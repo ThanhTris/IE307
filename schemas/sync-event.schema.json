@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://memo.local/schemas/sync-event.schema.json",
+  "title": "Memo sync event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["eventId", "deviceId", "entityType", "entityId", "operation", "baseVersion", "clientUpdatedAt", "payload"],
+  "properties": {
+    "eventId": { "type": "string", "minLength": 1 },
+    "deviceId": { "type": "string", "minLength": 1 },
+    "entityType": { "enum": ["deck", "card", "review_event", "game_session"] },
+    "entityId": { "type": "string", "minLength": 1 },
+    "operation": { "enum": ["upsert", "delete"] },
+    "baseVersion": { "type": "integer", "minimum": 0 },
+    "clientUpdatedAt": { "type": "string", "format": "date-time" },
+    "payload": { "type": ["object", "null"] }
+  }
+}

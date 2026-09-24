@@ -1,0 +1,54 @@
+# Dependencies and build outputs
+node_modules/
+.expo/
+dist/
+build/
+coverage/
+android/.gradle/
+android/app/build/
+ios/Pods/
+ios/build/
+
+# Environment and signing
+.env
+.env.*
+!.env.example
+*.jks
+*.keystore
+*.p8
+*.p12
+*.mobileprovision
+GoogleService-Info.plist
+google-services.json
+
+# IDE and OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Generated or local-only course material
+docs/references/course/files/*.pdf
+docs/references/course/manifest.local.json
+
+# Backup and temporary files
+archive/
+*.bak
+*.tmp
+*.log
+
+# Root compatibility copies kept by local Windows permissions
+/memo-vocabulary.html
+/Tai_lieu.docx
+/AI-CONTEXT-HANDOFF.md
+/ANTIGRAVITY-OPENDESIGN-HANDOFF.md
+/MODERN-UI-REFERENCE-PLAYBOOK.md
+/UI-IMPLEMENTATION-NOTES.md
+
+# Deliverable build artifacts
+deliverables/release/*.aab
+deliverables/release/*.apk
+deliverables/release/*.ipa
+deliverables/demo/*.mp4
+deliverables/package/*.zip

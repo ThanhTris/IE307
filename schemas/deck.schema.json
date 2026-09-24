@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://memo.local/schemas/deck.schema.json",
+  "title": "Memo deck",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "name", "schemaVersion", "fieldSchema", "cardTemplates"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "description": { "type": "string", "maxLength": 1000 },
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "fieldSchema": {
+      "type": "array",
+      "minItems": 2,
+      "items": { "$ref": "#/$defs/field" }
+    },
+    "cardTemplates": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/template" }
+    },
+    "tags": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+  },
+  "$defs": {
+    "field": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "label", "type", "required"],
+      "properties": {
+        "key": { "type": "string", "pattern": "^[a-z][a-z0-9_]{0,63}$" },
+        "label": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "type": { "enum": ["text", "markdown", "number", "image", "audio"] },
+        "required": { "type": "boolean" }
+      }
+    },
+    "template": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "front", "back"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "front": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "back": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+      }
+    }
+  }
+}

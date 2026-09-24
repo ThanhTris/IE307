@@ -1,0 +1,16 @@
+{
+  "id": "deck_japanese_n5",
+  "name": "Tiếng Nhật N5 cơ bản",
+  "description": "Dữ liệu mẫu cho import, study và game",
+  "schemaVersion": 1,
+  "fieldSchema": [
+    { "key": "term", "label": "Từ", "type": "text", "required": true },
+    { "key": "reading", "label": "Cách đọc", "type": "text", "required": false },
+    { "key": "meaning", "label": "Nghĩa", "type": "text", "required": true },
+    { "key": "example", "label": "Ví dụ", "type": "text", "required": false }
+  ],
+  "cardTemplates": [
+    { "id": "default", "front": ["term", "reading"], "back": ["meaning", "example"] }
+  ],
+  "tags": ["sample", "n5"]
+}

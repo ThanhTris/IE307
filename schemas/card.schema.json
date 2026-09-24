@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://memo.local/schemas/card.schema.json",
+  "title": "Memo card",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "deckId", "schemaVersion", "fields", "tags"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "deckId": { "type": "string", "minLength": 1 },
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "fields": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "oneOf": [
+          { "type": "string" },
+          { "type": "number" },
+          { "type": "array", "items": { "type": "string" } },
+          { "type": "null" }
+        ]
+      }
+    },
+    "tags": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "flag": { "enum": ["red", "orange", "green", "blue", "pink", "turquoise", "purple", null] }
+  }
+}
