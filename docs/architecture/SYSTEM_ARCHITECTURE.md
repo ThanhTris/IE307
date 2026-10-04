@@ -1,40 +1,38 @@
 # Kiến trúc hệ thống — Manabi
 
-Trạng thái: **đề xuất triển khai, chờ review MANABI-001 và các task phụ thuộc**. Cập nhật 02/10/2026. Stack SQLite + Supabase là baseline kế thừa đang được tái xác nhận; chưa có app/API/database production.
+Trạng thái: **đề xuất triển khai; phạm vi giai đoạn đầu local-first đã được chủ dự án chọn, ADR-004 còn chờ review kỹ thuật**. Cập nhật 05/10/2026. Chưa có app/API/database production trên `main`.
 
 Manabi chỉ nghiên cứu tiếng Nhật: deck/card tùy biến, flashcard, SRS, Matching, Four Choices, Word Ninja và pilot quiz Gemini/ảnh đời sống. [Prototype Manabi](../../design/prototypes/manabi-vocabulary.html) là giao diện đã chọn; native cần safe area/accessibility/layout thích ứng.
 
 ## 1. Tổng thể
 
-    Expo React Native + TypeScript strict (Android-first)
-      → UI/feature state
-      → domain: schema/import/SRS/game/quiz policy
-      → local repository
-           → SQLite: content JSON + metadata/index + outbox
-           → sync worker khi auth/mạng hợp lệ
-                → Supabase Auth + Edge Functions/RPC
-                     → PostgreSQL JSONB + RLS + version/receipt/cursor
-                     → consent/quota/source validator → Gemini
-                     → ảnh đã duyệt → provider có quyền rõ
+    Giai đoạn đầu: Expo React Native + TypeScript strict (Android-first)
+      → UI/feature state → domain: schema/import/SRS/game
+      → local repository → SQLite: content JSON + metadata/index
+      → JSON backup/import chủ động
 
-Mobile đọc/ghi dữ liệu học qua repository local. Guest học không cần login; upload/sync có thông báo và xác nhận scope. Thiếu mạng/Gemini/backend không chặn core. UI không giữ Gemini key/service-role/database credentials hoặc tự gọi provider.
+    Nhánh tùy chọn sau review: auth + sync worker → Supabase/PostgreSQL JSONB
+      → quyền, version/receipt/cursor và conflict policy
+    Pilot AI/ảnh sau cổng consent, quota, nguồn/giấy phép và review riêng
+
+Mobile đọc/ghi dữ liệu học qua repository local. Giai đoạn đầu không có login, upload hoặc cloud sync; nhánh online sau này phải có thông báo và xác nhận scope. Thiếu mạng/Gemini/backend không chặn core. UI không giữ Gemini key/service-role/database credentials hoặc tự gọi provider.
 
 ## 2. Ranh giới module
 
 | Module | Trách nhiệm |
 | --- | --- |
-| apps/mobile | Navigation/screens, safe-area/accessibility, feature state, repository adapters, sync worker/native capability |
+| apps/mobile | Navigation/screens, safe-area/accessibility, feature state, repository adapters; sync worker chỉ khi bật nhánh online |
 | packages/domain | Contract/validation theo deck, migration/import, scheduler deterministic, game/quiz eligibility, conflict policy |
 | packages/ui | Tokens/components theo prototype; không scheduler/quota/persistence |
-| services/api | API/Edge Function adapters, auth/consent/quota/source validation, lỗi ổn định/provider proxy |
-| supabase | Migrations, RLS, RPC/functions, seed demo không nhạy cảm, SQL/security tests |
+| services/api | Nhánh online/pilot sau review: API/Edge Function adapters, auth/consent/quota/source validation, lỗi ổn định/provider proxy |
+| supabase | Nhánh cloud tùy chọn: migrations, RLS, RPC/functions, seed demo không nhạy cảm, SQL/security tests |
 | schemas | JSON contracts versioned; mẫu cần mở rộng bằng task/migration trước production |
 
 Domain interfaces không phụ thuộc UI/backend. Boundary validate JSON; không biến JSON người dùng thành query/code/template thực thi. [CARD_JSON](../specs/CARD_JSON_SPEC.md) phân biệt nội dung linh hoạt với metadata có cấu trúc.
 
 ## 3. Database và version
 
-Giữ SQLite TEXT JSON local và Supabase/PostgreSQL JSONB cloud theo [DATA_STORAGE](../specs/DATA_STORAGE_SPEC.md)/[ADR-004](decisions/ADR-004-json-storage-and-database.md). [MongoDB](../research/DATABASE_FEASIBILITY.md) là alternative chưa chọn.
+Giai đoạn đầu dùng SQLite TEXT JSON local và JSON backup theo [DATA_STORAGE](../specs/DATA_STORAGE_SPEC.md)/[ADR-004](decisions/ADR-004-json-storage-and-database.md). Supabase/PostgreSQL JSONB chỉ là phương án cloud tùy chọn sau review; [MongoDB](../research/DATABASE_FEASIBILITY.md) là alternative chưa chọn.
 
 - Decks: metadata, fieldSchema/templates/mapping versioned.
 - Cards: fields JSON, contentVersion/contentHash, confirmedContentVersion/confirmedContentHash, recordVersion/owner/timestamps/tombstone.
@@ -49,13 +47,13 @@ Index cho ownership/dueAt/deck/version; không gộp toàn deck/history vào JSO
 
 ## 4. Luồng core
 
-Deck/card: form theo fieldSchema → validate required/type/length/key → transaction content/version/invalidation/outbox → local UI. Import paste/CSV có mapping/preview lỗi/trùng/policy skip-merge và rollback. [DECK_CARD](../specs/DECK_CARD_SPEC.md), [IMPORT](../specs/IMPORT_SPEC.md)
+Deck/card: form theo fieldSchema → validate required/type/length/key → transaction content/version/invalidation → local UI. Outbox chỉ thêm khi nhánh sync được duyệt. Import paste/CSV có mapping/preview lỗi/trùng/policy skip-merge và rollback. [DECK_CARD](../specs/DECK_CARD_SPEC.md), [IMPORT](../specs/IMPORT_SPEC.md)
 
-Flashcard/SRS: query schedule đến hạn bằng index → reveal → user rating Again/Hard/Good/Easy → transaction review-event/schedule/outbox. Resume/force-close không tự chấm; event trùng không áp hai lần. Scheduler versioned/UTC ngoài screen. [FLASHCARD](../specs/FLASHCARD_SPEC.md), [SRS](../specs/SRS_SPEC.md)
+Flashcard/SRS: query schedule đến hạn bằng index → reveal → user rating Again/Hard/Good/Easy → transaction review-event/schedule. Outbox chỉ thêm khi nhánh sync được duyệt. Resume/force-close không tự chấm; event trùng không áp hai lần. Scheduler versioned/UTC ngoài screen. [FLASHCARD](../specs/FLASHCARD_SPEC.md), [SRS](../specs/SRS_SPEC.md)
 
 Game: Matching/Four Choices/Word Ninja chọn card đã học và cặp nghĩa rõ. Lựa chọn đầu đủ điều kiện là signal phụ; bom/miss thao tác/auto-hit không là quên. Progress tách rating trực tiếp/game/quiz; modifier quiz bắt đầu shadow, chưa đổi lịch thật. [GAMES](../specs/GAMES_SPEC.md), [PROGRESS](../specs/PROGRESS_SPEC.md)
 
-Auth/sync: guest→account preview scope; secure token, login B không thấy cached A. Outbox push có baseVersion/capability, server auth/RLS/schema rồi commit canonical+receipt. Pull cursor/tombstone; conflict trả record/version để policy/preview, không ghi đè bằng clock client. Review-events dedup/replay, không tin dueAt projection tùy ý client. Backup JSON version/checksum snapshot/preview/transaction restore. [AUTH_SYNC](../specs/AUTH_SYNC_SPEC.md), [BACKUP](../specs/BACKUP_SPEC.md)
+Backup JSON version/checksum snapshot/preview/transaction restore thuộc core local. **Nhánh auth/sync tùy chọn sau review:** guest→account preview scope; secure token, login B không thấy cached A. Outbox push có baseVersion/capability, server auth/RLS/schema rồi commit canonical+receipt. Pull cursor/tombstone; conflict trả record/version để policy/preview, không ghi đè bằng clock client. Review-events dedup/replay, không tin dueAt projection tùy ý client. [AUTH_SYNC](../specs/AUTH_SYNC_SPEC.md), [BACKUP](../specs/BACKUP_SPEC.md)
 
 ## 5. Gemini pilot
 

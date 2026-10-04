@@ -10,7 +10,7 @@ Manabi phục vụ người tự học **tiếng Nhật** cần ghi nhớ từ v
 
 - [Chức năng FR-01–FR-18](FUNCTIONAL_REQUIREMENTS.md): hành vi, phạm vi và đặc tả liên kết cho task.
 - [Phi chức năng NFR-01–NFR-12](NON_FUNCTIONAL_REQUIREMENTS.md): mục tiêu đo và evidence; các ngưỡng là đề xuất chưa đo.
-- [Đặc tả lưu trữ](../specs/DATA_STORAGE_SPEC.md): nội dung JSON linh hoạt, metadata truy vấn được, SQLite local + Supabase/PostgreSQL JSONB baseline; nghiên cứu MongoDB không đồng nghĩa đã chuyển database.
+- [Đặc tả lưu trữ](../specs/DATA_STORAGE_SPEC.md): nội dung JSON linh hoạt, metadata truy vấn được; giai đoạn đầu SQLite trên thiết bị + JSON backup, không tài khoản/cloud sync. Supabase/PostgreSQL JSONB là phương án cloud tùy chọn sau review; nghiên cứu MongoDB không đồng nghĩa đã chuyển database.
 - [Prototype hiện tại](../../design/prototypes/manabi-vocabulary.html): giữ giao diện đã chọn, chỉ cập nhật tên; native app cần safe area/accessibility chứ không yêu cầu thiết kế mới.
 - [Kế hoạch](../project/PROJECT_PLAN.md), [phân công sáu thành viên](../project/TEAM_AND_RESPONSIBILITIES.md) và [workflow review/merge](../project/TEAM_WORKFLOW.md): nguồn task/dependency/owner/reviewer. Task Markdown là trạng thái chuẩn; báo cáo DOCX được tái tạo trước push để owner xem done/chưa làm/lỗi.
 

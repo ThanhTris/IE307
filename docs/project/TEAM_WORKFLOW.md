@@ -4,7 +4,7 @@ Quy tắc này thực hiện yêu cầu của chủ dự án ngày 02/10/2026. �
 
 ## Trước khi làm
 
-Đọc `AGENTS.md`, task, dependency đã được reviewer chấp thuận và linked spec. Chuyển task sang `tasks/in-progress` khi nhận việc, ghi giả định, patch nhỏ nhất và test plan. Chỉ nhận việc độc lập khi dependency còn review. Không bắt đầu 36 task triển khai trước khi MANABI-001 được chủ dự án duyệt.
+Đọc `AGENTS.md`, [Bắt đầu Manabi](START_HERE.md), task, dependency đã được reviewer chấp thuận và linked spec. Task Manabi chi tiết nằm trên nhánh triển khai chỉ trong trang bắt đầu; task PM/Memo trên `main` không áp dụng. Chuyển task sang `tasks/in-progress` khi nhận việc, ghi giả định, patch nhỏ nhất và test plan. Chỉ nhận việc độc lập khi dependency còn review. Kiểm quyết định reviewer của MANABI-001 trên nhánh triển khai trước khi mở các task phụ thuộc; không suy ra trạng thái từ chỉ mục `main`.
 
 ## Bắt buộc khi push task hoặc code triển khai
 
@@ -16,7 +16,7 @@ Quy tắc này thực hiện yêu cầu của chủ dự án ngày 02/10/2026. �
 
 ## Công bố tài liệu nền trên main
 
-Theo yêu cầu chủ dự án ngày 05/10/2026, lần cập nhật `main` này chỉ gồm đặc tả chính, quy trình, rule, UI prototype và công cụ duy trì tài liệu. Không đưa từng task Manabi, registry, fixture/evidence spike, workbook/DOCX theo task hoặc code ứng dụng vào commit này. Trước push chạy `python scripts/validate_repository.py`, kiểm liên kết và diff. DOCX tiến độ cùng manifest kiểm freshness tiếp tục ở nhánh triển khai. Khi một push có task/code triển khai, áp dụng đầy đủ năm bước ở trên.
+Theo yêu cầu chủ dự án ngày 05/10/2026, các lần cập nhật tài liệu nền trên `main` chỉ gồm đặc tả chính, quy trình, rule, UI prototype và hướng dẫn bắt đầu. Không đưa từng task Manabi, registry, fixture/evidence spike, workbook/DOCX theo task hoặc code ứng dụng vào các commit tài liệu này. Trước push chạy `python scripts/validate_repository.py`, kiểm liên kết và diff. DOCX tiến độ cùng manifest kiểm freshness tiếp tục ở nhánh triển khai. Khi một push có task/code triển khai, áp dụng đầy đủ năm bước ở trên.
 
 ## Cài hook
 

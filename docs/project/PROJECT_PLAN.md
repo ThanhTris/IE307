@@ -39,7 +39,7 @@ ID không phải thứ tự chạy. Trong cùng phase phải theo dependency, v�
 
 ## Dữ liệu và kiến trúc
 
-JSON dùng cho nội dung do người học quyết định: deck fieldSchema/template, card fields và portable backup. JSON không thay database transaction/index/ownership. Baseline: SQLite trên thiết bị; Supabase/Postgres JSONB phía cloud; dueAt, SRS state, review history, ownership, version và sync key truy vấn ngoài JSON. [DATA_STORAGE_SPEC](../specs/DATA_STORAGE_SPEC.md) và ADR-004 ghi đánh giá MongoDB. MANABI-004 kiểm truy vấn/migration/index/chi phí/offline và xác nhận quyết định; đổi Mongo cần ADR, contract và task mới được review, không chuyển tự động chỉ vì Mongo lưu document.
+JSON dùng cho nội dung do người học quyết định: deck fieldSchema/template, card fields và portable backup. JSON không thay database transaction/index/ownership. Chủ dự án đã chọn giai đoạn đầu SQLite trên thiết bị + JSON backup, không tài khoản/cloud sync; dueAt, SRS state, review history và version truy vấn ngoài JSON. Supabase/Postgres JSONB chỉ là phương án cloud tùy chọn sau review. [DATA_STORAGE_SPEC](../specs/DATA_STORAGE_SPEC.md) và [ADR-004](../architecture/decisions/ADR-004-json-storage-and-database.md) ghi quyết định phạm vi và phần review kỹ thuật còn lại. MANABI-004 kiểm truy vấn/migration/index/chi phí/offline; đổi Mongo cần ADR, contract và task mới được review, không chuyển tự động chỉ vì Mongo lưu document.
 
 ## Chất lượng nghiên cứu
 

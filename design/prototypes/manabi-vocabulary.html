@@ -883,8 +883,17 @@
       z-index: 10;
     }
     .study-toolbar-title {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      max-width: calc(100% - 166px);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-align: center;
+      pointer-events: none;
       font-family: var(--display);
-      font-size: 16px;
+      font-size: clamp(13px, 4vw, 16px);
       font-weight: 800;
       color: var(--fg);
     }
@@ -929,23 +938,28 @@
 
     /* Flashcard Container & 3D Interactive Feel */
     .study-wrap {
+      position: relative;
       flex: 1;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: center;
       padding: 18px 18px 22px;
       overflow-y: auto;
+    }
+    .study-card-stage {
+      width: 100%;
+      margin: auto 0;
     }
     .flashcard {
       position: relative;
       width: 100%;
       min-height: 360px;
-      margin: auto 0;
+      margin: 0;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: 32px 22px;
+      padding: 60px 22px;
       border: 1.5px solid var(--border);
       border-radius: 24px;
       background: var(--surface);
@@ -976,8 +990,9 @@
     .flashcard.flip-turn {
       animation: card-flip-in 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
     }
-    .flashcard.is-flipped {
-      border-color: rgba(79, 70, 229, 0.35);
+    .flashcard.is-flipped .term,
+    .flashcard.is-flipped .reading {
+      display: none;
     }
     .audio-button {
       position: absolute;
@@ -1016,15 +1031,9 @@
       padding: 4px 14px;
       border-radius: 20px;
     }
-    .flip-hint {
-      display: none !important;
-    }
     .study-answer {
       width: 100%;
       display: none;
-      margin-top: 26px;
-      padding-top: 20px;
-      border-top: 1.5px dashed var(--border);
       text-align: center;
     }
     .study-answer.visible {
@@ -1047,7 +1056,6 @@
       padding: 12px 14px;
       border-radius: 12px;
       background: var(--surface-2);
-      border-left: 3px solid var(--accent);
       font-size: 13px;
       text-align: left;
     }
@@ -1057,11 +1065,15 @@
     .study-reveal-btn {
       display: none !important;
     }
+    .study-actions-container {
+      display: flow-root;
+      min-height: 80px;
+    }
     .study-actions {
       display: none;
       grid-template-columns: repeat(4, 1fr);
       gap: 8px;
-      margin-top: 16px;
+      margin-top: 14px;
       width: 100%;
     }
     .study-actions.visible {
@@ -1069,11 +1081,9 @@
       animation: fade-up 220ms var(--ease) both;
     }
     .rating {
-      position: relative;
       min-height: 58px;
-      border: 1px solid var(--border);
+      border: 0;
       border-radius: 12px;
-      background: var(--surface);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -1082,16 +1092,7 @@
       cursor: pointer;
       user-select: none;
       box-shadow: var(--shadow-xs);
-      overflow: hidden;
-      transition: transform 140ms var(--ease), box-shadow 140ms var(--ease), border-color 140ms var(--ease);
-    }
-    .rating::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
+      transition: transform 140ms var(--ease), box-shadow 140ms var(--ease);
     }
     .rating:hover {
       transform: translateY(-2px);
@@ -1118,56 +1119,40 @@
     }
     .swipe-badge {
       position: absolute;
-      top: 24px;
+      top: 50%;
+      left: 50%;
       font-family: var(--display);
       font-size: 15px;
       font-weight: 850;
       padding: 6px 14px;
       border-radius: 12px;
-      border: 2px solid;
       pointer-events: none;
       opacity: 0;
-      transform: scale(0.85);
+      transform: translate(-50%, -50%) scale(0.9);
       transition: opacity 120ms ease, transform 120ms ease;
       z-index: 10;
       letter-spacing: 0.05em;
       text-transform: uppercase;
+      white-space: nowrap;
+      box-shadow: var(--shadow-card);
     }
     .swipe-badge.swipe-good {
-      right: 20px;
       color: #059669;
-      border-color: #059669;
       background: rgba(236, 253, 245, 0.94);
-      transform: rotate(10deg);
     }
     .swipe-badge.swipe-again {
-      left: 20px;
       color: #DC2626;
-      border-color: #DC2626;
       background: rgba(254, 242, 242, 0.94);
-      transform: rotate(-10deg);
-    }
-    .mobile-gesture-hint {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-top: 10px;
-      font-size: 11.5px;
-      color: var(--muted-light);
-      font-weight: 550;
-      user-select: none;
     }
 
-    /* Minimalist Top Indicator Bars */
-    .rating[data-rating="again"]::before { background: var(--danger); }
-    .rating[data-rating="again"]:hover { border-color: var(--danger); }
-    .rating[data-rating="hard"]::before { background: var(--amber); }
-    .rating[data-rating="hard"]:hover { border-color: var(--amber); }
-    .rating[data-rating="good"]::before { background: var(--accent); }
-    .rating[data-rating="good"]:hover { border-color: var(--accent); }
-    .rating[data-rating="easy"]::before { background: var(--green); }
-    .rating[data-rating="easy"]:hover { border-color: var(--green); }
+    .rating[data-rating="again"] { background: #FEF2F2; }
+    .rating[data-rating="again"] strong { color: #BE123C; }
+    .rating[data-rating="hard"] { background: #FFFBEB; }
+    .rating[data-rating="hard"] strong { color: #B45309; }
+    .rating[data-rating="good"] { background: #EEF2FF; }
+    .rating[data-rating="good"] strong { color: #4338CA; }
+    .rating[data-rating="easy"] { background: #ECFDF5; }
+    .rating[data-rating="easy"] strong { color: #047857; }
 
     /* Study Options Menu */
     .study-menu {
@@ -3703,7 +3688,8 @@
         <span style="display:none;" data-od-id="study-progress-percent">33%</span>
 
         <div class="study-wrap" data-od-id="study-session">
-          <article class="flashcard" data-od-id="study-flashcard" title="Chạm để lật mặt thẻ (Mặt trước ⇄ Mặt sau) • Phím Space">
+          <div class="study-card-stage">
+          <article class="flashcard" data-od-id="study-flashcard" role="group" tabindex="0" aria-label="Mặt trước, chạm hoặc nhấn Space để xem đáp án" title="Chạm để lật mặt thẻ (Mặt trước ⇄ Mặt sau) • Phím Space">
             <div class="card-meta-tags" id="study-card-meta-tags"></div>
             <button class="audio-button" type="button" aria-label="Phát âm từ vựng" aria-pressed="false" data-action="audio" data-od-id="study-audio"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></button>
             <div class="term" lang="ja" data-od-id="study-term">学校</div>
@@ -3716,7 +3702,6 @@
               </div>
             </div>
 
-            <div class="flip-hint" id="study-flip-hint" style="display: none !important;" aria-hidden="true"></div>
           </article>
 
           <div class="study-actions-container">
@@ -3741,11 +3726,7 @@
                 <strong>Dễ</strong>
               </button>
             </div>
-            <div class="mobile-gesture-hint" aria-hidden="true">
-              <span>Vuốt trái: Học lại</span>
-              <span>•</span>
-              <span>Vuốt phải: Đã nhớ</span>
-            </div>
+          </div>
           </div>
         </div>
       </section>
@@ -5974,7 +5955,6 @@
         var card = document.querySelector('[data-od-id="study-flashcard"]');
         var answer = document.querySelector('[data-od-id="study-answer"]');
         var ratings = document.querySelector('[data-od-id="study-rating-actions"]');
-        var hint = document.getElementById('study-flip-hint');
 
         if (withAnimation && card) {
           card.classList.remove('flip-turn');
@@ -5984,23 +5964,21 @@
 
         if (flipped) {
           cardRevealed = true;
-          if (card) card.classList.add('is-flipped');
+          if (card) {
+            card.classList.add('is-flipped');
+            card.setAttribute('aria-label', 'Mặt sau, chạm hoặc nhấn Space để xem lại mặt trước');
+          }
           if (answer) answer.classList.add('visible');
           if (ratings) ratings.classList.add('visible');
-          if (hint) {
-            hint.classList.remove('hidden');
-            hint.textContent = 'Chạm thẻ để quay lại câu hỏi (mặt trước)';
-          }
         } else {
-          if (card) card.classList.remove('is-flipped');
+          if (card) {
+            card.classList.remove('is-flipped');
+            card.setAttribute('aria-label', 'Mặt trước, chạm hoặc nhấn Space để xem đáp án');
+          }
           if (answer) answer.classList.remove('visible');
           if (ratings) {
             if (cardRevealed) ratings.classList.add('visible');
             else ratings.classList.remove('visible');
-          }
-          if (hint) {
-            hint.classList.remove('hidden');
-            hint.textContent = cardRevealed ? 'Chạm thẻ để xem lại đáp án • Đánh giá bên dưới' : 'Chạm thẻ để lật xem đáp án';
           }
         }
       }
@@ -6009,12 +5987,13 @@
         if ('vibrate' in navigator) {
           try { navigator.vibrate(15); } catch (_) {}
         }
-        var answer = document.querySelector('[data-od-id="study-answer"]');
-        var isCurrentlyFlipped = answer && answer.classList.contains('visible');
+        var card = document.querySelector('[data-od-id="study-flashcard"]');
+        var isCurrentlyFlipped = card && card.classList.contains('is-flipped');
         setCardFlipped(!isCurrentlyFlipped, true);
       }
 
       function applyRating(ratingName) {
+        if (!cardRevealed) return;
         if ('vibrate' in navigator) {
           try { navigator.vibrate(25); } catch (_) {}
         }
@@ -7062,17 +7041,18 @@
         }
       });
 
-      // Dynamic Swipe Badges & Gesture Engine for Mobile & Touch
+      // Keep swipe feedback fixed at the center while the card follows the finger.
       var flashcardEl = document.querySelector('[data-od-id="study-flashcard"]');
+      var studyWrapEl = document.querySelector('[data-od-id="study-session"]');
       var badgeGood = document.createElement('div');
       badgeGood.className = 'swipe-badge swipe-good';
       badgeGood.textContent = 'NHỚ TỐT';
       var badgeAgain = document.createElement('div');
       badgeAgain.className = 'swipe-badge swipe-again';
       badgeAgain.textContent = 'HỌC LẠI';
-      if (flashcardEl) {
-        flashcardEl.appendChild(badgeGood);
-        flashcardEl.appendChild(badgeAgain);
+      if (studyWrapEl) {
+        studyWrapEl.appendChild(badgeGood);
+        studyWrapEl.appendChild(badgeAgain);
       }
 
       function resetCardTransform() {
@@ -7091,12 +7071,13 @@
       var dragStartX = 0, dragStartY = 0, currentDeltaX = 0, isDragging = false;
 
       function onDragStart(clientX, clientY, target) {
-        if (currentScreen !== 'study' || !flashcardEl) return false;
+        if (currentScreen !== 'study' || !flashcardEl || !cardRevealed) return false;
         if (target && target.closest('[data-action="audio"]')) return false;
         dragStartX = clientX;
         dragStartY = clientY;
         currentDeltaX = 0;
         isDragging = true;
+        flashcardEl.classList.remove('flip-turn');
         flashcardEl.style.transition = 'none';
         return true;
       }
@@ -7136,7 +7117,6 @@
             flashcardEl.style.transform = 'translate3d(420px, 0, 0) rotate(16deg)';
             flashcardEl.style.opacity = '0';
             window.setTimeout(function () {
-              resetCardTransform();
               applyRating('good');
             }, 180);
           } else if (currentDeltaX < -threshold) {
@@ -7144,7 +7124,6 @@
             flashcardEl.style.transform = 'translate3d(-420px, 0, 0) rotate(-16deg)';
             flashcardEl.style.opacity = '0';
             window.setTimeout(function () {
-              resetCardTransform();
               applyRating('again');
             }, 180);
           } else {

@@ -1,16 +1,12 @@
-# Manabi UI implementation notes
+# Ghi chú triển khai UI Manabi
 
-This file is a handoff guide for another AI or developer continuing the Manabi vocabulary prototype.
-
-For cross-agent work with Antigravity and OpenDesign, read
-`ANTIGRAVITY-OPENDESIGN-HANDOFF.md` first. It defines the shared route,
-state, hook, preview, and collaboration contract.
+Đây là hướng dẫn UI hiện hành cho người chuyển [prototype HTML](manabi-vocabulary.html) sang app Expo React Native. Đọc cùng [FLASHCARD_SPEC](../../docs/specs/FLASHCARD_SPEC.md) và [Bắt đầu Manabi](../../docs/project/START_HERE.md). Prototype dùng dữ liệu và lịch ôn mẫu; không sao chép logic mẫu làm production. Nhật ký thay đổi cũ ở cuối tài liệu chỉ ghi lịch sử, không ghi đè hợp đồng UI hiện hành ở đây.
 
 ## Product direction
 
 - Product name used in the UI: **Manabi**.
-- Primary UI language: **100% Vietnamese** (natural, idiomatic, adhering to standard SRS terminology).
-- Learning content: Japanese vocabulary with Japanese term/reading (Kanji/Furigana) and Vietnamese/English meaning and example.
+- Primary UI language: **tiếng Việt** tự nhiên, dùng thuật ngữ ôn tập nhất quán.
+- Learning content: từ/cách đọc tiếng Nhật (Kanji/Furigana), nghĩa tiếng Việt và ví dụ.
 - The visual direction is intentionally simple and focused, inspired by a flashcard app rather than a dashboard.
 - The prototype is mobile-first and is previewed at a maximum width of 430px.
 
@@ -32,23 +28,16 @@ The single-page prototype is in `manabi-vocabulary.html` and switches screens wi
 
 ## Review screen (`#study`)
 
-The review screen deliberately hides the normal app shell to reduce distraction:
+Màn học ẩn thanh điều hướng dưới. Hợp đồng hiện hành:
 
-- Hidden while reviewing: the standard screen header, progress line, and bottom navigation.
-- Compact header: back button, truly centered `Review` title, flag action, and overflow action. The old `1 of 3` position indicator is intentionally removed; users only see the queue counts that matter for study.
-- The flag control is a real toggle for the current card. It changes `aria-pressed`, updates its accessible label, gets an indigo active state, and shows a toast confirmation.
-- The three-dot control opens a compact Anki-inspired `Card options` menu with `Edit note`, `Edit note type`, `Reschedule`, `Card details`, and `Review settings`. Less frequent operations are grouped under `More actions` in a bottom sheet.
-- `Edit note` now opens a dedicated full-height Anki-style note editor. It keeps note metadata (note type and deck) separate from field content, gives every field its own editor, supports tags, attachments, and a sticky Rich Text Editor Toolbar (bold, italic, underline, strikethrough, font size, color, superscript, subscript, audio). Empty media fields start collapsed to keep the mobile screen calm.
-- Field structure is managed through the Note Type editor. The note editor itself contains no `Add field` control. Built-in fields are protected; a custom type is cloned from `Basic` before users can rename, reorder, add, remove, or change field kinds (Text/Audio/Image).
-- Note type selection now separates Built-in and Custom groups. Custom types are cloned from `Basic`, can be named by the user, and then edited independently; their field schema is kept in the current browser session and reused by Note editor and the `Cards` tab.
-- The Note Type editor has two tabs: `Fields` stores the note data schema, while `Cards` stores card type, front/back field mapping, reverse-card creation, and live preview. There is no separate Card templates destination.
-- Default field ids use side/property prefixes (`frontText`, `frontReading`, `frontAudio`, `frontImage`, `backText`, `backExample`, `backTranslation`, `backAudio`, `backImage`). User-created custom fields keep the exact name entered by the user and can be mapped to either card side.
-- The `New / Learning / Due` queue is a small centered strip directly below the header.
-- The Japanese term and reading stay centered on the tinted Manabi background without a nested white flashcard frame or decorative glow.
-- The pronunciation control is in the upper-right of the study area.
-- `Reveal answer` is an indigo floating action bar with a small gap from the left, right, and bottom edges. It must remain easy to reach with one thumb.
-- After reveal, the four review ratings are `Again`, `Hard`, `Good`, and `Easy`, with example intervals of `1 min`, `6 days`, `10 days`, and `21 days`.
-- After reveal, the answer and rating actions become visible. The answer reveal button is hidden for that card state.
+- Header có nút quay lại bên trái, tên **Phiên học từ vựng** ở giữa và hai nút **xem lại thẻ trước** cùng **tùy chọn thẻ** bên phải. Tên không được chồng lên nút. Xem lại thẻ trước trả về card trước; chạm card mới lật mặt.
+- Menu ba chấm có bốn mục: **Chỉnh sửa thẻ, Cài đặt ôn tập, Hẹn lại lịch ôn, Thông tin thẻ**. Cờ/tag nằm trên card hoặc ở màn sửa thẻ, không chiếm chỗ trong header phiên học.
+- Dải **Mới / Đang học / Đến hạn** ở dưới header. Card trắng nằm giữa vùng học, tag ở phía trên tách khỏi nội dung, nút phát âm ở góc trên bên phải card. Mặt trước chỉ hiện thuật ngữ/cách đọc; mặt sau chỉ hiện nghĩa/ví dụ, không lặp lại mặt trước.
+- Chạm card để lật; card giữ vị trí giữa khi đổi mặt. Nội dung dài làm card lớn thêm về trên và dưới. Bốn nút đánh giá nằm ngay dưới card, có chỗ dành sẵn để khi hiện không làm card nhảy.
+- **Học lại / Khó / Tốt / Dễ** là bốn ô nền màu khác nhau, bo góc, không có border hoặc vạch màu ở mép. Ẩn trước lần mở mặt sau đầu tiên của từng card; sau đó luôn hiện khi lật qua lại card đó, và ẩn lại ở card mới. Khoảng `1 phút / 1 ngày / 3 ngày / 7 ngày` trong HTML chỉ minh họa; app lấy lịch thật từ scheduler.
+- Vuốt ngang sau reveal: card đi theo tay; chữ **HỌC LẠI** hoặc **NHỚ TỐT** cố định ở giữa vùng học, chỉ hiện trong lúc vuốt. Không giữ dòng “Vuốt trái/phải” dưới card. Thả qua ngưỡng thì chấm Again/Good, không qua ngưỡng thì card trở lại.
+- Nghĩa/ví dụ dùng nền trung tính. Không tự tô đậm một câu ví dụ chỉ vì nó là text nhập vào; chỉ thể hiện loại nội dung đặc biệt nếu import/card có metadata nói rõ.
+- Màn chỉnh sửa thẻ tách metadata (loại thẻ, deck) khỏi các field, tag và media; loại thẻ tùy chỉnh quản lý field/schema và mapping mặt trước/mặt sau. Giao diện mobile vẫn phải tôn trọng safe area, phóng chữ, accessibility và dark/system mode khi chuyển sang native.
 
 ## Visual system
 
@@ -59,17 +48,21 @@ The design tokens live at the top of `manabi-vocabulary.html` in `:root`:
 - `--accent` and `--accent-soft` are the indigo brand colors.
 - `--blue`, `--danger`, and `--green-dark` are reserved for New, Learning, and Due counts.
 - Typography uses the `--display`, `--ui`, and `--mono` stacks with system fallbacks, including Japanese font fallbacks.
-- `color-scheme: light` is set on `:root`; do not reintroduce a dark-mode switch unless the product direction changes.
+- `color-scheme: light` của HTML chỉ phục vụ preview; app native phải hỗ trợ dark/system mode theo NFR.
 
 ## Interaction hooks
 
 Keep these attributes stable when editing markup because the existing JavaScript uses them:
 
 - Navigation: `data-screen`, `data-nav`, `data-back`.
-- Review actions: `data-action="audio|reveal"`, `data-study-action="flag|settings"`, and `data-rating`.
+- Review actions: `data-action="audio|reveal"`, `data-study-action="undo|settings"`, and `data-rating`. Nút reveal cũ chỉ là hook ẩn; người dùng chạm card để lật.
 - OpenDesign inspection anchors: `data-od-id` attributes, especially `study-header`, `study-queue-counts`, `study-flashcard`, `study-reveal`, and `study-rating-actions`.
 
-## Change log — UI Simplification & Modernization Pass (21 September 2026)
+## Nhật ký thay đổi cũ (chỉ tham khảo lịch sử)
+
+Các mô tả cũ bên dưới có thể khác UI đã duyệt, nhất là header, vị trí cờ, viền nút, khoảng thời gian mẫu và cách hiện mặt sau. Khi mâu thuẫn, dùng hợp đồng hiện hành ở đầu tài liệu và mã prototype mới nhất.
+
+### UI Simplification & Modernization Pass (21 September 2026)
 
 - **Overall Visual System**: Harmonized design tokens to a crisp, modern palette (`--bg: #F8FAFC`, `--surface: #FFFFFF`, Indigo `--accent: #4F46E5`, Emerald `--green: #10B981`, Amber `--amber: #F59E0B`, Coral `--danger: #EF4444`). Replaced awkward asymmetric borders with uniform, sleek radii (`14px - 24px`) and subtle layered shadows.
 - **Screen 1 (#learn — Home / Today)**: Simplified the hero card with a clear progress bar, prominent `Start review ⚡` CTA, friendly color-coded queue pills (New / Learning / Due), quick-launch chips for the 3 minigames, and a clean deck list.

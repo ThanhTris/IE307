@@ -12,22 +12,22 @@ Manabi là đề tài mobile Android-first giúp người học tự tạo hoặ
 - Ảnh đời sống: pilot cho một tập nhỏ từ chỉ vật thể/hành động dễ nhận biết; ảnh cần nguồn, license và kiểm duyệt khớp nghĩa. Không giả định Gemini tự cung cấp một kho ảnh hợp pháp/chính xác.
 - Cộng đồng chia sẻ deck, thương mại, nhiều ngôn ngữ và chấm điểm ngữ pháp tự động nằm ngoài phạm vi nghiên cứu hiện tại.
 
-## Đọc dự án theo AIDD
+## Bắt đầu từ `main`
 
-1. `AGENTS.md` nêu thứ tự nguồn sự thật và quy tắc cho AI coding agent.
-2. `docs/product/PRODUCT_REQUIREMENTS.md` và `docs/project/PROJECT_PLAN.md` nêu phạm vi và thứ tự triển khai.
-3. Task Manabi chi tiết được theo dõi trên nhánh triển khai; bản `main` này công bố đặc tả, quy trình và UI tham chiếu.
+1. [Bắt đầu Manabi](docs/project/START_HERE.md) nêu quyết định đã chốt, nguồn task hiện hành và cách kiểm tra clone mới.
+2. `AGENTS.md` nêu thứ tự nguồn sự thật và quy tắc cho AI coding agent; [yêu cầu sản phẩm](docs/product/PRODUCT_REQUIREMENTS.md) và [kế hoạch](docs/project/PROJECT_PLAN.md) nêu phạm vi và cổng triển khai.
+3. Task Manabi chi tiết được theo dõi trên nhánh `origin/codex/manabi-task004-restore-2026-10-04`; bản `main` này công bố đặc tả, quy trình và UI tham chiếu. Task Memo còn trong `main` không thuộc lộ trình Manabi.
 4. Các đặc tả trong `docs/specs` là hợp đồng chức năng. `docs/architecture` nêu kiến trúc dự kiến, chưa phải mã đã chạy.
 
 ## Cấu trúc
 
 ```text
-apps/mobile/          Vị trí ứng dụng Expo React Native sẽ triển khai
+apps/mobile/          Vị trí ứng dụng Expo React Native; main chưa có scaffold chạy được
 packages/domain/      Domain, scheduler và logic game sẽ triển khai
 schemas/              JSON Schema hiện có cho deck/card/sync event
 design/prototypes/    Prototype HTML và ghi chú UI Manabi
 docs/                 PRD, spec, kiến trúc, nghiên cứu và quy trình
-tasks/                Mẫu task và backlog có từ baseline cũ
+tasks/                Chỉ mục task; trạng thái Manabi chi tiết ở nhánh triển khai
 ```
 
 Snapshot BeautyAI trước khi đổi hướng được lưu trong lịch sử ở commit `5034d52`; bản tài liệu `main` không dùng snapshot đó làm nguồn phát triển Manabi.
@@ -37,6 +37,6 @@ Snapshot BeautyAI trước khi đổi hướng được lưu trong lịch sử �
 - [18 yêu cầu chức năng](docs/product/FUNCTIONAL_REQUIREMENTS.md) và [12 yêu cầu phi chức năng](docs/product/NON_FUNCTIONAL_REQUIREMENTS.md).
 - [Phân công sáu thành viên](docs/project/TEAM_AND_RESPONSIBILITIES.md) và kế hoạch 36 task; file task chi tiết ở nhánh triển khai.
 - [Quy tắc cập nhật DOCX trước push](docs/project/TEAM_WORKFLOW.md) và [quy ước báo cáo](deliverables/report/README.md).
-- [Đánh giá database](docs/research/DATABASE_FEASIBILITY.md): JSON không buộc dùng MongoDB; đề xuất SQLite local + Supabase/PostgreSQL JSONB, quyết định chốt sau spike và review.
+- [ADR-004](docs/architecture/decisions/ADR-004-json-storage-and-database.md): chủ dự án đã chọn giai đoạn đầu SQLite trên thiết bị, backup JSON, không tài khoản/cloud sync; ADR vẫn chờ review kỹ thuật. [Đánh giá database](docs/research/DATABASE_FEASIBILITY.md) là căn cứ nghiên cứu, còn Supabase/PostgreSQL chỉ là phương án cloud tùy chọn sau này.
 
 Trí phụ trách BE/điều phối; Trang UI/FE; Tâm và Vinh data; Trung và Tuấn FE/BE/data. Mỗi người được dự kiến 6 task (32 điểm tương đối) và 6 lượt review (6 điểm). Roadmap theo cổng nghiệm thu, chưa có deadline mới. Trạng thái task được quản lý trên nhánh triển khai; `main` chưa có chức năng app production.

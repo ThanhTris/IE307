@@ -6,7 +6,7 @@ Liên kết yêu cầu: FR-02, FR-03, FR-06, FR-11, FR-13, FR-14, FR-15, FR-16, 
 
 ## 1. Mục tiêu và lựa chọn database
 
-Nội dung card phải linh hoạt theo người học, đồng thời truy vấn lịch ôn, kiểm tra quyền, migration và đồng bộ có thể tái lập. Giữ phương án hiện có: SQLite trên mobile, PostgreSQL/Supabase khi người dùng chọn đồng bộ. `fields` và `fieldSchema` lưu JSON ở SQLite và JSONB ở PostgreSQL; metadata dùng cột/index riêng. Không chuyển sang MongoDB chỉ vì cần JSON. [Đánh giá MongoDB](../research/DATABASE_FEASIBILITY.md) ghi phương án thay thế chưa được chọn.
+Nội dung card phải linh hoạt theo người học, đồng thời truy vấn lịch ôn và migration có thể tái lập. Giai đoạn đầu chủ dự án đã chọn SQLite trên mobile + JSON backup, không tài khoản/cloud sync. `fields` và `fieldSchema` lưu JSON ở SQLite; metadata dùng cột/index riêng. PostgreSQL/Supabase JSONB, quyền tài khoản và đồng bộ chỉ thuộc nhánh cloud tùy chọn sau review. Không chuyển sang MongoDB chỉ vì cần JSON. [ADR-004](../architecture/decisions/ADR-004-json-storage-and-database.md) ghi phạm vi đã chọn và phần kỹ thuật còn chờ review; [đánh giá MongoDB](../research/DATABASE_FEASIBILITY.md) ghi phương án thay thế chưa được chọn.
 
 Mobile đọc/ghi qua local repository. API và database cloud không được chặn flashcard, lịch ôn hoặc Matching/Four Choices/Word Ninja đã có dữ liệu. Prototype [manabi-vocabulary.html](../../design/prototypes/manabi-vocabulary.html) là tham chiếu giao diện.
 
@@ -96,8 +96,10 @@ Backend còn kiểm tra archive, consent, sense, hướng/mapping và schema tr�
 
 ## 6. Transaction, outbox và đồng bộ
 
-1. Tạo/sửa card: validate → ghi card, invalidation và outbox trong một SQLite transaction. Không báo thành công khi mới ghi một phần.
-2. Ôn flashcard: ghi review event, cập nhật schedule và outbox trong cùng transaction. Game/quiz attempt tạo event riêng và policy riêng; shadow mode chưa đổi schedule thật.
+Giai đoạn đầu chỉ thực thi transaction local. Các bước outbox/server dưới đây là hợp đồng cho nhánh cloud tùy chọn sau review, không phải yêu cầu bật worker hoặc tài khoản trong core offline.
+
+1. Tạo/sửa card: validate → ghi card và invalidation trong một SQLite transaction; khi bật sync, thêm outbox nguyên tử vào transaction đó. Không báo thành công khi mới ghi một phần.
+2. Ôn flashcard: ghi review event và cập nhật schedule trong cùng transaction; khi bật sync, thêm outbox nguyên tử. Game/quiz attempt tạo event riêng và policy riêng; shadow mode chưa đổi schedule thật.
 3. Worker gửi batch có giới hạn, `eventId`, `entityId`, `baseVersion`, `deviceId`; mỗi operation idempotent. Retry dùng cùng ID, không tạo review thứ hai.
 4. Backend kiểm tra quyền và version, commit canonical change và receipt cùng transaction. Unique ID ngăn cùng request bị tính quota/cập nhật lịch hai lần.
 5. Nếu base version khác canonical version, trả conflict có các version cần thiết. Không dùng last-write-wins dựa đồng hồ client để ghi đè lịch sử im lặng. Card nội dung có preview/resolve; review event bất biến được gộp theo ID rồi replay scheduler theo ordering đã định nghĩa.

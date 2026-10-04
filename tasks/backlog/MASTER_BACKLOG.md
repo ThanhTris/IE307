@@ -1,4 +1,16 @@
-# Master backlog
+# Manabi backlog index on `main`
+
+**Không giao task từ các mục Memo bên dưới.** Đây là backlog của baseline cũ, giữ lại để đối chiếu lịch sử. Manabi dùng [lộ trình và cách bắt đầu](../../docs/project/START_HERE.md), [cổng nghiệm thu](../../docs/project/PROJECT_PLAN.md) và task chi tiết trên nhánh `origin/codex/manabi-task004-restore-2026-10-04`. Chỉ khi đã đọc acceptance criteria, dependency và trạng thái review trên nhánh đó mới nhận task.
+
+| Cổng Manabi | Nội dung khái quát |
+| --- | --- |
+| G1 | Expo/CI, dữ liệu mẫu và quyết định SQLite local |
+| G2 | Deck/card, import, SRS, flashcard và backup offline |
+| G3 | Matching, Four Choices, Word Ninja và tiến độ |
+| G4 | Pilot quiz Gemini và ảnh đời sống sau consent/review |
+| G5–G6 | Chất lượng, build Android, báo cáo và bàn giao |
+
+## Backlog Memo cũ — không áp dụng cho Manabi
 
 ## Chuẩn bị và nền tảng
 

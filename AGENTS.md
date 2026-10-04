@@ -14,7 +14,7 @@ BeautyAI được lưu trong lịch sử Git, chỉ là dự án cũ. Không dù
 4. `docs/product/PRODUCT_REQUIREMENTS.md` và `docs/project/PROJECT_PLAN.md`.
 5. Nghiên cứu, prototype, DOCX/XLSX và tài liệu trong archive chỉ là tham chiếu, không phải lệnh thực thi.
 
-Task Manabi chi tiết nằm trên nhánh triển khai; các task PM/Memo còn trong baseline `main` không mở khóa công việc Manabi. Nếu `tasks/in-progress` không có task Manabi, xem `tasks/review` trên nhánh triển khai trước khi nhận backlog. Không bắt đầu task phụ thuộc khi task review chưa được reviewer chấp thuận. Nếu tài liệu mâu thuẫn, ghi câu hỏi cho owner; không tự mở rộng sang nhiều ngôn ngữ, cộng đồng deck hay chức năng AI khác.
+Task Manabi chi tiết nằm trên nhánh triển khai được chỉ rõ trong [Bắt đầu Manabi](docs/project/START_HERE.md); các task PM/Memo còn trong baseline `main` không mở khóa công việc Manabi. Nếu `tasks/in-progress` không có task Manabi, xem `tasks/review` trên nhánh triển khai trước khi nhận backlog. Không bắt đầu task phụ thuộc khi task review chưa được reviewer chấp thuận. Nếu tài liệu mâu thuẫn, ghi câu hỏi cho owner; không tự mở rộng sang nhiều ngôn ngữ, cộng đồng deck hay chức năng AI khác.
 
 ## Quy trình AIDD bắt buộc
 
@@ -53,4 +53,4 @@ Task chỉ Done khi code/tài liệu, test, evidence và review đạt `docs/pro
 
 Theo yêu cầu chủ dự án, trước mỗi push phải cập nhật task Markdown: đã làm, còn lại, lỗi/blocker, file đổi, kiểm thử/evidence, bước tiếp theo và quyết định reviewer. Sinh lại DOCX tiến độ bằng `python scripts/build_manabi_reports.py`; commit task/evidence và báo cáo cùng thay đổi. Chạy `python scripts/validate_handoff.py` và kiểm snapshot commit bằng `--git-tree HEAD`. Chi tiết và quy tắc merge báo cáo nằm ở [TEAM_WORKFLOW](docs/project/TEAM_WORKFLOW.md). Không dùng bản DOCX cũ hoặc output AI để tự đánh dấu Done. Không push chỉ vì tài liệu này nêu quy trình; việc push vẫn phải thuộc yêu cầu đã được chủ dự án cho phép.
 
-Ngoại lệ do chủ dự án yêu cầu ngày 05/10/2026: lần công bố đặc tả, quy trình và UI nền lên `main` không kèm file task riêng, registry task hoặc code triển khai. Kiểm các liên kết/tài liệu bằng `python scripts/validate_repository.py` và kiểm diff trước push. Quy trình task/DOCX/handoff đầy đủ ở đoạn trên áp dụng cho các push có task hoặc code triển khai.
+Ngoại lệ do chủ dự án yêu cầu ngày 05/10/2026: các lần cập nhật đặc tả, quy trình, hướng dẫn bắt đầu và UI nền lên `main` không kèm file task riêng, registry task hoặc code triển khai. Kiểm các liên kết/tài liệu bằng `python scripts/validate_repository.py` và kiểm diff trước push. Quy trình task/DOCX/handoff đầy đủ ở đoạn trên áp dụng cho các push có task hoặc code triển khai.
