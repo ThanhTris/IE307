@@ -1,104 +1,58 @@
-# Kế hoạch xây dựng Memo Vocabulary trong hai tháng
+# Kế hoạch phát triển Manabi
 
-## 1 Tổng quan và kết luận kế hoạch
+Cập nhật 02/10/2026 theo yêu cầu chủ dự án. Đây là kế hoạch triển khai mới; repository hiện có prototype, tài liệu và fixture, chưa có app production. Giữ giao diện [prototype Manabi](../../design/prototypes/manabi-vocabulary.html), chỉ chuyển sang React Native và điều chỉnh để dùng được trên mobile.
 
-Nhóm phát triển Memo Vocabulary thành ứng dụng React Native chạy Android và iOS, có thể tạo release build và chuẩn bị hồ sơ phát hành. Nhóm đặt mốc release candidate nội bộ vào ngày 15/11/2026, sớm hơn mốc hai tháng 24/11/2026 để dành chín ngày kiểm thử, sửa lỗi và hoàn thiện gói nộp.
+## Kết quả và phạm vi
 
-Phiên bản đầu giải quyết hai vấn đề chính: người học mất nhiều thời gian chuẩn bị dữ liệu flashcard và dễ chán khi chỉ học bằng thao tác lật thẻ. Sản phẩm kết hợp thẻ nhiều trường theo JSON schema, nhập CSV/Excel/dán văn bản, ôn tập ngắt quãng và ba trò chơi dùng cùng dữ liệu học.
+Manabi là ứng dụng Android-first học tiếng Nhật bằng deck/card tùy biến theo fieldSchema, học thẻ lật, lịch SRS và ba game Matching, Four Choices, Word Ninja. Người học có thể nhập paste/CSV, xem tiến độ và backup/restore JSON. Tài khoản/sync là nhánh online có kiểm soát; core học local không bắt buộc tài khoản. Gemini dùng một key admin phía server, tối đa 10 câu mới approved/người/ngày và ngân sách chung. Ảnh đời sống chỉ là pilot 30–50 nghĩa cụ thể có nguồn/quyền được duyệt.
 
-## 2 Khoảng trống cần kiểm chứng
+Các chi tiết và acceptance traceability nằm ở [FR](../product/FUNCTIONAL_REQUIREMENTS.md), [NFR](../product/NON_FUNCTIONAL_REQUIREMENTS.md) và specs. Task chi tiết được theo dõi trên nhánh triển khai. Không mở nhiều ngôn ngữ, cộng đồng deck hay loại chức năng AI mới.
 
-Đây là giả thuyết sản phẩm cần được kiểm chứng bằng khảo sát và usability test, không phải kết luận có sẵn:
+## Cổng nghiệm thu
 
-- Công cụ SRS mạnh có thể tạo cảm giác nhiều thiết lập và tốn thời gian chuẩn bị bộ thẻ.
-- Công cụ học dễ tiếp cận có thể không cho người dùng đủ quyền tùy biến cấu trúc trường và cách lưu dữ liệu.
-- Game hóa thường tách khỏi lịch ôn hoặc đánh giá quá mạnh câu trả lời có sẵn.
+| Cổng | Kết quả review được | Điều kiện mở công việc tiếp |
+| --- | --- | --- |
+| G0 Phạm vi Manabi | MANABI-001: docs/specs/ADR/36 task/phân công/DOCX | Reviewer độc lập xác nhận; thay thế baseline Memo cũ, không tự đánh dấu task cũ Done |
+| G1 Nền tảng | Expo/CI, quyết định JSON/database, fixture và component mobile | Build Android, schema/query/migration proof; ADR storage được duyệt |
+| G2 Core local | Deck/card, import, SRS, flashcard, backup | Offline CRUD/import/học/restore chạy, lịch ôn và transaction có test |
+| G3 Game/tiến độ và sync | Ba game, dashboard; auth/sync nếu bật nhánh online | Không có tác động lịch ôn ngoài policy; isolation/conflict/replay đạt |
+| G4 AI/ảnh pilot | Gateway quota, generator/validator/review UI và manifest ảnh | Tuổi/vùng/consent/tier phù hợp; câu/ảnh có nguồn, semantic review và fallback |
+| G5 Chất lượng | Held-out AI assessment, shadow SRS, perf, accessibility và acceptance | Không blocker/critical; ngưỡng đo theo spec; flag không đạt phải tắt |
+| G6 Bàn giao | Signed build, demo, báo cáo, slide và gói nộp | Release smoke thật, claim khớp evidence, human review đạt Definition of Done |
 
-Memo kiểm chứng hướng kết hợp: nhập nhanh, schema thẻ linh hoạt, offline-first, SRS minh bạch và game chỉ tạo tín hiệu bổ sung có trọng số vừa phải.
+Auth/sync được ưu tiên sau core; khi bật Gemini có account/quota/ownership server thì MANABI-009/015/016 và kiểm bảo mật trở thành dependency bắt buộc của nhánh online. Ảnh không chặn core release. MANABI-023 mặc định shadow mode, không tự bật điều chỉnh dueAt.
 
-## 3 Mục tiêu đo được
+## Sáu phase/sprint tương đối
 
-- Người dùng nhập và sửa được một bộ ít nhất 100 thẻ từ CSV/Excel hoặc văn bản.
-- Deck định nghĩa được trường tùy biến; card hợp lệ theo JSON schema của deck.
-- Học flashcard, đánh giá Again/Hard/Good/Easy và tạo lịch ôn tiếp theo.
-- Matching, Word Ninja và Four Choices dùng chung card đã học; lỗi thao tác hoặc vật phẩm không làm sai lịch ôn.
-- Hoạt động ngoại tuyến; đăng nhập và đồng bộ khi có mạng.
-- Android AAB build thành công; iOS archive/TestFlight hoàn thành nếu tài khoản Apple cho phép.
-- Không có lỗi blocker/critical trong luồng demo; crash-free cho bộ test thiết bị của nhóm.
-- Báo cáo, slide, demo, mã nguồn và LaTeX được đóng gói đúng yêu cầu.
+Ngày bắt đầu/kết thúc và độ dài sprint do nhóm đặt sau G0; không áp lịch tám tuần cũ hoặc deadline tự suy ra.
 
-## 4 Phạm vi MVP
+| Phase | Trọng tâm | Task dự kiến |
+| --- | --- | --- |
+| 1 | Nền tảng, spike và nghiên cứu quyết định | 002–007 |
+| 2 | Persistence/CRUD/import/SRS/backup/consent | 010, 011, 017, 022, 028, 034 |
+| 3 | Flashcard, game, progress, cloud/auth/sync tùy nhánh | 008, 009, 012–016, 029 |
+| 4 | Gateway/validator/quiz UI, image pilot, shadow signal | 018–021, 023, 025 |
+| 5 | Đánh giá chất lượng, security, perf và QA | 024, 026, 027, 030, 031, 035 |
+| 6 | Release, integration, report và demo | 032, 033, 036, 037 |
 
-### Bắt buộc
+ID không phải thứ tự chạy. Trong cùng phase phải theo dependency, ví dụ 010 → 034 → 011/022 và 017/034 → 008. Đủ người không mở khóa task khi dependency còn review.
 
-- Onboarding tối thiểu và authentication.
-- Tạo, sửa, xóa, tìm kiếm deck/card.
-- Deck schema và card fields dạng JSON có validation.
-- Nhập CSV, Excel, dán văn bản; ánh xạ cột, preview, xử lý dòng trống và trùng.
-- Flashcard study và lịch ôn cơ bản.
-- Ba game: Matching, Word Ninja, Four Choices.
-- Tiến độ, lịch sử, thẻ thường sai.
-- SQLite offline, export/import JSON backup, Supabase sync.
-- Responsive/adaptive UI, safe area, dark mode cơ bản và accessibility.
-- Release build, store metadata và checklist phát hành.
+## Dữ liệu và kiến trúc
 
-### Sau MVP
+JSON dùng cho nội dung do người học quyết định: deck fieldSchema/template, card fields và portable backup. JSON không thay database transaction/index/ownership. Baseline: SQLite trên thiết bị; Supabase/Postgres JSONB phía cloud; dueAt, SRS state, review history, ownership, version và sync key truy vấn ngoài JSON. [DATA_STORAGE_SPEC](../specs/DATA_STORAGE_SPEC.md) và ADR-004 ghi đánh giá MongoDB. MANABI-004 kiểm truy vấn/migration/index/chi phí/offline và xác nhận quyết định; đổi Mongo cần ADR, contract và task mới được review, không chuyển tự động chỉ vì Mongo lưu document.
 
-- AI tạo thẻ/ví dụ trực tiếp trong app.
-- Kho deck cộng đồng, lớp học, giao bài và phụ huynh.
-- Import trực tiếp qua API riêng của Quizlet/Anki.
-- Hệ thống gợi ý nâng cao hoặc mô hình học máy.
+## Chất lượng nghiên cứu
 
-## 5 Kiến trúc và công nghệ
+Fixture tổng hợp có quyền, người biết tiếng Nhật kiểm nghĩa/cách đọc; corpus development và evaluation tách biệt. Gemini không cung cấp đáp án chuẩn. Đo schema reject, semantic false accept, ambiguity, latency, token/calls, cache và failure cases; không giả định đúng JSON là đúng nghĩa. Assessor nội dung độc lập với người viết prompt phải có năng lực tiếng Nhật.
 
-- Expo React Native và TypeScript cho một codebase Android/iOS.
-- Expo Router cho điều hướng, development build cho native capability.
-- StyleSheet/NativeWind, Flexbox/Yoga, `useWindowDimensions`, safe area và platform-specific style.
-- SQLite lưu offline. Trường tùy biến được serialize JSON; cột lịch ôn và đồng bộ được chuẩn hóa để query hiệu quả.
-- Supabase PostgreSQL dùng JSONB cho `field_schema` và `fields`, Auth cho tài khoản, RLS cho phân quyền.
-- Edge Functions/RPC chỉ dùng cho nghiệp vụ cần transaction hoặc đồng bộ theo lô.
-- JSON Schema trong `schemas` là contract giữa mobile, local DB và backend.
+10 câu approved/người/ngày khác với 10 API calls/ngày: draft bị loại vẫn tiêu budget upstream, cần reservation/idempotency/circuit breaker. Một request có thể tạo nhiều draft khi phù hợp; đây không phải Gemini Batch API. Ảnh dùng mapping theo nghĩa chia sẻ, metadata quyền và công duyệt; không hứa coverage mọi từ chuyên ngành/trừu tượng.
 
-## 6 Kế hoạch tám tuần
+## Tải công việc và quy trình nhóm
 
-| Giai đoạn | Thời gian | Kết quả bắt buộc | Cổng nghiệm thu |
-| --- | --- | --- | --- |
-| Chuẩn bị | 24/09-27/09 | Repo, plan, AIDD, PRD, kiến trúc, task sheet | Phạm vi và owner được nhóm xác nhận |
-| Tuần 1 | 28/09-04/10 | Expo app, navigation, tokens, SQLite/Supabase skeleton, LaTeX | App chạy Android và iOS simulator/device |
-| Tuần 2 | 05/10-11/10 | Deck/card JSON schema, CRUD, import text/CSV/Excel, preview | Import 100 thẻ và rollback lỗi đúng |
-| Tuần 3 | 12/10-18/10 | Study screen, scheduler, review history, tests | Again/Hard/Good/Easy sinh lịch đúng fixture |
-| Tuần 4 | 19/10-25/10 | Ba game, game result policy, progress | Game dùng card đã học và không làm sai SRS |
-| Tuần 5 | 26/10-01/11 | Auth, RLS, offline queue, sync/conflict, export backup | Hai thiết bị đồng bộ không mất dữ liệu |
-| Tuần 6 | 02/11-08/11 | Accessibility, responsive, performance, E2E, store assets | Không còn blocker/critical; build CI sạch |
-| Tuần 7 | 09/11-15/11 | RC, Android AAB, iOS archive, báo cáo, slide, demo | RC đóng băng; demo rehearsal đạt |
-| Buffer | 16/11-23/11 | Sửa lỗi, kiểm tra chéo, hoàn thiện ZIP | Checklist nộp bài đạt 100% |
+36 task tương đối cho sáu người, mỗi người 6 task/32 implementation points + 6 review/6 points = 38 tổng. Coding, QA, nghiên cứu và docs nằm trong points task, không cộng trùng; MANABI-001 là việc tài liệu hiện tại có AI hỗ trợ, không nằm trong tải triển khai tương lai. [TEAM_AND_RESPONSIBILITIES](TEAM_AND_RESPONSIBILITIES.md) phản ánh vai trò user đã xác nhận. Ước lượng là đề xuất, không chứng minh số giờ bằng nhau; re-estimate sau phase 1 dựa dữ liệu thật và cân bằng lại.
 
-## 7 Cách phối hợp
+Mỗi người tối đa hai task active, ưu tiên finish một vertical slice. Trước push cập nhật task Markdown, regenerate DOCX tiến độ, ghi đã làm/chưa làm/lỗi/evidence; làm xong chuyển review, reviewer khác owner quyết định merge/Done theo [TEAM_WORKFLOW](TEAM_WORKFLOW.md). Trạng thái authority ở task file; workbook/DOCX là snapshot sinh lại, không cập nhật lệch nhau thủ công.
 
-- Trí chịu trách nhiệm kỹ thuật mobile và tích hợp.
-- Trang chịu trách nhiệm backend, auth, sync và release.
-- Tâm chịu trách nhiệm schema, local data và migration.
-- Vinh chịu trách nhiệm import, scheduler data, analytics và fixture.
-- Trung chịu trách nhiệm product, QA, báo cáo và quản lý yêu cầu.
-- Tuấn chịu trách nhiệm UI/UX, accessibility, slide, demo và visual QA.
+## Giảm phạm vi và bàn giao
 
-Mỗi task có một owner và một reviewer khác owner. Thay đổi schema/sync cần review chéo fullstack và data.
-
-## 8 Chiến lược kiểm thử
-
-- Unit: schema validation, import parser, SRS, game result policy, conflict resolution.
-- Component: form, deck list, study controls, error/empty/loading states.
-- Integration: SQLite repositories, Supabase RLS, offline queue và resume sync.
-- E2E smoke: import deck, học thẻ, chơi game, đồng bộ, export backup.
-- Device matrix: ít nhất hai Android có kích thước khác nhau và một iOS simulator/device.
-- Usability: 10-15 người dùng; đo thời gian nhập, tỷ lệ hoàn thành, lỗi và phản hồi SUS/rút gọn.
-
-## 9 Kế hoạch báo cáo và demo
-
-Báo cáo được viết song song từ tuần 1. Mỗi pull request liên quan tính năng phải bổ sung evidence: ảnh, test output, số liệu hoặc sơ đồ. Tuần 7 chỉ tổng hợp và chỉnh sửa, không bắt đầu viết từ đầu.
-
-Demo chuẩn gồm: nhập dữ liệu, chỉnh schema, học flashcard, đánh giá SRS, chơi một game, xem tiến độ, bật offline, đăng nhập đồng bộ và trình bày release build.
-
-## 10 Tiêu chí dừng phạm vi
-
-Nếu chậm hơn kế hoạch quá ba ngày, ưu tiên theo thứ tự: dữ liệu/CRUD, import, study/SRS, một game hoàn chỉnh, auth/sync, hai game còn lại, polish. Không cắt validation, backup, RLS hoặc release evidence để giữ hiệu ứng giao diện.
+Nếu thiếu thời gian giữ deck/card, import, flashcard/SRS, ba game, progress và backup offline. Thu hẹp sync/image/AI coverage hoặc tắt feature flag khi gate không đạt; không bỏ validator, consent, isolation, quyền ảnh hoặc fallback. Signed build nội bộ và gói demo có thể bàn giao trước store; public upload cần owner yêu cầu và chính sách release phù hợp.

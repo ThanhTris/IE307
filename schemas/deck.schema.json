@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://memo.local/schemas/deck.schema.json",
-  "title": "Memo deck",
+  "$id": "https://manabi.local/schemas/deck.schema.json",
+  "title": "Manabi deck",
   "type": "object",
   "additionalProperties": false,
   "required": ["id", "name", "schemaVersion", "fieldSchema", "cardTemplates"],

@@ -34,6 +34,10 @@ docs/references/course/manifest.local.json
 
 # Backup and temporary files
 archive/
+.work/
+outputs/
+__pycache__/
+*.pyc
 *.bak
 *.tmp
 *.log

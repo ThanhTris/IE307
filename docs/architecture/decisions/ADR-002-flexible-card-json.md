@@ -1,17 +1,21 @@
-# ADR 002 Flexible card JSON
+# ADR 002 — Card JSON linh hoạt của Manabi
 
 ## Trạng thái
 
-Accepted ngày 24/09/2026.
+Lịch sử: **Accepted ngày 24/09/2026**. Cập nhật Manabi ngày 02/10/2026 giữ nguyên nguyên tắc JSON; metadata/confirmation/schedule contract mới cần review MANABI-001 và task dữ liệu. Không tự coi phần bổ sung đã được Accepted.
 
 ## Quyết định
 
-Deck sở hữu `fieldSchema` JSON; card lưu giá trị trong `fields` JSON. Các giá trị phục vụ query, lịch ôn, ownership và sync được lưu ở cột chuẩn hóa.
+Deck sở hữu `fieldSchema` JSON versioned; card lưu nội dung trong `fields` JSON. Ownership, version/hash, lịch ôn, sync và xóa mềm nằm ngoài user fields, truy vấn được qua cột/index. SQLite TEXT JSON local, PostgreSQL JSONB theo baseline; JSON không bắt buộc MongoDB.
+
+Đề xuất bổ sung cần review: `card_schedules` riêng owner-card-template; card `contentVersion`/`contentHash` tách recordVersion và scheduler state; `confirmedContentVersion`/`confirmedContentHash` phải khớp nguồn trước quiz/ảnh. Sửa sense/mapping/nội dung làm nguồn cũ stale. [DATA_STORAGE](../../specs/DATA_STORAGE_SPEC.md), [ADR-004](ADR-004-json-storage-and-database.md)
 
 ## Lý do
 
-Người dùng có thể tự định nghĩa trường mà không cần migration cho mỗi loại thẻ. Cột chuẩn hóa tránh việc mọi truy vấn phải quét JSON và giúp sync/SRS đáng tin cậy.
+Người học tiếng Nhật tự định nghĩa trường nội dung mà không cần thêm cột database cho mỗi field. Metadata/index riêng giúp query SRS, ownership và sync; schedule riêng tránh ôn bài làm thay content version. Không gộp mọi card/history vào một JSON tăng vô hạn.
 
 ## Hệ quả
 
-Cần JSON Schema versioning, migration cho schema deck, validation khi import và quy tắc xử lý field bị đổi/xóa.
+Cần JSON Schema versioning, validator động theo deck, migration/preview cho đổi type/xóa field và import/backup fixtures. Field key ổn định khi đổi label; type/length/unsafe key/template code phải reject theo policy. Schema mẫu hiện tại chưa có hết metadata production và không được thêm trường im lặng vào contract closed.
+
+Hash canonical có version, source invalidation, transaction/outbox, confirmation và index benchmark 10.000 card là acceptance đề xuất, chưa triển khai/đo. MongoDB validator Draft 4 không copy trực tiếp contract Draft 2020-12; phương án thay DB cần ADR/review riêng.

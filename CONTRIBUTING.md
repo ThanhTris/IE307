@@ -12,10 +12,10 @@
 2. Gán owner/reviewer và chuyển file sang `tasks/in-progress`.
 3. Tạo nhánh, triển khai, kiểm thử và thêm evidence.
 4. Mở pull request theo template.
-5. Sau khi merge, chuyển task sang `tasks/done` và cập nhật workbook.
+5. Cập nhật task và DOCX trước push theo [TEAM_WORKFLOW](docs/project/TEAM_WORKFLOW.md); chỉ chuyển `done` sau review độc lập đạt DoD. Merge nguồn trước rồi sinh lại artifacts.
 
 ## Review
 
 - Người viết không tự duyệt thay cho reviewer.
 - Thay đổi schema, migration, auth/RLS, SRS hoặc sync cần ít nhất một fullstack và một data reviewer.
-- Thay đổi giao diện phải kiểm tra Android và iOS hoặc ghi rõ nền tảng chưa kiểm tra.
+- Thay đổi giao diện phải kiểm Android mục tiêu; iOS chưa thuộc phạm vi bắt buộc. Ghi rõ thiết bị và nền tảng chưa kiểm tra.

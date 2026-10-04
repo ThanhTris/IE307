@@ -1,81 +1,82 @@
-# Kiến trúc hệ thống
+# Kiến trúc hệ thống — Manabi
 
-## Tổng thể
+Trạng thái: **đề xuất triển khai, chờ review MANABI-001 và các task phụ thuộc**. Cập nhật 02/10/2026. Stack SQLite + Supabase là baseline kế thừa đang được tái xác nhận; chưa có app/API/database production.
 
-```text
-React Native mobile app
-  -> UI and feature modules
-  -> domain services and JSON validation
-  -> repository layer
-  -> SQLite local database and sync queue
-  -> Supabase Auth and API
-       -> PostgreSQL with JSONB and RLS
-       -> Edge Functions or RPC for batch operations
-       -> Storage for optional media
-```
+Manabi chỉ nghiên cứu tiếng Nhật: deck/card tùy biến, flashcard, SRS, Matching, Four Choices, Word Ninja và pilot quiz Gemini/ảnh đời sống. [Prototype Manabi](../../design/prototypes/manabi-vocabulary.html) là giao diện đã chọn; native cần safe area/accessibility/layout thích ứng.
 
-Mobile luôn đọc/ghi qua repository local. Sync chạy nền khi có mạng và tài khoản hợp lệ. UI không phụ thuộc trực tiếp vào Supabase để tránh mất khả năng offline.
+## 1. Tổng thể
 
-## Thành phần chính
+    Expo React Native + TypeScript strict (Android-first)
+      → UI/feature state
+      → domain: schema/import/SRS/game/quiz policy
+      → local repository
+           → SQLite: content JSON + metadata/index + outbox
+           → sync worker khi auth/mạng hợp lệ
+                → Supabase Auth + Edge Functions/RPC
+                     → PostgreSQL JSONB + RLS + version/receipt/cursor
+                     → consent/quota/source validator → Gemini
+                     → ảnh đã duyệt → provider có quyền rõ
 
-- `apps/mobile`: route, screen, feature state, repositories và sync worker.
-- `packages/domain`: entities, schema validator, import, scheduler, game policy.
-- `packages/ui`: tokens và components dùng chung.
-- `supabase`: database migrations, RLS, seed, functions.
-- `schemas`: JSON contracts có version.
+Mobile đọc/ghi dữ liệu học qua repository local. Guest học không cần login; upload/sync có thông báo và xác nhận scope. Thiếu mạng/Gemini/backend không chặn core. UI không giữ Gemini key/service-role/database credentials hoặc tự gọi provider.
 
-## Luồng dữ liệu
+## 2. Ranh giới module
 
-### Tạo hoặc sửa card
+| Module | Trách nhiệm |
+| --- | --- |
+| apps/mobile | Navigation/screens, safe-area/accessibility, feature state, repository adapters, sync worker/native capability |
+| packages/domain | Contract/validation theo deck, migration/import, scheduler deterministic, game/quiz eligibility, conflict policy |
+| packages/ui | Tokens/components theo prototype; không scheduler/quota/persistence |
+| services/api | API/Edge Function adapters, auth/consent/quota/source validation, lỗi ổn định/provider proxy |
+| supabase | Migrations, RLS, RPC/functions, seed demo không nhạy cảm, SQL/security tests |
+| schemas | JSON contracts versioned; mẫu cần mở rộng bằng task/migration trước production |
 
-1. Form đọc `fieldSchema` của deck.
-2. Dữ liệu được validate bằng JSON Schema.
-3. Repository ghi card và sync event trong cùng transaction SQLite.
-4. UI cập nhật từ local state.
-5. Sync worker đẩy event idempotent lên backend.
-6. Backend kiểm tra auth, RLS, version và trả record canonical.
+Domain interfaces không phụ thuộc UI/backend. Boundary validate JSON; không biến JSON người dùng thành query/code/template thực thi. [CARD_JSON](../specs/CARD_JSON_SPEC.md) phân biệt nội dung linh hoạt với metadata có cấu trúc.
 
-### Study
+## 3. Database và version
 
-1. Query các card đến hạn theo cột `dueAt`, `state` và giới hạn deck.
-2. User rating tạo `review_event` bất biến.
-3. Scheduler tính trạng thái mới và cập nhật card schedule trong transaction.
-4. Review event và card update được đưa vào sync queue.
+Giữ SQLite TEXT JSON local và Supabase/PostgreSQL JSONB cloud theo [DATA_STORAGE](../specs/DATA_STORAGE_SPEC.md)/[ADR-004](decisions/ADR-004-json-storage-and-database.md). [MongoDB](../research/DATABASE_FEASIBILITY.md) là alternative chưa chọn.
 
-### Game
+- Decks: metadata, fieldSchema/templates/mapping versioned.
+- Cards: fields JSON, contentVersion/contentHash, confirmedContentVersion/confirmedContentHash, recordVersion/owner/timestamps/tombstone.
+- Card_schedules: state/dueAt/lastReviewedAt/tham số scheduler/reps/lapses/schedulerVersion, khóa owner-card-template. Ôn bài không đổi contentVersion.
+- Review_events là rating trực tiếp append-only; game/quiz attempts độc lập, không giả review trực tiếp.
+- Sync_outbox local và sync_changes/sync_receipts server: idempotency/version/cursor.
+- Quiz_items/assignments: source target và candidates versions/hashes, prompt/model/validator version/approval.
+- Image_assets/image_card_links: license/ghi công và mapping nghĩa/source version.
+- Consents/ai_daily_usage/ai_reservations: policy/revoke, counters/reservation atomic.
 
-Game tạo session local từ card đã học. Kết quả chủ động đầu tiên được chuyển thành tín hiệu giới hạn; lỗi thao tác, bom và auto-complete chỉ ảnh hưởng điểm game.
+Index cho ownership/dueAt/deck/version; không gộp toàn deck/history vào JSON tăng vô hạn. Hash canonical versioned; nội dung/sense/mapping đổi làm confirmation/quiz/ảnh stale. Confirmation phải khớp version **và** hash, không boolean tồn tại vĩnh viễn.
 
-## Backend và API
+## 4. Luồng core
 
-- Supabase Auth xác thực người dùng.
-- PostgREST phục vụ CRUD có RLS cho luồng đơn giản.
-- RPC/Edge Function xử lý sync batch, import/export lớn hoặc transaction nhiều bảng.
-- API trả error code ổn định, không chỉ message tự do.
-- Mọi write cần `eventId`, `recordId`, `baseVersion` và `clientUpdatedAt` khi qua sync.
+Deck/card: form theo fieldSchema → validate required/type/length/key → transaction content/version/invalidation/outbox → local UI. Import paste/CSV có mapping/preview lỗi/trùng/policy skip-merge và rollback. [DECK_CARD](../specs/DECK_CARD_SPEC.md), [IMPORT](../specs/IMPORT_SPEC.md)
 
-## Database
+Flashcard/SRS: query schedule đến hạn bằng index → reveal → user rating Again/Hard/Good/Easy → transaction review-event/schedule/outbox. Resume/force-close không tự chấm; event trùng không áp hai lần. Scheduler versioned/UTC ngoài screen. [FLASHCARD](../specs/FLASHCARD_SPEC.md), [SRS](../specs/SRS_SPEC.md)
 
-- `decks`: metadata, `field_schema` JSONB, `card_templates` JSONB, version.
-- `cards`: `fields` JSONB và các cột schedule/index chuẩn hóa.
-- `review_events`: append-only event history.
-- `game_sessions`: score, accuracy, duration và signal summary.
-- `sync_changes`: idempotency, device, entity, operation và status.
+Game: Matching/Four Choices/Word Ninja chọn card đã học và cặp nghĩa rõ. Lựa chọn đầu đủ điều kiện là signal phụ; bom/miss thao tác/auto-hit không là quên. Progress tách rating trực tiếp/game/quiz; modifier quiz bắt đầu shadow, chưa đổi lịch thật. [GAMES](../specs/GAMES_SPEC.md), [PROGRESS](../specs/PROGRESS_SPEC.md)
 
-## Authentication và authorization
+Auth/sync: guest→account preview scope; secure token, login B không thấy cached A. Outbox push có baseVersion/capability, server auth/RLS/schema rồi commit canonical+receipt. Pull cursor/tombstone; conflict trả record/version để policy/preview, không ghi đè bằng clock client. Review-events dedup/replay, không tin dueAt projection tùy ý client. Backup JSON version/checksum snapshot/preview/transaction restore. [AUTH_SYNC](../specs/AUTH_SYNC_SPEC.md), [BACKUP](../specs/BACKUP_SPEC.md)
 
-- User chỉ đọc/ghi row có `user_id = auth.uid()`.
-- Shared deck là phase sau; MVP không mở public write.
-- Edge Function luôn kiểm tra JWT và không dùng service role trên client.
+## 5. Gemini pilot
 
-## Dịch vụ bên thứ ba
+1. Chỉ tài khoản có card demo không nhạy cảm đã sync/học/xác nhận, consent và tuổi/vùng/tier hợp lệ. Điều kiện chưa chốt thì flag AI tắt, core tiếp tục.
+2. Client gửi IDs/version/direction tối đa 5 target/lượt; server đọc payload tối thiểu theo owner/snapshot hashes, khóa answer từ card. Không email/history/toàn deck.
+3. Atomic reservation bảo đảm approvedNewQuestions + activeReservations ≤ 10 theo calendar day server Asia/Ho_Chi_Minh, generation counter tối đa 2 lượt/user/ngày. Global request/token/RPM cap riêng; Google Pacific RPD không phải ngày quota sản phẩm.
+4. Regular generateContent tối đa 5 drafts; không Gemini Batch API. Tối đa 1 retry tạm thời/request có backoff; reject/retry tính provider budget, không bù semantic lỗi vô hạn.
+5. Schema/ID/duplicate/meaning validation + reviewer độc lập biết tiếng Nhật. Needs_review không phát như verified. Approved assignment/counter commit cùng transaction; rejected/expired release slot. Approved sau TTL phải reserve/recheck.
+6. Cache theo quyền/owner, source target+candidates/hash/version, prompt/model/validator. Source edit/revoke/report dừng phát khi cần; poll/replay/chơi lại assignment không gọi AI/trừ quota tạo mới.
+7. Attempt đầu nguồn còn hiệu lực là record riêng; vừa xem đáp án lúc duyệt không tạo signal đủ điều kiện. SRS shadow policy versioned, bật modifier thật chỉ sau pilot/review.
 
-- Supabase cho auth/database/storage.
-- Expo/EAS cho development build và release build.
-- App Store Connect và Google Play Console cho phát hành thực tế, phụ thuộc tài khoản và xét duyệt.
+Error/timeout/429/quota có code/fallback Four Choices local. Key admin ở server secret store. [AI_QUIZ](../specs/AI_QUIZ_SPEC.md), [ADR-003](decisions/ADR-003-ai-quiz-boundary.md), [Free Tier](../research/GEMINI_FREE_TIER_FEASIBILITY.md)
 
-## Quan sát và bảo mật
+## 6. Ảnh đời sống
 
-- Log không chứa nội dung card nhạy cảm hoặc token.
-- Crash/error report phải loại PII.
-- Sync conflict, migration failure và schema validation failure có metric riêng.
+Biên tập 30–50 nghĩa cụ thể, mỗi ảnh/mapping/bốn lựa chọn được duyệt nghĩa + source/license/ghi công. Tìm một lần cho nghĩa mới rồi dùng mapping hợp lệ; không query/provider/Gemini từng lượt chơi. Quota ảnh riêng, key Gemini không cấp quyền ảnh. API chỉ đọc approved nguồn còn khớp; lỗi media/quyền/mơ hồ bỏ câu/fallback text. Cache theo terms provider. [IMAGE_CONTEXT](../specs/IMAGE_CONTEXT_SPEC.md)
+
+## 7. Security, evidence và release
+
+RLS/owner tests bao phủ dữ liệu; consent server version/revoke và purge không để outbox stale khôi phục dữ liệu xóa. Logs chỉ request ID/version/latency/quota/error/reject/cache/fallback; không raw card/prompt/model output/PII/key. [DATA_PRIVACY](../specs/DATA_PRIVACY_SPEC.md)
+
+Benchmark theo [NFR](../product/NON_FUNCTIONAL_REQUIREMENTS.md): fixture 10.000 card/50.000 review events, Android release thật, query plan/latency/memory/size và network/crash/replay. Mục tiêu chưa đo. Core offline độc lập, pilot không đạt flag tắt/listing chỉ claim chức năng nghiệm thu. [RELEASE](../specs/RELEASE_SPEC.md)
+
+MANABI-001 cần human review contract/version/consent/quota/retention/ngưỡng pilot và task dependencies trước implementation. Status ADR kế thừa không phê duyệt tự động scope mới.

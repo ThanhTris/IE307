@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Memo | Vocabulary practice</title>
+  <title>Manabi | Vocabulary practice</title>
   <style>
     :root {
       color-scheme: light;
@@ -2435,70 +2435,715 @@
       border-top: 1px solid var(--border);
     }
 
-    /* Screen 13: #profile */
-    .profile-hero {
-      display: grid;
-      grid-template-columns: 64px 1fr;
-      gap: 16px;
-      align-items: center;
-      padding: 16px 0;
+    /* Screen: #ai-quiz & #image-exercise */
+    /* AI & Verified badge chips */
+    .ai-chip-sm {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 12px;
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+      font-size: 10px;
+      font-weight: 750;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
     }
-    .profile-avatar {
-      width: 64px;
-      height: 64px;
-      display: grid;
-      place-items: center;
+    .verified-chip-sm {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 12px;
+      background: var(--green-soft);
+      color: var(--green-dark);
+      font-size: 10px;
+      font-weight: 750;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+    .ai-quiz-card {
+      padding: 22px 18px;
+      border: 1.5px solid var(--border);
       border-radius: 20px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
-      color: #FFFFFF;
-      font-family: var(--display);
-      font-size: 26px;
-      font-weight: 800;
-      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.25);
-    }
-    .profile-stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 16px;
-    }
-    .profile-stat {
-      padding: 14px 10px;
-      border: 1px solid var(--border);
-      border-radius: 16px;
       background: var(--surface);
+      box-shadow: var(--shadow-sm);
+      margin-top: 12px;
+      position: relative;
+    }
+    .ai-quiz-meta-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 12px;
+    }
+    .ai-quiz-tag {
+      color: var(--muted);
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .ai-verified-tag {
+      color: var(--green-dark);
+      background: var(--green-soft);
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .ai-sentence-box {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 14px;
+      margin-bottom: 12px;
+      text-align: left;
+    }
+    .ai-sentence-ja {
+      font-size: 19px;
+      font-weight: 700;
+      line-height: 1.6;
+      color: var(--fg);
+    }
+    .ai-quiz-blank {
+      display: inline-block;
+      min-width: 68px;
+      padding: 0 8px;
+      margin: 0 4px;
+      border-bottom: 2.5px solid var(--accent);
+      color: var(--accent);
+      font-weight: 800;
+      text-align: center;
+      background: rgba(67, 56, 202, 0.08);
+      border-radius: 4px 4px 0 0;
+    }
+    .ai-sentence-reading {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+    .ai-sentence-vi {
+      font-size: 13px;
+      color: var(--fg);
+      margin-top: 6px;
+      font-style: italic;
+      border-left: 2px solid var(--accent-dark);
+      padding-left: 8px;
+    }
+    .ai-explanation-panel {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      animation: screen-in 200ms ease both;
+    }
+    .ai-explanation-panel.correct {
+      border-color: rgba(5, 150, 105, 0.3);
+      background: var(--green-soft);
+    }
+    .ai-explanation-panel.incorrect {
+      border-color: rgba(220, 38, 38, 0.3);
+      background: var(--danger-soft);
+    }
+    .ai-explanation-title {
+      font-size: 13px;
+      font-weight: 750;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .ai-explanation-text {
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--fg);
+    }
+    .ai-source-card-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--fg);
+    }
+    .ai-quiz-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+      align-items: center;
+    }
+    .topbar-report-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 12px;
+      min-height: 32px;
+      border-radius: 999px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+      cursor: pointer;
+      transition: all 140ms ease;
+    }
+    .topbar-report-btn:hover {
+      background: var(--danger-soft);
+      border-color: rgba(220, 38, 38, 0.3);
+      color: var(--danger);
+    }
+    .topbar-report-btn:active {
+      transform: scale(0.96);
+    }
+
+
+    /* Screen: #image-exercise */
+    .image-exercise-card {
+      margin-top: 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      background: var(--surface);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .image-photo-container {
+      position: relative;
+      width: 100%;
+      height: 220px;
+      background: var(--surface-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .image-photo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .image-photo-fallback {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(145deg, #1E293B, #0F172A);
+      color: #F8FAFC;
+      padding: 20px;
       text-align: center;
     }
-    .profile-stat strong { display: block; font-family: var(--display); font-size: 22px; }
-    .profile-stat span { color: var(--muted); font-size: 11px; font-weight: 600; }
-    .calendar {
+    .image-attribution-overlay {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      right: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 5px 10px;
+      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.82);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #fff;
+      font-size: 11px;
+    }
+    .image-attribution-overlay button {
+      color: #93C5FD;
+      font-weight: 600;
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: 11px;
+      padding: 0;
+    }
+    .image-prompt-box {
+      padding: 14px 16px;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .image-prompt-text {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--fg);
+    }
+    .image-vocab-reveal {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: var(--green-soft);
+      border: 1px solid rgba(5, 150, 105, 0.25);
+      color: var(--green-dark);
+      font-size: 13px;
+      line-height: 1.5;
+      animation: screen-in 200ms ease both;
+    }
+    .image-vocab-reveal strong {
+      font-size: 17px;
+      color: var(--fg);
+    }
+    .image-exercise-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+      align-items: center;
+    }
+
+    /* Modal Sheet Styling for Attribution & Report */
+    .modal-sheet-dialog {
+      width: 100%;
+      max-width: 400px;
+      background: var(--surface);
+      border-radius: 20px 20px 0 0;
+      padding: 20px 18px 28px;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      animation: sheet-up 220ms var(--ease) both;
+    }
+    @keyframes sheet-up {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+    .modal-sheet-table {
+      width: 100%;
+      margin-top: 12px;
+      border-collapse: collapse;
+      font-size: 12.5px;
+    }
+    .modal-sheet-table th {
+      text-align: left;
+      padding: 7px 4px;
+      color: var(--muted);
+      font-weight: 600;
+      width: 38%;
+      vertical-align: top;
+      border-bottom: 1px solid var(--border);
+    }
+    .modal-sheet-table td {
+      padding: 7px 4px;
+      color: var(--fg);
+      font-weight: 500;
+      border-bottom: 1px solid var(--border);
+    }
+    .report-radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .report-radio-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface-2);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 120ms ease;
+    }
+    .report-radio-label:hover {
+      border-color: var(--accent);
+    }
+
+    /* Screen 13: #profile (Comprehensive Learner Hub) */
+    .profile-hero {
+      margin-top: 10px;
+    }
+    .profile-hero-card {
+      padding: 18px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      background: linear-gradient(145deg, #FFFFFF, var(--surface-2));
+      box-shadow: var(--shadow-sm);
+    }
+    .profile-hero-main {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .profile-avatar-wrap {
+      position: relative;
+      flex-shrink: 0;
+    }
+    .profile-avatar {
+      width: 60px;
+      height: 60px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #312E81);
+      color: #FFFFFF;
+      font-family: var(--display);
+      font-size: 24px;
+      font-weight: 800;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+      border: 2.5px solid #FFFFFF;
+    }
+    .profile-level-badge {
+      position: absolute;
+      bottom: -3px;
+      right: -3px;
+      padding: 1px 6px;
+      border-radius: 10px;
+      background: var(--amber-dark);
+      color: #FFFFFF;
+      font-family: var(--mono);
+      font-size: 9.5px;
+      font-weight: 800;
+      border: 1.5px solid #FFFFFF;
+      letter-spacing: 0.03em;
+    }
+    .profile-meta h1 {
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--fg);
+      margin: 0;
+    }
+    .profile-meta p {
+      font-size: 12.5px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .profile-target-box {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .profile-target-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+    .profile-target-head strong {
+      color: var(--fg);
+      font-weight: 700;
+    }
+    .profile-target-head span {
+      color: var(--accent);
+      font-weight: 750;
+      font-family: var(--mono);
+    }
+    .profile-target-progress {
+      height: 7px;
+      border-radius: 999px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .profile-target-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent), #818CF8);
+      width: 39%;
+      transition: width 300ms ease;
+    }
+
+    /* 4-Card 2x2 Stats Grid */
+    .profile-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .profile-stat-box {
+      padding: 13px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      background: var(--surface);
+      box-shadow: var(--shadow-xs);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 80px;
+      transition: transform 120ms ease;
+    }
+    .profile-stat-box:hover {
+      transform: translateY(-1px);
+    }
+    .profile-stat-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 11.5px;
+      font-weight: 650;
+    }
+    .profile-stat-val {
+      font-family: var(--display);
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-top: 5px;
+    }
+    .profile-stat-sub {
+      font-size: 10.5px;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    /* Daily Goal & Streak */
+    .daily-goal-card {
+      margin-top: 14px;
+      padding: 16px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      background: var(--surface);
+      box-shadow: var(--shadow-xs);
+    }
+    .daily-goal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .daily-goal-head strong {
+      font-size: 13.5px;
+      font-weight: 750;
+      color: var(--fg);
+    }
+    .daily-goal-head span {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .streak-week-strip {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       gap: 6px;
+      margin-top: 14px;
+    }
+    .streak-day-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      padding: 8px 2px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      transition: all 120ms ease;
+    }
+    .streak-day-item.completed {
+      background: var(--amber-soft);
+      border-color: rgba(245, 158, 11, 0.4);
+    }
+    .streak-day-item.today {
+      border: 2px solid var(--accent);
+      background: var(--accent-soft);
+      box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);
+    }
+    .streak-day-name {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    .streak-day-item.today .streak-day-name {
+      color: var(--accent-dark);
+      font-weight: 800;
+    }
+    .streak-day-icon {
+      font-size: 15px;
+      line-height: 1;
+    }
+    .streak-day-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--border-strong);
+    }
+    .streak-day-item.completed .streak-day-dot {
+      background: var(--amber-dark);
+    }
+
+    /* Heatmap Mini Grid */
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
       margin-top: 12px;
+      padding: 12px;
+      border-radius: 14px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
     }
     .calendar span {
       aspect-ratio: 1;
       display: grid;
       place-items: center;
-      border-radius: 8px;
-      background: var(--surface-2);
+      border-radius: 6px;
+      background: var(--surface);
+      border: 1px solid var(--border);
       color: var(--muted);
       font-family: var(--mono);
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
     }
-    .calendar span.active { background: var(--green); color: #fff; }
-    .calendar span.today { outline: 2px solid var(--accent); outline-offset: 2px; }
-    .mistake-list { display: grid; gap: 8px; margin-top: 10px; }
+    .calendar span.active { background: #86EFAC; border-color: #4ADE80; color: #14532D; font-weight: 750; }
+    .calendar span.today { background: var(--green); border-color: var(--green-dark); color: #FFFFFF; font-weight: 800; outline: 2px solid var(--accent); outline-offset: 1px; }
+
+    /* Badges Shelf */
+    .badge-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .badge-card {
+      padding: 12px 4px;
+      border-radius: 14px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      transition: all 120ms ease;
+    }
+    .badge-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-xs);
+    }
+    .badge-card.unlocked {
+      border-color: rgba(245, 158, 11, 0.45);
+      background: linear-gradient(180deg, #FFFFFF 0%, #FFFBEB 100%);
+    }
+    .badge-card.locked {
+      opacity: 0.55;
+      filter: grayscale(0.85);
+      background: var(--surface-2);
+    }
+    .badge-icon {
+      font-size: 22px;
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+    .badge-title {
+      font-size: 10.5px;
+      font-weight: 750;
+      color: var(--fg);
+      line-height: 1.2;
+    }
+    .badge-desc {
+      font-size: 9px;
+      color: var(--muted);
+      line-height: 1.2;
+    }
+
+    /* Enhanced Leech Cards */
+    .mistake-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
     .mistake-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 12px;
       padding: 12px 14px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
       background: var(--surface);
+      transition: border-color 140ms ease;
+    }
+    .mistake-row:hover {
+      border-color: var(--accent);
+    }
+    .mistake-info strong {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--fg);
+      display: block;
+    }
+    .mistake-info small {
+      font-size: 12px;
+      color: var(--muted);
+      display: block;
+      margin-top: 1px;
+    }
+    .mistake-tag {
+      display: inline-block;
+      margin-top: 3px;
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 750;
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+    .mistake-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Settings & Sync Group */
+    .settings-group-card {
+      margin-top: 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      background: var(--surface);
+      overflow: hidden;
+      box-shadow: var(--shadow-xs);
+    }
+    .settings-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13.5px;
+    }
+    .settings-row:last-child {
+      border-bottom: none;
+    }
+    .settings-row-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--fg);
+      font-weight: 600;
+    }
+    .settings-row-icon {
+      font-size: 17px;
+      line-height: 1;
+      width: 22px;
+      text-align: center;
+    }
+    .settings-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--surface-2);
+      color: var(--fg);
+      border: 1px solid var(--border);
+    }
+    .settings-badge.synced {
+      background: var(--green-soft);
+      color: var(--green-dark);
+      border-color: rgba(16, 185, 129, 0.3);
     }
 
     /* Bottom Nav Bar */
@@ -2593,7 +3238,7 @@
         <header class="topbar" data-od-id="learn-topbar">
           <a class="brand" href="#learn" data-screen="learn" data-od-id="memo-brand">
             <span class="brand-mark" aria-hidden="true">m</span>
-            <span>Memo</span>
+            <span>Manabi</span>
           </a>
           <div class="topbar-right">
             <span class="streak-badge-sm"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="vertical-align:-1px; margin-right:3px;"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>7 ngày</span>
@@ -2635,9 +3280,15 @@
 
         <div class="section-title">
           <h2>Luyện tập nhanh</h2>
-          <span class="topbar-label">3 TRÒ CHƠI</span>
+          <span class="topbar-label">5 HÌNH THỨC</span>
         </div>
         <div class="quick-games-scroll">
+          <button class="quick-game-chip" type="button" data-screen="ai-quiz" data-od-id="quick-game-ai-quiz">
+            <span class="icon" style="color:var(--accent);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></span> ✨ AI Quiz
+          </button>
+          <button class="quick-game-chip" type="button" data-screen="image-exercise" data-od-id="quick-game-image-exercise">
+            <span class="icon" style="color:var(--green);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></span> 📷 Ảnh đời sống
+          </button>
           <button class="quick-game-chip" type="button" data-screen="matching">
             <span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg></span> Ghép thẻ
           </button>
@@ -2645,7 +3296,7 @@
             <span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span> Word Ninja
           </button>
           <button class="quick-game-chip" type="button" data-screen="multiple-choice">
-            <span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span> Trắc nghiệm
+            <span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="6" r="10" stroke-dasharray="2 2" opacity="0"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span> Trắc nghiệm
           </button>
         </div>
 
@@ -2678,7 +3329,7 @@
         <header class="topbar" data-od-id="decks-topbar">
           <a class="brand" href="#learn" data-screen="learn">
             <span class="brand-mark" aria-hidden="true">m</span>
-            <span>Memo</span>
+            <span>Manabi</span>
           </a>
           <span class="topbar-label">Thư viện</span>
           <button class="avatar" type="button" data-screen="profile" aria-label="Hồ sơ cá nhân">AN</button>
@@ -2986,8 +3637,7 @@
           <button class="study-toolbar-button" type="button" data-back="learn" aria-label="Trở về trang chủ"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
           <span class="study-toolbar-title">Phiên học từ vựng</span>
           <div style="display:flex; align-items:center; gap:6px;">
-            <button class="study-toolbar-button" type="button" data-study-action="undo" title="Hoàn tác thẻ vừa đánh giá (Phím Z)" aria-label="Hoàn tác"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg></button>
-            <button class="study-toolbar-button" type="button" data-study-action="flag" aria-label="Gắn cờ đánh dấu thẻ" title="Gắn cờ đánh dấu thẻ"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></button>
+            <button class="study-toolbar-button" type="button" data-study-action="undo" title="Xem lại thẻ trước (Phím Z)" aria-label="Xem lại thẻ trước"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg></button>
             <button class="study-toolbar-button" type="button" data-study-action="settings" aria-label="Tùy chọn thẻ" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="1.3"/><circle cx="12" cy="5" r="1.3"/><circle cx="12" cy="19" r="1.3"/></svg></button>
           </div>
 
@@ -3011,7 +3661,7 @@
             <div class="study-sheet-panel" data-study-panel="details" hidden>
               <div class="detail-grid">
                 <div class="detail-stat"><strong>1</strong><small>lần học</small></div>
-                <div class="detail-stat"><strong>10d</strong><small>khoảng cách</small></div>
+                <div class="detail-stat"><strong>Mới</strong><small>trạng thái</small></div>
                 <div class="detail-stat"><strong>N5</strong><small>cấp độ</small></div>
                 <div class="detail-stat"><strong>0</strong><small>lần quên</small></div>
               </div>
@@ -3060,10 +3710,9 @@
             <div class="reading" lang="ja" data-od-id="study-reading">がっこう</div>
 
             <div class="study-answer" data-od-id="study-answer">
-              <strong data-od-id="study-answer-word">school</strong>
-              <p lang="en" data-od-id="study-answer-meaning">An educational institution for learning</p>
+              <strong data-od-id="study-answer-word">trường học</strong>
               <div class="example-line" lang="ja" data-od-id="study-example">
-                学校へ行きます。<br><span lang="en">I go to school.</span>
+                学校へ行きます。
               </div>
             </div>
 
@@ -3625,17 +4274,51 @@
         <header class="topbar" data-od-id="games-topbar">
           <a class="brand" href="#learn" data-screen="learn">
             <span class="brand-mark" aria-hidden="true">m</span>
-            <span>Memo</span>
+            <span>Manabi</span>
           </a>
           <span class="topbar-label">Luyện tập</span>
           <button class="avatar" type="button" data-screen="profile" aria-label="Hồ sơ cá nhân">AN</button>
         </header>
         <div class="page-head compact" data-od-id="games-page-heading">
-          <p class="eyebrow">Luyện phản xạ</p>
-          <h1>Trò chơi ôn tập</h1>
-          <p>Củng cố từ vựng đã học qua các thử thách tương tác nhanh.</p>
+          <p class="eyebrow">Luyện phản xạ & AI Pilot</p>
+          <h1>Luyện tập & Thử thách</h1>
+          <p>Củng cố từ vựng qua AI ngữ cảnh, hình ảnh đời sống và phản xạ tương tác nhanh.</p>
         </div>
-        <div class="game-list" data-od-id="games-list">
+
+        <div class="section-title" style="margin-top:14px;">
+          <h2>AI & Đời sống thực tế</h2>
+          <span class="topbar-label" style="background:var(--accent-soft); color:var(--accent); border-color:var(--accent-soft);">PILOT</span>
+        </div>
+        <div class="game-list" style="margin-top:8px;">
+          <button class="game-tile" type="button" data-screen="ai-quiz" data-od-id="game-ai-quiz" style="border-left: 4px solid var(--accent);">
+            <div class="game-icon" style="background:var(--accent-soft); color:var(--accent);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></div>
+            <div>
+              <div style="display:flex; align-items:center; gap:6px;">
+                <h3 style="margin:0;">AI Quiz Ngữ Cảnh</h3>
+                <span class="ai-chip-sm">Gemini AI</span>
+              </div>
+              <p>Tạo câu hỏi ngữ cảnh đời sống, kiểm định chặt từ thẻ gốc.</p>
+            </div>
+            <span class="game-chevron">›</span>
+          </button>
+          <button class="game-tile" type="button" data-screen="image-exercise" data-od-id="game-image-context" style="border-left: 4px solid var(--green);">
+            <div class="game-icon" style="background:var(--green-soft); color:var(--green);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+            <div>
+              <div style="display:flex; align-items:center; gap:6px;">
+                <h3 style="margin:0;">Ảnh Đời Sống Thực Tế</h3>
+                <span class="verified-chip-sm">Đã kiểm chứng</span>
+              </div>
+              <p>Nhìn ảnh đời sống, chọn nghĩa tiếng Việt chuẩn xác đã học.</p>
+            </div>
+            <span class="game-chevron">›</span>
+          </button>
+        </div>
+
+        <div class="section-title" style="margin-top:18px;">
+          <h2>Minigame phản xạ cổ điển</h2>
+          <span class="topbar-label">3 TRÒ CHƠI</span>
+        </div>
+        <div class="game-list" data-od-id="games-list" style="margin-top:8px;">
           <button class="game-tile" type="button" data-screen="matching" data-od-id="game-matching">
             <div class="game-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg></div>
             <div>
@@ -3756,6 +4439,108 @@
         </button>
       </section>
 
+      <!-- SCREEN: AI QUIZ -->
+      <section class="screen" id="screen-ai-quiz" data-screen="ai-quiz" data-od-id="ai-quiz-screen">
+        <header class="editor-screen-header" data-od-id="ai-quiz-header">
+          <button class="icon-button" type="button" data-back="games" aria-label="Quay lại"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+          <h1>AI Quiz Ngữ Cảnh</h1>
+          <button class="topbar-report-btn" type="button" id="btn-ai-quiz-report" data-od-id="ai-quiz-report-btn" aria-label="Báo lỗi câu hỏi" title="Báo lỗi câu hỏi">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+            <span>Báo lỗi</span>
+          </button>
+          <span class="visually-hidden" data-od-id="ai-quiz-quota"></span>
+        </header>
+
+        <div class="ai-quiz-card" data-od-id="ai-quiz-card">
+          <div class="ai-quiz-meta-bar">
+            <span class="ai-quiz-tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Điền từ vào ngữ cảnh</span>
+            <span class="ai-verified-tag" title="Đáp án chuẩn khóa chặt từ thẻ gốc đã học"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Card Verifier</span>
+          </div>
+
+          <div class="ai-sentence-box">
+            <div class="ai-sentence-ja" id="ai-quiz-stem-ja" lang="ja">
+              <!-- Japanese stem with blank -->
+            </div>
+            <div class="ai-sentence-reading" id="ai-quiz-stem-reading" lang="ja">
+              <!-- Reading helper -->
+            </div>
+            <div class="ai-sentence-vi" id="ai-quiz-stem-vi">
+              <!-- Vietnamese translation / prompt -->
+            </div>
+          </div>
+
+          <p style="font-size:12.5px; color:var(--muted); margin:0 0 10px 2px;">Chọn từ vựng tiếng Nhật phù hợp nhất:</p>
+
+          <div class="choices" id="ai-quiz-options-container" data-od-id="ai-quiz-choices">
+            <!-- Dynamic choices -->
+          </div>
+
+          <div id="ai-quiz-explanation-box" class="ai-explanation-panel hidden" data-od-id="ai-quiz-feedback">
+            <div class="ai-explanation-title" id="ai-quiz-explanation-title">
+              <!-- Result title -->
+            </div>
+            <div class="ai-explanation-text" id="ai-quiz-explanation-body">
+              <!-- Explanation text -->
+            </div>
+            <div class="ai-source-card-badge" id="ai-quiz-source-card-badge">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+              <span>Thẻ gốc: <strong id="ai-quiz-source-term">電車</strong> (<span id="ai-quiz-source-meaning">tàu điện</span>)</span>
+            </div>
+          </div>
+
+          <div class="ai-quiz-actions">
+            <button class="primary-button hidden" type="button" id="btn-ai-quiz-next" data-od-id="ai-quiz-next-btn" style="width:100%;">
+              Câu tiếp theo →
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCREEN: IMAGE CONTEXT EXERCISE -->
+      <section class="screen" id="screen-image-exercise" data-screen="image-exercise" data-od-id="image-exercise-screen">
+        <header class="editor-screen-header" data-od-id="image-exercise-header">
+          <button class="icon-button" type="button" data-back="games" aria-label="Quay lại"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+          <h1>Ảnh Đời Sống Thực Tế</h1>
+          <button class="topbar-report-btn" type="button" id="btn-image-report" data-od-id="image-exercise-report-btn" aria-label="Báo lỗi ảnh" title="Báo lỗi ảnh">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+            <span>Báo lỗi</span>
+          </button>
+        </header>
+
+        <div class="image-exercise-card" data-od-id="image-exercise-card">
+          <div class="image-photo-container" data-od-id="image-exercise-photo">
+            <img id="image-exercise-img" class="image-photo-img" src="" alt="Ảnh đời sống tiếng Nhật" />
+            <div id="image-exercise-fallback" class="image-photo-fallback hidden">
+              <!-- SVG fallback if offline -->
+            </div>
+            <div class="image-attribution-overlay" data-od-id="image-exercise-attribution">
+              <span id="image-attribution-summary">📷 Unsplash · Satoshi Hirayama</span>
+              <button type="button" id="btn-image-view-attribution" aria-label="Xem giấy phép">Chi tiết</button>
+            </div>
+          </div>
+
+          <div class="image-prompt-box">
+            <div class="image-prompt-text">
+              Quan sát hình ảnh đời sống và chọn nghĩa tiếng Việt phù hợp nhất:
+            </div>
+
+            <div class="choices" id="image-exercise-choices-container" data-od-id="image-exercise-choices" style="margin-top:12px;">
+              <!-- Dynamic choices -->
+            </div>
+
+            <div id="image-exercise-reveal" class="image-vocab-reveal hidden" data-od-id="image-exercise-feedback">
+              <!-- Revealed vocab details -->
+            </div>
+
+            <div class="image-exercise-actions">
+              <button class="primary-button hidden" type="button" id="btn-image-next" data-od-id="image-exercise-next-btn" style="width:100%;">
+                Ảnh tiếp theo →
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- SCREEN: RESULT -->
       <section class="screen" id="screen-result" data-screen="result" data-od-id="result-screen">
         <header class="editor-screen-header" data-od-id="result-header">
@@ -3803,58 +4588,258 @@
         </div>
       </section>
 
-      <!-- SCREEN: PROFILE -->
-      <section class="screen" id="screen-profile" data-screen="profile" data-od-id="profile-screen">
+      <!-- SCREEN: PROFILE (COMPREHENSIVE LEARNER HUB) -->
+      <section class="screen" id="screen-profile" data-screen="profile" data-od-id="profile-screen" style="padding-bottom:28px;">
         <header class="topbar" data-od-id="profile-topbar">
           <a class="brand" href="#learn" data-screen="learn">
             <span class="brand-mark" aria-hidden="true">m</span>
-            <span>Memo</span>
+            <span>Manabi</span>
           </a>
           <span class="topbar-label">Cá nhân</span>
           <button class="avatar" type="button" data-screen="profile" aria-label="Hồ sơ cá nhân">AN</button>
         </header>
-        <div class="profile-hero" data-od-id="profile-heading">
-          <div class="profile-avatar">AN</div>
-          <div>
-            <h1>Anna Nguyen</h1>
-            <p style="color:var(--muted); font-size:13px;">Đang học tiếng Nhật · JLPT N5</p>
+
+        <!-- 1. Hero Profile Card & JLPT Goal -->
+        <div class="profile-hero-card" data-od-id="profile-heading">
+          <div class="profile-hero-main">
+            <div class="profile-avatar-wrap">
+              <div class="profile-avatar">AN</div>
+              <span class="profile-level-badge">Lv.12</span>
+            </div>
+            <div class="profile-meta" style="flex:1;">
+              <div style="display:flex; align-items:center; justify-content:space-between;">
+                <h1>Anna Nguyen</h1>
+                <span class="topbar-label" style="font-size:10px; padding:2px 8px;">PRO</span>
+              </div>
+              <p>Học viên tích cực · Đang chinh phục JLPT N5</p>
+            </div>
+          </div>
+          <div class="profile-target-box">
+            <div class="profile-target-head">
+              <strong>Mục tiêu: Từ vựng JLPT N5</strong>
+              <span>118 / 300 từ (39%)</span>
+            </div>
+            <div class="profile-target-progress">
+              <div class="profile-target-fill" style="width: 39%;"></div>
+            </div>
           </div>
         </div>
+
+        <!-- 2. Smart SRS Insights (4-Card 2x2 Grid) -->
         <div class="profile-stats" data-od-id="profile-stats">
-          <div class="profile-stat">
-            <strong style="color:var(--amber-dark);"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="vertical-align:-1px; margin-right:2px;"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg> 7</strong>
-            <span>Chuỗi ngày</span>
+          <div class="profile-stat-box">
+            <div class="profile-stat-head">
+              <span>Chuỗi ngày</span>
+              <span style="font-size:14px;">🔥</span>
+            </div>
+            <div class="profile-stat-val" style="color:var(--amber-dark);">7 ngày</div>
+            <div class="profile-stat-sub">Kỷ lục: 14 ngày liên tiếp</div>
           </div>
-          <div class="profile-stat">
-            <strong style="color:var(--green-dark);">118</strong>
-            <span>Đã thuộc</span>
+
+          <div class="profile-stat-box">
+            <div class="profile-stat-head">
+              <span>Tỷ lệ nhớ SRS</span>
+              <span style="font-size:14px;">🧠</span>
+            </div>
+            <div class="profile-stat-val" style="color:var(--green-dark);">91.5%</div>
+            <div class="profile-stat-sub">Đo lường theo SM-2/FSRS</div>
           </div>
-          <div class="profile-stat">
-            <strong style="color:var(--accent);">1,840</strong>
-            <span>Tổng XP</span>
+
+          <div class="profile-stat-box">
+            <div class="profile-stat-head">
+              <span>Tổng từ vựng</span>
+              <span style="font-size:14px;">📚</span>
+            </div>
+            <div class="profile-stat-val" style="color:var(--fg);">118 thẻ</div>
+            <div class="profile-stat-sub">76 thuần thục · 42 đang ôn</div>
+          </div>
+
+          <div class="profile-stat-box">
+            <div class="profile-stat-head">
+              <span>Điểm tích lũy</span>
+              <span style="font-size:14px;">⚡</span>
+            </div>
+            <div class="profile-stat-val" style="color:var(--accent);">1,840 XP</div>
+            <div class="profile-stat-sub">Hạng Bạc (Top 15% tuần)</div>
           </div>
         </div>
-        <div class="section-title">
-          <h2 data-od-id="profile-calendar-heading">Hoạt động tháng 9</h2>
-          <span class="topbar-label">2026</span>
+
+        <!-- 3. Daily Goal & Weekly Streak Habit -->
+        <div class="daily-goal-card">
+          <div class="daily-goal-head">
+            <strong>🎯 Mục tiêu hôm nay</strong>
+            <span>15 / 20 thẻ (75%)</span>
+          </div>
+          <div class="profile-target-progress" style="height:9px;">
+            <div class="profile-target-fill" style="width:75%; background:linear-gradient(90deg, #10B981, #059669);"></div>
+          </div>
+          <p style="margin:8px 0 0; font-size:11.5px; color:var(--muted);">Chỉ còn 5 thẻ nữa để hoàn thành mục tiêu ngày và giữ vững chuỗi học!</p>
+
+          <div class="streak-week-strip">
+            <div class="streak-day-item completed">
+              <span class="streak-day-name">T2</span>
+              <span class="streak-day-icon">🔥</span>
+              <span class="streak-day-dot"></span>
+            </div>
+            <div class="streak-day-item completed">
+              <span class="streak-day-name">T3</span>
+              <span class="streak-day-icon">🔥</span>
+              <span class="streak-day-dot"></span>
+            </div>
+            <div class="streak-day-item completed">
+              <span class="streak-day-name">T4</span>
+              <span class="streak-day-icon">🔥</span>
+              <span class="streak-day-dot"></span>
+            </div>
+            <div class="streak-day-item completed">
+              <span class="streak-day-name">T5</span>
+              <span class="streak-day-icon">🔥</span>
+              <span class="streak-day-dot"></span>
+            </div>
+            <div class="streak-day-item completed">
+              <span class="streak-day-name">T6</span>
+              <span class="streak-day-icon">🔥</span>
+              <span class="streak-day-dot"></span>
+            </div>
+            <div class="streak-day-item completed">
+              <span class="streak-day-name">T7</span>
+              <span class="streak-day-icon">🔥</span>
+              <span class="streak-day-dot"></span>
+            </div>
+            <div class="streak-day-item today">
+              <span class="streak-day-name">CN</span>
+              <span class="streak-day-icon">🔥</span>
+              <span class="streak-day-dot"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Monthly Activity Heatmap -->
+        <div class="section-title" style="margin-top:18px;">
+          <h2 data-od-id="profile-calendar-heading">Lịch sử chuyên cần</h2>
+          <span class="topbar-label">THÁNG 10 · 2026</span>
         </div>
         <div class="calendar" aria-label="Lịch học" data-od-id="profile-study-calendar">
-          <span>1</span><span class="active">2</span><span class="active">3</span><span>4</span><span class="active">5</span><span class="active">6</span><span class="active today">7</span>
+          <span>1</span><span class="active">2</span><span class="active">3</span><span>4</span><span class="active">5</span><span class="active">6</span><span class="active">7</span>
           <span>8</span><span class="active">9</span><span class="active">10</span><span>11</span><span class="active">12</span><span class="active">13</span><span class="active">14</span>
-          <span>15</span><span class="active">16</span><span class="active">17</span><span class="active">18</span><span class="active today">19</span><span>20</span><span>21</span>
+          <span>15</span><span class="active">16</span><span class="active">17</span><span class="active">18</span><span class="active">19</span><span class="active">20</span><span class="active today">21</span>
         </div>
-        <div class="section-title">
-          <h2 data-od-id="profile-mistakes-heading">Từ hay quên</h2>
-          <button class="section-link" type="button" data-screen="study" data-od-id="profile-review-mistakes">Ôn tập ngay</button>
+
+        <!-- 5. Achievements / Badges -->
+        <div class="section-title" style="margin-top:18px;">
+          <h2>Huy hiệu thành tích</h2>
+          <span class="topbar-label" style="background:var(--amber-soft); color:var(--amber-dark); border-color:rgba(245,158,11,0.3);">3 / 4 ĐÃ ĐẠT</span>
+        </div>
+        <div class="badge-grid">
+          <div class="badge-card unlocked">
+            <span class="badge-icon">🔥</span>
+            <span class="badge-title">Chiến binh 7D</span>
+            <span class="badge-desc">Chuỗi 7 ngày</span>
+          </div>
+          <div class="badge-card unlocked">
+            <span class="badge-icon">⚔️</span>
+            <span class="badge-title">Word Ninja</span>
+            <span class="badge-desc">100+ chém trúng</span>
+          </div>
+          <div class="badge-card unlocked">
+            <span class="badge-icon">🤖</span>
+            <span class="badge-title">AI Master</span>
+            <span class="badge-desc">10 câu ngữ cảnh</span>
+          </div>
+          <div class="badge-card locked">
+            <span class="badge-icon">📷</span>
+            <span class="badge-title">Đời sống Pilot</span>
+            <span class="badge-desc">Tiến độ: 3/5 bài</span>
+          </div>
+        </div>
+
+        <!-- 6. Leech Cards (Từ cần củng cố) -->
+        <div class="section-title" style="margin-top:18px;">
+          <h2 data-od-id="profile-mistakes-heading">Từ cần củng cố (Leech)</h2>
+          <button class="section-link" type="button" data-screen="study" data-od-id="profile-review-mistakes">Ôn tập ngay →</button>
         </div>
         <div class="mistake-list" data-od-id="profile-mistakes">
           <div class="mistake-row">
-            <strong lang="ja" style="font-size:18px;">先生</strong>
-            <span style="color:var(--muted); font-size:13px;">teacher · sai 3 lần</span>
+            <div class="mistake-info">
+              <strong lang="ja">先生 <span style="font-size:13px; font-weight:normal; color:var(--muted);">(せんせい)</span></strong>
+              <small>Giáo viên, thầy cô</small>
+              <span class="mistake-tag">Sai 3 lần · Cần ôn lại</span>
+            </div>
+            <div class="mistake-actions">
+              <button class="icon-button" type="button" data-action="profile-audio" data-term="先生" aria-label="Phát âm 先生" style="width:34px; height:34px; min-height:34px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+              </button>
+              <button class="secondary-button" type="button" data-screen="study" style="min-height:34px; font-size:12px; padding:0 10px;">
+                Ôn thẻ
+              </button>
+            </div>
           </div>
           <div class="mistake-row">
-            <strong lang="ja" style="font-size:18px;">電車</strong>
-            <span style="color:var(--muted); font-size:13px;">train · sai 2 lần</span>
+            <div class="mistake-info">
+              <strong lang="ja">電車 <span style="font-size:13px; font-weight:normal; color:var(--muted);">(でんしゃ)</span></strong>
+              <small>Tàu điện (phương tiện đường sắt)</small>
+              <span class="mistake-tag">Sai 2 lần trong AI Quiz</span>
+            </div>
+            <div class="mistake-actions">
+              <button class="icon-button" type="button" data-action="profile-audio" data-term="電車" aria-label="Phát âm 電車" style="width:34px; height:34px; min-height:34px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+              </button>
+              <button class="secondary-button" type="button" data-screen="study" style="min-height:34px; font-size:12px; padding:0 10px;">
+                Ôn thẻ
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. Preferences & Data Management -->
+        <div class="section-title" style="margin-top:18px;">
+          <h2>Cài đặt & Dữ liệu</h2>
+          <span class="topbar-label">MANABI V1.0</span>
+        </div>
+        <div class="settings-group-card">
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <span class="settings-row-icon">🔊</span>
+              <span>Tự động phát âm thanh</span>
+            </div>
+            <label class="toggle-control" style="flex:0;">
+              <input type="checkbox" id="setting-profile-autoplay" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <span class="settings-row-icon">🈸</span>
+              <span>Hiển thị Furigana</span>
+            </div>
+            <span class="settings-badge" id="btn-toggle-furigana" style="cursor:pointer;" title="Chạm để chuyển chế độ">Luôn hiện ✓</span>
+          </div>
+
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <span class="settings-row-icon">⏰</span>
+              <span>Nhắc nhở học tập</span>
+            </div>
+            <span class="settings-badge" id="btn-profile-reminder" style="cursor:pointer;">20:00 hằng ngày</span>
+          </div>
+
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <span class="settings-row-icon">☁️</span>
+              <span>Đồng bộ dữ liệu (Local-first)</span>
+            </div>
+            <button class="settings-badge synced" type="button" id="btn-profile-sync" style="cursor:pointer; border:none;">✓ Đã đồng bộ</button>
+          </div>
+
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <span class="settings-row-icon">💾</span>
+              <span>Sao lưu dữ liệu JSON</span>
+            </div>
+            <button class="secondary-button" type="button" id="btn-profile-export-json" style="min-height:30px; font-size:11.5px; padding:0 10px;">
+              Xuất tệp .json
+            </button>
           </div>
         </div>
       </section>
@@ -3949,6 +4934,113 @@
       </div>
     </div>
 
+
+    <!-- AI Quiz Report Modal -->
+    <div class="custom-picker-layer" id="ai-quiz-report-modal" hidden data-od-id="ai-quiz-report-modal">
+      <button class="study-sheet-backdrop" type="button" id="btn-ai-quiz-report-backdrop" aria-label="Đóng"></button>
+      <div class="custom-picker-dialog" role="dialog" aria-modal="true" aria-labelledby="ai-quiz-report-title">
+        <div class="custom-picker-head">
+          <h3 id="ai-quiz-report-title" style="display:flex; align-items:center; gap:8px;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+            Báo lỗi câu hỏi AI Quiz
+          </h3>
+          <button class="picker-close-btn" type="button" id="btn-close-ai-report" aria-label="Đóng">✕</button>
+        </div>
+        <p style="font-size:12px; color:var(--muted); margin-top:4px;">Phản hồi giúp bộ lọc thẩm định loại bỏ các câu hỏi chưa đạt chuẩn:</p>
+        <div class="report-radio-group">
+          <label class="report-radio-label">
+            <input type="radio" name="ai-quiz-issue" value="grammar" checked />
+            <span>Sai ngữ pháp hoặc bối cảnh tự nhiên</span>
+          </label>
+          <label class="report-radio-label">
+            <input type="radio" name="ai-quiz-issue" value="distractor" />
+            <span>Phương án lựa chọn trùng lặp / đồng nghĩa mơ hồ</span>
+          </label>
+          <label class="report-radio-label">
+            <input type="radio" name="ai-quiz-issue" value="meaning" />
+            <span>Giải thích hoặc nghĩa tiếng Việt chưa chính xác</span>
+          </label>
+          <label class="report-radio-label">
+            <input type="radio" name="ai-quiz-issue" value="other" />
+            <span>Lỗi khác (hiển thị, kanji, furigana)</span>
+          </label>
+        </div>
+        <div style="display:flex; gap:8px; margin-top:16px;">
+          <button class="secondary-button" type="button" style="flex:1;" id="btn-cancel-ai-report">Hủy</button>
+          <button class="primary-button" type="button" style="flex:1;" id="btn-submit-ai-report">Gửi báo cáo</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Image Attribution Details Modal -->
+    <div class="custom-picker-layer" id="image-attribution-modal" hidden data-od-id="image-exercise-modal-attribution">
+      <button class="study-sheet-backdrop" type="button" id="btn-image-attrib-backdrop" aria-label="Đóng"></button>
+      <div class="custom-picker-dialog" role="dialog" aria-modal="true" aria-labelledby="image-attribution-title">
+        <div class="custom-picker-head">
+          <h3 id="image-attribution-title" style="display:flex; align-items:center; gap:8px;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            Bản quyền & Xuất xứ ảnh
+          </h3>
+          <button class="picker-close-btn" type="button" id="btn-close-image-attrib" aria-label="Đóng">✕</button>
+        </div>
+        <p style="font-size:12px; color:var(--muted); margin-top:4px;">Thông tin bản quyền và tác giả được lưu vết theo quy định AIDD:</p>
+        <table class="modal-sheet-table" id="image-attribution-table">
+          <tbody>
+            <tr><th>Đối tượng</th><td id="attrib-subject">Tàu điện Nhật Bản (電車)</td></tr>
+            <tr><th>Nhiếp ảnh gia</th><td id="attrib-photographer">Satoshi Hirayama</td></tr>
+            <tr><th>Nền tảng</th><td id="attrib-platform">Unsplash (ID: 1503899036084)</td></tr>
+            <tr><th>Giấy phép</th><td id="attrib-license">Unsplash License (Miễn phí thương mại & phi thương mại)</td></tr>
+            <tr><th>Kiểm tra</th><td id="attrib-date">01/10/2026 (Asia/Ho_Chi_Minh)</td></tr>
+            <tr><th>Thẻ liên kết</th><td id="attrib-card">電車 - Tiếng Nhật N5 cơ bản</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:16px;">
+          <button class="primary-button" type="button" style="width:100%;" id="btn-done-image-attrib">Đã hiểu</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Image Exercise Report Modal -->
+    <div class="custom-picker-layer" id="image-report-modal" hidden data-od-id="image-exercise-modal-report">
+      <button class="study-sheet-backdrop" type="button" id="btn-image-report-backdrop" aria-label="Đóng"></button>
+      <div class="custom-picker-dialog" role="dialog" aria-modal="true" aria-labelledby="image-report-title">
+        <div class="custom-picker-head">
+          <h3 id="image-report-title" style="display:flex; align-items:center; gap:8px;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+            Báo lỗi hình ảnh đời sống
+          </h3>
+          <button class="picker-close-btn" type="button" id="btn-close-image-report" aria-label="Đóng">✕</button>
+        </div>
+        <p style="font-size:12px; color:var(--muted); margin-top:4px;">Phản hồi về hình ảnh không khớp hoặc chất lượng chưa tốt:</p>
+        <div class="report-radio-group">
+          <label class="report-radio-label">
+            <input type="radio" name="image-issue" value="mismatch" checked />
+            <span>Ảnh không khớp với nghĩa tiếng Việt mục tiêu</span>
+          </label>
+          <label class="report-radio-label">
+            <input type="radio" name="image-issue" value="ocr-reveal" />
+            <span>Chữ trên ảnh hoặc biển hiệu tiết lộ đáp án (lỗi OCR)</span>
+          </label>
+          <label class="report-radio-label">
+            <input type="radio" name="image-issue" value="quality" />
+            <span>Ảnh mờ, góc chụp khuất hoặc khó nhận diện</span>
+          </label>
+          <label class="report-radio-label">
+            <input type="radio" name="image-issue" value="license" />
+            <span>Nghi ngờ bản quyền hoặc thông tin tác giả sai</span>
+          </label>
+          <label class="report-radio-label">
+            <input type="radio" name="image-issue" value="other" />
+            <span>Lỗi khác</span>
+          </label>
+        </div>
+        <div style="display:flex; gap:8px; margin-top:16px;">
+          <button class="secondary-button" type="button" style="flex:1;" id="btn-cancel-image-report">Hủy</button>
+          <button class="primary-button" type="button" style="flex:1;" id="btn-submit-image-report">Gửi báo cáo</button>
+        </div>
+      </div>
+    </div>
+
     <div class="toast" id="toast" role="status" aria-live="polite" data-od-id="app-toast"></div>
   </div>
 
@@ -3989,9 +5081,9 @@
         { name: 'Japanese N5', builtIn: false, base: 'Cơ bản (Basic)' }
       ];
       var studyCards = [
-        { term: '学校', reading: 'がっこう', answer: 'school', example: '学校へ行きます。', translation: 'I go to school.', tags: 'jlpt-n5, lesson-01', flagged: true, flagColor: 'red', fields: { frontText: { value: '学校', html: '学校' }, frontReading: { value: 'がっこう', html: 'がっこう' }, frontAudio: { value: '', html: '' }, backText: { value: 'school', html: 'school' }, backExample: { value: '学校へ行きます。', html: '学校へ行きます。' }, backTranslation: { value: 'I go to school.', html: 'I go to school.' } } },
-        { term: '電車', reading: 'でんしゃ', answer: 'train', example: '電車で行きます。', translation: 'I go by train.', tags: 'jlpt-n5', flagged: false, flagColor: null, fields: { frontText: { value: '電車', html: '電車' }, frontReading: { value: 'でんしゃ', html: 'でんしゃ' }, frontAudio: { value: '', html: '' }, backText: { value: 'train', html: 'train' }, backExample: { value: '電車で行きます。', html: '電車で行きます。' }, backTranslation: { value: 'I go by train.', html: 'I go by train.' } } },
-        { term: '先生', reading: 'せんせい', answer: 'teacher', example: '先生に聞きます。', translation: 'I ask the teacher.', tags: 'jlpt-n5', flagged: false, flagColor: null, fields: { frontText: { value: '先生', html: '先生' }, frontReading: { value: 'せんせい', html: 'せんせい' }, frontAudio: { value: '', html: '' }, backText: { value: 'teacher', html: 'teacher' }, backExample: { value: '先生に聞きます。', html: '先生に聞きます。' }, backTranslation: { value: 'I ask the teacher.', html: 'I ask the teacher.' } } }
+        { term: '学校', reading: 'がっこう', answer: 'trường học', example: '学校へ行きます。', translation: '', tags: 'jlpt-n5, lesson-01', flagged: true, flagColor: 'red', fields: { frontText: { value: '学校', html: '学校' }, frontReading: { value: 'がっこう', html: 'がっこう' }, frontAudio: { value: '', html: '' }, backText: { value: 'trường học', html: 'trường học' }, backExample: { value: '学校へ行きます。', html: '学校へ行きます。' }, backTranslation: { value: '', html: '' } } },
+        { term: '電車', reading: 'でんしゃ', answer: 'tàu điện', example: '電車に乗ります。', translation: '', tags: 'jlpt-n5', flagged: false, flagColor: null, fields: { frontText: { value: '電車', html: '電車' }, frontReading: { value: 'でんしゃ', html: 'でんしゃ' }, frontAudio: { value: '', html: '' }, backText: { value: 'tàu điện', html: 'tàu điện' }, backExample: { value: '電車に乗ります。', html: '電車に乗ります。' }, backTranslation: { value: '', html: '' } } },
+        { term: '先生', reading: 'せんせい', answer: 'giáo viên', example: '先生に質問します。', translation: '', tags: 'jlpt-n5', flagged: false, flagColor: null, fields: { frontText: { value: '先生', html: '先生' }, frontReading: { value: 'せんせい', html: 'せんせい' }, frontAudio: { value: '', html: '' }, backText: { value: 'giáo viên', html: 'giáo viên' }, backExample: { value: '先生に質問します。', html: '先生に質問します。' }, backTranslation: { value: '', html: '' } } }
       ];
 
       // Friendly metadata for note fields
@@ -4685,30 +5777,16 @@
         var term = document.querySelector('[data-od-id="study-term"]');
         var reading = document.querySelector('[data-od-id="study-reading"]');
         var answer = document.querySelector('[data-od-id="study-answer-word"]');
-        var meaning = document.querySelector('[data-od-id="study-answer-meaning"]');
         var example = document.querySelector('[data-od-id="study-example"]');
         if (term) term.textContent = fields.frontText.value || card.term;
         if (reading) reading.textContent = fields.frontReading.value || card.reading;
         if (answer) answer.textContent = fields.backText.value || card.answer;
-        if (meaning) meaning.textContent = fields.backText.value || card.answer;
-        if (example) example.innerHTML = (fields.backExample.value || card.example || '') + '<br><span lang="en">' + (fields.backTranslation.value || card.translation || '') + '</span>';
+        if (example) example.textContent = fields.backExample.value || card.example || '';
 
         // Render card tags & flag badge
         var metaContainer = document.getElementById('study-card-meta-tags');
         if (metaContainer) {
           metaContainer.innerHTML = '';
-          var isFlagged = Boolean(card.flagged);
-          var flagColor = card.flagColor || (isFlagged ? 'red' : null);
-          if (isFlagged && flagColor) {
-            var fObj = flagColors[flagColor] || { name: 'Cờ ' + flagColor, color: '#EF4444' };
-            var flagBtn = document.createElement('button');
-            flagBtn.className = 'card-tag-flag-pill';
-            flagBtn.type = 'button';
-            flagBtn.setAttribute('data-action', 'card-flag');
-            flagBtn.title = 'Chạm để đổi hoặc gỡ cờ';
-            flagBtn.innerHTML = '<span class="card-tag-flag-dot" style="background:' + fObj.color + ';"></span><span>' + fObj.name + '</span>';
-            metaContainer.appendChild(flagBtn);
-          }
           if (card.tags) {
             var tagList = card.tags.split(',').map(function (t) { return t.trim(); }).filter(Boolean);
             tagList.forEach(function (t) {
@@ -4721,6 +5799,8 @@
         }
 
         updateFlagControl();
+        var previousButton = document.querySelector('[data-study-action="undo"]');
+        if (previousButton) previousButton.disabled = studyIndex === 0;
         closeStudyMenu();
         closeStudySheet();
       }
@@ -5001,11 +6081,13 @@
         if (name === 'matching') resetMatching();
         if (name === 'ninja') resetNinja();
         if (name === 'multiple-choice') resetChoice();
+        if (name === 'ai-quiz') resetAiQuiz();
+        if (name === 'image-exercise') resetImageExercise();
 
         screens.forEach(function (screen) { screen.classList.toggle('active', screen === target); });
         app.classList.toggle('focus-study', name === 'study');
         app.classList.toggle('focus-editor', name === 'note-edit' || name === 'note-types' || name === 'review-settings');
-        app.classList.toggle('focus-modal', ['study', 'note-edit', 'note-types', 'review-settings', 'matching', 'ninja', 'multiple-choice', 'result', 'import'].indexOf(name) !== -1);
+        app.classList.toggle('focus-modal', ['study', 'note-edit', 'note-types', 'review-settings', 'matching', 'ninja', 'multiple-choice', 'ai-quiz', 'image-exercise', 'result', 'import'].indexOf(name) !== -1);
         currentScreen = name;
         if (['learn', 'decks', 'games', 'profile'].indexOf(name) !== -1) lastRootScreen = name;
         nav.forEach(function (item) { item.classList.toggle('active', item.dataset.nav === lastRootScreen); });
@@ -5079,7 +6161,467 @@
         if (feedback) { feedback.className = 'game-feedback'; feedback.textContent = 'Chọn nghĩa tiếng Anh tương ứng của từ.'; }
       }
 
+
+      // ==========================================
+      // FEATURE: AI QUIZ & REAL-LIFE IMAGE CONTEXT
+      // ==========================================
+      var aiQuizQuestions = [
+        {
+          id: 'ai-q1',
+          stem: '毎朝、私は駅まで ___ で通学しています。',
+          stemHtml: '毎朝、私は駅まで <span class="ai-quiz-blank">______</span> で通学しています。',
+          reading: 'Maiasa, watashi wa eki made ___ de tsuugaku shite imasu.',
+          translation: 'Mỗi sáng, tôi đi học đến nhà ga bằng ______.',
+          sourceCardTerm: '電車',
+          sourceCardReading: 'でんしゃ',
+          sourceCardAnswer: 'tàu điện',
+          deckName: 'Tiếng Nhật N5 cơ bản',
+          options: [
+            { text: '電車 (でんしゃ)', answer: 'tàu điện', isCorrect: true, reason: 'Đáp án chính xác. Tàu điện là phương tiện đường sắt phổ biến để di chuyển đến nhà ga.' },
+            { text: '自転車 (じてんしゃ)', answer: 'xe đạp', isCorrect: false, reason: 'Nhiễu phương tiện cá nhân, tuy hợp ngữ cảnh nhưng từ mục tiêu của thẻ này là 電車.' },
+            { text: 'バス (ばす)', answer: 'xe buýt', isCorrect: false, reason: 'Nhiễu cùng nhóm phương tiện công cộng (lexical domain).' },
+            { text: '飛行機 (ひこうき)', answer: 'máy bay', isCorrect: false, reason: 'Không phù hợp ngữ cảnh di chuyển thường ngày tới nhà ga.' }
+          ],
+          explanation: 'Chính xác!「電車」(でんしゃ - tàu điện) là từ vựng trong bộ thẻ của bạn. Câu hoàn chỉnh:「毎朝、私は駅まで電車で通学しています。」(Mỗi sáng tôi đi học đến ga bằng tàu điện).'
+        },
+        {
+          id: 'ai-q2',
+          stem: '授業が終わった後、___ に質問をしに行きました。',
+          stemHtml: '授業が終わった後、<span class="ai-quiz-blank">______</span> に質問をしに行きました。',
+          reading: 'Jugyou ga owatta ato, ___ ni shitsumon o shi ni ikimashita.',
+          translation: 'Sau khi giờ học kết thúc, tôi đã đến gặp ______ để đặt câu hỏi.',
+          sourceCardTerm: '先生',
+          sourceCardReading: 'せんせい',
+          sourceCardAnswer: 'giáo viên',
+          options: [
+            { text: '先生 (せんせい)', answer: 'giáo viên', isCorrect: true, reason: 'Đáp án chính xác. 先生 là người giải đáp thắc mắc sau tiết học.' },
+            { text: '学生 (がくせい)', answer: 'học sinh', isCorrect: false, reason: 'Nhiễu cùng nhóm danh từ chỉ người trong trường học.' },
+            { text: '友達 (ともだち)', answer: 'bạn bè', isCorrect: false, reason: 'Nhiễu đồng đẳng, nhưng từ khóa thẻ ôn tập là 先生.' },
+            { text: '医者 (いしゃ)', answer: 'bác sĩ', isCorrect: false, reason: 'Không phù hợp với ngữ cảnh câu hỏi trong lớp học.' }
+          ],
+          explanation: 'Chính xác!「先生」(せんせい - giáo viên) là đối tượng phù hợp nhất sau giờ học. Thẻ gốc đã được xác nhận trong bộ thẻ của bạn.'
+        },
+        {
+          id: 'ai-q3',
+          stem: '来週から新しい ___ で日本語の授業が始まります。',
+          stemHtml: '来週から新しい <span class="ai-quiz-blank">______</span> で日本語の授業が始まります。',
+          reading: 'Raishuu kara atarashii ___ de nihongo no jugyou ga hajimarimasu.',
+          translation: 'Từ tuần sau, các lớp học tiếng Nhật sẽ bắt đầu tại ______ mới.',
+          sourceCardTerm: '学校',
+          sourceCardReading: 'がっこう',
+          sourceCardAnswer: 'trường học',
+          options: [
+            { text: '学校 (がっこう)', answer: 'trường học', isCorrect: true, reason: 'Đáp án chính xác. 学校 là địa điểm tổ chức các lớp học tiếng Nhật.' },
+            { text: '病院 (びょういん)', answer: 'bệnh viện', isCorrect: false, reason: 'Nhiễu cơ sở công cộng, không phù hợp với lớp học.' },
+            { text: '銀行 (ぎんこう)', answer: 'ngân hàng', isCorrect: false, reason: 'Nhiễu cơ sở tài chính.' },
+            { text: '公園 (こうえん)', answer: 'công viên', isCorrect: false, reason: 'Không phù hợp lớp học chính quy.' }
+          ],
+          explanation: 'Chính xác!「学校」(がっこう - trường học) là danh từ chính xác cho địa điểm học tập tiếng Nhật.'
+        }
+      ];
+
+      var imageExerciseQuestions = [
+        {
+          id: 'img-1',
+          imageUrl: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=720&q=80',
+          fallbackTitle: 'Tàu điện Yamanote Line tại ga Tokyo',
+          targetTerm: '電車',
+          targetReading: 'でんしゃ',
+          targetAnswer: 'Tàu điện',
+          exampleSentence: '日本の通勤電車 (Tàu điện đi làm tại Nhật)',
+          attribution: {
+            subject: 'Tàu điện Nhật Bản (電車 - Train)',
+            photographer: 'Satoshi Hirayama (@shirayama)',
+            platform: 'Unsplash (ID: 1503899036084)',
+            license: 'Unsplash License (Miễn phí thương mại & phi thương mại)',
+            date: '01/10/2026 (Asia/Ho_Chi_Minh)',
+            card: '電車 - Tiếng Nhật N5 cơ bản'
+          },
+          options: [
+            { text: 'Tàu điện', isCorrect: true, cardTerm: '電車', cardReading: 'でんしゃ' },
+            { text: 'Nhà ga', isCorrect: false, cardTerm: '駅', cardReading: 'えき' },
+            { text: 'Xe buýt', isCorrect: false, cardTerm: 'バス', cardReading: 'ばす' },
+            { text: 'Xe đạp', isCorrect: false, cardTerm: '自転車', cardReading: 'じてんしゃ' }
+          ]
+        },
+        {
+          id: 'img-2',
+          imageUrl: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?auto=format&fit=crop&w=720&q=80',
+          fallbackTitle: 'Máy bán hàng tự động trên đường phố Tokyo',
+          targetTerm: '自動販売機',
+          targetReading: 'じどうはんばいき',
+          targetAnswer: 'Máy bán hàng tự động',
+          exampleSentence: '道にある自動販売機 (Máy bán nước ven đường)',
+          attribution: {
+            subject: 'Máy bán hàng tự động (自動販売機)',
+            photographer: 'Aleksandar Popelier',
+            platform: 'Unsplash (ID: 1580910051074)',
+            license: 'Unsplash License (Miễn phí thương mại & phi thương mại)',
+            date: '01/10/2026 (Asia/Ho_Chi_Minh)',
+            card: '自動販売機 - Đời sống học đường'
+          },
+          options: [
+            { text: 'Máy bán hàng tự động', isCorrect: true, cardTerm: '自動販売機', cardReading: 'じどうはんばいき' },
+            { text: 'Cửa hàng tiện lợi', isCorrect: false, cardTerm: 'コンビニ', cardReading: 'こんびに' },
+            { text: 'Bốt điện thoại', isCorrect: false, cardTerm: '電話ボックス', cardReading: 'でんわぼっくす' },
+            { text: 'Hòm thư bưu điện', isCorrect: false, cardTerm: '郵便ポスト', cardReading: 'ゆうびんぽすと' }
+          ]
+        },
+        {
+          id: 'img-3',
+          imageUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=720&q=80',
+          fallbackTitle: 'Cổng soát vé điện tử tại ga tàu ngầm Nhật Bản',
+          targetTerm: '改札',
+          targetReading: 'かいさつ',
+          targetAnswer: 'Cổng soát vé ga',
+          exampleSentence: 'ICカードで改札を通る (Qua cổng soát vé bằng thẻ IC)',
+          attribution: {
+            subject: 'Cổng soát vé ga tàu (改札 - Ticket barrier)',
+            photographer: 'Masashi Wakui',
+            platform: 'Unsplash (ID: 1542051841857)',
+            license: 'Unsplash License (Miễn phí thương mại & phi thương mại)',
+            date: '01/10/2026 (Asia/Ho_Chi_Minh)',
+            card: '改札 - Đời sống học đường'
+          },
+          options: [
+            { text: 'Cổng soát vé ga', isCorrect: true, cardTerm: '改札', cardReading: 'かいさつ' },
+            { text: 'Lối ra ga', isCorrect: false, cardTerm: '出口', cardReading: 'でぐち' },
+            { text: 'Quầy bán vé', isCorrect: false, cardTerm: '切符売り場', cardReading: 'きっぷうりば' },
+            { text: 'Cầu thang ga', isCorrect: false, cardTerm: '階段', cardReading: 'かいだん' }
+          ]
+        }
+      ];
+
+      var aiQuizIndex = 0;
+      var aiQuizTotal = 10;
+      var aiQuizAnswered = false;
+
+      var imageExerciseIndex = 0;
+      var imageExerciseAnswered = false;
+
+      function renderAiQuizQuestion() {
+        aiQuizAnswered = false;
+        var q = aiQuizQuestions[aiQuizIndex % aiQuizQuestions.length];
+        var stemJa = document.getElementById('ai-quiz-stem-ja');
+        var stemReading = document.getElementById('ai-quiz-stem-reading');
+        var stemVi = document.getElementById('ai-quiz-stem-vi');
+        var optionsContainer = document.getElementById('ai-quiz-options-container');
+        var explBox = document.getElementById('ai-quiz-explanation-box');
+        var nextBtn = document.getElementById('btn-ai-quiz-next');
+
+        if (stemJa) stemJa.innerHTML = q.stemHtml;
+        if (stemReading) stemReading.textContent = q.reading;
+        if (stemVi) stemVi.textContent = q.translation;
+        if (explBox) explBox.classList.add('hidden');
+        if (nextBtn) {
+          nextBtn.classList.add('hidden');
+          nextBtn.textContent = (aiQuizIndex === aiQuizTotal - 1) ? 'Xem kết quả' : 'Câu tiếp theo →';
+        }
+
+        if (optionsContainer) {
+          optionsContainer.innerHTML = '';
+          var letters = ['A', 'B', 'C', 'D'];
+          q.options.forEach(function (opt, idx) {
+            var btn = document.createElement('button');
+            btn.className = 'choice-button';
+            btn.type = 'button';
+            btn.setAttribute('data-ai-option-index', idx);
+            btn.innerHTML = '<span>' + letters[idx] + '</span> ' + opt.text;
+            btn.onclick = function () { handleAiQuizSelect(idx); };
+            optionsContainer.appendChild(btn);
+          });
+        }
+      }
+
+      function handleAiQuizSelect(chosenIndex) {
+        if (aiQuizAnswered) return;
+        aiQuizAnswered = true;
+        var q = aiQuizQuestions[aiQuizIndex % aiQuizQuestions.length];
+        var chosenOpt = q.options[chosenIndex];
+        var isCorrect = chosenOpt.isCorrect;
+
+        var optionsContainer = document.getElementById('ai-quiz-options-container');
+        if (optionsContainer) {
+          var buttons = optionsContainer.querySelectorAll('button');
+          buttons.forEach(function (btn, idx) {
+            btn.disabled = true;
+            if (q.options[idx].isCorrect) {
+              btn.classList.add('correct');
+            } else if (idx === chosenIndex && !isCorrect) {
+              btn.classList.add('incorrect');
+            }
+          });
+        }
+
+        var stemJa = document.getElementById('ai-quiz-stem-ja');
+        if (stemJa && isCorrect) {
+          stemJa.innerHTML = q.stemHtml.replace('______', '<span style="color:var(--green-dark);">' + q.sourceCardTerm + '</span>');
+        }
+
+        var explBox = document.getElementById('ai-quiz-explanation-box');
+        var explTitle = document.getElementById('ai-quiz-explanation-title');
+        var explBody = document.getElementById('ai-quiz-explanation-body');
+        var sourceTerm = document.getElementById('ai-quiz-source-term');
+        var sourceMeaning = document.getElementById('ai-quiz-source-meaning');
+
+        if (explBox) {
+          explBox.classList.remove('hidden', 'correct', 'incorrect');
+          explBox.classList.add(isCorrect ? 'correct' : 'incorrect');
+        }
+        if (explTitle) {
+          explTitle.innerHTML = isCorrect
+            ? '<span style="color:var(--green); font-size:16px;">✓</span> Chính xác! Đạt chuẩn ngữ cảnh.'
+            : '<span style="color:var(--danger); font-size:16px;">✕</span> Chưa chính xác. Xem giải thích:';
+        }
+        if (explBody) {
+          explBody.textContent = q.explanation;
+        }
+        if (sourceTerm) sourceTerm.textContent = q.sourceCardTerm;
+        if (sourceMeaning) sourceMeaning.textContent = q.sourceCardAnswer;
+
+        var nextBtn = document.getElementById('btn-ai-quiz-next');
+        if (nextBtn) {
+          nextBtn.classList.remove('hidden');
+          nextBtn.textContent = (aiQuizIndex === aiQuizTotal - 1) ? 'Xem kết quả' : 'Câu tiếp theo →';
+        }
+      }
+
+      function nextAiQuizQuestion() {
+        if (aiQuizIndex >= aiQuizTotal - 1) {
+          showToast('Đã hoàn thành 10 câu hỏi ngữ cảnh hôm nay!');
+          showScreen('result');
+          return;
+        }
+        aiQuizIndex++;
+        renderAiQuizQuestion();
+      }
+
+      function resetAiQuiz() {
+        aiQuizIndex = 0;
+        renderAiQuizQuestion();
+      }
+
+      // --- Image Context Exercise Logic (Nhìn ảnh, chọn nghĩa tiếng Việt) ---
+      function renderImageExercise() {
+        imageExerciseAnswered = false;
+        var q = imageExerciseQuestions[imageExerciseIndex % imageExerciseQuestions.length];
+        var imgEl = document.getElementById('image-exercise-img');
+        var fallbackEl = document.getElementById('image-exercise-fallback');
+        var summaryEl = document.getElementById('image-attribution-summary');
+        var choicesContainer = document.getElementById('image-exercise-choices-container');
+        var revealEl = document.getElementById('image-exercise-reveal');
+        var nextBtn = document.getElementById('btn-image-next');
+
+        if (imgEl && fallbackEl) {
+          imgEl.classList.remove('hidden');
+          fallbackEl.classList.add('hidden');
+          imgEl.src = q.imageUrl;
+          imgEl.alt = q.fallbackTitle;
+          imgEl.onerror = function () {
+            imgEl.classList.add('hidden');
+            fallbackEl.classList.remove('hidden');
+            fallbackEl.innerHTML = '<div style="font-size:38px; margin-bottom:6px;">📷</div><strong style="font-size:16px;">' + q.fallbackTitle + '</strong><span style="font-size:12px; opacity:0.8; margin-top:4px;">Chế độ minh họa ngoại tuyến</span>';
+          };
+        }
+
+        if (summaryEl) {
+          summaryEl.textContent = '📷 ' + q.attribution.platform.split(' ')[0] + ' · ' + q.attribution.photographer;
+        }
+
+        if (revealEl) revealEl.classList.add('hidden');
+        if (nextBtn) {
+          nextBtn.classList.add('hidden');
+          nextBtn.textContent = (imageExerciseIndex === imageExerciseQuestions.length - 1) ? 'Xem kết quả' : 'Ảnh tiếp theo →';
+        }
+
+        if (choicesContainer) {
+          choicesContainer.innerHTML = '';
+          var letters = ['A', 'B', 'C', 'D'];
+          q.options.forEach(function (opt, idx) {
+            var btn = document.createElement('button');
+            btn.className = 'choice-button';
+            btn.type = 'button';
+            btn.innerHTML = '<span>' + letters[idx] + '</span> <strong style="font-size:15.5px;">' + opt.text + '</strong>';
+            btn.onclick = function () { handleImageSelect(idx); };
+            choicesContainer.appendChild(btn);
+          });
+        }
+      }
+
+      function handleImageSelect(chosenIndex) {
+        if (imageExerciseAnswered) return;
+        imageExerciseAnswered = true;
+        var q = imageExerciseQuestions[imageExerciseIndex % imageExerciseQuestions.length];
+        var chosenOpt = q.options[chosenIndex];
+        var isCorrect = chosenOpt.isCorrect;
+
+        var choicesContainer = document.getElementById('image-exercise-choices-container');
+        if (choicesContainer) {
+          var buttons = choicesContainer.querySelectorAll('button');
+          buttons.forEach(function (btn, idx) {
+            btn.disabled = true;
+            if (q.options[idx].isCorrect) {
+              btn.classList.add('correct');
+            } else if (idx === chosenIndex && !isCorrect) {
+              btn.classList.add('incorrect');
+            }
+          });
+        }
+
+        var revealEl = document.getElementById('image-exercise-reveal');
+        if (revealEl) {
+          revealEl.classList.remove('hidden');
+          revealEl.innerHTML = '<div style="display:flex; justify-content:space-between; align-items:flex-start;">' +
+            '<div>' +
+              '<span style="font-size:11px; text-transform:uppercase; font-weight:750; letter-spacing:0.04em; color:var(--green-dark);">✓ Nghĩa chuẩn xác nhận:</span><br>' +
+              '<strong style="font-size:18px; color:var(--fg);">' + q.targetAnswer + '</strong>' +
+              '<div style="margin-top:6px; font-size:14px;">' +
+                'Thẻ tiếng Nhật: <strong lang="ja" style="font-size:19px;">' + q.targetTerm + '</strong> <span style="font-size:13px; font-weight:600; color:var(--accent-dark);">(' + q.targetReading + ')</span>' +
+              '</div>' +
+              '<div style="margin-top:4px; font-size:12px; color:var(--muted);">' + q.exampleSentence + '</div>' +
+              '<div style="margin-top:6px; font-size:11px; color:var(--green-dark); font-weight:600;">✓ Đã kiểm định nguồn ảnh & OCR không lộ đáp án</div>' +
+            '</div>' +
+            '<span style="font-size:22px;">' + (isCorrect ? '🎉' : '💡') + '</span>' +
+          '</div>';
+        }
+
+        var nextBtn = document.getElementById('btn-image-next');
+        if (nextBtn) {
+          nextBtn.classList.remove('hidden');
+          nextBtn.textContent = (imageExerciseIndex === imageExerciseQuestions.length - 1) ? 'Xem kết quả' : 'Ảnh tiếp theo →';
+        }
+      }
+
+      function nextImageExercise() {
+        if (imageExerciseIndex >= imageExerciseQuestions.length - 1) {
+          showToast('Đã hoàn thành các bài tập ảnh đời sống!');
+          showScreen('result');
+          return;
+        }
+        imageExerciseIndex++;
+        renderImageExercise();
+      }
+
+      function resetImageExercise() {
+        imageExerciseIndex = 0;
+        renderImageExercise();
+      }
+
+      // --- Modals Handlers ---
+      function openAiQuizReportModal() {
+        var modal = document.getElementById('ai-quiz-report-modal');
+        if (modal) modal.hidden = false;
+      }
+      function closeAiQuizReportModal() {
+        var modal = document.getElementById('ai-quiz-report-modal');
+        if (modal) modal.hidden = true;
+      }
+
+      function openImageAttributionModal() {
+        var q = imageExerciseQuestions[imageExerciseIndex % imageExerciseQuestions.length];
+        var modal = document.getElementById('image-attribution-modal');
+        if (!modal) return;
+        var subEl = document.getElementById('attrib-subject');
+        var photEl = document.getElementById('attrib-photographer');
+        var platEl = document.getElementById('attrib-platform');
+        var licEl = document.getElementById('attrib-license');
+        var datEl = document.getElementById('attrib-date');
+        var cardEl = document.getElementById('attrib-card');
+
+        if (subEl) subEl.textContent = q.attribution.subject;
+        if (photEl) photEl.textContent = q.attribution.photographer;
+        if (platEl) platEl.textContent = q.attribution.platform;
+        if (licEl) licEl.textContent = q.attribution.license;
+        if (datEl) datEl.textContent = q.attribution.date;
+        if (cardEl) cardEl.textContent = q.attribution.card;
+
+        modal.hidden = false;
+      }
+      function closeImageAttributionModal() {
+        var modal = document.getElementById('image-attribution-modal');
+        if (modal) modal.hidden = true;
+      }
+
+      function openImageReportModal() {
+        var modal = document.getElementById('image-report-modal');
+        if (modal) modal.hidden = false;
+      }
+      function closeImageReportModal() {
+        var modal = document.getElementById('image-report-modal');
+        if (modal) modal.hidden = true;
+      }
+
       app.addEventListener('click', function (event) {
+        var btnAiNext = event.target.closest('#btn-ai-quiz-next');
+        if (btnAiNext) { nextAiQuizQuestion(); return; }
+        var btnAiReport = event.target.closest('#btn-ai-quiz-report');
+        if (btnAiReport) { openAiQuizReportModal(); return; }
+        var btnCloseAiReport = event.target.closest('#btn-close-ai-report, #btn-cancel-ai-report, #btn-ai-quiz-report-backdrop');
+        if (btnCloseAiReport) { closeAiQuizReportModal(); return; }
+        var btnSubmitAiReport = event.target.closest('#btn-submit-ai-report');
+        if (btnSubmitAiReport) { closeAiQuizReportModal(); showToast('Cảm ơn bạn! Báo cáo câu hỏi đã được ghi nhận.'); return; }
+
+        var btnImgNext = event.target.closest('#btn-image-next');
+        if (btnImgNext) { nextImageExercise(); return; }
+        var btnImgViewAttrib = event.target.closest('#btn-image-view-attribution');
+        if (btnImgViewAttrib) { openImageAttributionModal(); return; }
+        var btnCloseImgAttrib = event.target.closest('#btn-close-image-attrib, #btn-done-image-attrib, #btn-image-attrib-backdrop');
+        if (btnCloseImgAttrib) { closeImageAttributionModal(); return; }
+        var btnImgReport = event.target.closest('#btn-image-report');
+        if (btnImgReport) { openImageReportModal(); return; }
+        var btnCloseImgReport = event.target.closest('#btn-close-image-report, #btn-cancel-image-report, #btn-image-report-backdrop');
+        if (btnCloseImgReport) { closeImageReportModal(); return; }
+        var btnSubmitImgReport = event.target.closest('#btn-submit-image-report');
+        if (btnSubmitImgReport) { closeImageReportModal(); showToast('Cảm ơn bạn! Báo cáo ảnh đã được gửi tới nhóm kiểm duyệt.'); return; }
+
+        var btnProfileAudio = event.target.closest('[data-action="profile-audio"]');
+        if (btnProfileAudio) {
+          var term = btnProfileAudio.dataset.term;
+          if ('speechSynthesis' in window && term) {
+            window.speechSynthesis.cancel();
+            var utterance = new SpeechSynthesisUtterance(term);
+            utterance.lang = 'ja-JP';
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+            showToast('Phát âm: ' + term);
+          } else {
+            showToast('Phát âm: ' + term);
+          }
+          return;
+        }
+
+        var btnToggleFurigana = event.target.closest('#btn-toggle-furigana');
+        if (btnToggleFurigana) {
+          var modes = ['Luôn hiện ✓', 'Chạm để hiện', 'Ẩn'];
+          var curr = btnToggleFurigana.textContent.trim();
+          var nextIdx = (modes.indexOf(curr) + 1) % modes.length;
+          btnToggleFurigana.textContent = modes[nextIdx];
+          showToast('Furigana: ' + modes[nextIdx]);
+          return;
+        }
+
+        var btnProfileSync = event.target.closest('#btn-profile-sync');
+        if (btnProfileSync) {
+          btnProfileSync.textContent = 'Đang đồng bộ...';
+          window.setTimeout(function () {
+            btnProfileSync.textContent = '✓ Đã đồng bộ';
+            showToast('Đồng bộ đám mây thành công! Toàn bộ thẻ và tiến độ đã an toàn.');
+          }, 600);
+          return;
+        }
+
+        var btnProfileExportJson = event.target.closest('#btn-profile-export-json');
+        if (btnProfileExportJson) {
+          showToast('Đã xuất bản sao lưu: manabi_backup_20261004.json');
+          return;
+        }
+
+        var btnProfileReminder = event.target.closest('#btn-profile-reminder');
+        if (btnProfileReminder) {
+          showToast('Nhắc nhở học tập: 20:00 hằng ngày');
+          return;
+        }
+
         var trigger = event.target.closest('[data-screen]');
         if (trigger && !trigger.classList.contains('screen')) {
           event.preventDefault();

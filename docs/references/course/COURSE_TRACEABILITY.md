@@ -1,6 +1,6 @@
 # Ma trận áp dụng nội dung IE307
 
-| Tài liệu | Nội dung chính | Áp dụng trong Memo | Evidence dự kiến |
+| Tài liệu | Nội dung chính | Áp dụng trong Manabi | Evidence dự kiến |
 | --- | --- | --- | --- |
 | 01 Introduction | React Native, New Architecture, Expo Go/Development Build/CLI, setup, debugging | Chọn Expo Development Build, quy trình debug và release Android/iOS | ADR 001, setup guide, build log |
 | 02 React Native Fundamentals | Component/JSX, props/state, event, conditional render, list, lifecycle | Tách feature/component, state rõ, event handler, empty/error/loading state, FlatList, effect cleanup | Component tree, unit/component test, code review |

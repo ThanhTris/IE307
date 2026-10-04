@@ -1,4 +1,6 @@
-# Cấu trúc báo cáo đồ án Memo Vocabulary
+# Cấu trúc báo cáo đồ án Manabi tiếng Nhật
+
+Đây là dàn ý, không phải báo cáo đã có kết quả. Chỉ ghi số liệu từ app/build và pilot thật; tách rõ chức năng triển khai, prototype và đề xuất.
 
 ## Phần đầu theo template LaTeX
 
@@ -8,19 +10,19 @@ Bìa, nhận xét, lời cảm ơn nếu cần, mục lục, danh mục hình/b�
 
 ### 1.1 Lý do chọn đề tài
 
-Mô tả chi phí chuẩn bị flashcard, sự nhàm chán của thao tác lặp và nhu cầu học đa nền tảng/offline.
+Mô tả việc chuẩn bị thẻ tiếng Nhật, ôn lặp và khó kiểm tra mình thực sự nhớ nghĩa hay chỉ nhận ra đáp án. Nêu vai trò của offline đối với học hằng ngày.
 
 ### 1.2 Khoảng trống và vấn đề chưa giải quyết
 
-Trình bày như giả thuyết có dữ liệu kiểm chứng: phỏng vấn/khảo sát nhỏ, so sánh luồng Anki/Quizlet, thời gian tạo bộ thẻ, mức tùy biến và cách game tác động lịch ôn.
+Trình bày như giả thuyết có dữ liệu kiểm chứng: phỏng vấn/khảo sát nhỏ, so sánh luồng Anki/Quizlet theo phiên bản cụ thể, cách tạo câu hỏi từ thẻ đã học, kiểm tra đáp án nhiễu và mức tác động của game/quiz lên lịch ôn. Không tuyên bố ứng dụng khác thiếu một tính năng nếu chưa kiểm tra.
 
 ### 1.3 Mục tiêu
 
-Mục tiêu sản phẩm và các tiêu chí đo: import, học, game, offline, sync, release.
+Mục tiêu sản phẩm và tiêu chí đo: import tiếng Nhật, học/SRS, ba game, độ đúng và chi phí quiz AI, khả năng offline/fallback, pilot ảnh, release Android.
 
 ### 1.4 Đối tượng và phạm vi
 
-Người tự học, sinh viên/giáo viên; MVP và phần phát triển sau.
+Người tự học tiếng Nhật; ưu tiên từ vựng và card có nghĩa rõ. Nêu giới hạn với từ đa nghĩa, ngữ pháp, kanji ngoài pilot, ảnh từ trừu tượng và deck chỉ lưu local.
 
 ### 1.5 Phương pháp thực hiện
 
@@ -36,15 +38,19 @@ Giải thích đủ để hiểu scheduler và vì sao game signal có trọng s
 
 So sánh tập trung vào use case của đề tài; không giới thiệu lịch sử dài dòng. Mọi nhận định phải có nguồn và ngày truy cập.
 
-### 2.3 React Native và Expo trong đề tài
+### 2.3 Độ tin cậy của quiz AI và ảnh ngữ cảnh
+
+Phân biệt câu trả lời đúng từ card đã xác nhận với nội dung Gemini đề xuất; giải thích vì sao JSON hợp lệ chưa đủ bảo đảm một đáp án duy nhất. Nêu cách chọn nguồn ảnh, kiểm tra license/ghi công và đo lỗi ghép ảnh–nghĩa.
+
+### 2.4 React Native và Expo trong đề tài
 
 Nêu lý do một codebase, development build, navigation, component/props/state/event, lifecycle và list virtualization được áp dụng ở module nào.
 
-### 2.4 UI đa thiết bị
+### 2.5 UI đa thiết bị
 
 Core Components, StyleSheet/NativeWind, Flexbox/Yoga, safe area, responsive/adaptive, dark mode và accessibility.
 
-### 2.5 SQLite, PostgreSQL JSONB và Supabase
+### 2.6 SQLite, PostgreSQL JSONB và Supabase
 
 Tập trung vào offline-first, JSON schema linh hoạt, RLS và sync.
 
@@ -56,11 +62,11 @@ Sơ đồ mobile-domain-repository-SQLite-sync-Supabase.
 
 ### 3.2 Thành phần chính
 
-Deck/card, import, study/SRS, games, progress, auth/sync và release.
+Deck/card, import, study/SRS, ba game, quiz AI có validator/cache, pilot ảnh, progress và release. Auth/sync chỉ mô tả mức thực tế đã làm.
 
 ### 3.3 Luồng dữ liệu
 
-Ba sequence diagram: import, review event, offline sync/conflict.
+Sequence diagram cho import, review event và tạo/duyệt quiz Gemini; thêm sync/conflict khi tính năng đó được triển khai.
 
 ### 3.4 Backend và API
 
@@ -80,7 +86,7 @@ Session, RLS, user isolation và policy tests.
 
 ### 3.8 Dịch vụ bên thứ ba
 
-Supabase, Expo/EAS, Google Play và App Store Connect; ghi rõ phụ thuộc tài khoản/xét duyệt.
+Gemini, nguồn ảnh có license, Supabase, Expo/EAS và Google Play; ghi rõ chi phí, giới hạn, consent và tài khoản/xét duyệt. App Store Connect chỉ khi có nhánh iOS thật.
 
 ## 4 Kết quả và thảo luận
 
@@ -88,21 +94,21 @@ Supabase, Expo/EAS, Google Play và App Store Connect; ghi rõ phụ thuộc tà
 
 Migration, RLS/API test, sync/conflict và số liệu lỗi.
 
-### 4.2 Kết quả Android và iOS
+### 4.2 Kết quả Android và iOS nếu có
 
-Ảnh cùng luồng trên hai nền tảng, build artifact và khác biệt cần xử lý.
+Build Android và ảnh/chỉ số trên thiết bị thử nghiệm; ghi iOS riêng nếu được thực hiện.
 
 ### 4.3 Kết quả chức năng
 
-Import, JSON fields, study/SRS, ba game, progress và backup.
+Import, JSON fields, study/SRS, ba game, progress và backup; quiz AI và ảnh chỉ ghi là kết quả nếu có build chạy và evidence.
 
 ### 4.4 Đánh giá
 
-Test pass rate, performance, device matrix, usability result, hạn chế và threat to validity. Không tạo số liệu giả.
+Test pass rate, performance, device matrix, usability result, tỷ lệ quiz bị loại/sai/mơ hồ, độ trễ và chi phí Gemini, lỗi ảnh–nghĩa/quyền ảnh, hạn chế và threat to validity. Không tạo số liệu giả.
 
 ### 4.5 Thảo luận
 
-So sánh mục tiêu, trade-off JSON linh hoạt/khả năng query, offline/sync và game/SRS.
+So sánh mục tiêu với kết quả; thảo luận card nguồn sai, khả năng đoán trắc nghiệm, kiểm duyệt của con người, offline/fallback, chi phí và phạm vi ảnh đời sống.
 
 ## 5 Kết luận và khuyến nghị
 

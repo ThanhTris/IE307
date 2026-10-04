@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://memo.local/schemas/sync-event.schema.json",
-  "title": "Memo sync event",
+  "$id": "https://manabi.local/schemas/sync-event.schema.json",
+  "title": "Manabi sync event",
   "type": "object",
   "additionalProperties": false,
   "required": ["eventId", "deviceId", "entityType", "entityId", "operation", "baseVersion", "clientUpdatedAt", "payload"],

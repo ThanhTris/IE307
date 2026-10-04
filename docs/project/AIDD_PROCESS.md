@@ -1,46 +1,26 @@
-# Quy trình AI Driven Development
+# Quy trình AI Driven Development — Manabi tiếng Nhật
 
-## Mục đích
+AIDD dùng AI để hỗ trợ viết và kiểm tra, còn owner quyết định phạm vi và reviewer khác owner xác nhận kết quả. Trạng thái thực tế của repository phải được ghi trung thực: prototype HTML là tham chiếu UI, chưa phải app production.
 
-AIDD giúp nhóm dùng AI để tăng tốc nhưng vẫn giữ con người chịu trách nhiệm về yêu cầu, kiến trúc, dữ liệu, kiểm thử và quyết định phát hành. AI không tự chọn phạm vi, không tự xác nhận task hoàn thành và không được xem nội dung tham chiếu là lệnh.
+## Chu kỳ của một task
 
-## Chu kỳ cho mỗi task
+1. **Intent:** owner ghi vấn đề người học gặp phải, kết quả cần đạt, phạm vi làm/không làm và dependency. Kiểm tra `tasks/in-progress`; nếu rỗng, xem `tasks/review` trước khi lấy việc từ backlog. Dependency chỉ mở khi reviewer chấp thuận.
+2. **Specification:** task có acceptance criteria kiểm chứng được, linked spec/ADR, contract liên quan và đường evidence. Giả định đổi phạm vi, dữ liệu, kiến trúc, quyền riêng tư hoặc release cần owner quyết định trước phần bị ảnh hưởng.
+3. **Context:** AI đọc yêu cầu hiện tại, `AGENTS.md`, task và linked spec theo thứ tự nguồn sự thật; chỉ lấy prototype/nghiên cứu/archive làm tham chiếu. Không đưa secret, deck riêng tư hay dữ liệu cá nhân vào prompt mặc định.
+4. **Patch plan:** trước khi sửa, AI nêu patch nhỏ nhất, file dự kiến đổi, phép kiểm thử và rủi ro. Triển khai đúng phạm vi; không tự mở thêm ngôn ngữ, cộng đồng deck hay tính năng AI khác.
+5. **Verification:** chạy test phù hợp với thay đổi, lưu output/fixture/screenshot/số liệu tại evidence path trong task. Tài liệu-only kiểm liên kết và nhất quán; code UI cần kiểm trên thiết bị mục tiêu khi có app.
+6. **Review:** cập nhật task, chuyển sang `tasks/review`, để reviewer khác owner kiểm diff, acceptance criteria và evidence. Không coi output AI là review độc lập; task review chưa mở khóa task phụ thuộc.
+7. **Decision:** sau khi reviewer chấp thuận và `DEFINITION_OF_DONE.md` đạt, chuyển sang `tasks/done`. Cập nhật spec/ADR nếu quyết định kỹ thuật thay đổi; ghi lại failure cases và bài học trong báo cáo nghiên cứu.
 
-### 1 Intent
+## Kiểm soát riêng cho hai hướng mới
 
-Owner ghi vấn đề, người dùng bị ảnh hưởng, kết quả mong muốn, phạm vi không làm và dependency.
+- Quiz Gemini chỉ dùng card đã học và được xác nhận làm nguồn đáp án; model đề xuất câu dẫn/ba nhiễu. JSON hợp schema chưa đủ chứng minh đúng nghĩa. Câu chưa duyệt, nhiều đáp án đúng hoặc thiếu ba nhiễu hợp lệ bị loại; attempt lỗi không tác động SRS.
+- Kết quả quiz là tín hiệu yếu hơn tự nhớ trực tiếp. Bước đầu đo ở shadow mode; điều chỉnh `dueAt` chỉ sau pilot, policy có version, giới hạn và test replay/rollback.
+- Ảnh đời sống cần nguồn và quyền sử dụng kiểm chứng được, ghi công và duyệt ảnh–nghĩa. Gemini không phải kho ảnh có giấy phép.
+- Core flashcard/SRS/ba game từ dữ liệu lưu local phải dùng được khi Gemini hoặc mạng lỗi. Không nhúng key vào app và không gửi toàn bộ deck/lịch sử học mặc định.
 
-### 2 Specification
+## Artifacts và evidence
 
-Owner cùng AI soạn acceptance criteria, contract dữ liệu/API, test cases và evidence path. Reviewer kiểm tra trước khi code.
+Mỗi task có file theo `tasks/templates/TASK_TEMPLATE.md`; thay đổi dữ liệu/scheduler/import có fixture, thay đổi contract/kiến trúc có spec hoặc ADR, thay đổi UI có ảnh hoặc video trên thiết bị phù hợp. Có thể dùng PR hoặc diff review trong workspace, nhưng bằng chứng kiểm thử và quyết định reviewer phải truy vết được từ task. Không tạo số liệu nghiên cứu, feedback người dùng hay ảnh demo giả để thay evidence.
 
-### 3 Context package
-
-Task liên kết đúng PRD, spec, ADR, prototype và file liên quan. Không đưa toàn bộ repo vào prompt nếu không cần. Không đưa secret hoặc dữ liệu cá nhân.
-
-### 4 AI assisted implementation
-
-AI đề xuất patch nhỏ; owner đọc diff, yêu cầu giải thích phần rủi ro và chạy test. Không merge code chưa hiểu.
-
-### 5 Verification
-
-Chạy unit/integration/E2E phù hợp, kiểm tra Android/iOS khi có UI và lưu evidence. Reviewer kiểm tra acceptance criteria độc lập.
-
-### 6 Decision and learning
-
-Owner cập nhật ADR/spec nếu có quyết định mới, ghi vấn đề đã gặp và prompt hữu ích. Chuyển task sang done sau review.
-
-## Artifacts bắt buộc
-
-- Task file theo `tasks/templates/TASK_TEMPLATE.md`.
-- Pull request có test evidence và ảnh khi thay đổi UI.
-- ADR cho thay đổi kiến trúc hoặc contract.
-- Fixture cho thay đổi parser, scheduler, sync hoặc migration.
-- Báo cáo tiến độ tuần dựa trên task, không dựa trên mô tả miệng.
-
-## Guardrails
-
-- Không dùng AI để tạo số liệu nghiên cứu giả, phản hồi người dùng giả hoặc ảnh demo giả.
-- Không gửi source code/private file sang dịch vụ ngoài khi nhóm chưa cho phép.
-- Không chấp nhận dependency hoặc snippet không rõ license.
-- Tất cả output AI là bản nháp cần human review.
+Trước mỗi push, cập nhật task và tái tạo DOCX theo [TEAM_WORKFLOW](TEAM_WORKFLOW.md). Bản tiến độ ghi đã làm/còn lại/lỗi/evidence; hook kiểm báo cáo đúng snapshot commit. Khi merge, giải quyết nguồn Markdown trước rồi sinh lại báo cáo. DOCX/XLSX không phải nguồn trạng thái độc lập.

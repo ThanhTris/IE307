@@ -1,6 +1,6 @@
-# Memo UI implementation notes
+# Manabi UI implementation notes
 
-This file is a handoff guide for another AI or developer continuing the Memo vocabulary prototype.
+This file is a handoff guide for another AI or developer continuing the Manabi vocabulary prototype.
 
 For cross-agent work with Antigravity and OpenDesign, read
 `ANTIGRAVITY-OPENDESIGN-HANDOFF.md` first. It defines the shared route,
@@ -8,7 +8,7 @@ state, hook, preview, and collaboration contract.
 
 ## Product direction
 
-- Product name used in the UI: **Memo**.
+- Product name used in the UI: **Manabi**.
 - Primary UI language: **100% Vietnamese** (natural, idiomatic, adhering to standard SRS terminology).
 - Learning content: Japanese vocabulary with Japanese term/reading (Kanji/Furigana) and Vietnamese/English meaning and example.
 - The visual direction is intentionally simple and focused, inspired by a flashcard app rather than a dashboard.
@@ -16,7 +16,7 @@ state, hook, preview, and collaboration contract.
 
 ## Current screens
 
-The single-page prototype is in `memo-vocabulary.html` and switches screens with URL hashes:
+The single-page prototype is in `manabi-vocabulary.html` and switches screens with URL hashes:
 
 - `#learn` — home/deck list and the main starting point.
 - `#decks` — deck library.
@@ -44,7 +44,7 @@ The review screen deliberately hides the normal app shell to reduce distraction:
 - The Note Type editor has two tabs: `Fields` stores the note data schema, while `Cards` stores card type, front/back field mapping, reverse-card creation, and live preview. There is no separate Card templates destination.
 - Default field ids use side/property prefixes (`frontText`, `frontReading`, `frontAudio`, `frontImage`, `backText`, `backExample`, `backTranslation`, `backAudio`, `backImage`). User-created custom fields keep the exact name entered by the user and can be mapped to either card side.
 - The `New / Learning / Due` queue is a small centered strip directly below the header.
-- The Japanese term and reading stay centered on the tinted Memo background without a nested white flashcard frame or decorative glow.
+- The Japanese term and reading stay centered on the tinted Manabi background without a nested white flashcard frame or decorative glow.
 - The pronunciation control is in the upper-right of the study area.
 - `Reveal answer` is an indigo floating action bar with a small gap from the left, right, and bottom edges. It must remain easy to reach with one thumb.
 - After reveal, the four review ratings are `Again`, `Hard`, `Good`, and `Easy`, with example intervals of `1 min`, `6 days`, `10 days`, and `21 days`.
@@ -52,9 +52,9 @@ The review screen deliberately hides the normal app shell to reduce distraction:
 
 ## Visual system
 
-The design tokens live at the top of `memo-vocabulary.html` in `:root`:
+The design tokens live at the top of `manabi-vocabulary.html` in `:root`:
 
-- `--bg`, `--surface`, and `--surface-2` define the light Memo palette.
+- `--bg`, `--surface`, and `--surface-2` define the light Manabi palette.
 - `--fg` is the dark navy text/action color.
 - `--accent` and `--accent-soft` are the indigo brand colors.
 - `--blue`, `--danger`, and `--green-dark` are reserved for New, Learning, and Due counts.
@@ -84,7 +84,7 @@ Keep these attributes stable when editing markup because the existing JavaScript
   - **Direct Ratings Once Flipped (Reimagined Modern Pastel Cards)**: As soon as the card is flipped, the 4 Spaced Repetition rating buttons (`Again`, `Hard`, `Good`, `Easy`) appear immediately (`cardRevealed = true`). Replaced ugly, thin outline wireframes with tactile, modern pastel-tinted cards:
     - **Again (1 min)**: Soft Coral Rose card (`#FEF2F2`), delicate border (`#FECDD3`), vibrant crimson typography (`#E11D48`), and subtle pink ambient shadow.
     - **Hard (1 day)**: Warm Golden Amber card (`#FFFBEB`), rich honey border (`#FDE68A`), radiant amber typography (`#D97706`), replacing muddy dark brown.
-    - **Good (3 days)**: Memo Brand Indigo card (`#EEF2FF`), royal iris border (`#C7D2FE`), primary indigo typography (`#4F46E5`), highlighting the primary recommendation.
+    - **Good (3 days)**: Manabi Brand Indigo card (`#EEF2FF`), royal iris border (`#C7D2FE`), primary indigo typography (`#4F46E5`), highlighting the primary recommendation.
     - **Easy (7 days)**: Fresh Mint Emerald card (`#ECFDF5`), crisp mint border (`#A7F3D0`), lush emerald typography (`#059669`).
     - Added subtle desktop keyboard shortcut badges (`1`, `2`, `3`, `4`) in the upper-right corner and smooth hover lift animations (`translateY(-2px)`).
     - If the user flips back to the front, ratings remain accessible for quick scoring. Moving to the next card resets to a fresh front side.
@@ -137,12 +137,50 @@ Keep these attributes stable when editing markup because the existing JavaScript
   - 100% syntax validity verified with Node.js ES6+ script parser.
   - All 152 `data-od-id` inspection anchors intact.
 
+## Change log — Version 3.0: AI Quiz Context & Real-life Image Context Pilot (03 October 2026)
+
+- **AI Quiz Screen (`#ai-quiz`)**:
+  - Context question generator based on learner's confirmed cards (FR-14 / FR-15).
+  - Stem presentation with blank slot (`______`), Furigana/Romaji reading helper, and Vietnamese context prompt.
+  - 4 interactive options: 1 correct option strictly locked from confirmed card (`term`, `reading`, `answer`), and 3 plausibility-filtered distractors within the same lexical domain.
+  - Interactive evaluation: Immediate green/red selection state, sentence blank populated with correct term, and slide-down explanation box referencing the source card.
+  - Clean Session Progress: Standard topbar progress label (`CÂU 1/10` to `CÂU 10/10`), eliminating distracting countdown badges, warning banners, and redirect buttons for a focused learning experience.
+  - Question Reporting Modal (`#ai-quiz-report-modal`): Allows learners to flag faulty grammar, duplicate distractors, or imprecise definitions.
+- **Real-Life Image Context Screen (`#image-exercise`)**:
+  - Real-world Japanese visual recognition exercise (FR-16), updated per latest DOCX spec to format **"Nhìn ảnh, chọn nghĩa tiếng Việt"** (Look at photo, pick Vietnamese meaning).
+  - High-resolution photograph of authentic Japanese life scenes/objects (Tokyo Yamanote train, Street vending machine, Subway IC ticket gate).
+  - 4 Vietnamese Meaning Options: 1 correct option strictly locked from confirmed card meaning, and 3 plausibility-filtered Vietnamese distractors within the same domain.
+  - Complete Provenance & Attribution: Attribution pill overlaying the photo with creator handle, source platform (Unsplash), and license.
+  - Attribution Details Sheet (`#image-attribution-modal`): Transparent metadata table displaying creator, source URL, verified timestamp, license conditions, and linked deck card.
+  - Offline / Network Failure Fallback: Embedded vector fallback with illustrative artwork ensuring 0 broken screens if external images fail.
+  - Post-selection Card Reveal: Shows target Kanji, Furigana, confirmed meaning, and real-life context sentence.
+  - Image Report Modal (`#image-report-modal`): Enables learners to report mismatched meanings, image quality, or printed text revealing answers (OCR failure).
+- **Navigation & Hub Integration**:
+  - Added Quick Practice chips on `#learn`: clean `✨ AI Quiz` and `📷 Ảnh đời sống (Pilot)`.
+  - Reorganized `#games` hub into two distinct tiers: "AI & Đời sống thực tế (Pilot)" and "Minigame phản xạ cổ điển".
+- **Change log — Version 3.1: Header Report Button Relocation & Progress Pill Cleanup (04 October 2026)**:
+  - **Relocated Report Buttons to Header**: Moved `#btn-ai-quiz-report` (`data-od-id="ai-quiz-report-btn"`) and `#btn-image-report` (`data-od-id="image-exercise-report-btn"`) directly into the `.editor-screen-header` topbar on `#screen-ai-quiz` and `#screen-image-exercise`. Styled with a sleek pill format (`.topbar-report-btn`) featuring a red hover state.
+  - **Removed Distracting Header Progress Pills**: Removed the `CÂU 1/10` and `ẢNH 1/3 · PILOT` pills from the header topbars per user request, creating a clean, minimal header focused on screen title and immediate reporting access. Preserved `data-od-id="ai-quiz-quota"` as a hidden accessibility anchor.
+  - **Full-Width Next Buttons**: With report actions moved to the header, `#btn-ai-quiz-next` and `#btn-image-next` now occupy the full width (`width: 100%`) of the bottom action area when an answer is selected.
+  - **All 173 anchors verified intact**: Tested with `scratch/verify_anchors.py` and `scratch/verify_js.js`.
+- **Change log — Version 3.2: Comprehensive Learner Hub Redesign on Profile Screen (04 October 2026)**:
+  - **Hero Learner Card**: Polished avatar with gradient shadow, Lv.12 badge, and visual JLPT N5 progress bar (118 / 300 words · 39%).
+  - **Smart SRS Insights 2x2 Grid**: Highlights 4 key metrics: Chuỗi ngày (7 ngày), Tỷ lệ nhớ SRS (91.5%), Tổng từ vựng (118 thẻ), and Điểm kinh nghiệm (1,840 XP).
+  - **Daily Goal & Weekly Flame Streak**: Today's goal card with 75% progress (15/20 words) and 7-day flame streak indicators (T2 to CN) with active today ring.
+  - **Activity Heatmap**: Modern mini-calendar contribution dots reflecting study volume.
+  - **Gamification Badges Shelf**: 4 achievement trophies (7-day Streak, Word Ninja, AI Quiz Master, Real-Life Explorer).
+  - **Enhanced Leech Vocabulary Notebook**: Upgraded "Từ hay quên" into actionable leech cards with Kanji, Furigana, Vietnamese meaning, error count tags, instant audio speech (`🔊`), and direct review action.
+  - **Settings & Data Sync Group**: Toggle for auto-play audio, Furigana display mode switcher, daily study reminder pill, cloud sync status (Local-first), and JSON backup export button per `BACKUP_SPEC.md`.
+
 ## Preview and verification
 
 Open the review state directly:
 
-`http://127.0.0.1:4173/memo-vocabulary.html#study`
+- `http://127.0.0.1:4173/manabi-vocabulary.html#study`
+- `http://127.0.0.1:4173/manabi-vocabulary.html#ai-quiz`
+- `http://127.0.0.1:4173/manabi-vocabulary.html#image-exercise`
 
-Or test the home dashboard:
+Or test the home dashboard & games hub:
 
-`http://127.0.0.1:4173/memo-vocabulary.html#learn`
+- `http://127.0.0.1:4173/manabi-vocabulary.html#learn`
+- `http://127.0.0.1:4173/manabi-vocabulary.html#games`
