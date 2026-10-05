@@ -2,7 +2,7 @@
 
 ## Trạng thái
 
-Proposed ngày 02/10/2026; cần owner/reviewer kỹ thuật/quyền riêng tư xác nhận trong MANABI-001 và task pilot trước implementation. Không thay thế ADR-001/002 hoặc [ADR-004](ADR-004-json-storage-and-database.md) về stack/dữ liệu.
+Proposed ngày 02/10/2026; cần owner/reviewer kỹ thuật/quyền riêng tư xác nhận cho phạm vi và task pilot trước implementation. Không thay thế ADR-001/002 hoặc [ADR-004](ADR-004-json-storage-and-database.md) về stack/dữ liệu.
 
 ## Bối cảnh
 

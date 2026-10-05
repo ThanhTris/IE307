@@ -15,6 +15,11 @@ const option = (name, fallback) => {
   return index < 0 ? fallback : args[index + 1];
 };
 const repo = path.resolve(option('--repo', path.join(path.dirname(fileURLToPath(import.meta.url)), '..')));
+try {
+  await fs.access(path.join(repo, 'tasks/project-tasks.json'));
+} catch {
+  throw new Error('Chua co registry/task trien khai; dung python scripts/validate_repository.py de kiem tra ke hoach.');
+}
 const runtimeModules = option('--runtime-modules', process.env.MANABI_ARTIFACT_NODE_MODULES
   || path.join(path.dirname(process.execPath), '..', 'node_modules'));
 const runtimeRequire = createRequire(path.join(path.resolve(runtimeModules), '..', 'manabi-artifact-loader.cjs'));
@@ -24,7 +29,7 @@ const qaDir = path.resolve(option('--qa-dir', path.join(repo, '.work/manabi/work
 await fs.mkdir(qaDir, { recursive: true });
 await fs.mkdir(path.dirname(outputPath), { recursive: true });
 
-const registryRelativePath = 'data/project-tasks.json';
+const registryRelativePath = 'tasks/project-tasks.json';
 const registryText = await fs.readFile(path.join(repo, registryRelativePath), 'utf8');
 const registry = JSON.parse(registryText);
 if (registry.project !== 'Manabi' || registry.tasks.length !== 36 || registry.members.length !== 6) {
@@ -68,8 +73,7 @@ const tasks = registry.tasks.map((task) => {
   if (!ac.length) throw new Error(`Missing acceptance criteria in ${task.id}`);
   return { ...task, status, file: source.file, ac };
 });
-// This exact subset is shared with the repository freshness checker. MANABI-001
-// is the documentation gate and does not appear in the 36-task workbook.
+// The 36 task sources are shared with the repository freshness checker.
 const workbookSources = new Map([[registryRelativePath, registryText],
   ...tasks.map((task) => [task.file, taskMap.get(task.id).text])]);
 const fingerprint = (sources) => {
@@ -85,7 +89,7 @@ const roles = new Map();
 for (const line of teamMarkdown.split(/\r?\n/)) {
   if (!line.startsWith('|')) continue;
   const cells = line.split('|').slice(1, -1).map((cell) => cell.trim());
-  if (registry.members.some((member) => member.name === cells[0]) && cells.length === 4) roles.set(cells[0], cells[1]);
+  if (registry.members.some((member) => member.name === cells[0]) && cells.length === 4) roles.set(cells[0], cells[3]);
 }
 const planMarkdown = await fs.readFile(path.join(repo, 'docs/project/PROJECT_PLAN.md'), 'utf8');
 const gates = new Map();
@@ -96,12 +100,7 @@ for (const line of planMarkdown.split(/\r?\n/)) {
 }
 for (const member of registry.members) {
   if (!roles.has(member.name)) throw new Error(`Missing role for ${member.name}`);
-  const owned = tasks.filter((task) => task.owner === member.name);
-  const reviewed = tasks.filter((task) => task.reviewer === member.name);
-  if (owned.length !== 6 || owned.reduce((sum, task) => sum + task.points, 0) !== 32
-      || reviewed.length !== 6 || reviewed.reduce((sum, task) => sum + task.reviewPoints, 0) !== 6) {
-    throw new Error(`Unbalanced planning metadata for ${member.name}`);
-  }
+
 }
 
 const wb = Workbook.create();
@@ -193,40 +192,42 @@ summary.getRange('C6:L12').setNumberFormat('0');
 summary.getRange('C6:L12').format.horizontalAlignment = 'right';
 summary.getRange('A12:L12').format.font = { name: 'Arial', size: 11, bold: true, color: ink };
 summary.getRange('A12:L12').format.borders = { top: { style: 'thin', color: brand } };
-summary.getRange('A15').values = [['Mỗi người: 6 task làm / 32 điểm + 6 task review / 6 điểm. Points không phải giờ; nhóm re-estimate sau phase 1.']];
-summary.getRange('A16').values = [['MANABI-001 là cổng tài liệu hiện tại, không tính trong tải triển khai 36 task. Reviewer khác owner xác nhận trước Done.']];
+summary.getRange('A15').values = [['Tải gồm triển khai, hỗ trợ và review; điểm lấy từ task đã chốt, không phải số giờ.']];
+summary.getRange('A16').values = [['Danh mục triển khai gồm MANABI-001 đến MANABI-036. Reviewer khác owner xác nhận trước Done.']];
 summary.getRange('A17').values = [['Nguồn trạng thái là task Markdown. Báo cáo DOCX trước push giúp trưởng nhóm xem đã làm, còn lại, lỗi và quyết định merge.']];
 setWidths(summary, { A: 112, B: 220, C: 76, D: 78, E: 90, F: 94, G: 84, H: 76, I: 84, J: 94, K: 64, L: 90 });
 
-styleSheet(roadmap, 'F', 16);
+const phaseLast = 4 + registry.phases.length;
+const phaseTotal = phaseLast + 1;
+styleSheet(roadmap, 'F', phaseTotal + 5);
 roadmap.getRange('A2').values = [['Manabi. Lộ trình theo dependency']];
 roadmap.getRange('A3').values = [['Chưa chốt ngày sprint. Phase không thay thế dependency/review gate; AI và ảnh không chặn core offline.']];
 roadmap.getRange('A4:F4').values = [['Phase', 'Trọng tâm', 'Số task', 'Điểm làm', 'Done', 'Cổng nghiệm thu']];
 styleHeader(roadmap, 'A4:F4');
 roadmap.getRange('A4:F4').format.rowHeight = 42;
-roadmap.getRange('A5:B10').values = registry.phases.map((phase) => [phase.id, phase.name]);
+roadmap.getRange(`A5:B${phaseLast}`).values = registry.phases.map((phase) => [phase.id, phase.name]);
 roadmap.getRange('C5:E5').formulas = [[
   `=COUNTIFS(${rowRange('E')},$A5)`,
   `=SUMIFS(${rowRange('F')},${rowRange('E')},$A5)`,
   `=COUNTIFS(${rowRange('E')},$A5,${rowRange('H')},"done")`,
 ]];
-roadmap.getRange('C5:E10').fillDown();
-roadmap.getRange('F5:F10').values = registry.phases.map((phase) => {
-  const gate = gates.get(phase.id);
+roadmap.getRange(`C5:E${phaseLast}`).fillDown();
+roadmap.getRange(`F5:F${phaseLast}`).values = registry.phases.map((phase) => {
+  const gate = phase.acceptance || gates.get(Number(String(phase.gate ?? phase.id).replace(/^G/, '')));
   if (!gate) throw new Error(`Missing roadmap gate G${phase.id}`);
   return [gate];
 });
-roadmap.getRange('A5:F10').format.rowHeightPx = 78;
-roadmap.getRange('B5:B10').format.wrapText = true;
-roadmap.getRange('F5:F10').format.wrapText = true;
-roadmap.getRange('A11').values = [['Tổng']];
-roadmap.getRange('C11:E11').formulas = [['=SUM(C5:C10)', '=SUM(D5:D10)', '=SUM(E5:E10)']];
-roadmap.getRange('A11:F11').format.font = { name: 'Arial', size: 11, bold: true, color: ink };
-roadmap.getRange('A11:F11').format.borders = { top: { style: 'thin', color: brand } };
-roadmap.getRange('C5:E11').setNumberFormat('0');
-roadmap.getRange('C5:E11').format.horizontalAlignment = 'right';
-roadmap.getRange('A14').values = [['G0: reviewer xác nhận MANABI-001 trước khi mở task triển khai. Phạm vi/dependency là kế hoạch chưa triển khai.']];
-roadmap.getRange('A15').values = [['Gate semantic cần assessor tiếng Nhật độc lập; chưa có assessor hoặc điều khoản phù hợp thì giữ AI/ảnh tắt.']];
+roadmap.getRange(`A5:F${phaseLast}`).format.rowHeightPx = 78;
+roadmap.getRange(`B5:B${phaseLast}`).format.wrapText = true;
+roadmap.getRange(`F5:F${phaseLast}`).format.wrapText = true;
+roadmap.getRange(`A${phaseTotal}`).values = [['Tổng']];
+roadmap.getRange(`C${phaseTotal}:E${phaseTotal}`).formulas = [[`=SUM(C5:C${phaseLast})`, `=SUM(D5:D${phaseLast})`, `=SUM(E5:E${phaseLast})`]];
+roadmap.getRange(`A${phaseTotal}:F${phaseTotal}`).format.font = { name: 'Arial', size: 11, bold: true, color: ink };
+roadmap.getRange(`A${phaseTotal}:F${phaseTotal}`).format.borders = { top: { style: 'thin', color: brand } };
+roadmap.getRange(`C5:E${phaseTotal}`).setNumberFormat('0');
+roadmap.getRange(`C5:E${phaseTotal}`).format.horizontalAlignment = 'right';
+roadmap.getRange(`A${phaseTotal + 3}`).values = [['G0: reviewer xác nhận phạm vi trước khi mở task triển khai. Phạm vi/dependency là kế hoạch chưa triển khai.']];
+roadmap.getRange(`A${phaseTotal + 4}`).values = [['Gate semantic cần assessor tiếng Nhật độc lập; chưa có assessor hoặc điều khoản phù hợp thì giữ AI/ảnh tắt.']];
 setWidths(roadmap, { A: 72, B: 310, C: 78, D: 84, E: 70, F: 650 });
 
 wb.recalculate();
@@ -234,10 +235,14 @@ const base = summary.getRange('C6:L11').values;
 for (const [index, member] of registry.members.entries()) {
   const expectedStatus = ['backlog', 'in-progress', 'review', 'done', 'blocked']
     .map((status) => tasks.filter((task) => task.owner === member.name && task.status === status).length);
-  const expected = [6, 32, 6, 6, 38, ...expectedStatus];
+  const owned = tasks.filter((task) => task.owner === member.name);
+  const reviewed = tasks.filter((task) => task.reviewer === member.name);
+  const ownerPoints = owned.reduce((sum, task) => sum + task.points, 0);
+  const reviewPoints = reviewed.reduce((sum, task) => sum + task.reviewPoints, 0);
+  const expected = [owned.length, ownerPoints, reviewed.length, reviewPoints, ownerPoints + reviewPoints, ...expectedStatus];
   if (JSON.stringify(base[index]) !== JSON.stringify(expected)) throw new Error(`Formula values mismatch for ${member.name}: ${JSON.stringify(base[index])}`);
 }
-if (JSON.stringify(roadmap.getRange('C11:E11').values[0]) !== JSON.stringify([36, 192, tasks.filter((task) => task.status === 'done').length])) {
+if (JSON.stringify(roadmap.getRange(`C${phaseTotal}:E${phaseTotal}`).values[0]) !== JSON.stringify([tasks.length, tasks.reduce((sum, task) => sum + task.points, 0), tasks.filter((task) => task.status === 'done').length])) {
   throw new Error('Roadmap totals mismatch independent source counts.');
 }
 // Recalculation proof: temporarily complete one task; its owner/phase counts react.
@@ -245,12 +250,12 @@ const oldStatus = detail.getRange('H5').values[0][0];
 const ownerIndex = registry.members.findIndex((member) => member.name === tasks[0].owner);
 const ownerSummaryRow = 6 + ownerIndex;
 const originalDone = summary.getRange(`K${ownerSummaryRow}`).values[0][0];
-const originalPhaseDone = roadmap.getRange(`E${4 + tasks[0].phase}`).values[0][0];
+const originalPhaseDone = roadmap.getRange(`E${5 + registry.phases.findIndex((phase) => phase.id === tasks[0].phase)}`).values[0][0];
 detail.getRange('H5').values = [[oldStatus === 'done' ? 'backlog' : 'done']];
 wb.recalculate();
 const delta = oldStatus === 'done' ? -1 : 1;
 if (summary.getRange(`K${ownerSummaryRow}`).values[0][0] !== originalDone + delta
-  || roadmap.getRange(`E${4 + tasks[0].phase}`).values[0][0] !== originalPhaseDone + delta) {
+  || roadmap.getRange(`E${5 + registry.phases.findIndex((phase) => phase.id === tasks[0].phase)}`).values[0][0] !== originalPhaseDone + delta) {
   throw new Error('Input mutation did not recalculate summary and roadmap.');
 }
 detail.getRange('H5').values = [[oldStatus]];
@@ -267,7 +272,7 @@ if (!args.includes('--skip-render')) {
     await fs.writeFile(path.join(qaDir, filename), new Uint8Array(await blob.arrayBuffer()));
   };
   await render('Tổng hợp', 'A1:L18', 'workbook-summary.png');
-  await render('Lộ trình', 'A1:F16', 'workbook-roadmap.png');
+  await render('Lộ trình', `A1:F${phaseTotal + 5}`, 'workbook-roadmap.png');
   await render('Tasks', 'A1:I4', 'workbook-tasks-header-core.png');
   await render('Tasks', 'J4:K4', 'workbook-tasks-header-criteria.png');
   for (let start = firstRow; start <= lastRow; start += 6) {
@@ -306,7 +311,11 @@ await fs.writeFile(sourceSidecar, JSON.stringify({
 const verification = {
   project: registry.project, sourceDate: registry.updatedAt, records: 36,
   sheets: ['Tổng hợp', 'Lộ trình', 'Tasks'],
-  totals: { ownerPoints: 192, reviewPoints: 36, totalPoints: 228 },
+  totals: {
+    ownerPoints: tasks.reduce((sum, task) => sum + task.points, 0),
+    reviewPoints: tasks.reduce((sum, task) => sum + task.reviewPoints, 0),
+    totalPoints: tasks.reduce((sum, task) => sum + task.points + task.reviewPoints, 0),
+  },
   formulaValues: base, mutationRecalculation: 'passed-and-restored',
   exportImportRoundtrip: 'passed', errorScan: errors.ndjson,
   output: path.relative(repo, outputPath).replaceAll('\\', '/'), sha256: hash, sourceFingerprint,

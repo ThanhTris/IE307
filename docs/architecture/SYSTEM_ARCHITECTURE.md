@@ -21,11 +21,11 @@ Mobile đọc/ghi dữ liệu học qua repository local. Giai đoạn đầu kh
 
 | Module | Trách nhiệm |
 | --- | --- |
-| apps/mobile | Navigation/screens, safe-area/accessibility, feature state, repository adapters; sync worker chỉ khi bật nhánh online |
-| packages/domain | Contract/validation theo deck, migration/import, scheduler deterministic, game/quiz eligibility, conflict policy |
-| packages/ui | Tokens/components theo prototype; không scheduler/quota/persistence |
-| services/api | Nhánh online/pilot sau review: API/Edge Function adapters, auth/consent/quota/source validation, lỗi ổn định/provider proxy |
-| supabase | Nhánh cloud tùy chọn: migrations, RLS, RPC/functions, seed demo không nhạy cảm, SQL/security tests |
+| frontend | Navigation/screens, safe-area/accessibility, feature state, repository adapters; sync worker chỉ khi bật nhánh online |
+| frontend/src/domain | Contract/validation theo deck, migration/import, scheduler deterministic, game/quiz eligibility, conflict policy |
+| frontend/src/ui | Tokens/components theo prototype; không scheduler/quota/persistence |
+| backend | Nhánh online/pilot sau review: API/Edge Function adapters, auth/consent/quota/source validation, lỗi ổn định/provider proxy |
+| backend/supabase | Nhánh cloud tùy chọn: migrations, RLS, RPC/functions, seed demo không nhạy cảm, SQL/security tests |
 | schemas | JSON contracts versioned; mẫu cần mở rộng bằng task/migration trước production |
 
 Domain interfaces không phụ thuộc UI/backend. Boundary validate JSON; không biến JSON người dùng thành query/code/template thực thi. [CARD_JSON](../specs/CARD_JSON_SPEC.md) phân biệt nội dung linh hoạt với metadata có cấu trúc.
@@ -77,4 +77,4 @@ RLS/owner tests bao phủ dữ liệu; consent server version/revoke và purge k
 
 Benchmark theo [NFR](../product/NON_FUNCTIONAL_REQUIREMENTS.md): fixture 10.000 card/50.000 review events, Android release thật, query plan/latency/memory/size và network/crash/replay. Mục tiêu chưa đo. Core offline độc lập, pilot không đạt flag tắt/listing chỉ claim chức năng nghiệm thu. [RELEASE](../specs/RELEASE_SPEC.md)
 
-MANABI-001 cần human review contract/version/consent/quota/retention/ngưỡng pilot và task dependencies trước implementation. Status ADR kế thừa không phê duyệt tự động scope mới.
+Cần review contract/version/consent/quota/retention/ngưỡng pilot và task dependencies trước implementation.

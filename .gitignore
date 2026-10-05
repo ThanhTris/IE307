@@ -42,17 +42,10 @@ __pycache__/
 *.tmp
 *.log
 
-# Root compatibility copies kept by local Windows permissions
-/memo-vocabulary.html
-/Tai_lieu.docx
-/AI-CONTEXT-HANDOFF.md
-/ANTIGRAVITY-OPENDESIGN-HANDOFF.md
-/MODERN-UI-REFERENCE-PLAYBOOK.md
-/UI-IMPLEMENTATION-NOTES.md
 
 # Deliverable build artifacts
-deliverables/release/*.aab
-deliverables/release/*.apk
-deliverables/release/*.ipa
-deliverables/demo/*.mp4
-deliverables/package/*.zip
+docs/deliverables/release/*.aab
+docs/deliverables/release/*.apk
+docs/deliverables/release/*.ipa
+docs/deliverables/demo/*.mp4
+docs/deliverables/package/*.zip

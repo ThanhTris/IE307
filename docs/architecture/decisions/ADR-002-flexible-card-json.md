@@ -2,13 +2,13 @@
 
 ## Trạng thái
 
-Lịch sử: **Accepted ngày 24/09/2026**. Cập nhật Manabi ngày 02/10/2026 giữ nguyên nguyên tắc JSON; metadata/confirmation/schedule contract mới cần review MANABI-001 và task dữ liệu. Không tự coi phần bổ sung đã được Accepted.
+Đề xuất, chờ review kỹ thuật về schema, version, confirmation và lịch ôn trước triển khai.
 
 ## Quyết định
 
-Deck sở hữu `fieldSchema` JSON versioned; card lưu nội dung trong `fields` JSON. Ownership, version/hash, lịch ôn, sync và xóa mềm nằm ngoài user fields, truy vấn được qua cột/index. SQLite TEXT JSON local, PostgreSQL JSONB theo baseline; JSON không bắt buộc MongoDB.
+Deck sở hữu `fieldSchema` JSON versioned; card lưu nội dung trong `fields` JSON. Ownership, version/hash, lịch ôn, sync và xóa mềm nằm ngoài user fields, truy vấn được qua cột/index. SQLite TEXT JSON local, PostgreSQL JSONB cho nhánh cloud tùy chọn; JSON không bắt buộc MongoDB.
 
-Đề xuất bổ sung cần review: `card_schedules` riêng owner-card-template; card `contentVersion`/`contentHash` tách recordVersion và scheduler state; `confirmedContentVersion`/`confirmedContentHash` phải khớp nguồn trước quiz/ảnh. Sửa sense/mapping/nội dung làm nguồn cũ stale. [DATA_STORAGE](../../specs/DATA_STORAGE_SPEC.md), [ADR-004](ADR-004-json-storage-and-database.md)
+Thiết kế cần review: `card_schedules` riêng owner-card-template; card `contentVersion`/`contentHash` tách recordVersion và scheduler state; `confirmedContentVersion`/`confirmedContentHash` phải khớp nguồn trước quiz/ảnh. Sửa sense/mapping/nội dung làm nguồn cũ stale. [DATA_STORAGE](../../specs/DATA_STORAGE_SPEC.md), [ADR-004](ADR-004-json-storage-and-database.md)
 
 ## Lý do
 

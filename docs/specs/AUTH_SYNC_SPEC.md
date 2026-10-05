@@ -1,6 +1,6 @@
 # Đặc tả tài khoản và đồng bộ — Manabi
 
-Liên kết: FR-12/13/17, NFR-01/03/04/05/08. Extension không chặn core offline. Baseline provider theo [DATA_STORAGE](DATA_STORAGE_SPEC.md)/ADR; chưa có app/auth production.
+Liên kết: FR-12/13/17, NFR-01/03/04/05/08. Extension không chặn core offline. Provider dự kiến theo [DATA_STORAGE](DATA_STORAGE_SPEC.md)/ADR; chưa có app/auth production.
 
 ## Tài khoản
 

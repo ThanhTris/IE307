@@ -1,6 +1,6 @@
 # Đánh giá JSON và MongoDB cho Manabi
 
-Ngày kiểm tra nguồn: 04/10/2026. Trạng thái: **nghiên cứu và host SQLite spike MANABI-004**, chưa có benchmark Android, migration app hay backend triển khai. Tài liệu không thay thế task, spec hoặc review kiến trúc.
+Ngày kiểm tra nguồn: 04/10/2026. Trạng thái: **nghiên cứu và kế hoạch spike SQLite MANABI-003**, chưa có benchmark Android, migration app hay backend triển khai. Tài liệu không thay thế task, spec hoặc review kiến trúc.
 
 ## Kết luận đề xuất
 
@@ -22,7 +22,7 @@ Không lưu mọi card/history của deck vào một JSON lớn. Mỗi card/even
 | Truy vấn SRS | Cột/index rõ; JSONB cho nội dung | Field/index rõ; không để SRS trong user fields |
 | Backend cho Gemini | Edge Function và secrets | Backend/Function riêng và secrets |
 | Review/history/statistics | Quan hệ, constraint và transaction | Collections/reference/aggregation; thiết kế transaction |
-| Công tích hợp | Phù hợp baseline, ít module vận hành mới | Thêm API, auth integration, deployment, permissions |
+| Công tích hợp | Phù hợp kiến trúc đề xuất, ít module vận hành | Thêm API, auth integration, deployment, permissions |
 | Rủi ro chính | RLS sai, sync/conflict và quota gói miễn phí | API authorization, sync/conflict, gói miễn phí và tutorial App Services đã EOL |
 
 Đánh giá công việc trong bảng là suy luận từ kiến trúc Manabi và khả năng sản phẩm, không phải số liệu đo thời gian triển khai. Không có phương án nào tự giải quyết đồng bộ nhiều thiết bị chỉ bằng việc chọn database.
@@ -75,6 +75,6 @@ Supabase Free hiện có 500 MB database, 1 GB file storage và 5 GB egress; pro
 
 Giữ repository interface và JSON contract trung lập để có thể nghiên cứu adapter khác sau. Không triển khai cả hai backend trong MVP vì làm tăng đáng kể phạm vi kiểm thử và đồng bộ.
 
-## 7. Evidence host SQLite của MANABI-004
+## 7. Kế hoạch kiểm chứng SQLite
 
-Spike MANABI-004 trên nhánh triển khai dùng SQLite đi kèm Python, SQL migration v1 và fixture hai `fieldSchema`/bốn card tiếng Nhật tổng hợp. Kết quả máy host ghi SQLite 3.50.4, `PRAGMA user_version=1`, bốn truy vấn due/search/tag/version đều có index trong `EXPLAIN QUERY PLAN`; có kiểm Unicode/custom field, scope local, rollback khi event ID trùng và JSON backup roundtrip/checksum sai không ghi dữ liệu. Runner và evidence thuộc task triển khai, không nằm trong gói tài liệu `main`. Đây là chứng cứ khả thi của schema trên máy host, chưa đo p50/p95 với 10.000 card trên Android, chưa test RLS/cloud hoặc migration nâng cấp từ DB người dùng thật.
+MANABI-003 dự kiến kiểm schema/migration, query due/search/tag/version và index, Unicode/custom field, scope local, rollback khi event ID trùng và backup roundtrip/checksum. Đây là kế hoạch kiểm thử, chưa có kết quả triển khai được xác nhận trong dự án. Cần đo trên Android với fixture mục tiêu và lưu evidence trước khi kết luận tính khả thi hoặc hiệu năng.

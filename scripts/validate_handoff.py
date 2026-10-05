@@ -13,21 +13,17 @@ from manabi_report_data import MANIFEST, REPORTS, UPDATE_HEADINGS, WORKBOOK_MANI
 
 def check(files: dict[str, bytes], require_reports: bool = True) -> list[str]:
     data, errors = snapshot(files)
+    if errors:
+        return errors
     tasks = data["tasks"]
-    expected = {f"MANABI-{i:03d}" for i in range(2, 38)}
+    expected = {f"MANABI-{i:03d}" for i in range(1, 37)}
     if {t["id"] for t in tasks} != expected or len(tasks) != 36:
-        errors.append("expected exactly MANABI-002..037")
+        errors.append("expected exactly MANABI-001..036")
     mapping = {t["id"]: t for t in tasks}
-    report_tasks = tasks + ([data["rebaseline"]] if data["rebaseline"] else [])
-    for member in data["members"]:
-        name = member["name"]
-        owned = [t for t in tasks if t["owner"] == name]
-        reviewed = [t for t in tasks if t["reviewer"] == name]
-        if (len(owned), sum(t["points"] for t in owned), len(reviewed)) != (6, 32, 6):
-            errors.append(f"unequal planned load: {name}")
+    report_tasks = tasks
     seen, visiting = set(), set()
     def visit(task_id):
-        if task_id == "MANABI-001" or task_id in seen:
+        if task_id in seen:
             return
         if task_id in visiting:
             errors.append(f"dependency cycle at {task_id}")
@@ -41,8 +37,7 @@ def check(files: dict[str, bytes], require_reports: bool = True) -> list[str]:
         visiting.remove(task_id)
         seen.add(task_id)
     for task in report_tasks:
-        if task["id"] != "MANABI-001":
-            visit(task["id"])
+        visit(task["id"])
         if task["owner"] == task["reviewer"]:
             errors.append(f"self review: {task['id']}")
         status = task["status"]
@@ -75,7 +70,7 @@ def check(files: dict[str, bytes], require_reports: bool = True) -> list[str]:
             errors.append("missing workbook-source.json; regenerate workbook")
         else:
             workbook_meta = json.loads(files[WORKBOOK_MANIFEST].decode("utf-8"))
-            task_source = {name: files[name] for name in ["data/project-tasks.json", *(t["file"] for t in tasks)]}
+            task_source = {name: files[name] for name in ["tasks/project-tasks.json", *(t["file"] for t in tasks)]}
             if workbook_meta.get("sourceFingerprint") != fingerprint(task_source):
                 errors.append("workbook stale for task sources; regenerate workbook before DOCX")
             if REPORTS[3] in files and workbook_meta.get("artifactSha256") != hashlib.sha256(files[REPORTS[3]]).hexdigest():
@@ -105,7 +100,7 @@ def main() -> int:
         print("\n".join(errors), file=sys.stderr)
         return 1
     statuses = Counter(t["status"] for t in snapshot(files)[0]["tasks"])
-    print(f"Manabi handoff OK: 36 tasks; equal planned load; DAG; FR/NFR; statuses {dict(statuses)}; "
+    print(f"Manabi handoff OK: 36 tasks; DAG; FR/NFR; statuses {dict(statuses)}; "
           + ("source only" if args.source_only else "report fingerprint/hashes"))
     return 0
 

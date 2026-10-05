@@ -10,9 +10,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 REPORTS = (
-    "deliverables/report/Manabi_Yeu_cau_va_dac_ta.docx",
-    "deliverables/report/Manabi_Ke_hoach_va_du_lieu.docx",
-    "deliverables/report/Manabi_Tien_do_cong_viec.docx",
+    "docs/deliverables/report/Manabi_Yeu_cau_va_dac_ta.docx",
+    "docs/deliverables/report/Manabi_Ke_hoach_va_du_lieu.docx",
+    "docs/deliverables/report/Manabi_Tien_do_cong_viec.docx",
     "docs/project/Phan_cong_du_an_Manabi.xlsx",
 )
 MANIFEST = "docs/project/generated-reports.json"
@@ -28,9 +28,9 @@ def monitored(name: str) -> bool:
         return True
     if name.startswith(("docs/", "tasks/")) and name.endswith(".md"):
         return True
-    if name.startswith(("data/", "schemas/")) and name.endswith(".json"):
+    if name.startswith(("tasks/", "schemas/")) and name.endswith(".json"):
         return True
-    if name.startswith(("apps/", "packages/", "services/", "supabase/", "scripts/", ".githooks/", "design/")):
+    if name.startswith(("frontend/", "backend/", "scripts/", ".githooks/", "design/")):
         return not name.endswith((".png", ".jpg", ".pdf", ".pyc")) and "/__pycache__/" not in name
     return name in {"package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "tsconfig.json"}
 
@@ -93,7 +93,13 @@ def section(body: str, heading: str) -> str:
 
 
 def snapshot(files: dict[str, bytes]) -> tuple[dict, list[str]]:
-    registry = json.loads(text(files, "data/project-tasks.json"))
+    if "tasks/project-tasks.json" not in files:
+        return {"tasks": [], "members": []}, [
+            "Chua co tasks/project-tasks.json va task trien khai chi tiet. "
+            "Hien chi co ke hoach; dung validate_repository.py de kiem tra. "
+            "Bao cao tien do chi sinh khi co du nguon task."
+        ]
+    registry = json.loads(text(files, "tasks/project-tasks.json"))
     task_files = {}
     errors = []
     for name in sorted(files):
@@ -122,12 +128,4 @@ def snapshot(files: dict[str, bytes]) -> tuple[dict, list[str]]:
             if not actual or actual.group(1).strip() != item[field]:
                 errors.append(f"{item['id']} {field} mismatch")
         tasks.append(item)
-    rebaseline = None
-    if "MANABI-001" in task_files:
-        name, body = task_files["MANABI-001"]
-        status = re.search(r"^- Trạng thái: (\S+)", body, re.M)
-        rebaseline = {"id": "MANABI-001", "file": name, "status": status.group(1) if status else "missing",
-                      "owner": re.search(r"^- Owner: (.+)$", body, re.M).group(1),
-                      "reviewer": re.search(r"^- Reviewer: (.+)$", body, re.M).group(1),
-                      "updates": {h: section(body, h) for h in UPDATE_HEADINGS}}
-    return {**registry, "tasks": tasks, "rebaseline": rebaseline, "sourceFingerprint": fingerprint(files)}, errors
+    return {**registry, "tasks": tasks, "sourceFingerprint": fingerprint(files)}, errors

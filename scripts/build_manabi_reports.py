@@ -226,7 +226,7 @@ def requirements(files, data):
 
 def plan(files, data):
     doc = document("Manabi kế hoạch triển khai và lựa chọn dữ liệu",
-                   "Nhóm có sáu thành viên và 36 task triển khai. Mỗi người nhận 32 điểm triển khai và 6 điểm review tương đối. Nội dung thẻ lưu JSON linh hoạt; đề xuất giữ SQLite local và PostgreSQL JSONB, kiểm chứng bằng spike trước khi chốt thay đổi database.", data["sourceFingerprint"])
+                   "Nhóm có sáu thành viên và 36 task. Phân công và ước lượng lấy từ nguồn task; tải gồm triển khai, hỗ trợ và review. Core dùng SQLite local và backup JSON; PostgreSQL JSONB thuộc nhánh cloud tùy chọn.", data["sourceFingerprint"])
     for index, (path, title) in enumerate((
         ("docs/project/TEAM_AND_RESPONSIBILITIES.md", "Phân công sáu thành viên"),
         ("docs/project/PROJECT_PLAN.md", "Roadmap và cổng nghiệm thu"),
@@ -250,20 +250,14 @@ def progress(files, data):
     states = {s: sum(t["status"] == s for t in tasks) for s in ("backlog", "in-progress", "blocked", "review", "done")}
     table(doc, ["Trạng thái", "Số task triển khai"], list(states.items()), [2, 5])
     doc.add_heading("Cách đọc các task chưa bắt đầu", 1)
-    doc.add_paragraph("Với mọi dòng backlog bên dưới: đã làm là kế hoạch/spec/task; chưa có code triển khai, file triển khai thay đổi hoặc test chạy. Còn lại là deliverable và toàn bộ acceptance criteria trong task. Blocker kế hoạch là MANABI-001/dependency chưa được duyệt; chưa kiểm kỹ thuật nên chưa kết luận không lỗi. Bước tiếp theo là review dependency rồi nhận task. Reviewer chưa duyệt. Khi task bắt đầu, báo cáo thêm đủ bảy mục cập nhật riêng bên dưới bảng của owner.")
-    baseline = data["rebaseline"]
-    if baseline:
-        heading = doc.add_heading("Công việc tái lập tài liệu MANABI 001", 1)
-        heading.paragraph_format.page_break_before = True
-        doc.add_paragraph(f"Trạng thái: {baseline['status']}. Owner: {baseline['owner']} Reviewer: {baseline['reviewer']} Không cộng vào tải 36 task triển khai. Nguồn: {baseline['file']}.")
-        table(doc, ["Nội dung", "Cập nhật"], [(h, baseline["updates"][h] or "Chưa ghi") for h in UPDATE_HEADINGS], [1.55, 5.45])
+    doc.add_paragraph("Với mọi dòng backlog bên dưới: đã làm là kế hoạch/spec/task; chưa có code triển khai, file triển khai thay đổi hoặc test chạy. Còn lại là deliverable và toàn bộ acceptance criteria trong task. Blocker kế hoạch là phạm vi/dependency chưa được duyệt; chưa kiểm kỹ thuật nên chưa kết luận không lỗi. Bước tiếp theo là review dependency rồi nhận task. Reviewer chưa duyệt. Khi task bắt đầu, báo cáo thêm đủ bảy mục cập nhật riêng bên dưới bảng của owner.")
     for member in data["members"]:
         name = member["name"]
         heading = doc.add_heading(heading_text("Tiến độ của " + name), 1)
         heading.paragraph_format.page_break_before = True
         owned = [t for t in tasks if t["owner"] == name]
         review = [t for t in tasks if t["reviewer"] == name]
-        doc.add_paragraph(f"Owner 6 task, 32 điểm triển khai; reviewer 6 task, 6 điểm. Tổng 38 điểm tương đối. Không phải số giờ hoặc tỷ lệ hoàn thành.")
+        doc.add_paragraph(f"Owner {len(owned)} task; reviewer {len(review)} task. Điểm được ước lượng theo phạm vi từng task.")
         rows = [[f"{t['id']}\n{t['title']}", f"{t['status']}\n{t['points']} điểm\nReviewer {t['reviewer']}\nPhụ thuộc: {', '.join(t['deps'])}", t["deliverable"]] for t in owned]
         table(doc, ["Task và nội dung", "Trạng thái và review", "Phần cần triển khai hoặc nghiệm thu"], rows, [2.7, 1.7, 2.6])
         doc.add_paragraph("Task phải review: " + ", ".join(t["id"] for t in review))
@@ -280,7 +274,7 @@ def main():
     data, errors = snapshot(files)
     if errors:
         raise SystemExit("\n".join(errors))
-    output = ROOT / "deliverables/report"
+    output = ROOT / "docs/deliverables/report"
     output.mkdir(parents=True, exist_ok=True)
     for name, builder in zip(REPORTS[:3], (requirements, plan, progress)):
         doc = builder(files, data)

@@ -1,43 +1,41 @@
 # Nhóm và phân công Manabi
 
-Vai trò sáu thành viên được chủ dự án xác nhận ngày 02/10/2026: Trí trưởng nhóm/BE; Trang UI/FE; Tâm và Vinh data; Trung và Tuấn có khả năng FE, BE và data. Phân công dưới đây là kế hoạch đề xuất dựa trên vai trò đó; chưa có task triển khai được hoàn thành.
+Người thực hiện và reviewer trong kế hoạch chỉ là đề xuất tham khảo, không bắt buộc. Thành viên có thể nhận task được đề xuất cho người khác; trao đổi trong nhóm để tránh nhận trùng và cập nhật người thực hiện thực tế khi bắt đầu. GitHub Assignees để trống đến khi có người nhận. Reviewer thực tế phải khác người thực hiện.
 
-| Thành viên | Vai trò | Task owner | Công việc chính |
+Nhóm gồm sáu thành viên. Phân công dưới đây là kế hoạch dự kiến, chưa bắt đầu triển khai. [Danh mục 36 task](../../tasks/backlog/MASTER_BACKLOG.md) là nguồn chi tiết owner/reviewer/dependency/đầu ra.
+
+| Thành viên | Task đề xuất | Số task | Trách nhiệm |
 | --- | --- | --- | --- |
-| Trí | Trưởng nhóm, BE | 003, 009, 015, 021, 027, 033 | CI/build, auth, sync, gateway/quota Gemini, security và Android release |
-| Trang | UI/FE | 007, 008, 014, 020, 026, 031 | Component từ prototype, flashcard, Four Choices, quiz UI, hiệu năng và accessibility |
-| Tâm | Data | 004, 010, 016, 022, 028, 034 | JSON/Mongo spike, SQLite/cloud schema, backup, consent data lifecycle, schema-driven CRUD |
-| Vinh | Data | 005, 011, 017, 023, 029, 035 | Fixture, import, scheduler, study signal, progress/history và regression dữ liệu |
-| Trung | FE/BE/data | 006, 012, 018, 024, 030, 036 | Corpus/rubric, Matching, AI generator/validator, AI evaluation, core QA và báo cáo |
-| Tuấn | FE/BE/data | 002, 013, 019, 025, 032, 037 | Expo foundation, Word Ninja, nguồn ảnh/ảnh UI, integration và slide/demo |
+| Trí | 002, 014, 020, 025, 026, 032 | 6 | BE, điều phối; CI, sync, gateway, benchmark, security, release |
+| Trang | 006, 007, 013, 019, 030, 033 | 6 | UI/FE; UI nền/settings, deck/card, flashcard, Four Choices, quiz UI, accessibility |
+| Tâm | 003, 009, 015, 018, 027 | 5 | Data; contract/spike SQLite, repository, cloud schema, pipeline ảnh, lifecycle |
+| Vinh | 004, 010, 016, 022, 023, 034 | 6 | Data; fixture, import, SRS, shadow signal, đánh giá AI độc lập, regression |
+| Trung | 005, 008, 011, 017, 021, 029, 035 | 7 | FE/BE/data; corpus, auth, Matching, validator, backup, QA, báo cáo |
+| Tuấn | 001, 012, 024, 028, 031, 036 | 6 | FE/BE/data; Expo, Word Ninja, UI ảnh, dashboard, integration, slide/demo |
 
-Tâm sở hữu domain/schema của task CRUD MANABI-034; Trang pairing kiểm form/render theo prototype. Trí phối hợp thiết kế contract, không làm thay tất cả backend. Trung/Tuấn đều có coding, không chỉ làm QA/tài liệu.
+## Ranh giới UI, dữ liệu và tích hợp
 
-## Balance bằng points tương đối
+- 009: Tâm sở hữu schema/migration/repository CRUD. 033: Trang sở hữu UI deck/card, form động và tích hợp repository; Tâm hỗ trợ contract, Tuấn và Tâm review.
+- 010: Vinh sở hữu import/parser/transaction; Trung làm UI mapping/preview. 021: Trung sở hữu cả backup service và UI/file picker, Tâm review dữ liệu.
+- 027: Tâm sở hữu lifecycle/consent state/delete; Trung làm UI. 008 do Trung sở hữu cả auth UI và logic; Trung hỗ trợ UI conflict cho 014 của Trí.
+- 028: Tuấn sở hữu dashboard/UI/tích hợp; Vinh cung cấp query/metrics. 031: Tuấn tích hợp liên tục từ core đầu tiên; Trí review contract/build, không chờ cuối kỳ.
+- 018: Tâm làm pipeline nguồn/quyền/metadata ảnh; 024: Tuấn làm bài tập ảnh. Trung làm validator 017; Vinh giữ holdout và đánh giá 023 độc lập.
+- Mỗi owner chịu trách nhiệm nối các phần và evidence của task; không để phần hỗ trợ trở thành công việc không có người chịu trách nhiệm.
 
-| Thành viên | Task owner | Owner points | Task review | Review points | Tổng |
-| --- | --- | --- | --- | --- | --- |
-| Trí | 6 | 32 | 6 | 6 | 38 |
-| Trang | 6 | 32 | 6 | 6 | 38 |
-| Tâm | 6 | 32 | 6 | 6 | 38 |
-| Vinh | 6 | 32 | 6 | 6 | 38 |
-| Trung | 6 | 32 | 6 | 6 | 38 |
-| Tuấn | 6 | 32 | 6 | 6 | 38 |
+## Cân bằng tải
 
-Mỗi người có 2 task 3 points, 2 task 5 points và 2 task 8 points. Points đo độ lớn/rủi ro tương đối; không phải giờ, không đảm bảo công sức thực bằng nhau. QA, tài liệu và nghiên cứu cần thiết cho task nằm trong estimate; review 1 point/task là estimate riêng. Tổng 192 owner + 36 review = 228 points; MANABI-001 hiện tại không tính vào tải phát triển tương lai. Sau phase 1 nhóm đo tốc độ thực và đổi estimate/phân công khi cần, ghi lý do trong registry/task.
+Số task không đại diện số giờ: Tâm có năm task nhưng persistence/schema rủi ro cao; Trung có bảy task và phần hỗ trợ UI nên cần kiểm tải trước mỗi đợt. Trí còn điều phối/merge và xử lý contract ngoài sáu task owner.
 
-## Review và chuyên môn
+Trước khi nhận task, estimate theo AC đã chốt, ghi riêng công owner, hỗ trợ và review; không mặc định review nào cũng một điểm. Chưa có estimate chi tiết hoặc thời gian rảnh nên chưa cam kết tải bằng nhau hay deadline. Cuối đợt nền tảng đo công thực tế và điều chỉnh kế hoạch; không nhận thêm auth/AI/ảnh khi core hoặc công hỗ trợ đang quá tải. Tối đa hai task active/người, ưu tiên hoàn tất một luồng.
 
-Reviewer chính luân phiên theo cặp Trí ↔ Trung (BE/AI), Trang ↔ Tuấn (FE/game), Tâm ↔ Vinh (data). Mỗi người review 6 task người khác. Reviewer không phải owner và không tự lấy output AI làm review. Review security/architecture cần cross-check Trí; thay đổi UI/schema liên ngành cần Trang/Tâm tham gia nếu ảnh hưởng module của họ.
+## Công việc core có thể phối hợp sớm
 
-Review nghĩa tiếng Nhật/AI/ảnh cần assessor biết tiếng Nhật độc lập với người viết prompt/mapping; hiện chưa gán người đủ chuyên môn. Reviewer task phải tìm assessor và lưu đánh giá; nếu chưa có năng lực này, gate semantic vẫn chưa đạt dù code chạy. Giấy phép/consent cần kiểm theo nguồn; code reviewer không mặc nhiên thay được assessor nội dung.
+Sau 003/001: Tâm làm 009; Vinh làm fixture 004; Trang làm UI nền/settings 006; Trí làm CI 003. Sau repository được duyệt: Trang làm 033, Vinh làm 016/import, Trung làm 021 và UI import, Tuấn làm harness 031, Trí hỗ trợ review/tích hợp và chuẩn bị đo/log an toàn. Công harness có thể bắt đầu sớm nhưng smoke chỉ hoàn tất sau 033/008. Không yêu cầu import/backup chờ màn CRUD khi repository/contract đã đủ và được review.
 
-## Cập nhật trước push và phối hợp
+## Review và pilot
 
-- Tối đa hai task active/người; mọi dependency qua review trước khi bắt đầu task phụ thuộc.
-- Owner cập nhật status, phần đã làm/còn lại, errors/blockers, file đổi, tests/evidence, ngày cập nhật và bước tiếp theo trong task Markdown.
-- Khi push task hoặc code triển khai, sinh lại DOCX tiến độ cùng task để trưởng nhóm/reviewer xem trước khi merge. Hướng dẫn/lệnh ở [TEAM_WORKFLOW](TEAM_WORKFLOW.md).
-- “Đã làm xong” nghĩa là review nếu chưa có quyết định độc lập. Chỉ reviewer chấp thuận Definition of Done mới chuyển done.
-- Không push key/deck riêng tư/dữ liệu thật; báo blocker sớm, không điền “không lỗi” khi chưa kiểm.
+Reviewer cụ thể nằm trong danh mục task, luôn khác owner; thay đổi schema/SRS/auth/sync có cả người data và fullstack review. Reviewer chỉ duyệt phần không do mình viết; nếu người hỗ trợ viết phần code đang review, bổ sung reviewer độc lập cho phần đó. Không ép số lượt review bằng nhau.
 
-Metadata kế hoạch và task/status thật nằm trên nhánh triển khai; báo cáo tiến độ và workbook được sinh từ nguồn đó. Bản `main` công bố phân công tổng quát, không công bố từng file task. Không xem bản Memo cũ trong lịch sử là phân công hiện tại.
+Vinh điều phối holdout/đánh giá AI, Trung phát triển generator/validator. Cần assessor biết tiếng Nhật độc lập với người viết prompt/mapping để duyệt nghĩa; chưa xác định được người phù hợp thì pilot không mở. Tâm review phương pháp không mặc nhiên thay assessor. Quyền ảnh và consent có evidence riêng.
+
+Core và release có thể hoàn tất khi online/AI/ảnh tắt. Task mở rộng bắt đầu khi đủ điều kiện nghiệm thu và nguồn lực. Phân công này chưa là quyết định review độc lập hoặc trạng thái Done. Workflow task/DOCX khi triển khai theo [TEAM_WORKFLOW](TEAM_WORKFLOW.md); giai đoạn hiện tại chỉ cập nhật tài liệu kế hoạch.

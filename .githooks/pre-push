@@ -4,7 +4,7 @@ set -eu
 MANABI_PYTHON_COMMAND="${MANABI_PYTHON:-python}"
 while read -r local_ref local_sha remote_ref remote_sha; do
   case "$local_sha" in 0000000000000000000000000000000000000000) continue ;; esac
-  if git cat-file -e "$local_sha:data/project-tasks.json" 2>/dev/null; then
+  if git cat-file -e "$local_sha:tasks/project-tasks.json" 2>/dev/null; then
     "$MANABI_PYTHON_COMMAND" scripts/validate_handoff.py --git-tree "$local_sha"
   else
     echo "Manabi docs baseline: no task registry in commit; handoff task check skipped"

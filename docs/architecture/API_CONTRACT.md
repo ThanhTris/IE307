@@ -1,6 +1,6 @@
 # Hợp đồng API — Manabi
 
-Trạng thái: **Proposed, chưa triển khai**; chờ human review MANABI-001/task API. Cập nhật 02/10/2026. Core dùng SQLite offline; endpoints không là điều kiện mở flashcard/game. Baseline Supabase Auth + PostgreSQL JSONB/RLS, chưa chọn MongoDB.
+Trạng thái: **Proposed, chưa triển khai**; chờ human review phạm vi và task API. Cập nhật 02/10/2026. Core dùng SQLite offline; endpoints không là điều kiện mở flashcard/game. Phương án online: Supabase Auth + PostgreSQL JSONB/RLS.
 
 Nguồn: [DATA_STORAGE](../specs/DATA_STORAGE_SPEC.md), [AUTH_SYNC](../specs/AUTH_SYNC_SPEC.md), [AI_QUIZ](../specs/AI_QUIZ_SPEC.md), [IMAGE_CONTEXT](../specs/IMAGE_CONTEXT_SPEC.md), [DATA_PRIVACY](../specs/DATA_PRIVACY_SPEC.md). Ví dụ chưa thay schema/migration executable trong task.
 
@@ -147,4 +147,4 @@ Codes: AUTH_REQUIRED, FORBIDDEN, CONSENT_REQUIRED, AI_POLICY_BLOCKED, SOURCE_NOT
 
 ## 10. Cổng trước code
 
-Task chốt executable schemas, config limits/TTL, reviewer auth, consent evidence, canonical hash, assignment lifecycle, transaction/retention và error matrix. Test A/B isolation/replay/2devices/source-edit, reservation expiry và đổi ngày, global429/revoke/purge/no-private-log/core offline. Contract không thay human approval MANABI-001/dependencies.
+Task chốt executable schemas, config limits/TTL, reviewer auth, consent evidence, canonical hash, assignment lifecycle, transaction/retention và error matrix. Test A/B isolation/replay/2devices/source-edit, reservation expiry và đổi ngày, global429/revoke/purge/no-private-log/core offline. Contract không thay human approval phạm vi và dependencies.

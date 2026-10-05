@@ -1,10 +1,15 @@
-# Quản lý task Manabi
+# Kế hoạch task Manabi
 
-`main` chỉ có chỉ mục và mẫu task. Trạng thái, acceptance criteria, dependency và evidence của task Manabi nằm trên nhánh `origin/codex/manabi-task004-restore-2026-10-04`; xem [Bắt đầu Manabi](../docs/project/START_HERE.md). Các file PM/Memo từ baseline cũ còn trong `tasks/in-progress` **không phải task Manabi đang làm** và không mở khóa công việc. Không nhận task từ tên thư mục trên `main` khi chưa kiểm nhánh triển khai.
+Người thực hiện và reviewer trong kế hoạch chỉ là đề xuất tham khảo, không bắt buộc. Thành viên có thể nhận task được đề xuất cho người khác; trao đổi trong nhóm để tránh nhận trùng và cập nhật người thực hiện thực tế khi bắt đầu. GitHub Assignees để trống đến khi có người nhận. Reviewer thực tế phải khác người thực hiện.
 
-- `backlog`: task đã định nghĩa nhưng chưa bắt đầu.
-- `in-progress`: đang có owner thực hiện; tối đa hai task active mỗi người.
-- `done`: đã đạt Definition of Done và được review.
-- `templates`: mẫu task chuẩn.
+Dự án hiện mới có plan, spec, UI mẫu và workflow. [Kế hoạch](../docs/project/PROJECT_PLAN.md) và [phân công sáu người](../docs/project/TEAM_AND_RESPONSIBILITIES.md) mô tả 36 task dự kiến; chưa xác nhận task triển khai nào đang làm hoặc hoàn thành.
 
-Task Markdown trên nhánh triển khai là nguồn chi tiết cho acceptance criteria, evidence và quyết định reviewer. Workbook/DOCX nếu có là bản tổng hợp sinh từ task, không phải trạng thái độc lập.
+Trước khi code, chốt task Markdown theo mẫu với owner/reviewer, phạm vi, acceptance criteria, dependency, linked spec và test plan.
+
+- `backlog`: task đã định nghĩa, chưa bắt đầu.
+- `in-progress`: công việc thực sự đã nhận; tối đa hai task active/người.
+- `review`: đã có kết quả và evidence, chờ reviewer độc lập.
+- `done`: chỉ sau review đạt Definition of Done.
+- `templates`: mẫu để chuẩn bị task.
+
+Workbook/DOCX được sinh khi có đủ task/registry triển khai; không dùng phân công dự kiến làm báo cáo tiến độ.

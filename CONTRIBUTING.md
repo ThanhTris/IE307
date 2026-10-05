@@ -8,7 +8,7 @@
 
 ## Luồng task
 
-1. Đọc [Bắt đầu Manabi](docs/project/START_HERE.md), rồi chọn task Manabi đủ thông tin trên nhánh triển khai được chỉ rõ ở đó; không chọn task Memo còn trong `main`.
+1. Đọc [Bắt đầu Manabi](docs/project/START_HERE.md), kế hoạch và phân công dự kiến. Trước khi triển khai, chốt task Markdown với phạm vi, acceptance criteria, dependency và linked spec.
 2. Gán owner/reviewer và chuyển file sang `tasks/in-progress`.
 3. Tạo nhánh, triển khai, kiểm thử và thêm evidence.
 4. Mở pull request theo template.

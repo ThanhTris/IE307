@@ -59,7 +59,7 @@ Truy vết: FR-02/03/04/11/13, NFR-03/08/12; [DECK_CARD](DECK_CARD_SPEC.md), [DA
 - PostgreSQL: dùng JSONB, thêm index có chọn lọc khi có use case truy vấn thật.
 - `due_at`, `state`, `stability`, `difficulty`, `reps`, `lapses`, `version`, `updated_at`, `deleted_at` không đặt trong `fields`.
 
-JSON là **định dạng nội dung**, không phải lựa chọn thay thế mọi database. Dữ liệu người dùng linh hoạt nhờ `fieldSchema` + `fields`; backend dùng JSONB vẫn lưu JSON mà có transaction/index/auth theo baseline. MongoDB/BSON được đánh giá trong nghiên cứu database, chưa mặc định chọn. Không gộp mọi card/lịch sử vào một file hoặc một document user tăng vô hạn.
+JSON là **định dạng nội dung**, không phải lựa chọn thay thế mọi database. Dữ liệu người dùng linh hoạt nhờ `fieldSchema` + `fields`; backend dùng JSONB vẫn lưu JSON mà có transaction/index/auth cho nhánh cloud tùy chọn. MongoDB/BSON được đánh giá trong nghiên cứu database, chưa mặc định chọn. Không gộp mọi card/lịch sử vào một file hoặc một document user tăng vô hạn.
 
 ## Validation và giới hạn đề xuất
 

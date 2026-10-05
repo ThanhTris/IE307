@@ -1,6 +1,6 @@
 # Yêu cầu sản phẩm — Manabi tiếng Nhật
 
-Phiên bản 2.0, ngày 02/10/2026. Chủ dự án đã chọn tên Manabi và phạm vi tiếng Nhật; hợp đồng triển khai, ngưỡng nghiệm thu, chính sách quiz AI và ảnh cần reviewer duyệt trước khi code. Tài liệu không chứng minh app production đã tồn tại.
+Manabi là đồ án ứng dụng học tiếng Nhật trên Android. Tài liệu xác định phạm vi, luồng học và yêu cầu để nhóm chuẩn bị triển khai. Hợp đồng kỹ thuật và ngưỡng nghiệm thu được review trước khi code.
 
 ## Bài toán và người dùng
 
