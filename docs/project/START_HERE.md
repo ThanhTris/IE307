@@ -2,6 +2,8 @@
 
 Đọc [PRD](../product/PRODUCT_REQUIREMENTS.md), [UI](../specs/UI_SPEC.md), [policy](../specs/DECISION_SPEC.md), [backlog](../../tasks/backlog/MASTER_BACKLOG.md). Bộ nền v0.1 đang chờ review GM-00. Thư mục mobile là skeleton; chưa có lệnh chạy Expo hợp lệ.
 
+Nhóm thiết kế/React Native dùng [kế hoạch UI theo màn và chặng](UI_IMPLEMENTATION_PLAN.md) để thống nhất chức năng, trạng thái lỗi và bằng chứng cần bàn giao.
+
 1. Reviewer và chủ dự án review giả định trong [migration plan](MIGRATION_PLAN.md), ADR và prototype.
 2. Chốt owner/reviewer thực tế, không coi phân công đề xuất là giao việc đã nhận.
 3. Khi GM-00 được duyệt, GM-01 bootstrap Expo, khóa dependency, chạy Android. GM-03/04 có thể bắt đầu song song sau cùng gate.

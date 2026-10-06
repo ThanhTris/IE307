@@ -2,6 +2,8 @@
 
 Draft v0.1. Prototype: [mở HTML](../../design/prototypes/gi-cung-duoc.html). Đây là mô phỏng một thiết bị, không có backend.
 
+[Kế hoạch UI và thứ tự triển khai](../project/UI_IMPLEMENTATION_PLAN.md) liệt kê chức năng, trạng thái và tiêu chí nghiệm thu theo từng màn.
+
 ## Hướng hình ảnh
 
 Ấm, thân thiện như một bàn ăn: nền kem, màu cam đất cho hành động, xanh rêu cho trạng thái đã thống nhất. Ưu tiên tên món và nút rõ nghĩa; không cần ảnh món tải mạng để hiểu luồng. Không dùng hình thức dating hoặc thông điệp ép người dùng nhận món.
