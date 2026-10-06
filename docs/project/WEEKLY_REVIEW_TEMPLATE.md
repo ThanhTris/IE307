@@ -1,29 +1,11 @@
 # Review tuần
 
-- Tuần và ngày:
-- Người điều phối:
-- Mục tiêu tuần:
-
-## Kết quả
-
-- Task Done kèm evidence:
-- Task đang review:
-- Task bị chặn và người xử lý:
-
-## Chất lượng
-
-- Build/test trạng thái:
-- Lỗi P0/P1 mở:
-- Android/iOS đã kiểm tra:
-- Dữ liệu/migration/RLS đã kiểm tra:
-
-## AIDD learning
-
-- Prompt/context hiệu quả:
-- Output AI bị loại và lý do:
-- Spec/ADR cần cập nhật:
-
-## Quyết định tuần tới
-
-- Scope giữ/cắt:
-- Owner và deadline:
+- Tuần / ngày / người tham gia:
+- Task được reviewer chấp thuận và evidence:
+- Task còn review / blocked, nguyên nhân và owner xử lý:
+- Demo dọc đã chạy trên thiết bị nào:
+- Số đo thực tế và lỗi người dùng (không thay bằng mục tiêu):
+- Quota/chi phí và tình trạng backend:
+- Thay đổi scope/ADR đã được owner quyết định:
+- Công review/hỗ trợ và điều chỉnh tải:
+- Tuần tới nhận task nào, dependency đã mở chưa:

@@ -1,51 +1,35 @@
-# Hướng dẫn AI coding agent — Manabi
+# Hướng dẫn AI coding agent — Gì Cũng Được
 
-## Dự án
+## Bối cảnh
 
-Manabi là đồ án Android-first học tiếng Nhật: deck/card, flashcard, lịch ôn, Matching, Four Choices, Word Ninja, tiến độ và backup JSON. Core dùng SQLite và hoạt động offline. Auth/sync là mở rộng tùy chọn; Gemini quiz và ảnh đời sống là pilot có điều kiện review.
+Dự án Android-first React Native giúp nhóm chọn món. Nguồn Manabi chỉ còn trong lịch sử Git; thư mục lưu trữ đã xóa theo yêu cầu chủ dự án. Bộ nền mới gồm plan, spec, prototype và skeleton; chưa có ứng dụng/API triển khai.
 
-Hiện dự án có plan, spec, UI mẫu, workflow và [36 task dự kiến](tasks/backlog/MASTER_BACKLOG.md) cho [sáu thành viên](docs/project/TEAM_AND_RESPONSIBILITIES.md). Chưa triển khai app/API. Prototype là tham chiếu giao diện.
+Nguồn yêu cầu: chỉ dẫn hiện tại của chủ dự án → task/AC → spec/ADR → PRD/plan → prototype/research. [Migration plan](docs/project/MIGRATION_PLAN.md) ghi giả định chờ review. Không dùng commit đề tài cũ làm yêu cầu active.
 
-## Nguồn yêu cầu
+## AIDD
 
-1. Yêu cầu hiện tại của chủ dự án và task được giao.
-2. Acceptance criteria, giả định, dependency và spec liên kết của task.
-3. `docs/specs` và `docs/architecture`.
-4. `docs/product/PRODUCT_REQUIREMENTS.md` và `docs/project/PROJECT_PLAN.md`.
-5. Nghiên cứu và prototype hỗ trợ quyết định; báo cáo tổng hợp từ nguồn task.
+Trước code: task có owner, reviewer khác owner, scope, AC, dependency, spec, patch plan và test plan. Dependency phải được review chấp thuận. GM-00 là bộ nền chờ review, không tự coi các task phụ thuộc đã mở khóa.
 
-Trước khi code, chốt task Markdown với owner/reviewer, phạm vi, AC, dependency và test plan. Chỉ nhận task khi dependency đã được review chấp thuận. Hỏi owner khi có mâu thuẫn hoặc thay đổi phạm vi, kiến trúc, dữ liệu, quyền riêng tư hay release.
+Đọc [workflow](docs/project/TEAM_WORKFLOW.md), [DoD](docs/project/DEFINITION_OF_DONE.md). AI không tự duyệt hoặc ghi Done. Thay phạm vi/kiến trúc/quyền riêng tư phải ghi ADR và hỏi owner khi chưa có ủy quyền. Cập nhật tài liệu/UI không cần task mới mỗi lần; gom vào task nền khi phù hợp.
 
-## Quy trình AIDD
+## React Native
 
-1. Đọc task, dependency, spec/ADR và acceptance criteria.
-2. Ghi giả định, nêu patch nhỏ nhất và kế hoạch kiểm thử trước khi sửa.
-3. Triển khai đúng phạm vi.
-4. Chạy kiểm tra phù hợp, lưu evidence tại đường dẫn task.
-5. Chuyển task sang `tasks/review` để reviewer khác owner xác nhận.
-6. Chỉ chuyển `tasks/done` sau review đạt [Definition of Done](docs/project/DEFINITION_OF_DONE.md). Cập nhật spec/ADR khi quyết định thay đổi.
+- Expo + TypeScript strict; routes mỏng trong `mobile/src/app`; screens/use cases theo feature; domain độc lập UI/network.
+- Chưa thêm package/lockfile hoặc thư viện native trước khi task bootstrap đủ dependency và reviewer chấp thuận dependency.
+- FlatList, safe area, dark mode, font scaling, TalkBack, nút thay thế swipe.
+- Server là nguồn chốt trạng thái/kết quả; local giữ nháp/cache. Không giả offline nhóm.
 
-## Dữ liệu và AI
+## Dữ liệu
 
-- Deck định nghĩa `fieldSchema`; nội dung card nằm trong `fields` JSON. `dueAt`, SRS state, lịch sử và khóa đồng bộ phải truy vấn ngoài JSON.
-- Quiz lấy đáp án từ nghĩa/cách đọc của card đã được người học xác nhận. Gemini chỉ đề xuất câu hỏi và ba nhiễu. Validate schema, nghĩa, trùng/đồng nghĩa và đáp án mơ hồ; thiếu ba nhiễu hợp lệ thì bỏ câu.
-- Lưu nguồn card/version, model/prompt/version validator và trạng thái duyệt. Câu lỗi không được chấm vào lịch ôn.
-- Tín hiệu trắc nghiệm có ảnh hưởng giới hạn lên SRS, có test và review; mặc định shadow mode. Tự đánh giá sau nhớ lại trực tiếp là tín hiệu chính.
-- Ảnh phải có URL/ID nguồn, tác giả, license/ghi công, thời điểm kiểm tra và liên kết nghĩa/card được duyệt. Thiếu quyền hoặc sai nghĩa thì không hiển thị.
-- Chỉ gửi dữ liệu tối thiểu lên dịch vụ ngoài sau thông báo/consent phù hợp; không gửi private deck, PII hoặc toàn bộ lịch sử mặc định.
-- Trước task Gemini, đọc [đánh giá Free Tier](docs/research/GEMINI_FREE_TIER_FEASIBILITY.md). Pilot dùng card demo không nhạy cảm và phải đáp ứng điều kiện tuổi/vùng/tier.
-- Không commit key, token, dữ liệu người học, signing hoặc nội dung chưa có quyền sử dụng.
+- WANT/OK/NO; thiếu phiếu không phải OK. NO không thể thành winner.
+- Hai vòng tối đa; server chọn một lần, kết quả ổn định qua retry/reconnect.
+- Giữ kín phiếu bằng quyền database/RPC, không chỉ ẩn UI. Host không xem phiếu thô người khác.
+- Supabase là đề xuất ADR chờ review. RPC đặc quyền kiểm auth/membership/version/expiry, fixed search_path, lock room và idempotency.
+- Không secret/service_role trong client; không log phiếu/token; không gửi dữ liệu sang AI mặc định.
+- OCR/AI/fairness qua nhiều bữa là mở rộng, không chặn MVP. Ảnh cần quyền sử dụng; không tuyên bố an toàn dị ứng từ tên món.
 
-## Code
+## Bàn giao
 
-- TypeScript strict; `any` cần lý do review. Scheduler, quiz validation, game signal và persistence nằm ngoài screen/component.
-- JSON có schema validation; migration có version, fixture và đường nâng cấp.
-- Danh sách dài dùng `FlatList`/`SectionList`. Hỗ trợ safe area, font scaling, dark mode, accessibility và compact/medium/expanded.
-- Dependency mới phải có lý do, license/kích thước và reviewer đồng ý.
-- Học thẻ, lịch ôn và game dùng dữ liệu đã lưu phải hoạt động khi mất mạng hoặc Gemini lỗi.
+Chạy `python scripts/validate_repository.py`, kiểm diff và evidence. HTML phải ghi rõ mô phỏng; native build có evidence riêng. Báo cáo/scripts Manabi trong lịch sử không áp dụng cho dự án mới; không sinh DOCX cũ để vượt kiểm tra. Sinh Word mới khi có yêu cầu/template chốt.
 
-## Tài liệu và bàn giao
-
-- Cập nhật plan/spec/UI/workflow: không cần tạo task riêng hoặc registry; chạy `python scripts/validate_repository.py` và kiểm diff.
-- Khi triển khai task/code: cập nhật task Markdown, evidence và báo cáo theo [TEAM_WORKFLOW](docs/project/TEAM_WORKFLOW.md). Sinh DOCX bằng `python scripts/build_manabi_reports.py`, chạy `python scripts/validate_handoff.py` và kiểm commit bằng `--git-tree HEAD` trước push.
-- Push phải thuộc yêu cầu được chủ dự án cho phép. AI không tự duyệt hoặc tự đánh dấu Done.
+Không tự commit/push nếu chưa được yêu cầu. Validator không thay review độc lập.

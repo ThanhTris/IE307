@@ -1,21 +1,5 @@
-# Quy ước đóng góp
+# Đóng góp
 
-## Nhánh và commit
+Đọc [AGENTS](AGENTS.md), [AIDD](docs/project/AIDD_PROCESS.md), [workflow](docs/project/TEAM_WORKFLOW.md). Nhận task sau review dependency; owner/reviewer trong backlog là đề xuất, cập nhật người thực tế trước triển khai.
 
-- Nhánh task: `feat/<task-id>-ten-ngan`, `fix/<task-id>-ten-ngan`, `docs/<task-id>-ten-ngan`.
-- Commit: `<type>(<scope>): <mô tả> [<task-id>]`.
-- Không làm trực tiếp trên `main` sau khi dự án đã có CI.
-
-## Luồng task
-
-1. Đọc [Bắt đầu Manabi](docs/project/START_HERE.md), kế hoạch và phân công dự kiến. Trước khi triển khai, chốt task Markdown với phạm vi, acceptance criteria, dependency và linked spec.
-2. Gán owner/reviewer và chuyển file sang `tasks/in-progress`.
-3. Tạo nhánh, triển khai, kiểm thử và thêm evidence.
-4. Mở pull request theo template.
-5. Cập nhật task và DOCX trước push theo [TEAM_WORKFLOW](docs/project/TEAM_WORKFLOW.md); chỉ chuyển `done` sau review độc lập đạt DoD. Merge nguồn trước rồi sinh lại artifacts.
-
-## Review
-
-- Người viết không tự duyệt thay cho reviewer.
-- Thay đổi schema, migration, auth/RLS, SRS hoặc sync cần ít nhất một fullstack và một data reviewer.
-- Thay đổi giao diện phải kiểm Android mục tiêu; iOS chưa thuộc phạm vi bắt buộc. Ghi rõ thiết bị và nền tảng chưa kiểm tra.
+Branch gợi ý `feature/gm-xx-ten-ngan`; AI dùng `codex/` khi được yêu cầu tạo branch. PR liên kết task, AC, evidence và giới hạn chưa kiểm tra. Không tự duyệt code của mình. Phân công trên GitHub mang nhãn assignment:proposed; thành viên tự chọn công việc cuối cùng và cập nhật người nhận thực tế.

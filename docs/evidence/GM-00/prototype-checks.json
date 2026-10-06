@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-06",
+  "engine": "Playwright Chromium headless",
+  "scope": "HTML prototype only; no React Native/backend",
+  "passed": [
+    "Host create/preferences/ready gate and full ballot",
+    "Fallback preserves NO, offline blocks submit, terminal winner stable",
+    "Empty intersection terminates without round 3",
+    "Removing all final candidates produces no consensus",
+    "Join invalid code / camera fallback / member role",
+    "Waiting ballot is locked; sample completion resumes; expired room is terminal",
+    "Layouts 320 / 390 / 768 have no horizontal overflow"
+  ],
+  "pageErrors": []
+}

@@ -1,11 +1,9 @@
-# Ma trận áp dụng nội dung IE307
+# Áp dụng IE307 cho Gì Cũng Được
 
-| Tài liệu | Nội dung chính | Áp dụng trong Manabi | Evidence dự kiến |
-| --- | --- | --- | --- |
-| 01 Introduction | React Native, New Architecture, Expo Go/Development Build/CLI, setup, debugging | Chọn Expo Development Build, quy trình debug và release Android/iOS | ADR 001, setup guide, build log |
-| 02 React Native Fundamentals | Component/JSX, props/state, event, conditional render, list, lifecycle | Tách feature/component, state rõ, event handler, empty/error/loading state, FlatList, effect cleanup | Component tree, unit/component test, code review |
-| 03 Core Components Layout Styling and Responsive UI | View/Text/Image/TextInput/Pressable/SafeAreaView/StatusBar, StyleSheet/NativeWind, Yoga/Flexbox, responsive/adaptive, theme/platform/accessibility | UI toàn app, form import, deck list, study card, game overlay, compact/medium/expanded layout | Device screenshots, accessibility checklist, performance test |
+| Nội dung đã có trong tài liệu môn | Áp dụng | Evidence cần có |
+| --- | --- | --- |
+| Introduction / Expo / RN | Expo Router, Android development build | GM-01 build/version log |
+| Components, props/state/events/list | card vote, lobby members, form, hook cleanup | GM-09/13 tests |
+| Layout/styling/responsive/accessibility | safe area, theme, font scaling, Pressable/FlatList | GM-02/21 screenshots native |
 
-## Quy tắc cập nhật
-
-Đầu mỗi tuần, Vinh chạy script sync, xem manifest thay đổi và cập nhật ma trận nếu xuất hiện chương mới. Task liên quan phải ghi tài liệu/chương đã áp dụng trong phần Evidence.
+Chỉ là mapping theo tài liệu đã biết; cập nhật khi nhóm nhận chương mới. Script sync-course-materials.ps1 giữ nguyên, không đưa PDF môn học vào Git.

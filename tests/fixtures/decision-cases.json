@@ -1,0 +1,126 @@
+{
+  "policyVersion": "decision-v1",
+  "cases": [
+    {
+      "id": "unanimous",
+      "round1": {
+        "a": {
+          "pho": "WANT",
+          "bun": "NO"
+        },
+        "b": {
+          "pho": "WANT",
+          "bun": "OK"
+        }
+      },
+      "expected": {
+        "state": "DECIDED",
+        "candidateIds": [
+          "pho"
+        ]
+      }
+    },
+    {
+      "id": "fallback",
+      "round1": {
+        "a": {
+          "pho": "WANT",
+          "bun": "NO"
+        },
+        "b": {
+          "pho": "OK",
+          "bun": "WANT"
+        }
+      },
+      "expected": {
+        "state": "ROUND_2",
+        "candidateIds": [
+          "pho"
+        ]
+      }
+    },
+    {
+      "id": "empty",
+      "round1": {
+        "a": {
+          "pho": "WANT",
+          "bun": "NO"
+        },
+        "b": {
+          "pho": "NO",
+          "bun": "OK"
+        }
+      },
+      "expected": {
+        "state": "NO_CONSENSUS",
+        "candidateIds": []
+      }
+    },
+    {
+      "id": "all-removed",
+      "round1": {
+        "a": {
+          "pho": "WANT"
+        },
+        "b": {
+          "pho": "OK"
+        }
+      },
+      "round2": {
+        "a": {
+          "pho": "KEEP"
+        },
+        "b": {
+          "pho": "REMOVE"
+        }
+      },
+      "expected": {
+        "state": "NO_CONSENSUS",
+        "candidateIds": []
+      }
+    },
+    {
+      "id": "tie",
+      "round1": {
+        "a": {
+          "pho": "WANT",
+          "bun": "OK"
+        },
+        "b": {
+          "pho": "OK",
+          "bun": "WANT"
+        }
+      },
+      "round2": {
+        "a": {
+          "pho": "KEEP",
+          "bun": "KEEP"
+        },
+        "b": {
+          "pho": "KEEP",
+          "bun": "KEEP"
+        }
+      },
+      "expected": {
+        "state": "DECIDED",
+        "candidateIds": [
+          "pho",
+          "bun"
+        ]
+      }
+    },
+    {
+      "id": "incomplete",
+      "round1": {
+        "a": {
+          "pho": "WANT"
+        },
+        "b": {}
+      },
+      "expected": {
+        "state": "WAITING",
+        "candidateIds": []
+      }
+    }
+  ]
+}

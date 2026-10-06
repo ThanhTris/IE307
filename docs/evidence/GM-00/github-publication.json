@@ -1,0 +1,576 @@
+{
+  "repo": "ThanhTris/IE307",
+  "defaultBranch": "main",
+  "assignmentPolicy": "proposed; member chooses final task",
+  "members": {
+    "Trí": "ThanhTris",
+    "Trang": "rosy179",
+    "Tâm": "HoaiTam",
+    "Vinh": "Vinh5905",
+    "Tuấn": "mtuan2491",
+    "Trung": null
+  },
+  "tasks": [
+    {
+      "id": "GM-00",
+      "number": 37,
+      "url": "https://github.com/ThanhTris/IE307/issues/37",
+      "taskPath": "tasks/review/GM-00.md",
+      "proposedOwner": "Codex",
+      "proposedAssignee": "ThanhTris",
+      "proposedReviewer": "ThanhTris",
+      "priority": "P0",
+      "status": "review",
+      "assignees": [
+        "ThanhTris"
+      ]
+    },
+    {
+      "id": "GM-01",
+      "number": 38,
+      "url": "https://github.com/ThanhTris/IE307/issues/38",
+      "taskPath": "tasks/backlog/GM-01.md",
+      "proposedOwner": "Tuấn",
+      "proposedAssignee": "mtuan2491",
+      "proposedReviewer": "ThanhTris",
+      "priority": "P0",
+      "status": "backlog",
+      "assignees": [
+        "mtuan2491"
+      ]
+    },
+    {
+      "id": "GM-02",
+      "number": 39,
+      "url": "https://github.com/ThanhTris/IE307/issues/39",
+      "taskPath": "tasks/backlog/GM-02.md",
+      "proposedOwner": "Trang",
+      "proposedAssignee": "rosy179",
+      "proposedReviewer": "mtuan2491",
+      "priority": "P0",
+      "status": "backlog",
+      "assignees": [
+        "rosy179"
+      ]
+    },
+    {
+      "id": "GM-03",
+      "number": 40,
+      "url": "https://github.com/ThanhTris/IE307/issues/40",
+      "taskPath": "tasks/backlog/GM-03.md",
+      "proposedOwner": "Vinh",
+      "proposedAssignee": "Vinh5905",
+      "proposedReviewer": "HoaiTam",
+      "priority": "P0",
+      "status": "backlog",
+      "assignees": [
+        "Vinh5905"
+      ]
+    },
+    {
+      "id": "GM-04",
+      "number": 41,
+      "url": "https://github.com/ThanhTris/IE307/issues/41",
+      "taskPath": "tasks/backlog/GM-04.md",
+      "proposedOwner": "Tâm",
+      "proposedAssignee": "HoaiTam",
+      "proposedReviewer": "ThanhTris",
+      "priority": "P0",
+      "status": "backlog",
+      "assignees": [
+        "HoaiTam"
+      ]
+    },
+    {
+      "id": "GM-05",
+      "number": 42,
+      "url": "https://github.com/ThanhTris/IE307/issues/42",
+      "taskPath": "tasks/backlog/GM-05.md",
+      "proposedOwner": "Trung",
+      "proposedAssignee": null,
+      "proposedReviewer": "ThanhTris",
+      "priority": "P0",
+      "status": "backlog",
+      "assignees": []
+    },
+    {
+      "id": "GM-06",
+      "number": 43,
+      "url": "https://github.com/ThanhTris/IE307/issues/43",
+      "taskPath": "tasks/backlog/GM-06.md",
+      "proposedOwner": "Trí",
+      "proposedAssignee": "ThanhTris",
+      "proposedReviewer": "HoaiTam",
+      "priority": "P0",
+      "status": "backlog",
+      "assignees": [
+        "ThanhTris"
+      ]
+    },
+    {
+      "id": "GM-07",
+      "number": 44,
+      "url": "https://github.com/ThanhTris/IE307/issues/44",
+      "taskPath": "tasks/backlog/GM-07.md",
+      "proposedOwner": "Trang",
+      "proposedAssignee": "rosy179",
+      "proposedReviewer": null,
+      "priority": "P0",
+      "status": "backlog",
+      "assignees": [
+        "rosy179"
+      ]
+    },
+    {
+      "id": "GM-08",
+      "number": 45,
+      "url": "https://github.com/ThanhTris/IE307/issues/45",
+      "taskPath": "tasks/backlog/GM-08.md",
+      "proposedOwner": "Tâm",
+      "proposedAssignee": "HoaiTam",
+      "proposedReviewer": "ThanhTris",
+      "priority": "P0",
+      "status": "backlog",
+      "assignees": [
+        "HoaiTam"
+      ]
+    },
+    {
+      "id": "GM-09",
+      "number": 46,
+      "url": "https://github.com/ThanhTris/IE307/issues/46",
+      "taskPath": "tasks/backlog/GM-09.md",
+      "proposedOwner": "Tuấn",
+      "proposedAssignee": "mtuan2491",
+      "proposedReviewer": "rosy179",
+      "priority": "P0",
+      "status": "backlog",
+      "assignees": [
+        "mtuan2491"
+      ]
+    },
+    {
+      "id": "GM-10",
+      "number": 47,
+      "url": "https://github.com/ThanhTris/IE307/issues/47",
+      "taskPath": "tasks/backlog/GM-10.md",
+      "proposedOwner": "Trang",
+      "proposedAssignee": "rosy179",
+      "proposedReviewer": "Vinh5905",
+      "priority": "P0",
+      "status": "backlog",
+      "assignees": [
+        "rosy179"
+      ]
+    },
+    {
+      "id": "GM-11",
+      "number": 48,
+      "url": "https://github.com/ThanhTris/IE307/issues/48",
+      "taskPath": "tasks/backlog/GM-11.md",
+      "proposedOwner": "Vinh",
+      "proposedAssignee": "Vinh5905",
+      "proposedReviewer": null,
+      "priority": "P0",
+      "status": "backlog",
+      "assignees": [
+        "Vinh5905"
+      ]
+    },
+    {
+      "id": "GM-12",
+      "number": 49,
+      "url": "https://github.com/ThanhTris/IE307/issues/49",
+      "taskPath": "tasks/backlog/GM-12.md",
+      "proposedOwner": "Trí",
+      "proposedAssignee": "ThanhTris",
+      "proposedReviewer": "HoaiTam",
+      "priority": "P0",
+      "status": "backlog",
+      "assignees": [
+        "ThanhTris"
+      ]
+    },
+    {
+      "id": "GM-13",
+      "number": 50,
+      "url": "https://github.com/ThanhTris/IE307/issues/50",
+      "taskPath": "tasks/backlog/GM-13.md",
+      "proposedOwner": "Trang",
+      "proposedAssignee": "rosy179",
+      "proposedReviewer": "mtuan2491",
+      "priority": "P0",
+      "status": "backlog",
+      "assignees": [
+        "rosy179"
+      ]
+    },
+    {
+      "id": "GM-14",
+      "number": 51,
+      "url": "https://github.com/ThanhTris/IE307/issues/51",
+      "taskPath": "tasks/backlog/GM-14.md",
+      "proposedOwner": "Tuấn",
+      "proposedAssignee": "mtuan2491",
+      "proposedReviewer": "Vinh5905",
+      "priority": "P0",
+      "status": "backlog",
+      "assignees": [
+        "mtuan2491"
+      ]
+    },
+    {
+      "id": "GM-15",
+      "number": 52,
+      "url": "https://github.com/ThanhTris/IE307/issues/52",
+      "taskPath": "tasks/backlog/GM-15.md",
+      "proposedOwner": "Trung",
+      "proposedAssignee": null,
+      "proposedReviewer": "Vinh5905",
+      "priority": "P0",
+      "status": "backlog",
+      "assignees": []
+    },
+    {
+      "id": "GM-16",
+      "number": 53,
+      "url": "https://github.com/ThanhTris/IE307/issues/53",
+      "taskPath": "tasks/backlog/GM-16.md",
+      "proposedOwner": "Trí",
+      "proposedAssignee": "ThanhTris",
+      "proposedReviewer": "HoaiTam",
+      "priority": "P0",
+      "status": "backlog",
+      "assignees": [
+        "ThanhTris"
+      ]
+    },
+    {
+      "id": "GM-17",
+      "number": 54,
+      "url": "https://github.com/ThanhTris/IE307/issues/54",
+      "taskPath": "tasks/backlog/GM-17.md",
+      "proposedOwner": "Trung",
+      "proposedAssignee": null,
+      "proposedReviewer": "ThanhTris",
+      "priority": "P1",
+      "status": "backlog",
+      "assignees": []
+    },
+    {
+      "id": "GM-18",
+      "number": 55,
+      "url": "https://github.com/ThanhTris/IE307/issues/55",
+      "taskPath": "tasks/backlog/GM-18.md",
+      "proposedOwner": "Tâm",
+      "proposedAssignee": "HoaiTam",
+      "proposedReviewer": "Vinh5905",
+      "priority": "P1",
+      "status": "backlog",
+      "assignees": [
+        "HoaiTam"
+      ]
+    },
+    {
+      "id": "GM-19",
+      "number": 56,
+      "url": "https://github.com/ThanhTris/IE307/issues/56",
+      "taskPath": "tasks/backlog/GM-19.md",
+      "proposedOwner": "Vinh",
+      "proposedAssignee": "Vinh5905",
+      "proposedReviewer": "HoaiTam",
+      "priority": "P0",
+      "status": "backlog",
+      "assignees": [
+        "Vinh5905"
+      ]
+    },
+    {
+      "id": "GM-20",
+      "number": 57,
+      "url": "https://github.com/ThanhTris/IE307/issues/57",
+      "taskPath": "tasks/backlog/GM-20.md",
+      "proposedOwner": "Tuấn",
+      "proposedAssignee": "mtuan2491",
+      "proposedReviewer": "rosy179",
+      "priority": "P0",
+      "status": "backlog",
+      "assignees": [
+        "mtuan2491"
+      ]
+    },
+    {
+      "id": "GM-21",
+      "number": 58,
+      "url": "https://github.com/ThanhTris/IE307/issues/58",
+      "taskPath": "tasks/backlog/GM-21.md",
+      "proposedOwner": "Vinh",
+      "proposedAssignee": "Vinh5905",
+      "proposedReviewer": "rosy179",
+      "priority": "P0",
+      "status": "backlog",
+      "assignees": [
+        "Vinh5905"
+      ]
+    },
+    {
+      "id": "GM-22",
+      "number": 59,
+      "url": "https://github.com/ThanhTris/IE307/issues/59",
+      "taskPath": "tasks/backlog/GM-22.md",
+      "proposedOwner": "Trí",
+      "proposedAssignee": "ThanhTris",
+      "proposedReviewer": "mtuan2491",
+      "priority": "P0",
+      "status": "backlog",
+      "assignees": [
+        "ThanhTris"
+      ]
+    },
+    {
+      "id": "GM-23",
+      "number": 60,
+      "url": "https://github.com/ThanhTris/IE307/issues/60",
+      "taskPath": "tasks/backlog/GM-23.md",
+      "proposedOwner": "Tâm",
+      "proposedAssignee": "HoaiTam",
+      "proposedReviewer": "Vinh5905",
+      "priority": "P2",
+      "status": "backlog",
+      "assignees": [
+        "HoaiTam"
+      ]
+    },
+    {
+      "id": "GM-24",
+      "number": 61,
+      "url": "https://github.com/ThanhTris/IE307/issues/61",
+      "taskPath": "tasks/backlog/GM-24.md",
+      "proposedOwner": "Trung",
+      "proposedAssignee": null,
+      "proposedReviewer": "ThanhTris",
+      "priority": "P2",
+      "status": "backlog",
+      "assignees": []
+    }
+  ],
+  "supersededIssues": [
+    {
+      "number": 36,
+      "url": "https://github.com/ThanhTris/IE307/issues/36",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 35,
+      "url": "https://github.com/ThanhTris/IE307/issues/35",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 34,
+      "url": "https://github.com/ThanhTris/IE307/issues/34",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 33,
+      "url": "https://github.com/ThanhTris/IE307/issues/33",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 32,
+      "url": "https://github.com/ThanhTris/IE307/issues/32",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 31,
+      "url": "https://github.com/ThanhTris/IE307/issues/31",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 30,
+      "url": "https://github.com/ThanhTris/IE307/issues/30",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 29,
+      "url": "https://github.com/ThanhTris/IE307/issues/29",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 28,
+      "url": "https://github.com/ThanhTris/IE307/issues/28",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 27,
+      "url": "https://github.com/ThanhTris/IE307/issues/27",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 26,
+      "url": "https://github.com/ThanhTris/IE307/issues/26",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 25,
+      "url": "https://github.com/ThanhTris/IE307/issues/25",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 24,
+      "url": "https://github.com/ThanhTris/IE307/issues/24",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 23,
+      "url": "https://github.com/ThanhTris/IE307/issues/23",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 22,
+      "url": "https://github.com/ThanhTris/IE307/issues/22",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 21,
+      "url": "https://github.com/ThanhTris/IE307/issues/21",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 20,
+      "url": "https://github.com/ThanhTris/IE307/issues/20",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 19,
+      "url": "https://github.com/ThanhTris/IE307/issues/19",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 18,
+      "url": "https://github.com/ThanhTris/IE307/issues/18",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 17,
+      "url": "https://github.com/ThanhTris/IE307/issues/17",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 16,
+      "url": "https://github.com/ThanhTris/IE307/issues/16",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 15,
+      "url": "https://github.com/ThanhTris/IE307/issues/15",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 14,
+      "url": "https://github.com/ThanhTris/IE307/issues/14",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 13,
+      "url": "https://github.com/ThanhTris/IE307/issues/13",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 12,
+      "url": "https://github.com/ThanhTris/IE307/issues/12",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 11,
+      "url": "https://github.com/ThanhTris/IE307/issues/11",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 10,
+      "url": "https://github.com/ThanhTris/IE307/issues/10",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 9,
+      "url": "https://github.com/ThanhTris/IE307/issues/9",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 8,
+      "url": "https://github.com/ThanhTris/IE307/issues/8",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 7,
+      "url": "https://github.com/ThanhTris/IE307/issues/7",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 6,
+      "url": "https://github.com/ThanhTris/IE307/issues/6",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 5,
+      "url": "https://github.com/ThanhTris/IE307/issues/5",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 4,
+      "url": "https://github.com/ThanhTris/IE307/issues/4",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 3,
+      "url": "https://github.com/ThanhTris/IE307/issues/3",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 2,
+      "url": "https://github.com/ThanhTris/IE307/issues/2",
+      "state": "closed",
+      "stateReason": "not_planned"
+    },
+    {
+      "number": 1,
+      "url": "https://github.com/ThanhTris/IE307/issues/1",
+      "state": "closed",
+      "stateReason": "not_planned"
+    }
+  ],
+  "verified": true
+}

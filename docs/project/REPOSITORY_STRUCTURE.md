@@ -1,23 +1,48 @@
-# Bản đồ thư mục Manabi
+# Cấu trúc React Native / Expo
 
-Cấu trúc repository Manabi và nơi đặt tài liệu, mã nguồn, dữ liệu mẫu.
+Đây là cấu trúc nguồn đề xuất, chưa có package/config/build native. Các thư mục rỗng có `.gitkeep` để nhóm thấy ranh giới; GM-01 tạo file ứng dụng sau review, không coi placeholders là tính năng.
 
-| Thư mục | Nội dung |
-| --- | --- |
-| `frontend/` | App Expo, màn hình, logic học offline và SQLite |
-| `frontend/src/domain/` | Logic thuần: import, scheduler, game policy và validation; không phụ thuộc UI |
-| `frontend/src/ui/` | Tokens và components dùng chung |
-| `backend/` | API local khi phát triển, triển khai server khi cần; chưa chọn framework |
-| `backend/supabase/` | Hướng dẫn cấu hình cloud tùy chọn sau review |
-| `schemas/` | Hợp đồng JSON; dữ liệu mẫu trong `examples/` |
-| `design/prototypes/` | UI HTML đã chốt và ghi chú chuyển sang native |
-| `docs/` | Sản phẩm, spec, kiến trúc, nghiên cứu và quy trình |
-| `docs/deliverables/` | Báo cáo, slide, demo, release và gói nộp bài |
-| `tasks/` | Task dự kiến; Markdown/registry chi tiết khi bắt đầu triển khai |
-| `scripts/` | Kiểm tra repository, sinh workbook/DOCX và kiểm handoff |
+```text
+mobile/
+  src/
+    app/                   Expo Router: routes/layouts mỏng
+    features/
+      identity/            guest, account link
+      rooms/               create/join/lobby/preferences
+      voting/              card, ballot, submission
+      results/             result/no-consensus/Maps
+      partners/            lời mời hai chiều P1
+      history/             lịch sử P1
+    domain/decision/       kiểu/policy thuần TypeScript
+    data/
+      supabase/            RPC/realtime adapters
+      local/               draft/cache/session adapters
+    shared/
+      ui/                  Button/Chip/Card/EmptyState
+      theme/               semantic tokens
+      lib/                 errors/validation/date
+      types/               kiểu chung thật sự cần chia sẻ
+  assets/                  hình/font có quyền dùng
+  tests/                   unit/component/integration mobile
+supabase/
+  migrations/              schema/policies/functions versioned
+  seed/                    catalogue demo, không dữ liệu cá nhân
+  tests/                   SQL/RLS/RPC tests
+tests/
+  fixtures/                đầu vào/kết quả quyết định chia sẻ
+  e2e/                     Android flow theo test plan
+```
 
-## Quy ước
+Mỗi feature triển khai dùng `screens/`, `components/`, `hooks/`, `services/`, `types.ts`, `index.ts` khi thực sự cần; không tạo mọi tầng cho một file đơn giản. Chỉ feature public API được import ra ngoài. Domain không import React hoặc SDK. Supabase adapter không chứa JSX.
 
-`AGENTS.md`, `README.md`, `.env.example` và cấu hình Git/CI nằm ở gốc. Frontend và backend dùng hợp đồng trong `schemas/`; logic học offline nằm trong `frontend/src/domain/`.
+## Route dự kiến (GM-01 sẽ tạo)
 
-Task Markdown lưu phạm vi, trạng thái và evidence khi triển khai. Registry phục vụ báo cáo đặt tại `tasks/project-tasks.json` khi có đủ dữ liệu. Báo cáo sinh theo [workflow](TEAM_WORKFLOW.md).
+`src/app/_layout.tsx`, `index.tsx`, `room/create.tsx`, `room/join.tsx`, `room/[id]/preferences.tsx`, `room/[id]/lobby.tsx`, `room/[id]/vote.tsx`, `room/[id]/final-round.tsx`, `room/[id]/result.tsx`, `partners/index.tsx` và `history/index.tsx` (P1).
+
+Route chỉ parse params/guard và render feature screen. ID trên URL không cấp quyền. Android Back trong phòng theo ROOM_SPEC, không cho back sửa phiếu đã nộp.
+
+## Config sẽ bổ sung ở bootstrap
+
+`mobile/package.json`, một lockfile, `app.config.ts`, `tsconfig.json`, lint/test config, `.env.example`, `expo-env.d.ts`. Không để config placeholder giả chạy. `android/ios` theo chiến lược Expo prebuild quyết định ở GM-01; không commit build artifacts. Supabase config/migration đầu ở GM-04.
+
+Nguồn cũ nằm trong lịch sử Git (commit `6086c16`); `docs/decision/` là file có sẵn của người dùng, không bị migration ghi đè.

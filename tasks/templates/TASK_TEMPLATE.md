@@ -1,43 +1,27 @@
-# TASK ID Tên task
+# Mẫu task
 
-## Trạng thái
+Khi tạo task dùng frontmatter: id, title, status, owner, reviewer, priority, dependencies (ID cách nhau dấu phẩy), spec (đường từ root), size. Status: backlog/in-progress/review/done; blocked giữ trong in-progress và ghi Blocker.
 
-- Owner:
-- Reviewer:
-- Bắt đầu:
-- Hạn:
-- Dependency:
-- Liên kết spec/ADR:
+## Mục tiêu và scope
 
-## Mục tiêu
-
-Mô tả kết quả người dùng hoặc hệ thống cần đạt.
-
-## Phạm vi
-
-- In scope:
-- Out of scope:
+Kết quả cần đạt; in scope / out of scope.
 
 ## Acceptance criteria
 
-- [ ] Tiêu chí có thể kiểm tra.
+- [ ] AC kiểm được, liên kết FR/spec/test.
 
-## Kế hoạch kiểm thử
+## Context và patch plan
 
-- Unit:
-- Integration:
-- Android/iOS:
-- Offline/error/accessibility nếu áp dụng:
+Đọc linked spec/ADR; dependency đã review; giả định; file thay đổi nhỏ nhất.
 
-## Evidence
+## Test plan
 
-- Pull request:
-- Test output:
-- Screenshot/video/data:
-- Report section:
+Lệnh/test scenario, môi trường và điều kiện lỗi.
 
-## AIDD log
+## Báo cáo
 
-- Context/prompt đã dùng:
-- Quyết định của con người:
-- Điều AI đề xuất nhưng không dùng và lý do:
+Đã làm / Còn lại / Lỗi và blocker / File đổi / Test và evidence / Bước tiếp theo.
+
+## Review
+
+Chờ reviewer. Khi duyệt ghi Reviewed-by và Reviewed-at YYYY-MM-DD, quyết định/evidence. AI thực hiện không tự ghi duyệt.

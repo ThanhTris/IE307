@@ -1,45 +1,36 @@
-# Manabi
+# Gì Cũng Được
 
-Manabi là đồ án ứng dụng Android hỗ trợ học từ vựng tiếng Nhật bằng flashcard, lịch ôn và ba trò chơi Matching, Four Choices, Word Ninja.
+Ứng dụng React Native giúp cặp đôi và nhóm bạn chọn món theo ba mức **Muốn ăn / Ăn được / Không ăn**, tối đa hai vòng và một kết quả chung.
 
-Dự án đang ở giai đoạn lập kế hoạch, đặc tả, UI mẫu và quy trình làm việc. Nhóm có sáu thành viên và 36 task dự kiến; ứng dụng Expo và backend chưa được triển khai.
+**Hiện trạng:** bộ nền đề xuất và prototype tương tác; chưa có app Expo chạy được, chưa deploy backend. Không có package để `npm install` ở root. Bootstrap bắt đầu sau review bộ nền.
 
-## Phạm vi
+## Đọc trước
 
-- Tạo, chỉnh sửa và nhập bộ thẻ; nội dung linh hoạt theo `fieldSchema` và `fields` JSON.
-- Học thẻ, tự đánh giá Again/Hard/Good/Easy, ôn theo lịch và xem tiến độ.
-- Chơi Matching, Four Choices và Word Ninja từ các thẻ đã học.
-- Lưu SQLite trên thiết bị, học offline và sao lưu/khôi phục JSON.
-- Mở rộng tùy chọn: tài khoản và đồng bộ.
-- Pilot: quiz Gemini từ card đã xác nhận và bài tập ảnh có nguồn/quyền sử dụng được duyệt. Đáp án chuẩn lấy từ card; câu lỗi không ảnh hưởng lịch ôn.
-
-## Bắt đầu
-
-1. [Hướng dẫn bắt đầu](docs/project/START_HERE.md).
-2. [Yêu cầu sản phẩm](docs/product/PRODUCT_REQUIREMENTS.md), [chức năng](docs/product/FUNCTIONAL_REQUIREMENTS.md) và [phi chức năng](docs/product/NON_FUNCTIONAL_REQUIREMENTS.md).
-3. [Kế hoạch](docs/project/PROJECT_PLAN.md), [phân công sáu người](docs/project/TEAM_AND_RESPONSIBILITIES.md) và [36 task dự kiến](tasks/backlog/MASTER_BACKLOG.md).
-4. [UI mẫu](design/prototypes/manabi-vocabulary.html) và [ghi chú triển khai UI](design/prototypes/UI-IMPLEMENTATION-NOTES.md).
-5. [Workflow](docs/project/TEAM_WORKFLOW.md) và [hướng dẫn cho AI](AGENTS.md).
-
-## Cấu trúc
+1. [Kế hoạch chuyển đề tài](docs/project/MIGRATION_PLAN.md), [kế hoạch 8 tuần](docs/project/PROJECT_PLAN.md).
+2. [PRD](docs/product/PRODUCT_REQUIREMENTS.md), [spec index](docs/specs/README.md), [truy vết](docs/specs/TRACEABILITY.md).
+3. [Prototype UI](design/prototypes/gi-cung-duoc.html), [UI spec](docs/specs/UI_SPEC.md), [design system](design/DESIGN_SYSTEM.md).
+4. [Kiến trúc](docs/architecture/SYSTEM_ARCHITECTURE.md), [cấu trúc React Native](docs/project/REPOSITORY_STRUCTURE.md).
+5. [Backlog](tasks/backlog/MASTER_BACKLOG.md), [sáu thành viên](docs/project/TEAM_AND_RESPONSIBILITIES.md), [AIDD](docs/project/AIDD_PROCESS.md).
 
 ```text
-Manabi/
-├─ frontend/       App Expo, UI, logic học offline và SQLite
-├─ backend/        API chạy local khi phát triển, deploy khi cần
-├─ schemas/        Hợp đồng JSON và dữ liệu mẫu
-├─ design/         UI mẫu và ghi chú triển khai
-├─ docs/           Sản phẩm, đặc tả, kiến trúc, kế hoạch và báo cáo
-├─ tasks/          Phân công dự kiến và quy trình task
-└─ scripts/        Kiểm tra tài liệu và sinh báo cáo
+mobile/        Expo Router + feature modules (skeleton)
+supabase/      migrations, seed, RPC/RLS tests (skeleton)
+design/        design system và prototype HTML
+docs/          PRD, specs, ADR, kế hoạch, kiểm thử
+tasks/         backlog, review, done và mẫu task
+tests/         fixture quyết định và E2E
+scripts/       validator và công cụ môn học
 ```
 
-Chi tiết: [bản đồ thư mục](docs/project/REPOSITORY_STRUCTURE.md). `frontend/` và `backend/` hiện chứa hướng dẫn chuẩn bị triển khai.
-
-## Kiểm tra tài liệu
+Mở `design/prototypes/gi-cung-duoc.html` bằng trình duyệt hoặc chạy `python -m http.server 8765 --bind 127.0.0.1`. Prototype mô phỏng, không kết nối backend.
 
 ```powershell
 python scripts/validate_repository.py
+git diff --check
 ```
 
-Công cụ kiểm các file bắt buộc, JSON và liên kết nội bộ. Hướng dẫn sinh báo cáo khi có task triển khai nằm trong [TEAM_WORKFLOW](docs/project/TEAM_WORKFLOW.md).
+Kiểm prototype tùy chọn: `node scripts/verify_prototype.cjs` trong môi trường có Playwright/Chromium (hoặc `PROTOTYPE_PLAYWRIGHT_PATH`). [Evidence lần chuyển đề tài](docs/evidence/GM-00/VERIFICATION.md).
+
+[Bắt đầu](docs/project/START_HERE.md). Nguồn đề tài cũ còn trong lịch sử Git (commit `6086c16`), không phải backlog hiện hành.
+
+[Task GitHub](https://github.com/ThanhTris/IE307/issues?q=is%3Aissue+is%3Aopen+label%3A%22project%3Agi-cung-duoc%22) được gắn người phụ trách ở mức đề xuất; thành viên tự chọn cuối cùng.
