@@ -31,6 +31,6 @@ git diff --check
 
 Kiểm prototype tùy chọn: `node scripts/verify_prototype.cjs` trong môi trường có Playwright/Chromium (hoặc `PROTOTYPE_PLAYWRIGHT_PATH`). [Evidence lần chuyển đề tài](docs/evidence/GM-00/VERIFICATION.md).
 
-[Bắt đầu](docs/project/START_HERE.md). Nguồn đề tài cũ còn trong lịch sử Git (commit `6086c16`), không phải backlog hiện hành.
+[Bắt đầu](docs/project/START_HERE.md). Đây là tài liệu hiện hành của dự án Gì Cũng Được.
 
 [Task GitHub](https://github.com/ThanhTris/IE307/issues?q=is%3Aissue+is%3Aopen+label%3A%22project%3Agi-cung-duoc%22) được gắn người phụ trách ở mức đề xuất; thành viên tự chọn cuối cùng.

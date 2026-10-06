@@ -1,6 +1,6 @@
 # Bàn giao Gì Cũng Được
 
-GM-22 tạo APK nội bộ, video demo, báo cáo và slide. Chưa có artifact native ở thời điểm bộ nền. Không dùng báo cáo Manabi để mô tả đề tài mới.
+GM-22 tạo APK nội bộ, video demo, báo cáo và slide. Chưa có artifact native ở thời điểm bộ nền.
 
 Nguồn báo cáo: [PRD](../product/PRODUCT_REQUIREMENTS.md), [research](../research/COMPETITIVE_POSITION.md), [kiến trúc](../architecture/SYSTEM_ARCHITECTURE.md), task và evidence thực tế.
 

@@ -11,7 +11,7 @@ GitHub issue là nơi thành viên chọn việc. `assignment:proposed` với As
 5. Chuyển task review; ghi đã làm/còn lại/lỗi/file/test/bước tiếp theo. Reviewer đối chiếu từng AC và evidence.
 6. Chỉ người review độc lập chấp thuận mới done. AI thực hiện không tự duyệt; backlog task phụ thuộc chưa được mở khi dependency còn review.
 
-Giai đoạn hiện tại là baseline tài liệu và prototype, chưa bắt đầu 24 task triển khai. GM-00 ở review. Báo cáo DOCX/XLSX Manabi không còn là yêu cầu pipeline mới; Word mới là artifact tùy yêu cầu, không thay Markdown.
+Giai đoạn hiện tại là baseline tài liệu và prototype, chưa bắt đầu 24 task triển khai. GM-00 ở review. Word mới là artifact tùy yêu cầu, không thay Markdown.
 
 ## Kiểm trước commit/push
 

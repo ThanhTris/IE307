@@ -1,10 +1,10 @@
-# Chuyển Manabi sang Gì Cũng Được
+# Gì Cũng Được — kế hoạch nền
 
 Ngày: 2026-10-06. Trạng thái: bộ nền đề xuất, chờ nhóm review; chưa triển khai ứng dụng.
 
 ## Kết quả của đợt chuyển đổi
 
-- Nguồn Manabi được bảo toàn trong lịch sử Git tại commit `6086c16`; đã xóa thư mục lưu trữ theo yêu cầu tiếp theo của chủ dự án.
+- Tài liệu đề tài trước đã được gỡ khỏi nội dung hiện hành.
 - Đổi tài liệu gốc, PRD, spec, ADR, UI và backlog theo chọn món cho nhóm.
 - Chuẩn hóa thư mục `mobile/` theo Expo Router + feature modules và `supabase/` theo migration/RPC/test.
 - Có prototype tương tác để review trước khi code; có đường truy vết yêu cầu → màn hình → spec → task → test.
@@ -39,4 +39,4 @@ Chạy validator tài liệu và diff; kiểm prototype ở desktop và viewport
 
 ## Rollback
 
-Nguồn cũ được giữ trong lịch sử Git, commit `6086c16`. Thư mục lưu trữ từng được kiểm đối chiếu rồi đã xóa theo yêu cầu chủ dự án. Khi quay lại đề tài cũ, tạo thay đổi riêng sau khi chủ dự án quyết định; không chạy script xóa/ghi đè toàn repo. File `docs/decision/so_sanh_ba_de_tai.docx` có sẵn được giữ nguyên.
+Khi cần xem lại bối cảnh cũ, dùng lịch sử Git. Không khôi phục hoặc trộn tài liệu đề tài trước vào nhánh hiện hành.

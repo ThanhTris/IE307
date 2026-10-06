@@ -63,8 +63,8 @@ class Source:
 
 def validate(src: Source) -> list[str]:
     errors = [f'missing required file: {p}' for p in REQUIRED if p not in src.files]
-    if any(p.startswith('legacy/manabi/') for p in src.files):
-        errors.append('legacy/manabi must be absent after requested deletion')
+    if any(p.startswith('legacy/') for p in src.files):
+        errors.append('legacy archive directory must be absent after requested deletion')
     for p in sorted(src.files):
         if p.startswith('legacy/'):
             continue

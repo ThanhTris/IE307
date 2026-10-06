@@ -2,7 +2,7 @@
 
 ## Bối cảnh
 
-Dự án Android-first React Native giúp nhóm chọn món. Nguồn Manabi chỉ còn trong lịch sử Git; thư mục lưu trữ đã xóa theo yêu cầu chủ dự án. Bộ nền mới gồm plan, spec, prototype và skeleton; chưa có ứng dụng/API triển khai.
+Dự án Android-first React Native giúp nhóm chọn món. Bộ nền mới gồm plan, spec, prototype và skeleton; chưa có ứng dụng/API triển khai.
 
 Nguồn yêu cầu: chỉ dẫn hiện tại của chủ dự án → task/AC → spec/ADR → PRD/plan → prototype/research. [Migration plan](docs/project/MIGRATION_PLAN.md) ghi giả định chờ review. Không dùng commit đề tài cũ làm yêu cầu active.
 
@@ -30,6 +30,6 @@ Trước code: task có owner, reviewer khác owner, scope, AC, dependency, spec
 
 ## Bàn giao
 
-Chạy `python scripts/validate_repository.py`, kiểm diff và evidence. HTML phải ghi rõ mô phỏng; native build có evidence riêng. Báo cáo/scripts Manabi trong lịch sử không áp dụng cho dự án mới; không sinh DOCX cũ để vượt kiểm tra. Sinh Word mới khi có yêu cầu/template chốt.
+Chạy `python scripts/validate_repository.py`, kiểm diff và evidence. HTML phải ghi rõ mô phỏng; native build có evidence riêng. Không sinh tài liệu đề tài cũ để vượt kiểm tra. Sinh Word mới khi có yêu cầu/template chốt.
 
 Không tự commit/push nếu chưa được yêu cầu. Validator không thay review độc lập.

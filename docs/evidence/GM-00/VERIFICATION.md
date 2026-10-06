@@ -6,7 +6,7 @@ Ngày 2026-10-06. Người thực hiện: Codex. Scope: tài liệu, cấu trúc
 
 - `python scripts/validate_repository.py`: PASS — file bắt buộc, local links, JSON, 25 task records (GM-00 + 24 triển khai), dependency DAG, owner/reviewer và FR-01..13 traceability.
 - `git diff --check`: PASS. Git có cảnh báo chuyển LF/CRLF trên Windows, không có lỗi whitespace với cấu hình repo hiện tại.
-- Audit lịch sử của lần chuyển đầu: 78 file lưu trữ đã đối chiếu với HEAD, không khác nội dung khi chuẩn hóa CRLF; sau đó thư mục đã được xóa theo yêu cầu chủ dự án. Báo cáo JSON ghi trạng thái tại thời điểm kiểm, không mô tả file đang tồn tại. [Chi tiết/hash](archive-audit.json). File DOCX sẵn có tại docs/decision vẫn hiện diện và không được sửa bởi migration.
+- Tài liệu đề tài trước đã được xóa khỏi working tree theo yêu cầu chủ dự án; lịch sử Git vẫn truy vết được commit trước đó. Bộ evidence hiện hành không chứa tài liệu hoặc dữ liệu của đề tài trước.
 - `scripts/verify_prototype.cjs` với Playwright Chromium headless: **7 nhóm kiểm qua, 0 lỗi JavaScript**. [Output](prototype-checks.json).
 - Kiểm hình trực tiếp: desktop, mobile, dark theme, vòng cuối; không thấy chữ/nút bị cắt ở ảnh kiểm. Automation kiểm không tràn ngang 320/390/768px ở home/vote.
 

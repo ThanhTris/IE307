@@ -32,6 +32,6 @@ Các Assignee dưới đây chỉ là đề xuất, không phải người đã 
 | GM-23 | [#60](https://github.com/ThanhTris/IE307/issues/60) | @HoaiTam | Thực hiện đề xuất |
 | GM-24 | [#61](https://github.com/ThanhTris/IE307/issues/61) | Trung — chờ chấp nhận lời mời | Thực hiện đề xuất |
 
-36 issue Manabi cũ đã đóng với `not_planned` và nhãn `project:manabi-superseded`, không phải hoàn thành. Nội dung lịch sử vẫn giữ trên GitHub.
+Các issue của đề tài trước đã đóng với `not_planned`, không phải hoàn thành. Nội dung lịch sử vẫn giữ trên GitHub.
 
 [Xem backlog hiện tại](https://github.com/ThanhTris/IE307/issues?q=is%3Aissue+is%3Aopen+label%3A%22project%3Agi-cung-duoc%22) • [Phân công nhóm](TEAM_AND_RESPONSIBILITIES.md)
