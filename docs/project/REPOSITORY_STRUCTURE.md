@@ -45,8 +45,12 @@ Route chỉ parse params/guard và render feature screen. ID trên URL không c�
 
 `mobile/package.json`, một lockfile, `app.config.ts`, `tsconfig.json`, lint/test config, `.env.example`, `expo-env.d.ts`. Không để config placeholder giả chạy. `android/ios` theo chiến lược Expo prebuild quyết định ở GM-01; không commit build artifacts. Supabase config/migration đầu ở GM-04.
 
-Nguồn cũ nằm trong lịch sử Git (commit `6086c16`); `docs/decision/` là file có sẵn của người dùng, không bị migration ghi đè.
+Nguồn cũ nằm trong lịch sử Git (commit `6086c16`); `docs/decision/` cũ đã được gỡ trong lần chuyển đề tài, không là nguồn hiện hành.
 
 ## Phạm vi v0.2
 
 features/notifications dự kiến chứa inbox/permission/token/navigation; data/local chứa SQLite draft/cache/outbox/history, data/supabase chứa RPC/realtime adapters. trusted push sender dự kiến supabase/functions, dùng secrets server. Chỉ là sơ đồ, chưa có packages hoặc file triển khai. [Spec index](../specs/README.md).
+
+## Food-v1
+
+GM-29 bổ sung feature/context và adapter vị trí/anchor trước create UI; GM-30 domain/eligibility thuần và SQL query; GM-27 verified seed/coverage/schedules. Đây là đích task, chưa có implementation. `scripts/task_readiness.py` kiểm gate và sinh các task indexes từ frontmatter. [Dependency map](TASK_DEPENDENCIES.md).

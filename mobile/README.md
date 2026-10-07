@@ -1,6 +1,6 @@
 # Mobile — Expo / React Native
 
-Đây là skeleton thư mục, chưa khởi tạo app/package. GM-01 sẽ bootstrap sau GM-00 được review; không có build Android đã chạy.
+Đây là skeleton thư mục, chưa khởi tạo app/package. GM-01 sẽ bootstrap sau GM-28 food-v1 được review; không có build Android đã chạy.
 
 [Cấu trúc](../docs/project/REPOSITORY_STRUCTURE.md), [kiến trúc](../docs/architecture/SYSTEM_ARCHITECTURE.md), [UI](../docs/specs/UI_SPEC.md).
 

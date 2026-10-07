@@ -1,3 +1,5 @@
+> Nghiên cứu lịch sử trước food-v1. Yêu cầu hiện hành: [food spec](../specs/FOOD_DATA_SPEC.md), [task summary](TASK_SUMMARY.md), [dependency map](TASK_DEPENDENCIES.md). Venue data nay P0; GM-28 review scope mới, GM-29/30 capability/eligibility sớm. Các mô tả “bản hiện hành” dưới đây chỉ áp dụng lúc soạn v0.2.
+
 # Kế hoạch cải thiện sau góp ý giảng viên — bản nghiên cứu
 
 > Đã được chuyển thành baseline tài liệu v0.2 theo yêu cầu tiếp theo. Đọc [mô tả hiện hành](../product/SYSTEM_OVERVIEW.md), [spec](../specs/README.md) và [tiến độ](PROJECT_PLAN.md). Các GM-17A/B/18A/B bên dưới là phương án phân rã lúc nghiên cứu; bản hiện hành dùng GM-17/18 core, GM-25 push, GM-26 account P1 và GM-27 venue P1. Chưa có independent review hoàn tất.

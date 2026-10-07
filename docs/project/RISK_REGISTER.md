@@ -14,10 +14,13 @@
 | 8 tuần nhưng chưa biết lịch từng người | Vừa | Trí | Estimate theo tuần; dời P1 trước khi cắt test core |
 | Prototype bị hiểu thành app đã chạy | Vừa | Trang | Banner mô phỏng, evidence native tách biệt |
 | Suy luận sở thích trong nhóm hai người | Vừa | Tâm | Không raw votes, copy không hứa ẩn danh tuyệt đối |
-
 | Outbox replay sai vòng/auth hoặc lost ACK | Cao | Trí/Tâm | Immutable payload, snapshot trước replay, TTL/logout isolation T-16 |
 | Push không tới/OS dừng app hoặc trùng | Vừa | Trung/Trí | Spike sớm, receipt/retry/dedupe/inbox; không fake completed |
 | Double-tap khó khám phá/nhầm TalkBack | Vừa | Trang/Tuấn | Hướng dẫn/ba nút/scroll cancel, native one-hand/TalkBack T-21 |
 | History nhóm lộ dữ liệu hoặc consent stale | Cao | Tâm/Trí | Canonical roster, ACL, opt-in all, delete/TTL/recompute trước start T-20 |
-| Link review bị hiểu là radius search | Vừa | Tuấn/Vinh | Copy rõ; venue dataset P1 GM-27, không giả lọc bán kính |
-| Core v0.2 tăng lên 23 task P0 | Cao | Trí | Spike/cân tải tuần, dời P1/P2; scope core đổi phải chủ dự án chốt |
+| Link review bị hiểu là radius search | Vừa | Tuấn/Vinh | Copy rõ; core verified dataset GM-27 + eligibility GM-30, không giả lọc bán kính |
+| Food-v1 có 27 task P0 kể cả gate GM-28 | Cao | Trí | Spike/cân tải tuần, dời P1/P2; scope core đổi phải chủ dự án chốt |
+| Giờ món khác giờ quán/qua đêm/nguồn stale | Cao | Tâm/Vinh | Schedule intersection/exceptions/timezone; FOOD-05/06/07, lịch kiểm lại GM-27 |
+| Chưa phủ khu vực hoặc ít candidate | Cao | Vinh/Tuấn | Coverage rõ, manual anchor; không fallback sai tỉnh hoặc bịa menu |
+| Done giả hoặc dependency chỉ checkbox | Cao | Trí | Gate đọc Approved/reviewer/date/evidence; CI regression, review thật vẫn bắt buộc |
+| Vòng phụ thuộc location/result/release | Cao | Tâm/Tuấn | GM-29 location sớm, GM-30 eligibility, GM-27 core trước room; validator DAG |

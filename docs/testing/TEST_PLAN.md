@@ -1,4 +1,4 @@
-# Test plan v0.2
+# Test plan food-v1
 
 2026-10-07. Đây là kế hoạch, chưa có kết quả native/backend. Test IDs dùng truy vết FR/task; dependency/package runner chốt ở GM-01.
 
@@ -26,9 +26,14 @@
 | T-20 | History | Opt-in partial/all, group key ACL,TTL/delete/rút consent,offline cache,3 recent soft preference không phá pool |
 | T-21 | Gesture | Double tap only WANT, no toggle/submit,scroll/single/vertical no vote,detail control,left/right thumb,TalkBack button |
 | T-22 | Explainability | Perfect/strict majority/half/allOK/odd n,NO excluded,shared tier không matrix,no-consensus copy/new room |
-| T-23 | P1 radius | Dataset coverage/source/date,units/Haversine not route,unknown not zero results,consent meeting point |
+| T-23 | P0 coverage/data | Dataset verified/source/license/freshness/rollback; origin khác nơi bán; Haversine tới anchor mét, manual/out-of-coverage/unknown không giả có món |
 | T-24 | P1 account | Link conflict/fail giữ guest,provider proof,auth change không replay user cũ,history sync/delete |
+| T-25 | P0 eligibility/time | FOOD-01..10/12..14 phần core: lịch quán giao lịch món, nhiều ca/overnight/date exception/local timezone/[start,end)/last order; desiredAt/buffer một lần; stale/sold_out/empty; dataset/start race/reset ready; offering sau start không reroll |
+| T-26 | P2 weather/mood | FOOD-11 và mood FOOD-12: forecast đúng giờ/khu vực, stale/timeout/opt-out, privacy/TTL; không override eligibility/NO hoặc đổi pool sau start |
 
 Domain runner dùng sau GM-01, SQL đa auth user trong môi trường test, native recording + logs sanitized. Evidence mỗi task gồm lệnh/version/ngày/device/network/fixture/output và kết quả AC; không token/raw vote/tọa độ thật. HTML prototype không chứng minh push/realtime/native. Negative cases là bắt buộc ở feature rủi ro.
 
 Mục tiêu NFR cập nhật <=2s trên Wi-Fi ổn định cần đo server/client timestamp, không là SLA. User pilot nhỏ không chứng minh thị trường hoặc độ an toàn dị ứng. Không chạy test placeholder rồi báo feature đạt.
+
+
+Food-v1 review gate GM-28. GM-04 bàn giao SQL setup/runner; GM-01 native/domain runner; GM-27 data thật trước GM-30 query. GM-19/21 không chờ GM-31 P2. [Food spec/AC](../specs/FOOD_DATA_SPEC.md), [dependency map](../project/TASK_DEPENDENCIES.md).

@@ -1,4 +1,4 @@
-# Identity, privacy và security — v0.2
+# Identity, privacy và security — food-v1
 
 2026-10-07 • FR-01/05/11/12/14/16/17. Supabase vẫn đề xuất ở ADR-001; không đã deploy.
 
@@ -26,7 +26,8 @@ Realtime báo version/state/progress, không publish bảng phiếu hoặc push 
 | Pair links | giữ khi đang kết bạn; unfriend xóa link, invalid pending room invites |
 | Pending friend/room invitations | friend invite tối đa 7 ngày, room invite không quá expiresAt phòng; terminal/reject/expiry purge trong 24h |
 | Push token/event | token inactive 30 ngày/invalid/logout thì vô hiệu; event/ticket 7 ngày |
-| Vị trí | foreground, không room/history/log/queue; không background tracking |
+| GPS cá nhân | foreground tạm trên máy, không gửi server/room/history/log/queue; không background tracking |
+| Điểm ăn công cộng | anchorId nhóm xác nhận trong room, TTL cleanup phòng 24h sau terminal/expiry đề xuất; không history mặc định |
 
 Scheduler/quota/TTL phải có evidence trước pilot thật. Xóa summary không chỉ ẩn UI. History không giữ raw votes để suy gu; chỉ sở thích tự khai. Không gửi sang AI mặc định. SQLite không mặc định mã hóa; review backup/file protection và không lưu token trong SQLite. Log/evidence không token, raw vote, tọa độ thật hoặc thông tin nhạy cảm.
 
@@ -39,3 +40,7 @@ matchTier/lý do tiết lộ tổng hợp; ở nhóm nhỏ có thể đoán phi�
 ## AC
 
 SEC-01 A/host không đọc ghi vote B. SEC-02 outsider không room/result/history/invites/tokens. SEC-03 terminal/expiry không vote/overcapacity. SEC-04 auth spoof thất bại, service key không bundle/log. SEC-05 TTL/cleanup theo server time có output, guest restore thật. SEC-06 pending invitation không tạo pair, unfriend/accept race đúng; account lỗi giữ guest. SEC-07 history consent/group boundaries/delete; SEC-08 token owner/notification leak/local account isolation.
+
+## Food-v1
+
+[FOOD_DATA_SPEC](FOOD_DATA_SPEC.md) giới hạn server input là anchor công cộng/radius/desiredAt, không GPS user. Shared snapshot chỉ context đã xác nhận; preferences cuisine/temperature/flavor vẫn riêng. Publisher dataset cần quyền server, reviewedBy khác enteredBy trước publish; nguồn/license/freshness có evidence. GM-28 review privacy mới trước code. Weather/mood GM-31 opt-in/mặc định không history/AI; chỉ share lý do tổng hợp không danh tính/mood cá nhân.

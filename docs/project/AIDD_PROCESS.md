@@ -11,3 +11,5 @@ Intent → Spec → Context → Patch plan → Implement → Verify → Independ
 - Review: người khác owner xác nhận; AI không tự đánh Done. Cập nhật task/spec/ADR nếu đổi quyết định.
 
 [Mẫu task](../../tasks/templates/TASK_TEMPLATE.md), [DoD](DEFINITION_OF_DONE.md), [traceability](../specs/TRACEABILITY.md).
+
+Trước code chạy `python scripts/task_readiness.py --task GM-XX`, mở [dependency map](TASK_DEPENDENCIES.md). Dependency là AND; parallel_with không thay gate. GM-28 review food-v1 riêng sau GM-00. Dùng [mẫu review](../../tasks/templates/REVIEW_TEMPLATE.md); task Done cần Decision Approved, reviewer/ngày và Review-evidence thật. Cập nhật indexes sau đổi status.

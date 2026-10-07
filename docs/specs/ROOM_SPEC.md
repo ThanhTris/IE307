@@ -1,6 +1,6 @@
 # ROOM SPEC — vòng đời phòng
 
-v0.2 • 2026-10-07 • FR-01..03, FR-09 • [API](../architecture/API_CONTRACT.md).
+food-v1 • 2026-10-07 • FR-01..03, FR-09 • [API](../architecture/API_CONTRACT.md).
 
 ## State machine
 
@@ -35,3 +35,7 @@ ROUND_1 có thể đi thẳng DECIDED (tất cả WANT) hoặc NO_CONSENSUS (kh�
 ## Invites và network v0.2
 
 QR/link cần user confirm, room invite kiểm accepted pair/expiry/capacity. Context/history được server tính lại khi roster thay trước start. Offline disconnect giữ member; chỉ ACK tăng submittedCount. [Push/link](NOTIFICATIONS_LINKS_SPEC.md), [outbox](OFFLINE_SYNC_SPEC.md), [context/history](CONTEXT_HISTORY_SPEC.md).
+
+## Eligibility food-v1 trước start
+
+GM-08 nhận context anchor công cộng/radius/desiredAt/buổi và gọi GM-30 trên dataset GM-27. Mọi người thấy cùng điểm ăn và giờ trước ready; không tự lấy GPS host. Context/pool/version đổi reset ready. Start kiểm giờ chưa qua, nguồn/giờ/quán/buổi còn hợp lệ và snapshot nhất quán; nếu khác pool đã ready thì báo CONTEXT_CHANGED để xác nhận lại. Không start khi empty/ngoài coverage/unknown. Sau start giữ pool/result; offering đổi do GM-14 báo/refetch, không reroll. [Food spec](FOOD_DATA_SPEC.md).

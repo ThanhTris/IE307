@@ -1,27 +1,18 @@
-# Kế hoạch UI v0.2
+# Kế hoạch UI — food-v1
 
-2026-10-07. Yêu cầu thiết kế/native; prototype HTML cũ chưa đại diện đủ v0.2. [UI spec](../specs/UI_SPEC.md) là bảng màn/hành động/state; [mô tả hệ thống](../product/SYSTEM_OVERVIEW.md) giúp đọc bối cảnh.
+2026-10-07. Review mới GM-28; prototype mô phỏng không là native evidence. [UI spec](../specs/UI_SPEC.md), [food spec](../specs/FOOD_DATA_SPEC.md), [dependency map](TASK_DEPENDENCIES.md).
 
-## Flow
+| Chặng | Tasks | Màn/đầu ra và gate |
+| --- | --- | --- |
+| Nền | GM-01/02 | Build/runner, tokens/primitives, a11y/error states |
+| Context sớm | GM-29 sau GM-01/02/05/06/27 | UI-15 capability: foreground/manual/public anchor/radius/giờ ăn; harness không chờ result |
+| Room | GM-07 sau GM-08/29, rồi GM-09/10 | UI-01..05: create/join/lobby/preferences thật, cùng context/pool, empty/unknown/coverage/reset ready |
+| Vote/result | GM-12/13/14/15; friends GM-17 riêng | UI-06..09/11: double-tap/ba nút, hai vòng, tier, offering đã kiểm đúng context và refetch |
+| Network/push | GM-16/25 | UI-10/12 pending khác ACK, restart/reconnect, permission và cold/warm |
+| History/integration | GM-18/20 | UI-13 history; QR/link/Maps/review tái dùng context GM-29; không GPS mới tự đổi room |
+| QA/release | GM-19/21/22 | Native/evidence 2/4/8 máy, FOOD core, gesture/a11y/privacy |
+| Mở rộng | GM-26/31 | UI-14 account P1, UI-16 weather/mood P2 |
 
-Home/guest/first-location-permission → create hoặc code/QR/link hoặc avatar invite → context/preferences/history consent → lobby/ready → round1 cards/double-tap → result hoặc round2 keep/remove → result/no consensus → Maps/review/history. Inbox/push có thể đưa vào invitation hoặc result nhưng luôn restore auth/refetch. Offline cache không cho chốt room.
+Mọi màn có loading/empty/error/retry, fetchedAt/nguồn/ngày kiểm, font200/dark/reduced motion/TalkBack, safe area/touch48. Card không ghép đặc tính từ nhiều quán; lịch dự kiến bán khác stock live; đường chim bay từ anchor khác GPS/route. Dữ liệu ngoài coverage/unknown không lấy món xa lấp pool.
 
-| Chặng | Màn | Task | Đầu ra và gate |
-| --- | --- | --- | --- |
-| W1–2 | UI foundation | GM-01/02 | Tokens/primitives, Android build, permission/empty/error states, TalkBack/font200 |
-| W3 | UI-01..05 | GM-05/07..10 | Guest/context/join/lobby hai máy; avatar entry chưa tự giả invite |
-| W4 | UI-06..09/11 | GM-12..15/17 | Card double-tap, 3 nút, two rounds, tier/lý do, bạn quen/inbox cơ bản |
-| W5 | UI-10/12 | GM-16/25 | Pending vs ACK, restart/reconnect, permission push và cold/warm tap |
-| W6 | UI-03/08/13 | GM-18/20 | Incoming link/QR, vị trí/review return, history consent/delete/offline |
-| W7–8 | UI-01..13 | GM-19/21/22 | Native screenshots/recordings, left/right one-hand, 2/4/8 máy, regression |
-| Sau core | UI-14/15 | GM-26/27 | Account/radius pilot P1; chưa vẽ như tính năng có sẵn |
-
-## Card và gesture
-
-Ảnh có quyền, tên/category/mô tả/tag/giá nullable có đơn vị/nguồn. Double-tap chọn WANT, không toggle/submit; vertical drag không vote; horizontal swipe optional phải WANT/trái NO; OK button. Chạm đơn không tự vote hoặc mở modal cạnh tranh; chi tiết nút riêng. Scroll hủy tap. Có hướng dẫn, label phản hồi/undo trước Gửi. TalkBack sử dụng ba nút chuẩn.
-
-## Bắt buộc mọi màn
-
-Loading/empty/error/retry, offline fetchedAt, font200/dark/reduced motion/TalkBack; safe area/touch48 và không overflow 320/390/768dp. Nháp/queued/unknown/ACK copy khác nhau; không tiết lộ votes qua avatar. Back active room giải thích hủy phiên; result không reroll. Geocoding/location/push deny không chặn core. Screen mỏng qua use case/repository, không tự score winner hoặc mở tùy ý QR URL.
-
-Checklist: đủ UI-01..13, từng trạng thái quan trọng có native evidence; T-06/09/10/11/12/16/17/18/20/21/22. P1/P2 có nhãn chưa triển khai. Review thiết kế không thay reviewer code/native.
+Double-tap đặt WANT, không toggle/submit; scroll/vertical không vote, detail nút riêng, ba nút luôn có. Result ổn định nếu offering đổi; cảnh báo và refetch đúng món, không reroll. P2 weather/mood không chặn P0. Native build/evidence theo DoD; thứ tự task lấy từ dependency map, không từ tuần cứng.

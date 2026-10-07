@@ -1,4 +1,4 @@
-# Non-functional requirements — v0.2
+# Non-functional requirements — food-v1
 
 2026-10-07 • mục tiêu nghiệm thu, chưa có số đo.
 
@@ -18,3 +18,5 @@
 | NFR-12 | Cache/outbox/history có TTL và phân vùng auth; restart không mất intent đã bấm Gửi; stale không replay |
 
 Không hứa nhóm chốt offline; nhãn tổng hợp nhóm nhỏ vẫn cho phép suy luận sở thích.
+
+Food-v1: query eligibility có kiểm bounds/index/query plan ở GM-30; dataset nguồn/menu/giờ/ngày kiểm và coverage có version/rollback, không dùng fixture như dữ liệu thật. Không cam kết tồn kho live; lỗi weather GM-31 không làm hỏng core. GPS riêng không backend/log; anchor công cộng theo TTL room. [Food spec](../specs/FOOD_DATA_SPEC.md).

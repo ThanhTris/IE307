@@ -8,7 +8,7 @@ Nguồn yêu cầu: chỉ dẫn hiện tại của chủ dự án → task/AC �
 
 ## AIDD
 
-Trước code: task có owner, reviewer khác owner, scope, AC, dependency, spec, patch plan và test plan. Dependency phải được review chấp thuận. GM-00 là bộ nền chờ review, không tự coi các task phụ thuộc đã mở khóa.
+Trước code: task có owner, reviewer khác owner, scope, AC, dependency, spec, patch plan và test plan. Dependency phải được review chấp thuận. GM-00 đã review baseline v0.2; scope food-v1 chờ GM-28. Chạy `python scripts/task_readiness.py --task GM-XX` trước code, không coi Approved cũ là mở khóa phạm vi mới.
 
 Đọc [workflow](docs/project/TEAM_WORKFLOW.md), [DoD](docs/project/DEFINITION_OF_DONE.md). AI không tự duyệt hoặc ghi Done. Thay phạm vi/kiến trúc/quyền riêng tư phải ghi ADR và hỏi owner khi chưa có ủy quyền. Cập nhật tài liệu/UI không cần task mới mỗi lần; gom vào task nền khi phù hợp.
 
@@ -26,10 +26,11 @@ Trước code: task có owner, reviewer khác owner, scope, AC, dependency, spec
 - Giữ kín phiếu bằng quyền database/RPC, không chỉ ẩn UI. Host không xem phiếu thô người khác.
 - Supabase là đề xuất ADR chờ review. RPC đặc quyền kiểm auth/membership/version/expiry, fixed search_path, lock room và idempotency.
 - Không secret/service_role trong client; không log phiếu/token; không gửi dữ liệu sang AI mặc định.
-- OCR/AI/fairness qua nhiều bữa là mở rộng, không chặn MVP. Ảnh cần quyền sử dụng; không tuyên bố an toàn dị ứng từ tên món.
+- Catalogue cuisine/category/nhiệt độ/vị phải có offering quán–món trong coverage và lịch quán/lịch món phù hợp trước tạo pool; source/freshness/unknown/overnight theo FOOD_DATA_SPEC. GPS chỉ gợi điểm ăn công cộng, không tự share GPS host.
+- OCR/AI/weather/mood/fairness qua nhiều bữa là mở rộng, không chặn MVP. Ảnh cần quyền sử dụng; không tuyên bố an toàn dị ứng từ tên món.
 
 ## Bàn giao
 
-Chạy `python scripts/validate_repository.py`, kiểm diff và evidence. HTML phải ghi rõ mô phỏng; native build có evidence riêng. Không sinh tài liệu đề tài cũ để vượt kiểm tra. Sinh Word mới khi có yêu cầu/template chốt.
+Chạy `python scripts/validate_repository.py`, regression `python -m unittest discover -s tests -p "test_*.py"`, `python scripts/task_readiness.py --check-docs`, kiểm diff và evidence. Sau đổi metadata task sinh lại indexes bằng `--write-docs`. Done phải có Decision Approved, reviewer độc lập/ngày và Review-evidence file thật. HTML phải ghi rõ mô phỏng; native build có evidence riêng. Không sinh tài liệu đề tài cũ để vượt kiểm tra. Sinh Word mới khi có yêu cầu/template chốt.
 
 Không tự commit/push nếu chưa được yêu cầu. Validator không thay review độc lập.

@@ -1,3 +1,5 @@
+> Bối cảnh quyết định cũ. Yêu cầu food-v1 được cập nhật tại [ADR-005](ADR-005-food-location-time-data.md), chờ GM-28 review; phần location chỉ sau winner/venue P1 dưới đây không là scope hiện hành.
+
 # ADR-003 — Vị trí foreground và liên kết tìm review
 
 Ngày 2026-10-06. Status: Proposed — chủ dự án đã yêu cầu xin quyền lần mở đầu và tự dùng vị trí khi mở review; lựa chọn kỹ thuật/provider chưa review. Không thay ADR-001 hoặc mở khóa dependency.

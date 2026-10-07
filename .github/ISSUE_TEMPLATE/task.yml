@@ -26,3 +26,31 @@ body:
       label: Owner và reviewer
     validations:
       required: true
+  - type: input
+    id: task_source
+    attributes:
+      label: Task Markdown / baseline / spec / ADR
+      description: Markdown là nguồn trạng thái; ghi đường dẫn task hiện hành, không chỉ issue cũ.
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Task phải hoàn thành trước
+      description: Liệt kê từng GM-ID, đầu ra cần dùng, link task/PR và review evidence. Không có thì giải thích.
+    validations:
+      required: true
+  - type: textarea
+    id: parallel
+    attributes:
+      label: Task có thể làm song song
+      description: Ghi GM-ID cụ thể, owner khác và file/interface cần phối hợp; hoặc N/A.
+    validations:
+      required: true
+  - type: textarea
+    id: patch_test_handoff
+    attributes:
+      label: Patch plan, test plan và bàn giao
+      description: File dự kiến, lệnh kiểm, evidence, task nhận đầu ra; code/native chưa có runner thì không giả đã pass.
+    validations:
+      required: true

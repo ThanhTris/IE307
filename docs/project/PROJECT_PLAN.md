@@ -1,35 +1,32 @@
-# Tiến độ 8 tuần — baseline tài liệu v0.2
+# Tiến độ theo dependency — food-v1
 
-2026-10-07. 6 người, Android-first, mục tiêu chi phí demo gần 0. GM-00 đã được Trí duyệt; W1 bắt đầu khi nhóm chốt người nhận và môi trường GM-01. Chưa có ngày bắt đầu/hạn môn học nên hạn task là tuần tương đối. Tài liệu đã soạn, app/API chưa triển khai; không coi ngày hôm nay là W1 hoặc tiến độ code.
+2026-10-07. 31 task sau GM-00, gồm gate tài liệu GM-28; 30 task triển khai, 27 P0 (kể cả gate), 1 P1 và 3 P2. GM-00 duyệt baseline cũ; GM-28 chờ review scope data mới. Lịch 8 tuần trước là mục tiêu cần ước lượng lại; chưa có ngày bắt đầu/hạn môn học hoặc cam kết mọi người nhận việc.
 
-## Mốc và điều kiện hoàn tất
+## Trình tự và song song
 
-| Tuần | Đầu ra review | Task dự kiến | Gate |
-| --- | --- | --- | --- |
-| W1 | Review PRD/spec/ADR/policy/privacy; Expo development build và spike native | GM-00/01, bắt đầu 03/04 | Chốt dependency, môi trường/credentials push, loại lỗi hạ tầng sớm |
-| W2 | Catalogue/giá/ảnh, schema, UI primitives, guest/RLS nền | GM-02..06 | Data có nguồn; user A/host không đọc phiếu B; migration thật |
-| W3 | Create/join/lobby/context 2 máy, engine v2/fixtures | GM-07..11 | Roster/pool giống nhau; category mềm, ready reset; engine không NO winner |
-| W4 | Submit → card double-tap → hai vòng/tier; kết bạn/inbox | GM-12..15, GM-17 | Demo dọc 4 máy; một resultId; accept invite không tự ready |
-| W5 | Cache/outbox/reconnect và remote push mời/kết quả | GM-16/25 | Kill/restart/lost ACK/stale vote đạt; pending khác ACK; push thật |
-| W6 | History consent/chống lặp; QR/link/location/review integration | GM-18/20 | Consent/group ACL/TTL, cold-warm link, location deny/browser fallback |
-| W7 | Regression, a11y 2/4/8 máy và >=5 nhóm pilot | GM-19/21 | Critical/blocker được sửa; không dùng HTML làm native evidence |
-| W8 | Freeze, APK, demo và báo cáo | GM-22 | Independent DoD, evidence + giới hạn + chi phí, không tự publish store |
-| Sau W8 nếu còn | Account/recovery/history sync, venue pilot, OCR/AI | GM-26/27 P1; GM-23/24 P2 | GM-22 review đạt; không chặn đồ án core |
+| Chặng | Task/nhánh | Điều kiện đi tiếp |
+| --- | --- | --- |
+| Review mới | GM-28 sau GM-00 | Trí review spec/ADR/data/privacy/nguồn/task/gate; không tự mở khóa |
+| Nền độc lập | GM-01 bootstrap song song GM-03 taxonomy | Runner native và contract data được review riêng |
+| Schema/UI | GM-02 primitives song song GM-04 schema sau dependency riêng | SQL setup/constraints và UI primitives |
+| Auth/data/rules | GM-05 song song GM-27; GM-06 song song GM-11 khi đủ gate | Identity/RLS, dataset nguồn thật, decision fixture |
+| Khả thi và vị trí | GM-29 song song GM-30 | Capability chọn anchor/giờ + eligibility server trên seed thật |
+| Room/UI | GM-08 → GM-07 → GM-09; GM-10 và GM-12 có thể song song; GM-17 nhánh riêng | Hai máy cùng context/pool, nguồn/giờ/coverage, quyền và submit |
+| Vote/result | GM-13 → GM-14 → GM-15; GM-18 nhánh history sau GM-12 | Hai vòng/result ổn định, availability đổi có thông báo |
+| Sync/integration | GM-16 song song GM-20; GM-25 nhánh push | Outbox, QR/link/review, push/receipt, history |
+| Regression/release | GM-19 có thể song song GM-20; GM-21 → GM-22 | Tất cả dependency riêng được review, native/pilot/SQL/DoD thật |
+| Sau release | GM-26 P1; GM-23/24/31 P2 | Account/OCR/AI/weather–mood không chặn P0 |
 
-Mốc tuần là mục tiêu, dependency task có quyền ưu tiên hơn lịch. GM-08/RLS nền được nghiệm thu theo AC nền; tích hợp history/notification/outbox có AC riêng và cổng regression cuối. Không yêu cầu mọi tính năng backend có từ task nền rồi tạo vòng dependency.
+Đây là tóm tắt; [dependency map sinh từ task](TASK_DEPENDENCIES.md) có link từng ID, trạng thái, gate, lớp topo và cặp parallel_with. Không chờ cả chặng nếu dependency riêng đã đạt. Dependency có quyền ưu tiên hơn lịch ước lượng. Cùng owner chỉ một task chính: GM-11/27 cùng Vinh cần xếp ca; Tâm schema/eligibility/room/history cần bố trí reviewer Vinh/Trí, không coi topo là cân tải.
 
-## Đường găng và phối hợp
+## Đầu vào dữ liệu bắt buộc
 
-GM-00 → GM-04/05/06 → GM-08 → GM-09/10 → GM-12/13/14/15 → GM-16 → GM-19/21 → GM-22. Catalogue/engine chạy nhánh riêng sau GM-00. GM-17 → GM-25 và GM-18/20 cần xong trước GM-19/21. UI có thể thiết kế mock trước, nhưng task tích hợp chỉ review đạt khi API dependency thật đã duyệt.
+GM-03 định nghĩa taxonomy/biểu mẫu; GM-04 schema không chờ khảo sát; GM-27 seed verified trên schema; GM-30 query eligibility; GM-08 room khóa pool. Chuỗi GM-03 → GM-04 → GM-27 → GM-30 → GM-08 là đường phụ thuộc data bắt buộc. GM-29 location sớm không chờ result; GM-20 tích hợp QR/review muộn tái sử dụng capability đó.
 
-Trí tập trung RPC/security/sync; Tâm schema/history; Trung identity/friends/push; Tuấn Expo/lobby/result/QR-links; Trang primitives/context/card; Vinh catalogue/engine/regression/QA. Cân tải hàng tuần, một task chính/người, reviewer có thời gian thật. 23 P0 có nhiều task L, cần spike sớm và phạm vi hẹp; không bảo đảm xong chỉ vì đã chia đủ task.
+P0 data thật giới hạn coverage khảo sát được; unknown/stale không thành khẳng định đang bán. Ngoài coverage là thiếu dữ liệu, không lấy quán tỉnh khác. Pilot data cần người kiểm nguồn/ngày/license và lịch cập nhật; ảnh/mock không làm bằng chứng nơi bán.
 
-## Theo dõi mỗi tuần
+## Theo dõi và điều chỉnh
 
-Mỗi thành viên cập nhật đã làm/còn lại/blocker/file/test/evidence trên task; chỉ xác nhận in-progress khi nhận việc. Reviewer ghi quyết định có ngày. Báo cáo checkpoint gồm milestone đạt/chưa đạt, blocker owner, quota/chi phí thực, demo native ngắn. Không dùng % tự ước lượng thay số AC/evidence. Lịch ngày cụ thể chờ ngày khởi động/hạn môn học.
+Mỗi tuần đối chiếu [mẫu checkpoint](WEEKLY_REVIEW_TEMPLATE.md): AC/evidence, task đủ gate, blocked owner, khả năng song song và tải review, dữ liệu hết hạn/quota/chi phí, lệnh chạy thực. Chỉ người nhận cập nhật in-progress; chỉ reviewer độc lập mới Done.
 
-## Cắt phạm vi nếu trễ
-
-Dời P1/P2 trước: account nâng cao, venue radius, OCR/AI. Core vẫn giữ transaction/RLS, NO/hai vòng, basic realtime/outbox, QR/link, avatar/inbox, minimal history và push hai event. Nếu phải giảm core, chủ dự án chốt thay đổi scope và ghi ADR/thông báo giảng viên; không tự bỏ test hoặc giả push bằng local notification. Gợi ý giao diện chỉ dùng ảnh/icon có quyền và giá nullable, không xây kho quán cả nước.
-
-[Task summary](TASK_SUMMARY.md) · [backlog](../../tasks/backlog/MASTER_BACKLOG.md) · [risk](RISK_REGISTER.md) · [test](../testing/TEST_PLAN.md).
+Ưu tiên dời GM-26/23/24/31 nếu trễ. Không tự cắt core location/time/NO/security/expiry/test để giữ lịch 8 tuần; thay scope cần chủ dự án chốt và ADR. Chưa sync issue/Project, chưa app/API/native evidence.

@@ -1,3 +1,5 @@
+> Lịch sử soạn baseline v0.1/v0.2. Phạm vi data hiện hành food-v1 ở [food spec](../specs/FOOD_DATA_SPEC.md) và [dependency map](TASK_DEPENDENCIES.md); GM-00 đã review v0.2, GM-28 chờ review bản mới. Những câu “venue P1/chờ GM-00” bên dưới là trạng thái của đợt cũ.
+
 # Gì Cũng Được — kế hoạch nền
 
 Ngày: 2026-10-06. Trạng thái: bộ nền đề xuất, chờ nhóm review; chưa triển khai ứng dụng.

@@ -9,3 +9,6 @@ jobs:
         with:
           python-version: '3.12'
       - run: python scripts/validate_repository.py
+      - run: python -m unittest discover -s tests -p "test_*.py"
+      - run: python scripts/task_readiness.py --check-docs
+      - run: git diff --check

@@ -1,6 +1,6 @@
-# Context, lịch sử và chống lặp — v0.2
+# Context, lịch sử và chống lặp — food-v1
 
-2026-10-07 • FR-15/17/20 • GM-03/10/18/27.
+2026-10-07 • FR-15/17/20 • GM-03/08/10/18/27/29/30; review GM-28.
 
 ## Context phòng
 
@@ -8,7 +8,7 @@ Host xác nhận mealSlot trước ready. Đề xuất từ giờ host: 05:00–
 
 Budget nullable là khoảng VNĐ/người tham khảo; không so sánh giá phần nhóm với giá một suất. Catalogue có priceMin/Max, currency VND, unit per_person, source/area/checkedAt hoặc null. Thiếu giá hiện Chưa có giá, không tự gán rẻ hoặc loại món. Budget mismatch chỉ giảm ưu tiên, không làm giá thành điều kiện an toàn/chốt.
 
-Category mềm, không chọn category không thành NO. Pool có seed/catalogueVersion/contextVersion; cùng snapshot mọi máy thấy cùng tập tối đa 8. Xếp/xen theo meal → category đa dạng → budget có dữ liệu → recent penalty → seed. Nếu không còn món theo meal, host đổi bối cảnh ở lobby trước start, không tạo phiếu rỗng.
+Category mềm, không chọn category không thành NO. Pool có seed/catalogueVersion/contextVersion; cùng snapshot mọi máy thấy cùng tập tối đa 8. Xếp/xen sau eligibility nơi bán/giờ/coverage → meal → category đa dạng → budget có dữ liệu → recent penalty → seed. Nếu không còn món theo meal, host đổi bối cảnh ở lobby trước start, không tạo phiếu rỗng.
 
 ## History tối thiểu core
 
@@ -20,10 +20,14 @@ Tại create/lobby/start, đọc tối đa 3 kết quả gần của đúng rost
 
 ## Vị trí và quán
 
-Core: foreground permission lần mở đầu; sau winner lấy vị trí người bấm, geocode khu vực rồi search Maps/review. Không background tracking, không lưu tọa độ room/history; thiếu location mở tên món. Search ngoài app không thực hiện radius filter.
+Core food-v1: GM-29 foreground/manual gợi public anchor đã xác nhận trước tạo pool; server nhận anchorId/radius/desiredAt, không GPS cá nhân. Nhóm dùng một điểm ăn chung nhìn thấy trước ready. Review ngoài app mặc định dùng khu vực này; search URL không chứng minh nơi bán.
 
-P1 GM-27: bộ 20–30 quán/15–20 món trong vùng quanh trường, mapping venue–dish có nguồn/ngày kiểm, lat/lng của quán (không user). Haversine lọc đường chim bay, không route km. Hiển thị phạm vi và stale/unknown; không gọi không có quán khi dataset không phủ. Điểm hẹn chung cần consent riêng; không lấy mọi GPS hoặc dùng vị trí host mặc định.
+P0 GM-27: mục tiêu 20–30 chi nhánh/15–20 món thật trong coverage, offering/menu/lịch quán và món/ngoại lệ/source freshness/giá có đơn vị; chưa có data thật. GM-30 query Haversine từ public anchor (không route), giao lịch/timezone/qua đêm/last order và buổi; unknown/stale không giả đang bán. Ngoài coverage báo thiếu dữ liệu. [Food spec](FOOD_DATA_SPEC.md) quy định dữ liệu và rule chi tiết.
 
 ## AC
 
-T-19 giờ boundary/timezone/budget null/category xung đột/seed và roster reset; T-20 consent partial/delete/TTL/correct group/3 recent không phá diversity; T-23 radius chỉ trong coverage và distance units. Pilot không là dependency core.
+T-19 giờ boundary/timezone/budget null/category xung đột/seed và roster reset; T-20 consent partial/delete/TTL/correct group/3 recent không phá diversity; T-23/25 eligibility địa điểm/lịch và distance units là core. GM-31 weather/mood T-26 nâng cao không chặn core.
+
+## Thời điểm ăn và snapshot
+
+Ăn ngay lấy server now + buffer một lần, đặt giờ cụ thể không cộng thêm. desiredAt UTC có timezone hiển thị; quá giờ trước start yêu cầu xác nhận/reset ready. GM-08 revalidate dataset/offerings/context trong start transaction; thay pool so với ready phải reset và xác nhận lại. Sau start không đổi pool/phiếu/result; GM-14 refetch nơi bán đúng món và báo thay đổi, không reroll. History anti-repeat chỉ rank tập đã qua eligibility; history không lưu anchor/GPS/mood mặc định.

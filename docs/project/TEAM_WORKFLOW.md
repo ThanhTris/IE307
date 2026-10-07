@@ -1,20 +1,40 @@
-# Workflow AIDD
+# Workflow AIDD — food-v1
 
-Task Markdown là nguồn trạng thái. Phân công chỉ là đề xuất; người nhận cập nhật owner/reviewer thực tế. Reviewer khác owner và không duyệt phần chính mình viết.
+Task Markdown là nguồn trạng thái; bảng tổng hợp và dependency map sinh từ task, GitHub có thể còn scope cũ. Phân công proposed chỉ là gợi ý. Khi nhận việc, người nhận và reviewer khác owner xác nhận, cập nhật assignment_status=accepted; nhãn GitHub chỉ đổi khi có ủy quyền sync.
 
-GitHub issue là nơi thành viên chọn việc. `assignment:proposed` với Assignee gợi ý không nghĩa đã nhận task. Khi nhận, thành viên xác nhận, đổi nhãn sang `assignment:accepted`, cập nhật owner/reviewer thực tế và trạng thái Markdown. Đã xác minh Trung là collaborator @TrungNQ2645 ngày 2026-10-06; Assignee vẫn là đề xuất, không nghĩa đã nhận việc.
+## Trước nhận việc và code
 
-1. Đọc PRD/spec/ADR/task; dependency chỉ mở khi task done có quyết định review có ngày và người duyệt.
-2. Chuyển backlog → in-progress khi nhận việc; ghi giả định, file dự kiến, patch nhỏ nhất, test plan.
-3. Triển khai đúng scope, cập nhật AC và evidence khi kiểm thật. Nếu bị chặn ghi lý do/owner xử lý; không giả completion.
-4. Chạy kiểm phù hợp: docs validator; code thêm typecheck/lint/unit; UI Android; backend RLS/RPC/concurrency.
-5. Chuyển task review; ghi đã làm/còn lại/lỗi/file/test/bước tiếp theo. Reviewer đối chiếu từng AC và evidence.
-6. Chỉ người review độc lập chấp thuận mới done. AI thực hiện không tự duyệt; backlog task phụ thuộc chưa được mở khi dependency còn review.
+1. Mở [dependency map](TASK_DEPENDENCIES.md), chọn task đúng phạm vi và chạy `python scripts/task_readiness.py --task GM-XX`.
+2. Đối chiếu từng dependency trong task: file đúng status=done, Reviewed-by đúng reviewer khác owner, Reviewed-at có ngày, Decision=Approved, Review-evidence trỏ file thật; mở PR/commit/evidence và xem đầu ra dùng được. CI/merge/checkbox không tự thay quyết định review.
+3. READY_TO_CLAIM cho phép nhận việc; READY_TO_START cho phép bắt đầu sau khi patch/test plan, package/license/provider và môi trường đã reviewer chốt. BLOCKED/IN_REVIEW thì chưa code phần phụ thuộc; ghi blocker và chọn task độc lập đủ gate.
+4. Cặp parallel_with chỉ nghĩa không có quan hệ trước/sau; từng task vẫn phải đạt gate riêng. Một task chính/người; phối hợp file/schema/contracts và reviewer. Không bắt cả nhóm chờ một “lớp tuần” nếu task riêng đã đủ dependency.
+5. Chuyển backlog → in-progress, sửa status và người nhận thực tế cùng lúc; chốt file dự kiến, giả định, patch nhỏ và test plan. Không tạo hai bản task.
 
-Giai đoạn hiện tại là baseline tài liệu và prototype, chưa bắt đầu 27 task triển khai v0.2. GM-00 đã được review/chấp thuận; task triển khai chỉ chuyển in-progress khi thành viên nhận việc. Word mới là artifact tùy yêu cầu, không thay Markdown.
+## Thực hiện và bàn giao
 
-## Kiểm trước commit/push
+Triển khai đúng scope; cập nhật spec/ADR trước đổi contract/schema/privacy. Ghi AC/evidence thật, lỗi/giới hạn/owner; chưa chạy hoặc mock không tính native/SQL pass. Bàn giao contract/dataset/migration version và PR/commit cho task sau. Chuyển review khi đủ evidence, dùng [mẫu PR](../../.github/pull_request_template.md) và [mẫu review](../../tasks/templates/REVIEW_TEMPLATE.md).
 
-`python scripts/validate_repository.py` và `git diff --check`. Khi có app thêm lệnh kiểm đã được GM-01 xác nhận trong mobile/README; không ghi lệnh chưa tồn tại là đã chạy. Hook kiểm tài liệu theo commit qua `--git-tree`. Không tự commit/push nếu chủ dự án chưa yêu cầu.
+Reviewer kiểm từng AC, dependency, source data và [DoD](DEFINITION_OF_DONE.md). Chỉ reviewer độc lập mới ghi:
+```text
+Reviewed-by: tên khớp reviewer trong task
+Reviewed-at: YYYY-MM-DD
+Decision: Approved
+Review-evidence: docs/evidence/GM-XX/REVIEW.md
+```
+Đường evidence phải là file thật; ghi version/PR/commit được review trong evidence. Pending/Changes requested giữ task review/in-progress. Sau Approved chuyển tasks/done, đổi status và đánh dấu AC/gate đã đối chiếu. AI thực hiện không tự Approved/Done.
 
-Mọi thay đổi contract/schema/quyết định cập nhật spec/ADR trước code phụ thuộc. Prototype tham chiếu UI, không thay nguồn yêu cầu. Legacy không thuộc CI active.
+Nếu scope đầu vào đã Done thay đổi đáng kể, lập review bổ sung/tách task và rà downstream; không giữ dấu Approved cũ để mở khóa nội dung mới. Không hạ dependency để né chờ review. GM-00 là baseline v0.2 đã duyệt; scope data food-v1 được soạn tại GM-28, chưa được duyệt nên chưa mở khóa code mới.
+
+## Cập nhật chỉ mục và kiểm trước bàn giao
+
+```text
+python scripts/task_readiness.py --write-docs
+python scripts/validate_repository.py
+python -m unittest discover -s tests -p "test_*.py"
+python scripts/task_readiness.py --check-docs
+git diff --check
+```
+
+--write-docs sinh bốn bảng và retarget link Markdown tới task sau khi chuyển thư mục; không đổi status/approval/assignment. --all là báo cáo trạng thái, không phải gate cho từng task. CI chạy validator, regression và kiểm bảng/link đã đồng bộ; các lệnh không chứng minh human review có thật.
+
+Khi có app, thêm typecheck/lint/unit/Android từ runner thực tế GM-01; SQL từ GM-04. Dataset thật cần nguồn, freshness, người kiểm khác người nhập; fixtures tách rõ. Không tự commit/push/sync issue khi chưa được yêu cầu.

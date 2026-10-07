@@ -1,3 +1,5 @@
+> Bối cảnh quyết định cũ. Yêu cầu food-v1 được cập nhật tại [ADR-005](ADR-005-food-location-time-data.md), chờ GM-28 review; phần location chỉ sau winner/venue P1 dưới đây không là scope hiện hành.
+
 # ADR-004 — Baseline tài liệu mobile consensus v0.2
 
 2026-10-07. Status: Proposed for independent review. Chủ dự án đã yêu cầu chuyển plan tiếp thu góp ý thành spec/task/tiến độ hiện hành. Đây là ủy quyền soạn lại phạm vi; không thay quyết định reviewer, không mở khóa GM-00 hoặc cài package.
