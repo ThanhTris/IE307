@@ -1,0 +1,55 @@
+{
+  "policyVersion": "decision-v2",
+  "note": "Specification fixtures, not executed engine results",
+  "cases": [
+    {
+      "id": "perfect",
+      "n": 4,
+      "want": 4,
+      "eligible": true,
+      "expectedTier": "PERFECT"
+    },
+    {
+      "id": "majority",
+      "n": 4,
+      "want": 3,
+      "eligible": true,
+      "expectedTier": "CONSENSUS"
+    },
+    {
+      "id": "half",
+      "n": 4,
+      "want": 2,
+      "eligible": true,
+      "expectedTier": "COMPROMISE"
+    },
+    {
+      "id": "all-ok",
+      "n": 4,
+      "want": 0,
+      "eligible": true,
+      "expectedTier": "COMPROMISE"
+    },
+    {
+      "id": "veto",
+      "n": 4,
+      "want": 3,
+      "eligible": false,
+      "expectedTier": "NO_CONSENSUS"
+    },
+    {
+      "id": "odd-majority",
+      "n": 3,
+      "want": 2,
+      "eligible": true,
+      "expectedTier": "CONSENSUS"
+    },
+    {
+      "id": "pair-compromise",
+      "n": 2,
+      "want": 1,
+      "eligible": true,
+      "expectedTier": "COMPROMISE"
+    }
+  ]
+}

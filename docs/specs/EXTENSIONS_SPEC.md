@@ -6,4 +6,4 @@ OCR: nhập ảnh menu → on-device OCR → người dùng sửa tên/giá → 
 
 AI: free text → JSON category/preference đề xuất → người dùng xác nhận. Model không chọn winner, không thay NO, không tạo quán có thật. Gateway giữ key; đánh giá schema và nghĩa, quota/cost/consent, fallback form. Chưa có model/vendor chốt.
 
-Fairness nhiều bữa: nghiên cứu cách đo người nhường, cold start và gaming; không tự ưu tiên dựa vào số phiên ít thắng. Chưa có task triển khai trong 24 task.
+Fairness nhiều bữa: nghiên cứu cách đo người nhường, cold start và gaming; không tự ưu tiên dựa vào số phiên ít thắng. Chưa có task triển khai trong 27 task.

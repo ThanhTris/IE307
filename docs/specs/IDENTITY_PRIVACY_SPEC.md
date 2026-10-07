@@ -1,37 +1,41 @@
-# IDENTITY, PRIVACY & SECURITY SPEC
+# Identity, privacy và security — v0.2
 
-Draft v0.1 • FR-01, FR-05, FR-09, FR-11..12.
+2026-10-07 • FR-01/05/11/12/14/16/17. Supabase vẫn đề xuất ở ADR-001; không đã deploy.
 
-## Khách và tài khoản
+## Identity và bạn quen
 
-Khách dùng Supabase anonymous sign-in để có auth.uid; không dùng userId do client tự khai. Lưu refresh session qua adapter secure storage được kiểm tra trên Android. Mất session khách hoặc gỡ app có thể mất quyền vào phiên/bạn cũ; UI nói rõ trước khi xóa dữ liệu.
+Guest anonymous auth có auth.uid, session secure storage; không client tự khai userId. Mất session/cài lại có thể mất bạn/server history. Account link/recovery/sync nhiều máy là P1 GM-26, lỗi phải giữ guest session. Không SMS có phí.
 
-Tài khoản và liên kết guest là P1; không dùng SMS có phí. Kiểm xung đột tài khoản đã có và lỗi liên kết; không chuyển quyền phòng chỉ bằng email nhập vào form.
+Kết bạn/inbox/avatar quick room là P0 GM-17. Canonical pair key unique, pending chỉ accepted bởi recipient. Mời phòng kiểm accepted pair khi tạo và khi accept; không auto join/ready. Unfriend chặn invite mới và accept invite cũ chưa dùng; không sửa result terminal. Khách có quan hệ bạn trong session hiện tại nhưng không hứa recover đổi máy.
 
-## Quyền dữ liệu
+## Quyền bảng/RPC
 
-- Public catalogue chỉ đọc bản published. Người chưa tham gia không đọc phòng/members/results qua query trực tiếp.
-- Room code chỉ dùng với join RPC; không cho list room codes. Rate limit join/create và số phòng active trên server; code ngẫu nhiên không thay auth.
-- Members đọc trạng thái phòng và tên hiển thị; phiếu chỉ đọc bởi người sở hữu. Host không đọc được raw votes của người khác, kể cả gọi REST trực tiếp.
-- Client không INSERT/UPDATE kết quả, state, membership hay ready bằng bảng trực tiếp; RPC kiểm quyền và transition.
-- RPC đặc quyền cần kiểm auth.uid, membership, state/version, lock hàng room; fixed search_path và tên bảng qualified. REVOKE quyền mặc định, GRANT rõ cho authenticated; không đặt service_role trong mobile.
-- Realtime chỉ phát trường được phép: state/version/progress tổng hợp. Không đưa bảng phiếu vào subscription/broadcast công khai. Nếu read policy phức tạp, dùng snapshot RPC và sự kiện version để refetch.
+Catalogue published được đọc. Người ngoài không list room/code/results/history/invitations/tokens; mã/link chỉ giúp gửi join request. Member chỉ đọc own votes/submissions; host không có quyền raw votes người khác. Shared snapshot có roster/progress/context/resultTier, không private preferences theo user hoặc vote matrix. ownBallot chỉ chính caller.
 
-## Retention
+Client không trực tiếp ghi state/result/membership/submission. Privileged RPC kiểm current auth, membership, state/version/expiry, lock room, fixed search_path và schema qualified. REVOKE mặc định/GRANT tối thiểu. Service key chỉ trusted sender/server, không app hoặc log.
 
-Đề xuất phiếu thô và membership phiên được dọn sau 24 giờ từ terminal/expiry. Join/vote từ chối ngay sau expiry dù dọn trễ; member chỉ đọc snapshot tối thiểu cho trạng thái hết hạn, không tiếp tục đọc phiếu. Kết quả đã chốt đọc được trong cửa sổ retention; P1 muốn giữ lâu hơn cần history snapshot theo consent. GM-06 phải chọn và kiểm chứng cơ chế dọn server tự động trong quota hiện tại; không ghi đã xóa chỉ vì UI ẩn. Nếu không có scheduler hợp lệ, không đưa dữ liệu cá nhân thật vào pilot và ghi blocker release.
+Realtime báo version/state/progress, không publish bảng phiếu hoặc push tokens. ACL subscription không thay quyền read/RPC. Room invites đọc theo recipient/sender với trường tối thiểu, history đúng user/group có consent.
 
-P1 history chỉ giữ winner, buổi ăn, timestamp, member IDs cần thiết theo consent; cho xóa lịch sử cá nhân. Không gửi raw votes cho AI hoặc analytics. Nhật ký QA dùng fixture, không token.
+## Dữ liệu và retention
 
-## Bạn ăn cùng — P1
+| Dữ liệu | Giới hạn đề xuất để review |
+| --- | --- |
+| Votes/submissions/membership chi tiết | dọn sau 24h từ terminal/expiry; expiry chặn ngay dù cleanup trễ |
+| Snapshot/draft/outbox local | 24h tối đa; reconcile terminal hoặc logout/auth change xóa private; không gửi queue stale |
+| Personal/group history summary | opt-in, 30 ngày; local tối đa 50 mục; group chỉ khi mọi người consent; xóa/rút consent ngừng chống lặp nhóm |
+| Pair links | giữ khi đang kết bạn; unfriend xóa link, invalid pending room invites |
+| Pending friend/room invitations | friend invite tối đa 7 ngày, room invite không quá expiresAt phòng; terminal/reject/expiry purge trong 24h |
+| Push token/event | token inactive 30 ngày/invalid/logout thì vô hiệu; event/ticket 7 ngày |
+| Vị trí | foreground, không room/history/log/queue; không background tracking |
 
-Lời mời được bên nhận chấp nhận; pair có đúng 2 user, canonical key chống trùng. Tạo nhanh phòng không có nghĩa người kia đã vào/ready. Hủy kết bạn chặn lời mời nhanh nhưng không sửa kết quả phiên đã kết thúc. Không cần upload danh bạ hay vị trí nền.
+Scheduler/quota/TTL phải có evidence trước pilot thật. Xóa summary không chỉ ẩn UI. History không giữ raw votes để suy gu; chỉ sở thích tự khai. Không gửi sang AI mặc định. SQLite không mặc định mã hóa; review backup/file protection và không lưu token trong SQLite. Log/evidence không token, raw vote, tọa độ thật hoặc thông tin nhạy cảm.
 
-## Acceptance criteria
+## Consent và rò rỉ suy luận
 
-- SEC-01: anonymous authenticated user A không đọc/ghi vote của B, host cũng bị chặn.
-- SEC-02: outsider không đọc room/result khi đoán được UUID hoặc code.
-- SEC-03: expired/cancelled room không nhận vote; member không thể tăng số lượng ghế bằng payload.
-- SEC-04: RPC dùng current auth; spoof userId thất bại; privileged key không có trong bundle/log.
-- SEC-05: test dọn dữ liệu dùng server time và báo số hàng; guest/session restore được kiểm thực tế.
-- SEC-06: P1 invitation chưa được chấp nhận không tạo pair; account link lỗi không làm mất guest session đang dùng.
+Xin quyền vị trí lần đầu theo chủ dự án, giải thích và deny không chặn chọn món. Notification permission hỏi lúc dùng mời; độc lập. Geocoding ngoài thiết bị cần nêu provider/bên nhận trước sử dụng, chỉ search khu vực tổng quát ra nền tảng. Không chia vị trí host hoặc mọi thành viên mặc định.
+
+matchTier/lý do tiết lộ tổng hợp; ở nhóm nhỏ có thể đoán phiếu người khác. Không nêu count/user matrix, không hứa ẩn danh hay end-to-end encryption. [History/context](CONTEXT_HISTORY_SPEC.md), [outbox](OFFLINE_SYNC_SPEC.md), [push/link](NOTIFICATIONS_LINKS_SPEC.md).
+
+## AC
+
+SEC-01 A/host không đọc ghi vote B. SEC-02 outsider không room/result/history/invites/tokens. SEC-03 terminal/expiry không vote/overcapacity. SEC-04 auth spoof thất bại, service key không bundle/log. SEC-05 TTL/cleanup theo server time có output, guest restore thật. SEC-06 pending invitation không tạo pair, unfriend/accept race đúng; account lỗi giữ guest. SEC-07 history consent/group boundaries/delete; SEC-08 token owner/notification leak/local account isolation.

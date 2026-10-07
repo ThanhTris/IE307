@@ -1,42 +1,35 @@
-# UI SPEC — Gì Cũng Được
+# UI spec — v0.2
 
-Draft v0.1. Prototype: [mở HTML](../../design/prototypes/gi-cung-duoc.html). Đây là mô phỏng một thiết bị, không có backend.
+2026-10-07 • Android-first, chờ review. [Prototype HTML](../../design/prototypes/gi-cung-duoc.html) là mô phỏng v0.1, chưa có đầy đủ v0.2. [Plan UI](../project/UI_IMPLEMENTATION_PLAN.md).
 
-[Kế hoạch UI và thứ tự triển khai](../project/UI_IMPLEMENTATION_PLAN.md) liệt kê chức năng, trạng thái và tiêu chí nghiệm thu theo từng màn.
+| UI | Màn và hành động | Trạng thái bắt buộc |
+| --- | --- | --- |
+| UI-01 | Home: guest/session, avatar bạn quen, tạo/vào phòng, lời giải thích/quyền vị trí lần đầu | restore/loading, deny/offline, empty friends, lost session |
+| UI-02 | Tạo: tên, buổi gợi ý theo giờ sửa được, budget/đổi món có giải thích | validation, quota/network, double create |
+| UI-03 | Vào: mã/QR/incoming link → confirm join | camera denied/manual, full/locked/expired/invalid, cold/warm auth |
+| UI-04 | Category mềm, consent history, bối cảnh nhóm | nhiều loại/bỏ qua, budget unknown, empty catalogue, đổi reset ready |
+| UI-05 | Lobby: roster/code/QR/link, mời bạn, ready/start host | chờ người/ready, disconnect, lỗi invite, context đổi, cancel |
+| UI-06 | Card ảnh/tên/tags/giá nguồn; ba nút, double-tap WANT; sửa/undo; Gửi | UNSET, DRAFT/QUEUED/SENDING/UNKNOWN/ACK, stale; pending không count |
+| UI-07 | Vòng cuối: Giữ/Loại thêm, explicit confirm | giữ mặc định nhưng phải nộp, loại hết hợp lệ, pending/reconnect |
+| UI-08 | Winner/Perfect–Consensus–Compromise/lý do; khu vực và Maps/YouTube/TikTok | location denied/GPS off/geocode error, browser/copy, no reroll |
+| UI-09 | No Consensus: lý do trung tính, kết thúc/tạo phiên mới | không tự vòng3/carry votes, không nêu người NO |
+| UI-10 | Network/expiry/cancel; cache fetchedAt và retry | refetch trước replay, xác nhận rời, stale queue không auto submit |
+| UI-11 | Friends: mã/link, accept/reject/unfriend, avatar quick room | pending/empty/expired, lost guest, không auto join/ready |
+| UI-12 | Inbox/push permission, invitation accept và kết quả server | denied vẫn inbox, cold/warm, expired/duplicate/outsider |
+| UI-13 | History consent/list/delete, 3 recent hint | offline cache stale, opt-out/empty, group consent thiếu |
+| UI-14 P1 | Account link/recovery và sync history | conflict/lỗi giữ guest, logout clear private |
+| UI-15 P1 | Pilot venue–dish radius + coverage/ngày kiểm | ngoài vùng/unknown, GPS deny, không route distance |
 
-## Hướng hình ảnh
+## Gesture và một tay
 
-Ấm, thân thiện như một bàn ăn: nền kem, màu cam đất cho hành động, xanh rêu cho trạng thái đã thống nhất. Ưu tiên tên món và nút rõ nghĩa; không cần ảnh món tải mạng để hiểu luồng. Không dùng hình thức dating hoặc thông điệp ép người dùng nhận món.
+Chạm hai lần vùng ảnh/card đặt WANT, không toggle hoặc gửi. Không vote bằng vuốt dọc. Swipe ngang tùy chọn phải WANT/trái NO; OK có nút. Kéo/scroll hủy tap recognizer. Mở chi tiết bằng nút riêng; không chạy chạm đơn đồng thời với double-tap. Hướng dẫn lần đầu và phản hồi chữ/tim nhẹ; reduced motion bỏ trang trí. Thử trái/phải và card đang chuyển; không suy mặc định double-tap tốt hơn từ thói quen TikTok.
 
-## Màn hình và điều hướng
+Ba nút Pressable có label/state luôn hiện; TalkBack dùng nút chuẩn (double-tap assistive không bị ghi WANT tùy biến). Mọi lựa chọn trước Gửi có thể sửa; sau queue chưa từng gửi có Cancel local rõ, sau possible delivery khóa tới reconcile. Không Back sửa submission đã nhận.
 
-| ID | Màn | Nội dung/hành động | Trạng thái cần có |
-| --- | --- | --- | --- |
-| UI-01 | Trang chủ | Tạo kèo ăn / Nhập mã; tiếp tục với khách; entry Bạn ăn cùng P1 | loading session, lỗi auth, offline |
-| UI-02 | Tạo phòng | Buổi ăn; tên của bạn; tạo mã | tên sai, đang tạo, quota/network error |
-| UI-03 | Vào phòng | Mã hoặc quét QR; tên | sai mã, hết hạn, đầy, đã bắt đầu, camera denied |
-| UI-04 | Sở thích | Chọn nhiều loại hoặc Gì cũng được; giải thích là ưu tiên | catalogue rỗng, không có loại chọn vẫn hợp lệ |
-| UI-05 | Phòng chờ | Mã/QR, thành viên, ready, đổi buổi với host | chưa đủ người, chưa ready, host rời, mất mạng |
-| UI-06 | Chọn món | card, tiến độ, ba nút Không ăn/Ăn được/Muốn ăn | chưa chọn, sửa trước nộp, gửi lỗi, đã nộp/chờ |
-| UI-07 | Vòng cuối | Các món mọi người ăn được; Giữ/Loại thêm; xác nhận | không còn món, chờ mọi người, reconnect |
-| UI-08 | Kết quả | Tên món, lý do, tìm quán trên Maps, về trang chủ | Maps không mở, đã kết thúc, không reroll |
-| UI-09 | Chưa đồng thuận | Lý do trung tính, kết thúc/tạo phiên mới | không tự quay lại vòng chọn |
-| UI-10 | Phiên gián đoạn | Chờ kết nối / hết hạn / đã hủy | retry refetch snapshot, xác nhận rời |
-| UI-11 | Bạn ăn cùng, lịch sử (P1) | Mời/chấp nhận, phòng nhanh, liên kết account | chưa có bạn, mất guest session, invite rejected |
+## Copy, quyền riêng tư và a11y
 
-## Copy và tương tác
+WANT Muốn ăn; OK Ăn được; NO Không ăn; không dùng Bỏ qua thay NO. Chỉ ACK làm tăng số hoàn tất chung. Nhãn Chờ gửi trên máy khác Server đã nhận. Không raw votes trên avatar/animation/notification. Kết quả nhãn tổng hợp có thể bị suy luận nhóm nhỏ, không hứa ẩn danh.
 
-- WANT: “Muốn ăn”; OK: “Ăn được”; NO: “Không ăn”. Không dùng “Bỏ qua” cho NO vì dễ hiểu thành chưa chọn.
-- Không cần vuốt mới dùng được: ba Pressable có label/state; swipe là shortcut, tap vẫn là đường chuẩn.
-- Phiếu gửi thành công mới tăng trạng thái đã nộp. Loading nút chống double tap nhưng server vẫn cần idempotency.
-- Không lộ phiếu cá nhân qua avatar, animation hay thông báo. “3/4 người đã chọn xong” là tiến độ chung.
-- Không có nút quay lại sửa phiếu đã gửi. Back ở phiên active hiện xác nhận rời với hệ quả hủy phiên.
-- Vòng cuối hiển thị danh sách với toggle rõ Giữ/Loại thêm. Nút nộp vẫn được dùng nếu loại hết, kết quả có thể chưa đồng thuận.
+Safe area, keyboard tránh form, touch48dp/font200/TalkBack/dark/reduced motion. UI 320–599 một cột; tablet card giới hạn chiều rộng, không tràn. FlatList khi phù hợp. Giá tham khảo rõ đơn vị/nguồn hoặc Chưa có giá; ảnh có quyền và fallback. Không tuyên bố allergy safety hoặc verified nearby nếu chỉ search URL.
 
-## Accessibility và responsive
-
-Theo [design system](../../design/DESIGN_SYSTEM.md). Dùng safe area, KeyboardAvoidingView khi nhập tên/mã, font scaling 200%, touch 48dp; font hệ thống hỗ trợ tiếng Việt. 320–599dp một cột, 600–839dp card tối đa 560dp, >=840dp panel nội dung + bối cảnh. Không kéo giãn card hết tablet. Dark theme có token riêng. Reduced motion bỏ rung/transition trang trí, focus đến tiêu đề màn mới.
-
-## Giới hạn prototype
-
-Prototype có dữ liệu mẫu và nút chọn kịch bản reviewer; không phải camera, đăng nhập, QR thật, realtime, secure vote hay Maps API. Màn P1 được mô tả trong spec, chưa mô phỏng đầy đủ. UI native cần screenshot Android và test TalkBack ở task triển khai.
+Native screenshots/recording có loading/empty/error, permission và offline; HTML không thay chứng cứ. [Test plan](../testing/TEST_PLAN.md).

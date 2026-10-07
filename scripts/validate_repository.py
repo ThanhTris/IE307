@@ -23,6 +23,8 @@ REQUIRED = (
     'docs/specs/IDENTITY_PRIVACY_SPEC.md', 'docs/specs/TRACEABILITY.md',
     'docs/architecture/API_CONTRACT.md', 'docs/architecture/DATA_MODEL.md',
     'docs/architecture/decisions/ADR-001-stack.md', 'docs/testing/TEST_PLAN.md',
+    'docs/product/SYSTEM_OVERVIEW.md', 'docs/specs/OFFLINE_SYNC_SPEC.md',
+    'docs/specs/NOTIFICATIONS_LINKS_SPEC.md', 'docs/specs/CONTEXT_HISTORY_SPEC.md',
     'design/DESIGN_SYSTEM.md', 'design/prototypes/gi-cung-duoc.html',
     'tasks/backlog/MASTER_BACKLOG.md', 'tasks/templates/TASK_TEMPLATE.md',
     'tests/fixtures/decision-cases.json',
@@ -111,9 +113,13 @@ def validate(src: Source) -> list[str]:
         if meta.get('status') == 'done':
             if not re.search(r'Reviewed-at:\s*\d{4}-\d{2}-\d{2}', text) or not re.search(r'Reviewed-by:\s*\S', text):
                 errors.append(f'done without review evidence: {tid}')
-    expected = {f'GM-{i:02}' for i in range(25)}
+    manifest = 'tasks/backlog/MASTER_BACKLOG.md'
+    declared = re.findall(r'^\| \[(GM-\d{2})\]', src.read(manifest), re.M) if manifest in src.files else []
+    if not declared or len(declared) != len(set(declared)):
+        errors.append('master backlog must declare unique implementation task IDs')
+    expected = {'GM-00', *declared}
     if set(tasks) != expected:
-        errors.append(f'task IDs must be GM-00..24; missing={sorted(expected-set(tasks))}')
+        errors.append(f'task/manifest mismatch: missing={sorted(expected-set(tasks))}; unexpected={sorted(set(tasks)-expected)}')
     graph = {tid: re.findall(r'GM-\d{2}', m.get('dependencies', '')) for tid, m in tasks.items()}
     active, seen = set(), set()
 
@@ -150,8 +156,16 @@ def validate(src: Source) -> list[str]:
     tracefile = 'docs/specs/TRACEABILITY.md'
     if tracefile in src.files:
         trace = src.read(tracefile)
-        if set(re.findall(r'\| (FR-\d{2}) \|', trace)) != {f'FR-{i:02}' for i in range(1,14)}:
-            errors.append('traceability must cover FR-01..13')
+        requirements = src.read('docs/product/FUNCTIONAL_REQUIREMENTS.md')
+        required_ids = re.findall(r'^\| (FR-\d{2}) \|', requirements, re.M)
+        traced_ids = re.findall(r'^\| (FR-\d{2}) \|', trace, re.M)
+        if not required_ids or len(required_ids) != len(set(required_ids)):
+            errors.append('functional requirements must declare unique FR IDs')
+        if set(traced_ids) != set(required_ids) or len(traced_ids) != len(set(traced_ids)):
+            errors.append('traceability must cover each current FR exactly once')
+        for task_id in set(re.findall(r'GM-\d{2}', trace)):
+            if task_id not in tasks:
+                errors.append(f'unknown task in traceability: {task_id}')
     return errors
 
 
@@ -168,7 +182,7 @@ def main():
         print(error)
     if errors:
         return 1
-    print('Gi Cung Duoc: documents, links, JSON, 25 task records, dependencies and FR traceability OK.')
+    print('Gi Cung Duoc: documents, links, JSON, task manifest, dependencies and current FR traceability OK.')
     print('Scope: documentation validation only; no native build/backend execution or human approval verified.')
     return 0
 

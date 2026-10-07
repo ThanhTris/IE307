@@ -1,36 +1,29 @@
 # Gì Cũng Được
 
-Ứng dụng React Native giúp cặp đôi và nhóm bạn chọn món theo ba mức **Muốn ăn / Ăn được / Không ăn**, tối đa hai vòng và một kết quả chung.
+Ứng dụng Android React Native giúp nhóm 2–8 người chọn món thỏa hiệp có giải thích trong tối đa hai vòng, rồi tìm quán/review theo vị trí. Card có ba nút; chạm hai lần chọn Muốn ăn. NO luôn loại món, server chốt kết quả một lần.
 
-**Hiện trạng:** bộ nền đề xuất và prototype tương tác; chưa có app Expo chạy được, chưa deploy backend. Không có package để `npm install` ở root. Bootstrap bắt đầu sau review bộ nền.
+Baseline tài liệu v0.2 • 2026-10-07. GM-00 đã được review/chấp thuận. Hiện có spec/task/prototype/skeleton, chưa app Expo chạy được hoặc backend deploy. Không npm install root; GM-01 bootstrap sau khi thành viên nhận task.
 
-## Đọc trước
+## Đọc để hiểu dự án
 
-1. [Kế hoạch chuyển đề tài](docs/project/MIGRATION_PLAN.md), [kế hoạch 8 tuần](docs/project/PROJECT_PLAN.md).
-2. [PRD](docs/product/PRODUCT_REQUIREMENTS.md), [spec index](docs/specs/README.md), [truy vết](docs/specs/TRACEABILITY.md).
-3. [Prototype UI](design/prototypes/gi-cung-duoc.html), [UI spec](docs/specs/UI_SPEC.md), [design system](design/DESIGN_SYSTEM.md).
-4. [Kiến trúc](docs/architecture/SYSTEM_ARCHITECTURE.md), [cấu trúc React Native](docs/project/REPOSITORY_STRUCTURE.md).
-5. [Backlog](tasks/backlog/MASTER_BACKLOG.md), [sáu thành viên](docs/project/TEAM_AND_RESPONSIBILITIES.md), [AIDD](docs/project/AIDD_PROCESS.md).
+1. [Mô tả hệ thống cho cả nhóm](docs/product/SYSTEM_OVERVIEW.md).
+2. [PRD](docs/product/PRODUCT_REQUIREMENTS.md), [20 yêu cầu chức năng](docs/product/FUNCTIONAL_REQUIREMENTS.md), [spec index](docs/specs/README.md).
+3. [27 task và trạng thái](docs/project/TASK_SUMMARY.md), [tiến độ 8 tuần](docs/project/PROJECT_PLAN.md), [phân công đề xuất](docs/project/TEAM_AND_RESPONSIBILITIES.md).
+4. [Kế hoạch UI](docs/project/UI_IMPLEMENTATION_PLAN.md), [test plan](docs/testing/TEST_PLAN.md), [AIDD/DoD](docs/project/TEAM_WORKFLOW.md).
+5. [Kiến trúc](docs/architecture/SYSTEM_ARCHITECTURE.md), [data](docs/architecture/DATA_MODEL.md), [API](docs/architecture/API_CONTRACT.md), [nghiên cứu 8 đối thủ](docs/research/LECTURER_APPS_REVIEW_2026-10-07.md).
+
+Core có guest/QR/link, bạn quen/push, realtime, cache/outbox/history consent, context giờ/budget và location/review. Account nâng cao/venue radius P1, OCR/AI P2. Owner/reviewer đề xuất, thành viên tự nhận/đổi; không tự coi task Done. [GitHub mapping](docs/project/GITHUB_TASKS.md) ghi riêng phần chưa đồng bộ.
 
 ```text
-mobile/        Expo Router + feature modules (skeleton)
-supabase/      migrations, seed, RPC/RLS tests (skeleton)
-design/        design system và prototype HTML
-docs/          PRD, specs, ADR, kế hoạch, kiểm thử
-tasks/         backlog, review, done và mẫu task
-tests/         fixture quyết định và E2E
-scripts/       validator và công cụ môn học
+mobile/       Expo Router/features/domain/adapters (skeleton)
+supabase/     migrations/RPC/RLS/tests/trusted sender dự kiến
+docs/         mô tả/PRD/spec/ADR/plan/test/evidence
+tasks/        GM-00 review + GM-01..27 backlog
+design/       design system/prototype HTML mô phỏng cũ
+tests/        fixtures/E2E và validator regression
+scripts/      validator tài liệu
 ```
 
-Mở `design/prototypes/gi-cung-duoc.html` bằng trình duyệt hoặc chạy `python -m http.server 8765 --bind 127.0.0.1`. Prototype mô phỏng, không kết nối backend.
+Kiểm tài liệu: `python scripts/validate_repository.py`, `git diff --check`. Validator không thay independent review/native evidence.
 
-```powershell
-python scripts/validate_repository.py
-git diff --check
-```
-
-Kiểm prototype tùy chọn: `node scripts/verify_prototype.cjs` trong môi trường có Playwright/Chromium (hoặc `PROTOTYPE_PLAYWRIGHT_PATH`). [Evidence lần chuyển đề tài](docs/evidence/GM-00/VERIFICATION.md).
-
-[Bắt đầu](docs/project/START_HERE.md). Đây là tài liệu hiện hành của dự án Gì Cũng Được.
-
-[Task GitHub](https://github.com/ThanhTris/IE307/issues?q=is%3Aissue+is%3Aopen+label%3A%22project%3Agi-cung-duoc%22) được gắn người phụ trách ở mức đề xuất; thành viên tự chọn cuối cùng.
+[Prototype HTML](design/prototypes/gi-cung-duoc.html) chưa mô phỏng đầy đủ v0.2. Mở bằng browser hoặc local HTTP; nó không chứng minh QR/push/SQL/realtime. [Bắt đầu](docs/project/START_HERE.md).

@@ -1,56 +1,34 @@
-# DECISION SPEC — không ép món, không quay vô hạn
+# Decision spec — v0.2
 
-Draft v0.1 • policyVersion `decision-v1` • FR-05..08, FR-10.
+2026-10-07 • policyVersion decision-v2 • FR-05..08. Thứ tự chọn giữ hai vòng; v2 bổ sung matchTier và contract lý do. Chờ review độc lập, chưa có engine/API triển khai.
 
-## Dữ liệu đầu vào
+## Input và vòng 1
 
-Roster và pool đã khóa. Phiếu vòng 1 là `WANT | OK | NO` cho từng dishId. `UNSET` chỉ là trạng thái UI, không được gửi như phiếu hợp lệ. Một submission phải đủ toàn bộ pool, không thừa ID, có requestId/version.
+Roster/context/pool khóa; phiếu WANT/OK/NO đầy đủ mỗi món, UNSET không gửi. Server đợi mọi thành viên, không early match hay bỏ người offline. Trước Gửi sửa draft; khi queued/sending tuân [outbox](OFFLINE_SYNC_SPEC.md).
 
-Trước nộp được sửa lựa chọn; sau khi nộp không sửa. Server đợi **tất cả** thành viên nộp, không chọn early match làm các máy khác kết quả hoặc cho người vuốt nhanh quyền ưu tiên.
+Tập M: mọi người WANT. M không rỗng → server random đều một lần trong M, persist DECIDED/PERFECT. Nếu M rỗng, A gồm món không NO, đủ WANT/OK. A rỗng → NO_CONSENSUS/EMPTY_INTERSECTION; A khác rỗng → ROUND_2 đúng A. Copy: Chưa có món cả nhóm cùng muốn; còn X món mọi người ăn được. Không nêu ai từ chối.
 
-## Vòng 1
+## Vòng 2 và điểm
 
-1. Tập M: món mà tất cả thành viên chọn WANT.
-2. Nếu M khác rỗng: chọn đều một món trong M ở server, lưu một lần, trạng thái DECIDED.
-3. Nếu M rỗng: tập A là các món không có NO và đã có WANT/OK từ mọi thành viên.
-4. Nếu A rỗng: NO_CONSENSUS. Nếu A không rỗng: ROUND_2 với đúng tập A.
+Giữ/Loại thêm từng món A; mặc định draft Giữ, user phải bấm xác nhận kể cả chỉ 1 món. S là tập mọi thành viên giữ; S rỗng → NO_CONSENSUS/ALL_REMOVED. S còn → score(d)=2×WANT(d)+OK(d)=n+WANT(d). Chỉ tính trong S; NO/REMOVE là loại trừ, không có điểm để bù. Chọn score cao nhất, hòa thì server random đều một lần; lưu resultId/winnerId/tiedIds/policyVersion/finalizedAt. Retry/reconnect không bốc lại, không vòng 3/reroll.
 
-Thông báo chuyển vòng: “Chưa có món cả nhóm cùng muốn. Còn X món mọi người đều ăn được.” Không nêu người khiến một món bị loại.
+## Nhãn và giải thích
 
-## Vòng 2
-
-Người dùng thấy các món A, mỗi món chọn **Giữ / Loại thêm**; mặc định nháp Giữ nhưng phải bấm “Xác nhận lựa chọn” để nộp. Không hiển thị các món đã NO ở vòng 1, không đề nghị bỏ giới hạn của người khác.
-
-Sau khi đủ submission: S gồm món được mọi người Giữ. S rỗng → NO_CONSENSUS. Nếu S còn món, ưu tiên số WANT vòng 1 cao nhất; khi hòa bốc đều một lần trong tập đứng đầu. Server lưu kết quả/tập hòa/policyVersion; reload hay retry không bốc lại. Không có vòng ba, không có reroll trong MVP. Tạo phiên mới là hành động rõ ràng, không tự lặp.
-
-## Giải thích kết quả
-
-- Vòng 1: “Cả nhóm cùng muốn ăn món này.”
-- Vòng 2: “Mọi người đều giữ món này ở vòng cuối; món được ưu tiên theo mức muốn ăn.”
-- Chưa đồng thuận: “Hiện chưa có món mọi người cùng ăn được. Bạn có thể kết thúc hoặc tạo một phiên mới với lựa chọn khác.”
-
-Không công khai matrix phiếu hoặc lý do cá nhân. Tổng hợp vẫn có thể cho phép suy luận ở nhóm nhỏ; không hứa ẩn danh tuyệt đối.
-
-## Invariants và AC
-
-- DEC-01: món có bất kỳ NO vòng 1 hoặc Loại thêm vòng 2 không thể là winner.
-- DEC-02: thiếu một member hoặc một dish vote không được finalize.
-- DEC-03: mọi client đọc cùng resultId/winnerId/version từ server.
-- DEC-04: retry requestId cùng payload trả lại kết quả cũ; cùng ID khác payload → lỗi.
-- DEC-05: số vòng <=2; terminal không đổi sau request đến muộn.
-- DEC-06: một món hợp lệ vẫn cần toàn bộ xác nhận vòng 2 nếu không phải unanimous WANT.
-- DEC-07: thuật toán TypeScript dùng mô phỏng/test; SQL RPC là nguồn chốt thật, chạy chung bộ fixture để chống lệch logic.
-
-## Ví dụ nghiệm thu
-
-| A | B | Kết quả |
+| matchTier | Điều kiện | Copy công khai |
 | --- | --- | --- |
-| WANT phở | WANT phở | Vòng 1 chọn phở nếu đó là match duy nhất |
-| WANT phở | OK phở | Sang vòng 2, chưa tự chốt |
-| WANT phở | NO phở | Không đưa phở vào vòng 2 |
-| OK phở, NO bún | NO phở, OK bún | Chưa đồng thuận |
-| Cùng giữ phở/bún, điểm WANT bằng nhau | Cùng giữ phở/bún | Chọn server một lần; các lần đọc không đổi |
+| PERFECT | WANT=n | Cả nhóm cùng muốn ăn món này |
+| CONSENSUS | n/2 < WANT < n, mọi người giữ vòng 2 | Đa số muốn ăn và mọi người đều giữ món này |
+| COMPROMISE | 0 <= WANT <= n/2, mọi người giữ vòng 2 | Phương án cả nhóm ăn được, ưu tiên theo mức muốn ăn |
+| NO_CONSENSUS | A hoặc S rỗng | Chưa có phương án mọi người cùng chấp nhận |
 
-Phân bổ công bằng qua nhiều buổi và tự tìm phương án nới ràng buộc là P2; không nằm trong policy v1.
+Ngưỡng là quy tắc sản phẩm được đề xuất, không chuẩn học thuật. Không trả score/count theo user hoặc matrix phiếu ra shared snapshot. matchTier tiết lộ thông tin tổng hợp nên nhóm nhỏ có thể suy luận; không hứa ẩn danh tuyệt đối. Public reasonCode/matchTier; tiedIds giữ server/internal, không tạo thao tác vote lần 3.
 
-Trong fixture engine, `WAITING` nghĩa chưa đủ dữ liệu để chuyển trạng thái, không phải RoomState mới; phòng vẫn ROUND_1/ROUND_2 hiện tại. Fixture chỉ định tập ứng viên hợp lệ, không ép một winner cố định khi hòa.
+No Consensus cho Kết thúc/Tạo phiên mới; phiên mới phải ready và chọn lại, không auto carry phiếu. Core cho đổi meal/category/budget từ catalogue; nhập món mới ngoài catalogue chưa thuộc scope.
+
+## Invariants
+
+DEC-01 NO/REMOVE không winner. DEC-02 thiếu member/dish không finalize. DEC-03 cùng resultId/winner/version. DEC-04 cùng requestId/payload trả ACK cũ, khác payload báo lỗi. DEC-05 <=2 vòng, terminal immutable. DEC-06 một món không unanimous vẫn cần mọi xác nhận vòng 2. DEC-07 TypeScript/SQL cùng fixtures. DEC-08 nhãn đúng threshold và không lộ matrix. Context/history chỉ xếp pool, không đổi điểm hoặc veto sau start.
+
+Ví dụ n=4: phở [W,W,O,O]=6; cơm [W,W,W,O]=7; lẩu [W,W,W,NO] loại. Cả nhóm giữ phở/cơm → cơm CONSENSUS. Hai WANT/hai OK → COMPROMISE. Tất cả OK vẫn hợp lệ và COMPROMISE.
+
+Fixture WAITING là thiếu dữ liệu, không thêm RoomState. Test T-04/05/07/22; [fixtures](../../tests/fixtures/decision-cases.json) và [nhãn](../../tests/fixtures/consensus-tier-cases.json).

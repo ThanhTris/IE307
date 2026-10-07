@@ -1,13 +1,13 @@
-# Bắt đầu
+# Đọc từ đây — baseline v0.2
 
-Đọc [PRD](../product/PRODUCT_REQUIREMENTS.md), [UI](../specs/UI_SPEC.md), [policy](../specs/DECISION_SPEC.md), [backlog](../../tasks/backlog/MASTER_BACKLOG.md). Bộ nền v0.1 đang chờ review GM-00. Thư mục mobile là skeleton; chưa có lệnh chạy Expo hợp lệ.
+2026-10-07. Dự án Gì Cũng Được, React Native Android-first, giúp nhóm chọn món thỏa hiệp rồi tìm quán. Hiện có tài liệu/prototype/skeleton, chưa app/API; GM-00 đã được duyệt, task code đang chờ thành viên nhận việc.
 
-Nhóm thiết kế/React Native dùng [kế hoạch UI theo màn và chặng](UI_IMPLEMENTATION_PLAN.md) để thống nhất chức năng, trạng thái lỗi và bằng chứng cần bàn giao.
+1. [Mô tả hệ thống dễ đọc](../product/SYSTEM_OVERVIEW.md): vấn đề, luồng dùng, chức năng và giới hạn.
+2. [PRD](../product/PRODUCT_REQUIREMENTS.md), [FR](../product/FUNCTIONAL_REQUIREMENTS.md), [spec index](../specs/README.md): yêu cầu hiện hành v0.2.
+3. [Task summary](TASK_SUMMARY.md), [backlog](../../tasks/backlog/MASTER_BACKLOG.md), [phân công](TEAM_AND_RESPONSIBILITIES.md): 27 task, tên chỉ đề xuất.
+4. [Tiến độ 8 tuần](PROJECT_PLAN.md), [UI plan](UI_IMPLEMENTATION_PLAN.md), [test plan](../testing/TEST_PLAN.md): gate và evidence cần bàn giao.
+5. [AIDD workflow](TEAM_WORKFLOW.md), [DoD](DEFINITION_OF_DONE.md), [kiến trúc](../architecture/SYSTEM_ARCHITECTURE.md): nhận task/patch/test/review trước code.
 
-1. Reviewer và chủ dự án review giả định trong [migration plan](MIGRATION_PLAN.md), ADR và prototype.
-2. Chốt owner/reviewer thực tế, không coi phân công đề xuất là giao việc đã nhận.
-3. Khi GM-00 được duyệt, GM-01 bootstrap Expo, khóa dependency, chạy Android. GM-03/04 có thể bắt đầu song song sau cùng gate.
-4. Nhận từng task, đọc spec, ghi patch/test plan, triển khai và lưu evidence.
-5. Gửi review, không tự đánh Done. Nhánh prototype không thay kiểm thử native.
+[Nghiên cứu 8 app](../research/LECTURER_APPS_REVIEW_2026-10-07.md) và [plan tiếp thu](IMPROVEMENT_PLAN_2026-10-07.md) giải thích nguồn quyết định; spec/task v0.2 là nguồn triển khai hiện hành. [Prototype HTML](../../design/prototypes/gi-cung-duoc.html) mô phỏng cũ, chưa có đầy đủ v0.2/native.
 
-Nhóm: Trí, Trang, Tâm, Vinh, Trung, Tuấn. [Workflow](TEAM_WORKFLOW.md) và [cấu trúc](REPOSITORY_STRUCTURE.md).
+Chưa có ngày bắt đầu/hạn môn học nên Wn chỉ tương đối. GitHub issue/Project cần đồng bộ scope mới; không coi Assignee là nhận việc. Không tự review Done hoặc commit/push.

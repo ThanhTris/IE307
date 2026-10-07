@@ -1,6 +1,6 @@
 # CATALOG & PREFERENCES SPEC
 
-Draft v0.1 • FR-03..04.
+v0.2 • 2026-10-07 • FR-03..04.
 
 ## Catalogue
 
@@ -26,3 +26,7 @@ MVP dùng NO ở cấp món trong phiên. Không xây hồ sơ bệnh/dị ứng
 - CAT-02: A chọn nướng, B chọn lẩu không làm tập ứng viên rỗng chỉ vì giao category rỗng.
 - CAT-03: pool không trùng ID, không đổi khi remote catalogue cập nhật.
 - CAT-04: “Gì cũng được” và nhiều category đều hợp lệ; không mặc định NO theo category không chọn.
+
+## Context/card v0.2
+
+Ảnh có source/license; giá nullable VNĐ/người có nguồn/khu vực/ngày, không giả giá khi thiếu. Budget/history là ưu tiên mềm, khóa context version cùng pool. [Context/history](CONTEXT_HISTORY_SPEC.md) là nguồn chi tiết; [UI](UI_SPEC.md) dùng double-tap WANT/ba nút, không vote vuốt dọc.

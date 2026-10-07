@@ -11,8 +11,8 @@ mobile/
       rooms/               create/join/lobby/preferences
       voting/              card, ballot, submission
       results/             result/no-consensus/Maps
-      partners/            lời mời hai chiều P1
-      history/             lịch sử P1
+      partners/            bạn quen/lời mời hai chiều P0
+      history/             history tối thiểu/consent P0, sync đa thiết bị P1
     domain/decision/       kiểu/policy thuần TypeScript
     data/
       supabase/            RPC/realtime adapters
@@ -37,7 +37,7 @@ Mỗi feature triển khai dùng `screens/`, `components/`, `hooks/`, `services/
 
 ## Route dự kiến (GM-01 sẽ tạo)
 
-`src/app/_layout.tsx`, `index.tsx`, `room/create.tsx`, `room/join.tsx`, `room/[id]/preferences.tsx`, `room/[id]/lobby.tsx`, `room/[id]/vote.tsx`, `room/[id]/final-round.tsx`, `room/[id]/result.tsx`, `partners/index.tsx` và `history/index.tsx` (P1).
+`src/app/_layout.tsx`, `index.tsx`, `room/create.tsx`, `room/join.tsx`, `room/[id]/preferences.tsx`, `room/[id]/lobby.tsx`, `room/[id]/vote.tsx`, `room/[id]/final-round.tsx`, `room/[id]/result.tsx`, `partners/index.tsx` `history/index.tsx` và `notifications/index.tsx` (P0); account/recovery (P1).
 
 Route chỉ parse params/guard và render feature screen. ID trên URL không cấp quyền. Android Back trong phòng theo ROOM_SPEC, không cho back sửa phiếu đã nộp.
 
@@ -46,3 +46,7 @@ Route chỉ parse params/guard và render feature screen. ID trên URL không c�
 `mobile/package.json`, một lockfile, `app.config.ts`, `tsconfig.json`, lint/test config, `.env.example`, `expo-env.d.ts`. Không để config placeholder giả chạy. `android/ios` theo chiến lược Expo prebuild quyết định ở GM-01; không commit build artifacts. Supabase config/migration đầu ở GM-04.
 
 Nguồn cũ nằm trong lịch sử Git (commit `6086c16`); `docs/decision/` là file có sẵn của người dùng, không bị migration ghi đè.
+
+## Phạm vi v0.2
+
+features/notifications dự kiến chứa inbox/permission/token/navigation; data/local chứa SQLite draft/cache/outbox/history, data/supabase chứa RPC/realtime adapters. trusted push sender dự kiến supabase/functions, dùng secrets server. Chỉ là sơ đồ, chưa có packages hoặc file triển khai. [Spec index](../specs/README.md).

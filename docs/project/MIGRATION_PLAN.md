@@ -14,7 +14,7 @@ Ngày: 2026-10-06. Trạng thái: bộ nền đề xuất, chờ nhóm review; c
 
 | Bước | Đầu ra | Cách kiểm |
 | --- | --- | --- |
-| 1. Chuyển đề tài | Lịch sử Git giữ nguồn cũ; xóa thư mục lưu trữ; giữ `docs/decision/` | Kiểm target xóa, validator và diff |
+| 1. Chuyển đề tài | Lịch sử Git giữ nguồn cũ; xóa thư mục lưu trữ và tài liệu quyết định đề tài cũ theo yêu cầu chủ dự án | Kiểm target xóa, validator và diff |
 | 2. Chốt baseline đề xuất | PRD, giả định, phạm vi MVP/P1/P2 | Nhóm review các quyết định bên dưới |
 | 3. Soạn UI | Design system, screen spec, prototype | Đi qua happy path, no-match, hết lựa chọn, mất mạng |
 | 4. Đặc tả AIDD | Domain, data, RPC, security, test plan, task | Validator kiểm link, ID, dependency, owner/reviewer |
@@ -30,7 +30,7 @@ Ngày: 2026-10-06. Trạng thái: bộ nền đề xuất, chờ nhóm review; c
 4. Chế độ nhóm online là core; mất mạng giữ lựa chọn nháp nhưng không tự công bố kết quả.
 5. Backend đề xuất Supabase thay cho gợi ý Firebase trong cuộc trao đổi trước: SQL RPC giúp chốt kết quả nguyên tử và giữ phiếu riêng tư. ADR vẫn chờ review.
 6. Vòng hai chỉ đánh giá các món mọi người đã xác nhận ăn được; nếu không còn món nào thì kết thúc chưa đồng thuận. Không tự đưa lại món NO hoặc tự mở vòng ba.
-7. Kết bạn nhanh cho cặp đôi thuộc P1 trong kế hoạch; OCR/AI và ưu tiên người đã nhường thuộc P2, không chặn MVP.
+7. Baseline v0.2 đưa bạn quen/history tối thiểu/push/outbox vào P0; account nâng cao/venue pilot P1, OCR/AI/fairness dài hạn P2. Chủ dự án đã yêu cầu soạn lại tài liệu, independent review vẫn pending.
 8. Catalogue đầu tiên 60–80 món tự biên soạn; dữ liệu giá chỉ tham khảo. Không quảng cáo độ an toàn dị ứng của món/quán.
 
 ## Kế hoạch kiểm tra của lần sửa này
@@ -40,3 +40,7 @@ Chạy validator tài liệu và diff; kiểm prototype ở desktop và viewport
 ## Rollback
 
 Khi cần xem lại bối cảnh cũ, dùng lịch sử Git. Không khôi phục hoặc trộn tài liệu đề tài trước vào nhánh hiện hành.
+
+## Cập nhật baseline tài liệu 2026-10-07
+
+Spec/FR/UI/data/API/test/backlog được soạn đồng bộ v0.2 theo góp ý giảng viên và double-tap WANT. 20 FR, 27 task triển khai + GM-00 review. [Mô tả hệ thống](../product/SYSTEM_OVERVIEW.md), [task summary](TASK_SUMMARY.md). Không đánh dấu Done hay tạo app; ADR dependency và prototype/native cần reviewer kiểm.

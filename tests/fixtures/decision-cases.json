@@ -1,5 +1,5 @@
 {
-  "policyVersion": "decision-v1",
+  "policyVersion": "decision-v2",
   "cases": [
     {
       "id": "unanimous",

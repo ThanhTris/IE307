@@ -1,25 +1,29 @@
-# Data model đề xuất
+# Data model — v0.2
 
-Draft v0.1. Timestamp UTC server, ID UUID, FK/index/constraint bằng migrations. Schema version tách catalogue/policy version.
+2026-10-07 • schema/API đề xuất chờ review. UTC server, UUID/FK/index/constraints/migrations; catalogue/context/policy version tách nhau.
 
-| Entity | Trường/constraint | Quyền đọc |
+| Entity | Trường và constraint chính | Quyền |
 | --- | --- | --- |
-| profiles | user_id PK auth.users, display_name 1–24, created_at | chính mình; tên qua snapshot |
-| dishes | id, version, name, category_ids, meal_slots, ingredient_tags nullable, artwork_source nullable, published | catalogue published |
-| rooms | id, code unique, host_id, meal_slot, state, version, catalog_version, policy_version, expires_at | member qua snapshot |
-| members | (room_id,user_id) unique, nickname_snapshot, categories[], ready, joined_at | member qua snapshot |
-| round_dishes | (room_id,round,dish_id) unique, dish snapshot, ordinal; round 1/2 | member |
-| submissions | (room_id,round,user_id) unique, request_id, payload_hash, submitted_at | owner; tiến độ tổng hợp |
-| votes | (room_id,round,user_id,dish_id) unique, value; FK submission và round_dish | owner và RPC tổng hợp |
-| results | room_id unique, result_id, winner_id nullable, reason_code, tied_ids, finalized_at, version | member |
-| idempotency | (user_id,operation,request_id) unique, payload_hash, response, expires_at | RPC, không public select |
-| pair_links P1 | canonical pair unique, invited_by, status | hai bên |
-| history P1 | user_id, winner snapshot, timestamp; không raw votes | chính mình |
+| profiles | user_id PK auth, display_name 1–24, preferences tự khai nullable | self; tên qua snapshot |
+| dishes | id/version/name/tags/categories/mealSlots, artwork source/license, priceRange/unit/source/area/checkedAt nullable, published | published read |
+| rooms | id/code unique/host/state/version, mealSlot/timeHint/budget/avoidRecent, catalog/context/policy versions, poolSeed, expiresAt | member qua RPC |
+| members | unique(room,user), nickname, category preferences private, ready, historyConsent, consentSnapshot lúc start | own writes RPC; roster tối thiểu |
+| round_dishes | unique(room,round,dish), snapshot/ordinal, round<=2 | member |
+| submissions/votes | unique(room,round,user), intentId/hash/requestId; unique vote theo dish FK pool | owner; trusted finalize |
+| results | room unique, resultId/winner, reasonCode/matchTier/policyVersion, tiedIds internal, finalizedAt/version | member; không raw score/count |
+| idempotency | unique(user,operation,requestId), payload hash/response/expiry | RPC only |
+| partner_invites/pair_links | sender/recipient/state/expiresAt; canonical pair unique | hai bên, accept recipient |
+| room_invites | id/room/sender/recipient/state/expiresAt/eventId unique; room không muộn hơn expiry | sender/recipient, accept kiểm pair/room |
+| personal_history | unique(user,result), dish snapshot/meal/timestamp/tier/groupKey, expiresAt | owner opt-in |
+| group_history_summary | unique(groupKey,result), canonical roster, minimal winner/time, consent, expiresAt | đúng member, mọi người opt-in |
+| push_devices | auth user/device/token private, permission/active/lastSeen | own register/unregister RPC, sender read |
+| notification_events/deliveries | unique(eventId,recipient), room/invite/result reference, state/ticket/receipt/attempts/expiry | trusted sender, không client list |
+| venues/venue_dishes P1 | venue coords, coverage, source/checkedAt, dish mapping, price optional | pilot published only |
 
-`join_room` lock room rồi kiểm count/state/expiry; `start_round` lock và snapshot roster/pool trong transaction. `submit_ballot` lock, kiểm quyền/vòng/payload; ghi cả votes/submission và chốt khi đủ người trong cùng transaction.
+Local SQLite: own drafts, cache fetchedAt/serverVersion, immutable outbox intent + attempts, consent history; token ở secure storage. Tách theo auth user, TTL/logout clear. Không cache raw vote người khác hoặc user location. Schema migrations có backup/upgrade test, chưa có SQL được chạy.
 
-Tra idempotency trước kiểm version mới để retry trả ACK cũ. Không dùng client seed/time cho winner. Client không tự đặt host_id/user_id. Cleanup theo [privacy](../specs/IDENTITY_PRIVACY_SPEC.md).
+join/start/submit/cancel transaction lock room; start khóa roster/pool/context/consent. finalize ghi result+history được phép+notification event trong cùng transaction để không phát kết quả chưa commit. Push sender xử lý sau commit; không làm network push trong transaction. Tra idempotency trước version để ACK retry.
 
-Enums: MealSlot `breakfast|lunch|dinner|snack`; RoomState `LOBBY|ROUND_1|ROUND_2|DECIDED|NO_CONSENSUS|CANCELLED|EXPIRED`; Round1 `WANT|OK|NO`; Round2 `KEEP|REMOVE`; ResultReason `UNANIMOUS_WANT|ACCEPTABLE_FINAL|EMPTY_INTERSECTION|ALL_REMOVED`.
+MealSlot breakfast/lunch/dinner/snack (late-night là hint). RoomState LOBBY/ROUND_1/ROUND_2/DECIDED/NO_CONSENSUS/CANCELLED/EXPIRED. Round1 WANT/OK/NO; Round2 KEEP/REMOVE. MatchTier PERFECT/CONSENSUS/COMPROMISE/NO_CONSENSUS. ResultReason UNANIMOUS_WANT/ACCEPTABLE_FINAL/EMPTY_INTERSECTION/ALL_REMOVED.
 
-Rollback/migration có fixture database; không sửa dashboard rồi bỏ migration.
+[Privacy/TTL](../specs/IDENTITY_PRIVACY_SPEC.md) · [RPC](API_CONTRACT.md).

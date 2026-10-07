@@ -1,6 +1,6 @@
 # ROOM SPEC — vòng đời phòng
 
-Draft v0.1 • FR-01..03, FR-09 • [API](../architecture/API_CONTRACT.md).
+v0.2 • 2026-10-07 • FR-01..03, FR-09 • [API](../architecture/API_CONTRACT.md).
 
 ## State machine
 
@@ -10,9 +10,9 @@ ROUND_1 có thể đi thẳng DECIDED (tất cả WANT) hoặc NO_CONSENSUS (kh�
 
 - Mã gồm 6 ký tự bỏ ký tự dễ nhầm; code được server sinh và kiểm uniqueness. Đây là mã mời, không phải quyền truy cập dữ liệu.
 - Giới hạn đề xuất 2–8 thành viên. Host cũng bỏ phiếu như mọi người. Vào nhiều lần bằng cùng user không chiếm thêm ghế.
-- Host chọn sáng/trưa/tối/ăn nhẹ; mọi thành viên thấy lựa chọn. Thay buổi ăn làm reset ready của cả nhóm.
+- Host chọn sáng/trưa/tối/ăn nhẹ; mọi thành viên thấy lựa chọn. Thay buổi/context làm reset ready của cả nhóm; timeHint/budget/avoidRecent được mọi người thấy.
 - Loại món là sở thích từng người; thay preferences làm reset ready của người đó. Mọi người phải ready, đủ 2 người trước start.
-- Start khóa roster, catalogueVersion, pool món, buổi ăn và preferences trong transaction. Late join bị từ chối.
+- Start khóa roster, catalogueVersion, pool món, buổi ăn/context, history consent và preferences trong transaction. Late join bị từ chối.
 - Phiên hết hạn sau 60 phút từ lúc tạo (đề xuất); dùng giờ server. RPC kiểm expiry kể cả cleanup chưa chạy.
 
 ## Người rời phòng và mất mạng
@@ -31,3 +31,7 @@ ROUND_1 có thể đi thẳng DECIDED (tất cả WANT) hoặc NO_CONSENSUS (kh�
 - ROOM-04: gửi vote sau expiry hoặc terminal bị từ chối, không đổi version/result.
 - ROOM-05: reconnect vào trạng thái hiện tại; không hiện phòng chờ cũ hoặc tự nộp vòng cũ.
 - ROOM-06: thành viên không nằm trong roster không start/submit/read result được.
+
+## Invites và network v0.2
+
+QR/link cần user confirm, room invite kiểm accepted pair/expiry/capacity. Context/history được server tính lại khi roster thay trước start. Offline disconnect giữ member; chỉ ACK tăng submittedCount. [Push/link](NOTIFICATIONS_LINKS_SPEC.md), [outbox](OFFLINE_SYNC_SPEC.md), [context/history](CONTEXT_HISTORY_SPEC.md).
