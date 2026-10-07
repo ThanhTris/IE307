@@ -1,112 +1,2844 @@
 <!doctype html>
 <html lang="vi">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Gì Cũng Được — UI prototype</title>
 <style>
-:root{--bg:#f7f3ec;--surface:#fff;--text:#222d27;--muted:#58665d;--primary:#a83d25;--onprimary:#fff;--green:#315947;--line:#d8ded6;--soft:#eaf0e9;--warm:#fae4d7;--danger:#a42938;--shadow:0 24px 70px #24332912}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}button,input,select{font:inherit}button,a,input,select{-webkit-tap-highlight-color:transparent}button{cursor:pointer;min-height:48px;border:0;border-radius:14px;padding:12px 17px;color:var(--text);background:var(--soft);font-weight:650}button:hover{filter:brightness(.97)}button:disabled{opacity:.48;cursor:not-allowed}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--primary);outline-offset:3px}a{color:var(--primary)}button.primary,.primary-link{background:var(--primary);color:var(--onprimary)}button.quiet{background:transparent;border:1px solid var(--line)}button.small{font-size:.85rem;padding:9px 12px}h1,h2,h3,p{margin:0}h1{font-size:2.5rem;line-height:1.12;letter-spacing:-1.3px}h2{font-size:1.75rem;line-height:1.2;letter-spacing:-.7px}h3{font-size:1.05rem}small,.muted{color:var(--muted)}.eyebrow{font-size:.72rem;letter-spacing:1.8px;text-transform:uppercase;font-weight:750;color:var(--green)}.workspace{max-width:1360px;margin:auto;padding:30px 38px}.mast{display:flex;align-items:center;justify-content:space-between;padding-bottom:28px;border-bottom:1px solid var(--line);gap:16px}.brand{font-size:1.2rem;font-weight:800;letter-spacing:-.5px;display:flex;align-items:center;gap:10px}.mark{background:var(--primary);color:var(--onprimary);width:36px;height:36px;border-radius:12px;display:grid;place-items:center;font-size:22px}.pill{font-size:.75rem;border:1px solid var(--line);padding:6px 11px;border-radius:99px;color:var(--muted)}.layout{display:grid;grid-template-columns:minmax(220px,1fr) 408px minmax(200px,.85fr);gap:38px;align-items:start;padding-top:34px}.intro{padding-top:36px}.intro h1{margin:16px 0 18px;max-width:320px}.intro p{max-width:280px;color:var(--muted)}.intro .rule{margin-top:32px;border-top:1px solid var(--line);padding-top:20px;max-width:280px}.steps{margin:22px 0 0;padding:0;list-style:none;display:grid;gap:15px;font-size:.88rem}.steps li{display:flex;align-items:center;gap:12px}.steps b{width:27px;height:27px;background:var(--soft);border-radius:50%;display:grid;place-items:center;font-size:.75rem}.phone{border:1px solid var(--line);border-radius:34px;background:var(--surface);box-shadow:var(--shadow);overflow:hidden;min-height:730px}.statusbar{padding:15px 24px 4px;display:flex;justify-content:space-between;font-size:.75rem;font-weight:700}.appbar{display:flex;align-items:center;justify-content:space-between;padding:10px 22px}.appbrand{font-weight:800;font-size:.95rem}.appbar button{min-width:48px;padding:8px;font-size:.85rem;background:transparent}.screen{padding:12px 24px 28px;min-height:620px}.screen>h2,.screen>.eyebrow{margin-bottom:12px}.screen p.lead{margin:9px 0 24px;color:var(--muted);font-size:.92rem}.stack{display:grid;gap:12px}.row{display:flex;align-items:center;gap:10px}.between{justify-content:space-between}.full{width:100%}.spacer{height:22px}.hero-art{height:192px;background:var(--warm);border-radius:25px;margin-bottom:23px;position:relative;display:grid;place-items:center;overflow:hidden}.plate{width:125px;height:125px;border-radius:50%;background:#fff7eb;box-shadow:0 10px 0 #d49f8135,inset 0 0 0 10px #eed8c2;display:grid;place-items:center;font-size:66px;transform:rotate(-9deg)}.float{position:absolute;background:var(--surface);border:1px solid var(--line);padding:6px 12px;border-radius:20px;font-size:.75rem;font-weight:650}.float.one{top:20px;left:17px;transform:rotate(-7deg)}.float.two{right:13px;bottom:24px;transform:rotate(5deg)}.notice{padding:12px 14px;border:1px solid var(--line);border-radius:14px;font-size:.83rem;color:var(--muted);margin:15px 0;background:var(--bg)}.notice.error{color:var(--danger);border-color:var(--danger)}.field{display:grid;gap:7px;margin:15px 0;font-size:.88rem;font-weight:600}input,select{width:100%;min-height:50px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--text);padding:12px}.options{display:grid;grid-template-columns:1fr 1fr;gap:10px}.option{text-align:left;font-size:.9rem;background:var(--surface);border:1px solid var(--line)}.option.selected,.chip.selected{background:var(--soft);border:2px solid var(--green);padding:11px 16px}.option .icon{font-size:23px;display:block;margin-bottom:5px}.chips{display:flex;gap:9px;flex-wrap:wrap}.chip{background:var(--surface);border:1px solid var(--line);font-size:.88rem}.roomcode{margin:20px 0;background:var(--bg);border-radius:22px;padding:21px;text-align:center}.roomcode strong{display:block;font-size:2rem;letter-spacing:7px;font-variant-numeric:tabular-nums}.member{display:flex;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}.avatar{height:40px;width:40px;border-radius:50%;background:var(--warm);display:grid;place-items:center;font-weight:700}.member .details{flex:1}.ready{color:var(--green);font-size:.8rem}.dish-art{background:var(--warm);border-radius:22px;height:200px;display:grid;place-items:center;font-size:85px}.dish-title{margin-top:17px;font-size:1.7rem}.tags{font-size:.8rem;color:var(--muted);margin:5px 0 12px}.progress{height:5px;background:var(--soft);border-radius:10px;margin:14px 0 18px;overflow:hidden}.progress span{display:block;height:100%;background:var(--green)}.votes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:19px}.votes button{font-size:.78rem;padding:11px 3px;background:var(--surface);border:1px solid var(--line)}.votes button b{display:block;font-size:23px;margin-bottom:4px}.votes button.selected{outline:2px solid var(--green);background:var(--soft)}.votes button.no{color:var(--danger)}.votes button.want{color:var(--green)}.cardnav{margin:14px 0;display:flex;justify-content:space-between;gap:8px}.cardnav button{font-size:.82rem}.finalitem{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:16px;padding:13px}.finalitem .food{font-size:32px}.finalitem .details{flex:1}.finalitem button{font-size:.8rem;min-width:80px;padding:9px}.finalitem.removed{opacity:.7}.finalitem.removed .details{text-decoration:line-through}.result-icon{font-size:75px;text-align:center;background:var(--soft);padding:32px;border-radius:24px;margin:17px 0 22px}.result{text-align:center}.result h2{margin:12px 0}.primary-link{display:flex;align-items:center;justify-content:center;min-height:50px;text-decoration:none;border-radius:14px;font-weight:650}.review{padding-top:8px}.review h3{font-size:.84rem;margin:12px 0}.review p,.review label{font-size:.82rem;color:var(--muted)}.review-panel{border:1px solid var(--line);padding:18px;border-radius:20px;margin-bottom:17px;background:var(--surface)}.review select{font-size:.85rem}.review .stack{margin-top:12px}.legend{display:grid;gap:12px;padding-top:8px}.legend div{font-size:.82rem}.legend span{display:block;color:var(--muted);margin-top:2px}.footer{margin-top:28px;font-size:.75rem;color:var(--muted);text-align:center}.offline{background:var(--warm);padding:12px 22px;font-size:.82rem;color:var(--text)}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}html[data-theme=dark]{--bg:#191d1a;--surface:#242b26;--text:#f4f2ec;--muted:#b7c2b9;--primary:#f7a78d;--onprimary:#352219;--green:#9ed2b3;--line:#516057;--soft:#303e33;--warm:#433529;--danger:#ffa8b2;--shadow:none}html[data-theme=dark] .plate{background:#ede4d4}
-@media(max-width:1100px){.layout{grid-template-columns:1fr 408px;gap:25px}.review{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:20px}.intro h1{font-size:2.3rem}.workspace{padding:22px}}
-@media(max-width:650px){.workspace{padding:12px}.mast{padding-bottom:14px}.mast .pill{font-size:.65rem}.layout{display:block;padding-top:14px}.intro{display:none}.phone{max-width:440px;margin:auto;border-radius:26px;min-height:0}.screen{min-height:590px;padding:12px 19px 23px}.review{display:block;max-width:440px;margin:20px auto 0}.statusbar{display:none}.hero-art{height:170px}.footer{margin-top:15px}.brand{font-size:1rem}.mast button{padding:8px;font-size:.75rem}.appbar{padding:10px 16px}}
-@media(prefers-reduced-motion:no-preference){.screen{animation:appear .16s ease-out}@keyframes appear{from{opacity:.6;transform:translateY(4px)}to{opacity:1;transform:none}}}
+:root {
+  --bg: #f8f9fa;
+  --surface: #ffffff;
+  --text: #191d24;
+  --muted: #64748b;
+  --primary: #ff5a36;
+  --onprimary: #ffffff;
+  --green: #10b981;
+  --line: #e5e7eb;
+  --soft: #f1f3f5;
+  --warm: #fff0e6;
+  --danger: #ef4444;
+  --phone-border: #1e2229;
+  --page-bg: #0c1017;
+}
+
+html[data-theme="dark"] {
+  --bg: #11141a;
+  --surface: #191e26;
+  --text: #f3f4f6;
+  --muted: #94a3b8;
+  --primary: #ff6845;
+  --onprimary: #ffffff;
+  --green: #34d399;
+  --line: #29303d;
+  --soft: #222834;
+  --warm: #2c211b;
+  --danger: #f87171;
+  --phone-border: #0a0d12;
+  --page-bg: #07090d;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--page-bg);
+  background-image: radial-gradient(ellipse at 50% 30%, #171d27 0%, #0c1017 100%);
+  color: var(--text);
+  font: 15px/1.5 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+}
+
+button, input, select { font: inherit; -webkit-tap-highlight-color: transparent; }
+button {
+  cursor: pointer;
+  min-height: 46px;
+  border: 0;
+  border-radius: 14px;
+  padding: 10px 16px;
+  color: var(--text);
+  background: var(--soft);
+  font-weight: 650;
+  transition: transform 0.1s ease, filter 0.1s ease, box-shadow 0.15s ease;
+}
+button:active { transform: scale(0.98); }
+button:hover { filter: brightness(0.97); }
+button:disabled { opacity: 0.48; cursor: not-allowed; transform: none; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+a { color: var(--primary); }
+button.primary, .primary-link {
+  background: var(--primary);
+  color: var(--onprimary);
+  box-shadow: 0 4px 14px rgba(255, 90, 54, 0.28);
+}
+button.primary:hover, .primary-link:hover {
+  box-shadow: 0 6px 20px rgba(255, 90, 54, 0.38);
+}
+button.quiet { background: var(--surface); border: 1px solid var(--line); }
+button.quiet:hover { background: var(--soft); }
+button.small { font-size: 0.82rem; padding: 8px 12px; min-height: 38px; }
+h1, h2, h3, p { margin: 0; }
+h1 { font-size: 2.2rem; line-height: 1.15; letter-spacing: -1px; }
+h2 { font-size: 1.65rem; line-height: 1.2; letter-spacing: -0.6px; }
+h3 { font-size: 1.05rem; }
+small, .muted { color: var(--muted); }
+.eyebrow { font-size: 0.72rem; letter-spacing: 1.8px; text-transform: uppercase; font-weight: 800; color: var(--primary); }
+
+/* PHONE FRAME */
+.phone-stage {
+  position: relative;
+  padding: 24px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+}
+
+.phone {
+  position: relative;
+  width: 392px;
+  max-width: 100%;
+  height: 825px;
+  max-height: calc(100vh - 40px);
+  background: var(--bg);
+  border-radius: 46px;
+  border: 11px solid var(--phone-border);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Nút vật lý điện thoại */
+.phone::before {
+  content: '';
+  position: absolute;
+  left: -14px;
+  top: 115px;
+  width: 4px;
+  height: 52px;
+  background: #474c58;
+  border-radius: 3px 0 0 3px;
+}
+.phone::after {
+  content: '';
+  position: absolute;
+  right: -14px;
+  top: 135px;
+  width: 4px;
+  height: 44px;
+  background: #474c58;
+  border-radius: 0 3px 3px 0;
+}
+
+/* Dynamic Island */
+.dynamic-island {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 112px;
+  height: 26px;
+  background: #000;
+  border-radius: 20px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+.island-camera {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #111422;
+  box-shadow: inset 0 0 2px #3b82f6;
+}
+.island-speaker {
+  width: 44px;
+  height: 4px;
+  background: #1e2029;
+  border-radius: 4px;
+}
+
+/* Status Bar */
+.statusbar {
+  padding: 13px 22px 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.76rem;
+  font-weight: 750;
+  color: var(--text);
+  z-index: 50;
+  user-select: none;
+}
+.status-icons {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+}
+
+/* App Bar */
+.appbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 18px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  z-index: 40;
+}
+.appbrand {
+  font-weight: 800;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.mark {
+  background: var(--primary);
+  color: var(--onprimary);
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-size: 15px;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(255, 90, 54, 0.35);
+}
+.appbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.appbar button {
+  min-width: 38px;
+  min-height: 38px;
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  background: transparent;
+  border-radius: 10px;
+}
+
+/* Scroll container */
+.phone-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-width: none;
+  background: var(--bg);
+}
+.phone-scroll::-webkit-scrollbar { display: none; }
+
+.screen {
+  padding: 14px 20px 24px;
+  min-height: 580px;
+}
+.screen > h2, .screen > .eyebrow { margin-bottom: 8px; }
+.screen p.lead { margin: 6px 0 18px; color: var(--muted); font-size: 0.9rem; }
+
+/* Home Indicator */
+.home-bar {
+  height: 18px;
+  background: var(--surface);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+}
+.home-indicator {
+  width: 125px;
+  height: 4px;
+  background: var(--muted);
+  border-radius: 99px;
+  opacity: 0.55;
+}
+
+/* COMMON SCREEN ELEMENTS */
+.stack { display: grid; gap: 11px; }
+.row { display: flex; align-items: center; gap: 10px; }
+.between { justify-content: space-between; }
+.full { width: 100%; }
+.spacer { height: 18px; }
+
+.hero-art {
+  height: 175px;
+  background: radial-gradient(circle at 50% 50%, #fff5ed 0%, #ffe8d6 100%);
+  border-radius: 24px;
+  margin-bottom: 20px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(255, 90, 54, 0.1);
+}
+html[data-theme="dark"] .hero-art {
+  background: radial-gradient(circle at 50% 50%, #2a211d 0%, #1c1714 100%);
+  border-color: rgba(255, 90, 54, 0.16);
+}
+.plate {
+  width: 115px;
+  height: 115px;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: 0 14px 28px rgba(255, 90, 54, 0.16), inset 0 0 0 8px #fff0e4;
+  display: grid;
+  place-items: center;
+  font-size: 60px;
+  transform: rotate(-9deg);
+}
+html[data-theme="dark"] .plate {
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.35), inset 0 0 0 8px #3a2a22;
+}
+.float {
+  position: absolute;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.float.one { top: 16px; left: 14px; transform: rotate(-6deg); color: var(--primary); }
+.float.two { right: 12px; bottom: 20px; transform: rotate(5deg); color: var(--green); }
+
+.notice {
+  padding: 11px 13px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin: 14px 0;
+  background: var(--surface);
+}
+.notice.error { color: var(--danger); border-color: var(--danger); background: #fef2f2; }
+html[data-theme="dark"] .notice.error { background: #451a1a; }
+.field { display: grid; gap: 6px; margin: 14px 0; font-size: 0.86rem; font-weight: 600; }
+input, select {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  padding: 11px 13px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+input:focus, select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255, 90, 54, 0.15);
+  outline: none;
+}
+.options { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.option {
+  text-align: left;
+  font-size: 0.88rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 14px;
+  transition: all 0.15s ease;
+}
+.option.selected, .chip.selected {
+  background: #fff2eb;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+  font-weight: 700;
+}
+html[data-theme="dark"] .option.selected, html[data-theme="dark"] .chip.selected {
+  background: #2d201a;
+  border-color: var(--primary);
+  color: #ffa58e;
+}
+.option .icon { font-size: 21px; display: block; margin-bottom: 4px; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  font-size: 0.85rem;
+  padding: 8px 16px;
+  transition: all 0.15s ease;
+}
+
+.roomcode {
+  margin: 16px 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 20px 18px;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+}
+.roomcode strong {
+  display: block;
+  font-size: 2rem;
+  letter-spacing: 8px;
+  font-variant-numeric: tabular-nums;
+  color: var(--primary);
+  font-weight: 850;
+}
+.member { display: flex; gap: 11px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.avatar {
+  height: 38px;
+  width: 38px;
+  border-radius: 50%;
+  background: #fff1eb;
+  color: var(--primary);
+  display: grid;
+  place-items: center;
+  font-weight: 750;
+  font-size: 0.95rem;
+  border: 1px solid rgba(255, 90, 54, 0.15);
+}
+html[data-theme="dark"] .avatar {
+  background: #302019;
+  color: #ff8568;
+  border-color: rgba(255, 133, 104, 0.25);
+}
+.member .details { flex: 1; font-size: 0.88rem; }
+.ready { color: var(--green); font-size: 0.8rem; font-weight: 700; }
+
+.progress { height: 6px; background: var(--soft); border-radius: 10px; margin: 10px 0 14px; overflow: hidden; }
+.progress span { display: block; height: 100%; background: linear-gradient(90deg, #ff6f4c 0%, #ff411c 100%); border-radius: 10px; }
+
+/* JOIN ROOM TABS & 6-DIGIT CODE */
+.join-tabs {
+  display: flex;
+  background: var(--soft);
+  border-radius: 14px;
+  padding: 4px;
+  gap: 4px;
+  margin-bottom: 18px;
+}
+.join-tab {
+  flex: 1;
+  min-height: 40px;
+  border-radius: 11px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.join-tab.active {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.code-input-group {
+  margin: 14px 0 16px;
+}
+.code-input-boxes {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  margin-top: 6px;
+}
+.code-box {
+  flex: 1;
+  height: 54px;
+  border: 1.5px solid var(--line);
+  background: var(--surface);
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--primary);
+  transition: all 0.15s ease;
+}
+.code-box.filled {
+  border-color: var(--primary);
+  background: #fff5ee;
+}
+html[data-theme="dark"] .code-box.filled {
+  background: #2d201a;
+}
+.code-box.current {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255, 90, 54, 0.16);
+}
+
+.quick-hint-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 6px 0 18px;
+}
+.quick-fill-btn {
+  border: 0;
+  background: transparent;
+  color: var(--primary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 4px 6px;
+  cursor: pointer;
+  min-height: auto;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.quick-fill-btn:hover {
+  text-decoration: underline;
+}
+
+/* SCANNER VIEWFINDER */
+.scanner-viewport {
+  position: relative;
+  width: 100%;
+  height: 310px;
+  background: #090b10;
+  border-radius: 26px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.8);
+  transition: background 0.3s ease;
+}
+.scanner-viewport.flash-on {
+  background: #222938;
+  box-shadow: inset 0 0 60px rgba(255, 255, 255, 0.2);
+}
+.scanner-viewport.scan-success .scanner-target-box::before,
+.scanner-viewport.scan-success .scanner-target-box::after,
+.scanner-viewport.scan-success .scanner-corners-bottom::before,
+.scanner-viewport.scan-success .scanner-corners-bottom::after {
+  border-color: var(--green) !important;
+}
+.scanner-viewport.scan-success .scanner-laser {
+  background: linear-gradient(90deg, transparent 0%, var(--green) 30%, #6ee7b7 50%, var(--green) 70%, transparent 100%) !important;
+  box-shadow: 0 0 16px var(--green) !important;
+}
+.scanner-grid {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 16px 16px;
+  pointer-events: none;
+}
+.scanner-target-box {
+  position: relative;
+  width: 190px;
+  height: 190px;
+  z-index: 5;
+}
+.scanner-target-box::before, .scanner-target-box::after {
+  content: '';
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border-color: var(--primary);
+  border-style: solid;
+  transition: border-color 0.2s ease;
+}
+.scanner-target-box::before {
+  top: 0;
+  left: 0;
+  border-width: 3.5px 0 0 3.5px;
+  border-top-left-radius: 12px;
+}
+.scanner-target-box::after {
+  top: 0;
+  right: 0;
+  border-width: 3.5px 3.5px 0 0;
+  border-top-right-radius: 12px;
+}
+.scanner-corners-bottom::before, .scanner-corners-bottom::after {
+  content: '';
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border-color: var(--primary);
+  border-style: solid;
+  transition: border-color 0.2s ease;
+}
+.scanner-corners-bottom::before {
+  bottom: 0;
+  left: 0;
+  border-width: 0 0 3.5px 3.5px;
+  border-bottom-left-radius: 12px;
+}
+.scanner-corners-bottom::after {
+  bottom: 0;
+  right: 0;
+  border-width: 0 3.5px 3.5px 0;
+  border-bottom-right-radius: 12px;
+}
+.scanner-laser {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  top: 10px;
+  height: 2.5px;
+  background: linear-gradient(90deg, transparent 0%, #ff5a36 30%, #ff8566 50%, #ff5a36 70%, transparent 100%);
+  box-shadow: 0 0 12px #ff5a36, 0 0 20px rgba(255, 90, 54, 0.6);
+  animation: scanSweep 2s ease-in-out infinite alternate;
+}
+@keyframes scanSweep {
+  0% { top: 12px; opacity: 0.95; }
+  100% { top: 174px; opacity: 0.95; }
+}
+.scanner-faint-qr {
+  position: absolute;
+  inset: 22px;
+  opacity: 0.22;
+  display: grid;
+  place-items: center;
+}
+.scanner-status-text {
+  position: absolute;
+  bottom: 14px;
+  font-size: 0.76rem;
+  color: #f1f3f5;
+  font-weight: 650;
+  z-index: 10;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.55);
+  padding: 5px 14px;
+  border-radius: 99px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.scanner-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.scanner-ctrl-btn {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  padding: 8px 16px;
+  font-size: 0.8rem;
+  font-weight: 650;
+  color: var(--text);
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.scanner-ctrl-btn:hover {
+  background: var(--soft);
+}
+.scanner-ctrl-btn.active {
+  background: #fff1eb;
+  border-color: var(--primary);
+  color: var(--primary);
+}
+html[data-theme="dark"] .scanner-ctrl-btn.active {
+  background: #2d201a;
+  color: #ffa58e;
+}
+
+/* LOBBY QR CARD */
+.lobby-qr-card {
+  margin: 12px 0 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 16px;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+}
+.qr-preview-svg {
+  width: 130px;
+  height: 130px;
+  margin: 8px auto 6px;
+  display: block;
+}
+
+/* ACTION BUTTONS: 3 NÚT BẰNG NHAU (MAPS, TIKTOK, YOUTUBE) */
+.place-actions-3grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 14px 0 14px;
+}
+.btn-place-action {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-decoration: none !important;
+  border-radius: 16px;
+  padding: 12px 6px;
+  min-height: 48px;
+  font-weight: 750;
+  font-size: 0.82rem;
+  transition: transform 0.12s ease, filter 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-place-action:active {
+  transform: scale(0.97);
+}
+.btn-place-action .action-icon {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+.btn-place-action svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+.btn-place-action.btn-maps {
+  background: #1a73e8 !important;
+  color: #ffffff !important;
+  border: 0 !important;
+  box-shadow: 0 4px 14px rgba(26, 115, 232, 0.28);
+}
+.btn-place-action.btn-maps:hover {
+  filter: brightness(1.08);
+}
+.btn-place-action.btn-tiktok {
+  background: #010101 !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+.btn-place-action.btn-tiktok:hover {
+  filter: brightness(1.15);
+}
+.btn-place-action.btn-tiktok svg {
+  fill: #ffffff;
+}
+.btn-place-action.btn-youtube {
+  background: #ff0000 !important;
+  color: #ffffff !important;
+  border: 0 !important;
+  box-shadow: 0 4px 14px rgba(255, 0, 0, 0.28);
+}
+.btn-place-action.btn-youtube:hover {
+  filter: brightness(1.08);
+}
+.btn-place-action.btn-youtube svg {
+  fill: #ffffff;
+}
+
+/* RESULT FRIENDS & PAIRING CARD (GỌN GÀNG, HẠN CHẾ CHỮ) */
+.result-friends-card {
+  margin: 12px 0 16px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  text-align: left;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+.result-friends-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.result-friends-title {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.result-members-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.result-member-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+  gap: 8px;
+}
+.result-member-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.result-member-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.result-member-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--warm);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 750;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+.result-member-name {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+}
+.result-member-badge {
+  font-size: 0.72rem;
+  padding: 3px 9px;
+  border-radius: 99px;
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--green);
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.btn-add-friend-sm {
+  padding: 5px 12px !important;
+  min-height: 32px !important;
+  font-size: 0.74rem !important;
+  border-radius: 99px !important;
+  background: var(--primary) !important;
+  color: var(--onprimary) !important;
+  font-weight: 700 !important;
+  border: 0 !important;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(255, 90, 54, 0.25);
+  transition: transform 0.1s ease;
+}
+.btn-add-friend-sm:active {
+  transform: scale(0.95);
+}
+.result-friends-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.btn-friend-invite-more {
+  flex: 1;
+  background: var(--soft) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--line) !important;
+  font-size: 0.78rem !important;
+  min-height: 36px !important;
+  border-radius: 12px !important;
+  font-weight: 650 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+}
+.btn-friend-invite-more:hover {
+  background: var(--surface) !important;
+}
+
+/* HOME FRIENDS PREVIEW CHIPS */
+.home-friends-preview {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  text-align: left;
+}
+.home-friends-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.home-friends-head .title {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+.home-friends-head .more-link {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font-size: 0.78rem;
+  color: var(--primary);
+  font-weight: 700;
+  cursor: pointer;
+  min-height: auto;
+}
+.home-friends-chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+.home-friend-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  padding: 5px 12px 5px 6px;
+  min-height: 36px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.1s ease, border-color 0.15s ease;
+}
+.home-friend-chip:active {
+  transform: scale(0.96);
+}
+.home-friend-chip .avatar-sm {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--warm);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+.home-friend-chip .status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.home-friend-chip .status-dot.online {
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+}
+.home-friend-chip .status-dot.idle {
+  background: var(--muted);
+}
+
+/* FRIENDS (BẠN ĂN CÙNG) & QUICK PAIRING */
+.friends-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+.friend-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  gap: 10px;
+}
+.friend-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.friend-info {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  flex: 1;
+}
+.friend-avatar-wrap {
+  position: relative;
+}
+.friend-status-dot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--surface);
+  background: var(--green);
+}
+.friend-status-dot.idle {
+  background: var(--muted);
+}
+.quick-room-btn {
+  background: linear-gradient(135deg, #ff5a36 0%, #ff3d17 100%);
+  color: #ffffff;
+  border: 0;
+  border-radius: 99px;
+  font-size: 0.8rem;
+  font-weight: 750;
+  padding: 7px 14px;
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 2px 8px rgba(255, 90, 54, 0.25);
+  cursor: pointer;
+}
+/* MODERN TOP SEARCH & FIND FRIENDS BAR */
+.friend-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 4px 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.friend-search-bar:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255, 90, 54, 0.12);
+}
+.friend-search-bar .search-icon {
+  font-size: 0.95rem;
+  opacity: 0.65;
+  flex-shrink: 0;
+}
+.friend-search-input {
+  flex: 1;
+  border: none !important;
+  background: transparent !important;
+  padding: 8px 0 !important;
+  min-height: 38px !important;
+  font-size: 0.85rem !important;
+  color: var(--text);
+  outline: none !important;
+  box-shadow: none !important;
+}
+.friend-search-input::placeholder {
+  color: var(--muted);
+  font-weight: 500;
+}
+.btn-clear-friend-search {
+  background: transparent !important;
+  border: none !important;
+  color: var(--muted) !important;
+  font-size: 0.85rem !important;
+  padding: 4px 6px !important;
+  min-height: auto !important;
+  cursor: pointer;
+}
+.friend-search-new-match {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(180deg, #fff9f5 0%, var(--surface) 100%);
+  border: 1px solid rgba(255, 90, 54, 0.35);
+  border-radius: 16px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  gap: 10px;
+}
+.search-user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.friend-badge-dot {
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  border-radius: 99px;
+  padding: 1px 7px;
+  margin-left: 4px;
+}
+
+/* MEAL HISTORY & ACCOUNT LINK (P1 GM-17 & GM-18) */
+.history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.84rem;
+  gap: 8px;
+}
+.history-item:last-child {
+  border-bottom: none;
+}
+.history-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.history-emoji {
+  font-size: 1.25rem;
+}
+.history-date {
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+.active-session-banner {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: var(--warm);
+  border: 1px solid rgba(255, 90, 54, 0.35);
+  border-radius: 18px;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.active-session-title {
+  font-size: 0.82rem;
+  font-weight: 750;
+  color: var(--primary);
+  margin-bottom: 2px;
+}
+.active-session-desc {
+  font-size: 0.74rem;
+  color: var(--text);
+  opacity: 0.85;
+}
+
+/* FLOATING TOAST FEEDBACK */
+.toast-msg {
+  position: absolute;
+  top: 54px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(17, 20, 26, 0.94);
+  color: #ffffff;
+  padding: 8px 18px;
+  border-radius: 99px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  z-index: 200;
+  white-space: nowrap;
+  animation: toastFade 2.4s forwards;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  pointer-events: none;
+}
+@keyframes toastFade {
+  0% { opacity: 0; transform: translate(-50%, -10px); }
+  15% { opacity: 1; transform: translate(-50%, 0); }
+  80% { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, -10px); }
+}
+
+/* FLASHCARD DECK & GESTURES */
+.deck-container {
+  position: relative;
+  width: 100%;
+  min-height: 310px;
+  margin: 10px 0 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
+}
+.flashcard-behind {
+  position: absolute;
+  top: 10px;
+  left: 8px;
+  right: 8px;
+  bottom: -6px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  opacity: 0.55;
+  transform: scale(0.95) translateY(10px);
+  z-index: 1;
+  pointer-events: none;
+}
+.flashcard {
+  position: relative;
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 14px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+  z-index: 2;
+  cursor: grab;
+  touch-action: none;
+  transform-origin: center bottom;
+  transition: transform 0.22s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
+  overflow: hidden;
+}
+.flashcard:active { cursor: grabbing; }
+.flashcard.dragging { transition: none !important; box-shadow: 0 16px 36px rgba(0, 0, 0, 0.14); }
+.flashcard.fly-left {
+  transition: transform 0.24s ease-in, opacity 0.2s ease-in !important;
+  transform: translate(-130%, 20px) rotate(-22deg) !important;
+  opacity: 0 !important;
+}
+.flashcard.fly-right {
+  transition: transform 0.24s ease-in, opacity 0.2s ease-in !important;
+  transform: translate(130%, 20px) rotate(22deg) !important;
+  opacity: 0 !important;
+}
+.flashcard.fly-up {
+  transition: transform 0.28s ease-out, opacity 0.22s ease-out !important;
+  transform: translate(0, -60px) scale(1.05) !important;
+  opacity: 0 !important;
+}
+
+.stamp {
+  position: absolute;
+  top: 16px;
+  padding: 6px 14px;
+  border-radius: 12px;
+  font-size: 0.92rem;
+  font-weight: 850;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border: 3px solid;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 10;
+  transition: opacity 0.1s ease;
+  backdrop-filter: blur(4px);
+}
+.stamp.stamp-no {
+  right: 16px;
+  color: var(--danger);
+  border-color: var(--danger);
+  transform: rotate(12deg);
+  background: rgba(239, 68, 68, 0.12);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+}
+.stamp.stamp-ok {
+  left: 16px;
+  color: var(--green);
+  border-color: var(--green);
+  transform: rotate(-12deg);
+  background: rgba(16, 185, 129, 0.12);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+}
+
+.tiktok-heart-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 25;
+}
+.tiktok-heart {
+  font-size: 88px;
+  display: block;
+  filter: drop-shadow(0 12px 26px rgba(239, 68, 68, 0.5));
+  animation: tiktokPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+@keyframes tiktokPop {
+  0% { transform: scale(0) rotate(-16deg); opacity: 0; }
+  40% { transform: scale(1.35) rotate(0deg); opacity: 1; }
+  65% { transform: scale(1.15) rotate(4deg); opacity: 1; }
+  85% { transform: scale(1.2) translateY(-20px); opacity: 0.9; }
+  100% { transform: scale(1.4) translateY(-50px); opacity: 0; }
+}
+
+.card-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.74rem;
+  margin-bottom: 7px;
+}
+.vote-badge {
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 99px;
+  font-size: 0.72rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.vote-badge.want { background: #ffe4e6; color: #e11d48; }
+.vote-badge.ok { background: #d1fae5; color: #059669; }
+.vote-badge.no { background: #fee2e2; color: #dc2626; }
+html[data-theme="dark"] .vote-badge.want { background: #4c1d24; color: #fda4af; }
+html[data-theme="dark"] .vote-badge.ok { background: #064e3b; color: #6ee7b7; }
+html[data-theme="dark"] .vote-badge.no { background: #4a1d24; color: #fca5a5; }
+
+.dish-art-wrap {
+  position: relative;
+  height: 135px;
+  border-radius: 18px;
+  background: var(--warm);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.dish-emoji { font-size: 70px; filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.08)); }
+.gesture-guide {
+  margin-top: 9px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--line);
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.69rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+.gesture-guide span { display: flex; align-items: center; gap: 3px; }
+
+/* VOTES ACTION BUTTONS */
+.votes {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 7px;
+  margin-top: 14px;
+}
+.votes button {
+  font-size: 0.76rem;
+  padding: 9px 2px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  text-align: center;
+}
+.votes button b { display: block; font-size: 20px; margin-bottom: 2px; }
+.votes button.selected { outline: 2px solid var(--green); background: var(--soft); }
+.votes button.no { color: var(--danger); }
+.votes button.want { color: var(--green); }
+
+.cardnav { margin: 12px 0; display: flex; justify-content: space-between; gap: 8px; }
+.cardnav button { font-size: 0.82rem; }
+
+.finalitem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 12px 14px;
+  background: var(--surface);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+.finalitem .food { font-size: 28px; }
+.finalitem .details { flex: 1; font-size: 0.88rem; }
+.finalitem button { font-size: 0.78rem; min-width: 76px; padding: 8px; border-radius: 99px; }
+.finalitem.removed { opacity: 0.65; }
+.finalitem.removed .details { text-decoration: line-through; }
+
+.result-icon {
+  font-size: 72px;
+  text-align: center;
+  background: radial-gradient(circle at 50% 50%, #fff5ed 0%, #ffe8d6 100%);
+  padding: 26px;
+  border-radius: 26px;
+  margin: 14px 0 18px;
+  border: 1px solid rgba(255, 90, 54, 0.12);
+}
+html[data-theme="dark"] .result-icon {
+  background: radial-gradient(circle at 50% 50%, #2a211d 0%, #1c1714 100%);
+  border-color: rgba(255, 90, 54, 0.2);
+}
+.result { text-align: center; }
+.result h2 { margin: 10px 0; }
+.primary-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  text-decoration: none;
+  border-radius: 14px;
+  font-weight: 650;
+}
+.offline {
+  background: #fef3c7;
+  color: #92400e;
+  padding: 10px 18px;
+  font-size: 0.82rem;
+  font-weight: 650;
+  text-align: center;
+}
+html[data-theme="dark"] .offline {
+  background: #451a03;
+  color: #fcd34d;
+}
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+/* FLOATING REVIEW PANEL (GỌN GÀNG, KHÔNG RÁC MÀN HÌNH) */
+.review-widget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.review-toggle-btn {
+  background: #272a30;
+  color: #f1f3f5;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 99px;
+  padding: 8px 16px;
+  font-size: 0.8rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.review-toggle-btn:hover { background: #353942; }
+.review-panel-box {
+  width: 290px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+  margin-bottom: 10px;
+  display: none;
+}
+.review-panel-box.open { display: block; }
+.review-panel-box h3 { font-size: 0.88rem; margin-bottom: 6px; }
+.review-panel-box p { font-size: 0.78rem; color: var(--muted); margin-bottom: 10px; }
+.review-panel-box select { font-size: 0.82rem; min-height: 40px; padding: 8px; margin-top: 4px; }
+.review-panel-box button { font-size: 0.78rem; padding: 8px; min-height: 38px; }
+
+/* MOBILE RESPONSIVE (DƯỚI 460PX KHUNG TỰ BIẾN THÀNH APP FULL MÀN HÌNH) */
+@media (max-width: 460px) {
+  body { background: var(--bg); padding: 0; }
+  .phone-stage { padding: 0; }
+  .phone {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    max-height: none;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+  }
+  .phone::before, .phone::after, .dynamic-island { display: none; }
+  .review-widget { bottom: 12px; right: 12px; }
+  .review-panel-box { width: calc(100vw - 30px); right: 0; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .screen { animation: appear 0.15s ease-out; }
+  @keyframes appear { from { opacity: 0.6; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+}
+
+/* CLEAN FLASHCARD VOTE SCREEN */
+.screen-vote-clean {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 610px;
+  padding: 0 4px;
+}
+.vote-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.round-label {
+  font-weight: 850;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--primary);
+  background: #fff1eb;
+  padding: 3px 9px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+html[data-theme="dark"] .round-label {
+  background: #2d201a;
+  color: #ffa58e;
+}
+.vote-topbar .progress {
+  flex: 1;
+  height: 6px;
+  margin: 0;
+  border-radius: 99px;
+  background: var(--soft);
+}
+.round-count {
+  font-weight: 750;
+  font-size: 0.86rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.deck-container-clean {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  min-height: 480px;
+  max-height: 520px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
+}
+.flashcard-behind {
+  position: absolute;
+  top: 10px;
+  left: 8px;
+  right: 8px;
+  bottom: -8px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 30px;
+  opacity: 0.5;
+  transform: scale(0.95) translateY(10px);
+  z-index: 1;
+  pointer-events: none;
+}
+.flashcard-clean {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 32px;
+  padding: 16px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+  z-index: 2;
+  cursor: grab;
+  touch-action: none;
+  transform-origin: center bottom;
+  transition: transform 0.22s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.flashcard-clean:active { cursor: grabbing; }
+.flashcard-clean.dragging { transition: none !important; box-shadow: 0 20px 48px rgba(0, 0, 0, 0.16); }
+.flashcard-clean.fly-left {
+  transition: transform 0.24s ease-in, opacity 0.2s ease-in !important;
+  transform: translate(-130%, 20px) rotate(-22deg) !important;
+  opacity: 0 !important;
+}
+.flashcard-clean.fly-right {
+  transition: transform 0.24s ease-in, opacity 0.2s ease-in !important;
+  transform: translate(130%, 20px) rotate(22deg) !important;
+  opacity: 0 !important;
+}
+.flashcard-clean.fly-up {
+  transition: transform 0.28s ease-out, opacity 0.22s ease-out !important;
+  transform: translate(0, -60px) scale(1.05) !important;
+  opacity: 0 !important;
+}
+.dish-photo-box {
+  flex: 1;
+  width: 100%;
+  min-height: 310px;
+  background: radial-gradient(circle at 50% 50%, #fffdf9 0%, #fff0e4 100%);
+  border-radius: 24px;
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 90, 54, 0.08);
+}
+html[data-theme="dark"] .dish-photo-box {
+  background: radial-gradient(circle at 50% 50%, #2a211d 0%, #1c1714 100%);
+  border-color: rgba(255, 90, 54, 0.16);
+}
+.dish-photo-emoji {
+  font-size: 110px;
+  filter: drop-shadow(0 16px 24px rgba(255, 90, 54, 0.15));
+}
+html[data-theme="dark"] .dish-photo-emoji {
+  filter: drop-shadow(0 16px 24px rgba(0, 0, 0, 0.35));
+}
+.dish-info-box {
+  padding: 16px 8px 4px;
+  text-align: left;
+}
+.dish-main-name {
+  font-size: 2.1rem;
+  font-weight: 850;
+  line-height: 1.15;
+  margin: 0 0 6px;
+  color: var(--text);
+  letter-spacing: -0.6px;
+}
+.dish-category-tag {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 650;
+  color: var(--muted);
+  background: var(--soft);
+  padding: 4px 12px;
+  border-radius: 99px;
+}
+.vote-bottom-bar {
+  height: 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.icon-round-btn {
+  min-width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  font-size: 1.1rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+.a11y-actions {
+  display: flex;
+  gap: 8px;
+}
+.vote-pill {
+  min-width: 46px;
+  height: 42px;
+  border-radius: 99px;
+  padding: 0 10px;
+  display: grid;
+  place-items: center;
+  font-size: 1.15rem;
+  font-weight: 800;
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+.vote-pill.selected { outline: 2px solid var(--green); background: var(--soft); }
+.vote-pill.no { color: var(--danger); }
+.vote-pill.want { color: #e11d48; }
+.vote-pill.ok { color: var(--green); }
+.submit-float-btn {
+  background: var(--primary);
+  color: var(--onprimary);
+  border-radius: 99px;
+  padding: 8px 18px;
+  font-weight: 750;
+  font-size: 0.88rem;
+  height: 42px;
+  min-height: 42px;
+  border: 0;
+}
+
+
+.vote-bottom-bar-minimal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 6px 0 2px;
+}
+.prev-only-btn {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  padding: 9px 22px;
+  font-size: 0.86rem;
+  font-weight: 650;
+  color: var(--muted);
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  transition: all 0.15s ease;
+}
+.prev-only-btn:hover:not(:disabled) {
+  color: var(--primary);
+  border-color: var(--primary);
+  background: var(--surface);
+}
+.prev-only-btn:disabled {
+  opacity: 0.32;
+  cursor: not-allowed;
+}
+
 </style>
 </head>
 <body>
-<div class="workspace">
- <header class="mast"><div class="brand"><span class="mark" aria-hidden="true">≈</span> Gì Cũng Được<span class="pill">UI / 0.1</span></div><button class="quiet small" data-action="theme">Đổi sáng / tối</button></header>
- <main class="layout">
-  <aside class="intro"><div class="eyebrow">Một kèo ăn, nhiều khẩu vị</div><h1>“Gì cũng được”<br>rồi cũng<br>chốt được món.</h1><p>Cùng chọn một món mà ai cũng thấy ổn. Nhẹ nhàng, rõ ràng, không ai phải ăn món mình không thích.</p><ol class="steps"><li><b>01</b> Rủ mọi người vào phòng</li><li><b>02</b> Chọn theo khẩu vị hôm nay</li><li><b>03</b> Chốt món, rồi tìm quán</li></ol><div class="rule"><span class="eyebrow">Nguyên tắc thiết kế</span><p style="margin-top:10px;font-size:.88rem">Hai vòng tối đa. Món có người chọn “Không ăn” sẽ không được chốt.</p></div></aside>
-  <section class="phone" aria-label="Ứng dụng mô phỏng"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>●●● ▰</span></div><div class="appbar"><span class="appbrand">Gì Cũng Được</span><button data-action="home" aria-label="Về trang chủ">⌂</button></div><div id="network"></div><div id="screen" class="screen"></div></section>
-  <aside class="review" aria-label="Công cụ review prototype"><div class="review-panel"><div class="eyebrow">Chỉ dành cho review</div><h3>Prototype tương tác</h3><p>Dữ liệu thành viên là mô phỏng. Chưa có React Native, đăng nhập, camera hay kết nối nhiều máy.</p><label class="field">Phiếu của các bạn mẫu<select id="scenario"><option value="happy">Có thể cùng muốn món đầu</option><option value="fallback">Mọi người mẫu đều ăn được</option><option value="empty">Không có lựa chọn chung</option><option value="waiting">Đang chờ một thành viên</option></select></label><div class="stack"><button class="quiet small" data-action="fill">Điền phiếu của tôi (demo)</button><button class="quiet small" data-action="mockstart">Chủ phòng mẫu bắt đầu</button><button class="quiet small" data-action="mocksubmit">Thành viên mẫu gửi phiếu</button><button class="quiet small" data-action="expire">Mô phỏng hết hạn phòng</button><button class="quiet small" data-action="offline">Mô phỏng mất / có mạng</button><button class="quiet small" data-action="reset">Bắt đầu lại demo</button></div><p style="margin-top:12px">Nút điền phiếu chỉ nằm ở công cụ review, không có trong app thật. Mã vào phòng mẫu: <b>123456</b>.</p></div><div class="review-panel"><h3>Ba mức, ba ý nghĩa</h3><div class="legend"><div>♡ <b>Muốn ăn</b><span>Đây là món mình đang thèm.</span></div><div>✓ <b>Ăn được</b><span>Không thèm lắm, nhưng mình vẫn ổn.</span></div><div>× <b>Không ăn</b><span>Loại món này khỏi lựa chọn chung.</span></div></div><p style="margin-top:16px">Gợi ý quán là bước sau cùng. Prototype không xác minh quán có món hoặc đang mở.</p></div></aside>
- </main><footer class="footer">GÌ CŨNG ĐƯỢC · Tham chiếu UI cho đồ án React Native · 2026</footer>
-</div>
+
+<main class="phone-stage">
+  <!-- KHUNG ĐIỆN THOẠI CHÍNH -->
+  <section class="phone" aria-label="Ứng dụng Gì Cũng Được">
+    <div class="dynamic-island" aria-hidden="true">
+      <span class="island-camera"></span>
+      <span class="island-speaker"></span>
+    </div>
+
+    <div class="statusbar" aria-hidden="true">
+      <span>9:41</span>
+      <div class="status-icons">
+        <span>5G</span>
+        <span>●●●</span>
+        <span>▰</span>
+      </div>
+    </div>
+
+        <header class="appbar">
+      <div class="appbrand">
+        <span class="mark" aria-hidden="true">≈</span>
+        <span>Gì Cũng Được</span>
+      </div>
+      <div class="appbar-actions">
+        <button data-action="theme" aria-label="Đổi giao diện sáng tối">🌓</button>
+        <button data-action="home" aria-label="Về trang chủ">⌂</button>
+      </div>
+    </header>
+
+    <div id="network"></div>
+
+    <div class="phone-scroll">
+      <div id="screen" class="screen"></div>
+    </div>
+
+    <div class="home-bar" aria-hidden="true">
+      <div class="home-indicator"></div>
+    </div>
+  </section>
+</main>
+
+<!-- REVIEW & TEST CONTROLS (GỌN GÀNG, KHÔNG PHÁ VỠ MOCKUP MOBILE) -->
+<aside class="review-widget" aria-label="Công cụ kiểm thử kịch bản">
+  <div class="review-panel-box" id="review-drawer">
+    <div class="eyebrow" style="margin-bottom:4px;">Chỉ dành cho review</div>
+    <h3>Công cụ mô phỏng</h3>
+    <p>Dữ liệu thành viên mô phỏng để test các luồng.</p>
+
+    <label class="field" style="margin:8px 0;">
+      Phiếu các bạn mẫu:
+      <select id="scenario">
+        <option value="happy">Có thể cùng muốn món đầu</option>
+        <option value="fallback">Mọi người mẫu đều ăn được</option>
+        <option value="empty">Không có lựa chọn chung</option>
+        <option value="waiting">Đang chờ một thành viên</option>
+      </select>
+    </label>
+
+    <div class="stack" style="gap:7px;margin-top:10px;">
+      <button class="quiet small" data-action="fill">Điền phiếu của tôi (demo)</button>
+      <button class="quiet small" data-action="mockstart">Chủ phòng mẫu bắt đầu</button>
+      <button class="quiet small" data-action="mocksubmit">Thành viên mẫu gửi phiếu</button>
+      <button class="quiet small" data-action="expire">Mô phỏng hết hạn phòng</button>
+      <button class="quiet small" data-action="offline">Mô phỏng mất / có mạng</button>
+      <button class="quiet small" data-action="reset">Bắt đầu lại demo</button>
+    </div>
+  </div>
+  <button class="review-toggle-btn" id="review-toggle" type="button" aria-expanded="false">
+    ⚙️ Công cụ Review
+  </button>
+</aside>
+
 <div id="live" class="sr-only" aria-live="polite"></div>
+
 <script>
-const dishes=[
- {id:'pho',name:'Phở bò',emoji:'🍜',tags:'Món nước · Nóng hổi',desc:'Một tô nước dùng thơm, thêm chút hành và rau.'},
- {id:'com',name:'Cơm tấm',emoji:'🍚',tags:'Cơm · Ăn no',desc:'Cơm, sườn nướng và đồ chua quen thuộc.'},
- {id:'lau',name:'Lẩu nấm',emoji:'🍲',tags:'Lẩu · Ăn chung',desc:'Một nồi lẩu ấm nóng để cả nhóm cùng ăn.'},
- {id:'nuong',name:'Thịt nướng',emoji:'🥩',tags:'Nướng · Ăn chung',desc:'Ngồi bên bếp nướng, trò chuyện và ăn cùng nhau.'},
- {id:'bun',name:'Bún chả',emoji:'🥢',tags:'Bún · Nướng',desc:'Bún, chả nướng và rau ăn kèm.'},
- {id:'banhmi',name:'Bánh mì',emoji:'🥖',tags:'Nhanh gọn · Ăn no',desc:'Một lựa chọn nhanh cho buổi gặp gọn nhẹ.'},
- {id:'sushi',name:'Sushi',emoji:'🍣',tags:'Món Nhật · Cơm',desc:'Các phần cơm cuộn nhỏ để lựa chọn cùng nhau.'},
- {id:'pizza',name:'Pizza',emoji:'🍕',tags:'Món Tây · Ăn chung',desc:'Chia nhau vài miếng bánh, chốt một kèo ăn vui.'}
+const dishes = [
+  { id: 'pho', name: 'Phở bò', emoji: '🍜', tags: 'Món nước · Nóng hổi', desc: 'Một tô nước dùng thơm, thêm chút hành và rau tươi.' },
+  { id: 'com', name: 'Cơm tấm', emoji: '🍚', tags: 'Cơm · Ăn no', desc: 'Cơm, sườn nướng mỡ hành và đồ chua quen thuộc.' },
+  { id: 'lau', name: 'Lẩu nấm', emoji: '🍲', tags: 'Lẩu · Ăn chung', desc: 'Một nồi lẩu ấm nóng để cả nhóm cùng quây quần.' },
+  { id: 'nuong', name: 'Thịt nướng', emoji: '🥩', tags: 'Nướng · Ăn chung', desc: 'Ngồi bên bếp than xèo xèo, trò chuyện rôm rả.' },
+  { id: 'bun', name: 'Bún chả', emoji: '🥢', tags: 'Bún · Nướng', desc: 'Bún tươi, chả nướng than hoa và rau ghém.' },
+  { id: 'banhmi', name: 'Bánh mì', emoji: '🥖', tags: 'Nhanh gọn · Giòn rụm', desc: 'Một ổ bánh mì giòn tan, tiện lợi và ngon miệng.' },
+  { id: 'sushi', name: 'Sushi', emoji: '🍣', tags: 'Món Nhật · Tươi ngon', desc: 'Các cuộn maki nhỏ xinh, thanh đạm và dễ ăn.' },
+  { id: 'pizza', name: 'Pizza', emoji: '🍕', tags: 'Món Tây · Tiệc tùng', desc: 'Chia nhau vài lát bánh phô mai, chốt kèo ăn vui.' }
 ];
-const meals={breakfast:'Bữa sáng',lunch:'Bữa trưa',dinner:'Bữa tối',snack:'Ăn nhẹ'};
+
+const meals = { breakfast: 'Bữa sáng', lunch: 'Bữa trưa', dinner: 'Bữa tối', snack: 'Ăn nhẹ' };
 let s;
-function reset(){s={page:'home',role:'host',name:'Minh',meal:'lunch',cats:[],ready:false,index:0,votes:{},eligible:[],keep:{},winner:null,reason:'',offline:false,notice:'',scenario:document.querySelector('#scenario').value};render()}
-const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function btn(text,action,kind='primary',extra=''){return `<button class="${kind}" data-action="${action}" ${extra}>${text}</button>`}
-function heading(step,title,desc){return `<div class="eyebrow">${step}</div><h2 tabindex="-1">${title}</h2><p class="lead">${desc}</p>`}
-function notice(){return s.notice?`<div class="notice error" role="status">${esc(s.notice)}</div>`:''}
-function networkGuard(){if(s.offline){s.notice='Đang mất kết nối. Lựa chọn vẫn ở đây; kết nối lại để tiếp tục.';render();return false}return true}
-function go(page){s.page=page;s.notice='';render();document.querySelector('#screen h2')?.focus({preventScroll:true})}
-function render(){
- document.querySelector('#network').innerHTML=s.offline?'<div class="offline" role="status">Chưa có mạng · Nháp chưa được gửi</div>':'';
- let h='';
- if(s.page==='home')h=`<div class="hero-art" aria-hidden="true"><span class="float one">Hôm nay ăn gì?</span><div class="plate">🍜</div><span class="float two">Cùng chọn nha ✓</span></div>${heading('CHỌN MỘT MÓN. VUI CẢ NHÓM.','Đói rồi,<br>mình ăn gì đây?','Tạo một kèo ăn, rủ bạn vào và cùng tìm món ai cũng thấy ổn.')}<div class="stack">${btn('＋ Tạo kèo ăn','create')}${btn('Tôi có mã phòng','join','quiet')}</div><div class="notice">Tiếp tục bằng khách, không cần email.<br>Demo hiện dùng tên <b>${esc(s.name)}</b>.</div>`;
- if(s.page==='create')h=heading('BƯỚC 1 / TẠO KÈO','Hẹn nhau bữa nào?','Chọn buổi ăn để cả nhóm cùng bắt đầu.')+`<label class="field">Tên của bạn<input id="name" maxlength="24" value="${esc(s.name)}" autocomplete="nickname"></label><div class="options">${Object.entries(meals).map(([k,v],i)=>`<button class="option ${s.meal===k?'selected':''}" aria-pressed="${s.meal===k}" data-action="meal" data-value="${k}"><span class="icon" aria-hidden="true">${['☀','◒','☾','☕'][i]}</span>${v}</button>`).join('')}</div>${notice()}<div class="spacer"></div>${btn('Tạo phòng và chọn khẩu vị →','created','primary full')}`;
- if(s.page==='join')h=heading('VÀO KÈO CỦA BẠN','Nhập mã phòng','Mã do người tạo phòng gửi cho bạn.')+`<label class="field">Tên của bạn<input id="name" maxlength="24" value="${esc(s.name)}"></label><label class="field">Mã phòng<input id="code" maxlength="6" placeholder="123456" inputmode="numeric" autocomplete="off"></label>${notice()}<div class="stack">${btn('Vào phòng →','joined')}${btn('Quét mã QR','qr','quiet')}</div><div class="notice">Mã demo: 123456. Quét QR sẽ dùng camera trong app React Native.</div>`;
- if(s.page==='prefs')h=heading('BƯỚC 2 / KHẨU VỊ','Hôm nay bạn thích…','Chọn vài loại món bạn đang muốn ăn. Đây là ưu tiên, chưa phải loại trừ món khác.')+`<div class="chips">${['Món nước','Cơm','Lẩu','Nướng','Món Nhật','Nhanh gọn'].map(v=>`<button class="chip ${s.cats.includes(v)?'selected':''}" aria-pressed="${s.cats.includes(v)}" data-action="cat" data-value="${v}">${v}</button>`).join('')}</div><div class="spacer"></div>${btn(s.cats.length?'Bỏ chọn — Gì cũng được':'✓ Gì cũng được','any','quiet full')}<div class="notice">Bạn thích nướng, bạn kia thích lẩu? Cả hai vẫn có thể xem và chọn những món ăn được.</div>${btn('Xong, đến phòng chờ →','lobby','primary full')}`;
- if(s.page==='lobby')h=heading(meals[s.meal].toUpperCase(),'Kèo ăn đã sẵn sàng','Chia sẻ mã cho bạn bè. Tất cả sẵn sàng rồi mình bắt đầu.')+`<div class="roomcode"><small>MÃ PHÒNG MẪU</small><strong>123456</strong><small>3 / 8 người · Dữ liệu demo</small></div><div class="member"><span class="avatar">${esc(s.name.charAt(0))}</span><div class="details"><b>${esc(s.name)}</b><br><small>Bạn · ${s.role==='host'?'Chủ phòng':'Thành viên'} demo</small></div><span class="ready">${s.ready?'✓ Sẵn sàng':'Chưa sẵn sàng'}</span></div>${['An','Linh'].map(n=>`<div class="member"><span class="avatar">${n[0]}</span><div class="details"><b>${n}</b><br><small>Thành viên mô phỏng</small></div><span class="ready">✓ Sẵn sàng</span></div>`).join('')}${notice()}<div class="spacer"></div><div class="stack">${btn(s.ready?'✓ Tôi đã sẵn sàng':'Tôi sẵn sàng','ready','quiet')}${btn(s.role==='host'?'Bắt đầu chọn món →':'Chờ chủ phòng bắt đầu','start','primary',s.ready&&s.role==='host'?'':'disabled')}${btn('Sửa khẩu vị','prefs','quiet small')}</div>`;
- if(s.page==='vote'){
-  const d=dishes[s.index],count=Object.keys(s.votes).length;
-  h=heading('VÒNG 1 / CHỌN RIÊNG','Bạn thấy món này sao?','Lựa chọn của bạn không hiện cho các bạn khác.')+`<div class="row between"><small>Món ${s.index+1} / ${dishes.length}</small><small>${count} món đã chọn</small></div><div class="progress" role="progressbar" aria-label="Số món đã chọn" aria-valuemin="0" aria-valuemax="8" aria-valuenow="${count}"><span style="width:${count/8*100}%"></span></div><div class="dish-art" aria-hidden="true">${d.emoji}</div><h3 class="dish-title">${d.name}</h3><p class="tags">${d.tags}</p><p class="muted" style="font-size:.88rem">${d.desc}</p><div class="votes">${[['NO','×','Không ăn','no'],['OK','✓','Ăn được',''],['WANT','♡','Muốn ăn','want']].map(([v,ic,l,c])=>`<button data-action="vote" data-value="${v}" class="${c} ${s.votes[d.id]===v?'selected':''}" aria-pressed="${s.votes[d.id]===v}"><b aria-hidden="true">${ic}</b>${l}</button>`).join('')}</div><div class="cardnav">${btn('← Món trước','prev','quiet',s.index===0?'disabled':'')}${btn('Món tiếp →','next','quiet',s.index===7?'disabled':'')}</div>${notice()}${btn('Gửi lựa chọn của tôi','submit','primary full',count===8?'':'disabled')}<p class="muted" style="font-size:.76rem;margin-top:10px">Bạn có thể sửa trước khi gửi. Sau khi gửi, lựa chọn của vòng sẽ được khóa.</p>`;
- }
- if(s.page==='final')h=heading('VÒNG 2 / VÒNG CUỐI','Còn những món này nè.','Chưa có món cả nhóm cùng muốn. Đây là những món mọi người đều ăn được; bạn có thể loại thêm.')+`<div class="stack">${s.eligible.map(id=>{const d=dishes.find(x=>x.id===id);return `<div class="finalitem ${s.keep[id]?'':'removed'}"><span class="food" aria-hidden="true">${d.emoji}</span><div class="details"><b>${d.name}</b></div><button data-action="keep" data-value="${id}" aria-pressed="${s.keep[id]}" aria-label="${s.keep[id]?'Giữ':'Đã loại'} ${d.name}">${s.keep[id]?'✓ Giữ':'× Đã loại'}</button></div>`}).join('')}</div><div class="notice">Món bạn chọn “Không ăn” không xuất hiện ở đây. Đây là vòng cuối, không tự quay thêm.</div>${notice()}${btn('Xác nhận lựa chọn cuối →','finish','primary full')}`;
- if(s.page==='waiting')h=heading('ĐÃ GỬI LỰA CHỌN','Chờ bạn một chút nha.','2 / 3 người đã chọn xong. Khi đủ người, cả nhóm sẽ cùng thấy bước tiếp theo.')+'<div class="result-icon" aria-hidden="true">🥢</div><div class="notice">Phiếu của bạn đã được khóa. Bạn chưa thể đổi lựa chọn hoặc tự chốt thay thành viên còn lại.</div>';
- if(s.page==='expired')h=heading('PHIÊN ĐÃ KẾT THÚC','Kèo ăn này hết hạn rồi.','Lựa chọn chưa gửi sẽ không được nộp vào phiên đã hết hạn.')+btn('Tạo một kèo mới','new','primary full');
- if(s.page==='result'){
- const d=dishes.find(x=>x.id===s.winner);
- h=`<div class="result">${heading('CẢ NHÓM ĐÃ CHỐT','Hôm nay ăn<br>'+d.name+'!',s.reason)}<div class="result-icon" aria-hidden="true">${d.emoji}</div><div class="notice">Kết quả được giữ nguyên khi xem lại.<br>Tìm quán phù hợp là bước tiếp theo.</div><div class="stack"><a class="primary-link" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(d.name+' gần đây')}" target="_blank" rel="noopener noreferrer">Tìm quán trên Google Maps ↗</a>${btn('Về trang chủ','home','quiet')}</div><p class="muted" style="font-size:.76rem;margin-top:15px">Maps hiển thị kết quả tìm kiếm; app chưa xác minh quán có món hay đang mở.</p></div>`;
- }
- if(s.page==='empty')h=`<div class="result"><div class="result-icon" aria-hidden="true">🥢</div>${heading('CHƯA CÓ MÓN CHUNG','Chưa khớp khẩu vị<br>lần này rồi.','Hiện chưa có món mọi người cùng ăn được. Không sao, mình không cần ép chọn một món.') }<div class="notice">Phiên này đã kết thúc. Bạn có thể tạo một phiên mới để xem các lựa chọn khác.</div><div class="stack">${btn('Tạo một phiên mới','new')}${btn('Kết thúc, về trang chủ','home','quiet')}</div></div>`;
- document.querySelector('#screen').innerHTML=h;
- document.querySelector('#live').textContent=s.notice;
+
+function getQrSvg(size = 130) {
+  return `<svg class="qr-preview-svg" style="width:${size}px;height:${size}px;" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="Mã QR phòng 123456">
+    <rect width="120" height="120" rx="16" fill="white"/>
+    <rect x="14" y="14" width="28" height="28" rx="6" fill="#191D24"/>
+    <rect x="20" y="20" width="16" height="16" rx="3" fill="white"/>
+    <rect x="24" y="24" width="8" height="8" rx="2" fill="#FF5A36"/>
+    <rect x="78" y="14" width="28" height="28" rx="6" fill="#191D24"/>
+    <rect x="84" y="20" width="16" height="16" rx="3" fill="white"/>
+    <rect x="88" y="24" width="8" height="8" rx="2" fill="#FF5A36"/>
+    <rect x="14" y="78" width="28" height="28" rx="6" fill="#191D24"/>
+    <rect x="20" y="84" width="16" height="16" rx="3" fill="white"/>
+    <rect x="24" y="88" width="8" height="8" rx="2" fill="#FF5A36"/>
+    <rect x="48" y="16" width="6" height="6" rx="1.5" fill="#191D24"/>
+    <rect x="58" y="16" width="6" height="6" rx="1.5" fill="#191D24"/>
+    <rect x="66" y="24" width="6" height="6" rx="1.5" fill="#191D24"/>
+    <rect x="48" y="32" width="6" height="6" rx="1.5" fill="#191D24"/>
+    <rect x="66" y="32" width="6" height="6" rx="1.5" fill="#191D24"/>
+    <rect x="16" y="48" width="6" height="6" rx="1.5" fill="#191D24"/>
+    <rect x="26" y="48" width="6" height="6" rx="1.5" fill="#191D24"/>
+    <rect x="36" y="48" width="6" height="6" rx="1.5" fill="#191D24"/>
+    <rect x="78" y="48" width="6" height="6" rx="1.5" fill="#191D24"/>
+    <rect x="88" y="48" width="6" height="6" rx="1.5" fill="#191D24"/>
+    <rect x="98" y="48" width="6" height="6" rx="1.5" fill="#191D24"/>
+    <rect x="16" y="60" width="6" height="6" rx="1.5" fill="#191D24"/>
+    <rect x="36" y="60" width="6" height="6" rx="1.5" fill="#191D24"/>
+    <rect x="78" y="60" width="6" height="6" rx="1.5" fill="#191D24"/>
+    <rect x="98" y="60" width="6" height="6" rx="1.5" fill="#191D24"/>
+    <rect x="48" y="78" width="6" height="6" rx="1.5" fill="#191D24"/>
+    <rect x="58" y="86" width="6" height="6" rx="1.5" fill="#191D24"/>
+    <rect x="66" y="78" width="6" height="6" rx="1.5" fill="#191D24"/>
+    <rect x="48" y="98" width="6" height="6" rx="1.5" fill="#191D24"/>
+    <rect x="66" y="98" width="6" height="6" rx="1.5" fill="#191D24"/>
+    <rect x="86" y="86" width="6" height="6" rx="1.5" fill="#191D24"/>
+    <rect x="96" y="96" width="6" height="6" rx="1.5" fill="#191D24"/>
+    <circle cx="60" cy="60" r="14" fill="#FF5A36"/>
+    <text x="60" y="65" font-size="14" font-weight="bold" fill="white" text-anchor="middle">≈</text>
+  </svg>`;
 }
-function submit(){
- if(!networkGuard()||Object.keys(s.votes).length!==8)return;
- if(s.scenario==='waiting'){go('waiting');return}
- const matched=dishes.filter(d=>s.votes[d.id]==='WANT'&&s.scenario==='happy'&&d.id==='pho');
- if(matched.length){s.winner=matched[0].id;s.reason='Cả nhóm cùng muốn ăn món này.';go('result');return}
- s.eligible=dishes.filter(d=>s.votes[d.id]!=='NO'&&s.scenario!=='empty').map(d=>d.id);
- if(!s.eligible.length){go('empty');return}
- s.keep=Object.fromEntries(s.eligible.map(id=>[id,true]));go('final');
+
+function getTiktokSvg() {
+  return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298-.002.595.042.88.13V9.4a6.33 6.33 0 0 0-1-.08A6.34 6.34 0 0 0 3 15.66a6.34 6.34 0 0 0 10.82 4.5 6.3 6.3 0 0 0 1.95-4.5V8.09a8.28 8.28 0 0 0 4.82 1.54V6.18a4.8 4.8 0 0 1-1-.05z"/></svg>`;
 }
-function finish(){if(!networkGuard())return;const remain=s.eligible.filter(id=>s.keep[id]);if(!remain.length){go('empty');return}const score=id=>(s.votes[id]==='WANT'?1:0)+(s.scenario==='happy'&&id==='pho'?2:0);const max=Math.max(...remain.map(score));const candidates=remain.filter(id=>score(id)===max);s.winner=candidates[Math.floor(Math.random()*candidates.length)];s.reason='Mọi người đều giữ món này ở vòng cuối. Ưu tiên mức muốn ăn; nếu hòa, chọn một lần.';go('result')}
-document.addEventListener('input',e=>{if(e.target.id==='name')s.name=e.target.value});
-document.querySelector('#scenario').addEventListener('change',e=>{const v=e.target.value;reset();s.scenario=v;render()});
-document.addEventListener('click',e=>{
- const target=e.target.closest('[data-action]');if(!target||target.disabled)return;const a=target.dataset.action,v=target.dataset.value;
- if(a==='theme'){document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark';return}
- if(a==='reset'){reset();return}
- if(a==='expire'){go('expired');return}
- if(a==='mocksubmit'){if(s.page==='waiting'){s.scenario='fallback';submit()}return}
- if(a==='offline'){s.offline=!s.offline;s.notice='';render();return}
- if(a==='home'){if(['vote','final','lobby','waiting'].includes(s.page)&&!confirm('Rời phiên đang diễn ra? Trong app thật, thao tác này có thể hủy phiên cho cả nhóm.'))return;go('home');return}
- if(a==='new'){reset();go('create');return}
- if(a==='create'||a==='join'||a==='prefs'){if(a!=='prefs')s.role=a==='create'?'host':'member';go(a);return}
- if(a==='meal'){s.meal=v;render();return}
- if(a==='created'||a==='joined'){
-  if(!s.name.trim()){s.notice='Nhập tên của bạn trước nha.';render();return}
-  if(a==='joined'&&document.querySelector('#code').value!=='123456'){s.notice='Không tìm thấy phòng mẫu. Dùng mã 123456 để thử.';render();return}
-  if(networkGuard())go('prefs');return;
- }
- if(a==='qr'){s.notice='Camera chưa được triển khai trong prototype. Bạn có thể nhập mã mẫu 123456.';render();return}
- if(a==='cat'){s.cats=s.cats.includes(v)?s.cats.filter(x=>x!==v):[...s.cats,v];s.ready=false;render();return}
- if(a==='any'){s.cats=[];s.ready=false;render();return}
- if(a==='lobby'){if(networkGuard())go('lobby');return}
- if(a==='ready'){if(networkGuard()){s.ready=!s.ready;render()}return}
- if(a==='mockstart'){if(s.page==='lobby'&&s.ready&&networkGuard())go('vote');return}
- if(a==='start'){if(s.role==='host'&&s.ready&&networkGuard()){s.index=0;s.votes={};go('vote')}return}
- if(a==='prev'||a==='next'){s.index=Math.max(0,Math.min(7,s.index+(a==='next'?1:-1)));render();return}
- if(a==='vote'){s.votes[dishes[s.index].id]=v;if(s.index<7)s.index++;render();return}
- if(a==='fill'){if(s.page!=='vote'){s.page='vote';s.index=0}s.votes=Object.fromEntries(dishes.map((d,i)=>[d.id,i===0?'WANT':i<4?'OK':'NO']));s.index=7;render();return}
- if(a==='submit'){submit();return}
- if(a==='keep'){s.keep[v]=!s.keep[v];render();return}
- if(a==='finish'){finish();return}
+
+function getYoutubeSvg() {
+  return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>`;
+}
+
+function showToast(msg) {
+  const existing = document.querySelector('.toast-msg');
+  if (existing) existing.remove();
+  const t = document.createElement('div');
+  t.className = 'toast-msg';
+  t.innerHTML = msg;
+  const phone = document.querySelector('.phone');
+  if (phone) phone.appendChild(t);
+  setTimeout(() => { t.remove(); }, 2400);
+}
+
+function reset() {
+  s = {
+    page: 'home',
+    role: 'host',
+    name: 'Minh',
+    meal: 'lunch',
+    cats: [],
+    ready: true,
+    index: 0,
+    votes: {},
+    eligible: [],
+    keep: {},
+    winner: null,
+    reason: '',
+    offline: false,
+    notice: '',
+    scenario: document.querySelector('#scenario').value,
+    joinMode: 'code',
+    code: '123456',
+    flashOn: false,
+    showLobbyQR: false,
+    location: 'Quận 1, TP.HCM',
+    friends: [
+      { id: 'linh', name: 'Linh', tag: 'Bạn thân', status: 'online', avatar: 'L' },
+      { id: 'nam', name: 'Nam', tag: 'Đồng nghiệp', status: 'idle', avatar: 'N' }
+    ],
+    friendRequests: [
+      { id: 'huy', name: 'Huy', mutual: '3 bữa ăn chung', avatar: 'H' }
+    ],
+    accountLinked: false,
+    invitedFriends: ['linh'],
+    friendSearch: '',
+    mealHistory: [
+      { id: 'h1', dish: 'Phở bò', emoji: '🍜', meal: 'Bữa trưa', date: 'Hôm qua', with: 'Linh' },
+      { id: 'h2', dish: 'Cơm tấm', emoji: '🍚', meal: 'Bữa trưa', date: '3 ngày trước', with: 'Linh, Nam' }
+    ]
+  };
+  render();
+}
+
+const esc = v => String(v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+function btn(text, action, kind = 'primary', extra = '') {
+  return `<button class="${kind}" data-action="${action}" ${extra}>${text}</button>`;
+}
+function heading(step, title, desc) {
+  return `<div class="eyebrow">${step}</div><h2 tabindex="-1">${title}</h2><p class="lead">${desc}</p>`;
+}
+function notice() {
+  return s.notice ? `<div class="notice error" role="status">${esc(s.notice)}</div>` : '';
+}
+function networkGuard() {
+  if (s.offline) {
+    s.notice = 'Đang mất kết nối. Lựa chọn vẫn ở đây; kết nối lại để tiếp tục.';
+    render();
+    return false;
+  }
+  return true;
+}
+function go(page) {
+  s.page = page;
+  s.notice = '';
+  render();
+  document.querySelector('#screen h2')?.focus({ preventScroll: true });
+}
+
+function render() {
+  document.querySelector('#network').innerHTML = s.offline ? '<div class="offline" role="status">Chưa có mạng · Nháp chưa được gửi</div>' : '';
+
+  let h = '';
+
+  if (s.page === 'home') {
+    h = `<div class="hero-art" aria-hidden="true">
+      <span class="float one">Hôm nay ăn gì?</span>
+      <div class="plate">🍜</div>
+      <span class="float two">Cùng chọn nha ✓</span>
+    </div>
+    <h2 style="margin-bottom:18px;">Đói rồi,<br>mình ăn gì đây?</h2>
+    <div class="stack">
+      ${btn('＋ Tạo kèo ăn', 'create')}
+      ${btn('Tôi có mã phòng', 'join', 'quiet')}
+      <button class="quiet" data-action="friends" type="button" style="display:flex;align-items:center;justify-content:center;gap:7px;">
+        <span>👥</span> Bạn ăn cùng
+        <span class="friend-badge-dot">${s.friends.length + s.friendRequests.length}</span>
+      </button>
+    </div>
+
+    ${s.activeRoom ? `<div class="active-session-banner">
+      <div>
+        <div class="active-session-title">📍 Phiên ăn đang diễn ra</div>
+        <div class="active-session-desc">Phòng #${esc(s.code)} · ${meals[s.meal]} (3 thành viên)</div>
+      </div>
+      <button class="primary small" data-action="resume-room" type="button" style="min-height:34px;padding:6px 12px;font-size:0.78rem;">Vào tiếp →</button>
+    </div>` : ''}
+
+    ${s.friends.length ? `<div class="home-friends-preview">
+      <div class="home-friends-head">
+        <span class="title">⚡ Kèo nhanh với bạn thân</span>
+        <button data-action="friends" class="more-link" type="button">Tất cả (${s.friends.length}) ›</button>
+      </div>
+      <div class="home-friends-chips">
+        ${s.friends.map(f => `
+          <button class="home-friend-chip" data-action="quick-room" data-value="${f.id}" type="button" title="Tạo phòng nhanh với ${esc(f.name)}">
+            <span class="avatar-sm">${f.avatar}</span>
+            <span class="name">${esc(f.name)}</span>
+            <span class="status-dot ${f.status}"></span>
+          </button>
+        `).join('')}
+      </div>
+    </div>` : ''}`;
+  }
+
+  if (s.page === 'friends') {
+    const q = (s.friendSearch || '').trim().toLowerCase();
+    const filteredFriends = q
+      ? s.friends.filter(f => f.name.toLowerCase().includes(q) || f.id.toLowerCase().includes(q))
+      : s.friends;
+    const isNewMatch = q && !s.friends.some(f => f.name.toLowerCase() === q || f.id.toLowerCase() === q);
+
+    h = `<div style="margin-bottom:8px;"><button data-action="home" style="border:0;background:transparent;padding:4px 0;font-size:0.86rem;color:var(--muted);font-weight:600;display:inline-flex;align-items:center;gap:3px;min-height:auto;cursor:pointer;">‹ Trang chủ</button></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <h2>Bạn ăn cùng</h2>
+        <span style="font-size:0.8rem;color:var(--muted);font-weight:700;">${s.friends.length} bạn bè</span>
+      </div>
+      <p class="lead" style="margin-bottom:12px;">Kết bạn để tạo kèo đôi nhanh trong 1 chạm.</p>
+
+      <!-- THANH TÌM KIẾM & KẾT BẠN NGAY Ở TRÊN -->
+      <div class="friend-search-bar">
+        <span class="search-icon" aria-hidden="true">🔍</span>
+        <input type="text" id="friend-search-input" class="friend-search-input" placeholder="Tìm kiếm hoặc nhập ID, SĐT để kết bạn..." value="${esc(s.friendSearch || '')}" aria-label="Tìm kiếm hoặc kết bạn" />
+        ${s.friendSearch ? `<button class="btn-clear-friend-search" data-action="clear-friend-search" type="button" aria-label="Xóa tìm kiếm">✕</button>` : ''}
+      </div>
+
+      <!-- KẾT QUẢ TÌM THẤY NGƯỜI MỚI ĐỂ KẾT BẠN TRỰC TIẾP -->
+      ${isNewMatch ? `
+        <div class="friend-search-new-match">
+          <div class="search-user-info">
+            <span class="avatar">${esc(s.friendSearch.trim().charAt(0).toUpperCase())}</span>
+            <div>
+              <b>${esc(s.friendSearch.trim())}</b>
+              <small style="display:block;color:var(--muted);font-size:0.72rem;">Người dùng / ID mới</small>
+            </div>
+          </div>
+          <button class="primary small" data-action="send-friend-req-search" data-value="${esc(s.friendSearch.trim())}" type="button" style="padding:6px 14px;min-height:34px;font-size:0.78rem;">＋ Kết bạn</button>
+        </div>
+      ` : ''}
+
+      ${s.friendRequests.length && !q ? `<div class="friends-card" style="border-color:rgba(255, 90, 54, 0.35);background:linear-gradient(180deg, #fff9f5 0%, var(--surface) 100%);">
+        <div style="font-size:0.75rem;font-weight:800;color:var(--primary);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Lời mời kết bạn (${s.friendRequests.length})</div>
+        ${s.friendRequests.map(r => `
+          <div class="friend-row">
+            <div class="friend-info">
+              <span class="avatar">${r.avatar}</span>
+              <div>
+                <b>${esc(r.name)}</b>
+                <small style="display:block;color:var(--muted);">${esc(r.mutual)}</small>
+              </div>
+            </div>
+            <div style="display:flex;gap:6px;">
+              <button class="small primary" data-action="accept-friend" data-value="${r.id}" type="button" style="padding:6px 12px;min-height:34px;">✓ Đồng ý</button>
+              <button class="small quiet" data-action="reject-friend" data-value="${r.id}" type="button" style="padding:6px 10px;min-height:34px;">✕</button>
+            </div>
+          </div>
+        `).join('')}
+      </div>` : ''}
+
+      <div class="friends-card">
+        <div style="font-size:0.75rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">
+          ${q ? `Kết quả tìm kiếm (${filteredFriends.length})` : 'Danh sách bạn bè'}
+        </div>
+        ${filteredFriends.length ? filteredFriends.map(f => `
+          <div class="friend-row">
+            <div class="friend-info">
+              <div class="friend-avatar-wrap">
+                <span class="avatar">${f.avatar}</span>
+                <span class="friend-status-dot ${f.status === 'online' ? '' : 'idle'}" title="${f.status === 'online' ? 'Đang online' : 'Ngoại tuyến'}"></span>
+              </div>
+              <div>
+                <b>${esc(f.name)}</b>
+                <small style="display:block;color:var(--muted);font-weight:600;">${esc(f.tag)} · ${f.status === 'online' ? '🟢 Đang rảnh' : '⚪ Ngoại tuyến'}</small>
+              </div>
+            </div>
+            <button class="quick-room-btn" data-action="quick-room" data-value="${f.id}" type="button">
+              ⚡ Kèo nhanh
+            </button>
+          </div>
+        `).join('') : '<p style="font-size:0.8rem;color:var(--muted);margin:8px 0;">Không tìm thấy bạn bè nào phù hợp.</p>'}
+      </div>
+
+      <!-- LỊCH SỬ KÈO ĂN GẦN ĐÂY (P1 GM-18 / FR-12) -->
+      ${!q ? `
+      <div class="friends-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <div style="font-size:0.75rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Lịch sử kèo ăn gần đây</div>
+          ${s.mealHistory.length ? `<button data-action="clear-history" type="button" style="border:0;background:transparent;color:var(--muted);font-size:0.72rem;font-weight:600;padding:0;min-height:auto;cursor:pointer;">🗑️ Xóa</button>` : ''}
+        </div>
+        ${s.mealHistory.length ? s.mealHistory.map(m => `
+          <div class="history-item">
+            <div class="history-left">
+              <span class="history-emoji">${m.emoji}</span>
+              <div>
+                <b>${esc(m.dish)}</b>
+                <span class="history-date" style="display:block;">${esc(m.meal)} · ${esc(m.date)} (với ${esc(m.with)})</span>
+              </div>
+            </div>
+            <button class="small quiet" data-action="quick-room" data-value="linh" type="button" style="padding:4px 8px;min-height:30px;font-size:0.74rem;">Ăn lại</button>
+          </div>
+        `).join('') : '<p style="font-size:0.8rem;color:var(--muted);margin:8px 0;">Chưa có lịch sử bữa ăn nào.</p>'}
+      </div>
+
+      <!-- LIÊN KẾT TÀI KHOẢN (P1 GM-17 / FR-12) -->
+      <div class="friends-card" style="border-style:dashed;">
+        <div style="font-size:0.75rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Tài khoản &amp; Sao lưu</div>
+        <p style="font-size:0.78rem;color:var(--muted);margin-bottom:10px;">${s.accountLinked ? '✓ Đã liên kết tài khoản Google · Dữ liệu được bảo toàn khi đổi thiết bị.' : 'Bạn đang dùng tài khoản Khách. Liên kết tài khoản để không mất danh sách bạn bè khi đổi máy.'}</p>
+        ${s.accountLinked ? `<span class="result-member-badge" style="display:inline-flex;">✓ Đã liên kết Google</span>` : `<button class="quiet small" data-action="link-account" type="button" style="width:100%;min-height:36px;font-size:0.8rem;">🔗 Liên kết tài khoản Google</button>`}
+      </div>
+      ` : ''}
+      ${notice()}`;
+  }
+
+  if (s.page === 'create') {
+    h = `<div style="margin-bottom:8px;"><button data-action="home" style="border:0;background:transparent;padding:4px 0;font-size:0.86rem;color:var(--muted);font-weight:600;display:inline-flex;align-items:center;gap:3px;min-height:auto;cursor:pointer;">‹ Quay lại</button></div>
+      <h2 style="margin-bottom:4px;">Hẹn nhau bữa nào?</h2>
+      <p class="lead" style="margin-bottom:14px;font-size:0.8rem;color:var(--muted);">Quy tắc: Nhóm 2–8 người · Tối đa 2 vòng bình chọn kín</p>
+      <label class="field">Tên của bạn<input id="name" maxlength="24" value="${esc(s.name)}" placeholder="Nhập tên của bạn"></label>
+      <div class="options">${Object.entries(meals).map(([k, v], i) => `<button class="option ${s.meal === k ? 'selected' : ''}" aria-pressed="${s.meal === k}" data-action="meal" data-value="${k}"><span class="icon" aria-hidden="true">${['☀', '◒', '☾', '☕'][i]}</span>${v}</button>`).join('')}</div>
+
+      <div style="margin:14px 0 6px;">
+        <label class="field" style="margin-bottom:6px;font-size:0.82rem;">Rủ bạn ăn cùng:</label>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          ${s.friends.map(f => `
+            <button class="chip ${s.invitedFriends.includes(f.id) ? 'selected' : ''}" data-action="toggle-invite-friend" data-value="${f.id}" type="button" style="font-size:0.78rem;padding:6px 10px;">
+              ${f.avatar} ${esc(f.name)}
+            </button>
+          `).join('')}
+        </div>
+      </div>
+
+      ${notice()}<div class="spacer"></div>
+      ${btn('Chọn khẩu vị →', 'created', 'primary full')}`;
+  }
+
+  if (s.page === 'join') {
+    const isScan = s.joinMode === 'scan';
+    const codeDigits = (s.code || '').padEnd(6, ' ').slice(0, 6).split('');
+
+    h = `<div style="margin-bottom:8px;"><button data-action="home" style="border:0;background:transparent;padding:4px 0;font-size:0.86rem;color:var(--muted);font-weight:600;display:inline-flex;align-items:center;gap:3px;min-height:auto;cursor:pointer;">‹ Quay lại</button></div>
+      <h2 style="margin-bottom:14px;">Vào kèo ăn</h2>
+
+      <div class="join-tabs" role="tablist">
+        <button class="join-tab ${!isScan ? 'active' : ''}" data-action="join-tab" data-value="code" role="tab" aria-selected="${!isScan}">⌨ Nhập mã 6 số</button>
+        <button class="join-tab ${isScan ? 'active' : ''}" data-action="join-tab" data-value="scan" role="tab" aria-selected="${isScan}">📷 Quét mã QR</button>
+      </div>
+
+      <label class="field" style="margin-bottom:14px;">Tên của bạn<input id="name" maxlength="24" value="${esc(s.name)}" placeholder="Nhập tên của bạn"></label>`;
+
+    if (!isScan) {
+      h += `<div class="code-input-group">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+          <span style="font-size:0.86rem;font-weight:600;">Mã phòng 6 số</span>
+          <button data-action="fill-code" class="quick-fill-btn" type="button">⚡ Điền mẫu 123456</button>
+        </div>
+        <div class="code-input-boxes" aria-hidden="true">
+          ${codeDigits.map((digit, i) => `<div class="code-box ${digit.trim() ? 'filled' : ''} ${i === s.code.length ? 'current' : ''}">${digit.trim() || '·'}</div>`).join('')}
+        </div>
+        <label class="sr-only" for="code">Mã phòng 6 số</label>
+        <input id="code" maxlength="6" value="${esc(s.code)}" placeholder="123456" inputmode="numeric" autocomplete="off" style="margin-top:10px;text-align:center;font-size:1.25rem;letter-spacing:6px;font-weight:800;font-variant-numeric:tabular-nums;">
+      </div>
+      ${notice()}
+      <div class="stack" style="margin-top:16px;">
+        ${btn('Vào phòng →', 'joined', 'primary full')}
+        <button data-action="join-tab" data-value="scan" class="quiet full" type="button">📷 Quét mã QR của chủ phòng</button>
+      </div>`;
+    } else {
+      h += `<div class="scanner-viewport ${s.flashOn ? 'flash-on' : ''}" id="scanner-view" aria-label="Màn hình quét mã QR">
+        <div class="scanner-grid" aria-hidden="true"></div>
+        <div class="scanner-target-box" aria-hidden="true">
+          <div class="scanner-laser"></div>
+          <div class="scanner-corners-bottom"></div>
+          <div class="scanner-faint-qr">
+            ${getQrSvg(110)}
+          </div>
+        </div>
+        <div class="scanner-status-text" id="scanner-status">
+          Căn chỉnh mã QR vào khung ngắm
+        </div>
+      </div>
+
+      <div class="scanner-controls">
+        <button class="scanner-ctrl-btn ${s.flashOn ? 'active' : ''}" data-action="toggle-flash" type="button">
+          ${s.flashOn ? '⚡ Đèn: Bật' : '⚡ Bật flash'}
+        </button>
+        <button class="scanner-ctrl-btn" data-action="gallery-scan" type="button">
+          🖼️ Chọn ảnh QR
+        </button>
+      </div>
+
+      ${notice()}
+
+      <div class="stack" style="margin-top:10px;">
+        <button class="primary full" data-action="sim-scan" type="button" style="background:linear-gradient(135deg, #FF5A36 0%, #FF3D17 100%);">
+          🎯 Quét mã phòng 123456 (Mô phỏng)
+        </button>
+        <button data-action="join-tab" data-value="code" class="quiet full" type="button">
+          ‹ Quay lại nhập mã số
+        </button>
+      </div>
+      <input id="code" type="hidden" value="${esc(s.code || '123456')}">`;
+    }
+  }
+
+  if (s.page === 'prefs') {
+    h = `<div style="margin-bottom:8px;"><button data-action="${s.role === 'host' ? 'create' : 'join'}" style="border:0;background:transparent;padding:4px 0;font-size:0.86rem;color:var(--muted);font-weight:600;display:inline-flex;align-items:center;gap:3px;min-height:auto;cursor:pointer;">‹ Quay lại</button></div>
+      <h2 style="margin-bottom:4px;">Hôm nay thích ăn gì?</h2>
+      <p class="lead" style="margin-bottom:14px;font-size:0.82rem;color:var(--muted);">Sở thích là ưu tiên mềm giúp gợi ý món; không chọn loại nào vẫn hợp lệ.</p>
+      <div class="chips">${['Món nước', 'Cơm', 'Lẩu', 'Nướng', 'Món Nhật', 'Nhanh gọn'].map(v => `<button class="chip ${s.cats.includes(v) ? 'selected' : ''}" aria-pressed="${s.cats.includes(v)}" data-action="cat" data-value="${v}">${v}</button>`).join('')}</div>
+      <div class="spacer"></div>
+      <div class="stack">
+        ${btn(s.cats.length ? 'Bỏ chọn — Gì cũng được' : '✓ Gì cũng được', 'any', 'quiet full')}
+        ${btn('Vào phòng chờ →', 'lobby', 'primary full')}
+      </div>`;
+  }
+
+  if (s.page === 'lobby') {
+    s.ready = true; // Vào phòng là luôn sẵn sàng!
+    h = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <button data-action="prefs" style="border:0;background:transparent;padding:4px 0;font-size:0.88rem;color:var(--primary);font-weight:700;display:inline-flex;align-items:center;gap:3px;min-height:auto;cursor:pointer;">‹ Sửa khẩu vị</button>
+        <button data-action="toggle-host-meal" type="button" style="border:0;background:var(--soft);padding:4px 8px;font-size:0.78rem;color:var(--primary);font-weight:750;text-transform:uppercase;cursor:pointer;border-radius:8px;" title="Host chạm để đổi buổi ăn">${meals[s.meal]} ▾</button>
+      </div>
+      <div class="roomcode" style="margin:6px 0 16px;">
+        <strong>123456</strong>
+        <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin-top:6px;">
+          <small style="color:var(--muted);font-weight:600;">3 / 8 thành viên</small>
+          <span style="color:var(--line);">•</span>
+          <button data-action="toggle-lobby-qr" style="border:0;background:transparent;color:var(--primary);font-size:0.8rem;font-weight:700;padding:2px 4px;min-height:auto;cursor:pointer;">
+            ${s.showLobbyQR ? '✕ Ẩn mã QR' : '📱 Hiện mã QR'}
+          </button>
+        </div>
+      </div>
+      ${s.showLobbyQR ? `<div class="lobby-qr-card">
+        <div style="font-size:0.8rem;font-weight:700;color:var(--muted);margin-bottom:4px;">QUÉT MÃ ĐỂ VÀO PHÒNG</div>
+        ${getQrSvg(130)}
+        <div style="font-size:0.82rem;font-weight:650;color:var(--text);margin-top:6px;">Mã phòng: <b style="color:var(--primary);font-size:1.1rem;letter-spacing:2px;">123456</b></div>
+        <div style="margin-top:8px;">
+          <button data-action="copy-lobby-code" class="quiet small" type="button" style="min-height:36px;padding:6px 14px;font-size:0.78rem;border-radius:10px;">📋 Sao chép mã phòng</button>
+        </div>
+      </div>` : ''}
+
+      <div class="member">
+        <span class="avatar">${esc(s.name.charAt(0))}</span>
+        <div class="details"><b>${esc(s.name)} (Bạn)</b></div>
+        <span class="ready">✓ Sẵn sàng</span>
+      </div>
+      ${['An', 'Linh'].map(n => `
+        <div class="member">
+          <span class="avatar">${n[0]}</span>
+          <div class="details">
+            <b>${n}</b>
+            ${n === 'Linh' ? '<small style="display:block;color:var(--primary);font-weight:650;">👥 Bạn thân</small>' : ''}
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            ${n === 'An' && !s.friends.some(f => f.name === 'An') ? `<button data-action="add-member-friend" data-value="An" class="quiet small" type="button" style="padding:4px 8px;min-height:30px;font-size:0.75rem;border-radius:99px;">＋ Kết bạn</button>` : ''}
+            <span class="ready">✓ Sẵn sàng</span>
+          </div>
+        </div>`).join('')}
+      ${notice()}
+      <div style="margin-top:20px;display:flex;flex-direction:column;gap:8px;">
+        ${btn('Bắt đầu chọn món →', 'start', 'primary full')}
+        <button data-action="friends" class="quiet full" type="button" style="font-size:0.84rem;min-height:42px;">👥 Mời thêm bạn ăn cùng</button>
+      </div>
+      <!-- Test / a11y fallback -->
+      <div class="sr-only">
+        <button data-action="ready">Tôi sẵn sàng</button>
+      </div>`;
+  }
+
+  if (s.page === 'vote') {
+    const d = dishes[s.index], count = Object.keys(s.votes).length;
+    const nextDish = s.index < 7 ? dishes[s.index + 1] : null;
+
+    h = `<div class="screen-vote-clean">
+      <div class="vote-topbar">
+        <div class="round-label">VÒNG 1</div>
+        <div class="progress" role="progressbar" aria-label="Số món đã chọn" aria-valuemin="0" aria-valuemax="8" aria-valuenow="${count}">
+          <span style="width:${(count / 8) * 100}%"></span>
+        </div>
+        <div class="round-count">${s.index + 1}/8</div>
+      </div>
+
+      <div class="deck-container-clean">
+        ${nextDish ? `<div class="flashcard-behind" aria-hidden="true"></div>` : ''}
+        <div class="flashcard-clean" role="region" aria-label="Thẻ món ăn: ${esc(d.name)}">
+          <div class="stamp stamp-no" aria-hidden="true">✕ KHÔNG ĂN</div>
+          <div class="stamp stamp-ok" aria-hidden="true">✓ ĂN ĐƯỢC</div>
+
+          <div class="dish-photo-box" aria-hidden="true">
+            <span class="dish-photo-emoji">${d.emoji}</span>
+          </div>
+
+          <div class="dish-info-box">
+            <h2 class="dish-main-name">${esc(d.name)}</h2>
+            <span class="dish-category-tag">${esc(d.tags)}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="vote-bottom-bar-minimal">
+        <button class="prev-only-btn" data-action="prev" ${s.index === 0 ? 'disabled' : ''}>← Quay lại món trước</button>
+      </div>
+
+      <div class="sr-only">
+        <button data-action="vote" data-value="NO">Không ăn</button>
+        <button data-action="vote" data-value="OK">Ăn được</button>
+        <button data-action="vote" data-value="WANT">Muốn ăn</button>
+        <button data-action="next">Món tiếp</button>
+        <button data-action="submit">Gửi phiếu</button>
+      </div>
+      ${notice()}
+    </div>`;
+  }
+
+  if (s.page === 'final') {
+    h = `<div class="eyebrow" style="margin-bottom:4px;">VÒNG 2 · CHỌN LỌC THÊM</div>
+      <h2 style="margin-bottom:6px;">Vòng cuối cùng</h2>
+      <p class="lead" style="margin-bottom:14px;font-size:0.84rem;color:var(--muted);">Chưa có món cả nhóm cùng muốn. Còn ${s.eligible.length} món mọi người đều ăn được; hãy Giữ hoặc Loại thêm để chốt món.</p>
+      <div class="stack">${s.eligible.map(id => { const d = dishes.find(x => x.id === id); return `<div class="finalitem ${s.keep[id] ? '' : 'removed'}"><span class="food" aria-hidden="true">${d.emoji}</span><div class="details"><b>${d.name}</b></div><button data-action="keep" data-value="${id}" aria-pressed="${s.keep[id]}" aria-label="${s.keep[id] ? 'Giữ' : 'Đã loại'} ${d.name}">${s.keep[id] ? '✓ Giữ' : '× Đã loại'}</button></div>`; }).join('')}</div>
+      ${notice()}<div class="spacer"></div>
+      ${btn('Xác nhận lựa chọn →', 'finish', 'primary full')}`;
+  }
+
+  if (s.page === 'waiting') {
+    h = `<h2 style="margin-bottom:10px;">Đang đợi các bạn</h2>
+      <div class="result-icon" aria-hidden="true">🥢</div>
+      <div class="notice">2 / 3 người đã gửi xong. Hệ thống sẽ chuyển tiếp ngay khi đủ người.</div>`;
+  }
+
+  if (s.page === 'expired') {
+    s.activeRoom = false;
+    h = `<div class="result">
+      <div class="result-icon" aria-hidden="true">⏳</div>
+      <h2 style="margin-bottom:8px;">Phòng đã hết hạn</h2>
+      <p style="margin:0 auto 16px;font-size:0.86rem;color:var(--muted);max-width:320px;line-height:1.4;">Phiên bình chọn đã hết hạn hoặc bị hủy. Bạn có thể tạo kèo mới cùng nhóm.</p>
+      <div class="spacer"></div>
+      <div class="stack" style="margin-top:20px;">
+        ${btn('Tạo kèo mới', 'new', 'primary full')}
+        ${btn('Về trang chủ', 'home', 'quiet full')}
+      </div>
+    </div>`;
+  }
+
+  if (s.page === 'result') {
+    const d = dishes.find(x => x.id === s.winner);
+    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(d.name + ' gần đây')}`;
+    const tiktokUrl = `https://www.tiktok.com/search?q=${encodeURIComponent('review quán ' + d.name + ' hot')}`;
+    const ytUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent('review quán ' + d.name + ' hot')}`;
+    const isFriendAn = s.friends.some(f => f.name === 'An');
+
+    h = `<div class="result">
+      <div class="eyebrow" style="margin-bottom:4px;">KẾT QUẢ CHUNG</div>
+      <h2 style="margin-bottom:6px;">Hôm nay ăn<br>${d.name}!</h2>
+      <p style="margin:0 auto 12px;font-size:0.86rem;color:var(--muted);max-width:320px;line-height:1.35;font-weight:600;">${esc(s.reason || 'Cả nhóm đã thống nhất lựa chọn món này.')}</p>
+      <div class="result-icon" aria-hidden="true">${d.emoji}</div>
+
+      <!-- 3 NÚT HÀNH ĐỘNG BẰNG NHAU (MAPS, TIKTOK, YOUTUBE) -->
+      <div class="place-actions-3grid">
+        <a class="btn-place-action btn-maps" href="${mapsUrl}" target="_blank" rel="noopener noreferrer" data-action="open-maps">
+          <span class="action-icon" aria-hidden="true">🗺️</span>
+          <span>Maps</span>
+        </a>
+        <a class="btn-place-action btn-tiktok" href="${tiktokUrl}" target="_blank" rel="noopener noreferrer" data-action="open-review-tiktok" data-dish="${esc(d.name)}">
+          ${getTiktokSvg()}
+          <span>TikTok</span>
+        </a>
+        <a class="btn-place-action btn-youtube" href="${ytUrl}" target="_blank" rel="noopener noreferrer" data-action="open-review-youtube" data-dish="${esc(d.name)}">
+          ${getYoutubeSvg()}
+          <span>YouTube</span>
+        </a>
+      </div>
+
+      <!-- KHỐI BẠN ĂN CÙNG (GỌN GÀNG, HẠN CHẾ CHỮ) -->
+      <div class="result-friends-card">
+        <div class="result-friends-header">
+          <div class="result-friends-title">
+            <span>👥</span> Bạn ăn cùng
+          </div>
+        </div>
+
+        <div class="result-members-list">
+          <div class="result-member-item">
+            <div class="result-member-left">
+              <span class="result-member-avatar">${esc(s.name.charAt(0))}</span>
+              <span class="result-member-name">${esc(s.name)} (Bạn)</span>
+            </div>
+            <span class="result-member-badge">Host</span>
+          </div>
+
+          <div class="result-member-item">
+            <div class="result-member-left">
+              <span class="result-member-avatar">L</span>
+              <span class="result-member-name">Linh</span>
+            </div>
+            <span class="result-member-badge">✓ Bạn thân</span>
+          </div>
+
+          <div class="result-member-item">
+            <div class="result-member-left">
+              <span class="result-member-avatar">A</span>
+              <span class="result-member-name">An</span>
+            </div>
+            ${isFriendAn
+              ? `<span class="result-member-badge">✓ Bạn bè</span>`
+              : `<button class="btn-add-friend-sm" data-action="add-member-friend" data-value="An" type="button">＋ Kết bạn</button>`
+            }
+          </div>
+        </div>
+
+        <div class="result-friends-actions">
+          <button class="btn-friend-invite-more" data-action="invite-friend-share" data-dish="${esc(d.name)}" type="button">
+            📤 Rủ thêm bạn
+          </button>
+        </div>
+      </div>
+
+      <div class="stack" style="margin-top:14px;">
+        ${btn('＋ Tạo kèo ăn mới', 'new', 'primary full')}
+        ${btn('Về trang chủ', 'home', 'quiet full')}
+      </div>
+    </div>`;
+  }
+
+  if (s.page === 'empty') {
+    s.activeRoom = false;
+    h = `<div class="result">
+      <div class="result-icon" aria-hidden="true">🥢</div>
+      <h2 style="margin-bottom:8px;">Chưa chọn được món</h2>
+      <p style="margin:0 auto 16px;font-size:0.86rem;color:var(--muted);max-width:320px;line-height:1.4;">Hiện chưa có món mọi người cùng ăn được. Bạn có thể kết thúc hoặc tạo một phiên mới với lựa chọn khác.</p>
+      <div class="stack" style="margin-top:20px;">
+        ${btn('Tạo phiên mới', 'new', 'primary full')}
+        ${btn('Về trang chủ', 'home', 'quiet full')}
+      </div>
+    </div>`;
+  }
+
+  document.querySelector('#screen').innerHTML = h;
+  document.querySelector('#live').textContent = s.notice;
+  if (s.page === 'vote') bindCardGestures();
+}
+
+function bindCardGestures() {
+  const card = document.querySelector('.flashcard-clean');
+  if (!card) return;
+  let startX = 0, startY = 0, curX = 0, curY = 0, isDrag = false, lastTap = 0;
+  const stampNo = card.querySelector('.stamp-no');
+  const stampOk = card.querySelector('.stamp-ok');
+
+  function startDrag(x, y) {
+    isDrag = true; startX = x; startY = y; curX = x; curY = y;
+    card.classList.add('dragging');
+  }
+  function moveDrag(x, y) {
+    if (!isDrag) return;
+    curX = x; curY = y;
+    const dx = curX - startX, dy = curY - startY;
+    const rot = (dx / 120) * 10;
+    card.style.transform = `translate(${dx}px, ${dy * 0.25}px) rotate(${rot}deg)`;
+    if (dx < 0) {
+      if (stampNo) stampNo.style.opacity = Math.min(1, Math.abs(dx) / 55);
+      if (stampOk) stampOk.style.opacity = 0;
+    } else if (dx > 0) {
+      if (stampOk) stampOk.style.opacity = Math.min(1, Math.abs(dx) / 55);
+      if (stampNo) stampNo.style.opacity = 0;
+    } else {
+      if (stampNo) stampNo.style.opacity = 0;
+      if (stampOk) stampOk.style.opacity = 0;
+    }
+  }
+  function endDrag() {
+    if (!isDrag) return;
+    isDrag = false;
+    card.classList.remove('dragging');
+    const dx = curX - startX;
+    const threshold = 60;
+    if (dx < -threshold) {
+      card.classList.add('fly-left');
+      if (stampNo) stampNo.style.opacity = 1;
+      setTimeout(() => { voteDish('NO'); }, 180);
+    } else if (dx > threshold) {
+      card.classList.add('fly-right');
+      if (stampOk) stampOk.style.opacity = 1;
+      setTimeout(() => { voteDish('OK'); }, 180);
+    } else {
+      card.style.transform = '';
+      if (stampNo) stampNo.style.opacity = 0;
+      if (stampOk) stampOk.style.opacity = 0;
+    }
+  }
+
+  card.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    startDrag(t.clientX, t.clientY);
+  }, { passive: true });
+  card.addEventListener('touchmove', e => {
+    if (!isDrag) return;
+    const t = e.touches[0];
+    moveDrag(t.clientX, t.clientY);
+  }, { passive: true });
+  card.addEventListener('touchend', () => endDrag());
+
+  card.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    startDrag(e.clientX, e.clientY);
+    function onMM(me) { moveDrag(me.clientX, me.clientY); }
+    function onMU() {
+      document.removeEventListener('mousemove', onMM);
+      document.removeEventListener('mouseup', onMU);
+      endDrag();
+    }
+    document.addEventListener('mousemove', onMM);
+    document.addEventListener('mouseup', onMU);
+  });
+
+  card.addEventListener('click', e => {
+    if (e.target.closest('button, a')) return;
+    const now = Date.now();
+    const diff = now - lastTap;
+    const dist = Math.hypot(curX - startX, curY - startY);
+    if (diff < 330 && dist < 12) {
+      lastTap = 0;
+      triggerHeart(card);
+    } else {
+      lastTap = now;
+    }
+  });
+}
+
+function triggerHeart(card) {
+  const h = document.createElement('div');
+  h.className = 'tiktok-heart-wrapper';
+  h.innerHTML = '<span class="tiktok-heart" aria-hidden="true">❤️</span>';
+  card.appendChild(h);
+  setTimeout(() => { card.classList.add('fly-up'); }, 200);
+  setTimeout(() => { voteDish('WANT'); }, 340);
+}
+
+function voteDish(v) {
+  s.votes[dishes[s.index].id] = v;
+  if (s.index < 7) {
+    s.index++;
+    render();
+  } else {
+    render();
+    if (Object.keys(s.votes).length === 8) {
+      setTimeout(() => {
+        submit();
+      }, 350);
+    }
+  }
+}
+
+function submit() {
+  if (!networkGuard() || Object.keys(s.votes).length !== 8) return;
+  if (s.scenario === 'waiting') { go('waiting'); return; }
+  const matched = dishes.filter(d => s.votes[d.id] === 'WANT' && s.scenario === 'happy' && d.id === 'pho');
+  if (matched.length) { s.winner = matched[0].id; s.reason = 'Cả nhóm cùng muốn ăn món này.'; go('result'); return; }
+  s.eligible = dishes.filter(d => s.votes[d.id] !== 'NO' && s.scenario !== 'empty').map(d => d.id);
+  if (!s.eligible.length) { go('empty'); return; }
+  s.keep = Object.fromEntries(s.eligible.map(id => [id, true]));
+  go('final');
+}
+
+function finish() {
+  if (!networkGuard()) return;
+  const remain = s.eligible.filter(id => s.keep[id]);
+  if (!remain.length) { go('empty'); return; }
+  const score = id => (s.votes[id] === 'WANT' ? 1 : 0) + (s.scenario === 'happy' && id === 'pho' ? 2 : 0);
+  const max = Math.max(...remain.map(score));
+  const candidates = remain.filter(id => score(id) === max);
+  s.winner = candidates[Math.floor(Math.random() * candidates.length)];
+  s.reason = 'Mọi người đều giữ món này ở vòng cuối. Ưu tiên mức muốn ăn; nếu hòa, chọn một lần.';
+  go('result');
+}
+
+// Global click & event listeners
+document.addEventListener('input', e => {
+  if (e.target.id === 'name') s.name = e.target.value;
+  if (e.target.id === 'friend-search-input') {
+    s.friendSearch = e.target.value;
+    render();
+    const input = document.querySelector('#friend-search-input');
+    if (input) {
+      input.focus();
+      const len = input.value.length;
+      input.setSelectionRange(len, len);
+    }
+  }
+  if (e.target.id === 'code') {
+    s.code = e.target.value;
+    const boxes = document.querySelectorAll('.code-box');
+    if (boxes.length) {
+      const chars = s.code.padEnd(6, ' ').slice(0, 6).split('');
+      boxes.forEach((box, i) => {
+        const c = chars[i];
+        box.textContent = c.trim() || '·';
+        box.className = `code-box ${c.trim() ? 'filled' : ''} ${i === s.code.length ? 'current' : ''}`;
+      });
+    }
+  }
 });
-if(matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.dataset.theme='dark';
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.id === 'friend-search-input') {
+    const val = (e.target.value || '').trim();
+    if (val) {
+      if (!s.friends.some(f => f.name.toLowerCase() === val.toLowerCase() || f.id.toLowerCase() === val.toLowerCase())) {
+        s.friends.push({
+          id: val.toLowerCase().replace(/\s+/g, '-'),
+          name: val,
+          tag: 'Bạn mới',
+          status: 'online',
+          avatar: val.charAt(0).toUpperCase()
+        });
+        showToast(`✓ Đã kết bạn thành công với "${val}"!`);
+      } else {
+        showToast(`"${val}" đã có trong danh sách bạn bè.`);
+      }
+      s.friendSearch = '';
+      render();
+    }
+  }
+});
+
+document.querySelector('#scenario').addEventListener('change', e => {
+  const v = e.target.value;
+  reset();
+  s.scenario = v;
+  render();
+});
+
+// Toggle review drawer
+const reviewToggle = document.querySelector('#review-toggle');
+const reviewDrawer = document.querySelector('#review-drawer');
+if (reviewToggle && reviewDrawer) {
+  reviewToggle.addEventListener('click', () => {
+    const isOpen = reviewDrawer.classList.toggle('open');
+    reviewToggle.setAttribute('aria-expanded', String(isOpen));
+  });
+}
+
+document.addEventListener('click', e => {
+  const target = e.target.closest('[data-action]');
+  if (!target || target.disabled) return;
+  const a = target.dataset.action, v = target.dataset.value;
+
+  if (a === 'theme') {
+    document.documentElement.dataset.theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    return;
+  }
+  if (a === 'reset') { reset(); return; }
+  if (a === 'expire') { go('expired'); return; }
+  if (a === 'mocksubmit') {
+    if (s.page === 'waiting') { s.scenario = 'fallback'; submit(); }
+    return;
+  }
+  if (a === 'offline') {
+    s.offline = !s.offline;
+    s.notice = '';
+    render();
+    return;
+  }
+  if (a === 'back') {
+    if (s.page === 'lobby') { go('prefs'); return; }
+    if (s.page === 'prefs') { go(s.role === 'host' ? 'create' : 'join'); return; }
+    if (s.page === 'create' || s.page === 'join') { go('home'); return; }
+    if (s.page === 'vote') { go('lobby'); return; }
+    if (s.page === 'final') { go('vote'); return; }
+    go('home');
+    return;
+  }
+  if (a === 'home') {
+    if (['vote', 'final', 'lobby', 'waiting'].includes(s.page)) {
+      s.activeRoom = true;
+    }
+    go('home');
+    return;
+  }
+  if (a === 'resume-room') {
+    go('lobby');
+    showToast(`Đã quay lại phòng #${s.code}!`);
+    return;
+  }
+  if (a === 'new') { reset(); s.activeRoom = false; go('create'); return; }
+  if (a === 'create' || a === 'join' || a === 'prefs') {
+    if (a !== 'prefs') s.role = a === 'create' ? 'host' : 'member';
+    if (a === 'join') s.joinMode = 'code';
+    go(a);
+    return;
+  }
+  if (a === 'toggle-host-meal') {
+    const keys = ['breakfast', 'lunch', 'dinner', 'snack'];
+    s.meal = keys[(keys.indexOf(s.meal) + 1) % keys.length];
+    showToast(`Đã đổi buổi ăn sang: ${meals[s.meal]}`);
+    render();
+    return;
+  }
+  if (a === 'toggle-invite-friend') {
+    if (s.invitedFriends.includes(v)) {
+      s.invitedFriends = s.invitedFriends.filter(x => x !== v);
+    } else {
+      s.invitedFriends.push(v);
+    }
+    render();
+    return;
+  }
+  if (a === 'clear-history') {
+    s.mealHistory = [];
+    showToast('🗑️ Đã xóa lịch sử bữa ăn cá nhân.');
+    render();
+    return;
+  }
+  if (a === 'link-account') {
+    s.accountLinked = true;
+    showToast('✓ Đã liên kết tài khoản Google thành công!');
+    render();
+    return;
+  }
+  if (a === 'friends') {
+    go('friends');
+    return;
+  }
+  if (a === 'accept-friend') {
+    const req = s.friendRequests.find(r => r.id === v);
+    if (req) {
+      s.friends.push({ id: req.id, name: req.name, tag: 'Bạn mới', status: 'online', avatar: req.avatar });
+      s.friendRequests = s.friendRequests.filter(r => r.id !== v);
+      showToast(`✓ Đã kết bạn thành công với ${req.name}!`);
+      render();
+    }
+    return;
+  }
+  if (a === 'reject-friend') {
+    s.friendRequests = s.friendRequests.filter(r => r.id !== v);
+    showToast('Đã bỏ qua lời mời kết bạn.');
+    render();
+    return;
+  }
+  if (a === 'quick-room') {
+    const f = s.friends.find(x => x.id === v);
+    s.role = 'host';
+    s.activeRoom = true;
+    s.page = 'lobby';
+    s.notice = '';
+    render();
+    showToast(`⚡ Đã tạo kèo nhanh và gửi lời mời đến ${f ? f.name : 'bạn'}!`);
+    return;
+  }
+  if (a === 'send-friend-req-search' || a === 'send-friend-req') {
+    const val = (v || s.friendSearch || '').trim();
+    if (!val) {
+      s.notice = 'Vui lòng nhập ID hoặc tên bạn bè.';
+      render();
+      return;
+    }
+    s.notice = '';
+    if (!s.friends.some(f => f.name.toLowerCase() === val.toLowerCase() || f.id.toLowerCase() === val.toLowerCase())) {
+      s.friends.push({
+        id: val.toLowerCase().replace(/\s+/g, '-'),
+        name: val,
+        tag: 'Bạn mới',
+        status: 'online',
+        avatar: val.charAt(0).toUpperCase()
+      });
+      showToast(`✓ Đã kết bạn thành công với "${val}"!`);
+    } else {
+      showToast(`"${val}" đã có trong danh sách bạn bè.`);
+    }
+    s.friendSearch = '';
+    render();
+    return;
+  }
+  if (a === 'clear-friend-search') {
+    s.friendSearch = '';
+    render();
+    return;
+  }
+  if (a === 'add-member-friend') {
+    if (!s.friends.some(f => f.name === v)) {
+      s.friends.push({ id: v.toLowerCase(), name: v, tag: 'Bạn bàn ăn', status: 'online', avatar: v[0] });
+    }
+    showToast(`✓ Đã kết bạn với ${v}! Có thể tạo kèo nhanh sau này.`);
+    render();
+    return;
+  }
+  if (a === 'open-maps') {
+    showToast('🗺️ Đang mở Google Maps tìm các quán ăn gần đây...');
+    return;
+  }
+  if (a === 'open-review-tiktok') {
+    const dish = target.dataset.dish || 'món ăn';
+    showToast(`🔍 Đang mở TikTok xem review quán "${dish}" hot...`);
+    return;
+  }
+  if (a === 'open-review-youtube') {
+    const dish = target.dataset.dish || 'món ăn';
+    showToast(`🔍 Đang mở YouTube xem review quán "${dish}" hot...`);
+    return;
+  }
+  if (a === 'invite-friend-share') {
+    const dish = target.dataset.dish || 'món ăn';
+    showToast(`📤 Đã gửi gợi ý cùng đi ăn "${dish}" tới bạn thân (Linh, Nam)!`);
+    return;
+  }
+  if (a === 'copy-lobby-code') {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(s.code || '123456');
+    }
+    showToast(`📋 Đã sao chép mã phòng: ${s.code || '123456'}!`);
+    return;
+  }
+  if (a === 'join-tab') {
+    s.joinMode = v;
+    s.notice = '';
+    render();
+    return;
+  }
+  if (a === 'fill-code') {
+    s.code = '123456';
+    s.notice = '';
+    render();
+    return;
+  }
+  if (a === 'toggle-flash') {
+    s.flashOn = !s.flashOn;
+    render();
+    return;
+  }
+  if (a === 'sim-scan' || a === 'gallery-scan') {
+    const vp = document.querySelector('#scanner-view');
+    const st = document.querySelector('#scanner-status');
+    if (vp) vp.classList.add('scan-success');
+    if (st) st.textContent = '✓ Đã nhận diện phòng 123456!';
+    s.code = '123456';
+    setTimeout(() => {
+      if (networkGuard()) go('prefs');
+    }, 450);
+    return;
+  }
+  if (a === 'toggle-lobby-qr') {
+    s.showLobbyQR = !s.showLobbyQR;
+    render();
+    return;
+  }
+  if (a === 'meal') { s.meal = v; render(); return; }
+  if (a === 'created' || a === 'joined') {
+    if (!s.name.trim()) { s.notice = 'Nhập tên của bạn trước nha.'; render(); return; }
+    const codeInput = document.querySelector('#code');
+    const codeVal = (codeInput ? codeInput.value : s.code || '').trim();
+    if (a === 'joined' && codeVal !== '123456') {
+      s.notice = 'Không tìm thấy phòng mẫu. Dùng mã 123456 để thử.';
+      render();
+      return;
+    }
+    s.code = codeVal;
+    if (networkGuard()) go('prefs');
+    return;
+  }
+  if (a === 'qr') {
+    s.joinMode = 'scan';
+    s.notice = '';
+    render();
+    return;
+  }
+  if (a === 'cat') {
+    s.cats = s.cats.includes(v) ? s.cats.filter(x => x !== v) : [...s.cats, v];
+    s.ready = false;
+    render();
+    return;
+  }
+  if (a === 'any') { s.cats = []; s.ready = false; render(); return; }
+  if (a === 'lobby') { if (networkGuard()) go('lobby'); return; }
+  if (a === 'ready') { if (networkGuard()) { s.ready = !s.ready; render(); } return; }
+  if (a === 'mockstart') { if (s.page === 'lobby' && s.ready && networkGuard()) go('vote'); return; }
+  if (a === 'start') {
+    if (s.role === 'host' && s.ready && networkGuard()) {
+      s.index = 0; s.votes = {}; go('vote');
+    }
+    return;
+  }
+  if (a === 'prev' || a === 'next') {
+    s.index = Math.max(0, Math.min(7, s.index + (a === 'next' ? 1 : -1)));
+    render();
+    return;
+  }
+  if (a === 'vote') {
+    s.votes[dishes[s.index].id] = v;
+    if (s.index < 7) s.index++;
+    render();
+    return;
+  }
+  if (a === 'fill') {
+    if (s.page !== 'vote') { s.page = 'vote'; s.index = 0; }
+    s.votes = Object.fromEntries(dishes.map((d, i) => [d.id, i === 0 ? 'WANT' : i < 4 ? 'OK' : 'NO']));
+    s.index = 7;
+    render();
+    return;
+  }
+  if (a === 'submit') { submit(); return; }
+  if (a === 'keep') { s.keep[v] = !s.keep[v]; render(); return; }
+  if (a === 'finish') { finish(); return; }
+});
+
+if (matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.dataset.theme = 'dark';
 reset();
 </script>
 </body>
