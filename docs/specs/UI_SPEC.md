@@ -1,6 +1,6 @@
 # UI spec — food-v1
 
-2026-10-07 • Android-first, chờ review. [Prototype HTML](../../design/prototypes/gi-cung-duoc.html) là mô phỏng, không chứng minh đáp ứng food-v1. [Plan UI](../project/UI_IMPLEMENTATION_PLAN.md).
+2026-10-07 • Android-first, chờ review. [Tài liệu Thiết kế & Triển khai UI](UI_DESIGN_SPECIFICATION.md) chuẩn hóa từ [Prototype HTML](../../design/prototypes/gi-cung-duoc.html). [Plan UI](../project/UI_IMPLEMENTATION_PLAN.md).
 
 | UI | Màn và hành động | Trạng thái bắt buộc |
 | --- | --- | --- |

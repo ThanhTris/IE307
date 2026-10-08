@@ -5,7 +5,7 @@
 - [ROOM_SPEC](ROOM_SPEC.md): vòng đời/ready/roster/expiry.
 - [CATALOG_PREFERENCES_SPEC](CATALOG_PREFERENCES_SPEC.md): danh mục/category/pool.
 - [DECISION_SPEC](DECISION_SPEC.md): decision-v2, score/veto/hai vòng/tiers.
-- [UI_SPEC](UI_SPEC.md): UI-01..16, double-tap/accessibility.
+- [UI_SPEC](UI_SPEC.md) & [UI_DESIGN_SPECIFICATION](UI_DESIGN_SPECIFICATION.md): UI-01..16, design tokens, component mapping, double-tap/accessibility.
 - [IDENTITY_PRIVACY_SPEC](IDENTITY_PRIVACY_SPEC.md): guest/pair/ACL/consent/retention.
 - [OFFLINE_SYNC_SPEC](OFFLINE_SYNC_SPEC.md): cache/outbox/retry/reconnect.
 - [NOTIFICATIONS_LINKS_SPEC](NOTIFICATIONS_LINKS_SPEC.md): push/inbox/incoming link.

@@ -1,6 +1,6 @@
 # Từ prototype sang React Native
 
-[Prototype](gi-cung-duoc.html) minh họa luồng, không copy DOM/CSS vào app.
+[Prototype](gi-cung-duoc.html) minh họa luồng, không copy DOM/CSS vào app. Xem bản đặc tả chi tiết tại [UI Design Specification](../../docs/specs/UI_DESIGN_SPECIFICATION.md).
 
 Map: HTML button → Pressable; card → View/Text; list → FlatList; input → TextInput; section → screen component. CSS token → semantic theme object. Router demo → Expo Router. JS fixture demo → repository mock chỉ trong test/story; production đọc server.
 

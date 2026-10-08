@@ -203,19 +203,24 @@ small, .muted { color: var(--muted); }
   font-size: 0.95rem;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  transition: opacity 0.15s ease;
+}
+.appbrand:active {
+  opacity: 0.8;
 }
 .mark {
-  background: var(--primary);
+  background: linear-gradient(135deg, #ff5a36 0%, #ff3a13 100%);
   color: var(--onprimary);
-  width: 24px;
-  height: 24px;
-  border-radius: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
   display: grid;
   place-items: center;
-  font-size: 15px;
-  font-weight: 800;
   box-shadow: 0 2px 8px rgba(255, 90, 54, 0.35);
+  flex-shrink: 0;
 }
 .appbar-actions {
   display: flex;
@@ -371,6 +376,119 @@ html[data-theme="dark"] .option.selected, html[data-theme="dark"] .chip.selected
   font-size: 0.85rem;
   padding: 8px 16px;
   transition: all 0.15s ease;
+}
+
+/* HERO OPTION: GÌ CŨNG ĐƯỢC */
+.whatever-hero-card {
+  width: 100%;
+  border: 1.5px dashed var(--line);
+  background: var(--surface);
+  border-radius: 18px;
+  padding: 13px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 12px;
+  text-align: left;
+}
+.whatever-hero-card.active {
+  border: 2px solid var(--primary);
+  border-style: solid;
+  background: linear-gradient(135deg, #fff7f2 0%, #ffede4 100%);
+  box-shadow: 0 4px 18px rgba(255, 90, 54, 0.15);
+}
+html[data-theme="dark"] .whatever-hero-card.active {
+  background: linear-gradient(135deg, #2d201a 0%, #201713 100%);
+  border-color: var(--primary);
+}
+.whatever-hero-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.whatever-hero-icon {
+  font-size: 24px;
+  line-height: 1;
+}
+.whatever-hero-text b {
+  display: block;
+  font-size: 0.92rem;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.whatever-hero-card.active .whatever-hero-text b {
+  color: var(--primary);
+  font-weight: 800;
+}
+.whatever-hero-text small {
+  font-size: 0.72rem;
+  color: var(--muted);
+  display: block;
+}
+.whatever-badge-pill {
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 5px 12px;
+  border-radius: 99px;
+  background: var(--soft);
+  color: var(--muted);
+  white-space: nowrap;
+}
+.whatever-hero-card.active .whatever-badge-pill {
+  background: var(--primary);
+  color: var(--onprimary);
+  box-shadow: 0 2px 8px rgba(255, 90, 54, 0.3);
+}
+
+/* LOBBY HEADER BAR */
+.lobby-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.lobby-back-link {
+  border: 0;
+  background: transparent;
+  padding: 4px 0;
+  font-size: 0.86rem;
+  color: var(--muted);
+  font-weight: 650;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  min-height: auto;
+  transition: color 0.15s ease;
+}
+.lobby-back-link:hover {
+  color: var(--primary);
+}
+.lobby-meal-pill {
+  border: 1px solid rgba(255, 90, 54, 0.22);
+  background: rgba(255, 90, 54, 0.08);
+  color: var(--primary);
+  padding: 5px 12px;
+  font-size: 0.78rem;
+  font-weight: 750;
+  border-radius: 99px;
+  cursor: pointer;
+  min-height: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s ease;
+}
+html[data-theme="dark"] .lobby-meal-pill {
+  background: #2d201a;
+  border-color: rgba(255, 90, 54, 0.35);
+  color: #ffa58e;
+}
+.lobby-meal-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(255, 90, 54, 0.18);
 }
 
 .roomcode {
@@ -859,7 +977,534 @@ html[data-theme="dark"] .scanner-ctrl-btn.active {
   background: var(--surface) !important;
 }
 
-/* HOME FRIENDS PREVIEW CHIPS */
+/* BASELINE FOOD-V1 COMPONENTS (ANCHOR, RADIUS, TIME, VENUE OFFERINGS) */
+.section-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+.section-card-title {
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: var(--muted);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.anchor-chips, .radius-chips, .timemode-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.anchor-chip, .radius-chip, .timemode-chip {
+  min-height: 34px !important;
+  font-size: 0.78rem !important;
+  padding: 6px 11px !important;
+  border-radius: 99px !important;
+  border: 1px solid var(--line) !important;
+  background: var(--soft) !important;
+  color: var(--text) !important;
+  font-weight: 650 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.anchor-chip.selected, .radius-chip.selected, .timemode-chip.selected {
+  background: #fff0e6 !important;
+  border-color: var(--primary) !important;
+  color: var(--primary) !important;
+  font-weight: 750 !important;
+}
+html[data-theme="dark"] .anchor-chip.selected,
+html[data-theme="dark"] .radius-chip.selected,
+html[data-theme="dark"] .timemode-chip.selected {
+  background: #2d201a !important;
+  color: #ffa58e !important;
+  border-color: rgba(255, 90, 54, 0.4) !important;
+}
+
+.lobby-context-badge {
+  background: var(--soft);
+  border: 1px solid var(--line);
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dish-venue-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.22);
+  color: #047857;
+  padding: 3px 9px;
+  border-radius: 99px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  margin-top: 6px;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+html[data-theme="dark"] .dish-venue-pill {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #6ee7b7;
+}
+
+.result-venue-card {
+  background: var(--surface);
+  border: 1.5px solid rgba(255, 90, 54, 0.25);
+  border-radius: 18px;
+  padding: 12px 14px;
+  margin: 10px 0 12px;
+  text-align: left;
+  box-shadow: 0 4px 14px rgba(255, 90, 54, 0.06);
+}
+.result-venue-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.result-venue-head .venue-badge {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--primary);
+}
+.result-venue-head .venue-hours {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--green);
+}
+.result-venue-main b {
+  font-size: 1rem;
+  color: var(--text);
+  display: block;
+}
+.result-venue-sub {
+  font-size: 0.76rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* MATCH TIER BADGES (V0.2) */
+.match-tier-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 99px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+.match-tier-badge.perfect {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+.match-tier-badge.consensus {
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+}
+.match-tier-badge.compromise {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+.match-tier-badge.no-consensus {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+html[data-theme="dark"] .match-tier-badge.perfect {
+  background: #451a03;
+  color: #fde68a;
+  border-color: #78350f;
+}
+html[data-theme="dark"] .match-tier-badge.consensus {
+  background: #064e3b;
+  color: #a7f3d0;
+  border-color: #065f46;
+}
+html[data-theme="dark"] .match-tier-badge.compromise {
+  background: #1e3a8a;
+  color: #bfdbfe;
+  border-color: #1e40af;
+}
+html[data-theme="dark"] .match-tier-badge.no-consensus {
+  background: #450a0a;
+  color: #fecaca;
+  border-color: #7f1d1d;
+}
+
+/* OUTBOX SYNC & DISH PRICE */
+.outbox-sync-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.68rem;
+  font-weight: 650;
+  color: var(--muted);
+  background: var(--soft);
+  padding: 2px 8px;
+  border-radius: 99px;
+}
+.outbox-sync-indicator.queued {
+  color: #b45309;
+  background: #fef3c7;
+}
+.dish-price-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--primary);
+  background: rgba(255, 90, 54, 0.08);
+  padding: 3px 9px;
+  border-radius: 99px;
+}
+
+/* INBOX & FRIENDS APPBAR BUTTONS */
+.inbox-icon-btn, .friends-icon-btn {
+  position: relative;
+  font-size: 1rem;
+}
+.inbox-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--primary);
+  border: 1.5px solid var(--surface);
+}
+.friends-badge-count {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 14px;
+  height: 14px;
+  border-radius: 99px;
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 0.62rem;
+  font-weight: 850;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  border: 1.5px solid var(--surface);
+}
+.profile-avatar-btn {
+  padding: 0 !important;
+  min-width: 30px !important;
+  min-height: 30px !important;
+  width: 30px;
+  height: 30px;
+  border-radius: 50% !important;
+  background: transparent !important;
+  display: grid;
+  place-items: center;
+  border: none !important;
+  cursor: pointer;
+  margin-left: 3px;
+  transition: transform 0.15s ease;
+}
+.profile-avatar-btn:active {
+  transform: scale(0.92);
+}
+.user-avatar-sm {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff7a59 0%, #ff4b2b 100%);
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 850;
+  display: grid;
+  place-items: center;
+  border: 1.5px solid var(--surface);
+  box-shadow: 0 2px 6px rgba(255, 90, 54, 0.3);
+}
+
+/* INBOX & NOTIFICATIONS */
+.inbox-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 10px 0;
+}
+.inbox-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  transition: transform 0.15s ease;
+}
+.inbox-card.unread {
+  border-color: rgba(255, 90, 54, 0.35);
+  background: linear-gradient(180deg, #fffaf7 0%, var(--surface) 100%);
+}
+html[data-theme="dark"] .inbox-card.unread {
+  background: linear-gradient(180deg, #2a1a15 0%, var(--surface) 100%);
+  border-color: rgba(255, 90, 54, 0.4);
+}
+.inbox-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.inbox-user-meta {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  flex: 1;
+}
+.inbox-icon-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--soft);
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.inbox-card.unread .inbox-icon-wrap {
+  background: #fff0eb;
+  color: var(--primary);
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+html[data-theme="dark"] .inbox-card.unread .inbox-icon-wrap {
+  background: #361f17;
+  color: #ff8568;
+}
+.inbox-meta-text {
+  flex: 1;
+  text-align: left;
+}
+.inbox-meta-text b {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text);
+  line-height: 1.3;
+}
+.inbox-meta-text small {
+  display: block;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 550;
+  margin-top: 2px;
+}
+.inbox-card-actions {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--line);
+}
+.btn-inbox-reject {
+  background: var(--soft);
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 7px 12px;
+  min-height: 36px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: all 0.15s ease;
+}
+.btn-inbox-reject:hover, .btn-inbox-reject:active {
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: rgba(220, 38, 38, 0.35);
+}
+html[data-theme="dark"] .btn-inbox-reject:hover,
+html[data-theme="dark"] .btn-inbox-reject:active {
+  background: #391a1a;
+  color: #f87171;
+  border-color: rgba(248, 113, 113, 0.45);
+}
+.btn-inbox-accept {
+  background: linear-gradient(135deg, #ff5a36 0%, #ff3a13 100%);
+  color: #ffffff;
+  border: 0;
+  border-radius: 99px;
+  font-size: 0.8rem;
+  font-weight: 750;
+  padding: 7px 14px;
+  min-height: 36px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  box-shadow: 0 2px 8px rgba(255, 90, 54, 0.25);
+  transition: transform 0.1s ease;
+}
+.btn-inbox-accept:active {
+  transform: scale(0.97);
+}
+
+/* PROFILE & SETTINGS SCREEN */
+.profile-avatar-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 14px;
+  text-align: center;
+}
+.profile-avatar-wrap {
+  position: relative;
+  margin-bottom: 10px;
+}
+.profile-avatar-big {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff7a59 0%, #ff4b2b 100%);
+  color: #ffffff;
+  font-size: 2rem;
+  font-weight: 850;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 6px 18px rgba(255, 90, 54, 0.35);
+  border: 3px solid var(--surface);
+  transition: transform 0.15s ease;
+}
+.avatar-picker-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 8px 0 12px;
+}
+.avatar-opt {
+  width: 36px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  min-width: 36px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  background: var(--soft) !important;
+  border: 1.5px solid var(--line) !important;
+  font-size: 17px !important;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+.avatar-opt.selected {
+  border-color: var(--primary) !important;
+  background: #fff3ed !important;
+  transform: scale(1.12);
+  box-shadow: 0 0 0 2px rgba(255, 90, 54, 0.25);
+}
+.diet-tag-btn {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--text);
+  font-size: 0.76rem;
+  font-weight: 650;
+  border-radius: 99px;
+  padding: 6px 12px;
+  min-height: 32px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s ease;
+}
+.diet-tag-btn.active {
+  background: #fff0eb;
+  border-color: var(--primary);
+  color: var(--primary);
+  font-weight: 750;
+}
+html[data-theme="dark"] .diet-tag-btn.active {
+  background: #361f17;
+  color: #ff8568;
+}
+
+/* ALLERGY & RESTRICTION SYSTEM */
+.custom-allergy-bar {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+.custom-allergy-input {
+  flex: 1;
+  font-size: 0.8rem !important;
+  padding: 6px 12px !important;
+  min-height: 36px !important;
+  border-radius: 12px !important;
+  border: 1px solid var(--line) !important;
+  background: var(--surface) !important;
+  color: var(--text) !important;
+}
+.dish-allergy-alert {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid rgba(217, 119, 6, 0.35);
+  border-radius: 99px;
+  padding: 4px 10px;
+  font-size: 0.72rem;
+  font-weight: 750;
+  margin-top: 6px;
+}
+html[data-theme="dark"] .dish-allergy-alert {
+  background: #451a03;
+  color: #fde68a;
+  border-color: rgba(245, 158, 11, 0.45);
+}
+.history-consent-box {
+  background: var(--soft);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+/* HOME FRIENDS PREVIEW - MODERN AVATAR ROW */
 .home-friends-preview {
   margin-top: 14px;
   padding: 12px 14px;
@@ -872,10 +1517,10 @@ html[data-theme="dark"] .scanner-ctrl-btn.active {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 .home-friends-head .title {
-  font-size: 0.75rem;
+  font-size: 0.74rem;
   font-weight: 800;
   color: var(--muted);
   text-transform: uppercase;
@@ -885,60 +1530,93 @@ html[data-theme="dark"] .scanner-ctrl-btn.active {
   border: 0;
   background: transparent;
   padding: 0;
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   color: var(--primary);
   font-weight: 700;
   cursor: pointer;
   min-height: auto;
 }
-.home-friends-chips {
+.home-friends-row {
   display: flex;
-  gap: 8px;
+  align-items: flex-start;
+  gap: 14px;
   overflow-x: auto;
-  padding-bottom: 2px;
+  padding: 2px 2px 4px;
+  scrollbar-width: none;
 }
-.home-friend-chip {
-  display: inline-flex;
+.home-friends-row::-webkit-scrollbar { display: none; }
+.home-friend-item {
+  display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 6px;
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+  min-height: auto !important;
+  cursor: pointer;
+  text-align: center;
+  flex-shrink: 0;
+}
+.home-friend-item:active {
+  transform: scale(0.95);
+}
+.friend-avatar-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  position: relative;
+  font-size: 0.95rem;
+  font-weight: 800;
+  background: #fff1eb;
+  color: var(--primary);
+  border: 2px solid var(--surface);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+html[data-theme="dark"] .friend-avatar-circle {
+  background: #2d1e18;
+  color: #ff8568;
+}
+.friend-avatar-circle.online {
+  box-shadow: 0 0 0 2px var(--green), 0 2px 8px rgba(16, 185, 129, 0.25);
+}
+.friend-avatar-circle.idle {
+  box-shadow: 0 0 0 1.5px var(--line);
+  opacity: 0.85;
+}
+.friend-avatar-circle.add {
+  border: 1.5px dashed var(--muted);
   background: var(--soft);
-  border: 1px solid var(--line);
-  border-radius: 99px;
-  padding: 5px 12px 5px 6px;
-  min-height: 36px;
-  font-size: 0.8rem;
+  color: var(--muted);
+  font-size: 1.2rem;
+  box-shadow: none;
+}
+.friend-avatar-circle .pip {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 2px solid var(--surface);
+}
+.friend-avatar-circle .pip.online {
+  background: var(--green);
+}
+.friend-avatar-circle .pip.idle {
+  background: #9ca3af;
+}
+.friend-label {
+  font-size: 0.72rem;
   font-weight: 700;
   color: var(--text);
-  cursor: pointer;
+  max-width: 52px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
-  transition: transform 0.1s ease, border-color 0.15s ease;
-}
-.home-friend-chip:active {
-  transform: scale(0.96);
-}
-.home-friend-chip .avatar-sm {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: var(--warm);
-  color: var(--primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.72rem;
-  font-weight: 800;
-}
-.home-friend-chip .status-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-}
-.home-friend-chip .status-dot.online {
-  background: var(--green);
-  box-shadow: 0 0 6px var(--green);
-}
-.home-friend-chip .status-dot.idle {
-  background: var(--muted);
+  line-height: 1.2;
 }
 
 /* FRIENDS (BẠN ĂN CÙNG) & QUICK PAIRING */
@@ -984,20 +1662,58 @@ html[data-theme="dark"] .scanner-ctrl-btn.active {
 .friend-status-dot.idle {
   background: var(--muted);
 }
+.friend-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
 .quick-room-btn {
-  background: linear-gradient(135deg, #ff5a36 0%, #ff3d17 100%);
-  color: #ffffff;
   border: 0;
   border-radius: 99px;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 750;
-  padding: 7px 14px;
-  min-height: 36px;
+  padding: 6px 12px;
+  min-height: 34px;
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  box-shadow: 0 2px 8px rgba(255, 90, 54, 0.25);
   cursor: pointer;
+  transition: transform 0.1s ease;
+}
+.quick-room-btn:active {
+  transform: scale(0.96);
+}
+.quick-room-btn.online {
+  background: linear-gradient(135deg, #ff5a36 0%, #ff3d17 100%);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(255, 90, 54, 0.25);
+}
+.quick-room-btn.offline {
+  background: var(--soft);
+  color: var(--text);
+  border: 1px solid var(--line);
+  box-shadow: none;
+  font-weight: 650;
+}
+.btn-more-friend {
+  background: transparent !important;
+  border: 0 !important;
+  color: var(--muted) !important;
+  font-size: 0.76rem !important;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  padding: 0 !important;
+  min-height: auto !important;
+  opacity: 0.5;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+.btn-more-friend:hover {
+  opacity: 1;
+  background: var(--soft) !important;
 }
 /* MODERN TOP SEARCH & FIND FRIENDS BAR */
 .friend-search-bar {
@@ -1332,21 +2048,131 @@ html[data-theme="dark"] .vote-badge.no { background: #4a1d24; color: #fca5a5; }
 .cardnav { margin: 12px 0; display: flex; justify-content: space-between; gap: 8px; }
 .cardnav button { font-size: 0.82rem; }
 
+.final-banner {
+  background: linear-gradient(135deg, rgba(29, 78, 216, 0.08) 0%, rgba(29, 78, 216, 0.02) 100%);
+  border: 1px solid rgba(29, 78, 216, 0.2);
+  border-radius: 16px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  text-align: left;
+}
+html[data-theme="dark"] .final-banner {
+  background: rgba(30, 58, 138, 0.2);
+  border-color: rgba(30, 64, 175, 0.4);
+}
+.final-banner-title {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #1d4ed8;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+html[data-theme="dark"] .final-banner-title {
+  color: #93c5fd;
+}
+.final-banner-desc {
+  font-size: 0.76rem;
+  color: var(--muted);
+  line-height: 1.35;
+  margin: 0;
+}
+.final-status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-weight: 700;
+}
 .finalitem {
   display: flex;
   align-items: center;
   gap: 12px;
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--line);
   border-radius: 18px;
   padding: 12px 14px;
   background: var(--surface);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  transition: all 0.2s ease;
 }
-.finalitem .food { font-size: 28px; }
-.finalitem .details { flex: 1; font-size: 0.88rem; }
-.finalitem button { font-size: 0.78rem; min-width: 76px; padding: 8px; border-radius: 99px; }
-.finalitem.removed { opacity: 0.65; }
-.finalitem.removed .details { text-decoration: line-through; }
+.finalitem.kept {
+  border-color: rgba(16, 185, 129, 0.35);
+  background: linear-gradient(180deg, rgba(16, 185, 129, 0.03) 0%, var(--surface) 100%);
+}
+.finalitem.removed {
+  opacity: 0.55;
+  background: var(--soft);
+  border-style: dashed;
+}
+.finalitem .food-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: var(--soft);
+  display: grid;
+  place-items: center;
+  font-size: 26px;
+  flex-shrink: 0;
+}
+.finalitem.kept .food-wrap {
+  background: #ecfdf5;
+}
+html[data-theme="dark"] .finalitem.kept .food-wrap {
+  background: #064e3b;
+}
+.finalitem .details { flex: 1; text-align: left; }
+.finalitem .details b {
+  display: block;
+  font-size: 0.94rem;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.finalitem.removed .details b {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+.finalitem .details .meta {
+  font-size: 0.72rem;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.finalitem-btn {
+  font-size: 0.76rem !important;
+  min-width: 84px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  padding: 0 12px !important;
+  border-radius: 99px !important;
+  font-weight: 750 !important;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+.finalitem-btn.kept {
+  background: #ecfdf5 !important;
+  color: #047857 !important;
+  border: 1.5px solid #a7f3d0 !important;
+}
+html[data-theme="dark"] .finalitem-btn.kept {
+  background: #064e3b !important;
+  color: #a7f3d0 !important;
+  border-color: #065f46 !important;
+}
+.finalitem-btn.removed {
+  background: var(--surface) !important;
+  color: var(--muted) !important;
+  border: 1px solid var(--line) !important;
+}
 
 .result-icon {
   font-size: 72px;
@@ -1701,13 +2527,22 @@ html[data-theme="dark"] .dish-photo-emoji {
     </div>
 
         <header class="appbar">
-      <div class="appbrand">
-        <span class="mark" aria-hidden="true">≈</span>
+      <div class="appbrand" data-action="home" role="button" tabindex="0" title="Về trang chủ">
+        <span class="mark" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M4 11C4 16.2 8 20.2 12 20.2C16 20.2 20 16.2 20 11H4Z" fill="white"/>
+            <path d="M8 14C9.5 15.6 10.8 16 12 16C13.2 16 14.5 15.6 16 14" stroke="#ff5a36" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M9 4C8.2 5.5 9.8 6.5 9 8M12 3C11.2 5 12.8 6 12 8M15 4C14.2 5.5 15.8 6.5 15 8" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </span>
         <span>Gì Cũng Được</span>
       </div>
       <div class="appbar-actions">
-        <button data-action="theme" aria-label="Đổi giao diện sáng tối">🌓</button>
-        <button data-action="home" aria-label="Về trang chủ">⌂</button>
+        <button data-action="friends" class="friends-icon-btn" aria-label="Bạn ăn cùng" title="Bạn ăn cùng">👥<span class="friends-badge-count" id="friends-badge" style="display:none;"></span></button>
+        <button data-action="inbox" class="inbox-icon-btn" aria-label="Thông báo" title="Thông báo">🔔<span class="inbox-dot" id="inbox-dot" style="display:none;"></span></button>
+        <button data-action="settings" class="profile-avatar-btn" aria-label="Hồ sơ & Cài đặt" title="Hồ sơ & Cài đặt">
+          <span class="user-avatar-sm" id="header-user-avatar">M</span>
+        </button>
       </div>
     </header>
 
@@ -1731,6 +2566,27 @@ html[data-theme="dark"] .dish-photo-emoji {
     <p>Dữ liệu thành viên mô phỏng để test các luồng.</p>
 
     <label class="field" style="margin:8px 0;">
+      Chuyển màn hình nhanh:
+      <select id="screen-switcher">
+        <option value="home">UI-01: Trang chủ</option>
+        <option value="create">UI-02: Tạo phòng</option>
+        <option value="join">UI-04: Vào phòng</option>
+        <option value="prefs">UI-02b: Chọn khẩu vị</option>
+        <option value="lobby">UI-05: Phòng chờ</option>
+        <option value="vote">UI-06: Chọn món Vòng 1</option>
+        <option value="final">UI-07: Chọn lọc Vòng 2</option>
+        <option value="waiting">Chờ thành viên gửi</option>
+        <option value="result">UI-08: Kết quả đồng thuận</option>
+        <option value="empty">UI-09: Chưa đồng thuận</option>
+        <option value="friends">UI-10: Bạn ăn cùng</option>
+        <option value="settings">UI-11: Hồ sơ & Cài đặt</option>
+        <option value="inbox">UI-12: Thông báo</option>
+        <option value="history">UI-13: Lịch sử ăn uống</option>
+        <option value="expired">Phòng hết hạn</option>
+      </select>
+    </label>
+
+    <label class="field" style="margin:8px 0;">
       Phiếu các bạn mẫu:
       <select id="scenario">
         <option value="happy">Có thể cùng muốn món đầu</option>
@@ -1741,6 +2597,8 @@ html[data-theme="dark"] .dish-photo-emoji {
     </label>
 
     <div class="stack" style="gap:7px;margin-top:10px;">
+      <button class="quiet small" data-action="theme" style="font-weight:700;">🌓 Đổi giao diện Sáng / Tối</button>
+      <button class="quiet small" data-action="demo-round2" style="font-weight:750;color:var(--primary);border-color:rgba(255,90,54,0.35);">⚡ Thử kịch bản: Sang Vòng 2</button>
       <button class="quiet small" data-action="fill">Điền phiếu của tôi (demo)</button>
       <button class="quiet small" data-action="mockstart">Chủ phòng mẫu bắt đầu</button>
       <button class="quiet small" data-action="mocksubmit">Thành viên mẫu gửi phiếu</button>
@@ -1757,18 +2615,35 @@ html[data-theme="dark"] .dish-photo-emoji {
 <div id="live" class="sr-only" aria-live="polite"></div>
 
 <script>
+const publicAnchors = [
+  { id: 'hcr', name: 'Hồ Con Rùa', area: 'Quận 3' },
+  { id: 'bk', name: 'ĐH Bách Khoa', area: 'Quận 10' },
+  { id: 'vc', name: 'Vincom Đồng Khởi', area: 'Quận 1' },
+  { id: 'landmark', name: 'Landmark 81', area: 'Bình Thạnh' }
+];
+
 const dishes = [
-  { id: 'pho', name: 'Phở bò', emoji: '🍜', tags: 'Món nước · Nóng hổi', desc: 'Một tô nước dùng thơm, thêm chút hành và rau tươi.' },
-  { id: 'com', name: 'Cơm tấm', emoji: '🍚', tags: 'Cơm · Ăn no', desc: 'Cơm, sườn nướng mỡ hành và đồ chua quen thuộc.' },
-  { id: 'lau', name: 'Lẩu nấm', emoji: '🍲', tags: 'Lẩu · Ăn chung', desc: 'Một nồi lẩu ấm nóng để cả nhóm cùng quây quần.' },
-  { id: 'nuong', name: 'Thịt nướng', emoji: '🥩', tags: 'Nướng · Ăn chung', desc: 'Ngồi bên bếp than xèo xèo, trò chuyện rôm rả.' },
-  { id: 'bun', name: 'Bún chả', emoji: '🥢', tags: 'Bún · Nướng', desc: 'Bún tươi, chả nướng than hoa và rau ghém.' },
-  { id: 'banhmi', name: 'Bánh mì', emoji: '🥖', tags: 'Nhanh gọn · Giòn rụm', desc: 'Một ổ bánh mì giòn tan, tiện lợi và ngon miệng.' },
-  { id: 'sushi', name: 'Sushi', emoji: '🍣', tags: 'Món Nhật · Tươi ngon', desc: 'Các cuộn maki nhỏ xinh, thanh đạm và dễ ăn.' },
-  { id: 'pizza', name: 'Pizza', emoji: '🍕', tags: 'Món Tây · Tiệc tùng', desc: 'Chia nhau vài lát bánh phô mai, chốt kèo ăn vui.' }
+  { id: 'pho', name: 'Phở bò', emoji: '🍜', tags: 'Món nước · Nóng', price: '~45k - 65k', venue: 'Phở Thìn', venueAddress: '12 Nguyễn Du', distance: '650m', openStatus: 'Mở đến 22:00', desc: 'Một tô nước dùng thơm, bánh phở mềm và nước lèo thanh ngọt.', allergens: [] },
+  { id: 'com', name: 'Cơm tấm', emoji: '🍚', tags: 'Cơm · Ăn no', price: '~40k - 60k', venue: 'Cơm Tấm Ba Ghiền', venueAddress: '84 Đặng Văn Ngữ', distance: '1.2km', openStatus: 'Mở đến 21:30', desc: 'Cơm, sườn nướng mỡ hành và đồ chua quen thuộc.', allergens: [] },
+  { id: 'lau', name: 'Lẩu nấm & Hải sản', emoji: '🍲', tags: 'Lẩu · Ăn chung', price: '~120k - 180k', venue: 'Lẩu Nấm Ashima', venueAddress: '35A Nguyễn Đình Chiểu', distance: '850m', openStatus: 'Mở đến 22:30', desc: 'Một nồi lẩu ấm nóng với nấm tươi và tôm mực.', allergens: ['Hải sản'] },
+  { id: 'nuong', name: 'Thịt nướng & Bia', emoji: '🥩', tags: 'Nướng · Đồ nhậu', price: '~150k - 220k', venue: 'Gogi House', venueAddress: 'Tầng 1 Vincom', distance: '1.4km', openStatus: 'Mở đến 22:00', desc: 'Ngồi bên bếp than xèo xèo, gọi thêm bia mát lạnh.', allergens: ['Đồ có cồn'] },
+  { id: 'bun', name: 'Bún chả', emoji: '🥢', tags: 'Bún · Nướng', price: '~45k - 60k', venue: 'Bún Chả Hương Liên', venueAddress: '24 Lê Văn Hưu', distance: '450m', openStatus: 'Mở đến 21:00', desc: 'Bún tươi, chả nướng than hoa và rau ghém.', allergens: [] },
+  { id: 'banhmi', name: 'Bánh mì pate', emoji: '🥖', tags: 'Nhanh gọn · Giòn', price: '~25k - 35k', venue: 'Bánh Mì Huỳnh Hoa', venueAddress: '26 Lê Thị Riêng', distance: '900m', openStatus: 'Mở cả ngày', desc: 'Một ổ bánh mì giòn tan, tiện lợi và no bụng.', allergens: ['Gluten'] },
+  { id: 'sushi', name: 'Sushi & Sashimi', emoji: '🍣', tags: 'Món Nhật · Tươi', price: '~120k - 200k', venue: 'Sushi Hokkaido', venueAddress: '172 Pasteur', distance: '1.1km', openStatus: 'Mở đến 22:00', desc: 'Cá hồi và hải sản tươi sống, thanh đạm và tinh tế.', allergens: ['Hải sản', 'Đồ sống'] },
+  { id: 'pizza', name: 'Pizza & Bia tươi', emoji: '🍕', tags: 'Món Tây · Vui', price: '~100k - 160k', venue: 'Pizza 4P\'s', venueAddress: '151 Hai Bà Trưng', distance: '700m', openStatus: 'Mở đến 22:30', desc: 'Chia nhau vài lát bánh phô mai béo ngậy kèm bia ủ thủ công.', allergens: ['Sữa', 'Gluten', 'Đồ có cồn'] }
 ];
 
 const meals = { breakfast: 'Bữa sáng', lunch: 'Bữa trưa', dinner: 'Bữa tối', snack: 'Ăn nhẹ' };
+const mealIcons = { breakfast: '☀️', lunch: '🍱', dinner: '🌙', snack: '☕' };
+
+function getAutoMeal() {
+  const h = new Date().getHours();
+  if (h >= 5 && h < 11) return 'breakfast';
+  if (h >= 11 && h < 15) return 'lunch';
+  if (h >= 15 && h < 18) return 'snack';
+  return 'dinner';
+}
+
 let s;
 
 function getQrSvg(size = 130) {
@@ -1834,7 +2709,22 @@ function reset() {
     page: 'home',
     role: 'host',
     name: 'Minh',
-    meal: 'lunch',
+    avatar: 'M',
+    userId: 'MINH-8899',
+    bio: 'Ăn gì cũng được, miễn vui!',
+    allergies: ['Hải sản', 'Đồ có cồn'],
+    customAllergies: [],
+    meal: getAutoMeal(),
+    anchor: 'hcr',
+    radius: 2,
+    timeMode: 'now',
+    customTime: '12:30',
+    avoidRecent: true,
+    historyConsent: true,
+    inbox: [
+      { id: 'inv1', from: 'Linh', avatar: 'L', roomCode: '889922', meal: 'Bữa trưa', date: 'Vừa xong', status: 'pending' },
+      { id: 'res1', type: 'result', dish: 'Phở bò', emoji: '🍜', roomCode: '123456', matchTier: 'PERFECT', date: 'Hôm qua' }
+    ],
     cats: [],
     ready: true,
     index: 0,
@@ -1842,10 +2732,11 @@ function reset() {
     eligible: [],
     keep: {},
     winner: null,
+    matchTier: 'CONSENSUS',
     reason: '',
     offline: false,
     notice: '',
-    scenario: document.querySelector('#scenario').value,
+    scenario: document.querySelector('#scenario') ? document.querySelector('#scenario').value : 'happy',
     joinMode: 'code',
     code: '123456',
     flashOn: false,
@@ -1858,12 +2749,12 @@ function reset() {
     friendRequests: [
       { id: 'huy', name: 'Huy', mutual: '3 bữa ăn chung', avatar: 'H' }
     ],
+    friendSearch: '',
     accountLinked: false,
     invitedFriends: ['linh'],
-    friendSearch: '',
     mealHistory: [
-      { id: 'h1', dish: 'Phở bò', emoji: '🍜', meal: 'Bữa trưa', date: 'Hôm qua', with: 'Linh' },
-      { id: 'h2', dish: 'Cơm tấm', emoji: '🍚', meal: 'Bữa trưa', date: '3 ngày trước', with: 'Linh, Nam' }
+      { id: 'h1', dish: 'Phở bò', emoji: '🍜', meal: 'Bữa trưa', matchTier: 'PERFECT', date: 'Hôm qua', with: 'Linh' },
+      { id: 'h2', dish: 'Cơm tấm', emoji: '🍚', meal: 'Bữa trưa', matchTier: 'CONSENSUS', date: '3 ngày trước', with: 'Linh, Nam' }
     ]
   };
   render();
@@ -1909,10 +2800,6 @@ function render() {
     <div class="stack">
       ${btn('＋ Tạo kèo ăn', 'create')}
       ${btn('Tôi có mã phòng', 'join', 'quiet')}
-      <button class="quiet" data-action="friends" type="button" style="display:flex;align-items:center;justify-content:center;gap:7px;">
-        <span>👥</span> Bạn ăn cùng
-        <span class="friend-badge-dot">${s.friends.length + s.friendRequests.length}</span>
-      </button>
     </div>
 
     ${s.activeRoom ? `<div class="active-session-banner">
@@ -1928,14 +2815,22 @@ function render() {
         <span class="title">⚡ Kèo nhanh với bạn thân</span>
         <button data-action="friends" class="more-link" type="button">Tất cả (${s.friends.length}) ›</button>
       </div>
-      <div class="home-friends-chips">
+      <div class="home-friends-row">
         ${s.friends.map(f => `
-          <button class="home-friend-chip" data-action="quick-room" data-value="${f.id}" type="button" title="Tạo phòng nhanh với ${esc(f.name)}">
-            <span class="avatar-sm">${f.avatar}</span>
-            <span class="name">${esc(f.name)}</span>
-            <span class="status-dot ${f.status}"></span>
+          <button class="home-friend-item" data-action="quick-room" data-value="${f.id}" type="button" title="Kèo nhanh với ${esc(f.name)}">
+            <div class="friend-avatar-circle ${f.status}">
+              <span>${f.avatar}</span>
+              <span class="pip ${f.status}"></span>
+            </div>
+            <span class="friend-label">${esc(f.name)}</span>
           </button>
         `).join('')}
+        <button class="home-friend-item add-new" data-action="friends" type="button" title="Thêm bạn bè">
+          <div class="friend-avatar-circle add">
+            <span>＋</span>
+          </div>
+          <span class="friend-label">Thêm</span>
+        </button>
       </div>
     </div>` : ''}`;
   }
@@ -1948,16 +2843,15 @@ function render() {
     const isNewMatch = q && !s.friends.some(f => f.name.toLowerCase() === q || f.id.toLowerCase() === q);
 
     h = `<div style="margin-bottom:8px;"><button data-action="home" style="border:0;background:transparent;padding:4px 0;font-size:0.86rem;color:var(--muted);font-weight:600;display:inline-flex;align-items:center;gap:3px;min-height:auto;cursor:pointer;">‹ Trang chủ</button></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-        <h2>Bạn ăn cùng</h2>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <h2 style="margin:0;">Bạn ăn cùng</h2>
         <span style="font-size:0.8rem;color:var(--muted);font-weight:700;">${s.friends.length} bạn bè</span>
       </div>
-      <p class="lead" style="margin-bottom:12px;">Kết bạn để tạo kèo đôi nhanh trong 1 chạm.</p>
 
       <!-- THANH TÌM KIẾM & KẾT BẠN NGAY Ở TRÊN -->
       <div class="friend-search-bar">
         <span class="search-icon" aria-hidden="true">🔍</span>
-        <input type="text" id="friend-search-input" class="friend-search-input" placeholder="Tìm kiếm hoặc nhập ID, SĐT để kết bạn..." value="${esc(s.friendSearch || '')}" aria-label="Tìm kiếm hoặc kết bạn" />
+        <input type="text" id="friend-search-input" class="friend-search-input" placeholder="Tìm tên, ID hoặc SĐT..." value="${esc(s.friendSearch || '')}" aria-label="Tìm kiếm hoặc kết bạn" />
         ${s.friendSearch ? `<button class="btn-clear-friend-search" data-action="clear-friend-search" type="button" aria-label="Xóa tìm kiếm">✕</button>` : ''}
       </div>
 
@@ -1968,7 +2862,7 @@ function render() {
             <span class="avatar">${esc(s.friendSearch.trim().charAt(0).toUpperCase())}</span>
             <div>
               <b>${esc(s.friendSearch.trim())}</b>
-              <small style="display:block;color:var(--muted);font-size:0.72rem;">Người dùng / ID mới</small>
+              <small style="display:block;color:var(--muted);font-size:0.72rem;">Người dùng mới</small>
             </div>
           </div>
           <button class="primary small" data-action="send-friend-req-search" data-value="${esc(s.friendSearch.trim())}" type="button" style="padding:6px 14px;min-height:34px;font-size:0.78rem;">＋ Kết bạn</button>
@@ -1976,27 +2870,27 @@ function render() {
       ` : ''}
 
       ${s.friendRequests.length && !q ? `<div class="friends-card" style="border-color:rgba(255, 90, 54, 0.35);background:linear-gradient(180deg, #fff9f5 0%, var(--surface) 100%);">
-        <div style="font-size:0.75rem;font-weight:800;color:var(--primary);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Lời mời kết bạn (${s.friendRequests.length})</div>
+        <div style="font-size:0.74rem;font-weight:800;color:var(--primary);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Lời mời kết bạn (${s.friendRequests.length})</div>
         ${s.friendRequests.map(r => `
           <div class="friend-row">
             <div class="friend-info">
               <span class="avatar">${r.avatar}</span>
               <div>
                 <b>${esc(r.name)}</b>
-                <small style="display:block;color:var(--muted);">${esc(r.mutual)}</small>
+                <small style="display:block;color:var(--muted);font-size:0.74rem;">${esc(r.mutual)}</small>
               </div>
             </div>
             <div style="display:flex;gap:6px;">
-              <button class="small primary" data-action="accept-friend" data-value="${r.id}" type="button" style="padding:6px 12px;min-height:34px;">✓ Đồng ý</button>
-              <button class="small quiet" data-action="reject-friend" data-value="${r.id}" type="button" style="padding:6px 10px;min-height:34px;">✕</button>
+              <button class="small primary" data-action="accept-friend" data-value="${r.id}" type="button" style="padding:6px 12px;min-height:34px;font-size:0.78rem;">✓ Đồng ý</button>
+              <button class="small quiet" data-action="reject-friend" data-value="${r.id}" type="button" style="padding:6px 10px;min-height:34px;font-size:0.78rem;">✕</button>
             </div>
           </div>
         `).join('')}
       </div>` : ''}
 
       <div class="friends-card">
-        <div style="font-size:0.75rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">
-          ${q ? `Kết quả tìm kiếm (${filteredFriends.length})` : 'Danh sách bạn bè'}
+        <div style="font-size:0.74rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">
+          ${q ? `Kết quả tìm kiếm (${filteredFriends.length})` : `Danh sách bạn bè (${filteredFriends.length})`}
         </div>
         ${filteredFriends.length ? filteredFriends.map(f => `
           <div class="friend-row">
@@ -2007,55 +2901,205 @@ function render() {
               </div>
               <div>
                 <b>${esc(f.name)}</b>
-                <small style="display:block;color:var(--muted);font-weight:600;">${esc(f.tag)} · ${f.status === 'online' ? '🟢 Đang rảnh' : '⚪ Ngoại tuyến'}</small>
+                <small style="display:block;color:var(--muted);font-weight:600;font-size:0.74rem;">${esc(f.tag)} · ${f.status === 'online' ? '🟢 Đang rảnh' : '⚪ Ngoại tuyến'}</small>
               </div>
             </div>
-            <button class="quick-room-btn" data-action="quick-room" data-value="${f.id}" type="button">
-              ⚡ Kèo nhanh
-            </button>
+            <div class="friend-actions">
+              ${f.status === 'online' ? `
+                <button class="quick-room-btn online" data-action="quick-room" data-value="${f.id}" type="button" title="Mở phòng đôi ngay">
+                  ⚡ Kèo nhanh
+                </button>
+              ` : `
+                <button class="quick-room-btn offline" data-action="ping-friend" data-value="${f.id}" type="button" title="Gửi thông báo rủ bạn đi ăn">
+                  🔔 Rủ ăn
+                </button>
+              `}
+              <button class="btn-more-friend" data-action="remove-friend" data-value="${f.id}" type="button" title="Xóa bạn" aria-label="Xóa bạn">✕</button>
+            </div>
           </div>
         `).join('') : '<p style="font-size:0.8rem;color:var(--muted);margin:8px 0;">Không tìm thấy bạn bè nào phù hợp.</p>'}
       </div>
 
-      <!-- LỊCH SỬ KÈO ĂN GẦN ĐÂY (P1 GM-18 / FR-12) -->
       ${!q ? `
-      <div class="friends-card">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <div style="font-size:0.75rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Lịch sử kèo ăn gần đây</div>
-          ${s.mealHistory.length ? `<button data-action="clear-history" type="button" style="border:0;background:transparent;color:var(--muted);font-size:0.72rem;font-weight:600;padding:0;min-height:auto;cursor:pointer;">🗑️ Xóa</button>` : ''}
-        </div>
-        ${s.mealHistory.length ? s.mealHistory.map(m => `
-          <div class="history-item">
-            <div class="history-left">
-              <span class="history-emoji">${m.emoji}</span>
-              <div>
-                <b>${esc(m.dish)}</b>
-                <span class="history-date" style="display:block;">${esc(m.meal)} · ${esc(m.date)} (với ${esc(m.with)})</span>
-              </div>
-            </div>
-            <button class="small quiet" data-action="quick-room" data-value="linh" type="button" style="padding:4px 8px;min-height:30px;font-size:0.74rem;">Ăn lại</button>
-          </div>
-        `).join('') : '<p style="font-size:0.8rem;color:var(--muted);margin:8px 0;">Chưa có lịch sử bữa ăn nào.</p>'}
-      </div>
-
-      <!-- LIÊN KẾT TÀI KHOẢN (P1 GM-17 / FR-12) -->
-      <div class="friends-card" style="border-style:dashed;">
-        <div style="font-size:0.75rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Tài khoản &amp; Sao lưu</div>
-        <p style="font-size:0.78rem;color:var(--muted);margin-bottom:10px;">${s.accountLinked ? '✓ Đã liên kết tài khoản Google · Dữ liệu được bảo toàn khi đổi thiết bị.' : 'Bạn đang dùng tài khoản Khách. Liên kết tài khoản để không mất danh sách bạn bè khi đổi máy.'}</p>
-        ${s.accountLinked ? `<span class="result-member-badge" style="display:inline-flex;">✓ Đã liên kết Google</span>` : `<button class="quiet small" data-action="link-account" type="button" style="width:100%;min-height:36px;font-size:0.8rem;">🔗 Liên kết tài khoản Google</button>`}
+      <div style="display:flex;justify-content:center;margin-top:14px;">
+        <button data-action="history" type="button" style="border:0;background:transparent;color:var(--muted);font-size:0.78rem;font-weight:700;display:inline-flex;align-items:center;gap:4px;cursor:pointer;padding:8px 12px;min-height:auto;">
+          <span>📜 Xem lịch sử các bữa ăn đã chốt ›</span>
+        </button>
       </div>
       ` : ''}
       ${notice()}`;
   }
 
+  if (s.page === 'settings') {
+    const avatarChoices = ['M', '😎', '🍜', '🥑', '🍔', '🦊', '🐱', '🍕'];
+    const importantAllergens = [
+      { id: 'Hải sản', label: '🦐 Hải sản' },
+      { id: 'Đồ có cồn', label: '🍺 Đồ có cồn / Bia rượu' },
+      { id: 'Đậu phộng', label: '🥜 Đậu phộng / Các loại hạt' },
+      { id: 'Đồ sống', label: '🐟 Đồ sống (Gỏi / Sashimi)' },
+      { id: 'Ăn chay', label: '🥦 Ăn chay (Không thịt)' },
+      { id: 'Sữa', label: '🥛 Sữa & Lactose' },
+      { id: 'Gluten', label: '🌾 Gluten / Bột mì' }
+    ];
+
+    h = `<div style="margin-bottom:8px;"><button data-action="home" style="border:0;background:transparent;padding:4px 0;font-size:0.86rem;color:var(--muted);font-weight:600;display:inline-flex;align-items:center;gap:3px;min-height:auto;cursor:pointer;">‹ Trang chủ</button></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <h2 style="margin:0;">Hồ sơ &amp; Cài đặt</h2>
+      </div>
+
+      <!-- AVATAR & THÔNG TIN CÁ NHÂN -->
+      <div class="friends-card" style="text-align:center;">
+        <div class="profile-avatar-hero">
+          <div class="profile-avatar-wrap">
+            <div class="profile-avatar-big" id="profile-avatar-display">${esc(s.avatar || (s.name ? s.name[0] : 'M'))}</div>
+          </div>
+          <div style="font-size:0.74rem;font-weight:750;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">Biểu tượng đại diện của bạn</div>
+          <div class="avatar-picker-row">
+            ${avatarChoices.map(ch => `
+              <button type="button" class="avatar-opt ${s.avatar === ch ? 'selected' : ''}" data-action="pick-avatar" data-value="${ch}" title="Chọn avatar ${ch}">
+                ${ch}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+
+        <label class="field" style="text-align:left;margin-bottom:10px;">
+          Tên hiển thị:
+          <input type="text" id="profile-name-input" value="${esc(s.name)}" maxlength="20" placeholder="Nhập tên của bạn" style="margin-top:4px;" />
+        </label>
+
+        <label class="field" style="text-align:left;margin-bottom:12px;">
+          Khẩu hiệu / Bio:
+          <input type="text" id="profile-bio-input" value="${esc(s.bio || 'Ăn gì cũng được, miễn vui!')}" maxlength="40" placeholder="Khẩu hiệu ăn uống..." style="margin-top:4px;" />
+        </label>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;background:var(--soft);border-radius:14px;padding:9px 12px;margin-top:6px;border:1px solid var(--line);">
+          <div style="text-align:left;">
+            <small style="display:block;color:var(--muted);font-size:0.68rem;text-transform:uppercase;font-weight:700;">ID kết bạn của bạn</small>
+            <b style="font-size:0.85rem;letter-spacing:0.5px;">#${esc(s.userId || 'MINH-8899')}</b>
+          </div>
+          <button class="quiet small" data-action="copy-id" type="button" style="padding:4px 10px;min-height:30px;font-size:0.74rem;">📋 Sao chép</button>
+        </div>
+      </div>
+
+      <!-- DỊ ỨNG & CHẤT CẦN TRÁNH -->
+      <div class="friends-card" style="text-align:left;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+          <div style="font-size:0.74rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">
+            Dị ứng &amp; Chất cần tránh
+          </div>
+          <span style="font-size:0.7rem;color:var(--primary);font-weight:700;">
+            ${(s.allergies && s.allergies.length) ? `${s.allergies.length} mục đã chọn` : 'Chưa chọn'}
+          </span>
+        </div>
+        <p style="font-size:0.72rem;color:var(--muted);margin:0 0 10px;line-height:1.35;">
+          Tự động gắn cờ ⚠️ cảnh báo khi món trong phòng chứa chất bạn kiêng kỵ.
+        </p>
+
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">
+          ${importantAllergens.map(item => {
+            const active = (s.allergies || []).includes(item.id);
+            return `<button type="button" class="diet-tag-btn ${active ? 'active' : ''}" data-action="toggle-allergy" data-value="${item.id}">
+              ${active ? '✓ ' : '＋ '}${item.label}
+            </button>`;
+          }).join('')}
+        </div>
+
+        <!-- Ô TỰ NHẬP RẤT GỌN GÀNG -->
+        <div class="custom-allergy-bar" style="margin-top:4px;">
+          <input type="text" id="custom-allergy-input" class="custom-allergy-input" placeholder="＋ Tự nhập chất khác (Mè, Trứng...)" maxlength="25" />
+          <button type="button" class="quiet small" data-action="add-custom-allergy" style="min-height:36px;padding:4px 12px;font-size:0.78rem;font-weight:750;border-radius:12px;">Thêm</button>
+        </div>
+
+        ${(s.customAllergies && s.customAllergies.length > 0) ? `
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">
+            ${s.customAllergies.map(c => `
+              <button type="button" class="diet-tag-btn active" data-action="remove-custom-allergy" data-value="${esc(c)}" title="Nhấn để xóa">
+                ✕ ${esc(c)}
+              </button>
+            `).join('')}
+          </div>
+        ` : ''}
+
+        <div style="font-size:0.69rem;color:var(--muted);margin-top:10px;line-height:1.35;opacity:0.85;">
+          ℹ️ Cảnh báo đối chiếu theo thông tin món ăn. Với dị ứng y tế nặng, vui lòng xác nhận trực tiếp với quán.
+        </div>
+      </div>
+
+      <!-- TÀI KHOẢN & ĐỒNG BỘ -->
+      <div class="friends-card">
+        <div style="font-size:0.74rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">
+          Tài khoản &amp; Đồng bộ dữ liệu
+        </div>
+        <p style="font-size:0.75rem;color:var(--muted);margin:0 0 10px;line-height:1.35;">
+          ${s.accountLinked ? '✓ Đã liên kết tài khoản Google · Danh sách bạn bè và lịch sử được lưu trữ trên mây an toàn.' : 'Bạn đang dùng tài khoản Khách. Hãy liên kết để không mất danh sách bạn bè khi đổi máy.'}
+        </p>
+        ${s.accountLinked ? `
+          <div style="display:flex;align-items:center;gap:6px;color:var(--green);font-size:0.8rem;font-weight:700;">
+            <span>🟢</span> Đã liên kết Google (minh.ie307@gmail.com)
+          </div>
+        ` : `
+          <button class="quiet small full" data-action="link-account" type="button" style="min-height:36px;font-size:0.8rem;">
+            🔗 Liên kết tài khoản Google
+          </button>
+        `}
+      </div>
+
+      <!-- TÙY CHỌN GIAO DIỆN -->
+      <div class="friends-card">
+        <div style="font-size:0.74rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">
+          Giao diện ứng dụng
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:0.82rem;font-weight:600;">Chế độ Sáng / Tối</span>
+          <button class="quiet small" data-action="theme" type="button" style="min-height:32px;font-size:0.76rem;padding:4px 10px;">🌓 Đổi giao diện</button>
+        </div>
+      </div>
+
+      <div class="stack" style="margin-top:16px;">
+        <button class="primary full" data-action="save-profile" type="button" style="min-height:42px;font-size:0.86rem;font-weight:750;">
+          💾 Lưu thay đổi hồ sơ
+        </button>
+      </div>
+      ${notice()}`;
+  }
+
   if (s.page === 'create') {
     h = `<div style="margin-bottom:8px;"><button data-action="home" style="border:0;background:transparent;padding:4px 0;font-size:0.86rem;color:var(--muted);font-weight:600;display:inline-flex;align-items:center;gap:3px;min-height:auto;cursor:pointer;">‹ Quay lại</button></div>
-      <h2 style="margin-bottom:4px;">Hẹn nhau bữa nào?</h2>
-      <p class="lead" style="margin-bottom:14px;font-size:0.8rem;color:var(--muted);">Quy tắc: Nhóm 2–8 người · Tối đa 2 vòng bình chọn kín</p>
+      <h2 style="margin-bottom:12px;">Hẹn nhau bữa nào?</h2>
       <label class="field">Tên của bạn<input id="name" maxlength="24" value="${esc(s.name)}" placeholder="Nhập tên của bạn"></label>
       <div class="options">${Object.entries(meals).map(([k, v], i) => `<button class="option ${s.meal === k ? 'selected' : ''}" aria-pressed="${s.meal === k}" data-action="meal" data-value="${k}"><span class="icon" aria-hidden="true">${['☀', '◒', '☾', '☕'][i]}</span>${v}</button>`).join('')}</div>
 
-      <div style="margin:14px 0 6px;">
+      <!-- THỜI ĐIỂM ĂN (TINH GỌN, ÍT CHỮ) -->
+      <div class="section-card">
+        <div class="section-card-title">
+          <span>⏰ Thời điểm ăn</span>
+        </div>
+        <div class="timemode-chips">
+          <button class="timemode-chip ${s.timeMode === 'now' ? 'selected' : ''}" data-action="set-time-mode" data-value="now" type="button">
+            ⚡ Ăn ngay
+          </button>
+          <button class="timemode-chip ${s.timeMode === 'custom' ? 'selected' : ''}" data-action="set-time-mode" data-value="custom" type="button">
+            ⏰ Hẹn giờ
+          </button>
+        </div>
+        ${s.timeMode === 'custom' ? `
+          <div style="margin-top:8px;">
+            <input type="time" id="custom-time-input" value="${esc(s.customTime || '12:30')}" style="padding:6px 12px;font-size:0.9rem;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--text);font-weight:700;" />
+          </div>
+        ` : ''}
+      </div>
+
+      <!-- TÙY CHỌN TRÁNH LẶP MÓN 3 BỮA GẦN NHẤT (V0.2) -->
+      <div style="margin:10px 0 6px;padding:10px 12px;background:var(--surface);border:1px solid var(--line);border-radius:14px;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-size:0.82rem;font-weight:700;">Tránh lặp món gần đây</div>
+          <small style="color:var(--muted);font-size:0.72rem;">Không gợi ý món đã ăn 3 bữa qua</small>
+        </div>
+        <input type="checkbox" id="avoid-recent" ${s.avoidRecent ? 'checked' : ''} data-action="toggle-avoid-recent" style="width:18px;height:18px;accent-color:var(--primary);cursor:pointer;">
+      </div>
+
+      <div style="margin:12px 0 6px;">
         <label class="field" style="margin-bottom:6px;font-size:0.82rem;">Rủ bạn ăn cùng:</label>
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
           ${s.friends.map(f => `
@@ -2140,24 +3184,45 @@ function render() {
   }
 
   if (s.page === 'prefs') {
+    const isWhatever = s.cats.length === 0;
     h = `<div style="margin-bottom:8px;"><button data-action="${s.role === 'host' ? 'create' : 'join'}" style="border:0;background:transparent;padding:4px 0;font-size:0.86rem;color:var(--muted);font-weight:600;display:inline-flex;align-items:center;gap:3px;min-height:auto;cursor:pointer;">‹ Quay lại</button></div>
-      <h2 style="margin-bottom:4px;">Hôm nay thích ăn gì?</h2>
-      <p class="lead" style="margin-bottom:14px;font-size:0.82rem;color:var(--muted);">Sở thích là ưu tiên mềm giúp gợi ý món; không chọn loại nào vẫn hợp lệ.</p>
-      <div class="chips">${['Món nước', 'Cơm', 'Lẩu', 'Nướng', 'Món Nhật', 'Nhanh gọn'].map(v => `<button class="chip ${s.cats.includes(v) ? 'selected' : ''}" aria-pressed="${s.cats.includes(v)}" data-action="cat" data-value="${v}">${v}</button>`).join('')}</div>
+      <h2 style="margin-bottom:14px;">Hôm nay thích ăn gì?</h2>
+
+      <!-- THẺ ĐIỂM NHẤN: GÌ CŨNG ĐƯỢC (SELECTED MẶC ĐỊNH KHI CHƯA CHỌN CHIP) -->
+      <div class="whatever-hero-card ${isWhatever ? 'active' : ''}" data-action="any" role="button" aria-pressed="${isWhatever}" tabindex="0">
+        <div class="whatever-hero-content">
+          <span class="whatever-hero-icon">${isWhatever ? '✨' : '🎲'}</span>
+          <div class="whatever-hero-text">
+            <b>Gì cũng được</b>
+            <small>Ăn gì cũng vui · Cả nhóm cùng chọn</small>
+          </div>
+        </div>
+        <span class="whatever-badge-pill">${isWhatever ? '✓ Đang chọn' : 'Chọn'}</span>
+      </div>
+
+      <div style="font-size:0.75rem;font-weight:800;color:var(--muted);letter-spacing:0.8px;text-transform:uppercase;margin:16px 0 8px;">
+        Khẩu vị ưu tiên
+      </div>
+      <div class="chips">${['Món nước', 'Cơm', 'Bún / Phở', 'Lẩu', 'Nướng', 'Món Việt', 'Món Hàn', 'Món Nhật', 'Món Thái', 'Bánh mì', 'Ăn vặt', 'Thanh đạm', 'Cay nồng'].map(v => `<button class="chip ${s.cats.includes(v) ? 'selected' : ''}" aria-pressed="${s.cats.includes(v)}" data-action="cat" data-value="${v}">${v}</button>`).join('')}</div>
+
       <div class="spacer"></div>
       <div class="stack">
-        ${btn(s.cats.length ? 'Bỏ chọn — Gì cũng được' : '✓ Gì cũng được', 'any', 'quiet full')}
         ${btn('Vào phòng chờ →', 'lobby', 'primary full')}
       </div>`;
   }
 
   if (s.page === 'lobby') {
     s.ready = true; // Vào phòng là luôn sẵn sàng!
-    h = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-        <button data-action="prefs" style="border:0;background:transparent;padding:4px 0;font-size:0.88rem;color:var(--primary);font-weight:700;display:inline-flex;align-items:center;gap:3px;min-height:auto;cursor:pointer;">‹ Sửa khẩu vị</button>
-        <button data-action="toggle-host-meal" type="button" style="border:0;background:var(--soft);padding:4px 8px;font-size:0.78rem;color:var(--primary);font-weight:750;text-transform:uppercase;cursor:pointer;border-radius:8px;" title="Host chạm để đổi buổi ăn">${meals[s.meal]} ▾</button>
+
+    h = `<div class="lobby-top-bar">
+        <button data-action="prefs" class="lobby-back-link" type="button">‹ Khẩu vị</button>
+        <button data-action="toggle-host-meal" class="lobby-meal-pill" type="button" title="Host chạm để đổi buổi ăn">
+          <span>${mealIcons[s.meal] || '🍽️'}</span>
+          <span>${meals[s.meal]} ▾</span>
+        </button>
       </div>
-      <div class="roomcode" style="margin:6px 0 16px;">
+
+      <div class="roomcode" style="margin:8px 0 16px;">
         <strong>123456</strong>
         <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin-top:6px;">
           <small style="color:var(--muted);font-weight:600;">3 / 8 thành viên</small>
@@ -2179,7 +3244,6 @@ function render() {
       <div class="member">
         <span class="avatar">${esc(s.name.charAt(0))}</span>
         <div class="details"><b>${esc(s.name)} (Bạn)</b></div>
-        <span class="ready">✓ Sẵn sàng</span>
       </div>
       ${['An', 'Linh'].map(n => `
         <div class="member">
@@ -2188,10 +3252,7 @@ function render() {
             <b>${n}</b>
             ${n === 'Linh' ? '<small style="display:block;color:var(--primary);font-weight:650;">👥 Bạn thân</small>' : ''}
           </div>
-          <div style="display:flex;align-items:center;gap:6px;">
-            ${n === 'An' && !s.friends.some(f => f.name === 'An') ? `<button data-action="add-member-friend" data-value="An" class="quiet small" type="button" style="padding:4px 8px;min-height:30px;font-size:0.75rem;border-radius:99px;">＋ Kết bạn</button>` : ''}
-            <span class="ready">✓ Sẵn sàng</span>
-          </div>
+          ${n === 'An' && !s.friends.some(f => f.name === 'An') ? `<button data-action="add-member-friend" data-value="An" class="quiet small" type="button" style="padding:4px 8px;min-height:30px;font-size:0.75rem;border-radius:99px;">＋ Kết bạn</button>` : ''}
         </div>`).join('')}
       ${notice()}
       <div style="margin-top:20px;display:flex;flex-direction:column;gap:8px;">
@@ -2207,6 +3268,19 @@ function render() {
   if (s.page === 'vote') {
     const d = dishes[s.index], count = Object.keys(s.votes).length;
     const nextDish = s.index < 7 ? dishes[s.index + 1] : null;
+
+    const userRestricted = [
+      ...(s.allergies || []),
+      ...(s.customAllergies || [])
+    ];
+    const dishAllergens = d.allergens || [];
+    const matchedAllergens = dishAllergens.filter(alg =>
+      userRestricted.some(r => {
+        const rLow = r.toLowerCase().trim();
+        const aLow = alg.toLowerCase().trim();
+        return rLow === aLow || aLow.includes(rLow) || rLow.includes(aLow);
+      })
+    );
 
     h = `<div class="screen-vote-clean">
       <div class="vote-topbar">
@@ -2229,13 +3303,33 @@ function render() {
 
           <div class="dish-info-box">
             <h2 class="dish-main-name">${esc(d.name)}</h2>
-            <span class="dish-category-tag">${esc(d.tags)}</span>
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+              <span class="dish-category-tag">${esc(d.tags)}</span>
+              <span class="dish-price-tag">🏷️ ${esc(d.price || '~40k - 60k')}</span>
+            </div>
+            ${matchedAllergens.length > 0 ? `
+              <div>
+                <span class="dish-allergy-alert" role="alert" title="Thành phần trùng với mục kiêng bạn đã đặt">
+                  <span>⚠️</span> Trùng kiêng của bạn: <b>${esc(matchedAllergens.join(', '))}</b>
+                </span>
+              </div>
+            ` : ''}
+            <div class="dish-venue-pill">
+              <span>🟢 ${esc(d.openStatus)}</span>
+            </div>
           </div>
         </div>
       </div>
 
       <div class="vote-bottom-bar-minimal">
         <button class="prev-only-btn" data-action="prev" ${s.index === 0 ? 'disabled' : ''}>← Quay lại món trước</button>
+      </div>
+
+      <!-- NÚT TRẢI NGHIỆM TRỰC TIẾP LUỒNG VÒNG 2 -->
+      <div style="margin-top:10px;text-align:center;">
+        <button data-action="demo-round2" type="button" style="border:0;background:transparent;color:var(--primary);font-size:0.76rem;font-weight:750;cursor:pointer;padding:4px 8px;display:inline-flex;align-items:center;gap:4px;">
+          ⚡ Thử tình huống: Chưa hợp ý V1 (Vào Vòng 2) ›
+        </button>
       </div>
 
       <div class="sr-only">
@@ -2250,12 +3344,62 @@ function render() {
   }
 
   if (s.page === 'final') {
-    h = `<div class="eyebrow" style="margin-bottom:4px;">VÒNG 2 · CHỌN LỌC THÊM</div>
-      <h2 style="margin-bottom:6px;">Vòng cuối cùng</h2>
-      <p class="lead" style="margin-bottom:14px;font-size:0.84rem;color:var(--muted);">Chưa có món cả nhóm cùng muốn. Còn ${s.eligible.length} món mọi người đều ăn được; hãy Giữ hoặc Loại thêm để chốt món.</p>
-      <div class="stack">${s.eligible.map(id => { const d = dishes.find(x => x.id === id); return `<div class="finalitem ${s.keep[id] ? '' : 'removed'}"><span class="food" aria-hidden="true">${d.emoji}</span><div class="details"><b>${d.name}</b></div><button data-action="keep" data-value="${id}" aria-pressed="${s.keep[id]}" aria-label="${s.keep[id] ? 'Giữ' : 'Đã loại'} ${d.name}">${s.keep[id] ? '✓ Giữ' : '× Đã loại'}</button></div>`; }).join('')}</div>
+    if (!s.eligible || !s.eligible.length) {
+      s.eligible = ['pho', 'com', 'bun'];
+      s.keep = { pho: true, com: true, bun: true };
+    }
+    const keptCount = s.eligible.filter(id => s.keep[id]).length;
+
+    h = `<div style="margin-bottom:8px;"><button data-action="vote" style="border:0;background:transparent;padding:4px 0;font-size:0.86rem;color:var(--muted);font-weight:600;display:inline-flex;align-items:center;gap:3px;min-height:auto;cursor:pointer;">‹ Vòng 1</button></div>
+      <div class="final-banner">
+        <div class="final-banner-title">
+          <span>⚡ VÒNG 2 · CHỌN LỌC</span>
+        </div>
+        <p class="final-banner-desc">
+          Các món cả nhóm cùng ăn được. Chọn <b>Giữ</b> hoặc <b>Loại</b> để chốt.
+        </p>
+      </div>
+
+      <div class="final-status-bar">
+        <span>Danh sách chọn lọc</span>
+        <span style="color:${keptCount > 0 ? 'var(--green)' : 'var(--danger)'};">Đang giữ: <b>${keptCount}/${s.eligible.length}</b> món</span>
+      </div>
+
+      <div class="stack" style="gap:10px;">
+        ${s.eligible.map(id => {
+          const d = dishes.find(x => x.id === id) || dishes[0];
+          const isKept = !!s.keep[id];
+          const userRestricted = [
+            ...(s.allergies || []),
+            ...(s.customAllergies || [])
+          ];
+          const dAllergens = (d.allergens || []).filter(alg =>
+            userRestricted.some(r => {
+              const rLow = r.toLowerCase().trim();
+              const aLow = alg.toLowerCase().trim();
+              return rLow === aLow || aLow.includes(rLow) || rLow.includes(aLow);
+            })
+          );
+          return `<div class="finalitem ${isKept ? 'kept' : 'removed'}">
+            <div class="food-wrap" aria-hidden="true">${d.emoji}</div>
+            <div class="details">
+              <b>${esc(d.name)}</b>
+              <div class="meta">
+                <span>🟢 ${esc(d.openStatus)}</span>
+                <span>•</span>
+                <span>🏷️ ${esc(d.price)}</span>
+                ${dAllergens.length ? `<span style="color:#d97706;font-weight:750;">• ⚠️ Trùng kiêng</span>` : ''}
+              </div>
+            </div>
+            <button class="finalitem-btn ${isKept ? 'kept' : 'removed'}" data-action="keep" data-value="${id}" aria-pressed="${isKept}">
+              ${isKept ? '✓ Giữ' : '✕ Đã loại'}
+            </button>
+          </div>`;
+        }).join('')}
+      </div>
+
       ${notice()}<div class="spacer"></div>
-      ${btn('Xác nhận lựa chọn →', 'finish', 'primary full')}`;
+      ${btn(keptCount > 0 ? 'Chốt món thắng →' : 'Phải giữ ít nhất 1 món', 'finish', keptCount > 0 ? 'primary full' : 'quiet full', keptCount === 0 ? 'disabled' : '')}`;
   }
 
   if (s.page === 'waiting') {
@@ -2279,17 +3423,29 @@ function render() {
   }
 
   if (s.page === 'result') {
-    const d = dishes.find(x => x.id === s.winner);
+    const d = dishes.find(x => x.id === s.winner) || dishes[0];
     const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(d.name + ' gần đây')}`;
     const tiktokUrl = `https://www.tiktok.com/search?q=${encodeURIComponent('review quán ' + d.name + ' hot')}`;
     const ytUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent('review quán ' + d.name + ' hot')}`;
     const isFriendAn = s.friends.some(f => f.name === 'An');
+    const tier = s.matchTier || 'CONSENSUS';
+    const tierLabels = {
+      PERFECT: '🌟 Đồng thuận tuyệt đối',
+      CONSENSUS: '🤝 Đồng thuận cao',
+      COMPROMISE: '⚖️ Thỏa hiệp tốt nhất'
+    };
 
     h = `<div class="result">
-      <div class="eyebrow" style="margin-bottom:4px;">KẾT QUẢ CHUNG</div>
-      <h2 style="margin-bottom:6px;">Hôm nay ăn<br>${d.name}!</h2>
-      <p style="margin:0 auto 12px;font-size:0.86rem;color:var(--muted);max-width:320px;line-height:1.35;font-weight:600;">${esc(s.reason || 'Cả nhóm đã thống nhất lựa chọn món này.')}</p>
+      <div class="match-tier-badge ${tier.toLowerCase()}">${tierLabels[tier] || '🤝 Đồng thuận'}</div>
+      <h2 style="margin:4px 0 8px;">Hôm nay ăn<br>${d.name}!</h2>
       <div class="result-icon" aria-hidden="true">${d.emoji}</div>
+
+      <!-- TRẠNG THÁI PHỤC VỤ (KHÔNG CỐ ĐỊNH 1 QUÁN HAY KHOẢNG CÁCH) -->
+      <div class="result-venue-card" style="text-align:center;padding:10px 14px;">
+        <span style="font-size:0.82rem;font-weight:700;color:var(--green);">🟢 Đang trong giờ phục vụ (${esc(d.openStatus)})</span>
+        <span style="color:var(--line);margin:0 6px;">•</span>
+        <span style="font-size:0.82rem;font-weight:700;color:var(--primary);">🏷️ ${esc(d.price)}</span>
+      </div>
 
       <!-- 3 NÚT HÀNH ĐỘNG BẰNG NHAU (MAPS, TIKTOK, YOUTUBE) -->
       <div class="place-actions-3grid">
@@ -2362,8 +3518,9 @@ function render() {
     s.activeRoom = false;
     h = `<div class="result">
       <div class="result-icon" aria-hidden="true">🥢</div>
-      <h2 style="margin-bottom:8px;">Chưa chọn được món</h2>
-      <p style="margin:0 auto 16px;font-size:0.86rem;color:var(--muted);max-width:320px;line-height:1.4;">Hiện chưa có món mọi người cùng ăn được. Bạn có thể kết thúc hoặc tạo một phiên mới với lựa chọn khác.</p>
+      <div class="match-tier-badge no-consensus">❌ Chưa có tiếng nói chung</div>
+      <h2 style="margin:4px 0 8px;">Chưa chọn được món</h2>
+      <p style="margin:0 auto 16px;font-size:0.84rem;color:var(--muted);max-width:320px;line-height:1.4;">Chưa tìm thấy món giao nhau giữa các thành viên. Phiếu của từng bạn được bảo mật tuyệt đối.</p>
       <div class="stack" style="margin-top:20px;">
         ${btn('Tạo phiên mới', 'new', 'primary full')}
         ${btn('Về trang chủ', 'home', 'quiet full')}
@@ -2371,8 +3528,116 @@ function render() {
     </div>`;
   }
 
+  if (s.page === 'inbox') {
+    h = `<div style="margin-bottom:8px;"><button data-action="home" style="border:0;background:transparent;padding:4px 0;font-size:0.86rem;color:var(--muted);font-weight:600;display:inline-flex;align-items:center;gap:3px;min-height:auto;cursor:pointer;">‹ Trang chủ</button></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <h2 style="margin:0;">Thông báo</h2>
+        <span style="font-size:0.78rem;color:var(--muted);font-weight:700;">${s.inbox.length} tin</span>
+      </div>
+
+      <div class="inbox-list">
+        ${s.inbox.length ? s.inbox.map(item => {
+          if (item.status === 'pending') {
+            return `<div class="inbox-card unread">
+              <div class="inbox-card-top">
+                <div class="inbox-user-meta">
+                  <div class="inbox-icon-wrap">${esc(item.avatar || 'L')}</div>
+                  <div class="inbox-meta-text">
+                    <b>${esc(item.from)} rủ bạn ăn ${esc(item.meal)}</b>
+                    <small>${esc(item.date)}</small>
+                  </div>
+                </div>
+              </div>
+              <div class="inbox-card-actions">
+                <button class="btn-inbox-reject" data-action="reject-room-invite" data-value="${esc(item.id)}" type="button" title="Từ chối lời mời">
+                  ✕ Bỏ qua
+                </button>
+                <button class="btn-inbox-accept" data-action="accept-room-invite" data-value="${esc(item.roomCode)}" type="button" title="Tham gia phòng ăn">
+                  ✓ Vào kèo ngay
+                </button>
+              </div>
+            </div>`;
+          } else {
+            return `<div class="inbox-card">
+              <div class="inbox-card-top">
+                <div class="inbox-user-meta">
+                  <div class="inbox-icon-wrap">${item.emoji || '🍜'}</div>
+                  <div class="inbox-meta-text">
+                    <b>Đã chốt ${esc(item.dish)}</b>
+                    <small>${esc(item.date)} · ${item.matchTier === 'PERFECT' ? '🌟 Đồng thuận tuyệt đối' : '🤝 Đồng thuận'}</small>
+                  </div>
+                </div>
+              </div>
+            </div>`;
+          }
+        }).join('') : '<p style="font-size:0.82rem;color:var(--muted);text-align:center;padding:24px 0;">Không có thông báo nào.</p>'}
+      </div>
+
+      <div style="display:flex;justify-content:center;margin-top:16px;">
+        <button data-action="history" type="button" style="border:0;background:transparent;color:var(--muted);font-size:0.78rem;font-weight:700;display:inline-flex;align-items:center;gap:4px;cursor:pointer;padding:8px 12px;min-height:auto;">
+          <span>📜 Xem lịch sử các bữa ăn đã chốt ›</span>
+        </button>
+      </div>`;
+  }
+
+  if (s.page === 'history') {
+    h = `<div style="margin-bottom:8px;"><button data-action="inbox" style="border:0;background:transparent;padding:4px 0;font-size:0.86rem;color:var(--muted);font-weight:600;display:inline-flex;align-items:center;gap:3px;min-height:auto;cursor:pointer;">‹ Thông báo</button></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <h2 style="margin:0;">Lịch sử ăn uống</h2>
+        ${s.mealHistory.length ? `<button data-action="clear-history" type="button" style="border:0;background:transparent;color:var(--danger);font-size:0.75rem;font-weight:700;padding:2px;min-height:auto;cursor:pointer;">🗑️ Xóa hết</button>` : ''}
+      </div>
+
+      <!-- CONSENT LƯU 30 NGÀY (BẢO VỆ DỮ LIỆU CÁ NHÂN) -->
+      <div class="history-consent-box">
+        <div>
+          <b style="font-size:0.8rem;display:block;">Lưu lịch sử 30 ngày</b>
+          <small style="color:var(--muted);font-size:0.72rem;">Chỉ lưu thiết bị để loại trừ món đã ăn gần đây</small>
+        </div>
+        <input type="checkbox" id="history-consent-toggle" ${s.historyConsent ? 'checked' : ''} data-action="toggle-history-consent" style="width:18px;height:18px;accent-color:var(--primary);cursor:pointer;">
+      </div>
+
+      <div class="inbox-list">
+        ${s.mealHistory.length ? s.mealHistory.map(m => `
+          <div class="inbox-card">
+            <div class="inbox-card-top">
+              <div class="inbox-user-meta">
+                <span style="font-size:28px;">${m.emoji}</span>
+                <div>
+                  <b>${esc(m.dish)}</b>
+                  <span class="match-tier-badge ${(m.matchTier || 'CONSENSUS').toLowerCase()}" style="margin:2px 0 4px;font-size:0.65rem;padding:2px 6px;">
+                    ${m.matchTier === 'PERFECT' ? '🌟 Tuyệt đối' : '🤝 Đồng thuận'}
+                  </span>
+                  <small style="display:block;color:var(--muted);font-size:0.72rem;">${esc(m.meal)} · ${esc(m.date)} (với ${esc(m.with)})</small>
+                </div>
+              </div>
+              <button class="primary small" data-action="quick-room" data-value="linh" type="button" style="padding:6px 12px;min-height:34px;font-size:0.76rem;">Ăn lại</button>
+            </div>
+          </div>
+        `).join('') : '<p style="font-size:0.82rem;color:var(--muted);text-align:center;padding:20px 0;">Chưa có lịch sử bữa ăn nào được ghi lại.</p>'}
+      </div>
+
+      <div class="spacer"></div>
+      ${btn('‹ Về trang chủ', 'home', 'quiet full')}`;
+  }
+
   document.querySelector('#screen').innerHTML = h;
   document.querySelector('#live').textContent = s.notice;
+  const switcher = document.querySelector('#screen-switcher');
+  if (switcher && switcher.value !== s.page) switcher.value = s.page;
+  const dot = document.querySelector('#inbox-dot');
+  if (dot && dot.style) dot.style.display = (s.inbox && s.inbox.some(i => i.status === 'pending')) ? 'block' : 'none';
+  const friendBadge = document.querySelector('#friends-badge');
+  if (friendBadge) {
+    const count = s.friendRequests ? s.friendRequests.length : 0;
+    if (count > 0) {
+      friendBadge.textContent = count;
+      friendBadge.style.display = 'flex';
+    } else {
+      friendBadge.style.display = 'none';
+    }
+  }
+  const userAv = document.querySelector('#header-user-avatar');
+  if (userAv) userAv.textContent = s.avatar || (s.name ? s.name[0] : 'M');
   if (s.page === 'vote') bindCardGestures();
 }
 
@@ -2380,8 +3645,8 @@ function bindCardGestures() {
   const card = document.querySelector('.flashcard-clean');
   if (!card) return;
   let startX = 0, startY = 0, curX = 0, curY = 0, isDrag = false, lastTap = 0;
-  const stampNo = card.querySelector('.stamp-no');
-  const stampOk = card.querySelector('.stamp-ok');
+  const stampNo = card.querySelector ? card.querySelector('.stamp-no') : null;
+  const stampOk = card.querySelector ? card.querySelector('.stamp-ok') : null;
 
   function startDrag(x, y) {
     isDrag = true; startX = x; startY = y; curX = x; curY = y;
@@ -2491,22 +3756,38 @@ function submit() {
   if (!networkGuard() || Object.keys(s.votes).length !== 8) return;
   if (s.scenario === 'waiting') { go('waiting'); return; }
   const matched = dishes.filter(d => s.votes[d.id] === 'WANT' && s.scenario === 'happy' && d.id === 'pho');
-  if (matched.length) { s.winner = matched[0].id; s.reason = 'Cả nhóm cùng muốn ăn món này.'; go('result'); return; }
+  if (matched.length) {
+    s.winner = matched[0].id;
+    s.matchTier = 'PERFECT';
+    s.reason = 'Cả nhóm cùng muốn ăn món này (100% đồng thuận).';
+    go('result');
+    return;
+  }
   s.eligible = dishes.filter(d => s.votes[d.id] !== 'NO' && s.scenario !== 'empty').map(d => d.id);
-  if (!s.eligible.length) { go('empty'); return; }
+  if (!s.eligible.length) {
+    s.matchTier = 'NO_CONSENSUS';
+    go('empty');
+    return;
+  }
   s.keep = Object.fromEntries(s.eligible.map(id => [id, true]));
+  showToast('⚡ Vòng 1 chưa hợp ý: Có ' + s.eligible.length + ' món ăn được -> Vào Vòng 2!');
   go('final');
 }
 
 function finish() {
   if (!networkGuard()) return;
   const remain = s.eligible.filter(id => s.keep[id]);
-  if (!remain.length) { go('empty'); return; }
+  if (!remain.length) {
+    s.matchTier = 'NO_CONSENSUS';
+    go('empty');
+    return;
+  }
   const score = id => (s.votes[id] === 'WANT' ? 1 : 0) + (s.scenario === 'happy' && id === 'pho' ? 2 : 0);
   const max = Math.max(...remain.map(score));
   const candidates = remain.filter(id => score(id) === max);
   s.winner = candidates[Math.floor(Math.random() * candidates.length)];
-  s.reason = 'Mọi người đều giữ món này ở vòng cuối. Ưu tiên mức muốn ăn; nếu hòa, chọn một lần.';
+  s.matchTier = max > 1 ? 'CONSENSUS' : 'COMPROMISE';
+  s.reason = s.matchTier === 'CONSENSUS' ? 'Mọi người đều ăn được món này sau 2 vòng.' : 'Thỏa hiệp tốt nhất từ danh sách món không ai từ chối.';
   go('result');
 }
 
@@ -2522,6 +3803,9 @@ document.addEventListener('input', e => {
       const len = input.value.length;
       input.setSelectionRange(len, len);
     }
+  }
+  if (e.target.id === 'custom-time-input') {
+    s.customTime = e.target.value;
   }
   if (e.target.id === 'code') {
     s.code = e.target.value;
@@ -2557,6 +3841,19 @@ document.addEventListener('keydown', e => {
       render();
     }
   }
+  if (e.key === 'Enter' && e.target.id === 'custom-allergy-input') {
+    const val = (e.target.value || '').trim();
+    if (val) {
+      if (!s.customAllergies) s.customAllergies = [];
+      if (!s.customAllergies.includes(val)) {
+        s.customAllergies.push(val);
+        showToast(`✓ Đã thêm kiêng kỵ: ${val}`);
+      } else {
+        showToast(`"${val}" đã có trong danh sách.`);
+      }
+      render();
+    }
+  }
 });
 
 document.querySelector('#scenario').addEventListener('change', e => {
@@ -2565,6 +3862,26 @@ document.querySelector('#scenario').addEventListener('change', e => {
   s.scenario = v;
   render();
 });
+
+const screenSwitcher = document.querySelector('#screen-switcher');
+if (screenSwitcher) {
+  screenSwitcher.addEventListener('change', e => {
+    const p = e.target.value;
+    if (['vote', 'final'].includes(p)) s.index = 0;
+    if (p === 'lobby') s.role = 'host';
+    if (p === 'final') {
+      if (!s.eligible || !s.eligible.length) {
+        s.eligible = ['pho', 'com', 'bun'];
+        s.keep = { pho: true, com: true, bun: true };
+      }
+    }
+    if (p === 'result') {
+      s.winner = s.winner || 'pho';
+      s.matchTier = s.matchTier || 'PERFECT';
+    }
+    go(p);
+  });
+}
 
 // Toggle review drawer
 const reviewToggle = document.querySelector('#review-toggle');
@@ -2586,6 +3903,62 @@ document.addEventListener('click', e => {
     return;
   }
   if (a === 'reset') { reset(); return; }
+  if (a === 'demo-round2') {
+    s.scenario = 'fallback';
+    s.eligible = ['pho', 'com', 'bun'];
+    s.keep = { pho: true, com: true, bun: true };
+    s.votes = { pho: 'OK', com: 'OK', bun: 'OK', lau: 'NO', nuong: 'NO', banhmi: 'NO', sushi: 'NO', pizza: 'NO' };
+    showToast('⚡ Vòng 1 chưa hợp ý: Có 3 món ăn được -> Vào Vòng 2!');
+    go('final');
+    return;
+  }
+  if (a === 'inbox') { go('inbox'); return; }
+  if (a === 'history') { go('history'); return; }
+  if (a === 'set-anchor') {
+    s.anchor = v;
+    const aObj = publicAnchors.find(x => x.id === v);
+    showToast(`📍 Điểm hẹn: ${aObj ? aObj.name : v}`);
+    render();
+    return;
+  }
+  if (a === 'set-radius') {
+    s.radius = Number(v);
+    showToast(`Bán kính tìm kiếm: ${v}km`);
+    render();
+    return;
+  }
+  if (a === 'set-time-mode') {
+    s.timeMode = v;
+    showToast(v === 'now' ? '⚡ Thời điểm ăn: Ăn ngay (+15p đệm)' : '⏰ Thời điểm ăn: Đặt giờ hẹn cụ thể');
+    render();
+    return;
+  }
+  if (a === 'toggle-avoid-recent') {
+    s.avoidRecent = !s.avoidRecent;
+    showToast(s.avoidRecent ? '✓ Đã bật: Tránh lặp món 3 bữa gần đây' : 'Đã tắt tránh lặp món');
+    render();
+    return;
+  }
+  if (a === 'toggle-history-consent') {
+    s.historyConsent = !s.historyConsent;
+    showToast(s.historyConsent ? '✓ Đã đồng ý lưu lịch sử 30 ngày' : 'Đã tắt lưu lịch sử');
+    render();
+    return;
+  }
+  if (a === 'accept-room-invite') {
+    s.code = v || '889922';
+    s.role = 'member';
+    s.activeRoom = true;
+    showToast(`✓ Đã vào phòng #${s.code}!`);
+    go('lobby');
+    return;
+  }
+  if (a === 'reject-room-invite') {
+    s.inbox = s.inbox.filter(x => x.id !== v);
+    showToast('Đã bỏ qua lời mời phòng.');
+    render();
+    return;
+  }
   if (a === 'expire') { go('expired'); return; }
   if (a === 'mocksubmit') {
     if (s.page === 'waiting') { s.scenario = 'fallback'; submit(); }
@@ -2657,6 +4030,76 @@ document.addEventListener('click', e => {
     go('friends');
     return;
   }
+  if (a === 'settings') {
+    go('settings');
+    return;
+  }
+  if (a === 'pick-avatar') {
+    s.avatar = v;
+    render();
+    return;
+  }
+  if (a === 'toggle-allergy') {
+    if (!s.allergies) s.allergies = [];
+    if (s.allergies.includes(v)) {
+      s.allergies = s.allergies.filter(x => x !== v);
+    } else {
+      s.allergies.push(v);
+    }
+    render();
+    return;
+  }
+
+  if (a === 'add-custom-allergy') {
+    const inp = document.querySelector('#custom-allergy-input');
+    const txt = (inp && inp.value ? inp.value.trim() : '');
+    if (txt) {
+      if (!s.customAllergies) s.customAllergies = [];
+      if (!s.customAllergies.includes(txt)) {
+        s.customAllergies.push(txt);
+        showToast(`✓ Đã thêm kiêng kỵ: ${txt}`);
+      } else {
+        showToast(`"${txt}" đã có trong danh sách.`);
+      }
+      render();
+    }
+    return;
+  }
+  if (a === 'remove-custom-allergy') {
+    if (s.customAllergies) {
+      s.customAllergies = s.customAllergies.filter(x => x !== v);
+      showToast(`Đã gỡ kiêng kỵ: ${v}`);
+      render();
+    }
+    return;
+  }
+  if (a === 'toggle-diet-pref') {
+    if (!s.dietPrefs) s.dietPrefs = [];
+    if (s.dietPrefs.includes(v)) {
+      s.dietPrefs = s.dietPrefs.filter(x => x !== v);
+    } else {
+      s.dietPrefs.push(v);
+    }
+    render();
+    return;
+  }
+  if (a === 'copy-id') {
+    showToast(`✓ Đã sao chép mã ID: #${s.userId || 'MINH-8899'}`);
+    return;
+  }
+  if (a === 'save-profile') {
+    const nameInp = document.querySelector('#profile-name-input');
+    const bioInp = document.querySelector('#profile-bio-input');
+    if (nameInp && nameInp.value.trim()) {
+      s.name = nameInp.value.trim();
+    }
+    if (bioInp) {
+      s.bio = bioInp.value.trim();
+    }
+    showToast('✓ Đã cập nhật hồ sơ cá nhân thành công!');
+    render();
+    return;
+  }
   if (a === 'accept-friend') {
     const req = s.friendRequests.find(r => r.id === v);
     if (req) {
@@ -2681,6 +4124,18 @@ document.addEventListener('click', e => {
     s.notice = '';
     render();
     showToast(`⚡ Đã tạo kèo nhanh và gửi lời mời đến ${f ? f.name : 'bạn'}!`);
+    return;
+  }
+  if (a === 'ping-friend') {
+    const f = s.friends.find(x => x.id === v);
+    showToast(`🔔 Đã gửi thông báo rủ ${f ? f.name : 'bạn'} đi ăn!`);
+    return;
+  }
+  if (a === 'remove-friend') {
+    const f = s.friends.find(x => x.id === v);
+    s.friends = s.friends.filter(x => x.id !== v);
+    showToast(`Đã xóa ${f ? f.name : ''} khỏi danh sách bạn bè.`);
+    render();
     return;
   }
   if (a === 'send-friend-req-search' || a === 'send-friend-req') {
