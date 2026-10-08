@@ -1,6 +1,6 @@
 # Cấu trúc React Native / Expo
 
-Đây là cấu trúc nguồn đề xuất, chưa có package/config/build native. Các thư mục rỗng có `.gitkeep` để nhóm thấy ranh giới; GM-02 tạo file ứng dụng sau review, không coi placeholders là tính năng.
+Đây là cấu trúc nguồn đề xuất. Trên sanbox đã có package/config/runner và feature bootstrap GM-02 theo yêu cầu tiếp tục của chủ dự án; chưa có APK hoặc app tính năng/backend. Start/merge review vẫn Pending; [báo cáo GM-02](../evidence/roadmap-v1/GM-02/REPORT.md). Các thư mục rỗng có `.gitkeep` để nhóm thấy ranh giới, không là tính năng.
 
 ```text
 mobile/
@@ -35,21 +35,23 @@ tests/
 
 Mỗi feature triển khai dùng `screens/`, `components/`, `hooks/`, `services/`, `types.ts`, `index.ts` khi thực sự cần; không tạo mọi tầng cho một file đơn giản. Chỉ feature public API được import ra ngoài. Domain không import React hoặc SDK. Supabase adapter không chứa JSX.
 
-## Route dự kiến (GM-02 sẽ tạo)
+## Routes
+
+GM-02 chỉ tạo `_layout.tsx`, `index.tsx`, `join.tsx`, `+native-intent.tsx` cho spike. `features/bootstrap` có screens/components/services; `domain/bootstrap` có parser thử nghiệm thuần TypeScript. Routes sản phẩm bên dưới thuộc task feature tương ứng, chưa tạo placeholders giả chạy.
 
 `src/app/_layout.tsx`, `index.tsx`, `room/create.tsx`, `room/join.tsx`, `room/[id]/preferences.tsx`, `room/[id]/lobby.tsx`, `room/[id]/vote.tsx`, `room/[id]/final-round.tsx`, `room/[id]/result.tsx`, `partners/index.tsx` `history/index.tsx` và `notifications/index.tsx` (P0); account/recovery (P1).
 
 Route chỉ parse params/guard và render feature screen. ID trên URL không cấp quyền. Android Back trong phòng theo ROOM_SPEC, không cho back sửa phiếu đã nộp.
 
-## Config sẽ bổ sung ở bootstrap
+## Config bootstrap
 
-`mobile/package.json`, một lockfile, `app.config.ts`, `tsconfig.json`, lint/test config, `.env.example`, `expo-env.d.ts`. Không để config placeholder giả chạy. `android/ios` theo chiến lược Expo prebuild quyết định ở GM-02; không commit build artifacts. Supabase config/migration đầu ở GM-05.
+GM-02 đã bổ sung `mobile/package.json`, package-lock.json, `app.config.ts`, `tsconfig.json`, lint/test config và `.env.example`. Expo CLI quản lý expo-env.d.ts theo cấu hình typed routes; file generated được ignore. CNG sinh android/ios từ config/lockfile và ignore native generated; không commit build artifacts. Supabase config/migration đầu ở GM-05.
 
 Nguồn cũ nằm trong lịch sử Git (commit `6086c16`); `docs/decision/` cũ đã được gỡ trong lần chuyển đề tài, không là nguồn hiện hành.
 
 ## Phạm vi v0.2
 
-features/notifications dự kiến chứa inbox/permission/token/navigation; data/local chứa SQLite draft/cache/outbox/history, data/supabase chứa RPC/realtime adapters. trusted push sender dự kiến supabase/functions, dùng secrets server. Chỉ là sơ đồ, chưa có packages hoặc file triển khai. [Spec index](../specs/README.md).
+features/notifications dự kiến chứa inbox/permission/token/navigation; data/local chứa SQLite draft/cache/outbox/history, data/supabase chứa RPC/realtime adapters. trusted push sender dự kiến supabase/functions, dùng secrets server. Các feature này chưa triển khai; GM-02 chỉ có spike SQLite counter và local notification riêng. [Spec index](../specs/README.md).
 
 ## Food-v1
 

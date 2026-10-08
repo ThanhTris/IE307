@@ -1,0 +1,5 @@
+# Continuous Native Generation: regenerate from app.config.ts and lockfile.
+/android/
+/ios/
+# Managed by Expo CLI when typed routes/environment declarations are enabled.
+/expo-env.d.ts

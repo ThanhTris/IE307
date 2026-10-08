@@ -2,7 +2,7 @@
 
 Ứng dụng Android React Native giúp nhóm 2–8 người chọn món thỏa hiệp có giải thích trong tối đa hai vòng, với bộ món có nơi bán phù hợp khu vực/giờ ăn, rồi xem quán/review. Card có ba nút; chạm hai lần chọn Muốn ăn. NO luôn loại món, server chốt kết quả một lần.
 
-Baseline food-v1 • workflow cập nhật 2026-10-08. GM-00 đã review v0.2; GM-01 đang review scope mới. Repo có spec/task/prototype/skeleton, chưa app/backend. Hai gate: đủ start deps thì viết phần độc lập trên nhánh riêng; đủ merge deps và tích hợp thật mới merge.
+Baseline food-v1 • workflow cập nhật 2026-10-08. GM-00 đã review v0.2; GM-01 đang review scope mới. Repo có spec/task/prototype và bản nháp bootstrap GM-02 trên sanbox theo yêu cầu tiếp tục của chủ dự án; chưa có app tính năng/backend hoặc APK đã build. Hai gate vẫn giữ nguyên cho review/merge. Xem [test GM-02](docs/evidence/roadmap-v1/GM-02/USER_TEST.md) và [báo cáo](docs/evidence/roadmap-v1/GM-02/REPORT.md).
 
 ## Đọc để hiểu dự án
 
@@ -17,7 +17,7 @@ Task đã đánh số theo lộ trình GM-01 → GM-31; dependency chỉ trỏ s
 Core có guest/QR/link, friends/push, realtime/outbox/history, taxonomy món, data quán–món–lịch bán/coverage và lọc trước khi vote. Account P1; OCR/AI/weather–mood P2. Owner/reviewer đề xuất, thành viên tự nhận/đổi; không tự coi task Done. [GitHub mapping](docs/project/GITHUB_TASKS.md) ghi riêng phần chưa đồng bộ.
 
 ```text
-mobile/       Expo Router/features/domain/adapters (skeleton)
+mobile/       Expo Router và spike GM-02; features/domain/adapters nền
 supabase/     migrations/RPC/RLS/tests/trusted sender dự kiến
 docs/         mô tả/PRD/spec/ADR/plan/test/evidence
 tasks/        GM-00 done, GM-01 review, task triển khai backlog

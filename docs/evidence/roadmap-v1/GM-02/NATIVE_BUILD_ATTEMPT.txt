@@ -1,0 +1,12 @@
+2026-10-08 / Windows / Node 24.15.0 / npm 11.12.1 / JDK 17.0.12
+Command: npm run android -- --no-install
+Exit: 1
+
+Failed to resolve the Android SDK path. Default install location not found: C:\Users\ADMIN\AppData\Local\Android\Sdk. Use ANDROID_HOME to set the Android SDK location.
+Error: 'adb' is not recognized as an internal or external command,
+operable program or batch file.
+
+These are selected actual error lines; duplicate lines and stack trace omitted.
+ANDROID_HOME/ANDROID_SDK_ROOT unset; adb not found on PATH.
+No successful Gradle build, APK install, device smoke, FCM or remote push evidence.
+Prebuild succeeded separately; it does not prove an Android build.

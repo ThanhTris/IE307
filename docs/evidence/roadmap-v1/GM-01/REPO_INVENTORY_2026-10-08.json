@@ -1,0 +1,960 @@
+{
+  "date": "2026-10-08",
+  "base_ref": "main (local)",
+  "base_commit": "1b9e156c22f33f2965286cb1cc9685702811516f",
+  "scope": "Tracked baseline files only; Git blob IDs describe the base commit. Working files were read for inventory; this is not visual/native/backend verification. New audit files are excluded.",
+  "counts": {
+    "text": 152,
+    "image": 6
+  },
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "base_blob": "adaa6a934750cf66530340fca0dc866c9554558a",
+      "base_bytes": 213,
+      "category": "text"
+    },
+    {
+      "path": ".env.example",
+      "base_blob": "cf9ff87bc5a5a8df138a890c4bbf606f47865596",
+      "base_bytes": 123,
+      "category": "text"
+    },
+    {
+      "path": ".gitattributes",
+      "base_blob": "69cc80ca146dbf8bc5e9dc19b1939c3fbd55c2b1",
+      "base_bytes": 24,
+      "category": "text"
+    },
+    {
+      "path": ".githooks/pre-push",
+      "base_blob": "03d3d1e1d2ac13d43dbf5d1422ea6420f84d7bbd",
+      "base_bytes": 546,
+      "category": "text"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/task.yml",
+      "base_blob": "490a37a5281cac6a1c40d1c82022833cb67a015a",
+      "base_bytes": 2222,
+      "category": "text"
+    },
+    {
+      "path": ".github/pull_request_template.md",
+      "base_blob": "ca34acfae0bcc3aa41ed3d7a46b164971e772d82",
+      "base_bytes": 3104,
+      "category": "text"
+    },
+    {
+      "path": ".github/workflows/documents.yml",
+      "base_blob": "397f4e659cde3f8fb5e10917a794cf6cce544d44",
+      "base_bytes": 429,
+      "category": "text"
+    },
+    {
+      "path": ".gitignore",
+      "base_blob": "b43a4a3ca202c84627166eb0ed6f9d0fc66218a7",
+      "base_bytes": 737,
+      "category": "text"
+    },
+    {
+      "path": "AGENTS.md",
+      "base_blob": "f64292b63d747541d23d7ef1207ddf13560bb9fa",
+      "base_bytes": 4160,
+      "category": "text"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "base_blob": "c3fde3d73a36f8a9d1e95e7576cf28844d8f73a4",
+      "base_bytes": 1143,
+      "category": "text"
+    },
+    {
+      "path": "README.md",
+      "base_blob": "7caf5f52fcc822481cbbbc5cf18a502756ae954b",
+      "base_bytes": 3455,
+      "category": "text"
+    },
+    {
+      "path": "design/DESIGN_SYSTEM.md",
+      "base_blob": "4642846a09d5a7b746f90ebcdd8eb1b65493c4c4",
+      "base_bytes": 1559,
+      "category": "text"
+    },
+    {
+      "path": "design/assets/logo-concept-1.jpg",
+      "base_blob": "6a1c2bf8339d48c7eaf9bade786d3aea2d983c3c",
+      "base_bytes": 427843,
+      "category": "image"
+    },
+    {
+      "path": "design/assets/logo-concept-2.jpg",
+      "base_blob": "fb221d9c6d941667d722844f734b4c3c85e48776",
+      "base_bytes": 382378,
+      "category": "image"
+    },
+    {
+      "path": "design/prototypes/UI-IMPLEMENTATION-NOTES.md",
+      "base_blob": "3061d1912fb3c56445b05d551131aaf6645b9504",
+      "base_bytes": 1557,
+      "category": "text"
+    },
+    {
+      "path": "design/prototypes/gi-cung-duoc.html",
+      "base_blob": "ef82bec003f706be349ea0f9c825b9aa54f7e75c",
+      "base_bytes": 140694,
+      "category": "text"
+    },
+    {
+      "path": "docs/ai/README.md",
+      "base_blob": "d35a0b465b859b08ac0ebcfc5be258b029919c97",
+      "base_bytes": 455,
+      "category": "text"
+    },
+    {
+      "path": "docs/ai/TASK_PROMPT_TEMPLATE.md",
+      "base_blob": "fb72c7d45f222a1d5d43a4f49fa8352c4e4ef7d4",
+      "base_bytes": 1067,
+      "category": "text"
+    },
+    {
+      "path": "docs/architecture/API_CONTRACT.md",
+      "base_blob": "baf09fae3307ba35212d99cc414157fc696ba071",
+      "base_bytes": 5341,
+      "category": "text"
+    },
+    {
+      "path": "docs/architecture/DATA_MODEL.md",
+      "base_blob": "51d65677e4e0bffce49a0b9b54bcb530840cbaff",
+      "base_bytes": 4545,
+      "category": "text"
+    },
+    {
+      "path": "docs/architecture/SYSTEM_ARCHITECTURE.md",
+      "base_blob": "ea17996aaae31fb642c7751c018355b99a6f3390",
+      "base_bytes": 2080,
+      "category": "text"
+    },
+    {
+      "path": "docs/architecture/decisions/ADR-001-stack.md",
+      "base_blob": "056e56d2bea042d11da4644ced0d0466a4a5e39e",
+      "base_bytes": 1056,
+      "category": "text"
+    },
+    {
+      "path": "docs/architecture/decisions/ADR-002-decision-policy.md",
+      "base_blob": "a9dbb8b9be14658279339c01ba6d7e27e4656d38",
+      "base_bytes": 762,
+      "category": "text"
+    },
+    {
+      "path": "docs/architecture/decisions/ADR-003-location-external-discovery.md",
+      "base_blob": "9b7b95acbc4d5fdec110de4341afa23cc8745ede",
+      "base_bytes": 2607,
+      "category": "text"
+    },
+    {
+      "path": "docs/architecture/decisions/ADR-004-mobile-consensus-improvement.md",
+      "base_blob": "7ba3193c705edcab39ca92857f6a1cc85588589a",
+      "base_bytes": 2485,
+      "category": "text"
+    },
+    {
+      "path": "docs/architecture/decisions/ADR-005-food-location-time-data.md",
+      "base_blob": "faa4a91d2c86c91d16c8cbe1feec0af1975fa350",
+      "base_bytes": 4615,
+      "category": "text"
+    },
+    {
+      "path": "docs/architecture/decisions/ADR-006-parallel-start-ordered-merge.md",
+      "base_blob": "a2abe01d0bf4b36bfe221649de5910914776821d",
+      "base_bytes": 3262,
+      "category": "text"
+    },
+    {
+      "path": "docs/architecture/decisions/ADR-007-task-roadmap-numbering.md",
+      "base_blob": "d41e6e6d00ff06948fda5dc0cf3fd48ff610f4f2",
+      "base_bytes": 1676,
+      "category": "text"
+    },
+    {
+      "path": "docs/deliverables/README.md",
+      "base_blob": "2f8203b343d853ec7993d3e49e69e6d4480d13e9",
+      "base_bytes": 722,
+      "category": "text"
+    },
+    {
+      "path": "docs/evidence/GM-00/BASELINE_V02_2026-10-07.md",
+      "base_blob": "d5851430cead8fda9d4b96e6d2c59b86ed7ba1f4",
+      "base_bytes": 1667,
+      "category": "text"
+    },
+    {
+      "path": "docs/evidence/GM-00/PUBLICATION.md",
+      "base_blob": "20fbab2d5e47e698ffac089017bc880acf47a68e",
+      "base_bytes": 1311,
+      "category": "text"
+    },
+    {
+      "path": "docs/evidence/GM-00/RESEARCH_PLAN_2026-10-07.md",
+      "base_blob": "a20357e8b0829edff218a3590d2325d8660ee040",
+      "base_bytes": 1161,
+      "category": "text"
+    },
+    {
+      "path": "docs/evidence/GM-00/TASK_UPDATE_2026-10-06.md",
+      "base_blob": "99301c672ee2e7f3119e1ee30161d671de054d1b",
+      "base_bytes": 1627,
+      "category": "text"
+    },
+    {
+      "path": "docs/evidence/GM-00/VERIFICATION.md",
+      "base_blob": "a4c1514e0c2d94dd2f336b9e8eea5f68e5e46826",
+      "base_bytes": 3041,
+      "category": "text"
+    },
+    {
+      "path": "docs/evidence/GM-00/github-publication.json",
+      "base_blob": "e78c3b5ffa62a69d76164fb89bbf9eefcbddf309",
+      "base_bytes": 14876,
+      "category": "text"
+    },
+    {
+      "path": "docs/evidence/GM-00/prototype-checks.json",
+      "base_blob": "2a65a28b4276348d5c724c80f80e1a2c5b74c338",
+      "base_bytes": 614,
+      "category": "text"
+    },
+    {
+      "path": "docs/evidence/GM-00/ui-dark.png",
+      "base_blob": "7846b8f6ff86293404aae474df5a71db26c9a184",
+      "base_bytes": 87253,
+      "category": "image"
+    },
+    {
+      "path": "docs/evidence/GM-00/ui-desktop.png",
+      "base_blob": "809e9119b5947a413ef6f308a13b6b23325e0285",
+      "base_bytes": 132669,
+      "category": "image"
+    },
+    {
+      "path": "docs/evidence/GM-00/ui-final-round.png",
+      "base_blob": "8c75fd3dc14b5b2e72e2667893d4d633d12a4111",
+      "base_bytes": 132112,
+      "category": "image"
+    },
+    {
+      "path": "docs/evidence/GM-00/ui-mobile.png",
+      "base_blob": "9a4bb8947d25f17d1554fd7a10572af66aa435d7",
+      "base_bytes": 87019,
+      "category": "image"
+    },
+    {
+      "path": "docs/evidence/GM-28/PARALLEL_WORKFLOW_2026-10-08.md",
+      "base_blob": "620ed6ccb2ed7f6478471378d46c661ab9aeaef8",
+      "base_bytes": 3657,
+      "category": "text"
+    },
+    {
+      "path": "docs/evidence/GM-28/REPOSITORY_AUDIT.md",
+      "base_blob": "20da565040a2405f14fb25dfd13ab19d78e13b06",
+      "base_bytes": 6401,
+      "category": "text"
+    },
+    {
+      "path": "docs/evidence/roadmap-v1/GM-01/FINAL_AUDIT_2026-10-08.md",
+      "base_blob": "b7078133ab5a0b4ff260bfc122ab056e65eb9ca4",
+      "base_bytes": 2623,
+      "category": "text"
+    },
+    {
+      "path": "docs/evidence/roadmap-v1/GM-01/RENUMBERING_2026-10-08.md",
+      "base_blob": "4a4bf8316908cb464bb635310fbb76aafdc73e70",
+      "base_bytes": 3194,
+      "category": "text"
+    },
+    {
+      "path": "docs/product/FUNCTIONAL_REQUIREMENTS.md",
+      "base_blob": "284d097bdfc6c1171ac8fde6999a254f309c7fb7",
+      "base_bytes": 3764,
+      "category": "text"
+    },
+    {
+      "path": "docs/product/NON_FUNCTIONAL_REQUIREMENTS.md",
+      "base_blob": "ae82fe24f5fb2fcfaf026cf87096e57f0d6cd74c",
+      "base_bytes": 2472,
+      "category": "text"
+    },
+    {
+      "path": "docs/product/PRODUCT_REQUIREMENTS.md",
+      "base_blob": "b53c9828092fa3e1871a00db808b94dfebd4a473",
+      "base_bytes": 4064,
+      "category": "text"
+    },
+    {
+      "path": "docs/product/SYSTEM_OVERVIEW.md",
+      "base_blob": "0c83eeb1c83984d141e0920386c00854adee5a18",
+      "base_bytes": 6648,
+      "category": "text"
+    },
+    {
+      "path": "docs/project/AIDD_PROCESS.md",
+      "base_blob": "6a48734dddb273a6c6757323f146823f6d93f540",
+      "base_bytes": 1635,
+      "category": "text"
+    },
+    {
+      "path": "docs/project/DEFINITION_OF_DONE.md",
+      "base_blob": "02c51fef31bba57357ef4cc7e6997fc5e1a920c6",
+      "base_bytes": 2515,
+      "category": "text"
+    },
+    {
+      "path": "docs/project/FOOD_DATA_REQUIREMENTS_PLAN.md",
+      "base_blob": "0428320658cfcca0fd30da189acee17cfdc3c4df",
+      "base_bytes": 29976,
+      "category": "text"
+    },
+    {
+      "path": "docs/project/GITHUB_TASKS.md",
+      "base_blob": "4f8b43456fcb3865308aca73d2e85188720dc2ac",
+      "base_bytes": 4870,
+      "category": "text"
+    },
+    {
+      "path": "docs/project/IMPROVEMENT_PLAN_2026-10-07.md",
+      "base_blob": "7923828f6887d17fcc39c2cc6e0ab61e756d31af",
+      "base_bytes": 22950,
+      "category": "text"
+    },
+    {
+      "path": "docs/project/MIGRATION_PLAN.md",
+      "base_blob": "98dcdff737388138c6028f6f4993e209b0da8dbb",
+      "base_bytes": 4505,
+      "category": "text"
+    },
+    {
+      "path": "docs/project/PROJECT_PLAN.md",
+      "base_blob": "46ac3d4b4d861ece9f11c87379e34a1d127cede2",
+      "base_bytes": 4501,
+      "category": "text"
+    },
+    {
+      "path": "docs/project/REPOSITORY_STRUCTURE.md",
+      "base_blob": "3b0acb3a70260ad8f6ae1b3a67fdf18887d7cfb9",
+      "base_bytes": 3667,
+      "category": "text"
+    },
+    {
+      "path": "docs/project/RISK_REGISTER.md",
+      "base_blob": "3bc8ef871af233d29ea18343c6b703b5107a9b34",
+      "base_bytes": 3047,
+      "category": "text"
+    },
+    {
+      "path": "docs/project/START_HERE.md",
+      "base_blob": "c4d1af767b0bb72c1075874ab2edb79a30de0727",
+      "base_bytes": 2219,
+      "category": "text"
+    },
+    {
+      "path": "docs/project/TASK_DEPENDENCIES.md",
+      "base_blob": "33e54fb9ad5b9b8d5b007be3b86247b153530f94",
+      "base_bytes": 20578,
+      "category": "text"
+    },
+    {
+      "path": "docs/project/TASK_RENUMBERING.md",
+      "base_blob": "54c1beaac87b677b755907a35555404004c04536",
+      "base_bytes": 7442,
+      "category": "text"
+    },
+    {
+      "path": "docs/project/TASK_SUMMARY.md",
+      "base_blob": "313ebfef7a204902d73be08efcddbcbd91592c89",
+      "base_bytes": 12022,
+      "category": "text"
+    },
+    {
+      "path": "docs/project/TEAM_AND_RESPONSIBILITIES.md",
+      "base_blob": "2466fa85bec9621fc4376bf2932b64c562ca7c5d",
+      "base_bytes": 2897,
+      "category": "text"
+    },
+    {
+      "path": "docs/project/TEAM_WORKFLOW.md",
+      "base_blob": "6a1d1b80f3060d5f677d4fbc6da118d606f35c54",
+      "base_bytes": 5708,
+      "category": "text"
+    },
+    {
+      "path": "docs/project/UI_IMPLEMENTATION_PLAN.md",
+      "base_blob": "bc360bfa4af75231c9d79fd77ab3a97b835e2086",
+      "base_bytes": 2486,
+      "category": "text"
+    },
+    {
+      "path": "docs/project/WEEKLY_REVIEW_TEMPLATE.md",
+      "base_blob": "758a50c72ed2352ec53c2fb2453b344e2ae9b63c",
+      "base_bytes": 999,
+      "category": "text"
+    },
+    {
+      "path": "docs/references/course/COURSE_TRACEABILITY.md",
+      "base_blob": "20d1c839961eddd62632ebfb40734626f123dfdc",
+      "base_bytes": 660,
+      "category": "text"
+    },
+    {
+      "path": "docs/references/course/README.md",
+      "base_blob": "981778aefcdd8ff8ebd6f17b7fa6df030952b6bc",
+      "base_bytes": 581,
+      "category": "text"
+    },
+    {
+      "path": "docs/references/source/README.md",
+      "base_blob": "574f714823516e01a47e89bcb0fcdd6ad7625f29",
+      "base_bytes": 499,
+      "category": "text"
+    },
+    {
+      "path": "docs/research/COMPETITIVE_POSITION.md",
+      "base_blob": "8773d95a8236c427244eda74fa26bd4f4dcb815b",
+      "base_bytes": 1482,
+      "category": "text"
+    },
+    {
+      "path": "docs/research/LECTURER_APPS_REVIEW_2026-10-07.md",
+      "base_blob": "82d51d6afa6768e91eb50cdeaf2ed5f8c46e5118",
+      "base_bytes": 6607,
+      "category": "text"
+    },
+    {
+      "path": "docs/research/TECHNOLOGY_NOTES.md",
+      "base_blob": "ba9ee2f76f8534b68f46908128b7f974fb586387",
+      "base_bytes": 1327,
+      "category": "text"
+    },
+    {
+      "path": "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+      "base_blob": "91fd07a95e9198f8628a2b42be01d545baaf62c4",
+      "base_bytes": 3263,
+      "category": "text"
+    },
+    {
+      "path": "docs/specs/CONTEXT_HISTORY_SPEC.md",
+      "base_blob": "1412673a64e962240db4dafdce184098edf02368",
+      "base_bytes": 4403,
+      "category": "text"
+    },
+    {
+      "path": "docs/specs/DECISION_SPEC.md",
+      "base_blob": "9ef68d9fd1e1d0996dcf621fcf5223ec4212029d",
+      "base_bytes": 3428,
+      "category": "text"
+    },
+    {
+      "path": "docs/specs/EXTENSIONS_SPEC.md",
+      "base_blob": "6523a01c2f73ef354b5978ea072e42480e65bccb",
+      "base_bytes": 1295,
+      "category": "text"
+    },
+    {
+      "path": "docs/specs/FOOD_DATA_SPEC.md",
+      "base_blob": "bf5ceefd2b02ee8a317f7e4fab32243f74f18f8e",
+      "base_bytes": 12664,
+      "category": "text"
+    },
+    {
+      "path": "docs/specs/IDENTITY_PRIVACY_SPEC.md",
+      "base_blob": "c75b1d2fd34c67dc25b83b925f7cd3b60651622a",
+      "base_bytes": 5069,
+      "category": "text"
+    },
+    {
+      "path": "docs/specs/NOTIFICATIONS_LINKS_SPEC.md",
+      "base_blob": "5f7f9ef0da90c1223d73bbb283cbab63ab0203d2",
+      "base_bytes": 2923,
+      "category": "text"
+    },
+    {
+      "path": "docs/specs/OFFLINE_SYNC_SPEC.md",
+      "base_blob": "29a0f08629018dec1f8aa18d4303c84fc927e3a3",
+      "base_bytes": 3292,
+      "category": "text"
+    },
+    {
+      "path": "docs/specs/README.md",
+      "base_blob": "89a1b876c7607dee8d10016d8d9c92397f0ea39f",
+      "base_bytes": 1404,
+      "category": "text"
+    },
+    {
+      "path": "docs/specs/RELEASE_SPEC.md",
+      "base_blob": "2f11ac07db0457c51f803f8f762395eb427abf89",
+      "base_bytes": 1472,
+      "category": "text"
+    },
+    {
+      "path": "docs/specs/ROOM_SPEC.md",
+      "base_blob": "eeec6117f43e1a63c5eb3e80741fe3c4dd0d172e",
+      "base_bytes": 3728,
+      "category": "text"
+    },
+    {
+      "path": "docs/specs/SOCIAL_DISCOVERY_SPEC.md",
+      "base_blob": "9763aa3d234c04f8d01a5868171dfa5201c8050c",
+      "base_bytes": 2792,
+      "category": "text"
+    },
+    {
+      "path": "docs/specs/TRACEABILITY.md",
+      "base_blob": "ce3132c4096d8e033e256d90337f98adbd50dc9e",
+      "base_bytes": 4549,
+      "category": "text"
+    },
+    {
+      "path": "docs/specs/UI_DESIGN_SPECIFICATION.md",
+      "base_blob": "e8acffd2718665840e1aa503cfc3d6c78dafe868",
+      "base_bytes": 15607,
+      "category": "text"
+    },
+    {
+      "path": "docs/specs/UI_SPEC.md",
+      "base_blob": "9d8e71ed92ac6bb4bb0f595029f35aecdc683150",
+      "base_bytes": 4653,
+      "category": "text"
+    },
+    {
+      "path": "docs/testing/TEST_PLAN.md",
+      "base_blob": "9631aae28fa96df1584debc7bfcbe482dfba6b4f",
+      "base_bytes": 4559,
+      "category": "text"
+    },
+    {
+      "path": "mobile/.env.example",
+      "base_blob": "ea48bb98af7fd9b662272d478330a275361c401e",
+      "base_bytes": 64,
+      "category": "text"
+    },
+    {
+      "path": "mobile/README.md",
+      "base_blob": "8fd9f274980678d2c61a636fd6aa23e356f93937",
+      "base_bytes": 918,
+      "category": "text"
+    },
+    {
+      "path": "mobile/assets/.gitkeep",
+      "base_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "base_bytes": 1,
+      "category": "text"
+    },
+    {
+      "path": "mobile/src/app/.gitkeep",
+      "base_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "base_bytes": 1,
+      "category": "text"
+    },
+    {
+      "path": "mobile/src/data/local/.gitkeep",
+      "base_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "base_bytes": 1,
+      "category": "text"
+    },
+    {
+      "path": "mobile/src/data/supabase/.gitkeep",
+      "base_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "base_bytes": 1,
+      "category": "text"
+    },
+    {
+      "path": "mobile/src/domain/decision/.gitkeep",
+      "base_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "base_bytes": 1,
+      "category": "text"
+    },
+    {
+      "path": "mobile/src/features/history/.gitkeep",
+      "base_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "base_bytes": 1,
+      "category": "text"
+    },
+    {
+      "path": "mobile/src/features/identity/.gitkeep",
+      "base_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "base_bytes": 1,
+      "category": "text"
+    },
+    {
+      "path": "mobile/src/features/partners/.gitkeep",
+      "base_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "base_bytes": 1,
+      "category": "text"
+    },
+    {
+      "path": "mobile/src/features/results/.gitkeep",
+      "base_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "base_bytes": 1,
+      "category": "text"
+    },
+    {
+      "path": "mobile/src/features/rooms/.gitkeep",
+      "base_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "base_bytes": 1,
+      "category": "text"
+    },
+    {
+      "path": "mobile/src/features/voting/.gitkeep",
+      "base_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "base_bytes": 1,
+      "category": "text"
+    },
+    {
+      "path": "mobile/src/shared/lib/.gitkeep",
+      "base_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "base_bytes": 1,
+      "category": "text"
+    },
+    {
+      "path": "mobile/src/shared/theme/.gitkeep",
+      "base_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "base_bytes": 1,
+      "category": "text"
+    },
+    {
+      "path": "mobile/src/shared/types/.gitkeep",
+      "base_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "base_bytes": 1,
+      "category": "text"
+    },
+    {
+      "path": "mobile/src/shared/ui/.gitkeep",
+      "base_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "base_bytes": 1,
+      "category": "text"
+    },
+    {
+      "path": "mobile/tests/.gitkeep",
+      "base_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "base_bytes": 1,
+      "category": "text"
+    },
+    {
+      "path": "scripts/sync-course-materials.ps1",
+      "base_blob": "18c7b3f38ad9fd0c3f262617110dbc65b7a52d1d",
+      "base_bytes": 1542,
+      "category": "text"
+    },
+    {
+      "path": "scripts/task_readiness.py",
+      "base_blob": "2fd27498cc22f989cba82f44d3eb780534fe8a44",
+      "base_bytes": 16730,
+      "category": "text"
+    },
+    {
+      "path": "scripts/validate_repository.py",
+      "base_blob": "e65df55a76fd5ee75d04238aa56eafd66d02d6c3",
+      "base_bytes": 18111,
+      "category": "text"
+    },
+    {
+      "path": "scripts/verify_prototype.cjs",
+      "base_blob": "9569bf111f66f1679155459217e1d1b67f81db58",
+      "base_bytes": 5979,
+      "category": "text"
+    },
+    {
+      "path": "supabase/README.md",
+      "base_blob": "cd93ae85af7d3db0fa83fbc7091a18ac0e03d8b7",
+      "base_bytes": 1052,
+      "category": "text"
+    },
+    {
+      "path": "supabase/migrations/.gitkeep",
+      "base_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "base_bytes": 1,
+      "category": "text"
+    },
+    {
+      "path": "supabase/seed/.gitkeep",
+      "base_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "base_bytes": 1,
+      "category": "text"
+    },
+    {
+      "path": "supabase/tests/.gitkeep",
+      "base_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "base_bytes": 1,
+      "category": "text"
+    },
+    {
+      "path": "tasks/README.md",
+      "base_blob": "5bb4130b8fd3e1f1eb32fcc1120be3fa0412ad26",
+      "base_bytes": 1792,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-02.md",
+      "base_blob": "02b3a8b530f0dacf18d524dc2a73ea4042f00b15",
+      "base_bytes": 6596,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-03.md",
+      "base_blob": "0df20f07c21278c10a4b624e7207dcfed055e196",
+      "base_bytes": 6996,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-04.md",
+      "base_blob": "b7c0c25848ed824006b0fa27dcb1c1b47ef24d22",
+      "base_bytes": 6453,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-05.md",
+      "base_blob": "1832827465d198d679d153723b1c770cc32ef95b",
+      "base_bytes": 7257,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-06.md",
+      "base_blob": "08338af322dc2049be1f30ba676e6e77c218f230",
+      "base_bytes": 6444,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-07.md",
+      "base_blob": "a2484f7f4e0dd744509795605442124106040699",
+      "base_bytes": 6560,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-08.md",
+      "base_blob": "cf5014c923a0eac9e88e6fe8d72e84e242e14460",
+      "base_bytes": 7320,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-09.md",
+      "base_blob": "e5e1d97d78f36e2edce1788d4b89d0475faa7e7e",
+      "base_bytes": 7029,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-10.md",
+      "base_blob": "4f72c7671a9399575d60cf1b464d8d27a2fe71a9",
+      "base_bytes": 5969,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-11.md",
+      "base_blob": "9f79c98b859ffe466ce49a1b41199ef3c1f0e8de",
+      "base_bytes": 6231,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-12.md",
+      "base_blob": "8b877c013595e299933593fb829da883ed9d1180",
+      "base_bytes": 7374,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-13.md",
+      "base_blob": "d9cb7e0124b703c4911148775a4a99293c1f7fba",
+      "base_bytes": 7174,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-14.md",
+      "base_blob": "09be0f5144d153640382e74f7faa1a4c808ce9a7",
+      "base_bytes": 6937,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-15.md",
+      "base_blob": "d86913a7622275979d547302011bd88bd0c663d0",
+      "base_bytes": 6923,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-16.md",
+      "base_blob": "114aea3dda74216ef8b9c3cab00655f92e59895f",
+      "base_bytes": 6449,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-17.md",
+      "base_blob": "543b12733f89be1b607840ea84087f83f9fb06d6",
+      "base_bytes": 7311,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-18.md",
+      "base_blob": "fb53ef76041d5edb2bb95418436da1e1cde7ee9e",
+      "base_bytes": 6943,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-19.md",
+      "base_blob": "854192f041975fa58393bd45ea1dd0e85cfeda5b",
+      "base_bytes": 7464,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-20.md",
+      "base_blob": "bca877faa96b2e45b508dc047e964c9922e6a38e",
+      "base_bytes": 7133,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-21.md",
+      "base_blob": "0b7f2038ad54d4c1f593567b822233ce6acc0a40",
+      "base_bytes": 7091,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-22.md",
+      "base_blob": "01b84de4b1c8f17ae9d469b27837ef4b8381cab9",
+      "base_bytes": 6592,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-23.md",
+      "base_blob": "a38e46fcb7e87f0c1c1a18ae2c6fb5db489f23b3",
+      "base_bytes": 7427,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-24.md",
+      "base_blob": "63f533345ba26d8518556f3f263207acc9094ea3",
+      "base_bytes": 6968,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-25.md",
+      "base_blob": "92b4afff33266ece0de7f3413ff143018ece74ab",
+      "base_bytes": 7336,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-26.md",
+      "base_blob": "bea5419da31cc8863b4a631794a61687054f6fa7",
+      "base_bytes": 7845,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-27.md",
+      "base_blob": "c9c540a5c43254180739ab94dc1897acd342bf96",
+      "base_bytes": 6471,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-28.md",
+      "base_blob": "8f15d42cd3622359af3b943530e6a991017560b8",
+      "base_bytes": 6491,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-29.md",
+      "base_blob": "ad5983e7376a9cccc710458e0b1698c1beb66ad0",
+      "base_bytes": 6554,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-30.md",
+      "base_blob": "db0b18a7a806fb713b1e827a595600b289e2549a",
+      "base_bytes": 6380,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/GM-31.md",
+      "base_blob": "8c1b6ce0d29aaf9290b5ec28663c835a09eed185",
+      "base_bytes": 5647,
+      "category": "text"
+    },
+    {
+      "path": "tasks/backlog/MASTER_BACKLOG.md",
+      "base_blob": "389acfb8116b333bb3acc36bae4fb33070db7b88",
+      "base_bytes": 8118,
+      "category": "text"
+    },
+    {
+      "path": "tasks/done/.gitkeep",
+      "base_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "base_bytes": 1,
+      "category": "text"
+    },
+    {
+      "path": "tasks/done/GM-00.md",
+      "base_blob": "dd335a1de897bf040652f5129643719658d77188",
+      "base_bytes": 3571,
+      "category": "text"
+    },
+    {
+      "path": "tasks/in-progress/.gitkeep",
+      "base_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "base_bytes": 1,
+      "category": "text"
+    },
+    {
+      "path": "tasks/review/GM-01.md",
+      "base_blob": "f6cbe843ab2651aa91506d72571d37fec04acaa4",
+      "base_bytes": 6871,
+      "category": "text"
+    },
+    {
+      "path": "tasks/task-id-map.json",
+      "base_blob": "394e511311a0a7d18c08bf20f782c823edd5aa8d",
+      "base_bytes": 5817,
+      "category": "text"
+    },
+    {
+      "path": "tasks/templates/REVIEW_TEMPLATE.md",
+      "base_blob": "9edd182b2539dab2e08de40fd6ddb70a11792f07",
+      "base_bytes": 2043,
+      "category": "text"
+    },
+    {
+      "path": "tasks/templates/TASK_TEMPLATE.md",
+      "base_blob": "05611ef56ebad4a2afff20de6361a1af02b056a8",
+      "base_bytes": 3332,
+      "category": "text"
+    },
+    {
+      "path": "tests/README.md",
+      "base_blob": "d0b8b8c66186762532be37fb8e0d6d48ade587b6",
+      "base_bytes": 664,
+      "category": "text"
+    },
+    {
+      "path": "tests/e2e/.gitkeep",
+      "base_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "base_bytes": 1,
+      "category": "text"
+    },
+    {
+      "path": "tests/fixtures/consensus-tier-cases.json",
+      "base_blob": "85bae7be47bd9796973056df889ad8ee6904c049",
+      "base_bytes": 1006,
+      "category": "text"
+    },
+    {
+      "path": "tests/fixtures/decision-cases.json",
+      "base_blob": "e427a0bfc11fd545d7d60887833510c81c677c91",
+      "base_bytes": 2081,
+      "category": "text"
+    },
+    {
+      "path": "tests/test_repository_validator.py",
+      "base_blob": "b53e6901fce2c5ccc9c2909f6ac9775c39a2a3dc",
+      "base_bytes": 14757,
+      "category": "text"
+    },
+    {
+      "path": "tests/test_task_readiness.py",
+      "base_blob": "6876dbbc065a30126d5777cbb5b05cd46793cdb5",
+      "base_bytes": 10625,
+      "category": "text"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+
+> gi-cung-duoc-mobile@0.1.0 check
+> npm run typecheck && npm run lint && npm test && npm run check:architecture
+
+
+> gi-cung-duoc-mobile@0.1.0 typecheck
+> tsc --noEmit
+
+
+> gi-cung-duoc-mobile@0.1.0 lint
+> eslint .
+
+
+> gi-cung-duoc-mobile@0.1.0 test
+> jest --runInBand
+
+PASS tests/BootstrapScreen.test.tsx
+PASS tests/JoinSpikeScreen.test.tsx
+PASS tests/localNotifications.test.ts
+PASS tests/joinLink.test.ts
+PASS tests/counterStore.test.ts
+
+Test Suites: 5 passed, 5 total
+Tests:       53 passed, 53 total
+Snapshots:   0 total
+Time:        4.215 s
+Ran all test suites.
+
+> gi-cung-duoc-mobile@0.1.0 check:architecture
+> node scripts/check-architecture.cjs
+
+Domain boundary OK: local pure imports only.

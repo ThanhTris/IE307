@@ -1,0 +1,120 @@
+{
+  "date": "2026-10-08",
+  "branch": "sanbox",
+  "base_commit": "1b9e156c22f33f2965286cb1cc9685702811516f",
+  "scope": "GM-02 mobile source and workflow; uncommitted, not approval; excludes generated outputs and evidence",
+  "files": [
+    {
+      "path": ".github/workflows/mobile.yml",
+      "sha256": "51a81a92eadaf504fdd49982f778142acc6b57b6de33cb344a123322d2449a93"
+    },
+    {
+      "path": "mobile/.env.example",
+      "sha256": "a12bb2224a9c0848aaee80e5e1057af8af67e96ada99cda7f68234b9fda19e15"
+    },
+    {
+      "path": "mobile/.gitignore",
+      "sha256": "c3203a5198ad471d2cdb88f7bbf3defa9ef3f2867978d5f59ba8cef57aaabd13"
+    },
+    {
+      "path": "mobile/.npmrc",
+      "sha256": "be85cc462e740587626bbcbb1c3ed1c40b26e62ec072e8cbd2768f23915c28e6"
+    },
+    {
+      "path": "mobile/README.md",
+      "sha256": "c95f7ed5ed84b19bab27a4dae0c5ead570c527adad97693d5ee0ee16886301f8"
+    },
+    {
+      "path": "mobile/app.config.ts",
+      "sha256": "38ed6225317623fd81f2672865d22ba569cd030e75a25c5b4556d9b3db96fda1"
+    },
+    {
+      "path": "mobile/eslint.config.cjs",
+      "sha256": "83707c5c31cc13ba2e62df8783a632166e548e6b9a4b07a91c317daecd7cd1b9"
+    },
+    {
+      "path": "mobile/jest.config.cjs",
+      "sha256": "32ced84629e65c550d6728a37e5f31104eeeda0f250e0e45ba9bfcafb8257613"
+    },
+    {
+      "path": "mobile/package-lock.json",
+      "sha256": "9bbbb7f2ac92f89fa49a3467db01e4ce7bfd9d951fb16f365e17977eed340445"
+    },
+    {
+      "path": "mobile/package.json",
+      "sha256": "27cacf5ccf860b588774c9c8f31ff826c3fb375a29c0d5830ad4e1bafdec2049"
+    },
+    {
+      "path": "mobile/scripts/check-architecture.cjs",
+      "sha256": "b92590e601660e6e0b1fc73a8854f77f0e4512343d048780c8d824826c04d5ec"
+    },
+    {
+      "path": "mobile/src/app/+native-intent.tsx",
+      "sha256": "a4e437d1641ab59649215d2b0b17ff8b75f6cc55bc5054754f664484e89d657f"
+    },
+    {
+      "path": "mobile/src/app/_layout.tsx",
+      "sha256": "60c6ada3df967ca83d2b21ebb4deeefab4bd9b350cbdd088d1322208ae44c717"
+    },
+    {
+      "path": "mobile/src/app/index.tsx",
+      "sha256": "a80553ee2999e2e0664b80bd672028da77fb7f328fdee3070de85c85c79303af"
+    },
+    {
+      "path": "mobile/src/app/join.tsx",
+      "sha256": "eb351d17020d482546912113a9d05117e78ae972014971f32b8fa7aa10df63b1"
+    },
+    {
+      "path": "mobile/src/domain/bootstrap/joinLink.ts",
+      "sha256": "5133689b29073752ed7b28426c3227b2e92f35f76a6968636eb4e6e45b045980"
+    },
+    {
+      "path": "mobile/src/features/bootstrap/components/SpikePage.tsx",
+      "sha256": "eb873259c7b6ada4311f542a82c46645375fa40244b5d3d8c166b4372b1d9a60"
+    },
+    {
+      "path": "mobile/src/features/bootstrap/index.ts",
+      "sha256": "5d3a55dc9449d2366b405a3c211e2deff05095f6ecf45bd22e502048ca8b33ad"
+    },
+    {
+      "path": "mobile/src/features/bootstrap/screens/BootstrapScreen.tsx",
+      "sha256": "4756f0b7ae810853e3cce5de9bffca6bdd3ea4a856ed8730774908a45ed699f8"
+    },
+    {
+      "path": "mobile/src/features/bootstrap/screens/JoinSpikeScreen.tsx",
+      "sha256": "0b405c36753315cda752892719b0fa978a4821bd84bf725a511a9b446eb126e4"
+    },
+    {
+      "path": "mobile/src/features/bootstrap/services/counterStore.ts",
+      "sha256": "ff53975ee869e4f19790c023a258f902ea1723ae3a7f69619e10b21fbe523c40"
+    },
+    {
+      "path": "mobile/src/features/bootstrap/services/localNotifications.ts",
+      "sha256": "e13746d5b1bb77c004dceb96696b80a61a6664d9d63c2b17f99b303db2a122e4"
+    },
+    {
+      "path": "mobile/tests/BootstrapScreen.test.tsx",
+      "sha256": "a6e74ad7eab7c618a1d0dcc3675e4ded703d436fb09d1edf8e5748b368e832f8"
+    },
+    {
+      "path": "mobile/tests/JoinSpikeScreen.test.tsx",
+      "sha256": "3b4ffd4032c244a246a31f2b56043c4c7cf6e190f6c88240b295a8879506ee0b"
+    },
+    {
+      "path": "mobile/tests/counterStore.test.ts",
+      "sha256": "d8b4f782a55a0e52e48fb931aabe5139971a7dfc28ccf9a9b1cfa892f8e446b3"
+    },
+    {
+      "path": "mobile/tests/joinLink.test.ts",
+      "sha256": "fafbb7740fa9179e5b9fc3f28a40b4b96e22200a9254511e8258a08f56171993"
+    },
+    {
+      "path": "mobile/tests/localNotifications.test.ts",
+      "sha256": "fb4cb42432be79ee83a220ce58a8ecf053b4cafe237dfb3cfeae8967168e2f81"
+    },
+    {
+      "path": "mobile/tsconfig.json",
+      "sha256": "632bcd128cc9e35866a10e2a10f4718f3a310420435f8392777cd70139de977b"
+    }
+  ]
+}
