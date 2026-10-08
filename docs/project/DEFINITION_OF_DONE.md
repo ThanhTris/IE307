@@ -16,7 +16,8 @@ Validator chỉ kiểm cấu trúc/truy vết, không chứng minh review có th
 
 ## Bổ sung food-v1 và bàn giao dependency
 
-- Task có assignment accepted, mọi dependency Done + Decision Approved + reviewer độc lập/ngày/evidence; bản review chỉ áp dụng scope/version được ghi.
+- Task có assignment accepted, cả start_dependencies và merge_dependencies Done + Decision Approved + reviewer độc lập/ngày/evidence; bản review chỉ áp dụng scope/version được ghi. In-progress/draft review có thể còn merge blocker; Done không được bỏ qua merge deps.
+- Trước merge kiểm ref target đã cập nhật, bản task/evidence đúng revision, PR/merge commit upstream thực tế và integration tests sau cập nhật branch. Done không đồng nghĩa đã merge; checker không chứng minh code đã vào target. Mock không thay native/SQL/verified-data AC.
 - Reviewer ghi Reviewed-by, Reviewed-at, Decision: Approved và Review-evidence (file từ root có thật), PR/commit/version trong evidence; không coi merge PR là Done.
 - Dataset: nguồn/license/freshness/coverage, quán–món/lịch/ngoại lệ/unknown/giá đơn vị và người kiểm khác người nhập; fixture tách thật. FOOD-01..10/12..14 áp dụng P0; FOOD-11 và mood thuộc GM-31 P2.
 - Gate checker, validator và regression đạt; sinh lại task indexes rồi --check-docs. Handoff nêu output/version/task sau, migration/rollback và lỗi còn lại.

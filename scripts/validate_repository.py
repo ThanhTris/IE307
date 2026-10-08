@@ -32,6 +32,9 @@ REQUIRED = (
     'docs/specs/FOOD_DATA_SPEC.md', 'docs/project/TASK_DEPENDENCIES.md',
     'scripts/task_readiness.py', 'tasks/templates/REVIEW_TEMPLATE.md',
     '.github/pull_request_template.md', '.github/ISSUE_TEMPLATE/task.yml',
+    'docs/architecture/decisions/ADR-006-parallel-start-ordered-merge.md',
+    'docs/architecture/decisions/ADR-007-task-roadmap-numbering.md',
+    'docs/project/TASK_RENUMBERING.md', 'tasks/task-id-map.json',
 )
 LINK = re.compile(r'(?<!!)\[[^\]]+\]\(([^)]+)\)')
 
@@ -74,9 +77,18 @@ def approval_errors(src: Source, record: dict) -> list[str]:
     return errors
 
 
+def dependency_ids(record: dict, gate: str) -> list[str]:
+    """Only the immutable historical GM-00 supports the old field."""
+    meta = record['meta']
+    field = gate + '_dependencies'
+    value = meta.get(field, meta.get('dependencies', '') if meta.get('id') == 'GM-00' else '')
+    return re.findall(r'GM-\d{2}', value)
+
+
 class Source:
     def __init__(self, ref: str | None):
         self.ref = None
+        self._git_contents = {}
         if ref:
             if ref.startswith('-'):
                 raise ValueError('invalid git ref')
@@ -99,7 +111,12 @@ class Source:
         return subprocess.check_output(['git', *args], cwd=ROOT, encoding='utf-8')
 
     def read(self, path: str) -> str:
-        return self.git('show', f'{self.ref}:{path}') if self.ref else (ROOT / path).read_text(encoding='utf-8-sig')
+        if self.ref:
+            # A resolved commit is immutable; --all merge checks reuse its records.
+            if path not in self._git_contents:
+                self._git_contents[path] = self.git('show', f'{self.ref}:{path}')
+            return self._git_contents[path]
+        return (ROOT / path).read_text(encoding='utf-8-sig')
 
     def exists(self, path: str) -> bool:
         return path in self.files or any(p.startswith(path.rstrip('/') + '/') for p in self.files)
@@ -156,7 +173,7 @@ def validate(src: Source) -> list[str]:
             for reason in approval_errors(src, {'meta': meta, 'text': text, 'path': p}):
                 errors.append(f'done without valid approval: {tid}: {reason}')
         if tid != 'GM-00':
-            for field in ('assignment_status', 'baseline'):
+            for field in ('assignment_status', 'baseline', 'start_dependencies', 'merge_dependencies'):
                 if not meta.get(field):
                     errors.append(f'{tid}: missing {field}')
             if meta.get('assignment_status') not in {'proposed', 'accepted'}:
@@ -168,13 +185,20 @@ def validate(src: Source) -> list[str]:
                     errors.append(f'{tid}: missing {heading}')
             if meta.get('baseline') != 'food-v1':
                 errors.append(f'{tid}: wrong current baseline')
-            if '## Dependency gate' in text:
-                section = text.split('## Dependency gate', 1)[1].split('\n## ', 1)[0]
+            if 'dependencies' in meta:
+                errors.append(f'{tid}: obsolete dependencies field; use start/merge_dependencies')
+            for gate, heading in (('start', '### Trước bắt đầu'), ('merge', '### Trước merge')):
+                if heading not in text:
+                    errors.append(f'{tid}: missing {heading}')
+                    continue
+                section = re.split(r'\n#{2,3} ', text.split(heading, 1)[1], maxsplit=1)[0]
                 checked_ids = re.findall(r'^- \[[ x]\] \[(GM-\d{2})\]', section, re.M)
-                expected_ids = re.findall(r'GM-\d{2}', meta.get('dependencies', ''))
+                expected_ids = re.findall(r'GM-\d{2}', meta.get(gate + '_dependencies', ''))
                 if sorted(checked_ids) != sorted(expected_ids):
-                    errors.append(f'{tid}: dependency checklist differs from metadata')
-        for field in ('dependencies', 'parallel_with'):
+                    errors.append(f'{tid}: {gate} dependency checklist differs from metadata')
+            if '### Phần làm trước và phần chờ tích hợp' not in text:
+                errors.append(f'{tid}: missing parallel scope boundary')
+        for field in ('dependencies', 'start_dependencies', 'merge_dependencies', 'parallel_with'):
             value = meta.get(field, '').strip()
             ids = re.findall(r'GM-\d{2}', value)
             if value and not re.fullmatch(r'GM-\d{2}(?:,\s*GM-\d{2})*', value):
@@ -188,8 +212,37 @@ def validate(src: Source) -> list[str]:
     expected = {'GM-00', *declared}
     if set(tasks) != expected:
         errors.append(f'task/manifest mismatch: missing={sorted(expected-set(tasks))}; unexpected={sorted(set(tasks)-expected)}')
-    graph = {tid: re.findall(r'GM-\d{2}', m.get('dependencies', '')) for tid, m in tasks.items()}
     records = task_records(src)
+    numbered = sorted(tid for tid in tasks if tid != 'GM-00')
+    if numbered != [f'GM-{n:02}' for n in range(1, len(numbered) + 1)]:
+        errors.append('current task IDs must be contiguous from GM-01')
+    mapping_path = 'tasks/task-id-map.json'
+    if mapping_path in src.files:
+        try:
+            mapping = json.loads(src.read(mapping_path))
+            entries = mapping['entries']
+            old_ids = [entry['old_id'] for entry in entries]
+            new_ids = [entry['new_id'] for entry in entries]
+            if (mapping['version'] != 'roadmap-v1' or not entries
+                    or any(not re.fullmatch(r'GM-\d{2}', value) or value == 'GM-00' for value in old_ids + new_ids)
+                    or len(set(old_ids)) != len(old_ids) or len(set(new_ids)) != len(new_ids)):
+                errors.append('task ID mapping must be one-to-one for roadmap-v1')
+            for entry in entries:
+                meta = tasks.get(entry['new_id'], {})
+                if meta.get('previous_id') != entry['old_id']:
+                    errors.append(f"task ID mapping mismatch: {entry['new_id']}")
+            for tid, meta in tasks.items():
+                if tid == 'GM-00':
+                    continue
+                if meta.get('numbering') != 'roadmap-v1':
+                    errors.append(f'{tid}: missing roadmap-v1 numbering')
+                if meta.get('previous_id') and tid not in new_ids:
+                    errors.append(f'task missing from ID mapping: {tid}')
+        except (ValueError, KeyError, TypeError):
+            errors.append('invalid task ID mapping JSON/schema')
+    start_graph = {tid: dependency_ids(r, 'start') for tid, r in records.items()}
+    # Merge requires both sets; retaining start edges also prevents mixed-gate cycles.
+    graph = {tid: sorted(set(start_graph[tid] + dependency_ids(r, 'merge'))) for tid, r in records.items()}
     active, seen = set(), set()
 
     def visit(tid):
@@ -203,9 +256,13 @@ def validate(src: Source) -> list[str]:
             if dep not in tasks:
                 errors.append(f'unknown dependency: {tid} -> {dep}')
                 continue
+            if re.fullmatch(r'GM-\d{2}', tid) and dep >= tid:
+                errors.append(f'dependency must have a smaller task ID: {tid} -> {dep}')
             if tasks[tid].get('priority') == 'P0' and tasks[dep].get('priority') in {'P1', 'P2'}:
                 errors.append(f'core blocked by extension: {tid} -> {dep}')
-            if tasks[tid].get('status') in {'in-progress', 'review', 'done'} and approval_errors(src, records[dep]):
+            required_now = tasks[tid].get('status') == 'done' or (
+                tasks[tid].get('status') in {'in-progress', 'review'} and dep in start_graph[tid])
+            if required_now and approval_errors(src, records[dep]):
                 errors.append(f'active task with unreviewed dependency: {tid} -> {dep}')
             visit(dep)
         active.remove(tid)
@@ -213,30 +270,31 @@ def validate(src: Source) -> list[str]:
     for tid in tasks:
         visit(tid)
 
-    def ancestors(tid, seen=None):
+    def ancestors(tid, seen=None, edges=None):
         seen = set() if seen is None else seen
-        for dep in graph.get(tid, []):
+        edges = graph if edges is None else edges
+        for dep in edges.get(tid, []):
             if dep not in seen:
                 seen.add(dep)
-                ancestors(dep, seen)
+                ancestors(dep, seen, edges)
         return seen
 
     for tid, meta in tasks.items():
-        if tid not in {'GM-00', 'GM-28'} and 'GM-28' not in ancestors(tid):
+        if tid not in {'GM-00', 'GM-01'} and 'GM-01' not in ancestors(tid, edges=start_graph):
             errors.append(f'task bypasses current baseline gate: {tid}')
         for peer in re.findall(r'GM-\d{2}', meta.get('parallel_with', '')):
             if peer not in tasks:
                 errors.append(f'unknown parallel task: {tid} -> {peer}')
-            elif peer == tid or peer in ancestors(tid) or tid in ancestors(peer):
+            elif peer == tid or peer in ancestors(tid, edges=start_graph) or tid in ancestors(peer, edges=start_graph):
                 errors.append(f'parallel tasks have dependency: {tid} / {peer}')
             elif tasks[peer].get('owner') == meta.get('owner'):
                 errors.append(f'parallel tasks share owner: {tid} / {peer}')
             elif tid not in re.findall(r'GM-\d{2}', tasks[peer].get('parallel_with', '')):
                 errors.append(f'asymmetric parallel declaration: {tid} / {peer}')
-    if 'GM-22' in tasks:
+    if 'GM-27' in tasks:
         required_core = {tid for tid, meta in tasks.items()
-                         if meta.get('priority') == 'P0' and tid != 'GM-22'}
-        missing_core = required_core - ancestors('GM-22')
+                         if meta.get('priority') == 'P0' and tid != 'GM-27'}
+        missing_core = required_core - ancestors('GM-27')
         if missing_core:
             errors.append('release bypasses P0 tasks: ' + ', '.join(sorted(missing_core)))
 

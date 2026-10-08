@@ -35,4 +35,4 @@ Safe area, keyboard tránh form, touch48dp/font200/TalkBack/dark/reduced motion.
 
 Native screenshots/recording có loading/empty/error, permission và offline; HTML không thay chứng cứ. [Test plan](../testing/TEST_PLAN.md).
 
-Food-v1 theo [food spec](FOOD_DATA_SPEC.md): card không ghép thuộc tính từ nhiều quán; ngày kiểm/lịch dự kiến khác tồn kho live. UI-15 là capability GM-29 trước GM-07 và offering GM-14 sau vote; không làm location phụ thuộc result. GM-28 review trước code.
+Food-v1 theo [food spec](FOOD_DATA_SPEC.md): card không ghép thuộc tính từ nhiều quán; ngày kiểm/lịch dự kiến khác tồn kho live. UI-15 là capability GM-10 trước GM-13 và offering GM-21 sau vote; không làm location phụ thuộc result. GM-01 review trước code.

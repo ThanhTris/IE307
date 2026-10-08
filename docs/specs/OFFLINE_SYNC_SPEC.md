@@ -1,6 +1,6 @@
 # Cache, outbox và đồng bộ — v0.2
 
-2026-10-07 • FR-09/16 • GM-16/19/21 • [RPC](../architecture/API_CONTRACT.md).
+2026-10-07 • FR-09/16 • GM-24, GM-25, GM-26 • [RPC](../architecture/API_CONTRACT.md).
 
 ## Dữ liệu và trạng thái
 
@@ -25,4 +25,4 @@ Cache có nhãn Dữ liệu lần đồng bộ gần nhất; không dùng nó ch
 
 SYNC-01 queue sống qua kill/restart; chưa Gửi không tự nộp. SYNC-02 timeout trước/sau commit trả ACK một lần, cùng resultId. SYNC-03 stale round/pool/auth bị chặn. SYNC-04 pending không cộng progress. SYNC-05 logout/TTL clear private cache; history consent tách raw draft. SYNC-06 2/4/8 clients nhận cùng snapshot qua retry/reconnect.
 
-Test T-09/16; evidence ghi mạng/thiết bị/steps, không payload phiếu thật/token. Native dependencies chờ GM-01 và reviewer.
+Test T-09/16; evidence ghi mạng/thiết bị/steps, không payload phiếu thật/token. Native dependencies chờ GM-02 và reviewer.

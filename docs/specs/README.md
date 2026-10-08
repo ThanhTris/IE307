@@ -1,6 +1,6 @@
 # Spec index food-v1
 
-2026-10-07, yêu cầu hiện hành chờ review GM-28. [Mô tả hệ thống](../product/SYSTEM_OVERVIEW.md) trước, [FR](../product/FUNCTIONAL_REQUIREMENTS.md) sau.
+2026-10-07, yêu cầu hiện hành chờ review GM-01. [Mô tả hệ thống](../product/SYSTEM_OVERVIEW.md) trước, [FR](../product/FUNCTIONAL_REQUIREMENTS.md) sau.
 
 - [ROOM_SPEC](ROOM_SPEC.md): vòng đời/ready/roster/expiry.
 - [CATALOG_PREFERENCES_SPEC](CATALOG_PREFERENCES_SPEC.md): danh mục/category/pool.

@@ -1,6 +1,6 @@
 # Bạn ăn cùng và khám phá quán — food-v1
 
-2026-10-07 • FR-10/11/18. Kết bạn core GM-17; account link chuyển GM-26/P1. Scope này thay ghi chú P1 cũ ngày 2026-10-06.
+2026-10-07 • FR-10/11/18. Kết bạn core GM-15; account link chuyển GM-28/P1. Scope này thay ghi chú P1 cũ ngày 2026-10-06.
 
 ## Kết bạn/chọn nhanh
 
@@ -10,7 +10,7 @@ Lời mời phòng là P0, không tự nhập bạn từ roster, không tự rea
 
 ## Vị trí và mở review
 
-GM-29 giải thích/xin foreground để gợi khu vực trước chọn món; deny thì chọn public anchor thủ công. Nhóm xác nhận khu vực ăn chung trước ready. GM-20 mở review sau chốt mặc định theo khu vực chung; nếu user chủ động đổi khu vực tìm kiếm ngoài phiên phải ghi rõ và không sửa pool/result. Không tự hỏi quyền lặp vô hạn.
+GM-10 giải thích/xin foreground để gợi khu vực trước chọn món; deny thì chọn public anchor thủ công. Nhóm xác nhận khu vực ăn chung trước ready. GM-23 mở review sau chốt mặc định theo khu vực chung; nếu user chủ động đổi khu vực tìm kiếm ngoài phiên phải ghi rõ và không sửa pool/result. Không tự hỏi quyền lặp vô hạn.
 
 UI-08 có Xem review trên YouTube, Xem review trên TikTok, Tìm quán trên Maps, nhãn khu vực dùng. Query tên món+khu vực+review quán, encode đúng và HTTPS allowlist. YouTube /results?search_query=..., TikTok /search?q=... là URL ứng viên cần thử native. Maps /maps/search/?api=1&query=...; browser/copy fallback. Không thao tác bên trong app khác hoặc điều khiển Nearby. Kết quả nền tảng có thể khác theo người dùng.
 
@@ -18,6 +18,6 @@ Không gửi địa chỉ nhà/tọa độ/userID/token trong review query; khô
 
 ## Scope mở rộng
 
-Chia sẻ thẻ kết quả hoặc link quán về phòng chưa có task core. Venue–dish/giờ là GM-27/P0; eligibility GM-30, location sớm GM-29; xem [food spec](FOOD_DATA_SPEC.md). OCR/AI P2.
+Chia sẻ thẻ kết quả hoặc link quán về phòng chưa có task core. Venue–dish/giờ là GM-08/P0; eligibility GM-11, location sớm GM-10; xem [food spec](FOOD_DATA_SPEC.md). OCR/AI P2.
 
 Test T-10/11/18; evidence Android cold/warm, có/không app ngoài, deny/GPS off/timeout/query tiếng Việt và security invalid QR.

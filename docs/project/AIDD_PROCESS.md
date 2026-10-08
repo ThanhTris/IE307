@@ -5,11 +5,11 @@ Intent → Spec → Context → Patch plan → Implement → Verify → Independ
 - Intent: kết quả thực tế cần đạt cho người chọn món, giới hạn và giả định.
 - Spec: ID yêu cầu, AC có thể kiểm, state machine, contract, quyền và tình huống lỗi.
 - Context: đưa cho AI đúng task, linked spec/ADR, fixture; không đưa secret/phiếu thật vào prompt.
-- Patch plan: tóm tắt file sửa, bước nhỏ nhất, kiểm thử trước khi code. Dependency chưa review thì chưa triển khai phần phụ thuộc.
+- Patch plan: file sở hữu, contract version, phần độc lập với fixture và phần chờ tích hợp thật. Start deps chưa review thì chưa viết; merge deps chưa xong vẫn được viết phần độc lập đã chốt.
 - Implement: code theo feature/domain/data; không để screen quyết định winner.
 - Verify: evidence thực tế cho từng AC; phân biệt test không chạy, test fail và test pass.
 - Review: người khác owner xác nhận; AI không tự đánh Done. Cập nhật task/spec/ADR nếu đổi quyết định.
 
 [Mẫu task](../../tasks/templates/TASK_TEMPLATE.md), [DoD](DEFINITION_OF_DONE.md), [traceability](../specs/TRACEABILITY.md).
 
-Trước code chạy `python scripts/task_readiness.py --task GM-XX`, mở [dependency map](TASK_DEPENDENCIES.md). Dependency là AND; parallel_with không thay gate. GM-28 review food-v1 riêng sau GM-00. Dùng [mẫu review](../../tasks/templates/REVIEW_TEMPLATE.md); task Done cần Decision Approved, reviewer/ngày và Review-evidence thật. Cập nhật indexes sau đổi status.
+Trước code chạy `python scripts/task_readiness.py --task GM-XX` cho start gate. Trước merge thêm `--gate merge --base-ref origin/main` sau cập nhật ref, kiểm PR/commit và integration thật. [Dependency map](TASK_DEPENDENCIES.md) tách hai thứ tự; parallel_with có thể có quan hệ merge. GM-01 vẫn review food-v1; Done cần cả hai gate/AC, Approved/reviewer/ngày/evidence thật theo [workflow](TEAM_WORKFLOW.md). Sinh lại indexes sau đổi metadata.

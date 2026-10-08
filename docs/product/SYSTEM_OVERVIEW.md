@@ -1,6 +1,6 @@
 # Gì Cũng Được — mô tả hệ thống cho cả nhóm
 
-Baseline food-v1 • 2026-10-07. Đây là phạm vi yêu cầu hiện hành được soạn theo yêu cầu chủ dự án và góp ý giảng viên; chưa có app/API triển khai; review scope mới chờ GM-28.
+Baseline food-v1 • 2026-10-07. Đây là phạm vi yêu cầu hiện hành được soạn theo yêu cầu chủ dự án và góp ý giảng viên; chưa có app/API triển khai; review scope mới chờ GM-01.
 
 ## Ứng dụng giải quyết việc gì?
 
@@ -36,7 +36,7 @@ P1: tài khoản liên kết/khôi phục, history nhiều máy. P2: OCR/AI/weat
 
 ## Người làm và tiến độ là gì?
 
-Các tên trong backlog chỉ là gợi ý; thành viên có thể nhận/đổi việc và reviewer phải khác owner. GM-00 v0.2 đã được Trí duyệt; GM-28 food-v1 đang chờ review và mọi task triển khai vẫn backlog cho đến khi thành viên nhận việc. 8 tuần cũ cần ước lượng lại theo scope data mới; chưa có ngày bắt đầu/hạn môn học nên không tự đặt deadline lịch.
+Các tên trong backlog chỉ là gợi ý; thành viên có thể nhận/đổi việc và reviewer phải khác owner. GM-00 v0.2 đã được Trí duyệt; GM-01 food-v1 đang chờ review và mọi task triển khai vẫn backlog cho đến khi thành viên nhận việc. 8 tuần cũ cần ước lượng lại theo scope data mới; chưa có ngày bắt đầu/hạn môn học nên không tự đặt deadline lịch.
 
 Đọc [task summary](../project/TASK_SUMMARY.md), [plan 8 tuần](../project/PROJECT_PLAN.md) và [spec index](../specs/README.md). Prototype HTML dùng để xem ý tưởng cũ, chưa chứng minh đủ food-v1 và không chứng minh native/realtime/push.
 

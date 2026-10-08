@@ -1,0 +1,193 @@
+{
+  "version": "roadmap-v1",
+  "date": "2026-10-08",
+  "description": "Old IDs are historical identifiers, not dependencies or current aliases.",
+  "entries": [
+    {
+      "old_id": "GM-28",
+      "new_id": "GM-01",
+      "title": "Review baseline food-v1, dependency và quy trình PR",
+      "github_issue": ""
+    },
+    {
+      "old_id": "GM-01",
+      "new_id": "GM-02",
+      "title": "Bootstrap Expo Android và native capability spike",
+      "github_issue": "https://github.com/ThanhTris/IE307/issues/38"
+    },
+    {
+      "old_id": "GM-03",
+      "new_id": "GM-03",
+      "title": "Taxonomy món ăn và hợp đồng dataset",
+      "github_issue": "https://github.com/ThanhTris/IE307/issues/40"
+    },
+    {
+      "old_id": "GM-02",
+      "new_id": "GM-04",
+      "title": "Design system và UI primitives",
+      "github_issue": "https://github.com/ThanhTris/IE307/issues/39"
+    },
+    {
+      "old_id": "GM-04",
+      "new_id": "GM-05",
+      "title": "Schema món–quán–lịch bán và migrations",
+      "github_issue": "https://github.com/ThanhTris/IE307/issues/41"
+    },
+    {
+      "old_id": "GM-11",
+      "new_id": "GM-06",
+      "title": "Engine decision-v2 và fixtures",
+      "github_issue": "https://github.com/ThanhTris/IE307/issues/48"
+    },
+    {
+      "old_id": "GM-05",
+      "new_id": "GM-07",
+      "title": "Guest identity và secure session",
+      "github_issue": "https://github.com/ThanhTris/IE307/issues/42"
+    },
+    {
+      "old_id": "GM-27",
+      "new_id": "GM-08",
+      "title": "Dataset quán–món–lịch bán đã kiểm trong coverage",
+      "github_issue": ""
+    },
+    {
+      "old_id": "GM-06",
+      "new_id": "GM-09",
+      "title": "RLS/quyền RPC nền và retention",
+      "github_issue": "https://github.com/ThanhTris/IE307/issues/43"
+    },
+    {
+      "old_id": "GM-29",
+      "new_id": "GM-10",
+      "title": "Vị trí foreground, coverage và điểm ăn chung",
+      "github_issue": ""
+    },
+    {
+      "old_id": "GM-30",
+      "new_id": "GM-11",
+      "title": "Eligibility món theo nơi bán, giờ và snapshot pool",
+      "github_issue": ""
+    },
+    {
+      "old_id": "GM-08",
+      "new_id": "GM-12",
+      "title": "Room RPC, context và khóa pool khả thi",
+      "github_issue": "https://github.com/ThanhTris/IE307/issues/45"
+    },
+    {
+      "old_id": "GM-07",
+      "new_id": "GM-13",
+      "title": "Home/create/join và context khu vực–giờ ăn",
+      "github_issue": "https://github.com/ThanhTris/IE307/issues/44"
+    },
+    {
+      "old_id": "GM-12",
+      "new_id": "GM-14",
+      "title": "Submit/finalize nguyên tử và result event",
+      "github_issue": "https://github.com/ThanhTris/IE307/issues/49"
+    },
+    {
+      "old_id": "GM-17",
+      "new_id": "GM-15",
+      "title": "Kết bạn avatar và room invitation core",
+      "github_issue": "https://github.com/ThanhTris/IE307/issues/54"
+    },
+    {
+      "old_id": "GM-09",
+      "new_id": "GM-16",
+      "title": "Lobby ready và đồng bộ cơ bản",
+      "github_issue": "https://github.com/ThanhTris/IE307/issues/46"
+    },
+    {
+      "old_id": "GM-18",
+      "new_id": "GM-17",
+      "title": "History consent và chống lặp core",
+      "github_issue": "https://github.com/ThanhTris/IE307/issues/55"
+    },
+    {
+      "old_id": "GM-25",
+      "new_id": "GM-18",
+      "title": "Push invite/result và notification inbox",
+      "github_issue": ""
+    },
+    {
+      "old_id": "GM-10",
+      "new_id": "GM-19",
+      "title": "Preferences cuisine/đặc tính và pool theo context",
+      "github_issue": "https://github.com/ThanhTris/IE307/issues/47"
+    },
+    {
+      "old_id": "GM-13",
+      "new_id": "GM-20",
+      "title": "Card voting double-tap và pending UX",
+      "github_issue": "https://github.com/ThanhTris/IE307/issues/50"
+    },
+    {
+      "old_id": "GM-14",
+      "new_id": "GM-21",
+      "title": "Result và nơi bán theo lịch đã kiểm",
+      "github_issue": "https://github.com/ThanhTris/IE307/issues/51"
+    },
+    {
+      "old_id": "GM-15",
+      "new_id": "GM-22",
+      "title": "Vòng hai Giữ/Loại và giới hạn phiên",
+      "github_issue": "https://github.com/ThanhTris/IE307/issues/52"
+    },
+    {
+      "old_id": "GM-20",
+      "new_id": "GM-23",
+      "title": "QR/incoming links và tích hợp Maps/review",
+      "github_issue": "https://github.com/ThanhTris/IE307/issues/57"
+    },
+    {
+      "old_id": "GM-16",
+      "new_id": "GM-24",
+      "title": "SQLite outbox/cache và realtime recovery",
+      "github_issue": "https://github.com/ThanhTris/IE307/issues/53"
+    },
+    {
+      "old_id": "GM-19",
+      "new_id": "GM-25",
+      "title": "Regression contract/security/race",
+      "github_issue": "https://github.com/ThanhTris/IE307/issues/56"
+    },
+    {
+      "old_id": "GM-21",
+      "new_id": "GM-26",
+      "title": "QA native và user pilot",
+      "github_issue": "https://github.com/ThanhTris/IE307/issues/58"
+    },
+    {
+      "old_id": "GM-22",
+      "new_id": "GM-27",
+      "title": "APK/demo/báo cáo và bàn giao",
+      "github_issue": "https://github.com/ThanhTris/IE307/issues/59"
+    },
+    {
+      "old_id": "GM-26",
+      "new_id": "GM-28",
+      "title": "Account link/recovery và history sync",
+      "github_issue": ""
+    },
+    {
+      "old_id": "GM-23",
+      "new_id": "GM-29",
+      "title": "Pilot OCR menu",
+      "github_issue": "https://github.com/ThanhTris/IE307/issues/60"
+    },
+    {
+      "old_id": "GM-24",
+      "new_id": "GM-30",
+      "title": "Pilot AI hiểu sở thích",
+      "github_issue": "https://github.com/ThanhTris/IE307/issues/61"
+    },
+    {
+      "old_id": "GM-31",
+      "new_id": "GM-31",
+      "title": "Weather và tâm trạng tự khai để xếp hạng",
+      "github_issue": ""
+    }
+  ]
+}

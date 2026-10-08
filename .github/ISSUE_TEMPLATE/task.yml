@@ -34,17 +34,24 @@ body:
     validations:
       required: true
   - type: textarea
-    id: dependencies
+    id: start_dependencies
     attributes:
-      label: Task phải hoàn thành trước
-      description: Liệt kê từng GM-ID, đầu ra cần dùng, link task/PR và review evidence. Không có thì giải thích.
+      label: Start dependencies — cần trước phần độc lập
+      description: GM-ID hiện hành có số nhỏ hơn task này, contract/version/evidence đã review; phần được viết sớm với fixture. Không dùng mã cũ hoặc danh sách này thay merge gate.
+    validations:
+      required: true
+  - type: textarea
+    id: merge_dependencies
+    attributes:
+      label: Merge dependencies — cần trước tích hợp và merge
+      description: GM-ID hiện hành có số nhỏ hơn task này, API/schema/data/runner thật, PR/merge commit và ref target cần kiểm; bao gồm start deps khi nghiệm thu.
     validations:
       required: true
   - type: textarea
     id: parallel
     attributes:
       label: Task có thể làm song song
-      description: Ghi GM-ID cụ thể, owner khác và file/interface cần phối hợp; hoặc N/A.
+      description: Ghi GM-ID cụ thể, owner khác, file/interface/version và phần làm trước/phần chờ tích hợp; được có quan hệ merge trước/sau, không có start trước/sau; hoặc N/A.
     validations:
       required: true
   - type: textarea

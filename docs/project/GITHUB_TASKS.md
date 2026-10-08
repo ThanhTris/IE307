@@ -1,3 +1,5 @@
+> Lưu ý mã task: nội dung lịch sử bên dưới dùng mã cũ. Task hiện hành đã đánh số theo lộ trình; xem [bảng mã cũ–mới](TASK_RENUMBERING.md). Không suy task hiện tại từ số trong bản lịch sử.
+
 > Lịch sử remote lần kiểm 2026-10-06. Baseline local hiện tại là food-v1 với 31 task sau GM-00; GM-28 review, task code backlog. GM-25..31 chưa có issue được ghi nhận; scope/dependency/owner thực tế chưa sync remote. Dùng [task summary](TASK_SUMMARY.md) và [dependency map](TASK_DEPENDENCIES.md) cho công việc hiện tại. Bảng dưới không là bằng chứng nhận task hay trạng thái live.
 
 # Task GitHub — lần đồng bộ gần nhất 2026-10-06

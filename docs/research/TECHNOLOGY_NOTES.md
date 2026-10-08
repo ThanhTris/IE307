@@ -11,4 +11,4 @@ Kiểm 2026-10-06; nghiên cứu hỗ trợ ADR, chưa phải bằng chứng app
 - [Expo Camera](https://docs.expo.dev/versions/latest/sdk/camera/): QR cần permission và nhập mã fallback.
 - [ML Kit](https://developers.google.com/ml-kit/vision/text-recognition/v2/android): OCR P2, native integration, người dùng kiểm sửa.
 
-Không cài latest thiếu lockfile khi code. GM-01 ghi phiên bản/license/kích thước dependency được reviewer duyệt. AI/OCR không là dependency MVP.
+Không cài latest thiếu lockfile khi code. GM-02 ghi phiên bản/license/kích thước dependency được reviewer duyệt. AI/OCR không là dependency MVP.

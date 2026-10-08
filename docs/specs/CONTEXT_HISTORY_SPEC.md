@@ -1,6 +1,6 @@
 # Context, lịch sử và chống lặp — food-v1
 
-2026-10-07 • FR-15/17/20 • GM-03/08/10/18/27/29/30; review GM-28.
+2026-10-07 • FR-15/17/20 • GM-03, GM-12, GM-19, GM-17, GM-08, GM-10, GM-11; review GM-01.
 
 ## Context phòng
 
@@ -20,9 +20,9 @@ Tại create/lobby/start, đọc tối đa 3 kết quả gần của đúng rost
 
 ## Vị trí và quán
 
-Core food-v1: GM-29 foreground/manual gợi public anchor đã xác nhận trước tạo pool; server nhận anchorId/radius/desiredAt, không GPS cá nhân. Nhóm dùng một điểm ăn chung nhìn thấy trước ready. Review ngoài app mặc định dùng khu vực này; search URL không chứng minh nơi bán.
+Core food-v1: GM-10 foreground/manual gợi public anchor đã xác nhận trước tạo pool; server nhận anchorId/radius/desiredAt, không GPS cá nhân. Nhóm dùng một điểm ăn chung nhìn thấy trước ready. Review ngoài app mặc định dùng khu vực này; search URL không chứng minh nơi bán.
 
-P0 GM-27: mục tiêu 20–30 chi nhánh/15–20 món thật trong coverage, offering/menu/lịch quán và món/ngoại lệ/source freshness/giá có đơn vị; chưa có data thật. GM-30 query Haversine từ public anchor (không route), giao lịch/timezone/qua đêm/last order và buổi; unknown/stale không giả đang bán. Ngoài coverage báo thiếu dữ liệu. [Food spec](FOOD_DATA_SPEC.md) quy định dữ liệu và rule chi tiết.
+P0 GM-08: mục tiêu 20–30 chi nhánh/15–20 món thật trong coverage, offering/menu/lịch quán và món/ngoại lệ/source freshness/giá có đơn vị; chưa có data thật. GM-11 query Haversine từ public anchor (không route), giao lịch/timezone/qua đêm/last order và buổi; unknown/stale không giả đang bán. Ngoài coverage báo thiếu dữ liệu. [Food spec](FOOD_DATA_SPEC.md) quy định dữ liệu và rule chi tiết.
 
 ## AC
 
@@ -30,4 +30,4 @@ T-19 giờ boundary/timezone/budget null/category xung đột/seed và roster re
 
 ## Thời điểm ăn và snapshot
 
-Ăn ngay lấy server now + buffer một lần, đặt giờ cụ thể không cộng thêm. desiredAt UTC có timezone hiển thị; quá giờ trước start yêu cầu xác nhận/reset ready. GM-08 revalidate dataset/offerings/context trong start transaction; thay pool so với ready phải reset và xác nhận lại. Sau start không đổi pool/phiếu/result; GM-14 refetch nơi bán đúng món và báo thay đổi, không reroll. History anti-repeat chỉ rank tập đã qua eligibility; history không lưu anchor/GPS/mood mặc định.
+Ăn ngay lấy server now + buffer một lần, đặt giờ cụ thể không cộng thêm. desiredAt UTC có timezone hiển thị; quá giờ trước start yêu cầu xác nhận/reset ready. GM-12 revalidate dataset/offerings/context trong start transaction; thay pool so với ready phải reset và xác nhận lại. Sau start không đổi pool/phiếu/result; GM-21 refetch nơi bán đúng món và báo thay đổi, không reroll. History anti-repeat chỉ rank tập đã qua eligibility; history không lưu anchor/GPS/mood mặc định.

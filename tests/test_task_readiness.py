@@ -31,48 +31,99 @@ class ReadinessTests(unittest.TestCase):
 
     def test_current_baseline_is_review_and_children_blocked(self):
         records = self.records()
-        self.assertEqual(gates.readiness(self.source, records, 'GM-28'), ('IN_REVIEW', []))
-        self.assertEqual(gates.readiness(self.source, records, 'GM-01'), ('BLOCKED', ['GM-28']))
+        self.assertEqual(gates.readiness(self.source, records, 'GM-01'), ('IN_REVIEW', []))
+        self.assertEqual(gates.readiness(self.source, records, 'GM-02'), ('BLOCKED', ['GM-01']))
         self.assertEqual(gates.readiness(self.source, records, 'GM-00'), ('DONE_REVIEWED', []))
 
-    def test_approved_gate_opens_only_directly_satisfied_tasks(self):
-        self.approve_in_memory('GM-28')
+    def test_approved_baseline_opens_independent_work_not_all_merges(self):
+        self.approve_in_memory('GM-01')
         records = self.records()
-        self.assertEqual(gates.readiness(self.source, records, 'GM-01')[0], 'READY_TO_CLAIM')
+        self.assertEqual(gates.readiness(self.source, records, 'GM-02')[0], 'READY_TO_CLAIM')
         self.assertEqual(gates.readiness(self.source, records, 'GM-03')[0], 'READY_TO_CLAIM')
-        self.assertEqual(gates.readiness(self.source, records, 'GM-02'), ('BLOCKED', ['GM-01']))
+        self.assertEqual(gates.readiness(self.source, records, 'GM-04'), ('READY_TO_CLAIM', []))
+        self.assertEqual(gates.readiness(self.source, records, 'GM-04', 'merge'), ('BLOCKED', ['GM-02']))
+        self.assertEqual(gates.readiness(self.source, records, 'GM-08'), ('BLOCKED', ['GM-03']))
+        ready = [tid for tid in records if gates.readiness(self.source, records, tid)[0] == 'READY_TO_CLAIM']
+        self.assertEqual(len(ready), 26)
+
+    def test_data_contract_unlocks_four_data_tasks_without_schema_or_seed(self):
+        self.approve_in_memory('GM-01')
+        self.approve_in_memory('GM-03')
+        for tid in ('GM-05', 'GM-06', 'GM-08', 'GM-11'):
+            self.assertEqual(gates.readiness(self.source, self.records(), tid)[0], 'READY_TO_CLAIM')
+        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-08', 'merge'), ('BLOCKED', ['GM-05']))
+
+    def test_preferences_can_start_but_merge_waits_for_history_integration(self):
+        self.approve_in_memory('GM-01')
+        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-19'), ('READY_TO_CLAIM', []))
+        for tid in ('GM-04', 'GM-11', 'GM-16'):
+            self.approve_in_memory(tid)
+        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-19', 'merge'), ('BLOCKED', ['GM-17']))
+        self.approve_in_memory('GM-17')
+        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-19', 'merge', self.source), ('READY_FOR_MERGE_REVIEW', []))
 
     def test_accepted_owner_distinguishes_ready_to_start(self):
-        self.approve_in_memory('GM-28')
-        path = 'tasks/backlog/GM-01.md'
+        self.approve_in_memory('GM-01')
+        path = 'tasks/backlog/GM-02.md'
         self.source.contents[path] = self.source.read(path).replace('assignment_status: proposed', 'assignment_status: accepted')
-        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-01')[0], 'READY_TO_START')
+        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-02')[0], 'READY_TO_START')
 
     def test_all_dependencies_required_not_any(self):
         self.approve_in_memory('GM-01')
-        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-05'), ('BLOCKED', ['GM-04']))
+        self.approve_in_memory('GM-02')
+        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-07', 'merge'), ('BLOCKED', ['GM-05']))
+
+    def test_merge_without_base_is_never_ready(self):
+        self.approve_in_memory('GM-01')
+        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-02', 'merge'), ('NEEDS_BASE_CHECK', []))
+
+    def test_approved_local_dependency_missing_on_base_still_blocks(self):
+        base = MemorySource()
+        self.approve_in_memory('GM-01')
+        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-02', 'merge', base), ('BLOCKED_ON_BASE', ['GM-01']))
+
+    def test_matching_approved_dependency_on_base_allows_merge_review_only(self):
+        self.approve_in_memory('GM-01')
+        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-02', 'merge', self.source), ('READY_FOR_MERGE_REVIEW', []))
+
+    def test_changed_evidence_or_task_revision_on_base_blocks(self):
+        self.approve_in_memory('GM-01')
+        base = MemorySource()
+        base.contents.update(self.source.contents)
+        evidence = 'docs/evidence/GM-28/REPOSITORY_AUDIT.md'
+        base.contents[evidence] += '\nAn older/different review revision.\n'
+        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-02', 'merge', base)[0], 'BLOCKED_ON_BASE')
+        base.contents.update(self.source.contents)
+        base.contents['tasks/review/GM-01.md'] += '\nChanged scope.\n'
+        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-02', 'merge', base)[0], 'BLOCKED_ON_BASE')
+
+    def test_merge_requires_start_gate_even_when_merge_deps_empty(self):
+        records = self.records()
+        records['GM-02']['meta']['merge_dependencies'] = ''
+        self.assertEqual(gates.readiness(self.source, records, 'GM-02', 'merge', self.source), ('BLOCKED', ['GM-01']))
 
     def test_done_parent_with_pending_review_does_not_unlock(self):
-        path = 'tasks/review/GM-28.md'
+        path = 'tasks/review/GM-01.md'
         self.source.contents[path] = self.source.read(path).replace('status: review', 'status: done')
-        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-01'), ('BLOCKED', ['GM-28']))
+        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-02'), ('BLOCKED', ['GM-01']))
 
     def test_missing_evidence_does_not_unlock(self):
-        self.approve_in_memory('GM-28')
+        self.approve_in_memory('GM-01')
         self.source.files.remove('docs/evidence/GM-28/REPOSITORY_AUDIT.md')
-        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-01')[0], 'BLOCKED')
+        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-02')[0], 'BLOCKED')
 
     def test_every_dependency_precedes_child_in_layers(self):
         records = self.records()
-        levels = {tid: index for index, layer in enumerate(gates.layers(records)) for tid in layer}
-        self.assertEqual(set(levels), set(records))
-        for tid, record in records.items():
-            for dep in gates.dependencies(record):
-                self.assertLess(levels[dep], levels[tid], (dep, tid))
+        for gate in ('start', 'merge'):
+            levels = {tid: index for index, layer in enumerate(gates.layers(records, gate)) for tid in layer}
+            self.assertEqual(set(levels), set(records))
+            for tid, record in records.items():
+                for dep in gates.dependencies(record, gate):
+                    self.assertLess(levels[dep], levels[tid], (gate, dep, tid))
 
     def test_layers_reject_cycles(self):
         records = self.records()
-        records['GM-00']['meta']['dependencies'] = 'GM-28'
+        records['GM-00']['meta']['dependencies'] = 'GM-01'
         with self.assertRaisesRegex(ValueError, 'cycle'):
             gates.layers(records)
 
@@ -81,21 +132,21 @@ class ReadinessTests(unittest.TestCase):
             self.assertEqual(self.source.read(path), expected, path)
 
     def test_owner_change_makes_generated_indexes_stale(self):
-        path = 'tasks/backlog/GM-01.md'
+        path = 'tasks/backlog/GM-02.md'
         self.source.contents[path] = self.source.read(path).replace('owner: Tuấn', 'owner: Trang')
         result = gates.render_documents(self.source)
         name = 'docs/project/TEAM_AND_RESPONSIBILITIES.md'
         self.assertNotEqual(self.source.read(name), result[name])
 
     def test_moved_task_links_are_repaired_without_changing_status(self):
-        old, new = 'tasks/review/GM-28.md', 'tasks/done/GM-28.md'
+        old, new = 'tasks/review/GM-01.md', 'tasks/done/GM-01.md'
         self.source.files.remove(old)
         self.source.files.add(new)
         original = self.source.contents.pop(old)
         self.source.contents[new] = original.replace('status: review', 'status: done')
         updates = gates.task_link_updates(self.source)
-        task = updates['tasks/backlog/GM-01.md']
-        self.assertIn('[GM-28](../done/GM-28.md)', task)
+        task = updates['tasks/backlog/GM-02.md']
+        self.assertIn('[GM-01](../done/GM-01.md)', task)
         self.assertIn('status: backlog', task)
         self.assertNotIn('Decision: Approved', task)
         self.assertEqual(self.source.read(new), original.replace('status: review', 'status: done'))
@@ -103,21 +154,34 @@ class ReadinessTests(unittest.TestCase):
     def test_task_link_repair_keeps_anchors_and_external_urls(self):
         path = 'docs/project/link-test.md'
         self.source.files.add(path)
-        external = '[external](https://example.com/tasks/backlog/GM-28.md)'
-        self.source.contents[path] = '[gate](../../tasks/backlog/GM-28.md#review)\n' + external
+        external = '[external](https://example.com/tasks/backlog/GM-01.md)'
+        self.source.contents[path] = '[gate](../../tasks/backlog/GM-01.md#review)\n' + external
         revised = gates.task_link_updates(self.source)[path]
-        self.assertIn('../../tasks/review/GM-28.md#review', revised)
+        self.assertIn('../../tasks/review/GM-01.md#review', revised)
         self.assertIn(external, revised)
 
     def test_task_cli_reports_blocker_with_nonzero_exit(self):
         output = io.StringIO()
-        with patch.object(sys, 'argv', ['task_readiness.py', '--task', 'GM-01']), contextlib.redirect_stdout(output):
+        with patch.object(sys, 'argv', ['task_readiness.py', '--task', 'GM-02']), contextlib.redirect_stdout(output):
             self.assertEqual(gates.main(), 1)
-        self.assertIn('WAIT GM-28', output.getvalue())
+        self.assertIn('WAIT GM-01', output.getvalue())
 
     def test_task_cli_unknown_id_is_error(self):
         with patch.object(sys, 'argv', ['task_readiness.py', '--task', 'GM-99']), contextlib.redirect_stdout(io.StringIO()):
             self.assertEqual(gates.main(), 2)
+
+    def test_merge_cli_requires_explicit_target_ref(self):
+        with patch.object(sys, 'argv', ['task_readiness.py', '--task', 'GM-02', '--gate', 'merge']), contextlib.redirect_stderr(io.StringIO()):
+            with self.assertRaises(SystemExit) as raised:
+                gates.main()
+        self.assertEqual(raised.exception.code, 2)
+
+    def test_merge_cli_uses_real_git_snapshot_without_writing(self):
+        output = io.StringIO()
+        with patch.object(sys, 'argv', ['task_readiness.py', '--task', 'GM-02', '--gate', 'merge', '--base-ref', 'HEAD']), contextlib.redirect_stdout(output):
+            self.assertEqual(gates.main(), 1)
+        self.assertIn('Target snapshot: HEAD =', output.getvalue())
+        self.assertIn('WAIT GM-01', output.getvalue())
 
     def test_task_cli_approved_baseline_is_success(self):
         with patch.object(sys, 'argv', ['task_readiness.py', '--task', 'GM-00']), contextlib.redirect_stdout(io.StringIO()):

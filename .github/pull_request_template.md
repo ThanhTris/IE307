@@ -1,45 +1,50 @@
 ## Task và phạm vi
 
-Task ID/link Markdown:
-Owner / reviewer khác owner:
+Task Markdown / owner / reviewer khác owner:
+Mã hiện hành roadmap-v1 / mã cũ nếu đối chiếu issue (xem docs/project/TASK_RENUMBERING.md):
 Assignment accepted / baseline / spec / ADR:
-Vấn đề và hành vi sau thay đổi:
+Branch / target / PR cha (nếu stacked):
+Scope và phần ngoài scope:
 
-## Dependency gate trước triển khai
+## Start gate — trước viết phần độc lập
 
-| Task phải xong trước | Link task/PR | Status Done + Decision Approved | Reviewer/ngày/evidence | Đầu ra/version đã dùng |
+- [ ] Đã chạy `python scripts/task_readiness.py --task GM-XX`; start_dependencies Approved, đọc evidence đúng version.
+- [ ] Owner/reviewer nhận việc; patch/test plan và package/provider/license được review khi áp dụng.
+- Contract/fixtures commit, input/output/errors/nullable/version và owner upstream:
+- Task song song / interface / file mỗi người sở hữu:
+- Phần làm trước bằng mock, phần đang chờ tích hợp và blocker:
+
+## Merge gate — không bắt buộc hoàn tất khi mở draft PR
+
+| Start/merge dependency | Task/PR upstream | Done + Approved / reviewer / evidence | Merge/squash commit thực tế | Có trên target đúng revision? |
 | --- | --- | --- | --- | --- |
 | GM-XX | | | | |
 
-- [ ] Đã chạy `python scripts/task_readiness.py --task GM-XX`, đối chiếu mọi dependency và evidence; không coi merged PR là Done.
-- [ ] Đã nhận việc, owner/reviewer thực tế cập nhật trong task; không còn dependency thiếu review.
-- Task làm song song / interface/file cần phối hợp:
-- Thay đổi contract/scope/privacy và task phía sau chịu ảnh hưởng:
+- [ ] Ref target đã cập nhật; ghi tên ref/SHA/thời điểm kiểm bên dưới.
+- [ ] `python scripts/task_readiness.py --task GM-XX --gate merge --base-ref origin/main` đạt; đổi ref nếu target khác.
+- [ ] Người merge kiểm code/merge commit upstream thật trên target; không chỉ nhìn bản ghi Done/evidence.
+- [ ] Cập nhật/rebase branch, retarget nếu stacked, diff chỉ còn scope task; integration tests thật chạy lại và đạt.
+- Target ref / SHA / output / giới hạn kiểm:
+- Thay đổi contract/schema/privacy / task bị ảnh hưởng / migration và rollback:
 
-## Acceptance criteria
+## AC và verification
 
-| AC từ task | Pass/Fail/Not run | Evidence/output/phiên bản | Còn lại hoặc N/A có lý do |
+| AC | Pass/Fail/Not run | Evidence/output/version/môi trường | Mock hay thật / giới hạn |
 | --- | --- | --- | --- |
 | | | | |
 
-## Verification
-
 - [ ] `python scripts/validate_repository.py`
 - [ ] `python -m unittest discover -s tests -p "test_*.py"`
-- [ ] `python scripts/task_readiness.py --check-docs` (regenerate bằng `--write-docs` nếu task đổi)
+- [ ] `python scripts/task_readiness.py --check-docs` (đổi task thì --write-docs trước)
 - [ ] `git diff --check`
-- Code: typecheck/lint/domain; SQL: migration/RLS/transaction/race; native: thiết bị/Android/build/a11y/offline (ghi lệnh/kết quả hoặc N/A có lý do):
-- Food data: source/license/coverage/menu-hours/freshness/unknown/overnight/fixture-vs-real (nếu áp dụng):
+- Native/typecheck/lint/unit/SQL/RLS/race/Android/a11y/offline: lệnh và evidence thật, hoặc N/A có lý do với docs-only:
+- Food data: source/license/coverage/menu-hours/freshness/unknown/overnight, fixture tách verified data:
+- Artifact/commit/version bàn giao; task nhận đầu ra; blocker và owner:
+- Evidence mới dùng docs/evidence/roadmap-v1/GM-XX/; không ghi đè folder evidence mã cũ.
 
-## Bàn giao và review
+## Review độc lập
 
-PR/commit/artifact version để reviewer đối chiếu:
-Evidence path (không token/raw votes/GPS):
-Migration/rollback hoặc N/A:
-Task sau nhận đầu ra / contract/dataset version:
-Known issues, blocker và owner xử lý:
+- [ ] Reviewer kiểm AC, cả hai gate và evidence cho revision PR hiện tại; AI không tự tick.
+- [ ] Khi Approved ghi Reviewed-by/Reviewed-at/Decision/Review-evidence trong task; chuyển done và sinh indexes trước merge. Thay code sau review phải review lại.
 
-- [ ] Reviewer độc lập đã đối chiếu từng AC và evidence theo `tasks/templates/REVIEW_TEMPLATE.md`.
-- [ ] Khi Approved, ghi Reviewed-by/Reviewed-at/Decision/Review-evidence trong task rồi mới chuyển Done và sinh lại task indexes.
-
-AI thực hiện không tự tick review hoặc ghi Approved. CI xanh không chứng minh reviewer đã duyệt, nguồn quán còn đúng hoặc native đã đạt.
+READY_FOR_MERGE_REVIEW không là quyền tự merge. Checker không tự fetch/kiểm GitHub hoặc chứng minh code đã merge. Done không đồng nghĩa đã vào target. Mock/CI/docs validator không thay native/SQL/data thật. Draft PR được giữ checklist merge chưa đạt.

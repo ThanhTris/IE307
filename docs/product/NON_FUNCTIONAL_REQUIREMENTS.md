@@ -4,7 +4,7 @@
 
 | ID | Mục tiêu / tiêu chí |
 | --- | --- |
-| NFR-01 | Android là thiết bị nghiệm thu; TypeScript strict; phiên bản Expo/RN tương thích được khóa ở GM-01 |
+| NFR-01 | Android là thiết bị nghiệm thu; TypeScript strict; phiên bản Expo/RN tương thích được khóa ở GM-02 |
 | NFR-02 | Mục tiêu cập nhật trạng thái vòng trong 2 giây ở mạng Wi-Fi ổn định; đo log thời điểm server/client, không coi là SLA |
 | NFR-03 | Mỗi request ghi có requestId; room mutations có expectedVersion (join/accept_room_invite trước membership và device registration là ngoại lệ đặc tả); thao tác chốt nguyên tử, retry không sinh hai kết quả |
 | NFR-04 | Người ngoài phòng không đọc được dữ liệu; thành viên chỉ đọc phiếu của mình; host không có quyền xem phiếu thô của người khác |
@@ -19,4 +19,4 @@
 
 Không hứa nhóm chốt offline; nhãn tổng hợp nhóm nhỏ vẫn cho phép suy luận sở thích.
 
-Food-v1: query eligibility có kiểm bounds/index/query plan ở GM-30; dataset nguồn/menu/giờ/ngày kiểm và coverage có version/rollback, không dùng fixture như dữ liệu thật. Không cam kết tồn kho live; lỗi weather GM-31 không làm hỏng core. GPS riêng không backend/log; anchor công cộng theo TTL room. [Food spec](../specs/FOOD_DATA_SPEC.md).
+Food-v1: query eligibility có kiểm bounds/index/query plan ở GM-11; dataset nguồn/menu/giờ/ngày kiểm và coverage có version/rollback, không dùng fixture như dữ liệu thật. Không cam kết tồn kho live; lỗi weather GM-31 không làm hỏng core. GPS riêng không backend/log; anchor công cộng theo TTL room. [Food spec](../specs/FOOD_DATA_SPEC.md).

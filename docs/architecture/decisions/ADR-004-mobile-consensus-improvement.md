@@ -1,4 +1,4 @@
-> Bối cảnh quyết định cũ. Yêu cầu food-v1 được cập nhật tại [ADR-005](ADR-005-food-location-time-data.md), chờ GM-28 review; phần location chỉ sau winner/venue P1 dưới đây không là scope hiện hành.
+> Bối cảnh quyết định cũ. Yêu cầu food-v1 được cập nhật tại [ADR-005](ADR-005-food-location-time-data.md), chờ GM-01 review; phần location chỉ sau winner/venue P1 dưới đây không là scope hiện hành.
 
 # ADR-004 — Baseline tài liệu mobile consensus v0.2
 
@@ -8,7 +8,7 @@
 
 Giữ NO cứng/hai vòng/server chốt một lần; score 2W+OK tương đương ưu tiên WANT. decision-v2 thêm matchTier/contract lý do. Giữ double-tap WANT/ba nút theo chủ dự án, không vote vuốt dọc; khả dụng cần thử native và người dùng.
 
-Đưa bạn quen/inbox GM-17, history tối thiểu/consent GM-18, push GM-25 và cache/outbox GM-16 vào P0. Account/recovery/history sync tách GM-26/P1; venue radius giới hạn dataset GM-27/P1; OCR/AI P2. Tổng 27 task triển khai, owner/reviewer vẫn đề xuất.
+Đưa bạn quen/inbox GM-15, history tối thiểu/consent GM-17, push GM-18 và cache/outbox GM-24 vào P0. Account/recovery/history sync tách GM-28/P1; venue radius giới hạn dataset GM-08/P1; OCR/AI P2. Tổng 27 task triển khai, owner/reviewer vẫn đề xuất.
 
 Context khóa server: meal/time hint/category/budget/history có nguồn; không dùng location suy quán có món nếu thiếu dữ liệu. Location foreground không persist/share mặc định, search review ngoài app có fallback. Push event sau commit, không payload authority.
 

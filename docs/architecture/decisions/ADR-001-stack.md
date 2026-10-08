@@ -4,7 +4,7 @@ Status: Proposed, chưa được reviewer chấp thuận. Ngày 2026-10-06.
 
 6 người, 8 tuần, React Native, chi phí gần 0; nhiều máy và phiếu kín đối với cả host. Firebase ở hội thoại là gợi ý, chưa là quyết định triển khai.
 
-Đề xuất Expo Router + TypeScript strict; Supabase guest Auth, PostgreSQL RPC/RLS và Realtime báo version. Khóa phiên bản tương thích tại GM-01; không thêm server HTTP riêng.
+Đề xuất Expo Router + TypeScript strict; Supabase guest Auth, PostgreSQL RPC/RLS và Realtime báo version. Khóa phiên bản tương thích tại GM-02; không thêm server HTTP riêng.
 
 | Phương án | Lợi ích | Đánh đổi |
 | --- | --- | --- |

@@ -1,6 +1,8 @@
+> Hồ sơ lịch sử dùng mã task cũ trước khi đánh số roadmap-v1. Không dùng các GM-ID bên dưới để nhận việc hiện tại; xem [bảng mã cũ–mới](../../project/TASK_RENUMBERING.md). Liên kết task (nếu có) đã trỏ tới mã mới; kết quả/lệnh cũ được giữ nguyên.
+
 # Audit repo và chuyển baseline food-v1
 
-Ngày 2026-10-07. Owner soạn: Codex; reviewer đề xuất: Trí. Đây là evidence thao tác/kiểm, không là quyết định review. [GM-28](../../../tasks/review/GM-28.md) ở review; Decision pending. Không tự Approved hoặc Done.
+Ngày 2026-10-07. Owner soạn: Codex; reviewer đề xuất: Trí. Đây là evidence thao tác/kiểm, không là quyết định review. [GM-28](../../../tasks/review/GM-01.md) ở review; Decision pending. Không tự Approved hoặc Done.
 
 ## Phạm vi rà soát
 

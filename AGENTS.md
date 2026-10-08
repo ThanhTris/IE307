@@ -8,9 +8,11 @@ Nguồn yêu cầu: chỉ dẫn hiện tại của chủ dự án → task/AC �
 
 ## AIDD
 
-Trước code: task có owner, reviewer khác owner, scope, AC, dependency, spec, patch plan và test plan. Dependency phải được review chấp thuận. GM-00 đã review baseline v0.2; scope food-v1 chờ GM-28. Chạy `python scripts/task_readiness.py --task GM-XX` trước code, không coi Approved cũ là mở khóa phạm vi mới.
+Trước code: task có owner, reviewer khác owner, scope, AC, spec, patch/test plan và contract version. `start_dependencies` phải được review; được viết phần độc lập theo contract/fixture dù `merge_dependencies` chưa xong. Trước tích hợp/merge cần cả hai loại dependency Approved, đúng bản task/evidence trên nhánh đích, kiểm PR/commit và test thật. Theo ADR-006, parallel_with cho phép quan hệ merge trước/sau nhưng không quan hệ start trước/sau. GM-00 chỉ duyệt v0.2; food-v1 vẫn chờ GM-01. Chạy `python scripts/task_readiness.py --task GM-XX` trước code; trước merge thêm `--gate merge --base-ref origin/main` sau cập nhật ref. Checker không tự fetch/merge hoặc thay review.
 
 Đọc [workflow](docs/project/TEAM_WORKFLOW.md), [DoD](docs/project/DEFINITION_OF_DONE.md). AI không tự duyệt hoặc ghi Done. Thay phạm vi/kiến trúc/quyền riêng tư phải ghi ADR và hỏi owner khi chưa có ủy quyền. Cập nhật tài liệu/UI không cần task mới mỗi lần; gom vào task nền khi phù hợp.
+
+Mã task hiện hành theo roadmap-v1: GM-01..31, dependency phải có số nhỏ hơn task. Xem docs/project/TASK_RENUMBERING.md và tasks/task-id-map.json khi tra mã cũ; previous_id không là dependency. Giữ evidence lịch sử, evidence mới dùng docs/evidence/roadmap-v1/GM-XX/. Không tự đổi số issue hoặc sync GitHub khi chỉ đổi mã task local.
 
 ## React Native
 

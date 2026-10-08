@@ -1,6 +1,6 @@
 # Food data spec — food-v1
 
-2026-10-07. Yêu cầu hiện hành được soạn theo chỉ dẫn chủ dự án; review kỹ thuật/triển khai chờ [GM-28](../../tasks/review/GM-28.md). Nguồn chi tiết: [plan data](../project/FOOD_DATA_REQUIREMENTS_PLAN.md), [ADR-005](../architecture/decisions/ADR-005-food-location-time-data.md). FR-04/10/15/20/21; T-03/10/14/19/23/25/26. GM-03/04/27/29/30 là đầu vào core, GM-31 nâng cao.
+2026-10-07. Yêu cầu hiện hành được soạn theo chỉ dẫn chủ dự án; review kỹ thuật/triển khai chờ [GM-01](../../tasks/review/GM-01.md). Nguồn chi tiết: [plan data](../project/FOOD_DATA_REQUIREMENTS_PLAN.md), [ADR-005](../architecture/decisions/ADR-005-food-location-time-data.md). FR-04/10/15/20/21; T-03/10/14/19/23/25/26. GM-03, GM-05, GM-08, GM-10, GM-11 là đầu vào core, GM-31 nâng cao.
 
 ## Data contract bắt buộc
 
@@ -16,13 +16,13 @@
 | coverage_areas/public_anchors | areaId/boundary/datasetVersion/checkedAt/validUntil; anchorId/name/public lat/lng/coverageId | Coverage là vùng đã khảo sát, không bảo đảm mọi quán; anchor công cộng được user xác nhận |
 | data_sources/dataset_versions | sourceRef/locator/usageRights/checkedAt/validUntil/enteredBy/reviewedBy/status/version | draft → verified → published; người nhập khác người kiểm, có report/rollback; fixture không publish như thật |
 
-GM-03 chốt biểu mẫu/IDs/field types/units và fixture mẫu; GM-04 chốt SQL constraints/indices/import transaction. Trường chưa biết để null/unknown đúng contract, không nhập giá/giờ/tọa độ bịa. FK offering → branch/dish/schedule; unique theo branch/dish/variant/serviceMode. Latitude [-90,90], longitude [-180,180], radius theo mét và cấu hình server có giới hạn; giá không âm, min<=max, timezone hợp lệ. Hạn dataset không được che dữ liệu con đã hết hạn. publish/read không cho client đổi verified state.
+GM-03 chốt biểu mẫu/IDs/field types/units và fixture mẫu; GM-05 chốt SQL constraints/indices/import transaction. Trường chưa biết để null/unknown đúng contract, không nhập giá/giờ/tọa độ bịa. FK offering → branch/dish/schedule; unique theo branch/dish/variant/serviceMode. Latitude [-90,90], longitude [-180,180], radius theo mét và cấu hình server có giới hạn; giá không âm, min<=max, timezone hợp lệ. Hạn dataset không được che dữ liệu con đã hết hạn. publish/read không cho client đổi verified state.
 
 ## Đầu vào context
 
 Room có anchorId công cộng, coverageId, radiusM, desiredAt UTC, venue timezone, mealSlot, timeHint, budget nullable, serviceMode (core dine_in), preferences riêng và avoidRecent. Context/catalogue/dataset/eligibility policy đều có version và seed; shared snapshot không có preference theo user.
 
-GPS foreground chỉ giúp chọn khu vực/anchor trên máy; GM-29 cung cấp capability trước GM-07. User xác nhận điểm ăn; server nhận anchorId/radius, không nhận tọa độ cá nhân. Deny/GPS off/ngoài coverage hỗ trợ manual. Nhóm dùng một điểm ăn chung hiển thị trước ready, không tự chia GPS host hoặc thu GPS mọi thành viên. Khoảng cách là đường chim bay từ anchor đã chọn; muốn khoảng cách GPS/route phải có contract/privacy riêng. Request giới hạn radius/time horizon theo cấu hình được reviewer chốt, không nhận groupKey hoặc arbitrary SQL/filter expression.
+GPS foreground chỉ giúp chọn khu vực/anchor trên máy; GM-10 cung cấp capability trước GM-13. User xác nhận điểm ăn; server nhận anchorId/radius, không nhận tọa độ cá nhân. Deny/GPS off/ngoài coverage hỗ trợ manual. Nhóm dùng một điểm ăn chung hiển thị trước ready, không tự chia GPS host hoặc thu GPS mọi thành viên. Khoảng cách là đường chim bay từ anchor đã chọn; muốn khoảng cách GPS/route phải có contract/privacy riêng. Request giới hạn radius/time horizon theo cấu hình được reviewer chốt, không nhận groupKey hoặc arbitrary SQL/filter expression.
 
 Ăn ngay: dùng server now + buffer người dùng chọn để đề xuất desiredAt; xác nhận một lần. Đặt giờ cụ thể: dùng đúng giờ, không cộng buffer lần nữa. Trước start, desiredAt đã qua yêu cầu xác nhận lại/reset ready. Ngày/giờ thiết bị chỉ để hiển thị, không là authority. Nếu thiếu bối cảnh hợp lệ, cho sửa lobby; không tạo pool rỗng để bỏ phiếu.
 
@@ -33,23 +33,23 @@ GPS foreground chỉ giúp chọn khu vực/anchor trên máy; GM-29 cung cấp 
 3. sold_out/paused còn hiệu lực bị loại. Giờ/menu stale hoặc unknown vào trạng thái Cần xác nhận, không vào pool khả thi. Tồn kho unknown nhưng lịch verified vẫn được mô tả là “dự kiến phục vụ theo lịch”; không được quảng cáo live stock. Offering có báo hết hàng đã hết hạn vẫn cần phân biệt lịch với xác nhận tồn món.
 4. Món có mealSlot phù hợp bữa đã chọn. Buổi là biên tập theo dữ liệu, không giả mọi món có breakfast; nhóm được đổi buổi trong lobby với reset ready. 22:00 không tự loại tất cả món: quán/món phục vụ 22:00–02:00 vẫn có thể đạt.
 5. Gom theo dish/variant, không trùng; đặc tính/giá trên card phải được ít nhất một offering hợp lệ đáp ứng đồng thời. Không ghép nhiệt độ quán A với vị/giá quán B thành món không thực tế. Không đủ dữ liệu đặc tính chung thì ghi tùy quán/unknown hoặc phân định variant rõ.
-6. Cuisine/category/flavor/temperature/budget/distance/recent history xếp hạng mềm trong tập hợp lệ, không là veto thay phiếu. GM-30 có rule order/version deterministic và fixture; không hứa weights tối ưu. <=8 món, ít hơn dùng số thực; rỗng trả lý do, không tự nới vùng/giờ hoặc lấy quán unknown.
+6. Cuisine/category/flavor/temperature/budget/distance/recent history xếp hạng mềm trong tập hợp lệ, không là veto thay phiếu. GM-11 có rule order/version deterministic và fixture; không hứa weights tối ưu. <=8 món, ít hơn dùng số thực; rỗng trả lý do, không tự nới vùng/giờ hoặc lấy quán unknown.
 
 Món gốc Nam bán tại Hà Nội được gợi ý ở Hà Nội nếu đạt các điều kiện; món chỉ có offering tại TP.HCM không vào pool ăn ở Hà Nội. Schedule verified là bằng chứng lịch dự kiến, không bảo đảm khách đến còn món/chỗ ngồi; không thêm booking/capacity claim.
 
 ## Contract output và khóa phiên
 
-GM-30 trả eligible dishes/variants + offering refs, effective profile/price source/unit, reasonCodes, evaluatedAt, datasetVersion, eligibilityVersion và poolSeed; không trả GPS/private preferences. GM-08 tích hợp vào preview/room/start; GM-11 chỉ score/veto/tier trên pool được khóa, không phụ thuộc UI hoặc thời tiết.
+GM-11 trả eligible dishes/variants + offering refs, effective profile/price source/unit, reasonCodes, evaluatedAt, datasetVersion, eligibilityVersion và poolSeed; không trả GPS/private preferences. GM-12 tích hợp vào preview/room/start; GM-06 chỉ score/veto/tier trên pool được khóa, không phụ thuộc UI hoặc thời tiết.
 
-GM-08 revalidate trước start trong transaction cùng lock room; dataset publish/version thay đổi phải dùng snapshot nhất quán, không đọc trộn phiên bản. Pool/context/version đã được nhóm ready khác kết quả mới → trả CONTEXT_CHANGED, cập nhật snapshot/reset ready rồi yêu cầu nhóm xác nhận lại. Retry cùng requestId giữ semantics idempotency; sửa request body/version phải dùng requestId mới sau phản hồi từ chối rõ.
+GM-12 revalidate trước start trong transaction cùng lock room; dataset publish/version thay đổi phải dùng snapshot nhất quán, không đọc trộn phiên bản. Pool/context/version đã được nhóm ready khác kết quả mới → trả CONTEXT_CHANGED, cập nhật snapshot/reset ready rồi yêu cầu nhóm xác nhận lại. Retry cùng requestId giữ semantics idempotency; sửa request body/version phải dùng requestId mới sau phản hồi từ chối rõ.
 
-Sau start snapshot pool/roster/context/offerings/lịch/evaluatedAt/policy bất biến. Lịch quán đổi giữa phiên không thay phiếu/resultId. GM-14 refetch offering cho đúng winner/context: còn nơi khác hợp lệ thì hiển thị, không còn thì báo và cho tạo phiên mới. Result cũ vẫn là quyết định đã chốt; không reroll hoặc phục hồi NO. Outbox GM-16 cache version/evaluatedAt, không biến cache thành xác nhận đang bán.
+Sau start snapshot pool/roster/context/offerings/lịch/evaluatedAt/policy bất biến. Lịch quán đổi giữa phiên không thay phiếu/resultId. GM-21 refetch offering cho đúng winner/context: còn nơi khác hợp lệ thì hiển thị, không còn thì báo và cho tạo phiên mới. Result cũ vẫn là quyết định đã chốt; không reroll hoặc phục hồi NO. Outbox GM-24 cache version/evaluatedAt, không biến cache thành xác nhận đang bán.
 
 ## Freshness, quyền và vận hành
 
-GM-27 thu dữ liệu pilot thật có quyền dùng: mục tiêu 20–30 chi nhánh, 15–20 món trong vùng đã chốt; không ép bịa để đủ số. Catalogue biên tập 60–80 món chưa có offering vẫn không được vào pool thực tế. Source cho từng nhóm thông tin (ảnh/menu/giờ/giá/tọa độ); nhập → kiểm máy → người khác review → publish version → lịch kiểm lại. CSV/JSON import phải trả lỗi trường/dòng, không publish một phần không rõ trạng thái.
+GM-08 thu dữ liệu pilot thật có quyền dùng: mục tiêu 20–30 chi nhánh, 15–20 món trong vùng đã chốt; không ép bịa để đủ số. Catalogue biên tập 60–80 món chưa có offering vẫn không được vào pool thực tế. Source cho từng nhóm thông tin (ảnh/menu/giờ/giá/tọa độ); nhập → kiểm máy → người khác review → publish version → lịch kiểm lại. CSV/JSON import phải trả lỗi trường/dòng, không publish một phần không rõ trạng thái.
 
-Đề xuất ngưỡng review tại GM-28: menu/giờ 7 ngày; địa chỉ/tọa độ 30 ngày; kiểm lại offering dùng demo trước buổi pilot. Đây là policy cần chốt, không bảo đảm thực tế không đổi. sold_out override có expiresAt; phản ánh user vào hàng chờ xác minh. Có dataset quality report và rollback/version snapshot không làm đổi phiên đã start.
+Đề xuất ngưỡng review tại GM-01: menu/giờ 7 ngày; địa chỉ/tọa độ 30 ngày; kiểm lại offering dùng demo trước buổi pilot. Đây là policy cần chốt, không bảo đảm thực tế không đổi. sold_out override có expiresAt; phản ánh user vào hàng chờ xác minh. Có dataset quality report và rollback/version snapshot không làm đổi phiên đã start.
 
 GPS không server/database/log/queue/history; anchor công cộng chỉ trong context phòng cần thiết tới cleanup (đề xuất 24h sau terminal như room), không đưa vào history mặc định. Preference/mood riêng theo auth, không gửi notification hoặc AI mặc định. Shared snapshot chỉ có bối cảnh đã xác nhận; privileged publisher/RPC kiểm quyền, không service key client.
 
@@ -63,19 +63,19 @@ Mood là nhãn user tự chọn (ví dụ muốn ăn nhẹ, món quen, thử m�
 
 | AC | Nội dung | Tasks | Tests |
 | --- | --- | --- | --- |
-| FOOD-01 | Phân biệt origin và địa điểm có offering thật | GM-03/27/30 | T-23/25 |
-| FOOD-02 | Radius mét/anchor/ranh giới/coverage | GM-27/29/30 | T-10/23 |
-| FOOD-03 | GPS deny/manual/nhóm nhiều vùng dùng một context | GM-07/29 | T-10/19 |
-| FOOD-04 | Buổi ăn đúng/đổi buổi reset ready | GM-08/10/30 | T-19/25 |
-| FOOD-05 | Giờ món khác giờ quán, nhiều ca, last order | GM-04/27/30 | T-14/25 |
-| FOOD-06 | Overnight/ngoại lệ/ngày/timezone/buffer một lần | GM-29/30/08 | T-19/25 |
-| FOOD-07 | Unknown/stale/sold_out không giả đang bán | GM-27/30 | T-23/25 |
-| FOOD-08 | Card/variant/giá không ghép dữ liệu sai giữa quán | GM-03/13/30 | T-03/25 |
-| FOOD-09 | Version/revalidate/start/reset/snapshot nhất quán | GM-08/12/16 | T-02/05/16/25 |
-| FOOD-10 | Availability sau start không reroll result | GM-12/14 | T-05/25 |
+| FOOD-01 | Phân biệt origin và địa điểm có offering thật | GM-03, GM-08, GM-11 | T-23/25 |
+| FOOD-02 | Radius mét/anchor/ranh giới/coverage | GM-08, GM-10, GM-11 | T-10/23 |
+| FOOD-03 | GPS deny/manual/nhóm nhiều vùng dùng một context | GM-13, GM-10 | T-10/19 |
+| FOOD-04 | Buổi ăn đúng/đổi buổi reset ready | GM-12, GM-19, GM-11 | T-19/25 |
+| FOOD-05 | Giờ món khác giờ quán, nhiều ca, last order | GM-05, GM-08, GM-11 | T-14/25 |
+| FOOD-06 | Overnight/ngoại lệ/ngày/timezone/buffer một lần | GM-10, GM-11, GM-12 | T-19/25 |
+| FOOD-07 | Unknown/stale/sold_out không giả đang bán | GM-08, GM-11 | T-23/25 |
+| FOOD-08 | Card/variant/giá không ghép dữ liệu sai giữa quán | GM-03, GM-20, GM-11 | T-03/25 |
+| FOOD-09 | Version/revalidate/start/reset/snapshot nhất quán | GM-12, GM-14, GM-24 | T-02/05/16/25 |
+| FOOD-10 | Availability sau start không reroll result | GM-14, GM-21 | T-05/25 |
 | FOOD-11 | Weather/mood không override feasibility/veto | GM-31 | T-26 |
-| FOOD-12 | GPS/preference/mood không leak | GM-06/29/31 | T-08/10/26 |
-| FOOD-13 | Source/license/freshness/publish/rollback, fixture riêng | GM-03/04/27 | T-14/23 |
-| FOOD-14 | Pool ít/rỗng, không nhân bản hoặc fallback sai vùng | GM-08/10/30 | T-03/19/25 |
+| FOOD-12 | GPS/preference/mood không leak | GM-09, GM-10, GM-31 | T-08/10/26 |
+| FOOD-13 | Source/license/freshness/publish/rollback, fixture riêng | GM-03, GM-05, GM-08 | T-14/23 |
+| FOOD-14 | Pool ít/rỗng, không nhân bản hoặc fallback sai vùng | GM-12, GM-19, GM-11 | T-03/19/25 |
 
-Core GM-19/21 kiểm FOOD-01..10/12..14 theo phạm vi P0; FOOD-11 và phần mood FOOD-12 do GM-31 sau release, không chặn P0. Pure TS/SQL dùng chung fixture; test thật cần runner GM-01 và SQL setup GM-04. GM-27 là dataset, GM-29 là capability location, GM-30 là eligibility, GM-08 là room integration: dependency rõ để không tạo vòng với result/release.
+Core GM-25, GM-26 kiểm FOOD-01..10/12..14 theo phạm vi P0; FOOD-11 và phần mood FOOD-12 do GM-31 sau release, không chặn P0. Pure TS/SQL dùng chung fixture; test thật cần runner GM-02 và SQL setup GM-05. GM-08 là dataset, GM-10 là capability location, GM-11 là eligibility, GM-12 là room integration: dependency rõ để không tạo vòng với result/release.

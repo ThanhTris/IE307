@@ -1,4 +1,4 @@
-> Bối cảnh quyết định cũ. Yêu cầu food-v1 được cập nhật tại [ADR-005](ADR-005-food-location-time-data.md), chờ GM-28 review; phần location chỉ sau winner/venue P1 dưới đây không là scope hiện hành.
+> Bối cảnh quyết định cũ. Yêu cầu food-v1 được cập nhật tại [ADR-005](ADR-005-food-location-time-data.md), chờ GM-01 review; phần location chỉ sau winner/venue P1 dưới đây không là scope hiện hành.
 
 # ADR-003 — Vị trí foreground và liên kết tìm review
 
@@ -19,6 +19,6 @@ Xin quyền vị trí foreground lần mở đầu sau giải thích. Khi ngư�
 
 ## Gate trước code
 
-Reviewer của GM-20 kiểm provider/dependency/license/quota, thông báo consent và allowlist URL; chốt patch/test plan. Không có bằng chứng native trong đợt tài liệu này. Không tự coi ADR Accepted.
+Reviewer của GM-23 kiểm provider/dependency/license/quota, thông báo consent và allowlist URL; chốt patch/test plan. Không có bằng chứng native trong đợt tài liệu này. Không tự coi ADR Accepted.
 
 [Spec bổ sung](../../specs/SOCIAL_DISCOVERY_SPEC.md). Tham khảo: [React Native Linking](https://reactnative.dev/docs/linking), [Android app links](https://developer.android.com/training/app-links), [TikTok Nearby](https://support.tiktok.com/en/using-tiktok/exploring-videos/nearby).

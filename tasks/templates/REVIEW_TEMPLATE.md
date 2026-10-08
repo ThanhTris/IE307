@@ -1,40 +1,44 @@
-# Mẫu review và bàn giao dependency
+# Mẫu review và bàn giao hai gate
 
-Task ID / đường dẫn:
-Owner thực tế:
-Reviewer độc lập:
-PR / commit hoặc phiên bản artifact được review:
-Baseline / spec / dataset / migration version:
+Task / owner / reviewer độc lập:
+PR / revision / contract / dataset / migration version:
+Loại review: draft phần độc lập hay nghiệm thu toàn task?
 
-## Dependency được đối chiếu
+## Start dependencies
 
-| Task trước | Đường dẫn task/PR | Done? | Reviewer/ngày/quyết định | Evidence và đầu ra đã dùng |
-| --- | --- | --- | --- | --- |
-| GM-XX | điền link thật | chưa/đã | điền bản ghi thật | contract/dataset/build/test version |
+| Task trước | Done/Approved / reviewer / ngày / evidence | Contract version / phần được làm trước |
+| --- | --- | --- |
+| GM-XX | | |
 
-Không chỉ nhìn merged/checkbox. Chạy `python scripts/task_readiness.py --task GM-XX`; đọc evidence của từng dependency. Nếu scope đầu vào thay đổi sau review, ghi task bị ảnh hưởng và review lại trước tiếp tục.
+Chạy `python scripts/task_readiness.py --task GM-XX`. Draft review được còn merge blocker; không được Approved toàn task nếu chưa đạt AC.
 
-## Kết quả từng AC
+## Merge dependencies và target
 
-| AC | Pass/Fail/Not run | Evidence/lệnh/output/môi trường | Giới hạn/blocker/owner |
+| Task trước (gồm start deps) | Task/PR/evidence Approved | Merge/squash commit | Ref target / SHA đã kiểm |
+| --- | --- | --- | --- |
+| GM-XX | | | |
+
+Chạy `python scripts/task_readiness.py --task GM-XX --gate merge --base-ref origin/main` sau cập nhật ref. Người merge xác minh code upstream thật trên target; không coi metadata checker là kiểm GitHub/commit ancestry. Cập nhật branch và chạy integration tests lại. Thay contract/revision phải review lại downstream.
+
+## Kết quả AC
+
+| AC | Pass/Fail/Not run | Lệnh/output/môi trường/evidence | Mock hay thật / blocker |
 | --- | --- | --- | --- |
 | AC-… | | | |
 
-Docs validator không thay test SQL/native hoặc kiểm nguồn dataset. Ghi riêng fixture mô phỏng với dữ liệu quán thật. Reviewer kiểm error/race/privacy/expiry/source freshness nếu thuộc scope. Owner không duyệt phần mình thực hiện.
+Docs-only ghi N/A cho native/SQL có lý do. Với feature/data, mock/validator không thay native/SQL/nguồn thật; kiểm race/privacy/expiry/freshness khi áp dụng.
 
 ## Quyết định
 
-Reviewed-by: điền đúng reviewer trong task
+Reviewed-by: tên đúng reviewer khác owner
 Reviewed-at: YYYY-MM-DD
 Decision: Pending
-Review-evidence: đường dẫn file evidence có thật tính từ repo root
+Review-evidence: docs/evidence/roadmap-v1/GM-XX/REVIEW.md (file thật từ repo root)
 
-Reviewer chỉ đổi Decision thành Approved sau khi mọi AC/dependency/DoD đạt; ghi các trường trên ở task, chuyển file vào tasks/done và đổi status cùng lúc. Changes requested thì giữ review/in-progress, ghi lỗi và người xử lý. AI thực hiện không tự ghi Approved. PR merge không tự chuyển Done.
+Chỉ reviewer đổi Approved khi mọi AC, cả hai gate và DoD đạt cho revision được ghi. Sau đó chuyển task done, sinh indexes; code đổi tiếp cần review lại. AI không tự Approved. Done không chứng minh PR đã merge; downstream phải kiểm target riêng.
 
-## Bàn giao task sau
+## Bàn giao
 
-Task nhận đầu ra:
-Interface/types/RPC/schema/dataset/artifact version:
-Lệnh chạy/tái hiện:
-Migration/rollback hoặc N/A có lý do:
-Giới hạn được reviewer chấp thuận:
+Task nhận đầu ra / version / PR / commit:
+Lệnh tái hiện / migration / rollback:
+Giới hạn, blocker và người xử lý:

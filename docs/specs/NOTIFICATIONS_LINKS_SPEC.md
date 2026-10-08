@@ -1,6 +1,6 @@
 # Push, inbox và incoming links — v0.2
 
-2026-10-07 • FR-14/18 • GM-25/20. Android development build là môi trường nghiệm thu; credentials và package chưa được cấp/cài.
+2026-10-07 • FR-14/18 • GM-18, GM-23. Android development build là môi trường nghiệm thu; credentials và package chưa được cấp/cài.
 
 ## Push tối thiểu
 

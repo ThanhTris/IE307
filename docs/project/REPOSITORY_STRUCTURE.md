@@ -1,6 +1,6 @@
 # Cấu trúc React Native / Expo
 
-Đây là cấu trúc nguồn đề xuất, chưa có package/config/build native. Các thư mục rỗng có `.gitkeep` để nhóm thấy ranh giới; GM-01 tạo file ứng dụng sau review, không coi placeholders là tính năng.
+Đây là cấu trúc nguồn đề xuất, chưa có package/config/build native. Các thư mục rỗng có `.gitkeep` để nhóm thấy ranh giới; GM-02 tạo file ứng dụng sau review, không coi placeholders là tính năng.
 
 ```text
 mobile/
@@ -35,7 +35,7 @@ tests/
 
 Mỗi feature triển khai dùng `screens/`, `components/`, `hooks/`, `services/`, `types.ts`, `index.ts` khi thực sự cần; không tạo mọi tầng cho một file đơn giản. Chỉ feature public API được import ra ngoài. Domain không import React hoặc SDK. Supabase adapter không chứa JSX.
 
-## Route dự kiến (GM-01 sẽ tạo)
+## Route dự kiến (GM-02 sẽ tạo)
 
 `src/app/_layout.tsx`, `index.tsx`, `room/create.tsx`, `room/join.tsx`, `room/[id]/preferences.tsx`, `room/[id]/lobby.tsx`, `room/[id]/vote.tsx`, `room/[id]/final-round.tsx`, `room/[id]/result.tsx`, `partners/index.tsx` `history/index.tsx` và `notifications/index.tsx` (P0); account/recovery (P1).
 
@@ -43,7 +43,7 @@ Route chỉ parse params/guard và render feature screen. ID trên URL không c�
 
 ## Config sẽ bổ sung ở bootstrap
 
-`mobile/package.json`, một lockfile, `app.config.ts`, `tsconfig.json`, lint/test config, `.env.example`, `expo-env.d.ts`. Không để config placeholder giả chạy. `android/ios` theo chiến lược Expo prebuild quyết định ở GM-01; không commit build artifacts. Supabase config/migration đầu ở GM-04.
+`mobile/package.json`, một lockfile, `app.config.ts`, `tsconfig.json`, lint/test config, `.env.example`, `expo-env.d.ts`. Không để config placeholder giả chạy. `android/ios` theo chiến lược Expo prebuild quyết định ở GM-02; không commit build artifacts. Supabase config/migration đầu ở GM-05.
 
 Nguồn cũ nằm trong lịch sử Git (commit `6086c16`); `docs/decision/` cũ đã được gỡ trong lần chuyển đề tài, không là nguồn hiện hành.
 
@@ -53,4 +53,4 @@ features/notifications dự kiến chứa inbox/permission/token/navigation; dat
 
 ## Food-v1
 
-GM-29 bổ sung feature/context và adapter vị trí/anchor trước create UI; GM-30 domain/eligibility thuần và SQL query; GM-27 verified seed/coverage/schedules. Đây là đích task, chưa có implementation. `scripts/task_readiness.py` kiểm gate và sinh các task indexes từ frontmatter. [Dependency map](TASK_DEPENDENCIES.md).
+GM-10 bổ sung feature/context và adapter vị trí/anchor trước create UI; GM-11 domain/eligibility thuần và SQL query; GM-08 verified seed/coverage/schedules. Đây là đích task, chưa có implementation. `scripts/task_readiness.py` kiểm gate và sinh các task indexes từ frontmatter. [Dependency map](TASK_DEPENDENCIES.md).

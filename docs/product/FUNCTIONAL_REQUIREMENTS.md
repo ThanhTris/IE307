@@ -1,6 +1,6 @@
 # Functional requirements — food-v1
 
-2026-10-07 • yêu cầu hiện hành chờ review GM-28. Mỗi ID được truy vết ở [ma trận](../specs/TRACEABILITY.md).
+2026-10-07 • yêu cầu hiện hành chờ review GM-01. Mỗi ID được truy vết ở [ma trận](../specs/TRACEABILITY.md).
 
 | ID | Mức | Yêu cầu nghiệm thu |
 | --- | --- | --- |

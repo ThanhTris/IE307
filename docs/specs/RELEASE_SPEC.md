@@ -9,4 +9,4 @@ food-v1 • 2026-10-07. Nghiệm thu Android APK nội bộ, chưa phát hành s
 - Demo video có happy path, vòng hai, không đồng thuận, pending/restart/reconnect, avatar invitation/push, QR/link/location và history consent; ghi phiên bản app/backend, không dùng prototype thay app thật.
 - Báo cáo chỉ nêu tính năng đã chạy; tính năng đề xuất có mục riêng. Reviewer độc lập phê duyệt trước task done.
 
-Core food-v1 bao gồm data/coverage/location/eligibility GM-27/29/30, không trì hoãn sau release. Demo có đổi giờ/khu vực, unknown/out-of-coverage và offering thay đổi sau result. Kiểm mọi P0 qua dependency map và review độc lập; không bảo đảm tồn kho live từ lịch. GM-28 review scope mới trước triển khai.
+Core food-v1 bao gồm data/coverage/location/eligibility GM-08, GM-10, GM-11, không trì hoãn sau release. Demo có đổi giờ/khu vực, unknown/out-of-coverage và offering thay đổi sau result. Kiểm mọi P0 qua dependency map và review độc lập; không bảo đảm tồn kho live từ lịch. GM-01 review scope mới trước triển khai.

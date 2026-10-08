@@ -1,6 +1,6 @@
 # Test plan food-v1
 
-2026-10-07. Đây là kế hoạch, chưa có kết quả native/backend. Test IDs dùng truy vết FR/task; dependency/package runner chốt ở GM-01.
+2026-10-07. Đây là kế hoạch, chưa có kết quả native/backend. Test IDs dùng truy vết FR/task; dependency/package runner chốt ở GM-02.
 
 | ID | Kiểu | Scenario / expected |
 | --- | --- | --- |
@@ -31,9 +31,9 @@
 | T-25 | P0 eligibility/time | FOOD-01..10/12..14 phần core: lịch quán giao lịch món, nhiều ca/overnight/date exception/local timezone/[start,end)/last order; desiredAt/buffer một lần; stale/sold_out/empty; dataset/start race/reset ready; offering sau start không reroll |
 | T-26 | P2 weather/mood | FOOD-11 và mood FOOD-12: forecast đúng giờ/khu vực, stale/timeout/opt-out, privacy/TTL; không override eligibility/NO hoặc đổi pool sau start |
 
-Domain runner dùng sau GM-01, SQL đa auth user trong môi trường test, native recording + logs sanitized. Evidence mỗi task gồm lệnh/version/ngày/device/network/fixture/output và kết quả AC; không token/raw vote/tọa độ thật. HTML prototype không chứng minh push/realtime/native. Negative cases là bắt buộc ở feature rủi ro.
+Domain runner dùng sau GM-02, SQL đa auth user trong môi trường test, native recording + logs sanitized. Evidence mỗi task gồm lệnh/version/ngày/device/network/fixture/output và kết quả AC; không token/raw vote/tọa độ thật. HTML prototype không chứng minh push/realtime/native. Negative cases là bắt buộc ở feature rủi ro.
 
 Mục tiêu NFR cập nhật <=2s trên Wi-Fi ổn định cần đo server/client timestamp, không là SLA. User pilot nhỏ không chứng minh thị trường hoặc độ an toàn dị ứng. Không chạy test placeholder rồi báo feature đạt.
 
 
-Food-v1 review gate GM-28. GM-04 bàn giao SQL setup/runner; GM-01 native/domain runner; GM-27 data thật trước GM-30 query. GM-19/21 không chờ GM-31 P2. [Food spec/AC](../specs/FOOD_DATA_SPEC.md), [dependency map](../project/TASK_DEPENDENCIES.md).
+Food-v1 review gate GM-01. GM-05 bàn giao SQL setup/runner; GM-02 native/domain runner; GM-08 data thật trước GM-11 query. GM-25, GM-26 không chờ GM-31 P2. [Food spec/AC](../specs/FOOD_DATA_SPEC.md), [dependency map](../project/TASK_DEPENDENCIES.md).
