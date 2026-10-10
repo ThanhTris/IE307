@@ -1,0 +1,2 @@
+﻿id,offeringId,state,source,observedAt,expiresAt,version,reviewStatus,sourceRef,fieldSources,checkedAt,validUntil,enteredBy,reviewedBy
+9022e08e-a064-557a-b201-97693a7d223c,53bda109-7c1b-5317-991c-7c893694c263,sold_out,377d7e61-dbca-5192-9bfc-9ab3efe8436d,2026-10-09T15:00:00Z,2026-10-09T16:00:00Z,1,draft,377d7e61-dbca-5192-9bfc-9ab3efe8436d,{},2026-10-09T00:00:00Z,,fixture-author,

@@ -1,0 +1,1205 @@
+{
+  "contractVersion": "1.0.0",
+  "status": "draft",
+  "entityNamesNote": "CamelCase JSON/CSV; venueDishes corresponds to venue_dishes in FOOD_DATA_SPEC",
+  "entities": {
+    "taxonomy": {
+      "primaryKey": "id",
+      "fields": {
+        "id": {
+          "type": "uuid",
+          "description": "ID ổn định UUIDv5 từ registry key bất biến",
+          "nullable": false
+        },
+        "type": {
+          "type": "enum",
+          "description": "Loại taxonomy; temperature/flavor/meal là enum trong codebook",
+          "nullable": false,
+          "values": [
+            "cuisine",
+            "origin",
+            "category"
+          ]
+        },
+        "code": {
+          "type": "string",
+          "description": "Mã trong taxonomy_v1.json; category có family:/preparation:",
+          "nullable": false
+        },
+        "label": {
+          "type": "string",
+          "description": "Tên hiển thị",
+          "nullable": false
+        },
+        "description": {
+          "type": "string",
+          "description": "Giải thích ngắn, không suy nguồn gốc từ nơi bán",
+          "nullable": true
+        },
+        "status": {
+          "type": "enum",
+          "description": "Trạng thái taxonomy",
+          "nullable": false,
+          "values": [
+            "draft",
+            "verified",
+            "published"
+          ]
+        },
+        "origin": {
+          "type": "enum",
+          "description": "Nguồn gốc Việt, không phải nơi bán",
+          "nullable": true,
+          "values": [
+            "north",
+            "central",
+            "south",
+            "unknown",
+            "not_applicable"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "description": "Phiên bản bản ghi, tăng khi nội dung đổi",
+          "nullable": false,
+          "min": 1
+        },
+        "reviewStatus": {
+          "type": "enum",
+          "description": "Trạng thái kiểm dữ liệu; khác trạng thái đang bán",
+          "nullable": false,
+          "values": [
+            "draft",
+            "verified",
+            "published"
+          ]
+        },
+        "sourceRef": {
+          "type": "uuid",
+          "description": "Nguồn chính; bổ sung fieldSources cho từng nhóm thông tin",
+          "nullable": true,
+          "ref": "dataSources"
+        },
+        "fieldSources": {
+          "type": "object",
+          "description": "Map nhóm thông tin → sourceRef; không dùng để suy quyền ảnh",
+          "nullable": false
+        },
+        "checkedAt": {
+          "type": "utc",
+          "description": "Lần kiểm dữ liệu có bằng chứng, UTC",
+          "nullable": true
+        },
+        "validUntil": {
+          "type": "utc",
+          "description": "Hạn hiệu lực đã được chốt; draft thiếu để null",
+          "nullable": true
+        },
+        "enteredBy": {
+          "type": "string",
+          "description": "Người nhập hoặc mã agent có thể truy vết",
+          "nullable": false
+        },
+        "reviewedBy": {
+          "type": "string",
+          "description": "Reviewer độc lập; draft chưa review để null",
+          "nullable": true
+        }
+      }
+    },
+    "dishes": {
+      "primaryKey": "id",
+      "fields": {
+        "id": {
+          "type": "uuid",
+          "description": "ID ổn định UUIDv5 từ registry key bất biến",
+          "nullable": false
+        },
+        "name": {
+          "type": "string",
+          "description": "Tên món gốc",
+          "nullable": false
+        },
+        "description": {
+          "type": "string",
+          "description": "Mô tả có nguồn",
+          "nullable": true
+        },
+        "aliases": {
+          "type": "stringArray",
+          "description": "Tên tương đương; không tự đưa topping vào alias",
+          "nullable": false
+        },
+        "cuisineIds": {
+          "type": "uuidArray",
+          "description": "Cuisine đa nhãn; [] + classificationStatus unknown khi chưa biết",
+          "nullable": false,
+          "ref": "taxonomy"
+        },
+        "categoryIds": {
+          "type": "uuidArray",
+          "description": "Họ món và cách chế biến đa nhãn",
+          "nullable": false,
+          "ref": "taxonomy"
+        },
+        "mealSlots": {
+          "type": "stringArray",
+          "description": "Buổi ăn; [] khi chưa xác minh",
+          "nullable": false,
+          "values": [
+            "breakfast",
+            "lunch",
+            "dinner",
+            "snack"
+          ]
+        },
+        "timeHints": {
+          "type": "stringArray",
+          "description": "Thông tin bổ sung, không thay lịch",
+          "nullable": false,
+          "values": [
+            "late_night"
+          ]
+        },
+        "classificationStatus": {
+          "type": "enum",
+          "description": "Trạng thái xác minh thuộc tính",
+          "nullable": false,
+          "values": [
+            "unknown",
+            "needs_review",
+            "reviewed"
+          ]
+        },
+        "origin": {
+          "type": "enum",
+          "description": "Nguồn gốc, tách nơi bán",
+          "nullable": true,
+          "values": [
+            "north",
+            "central",
+            "south",
+            "unknown",
+            "not_applicable"
+          ]
+        },
+        "ingredientTags": {
+          "type": "stringArray",
+          "description": "Thành phần có nguồn, không bảo đảm dị ứng",
+          "nullable": true
+        },
+        "temperature": {
+          "type": "enum",
+          "description": "Nhiệt độ phục vụ",
+          "nullable": true,
+          "values": [
+            "hot",
+            "warm",
+            "cold",
+            "ambient",
+            "unknown"
+          ]
+        },
+        "flavor": {
+          "type": "flavor",
+          "description": "4 vị: present true/false/null + intensity",
+          "nullable": true
+        },
+        "artwork": {
+          "type": "artwork",
+          "description": "Ảnh: url/sourceRef/usageRights/license/attribution",
+          "nullable": true
+        },
+        "sourceDishIds": {
+          "type": "stringArray",
+          "description": "ID khảo sát làm cầu nối, không thay canonical UUID",
+          "nullable": false
+        },
+        "status": {
+          "type": "enum",
+          "description": "Trạng thái món",
+          "nullable": false,
+          "values": [
+            "draft",
+            "verified",
+            "published"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "description": "Phiên bản bản ghi, tăng khi nội dung đổi",
+          "nullable": false,
+          "min": 1
+        },
+        "reviewStatus": {
+          "type": "enum",
+          "description": "Trạng thái kiểm dữ liệu; khác trạng thái đang bán",
+          "nullable": false,
+          "values": [
+            "draft",
+            "verified",
+            "published"
+          ]
+        },
+        "sourceRef": {
+          "type": "uuid",
+          "description": "Nguồn chính; bổ sung fieldSources cho từng nhóm thông tin",
+          "nullable": true,
+          "ref": "dataSources"
+        },
+        "fieldSources": {
+          "type": "object",
+          "description": "Map nhóm thông tin → sourceRef; không dùng để suy quyền ảnh",
+          "nullable": false
+        },
+        "checkedAt": {
+          "type": "utc",
+          "description": "Lần kiểm dữ liệu có bằng chứng, UTC",
+          "nullable": true
+        },
+        "validUntil": {
+          "type": "utc",
+          "description": "Hạn hiệu lực đã được chốt; draft thiếu để null",
+          "nullable": true
+        },
+        "enteredBy": {
+          "type": "string",
+          "description": "Người nhập hoặc mã agent có thể truy vết",
+          "nullable": false
+        },
+        "reviewedBy": {
+          "type": "string",
+          "description": "Reviewer độc lập; draft chưa review để null",
+          "nullable": true
+        }
+      }
+    },
+    "venues": {
+      "primaryKey": "id",
+      "fields": {
+        "id": {
+          "type": "uuid",
+          "description": "ID ổn định UUIDv5 từ registry key bất biến",
+          "nullable": false
+        },
+        "branchName": {
+          "type": "string",
+          "description": "Một chi nhánh một ID",
+          "nullable": false
+        },
+        "address": {
+          "type": "string",
+          "description": "Địa chỉ công khai",
+          "nullable": true
+        },
+        "adminAreaId": {
+          "type": "string",
+          "description": "Mã hành chính từ nguồn; không tự sinh bằng tên",
+          "nullable": true
+        },
+        "lat": {
+          "type": "number",
+          "description": "Latitude quán, độ thập phân",
+          "nullable": true,
+          "min": -90,
+          "max": 90
+        },
+        "lng": {
+          "type": "number",
+          "description": "Longitude quán, độ thập phân",
+          "nullable": true,
+          "min": -180,
+          "max": 180
+        },
+        "timezone": {
+          "type": "timezone",
+          "description": "IANA timezone",
+          "nullable": false
+        },
+        "status": {
+          "type": "enum",
+          "description": "Trạng thái chi nhánh",
+          "nullable": false,
+          "values": [
+            "active",
+            "closed",
+            "unknown"
+          ]
+        },
+        "serviceModes": {
+          "type": "stringArray",
+          "description": "Dine-in cần bằng chứng; menu giao hàng không đủ",
+          "nullable": false,
+          "values": [
+            "dine_in",
+            "takeaway",
+            "delivery"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "description": "Phiên bản bản ghi, tăng khi nội dung đổi",
+          "nullable": false,
+          "min": 1
+        },
+        "reviewStatus": {
+          "type": "enum",
+          "description": "Trạng thái kiểm dữ liệu; khác trạng thái đang bán",
+          "nullable": false,
+          "values": [
+            "draft",
+            "verified",
+            "published"
+          ]
+        },
+        "sourceRef": {
+          "type": "uuid",
+          "description": "Nguồn chính; bổ sung fieldSources cho từng nhóm thông tin",
+          "nullable": true,
+          "ref": "dataSources"
+        },
+        "fieldSources": {
+          "type": "object",
+          "description": "Map nhóm thông tin → sourceRef; không dùng để suy quyền ảnh",
+          "nullable": false
+        },
+        "checkedAt": {
+          "type": "utc",
+          "description": "Lần kiểm dữ liệu có bằng chứng, UTC",
+          "nullable": true
+        },
+        "validUntil": {
+          "type": "utc",
+          "description": "Hạn hiệu lực đã được chốt; draft thiếu để null",
+          "nullable": true
+        },
+        "enteredBy": {
+          "type": "string",
+          "description": "Người nhập hoặc mã agent có thể truy vết",
+          "nullable": false
+        },
+        "reviewedBy": {
+          "type": "string",
+          "description": "Reviewer độc lập; draft chưa review để null",
+          "nullable": true
+        }
+      }
+    },
+    "venueDishes": {
+      "primaryKey": "offeringId",
+      "fields": {
+        "offeringId": {
+          "type": "uuid",
+          "description": "ID ổn định UUIDv5 từ registry key bất biến",
+          "nullable": false
+        },
+        "venueId": {
+          "type": "uuid",
+          "description": "Chi nhánh bán",
+          "nullable": false,
+          "ref": "venues"
+        },
+        "dishId": {
+          "type": "uuid",
+          "description": "Món gốc",
+          "nullable": false,
+          "ref": "dishes"
+        },
+        "variant": {
+          "type": "string",
+          "description": "Tên biến thể/khẩu phần nguồn; null nếu chưa rõ",
+          "nullable": true
+        },
+        "menuName": {
+          "type": "string",
+          "description": "Tên nguyên trạng trên menu",
+          "nullable": false
+        },
+        "menuSource": {
+          "type": "uuid",
+          "description": "Nguồn menu",
+          "nullable": true,
+          "ref": "dataSources"
+        },
+        "scheduleId": {
+          "type": "uuid",
+          "description": "Lịch món, không dùng thay lịch quán",
+          "nullable": true,
+          "ref": "weeklySchedules",
+          "refKey": "scheduleId"
+        },
+        "serviceMode": {
+          "type": "enum",
+          "description": "Kiểu phục vụ được xác minh",
+          "nullable": true,
+          "values": [
+            "dine_in",
+            "takeaway",
+            "delivery"
+          ]
+        },
+        "priceMin": {
+          "type": "number",
+          "description": "Giá thấp nhất theo cùng đơn vị",
+          "nullable": true,
+          "min": 0
+        },
+        "priceMax": {
+          "type": "number",
+          "description": "Giá cao nhất theo cùng đơn vị",
+          "nullable": true,
+          "min": 0
+        },
+        "unit": {
+          "type": "enum",
+          "description": "Đơn vị giá nguồn, không tự quy giá/người",
+          "nullable": true,
+          "values": [
+            "portion",
+            "item",
+            "person",
+            "group",
+            "kg",
+            "menu_item_unspecified"
+          ]
+        },
+        "currency": {
+          "type": "enum",
+          "description": "Mã tiền tệ, VND nguồn khảo sát",
+          "nullable": true,
+          "values": [
+            "VND",
+            "USD",
+            "THB",
+            "KRW",
+            "JPY",
+            "CNY",
+            "EUR",
+            "other"
+          ]
+        },
+        "servingSize": {
+          "type": "string",
+          "description": "Khẩu phần theo nguồn",
+          "nullable": true
+        },
+        "profileOverrides": {
+          "type": "profile",
+          "description": "Đặc tính có nguồn của riêng offering",
+          "nullable": true
+        },
+        "artwork": {
+          "type": "artwork",
+          "description": "Ảnh của offering, quyền riêng",
+          "nullable": true
+        },
+        "status": {
+          "type": "enum",
+          "description": "Trạng thái offering",
+          "nullable": false,
+          "values": [
+            "draft",
+            "verified",
+            "published"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "description": "Phiên bản bản ghi, tăng khi nội dung đổi",
+          "nullable": false,
+          "min": 1
+        },
+        "reviewStatus": {
+          "type": "enum",
+          "description": "Trạng thái kiểm dữ liệu; khác trạng thái đang bán",
+          "nullable": false,
+          "values": [
+            "draft",
+            "verified",
+            "published"
+          ]
+        },
+        "sourceRef": {
+          "type": "uuid",
+          "description": "Nguồn chính; bổ sung fieldSources cho từng nhóm thông tin",
+          "nullable": true,
+          "ref": "dataSources"
+        },
+        "fieldSources": {
+          "type": "object",
+          "description": "Map nhóm thông tin → sourceRef; không dùng để suy quyền ảnh",
+          "nullable": false
+        },
+        "checkedAt": {
+          "type": "utc",
+          "description": "Lần kiểm dữ liệu có bằng chứng, UTC",
+          "nullable": true
+        },
+        "validUntil": {
+          "type": "utc",
+          "description": "Hạn hiệu lực đã được chốt; draft thiếu để null",
+          "nullable": true
+        },
+        "enteredBy": {
+          "type": "string",
+          "description": "Người nhập hoặc mã agent có thể truy vết",
+          "nullable": false
+        },
+        "reviewedBy": {
+          "type": "string",
+          "description": "Reviewer độc lập; draft chưa review để null",
+          "nullable": true
+        }
+      }
+    },
+    "weeklySchedules": {
+      "primaryKey": "id",
+      "fields": {
+        "id": {
+          "type": "uuid",
+          "description": "ID ổn định UUIDv5 từ registry key bất biến",
+          "nullable": false
+        },
+        "scheduleId": {
+          "type": "uuid",
+          "description": "ID nhóm lịch; nhiều hàng ca/ngày dùng cùng scheduleId",
+          "nullable": false
+        },
+        "ownerType": {
+          "type": "enum",
+          "description": "Chủ lịch",
+          "nullable": false,
+          "values": [
+            "venue",
+            "offering"
+          ]
+        },
+        "ownerId": {
+          "type": "uuid",
+          "description": "ID chủ lịch tương ứng ownerType",
+          "nullable": false
+        },
+        "dayOfWeek": {
+          "type": "integer",
+          "description": "ISO weekday 1=Thứ Hai ..7=Chủ Nhật",
+          "nullable": false,
+          "min": 1,
+          "max": 7
+        },
+        "startTime": {
+          "type": "time",
+          "description": "Giờ địa phương HH:mm, gồm đầu",
+          "nullable": true
+        },
+        "endTime": {
+          "type": "time",
+          "description": "Giờ địa phương HH:mm, loại cuối",
+          "nullable": true
+        },
+        "endDayOffset": {
+          "type": "integer",
+          "description": "0 cùng ngày, 1 qua đêm",
+          "nullable": true,
+          "min": 0,
+          "max": 1
+        },
+        "is24Hours": {
+          "type": "boolean",
+          "description": "24h phải nguồn nói rõ; 00:00–23:59 không suy 24h",
+          "nullable": false
+        },
+        "timezone": {
+          "type": "timezone",
+          "description": "IANA timezone quán",
+          "nullable": false
+        },
+        "status": {
+          "type": "enum",
+          "description": "Closed khác chưa biết",
+          "nullable": false,
+          "values": [
+            "open",
+            "closed",
+            "unknown"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "description": "Phiên bản bản ghi, tăng khi nội dung đổi",
+          "nullable": false,
+          "min": 1
+        },
+        "reviewStatus": {
+          "type": "enum",
+          "description": "Trạng thái kiểm dữ liệu; khác trạng thái đang bán",
+          "nullable": false,
+          "values": [
+            "draft",
+            "verified",
+            "published"
+          ]
+        },
+        "sourceRef": {
+          "type": "uuid",
+          "description": "Nguồn chính; bổ sung fieldSources cho từng nhóm thông tin",
+          "nullable": true,
+          "ref": "dataSources"
+        },
+        "fieldSources": {
+          "type": "object",
+          "description": "Map nhóm thông tin → sourceRef; không dùng để suy quyền ảnh",
+          "nullable": false
+        },
+        "checkedAt": {
+          "type": "utc",
+          "description": "Lần kiểm dữ liệu có bằng chứng, UTC",
+          "nullable": true
+        },
+        "validUntil": {
+          "type": "utc",
+          "description": "Hạn hiệu lực đã được chốt; draft thiếu để null",
+          "nullable": true
+        },
+        "enteredBy": {
+          "type": "string",
+          "description": "Người nhập hoặc mã agent có thể truy vết",
+          "nullable": false
+        },
+        "reviewedBy": {
+          "type": "string",
+          "description": "Reviewer độc lập; draft chưa review để null",
+          "nullable": true
+        }
+      }
+    },
+    "dateExceptions": {
+      "primaryKey": "id",
+      "fields": {
+        "id": {
+          "type": "uuid",
+          "description": "ID ổn định UUIDv5 từ registry key bất biến",
+          "nullable": false
+        },
+        "scheduleId": {
+          "type": "uuid",
+          "description": "Lịch chịu ngoại lệ",
+          "nullable": false,
+          "ref": "weeklySchedules",
+          "refKey": "scheduleId"
+        },
+        "localDate": {
+          "type": "date",
+          "description": "Ngày thực tế tại timezone quán",
+          "nullable": false
+        },
+        "status": {
+          "type": "enum",
+          "description": "Ngoại lệ thay lịch; đóng chặn phần ca đêm ngày trước",
+          "nullable": false,
+          "values": [
+            "open",
+            "closed",
+            "unknown"
+          ]
+        },
+        "intervals": {
+          "type": "intervals",
+          "description": "Các khoảng startTime/endTime/endDayOffset/is24Hours; [] khi closed/unknown",
+          "nullable": false
+        },
+        "lastOrder": {
+          "type": "time",
+          "description": "Giờ nhận món cuối theo nguồn",
+          "nullable": true
+        },
+        "version": {
+          "type": "integer",
+          "description": "Phiên bản bản ghi, tăng khi nội dung đổi",
+          "nullable": false,
+          "min": 1
+        },
+        "reviewStatus": {
+          "type": "enum",
+          "description": "Trạng thái kiểm dữ liệu; khác trạng thái đang bán",
+          "nullable": false,
+          "values": [
+            "draft",
+            "verified",
+            "published"
+          ]
+        },
+        "sourceRef": {
+          "type": "uuid",
+          "description": "Nguồn chính; bổ sung fieldSources cho từng nhóm thông tin",
+          "nullable": true,
+          "ref": "dataSources"
+        },
+        "fieldSources": {
+          "type": "object",
+          "description": "Map nhóm thông tin → sourceRef; không dùng để suy quyền ảnh",
+          "nullable": false
+        },
+        "checkedAt": {
+          "type": "utc",
+          "description": "Lần kiểm dữ liệu có bằng chứng, UTC",
+          "nullable": true
+        },
+        "validUntil": {
+          "type": "utc",
+          "description": "Hạn hiệu lực đã được chốt; draft thiếu để null",
+          "nullable": true
+        },
+        "enteredBy": {
+          "type": "string",
+          "description": "Người nhập hoặc mã agent có thể truy vết",
+          "nullable": false
+        },
+        "reviewedBy": {
+          "type": "string",
+          "description": "Reviewer độc lập; draft chưa review để null",
+          "nullable": true
+        }
+      }
+    },
+    "availabilityOverrides": {
+      "primaryKey": "id",
+      "fields": {
+        "id": {
+          "type": "uuid",
+          "description": "ID ổn định UUIDv5 từ registry key bất biến",
+          "nullable": false
+        },
+        "offeringId": {
+          "type": "uuid",
+          "description": "Offering",
+          "nullable": false,
+          "ref": "venueDishes"
+        },
+        "state": {
+          "type": "enum",
+          "description": "Tình trạng quan sát, hết hạn về unknown",
+          "nullable": false,
+          "values": [
+            "available",
+            "sold_out",
+            "paused",
+            "unknown"
+          ]
+        },
+        "source": {
+          "type": "uuid",
+          "description": "Nguồn trạng thái",
+          "nullable": true,
+          "ref": "dataSources"
+        },
+        "observedAt": {
+          "type": "utc",
+          "description": "Thời gian quan sát UTC",
+          "nullable": false
+        },
+        "expiresAt": {
+          "type": "utc",
+          "description": "Hạn override UTC",
+          "nullable": false
+        },
+        "version": {
+          "type": "integer",
+          "description": "Phiên bản bản ghi, tăng khi nội dung đổi",
+          "nullable": false,
+          "min": 1
+        },
+        "reviewStatus": {
+          "type": "enum",
+          "description": "Trạng thái kiểm dữ liệu; khác trạng thái đang bán",
+          "nullable": false,
+          "values": [
+            "draft",
+            "verified",
+            "published"
+          ]
+        },
+        "sourceRef": {
+          "type": "uuid",
+          "description": "Nguồn chính; bổ sung fieldSources cho từng nhóm thông tin",
+          "nullable": true,
+          "ref": "dataSources"
+        },
+        "fieldSources": {
+          "type": "object",
+          "description": "Map nhóm thông tin → sourceRef; không dùng để suy quyền ảnh",
+          "nullable": false
+        },
+        "checkedAt": {
+          "type": "utc",
+          "description": "Lần kiểm dữ liệu có bằng chứng, UTC",
+          "nullable": true
+        },
+        "validUntil": {
+          "type": "utc",
+          "description": "Hạn hiệu lực đã được chốt; draft thiếu để null",
+          "nullable": true
+        },
+        "enteredBy": {
+          "type": "string",
+          "description": "Người nhập hoặc mã agent có thể truy vết",
+          "nullable": false
+        },
+        "reviewedBy": {
+          "type": "string",
+          "description": "Reviewer độc lập; draft chưa review để null",
+          "nullable": true
+        }
+      }
+    },
+    "coverageAreas": {
+      "primaryKey": "areaId",
+      "fields": {
+        "areaId": {
+          "type": "uuid",
+          "description": "ID ổn định UUIDv5 từ registry key bất biến",
+          "nullable": false
+        },
+        "name": {
+          "type": "string",
+          "description": "Tên vùng khảo sát",
+          "nullable": false
+        },
+        "boundary": {
+          "type": "geojson",
+          "description": "GeoJSON Polygon WGS84 [lng,lat]; null khi chưa xác minh",
+          "nullable": true
+        },
+        "datasetVersion": {
+          "type": "semver",
+          "description": "Phiên bản dataset chứa coverage",
+          "nullable": false
+        },
+        "version": {
+          "type": "integer",
+          "description": "Phiên bản bản ghi, tăng khi nội dung đổi",
+          "nullable": false,
+          "min": 1
+        },
+        "reviewStatus": {
+          "type": "enum",
+          "description": "Trạng thái kiểm dữ liệu; khác trạng thái đang bán",
+          "nullable": false,
+          "values": [
+            "draft",
+            "verified",
+            "published"
+          ]
+        },
+        "sourceRef": {
+          "type": "uuid",
+          "description": "Nguồn chính; bổ sung fieldSources cho từng nhóm thông tin",
+          "nullable": true,
+          "ref": "dataSources"
+        },
+        "fieldSources": {
+          "type": "object",
+          "description": "Map nhóm thông tin → sourceRef; không dùng để suy quyền ảnh",
+          "nullable": false
+        },
+        "checkedAt": {
+          "type": "utc",
+          "description": "Lần kiểm dữ liệu có bằng chứng, UTC",
+          "nullable": true
+        },
+        "validUntil": {
+          "type": "utc",
+          "description": "Hạn hiệu lực đã được chốt; draft thiếu để null",
+          "nullable": true
+        },
+        "enteredBy": {
+          "type": "string",
+          "description": "Người nhập hoặc mã agent có thể truy vết",
+          "nullable": false
+        },
+        "reviewedBy": {
+          "type": "string",
+          "description": "Reviewer độc lập; draft chưa review để null",
+          "nullable": true
+        }
+      }
+    },
+    "publicAnchors": {
+      "primaryKey": "anchorId",
+      "fields": {
+        "anchorId": {
+          "type": "uuid",
+          "description": "ID ổn định UUIDv5 từ registry key bất biến",
+          "nullable": false
+        },
+        "name": {
+          "type": "string",
+          "description": "Tên điểm ăn công cộng",
+          "nullable": false
+        },
+        "lat": {
+          "type": "number",
+          "description": "Latitude công cộng, không GPS người dùng",
+          "nullable": false,
+          "min": -90,
+          "max": 90
+        },
+        "lng": {
+          "type": "number",
+          "description": "Longitude công cộng",
+          "nullable": false,
+          "min": -180,
+          "max": 180
+        },
+        "coverageId": {
+          "type": "uuid",
+          "description": "Vùng khảo sát",
+          "nullable": false,
+          "ref": "coverageAreas"
+        },
+        "isPublic": {
+          "type": "boolean",
+          "description": "Chỉ điểm công cộng, true",
+          "nullable": false
+        },
+        "version": {
+          "type": "integer",
+          "description": "Phiên bản bản ghi, tăng khi nội dung đổi",
+          "nullable": false,
+          "min": 1
+        },
+        "reviewStatus": {
+          "type": "enum",
+          "description": "Trạng thái kiểm dữ liệu; khác trạng thái đang bán",
+          "nullable": false,
+          "values": [
+            "draft",
+            "verified",
+            "published"
+          ]
+        },
+        "sourceRef": {
+          "type": "uuid",
+          "description": "Nguồn chính; bổ sung fieldSources cho từng nhóm thông tin",
+          "nullable": true,
+          "ref": "dataSources"
+        },
+        "fieldSources": {
+          "type": "object",
+          "description": "Map nhóm thông tin → sourceRef; không dùng để suy quyền ảnh",
+          "nullable": false
+        },
+        "checkedAt": {
+          "type": "utc",
+          "description": "Lần kiểm dữ liệu có bằng chứng, UTC",
+          "nullable": true
+        },
+        "validUntil": {
+          "type": "utc",
+          "description": "Hạn hiệu lực đã được chốt; draft thiếu để null",
+          "nullable": true
+        },
+        "enteredBy": {
+          "type": "string",
+          "description": "Người nhập hoặc mã agent có thể truy vết",
+          "nullable": false
+        },
+        "reviewedBy": {
+          "type": "string",
+          "description": "Reviewer độc lập; draft chưa review để null",
+          "nullable": true
+        }
+      }
+    },
+    "dataSources": {
+      "primaryKey": "sourceRef",
+      "fields": {
+        "sourceRef": {
+          "type": "uuid",
+          "description": "ID ổn định UUIDv5 từ registry key bất biến",
+          "nullable": false
+        },
+        "locator": {
+          "type": "string",
+          "description": "URL/file nguồn có thể truy vết",
+          "nullable": false
+        },
+        "usageRights": {
+          "type": "enum",
+          "description": "Quyền sử dụng dữ liệu, không suy từ công khai",
+          "nullable": false,
+          "values": [
+            "unknown",
+            "granted",
+            "licensed",
+            "public_domain",
+            "denied"
+          ]
+        },
+        "license": {
+          "type": "string",
+          "description": "License/thỏa thuận cụ thể",
+          "nullable": true
+        },
+        "attribution": {
+          "type": "string",
+          "description": "Ghi công nếu yêu cầu",
+          "nullable": true
+        },
+        "status": {
+          "type": "enum",
+          "description": "Trạng thái nguồn",
+          "nullable": false,
+          "values": [
+            "draft",
+            "verified",
+            "published"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "description": "Phiên bản bản ghi, tăng khi nội dung đổi",
+          "nullable": false,
+          "min": 1
+        },
+        "reviewStatus": {
+          "type": "enum",
+          "description": "Trạng thái kiểm dữ liệu; khác trạng thái đang bán",
+          "nullable": false,
+          "values": [
+            "draft",
+            "verified",
+            "published"
+          ]
+        },
+        "fieldSources": {
+          "type": "object",
+          "description": "Map nhóm thông tin → sourceRef; không dùng để suy quyền ảnh",
+          "nullable": false
+        },
+        "checkedAt": {
+          "type": "utc",
+          "description": "Lần kiểm dữ liệu có bằng chứng, UTC",
+          "nullable": true
+        },
+        "validUntil": {
+          "type": "utc",
+          "description": "Hạn hiệu lực đã được chốt; draft thiếu để null",
+          "nullable": true
+        },
+        "enteredBy": {
+          "type": "string",
+          "description": "Người nhập hoặc mã agent có thể truy vết",
+          "nullable": false
+        },
+        "reviewedBy": {
+          "type": "string",
+          "description": "Reviewer độc lập; draft chưa review để null",
+          "nullable": true
+        }
+      }
+    },
+    "datasetVersions": {
+      "primaryKey": "id",
+      "fields": {
+        "id": {
+          "type": "uuid",
+          "description": "ID ổn định UUIDv5 từ registry key bất biến",
+          "nullable": false
+        },
+        "datasetVersion": {
+          "type": "semver",
+          "description": "SemVer phiên bản dữ liệu",
+          "nullable": false
+        },
+        "contractVersion": {
+          "type": "semver",
+          "description": "SemVer hợp đồng trường",
+          "nullable": false
+        },
+        "status": {
+          "type": "enum",
+          "description": "Trạng thái dataset",
+          "nullable": false,
+          "values": [
+            "draft",
+            "verified",
+            "published"
+          ]
+        },
+        "checksum": {
+          "type": "sha256",
+          "description": "SHA-256 nội dung artifact; không thay version",
+          "nullable": true
+        },
+        "artifactLocator": {
+          "type": "string",
+          "description": "Vị trí artifact nguồn",
+          "nullable": true
+        },
+        "previousVersionId": {
+          "type": "uuid",
+          "description": "Phiên bản trước, null ở bản đầu",
+          "nullable": true,
+          "ref": "datasetVersions"
+        },
+        "qualityReport": {
+          "type": "string",
+          "description": "Đường dẫn report kiểm chất lượng",
+          "nullable": true
+        },
+        "rollbackLocator": {
+          "type": "string",
+          "description": "Artifact có thể khôi phục",
+          "nullable": true
+        },
+        "version": {
+          "type": "integer",
+          "description": "Phiên bản bản ghi, tăng khi nội dung đổi",
+          "nullable": false,
+          "min": 1
+        },
+        "reviewStatus": {
+          "type": "enum",
+          "description": "Trạng thái kiểm dữ liệu; khác trạng thái đang bán",
+          "nullable": false,
+          "values": [
+            "draft",
+            "verified",
+            "published"
+          ]
+        },
+        "sourceRef": {
+          "type": "uuid",
+          "description": "Nguồn chính; bổ sung fieldSources cho từng nhóm thông tin",
+          "nullable": true,
+          "ref": "dataSources"
+        },
+        "fieldSources": {
+          "type": "object",
+          "description": "Map nhóm thông tin → sourceRef; không dùng để suy quyền ảnh",
+          "nullable": false
+        },
+        "checkedAt": {
+          "type": "utc",
+          "description": "Lần kiểm dữ liệu có bằng chứng, UTC",
+          "nullable": true
+        },
+        "validUntil": {
+          "type": "utc",
+          "description": "Hạn hiệu lực đã được chốt; draft thiếu để null",
+          "nullable": true
+        },
+        "enteredBy": {
+          "type": "string",
+          "description": "Người nhập hoặc mã agent có thể truy vết",
+          "nullable": false
+        },
+        "reviewedBy": {
+          "type": "string",
+          "description": "Reviewer độc lập; draft chưa review để null",
+          "nullable": true
+        }
+      }
+    }
+  }
+}

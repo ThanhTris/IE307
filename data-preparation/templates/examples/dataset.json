@@ -1,0 +1,304 @@
+{
+  "contractVersion": "1.0.0",
+  "datasetVersion": "0.1.0",
+  "fixtureOnly": true,
+  "entities": {
+    "taxonomy": [
+      {
+        "id": "15584bca-1b90-5565-9aeb-5b69a075fee1",
+        "type": "cuisine",
+        "code": "vi",
+        "label": "Việt",
+        "description": "Fixture tổng hợp, không phải dữ liệu thật",
+        "status": "draft",
+        "origin": null,
+        "version": 1,
+        "reviewStatus": "draft",
+        "sourceRef": "377d7e61-dbca-5192-9bfc-9ab3efe8436d",
+        "fieldSources": {},
+        "checkedAt": "2026-10-09T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-author",
+        "reviewedBy": null
+      },
+      {
+        "id": "9654d06c-8441-50a3-bf67-87b9da2ec6c3",
+        "type": "category",
+        "code": "family:rice",
+        "label": "Cơm",
+        "description": "Họ món",
+        "status": "draft",
+        "origin": null,
+        "version": 1,
+        "reviewStatus": "draft",
+        "sourceRef": "377d7e61-dbca-5192-9bfc-9ab3efe8436d",
+        "fieldSources": {},
+        "checkedAt": "2026-10-09T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-author",
+        "reviewedBy": null
+      }
+    ],
+    "dishes": [
+      {
+        "id": "4a662ee6-9761-5f2f-af8b-07533d2934e0",
+        "name": "Cơm gà — fixture",
+        "description": null,
+        "aliases": [],
+        "cuisineIds": [
+          "15584bca-1b90-5565-9aeb-5b69a075fee1"
+        ],
+        "categoryIds": [
+          "9654d06c-8441-50a3-bf67-87b9da2ec6c3"
+        ],
+        "mealSlots": [
+          "lunch"
+        ],
+        "timeHints": [],
+        "classificationStatus": "needs_review",
+        "origin": "unknown",
+        "ingredientTags": null,
+        "temperature": "unknown",
+        "flavor": null,
+        "artwork": null,
+        "sourceDishIds": [],
+        "status": "draft",
+        "version": 1,
+        "reviewStatus": "draft",
+        "sourceRef": "377d7e61-dbca-5192-9bfc-9ab3efe8436d",
+        "fieldSources": {},
+        "checkedAt": "2026-10-09T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-author",
+        "reviewedBy": null
+      }
+    ],
+    "venues": [
+      {
+        "id": "684714d4-0949-57ef-a1b6-f2d53db1c0ed",
+        "branchName": "Chi nhánh giả lập",
+        "address": "Địa chỉ fixture, không tìm quán này",
+        "adminAreaId": null,
+        "lat": null,
+        "lng": null,
+        "timezone": "Asia/Ho_Chi_Minh",
+        "status": "unknown",
+        "serviceModes": [
+          "delivery"
+        ],
+        "version": 1,
+        "reviewStatus": "draft",
+        "sourceRef": "377d7e61-dbca-5192-9bfc-9ab3efe8436d",
+        "fieldSources": {},
+        "checkedAt": "2026-10-09T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-author",
+        "reviewedBy": null
+      }
+    ],
+    "venueDishes": [
+      {
+        "offeringId": "53bda109-7c1b-5317-991c-7c893694c263",
+        "venueId": "684714d4-0949-57ef-a1b6-f2d53db1c0ed",
+        "dishId": "4a662ee6-9761-5f2f-af8b-07533d2934e0",
+        "variant": "sốt riêng — fixture",
+        "menuName": "Cơm gà sốt riêng — fixture",
+        "menuSource": "377d7e61-dbca-5192-9bfc-9ab3efe8436d",
+        "scheduleId": "23790b1d-bf58-5666-8b01-3e4f74dc44ed",
+        "serviceMode": "delivery",
+        "priceMin": 30000,
+        "priceMax": 30000,
+        "unit": "menu_item_unspecified",
+        "currency": "VND",
+        "servingSize": null,
+        "profileOverrides": null,
+        "artwork": null,
+        "status": "draft",
+        "version": 1,
+        "reviewStatus": "draft",
+        "sourceRef": "377d7e61-dbca-5192-9bfc-9ab3efe8436d",
+        "fieldSources": {
+          "menu": "377d7e61-dbca-5192-9bfc-9ab3efe8436d",
+          "price": "377d7e61-dbca-5192-9bfc-9ab3efe8436d"
+        },
+        "checkedAt": "2026-10-09T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-author",
+        "reviewedBy": null
+      }
+    ],
+    "weeklySchedules": [
+      {
+        "id": "ebb333ce-55a5-5f8e-8439-30e822b6e0b2",
+        "scheduleId": "23790b1d-bf58-5666-8b01-3e4f74dc44ed",
+        "ownerType": "offering",
+        "ownerId": "53bda109-7c1b-5317-991c-7c893694c263",
+        "dayOfWeek": 5,
+        "startTime": "22:00",
+        "endTime": "02:00",
+        "endDayOffset": 1,
+        "is24Hours": false,
+        "timezone": "Asia/Ho_Chi_Minh",
+        "status": "open",
+        "version": 1,
+        "reviewStatus": "draft",
+        "sourceRef": "377d7e61-dbca-5192-9bfc-9ab3efe8436d",
+        "fieldSources": {},
+        "checkedAt": "2026-10-09T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-author",
+        "reviewedBy": null
+      },
+      {
+        "id": "1da97ca9-1be7-530c-9133-6b327f4ed193",
+        "scheduleId": "23790b1d-bf58-5666-8b01-3e4f74dc44ed",
+        "ownerType": "offering",
+        "ownerId": "53bda109-7c1b-5317-991c-7c893694c263",
+        "dayOfWeek": 6,
+        "startTime": "11:00",
+        "endTime": "14:00",
+        "endDayOffset": 0,
+        "is24Hours": false,
+        "timezone": "Asia/Ho_Chi_Minh",
+        "status": "open",
+        "version": 1,
+        "reviewStatus": "draft",
+        "sourceRef": "377d7e61-dbca-5192-9bfc-9ab3efe8436d",
+        "fieldSources": {},
+        "checkedAt": "2026-10-09T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-author",
+        "reviewedBy": null
+      },
+      {
+        "id": "b908caf0-3f48-5871-af71-6677cdcd74cc",
+        "scheduleId": "5f0e9ce8-ea73-5846-81b8-4e241758eeb9",
+        "ownerType": "venue",
+        "ownerId": "684714d4-0949-57ef-a1b6-f2d53db1c0ed",
+        "dayOfWeek": 5,
+        "startTime": null,
+        "endTime": null,
+        "endDayOffset": null,
+        "is24Hours": false,
+        "timezone": "Asia/Ho_Chi_Minh",
+        "status": "unknown",
+        "version": 1,
+        "reviewStatus": "draft",
+        "sourceRef": "377d7e61-dbca-5192-9bfc-9ab3efe8436d",
+        "fieldSources": {},
+        "checkedAt": "2026-10-09T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-author",
+        "reviewedBy": null
+      }
+    ],
+    "dateExceptions": [
+      {
+        "id": "8ea556b9-0bdf-5332-a805-d006f0eff141",
+        "scheduleId": "23790b1d-bf58-5666-8b01-3e4f74dc44ed",
+        "localDate": "2026-10-10",
+        "status": "closed",
+        "intervals": [],
+        "lastOrder": null,
+        "version": 1,
+        "reviewStatus": "draft",
+        "sourceRef": "377d7e61-dbca-5192-9bfc-9ab3efe8436d",
+        "fieldSources": {},
+        "checkedAt": "2026-10-09T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-author",
+        "reviewedBy": null
+      }
+    ],
+    "availabilityOverrides": [
+      {
+        "id": "9022e08e-a064-557a-b201-97693a7d223c",
+        "offeringId": "53bda109-7c1b-5317-991c-7c893694c263",
+        "state": "sold_out",
+        "source": "377d7e61-dbca-5192-9bfc-9ab3efe8436d",
+        "observedAt": "2026-10-09T15:00:00Z",
+        "expiresAt": "2026-10-09T16:00:00Z",
+        "version": 1,
+        "reviewStatus": "draft",
+        "sourceRef": "377d7e61-dbca-5192-9bfc-9ab3efe8436d",
+        "fieldSources": {},
+        "checkedAt": "2026-10-09T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-author",
+        "reviewedBy": null
+      }
+    ],
+    "coverageAreas": [
+      {
+        "areaId": "2c72eec5-fb93-5a74-8d55-b9db4d831141",
+        "name": "Vùng giả lập, không là coverage Thủ Đức",
+        "boundary": null,
+        "datasetVersion": "0.1.0",
+        "version": 1,
+        "reviewStatus": "draft",
+        "sourceRef": "377d7e61-dbca-5192-9bfc-9ab3efe8436d",
+        "fieldSources": {},
+        "checkedAt": "2026-10-09T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-author",
+        "reviewedBy": null
+      }
+    ],
+    "publicAnchors": [
+      {
+        "anchorId": "b7c1ae04-badb-593d-a429-ac208b868339",
+        "name": "Điểm công cộng giả lập",
+        "lat": 10.85,
+        "lng": 106.76,
+        "coverageId": "2c72eec5-fb93-5a74-8d55-b9db4d831141",
+        "isPublic": true,
+        "version": 1,
+        "reviewStatus": "draft",
+        "sourceRef": "377d7e61-dbca-5192-9bfc-9ab3efe8436d",
+        "fieldSources": {},
+        "checkedAt": "2026-10-09T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-author",
+        "reviewedBy": null
+      }
+    ],
+    "dataSources": [
+      {
+        "sourceRef": "377d7e61-dbca-5192-9bfc-9ab3efe8436d",
+        "locator": "https://example.invalid/synthetic-menu",
+        "usageRights": "unknown",
+        "license": null,
+        "attribution": null,
+        "status": "draft",
+        "version": 1,
+        "reviewStatus": "draft",
+        "fieldSources": {},
+        "checkedAt": "2026-10-09T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-author",
+        "reviewedBy": null
+      }
+    ],
+    "datasetVersions": [
+      {
+        "id": "218a092f-8176-56af-81fe-47558f0037ef",
+        "datasetVersion": "0.1.0",
+        "contractVersion": "1.0.0",
+        "status": "draft",
+        "checksum": null,
+        "artifactLocator": null,
+        "previousVersionId": null,
+        "qualityReport": null,
+        "rollbackLocator": null,
+        "version": 1,
+        "reviewStatus": "draft",
+        "sourceRef": "377d7e61-dbca-5192-9bfc-9ab3efe8436d",
+        "fieldSources": {},
+        "checkedAt": "2026-10-09T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-author",
+        "reviewedBy": null
+      }
+    ]
+  }
+}

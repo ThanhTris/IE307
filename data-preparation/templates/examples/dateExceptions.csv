@@ -1,0 +1,2 @@
+﻿id,scheduleId,localDate,status,intervals,lastOrder,version,reviewStatus,sourceRef,fieldSources,checkedAt,validUntil,enteredBy,reviewedBy
+8ea556b9-0bdf-5332-a805-d006f0eff141,23790b1d-bf58-5666-8b01-3e4f74dc44ed,2026-10-10,closed,[],,1,draft,377d7e61-dbca-5192-9bfc-9ab3efe8436d,{},2026-10-09T00:00:00Z,,fixture-author,

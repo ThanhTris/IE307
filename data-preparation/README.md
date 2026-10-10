@@ -1,3 +1,5 @@
+[Data dictionary](docs/DATA_DICTIONARY.md) và [CSV/JSON forms](templates/README.md): hợp đồng draft 11 entity, ví dụ giả lập, validator không publish. Mở thêm notebooks/inspect_data_contract.ipynb để xem trường, ví dụ, lỗi và chuyển đổi CSV offline.
+
 [Handoff GM-03](docs/HANDOFF.md) và [taxonomy/món gốc](docs/TAXONOMY.md): snapshot Git 219 tên, 39 món gốc, mapping và notebook chạy offline.
 
 # Danh mục món từ thực đơn khu Thủ Đức cũ

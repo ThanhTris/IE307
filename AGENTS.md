@@ -33,7 +33,7 @@ Mã task hiện hành theo roadmap-v2: GM-01..38, dependency phải có số nh�
 
 ## Chuẩn bị dữ liệu GM-03
 
-Đọc [handoff](data-preparation/docs/HANDOFF.md) để biết nguồn/snapshot/giới hạn, [taxonomy](data-preparation/docs/TAXONOMY.md) để biết giá trị chuẩn và cách gộp món. Notebook/config/snapshot trong `data-preparation/` là draft owner yêu cầu; không mở khóa GM-28, không dùng làm seed đã review. Giữ nguyên pilot/cache; mặc định offline, không gọi lại AI.
+Đọc [handoff](data-preparation/docs/HANDOFF.md) để biết nguồn/snapshot/giới hạn, [taxonomy](data-preparation/docs/TAXONOMY.md) để biết giá trị chuẩn và cách gộp món; [dictionary](data-preparation/docs/DATA_DICTIONARY.md) và [forms](data-preparation/templates/README.md) cho ID/kiểu/unknown/nguồn/review, CSV/JSON và validator. Notebook/config/snapshot trong `data-preparation/` là draft owner yêu cầu; không mở khóa GM-28, không dùng làm seed đã review. Giữ nguyên pilot/cache; mặc định offline, không gọi lại AI.
 
 ## Bàn giao
 

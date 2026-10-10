@@ -5,6 +5,7 @@
 1. [Tổng quan nguồn](../DATASET_OVERVIEW.md): phạm vi, danh sách quán, 35 cột khảo sát.
 2. [Vilao full](../VILAO_CATALOGUE.md): 17 cột thêm, prompt/cache/usage và giới hạn.
 3. [Taxonomy](TAXONOMY.md): giá trị chuẩn, món gốc, alias/variant và quy tắc owner.
+4. [Data dictionary](DATA_DICTIONARY.md) và [forms](../templates/README.md): 11 entity, CSV/JSON, ID/version/unknown, kiểm FK/giá/lịch/source/review.
 
 ## Bản dữ liệu đóng băng
 
@@ -25,3 +26,7 @@ Kiểm bằng Python runner, chưa Jupyter kernel/native/SQL. Không cài packag
 ## Kiểm chứng phần 1 — 2026-10-10
 
 89 regression tests đạt; repository validator, task index check và diff check đạt. Notebook gộp món chạy 2 lần offline, 7/7 code cells đạt, 0 API calls, các CSV cùng SHA-256 theo snapshots/manifest.json. CSV nguồn có SHA-256 e441ecfca93846da6596284f969149d2fef3e53f3397daa537cd8ba24dbcff37. Các kiểm chứng này không thay review nội dung hoặc approval GM-28.
+
+## Bàn giao phần 2
+
+Dictionary/contract/forms có 11 entity và 14 bản ghi fixture tổng hợp. Notebook inspect_data_contract chạy 5/5 cells offline; JSON/CSV đọc lại tương đương. 138 tests đạt (49 contract mới); evidence và các giới hạn tại [DATA_PREPARATION](../../docs/evidence/GM-03/DATA_PREPARATION.md). Không chuyển snapshot nghiên cứu thành dữ liệu verified/published. Validator chỉ kiểm contract, không import hay cấp approval.

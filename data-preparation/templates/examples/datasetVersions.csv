@@ -1,0 +1,2 @@
+﻿id,datasetVersion,contractVersion,status,checksum,artifactLocator,previousVersionId,qualityReport,rollbackLocator,version,reviewStatus,sourceRef,fieldSources,checkedAt,validUntil,enteredBy,reviewedBy
+218a092f-8176-56af-81fe-47558f0037ef,0.1.0,1.0.0,draft,,,,,,1,draft,377d7e61-dbca-5192-9bfc-9ab3efe8436d,{},2026-10-09T00:00:00Z,,fixture-author,

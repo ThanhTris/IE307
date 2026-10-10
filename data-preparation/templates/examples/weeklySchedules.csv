@@ -1,0 +1,4 @@
+﻿id,scheduleId,ownerType,ownerId,dayOfWeek,startTime,endTime,endDayOffset,is24Hours,timezone,status,version,reviewStatus,sourceRef,fieldSources,checkedAt,validUntil,enteredBy,reviewedBy
+ebb333ce-55a5-5f8e-8439-30e822b6e0b2,23790b1d-bf58-5666-8b01-3e4f74dc44ed,offering,53bda109-7c1b-5317-991c-7c893694c263,5,22:00,02:00,1,false,Asia/Ho_Chi_Minh,open,1,draft,377d7e61-dbca-5192-9bfc-9ab3efe8436d,{},2026-10-09T00:00:00Z,,fixture-author,
+1da97ca9-1be7-530c-9133-6b327f4ed193,23790b1d-bf58-5666-8b01-3e4f74dc44ed,offering,53bda109-7c1b-5317-991c-7c893694c263,6,11:00,14:00,0,false,Asia/Ho_Chi_Minh,open,1,draft,377d7e61-dbca-5192-9bfc-9ab3efe8436d,{},2026-10-09T00:00:00Z,,fixture-author,
+b908caf0-3f48-5871-af71-6677cdcd74cc,5f0e9ce8-ea73-5846-81b8-4e241758eeb9,venue,684714d4-0949-57ef-a1b6-f2d53db1c0ed,5,,,,false,Asia/Ho_Chi_Minh,unknown,1,draft,377d7e61-dbca-5192-9bfc-9ab3efe8436d,{},2026-10-09T00:00:00Z,,fixture-author,
