@@ -1,0 +1,32 @@
+{
+  "bundleSha256": "82bbbcef3eddbb72415aa908359f07c0cd41db3106b7baf315ea6e8bfdfd309d",
+  "contractVersion": "food-v1/roadmap-v2/GM-08.1",
+  "coverageIds": [],
+  "datasetVersion": "0.2.0",
+  "fixtureOnly": false,
+  "foodContractVersion": "1.1.0",
+  "pilotTarget": {
+    "dishes": "15–20",
+    "quotaMet": false,
+    "venues": "20–30"
+  },
+  "publicationPerformed": false,
+  "rowCounts": {
+    "availabilityOverrides": 0,
+    "coverageAreas": 0,
+    "dataSources": 27,
+    "datasetVersions": 1,
+    "dateExceptions": 0,
+    "dishes": 39,
+    "publicAnchors": 0,
+    "taxonomy": 18,
+    "venueDishes": 0,
+    "venues": 0,
+    "weeklySchedules": 0
+  },
+  "schemaVersion": "0.1.0",
+  "stagedAt": "2026-10-10T17:37:26.464299Z",
+  "state": "staged",
+  "timezones": [],
+  "validationAt": "2026-10-11T00:00:00Z"
+}

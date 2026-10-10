@@ -1,0 +1,54 @@
+{
+  "contractVersion": "food-v1/roadmap-v2/GM-08.1",
+  "schemaVersion": "0.1.0",
+  "foodContractVersion": "1.1.0",
+  "state": "awaiting_independent_dataset_verification",
+  "datasetVersion": null,
+  "bundleSha256": null,
+  "fixtureOnly": false,
+  "publicationPerformed": false,
+  "verifiedRowCounts": {
+    "availabilityOverrides": 0,
+    "coverageAreas": 0,
+    "dataSources": 0,
+    "datasetVersions": 0,
+    "dateExceptions": 0,
+    "dishes": 0,
+    "publicAnchors": 0,
+    "taxonomy": 0,
+    "venueDishes": 0,
+    "venues": 0,
+    "weeklySchedules": 0
+  },
+  "coverageIds": [],
+  "timezones": [],
+  "draftCandidate": {
+    "datasetVersion": "0.2.0",
+    "bundleSha256": "82bbbcef3eddbb72415aa908359f07c0cd41db3106b7baf315ea6e8bfdfd309d",
+    "sourcePath": "data-preparation/snapshots/editorial-v0.2.0/catalogue.json",
+    "sourceSha256": "cfaff47b0c65833983fe8de748428f25d26d7e1d49c539a5d1045676a08b9e90",
+    "rowCounts": {
+      "availabilityOverrides": 0,
+      "coverageAreas": 0,
+      "dataSources": 27,
+      "datasetVersions": 1,
+      "dateExceptions": 0,
+      "dishes": 39,
+      "publicAnchors": 0,
+      "taxonomy": 18,
+      "venueDishes": 0,
+      "venues": 0,
+      "weeklySchedules": 0
+    }
+  },
+  "evidence": "docs/evidence/roadmap-v2/GM-08/draft-audit.json",
+  "blockers": [
+    "39 editorial draft dishes, not verified offerings",
+    "no actual venue/offering/schedule/coverage/anchor records",
+    "menu rights, dine_in, freshness and independent content review pending",
+    "no artwork selected; image metadata is not permission"
+  ],
+  "owner": "HoaiTam",
+  "reviewer": "ThanhTris",
+  "note": "Status manifest only; no verified bundle published. Draft counts are not verified coverage."
+}
