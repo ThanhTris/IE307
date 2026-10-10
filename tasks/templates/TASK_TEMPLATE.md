@@ -59,15 +59,15 @@ Lệnh và expected result cho scope thay đổi, không lặp capability demo k
 
 ### Trước bắt đầu
 
-- [ ] [GM-05](../backlog/GM-05.md): Done/Approved, artifact/commit có trên nhánh làm việc.
-- [ ] [GM-07](../backlog/GM-07.md): Done/Approved, artifact/commit có trên nhánh làm việc.
+- [ ] [GM-05](../backlog/GM-05.md): Done trên Project, output/HANDOFF/commit có trên nhánh làm việc.
+- [ ] [GM-07](../backlog/GM-07.md): Done trên Project, output/HANDOFF/commit có trên nhánh làm việc.
 
 Chạy readiness --task GM-XX; để đối chiếu upstream trên target thêm --base-ref origin/main.
 
 ### Trước merge
 
-- [ ] [GM-05](../backlog/GM-05.md): Done/Approved, artifact/PR/commit có trên target.
-- [ ] [GM-07](../backlog/GM-07.md): Done/Approved, artifact/PR/commit có trên target.
+- [ ] [GM-05](../backlog/GM-05.md): Done trên Project, contract/manifest/output/HANDOFF khớp target; kiểm PR/commit thật.
+- [ ] [GM-07](../backlog/GM-07.md): Done trên Project, contract/manifest/output/HANDOFF khớp target; kiểm PR/commit thật.
 
 Checker --gate merge --base-ref origin/main; review cả start inputs và current revision.
 

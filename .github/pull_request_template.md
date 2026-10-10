@@ -8,7 +8,7 @@ Scope và phần ngoài scope:
 
 ## Start gate — trước viết phần độc lập
 
-- [ ] Đã chạy `python scripts/task_readiness.py --task GM-XX`; start_dependencies Approved, đọc evidence đúng version.
+- [ ] Đã chạy `python scripts/task_readiness.py --task GM-XX`; start_dependencies Done trên Project, nhận đủ output/HANDOFF đúng version.
 - [ ] Owner/reviewer nhận việc; patch/test plan và package/provider/license được review khi áp dụng.
 - Contract/fixtures commit, input/output/errors/nullable/version và owner upstream:
 - Task song song / interface / file mỗi người sở hữu:
@@ -16,7 +16,7 @@ Scope và phần ngoài scope:
 
 ## Merge gate — không bắt buộc hoàn tất khi mở draft PR
 
-| Start/merge dependency | Task/PR upstream | Done + Approved / reviewer / evidence | Merge/squash commit thực tế | Có trên target đúng revision? |
+| Start/merge dependency | Task/PR upstream | Project Done / thời điểm checker | Merge/squash commit thực tế | Artifact/version trên target khớp? |
 | --- | --- | --- | --- | --- |
 | GM-XX | | | | |
 
@@ -45,9 +45,9 @@ Scope và phần ngoài scope:
 ## Review độc lập
 
 - [ ] Reviewer kiểm AC, cả hai gate và evidence cho revision PR hiện tại; AI không tự tick.
-- [ ] Khi Approved ghi Reviewed-by/Reviewed-at/Decision/Review-evidence trong task; chuyển done và sinh indexes trước merge. Thay code sau review phải review lại.
+- [ ] Trí nghiệm thu/chuyển Done trên Project; lưu review revision/evidence. Khi chuyển Markdown thành done vẫn cần review fields thật và sinh indexes; không bắt đồng bộ Markdown để mở downstream. Thay code sau review phải review lại.
 
-READY_FOR_MERGE_REVIEW không là quyền tự merge. Checker không tự fetch/kiểm GitHub hoặc chứng minh code đã merge. Done không đồng nghĩa đã vào target. Mock/CI/docs validator không thay native/SQL/data thật. Draft PR được giữ checklist merge chưa đạt.
+READY_FOR_MERGE_REVIEW không là quyền tự merge. Checker đọc GitHub Project và đối chiếu artifact/version nhưng không tự fetch hoặc chứng minh PR/commit đã merge. Done không đồng nghĩa đã vào target. Mock/CI/docs validator không thay native/SQL/data thật. Draft PR được giữ checklist merge chưa đạt.
 
 ## Artifact bàn giao roadmap-v2
 

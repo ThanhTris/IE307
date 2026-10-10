@@ -6,7 +6,7 @@ Loại review: draft phần độc lập hay nghiệm thu toàn task?
 
 ## Start dependencies
 
-| Task trước | Done/Approved / reviewer / ngày / evidence | Contract version / phần được làm trước |
+| Task trước | Project issue / Status Done / thời điểm checker | Contract version / phần được làm trước |
 | --- | --- | --- |
 | GM-XX | | |
 
@@ -14,11 +14,11 @@ Chạy `python scripts/task_readiness.py --task GM-XX`. Draft review được c�
 
 ## Merge dependencies và target
 
-| Task trước (gồm start deps) | Task/PR/evidence Approved | Merge/squash commit | Ref target / SHA đã kiểm |
+| Task trước (gồm start deps) | Project Done / artifact và version khớp | Merge/squash commit | Ref target / SHA đã kiểm |
 | --- | --- | --- | --- |
 | GM-XX | | | |
 
-Chạy `python scripts/task_readiness.py --task GM-XX --gate merge --base-ref origin/main` sau cập nhật ref. Người merge xác minh code upstream thật trên target; không coi metadata checker là kiểm GitHub/commit ancestry. Cập nhật branch và chạy integration tests lại. Thay contract/revision phải review lại downstream.
+Chạy `python scripts/task_readiness.py --task GM-XX --gate merge --base-ref origin/main` sau cập nhật ref. Checker đọc Project live và đối chiếu output/HANDOFF/version; người merge vẫn xác minh PR/commit upstream thật và chạy integration tests sau cập nhật branch. Thay contract/revision phải review lại downstream. Không bắt đồng bộ Approved trong Markdown để nhận dependency đã Done trên Project.
 
 ## Kết quả AC
 
@@ -35,7 +35,7 @@ Reviewed-at: YYYY-MM-DD
 Decision: Pending
 Review-evidence: docs/evidence/roadmap-v2/GM-XX/REVIEW.md (file thật từ repo root)
 
-Chỉ reviewer đổi Approved khi mọi AC, cả hai gate và DoD đạt cho revision được ghi. Sau đó chuyển task done, sinh indexes; code đổi tiếp cần review lại. AI không tự Approved. Done không chứng minh PR đã merge; downstream phải kiểm target riêng.
+Chỉ reviewer đổi Approved khi mọi AC, cả hai gate và DoD đạt cho revision được ghi. Trí chuyển Done trên Project sau nghiệm thu; đó là nguồn gate downstream. Khi cập nhật task Markdown thành done, giữ approval/evidence thật và sinh indexes offline; không bắt bước này để mở downstream. Code đổi tiếp cần review lại. AI không tự Approved/Done. Done không chứng minh PR đã merge; downstream phải kiểm target riêng.
 
 ## Bàn giao
 

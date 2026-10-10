@@ -1,6 +1,6 @@
 # Checklist đầu ra chạy được — roadmap-v2
 
-Sinh từ task bằng `python scripts/task_readiness.py --write-docs`; không sửa tay. `--check-docs` kiểm độ mới. Đây là metadata local, không phải trạng thái GitHub.
+Sinh từ task bằng `python scripts/task_readiness.py --write-docs`; không sửa tay. `--check-docs` kiểm độ mới. Đây là metadata/gate chẩn đoán local, không phải trạng thái GitHub. Gate thực tế đọc Done live trên Project theo ADR-011; xem docs/project/PROJECT_READINESS.md.
 
 Theo [chuẩn đầu ra](TASK_OUTPUT_REQUIREMENTS.md). Các route/request/lệnh bên dưới là yêu cầu bàn giao, chưa chứng minh implementation đã có. Mọi task cần CHECKS.md và HANDOFF.md; checker kiểm metadata/path, reviewer kiểm output và assertion thật.
 

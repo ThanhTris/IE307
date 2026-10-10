@@ -13,6 +13,8 @@ from datetime import date
 from pathlib import Path
 from urllib.parse import unquote
 
+import github_project_status
+
 ROOT = Path(__file__).resolve().parents[1]
 REQUIRED = (
     'README.md', 'AGENTS.md', 'mobile/README.md', 'supabase/README.md',
@@ -31,6 +33,9 @@ REQUIRED = (
     'tests/fixtures/decision-cases.json',
     'docs/specs/FOOD_DATA_SPEC.md', 'docs/project/TASK_DEPENDENCIES.md',
     'scripts/task_readiness.py', 'tasks/templates/REVIEW_TEMPLATE.md',
+    'scripts/github_project_status.py', 'tasks/project-gate.json',
+    'docs/project/PROJECT_READINESS.md',
+    'docs/architecture/decisions/ADR-011-project-done-readiness.md',
     '.github/pull_request_template.md', '.github/ISSUE_TEMPLATE/task.yml',
     'docs/architecture/decisions/ADR-006-parallel-start-ordered-merge.md',
     'docs/architecture/decisions/ADR-007-task-roadmap-numbering.md',
@@ -303,11 +308,16 @@ class Source:
             return self._git_contents[path]
         return (ROOT / path).read_text(encoding='utf-8-sig')
 
+    def digest(self, path: str) -> str:
+        if self.ref:
+            return self.git('rev-parse', f'{self.ref}:{path}').strip()
+        return self.git('hash-object', '--path=' + path, '--', str(ROOT / path)).strip()
+
     def exists(self, path: str) -> bool:
         return path in self.files or any(p.startswith(path.rstrip('/') + '/') for p in self.files)
 
 
-def validate(src: Source) -> list[str]:
+def validate(src: Source, *, check_dependency_approvals=True) -> list[str]:
     errors = [f'missing required file: {p}' for p in REQUIRED if p not in src.files]
     if any(p.startswith('legacy/') for p in src.files):
         errors.append('legacy archive directory must be absent after requested deletion')
@@ -425,7 +435,7 @@ def validate(src: Source) -> list[str]:
                 errors.append(f'core blocked by extension: {tid} -> {dep}')
             required_now = tasks[tid].get('status') == 'done' or (
                 tasks[tid].get('status') in {'in-progress', 'review'} and dep in start_graph[tid])
-            if required_now and approval_errors(src, records[dep]):
+            if check_dependency_approvals and required_now and approval_errors(src, records[dep]):
                 errors.append(f'active task with unreviewed dependency: {tid} -> {dep}')
             visit(dep)
         active.remove(tid)
@@ -513,8 +523,14 @@ def main():
     parser.add_argument('--git-tree', help='Validate committed snapshot rather than working files')
     args = parser.parse_args()
     try:
-        errors = validate(Source(args.git_tree))
-    except (OSError, ValueError, subprocess.CalledProcessError) as exc:
+        src = Source(args.git_tree)
+        # Static CI cannot infer live Project approval from stale task Markdown.
+        # It validates structure only; task_readiness performs the live gate.
+        project_workflow = 'tasks/project-gate.json' in src.files
+        if project_workflow:
+            github_project_status.configuration(src)
+        errors = validate(src, check_dependency_approvals=not project_workflow)
+    except (OSError, ValueError, subprocess.CalledProcessError, github_project_status.ProjectUnavailable) as exc:
         print(f'Validation failed: {exc}')
         return 1
     for error in errors:
@@ -523,6 +539,8 @@ def main():
         return 1
     print('Gi Cung Duoc: documents, links, JSON, task manifest, dependencies and current FR traceability OK.')
     print('Scope: documentation validation only; no native build/backend execution or human approval verified.')
+    if project_workflow:
+        print('Dependency approval uses live GitHub Project; run task_readiness --task before code/merge. This offline validator does not unlock tasks.')
     return 0
 
 

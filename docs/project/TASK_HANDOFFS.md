@@ -1,6 +1,6 @@
 # Bảng nhận đầu vào và bàn giao — roadmap-v2
 
-Sinh từ task bằng `python scripts/task_readiness.py --write-docs`; không sửa tay. `--check-docs` kiểm độ mới. Đây là metadata local, không phải trạng thái GitHub.
+Sinh từ task bằng `python scripts/task_readiness.py --write-docs`; không sửa tay. `--check-docs` kiểm độ mới. Đây là metadata/gate chẩn đoán local, không phải trạng thái GitHub. Gate thực tế đọc Done live trên Project theo ADR-011; xem docs/project/PROJECT_READINESS.md.
 
 Path dưới đây là đầu ra dự kiến, không chứng minh file đã có. Người nhận đối chiếu HANDOFF/PR/commit/version và chạy smoke sau khi cập nhật nhánh. Trước start dùng readiness; thêm --base-ref origin/main để kiểm target. Merge bắt buộc --gate merge --base-ref origin/main. Checker kiểm sự hiện diện file, không chứng minh nội dung chạy đúng.
 
