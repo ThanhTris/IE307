@@ -1,8 +1,8 @@
 # GM-15 — bàn giao engine decision-v2 legacy GM-06
 
 Owner Vinh; reviewer đề xuất Trung trong repo, Trí review cuối theo comment PR. Review Pending.
-Branch codex/gm-06-decision-engine; PR #101 stacked trên PR #62, chưa merge.
-Main0cf1dc0; parent d428a80384d3dc238936d8a0311c4d4b1ee247f9. Engine1.0.0/policy decision-v2.
+Branch codex/gm-06-decision-engine; PR #101 đã retarget main sau PR #62 merge.
+Main d9e83d9; parent d428a80384d3dc238936d8a0311c4d4b1ee247f9. Engine1.0.0/policy decision-v2.
 GM-06 hiện hành là DB schema của Tâm; engine legacy GM-06 → GM-15, không sửa task schema.
 
 ## Upstream / version
@@ -37,7 +37,9 @@ Caller chỉ dùng ACK của hành động Gửi/xác nhận, không draft KEEP;
 
 ## Rebase / review / rollback
 
-Data PR #62 còn mở: giữ target nhánh data để diff chỉ engine/fixtures/tests/evidence/CI. Sau parent merge mới rebase/retarget main và chạy tests/gate lại. Không tự merge hoặc Approved/Done.
+Data PR #62 đã merge tại d9e83d9; PR #101 đã rebase lên origin/main và retarget main. Diff chỉ engine/fixtures/tests/evidence/CI, không lặp data. Không tự merge hoặc Approved/Done.
 Đã rebase3 engine commits từ parentf5a8304 lên d428a80; không conflict, giữ main foundation và data snapshots. Feature/evidence revision mới được pin trong CHECKS/PR.
 Evidence lần trước [REBASE_CHECKS](REBASE_CHECKS.json), [MAIN_SYNC](MAIN_SYNC_20261010.json) và [v1](../../roadmap-v1/GM-06/HANDOFF.md) là historical, không claim tests/typecheck mới từ những file cũ.
 Rollback riêng engine commits, giữ parent data/catalogue nguyên trạng.
+
+Retarget cuối: PR #62 merged d9e83d9c091b4487f7188bdfb7906e8f950db378. Engine rebase5 commits, no conflict, PR #101 base main; gate vẫn BLOCKED do metadata GM-04/07, không coi merge là Decision Approved. Post-rebase actual report/source revision trong domain-case-results.json.
