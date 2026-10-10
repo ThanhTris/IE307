@@ -1,7 +1,7 @@
 # GM-15 — kiểm bổ sung review PR #101
 
 Owner Vinh; reviewer đề xuất Trung trong repo, Trí review cuối theo comment. Review/assignment/contract Pending.
-Main0cf1dc0; parent d428a80 (GM-04.2/core1.1.0). Engine decision-v2/1.0.0.
+Main d9e83d9; parent d428a80 (GM-04.2/core1.1.0). Engine decision-v2/1.0.0.
 Tested revision/hashes trong domain-case-results.json; report working tree có HEAD cũ nhưng hashes đúng bộ source đã chạy. Feature revision sẽ pin sau commit.
 Mac Node24.15.0, Python3.12.14/pandas/lxml hiện có; npm ci khôi phục đúng lockfile nền, không thêm dependency/config.
 
@@ -13,7 +13,7 @@ Từ root:
 3. python3 -X utf8 -m unittest discover -s tests -p 'test_*.py'
 4. python3 scripts/validate_repository.py
 5. python3 scripts/task_readiness.py --check-docs
-6. python3 scripts/task_readiness.py --task GM-15 --gate merge --base-ref codex/gm-03-taxonomy-data-contract
+6. python3 scripts/task_readiness.py --task GM-15 --gate merge --base-ref origin/main
 7. git diff --check
 
 Từ mobile sau npm ci: npm run typecheck; npm run lint; npm test -- --watchman=false; npm run check:architecture.
@@ -49,3 +49,5 @@ npm run check ban đầu: typecheck/lint Pass, Jest Fail do sandbox Watchman fch
 [Mapping](CONTRACT_MAPPING.md) ghi field/version/parent và gap seed/winner. [Parity map](../../../../tests/fixtures/decision-v2/parity-map.json) bàn giao từng ID/projection cho SQL. SQL parity/auth/transaction/concurrency/expiry/terminal/persisted retry: Not run, GM-20 nhận fixtures. Không cần API/Postman/native task sau để test domain, không claim các phần đó.
 GM-07 DTO chưa bàn giao/Approved nên adapter cross-contract integration Not run. Candidate/ties/matrix/score internal, không public. Repeat pure function không chứng minh seeded uniform winner hoặc persisted retry. Không tự đổi AC/Approved/Done/merge.
  [Patch plan](PATCH_TEST_PLAN.md) · [HANDOFF](HANDOFF.md)
+
+Retarget cuối: PR #62 merged d9e83d9c091b4487f7188bdfb7906e8f950db378. Engine rebase5 commits, no conflict, PR #101 base main; gate vẫn BLOCKED do metadata GM-04/07, không coi merge là Decision Approved. Post-rebase actual report/source revision trong domain-case-results.json.

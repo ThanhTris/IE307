@@ -2,7 +2,7 @@
 
 Proposal, chưa Approved. Engine decision-v2/1.0.0 nhận locked snapshot nội bộ,
 không nhận DTO client hoặc tự đọc DB. GM-04 proposal food-v1/roadmap-v2/GM-04.2,
-food1.1.0/core1.1.0 tại d428a80 (feature8f90af5); chưa review/merge. GM-07
+food1.1.0/core1.1.0 tại d428a80 (feature8f90af5); đã merge PR #62; approval metadata vẫn chưa được cập nhật trên main. GM-07
 mobile/src/data/api/contracts.ts chưa được bàn giao/duyệt. Không có adapter runtime
 hoặc assertion cross-contract integration trước khi nhận DTO đúng revision.
 
@@ -52,3 +52,5 @@ roster/pool tường minh và DECIDED → DECISION_READY chỉ để so status/c
 Không sửa expected theo output engine. SQL adapter sau này phải trả cùng shape
 nội bộ để đối chiếu; **chưa chạy TypeScript/SQL parity**. Trường optional absent
 khác null; diagnostics order/candidateIds sort phải ổn định khi so full vectors.
+
+Retarget cuối: PR #62 merged d9e83d9c091b4487f7188bdfb7906e8f950db378. Engine rebase5 commits, no conflict, PR #101 base main; gate vẫn BLOCKED do metadata GM-04/07, không coi merge là Decision Approved. Post-rebase actual report/source revision trong domain-case-results.json.
