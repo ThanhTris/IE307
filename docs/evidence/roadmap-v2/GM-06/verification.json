@@ -1,0 +1,166 @@
+{
+  "reviewedHead": "b6690708a04850593300c8af2166d997d5b038a3",
+  "integratedTarget": "fc092aa86ed12aa1181f230d85950bbb93913620",
+  "workingTree": "uncommitted review fix plus main merge --no-commit",
+  "checkedAt": "2026-10-10T16:49:56.369734+00:00",
+  "reviewComment": "https://github.com/ThanhTris/IE307/pull/102#issuecomment-6099597593",
+  "artifactHashes": {
+    "supabase/migrations/0001_core_schema.sql": "6733e28f282f600e627e675dccede3afef1efd37cf4a7cfe8d94af4cd02d30f5",
+    "supabase/schema/gm06_helpers.sql": "b3c852fae61833609324649542e5ac0df79f8d9e8c93f5436f0c1a665405685d",
+    "supabase/schema/gm06_relations.sql": "6d89daf1003e266f5d74d66f88b3fa988b08adc012b34206886b99e286bf1e19",
+    "supabase/rollback/0001_core_schema.down.sql": "b6646dc2ff9b2582b25847b5daba2bd21a35944469dc62884b2fa5cd8dce2cdf",
+    "supabase/tests/schema_contract.sql": "c20f17ad89f5d5e641e69815a6ac8eefc6cc55bc79e8f05acfaa4af18b078f1d",
+    "scripts/gm06_schema_check.py": "52df9073a764dda7a31e80c460d0aa02de211b5f68982d6bc8b17dfeaf1aed69",
+    "tests/test_gm06_schema_runner.py": "f5a93a6d3fde28495d8c02ef32c1e6a93e85de2dd322ff1990ced7e81abb6668",
+    "docs/data/database-mapping.json": "9d3f15fd8ac21dc4ff8789bfe2a3140d0d9647055c830ffd37c0e53394ccc86c",
+    ".github/workflows/gm06-schema.yml": "a1e8ea9846920851ff9300a37716f32f5d8d6847f9d4cef8b8ec80583472d628"
+  },
+  "checks": [
+    {
+      "check": "sql",
+      "command": "python3 scripts/gm06_schema_check.py --report docs/evidence/roadmap-v2/GM-06/sql-results.json",
+      "result": "Pass",
+      "sqlAssertions": 67,
+      "referenceRaces": 16,
+      "scheduleRaces": 2,
+      "mappedPaths": 596,
+      "mappedColumns": 374,
+      "report": "sql-results.json"
+    },
+    {
+      "check": "upstream-artifacts",
+      "command": "python3 scripts/build_field_contracts.py --check",
+      "result": "Pass",
+      "consistent": true,
+      "drift": []
+    },
+    {
+      "check": "upstream-contract-cases",
+      "command": "python3 scripts/validate_field_contracts.py --cases --report /tmp/gm04-cases.json",
+      "result": "Pass",
+      "count": 166,
+      "passed": 166,
+      "fixtureOnly": true
+    },
+    {
+      "check": "backend-unit",
+      "command": "npm test",
+      "result": "Pass",
+      "count": 8,
+      "passed": 8
+    },
+    {
+      "check": "regression",
+      "command": "python3 -m unittest discover -s tests -p 'test_*.py'",
+      "result": "Pass",
+      "report": "regression.txt",
+      "total": 466,
+      "passed": 461,
+      "skipped": 5,
+      "failures": 0,
+      "output": ".................................................................................................................................................................................................................................................................................................................../Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/dateutil/tz/tz.py:37: DeprecationWarning: datetime.datetime.utcfromtimestamp() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.fromtimestamp(timestamp, datetime.UTC).\n  EPOCH = datetime.datetime.utcfromtimestamp(0)\n.............sssss.............................................................................................................................................\n----------------------------------------------------------------------\nRan 466 tests in 19.479s\n\nOK (skipped=5)\n"
+    },
+    {
+      "check": "repository",
+      "command": "python3 scripts/validate_repository.py",
+      "result": "Pass",
+      "output": "Documents, links, JSON, task manifest, dependencies and FR traceability OK; offline tooling only."
+    },
+    {
+      "check": "generated-docs",
+      "command": "python3 scripts/task_readiness.py --check-docs",
+      "result": "Pass",
+      "output": "Task indexes match task metadata."
+    },
+    {
+      "check": "diff",
+      "command": "git diff --check",
+      "result": "Pass"
+    },
+    {
+      "check": "embedded-helpers-and-hashes",
+      "result": "Pass"
+    },
+    {
+      "check": "start-gate",
+      "command": "python3 scripts/task_readiness.py --task GM-06 --base-ref origin/main",
+      "result": "BLOCKED_PROJECT_UNVERIFIED",
+      "exitCode": 1,
+      "output": "Cannot read GitHub Project. gh GraphQL confirmed INSUFFICIENT_SCOPES: read:project required; no local fallback."
+    },
+    {
+      "check": "merge-gate",
+      "command": "python3 scripts/task_readiness.py --task GM-06 --gate merge --base-ref origin/main",
+      "result": "BLOCKED_PROJECT_UNVERIFIED",
+      "exitCode": 1,
+      "output": "Cannot read GitHub Project. Reviewer reports gate achieved with new checker; not independently verified by this account."
+    }
+  ],
+  "baseline": {
+    "report": "review-baseline.json",
+    "accepted": 2,
+    "danglingReferences": 1,
+    "result": "Pre-fix defect reproduced"
+  },
+  "platformChecks": {
+    "macOSFullRunner": {
+      "result": "Pass",
+      "report": "sql-results.json"
+    },
+    "windowsCp1252Simulation": {
+      "result": "Pass",
+      "tests": 2,
+      "nativeWindows": false
+    },
+    "linuxEncoding": {
+      "result": "Pass",
+      "platform": "Linux",
+      "python": "3.13.3",
+      "localeEncoding": "ANSI_X3.4-1968",
+      "utf8Mode": 0,
+      "tests": 2,
+      "report": "encoding-linux.txt",
+      "image": "python:3.13.3-slim@sha256:56a11364ffe0fee3bd60af6d6d5209eba8a99c2c16dc4c7c5861dc06261503cc",
+      "isolation": "network none, filesystem read-only, repo read-only, tmpfs /tmp, no Docker socket"
+    },
+    "linuxFullRunnerCI": {
+      "result": "Not run before commit/push",
+      "workflow": ".github/workflows/gm06-schema.yml",
+      "artifact": "gm06-sql-results-linux",
+      "nativeDockerHost": true
+    },
+    "nativeWindows": {
+      "result": "Not run",
+      "reason": "Owner confirmed no Windows environment available"
+    }
+  },
+  "localSupabaseIntegration": {
+    "result": "Pass",
+    "exactBusinessAuthRowsBeforeGuardedReset": 0,
+    "schemaVersion": "0.1.0",
+    "serializationTriggerTables": 20,
+    "epochRowInstalled": true,
+    "health": {
+      "status": 200,
+      "name": "GoTrue",
+      "version": "v2.197.0",
+      "assertions": "status/name/version/description PASS"
+    },
+    "foundationSqlTests": 3,
+    "leftoverTestDatabases": 0
+  },
+  "automaticApprovalReview": {
+    "rejectedAction": "Full runner in third-party Docker CLI container with host Docker socket mounted",
+    "reason": "Host socket grants broad control of local containers/host",
+    "safeAlternative": "Isolated Linux encoding checks plus Ubuntu CI full runner on native Docker host; no socket mount workaround"
+  },
+  "limits": [
+    "Shared epoch serializes related writes including auth.users; measure throughput before optimizing",
+    "Windows native and full Linux CI acceptance are pending",
+    "Project live gate requires read:project credential",
+    "Task metadata backlog/proposed retained as PR baseline; owner acceptance and reviewer participation documented separately"
+  ],
+  "approval": "Pending independent re-review; not Approved/Done",
+  "localCleanup": "Own disposable test databases removed; own local Supabase project stopped with backups/volumes preserved.",
+  "status": "Implementation and available tests Pass; Windows native, Linux full CI, live Project access and independent re-review pending."
+}

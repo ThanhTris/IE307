@@ -1,0 +1,40 @@
+name: GM-06 PostgreSQL schema
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  schema:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm ci
+      - name: Start the disposable local Supabase project
+        run: npm run backend:start
+      - run: npm run backend:smoke
+      - name: Encoding regression and real SQL checks under an ASCII locale
+        env:
+          LC_ALL: C
+          PYTHONUTF8: '0'
+          PYTHONCOERCECLOCALE: '0'
+        run: |
+          python -m unittest discover -s tests -p 'test_gm06_schema_runner.py' -v
+          python scripts/gm06_schema_check.py --report "$RUNNER_TEMP/gm06-sql-results-linux.json"
+      - run: npm run backend:test
+      - name: Upload the actual SQL report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm06-sql-results-linux
+          path: ${{ runner.temp }}/gm06-sql-results-linux.json
+          if-no-files-found: warn
+      - name: Stop the local project
+        if: always()
+        run: npm run backend:stop

@@ -1,0 +1,440 @@
+{
+  "schemaVersion": "0.1.0",
+  "databaseMode": "isolated disposable DB; real Supabase auth.users DDL",
+  "runnerEnvironment": {
+    "platform": "Darwin",
+    "python": "3.13.3",
+    "localeEncoding": "UTF-8",
+    "utf8Mode": 0,
+    "fileAndSubprocessEncoding": "utf-8"
+  },
+  "postgresVersion": "17.11",
+  "image": "public.ecr.aws/supabase/postgres:17.11.0.004",
+  "fixtureOnly": true,
+  "phases": [
+    {
+      "phase": "fresh migration",
+      "result": "Pass"
+    },
+    {
+      "phase": "SQL contract",
+      "result": "Pass"
+    },
+    {
+      "phase": "concurrent schedule integrity",
+      "result": "Pass"
+    },
+    {
+      "phase": "concurrent nested reference integrity",
+      "result": "Pass"
+    },
+    {
+      "phase": "rollback retains unrelated rows",
+      "result": "Pass"
+    },
+    {
+      "phase": "upgrade and reapply",
+      "result": "Pass"
+    }
+  ],
+  "checkedAt": "2026-10-10T16:37:11.406359+00:00",
+  "artifactHashes": {
+    "scripts/gm06_schema_check.py": "52df9073a764dda7a31e80c460d0aa02de211b5f68982d6bc8b17dfeaf1aed69",
+    "supabase/tests/schema_contract.sql": "c20f17ad89f5d5e641e69815a6ac8eefc6cc55bc79e8f05acfaa4af18b078f1d",
+    "docs/data/database-mapping.json": "9d3f15fd8ac21dc4ff8789bfe2a3140d0d9647055c830ffd37c0e53394ccc86c",
+    "supabase/rollback/0001_core_schema.down.sql": "b6646dc2ff9b2582b25847b5daba2bd21a35944469dc62884b2fa5cd8dce2cdf"
+  },
+  "migrationSha256": "6733e28f282f600e627e675dccede3afef1efd37cf4a7cfe8d94af4cd02d30f5",
+  "sqlAssertions": 67,
+  "tap": [
+    "BEGIN",
+    "SET",
+    "SET",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "INSERT 0 1",
+    "SET CONSTRAINTS",
+    "SET CONSTRAINTS",
+    "CREATE FUNCTION",
+    "CREATE FUNCTION",
+    "CREATE FUNCTION",
+    "1..67",
+    "ok 1 - schema version is separate from dataset/contract",
+    "ok 2 - one installed schema version",
+    "ok 3 - synthetic catalogue query returns one dish",
+    "ok 4 - BE can join offering / dish / venue / schedule",
+    "ok 5 - room roster query has two members",
+    "ok 6 - result references a persisted choice",
+    "ok 7 - personal and group minimal history stored",
+    "ok 8 - invitation and result event refs stored",
+    "ok 9 - required SQL field rejects null",
+    "ok 10 - enum rejects unknown label",
+    "ok 11 - negative price rejected",
+    "ok 12 - min price greater than max rejected",
+    "ok 13 - known price requires unit/currency",
+    "ok 14 - latitude WGS84 bound",
+    "ok 15 - coordinate pair must be complete",
+    "ok 16 - IANA timezone exists",
+    "ok 17 - private GPS cannot become public anchor",
+    "ok 18 - record version is positive and monotonic",
+    "ok 19 - content update requires version increase",
+    "ok 20 - stable ID immutable",
+    "ok 21 - FK references real auth.users instead of profiles",
+    "ok 22 - array UUID FK rejects missing taxonomy",
+    "ok 23 - cuisine cannot point to category taxonomy",
+    "ok 24 - UUID array uniqueItems enforced",
+    "ok 25 - JSON source UUID FK enforced",
+    "ok 26 - nested structured-array auth FK enforced",
+    "ok 27 - nested required flavor keys enforced",
+    "ok 28 - JSON extra field rejects private GPS payload",
+    "ok 29 - radius strictly positive",
+    "ok 30 - locked roster minimum two",
+    "ok 31 - overnight interval needs explicit offset",
+    "ok 32 - last order excludes end boundary",
+    "ok 33 - last-order time and offset known together",
+    "ok 34 - schedule timezone consistent with group/venue",
+    "ok 35 - closed exception cannot retain open intervals",
+    "ok 36 - polygon ring must close",
+    "ok 37 - reviewer must differ from data entrant",
+    "ok 38 - fixtureOnly rows cannot publish",
+    "ok 39 - active push device requires permission and token",
+    "ok 40 - self invite rejected",
+    "ok 41 - friend pair sorted and distinct",
+    "ok 42 - ACK payload hash immutable",
+    "ok 43 - persisted result immutable",
+    "ok 44 - authenticated cannot select raw votes",
+    "ok 45 - anonymous cannot select rooms",
+    "ok 46 - private tables enable and force RLS",
+    "ok 47 - internal publisher restricted to food",
+    "ok 48 - publisher cannot login or bypass RLS",
+    "ok 49 - no implicit OK/KEEP default",
+    "ok 50 - NULL variant tuple cannot duplicate offering",
+    "ok 51 - only one persisted result per room",
+    "ok 52 - maximum eight choices via ordinal bound and unique room/round/ordinal",
+    "ok 53 - overlapping and duplicate weekly intervals rejected",
+    "ok 54 - real calendar date rejects February 30",
+    "ok 55 - null array element is not an unknown UUID",
+    "ok 56 - parent deletion rejects a source referenced only inside JSON",
+    "ok 57 - real authenticated SELECT denied",
+    "ok 58 - real anonymous SELECT denied",
+    "GRANT",
+    "ok 59 - RLS returns no raw votes even if SELECT is granted",
+    "ok 60 - RLS returns no histories even if SELECT is granted",
+    "GRANT ROLE",
+    "ok 61 - internal publisher can write food with all constraints active",
+    "ok 62 - locked consent users must match roster exactly",
+    "ok 63 - every nested FK source and parent has the BEFORE STATEMENT serialization trigger",
+    "ok 64 - internal reference serialization state also enables and forces RLS",
+    "ok 65 - clients and publisher cannot modify or read the private reference lock",
+    "ok 66 - missing reference serialization row fails closed",
+    "ok 67 - a referenced source key cannot be changed by a parent update",
+    "ROLLBACK"
+  ],
+  "mappedPaths": 596,
+  "mappedColumns": 374,
+  "scheduleRaces": [
+    {
+      "isolation": "read committed",
+      "accepted": 1,
+      "rejected": 1,
+      "persistedIntervals": 1,
+      "result": "Pass"
+    },
+    {
+      "isolation": "repeatable read",
+      "accepted": 1,
+      "rejected": 1,
+      "persistedIntervals": 1,
+      "result": "Pass"
+    }
+  ],
+  "referenceRaces": [
+    {
+      "family": "json",
+      "referenceOperation": "insert",
+      "parentOperation": "delete",
+      "isolation": "read committed",
+      "first": "reference",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "23503"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "json",
+      "referenceOperation": "insert",
+      "parentOperation": "delete",
+      "isolation": "read committed",
+      "first": "parent",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "23503"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "json",
+      "referenceOperation": "insert",
+      "parentOperation": "delete",
+      "isolation": "repeatable read",
+      "first": "reference",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "40001"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "json",
+      "referenceOperation": "insert",
+      "parentOperation": "delete",
+      "isolation": "repeatable read",
+      "first": "parent",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "40001"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "json",
+      "referenceOperation": "update",
+      "parentOperation": "delete",
+      "isolation": "read committed",
+      "first": "reference",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "23503"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "json",
+      "referenceOperation": "update",
+      "parentOperation": "delete",
+      "isolation": "read committed",
+      "first": "parent",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "23503"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "json",
+      "referenceOperation": "update",
+      "parentOperation": "delete",
+      "isolation": "repeatable read",
+      "first": "reference",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "40001"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "json",
+      "referenceOperation": "update",
+      "parentOperation": "delete",
+      "isolation": "repeatable read",
+      "first": "parent",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "40001"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "array",
+      "referenceOperation": "insert",
+      "parentOperation": "delete",
+      "isolation": "read committed",
+      "first": "reference",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "23503"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "array",
+      "referenceOperation": "insert",
+      "parentOperation": "delete",
+      "isolation": "read committed",
+      "first": "parent",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "23503"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "array",
+      "referenceOperation": "insert",
+      "parentOperation": "delete",
+      "isolation": "repeatable read",
+      "first": "reference",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "40001"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "array",
+      "referenceOperation": "insert",
+      "parentOperation": "delete",
+      "isolation": "repeatable read",
+      "first": "parent",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "40001"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "array",
+      "referenceOperation": "update",
+      "parentOperation": "delete",
+      "isolation": "read committed",
+      "first": "reference",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "23503"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "array",
+      "referenceOperation": "update",
+      "parentOperation": "delete",
+      "isolation": "read committed",
+      "first": "parent",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "23503"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "array",
+      "referenceOperation": "update",
+      "parentOperation": "delete",
+      "isolation": "repeatable read",
+      "first": "reference",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "40001"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "array",
+      "referenceOperation": "update",
+      "parentOperation": "delete",
+      "isolation": "repeatable read",
+      "first": "parent",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "40001"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    }
+  ],
+  "result": "Pass"
+}
