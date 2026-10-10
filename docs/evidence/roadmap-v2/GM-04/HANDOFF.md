@@ -1,52 +1,88 @@
-# GM-04 — Tiếp nhận draft dữ liệu legacy GM-03 sau rebase
+# GM-04 — Food/core field contract, bổ sung PR #62
 
-2026-10-10 • Owner Vinh • Reviewer đề xuất Tâm • Review Pending.
+2026-10-10 • Owner Vinh • Reviewer Trí theo comment PR #62 • Review Pending.
+Không Approved/Done và không Closes #65. Issue hiện hành
+[#65](https://github.com/ThanhTris/IE307/issues/65); task metadata local chưa tự
+chuyển accepted/Done từ assignee GitHub.
 
-## Scope / version / nguồn
+## Input, revision và mapping
 
-Branch `codex/gm-03-taxonomy-data-contract`, PR #62, base main.
-Main được fetch tại `4f154af714411e81351e7761ceca281b1436fa68`.
-Nhánh trước rebase: `42a821c28144c0667839d485edf2b9462d463937`.
-5 commit data được replay lên main; merge cũ không tạo merge thừa. Evidence/data
-trong commit merge cũ được bảo toàn riêng, không viết lại nội dung lịch sử.
+Main đã fetch `0cf1dc0b247c717abce1bdd23fec8dba791835cc`; GM-01
+`food-v1/roadmap-v2/GM-01.1` **Done/Approved** theo
+[REVIEW](../GM-01/REVIEW.md). Hồ sơ ghi xác nhận chủ dự án cho baseline/stack;
+không duyệt dữ liệu/code GM-04. UI GM-02 và BE GM-03 đang review trên main mới.
+Nhánh dữ liệu `codex/gm-03-taxonomy-data-contract` rebase từ `feb2810a` lên main;
+6 commit replay, head trước patch bổ sung `77163db394b7053c475396a763a08097f9c655a9`.
+Conflict README và repository tests được giữ cả nền main và phần dữ liệu.
 
-Roadmap-v1 GM-03 nhận scope ở roadmap-v2 GM-04 và GM-07. Đây là tiếp nhận draft,
-không hoàn thành AC mới hoặc tự duyệt. Task GM-03 hiện tại thuộc BE structure của
-Trí và được giữ nguyên main. Issue fields hiện hành #65; issue #40 cũ không còn
-truy cập. Không dùng Closes cho task chưa nghiệm thu.
+Legacy roadmap-v1 GM-03 → roadmap-v2 GM-04 field contract và GM-07 consumer DTO;
+verified import là GM-08 sau schema GM-06, eligibility GM-18. Không ghi metadata
+vào task GM-03 BE hiện tại. [Evidence lịch sử](../../roadmap-v1/GM-03/MAIN_SYNC.md)
+và [review package cũ](../../GM-03/REVIEW_PACKAGE.md) giữ nguyên nội dung.
 
-## Artifact đã có
+## Artifacts sử dụng ngay
 
-- [Dictionary](../../../../data-preparation/docs/DATA_DICTIONARY.md),
-  [taxonomy](../../../../data-preparation/docs/TAXONOMY.md),
-  [templates CSV/JSON](../../../../data-preparation/templates/README.md).
-- [Catalogue editorial](../../../../data-preparation/docs/EDITORIAL_CATALOGUE.md):
-  39 món; source mapping 219 tên (216 mapped/2 review/1 excluded); 247 menu price
-  observations, artwork=null. Catalogue dataset 0.2.0, food contract 1.0.0 draft.
-- [Food fixtures](../../../../tests/fixtures/food-data-v1/README.md),
-  [review package cũ](../../GM-03/REVIEW_PACKAGE.md) và audit chỉ đọc.
-- [Sync v1](../../roadmap-v1/GM-03/MAIN_SYNC.md) giữ nguyên;
-  [task trước v2](../../roadmap-v1/GM-03/TASK_BEFORE_V2.json) chỉ là snapshot.
+| Artifact | Vai trò / version |
+| --- | --- |
+| [Dictionary](../../../data/FOOD_DATA_DICTIONARY.md) | Food/core fields, null/default/enum/unit/privacy/source và consumer |
+| [Field coverage](../../../data/FIELD_COVERAGE.md) / [machine](../../../data/field-coverage.json) | 596 field paths kể cả nested; type/required/null/default/enum/unit/timezone/FK/unique/privacy/version/source, valid/invalid/unknown |
+| [Food schema](../../../../supabase/seed/templates/food-v1.schema.json) / [template](../../../../supabase/seed/templates/food-v1.template.json) | Food field interchange 1.1.0; 11 entities, có mô phỏng đầy đủ |
+| [Core schema](../../../../supabase/seed/templates/core-v1.schema.json) / [template](../../../../supabase/seed/templates/core-v1.template.json) | Core 1.0.0; 18 entities, roster/pool/submission/result/history/social/inbox/ACK có liên kết |
+| [Contract cases](../../../../tests/fixtures/food-v1/contract-cases.json) / [README](../../../../tests/fixtures/food-v1/README.md) | 135 expected được biên tập độc lập, clock cố định |
+| [Model](../../../../scripts/gm04_contract_model.py) / [builder](../../../../scripts/build_field_contracts.py) / [validator](../../../../scripts/validate_field_contracts.py) | Offline, stdlib; schema và semantic rules; không SQL/import/API |
+| [Manifest](../../../../tests/fixtures/food-v1/artifact-manifest.json) | SHA256 artifact mới và cases, độc lập version |
+| [CHECKS](CHECKS.md) / [actual](contract-case-results.json) | Input → expected → actual/error path, commands, giới hạn |
 
-## Kiểm / expected / giới hạn
+Contract chung đề xuất `food-v1/roadmap-v2/GM-04.1` cần Trí review. Food 1.1.0
+bổ sung binding `venues.scheduleId` và `lastOrder`/`lastOrderDayOffset` cho lịch
+quán/món; `dateExceptions.lastOrderDayOffset` rõ ngày qua đêm. Adapter copy legacy
+1.0.0, không sửa snapshot. Known lastOrder cũ cần người review offset trước adapter.
+GM-06/07 nhận field proposal này; JSON Schema không thay SQL constraints hoặc RPC DTO.
 
-Sau rebase: bundled Python 3.12.14 chạy 239 regression tests, OK;
-repository validator và `task_readiness.py --check-docs` Pass; audit dữ liệu
-9/9 nhóm Pass, validStructure=true/readyForPublish=false; `git diff --check` Pass.
-Audit dùng clock lịch sử, không xác nhận freshness hôm nay. Snapshot/config/
-code/data fixtures và evidence cũ đối chiếu byte với branch trước rebase.
-Không gọi lại GPT/crawl/API dữ liệu, không sửa checksum snapshot hoặc fixtures.
+## Chạy từ clone sạch
 
-Đầu ra v2 dự kiến `docs/data/FOOD_DATA_DICTIONARY.md`, seed template food-v1 và
-contract-cases chưa được chuyển thành artifact chuẩn của GM-04. Field entity
-room/member/phiếu/result/history/friend/inbox theo AC mới cần GM-04/GM-07 review
-và bổ sung riêng; không tự copy placeholder để mở gate. Schema GM-06, client
-GM-07, verified import GM-08 và quyền ảnh/nội dung chưa được nghiệm thu bằng patch
-này. Mục tiêu 60–80 món chưa đạt, chỉ có 39 món đã chốt.
+Python 3.12+ stdlib (zoneinfo cần IANA tzdata của hệ điều hành), không cần .env,
+package mới, notebook kernel hoặc mạng cho contract runner:
 
-## Downstream và review
+```sh
+python3 scripts/build_field_contracts.py --check
+python3 scripts/validate_field_contracts.py --food supabase/seed/templates/food-v1.template.json --core supabase/seed/templates/core-v1.template.json --as-of 2026-10-10T00:00:00Z
+python3 scripts/validate_field_contracts.py --cases --report /tmp/gm04-cases.json
+python3 -m unittest discover -s tests -p 'test_field_contracts.py'
+```
 
-GM-05/06/07/08/15 nhận artifact theo contract/path đã được reviewer duyệt. Engine
-legacy GM-06 sẽ rebase từ nhánh này và thuộc GM-15 v2; code của nhánh con không có
-trong PR dữ liệu. GM-01 baseline còn Pending; giữ task backlog/proposed, không
-Approved/Done, không auto merge. Trước tích hợp chạy gate theo ref đích thực tế.
+Expected: artifacts consistent, templates valid=true, 135/135 cases Pass. Runner
+không áp default, không dùng clock máy. Schema Draft 2020-12 dùng vocabulary đóng;
+stdlib runner kiểm toàn bộ keywords đang dùng và fail với keyword chưa hỗ trợ.
+Chưa chạy validator JSON Schema của thư viện bên thứ ba. FK/unique/date/timezone/
+source/consent cần semantic runner bên cạnh shape schema.
+
+## Catalogue và dữ liệu thật
+
+[Taxonomy legacy](../../../../data-preparation/docs/TAXONOMY.md),
+[dictionary/forms legacy](../../../../data-preparation/docs/DATA_DICTIONARY.md),
+[catalogue](../../../../data-preparation/docs/EDITORIAL_CATALOGUE.md): **39 món draft**,
+219 tên menu → 216 mapped/2 needs_review/1 excluded; 247 quan sát giá tại 21 chi nhánh,
+artwork=null. Snapshot contract **1.0.0**, dataset **0.2.0**, ID/checksum giữ nguyên.
+Không cần tăng lên 60–80 để nghiệm thu field contract GM-04. Chưa phải verified
+menu/hours/coverage/rights hoặc seed app; các entity nơi bán trong catalogue rỗng
+vẫn là draft. Khảo sát có thể tái dùng cho GM-08 sau schema/review/nguồn còn hạn.
+
+Templates và cases mới luôn fixtureOnly=true, IDs riêng, example.invalid. Simulated
+review/license không là bằng chứng thật; fixture bị chặn publish. Fixtures eligibility
+[food-data-v1](../../../../tests/fixtures/food-data-v1/README.md) nguyên trạng dành
+GM-18, không là test query/RPC. Thông tin giá/ảnh thực chưa được review lại.
+
+## Review và downstream
+
+Trí đối chiếu [CHECKS](CHECKS.md) theo từng mục của
+[comment](https://github.com/ThanhTris/IE307/pull/62#issuecomment-6096995245).
+GM-06 nhận dictionary/schema để viết DB; GM-07 nhận fields/null/privacy để chốt DTO;
+GM-08 nhận draft khảo sát sau schema; GM-18/19 thực hiện eligibility và khóa context.
+Nhánh engine legacy GM-06 thuộc GM-15, PR #101 stacked trên nhánh này; không nằm
+trong diff dữ liệu PR #62.
+
+Start và merge dependency GM-01 đã được nhận trên origin/main đúng revision.
+READY_FOR_MERGE_REVIEW chỉ là gate metadata, không quyền auto-merge. Còn chờ
+review revision/contract bởi Trí, SQL/RLS/RPC/import/query/native và verified dữ liệu
+ở task sau; không tự nghiệm thu các phần đó bằng mock/CI.

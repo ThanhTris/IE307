@@ -1,6 +1,6 @@
 # Taxonomy và món gốc — draft 1.0.0
 
-Nguồn yêu cầu: kế hoạch GM-03 được chủ dự án xác nhận. [Food data spec](../../docs/specs/FOOD_DATA_SPEC.md) và [task GM-03](../../tasks/backlog/GM-03.md) còn chờ GM-28/reviewer. Quyết định gộp tên của owner không thay review độc lập về dữ liệu.
+Nguồn yêu cầu: kế hoạch GM-03 được chủ dự án xác nhận. [Food data spec](../../docs/specs/FOOD_DATA_SPEC.md) và [task GM-03 lịch sử](../../docs/evidence/roadmap-v1/GM-03/TASK_BEFORE_V2.json) còn chờ GM-28/reviewer. Quyết định gộp tên của owner không thay review độc lập về dữ liệu.
 
 ## Cấu hình có thẩm quyền
 

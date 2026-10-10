@@ -35,3 +35,5 @@ Chạy UI: theo [mobile README](mobile/README.md), `cd mobile`, `npm ci`, `npm s
 [Prototype HTML](design/prototypes/gi-cung-duoc.html) không là bằng chứng đáp ứng food-v1. Mở bằng browser hoặc local HTTP; nó không chứng minh QR/push/SQL/realtime. [Bắt đầu](docs/project/START_HERE.md).
 
 Trước nhận việc: `python scripts/task_readiness.py --task GM-XX`. Trước merge thêm `--gate merge --base-ref origin/main` sau cập nhật ref; kiểm PR/commit và integration thật theo [workflow](docs/project/TEAM_WORKFLOW.md). [Dependency map](docs/project/TASK_DEPENDENCIES.md) có hai thứ tự và cặp song song. Sau đổi task: `--write-docs`, rồi `--check-docs`; regression: `python -m unittest discover -s tests -p "test_*.py"`. [PR template](.github/pull_request_template.md) và [review template](tasks/templates/REVIEW_TEMPLATE.md).
+
+[GM-04 food/core field contract](docs/data/FOOD_DATA_DICTIONARY.md): schema/template, coverage và 135 ca mô phỏng offline cho GM-06/07; chưa verified seed/SQL/API.

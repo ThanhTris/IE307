@@ -1,0 +1,454 @@
+{
+  "contractVersion": "1.0.0",
+  "datasetVersion": "0.1.0",
+  "fixtureOnly": true,
+  "entities": {
+    "profiles": [
+      {
+        "id": "34ebbaa4-37be-5657-9fc9-4bab87502064",
+        "userId": "4e804028-22c0-59e3-9b34-6b80e98470f8",
+        "displayName": "Người A mô phỏng",
+        "createdAt": "2026-10-09T14:00:00Z",
+        "version": 1
+      },
+      {
+        "id": "fca5639b-7575-539d-9459-47ce8e72ba3b",
+        "userId": "33ea5af0-8566-5a1f-aa2f-adb6500752b4",
+        "displayName": "Người B mô phỏng",
+        "createdAt": "2026-10-09T14:00:00Z",
+        "version": 1
+      }
+    ],
+    "rooms": [
+      {
+        "id": "eb19d9ac-f439-512e-b754-f9dba2c9fc44",
+        "code": "ABC234",
+        "hostUserId": "4e804028-22c0-59e3-9b34-6b80e98470f8",
+        "state": "DECIDED",
+        "createdAt": "2026-10-09T14:00:00Z",
+        "updatedAt": "2026-10-09T14:20:00Z",
+        "expiresAt": "2026-10-09T15:00:00Z",
+        "mealSlot": "dinner",
+        "timeHint": "late_night",
+        "budget": null,
+        "avoidRecent": false,
+        "anchorId": "604de193-b001-59fb-be36-7bcfa8867503",
+        "coverageId": "9ae61a46-a66a-59e0-bac6-6d8c0237aece",
+        "radiusM": 1500,
+        "desiredAt": "2026-10-09T15:30:00Z",
+        "timezone": "Asia/Ho_Chi_Minh",
+        "serviceMode": "delivery",
+        "catalogueVersion": "0.2.0",
+        "datasetVersion": "0.1.0",
+        "eligibilityVersion": "fixture-only-not-eligibility",
+        "contextVersion": 1,
+        "poolVersion": 1,
+        "policyVersion": "decision-v2",
+        "poolSeed": "simulation-fixed-seed",
+        "rosterUserIds": [
+          "4e804028-22c0-59e3-9b34-6b80e98470f8",
+          "33ea5af0-8566-5a1f-aa2f-adb6500752b4"
+        ],
+        "consentSnapshot": [
+          {
+            "userId": "4e804028-22c0-59e3-9b34-6b80e98470f8",
+            "historyConsent": true
+          },
+          {
+            "userId": "33ea5af0-8566-5a1f-aa2f-adb6500752b4",
+            "historyConsent": true
+          }
+        ],
+        "evaluatedAt": "2026-10-09T14:10:00Z",
+        "lockedAt": "2026-10-09T14:10:00Z",
+        "version": 1
+      }
+    ],
+    "members": [
+      {
+        "id": "d4f2ec60-bd25-538d-9395-39ef29f0b484",
+        "roomId": "eb19d9ac-f439-512e-b754-f9dba2c9fc44",
+        "userId": "4e804028-22c0-59e3-9b34-6b80e98470f8",
+        "nickname": "Người A mô phỏng",
+        "ready": true,
+        "historyConsent": true,
+        "joinedAt": "2026-10-09T14:00:00Z",
+        "leftAt": null,
+        "version": 1
+      },
+      {
+        "id": "2ccdc4a9-f1a8-53c8-9cf9-46b214fca745",
+        "roomId": "eb19d9ac-f439-512e-b754-f9dba2c9fc44",
+        "userId": "33ea5af0-8566-5a1f-aa2f-adb6500752b4",
+        "nickname": "Người B mô phỏng",
+        "ready": true,
+        "historyConsent": true,
+        "joinedAt": "2026-10-09T14:00:00Z",
+        "leftAt": null,
+        "version": 1
+      }
+    ],
+    "preferences": [
+      {
+        "id": "6a9965d8-5f60-5fd3-97b2-5cd79c8dd62a",
+        "roomId": "eb19d9ac-f439-512e-b754-f9dba2c9fc44",
+        "userId": "4e804028-22c0-59e3-9b34-6b80e98470f8",
+        "cuisineIds": [
+          "a0158904-2e08-5bee-9b94-b4267224e40a"
+        ],
+        "categoryIds": [
+          "e26fa8c3-e9c4-5f7a-a7f9-536d1696f872"
+        ],
+        "temperature": "unknown",
+        "flavor": null,
+        "updatedAt": "2026-10-09T14:00:00Z",
+        "version": 1
+      },
+      {
+        "id": "e1b36201-f174-5eb1-b1ad-82ff68e22ceb",
+        "roomId": "eb19d9ac-f439-512e-b754-f9dba2c9fc44",
+        "userId": "33ea5af0-8566-5a1f-aa2f-adb6500752b4",
+        "cuisineIds": [
+          "a0158904-2e08-5bee-9b94-b4267224e40a"
+        ],
+        "categoryIds": [
+          "e26fa8c3-e9c4-5f7a-a7f9-536d1696f872"
+        ],
+        "temperature": "unknown",
+        "flavor": null,
+        "updatedAt": "2026-10-09T14:00:00Z",
+        "version": 1
+      }
+    ],
+    "roundDishes": [
+      {
+        "id": "d6e41ba6-701e-5730-8c40-31d9e618cb92",
+        "roomId": "eb19d9ac-f439-512e-b754-f9dba2c9fc44",
+        "round": 1,
+        "choiceId": "20916893-7f5d-5bb8-8a34-382933dd480c",
+        "dishId": "0a3c8424-4faf-5e5b-ba98-26ad70f4c042",
+        "variant": "sốt riêng — fixture",
+        "offeringId": "2ee54e31-5e7c-5130-b5ed-adf284726ddb",
+        "venueId": "9c4fe7c4-0a70-52f9-bf37-d43f86fc3290",
+        "ordinal": 0,
+        "datasetVersion": "0.1.0",
+        "scheduleId": "e5879d8d-34a6-51ee-921e-06395f17fc1e",
+        "scheduleVersion": 1,
+        "effectiveProfile": null,
+        "price": {
+          "priceMin": 30000,
+          "priceMax": 30000,
+          "unit": "menu_item_unspecified",
+          "currency": "VND",
+          "servingSize": null,
+          "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+        },
+        "poolVersion": 1,
+        "version": 1
+      }
+    ],
+    "submissions": [
+      {
+        "id": "6f757d7f-3eea-52a1-a117-d0796b6a6d7e",
+        "roomId": "eb19d9ac-f439-512e-b754-f9dba2c9fc44",
+        "memberId": "d4f2ec60-bd25-538d-9395-39ef29f0b484",
+        "round": 1,
+        "intentId": "f8db7859-9762-5012-b6af-2c7bdfdcff9b",
+        "requestId": "113aeae0-0bb1-520a-87a0-28fa7d58ff8e",
+        "payloadHash": "638d8f06f88d3cca02a5fd5e1a23c334760e8ca3d0bedb60876d5a6c14a83c4d",
+        "poolVersion": 1,
+        "acceptedAt": "2026-10-09T14:19:00Z",
+        "version": 1
+      },
+      {
+        "id": "041380b4-1ffd-5e33-ad5b-fe8676019728",
+        "roomId": "eb19d9ac-f439-512e-b754-f9dba2c9fc44",
+        "memberId": "2ccdc4a9-f1a8-53c8-9cf9-46b214fca745",
+        "round": 1,
+        "intentId": "7de6a14c-6ce0-542f-ba18-592a8cc4ed17",
+        "requestId": "a675f6cf-5861-501b-a4e6-bf9f009d4b54",
+        "payloadHash": "c3061cf0a94f3d74e3f537bd4e01c0e8134eb2e0131ba97af815af3054939e06",
+        "poolVersion": 1,
+        "acceptedAt": "2026-10-09T14:19:00Z",
+        "version": 1
+      }
+    ],
+    "votes": [
+      {
+        "id": "ff9d8648-5da7-539c-bf5b-de9127e96784",
+        "submissionId": "6f757d7f-3eea-52a1-a117-d0796b6a6d7e",
+        "roundDishId": "d6e41ba6-701e-5730-8c40-31d9e618cb92",
+        "value": "WANT",
+        "version": 1
+      },
+      {
+        "id": "6e724aaf-1b98-5cfb-9d8c-074c934ecefa",
+        "submissionId": "041380b4-1ffd-5e33-ad5b-fe8676019728",
+        "roundDishId": "d6e41ba6-701e-5730-8c40-31d9e618cb92",
+        "value": "WANT",
+        "version": 1
+      }
+    ],
+    "results": [
+      {
+        "id": "bd6a94e2-bbdd-5d26-abc4-547604539a51",
+        "roomId": "eb19d9ac-f439-512e-b754-f9dba2c9fc44",
+        "winnerRoundDishId": "d6e41ba6-701e-5730-8c40-31d9e618cb92",
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT",
+        "policyVersion": "decision-v2",
+        "tiedChoiceIds": [
+          "20916893-7f5d-5bb8-8a34-382933dd480c"
+        ],
+        "finalizedAt": "2026-10-09T14:20:00Z",
+        "version": 1
+      }
+    ],
+    "consents": [
+      {
+        "id": "8d7490ff-2d19-57d6-aa9b-e7c374fde063",
+        "userId": "4e804028-22c0-59e3-9b34-6b80e98470f8",
+        "roomId": "eb19d9ac-f439-512e-b754-f9dba2c9fc44",
+        "scope": "personal_history",
+        "enabled": true,
+        "grantedAt": "2026-10-09T14:00:00Z",
+        "revokedAt": null,
+        "expiresAt": "2026-11-01T00:00:00Z",
+        "version": 1
+      },
+      {
+        "id": "81f8c1e5-01a6-5a83-9cd6-a3dc60a76594",
+        "userId": "4e804028-22c0-59e3-9b34-6b80e98470f8",
+        "roomId": "eb19d9ac-f439-512e-b754-f9dba2c9fc44",
+        "scope": "group_history",
+        "enabled": true,
+        "grantedAt": "2026-10-09T14:00:00Z",
+        "revokedAt": null,
+        "expiresAt": "2026-11-01T00:00:00Z",
+        "version": 1
+      },
+      {
+        "id": "032c67f2-d3d9-52c5-80a4-1a414a1e0e87",
+        "userId": "4e804028-22c0-59e3-9b34-6b80e98470f8",
+        "roomId": "eb19d9ac-f439-512e-b754-f9dba2c9fc44",
+        "scope": "notifications",
+        "enabled": true,
+        "grantedAt": "2026-10-09T14:00:00Z",
+        "revokedAt": null,
+        "expiresAt": "2026-11-01T00:00:00Z",
+        "version": 1
+      },
+      {
+        "id": "cb03370c-fceb-58a5-b862-3d963e48dbd5",
+        "userId": "33ea5af0-8566-5a1f-aa2f-adb6500752b4",
+        "roomId": "eb19d9ac-f439-512e-b754-f9dba2c9fc44",
+        "scope": "personal_history",
+        "enabled": true,
+        "grantedAt": "2026-10-09T14:00:00Z",
+        "revokedAt": null,
+        "expiresAt": "2026-11-01T00:00:00Z",
+        "version": 1
+      },
+      {
+        "id": "b52ae3d8-d2cd-5b99-b647-a91f30c6f61c",
+        "userId": "33ea5af0-8566-5a1f-aa2f-adb6500752b4",
+        "roomId": "eb19d9ac-f439-512e-b754-f9dba2c9fc44",
+        "scope": "group_history",
+        "enabled": true,
+        "grantedAt": "2026-10-09T14:00:00Z",
+        "revokedAt": null,
+        "expiresAt": "2026-11-01T00:00:00Z",
+        "version": 1
+      },
+      {
+        "id": "e7743066-1a05-5049-8651-baee8e90c91f",
+        "userId": "33ea5af0-8566-5a1f-aa2f-adb6500752b4",
+        "roomId": "eb19d9ac-f439-512e-b754-f9dba2c9fc44",
+        "scope": "notifications",
+        "enabled": true,
+        "grantedAt": "2026-10-09T14:00:00Z",
+        "revokedAt": null,
+        "expiresAt": "2026-11-01T00:00:00Z",
+        "version": 1
+      }
+    ],
+    "histories": [
+      {
+        "id": "5bdc9e59-4016-57bd-94d0-fa1bdd574933",
+        "scope": "personal",
+        "ownerUserId": "4e804028-22c0-59e3-9b34-6b80e98470f8",
+        "memberUserIds": [
+          "4e804028-22c0-59e3-9b34-6b80e98470f8"
+        ],
+        "groupKey": "14f6a4b3a186608875a486cef6a079b0bb20a76d4a643e1137e51c848014e8ba",
+        "resultId": "bd6a94e2-bbdd-5d26-abc4-547604539a51",
+        "dishId": "0a3c8424-4faf-5e5b-ba98-26ad70f4c042",
+        "dishName": "Cơm gà — fixture",
+        "mealSlot": "dinner",
+        "matchTier": "PERFECT",
+        "finalizedAt": "2026-10-09T14:20:00Z",
+        "expiresAt": "2026-11-01T00:00:00Z",
+        "consentIds": [
+          "8d7490ff-2d19-57d6-aa9b-e7c374fde063"
+        ],
+        "version": 1
+      },
+      {
+        "id": "dd5e8048-74c5-53cb-ad90-b69b651bfd6f",
+        "scope": "group",
+        "ownerUserId": null,
+        "memberUserIds": [
+          "4e804028-22c0-59e3-9b34-6b80e98470f8",
+          "33ea5af0-8566-5a1f-aa2f-adb6500752b4"
+        ],
+        "groupKey": "14f6a4b3a186608875a486cef6a079b0bb20a76d4a643e1137e51c848014e8ba",
+        "resultId": "bd6a94e2-bbdd-5d26-abc4-547604539a51",
+        "dishId": "0a3c8424-4faf-5e5b-ba98-26ad70f4c042",
+        "dishName": "Cơm gà — fixture",
+        "mealSlot": "dinner",
+        "matchTier": "PERFECT",
+        "finalizedAt": "2026-10-09T14:20:00Z",
+        "expiresAt": "2026-11-01T00:00:00Z",
+        "consentIds": [
+          "81f8c1e5-01a6-5a83-9cd6-a3dc60a76594",
+          "b52ae3d8-d2cd-5b99-b647-a91f30c6f61c"
+        ],
+        "version": 1
+      }
+    ],
+    "friendInvitations": [
+      {
+        "id": "380eca99-9905-5244-a983-7caaefb6086d",
+        "senderUserId": "4e804028-22c0-59e3-9b34-6b80e98470f8",
+        "recipientUserId": "33ea5af0-8566-5a1f-aa2f-adb6500752b4",
+        "state": "accepted",
+        "createdAt": "2026-10-08T00:00:00Z",
+        "expiresAt": "2026-10-15T00:00:00Z",
+        "respondedAt": "2026-10-09T14:00:00Z",
+        "version": 1
+      }
+    ],
+    "friends": [
+      {
+        "id": "4afe0820-693d-5fb9-ac4a-291479ac8733",
+        "lowUserId": "33ea5af0-8566-5a1f-aa2f-adb6500752b4",
+        "highUserId": "4e804028-22c0-59e3-9b34-6b80e98470f8",
+        "acceptedAt": "2026-10-09T14:00:00Z",
+        "version": 1
+      }
+    ],
+    "roomInvitations": [
+      {
+        "id": "94f9bb86-ceb6-556e-b6d4-e6793a06c129",
+        "roomId": "eb19d9ac-f439-512e-b754-f9dba2c9fc44",
+        "friendId": "4afe0820-693d-5fb9-ac4a-291479ac8733",
+        "senderUserId": "4e804028-22c0-59e3-9b34-6b80e98470f8",
+        "recipientUserId": "33ea5af0-8566-5a1f-aa2f-adb6500752b4",
+        "state": "accepted",
+        "eventId": "83b6dd06-f455-5d16-b554-b79075c04585",
+        "createdAt": "2026-10-09T14:00:00Z",
+        "expiresAt": "2026-10-09T15:00:00Z",
+        "respondedAt": "2026-10-09T14:01:00Z",
+        "version": 1
+      }
+    ],
+    "inbox": [
+      {
+        "id": "af139366-5217-5673-88b6-557ebd8d7253",
+        "ownerUserId": "33ea5af0-8566-5a1f-aa2f-adb6500752b4",
+        "eventId": "83b6dd06-f455-5d16-b554-b79075c04585",
+        "readAt": null,
+        "createdAt": "2026-10-09T14:00:00Z",
+        "expiresAt": "2026-10-09T15:00:00Z",
+        "version": 1
+      },
+      {
+        "id": "f50ffc8e-4030-52bc-a11b-661620e4f238",
+        "ownerUserId": "4e804028-22c0-59e3-9b34-6b80e98470f8",
+        "eventId": "0a9619eb-30e5-56c5-ae39-c09cb5886962",
+        "readAt": null,
+        "createdAt": "2026-10-09T14:20:00Z",
+        "expiresAt": "2026-10-16T14:20:00Z",
+        "version": 1
+      }
+    ],
+    "devices": [
+      {
+        "id": "8b3dfe03-7d9c-52e8-9b32-a4b77fe085ec",
+        "userId": "33ea5af0-8566-5a1f-aa2f-adb6500752b4",
+        "deviceKey": "simulation-device-b",
+        "platform": "android",
+        "pushToken": null,
+        "permission": "unknown",
+        "active": false,
+        "createdAt": "2026-10-09T14:00:00Z",
+        "lastSeenAt": "2026-10-09T14:20:00Z",
+        "version": 1
+      }
+    ],
+    "events": [
+      {
+        "id": "83b6dd06-f455-5d16-b554-b79075c04585",
+        "kind": "ROOM_INVITED",
+        "roomId": "eb19d9ac-f439-512e-b754-f9dba2c9fc44",
+        "invitationId": "94f9bb86-ceb6-556e-b6d4-e6793a06c129",
+        "resultId": null,
+        "recipientUserIds": [
+          "33ea5af0-8566-5a1f-aa2f-adb6500752b4"
+        ],
+        "dedupeKey": "simulation-invite-one",
+        "createdAt": "2026-10-09T14:00:00Z",
+        "expiresAt": "2026-10-09T15:00:00Z",
+        "version": 1
+      },
+      {
+        "id": "0a9619eb-30e5-56c5-ae39-c09cb5886962",
+        "kind": "ROOM_RESULT_READY",
+        "roomId": "eb19d9ac-f439-512e-b754-f9dba2c9fc44",
+        "invitationId": null,
+        "resultId": "bd6a94e2-bbdd-5d26-abc4-547604539a51",
+        "recipientUserIds": [
+          "4e804028-22c0-59e3-9b34-6b80e98470f8",
+          "33ea5af0-8566-5a1f-aa2f-adb6500752b4"
+        ],
+        "dedupeKey": "simulation-result-one",
+        "createdAt": "2026-10-09T14:20:00Z",
+        "expiresAt": "2026-10-16T14:20:00Z",
+        "version": 1
+      }
+    ],
+    "deliveries": [
+      {
+        "id": "026d73c7-2d2c-55a2-9193-d12bdfb6409e",
+        "eventId": "83b6dd06-f455-5d16-b554-b79075c04585",
+        "recipientUserId": "33ea5af0-8566-5a1f-aa2f-adb6500752b4",
+        "deviceId": "8b3dfe03-7d9c-52e8-9b32-a4b77fe085ec",
+        "state": "pending",
+        "attempts": 0,
+        "ticketId": null,
+        "receiptId": null,
+        "lastAttemptAt": null,
+        "expiresAt": "2026-10-09T15:00:00Z",
+        "version": 1
+      }
+    ],
+    "idempotency": [
+      {
+        "id": "c78e0913-2f2b-5b9e-bf44-f9ff32df60a6",
+        "userId": "4e804028-22c0-59e3-9b34-6b80e98470f8",
+        "operation": "submit_ballot",
+        "requestId": "113aeae0-0bb1-520a-87a0-28fa7d58ff8e",
+        "payloadHash": "638d8f06f88d3cca02a5fd5e1a23c334760e8ca3d0bedb60876d5a6c14a83c4d",
+        "expectedVersion": 1,
+        "response": {
+          "roomId": "eb19d9ac-f439-512e-b754-f9dba2c9fc44",
+          "resultId": "bd6a94e2-bbdd-5d26-abc4-547604539a51",
+          "serverVersion": 1
+        },
+        "createdAt": "2026-10-09T14:20:00Z",
+        "expiresAt": "2026-10-10T14:20:00Z",
+        "version": 1
+      }
+    ]
+  }
+}

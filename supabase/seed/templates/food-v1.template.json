@@ -1,0 +1,342 @@
+{
+  "contractVersion": "1.1.0",
+  "datasetVersion": "0.1.0",
+  "fixtureOnly": true,
+  "entities": {
+    "taxonomy": [
+      {
+        "id": "a0158904-2e08-5bee-9b94-b4267224e40a",
+        "type": "cuisine",
+        "code": "vi",
+        "label": "Việt",
+        "description": "Fixture tổng hợp, không phải dữ liệu thật",
+        "status": "draft",
+        "origin": null,
+        "version": 1,
+        "reviewStatus": "draft",
+        "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+        "fieldSources": {},
+        "checkedAt": "2026-10-09T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-author",
+        "reviewedBy": null
+      },
+      {
+        "id": "e26fa8c3-e9c4-5f7a-a7f9-536d1696f872",
+        "type": "category",
+        "code": "family:rice",
+        "label": "Cơm",
+        "description": "Họ món",
+        "status": "draft",
+        "origin": null,
+        "version": 1,
+        "reviewStatus": "draft",
+        "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+        "fieldSources": {},
+        "checkedAt": "2026-10-09T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-author",
+        "reviewedBy": null
+      }
+    ],
+    "dishes": [
+      {
+        "id": "0a3c8424-4faf-5e5b-ba98-26ad70f4c042",
+        "name": "Cơm gà — fixture",
+        "description": null,
+        "aliases": [],
+        "cuisineIds": [
+          "a0158904-2e08-5bee-9b94-b4267224e40a"
+        ],
+        "categoryIds": [
+          "e26fa8c3-e9c4-5f7a-a7f9-536d1696f872"
+        ],
+        "mealSlots": [
+          "lunch"
+        ],
+        "timeHints": [],
+        "classificationStatus": "needs_review",
+        "origin": "unknown",
+        "ingredientTags": null,
+        "temperature": "unknown",
+        "flavor": null,
+        "artwork": null,
+        "sourceDishIds": [],
+        "status": "draft",
+        "version": 1,
+        "reviewStatus": "draft",
+        "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+        "fieldSources": {},
+        "checkedAt": "2026-10-09T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-author",
+        "reviewedBy": null
+      }
+    ],
+    "venues": [
+      {
+        "id": "9c4fe7c4-0a70-52f9-bf37-d43f86fc3290",
+        "branchName": "Chi nhánh giả lập",
+        "address": "Địa chỉ fixture, không tìm quán này",
+        "adminAreaId": "simulation-only",
+        "lat": 10.85,
+        "lng": 106.76,
+        "timezone": "Asia/Ho_Chi_Minh",
+        "status": "active",
+        "serviceModes": [
+          "delivery"
+        ],
+        "version": 1,
+        "reviewStatus": "draft",
+        "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+        "fieldSources": {},
+        "checkedAt": "2026-10-09T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-author",
+        "reviewedBy": null,
+        "scheduleId": "c1dfc4d3-c73a-5492-b9ec-37aa8e308c9c"
+      }
+    ],
+    "venueDishes": [
+      {
+        "offeringId": "2ee54e31-5e7c-5130-b5ed-adf284726ddb",
+        "venueId": "9c4fe7c4-0a70-52f9-bf37-d43f86fc3290",
+        "dishId": "0a3c8424-4faf-5e5b-ba98-26ad70f4c042",
+        "variant": "sốt riêng — fixture",
+        "menuName": "Cơm gà sốt riêng — fixture",
+        "menuSource": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+        "scheduleId": "e5879d8d-34a6-51ee-921e-06395f17fc1e",
+        "serviceMode": "delivery",
+        "priceMin": 30000,
+        "priceMax": 30000,
+        "unit": "menu_item_unspecified",
+        "currency": "VND",
+        "servingSize": null,
+        "profileOverrides": null,
+        "artwork": null,
+        "status": "draft",
+        "version": 1,
+        "reviewStatus": "draft",
+        "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+        "fieldSources": {
+          "menu": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+          "price": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+        },
+        "checkedAt": "2026-10-09T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-author",
+        "reviewedBy": null
+      }
+    ],
+    "weeklySchedules": [
+      {
+        "id": "f94920c9-77d9-5a3c-8810-87c1e152b301",
+        "scheduleId": "e5879d8d-34a6-51ee-921e-06395f17fc1e",
+        "ownerType": "offering",
+        "ownerId": "2ee54e31-5e7c-5130-b5ed-adf284726ddb",
+        "dayOfWeek": 5,
+        "startTime": "22:00",
+        "endTime": "02:00",
+        "endDayOffset": 1,
+        "is24Hours": false,
+        "timezone": "Asia/Ho_Chi_Minh",
+        "status": "open",
+        "version": 1,
+        "reviewStatus": "draft",
+        "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+        "fieldSources": {
+          "hours": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+        },
+        "checkedAt": "2026-10-09T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-author",
+        "reviewedBy": null,
+        "lastOrder": "01:30",
+        "lastOrderDayOffset": 1
+      },
+      {
+        "id": "88d7fa24-6a52-5b5f-9fc2-098f0fe91d83",
+        "scheduleId": "e5879d8d-34a6-51ee-921e-06395f17fc1e",
+        "ownerType": "offering",
+        "ownerId": "2ee54e31-5e7c-5130-b5ed-adf284726ddb",
+        "dayOfWeek": 6,
+        "startTime": "11:00",
+        "endTime": "14:00",
+        "endDayOffset": 0,
+        "is24Hours": false,
+        "timezone": "Asia/Ho_Chi_Minh",
+        "status": "open",
+        "version": 1,
+        "reviewStatus": "draft",
+        "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+        "fieldSources": {},
+        "checkedAt": "2026-10-09T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-author",
+        "reviewedBy": null,
+        "lastOrder": null,
+        "lastOrderDayOffset": null
+      },
+      {
+        "id": "df75e923-15c3-50b6-ae80-3bdaff7ca395",
+        "scheduleId": "c1dfc4d3-c73a-5492-b9ec-37aa8e308c9c",
+        "ownerType": "venue",
+        "ownerId": "9c4fe7c4-0a70-52f9-bf37-d43f86fc3290",
+        "dayOfWeek": 5,
+        "startTime": "21:00",
+        "endTime": "03:00",
+        "endDayOffset": 1,
+        "is24Hours": false,
+        "timezone": "Asia/Ho_Chi_Minh",
+        "status": "open",
+        "version": 1,
+        "reviewStatus": "draft",
+        "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+        "fieldSources": {
+          "hours": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+        },
+        "checkedAt": "2026-10-09T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-author",
+        "reviewedBy": null,
+        "lastOrder": "02:30",
+        "lastOrderDayOffset": 1
+      }
+    ],
+    "dateExceptions": [
+      {
+        "id": "842310be-ba48-53b8-9d08-99e7bd7ca152",
+        "scheduleId": "e5879d8d-34a6-51ee-921e-06395f17fc1e",
+        "localDate": "2026-10-10",
+        "status": "closed",
+        "intervals": [],
+        "lastOrder": null,
+        "version": 1,
+        "reviewStatus": "draft",
+        "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+        "fieldSources": {},
+        "checkedAt": "2026-10-09T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-author",
+        "reviewedBy": null,
+        "lastOrderDayOffset": null
+      }
+    ],
+    "availabilityOverrides": [
+      {
+        "id": "679a1862-9f64-5b01-9b6b-ad8923f164a8",
+        "offeringId": "2ee54e31-5e7c-5130-b5ed-adf284726ddb",
+        "state": "sold_out",
+        "source": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+        "observedAt": "2026-10-09T15:00:00Z",
+        "expiresAt": "2026-10-09T16:00:00Z",
+        "version": 1,
+        "reviewStatus": "draft",
+        "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+        "fieldSources": {},
+        "checkedAt": "2026-10-09T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-author",
+        "reviewedBy": null
+      }
+    ],
+    "coverageAreas": [
+      {
+        "areaId": "9ae61a46-a66a-59e0-bac6-6d8c0237aece",
+        "name": "Vùng giả lập, không là coverage Thủ Đức",
+        "boundary": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                106.7,
+                10.8
+              ],
+              [
+                106.8,
+                10.8
+              ],
+              [
+                106.8,
+                10.9
+              ],
+              [
+                106.7,
+                10.9
+              ],
+              [
+                106.7,
+                10.8
+              ]
+            ]
+          ]
+        },
+        "datasetVersion": "0.1.0",
+        "version": 1,
+        "reviewStatus": "draft",
+        "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+        "fieldSources": {},
+        "checkedAt": "2026-10-09T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-author",
+        "reviewedBy": null
+      }
+    ],
+    "publicAnchors": [
+      {
+        "anchorId": "604de193-b001-59fb-be36-7bcfa8867503",
+        "name": "Điểm công cộng giả lập",
+        "lat": 10.85,
+        "lng": 106.76,
+        "coverageId": "9ae61a46-a66a-59e0-bac6-6d8c0237aece",
+        "isPublic": true,
+        "version": 1,
+        "reviewStatus": "draft",
+        "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+        "fieldSources": {},
+        "checkedAt": "2026-10-09T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-author",
+        "reviewedBy": null
+      }
+    ],
+    "dataSources": [
+      {
+        "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+        "locator": "https://example.invalid/synthetic-menu",
+        "usageRights": "unknown",
+        "license": null,
+        "attribution": null,
+        "status": "draft",
+        "version": 1,
+        "reviewStatus": "draft",
+        "fieldSources": {},
+        "checkedAt": "2026-10-09T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-author",
+        "reviewedBy": null
+      }
+    ],
+    "datasetVersions": [
+      {
+        "id": "328152d3-090c-5a08-8665-5c0ad6f93ede",
+        "datasetVersion": "0.1.0",
+        "contractVersion": "1.1.0",
+        "status": "draft",
+        "checksum": null,
+        "artifactLocator": null,
+        "previousVersionId": null,
+        "qualityReport": null,
+        "rollbackLocator": null,
+        "version": 1,
+        "reviewStatus": "draft",
+        "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+        "fieldSources": {},
+        "checkedAt": "2026-10-09T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-author",
+        "reviewedBy": null
+      }
+    ]
+  }
+}
