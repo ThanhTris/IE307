@@ -1,6 +1,6 @@
 # Decision spec — v0.2
 
-2026-10-07 • policyVersion decision-v2 • FR-05..08. Thứ tự chọn giữ hai vòng; v2 bổ sung matchTier và contract lý do. Chờ review độc lập, chưa có engine/API triển khai.
+2026-10-07 • policyVersion decision-v2 • FR-05..08. Thứ tự chọn giữ hai vòng; v2 bổ sung matchTier và contract lý do. Chờ review độc lập; [engine GM-06 draft](../../mobile/src/domain/decision/README.md) đã có tests thuần, chưa có API triển khai hoặc SQL parity.
 
 ## Input và vòng 1
 

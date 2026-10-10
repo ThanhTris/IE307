@@ -1,0 +1,2224 @@
+{
+  "fixtureOnly": true,
+  "policyVersion": "decision-v2",
+  "engineContractVersion": "1.0.0",
+  "note": "Synthetic handwritten expectations; DECISION_READY is not persisted DECIDED. No SQL parity claim.",
+  "cases": [
+    {
+      "id": "unanimous",
+      "description": "Mọi người WANT; chưa persist kết quả.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "WANT"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      }
+    },
+    {
+      "id": "multiple-unanimous",
+      "description": "Trả toàn bộ tập M, không tự chọn ngẫu nhiên.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT",
+            "bun": "WANT"
+          },
+          "b": {
+            "pho": "WANT",
+            "bun": "WANT"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "bun",
+          "pho"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      }
+    },
+    {
+      "id": "unanimous-over-acceptable",
+      "description": "Có M thì chỉ trả M.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT",
+            "bun": "OK"
+          },
+          "b": {
+            "pho": "WANT",
+            "bun": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      }
+    },
+    {
+      "id": "single-fallback",
+      "description": "Một món không unanimous vẫn phải vòng 2.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "ROUND_2",
+        "candidateIds": [
+          "pho"
+        ]
+      }
+    },
+    {
+      "id": "fallback-veto",
+      "description": "NO loại khỏi A, dù thành viên khác WANT.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT",
+            "bun": "NO"
+          },
+          "b": {
+            "pho": "OK",
+            "bun": "WANT"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "ROUND_2",
+        "candidateIds": [
+          "pho"
+        ]
+      }
+    },
+    {
+      "id": "empty-intersection",
+      "description": "NO trên mọi lựa chọn.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "NO"
+          },
+          "b": {
+            "pho": "WANT"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "NO_CONSENSUS",
+        "candidateIds": [],
+        "reasonCode": "EMPTY_INTERSECTION",
+        "matchTier": "NO_CONSENSUS"
+      }
+    },
+    {
+      "id": "missing-member",
+      "description": "Roster khóa có b dù không có key phiếu b.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      }
+    },
+    {
+      "id": "missing-dish",
+      "description": "Thiếu phiếu một món chưa được chốt món unanimous khác.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT",
+            "bun": "OK"
+          },
+          "b": {
+            "pho": "WANT"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      }
+    },
+    {
+      "id": "entire-dish-missing",
+      "description": "Pool khóa chứa món không xuất hiện trong matrix.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "WANT"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      }
+    },
+    {
+      "id": "unset-round1",
+      "description": "UNSET không phải OK.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "UNSET"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      }
+    },
+    {
+      "id": "veto-with-missing",
+      "description": "Không early no-consensus trước khi đủ phiếu.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      }
+    },
+    {
+      "id": "empty-matrix",
+      "description": "Matrix rỗng vẫn chờ roster khóa.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {}
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      }
+    },
+    {
+      "id": "single-confirmed",
+      "description": "Cả hai KEEP một món, điểm WANT bằng n/2.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "KEEP"
+          },
+          "b": {
+            "pho": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      }
+    },
+    {
+      "id": "round2-not-submitted",
+      "description": "Không tự điền draft KEEP.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 2,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      }
+    },
+    {
+      "id": "round2-missing-member",
+      "description": "Không bỏ người offline.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 2,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      }
+    },
+    {
+      "id": "unset-round2",
+      "description": "UNSET vòng 2 không thành KEEP.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "KEEP"
+          },
+          "b": {
+            "pho": "UNSET"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 2,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      }
+    },
+    {
+      "id": "all-removed",
+      "description": "Một REMOVE đủ loại, sau khi đủ xác nhận.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "KEEP"
+          },
+          "b": {
+            "pho": "REMOVE"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "NO_CONSENSUS",
+        "candidateIds": [],
+        "reasonCode": "ALL_REMOVED",
+        "matchTier": "NO_CONSENSUS"
+      }
+    },
+    {
+      "id": "remove-with-missing",
+      "description": "Không early all-removed trước khi đủ xác nhận.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "REMOVE"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 2,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      }
+    },
+    {
+      "id": "tie",
+      "description": "Hai ứng viên cùng điểm, không chọn winner.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT",
+            "bun": "OK"
+          },
+          "b": {
+            "pho": "OK",
+            "bun": "WANT"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "KEEP",
+            "bun": "KEEP"
+          },
+          "b": {
+            "pho": "KEEP",
+            "bun": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "bun",
+          "pho"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      }
+    },
+    {
+      "id": "missing-round2-dish",
+      "description": "Một KEEP thiếu không là xác nhận toàn bộ A.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT",
+            "bun": "OK"
+          },
+          "b": {
+            "pho": "OK",
+            "bun": "WANT"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "KEEP",
+            "bun": "KEEP"
+          },
+          "b": {
+            "pho": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 2,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      }
+    },
+    {
+      "id": "removed-tie-member",
+      "description": "REMOVE loại một ứng viên dù điểm hòa.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT",
+            "bun": "OK"
+          },
+          "b": {
+            "pho": "OK",
+            "bun": "WANT"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "KEEP",
+            "bun": "REMOVE"
+          },
+          "b": {
+            "pho": "KEEP",
+            "bun": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      }
+    },
+    {
+      "id": "even-majority",
+      "description": "Ngưỡng tier theo roster cố định.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "u0",
+          "u1",
+          "u2",
+          "u3"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "u0": {
+            "pho": "WANT"
+          },
+          "u1": {
+            "pho": "WANT"
+          },
+          "u2": {
+            "pho": "WANT"
+          },
+          "u3": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "u0": {
+            "pho": "KEEP"
+          },
+          "u1": {
+            "pho": "KEEP"
+          },
+          "u2": {
+            "pho": "KEEP"
+          },
+          "u3": {
+            "pho": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "CONSENSUS"
+      }
+    },
+    {
+      "id": "even-half",
+      "description": "Ngưỡng tier theo roster cố định.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "u0",
+          "u1",
+          "u2",
+          "u3"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "u0": {
+            "pho": "WANT"
+          },
+          "u1": {
+            "pho": "WANT"
+          },
+          "u2": {
+            "pho": "OK"
+          },
+          "u3": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "u0": {
+            "pho": "KEEP"
+          },
+          "u1": {
+            "pho": "KEEP"
+          },
+          "u2": {
+            "pho": "KEEP"
+          },
+          "u3": {
+            "pho": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      }
+    },
+    {
+      "id": "odd-majority",
+      "description": "Ngưỡng tier theo roster cố định.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "u0",
+          "u1",
+          "u2"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "u0": {
+            "pho": "WANT"
+          },
+          "u1": {
+            "pho": "WANT"
+          },
+          "u2": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "u0": {
+            "pho": "KEEP"
+          },
+          "u1": {
+            "pho": "KEEP"
+          },
+          "u2": {
+            "pho": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "CONSENSUS"
+      }
+    },
+    {
+      "id": "odd-minority",
+      "description": "Ngưỡng tier theo roster cố định.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "u0",
+          "u1",
+          "u2"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "u0": {
+            "pho": "WANT"
+          },
+          "u1": {
+            "pho": "OK"
+          },
+          "u2": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "u0": {
+            "pho": "KEEP"
+          },
+          "u1": {
+            "pho": "KEEP"
+          },
+          "u2": {
+            "pho": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      }
+    },
+    {
+      "id": "all-ok",
+      "description": "Ngưỡng tier theo roster cố định.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "u0",
+          "u1"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "u0": {
+            "pho": "OK"
+          },
+          "u1": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "u0": {
+            "pho": "KEEP"
+          },
+          "u1": {
+            "pho": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      }
+    },
+    {
+      "id": "score-spec-example",
+      "description": "Cơm 7 điểm thắng phở 6; lẩu bị NO dù 3 WANT.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ],
+        "pool": [
+          "pho",
+          "com",
+          "lau"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT",
+            "com": "WANT",
+            "lau": "WANT"
+          },
+          "b": {
+            "pho": "WANT",
+            "com": "WANT",
+            "lau": "WANT"
+          },
+          "c": {
+            "pho": "OK",
+            "com": "WANT",
+            "lau": "WANT"
+          },
+          "d": {
+            "pho": "OK",
+            "com": "OK",
+            "lau": "NO"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "KEEP",
+            "com": "KEEP"
+          },
+          "b": {
+            "pho": "KEEP",
+            "com": "KEEP"
+          },
+          "c": {
+            "pho": "KEEP",
+            "com": "KEEP"
+          },
+          "d": {
+            "pho": "KEEP",
+            "com": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "com"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "CONSENSUS"
+      }
+    },
+    {
+      "id": "removed-high-score",
+      "description": "Không dùng điểm bù REMOVE.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ],
+        "pool": [
+          "pho",
+          "com",
+          "lau"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT",
+            "com": "WANT",
+            "lau": "WANT"
+          },
+          "b": {
+            "pho": "WANT",
+            "com": "WANT",
+            "lau": "WANT"
+          },
+          "c": {
+            "pho": "OK",
+            "com": "WANT",
+            "lau": "WANT"
+          },
+          "d": {
+            "pho": "OK",
+            "com": "OK",
+            "lau": "NO"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "KEEP",
+            "com": "REMOVE"
+          },
+          "b": {
+            "pho": "KEEP",
+            "com": "KEEP"
+          },
+          "c": {
+            "pho": "KEEP",
+            "com": "KEEP"
+          },
+          "d": {
+            "pho": "KEEP",
+            "com": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      }
+    },
+    {
+      "id": "variant-choice-ids",
+      "description": "Hai ID lựa chọn variant không gộp theo tên gốc.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho:bo",
+          "pho:ga"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho:bo": "WANT",
+            "pho:ga": "OK"
+          },
+          "b": {
+            "pho:bo": "OK",
+            "pho:ga": "WANT"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "ROUND_2",
+        "candidateIds": [
+          "pho:bo",
+          "pho:ga"
+        ]
+      }
+    },
+    {
+      "id": "wrong-policy",
+      "description": "Từ chối cấu trúc/version không hợp lệ.",
+      "specRefs": [
+        "DEC-01",
+        "DEC-02",
+        "DEC-05"
+      ],
+      "input": {
+        "policyVersion": "decision-v1",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/policyVersion"
+          }
+        ]
+      }
+    },
+    {
+      "id": "third-round",
+      "description": "Từ chối cấu trúc/version không hợp lệ.",
+      "specRefs": [
+        "DEC-01",
+        "DEC-02",
+        "DEC-05"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 3,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round"
+          }
+        ]
+      }
+    },
+    {
+      "id": "duplicate-roster",
+      "description": "Từ chối cấu trúc/version không hợp lệ.",
+      "specRefs": [
+        "DEC-01",
+        "DEC-02",
+        "DEC-05"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "a"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/roster"
+          }
+        ]
+      }
+    },
+    {
+      "id": "duplicate-pool",
+      "description": "Từ chối cấu trúc/version không hợp lệ.",
+      "specRefs": [
+        "DEC-01",
+        "DEC-02",
+        "DEC-05"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho",
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/pool"
+          }
+        ]
+      }
+    },
+    {
+      "id": "blank-id",
+      "description": "Từ chối cấu trúc/version không hợp lệ.",
+      "specRefs": [
+        "DEC-01",
+        "DEC-02",
+        "DEC-05"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          " "
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/pool"
+          }
+        ]
+      }
+    },
+    {
+      "id": "empty-roster",
+      "description": "Từ chối cấu trúc/version không hợp lệ.",
+      "specRefs": [
+        "DEC-01",
+        "DEC-02",
+        "DEC-05"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/roster"
+          }
+        ]
+      }
+    },
+    {
+      "id": "empty-pool",
+      "description": "Từ chối cấu trúc/version không hợp lệ.",
+      "specRefs": [
+        "DEC-01",
+        "DEC-02",
+        "DEC-05"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/pool"
+          }
+        ]
+      }
+    },
+    {
+      "id": "null-round1",
+      "description": "Từ chối cấu trúc/version không hợp lệ.",
+      "specRefs": [
+        "DEC-01",
+        "DEC-02",
+        "DEC-05"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": null
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1"
+          }
+        ]
+      }
+    },
+    {
+      "id": "array-matrix",
+      "description": "Từ chối cấu trúc/version không hợp lệ.",
+      "specRefs": [
+        "DEC-01",
+        "DEC-02",
+        "DEC-05"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": []
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1"
+          }
+        ]
+      }
+    },
+    {
+      "id": "null-input",
+      "description": "Input không là object.",
+      "specRefs": [
+        "DEC-01",
+        "DEC-02",
+        "DEC-05"
+      ],
+      "input": null,
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "missing-round",
+      "description": "Round phải tường minh.",
+      "specRefs": [
+        "DEC-01",
+        "DEC-02",
+        "DEC-05"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round"
+          }
+        ]
+      }
+    },
+    {
+      "id": "missing-round1",
+      "description": "Round1 object bắt buộc; matrix rỗng khác null.",
+      "specRefs": [
+        "DEC-01",
+        "DEC-02",
+        "DEC-05"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1"
+          }
+        ]
+      }
+    },
+    {
+      "id": "unknown-member",
+      "description": "Member ngoài roster không được tham gia.",
+      "specRefs": [
+        "DEC-01",
+        "DEC-02",
+        "DEC-05"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          },
+          "c": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "NOT_MEMBER",
+            "path": "/round1/c"
+          }
+        ]
+      }
+    },
+    {
+      "id": "unknown-dish",
+      "description": "Món ngoài pool không được tham gia.",
+      "specRefs": [
+        "DEC-01",
+        "DEC-02",
+        "DEC-05"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT",
+            "bun": "OK"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_DISH",
+            "path": "/round1/a/bun"
+          }
+        ]
+      }
+    },
+    {
+      "id": "invalid-vote",
+      "description": "Sai enum phiếu.",
+      "specRefs": [
+        "DEC-01",
+        "DEC-02",
+        "DEC-05"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "LIKE"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1/a/pho"
+          }
+        ]
+      }
+    },
+    {
+      "id": "null-vote",
+      "description": "Null không là UNSET hay OK.",
+      "specRefs": [
+        "DEC-01",
+        "DEC-02",
+        "DEC-05"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": null
+          },
+          "b": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1/a/pho"
+          }
+        ]
+      }
+    },
+    {
+      "id": "null-ballot",
+      "description": "Ballot member phải object.",
+      "specRefs": [
+        "DEC-01",
+        "DEC-02",
+        "DEC-05"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": null,
+          "b": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1/a"
+          }
+        ]
+      }
+    },
+    {
+      "id": "unexpected-round3",
+      "description": "Không nhận field round3.",
+      "specRefs": [
+        "DEC-01",
+        "DEC-02",
+        "DEC-05"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round3": {}
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round3"
+          }
+        ]
+      }
+    },
+    {
+      "id": "round2-in-round1",
+      "description": "Không nộp vòng 2 trong input vòng 1.",
+      "specRefs": [
+        "DEC-01",
+        "DEC-02",
+        "DEC-05"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round2": {}
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round2"
+          }
+        ]
+      }
+    },
+    {
+      "id": "round2-null",
+      "description": "Omitted round2 là chưa gửi; null là sai kiểu.",
+      "specRefs": [
+        "DEC-01",
+        "DEC-02",
+        "DEC-05"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round2": null
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round2"
+          }
+        ]
+      }
+    },
+    {
+      "id": "round2-invalid-vote",
+      "description": "KEEP/REMOVE khác WANT/OK/NO.",
+      "specRefs": [
+        "DEC-01",
+        "DEC-02",
+        "DEC-05"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round2/a/pho"
+          }
+        ]
+      }
+    },
+    {
+      "id": "round2-vetoed-dish",
+      "description": "Tính lại A, không tin candidate của caller.",
+      "specRefs": [
+        "DEC-01",
+        "DEC-02",
+        "DEC-05"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT",
+            "bun": "NO"
+          },
+          "b": {
+            "pho": "OK",
+            "bun": "WANT"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "KEEP",
+            "bun": "KEEP"
+          },
+          "b": {
+            "pho": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_DISH",
+            "path": "/round2/a/bun"
+          }
+        ]
+      }
+    },
+    {
+      "id": "round2-after-unanimous",
+      "description": "Không mở vòng 2 khi vòng 1 đã có M.",
+      "specRefs": [
+        "DEC-01",
+        "DEC-02",
+        "DEC-05"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "WANT"
+          }
+        },
+        "round2": {}
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round"
+          }
+        ]
+      }
+    },
+    {
+      "id": "round2-after-empty",
+      "description": "Không mở vòng 2 trên A rỗng.",
+      "specRefs": [
+        "DEC-01",
+        "DEC-02",
+        "DEC-05"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "NO"
+          },
+          "b": {
+            "pho": "WANT"
+          }
+        },
+        "round2": {}
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round"
+          }
+        ]
+      }
+    }
+  ]
+}
