@@ -5,9 +5,9 @@
 ## Branch / commit / version
 
 Branch `codex/gm-06-decision-engine`, kế thừa data branch
-`codex/gm-03-taxonomy-data-contract` tại `feb2810` (PR #62 còn mở).
-Main fetch mới nhất: `4f154af714411e81351e7761ceca281b1436fa68`.
-Commit engine trước rebase `49c8a4a`, sau replay `ee41bcd`.
+`codex/gm-03-taxonomy-data-contract` tại `f5a8304b7ce7c03f021cbfda7e3c58ea6ae6d062` (PR #62 còn mở).
+Main fetch mới nhất: `0cf1dc0b247c717abce1bdd23fec8dba791835cc`.
+Commit engine gốc `49c8a4a`; lần rebase mới replay code tại `620ab3d`, mapping tại `48ed3f3`.
 Policy decision-v2, engine contract 1.0.0; không nhận đây là GM-07 API DTO đã review.
 
 GM-06 roadmap-v1 → GM-15 roadmap-v2 ([mapping](../../../project/TASK_RENUMBERING.md)),
@@ -30,8 +30,8 @@ approval hoặc số issue cũ sang scope mới.
   [task trước v2](../../roadmap-v1/GM-06/TASK_BEFORE_V2.json) giữ lịch sử trước rebase.
   Nội dung evidence v1 nói working tree/parent cũ là mô tả thời điểm đó.
 
-Đầu vào formal GM-15: GM-04 dictionary và GM-07 contracts.ts chưa bàn giao ở path
-chuẩn/được reviewer duyệt. Patch này bảo toàn bản draft owner đã yêu cầu; không
+Đầu vào formal GM-15: GM-04 dictionary/schema/template/cases đã có path chuẩn
+trên parent mới nhưng chưa Approved; GM-07 contracts.ts chưa được bàn giao/duyệt. Patch này bảo toàn bản draft owner đã yêu cầu; không
 tự tạo shared DTO, scaffold, dependency hoặc mở start/merge gate.
 
 ## AC / boundary / known limits
@@ -48,9 +48,9 @@ không tự triển khai RNG trái lựa chọn owner. Chưa claim toàn bộ GM
 dùng Closes #76. Typecheck/lint GM-02, SQL parity/finalize, auth/race/terminal,
 native build chưa chạy. Retry deterministic của hàm không thay idempotency RPC.
 
-## Verification sau rebase
+## Verification lần rebase trước (4f154af/feb2810)
 
-Sau rebase: Node v24.15.0 chạy `node --test mobile/tests/decision.test.mjs`,
+Sau lần rebase trước: Node v24.15.0 chạy `node --test mobile/tests/decision.test.mjs`,
 75 pass/0 fail; bundled Python 3.12.14 chạy 239 regression tests, OK. Repository
 validator, task indexes và `git diff --check` Pass. Manifest legacy có 5 artifact
 SHA-256 còn khớp; parent data không đổi; task BE GM-03/database GM-06 bằng main.
@@ -68,3 +68,16 @@ Reviewer Trung kiểm phần thuần cùng gap seed/upstream; GM-20 nhận fixtu
 triển khai finalize/SQL parity. Task status/assignment/approval vẫn nguyên trạng.
 Không merge main, không tự Approved/Done. Gate kiểm trên origin/main mới và trên
 parent target thực tế, không suy CI xanh thay review.
+
+## Đồng bộ parent/main ngày 2026-10-10
+
+Main0cf1dc0 có hồ sơ GM-01 Approved, UI/BE structure; parent GM-04 đã bổ sung
+food/core field contract. Rebase chỉ replay engine và giải quyết mobile README
+bằng cách giữ hướng dẫn Expo mới, đặt hướng dẫn engine ở mục riêng. Node24
+chạy 75/75 domain tests và architecture guard Pass. Python regression chạy lại
+trên nền mới; xem [sync checks](MAIN_SYNC_20261010.json). Cả5 checksum artifact
+engine giữ nguyên; không thay code, expected hoặc package/lockfile.
+
+GM-04 output chờ Trí review, GM-07 chưa Approved nên start/merge GM-15 vẫn
+BLOCKED. Không suy từ baseline GM-01 hoặc field shape tests thành Done engine,
+SQL parity/finalize hoặc typecheck/lint. GM-04 bổ sung không nằm trong diff PR #101.
