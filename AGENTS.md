@@ -39,6 +39,10 @@ Mã task hiện hành theo roadmap-v2: GM-01..38, dependency phải có số nh�
 
 [Fixtures food](tests/fixtures/food-data-v1/README.md) mô phỏng cho eligibility GM-18, fixtureOnly=true, clock cố định; verified/reviewer/license chỉ mô phỏng, không nghiệm thu parity. [Review package lịch sử](docs/evidence/GM-03/REVIEW_PACKAGE.md) cho Tâm; chạy `python data-preparation/scripts/validate_data_preparation.py` để audit chỉ đọc. validStructure không là approval/publish/freshness hiện tại.
 
+## Engine GM-06
+
+[Contract engine](mobile/src/domain/decision/README.md) và [handoff](docs/evidence/roadmap-v1/GM-06/HANDOFF.md) hướng dẫn draft decision-v2 thuần: roster/pool khóa tường minh, hai vòng, veto/score/tier, chỉ trả tập ứng viên nội bộ. [Fixtures](tests/fixtures/decision-v2/README.md) là mô phỏng; chạy `node --test mobile/tests/decision.test.mjs` với Node 24. Node type stripping không thay typecheck; chưa SQL parity/persist/retry backend. Không public matrices/tie sets hoặc dùng draft KEEP như submission. Không thay GM-02 package/config/runner, không coi owner yêu cầu draft là dependency Approved.
+
 ## Bàn giao
 
 Đầu ra theo docs/project/TASK_OUTPUT_REQUIREMENTS.md và TASK_OUTPUT_CHECKLIST.md: UI mở Expo thấy/tương tác các mục task; BE có Postman/curl/runner input-response-assertions thật (nền/contract/domain kiểm đúng stage); Data đủ field/schema/template/fixture/version để BE làm song song. Mỗi task có CHECKS.md + HANDOFF.md; API task có request suite supabase/tests/http/GM-XX.http. Not run/Fail của AC bắt buộc chặn Done; placeholder/docs CI không thay output thật. Shell Expo Go không bị native module crash; tính năng không hỗ trợ Expo Go cần development/native build evidence riêng. Plan cấu trúc đã được chủ dự án xác nhận tại docs/project/FOUNDATION_IMPLEMENTATION_PLAN.md, không thay approval baseline/package.
