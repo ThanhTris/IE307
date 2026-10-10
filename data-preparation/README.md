@@ -84,3 +84,17 @@ Cell 7 kiểm ID và FK raw↔mapping↔catalogue, tổng occurrence, các cặp
 Regression notebook ở tests/test_menu_notebook.py kiểm phân loại và parser bằng fixture nhỏ; không dùng fixture làm kết quả khảo sát. Các kết quả thực tế và hạn chế của lần chạy được lưu ở quality_report/source_coverage và notebook executed. Không tự Approved/Done, commit hoặc push.
 
 Lần chạy full 2026-10-09 đã refresh thành công cả 27 URL. Đọc được menu của 23 nguồn beFood: 692 mục sau gộp occurrence cùng ID; 260 mục có URL ảnh. Sau rà quy tắc theo nhóm menu, file cuối có **219 tên ứng viên từ 250 mục menu ở 21 chi nhánh**, 110 tên có URL ảnh và 126 tên có mô tả. Mapping còn 253 mục cần rà và 189 mục bị loại khỏi danh mục bữa chính; dữ liệu của hai quán chỉ có món nhóm/món chưa rõ vẫn giữ trong raw/mapping. Bốn nguồn ShopeeFood cần render, chưa có menu trong bản xuất. Toàn bộ 8 cell chạy đạt bằng Python 3.12.14/pandas 2.2.3/lxml 6.1.1. Chưa kiểm qua Jupyter kernel; đây là mẫu 27 URL đã chọn, chưa là toàn bộ quán/món khu Thủ Đức cũ.
+
+## Audit và bàn giao phần 5
+
+[Review package cho Tâm](../docs/evidence/GM-03/REVIEW_PACKAGE.md) tập hợp taxonomy/dictionary, catalogue/forms, fixtures/expected, nguồn/license và từng AC; [patch/test plan](../docs/evidence/GM-03/VALIDATION_PLAN.md) còn Pending.
+
+```sh
+python3 data-preparation/scripts/validate_data_preparation.py
+python3 data-preparation/scripts/validate_data_preparation.py --report-dir data-preparation/datasets/data-validation/reports
+python3 data-preparation/scripts/run_notebook.py data-preparation/notebooks/validate_data_preparation.ipynb --offline
+```
+
+Audit CLI dùng stdlib; notebook dùng pandas runtime sẵn có. Mặc định chỉ đọc; thư mục report tự tạo khi chỉ định. Notebook 5 khối để xem nguồn/số liệu/thiếu thông tin/lỗi mô phỏng và kiểm replay. Không viết vào snapshots/fixtures, gọi API hoặc cài package. CLI trả 1 khi lỗi cấu trúc, 0 khi cấu trúc đạt dù vẫn có cảnh báo review/thiếu thông tin; readyForPublish luôn false vì đây là tooling draft.
+
+Clock catalogue/forms mặc định 2026-10-10T03:00:00Z để tái lập kiểm lịch sử; `--at` nhận UTC ISO 8601 khi muốn audit tại thời điểm khác. Fixture dùng validationAt riêng, không đổi evaluatedAt từng ca. Kết quả lịch sử không xác nhận dữ liệu đang còn hạn. `validStructure` không thay review Tâm, gate GM-28, quyền ảnh hoặc test thuật toán GM-30.

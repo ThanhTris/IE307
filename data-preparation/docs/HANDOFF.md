@@ -8,6 +8,7 @@
 4. [Data dictionary](DATA_DICTIONARY.md) và [forms](../templates/README.md): 11 entity, CSV/JSON, ID/version/unknown, kiểm FK/giá/lịch/source/review.
 5. [Catalogue biên tập](EDITORIAL_CATALOGUE.md): 39 UUID version 2, nguồn từng trường, bảng giá/ảnh, notebook offline và báo cáo 0.2.0.
 6. [Fixtures phần 4](../../tests/fixtures/food-data-v1/README.md): input/expected cho pool/giá/lịch/coverage/unknown, clocks cố định, tách dữ liệu thật.
+7. [Review package phần 5](../../docs/evidence/GM-03/REVIEW_PACKAGE.md): từng AC cho Tâm, patch/test plan Pending, audit/report/log kiểm, nguồn/license và phần còn thiếu.
 
 ## Bản dữ liệu đóng băng
 
@@ -45,6 +46,14 @@ Catalogue mới [editorial-v0.2.0](../snapshots/editorial-v0.2.0/catalogue.json)
 
 42 ca/27 dataset/36 assertions, 13 nhóm; dataset cơ sở 10 món mô phỏng để kiểm cắt pool về 8, 61 bản ghi thuộc 11 entity. Có CSV/JSON tương đương, registry UUID fixture riêng, cases và comparison cùng seed/input/đảo thứ tự nguồn. expected nhận/loại/cần xác nhận viết rõ, không tính từ eligibility; ca >8 không chốt tám món thắng hay thứ tự rank. Các variant là candidate theo dishId/variant, alias không thêm candidate.
 
-Nguồn/giá/quán/coverage/reviewer/quyền đều mô phỏng; fixtureOnly=true, không publish/seed/ảnh thật. validationAt cố định khác evaluatedAt, không dùng ngày máy để che ca hết hạn. Notebook prepare_food_fixtures có 7 khối, chạy offline và lưu executed trong datasets Git-ignored. Phần 4 chưa commit; giữ nguyên branch và snapshot thật. GM-30 tiếp nhận dữ liệu/expected và thực thi thuật toán/TypeScript–SQL parity sau gate chính thức, GM-03 chưa Approved/Done.
+Nguồn/giá/quán/coverage/reviewer/quyền đều mô phỏng; fixtureOnly=true, không publish/seed/ảnh thật. validationAt cố định khác evaluatedAt, không dùng ngày máy để che ca hết hạn. Notebook prepare_food_fixtures có 7 khối, chạy offline và lưu executed trong datasets Git-ignored. Phần 4 đã commit 27854223b2670a8b73ed61f32c0a82501456cccd trước phần 5; giữ nguyên branch và snapshot thật. GM-30 tiếp nhận dữ liệu/expected và thực thi thuật toán/TypeScript–SQL parity sau gate chính thức, GM-03 chưa Approved/Done.
 
 184 regression tests đạt (26 fixtures mới), validator fixtures/repository/task index/diff đạt. Hai lượt notebook offline 7/7 cells, 19 artifact cùng checksum, JSON/CSV cơ sở tương đương; 0 network/API calls. Kiểm Python runner, chưa Jupyter kernel hoặc eligibility engine. Evidence chi tiết ở DATA_PREPARATION.md; không báo những kiểm này thay review nội dung/approval.
+
+## Bàn giao phần 5
+
+`python data-preparation/scripts/validate_data_preparation.py` là audit chỉ đọc: 9 nhóm kiểm manifest/byte/hash, mapping và metadata lossless, taxonomy registry, forms, catalogue/giá/nguồn và fixture/expected. Catalogue/forms kiểm với clock lịch sử 2026-10-10T03:00:00Z; fixtures dùng validationAt riêng. Lỗi có file/entity/dòng/trường; null/unknown hợp lệ ở draft được báo giới hạn, không nâng thành verified. Thêm `--report-dir data-preparation/datasets/data-validation/reports` khi cần lưu, thư mục tự tạo; không ghi vào snapshot/fixture.
+
+Notebook validate_data_preparation có 5 khối, xem nguồn/thiếu thông tin, minh họa lỗi trong bộ nhớ và kiểm hai lần audit ổn định. [Evidence tổng hợp](../../docs/evidence/GM-03/REVIEW_PACKAGE.md) dẫn taxonomy/dictionary/catalogue/forms/fixtures, từng AC, nguồn/license, checksum và log lệnh kiểm. Owner đã yêu cầu commit phần 5 với message `feat(data): add GM-03 validation and reviewer handoff`; hash tra trong Git history. Reviewer Tâm còn proposed/Pending; 39/60–80, artwork=0, quyền menu/freshness/review và dữ liệu nơi bán thật còn thiếu. Không SQL/eligibility/publish hoặc đổi trạng thái task.
+
+201 regression tests đạt (17 audit mới); 9/9 nhóm audit đạt, 0 lỗi, 9 cảnh báo. Repository validator/task index/diff đạt; readiness vẫn BLOCKED. Hai lượt notebook offline 5/5 cells cho report cùng checksum và 86 input không đổi; mọi snapshot/config/form/fixture giữ nguyên so với commit phần 4. Kiểm Python runner, chưa Jupyter kernel hoặc reviewer chấp thuận.

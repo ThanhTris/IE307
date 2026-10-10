@@ -39,6 +39,8 @@ Mã task hiện hành theo roadmap-v2: GM-01..38, dependency phải có số nh�
 
 [Fixtures phần 4](tests/fixtures/food-data-v1/README.md) có input/expected mô phỏng cho GM-30, notebook và validator riêng. fixtureOnly=true; verified/reviewer/quyền chỉ mô phỏng, không dùng làm seed thật. Kiểm với validationAt cố định; evaluatedAt của ca dùng cho freshness/eligibility. Không sinh expected bằng thuật toán lọc; không báo tooling tests như parity TypeScript/SQL.
 
+[Review package phần 5](docs/evidence/GM-03/REVIEW_PACKAGE.md) đối chiếu từng AC cho reviewer Tâm; patch/test plan còn Pending. Chạy `python data-preparation/scripts/validate_data_preparation.py` để audit chỉ đọc snapshots/forms/fixtures và nguồn/checksum, hoặc notebook validate_data_preparation để xem báo cáo. Clock lịch sử/fixture cố định không xác nhận freshness hôm nay; validStructure không là Approved/publish/eligibility pass.
+
 ## Bàn giao
 
 Đầu ra theo docs/project/TASK_OUTPUT_REQUIREMENTS.md và TASK_OUTPUT_CHECKLIST.md: UI mở Expo thấy/tương tác các mục task; BE có Postman/curl/runner input-response-assertions thật (nền/contract/domain kiểm đúng stage); Data đủ field/schema/template/fixture/version để BE làm song song. Mỗi task có CHECKS.md + HANDOFF.md; API task có request suite supabase/tests/http/GM-XX.http. Not run/Fail của AC bắt buộc chặn Done; placeholder/docs CI không thay output thật. Shell Expo Go không bị native module crash; tính năng không hỗ trợ Expo Go cần development/native build evidence riêng. Plan cấu trúc đã được chủ dự án xác nhận tại docs/project/FOUNDATION_IMPLEMENTATION_PLAN.md, không thay approval baseline/package.

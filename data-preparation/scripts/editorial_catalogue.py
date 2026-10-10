@@ -119,7 +119,7 @@ def source_record(key, locator, checked=None, rights='unknown', license=None, at
                 usageRights=rights, license=license, attribution=attribution, status='draft')
 
 
-def build(bases, cfg, evidence, images):
+def build(bases, cfg, evidence, images, *, as_of=None):
     """No fuzzy grouping or inferred model values: all amendments are per UUID."""
     entries = cfg['dishes']
     if (cfg['datasetVersion'], cfg['contractVersion'], cfg['status']) != ('0.2.0', '1.0.0', 'draft'):
@@ -246,7 +246,7 @@ def build(bases, cfg, evidence, images):
         status='draft', checksum=None, artifactLocator='data-preparation/snapshots/editorial-v0.2.0/catalogue.json',
         previousVersionId=None, qualityReport='data-preparation/snapshots/editorial-v0.2.0/QUALITY_REPORT.md',
         rollbackLocator='data-preparation/snapshots/thu_duc_base_dishes.csv')]
-    errors = dc.validate(bundle)
+    errors = dc.validate(bundle, as_of)
     if errors:
         raise ValueError(errors)
     return bundle, prices, image_rows, field_evidence

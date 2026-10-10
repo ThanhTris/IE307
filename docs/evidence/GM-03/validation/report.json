@@ -1,0 +1,810 @@
+{
+  "reportVersion": "1.0.0",
+  "auditAt": "2026-10-10T03:00:00Z",
+  "fixtureValidationAt": "2026-10-08T00:00:00Z",
+  "scope": "Historical offline structure/integrity; not current freshness or human review",
+  "validStructure": true,
+  "readyForPublish": false,
+  "reviewDecision": "Pending",
+  "checks": [
+    {
+      "name": "base-manifest",
+      "path": "data-preparation/snapshots/manifest.json",
+      "passed": true
+    },
+    {
+      "name": "owner-mapping-lossless-replay",
+      "path": "data-preparation/snapshots",
+      "passed": true
+    },
+    {
+      "name": "taxonomy-registry",
+      "path": "data-preparation/config/taxonomy_registry_v1.json",
+      "passed": true
+    },
+    {
+      "name": "form-empty",
+      "path": "data-preparation/templates/empty",
+      "passed": true
+    },
+    {
+      "name": "form-examples",
+      "path": "data-preparation/templates/examples",
+      "passed": true
+    },
+    {
+      "name": "editorial-manifest",
+      "path": "data-preparation/snapshots/editorial-v0.2.0",
+      "passed": true
+    },
+    {
+      "name": "editorial-contract-source-price-replay",
+      "path": "data-preparation/snapshots/editorial-v0.2.0",
+      "passed": true
+    },
+    {
+      "name": "fixture-manifest",
+      "path": "tests/fixtures/food-data-v1",
+      "passed": true
+    },
+    {
+      "name": "fixture-contract-expected-replay",
+      "path": "tests/fixtures/food-data-v1",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    {
+      "code": "review_gate",
+      "message": "GM-28 review, accepted assignment and independent Tâm review remain pending."
+    },
+    {
+      "code": "catalogue_target",
+      "message": "39 base dishes; the 60–80 target is not met."
+    },
+    {
+      "code": "artwork",
+      "message": "0 selected artworks; 28 metadata candidates do not prove visual suitability or permission review."
+    },
+    {
+      "code": "missing_fields",
+      "message": "5 descriptions missing; cuisine/meal/flavor/origin/ingredients remain mostly unknown. See editorial statistics."
+    },
+    {
+      "code": "price_scope",
+      "message": "247 snapshot prices from 21 branches; menu_item_unspecified, portion/expiry unknown; no current or per-person price claim."
+    },
+    {
+      "code": "source_rights_freshness",
+      "message": "24/27 draft sources have unknown usage rights; 3 reference-text sources record licenses. All lack expiry/reviewer. Historical audit does not establish current freshness or reuse permission."
+    },
+    {
+      "code": "real_offerings",
+      "message": "Real venue/offering/schedule/coverage arrays are empty; GM-27 must supply verified selling data."
+    },
+    {
+      "code": "algorithm",
+      "message": "Fixtures validate input/expected integrity only; GM-30 execution and TypeScript/SQL parity not run."
+    },
+    {
+      "code": "runner",
+      "message": "Notebook tested through Python exec, not a Jupyter kernel; native/SQL and human review not run."
+    }
+  ],
+  "statistics": {
+    "mapping": {
+      "sourceNames": 219,
+      "baseDishes": 39,
+      "states": {
+        "mapped": 216,
+        "needs_review": 2,
+        "excluded": 1
+      },
+      "originalColumns": 52,
+      "menuItems": 247
+    },
+    "editorial": {
+      "dishes": 39,
+      "populated": {
+        "description": 34,
+        "aliases": 1,
+        "cuisineIds": 5,
+        "categoryIds": 39,
+        "mealSlots": 2,
+        "timeHints": 0,
+        "artwork": 0,
+        "ingredientTags": 0,
+        "flavor": 0,
+        "temperature": 2,
+        "origin": 1
+      },
+      "categoryCounts": {
+        "family:banh_bao": 1,
+        "family:banh_cuon": 1,
+        "family:banh_cuon_wrap": 1,
+        "family:banh_mi": 1,
+        "family:banh_uot": 1,
+        "family:bun": 10,
+        "family:burger": 1,
+        "family:hu_tieu": 1,
+        "family:mien": 1,
+        "family:noodles": 3,
+        "family:nui": 1,
+        "family:pho": 2,
+        "family:rice": 13,
+        "family:salad": 1,
+        "family:sticky_rice": 1,
+        "preparation:steamed": 2
+      },
+      "cuisineCounts": {
+        "vi": 5,
+        "zh": 1
+      },
+      "mealCounts": {
+        "breakfast": 2,
+        "snack": 1
+      },
+      "missingDescriptions": [
+        "Bún mọc",
+        "Cơm canh khổ qua",
+        "Cơm cá kho",
+        "Cơm tôm rim",
+        "Cơm đậu hủ sốt cà"
+      ],
+      "imageStatuses": {
+        "needs_visual_review": 23,
+        "rejected": 5,
+        "no_eligible_image": 32
+      },
+      "prices": 247,
+      "knownPrices": 247,
+      "venues": 21,
+      "imageCandidates": 28,
+      "mapping": {
+        "mapped": 216,
+        "needs_review": 2,
+        "excluded": 1
+      },
+      "apiCallsDuringReplay": 0,
+      "status": "draft",
+      "target": "60–80",
+      "expansionRequired": true
+    },
+    "fixtures": {
+      "fixtureOnly": true,
+      "fixtureVersion": "food-fixtures-v1",
+      "cases": 42,
+      "datasets": 27,
+      "groups": {
+        "availability": 4,
+        "context": 3,
+        "determinism": 2,
+        "freshness": 5,
+        "geography": 3,
+        "identity": 4,
+        "meal": 1,
+        "overnight": 5,
+        "pool": 4,
+        "preferences": 2,
+        "price": 4,
+        "profile": 2,
+        "schedule": 3
+      },
+      "baseDishes": 10,
+      "baseEntities": {
+        "taxonomy": 8,
+        "dishes": 10,
+        "venues": 2,
+        "venueDishes": 10,
+        "weeklySchedules": 24,
+        "dateExceptions": 0,
+        "availabilityOverrides": 0,
+        "coverageAreas": 1,
+        "publicAnchors": 1,
+        "dataSources": 4,
+        "datasetVersions": 1
+      },
+      "assertions": 36,
+      "part3Commit": "2e61a5712a07fe4834e92f907a278cb0740c7174",
+      "validationAt": "2026-10-08T00:00:00Z",
+      "networkCalls": 0,
+      "eligibilityExecuted": false,
+      "publicationPerformed": false
+    }
+  },
+  "sources": [
+    {
+      "sourceRef": "09685886-f124-54d4-be95-f9b6180fbad3",
+      "locator": "https://food.be.com.vn/ho-chi-minh/ga-ran-texas-chicken-vo-van-ngan-67488",
+      "usageRights": "unknown",
+      "license": null,
+      "checkedAt": "2026-10-09T16:38:26Z",
+      "validUntil": null,
+      "reviewedBy": null
+    },
+    {
+      "sourceRef": "11dd6ec4-4037-55d0-930c-ab5e47a42452",
+      "locator": "https://food.be.com.vn/ho-chi-minh/mi-tron-nha-min-kha-van-can-147476",
+      "usageRights": "unknown",
+      "license": null,
+      "checkedAt": "2026-10-09T16:38:12Z",
+      "validUntil": null,
+      "reviewedBy": null
+    },
+    {
+      "sourceRef": "274f6cc1-8d26-54af-9d61-522bc9b2dab4",
+      "locator": "https://food.be.com.vn/ho-chi-minh/banh-cuon-banh-uot-chuong-duong-33659",
+      "usageRights": "unknown",
+      "license": null,
+      "checkedAt": "2026-10-09T16:38:56Z",
+      "validUntil": null,
+      "reviewedBy": null
+    },
+    {
+      "sourceRef": "2a5af80d-cf4a-50ac-a903-5fbafd476685",
+      "locator": "https://en.wikipedia.org/wiki/B%C3%A1nh_cu%E1%BB%91n",
+      "usageRights": "licensed",
+      "license": "CC BY-SA 4.0",
+      "checkedAt": "2026-10-10T02:26:05Z",
+      "validUntil": null,
+      "reviewedBy": null
+    },
+    {
+      "sourceRef": "2ad013ea-7096-5125-9e8e-12f36839e8db",
+      "locator": "https://commons.wikimedia.org/wiki/Commons:Reusing_content_outside_Wikimedia",
+      "usageRights": "unknown",
+      "license": null,
+      "checkedAt": "2026-10-10T02:26:05Z",
+      "validUntil": null,
+      "reviewedBy": null
+    },
+    {
+      "sourceRef": "4b8e096d-2210-5cf6-b0e6-384a213b37aa",
+      "locator": "https://en.wikipedia.org/wiki/B%C3%A1nh_bao",
+      "usageRights": "licensed",
+      "license": "CC BY-SA 4.0",
+      "checkedAt": "2026-10-10T02:26:05Z",
+      "validUntil": null,
+      "reviewedBy": null
+    },
+    {
+      "sourceRef": "4c0b0268-6756-56a9-b24f-96483f7e841a",
+      "locator": "https://food.be.com.vn/ho-chi-minh/bun-bo-hue-song-huong-duong-2-19461",
+      "usageRights": "unknown",
+      "license": null,
+      "checkedAt": "2026-10-09T16:38:44Z",
+      "validUntil": null,
+      "reviewedBy": null
+    },
+    {
+      "sourceRef": "4feff167-bbd1-5742-8c74-887247a9e043",
+      "locator": "https://food.be.com.vn/ho-chi-minh/com-chay-thap-phuong-hoang-dieu-2-125649",
+      "usageRights": "unknown",
+      "license": null,
+      "checkedAt": "2026-10-09T16:38:21Z",
+      "validUntil": null,
+      "reviewedBy": null
+    },
+    {
+      "sourceRef": "5dd7d319-9918-5389-ad80-817f8de98fd6",
+      "locator": "https://food.be.com.vn/ho-chi-minh/pho-ly-quoc-su-hoang-dieu-2-86590",
+      "usageRights": "unknown",
+      "license": null,
+      "checkedAt": "2026-10-09T16:38:48Z",
+      "validUntil": null,
+      "reviewedBy": null
+    },
+    {
+      "sourceRef": "601eb901-c804-58ac-a21c-08efe786648c",
+      "locator": "https://food.be.com.vn/ho-chi-minh/nem-nuong-nha-trang-hung-viet-hoang-dieu-2-105890",
+      "usageRights": "unknown",
+      "license": null,
+      "checkedAt": "2026-10-09T16:39:00Z",
+      "validUntil": null,
+      "reviewedBy": null
+    },
+    {
+      "sourceRef": "62568427-0d84-557f-a044-97dc526fa14e",
+      "locator": "https://en.wikipedia.org/wiki/Pho",
+      "usageRights": "licensed",
+      "license": "CC BY-SA 4.0",
+      "checkedAt": "2026-10-10T02:26:05Z",
+      "validUntil": null,
+      "reviewedBy": null
+    },
+    {
+      "sourceRef": "6304e8d5-110e-509f-855a-aa2680636f82",
+      "locator": "https://food.be.com.vn/ho-chi-minh/the-beoso-healthy-food-kha-van-can-138734",
+      "usageRights": "unknown",
+      "license": null,
+      "checkedAt": "2026-10-09T16:38:14Z",
+      "validUntil": null,
+      "reviewedBy": null
+    },
+    {
+      "sourceRef": "67454d1b-dafa-506c-a960-cf7cb29e7866",
+      "locator": "https://food.be.com.vn/ho-chi-minh/kim-nga-quan-com-phan-bun-rieu-banh-canh-le-van-chi-130264",
+      "usageRights": "unknown",
+      "license": null,
+      "checkedAt": "2026-10-09T16:38:23Z",
+      "validUntil": null,
+      "reviewedBy": null
+    },
+    {
+      "sourceRef": "6f69256a-a101-5bc7-b230-9c4a13b32e0c",
+      "locator": "https://food.be.com.vn/ho-chi-minh/bun-bo-ngon-anh-linh-banh-canh-mi-y-24h-duong-49-94430",
+      "usageRights": "unknown",
+      "license": null,
+      "checkedAt": "2026-10-09T16:38:41Z",
+      "validUntil": null,
+      "reviewedBy": null
+    },
+    {
+      "sourceRef": "7653a338-3eb4-5ec9-851c-8d3574c3b0b8",
+      "locator": "https://food.be.com.vn/ho-chi-minh/pha-lau-co-phuong-hiep-binh-46636",
+      "usageRights": "unknown",
+      "license": null,
+      "checkedAt": "2026-10-09T16:38:46Z",
+      "validUntil": null,
+      "reviewedBy": null
+    },
+    {
+      "sourceRef": "79db7b66-bb3b-5fa6-9a7c-0a1c68610fce",
+      "locator": "https://food.be.com.vn/ho-chi-minh/com-tam-49-duong-so-4-64909",
+      "usageRights": "unknown",
+      "license": null,
+      "checkedAt": "2026-10-09T16:38:05Z",
+      "validUntil": null,
+      "reviewedBy": null
+    },
+    {
+      "sourceRef": "81e6c76a-5c44-524a-bddf-6467d24d0348",
+      "locator": "https://food.be.com.vn/ho-chi-minh/bun-dau-mam-tom-ba-anh-em-hoang-dieu-2-75616",
+      "usageRights": "unknown",
+      "license": null,
+      "checkedAt": "2026-10-09T16:38:53Z",
+      "validUntil": null,
+      "reviewedBy": null
+    },
+    {
+      "sourceRef": "83199cc8-678e-592b-a02b-9cf6dce0d645",
+      "locator": "https://food.be.com.vn/ho-chi-minh/quie-tea-food-hoang-dieu-2-148318",
+      "usageRights": "unknown",
+      "license": null,
+      "checkedAt": "2026-10-09T16:38:58Z",
+      "validUntil": null,
+      "reviewedBy": null
+    },
+    {
+      "sourceRef": "93190189-abda-58b5-a7ec-d5c8daad2eb2",
+      "locator": "https://food.be.com.vn/ho-chi-minh/ga-ran-va-my-y-jollibee-vo-van-ngan-98881",
+      "usageRights": "unknown",
+      "license": null,
+      "checkedAt": "2026-10-09T16:38:28Z",
+      "validUntil": null,
+      "reviewedBy": null
+    },
+    {
+      "sourceRef": "96a964f9-9527-593a-8518-5693cae4fbc7",
+      "locator": "data-preparation/config/taxonomy_v1.json",
+      "usageRights": "unknown",
+      "license": null,
+      "checkedAt": "2026-10-10T02:26:05Z",
+      "validUntil": null,
+      "reviewedBy": null
+    },
+    {
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "locator": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "usageRights": "unknown",
+      "license": null,
+      "checkedAt": "2026-10-09T16:38:38Z",
+      "validUntil": null,
+      "reviewedBy": null
+    },
+    {
+      "sourceRef": "a2bc1d40-2c9d-5f93-a2f7-ded6657b4673",
+      "locator": "https://food.be.com.vn/ho-chi-minh/wallace-burger-chicken-kha-van-can-126511",
+      "usageRights": "unknown",
+      "license": null,
+      "checkedAt": "2026-10-09T16:38:10Z",
+      "validUntil": null,
+      "reviewedBy": null
+    },
+    {
+      "sourceRef": "bd7249fc-fec6-55d3-9ba0-3a06cee8a859",
+      "locator": "https://food.be.com.vn/ho-chi-minh/pho-bun-bo-tuoi-hoang-dieu-2-137270",
+      "usageRights": "unknown",
+      "license": null,
+      "checkedAt": "2026-10-09T16:38:51Z",
+      "validUntil": null,
+      "reviewedBy": null
+    },
+    {
+      "sourceRef": "c12d820b-bc32-5743-81af-50400684cced",
+      "locator": "https://food.be.com.vn/ho-chi-minh/com-tam-my-my-kha-van-can-148809",
+      "usageRights": "unknown",
+      "license": null,
+      "checkedAt": "2026-10-09T16:38:17Z",
+      "validUntil": null,
+      "reviewedBy": null
+    },
+    {
+      "sourceRef": "cd026318-9480-5df6-a3a9-6fe05474f62c",
+      "locator": "https://food.be.com.vn/ho-chi-minh/banh-mi-xoi-xiu-mai-xa-xiu-dang-van-bi-120584",
+      "usageRights": "unknown",
+      "license": null,
+      "checkedAt": "2026-10-09T16:38:36Z",
+      "validUntil": null,
+      "reviewedBy": null
+    },
+    {
+      "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
+      "locator": "data-preparation/snapshots/thu_duc_base_dishes.csv",
+      "usageRights": "unknown",
+      "license": null,
+      "checkedAt": "2026-10-10T02:26:05Z",
+      "validUntil": null,
+      "reviewedBy": null
+    },
+    {
+      "sourceRef": "fa76dfbf-99bb-5760-ac20-2741a5862b50",
+      "locator": "https://food.be.com.vn/ho-chi-minh/tiem-com-nha-tron-hoang-dieu-2-102327",
+      "usageRights": "unknown",
+      "license": null,
+      "checkedAt": "2026-10-09T16:38:07Z",
+      "validUntil": null,
+      "reviewedBy": null
+    }
+  ],
+  "inputFiles": {
+    "data-preparation/config/base_dish_mapping_v1.json": {
+      "sha256": "48af51987e554ce7690859d4ce562502710a25e958cea86532dd71648d1e1a4c",
+      "bytes": 52416
+    },
+    "data-preparation/config/base_dish_registry.json": {
+      "sha256": "f67340e72c3be7302de6449e886c6b84f4537387342f0b59423ca2c8c92ad4b1",
+      "bytes": 5779
+    },
+    "data-preparation/config/data_contract_v1.json": {
+      "sha256": "cbb41f73fb38bfec116d9cc535a241f54f270edba5565b06c68df7fa4978bed4",
+      "bytes": 36408
+    },
+    "data-preparation/config/editorial_catalogue_v1.json": {
+      "sha256": "d8d51e9a3c897dfea739ba56b97a47a070e17dc26e3724b6a6a888ec97b9b426",
+      "bytes": 89296
+    },
+    "data-preparation/config/editorial_image_candidates_v1.json": {
+      "sha256": "ed296a260165b5c992594dbd69a41fccedbd87e0424cea6a48bc83c2c554bba5",
+      "bytes": 61781
+    },
+    "data-preparation/config/editorial_source_evidence_v1.json": {
+      "sha256": "677f04809f791b245b9b3ec719ac78bf9280d190ed3db657dfbbedc23fae136d",
+      "bytes": 31900
+    },
+    "data-preparation/config/taxonomy_pilot_v1.json": {
+      "sha256": "f6d81d18337809458cc7c9f8c3588ebe207455954eac254d502c5670613c3e95",
+      "bytes": 2008
+    },
+    "data-preparation/config/taxonomy_registry_v1.json": {
+      "sha256": "aa263fe907b09cbe254a68e8f6c8db6bfe32bbed534cbba924f19b07266d2194",
+      "bytes": 9815
+    },
+    "data-preparation/config/taxonomy_v1.json": {
+      "sha256": "6cb1191446b06d93bc0c2eceb9c75bc2ad0ad9c28a8b71dba0361df0cd5d8e89",
+      "bytes": 1873
+    },
+    "data-preparation/config/thu_duc_sources.json": {
+      "sha256": "040acd5c58c0a9bf15c831725b34857c8d2c31cdc0fa290c8fbc560602564fc3",
+      "bytes": 7932
+    },
+    "data-preparation/config/vilao.env.example": {
+      "sha256": "4f5d56a524e9e9b82b7ec94a0ffcf0050c850a7ac8244dea3662248a3058d992",
+      "bytes": 246
+    },
+    "data-preparation/scripts/base_catalogue.py": {
+      "sha256": "22b0051f83086bbd657421a2a1211ab89d32050369b7fa4fb18317c73fa01e2d",
+      "bytes": 6910
+    },
+    "data-preparation/scripts/data_contract.py": {
+      "sha256": "74dd6e53006d8bf2d1a94a97df7e9d65e984e821b071dfb5f74d2a01b0f1924a",
+      "bytes": 23825
+    },
+    "data-preparation/scripts/editorial_catalogue.py": {
+      "sha256": "e301d3a7512b2dc7369ae30a7644728964e33249da525092e72325f7f26468c1",
+      "bytes": 22364
+    },
+    "data-preparation/scripts/food_fixtures.py": {
+      "sha256": "d15391b89873e769f8e11a03c82b55d41f920be162427c60b9de16429df2bb88",
+      "bytes": 48060
+    },
+    "data-preparation/scripts/prepare_contract_templates.py": {
+      "sha256": "a45a52e81192e6570a99ac3f5178b24a6ad4eceb62d3baaa2cb165389f5cdd6e",
+      "bytes": 11328
+    },
+    "data-preparation/scripts/validate_data_preparation.py": {
+      "sha256": "cffc99cc8d08f8a3e53ad58c1bf6a8a9aa619592826d5b658a48857ea31efceb",
+      "bytes": 15155
+    },
+    "data-preparation/snapshots/editorial-v0.2.0/QUALITY_REPORT.md": {
+      "sha256": "66b4dbdc01ca12976fbce84a9a6a5bb40e9b30e14f23bd2baaeecf3ec189b9c1",
+      "bytes": 5223
+    },
+    "data-preparation/snapshots/editorial-v0.2.0/catalogue.json": {
+      "sha256": "cfaff47b0c65833983fe8de748428f25d26d7e1d49c539a5d1045676a08b9e90",
+      "bytes": 77546
+    },
+    "data-preparation/snapshots/editorial-v0.2.0/csv/availabilityOverrides.csv": {
+      "sha256": "167f6e75b6deeb47dd1506927b86bd0a5f08d400e04a216fe74e80a30a9a839d",
+      "bytes": 137
+    },
+    "data-preparation/snapshots/editorial-v0.2.0/csv/bundle.json": {
+      "sha256": "ee23b5cbff413a5e0d485d3a71c147b7c9e3abca03f6d98bbf96ecdc9332b70f",
+      "bytes": 86
+    },
+    "data-preparation/snapshots/editorial-v0.2.0/csv/coverageAreas.csv": {
+      "sha256": "f84d62dcc36af1c535115e23743d52748fad642029569598d5cde305a7d9dc32",
+      "bytes": 125
+    },
+    "data-preparation/snapshots/editorial-v0.2.0/csv/dataSources.csv": {
+      "sha256": "29821f7f7c2d32717b006358825b88d5ceaf815c22675e256ec065e030ef7460",
+      "bytes": 5250
+    },
+    "data-preparation/snapshots/editorial-v0.2.0/csv/datasetVersions.csv": {
+      "sha256": "8c4b53a475e2a8df90270d1c99c9addab48d5633445b8aeb427abf7fd7cf3dc1",
+      "bytes": 524
+    },
+    "data-preparation/snapshots/editorial-v0.2.0/csv/dateExceptions.csv": {
+      "sha256": "1d10f0b99d5fa2f11071726f562c7a84c7f193b5f88041415b5d4bda25ead01e",
+      "bytes": 140
+    },
+    "data-preparation/snapshots/editorial-v0.2.0/csv/dishes.csv": {
+      "sha256": "6eb5fd20970e8ba28ca78d344b7bdad29d0dcfaa22e32354396fc62ce76fc56a",
+      "bytes": 25654
+    },
+    "data-preparation/snapshots/editorial-v0.2.0/csv/publicAnchors.csv": {
+      "sha256": "5d38c2960f2dc81a96f3e9021126b509d5125cc50c3d6d70b57ded32b98cb910",
+      "bytes": 131
+    },
+    "data-preparation/snapshots/editorial-v0.2.0/csv/taxonomy.csv": {
+      "sha256": "eab593aad5063bb35258a5b5779608e4f5b0f209ac7087376e01012c83f8208d",
+      "bytes": 3142
+    },
+    "data-preparation/snapshots/editorial-v0.2.0/csv/venueDishes.csv": {
+      "sha256": "86d50120c77eb23d1c2c7254e34f388fbdfbe68df34aa134506abc97cdc9c7f9",
+      "bytes": 242
+    },
+    "data-preparation/snapshots/editorial-v0.2.0/csv/venues.csv": {
+      "sha256": "2feb600bb08324759d8d694442ae8ab25d27f727b3f2e6a56d07f5f13ed06c6f",
+      "bytes": 160
+    },
+    "data-preparation/snapshots/editorial-v0.2.0/csv/weeklySchedules.csv": {
+      "sha256": "e678885f459f430398a40b268d0d49abc1534eae8b7c1dbb109ec3087a25fbef",
+      "bytes": 188
+    },
+    "data-preparation/snapshots/editorial-v0.2.0/field_evidence.csv": {
+      "sha256": "8ee141a8f74a4d795096bf05fd017aed3fffd7adb546a03b089594be1f6902ed",
+      "bytes": 49371
+    },
+    "data-preparation/snapshots/editorial-v0.2.0/image_references.csv": {
+      "sha256": "7ac1105600098deb854fc66fd8be8fede36061685c626dff36790d5e2f3f65fd",
+      "bytes": 33599
+    },
+    "data-preparation/snapshots/editorial-v0.2.0/manifest.json": {
+      "sha256": "40301fbcf79000cad60cc1d50b3d1333462868c636e3c156801c6eb129543e71",
+      "bytes": 4777
+    },
+    "data-preparation/snapshots/editorial-v0.2.0/price_references.csv": {
+      "sha256": "2bac7da6f7a5a9e61fa28bdcd2c45ea5cf332c605735515edf0e7fd290dc416f",
+      "bytes": 136987
+    },
+    "data-preparation/snapshots/editorial-v0.2.0/quality.json": {
+      "sha256": "f5accf77f7f352af1777164fdffb31f411a15f83ffcd18e75ddecf9d55f92488",
+      "bytes": 1317
+    },
+    "data-preparation/snapshots/manifest.json": {
+      "sha256": "95d09dd954cfedaf9addf1ab9293d9e102e42304d48fcdbd16c38ac1e99c6b5e",
+      "bytes": 707
+    },
+    "data-preparation/snapshots/source_to_base_mapping.csv": {
+      "sha256": "29ffa3cd95dff82d396b6a7664135c0540c00b2ae151e49b9ff013db9ef5078f",
+      "bytes": 26044
+    },
+    "data-preparation/snapshots/thu_duc_base_dishes.csv": {
+      "sha256": "d992deda724e7dc8f600443b68354ceae20a24216795a35cd0f615113e881e97",
+      "bytes": 1666801
+    },
+    "data-preparation/snapshots/thu_duc_dishes_taxonomy.csv": {
+      "sha256": "e441ecfca93846da6596284f969149d2fef3e53f3397daa537cd8ba24dbcff37",
+      "bytes": 1955954
+    },
+    "data-preparation/templates/README.md": {
+      "sha256": "1f89000facc79105a19e962895bb94655d23800645c4645ff05e80ad47aa1668",
+      "bytes": 2365
+    },
+    "data-preparation/templates/empty/availabilityOverrides.csv": {
+      "sha256": "167f6e75b6deeb47dd1506927b86bd0a5f08d400e04a216fe74e80a30a9a839d",
+      "bytes": 137
+    },
+    "data-preparation/templates/empty/bundle.json": {
+      "sha256": "512df150de52c6ab70e0f1c2f5eee6f098af60f30256c49e75d9cd47224c61bf",
+      "bytes": 85
+    },
+    "data-preparation/templates/empty/coverageAreas.csv": {
+      "sha256": "f84d62dcc36af1c535115e23743d52748fad642029569598d5cde305a7d9dc32",
+      "bytes": 125
+    },
+    "data-preparation/templates/empty/dataSources.csv": {
+      "sha256": "ae5e7c7fb81523d2575b2f414f362885d12622de28e3105ed3fdbafa08225457",
+      "bytes": 136
+    },
+    "data-preparation/templates/empty/dataset.json": {
+      "sha256": "d31ba8f6924808b7802e94acb1b4aec584d292a758265c7773cb4419859d9069",
+      "bytes": 370
+    },
+    "data-preparation/templates/empty/datasetVersions.csv": {
+      "sha256": "353119823ba8e6845f2d9a28bab179623b3b47f19294ecdbd2f08094c8ee3ed4",
+      "bytes": 203
+    },
+    "data-preparation/templates/empty/dateExceptions.csv": {
+      "sha256": "1d10f0b99d5fa2f11071726f562c7a84c7f193b5f88041415b5d4bda25ead01e",
+      "bytes": 140
+    },
+    "data-preparation/templates/empty/dishes.csv": {
+      "sha256": "ad50342ce8c21a986b3ca3597fb2072d17b3011331531c01294c3bdef60d1cb9",
+      "bytes": 251
+    },
+    "data-preparation/templates/empty/publicAnchors.csv": {
+      "sha256": "5d38c2960f2dc81a96f3e9021126b509d5125cc50c3d6d70b57ded32b98cb910",
+      "bytes": 131
+    },
+    "data-preparation/templates/empty/taxonomy.csv": {
+      "sha256": "bfd2b6b7485f6aad588580d9c1e094bb43941664e53fab611ae7f6a3abb29384",
+      "bytes": 134
+    },
+    "data-preparation/templates/empty/venueDishes.csv": {
+      "sha256": "86d50120c77eb23d1c2c7254e34f388fbdfbe68df34aa134506abc97cdc9c7f9",
+      "bytes": 242
+    },
+    "data-preparation/templates/empty/venues.csv": {
+      "sha256": "2feb600bb08324759d8d694442ae8ab25d27f727b3f2e6a56d07f5f13ed06c6f",
+      "bytes": 160
+    },
+    "data-preparation/templates/empty/weeklySchedules.csv": {
+      "sha256": "e678885f459f430398a40b268d0d49abc1534eae8b7c1dbb109ec3087a25fbef",
+      "bytes": 188
+    },
+    "data-preparation/templates/examples/availabilityOverrides.csv": {
+      "sha256": "aad240330f65745d855fa2b065e0d067c7b0bca02b3c40cb53683c4673ba3723",
+      "bytes": 385
+    },
+    "data-preparation/templates/examples/bundle.json": {
+      "sha256": "512df150de52c6ab70e0f1c2f5eee6f098af60f30256c49e75d9cd47224c61bf",
+      "bytes": 85
+    },
+    "data-preparation/templates/examples/coverageAreas.csv": {
+      "sha256": "ec37a1db272ac6e4ffbd2a192fc4a329b9565646728b0dac5ab9ad1c5e0f95e6",
+      "bytes": 309
+    },
+    "data-preparation/templates/examples/dataSources.csv": {
+      "sha256": "67b7ac33f7a5ef929ee67f1dec36e960761f1511eaf7ee2eca174ac9cdd1e6e2",
+      "bytes": 277
+    },
+    "data-preparation/templates/examples/dataset.json": {
+      "sha256": "b27ea38a69a9d9c2698c5882ac6cd7186195093a844e94afbbcba0dab7f622b6",
+      "bytes": 9588
+    },
+    "data-preparation/templates/examples/datasetVersions.csv": {
+      "sha256": "03cf8d0c15fa772da01e70dc97586c4ea411602d6ef475f1f065cc8e24716170",
+      "bytes": 349
+    },
+    "data-preparation/templates/examples/dateExceptions.csv": {
+      "sha256": "5591792f776fe787e21e5cd0d074274646b25777d169b2f652078501158864b8",
+      "bytes": 322
+    },
+    "data-preparation/templates/examples/dishes.csv": {
+      "sha256": "269f601ab81a3cc042d137e3ed969dd200465dc535ab9ffdf8dade8d0d9bd9ae",
+      "bytes": 547
+    },
+    "data-preparation/templates/examples/publicAnchors.csv": {
+      "sha256": "2ee837c7749baaaa40d4548ab57d9937f80b510e9e13a5af104a7e84cde9da02",
+      "bytes": 342
+    },
+    "data-preparation/templates/examples/taxonomy.csv": {
+      "sha256": "a3c3bf00c49c129df60cc026754d130be599b5f83b9d5aaacf574c4ace1bbbed",
+      "bytes": 505
+    },
+    "data-preparation/templates/examples/venueDishes.csv": {
+      "sha256": "07bd41db1970f10c5b4971d24b9a83237dc632a54a1f33565cb6e3605c75d9de",
+      "bytes": 730
+    },
+    "data-preparation/templates/examples/venues.csv": {
+      "sha256": "e2635d157f577b423f2ea9a2de1ced60ae461fd735ea5252895ebbb81cda14b6",
+      "bytes": 398
+    },
+    "data-preparation/templates/examples/weeklySchedules.csv": {
+      "sha256": "76d7a7a1f49c7fadbb996d60caa36ccdad02f7689f57429268c1489454c24fb6",
+      "bytes": 927
+    },
+    "tests/fixtures/food-data-v1/README.md": {
+      "sha256": "e37b4db72c00eb8ddf536abe26a3a4b915294399121a372ba2cd732ee0cf66d4",
+      "bytes": 10284
+    },
+    "tests/fixtures/food-data-v1/base-csv/availabilityOverrides.csv": {
+      "sha256": "167f6e75b6deeb47dd1506927b86bd0a5f08d400e04a216fe74e80a30a9a839d",
+      "bytes": 137
+    },
+    "tests/fixtures/food-data-v1/base-csv/bundle.json": {
+      "sha256": "31f82a6de9da94b99198a1a5bcfa2c584867e0e9dd9a4ac19ccaad6e5f42e854",
+      "bytes": 85
+    },
+    "tests/fixtures/food-data-v1/base-csv/coverageAreas.csv": {
+      "sha256": "0f929358f678e768f3c013b16d3d1b99fcb1e31cc143032a1499abbd8777274b",
+      "bytes": 551
+    },
+    "tests/fixtures/food-data-v1/base-csv/dataSources.csv": {
+      "sha256": "a6a285a7388c6f86915ddcecf8d6745415cb2b1b69ff5ed4b7ea3dee4819b5e4",
+      "bytes": 1328
+    },
+    "tests/fixtures/food-data-v1/base-csv/datasetVersions.csv": {
+      "sha256": "f19814c952d51e4f8bf08dd6158fcd880be3e9ef4cdbbe4cb48901ceac5b550f",
+      "bytes": 485
+    },
+    "tests/fixtures/food-data-v1/base-csv/dateExceptions.csv": {
+      "sha256": "1d10f0b99d5fa2f11071726f562c7a84c7f193b5f88041415b5d4bda25ead01e",
+      "bytes": 140
+    },
+    "tests/fixtures/food-data-v1/base-csv/dishes.csv": {
+      "sha256": "61360d6b692e5943718b1322287d4dd55de669b0ec3b5aaae3ef469549578eee",
+      "bytes": 6276
+    },
+    "tests/fixtures/food-data-v1/base-csv/publicAnchors.csv": {
+      "sha256": "e2a5a5f124a5577b2139395063b4c444e870f4e97369b5a12473d62041e79ebf",
+      "bytes": 404
+    },
+    "tests/fixtures/food-data-v1/base-csv/taxonomy.csv": {
+      "sha256": "143263d82c3acb7445f2ead8fc371b57ea97eb56710ede43e1dffbbee0c1c011",
+      "bytes": 2503
+    },
+    "tests/fixtures/food-data-v1/base-csv/venueDishes.csv": {
+      "sha256": "fe6e8ba8f2e31d72bc1cdc6e8e4c16112b7563acfbcbb354c896eac6c8d5756b",
+      "bytes": 5835
+    },
+    "tests/fixtures/food-data-v1/base-csv/venues.csv": {
+      "sha256": "c4fbd954d1043a1443f4705019bd96ff730e161c47a6866dca20210b2203e889",
+      "bytes": 1140
+    },
+    "tests/fixtures/food-data-v1/base-csv/weeklySchedules.csv": {
+      "sha256": "2085f5c6c4bd8822f468bb5171215c908c87dce615ed41455d46bb39d4439d42",
+      "bytes": 8836
+    },
+    "tests/fixtures/food-data-v1/base.json": {
+      "sha256": "0de711941a98dae7db9ced2370fbef8b15d5ce091c0ba27e335597bfaf4849f9",
+      "bytes": 57066
+    },
+    "tests/fixtures/food-data-v1/cases.json": {
+      "sha256": "04e7cd78166dc80c417fb21969c9ab8baf86385f6e06b21304a424caa8b0d676",
+      "bytes": 84513
+    },
+    "tests/fixtures/food-data-v1/datasets.json": {
+      "sha256": "f11085cb4bf18ed081698aefee2dc4025e435d2591f554858f609389ffe416e3",
+      "bytes": 697323
+    },
+    "tests/fixtures/food-data-v1/manifest.json": {
+      "sha256": "998028f65a44ae43225f8f0448f6f0293d619d0a3baa8ba395b4a107d4cd6114",
+      "bytes": 3618
+    },
+    "tests/fixtures/food-data-v1/quality.json": {
+      "sha256": "c5ad157b3684bf5e2d410e092eabf8366bdea6b4cc57e5d74d8a0de77aed0d2f",
+      "bytes": 874
+    },
+    "tests/fixtures/food-data-v1/registry.json": {
+      "sha256": "6e07cda958adb8d195e5f215f41e508b4e01d74b477215084a68c02cc6a25be9",
+      "bytes": 11222
+    }
+  },
+  "networkCalls": 0,
+  "eligibilityExecuted": false,
+  "publicationPerformed": false
+}

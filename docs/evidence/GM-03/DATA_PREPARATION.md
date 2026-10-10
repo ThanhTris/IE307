@@ -73,3 +73,17 @@ git diff --check
 184 tests đạt: 158 trước đó + 26 fixture integrity tests. Kiểm thời gian/expected đã viết rõ, ID/FK, fixtureOnly/source/alias/variant/giá/profile, chống publish, raw GPS, sửa seed hoặc đổi dữ liệu trong cặp chỉ đảo thứ tự, unknown/expiry, CSV roundtrip/determinism và chống export vào snapshot/seed thật. Không báo những kiểm này là thuật toán eligibility/TypeScript–SQL parity đã đạt. Validator fixtures/repository/task index/diff đạt; kiểm whitespace cả file mới chưa stage.
 
 Hai lượt notebook fixtures cuối cùng đạt 7/7 cells, 19 artifact cùng byte/checksum, 0 network/API calls; cases.json SHA-256 **04e7cd78166dc80c417fb21969c9ab8baf86385f6e06b21304a424caa8b0d676**. Có output executed thật trong datasets/food-fixtures/reports Git-ignored, chưa chạy trực tiếp Jupyter kernel. Snapshot/config dữ liệu thật không đổi so với commit phần 3. Phần 4 để working tree, chưa commit; GM-30 nhận input/expected khi đạt gate để chạy thuật toán/parity. GM-03 còn review độc lập, ảnh và thông tin món chưa đủ nguồn, mục tiêu 60–80 chưa đạt và dataset nơi bán thật thuộc GM-27.
+
+## Phần 5 — audit và gói review, 2026-10-10
+
+Phần 4 đã commit **27854223b2670a8b73ed61f32c0a82501456cccd** theo yêu cầu owner trước khi làm phần 5; các ghi chú “chưa commit” trong phần 4 ở trên là trạng thái của lượt trước. Không push/PR. Branch và mọi snapshot/config/fixture thật giữ nguyên.
+
+[Review package](REVIEW_PACKAGE.md) dẫn đầu ra/từng AC, [patch/test plan](VALIDATION_PLAN.md) Pending Tâm và [report máy](validation/REPORT.md)/[JSON](validation/report.json)/[log lệnh](validation/checks.json). Audit chỉ đọc tái dùng mapping/contract/editorial/fixtures; bổ sung manifest completeness/byte/hash, registry consistency, source/price lossless replay, CSV–JSON và artifact inventory 86 input. Catalogue/forms dùng clock lịch sử 2026-10-10T03:00:00Z; fixture giữ validationAt 2026-10-08T00:00:00Z và evaluatedAt riêng. Editorial build thêm tham số as_of tùy chọn để audit không phụ thuộc clock máy, không đổi nội dung đầu ra hoặc GPT pipeline.
+
+9/9 nhóm kiểm đạt, 0 lỗi, 9 cảnh báo cần xử lý/review; validStructure=true, readyForPublish=false, Decision Pending. 39 món chưa đạt 60–80, artwork=0, nguồn/quyền menu/freshness/reviewer và nơi bán thật còn thiếu; báo rõ từng AC trong package, không dùng null để tuyên bố task hoàn tất.
+
+17 tests audit mới kiểm input hỏng: ID trùng, taxonomy FK, thiếu source ở verified mô phỏng, giá âm/đơn vị sai, lịch qua đêm/ngày đóng sai, fixture publish, CSV drift, manifest size/hash/missing/unlisted/path escape, registry drift và diagnostic isolation. Null/unknown hợp lệ ở draft vẫn được giữ. Không triển khai eligibility để kiểm expected.
+
+Toàn bộ 201 regression tests đạt; repository validator, task index và diff check đạt. Readiness GM-03 trả exit 1/BLOCKED vì GM-28 còn review; ghi riêng, không tính dependency đã qua. Lệnh/output thật ở validation/checks.json, evidence hai lượt và checksum report ở validation/offline.json.
+
+Notebook audit có 5 cells; hai lượt offline đạt 5/5 và report cùng byte/checksum, input không đổi. Python runner sử dụng runtime sẵn có, không network/API/cài package; chưa Jupyter kernel/native/SQL/TypeScript–SQL parity hoặc review độc lập. Phần 5 giữ working tree; nguồn 219/52, mapping 216/2/1, catalogue 39/247 và fixtures 42/27 không đổi so với commit phần 4. Kết quả regression/repository/index/diff và readiness BLOCKED được lưu trong log lệnh, không coi blocker review là test dữ liệu fail.
