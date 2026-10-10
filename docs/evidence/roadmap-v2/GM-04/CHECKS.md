@@ -9,6 +9,7 @@ Không phải approval code/AC hoặc quyền tự merge/Done.
 ## Revision, version và môi trường
 
 Source đã kiểm và revision trong [summary](review-fix-summary.json), SHA256 từng
+file code tại feature commit `8f90af5555daad7506d16f59957d6e653c22b603`; follow-up chỉ cập nhật docs.
 file code; [manifest](../../../../tests/fixtures/food-v1/artifact-manifest.json)
 pin generated artifacts/cases. Main0cf1dc0, GM-01 Approved theo [REVIEW](../GM-01/REVIEW.md).
 Contract proposal **GM-04.2**, food shape **1.1.0**, core **1.1.0** thêm consent

@@ -1,5 +1,7 @@
 # GM-04 — Food/core field contract, bổ sung PR #62
 
+Tested feature revision mới: `8f90af5555daad7506d16f59957d6e653c22b603`, source hashes trong review-fix-summary.json.
+
 2026-10-10 • Owner Vinh • Reviewer Trí theo comment PR #62 • Review Pending.
 Không Approved/Done và không Closes #65. Issue hiện hành
 [#65](https://github.com/ThanhTris/IE307/issues/65); task metadata local chưa tự

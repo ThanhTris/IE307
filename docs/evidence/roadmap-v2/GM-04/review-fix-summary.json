@@ -1,5 +1,5 @@
 {
-  "testedRevision": "working tree based on f5a8304b7ce7c03f021cbfda7e3c58ea6ae6d062; exact tested source SHA256 below",
+  "testedRevision": "8f90af5555daad7506d16f59957d6e653c22b603",
   "contractId": "food-v1/roadmap-v2/GM-04.2",
   "foodContractVersion": "1.1.0",
   "coreContractVersion": "1.1.0",

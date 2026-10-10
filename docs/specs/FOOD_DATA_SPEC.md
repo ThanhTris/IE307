@@ -82,4 +82,4 @@ Core GM-32, GM-33 kiểm FOOD-01..10/12..14 theo phạm vi P0; FOOD-11 và phầ
 
 ## Bàn giao field contract GM-04 (đề xuất review)
 
-[Dictionary food/core](../data/FOOD_DATA_DICTIONARY.md) và [coverage](../data/FIELD_COVERAGE.md) triển khai field proposal `food-v1/roadmap-v2/GM-04.1`. Food interchange 1.1.0 thêm venue.scheduleId và lastOrder/lastOrderDayOffset rõ ngày; core 1.0.0 chờ review consumer GM-06/07. Adapter không đổi snapshots food1.0.0/dataset0.2.0. [Checks](../evidence/roadmap-v2/GM-04/CHECKS.md) chỉ kiểm contract, không SQL/eligibility hoặc approval.
+[Dictionary food/core](../data/FOOD_DATA_DICTIONARY.md) và [coverage](../data/FIELD_COVERAGE.md) triển khai field proposal `food-v1/roadmap-v2/GM-04.2`. Food interchange 1.1.0 thêm venue.scheduleId và lastOrder/lastOrderDayOffset rõ ngày; core 1.1.0 chờ review consumer GM-06/07. Adapter không đổi snapshots food1.0.0/dataset0.2.0. [Checks](../evidence/roadmap-v2/GM-04/CHECKS.md) chỉ kiểm contract, không SQL/eligibility hoặc approval.
