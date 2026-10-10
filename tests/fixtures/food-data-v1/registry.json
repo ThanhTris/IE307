@@ -1,0 +1,452 @@
+[
+  {
+    "entity": "dataSources",
+    "registryKey": "main",
+    "id": "fad0b6db-1c57-5f32-ac41-08edead76612"
+  },
+  {
+    "entity": "dataSources",
+    "registryKey": "menu",
+    "id": "7ef0cd2e-68e6-514d-ab85-125a6c137cbe"
+  },
+  {
+    "entity": "dataSources",
+    "registryKey": "hours",
+    "id": "c794ba13-f55d-5266-ba51-ddbc696148c3"
+  },
+  {
+    "entity": "dataSources",
+    "registryKey": "coordinates",
+    "id": "b843aea1-e2d8-50b3-9c7c-dc7451c68569"
+  },
+  {
+    "entity": "taxonomy",
+    "registryKey": "cuisine:vi",
+    "id": "d4fb1c35-0807-5915-91bd-9501d5d473ec"
+  },
+  {
+    "entity": "taxonomy",
+    "registryKey": "family:bun",
+    "id": "8add81ba-f551-5cf4-8a61-f745bdcc6543"
+  },
+  {
+    "entity": "taxonomy",
+    "registryKey": "family:hotpot",
+    "id": "288f92e2-3141-58c4-967f-f953666060d1"
+  },
+  {
+    "entity": "taxonomy",
+    "registryKey": "family:pho",
+    "id": "de90fb20-e2fd-5de9-a16a-8634144ebade"
+  },
+  {
+    "entity": "taxonomy",
+    "registryKey": "family:rice",
+    "id": "1c7c9965-b574-507d-8674-2daf0492d52f"
+  },
+  {
+    "entity": "taxonomy",
+    "registryKey": "family:salad",
+    "id": "3de179c7-4251-5c01-95c7-c685a3ab9cca"
+  },
+  {
+    "entity": "taxonomy",
+    "registryKey": "family:sticky_rice",
+    "id": "1cd6946f-04c4-5810-80bf-6726d85991de"
+  },
+  {
+    "entity": "taxonomy",
+    "registryKey": "preparation:grilled",
+    "id": "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+  },
+  {
+    "entity": "dishes",
+    "registryKey": "grill-chicken",
+    "id": "21ef9e4c-d524-5a9d-82c2-0cbbb3034c90"
+  },
+  {
+    "entity": "dishes",
+    "registryKey": "grill-fish",
+    "id": "5aefd01d-d9bc-5e97-8b10-701172762c81"
+  },
+  {
+    "entity": "dishes",
+    "registryKey": "hotpot-veg",
+    "id": "0d55522b-4c1d-5212-b628-f741640b02cd"
+  },
+  {
+    "entity": "dishes",
+    "registryKey": "hotpot-mushroom",
+    "id": "5af235d3-3b7a-5646-ba3b-1411e852c18e"
+  },
+  {
+    "entity": "dishes",
+    "registryKey": "hotpot-grill",
+    "id": "3947ca90-b09d-5520-9a69-025768a4b892"
+  },
+  {
+    "entity": "dishes",
+    "registryKey": "rice",
+    "id": "31c42a77-8de7-5fd8-8e3c-6bc0a2639145"
+  },
+  {
+    "entity": "dishes",
+    "registryKey": "bun",
+    "id": "e320fa93-e1aa-5bb6-a279-4e4d977e792e"
+  },
+  {
+    "entity": "dishes",
+    "registryKey": "pho",
+    "id": "68a87bd2-bd3b-57a0-be2a-7b498fd7c0dc"
+  },
+  {
+    "entity": "dishes",
+    "registryKey": "salad",
+    "id": "00616e8c-b30a-521a-a008-8ddc5bfcf164"
+  },
+  {
+    "entity": "dishes",
+    "registryKey": "sticky-rice",
+    "id": "b680eeaa-7054-57f9-a0e7-4806885e3dfe"
+  },
+  {
+    "entity": "venues",
+    "registryKey": "a",
+    "id": "8c8abb46-fe61-5a6a-953c-ae7388f3dd90"
+  },
+  {
+    "entity": "scheduleGroups",
+    "registryKey": "venue-a",
+    "id": "0fd53ddf-1391-593b-b15c-eb14905597bd"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "venue-a-5",
+    "id": "01f752da-4cf9-5b48-9b75-49d1bb4e38e8"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "venue-a-6",
+    "id": "ba7853fe-ea37-5f95-9ec0-d71a581e0c1b"
+  },
+  {
+    "entity": "venues",
+    "registryKey": "b",
+    "id": "5c59eb69-a4e7-5b8e-92fe-b43d1cf0787e"
+  },
+  {
+    "entity": "scheduleGroups",
+    "registryKey": "venue-b",
+    "id": "8bd4f644-0b93-5ec9-9556-652e17e9e4e6"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "venue-b-5",
+    "id": "ca6f06d8-f1e0-5a50-9a1c-a691458390d7"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "venue-b-6",
+    "id": "b0ad5b7a-028f-5404-b8df-2df5f163750f"
+  },
+  {
+    "entity": "scheduleGroups",
+    "registryKey": "offering-grill-chicken",
+    "id": "5192715f-1897-5558-a1a9-bbd0b6034325"
+  },
+  {
+    "entity": "venueDishes",
+    "registryKey": "grill-chicken",
+    "id": "198c4e87-e8b9-5171-b778-cb82b5c732ad"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "offering-grill-chicken-5",
+    "id": "1dfb932d-32dd-54f9-beac-3663b06050fe"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "offering-grill-chicken-6",
+    "id": "ea59bc4b-4465-56d1-b9dd-9ec4162ef1db"
+  },
+  {
+    "entity": "scheduleGroups",
+    "registryKey": "offering-grill-fish",
+    "id": "1f0ecd5d-1359-507b-87ab-3104cf8589c7"
+  },
+  {
+    "entity": "venueDishes",
+    "registryKey": "grill-fish",
+    "id": "81ecb677-c9f5-5201-af89-b38a7d2504ba"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "offering-grill-fish-5",
+    "id": "481cce78-e938-57b1-851e-01d27ecc2228"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "offering-grill-fish-6",
+    "id": "3929136f-a47b-57ec-9d53-ab41661a9adb"
+  },
+  {
+    "entity": "scheduleGroups",
+    "registryKey": "offering-hotpot-veg",
+    "id": "5edc8ebd-a668-5b27-b064-112d87abaf70"
+  },
+  {
+    "entity": "venueDishes",
+    "registryKey": "hotpot-veg",
+    "id": "6578cb25-30da-5443-a116-ab61f875cd1b"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "offering-hotpot-veg-5",
+    "id": "4157e1b6-d3e7-54a6-b458-3bd0c071c7e4"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "offering-hotpot-veg-6",
+    "id": "4213857b-efa4-5f05-b15f-bfb67c82a755"
+  },
+  {
+    "entity": "scheduleGroups",
+    "registryKey": "offering-hotpot-mushroom",
+    "id": "c84bfb5e-4016-564c-81df-0276a899f9c8"
+  },
+  {
+    "entity": "venueDishes",
+    "registryKey": "hotpot-mushroom",
+    "id": "ea64650b-ae4d-5de4-9f5d-790acbfd202d"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "offering-hotpot-mushroom-5",
+    "id": "0dd30a77-e337-5408-a011-594b9efb8e13"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "offering-hotpot-mushroom-6",
+    "id": "269f6a69-d11a-56be-8d80-9b1d6c5c2d41"
+  },
+  {
+    "entity": "scheduleGroups",
+    "registryKey": "offering-hotpot-grill",
+    "id": "4b014dd0-af04-5659-a165-47e3f3ebd0de"
+  },
+  {
+    "entity": "venueDishes",
+    "registryKey": "hotpot-grill",
+    "id": "81082de5-fc22-50e6-a57e-18c0e58225ed"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "offering-hotpot-grill-5",
+    "id": "6e93505d-607c-5994-a0b7-4421235ea7cc"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "offering-hotpot-grill-6",
+    "id": "cdff593b-9b4d-58e7-a759-4ad7e2397db6"
+  },
+  {
+    "entity": "scheduleGroups",
+    "registryKey": "offering-rice",
+    "id": "49c8aaf2-cd19-52d3-b2ad-85acf0b258a2"
+  },
+  {
+    "entity": "venueDishes",
+    "registryKey": "rice",
+    "id": "2e9a2e56-c7c9-5812-93b8-c62875376a07"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "offering-rice-5",
+    "id": "29d2abaf-81a7-5c2d-9ba0-bcbae5148532"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "offering-rice-6",
+    "id": "65df9b9c-26aa-51b8-a9e2-4481a97f5071"
+  },
+  {
+    "entity": "scheduleGroups",
+    "registryKey": "offering-bun",
+    "id": "aef8d66e-6bed-5aaf-9103-54de4017c116"
+  },
+  {
+    "entity": "venueDishes",
+    "registryKey": "bun",
+    "id": "5d050d4b-610e-5ac1-b199-2d5ea9ec4fc3"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "offering-bun-5",
+    "id": "be92abcc-f75d-5d0c-a625-aa9fe27fea54"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "offering-bun-6",
+    "id": "9be92e4c-ebcd-5277-ac04-584762bf5a06"
+  },
+  {
+    "entity": "scheduleGroups",
+    "registryKey": "offering-pho",
+    "id": "1d58afea-cdf3-5105-aebe-005c21575977"
+  },
+  {
+    "entity": "venueDishes",
+    "registryKey": "pho",
+    "id": "06064616-9e44-5beb-8ad7-309fdb277eb3"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "offering-pho-5",
+    "id": "df05b0ab-cdca-5141-8c8a-29a6c2625b67"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "offering-pho-6",
+    "id": "d6fb9efe-29b0-598d-93d4-268435ab5ded"
+  },
+  {
+    "entity": "scheduleGroups",
+    "registryKey": "offering-salad",
+    "id": "b8513171-ede9-5310-a95f-896857398572"
+  },
+  {
+    "entity": "venueDishes",
+    "registryKey": "salad",
+    "id": "6a719d6e-e8ee-5690-b077-9b684f714437"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "offering-salad-5",
+    "id": "6e8d2512-5119-5d16-b2d0-415f88ded5d4"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "offering-salad-6",
+    "id": "1734fc5a-bccc-58da-bd8f-c6b533276eae"
+  },
+  {
+    "entity": "scheduleGroups",
+    "registryKey": "offering-sticky-rice",
+    "id": "cc5c25fa-beb7-5adc-a099-c00154b2bc41"
+  },
+  {
+    "entity": "venueDishes",
+    "registryKey": "sticky-rice",
+    "id": "57c5807a-0220-5801-b11b-b303d671d1de"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "offering-sticky-rice-5",
+    "id": "7167ff21-c324-56e3-8464-dc8e6b8b3676"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "offering-sticky-rice-6",
+    "id": "64126646-555a-510c-a711-ffb048998f15"
+  },
+  {
+    "entity": "coverageAreas",
+    "registryKey": "area",
+    "id": "5c4bb474-8ab4-539f-a714-9c3f01d84640"
+  },
+  {
+    "entity": "publicAnchors",
+    "registryKey": "anchor",
+    "id": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62"
+  },
+  {
+    "entity": "datasetVersions",
+    "registryKey": "version",
+    "id": "8f768c68-2690-5673-b2b1-2010a6eac5dd"
+  },
+  {
+    "entity": "venueDishes",
+    "registryKey": "chicken-variant",
+    "id": "14893c87-5587-5b24-a973-9e58788278d3"
+  },
+  {
+    "entity": "venueDishes",
+    "registryKey": "chicken-other-venue",
+    "id": "b02b2b33-2aae-5f2b-b7e0-0a112c68c06b"
+  },
+  {
+    "entity": "venueDishes",
+    "registryKey": "chicken-cold-spicy",
+    "id": "408b3652-0780-5974-8f56-fc335a355afa"
+  },
+  {
+    "entity": "scheduleGroups",
+    "registryKey": "chicken-variant",
+    "id": "081eedeb-8500-55bc-82a6-4e6cc63b5f90"
+  },
+  {
+    "entity": "scheduleGroups",
+    "registryKey": "chicken-other-venue",
+    "id": "fe412054-1414-5b66-a58f-3316745d0dda"
+  },
+  {
+    "entity": "scheduleGroups",
+    "registryKey": "chicken-cold-spicy",
+    "id": "ef15ceb1-3f40-519f-9e6c-7b52eec87203"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "split-5",
+    "id": "f396ccdf-d6f7-5ed9-b3d4-75eb11c0b655"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "split-6",
+    "id": "bf21c22d-1b77-5237-991e-45caa076d53e"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "chicken-variant-5",
+    "id": "da2f9dae-5075-5897-bca0-0cee48faebdb"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "chicken-variant-6",
+    "id": "c585f9fd-8b37-5e2e-a17f-56dd2f359a9f"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "chicken-other-venue-5",
+    "id": "a6b0caee-c361-519b-86a2-f9396efb5ba4"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "chicken-other-venue-6",
+    "id": "fde19e9a-d2d8-5d2a-adb8-68594f81c506"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "chicken-cold-spicy-5",
+    "id": "0ee88745-9732-539a-8ac1-3ad171cce1d4"
+  },
+  {
+    "entity": "weeklySchedules",
+    "registryKey": "chicken-cold-spicy-6",
+    "id": "61f5bd74-4586-5eac-8efb-24bcc18fd480"
+  },
+  {
+    "entity": "dateExceptions",
+    "registryKey": "closed-saturday",
+    "id": "ebb41058-c086-51cc-9d1d-313d99d6dc45"
+  },
+  {
+    "entity": "availabilityOverrides",
+    "registryKey": "sold-out",
+    "id": "5cde36a2-86a7-53ee-881b-0f43be280ed2"
+  },
+  {
+    "entity": "availabilityOverrides",
+    "registryKey": "paused",
+    "id": "825b9271-4a12-5c12-8863-47b6eda0430f"
+  }
+]

@@ -7,6 +7,7 @@
 3. [Taxonomy](TAXONOMY.md): giá trị chuẩn, món gốc, alias/variant và quy tắc owner.
 4. [Data dictionary](DATA_DICTIONARY.md) và [forms](../templates/README.md): 11 entity, CSV/JSON, ID/version/unknown, kiểm FK/giá/lịch/source/review.
 5. [Catalogue biên tập](EDITORIAL_CATALOGUE.md): 39 UUID version 2, nguồn từng trường, bảng giá/ảnh, notebook offline và báo cáo 0.2.0.
+6. [Fixtures phần 4](../../tests/fixtures/food-data-v1/README.md): input/expected cho pool/giá/lịch/coverage/unknown, clocks cố định, tách dữ liệu thật.
 
 ## Bản dữ liệu đóng băng
 
@@ -20,7 +21,7 @@ Snapshots Git có CSV 219 dòng/52 cột, CSV 39 món gốc, CSV mapping 219 dò
 
 Owner đã xác nhận gộp 216 tên vào 39 món, 2 needs_review, 1 excluded. Không mất offering, không ghép giá/đặc tính giữa quán, không suy quyền ảnh từ URL. GM-03 vẫn BLOCKED bởi GM-28 và phân công còn proposed. Không sửa Approved/Done hoặc publish seed.
 
-Còn review độc lập, nguồn/quyền ảnh và giá/đơn vị, biên tập taxonomy/meal unknown, fixtures pool/budget/context boundary và kiểm freshness/lịch/offering thật. GM-04 làm SQL/import transaction; GM-27 xác minh dataset quán; GM-30 thực thi eligibility. Không sử dụng dataset này như danh sách quán đang mở/còn hàng.
+Còn review độc lập, nguồn/quyền ảnh và giá/đơn vị, biên tập taxonomy/meal unknown và kiểm freshness/lịch/offering thật. Fixtures pool/budget/context đã có ở phần 4; GM-30 còn thực thi thuật toán và parity. GM-04 làm SQL/import transaction; GM-27 xác minh dataset quán. Không sử dụng dataset này như danh sách quán đang mở/còn hàng.
 
 Kiểm bằng Python runner, chưa Jupyter kernel/native/SQL. Không cài package, không gọi API thêm khi gộp món. Task readiness BLOCKED là kết quả dự kiến, không phải bằng chứng test thất bại hay gate mở.
 
@@ -38,4 +39,12 @@ Catalogue mới [editorial-v0.2.0](../snapshots/editorial-v0.2.0/catalogue.json)
 
 247 giá quan sát từ 21 chi nhánh có source/đơn vị/ngày snapshot; không giá chung hoặc giá/người. 28 ứng viên ảnh có metadata nhưng chưa xem được nội dung vì Wikimedia 403/429, 0 artwork được chọn. Bảng ảnh phân biệt bị loại/cần rà/chưa có ứng viên. Venue/offering/lịch/coverage arrays rỗng, chưa dùng cho gợi ý thực tế. [Báo cáo](../snapshots/editorial-v0.2.0/QUALITY_REPORT.md), [manifest](../snapshots/editorial-v0.2.0/manifest.json) và field_evidence.csv cung cấp bằng chứng chi tiết; raw web cache Git-ignored, clone chạy offline từ evidence trích xuất.
 
-158 tests đạt (20 editorial mới), repository validator/task index/diff check đạt. Hai lần notebook offline 7/7 cells, 19 artifact cùng checksum, JSON/CSV tương đương. Kiểm Python runner; chưa Jupyter kernel hoặc reviewer Approved. Evidence phần 3 nằm trong DATA_PREPARATION.md liên kết ở trên; chưa commit/push phần 3.
+158 tests đạt (20 editorial mới), repository validator/task index/diff check đạt. Hai lần notebook offline 7/7 cells, 19 artifact cùng checksum, JSON/CSV tương đương. Kiểm Python runner; chưa Jupyter kernel hoặc reviewer Approved. Phần 3 đã commit 2e61a5712a07fe4834e92f907a278cb0740c7174 trước phần 4 theo yêu cầu owner; không push.
+
+## Bàn giao phần 4
+
+42 ca/27 dataset/36 assertions, 13 nhóm; dataset cơ sở 10 món mô phỏng để kiểm cắt pool về 8, 61 bản ghi thuộc 11 entity. Có CSV/JSON tương đương, registry UUID fixture riêng, cases và comparison cùng seed/input/đảo thứ tự nguồn. expected nhận/loại/cần xác nhận viết rõ, không tính từ eligibility; ca >8 không chốt tám món thắng hay thứ tự rank. Các variant là candidate theo dishId/variant, alias không thêm candidate.
+
+Nguồn/giá/quán/coverage/reviewer/quyền đều mô phỏng; fixtureOnly=true, không publish/seed/ảnh thật. validationAt cố định khác evaluatedAt, không dùng ngày máy để che ca hết hạn. Notebook prepare_food_fixtures có 7 khối, chạy offline và lưu executed trong datasets Git-ignored. Phần 4 chưa commit; giữ nguyên branch và snapshot thật. GM-30 tiếp nhận dữ liệu/expected và thực thi thuật toán/TypeScript–SQL parity sau gate chính thức, GM-03 chưa Approved/Done.
+
+184 regression tests đạt (26 fixtures mới), validator fixtures/repository/task index/diff đạt. Hai lượt notebook offline 7/7 cells, 19 artifact cùng checksum, JSON/CSV cơ sở tương đương; 0 network/API calls. Kiểm Python runner, chưa Jupyter kernel hoặc eligibility engine. Evidence chi tiết ở DATA_PREPARATION.md; không báo những kiểm này thay review nội dung/approval.

@@ -52,3 +52,24 @@ git diff --check
 ```
 
 Hai lượt notebook offline cuối cùng đạt 7/7 code cells; 19 artifact giống checksum (kể cả manifest), 0 network/API calls trong replay. Catalogue SHA-256: cfaff47b0c65833983fe8de748428f25d26d7e1d49c539a5d1045676a08b9e90. JSON và 11 CSV entity tương đương; bảng giá CSV đọc lại khớp từng ô nguồn, UTF-8 BOM. 158 regression tests đạt, gồm 20 tests editorial mới: nguồn theo trường, không promote GPT/ảnh menu, không lẫn giá chi nhánh, reject cache drift, clone offline, output deterministic, refresh lưu bytes/checksum và dừng 429, draft không vượt publish guard. Refresh tests dùng mock response, không gọi mạng. Kiểm bằng Python runner, chưa Jupyter kernel hay reviewer độc lập. Không commit/push/PR phần 3 trong lượt này.
+
+## Phần 4 — fixtures, 2026-10-10
+
+Theo yêu cầu mới của owner, đã kiểm 158 tests/repository/task index/diff và commit riêng phần 3 **2e61a5712a07fe4834e92f907a278cb0740c7174** trước khi viết phần 4; giữ branch codex/gm-03-taxonomy-data-contract, không push/PR. Stage check phát hiện khoảng trắng cuối dòng trong metadata Commons; đã chuẩn hóa chuỗi hiển thị metadata, cập nhật checksum và chạy regression trước commit. Raw capture và snapshot khảo sát gốc không đổi. Trạng thái GM-03 vẫn BLOCKED bởi review GM-28, không sửa assignment/Approved/Done.
+
+[Bộ fixtures](../../../tests/fixtures/food-data-v1/README.md) có 42 ca, 27 dataset tình huống, 13 nhóm và 36 assertions. Cơ sở 10 món/61 bản ghi thuộc 11 entity để kiểm cắt pool về 8, số món ít hơn giữ thực; ID/registry riêng không trùng catalogue thật. Các ca có meal/budget/trait unknown, ưu tiên nướng/lẩu, alias/variant/đa nhãn, giao lịch/qua đêm/ranh giới/ngày đóng, nguồn hết hạn/coverage/radius, availability và seed/context/buffer. Tập nhận/loại/cần xác nhận partition offering; expected viết rõ từ spec, không được tính bằng eligibility. Thứ tự rank/tám món thắng chưa chốt; comparison cùng input/seed/version và nguồn đảo thứ tự phải cho cùng ordered pool của thuật toán tương lai.
+
+fixtureOnly=true, mọi nguồn/example.invalid/quán/giá/coverage/reviewer/quyền đều mô phỏng; artwork và ingredientTags=null. verified là trạng thái giả lập, không thay review thật. Export từ chối ghi vào seed/snapshot thật. Structural validationAt cố định 2026-10-08T00:00:00Z; evaluatedAt của từng ca 2026-10-09/10, không dùng giờ máy hiện tại để đánh giá ca hết hạn. CSV cơ sở và JSON tương đương, bundle tình huống đầy đủ không cần sửa tay. Không API/package mới hoặc triển khai GM-30/SQL/TypeScript.
+
+```text
+<bundled-python> data-preparation/scripts/run_notebook.py data-preparation/notebooks/prepare_food_fixtures.ipynb --offline
+python3 data-preparation/scripts/food_fixtures.py --check
+<bundled-python> -m unittest discover -s tests -p 'test_*.py'
+python3 scripts/validate_repository.py
+python3 scripts/task_readiness.py --check-docs
+git diff --check
+```
+
+184 tests đạt: 158 trước đó + 26 fixture integrity tests. Kiểm thời gian/expected đã viết rõ, ID/FK, fixtureOnly/source/alias/variant/giá/profile, chống publish, raw GPS, sửa seed hoặc đổi dữ liệu trong cặp chỉ đảo thứ tự, unknown/expiry, CSV roundtrip/determinism và chống export vào snapshot/seed thật. Không báo những kiểm này là thuật toán eligibility/TypeScript–SQL parity đã đạt. Validator fixtures/repository/task index/diff đạt; kiểm whitespace cả file mới chưa stage.
+
+Hai lượt notebook fixtures cuối cùng đạt 7/7 cells, 19 artifact cùng byte/checksum, 0 network/API calls; cases.json SHA-256 **04e7cd78166dc80c417fb21969c9ab8baf86385f6e06b21304a424caa8b0d676**. Có output executed thật trong datasets/food-fixtures/reports Git-ignored, chưa chạy trực tiếp Jupyter kernel. Snapshot/config dữ liệu thật không đổi so với commit phần 3. Phần 4 để working tree, chưa commit; GM-30 nhận input/expected khi đạt gate để chạy thuật toán/parity. GM-03 còn review độc lập, ảnh và thông tin món chưa đủ nguồn, mục tiêu 60–80 chưa đạt và dataset nơi bán thật thuộc GM-27.

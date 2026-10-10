@@ -1,0 +1,2 @@
+﻿areaId,name,boundary,datasetVersion,version,reviewStatus,sourceRef,fieldSources,checkedAt,validUntil,enteredBy,reviewedBy
+5c4bb474-8ab4-539f-a714-9c3f01d84640,"Ô lưới giả lập — mô phỏng, không phải coverage thật","{""type"":""Polygon"",""coordinates"":[[[-0.02,-0.02],[0.02,-0.02],[0.02,0.02],[-0.02,0.02],[-0.02,-0.02]]]}",1.0.0,1,verified,b843aea1-e2d8-50b3-9c7c-dc7451c68569,"{""coverage"":""b843aea1-e2d8-50b3-9c7c-dc7451c68569""}",2026-10-07T00:00:00Z,2026-10-20T00:00:00Z,fixture-author-simulated,fixture-reviewer-simulated
