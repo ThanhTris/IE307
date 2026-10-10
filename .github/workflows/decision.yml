@@ -1,0 +1,19 @@
+name: Decision domain
+on: [push, pull_request]
+jobs:
+  decision:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      # Separate node:test suite: GM-02 Jest only discovers .test.ts/.test.tsx.
+      - run: node --test mobile/tests/decision.test.mjs
+      - run: node mobile/scripts/check-decision.mjs --report /tmp/decision-actual.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: decision-domain-actual
+          path: /tmp/decision-actual.json
+          if-no-files-found: error

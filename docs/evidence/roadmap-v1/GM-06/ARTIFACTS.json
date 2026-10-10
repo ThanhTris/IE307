@@ -1,0 +1,36 @@
+{
+  "taskId": "GM-06",
+  "policyVersion": "decision-v2",
+  "engineContractVersion": "1.0.0",
+  "parentCommit": "42a821c28144c0667839d485edf2b9462d463937",
+  "branch": "codex/gm-06-decision-engine",
+  "state": "uncommitted-draft",
+  "fixtureOnly": true,
+  "artifacts": [
+    {
+      "path": "mobile/src/domain/decision/index.ts",
+      "sha256": "85aff7a5c0d264cfc33777bcbf8382774c4f0d82f881c5b8f710658e7a172f85",
+      "bytes": 9510
+    },
+    {
+      "path": "mobile/src/domain/decision/README.md",
+      "sha256": "1e7d868ab0185f023a1d664f30fa4e26bf5ae266bee75fa2b185f00a93c9adfa",
+      "bytes": 5267
+    },
+    {
+      "path": "mobile/tests/decision.test.mjs",
+      "sha256": "73823de77254720765a05d34e620952b37d8b6d5086a8f9d3dc13e2081fb0ed6",
+      "bytes": 10028
+    },
+    {
+      "path": "tests/fixtures/decision-v2/cases.json",
+      "sha256": "6d2fa8cc89d18c32ccda5bb6c6a5805bd6d89d303d224d1a89019f8208b3dd30",
+      "bytes": 45243
+    },
+    {
+      "path": "tests/fixtures/decision-v2/README.md",
+      "sha256": "c86561ece64c4720c705a3517251543c2aea83eb17b17439502e1e0a8d6f0dda",
+      "bytes": 1717
+    }
+  ]
+}

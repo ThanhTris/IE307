@@ -1,0 +1,1863 @@
+{
+  "fixtureOnly": true,
+  "policyVersion": "decision-v2",
+  "engineContractVersion": "1.0.0",
+  "note": "Synthetic fixed expectations authored from rules, not engine outputs; supplements unchanged 53 golden vectors. No seeded winner or SQL parity.",
+  "cases": [
+    {
+      "id": "roster-2-unanimous",
+      "description": "2 members WANT choice-a; NO vetoes choice-b.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      }
+    },
+    {
+      "id": "roster-2-unset",
+      "description": "2 members; last member UNSET means wait despite other WANTs.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "UNSET",
+            "choice-b": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      }
+    },
+    {
+      "id": "roster-2-tie",
+      "description": "2 members all OK and all KEEP; both candidates tie, all-OK COMPROMISE.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      }
+    },
+    {
+      "id": "roster-2-all-removed",
+      "description": "2 members; last member REMOVE vetoes both choices.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "REMOVE",
+            "choice-b": "REMOVE"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "NO_CONSENSUS",
+        "candidateIds": [],
+        "reasonCode": "ALL_REMOVED",
+        "matchTier": "NO_CONSENSUS"
+      }
+    },
+    {
+      "id": "roster-3-unanimous",
+      "description": "3 members WANT choice-a; NO vetoes choice-b.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      }
+    },
+    {
+      "id": "roster-3-unset",
+      "description": "3 members; last member UNSET means wait despite other WANTs.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "UNSET",
+            "choice-b": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      }
+    },
+    {
+      "id": "roster-3-tie",
+      "description": "3 members all OK and all KEEP; both candidates tie, all-OK COMPROMISE.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      }
+    },
+    {
+      "id": "roster-3-all-removed",
+      "description": "3 members; last member REMOVE vetoes both choices.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "REMOVE",
+            "choice-b": "REMOVE"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "NO_CONSENSUS",
+        "candidateIds": [],
+        "reasonCode": "ALL_REMOVED",
+        "matchTier": "NO_CONSENSUS"
+      }
+    },
+    {
+      "id": "roster-4-unanimous",
+      "description": "4 members WANT choice-a; NO vetoes choice-b.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      }
+    },
+    {
+      "id": "roster-4-unset",
+      "description": "4 members; last member UNSET means wait despite other WANTs.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "UNSET",
+            "choice-b": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      }
+    },
+    {
+      "id": "roster-4-tie",
+      "description": "4 members all OK and all KEEP; both candidates tie, all-OK COMPROMISE.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      }
+    },
+    {
+      "id": "roster-4-all-removed",
+      "description": "4 members; last member REMOVE vetoes both choices.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "REMOVE",
+            "choice-b": "REMOVE"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "NO_CONSENSUS",
+        "candidateIds": [],
+        "reasonCode": "ALL_REMOVED",
+        "matchTier": "NO_CONSENSUS"
+      }
+    },
+    {
+      "id": "roster-5-unanimous",
+      "description": "5 members WANT choice-a; NO vetoes choice-b.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      }
+    },
+    {
+      "id": "roster-5-unset",
+      "description": "5 members; last member UNSET means wait despite other WANTs.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "UNSET",
+            "choice-b": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      }
+    },
+    {
+      "id": "roster-5-tie",
+      "description": "5 members all OK and all KEEP; both candidates tie, all-OK COMPROMISE.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      }
+    },
+    {
+      "id": "roster-5-all-removed",
+      "description": "5 members; last member REMOVE vetoes both choices.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "REMOVE",
+            "choice-b": "REMOVE"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "NO_CONSENSUS",
+        "candidateIds": [],
+        "reasonCode": "ALL_REMOVED",
+        "matchTier": "NO_CONSENSUS"
+      }
+    },
+    {
+      "id": "roster-6-unanimous",
+      "description": "6 members WANT choice-a; NO vetoes choice-b.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m6": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      }
+    },
+    {
+      "id": "roster-6-unset",
+      "description": "6 members; last member UNSET means wait despite other WANTs.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m6": {
+            "choice-a": "UNSET",
+            "choice-b": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      }
+    },
+    {
+      "id": "roster-6-tie",
+      "description": "6 members all OK and all KEEP; both candidates tie, all-OK COMPROMISE.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m6": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m6": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      }
+    },
+    {
+      "id": "roster-6-all-removed",
+      "description": "6 members; last member REMOVE vetoes both choices.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m6": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m6": {
+            "choice-a": "REMOVE",
+            "choice-b": "REMOVE"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "NO_CONSENSUS",
+        "candidateIds": [],
+        "reasonCode": "ALL_REMOVED",
+        "matchTier": "NO_CONSENSUS"
+      }
+    },
+    {
+      "id": "roster-7-unanimous",
+      "description": "7 members WANT choice-a; NO vetoes choice-b.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m6": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m7": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      }
+    },
+    {
+      "id": "roster-7-unset",
+      "description": "7 members; last member UNSET means wait despite other WANTs.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m6": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m7": {
+            "choice-a": "UNSET",
+            "choice-b": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      }
+    },
+    {
+      "id": "roster-7-tie",
+      "description": "7 members all OK and all KEEP; both candidates tie, all-OK COMPROMISE.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m6": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m7": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m6": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m7": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      }
+    },
+    {
+      "id": "roster-7-all-removed",
+      "description": "7 members; last member REMOVE vetoes both choices.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m6": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m7": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m6": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m7": {
+            "choice-a": "REMOVE",
+            "choice-b": "REMOVE"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "NO_CONSENSUS",
+        "candidateIds": [],
+        "reasonCode": "ALL_REMOVED",
+        "matchTier": "NO_CONSENSUS"
+      }
+    },
+    {
+      "id": "roster-8-unanimous",
+      "description": "8 members WANT choice-a; NO vetoes choice-b.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7",
+          "m8"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m6": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m7": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m8": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      }
+    },
+    {
+      "id": "roster-8-unset",
+      "description": "8 members; last member UNSET means wait despite other WANTs.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7",
+          "m8"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m6": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m7": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m8": {
+            "choice-a": "UNSET",
+            "choice-b": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      }
+    },
+    {
+      "id": "roster-8-tie",
+      "description": "8 members all OK and all KEEP; both candidates tie, all-OK COMPROMISE.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7",
+          "m8"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m6": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m7": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m8": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m6": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m7": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m8": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      }
+    },
+    {
+      "id": "roster-8-all-removed",
+      "description": "8 members; last member REMOVE vetoes both choices.",
+      "specRefs": [
+        "DECISION_SPEC decision-v2",
+        "T-04",
+        "T-07",
+        "T-22"
+      ],
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7",
+          "m8"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m6": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m7": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m8": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m6": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m7": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m8": {
+            "choice-a": "REMOVE",
+            "choice-b": "REMOVE"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "NO_CONSENSUS",
+        "candidateIds": [],
+        "reasonCode": "ALL_REMOVED",
+        "matchTier": "NO_CONSENSUS"
+      }
+    }
+  ]
+}
