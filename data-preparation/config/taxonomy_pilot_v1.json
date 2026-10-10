@@ -1,0 +1,17 @@
+{
+  "version": "taxonomy-pilot-v1-draft",
+  "row_order": ["index", "cuisines", "origin", "categories", "methods", "temperature", "flavors", "meal_slots", "evidence"],
+  "evidence_order": ["cuisines", "origin", "categories", "methods", "temperature", "flavors", "meal_slots"],
+  "flavor_order": ["spicy", "salty", "sweet", "sour"],
+  "cuisines": {"0": "unknown", "1": "Việt", "2": "Thái", "3": "Hàn", "4": "Nhật", "5": "Hoa", "6": "Ý", "7": "Mỹ", "8": "other"},
+  "origin": {"0": "unknown", "1": "Bắc", "2": "Trung", "3": "Nam", "4": "not_applicable"},
+  "categories": {"0": "unknown", "1": "cơm", "2": "bún", "3": "phở", "4": "mì", "5": "hủ tiếu", "6": "miến", "7": "nui", "8": "xôi", "9": "cháo", "10": "bánh canh", "11": "bánh mì", "12": "bánh bao", "13": "bánh cuốn", "14": "bánh ướt", "15": "bánh cuộn", "16": "burger", "17": "salad", "18": "lẩu", "19": "gỏi/cuốn", "20": "gà rán", "21": "other"},
+  "methods": {"0": "unknown", "1": "nướng", "2": "chiên", "3": "xào", "4": "hấp", "5": "luộc", "6": "kho", "7": "hầm", "8": "quay", "9": "trộn", "10": "sous vide", "11": "áp chảo", "12": "other"},
+  "temperature": {"0": "unknown", "1": "nóng", "2": "ấm", "3": "lạnh", "4": "nhiệt độ thường"},
+  "flavor_levels": {"-1": "unknown", "0": "không có — nguồn nói rõ", "1": "nhẹ", "2": "vừa", "3": "nhiều", "4": "có vị này, chưa rõ mức"},
+  "meal_slots": {"0": "unknown", "1": "sáng", "2": "trưa", "3": "tối", "4": "khuya"},
+  "evidence": {"0": "unknown", "1": "menu_explicit", "2": "model_inferred_draft"},
+  "max_labels": {"cuisines": 2, "categories": 3, "methods": 3, "meal_slots": 4},
+  "meal_windows": {"1": [5, 11], "2": [11, 15], "3": [17, 21], "4": [21, 29]},
+  "sample_names": ["Cơm tấm sườn bì", "Cơm ba rọi chay", "Bún thịt nướng", "Phở gà", "Bánh mì thập cẩm", "Mì spaghetti", "Salad ức gà sous vide", "Burger bóng đêm", "Xôi thập cẩm", "Bánh cuốn trứng"]
+}

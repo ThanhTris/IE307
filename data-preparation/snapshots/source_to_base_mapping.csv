@@ -1,0 +1,220 @@
+﻿sourceDishId,sourceName,baseDishId,status,reason
+dish_4b8c617d22391ddd9286,Bún thịt nướng,441e70be-0b06-521d-b5b9-7349386f14ad,mapped,owner_confirmed_base_group
+dish_71700d408984f9088754,Burger gà giòn,8131e3cd-bce2-5843-8800-9426c91382ba,mapped,owner_confirmed_base_group
+dish_cdc78714e5476a169c19,Bánh mì thập cẩm,00cf348d-3c93-5940-b6ab-4fff39bcc886,mapped,owner_confirmed_base_group
+dish_498a95270cac39382a4c,Bánh mì thịt nướng,00cf348d-3c93-5940-b6ab-4fff39bcc886,mapped,owner_confirmed_base_group
+dish_e5539cfdb8d8de0db0a9,Bánh mì xíu mại,00cf348d-3c93-5940-b6ab-4fff39bcc886,mapped,owner_confirmed_base_group
+dish_5ebf723ade97ae6e30f6,Bún nem nướng,e6558eda-db0f-5583-bbf5-be4f7da8f2f9,mapped,owner_confirmed_base_group
+dish_da328759a81fd02249e5,Bún riêu,79c72911-92fc-5af0-9f7f-b8c476542e7f,mapped,owner_confirmed_base_group
+dish_872cb994c72c329faf25,Cơm thịt kho trứng,a7619de7-cecd-558c-9e8a-dcdedd82465a,mapped,owner_confirmed_base_group
+dish_1cb93b65f9f155d1313c,Cơm tấm sườn bì,fc959eeb-033c-54b6-b8a2-9d7c6982803e,mapped,owner_confirmed_base_group
+dish_fd4bae33d627f75bbf5e,Miến gà,c3f1f939-20a4-55b1-89af-42e3c95a33fa,mapped,owner_confirmed_base_group
+dish_57f77e9c526f7d80610a,Phở gà,33c758d0-9f9b-5dd9-8976-c52b6f949d31,mapped,owner_confirmed_base_group
+dish_820324c0c62e35ea1924,Xôi thập cẩm,1fdae49f-b6da-5574-82b6-4b7fc1cf09cd,mapped,owner_confirmed_base_group
+dish_0ef9628442073fcd4fdb,Burger bò,8131e3cd-bce2-5843-8800-9426c91382ba,mapped,owner_confirmed_base_group
+dish_d3001f0dd740744e1b79,Burger bóng đêm,8131e3cd-bce2-5843-8800-9426c91382ba,mapped,owner_confirmed_base_group
+dish_08ee8e895a1260b19927,Burger cá,8131e3cd-bce2-5843-8800-9426c91382ba,mapped,owner_confirmed_base_group
+dish_1c61b7843ae6e7795bc5,Burger mexicana cay,8131e3cd-bce2-5843-8800-9426c91382ba,mapped,owner_confirmed_base_group
+dish_af0eb2d7527733ed71a0,Burger mexicana không cay,8131e3cd-bce2-5843-8800-9426c91382ba,mapped,owner_confirmed_base_group
+dish_0a72910a90b4b0e63796,Burger tex supreme cay,8131e3cd-bce2-5843-8800-9426c91382ba,mapped,owner_confirmed_base_group
+dish_8022028bb5be87812928,Burger tex supreme không cay,8131e3cd-bce2-5843-8800-9426c91382ba,mapped,owner_confirmed_base_group
+dish_c451a09aa0106881060c,Burger thịt nướng,8131e3cd-bce2-5843-8800-9426c91382ba,mapped,owner_confirmed_base_group
+dish_3b384ae73d116fef5bb4,Burger tôm,8131e3cd-bce2-5843-8800-9426c91382ba,mapped,owner_confirmed_base_group
+dish_673f3c27c43db091f586,Burger tôm cay,8131e3cd-bce2-5843-8800-9426c91382ba,mapped,owner_confirmed_base_group
+dish_280e536e866b0616a872,Burger tôm không cay,8131e3cd-bce2-5843-8800-9426c91382ba,mapped,owner_confirmed_base_group
+dish_4863a6d8a369f369b378,Bánh bao nhân thịt 2 trứng cút,990393dc-1b1d-5a1a-9ccd-2b0c4ac60572,mapped,owner_confirmed_base_group
+dish_5b5fc67c61e37ef0a88f,Bánh bao nhân thịt xá xíu trứng muối,990393dc-1b1d-5a1a-9ccd-2b0c4ac60572,mapped,owner_confirmed_base_group
+dish_4d68b13a1eeb0dbb3cf5,Bánh cuốn,a785a621-2cbc-5f16-9274-a47141a8e3c8,mapped,owner_confirmed_base_group
+dish_9ae2acfc0cd0f2e3396c,Bánh cuốn trứng,a785a621-2cbc-5f16-9274-a47141a8e3c8,mapped,owner_confirmed_base_group
+dish_b256669a4fc96c4d4e6f,Bánh cuộn gà mexico,39da0965-df4e-5ca1-8741-bdb9aeb85f57,mapped,owner_confirmed_base_group
+dish_86eeb0edd22d484be231,Bánh cuộn hải sản,39da0965-df4e-5ca1-8741-bdb9aeb85f57,mapped,owner_confirmed_base_group
+dish_911270a93bcf8b5bc4ce,Bánh cuộn mexicana cay,39da0965-df4e-5ca1-8741-bdb9aeb85f57,mapped,owner_confirmed_base_group
+dish_ae18816678771e395cc7,Bánh cuộn mexicana không cay,39da0965-df4e-5ca1-8741-bdb9aeb85f57,mapped,owner_confirmed_base_group
+dish_42eda451c8dd8cbaa2c7,Bánh cuộn tex cay,39da0965-df4e-5ca1-8741-bdb9aeb85f57,mapped,owner_confirmed_base_group
+dish_a77a4b31ab4e64505f40,Bánh cuộn tex không cay,39da0965-df4e-5ca1-8741-bdb9aeb85f57,mapped,owner_confirmed_base_group
+dish_241851b9474b98532b9f,Bánh mì 1 trứng,00cf348d-3c93-5940-b6ab-4fff39bcc886,mapped,owner_confirmed_base_group
+dish_0b023b6636fd298baddf,Bánh mì 2 trứng,00cf348d-3c93-5940-b6ab-4fff39bcc886,mapped,owner_confirmed_base_group
+dish_67b51a26ed3194c8cf19,Bánh mì a xíu,00cf348d-3c93-5940-b6ab-4fff39bcc886,mapped,owner_confirmed_base_group
+dish_9b6e1b2b5e20b157c101,Bánh mì chà bông,00cf348d-3c93-5940-b6ab-4fff39bcc886,mapped,owner_confirmed_base_group
+dish_a7a3fa0547359ead0774,Bánh mì chả,00cf348d-3c93-5940-b6ab-4fff39bcc886,mapped,owner_confirmed_base_group
+dish_cd633551352a7f84f10d,Bánh mì chả cá,00cf348d-3c93-5940-b6ab-4fff39bcc886,mapped,owner_confirmed_base_group
+dish_6a744226fb02b0d8ad9a,Bánh mì chả lụa,00cf348d-3c93-5940-b6ab-4fff39bcc886,mapped,owner_confirmed_base_group
+dish_6e0c65197340fec658db,Bánh mì chấm,00cf348d-3c93-5940-b6ab-4fff39bcc886,mapped,owner_confirmed_base_group
+dish_323743b69bfff44b6a73,Bánh mì chấm đặc biệt,00cf348d-3c93-5940-b6ab-4fff39bcc886,mapped,owner_confirmed_base_group
+dish_b0a320d761fd9d255a98,Bánh mì cá hộp,00cf348d-3c93-5940-b6ab-4fff39bcc886,mapped,owner_confirmed_base_group
+dish_e4fa67dfc8f6f12b0162,Bánh mì heo quay,00cf348d-3c93-5940-b6ab-4fff39bcc886,mapped,owner_confirmed_base_group
+dish_8ba41c0e3c4af27f7cab,Bánh mì phá lấu,00cf348d-3c93-5940-b6ab-4fff39bcc886,mapped,owner_confirmed_base_group
+dish_c110e05a12e58595da4d,Bánh mì phô mai,00cf348d-3c93-5940-b6ab-4fff39bcc886,mapped,owner_confirmed_base_group
+dish_e3de13c73a42fa34b12d,Bánh mì phô mai lát,00cf348d-3c93-5940-b6ab-4fff39bcc886,mapped,owner_confirmed_base_group
+dish_9f452355832955ed1419,Bánh mì thịt nguội,00cf348d-3c93-5940-b6ab-4fff39bcc886,mapped,owner_confirmed_base_group
+dish_0e093f86564eb555d093,Bánh mì trứng 1 trứng,00cf348d-3c93-5940-b6ab-4fff39bcc886,mapped,owner_confirmed_base_group
+dish_c16a23de539f7d4f57a4,Bánh mì trứng 2 trứng,00cf348d-3c93-5940-b6ab-4fff39bcc886,mapped,owner_confirmed_base_group
+dish_c9fd7f730de08750e84e,Bánh mì xá xíu,00cf348d-3c93-5940-b6ab-4fff39bcc886,mapped,owner_confirmed_base_group
+dish_2f7bbbe1affe989481fd,Bánh mì xúc xích,00cf348d-3c93-5940-b6ab-4fff39bcc886,mapped,owner_confirmed_base_group
+dish_415c55e068c6db27ac89,Bánh mì đặc biệt,00cf348d-3c93-5940-b6ab-4fff39bcc886,mapped,owner_confirmed_base_group
+dish_81217eb4a7be48a46586,Bánh ướt,620d6a2f-02a2-532f-b254-c37f3713ba04,mapped,owner_confirmed_base_group
+dish_100724a3ef78f1530b1d,Bánh ướt thịt nướng,620d6a2f-02a2-532f-b254-c37f3713ba04,mapped,owner_confirmed_base_group
+dish_141b85de02bfd7e3b0c1,Bún bò,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_94d5e7d6689430f6b154,Bún bò bò viên,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_ddab4930b57c8c130906,Bún bò bắp,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_ddb506d384d5b06aecc4,Bún bò bắp bò viên,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_ed71fdf844fbc6e1ebf7,Bún bò bắp chả,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_8038552db31e65f30b97,Bún bò bắp chả bò viên,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_2bc75c7fb3bc54bd62a5,Bún bò bắp gân,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_8d369a414c7bd0c3c390,Bún bò chay,fe39887f-b79c-5981-8f0a-6e50c4a5dc54,mapped,owner_confirmed_base_group
+dish_aa2b4720ec4fa2822524,Bún bò chả,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_359b5f2be849f65a2030,Bún bò giò bò viên,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_3c5b9534d42c1cd3d62e,Bún bò giò bắp,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_022bef678409d0d50cf4,Bún bò giò bắp bò viên,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_25e245c2dea37cb7aff9,Bún bò giò bắp chả,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_cbe547799c77701dbb85,Bún bò giò chả,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_bc94477470ff44d2baca,Bún bò giò heo,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_b2a4a75b22a6f4786295,Bún bò gân,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_3194b2c3916cd9d3b324,Bún bò huế,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_ec4490529745d6ba3ad0,Bún bò khô,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_b14094f70fddb47646c2,Bún bò nạm,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_59f7d277e4577a65f24f,Bún bò nạm chả,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_0d90dd019ff89657d9e0,Bún bò nạm giò heo,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_c648ea8f8c789ae751e6,Bún bò nạm gân,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_3ba586ffd7c9a48b5dfe,Bún bò sườn bò viên,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_3046dff208137ace0033,Bún bò sườn bắp,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_2a04f420d5d5183d1eff,Bún bò sườn bắp bò viên,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_1e6abba4eac6c9550dfc,Bún bò sườn chả,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_082f6df5c23f640d1d42,Bún bò sườn chả bò viên,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_af4d512cf6b844a2cec1,Bún bò tái,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_0ee5554da66ee73b238b,Bún bò tái chả,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_1caf884d957c7360217f,Bún bò tô trẻ em,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_d891e22efe490528d5fc,Bún bò đặc biệt full topping,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_b0cc7bc9bbe05d3bc829,Bún bắp bò,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_3e1c8730233bffe4a609,Bún chay tàu hủ nước tương,52c6435f-c967-5820-8e76-b1917291a1ef,mapped,owner_confirmed_base_group
+dish_014fba0b985393ad1e73,Bún gạo lứt ức gà sous vide,807a5dfe-64b0-5137-ac00-6f95882830d6,mapped,owner_confirmed_base_group
+dish_0f05bc17b57d1362b5ce,Bún healthy eco,807a5dfe-64b0-5137-ac00-6f95882830d6,mapped,owner_confirmed_base_group
+dish_aa4b6fcca30b2dc9c5e1,Bún măng chay,52c6435f-c967-5820-8e76-b1917291a1ef,mapped,owner_confirmed_base_group
+dish_c29ec05f8a7721b92c34,Bún mọc,4a8ac4a8-b566-5032-be38-48f00e6a53b9,mapped,owner_confirmed_base_group
+dish_0467ee27d279ae5974c4,Bún nem lụi nướng,e6558eda-db0f-5583-bbf5-be4f7da8f2f9,mapped,owner_confirmed_base_group
+dish_25a46f3450446b403b67,Bún nem phên nướng,e6558eda-db0f-5583-bbf5-be4f7da8f2f9,mapped,owner_confirmed_base_group
+dish_a7c084bf56ab95901318,Bún nạm gân,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_43056d224b1def0fd8ec,Bún nạm viên,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_ae95b5a9f31da776d31d,Bún riêu chay,db666124-3676-5609-8dc4-b313a1809358,mapped,owner_confirmed_base_group
+dish_9bda251ae2b887dd2c7c,Bún riêu giò heo,79c72911-92fc-5af0-9f7f-b8c476542e7f,mapped,owner_confirmed_base_group
+dish_e9db48e3896b3d58e8f3,Bún riêu tôm,79c72911-92fc-5af0-9f7f-b8c476542e7f,mapped,owner_confirmed_base_group
+dish_5d494a23a8c8952024b9,Bún trộn bò lúc lắc,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_b44cc73ad62e8af2f43d,Bún tái chả,ff74d5af-05b6-5f9a-9012-f8a2aadefb0c,mapped,owner_confirmed_base_group
+dish_d99895bac9fad07ecb85,Bún đậu,d320d9fe-0b53-539f-98ce-87ac91cf2dbb,mapped,owner_confirmed_base_group
+dish_fdb06e2601fe7f5bfc4e,Bún đậu chả cua,d320d9fe-0b53-539f-98ce-87ac91cf2dbb,mapped,owner_confirmed_base_group
+dish_6ae7970f5e91739b5b54,Bún đậu chả cốm,d320d9fe-0b53-539f-98ce-87ac91cf2dbb,mapped,owner_confirmed_base_group
+dish_d03b21dfc9c21b7e318a,Bún đậu chả mực,d320d9fe-0b53-539f-98ce-87ac91cf2dbb,mapped,owner_confirmed_base_group
+dish_a2850d2c411537a9e889,Bún đậu nem chiên,d320d9fe-0b53-539f-98ce-87ac91cf2dbb,mapped,owner_confirmed_base_group
+dish_204c9b8267a5b4c567d6,Bún đậu thập cẩm,d320d9fe-0b53-539f-98ce-87ac91cf2dbb,mapped,owner_confirmed_base_group
+dish_4364a811ead759a4787f,Bún đậu thịt,d320d9fe-0b53-539f-98ce-87ac91cf2dbb,mapped,owner_confirmed_base_group
+dish_8fb45d0dd3be1168fdf9,Bún đậu đặc biệt,d320d9fe-0b53-539f-98ce-87ac91cf2dbb,mapped,owner_confirmed_base_group
+dish_a469811ae997daf98d96,Cơm ba rọi chay,16ad89fb-0bc1-5d43-b8d0-4285916a69dc,mapped,owner_confirmed_base_group
+dish_b20466259cd1d0ed8a48,Cơm bò đậm vị,864f37d1-97e9-57bc-bce5-351668f703da,mapped,owner_confirmed_base_group
+dish_64f0fb5ee56faeddd93e,Cơm canh khổ qua,f9224f9d-f9e2-5b4b-a328-0db75c978c2a,mapped,owner_confirmed_base_group
+dish_ded2f8290301e53ad52b,Cơm chiên gà xối mỡ,da40f225-25dd-5527-b535-ae5d48e15b9d,mapped,owner_confirmed_base_group
+dish_04ebcb335bb9ab637bb4,Cơm chiên kim chi,da40f225-25dd-5527-b535-ae5d48e15b9d,mapped,owner_confirmed_base_group
+dish_82b0fa149d497af38a37,Cơm cá basa kho,f518af1a-6744-545a-83b4-4fa14d590a43,mapped,owner_confirmed_base_group
+dish_c7107fbf05f5cf0ccffd,Cơm cá chiên,01e12db6-8014-5e84-bc53-398af27ad314,mapped,owner_confirmed_base_group
+dish_6ea650aa476d7f00577d,Cơm cá lóc kho,f518af1a-6744-545a-83b4-4fa14d590a43,mapped,owner_confirmed_base_group
+dish_32873f9e5bf46e9ce8eb,Cơm cá rô kho,f518af1a-6744-545a-83b4-4fa14d590a43,mapped,owner_confirmed_base_group
+dish_1482466e171652836ed3,Cơm cá thu chay,16ad89fb-0bc1-5d43-b8d0-4285916a69dc,mapped,owner_confirmed_base_group
+dish_b4a24a3cbab1a43f9be8,Cơm cánh gà chay,16ad89fb-0bc1-5d43-b8d0-4285916a69dc,mapped,owner_confirmed_base_group
+dish_c8a5b4a1eedd80d523e2,Cơm gapao,d9756559-2697-565c-86e0-36cf39c4da49,mapped,owner_confirmed_base_group
+dish_20622e6470b34b5213da,Cơm gà chiên mắm,b115bf23-4277-5a5d-a439-002b0ceda3ce,mapped,owner_confirmed_base_group
+dish_6c10e67c9623664184ea,Cơm gà kho sả ớt,b115bf23-4277-5a5d-a439-002b0ceda3ce,mapped,owner_confirmed_base_group
+dish_7a29e0aefe100b4baef0,Cơm gà kho xã ớt,b115bf23-4277-5a5d-a439-002b0ceda3ce,mapped,owner_confirmed_base_group
+dish_3d6a9feb25d43d03aae5,Cơm gà mắm tỏi,b115bf23-4277-5a5d-a439-002b0ceda3ce,mapped,owner_confirmed_base_group
+dish_15a9d84d2ad40a0b01be,Cơm gà phô mai,b115bf23-4277-5a5d-a439-002b0ceda3ce,mapped,owner_confirmed_base_group
+dish_a750b00ff23839991c03,Cơm gà sous vide original,b115bf23-4277-5a5d-a439-002b0ceda3ce,mapped,owner_confirmed_base_group
+dish_042c42205d0670eafc3c,Cơm gà sốt teriyaki,b115bf23-4277-5a5d-a439-002b0ceda3ce,mapped,owner_confirmed_base_group
+dish_771b83ebd2a664e86052,Cơm gà sốt tiêu đen,b115bf23-4277-5a5d-a439-002b0ceda3ce,mapped,owner_confirmed_base_group
+dish_afd4aa4ea1df80b63006,Cơm gà xá xíu,b115bf23-4277-5a5d-a439-002b0ceda3ce,mapped,owner_confirmed_base_group
+dish_72c7f41d15903017ac02,Cơm heo quay chay,16ad89fb-0bc1-5d43-b8d0-4285916a69dc,mapped,owner_confirmed_base_group
+dish_be26a73e00ec7366dbbc,Cơm nấm chay,16ad89fb-0bc1-5d43-b8d0-4285916a69dc,mapped,owner_confirmed_base_group
+dish_a6d4ec33de70f7129187,Cơm rau củ chay,16ad89fb-0bc1-5d43-b8d0-4285916a69dc,mapped,owner_confirmed_base_group
+dish_d16627d610819b482a69,Cơm sườn chay,16ad89fb-0bc1-5d43-b8d0-4285916a69dc,mapped,owner_confirmed_base_group
+dish_739d04ada468dfc86a8d,Cơm sườn non ram,37e032fb-1a78-5b5c-833d-c5362ba14445,mapped,owner_confirmed_base_group
+dish_e7bbd2f93c3803e63110,Cơm sườn ram,37e032fb-1a78-5b5c-833d-c5362ba14445,mapped,owner_confirmed_base_group
+dish_2acb3008d03606fd05df,Cơm sườn trứng ốp la,37e032fb-1a78-5b5c-833d-c5362ba14445,mapped,owner_confirmed_base_group
+dish_70c4dbe3a9308a9d91ff,Cơm thập cẩm chay,16ad89fb-0bc1-5d43-b8d0-4285916a69dc,mapped,owner_confirmed_base_group
+dish_cc6d02499b0bbad8272e,Cơm thịt kho tiêu,a7619de7-cecd-558c-9e8a-dcdedd82465a,mapped,owner_confirmed_base_group
+dish_cefb6ebb12fd9844a7ef,Cơm thịt kho trứng cút,a7619de7-cecd-558c-9e8a-dcdedd82465a,mapped,owner_confirmed_base_group
+dish_c573beee577cdda71568,Cơm thịt kho đậu hủ,a7619de7-cecd-558c-9e8a-dcdedd82465a,mapped,owner_confirmed_base_group
+dish_dd444509e2f16476f8d5,Cơm tomyum,d9756559-2697-565c-86e0-36cf39c4da49,mapped,owner_confirmed_base_group
+dish_5149393fc130786a8806,Cơm trộn cơ bản bò bằm,d9756559-2697-565c-86e0-36cf39c4da49,mapped,owner_confirmed_base_group
+dish_c6dbe18f854f98940f92,Cơm trộn cơ bản thịt bằm,d9756559-2697-565c-86e0-36cf39c4da49,mapped,owner_confirmed_base_group
+dish_1b77097589ad6b798904,Cơm tôm chay,16ad89fb-0bc1-5d43-b8d0-4285916a69dc,mapped,owner_confirmed_base_group
+dish_1377542c3668f8eaf9d8,Cơm tôm rim,e0a99abc-3bb4-54e5-85ea-0361df2098b7,mapped,owner_confirmed_base_group
+dish_9a79f808de1ea519560f,Cơm tấm bì chả,fc959eeb-033c-54b6-b8a2-9d7c6982803e,mapped,owner_confirmed_base_group
+dish_89cf91699774de307a7e,Cơm tấm bì lạp xưởng,fc959eeb-033c-54b6-b8a2-9d7c6982803e,mapped,owner_confirmed_base_group
+dish_bc9a2af68c543f772bbe,Cơm tấm bì trứng,fc959eeb-033c-54b6-b8a2-9d7c6982803e,mapped,owner_confirmed_base_group
+dish_1cb9f0bce516455f011e,Cơm tấm chả,fc959eeb-033c-54b6-b8a2-9d7c6982803e,mapped,owner_confirmed_base_group
+dish_7a8ce48c7491c158f4ad,Cơm tấm sườn,fc959eeb-033c-54b6-b8a2-9d7c6982803e,mapped,owner_confirmed_base_group
+dish_016081c52de83e07b917,Cơm tấm sườn bì chả,fc959eeb-033c-54b6-b8a2-9d7c6982803e,mapped,owner_confirmed_base_group
+dish_64cc7f1877f7447ac8dd,Cơm tấm sườn bì lạp xưởng,fc959eeb-033c-54b6-b8a2-9d7c6982803e,mapped,owner_confirmed_base_group
+dish_908eff610e7282441afb,Cơm tấm sườn bì trứng,fc959eeb-033c-54b6-b8a2-9d7c6982803e,mapped,owner_confirmed_base_group
+dish_0e5b34900e97f8eee2a5,Cơm tấm sườn chả,fc959eeb-033c-54b6-b8a2-9d7c6982803e,mapped,owner_confirmed_base_group
+dish_376156411e77bb648713,Cơm tấm sườn trứng,fc959eeb-033c-54b6-b8a2-9d7c6982803e,mapped,owner_confirmed_base_group
+dish_cc505a492c9e0ae991d1,Cơm tấm trứng ốp la,fc959eeb-033c-54b6-b8a2-9d7c6982803e,mapped,owner_confirmed_base_group
+dish_a9da3946880ce98d4759,Cơm tấm đặc biệt 4 món sườn bì chả trứng,fc959eeb-033c-54b6-b8a2-9d7c6982803e,mapped,owner_confirmed_base_group
+dish_3a4349e2fe45e05a2179,Cơm tấm đặc biệt 5 món sườn bì chả trứng lạp xưởng,fc959eeb-033c-54b6-b8a2-9d7c6982803e,mapped,owner_confirmed_base_group
+dish_2ae639dec229ff3fbb17,Cơm viên chua ngọt,,needs_review,insufficient_menu_description
+dish_2afd46d6d104a5211020,Cơm xúc xích chay,16ad89fb-0bc1-5d43-b8d0-4285916a69dc,mapped,owner_confirmed_base_group
+dish_76a8f52560552216f530,Cơm đậu hủ sốt cà,9cbc5485-896f-5725-bc54-c7d637f54770,mapped,owner_confirmed_base_group
+dish_8f5ab6645c7bb0c331dc,Cơm đậu ki chay,16ad89fb-0bc1-5d43-b8d0-4285916a69dc,mapped,owner_confirmed_base_group
+dish_a3fab41af2b4294e306c,Cơm đậu nhồi chay,16ad89fb-0bc1-5d43-b8d0-4285916a69dc,mapped,owner_confirmed_base_group
+dish_9264773add3f6873cabe,Cơm đậu tương chay,16ad89fb-0bc1-5d43-b8d0-4285916a69dc,mapped,owner_confirmed_base_group
+dish_f738f0d8ef47af25d223,Cơm đậu xả chay,16ad89fb-0bc1-5d43-b8d0-4285916a69dc,mapped,owner_confirmed_base_group
+dish_b13dd52fa91ec5ae0d1a,Hamburger gà điền viên,8131e3cd-bce2-5843-8800-9426c91382ba,mapped,owner_confirmed_base_group
+dish_820fff8e221d7f5be078,Hamburger heo nướng,8131e3cd-bce2-5843-8800-9426c91382ba,mapped,owner_confirmed_base_group
+dish_dce648c0442a05550375,Hamburger tôm,8131e3cd-bce2-5843-8800-9426c91382ba,mapped,owner_confirmed_base_group
+dish_d133b89fd91b3db6438a,Hủ tiếu giò heo,c5bbbe58-91c4-5819-8813-a531825073b6,mapped,owner_confirmed_base_group
+dish_738959b6fdecd425c58f,Hủ tiếu thịt,c5bbbe58-91c4-5819-8813-a531825073b6,mapped,owner_confirmed_base_group
+dish_73b5a86718cf08de22a7,Hủ tiếu thịt mộc,c5bbbe58-91c4-5819-8813-a531825073b6,mapped,owner_confirmed_base_group
+dish_94ff471f63e1954bb85d,Miến bò,c3f1f939-20a4-55b1-89af-42e3c95a33fa,mapped,owner_confirmed_base_group
+dish_e1555d8337835db7d4ce,Miến hàn trộn,c3f1f939-20a4-55b1-89af-42e3c95a33fa,mapped,owner_confirmed_base_group
+dish_4115c5ca98162d8f00f5,Mì bò,69073532-dba4-59ab-917e-42971d5e81c3,mapped,owner_confirmed_base_group
+dish_6dd62c7a82a907fb3e9e,Mì gà,69073532-dba4-59ab-917e-42971d5e81c3,mapped,owner_confirmed_base_group
+dish_afb354cef0f8cff266c1,Mì hoả tốc mì trộn phô mai hàn quốc colusa,4f4e0327-d10e-5c8f-b69a-eb4f2df520ea,mapped,owner_confirmed_base_group
+dish_f66d25f9fa8ffb113ff4,Mì nước phá lấu,69073532-dba4-59ab-917e-42971d5e81c3,mapped,owner_confirmed_base_group
+dish_1ace02b18ad0a4ec3886,Mì spaghetti,b151781d-c641-593f-9aba-a1ac5d16e309,mapped,owner_confirmed_base_group
+dish_c3619fb3dc5c713357e1,Mì trộn colusa,4f4e0327-d10e-5c8f-b69a-eb4f2df520ea,mapped,owner_confirmed_base_group
+dish_db2b6b854d9285f59197,Mì trộn hương vị kebab colusa,4f4e0327-d10e-5c8f-b69a-eb4f2df520ea,mapped,owner_confirmed_base_group
+dish_eab29cd9ca564af4d383,Mì trộn indo,4f4e0327-d10e-5c8f-b69a-eb4f2df520ea,mapped,owner_confirmed_base_group
+dish_bc6ad85a65231be87c00,Mì trộn phô mai,4f4e0327-d10e-5c8f-b69a-eb4f2df520ea,mapped,owner_confirmed_base_group
+dish_68a8c81942dbf5f9273e,Mì trộn quie,4f4e0327-d10e-5c8f-b69a-eb4f2df520ea,mapped,owner_confirmed_base_group
+dish_825b296788d820b9a05b,Mì trộn thập cẩm,4f4e0327-d10e-5c8f-b69a-eb4f2df520ea,mapped,owner_confirmed_base_group
+dish_be0ade5fe4efb3c4ba27,Mì xào phá lấu,69073532-dba4-59ab-917e-42971d5e81c3,mapped,owner_confirmed_base_group
+dish_fede256ac3dc226a41d8,Mì ý,b151781d-c641-593f-9aba-a1ac5d16e309,mapped,owner_confirmed_base_group
+dish_a1f800d99897dfc23647,Mì ý jolly,b151781d-c641-593f-9aba-a1ac5d16e309,mapped,owner_confirmed_base_group
+dish_9290a37606c5e5459cfe,Mì ý sốt cay,b151781d-c641-593f-9aba-a1ac5d16e309,mapped,owner_confirmed_base_group
+dish_f908017ba1f9d6106cd2,Nui a xíu,aa59b2ad-3c15-5133-bad9-122a8d2fe93b,mapped,owner_confirmed_base_group
+dish_dcd74674a16be4527e9f,Phở bò gà,,excluded,owner_requested_exclusion
+dish_bd2dc56065055571b6eb,Phở bò tô đặc biệt,0da7d12b-4e83-517b-9c26-b192e6d63fe9,mapped,owner_confirmed_base_group
+dish_a9125964fe69d9ce8a35,Phở bò viên,0da7d12b-4e83-517b-9c26-b192e6d63fe9,mapped,owner_confirmed_base_group
+dish_9f2bb340655c742b77e4,Phở bắp bò,0da7d12b-4e83-517b-9c26-b192e6d63fe9,mapped,owner_confirmed_base_group
+dish_81ae071d619bc6b6bb54,Phở gân,0da7d12b-4e83-517b-9c26-b192e6d63fe9,mapped,owner_confirmed_base_group
+dish_04b11f522d5004473fbf,Phở gầu,0da7d12b-4e83-517b-9c26-b192e6d63fe9,mapped,owner_confirmed_base_group
+dish_ae67bb6b321d02b1a944,Phở nạm,0da7d12b-4e83-517b-9c26-b192e6d63fe9,mapped,owner_confirmed_base_group
+dish_c41522451e94d39a631f,Phở nạm gân,0da7d12b-4e83-517b-9c26-b192e6d63fe9,mapped,owner_confirmed_base_group
+dish_29d30602d5e6e2e1cd89,Phở nạm gầu,0da7d12b-4e83-517b-9c26-b192e6d63fe9,mapped,owner_confirmed_base_group
+dish_d75ed25a37ba09a613cf,Phở nạm viên,0da7d12b-4e83-517b-9c26-b192e6d63fe9,mapped,owner_confirmed_base_group
+dish_03cc6c7c7f7839dbf654,Phở thập cẩm,,needs_review,insufficient_menu_description
+dish_c21e10bafb67110a4b80,Phở tái,0da7d12b-4e83-517b-9c26-b192e6d63fe9,mapped,owner_confirmed_base_group
+dish_e24fc69e534f2dd5707e,Phở tái bò viên,0da7d12b-4e83-517b-9c26-b192e6d63fe9,mapped,owner_confirmed_base_group
+dish_a695b62dc96049efae07,Phở tái bắp,0da7d12b-4e83-517b-9c26-b192e6d63fe9,mapped,owner_confirmed_base_group
+dish_0dc5fb98c2fec8649beb,Phở tái gân,0da7d12b-4e83-517b-9c26-b192e6d63fe9,mapped,owner_confirmed_base_group
+dish_ddb80c6ef2f2de745843,Phở tái gầu,0da7d12b-4e83-517b-9c26-b192e6d63fe9,mapped,owner_confirmed_base_group
+dish_0fde62ace0ec1c917ce3,Phở tái lăn,0da7d12b-4e83-517b-9c26-b192e6d63fe9,mapped,owner_confirmed_base_group
+dish_60f58b594900b3df1a0d,Phở tái nạm,0da7d12b-4e83-517b-9c26-b192e6d63fe9,mapped,owner_confirmed_base_group
+dish_1b0387a9ffb5dd9b0b81,Salad bò,26448eef-8a0a-5934-bc0a-8936b205b389,mapped,owner_confirmed_base_group
+dish_571af392ae3742971c99,Salad trứng,26448eef-8a0a-5934-bc0a-8936b205b389,mapped,owner_confirmed_base_group
+dish_775b37467263b0fb1a51,Salad ức gà sous vide,26448eef-8a0a-5934-bc0a-8936b205b389,mapped,owner_confirmed_base_group
+dish_dc49a26fe717591dff07,Xôi a xíu,1fdae49f-b6da-5574-82b6-4b7fc1cf09cd,mapped,owner_confirmed_base_group
+dish_6f7e93f1372b5d1cca92,Xôi chả,1fdae49f-b6da-5574-82b6-4b7fc1cf09cd,mapped,owner_confirmed_base_group
+dish_90146e77857fd9547758,Xôi chả lụa,1fdae49f-b6da-5574-82b6-4b7fc1cf09cd,mapped,owner_confirmed_base_group
+dish_3bf6845b46977e018083,Xôi heo quay,1fdae49f-b6da-5574-82b6-4b7fc1cf09cd,mapped,owner_confirmed_base_group
+dish_a10642a3b8b5006ccdf1,Xôi thịt nướng,1fdae49f-b6da-5574-82b6-4b7fc1cf09cd,mapped,owner_confirmed_base_group
+dish_9ce2e1139a5f2e6506f3,Xôi trứng,1fdae49f-b6da-5574-82b6-4b7fc1cf09cd,mapped,owner_confirmed_base_group
+dish_e1bf57667cea4d5bac72,Xôi xá xíu,1fdae49f-b6da-5574-82b6-4b7fc1cf09cd,mapped,owner_confirmed_base_group
+dish_e12223ea3df4bb83af3f,Xôi xíu mại,1fdae49f-b6da-5574-82b6-4b7fc1cf09cd,mapped,owner_confirmed_base_group

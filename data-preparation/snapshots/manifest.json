@@ -1,0 +1,27 @@
+{
+  "sourceRows": 219,
+  "baseDishes": 39,
+  "mappingStates": {
+    "mapped": 216,
+    "needs_review": 2,
+    "excluded": 1
+  },
+  "apiCalls": 0,
+  "status": "draft",
+  "contractVersion": "1.0.0",
+  "engine": "Python exec; no Jupyter kernel",
+  "files": {
+    "source_to_base_mapping.csv": {
+      "sha256": "29ffa3cd95dff82d396b6a7664135c0540c00b2ae151e49b9ff013db9ef5078f",
+      "bytes": 26044
+    },
+    "thu_duc_base_dishes.csv": {
+      "sha256": "d992deda724e7dc8f600443b68354ceae20a24216795a35cd0f615113e881e97",
+      "bytes": 1666801
+    },
+    "thu_duc_dishes_taxonomy.csv": {
+      "sha256": "e441ecfca93846da6596284f969149d2fef3e53f3397daa537cd8ba24dbcff37",
+      "bytes": 1955954
+    }
+  }
+}

@@ -1,0 +1,203 @@
+{
+  "scope": "Khu Thủ Đức cũ; danh sách chi nhánh được chọn từ địa chỉ công khai, chưa là polygon coverage đã kiểm.",
+  "discovery_date": "2026-10-09",
+  "discovery_method": "Web search theo đường/nhóm món; URL là đầu vào ứng viên, notebook kiểm lại HTML và địa chỉ.",
+  "discovery_queries": [
+    "site:food.be.com.vn \"Hoàng Diệu 2\"",
+    "site:food.be.com.vn \"Kha Vạn Cân\"",
+    "site:food.be.com.vn \"Võ Văn Ngân\"",
+    "site:food.be.com.vn \"Lê Văn Chí\"",
+    "site:shopeefood.vn \"Hoàng Diệu 2\""
+  ],
+  "sources": [
+    {
+      "platform": "befood",
+      "url": "https://food.be.com.vn/ho-chi-minh/com-tam-49-duong-so-4-64909",
+      "survey_cluster": "Linh Xuân",
+      "expected_address_token": "đường số 4",
+      "discovery_group": "cơm"
+    },
+    {
+      "platform": "befood",
+      "url": "https://food.be.com.vn/ho-chi-minh/tiem-com-nha-tron-hoang-dieu-2-102327",
+      "survey_cluster": "Hoàng Diệu 2 – Lê Văn Chí",
+      "expected_address_token": "hoàng diệu 2",
+      "discovery_group": "cơm"
+    },
+    {
+      "platform": "befood",
+      "url": "https://food.be.com.vn/ho-chi-minh/wallace-burger-chicken-kha-van-can-126511",
+      "survey_cluster": "Kha Vạn Cân",
+      "expected_address_token": "kha vạn cân",
+      "discovery_group": "burger/gà"
+    },
+    {
+      "platform": "befood",
+      "url": "https://food.be.com.vn/ho-chi-minh/mi-tron-nha-min-kha-van-can-147476",
+      "survey_cluster": "Kha Vạn Cân",
+      "expected_address_token": "kha vạn cân",
+      "discovery_group": "mì"
+    },
+    {
+      "platform": "befood",
+      "url": "https://food.be.com.vn/ho-chi-minh/the-beoso-healthy-food-kha-van-can-138734",
+      "survey_cluster": "Kha Vạn Cân",
+      "expected_address_token": "kha vạn cân",
+      "discovery_group": "salad/cơm"
+    },
+    {
+      "platform": "befood",
+      "url": "https://food.be.com.vn/ho-chi-minh/com-tam-my-my-kha-van-can-148809",
+      "survey_cluster": "Kha Vạn Cân",
+      "expected_address_token": "kha vạn cân",
+      "discovery_group": "cơm"
+    },
+    {
+      "platform": "befood",
+      "url": "https://food.be.com.vn/ho-chi-minh/quan-com-hoa-dao-kha-van-can-74716",
+      "survey_cluster": "Kha Vạn Cân",
+      "expected_address_token": "kha vạn cân",
+      "discovery_group": "cơm"
+    },
+    {
+      "platform": "befood",
+      "url": "https://food.be.com.vn/ho-chi-minh/com-chay-thap-phuong-hoang-dieu-2-125649",
+      "survey_cluster": "Hoàng Diệu 2 – Lê Văn Chí",
+      "expected_address_token": "hoàng diệu 2",
+      "discovery_group": "chay"
+    },
+    {
+      "platform": "befood",
+      "url": "https://food.be.com.vn/ho-chi-minh/kim-nga-quan-com-phan-bun-rieu-banh-canh-le-van-chi-130264",
+      "survey_cluster": "Hoàng Diệu 2 – Lê Văn Chí",
+      "expected_address_token": "lê văn chí",
+      "discovery_group": "cơm/bún"
+    },
+    {
+      "platform": "befood",
+      "url": "https://food.be.com.vn/ho-chi-minh/ga-ran-texas-chicken-vo-van-ngan-67488",
+      "survey_cluster": "Võ Văn Ngân – Tô Vĩnh Diện",
+      "expected_address_token": "võ văn ngân",
+      "discovery_group": "gà/mì"
+    },
+    {
+      "platform": "befood",
+      "url": "https://food.be.com.vn/ho-chi-minh/ga-ran-va-my-y-jollibee-vo-van-ngan-98881",
+      "survey_cluster": "Võ Văn Ngân – Tô Vĩnh Diện",
+      "expected_address_token": "võ văn ngân",
+      "discovery_group": "gà/mì"
+    },
+    {
+      "platform": "befood",
+      "url": "https://food.be.com.vn/ho-chi-minh/banh-mi-xoi-xiu-mai-xa-xiu-dang-van-bi-120584",
+      "survey_cluster": "Đặng Văn Bi",
+      "expected_address_token": "đặng văn bi",
+      "discovery_group": "bánh mì/xôi"
+    },
+    {
+      "platform": "befood",
+      "url": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "survey_cluster": "Hoàng Diệu 2 – Lê Văn Chí",
+      "expected_address_token": "hoàng diệu 2",
+      "discovery_group": "bánh mì/xôi"
+    },
+    {
+      "platform": "befood",
+      "url": "https://food.be.com.vn/ho-chi-minh/bun-bo-ngon-anh-linh-banh-canh-mi-y-24h-duong-49-94430",
+      "survey_cluster": "Hiệp Bình Chánh",
+      "expected_address_token": "đường 49",
+      "discovery_group": "bún"
+    },
+    {
+      "platform": "befood",
+      "url": "https://food.be.com.vn/ho-chi-minh/bun-bo-hue-song-huong-duong-2-19461",
+      "survey_cluster": "Linh Đông",
+      "expected_address_token": "đường 2",
+      "discovery_group": "bún"
+    },
+    {
+      "platform": "befood",
+      "url": "https://food.be.com.vn/ho-chi-minh/pha-lau-co-phuong-hiep-binh-46636",
+      "survey_cluster": "Hiệp Bình Chánh",
+      "expected_address_token": "hiệp bình",
+      "discovery_group": "phá lấu"
+    },
+    {
+      "platform": "befood",
+      "url": "https://food.be.com.vn/ho-chi-minh/pho-ly-quoc-su-hoang-dieu-2-86590",
+      "survey_cluster": "Hoàng Diệu 2 – Lê Văn Chí",
+      "expected_address_token": "hoàng diệu 2",
+      "discovery_group": "phở"
+    },
+    {
+      "platform": "befood",
+      "url": "https://food.be.com.vn/ho-chi-minh/pho-bun-bo-tuoi-hoang-dieu-2-137270",
+      "survey_cluster": "Hoàng Diệu 2 – Lê Văn Chí",
+      "expected_address_token": "hoàng diệu 2",
+      "discovery_group": "phở/bún"
+    },
+    {
+      "platform": "befood",
+      "url": "https://food.be.com.vn/ho-chi-minh/bun-dau-mam-tom-ba-anh-em-hoang-dieu-2-75616",
+      "survey_cluster": "Hoàng Diệu 2 – Lê Văn Chí",
+      "expected_address_token": "hoàng diệu 2",
+      "discovery_group": "bún đậu"
+    },
+    {
+      "platform": "befood",
+      "url": "https://food.be.com.vn/ho-chi-minh/banh-cuon-banh-uot-chuong-duong-33659",
+      "survey_cluster": "Linh Chiểu",
+      "expected_address_token": "chương dương",
+      "discovery_group": "bánh cuốn"
+    },
+    {
+      "platform": "befood",
+      "url": "https://food.be.com.vn/ho-chi-minh/quie-tea-food-hoang-dieu-2-148318",
+      "survey_cluster": "Hoàng Diệu 2 – Lê Văn Chí",
+      "expected_address_token": "hoàng diệu 2",
+      "discovery_group": "mì"
+    },
+    {
+      "platform": "befood",
+      "url": "https://food.be.com.vn/ho-chi-minh/nem-nuong-nha-trang-hung-viet-hoang-dieu-2-105890",
+      "survey_cluster": "Hoàng Diệu 2 – Lê Văn Chí",
+      "expected_address_token": "hoàng diệu 2",
+      "discovery_group": "nem nướng"
+    },
+    {
+      "platform": "befood",
+      "url": "https://food.be.com.vn/ho-chi-minh/lau-ga-ot-hiem-109-hoang-dieu-2-98673",
+      "survey_cluster": "Hoàng Diệu 2 – Lê Văn Chí",
+      "expected_address_token": "hoàng diệu 2",
+      "discovery_group": "lẩu"
+    },
+    {
+      "platform": "shopeefood",
+      "url": "https://shopeefood.vn/ho-chi-minh/tep-thu-duc-com-tam-chao-long-to-vinh-dien",
+      "survey_cluster": "Võ Văn Ngân – Tô Vĩnh Diện",
+      "expected_address_token": "tô vĩnh diện",
+      "discovery_group": "cơm/cháo"
+    },
+    {
+      "platform": "shopeefood",
+      "url": "https://shopeefood.vn/ho-chi-minh/bun-bo-bo-ne-bo-kho-134-hoang-dieu-2",
+      "survey_cluster": "Hoàng Diệu 2 – Lê Văn Chí",
+      "expected_address_token": "hoàng diệu 2",
+      "discovery_group": "bún/bò kho"
+    },
+    {
+      "platform": "shopeefood",
+      "url": "https://shopeefood.vn/ho-chi-minh/bun-thit-nuong-com-tam-tem-hoang-dieu-2",
+      "survey_cluster": "Hoàng Diệu 2 – Lê Văn Chí",
+      "expected_address_token": "hoàng diệu 2",
+      "discovery_group": "bún/cơm"
+    },
+    {
+      "platform": "shopeefood",
+      "url": "https://shopeefood.vn/ho-chi-minh/tra-dau-nha-pao-vo-van-ngan",
+      "survey_cluster": "Võ Văn Ngân – Tô Vĩnh Diện",
+      "expected_address_token": "võ văn ngân",
+      "discovery_group": "cơm"
+    }
+  ]
+}

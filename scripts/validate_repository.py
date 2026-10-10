@@ -279,12 +279,15 @@ class Source:
         else:
             # Scan only project sources, never dependencies/builds or .git metadata.
             self.files = set()
-            for top in ('docs', 'tasks', 'mobile', 'supabase', 'design', 'tests', 'scripts', '.github', '.githooks'):
+            for top in ('docs', 'tasks', 'mobile', 'supabase', 'design', 'tests', 'scripts', 'data-preparation', '.github', '.githooks'):
                 folder = ROOT / top
                 if folder.exists():
                     import os
                     for base, dirs, files in os.walk(folder):
-                        dirs[:] = [d for d in dirs if d not in {'node_modules', '.git', '.expo', 'build', 'dist', '__pycache__'}]
+                        excluded = {'node_modules', '.git', '.expo', 'build', 'dist', '__pycache__', '.ipynb_checkpoints'}
+                        if Path(base) == ROOT / 'data-preparation':
+                            excluded.add('datasets')
+                        dirs[:] = [d for d in dirs if d not in excluded]
                         self.files.update((Path(base) / f).relative_to(ROOT).as_posix() for f in files)
             self.files.update(p.name for p in ROOT.iterdir() if p.is_file())
 
@@ -311,7 +314,7 @@ def validate(src: Source) -> list[str]:
     for p in sorted(src.files):
         if p.startswith('legacy/'):
             continue
-        if p.endswith('.md') and (p.startswith(('docs/', 'tasks/', 'mobile/', 'supabase/', 'design/', 'tests/', '.github/')) or p in {'README.md', 'AGENTS.md', 'CONTRIBUTING.md'}):
+        if p.endswith('.md') and (p.startswith(('docs/', 'tasks/', 'mobile/', 'supabase/', 'design/', 'tests/', 'data-preparation/', '.github/')) or p in {'README.md', 'AGENTS.md', 'CONTRIBUTING.md'}):
             for match in LINK.finditer(src.read(p)):
                 target = unquote(match.group(1).strip().strip('<>').split('#')[0])
                 if not target or re.match(r'^[a-z]+:', target):

@@ -24,11 +24,13 @@ tasks/        GM-00/01 done theo human review; triển khai task sau chưa Appro
 design/       design system/prototype HTML mô phỏng cũ
 tests/        fixtures/E2E và validator regression
 scripts/      validator, dependency gate/indexes và backend local runner
+data-preparation/ notebooks và công cụ khảo sát/xử lý dữ liệu
 ```
 
 Kiểm tài liệu: `python scripts/validate_repository.py`, `git diff --check`. Validator không thay independent review/native evidence.
 
 Chạy UI: theo [mobile README](mobile/README.md), `cd mobile`, `npm ci`, `npm start` (Expo Go LAN). Chạy BE: theo [Supabase README](supabase/README.md), tại root `npm ci`, bật Docker Linux engine, `npm run backend:start`, `npm run backend:smoke`, `npm run backend:test`. [Chuẩn output UI/BE/Data](docs/project/TASK_OUTPUT_REQUIREMENTS.md) và [checklist 38 task](docs/project/TASK_OUTPUT_CHECKLIST.md) ghi phép nghiệm thu từng task, không chỉ file/checkbox.
+[Chuẩn bị dữ liệu](data-preparation/README.md): khảo sát thực đơn khu Thủ Đức cũ, chuẩn hóa tên món và truy vết về menu nguồn. Dữ liệu cục bộ cùng CSV sinh ra nằm trong thư mục datasets được Git bỏ qua.
 
 [Prototype HTML](design/prototypes/gi-cung-duoc.html) không là bằng chứng đáp ứng food-v1. Mở bằng browser hoặc local HTTP; nó không chứng minh QR/push/SQL/realtime. [Bắt đầu](docs/project/START_HERE.md).
 

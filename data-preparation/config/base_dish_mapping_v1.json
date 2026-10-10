@@ -1,0 +1,1540 @@
+{
+  "version": "1.0.0",
+  "decisionBy": "project_owner",
+  "decisionBasis": "User-approved GM-03 implementation plan",
+  "mapping": [
+    {
+      "sourceDishId": "dish_4b8c617d22391ddd9286",
+      "sourceName": "Bún thịt nướng",
+      "baseDishId": "441e70be-0b06-521d-b5b9-7349386f14ad",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_71700d408984f9088754",
+      "sourceName": "Burger gà giòn",
+      "baseDishId": "8131e3cd-bce2-5843-8800-9426c91382ba",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_cdc78714e5476a169c19",
+      "sourceName": "Bánh mì thập cẩm",
+      "baseDishId": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_498a95270cac39382a4c",
+      "sourceName": "Bánh mì thịt nướng",
+      "baseDishId": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_e5539cfdb8d8de0db0a9",
+      "sourceName": "Bánh mì xíu mại",
+      "baseDishId": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_5ebf723ade97ae6e30f6",
+      "sourceName": "Bún nem nướng",
+      "baseDishId": "e6558eda-db0f-5583-bbf5-be4f7da8f2f9",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_da328759a81fd02249e5",
+      "sourceName": "Bún riêu",
+      "baseDishId": "79c72911-92fc-5af0-9f7f-b8c476542e7f",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_872cb994c72c329faf25",
+      "sourceName": "Cơm thịt kho trứng",
+      "baseDishId": "a7619de7-cecd-558c-9e8a-dcdedd82465a",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_1cb93b65f9f155d1313c",
+      "sourceName": "Cơm tấm sườn bì",
+      "baseDishId": "fc959eeb-033c-54b6-b8a2-9d7c6982803e",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_fd4bae33d627f75bbf5e",
+      "sourceName": "Miến gà",
+      "baseDishId": "c3f1f939-20a4-55b1-89af-42e3c95a33fa",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_57f77e9c526f7d80610a",
+      "sourceName": "Phở gà",
+      "baseDishId": "33c758d0-9f9b-5dd9-8976-c52b6f949d31",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_820324c0c62e35ea1924",
+      "sourceName": "Xôi thập cẩm",
+      "baseDishId": "1fdae49f-b6da-5574-82b6-4b7fc1cf09cd",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_0ef9628442073fcd4fdb",
+      "sourceName": "Burger bò",
+      "baseDishId": "8131e3cd-bce2-5843-8800-9426c91382ba",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_d3001f0dd740744e1b79",
+      "sourceName": "Burger bóng đêm",
+      "baseDishId": "8131e3cd-bce2-5843-8800-9426c91382ba",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_08ee8e895a1260b19927",
+      "sourceName": "Burger cá",
+      "baseDishId": "8131e3cd-bce2-5843-8800-9426c91382ba",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_1c61b7843ae6e7795bc5",
+      "sourceName": "Burger mexicana cay",
+      "baseDishId": "8131e3cd-bce2-5843-8800-9426c91382ba",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_af0eb2d7527733ed71a0",
+      "sourceName": "Burger mexicana không cay",
+      "baseDishId": "8131e3cd-bce2-5843-8800-9426c91382ba",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_0a72910a90b4b0e63796",
+      "sourceName": "Burger tex supreme cay",
+      "baseDishId": "8131e3cd-bce2-5843-8800-9426c91382ba",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_8022028bb5be87812928",
+      "sourceName": "Burger tex supreme không cay",
+      "baseDishId": "8131e3cd-bce2-5843-8800-9426c91382ba",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_c451a09aa0106881060c",
+      "sourceName": "Burger thịt nướng",
+      "baseDishId": "8131e3cd-bce2-5843-8800-9426c91382ba",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_3b384ae73d116fef5bb4",
+      "sourceName": "Burger tôm",
+      "baseDishId": "8131e3cd-bce2-5843-8800-9426c91382ba",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_673f3c27c43db091f586",
+      "sourceName": "Burger tôm cay",
+      "baseDishId": "8131e3cd-bce2-5843-8800-9426c91382ba",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_280e536e866b0616a872",
+      "sourceName": "Burger tôm không cay",
+      "baseDishId": "8131e3cd-bce2-5843-8800-9426c91382ba",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_4863a6d8a369f369b378",
+      "sourceName": "Bánh bao nhân thịt 2 trứng cút",
+      "baseDishId": "990393dc-1b1d-5a1a-9ccd-2b0c4ac60572",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_5b5fc67c61e37ef0a88f",
+      "sourceName": "Bánh bao nhân thịt xá xíu trứng muối",
+      "baseDishId": "990393dc-1b1d-5a1a-9ccd-2b0c4ac60572",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_4d68b13a1eeb0dbb3cf5",
+      "sourceName": "Bánh cuốn",
+      "baseDishId": "a785a621-2cbc-5f16-9274-a47141a8e3c8",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_9ae2acfc0cd0f2e3396c",
+      "sourceName": "Bánh cuốn trứng",
+      "baseDishId": "a785a621-2cbc-5f16-9274-a47141a8e3c8",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_b256669a4fc96c4d4e6f",
+      "sourceName": "Bánh cuộn gà mexico",
+      "baseDishId": "39da0965-df4e-5ca1-8741-bdb9aeb85f57",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_86eeb0edd22d484be231",
+      "sourceName": "Bánh cuộn hải sản",
+      "baseDishId": "39da0965-df4e-5ca1-8741-bdb9aeb85f57",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_911270a93bcf8b5bc4ce",
+      "sourceName": "Bánh cuộn mexicana cay",
+      "baseDishId": "39da0965-df4e-5ca1-8741-bdb9aeb85f57",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_ae18816678771e395cc7",
+      "sourceName": "Bánh cuộn mexicana không cay",
+      "baseDishId": "39da0965-df4e-5ca1-8741-bdb9aeb85f57",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_42eda451c8dd8cbaa2c7",
+      "sourceName": "Bánh cuộn tex cay",
+      "baseDishId": "39da0965-df4e-5ca1-8741-bdb9aeb85f57",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_a77a4b31ab4e64505f40",
+      "sourceName": "Bánh cuộn tex không cay",
+      "baseDishId": "39da0965-df4e-5ca1-8741-bdb9aeb85f57",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_241851b9474b98532b9f",
+      "sourceName": "Bánh mì 1 trứng",
+      "baseDishId": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_0b023b6636fd298baddf",
+      "sourceName": "Bánh mì 2 trứng",
+      "baseDishId": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_67b51a26ed3194c8cf19",
+      "sourceName": "Bánh mì a xíu",
+      "baseDishId": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_9b6e1b2b5e20b157c101",
+      "sourceName": "Bánh mì chà bông",
+      "baseDishId": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_a7a3fa0547359ead0774",
+      "sourceName": "Bánh mì chả",
+      "baseDishId": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_cd633551352a7f84f10d",
+      "sourceName": "Bánh mì chả cá",
+      "baseDishId": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_6a744226fb02b0d8ad9a",
+      "sourceName": "Bánh mì chả lụa",
+      "baseDishId": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_6e0c65197340fec658db",
+      "sourceName": "Bánh mì chấm",
+      "baseDishId": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_323743b69bfff44b6a73",
+      "sourceName": "Bánh mì chấm đặc biệt",
+      "baseDishId": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_b0a320d761fd9d255a98",
+      "sourceName": "Bánh mì cá hộp",
+      "baseDishId": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_e4fa67dfc8f6f12b0162",
+      "sourceName": "Bánh mì heo quay",
+      "baseDishId": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_8ba41c0e3c4af27f7cab",
+      "sourceName": "Bánh mì phá lấu",
+      "baseDishId": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_c110e05a12e58595da4d",
+      "sourceName": "Bánh mì phô mai",
+      "baseDishId": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_e3de13c73a42fa34b12d",
+      "sourceName": "Bánh mì phô mai lát",
+      "baseDishId": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_9f452355832955ed1419",
+      "sourceName": "Bánh mì thịt nguội",
+      "baseDishId": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_0e093f86564eb555d093",
+      "sourceName": "Bánh mì trứng 1 trứng",
+      "baseDishId": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_c16a23de539f7d4f57a4",
+      "sourceName": "Bánh mì trứng 2 trứng",
+      "baseDishId": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_c9fd7f730de08750e84e",
+      "sourceName": "Bánh mì xá xíu",
+      "baseDishId": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_2f7bbbe1affe989481fd",
+      "sourceName": "Bánh mì xúc xích",
+      "baseDishId": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_415c55e068c6db27ac89",
+      "sourceName": "Bánh mì đặc biệt",
+      "baseDishId": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_81217eb4a7be48a46586",
+      "sourceName": "Bánh ướt",
+      "baseDishId": "620d6a2f-02a2-532f-b254-c37f3713ba04",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_100724a3ef78f1530b1d",
+      "sourceName": "Bánh ướt thịt nướng",
+      "baseDishId": "620d6a2f-02a2-532f-b254-c37f3713ba04",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_141b85de02bfd7e3b0c1",
+      "sourceName": "Bún bò",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_94d5e7d6689430f6b154",
+      "sourceName": "Bún bò bò viên",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_ddab4930b57c8c130906",
+      "sourceName": "Bún bò bắp",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_ddb506d384d5b06aecc4",
+      "sourceName": "Bún bò bắp bò viên",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_ed71fdf844fbc6e1ebf7",
+      "sourceName": "Bún bò bắp chả",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_8038552db31e65f30b97",
+      "sourceName": "Bún bò bắp chả bò viên",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_2bc75c7fb3bc54bd62a5",
+      "sourceName": "Bún bò bắp gân",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_8d369a414c7bd0c3c390",
+      "sourceName": "Bún bò chay",
+      "baseDishId": "fe39887f-b79c-5981-8f0a-6e50c4a5dc54",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_aa2b4720ec4fa2822524",
+      "sourceName": "Bún bò chả",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_359b5f2be849f65a2030",
+      "sourceName": "Bún bò giò bò viên",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_3c5b9534d42c1cd3d62e",
+      "sourceName": "Bún bò giò bắp",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_022bef678409d0d50cf4",
+      "sourceName": "Bún bò giò bắp bò viên",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_25e245c2dea37cb7aff9",
+      "sourceName": "Bún bò giò bắp chả",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_cbe547799c77701dbb85",
+      "sourceName": "Bún bò giò chả",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_bc94477470ff44d2baca",
+      "sourceName": "Bún bò giò heo",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_b2a4a75b22a6f4786295",
+      "sourceName": "Bún bò gân",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_3194b2c3916cd9d3b324",
+      "sourceName": "Bún bò huế",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_ec4490529745d6ba3ad0",
+      "sourceName": "Bún bò khô",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_b14094f70fddb47646c2",
+      "sourceName": "Bún bò nạm",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_59f7d277e4577a65f24f",
+      "sourceName": "Bún bò nạm chả",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_0d90dd019ff89657d9e0",
+      "sourceName": "Bún bò nạm giò heo",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_c648ea8f8c789ae751e6",
+      "sourceName": "Bún bò nạm gân",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_3ba586ffd7c9a48b5dfe",
+      "sourceName": "Bún bò sườn bò viên",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_3046dff208137ace0033",
+      "sourceName": "Bún bò sườn bắp",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_2a04f420d5d5183d1eff",
+      "sourceName": "Bún bò sườn bắp bò viên",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_1e6abba4eac6c9550dfc",
+      "sourceName": "Bún bò sườn chả",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_082f6df5c23f640d1d42",
+      "sourceName": "Bún bò sườn chả bò viên",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_af4d512cf6b844a2cec1",
+      "sourceName": "Bún bò tái",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_0ee5554da66ee73b238b",
+      "sourceName": "Bún bò tái chả",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_1caf884d957c7360217f",
+      "sourceName": "Bún bò tô trẻ em",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_d891e22efe490528d5fc",
+      "sourceName": "Bún bò đặc biệt full topping",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_b0cc7bc9bbe05d3bc829",
+      "sourceName": "Bún bắp bò",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_3e1c8730233bffe4a609",
+      "sourceName": "Bún chay tàu hủ nước tương",
+      "baseDishId": "52c6435f-c967-5820-8e76-b1917291a1ef",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_014fba0b985393ad1e73",
+      "sourceName": "Bún gạo lứt ức gà sous vide",
+      "baseDishId": "807a5dfe-64b0-5137-ac00-6f95882830d6",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_0f05bc17b57d1362b5ce",
+      "sourceName": "Bún healthy eco",
+      "baseDishId": "807a5dfe-64b0-5137-ac00-6f95882830d6",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_aa4b6fcca30b2dc9c5e1",
+      "sourceName": "Bún măng chay",
+      "baseDishId": "52c6435f-c967-5820-8e76-b1917291a1ef",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_c29ec05f8a7721b92c34",
+      "sourceName": "Bún mọc",
+      "baseDishId": "4a8ac4a8-b566-5032-be38-48f00e6a53b9",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_0467ee27d279ae5974c4",
+      "sourceName": "Bún nem lụi nướng",
+      "baseDishId": "e6558eda-db0f-5583-bbf5-be4f7da8f2f9",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_25a46f3450446b403b67",
+      "sourceName": "Bún nem phên nướng",
+      "baseDishId": "e6558eda-db0f-5583-bbf5-be4f7da8f2f9",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_a7c084bf56ab95901318",
+      "sourceName": "Bún nạm gân",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_43056d224b1def0fd8ec",
+      "sourceName": "Bún nạm viên",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_ae95b5a9f31da776d31d",
+      "sourceName": "Bún riêu chay",
+      "baseDishId": "db666124-3676-5609-8dc4-b313a1809358",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_9bda251ae2b887dd2c7c",
+      "sourceName": "Bún riêu giò heo",
+      "baseDishId": "79c72911-92fc-5af0-9f7f-b8c476542e7f",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_e9db48e3896b3d58e8f3",
+      "sourceName": "Bún riêu tôm",
+      "baseDishId": "79c72911-92fc-5af0-9f7f-b8c476542e7f",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_5d494a23a8c8952024b9",
+      "sourceName": "Bún trộn bò lúc lắc",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_b44cc73ad62e8af2f43d",
+      "sourceName": "Bún tái chả",
+      "baseDishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_d99895bac9fad07ecb85",
+      "sourceName": "Bún đậu",
+      "baseDishId": "d320d9fe-0b53-539f-98ce-87ac91cf2dbb",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_fdb06e2601fe7f5bfc4e",
+      "sourceName": "Bún đậu chả cua",
+      "baseDishId": "d320d9fe-0b53-539f-98ce-87ac91cf2dbb",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_6ae7970f5e91739b5b54",
+      "sourceName": "Bún đậu chả cốm",
+      "baseDishId": "d320d9fe-0b53-539f-98ce-87ac91cf2dbb",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_d03b21dfc9c21b7e318a",
+      "sourceName": "Bún đậu chả mực",
+      "baseDishId": "d320d9fe-0b53-539f-98ce-87ac91cf2dbb",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_a2850d2c411537a9e889",
+      "sourceName": "Bún đậu nem chiên",
+      "baseDishId": "d320d9fe-0b53-539f-98ce-87ac91cf2dbb",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_204c9b8267a5b4c567d6",
+      "sourceName": "Bún đậu thập cẩm",
+      "baseDishId": "d320d9fe-0b53-539f-98ce-87ac91cf2dbb",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_4364a811ead759a4787f",
+      "sourceName": "Bún đậu thịt",
+      "baseDishId": "d320d9fe-0b53-539f-98ce-87ac91cf2dbb",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_8fb45d0dd3be1168fdf9",
+      "sourceName": "Bún đậu đặc biệt",
+      "baseDishId": "d320d9fe-0b53-539f-98ce-87ac91cf2dbb",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_a469811ae997daf98d96",
+      "sourceName": "Cơm ba rọi chay",
+      "baseDishId": "16ad89fb-0bc1-5d43-b8d0-4285916a69dc",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_b20466259cd1d0ed8a48",
+      "sourceName": "Cơm bò đậm vị",
+      "baseDishId": "864f37d1-97e9-57bc-bce5-351668f703da",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_64f0fb5ee56faeddd93e",
+      "sourceName": "Cơm canh khổ qua",
+      "baseDishId": "f9224f9d-f9e2-5b4b-a328-0db75c978c2a",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_ded2f8290301e53ad52b",
+      "sourceName": "Cơm chiên gà xối mỡ",
+      "baseDishId": "da40f225-25dd-5527-b535-ae5d48e15b9d",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_04ebcb335bb9ab637bb4",
+      "sourceName": "Cơm chiên kim chi",
+      "baseDishId": "da40f225-25dd-5527-b535-ae5d48e15b9d",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_82b0fa149d497af38a37",
+      "sourceName": "Cơm cá basa kho",
+      "baseDishId": "f518af1a-6744-545a-83b4-4fa14d590a43",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_c7107fbf05f5cf0ccffd",
+      "sourceName": "Cơm cá chiên",
+      "baseDishId": "01e12db6-8014-5e84-bc53-398af27ad314",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_6ea650aa476d7f00577d",
+      "sourceName": "Cơm cá lóc kho",
+      "baseDishId": "f518af1a-6744-545a-83b4-4fa14d590a43",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_32873f9e5bf46e9ce8eb",
+      "sourceName": "Cơm cá rô kho",
+      "baseDishId": "f518af1a-6744-545a-83b4-4fa14d590a43",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_1482466e171652836ed3",
+      "sourceName": "Cơm cá thu chay",
+      "baseDishId": "16ad89fb-0bc1-5d43-b8d0-4285916a69dc",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_b4a24a3cbab1a43f9be8",
+      "sourceName": "Cơm cánh gà chay",
+      "baseDishId": "16ad89fb-0bc1-5d43-b8d0-4285916a69dc",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_c8a5b4a1eedd80d523e2",
+      "sourceName": "Cơm gapao",
+      "baseDishId": "d9756559-2697-565c-86e0-36cf39c4da49",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_20622e6470b34b5213da",
+      "sourceName": "Cơm gà chiên mắm",
+      "baseDishId": "b115bf23-4277-5a5d-a439-002b0ceda3ce",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_6c10e67c9623664184ea",
+      "sourceName": "Cơm gà kho sả ớt",
+      "baseDishId": "b115bf23-4277-5a5d-a439-002b0ceda3ce",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_7a29e0aefe100b4baef0",
+      "sourceName": "Cơm gà kho xã ớt",
+      "baseDishId": "b115bf23-4277-5a5d-a439-002b0ceda3ce",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_3d6a9feb25d43d03aae5",
+      "sourceName": "Cơm gà mắm tỏi",
+      "baseDishId": "b115bf23-4277-5a5d-a439-002b0ceda3ce",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_15a9d84d2ad40a0b01be",
+      "sourceName": "Cơm gà phô mai",
+      "baseDishId": "b115bf23-4277-5a5d-a439-002b0ceda3ce",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_a750b00ff23839991c03",
+      "sourceName": "Cơm gà sous vide original",
+      "baseDishId": "b115bf23-4277-5a5d-a439-002b0ceda3ce",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_042c42205d0670eafc3c",
+      "sourceName": "Cơm gà sốt teriyaki",
+      "baseDishId": "b115bf23-4277-5a5d-a439-002b0ceda3ce",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_771b83ebd2a664e86052",
+      "sourceName": "Cơm gà sốt tiêu đen",
+      "baseDishId": "b115bf23-4277-5a5d-a439-002b0ceda3ce",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_afd4aa4ea1df80b63006",
+      "sourceName": "Cơm gà xá xíu",
+      "baseDishId": "b115bf23-4277-5a5d-a439-002b0ceda3ce",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_72c7f41d15903017ac02",
+      "sourceName": "Cơm heo quay chay",
+      "baseDishId": "16ad89fb-0bc1-5d43-b8d0-4285916a69dc",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_be26a73e00ec7366dbbc",
+      "sourceName": "Cơm nấm chay",
+      "baseDishId": "16ad89fb-0bc1-5d43-b8d0-4285916a69dc",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_a6d4ec33de70f7129187",
+      "sourceName": "Cơm rau củ chay",
+      "baseDishId": "16ad89fb-0bc1-5d43-b8d0-4285916a69dc",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_d16627d610819b482a69",
+      "sourceName": "Cơm sườn chay",
+      "baseDishId": "16ad89fb-0bc1-5d43-b8d0-4285916a69dc",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_739d04ada468dfc86a8d",
+      "sourceName": "Cơm sườn non ram",
+      "baseDishId": "37e032fb-1a78-5b5c-833d-c5362ba14445",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_e7bbd2f93c3803e63110",
+      "sourceName": "Cơm sườn ram",
+      "baseDishId": "37e032fb-1a78-5b5c-833d-c5362ba14445",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_2acb3008d03606fd05df",
+      "sourceName": "Cơm sườn trứng ốp la",
+      "baseDishId": "37e032fb-1a78-5b5c-833d-c5362ba14445",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_70c4dbe3a9308a9d91ff",
+      "sourceName": "Cơm thập cẩm chay",
+      "baseDishId": "16ad89fb-0bc1-5d43-b8d0-4285916a69dc",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_cc6d02499b0bbad8272e",
+      "sourceName": "Cơm thịt kho tiêu",
+      "baseDishId": "a7619de7-cecd-558c-9e8a-dcdedd82465a",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_cefb6ebb12fd9844a7ef",
+      "sourceName": "Cơm thịt kho trứng cút",
+      "baseDishId": "a7619de7-cecd-558c-9e8a-dcdedd82465a",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_c573beee577cdda71568",
+      "sourceName": "Cơm thịt kho đậu hủ",
+      "baseDishId": "a7619de7-cecd-558c-9e8a-dcdedd82465a",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_dd444509e2f16476f8d5",
+      "sourceName": "Cơm tomyum",
+      "baseDishId": "d9756559-2697-565c-86e0-36cf39c4da49",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_5149393fc130786a8806",
+      "sourceName": "Cơm trộn cơ bản bò bằm",
+      "baseDishId": "d9756559-2697-565c-86e0-36cf39c4da49",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_c6dbe18f854f98940f92",
+      "sourceName": "Cơm trộn cơ bản thịt bằm",
+      "baseDishId": "d9756559-2697-565c-86e0-36cf39c4da49",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_1b77097589ad6b798904",
+      "sourceName": "Cơm tôm chay",
+      "baseDishId": "16ad89fb-0bc1-5d43-b8d0-4285916a69dc",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_1377542c3668f8eaf9d8",
+      "sourceName": "Cơm tôm rim",
+      "baseDishId": "e0a99abc-3bb4-54e5-85ea-0361df2098b7",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_9a79f808de1ea519560f",
+      "sourceName": "Cơm tấm bì chả",
+      "baseDishId": "fc959eeb-033c-54b6-b8a2-9d7c6982803e",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_89cf91699774de307a7e",
+      "sourceName": "Cơm tấm bì lạp xưởng",
+      "baseDishId": "fc959eeb-033c-54b6-b8a2-9d7c6982803e",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_bc9a2af68c543f772bbe",
+      "sourceName": "Cơm tấm bì trứng",
+      "baseDishId": "fc959eeb-033c-54b6-b8a2-9d7c6982803e",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_1cb9f0bce516455f011e",
+      "sourceName": "Cơm tấm chả",
+      "baseDishId": "fc959eeb-033c-54b6-b8a2-9d7c6982803e",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_7a8ce48c7491c158f4ad",
+      "sourceName": "Cơm tấm sườn",
+      "baseDishId": "fc959eeb-033c-54b6-b8a2-9d7c6982803e",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_016081c52de83e07b917",
+      "sourceName": "Cơm tấm sườn bì chả",
+      "baseDishId": "fc959eeb-033c-54b6-b8a2-9d7c6982803e",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_64cc7f1877f7447ac8dd",
+      "sourceName": "Cơm tấm sườn bì lạp xưởng",
+      "baseDishId": "fc959eeb-033c-54b6-b8a2-9d7c6982803e",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_908eff610e7282441afb",
+      "sourceName": "Cơm tấm sườn bì trứng",
+      "baseDishId": "fc959eeb-033c-54b6-b8a2-9d7c6982803e",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_0e5b34900e97f8eee2a5",
+      "sourceName": "Cơm tấm sườn chả",
+      "baseDishId": "fc959eeb-033c-54b6-b8a2-9d7c6982803e",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_376156411e77bb648713",
+      "sourceName": "Cơm tấm sườn trứng",
+      "baseDishId": "fc959eeb-033c-54b6-b8a2-9d7c6982803e",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_cc505a492c9e0ae991d1",
+      "sourceName": "Cơm tấm trứng ốp la",
+      "baseDishId": "fc959eeb-033c-54b6-b8a2-9d7c6982803e",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_a9da3946880ce98d4759",
+      "sourceName": "Cơm tấm đặc biệt 4 món sườn bì chả trứng",
+      "baseDishId": "fc959eeb-033c-54b6-b8a2-9d7c6982803e",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_3a4349e2fe45e05a2179",
+      "sourceName": "Cơm tấm đặc biệt 5 món sườn bì chả trứng lạp xưởng",
+      "baseDishId": "fc959eeb-033c-54b6-b8a2-9d7c6982803e",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_2ae639dec229ff3fbb17",
+      "sourceName": "Cơm viên chua ngọt",
+      "baseDishId": null,
+      "status": "needs_review",
+      "reason": "insufficient_menu_description"
+    },
+    {
+      "sourceDishId": "dish_2afd46d6d104a5211020",
+      "sourceName": "Cơm xúc xích chay",
+      "baseDishId": "16ad89fb-0bc1-5d43-b8d0-4285916a69dc",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_76a8f52560552216f530",
+      "sourceName": "Cơm đậu hủ sốt cà",
+      "baseDishId": "9cbc5485-896f-5725-bc54-c7d637f54770",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_8f5ab6645c7bb0c331dc",
+      "sourceName": "Cơm đậu ki chay",
+      "baseDishId": "16ad89fb-0bc1-5d43-b8d0-4285916a69dc",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_a3fab41af2b4294e306c",
+      "sourceName": "Cơm đậu nhồi chay",
+      "baseDishId": "16ad89fb-0bc1-5d43-b8d0-4285916a69dc",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_9264773add3f6873cabe",
+      "sourceName": "Cơm đậu tương chay",
+      "baseDishId": "16ad89fb-0bc1-5d43-b8d0-4285916a69dc",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_f738f0d8ef47af25d223",
+      "sourceName": "Cơm đậu xả chay",
+      "baseDishId": "16ad89fb-0bc1-5d43-b8d0-4285916a69dc",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_b13dd52fa91ec5ae0d1a",
+      "sourceName": "Hamburger gà điền viên",
+      "baseDishId": "8131e3cd-bce2-5843-8800-9426c91382ba",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_820fff8e221d7f5be078",
+      "sourceName": "Hamburger heo nướng",
+      "baseDishId": "8131e3cd-bce2-5843-8800-9426c91382ba",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_dce648c0442a05550375",
+      "sourceName": "Hamburger tôm",
+      "baseDishId": "8131e3cd-bce2-5843-8800-9426c91382ba",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_d133b89fd91b3db6438a",
+      "sourceName": "Hủ tiếu giò heo",
+      "baseDishId": "c5bbbe58-91c4-5819-8813-a531825073b6",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_738959b6fdecd425c58f",
+      "sourceName": "Hủ tiếu thịt",
+      "baseDishId": "c5bbbe58-91c4-5819-8813-a531825073b6",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_73b5a86718cf08de22a7",
+      "sourceName": "Hủ tiếu thịt mộc",
+      "baseDishId": "c5bbbe58-91c4-5819-8813-a531825073b6",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_94ff471f63e1954bb85d",
+      "sourceName": "Miến bò",
+      "baseDishId": "c3f1f939-20a4-55b1-89af-42e3c95a33fa",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_e1555d8337835db7d4ce",
+      "sourceName": "Miến hàn trộn",
+      "baseDishId": "c3f1f939-20a4-55b1-89af-42e3c95a33fa",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_4115c5ca98162d8f00f5",
+      "sourceName": "Mì bò",
+      "baseDishId": "69073532-dba4-59ab-917e-42971d5e81c3",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_6dd62c7a82a907fb3e9e",
+      "sourceName": "Mì gà",
+      "baseDishId": "69073532-dba4-59ab-917e-42971d5e81c3",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_afb354cef0f8cff266c1",
+      "sourceName": "Mì hoả tốc mì trộn phô mai hàn quốc colusa",
+      "baseDishId": "4f4e0327-d10e-5c8f-b69a-eb4f2df520ea",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_f66d25f9fa8ffb113ff4",
+      "sourceName": "Mì nước phá lấu",
+      "baseDishId": "69073532-dba4-59ab-917e-42971d5e81c3",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_1ace02b18ad0a4ec3886",
+      "sourceName": "Mì spaghetti",
+      "baseDishId": "b151781d-c641-593f-9aba-a1ac5d16e309",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_c3619fb3dc5c713357e1",
+      "sourceName": "Mì trộn colusa",
+      "baseDishId": "4f4e0327-d10e-5c8f-b69a-eb4f2df520ea",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_db2b6b854d9285f59197",
+      "sourceName": "Mì trộn hương vị kebab colusa",
+      "baseDishId": "4f4e0327-d10e-5c8f-b69a-eb4f2df520ea",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_eab29cd9ca564af4d383",
+      "sourceName": "Mì trộn indo",
+      "baseDishId": "4f4e0327-d10e-5c8f-b69a-eb4f2df520ea",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_bc6ad85a65231be87c00",
+      "sourceName": "Mì trộn phô mai",
+      "baseDishId": "4f4e0327-d10e-5c8f-b69a-eb4f2df520ea",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_68a8c81942dbf5f9273e",
+      "sourceName": "Mì trộn quie",
+      "baseDishId": "4f4e0327-d10e-5c8f-b69a-eb4f2df520ea",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_825b296788d820b9a05b",
+      "sourceName": "Mì trộn thập cẩm",
+      "baseDishId": "4f4e0327-d10e-5c8f-b69a-eb4f2df520ea",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_be0ade5fe4efb3c4ba27",
+      "sourceName": "Mì xào phá lấu",
+      "baseDishId": "69073532-dba4-59ab-917e-42971d5e81c3",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_fede256ac3dc226a41d8",
+      "sourceName": "Mì ý",
+      "baseDishId": "b151781d-c641-593f-9aba-a1ac5d16e309",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_a1f800d99897dfc23647",
+      "sourceName": "Mì ý jolly",
+      "baseDishId": "b151781d-c641-593f-9aba-a1ac5d16e309",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_9290a37606c5e5459cfe",
+      "sourceName": "Mì ý sốt cay",
+      "baseDishId": "b151781d-c641-593f-9aba-a1ac5d16e309",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_f908017ba1f9d6106cd2",
+      "sourceName": "Nui a xíu",
+      "baseDishId": "aa59b2ad-3c15-5133-bad9-122a8d2fe93b",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_dcd74674a16be4527e9f",
+      "sourceName": "Phở bò gà",
+      "baseDishId": null,
+      "status": "excluded",
+      "reason": "owner_requested_exclusion"
+    },
+    {
+      "sourceDishId": "dish_bd2dc56065055571b6eb",
+      "sourceName": "Phở bò tô đặc biệt",
+      "baseDishId": "0da7d12b-4e83-517b-9c26-b192e6d63fe9",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_a9125964fe69d9ce8a35",
+      "sourceName": "Phở bò viên",
+      "baseDishId": "0da7d12b-4e83-517b-9c26-b192e6d63fe9",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_9f2bb340655c742b77e4",
+      "sourceName": "Phở bắp bò",
+      "baseDishId": "0da7d12b-4e83-517b-9c26-b192e6d63fe9",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_81ae071d619bc6b6bb54",
+      "sourceName": "Phở gân",
+      "baseDishId": "0da7d12b-4e83-517b-9c26-b192e6d63fe9",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_04b11f522d5004473fbf",
+      "sourceName": "Phở gầu",
+      "baseDishId": "0da7d12b-4e83-517b-9c26-b192e6d63fe9",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_ae67bb6b321d02b1a944",
+      "sourceName": "Phở nạm",
+      "baseDishId": "0da7d12b-4e83-517b-9c26-b192e6d63fe9",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_c41522451e94d39a631f",
+      "sourceName": "Phở nạm gân",
+      "baseDishId": "0da7d12b-4e83-517b-9c26-b192e6d63fe9",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_29d30602d5e6e2e1cd89",
+      "sourceName": "Phở nạm gầu",
+      "baseDishId": "0da7d12b-4e83-517b-9c26-b192e6d63fe9",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_d75ed25a37ba09a613cf",
+      "sourceName": "Phở nạm viên",
+      "baseDishId": "0da7d12b-4e83-517b-9c26-b192e6d63fe9",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_03cc6c7c7f7839dbf654",
+      "sourceName": "Phở thập cẩm",
+      "baseDishId": null,
+      "status": "needs_review",
+      "reason": "insufficient_menu_description"
+    },
+    {
+      "sourceDishId": "dish_c21e10bafb67110a4b80",
+      "sourceName": "Phở tái",
+      "baseDishId": "0da7d12b-4e83-517b-9c26-b192e6d63fe9",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_e24fc69e534f2dd5707e",
+      "sourceName": "Phở tái bò viên",
+      "baseDishId": "0da7d12b-4e83-517b-9c26-b192e6d63fe9",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_a695b62dc96049efae07",
+      "sourceName": "Phở tái bắp",
+      "baseDishId": "0da7d12b-4e83-517b-9c26-b192e6d63fe9",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_0dc5fb98c2fec8649beb",
+      "sourceName": "Phở tái gân",
+      "baseDishId": "0da7d12b-4e83-517b-9c26-b192e6d63fe9",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_ddb80c6ef2f2de745843",
+      "sourceName": "Phở tái gầu",
+      "baseDishId": "0da7d12b-4e83-517b-9c26-b192e6d63fe9",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_0fde62ace0ec1c917ce3",
+      "sourceName": "Phở tái lăn",
+      "baseDishId": "0da7d12b-4e83-517b-9c26-b192e6d63fe9",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_60f58b594900b3df1a0d",
+      "sourceName": "Phở tái nạm",
+      "baseDishId": "0da7d12b-4e83-517b-9c26-b192e6d63fe9",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_1b0387a9ffb5dd9b0b81",
+      "sourceName": "Salad bò",
+      "baseDishId": "26448eef-8a0a-5934-bc0a-8936b205b389",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_571af392ae3742971c99",
+      "sourceName": "Salad trứng",
+      "baseDishId": "26448eef-8a0a-5934-bc0a-8936b205b389",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_775b37467263b0fb1a51",
+      "sourceName": "Salad ức gà sous vide",
+      "baseDishId": "26448eef-8a0a-5934-bc0a-8936b205b389",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_dc49a26fe717591dff07",
+      "sourceName": "Xôi a xíu",
+      "baseDishId": "1fdae49f-b6da-5574-82b6-4b7fc1cf09cd",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_6f7e93f1372b5d1cca92",
+      "sourceName": "Xôi chả",
+      "baseDishId": "1fdae49f-b6da-5574-82b6-4b7fc1cf09cd",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_90146e77857fd9547758",
+      "sourceName": "Xôi chả lụa",
+      "baseDishId": "1fdae49f-b6da-5574-82b6-4b7fc1cf09cd",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_3bf6845b46977e018083",
+      "sourceName": "Xôi heo quay",
+      "baseDishId": "1fdae49f-b6da-5574-82b6-4b7fc1cf09cd",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_a10642a3b8b5006ccdf1",
+      "sourceName": "Xôi thịt nướng",
+      "baseDishId": "1fdae49f-b6da-5574-82b6-4b7fc1cf09cd",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_9ce2e1139a5f2e6506f3",
+      "sourceName": "Xôi trứng",
+      "baseDishId": "1fdae49f-b6da-5574-82b6-4b7fc1cf09cd",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_e1bf57667cea4d5bac72",
+      "sourceName": "Xôi xá xíu",
+      "baseDishId": "1fdae49f-b6da-5574-82b6-4b7fc1cf09cd",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    },
+    {
+      "sourceDishId": "dish_e12223ea3df4bb83af3f",
+      "sourceName": "Xôi xíu mại",
+      "baseDishId": "1fdae49f-b6da-5574-82b6-4b7fc1cf09cd",
+      "status": "mapped",
+      "reason": "owner_confirmed_base_group"
+    }
+  ]
+}

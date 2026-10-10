@@ -31,6 +31,10 @@ Mã task hiện hành theo roadmap-v2: GM-01..38, dependency phải có số nh�
 - Catalogue cuisine/category/nhiệt độ/vị phải có offering quán–món trong coverage và lịch quán/lịch món phù hợp trước tạo pool; source/freshness/unknown/overnight theo FOOD_DATA_SPEC. GPS chỉ gợi điểm ăn công cộng, không tự share GPS host.
 - OCR/AI/weather/mood/fairness qua nhiều bữa là mở rộng, không chặn MVP. Ảnh cần quyền sử dụng; không tuyên bố an toàn dị ứng từ tên món.
 
+## Chuẩn bị dữ liệu GM-03
+
+Đọc [handoff](data-preparation/docs/HANDOFF.md) để biết nguồn/snapshot/giới hạn, [taxonomy](data-preparation/docs/TAXONOMY.md) để biết giá trị chuẩn và cách gộp món. Notebook/config/snapshot trong `data-preparation/` là draft owner yêu cầu; không mở khóa GM-28, không dùng làm seed đã review. Giữ nguyên pilot/cache; mặc định offline, không gọi lại AI.
+
 ## Bàn giao
 
 Đầu ra theo docs/project/TASK_OUTPUT_REQUIREMENTS.md và TASK_OUTPUT_CHECKLIST.md: UI mở Expo thấy/tương tác các mục task; BE có Postman/curl/runner input-response-assertions thật (nền/contract/domain kiểm đúng stage); Data đủ field/schema/template/fixture/version để BE làm song song. Mỗi task có CHECKS.md + HANDOFF.md; API task có request suite supabase/tests/http/GM-XX.http. Not run/Fail của AC bắt buộc chặn Done; placeholder/docs CI không thay output thật. Shell Expo Go không bị native module crash; tính năng không hỗ trợ Expo Go cần development/native build evidence riêng. Plan cấu trúc đã được chủ dự án xác nhận tại docs/project/FOUNDATION_IMPLEMENTATION_PLAN.md, không thay approval baseline/package.

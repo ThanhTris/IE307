@@ -41,6 +41,9 @@ archive/
 !tasks/archive/roadmap-v1/*.json
 .work/
 outputs/
+# Local data sources, generated CSVs and executed notebook reports
+data-preparation/datasets/
+.ipynb_checkpoints/
 __pycache__/
 *.pyc
 *.bak

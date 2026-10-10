@@ -1,1 +1,4 @@
 .githooks/* text eol=lf
+
+# CSV snapshots preserve their original CRLF bytes and UTF-8 BOM.
+data-preparation/**/*.csv -text whitespace=cr-at-eol
