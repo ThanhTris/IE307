@@ -1,8 +1,8 @@
-# GM-06 — decision-v2 engine
+# GM-15 — decision-v2 engine (legacy GM-06)
 
 Engine TypeScript thuần, draft theo yêu cầu owner; reviewer Trung còn Pending.
 Policy `decision-v2`, **engine contract** `1.0.0` (namespace riêng, không phải food
-contract). Parent GM-03: `42a821c28144c0667839d485edf2b9462d463937`.
+contract). Parent lịch sử GM-03: `42a821c28144c0667839d485edf2b9462d463937`.
 [Patch/test plan](../../../../docs/evidence/roadmap-v1/GM-06/PATCH_TEST_PLAN.md) và
 [handoff/evidence](../../../../docs/evidence/roadmap-v1/GM-06/HANDOFF.md).
 
@@ -87,6 +87,6 @@ Từ repo root với Node 24 có type stripping/node:test:
 node --test mobile/tests/decision.test.mjs
 ```
 
-Phiên này dùng bundled Node v24.19.0. Không cài dependency hoặc tạo package/
-tsconfig/lockfile. Node chỉ bỏ type để chạy: **chưa strict typecheck**, lint GM-02,
-SQL parity hoặc native build. Fixtures mô phỏng; engine còn chờ upstream/reviewer.
+Bản bổ sung review: Node24.15.0,104 domain tests; strict typecheck/lint GM-02 đã chạy riêng bằng dependencies đã khóa. Package/config/lockfile không đổi. SQL parity/seeded winner/persisted retry chưa kiểm; upstream/reviewer Pending.
+[CHECKS v2](../../../../docs/evidence/roadmap-v2/GM-15/CHECKS.md) và [mapping/boundary proposal](../../../../docs/evidence/roadmap-v2/GM-15/CONTRACT_MAPPING.md).
+CI Decision domain chạy Node suite riêng; từ root chạy node mobile/scripts/check-decision.mjs --report /tmp/decision-actual.json để xuất94 checks mô phỏng, không live votes.

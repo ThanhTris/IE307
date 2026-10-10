@@ -1,0 +1,192 @@
+{
+  "fixtureOnly": true,
+  "policyVersion": "decision-v2",
+  "engineContractVersion": "1.0.0",
+  "scope": "TS evaluator vectors for future SQL adapter. SQL parity not executed; candidateIds are internal, not persisted winners.",
+  "directSuites": [
+    {
+      "path": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "caseIds": [
+        "unanimous",
+        "multiple-unanimous",
+        "unanimous-over-acceptable",
+        "single-fallback",
+        "fallback-veto",
+        "empty-intersection",
+        "missing-member",
+        "missing-dish",
+        "entire-dish-missing",
+        "unset-round1",
+        "veto-with-missing",
+        "empty-matrix",
+        "single-confirmed",
+        "round2-not-submitted",
+        "round2-missing-member",
+        "unset-round2",
+        "all-removed",
+        "remove-with-missing",
+        "tie",
+        "missing-round2-dish",
+        "removed-tie-member",
+        "even-majority",
+        "even-half",
+        "odd-majority",
+        "odd-minority",
+        "all-ok",
+        "score-spec-example",
+        "removed-high-score",
+        "variant-choice-ids",
+        "wrong-policy",
+        "third-round",
+        "duplicate-roster",
+        "duplicate-pool",
+        "blank-id",
+        "empty-roster",
+        "empty-pool",
+        "null-round1",
+        "array-matrix",
+        "null-input",
+        "missing-round",
+        "missing-round1",
+        "unknown-member",
+        "unknown-dish",
+        "invalid-vote",
+        "null-vote",
+        "null-ballot",
+        "unexpected-round3",
+        "round2-in-round1",
+        "round2-null",
+        "round2-invalid-vote",
+        "round2-vetoed-dish",
+        "round2-after-unanimous",
+        "round2-after-empty"
+      ]
+    },
+    {
+      "path": "tests/fixtures/decision-v2/roster-cases.json",
+      "projection": "full",
+      "caseIds": [
+        "roster-2-unanimous",
+        "roster-2-unset",
+        "roster-2-tie",
+        "roster-2-all-removed",
+        "roster-3-unanimous",
+        "roster-3-unset",
+        "roster-3-tie",
+        "roster-3-all-removed",
+        "roster-4-unanimous",
+        "roster-4-unset",
+        "roster-4-tie",
+        "roster-4-all-removed",
+        "roster-5-unanimous",
+        "roster-5-unset",
+        "roster-5-tie",
+        "roster-5-all-removed",
+        "roster-6-unanimous",
+        "roster-6-unset",
+        "roster-6-tie",
+        "roster-6-all-removed",
+        "roster-7-unanimous",
+        "roster-7-unset",
+        "roster-7-tie",
+        "roster-7-all-removed",
+        "roster-8-unanimous",
+        "roster-8-unset",
+        "roster-8-tie",
+        "roster-8-all-removed"
+      ]
+    }
+  ],
+  "historical": {
+    "path": "tests/fixtures/decision-cases.json",
+    "projection": "status-and-candidates",
+    "statusMap": {
+      "DECIDED": "DECISION_READY"
+    },
+    "cases": [
+      {
+        "sourceCaseId": "unanimous",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho",
+          "bun"
+        ]
+      },
+      {
+        "sourceCaseId": "fallback",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho",
+          "bun"
+        ]
+      },
+      {
+        "sourceCaseId": "empty",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho",
+          "bun"
+        ]
+      },
+      {
+        "sourceCaseId": "all-removed",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ]
+      },
+      {
+        "sourceCaseId": "tie",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho",
+          "bun"
+        ]
+      },
+      {
+        "sourceCaseId": "incomplete",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ]
+      }
+    ]
+  },
+  "tierHelpers": {
+    "path": "tests/fixtures/consensus-tier-cases.json",
+    "input": [
+      "n",
+      "want",
+      "eligible"
+    ],
+    "output": "expectedTier",
+    "caseIds": [
+      "perfect",
+      "majority",
+      "half",
+      "all-ok",
+      "veto",
+      "odd-majority",
+      "pair-compromise"
+    ]
+  }
+}

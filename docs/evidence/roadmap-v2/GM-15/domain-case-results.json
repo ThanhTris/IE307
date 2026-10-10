@@ -1,0 +1,5390 @@
+{
+  "fixtureOnly": true,
+  "policyVersion": "decision-v2",
+  "engineContractVersion": "1.0.0",
+  "sourceRevision": "89000022a36c10bf0dd0ac888c5784adb4658770",
+  "node": "v24.15.0",
+  "artifactSha256": {
+    "mobile/src/domain/decision/index.ts": "85aff7a5c0d264cfc33777bcbf8382774c4f0d82f881c5b8f710658e7a172f85",
+    "mobile/tests/decision.test.mjs": "9e7bf439906a61c8f47ada21f2a960ced8a363a50cf164cff266953fbf4ee984",
+    "mobile/scripts/check-decision.mjs": "c52d2b7ce1b8130d737e7c1868eecfc664372cb121ee83569b3ae716378d8cf1",
+    "tests/fixtures/decision-cases.json": "4c0919c6933afc8f6a3e2c50a7c2b920f67d20dba3df338fad808bf02ad3dfb4",
+    "tests/fixtures/consensus-tier-cases.json": "65baa04b920e2d047c2ad3098fe6660d782ce36fe55259f2a88ae91b0f0063cf",
+    "tests/fixtures/decision-v2/cases.json": "6d2fa8cc89d18c32ccda5bb6c6a5805bd6d89d303d224d1a89019f8208b3dd30",
+    "tests/fixtures/decision-v2/roster-cases.json": "431e103588074d9033322c6056ea726615ab59fdc08883904fa0b33b417412f5",
+    "tests/fixtures/decision-v2/parity-map.json": "e7ecb328eb065edfd2d911b73ed1301fa32c22780dc64dd93aa409777709a9b6",
+    ".github/workflows/decision.yml": "3f474110f3c52c587e42befae2e00488c09cfdcefa60410387b5b039a20e44f5"
+  },
+  "summary": {
+    "evaluations": 87,
+    "tierChecks": 7,
+    "total": 94,
+    "passed": 94,
+    "failed": 0
+  },
+  "boundary": "Candidate-only synthetic domain vectors; no SQL, winner selection, RPC or persisted retry assertions.",
+  "cases": [
+    {
+      "id": "unanimous",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "WANT"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "multiple-unanimous",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT",
+            "bun": "WANT"
+          },
+          "b": {
+            "pho": "WANT",
+            "bun": "WANT"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "bun",
+          "pho"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "bun",
+          "pho"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "unanimous-over-acceptable",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT",
+            "bun": "OK"
+          },
+          "b": {
+            "pho": "WANT",
+            "bun": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "single-fallback",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "ROUND_2",
+        "candidateIds": [
+          "pho"
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "ROUND_2",
+        "candidateIds": [
+          "pho"
+        ]
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "fallback-veto",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT",
+            "bun": "NO"
+          },
+          "b": {
+            "pho": "OK",
+            "bun": "WANT"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "ROUND_2",
+        "candidateIds": [
+          "pho"
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "ROUND_2",
+        "candidateIds": [
+          "pho"
+        ]
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "empty-intersection",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "NO"
+          },
+          "b": {
+            "pho": "WANT"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "NO_CONSENSUS",
+        "candidateIds": [],
+        "reasonCode": "EMPTY_INTERSECTION",
+        "matchTier": "NO_CONSENSUS"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "NO_CONSENSUS",
+        "candidateIds": [],
+        "reasonCode": "EMPTY_INTERSECTION",
+        "matchTier": "NO_CONSENSUS"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "missing-member",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "missing-dish",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT",
+            "bun": "OK"
+          },
+          "b": {
+            "pho": "WANT"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "entire-dish-missing",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "WANT"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "unset-round1",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "UNSET"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "veto-with-missing",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "empty-matrix",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {}
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "single-confirmed",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "KEEP"
+          },
+          "b": {
+            "pho": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "round2-not-submitted",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 2,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 2,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "round2-missing-member",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 2,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 2,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "unset-round2",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "KEEP"
+          },
+          "b": {
+            "pho": "UNSET"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 2,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 2,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "all-removed",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "KEEP"
+          },
+          "b": {
+            "pho": "REMOVE"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "NO_CONSENSUS",
+        "candidateIds": [],
+        "reasonCode": "ALL_REMOVED",
+        "matchTier": "NO_CONSENSUS"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "NO_CONSENSUS",
+        "candidateIds": [],
+        "reasonCode": "ALL_REMOVED",
+        "matchTier": "NO_CONSENSUS"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "remove-with-missing",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "REMOVE"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 2,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 2,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "tie",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT",
+            "bun": "OK"
+          },
+          "b": {
+            "pho": "OK",
+            "bun": "WANT"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "KEEP",
+            "bun": "KEEP"
+          },
+          "b": {
+            "pho": "KEEP",
+            "bun": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "bun",
+          "pho"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "bun",
+          "pho"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "missing-round2-dish",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT",
+            "bun": "OK"
+          },
+          "b": {
+            "pho": "OK",
+            "bun": "WANT"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "KEEP",
+            "bun": "KEEP"
+          },
+          "b": {
+            "pho": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 2,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 2,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "removed-tie-member",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT",
+            "bun": "OK"
+          },
+          "b": {
+            "pho": "OK",
+            "bun": "WANT"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "KEEP",
+            "bun": "REMOVE"
+          },
+          "b": {
+            "pho": "KEEP",
+            "bun": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "even-majority",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "u0",
+          "u1",
+          "u2",
+          "u3"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "u0": {
+            "pho": "WANT"
+          },
+          "u1": {
+            "pho": "WANT"
+          },
+          "u2": {
+            "pho": "WANT"
+          },
+          "u3": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "u0": {
+            "pho": "KEEP"
+          },
+          "u1": {
+            "pho": "KEEP"
+          },
+          "u2": {
+            "pho": "KEEP"
+          },
+          "u3": {
+            "pho": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "CONSENSUS"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "CONSENSUS"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "even-half",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "u0",
+          "u1",
+          "u2",
+          "u3"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "u0": {
+            "pho": "WANT"
+          },
+          "u1": {
+            "pho": "WANT"
+          },
+          "u2": {
+            "pho": "OK"
+          },
+          "u3": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "u0": {
+            "pho": "KEEP"
+          },
+          "u1": {
+            "pho": "KEEP"
+          },
+          "u2": {
+            "pho": "KEEP"
+          },
+          "u3": {
+            "pho": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "odd-majority",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "u0",
+          "u1",
+          "u2"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "u0": {
+            "pho": "WANT"
+          },
+          "u1": {
+            "pho": "WANT"
+          },
+          "u2": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "u0": {
+            "pho": "KEEP"
+          },
+          "u1": {
+            "pho": "KEEP"
+          },
+          "u2": {
+            "pho": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "CONSENSUS"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "CONSENSUS"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "odd-minority",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "u0",
+          "u1",
+          "u2"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "u0": {
+            "pho": "WANT"
+          },
+          "u1": {
+            "pho": "OK"
+          },
+          "u2": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "u0": {
+            "pho": "KEEP"
+          },
+          "u1": {
+            "pho": "KEEP"
+          },
+          "u2": {
+            "pho": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "all-ok",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "u0",
+          "u1"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "u0": {
+            "pho": "OK"
+          },
+          "u1": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "u0": {
+            "pho": "KEEP"
+          },
+          "u1": {
+            "pho": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "score-spec-example",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ],
+        "pool": [
+          "pho",
+          "com",
+          "lau"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT",
+            "com": "WANT",
+            "lau": "WANT"
+          },
+          "b": {
+            "pho": "WANT",
+            "com": "WANT",
+            "lau": "WANT"
+          },
+          "c": {
+            "pho": "OK",
+            "com": "WANT",
+            "lau": "WANT"
+          },
+          "d": {
+            "pho": "OK",
+            "com": "OK",
+            "lau": "NO"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "KEEP",
+            "com": "KEEP"
+          },
+          "b": {
+            "pho": "KEEP",
+            "com": "KEEP"
+          },
+          "c": {
+            "pho": "KEEP",
+            "com": "KEEP"
+          },
+          "d": {
+            "pho": "KEEP",
+            "com": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "com"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "CONSENSUS"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "com"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "CONSENSUS"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "removed-high-score",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ],
+        "pool": [
+          "pho",
+          "com",
+          "lau"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT",
+            "com": "WANT",
+            "lau": "WANT"
+          },
+          "b": {
+            "pho": "WANT",
+            "com": "WANT",
+            "lau": "WANT"
+          },
+          "c": {
+            "pho": "OK",
+            "com": "WANT",
+            "lau": "WANT"
+          },
+          "d": {
+            "pho": "OK",
+            "com": "OK",
+            "lau": "NO"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "KEEP",
+            "com": "REMOVE"
+          },
+          "b": {
+            "pho": "KEEP",
+            "com": "KEEP"
+          },
+          "c": {
+            "pho": "KEEP",
+            "com": "KEEP"
+          },
+          "d": {
+            "pho": "KEEP",
+            "com": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "variant-choice-ids",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho:bo",
+          "pho:ga"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho:bo": "WANT",
+            "pho:ga": "OK"
+          },
+          "b": {
+            "pho:bo": "OK",
+            "pho:ga": "WANT"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "ROUND_2",
+        "candidateIds": [
+          "pho:bo",
+          "pho:ga"
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "ROUND_2",
+        "candidateIds": [
+          "pho:bo",
+          "pho:ga"
+        ]
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "wrong-policy",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v1",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/policyVersion"
+          }
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/policyVersion"
+          }
+        ]
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "third-round",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 3,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round"
+          }
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round"
+          }
+        ]
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "duplicate-roster",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "a"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/roster"
+          }
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/roster"
+          }
+        ]
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "duplicate-pool",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho",
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/pool"
+          }
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/pool"
+          }
+        ]
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "blank-id",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          " "
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/pool"
+          }
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/pool"
+          }
+        ]
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "empty-roster",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/roster"
+          }
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/roster"
+          }
+        ]
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "empty-pool",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/pool"
+          }
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/pool"
+          }
+        ]
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "null-round1",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": null
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1"
+          }
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1"
+          }
+        ]
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "array-matrix",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": []
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1"
+          }
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1"
+          }
+        ]
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "null-input",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": null,
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": ""
+          }
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": ""
+          }
+        ]
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "missing-round",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round"
+          }
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round"
+          }
+        ]
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "missing-round1",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1"
+          }
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1"
+          }
+        ]
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "unknown-member",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          },
+          "c": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "NOT_MEMBER",
+            "path": "/round1/c"
+          }
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "NOT_MEMBER",
+            "path": "/round1/c"
+          }
+        ]
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "unknown-dish",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT",
+            "bun": "OK"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_DISH",
+            "path": "/round1/a/bun"
+          }
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_DISH",
+            "path": "/round1/a/bun"
+          }
+        ]
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "invalid-vote",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "LIKE"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1/a/pho"
+          }
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1/a/pho"
+          }
+        ]
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "null-vote",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": null
+          },
+          "b": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1/a/pho"
+          }
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1/a/pho"
+          }
+        ]
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "null-ballot",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": null,
+          "b": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1/a"
+          }
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1/a"
+          }
+        ]
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "unexpected-round3",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round3": {}
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round3"
+          }
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round3"
+          }
+        ]
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "round2-in-round1",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round2": {}
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round2"
+          }
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round2"
+          }
+        ]
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "round2-null",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round2": null
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round2"
+          }
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round2"
+          }
+        ]
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "round2-invalid-vote",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "OK"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round2/a/pho"
+          }
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round2/a/pho"
+          }
+        ]
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "round2-vetoed-dish",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT",
+            "bun": "NO"
+          },
+          "b": {
+            "pho": "OK",
+            "bun": "WANT"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "KEEP",
+            "bun": "KEEP"
+          },
+          "b": {
+            "pho": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_DISH",
+            "path": "/round2/a/bun"
+          }
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_DISH",
+            "path": "/round2/a/bun"
+          }
+        ]
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "round2-after-unanimous",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "WANT"
+          }
+        },
+        "round2": {}
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round"
+          }
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round"
+          }
+        ]
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "round2-after-empty",
+      "source": "tests/fixtures/decision-v2/cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "NO"
+          },
+          "b": {
+            "pho": "WANT"
+          }
+        },
+        "round2": {}
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round"
+          }
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round"
+          }
+        ]
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "roster-2-unanimous",
+      "source": "tests/fixtures/decision-v2/roster-cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "roster-2-unset",
+      "source": "tests/fixtures/decision-v2/roster-cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "UNSET",
+            "choice-b": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "roster-2-tie",
+      "source": "tests/fixtures/decision-v2/roster-cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "roster-2-all-removed",
+      "source": "tests/fixtures/decision-v2/roster-cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "REMOVE",
+            "choice-b": "REMOVE"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "NO_CONSENSUS",
+        "candidateIds": [],
+        "reasonCode": "ALL_REMOVED",
+        "matchTier": "NO_CONSENSUS"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "NO_CONSENSUS",
+        "candidateIds": [],
+        "reasonCode": "ALL_REMOVED",
+        "matchTier": "NO_CONSENSUS"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "roster-3-unanimous",
+      "source": "tests/fixtures/decision-v2/roster-cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "roster-3-unset",
+      "source": "tests/fixtures/decision-v2/roster-cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "UNSET",
+            "choice-b": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "roster-3-tie",
+      "source": "tests/fixtures/decision-v2/roster-cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "roster-3-all-removed",
+      "source": "tests/fixtures/decision-v2/roster-cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "REMOVE",
+            "choice-b": "REMOVE"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "NO_CONSENSUS",
+        "candidateIds": [],
+        "reasonCode": "ALL_REMOVED",
+        "matchTier": "NO_CONSENSUS"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "NO_CONSENSUS",
+        "candidateIds": [],
+        "reasonCode": "ALL_REMOVED",
+        "matchTier": "NO_CONSENSUS"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "roster-4-unanimous",
+      "source": "tests/fixtures/decision-v2/roster-cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "roster-4-unset",
+      "source": "tests/fixtures/decision-v2/roster-cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "UNSET",
+            "choice-b": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "roster-4-tie",
+      "source": "tests/fixtures/decision-v2/roster-cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "roster-4-all-removed",
+      "source": "tests/fixtures/decision-v2/roster-cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "REMOVE",
+            "choice-b": "REMOVE"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "NO_CONSENSUS",
+        "candidateIds": [],
+        "reasonCode": "ALL_REMOVED",
+        "matchTier": "NO_CONSENSUS"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "NO_CONSENSUS",
+        "candidateIds": [],
+        "reasonCode": "ALL_REMOVED",
+        "matchTier": "NO_CONSENSUS"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "roster-5-unanimous",
+      "source": "tests/fixtures/decision-v2/roster-cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "roster-5-unset",
+      "source": "tests/fixtures/decision-v2/roster-cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "UNSET",
+            "choice-b": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "roster-5-tie",
+      "source": "tests/fixtures/decision-v2/roster-cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "roster-5-all-removed",
+      "source": "tests/fixtures/decision-v2/roster-cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "REMOVE",
+            "choice-b": "REMOVE"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "NO_CONSENSUS",
+        "candidateIds": [],
+        "reasonCode": "ALL_REMOVED",
+        "matchTier": "NO_CONSENSUS"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "NO_CONSENSUS",
+        "candidateIds": [],
+        "reasonCode": "ALL_REMOVED",
+        "matchTier": "NO_CONSENSUS"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "roster-6-unanimous",
+      "source": "tests/fixtures/decision-v2/roster-cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m6": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "roster-6-unset",
+      "source": "tests/fixtures/decision-v2/roster-cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m6": {
+            "choice-a": "UNSET",
+            "choice-b": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "roster-6-tie",
+      "source": "tests/fixtures/decision-v2/roster-cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m6": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m6": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "roster-6-all-removed",
+      "source": "tests/fixtures/decision-v2/roster-cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m6": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m6": {
+            "choice-a": "REMOVE",
+            "choice-b": "REMOVE"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "NO_CONSENSUS",
+        "candidateIds": [],
+        "reasonCode": "ALL_REMOVED",
+        "matchTier": "NO_CONSENSUS"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "NO_CONSENSUS",
+        "candidateIds": [],
+        "reasonCode": "ALL_REMOVED",
+        "matchTier": "NO_CONSENSUS"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "roster-7-unanimous",
+      "source": "tests/fixtures/decision-v2/roster-cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m6": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m7": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "roster-7-unset",
+      "source": "tests/fixtures/decision-v2/roster-cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m6": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m7": {
+            "choice-a": "UNSET",
+            "choice-b": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "roster-7-tie",
+      "source": "tests/fixtures/decision-v2/roster-cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m6": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m7": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m6": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m7": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "roster-7-all-removed",
+      "source": "tests/fixtures/decision-v2/roster-cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m6": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m7": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m6": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m7": {
+            "choice-a": "REMOVE",
+            "choice-b": "REMOVE"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "NO_CONSENSUS",
+        "candidateIds": [],
+        "reasonCode": "ALL_REMOVED",
+        "matchTier": "NO_CONSENSUS"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "NO_CONSENSUS",
+        "candidateIds": [],
+        "reasonCode": "ALL_REMOVED",
+        "matchTier": "NO_CONSENSUS"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "roster-8-unanimous",
+      "source": "tests/fixtures/decision-v2/roster-cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7",
+          "m8"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m6": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m7": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m8": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "roster-8-unset",
+      "source": "tests/fixtures/decision-v2/roster-cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7",
+          "m8"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m6": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m7": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m8": {
+            "choice-a": "UNSET",
+            "choice-b": "NO"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "roster-8-tie",
+      "source": "tests/fixtures/decision-v2/roster-cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7",
+          "m8"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m6": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m7": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m8": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m6": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m7": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m8": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "roster-8-all-removed",
+      "source": "tests/fixtures/decision-v2/roster-cases.json",
+      "projection": "full",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7",
+          "m8"
+        ],
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m6": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m7": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m8": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m6": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m7": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m8": {
+            "choice-a": "REMOVE",
+            "choice-b": "REMOVE"
+          }
+        }
+      },
+      "expected": {
+        "policyVersion": "decision-v2",
+        "status": "NO_CONSENSUS",
+        "candidateIds": [],
+        "reasonCode": "ALL_REMOVED",
+        "matchTier": "NO_CONSENSUS"
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "NO_CONSENSUS",
+        "candidateIds": [],
+        "reasonCode": "ALL_REMOVED",
+        "matchTier": "NO_CONSENSUS"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "historical-unanimous",
+      "source": "tests/fixtures/decision-cases.json",
+      "projection": "status-and-candidates",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT",
+            "bun": "NO"
+          },
+          "b": {
+            "pho": "WANT",
+            "bun": "OK"
+          }
+        }
+      },
+      "expected": {
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "pho"
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "matchTier": "PERFECT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "historical-fallback",
+      "source": "tests/fixtures/decision-cases.json",
+      "projection": "status-and-candidates",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT",
+            "bun": "NO"
+          },
+          "b": {
+            "pho": "OK",
+            "bun": "WANT"
+          }
+        }
+      },
+      "expected": {
+        "status": "ROUND_2",
+        "candidateIds": [
+          "pho"
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "ROUND_2",
+        "candidateIds": [
+          "pho"
+        ]
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "historical-empty",
+      "source": "tests/fixtures/decision-cases.json",
+      "projection": "status-and-candidates",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT",
+            "bun": "NO"
+          },
+          "b": {
+            "pho": "NO",
+            "bun": "OK"
+          }
+        }
+      },
+      "expected": {
+        "status": "NO_CONSENSUS",
+        "candidateIds": []
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "NO_CONSENSUS",
+        "candidateIds": [],
+        "reasonCode": "EMPTY_INTERSECTION",
+        "matchTier": "NO_CONSENSUS"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "historical-all-removed",
+      "source": "tests/fixtures/decision-cases.json",
+      "projection": "status-and-candidates",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "KEEP"
+          },
+          "b": {
+            "pho": "REMOVE"
+          }
+        }
+      },
+      "expected": {
+        "status": "NO_CONSENSUS",
+        "candidateIds": []
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "NO_CONSENSUS",
+        "candidateIds": [],
+        "reasonCode": "ALL_REMOVED",
+        "matchTier": "NO_CONSENSUS"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "historical-tie",
+      "source": "tests/fixtures/decision-cases.json",
+      "projection": "status-and-candidates",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 2,
+        "round1": {
+          "a": {
+            "pho": "WANT",
+            "bun": "OK"
+          },
+          "b": {
+            "pho": "OK",
+            "bun": "WANT"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "KEEP",
+            "bun": "KEEP"
+          },
+          "b": {
+            "pho": "KEEP",
+            "bun": "KEEP"
+          }
+        }
+      },
+      "expected": {
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "bun",
+          "pho"
+        ]
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "DECISION_READY",
+        "candidateIds": [
+          "bun",
+          "pho"
+        ],
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "matchTier": "COMPROMISE"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    },
+    {
+      "id": "historical-incomplete",
+      "source": "tests/fixtures/decision-cases.json",
+      "projection": "status-and-candidates",
+      "input": {
+        "policyVersion": "decision-v2",
+        "roster": [
+          "a",
+          "b"
+        ],
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {}
+        }
+      },
+      "expected": {
+        "status": "WAITING",
+        "candidateIds": []
+      },
+      "actual": {
+        "policyVersion": "decision-v2",
+        "status": "WAITING",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "reasonCode": "INCOMPLETE_BALLOT"
+      },
+      "assertions": {
+        "expectedMatchesActual": true,
+        "repeat": true,
+        "permutation": true,
+        "inputUnchanged": true
+      },
+      "passed": true
+    }
+  ],
+  "helperCases": [
+    {
+      "id": "perfect",
+      "source": "tests/fixtures/consensus-tier-cases.json",
+      "input": {
+        "n": 4,
+        "want": 4,
+        "eligible": true
+      },
+      "expected": "PERFECT",
+      "actual": "PERFECT",
+      "passed": true
+    },
+    {
+      "id": "majority",
+      "source": "tests/fixtures/consensus-tier-cases.json",
+      "input": {
+        "n": 4,
+        "want": 3,
+        "eligible": true
+      },
+      "expected": "CONSENSUS",
+      "actual": "CONSENSUS",
+      "passed": true
+    },
+    {
+      "id": "half",
+      "source": "tests/fixtures/consensus-tier-cases.json",
+      "input": {
+        "n": 4,
+        "want": 2,
+        "eligible": true
+      },
+      "expected": "COMPROMISE",
+      "actual": "COMPROMISE",
+      "passed": true
+    },
+    {
+      "id": "all-ok",
+      "source": "tests/fixtures/consensus-tier-cases.json",
+      "input": {
+        "n": 4,
+        "want": 0,
+        "eligible": true
+      },
+      "expected": "COMPROMISE",
+      "actual": "COMPROMISE",
+      "passed": true
+    },
+    {
+      "id": "veto",
+      "source": "tests/fixtures/consensus-tier-cases.json",
+      "input": {
+        "n": 4,
+        "want": 3,
+        "eligible": false
+      },
+      "expected": "NO_CONSENSUS",
+      "actual": "NO_CONSENSUS",
+      "passed": true
+    },
+    {
+      "id": "odd-majority",
+      "source": "tests/fixtures/consensus-tier-cases.json",
+      "input": {
+        "n": 3,
+        "want": 2,
+        "eligible": true
+      },
+      "expected": "CONSENSUS",
+      "actual": "CONSENSUS",
+      "passed": true
+    },
+    {
+      "id": "pair-compromise",
+      "source": "tests/fixtures/consensus-tier-cases.json",
+      "input": {
+        "n": 2,
+        "want": 1,
+        "eligible": true
+      },
+      "expected": "COMPROMISE",
+      "actual": "COMPROMISE",
+      "passed": true
+    }
+  ]
+}
