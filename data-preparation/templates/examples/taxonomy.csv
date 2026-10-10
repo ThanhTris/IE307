@@ -1,0 +1,3 @@
+﻿id,type,code,label,description,status,origin,version,reviewStatus,sourceRef,fieldSources,checkedAt,validUntil,enteredBy,reviewedBy
+15584bca-1b90-5565-9aeb-5b69a075fee1,cuisine,vi,Việt,"Fixture tổng hợp, không phải dữ liệu thật",draft,,1,draft,377d7e61-dbca-5192-9bfc-9ab3efe8436d,{},2026-10-09T00:00:00Z,,fixture-author,
+9654d06c-8441-50a3-bf67-87b9da2ec6c3,category,family:rice,Cơm,Họ món,draft,,1,draft,377d7e61-dbca-5192-9bfc-9ab3efe8436d,{},2026-10-09T00:00:00Z,,fixture-author,

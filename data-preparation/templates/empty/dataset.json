@@ -1,0 +1,18 @@
+{
+  "contractVersion": "1.0.0",
+  "datasetVersion": "0.1.0",
+  "fixtureOnly": true,
+  "entities": {
+    "taxonomy": [],
+    "dishes": [],
+    "venues": [],
+    "venueDishes": [],
+    "weeklySchedules": [],
+    "dateExceptions": [],
+    "availabilityOverrides": [],
+    "coverageAreas": [],
+    "publicAnchors": [],
+    "dataSources": [],
+    "datasetVersions": []
+  }
+}

@@ -1,0 +1,4689 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/anyfood/food-v1.schema.json",
+  "title": "GM-04 draft food field contract",
+  "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+  "$defs": {
+    "taxonomy": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "ID ổn định UUIDv5 từ registry key bất biến",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "primary key"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "cuisine",
+            "origin",
+            "category"
+          ],
+          "description": "Loại taxonomy; temperature/flavor/meal là enum trong codebook",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "code": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Mã trong taxonomy_v1.json; category có family:/preparation:",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Tên hiển thị",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Giải thích ngắn, không suy nguồn gốc từ nơi bán",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "verified",
+            "published"
+          ],
+          "description": "Trạng thái taxonomy",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "origin": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "north",
+                "central",
+                "south",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Nguồn gốc Việt, không phải nơi bán",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Phiên bản bản ghi, tăng khi nội dung đổi",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "reviewStatus": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "verified",
+            "published"
+          ],
+          "description": "Trạng thái kiểm dữ liệu; khác trạng thái đang bán",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "sourceRef": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Nguồn chính; bổ sung fieldSources cho từng nhóm thông tin",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": "food.dataSources",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "fieldSources": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "description": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "taxonomy": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "image": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "menu": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "price": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "coordinates": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "address": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "hours": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "availability": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "coverage": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Map nhóm thông tin → sourceRef; không dùng để suy quyền ảnh",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "checkedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Lần kiểm dữ liệu có bằng chứng, UTC",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "validUntil": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Hạn hiệu lực đã được chốt; draft thiếu để null",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "enteredBy": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Người nhập hoặc mã agent có thể truy vết",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "reviewedBy": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Reviewer độc lập; draft chưa review để null",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "code",
+        "label",
+        "description",
+        "status",
+        "origin",
+        "version",
+        "reviewStatus",
+        "sourceRef",
+        "fieldSources",
+        "checkedAt",
+        "validUntil",
+        "enteredBy",
+        "reviewedBy"
+      ],
+      "additionalProperties": false,
+      "x-unique": [
+        [
+          "id"
+        ],
+        [
+          "type",
+          "code"
+        ]
+      ]
+    },
+    "dishes": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "ID ổn định UUIDv5 từ registry key bất biến",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "primary key"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Tên món gốc",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Mô tả có nguồn",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "uniqueItems": true,
+          "description": "Tên tương đương; không tự đưa topping vào alias",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "cuisineIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "uniqueItems": true,
+          "description": "Cuisine đa nhãn; [] + classificationStatus unknown khi chưa biết",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": "food.taxonomy",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "categoryIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "uniqueItems": true,
+          "description": "Họ món và cách chế biến đa nhãn",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": "food.taxonomy",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "mealSlots": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "breakfast",
+              "lunch",
+              "dinner",
+              "snack"
+            ]
+          },
+          "uniqueItems": true,
+          "description": "Buổi ăn; [] khi chưa xác minh",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "timeHints": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "late_night"
+            ]
+          },
+          "uniqueItems": true,
+          "description": "Thông tin bổ sung, không thay lịch",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "classificationStatus": {
+          "type": "string",
+          "enum": [
+            "unknown",
+            "needs_review",
+            "reviewed"
+          ],
+          "description": "Trạng thái xác minh thuộc tính",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "origin": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "north",
+                "central",
+                "south",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Nguồn gốc, tách nơi bán",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "ingredientTags": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "uniqueItems": true
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Thành phần có nguồn, không bảo đảm dị ứng",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "temperature": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "hot",
+                "warm",
+                "cold",
+                "ambient",
+                "unknown"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Nhiệt độ phục vụ",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "flavor": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "spicy": {
+                  "type": "object",
+                  "properties": {
+                    "present": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "intensity": {
+                      "type": "string",
+                      "enum": [
+                        "none",
+                        "low",
+                        "medium",
+                        "high",
+                        "unknown"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "present",
+                    "intensity"
+                  ],
+                  "additionalProperties": false
+                },
+                "salty": {
+                  "type": "object",
+                  "properties": {
+                    "present": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "intensity": {
+                      "type": "string",
+                      "enum": [
+                        "none",
+                        "low",
+                        "medium",
+                        "high",
+                        "unknown"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "present",
+                    "intensity"
+                  ],
+                  "additionalProperties": false
+                },
+                "sweet": {
+                  "type": "object",
+                  "properties": {
+                    "present": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "intensity": {
+                      "type": "string",
+                      "enum": [
+                        "none",
+                        "low",
+                        "medium",
+                        "high",
+                        "unknown"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "present",
+                    "intensity"
+                  ],
+                  "additionalProperties": false
+                },
+                "sour": {
+                  "type": "object",
+                  "properties": {
+                    "present": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "intensity": {
+                      "type": "string",
+                      "enum": [
+                        "none",
+                        "low",
+                        "medium",
+                        "high",
+                        "unknown"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "present",
+                    "intensity"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "spicy",
+                "salty",
+                "sweet",
+                "sour"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "4 vị: present true/false/null + intensity",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "artwork": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "pattern": "^https?://[^\\s]+$"
+                },
+                "sourceRef": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "usageRights": {
+                  "type": "string",
+                  "enum": [
+                    "unknown",
+                    "granted",
+                    "licensed",
+                    "public_domain",
+                    "denied"
+                  ]
+                },
+                "license": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "pattern": "\\S"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "attribution": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "pattern": "\\S"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "url",
+                "sourceRef",
+                "usageRights",
+                "license",
+                "attribution"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Ảnh: url/sourceRef/usageRights/license/attribution",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "sourceDishIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "uniqueItems": true,
+          "description": "ID khảo sát làm cầu nối, không thay canonical UUID",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "verified",
+            "published"
+          ],
+          "description": "Trạng thái món",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Phiên bản bản ghi, tăng khi nội dung đổi",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "reviewStatus": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "verified",
+            "published"
+          ],
+          "description": "Trạng thái kiểm dữ liệu; khác trạng thái đang bán",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "sourceRef": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Nguồn chính; bổ sung fieldSources cho từng nhóm thông tin",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": "food.dataSources",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "fieldSources": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "description": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "taxonomy": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "image": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "menu": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "price": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "coordinates": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "address": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "hours": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "availability": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "coverage": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Map nhóm thông tin → sourceRef; không dùng để suy quyền ảnh",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "checkedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Lần kiểm dữ liệu có bằng chứng, UTC",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "validUntil": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Hạn hiệu lực đã được chốt; draft thiếu để null",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "enteredBy": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Người nhập hoặc mã agent có thể truy vết",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "reviewedBy": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Reviewer độc lập; draft chưa review để null",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "aliases",
+        "cuisineIds",
+        "categoryIds",
+        "mealSlots",
+        "timeHints",
+        "classificationStatus",
+        "origin",
+        "ingredientTags",
+        "temperature",
+        "flavor",
+        "artwork",
+        "sourceDishIds",
+        "status",
+        "version",
+        "reviewStatus",
+        "sourceRef",
+        "fieldSources",
+        "checkedAt",
+        "validUntil",
+        "enteredBy",
+        "reviewedBy"
+      ],
+      "additionalProperties": false,
+      "x-unique": [
+        [
+          "id"
+        ]
+      ]
+    },
+    "venues": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "ID ổn định UUIDv5 từ registry key bất biến",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "primary key"
+        },
+        "branchName": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Một chi nhánh một ID",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Địa chỉ công khai",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "adminAreaId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Mã hành chính từ nguồn; không tự sinh bằng tên",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "lat": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": -90,
+              "maximum": 90
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Latitude quán, độ thập phân",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "lng": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": -180,
+              "maximum": 180
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Longitude quán, độ thập phân",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "timezone": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "IANA timezone",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "IANA",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "active",
+            "closed",
+            "unknown"
+          ],
+          "description": "Trạng thái chi nhánh",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "serviceModes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "dine_in",
+              "takeaway",
+              "delivery"
+            ]
+          },
+          "uniqueItems": true,
+          "description": "Dine-in cần bằng chứng; menu giao hàng không đủ",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Phiên bản bản ghi, tăng khi nội dung đổi",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "reviewStatus": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "verified",
+            "published"
+          ],
+          "description": "Trạng thái kiểm dữ liệu; khác trạng thái đang bán",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "sourceRef": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Nguồn chính; bổ sung fieldSources cho từng nhóm thông tin",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": "food.dataSources",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "fieldSources": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "description": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "taxonomy": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "image": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "menu": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "price": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "coordinates": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "address": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "hours": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "availability": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "coverage": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Map nhóm thông tin → sourceRef; không dùng để suy quyền ảnh",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "checkedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Lần kiểm dữ liệu có bằng chứng, UTC",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "validUntil": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Hạn hiệu lực đã được chốt; draft thiếu để null",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "enteredBy": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Người nhập hoặc mã agent có thể truy vết",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "reviewedBy": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Reviewer độc lập; draft chưa review để null",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "scheduleId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Binding lịch quán riêng; null là chưa biết, không mượn lịch món",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": "food.weeklySchedules.scheduleId",
+          "x-unique": "see entity x-unique; not globally unique"
+        }
+      },
+      "required": [
+        "id",
+        "branchName",
+        "address",
+        "adminAreaId",
+        "lat",
+        "lng",
+        "timezone",
+        "status",
+        "serviceModes",
+        "version",
+        "reviewStatus",
+        "sourceRef",
+        "fieldSources",
+        "checkedAt",
+        "validUntil",
+        "enteredBy",
+        "reviewedBy",
+        "scheduleId"
+      ],
+      "additionalProperties": false,
+      "x-unique": [
+        [
+          "id"
+        ]
+      ]
+    },
+    "venueDishes": {
+      "type": "object",
+      "properties": {
+        "offeringId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "ID ổn định UUIDv5 từ registry key bất biến",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "primary key"
+        },
+        "venueId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "Chi nhánh bán",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": "food.venues",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "dishId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "Món gốc",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": "food.dishes",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "variant": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Tên biến thể/khẩu phần nguồn; null nếu chưa rõ",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "menuName": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Tên nguyên trạng trên menu",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "menuSource": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Nguồn menu",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": "food.dataSources",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "scheduleId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Lịch món, không dùng thay lịch quán",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": "food.weeklySchedules.scheduleId",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "serviceMode": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "dine_in",
+                "takeaway",
+                "delivery"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Kiểu phục vụ được xác minh",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "priceMin": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Giá thấp nhất theo cùng đơn vị",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "priceMax": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Giá cao nhất theo cùng đơn vị",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "portion",
+                "item",
+                "person",
+                "group",
+                "kg",
+                "menu_item_unspecified"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Đơn vị giá nguồn, không tự quy giá/người",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "VND",
+                "USD",
+                "THB",
+                "KRW",
+                "JPY",
+                "CNY",
+                "EUR",
+                "other"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Mã tiền tệ, VND nguồn khảo sát",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "servingSize": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Khẩu phần theo nguồn",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "profileOverrides": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "cuisineIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                  },
+                  "uniqueItems": true
+                },
+                "categoryIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                  },
+                  "uniqueItems": true
+                },
+                "mealSlots": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "breakfast",
+                      "lunch",
+                      "dinner",
+                      "snack"
+                    ]
+                  },
+                  "uniqueItems": true
+                },
+                "timeHints": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "late_night"
+                    ]
+                  },
+                  "uniqueItems": true
+                },
+                "temperature": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "enum": [
+                        "hot",
+                        "warm",
+                        "cold",
+                        "ambient",
+                        "unknown"
+                      ]
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "flavor": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "spicy": {
+                          "type": "object",
+                          "properties": {
+                            "present": {
+                              "type": [
+                                "boolean",
+                                "null"
+                              ]
+                            },
+                            "intensity": {
+                              "type": "string",
+                              "enum": [
+                                "none",
+                                "low",
+                                "medium",
+                                "high",
+                                "unknown"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "present",
+                            "intensity"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "salty": {
+                          "type": "object",
+                          "properties": {
+                            "present": {
+                              "type": [
+                                "boolean",
+                                "null"
+                              ]
+                            },
+                            "intensity": {
+                              "type": "string",
+                              "enum": [
+                                "none",
+                                "low",
+                                "medium",
+                                "high",
+                                "unknown"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "present",
+                            "intensity"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "sweet": {
+                          "type": "object",
+                          "properties": {
+                            "present": {
+                              "type": [
+                                "boolean",
+                                "null"
+                              ]
+                            },
+                            "intensity": {
+                              "type": "string",
+                              "enum": [
+                                "none",
+                                "low",
+                                "medium",
+                                "high",
+                                "unknown"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "present",
+                            "intensity"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "sour": {
+                          "type": "object",
+                          "properties": {
+                            "present": {
+                              "type": [
+                                "boolean",
+                                "null"
+                              ]
+                            },
+                            "intensity": {
+                              "type": "string",
+                              "enum": [
+                                "none",
+                                "low",
+                                "medium",
+                                "high",
+                                "unknown"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "present",
+                            "intensity"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "spicy",
+                        "salty",
+                        "sweet",
+                        "sour"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "origin": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "enum": [
+                        "north",
+                        "central",
+                        "south",
+                        "unknown",
+                        "not_applicable"
+                      ]
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [],
+              "additionalProperties": false,
+              "minProperties": 1
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Đặc tính có nguồn của riêng offering",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "artwork": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "pattern": "^https?://[^\\s]+$"
+                },
+                "sourceRef": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "usageRights": {
+                  "type": "string",
+                  "enum": [
+                    "unknown",
+                    "granted",
+                    "licensed",
+                    "public_domain",
+                    "denied"
+                  ]
+                },
+                "license": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "pattern": "\\S"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "attribution": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "pattern": "\\S"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "url",
+                "sourceRef",
+                "usageRights",
+                "license",
+                "attribution"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Ảnh của offering, quyền riêng",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "verified",
+            "published"
+          ],
+          "description": "Trạng thái offering",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Phiên bản bản ghi, tăng khi nội dung đổi",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "reviewStatus": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "verified",
+            "published"
+          ],
+          "description": "Trạng thái kiểm dữ liệu; khác trạng thái đang bán",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "sourceRef": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Nguồn chính; bổ sung fieldSources cho từng nhóm thông tin",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": "food.dataSources",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "fieldSources": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "description": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "taxonomy": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "image": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "menu": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "price": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "coordinates": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "address": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "hours": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "availability": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "coverage": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Map nhóm thông tin → sourceRef; không dùng để suy quyền ảnh",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "checkedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Lần kiểm dữ liệu có bằng chứng, UTC",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "validUntil": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Hạn hiệu lực đã được chốt; draft thiếu để null",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "enteredBy": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Người nhập hoặc mã agent có thể truy vết",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "reviewedBy": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Reviewer độc lập; draft chưa review để null",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        }
+      },
+      "required": [
+        "offeringId",
+        "venueId",
+        "dishId",
+        "variant",
+        "menuName",
+        "menuSource",
+        "scheduleId",
+        "serviceMode",
+        "priceMin",
+        "priceMax",
+        "unit",
+        "currency",
+        "servingSize",
+        "profileOverrides",
+        "artwork",
+        "status",
+        "version",
+        "reviewStatus",
+        "sourceRef",
+        "fieldSources",
+        "checkedAt",
+        "validUntil",
+        "enteredBy",
+        "reviewedBy"
+      ],
+      "additionalProperties": false,
+      "x-unique": [
+        [
+          "offeringId"
+        ],
+        [
+          "venueId",
+          "dishId",
+          "variant",
+          "serviceMode"
+        ]
+      ]
+    },
+    "weeklySchedules": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "ID ổn định UUIDv5 từ registry key bất biến",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "primary key"
+        },
+        "scheduleId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "ID nhóm lịch; nhiều hàng ca/ngày dùng cùng scheduleId",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "ownerType": {
+          "type": "string",
+          "enum": [
+            "venue",
+            "offering"
+          ],
+          "description": "Chủ lịch",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "ownerId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "ID chủ lịch tương ứng ownerType",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "dayOfWeek": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 7,
+          "description": "ISO weekday 1=Thứ Hai ..7=Chủ Nhật",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "startTime": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Giờ địa phương HH:mm, gồm đầu",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "local HH:mm",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "endTime": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Giờ địa phương HH:mm, loại cuối",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "local HH:mm",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "endDayOffset": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "0 cùng ngày, 1 qua đêm",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "is24Hours": {
+          "type": "boolean",
+          "description": "24h phải nguồn nói rõ; 00:00–23:59 không suy 24h",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "timezone": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "IANA timezone quán",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "IANA",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "open",
+            "closed",
+            "unknown"
+          ],
+          "description": "Closed khác chưa biết",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Phiên bản bản ghi, tăng khi nội dung đổi",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "reviewStatus": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "verified",
+            "published"
+          ],
+          "description": "Trạng thái kiểm dữ liệu; khác trạng thái đang bán",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "sourceRef": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Nguồn chính; bổ sung fieldSources cho từng nhóm thông tin",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": "food.dataSources",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "fieldSources": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "description": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "taxonomy": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "image": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "menu": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "price": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "coordinates": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "address": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "hours": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "availability": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "coverage": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Map nhóm thông tin → sourceRef; không dùng để suy quyền ảnh",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "checkedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Lần kiểm dữ liệu có bằng chứng, UTC",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "validUntil": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Hạn hiệu lực đã được chốt; draft thiếu để null",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "enteredBy": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Người nhập hoặc mã agent có thể truy vết",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "reviewedBy": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Reviewer độc lập; draft chưa review để null",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "lastOrder": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Giờ địa phương nhận món cuối có nguồn; null khi chưa biết",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "local HH:mm",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "lastOrderDayOffset": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "0 ngày bắt đầu, 1 ngày hôm sau; phải cùng null với lastOrder",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        }
+      },
+      "required": [
+        "id",
+        "scheduleId",
+        "ownerType",
+        "ownerId",
+        "dayOfWeek",
+        "startTime",
+        "endTime",
+        "endDayOffset",
+        "is24Hours",
+        "timezone",
+        "status",
+        "version",
+        "reviewStatus",
+        "sourceRef",
+        "fieldSources",
+        "checkedAt",
+        "validUntil",
+        "enteredBy",
+        "reviewedBy",
+        "lastOrder",
+        "lastOrderDayOffset"
+      ],
+      "additionalProperties": false,
+      "x-unique": [
+        [
+          "id"
+        ]
+      ]
+    },
+    "dateExceptions": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "ID ổn định UUIDv5 từ registry key bất biến",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "primary key"
+        },
+        "scheduleId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "Lịch chịu ngoại lệ",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": "food.weeklySchedules.scheduleId",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "localDate": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "description": "Ngày thực tế tại timezone quán",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "open",
+            "closed",
+            "unknown"
+          ],
+          "description": "Ngoại lệ thay lịch; đóng chặn phần ca đêm ngày trước",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "intervals": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "startTime": {
+                "type": "string",
+                "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+              },
+              "endTime": {
+                "type": "string",
+                "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+              },
+              "endDayOffset": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "is24Hours": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "startTime",
+              "endTime",
+              "endDayOffset",
+              "is24Hours"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Các khoảng startTime/endTime/endDayOffset/is24Hours; [] khi closed/unknown",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "lastOrder": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Giờ địa phương nhận món cuối có nguồn; null khi chưa biết",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "local HH:mm",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Phiên bản bản ghi, tăng khi nội dung đổi",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "reviewStatus": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "verified",
+            "published"
+          ],
+          "description": "Trạng thái kiểm dữ liệu; khác trạng thái đang bán",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "sourceRef": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Nguồn chính; bổ sung fieldSources cho từng nhóm thông tin",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": "food.dataSources",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "fieldSources": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "description": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "taxonomy": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "image": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "menu": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "price": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "coordinates": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "address": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "hours": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "availability": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "coverage": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Map nhóm thông tin → sourceRef; không dùng để suy quyền ảnh",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "checkedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Lần kiểm dữ liệu có bằng chứng, UTC",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "validUntil": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Hạn hiệu lực đã được chốt; draft thiếu để null",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "enteredBy": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Người nhập hoặc mã agent có thể truy vết",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "reviewedBy": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Reviewer độc lập; draft chưa review để null",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "lastOrderDayOffset": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "0 ngày bắt đầu, 1 ngày hôm sau; phải cùng null với lastOrder",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        }
+      },
+      "required": [
+        "id",
+        "scheduleId",
+        "localDate",
+        "status",
+        "intervals",
+        "lastOrder",
+        "version",
+        "reviewStatus",
+        "sourceRef",
+        "fieldSources",
+        "checkedAt",
+        "validUntil",
+        "enteredBy",
+        "reviewedBy",
+        "lastOrderDayOffset"
+      ],
+      "additionalProperties": false,
+      "x-unique": [
+        [
+          "id"
+        ],
+        [
+          "scheduleId",
+          "localDate"
+        ]
+      ]
+    },
+    "availabilityOverrides": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "ID ổn định UUIDv5 từ registry key bất biến",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "primary key"
+        },
+        "offeringId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "Offering",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": "food.venueDishes",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "available",
+            "sold_out",
+            "paused",
+            "unknown"
+          ],
+          "description": "Tình trạng quan sát, hết hạn về unknown",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Nguồn trạng thái",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": "food.dataSources",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "observedAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+          "description": "Thời gian quan sát UTC",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "expiresAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+          "description": "Hạn override UTC",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Phiên bản bản ghi, tăng khi nội dung đổi",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "reviewStatus": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "verified",
+            "published"
+          ],
+          "description": "Trạng thái kiểm dữ liệu; khác trạng thái đang bán",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "sourceRef": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Nguồn chính; bổ sung fieldSources cho từng nhóm thông tin",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": "food.dataSources",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "fieldSources": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "description": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "taxonomy": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "image": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "menu": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "price": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "coordinates": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "address": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "hours": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "availability": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "coverage": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Map nhóm thông tin → sourceRef; không dùng để suy quyền ảnh",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "checkedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Lần kiểm dữ liệu có bằng chứng, UTC",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "validUntil": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Hạn hiệu lực đã được chốt; draft thiếu để null",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "enteredBy": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Người nhập hoặc mã agent có thể truy vết",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "reviewedBy": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Reviewer độc lập; draft chưa review để null",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        }
+      },
+      "required": [
+        "id",
+        "offeringId",
+        "state",
+        "source",
+        "observedAt",
+        "expiresAt",
+        "version",
+        "reviewStatus",
+        "sourceRef",
+        "fieldSources",
+        "checkedAt",
+        "validUntil",
+        "enteredBy",
+        "reviewedBy"
+      ],
+      "additionalProperties": false,
+      "x-unique": [
+        [
+          "id"
+        ]
+      ]
+    },
+    "coverageAreas": {
+      "type": "object",
+      "properties": {
+        "areaId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "ID ổn định UUIDv5 từ registry key bất biến",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "primary key"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Tên vùng khảo sát",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "boundary": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "const": "Polygon"
+                },
+                "coordinates": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    },
+                    "minItems": 4
+                  },
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "type",
+                "coordinates"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "GeoJSON Polygon WGS84 [lng,lat]; null khi chưa xác minh",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "datasetVersion": {
+          "type": "string",
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+          "description": "Phiên bản dataset chứa coverage",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Phiên bản bản ghi, tăng khi nội dung đổi",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "reviewStatus": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "verified",
+            "published"
+          ],
+          "description": "Trạng thái kiểm dữ liệu; khác trạng thái đang bán",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "sourceRef": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Nguồn chính; bổ sung fieldSources cho từng nhóm thông tin",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": "food.dataSources",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "fieldSources": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "description": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "taxonomy": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "image": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "menu": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "price": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "coordinates": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "address": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "hours": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "availability": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "coverage": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Map nhóm thông tin → sourceRef; không dùng để suy quyền ảnh",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "checkedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Lần kiểm dữ liệu có bằng chứng, UTC",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "validUntil": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Hạn hiệu lực đã được chốt; draft thiếu để null",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "enteredBy": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Người nhập hoặc mã agent có thể truy vết",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "reviewedBy": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Reviewer độc lập; draft chưa review để null",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        }
+      },
+      "required": [
+        "areaId",
+        "name",
+        "boundary",
+        "datasetVersion",
+        "version",
+        "reviewStatus",
+        "sourceRef",
+        "fieldSources",
+        "checkedAt",
+        "validUntil",
+        "enteredBy",
+        "reviewedBy"
+      ],
+      "additionalProperties": false,
+      "x-unique": [
+        [
+          "areaId"
+        ]
+      ]
+    },
+    "publicAnchors": {
+      "type": "object",
+      "properties": {
+        "anchorId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "ID ổn định UUIDv5 từ registry key bất biến",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "primary key"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Tên điểm ăn công cộng",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "lat": {
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90,
+          "description": "Latitude công cộng, không GPS người dùng",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "lng": {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180,
+          "description": "Longitude công cộng",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "coverageId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "Vùng khảo sát",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": "food.coverageAreas",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "isPublic": {
+          "type": "boolean",
+          "description": "Chỉ điểm công cộng, true",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Phiên bản bản ghi, tăng khi nội dung đổi",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "reviewStatus": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "verified",
+            "published"
+          ],
+          "description": "Trạng thái kiểm dữ liệu; khác trạng thái đang bán",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "sourceRef": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Nguồn chính; bổ sung fieldSources cho từng nhóm thông tin",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": "food.dataSources",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "fieldSources": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "description": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "taxonomy": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "image": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "menu": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "price": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "coordinates": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "address": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "hours": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "availability": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "coverage": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Map nhóm thông tin → sourceRef; không dùng để suy quyền ảnh",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "checkedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Lần kiểm dữ liệu có bằng chứng, UTC",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "validUntil": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Hạn hiệu lực đã được chốt; draft thiếu để null",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "enteredBy": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Người nhập hoặc mã agent có thể truy vết",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "reviewedBy": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Reviewer độc lập; draft chưa review để null",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        }
+      },
+      "required": [
+        "anchorId",
+        "name",
+        "lat",
+        "lng",
+        "coverageId",
+        "isPublic",
+        "version",
+        "reviewStatus",
+        "sourceRef",
+        "fieldSources",
+        "checkedAt",
+        "validUntil",
+        "enteredBy",
+        "reviewedBy"
+      ],
+      "additionalProperties": false,
+      "x-unique": [
+        [
+          "anchorId"
+        ]
+      ]
+    },
+    "dataSources": {
+      "type": "object",
+      "properties": {
+        "sourceRef": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "ID ổn định UUIDv5 từ registry key bất biến",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "primary key"
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "URL/file nguồn có thể truy vết",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "usageRights": {
+          "type": "string",
+          "enum": [
+            "unknown",
+            "granted",
+            "licensed",
+            "public_domain",
+            "denied"
+          ],
+          "description": "Quyền sử dụng dữ liệu, không suy từ công khai",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "license": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "License/thỏa thuận cụ thể",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "attribution": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Ghi công nếu yêu cầu",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "verified",
+            "published"
+          ],
+          "description": "Trạng thái nguồn",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Phiên bản bản ghi, tăng khi nội dung đổi",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "reviewStatus": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "verified",
+            "published"
+          ],
+          "description": "Trạng thái kiểm dữ liệu; khác trạng thái đang bán",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "fieldSources": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "description": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "taxonomy": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "image": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "menu": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "price": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "coordinates": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "address": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "hours": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "availability": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "coverage": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Map nhóm thông tin → sourceRef; không dùng để suy quyền ảnh",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "checkedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Lần kiểm dữ liệu có bằng chứng, UTC",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "validUntil": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Hạn hiệu lực đã được chốt; draft thiếu để null",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "enteredBy": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Người nhập hoặc mã agent có thể truy vết",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "reviewedBy": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Reviewer độc lập; draft chưa review để null",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        }
+      },
+      "required": [
+        "sourceRef",
+        "locator",
+        "usageRights",
+        "license",
+        "attribution",
+        "status",
+        "version",
+        "reviewStatus",
+        "fieldSources",
+        "checkedAt",
+        "validUntil",
+        "enteredBy",
+        "reviewedBy"
+      ],
+      "additionalProperties": false,
+      "x-unique": [
+        [
+          "sourceRef"
+        ]
+      ]
+    },
+    "datasetVersions": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "ID ổn định UUIDv5 từ registry key bất biến",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "primary key"
+        },
+        "datasetVersion": {
+          "type": "string",
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+          "description": "SemVer phiên bản dữ liệu",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "contractVersion": {
+          "type": "string",
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+          "description": "SemVer hợp đồng trường",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "verified",
+            "published"
+          ],
+          "description": "Trạng thái dataset",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "checksum": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "SHA-256 nội dung artifact; không thay version",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "artifactLocator": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Vị trí artifact nguồn",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "previousVersionId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Phiên bản trước, null ở bản đầu",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": "food.datasetVersions",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "qualityReport": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Đường dẫn report kiểm chất lượng",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "rollbackLocator": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Artifact có thể khôi phục",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Phiên bản bản ghi, tăng khi nội dung đổi",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "reviewStatus": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "verified",
+            "published"
+          ],
+          "description": "Trạng thái kiểm dữ liệu; khác trạng thái đang bán",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "sourceRef": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Nguồn chính; bổ sung fieldSources cho từng nhóm thông tin",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": "food.dataSources",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "fieldSources": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "description": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "taxonomy": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "image": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "menu": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "price": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "coordinates": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "address": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "hours": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "availability": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "coverage": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Map nhóm thông tin → sourceRef; không dùng để suy quyền ảnh",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "checkedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Lần kiểm dữ liệu có bằng chứng, UTC",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "validUntil": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Hạn hiệu lực đã được chốt; draft thiếu để null",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "enteredBy": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Người nhập hoặc mã agent có thể truy vết",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "reviewedBy": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Reviewer độc lập; draft chưa review để null",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "published read only after review; trusted publisher writes",
+          "x-source": "fieldSources/sourceRef; missing evidence stays draft/null/unknown",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        }
+      },
+      "required": [
+        "id",
+        "datasetVersion",
+        "contractVersion",
+        "status",
+        "checksum",
+        "artifactLocator",
+        "previousVersionId",
+        "qualityReport",
+        "rollbackLocator",
+        "version",
+        "reviewStatus",
+        "sourceRef",
+        "fieldSources",
+        "checkedAt",
+        "validUntil",
+        "enteredBy",
+        "reviewedBy"
+      ],
+      "additionalProperties": false,
+      "x-unique": [
+        [
+          "id"
+        ],
+        [
+          "datasetVersion"
+        ]
+      ]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "contractVersion": {
+      "const": "1.1.0"
+    },
+    "datasetVersion": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$"
+    },
+    "fixtureOnly": {
+      "type": "boolean"
+    },
+    "entities": {
+      "type": "object",
+      "properties": {
+        "taxonomy": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/taxonomy"
+          }
+        },
+        "dishes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/dishes"
+          }
+        },
+        "venues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/venues"
+          }
+        },
+        "venueDishes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/venueDishes"
+          }
+        },
+        "weeklySchedules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/weeklySchedules"
+          }
+        },
+        "dateExceptions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/dateExceptions"
+          }
+        },
+        "availabilityOverrides": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/availabilityOverrides"
+          }
+        },
+        "coverageAreas": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/coverageAreas"
+          }
+        },
+        "publicAnchors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/publicAnchors"
+          }
+        },
+        "dataSources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/dataSources"
+          }
+        },
+        "datasetVersions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/datasetVersions"
+          }
+        }
+      },
+      "required": [
+        "taxonomy",
+        "dishes",
+        "venues",
+        "venueDishes",
+        "weeklySchedules",
+        "dateExceptions",
+        "availabilityOverrides",
+        "coverageAreas",
+        "publicAnchors",
+        "dataSources",
+        "datasetVersions"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "contractVersion",
+    "datasetVersion",
+    "fixtureOnly",
+    "entities"
+  ],
+  "additionalProperties": false
+}

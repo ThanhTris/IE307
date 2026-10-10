@@ -1,0 +1,55 @@
+{
+  "task": "GM-03",
+  "recordedAt": "2026-10-10 03:28:02 UTC",
+  "branch": "codex/gm-03-taxonomy-data-contract",
+  "part4Commit": "27854223b2670a8b73ed61f32c0a82501456cccd",
+  "part5State": "working tree",
+  "humanReview": "Pending",
+  "checks": [
+    {
+      "name": "regression",
+      "command": "/Users/hoangvinh/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -m unittest discover -s tests -p 'test_*.py'",
+      "exitCode": 0,
+      "output": ".........................................................................................................................................................................................................\n----------------------------------------------------------------------\nRan 201 tests in 2.544s\n\nOK\n",
+      "interpretation": "Passed"
+    },
+    {
+      "name": "repository",
+      "command": "python3 scripts/validate_repository.py",
+      "exitCode": 0,
+      "output": "Gi Cung Duoc: documents, links, JSON, task manifest, dependencies and current FR traceability OK.\nScope: documentation validation only; no native build/backend execution or human approval verified.\n",
+      "interpretation": "Passed"
+    },
+    {
+      "name": "task-index",
+      "command": "python3 scripts/task_readiness.py --check-docs",
+      "exitCode": 0,
+      "output": "Task indexes match task metadata.\n",
+      "interpretation": "Passed"
+    },
+    {
+      "name": "readiness",
+      "command": "python3 scripts/task_readiness.py --task GM-03",
+      "exitCode": 1,
+      "output": "GM-03: BLOCKED | owner=Vinh reviewer=Tâm | tasks/backlog/GM-03.md\n  WAIT GM-28: review | tasks/review/GM-28.md\nRecorded approval only; inspect evidence and confirm assignment before starting.\n",
+      "interpretation": "Expected BLOCKED: GM-28 review remains pending. This is a gate report, not a passing dependency."
+    },
+    {
+      "name": "diff",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "output": "",
+      "interpretation": "Passed"
+    }
+  ],
+  "auditReport": "docs/evidence/GM-03/validation/report.json",
+  "offlineEvidence": "docs/evidence/GM-03/validation/offline.json",
+  "notRun": [
+    "Jupyter kernel",
+    "native",
+    "SQL",
+    "GM-30 eligibility execution",
+    "TypeScript/SQL parity",
+    "independent human review"
+  ]
+}

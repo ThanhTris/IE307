@@ -1,0 +1,175 @@
+{
+  "reportVersion": "1.0.0",
+  "reviewDecision": "Pending",
+  "upstreamMain": "0cf1dc0b247c717abce1bdd23fec8dba791835cc",
+  "testedBase": "77163db394b7053c475396a763a08097f9c655a9",
+  "testedPatch": "committed feature revision; following evidence commit changes documentation only",
+  "contractId": "food-v1/roadmap-v2/GM-04.1",
+  "contractCases": {
+    "count": 135,
+    "passed": 135,
+    "repeatIdentical": true,
+    "reportSha256": "30e2f05c10916894d10a3010d8da9d44b58dc4d7793d2253c27820c7270c3b18"
+  },
+  "fieldPaths": 596,
+  "fieldShapeExamples": {
+    "valid": 596,
+    "invalid": 596
+  },
+  "regression": {
+    "tests": 398,
+    "passed": true,
+    "skipped": 0,
+    "runtime": "bundled Python 3.12.14"
+  },
+  "legacy": {
+    "checks": 9,
+    "passed": 9,
+    "validStructure": true,
+    "readyForPublish": false,
+    "networkCalls": 0,
+    "preservedFiles": 114,
+    "statistics": {
+      "mapping": {
+        "sourceNames": 219,
+        "baseDishes": 39,
+        "states": {
+          "mapped": 216,
+          "needs_review": 2,
+          "excluded": 1
+        },
+        "originalColumns": 52,
+        "menuItems": 247
+      },
+      "editorial": {
+        "dishes": 39,
+        "populated": {
+          "description": 34,
+          "aliases": 1,
+          "cuisineIds": 5,
+          "categoryIds": 39,
+          "mealSlots": 2,
+          "timeHints": 0,
+          "artwork": 0,
+          "ingredientTags": 0,
+          "flavor": 0,
+          "temperature": 2,
+          "origin": 1
+        },
+        "categoryCounts": {
+          "family:banh_bao": 1,
+          "family:banh_cuon": 1,
+          "family:banh_cuon_wrap": 1,
+          "family:banh_mi": 1,
+          "family:banh_uot": 1,
+          "family:bun": 10,
+          "family:burger": 1,
+          "family:hu_tieu": 1,
+          "family:mien": 1,
+          "family:noodles": 3,
+          "family:nui": 1,
+          "family:pho": 2,
+          "family:rice": 13,
+          "family:salad": 1,
+          "family:sticky_rice": 1,
+          "preparation:steamed": 2
+        },
+        "cuisineCounts": {
+          "vi": 5,
+          "zh": 1
+        },
+        "mealCounts": {
+          "breakfast": 2,
+          "snack": 1
+        },
+        "missingDescriptions": [
+          "Bún mọc",
+          "Cơm canh khổ qua",
+          "Cơm cá kho",
+          "Cơm tôm rim",
+          "Cơm đậu hủ sốt cà"
+        ],
+        "imageStatuses": {
+          "needs_visual_review": 23,
+          "rejected": 5,
+          "no_eligible_image": 32
+        },
+        "prices": 247,
+        "knownPrices": 247,
+        "venues": 21,
+        "imageCandidates": 28,
+        "mapping": {
+          "mapped": 216,
+          "needs_review": 2,
+          "excluded": 1
+        },
+        "apiCallsDuringReplay": 0,
+        "status": "draft",
+        "target": "60–80",
+        "expansionRequired": true
+      },
+      "fixtures": {
+        "fixtureOnly": true,
+        "fixtureVersion": "food-fixtures-v1",
+        "cases": 42,
+        "datasets": 27,
+        "groups": {
+          "availability": 4,
+          "context": 3,
+          "determinism": 2,
+          "freshness": 5,
+          "geography": 3,
+          "identity": 4,
+          "meal": 1,
+          "overnight": 5,
+          "pool": 4,
+          "preferences": 2,
+          "price": 4,
+          "profile": 2,
+          "schedule": 3
+        },
+        "baseDishes": 10,
+        "baseEntities": {
+          "taxonomy": 8,
+          "dishes": 10,
+          "venues": 2,
+          "venueDishes": 10,
+          "weeklySchedules": 24,
+          "dateExceptions": 0,
+          "availabilityOverrides": 0,
+          "coverageAreas": 1,
+          "publicAnchors": 1,
+          "dataSources": 4,
+          "datasetVersions": 1
+        },
+        "assertions": 36,
+        "part3Commit": "2e61a5712a07fe4834e92f907a278cb0740c7174",
+        "validationAt": "2026-10-08T00:00:00Z",
+        "networkCalls": 0,
+        "eligibilityExecuted": false,
+        "publicationPerformed": false
+      }
+    }
+  },
+  "codeHashes": {
+    "scripts/gm04_contract_model.py": "c19adad7a1e5b65e05f94ed6c756299727c7187f45344aa342dcb162e7982b66",
+    "scripts/build_field_contracts.py": "243a36df8fe786ee44f78afe00d9d4017326b6b406263e8ca8b79e582adbddf0",
+    "scripts/validate_field_contracts.py": "79a1b594d2a2455df9592a0f1529e6f8c25db8e24a8f9d9d7e2a5bbc1513e8b0",
+    "tests/test_field_contracts.py": "e9259298d68df9df7709bf16341b06c812410228817ab99d4b5a72d0906a675a"
+  },
+  "optionalFoundationNodeTests": {
+    "tests": 8,
+    "passed": 7,
+    "failed": 1,
+    "reason": "Supabase CLI missing. Test expects Docker error after CLI exists. scripts/backend.mjs and tests/backend-runner.test.mjs identical to origin/main. No install/package change."
+  },
+  "notRun": [
+    "SQL/RLS/RPC/transaction",
+    "eligibility/query/import",
+    "Android/native/push",
+    "third-party JSON Schema validator",
+    "independent reviewer approval"
+  ],
+  "publicationPerformed": false,
+  "testedRevision": "c6e857e4a4c0bd16ee7f4f6d002f921ab65e6eeb"
+}

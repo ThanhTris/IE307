@@ -79,3 +79,7 @@ Mood là nhãn user tự chọn (ví dụ muốn ăn nhẹ, món quen, thử m�
 | FOOD-14 | Pool ít/rỗng, không nhân bản hoặc fallback sai vùng | GM-19, GM-25, GM-18 | T-03/19/25 |
 
 Core GM-32, GM-33 kiểm FOOD-01..10/12..14 theo phạm vi P0; FOOD-11 và phần mood FOOD-12 do GM-38 sau release, không chặn P0. Pure TS/SQL dùng chung fixture; test thật cần runner GM-02 và SQL setup GM-06. GM-08 là dataset, GM-24 là capability location, GM-18 là eligibility, GM-19 là room integration: dependency rõ để không tạo vòng với result/release.
+
+## Bàn giao field contract GM-04 (đề xuất review)
+
+[Dictionary food/core](../data/FOOD_DATA_DICTIONARY.md) và [coverage](../data/FIELD_COVERAGE.md) triển khai field proposal `food-v1/roadmap-v2/GM-04.2`. Food interchange 1.1.0 thêm venue.scheduleId và lastOrder/lastOrderDayOffset rõ ngày; core 1.1.0 chờ review consumer GM-06/07. Adapter không đổi snapshots food1.0.0/dataset0.2.0. [Checks](../evidence/roadmap-v2/GM-04/CHECKS.md) chỉ kiểm contract, không SQL/eligibility hoặc approval.

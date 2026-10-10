@@ -1,0 +1,2927 @@
+{
+  "fixtureVersion": "food-fixtures-v1",
+  "fixtureOnly": true,
+  "contractVersion": "1.0.0",
+  "validationAt": "2026-10-08T00:00:00Z",
+  "part3Commit": "2e61a5712a07fe4834e92f907a278cb0740c7174",
+  "cases": [
+    {
+      "id": "pool-ten",
+      "group": "pool",
+      "description": "10 ứng viên, tối đa 8, không chỉ định tám món thắng (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "base",
+      "evaluatedAt": "2026-10-10T05:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [
+          "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+          "81ecb677-c9f5-5201-af89-b38a7d2504ba",
+          "6578cb25-30da-5443-a116-ab61f875cd1b",
+          "ea64650b-ae4d-5de4-9f5d-790acbfd202d",
+          "81082de5-fc22-50e6-a57e-18c0e58225ed",
+          "2e9a2e56-c7c9-5812-93b8-c62875376a07",
+          "5d050d4b-610e-5ac1-b199-2d5ea9ec4fc3",
+          "06064616-9e44-5beb-8ad7-309fdb277eb3",
+          "6a719d6e-e8ee-5690-b077-9b684f714437",
+          "57c5807a-0220-5801-b11b-b303d671d1de"
+        ],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 8,
+          "maxSize": 8,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [
+            "preparation:grilled",
+            "family:hotpot"
+          ],
+          "includeAllEligibleCandidates": false
+        },
+        "assertions": [
+          "pool_limit",
+          "category_representation"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "pool-eight",
+      "group": "pool",
+      "description": "Đúng 8 ứng viên, không bổ sung (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "eight",
+      "evaluatedAt": "2026-10-10T05:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [
+          "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+          "81ecb677-c9f5-5201-af89-b38a7d2504ba",
+          "6578cb25-30da-5443-a116-ab61f875cd1b",
+          "ea64650b-ae4d-5de4-9f5d-790acbfd202d",
+          "81082de5-fc22-50e6-a57e-18c0e58225ed",
+          "2e9a2e56-c7c9-5812-93b8-c62875376a07",
+          "5d050d4b-610e-5ac1-b199-2d5ea9ec4fc3",
+          "06064616-9e44-5beb-8ad7-309fdb277eb3"
+        ],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 8,
+          "maxSize": 8,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "pool_limit",
+          "use_actual_count"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "pool-three",
+      "group": "pool",
+      "description": "Chỉ 3 món, giữ số thực (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "three",
+      "evaluatedAt": "2026-10-10T05:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [
+          "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+          "81ecb677-c9f5-5201-af89-b38a7d2504ba",
+          "6578cb25-30da-5443-a116-ab61f875cd1b"
+        ],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 3,
+          "maxSize": 3,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "use_actual_count"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "pool-empty",
+      "group": "pool",
+      "description": "Có món nhưng không có offering (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "no-offering",
+      "evaluatedAt": "2026-10-10T05:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 0,
+          "maxSize": 0,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "empty_has_reason"
+        ],
+        "details": {
+          "emptyReason": "no_evidenced_offering"
+        }
+      }
+    },
+    {
+      "id": "preferences-conflict",
+      "group": "preferences",
+      "description": "A nướng, B lẩu là ưu tiên mềm (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "three",
+      "evaluatedAt": "2026-10-10T05:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [
+          "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+          "81ecb677-c9f5-5201-af89-b38a7d2504ba",
+          "6578cb25-30da-5443-a116-ab61f875cd1b"
+        ],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 3,
+          "maxSize": 3,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [
+            "preparation:grilled",
+            "family:hotpot"
+          ],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "category_is_soft",
+          "category_representation"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "preferences-skipped",
+      "group": "preferences",
+      "description": "Bỏ qua category không thành NO (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "three",
+      "evaluatedAt": "2026-10-10T05:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": []
+          },
+          "B": {
+            "categoryIds": []
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [
+          "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+          "81ecb677-c9f5-5201-af89-b38a7d2504ba",
+          "6578cb25-30da-5443-a116-ab61f875cd1b"
+        ],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 3,
+          "maxSize": 3,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "category_is_soft"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "identity-multilabel",
+      "group": "identity",
+      "description": "Một lựa chọn có hai nhãn vẫn chỉ một candidate (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "multi",
+      "evaluatedAt": "2026-10-10T05:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [
+          "81082de5-fc22-50e6-a57e-18c0e58225ed"
+        ],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 1,
+          "maxSize": 1,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [
+            "preparation:grilled",
+            "family:hotpot"
+          ],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "multilabel_not_duplicate"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "identity-alias",
+      "group": "identity",
+      "description": "Tên chính và alias cùng ID (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "one",
+      "evaluatedAt": "2026-10-10T05:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [
+          "198c4e87-e8b9-5171-b778-cb82b5c732ad"
+        ],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 1,
+          "maxSize": 1,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "alias_same_identity"
+        ],
+        "details": {
+          "aliasResolutions": [
+            {
+              "text": "Gà nướng — mô phỏng",
+              "dishId": "21ef9e4c-d524-5a9d-82c2-0cbbb3034c90"
+            },
+            {
+              "text": "Thịt gà nướng — mô phỏng",
+              "dishId": "21ef9e4c-d524-5a9d-82c2-0cbbb3034c90"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "identity-variants",
+      "group": "identity",
+      "description": "Hai variant của cùng món giữ offering riêng (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "variants",
+      "evaluatedAt": "2026-10-10T05:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [
+          "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+          "14893c87-5587-5b24-a973-9e58788278d3"
+        ],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 2,
+          "maxSize": 2,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "preserve_variants"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "identity-two-venues",
+      "group": "identity",
+      "description": "Cùng món/variant tại hai quán chỉ một candidate (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "same-variant-two-venues",
+      "evaluatedAt": "2026-10-10T05:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [
+          "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+          "b02b2b33-2aae-5f2b-b7e0-0a112c68c06b"
+        ],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 1,
+          "maxSize": 1,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "multilabel_not_duplicate"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "price-missing",
+      "group": "price",
+      "description": "Thiếu giá không thành 0 và không loại món (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "missing-price",
+      "evaluatedAt": "2026-10-10T05:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": {
+            "min": 20000,
+            "max": 40000,
+            "currency": "VND",
+            "unit": "person"
+          },
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [
+          "198c4e87-e8b9-5171-b778-cb82b5c732ad"
+        ],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 1,
+          "maxSize": 1,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "unknown_price_not_zero"
+        ],
+        "details": {
+          "priceExpectation": {
+            "offeringId": "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+            "priceMin": null,
+            "priceMax": null,
+            "unit": null,
+            "currency": null
+          }
+        }
+      }
+    },
+    {
+      "id": "price-over-budget",
+      "group": "price",
+      "description": "Giá vượt budget chỉ ảnh hưởng ưu tiên (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "over-budget",
+      "evaluatedAt": "2026-10-10T05:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": {
+            "min": 20000,
+            "max": 40000,
+            "currency": "VND",
+            "unit": "person"
+          },
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [
+          "198c4e87-e8b9-5171-b778-cb82b5c732ad"
+        ],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 1,
+          "maxSize": 1,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "budget_is_soft"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "price-budget-null",
+      "group": "price",
+      "description": "Budget null không tự gán trần giá hoặc loại món (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "three",
+      "evaluatedAt": "2026-10-10T05:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [
+          "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+          "81ecb677-c9f5-5201-af89-b38a7d2504ba",
+          "6578cb25-30da-5443-a116-ab61f875cd1b"
+        ],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 3,
+          "maxSize": 3,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "budget_is_soft"
+        ],
+        "details": {
+          "budgetExpectation": null
+        }
+      }
+    },
+    {
+      "id": "price-group-unit",
+      "group": "price",
+      "description": "Không chia giá nhóm thành giá mỗi người (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "group-price",
+      "evaluatedAt": "2026-10-10T05:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": {
+            "min": 20000,
+            "max": 40000,
+            "currency": "VND",
+            "unit": "person"
+          },
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [
+          "198c4e87-e8b9-5171-b778-cb82b5c732ad"
+        ],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 1,
+          "maxSize": 1,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "group_price_not_per_person"
+        ],
+        "details": {
+          "priceExpectation": {
+            "offeringId": "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+            "priceMin": 240000,
+            "priceMax": 240000,
+            "unit": "group",
+            "currency": "VND"
+          },
+          "budgetComparable": false
+        }
+      }
+    },
+    {
+      "id": "profile-unknown",
+      "group": "profile",
+      "description": "Nhiệt độ/vị chưa biết không bị tự điền (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "one",
+      "evaluatedAt": "2026-10-10T05:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [
+          "198c4e87-e8b9-5171-b778-cb82b5c732ad"
+        ],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 1,
+          "maxSize": 1,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "unknown_traits_preserved"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "profile-no-merge",
+      "group": "profile",
+      "description": "Không ghép nóng ở quán A với cay/giá rẻ ở quán B (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "profile-split",
+      "evaluatedAt": "2026-10-10T05:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [
+          "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+          "408b3652-0780-5974-8f56-fc335a355afa"
+        ],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 1,
+          "maxSize": 1,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "no_cross_offering_profile"
+        ],
+        "details": {
+          "forbiddenComposite": {
+            "dishId": "21ef9e4c-d524-5a9d-82c2-0cbbb3034c90",
+            "temperature": "hot",
+            "spicy": true,
+            "priceMax": 20000
+          }
+        }
+      }
+    },
+    {
+      "id": "meal-unknown",
+      "group": "meal",
+      "description": "Buổi chưa xác định không được giả là lunch (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "missing-meal",
+      "evaluatedAt": "2026-10-10T05:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [
+          {
+            "offeringId": "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+            "reason": "meal_unknown"
+          }
+        ],
+        "pool": {
+          "minSize": 0,
+          "maxSize": 0,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "unknown_meal_not_assumed"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "night-before-open",
+      "group": "overnight",
+      "description": "night-before-open (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "night",
+      "evaluatedAt": "2026-10-09T14:59:59Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-09T14:59:59Z",
+          "mealSlot": "dinner",
+          "timeHint": "late_night",
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-09T14:59:59Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [],
+        "excludedOfferings": [
+          {
+            "offeringId": "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+            "reason": "outside_schedule"
+          }
+        ],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 0,
+          "maxSize": 0,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "opening_inclusive"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "night-at-open",
+      "group": "overnight",
+      "description": "night-at-open (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "night",
+      "evaluatedAt": "2026-10-09T15:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-09T15:00:00Z",
+          "mealSlot": "dinner",
+          "timeHint": "late_night",
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-09T15:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [
+          "198c4e87-e8b9-5171-b778-cb82b5c732ad"
+        ],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 1,
+          "maxSize": 1,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "opening_inclusive"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "night-after-midnight",
+      "group": "overnight",
+      "description": "night-after-midnight (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "night",
+      "evaluatedAt": "2026-10-09T17:30:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-09T17:30:00Z",
+          "mealSlot": "dinner",
+          "timeHint": "late_night",
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-09T17:30:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [
+          "198c4e87-e8b9-5171-b778-cb82b5c732ad"
+        ],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 1,
+          "maxSize": 1,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "overnight_carry"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "night-before-close",
+      "group": "overnight",
+      "description": "night-before-close (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "night",
+      "evaluatedAt": "2026-10-09T18:59:59Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-09T18:59:59Z",
+          "mealSlot": "dinner",
+          "timeHint": "late_night",
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-09T18:59:59Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [
+          "198c4e87-e8b9-5171-b778-cb82b5c732ad"
+        ],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 1,
+          "maxSize": 1,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "closing_exclusive"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "night-at-close",
+      "group": "overnight",
+      "description": "night-at-close (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "night",
+      "evaluatedAt": "2026-10-09T19:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-09T19:00:00Z",
+          "mealSlot": "dinner",
+          "timeHint": "late_night",
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-09T19:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [],
+        "excludedOfferings": [
+          {
+            "offeringId": "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+            "reason": "outside_schedule"
+          }
+        ],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 0,
+          "maxSize": 0,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "closing_exclusive"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "schedule-venue-intersection",
+      "group": "schedule",
+      "description": "Món mở nhưng quán chưa mở (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "venue-closed",
+      "evaluatedAt": "2026-10-10T05:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [],
+        "excludedOfferings": [
+          {
+            "offeringId": "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+            "reason": "outside_venue_schedule"
+          }
+        ],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 0,
+          "maxSize": 0,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "venue_offering_intersection"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "schedule-gap",
+      "group": "schedule",
+      "description": "Giờ nghỉ giữa hai ca (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "split-gap",
+      "evaluatedAt": "2026-10-10T05:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [],
+        "excludedOfferings": [
+          {
+            "offeringId": "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+            "reason": "between_shifts"
+          }
+        ],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 0,
+          "maxSize": 0,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "split_shift_gap"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "schedule-closed-next-day",
+      "group": "schedule",
+      "description": "Ngày đóng cửa chặn ca qua đêm hôm trước (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "night-closed-next-day",
+      "evaluatedAt": "2026-10-09T17:30:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-09T17:30:00Z",
+          "mealSlot": "dinner",
+          "timeHint": "late_night",
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-09T17:30:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [],
+        "excludedOfferings": [
+          {
+            "offeringId": "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+            "reason": "closed_date_exception"
+          }
+        ],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 0,
+          "maxSize": 0,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "closed_exception_blocks_carry"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "geography-outside-area",
+      "group": "geography",
+      "description": "Anchor ngoài coverage (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "outside-area",
+      "evaluatedAt": "2026-10-10T05:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [],
+        "excludedOfferings": [
+          {
+            "offeringId": "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+            "reason": "outside_coverage"
+          }
+        ],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 0,
+          "maxSize": 0,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "no_coverage_expansion"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "geography-outside-radius",
+      "group": "geography",
+      "description": "Quán trong coverage nhưng ngoài radius (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "outside-radius",
+      "evaluatedAt": "2026-10-10T05:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [],
+        "excludedOfferings": [
+          {
+            "offeringId": "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+            "reason": "outside_radius"
+          }
+        ],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 0,
+          "maxSize": 0,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "no_radius_expansion"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "geography-origin",
+      "group": "geography",
+      "description": "Origin Nam không giới hạn vị trí bán (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "southern-origin",
+      "evaluatedAt": "2026-10-10T05:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [
+          "198c4e87-e8b9-5171-b778-cb82b5c732ad"
+        ],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 1,
+          "maxSize": 1,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "origin_not_location"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "freshness-before-expiry",
+      "group": "freshness",
+      "description": "Nguồn ngay trước hạn cuối (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "source-expiry",
+      "evaluatedAt": "2026-10-10T04:59:59Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T04:59:59Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T04:59:59Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [
+          "198c4e87-e8b9-5171-b778-cb82b5c732ad"
+        ],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 1,
+          "maxSize": 1,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "source_freshness"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "freshness-at-expiry",
+      "group": "freshness",
+      "description": "Đúng validUntil nguồn không còn hiệu lực (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "source-expiry",
+      "evaluatedAt": "2026-10-10T05:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [
+          {
+            "offeringId": "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+            "reason": "source_expired"
+          }
+        ],
+        "pool": {
+          "minSize": 0,
+          "maxSize": 0,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "source_expiry_exclusive",
+          "dataset_does_not_extend_child"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "freshness-after-expiry",
+      "group": "freshness",
+      "description": "Nguồn hết hạn dù dataset còn hạn (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "source-expiry",
+      "evaluatedAt": "2026-10-10T05:00:01Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:01Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:01Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [
+          {
+            "offeringId": "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+            "reason": "source_expired"
+          }
+        ],
+        "pool": {
+          "minSize": 0,
+          "maxSize": 0,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "dataset_does_not_extend_child"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "freshness-menu-unknown",
+      "group": "freshness",
+      "description": "Menu chưa có nguồn xác minh (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "unknown-menu",
+      "evaluatedAt": "2026-10-10T05:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [
+          {
+            "offeringId": "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+            "reason": "menu_unknown"
+          }
+        ],
+        "pool": {
+          "minSize": 0,
+          "maxSize": 0,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "unknown_menu_requires_confirmation"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "freshness-hours-unknown",
+      "group": "freshness",
+      "description": "Lịch món unknown (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "unknown-hours",
+      "evaluatedAt": "2026-10-10T05:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [
+          {
+            "offeringId": "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+            "reason": "schedule_unknown"
+          }
+        ],
+        "pool": {
+          "minSize": 0,
+          "maxSize": 0,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "unknown_schedule_requires_confirmation"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "availability-sold-out",
+      "group": "availability",
+      "description": "Override còn hiệu lực loại offering (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "sold-out",
+      "evaluatedAt": "2026-10-10T04:59:59Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T04:59:59Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T04:59:59Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [],
+        "excludedOfferings": [
+          {
+            "offeringId": "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+            "reason": "sold_out"
+          }
+        ],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 0,
+          "maxSize": 0,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "active_stock_override_excludes"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "availability-paused",
+      "group": "availability",
+      "description": "Override còn hiệu lực loại offering (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "paused",
+      "evaluatedAt": "2026-10-10T04:59:59Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T04:59:59Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T04:59:59Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [],
+        "excludedOfferings": [
+          {
+            "offeringId": "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+            "reason": "paused"
+          }
+        ],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 0,
+          "maxSize": 0,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "active_stock_override_excludes"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "availability-expired",
+      "group": "availability",
+      "description": "Override hết hạn quay về unknown, lịch vẫn hợp lệ (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "sold-out",
+      "evaluatedAt": "2026-10-10T05:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [
+          "198c4e87-e8b9-5171-b778-cb82b5c732ad"
+        ],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 1,
+          "maxSize": 1,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "expired_stock_override_unknown",
+          "schedule_not_live_stock"
+        ],
+        "details": {
+          "availabilityExpectation": {
+            "offeringId": "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+            "state": "unknown",
+            "liveStockClaim": false
+          }
+        }
+      }
+    },
+    {
+      "id": "availability-schedule-only",
+      "group": "availability",
+      "description": "Không có override: chỉ dự kiến theo lịch (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "one",
+      "evaluatedAt": "2026-10-10T05:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [
+          "198c4e87-e8b9-5171-b778-cb82b5c732ad"
+        ],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 1,
+          "maxSize": 1,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "schedule_not_live_stock"
+        ],
+        "details": {
+          "availabilityExpectation": {
+            "offeringId": "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+            "state": "unknown",
+            "liveStockClaim": false
+          }
+        }
+      }
+    },
+    {
+      "id": "context-scheduled",
+      "group": "context",
+      "description": "Đặt giờ cụ thể không cộng buffer lần hai (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "short-window",
+      "evaluatedAt": "2026-10-10T04:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 15
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [
+          "198c4e87-e8b9-5171-b778-cb82b5c732ad"
+        ],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 1,
+          "maxSize": 1,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "scheduled_no_second_buffer"
+        ],
+        "details": {
+          "normalizedDesiredAt": "2026-10-10T05:00:00Z"
+        }
+      }
+    },
+    {
+      "id": "context-now-buffer",
+      "group": "context",
+      "description": "Server now cộng buffer đúng một lần (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "short-window",
+      "evaluatedAt": "2026-10-10T04:45:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "now",
+          "requestedAt": null,
+          "bufferMinutes": 15
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [
+          "198c4e87-e8b9-5171-b778-cb82b5c732ad"
+        ],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 1,
+          "maxSize": 1,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "now_buffer_once"
+        ],
+        "details": {
+          "normalizedDesiredAt": "2026-10-10T05:00:00Z"
+        }
+      }
+    },
+    {
+      "id": "context-past",
+      "group": "context",
+      "description": "desiredAt đã qua cần xác nhận lại trước start (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "one",
+      "evaluatedAt": "2026-10-10T05:01:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [
+          {
+            "offeringId": "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+            "reason": "context_time_elapsed"
+          }
+        ],
+        "pool": {
+          "minSize": 0,
+          "maxSize": 0,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [],
+          "includeAllEligibleCandidates": true
+        },
+        "assertions": [
+          "past_time_requires_confirmation"
+        ],
+        "details": {
+          "contextOutcome": "needs_confirmation",
+          "resetReady": true
+        }
+      }
+    },
+    {
+      "id": "determinism-repeat",
+      "group": "determinism",
+      "description": "Cùng snapshot/context/seed cho cùng kết quả (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "base",
+      "evaluatedAt": "2026-10-10T05:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [
+          "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+          "81ecb677-c9f5-5201-af89-b38a7d2504ba",
+          "6578cb25-30da-5443-a116-ab61f875cd1b",
+          "ea64650b-ae4d-5de4-9f5d-790acbfd202d",
+          "81082de5-fc22-50e6-a57e-18c0e58225ed",
+          "2e9a2e56-c7c9-5812-93b8-c62875376a07",
+          "5d050d4b-610e-5ac1-b199-2d5ea9ec4fc3",
+          "06064616-9e44-5beb-8ad7-309fdb277eb3",
+          "6a719d6e-e8ee-5690-b077-9b684f714437",
+          "57c5807a-0220-5801-b11b-b303d671d1de"
+        ],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 8,
+          "maxSize": 8,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [
+            "preparation:grilled",
+            "family:hotpot"
+          ],
+          "includeAllEligibleCandidates": false
+        },
+        "assertions": [
+          "same_seed_same_pool"
+        ],
+        "details": {}
+      }
+    },
+    {
+      "id": "determinism-reordered",
+      "group": "determinism",
+      "description": "Đảo thứ tự nguồn không đổi ý nghĩa (mô phỏng)",
+      "specRefs": [
+        "docs/specs/FOOD_DATA_SPEC.md",
+        "docs/specs/CATALOG_PREFERENCES_SPEC.md",
+        "docs/specs/CONTEXT_HISTORY_SPEC.md"
+      ],
+      "datasetKey": "base-reordered",
+      "evaluatedAt": "2026-10-10T05:00:00Z",
+      "input": {
+        "context": {
+          "anchorId": "a609bc3d-6fb2-5501-9f5f-d8856d0b1c62",
+          "coverageId": "5c4bb474-8ab4-539f-a714-9c3f01d84640",
+          "radiusM": 1000,
+          "desiredAt": "2026-10-10T05:00:00Z",
+          "mealSlot": "lunch",
+          "timeHint": null,
+          "serviceMode": "dine_in",
+          "budget": null,
+          "avoidRecent": false,
+          "contextVersion": 1
+        },
+        "preferencesByParticipant": {
+          "A": {
+            "categoryIds": [
+              "613e9609-2ec4-5387-b7cd-e72e5beb54b0"
+            ]
+          },
+          "B": {
+            "categoryIds": [
+              "288f92e2-3141-58c4-967f-f953666060d1"
+            ]
+          }
+        },
+        "poolSeed": "gm03-fixture-seed-01",
+        "timeSelection": {
+          "mode": "scheduled",
+          "requestedAt": "2026-10-10T05:00:00Z",
+          "bufferMinutes": 0
+        }
+      },
+      "expected": {
+        "eligibleOfferingIds": [
+          "198c4e87-e8b9-5171-b778-cb82b5c732ad",
+          "81ecb677-c9f5-5201-af89-b38a7d2504ba",
+          "6578cb25-30da-5443-a116-ab61f875cd1b",
+          "ea64650b-ae4d-5de4-9f5d-790acbfd202d",
+          "81082de5-fc22-50e6-a57e-18c0e58225ed",
+          "2e9a2e56-c7c9-5812-93b8-c62875376a07",
+          "5d050d4b-610e-5ac1-b199-2d5ea9ec4fc3",
+          "06064616-9e44-5beb-8ad7-309fdb277eb3",
+          "6a719d6e-e8ee-5690-b077-9b684f714437",
+          "57c5807a-0220-5801-b11b-b303d671d1de"
+        ],
+        "excludedOfferings": [],
+        "needsConfirmationOfferings": [],
+        "pool": {
+          "minSize": 8,
+          "maxSize": 8,
+          "uniqueBy": [
+            "dishId",
+            "variant"
+          ],
+          "requiredCategoryCodes": [
+            "preparation:grilled",
+            "family:hotpot"
+          ],
+          "includeAllEligibleCandidates": false
+        },
+        "assertions": [
+          "source_order_invariant"
+        ],
+        "details": {}
+      }
+    }
+  ],
+  "comparisons": [
+    {
+      "id": "same-seed-and-source-order",
+      "kind": "sameOrderedPool",
+      "caseIds": [
+        "pool-ten",
+        "determinism-repeat",
+        "determinism-reordered"
+      ]
+    }
+  ]
+}

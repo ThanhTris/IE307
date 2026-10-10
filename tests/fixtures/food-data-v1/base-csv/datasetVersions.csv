@@ -1,0 +1,2 @@
+﻿id,datasetVersion,contractVersion,status,checksum,artifactLocator,previousVersionId,qualityReport,rollbackLocator,version,reviewStatus,sourceRef,fieldSources,checkedAt,validUntil,enteredBy,reviewedBy
+8f768c68-2690-5673-b2b1-2010a6eac5dd,1.0.0,1.0.0,verified,,tests/fixtures/food-data-v1/base.json,,tests/fixtures/food-data-v1/README.md,,1,verified,fad0b6db-1c57-5f32-ac41-08edead76612,{},2026-10-07T00:00:00Z,2026-10-20T00:00:00Z,fixture-author-simulated,fixture-reviewer-simulated

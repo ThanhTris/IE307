@@ -1,0 +1,3919 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/anyfood/core-v1.schema.json",
+  "title": "GM-04 draft core field contract",
+  "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+  "$defs": {
+    "profiles": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "Stable UUID, immutable key; never display name",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self",
+          "x-source": "authenticated user/server",
+          "x-ref": null,
+          "x-unique": "primary key"
+        },
+        "userId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "userId; authenticated user/server",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self",
+          "x-source": "auth.uid",
+          "x-ref": "auth.users",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 24,
+          "pattern": "\\S",
+          "description": "displayName; authenticated user/server",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self; roster display name only",
+          "x-source": "authenticated user/server",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "createdAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+          "description": "createdAt; authenticated user/server",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "self",
+          "x-source": "authenticated user/server",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Record version monotonic, server increment",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self",
+          "x-source": "authenticated user/server",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "displayName",
+        "createdAt",
+        "version"
+      ],
+      "additionalProperties": false,
+      "x-unique": [
+        [
+          "id"
+        ],
+        [
+          "userId"
+        ]
+      ]
+    },
+    "rooms": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "Stable UUID, immutable key; never display name",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member snapshot via RPC; consent/roster lock server_only",
+          "x-source": "server confirmed context",
+          "x-ref": null,
+          "x-unique": "primary key"
+        },
+        "code": {
+          "type": "string",
+          "pattern": "^[A-HJ-NP-Z2-9]{6}$",
+          "description": "Server-generated invitation code; not authorization",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member snapshot via RPC; consent/roster lock server_only",
+          "x-source": "server confirmed context",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "hostUserId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "hostUserId; server confirmed context",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member snapshot via RPC; consent/roster lock server_only",
+          "x-source": "server confirmed context",
+          "x-ref": "auth.users",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "LOBBY",
+            "ROUND_1",
+            "ROUND_2",
+            "DECIDED",
+            "NO_CONSENSUS",
+            "CANCELLED",
+            "EXPIRED"
+          ],
+          "description": "state; server confirmed context",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member snapshot via RPC; consent/roster lock server_only",
+          "x-source": "server confirmed context",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "createdAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+          "description": "createdAt; server confirmed context",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "member snapshot via RPC; consent/roster lock server_only",
+          "x-source": "server confirmed context",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "updatedAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+          "description": "updatedAt; server confirmed context",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "member snapshot via RPC; consent/roster lock server_only",
+          "x-source": "server confirmed context",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "expiresAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+          "description": "expiresAt; server confirmed context",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "member snapshot via RPC; consent/roster lock server_only",
+          "x-source": "server confirmed context",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "mealSlot": {
+          "type": "string",
+          "enum": [
+            "breakfast",
+            "lunch",
+            "dinner",
+            "snack"
+          ],
+          "description": "mealSlot; server confirmed context",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member snapshot via RPC; consent/roster lock server_only",
+          "x-source": "server confirmed context",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "timeHint": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "late_night"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "timeHint; server confirmed context",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member snapshot via RPC; consent/roster lock server_only",
+          "x-source": "server confirmed context",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "budget": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "min": {
+                  "anyOf": [
+                    {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "max": {
+                  "anyOf": [
+                    {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "currency": {
+                  "const": "VND"
+                },
+                "unit": {
+                  "const": "person"
+                }
+              },
+              "required": [
+                "min",
+                "max",
+                "currency",
+                "unit"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "budget; server confirmed context",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member snapshot via RPC; consent/roster lock server_only",
+          "x-source": "server confirmed context",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "avoidRecent": {
+          "type": "boolean",
+          "description": "avoidRecent; server confirmed context",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member snapshot via RPC; consent/roster lock server_only",
+          "x-source": "server confirmed context",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "anchorId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "anchorId; server confirmed context",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member snapshot via RPC; consent/roster lock server_only",
+          "x-source": "server confirmed context",
+          "x-ref": "food.publicAnchors",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "coverageId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "coverageId; server confirmed context",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member snapshot via RPC; consent/roster lock server_only",
+          "x-source": "server confirmed context",
+          "x-ref": "food.coverageAreas",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "radiusM": {
+          "type": "number",
+          "minimum": 0,
+          "description": "radiusM; server confirmed context",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "metres; positive; server-config cap not hardcoded",
+          "x-privacy": "member snapshot via RPC; consent/roster lock server_only",
+          "x-source": "server confirmed context",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "desiredAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+          "description": "desiredAt; server confirmed context",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "member snapshot via RPC; consent/roster lock server_only",
+          "x-source": "server confirmed context",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "timezone": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "timezone; server confirmed context",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "IANA",
+          "x-privacy": "member snapshot via RPC; consent/roster lock server_only",
+          "x-source": "server confirmed context",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "serviceMode": {
+          "type": "string",
+          "enum": [
+            "dine_in",
+            "takeaway",
+            "delivery"
+          ],
+          "description": "serviceMode; server confirmed context",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member snapshot via RPC; consent/roster lock server_only",
+          "x-source": "server confirmed context",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "catalogueVersion": {
+          "type": "string",
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+          "description": "catalogueVersion; server confirmed context",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member snapshot via RPC; consent/roster lock server_only",
+          "x-source": "server confirmed context",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "datasetVersion": {
+          "type": "string",
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+          "description": "datasetVersion; server confirmed context",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member snapshot via RPC; consent/roster lock server_only",
+          "x-source": "server confirmed context",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "eligibilityVersion": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "eligibilityVersion; server confirmed context",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member snapshot via RPC; consent/roster lock server_only",
+          "x-source": "server confirmed context",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "contextVersion": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Record version monotonic, server increment",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member snapshot via RPC; consent/roster lock server_only",
+          "x-source": "server confirmed context",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "poolVersion": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Record version monotonic, server increment",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member snapshot via RPC; consent/roster lock server_only",
+          "x-source": "server confirmed context",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "policyVersion": {
+          "type": "string",
+          "enum": [
+            "decision-v2"
+          ],
+          "description": "policyVersion; server confirmed context",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member snapshot via RPC; consent/roster lock server_only",
+          "x-source": "server confirmed context",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "poolSeed": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "poolSeed; server confirmed context",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member snapshot via RPC; consent/roster lock server_only",
+          "x-source": "server confirmed context",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "rosterUserIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "uniqueItems": true,
+          "description": "rosterUserIds; server confirmed context",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member snapshot via RPC; consent/roster lock server_only",
+          "x-source": "server confirmed context",
+          "x-ref": "auth.users",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "consentSnapshot": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "userId": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+              },
+              "historyConsent": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "userId",
+              "historyConsent"
+            ],
+            "additionalProperties": false
+          },
+          "description": "consentSnapshot; server confirmed context",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "server_only",
+          "x-source": "server confirmed context",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "evaluatedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "evaluatedAt; server confirmed context",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "member snapshot via RPC; consent/roster lock server_only",
+          "x-source": "server confirmed context",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "lockedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "lockedAt; server confirmed context",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "member snapshot via RPC; consent/roster lock server_only",
+          "x-source": "server confirmed context",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Record version monotonic, server increment",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member snapshot via RPC; consent/roster lock server_only",
+          "x-source": "server confirmed context",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        }
+      },
+      "required": [
+        "id",
+        "code",
+        "hostUserId",
+        "state",
+        "createdAt",
+        "updatedAt",
+        "expiresAt",
+        "mealSlot",
+        "timeHint",
+        "budget",
+        "avoidRecent",
+        "anchorId",
+        "coverageId",
+        "radiusM",
+        "desiredAt",
+        "timezone",
+        "serviceMode",
+        "catalogueVersion",
+        "datasetVersion",
+        "eligibilityVersion",
+        "contextVersion",
+        "poolVersion",
+        "policyVersion",
+        "poolSeed",
+        "rosterUserIds",
+        "consentSnapshot",
+        "evaluatedAt",
+        "lockedAt",
+        "version"
+      ],
+      "additionalProperties": false,
+      "x-unique": [
+        [
+          "id"
+        ],
+        [
+          "code"
+        ]
+      ]
+    },
+    "members": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "Stable UUID, immutable key; never display name",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member roster; own mutation RPC",
+          "x-source": "authenticated user/server",
+          "x-ref": null,
+          "x-unique": "primary key"
+        },
+        "roomId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "roomId; authenticated user/server",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member roster; own mutation RPC",
+          "x-source": "authenticated user/server",
+          "x-ref": "rooms",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "userId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "userId; authenticated user/server",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member roster; own mutation RPC",
+          "x-source": "authenticated user/server",
+          "x-ref": "auth.users",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "nickname": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 24,
+          "pattern": "\\S",
+          "description": "nickname; authenticated user/server",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member roster; own mutation RPC",
+          "x-source": "authenticated user/server",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "ready": {
+          "type": "boolean",
+          "description": "ready; authenticated user/server",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member roster; own mutation RPC",
+          "x-source": "authenticated user/server",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "historyConsent": {
+          "type": "boolean",
+          "description": "historyConsent; authenticated user/server",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self; locked snapshot server_only",
+          "x-source": "authenticated user/server",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "joinedAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+          "description": "joinedAt; authenticated user/server",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "member roster; own mutation RPC",
+          "x-source": "authenticated user/server",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "leftAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "leftAt; authenticated user/server",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "member roster; own mutation RPC",
+          "x-source": "authenticated user/server",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Record version monotonic, server increment",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member roster; own mutation RPC",
+          "x-source": "authenticated user/server",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        }
+      },
+      "required": [
+        "id",
+        "roomId",
+        "userId",
+        "nickname",
+        "ready",
+        "historyConsent",
+        "joinedAt",
+        "leftAt",
+        "version"
+      ],
+      "additionalProperties": false,
+      "x-unique": [
+        [
+          "id"
+        ],
+        [
+          "roomId",
+          "userId"
+        ]
+      ]
+    },
+    "preferences": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "Stable UUID, immutable key; never display name",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self only; host cannot read others",
+          "x-source": "self declared; not inferred from votes",
+          "x-ref": null,
+          "x-unique": "primary key"
+        },
+        "roomId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "roomId; self declared; not inferred from votes",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self only; host cannot read others",
+          "x-source": "self declared; not inferred from votes",
+          "x-ref": "rooms",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "userId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "userId; self declared; not inferred from votes",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self only; host cannot read others",
+          "x-source": "self declared; not inferred from votes",
+          "x-ref": "auth.users",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "cuisineIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "uniqueItems": true,
+          "description": "cuisineIds; self declared; not inferred from votes",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self only; host cannot read others",
+          "x-source": "self declared; not inferred from votes",
+          "x-ref": "food.taxonomy",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "categoryIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "uniqueItems": true,
+          "description": "categoryIds; self declared; not inferred from votes",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self only; host cannot read others",
+          "x-source": "self declared; not inferred from votes",
+          "x-ref": "food.taxonomy",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "temperature": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "hot",
+                "warm",
+                "cold",
+                "ambient",
+                "unknown"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "temperature; self declared; not inferred from votes",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self only; host cannot read others",
+          "x-source": "self declared; not inferred from votes",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "flavor": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "spicy": {
+                  "type": "object",
+                  "properties": {
+                    "present": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "intensity": {
+                      "type": "string",
+                      "enum": [
+                        "none",
+                        "low",
+                        "medium",
+                        "high",
+                        "unknown"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "present",
+                    "intensity"
+                  ],
+                  "additionalProperties": false
+                },
+                "salty": {
+                  "type": "object",
+                  "properties": {
+                    "present": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "intensity": {
+                      "type": "string",
+                      "enum": [
+                        "none",
+                        "low",
+                        "medium",
+                        "high",
+                        "unknown"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "present",
+                    "intensity"
+                  ],
+                  "additionalProperties": false
+                },
+                "sweet": {
+                  "type": "object",
+                  "properties": {
+                    "present": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "intensity": {
+                      "type": "string",
+                      "enum": [
+                        "none",
+                        "low",
+                        "medium",
+                        "high",
+                        "unknown"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "present",
+                    "intensity"
+                  ],
+                  "additionalProperties": false
+                },
+                "sour": {
+                  "type": "object",
+                  "properties": {
+                    "present": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "intensity": {
+                      "type": "string",
+                      "enum": [
+                        "none",
+                        "low",
+                        "medium",
+                        "high",
+                        "unknown"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "present",
+                    "intensity"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "spicy",
+                "salty",
+                "sweet",
+                "sour"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "flavor; self declared; not inferred from votes",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self only; host cannot read others",
+          "x-source": "self declared; not inferred from votes",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "updatedAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+          "description": "updatedAt; self declared; not inferred from votes",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "self only; host cannot read others",
+          "x-source": "self declared; not inferred from votes",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Record version monotonic, server increment",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self only; host cannot read others",
+          "x-source": "self declared; not inferred from votes",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        }
+      },
+      "required": [
+        "id",
+        "roomId",
+        "userId",
+        "cuisineIds",
+        "categoryIds",
+        "temperature",
+        "flavor",
+        "updatedAt",
+        "version"
+      ],
+      "additionalProperties": false,
+      "x-unique": [
+        [
+          "id"
+        ],
+        [
+          "roomId",
+          "userId"
+        ]
+      ]
+    },
+    "roundDishes": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "Stable UUID, immutable key; never display name",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member locked pool via snapshot",
+          "x-source": "one offering and its schedule snapshot; no cross-venue merging",
+          "x-ref": null,
+          "x-unique": "primary key"
+        },
+        "roomId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "roomId; one offering and its schedule snapshot; no cross-venue merging",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member locked pool via snapshot",
+          "x-source": "one offering and its schedule snapshot; no cross-venue merging",
+          "x-ref": "rooms",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "round": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2,
+          "description": "round; one offering and its schedule snapshot; no cross-venue merging",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member locked pool via snapshot",
+          "x-source": "one offering and its schedule snapshot; no cross-venue merging",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "choiceId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "Same immutable dish/variant choice across rounds",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member locked pool via snapshot",
+          "x-source": "one offering and its schedule snapshot; no cross-venue merging",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "dishId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "dishId; one offering and its schedule snapshot; no cross-venue merging",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member locked pool via snapshot",
+          "x-source": "one offering and its schedule snapshot; no cross-venue merging",
+          "x-ref": "food.dishes",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "variant": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "variant; one offering and its schedule snapshot; no cross-venue merging",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member locked pool via snapshot",
+          "x-source": "one offering and its schedule snapshot; no cross-venue merging",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "offeringId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "offeringId; one offering and its schedule snapshot; no cross-venue merging",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member locked pool via snapshot",
+          "x-source": "one offering and its schedule snapshot; no cross-venue merging",
+          "x-ref": "food.venueDishes",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "venueId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "venueId; one offering and its schedule snapshot; no cross-venue merging",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member locked pool via snapshot",
+          "x-source": "one offering and its schedule snapshot; no cross-venue merging",
+          "x-ref": "food.venues",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "ordinal": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 7,
+          "description": "ordinal; one offering and its schedule snapshot; no cross-venue merging",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member locked pool via snapshot",
+          "x-source": "one offering and its schedule snapshot; no cross-venue merging",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "datasetVersion": {
+          "type": "string",
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+          "description": "datasetVersion; one offering and its schedule snapshot; no cross-venue merging",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member locked pool via snapshot",
+          "x-source": "one offering and its schedule snapshot; no cross-venue merging",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "scheduleId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "scheduleId; one offering and its schedule snapshot; no cross-venue merging",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member locked pool via snapshot",
+          "x-source": "one offering and its schedule snapshot; no cross-venue merging",
+          "x-ref": "food.weeklySchedules.scheduleId",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "scheduleVersion": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Record version monotonic, server increment",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member locked pool via snapshot",
+          "x-source": "one offering and its schedule snapshot; no cross-venue merging",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "effectiveProfile": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "cuisineIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                  },
+                  "uniqueItems": true
+                },
+                "categoryIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                  },
+                  "uniqueItems": true
+                },
+                "mealSlots": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "breakfast",
+                      "lunch",
+                      "dinner",
+                      "snack"
+                    ]
+                  },
+                  "uniqueItems": true
+                },
+                "timeHints": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "late_night"
+                    ]
+                  },
+                  "uniqueItems": true
+                },
+                "temperature": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "enum": [
+                        "hot",
+                        "warm",
+                        "cold",
+                        "ambient",
+                        "unknown"
+                      ]
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "flavor": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "spicy": {
+                          "type": "object",
+                          "properties": {
+                            "present": {
+                              "type": [
+                                "boolean",
+                                "null"
+                              ]
+                            },
+                            "intensity": {
+                              "type": "string",
+                              "enum": [
+                                "none",
+                                "low",
+                                "medium",
+                                "high",
+                                "unknown"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "present",
+                            "intensity"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "salty": {
+                          "type": "object",
+                          "properties": {
+                            "present": {
+                              "type": [
+                                "boolean",
+                                "null"
+                              ]
+                            },
+                            "intensity": {
+                              "type": "string",
+                              "enum": [
+                                "none",
+                                "low",
+                                "medium",
+                                "high",
+                                "unknown"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "present",
+                            "intensity"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "sweet": {
+                          "type": "object",
+                          "properties": {
+                            "present": {
+                              "type": [
+                                "boolean",
+                                "null"
+                              ]
+                            },
+                            "intensity": {
+                              "type": "string",
+                              "enum": [
+                                "none",
+                                "low",
+                                "medium",
+                                "high",
+                                "unknown"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "present",
+                            "intensity"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "sour": {
+                          "type": "object",
+                          "properties": {
+                            "present": {
+                              "type": [
+                                "boolean",
+                                "null"
+                              ]
+                            },
+                            "intensity": {
+                              "type": "string",
+                              "enum": [
+                                "none",
+                                "low",
+                                "medium",
+                                "high",
+                                "unknown"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "present",
+                            "intensity"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "spicy",
+                        "salty",
+                        "sweet",
+                        "sour"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "origin": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "enum": [
+                        "north",
+                        "central",
+                        "south",
+                        "unknown",
+                        "not_applicable"
+                      ]
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [],
+              "additionalProperties": false,
+              "minProperties": 1
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "effectiveProfile; one offering and its schedule snapshot; no cross-venue merging",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member locked pool via snapshot",
+          "x-source": "one offering and its schedule snapshot; no cross-venue merging",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "price": {
+          "type": "object",
+          "properties": {
+            "priceMin": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "priceMax": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "unit": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "portion",
+                    "item",
+                    "person",
+                    "group",
+                    "kg",
+                    "menu_item_unspecified"
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "currency": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "VND",
+                    "USD",
+                    "THB",
+                    "KRW",
+                    "JPY",
+                    "CNY",
+                    "EUR",
+                    "other"
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "servingSize": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sourceRef": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "priceMin",
+            "priceMax",
+            "unit",
+            "currency",
+            "servingSize",
+            "sourceRef"
+          ],
+          "additionalProperties": false,
+          "description": "price; one offering and its schedule snapshot; no cross-venue merging",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member locked pool via snapshot",
+          "x-source": "one offering and its schedule snapshot; no cross-venue merging",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "poolVersion": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Record version monotonic, server increment",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member locked pool via snapshot",
+          "x-source": "one offering and its schedule snapshot; no cross-venue merging",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Record version monotonic, server increment",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member locked pool via snapshot",
+          "x-source": "one offering and its schedule snapshot; no cross-venue merging",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        }
+      },
+      "required": [
+        "id",
+        "roomId",
+        "round",
+        "choiceId",
+        "dishId",
+        "variant",
+        "offeringId",
+        "venueId",
+        "ordinal",
+        "datasetVersion",
+        "scheduleId",
+        "scheduleVersion",
+        "effectiveProfile",
+        "price",
+        "poolVersion",
+        "version"
+      ],
+      "additionalProperties": false,
+      "x-unique": [
+        [
+          "id"
+        ],
+        [
+          "roomId",
+          "round",
+          "choiceId"
+        ],
+        [
+          "roomId",
+          "round",
+          "dishId",
+          "variant"
+        ],
+        [
+          "roomId",
+          "round",
+          "ordinal"
+        ]
+      ]
+    },
+    "submissions": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "Stable UUID, immutable key; never display name",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self/trusted finalize only; host no raw ballot",
+          "x-source": "server ACK of complete explicit submission",
+          "x-ref": null,
+          "x-unique": "primary key"
+        },
+        "roomId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "roomId; server ACK of complete explicit submission",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self/trusted finalize only; host no raw ballot",
+          "x-source": "server ACK of complete explicit submission",
+          "x-ref": "rooms",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "memberId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "memberId; server ACK of complete explicit submission",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self/trusted finalize only; host no raw ballot",
+          "x-source": "server ACK of complete explicit submission",
+          "x-ref": "members",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "round": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2,
+          "description": "round; server ACK of complete explicit submission",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self/trusted finalize only; host no raw ballot",
+          "x-source": "server ACK of complete explicit submission",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "intentId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "intentId; server ACK of complete explicit submission",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self/trusted finalize only; host no raw ballot",
+          "x-source": "server ACK of complete explicit submission",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "requestId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "requestId; server ACK of complete explicit submission",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self/trusted finalize only; host no raw ballot",
+          "x-source": "server ACK of complete explicit submission",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "payloadHash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "payloadHash; server ACK of complete explicit submission",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self/trusted finalize only; host no raw ballot",
+          "x-source": "server ACK of complete explicit submission",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "poolVersion": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Record version monotonic, server increment",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self/trusted finalize only; host no raw ballot",
+          "x-source": "server ACK of complete explicit submission",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "acceptedAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+          "description": "acceptedAt; server ACK of complete explicit submission",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "self/trusted finalize only; host no raw ballot",
+          "x-source": "server ACK of complete explicit submission",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Record version monotonic, server increment",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self/trusted finalize only; host no raw ballot",
+          "x-source": "server ACK of complete explicit submission",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        }
+      },
+      "required": [
+        "id",
+        "roomId",
+        "memberId",
+        "round",
+        "intentId",
+        "requestId",
+        "payloadHash",
+        "poolVersion",
+        "acceptedAt",
+        "version"
+      ],
+      "additionalProperties": false,
+      "x-unique": [
+        [
+          "id"
+        ],
+        [
+          "roomId",
+          "round",
+          "memberId"
+        ],
+        [
+          "memberId",
+          "intentId"
+        ]
+      ]
+    },
+    "votes": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "Stable UUID, immutable key; never display name",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self/trusted finalize only",
+          "x-source": "explicit submitted ballot; no UNSET/default KEEP",
+          "x-ref": null,
+          "x-unique": "primary key"
+        },
+        "submissionId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "submissionId; explicit submitted ballot; no UNSET/default KEEP",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self/trusted finalize only",
+          "x-source": "explicit submitted ballot; no UNSET/default KEEP",
+          "x-ref": "submissions",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "roundDishId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "roundDishId; explicit submitted ballot; no UNSET/default KEEP",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self/trusted finalize only",
+          "x-source": "explicit submitted ballot; no UNSET/default KEEP",
+          "x-ref": "roundDishes",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "value": {
+          "type": "string",
+          "enum": [
+            "WANT",
+            "OK",
+            "NO",
+            "KEEP",
+            "REMOVE"
+          ],
+          "description": "value; explicit submitted ballot; no UNSET/default KEEP",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self/trusted finalize only",
+          "x-source": "explicit submitted ballot; no UNSET/default KEEP",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Record version monotonic, server increment",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self/trusted finalize only",
+          "x-source": "explicit submitted ballot; no UNSET/default KEEP",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        }
+      },
+      "required": [
+        "id",
+        "submissionId",
+        "roundDishId",
+        "value",
+        "version"
+      ],
+      "additionalProperties": false,
+      "x-unique": [
+        [
+          "id"
+        ],
+        [
+          "submissionId",
+          "roundDishId"
+        ]
+      ]
+    },
+    "results": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "Stable UUID, immutable key; never display name",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member result via RPC; ties server_only",
+          "x-source": "trusted finalize/persist once; not client computed",
+          "x-ref": null,
+          "x-unique": "primary key"
+        },
+        "roomId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "roomId; trusted finalize/persist once; not client computed",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member result via RPC; ties server_only",
+          "x-source": "trusted finalize/persist once; not client computed",
+          "x-ref": "rooms",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "winnerRoundDishId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "winnerRoundDishId; trusted finalize/persist once; not client computed",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member result via RPC; ties server_only",
+          "x-source": "trusted finalize/persist once; not client computed",
+          "x-ref": "roundDishes",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "reasonCode": {
+          "type": "string",
+          "enum": [
+            "UNANIMOUS_WANT",
+            "ACCEPTABLE_FINAL",
+            "EMPTY_INTERSECTION",
+            "ALL_REMOVED"
+          ],
+          "description": "reasonCode; trusted finalize/persist once; not client computed",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member result via RPC; ties server_only",
+          "x-source": "trusted finalize/persist once; not client computed",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "matchTier": {
+          "type": "string",
+          "enum": [
+            "PERFECT",
+            "CONSENSUS",
+            "COMPROMISE",
+            "NO_CONSENSUS"
+          ],
+          "description": "matchTier; trusted finalize/persist once; not client computed",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member result via RPC; ties server_only",
+          "x-source": "trusted finalize/persist once; not client computed",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "policyVersion": {
+          "type": "string",
+          "enum": [
+            "decision-v2"
+          ],
+          "description": "policyVersion; trusted finalize/persist once; not client computed",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member result via RPC; ties server_only",
+          "x-source": "trusted finalize/persist once; not client computed",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "tiedChoiceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "uniqueItems": true,
+          "description": "tiedChoiceIds; trusted finalize/persist once; not client computed",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "server_only; never shared snapshot",
+          "x-source": "trusted finalize/persist once; not client computed",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "finalizedAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+          "description": "finalizedAt; trusted finalize/persist once; not client computed",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "member result via RPC; ties server_only",
+          "x-source": "trusted finalize/persist once; not client computed",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Record version monotonic, server increment",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "member result via RPC; ties server_only",
+          "x-source": "trusted finalize/persist once; not client computed",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        }
+      },
+      "required": [
+        "id",
+        "roomId",
+        "winnerRoundDishId",
+        "reasonCode",
+        "matchTier",
+        "policyVersion",
+        "tiedChoiceIds",
+        "finalizedAt",
+        "version"
+      ],
+      "additionalProperties": false,
+      "x-unique": [
+        [
+          "id"
+        ],
+        [
+          "roomId"
+        ]
+      ]
+    },
+    "consents": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "Stable UUID, immutable key; never display name",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self only; group snapshot trusted server",
+          "x-source": "explicit opt-in/withdrawal",
+          "x-ref": null,
+          "x-unique": "primary key"
+        },
+        "userId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "userId; explicit opt-in/withdrawal",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self only; group snapshot trusted server",
+          "x-source": "explicit opt-in/withdrawal",
+          "x-ref": "auth.users",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "roomId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "roomId; explicit opt-in/withdrawal",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self only; group snapshot trusted server",
+          "x-source": "explicit opt-in/withdrawal",
+          "x-ref": "rooms",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "scope": {
+          "type": "string",
+          "enum": [
+            "personal_history",
+            "group_history",
+            "notifications"
+          ],
+          "description": "scope; explicit opt-in/withdrawal",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self only; group snapshot trusted server",
+          "x-source": "explicit opt-in/withdrawal",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "enabled; explicit opt-in/withdrawal",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self only; group snapshot trusted server",
+          "x-source": "explicit opt-in/withdrawal",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "grantedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "grantedAt; explicit opt-in/withdrawal",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "self only; group snapshot trusted server",
+          "x-source": "explicit opt-in/withdrawal",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "revokedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "revokedAt; explicit opt-in/withdrawal",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "self only; group snapshot trusted server",
+          "x-source": "explicit opt-in/withdrawal",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "expiresAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "expiresAt; explicit opt-in/withdrawal",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "self only; group snapshot trusted server",
+          "x-source": "explicit opt-in/withdrawal",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Record version monotonic, server increment",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "self only; group snapshot trusted server",
+          "x-source": "explicit opt-in/withdrawal",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "roomId",
+        "scope",
+        "enabled",
+        "grantedAt",
+        "revokedAt",
+        "expiresAt",
+        "version"
+      ],
+      "additionalProperties": false,
+      "x-unique": [
+        [
+          "id"
+        ],
+        [
+          "userId",
+          "roomId",
+          "scope"
+        ]
+      ]
+    },
+    "histories": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "Stable UUID, immutable key; never display name",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "personal owner; group exact roster and all opted in",
+          "x-source": "minimal result summary; never raw votes/GPS/anchor/mood",
+          "x-ref": null,
+          "x-unique": "primary key"
+        },
+        "scope": {
+          "type": "string",
+          "enum": [
+            "personal",
+            "group"
+          ],
+          "description": "scope; minimal result summary; never raw votes/GPS/anchor/mood",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "personal owner; group exact roster and all opted in",
+          "x-source": "minimal result summary; never raw votes/GPS/anchor/mood",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "ownerUserId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "ownerUserId; minimal result summary; never raw votes/GPS/anchor/mood",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "personal owner; group exact roster and all opted in",
+          "x-source": "minimal result summary; never raw votes/GPS/anchor/mood",
+          "x-ref": "auth.users",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "memberUserIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "uniqueItems": true,
+          "description": "memberUserIds; minimal result summary; never raw votes/GPS/anchor/mood",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "personal owner; group exact roster and all opted in",
+          "x-source": "minimal result summary; never raw votes/GPS/anchor/mood",
+          "x-ref": "auth.users",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "groupKey": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "groupKey; minimal result summary; never raw votes/GPS/anchor/mood",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "personal owner; group exact roster and all opted in",
+          "x-source": "minimal result summary; never raw votes/GPS/anchor/mood",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "resultId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "resultId; minimal result summary; never raw votes/GPS/anchor/mood",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "personal owner; group exact roster and all opted in",
+          "x-source": "minimal result summary; never raw votes/GPS/anchor/mood",
+          "x-ref": "results",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "dishId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "dishId; minimal result summary; never raw votes/GPS/anchor/mood",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "personal owner; group exact roster and all opted in",
+          "x-source": "minimal result summary; never raw votes/GPS/anchor/mood",
+          "x-ref": "food.dishes",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "dishName": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "dishName; minimal result summary; never raw votes/GPS/anchor/mood",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "personal owner; group exact roster and all opted in",
+          "x-source": "minimal result summary; never raw votes/GPS/anchor/mood",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "mealSlot": {
+          "type": "string",
+          "enum": [
+            "breakfast",
+            "lunch",
+            "dinner",
+            "snack"
+          ],
+          "description": "mealSlot; minimal result summary; never raw votes/GPS/anchor/mood",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "personal owner; group exact roster and all opted in",
+          "x-source": "minimal result summary; never raw votes/GPS/anchor/mood",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "matchTier": {
+          "type": "string",
+          "enum": [
+            "PERFECT",
+            "CONSENSUS",
+            "COMPROMISE"
+          ],
+          "description": "matchTier; minimal result summary; never raw votes/GPS/anchor/mood",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "personal owner; group exact roster and all opted in",
+          "x-source": "minimal result summary; never raw votes/GPS/anchor/mood",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "finalizedAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+          "description": "finalizedAt; minimal result summary; never raw votes/GPS/anchor/mood",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "personal owner; group exact roster and all opted in",
+          "x-source": "minimal result summary; never raw votes/GPS/anchor/mood",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "expiresAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+          "description": "expiresAt; minimal result summary; never raw votes/GPS/anchor/mood",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "personal owner; group exact roster and all opted in",
+          "x-source": "minimal result summary; never raw votes/GPS/anchor/mood",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "consentIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "uniqueItems": true,
+          "description": "consentIds; minimal result summary; never raw votes/GPS/anchor/mood",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "personal owner; group exact roster and all opted in",
+          "x-source": "minimal result summary; never raw votes/GPS/anchor/mood",
+          "x-ref": "consents",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Record version monotonic, server increment",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "personal owner; group exact roster and all opted in",
+          "x-source": "minimal result summary; never raw votes/GPS/anchor/mood",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "ownerUserId",
+        "memberUserIds",
+        "groupKey",
+        "resultId",
+        "dishId",
+        "dishName",
+        "mealSlot",
+        "matchTier",
+        "finalizedAt",
+        "expiresAt",
+        "consentIds",
+        "version"
+      ],
+      "additionalProperties": false,
+      "x-unique": [
+        [
+          "id"
+        ],
+        [
+          "scope",
+          "ownerUserId",
+          "groupKey",
+          "resultId"
+        ]
+      ]
+    },
+    "friendInvitations": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "Stable UUID, immutable key; never display name",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "sender/recipient only; accept recipient",
+          "x-source": "explicit invitation; no contact upload",
+          "x-ref": null,
+          "x-unique": "primary key"
+        },
+        "senderUserId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "senderUserId; explicit invitation; no contact upload",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "sender/recipient only; accept recipient",
+          "x-source": "explicit invitation; no contact upload",
+          "x-ref": "auth.users",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "recipientUserId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "recipientUserId; explicit invitation; no contact upload",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "sender/recipient only; accept recipient",
+          "x-source": "explicit invitation; no contact upload",
+          "x-ref": "auth.users",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "accepted",
+            "rejected",
+            "cancelled",
+            "expired"
+          ],
+          "description": "state; explicit invitation; no contact upload",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "sender/recipient only; accept recipient",
+          "x-source": "explicit invitation; no contact upload",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "createdAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+          "description": "createdAt; explicit invitation; no contact upload",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "sender/recipient only; accept recipient",
+          "x-source": "explicit invitation; no contact upload",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "expiresAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+          "description": "expiresAt; explicit invitation; no contact upload",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "sender/recipient only; accept recipient",
+          "x-source": "explicit invitation; no contact upload",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "respondedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "respondedAt; explicit invitation; no contact upload",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "sender/recipient only; accept recipient",
+          "x-source": "explicit invitation; no contact upload",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Record version monotonic, server increment",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "sender/recipient only; accept recipient",
+          "x-source": "explicit invitation; no contact upload",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        }
+      },
+      "required": [
+        "id",
+        "senderUserId",
+        "recipientUserId",
+        "state",
+        "createdAt",
+        "expiresAt",
+        "respondedAt",
+        "version"
+      ],
+      "additionalProperties": false,
+      "x-unique": [
+        [
+          "id"
+        ]
+      ]
+    },
+    "friends": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "Stable UUID, immutable key; never display name",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "two parties only",
+          "x-source": "canonical sorted accepted pair; unfriend removes link",
+          "x-ref": null,
+          "x-unique": "primary key"
+        },
+        "lowUserId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "lowUserId; canonical sorted accepted pair; unfriend removes link",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "two parties only",
+          "x-source": "canonical sorted accepted pair; unfriend removes link",
+          "x-ref": "auth.users",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "highUserId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "highUserId; canonical sorted accepted pair; unfriend removes link",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "two parties only",
+          "x-source": "canonical sorted accepted pair; unfriend removes link",
+          "x-ref": "auth.users",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "acceptedAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+          "description": "acceptedAt; canonical sorted accepted pair; unfriend removes link",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "two parties only",
+          "x-source": "canonical sorted accepted pair; unfriend removes link",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Record version monotonic, server increment",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "two parties only",
+          "x-source": "canonical sorted accepted pair; unfriend removes link",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        }
+      },
+      "required": [
+        "id",
+        "lowUserId",
+        "highUserId",
+        "acceptedAt",
+        "version"
+      ],
+      "additionalProperties": false,
+      "x-unique": [
+        [
+          "id"
+        ],
+        [
+          "lowUserId",
+          "highUserId"
+        ]
+      ]
+    },
+    "roomInvitations": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "Stable UUID, immutable key; never display name",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "sender/recipient only; no automatic join/ready",
+          "x-source": "server checks accepted pair and room at create/accept",
+          "x-ref": null,
+          "x-unique": "primary key"
+        },
+        "roomId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "roomId; server checks accepted pair and room at create/accept",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "sender/recipient only; no automatic join/ready",
+          "x-source": "server checks accepted pair and room at create/accept",
+          "x-ref": "rooms",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "friendId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "friendId; server checks accepted pair and room at create/accept",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "sender/recipient only; no automatic join/ready",
+          "x-source": "server checks accepted pair and room at create/accept",
+          "x-ref": "friends",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "senderUserId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "senderUserId; server checks accepted pair and room at create/accept",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "sender/recipient only; no automatic join/ready",
+          "x-source": "server checks accepted pair and room at create/accept",
+          "x-ref": "auth.users",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "recipientUserId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "recipientUserId; server checks accepted pair and room at create/accept",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "sender/recipient only; no automatic join/ready",
+          "x-source": "server checks accepted pair and room at create/accept",
+          "x-ref": "auth.users",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "accepted",
+            "rejected",
+            "cancelled",
+            "expired"
+          ],
+          "description": "state; server checks accepted pair and room at create/accept",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "sender/recipient only; no automatic join/ready",
+          "x-source": "server checks accepted pair and room at create/accept",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "eventId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "eventId; server checks accepted pair and room at create/accept",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "sender/recipient only; no automatic join/ready",
+          "x-source": "server checks accepted pair and room at create/accept",
+          "x-ref": "events",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "createdAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+          "description": "createdAt; server checks accepted pair and room at create/accept",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "sender/recipient only; no automatic join/ready",
+          "x-source": "server checks accepted pair and room at create/accept",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "expiresAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+          "description": "expiresAt; server checks accepted pair and room at create/accept",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "sender/recipient only; no automatic join/ready",
+          "x-source": "server checks accepted pair and room at create/accept",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "respondedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "respondedAt; server checks accepted pair and room at create/accept",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "sender/recipient only; no automatic join/ready",
+          "x-source": "server checks accepted pair and room at create/accept",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Record version monotonic, server increment",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "sender/recipient only; no automatic join/ready",
+          "x-source": "server checks accepted pair and room at create/accept",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        }
+      },
+      "required": [
+        "id",
+        "roomId",
+        "friendId",
+        "senderUserId",
+        "recipientUserId",
+        "state",
+        "eventId",
+        "createdAt",
+        "expiresAt",
+        "respondedAt",
+        "version"
+      ],
+      "additionalProperties": false,
+      "x-unique": [
+        [
+          "id"
+        ],
+        [
+          "eventId"
+        ]
+      ]
+    },
+    "inbox": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "Stable UUID, immutable key; never display name",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "owner only",
+          "x-source": "server notification projection; refetch permissions",
+          "x-ref": null,
+          "x-unique": "primary key"
+        },
+        "ownerUserId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "ownerUserId; server notification projection; refetch permissions",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "owner only",
+          "x-source": "server notification projection; refetch permissions",
+          "x-ref": "auth.users",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "eventId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "eventId; server notification projection; refetch permissions",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "owner only",
+          "x-source": "server notification projection; refetch permissions",
+          "x-ref": "events",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "readAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "readAt; server notification projection; refetch permissions",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "owner only",
+          "x-source": "server notification projection; refetch permissions",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "createdAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+          "description": "createdAt; server notification projection; refetch permissions",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "owner only",
+          "x-source": "server notification projection; refetch permissions",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "expiresAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+          "description": "expiresAt; server notification projection; refetch permissions",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "owner only",
+          "x-source": "server notification projection; refetch permissions",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Record version monotonic, server increment",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "owner only",
+          "x-source": "server notification projection; refetch permissions",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        }
+      },
+      "required": [
+        "id",
+        "ownerUserId",
+        "eventId",
+        "readAt",
+        "createdAt",
+        "expiresAt",
+        "version"
+      ],
+      "additionalProperties": false,
+      "x-unique": [
+        [
+          "id"
+        ],
+        [
+          "ownerUserId",
+          "eventId"
+        ]
+      ]
+    },
+    "devices": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "Stable UUID, immutable key; never display name",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "owner/trusted sender only",
+          "x-source": "device permission/provider registration",
+          "x-ref": null,
+          "x-unique": "primary key"
+        },
+        "userId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "userId; device permission/provider registration",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "owner/trusted sender only",
+          "x-source": "device permission/provider registration",
+          "x-ref": "auth.users",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "deviceKey": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "deviceKey; device permission/provider registration",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "owner/trusted sender only",
+          "x-source": "device permission/provider registration",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "platform": {
+          "type": "string",
+          "enum": [
+            "android"
+          ],
+          "description": "platform; device permission/provider registration",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "owner/trusted sender only",
+          "x-source": "device permission/provider registration",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "pushToken": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "pushToken; device permission/provider registration",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "owner register/unregister; trusted sender only; never log",
+          "x-source": "device permission/provider registration",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "permission": {
+          "type": "string",
+          "enum": [
+            "granted",
+            "denied",
+            "unknown"
+          ],
+          "description": "permission; device permission/provider registration",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "owner/trusted sender only",
+          "x-source": "device permission/provider registration",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "active": {
+          "type": "boolean",
+          "description": "active; device permission/provider registration",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "owner/trusted sender only",
+          "x-source": "device permission/provider registration",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "createdAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+          "description": "createdAt; device permission/provider registration",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "owner/trusted sender only",
+          "x-source": "device permission/provider registration",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "lastSeenAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+          "description": "lastSeenAt; device permission/provider registration",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "owner/trusted sender only",
+          "x-source": "device permission/provider registration",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Record version monotonic, server increment",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "owner/trusted sender only",
+          "x-source": "device permission/provider registration",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "deviceKey",
+        "platform",
+        "pushToken",
+        "permission",
+        "active",
+        "createdAt",
+        "lastSeenAt",
+        "version"
+      ],
+      "additionalProperties": false,
+      "x-unique": [
+        [
+          "id"
+        ],
+        [
+          "userId",
+          "deviceKey"
+        ]
+      ]
+    },
+    "events": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "Stable UUID, immutable key; never display name",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "trusted sender only; minimal ref payload",
+          "x-source": "server transaction event; dispatch after commit",
+          "x-ref": null,
+          "x-unique": "primary key"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "ROOM_INVITED",
+            "ROOM_RESULT_READY"
+          ],
+          "description": "kind; server transaction event; dispatch after commit",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "trusted sender only; minimal ref payload",
+          "x-source": "server transaction event; dispatch after commit",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "roomId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "roomId; server transaction event; dispatch after commit",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "trusted sender only; minimal ref payload",
+          "x-source": "server transaction event; dispatch after commit",
+          "x-ref": "rooms",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "invitationId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "invitationId; server transaction event; dispatch after commit",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "trusted sender only; minimal ref payload",
+          "x-source": "server transaction event; dispatch after commit",
+          "x-ref": "roomInvitations",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "resultId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "resultId; server transaction event; dispatch after commit",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "trusted sender only; minimal ref payload",
+          "x-source": "server transaction event; dispatch after commit",
+          "x-ref": "results",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "recipientUserIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "uniqueItems": true,
+          "description": "recipientUserIds; server transaction event; dispatch after commit",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "trusted sender only; minimal ref payload",
+          "x-source": "server transaction event; dispatch after commit",
+          "x-ref": "auth.users",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "dedupeKey": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "dedupeKey; server transaction event; dispatch after commit",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "trusted sender only; minimal ref payload",
+          "x-source": "server transaction event; dispatch after commit",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "createdAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+          "description": "createdAt; server transaction event; dispatch after commit",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "trusted sender only; minimal ref payload",
+          "x-source": "server transaction event; dispatch after commit",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "expiresAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+          "description": "expiresAt; server transaction event; dispatch after commit",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "trusted sender only; minimal ref payload",
+          "x-source": "server transaction event; dispatch after commit",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Record version monotonic, server increment",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "trusted sender only; minimal ref payload",
+          "x-source": "server transaction event; dispatch after commit",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "roomId",
+        "invitationId",
+        "resultId",
+        "recipientUserIds",
+        "dedupeKey",
+        "createdAt",
+        "expiresAt",
+        "version"
+      ],
+      "additionalProperties": false,
+      "x-unique": [
+        [
+          "id"
+        ],
+        [
+          "dedupeKey"
+        ]
+      ]
+    },
+    "deliveries": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "Stable UUID, immutable key; never display name",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "trusted sender only",
+          "x-source": "provider ACK/receipt; duplicate delivery possible",
+          "x-ref": null,
+          "x-unique": "primary key"
+        },
+        "eventId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "eventId; provider ACK/receipt; duplicate delivery possible",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "trusted sender only",
+          "x-source": "provider ACK/receipt; duplicate delivery possible",
+          "x-ref": "events",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "recipientUserId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "recipientUserId; provider ACK/receipt; duplicate delivery possible",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "trusted sender only",
+          "x-source": "provider ACK/receipt; duplicate delivery possible",
+          "x-ref": "auth.users",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "deviceId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "deviceId; provider ACK/receipt; duplicate delivery possible",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "trusted sender only",
+          "x-source": "provider ACK/receipt; duplicate delivery possible",
+          "x-ref": "devices",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "sent",
+            "failed",
+            "expired"
+          ],
+          "description": "state; provider ACK/receipt; duplicate delivery possible",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "trusted sender only",
+          "x-source": "provider ACK/receipt; duplicate delivery possible",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "attempts": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "attempts; provider ACK/receipt; duplicate delivery possible",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "trusted sender only",
+          "x-source": "provider ACK/receipt; duplicate delivery possible",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "ticketId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "ticketId; provider ACK/receipt; duplicate delivery possible",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "trusted sender only",
+          "x-source": "provider ACK/receipt; duplicate delivery possible",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "receiptId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "receiptId; provider ACK/receipt; duplicate delivery possible",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "trusted sender only",
+          "x-source": "provider ACK/receipt; duplicate delivery possible",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "lastAttemptAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "lastAttemptAt; provider ACK/receipt; duplicate delivery possible",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "trusted sender only",
+          "x-source": "provider ACK/receipt; duplicate delivery possible",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "expiresAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+          "description": "expiresAt; provider ACK/receipt; duplicate delivery possible",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "trusted sender only",
+          "x-source": "provider ACK/receipt; duplicate delivery possible",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Record version monotonic, server increment",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "trusted sender only",
+          "x-source": "provider ACK/receipt; duplicate delivery possible",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        }
+      },
+      "required": [
+        "id",
+        "eventId",
+        "recipientUserId",
+        "deviceId",
+        "state",
+        "attempts",
+        "ticketId",
+        "receiptId",
+        "lastAttemptAt",
+        "expiresAt",
+        "version"
+      ],
+      "additionalProperties": false,
+      "x-unique": [
+        [
+          "id"
+        ],
+        [
+          "eventId",
+          "recipientUserId",
+          "deviceId"
+        ]
+      ]
+    },
+    "idempotency": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "Stable UUID, immutable key; never display name",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "trusted RPC only; caller receives own ACK",
+          "x-source": "immutable payload hash; ACK lookup before version check",
+          "x-ref": null,
+          "x-unique": "primary key"
+        },
+        "userId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "userId; immutable payload hash; ACK lookup before version check",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "trusted RPC only; caller receives own ACK",
+          "x-source": "immutable payload hash; ACK lookup before version check",
+          "x-ref": "auth.users",
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "operation": {
+          "type": "string",
+          "enum": [
+            "create_room",
+            "join_room",
+            "update_preferences",
+            "update_context",
+            "set_ready",
+            "start_room",
+            "submit_ballot",
+            "cancel_room",
+            "leave_room",
+            "create_friend_invite",
+            "accept_friend_invite",
+            "reject_friend_invite",
+            "unfriend",
+            "create_room_invite",
+            "accept_room_invite",
+            "reject_room_invite",
+            "register_push_device",
+            "unregister_push_device",
+            "delete_history",
+            "update_history_consent"
+          ],
+          "description": "operation; immutable payload hash; ACK lookup before version check",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "trusted RPC only; caller receives own ACK",
+          "x-source": "immutable payload hash; ACK lookup before version check",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "requestId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "requestId; immutable payload hash; ACK lookup before version check",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "trusted RPC only; caller receives own ACK",
+          "x-source": "immutable payload hash; ACK lookup before version check",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "payloadHash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "payloadHash; immutable payload hash; ACK lookup before version check",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "trusted RPC only; caller receives own ACK",
+          "x-source": "immutable payload hash; ACK lookup before version check",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "expectedVersion": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "expectedVersion; immutable payload hash; ACK lookup before version check",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": true,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "trusted RPC only; caller receives own ACK",
+          "x-source": "immutable payload hash; ACK lookup before version check",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "response": {
+          "type": "object",
+          "properties": {
+            "roomId": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "resultId": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "serverVersion": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "roomId",
+            "resultId",
+            "serverVersion"
+          ],
+          "additionalProperties": false,
+          "description": "response; immutable payload hash; ACK lookup before version check",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "trusted RPC only; caller receives own ACK",
+          "x-source": "immutable payload hash; ACK lookup before version check",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "createdAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+          "description": "createdAt; immutable payload hash; ACK lookup before version check",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "trusted RPC only; caller receives own ACK",
+          "x-source": "immutable payload hash; ACK lookup before version check",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "expiresAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+          "description": "expiresAt; immutable payload hash; ACK lookup before version check",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "UTC ISO 8601 Z",
+          "x-privacy": "trusted RPC only; caller receives own ACK",
+          "x-source": "immutable payload hash; ACK lookup before version check",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Record version monotonic, server increment",
+          "x-contractId": "food-v1/roadmap-v2/GM-04.2",
+          "x-nullable": false,
+          "x-default": "no implicit default",
+          "x-unit": "none",
+          "x-privacy": "trusted RPC only; caller receives own ACK",
+          "x-source": "immutable payload hash; ACK lookup before version check",
+          "x-ref": null,
+          "x-unique": "see entity x-unique; not globally unique"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "operation",
+        "requestId",
+        "payloadHash",
+        "expectedVersion",
+        "response",
+        "createdAt",
+        "expiresAt",
+        "version"
+      ],
+      "additionalProperties": false,
+      "x-unique": [
+        [
+          "id"
+        ],
+        [
+          "userId",
+          "operation",
+          "requestId"
+        ]
+      ]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "contractVersion": {
+      "const": "1.1.0"
+    },
+    "datasetVersion": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$"
+    },
+    "fixtureOnly": {
+      "type": "boolean"
+    },
+    "entities": {
+      "type": "object",
+      "properties": {
+        "profiles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/profiles"
+          }
+        },
+        "rooms": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rooms"
+          }
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/members"
+          }
+        },
+        "preferences": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/preferences"
+          }
+        },
+        "roundDishes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/roundDishes"
+          }
+        },
+        "submissions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/submissions"
+          }
+        },
+        "votes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/votes"
+          }
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/results"
+          }
+        },
+        "consents": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/consents"
+          }
+        },
+        "histories": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/histories"
+          }
+        },
+        "friendInvitations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/friendInvitations"
+          }
+        },
+        "friends": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/friends"
+          }
+        },
+        "roomInvitations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/roomInvitations"
+          }
+        },
+        "inbox": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/inbox"
+          }
+        },
+        "devices": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/devices"
+          }
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/events"
+          }
+        },
+        "deliveries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/deliveries"
+          }
+        },
+        "idempotency": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/idempotency"
+          }
+        }
+      },
+      "required": [
+        "profiles",
+        "rooms",
+        "members",
+        "preferences",
+        "roundDishes",
+        "submissions",
+        "votes",
+        "results",
+        "consents",
+        "histories",
+        "friendInvitations",
+        "friends",
+        "roomInvitations",
+        "inbox",
+        "devices",
+        "events",
+        "deliveries",
+        "idempotency"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "contractVersion",
+    "datasetVersion",
+    "fixtureOnly",
+    "entities"
+  ],
+  "additionalProperties": false
+}

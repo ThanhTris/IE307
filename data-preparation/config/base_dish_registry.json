@@ -1,0 +1,240 @@
+{
+  "version": "1.0.0",
+  "entityNamespace": "anyfood:food-v1:dishes",
+  "dishes": [
+    {
+      "registryKey": "base-001",
+      "id": "441e70be-0b06-521d-b5b9-7349386f14ad",
+      "name": "Bún thịt nướng",
+      "version": 1
+    },
+    {
+      "registryKey": "base-002",
+      "id": "8131e3cd-bce2-5843-8800-9426c91382ba",
+      "name": "Burger",
+      "version": 1
+    },
+    {
+      "registryKey": "base-003",
+      "id": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
+      "name": "Bánh mì",
+      "version": 1
+    },
+    {
+      "registryKey": "base-004",
+      "id": "e6558eda-db0f-5583-bbf5-be4f7da8f2f9",
+      "name": "Bún nem nướng",
+      "version": 1
+    },
+    {
+      "registryKey": "base-005",
+      "id": "79c72911-92fc-5af0-9f7f-b8c476542e7f",
+      "name": "Bún riêu",
+      "version": 1
+    },
+    {
+      "registryKey": "base-006",
+      "id": "a7619de7-cecd-558c-9e8a-dcdedd82465a",
+      "name": "Cơm thịt kho",
+      "version": 1
+    },
+    {
+      "registryKey": "base-007",
+      "id": "fc959eeb-033c-54b6-b8a2-9d7c6982803e",
+      "name": "Cơm tấm",
+      "version": 1
+    },
+    {
+      "registryKey": "base-008",
+      "id": "c3f1f939-20a4-55b1-89af-42e3c95a33fa",
+      "name": "Miến",
+      "version": 1
+    },
+    {
+      "registryKey": "base-009",
+      "id": "33c758d0-9f9b-5dd9-8976-c52b6f949d31",
+      "name": "Phở gà",
+      "version": 1
+    },
+    {
+      "registryKey": "base-010",
+      "id": "1fdae49f-b6da-5574-82b6-4b7fc1cf09cd",
+      "name": "Xôi",
+      "version": 1
+    },
+    {
+      "registryKey": "base-011",
+      "id": "990393dc-1b1d-5a1a-9ccd-2b0c4ac60572",
+      "name": "Bánh bao",
+      "version": 1
+    },
+    {
+      "registryKey": "base-012",
+      "id": "a785a621-2cbc-5f16-9274-a47141a8e3c8",
+      "name": "Bánh cuốn",
+      "version": 1
+    },
+    {
+      "registryKey": "base-013",
+      "id": "39da0965-df4e-5ca1-8741-bdb9aeb85f57",
+      "name": "Bánh cuộn",
+      "version": 1
+    },
+    {
+      "registryKey": "base-014",
+      "id": "620d6a2f-02a2-532f-b254-c37f3713ba04",
+      "name": "Bánh ướt",
+      "version": 1
+    },
+    {
+      "registryKey": "base-015",
+      "id": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "name": "Bún bò",
+      "version": 1
+    },
+    {
+      "registryKey": "base-016",
+      "id": "fe39887f-b79c-5981-8f0a-6e50c4a5dc54",
+      "name": "Bún bò chay",
+      "version": 1
+    },
+    {
+      "registryKey": "base-017",
+      "id": "52c6435f-c967-5820-8e76-b1917291a1ef",
+      "name": "Bún chay",
+      "version": 1
+    },
+    {
+      "registryKey": "base-018",
+      "id": "807a5dfe-64b0-5137-ac00-6f95882830d6",
+      "name": "Bún gạo lứt",
+      "version": 1
+    },
+    {
+      "registryKey": "base-019",
+      "id": "4a8ac4a8-b566-5032-be38-48f00e6a53b9",
+      "name": "Bún mọc",
+      "version": 1
+    },
+    {
+      "registryKey": "base-020",
+      "id": "db666124-3676-5609-8dc4-b313a1809358",
+      "name": "Bún riêu chay",
+      "version": 1
+    },
+    {
+      "registryKey": "base-021",
+      "id": "d320d9fe-0b53-539f-98ce-87ac91cf2dbb",
+      "name": "Bún đậu",
+      "version": 1
+    },
+    {
+      "registryKey": "base-022",
+      "id": "16ad89fb-0bc1-5d43-b8d0-4285916a69dc",
+      "name": "Cơm chay",
+      "version": 1
+    },
+    {
+      "registryKey": "base-023",
+      "id": "864f37d1-97e9-57bc-bce5-351668f703da",
+      "name": "Cơm bò",
+      "version": 1
+    },
+    {
+      "registryKey": "base-024",
+      "id": "f9224f9d-f9e2-5b4b-a328-0db75c978c2a",
+      "name": "Cơm canh khổ qua",
+      "version": 1
+    },
+    {
+      "registryKey": "base-025",
+      "id": "da40f225-25dd-5527-b535-ae5d48e15b9d",
+      "name": "Cơm chiên",
+      "version": 1
+    },
+    {
+      "registryKey": "base-026",
+      "id": "f518af1a-6744-545a-83b4-4fa14d590a43",
+      "name": "Cơm cá kho",
+      "version": 1
+    },
+    {
+      "registryKey": "base-027",
+      "id": "01e12db6-8014-5e84-bc53-398af27ad314",
+      "name": "Cơm cá chiên",
+      "version": 1
+    },
+    {
+      "registryKey": "base-028",
+      "id": "d9756559-2697-565c-86e0-36cf39c4da49",
+      "name": "Cơm trộn",
+      "version": 1
+    },
+    {
+      "registryKey": "base-029",
+      "id": "b115bf23-4277-5a5d-a439-002b0ceda3ce",
+      "name": "Cơm gà",
+      "version": 1
+    },
+    {
+      "registryKey": "base-030",
+      "id": "37e032fb-1a78-5b5c-833d-c5362ba14445",
+      "name": "Cơm sườn",
+      "version": 1
+    },
+    {
+      "registryKey": "base-031",
+      "id": "e0a99abc-3bb4-54e5-85ea-0361df2098b7",
+      "name": "Cơm tôm rim",
+      "version": 1
+    },
+    {
+      "registryKey": "base-032",
+      "id": "9cbc5485-896f-5725-bc54-c7d637f54770",
+      "name": "Cơm đậu hủ sốt cà",
+      "version": 1
+    },
+    {
+      "registryKey": "base-033",
+      "id": "c5bbbe58-91c4-5819-8813-a531825073b6",
+      "name": "Hủ tiếu",
+      "version": 1
+    },
+    {
+      "registryKey": "base-034",
+      "id": "69073532-dba4-59ab-917e-42971d5e81c3",
+      "name": "Mì",
+      "version": 1
+    },
+    {
+      "registryKey": "base-035",
+      "id": "4f4e0327-d10e-5c8f-b69a-eb4f2df520ea",
+      "name": "Mì trộn",
+      "version": 1
+    },
+    {
+      "registryKey": "base-036",
+      "id": "b151781d-c641-593f-9aba-a1ac5d16e309",
+      "name": "Mì Ý",
+      "version": 1
+    },
+    {
+      "registryKey": "base-037",
+      "id": "aa59b2ad-3c15-5133-bad9-122a8d2fe93b",
+      "name": "Nui",
+      "version": 1
+    },
+    {
+      "registryKey": "base-038",
+      "id": "0da7d12b-4e83-517b-9c26-b192e6d63fe9",
+      "name": "Phở bò",
+      "version": 1
+    },
+    {
+      "registryKey": "base-039",
+      "id": "26448eef-8a0a-5934-bc0a-8936b205b389",
+      "name": "Salad",
+      "version": 1
+    }
+  ]
+}

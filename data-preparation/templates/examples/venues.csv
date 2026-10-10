@@ -1,0 +1,2 @@
+﻿id,branchName,address,adminAreaId,lat,lng,timezone,status,serviceModes,version,reviewStatus,sourceRef,fieldSources,checkedAt,validUntil,enteredBy,reviewedBy
+684714d4-0949-57ef-a1b6-f2d53db1c0ed,Chi nhánh giả lập,"Địa chỉ fixture, không tìm quán này",,,,Asia/Ho_Chi_Minh,unknown,"[""delivery""]",1,draft,377d7e61-dbca-5192-9bfc-9ab3efe8436d,{},2026-10-09T00:00:00Z,,fixture-author,

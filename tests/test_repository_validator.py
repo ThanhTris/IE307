@@ -92,6 +92,16 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertFalse(validator.historical_task_reference(self.source, path, 'missing-artifact.md'))
         self.assertFalse(validator.historical_task_reference(self.source, 'docs/project/START_HERE.md', target))
 
+    def test_missing_data_preparation_notebook_link_is_rejected(self):
+        path = "data-preparation/README.md"
+        self.source.contents[path] = self.source.read(path).replace(
+            "(notebooks/prepare_thu_duc_menus.ipynb)", "(notebooks/missing.ipynb)"
+        )
+        self.assertIn(
+            "broken link: data-preparation/README.md -> notebooks/missing.ipynb",
+            self.errors(),
+        )
+
     def test_declared_task_missing_is_rejected(self):
         self.source.files.remove("tasks/backlog/GM-18.md")
         self.assertIn("task/manifest mismatch", self.errors())

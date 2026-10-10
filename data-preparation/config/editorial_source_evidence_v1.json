@@ -1,0 +1,627 @@
+{
+  "status": "draft",
+  "checkedAt": "2026-10-10T02:26:05Z",
+  "sources": [
+    {
+      "key": "menu-catalogue",
+      "url": "data-preparation/snapshots/thu_duc_base_dishes.csv",
+      "checkedAt": "2026-10-10T02:26:05Z",
+      "usageRights": "unknown",
+      "note": "Frozen sourceNames, descriptions and menuGroups, paired with the owner-confirmed mapping; does not license menu images."
+    },
+    {
+      "key": "taxonomy-contract",
+      "url": "data-preparation/config/taxonomy_v1.json",
+      "checkedAt": "2026-10-10T02:26:05Z",
+      "usageRights": "unknown",
+      "note": "Owner-defined controlled labels; code IDs are resolved via taxonomy_registry_v1.json."
+    },
+    {
+      "key": "wiki-bao",
+      "url": "https://en.wikipedia.org/wiki/B%C3%A1nh_bao",
+      "revision": "1379372353",
+      "checkedAt": "2026-10-10T02:26:05Z",
+      "usageRights": "licensed",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Wikipedia contributors, Bánh bao, CC BY-SA 4.0; https://en.wikipedia.org/wiki/B%C3%A1nh_bao",
+      "note": "Reference identifies Vietnamese adaptation of Chinese bun, savory/vegetarian variants; breakfast or snack. Fillings are not promoted to all variants."
+    },
+    {
+      "key": "wiki-cuon",
+      "url": "https://en.wikipedia.org/wiki/B%C3%A1nh_cu%E1%BB%91n",
+      "revision": "1376045444",
+      "checkedAt": "2026-10-10T02:26:05Z",
+      "usageRights": "licensed",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Wikipedia contributors, Bánh cuốn, CC BY-SA 4.0; https://en.wikipedia.org/wiki/B%C3%A1nh_cu%E1%BB%91n",
+      "note": "Vietnamese rice-sheet dish, steaming, breakfast, north; equivalent name Bánh quấn. Bánh ướt section distinguishes unfilled rice sheets; no alias between these two base dishes."
+    },
+    {
+      "key": "wiki-pho",
+      "url": "https://en.wikipedia.org/wiki/Pho",
+      "revision": null,
+      "checkedAt": "2026-10-10T02:26:05Z",
+      "usageRights": "licensed",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Wikipedia contributors, Pho, CC BY-SA 4.0; https://en.wikipedia.org/wiki/Pho",
+      "note": "Vietnamese hot noodle soup, beef/chicken variants. Exact origin debated; leave origin unknown in this pilot. No flavor, meal-time or allergy inference."
+    },
+    {
+      "key": "commons-guide",
+      "url": "https://commons.wikimedia.org/wiki/Commons:Reusing_content_outside_Wikimedia",
+      "revision": null,
+      "checkedAt": "2026-10-10T02:26:05Z",
+      "usageRights": "unknown",
+      "note": "License is checked per file, with author credit and applicable license conditions. Guide does not grant rights to any candidate image."
+    }
+  ],
+  "rawCaptures": [
+    {
+      "file": "0582468cde87b0426c3b5da29878feff3d47614cbfcad6f90dcdbc5b298cfb47.json",
+      "sha256": "7bf0015091548e7e8919b9ab943153ce366974daa7dbdf4bb89e202b61585983",
+      "bytes": 377
+    },
+    {
+      "file": "0808724b64e84a517639d9332d597c57f6fe644533611ea9369e201febd9ae85.json",
+      "sha256": "6f96b1c001c5b590745f57a32b6dfa5590abb01b8fdc54d7e10c2e42e280835a",
+      "bytes": 327
+    },
+    {
+      "file": "182c06d77ac7c2917e1dc316eadb4bb878bcaba9ea30e87a4c62c06630538101.json",
+      "sha256": "6d1cf0488d2eafa9c610d90af226f6fec00e87c0642caeac1913119c660eb320",
+      "bytes": 392
+    },
+    {
+      "file": "18de19c63090c01a66a946424d2bf4bc09304c7b46c03cfed6c697abc59fa580.json",
+      "sha256": "d997744889506768cd4511c368138b76a1a1be9d9130468bf7be6bae56870c03",
+      "bytes": 457
+    },
+    {
+      "file": "1ccbbfee2b1db161e9687c72bb8aeccadc4aaa1f384d268ca95684c9cd6d5a55.json",
+      "sha256": "fef19acfb6b1225f8e884b73071c5b408c06f2fc082cd2091dee25dde3c7cf6b",
+      "bytes": 366
+    },
+    {
+      "file": "2be5d5bd52d4bafe443bad57052efe063ae0c8fb1748082f4e4810c527837793.json",
+      "sha256": "ab468a3185bddd415037514a0d8645e526902c2a697816c4665647fc8e069f05",
+      "bytes": 387
+    },
+    {
+      "file": "2ea7f1918761664a48e38552323e8315d6429c51c7ff84ca36ef7467062cefeb.json",
+      "sha256": "f3b9a399062f235da0366fef1e262455e00935c6d748476f57757a0f62f3093a",
+      "bytes": 389
+    },
+    {
+      "file": "3027166d4fbacafe6573ebf4c25f7af5b3a10b25a7ea462b830c23857f50c528.json",
+      "sha256": "b9dfcb58e7441c2dc4302cdf61dd4bd0ad5cc21b7c8e7269119c593345b33ed6",
+      "bytes": 309
+    },
+    {
+      "file": "324d9cf39b5c5039a8cb7c014f8861b17c3c6988771986a4f2899b8c40b45deb.json",
+      "sha256": "fd573feb5252153fb8caef7cbd0af7545d1a4781c7768cc02dc707f618fcd174",
+      "bytes": 393
+    },
+    {
+      "file": "325bbd00ec2bd0afeebbf606796a0795fdcb5da47cd73ff4061c1c2caa581d1d.json",
+      "sha256": "eea7a12162fd01881e64ea5a918de38b36b9600450d9fbe76a35d394b15d28c0",
+      "bytes": 327
+    },
+    {
+      "file": "33b07012dbbc04f0743db86f077e63853376c5dd4e930fbc35de5fa35fe7cc5f.json",
+      "sha256": "3b91fbc30cacffdca1bbd68d780d4dd06d64c3f52ebcc288fde09278f4d89b5b",
+      "bytes": 391
+    },
+    {
+      "file": "3b81fef3aa59d15f3804e9ae1f6fc439e8b9f65c07e1a24c7e4721de2b49d90e.json",
+      "sha256": "b7068ed4d14f1718c04778cf75a05effb3d507e7ecdd1a770aae1182416747eb",
+      "bytes": 331
+    },
+    {
+      "file": "44bd189433f5c9973c914b4eb321eb9477780956325a1a44a2ea4fdbb5caa1ff.json",
+      "sha256": "4904de6c78be482e807e70a4d6eaeb215672e1cfd9e0359a9f57c278771ac096",
+      "bytes": 378
+    },
+    {
+      "file": "49314da2a7547f36c0ffde1c2097df78f6c2c4751e5e5233485e26ebc053d53d.json",
+      "sha256": "3ae2ca59c1391051508d9ee365353895c258d181e77d2308ac22866c0271683e",
+      "bytes": 450
+    },
+    {
+      "file": "4c7eda6cba0fd8a6338095e403250939a1c9b434dd7297edb8acaea00d456e60.json",
+      "sha256": "6a41bd4c4d2c820c9aab6c878de7c04385e3293d4e9d45ec122a744a971d05b4",
+      "bytes": 377
+    },
+    {
+      "file": "4f5fdd86f961f4c1bcac31bda86dae04faeec6956abe5b6453c7762dd5ba4332.json",
+      "sha256": "e510e9ea84606a798d391b93bbbfae232c45b2a3ec1d4f458ff5f6e8d4d11ed9",
+      "bytes": 380
+    },
+    {
+      "file": "5ffcdf921ea6d054ef8e547f2fae1868ce46019e497ac1b18ee75ff256609e38.json",
+      "sha256": "21d0e232ee74a93013e90c410b4734eb44a6be90b99241b2febd8f3a34904604",
+      "bytes": 325
+    },
+    {
+      "file": "63b0843846dfb42141024d94ef7992ee0994d81eceb22680f2f79a15f2b494bd.json",
+      "sha256": "262bfbea4cc5bc46eda4ffb31b66d56f820f17330b6c91b7b2c4460c70c63852",
+      "bytes": 27736
+    },
+    {
+      "file": "644cc1ab78d5cf32c0871e1d20c59f236545822de9a72ebb667c8bd09853411c.json",
+      "sha256": "bbd10d1318e4f8db80996050e32cc6f84317a9bc5a12c48219b23b966354ff74",
+      "bytes": 335
+    },
+    {
+      "file": "660022e75f9b4aaf0578891cc4cf6739d5a7467984ba6512b855fa7403b2f493.json",
+      "sha256": "fc64ff3aed1f69dbb40076a56629d67e7e3bd9c553b550d802e7155f7207073d",
+      "bytes": 377
+    },
+    {
+      "file": "6e8102c6490a26a3d535f23d2c17ddd6801043dc4fd009e98dd453bb11f6c0ec.json",
+      "sha256": "6216865965b77857389f30bbfc65791857796c45fbb47717c81e709c40748530",
+      "bytes": 387
+    },
+    {
+      "file": "7eabd139501930a5448aab4da4f59c90f67fa9aea9316dd06c33c438883b79c1.json",
+      "sha256": "ef652af8b7ab78ac4720142b4cad82bae4025c70a5cfb1ab798e9b42bc4c5007",
+      "bytes": 323
+    },
+    {
+      "file": "8908ec2410d1d5209a42a297ada1c48b22d4fbcb061802a9f9f0a17f1f100e0c.json",
+      "sha256": "22acfa4c794acf3d7411e2c79c593ae7f21f12aff2df9c81918a68014a619312",
+      "bytes": 23501
+    },
+    {
+      "file": "8de7faf6cc1d446563a6be99defab39baec382ded1df38278b8aa0fd8c332e45.json",
+      "sha256": "2f06b68ed36a85f258c4196fd57f5dd22c616703ceb677278a4dc40b1c52a907",
+      "bytes": 376
+    },
+    {
+      "file": "9141b376662ae0699c9cf70c1eef6c1acafc3a5709237d1b63d765bd67796c07.json",
+      "sha256": "d963285b92dfc54918ddecdb9e0e0f6e867ab7ab00ce49c1fadcadf8301016f1",
+      "bytes": 307
+    },
+    {
+      "file": "917bfaea313a4412fd1e407aa5f3d4ed90405b6f87411cb33786e4857d9af944.json",
+      "sha256": "4043a2ff28d60d01cc69b12d7a705824f5fafd6330e30a65a47bb4507d6ed39f",
+      "bytes": 313
+    },
+    {
+      "file": "9329d2397273dc52eb922737b1aaba5f61082adcf4bc39efb93c7c6e52001218.json",
+      "sha256": "9cd7d8826d0116660f79383f6d72f1bfb1aec9004d911eae0598294355b8ddfa",
+      "bytes": 392
+    },
+    {
+      "file": "9dca948a2dadb47181d0de2d15112ad6ab07d0f9c058c4d0bb38c9d2dedbf70f.json",
+      "sha256": "3e08888bcdb2ae2c6224ea6f534539121760a89c364dcc447d4ef5a99d5fa7b3",
+      "bytes": 376
+    },
+    {
+      "file": "9f856c631673ae91a779bfecf5bb2ef81f9e4fe62174f3d0576631693b014548.json",
+      "sha256": "70363066e846329656ea36831eb9faa3dcfb8c9991a20467dec9f9b3d599e71b",
+      "bytes": 21330
+    },
+    {
+      "file": "a3bd83e80fb585c1af78a179b599eab71307f43e88bfc426183f9e001578b619.json",
+      "sha256": "66529fd77df4ed5dec979b2b028a06d5eb286af7532bc74d7811915f1a3b2ce2",
+      "bytes": 389
+    },
+    {
+      "file": "b03f4bc729c0e04bb37ee8929829fd3366f5a9be42de87b54f6a96bdb4234da8.json",
+      "sha256": "30e93d63c8a22b9a455cbac52edf071d4fcc1d32b28719716a33e012e9d6d6aa",
+      "bytes": 375
+    },
+    {
+      "file": "b1a28bd94b628cf512f1231f5bc8e1cac0ead635d4453eaed4b957da98a95141.json",
+      "sha256": "ef047f1481d86b746ccde8908e72d2af9c841f1552745add3037c3ecc5007cd9",
+      "bytes": 331
+    },
+    {
+      "file": "b3b857ab640bd88d9a0f41c9d4c38c4dbfac9c18bab01333328c5579ced2d0b5.json",
+      "sha256": "ce1878c0caab300f41f505dfbdf69ad255cb9823e2d4ba6191e21b0dbfb0afb9",
+      "bytes": 339
+    },
+    {
+      "file": "bcca3fc6d6c622797b17974f7a40b8a6ad4c24834b6d434c7840002c24526d0a.json",
+      "sha256": "d528c3217dff473e3d6ca81c624d2901d14da427c71eeb47dfb2e834f41466a4",
+      "bytes": 376
+    },
+    {
+      "file": "bd639e964770c8c2c737edcbbba358f006ab097c51076fc0c81c82e97299fb86.json",
+      "sha256": "87b960c17109917dcdd10f05f4b0b86aeca1063a8bee24f07e23408ac7307aed",
+      "bytes": 315
+    },
+    {
+      "file": "be617e021076bb12fb08902e030e482a3b76f915b3cd21949d11c7604883f16f.json",
+      "sha256": "0a666ce70b4b804e7adfedd01eec05b7c957cc80e6b25d8a5e0bdb94002b46da",
+      "bytes": 376
+    },
+    {
+      "file": "c3d090afe3a3a5f0d811fbd49d3129f1722ebb05ae44689f8220b765c60da6f5.json",
+      "sha256": "5ee97153df1d46cd6da4a5f91781be741d7536799038f6a44c665d7d43feaff7",
+      "bytes": 319
+    },
+    {
+      "file": "c909025ac1b2e24339ae2d0ee186e72d85e535843aeb78d88d9e754229fc0b48.json",
+      "sha256": "ba0e3242f031a53531c60b433aa238f8732304afcdaabdd2b7cba2fbabc29e02",
+      "bytes": 380
+    },
+    {
+      "file": "cda6cf81ba5268d97311f6e25f84edd5604f075680a1a7497f084863df47175e.json",
+      "sha256": "11f32c01df9aa3750971185186dc1b88ef9bbb6efbbe9a7e8091a9810fcabc0a",
+      "bytes": 375
+    },
+    {
+      "file": "cf783919e33454885d308f1a6c5a78b6cd49f172cc9eb77cd72cf8f9998e14fe.json",
+      "sha256": "9f03125f817936327e4c1223404345a81de06871dfc001e7996f1bcba8b2fd3d",
+      "bytes": 379
+    },
+    {
+      "file": "cfb012c95d2ec1a5fcdf274fe375764047c1e1fb7299b1c76d3835d45271fa47.json",
+      "sha256": "2b4d9303660acdc32b55ae65b497cf7536844b6bbb4679f1a8391762b3eeff91",
+      "bytes": 373
+    },
+    {
+      "file": "d3c36549a13f462895062b203c3af974e4fc0dca72b265f0045b8886ffe7383a.json",
+      "sha256": "bf5e5e0a45b366707aa4bd61df6b2b8d31e8a9298a64ca5cc09bec3f1607d928",
+      "bytes": 460
+    },
+    {
+      "file": "d411af647fefd622218ce0e331ceb12cb880fb1ffa27040efe4c77b6e85130a8.json",
+      "sha256": "c9fcbead22ee987ce6d3a501ae65fae1fc11a4eb8beb2415a957b7836d966b49",
+      "bytes": 307
+    },
+    {
+      "file": "d980543b086680d6a2f80cbd9b6d2730cbba68bbfcb15733f3c194cc79fa3d04.json",
+      "sha256": "c70708fd1eee6196f99821cc3099efb02facd92767bf958887d49ccaa4dd7a9f",
+      "bytes": 374
+    },
+    {
+      "file": "dbf71c76993de94576757fca9e895ba0da20228565bebd4356a94be45d317b95.json",
+      "sha256": "ba7c5be2411f7e56dbc3a7e156f7e5b37507b6f5806cccfe29df6c9da12d7107",
+      "bytes": 21210
+    },
+    {
+      "file": "de24af52ad33ae5b61cce92868189d1dae6d7ca1627f9b55767d1ee47dad37dd.json",
+      "sha256": "9a365335faa9e74ad7a467b10f1303e436c6a5984988c49af23a8acf6fcf4b7f",
+      "bytes": 315
+    },
+    {
+      "file": "dfffd3e194946df8ac161a0c015bba95eb8b5a8144406951506c2ba7c246550d.json",
+      "sha256": "1fedaa55f7dd6827b17e117f5a80785024f021876802e511dfa9677004ce6177",
+      "bytes": 21329
+    },
+    {
+      "file": "e256dc31857c84a9b9936a252c49b873c3258ddc3d2d3d8a38f660c761bfa6df.json",
+      "sha256": "c1e0f6ee8585b3b9483a719184ab64b616cc1dc604d4c0a6a5e6c2086eb3cbf4",
+      "bytes": 395
+    },
+    {
+      "file": "eaeb6f7c9f2bb109a514b1c23e9b2d0e0fd29fdbe907840562db480643aa2a4c.json",
+      "sha256": "c4474d1c2f5f4435f0c47b3e47c2fc8a986c5720acdb464e6a2ebebe89ae5c64",
+      "bytes": 374
+    },
+    {
+      "file": "ecaafdfa3d93cf5031772e267645bf1c955e4346b8cdfbe9e37ff070625a9e82.json",
+      "sha256": "758649324be4d600bb3ae00d37f8ce788c262aa5f64de4c1aaa3639fe66ca2e5",
+      "bytes": 373
+    },
+    {
+      "file": "editorial_banhcuon.json",
+      "sha256": "bcef2927974ee1546263e562e768d33a08feae47602021306069fce334f03e0b",
+      "bytes": 14694
+    },
+    {
+      "file": "editorial_web_1.json",
+      "sha256": "6771c7e47004755d696993c37e6b761499a4581b5415a560897dc2db428355a7",
+      "bytes": 28257
+    },
+    {
+      "file": "editorial_web_2.json",
+      "sha256": "5eadb788402ee0fbfe045a3510683c7383367cbae1989855a59f0d66cb927852",
+      "bytes": 30075
+    },
+    {
+      "file": "editorial_web_final.json",
+      "sha256": "af13dbe974e14e6d4093d17c03706826f9a5b272452bedcfc6b9cb7317045aa7",
+      "bytes": 31518
+    },
+    {
+      "file": "ef576cfcfbbc7b87fbd2b2442f13b8b929fbddf19d75bc787d49d0936ed4e55c.json",
+      "sha256": "684475c288968db56f1b6d720b3e148a0410584c0cc1d2275be5e0866bcaa3c8",
+      "bytes": 32457
+    },
+    {
+      "file": "f01bb87f50c6ae2e036bf6ff6d543e80fd94c44e66225610fe970615d6bfa5a7.json",
+      "sha256": "cc3e3aae0fa5929b59b61566a70bb4ae66f46c93d526105793876a70d8d8a17f",
+      "bytes": 303
+    },
+    {
+      "file": "f228316452415e083716e8c0188c2b273c8defa6fca86dfd422ad4533258aaa0.json",
+      "sha256": "c08a0146ba80f9c06430b5829dd5a0fc102df22c4881fd67c7abd52c68c9886f",
+      "bytes": 413
+    },
+    {
+      "file": "f279d1c29dd6807554f5b0bb74fc59feddaba505f29f211a67774282989de45e.json",
+      "sha256": "4fd661f4c31dd12124148dce312348dfbd178d261d854b8f6cb033be2f6d6b35",
+      "bytes": 377
+    },
+    {
+      "file": "f2f2e302450ec681137180977939c0f44f4712641798f6e4295e2b4cb73c7dd9.json",
+      "sha256": "9778d6a2e99e69b4ee84be38bc86850db8ab061cbd457727e3057d54e3667aae",
+      "bytes": 21537
+    },
+    {
+      "file": "f48996388a7e4c32b0fd078c4a652cf6b87f811ecfa5fc97d6083e1a7be50059.json",
+      "sha256": "6c81e0939171cd31c74b83ead1107f89095cf5f15003390a9282ff810840d3e1",
+      "bytes": 365
+    },
+    {
+      "file": "f7080162343de6664fef5acee4e94db199f0c90e5febae93a733e0c6c16e862e.json",
+      "sha256": "453433bccc59c7b7dbe6e0803cb3d6e05605dceb0f82342ff1c35685673dd112",
+      "bytes": 317
+    },
+    {
+      "file": "f7d9a7d6fa62170dfa7f0225e4f442f7a6f57812cdeda8a12929b4a0de0fc656.json",
+      "sha256": "0dc41a27216cebc89b8a6ffa53381533aea2d1748818d88fefb2cad6d040a528",
+      "bytes": 357
+    },
+    {
+      "file": "fa067fd7a3673449524bcc02e909e740ed23b97638ccc183a14fbd9a2c942db4.json",
+      "sha256": "f52758c9ece4dbf002db7416ef47afc3bfd3a18b488c7c4ab74810e41d22903b",
+      "bytes": 327
+    },
+    {
+      "file": "index.json",
+      "sha256": "6cc1605ac00c47bf5c50d57b1e6c47922eb1d1ceddfad8e1522786ad5636cd6e",
+      "bytes": 25428
+    }
+  ],
+  "retrievalSummary": {
+    "commonsRequests": 39,
+    "articleRequests": 20,
+    "commonsOk": 10,
+    "commonsErrors": 29,
+    "articleOk": 0,
+    "articleErrors": 20,
+    "note": "Initial exploratory collector used 3 workers and continued after 429. Production refresh now stops immediately at 403/429, sequential, no automatic retry. Web-tool text reads used for the accepted reference summaries; original images not inspected."
+  },
+  "refreshRequests": [
+    {
+      "key": "commons:Burger",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=hamburger+cheeseburger&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Bánh bao",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22Banh+bao%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Bánh cuốn",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22Banh+cuon%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Bánh cuộn",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=chicken+wrap+tortilla&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Bánh mì",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22Banh+mi%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Bánh ướt",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22Banh+uot%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Bún bò",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22Bun+bo%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Bún bò chay",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22Bun+bo+chay%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Bún chay",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22Bun+chay%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Bún gạo lứt",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22bun+gao+lut%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Bún mọc",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22Bun+moc%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Bún nem nướng",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22Bun+nem+nuong%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Bún riêu",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22Bun+rieu%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Bún riêu chay",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22Bun+rieu+chay%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Bún thịt nướng",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22Bun+thit+nuong%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Bún đậu",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22Bun+dau%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Cơm bò",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22com+bo%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Cơm canh khổ qua",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22com%22+%22kho+qua%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Cơm chay",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22com+chay%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Cơm chiên",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22Vietnamese+fried+rice%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Cơm cá chiên",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22com%22+%22ca+chien%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Cơm cá kho",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22com%22+%22ca+kho%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Cơm gà",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22com+ga%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Cơm sườn",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22com+suon%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Cơm thịt kho",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22com%22+%22thit+kho%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Cơm trộn",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22mixed+rice%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Cơm tôm rim",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22com%22+%22tom+rim%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Cơm tấm",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22com+tam%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Cơm đậu hủ sốt cà",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22tofu%22+%22tomato%22+%22rice%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Hủ tiếu",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22hu+tieu%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Miến",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22mien%22+noodles&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Mì",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=Vietnamese+noodle+soup&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Mì trộn",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22mi+tron%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Mì Ý",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=spaghetti+tomato&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Nui",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=Vietnamese+macaroni&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Phở bò",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22pho+bo%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Phở gà",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22pho+ga%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Salad",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22salad%22+vegetables&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "commons:Xôi",
+      "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=%22xoi%22&gsrnamespace=6&gsrlimit=4&prop=imageinfo%7Crevisions&iiprop=url%7Cextmetadata&iiurlwidth=500&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "article:Bánh mì",
+      "url": "https://vi.wikipedia.org/w/api.php?action=query&format=json&titles=B%C3%A1nh+m%C3%AC&redirects=1&prop=extracts%7Crevisions&exintro=1&explaintext=1&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "article:Bánh bao",
+      "url": "https://vi.wikipedia.org/w/api.php?action=query&format=json&titles=B%C3%A1nh+bao&redirects=1&prop=extracts%7Crevisions&exintro=1&explaintext=1&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "article:Bánh cuốn",
+      "url": "https://vi.wikipedia.org/w/api.php?action=query&format=json&titles=B%C3%A1nh+cu%E1%BB%91n&redirects=1&prop=extracts%7Crevisions&exintro=1&explaintext=1&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "article:Bánh ướt",
+      "url": "https://vi.wikipedia.org/w/api.php?action=query&format=json&titles=B%C3%A1nh+%C6%B0%E1%BB%9Bt&redirects=1&prop=extracts%7Crevisions&exintro=1&explaintext=1&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "article:Bún bò Huế",
+      "url": "https://vi.wikipedia.org/w/api.php?action=query&format=json&titles=B%C3%BAn+b%C3%B2+Hu%E1%BA%BF&redirects=1&prop=extracts%7Crevisions&exintro=1&explaintext=1&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "article:Bún mọc",
+      "url": "https://vi.wikipedia.org/w/api.php?action=query&format=json&titles=B%C3%BAn+m%E1%BB%8Dc&redirects=1&prop=extracts%7Crevisions&exintro=1&explaintext=1&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "article:Bún riêu",
+      "url": "https://vi.wikipedia.org/w/api.php?action=query&format=json&titles=B%C3%BAn+ri%C3%AAu&redirects=1&prop=extracts%7Crevisions&exintro=1&explaintext=1&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "article:Bún thịt nướng",
+      "url": "https://vi.wikipedia.org/w/api.php?action=query&format=json&titles=B%C3%BAn+th%E1%BB%8Bt+n%C6%B0%E1%BB%9Bng&redirects=1&prop=extracts%7Crevisions&exintro=1&explaintext=1&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "article:Bún đậu mắm tôm",
+      "url": "https://vi.wikipedia.org/w/api.php?action=query&format=json&titles=B%C3%BAn+%C4%91%E1%BA%ADu+m%E1%BA%AFm+t%C3%B4m&redirects=1&prop=extracts%7Crevisions&exintro=1&explaintext=1&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "article:Cơm tấm",
+      "url": "https://vi.wikipedia.org/w/api.php?action=query&format=json&titles=C%C6%A1m+t%E1%BA%A5m&redirects=1&prop=extracts%7Crevisions&exintro=1&explaintext=1&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "article:Cơm chiên",
+      "url": "https://vi.wikipedia.org/w/api.php?action=query&format=json&titles=C%C6%A1m+chi%C3%AAn&redirects=1&prop=extracts%7Crevisions&exintro=1&explaintext=1&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "article:Hủ tiếu",
+      "url": "https://vi.wikipedia.org/w/api.php?action=query&format=json&titles=H%E1%BB%A7+ti%E1%BA%BFu&redirects=1&prop=extracts%7Crevisions&exintro=1&explaintext=1&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "article:Miến",
+      "url": "https://vi.wikipedia.org/w/api.php?action=query&format=json&titles=Mi%E1%BA%BFn&redirects=1&prop=extracts%7Crevisions&exintro=1&explaintext=1&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "article:Mì",
+      "url": "https://vi.wikipedia.org/w/api.php?action=query&format=json&titles=M%C3%AC&redirects=1&prop=extracts%7Crevisions&exintro=1&explaintext=1&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "article:Mì Ý",
+      "url": "https://vi.wikipedia.org/w/api.php?action=query&format=json&titles=M%C3%AC+%C3%9D&redirects=1&prop=extracts%7Crevisions&exintro=1&explaintext=1&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "article:Nui",
+      "url": "https://vi.wikipedia.org/w/api.php?action=query&format=json&titles=Nui&redirects=1&prop=extracts%7Crevisions&exintro=1&explaintext=1&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "article:Phở",
+      "url": "https://vi.wikipedia.org/w/api.php?action=query&format=json&titles=Ph%E1%BB%9F&redirects=1&prop=extracts%7Crevisions&exintro=1&explaintext=1&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "article:Xôi",
+      "url": "https://vi.wikipedia.org/w/api.php?action=query&format=json&titles=X%C3%B4i&redirects=1&prop=extracts%7Crevisions&exintro=1&explaintext=1&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "article:Salad",
+      "url": "https://vi.wikipedia.org/w/api.php?action=query&format=json&titles=Salad&redirects=1&prop=extracts%7Crevisions&exintro=1&explaintext=1&rvprop=ids%7Ctimestamp"
+    },
+    {
+      "key": "article:Hamburger",
+      "url": "https://vi.wikipedia.org/w/api.php?action=query&format=json&titles=Hamburger&redirects=1&prop=extracts%7Crevisions&exintro=1&explaintext=1&rvprop=ids%7Ctimestamp"
+    }
+  ]
+}

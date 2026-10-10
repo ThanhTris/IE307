@@ -1,0 +1,374 @@
+{
+  "contractVersion": "1.0.0",
+  "status": "draft",
+  "entries": [
+    {
+      "registryKey": "cuisine:vi",
+      "id": "d7bf6ad7-596c-5ee0-bf45-ccedfcf6460b",
+      "type": "cuisine",
+      "code": "vi",
+      "label": "Việt",
+      "version": 1
+    },
+    {
+      "registryKey": "cuisine:th",
+      "id": "a62999b1-8c5b-58dd-9739-9856a1f534f0",
+      "type": "cuisine",
+      "code": "th",
+      "label": "Thái",
+      "version": 1
+    },
+    {
+      "registryKey": "cuisine:ko",
+      "id": "9397254e-ad5f-5f85-9674-96933b6c0db2",
+      "type": "cuisine",
+      "code": "ko",
+      "label": "Hàn",
+      "version": 1
+    },
+    {
+      "registryKey": "cuisine:ja",
+      "id": "73e625b4-4d2f-50f8-8051-111b703f6f11",
+      "type": "cuisine",
+      "code": "ja",
+      "label": "Nhật",
+      "version": 1
+    },
+    {
+      "registryKey": "cuisine:zh",
+      "id": "76754d62-96e1-5d54-bf87-048a0df60e3f",
+      "type": "cuisine",
+      "code": "zh",
+      "label": "Hoa",
+      "version": 1
+    },
+    {
+      "registryKey": "cuisine:it",
+      "id": "b251e842-814b-5184-b25b-2636e3fcd6cd",
+      "type": "cuisine",
+      "code": "it",
+      "label": "Ý",
+      "version": 1
+    },
+    {
+      "registryKey": "cuisine:us",
+      "id": "ffe1ea7a-e3b7-5853-b87f-a5127b5be0d3",
+      "type": "cuisine",
+      "code": "us",
+      "label": "Mỹ",
+      "version": 1
+    },
+    {
+      "registryKey": "cuisine:other",
+      "id": "baa7c009-744f-548b-8d03-875d011c090d",
+      "type": "cuisine",
+      "code": "other",
+      "label": "other",
+      "version": 1
+    },
+    {
+      "registryKey": "origin:north",
+      "id": "f0c17cc4-6e58-5fa2-bc9a-2aa699e34e27",
+      "type": "origin",
+      "code": "north",
+      "label": "Bắc",
+      "version": 1
+    },
+    {
+      "registryKey": "origin:central",
+      "id": "51b8ad29-40bd-51ea-a10c-7280207cb567",
+      "type": "origin",
+      "code": "central",
+      "label": "Trung",
+      "version": 1
+    },
+    {
+      "registryKey": "origin:south",
+      "id": "131d317e-20c3-54c4-a186-2a37719f115e",
+      "type": "origin",
+      "code": "south",
+      "label": "Nam",
+      "version": 1
+    },
+    {
+      "registryKey": "origin:unknown",
+      "id": "81b8b1f6-046e-5717-b2d8-0e17586690d2",
+      "type": "origin",
+      "code": "unknown",
+      "label": "Chưa biết",
+      "version": 1
+    },
+    {
+      "registryKey": "origin:not_applicable",
+      "id": "2c064894-1488-50f8-9476-c8f813a5e323",
+      "type": "origin",
+      "code": "not_applicable",
+      "label": "Không áp dụng",
+      "version": 1
+    },
+    {
+      "registryKey": "category:family:rice",
+      "id": "e69b5f45-580d-5ee3-9e43-360650b4c650",
+      "type": "category",
+      "code": "family:rice",
+      "label": "cơm",
+      "version": 1
+    },
+    {
+      "registryKey": "category:family:bun",
+      "id": "14bc9d6f-c43e-5c1d-9c13-eddc5cc80dcc",
+      "type": "category",
+      "code": "family:bun",
+      "label": "bún",
+      "version": 1
+    },
+    {
+      "registryKey": "category:family:pho",
+      "id": "1f89baf1-52f8-5f1e-98d8-7a36cae7a596",
+      "type": "category",
+      "code": "family:pho",
+      "label": "phở",
+      "version": 1
+    },
+    {
+      "registryKey": "category:family:noodles",
+      "id": "ac9e12a4-0416-53fc-af30-5b8b11ee0b49",
+      "type": "category",
+      "code": "family:noodles",
+      "label": "mì",
+      "version": 1
+    },
+    {
+      "registryKey": "category:family:hu_tieu",
+      "id": "1af6a10b-2820-5c18-909f-40acfa83ec84",
+      "type": "category",
+      "code": "family:hu_tieu",
+      "label": "hủ tiếu",
+      "version": 1
+    },
+    {
+      "registryKey": "category:family:mien",
+      "id": "a7033166-916f-5748-b9c3-6670424dbfcf",
+      "type": "category",
+      "code": "family:mien",
+      "label": "miến",
+      "version": 1
+    },
+    {
+      "registryKey": "category:family:nui",
+      "id": "5cc8224c-f7da-5c2e-9dcc-274504b977c4",
+      "type": "category",
+      "code": "family:nui",
+      "label": "nui",
+      "version": 1
+    },
+    {
+      "registryKey": "category:family:sticky_rice",
+      "id": "87e3727e-5022-50a2-9a60-0b3dea21ca5d",
+      "type": "category",
+      "code": "family:sticky_rice",
+      "label": "xôi",
+      "version": 1
+    },
+    {
+      "registryKey": "category:family:porridge",
+      "id": "bf53ba6f-c4fc-536b-a932-b7cb18cb7e60",
+      "type": "category",
+      "code": "family:porridge",
+      "label": "cháo",
+      "version": 1
+    },
+    {
+      "registryKey": "category:family:banh_canh",
+      "id": "1e7f5a78-1429-5e5e-8df2-4cba824a881b",
+      "type": "category",
+      "code": "family:banh_canh",
+      "label": "bánh canh",
+      "version": 1
+    },
+    {
+      "registryKey": "category:family:banh_mi",
+      "id": "811f6aa0-6b7f-5645-aeb9-c2f96cf50630",
+      "type": "category",
+      "code": "family:banh_mi",
+      "label": "bánh mì",
+      "version": 1
+    },
+    {
+      "registryKey": "category:family:banh_bao",
+      "id": "542c7681-b911-5a11-ae24-7010ae19a0a1",
+      "type": "category",
+      "code": "family:banh_bao",
+      "label": "bánh bao",
+      "version": 1
+    },
+    {
+      "registryKey": "category:family:banh_cuon",
+      "id": "5dcf86dc-9369-59ca-a0cd-59836909b177",
+      "type": "category",
+      "code": "family:banh_cuon",
+      "label": "bánh cuốn",
+      "version": 1
+    },
+    {
+      "registryKey": "category:family:banh_uot",
+      "id": "6bcd10c4-acc9-53cd-be72-43a4e7061b9a",
+      "type": "category",
+      "code": "family:banh_uot",
+      "label": "bánh ướt",
+      "version": 1
+    },
+    {
+      "registryKey": "category:family:banh_cuon_wrap",
+      "id": "e78e10c2-a90f-57b6-bc28-421fd7bd6b0a",
+      "type": "category",
+      "code": "family:banh_cuon_wrap",
+      "label": "bánh cuộn",
+      "version": 1
+    },
+    {
+      "registryKey": "category:family:burger",
+      "id": "0a0fc007-2e29-5077-a43a-3f3fa54da0b5",
+      "type": "category",
+      "code": "family:burger",
+      "label": "burger",
+      "version": 1
+    },
+    {
+      "registryKey": "category:family:salad",
+      "id": "bab170d6-9d47-57c9-8ca5-767954cbd111",
+      "type": "category",
+      "code": "family:salad",
+      "label": "salad",
+      "version": 1
+    },
+    {
+      "registryKey": "category:family:hotpot",
+      "id": "7d4b93cd-665d-5ef3-bde6-9d2f1a721f40",
+      "type": "category",
+      "code": "family:hotpot",
+      "label": "lẩu",
+      "version": 1
+    },
+    {
+      "registryKey": "category:family:rolls",
+      "id": "26e61cf0-7a35-56aa-a855-a11c6cd3599b",
+      "type": "category",
+      "code": "family:rolls",
+      "label": "gỏi/cuốn",
+      "version": 1
+    },
+    {
+      "registryKey": "category:family:fried_chicken",
+      "id": "748c36e8-97ad-5dab-8903-c145243af069",
+      "type": "category",
+      "code": "family:fried_chicken",
+      "label": "gà rán",
+      "version": 1
+    },
+    {
+      "registryKey": "category:family:other",
+      "id": "0455b1e8-61ff-58c1-9836-3107bd9479d9",
+      "type": "category",
+      "code": "family:other",
+      "label": "other",
+      "version": 1
+    },
+    {
+      "registryKey": "category:preparation:grilled",
+      "id": "8cafe08d-a706-5f8e-bc7c-137e188d7801",
+      "type": "category",
+      "code": "preparation:grilled",
+      "label": "nướng",
+      "version": 1
+    },
+    {
+      "registryKey": "category:preparation:fried",
+      "id": "fbf82def-162e-5e87-955b-d7a915ff4e6d",
+      "type": "category",
+      "code": "preparation:fried",
+      "label": "chiên",
+      "version": 1
+    },
+    {
+      "registryKey": "category:preparation:stir_fried",
+      "id": "2f88eb5f-584d-5190-8c7a-e019e22150a9",
+      "type": "category",
+      "code": "preparation:stir_fried",
+      "label": "xào",
+      "version": 1
+    },
+    {
+      "registryKey": "category:preparation:steamed",
+      "id": "cf7fd677-325f-5fa6-a70b-a884f0684240",
+      "type": "category",
+      "code": "preparation:steamed",
+      "label": "hấp",
+      "version": 1
+    },
+    {
+      "registryKey": "category:preparation:boiled",
+      "id": "cb5c52d3-48b7-597e-be58-b74a8f67c59b",
+      "type": "category",
+      "code": "preparation:boiled",
+      "label": "luộc",
+      "version": 1
+    },
+    {
+      "registryKey": "category:preparation:braised",
+      "id": "d5f02b6a-2b68-54cc-87c7-18ba3fa01845",
+      "type": "category",
+      "code": "preparation:braised",
+      "label": "kho",
+      "version": 1
+    },
+    {
+      "registryKey": "category:preparation:stewed",
+      "id": "a26b4f39-36fb-56a4-b701-2eab6012e668",
+      "type": "category",
+      "code": "preparation:stewed",
+      "label": "hầm",
+      "version": 1
+    },
+    {
+      "registryKey": "category:preparation:roasted",
+      "id": "6a50e722-1d41-55aa-a11a-17c58943c4bd",
+      "type": "category",
+      "code": "preparation:roasted",
+      "label": "quay",
+      "version": 1
+    },
+    {
+      "registryKey": "category:preparation:mixed",
+      "id": "da610459-89da-5d3d-a589-ee3617212f1c",
+      "type": "category",
+      "code": "preparation:mixed",
+      "label": "trộn",
+      "version": 1
+    },
+    {
+      "registryKey": "category:preparation:sous_vide",
+      "id": "f77b760a-afc6-5319-a534-8c2b177e58a9",
+      "type": "category",
+      "code": "preparation:sous_vide",
+      "label": "sous vide",
+      "version": 1
+    },
+    {
+      "registryKey": "category:preparation:pan_seared",
+      "id": "1575ebb1-0ef9-5818-be41-b64e4714a3a3",
+      "type": "category",
+      "code": "preparation:pan_seared",
+      "label": "áp chảo",
+      "version": 1
+    },
+    {
+      "registryKey": "category:preparation:other",
+      "id": "9d4d509d-26b8-5d85-9023-94a52c63640a",
+      "type": "category",
+      "code": "preparation:other",
+      "label": "other",
+      "version": 1
+    }
+  ]
+}

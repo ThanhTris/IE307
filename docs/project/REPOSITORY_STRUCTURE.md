@@ -52,3 +52,7 @@ Route theo màn: index, room/create/join/[id]/preferences/lobby/vote/final-round
 Owner file: GM-02 mobile package/lockfile/config; GM-03 root package/lockfile (chỉ BE tooling)/runner/config; GM-04 dictionary/schema/template/field coverage; GM-05 UI components; GM-06 migrations/schema convention; GM-07 DTO/client/mock. Các task sau bàn giao migration/request/test/file riêng, không sửa migration đã merge hoặc tạo contract trùng. Hai lockfile không là monorepo framework; thư mục quy hoạch của task sau không cần file rỗng hàng loạt.
 
 [Task/owner](TASK_SUMMARY.md) · [luồng bàn giao](IMPLEMENTATION_ROADMAP.md).
+
+## Chuẩn bị dữ liệu khảo sát
+
+data-preparation chứa notebook chia cell, scripts/runner Python, config và snapshots draft. Raw/cache/kết quả thực thi trong datasets được Git bỏ qua; notebook tự tạo thư mục. Xem [hướng dẫn](../../data-preparation/README.md). Scope dữ liệu GM-03 roadmap-v1 chuyển sang GM-04/GM-07 roadmap-v2; catalogue khảo sát không thay verified import GM-08. Không phục hồi task BE GM-03 bằng metadata task dữ liệu cũ.

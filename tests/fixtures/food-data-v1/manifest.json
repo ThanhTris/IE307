@@ -1,0 +1,118 @@
+{
+  "statistics": {
+    "fixtureOnly": true,
+    "fixtureVersion": "food-fixtures-v1",
+    "cases": 42,
+    "datasets": 27,
+    "groups": {
+      "availability": 4,
+      "context": 3,
+      "determinism": 2,
+      "freshness": 5,
+      "geography": 3,
+      "identity": 4,
+      "meal": 1,
+      "overnight": 5,
+      "pool": 4,
+      "preferences": 2,
+      "price": 4,
+      "profile": 2,
+      "schedule": 3
+    },
+    "baseDishes": 10,
+    "baseEntities": {
+      "taxonomy": 8,
+      "dishes": 10,
+      "venues": 2,
+      "venueDishes": 10,
+      "weeklySchedules": 24,
+      "dateExceptions": 0,
+      "availabilityOverrides": 0,
+      "coverageAreas": 1,
+      "publicAnchors": 1,
+      "dataSources": 4,
+      "datasetVersions": 1
+    },
+    "assertions": 36,
+    "part3Commit": "2e61a5712a07fe4834e92f907a278cb0740c7174",
+    "validationAt": "2026-10-08T00:00:00Z",
+    "networkCalls": 0,
+    "eligibilityExecuted": false,
+    "publicationPerformed": false
+  },
+  "generatorSha256": "d15391b89873e769f8e11a03c82b55d41f920be162427c60b9de16429df2bb88",
+  "files": {
+    "README.md": {
+      "sha256": "e37b4db72c00eb8ddf536abe26a3a4b915294399121a372ba2cd732ee0cf66d4",
+      "bytes": 10284
+    },
+    "base-csv/availabilityOverrides.csv": {
+      "sha256": "167f6e75b6deeb47dd1506927b86bd0a5f08d400e04a216fe74e80a30a9a839d",
+      "bytes": 137
+    },
+    "base-csv/bundle.json": {
+      "sha256": "31f82a6de9da94b99198a1a5bcfa2c584867e0e9dd9a4ac19ccaad6e5f42e854",
+      "bytes": 85
+    },
+    "base-csv/coverageAreas.csv": {
+      "sha256": "0f929358f678e768f3c013b16d3d1b99fcb1e31cc143032a1499abbd8777274b",
+      "bytes": 551
+    },
+    "base-csv/dataSources.csv": {
+      "sha256": "a6a285a7388c6f86915ddcecf8d6745415cb2b1b69ff5ed4b7ea3dee4819b5e4",
+      "bytes": 1328
+    },
+    "base-csv/datasetVersions.csv": {
+      "sha256": "f19814c952d51e4f8bf08dd6158fcd880be3e9ef4cdbbe4cb48901ceac5b550f",
+      "bytes": 485
+    },
+    "base-csv/dateExceptions.csv": {
+      "sha256": "1d10f0b99d5fa2f11071726f562c7a84c7f193b5f88041415b5d4bda25ead01e",
+      "bytes": 140
+    },
+    "base-csv/dishes.csv": {
+      "sha256": "61360d6b692e5943718b1322287d4dd55de669b0ec3b5aaae3ef469549578eee",
+      "bytes": 6276
+    },
+    "base-csv/publicAnchors.csv": {
+      "sha256": "e2a5a5f124a5577b2139395063b4c444e870f4e97369b5a12473d62041e79ebf",
+      "bytes": 404
+    },
+    "base-csv/taxonomy.csv": {
+      "sha256": "143263d82c3acb7445f2ead8fc371b57ea97eb56710ede43e1dffbbee0c1c011",
+      "bytes": 2503
+    },
+    "base-csv/venueDishes.csv": {
+      "sha256": "fe6e8ba8f2e31d72bc1cdc6e8e4c16112b7563acfbcbb354c896eac6c8d5756b",
+      "bytes": 5835
+    },
+    "base-csv/venues.csv": {
+      "sha256": "c4fbd954d1043a1443f4705019bd96ff730e161c47a6866dca20210b2203e889",
+      "bytes": 1140
+    },
+    "base-csv/weeklySchedules.csv": {
+      "sha256": "2085f5c6c4bd8822f468bb5171215c908c87dce615ed41455d46bb39d4439d42",
+      "bytes": 8836
+    },
+    "base.json": {
+      "sha256": "0de711941a98dae7db9ced2370fbef8b15d5ce091c0ba27e335597bfaf4849f9",
+      "bytes": 57066
+    },
+    "cases.json": {
+      "sha256": "04e7cd78166dc80c417fb21969c9ab8baf86385f6e06b21304a424caa8b0d676",
+      "bytes": 84513
+    },
+    "datasets.json": {
+      "sha256": "f11085cb4bf18ed081698aefee2dc4025e435d2591f554858f609389ffe416e3",
+      "bytes": 697323
+    },
+    "quality.json": {
+      "sha256": "c5ad157b3684bf5e2d410e092eabf8366bdea6b4cc57e5d74d8a0de77aed0d2f",
+      "bytes": 874
+    },
+    "registry.json": {
+      "sha256": "6e07cda958adb8d195e5f215f41e508b4e01d74b477215084a68c02cc6a25be9",
+      "bytes": 11222
+    }
+  }
+}

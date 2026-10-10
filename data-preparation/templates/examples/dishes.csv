@@ -1,0 +1,2 @@
+﻿id,name,description,aliases,cuisineIds,categoryIds,mealSlots,timeHints,classificationStatus,origin,ingredientTags,temperature,flavor,artwork,sourceDishIds,status,version,reviewStatus,sourceRef,fieldSources,checkedAt,validUntil,enteredBy,reviewedBy
+4a662ee6-9761-5f2f-af8b-07533d2934e0,Cơm gà — fixture,,[],"[""15584bca-1b90-5565-9aeb-5b69a075fee1""]","[""9654d06c-8441-50a3-bf67-87b9da2ec6c3""]","[""lunch""]",[],needs_review,unknown,,unknown,,,[],draft,1,draft,377d7e61-dbca-5192-9bfc-9ab3efe8436d,{},2026-10-09T00:00:00Z,,fixture-author,

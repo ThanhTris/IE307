@@ -1,0 +1,74 @@
+{
+  "task": "GM-03",
+  "numbering": "roadmap-v1",
+  "recordedAt": "2026-10-10 03:58:59 UTC",
+  "targetRef": "origin/main",
+  "targetSha": "aeb1a83379d044c5e7e0e12a47cec38989010490",
+  "previousHead": "cf4e0bd3d957a51ad6e1f0251d2b4509bdc854fa",
+  "pr": "https://github.com/ThanhTris/IE307/pull/62",
+  "taskMappings": {
+    "baselineReview": {
+      "previous": "GM-28",
+      "current": "GM-01"
+    },
+    "schema": {
+      "previous": "GM-04",
+      "current": "GM-05"
+    },
+    "dataset": {
+      "previous": "GM-27",
+      "current": "GM-08"
+    },
+    "eligibility": {
+      "previous": "GM-30",
+      "current": "GM-11"
+    }
+  },
+  "checks": [
+    {
+      "name": "regression",
+      "command": "/Users/hoangvinh/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -m unittest discover -s tests -p 'test_*.py'",
+      "exitCode": 0,
+      "output": "....................................................................................................................................................................................................................................\n----------------------------------------------------------------------\nRan 228 tests in 3.499s\n\nOK\n"
+    },
+    {
+      "name": "repository",
+      "command": "python3 scripts/validate_repository.py",
+      "exitCode": 0,
+      "output": "Gi Cung Duoc: documents, links, JSON, task manifest, dependencies and current FR traceability OK.\nScope: documentation validation only; no native build/backend execution or human approval verified.\n"
+    },
+    {
+      "name": "task-index",
+      "command": "python3 scripts/task_readiness.py --check-docs",
+      "exitCode": 0,
+      "output": "Task indexes match task metadata.\n"
+    },
+    {
+      "name": "audit",
+      "command": "python3 data-preparation/scripts/validate_data_preparation.py",
+      "exitCode": 0,
+      "output": "{\n  \"validStructure\": true,\n  \"readyForPublish\": false,\n  \"auditAt\": \"2026-10-10T03:00:00Z\",\n  \"checks\": [\n    {\n      \"name\": \"base-manifest\",\n      \"path\": \"data-preparation/snapshots/manifest.json\",\n      \"passed\": true\n    },\n    {\n      \"name\": \"owner-mapping-lossless-replay\",\n      \"path\": \"data-preparation/snapshots\",\n      \"passed\": true\n    },\n    {\n      \"name\": \"taxonomy-registry\",\n      \"path\": \"data-preparation/config/taxonomy_registry_v1.json\",\n      \"passed\": true\n    },\n    {\n      \"name\": \"form-empty\",\n      \"path\": \"data-preparation/templates/empty\",\n      \"passed\": true\n    },\n    {\n      \"name\": \"form-examples\",\n      \"path\": \"data-preparation/templates/examples\",\n      \"passed\": true\n    },\n    {\n      \"name\": \"editorial-manifest\",\n      \"path\": \"data-preparation/snapshots/editorial-v0.2.0\",\n      \"passed\": true\n    },\n    {\n      \"name\": \"editorial-contract-source-price-replay\",\n      \"path\": \"data-preparation/snapshots/editorial-v0.2.0\",\n      \"passed\": true\n    },\n    {\n      \"name\": \"fixture-manifest\",\n      \"path\": \"tests/fixtures/food-data-v1\",\n      \"passed\": true\n    },\n    {\n      \"name\": \"fixture-contract-expected-replay\",\n      \"path\": \"tests/fixtures/food-data-v1\",\n      \"passed\": true\n    }\n  ],\n  \"errors\": [],\n  \"warnings\": [\n    {\n      \"code\": \"review_gate\",\n      \"message\": \"GM-28 review, accepted assignment and independent Tâm review remain pending.\"\n    },\n    {\n      \"code\": \"catalogue_target\",\n      \"message\": \"39 base dishes; the 60–80 target is not met.\"\n    },\n    {\n      \"code\": \"artwork\",\n      \"message\": \"0 selected artworks; 28 metadata candidates do not prove visual suitability or permission review.\"\n    },\n    {\n      \"code\": \"missing_fields\",\n      \"message\": \"5 descriptions missing; cuisine/meal/flavor/origin/ingredients remain mostly unknown. See editorial statistics.\"\n    },\n    {\n      \"code\": \"price_scope\",\n      \"message\": \"247 snapshot prices from 21 branches; menu_item_unspecified, portion/expiry unknown; no current or per-person price claim.\"\n    },\n    {\n      \"code\": \"source_rights_freshness\",\n      \"message\": \"24/27 draft sources have unknown usage rights; 3 reference-text sources record licenses. All lack expiry/reviewer. Historical audit does not establish current freshness or reuse permission.\"\n    },\n    {\n      \"code\": \"real_offerings\",\n      \"message\": \"Real venue/offering/schedule/coverage arrays are empty; GM-27 must supply verified selling data.\"\n    },\n    {\n      \"code\": \"algorithm\",\n      \"message\": \"Fixtures validate input/expected integrity only; GM-30 execution and TypeScript/SQL parity not run.\"\n    },\n    {\n      \"code\": \"runner\",\n      \"message\": \"Notebook tested through Python exec, not a Jupyter kernel; native/SQL and human review not run.\"\n    }\n  ]\n}\n"
+    },
+    {
+      "name": "diff",
+      "command": "git diff --check; git diff --cached --check",
+      "exitCode": 2,
+      "output": "docs/specs/UI_DESIGN_SPECIFICATION.md:3: trailing whitespace.\n+> **Mục đích:** Tài liệu này chuẩn hóa toàn bộ cấu trúc giao diện, luồng tương tác, component và quy chuẩn thiết kế từ bản nguyên mẫu tương tác [`design/prototypes/gi-cung-duoc.html`](../../design/prototypes/gi-cung-duoc.html) sang ứng dụng di động React Native (Expo + TypeScript).  \n"
+    }
+  ],
+  "finalDiffAndFrozenArtifacts": {
+    "exitCode": 0,
+    "output": "",
+    "interpretation": "Whitespace from target UI spec resolved; frozen config/snapshots/forms/fixtures/historical evidence unchanged from cf4e0bd."
+  },
+  "mergeGate": {
+    "command": "python3 scripts/task_readiness.py --task GM-03 --gate merge --base-ref origin/main",
+    "exitCode": 1,
+    "output": "Target snapshot: origin/main = aeb1a83379d044c5e7e0e12a47cec38989010490 (local ref; freshness not verified)\nGM-03: BLOCKED | owner=Vinh reviewer=Tâm | tasks/backlog/GM-03.md\n  WAIT GM-01: review | tasks/review/GM-01.md\nRecorded approval only; confirm assignment/contracts for start. Merge still requires independent review, exact PR/commit ancestry and real integration tests; no remote verification.\n",
+    "interpretation": "Expected BLOCKED: GM-01 review still pending; not a data test failure or approval."
+  },
+  "humanReview": "Pending",
+  "eligibilityExecuted": false,
+  "publicationPerformed": false,
+  "prMerged": false
+}

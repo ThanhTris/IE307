@@ -1,0 +1,2327 @@
+{
+  "datasetVersion": "0.2.0",
+  "contractVersion": "1.0.0",
+  "status": "draft",
+  "editedAt": "2026-10-10T02:26:05Z",
+  "snapshotChecksums": {
+    "thu_duc_dishes_taxonomy.csv": "e441ecfca93846da6596284f969149d2fef3e53f3397daa537cd8ba24dbcff37",
+    "thu_duc_base_dishes.csv": "d992deda724e7dc8f600443b68354ceae20a24216795a35cd0f615113e881e97",
+    "source_to_base_mapping.csv": "29ffa3cd95dff82d396b6a7664135c0540c00b2ae151e49b9ff013db9ef5078f"
+  },
+  "inputChecksums": {
+    "editorial_source_evidence_v1.json": "677f04809f791b245b9b3ec719ac78bf9280d190ed3db657dfbbedc23fae136d",
+    "editorial_image_candidates_v1.json": "ed296a260165b5c992594dbd69a41fccedbd87e0424cea6a48bc83c2c554bba5"
+  },
+  "dishes": [
+    {
+      "id": "8131e3cd-bce2-5843-8800-9426c91382ba",
+      "name": "Burger",
+      "description": "Nhóm burger nhiều loại nhân và sốt; phần ăn cụ thể theo menu từng quán.",
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:burger"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_50dbb70cd814e8bf7a93",
+            "menu_b247a4225fbecb0d5655",
+            "menu_7ccd7ce494621fbebb4b",
+            "menu_56b43d7d9125ab1978c1",
+            "menu_3d33d6cd7e6c3ab05d85",
+            "menu_312ee6a1237733f43a12",
+            "menu_7ed821780e5843c769cc",
+            "menu_41699bd827eafde21687",
+            "menu_a92109465d8c6cbebee6",
+            "menu_37b38ac2c9640e60d182",
+            "menu_f5d0b4a797585275136a",
+            "menu_12e8ac2a393d2436fb17",
+            "menu_d98fe949288438d189b1",
+            "menu_048ebbedcd80fd5a4c0c",
+            "menu_3d14a5712e7f1edb7eaf",
+            "menu_87dc41f8a8356f182c55"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_50dbb70cd814e8bf7a93",
+            "menu_b247a4225fbecb0d5655",
+            "menu_7ccd7ce494621fbebb4b",
+            "menu_56b43d7d9125ab1978c1",
+            "menu_3d33d6cd7e6c3ab05d85",
+            "menu_312ee6a1237733f43a12",
+            "menu_7ed821780e5843c769cc",
+            "menu_41699bd827eafde21687",
+            "menu_a92109465d8c6cbebee6",
+            "menu_37b38ac2c9640e60d182",
+            "menu_f5d0b4a797585275136a",
+            "menu_12e8ac2a393d2436fb17",
+            "menu_d98fe949288438d189b1",
+            "menu_048ebbedcd80fd5a4c0c",
+            "menu_3d14a5712e7f1edb7eaf",
+            "menu_87dc41f8a8356f182c55"
+          ]
+        },
+        "description": {
+          "sourceKey": "menu-catalogue",
+          "basis": "menu_scope",
+          "note": "Mô tả phạm vi nhóm từ tên/menu/mô tả nguồn; không áp thành phần một biến thể cho cả nhóm.",
+          "menuItemIds": [
+            "menu_50dbb70cd814e8bf7a93",
+            "menu_b247a4225fbecb0d5655",
+            "menu_7ccd7ce494621fbebb4b",
+            "menu_56b43d7d9125ab1978c1",
+            "menu_3d33d6cd7e6c3ab05d85",
+            "menu_312ee6a1237733f43a12",
+            "menu_7ed821780e5843c769cc",
+            "menu_41699bd827eafde21687",
+            "menu_a92109465d8c6cbebee6",
+            "menu_37b38ac2c9640e60d182",
+            "menu_f5d0b4a797585275136a",
+            "menu_12e8ac2a393d2436fb17",
+            "menu_d98fe949288438d189b1",
+            "menu_048ebbedcd80fd5a4c0c",
+            "menu_3d14a5712e7f1edb7eaf",
+            "menu_87dc41f8a8356f182c55"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "990393dc-1b1d-5a1a-9ccd-2b0c4ac60572",
+      "name": "Bánh bao",
+      "description": "Bánh hấp có nhân, với các phiên bản khác nhau; loại nhân theo menu từng quán.",
+      "aliases": [],
+      "cuisineCodes": [
+        "vi",
+        "zh"
+      ],
+      "categoryCodes": [
+        "family:banh_bao",
+        "preparation:steamed"
+      ],
+      "mealSlots": [
+        "breakfast",
+        "snack"
+      ],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_30f5a26a11af0f7b74f5",
+            "menu_756501d5ffdb5a98832a"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "wiki-bao",
+          "basis": "reference",
+          "note": "Họ món theo menu/owner, cách hấp được nguồn tham khảo mô tả rõ.",
+          "menuItemIds": []
+        },
+        "description": {
+          "sourceKey": "wiki-bao",
+          "basis": "reference",
+          "note": "Nguồn tham khảo mô tả đúng món; biên tập ngắn và giữ phạm vi biến thể, chưa review độc lập.",
+          "menuItemIds": []
+        },
+        "cuisineCodes": {
+          "sourceKey": "wiki-bao",
+          "basis": "reference",
+          "note": "Nguồn tham khảo mô tả đúng món; biên tập ngắn và giữ phạm vi biến thể, chưa review độc lập.",
+          "menuItemIds": []
+        },
+        "mealSlots": {
+          "sourceKey": "wiki-bao",
+          "basis": "reference",
+          "note": "Nguồn nêu buổi ăn phổ biến; không thay lịch bán thực tế.",
+          "menuItemIds": []
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "a785a621-2cbc-5f16-9274-a47141a8e3c8",
+      "name": "Bánh cuốn",
+      "description": "Món bánh từ lớp bột gạo mỏng hấp; nhân và món ăn kèm tùy phiên bản.",
+      "aliases": [
+        "Bánh quấn"
+      ],
+      "cuisineCodes": [
+        "vi"
+      ],
+      "categoryCodes": [
+        "family:banh_cuon",
+        "preparation:steamed"
+      ],
+      "mealSlots": [
+        "breakfast"
+      ],
+      "timeHints": [],
+      "origin": "north",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_500cfa38be779aeba130",
+            "menu_ed245b9a10338093acf8"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "wiki-cuon",
+          "basis": "reference",
+          "note": "Họ món theo menu/owner, cách hấp được nguồn tham khảo mô tả rõ.",
+          "menuItemIds": []
+        },
+        "description": {
+          "sourceKey": "wiki-cuon",
+          "basis": "reference",
+          "note": "Nguồn tham khảo mô tả đúng món; biên tập ngắn và giữ phạm vi biến thể, chưa review độc lập.",
+          "menuItemIds": []
+        },
+        "cuisineCodes": {
+          "sourceKey": "wiki-cuon",
+          "basis": "reference",
+          "note": "Nguồn tham khảo mô tả đúng món; biên tập ngắn và giữ phạm vi biến thể, chưa review độc lập.",
+          "menuItemIds": []
+        },
+        "mealSlots": {
+          "sourceKey": "wiki-cuon",
+          "basis": "reference",
+          "note": "Nguồn nêu buổi ăn phổ biến; không thay lịch bán thực tế.",
+          "menuItemIds": []
+        },
+        "aliases": {
+          "sourceKey": "wiki-cuon",
+          "basis": "reference",
+          "note": "Nguồn ghi Bánh quấn là alternative name, không phải topping/variant.",
+          "menuItemIds": []
+        },
+        "origin": {
+          "sourceKey": "wiki-cuon",
+          "basis": "reference",
+          "note": "Nguồn nêu Bắc; nguồn gốc không xác định địa điểm bán.",
+          "menuItemIds": []
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: timeHints, flavor, ingredientTags, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "39da0965-df4e-5ca1-8741-bdb9aeb85f57",
+      "name": "Bánh cuộn",
+      "description": "Nhóm bánh cuộn theo menu khảo sát, có các lựa chọn nhân và sốt riêng.",
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:banh_cuon_wrap"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_650eacdbe4cff00416d3",
+            "menu_f9adec3a9043d7afe2f8",
+            "menu_9d9ba1ff47265d7c5600",
+            "menu_2d48fa143efbcbc76485",
+            "menu_e153e24190f97d8b307f",
+            "menu_e0eba3c9b78f4cb77910"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_650eacdbe4cff00416d3",
+            "menu_f9adec3a9043d7afe2f8",
+            "menu_9d9ba1ff47265d7c5600",
+            "menu_2d48fa143efbcbc76485",
+            "menu_e153e24190f97d8b307f",
+            "menu_e0eba3c9b78f4cb77910"
+          ]
+        },
+        "description": {
+          "sourceKey": "menu-catalogue",
+          "basis": "menu_scope",
+          "note": "Mô tả phạm vi nhóm từ tên/menu/mô tả nguồn; không áp thành phần một biến thể cho cả nhóm.",
+          "menuItemIds": [
+            "menu_650eacdbe4cff00416d3",
+            "menu_f9adec3a9043d7afe2f8",
+            "menu_9d9ba1ff47265d7c5600",
+            "menu_2d48fa143efbcbc76485",
+            "menu_e153e24190f97d8b307f",
+            "menu_e0eba3c9b78f4cb77910"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
+      "name": "Bánh mì",
+      "description": "Nhóm bánh mì có nhân và bánh mì chấm; phần ăn cụ thể theo menu từng quán.",
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:banh_mi"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_9f27a7f9309b73e5eed1",
+            "menu_b3e1acfbbd15c50ba691",
+            "menu_d0ec65277f25c495dc7c",
+            "menu_3dc8d65c0a4a51beb35c",
+            "menu_aabe636b97d179594b59",
+            "menu_68a2d7913c64e73e0f33",
+            "menu_a182dcac9cefa6b29ac4",
+            "menu_f39dd0d60d35ba5cfe41",
+            "menu_78afa09cec806e769bd2",
+            "menu_eb37c1ae9cb2febc5595",
+            "menu_f9c0db4092f5b6de8900",
+            "menu_1af6e5195f4fc77f97f7",
+            "menu_8f7565e50ea716d86c62",
+            "menu_952e852803be93374319",
+            "menu_2cf63c6d6bd87952292f",
+            "menu_8ab8064fac2bdb7042d1",
+            "menu_9f8bf55d47b0535cb6a1",
+            "menu_328db74816c52c8178bc",
+            "menu_93899b73a95322812895",
+            "menu_4068b5d1934ddc98557a",
+            "menu_d9a8e2975d3a958c41bd",
+            "menu_063738d6919ba8af4d4d",
+            "menu_9487bba63d26fc45a821",
+            "menu_4dab87a2f831123787f2",
+            "menu_70350b71b7ba6cba96d3",
+            "menu_7113b8c4202af5727d94",
+            "menu_383cc04c7c1b9b9b3db9",
+            "menu_6b551ae6af3cd7f32eb0",
+            "menu_590f0f5edde6d0347d3e",
+            "menu_35bc18bd766ffd63bc2f",
+            "menu_5d6a5a1e085e5d1862af",
+            "menu_68cc3a5bc4ea0edad7f8",
+            "menu_22543e90a67f3d31d0ba",
+            "menu_faf75d80dc8c7aa7b422",
+            "menu_26952d6eb7082c6ec130",
+            "menu_4f6eeb02e5f6592edada",
+            "menu_bd3a30bec5022b82dbc7"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_9f27a7f9309b73e5eed1",
+            "menu_b3e1acfbbd15c50ba691",
+            "menu_d0ec65277f25c495dc7c",
+            "menu_3dc8d65c0a4a51beb35c",
+            "menu_aabe636b97d179594b59",
+            "menu_68a2d7913c64e73e0f33",
+            "menu_a182dcac9cefa6b29ac4",
+            "menu_f39dd0d60d35ba5cfe41",
+            "menu_78afa09cec806e769bd2",
+            "menu_eb37c1ae9cb2febc5595",
+            "menu_f9c0db4092f5b6de8900",
+            "menu_1af6e5195f4fc77f97f7",
+            "menu_8f7565e50ea716d86c62",
+            "menu_952e852803be93374319",
+            "menu_2cf63c6d6bd87952292f",
+            "menu_8ab8064fac2bdb7042d1",
+            "menu_9f8bf55d47b0535cb6a1",
+            "menu_328db74816c52c8178bc",
+            "menu_93899b73a95322812895",
+            "menu_4068b5d1934ddc98557a",
+            "menu_d9a8e2975d3a958c41bd",
+            "menu_063738d6919ba8af4d4d",
+            "menu_9487bba63d26fc45a821",
+            "menu_4dab87a2f831123787f2",
+            "menu_70350b71b7ba6cba96d3",
+            "menu_7113b8c4202af5727d94",
+            "menu_383cc04c7c1b9b9b3db9",
+            "menu_6b551ae6af3cd7f32eb0",
+            "menu_590f0f5edde6d0347d3e",
+            "menu_35bc18bd766ffd63bc2f",
+            "menu_5d6a5a1e085e5d1862af",
+            "menu_68cc3a5bc4ea0edad7f8",
+            "menu_22543e90a67f3d31d0ba",
+            "menu_faf75d80dc8c7aa7b422",
+            "menu_26952d6eb7082c6ec130",
+            "menu_4f6eeb02e5f6592edada",
+            "menu_bd3a30bec5022b82dbc7"
+          ]
+        },
+        "description": {
+          "sourceKey": "menu-catalogue",
+          "basis": "menu_scope",
+          "note": "Mô tả phạm vi nhóm từ tên/menu/mô tả nguồn; không áp thành phần một biến thể cho cả nhóm.",
+          "menuItemIds": [
+            "menu_9f27a7f9309b73e5eed1",
+            "menu_b3e1acfbbd15c50ba691",
+            "menu_d0ec65277f25c495dc7c",
+            "menu_3dc8d65c0a4a51beb35c",
+            "menu_aabe636b97d179594b59",
+            "menu_68a2d7913c64e73e0f33",
+            "menu_a182dcac9cefa6b29ac4",
+            "menu_f39dd0d60d35ba5cfe41",
+            "menu_78afa09cec806e769bd2",
+            "menu_eb37c1ae9cb2febc5595",
+            "menu_f9c0db4092f5b6de8900",
+            "menu_1af6e5195f4fc77f97f7",
+            "menu_8f7565e50ea716d86c62",
+            "menu_952e852803be93374319",
+            "menu_2cf63c6d6bd87952292f",
+            "menu_8ab8064fac2bdb7042d1",
+            "menu_9f8bf55d47b0535cb6a1",
+            "menu_328db74816c52c8178bc",
+            "menu_93899b73a95322812895",
+            "menu_4068b5d1934ddc98557a",
+            "menu_d9a8e2975d3a958c41bd",
+            "menu_063738d6919ba8af4d4d",
+            "menu_9487bba63d26fc45a821",
+            "menu_4dab87a2f831123787f2",
+            "menu_70350b71b7ba6cba96d3",
+            "menu_7113b8c4202af5727d94",
+            "menu_383cc04c7c1b9b9b3db9",
+            "menu_6b551ae6af3cd7f32eb0",
+            "menu_590f0f5edde6d0347d3e",
+            "menu_35bc18bd766ffd63bc2f",
+            "menu_5d6a5a1e085e5d1862af",
+            "menu_68cc3a5bc4ea0edad7f8",
+            "menu_22543e90a67f3d31d0ba",
+            "menu_faf75d80dc8c7aa7b422",
+            "menu_26952d6eb7082c6ec130",
+            "menu_4f6eeb02e5f6592edada",
+            "menu_bd3a30bec5022b82dbc7"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "620d6a2f-02a2-532f-b254-c37f3713ba04",
+      "name": "Bánh ướt",
+      "description": "Bánh dạng lá gạo mỏng không cuộn nhân; món ăn kèm theo menu từng quán.",
+      "aliases": [],
+      "cuisineCodes": [
+        "vi"
+      ],
+      "categoryCodes": [
+        "family:banh_uot"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_fcba5a7097f21b5b2fb8",
+            "menu_c34f0f884b5603bb5cad"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_fcba5a7097f21b5b2fb8",
+            "menu_c34f0f884b5603bb5cad"
+          ]
+        },
+        "description": {
+          "sourceKey": "wiki-cuon",
+          "basis": "reference",
+          "note": "Nguồn tham khảo mô tả đúng món; biên tập ngắn và giữ phạm vi biến thể, chưa review độc lập.",
+          "menuItemIds": []
+        },
+        "cuisineCodes": {
+          "sourceKey": "wiki-cuon",
+          "basis": "reference",
+          "note": "Nguồn tham khảo mô tả đúng món; biên tập ngắn và giữ phạm vi biến thể, chưa review độc lập.",
+          "menuItemIds": []
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "name": "Bún bò",
+      "description": "Nhóm bún bò gồm các phiên bản nước, khô và trộn trong menu khảo sát; món kèm giữ riêng.",
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:bun"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_028a60e0c694af9d1dd9",
+            "menu_713c13813856ec31cd41",
+            "menu_185b58930610477e92a0",
+            "menu_d990c1bcba36dad1919f",
+            "menu_fe5f7aebe3e0b0877f60",
+            "menu_3dc76f5695b35349f545",
+            "menu_e0176818122939dfd7b1",
+            "menu_6aecf265e0b3dd38db25",
+            "menu_46b445684f87d612e38b",
+            "menu_bf5f8b9c923deb5f19e4",
+            "menu_19a3dd1c2e3c740387e2",
+            "menu_0aa1ced4d41357d1a929",
+            "menu_3665369c8910b0fff0d1",
+            "menu_910c92238d15099cc004",
+            "menu_a3228b632124109f14be",
+            "menu_52042c9911fad6fa81c1",
+            "menu_484da662f67a20fd007d",
+            "menu_79f2d1afde50f57879b7",
+            "menu_24cf32183c0789bb727d",
+            "menu_ecf8f37e28fb63142f81",
+            "menu_21477da06ac5d200903f",
+            "menu_b32814962796589cf8f1",
+            "menu_93b8acb014059b29195e",
+            "menu_6b01a9cad699439ad9b4",
+            "menu_1d385a20dd405ebff270",
+            "menu_18405c461501c1ded2b1",
+            "menu_9d336919d4840a16eca7",
+            "menu_e0610254b162c14bd764",
+            "menu_61423f3d1f9f358fe551",
+            "menu_650cc70ac8049e2847ed",
+            "menu_f3910940e2bc77fe66c7",
+            "menu_8f27d2705fe659681eca",
+            "menu_8b0862121e4192954850",
+            "menu_e42e740072c89390bbb1",
+            "menu_c181071d9145bb1563ae"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_028a60e0c694af9d1dd9",
+            "menu_713c13813856ec31cd41",
+            "menu_185b58930610477e92a0",
+            "menu_d990c1bcba36dad1919f",
+            "menu_fe5f7aebe3e0b0877f60",
+            "menu_3dc76f5695b35349f545",
+            "menu_e0176818122939dfd7b1",
+            "menu_6aecf265e0b3dd38db25",
+            "menu_46b445684f87d612e38b",
+            "menu_bf5f8b9c923deb5f19e4",
+            "menu_19a3dd1c2e3c740387e2",
+            "menu_0aa1ced4d41357d1a929",
+            "menu_3665369c8910b0fff0d1",
+            "menu_910c92238d15099cc004",
+            "menu_a3228b632124109f14be",
+            "menu_52042c9911fad6fa81c1",
+            "menu_484da662f67a20fd007d",
+            "menu_79f2d1afde50f57879b7",
+            "menu_24cf32183c0789bb727d",
+            "menu_ecf8f37e28fb63142f81",
+            "menu_21477da06ac5d200903f",
+            "menu_b32814962796589cf8f1",
+            "menu_93b8acb014059b29195e",
+            "menu_6b01a9cad699439ad9b4",
+            "menu_1d385a20dd405ebff270",
+            "menu_18405c461501c1ded2b1",
+            "menu_9d336919d4840a16eca7",
+            "menu_e0610254b162c14bd764",
+            "menu_61423f3d1f9f358fe551",
+            "menu_650cc70ac8049e2847ed",
+            "menu_f3910940e2bc77fe66c7",
+            "menu_8f27d2705fe659681eca",
+            "menu_8b0862121e4192954850",
+            "menu_e42e740072c89390bbb1",
+            "menu_c181071d9145bb1563ae"
+          ]
+        },
+        "description": {
+          "sourceKey": "menu-catalogue",
+          "basis": "menu_scope",
+          "note": "Mô tả phạm vi nhóm từ tên/menu/mô tả nguồn; không áp thành phần một biến thể cho cả nhóm.",
+          "menuItemIds": [
+            "menu_028a60e0c694af9d1dd9",
+            "menu_713c13813856ec31cd41",
+            "menu_185b58930610477e92a0",
+            "menu_d990c1bcba36dad1919f",
+            "menu_fe5f7aebe3e0b0877f60",
+            "menu_3dc76f5695b35349f545",
+            "menu_e0176818122939dfd7b1",
+            "menu_6aecf265e0b3dd38db25",
+            "menu_46b445684f87d612e38b",
+            "menu_bf5f8b9c923deb5f19e4",
+            "menu_19a3dd1c2e3c740387e2",
+            "menu_0aa1ced4d41357d1a929",
+            "menu_3665369c8910b0fff0d1",
+            "menu_910c92238d15099cc004",
+            "menu_a3228b632124109f14be",
+            "menu_52042c9911fad6fa81c1",
+            "menu_484da662f67a20fd007d",
+            "menu_79f2d1afde50f57879b7",
+            "menu_24cf32183c0789bb727d",
+            "menu_ecf8f37e28fb63142f81",
+            "menu_21477da06ac5d200903f",
+            "menu_b32814962796589cf8f1",
+            "menu_93b8acb014059b29195e",
+            "menu_6b01a9cad699439ad9b4",
+            "menu_1d385a20dd405ebff270",
+            "menu_18405c461501c1ded2b1",
+            "menu_9d336919d4840a16eca7",
+            "menu_e0610254b162c14bd764",
+            "menu_61423f3d1f9f358fe551",
+            "menu_650cc70ac8049e2847ed",
+            "menu_f3910940e2bc77fe66c7",
+            "menu_8f27d2705fe659681eca",
+            "menu_8b0862121e4192954850",
+            "menu_e42e740072c89390bbb1",
+            "menu_c181071d9145bb1563ae"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "fe39887f-b79c-5981-8f0a-6e50c4a5dc54",
+      "name": "Bún bò chay",
+      "description": "Phiên bản bún bò được menu ghi là chay; thành phần cụ thể cần kiểm ở từng quán.",
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:bun"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_ab2c37e258a6066f72c9"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_ab2c37e258a6066f72c9"
+          ]
+        },
+        "description": {
+          "sourceKey": "menu-catalogue",
+          "basis": "menu_scope",
+          "note": "Mô tả phạm vi nhóm từ tên/menu/mô tả nguồn; không áp thành phần một biến thể cho cả nhóm.",
+          "menuItemIds": [
+            "menu_ab2c37e258a6066f72c9"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "52c6435f-c967-5820-8e76-b1917291a1ef",
+      "name": "Bún chay",
+      "description": "Nhóm bún chay gồm các phiên bản măng và tàu hủ nước tương trong menu khảo sát.",
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:bun"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_7b42359df8a71ec9ff28",
+            "menu_2f89f3d1c5509bf46b72"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_7b42359df8a71ec9ff28",
+            "menu_2f89f3d1c5509bf46b72"
+          ]
+        },
+        "description": {
+          "sourceKey": "menu-catalogue",
+          "basis": "menu_scope",
+          "note": "Mô tả phạm vi nhóm từ tên/menu/mô tả nguồn; không áp thành phần một biến thể cho cả nhóm.",
+          "menuItemIds": [
+            "menu_7b42359df8a71ec9ff28",
+            "menu_2f89f3d1c5509bf46b72"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "807a5dfe-64b0-5137-ac00-6f95882830d6",
+      "name": "Bún gạo lứt",
+      "description": "Bún gạo lứt với các lựa chọn phần kèm và sốt theo menu khảo sát.",
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:bun"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_c0c776472db075d49c23",
+            "menu_0d7fad72d4d3c37cb802"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_c0c776472db075d49c23",
+            "menu_0d7fad72d4d3c37cb802"
+          ]
+        },
+        "description": {
+          "sourceKey": "menu-catalogue",
+          "basis": "menu_scope",
+          "note": "Mô tả phạm vi nhóm từ tên/menu/mô tả nguồn; không áp thành phần một biến thể cho cả nhóm.",
+          "menuItemIds": [
+            "menu_c0c776472db075d49c23",
+            "menu_0d7fad72d4d3c37cb802"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "4a8ac4a8-b566-5032-be38-48f00e6a53b9",
+      "name": "Bún mọc",
+      "description": null,
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:bun"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_fe76fc3c13c8a6213c25"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_fe76fc3c13c8a6213c25"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: description, aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "e6558eda-db0f-5583-bbf5-be4f7da8f2f9",
+      "name": "Bún nem nướng",
+      "description": "Nhóm bún nem nướng gồm các phiên bản nem lụi và nem phên trong menu khảo sát.",
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:bun"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_4955c51eca8e6c72c54f",
+            "menu_edcf4311e6bdedcb5823",
+            "menu_d5738a5eb1dbeb4bc040",
+            "menu_186a646d60dcf2097ec6"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_4955c51eca8e6c72c54f",
+            "menu_edcf4311e6bdedcb5823",
+            "menu_d5738a5eb1dbeb4bc040",
+            "menu_186a646d60dcf2097ec6"
+          ]
+        },
+        "description": {
+          "sourceKey": "menu-catalogue",
+          "basis": "menu_scope",
+          "note": "Mô tả phạm vi nhóm từ tên/menu/mô tả nguồn; không áp thành phần một biến thể cho cả nhóm.",
+          "menuItemIds": [
+            "menu_4955c51eca8e6c72c54f",
+            "menu_edcf4311e6bdedcb5823",
+            "menu_d5738a5eb1dbeb4bc040",
+            "menu_186a646d60dcf2097ec6"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "79c72911-92fc-5af0-9f7f-b8c476542e7f",
+      "name": "Bún riêu",
+      "description": "Nhóm bún riêu có các lựa chọn món kèm theo menu; phiên bản chay được tách riêng.",
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:bun"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_4a9609802452ab5ebc7c",
+            "menu_809116427eff03becc18",
+            "menu_47d4c659bdd81c277d02",
+            "menu_cee94deafa33c33c963f"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_4a9609802452ab5ebc7c",
+            "menu_809116427eff03becc18",
+            "menu_47d4c659bdd81c277d02",
+            "menu_cee94deafa33c33c963f"
+          ]
+        },
+        "description": {
+          "sourceKey": "menu-catalogue",
+          "basis": "menu_scope",
+          "note": "Mô tả phạm vi nhóm từ tên/menu/mô tả nguồn; không áp thành phần một biến thể cho cả nhóm.",
+          "menuItemIds": [
+            "menu_4a9609802452ab5ebc7c",
+            "menu_809116427eff03becc18",
+            "menu_47d4c659bdd81c277d02",
+            "menu_cee94deafa33c33c963f"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "db666124-3676-5609-8dc4-b313a1809358",
+      "name": "Bún riêu chay",
+      "description": "Phiên bản bún riêu được menu ghi là chay; thành phần cụ thể cần kiểm ở từng quán.",
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:bun"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_b385bfd69e100fe6181a"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_b385bfd69e100fe6181a"
+          ]
+        },
+        "description": {
+          "sourceKey": "menu-catalogue",
+          "basis": "menu_scope",
+          "note": "Mô tả phạm vi nhóm từ tên/menu/mô tả nguồn; không áp thành phần một biến thể cho cả nhóm.",
+          "menuItemIds": [
+            "menu_b385bfd69e100fe6181a"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "441e70be-0b06-521d-b5b9-7349386f14ad",
+      "name": "Bún thịt nướng",
+      "description": "Bún ăn kèm thịt nướng và phần ăn kèm theo menu từng quán.",
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:bun"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_42e351d60faa9b17eb3c",
+            "menu_5c335eeb61a699af929d",
+            "menu_69b7785601a6f668ac45"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_42e351d60faa9b17eb3c",
+            "menu_5c335eeb61a699af929d",
+            "menu_69b7785601a6f668ac45"
+          ]
+        },
+        "description": {
+          "sourceKey": "menu-catalogue",
+          "basis": "menu_scope",
+          "note": "Mô tả phạm vi nhóm từ tên/menu/mô tả nguồn; không áp thành phần một biến thể cho cả nhóm.",
+          "menuItemIds": [
+            "menu_42e351d60faa9b17eb3c",
+            "menu_5c335eeb61a699af929d",
+            "menu_69b7785601a6f668ac45"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "d320d9fe-0b53-539f-98ce-87ac91cf2dbb",
+      "name": "Bún đậu",
+      "description": "Nhóm bún đậu với các lựa chọn món ăn kèm theo menu khảo sát.",
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:bun"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_7e35ac25f061e4e594fa",
+            "menu_4488322a439a10abcd15",
+            "menu_e05608e52c8999235009",
+            "menu_a7731ed4812777124ba1",
+            "menu_758b1c3c06b57a5f0756",
+            "menu_a830517fa3c3d2454f1d",
+            "menu_099ff3f77ffb57f57be2",
+            "menu_cf554dc3ccc79bbaf901"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_7e35ac25f061e4e594fa",
+            "menu_4488322a439a10abcd15",
+            "menu_e05608e52c8999235009",
+            "menu_a7731ed4812777124ba1",
+            "menu_758b1c3c06b57a5f0756",
+            "menu_a830517fa3c3d2454f1d",
+            "menu_099ff3f77ffb57f57be2",
+            "menu_cf554dc3ccc79bbaf901"
+          ]
+        },
+        "description": {
+          "sourceKey": "menu-catalogue",
+          "basis": "menu_scope",
+          "note": "Mô tả phạm vi nhóm từ tên/menu/mô tả nguồn; không áp thành phần một biến thể cho cả nhóm.",
+          "menuItemIds": [
+            "menu_7e35ac25f061e4e594fa",
+            "menu_4488322a439a10abcd15",
+            "menu_e05608e52c8999235009",
+            "menu_a7731ed4812777124ba1",
+            "menu_758b1c3c06b57a5f0756",
+            "menu_a830517fa3c3d2454f1d",
+            "menu_099ff3f77ffb57f57be2",
+            "menu_cf554dc3ccc79bbaf901"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "864f37d1-97e9-57bc-bce5-351668f703da",
+      "name": "Cơm bò",
+      "description": "Nhóm cơm bò, có các lựa chọn món kèm và sốt theo menu khảo sát.",
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:rice"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_9b922b472a10f035ce17"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_9b922b472a10f035ce17"
+          ]
+        },
+        "description": {
+          "sourceKey": "menu-catalogue",
+          "basis": "menu_scope",
+          "note": "Mô tả phạm vi nhóm từ tên/menu/mô tả nguồn; không áp thành phần một biến thể cho cả nhóm.",
+          "menuItemIds": [
+            "menu_9b922b472a10f035ce17"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "f9224f9d-f9e2-5b4b-a328-0db75c978c2a",
+      "name": "Cơm canh khổ qua",
+      "description": null,
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:rice"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_02caf3bd117b33b87a54"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_02caf3bd117b33b87a54"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: description, aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "16ad89fb-0bc1-5d43-b8d0-4285916a69dc",
+      "name": "Cơm chay",
+      "description": "Nhóm cơm được menu ghi là chay, với các lựa chọn món kèm khác nhau.",
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:rice"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_b2c630badddaeeaa5e5e",
+            "menu_c4b9236e3c96bd16ad15",
+            "menu_f103efc59644a7da92fe",
+            "menu_34154d376528426660a2",
+            "menu_82ccacfdf7c5fa3b0279",
+            "menu_500fcb94fc244e992461",
+            "menu_cad894f8ad34ec7ffd4a",
+            "menu_c7fe75b991b64a5b6e0a",
+            "menu_32f5ee4efd43201cc667",
+            "menu_a0c2ffd89122ec2495d7",
+            "menu_d77c7a48447b5f5a09ff",
+            "menu_745e01a04f03f773a2e6",
+            "menu_48850a82a1392cbe6e81",
+            "menu_277d212aca4c58a7e1e9"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_b2c630badddaeeaa5e5e",
+            "menu_c4b9236e3c96bd16ad15",
+            "menu_f103efc59644a7da92fe",
+            "menu_34154d376528426660a2",
+            "menu_82ccacfdf7c5fa3b0279",
+            "menu_500fcb94fc244e992461",
+            "menu_cad894f8ad34ec7ffd4a",
+            "menu_c7fe75b991b64a5b6e0a",
+            "menu_32f5ee4efd43201cc667",
+            "menu_a0c2ffd89122ec2495d7",
+            "menu_d77c7a48447b5f5a09ff",
+            "menu_745e01a04f03f773a2e6",
+            "menu_48850a82a1392cbe6e81",
+            "menu_277d212aca4c58a7e1e9"
+          ]
+        },
+        "description": {
+          "sourceKey": "menu-catalogue",
+          "basis": "menu_scope",
+          "note": "Mô tả phạm vi nhóm từ tên/menu/mô tả nguồn; không áp thành phần một biến thể cho cả nhóm.",
+          "menuItemIds": [
+            "menu_b2c630badddaeeaa5e5e",
+            "menu_c4b9236e3c96bd16ad15",
+            "menu_f103efc59644a7da92fe",
+            "menu_34154d376528426660a2",
+            "menu_82ccacfdf7c5fa3b0279",
+            "menu_500fcb94fc244e992461",
+            "menu_cad894f8ad34ec7ffd4a",
+            "menu_c7fe75b991b64a5b6e0a",
+            "menu_32f5ee4efd43201cc667",
+            "menu_a0c2ffd89122ec2495d7",
+            "menu_d77c7a48447b5f5a09ff",
+            "menu_745e01a04f03f773a2e6",
+            "menu_48850a82a1392cbe6e81",
+            "menu_277d212aca4c58a7e1e9"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "da40f225-25dd-5527-b535-ae5d48e15b9d",
+      "name": "Cơm chiên",
+      "description": "Nhóm cơm chiên có các phiên bản gà xối mỡ và kimchi trong menu khảo sát.",
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:rice"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_1bbd6745ba85a50ca9c3",
+            "menu_d4a1d18ba4afb76e5226"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_1bbd6745ba85a50ca9c3",
+            "menu_d4a1d18ba4afb76e5226"
+          ]
+        },
+        "description": {
+          "sourceKey": "menu-catalogue",
+          "basis": "menu_scope",
+          "note": "Mô tả phạm vi nhóm từ tên/menu/mô tả nguồn; không áp thành phần một biến thể cho cả nhóm.",
+          "menuItemIds": [
+            "menu_1bbd6745ba85a50ca9c3",
+            "menu_d4a1d18ba4afb76e5226"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "01e12db6-8014-5e84-bc53-398af27ad314",
+      "name": "Cơm cá chiên",
+      "description": "Cơm ăn kèm cá chiên; phần ăn kèm khác theo menu khảo sát.",
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:rice"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_dae6d281baa4cb0949cf"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_dae6d281baa4cb0949cf"
+          ]
+        },
+        "description": {
+          "sourceKey": "menu-catalogue",
+          "basis": "menu_scope",
+          "note": "Mô tả phạm vi nhóm từ tên/menu/mô tả nguồn; không áp thành phần một biến thể cho cả nhóm.",
+          "menuItemIds": [
+            "menu_dae6d281baa4cb0949cf"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "f518af1a-6744-545a-83b4-4fa14d590a43",
+      "name": "Cơm cá kho",
+      "description": null,
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:rice"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_0fb1066b202b6a570091",
+            "menu_eda3e213ee2ff1d749b2",
+            "menu_3e5f958f43eb66887651"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_0fb1066b202b6a570091",
+            "menu_eda3e213ee2ff1d749b2",
+            "menu_3e5f958f43eb66887651"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: description, aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "b115bf23-4277-5a5d-a439-002b0ceda3ce",
+      "name": "Cơm gà",
+      "description": "Nhóm cơm gà nhiều cách chế biến và sốt; phiên bản cụ thể theo menu từng quán.",
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:rice"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_f3b1dce2424b2af175d2",
+            "menu_a654cb46f37e50e7c289",
+            "menu_9b900050d66d8e4d4430",
+            "menu_e9feaedf570282b04aa3",
+            "menu_11ff051045a4eea958ae",
+            "menu_eefa618e0a50dffdaa5c",
+            "menu_7163161037896aab399c",
+            "menu_0adeae409eb0ad26ef33",
+            "menu_bae66c3ae66e0322eaac"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_f3b1dce2424b2af175d2",
+            "menu_a654cb46f37e50e7c289",
+            "menu_9b900050d66d8e4d4430",
+            "menu_e9feaedf570282b04aa3",
+            "menu_11ff051045a4eea958ae",
+            "menu_eefa618e0a50dffdaa5c",
+            "menu_7163161037896aab399c",
+            "menu_0adeae409eb0ad26ef33",
+            "menu_bae66c3ae66e0322eaac"
+          ]
+        },
+        "description": {
+          "sourceKey": "menu-catalogue",
+          "basis": "menu_scope",
+          "note": "Mô tả phạm vi nhóm từ tên/menu/mô tả nguồn; không áp thành phần một biến thể cho cả nhóm.",
+          "menuItemIds": [
+            "menu_f3b1dce2424b2af175d2",
+            "menu_a654cb46f37e50e7c289",
+            "menu_9b900050d66d8e4d4430",
+            "menu_e9feaedf570282b04aa3",
+            "menu_11ff051045a4eea958ae",
+            "menu_eefa618e0a50dffdaa5c",
+            "menu_7163161037896aab399c",
+            "menu_0adeae409eb0ad26ef33",
+            "menu_bae66c3ae66e0322eaac"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "37e032fb-1a78-5b5c-833d-c5362ba14445",
+      "name": "Cơm sườn",
+      "description": "Nhóm cơm sườn; cách chế biến và phần ăn kèm lưu theo menu từng quán.",
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:rice"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_3fab60bacc6b85b97dff",
+            "menu_9088be3e1160f96e4100",
+            "menu_7e770ee9a93604f7edd1"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_3fab60bacc6b85b97dff",
+            "menu_9088be3e1160f96e4100",
+            "menu_7e770ee9a93604f7edd1"
+          ]
+        },
+        "description": {
+          "sourceKey": "menu-catalogue",
+          "basis": "menu_scope",
+          "note": "Mô tả phạm vi nhóm từ tên/menu/mô tả nguồn; không áp thành phần một biến thể cho cả nhóm.",
+          "menuItemIds": [
+            "menu_3fab60bacc6b85b97dff",
+            "menu_9088be3e1160f96e4100",
+            "menu_7e770ee9a93604f7edd1"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "a7619de7-cecd-558c-9e8a-dcdedd82465a",
+      "name": "Cơm thịt kho",
+      "description": "Nhóm cơm thịt kho với các lựa chọn món kèm theo menu khảo sát.",
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:rice"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_223a88513e71d12943f8",
+            "menu_d7904c475153a18f71e0",
+            "menu_536e8d30b0c254ec73ae",
+            "menu_0ba8eaef1176deeca9b5",
+            "menu_f169551637c0e308ab9b"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_223a88513e71d12943f8",
+            "menu_d7904c475153a18f71e0",
+            "menu_536e8d30b0c254ec73ae",
+            "menu_0ba8eaef1176deeca9b5",
+            "menu_f169551637c0e308ab9b"
+          ]
+        },
+        "description": {
+          "sourceKey": "menu-catalogue",
+          "basis": "menu_scope",
+          "note": "Mô tả phạm vi nhóm từ tên/menu/mô tả nguồn; không áp thành phần một biến thể cho cả nhóm.",
+          "menuItemIds": [
+            "menu_223a88513e71d12943f8",
+            "menu_d7904c475153a18f71e0",
+            "menu_536e8d30b0c254ec73ae",
+            "menu_0ba8eaef1176deeca9b5",
+            "menu_f169551637c0e308ab9b"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "d9756559-2697-565c-86e0-36cf39c4da49",
+      "name": "Cơm trộn",
+      "description": "Nhóm cơm trộn gồm các phiên bản gapao, tomyum và cơm trộn trong menu khảo sát.",
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:rice"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_18d0cf359b88f272147e",
+            "menu_719211d81001ca214099",
+            "menu_25dd6c7143d26252e7f9",
+            "menu_78889514181ef7b0a575"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_18d0cf359b88f272147e",
+            "menu_719211d81001ca214099",
+            "menu_25dd6c7143d26252e7f9",
+            "menu_78889514181ef7b0a575"
+          ]
+        },
+        "description": {
+          "sourceKey": "menu-catalogue",
+          "basis": "menu_scope",
+          "note": "Mô tả phạm vi nhóm từ tên/menu/mô tả nguồn; không áp thành phần một biến thể cho cả nhóm.",
+          "menuItemIds": [
+            "menu_18d0cf359b88f272147e",
+            "menu_719211d81001ca214099",
+            "menu_25dd6c7143d26252e7f9",
+            "menu_78889514181ef7b0a575"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "e0a99abc-3bb4-54e5-85ea-0361df2098b7",
+      "name": "Cơm tôm rim",
+      "description": null,
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:rice"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_3ddf601a91601f8a54ce"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_3ddf601a91601f8a54ce"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: description, aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "fc959eeb-033c-54b6-b8a2-9d7c6982803e",
+      "name": "Cơm tấm",
+      "description": "Nhóm cơm tấm nhiều lựa chọn món kèm như sườn, bì, chả hoặc trứng, tùy menu.",
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:rice"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_28efc43664aa320f0ad5",
+            "menu_f3d440a69d633aa5dea5",
+            "menu_d819fcd8bb3b1c0f989a",
+            "menu_8d4be8fd39b0d561440e",
+            "menu_813ed0d2e7a127d00b47",
+            "menu_e2b3d5c2f85e31e3ce89",
+            "menu_c3f2ed4ff03882701a20",
+            "menu_1d4d9f73066a4548670f",
+            "menu_b7e3442a37aec60f0886",
+            "menu_119cfebac0e8cbcbcc5c",
+            "menu_319b55951dcf88a201c6",
+            "menu_ca65442aa17ebc4d00d8",
+            "menu_f089ebdf1cf0409a152f",
+            "menu_acccc5e3f6bf86ab9c32",
+            "menu_f89f2b0e8831e718d80f"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_28efc43664aa320f0ad5",
+            "menu_f3d440a69d633aa5dea5",
+            "menu_d819fcd8bb3b1c0f989a",
+            "menu_8d4be8fd39b0d561440e",
+            "menu_813ed0d2e7a127d00b47",
+            "menu_e2b3d5c2f85e31e3ce89",
+            "menu_c3f2ed4ff03882701a20",
+            "menu_1d4d9f73066a4548670f",
+            "menu_b7e3442a37aec60f0886",
+            "menu_119cfebac0e8cbcbcc5c",
+            "menu_319b55951dcf88a201c6",
+            "menu_ca65442aa17ebc4d00d8",
+            "menu_f089ebdf1cf0409a152f",
+            "menu_acccc5e3f6bf86ab9c32",
+            "menu_f89f2b0e8831e718d80f"
+          ]
+        },
+        "description": {
+          "sourceKey": "menu-catalogue",
+          "basis": "menu_scope",
+          "note": "Mô tả phạm vi nhóm từ tên/menu/mô tả nguồn; không áp thành phần một biến thể cho cả nhóm.",
+          "menuItemIds": [
+            "menu_28efc43664aa320f0ad5",
+            "menu_f3d440a69d633aa5dea5",
+            "menu_d819fcd8bb3b1c0f989a",
+            "menu_8d4be8fd39b0d561440e",
+            "menu_813ed0d2e7a127d00b47",
+            "menu_e2b3d5c2f85e31e3ce89",
+            "menu_c3f2ed4ff03882701a20",
+            "menu_1d4d9f73066a4548670f",
+            "menu_b7e3442a37aec60f0886",
+            "menu_119cfebac0e8cbcbcc5c",
+            "menu_319b55951dcf88a201c6",
+            "menu_ca65442aa17ebc4d00d8",
+            "menu_f089ebdf1cf0409a152f",
+            "menu_acccc5e3f6bf86ab9c32",
+            "menu_f89f2b0e8831e718d80f"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "9cbc5485-896f-5725-bc54-c7d637f54770",
+      "name": "Cơm đậu hủ sốt cà",
+      "description": null,
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:rice"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_76c7ef46aca8d2643afc"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_76c7ef46aca8d2643afc"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: description, aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "c5bbbe58-91c4-5819-8813-a531825073b6",
+      "name": "Hủ tiếu",
+      "description": "Nhóm hủ tiếu với các lựa chọn món kèm theo menu khảo sát.",
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:hu_tieu"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_68c1d55c04815ceb4d10",
+            "menu_b28ee85658b079b63371",
+            "menu_ff2a1671693f68c570fb"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_68c1d55c04815ceb4d10",
+            "menu_b28ee85658b079b63371",
+            "menu_ff2a1671693f68c570fb"
+          ]
+        },
+        "description": {
+          "sourceKey": "menu-catalogue",
+          "basis": "menu_scope",
+          "note": "Mô tả phạm vi nhóm từ tên/menu/mô tả nguồn; không áp thành phần một biến thể cho cả nhóm.",
+          "menuItemIds": [
+            "menu_68c1d55c04815ceb4d10",
+            "menu_b28ee85658b079b63371",
+            "menu_ff2a1671693f68c570fb"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "c3f1f939-20a4-55b1-89af-42e3c95a33fa",
+      "name": "Miến",
+      "description": "Nhóm miến gồm các phiên bản miến gà, miến bò và miến Hàn trộn trong menu khảo sát.",
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:mien"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_88966dfa8a9163a7a409",
+            "menu_bb2bf3d856e95b1e2f82",
+            "menu_3188e4590e77e87204d5",
+            "menu_60ade44cd0eaa58a79ec"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_88966dfa8a9163a7a409",
+            "menu_bb2bf3d856e95b1e2f82",
+            "menu_3188e4590e77e87204d5",
+            "menu_60ade44cd0eaa58a79ec"
+          ]
+        },
+        "description": {
+          "sourceKey": "menu-catalogue",
+          "basis": "menu_scope",
+          "note": "Mô tả phạm vi nhóm từ tên/menu/mô tả nguồn; không áp thành phần một biến thể cho cả nhóm.",
+          "menuItemIds": [
+            "menu_88966dfa8a9163a7a409",
+            "menu_bb2bf3d856e95b1e2f82",
+            "menu_3188e4590e77e87204d5",
+            "menu_60ade44cd0eaa58a79ec"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "69073532-dba4-59ab-917e-42971d5e81c3",
+      "name": "Mì",
+      "description": "Nhóm mì gồm nhiều cách phục vụ; mì trộn và mì Ý được tách riêng trong catalogue.",
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:noodles"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_1631d466455cd52472a0",
+            "menu_70ba964c0626f7b44a93",
+            "menu_af2aefac7a2679359adb",
+            "menu_6f9d19fccbbe51ed301a"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_1631d466455cd52472a0",
+            "menu_70ba964c0626f7b44a93",
+            "menu_af2aefac7a2679359adb",
+            "menu_6f9d19fccbbe51ed301a"
+          ]
+        },
+        "description": {
+          "sourceKey": "menu-catalogue",
+          "basis": "menu_scope",
+          "note": "Mô tả phạm vi nhóm từ tên/menu/mô tả nguồn; không áp thành phần một biến thể cho cả nhóm.",
+          "menuItemIds": [
+            "menu_1631d466455cd52472a0",
+            "menu_70ba964c0626f7b44a93",
+            "menu_af2aefac7a2679359adb",
+            "menu_6f9d19fccbbe51ed301a"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "4f4e0327-d10e-5c8f-b69a-eb4f2df520ea",
+      "name": "Mì trộn",
+      "description": "Nhóm mì trộn nhiều loại sốt và món kèm; phiên bản cụ thể theo menu khảo sát.",
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:noodles"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_48438c228897db92d83c",
+            "menu_eb31c70ae1612e482edb",
+            "menu_2f83ae6572afa0131c04",
+            "menu_85d40bace981273f315c",
+            "menu_fa4567bd7a33d7ccc0bc",
+            "menu_2452a32cf1c94fcb8ce3",
+            "menu_a6fb7148f478e6e05325"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_48438c228897db92d83c",
+            "menu_eb31c70ae1612e482edb",
+            "menu_2f83ae6572afa0131c04",
+            "menu_85d40bace981273f315c",
+            "menu_fa4567bd7a33d7ccc0bc",
+            "menu_2452a32cf1c94fcb8ce3",
+            "menu_a6fb7148f478e6e05325"
+          ]
+        },
+        "description": {
+          "sourceKey": "menu-catalogue",
+          "basis": "menu_scope",
+          "note": "Mô tả phạm vi nhóm từ tên/menu/mô tả nguồn; không áp thành phần một biến thể cho cả nhóm.",
+          "menuItemIds": [
+            "menu_48438c228897db92d83c",
+            "menu_eb31c70ae1612e482edb",
+            "menu_2f83ae6572afa0131c04",
+            "menu_85d40bace981273f315c",
+            "menu_fa4567bd7a33d7ccc0bc",
+            "menu_2452a32cf1c94fcb8ce3",
+            "menu_a6fb7148f478e6e05325"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "b151781d-c641-593f-9aba-a1ac5d16e309",
+      "name": "Mì Ý",
+      "description": "Nhóm mì Ý với các lựa chọn sốt và kích cỡ theo menu khảo sát.",
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:noodles"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_09d13c1382a6c3b65b7a",
+            "menu_ac5eec97a6e8cfff4f7d",
+            "menu_f2005d073454d5eead81",
+            "menu_3c80f11a5ee74a3347fa",
+            "menu_2da8b53c3a217daebcaa",
+            "menu_5787cc84c67b5dae0bbc",
+            "menu_bbf973289cf84c5ab034"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_09d13c1382a6c3b65b7a",
+            "menu_ac5eec97a6e8cfff4f7d",
+            "menu_f2005d073454d5eead81",
+            "menu_3c80f11a5ee74a3347fa",
+            "menu_2da8b53c3a217daebcaa",
+            "menu_5787cc84c67b5dae0bbc",
+            "menu_bbf973289cf84c5ab034"
+          ]
+        },
+        "description": {
+          "sourceKey": "menu-catalogue",
+          "basis": "menu_scope",
+          "note": "Mô tả phạm vi nhóm từ tên/menu/mô tả nguồn; không áp thành phần một biến thể cho cả nhóm.",
+          "menuItemIds": [
+            "menu_09d13c1382a6c3b65b7a",
+            "menu_ac5eec97a6e8cfff4f7d",
+            "menu_f2005d073454d5eead81",
+            "menu_3c80f11a5ee74a3347fa",
+            "menu_2da8b53c3a217daebcaa",
+            "menu_5787cc84c67b5dae0bbc",
+            "menu_bbf973289cf84c5ab034"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "aa59b2ad-3c15-5133-bad9-122a8d2fe93b",
+      "name": "Nui",
+      "description": "Nhóm nui theo menu khảo sát; phần ăn kèm có xíu mại và xá xíu ở phiên bản được mô tả.",
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:nui"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_5475979fede9f79b0a83"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_5475979fede9f79b0a83"
+          ]
+        },
+        "description": {
+          "sourceKey": "menu-catalogue",
+          "basis": "menu_scope",
+          "note": "Mô tả phạm vi nhóm từ tên/menu/mô tả nguồn; không áp thành phần một biến thể cho cả nhóm.",
+          "menuItemIds": [
+            "menu_5475979fede9f79b0a83"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "0da7d12b-4e83-517b-9c26-b192e6d63fe9",
+      "name": "Phở bò",
+      "description": "Phở nước với bò; phần thịt, nước dùng và món kèm tùy phiên bản.",
+      "aliases": [],
+      "cuisineCodes": [
+        "vi"
+      ],
+      "categoryCodes": [
+        "family:pho"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "hot",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_9ed20b9b57bf75f5eaac",
+            "menu_9665149cf43578a6cd3d",
+            "menu_26b4ede4ba27f12f3a28",
+            "menu_0ef6c055bbcba05309ea",
+            "menu_6198731b557bb210b58a",
+            "menu_3fb3cb6f15849aa837b2",
+            "menu_d71a52f7187a2c99274d",
+            "menu_410b4ed15974c00291a2",
+            "menu_ec0f7a919171f3b7f551",
+            "menu_9d138530cd95e47dad82",
+            "menu_4c1b9f765850487eaaac",
+            "menu_82ba99640338e56d340e",
+            "menu_fd04e4f394d6da7d938d",
+            "menu_1b5c4eb74496735ab688",
+            "menu_9226e6fe566e7b5ccb43",
+            "menu_ad417eee5118846d8be6"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_9ed20b9b57bf75f5eaac",
+            "menu_9665149cf43578a6cd3d",
+            "menu_26b4ede4ba27f12f3a28",
+            "menu_0ef6c055bbcba05309ea",
+            "menu_6198731b557bb210b58a",
+            "menu_3fb3cb6f15849aa837b2",
+            "menu_d71a52f7187a2c99274d",
+            "menu_410b4ed15974c00291a2",
+            "menu_ec0f7a919171f3b7f551",
+            "menu_9d138530cd95e47dad82",
+            "menu_4c1b9f765850487eaaac",
+            "menu_82ba99640338e56d340e",
+            "menu_fd04e4f394d6da7d938d",
+            "menu_1b5c4eb74496735ab688",
+            "menu_9226e6fe566e7b5ccb43",
+            "menu_ad417eee5118846d8be6"
+          ]
+        },
+        "description": {
+          "sourceKey": "wiki-pho",
+          "basis": "reference",
+          "note": "Nguồn tham khảo mô tả đúng món; biên tập ngắn và giữ phạm vi biến thể, chưa review độc lập.",
+          "menuItemIds": []
+        },
+        "cuisineCodes": {
+          "sourceKey": "wiki-pho",
+          "basis": "reference",
+          "note": "Nguồn tham khảo mô tả đúng món; biên tập ngắn và giữ phạm vi biến thể, chưa review độc lập.",
+          "menuItemIds": []
+        },
+        "temperature": {
+          "sourceKey": "wiki-pho",
+          "basis": "reference",
+          "note": "Serving temperature Hot của phở nước trong nguồn; không bảo đảm nhiệt độ offering hiện tại.",
+          "menuItemIds": []
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, mealSlots, timeHints, flavor, ingredientTags, origin. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "33c758d0-9f9b-5dd9-8976-c52b6f949d31",
+      "name": "Phở gà",
+      "description": "Phở nước với gà; phần thịt, nước dùng và món kèm tùy phiên bản.",
+      "aliases": [],
+      "cuisineCodes": [
+        "vi"
+      ],
+      "categoryCodes": [
+        "family:pho"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "hot",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_93c677af17d612620a14",
+            "menu_c2a09df0ebf10b8bb2e8"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_93c677af17d612620a14",
+            "menu_c2a09df0ebf10b8bb2e8"
+          ]
+        },
+        "description": {
+          "sourceKey": "wiki-pho",
+          "basis": "reference",
+          "note": "Nguồn tham khảo mô tả đúng món; biên tập ngắn và giữ phạm vi biến thể, chưa review độc lập.",
+          "menuItemIds": []
+        },
+        "cuisineCodes": {
+          "sourceKey": "wiki-pho",
+          "basis": "reference",
+          "note": "Nguồn tham khảo mô tả đúng món; biên tập ngắn và giữ phạm vi biến thể, chưa review độc lập.",
+          "menuItemIds": []
+        },
+        "temperature": {
+          "sourceKey": "wiki-pho",
+          "basis": "reference",
+          "note": "Serving temperature Hot của phở nước trong nguồn; không bảo đảm nhiệt độ offering hiện tại.",
+          "menuItemIds": []
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, mealSlots, timeHints, flavor, ingredientTags, origin. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "26448eef-8a0a-5934-bc0a-8936b205b389",
+      "name": "Salad",
+      "description": "Nhóm salad rau với các lựa chọn phần kèm và sốt theo menu khảo sát.",
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:salad"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_8caf606557c67bc70f81",
+            "menu_d10a7dfc7dc58341cf5b",
+            "menu_a9ad4b5415a36a8e675a"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_8caf606557c67bc70f81",
+            "menu_d10a7dfc7dc58341cf5b",
+            "menu_a9ad4b5415a36a8e675a"
+          ]
+        },
+        "description": {
+          "sourceKey": "menu-catalogue",
+          "basis": "menu_scope",
+          "note": "Mô tả phạm vi nhóm từ tên/menu/mô tả nguồn; không áp thành phần một biến thể cho cả nhóm.",
+          "menuItemIds": [
+            "menu_8caf606557c67bc70f81",
+            "menu_d10a7dfc7dc58341cf5b",
+            "menu_a9ad4b5415a36a8e675a"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    },
+    {
+      "id": "1fdae49f-b6da-5574-82b6-4b7fc1cf09cd",
+      "name": "Xôi",
+      "description": "Nhóm xôi nhiều lựa chọn món kèm; phần ăn cụ thể theo menu khảo sát.",
+      "aliases": [],
+      "cuisineCodes": [],
+      "categoryCodes": [
+        "family:sticky_rice"
+      ],
+      "mealSlots": [],
+      "timeHints": [],
+      "origin": "unknown",
+      "temperature": "unknown",
+      "flavor": null,
+      "ingredientTags": null,
+      "evidence": {
+        "name": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Tên món gốc theo mapping owner đã chốt; sourceNames không phải alias.",
+          "menuItemIds": [
+            "menu_3c768f03949d8ec04107",
+            "menu_64a31ed90738e2e76a7a",
+            "menu_ecaf179619d8bd198b15",
+            "menu_e8e1abae674db0ae945f",
+            "menu_a5f55b9de72226c5207b",
+            "menu_206664a65c17551bb094",
+            "menu_6f067a34bfeceba57d3e",
+            "menu_30ab487df9a065681f6c",
+            "menu_3fd4c27c0ad56ae0e99b",
+            "menu_5689cd84ba37921bbe23",
+            "menu_109164ade65bd31f6422",
+            "menu_652ab22a3d90c0a31b6d",
+            "menu_5ff0e72ad10181494431",
+            "menu_58abffbc7f2b8d6a5261"
+          ]
+        },
+        "categoryCodes": {
+          "sourceKey": "menu-catalogue",
+          "basis": "owner_grouping",
+          "note": "Họ món theo tên/nhóm menu và phạm vi gộp owner; không suy cách chế biến/thành phần.",
+          "menuItemIds": [
+            "menu_3c768f03949d8ec04107",
+            "menu_64a31ed90738e2e76a7a",
+            "menu_ecaf179619d8bd198b15",
+            "menu_e8e1abae674db0ae945f",
+            "menu_a5f55b9de72226c5207b",
+            "menu_206664a65c17551bb094",
+            "menu_6f067a34bfeceba57d3e",
+            "menu_30ab487df9a065681f6c",
+            "menu_3fd4c27c0ad56ae0e99b",
+            "menu_5689cd84ba37921bbe23",
+            "menu_109164ade65bd31f6422",
+            "menu_652ab22a3d90c0a31b6d",
+            "menu_5ff0e72ad10181494431",
+            "menu_58abffbc7f2b8d6a5261"
+          ]
+        },
+        "description": {
+          "sourceKey": "menu-catalogue",
+          "basis": "menu_scope",
+          "note": "Mô tả phạm vi nhóm từ tên/menu/mô tả nguồn; không áp thành phần một biến thể cho cả nhóm.",
+          "menuItemIds": [
+            "menu_3c768f03949d8ec04107",
+            "menu_64a31ed90738e2e76a7a",
+            "menu_ecaf179619d8bd198b15",
+            "menu_e8e1abae674db0ae945f",
+            "menu_a5f55b9de72226c5207b",
+            "menu_206664a65c17551bb094",
+            "menu_6f067a34bfeceba57d3e",
+            "menu_30ab487df9a065681f6c",
+            "menu_3fd4c27c0ad56ae0e99b",
+            "menu_5689cd84ba37921bbe23",
+            "menu_109164ade65bd31f6422",
+            "menu_652ab22a3d90c0a31b6d",
+            "menu_5ff0e72ad10181494431",
+            "menu_58abffbc7f2b8d6a5261"
+          ]
+        }
+      },
+      "missingNotes": "Chưa đủ bằng chứng chung cho: aliases, cuisineCodes, mealSlots, timeHints, flavor, ingredientTags, origin, temperature. Không tự lấp bằng suy luận GPT."
+    }
+  ]
+}

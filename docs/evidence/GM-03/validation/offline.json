@@ -1,0 +1,32 @@
+{
+  "engine": "Python exec; no Jupyter kernel",
+  "runtime": "3.12.14 (main, Aug 25 2026, 13:50:33) [Clang 22.1.3 ]",
+  "notebook": "data-preparation/notebooks/validate_data_preparation.ipynb",
+  "cellsPerRun": 5,
+  "runs": [
+    {
+      "exitCode": 0,
+      "output": "Cell 1: OK\nCell 2: OK\nCell 3: OK\nCell 4: OK\nCell 5: OK\nReport: /Users/hoangvinh/Library/CloudStorage/OneDrive-Personal/Workspace/anyfood/data-preparation/datasets/data-validation/reports/validate_data_preparation.executed.ipynb\n{\n  \"checks\": 9,\n  \"errors\": 0,\n  \"warnings\": 9,\n  \"networkCalls\": 0,\n  \"eligibilityExecuted\": false\n}\n"
+    },
+    {
+      "exitCode": 0,
+      "output": "Cell 1: OK\nCell 2: OK\nCell 3: OK\nCell 4: OK\nCell 5: OK\nReport: /Users/hoangvinh/Library/CloudStorage/OneDrive-Personal/Workspace/anyfood/data-preparation/datasets/data-validation/reports/validate_data_preparation.executed.ipynb\n{\n  \"checks\": 9,\n  \"errors\": 0,\n  \"warnings\": 9,\n  \"networkCalls\": 0,\n  \"eligibilityExecuted\": false\n}\n"
+    }
+  ],
+  "reportChecksums": {
+    "report.json": "4cd4c74f2506e3f3bdbce8a450f28a04da00235145c4a7657fa28e86b0ab8c51",
+    "REPORT.md": "2dd4e14350a31918aecd3024c7feecb259e207dc47b124c07003b74194bd3cc3",
+    "validate_data_preparation.executed.ipynb": "f073e1a0c09ce8aac1ed7a27df50b3ced3e0666e5b719ced1f43dbeb0ca4439d"
+  },
+  "identicalReports": true,
+  "inputFilesUnchanged": 86,
+  "artifactsUnchangedSince": "27854223b2670a8b73ed61f32c0a82501456cccd",
+  "artifactPaths": [
+    "data-preparation/snapshots",
+    "data-preparation/config",
+    "data-preparation/templates",
+    "tests/fixtures/food-data-v1"
+  ],
+  "networkCalls": 0,
+  "eligibilityExecuted": false
+}

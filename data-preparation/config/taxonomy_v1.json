@@ -1,0 +1,97 @@
+{
+  "contractVersion": "1.0.0",
+  "status": "draft",
+  "cuisines": {
+    "vi": "Việt",
+    "th": "Thái",
+    "ko": "Hàn",
+    "ja": "Nhật",
+    "zh": "Hoa",
+    "it": "Ý",
+    "us": "Mỹ",
+    "other": "other"
+  },
+  "origins": {
+    "north": "Bắc",
+    "central": "Trung",
+    "south": "Nam",
+    "unknown": "Chưa biết",
+    "not_applicable": "Không áp dụng"
+  },
+  "categoryGroups": {
+    "family": {
+      "rice": "cơm",
+      "bun": "bún",
+      "pho": "phở",
+      "noodles": "mì",
+      "hu_tieu": "hủ tiếu",
+      "mien": "miến",
+      "nui": "nui",
+      "sticky_rice": "xôi",
+      "porridge": "cháo",
+      "banh_canh": "bánh canh",
+      "banh_mi": "bánh mì",
+      "banh_bao": "bánh bao",
+      "banh_cuon": "bánh cuốn",
+      "banh_uot": "bánh ướt",
+      "banh_cuon_wrap": "bánh cuộn",
+      "burger": "burger",
+      "salad": "salad",
+      "hotpot": "lẩu",
+      "rolls": "gỏi/cuốn",
+      "fried_chicken": "gà rán",
+      "other": "other"
+    },
+    "preparation": {
+      "grilled": "nướng",
+      "fried": "chiên",
+      "stir_fried": "xào",
+      "steamed": "hấp",
+      "boiled": "luộc",
+      "braised": "kho",
+      "stewed": "hầm",
+      "roasted": "quay",
+      "mixed": "trộn",
+      "sous_vide": "sous vide",
+      "pan_seared": "áp chảo",
+      "other": "other"
+    }
+  },
+  "temperature": [
+    "hot",
+    "warm",
+    "cold",
+    "ambient",
+    "unknown"
+  ],
+  "flavorKinds": [
+    "spicy",
+    "salty",
+    "sweet",
+    "sour"
+  ],
+  "flavorIntensities": [
+    "none",
+    "low",
+    "medium",
+    "high",
+    "unknown"
+  ],
+  "mealSlots": [
+    "breakfast",
+    "lunch",
+    "dinner",
+    "snack"
+  ],
+  "evidence": [
+    "unknown",
+    "menu_explicit",
+    "model_inferred_draft",
+    "reviewed"
+  ],
+  "statusValues": [
+    "draft",
+    "verified",
+    "published"
+  ]
+}
