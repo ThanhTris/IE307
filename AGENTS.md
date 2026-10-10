@@ -31,15 +31,13 @@ Mã task hiện hành theo roadmap-v2: GM-01..38, dependency phải có số nh�
 - Catalogue cuisine/category/nhiệt độ/vị phải có offering quán–món trong coverage và lịch quán/lịch món phù hợp trước tạo pool; source/freshness/unknown/overnight theo FOOD_DATA_SPEC. GPS chỉ gợi điểm ăn công cộng, không tự share GPS host.
 - OCR/AI/weather/mood/fairness qua nhiều bữa là mở rộng, không chặn MVP. Ảnh cần quyền sử dụng; không tuyên bố an toàn dị ứng từ tên món.
 
-## Chuẩn bị dữ liệu GM-03
+## Chuẩn bị dữ liệu legacy GM-03 → roadmap-v2 GM-04
 
-Đọc [handoff](data-preparation/docs/HANDOFF.md) để biết nguồn/snapshot/giới hạn, [taxonomy](data-preparation/docs/TAXONOMY.md) để biết giá trị chuẩn và cách gộp món; [dictionary](data-preparation/docs/DATA_DICTIONARY.md) và [forms](data-preparation/templates/README.md) cho ID/kiểu/unknown/nguồn/review, CSV/JSON và validator. Notebook/config/snapshot trong `data-preparation/` là draft owner yêu cầu; không mở khóa GM-28, không dùng làm seed đã review. Giữ nguyên pilot/cache; mặc định offline, không gọi lại AI.
+[Handoff hiện hành](docs/evidence/roadmap-v2/GM-04/HANDOFF.md) đối chiếu nhánh data cũ với roadmap-v2. GM-03 hiện tại là BE structure của Trí; không thay task đó bằng metadata dữ liệu. GM-03 roadmap-v1 nhận scope tại GM-04/GM-07; verified import là GM-08; food eligibility là GM-18. [Đồng bộ v1 lịch sử](docs/evidence/roadmap-v1/GM-03/MAIN_SYNC.md) và evidence đời trước giữ nguyên, mã cũ không là task hiện tại.
 
-[Catalogue biên tập](data-preparation/docs/EDITORIAL_CATALOGUE.md) hướng dẫn phần 3: 39 món có evidence từng trường, giá theo menu và ứng viên ảnh/license; snapshot editorial-v0.2.0 theo contract 1.0.0. Ảnh chưa kiểm nội dung giữ artwork=null; không dùng metadata license thay review ảnh. Chạy notebook offline; refresh web riêng không tự cập nhật nhãn/approve nguồn.
+Đọc [handoff dữ liệu](data-preparation/docs/HANDOFF.md), [taxonomy](data-preparation/docs/TAXONOMY.md), [dictionary](data-preparation/docs/DATA_DICTIONARY.md) và [forms](data-preparation/templates/README.md) cho nguồn/ID/nullable/CSV/JSON/validator. [Catalogue](data-preparation/docs/EDITORIAL_CATALOGUE.md) có 39 món draft, giá theo menu; artwork chưa review giữ null. Giữ snapshot/cache/pilot nguyên trạng, mặc định offline, không gọi lại AI hoặc dùng làm verified seed. Các path v2 dự kiến chưa được bàn giao chỉ vì có dữ liệu legacy.
 
-[Fixtures phần 4](tests/fixtures/food-data-v1/README.md) có input/expected mô phỏng cho GM-30, notebook và validator riêng. fixtureOnly=true; verified/reviewer/quyền chỉ mô phỏng, không dùng làm seed thật. Kiểm với validationAt cố định; evaluatedAt của ca dùng cho freshness/eligibility. Không sinh expected bằng thuật toán lọc; không báo tooling tests như parity TypeScript/SQL.
-
-[Review package phần 5](docs/evidence/GM-03/REVIEW_PACKAGE.md) đối chiếu từng AC cho reviewer Tâm; patch/test plan còn Pending. Chạy `python data-preparation/scripts/validate_data_preparation.py` để audit chỉ đọc snapshots/forms/fixtures và nguồn/checksum, hoặc notebook validate_data_preparation để xem báo cáo. Clock lịch sử/fixture cố định không xác nhận freshness hôm nay; validStructure không là Approved/publish/eligibility pass.
+[Fixtures food](tests/fixtures/food-data-v1/README.md) mô phỏng cho eligibility GM-18, fixtureOnly=true, clock cố định; verified/reviewer/license chỉ mô phỏng, không nghiệm thu parity. [Review package lịch sử](docs/evidence/GM-03/REVIEW_PACKAGE.md) cho Tâm; chạy `python data-preparation/scripts/validate_data_preparation.py` để audit chỉ đọc. validStructure không là approval/publish/freshness hiện tại.
 
 ## Bàn giao
 

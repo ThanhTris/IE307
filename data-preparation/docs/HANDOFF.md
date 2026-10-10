@@ -1,5 +1,9 @@
 # Bàn giao chuẩn bị dữ liệu GM-03
 
+## Đồng bộ roadmap-v1
+
+Sau cập nhật main, mã hiện hành: review baseline GM-01 (trước GM-28), schema GM-05 (trước GM-04), dataset GM-08 (trước GM-27), eligibility GM-11 (trước GM-30). Các phần 1–5 bên dưới và snapshot/report/fixtures là hồ sơ trước đổi mã, giữ nguyên để đối chiếu checksum; tra [mapping](../../docs/project/TASK_RENUMBERING.md), không dùng số cũ làm dependency hiện hành. Evidence tích hợp mới tại [MAIN_SYNC](../../docs/evidence/roadmap-v1/GM-03/MAIN_SYNC.md). Contract/dataset/ID/expected không thay đổi; GM-03 vẫn Pending review, PR #62 là PR thường nhắm main theo yêu cầu owner.
+
 ## Đọc theo thứ tự
 
 1. [Tổng quan nguồn](../DATASET_OVERVIEW.md): phạm vi, danh sách quán, 35 cột khảo sát.
