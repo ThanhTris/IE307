@@ -39,9 +39,9 @@ Mã task hiện hành theo roadmap-v2: GM-01..38, dependency phải có số nh�
 
 [Fixtures food](tests/fixtures/food-data-v1/README.md) mô phỏng cho eligibility GM-18, fixtureOnly=true, clock cố định; verified/reviewer/license chỉ mô phỏng, không nghiệm thu parity. [Review package lịch sử](docs/evidence/GM-03/REVIEW_PACKAGE.md) cho Tâm; chạy `python data-preparation/scripts/validate_data_preparation.py` để audit chỉ đọc. validStructure không là approval/publish/freshness hiện tại.
 
-## Engine GM-06
+## Engine legacy GM-06 → roadmap-v2 GM-15
 
-[Contract engine](mobile/src/domain/decision/README.md) và [handoff](docs/evidence/roadmap-v1/GM-06/HANDOFF.md) hướng dẫn draft decision-v2 thuần: roster/pool khóa tường minh, hai vòng, veto/score/tier, chỉ trả tập ứng viên nội bộ. [Fixtures](tests/fixtures/decision-v2/README.md) là mô phỏng; chạy `node --test mobile/tests/decision.test.mjs` với Node 24. Node type stripping không thay typecheck; chưa SQL parity/persist/retry backend. Không public matrices/tie sets hoặc dùng draft KEEP như submission. Không thay GM-02 package/config/runner, không coi owner yêu cầu draft là dependency Approved.
+[Contract engine legacy](mobile/src/domain/decision/README.md) và [handoff hiện hành](docs/evidence/roadmap-v2/GM-15/HANDOFF.md) hướng dẫn draft decision-v2 thuần: roster/pool khóa tường minh, hai vòng, veto/score/tier, chỉ trả tập ứng viên nội bộ. [Fixtures](tests/fixtures/decision-v2/README.md) là mô phỏng; chạy `node --test mobile/tests/decision.test.mjs` với Node 24. Node type stripping không thay typecheck; chưa SQL parity/persist/retry backend. Không public matrices/tie sets hoặc dùng draft KEEP như submission. Không thay GM-02 package/config/runner, không coi owner yêu cầu draft là dependency Approved. GM-06 hiện tại là schema của Tâm; không ghi metadata engine vào task đó. AC GM-15 mới về seed/contract upstream còn cần review, không tự thêm RNG sau khi owner chốt chỉ trả candidate set.
 
 ## Bàn giao
 
