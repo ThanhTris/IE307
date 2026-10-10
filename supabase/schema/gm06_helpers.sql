@@ -170,8 +170,37 @@ begin
   end if;
 end $$;
 
+-- A private serialization row covers every table with an outgoing or incoming
+-- nested FK. BEFORE STATEMENT acquires it before any affected row is locked.
+-- This deliberately serializes these writes until a normalized FK design can
+-- be reviewed with real workload measurements. No reference API/contract changes.
+create table gm06_private.reference_epoch (
+  singleton boolean primary key check(singleton),
+  epoch bigint not null check(epoch>=0)
+);
+insert into gm06_private.reference_epoch values(true,0);
+alter table gm06_private.reference_epoch enable row level security;
+alter table gm06_private.reference_epoch force row level security;
+revoke all on gm06_private.reference_epoch from public,anon,authenticated;
+
+create function gm06_private.lock_references() returns trigger
+language plpgsql security definer set search_path = pg_catalog, gm06_private as $$
+begin
+  -- A tuple UPDATE, rather than an advisory/row lock alone, makes a transaction
+  -- with a stale REPEATABLE READ snapshot fail with 40001. READ COMMITTED waits
+  -- here, then the volatile deferred check sees the preceding committed writes.
+  update gm06_private.reference_epoch set epoch=epoch+1 where singleton;
+  if not found then
+    raise exception using errcode='23514',message='GM06_REFERENCE_LOCK_MISSING';
+  end if;
+  return null;
+end $$;
+
 -- Deferred reference checks include the reverse (parent delete/update) edge.
 -- Query current rows instead of queued NEW to permit multiple writes in one transaction.
+-- Every affected statement already holds reference_epoch through commit. This
+-- also protects SET CONSTRAINTS ALL IMMEDIATE followed by an idle transaction:
+-- the competing parent/reference writer cannot pass the serialization boundary.
 create function gm06_private.reference_guard() returns trigger
 language plpgsql security definer set search_path = pg_catalog, gm06_private as $$
 declare edge jsonb; bad boolean; path text[];

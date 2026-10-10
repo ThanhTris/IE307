@@ -13,8 +13,8 @@ npm run backend:smoke
 python3 scripts/gm06_schema_check.py --report /tmp/gm06-sql-results.json
 ```
 
-Expected: `result: Pass`, 62 SQL assertions, 596 mapped paths / 374 columns,
-hai schedule race cases (READ COMMITTED/REPEATABLE READ), fresh migration,
+Expected: `result: Pass`, 67 SQL assertions, 596 mapped paths / 374 columns,
+hai schedule race cases và 16 JSON/array reference race cases (READ COMMITTED/REPEATABLE READ), fresh migration,
 rollback giữ unrelated data, upgrade/reapply. Runner kiểm đúng container local
 `supabase_db_gi-cung-duoc-local` / Postgres17, không nhận db-url hoặc remote ref,
 không reset database đang dùng. Nó tạo database `gm06_check_<random>`, copy **DDL**
@@ -25,6 +25,17 @@ trong Supabase image, không thêm dependency package.
 `supabase/tests/schema_contract.sql` có marker fixture để runner inject templates
 fixtureOnly=true. Không chạy file trực tiếp mà bỏ qua marker hoặc gọi là seed thật.
 Report không chứa credential/user thật. Rerun SQL suite nếu thay schema/test/runner.
+File input/report và subprocess SQL đều dùng UTF-8 tường minh; report dùng newline LF.
+Hai regression encoding kiểm template với default cp1252 mô phỏng và SQL Unicode
+qua subprocess. Linux locale ASCII đã kiểm trong container không mạng/socket;
+full SQL runner Ubuntu có workflow `.github/workflows/gm06-schema.yml`, artifact
+report tải từ run sau push. Không coi workflow chưa chạy là Pass hoặc thay Windows thật.
+
+Nested FK dùng BEFORE STATEMENT UPDATE `gm06_private.reference_epoch` ở cả nguồn
+và parent, giữ hàng khóa đến commit để deferred check không bị write skew. Điều
+này serialize write liên quan, gồm auth.users có nested references. Giữ transaction
+ngắn; retry toàn transaction với `40001`/`40P01`. Đo throughput và review normalized
+FK trước tối ưu, không bỏ khóa chỉ vì SELECT/pgTAP đơn session đã xanh.
 Start CLI chạy mọi migration chưa áp dụng; local project đã giữ version0001 cũ
 trong lúc draft thì dùng DB riêng của runner cho kết quả revision hiện hành.
 Chỉ reset local khi đã xác nhận đó là môi trường disposable; reset không là lệnh

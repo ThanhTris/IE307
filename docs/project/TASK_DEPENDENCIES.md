@@ -1,13 +1,13 @@
 # Làm song song, merge theo dependency — food-v1
 
-Sinh từ task bằng `python scripts/task_readiness.py --write-docs`; không sửa tay. `--check-docs` kiểm độ mới. Đây là metadata local, không phải trạng thái GitHub.
+Sinh từ task bằng `python scripts/task_readiness.py --write-docs`; không sửa tay. `--check-docs` kiểm độ mới. Đây là metadata/gate chẩn đoán local, không phải trạng thái GitHub. Gate thực tế đọc Done live trên Project theo ADR-011; xem docs/project/PROJECT_READINESS.md.
 
 38 task sau GM-00: 34 P0 (gồm GM-01), 1 P1, 3 P2. Mã roadmap-v2 tăng theo lộ trình; mọi dependency có số nhỏ hơn task. Owner/reviewer là đề xuất; không kế thừa approval khi đổi scope.
 
 ## Hai gate khác nhau
 
-- `start_dependencies`: đầu vào phải Done/Approved trước viết phần độc lập. Mặc định checker dùng gate start.
-- `merge_dependencies`: đầu vào phải Done/Approved và có trên nhánh đích trước tích hợp/merge; luôn cộng thêm start deps. Có thể viết branch/draft PR trong khi các task này đang làm.
+- `start_dependencies`: đầu vào phải Done trên Project và đủ output/HANDOFF trước viết phần độc lập. Mặc định CLI đọc Project live, gate start.
+- `merge_dependencies`: đầu vào phải Done trên Project và artifact/version khớp nhánh đích trước tích hợp/merge; luôn cộng thêm start deps. Có thể viết branch/draft PR trong khi các task này đang làm.
 - `parallel_with`: cặp làm phần độc lập trên nhánh riêng, có thể có quan hệ merge trước/sau. Không được có quan hệ start trước/sau hoặc cùng owner.
 
 ```text
@@ -17,11 +17,11 @@ python scripts/task_readiness.py --task GM-20 --gate merge --base-ref origin/mai
 python scripts/task_readiness.py --all
 ```
 
-Trước kiểm merge, cập nhật ref nhánh đích bằng fetch phù hợp remote đã xác nhận. Checker không tự fetch/merge. Nó in SHA snapshot và kiểm task/evidence của dependency trên ref đó khớp bản local được review; không chứng minh code của PR đã merge hoặc remote ref còn mới. Người merge phải kiểm PR/merge commit thực tế, ancestry, cập nhật nhánh và chạy lại integration tests.
+Trước kiểm merge, cập nhật ref nhánh đích bằng fetch phù hợp remote đã xác nhận. Checker không tự fetch/merge. Nó in SHA snapshot, đọc Done Project và kiểm contract/manifest/output/HANDOFF của dependency khớp local; không chứng minh code của PR đã merge hoặc remote ref còn mới. Người merge phải kiểm PR/merge commit thực tế, ancestry, cập nhật nhánh và chạy lại integration tests.
 
-READY_TO_CLAIM: đủ start deps, chưa nhận việc; READY_TO_START: đã nhận; IN_PROGRESS: đang làm; IN_REVIEW: chờ reviewer; DONE_REVIEWED: bản ghi review đạt, không đồng nghĩa đã merge. BLOCKED: thiếu review dependency; BLOCKED_ARTIFACTS: upstream thiếu file bàn giao/HANDOFF; BLOCKED_ON_BASE: đầu vào thiếu/khác revision trên nhánh đích; NEEDS_BASE_CHECK: metadata local đạt nhưng chưa kiểm ref đích; READY_FOR_MERGE_REVIEW: đầu vào trên ref đạt, vẫn cần reviewer của chính PR và AC/test thật. Exit 0 của --task chỉ là gate tương ứng đạt; 1 là chờ; 2 là dữ liệu/lệnh lỗi. --all exit 0 chỉ là báo cáo chạy được.
+READY_TO_CLAIM: đủ start deps, chưa nhận việc; READY_TO_START: đã nhận; IN_PROGRESS: đang làm; IN_REVIEW: chờ reviewer; DONE_REVIEWED: bản ghi review đạt, không đồng nghĩa đã merge. BLOCKED: dependency chưa được nghiệm thu; BLOCKED_PROJECT_UNVERIFIED: không xác minh được Project, không fallback local/cache; DONE_ON_PROJECT: task Done live và đủ output; BLOCKED_ARTIFACTS: upstream thiếu file bàn giao/HANDOFF; BLOCKED_ON_BASE: đầu vào thiếu/khác revision trên nhánh đích; NEEDS_BASE_CHECK: metadata local đạt nhưng chưa kiểm ref đích; READY_FOR_MERGE_REVIEW: đầu vào trên ref đạt, vẫn cần reviewer của chính PR và AC/test thật. Exit 0 của --task chỉ là gate tương ứng đạt; 1 là chờ; 2 là dữ liệu/lệnh lỗi. --all exit 0 chỉ là báo cáo chạy được.
 
-## Trạng thái hiện tại
+## Snapshot chẩn đoán hồ sơ local (offline, không là gate Project)
 
 | Task | Start | Chờ start | Merge local | Chờ merge (gồm start) |
 | --- | --- | --- | --- | --- |
@@ -135,6 +135,6 @@ Lớp topo không là barrier cả nhóm hay deadline. Chỉ chờ dependency c�
 | [GM-36](../../tasks/backlog/GM-36.md), [GM-37](../../tasks/backlog/GM-37.md) | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |
 | [GM-36](../../tasks/backlog/GM-36.md), [GM-38](../../tasks/backlog/GM-38.md) | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |
 
-Không liệt kê mọi cặp có thể song song. Chốt interface và file ownership trong draft PR trước viết; GM-02 UI structure / GM-03 BE structure / GM-04 fields là ba nhánh nền. GM-05 components và GM-07 client/mock có thể làm đồng thời sau đầu vào riêng; GM-08 import chờ schema GM-06. GM-09..14 màn mock nghiệm thu riêng sau components+contract, không chờ API nghiệp vụ. GM-15..23 hoàn thiện BE; GM-24..31 tích hợp UI/API/native; GM-32..34 kiểm thử và release. GM-35..38 chỉ merge sau core. GM-01 vẫn review. Mock không đóng AC native/SQL/dataset thật của task tích hợp.
+Không liệt kê mọi cặp có thể song song. Chốt interface và file ownership trong draft PR trước viết; GM-02 UI structure / GM-03 BE structure / GM-04 fields là ba nhánh nền. GM-05 components và GM-07 client/mock có thể làm đồng thời sau đầu vào riêng; GM-08 import chờ schema GM-06. GM-09..14 màn mock nghiệm thu riêng sau components+contract, không chờ API nghiệp vụ. GM-15..23 hoàn thiện BE; GM-24..31 tích hợp UI/API/native; GM-32..34 kiểm thử và release. GM-35..38 chỉ merge sau core. Trạng thái GM-01 theo hồ sơ local: done; Project Done mở dependency theo ADR-011 nhưng không tự viết lại review evidence local. Mock không đóng AC native/SQL/dataset thật của task tích hợp.
 
 [Lộ trình](IMPLEMENTATION_ROADMAP.md) · [Đầu vào/đầu ra](TASK_HANDOFFS.md) · [Workflow](TEAM_WORKFLOW.md) · [Mapping](TASK_RENUMBERING.md) · [ADR-009](../architecture/decisions/ADR-009-foundation-first-task-slicing.md).

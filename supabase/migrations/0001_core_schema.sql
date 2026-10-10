@@ -173,8 +173,37 @@ begin
   end if;
 end $$;
 
+-- A private serialization row covers every table with an outgoing or incoming
+-- nested FK. BEFORE STATEMENT acquires it before any affected row is locked.
+-- This deliberately serializes these writes until a normalized FK design can
+-- be reviewed with real workload measurements. No reference API/contract changes.
+create table gm06_private.reference_epoch (
+  singleton boolean primary key check(singleton),
+  epoch bigint not null check(epoch>=0)
+);
+insert into gm06_private.reference_epoch values(true,0);
+alter table gm06_private.reference_epoch enable row level security;
+alter table gm06_private.reference_epoch force row level security;
+revoke all on gm06_private.reference_epoch from public,anon,authenticated;
+
+create function gm06_private.lock_references() returns trigger
+language plpgsql security definer set search_path = pg_catalog, gm06_private as $$
+begin
+  -- A tuple UPDATE, rather than an advisory/row lock alone, makes a transaction
+  -- with a stale REPEATABLE READ snapshot fail with 40001. READ COMMITTED waits
+  -- here, then the volatile deferred check sees the preceding committed writes.
+  update gm06_private.reference_epoch set epoch=epoch+1 where singleton;
+  if not found then
+    raise exception using errcode='23514',message='GM06_REFERENCE_LOCK_MISSING';
+  end if;
+  return null;
+end $$;
+
 -- Deferred reference checks include the reverse (parent delete/update) edge.
 -- Query current rows instead of queued NEW to permit multiple writes in one transaction.
+-- Every affected statement already holds reference_epoch through commit. This
+-- also protects SET CONSTRAINTS ALL IMMEDIATE followed by an idle transaction:
+-- the competing parent/reference writer cannot pass the serialization boundary.
 create function gm06_private.reference_guard() returns trigger
 language plpgsql security definer set search_path = pg_catalog, gm06_private as $$
 declare edge jsonb; bad boolean; path text[];
@@ -1392,6 +1421,14 @@ create constraint trigger gm06_histories_nested_fk after insert or update or del
 create constraint trigger gm06_events_nested_fk after insert or update or delete on public.events deferrable initially deferred for each row execute function gm06_private.reference_guard('[{"table":"events","path":["recipient_user_ids","[]"],"target_schema":"auth","target":"users","key":"id"}]');
 create constraint trigger gm06_idempotency_nested_fk after insert or update or delete on public.idempotency deferrable initially deferred for each row execute function gm06_private.reference_guard('[{"table":"idempotency","path":["response","roomId"],"target_schema":"public","target":"rooms","key":"id"},{"table":"idempotency","path":["response","resultId"],"target_schema":"public","target":"results","key":"id"}]');
 create constraint trigger gm06_users_nested_fk after insert or update or delete on auth.users deferrable initially deferred for each row execute function gm06_private.reference_guard('[{"table":"rooms","path":["roster_user_ids","[]"],"target_schema":"auth","target":"users","key":"id"},{"table":"rooms","path":["consent_snapshot","[]","userId"],"target_schema":"auth","target":"users","key":"id"},{"table":"histories","path":["member_user_ids","[]"],"target_schema":"auth","target":"users","key":"id"},{"table":"events","path":["recipient_user_ids","[]"],"target_schema":"auth","target":"users","key":"id"}]');
+-- Install the same serialization boundary on both sides of every nested FK.
+-- Derive this from the already-installed guards so no source/parent can be omitted.
+do $$ declare r record; begin
+  for r in select distinct tgrelid::regclass as tbl from pg_trigger
+    where tgfoid='gm06_private.reference_guard()'::regprocedure loop
+    execute format('create trigger gm06_reference_lock before insert or update or delete on %s for each statement execute function gm06_private.lock_references()',r.tbl);
+  end loop;
+end $$;
 -- SQL integrity only. Selection, membership permission, publish pipeline, consent
 -- withdrawal/cleanup and transaction state transitions belong to later API tasks.
 alter table public.members add unique(id,room_id);

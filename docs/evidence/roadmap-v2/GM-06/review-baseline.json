@@ -1,0 +1,21 @@
+{
+  "reviewedHead": "b6690708a04850593300c8af2166d997d5b038a3",
+  "migrationSha256": "0c3f3b0e1a00311ecb59baf5056904d3d6e1576a19b9612da827ebc88085b8cd",
+  "capturedAt": "2026-10-10T16:28:22.290346+00:00",
+  "case": {
+    "family": "json",
+    "referenceOperation": "insert",
+    "parentOperation": "delete",
+    "isolation": "read committed",
+    "first": "reference",
+    "accepted": 2,
+    "rejected": 0,
+    "contenderBlocked": false,
+    "rejectionStates": [],
+    "danglingReferences": 1
+  },
+  "expected": "Exactly one commit and zero dangling references",
+  "result": "Reproduced pre-fix defect; not Pass",
+  "fixtureOnly": true,
+  "database": "process-created disposable database; cleaned by runner"
+}

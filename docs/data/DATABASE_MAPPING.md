@@ -39,6 +39,16 @@ integrity, fixed search_path/qualified tables, revoke execute khỏi client; kh�
 tạo RPC đọc dữ liệu riêng tư. Native FK xử lý scalar. Unique tuple nullable dùng
 `UNIQUE NULLS NOT DISTINCT`, gồm offering variant và history/consent/device tuple.
 
+Reference JSON/array được bảo vệ bởi `gm06_private.reference_epoch`: mỗi bảng
+nguồn/parent có trigger **BEFORE STATEMENT** UPDATE hàng khóa thật, giữ tới commit.
+Deferred guard kiểm lại dữ liệu sau writer trước ở READ COMMITTED; snapshot cũ ở
+REPEATABLE READ bị từ chối `40001`. Khóa vẫn được giữ sau SET CONSTRAINTS IMMEDIATE.
+16 race insert/update JSON/array ↔ delete parent, hai isolation và hai thứ tự writer,
+đã đạt; mọi bảng có reference_guard đều có serialization trigger theo catalog test.
+Lựa chọn này serialize toàn bộ các write liên quan để bảo toàn integrity;
+GM-08/BE cần transaction ngắn, retry toàn transaction khi `40001`/`40P01`, đo tải và
+review phương án normalized FK trước tối ưu. Hàng khóa riêng tư không là field wire.
+
 ## Bảng và ownership
 
 11 bảng food: `taxonomy`, `dishes`, `venues`, `venue_dishes`, `weekly_schedules`,
@@ -49,7 +59,8 @@ tạo RPC đọc dữ liệu riêng tư. Native FK xử lý scalar. Unique tuple
 `submissions`, `votes`, `results`, `consents`, `histories`, `friend_invitations`,
 `friends`, `room_invitations`, `inbox`, `devices`, `events`, `deliveries`, `idempotency`.
 
-2 bảng storage nội bộ: `schema_versions`, `schedule_groups`. `profiles.user_id`
+2 bảng storage nội bộ public: `schema_versions`, `schedule_groups`; thêm bảng
+serialization private `gm06_private.reference_epoch`, không trong mapping wire. `profiles.user_id`
 và mọi user FK trỏ **auth.users**, không dùng profiles như authority. History là
 snapshot tối thiểu, không có GPS/anchor/preferences/mood/raw votes. App roles chưa
 có policy hoặc table privileges; GM-17 cấp quyền theo ma trận và projection RPC.
@@ -78,7 +89,7 @@ transaction ở isolation REPEATABLE READ, không retry từng INSERT riêng.
 
 ## Quyền và version
 
-Mọi 31 bảng bật và force RLS; PUBLIC/anon/authenticated bị revoke table privileges.
+Mọi 31 bảng public và bảng khóa private bật và force RLS; PUBLIC/anon/authenticated bị revoke table privileges.
 Không có policy cho app. `gm06_publisher` NOLOGIN/NOINHERIT/NOBYPASSRLS, policy
 CRUD chỉ 11 bảng food + schedule_groups; không tự grant quyền SET role cho login hoặc
 service_role. Existing publisher role không an toàn làm migration fail.

@@ -2,6 +2,7 @@
 -- Apply only to disposable GM-06 test DBs; downstream migrations must roll back first.
 begin;
 drop trigger if exists gm06_users_nested_fk on auth.users;
+drop trigger if exists gm06_reference_lock on auth.users;
 do $$ declare r record; begin
   for r in select conrelid::regclass as tbl, conname from pg_constraint
     where contype='f' and conrelid in ('public.availability_overrides'::regclass,'public.consents'::regclass,'public.coverage_areas'::regclass,'public.data_sources'::regclass,'public.dataset_versions'::regclass,'public.date_exceptions'::regclass,'public.deliveries'::regclass,'public.devices'::regclass,'public.dishes'::regclass,'public.events'::regclass,'public.friend_invitations'::regclass,'public.friends'::regclass,'public.histories'::regclass,'public.idempotency'::regclass,'public.inbox'::regclass,'public.members'::regclass,'public.preferences'::regclass,'public.profiles'::regclass,'public.public_anchors'::regclass,'public.results'::regclass,'public.room_invitations'::regclass,'public.rooms'::regclass,'public.round_dishes'::regclass,'public.submissions'::regclass,'public.taxonomy'::regclass,'public.venue_dishes'::regclass,'public.venues'::regclass,'public.votes'::regclass,'public.weekly_schedules'::regclass,'public.schedule_groups'::regclass) loop
@@ -47,6 +48,7 @@ do $$ declare r record; begin
     execute format('drop function %s',r.signature);
   end loop;
 end $$;
+drop table gm06_private.reference_epoch;
 drop schema gm06_private;
 -- Keep NOLOGIN gm06_publisher: roles are cluster-wide and may be used by another local DB.
 commit;

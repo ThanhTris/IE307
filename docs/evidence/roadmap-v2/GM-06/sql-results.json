@@ -1,6 +1,13 @@
 {
   "schemaVersion": "0.1.0",
   "databaseMode": "isolated disposable DB; real Supabase auth.users DDL",
+  "runnerEnvironment": {
+    "platform": "Darwin",
+    "python": "3.13.3",
+    "localeEncoding": "UTF-8",
+    "utf8Mode": 0,
+    "fileAndSubprocessEncoding": "utf-8"
+  },
   "postgresVersion": "17.11",
   "image": "public.ecr.aws/supabase/postgres:17.11.0.004",
   "fixtureOnly": true,
@@ -18,6 +25,10 @@
       "result": "Pass"
     },
     {
+      "phase": "concurrent nested reference integrity",
+      "result": "Pass"
+    },
+    {
       "phase": "rollback retains unrelated rows",
       "result": "Pass"
     },
@@ -26,15 +37,15 @@
       "result": "Pass"
     }
   ],
-  "checkedAt": "2026-10-10T15:44:46.597638+00:00",
+  "checkedAt": "2026-10-10T16:37:11.406359+00:00",
   "artifactHashes": {
-    "scripts/gm06_schema_check.py": "316d91c65247bfcbbc9e07aa92928bb6ecff2994e54acf15faeac0c63651ef8f",
-    "supabase/tests/schema_contract.sql": "ba5d6644ff204d5c1e2b8d9bc9f16b1b7f6602a7da9b003842aa7a58e900c94d",
+    "scripts/gm06_schema_check.py": "52df9073a764dda7a31e80c460d0aa02de211b5f68982d6bc8b17dfeaf1aed69",
+    "supabase/tests/schema_contract.sql": "c20f17ad89f5d5e641e69815a6ac8eefc6cc55bc79e8f05acfaa4af18b078f1d",
     "docs/data/database-mapping.json": "9d3f15fd8ac21dc4ff8789bfe2a3140d0d9647055c830ffd37c0e53394ccc86c",
-    "supabase/rollback/0001_core_schema.down.sql": "7131d260c82ca06e11da9af39e4eab2d4538cbb1f950ac8026be838a74ae2352"
+    "supabase/rollback/0001_core_schema.down.sql": "b6646dc2ff9b2582b25847b5daba2bd21a35944469dc62884b2fa5cd8dce2cdf"
   },
-  "migrationSha256": "0c3f3b0e1a00311ecb59baf5056904d3d6e1576a19b9612da827ebc88085b8cd",
-  "sqlAssertions": 62,
+  "migrationSha256": "6733e28f282f600e627e675dccede3afef1efd37cf4a7cfe8d94af4cd02d30f5",
+  "sqlAssertions": 67,
   "tap": [
     "BEGIN",
     "SET",
@@ -93,7 +104,7 @@
     "CREATE FUNCTION",
     "CREATE FUNCTION",
     "CREATE FUNCTION",
-    "1..62",
+    "1..67",
     "ok 1 - schema version is separate from dataset/contract",
     "ok 2 - one installed schema version",
     "ok 3 - synthetic catalogue query returns one dish",
@@ -158,6 +169,11 @@
     "GRANT ROLE",
     "ok 61 - internal publisher can write food with all constraints active",
     "ok 62 - locked consent users must match roster exactly",
+    "ok 63 - every nested FK source and parent has the BEFORE STATEMENT serialization trigger",
+    "ok 64 - internal reference serialization state also enables and forces RLS",
+    "ok 65 - clients and publisher cannot modify or read the private reference lock",
+    "ok 66 - missing reference serialization row fails closed",
+    "ok 67 - a referenced source key cannot be changed by a parent update",
     "ROLLBACK"
   ],
   "mappedPaths": 596,
@@ -175,6 +191,248 @@
       "accepted": 1,
       "rejected": 1,
       "persistedIntervals": 1,
+      "result": "Pass"
+    }
+  ],
+  "referenceRaces": [
+    {
+      "family": "json",
+      "referenceOperation": "insert",
+      "parentOperation": "delete",
+      "isolation": "read committed",
+      "first": "reference",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "23503"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "json",
+      "referenceOperation": "insert",
+      "parentOperation": "delete",
+      "isolation": "read committed",
+      "first": "parent",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "23503"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "json",
+      "referenceOperation": "insert",
+      "parentOperation": "delete",
+      "isolation": "repeatable read",
+      "first": "reference",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "40001"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "json",
+      "referenceOperation": "insert",
+      "parentOperation": "delete",
+      "isolation": "repeatable read",
+      "first": "parent",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "40001"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "json",
+      "referenceOperation": "update",
+      "parentOperation": "delete",
+      "isolation": "read committed",
+      "first": "reference",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "23503"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "json",
+      "referenceOperation": "update",
+      "parentOperation": "delete",
+      "isolation": "read committed",
+      "first": "parent",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "23503"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "json",
+      "referenceOperation": "update",
+      "parentOperation": "delete",
+      "isolation": "repeatable read",
+      "first": "reference",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "40001"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "json",
+      "referenceOperation": "update",
+      "parentOperation": "delete",
+      "isolation": "repeatable read",
+      "first": "parent",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "40001"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "array",
+      "referenceOperation": "insert",
+      "parentOperation": "delete",
+      "isolation": "read committed",
+      "first": "reference",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "23503"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "array",
+      "referenceOperation": "insert",
+      "parentOperation": "delete",
+      "isolation": "read committed",
+      "first": "parent",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "23503"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "array",
+      "referenceOperation": "insert",
+      "parentOperation": "delete",
+      "isolation": "repeatable read",
+      "first": "reference",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "40001"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "array",
+      "referenceOperation": "insert",
+      "parentOperation": "delete",
+      "isolation": "repeatable read",
+      "first": "parent",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "40001"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "array",
+      "referenceOperation": "update",
+      "parentOperation": "delete",
+      "isolation": "read committed",
+      "first": "reference",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "23503"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "array",
+      "referenceOperation": "update",
+      "parentOperation": "delete",
+      "isolation": "read committed",
+      "first": "parent",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "23503"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "array",
+      "referenceOperation": "update",
+      "parentOperation": "delete",
+      "isolation": "repeatable read",
+      "first": "reference",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "40001"
+      ],
+      "danglingReferences": 0,
+      "result": "Pass"
+    },
+    {
+      "family": "array",
+      "referenceOperation": "update",
+      "parentOperation": "delete",
+      "isolation": "repeatable read",
+      "first": "parent",
+      "accepted": 1,
+      "rejected": 1,
+      "contenderBlocked": true,
+      "rejectionStates": [
+        "40001"
+      ],
+      "danglingReferences": 0,
       "result": "Pass"
     }
   ],

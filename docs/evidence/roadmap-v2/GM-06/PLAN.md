@@ -3,7 +3,7 @@
 2026-10-10 • Owner Tâm (@HoaiTam) • Reviewer Trí (@ThanhTris), review Pending.
 Task [#67](https://github.com/ThanhTris/IE307/issues/67), contract `food-v1/roadmap-v2/GM-06.1`; schema 0.1.0.
 
-## Authorization và đầu vào
+## Authorization và đầu vào lúc triển khai ban đầu
 
 Tâm báo GM-03/04 đã Done trên Project và yêu cầu trực tiếp bắt đầu GM-06 đúng quy trình. CLI xác minh #64/#65 Closed bởi ThanhTris; không có quyền read:project để tự đọc cột Project. `task_readiness.py --task GM-06 --base-ref origin/main` đã chạy và còn BLOCKED do main ghi GM-03 Review / GM-04 Backlog. Triển khai nhánh theo chỉ dẫn hiện tại; không ghi Approved thay reviewer hoặc sửa gate. Metadata task giữ backlog/proposed cho tới xác nhận reviewer/upstream; owner đã nhận việc và code chuẩn bị được ghi trong hồ sơ này. Trí cần đồng bộ review evidence upstream và review revision GM-06 trước merge.
 
@@ -26,3 +26,22 @@ Chỉ schema/migration/constraints/indexes/mapping, SQL synthetic fixture/tests,
 Dùng runner GM-03/Supabase Postgres17 local; xác minh engine trước migrate. Không reset DB đang có dữ liệu người dùng; kiểm trên DB test riêng mới tạo, cleanup đúng DB đó. Migrate DB rỗng, upgrade có dữ liệu, rollback/reapply; SQL assertions cho FK/nullable/enum/unique/version/nested shape/overnight/timezone/default deny/internal publisher và query mẫu. Fixtures tổng hợp từ templates 1.1.0 không seed thật. Kiểm coverage 596 paths đối chiếu catalog PostgreSQL và sha256 revision.
 
 Chạy contract checks upstream, repository validator, toàn bộ regression yêu cầu, --write-docs/--check-docs và git diff --check. CHECKS ghi lệnh/expected/actual/report cùng giới hạn. Không commit/push/sync GitHub hoặc Approved/Done.
+
+## Bản sửa sau review PR #102
+
+Trí đã review head b669070 và yêu cầu P1 concurrency/P2 encoding tại
+[comment](https://github.com/ThanhTris/IE307/pull/102#issuecomment-6099597593).
+Nhận main fc092aa bằng merge chưa commit, áp dụng ADR-011 Project Done; không
+còn dùng status Markdown GM-03/04 để phủ nhận Project Done. Reviewer xác nhận
+upstream đã đạt checker mới; local live gate thiếu read:project nên chưa xác minh.
+Task metadata backlog/proposed giữ như baseline PR; owner thực tế và Trí review PR được ghi riêng, không Approved/Done.
+
+Plan P1: tái lập lỗi migration b669070 trong DB riêng, BEFORE STATEMENT UPDATE
+reference_epoch chung cho mọi nguồn/parent, deferred reverse revalidate, private
+RLS/revoke, down cleanup; test16 races2session với B snapshot trước A, cả RC/RR,
+insert/update JSON/UUID-array và hai thứ tự, quan sát wait_event Lock.
+Plan P2: UTF-8 mọi file/read/write/subprocess, reportLF; testcp1252 mô phỏng,
+Linux ASCII encoding và workflow Ubuntu full runner trên native Docker host.
+Windows thật chưa có môi trường theo owner, ghi Not run. CHECKS/REVIEW_FIX/HANDOFF
+và reports cập nhật actual/hashes; không tự commit/push/trả lời review hoặc approve.
+Shared lock là correctness tradeoff cần downstream đo throughput/review normalized FK.

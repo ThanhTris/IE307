@@ -38,7 +38,7 @@ begin
   return n;
 end $$;
 
-select plan(62);
+select plan(67);
 select is((select schema_version from public.schema_versions),'0.1.0','schema version is separate from dataset/contract');
 select is((select count(*)::int from public.schema_versions),1,'one installed schema version');
 select is((select count(*)::int from public.dishes),1,'synthetic catalogue query returns one dish');
@@ -106,6 +106,19 @@ select is(pg_temp.client_count('anon','histories'),0::bigint,'RLS returns no his
 grant gm06_publisher to postgres with inherit false, set true;
 select lives_ok($q$set local role gm06_publisher; update public.dishes set name='fixture publisher update',version=version+1;reset role$q$,'internal publisher can write food with all constraints active');
 select ok(pg_temp.rejects($q$update public.rooms set consent_snapshot=jsonb_build_array(consent_snapshot->0,consent_snapshot->0),version=version+1$q$,'23514'),'locked consent users must match roster exactly');
+select ok(not exists(select 1 from pg_trigger g where g.tgfoid='gm06_private.reference_guard()'::regprocedure
+  and not exists(select 1 from pg_trigger l where l.tgrelid=g.tgrelid and l.tgfoid='gm06_private.lock_references()'::regprocedure
+    and not l.tgisinternal and l.tgenabled='O' and l.tgtype=30)),
+  'every nested FK source and parent has the BEFORE STATEMENT serialization trigger');
+select ok((select relrowsecurity and relforcerowsecurity from pg_class where oid='gm06_private.reference_epoch'::regclass),
+  'internal reference serialization state also enables and forces RLS');
+select ok(not has_table_privilege('gm06_publisher','gm06_private.reference_epoch','UPDATE')
+  and not has_table_privilege('authenticated','gm06_private.reference_epoch','SELECT'),
+  'clients and publisher cannot modify or read the private reference lock');
+select ok(pg_temp.rejects($q$delete from gm06_private.reference_epoch;update public.dishes set version=version+1$q$,'23514'),
+  'missing reference serialization row fails closed');
+select ok(pg_temp.rejects($q$update public.data_sources set source_ref='00000000-0000-0000-0000-000000000016',version=version+1$q$,'23514'),
+  'a referenced source key cannot be changed by a parent update');
 
 select * from finish();
 rollback;

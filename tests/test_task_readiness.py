@@ -212,12 +212,12 @@ class ReadinessTests(unittest.TestCase):
 
     def test_task_cli_reports_blocker_with_nonzero_exit(self):
         output = io.StringIO()
-        with patch.object(sys, 'argv', ['task_readiness.py', '--task', 'GM-02']), contextlib.redirect_stdout(output):
+        with patch.object(sys, 'argv', ['task_readiness.py', '--approval-source', 'local', '--task', 'GM-02']), contextlib.redirect_stdout(output):
             self.assertEqual(gates.main(), 1)
         self.assertIn('WAIT GM-01', output.getvalue())
 
     def test_task_cli_unknown_id_is_error(self):
-        with patch.object(sys, 'argv', ['task_readiness.py', '--task', 'GM-99']), contextlib.redirect_stdout(io.StringIO()):
+        with patch.object(sys, 'argv', ['task_readiness.py', '--approval-source', 'local', '--task', 'GM-99']), contextlib.redirect_stdout(io.StringIO()):
             self.assertEqual(gates.main(), 2)
 
     def test_merge_cli_requires_explicit_target_ref(self):
@@ -228,18 +228,18 @@ class ReadinessTests(unittest.TestCase):
 
     def test_merge_cli_uses_real_git_snapshot_without_writing(self):
         output = io.StringIO()
-        with patch.object(sys, 'argv', ['task_readiness.py', '--task', 'GM-02', '--gate', 'merge', '--base-ref', 'HEAD']), contextlib.redirect_stdout(output):
+        with patch.object(sys, 'argv', ['task_readiness.py', '--approval-source', 'local', '--task', 'GM-02', '--gate', 'merge', '--base-ref', 'HEAD']), contextlib.redirect_stdout(output):
             self.assertEqual(gates.main(), 1)
         self.assertIn('Target snapshot: HEAD =', output.getvalue())
         self.assertIn('WAIT GM-01', output.getvalue())
 
     def test_task_cli_approved_baseline_is_success(self):
-        with patch.object(sys, 'argv', ['task_readiness.py', '--task', 'GM-00']), contextlib.redirect_stdout(io.StringIO()):
+        with patch.object(sys, 'argv', ['task_readiness.py', '--approval-source', 'local', '--task', 'GM-00']), contextlib.redirect_stdout(io.StringIO()):
             self.assertEqual(gates.main(), 0)
 
     def test_all_report_can_succeed_while_work_is_blocked(self):
         output = io.StringIO()
-        with patch.object(sys, 'argv', ['task_readiness.py', '--all']), contextlib.redirect_stdout(output):
+        with patch.object(sys, 'argv', ['task_readiness.py', '--approval-source', 'local', '--all']), contextlib.redirect_stdout(output):
             self.assertEqual(gates.main(), 0)
         self.assertIn('BLOCKED', output.getvalue())
 
