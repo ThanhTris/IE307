@@ -5,10 +5,10 @@ Upstream main đã fetch: `0cf1dc0b247c717abce1bdd23fec8dba791835cc`.
 GM-01 `food-v1/roadmap-v2/GM-01.1` Done/Approved theo [REVIEW](../GM-01/REVIEW.md)
 có trên target; không phải approval output GM-04.
 
-Tested base `77163db394b7053c475396a763a08097f9c655a9` + patch bổ sung working tree.
+Tested code revision `c6e857e4a4c0bd16ee7f4f6d002f921ab65e6eeb` (feature commit sau rebase).
 [Summary](validation-summary.json) ghi SHA256 code đã chạy;
 [manifest](../../../../tests/fixtures/food-v1/artifact-manifest.json) ghi checksum
-schema/template/dictionary/cases. Revision commit final sẽ được ghi trong PR;
+schema/template/dictionary/cases. Commit evidence kế tiếp chỉ cập nhật docs, không thay source/schema/cases đã kiểm; revision final được ghi trong PR;
 reviewer đối chiếu hashes và chạy lại trên revision đó.
 Contract đề xuất `food-v1/roadmap-v2/GM-04.1`; food **1.1.0**, core **1.0.0**;
 fixture dataset0.1.0. Legacy contract1.0.0/editorial dataset0.2.0 giữ nguyên.

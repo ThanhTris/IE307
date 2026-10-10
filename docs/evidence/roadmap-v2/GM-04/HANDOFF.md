@@ -14,6 +14,7 @@ không duyệt dữ liệu/code GM-04. UI GM-02 và BE GM-03 đang review trên 
 Nhánh dữ liệu `codex/gm-03-taxonomy-data-contract` rebase từ `feb2810a` lên main;
 6 commit replay, head trước patch bổ sung `77163db394b7053c475396a763a08097f9c655a9`.
 Conflict README và repository tests được giữ cả nền main và phần dữ liệu.
+Feature commit bổ sung đã kiểm: `c6e857e4a4c0bd16ee7f4f6d002f921ab65e6eeb`; commit evidence sau chỉ cập nhật tài liệu, không đổi code/schema/fixtures.
 
 Legacy roadmap-v1 GM-03 → roadmap-v2 GM-04 field contract và GM-07 consumer DTO;
 verified import là GM-08 sau schema GM-06, eligibility GM-18. Không ghi metadata

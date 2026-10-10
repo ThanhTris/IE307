@@ -3,7 +3,7 @@
   "reviewDecision": "Pending",
   "upstreamMain": "0cf1dc0b247c717abce1bdd23fec8dba791835cc",
   "testedBase": "77163db394b7053c475396a763a08097f9c655a9",
-  "testedPatch": "working tree; code hashes plus artifact-manifest identify exact input",
+  "testedPatch": "committed feature revision; following evidence commit changes documentation only",
   "contractId": "food-v1/roadmap-v2/GM-04.1",
   "contractCases": {
     "count": 135,
@@ -170,5 +170,6 @@
     "third-party JSON Schema validator",
     "independent reviewer approval"
   ],
-  "publicationPerformed": false
+  "publicationPerformed": false,
+  "testedRevision": "c6e857e4a4c0bd16ee7f4f6d002f921ab65e6eeb"
 }
