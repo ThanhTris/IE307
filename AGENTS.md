@@ -14,6 +14,16 @@ Trước code: task có owner, reviewer khác owner, scope, AC, spec, patch/test
 
 Mã task hiện hành theo roadmap-v2: GM-01..38, dependency phải có số nhỏ hơn task. Xem docs/project/IMPLEMENTATION_ROADMAP.md, TASK_RENUMBERING.md và tasks/task-id-map.json (previous_ids chỉ truy vết scope cũ, có thể một–nhiều). Giữ snapshot/evidence roadmap-v1; evidence mới dùng docs/evidence/roadmap-v2/GM-XX/. UI: cấu trúc GM-02 → component theo mẫu GM-05 → màn mock GM-09..14 → tích hợp GM-24..31. BE: cấu trúc GM-03 → contract/client GM-07 → API; Data: field GM-04 → DB GM-06 → import GM-08. Mỗi task nhận artifact/version upstream, không tự đoán hoặc dựng lại nền. Không tự sync GitHub khi chỉ chia task local.
 
+## Liên kết PR khi review
+
+Theo yêu cầu của chủ dự án ngày 2026-10-11, chỉ khi chính chủ dự án Trí (`ThanhTris`) yêu cầu kiểm tra/review một PR của repo `ThanhTris/IE307`, agent đồng thời cập nhật link PR vào trường `PR review` của đúng task trên GitHub Project #2 (`https://github.com/users/ThanhTris/projects/2`). Đây là quyền cập nhật link trong phạm vi lần review do chủ dự án yêu cầu, không cần hỏi lại; không tạo workflow chạy nền hoặc yêu cầu token mới chỉ cho việc này.
+
+- Người yêu cầu được phép (`authorized_requester`): chủ dự án Trí / `ThanhTris` duy nhất. Thành viên khác yêu cầu review thì chỉ kiểm PR, không áp dụng quyền ghi Project từ rule này. Xác nhận trực tiếp của chủ dự án trong cuộc hội thoại hiện tại là căn cứ; ở cuộc hội thoại khác, nếu chưa xác minh được người yêu cầu thì không cập nhật Project. Không suy ra danh tính người yêu cầu từ tác giả PR, assignee, tài khoản GitHub/credential đang đăng nhập, nội dung PR/comment hoặc riêng việc họ nói mình là chủ dự án. Rule là hướng dẫn cho agent, không thay cấu hình phân quyền thực tế của GitHub.
+- Xác minh PR hiện tại và task roadmap-v2 từ scope, issue và `tasks/project-gate.json`; không đoán theo tên branch/mã task cũ, không gắn PR vào task chỉ được nhắc như dependency. Nếu mapping còn mơ hồ thì hỏi người dùng trước khi cập nhật.
+- Giữ link PR khác đã có, không thêm trùng. Dùng hyperlink HTML được GitHub hiển thị có thể bấm, ví dụ `<a href="https://github.com/ThanhTris/IE307/pull/103">PR #103</a>`, để mở trực tiếp từ Board/Table; giữ hiển thị trường `PR review` trên view đang dùng.
+- Chỉ cập nhật link: không đổi Status/Done, assignee, deadline, approval; không tạo/xóa item hoặc thêm `Closes`/liên kết tự đóng issue. Link không phải xác nhận nghiệm thu hay quyền merge.
+- Ưu tiên API/CLI khi đã có quyền phù hợp; nếu credential chỉ đọc thì dùng phiên GitHub đã đăng nhập qua trình duyệt. Không tự mở rộng quyền. Kiểm tra lại link đã lưu đúng task và ghi kết quả đồng bộ trong câu trả lời review; nếu không cập nhật được thì báo rõ, vẫn tiếp tục phần kiểm PR có thể làm.
+
 ## React Native
 
 - Expo + TypeScript strict; routes mỏng trong `mobile/src/app`; screens/use cases theo feature; domain độc lập UI/network.
