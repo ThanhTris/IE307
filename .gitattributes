@@ -1,4 +1,20 @@
 .githooks/* text eol=lf
 
+# Generated contract bytes and source code are UTF-8/LF, also on autocrlf clones.
+*.py text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Historical data/evidence are byte-pinned; never apply text conversion to them.
+data-preparation/config/** -text
+data-preparation/snapshots/** -text
+data-preparation/templates/** -text
+tests/fixtures/food-data-v1/** -text
+docs/evidence/GM-03/** -text
+docs/evidence/roadmap-v1/** -text
+
 # CSV snapshots preserve their original CRLF bytes and UTF-8 BOM.
 data-preparation/**/*.csv -text whitespace=cr-at-eol
+tests/fixtures/**/*.csv -text whitespace=cr-at-eol

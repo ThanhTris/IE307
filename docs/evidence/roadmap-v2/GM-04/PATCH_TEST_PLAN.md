@@ -1,5 +1,17 @@
 # GM-04 — bổ sung PR #62 theo review Trí
 
+## Bổ sung theo review revision f5a8304
+
+Yêu cầu [review mới](https://github.com/ThanhTris/IE307/pull/62#issuecomment-6098430905):
+operation version theo API_CONTRACT, consent operation; published venue kiểm toàn
+nhóm lịch/source; UTF-8/LF/POSIX manifest và môi trường WSL cho fcntl; use-case
+mapping có artifact/case/consumer. Contract proposal mới GM-04.2, core1.1.0;
+food shape1.1.0 không đổi, publish semantic rule siết lỗi đã tái hiện. Không thêm RPC.
+Expected counterexamples độc lập;20 operations +11 schedule/source cases. Kiểm
+autocrlf checkout và UTF-8, bảo toàn byte snapshots/config/evidence/fixture generator.
+Môi trường hỗ trợ toàn pipeline: macOS/Linux/WSL; native Windows/WSL thực Not run.
+Kết quả và artifact/revision mới xem CHECKS/HANDOFF; phần plan bên dưới là revision trước.
+
 Owner Vinh; reviewer Trí theo comment PR #62 ngày 2026-10-10. Review Pending.
 Input: main `0cf1dc0b247c717abce1bdd23fec8dba791835cc`, GM-01
 `food-v1/roadmap-v2/GM-01.1`, hồ sơ Approved tại

@@ -1,0 +1,1760 @@
+{
+  "contractId": "food-v1/roadmap-v2/GM-04.2",
+  "useCases": [
+    {
+      "id": "catalogue-taxonomy",
+      "useCase": "Tên/alias/variant, cuisine/origin khác nơi bán",
+      "fields": [
+        {
+          "contract": "food",
+          "path": "dishes.name"
+        },
+        {
+          "contract": "food",
+          "path": "dishes.aliases"
+        },
+        {
+          "contract": "food",
+          "path": "dishes.cuisineIds"
+        },
+        {
+          "contract": "food",
+          "path": "dishes.categoryIds"
+        },
+        {
+          "contract": "food",
+          "path": "dishes.origin"
+        },
+        {
+          "contract": "food",
+          "path": "venueDishes.variant"
+        }
+      ],
+      "caseIds": [
+        "alias-same-id",
+        "origin-not-sales-location",
+        "multi-category",
+        "thai-cuisine-independent-origin"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-08",
+        "GM-18"
+      ],
+      "contractId": "food-v1/roadmap-v2/GM-04.2",
+      "artifacts": [
+        {
+          "field": "dishes.name",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/dishes/properties/name",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/dishes/0/name",
+          "examples": "docs/data/field-coverage.json: food.dishes.name"
+        },
+        {
+          "field": "dishes.aliases",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/dishes/properties/aliases",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/dishes/0/aliases",
+          "examples": "docs/data/field-coverage.json: food.dishes.aliases"
+        },
+        {
+          "field": "dishes.cuisineIds",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/dishes/properties/cuisineIds",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/dishes/0/cuisineIds",
+          "examples": "docs/data/field-coverage.json: food.dishes.cuisineIds"
+        },
+        {
+          "field": "dishes.categoryIds",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/dishes/properties/categoryIds",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/dishes/0/categoryIds",
+          "examples": "docs/data/field-coverage.json: food.dishes.categoryIds"
+        },
+        {
+          "field": "dishes.origin",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/dishes/properties/origin",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/dishes/0/origin",
+          "examples": "docs/data/field-coverage.json: food.dishes.origin"
+        },
+        {
+          "field": "venueDishes.variant",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/venueDishes/properties/variant",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/venueDishes/0/variant",
+          "examples": "docs/data/field-coverage.json: food.venueDishes.variant"
+        }
+      ]
+    },
+    {
+      "id": "coverage-location",
+      "useCase": "Coverage/điểm công cộng/chi nhánh và radius",
+      "fields": [
+        {
+          "contract": "food",
+          "path": "coverageAreas.boundary"
+        },
+        {
+          "contract": "food",
+          "path": "publicAnchors.coverageId"
+        },
+        {
+          "contract": "food",
+          "path": "publicAnchors.lat"
+        },
+        {
+          "contract": "food",
+          "path": "publicAnchors.lng"
+        },
+        {
+          "contract": "food",
+          "path": "venues.lat"
+        },
+        {
+          "contract": "food",
+          "path": "venues.lng"
+        },
+        {
+          "contract": "food",
+          "path": "venues.adminAreaId"
+        },
+        {
+          "contract": "core",
+          "path": "rooms.anchorId"
+        },
+        {
+          "contract": "core",
+          "path": "rooms.coverageId"
+        },
+        {
+          "contract": "core",
+          "path": "rooms.radiusM"
+        }
+      ],
+      "caseIds": [
+        "outside-coverage-shape",
+        "outside-radius-context-shape",
+        "anchor-coverage-mismatch",
+        "radius-zero"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-08",
+        "GM-18",
+        "GM-19"
+      ],
+      "contractId": "food-v1/roadmap-v2/GM-04.2",
+      "artifacts": [
+        {
+          "field": "coverageAreas.boundary",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/coverageAreas/properties/boundary",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/coverageAreas/0/boundary",
+          "examples": "docs/data/field-coverage.json: food.coverageAreas.boundary"
+        },
+        {
+          "field": "publicAnchors.coverageId",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/publicAnchors/properties/coverageId",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/publicAnchors/0/coverageId",
+          "examples": "docs/data/field-coverage.json: food.publicAnchors.coverageId"
+        },
+        {
+          "field": "publicAnchors.lat",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/publicAnchors/properties/lat",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/publicAnchors/0/lat",
+          "examples": "docs/data/field-coverage.json: food.publicAnchors.lat"
+        },
+        {
+          "field": "publicAnchors.lng",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/publicAnchors/properties/lng",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/publicAnchors/0/lng",
+          "examples": "docs/data/field-coverage.json: food.publicAnchors.lng"
+        },
+        {
+          "field": "venues.lat",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/venues/properties/lat",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/venues/0/lat",
+          "examples": "docs/data/field-coverage.json: food.venues.lat"
+        },
+        {
+          "field": "venues.lng",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/venues/properties/lng",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/venues/0/lng",
+          "examples": "docs/data/field-coverage.json: food.venues.lng"
+        },
+        {
+          "field": "venues.adminAreaId",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/venues/properties/adminAreaId",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/venues/0/adminAreaId",
+          "examples": "docs/data/field-coverage.json: food.venues.adminAreaId"
+        },
+        {
+          "field": "rooms.anchorId",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/rooms/properties/anchorId",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/rooms/0/anchorId",
+          "examples": "docs/data/field-coverage.json: core.rooms.anchorId"
+        },
+        {
+          "field": "rooms.coverageId",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/rooms/properties/coverageId",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/rooms/0/coverageId",
+          "examples": "docs/data/field-coverage.json: core.rooms.coverageId"
+        },
+        {
+          "field": "rooms.radiusM",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/rooms/properties/radiusM",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/rooms/0/radiusM",
+          "examples": "docs/data/field-coverage.json: core.rooms.radiusM"
+        }
+      ]
+    },
+    {
+      "id": "one-offering",
+      "useCase": "Một lựa chọn dùng đúng quán–món–variant–profile",
+      "fields": [
+        {
+          "contract": "food",
+          "path": "venueDishes.dishId"
+        },
+        {
+          "contract": "food",
+          "path": "venueDishes.venueId"
+        },
+        {
+          "contract": "food",
+          "path": "venueDishes.profileOverrides"
+        },
+        {
+          "contract": "food",
+          "path": "venueDishes.serviceMode"
+        },
+        {
+          "contract": "food",
+          "path": "venues.serviceModes"
+        },
+        {
+          "contract": "core",
+          "path": "roundDishes.choiceId"
+        },
+        {
+          "contract": "core",
+          "path": "roundDishes.offeringId"
+        },
+        {
+          "contract": "core",
+          "path": "roundDishes.variant"
+        },
+        {
+          "contract": "core",
+          "path": "roundDishes.effectiveProfile"
+        }
+      ],
+      "caseIds": [
+        "offering-variant-mismatch",
+        "offering-profile-mismatch",
+        "service-not-at-venue"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-08",
+        "GM-18",
+        "GM-19"
+      ],
+      "contractId": "food-v1/roadmap-v2/GM-04.2",
+      "artifacts": [
+        {
+          "field": "venueDishes.dishId",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/venueDishes/properties/dishId",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/venueDishes/0/dishId",
+          "examples": "docs/data/field-coverage.json: food.venueDishes.dishId"
+        },
+        {
+          "field": "venueDishes.venueId",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/venueDishes/properties/venueId",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/venueDishes/0/venueId",
+          "examples": "docs/data/field-coverage.json: food.venueDishes.venueId"
+        },
+        {
+          "field": "venueDishes.profileOverrides",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/venueDishes/properties/profileOverrides",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/venueDishes/0/profileOverrides",
+          "examples": "docs/data/field-coverage.json: food.venueDishes.profileOverrides"
+        },
+        {
+          "field": "venueDishes.serviceMode",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/venueDishes/properties/serviceMode",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/venueDishes/0/serviceMode",
+          "examples": "docs/data/field-coverage.json: food.venueDishes.serviceMode"
+        },
+        {
+          "field": "venues.serviceModes",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/venues/properties/serviceModes",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/venues/0/serviceModes",
+          "examples": "docs/data/field-coverage.json: food.venues.serviceModes"
+        },
+        {
+          "field": "roundDishes.choiceId",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/roundDishes/properties/choiceId",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/roundDishes/0/choiceId",
+          "examples": "docs/data/field-coverage.json: core.roundDishes.choiceId"
+        },
+        {
+          "field": "roundDishes.offeringId",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/roundDishes/properties/offeringId",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/roundDishes/0/offeringId",
+          "examples": "docs/data/field-coverage.json: core.roundDishes.offeringId"
+        },
+        {
+          "field": "roundDishes.variant",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/roundDishes/properties/variant",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/roundDishes/0/variant",
+          "examples": "docs/data/field-coverage.json: core.roundDishes.variant"
+        },
+        {
+          "field": "roundDishes.effectiveProfile",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/roundDishes/properties/effectiveProfile",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/roundDishes/0/effectiveProfile",
+          "examples": "docs/data/field-coverage.json: core.roundDishes.effectiveProfile"
+        }
+      ]
+    },
+    {
+      "id": "meal-profile",
+      "useCase": "Buổi ăn/nhiệt độ/vị chưa biết không tự thành phù hợp",
+      "fields": [
+        {
+          "contract": "food",
+          "path": "dishes.mealSlots"
+        },
+        {
+          "contract": "food",
+          "path": "dishes.timeHints"
+        },
+        {
+          "contract": "food",
+          "path": "dishes.temperature"
+        },
+        {
+          "contract": "food",
+          "path": "dishes.flavor"
+        },
+        {
+          "contract": "core",
+          "path": "rooms.mealSlot"
+        },
+        {
+          "contract": "core",
+          "path": "rooms.timeHint"
+        }
+      ],
+      "caseIds": [
+        "unknown-meal-profile",
+        "flavor-unknown-not-false",
+        "flavor-present-level-unknown",
+        "meal-late-night-invalid"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-18"
+      ],
+      "contractId": "food-v1/roadmap-v2/GM-04.2",
+      "artifacts": [
+        {
+          "field": "dishes.mealSlots",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/dishes/properties/mealSlots",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/dishes/0/mealSlots",
+          "examples": "docs/data/field-coverage.json: food.dishes.mealSlots"
+        },
+        {
+          "field": "dishes.timeHints",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/dishes/properties/timeHints",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/dishes/0/timeHints",
+          "examples": "docs/data/field-coverage.json: food.dishes.timeHints"
+        },
+        {
+          "field": "dishes.temperature",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/dishes/properties/temperature",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/dishes/0/temperature",
+          "examples": "docs/data/field-coverage.json: food.dishes.temperature"
+        },
+        {
+          "field": "dishes.flavor",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/dishes/properties/flavor",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/dishes/0/flavor",
+          "examples": "docs/data/field-coverage.json: food.dishes.flavor"
+        },
+        {
+          "field": "rooms.mealSlot",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/rooms/properties/mealSlot",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/rooms/0/mealSlot",
+          "examples": "docs/data/field-coverage.json: core.rooms.mealSlot"
+        },
+        {
+          "field": "rooms.timeHint",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/rooms/properties/timeHint",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/rooms/0/timeHint",
+          "examples": "docs/data/field-coverage.json: core.rooms.timeHint"
+        }
+      ]
+    },
+    {
+      "id": "price-budget",
+      "useCase": "Giá nguồn/đơn vị/khẩu phần và budget ưu tiên mềm",
+      "fields": [
+        {
+          "contract": "food",
+          "path": "venueDishes.priceMin"
+        },
+        {
+          "contract": "food",
+          "path": "venueDishes.priceMax"
+        },
+        {
+          "contract": "food",
+          "path": "venueDishes.unit"
+        },
+        {
+          "contract": "food",
+          "path": "venueDishes.currency"
+        },
+        {
+          "contract": "food",
+          "path": "venueDishes.servingSize"
+        },
+        {
+          "contract": "core",
+          "path": "roundDishes.price"
+        },
+        {
+          "contract": "core",
+          "path": "rooms.budget"
+        }
+      ],
+      "caseIds": [
+        "missing-price",
+        "group-price-not-per-person",
+        "offering-price-mismatch",
+        "pool-price-unit-missing",
+        "budget-null"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-18",
+        "GM-19"
+      ],
+      "contractId": "food-v1/roadmap-v2/GM-04.2",
+      "artifacts": [
+        {
+          "field": "venueDishes.priceMin",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/venueDishes/properties/priceMin",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/venueDishes/0/priceMin",
+          "examples": "docs/data/field-coverage.json: food.venueDishes.priceMin"
+        },
+        {
+          "field": "venueDishes.priceMax",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/venueDishes/properties/priceMax",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/venueDishes/0/priceMax",
+          "examples": "docs/data/field-coverage.json: food.venueDishes.priceMax"
+        },
+        {
+          "field": "venueDishes.unit",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/venueDishes/properties/unit",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/venueDishes/0/unit",
+          "examples": "docs/data/field-coverage.json: food.venueDishes.unit"
+        },
+        {
+          "field": "venueDishes.currency",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/venueDishes/properties/currency",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/venueDishes/0/currency",
+          "examples": "docs/data/field-coverage.json: food.venueDishes.currency"
+        },
+        {
+          "field": "venueDishes.servingSize",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/venueDishes/properties/servingSize",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/venueDishes/0/servingSize",
+          "examples": "docs/data/field-coverage.json: food.venueDishes.servingSize"
+        },
+        {
+          "field": "roundDishes.price",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/roundDishes/properties/price",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/roundDishes/0/price",
+          "examples": "docs/data/field-coverage.json: core.roundDishes.price"
+        },
+        {
+          "field": "rooms.budget",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/rooms/properties/budget",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/rooms/0/budget",
+          "examples": "docs/data/field-coverage.json: core.rooms.budget"
+        }
+      ]
+    },
+    {
+      "id": "hours-intersection",
+      "useCase": "Binding lịch quán/món riêng, consumer tính giao",
+      "fields": [
+        {
+          "contract": "food",
+          "path": "venues.scheduleId"
+        },
+        {
+          "contract": "food",
+          "path": "venueDishes.scheduleId"
+        },
+        {
+          "contract": "food",
+          "path": "weeklySchedules.ownerType"
+        },
+        {
+          "contract": "food",
+          "path": "weeklySchedules.ownerId"
+        },
+        {
+          "contract": "food",
+          "path": "weeklySchedules.timezone"
+        },
+        {
+          "contract": "food",
+          "path": "weeklySchedules.status"
+        },
+        {
+          "contract": "core",
+          "path": "roundDishes.scheduleId"
+        },
+        {
+          "contract": "core",
+          "path": "roundDishes.scheduleVersion"
+        }
+      ],
+      "caseIds": [
+        "venue-bound-to-offering-schedule",
+        "unknown-venue-schedule",
+        "published-venue-hours-valid",
+        "published-venue-hours-draft",
+        "published-venue-hours-unknown"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-08",
+        "GM-18"
+      ],
+      "contractId": "food-v1/roadmap-v2/GM-04.2",
+      "artifacts": [
+        {
+          "field": "venues.scheduleId",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/venues/properties/scheduleId",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/venues/0/scheduleId",
+          "examples": "docs/data/field-coverage.json: food.venues.scheduleId"
+        },
+        {
+          "field": "venueDishes.scheduleId",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/venueDishes/properties/scheduleId",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/venueDishes/0/scheduleId",
+          "examples": "docs/data/field-coverage.json: food.venueDishes.scheduleId"
+        },
+        {
+          "field": "weeklySchedules.ownerType",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/weeklySchedules/properties/ownerType",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/weeklySchedules/0/ownerType",
+          "examples": "docs/data/field-coverage.json: food.weeklySchedules.ownerType"
+        },
+        {
+          "field": "weeklySchedules.ownerId",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/weeklySchedules/properties/ownerId",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/weeklySchedules/0/ownerId",
+          "examples": "docs/data/field-coverage.json: food.weeklySchedules.ownerId"
+        },
+        {
+          "field": "weeklySchedules.timezone",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/weeklySchedules/properties/timezone",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/weeklySchedules/0/timezone",
+          "examples": "docs/data/field-coverage.json: food.weeklySchedules.timezone"
+        },
+        {
+          "field": "weeklySchedules.status",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/weeklySchedules/properties/status",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/weeklySchedules/0/status",
+          "examples": "docs/data/field-coverage.json: food.weeklySchedules.status"
+        },
+        {
+          "field": "roundDishes.scheduleId",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/roundDishes/properties/scheduleId",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/roundDishes/0/scheduleId",
+          "examples": "docs/data/field-coverage.json: core.roundDishes.scheduleId"
+        },
+        {
+          "field": "roundDishes.scheduleVersion",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/roundDishes/properties/scheduleVersion",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/roundDishes/0/scheduleVersion",
+          "examples": "docs/data/field-coverage.json: core.roundDishes.scheduleVersion"
+        }
+      ]
+    },
+    {
+      "id": "overnight-last-order",
+      "useCase": "Ca qua đêm và nhận món cuối [start,end)",
+      "fields": [
+        {
+          "contract": "food",
+          "path": "weeklySchedules.startTime"
+        },
+        {
+          "contract": "food",
+          "path": "weeklySchedules.endTime"
+        },
+        {
+          "contract": "food",
+          "path": "weeklySchedules.endDayOffset"
+        },
+        {
+          "contract": "food",
+          "path": "weeklySchedules.lastOrder"
+        },
+        {
+          "contract": "food",
+          "path": "weeklySchedules.lastOrderDayOffset"
+        }
+      ],
+      "caseIds": [
+        "last-order-next-day",
+        "last-order-at-close",
+        "last-order-wrong-day",
+        "overnight-missing-offset"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-18"
+      ],
+      "contractId": "food-v1/roadmap-v2/GM-04.2",
+      "artifacts": [
+        {
+          "field": "weeklySchedules.startTime",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/weeklySchedules/properties/startTime",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/weeklySchedules/0/startTime",
+          "examples": "docs/data/field-coverage.json: food.weeklySchedules.startTime"
+        },
+        {
+          "field": "weeklySchedules.endTime",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/weeklySchedules/properties/endTime",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/weeklySchedules/0/endTime",
+          "examples": "docs/data/field-coverage.json: food.weeklySchedules.endTime"
+        },
+        {
+          "field": "weeklySchedules.endDayOffset",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/weeklySchedules/properties/endDayOffset",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/weeklySchedules/0/endDayOffset",
+          "examples": "docs/data/field-coverage.json: food.weeklySchedules.endDayOffset"
+        },
+        {
+          "field": "weeklySchedules.lastOrder",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/weeklySchedules/properties/lastOrder",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/weeklySchedules/0/lastOrder",
+          "examples": "docs/data/field-coverage.json: food.weeklySchedules.lastOrder"
+        },
+        {
+          "field": "weeklySchedules.lastOrderDayOffset",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/weeklySchedules/properties/lastOrderDayOffset",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/weeklySchedules/0/lastOrderDayOffset",
+          "examples": "docs/data/field-coverage.json: food.weeklySchedules.lastOrderDayOffset"
+        }
+      ]
+    },
+    {
+      "id": "date-exceptions",
+      "useCase": "Ngày nghỉ/ngoại lệ và ca đêm hôm trước",
+      "fields": [
+        {
+          "contract": "food",
+          "path": "dateExceptions.localDate"
+        },
+        {
+          "contract": "food",
+          "path": "dateExceptions.status"
+        },
+        {
+          "contract": "food",
+          "path": "dateExceptions.intervals"
+        },
+        {
+          "contract": "food",
+          "path": "dateExceptions.lastOrder"
+        },
+        {
+          "contract": "food",
+          "path": "dateExceptions.lastOrderDayOffset"
+        }
+      ],
+      "caseIds": [
+        "closed-next-day-contract",
+        "closed-exception-open-interval"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-08",
+        "GM-18"
+      ],
+      "contractId": "food-v1/roadmap-v2/GM-04.2",
+      "artifacts": [
+        {
+          "field": "dateExceptions.localDate",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/dateExceptions/properties/localDate",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/dateExceptions/0/localDate",
+          "examples": "docs/data/field-coverage.json: food.dateExceptions.localDate"
+        },
+        {
+          "field": "dateExceptions.status",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/dateExceptions/properties/status",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/dateExceptions/0/status",
+          "examples": "docs/data/field-coverage.json: food.dateExceptions.status"
+        },
+        {
+          "field": "dateExceptions.intervals",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/dateExceptions/properties/intervals",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/dateExceptions/0/intervals",
+          "examples": "docs/data/field-coverage.json: food.dateExceptions.intervals"
+        },
+        {
+          "field": "dateExceptions.lastOrder",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/dateExceptions/properties/lastOrder",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/dateExceptions/0/lastOrder",
+          "examples": "docs/data/field-coverage.json: food.dateExceptions.lastOrder"
+        },
+        {
+          "field": "dateExceptions.lastOrderDayOffset",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/dateExceptions/properties/lastOrderDayOffset",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/dateExceptions/0/lastOrderDayOffset",
+          "examples": "docs/data/field-coverage.json: food.dateExceptions.lastOrderDayOffset"
+        }
+      ]
+    },
+    {
+      "id": "inventory",
+      "useCase": "Sold-out/paused/unknown với override có hạn",
+      "fields": [
+        {
+          "contract": "food",
+          "path": "availabilityOverrides.state"
+        },
+        {
+          "contract": "food",
+          "path": "availabilityOverrides.observedAt"
+        },
+        {
+          "contract": "food",
+          "path": "availabilityOverrides.expiresAt"
+        }
+      ],
+      "caseIds": [
+        "expired-inventory-record",
+        "unknown-inventory-record",
+        "inventory-zero-duration"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-08",
+        "GM-18"
+      ],
+      "contractId": "food-v1/roadmap-v2/GM-04.2",
+      "artifacts": [
+        {
+          "field": "availabilityOverrides.state",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/availabilityOverrides/properties/state",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/availabilityOverrides/0/state",
+          "examples": "docs/data/field-coverage.json: food.availabilityOverrides.state"
+        },
+        {
+          "field": "availabilityOverrides.observedAt",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/availabilityOverrides/properties/observedAt",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/availabilityOverrides/0/observedAt",
+          "examples": "docs/data/field-coverage.json: food.availabilityOverrides.observedAt"
+        },
+        {
+          "field": "availabilityOverrides.expiresAt",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/availabilityOverrides/properties/expiresAt",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/availabilityOverrides/0/expiresAt",
+          "examples": "docs/data/field-coverage.json: food.availabilityOverrides.expiresAt"
+        }
+      ]
+    },
+    {
+      "id": "source-publish",
+      "useCase": "Nguồn/license/reviewer/hạn; dataset không che child stale",
+      "fields": [
+        {
+          "contract": "food",
+          "path": "dataSources.usageRights"
+        },
+        {
+          "contract": "food",
+          "path": "dataSources.license"
+        },
+        {
+          "contract": "food",
+          "path": "dataSources.checkedAt"
+        },
+        {
+          "contract": "food",
+          "path": "dataSources.validUntil"
+        },
+        {
+          "contract": "food",
+          "path": "dataSources.reviewedBy"
+        },
+        {
+          "contract": "food",
+          "path": "venues.fieldSources"
+        },
+        {
+          "contract": "food",
+          "path": "weeklySchedules.sourceRef"
+        },
+        {
+          "contract": "food",
+          "path": "weeklySchedules.validUntil"
+        },
+        {
+          "contract": "food",
+          "path": "datasetVersions.validUntil"
+        }
+      ],
+      "caseIds": [
+        "fixture-publish-blocked",
+        "source-expired-at-boundary",
+        "published-venue-hours-exact-expiry",
+        "published-venue-hours-source-stale",
+        "published-venue-hours-source-rights-unknown"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-08",
+        "GM-18"
+      ],
+      "contractId": "food-v1/roadmap-v2/GM-04.2",
+      "artifacts": [
+        {
+          "field": "dataSources.usageRights",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/dataSources/properties/usageRights",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/dataSources/0/usageRights",
+          "examples": "docs/data/field-coverage.json: food.dataSources.usageRights"
+        },
+        {
+          "field": "dataSources.license",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/dataSources/properties/license",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/dataSources/0/license",
+          "examples": "docs/data/field-coverage.json: food.dataSources.license"
+        },
+        {
+          "field": "dataSources.checkedAt",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/dataSources/properties/checkedAt",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/dataSources/0/checkedAt",
+          "examples": "docs/data/field-coverage.json: food.dataSources.checkedAt"
+        },
+        {
+          "field": "dataSources.validUntil",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/dataSources/properties/validUntil",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/dataSources/0/validUntil",
+          "examples": "docs/data/field-coverage.json: food.dataSources.validUntil"
+        },
+        {
+          "field": "dataSources.reviewedBy",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/dataSources/properties/reviewedBy",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/dataSources/0/reviewedBy",
+          "examples": "docs/data/field-coverage.json: food.dataSources.reviewedBy"
+        },
+        {
+          "field": "venues.fieldSources",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/venues/properties/fieldSources",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/venues/0/fieldSources",
+          "examples": "docs/data/field-coverage.json: food.venues.fieldSources"
+        },
+        {
+          "field": "weeklySchedules.sourceRef",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/weeklySchedules/properties/sourceRef",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/weeklySchedules/0/sourceRef",
+          "examples": "docs/data/field-coverage.json: food.weeklySchedules.sourceRef"
+        },
+        {
+          "field": "weeklySchedules.validUntil",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/weeklySchedules/properties/validUntil",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/weeklySchedules/0/validUntil",
+          "examples": "docs/data/field-coverage.json: food.weeklySchedules.validUntil"
+        },
+        {
+          "field": "datasetVersions.validUntil",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/datasetVersions/properties/validUntil",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/datasetVersions/0/validUntil",
+          "examples": "docs/data/field-coverage.json: food.datasetVersions.validUntil"
+        }
+      ]
+    },
+    {
+      "id": "artwork-rights",
+      "useCase": "Ảnh có nguồn/quyền, thiếu bằng chứng giữ null",
+      "fields": [
+        {
+          "contract": "food",
+          "path": "dishes.artwork"
+        },
+        {
+          "contract": "food",
+          "path": "dataSources.attribution"
+        }
+      ],
+      "caseIds": [
+        "unknown-image-license-publish"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-08"
+      ],
+      "contractId": "food-v1/roadmap-v2/GM-04.2",
+      "artifacts": [
+        {
+          "field": "dishes.artwork",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/dishes/properties/artwork",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/dishes/0/artwork",
+          "examples": "docs/data/field-coverage.json: food.dishes.artwork"
+        },
+        {
+          "field": "dataSources.attribution",
+          "schema": "supabase/seed/templates/food-v1.schema.json#/$defs/dataSources/properties/attribution",
+          "template": "supabase/seed/templates/food-v1.template.json#/entities/dataSources/0/attribution",
+          "examples": "docs/data/field-coverage.json: food.dataSources.attribution"
+        }
+      ]
+    },
+    {
+      "id": "room-lock",
+      "useCase": "Khóa context/roster/consent/pool/version/expiry",
+      "fields": [
+        {
+          "contract": "core",
+          "path": "rooms.state"
+        },
+        {
+          "contract": "core",
+          "path": "rooms.rosterUserIds"
+        },
+        {
+          "contract": "core",
+          "path": "rooms.consentSnapshot"
+        },
+        {
+          "contract": "core",
+          "path": "rooms.poolVersion"
+        },
+        {
+          "contract": "core",
+          "path": "rooms.contextVersion"
+        },
+        {
+          "contract": "core",
+          "path": "rooms.lockedAt"
+        },
+        {
+          "contract": "core",
+          "path": "rooms.expiresAt"
+        },
+        {
+          "contract": "core",
+          "path": "rooms.desiredAt"
+        },
+        {
+          "contract": "core",
+          "path": "members.userId"
+        },
+        {
+          "contract": "core",
+          "path": "members.ready"
+        },
+        {
+          "contract": "core",
+          "path": "members.leftAt"
+        }
+      ],
+      "caseIds": [
+        "started-unlocked",
+        "locked-roster-missing-member",
+        "consent-snapshot-incomplete",
+        "pool-version-mismatch"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-17",
+        "GM-19"
+      ],
+      "contractId": "food-v1/roadmap-v2/GM-04.2",
+      "artifacts": [
+        {
+          "field": "rooms.state",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/rooms/properties/state",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/rooms/0/state",
+          "examples": "docs/data/field-coverage.json: core.rooms.state"
+        },
+        {
+          "field": "rooms.rosterUserIds",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/rooms/properties/rosterUserIds",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/rooms/0/rosterUserIds",
+          "examples": "docs/data/field-coverage.json: core.rooms.rosterUserIds"
+        },
+        {
+          "field": "rooms.consentSnapshot",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/rooms/properties/consentSnapshot",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/rooms/0/consentSnapshot",
+          "examples": "docs/data/field-coverage.json: core.rooms.consentSnapshot"
+        },
+        {
+          "field": "rooms.poolVersion",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/rooms/properties/poolVersion",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/rooms/0/poolVersion",
+          "examples": "docs/data/field-coverage.json: core.rooms.poolVersion"
+        },
+        {
+          "field": "rooms.contextVersion",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/rooms/properties/contextVersion",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/rooms/0/contextVersion",
+          "examples": "docs/data/field-coverage.json: core.rooms.contextVersion"
+        },
+        {
+          "field": "rooms.lockedAt",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/rooms/properties/lockedAt",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/rooms/0/lockedAt",
+          "examples": "docs/data/field-coverage.json: core.rooms.lockedAt"
+        },
+        {
+          "field": "rooms.expiresAt",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/rooms/properties/expiresAt",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/rooms/0/expiresAt",
+          "examples": "docs/data/field-coverage.json: core.rooms.expiresAt"
+        },
+        {
+          "field": "rooms.desiredAt",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/rooms/properties/desiredAt",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/rooms/0/desiredAt",
+          "examples": "docs/data/field-coverage.json: core.rooms.desiredAt"
+        },
+        {
+          "field": "members.userId",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/members/properties/userId",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/members/0/userId",
+          "examples": "docs/data/field-coverage.json: core.members.userId"
+        },
+        {
+          "field": "members.ready",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/members/properties/ready",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/members/0/ready",
+          "examples": "docs/data/field-coverage.json: core.members.ready"
+        },
+        {
+          "field": "members.leftAt",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/members/properties/leftAt",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/members/0/leftAt",
+          "examples": "docs/data/field-coverage.json: core.members.leftAt"
+        }
+      ]
+    },
+    {
+      "id": "preferences",
+      "useCase": "Ưu tiên riêng từng người, không đọc phiếu người khác",
+      "fields": [
+        {
+          "contract": "core",
+          "path": "preferences.cuisineIds"
+        },
+        {
+          "contract": "core",
+          "path": "preferences.categoryIds"
+        },
+        {
+          "contract": "core",
+          "path": "preferences.temperature"
+        },
+        {
+          "contract": "core",
+          "path": "preferences.flavor"
+        }
+      ],
+      "caseIds": [
+        "preferences-skipped",
+        "core-wrong-taxonomy-kind"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-17",
+        "GM-19"
+      ],
+      "contractId": "food-v1/roadmap-v2/GM-04.2",
+      "artifacts": [
+        {
+          "field": "preferences.cuisineIds",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/preferences/properties/cuisineIds",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/preferences/0/cuisineIds",
+          "examples": "docs/data/field-coverage.json: core.preferences.cuisineIds"
+        },
+        {
+          "field": "preferences.categoryIds",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/preferences/properties/categoryIds",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/preferences/0/categoryIds",
+          "examples": "docs/data/field-coverage.json: core.preferences.categoryIds"
+        },
+        {
+          "field": "preferences.temperature",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/preferences/properties/temperature",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/preferences/0/temperature",
+          "examples": "docs/data/field-coverage.json: core.preferences.temperature"
+        },
+        {
+          "field": "preferences.flavor",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/preferences/properties/flavor",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/preferences/0/flavor",
+          "examples": "docs/data/field-coverage.json: core.preferences.flavor"
+        }
+      ]
+    },
+    {
+      "id": "submitted-ballot",
+      "useCase": "ACK của Gửi đủ pool, không default OK/KEEP",
+      "fields": [
+        {
+          "contract": "core",
+          "path": "submissions.memberId"
+        },
+        {
+          "contract": "core",
+          "path": "submissions.round"
+        },
+        {
+          "contract": "core",
+          "path": "submissions.poolVersion"
+        },
+        {
+          "contract": "core",
+          "path": "submissions.acceptedAt"
+        },
+        {
+          "contract": "core",
+          "path": "submissions.intentId"
+        },
+        {
+          "contract": "core",
+          "path": "submissions.payloadHash"
+        },
+        {
+          "contract": "core",
+          "path": "votes.submissionId"
+        },
+        {
+          "contract": "core",
+          "path": "votes.roundDishId"
+        },
+        {
+          "contract": "core",
+          "path": "votes.value"
+        }
+      ],
+      "caseIds": [
+        "vote-unset-invalid",
+        "submission-incomplete-votes",
+        "round1-keep-invalid",
+        "submission-at-expiry"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-15",
+        "GM-17",
+        "GM-20"
+      ],
+      "contractId": "food-v1/roadmap-v2/GM-04.2",
+      "artifacts": [
+        {
+          "field": "submissions.memberId",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/submissions/properties/memberId",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/submissions/0/memberId",
+          "examples": "docs/data/field-coverage.json: core.submissions.memberId"
+        },
+        {
+          "field": "submissions.round",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/submissions/properties/round",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/submissions/0/round",
+          "examples": "docs/data/field-coverage.json: core.submissions.round"
+        },
+        {
+          "field": "submissions.poolVersion",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/submissions/properties/poolVersion",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/submissions/0/poolVersion",
+          "examples": "docs/data/field-coverage.json: core.submissions.poolVersion"
+        },
+        {
+          "field": "submissions.acceptedAt",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/submissions/properties/acceptedAt",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/submissions/0/acceptedAt",
+          "examples": "docs/data/field-coverage.json: core.submissions.acceptedAt"
+        },
+        {
+          "field": "submissions.intentId",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/submissions/properties/intentId",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/submissions/0/intentId",
+          "examples": "docs/data/field-coverage.json: core.submissions.intentId"
+        },
+        {
+          "field": "submissions.payloadHash",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/submissions/properties/payloadHash",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/submissions/0/payloadHash",
+          "examples": "docs/data/field-coverage.json: core.submissions.payloadHash"
+        },
+        {
+          "field": "votes.submissionId",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/votes/properties/submissionId",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/votes/0/submissionId",
+          "examples": "docs/data/field-coverage.json: core.votes.submissionId"
+        },
+        {
+          "field": "votes.roundDishId",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/votes/properties/roundDishId",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/votes/0/roundDishId",
+          "examples": "docs/data/field-coverage.json: core.votes.roundDishId"
+        },
+        {
+          "field": "votes.value",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/votes/properties/value",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/votes/0/value",
+          "examples": "docs/data/field-coverage.json: core.votes.value"
+        }
+      ]
+    },
+    {
+      "id": "decision-result",
+      "useCase": "Hai vòng, winner/tier/reason persisted và ties private",
+      "fields": [
+        {
+          "contract": "core",
+          "path": "roundDishes.round"
+        },
+        {
+          "contract": "core",
+          "path": "roundDishes.choiceId"
+        },
+        {
+          "contract": "core",
+          "path": "results.winnerRoundDishId"
+        },
+        {
+          "contract": "core",
+          "path": "results.reasonCode"
+        },
+        {
+          "contract": "core",
+          "path": "results.matchTier"
+        },
+        {
+          "contract": "core",
+          "path": "results.tiedChoiceIds"
+        },
+        {
+          "contract": "core",
+          "path": "results.finalizedAt"
+        }
+      ],
+      "caseIds": [
+        "round2-new-choice",
+        "winner-veto-invalid",
+        "result-tier-inconsistent",
+        "missing-member-ack-final",
+        "result-no-score-matrix"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-15",
+        "GM-17",
+        "GM-20"
+      ],
+      "contractId": "food-v1/roadmap-v2/GM-04.2",
+      "artifacts": [
+        {
+          "field": "roundDishes.round",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/roundDishes/properties/round",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/roundDishes/0/round",
+          "examples": "docs/data/field-coverage.json: core.roundDishes.round"
+        },
+        {
+          "field": "roundDishes.choiceId",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/roundDishes/properties/choiceId",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/roundDishes/0/choiceId",
+          "examples": "docs/data/field-coverage.json: core.roundDishes.choiceId"
+        },
+        {
+          "field": "results.winnerRoundDishId",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/results/properties/winnerRoundDishId",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/results/0/winnerRoundDishId",
+          "examples": "docs/data/field-coverage.json: core.results.winnerRoundDishId"
+        },
+        {
+          "field": "results.reasonCode",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/results/properties/reasonCode",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/results/0/reasonCode",
+          "examples": "docs/data/field-coverage.json: core.results.reasonCode"
+        },
+        {
+          "field": "results.matchTier",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/results/properties/matchTier",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/results/0/matchTier",
+          "examples": "docs/data/field-coverage.json: core.results.matchTier"
+        },
+        {
+          "field": "results.tiedChoiceIds",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/results/properties/tiedChoiceIds",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/results/0/tiedChoiceIds",
+          "examples": "docs/data/field-coverage.json: core.results.tiedChoiceIds"
+        },
+        {
+          "field": "results.finalizedAt",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/results/properties/finalizedAt",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/results/0/finalizedAt",
+          "examples": "docs/data/field-coverage.json: core.results.finalizedAt"
+        }
+      ]
+    },
+    {
+      "id": "history-consent",
+      "useCase": "Lịch sử tối thiểu/đúng roster/opt-in, rút consent",
+      "fields": [
+        {
+          "contract": "core",
+          "path": "histories.memberUserIds"
+        },
+        {
+          "contract": "core",
+          "path": "histories.groupKey"
+        },
+        {
+          "contract": "core",
+          "path": "histories.consentIds"
+        },
+        {
+          "contract": "core",
+          "path": "histories.resultId"
+        },
+        {
+          "contract": "core",
+          "path": "consents.scope"
+        },
+        {
+          "contract": "core",
+          "path": "consents.enabled"
+        },
+        {
+          "contract": "core",
+          "path": "consents.revokedAt"
+        },
+        {
+          "contract": "core",
+          "path": "consents.expiresAt"
+        }
+      ],
+      "caseIds": [
+        "history-wrong-roster",
+        "history-withdrawn-consent",
+        "history-consent-exact-expiry",
+        "operation-update-history-consent-null-version"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-17",
+        "GM-21"
+      ],
+      "contractId": "food-v1/roadmap-v2/GM-04.2",
+      "artifacts": [
+        {
+          "field": "histories.memberUserIds",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/histories/properties/memberUserIds",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/histories/0/memberUserIds",
+          "examples": "docs/data/field-coverage.json: core.histories.memberUserIds"
+        },
+        {
+          "field": "histories.groupKey",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/histories/properties/groupKey",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/histories/0/groupKey",
+          "examples": "docs/data/field-coverage.json: core.histories.groupKey"
+        },
+        {
+          "field": "histories.consentIds",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/histories/properties/consentIds",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/histories/0/consentIds",
+          "examples": "docs/data/field-coverage.json: core.histories.consentIds"
+        },
+        {
+          "field": "histories.resultId",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/histories/properties/resultId",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/histories/0/resultId",
+          "examples": "docs/data/field-coverage.json: core.histories.resultId"
+        },
+        {
+          "field": "consents.scope",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/consents/properties/scope",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/consents/0/scope",
+          "examples": "docs/data/field-coverage.json: core.consents.scope"
+        },
+        {
+          "field": "consents.enabled",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/consents/properties/enabled",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/consents/0/enabled",
+          "examples": "docs/data/field-coverage.json: core.consents.enabled"
+        },
+        {
+          "field": "consents.revokedAt",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/consents/properties/revokedAt",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/consents/0/revokedAt",
+          "examples": "docs/data/field-coverage.json: core.consents.revokedAt"
+        },
+        {
+          "field": "consents.expiresAt",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/consents/properties/expiresAt",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/consents/0/expiresAt",
+          "examples": "docs/data/field-coverage.json: core.consents.expiresAt"
+        }
+      ]
+    },
+    {
+      "id": "social-invites",
+      "useCase": "Canonical friends, invitation không auto-join/ready",
+      "fields": [
+        {
+          "contract": "core",
+          "path": "friends.lowUserId"
+        },
+        {
+          "contract": "core",
+          "path": "friends.highUserId"
+        },
+        {
+          "contract": "core",
+          "path": "friendInvitations.state"
+        },
+        {
+          "contract": "core",
+          "path": "roomInvitations.roomId"
+        },
+        {
+          "contract": "core",
+          "path": "roomInvitations.friendId"
+        },
+        {
+          "contract": "core",
+          "path": "roomInvitations.expiresAt"
+        }
+      ],
+      "caseIds": [
+        "friend-self-pair",
+        "room-invite-outlives-room",
+        "room-invite-unfriend-no-link",
+        "operation-accept-room-invite-null-version"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-17",
+        "GM-22"
+      ],
+      "contractId": "food-v1/roadmap-v2/GM-04.2",
+      "artifacts": [
+        {
+          "field": "friends.lowUserId",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/friends/properties/lowUserId",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/friends/0/lowUserId",
+          "examples": "docs/data/field-coverage.json: core.friends.lowUserId"
+        },
+        {
+          "field": "friends.highUserId",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/friends/properties/highUserId",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/friends/0/highUserId",
+          "examples": "docs/data/field-coverage.json: core.friends.highUserId"
+        },
+        {
+          "field": "friendInvitations.state",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/friendInvitations/properties/state",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/friendInvitations/0/state",
+          "examples": "docs/data/field-coverage.json: core.friendInvitations.state"
+        },
+        {
+          "field": "roomInvitations.roomId",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/roomInvitations/properties/roomId",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/roomInvitations/0/roomId",
+          "examples": "docs/data/field-coverage.json: core.roomInvitations.roomId"
+        },
+        {
+          "field": "roomInvitations.friendId",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/roomInvitations/properties/friendId",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/roomInvitations/0/friendId",
+          "examples": "docs/data/field-coverage.json: core.roomInvitations.friendId"
+        },
+        {
+          "field": "roomInvitations.expiresAt",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/roomInvitations/properties/expiresAt",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/roomInvitations/0/expiresAt",
+          "examples": "docs/data/field-coverage.json: core.roomInvitations.expiresAt"
+        }
+      ]
+    },
+    {
+      "id": "notifications",
+      "useCase": "Inbox riêng, device/token/dispatch sau result",
+      "fields": [
+        {
+          "contract": "core",
+          "path": "inbox.ownerUserId"
+        },
+        {
+          "contract": "core",
+          "path": "inbox.eventId"
+        },
+        {
+          "contract": "core",
+          "path": "devices.pushToken"
+        },
+        {
+          "contract": "core",
+          "path": "devices.permission"
+        },
+        {
+          "contract": "core",
+          "path": "devices.active"
+        },
+        {
+          "contract": "core",
+          "path": "events.recipientUserIds"
+        },
+        {
+          "contract": "core",
+          "path": "events.resultId"
+        },
+        {
+          "contract": "core",
+          "path": "deliveries.deviceId"
+        }
+      ],
+      "caseIds": [
+        "inbox-no-token",
+        "unknown-device-active",
+        "event-before-result",
+        "delivery-wrong-device-owner",
+        "notification-consent-withdrawn"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-17",
+        "GM-23"
+      ],
+      "contractId": "food-v1/roadmap-v2/GM-04.2",
+      "artifacts": [
+        {
+          "field": "inbox.ownerUserId",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/inbox/properties/ownerUserId",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/inbox/0/ownerUserId",
+          "examples": "docs/data/field-coverage.json: core.inbox.ownerUserId"
+        },
+        {
+          "field": "inbox.eventId",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/inbox/properties/eventId",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/inbox/0/eventId",
+          "examples": "docs/data/field-coverage.json: core.inbox.eventId"
+        },
+        {
+          "field": "devices.pushToken",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/devices/properties/pushToken",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/devices/0/pushToken",
+          "examples": "docs/data/field-coverage.json: core.devices.pushToken"
+        },
+        {
+          "field": "devices.permission",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/devices/properties/permission",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/devices/0/permission",
+          "examples": "docs/data/field-coverage.json: core.devices.permission"
+        },
+        {
+          "field": "devices.active",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/devices/properties/active",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/devices/0/active",
+          "examples": "docs/data/field-coverage.json: core.devices.active"
+        },
+        {
+          "field": "events.recipientUserIds",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/events/properties/recipientUserIds",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/events/0/recipientUserIds",
+          "examples": "docs/data/field-coverage.json: core.events.recipientUserIds"
+        },
+        {
+          "field": "events.resultId",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/events/properties/resultId",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/events/0/resultId",
+          "examples": "docs/data/field-coverage.json: core.events.resultId"
+        },
+        {
+          "field": "deliveries.deviceId",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/deliveries/properties/deviceId",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/deliveries/0/deviceId",
+          "examples": "docs/data/field-coverage.json: core.deliveries.deviceId"
+        }
+      ]
+    },
+    {
+      "id": "idempotency-version",
+      "useCase": "Request/hash/ACK trước version, pre-membership null",
+      "fields": [
+        {
+          "contract": "core",
+          "path": "idempotency.operation"
+        },
+        {
+          "contract": "core",
+          "path": "idempotency.requestId"
+        },
+        {
+          "contract": "core",
+          "path": "idempotency.payloadHash"
+        },
+        {
+          "contract": "core",
+          "path": "idempotency.expectedVersion"
+        },
+        {
+          "contract": "core",
+          "path": "idempotency.response"
+        },
+        {
+          "contract": "core",
+          "path": "idempotency.expiresAt"
+        }
+      ],
+      "caseIds": [
+        "operation-join-room-null-version",
+        "operation-accept-room-invite-null-version",
+        "operation-submit-ballot-null-version",
+        "operation-create-room-invite-null-version",
+        "idempotency-hash-changed",
+        "idempotency-duplicate-request"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-17",
+        "GM-19",
+        "GM-20",
+        "GM-21",
+        "GM-22",
+        "GM-23"
+      ],
+      "contractId": "food-v1/roadmap-v2/GM-04.2",
+      "artifacts": [
+        {
+          "field": "idempotency.operation",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/idempotency/properties/operation",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/idempotency/0/operation",
+          "examples": "docs/data/field-coverage.json: core.idempotency.operation"
+        },
+        {
+          "field": "idempotency.requestId",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/idempotency/properties/requestId",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/idempotency/0/requestId",
+          "examples": "docs/data/field-coverage.json: core.idempotency.requestId"
+        },
+        {
+          "field": "idempotency.payloadHash",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/idempotency/properties/payloadHash",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/idempotency/0/payloadHash",
+          "examples": "docs/data/field-coverage.json: core.idempotency.payloadHash"
+        },
+        {
+          "field": "idempotency.expectedVersion",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/idempotency/properties/expectedVersion",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/idempotency/0/expectedVersion",
+          "examples": "docs/data/field-coverage.json: core.idempotency.expectedVersion"
+        },
+        {
+          "field": "idempotency.response",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/idempotency/properties/response",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/idempotency/0/response",
+          "examples": "docs/data/field-coverage.json: core.idempotency.response"
+        },
+        {
+          "field": "idempotency.expiresAt",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/idempotency/properties/expiresAt",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/idempotency/0/expiresAt",
+          "examples": "docs/data/field-coverage.json: core.idempotency.expiresAt"
+        }
+      ]
+    },
+    {
+      "id": "privacy-reserved",
+      "useCase": "Projection allowlist, không GPS/votes/token/mood public",
+      "fields": [
+        {
+          "contract": "core",
+          "path": "rooms.rosterUserIds"
+        },
+        {
+          "contract": "core",
+          "path": "results.tiedChoiceIds"
+        },
+        {
+          "contract": "core",
+          "path": "histories.ownerUserId"
+        },
+        {
+          "contract": "core",
+          "path": "devices.pushToken"
+        }
+      ],
+      "caseIds": [
+        "raw-votes-in-room",
+        "gps-in-room",
+        "history-no-votes",
+        "history-no-anchor",
+        "weather-reserved",
+        "mood-reserved"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-17",
+        "GM-07"
+      ],
+      "contractId": "food-v1/roadmap-v2/GM-04.2",
+      "artifacts": [
+        {
+          "field": "rooms.rosterUserIds",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/rooms/properties/rosterUserIds",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/rooms/0/rosterUserIds",
+          "examples": "docs/data/field-coverage.json: core.rooms.rosterUserIds"
+        },
+        {
+          "field": "results.tiedChoiceIds",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/results/properties/tiedChoiceIds",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/results/0/tiedChoiceIds",
+          "examples": "docs/data/field-coverage.json: core.results.tiedChoiceIds"
+        },
+        {
+          "field": "histories.ownerUserId",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/histories/properties/ownerUserId",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/histories/0/ownerUserId",
+          "examples": "docs/data/field-coverage.json: core.histories.ownerUserId"
+        },
+        {
+          "field": "devices.pushToken",
+          "schema": "supabase/seed/templates/core-v1.schema.json#/$defs/devices/properties/pushToken",
+          "template": "supabase/seed/templates/core-v1.template.json#/entities/devices/0/pushToken",
+          "examples": "docs/data/field-coverage.json: core.devices.pushToken"
+        }
+      ]
+    }
+  ]
+}

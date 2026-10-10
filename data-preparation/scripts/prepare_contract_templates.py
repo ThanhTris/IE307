@@ -35,19 +35,19 @@ def example_bundle():
     return bundle
 
 def generate():
-    codebook=json.loads((BASE/'config/taxonomy_v1.json').read_text())
+    codebook=json.loads((BASE/'config/taxonomy_v1.json').read_text(encoding='utf-8'))
     registry=[]
     for kind,labels in [('cuisine',codebook['cuisines']),('origin',codebook['origins']),('category',{f'{g}:{k}':label for g,values in codebook['categoryGroups'].items() for k,label in values.items()})]:
         for code,label in labels.items():
             key=f'{kind}:{code}'
             registry.append({'registryKey':key,'id':stable_id('taxonomy',key),'type':kind,'code':code,'label':label,'version':1})
-    (BASE/'config/taxonomy_registry_v1.json').write_text(json.dumps({'contractVersion':'1.0.0','status':'draft','entries':registry},ensure_ascii=False,indent=2)+'\n')
+    (BASE/'config/taxonomy_registry_v1.json').write_text(json.dumps({'contractVersion':'1.0.0','status':'draft','entries':registry},ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     for name,bundle in [('empty',empty_bundle()),('examples',example_bundle())]:
         errors=validate(bundle)
         if errors:raise ValueError(errors)
         out=BASE/'templates'/name
         out.mkdir(parents=True,exist_ok=True)
-        (out/'dataset.json').write_text(json.dumps(bundle,ensure_ascii=False,indent=2)+'\n')
+        (out/'dataset.json').write_text(json.dumps(bundle,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
         write_csv_bundle(bundle,out)
         if read_csv_bundle(out)!=bundle:raise ValueError('JSON/CSV semantic mismatch')
     lines=['# Data dictionary — draft 1.0.0','',
@@ -74,6 +74,6 @@ def generate():
     lines += ['## Ví dụ và kiểm tra','',
               '[Hướng dẫn forms](../templates/README.md) chỉ vị trí CSV/JSON trống và bộ ví dụ fixture tương đương. Ví dụ từng trường có ngay ở templates/examples/dataset.json và CSV cùng entity.','',
               'GM-04 làm SQL constraints/import transaction; GM-27 xác minh quán/nguồn/giờ/quyền; GM-30 áp dụng lịch, coverage, giá và unknown để tạo pool. Bộ hợp đồng này không thực thi các task đó.']
-    (BASE/'docs/DATA_DICTIONARY.md').write_text('\n'.join(lines)+'\n')
+    (BASE/'docs/DATA_DICTIONARY.md').write_text('\n'.join(lines)+'\n',encoding='utf-8',newline='\n')
 
 if __name__=='__main__':generate()

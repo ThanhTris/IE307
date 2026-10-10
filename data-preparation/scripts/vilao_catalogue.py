@@ -4,7 +4,10 @@ from __future__ import annotations
 from contextlib import contextmanager
 import csv
 from datetime import datetime, timezone
-import fcntl
+try:
+    import fcntl
+except ImportError:  # Offline imports remain possible; locked runs require POSIX.
+    fcntl = None
 import json
 from pathlib import Path
 
@@ -39,7 +42,7 @@ Codes="""
 def atomic_json(path: Path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
     temp = path.with_suffix(path.suffix + '.tmp')
-    temp.write_text(json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False) + '\n', 'utf-8')
+    temp.write_text(json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False) + '\n', encoding='utf-8', newline='\n')
     temp.replace(path)
 
 
@@ -90,6 +93,8 @@ def read_samples(source: Path) -> tuple[list, list, list]:
 
 @contextmanager
 def single_run(path: Path):
+    if fcntl is None:
+        raise RuntimeError('Taxonomy locking requires Linux/macOS/WSL. Run this pipeline inside WSL; no unlocked fallback is allowed.')
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open('a') as handle:
         try:

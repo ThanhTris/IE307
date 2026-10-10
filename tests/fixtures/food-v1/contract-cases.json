@@ -1,5 +1,5 @@
 {
-  "contractId": "food-v1/roadmap-v2/GM-04.1",
+  "contractId": "food-v1/roadmap-v2/GM-04.2",
   "fixtureOnly": true,
   "description": "All inputs are simulations; edits applied to complete committed templates. Expected assertions authored independently, not derived from validator. Error labels are runner diagnostics, not API enums.",
   "cases": [
@@ -7131,6 +7131,2874 @@
           }
         ]
       }
+    },
+    {
+      "id": "operation-create-room-null-version",
+      "contract": "core",
+      "description": "create_room accepts null before membership or outside room mutation",
+      "spec": "API_CONTRACT",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "operation"
+          ],
+          "value": "create_room"
+        },
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "expectedVersion"
+          ],
+          "value": null
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "errors": []
+      }
+    },
+    {
+      "id": "operation-join-room-null-version",
+      "contract": "core",
+      "description": "join_room accepts null before membership or outside room mutation",
+      "spec": "API_CONTRACT",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "operation"
+          ],
+          "value": "join_room"
+        },
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "expectedVersion"
+          ],
+          "value": null
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "errors": []
+      }
+    },
+    {
+      "id": "operation-update-preferences-null-version",
+      "contract": "core",
+      "description": "update_preferences requires room version",
+      "spec": "API_CONTRACT",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "operation"
+          ],
+          "value": "update_preferences"
+        },
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "expectedVersion"
+          ],
+          "value": null
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "errors": [
+          {
+            "code": "VERSION",
+            "path": "$.entities.idempotency[0].expectedVersion"
+          }
+        ]
+      }
+    },
+    {
+      "id": "operation-update-context-null-version",
+      "contract": "core",
+      "description": "update_context requires room version",
+      "spec": "API_CONTRACT",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "operation"
+          ],
+          "value": "update_context"
+        },
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "expectedVersion"
+          ],
+          "value": null
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "errors": [
+          {
+            "code": "VERSION",
+            "path": "$.entities.idempotency[0].expectedVersion"
+          }
+        ]
+      }
+    },
+    {
+      "id": "operation-set-ready-null-version",
+      "contract": "core",
+      "description": "set_ready requires room version",
+      "spec": "API_CONTRACT",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "operation"
+          ],
+          "value": "set_ready"
+        },
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "expectedVersion"
+          ],
+          "value": null
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "errors": [
+          {
+            "code": "VERSION",
+            "path": "$.entities.idempotency[0].expectedVersion"
+          }
+        ]
+      }
+    },
+    {
+      "id": "operation-start-room-null-version",
+      "contract": "core",
+      "description": "start_room requires room version",
+      "spec": "API_CONTRACT",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "operation"
+          ],
+          "value": "start_room"
+        },
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "expectedVersion"
+          ],
+          "value": null
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "errors": [
+          {
+            "code": "VERSION",
+            "path": "$.entities.idempotency[0].expectedVersion"
+          }
+        ]
+      }
+    },
+    {
+      "id": "operation-submit-ballot-null-version",
+      "contract": "core",
+      "description": "submit_ballot requires room version",
+      "spec": "API_CONTRACT",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "operation"
+          ],
+          "value": "submit_ballot"
+        },
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "expectedVersion"
+          ],
+          "value": null
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "errors": [
+          {
+            "code": "VERSION",
+            "path": "$.entities.idempotency[0].expectedVersion"
+          }
+        ]
+      }
+    },
+    {
+      "id": "operation-cancel-room-null-version",
+      "contract": "core",
+      "description": "cancel_room requires room version",
+      "spec": "API_CONTRACT",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "operation"
+          ],
+          "value": "cancel_room"
+        },
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "expectedVersion"
+          ],
+          "value": null
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "errors": [
+          {
+            "code": "VERSION",
+            "path": "$.entities.idempotency[0].expectedVersion"
+          }
+        ]
+      }
+    },
+    {
+      "id": "operation-leave-room-null-version",
+      "contract": "core",
+      "description": "leave_room requires room version",
+      "spec": "API_CONTRACT",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "operation"
+          ],
+          "value": "leave_room"
+        },
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "expectedVersion"
+          ],
+          "value": null
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "errors": [
+          {
+            "code": "VERSION",
+            "path": "$.entities.idempotency[0].expectedVersion"
+          }
+        ]
+      }
+    },
+    {
+      "id": "operation-create-friend-invite-null-version",
+      "contract": "core",
+      "description": "create_friend_invite accepts null before membership or outside room mutation",
+      "spec": "API_CONTRACT",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "operation"
+          ],
+          "value": "create_friend_invite"
+        },
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "expectedVersion"
+          ],
+          "value": null
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "errors": []
+      }
+    },
+    {
+      "id": "operation-accept-friend-invite-null-version",
+      "contract": "core",
+      "description": "accept_friend_invite accepts null before membership or outside room mutation",
+      "spec": "API_CONTRACT",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "operation"
+          ],
+          "value": "accept_friend_invite"
+        },
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "expectedVersion"
+          ],
+          "value": null
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "errors": []
+      }
+    },
+    {
+      "id": "operation-reject-friend-invite-null-version",
+      "contract": "core",
+      "description": "reject_friend_invite accepts null before membership or outside room mutation",
+      "spec": "API_CONTRACT",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "operation"
+          ],
+          "value": "reject_friend_invite"
+        },
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "expectedVersion"
+          ],
+          "value": null
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "errors": []
+      }
+    },
+    {
+      "id": "operation-unfriend-null-version",
+      "contract": "core",
+      "description": "unfriend accepts null before membership or outside room mutation",
+      "spec": "API_CONTRACT",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "operation"
+          ],
+          "value": "unfriend"
+        },
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "expectedVersion"
+          ],
+          "value": null
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "errors": []
+      }
+    },
+    {
+      "id": "operation-create-room-invite-null-version",
+      "contract": "core",
+      "description": "create_room_invite requires room version",
+      "spec": "API_CONTRACT",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "operation"
+          ],
+          "value": "create_room_invite"
+        },
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "expectedVersion"
+          ],
+          "value": null
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "errors": [
+          {
+            "code": "VERSION",
+            "path": "$.entities.idempotency[0].expectedVersion"
+          }
+        ]
+      }
+    },
+    {
+      "id": "operation-accept-room-invite-null-version",
+      "contract": "core",
+      "description": "accept_room_invite accepts null before membership or outside room mutation",
+      "spec": "API_CONTRACT",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "operation"
+          ],
+          "value": "accept_room_invite"
+        },
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "expectedVersion"
+          ],
+          "value": null
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "errors": []
+      }
+    },
+    {
+      "id": "operation-reject-room-invite-null-version",
+      "contract": "core",
+      "description": "reject_room_invite accepts null before membership or outside room mutation",
+      "spec": "API_CONTRACT",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "operation"
+          ],
+          "value": "reject_room_invite"
+        },
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "expectedVersion"
+          ],
+          "value": null
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "errors": []
+      }
+    },
+    {
+      "id": "operation-register-push-device-null-version",
+      "contract": "core",
+      "description": "register_push_device accepts null before membership or outside room mutation",
+      "spec": "API_CONTRACT",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "operation"
+          ],
+          "value": "register_push_device"
+        },
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "expectedVersion"
+          ],
+          "value": null
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "errors": []
+      }
+    },
+    {
+      "id": "operation-unregister-push-device-null-version",
+      "contract": "core",
+      "description": "unregister_push_device accepts null before membership or outside room mutation",
+      "spec": "API_CONTRACT",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "operation"
+          ],
+          "value": "unregister_push_device"
+        },
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "expectedVersion"
+          ],
+          "value": null
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "errors": []
+      }
+    },
+    {
+      "id": "operation-delete-history-null-version",
+      "contract": "core",
+      "description": "delete_history accepts null before membership or outside room mutation",
+      "spec": "API_CONTRACT",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "operation"
+          ],
+          "value": "delete_history"
+        },
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "expectedVersion"
+          ],
+          "value": null
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "errors": []
+      }
+    },
+    {
+      "id": "operation-update-history-consent-null-version",
+      "contract": "core",
+      "description": "update_history_consent accepts null before membership or outside room mutation",
+      "spec": "API_CONTRACT",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "operation"
+          ],
+          "value": "update_history_consent"
+        },
+        {
+          "path": [
+            "entities",
+            "idempotency",
+            0,
+            "expectedVersion"
+          ],
+          "value": null
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "errors": []
+      }
+    },
+    {
+      "id": "published-venue-hours-valid",
+      "contract": "food",
+      "description": "Synthetic published venue checks every linked schedule and hours source",
+      "spec": "FOOD_DATA_SPEC",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "reviewStatus"
+          ],
+          "value": "published"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "sourceRef"
+          ],
+          "value": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "fieldSources"
+          ],
+          "value": {
+            "hours": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+            "coordinates": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+            "address": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+          }
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "reviewStatus"
+          ],
+          "value": "verified"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "reviewStatus"
+          ],
+          "value": "verified"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "usageRights"
+          ],
+          "value": "licensed"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "license"
+          ],
+          "value": "Synthetic permission, never real rights"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "sourceRef"
+          ],
+          "value": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "status"
+          ],
+          "value": "verified"
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "errors": []
+      },
+      "fixtureOnlyOverride": false,
+      "simulationOnly": true
+    },
+    {
+      "id": "published-venue-hours-draft",
+      "contract": "food",
+      "description": "Synthetic published venue checks every linked schedule and hours source",
+      "spec": "FOOD_DATA_SPEC",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "reviewStatus"
+          ],
+          "value": "published"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "sourceRef"
+          ],
+          "value": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "fieldSources"
+          ],
+          "value": {
+            "hours": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+            "coordinates": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+            "address": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+          }
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "reviewStatus"
+          ],
+          "value": "verified"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "reviewStatus"
+          ],
+          "value": "verified"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "usageRights"
+          ],
+          "value": "licensed"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "license"
+          ],
+          "value": "Synthetic permission, never real rights"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "sourceRef"
+          ],
+          "value": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "reviewStatus"
+          ],
+          "value": "draft"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "status"
+          ],
+          "value": "verified"
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "errors": [
+          {
+            "code": "REVIEW",
+            "path": "$.entities.venues[0].scheduleId"
+          }
+        ]
+      },
+      "fixtureOnlyOverride": false,
+      "simulationOnly": true
+    },
+    {
+      "id": "published-venue-hours-unknown",
+      "contract": "food",
+      "description": "Synthetic published venue checks every linked schedule and hours source",
+      "spec": "FOOD_DATA_SPEC",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "reviewStatus"
+          ],
+          "value": "published"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "sourceRef"
+          ],
+          "value": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "fieldSources"
+          ],
+          "value": {
+            "hours": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+            "coordinates": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+            "address": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+          }
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "reviewStatus"
+          ],
+          "value": "verified"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "reviewStatus"
+          ],
+          "value": "verified"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "usageRights"
+          ],
+          "value": "licensed"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "license"
+          ],
+          "value": "Synthetic permission, never real rights"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "sourceRef"
+          ],
+          "value": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "status"
+          ],
+          "value": "unknown"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "startTime"
+          ],
+          "value": null
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "endTime"
+          ],
+          "value": null
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "endDayOffset"
+          ],
+          "value": null
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "lastOrder"
+          ],
+          "value": null
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "lastOrderDayOffset"
+          ],
+          "value": null
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "status"
+          ],
+          "value": "verified"
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "errors": [
+          {
+            "code": "SCHEDULE",
+            "path": "$.entities.venues[0].scheduleId"
+          }
+        ]
+      },
+      "fixtureOnlyOverride": false,
+      "simulationOnly": true
+    },
+    {
+      "id": "published-venue-hours-expiry-null",
+      "contract": "food",
+      "description": "Synthetic published venue checks every linked schedule and hours source",
+      "spec": "FOOD_DATA_SPEC",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "reviewStatus"
+          ],
+          "value": "published"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "sourceRef"
+          ],
+          "value": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "fieldSources"
+          ],
+          "value": {
+            "hours": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+            "coordinates": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+            "address": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+          }
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "reviewStatus"
+          ],
+          "value": "verified"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "reviewStatus"
+          ],
+          "value": "verified"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "usageRights"
+          ],
+          "value": "licensed"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "license"
+          ],
+          "value": "Synthetic permission, never real rights"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "sourceRef"
+          ],
+          "value": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "validUntil"
+          ],
+          "value": null
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "status"
+          ],
+          "value": "verified"
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "errors": [
+          {
+            "code": "REVIEW",
+            "path": "$.entities.venues[0].scheduleId"
+          }
+        ]
+      },
+      "fixtureOnlyOverride": false,
+      "simulationOnly": true
+    },
+    {
+      "id": "published-venue-hours-stale",
+      "contract": "food",
+      "description": "Synthetic published venue checks every linked schedule and hours source",
+      "spec": "FOOD_DATA_SPEC",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "reviewStatus"
+          ],
+          "value": "published"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "sourceRef"
+          ],
+          "value": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "fieldSources"
+          ],
+          "value": {
+            "hours": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+            "coordinates": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+            "address": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+          }
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "reviewStatus"
+          ],
+          "value": "verified"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "reviewStatus"
+          ],
+          "value": "verified"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "usageRights"
+          ],
+          "value": "licensed"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "license"
+          ],
+          "value": "Synthetic permission, never real rights"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "sourceRef"
+          ],
+          "value": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "validUntil"
+          ],
+          "value": "2026-10-09T12:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "status"
+          ],
+          "value": "verified"
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "errors": [
+          {
+            "code": "REVIEW",
+            "path": "$.entities.venues[0].scheduleId"
+          }
+        ]
+      },
+      "fixtureOnlyOverride": false,
+      "simulationOnly": true
+    },
+    {
+      "id": "published-venue-hours-exact-expiry",
+      "contract": "food",
+      "description": "Synthetic published venue checks every linked schedule and hours source",
+      "spec": "FOOD_DATA_SPEC",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "reviewStatus"
+          ],
+          "value": "published"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "sourceRef"
+          ],
+          "value": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "fieldSources"
+          ],
+          "value": {
+            "hours": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+            "coordinates": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+            "address": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+          }
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "reviewStatus"
+          ],
+          "value": "verified"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "reviewStatus"
+          ],
+          "value": "verified"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "usageRights"
+          ],
+          "value": "licensed"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "license"
+          ],
+          "value": "Synthetic permission, never real rights"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "sourceRef"
+          ],
+          "value": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "validUntil"
+          ],
+          "value": "2026-10-10T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "status"
+          ],
+          "value": "verified"
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "errors": [
+          {
+            "code": "REVIEW",
+            "path": "$.entities.venues[0].scheduleId"
+          }
+        ]
+      },
+      "fixtureOnlyOverride": false,
+      "simulationOnly": true
+    },
+    {
+      "id": "published-venue-hours-checked-null",
+      "contract": "food",
+      "description": "Synthetic published venue checks every linked schedule and hours source",
+      "spec": "FOOD_DATA_SPEC",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "reviewStatus"
+          ],
+          "value": "published"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "sourceRef"
+          ],
+          "value": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "fieldSources"
+          ],
+          "value": {
+            "hours": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+            "coordinates": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+            "address": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+          }
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "reviewStatus"
+          ],
+          "value": "verified"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "reviewStatus"
+          ],
+          "value": "verified"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "usageRights"
+          ],
+          "value": "licensed"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "license"
+          ],
+          "value": "Synthetic permission, never real rights"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "sourceRef"
+          ],
+          "value": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "checkedAt"
+          ],
+          "value": null
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "status"
+          ],
+          "value": "verified"
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "errors": [
+          {
+            "code": "REVIEW",
+            "path": "$.entities.venues[0].scheduleId"
+          }
+        ]
+      },
+      "fixtureOnlyOverride": false,
+      "simulationOnly": true
+    },
+    {
+      "id": "published-venue-hours-hours-source-null",
+      "contract": "food",
+      "description": "Synthetic published venue checks every linked schedule and hours source",
+      "spec": "FOOD_DATA_SPEC",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "reviewStatus"
+          ],
+          "value": "published"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "sourceRef"
+          ],
+          "value": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "fieldSources"
+          ],
+          "value": {
+            "hours": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+            "coordinates": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+            "address": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+          }
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "reviewStatus"
+          ],
+          "value": "verified"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "reviewStatus"
+          ],
+          "value": "verified"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "usageRights"
+          ],
+          "value": "licensed"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "license"
+          ],
+          "value": "Synthetic permission, never real rights"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "sourceRef"
+          ],
+          "value": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "fieldSources"
+          ],
+          "value": {}
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "status"
+          ],
+          "value": "verified"
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "errors": [
+          {
+            "code": "REVIEW",
+            "path": "$.entities.venues[0].scheduleId"
+          }
+        ]
+      },
+      "fixtureOnlyOverride": false,
+      "simulationOnly": true
+    },
+    {
+      "id": "published-venue-hours-source-stale",
+      "contract": "food",
+      "description": "Synthetic published venue checks every linked schedule and hours source",
+      "spec": "FOOD_DATA_SPEC",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "reviewStatus"
+          ],
+          "value": "published"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "sourceRef"
+          ],
+          "value": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "fieldSources"
+          ],
+          "value": {
+            "hours": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+            "coordinates": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+            "address": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+          }
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "reviewStatus"
+          ],
+          "value": "verified"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "reviewStatus"
+          ],
+          "value": "verified"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "usageRights"
+          ],
+          "value": "licensed"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "license"
+          ],
+          "value": "Synthetic permission, never real rights"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "sourceRef"
+          ],
+          "value": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "validUntil"
+          ],
+          "value": "2026-10-10T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "status"
+          ],
+          "value": "verified"
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "errors": [
+          {
+            "code": "REVIEW",
+            "path": "$.entities.venues[0].scheduleId"
+          }
+        ]
+      },
+      "fixtureOnlyOverride": false,
+      "simulationOnly": true
+    },
+    {
+      "id": "published-venue-hours-source-rights-unknown",
+      "contract": "food",
+      "description": "Synthetic published venue checks every linked schedule and hours source",
+      "spec": "FOOD_DATA_SPEC",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "reviewStatus"
+          ],
+          "value": "published"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "sourceRef"
+          ],
+          "value": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "fieldSources"
+          ],
+          "value": {
+            "hours": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+            "coordinates": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+            "address": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+          }
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "reviewStatus"
+          ],
+          "value": "verified"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "reviewStatus"
+          ],
+          "value": "verified"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "usageRights"
+          ],
+          "value": "licensed"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "license"
+          ],
+          "value": "Synthetic permission, never real rights"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "sourceRef"
+          ],
+          "value": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "usageRights"
+          ],
+          "value": "unknown"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "license"
+          ],
+          "value": null
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "status"
+          ],
+          "value": "verified"
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "errors": [
+          {
+            "code": "REVIEW",
+            "path": "$.entities.venues[0].scheduleId"
+          }
+        ]
+      },
+      "fixtureOnlyOverride": false,
+      "simulationOnly": true
+    },
+    {
+      "id": "published-venue-hours-second-row-draft",
+      "contract": "food",
+      "description": "A current first row cannot mask draft second row in the same group",
+      "spec": "FOOD_DATA_SPEC",
+      "validationAt": "2026-10-10T00:00:00Z",
+      "edits": [
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "reviewStatus"
+          ],
+          "value": "published"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "sourceRef"
+          ],
+          "value": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+        },
+        {
+          "path": [
+            "entities",
+            "venues",
+            0,
+            "fieldSources"
+          ],
+          "value": {
+            "hours": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+            "coordinates": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+            "address": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+          }
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "reviewStatus"
+          ],
+          "value": "verified"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "reviewStatus"
+          ],
+          "value": "verified"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "checkedAt"
+          ],
+          "value": "2026-10-09T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "validUntil"
+          ],
+          "value": "2026-10-11T00:00:00Z"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "reviewedBy"
+          ],
+          "value": "simulation-reviewer"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "usageRights"
+          ],
+          "value": "licensed"
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "license"
+          ],
+          "value": "Synthetic permission, never real rights"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules",
+            2,
+            "sourceRef"
+          ],
+          "value": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+        },
+        {
+          "path": [
+            "entities",
+            "weeklySchedules"
+          ],
+          "op": "append",
+          "value": {
+            "id": "5e553670-972e-52a1-9c49-4944478cc24f",
+            "scheduleId": "c1dfc4d3-c73a-5492-b9ec-37aa8e308c9c",
+            "ownerType": "venue",
+            "ownerId": "9c4fe7c4-0a70-52f9-bf37-d43f86fc3290",
+            "dayOfWeek": 2,
+            "startTime": "21:00",
+            "endTime": "03:00",
+            "endDayOffset": 1,
+            "is24Hours": false,
+            "timezone": "Asia/Ho_Chi_Minh",
+            "status": "open",
+            "version": 1,
+            "reviewStatus": "draft",
+            "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709",
+            "fieldSources": {
+              "hours": "025b5393-d00c-5f8d-b26f-4ea436a89709"
+            },
+            "checkedAt": "2026-10-09T00:00:00Z",
+            "validUntil": null,
+            "enteredBy": "fixture-author",
+            "reviewedBy": null,
+            "lastOrder": "02:30",
+            "lastOrderDayOffset": 1
+          }
+        },
+        {
+          "path": [
+            "entities",
+            "dataSources",
+            0,
+            "status"
+          ],
+          "value": "verified"
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "errors": [
+          {
+            "code": "REVIEW",
+            "path": "$.entities.venues[0].scheduleId"
+          }
+        ]
+      },
+      "fixtureOnlyOverride": false,
+      "simulationOnly": true
     }
   ]
 }

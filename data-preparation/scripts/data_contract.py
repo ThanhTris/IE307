@@ -12,7 +12,7 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from base_catalogue import stable_id
 
 BASE=Path(__file__).resolve().parents[1]
-SCHEMA=json.loads((BASE/'config/data_contract_v1.json').read_text())
+SCHEMA=json.loads((BASE/'config/data_contract_v1.json').read_text(encoding='utf-8'))
 ENTITIES=SCHEMA['entities']
 csv.field_size_limit(16*1024*1024)
 JSON_TYPES={'stringArray','uuidArray','object','flavor','artwork','profile','intervals','geojson'}
@@ -204,7 +204,7 @@ def validate(bundle, as_of=None):
                     s=sources.get(art['sourceRef'])
                     if art['usageRights'] not in ['granted','licensed','public_domain'] or not art['license'] or not s or s['usageRights'] not in ['granted','licensed','public_domain'] or s['reviewStatus'] not in ['verified','published'] or not s['validUntil'] or utc(s['validUntil'])<=as_of:err(name,number,'artwork','Image rights/source/license required to publish')
             if name=='taxonomy':
-                codebook=json.loads((BASE/'config/taxonomy_v1.json').read_text())
+                codebook=json.loads((BASE/'config/taxonomy_v1.json').read_text(encoding='utf-8'))
                 allowed=set(codebook['cuisines']) if row['type']=='cuisine' else set(codebook['origins']) if row['type']=='origin' else {f'{g}:{k}' for g,labels in codebook['categoryGroups'].items() for k in labels}
                 if row['code'] not in allowed:err(name,number,'code','Code not in taxonomy_v1')
             if name=='dataSources' and row['usageRights'] in ['granted','licensed','public_domain'] and not row['license']:err(name,number,'license','Rights require license/agreement record')
@@ -277,7 +277,7 @@ def validate(bundle, as_of=None):
 
 def write_csv_bundle(bundle,directory):
     directory=Path(directory);directory.mkdir(parents=True,exist_ok=True)
-    (directory/'bundle.json').write_text(json.dumps({k:v for k,v in bundle.items() if k!='entities'},ensure_ascii=False,indent=2)+'\n')
+    (directory/'bundle.json').write_text(json.dumps({k:v for k,v in bundle.items() if k!='entities'},ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     for name,definition in ENTITIES.items():
         with (directory/f'{name}.csv').open('w',encoding='utf-8-sig',newline='') as f:
             writer=csv.DictWriter(f,fieldnames=definition['fields'],lineterminator='\n');writer.writeheader()
@@ -285,7 +285,7 @@ def write_csv_bundle(bundle,directory):
                 writer.writerow({k:'' if v is None else json.dumps(v,ensure_ascii=False,separators=(',', ':')) if definition['fields'][k]['type'] in JSON_TYPES or type(v) is bool else v for k,v in row.items()})
 
 def read_csv_bundle(directory):
-    directory=Path(directory);bundle=json.loads((directory/'bundle.json').read_text());bundle['entities']={}
+    directory=Path(directory);bundle=json.loads((directory/'bundle.json').read_text(encoding='utf-8'));bundle['entities']={}
     for name,definition in ENTITIES.items():
         rows=[]
         with (directory/f'{name}.csv').open(encoding='utf-8-sig',newline='') as f:
@@ -311,7 +311,7 @@ def read_csv_bundle(directory):
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('path',type=Path);parser.add_argument('--as-of',help='UTC instant ending Z for deterministic fixtures');args=parser.parse_args()
     try:
-        bundle=read_csv_bundle(args.path) if args.path.is_dir() else json.loads(args.path.read_text())
+        bundle=read_csv_bundle(args.path) if args.path.is_dir() else json.loads(args.path.read_text(encoding='utf-8'))
         errors=validate(bundle,utc(args.as_of) if args.as_of else None)
     except (ValueError,OSError) as e:
         print(json.dumps({'errors':[str(e)]},ensure_ascii=False));return 1

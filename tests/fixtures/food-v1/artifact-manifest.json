@@ -1,17 +1,18 @@
 {
-  "contractId": "food-v1/roadmap-v2/GM-04.1",
+  "contractId": "food-v1/roadmap-v2/GM-04.2",
   "fixtureOnly": true,
   "foodContractVersion": "1.1.0",
-  "coreContractVersion": "1.0.0",
-  "casesSha256": "14aab000849258b08b91f67867d48afeb7938e0cfbb90486dbd041358233f309",
+  "coreContractVersion": "1.1.0",
+  "casesSha256": "53f29dc90c175e9a61d3212c59a6333b164ffc7166f66071f49fe423e551cafa",
   "fieldCount": 596,
   "files": {
-    "supabase/seed/templates/food-v1.schema.json": "baeb89e13eef6193f0ecccfcd65470aa8d035392c7caa6718c0f0703e7840076",
-    "supabase/seed/templates/core-v1.schema.json": "77060a7959c8342eba26de3eabdaec521bd8ab1aa4d113473a69882d770c21d0",
+    "supabase/seed/templates/food-v1.schema.json": "32725384fdb9ccface3100a55e2646257159d8ca07a613e18dbfd1c5623db255",
+    "supabase/seed/templates/core-v1.schema.json": "d45bd8349fd2a2c24022093a74d0c04d30b6275ac201e0fa4707f048044eadf6",
     "supabase/seed/templates/food-v1.template.json": "d8a566553d6a9e44327a3e157163f070d3a644f8e1bcb9f3bb868f86f4e47265",
-    "supabase/seed/templates/core-v1.template.json": "525bb71e54854cab664ec35a3119f1f11762e146afa7199bec60b4dc5778da3c",
-    "docs/data/field-coverage.json": "1e5db8e3493f616fd7e4a4ab713a484530f631d2c70c9931cb9cb9488bada053",
-    "docs/data/FIELD_COVERAGE.md": "8c0229f55015d3c7c3c61502d4e20c47b4d3c99c73680d8a457c0b0566244a17",
-    "docs/data/FOOD_DATA_DICTIONARY.md": "2ea40f6c295f69bf91cc7745654bef337c83471414d6ce5fd91ec3ab272ccd00"
+    "supabase/seed/templates/core-v1.template.json": "b0fd75d0a14499de6522f91846b58ac76f7a6e509cdfdf5ef705213b7a2709f2",
+    "docs/data/field-coverage.json": "8a6c6cfdbafe3f32decfa36b64ae857edd52b0a3fb5d57f6ebed3108af0a7983",
+    "docs/data/use-case-coverage.json": "63ec891f1bbe4889fb56a7a84b61d077318367ac6922249ff4db6496033fbdf4",
+    "docs/data/FIELD_COVERAGE.md": "bc72425c0c47c99c486844feb27a4bb593a676ceaa7f39f6ce335c0d40f88ba6",
+    "docs/data/FOOD_DATA_DICTIONARY.md": "6c4af19d6a5756da23e59784c2218361ee81b10df3885beb8107b25151c0346a"
   }
 }

@@ -11,7 +11,7 @@ import re
 import sys
 from zoneinfo import ZoneInfo
 
-from gm04_contract_model import ROOT, FOOD, CORE, FOOD_UNIQUE, CONTRACT_ID
+from gm04_contract_model import ROOT, FOOD, CORE, FOOD_UNIQUE, CONTRACT_ID, OPERATION_RULES
 sys.path.insert(0, str(ROOT/'data-preparation/scripts'))
 import data_contract as legacy
 
@@ -29,7 +29,7 @@ def load_json(path):
             out[key] = value
         return out
     def reject(value): raise ValueError('Non-finite JSON value: '+value)
-    return json.loads(Path(path).read_text(), object_pairs_hook=pairs, parse_constant=reject)
+    return json.loads(Path(path).read_text(encoding='utf-8'), object_pairs_hook=pairs, parse_constant=reject)
 
 
 def audit_schema(schema, root=None):
@@ -135,6 +135,8 @@ def validate_food(bundle, as_of):
         path = '$' if e['entity']=='bundle' else f"$.entities.{e['entity']}[{max(0,e['row']-1)}]"
         errors.append({'code':'FOOD_CONTRACT','path':path+'.'+e['field'],'message':e['message']})
     data=bundle['entities'];schedules={}
+    sources={r['sourceRef']:r for r in data['dataSources']}
+    at=legacy.utc(as_of)
     for row in data['weeklySchedules']: schedules.setdefault(row['scheduleId'],[]).append(row)
     def err(name,i,key,code,message): errors.append({'code':code,'path':f'$.entities.{name}[{i}].{key}','message':message})
     for name,keys_list in FOOD_UNIQUE.items():
@@ -145,6 +147,26 @@ def validate_food(bundle, as_of):
         if row['scheduleId'] is not None and not group:err('venues',i,'scheduleId','FK','Venue schedule missing')
         if group and any(s['ownerType']!='venue' or s['ownerId']!=row['id'] for s in group):err('venues',i,'scheduleId','SCHEDULE','Venue schedule belongs to another owner')
         if row['reviewStatus'] in ['verified','published'] and row['scheduleId'] is None:err('venues',i,'scheduleId','REVIEW','Reviewed venue requires explicit schedule binding')
+        if row['reviewStatus']=='published' and group:
+            # Validate every row in the bound schedule group, not just one index row.
+            # The legacy adapter removes this new FK, so its publish checks cannot cover it.
+            if any(s['status']=='unknown' for s in group):
+                err('venues',i,'scheduleId','SCHEDULE','Published venue cannot bind unknown hours')
+            for s in group:
+                refs={s['sourceRef'],s['fieldSources'].get('hours')}
+                reviewed = (s['reviewStatus'] in ['verified','published'] and s['checkedAt'] is not None
+                            and legacy.utc(s['checkedAt'])<=at and s['validUntil'] is not None
+                            and legacy.utc(s['validUntil'])>at and s['reviewedBy'] is not None
+                            and s['reviewedBy']!=s['enteredBy'])
+                licensed_sources = all(ref in sources and sources[ref]['reviewStatus'] in ['verified','published']
+                    and sources[ref]['checkedAt'] is not None and legacy.utc(sources[ref]['checkedAt'])<=at
+                    and sources[ref]['validUntil'] is not None and legacy.utc(sources[ref]['validUntil'])>at
+                    and sources[ref]['reviewedBy'] is not None and sources[ref]['reviewedBy']!=sources[ref]['enteredBy']
+                    and sources[ref]['usageRights'] in ['granted','licensed','public_domain']
+                    and sources[ref]['license'] is not None for ref in refs)
+                if not reviewed or not licensed_sources:
+                    err('venues',i,'scheduleId','REVIEW','Published venue requires reviewed, current schedule and hours sources')
+                    break
     for name in ['weeklySchedules','dateExceptions']:
         for i,row in enumerate(data[name]):
             last=row['lastOrder'];offset=row['lastOrderDayOffset']
@@ -339,7 +361,7 @@ def validate_core(bundle, food, as_of):
     for i,r in enumerate(data['idempotency']):
         for key,target in [('roomId','rooms'),('resultId','results')]:
             if r['response'][key] is not None and r['response'][key] not in indexes[target]:err('idempotency',i,'response','FK','ACK ref missing')
-        if r['operation'] not in ['create_room','create_friend_invite','register_push_device','unregister_push_device','delete_history'] and r['expectedVersion'] is None:err('idempotency',i,'expectedVersion','VERSION','Room mutation needs expected version')
+        if OPERATION_RULES[r['operation']][1] and r['expectedVersion'] is None:err('idempotency',i,'expectedVersion','VERSION','Room mutation needs expected version')
         if r['operation']=='submit_ballot':
             sub=[s for s in data['submissions'] if s['requestId']==r['requestId'] and indexes['members'].get(s['memberId'],{}).get('userId')==r['userId']]
             if len(sub)!=1 or sub[0]['payloadHash']!=r['payloadHash'] or sub[0]['roomId']!=r['response']['roomId']:err('idempotency',i,'payloadHash','IDEMPOTENCY','Submission ACK must bind same user/request/hash/room')
@@ -357,6 +379,15 @@ def apply_edits(bundle, edits):
     return b
 
 
+def case_input(bundle, case):
+    target=apply_edits(bundle,case['edits'])
+    # A simulated counterexample exercises publish rules independently of the
+    # fixture guard. This in-memory bundle is never written/imported/published.
+    if 'fixtureOnlyOverride' in case:
+        target['fixtureOnly']=case['fixtureOnlyOverride']
+    return target
+
+
 def validate_case_suite(suite):
     """A broken test plan must fail instead of silently exercising zero inputs."""
     if not isinstance(suite,dict) or suite.get('contractId')!=CONTRACT_ID or suite.get('fixtureOnly') is not True:
@@ -370,6 +401,8 @@ def validate_case_suite(suite):
         if not isinstance(case['id'],str) or not re.fullmatch(r'[a-z0-9-]+',case['id']) or case['id'] in seen:raise ValueError('Unique case ID required')
         seen.add(case['id'])
         if case['contract'] not in ['food','core']:raise ValueError('Unknown case contract')
+        if 'fixtureOnlyOverride' in case and (case['fixtureOnlyOverride'] is not False or case.get('simulationOnly') is not True or case['contract']!='food'):
+            raise ValueError('Publish counterexample must be explicitly simulated food input')
         legacy.utc(case['validationAt'])
         expected=case['expected']
         if not isinstance(expected,dict) or type(expected.get('valid')) is not bool or not isinstance(expected.get('errors'),list):raise ValueError('Typed expected required')
@@ -391,12 +424,12 @@ def run_cases():
     if food['fixtureOnly'] is not True or core['fixtureOnly'] is not True:raise ValueError('Case templates must be fixtureOnly')
     results=[]
     for case in suite['cases']:
-        target=apply_edits(food if case['contract']=='food' else core,case['edits'])
+        target=case_input(food if case['contract']=='food' else core,case)
         errors=validate_food(target,case['validationAt']) if case['contract']=='food' else validate_core(target,food,case['validationAt'])
         actual={'valid':not errors,'errors':errors}
         expected=case['expected']
         passed=actual['valid']==expected['valid'] and all(any(e['code']==required['code'] and e['path']==required['path'] for e in errors) for required in expected.get('errors',[]))
-        results.append({'id':case['id'],'input':{'contract':case['contract'],'edits':case['edits'],'validationAt':case['validationAt']},'expected':expected,'actual':actual,'pass':passed})
+        results.append({'id':case['id'],'input':{'contract':case['contract'],'edits':case['edits'],'validationAt':case['validationAt'],**({'fixtureOnlyOverride':False,'simulationOnly':True} if 'fixtureOnlyOverride' in case else {})},'expected':expected,'actual':actual,'pass':passed})
     return {'contractId':CONTRACT_ID,'fixtureOnly':True,'publicationPerformed':False,'count':len(results), 'passed':sum(r['pass'] for r in results), 'results':results}
 
 
@@ -412,7 +445,7 @@ def main():
         if args.core and not errors:errors+=validate_core(load_json(args.core),food,args.as_of)
         report={'valid':not errors,'errors':errors,'publicationPerformed':False};valid=not errors
     if args.report:
-        args.report.parent.mkdir(parents=True,exist_ok=True);args.report.write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+        args.report.parent.mkdir(parents=True,exist_ok=True);args.report.write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     print(json.dumps({k:v for k,v in report.items() if k!='results'},ensure_ascii=False,indent=2))
     return 0 if valid else 1
 

@@ -5,13 +5,14 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT/'data-preparation/scripts'))
-from vilao_catalogue import CatalogueRun, atomic_json, parse_batch_arrays
+from vilao_catalogue import CatalogueRun, atomic_json, parse_batch_arrays, single_run
 from vilao_pilot import MODEL, compact, sha
 
-TAXONOMY = json.loads((ROOT/'data-preparation/config/taxonomy_pilot_v1.json').read_text())
+TAXONOMY = json.loads((ROOT/'data-preparation/config/taxonomy_pilot_v1.json').read_text(encoding='utf-8'))
 
 
 class MockClient:
@@ -30,6 +31,14 @@ class MockClient:
 
 
 class CatalogueTests(unittest.TestCase):
+    def test_unsupported_lock_platform_fails_before_touching_cache(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/'lock'
+            with patch('vilao_catalogue.fcntl',None):
+                with self.assertRaisesRegex(RuntimeError,'WSL'):
+                    with single_run(path):self.fail('must not run unlocked')
+            self.assertFalse(path.exists())
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
@@ -73,7 +82,7 @@ class CatalogueTests(unittest.TestCase):
         self.assertTrue(report['complete'])
         item=run.states['d00']
         self.assertEqual(len(item['attempts']),2)
-        records=[json.loads(p.read_text()) for p in (run.cache/'batches').glob('*.json')]
+        records=[json.loads(p.read_text(encoding='utf-8')) for p in (run.cache/'batches').glob('*.json')]
         first=next(x for x in records if len(x['dish_ids'])==10)
         self.assertEqual(json.loads(first['response']['content'])[0][8][5],1)
 

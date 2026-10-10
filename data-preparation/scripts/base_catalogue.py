@@ -107,7 +107,7 @@ def export(rows, mappings, out=BASE/'snapshots'):
     stats={'sourceRows':len(mappings),'baseDishes':len(rows),'mappingStates':dict(Counter(m['status'] for m in mappings)),
            'apiCalls':0,'status':'draft','contractVersion':'1.0.0','engine':'Python exec; no Jupyter kernel'}
     stats['files']={p.name:{'sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'bytes':p.stat().st_size} for p in sorted(out.glob('*.csv'))}
-    (out/'manifest.json').write_text(json.dumps(stats,ensure_ascii=False,indent=2)+'\n')
+    (out/'manifest.json').write_text(json.dumps(stats,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     return stats
 
 if __name__=='__main__':

@@ -10,7 +10,7 @@ Simulated verified/reviewer/license chỉ kiểm contract, không là evidence r
 - [Core template](../../../supabase/seed/templates/core-v1.template.json): đủ 18
   entity, hai thành viên mô phỏng, pool khóa một món, hai submission WANT đầy đủ,
   result đã lưu, history có consent, friend/invitation/inbox/event/device và ACK.
-- [135 cases](contract-cases.json): mỗi input là template đầy đủ + edits có path
+- [166 cases](contract-cases.json): mỗi input là template đầy đủ + edits có path
   theo key/index JSON. Expected viết độc lập; validator không sinh expected.
   Invalid cases yêu cầu error code/path tối thiểu, các lỗi kéo theo được ghi trong
   actual. Nhãn error là runner diagnostics, chưa là API enum GM-07.
@@ -31,3 +31,16 @@ Fixtures [food-data-v1](../food-data-v1/README.md) và snapshot khảo sát lega
 giữ nguyên; không trộn vào seed verified. Dùng [dictionary](../../../docs/data/FOOD_DATA_DICTIONARY.md)
 và [handoff](../../../docs/evidence/roadmap-v2/GM-04/HANDOFF.md) cho contract/version,
 nullable, privacy và phần chờ review.
+
+## Review fixes / portability
+
+Contract proposal GM-04.2, core 1.1.0; food shape remains 1.1.0. Added20 operation
+version cases and11 published-venue schedule/source counterexamples. simulationOnly
+marks in-memory fixtureOnlyOverride=false test inputs: no real data or publishing.
+Existing fixture-publish-blocked still verifies the independent fixture guard.
+
+Generated files use UTF-8/LF; .gitattributes prevents autocrlf conversion, preserving
+legacy CSV/BOM/CRLF and pinned snapshots. Full historical audit/locking is supported
+on Linux/macOS/WSL, run with `python3 -X utf8`; native Windows full suite Not run.
+See [platform guide](../../../data-preparation/docs/PLATFORMS.md). Use-case mapping
+is generated from scripts/gm04_use_cases.json into docs/data/use-case-coverage.json.

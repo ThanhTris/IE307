@@ -37,7 +37,7 @@ def check_manifest(directory, *, generator=None):
         elif path.stat().st_size != meta['bytes'] or ec.sha256(path) != meta['sha256']:
             errors.append(issue(filename, 'sha256/bytes', 'Artifact differs from manifest'))
     # Missing entries also fail: otherwise a newly added file could escape checksum checks.
-    actual = {str(p.relative_to(directory)) for p in directory.rglob('*') if p.is_file() and p.name != 'manifest.json'}
+    actual = {p.relative_to(directory).as_posix() for p in directory.rglob('*') if p.is_file() and p.name != 'manifest.json'}
     # The base snapshots directory contains the separate editorial subdirectory.
     if directory == bc.BASE / 'snapshots':
         actual = {p.name for p in directory.iterdir() if p.is_file() and p.name != 'manifest.json'}
@@ -188,7 +188,7 @@ def audit(*, at=AUDIT_AT):
     paths.update((bc.BASE / 'scripts' / name) for name in ['base_catalogue.py', 'data_contract.py',
         'editorial_catalogue.py', 'prepare_contract_templates.py', 'food_fixtures.py', 'validate_data_preparation.py'])
     for path in sorted(paths):
-        relative = str(path.relative_to(ROOT))
+        relative = path.relative_to(ROOT).as_posix()
         try:
             report['inputFiles'][relative] = dict(sha256=ec.sha256(path), bytes=path.stat().st_size)
         except OSError as exc:

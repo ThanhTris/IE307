@@ -1,0 +1,901 @@
+{
+  "useCases": [
+    {
+      "id": "catalogue-taxonomy",
+      "useCase": "Tên/alias/variant, cuisine/origin khác nơi bán",
+      "fields": [
+        {
+          "contract": "food",
+          "path": "dishes.name"
+        },
+        {
+          "contract": "food",
+          "path": "dishes.aliases"
+        },
+        {
+          "contract": "food",
+          "path": "dishes.cuisineIds"
+        },
+        {
+          "contract": "food",
+          "path": "dishes.categoryIds"
+        },
+        {
+          "contract": "food",
+          "path": "dishes.origin"
+        },
+        {
+          "contract": "food",
+          "path": "venueDishes.variant"
+        }
+      ],
+      "caseIds": [
+        "alias-same-id",
+        "origin-not-sales-location",
+        "multi-category",
+        "thai-cuisine-independent-origin"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-08",
+        "GM-18"
+      ]
+    },
+    {
+      "id": "coverage-location",
+      "useCase": "Coverage/điểm công cộng/chi nhánh và radius",
+      "fields": [
+        {
+          "contract": "food",
+          "path": "coverageAreas.boundary"
+        },
+        {
+          "contract": "food",
+          "path": "publicAnchors.coverageId"
+        },
+        {
+          "contract": "food",
+          "path": "publicAnchors.lat"
+        },
+        {
+          "contract": "food",
+          "path": "publicAnchors.lng"
+        },
+        {
+          "contract": "food",
+          "path": "venues.lat"
+        },
+        {
+          "contract": "food",
+          "path": "venues.lng"
+        },
+        {
+          "contract": "food",
+          "path": "venues.adminAreaId"
+        },
+        {
+          "contract": "core",
+          "path": "rooms.anchorId"
+        },
+        {
+          "contract": "core",
+          "path": "rooms.coverageId"
+        },
+        {
+          "contract": "core",
+          "path": "rooms.radiusM"
+        }
+      ],
+      "caseIds": [
+        "outside-coverage-shape",
+        "outside-radius-context-shape",
+        "anchor-coverage-mismatch",
+        "radius-zero"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-08",
+        "GM-18",
+        "GM-19"
+      ]
+    },
+    {
+      "id": "one-offering",
+      "useCase": "Một lựa chọn dùng đúng quán–món–variant–profile",
+      "fields": [
+        {
+          "contract": "food",
+          "path": "venueDishes.dishId"
+        },
+        {
+          "contract": "food",
+          "path": "venueDishes.venueId"
+        },
+        {
+          "contract": "food",
+          "path": "venueDishes.profileOverrides"
+        },
+        {
+          "contract": "food",
+          "path": "venueDishes.serviceMode"
+        },
+        {
+          "contract": "food",
+          "path": "venues.serviceModes"
+        },
+        {
+          "contract": "core",
+          "path": "roundDishes.choiceId"
+        },
+        {
+          "contract": "core",
+          "path": "roundDishes.offeringId"
+        },
+        {
+          "contract": "core",
+          "path": "roundDishes.variant"
+        },
+        {
+          "contract": "core",
+          "path": "roundDishes.effectiveProfile"
+        }
+      ],
+      "caseIds": [
+        "offering-variant-mismatch",
+        "offering-profile-mismatch",
+        "service-not-at-venue"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-08",
+        "GM-18",
+        "GM-19"
+      ]
+    },
+    {
+      "id": "meal-profile",
+      "useCase": "Buổi ăn/nhiệt độ/vị chưa biết không tự thành phù hợp",
+      "fields": [
+        {
+          "contract": "food",
+          "path": "dishes.mealSlots"
+        },
+        {
+          "contract": "food",
+          "path": "dishes.timeHints"
+        },
+        {
+          "contract": "food",
+          "path": "dishes.temperature"
+        },
+        {
+          "contract": "food",
+          "path": "dishes.flavor"
+        },
+        {
+          "contract": "core",
+          "path": "rooms.mealSlot"
+        },
+        {
+          "contract": "core",
+          "path": "rooms.timeHint"
+        }
+      ],
+      "caseIds": [
+        "unknown-meal-profile",
+        "flavor-unknown-not-false",
+        "flavor-present-level-unknown",
+        "meal-late-night-invalid"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-18"
+      ]
+    },
+    {
+      "id": "price-budget",
+      "useCase": "Giá nguồn/đơn vị/khẩu phần và budget ưu tiên mềm",
+      "fields": [
+        {
+          "contract": "food",
+          "path": "venueDishes.priceMin"
+        },
+        {
+          "contract": "food",
+          "path": "venueDishes.priceMax"
+        },
+        {
+          "contract": "food",
+          "path": "venueDishes.unit"
+        },
+        {
+          "contract": "food",
+          "path": "venueDishes.currency"
+        },
+        {
+          "contract": "food",
+          "path": "venueDishes.servingSize"
+        },
+        {
+          "contract": "core",
+          "path": "roundDishes.price"
+        },
+        {
+          "contract": "core",
+          "path": "rooms.budget"
+        }
+      ],
+      "caseIds": [
+        "missing-price",
+        "group-price-not-per-person",
+        "offering-price-mismatch",
+        "pool-price-unit-missing",
+        "budget-null"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-18",
+        "GM-19"
+      ]
+    },
+    {
+      "id": "hours-intersection",
+      "useCase": "Binding lịch quán/món riêng, consumer tính giao",
+      "fields": [
+        {
+          "contract": "food",
+          "path": "venues.scheduleId"
+        },
+        {
+          "contract": "food",
+          "path": "venueDishes.scheduleId"
+        },
+        {
+          "contract": "food",
+          "path": "weeklySchedules.ownerType"
+        },
+        {
+          "contract": "food",
+          "path": "weeklySchedules.ownerId"
+        },
+        {
+          "contract": "food",
+          "path": "weeklySchedules.timezone"
+        },
+        {
+          "contract": "food",
+          "path": "weeklySchedules.status"
+        },
+        {
+          "contract": "core",
+          "path": "roundDishes.scheduleId"
+        },
+        {
+          "contract": "core",
+          "path": "roundDishes.scheduleVersion"
+        }
+      ],
+      "caseIds": [
+        "venue-bound-to-offering-schedule",
+        "unknown-venue-schedule",
+        "published-venue-hours-valid",
+        "published-venue-hours-draft",
+        "published-venue-hours-unknown"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-08",
+        "GM-18"
+      ]
+    },
+    {
+      "id": "overnight-last-order",
+      "useCase": "Ca qua đêm và nhận món cuối [start,end)",
+      "fields": [
+        {
+          "contract": "food",
+          "path": "weeklySchedules.startTime"
+        },
+        {
+          "contract": "food",
+          "path": "weeklySchedules.endTime"
+        },
+        {
+          "contract": "food",
+          "path": "weeklySchedules.endDayOffset"
+        },
+        {
+          "contract": "food",
+          "path": "weeklySchedules.lastOrder"
+        },
+        {
+          "contract": "food",
+          "path": "weeklySchedules.lastOrderDayOffset"
+        }
+      ],
+      "caseIds": [
+        "last-order-next-day",
+        "last-order-at-close",
+        "last-order-wrong-day",
+        "overnight-missing-offset"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-18"
+      ]
+    },
+    {
+      "id": "date-exceptions",
+      "useCase": "Ngày nghỉ/ngoại lệ và ca đêm hôm trước",
+      "fields": [
+        {
+          "contract": "food",
+          "path": "dateExceptions.localDate"
+        },
+        {
+          "contract": "food",
+          "path": "dateExceptions.status"
+        },
+        {
+          "contract": "food",
+          "path": "dateExceptions.intervals"
+        },
+        {
+          "contract": "food",
+          "path": "dateExceptions.lastOrder"
+        },
+        {
+          "contract": "food",
+          "path": "dateExceptions.lastOrderDayOffset"
+        }
+      ],
+      "caseIds": [
+        "closed-next-day-contract",
+        "closed-exception-open-interval"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-08",
+        "GM-18"
+      ]
+    },
+    {
+      "id": "inventory",
+      "useCase": "Sold-out/paused/unknown với override có hạn",
+      "fields": [
+        {
+          "contract": "food",
+          "path": "availabilityOverrides.state"
+        },
+        {
+          "contract": "food",
+          "path": "availabilityOverrides.observedAt"
+        },
+        {
+          "contract": "food",
+          "path": "availabilityOverrides.expiresAt"
+        }
+      ],
+      "caseIds": [
+        "expired-inventory-record",
+        "unknown-inventory-record",
+        "inventory-zero-duration"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-08",
+        "GM-18"
+      ]
+    },
+    {
+      "id": "source-publish",
+      "useCase": "Nguồn/license/reviewer/hạn; dataset không che child stale",
+      "fields": [
+        {
+          "contract": "food",
+          "path": "dataSources.usageRights"
+        },
+        {
+          "contract": "food",
+          "path": "dataSources.license"
+        },
+        {
+          "contract": "food",
+          "path": "dataSources.checkedAt"
+        },
+        {
+          "contract": "food",
+          "path": "dataSources.validUntil"
+        },
+        {
+          "contract": "food",
+          "path": "dataSources.reviewedBy"
+        },
+        {
+          "contract": "food",
+          "path": "venues.fieldSources"
+        },
+        {
+          "contract": "food",
+          "path": "weeklySchedules.sourceRef"
+        },
+        {
+          "contract": "food",
+          "path": "weeklySchedules.validUntil"
+        },
+        {
+          "contract": "food",
+          "path": "datasetVersions.validUntil"
+        }
+      ],
+      "caseIds": [
+        "fixture-publish-blocked",
+        "source-expired-at-boundary",
+        "published-venue-hours-exact-expiry",
+        "published-venue-hours-source-stale",
+        "published-venue-hours-source-rights-unknown"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-08",
+        "GM-18"
+      ]
+    },
+    {
+      "id": "artwork-rights",
+      "useCase": "Ảnh có nguồn/quyền, thiếu bằng chứng giữ null",
+      "fields": [
+        {
+          "contract": "food",
+          "path": "dishes.artwork"
+        },
+        {
+          "contract": "food",
+          "path": "dataSources.attribution"
+        }
+      ],
+      "caseIds": [
+        "unknown-image-license-publish"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-08"
+      ]
+    },
+    {
+      "id": "room-lock",
+      "useCase": "Khóa context/roster/consent/pool/version/expiry",
+      "fields": [
+        {
+          "contract": "core",
+          "path": "rooms.state"
+        },
+        {
+          "contract": "core",
+          "path": "rooms.rosterUserIds"
+        },
+        {
+          "contract": "core",
+          "path": "rooms.consentSnapshot"
+        },
+        {
+          "contract": "core",
+          "path": "rooms.poolVersion"
+        },
+        {
+          "contract": "core",
+          "path": "rooms.contextVersion"
+        },
+        {
+          "contract": "core",
+          "path": "rooms.lockedAt"
+        },
+        {
+          "contract": "core",
+          "path": "rooms.expiresAt"
+        },
+        {
+          "contract": "core",
+          "path": "rooms.desiredAt"
+        },
+        {
+          "contract": "core",
+          "path": "members.userId"
+        },
+        {
+          "contract": "core",
+          "path": "members.ready"
+        },
+        {
+          "contract": "core",
+          "path": "members.leftAt"
+        }
+      ],
+      "caseIds": [
+        "started-unlocked",
+        "locked-roster-missing-member",
+        "consent-snapshot-incomplete",
+        "pool-version-mismatch"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-17",
+        "GM-19"
+      ]
+    },
+    {
+      "id": "preferences",
+      "useCase": "Ưu tiên riêng từng người, không đọc phiếu người khác",
+      "fields": [
+        {
+          "contract": "core",
+          "path": "preferences.cuisineIds"
+        },
+        {
+          "contract": "core",
+          "path": "preferences.categoryIds"
+        },
+        {
+          "contract": "core",
+          "path": "preferences.temperature"
+        },
+        {
+          "contract": "core",
+          "path": "preferences.flavor"
+        }
+      ],
+      "caseIds": [
+        "preferences-skipped",
+        "core-wrong-taxonomy-kind"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-17",
+        "GM-19"
+      ]
+    },
+    {
+      "id": "submitted-ballot",
+      "useCase": "ACK của Gửi đủ pool, không default OK/KEEP",
+      "fields": [
+        {
+          "contract": "core",
+          "path": "submissions.memberId"
+        },
+        {
+          "contract": "core",
+          "path": "submissions.round"
+        },
+        {
+          "contract": "core",
+          "path": "submissions.poolVersion"
+        },
+        {
+          "contract": "core",
+          "path": "submissions.acceptedAt"
+        },
+        {
+          "contract": "core",
+          "path": "submissions.intentId"
+        },
+        {
+          "contract": "core",
+          "path": "submissions.payloadHash"
+        },
+        {
+          "contract": "core",
+          "path": "votes.submissionId"
+        },
+        {
+          "contract": "core",
+          "path": "votes.roundDishId"
+        },
+        {
+          "contract": "core",
+          "path": "votes.value"
+        }
+      ],
+      "caseIds": [
+        "vote-unset-invalid",
+        "submission-incomplete-votes",
+        "round1-keep-invalid",
+        "submission-at-expiry"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-15",
+        "GM-17",
+        "GM-20"
+      ]
+    },
+    {
+      "id": "decision-result",
+      "useCase": "Hai vòng, winner/tier/reason persisted và ties private",
+      "fields": [
+        {
+          "contract": "core",
+          "path": "roundDishes.round"
+        },
+        {
+          "contract": "core",
+          "path": "roundDishes.choiceId"
+        },
+        {
+          "contract": "core",
+          "path": "results.winnerRoundDishId"
+        },
+        {
+          "contract": "core",
+          "path": "results.reasonCode"
+        },
+        {
+          "contract": "core",
+          "path": "results.matchTier"
+        },
+        {
+          "contract": "core",
+          "path": "results.tiedChoiceIds"
+        },
+        {
+          "contract": "core",
+          "path": "results.finalizedAt"
+        }
+      ],
+      "caseIds": [
+        "round2-new-choice",
+        "winner-veto-invalid",
+        "result-tier-inconsistent",
+        "missing-member-ack-final",
+        "result-no-score-matrix"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-15",
+        "GM-17",
+        "GM-20"
+      ]
+    },
+    {
+      "id": "history-consent",
+      "useCase": "Lịch sử tối thiểu/đúng roster/opt-in, rút consent",
+      "fields": [
+        {
+          "contract": "core",
+          "path": "histories.memberUserIds"
+        },
+        {
+          "contract": "core",
+          "path": "histories.groupKey"
+        },
+        {
+          "contract": "core",
+          "path": "histories.consentIds"
+        },
+        {
+          "contract": "core",
+          "path": "histories.resultId"
+        },
+        {
+          "contract": "core",
+          "path": "consents.scope"
+        },
+        {
+          "contract": "core",
+          "path": "consents.enabled"
+        },
+        {
+          "contract": "core",
+          "path": "consents.revokedAt"
+        },
+        {
+          "contract": "core",
+          "path": "consents.expiresAt"
+        }
+      ],
+      "caseIds": [
+        "history-wrong-roster",
+        "history-withdrawn-consent",
+        "history-consent-exact-expiry",
+        "operation-update-history-consent-null-version"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-17",
+        "GM-21"
+      ]
+    },
+    {
+      "id": "social-invites",
+      "useCase": "Canonical friends, invitation không auto-join/ready",
+      "fields": [
+        {
+          "contract": "core",
+          "path": "friends.lowUserId"
+        },
+        {
+          "contract": "core",
+          "path": "friends.highUserId"
+        },
+        {
+          "contract": "core",
+          "path": "friendInvitations.state"
+        },
+        {
+          "contract": "core",
+          "path": "roomInvitations.roomId"
+        },
+        {
+          "contract": "core",
+          "path": "roomInvitations.friendId"
+        },
+        {
+          "contract": "core",
+          "path": "roomInvitations.expiresAt"
+        }
+      ],
+      "caseIds": [
+        "friend-self-pair",
+        "room-invite-outlives-room",
+        "room-invite-unfriend-no-link",
+        "operation-accept-room-invite-null-version"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-17",
+        "GM-22"
+      ]
+    },
+    {
+      "id": "notifications",
+      "useCase": "Inbox riêng, device/token/dispatch sau result",
+      "fields": [
+        {
+          "contract": "core",
+          "path": "inbox.ownerUserId"
+        },
+        {
+          "contract": "core",
+          "path": "inbox.eventId"
+        },
+        {
+          "contract": "core",
+          "path": "devices.pushToken"
+        },
+        {
+          "contract": "core",
+          "path": "devices.permission"
+        },
+        {
+          "contract": "core",
+          "path": "devices.active"
+        },
+        {
+          "contract": "core",
+          "path": "events.recipientUserIds"
+        },
+        {
+          "contract": "core",
+          "path": "events.resultId"
+        },
+        {
+          "contract": "core",
+          "path": "deliveries.deviceId"
+        }
+      ],
+      "caseIds": [
+        "inbox-no-token",
+        "unknown-device-active",
+        "event-before-result",
+        "delivery-wrong-device-owner",
+        "notification-consent-withdrawn"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-17",
+        "GM-23"
+      ]
+    },
+    {
+      "id": "idempotency-version",
+      "useCase": "Request/hash/ACK trước version, pre-membership null",
+      "fields": [
+        {
+          "contract": "core",
+          "path": "idempotency.operation"
+        },
+        {
+          "contract": "core",
+          "path": "idempotency.requestId"
+        },
+        {
+          "contract": "core",
+          "path": "idempotency.payloadHash"
+        },
+        {
+          "contract": "core",
+          "path": "idempotency.expectedVersion"
+        },
+        {
+          "contract": "core",
+          "path": "idempotency.response"
+        },
+        {
+          "contract": "core",
+          "path": "idempotency.expiresAt"
+        }
+      ],
+      "caseIds": [
+        "operation-join-room-null-version",
+        "operation-accept-room-invite-null-version",
+        "operation-submit-ballot-null-version",
+        "operation-create-room-invite-null-version",
+        "idempotency-hash-changed",
+        "idempotency-duplicate-request"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-17",
+        "GM-19",
+        "GM-20",
+        "GM-21",
+        "GM-22",
+        "GM-23"
+      ]
+    },
+    {
+      "id": "privacy-reserved",
+      "useCase": "Projection allowlist, không GPS/votes/token/mood public",
+      "fields": [
+        {
+          "contract": "core",
+          "path": "rooms.rosterUserIds"
+        },
+        {
+          "contract": "core",
+          "path": "results.tiedChoiceIds"
+        },
+        {
+          "contract": "core",
+          "path": "histories.ownerUserId"
+        },
+        {
+          "contract": "core",
+          "path": "devices.pushToken"
+        }
+      ],
+      "caseIds": [
+        "raw-votes-in-room",
+        "gps-in-room",
+        "history-no-votes",
+        "history-no-anchor",
+        "weather-reserved",
+        "mood-reserved"
+      ],
+      "consumers": [
+        "GM-06",
+        "GM-07",
+        "GM-17",
+        "GM-07"
+      ]
+    }
+  ]
+}

@@ -108,7 +108,7 @@ class FoodFixtureTests(unittest.TestCase):
         self.assertNotEqual(before['entities']['dishes'][0]['name'], after['entities']['dishes'][0]['name'])
 
     def test_real_ids_and_images_not_used(self):
-        real = {r['id'] for r in json.loads((ff.BASE / 'config/base_dish_registry.json').read_text())['dishes']}
+        real = {r['id'] for r in json.loads((ff.BASE / 'config/base_dish_registry.json').read_text(encoding='utf-8'))['dishes']}
         for data in self.datasets.values():
             self.assertTrue(data['fixtureOnly'])
             for row in data['entities']['dishes']:
@@ -194,9 +194,9 @@ class FoodFixtureTests(unittest.TestCase):
 
     def test_tracked_snapshots_match_generator(self):
         for name, expected in [('datasets.json', self.datasets), ('cases.json', self.suite), ('registry.json', self.registry)]:
-            self.assertEqual(json.loads((ff.OUTPUT / name).read_text()), expected)
+            self.assertEqual(json.loads((ff.OUTPUT / name).read_text(encoding='utf-8')), expected)
         self.assertEqual(ff.dc.read_csv_bundle(ff.OUTPUT / 'base-csv'), self.datasets['base'])
-        manifest = json.loads((ff.OUTPUT / 'manifest.json').read_text())
+        manifest = json.loads((ff.OUTPUT / 'manifest.json').read_text(encoding='utf-8'))
         self.assertEqual(manifest['generatorSha256'], ff.hash_file(Path(ff.__file__)))
         for filename, metadata in manifest['files'].items():
             self.assertEqual(ff.hash_file(ff.OUTPUT / filename), metadata['sha256'])

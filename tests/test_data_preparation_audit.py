@@ -1,7 +1,7 @@
 """GM-03 handoff audit diagnostics and isolation; never run eligibility/network."""
 import copy
 import json
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 import sys
 import tempfile
 import unittest
@@ -111,6 +111,16 @@ class DataPreparationAuditTests(unittest.TestCase):
             directory = Path(d)
             (directory / 'manifest.json').write_text(json.dumps(dict(files={'../escape.json': dict(bytes=0, sha256='x')})))
             self.assertTrue(any('escapes' in e['message'] for e in audit.check_manifest(directory)))
+
+    def test_nested_manifest_uses_posix_paths_on_windows(self):
+        with tempfile.TemporaryDirectory() as d:
+            directory=Path(d);(directory/'nested').mkdir()
+            self.manifest(directory,'nested/input.json')
+            original=Path.relative_to
+            def windows_relative(path,*args,**kwargs):
+                return PureWindowsPath(original(path,*args,**kwargs).as_posix())
+            with patch.object(Path,'relative_to',windows_relative):
+                self.assertEqual(audit.check_manifest(directory),[])
 
     def test_registry_duplicate_or_changed_uuid(self):
         registry = audit.bc.load_json(audit.bc.BASE / 'config/taxonomy_registry_v1.json')

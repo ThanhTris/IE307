@@ -3,6 +3,7 @@ from copy import deepcopy
 import json
 from pathlib import Path
 import socket
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -23,7 +24,7 @@ class FieldContractTests(unittest.TestCase):
         self.assertEqual(set(core['entities']),set(model.CORE))
         self.assertTrue(all(core['entities'].values()))
         self.assertTrue(all(food['entities'].values()))
-        survey=json.loads((ROOT/'data-preparation/config/base_dish_registry.json').read_text())
+        survey=json.loads((ROOT/'data-preparation/config/base_dish_registry.json').read_text(encoding='utf-8'))
         survey_ids={r['id'] for r in survey['dishes']}
         self.assertEqual(len(survey_ids),39)
         self.assertTrue(survey_ids.isdisjoint({r['id'] for r in food['entities']['dishes']}))
@@ -105,6 +106,52 @@ class FieldContractTests(unittest.TestCase):
                 self.assertIn('never shared',index['results.tiedChoiceIds']['privacy'])
                 self.assertIn('never log',index['devices.pushToken']['privacy'])
 
+    def test_use_case_coverage_resolves_fields_cases_schema_and_template(self):
+        document=check.load_json(ROOT/'docs/data/use-case-coverage.json')
+        self.assertEqual(document['contractId'],model.CONTRACT_ID)
+        cases={c['id'] for c in check.load_json(ROOT/'tests/fixtures/food-v1/contract-cases.json')['cases']}
+        self.assertEqual(len(document['useCases']),20)
+        for use_case in document['useCases']:
+            self.assertTrue({'GM-06','GM-07'}<=set(use_case['consumers']))
+            self.assertTrue(set(use_case['caseIds'])<=cases)
+            for artifact in use_case['artifacts']:
+                for key in ['schema','template']:
+                    path,pointer=artifact[key].split('#',1)
+                    value=check.load_json(ROOT/path)
+                    for part in pointer.strip('/').split('/'):
+                        value=value[int(part)] if isinstance(value,list) else value[part]
+
+    def test_operation_mapping_covers_existing_p0_writes_without_guessing_version(self):
+        existing={'create_room','join_room','update_preferences','update_context','set_ready','start_round',
+                  'submit_ballot','cancel_room','leave_room','invite_partner','accept_partner','reject_partner',
+                  'unfriend','invite_to_room','accept_room_invite','register_push_device','unregister_push_device',
+                  'delete_history','update_history_consent'}
+        self.assertEqual({rpc for rpc,_,_ in model.OPERATION_RULES.values() if rpc},existing)
+        for op in ['join_room','accept_room_invite','update_history_consent','accept_friend_invite']:
+            self.assertFalse(model.OPERATION_RULES[op][1])
+        self.assertTrue(model.OPERATION_RULES['submit_ballot'][1])
+
+    def test_generated_bytes_survive_autocrlf_checkout_and_legacy_csv_stays_exact(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out=Path(tmp)
+            def git(*args):
+                return subprocess.run(['git',*args],cwd=out,check=True,capture_output=True)
+            git('init','--quiet');git('config','core.autocrlf','true')
+            (out/'.gitattributes').write_bytes((ROOT/'.gitattributes').read_bytes())
+            path=out/'supabase/seed/templates/core-v1.template.json';path.parent.mkdir(parents=True)
+            value=build.artifacts()['supabase/seed/templates/core-v1.template.json'].encode('utf-8');path.write_bytes(value)
+            csv=out/'data-preparation/snapshots/sample.csv';csv.parent.mkdir(parents=True)
+            raw=b'\xef\xbb\xbfID,name\r\n1,unchanged\r\n';csv.write_bytes(raw)
+            git('add','.');path.unlink();csv.unlink();git('checkout-index','--all')
+            self.assertEqual(path.read_bytes(),value)
+            self.assertEqual(csv.read_bytes(),raw)
+
+    def test_explicit_utf8_loader_preserves_vietnamese_under_non_utf8_locale(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/'input.json';path.write_bytes('{"món":"Bún bò"}'.encode('utf-8'))
+            with patch('locale.getencoding',return_value='cp1252'):
+                self.assertEqual(check.load_json(path),{'món':'Bún bò'})
+
     def test_effective_profile_can_inherit_base_but_not_another_offering(self):
         food,core=build.templates()
         core['entities']['roundDishes'][0]['effectiveProfile']={'temperature':food['entities']['dishes'][0]['temperature']}
@@ -147,7 +194,7 @@ class FieldContractTests(unittest.TestCase):
 def make_case_test(case):
     def test(self):
         food,core=build.templates()
-        target=check.apply_edits(food if case['contract']=='food' else core,case['edits'])
+        target=check.case_input(food if case['contract']=='food' else core,case)
         errors=check.validate_food(target,case['validationAt']) if case['contract']=='food' else check.validate_core(target,food,case['validationAt'])
         self.assertEqual(not errors,case['expected']['valid'],errors)
         for expected in case['expected']['errors']:

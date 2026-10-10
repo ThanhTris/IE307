@@ -4,9 +4,9 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-CONTRACT_ID = 'food-v1/roadmap-v2/GM-04.1'
+CONTRACT_ID = 'food-v1/roadmap-v2/GM-04.2'
 FOOD_VERSION = '1.1.0'
-CORE_VERSION = '1.0.0'
+CORE_VERSION = '1.1.0'
 UTC_PATTERN = r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?Z$'
 UUID_PATTERN = r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
 SEMVER_PATTERN = r'^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$'
@@ -14,6 +14,32 @@ MEALS = ['breakfast', 'lunch', 'dinner', 'snack']
 RIGHTS = ['unknown', 'granted', 'licensed', 'public_domain', 'denied']
 REVIEW = ['draft', 'verified', 'published']
 SOURCE_GROUPS = ['name','description','taxonomy','image','menu','price','coordinates','address','hours','availability','coverage']
+
+# Internal operation names map to existing spec writes; this does not create RPCs.
+# No-room/pre-membership operations never require a client to guess room version.
+OPERATION_RULES = {
+    'create_room': ('create_room', False, 'GM-19'),
+    'join_room': ('join_room', False, 'GM-19'),
+    'update_preferences': ('update_preferences', True, 'GM-19'),
+    'update_context': ('update_context', True, 'GM-19'),
+    'set_ready': ('set_ready', True, 'GM-19'),
+    'start_room': ('start_round', True, 'GM-19'),
+    'submit_ballot': ('submit_ballot', True, 'GM-20'),
+    'cancel_room': ('cancel_room', True, 'GM-19'),
+    'leave_room': ('leave_room', True, 'GM-19'),
+    'create_friend_invite': ('invite_partner', False, 'GM-22'),
+    'accept_friend_invite': ('accept_partner', False, 'GM-22'),
+    'reject_friend_invite': ('reject_partner', False, 'GM-22'),
+    'unfriend': ('unfriend', False, 'GM-22'),
+    'create_room_invite': ('invite_to_room', True, 'GM-22'),
+    'accept_room_invite': ('accept_room_invite', False, 'GM-22'),
+    # Existing internal invitation state write; no separately declared public RPC.
+    'reject_room_invite': (None, False, 'GM-22'),
+    'register_push_device': ('register_push_device', False, 'GM-23'),
+    'unregister_push_device': ('unregister_push_device', False, 'GM-23'),
+    'delete_history': ('delete_history', False, 'GM-21'),
+    'update_history_consent': ('update_history_consent', False, 'GM-21'),
+}
 
 
 def obj(fields, required=None):
@@ -90,7 +116,7 @@ def primitive(field):
     return nullable(s) if field['nullable'] else s
 
 
-FOOD = deepcopy(json.loads((ROOT/'data-preparation/config/data_contract_v1.json').read_text())['entities'])
+FOOD = deepcopy(json.loads((ROOT/'data-preparation/config/data_contract_v1.json').read_text(encoding='utf-8'))['entities'])
 FOOD['venues']['fields']['scheduleId'] = {'type':'uuid','nullable':True,'ref':'weeklySchedules','refKey':'scheduleId',
     'description':'Binding lịch quán riêng; null là chưa biết, không mượn lịch món'}
 for name in ['weeklySchedules','dateExceptions']:
@@ -161,7 +187,7 @@ entity('inbox', {'ownerUserId':uid(ref='auth.users'), 'eventId':uid(ref='events'
 entity('devices', {'userId':uid(ref='auth.users'), 'deviceKey':f(), 'platform':en(['android']), 'pushToken':f(null=True,privacy='owner register/unregister; trusted sender only; never log'), 'permission':en(['granted','denied','unknown']), 'active':f('boolean'), 'createdAt':ts(), 'lastSeenAt':ts()}, [['userId','deviceKey']], 'owner/trusted sender only', 'device permission/provider registration', 'NOTIFICATIONS_LINKS_SPEC; IDENTITY_PRIVACY_SPEC')
 entity('events', {'kind':en(['ROOM_INVITED','ROOM_RESULT_READY']), 'roomId':uid(ref='rooms'), 'invitationId':uid(ref='roomInvitations',null=True), 'resultId':uid(ref='results',null=True), 'recipientUserIds':ids(ref='auth.users'), 'dedupeKey':f(), 'createdAt':ts(), 'expiresAt':ts()}, [['dedupeKey']], 'trusted sender only; minimal ref payload', 'server transaction event; dispatch after commit', 'NOTIFICATIONS_LINKS_SPEC; API_CONTRACT')
 entity('deliveries', {'eventId':uid(ref='events'), 'recipientUserId':uid(ref='auth.users'), 'deviceId':uid(ref='devices',null=True), 'state':en(['pending','sent','failed','expired']), 'attempts':f('integer',minimum=0), 'ticketId':f(null=True,privacy='trusted sender only'), 'receiptId':f(null=True,privacy='trusted sender only'), 'lastAttemptAt':ts(null=True), 'expiresAt':ts()}, [['eventId','recipientUserId','deviceId']], 'trusted sender only', 'provider ACK/receipt; duplicate delivery possible', 'NOTIFICATIONS_LINKS_SPEC')
-entity('idempotency', {'userId':uid(ref='auth.users'), 'operation':en(['create_room','join_room','update_preferences','update_context','set_ready','start_room','submit_ballot','cancel_room','leave_room','create_friend_invite','accept_friend_invite','reject_friend_invite','unfriend','create_room_invite','accept_room_invite','reject_room_invite','register_push_device','unregister_push_device','delete_history']), 'requestId':uid(), 'payloadHash':f('sha256'), 'expectedVersion':f('integer',minimum=1,null=True), 'response':field_obj(obj({'roomId':nullable(uuid_schema()), 'resultId':nullable(uuid_schema()), 'serverVersion':{'type':'integer','minimum':1}})), 'createdAt':ts(), 'expiresAt':ts()}, [['userId','operation','requestId']], 'trusted RPC only; caller receives own ACK', 'immutable payload hash; ACK lookup before version check', 'API_CONTRACT; OFFLINE_SYNC_SPEC')
+entity('idempotency', {'userId':uid(ref='auth.users'), 'operation':en(list(OPERATION_RULES)), 'requestId':uid(), 'payloadHash':f('sha256'), 'expectedVersion':f('integer',minimum=1,null=True), 'response':field_obj(obj({'roomId':nullable(uuid_schema()), 'resultId':nullable(uuid_schema()), 'serverVersion':{'type':'integer','minimum':1}})), 'createdAt':ts(), 'expiresAt':ts()}, [['userId','operation','requestId']], 'trusted RPC only; caller receives own ACK', 'immutable payload hash; ACK lookup before version check', 'API_CONTRACT; OFFLINE_SYNC_SPEC')
 
 FOOD_UNIQUE = {'taxonomy':[['type','code']], 'venueDishes':[['venueId','dishId','variant','serviceMode']], 'dateExceptions':[['scheduleId','localDate']], 'datasetVersions':[['datasetVersion']]}
 

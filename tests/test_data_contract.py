@@ -28,7 +28,7 @@ class DataContractTests(unittest.TestCase):
     def test_tracked_forms_current(self):
         for folder,bundle in [('empty',empty_bundle()),('examples',example_bundle())]:
             self.assertEqual(dc.read_csv_bundle(dc.BASE/'templates'/folder),bundle)
-            self.assertEqual(json.loads((dc.BASE/'templates'/folder/'dataset.json').read_text()),bundle)
+            self.assertEqual(json.loads((dc.BASE/'templates'/folder/'dataset.json').read_text(encoding='utf-8')),bundle)
     def test_unknown_draft_allowed(self):
         self.assertIsNone(self.row('venues')['lat']);self.assertIsNone(self.row('venueDishes')['servingSize']);self.assertEqual(self.errors(),[])
     def test_duplicate_id(self):
@@ -111,7 +111,7 @@ class DataContractTests(unittest.TestCase):
         self.assertNotEqual(schedules[0]['id'],schedules[1]['id'])
         self.assertEqual(self.errors(),[])
     def test_taxonomy_registry_ids(self):
-        registry=json.loads((dc.BASE/'config/taxonomy_registry_v1.json').read_text())['entries']
+        registry=json.loads((dc.BASE/'config/taxonomy_registry_v1.json').read_text(encoding='utf-8'))['entries']
         self.assertEqual(len({x['id'] for x in registry}),len(registry))
         for x in registry:self.assertEqual(x['id'],dc.stable_id('taxonomy',x['registryKey']))
     def test_utc_requires_full_datetime(self):

@@ -1,0 +1,56 @@
+{
+  "testedRevision": "working tree based on f5a8304b7ce7c03f021cbfda7e3c58ea6ae6d062; exact tested source SHA256 below",
+  "contractId": "food-v1/roadmap-v2/GM-04.2",
+  "foodContractVersion": "1.1.0",
+  "coreContractVersion": "1.1.0",
+  "platform": "macOS-26.1-arm64-arm-64bit",
+  "python": "3.12.14",
+  "fixtureClock": "2026-10-10T00:00:00Z",
+  "caseAssertions": {
+    "total": 166,
+    "passed": 166,
+    "repeatByteIdentical": true
+  },
+  "fieldTests": 183,
+  "fullRegression": {
+    "total": 435,
+    "passed": 435,
+    "skipped": 0
+  },
+  "legacyAudit": {
+    "checks": 9,
+    "passed": 9,
+    "readyForPublish": false
+  },
+  "useCases": 20,
+  "fieldPaths": 596,
+  "sourceSha256": {
+    "scripts/gm04_contract_model.py": "53e0c27192ca307b602334e52ed540ba67749b8a0b2a4c0447fcefcac210ffae",
+    "scripts/build_field_contracts.py": "95eb71023ab3c061946c6ecdb732c7295e0dbe225daf145481214c7a7afa88ee",
+    "scripts/validate_field_contracts.py": "1d76d68fec8d1532c5cd4e7f2d1f30c19c36db0f2b09d23e6b7406ea80cb7ec7",
+    "scripts/gm04_use_cases.json": "5f613da0b5d24d088c158dd9994784f8b29601d449db34c9219dd04d5c21d9e1",
+    "tests/test_field_contracts.py": "9344b17101c985d74efacc946d5736d91df9c97c2260d55064cfb3fb53981821",
+    "tests/test_data_preparation_audit.py": "43ae2c32935965b4e5f57d1459870f210b0411f5c3f2942eb34cf2ebab7cb614",
+    "tests/test_vilao_catalogue.py": "79748bc5f04c0fc440750b28225fccb22f92a52a6d265260fb276e0a4de8f33a",
+    "data-preparation/scripts/data_contract.py": "52aff83017b61df2f6494b1796b45f7006c1177460c7f85f54b9a591da4e0a8e",
+    "data-preparation/scripts/validate_data_preparation.py": "77de984987a9ab77ef88371149f8d193a422e43db0ca131022d984aec65ff04c",
+    "data-preparation/scripts/vilao_catalogue.py": "cda7d473b1906ac9cb688fd10e66d2870723bc22d00d923d3f25fb57a7644f70",
+    ".gitattributes": "ef300c9d2b1cc81b0c27e0da1ed2796bae031dda3189d227a5ac4b46583a75d2"
+  },
+  "commands": [
+    "python3 -X utf8 scripts/build_field_contracts.py --check",
+    "python3 -X utf8 scripts/validate_field_contracts.py --cases --report /tmp/gm04-fixes-cases.json",
+    "python3 -X utf8 -m unittest discover -s tests -p 'test_field_contracts.py'",
+    "python3 -X utf8 -m unittest discover -s tests -p 'test_*.py'",
+    "python3 -X utf8 data-preparation/scripts/validate_data_preparation.py --report-dir /tmp/gm04-fix-audit",
+    "python3 scripts/validate_repository.py",
+    "python3 scripts/task_readiness.py --check-docs",
+    "git diff --check"
+  ],
+  "notRun": [
+    "Native Windows/WSL runtime",
+    "SQL/RPC/eligibility/import/native",
+    "Independent reviewer approval"
+  ],
+  "ownerPlatformDecision": "User confirmed Mac test evidence suffices for GM-04; Windows-only compatibility is a separate follow-up, not a merge blocker."
+}
