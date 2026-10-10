@@ -1,53 +1,57 @@
-# Workflow — viết song song, merge có thứ tự
+# Workflow — nhận đủ đầu vào, dựng nền trước rồi tích hợp
 
-Task Markdown là nguồn trạng thái; GitHub có thể còn scope cũ. Theo [ADR-006](../architecture/decisions/ADR-006-parallel-start-ordered-merge.md), chủ dự án đã yêu cầu tách hai gate. GM-01 vẫn chờ Trí review food-v1, không tự mở khóa từ GM-00.
+Roadmap-v2 theo [ADR-009](../architecture/decisions/ADR-009-foundation-first-task-slicing.md) và [lộ trình](IMPLEMENTATION_ROADMAP.md). Task Markdown là nguồn scope/status; task map lưu producer/input/output. GitHub có thể còn mã/scope cũ.
 
-## Trước bắt đầu phần độc lập
+## Trước bắt đầu
 
-Mã hiện hành GM-01..31 theo [lộ trình](TASK_RENUMBERING.md); dependency chỉ được trỏ số nhỏ hơn. GM-03 chờ review GM-01, không chờ account GM-28. parallel_with là cặp phối hợp, không là điều kiện chặn nên có thể chứa số lớn hơn. Issue/evidence cũ phải tra mapping, không suy task theo số cũ.
+1. Chọn đúng task roadmap-v2 và xem bảng đầu vào. UI cần shell → components → contract/mock trước màn; BE cần structure/field/contract trước API; Data cần fields → schema → import.
+2. Chạy `python scripts/task_readiness.py --task GM-XX`. Start deps phải Done/Approved; checker kiểm file output cần nhận. Sau fetch đúng remote, có thể thêm `--base-ref origin/main` để đối chiếu task/evidence và artifact trên target.
+3. Đọc HANDOFF upstream: file/commit/version, lệnh chạy, expected output, limitations; cập nhật nhánh nhận đúng code. Thiếu file hoặc contract thì báo blocker cụ thể, không tự dựng lại hoặc đoán response.
+4. Owner/reviewer xác nhận nhận việc, chốt patch/test plan và file ownership; dùng nhánh riêng, mặc định `codex/gm-xx-mo-ta`.
+5. Thực hiện phần đã có đầu vào. GM-09..14 là màn mock có thể hoàn thành độc lập; task INTEGRATION mới nghiệm thu API/native thật. Không gộp gallery/capability test vào việc dựng màn mẫu.
 
-1. Chạy `python scripts/task_readiness.py --task GM-XX` (mặc định --gate start); chỉ start_dependencies phải Done/Approved với reviewer/ngày/evidence hợp lệ.
-2. Owner/reviewer xác nhận nhận việc, assignment_status=accepted; chốt patch/test plan và phần “Làm trước” trong task. READY_TO_CLAIM chưa có nghĩa đã nhận việc.
-3. Draft PR ghi commit contract/fixtures cụ thể: input/output/error/nullable/version và owner upstream, dựa trên spec/API/data model đã review. Interface chưa rõ hoặc đổi thì thống nhất trước phần bị ảnh hưởng; không tự đoán/copy shared types.
-4. Dùng nhánh riêng; mặc định `codex/gm-xx-mo-ta` khi agent tạo nhánh. Viết UI/view model/adapter/pure rules/tests với fake đúng contract dù merge_dependencies chưa Done. Ghi rõ mock và Not run nếu thiếu runner; không dùng mock đóng AC thật.
-5. Chuyển backlog → in-progress và sửa status cùng lúc, không copy task. Được mở draft PR/review sớm, chưa đồng nghĩa đủ merge. Mỗi người một task chính; không bắt cả nhóm chờ cùng lớp.
+GM-01 hiện review, GM-00 chỉ approval v0.2. Yêu cầu hiện tại cho phép Codex soạn lại task/docs/tooling; không tự duyệt baseline/code hoặc chuyển task Done. Review sandbox của chủ dự án được ghi nhận cho đúng scope/revision; không tự mở gate cho phần mới ở main.
 
-## File ownership và contract
+## Hai gate và song song
 
-- GM-02 (Tuấn): package/lockfile/config/runner. Task khác đề xuất dependency qua review, không tự tạo tooling cạnh tranh.
-- GM-03 (Vinh): taxonomy/DTO/templates; GM-05 (Tâm): schema/SQL setup/migration numbering. Khảo sát GM-08 và schema GM-05 làm song song sau GM-03.
-- GM-04 (Trang): shared UI primitives. Screen dùng interface đã chốt; fake trong test/feature riêng, không ghi đè primitives đang làm.
-- Feature owner giữ file patch plan; shared adapters/types/routes/fixtures phải ghi người sửa trong PR. Migration/test/fixture tên task riêng; không sửa migration đã merge.
-- Đổi API: cập nhật spec/ADR khi cần, báo owner/reviewer upstream và downstream; review lại revision mới, không tái dùng Approved cũ.
-- Có thể dùng stacked branch để chạy thử; PR ghi cha. Cha merge xong thì cập nhật/rebase/retarget về target, kiểm diff chỉ còn scope mình và chạy lại tests. Không tự merge cả stack.
+Start dependency chặn phần dùng đầu vào đó. Merge dependency là phần chỉ cần khi tích hợp/nghiệm thu task; merge luôn cộng start deps. Ví dụ GM-07 soạn client/mock sau dictionary và cấu trúc, đối chiếu schema GM-06 trước merge. GM-24 có thể soạn adapter native theo contract rồi nghiệm thu cùng auth/eligibility API sau.
 
-## Trước merge từng PR
+Mọi dependency có ID nhỏ hơn task hiện tại. Merge tăng dần 01..38 luôn hợp lệ; không cần chờ task không liên quan nếu chọn merge theo graph. `parallel_with` chỉ cặp phối hợp: khác owner, không có start ancestor, có thể có quan hệ merge trước/sau. Chỉ chạy song song khi đủ input, có người và tách file rõ. Cùng owner xếp ca.
 
-1. Xem [dependency map](TASK_DEPENDENCIES.md). Cả start_dependencies và merge_dependencies phải Done/Approved; task/evidence upstream đúng revision trên target. Không đợi task không liên quan.
-2. Cập nhật ref target (fetch sau khi xác nhận remote), chạy:
+## File ownership
 
-   `python scripts/task_readiness.py --task GM-XX --gate merge --base-ref origin/main`
+| Phần dùng chung | Task điều phối |
+| --- | --- |
+| Mobile package/lockfile/config/runner/routes shell | GM-02 |
+| BE config/local tooling/runner | GM-03 |
+| Dictionary/template/validation rules | GM-04 |
+| Tokens/shared UI/component props | GM-05 |
+| Schema/migration numbering/constraints | GM-06 |
+| API DTO/errors/client/mock/transport | GM-07 |
 
-   Checker in SHA snapshot local. Chưa fetch được thì không tuyên bố remote mới. BLOCKED_ON_BASE = task/evidence upstream thiếu hoặc khác revision. READY_FOR_MERGE_REVIEW chỉ xác nhận đầu vào, không tự cho phép merge.
-3. Điền PR/merge commit upstream trong mẫu PR, kiểm code đã vào target chứ không chỉ task Markdown. Có thể dùng `git merge-base --is-ancestor <merge-commit> <target-ref>`; với squash dùng commit squash thực tế, không dùng SHA nhánh cũ. Checker không tự kiểm phần này.
-4. Cập nhật branch từ target, xử lý conflict contract/schema/types; chạy typecheck/lint/test/native/SQL theo AC trên tích hợp thật. Thiếu runner/evidence thì giữ draft/review, không ghi pass.
-5. Reviewer độc lập kiểm AC, hai gate, nguồn data và [DoD](DEFINITION_OF_DONE.md), duyệt revision hiện tại. CI xanh không thay review. Với docs-only, kiểm docs/regression/diff thay native/SQL và ghi N/A rõ.
-6. Sau Approved chuyển task done, sinh indexes và kiểm diff; thay code tiếp phải review lại. Người phụ trách merge theo dependency. Downstream chỉ mở merge khi bản Done/evidence upstream đã vào target.
+Task màn thêm route và feature file của mình, dùng components/repository sẵn có. Từng API có migration/test tên riêng, không sửa migration đã merge. Đổi contract cập nhật spec và báo owner upstream/downstream, review lại revision. Không thêm package/provider khi chưa review.
 
-Done = scope được review, không tự chứng minh PR đã merge. P1/P2 được soạn isolated draft nếu còn người, vẫn merge sau GM-27 và không chiếm nguồn lực P0 mặc định.
+## Trước merge
 
-## Review và bàn giao
+1. Cập nhật ref nhánh đích; chạy `python scripts/task_readiness.py --task GM-XX --gate merge --base-ref origin/main`.
+2. Kiểm cả start/merge dependencies đúng scope, task/evidence/version và file bàn giao trên target. Checker không tự fetch, không chứng minh file chạy đúng hoặc thay việc kiểm PR/commit upstream thật.
+3. Điền PR/merge hoặc squash commit và artifact path trong [mẫu PR](../../.github/pull_request_template.md). Kiểm ancestry khi phù hợp; branch đã nhận đúng code, không chỉ bản ghi Done.
+4. Rebase/update/retarget stacked branch khi cần, diff chỉ scope mình; chạy tests tương ứng sau tích hợp. Task màn kiểm mock/visual; API/native/data kiểm đúng môi trường của chúng.
+5. Reviewer khác owner duyệt AC và [DoD](DEFINITION_OF_DONE.md) cho revision hiện tại. Sau Approved mới chuyển task done và sinh indexes. Done không đồng nghĩa code đã vào target.
+6. Bàn giao [HANDOFF](../../tasks/templates/HANDOFF_TEMPLATE.md) và tag task nhận tiếp trong báo cáo/PR; thiếu đầu ra thì downstream vẫn bị chặn.
 
-Chỉ reviewer độc lập ghi trong task:
+Không bắt nghiệm thu production/APK cho task shell/mock. Mock không đóng AC của task API/native. P1/P2 merge sau GM-34, không chặn release.
+
+## Evidence và kiểm tra repo
+
+Evidence mới ở `docs/evidence/roadmap-v2/GM-XX/`; giữ evidence roadmap-v1 nguyên trạng. Reviewer ghi:
 
 ```text
 Reviewed-by: tên khớp reviewer khác owner
 Reviewed-at: YYYY-MM-DD
 Decision: Approved
-Review-evidence: docs/evidence/roadmap-v1/GM-XX/REVIEW.md
+Review-evidence: docs/evidence/roadmap-v2/GM-XX/REVIEW.md
 ```
-
-Evidence ghi PR/commit/version/AC/test thật, không token/raw votes/GPS. AI không tự Approved/Done. Assignment proposed vẫn là đề xuất. Dùng [mẫu PR](../../.github/pull_request_template.md) và [mẫu review](../../tasks/templates/REVIEW_TEMPLATE.md).
 
 ```text
 python scripts/task_readiness.py --write-docs
@@ -57,4 +61,4 @@ python scripts/task_readiness.py --check-docs
 git diff --check
 ```
 
-Generator sinh bốn indexes và sửa link sau khi chuyển task; không đổi status/approval/assignment. --all chỉ là báo cáo. Validator không thay test native/SQL/review thật. Không tự commit/push/sync issue nếu chưa được yêu cầu.
+Generator cập nhật indexes/links, không đổi approval/assignment. --all là báo cáo; Pass tooling không phải Pass app. Không tự commit/push/sync issue nếu chưa có yêu cầu.

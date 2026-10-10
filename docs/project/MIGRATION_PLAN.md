@@ -1,3 +1,5 @@
+> Lịch sử: các mã task trong tài liệu này thuộc thời điểm soạn/roadmap-v1 (hoặc mã cũ được ghi bên dưới). Lộ trình hiện hành: [roadmap-v2](IMPLEMENTATION_ROADMAP.md); không dùng mã trong tài liệu này để mở gate.
+
 > Lưu ý mã task: nội dung lịch sử bên dưới dùng mã cũ. Task hiện hành đã đánh số theo lộ trình; xem [bảng mã cũ–mới](TASK_RENUMBERING.md). Không suy task hiện tại từ số trong bản lịch sử.
 
 > Lịch sử soạn baseline v0.1/v0.2. Phạm vi data hiện hành food-v1 ở [food spec](../specs/FOOD_DATA_SPEC.md) và [dependency map](TASK_DEPENDENCIES.md); GM-00 đã review v0.2, GM-28 chờ review bản mới. Những câu “venue P1/chờ GM-00” bên dưới là trạng thái của đợt cũ.

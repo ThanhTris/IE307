@@ -4,9 +4,9 @@
 
 ## Identity và bạn quen
 
-Guest anonymous auth có auth.uid, session secure storage; không client tự khai userId. Mất session/cài lại có thể mất bạn/server history. Account link/recovery/sync nhiều máy là P1 GM-28, lỗi phải giữ guest session. Không SMS có phí.
+Guest anonymous auth có auth.uid, session secure storage; không client tự khai userId. Mất session/cài lại có thể mất bạn/server history. Account link/recovery/sync nhiều máy là P1 GM-35, lỗi phải giữ guest session. Không SMS có phí.
 
-Kết bạn/inbox/avatar quick room là P0 GM-15. Canonical pair key unique, pending chỉ accepted bởi recipient. Mời phòng kiểm accepted pair khi tạo và khi accept; không auto join/ready. Unfriend chặn invite mới và accept invite cũ chưa dùng; không sửa result terminal. Khách có quan hệ bạn trong session hiện tại nhưng không hứa recover đổi máy.
+Kết bạn/inbox/avatar quick room là P0 GM-22. Canonical pair key unique, pending chỉ accepted bởi recipient. Mời phòng kiểm accepted pair khi tạo và khi accept; không auto join/ready. Unfriend chặn invite mới và accept invite cũ chưa dùng; không sửa result terminal. Khách có quan hệ bạn trong session hiện tại nhưng không hứa recover đổi máy.
 
 ## Quyền bảng/RPC
 
@@ -43,4 +43,4 @@ SEC-01 A/host không đọc ghi vote B. SEC-02 outsider không room/result/histo
 
 ## Food-v1
 
-[FOOD_DATA_SPEC](FOOD_DATA_SPEC.md) giới hạn server input là anchor công cộng/radius/desiredAt, không GPS user. Shared snapshot chỉ context đã xác nhận; preferences cuisine/temperature/flavor vẫn riêng. Publisher dataset cần quyền server, reviewedBy khác enteredBy trước publish; nguồn/license/freshness có evidence. GM-01 review privacy mới trước code. Weather/mood GM-31 opt-in/mặc định không history/AI; chỉ share lý do tổng hợp không danh tính/mood cá nhân.
+[FOOD_DATA_SPEC](FOOD_DATA_SPEC.md) giới hạn server input là anchor công cộng/radius/desiredAt, không GPS user. Shared snapshot chỉ context đã xác nhận; preferences cuisine/temperature/flavor vẫn riêng. Publisher dataset cần quyền server, reviewedBy khác enteredBy trước publish; nguồn/license/freshness có evidence. GM-01 review privacy mới trước code. Weather/mood GM-38 opt-in/mặc định không history/AI; chỉ share lý do tổng hợp không danh tính/mood cá nhân.

@@ -19,5 +19,9 @@ Validator chỉ kiểm cấu trúc/truy vết, không chứng minh review có th
 - Task có assignment accepted, cả start_dependencies và merge_dependencies Done + Decision Approved + reviewer độc lập/ngày/evidence; bản review chỉ áp dụng scope/version được ghi. In-progress/draft review có thể còn merge blocker; Done không được bỏ qua merge deps.
 - Trước merge kiểm ref target đã cập nhật, bản task/evidence đúng revision, PR/merge commit upstream thực tế và integration tests sau cập nhật branch. Done không đồng nghĩa đã merge; checker không chứng minh code đã vào target. Mock không thay native/SQL/verified-data AC.
 - Reviewer ghi Reviewed-by, Reviewed-at, Decision: Approved và Review-evidence (file từ root có thật), PR/commit/version trong evidence; không coi merge PR là Done.
-- Dataset: nguồn/license/freshness/coverage, quán–món/lịch/ngoại lệ/unknown/giá đơn vị và người kiểm khác người nhập; fixture tách thật. FOOD-01..10/12..14 áp dụng P0; FOOD-11 và mood thuộc GM-31 P2.
+- Dataset: nguồn/license/freshness/coverage, quán–món/lịch/ngoại lệ/unknown/giá đơn vị và người kiểm khác người nhập; fixture tách thật. FOOD-01..10/12..14 áp dụng P0; FOOD-11 và mood thuộc GM-38 P2.
 - Gate checker, validator và regression đạt; sinh lại task indexes rồi --check-docs. Handoff nêu output/version/task sau, migration/rollback và lỗi còn lại.
+
+## Nghiệm thu theo scope roadmap-v2
+
+Task shell/component/màn mock được Done khi đạt đúng AC của task đó và review, không cần API/native của task sau. GM-02 không chờ camera/push/SQLite/APK; GM-05 không phải nghiệm thu gallery riêng; GM-09..14 bàn giao màn theo mẫu + mock đúng contract. Các task tích hợp GM-24..31 cần API/native thật theo AC. Mỗi task cung cấp file thực tế/lệnh dùng/version/commit/HANDOFF, người nhận kiểm đủ input trước làm; không dùng placeholder hoặc đổi mã để kế thừa approval. [Lộ trình](IMPLEMENTATION_ROADMAP.md).

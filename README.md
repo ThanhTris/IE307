@@ -6,11 +6,11 @@ Baseline food-v1 • workflow cập nhật 2026-10-08. GM-00 đã review v0.2; G
 
 ## Đọc để hiểu dự án
 
-Task đã đánh số theo lộ trình GM-01 → GM-31; dependency chỉ trỏ số nhỏ hơn. [Bảng mã cũ–mới](docs/project/TASK_RENUMBERING.md) giúp tra issue/evidence cũ; không dùng mã cũ để nhận task hiện tại.
+Task đã đánh số theo lộ trình GM-01 → GM-38; dependency chỉ trỏ số nhỏ hơn. [Bảng mã cũ–mới](docs/project/TASK_RENUMBERING.md) giúp tra issue/evidence cũ; không dùng mã cũ để nhận task hiện tại.
 
 1. [Mô tả hệ thống cho cả nhóm](docs/product/SYSTEM_OVERVIEW.md).
 2. [PRD](docs/product/PRODUCT_REQUIREMENTS.md), [21 yêu cầu chức năng](docs/product/FUNCTIONAL_REQUIREMENTS.md), [spec index](docs/specs/README.md).
-3. [31 task và trạng thái](docs/project/TASK_SUMMARY.md), [tiến độ theo dependency](docs/project/PROJECT_PLAN.md), [phân công đề xuất](docs/project/TEAM_AND_RESPONSIBILITIES.md).
+3. [38 task và trạng thái](docs/project/TASK_SUMMARY.md), [tiến độ theo dependency](docs/project/PROJECT_PLAN.md), [phân công đề xuất](docs/project/TEAM_AND_RESPONSIBILITIES.md).
 4. [Kế hoạch UI](docs/project/UI_IMPLEMENTATION_PLAN.md), [test plan](docs/testing/TEST_PLAN.md), [AIDD/DoD](docs/project/TEAM_WORKFLOW.md).
 5. [Kiến trúc](docs/architecture/SYSTEM_ARCHITECTURE.md), [data](docs/architecture/DATA_MODEL.md), [API](docs/architecture/API_CONTRACT.md), [nghiên cứu 8 đối thủ](docs/research/LECTURER_APPS_REVIEW_2026-10-07.md).
 

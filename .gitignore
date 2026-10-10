@@ -34,6 +34,9 @@ docs/references/course/manifest.local.json
 
 # Backup and temporary files
 archive/
+!tasks/archive/
+!tasks/archive/roadmap-v1/
+!tasks/archive/roadmap-v1/*.json
 .work/
 outputs/
 __pycache__/

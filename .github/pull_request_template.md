@@ -1,7 +1,7 @@
 ## Task và phạm vi
 
 Task Markdown / owner / reviewer khác owner:
-Mã hiện hành roadmap-v1 / mã cũ nếu đối chiếu issue (xem docs/project/TASK_RENUMBERING.md):
+Mã hiện hành roadmap-v2 / mã cũ nếu đối chiếu issue (xem docs/project/TASK_RENUMBERING.md):
 Assignment accepted / baseline / spec / ADR:
 Branch / target / PR cha (nếu stacked):
 Scope và phần ngoài scope:
@@ -40,7 +40,7 @@ Scope và phần ngoài scope:
 - Native/typecheck/lint/unit/SQL/RLS/race/Android/a11y/offline: lệnh và evidence thật, hoặc N/A có lý do với docs-only:
 - Food data: source/license/coverage/menu-hours/freshness/unknown/overnight, fixture tách verified data:
 - Artifact/commit/version bàn giao; task nhận đầu ra; blocker và owner:
-- Evidence mới dùng docs/evidence/roadmap-v1/GM-XX/; không ghi đè folder evidence mã cũ.
+- Evidence mới dùng docs/evidence/roadmap-v2/GM-XX/; không ghi đè folder evidence mã cũ.
 
 ## Review độc lập
 
@@ -48,3 +48,17 @@ Scope và phần ngoài scope:
 - [ ] Khi Approved ghi Reviewed-by/Reviewed-at/Decision/Review-evidence trong task; chuyển done và sinh indexes trước merge. Thay code sau review phải review lại.
 
 READY_FOR_MERGE_REVIEW không là quyền tự merge. Checker không tự fetch/kiểm GitHub hoặc chứng minh code đã merge. Done không đồng nghĩa đã vào target. Mock/CI/docs validator không thay native/SQL/data thật. Draft PR được giữ checklist merge chưa đạt.
+
+## Artifact bàn giao roadmap-v2
+
+Track / stage / mock UI hay API/native thật:
+
+| Input task | Artifact + version/commit | Có trên target/nhánh? | Smoke đã kiểm |
+| --- | --- | --- | --- |
+| | | | |
+
+Output paths / contract-schema-dataset version / lệnh chạy / expected result / task nhận:
+HANDOFF.md: docs/evidence/roadmap-v2/GM-XX/HANDOFF.md
+
+- [ ] Scope UI mock được nghiệm thu riêng; không ghi API/native pass từ fixture.
+- [ ] Đầu vào thực tế đủ để tiếp tục, không tự tạo lại scaffold/contract hoặc bỏ prerequisite.

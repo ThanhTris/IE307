@@ -32,4 +32,4 @@ MealSlot breakfast/lunch/dinner/snack (late-night là hint). RoomState LOBBY/ROU
 
 [Privacy/TTL](../specs/IDENTITY_PRIVACY_SPEC.md) · [RPC](API_CONTRACT.md).
 
-Food-v1 chốt field contract/constraints tại [FOOD_DATA_SPEC](../specs/FOOD_DATA_SPEC.md). GM-05 cung cấp SQL setup/runner/migration trước GM-08 import seed; GM-09 quyền, GM-11 eligibility; GM-12 revalidate/lock dataset snapshot trong start transaction. Anchor là điểm công cộng được nhóm xác nhận, không GPS user; hết TTL room dọn context và không copy vào history mặc định. Weather/mood GM-31 có migration riêng sau core. Chưa có SQL/app được triển khai.
+Food-v1 chốt field contract/constraints tại [FOOD_DATA_SPEC](../specs/FOOD_DATA_SPEC.md). GM-06 cung cấp SQL setup/runner/migration trước GM-08 import seed; GM-17 quyền, GM-18 eligibility; GM-19 revalidate/lock dataset snapshot trong start transaction. Anchor là điểm công cộng được nhóm xác nhận, không GPS user; hết TTL room dọn context và không copy vào history mặc định. Weather/mood GM-38 có migration riêng sau core. Chưa có SQL/app được triển khai.

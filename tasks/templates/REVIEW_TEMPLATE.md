@@ -33,7 +33,7 @@ Docs-only ghi N/A cho native/SQL có lý do. Với feature/data, mock/validator 
 Reviewed-by: tên đúng reviewer khác owner
 Reviewed-at: YYYY-MM-DD
 Decision: Pending
-Review-evidence: docs/evidence/roadmap-v1/GM-XX/REVIEW.md (file thật từ repo root)
+Review-evidence: docs/evidence/roadmap-v2/GM-XX/REVIEW.md (file thật từ repo root)
 
 Chỉ reviewer đổi Approved khi mọi AC, cả hai gate và DoD đạt cho revision được ghi. Sau đó chuyển task done, sinh indexes; code đổi tiếp cần review lại. AI không tự Approved. Done không chứng minh PR đã merge; downstream phải kiểm target riêng.
 

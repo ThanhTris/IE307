@@ -1,193 +1,1134 @@
 {
-  "version": "roadmap-v1",
-  "date": "2026-10-08",
-  "description": "Old IDs are historical identifiers, not dependencies or current aliases.",
+  "version": "roadmap-v2",
+  "previous_version": "roadmap-v1",
+  "date": "2026-10-10",
+  "source_commit": "aeb1a83",
+  "release_task": "GM-34",
+  "previous_snapshot": "tasks/archive/roadmap-v1/task-snapshot.json",
   "entries": [
     {
-      "old_id": "GM-28",
       "new_id": "GM-01",
-      "title": "Review baseline food-v1, dependency và quy trình PR",
-      "github_issue": ""
+      "previous_ids": [
+        "GM-01"
+      ],
+      "title": "Chốt lộ trình UI–BE–Data và bàn giao đầu vào",
+      "track": "PLAN",
+      "stage": "baseline",
+      "outputs": [
+        "docs/project/IMPLEMENTATION_ROADMAP.md"
+      ],
+      "inputs": [
+        {
+          "task": "GM-00",
+          "artifact": "docs/evidence/GM-00/BASELINE_V02_2026-10-07.md",
+          "gate": "start"
+        }
+      ]
     },
     {
-      "old_id": "GM-01",
       "new_id": "GM-02",
-      "title": "Bootstrap Expo Android và native capability spike",
-      "github_issue": "https://github.com/ThanhTris/IE307/issues/38"
+      "previous_ids": [
+        "GM-02"
+      ],
+      "title": "UI: cấu trúc thư mục và app Expo chạy được",
+      "track": "UI",
+      "stage": "structure",
+      "outputs": [
+        "mobile/src/app/_layout.tsx",
+        "mobile/package.json",
+        "mobile/README.md"
+      ],
+      "inputs": [
+        {
+          "task": "GM-01",
+          "artifact": "docs/project/IMPLEMENTATION_ROADMAP.md",
+          "gate": "start"
+        }
+      ]
     },
     {
-      "old_id": "GM-03",
       "new_id": "GM-03",
-      "title": "Taxonomy món ăn và hợp đồng dataset",
-      "github_issue": "https://github.com/ThanhTris/IE307/issues/40"
+      "previous_ids": [],
+      "title": "BE: cấu trúc thư mục và môi trường chạy local",
+      "track": "BE",
+      "stage": "structure",
+      "outputs": [
+        "supabase/config.toml",
+        "supabase/tests/README.md",
+        "supabase/functions/_shared/README.md"
+      ],
+      "inputs": [
+        {
+          "task": "GM-01",
+          "artifact": "docs/project/IMPLEMENTATION_ROADMAP.md",
+          "gate": "start"
+        }
+      ]
     },
     {
-      "old_id": "GM-02",
       "new_id": "GM-04",
-      "title": "Design system và UI primitives",
-      "github_issue": "https://github.com/ThanhTris/IE307/issues/39"
+      "previous_ids": [
+        "GM-03"
+      ],
+      "title": "Data: trường thông tin, taxonomy và mẫu nhập liệu",
+      "track": "DATA",
+      "stage": "fields",
+      "outputs": [
+        "docs/data/FOOD_DATA_DICTIONARY.md",
+        "supabase/seed/templates/food-v1.template.json",
+        "tests/fixtures/food-v1/contract-cases.json"
+      ],
+      "inputs": [
+        {
+          "task": "GM-01",
+          "artifact": "docs/project/IMPLEMENTATION_ROADMAP.md",
+          "gate": "start"
+        }
+      ]
     },
     {
-      "old_id": "GM-04",
       "new_id": "GM-05",
-      "title": "Schema món–quán–lịch bán và migrations",
-      "github_issue": "https://github.com/ThanhTris/IE307/issues/41"
+      "previous_ids": [
+        "GM-04"
+      ],
+      "title": "UI: component dùng chung theo UI mẫu",
+      "track": "UI",
+      "stage": "components",
+      "outputs": [
+        "mobile/src/shared/theme/tokens.ts",
+        "mobile/src/shared/ui/index.ts",
+        "docs/design/COMPONENT_MAP.md"
+      ],
+      "inputs": [
+        {
+          "task": "GM-02",
+          "artifact": "mobile/src/app/_layout.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-04",
+          "artifact": "docs/data/FOOD_DATA_DICTIONARY.md",
+          "gate": "start"
+        }
+      ]
     },
     {
-      "old_id": "GM-11",
       "new_id": "GM-06",
-      "title": "Engine decision-v2 và fixtures",
-      "github_issue": "https://github.com/ThanhTris/IE307/issues/48"
+      "previous_ids": [
+        "GM-05"
+      ],
+      "title": "Data: thiết lập database và migrations từ dictionary",
+      "track": "DATA",
+      "stage": "database",
+      "outputs": [
+        "supabase/migrations/0001_core_schema.sql",
+        "supabase/migrations/README.md",
+        "supabase/tests/schema_contract.sql",
+        "docs/data/DATABASE_MAPPING.md"
+      ],
+      "inputs": [
+        {
+          "task": "GM-03",
+          "artifact": "supabase/config.toml",
+          "gate": "start"
+        },
+        {
+          "task": "GM-04",
+          "artifact": "docs/data/FOOD_DATA_DICTIONARY.md",
+          "gate": "start"
+        }
+      ]
     },
     {
-      "old_id": "GM-05",
       "new_id": "GM-07",
-      "title": "Guest identity và secure session",
-      "github_issue": "https://github.com/ThanhTris/IE307/issues/42"
+      "previous_ids": [
+        "GM-03"
+      ],
+      "title": "BE: hợp đồng API, lớp gọi API và mock adapter",
+      "track": "BE",
+      "stage": "api-contract",
+      "outputs": [
+        "mobile/src/data/api/contracts.ts",
+        "mobile/src/data/api/client.ts",
+        "mobile/src/data/api/mock.ts",
+        "docs/architecture/API_CONTRACT.md"
+      ],
+      "inputs": [
+        {
+          "task": "GM-02",
+          "artifact": "mobile/src/app/_layout.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-03",
+          "artifact": "supabase/config.toml",
+          "gate": "start"
+        },
+        {
+          "task": "GM-04",
+          "artifact": "docs/data/FOOD_DATA_DICTIONARY.md",
+          "gate": "start"
+        },
+        {
+          "task": "GM-06",
+          "artifact": "supabase/migrations/0001_core_schema.sql",
+          "gate": "merge"
+        }
+      ]
     },
     {
-      "old_id": "GM-27",
       "new_id": "GM-08",
-      "title": "Dataset quán–món–lịch bán đã kiểm trong coverage",
-      "github_issue": ""
+      "previous_ids": [
+        "GM-08"
+      ],
+      "title": "Data: nhập, kiểm và bàn giao dataset thật",
+      "track": "DATA",
+      "stage": "import",
+      "outputs": [
+        "supabase/seed/import_food_data.py",
+        "supabase/seed/verified/manifest.json",
+        "docs/data/DATASET_HANDOFF.md"
+      ],
+      "inputs": [
+        {
+          "task": "GM-04",
+          "artifact": "docs/data/FOOD_DATA_DICTIONARY.md",
+          "gate": "start"
+        },
+        {
+          "task": "GM-06",
+          "artifact": "supabase/migrations/0001_core_schema.sql",
+          "gate": "start"
+        }
+      ]
     },
     {
-      "old_id": "GM-06",
       "new_id": "GM-09",
-      "title": "RLS/quyền RPC nền và retention",
-      "github_issue": "https://github.com/ThanhTris/IE307/issues/43"
+      "previous_ids": [
+        "GM-13"
+      ],
+      "title": "UI: Home, tạo phòng và nhập mã theo mẫu",
+      "track": "UI",
+      "stage": "screens",
+      "outputs": [
+        "mobile/src/features/home/screens/HomeScreen.tsx",
+        "mobile/src/features/rooms/screens/CreateRoomScreen.tsx",
+        "mobile/src/features/rooms/screens/JoinRoomScreen.tsx"
+      ],
+      "inputs": [
+        {
+          "task": "GM-05",
+          "artifact": "mobile/src/shared/theme/tokens.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
+          "gate": "start"
+        }
+      ]
     },
     {
-      "old_id": "GM-29",
       "new_id": "GM-10",
-      "title": "Vị trí foreground, coverage và điểm ăn chung",
-      "github_issue": ""
+      "previous_ids": [
+        "GM-10",
+        "GM-19"
+      ],
+      "title": "UI: chọn khu vực, giờ ăn và sở thích theo mẫu",
+      "track": "UI",
+      "stage": "screens",
+      "outputs": [
+        "mobile/src/features/context/screens/ContextScreen.tsx",
+        "mobile/src/features/preferences/screens/PreferencesScreen.tsx"
+      ],
+      "inputs": [
+        {
+          "task": "GM-05",
+          "artifact": "mobile/src/shared/theme/tokens.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
+          "gate": "start"
+        }
+      ]
     },
     {
-      "old_id": "GM-30",
       "new_id": "GM-11",
-      "title": "Eligibility món theo nơi bán, giờ và snapshot pool",
-      "github_issue": ""
+      "previous_ids": [
+        "GM-16"
+      ],
+      "title": "UI: lobby, ready và trạng thái phòng theo mẫu",
+      "track": "UI",
+      "stage": "screens",
+      "outputs": [
+        "mobile/src/features/rooms/screens/LobbyScreen.tsx",
+        "mobile/src/features/rooms/screens/RoomStatusScreen.tsx"
+      ],
+      "inputs": [
+        {
+          "task": "GM-05",
+          "artifact": "mobile/src/shared/theme/tokens.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
+          "gate": "start"
+        }
+      ]
     },
     {
-      "old_id": "GM-08",
       "new_id": "GM-12",
-      "title": "Room RPC, context và khóa pool khả thi",
-      "github_issue": "https://github.com/ThanhTris/IE307/issues/45"
+      "previous_ids": [
+        "GM-20",
+        "GM-22"
+      ],
+      "title": "UI: bình chọn và vòng hai theo mẫu",
+      "track": "UI",
+      "stage": "screens",
+      "outputs": [
+        "mobile/src/features/voting/screens/VoteScreen.tsx",
+        "mobile/src/features/voting/screens/FinalRoundScreen.tsx"
+      ],
+      "inputs": [
+        {
+          "task": "GM-05",
+          "artifact": "mobile/src/shared/theme/tokens.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
+          "gate": "start"
+        }
+      ]
     },
     {
-      "old_id": "GM-07",
       "new_id": "GM-13",
-      "title": "Home/create/join và context khu vực–giờ ăn",
-      "github_issue": "https://github.com/ThanhTris/IE307/issues/44"
+      "previous_ids": [
+        "GM-21"
+      ],
+      "title": "UI: kết quả, nơi bán và không đồng thuận theo mẫu",
+      "track": "UI",
+      "stage": "screens",
+      "outputs": [
+        "mobile/src/features/result/screens/ResultScreen.tsx",
+        "mobile/src/features/result/screens/NoConsensusScreen.tsx"
+      ],
+      "inputs": [
+        {
+          "task": "GM-05",
+          "artifact": "mobile/src/shared/theme/tokens.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
+          "gate": "start"
+        }
+      ]
     },
     {
-      "old_id": "GM-12",
       "new_id": "GM-14",
-      "title": "Submit/finalize nguyên tử và result event",
-      "github_issue": "https://github.com/ThanhTris/IE307/issues/49"
+      "previous_ids": [
+        "GM-15",
+        "GM-17",
+        "GM-18"
+      ],
+      "title": "UI: bạn bè, inbox và lịch sử theo mẫu",
+      "track": "UI",
+      "stage": "screens",
+      "outputs": [
+        "mobile/src/features/friends/screens/FriendsScreen.tsx",
+        "mobile/src/features/inbox/screens/InboxScreen.tsx",
+        "mobile/src/features/history/screens/HistoryScreen.tsx"
+      ],
+      "inputs": [
+        {
+          "task": "GM-05",
+          "artifact": "mobile/src/shared/theme/tokens.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
+          "gate": "start"
+        }
+      ]
     },
     {
-      "old_id": "GM-17",
       "new_id": "GM-15",
-      "title": "Kết bạn avatar và room invitation core",
-      "github_issue": "https://github.com/ThanhTris/IE307/issues/54"
+      "previous_ids": [
+        "GM-06"
+      ],
+      "title": "BE: engine quyết định thuần và fixture chuẩn",
+      "track": "BE",
+      "stage": "implementation",
+      "outputs": [
+        "mobile/src/domain/decision/index.ts",
+        "tests/fixtures/decision-cases.json"
+      ],
+      "inputs": [
+        {
+          "task": "GM-04",
+          "artifact": "docs/data/FOOD_DATA_DICTIONARY.md",
+          "gate": "start"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
+          "gate": "start"
+        }
+      ]
     },
     {
-      "old_id": "GM-09",
       "new_id": "GM-16",
-      "title": "Lobby ready và đồng bộ cơ bản",
-      "github_issue": "https://github.com/ThanhTris/IE307/issues/46"
+      "previous_ids": [
+        "GM-07"
+      ],
+      "title": "BE: guest auth và session API",
+      "track": "BE",
+      "stage": "implementation",
+      "outputs": [
+        "mobile/src/data/auth/session.ts",
+        "supabase/tests/auth.sql"
+      ],
+      "inputs": [
+        {
+          "task": "GM-03",
+          "artifact": "supabase/config.toml",
+          "gate": "start"
+        },
+        {
+          "task": "GM-06",
+          "artifact": "supabase/migrations/0001_core_schema.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
+          "gate": "start"
+        }
+      ]
     },
     {
-      "old_id": "GM-18",
       "new_id": "GM-17",
-      "title": "History consent và chống lặp core",
-      "github_issue": "https://github.com/ThanhTris/IE307/issues/55"
+      "previous_ids": [
+        "GM-09"
+      ],
+      "title": "BE: RLS, quyền RPC và retention",
+      "track": "BE",
+      "stage": "implementation",
+      "outputs": [
+        "supabase/migrations/0017_access_policies.sql",
+        "supabase/tests/rls.sql",
+        "docs/architecture/ACCESS_MATRIX.md"
+      ],
+      "inputs": [
+        {
+          "task": "GM-06",
+          "artifact": "supabase/migrations/0001_core_schema.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-16",
+          "artifact": "mobile/src/data/auth/session.ts",
+          "gate": "start"
+        }
+      ]
     },
     {
-      "old_id": "GM-25",
       "new_id": "GM-18",
-      "title": "Push invite/result và notification inbox",
-      "github_issue": ""
+      "previous_ids": [
+        "GM-11"
+      ],
+      "title": "BE: API catalogue, coverage và lọc món khả thi",
+      "track": "BE",
+      "stage": "implementation",
+      "outputs": [
+        "supabase/migrations/0018_food_eligibility.sql",
+        "supabase/tests/food_eligibility.sql",
+        "mobile/src/domain/eligibility/index.ts"
+      ],
+      "inputs": [
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-08",
+          "artifact": "supabase/seed/import_food_data.py",
+          "gate": "start"
+        },
+        {
+          "task": "GM-17",
+          "artifact": "supabase/migrations/0017_access_policies.sql",
+          "gate": "start"
+        }
+      ]
     },
     {
-      "old_id": "GM-10",
       "new_id": "GM-19",
-      "title": "Preferences cuisine/đặc tính và pool theo context",
-      "github_issue": "https://github.com/ThanhTris/IE307/issues/47"
+      "previous_ids": [
+        "GM-12"
+      ],
+      "title": "BE: API phòng, context, ready và start",
+      "track": "BE",
+      "stage": "implementation",
+      "outputs": [
+        "supabase/migrations/0019_room_lifecycle.sql",
+        "supabase/tests/room_lifecycle.sql"
+      ],
+      "inputs": [
+        {
+          "task": "GM-16",
+          "artifact": "mobile/src/data/auth/session.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-17",
+          "artifact": "supabase/migrations/0017_access_policies.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-18",
+          "artifact": "supabase/migrations/0018_food_eligibility.sql",
+          "gate": "start"
+        }
+      ]
     },
     {
-      "old_id": "GM-13",
       "new_id": "GM-20",
-      "title": "Card voting double-tap và pending UX",
-      "github_issue": "https://github.com/ThanhTris/IE307/issues/50"
+      "previous_ids": [
+        "GM-14"
+      ],
+      "title": "BE: API nộp phiếu, hai vòng và chốt kết quả",
+      "track": "BE",
+      "stage": "implementation",
+      "outputs": [
+        "supabase/migrations/0020_finalize.sql",
+        "supabase/tests/finalize.sql"
+      ],
+      "inputs": [
+        {
+          "task": "GM-15",
+          "artifact": "mobile/src/domain/decision/index.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-19",
+          "artifact": "supabase/migrations/0019_room_lifecycle.sql",
+          "gate": "start"
+        }
+      ]
     },
     {
-      "old_id": "GM-14",
       "new_id": "GM-21",
-      "title": "Result và nơi bán theo lịch đã kiểm",
-      "github_issue": "https://github.com/ThanhTris/IE307/issues/51"
+      "previous_ids": [
+        "GM-17"
+      ],
+      "title": "BE: API history, consent và chống lặp",
+      "track": "BE",
+      "stage": "implementation",
+      "outputs": [
+        "supabase/migrations/0021_history.sql",
+        "supabase/tests/history.sql"
+      ],
+      "inputs": [
+        {
+          "task": "GM-18",
+          "artifact": "supabase/migrations/0018_food_eligibility.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-20",
+          "artifact": "supabase/migrations/0020_finalize.sql",
+          "gate": "start"
+        }
+      ]
     },
     {
-      "old_id": "GM-15",
       "new_id": "GM-22",
-      "title": "Vòng hai Giữ/Loại và giới hạn phiên",
-      "github_issue": "https://github.com/ThanhTris/IE307/issues/52"
+      "previous_ids": [
+        "GM-15"
+      ],
+      "title": "BE: API bạn bè và lời mời phòng",
+      "track": "BE",
+      "stage": "implementation",
+      "outputs": [
+        "supabase/migrations/0022_social.sql",
+        "supabase/tests/social.sql"
+      ],
+      "inputs": [
+        {
+          "task": "GM-16",
+          "artifact": "mobile/src/data/auth/session.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-17",
+          "artifact": "supabase/migrations/0017_access_policies.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-19",
+          "artifact": "supabase/migrations/0019_room_lifecycle.sql",
+          "gate": "start"
+        }
+      ]
     },
     {
-      "old_id": "GM-20",
       "new_id": "GM-23",
-      "title": "QR/incoming links và tích hợp Maps/review",
-      "github_issue": "https://github.com/ThanhTris/IE307/issues/57"
+      "previous_ids": [
+        "GM-18"
+      ],
+      "title": "BE: API inbox, thiết bị push và sender",
+      "track": "BE",
+      "stage": "implementation",
+      "outputs": [
+        "supabase/functions/push-sender/index.ts",
+        "supabase/tests/notifications.sql"
+      ],
+      "inputs": [
+        {
+          "task": "GM-20",
+          "artifact": "supabase/migrations/0020_finalize.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-22",
+          "artifact": "supabase/migrations/0022_social.sql",
+          "gate": "start"
+        }
+      ]
     },
     {
-      "old_id": "GM-16",
       "new_id": "GM-24",
-      "title": "SQLite outbox/cache và realtime recovery",
-      "github_issue": "https://github.com/ThanhTris/IE307/issues/53"
+      "previous_ids": [
+        "GM-02",
+        "GM-10"
+      ],
+      "title": "UI: nối vị trí thiết bị với coverage API",
+      "track": "INTEGRATION",
+      "stage": "native",
+      "outputs": [
+        "mobile/src/features/context/services/location.ts"
+      ],
+      "inputs": [
+        {
+          "task": "GM-05",
+          "artifact": "mobile/src/shared/theme/tokens.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-16",
+          "artifact": "mobile/src/data/auth/session.ts",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-18",
+          "artifact": "supabase/migrations/0018_food_eligibility.sql",
+          "gate": "merge"
+        }
+      ]
     },
     {
-      "old_id": "GM-19",
       "new_id": "GM-25",
-      "title": "Regression contract/security/race",
-      "github_issue": "https://github.com/ThanhTris/IE307/issues/56"
+      "previous_ids": [
+        "GM-10",
+        "GM-13",
+        "GM-16",
+        "GM-19"
+      ],
+      "title": "UI–BE: nối Home, context, preferences và lobby",
+      "track": "INTEGRATION",
+      "stage": "integration",
+      "outputs": [
+        "mobile/src/features/rooms/services/roomRepository.ts"
+      ],
+      "inputs": [
+        {
+          "task": "GM-09",
+          "artifact": "mobile/src/features/home/screens/HomeScreen.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-10",
+          "artifact": "mobile/src/features/context/screens/ContextScreen.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-11",
+          "artifact": "mobile/src/features/rooms/screens/LobbyScreen.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-16",
+          "artifact": "mobile/src/data/auth/session.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-19",
+          "artifact": "supabase/migrations/0019_room_lifecycle.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-21",
+          "artifact": "supabase/migrations/0021_history.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-24",
+          "artifact": "mobile/src/features/context/services/location.ts",
+          "gate": "start"
+        }
+      ]
     },
     {
-      "old_id": "GM-21",
       "new_id": "GM-26",
-      "title": "QA native và user pilot",
-      "github_issue": "https://github.com/ThanhTris/IE307/issues/58"
+      "previous_ids": [
+        "GM-20",
+        "GM-22"
+      ],
+      "title": "UI–BE: nối bình chọn, nộp phiếu và vòng hai",
+      "track": "INTEGRATION",
+      "stage": "integration",
+      "outputs": [
+        "mobile/src/features/voting/services/voteRepository.ts"
+      ],
+      "inputs": [
+        {
+          "task": "GM-12",
+          "artifact": "mobile/src/features/voting/screens/VoteScreen.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-20",
+          "artifact": "supabase/migrations/0020_finalize.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-25",
+          "artifact": "mobile/src/features/rooms/services/roomRepository.ts",
+          "gate": "start"
+        }
+      ]
     },
     {
-      "old_id": "GM-22",
       "new_id": "GM-27",
-      "title": "APK/demo/báo cáo và bàn giao",
-      "github_issue": "https://github.com/ThanhTris/IE307/issues/59"
+      "previous_ids": [
+        "GM-21"
+      ],
+      "title": "UI–BE: nối kết quả và nơi bán thực tế",
+      "track": "INTEGRATION",
+      "stage": "integration",
+      "outputs": [
+        "mobile/src/features/result/services/resultRepository.ts"
+      ],
+      "inputs": [
+        {
+          "task": "GM-13",
+          "artifact": "mobile/src/features/result/screens/ResultScreen.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-18",
+          "artifact": "supabase/migrations/0018_food_eligibility.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-26",
+          "artifact": "mobile/src/features/voting/services/voteRepository.ts",
+          "gate": "start"
+        }
+      ]
     },
     {
-      "old_id": "GM-26",
       "new_id": "GM-28",
-      "title": "Account link/recovery và history sync",
-      "github_issue": ""
+      "previous_ids": [
+        "GM-15",
+        "GM-17",
+        "GM-18"
+      ],
+      "title": "UI–BE: nối bạn bè, inbox và history",
+      "track": "INTEGRATION",
+      "stage": "integration",
+      "outputs": [
+        "mobile/src/features/friends/services/socialRepository.ts",
+        "mobile/src/features/inbox/services/inboxRepository.ts",
+        "mobile/src/features/history/services/historyRepository.ts"
+      ],
+      "inputs": [
+        {
+          "task": "GM-14",
+          "artifact": "mobile/src/features/friends/screens/FriendsScreen.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-21",
+          "artifact": "supabase/migrations/0021_history.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-22",
+          "artifact": "supabase/migrations/0022_social.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-23",
+          "artifact": "supabase/functions/push-sender/index.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-25",
+          "artifact": "mobile/src/features/rooms/services/roomRepository.ts",
+          "gate": "start"
+        }
+      ]
     },
     {
-      "old_id": "GM-23",
       "new_id": "GM-29",
-      "title": "Pilot OCR menu",
-      "github_issue": "https://github.com/ThanhTris/IE307/issues/60"
+      "previous_ids": [
+        "GM-02",
+        "GM-18"
+      ],
+      "title": "UI–BE: push native và mở app từ thông báo",
+      "track": "INTEGRATION",
+      "stage": "native",
+      "outputs": [
+        "mobile/src/features/inbox/services/nativePush.ts"
+      ],
+      "inputs": [
+        {
+          "task": "GM-02",
+          "artifact": "mobile/src/app/_layout.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-23",
+          "artifact": "supabase/functions/push-sender/index.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-28",
+          "artifact": "mobile/src/features/friends/services/socialRepository.ts",
+          "gate": "start"
+        }
+      ]
     },
     {
-      "old_id": "GM-24",
       "new_id": "GM-30",
-      "title": "Pilot AI hiểu sở thích",
-      "github_issue": "https://github.com/ThanhTris/IE307/issues/61"
+      "previous_ids": [
+        "GM-02",
+        "GM-23"
+      ],
+      "title": "UI–BE: QR, incoming links và Maps/review",
+      "track": "INTEGRATION",
+      "stage": "native",
+      "outputs": [
+        "mobile/src/features/rooms/services/joinLinks.ts",
+        "mobile/src/features/result/services/externalLinks.ts"
+      ],
+      "inputs": [
+        {
+          "task": "GM-22",
+          "artifact": "supabase/migrations/0022_social.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-24",
+          "artifact": "mobile/src/features/context/services/location.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-25",
+          "artifact": "mobile/src/features/rooms/services/roomRepository.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-27",
+          "artifact": "mobile/src/features/result/services/resultRepository.ts",
+          "gate": "start"
+        }
+      ]
     },
     {
-      "old_id": "GM-31",
       "new_id": "GM-31",
-      "title": "Weather và tâm trạng tự khai để xếp hạng",
-      "github_issue": ""
+      "previous_ids": [
+        "GM-02",
+        "GM-24"
+      ],
+      "title": "UI–BE: SQLite outbox, cache và reconnect",
+      "track": "INTEGRATION",
+      "stage": "integration",
+      "outputs": [
+        "mobile/src/data/local/outbox.ts",
+        "mobile/src/data/local/migrations.ts"
+      ],
+      "inputs": [
+        {
+          "task": "GM-26",
+          "artifact": "mobile/src/features/voting/services/voteRepository.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-28",
+          "artifact": "mobile/src/features/friends/services/socialRepository.ts",
+          "gate": "start"
+        }
+      ]
+    },
+    {
+      "new_id": "GM-32",
+      "previous_ids": [
+        "GM-25"
+      ],
+      "title": "QA: regression API, data, quyền và race",
+      "track": "QA",
+      "stage": "regression",
+      "outputs": [
+        "docs/evidence/roadmap-v2/GM-32/REGRESSION.md"
+      ],
+      "inputs": [
+        {
+          "task": "GM-18",
+          "artifact": "supabase/migrations/0018_food_eligibility.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-20",
+          "artifact": "supabase/migrations/0020_finalize.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-21",
+          "artifact": "supabase/migrations/0021_history.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-22",
+          "artifact": "supabase/migrations/0022_social.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-23",
+          "artifact": "supabase/functions/push-sender/index.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-31",
+          "artifact": "mobile/src/data/local/outbox.ts",
+          "gate": "start"
+        }
+      ]
+    },
+    {
+      "new_id": "GM-33",
+      "previous_ids": [
+        "GM-26"
+      ],
+      "title": "QA: đối chiếu UI mẫu và pilot Android end-to-end",
+      "track": "QA",
+      "stage": "qa",
+      "outputs": [
+        "docs/evidence/roadmap-v2/GM-33/ANDROID_PILOT.md"
+      ],
+      "inputs": [
+        {
+          "task": "GM-08",
+          "artifact": "supabase/seed/import_food_data.py",
+          "gate": "start"
+        },
+        {
+          "task": "GM-27",
+          "artifact": "mobile/src/features/result/services/resultRepository.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-28",
+          "artifact": "mobile/src/features/friends/services/socialRepository.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-29",
+          "artifact": "mobile/src/features/inbox/services/nativePush.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-30",
+          "artifact": "mobile/src/features/rooms/services/joinLinks.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-31",
+          "artifact": "mobile/src/data/local/outbox.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-32",
+          "artifact": "docs/evidence/roadmap-v2/GM-32/REGRESSION.md",
+          "gate": "start"
+        }
+      ]
+    },
+    {
+      "new_id": "GM-34",
+      "previous_ids": [
+        "GM-27"
+      ],
+      "title": "Release: APK, demo và bàn giao core",
+      "track": "RELEASE",
+      "stage": "release",
+      "outputs": [
+        "docs/evidence/roadmap-v2/GM-34/RELEASE.md"
+      ],
+      "inputs": [
+        {
+          "task": "GM-33",
+          "artifact": "docs/evidence/roadmap-v2/GM-33/ANDROID_PILOT.md",
+          "gate": "start"
+        }
+      ]
+    },
+    {
+      "new_id": "GM-35",
+      "previous_ids": [
+        "GM-28"
+      ],
+      "title": "P1: account link/recovery và history sync",
+      "track": "EXTENSION",
+      "stage": "extension",
+      "outputs": [
+        "mobile/src/features/account/index.ts"
+      ],
+      "inputs": [
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-28",
+          "artifact": "mobile/src/features/friends/services/socialRepository.ts",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-34",
+          "artifact": "docs/evidence/roadmap-v2/GM-34/RELEASE.md",
+          "gate": "merge"
+        }
+      ]
+    },
+    {
+      "new_id": "GM-36",
+      "previous_ids": [
+        "GM-29"
+      ],
+      "title": "P2: OCR menu qua quy trình nhập dữ liệu",
+      "track": "EXTENSION",
+      "stage": "extension",
+      "outputs": [
+        "supabase/functions/menu-ocr/index.ts"
+      ],
+      "inputs": [
+        {
+          "task": "GM-04",
+          "artifact": "docs/data/FOOD_DATA_DICTIONARY.md",
+          "gate": "start"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-08",
+          "artifact": "supabase/seed/import_food_data.py",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-34",
+          "artifact": "docs/evidence/roadmap-v2/GM-34/RELEASE.md",
+          "gate": "merge"
+        }
+      ]
+    },
+    {
+      "new_id": "GM-37",
+      "previous_ids": [
+        "GM-30"
+      ],
+      "title": "P2: AI hiểu sở thích",
+      "track": "EXTENSION",
+      "stage": "extension",
+      "outputs": [
+        "supabase/functions/preference-ai/index.ts"
+      ],
+      "inputs": [
+        {
+          "task": "GM-04",
+          "artifact": "docs/data/FOOD_DATA_DICTIONARY.md",
+          "gate": "start"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-34",
+          "artifact": "docs/evidence/roadmap-v2/GM-34/RELEASE.md",
+          "gate": "merge"
+        }
+      ]
+    },
+    {
+      "new_id": "GM-38",
+      "previous_ids": [
+        "GM-31"
+      ],
+      "title": "P2: weather và mood tự khai để xếp hạng",
+      "track": "EXTENSION",
+      "stage": "extension",
+      "outputs": [
+        "supabase/functions/weather-context/index.ts",
+        "mobile/src/features/context/services/mood.ts"
+      ],
+      "inputs": [
+        {
+          "task": "GM-04",
+          "artifact": "docs/data/FOOD_DATA_DICTIONARY.md",
+          "gate": "start"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-18",
+          "artifact": "supabase/migrations/0018_food_eligibility.sql",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-21",
+          "artifact": "supabase/migrations/0021_history.sql",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-34",
+          "artifact": "docs/evidence/roadmap-v2/GM-34/RELEASE.md",
+          "gate": "merge"
+        }
+      ]
     }
   ]
 }

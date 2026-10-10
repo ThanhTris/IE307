@@ -1,3 +1,5 @@
+> Lịch sử: các mã task trong tài liệu này thuộc thời điểm soạn/roadmap-v1 (hoặc mã cũ được ghi bên dưới). Lộ trình hiện hành: [roadmap-v2](IMPLEMENTATION_ROADMAP.md); không dùng mã trong tài liệu này để mở gate.
+
 > Lưu ý mã task: nội dung lịch sử bên dưới dùng mã cũ. Task hiện hành đã đánh số theo lộ trình; xem [bảng mã cũ–mới](TASK_RENUMBERING.md). Không suy task hiện tại từ số trong bản lịch sử.
 
 > Đã chuyển thành yêu cầu food-v1 theo chỉ dẫn tiếp của chủ dự án. Nguồn triển khai hiện hành: [FOOD_DATA_SPEC](../specs/FOOD_DATA_SPEC.md), [task summary](TASK_SUMMARY.md), [dependency map](TASK_DEPENDENCIES.md). GM-27 P0, GM-28 review, GM-29 location, GM-30 eligibility, GM-31 weather/mood; phần dưới giữ nội dung plan ban đầu để truy nguồn, các câu “chưa đồng bộ task” là trạng thái trước đợt cập nhật. Review độc lập food-v1 vẫn pending, không coi plan là Approved.

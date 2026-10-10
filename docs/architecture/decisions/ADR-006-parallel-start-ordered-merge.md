@@ -1,3 +1,5 @@
+> Lịch sử: các mã task trong tài liệu này thuộc thời điểm soạn/roadmap-v1 (hoặc mã cũ được ghi bên dưới). Lộ trình hiện hành: [roadmap-v2](../../project/IMPLEMENTATION_ROADMAP.md); không dùng mã trong tài liệu này để mở gate.
+
 # ADR-006 — Tách điều kiện bắt đầu và merge
 
 Ngày: 2026-10-08. Chủ dự án đã yêu cầu áp dụng cách làm nhánh song song rồi merge theo thứ tự. Trạng thái: đã soạn theo ủy quyền; review độc lập trong GM-01 vẫn Pending. Không đổi approval của GM-00 hoặc tự duyệt food-v1.

@@ -8,8 +8,8 @@
 4. [Workflow](TEAM_WORKFLOW.md), [DoD](DEFINITION_OF_DONE.md), [mẫu task](../../tasks/templates/TASK_TEMPLATE.md), [mẫu PR](../../.github/pull_request_template.md), [mẫu review](../../tasks/templates/REVIEW_TEMPLATE.md).
 5. [UI plan](UI_IMPLEMENTATION_PLAN.md), [test plan](../testing/TEST_PLAN.md), [audit repo lịch sử — mã cũ](../evidence/GM-28/REPOSITORY_AUDIT.md).
 
-Task hiện hành đánh số GM-01 → GM-31; mọi dependency chỉ trỏ số nhỏ hơn. [Lộ trình và bảng mã cũ–mới](TASK_RENUMBERING.md) giải thích việc chuyển review nền từ GM-28 cũ thành GM-01 mới. Số tăng không bắt các task độc lập phải chờ nhau.
+Task hiện hành roadmap-v2 đánh số GM-01 → GM-38; mọi dependency chỉ trỏ số nhỏ hơn. Đọc [lộ trình UI–BE–Data](IMPLEMENTATION_ROADMAP.md), [bảng nhận/bàn giao](TASK_HANDOFFS.md) và [mapping scope cũ–mới](TASK_RENUMBERING.md). Số tăng không bắt các task độc lập phải chờ nhau.
 
 GM-00 duyệt v0.2; GM-01 chờ review food-v1 nên start gate code vẫn chưa mở. Sau review baseline, được viết phần độc lập dù merge deps chưa xong. Nhận việc: `python scripts/task_readiness.py --task GM-XX`; trước merge thêm `--gate merge --base-ref origin/main` sau cập nhật ref và kiểm PR/commit/test thật. [ADR-006](../architecture/decisions/ADR-006-parallel-start-ordered-merge.md) giải thích hai gate.
 
-31 task sau GM-00 (gồm gate tài liệu), các task triển khai chưa nhận việc. GitHub mapping chưa sync scope mới; [prototype HTML](../../design/prototypes/gi-cung-duoc.html) chỉ mô phỏng và có thay đổi của người dùng, không là native evidence. Lịch ngày chờ nhóm chốt; không tự commit/push.
+38 task sau GM-00 (34 P0 gồm review baseline, 1 P1, 3 P2), assignment triển khai main vẫn proposed. Kết quả sandbox được tái sử dụng theo mapping và revision đã review. GitHub chưa sync scope mới; [prototype HTML](../../design/prototypes/gi-cung-duoc.html) là mẫu dựng UI, không là native evidence. Lịch ngày chờ nhóm chốt; không tự commit/push.

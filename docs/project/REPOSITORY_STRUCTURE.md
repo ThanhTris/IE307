@@ -1,56 +1,38 @@
-# Cấu trúc React Native / Expo
+# Cấu trúc UI, BE và Data — roadmap-v2
 
-Đây là cấu trúc nguồn đề xuất, chưa có package/config/build native. Các thư mục rỗng có `.gitkeep` để nhóm thấy ranh giới; GM-02 tạo file ứng dụng sau review, không coi placeholders là tính năng.
+Cấu trúc đích để các task bàn giao; main hiện có tài liệu/prototype/skeleton, code thử ở nhánh sanbox được tái sử dụng sau đối chiếu. Không coi .gitkeep hoặc path trong plan là implementation.
 
 ```text
-mobile/
-  src/
-    app/                   Expo Router: routes/layouts mỏng
-    features/
-      identity/            guest, account link
-      rooms/               create/join/lobby/preferences
-      voting/              card, ballot, submission
-      results/             result/no-consensus/Maps
-      partners/            bạn quen/lời mời hai chiều P0
-      history/             history tối thiểu/consent P0, sync đa thiết bị P1
-    domain/decision/       kiểu/policy thuần TypeScript
-    data/
-      supabase/            RPC/realtime adapters
-      local/               draft/cache/session adapters
-    shared/
-      ui/                  Button/Chip/Card/EmptyState
-      theme/               semantic tokens
-      lib/                 errors/validation/date
-      types/               kiểu chung thật sự cần chia sẻ
-  assets/                  hình/font có quyền dùng
-  tests/                   unit/component/integration mobile
-supabase/
-  migrations/              schema/policies/functions versioned
-  seed/                    catalogue demo, không dữ liệu cá nhân
-  tests/                   SQL/RLS/RPC tests
-tests/
-  fixtures/                đầu vào/kết quả quyết định chia sẻ
-  e2e/                     Android flow theo test plan
+mobile/                         GM-02: config/lockfile/runner
+  src/app/                      routes/layouts mỏng, file riêng mỗi màn
+  src/features/
+    home/ rooms/ context/ preferences/ voting/ result/
+    friends/ inbox/ history/ account/
+  src/shared/theme/             GM-05 tokens
+  src/shared/ui/                GM-05 components theo mẫu
+  src/domain/decision/          GM-15 luật thuần
+  src/domain/eligibility/       GM-18 lọc/rank thuần và parity
+  src/data/api/                 GM-07 contracts/client/mock; adapters thật về sau
+  src/data/auth/                GM-16 secure session
+  src/data/local/               GM-31 SQLite/cache/outbox
+  tests/                        unit/component/integration
+supabase/                       GM-03 config/local runner
+  migrations/                   GM-06 schema; migration riêng từng task BE
+  functions/_shared/            BE helper/transport; không secret mobile
+  functions/push-sender/        GM-23
+  seed/templates/               GM-04 field/template
+  seed/verified/                GM-08 dataset manifest/data đã kiểm
+  tests/                        SQL/schema/RLS/RPC/race
+docs/data/                      dictionary/database mapping/dataset handoff
+tests/fixtures/                 mẫu tổng hợp, không publish verified
+docs/evidence/roadmap-v2/        output/test/handoff/review theo task mới
+tasks/archive/roadmap-v1/        snapshot JSON giữ task/mapping cũ
 ```
 
-Mỗi feature triển khai dùng `screens/`, `components/`, `hooks/`, `services/`, `types.ts`, `index.ts` khi thực sự cần; không tạo mọi tầng cho một file đơn giản. Chỉ feature public API được import ra ngoài. Domain không import React hoặc SDK. Supabase adapter không chứa JSX.
+Feature dùng screens/components/hooks/services/types/index khi cần, không tạo lớp rỗng bắt buộc. Domain không React/SDK/network. UI nhận DTO/view props và repository interface; composition root chọn mock hay real, production không âm thầm fallback fixture.
 
-## Route dự kiến (GM-02 sẽ tạo)
+Route theo màn: index, room/create/join/[id]/preferences/lobby/vote/final-round/result, friends, inbox, history. GM-02 chỉ tạo shell và quy ước; task màn thêm route của mình. Permission/native modules đưa vào task chức năng GM-24/29/30/31, không chặn xem UI mẫu.
 
-`src/app/_layout.tsx`, `index.tsx`, `room/create.tsx`, `room/join.tsx`, `room/[id]/preferences.tsx`, `room/[id]/lobby.tsx`, `room/[id]/vote.tsx`, `room/[id]/final-round.tsx`, `room/[id]/result.tsx`, `partners/index.tsx` `history/index.tsx` và `notifications/index.tsx` (P0); account/recovery (P1).
+Owner file: GM-02 mobile package/lockfile/config; GM-03 BE tooling/config; GM-04 dictionary/template; GM-05 UI components; GM-06 migrations/schema convention; GM-07 DTO/client/mock. Các task sau bàn giao migration/file riêng, không sửa migration đã merge hoặc tạo contract trùng.
 
-Route chỉ parse params/guard và render feature screen. ID trên URL không cấp quyền. Android Back trong phòng theo ROOM_SPEC, không cho back sửa phiếu đã nộp.
-
-## Config sẽ bổ sung ở bootstrap
-
-`mobile/package.json`, một lockfile, `app.config.ts`, `tsconfig.json`, lint/test config, `.env.example`, `expo-env.d.ts`. Không để config placeholder giả chạy. `android/ios` theo chiến lược Expo prebuild quyết định ở GM-02; không commit build artifacts. Supabase config/migration đầu ở GM-05.
-
-Nguồn cũ nằm trong lịch sử Git (commit `6086c16`); `docs/decision/` cũ đã được gỡ trong lần chuyển đề tài, không là nguồn hiện hành.
-
-## Phạm vi v0.2
-
-features/notifications dự kiến chứa inbox/permission/token/navigation; data/local chứa SQLite draft/cache/outbox/history, data/supabase chứa RPC/realtime adapters. trusted push sender dự kiến supabase/functions, dùng secrets server. Chỉ là sơ đồ, chưa có packages hoặc file triển khai. [Spec index](../specs/README.md).
-
-## Food-v1
-
-GM-10 bổ sung feature/context và adapter vị trí/anchor trước create UI; GM-11 domain/eligibility thuần và SQL query; GM-08 verified seed/coverage/schedules. Đây là đích task, chưa có implementation. `scripts/task_readiness.py` kiểm gate và sinh các task indexes từ frontmatter. [Dependency map](TASK_DEPENDENCIES.md).
+[Task/owner](TASK_SUMMARY.md) · [luồng bàn giao](IMPLEMENTATION_ROADMAP.md).

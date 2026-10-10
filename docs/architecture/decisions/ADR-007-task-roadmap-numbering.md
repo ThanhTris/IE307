@@ -1,3 +1,5 @@
+> Lịch sử: các mã task trong tài liệu này thuộc thời điểm soạn/roadmap-v1 (hoặc mã cũ được ghi bên dưới). Lộ trình hiện hành: [roadmap-v2](../../project/IMPLEMENTATION_ROADMAP.md); không dùng mã trong tài liệu này để mở gate.
+
 # ADR-007 — Mã task theo thứ tự triển khai
 
 Ngày: 2026-10-08. Chủ dự án yêu cầu task sau chỉ phụ thuộc task trước theo số 1..N. Đã soạn theo ủy quyền; review độc lập GM-01 vẫn Pending, không tự Accepted/Approved.

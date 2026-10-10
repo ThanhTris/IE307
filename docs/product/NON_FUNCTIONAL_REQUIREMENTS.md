@@ -19,4 +19,4 @@
 
 Không hứa nhóm chốt offline; nhãn tổng hợp nhóm nhỏ vẫn cho phép suy luận sở thích.
 
-Food-v1: query eligibility có kiểm bounds/index/query plan ở GM-11; dataset nguồn/menu/giờ/ngày kiểm và coverage có version/rollback, không dùng fixture như dữ liệu thật. Không cam kết tồn kho live; lỗi weather GM-31 không làm hỏng core. GPS riêng không backend/log; anchor công cộng theo TTL room. [Food spec](../specs/FOOD_DATA_SPEC.md).
+Food-v1: query eligibility có kiểm bounds/index/query plan ở GM-18; dataset nguồn/menu/giờ/ngày kiểm và coverage có version/rollback, không dùng fixture như dữ liệu thật. Không cam kết tồn kho live; lỗi weather GM-38 không làm hỏng core. GPS riêng không backend/log; anchor công cộng theo TTL room. [Food spec](../specs/FOOD_DATA_SPEC.md).

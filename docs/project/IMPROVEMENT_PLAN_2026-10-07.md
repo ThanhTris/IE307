@@ -1,3 +1,5 @@
+> Lịch sử: các mã task trong tài liệu này thuộc thời điểm soạn/roadmap-v1 (hoặc mã cũ được ghi bên dưới). Lộ trình hiện hành: [roadmap-v2](IMPLEMENTATION_ROADMAP.md); không dùng mã trong tài liệu này để mở gate.
+
 > Lưu ý mã task: nội dung lịch sử bên dưới dùng mã cũ. Task hiện hành đã đánh số theo lộ trình; xem [bảng mã cũ–mới](TASK_RENUMBERING.md). Không suy task hiện tại từ số trong bản lịch sử.
 
 > Nghiên cứu lịch sử trước food-v1. Yêu cầu hiện hành: [food spec](../specs/FOOD_DATA_SPEC.md), [task summary](TASK_SUMMARY.md), [dependency map](TASK_DEPENDENCIES.md). Venue data nay P0; GM-28 review scope mới, GM-29/30 capability/eligibility sớm. Các mô tả “bản hiện hành” dưới đây chỉ áp dụng lúc soạn v0.2.

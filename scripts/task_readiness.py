@@ -1,6 +1,6 @@
 """Read-only task gates and reproducible task indexes; no external services.
 
---write-docs regenerates four Markdown indexes and repairs links after task moves.
+--write-docs regenerates task/handoff indexes and repairs links after task moves.
 No task status, approval or assignment is ever changed by this script.
 """
 from __future__ import annotations
@@ -27,18 +27,24 @@ def readiness(src, records, tid, gate='start', base=None):
     status = record['meta']['status']
     if status == 'done' and gate == 'start':
         reasons = repository.approval_errors(src, record)
+        reasons.extend(repository.delivery_errors(src, record))
         return ('INVALID_APPROVAL', reasons) if reasons else ('DONE_REVIEWED', [])
     blocked = [dep for dep in dependencies(record, gate)
                if dep not in records or repository.approval_errors(src, records[dep])]
     if blocked:
         return 'BLOCKED', blocked
-    if gate == 'merge':
-        if base is None:
-            return 'NEEDS_BASE_CHECK', []
+    missing = [dep for dep in dependencies(record, gate)
+               if repository.delivery_errors(src, records[dep])]
+    if missing:
+        return 'BLOCKED_ARTIFACTS', missing
+    if gate == 'merge' and base is None:
+        return 'NEEDS_BASE_CHECK', []
+    if base is not None:
         base_records = repository.task_records(base)
         for dep in dependencies(record, gate):
             target = base_records.get(dep)
-            if not target or repository.approval_errors(base, target):
+            if (not target or repository.approval_errors(base, target)
+                    or repository.delivery_errors(base, target)):
                 blocked.append(dep)
                 continue
             # Do not accept an older baseline/evidence revision just because it is Approved.
@@ -49,6 +55,7 @@ def readiness(src, records, tid, gate='start', base=None):
                 blocked.append(dep)
         if blocked:
             return 'BLOCKED_ON_BASE', blocked
+    if gate == 'merge':
         return 'READY_FOR_MERGE_REVIEW', []
     if status == 'review':
         return 'IN_REVIEW', []
@@ -116,21 +123,39 @@ def render_documents(src):
               '`--check-docs` kiểm độ mới. Đây là metadata local, không phải trạng thái GitHub.\n\n')
     counts = {p: sum(records[t]['meta']['priority'] == p for t in ids) for p in ('P0', 'P1', 'P2')}
     summary = (f"{len(ids)} task sau GM-00: {counts['P0']} P0 (gồm GM-01), "
-               f"{counts['P1']} P1, {counts['P2']} P2. Mã roadmap-v1 tăng theo lộ trình; "
-               'mọi dependency có số nhỏ hơn task. Không đổi owner/priority/approval.\n\n')
+               f"{counts['P1']} P1, {counts['P2']} P2. Mã roadmap-v2 tăng theo lộ trình; "
+               'mọi dependency có số nhỏ hơn task. Owner/reviewer là đề xuất; không kế thừa approval khi đổi scope.\n\n')
     for path, title in (
         ('tasks/backlog/MASTER_BACKLOG.md', 'Master backlog — food-v1'),
         ('docs/project/TASK_SUMMARY.md', 'Tổng hợp task — food-v1'),
     ):
-        rows = ['| Task | Phạm vi | Owner / reviewer | Mức/cỡ | Status | Gate bắt đầu | Start deps | Merge deps | Song song |',
-                '| --- | --- | --- | --- | --- | --- | --- | --- | --- |']
+        rows = ['| Task | Luồng / bước | Phạm vi | Owner / reviewer | Mức/cỡ | Status | Gate bắt đầu | Start deps | Merge deps | Song song |',
+                '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |']
         for tid in ids:
             m = records[tid]['meta']
             peers = re.findall(r'GM-\d{2}', m.get('parallel_with', ''))
-            rows.append(f"| {link(tid,path)} | {m['title']} | {m['owner']} / {m['reviewer']} | {m['priority']}/{m['size']} | {m['status']} | {readiness(src,records,tid)[0]} | {links(dependencies(records[tid],'start'),path)} | {links(repository.dependency_ids(records[tid],'merge'),path)} | {links(peers,path)} |")
+            rows.append(f"| {link(tid,path)} | {m.get('track', '')} / {m.get('stage', '')} | {m['title']} | {m['owner']} / {m['reviewer']} | {m['priority']}/{m['size']} | {m['status']} | {readiness(src,records,tid)[0]} | {links(dependencies(records[tid],'start'),path)} | {links(repository.dependency_ids(records[tid],'merge'),path)} | {links(peers,path)} |")
         dep_path = posixpath.relpath('docs/project/TASK_DEPENDENCIES.md', posixpath.dirname(path))
         mapping_path = posixpath.relpath('docs/project/TASK_RENUMBERING.md', posixpath.dirname(path))
-        outputs[path] = f'# {title}\n\n' + notice + summary + '\n'.join(rows) + f'\n\n[Hai gate và thứ tự merge]({dep_path}) · [Mã cũ–mới]({mapping_path}). Merge cần cả start deps và merge deps. Song song chỉ áp dụng phần độc lập được ghi trong task; không tự xác nhận nhận việc.\n'
+        handoff_path = posixpath.relpath('docs/project/TASK_HANDOFFS.md', posixpath.dirname(path))
+        outputs[path] = f'# {title}\n\n' + notice + summary + '\n'.join(rows) + f'\n\n[Hai gate và thứ tự merge]({dep_path}) · [Đầu vào/đầu ra]({handoff_path}) · [Mã cũ–mới]({mapping_path}). Merge cần cả start deps và merge deps. Song song chỉ áp dụng phần độc lập được ghi trong task; không tự xác nhận nhận việc.\n'
+
+    path = 'docs/project/TASK_HANDOFFS.md'
+    mapping = repository.roadmap(src)
+    text = '# Bảng nhận đầu vào và bàn giao — roadmap-v2\n\n' + notice
+    text += ('Path dưới đây là đầu ra dự kiến, không chứng minh file đã có. Người nhận đối chiếu HANDOFF/PR/commit/version và chạy smoke sau khi cập nhật nhánh. '
+             'Trước start dùng readiness; thêm --base-ref origin/main để kiểm target. Merge bắt buộc --gate merge --base-ref origin/main. '
+             'Checker kiểm sự hiện diện file, không chứng minh nội dung chạy đúng.\n\n'
+             '| Task / owner | Nhận trước start | Nhận trước merge (ngoài start) | Bàn giao cho task sau |\n'
+             '| --- | --- | --- | --- |\n')
+    for entry in mapping['entries']:
+        tid = entry['new_id']
+        inputs = {gate: '<br>'.join(f"{link(i['task'],path)}: `{i['artifact']}`" for i in entry['inputs'] if i['gate'] == gate) or '—'
+                  for gate in ('start', 'merge')}
+        artifacts = '<br>'.join(f'`{p}`' for p in entry['outputs'])
+        text += f"| {link(tid,path)} — {records[tid]['meta']['owner']} | {inputs['start']} | {inputs['merge']} | {artifacts} |\n"
+    text += '\n[Mẫu HANDOFF](../../tasks/templates/HANDOFF_TEMPLATE.md) · [Lộ trình](IMPLEMENTATION_ROADMAP.md).\n'
+    outputs[path] = text
 
     path = 'docs/project/TASK_DEPENDENCIES.md'
     text = '# Làm song song, merge theo dependency — food-v1\n\n' + notice + summary
@@ -141,6 +166,7 @@ def render_documents(src):
         '- `parallel_with`: cặp làm phần độc lập trên nhánh riêng, có thể có quan hệ merge trước/sau. Không được có quan hệ start trước/sau hoặc cùng owner.\n\n'
         '```text\n'
         'python scripts/task_readiness.py --task GM-20\n'
+        'python scripts/task_readiness.py --task GM-20 --base-ref origin/main\n'
         'python scripts/task_readiness.py --task GM-20 --gate merge --base-ref origin/main\n'
         'python scripts/task_readiness.py --all\n'
         '```\n\n'
@@ -149,7 +175,7 @@ def render_documents(src):
         'không chứng minh code của PR đã merge hoặc remote ref còn mới. Người merge phải kiểm PR/merge commit thực tế, ancestry, cập nhật nhánh và chạy lại integration tests.\n\n'
         'READY_TO_CLAIM: đủ start deps, chưa nhận việc; READY_TO_START: đã nhận; IN_PROGRESS: đang làm; '
         'IN_REVIEW: chờ reviewer; DONE_REVIEWED: bản ghi review đạt, không đồng nghĩa đã merge. '
-        'BLOCKED: thiếu review dependency; BLOCKED_ON_BASE: đầu vào thiếu/khác revision trên nhánh đích; '
+        'BLOCKED: thiếu review dependency; BLOCKED_ARTIFACTS: upstream thiếu file bàn giao/HANDOFF; BLOCKED_ON_BASE: đầu vào thiếu/khác revision trên nhánh đích; '
         'NEEDS_BASE_CHECK: metadata local đạt nhưng chưa kiểm ref đích; READY_FOR_MERGE_REVIEW: đầu vào trên ref đạt, vẫn cần reviewer của chính PR và AC/test thật. '
         'Exit 0 của --task chỉ là gate tương ứng đạt; 1 là chờ; 2 là dữ liệu/lệnh lỗi. --all exit 0 chỉ là báo cáo chạy được.\n\n'
         '## Trạng thái hiện tại\n\n'
@@ -173,12 +199,12 @@ def render_documents(src):
         text += f'| {links([first,second],path)} | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |\n'
     text += (
         '\nKhông liệt kê mọi cặp có thể song song. Chốt interface và file ownership trong draft PR trước viết; '
-        'mock không đóng AC native/SQL/dataset thật. GM-01 vẫn review, không tự mở khóa scope food-v1. '
-        'GM-03 chốt taxonomy/templates trước GM-05, GM-06, GM-08, GM-11. GM-08 có thể khảo sát trong lúc GM-05 làm schema; '
-        'GM-11 viết pure rules cùng GM-08 nhưng nghiệm thu query trên data thật phải chờ. '
-        'Các cặp GM-12 với GM-13, GM-14 với GM-20, GM-20 với GM-21 được viết song song, merge theo chuỗi tích hợp. '
-        'GM-28, GM-29, GM-30, GM-31 có thể soạn isolated draft khi đủ start gate và còn người; merge vẫn sau GM-27, không lấy nguồn lực P0 mặc định.\n\n'
-        '[Workflow và kiểm merge thực tế](TEAM_WORKFLOW.md) · [Mã cũ–mới](TASK_RENUMBERING.md) · [Hai gate](../architecture/decisions/ADR-006-parallel-start-ordered-merge.md) · [Quy tắc đánh số](../architecture/decisions/ADR-007-task-roadmap-numbering.md).\n')
+        'GM-02 UI structure / GM-03 BE structure / GM-04 fields là ba nhánh nền. '
+        'GM-05 components và GM-07 client/mock có thể làm đồng thời sau đầu vào riêng; GM-08 import chờ schema GM-06. '
+        'GM-09..14 màn mock nghiệm thu riêng sau components+contract, không chờ API nghiệp vụ. '
+        'GM-15..23 hoàn thiện BE; GM-24..31 tích hợp UI/API/native; GM-32..34 kiểm thử và release. '
+        'GM-35..38 chỉ merge sau core. GM-01 vẫn review. Mock không đóng AC native/SQL/dataset thật của task tích hợp.\n\n'
+        '[Lộ trình](IMPLEMENTATION_ROADMAP.md) · [Đầu vào/đầu ra](TASK_HANDOFFS.md) · [Workflow](TEAM_WORKFLOW.md) · [Mapping](TASK_RENUMBERING.md) · [ADR-009](../architecture/decisions/ADR-009-foundation-first-task-slicing.md).\n')
     outputs[path] = text
 
     path = 'docs/project/TEAM_AND_RESPONSIBILITIES.md'
@@ -188,17 +214,12 @@ def render_documents(src):
         owned = [tid for tid in ids if records[tid]['meta']['owner'] == owner]
         text += f'| {owner} | {links(owned,path)} | [@{handle}](https://github.com/{handle}) |\n'
     text += (
-        '\nCodex soạn GM-01; Trí review độc lập, chưa Approved. Sau GM-01, đợt đầu đề xuất: '
-        'Tuấn GM-02 runner; Trang GM-04 primitives theo UI spec; Vinh GM-03 contract; '
-        'Trung GM-07 adapter identity theo API; Trí GM-09 thiết kế quyền/tests theo data model. '
-        'Tâm chuẩn bị patch/test plan GM-05, chỉ triển khai sau GM-03 được review. '
-        'Các nhánh chưa có runtime phải ghi Not run, không tự tạo package/lockfile riêng.\n\n'
-        'Sau GM-03: Tâm GM-05 schema và Vinh GM-08 khảo sát có thể song song; '
-        'GM-06 cùng owner Vinh cần xếp ca, GM-11 cùng Tâm cần xếp ca. '
-        'Sau nền: Trang UI, Tuấn context/result/links, Tâm eligibility/room/history, '
-        'Trí security/submit/outbox, Trung friends/push, Vinh data/decision/QA. '
-        'Reviewer Trí/Tâm có tải cao: đặt lịch review contract sớm, không tự thay reviewer hay coi proposed là đã nhận. '
-        'Xem [hai gate và cặp task](TASK_DEPENDENCIES.md); cùng owner không được tự gắn song song.\n')
+        '\nCodex soạn GM-01, Trí review baseline. Đợt nền: Tuấn GM-02 UI structure, Trí GM-03 BE structure, Vinh GM-04 fields. '
+        'Trang chuẩn bị inventory UI mẫu; Tâm/Trung review data/API plan. Sau đầu vào tương ứng: Trang GM-05 components, '
+        'Tâm GM-06 database, Trung GM-07 client/mock, Vinh GM-08 import. Trang/Tuấn chia màn GM-09..14 theo ca; '
+        'BE và tích hợp theo task/owner trong bảng. Không yêu cầu người chưa có nền tự tạo scaffolding riêng. '
+        'Đặt lịch review sớm, cùng owner xếp ca. Xem [lộ trình](IMPLEMENTATION_ROADMAP.md), [handoff](TASK_HANDOFFS.md) '
+        'và [dependency](TASK_DEPENDENCIES.md).\n')
     outputs[path] = text
     return outputs
 
@@ -206,7 +227,7 @@ def render_documents(src):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--gate', choices=('start', 'merge'), default='start')
-    parser.add_argument('--base-ref', help='Local Git ref of target branch; fetch it separately before checking merge')
+    parser.add_argument('--base-ref', help='Compare upstream task/evidence/artifacts with this local target ref; required for merge, optional for start')
     choice = parser.add_mutually_exclusive_group(required=True)
     choice.add_argument('--task')
     choice.add_argument('--all', action='store_true')
@@ -216,8 +237,8 @@ def main():
     args = parser.parse_args()
     if args.gate == 'merge' and (args.task or args.all) and not args.base_ref:
         parser.error('--gate merge requires --base-ref (for example origin/main)')
-    if args.base_ref and (args.gate != 'merge' or not (args.task or args.all)):
-        parser.error('--base-ref is only for --task/--all --gate merge')
+    if args.base_ref and not (args.task or args.all):
+        parser.error('--base-ref is only for --task/--all')
     src = repository.Source(None)
     records = repository.task_records(src)
     # Generation also repairs stale indexes after task edits; validate gates afterwards.
@@ -261,7 +282,13 @@ def main():
         m = records[tid]['meta']
         print(f"{tid}: {state} | owner={m['owner']} reviewer={m['reviewer']} | {records[tid]['path']}")
         for dep in blocked:
-            print(f"  WAIT {dep}: {records[dep]['meta']['status']} | {records[dep]['path']}")
+            if dep in records:
+                print(f"  WAIT {dep}: {records[dep]['meta']['status']} | {records[dep]['path']}")
+                if state == 'BLOCKED_ARTIFACTS':
+                    for reason in repository.delivery_errors(src, records[dep]):
+                        print('    ' + reason)
+            else:
+                print('  ' + dep)
     print('Recorded approval only; confirm assignment/contracts for start. Merge still requires independent review, exact PR/commit ancestry and real integration tests; no remote verification.')
     if args.task:
         return 0 if readiness(src, records, args.task, args.gate, base)[0] in {'READY_TO_CLAIM', 'READY_TO_START', 'IN_PROGRESS', 'DONE_REVIEWED', 'READY_FOR_MERGE_REVIEW'} else 1

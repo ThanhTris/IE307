@@ -19,9 +19,9 @@
 | register_push_device/unregister_push_device P0 | deviceId/token/permission | own user/device, không client list tokens |
 | get_history/update_history_consent/delete_history P0 | scope personal/group, cursor/resultId | self/đúng roster/consent, rút consent xóa group summary, không raw votes |
 | account_link/recovery P1 | provider proof/nonce | SDK auth + conflict recovery, không chỉ email nhập |
-| get_discovery_context P0 | areaId?/anchorId?; cursor bounded | GM-05, GM-09 cung cấp published coverage/anchor lookup + serverTime; GM-08 data; auth/read/rate limit, không GPS input; GM-10 dùng trước room |
-| preview_food_pool P0 | anchorId/radiusM/desiredAt/mealSlot/serviceMode, preference inputs hợp lệ | GM-11 read eligibility; dataset/evaluatedAt/reasonCodes; room integration GM-12 không tin pool client |
-| get_result_offerings P0 | roomId/resultId | GM-12 member only, query GM-11 cho đúng winner/context; lịch mới không đổi result |
+| get_discovery_context P0 | areaId?/anchorId?; cursor bounded | GM-06, GM-17 cung cấp published coverage/anchor lookup + serverTime; GM-08 data; auth/read/rate limit, không GPS input; GM-24 dùng trước room |
+| preview_food_pool P0 | anchorId/radiusM/desiredAt/mealSlot/serviceMode, preference inputs hợp lệ | GM-18 read eligibility; dataset/evaluatedAt/reasonCodes; room integration GM-19 không tin pool client |
+| get_result_offerings P0 | roomId/resultId | GM-19 member only, query GM-18 cho đúng winner/context; lịch mới không đổi result |
 
 Success write {ok:true,requestId,roomId?,version?,state?,data}. Reads không cần requestId. Snapshot result {resultId,winnerId?,reasonCode,matchTier,policyVersion,finalizedAt}; tiedIds/score matrix không public.
 
@@ -33,4 +33,20 @@ Realtime roomId/version/state/progress tổng được ACL, events chỉ refetch
 
 Final submit transaction tạo result/history opt-in/notification event; sender network sau commit. Sender không là public client RPC. Tests auth spoof, host đọc phiếu, race last-seat/start-join/final-submit/cancel-vote, retry ACK, invite/pair/unfriend, history/group consent/token ownership.
 
-Food-v1: request context chỉ nhận public anchorId đã xác nhận, không raw GPS; radius/desiredAt có giới hạn cấu hình review ở GM-01, GM-11. Thiếu context chặn tạo pool thực tế; phòng lobby cho sửa trước start. Snapshot bổ sung datasetVersion/eligibilityVersion/evaluatedAt/offerings/lịch/ngày nguồn và khoảng cách tới anchor. Revalidation đổi pool thì CONTEXT_CHANGED/reset ready; không start trên ready cũ. Weather/mood RPC chỉ GM-31 P2 sau core. [Food spec](../specs/FOOD_DATA_SPEC.md).
+Food-v1: request context chỉ nhận public anchorId đã xác nhận, không raw GPS; radius/desiredAt có giới hạn cấu hình review ở GM-01, GM-18. Thiếu context chặn tạo pool thực tế; phòng lobby cho sửa trước start. Snapshot bổ sung datasetVersion/eligibilityVersion/evaluatedAt/offerings/lịch/ngày nguồn và khoảng cách tới anchor. Revalidation đổi pool thì CONTEXT_CHANGED/reset ready; không start trên ready cũ. Weather/mood RPC chỉ GM-38 P2 sau core. [Food spec](../specs/FOOD_DATA_SPEC.md).
+
+## Chủ sở hữu endpoint theo roadmap-v2
+
+GM-07 chốt request/response/error/version từ dictionary GM-04, đối chiếu schema GM-06 và xuất client/transport/mock interface. Đây là API scaffold để UI dùng; các task dưới hoàn thiện xử lý trên database và data đã nạp.
+
+| Endpoint / module | Task BE | UI dùng mock trước | Task nối API thật |
+| --- | --- | --- | --- |
+| guest session/restore/refresh/logout | GM-16 | GM-09 | GM-25 |
+| get_discovery_context / preview_food_pool / get_result_offerings | GM-18 | GM-10/13 | GM-24/25/27 |
+| create/join/snapshot/preferences/context/ready/start/leave/cancel | GM-19 | GM-09/10/11 | GM-25 |
+| submit_ballot / round transition / finalize | GM-20 | GM-12/13 | GM-26/27 |
+| get_history / consent / delete / recent input | GM-21 | GM-10/14 | GM-25/28 |
+| partner / invite / accept_room_invite | GM-22 | GM-09/11/14 | GM-28/30 |
+| inbox / register/unregister push device / sender | GM-23 | GM-14 | GM-28/29 |
+
+GM-17 bảo vệ tables/RPC/retention, từng task API thêm auth/membership/version/expiry/lock/idempotency đúng endpoint. Client không import SQL/SDK vào UI; production không fallback sang mock khi API lỗi. Lệnh smoke/API example và response mẫu là bắt buộc trong HANDOFF.

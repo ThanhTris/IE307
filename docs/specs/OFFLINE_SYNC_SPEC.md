@@ -1,6 +1,6 @@
 # Cache, outbox và đồng bộ — v0.2
 
-2026-10-07 • FR-09/16 • GM-24, GM-25, GM-26 • [RPC](../architecture/API_CONTRACT.md).
+2026-10-07 • FR-09/16 • GM-31, GM-32, GM-33 • [RPC](../architecture/API_CONTRACT.md).
 
 ## Dữ liệu và trạng thái
 

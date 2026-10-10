@@ -1,20 +1,18 @@
-# Kế hoạch UI — food-v1
+# Kế hoạch UI — dựng theo mẫu trước, nối API sau
 
-2026-10-07. Review mới GM-01; prototype mô phỏng không là native evidence. [UI spec](../specs/UI_SPEC.md), [food spec](../specs/FOOD_DATA_SPEC.md), [dependency map](TASK_DEPENDENCIES.md).
+Roadmap-v2, 2026-10-10. [Lộ trình đầy đủ](IMPLEMENTATION_ROADMAP.md) · [UI spec](../specs/UI_SPEC.md) · [mẫu](../../design/prototypes/gi-cung-duoc.html).
 
-Các chặng dưới là **tích hợp/merge**, không chặn viết màn hình độc lập. Sau start gate GM-01, UI/view model/states dùng fake adapter đúng API/UI contract có thể làm song song backend. Ví dụ GM-13 với GM-12, GM-20 với GM-14, GM-21 với GM-20; cập nhật runner GM-02/primitives GM-04 trước kiểm native thật. Không tự thêm package/lockfile hoặc copy shared types; draft PR ghi contract commit, file ownership và phần mock. Xem [workflow](TEAM_WORKFLOW.md).
+| Bước | Task | Đầu vào thật phải có | Đầu ra nghiệm thu |
+| --- | --- | --- | --- |
+| 1. Cấu trúc | GM-02 — Tuấn | Baseline GM-01 | Expo shell/folder/routes/runner, mở được trên Expo Go |
+| 2. Component theo mẫu | GM-05 — Trang | Shell GM-02 + field GM-04 | Tokens/Button/Chip/Card/Form/Avatar/Header/ContextSummary, props/events |
+| 3. Màn chi tiết | GM-09/12/14 — Trang; GM-10/11/13 — Tuấn | Components GM-05 + API client/mock GM-07 | UI-01..13/15 với dữ liệu mẫu và interaction; có thể merge riêng |
+| 4. Nối dữ liệu thật | GM-24..28 | Các màn tương ứng + API/verified data đã bàn giao | Location/room/preferences/vote/result/social/history thực |
+| 5. Native/recovery | GM-29..31 | Luồng/API tích hợp trước đó | Push, QR/link/Maps, SQLite/reconnect |
+| 6. QA/release | GM-32..34 | Core đã tích hợp | Regression, Android/pilot, APK |
 
-| Chặng | Tasks | Màn/đầu ra và gate tích hợp |
-| --- | --- | --- |
-| Nền | GM-02, GM-04 | Build/runner, tokens/primitives, a11y/error states |
-| Context sớm | GM-10 sau GM-02, GM-04, GM-07, GM-09, GM-08 | UI-15 capability: foreground/manual/public anchor/radius/giờ ăn; harness không chờ result |
-| Room | GM-13 sau GM-12, GM-10, rồi GM-16, GM-19 | UI-01..05: create/join/lobby/preferences thật, cùng context/pool, empty/unknown/coverage/reset ready |
-| Vote/result | GM-14, GM-20, GM-21, GM-22; friends GM-15 riêng | UI-06..09/11: double-tap/ba nút, hai vòng, tier, offering đã kiểm đúng context và refetch |
-| Network/push | GM-24, GM-18 | UI-10/12 pending khác ACK, restart/reconnect, permission và cold/warm |
-| History/integration | GM-17, GM-23 | UI-13 history; QR/link/Maps/review tái dùng context GM-10; không GPS mới tự đổi room |
-| QA/release | GM-25, GM-26, GM-27 | Native/evidence 2/4/8 máy, FOOD core, gesture/a11y/privacy |
-| Mở rộng | GM-28, GM-31 | UI-14 account P1, UI-16 weather/mood P2 |
+Các màn GM-09..14 là task UI độc lập, không giữ mở chỉ vì chưa có API thật. Mock adapter có interface/type/version do GM-07 sở hữu, banner dữ liệu mẫu và fixture rõ; API lỗi trong production không tự chuyển sang mock. Tích hợp dùng lại screens; logic server không nằm trong component.
 
-Mọi màn có loading/empty/error/retry, fetchedAt/nguồn/ngày kiểm, font200/dark/reduced motion/TalkBack, safe area/touch48. Card không ghép đặc tính từ nhiều quán; lịch dự kiến bán khác stock live; đường chim bay từ anchor khác GPS/route. Dữ liệu ngoài coverage/unknown không lấy món xa lấp pool.
+Bố cục/màu/spacing/copy dựa mẫu. Ready/submit chủ động, mã do server, anchor công cộng được xác nhận và ba nút vote theo UI_SPEC. Component map ghi trường hợp HTML khác luật. Chưa đưa hồ sơ dị ứng/Google linking vào core chỉ vì mẫu có nút.
 
-Double-tap đặt WANT, không toggle/submit; scroll/vertical không vote, detail nút riêng, ba nút luôn có. Result ổn định nếu offering đổi; cảnh báo và refetch đúng món, không reroll. P2 weather/mood không chặn P0. Native build/evidence theo DoD; thứ tự task lấy từ dependency map, không từ tuần cứng.
+Chỉ kiểm phần liên quan: shell startup ở GM-02, render/interaction ở GM-05/09..14, native trong task dùng capability. Không để gallery/camera/notification/SQLite demo thành điều kiện dựng UI. Accessibility cơ bản nằm ngay trong component và màn; kiểm thiết bị đầy đủ ở GM-33.

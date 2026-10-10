@@ -18,7 +18,7 @@ Baseline v0.2 dùng location sau khi chốt món để mở tìm quán/review; v
 
 ## Tác động và đánh đổi
 
-Core mới cần dữ liệu venue–dish/schedule trước pool; phải review chuyển phần thiết yếu từ GM-08/P1 vào các task core và tách location context sớm khỏi QR/review muộn của GM-23. Cần sửa spec/AC/dependency/lịch đồng bộ, tránh vòng dependency và không giả tự mở khóa. Đợt cập nhật tiếp theo: GM-08 thành P0; thêm GM-01 review gate, GM-10 location sớm, GM-11 eligibility và GM-31 weather/mood P2. Dependency/status được ghi trong task và chỉ mục tự sinh; task code vẫn backlog.
+Core mới cần dữ liệu venue–dish/schedule trước pool; phải review chuyển phần thiết yếu từ GM-08/P1 vào các task core và tách location context sớm khỏi QR/review muộn của GM-30. Cần sửa spec/AC/dependency/lịch đồng bộ, tránh vòng dependency và không giả tự mở khóa. Đợt cập nhật tiếp theo: GM-08 thành P0; thêm GM-01 review gate, GM-24 location sớm, GM-18 eligibility và GM-38 weather/mood P2. Dependency/status được ghi trong task và chỉ mục tự sinh; task code vẫn backlog.
 
 Dataset pilot giới hạn khu vực có nguồn/nhân lực kiểm; không tuyên bố coverage toàn quốc. Lọc dữ liệu verified có thể làm ít/rỗng candidate; cần đổi context rõ thay vì đề xuất sai vùng. Chi phí duy trì menu/giờ là công việc liên tục. Public anchor giảm việc xử lý GPS cá nhân nhưng khoảng cách tương đối với người đứng; cần kiểm UX/độ tiện dụng và thông báo bên nhận dữ liệu phù hợp.
 

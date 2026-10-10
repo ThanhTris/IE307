@@ -9,7 +9,7 @@ from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 import task_readiness as gates
-from test_repository_validator import MemorySource
+from test_repository_validator import MemorySource, deliver_in_memory
 
 
 class ReadinessTests(unittest.TestCase):
@@ -20,6 +20,7 @@ class ReadinessTests(unittest.TestCase):
         return gates.repository.task_records(self.source)
 
     def approve_in_memory(self, tid):
+        deliver_in_memory(self.source, tid)
         record = self.records()[tid]
         text = record['text']
         text = re.sub(r'^status:.*$', 'status: done', text, flags=re.M)
@@ -41,26 +42,59 @@ class ReadinessTests(unittest.TestCase):
         self.assertEqual(gates.readiness(self.source, records, 'GM-02')[0], 'READY_TO_CLAIM')
         self.assertEqual(gates.readiness(self.source, records, 'GM-03')[0], 'READY_TO_CLAIM')
         self.assertEqual(gates.readiness(self.source, records, 'GM-04'), ('READY_TO_CLAIM', []))
-        self.assertEqual(gates.readiness(self.source, records, 'GM-04', 'merge'), ('BLOCKED', ['GM-02']))
-        self.assertEqual(gates.readiness(self.source, records, 'GM-08'), ('BLOCKED', ['GM-03']))
+        self.assertEqual(gates.readiness(self.source, records, 'GM-04', 'merge'), ('NEEDS_BASE_CHECK', []))
+        self.assertEqual(gates.readiness(self.source, records, 'GM-08'), ('BLOCKED', ['GM-04', 'GM-06']))
         ready = [tid for tid in records if gates.readiness(self.source, records, tid)[0] == 'READY_TO_CLAIM']
-        self.assertEqual(len(ready), 26)
+        self.assertEqual(set(ready), {'GM-02', 'GM-03', 'GM-04'})
 
-    def test_data_contract_unlocks_four_data_tasks_without_schema_or_seed(self):
-        self.approve_in_memory('GM-01')
-        self.approve_in_memory('GM-03')
-        for tid in ('GM-05', 'GM-06', 'GM-08', 'GM-11'):
-            self.assertEqual(gates.readiness(self.source, self.records(), tid)[0], 'READY_TO_CLAIM')
-        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-08', 'merge'), ('BLOCKED', ['GM-05']))
-
-    def test_preferences_can_start_but_merge_waits_for_history_integration(self):
-        self.approve_in_memory('GM-01')
-        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-19'), ('READY_TO_CLAIM', []))
-        for tid in ('GM-04', 'GM-11', 'GM-16'):
+    def test_fields_then_database_then_import(self):
+        for tid in ('GM-01', 'GM-03', 'GM-04'):
             self.approve_in_memory(tid)
-        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-19', 'merge'), ('BLOCKED', ['GM-17']))
-        self.approve_in_memory('GM-17')
-        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-19', 'merge', self.source), ('READY_FOR_MERGE_REVIEW', []))
+        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-06')[0], 'READY_TO_CLAIM')
+        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-08'), ('BLOCKED', ['GM-06']))
+        self.approve_in_memory('GM-06')
+        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-08')[0], 'READY_TO_CLAIM')
+
+    def test_contract_can_start_before_database_merge(self):
+        for tid in ('GM-01', 'GM-02', 'GM-03', 'GM-04'):
+            self.approve_in_memory(tid)
+        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-07')[0], 'READY_TO_CLAIM')
+        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-07', 'merge'), ('BLOCKED', ['GM-06']))
+
+    def test_mock_preferences_merge_without_backend_but_integration_waits(self):
+        for tid in ('GM-01', 'GM-02', 'GM-03', 'GM-04', 'GM-05', 'GM-06', 'GM-07'):
+            self.approve_in_memory(tid)
+        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-10', 'merge', self.source),
+                         ('READY_FOR_MERGE_REVIEW', []))
+        state, blockers = gates.readiness(self.source, self.records(), 'GM-25')
+        self.assertEqual(state, 'BLOCKED')
+        self.assertIn('GM-21', blockers)
+
+    def test_approved_dependency_without_handoff_blocks(self):
+        self.approve_in_memory('GM-01')
+        self.source.files.remove('docs/evidence/roadmap-v2/GM-01/HANDOFF.md')
+        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-02'),
+                         ('BLOCKED_ARTIFACTS', ['GM-01']))
+
+    def test_missing_delivered_output_blocks(self):
+        for tid in ('GM-01', 'GM-02', 'GM-04'):
+            self.approve_in_memory(tid)
+        import json
+        entry = next(e for e in json.loads(self.source.read('tasks/task-id-map.json'))['entries']
+                     if e['new_id'] == 'GM-02')
+        self.source.files.remove(entry['outputs'][0])
+        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-05'),
+                         ('BLOCKED_ARTIFACTS', ['GM-02']))
+
+    def test_missing_target_handoff_blocks_start_and_merge(self):
+        self.approve_in_memory('GM-01')
+        base = MemorySource()
+        base.contents.update(self.source.contents)
+        base.files.update(self.source.files)
+        base.files.remove('docs/evidence/roadmap-v2/GM-01/HANDOFF.md')
+        for gate in ('start', 'merge'):
+            self.assertEqual(gates.readiness(self.source, self.records(), 'GM-02', gate, base),
+                             ('BLOCKED_ON_BASE', ['GM-01']))
 
     def test_accepted_owner_distinguishes_ready_to_start(self):
         self.approve_in_memory('GM-01')
@@ -71,7 +105,7 @@ class ReadinessTests(unittest.TestCase):
     def test_all_dependencies_required_not_any(self):
         self.approve_in_memory('GM-01')
         self.approve_in_memory('GM-02')
-        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-07', 'merge'), ('BLOCKED', ['GM-05']))
+        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-07', 'merge'), ('BLOCKED', ['GM-03', 'GM-04', 'GM-06']))
 
     def test_merge_without_base_is_never_ready(self):
         self.approve_in_memory('GM-01')
@@ -90,10 +124,12 @@ class ReadinessTests(unittest.TestCase):
         self.approve_in_memory('GM-01')
         base = MemorySource()
         base.contents.update(self.source.contents)
+        base.files.update(self.source.files)
         evidence = 'docs/evidence/GM-28/REPOSITORY_AUDIT.md'
         base.contents[evidence] += '\nAn older/different review revision.\n'
         self.assertEqual(gates.readiness(self.source, self.records(), 'GM-02', 'merge', base)[0], 'BLOCKED_ON_BASE')
         base.contents.update(self.source.contents)
+        base.files.update(self.source.files)
         base.contents['tasks/review/GM-01.md'] += '\nChanged scope.\n'
         self.assertEqual(gates.readiness(self.source, self.records(), 'GM-02', 'merge', base)[0], 'BLOCKED_ON_BASE')
 

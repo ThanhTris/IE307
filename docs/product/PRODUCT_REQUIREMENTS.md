@@ -14,14 +14,14 @@ Lọc món có nơi bán phù hợp khu vực/buổi/giờ trước, nhóm chọ
 | --- | --- |
 | P0 | Guest/session; 2–8 người; mã/QR/incoming link; cuisine/category/temperature/flavor mềm; quán–món/giờ phục vụ/coverage/anchor công cộng/radius/desiredAt, budget tham khảo; pool tối đa 8; card ảnh/tag/giá; double-tap WANT/ba nút; hai vòng/scoring/4 nhãn kết quả; private votes; realtime; SQLite cache/outbox; kết bạn/avatar/inbox; push mời/kết quả; history tối thiểu/consent/chống lặp; vị trí foreground và Maps/YouTube/TikTok; a11y, QA/APK |
 | P1 | Account link/recovery và history sync đa thiết bị |
-| P2 | OCR menu, AI phân loại sở thích có xác nhận, weather/mood GM-31; fairness dài hạn chưa có task |
+| P2 | OCR menu, AI phân loại sở thích có xác nhận, weather/mood GM-38; fairness dài hạn chưa có task |
 | Ngoài scope | Đặt món/đặt bàn/thanh toán/chat/pantry; Bluetooth; AI tự chọn winner; dữ liệu quán toàn quốc hoặc tuyên bố allergy safety |
 
 ## Luồng và giới hạn
 
 [Tổng quan](SYSTEM_OVERVIEW.md) mô tả 11 bước. Host chọn context, tất cả ready rồi server khóa roster/pool/context. Vòng 1 unanimous WANT có thể chốt ngay; nếu không, vòng 2 loại dần món không NO rồi tối đa hóa WANT. Chưa đồng thuận có kết thúc hoặc tạo phiên mới; không tự vòng 3/reroll. Người mất mạng không bị tự loại và phiếu chờ không được coi đã gửi.
 
-Context chỉ dùng dữ liệu có nguồn. Location GM-10 giúp chọn public anchor trước pool; dataset verified GM-08 và eligibility GM-11 là core. Lịch quán/giờ món/timezone/exceptions/source freshness theo FOOD_DATA_SPEC; ngoài coverage không giả có món. Lịch sử dùng consent, không khai thác raw votes. Khách mất session có thể mất bạn/history trên server; account khôi phục là P1.
+Context chỉ dùng dữ liệu có nguồn. Location GM-24 giúp chọn public anchor trước pool; dataset verified GM-08 và eligibility GM-18 là core. Lịch quán/giờ món/timezone/exceptions/source freshness theo FOOD_DATA_SPEC; ngoài coverage không giả có món. Lịch sử dùng consent, không khai thác raw votes. Khách mất session có thể mất bạn/history trên server; account khôi phục là P1.
 
 ## Tiêu chí thành công cần đo
 

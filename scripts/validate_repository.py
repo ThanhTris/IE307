@@ -35,6 +35,12 @@ REQUIRED = (
     'docs/architecture/decisions/ADR-006-parallel-start-ordered-merge.md',
     'docs/architecture/decisions/ADR-007-task-roadmap-numbering.md',
     'docs/project/TASK_RENUMBERING.md', 'tasks/task-id-map.json',
+    'docs/project/IMPLEMENTATION_ROADMAP.md',
+    'docs/project/TASK_HANDOFFS.md',
+    'docs/architecture/decisions/ADR-009-foundation-first-task-slicing.md',
+    'tasks/templates/HANDOFF_TEMPLATE.md',
+    'tasks/archive/roadmap-v1/task-snapshot.json',
+    'tasks/archive/roadmap-v1/task-id-map.json',
 )
 LINK = re.compile(r'(?<!!)\[[^\]]+\]\(([^)]+)\)')
 
@@ -83,6 +89,124 @@ def dependency_ids(record: dict, gate: str) -> list[str]:
     field = gate + '_dependencies'
     value = meta.get(field, meta.get('dependencies', '') if meta.get('id') == 'GM-00' else '')
     return re.findall(r'GM-\d{2}', value)
+
+
+def roadmap(src: Source) -> dict:
+    return json.loads(src.read('tasks/task-id-map.json'))
+
+
+def delivery_errors(src: Source, record: dict) -> list[str]:
+    """Presence only: reviewers still verify contents, tests and upstream commits."""
+    meta = record['meta']
+    if meta.get('numbering') != 'roadmap-v2':
+        return []
+    entry = next(e for e in roadmap(src)['entries'] if e['new_id'] == meta['id'])
+    paths = entry['outputs'] + [f"docs/evidence/roadmap-v2/{meta['id']}/HANDOFF.md"]
+    return [f'missing delivered artifact: {path}' for path in paths if path not in src.files]
+
+
+def validate_roadmap(src: Source, records: dict) -> tuple[list[str], dict]:
+    """Check scope migration and each input's producer, not just numeric edges."""
+    errors = []
+    try:
+        mapping = roadmap(src)
+        entries = mapping['entries']
+        if mapping['version'] != 'roadmap-v2' or mapping['previous_version'] != 'roadmap-v1':
+            raise ValueError('wrong roadmap version')
+        if not isinstance(entries, list) or not entries:
+            raise ValueError('empty roadmap')
+        new_ids = [e['new_id'] for e in entries]
+        if any(not isinstance(t, str) or not re.fullmatch(r'GM-\d{2}', t) for t in new_ids):
+            raise ValueError('invalid current ID')
+        if len(new_ids) != len(set(new_ids)):
+            errors.append('task ID mapping must declare each current task exactly once')
+        if set(new_ids) != set(records) - {'GM-00'}:
+            errors.append('task ID mapping must cover every current task')
+        by_id = {e['new_id']: e for e in entries}
+        snapshot = json.loads(src.read(mapping['previous_snapshot']))
+        if snapshot['version'] != 'roadmap-v1' or not isinstance(snapshot['tasks'], dict):
+            raise ValueError('invalid previous snapshot')
+        previous_ids = {Path(path).stem for path in snapshot['tasks']}
+        covered = set()
+        track_stages = {
+            'PLAN': {'baseline'}, 'UI': {'structure', 'components', 'screens'},
+            'DATA': {'fields', 'database', 'import'},
+            'BE': {'structure', 'api-contract', 'implementation'},
+            'INTEGRATION': {'native', 'integration'}, 'QA': {'regression', 'qa'},
+            'RELEASE': {'release'}, 'EXTENSION': {'extension'},
+        }
+
+        def valid_path(path):
+            return (isinstance(path, str) and bool(path) and ':' not in path
+                    and '\\' not in path and not path.startswith('/')
+                    and '..' not in path.split('/') and posixpath.normpath(path) == path)
+
+        for entry in entries:
+            tid = entry['new_id']
+            if (not isinstance(entry['previous_ids'], list)
+                    or any(p not in previous_ids for p in entry['previous_ids'])
+                    or len(entry['previous_ids']) != len(set(entry['previous_ids']))):
+                raise ValueError('invalid previous IDs')
+            covered.update(entry['previous_ids'])
+            if (entry['track'] not in track_stages
+                    or entry['stage'] not in track_stages[entry['track']]):
+                errors.append(f'{tid}: invalid track/stage')
+            outputs = entry['outputs']
+            if (not isinstance(outputs, list) or not outputs
+                    or any(not valid_path(p) for p in outputs) or len(outputs) != len(set(outputs))):
+                raise ValueError('invalid outputs')
+            inputs = entry['inputs']
+            if not isinstance(inputs, list) or not inputs:
+                raise ValueError('missing inputs')
+            record = records.get(tid)
+            if not record:
+                continue
+            meta, text = record['meta'], record['text']
+            if re.findall(r'GM-\d{2}', meta.get('previous_ids', '')) != entry['previous_ids']:
+                errors.append(f'task ID mapping mismatch: {tid}')
+            for field in ('title', 'track', 'stage'):
+                if meta.get(field) != entry[field]:
+                    errors.append(f'{tid}: roadmap {field} differs from task metadata')
+            if meta.get('numbering') != 'roadmap-v2' or 'previous_id' in meta:
+                errors.append(f'{tid}: missing roadmap-v2 numbering/previous_ids')
+            if not meta.get('contract_version'):
+                errors.append(f'{tid}: missing contract_version')
+            if '## Đầu vào bắt buộc và đầu ra bàn giao' not in text:
+                errors.append(f'{tid}: missing artifact handoff section')
+            if any(f'`{p}`' not in text for p in outputs):
+                errors.append(f'{tid}: output artifacts missing from task body')
+            start = set(dependency_ids(record, 'start'))
+            merge = set(dependency_ids(record, 'merge')) - start
+            expected = {(dep, 'start') for dep in start} | {(dep, 'merge') for dep in merge}
+            declared, unique = set(), set()
+            for item in inputs:
+                producer, artifact, gate = item['task'], item['artifact'], item['gate']
+                if not isinstance(producer, str) or gate not in {'start', 'merge'} or not valid_path(artifact):
+                    raise ValueError('invalid input')
+                declared.add((producer, gate))
+                key = (producer, artifact, gate)
+                if key in unique:
+                    errors.append(f'{tid}: duplicate input artifact')
+                unique.add(key)
+                producer_outputs = (by_id.get(producer, {}).get('outputs', [])
+                                    if producer != 'GM-00' else
+                                    ['docs/evidence/GM-00/BASELINE_V02_2026-10-07.md'])
+                if artifact not in producer_outputs:
+                    errors.append(f'{tid}: input artifact not produced by {producer}: {artifact}')
+                label = 'Trước bắt đầu' if gate == 'start' else 'Trước nghiệm thu/merge'
+                row = re.compile(r'^\| \[' + re.escape(producer) + r'\]\([^\n]+?\) \| `'
+                                 + re.escape(artifact) + r'`[^\n]+\| ' + label + r' \|$', re.M)
+                if not row.search(text):
+                    errors.append(f'{tid}: input artifact table differs from roadmap: {producer}')
+            if declared != expected:
+                errors.append(f'{tid}: artifact input gates differ from dependencies')
+        if covered != previous_ids:
+            errors.append('previous task scope missing from roadmap mapping: ' + ', '.join(sorted(previous_ids - covered)))
+        if mapping['release_task'] not in by_id or by_id[mapping['release_task']]['stage'] != 'release':
+            errors.append('roadmap release_task must identify the release stage')
+        return errors, mapping
+    except (ValueError, KeyError, TypeError, AttributeError, OSError) as exc:
+        return errors + [f'invalid task ID mapping JSON/schema: {exc}'], {}
 
 
 class Source:
@@ -216,30 +340,8 @@ def validate(src: Source) -> list[str]:
     numbered = sorted(tid for tid in tasks if tid != 'GM-00')
     if numbered != [f'GM-{n:02}' for n in range(1, len(numbered) + 1)]:
         errors.append('current task IDs must be contiguous from GM-01')
-    mapping_path = 'tasks/task-id-map.json'
-    if mapping_path in src.files:
-        try:
-            mapping = json.loads(src.read(mapping_path))
-            entries = mapping['entries']
-            old_ids = [entry['old_id'] for entry in entries]
-            new_ids = [entry['new_id'] for entry in entries]
-            if (mapping['version'] != 'roadmap-v1' or not entries
-                    or any(not re.fullmatch(r'GM-\d{2}', value) or value == 'GM-00' for value in old_ids + new_ids)
-                    or len(set(old_ids)) != len(old_ids) or len(set(new_ids)) != len(new_ids)):
-                errors.append('task ID mapping must be one-to-one for roadmap-v1')
-            for entry in entries:
-                meta = tasks.get(entry['new_id'], {})
-                if meta.get('previous_id') != entry['old_id']:
-                    errors.append(f"task ID mapping mismatch: {entry['new_id']}")
-            for tid, meta in tasks.items():
-                if tid == 'GM-00':
-                    continue
-                if meta.get('numbering') != 'roadmap-v1':
-                    errors.append(f'{tid}: missing roadmap-v1 numbering')
-                if meta.get('previous_id') and tid not in new_ids:
-                    errors.append(f'task missing from ID mapping: {tid}')
-        except (ValueError, KeyError, TypeError):
-            errors.append('invalid task ID mapping JSON/schema')
+    mapping_errors, mapping = validate_roadmap(src, records)
+    errors.extend(mapping_errors)
     start_graph = {tid: dependency_ids(r, 'start') for tid, r in records.items()}
     # Merge requires both sets; retaining start edges also prevents mixed-gate cycles.
     graph = {tid: sorted(set(start_graph[tid] + dependency_ids(r, 'merge'))) for tid, r in records.items()}
@@ -291,10 +393,32 @@ def validate(src: Source) -> list[str]:
                 errors.append(f'parallel tasks share owner: {tid} / {peer}')
             elif tid not in re.findall(r'GM-\d{2}', tasks[peer].get('parallel_with', '')):
                 errors.append(f'asymmetric parallel declaration: {tid} / {peer}')
-    if 'GM-27' in tasks:
+    # A well-numbered graph can still allow a screen before its components exist.
+    stage_requirements = {
+        ('UI', 'components'): {('UI', 'structure'), ('DATA', 'fields')},
+        ('UI', 'screens'): {('UI', 'structure'), ('UI', 'components'), ('BE', 'api-contract')},
+        ('DATA', 'database'): {('DATA', 'fields'), ('BE', 'structure')},
+        ('DATA', 'import'): {('DATA', 'database'), ('DATA', 'fields')},
+        ('BE', 'api-contract'): {('UI', 'structure'), ('BE', 'structure'), ('DATA', 'fields')},
+        ('BE', 'implementation'): {('BE', 'structure'), ('BE', 'api-contract')},
+    }
+    for tid, meta in tasks.items():
+        stage = (meta.get('track'), meta.get('stage'))
+        available = {(tasks[a].get('track'), tasks[a].get('stage'))
+                     for a in ancestors(tid, edges=start_graph) if a in tasks}
+        for required in sorted(stage_requirements.get(stage, set()) - available):
+            errors.append(f'{tid}: start gate missing foundation {required[0]}/{required[1]}')
+        if stage == ('UI', 'screens'):
+            if any((tasks[a].get('track'), tasks[a].get('stage')) == ('BE', 'implementation')
+                   for a in ancestors(tid) if a in tasks):
+                errors.append(f'{tid}: mock UI screen must not wait for backend implementation')
+        if mapping and not mapping_errors and meta.get('status') == 'done':
+            errors.extend(f'{tid}: {reason}' for reason in delivery_errors(src, records[tid]))
+    release_task = mapping.get('release_task')
+    if release_task in tasks:
         required_core = {tid for tid, meta in tasks.items()
-                         if meta.get('priority') == 'P0' and tid != 'GM-27'}
-        missing_core = required_core - ancestors('GM-27')
+                         if meta.get('priority') == 'P0' and tid != release_task}
+        missing_core = required_core - ancestors(release_task)
         if missing_core:
             errors.append('release bypasses P0 tasks: ' + ', '.join(sorted(missing_core)))
 

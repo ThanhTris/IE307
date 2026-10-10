@@ -19,7 +19,7 @@
 | UI-13 | History consent/list/delete, 3 recent hint | offline cache stale, opt-out/empty, group consent thiếu |
 | UI-14 P1 | Account link/recovery và sync history | conflict/lỗi giữ guest, logout clear private |
 | UI-15 P0 | Chọn public anchor/radius và xem nơi bán có lịch phù hợp | ngoài vùng/unknown/stale, manual/GPS deny, đường chim bay tới anchor |
-| UI-16 P2 | Weather và mood tự khai tùy chọn GM-31 | bỏ qua/tắt/stale/API lỗi; không chặn core |
+| UI-16 P2 | Weather và mood tự khai tùy chọn GM-38 | bỏ qua/tắt/stale/API lỗi; không chặn core |
 
 ## Gesture và một tay
 
@@ -35,4 +35,4 @@ Safe area, keyboard tránh form, touch48dp/font200/TalkBack/dark/reduced motion.
 
 Native screenshots/recording có loading/empty/error, permission và offline; HTML không thay chứng cứ. [Test plan](../testing/TEST_PLAN.md).
 
-Food-v1 theo [food spec](FOOD_DATA_SPEC.md): card không ghép thuộc tính từ nhiều quán; ngày kiểm/lịch dự kiến khác tồn kho live. UI-15 là capability GM-10 trước GM-13 và offering GM-21 sau vote; không làm location phụ thuộc result. GM-01 review trước code.
+Food-v1 theo [food spec](FOOD_DATA_SPEC.md): card không ghép thuộc tính từ nhiều quán; ngày kiểm/lịch dự kiến khác tồn kho live. UI-15 là capability GM-24 trước GM-25 và offering GM-27 sau vote; không làm location phụ thuộc result. GM-01 review trước code.

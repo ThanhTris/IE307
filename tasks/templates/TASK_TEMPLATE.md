@@ -1,78 +1,82 @@
-# Mẫu task hai gate
+# Mẫu task có đầu vào/đầu ra — roadmap-v2
 
-Copy vào tasks/backlog/GM-XX.md; thay placeholders. Frontmatter scalar, các ID cách dấu phẩy:
+Mỗi task có owner/reviewer khác nhau, một scope nghiệm thu. UI màn mock và nối API là task riêng. Tham khảo [lộ trình](../../docs/project/IMPLEMENTATION_ROADMAP.md).
 
 ```yaml
 ---
 github_issue:
 assignment_status: proposed
 id: GM-XX
-numbering: roadmap-v1
-title: Kết quả cần bàn giao
+previous_ids:
+numbering: roadmap-v2
+title: Đầu ra cần bàn giao
 status: backlog
-owner: Tên người làm
-reviewer: Tên khác owner
+owner: Người làm
+reviewer: Người kiểm
+track: UI
+stage: screens
+contract_version: food-v1/roadmap-v2/GM-XX.1
 priority: P0
 size: M
-start_dependencies: GM-01
-merge_dependencies: GM-01
+start_dependencies: GM-05, GM-07
+merge_dependencies: GM-05, GM-07
 parallel_with:
 baseline: food-v1
-spec: docs/specs/FOOD_DATA_SPEC.md
-planned_week: Theo dependency map
+spec: docs/specs/UI_SPEC.md
+planned_week: Theo dependency
 ---
 ```
 
-Start deps chặn phần độc lập; merge deps chặn tích hợp/merge và luôn cộng start deps. Mọi dependency phải có số nhỏ hơn task hiện tại; task mới cấp số tiếp theo, không lấp mã cũ bằng scope khác. Task đổi số có previous_id trong mapping; task mới không tự đặt previous_id. Không dùng dependencies cũ. parallel_with đối xứng/khác owner/không có start ancestor; được có merge ancestor và số lớn hơn vì đây không phải dependency. Không đổi assignment hay Approved chỉ để mở khóa.
+Khai báo entry tương ứng trong tasks/task-id-map.json: new_id, previous_ids (scope cũ nếu có), title, track, stage, inputs [{task, artifact, gate}], outputs [path]. ID producer nhỏ hơn consumer, input path có trong outputs producer. Path dự kiến phải nằm trong scope; không thêm placeholder chỉ để qua kiểm.
 
 ## Mục tiêu và phạm vi
 
-Output/in-scope/non-goals, spec/ADR/FR và contract version.
+Scope / ngoài scope / spec / contract version.
+
+## Đầu vào bắt buộc và đầu ra bàn giao
+
+| Task cung cấp | Artifact phải nhận | Thời điểm |
+| --- | --- | --- |
+| GM-ID/link | path + version/commit | start hoặc merge |
+
+Liệt kê output paths, cách chạy/đọc, task nhận. Các path chưa tồn tại là kế hoạch, phải có file thật khi bàn giao.
 
 ## Acceptance criteria
 
-- [ ] AC kiểm được, evidence và trường hợp lỗi/unknown.
+- [ ] AC theo scope và loại evidence; UI mock được nghiệm thu riêng, API/native có task riêng.
+
+## Context và patch plan
+
+File cụ thể; reuse scaffold/component/contract; ai sở hữu shared file; migration/rollback.
+
+## Test plan
+
+Lệnh và expected result cho scope thay đổi, không lặp capability demo không liên quan. Repo validator/regression/check-docs/diff và feature checks cần thiết.
 
 ## Dependency gate
 
 ### Trước bắt đầu
 
-Chạy `python scripts/task_readiness.py --task GM-XX`. Thêm từng dòng checkbox link GM-ID khớp chính xác start_dependencies (không gom nhiều ID một dòng).
+- [ ] [GM-05](../backlog/GM-05.md): Done/Approved, artifact/commit có trên nhánh làm việc.
+- [ ] [GM-07](../backlog/GM-07.md): Done/Approved, artifact/commit có trên nhánh làm việc.
 
-- [ ] [GM-01](../review/GM-01.md): Done/Approved, reviewer khác owner, ngày/evidence/version hợp lệ.
-- [ ] Assignment accepted, patch/test plan và contract/file ownership đã chốt.
+Chạy readiness --task GM-XX; để đối chiếu upstream trên target thêm --base-ref origin/main.
 
 ### Trước merge
 
-Chạy `python scripts/task_readiness.py --task GM-XX --gate merge --base-ref origin/main`. Thêm từng dòng checkbox khớp merge_dependencies; kiểm thêm start deps.
+- [ ] [GM-05](../backlog/GM-05.md): Done/Approved, artifact/PR/commit có trên target.
+- [ ] [GM-07](../backlog/GM-07.md): Done/Approved, artifact/PR/commit có trên target.
 
-- [ ] [GM-01](../review/GM-01.md): Done/Approved, đúng task/evidence và PR/merge commit trên target.
-- [ ] Cập nhật target/branch; integration tests thật và review độc lập cho revision hiện tại.
+Checker --gate merge --base-ref origin/main; review cả start inputs và current revision.
 
 ## Song song và bàn giao
 
-GM-ID song song cụ thể hoặc N/A; giới hạn cùng owner/reviewer/file.
+Các task cụ thể, khác owner và không có start ancestor; không copy shared tooling/types.
 
 ### Phần làm trước và phần chờ tích hợp
 
-- Làm trước: module/UI/fixtures độc lập cụ thể, không chỉ “toàn bộ task”.
-- Chờ tích hợp: AC/input nào phải dùng API/schema/data/runner thật.
-- Contract: version/commit, input/output/error và owner upstream chốt.
-- File ownership: thư mục/file của task, shared file ai sửa; GM-02 giữ tooling, GM-05 điều phối schema.
-- Bàn giao: PR/commit/output/version/test/evidence/task sau/giới hạn; evidence mới ở docs/evidence/roadmap-v1/GM-XX/.
+Phần làm độc lập / inputs chờ / mock-vs-real / HANDOFF.md. Dùng [mẫu bàn giao](HANDOFF_TEMPLATE.md).
 
-## Context và patch plan
+## Báo cáo và review
 
-File cụ thể, patch nhỏ, dependency/license/provider review; migration/rollback nếu có.
-
-## Test plan
-
-Lệnh/runner/scenario/environment/evidence; mock khác thật, Not run khác Pass. Validator/unit/readiness --check-docs/diff và test feature.
-
-## Báo cáo
-
-Đã làm / còn lại / blocker + owner / PR / evidence / bước tiếp theo.
-
-## Review
-
-Pending. Theo [mẫu review](REVIEW_TEMPLATE.md); AI không tự Approved/Done. Reviewer duyệt cả hai gate/AC/DoD mới chuyển done; merge theo [workflow](../../docs/project/TEAM_WORKFLOW.md).
+Đã làm/còn lại/blocker/owner/evidence tại docs/evidence/roadmap-v2/GM-XX/. Pending; không tự Approved/Done.

@@ -33,4 +33,4 @@ MVP dùng NO ở cấp món trong phiên. Không xây hồ sơ bệnh/dị ứng
 
 ## Data food-v1
 
-Cuisine Việt/Thái… và origin Bắc/Trung/Nam tách category và nơi bán. Temperature tách flavor/intensity; không suy vị từ tên. GM-03 bàn giao dictionary/biểu mẫu/fixtures; GM-08 nơi bán/menu/giờ có nguồn thật; GM-11 lọc eligibility trước GM-12 pool. Không có offering đạt điều kiện thì món biên tập không được vào gợi ý thực tế. Card/variant không ghép đặc tính từ nhiều quán thành lựa chọn không quán nào bán. [FOOD_DATA_SPEC](FOOD_DATA_SPEC.md) là nguồn quy tắc lịch/coverage/freshness.
+Cuisine Việt/Thái… và origin Bắc/Trung/Nam tách category và nơi bán. Temperature tách flavor/intensity; không suy vị từ tên. GM-04 bàn giao dictionary/biểu mẫu/fixtures; GM-08 nơi bán/menu/giờ có nguồn thật; GM-18 lọc eligibility trước GM-19 pool. Không có offering đạt điều kiện thì món biên tập không được vào gợi ý thực tế. Card/variant không ghép đặc tính từ nhiều quán thành lựa chọn không quán nào bán. [FOOD_DATA_SPEC](FOOD_DATA_SPEC.md) là nguồn quy tắc lịch/coverage/freshness.

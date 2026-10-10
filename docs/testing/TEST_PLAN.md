@@ -36,4 +36,4 @@ Domain runner dùng sau GM-02, SQL đa auth user trong môi trường test, nati
 Mục tiêu NFR cập nhật <=2s trên Wi-Fi ổn định cần đo server/client timestamp, không là SLA. User pilot nhỏ không chứng minh thị trường hoặc độ an toàn dị ứng. Không chạy test placeholder rồi báo feature đạt.
 
 
-Food-v1 review gate GM-01. GM-05 bàn giao SQL setup/runner; GM-02 native/domain runner; GM-08 data thật trước GM-11 query. GM-25, GM-26 không chờ GM-31 P2. [Food spec/AC](../specs/FOOD_DATA_SPEC.md), [dependency map](../project/TASK_DEPENDENCIES.md).
+Food-v1 review gate GM-01. GM-06 bàn giao SQL setup/runner; GM-02 native/domain runner; GM-08 data thật trước GM-18 query. GM-32, GM-33 không chờ GM-38 P2. [Food spec/AC](../specs/FOOD_DATA_SPEC.md), [dependency map](../project/TASK_DEPENDENCIES.md).
