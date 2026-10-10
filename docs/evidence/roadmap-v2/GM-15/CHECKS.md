@@ -49,4 +49,3 @@ npm run check ban đầu: typecheck/lint Pass, Jest Fail do sandbox Watchman fch
 [Mapping](CONTRACT_MAPPING.md) ghi field/version/parent và gap seed/winner. [Parity map](../../../../tests/fixtures/decision-v2/parity-map.json) bàn giao từng ID/projection cho SQL. SQL parity/auth/transaction/concurrency/expiry/terminal/persisted retry: Not run, GM-20 nhận fixtures. Không cần API/Postman/native task sau để test domain, không claim các phần đó.
 GM-07 DTO chưa bàn giao/Approved nên adapter cross-contract integration Not run. Candidate/ties/matrix/score internal, không public. Repeat pure function không chứng minh seeded uniform winner hoặc persisted retry. Không tự đổi AC/Approved/Done/merge.
  [Patch plan](PATCH_TEST_PLAN.md) · [HANDOFF](HANDOFF.md)
-
