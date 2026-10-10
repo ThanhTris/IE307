@@ -9,6 +9,8 @@ const readFixture = name => JSON.parse(readFileSync(
   new URL(`../../tests/fixtures/${name}`, import.meta.url), 'utf8',
 ));
 const fixtures = readFixture('decision-v2/cases.json');
+const rosterFixtures = readFixture('decision-v2/roster-cases.json');
+const parityMap = readFixture('decision-v2/parity-map.json');
 
 function deepFreeze(value) {
   if (value && typeof value === 'object') {
@@ -36,7 +38,22 @@ test('fixture contract, simulation marker and unique case IDs', () => {
   }
 });
 
-for (const c of fixtures.cases) {
+test('2–8 roster fixtures and SQL handoff mapping are complete and simulated', () => {
+  assert.equal(rosterFixtures.fixtureOnly, true);
+  assert.equal(rosterFixtures.policyVersion, POLICY_VERSION);
+  assert.equal(rosterFixtures.engineContractVersion, ENGINE_CONTRACT_VERSION);
+  assert.equal(rosterFixtures.cases.length, 28);
+  assert.deepEqual([...new Set(rosterFixtures.cases.map(c => c.input.roster.length))], [2, 3, 4, 5, 6, 7, 8]);
+  assert.equal(new Set([...fixtures.cases, ...rosterFixtures.cases].map(c => c.id)).size, 81);
+  assert.equal(parityMap.fixtureOnly, true);
+  for (const suite of parityMap.directSuites) {
+    assert.deepEqual(readFixture(suite.path.replace('tests/fixtures/', '')).cases.map(c => c.id), suite.caseIds);
+  }
+  assert.deepEqual(readFixture('decision-cases.json').cases.map(c => c.id),
+    parityMap.historical.cases.map(c => c.sourceCaseId));
+});
+
+for (const c of [...fixtures.cases, ...rosterFixtures.cases]) {
   test(`golden ${c.id}: ${c.description}`, () => {
     const input = deepFreeze(structuredClone(c.input));
     const before = JSON.stringify(input);

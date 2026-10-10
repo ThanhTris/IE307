@@ -32,4 +32,4 @@ Routes mỏng `src/app`; UI theo feature; composition `src/bootstrap`; domain kh
 
 ## Engine decision-v2 legacy GM-06 → GM-15
 
-[Contract engine draft](src/domain/decision/README.md) có TypeScript thuần và fixtures kiểm phiếu hai vòng. Chạy `node --test mobile/tests/decision.test.mjs` bằng Node 24. Chưa kiểm typecheck/lint chính thức với tooling mới, SQL parity/persist/retry backend hoặc tích hợp app/RPC; xem handoff GM-15.
+[Contract engine draft](src/domain/decision/README.md) có TypeScript thuần và fixtures kiểm phiếu hai vòng. Chạy `node --test mobile/tests/decision.test.mjs` bằng Node 24. Typecheck/lint/Jest/architecture đã kiểm riêng bằng tooling GM-02; CI Decision domain chạy suite Node .mjs riêng. SQL parity/seeded winner/persist/retry backend và tích hợp app/RPC còn chờ; xem CHECKS/handoff GM-15.
