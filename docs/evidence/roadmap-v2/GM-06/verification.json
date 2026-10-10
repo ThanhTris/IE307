@@ -1,0 +1,148 @@
+{
+  "testedBase": "d9e83d9c091b4487f7188bdfb7906e8f950db378",
+  "workingTree": "uncommitted",
+  "checkedAt": "2026-10-10T15:43:25.981138+00:00",
+  "checks": [
+    {
+      "check": "generated-docs",
+      "command": [
+        "python3",
+        "scripts/task_readiness.py",
+        "--check-docs"
+      ],
+      "exitCode": 0,
+      "result": "Pass",
+      "output": "Task indexes match task metadata.\n"
+    },
+    {
+      "check": "repository",
+      "command": [
+        "python3",
+        "scripts/validate_repository.py"
+      ],
+      "exitCode": 0,
+      "result": "Pass",
+      "output": "Gi Cung Duoc: documents, links, JSON, task manifest, dependencies and current FR traceability OK.\nScope: documentation validation only; no native build/backend execution or human approval verified.\n"
+    },
+    {
+      "check": "upstream-artifacts",
+      "command": [
+        "python3",
+        "scripts/build_field_contracts.py",
+        "--check"
+      ],
+      "exitCode": 0,
+      "result": "Pass",
+      "output": "{\n  \"consistent\": true,\n  \"drift\": [],\n  \"written\": false\n}\n\n"
+    },
+    {
+      "check": "regression",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_*.py"
+      ],
+      "exitCode": 0,
+      "result": "Pass",
+      "output": "................................................................................................................................................................................................................................................................................................................./Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/dateutil/tz/tz.py:37: DeprecationWarning: datetime.datetime.utcfromtimestamp() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.fromtimestamp(timestamp, datetime.UTC).\n  EPOCH = datetime.datetime.utcfromtimestamp(0)\n.............sssss................................................................................................................\n----------------------------------------------------------------------\nRan 435 tests in 110.949s\n\nOK (skipped=5)\n"
+    },
+    {
+      "check": "backend-unit",
+      "command": [
+        "npm",
+        "test"
+      ],
+      "exitCode": 0,
+      "result": "Pass",
+      "output": "\n> gi-cung-duoc-backend-tooling@0.1.0 test\n> node --test tests/backend-runner.test.mjs\n\n✔ config pins project and ports (26.454875ms)\n✔ local URL guard rejects remote, credentials, paths, redirects and wrong port (1.304459ms)\n✔ commands never target remote or delete backups (1.483958ms)\n✔ status deliberately drops all secrets (8.353542ms)\n✔ health asserts HTTP status and GoTrue body, no redirect following (306.877916ms)\n✔ redaction strips JWT, keys, password and named credential fields (4.66775ms)\n✔ invalid reset rejected before any process (0.743625ms)\n✔ missing Docker fails actionable, not success (15.819083ms)\nℹ tests 8\nℹ suites 0\nℹ pass 8\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 1186.986667\n"
+    },
+    {
+      "check": "diff",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "result": "Pass",
+      "output": ""
+    },
+    {
+      "check": "start-gate",
+      "command": [
+        "python3",
+        "scripts/task_readiness.py",
+        "--task",
+        "GM-06",
+        "--base-ref",
+        "origin/main"
+      ],
+      "exitCode": 1,
+      "result": "Blocked",
+      "output": "Target snapshot: origin/main = d9e83d9c091b4487f7188bdfb7906e8f950db378 (local ref; freshness not verified)\nGM-06: BLOCKED | owner=Tâm reviewer=Trí | tasks/backlog/GM-06.md\n  WAIT GM-03: review | tasks/review/GM-03.md\n  WAIT GM-04: backlog | tasks/backlog/GM-04.md\nRecorded approval only; confirm assignment/contracts for start. Merge still requires independent review, exact PR/commit ancestry and real integration tests; no remote verification.\n"
+    },
+    {
+      "check": "merge-gate",
+      "command": [
+        "python3",
+        "scripts/task_readiness.py",
+        "--task",
+        "GM-06",
+        "--gate",
+        "merge",
+        "--base-ref",
+        "origin/main"
+      ],
+      "exitCode": 1,
+      "result": "Blocked",
+      "output": "Target snapshot: origin/main = d9e83d9c091b4487f7188bdfb7906e8f950db378 (local ref; freshness not verified)\nGM-06: BLOCKED | owner=Tâm reviewer=Trí | tasks/backlog/GM-06.md\n  WAIT GM-03: review | tasks/review/GM-03.md\n  WAIT GM-04: backlog | tasks/backlog/GM-04.md\nRecorded approval only; confirm assignment/contracts for start. Merge still requires independent review, exact PR/commit ancestry and real integration tests; no remote verification.\n"
+    }
+  ],
+  "sqlReport": "sql-results.json",
+  "approval": "Pending; not Approved",
+  "localSupabaseIntegration": {
+    "result": "Pass",
+    "installedState": {
+      "schemaVersion": "0.1.0",
+      "forcedRlsTables": 31,
+      "cliMigrationVersions": [
+        "0001"
+      ],
+      "rosterCheckInstalled": true,
+      "leftoverTestDatabases": 0,
+      "scheduleWriteLockInstalled": true
+    },
+    "health": {
+      "status": 200,
+      "name": "GoTrue",
+      "version": "v2.197.0",
+      "assertions": "status/name/version/description PASS"
+    },
+    "foundationSqlTests": {
+      "passed": 3,
+      "result": "Pass"
+    },
+    "setup": "New local project this turn; checked zero business/auth rows before guarded CLI reset; no remote data"
+  },
+  "upstreamContractCases": {
+    "count": 166,
+    "passed": 166,
+    "fixtureOnly": true,
+    "result": "Pass"
+  },
+  "freshTarget": "d9e83d9c091b4487f7188bdfb7906e8f950db378",
+  "artifactHashes": {
+    "supabase/migrations/0001_core_schema.sql": "0c3f3b0e1a00311ecb59baf5056904d3d6e1576a19b9612da827ebc88085b8cd",
+    "supabase/tests/schema_contract.sql": "ba5d6644ff204d5c1e2b8d9bc9f16b1b7f6602a7da9b003842aa7a58e900c94d",
+    "supabase/rollback/0001_core_schema.down.sql": "7131d260c82ca06e11da9af39e4eab2d4538cbb1f950ac8026be838a74ae2352",
+    "scripts/gm06_schema_check.py": "316d91c65247bfcbbc9e07aa92928bb6ecff2994e54acf15faeac0c63651ef8f",
+    "docs/data/database-mapping.json": "9d3f15fd8ac21dc4ff8789bfe2a3140d0d9647055c830ffd37c0e53394ccc86c"
+  },
+  "status": "Implementation checks Pass; independent review and upstream metadata gates Pending",
+  "localCleanup": "Own disposable test databases removed; local Supabase project stopped with volumes preserved."
+}
