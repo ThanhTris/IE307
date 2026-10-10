@@ -23,7 +23,7 @@ UI component chỉ phụ thuộc UI shell và định nghĩa field cần hiển 
 | [GM-05](../../tasks/backlog/GM-05.md) | UI / components | UI: component dùng chung theo UI mẫu | Trang / Tuấn |
 | [GM-06](../../tasks/backlog/GM-06.md) | DATA / database | Data: thiết lập database và migrations từ dictionary | Tâm / Trí |
 | [GM-07](../../tasks/backlog/GM-07.md) | BE / api-contract | BE: hợp đồng API, lớp gọi API và mock adapter | Trung / Trí |
-| [GM-08](../../tasks/backlog/GM-08.md) | DATA / import | Data: nhập, kiểm và bàn giao dataset thật | Vinh / Tâm |
+| [GM-08](../../tasks/in-progress/GM-08.md) | DATA / import | Data: nhập, kiểm và bàn giao dataset thật | Vinh / Tâm |
 | [GM-09](../../tasks/backlog/GM-09.md) | UI / screens | UI: Home, tạo phòng và nhập mã theo mẫu | Trang / Tuấn |
 | [GM-10](../../tasks/backlog/GM-10.md) | UI / screens | UI: chọn khu vực, giờ ăn và sở thích theo mẫu | Tuấn / Trang |
 | [GM-11](../../tasks/backlog/GM-11.md) | UI / screens | UI: lobby, ready và trạng thái phòng theo mẫu | Tuấn / Trang |

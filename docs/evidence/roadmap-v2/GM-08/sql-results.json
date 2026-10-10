@@ -1,0 +1,257 @@
+{
+  "artifactHashes": {
+    "scripts/gm08_import_check.py": "8bbf46c999dfef4c2f4c4d3aab10c57f1f22e1e1934c4efe29c2805f66812cfb",
+    "supabase/migrations/0001_core_schema.sql": "6733e28f282f600e627e675dccede3afef1efd37cf4a7cfe8d94af4cd02d30f5",
+    "supabase/migrations/0002_food_import_receipts.sql": "eb80acba1f69bfb68b014a1ab5807e42d65db940a36d201f28db88172157f55e",
+    "supabase/seed/import_food_data.py": "4e59d087bc40c48b3d97ac413b8d6a62dc6839cfa65cf9116c88c6a416d680f2",
+    "tests/test_food_import.py": "d61ed4200a271abc2abb5eeecd8b59df09d6f2dcfff9c7ae45b58e5a8af4be87"
+  },
+  "caseCount": 31,
+  "cases": [
+    {
+      "actual": "t",
+      "case": "journal enabled/forced RLS",
+      "expected": "t",
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "reject 42501",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "reject 42501",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "reject 42501",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "review binds staged input and current publish preflight",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "reject 23503",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": [
+        "0",
+        "0"
+      ],
+      "case": "failed FK import leaves zero food rows and zero receipts",
+      "expected": [
+        "0",
+        "0"
+      ],
+      "result": "Pass"
+    },
+    {
+      "actual": 2,
+      "case": "concurrent identical imports both converge",
+      "expected": 2,
+      "result": "Pass"
+    },
+    {
+      "actual": [
+        "1",
+        "1"
+      ],
+      "case": "exactly one import receipt and one offering",
+      "expected": [
+        "1",
+        "1"
+      ],
+      "result": "Pass"
+    },
+    {
+      "actual": [
+        "2",
+        "14"
+      ],
+      "case": "schedule groups and all weekly days imported",
+      "expected": [
+        "2",
+        "14"
+      ],
+      "result": "Pass"
+    },
+    {
+      "actual": "1",
+      "case": "reimport preserves row version",
+      "expected": "1",
+      "result": "Pass"
+    },
+    {
+      "actual": 1,
+      "case": "receipt-bound query returns actual synthetic offering",
+      "expected": 1,
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "reject 23505",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": "Cơm gà — fixture",
+      "case": "version collision preserves original dish",
+      "expected": "Cơm gà — fixture",
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "reject 23514",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": [
+        "published",
+        "keep unrelated data"
+      ],
+      "case": "drift refusal preserves receipt and unrelated sentinel",
+      "expected": [
+        "published",
+        "keep unrelated data"
+      ],
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "reject 23503",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": [
+        "0",
+        "1"
+      ],
+      "case": "FK-protected rollback refuses referenced dataset atomically",
+      "expected": [
+        "0",
+        "1"
+      ],
+      "result": "Pass"
+    },
+    {
+      "actual": [
+        "0",
+        "0",
+        "0"
+      ],
+      "case": "rollback removes only imported food/group rows",
+      "expected": [
+        "0",
+        "0",
+        "0"
+      ],
+      "result": "Pass"
+    },
+    {
+      "actual": "rolled_back",
+      "case": "rollback retry converges",
+      "expected": "rolled_back",
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "reject 23514",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "reject 23514",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": "0",
+      "case": "content change without version increment rolls back new dataset",
+      "expected": "0",
+      "result": "Pass"
+    },
+    {
+      "actual": "591ea84a8e062af4b66623fd48e764e42c703d39e7fbbf591af1494f2183be58",
+      "case": "publish does not alter locked rooms/results/history",
+      "expected": "591ea84a8e062af4b66623fd48e764e42c703d39e7fbbf591af1494f2183be58",
+      "result": "Pass"
+    },
+    {
+      "actual": "Cơm '$body$'; rollback; --",
+      "case": "quoted SQL-looking text persisted literally",
+      "expected": "Cơm '$body$'; rollback; --",
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "reject 23514",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": "591ea84a8e062af4b66623fd48e764e42c703d39e7fbbf591af1494f2183be58",
+      "case": "rollback does not alter locked rooms/results/history",
+      "expected": "591ea84a8e062af4b66623fd48e764e42c703d39e7fbbf591af1494f2183be58",
+      "result": "Pass"
+    },
+    {
+      "actual": [
+        "Cơm gà — fixture",
+        "3"
+      ],
+      "case": "newest version rollback restores previous content monotonically",
+      "expected": [
+        "Cơm gà — fixture",
+        "3"
+      ],
+      "result": "Pass"
+    },
+    {
+      "actual": [
+        "1",
+        "1",
+        "keep unrelated data"
+      ],
+      "case": "rollback preserves previous dataset and core snapshots",
+      "expected": [
+        "1",
+        "1",
+        "keep unrelated data"
+      ],
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "reject 23514",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": "0.1.0",
+      "case": "food schema version unchanged",
+      "expected": "0.1.0",
+      "result": "Pass"
+    }
+  ],
+  "checkedAt": "2026-10-10T17:49:43.915040Z",
+  "cleanup": "process-created database dropped; unrelated containers/data untouched",
+  "dataMode": "synthetic fixtures and simulated independent review ONLY",
+  "databaseMode": "process-created isolated database; real Supabase auth.users DDL",
+  "postgresVersion": "17.11",
+  "result": "Pass",
+  "verifiedDatasetPublished": false
+}

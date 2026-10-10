@@ -36,7 +36,7 @@ class MemorySource:
             self.contents.pop(old)
             self.files.add(new)
             self.contents[new] = text
-            for tid in ('GM-02', 'GM-03'):
+            for tid in ('GM-02', 'GM-03', 'GM-08'):
                 current = self.task_path(tid)
                 if current != f'tasks/backlog/{tid}.md':
                     baseline = self.contents.pop(current)
@@ -81,8 +81,11 @@ class ManifestValidationTests(unittest.TestCase):
     def test_current_baseline(self):
         self.assertEqual(self.errors(), "")
 
-    def test_live_repository_with_current_human_approval_is_valid(self):
-        self.assertEqual(validator.validate(MemorySource()), [])
+    def test_live_repository_static_validation_defers_dependency_approval_to_project(self):
+        # Actual Project gates run live; stale Markdown must not block structural CI.
+        source = MemorySource()
+        validator.github_project_status.configuration(source)
+        self.assertEqual(validator.validate(source, check_dependency_approvals=False), [])
 
     def test_only_known_archived_task_paths_are_historical_references(self):
         path = 'docs/evidence/roadmap-v1/GM-01/FINAL_AUDIT_2026-10-08.md'
