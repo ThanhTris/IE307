@@ -16,6 +16,8 @@ Task đã đánh số theo lộ trình GM-01 → GM-31; dependency chỉ trỏ s
 
 Core có guest/QR/link, friends/push, realtime/outbox/history, taxonomy món, data quán–món–lịch bán/coverage và lọc trước khi vote. Account P1; OCR/AI/weather–mood P2. Owner/reviewer đề xuất, thành viên tự nhận/đổi; không tự coi task Done. [GitHub mapping](docs/project/GITHUB_TASKS.md) ghi riêng phần chưa đồng bộ.
 
+Bản nháp GM-03: [bản đồ dữ liệu FE/contract/template](docs/data/FOOD_DATA_DICTIONARY.md) và [cách test](docs/evidence/roadmap-v1/GM-03/USER_TEST.md). Có DTO/validator và fixture tổng hợp, chưa có dataset quán thật/SQL/eligibility hoặc màn hình sản phẩm mới.
+
 ```text
 mobile/       Expo Router và spike GM-02; features/domain/adapters nền
 supabase/     migrations/RPC/RLS/tests/trusted sender dự kiến

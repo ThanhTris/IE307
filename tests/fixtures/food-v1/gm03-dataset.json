@@ -1,0 +1,71 @@
+{
+  "contractVersion": "food-v1.gm03-draft.1",
+  "datasetVersion": "fixture-gm03-v1",
+  "kind": "fixture",
+  "status": "draft",
+  "enteredBy": "fixture-author",
+  "reviewedBy": null,
+  "checkedAt": "2026-10-06T00:00:00Z",
+  "validUntil": "2026-10-13T00:00:00Z",
+  "taxonomy": [
+    {"id":"cuisine-vn","version":"v1","type":"cuisine","key":"vn","label":"Việt Nam","description":"Ẩm thực, không phải vị trí nơi bán.","status":"active","sourceRef":"source-fixture"},
+    {"id":"origin-south","version":"v1","type":"origin","key":"south","label":"Nam Bộ","description":"Nguồn gốc biên tập mô phỏng; không quyết định coverage.","status":"active","sourceRef":"source-fixture"},
+    {"id":"category-rice","version":"v1","type":"category","key":"rice","label":"Cơm","description":"Nhóm món cơm.","status":"active","sourceRef":"source-fixture"},
+    {"id":"category-hotpot","version":"v1","type":"category","key":"hotpot","label":"Lẩu","description":"Nhóm món lẩu.","status":"active","sourceRef":"source-fixture"},
+    {"id":"category-grill","version":"v1","type":"category","key":"grill","label":"Nướng","description":"Nhóm món nướng.","status":"active","sourceRef":"source-fixture"},
+    {"id":"temperature-hot","version":"v1","type":"temperature","key":"hot","label":"Nóng","description":"Nhiệt độ phục vụ, không phải độ cay.","status":"active","sourceRef":"source-fixture"},
+    {"id":"temperature-unknown","version":"v1","type":"temperature","key":"unknown","label":"Chưa biết nhiệt độ","description":"Không suy từ tên món.","status":"active","sourceRef":"source-fixture"},
+    {"id":"flavor-spicy","version":"v1","type":"flavor","key":"spicy","label":"Cay","description":"Một chiều vị; mức unknown khác none.","status":"active","sourceRef":"source-fixture"},
+    {"id":"meal-dinner","version":"v1","type":"meal_slot","key":"dinner","label":"Bữa tối","description":"Buổi ăn biên tập; đêm muộn là time hint.","status":"active","sourceRef":"source-fixture"}
+  ],
+  "dishes": [
+    {"id":"dish-rice","version":"v1","name":"Cơm TEST","aliases":["Cơm mẫu"],"description":"Món mô phỏng để kiểm dữ liệu; không phải thực đơn thật.","cuisineIds":["cuisine-vn"],"originIds":["origin-south"],"categoryIds":["category-rice"],"mealSlots":["lunch","dinner"],"ingredientTags":null,"temperature":null,"flavor":null,"artwork":null},
+    {"id":"dish-hotpot","version":"v1","name":"Lẩu TEST","aliases":[],"description":"Fixture giá phần nhóm, không tự quy đổi giá/người.","cuisineIds":["cuisine-vn"],"originIds":[],"categoryIds":["category-hotpot"],"mealSlots":["dinner"],"ingredientTags":null,"temperature":"hot","flavor":{"spicy":"unknown","salty":"unknown","sweet":"unknown","sour":"unknown"},"artwork":null},
+    {"id":"dish-grill","version":"v1","name":"Nướng TEST","aliases":[],"description":"Fixture ca đêm và sold_out, không dữ liệu tồn kho thật.","cuisineIds":[],"originIds":[],"categoryIds":["category-grill"],"mealSlots":["dinner","snack"],"ingredientTags":null,"temperature":"warm","flavor":null,"artwork":null},
+    {"id":"dish-combo","version":"v1","name":"Lẩu nướng TEST","aliases":["Combo TEST"],"description":"Một lựa chọn đa nhãn được khai báo tường minh, không ghép tên tự động.","cuisineIds":["cuisine-vn"],"originIds":[],"categoryIds":["category-hotpot","category-grill"],"mealSlots":["dinner"],"ingredientTags":null,"temperature":"unknown","flavor":null,"artwork":null}
+  ],
+  "venues": [
+    {"id":"venue-a","branchName":"Chi nhánh TEST-A","address":"Địa chỉ mô phỏng A, không đến ăn","adminAreaId":"area-test-north","lat":0.01,"lng":0.01,"timezone":"Asia/Ho_Chi_Minh","status":"active","serviceModes":["dine_in"],"sourceRef":"source-fixture","checkedAt":"2026-10-06T00:00:00Z","validUntil":"2026-10-13T00:00:00Z"},
+    {"id":"venue-b","branchName":"Chi nhánh TEST-B ngoài vùng A","address":"Địa chỉ mô phỏng B, không đến ăn","adminAreaId":"area-test-south","lat":1.01,"lng":1.01,"timezone":"Asia/Ho_Chi_Minh","status":"active","serviceModes":["dine_in"],"sourceRef":"source-fixture","checkedAt":"2026-10-06T00:00:00Z","validUntil":"2026-10-13T00:00:00Z"}
+  ],
+  "offerings": [
+    {"id":"off-rice-a","venueId":"venue-a","dishId":"dish-rice","variantId":"variant-standard","variant":"Phần tiêu chuẩn TEST","menuSource":"source-fixture","scheduleId":"schedule-rice-a","serviceMode":"dine_in","status":"draft","checkedAt":"2026-10-06T00:00:00Z","validUntil":"2026-10-13T00:00:00Z","price":{"min":45000,"max":50000,"unit":"person","currency":"VND","servingSize":1,"sourceRef":"source-fixture"},"temperature":"hot","flavor":{"spicy":"none","salty":"low","sweet":"unknown","sour":"none"}},
+    {"id":"off-rice-b","venueId":"venue-b","dishId":"dish-rice","variantId":"variant-standard","variant":"Phần tiêu chuẩn TEST","menuSource":"source-fixture","scheduleId":"schedule-rice-b","serviceMode":"dine_in","status":"draft","checkedAt":"2026-10-06T00:00:00Z","validUntil":"2026-10-13T00:00:00Z","price":{"min":60000,"max":60000,"unit":"portion","currency":"VND","servingSize":null,"sourceRef":"source-fixture"},"temperature":"ambient","flavor":{"spicy":"high","salty":"unknown","sweet":"unknown","sour":"unknown"}},
+    {"id":"off-hotpot-b","venueId":"venue-b","dishId":"dish-hotpot","variantId":"variant-group","variant":"Nồi nhóm TEST","menuSource":"source-fixture","scheduleId":"schedule-hotpot-b","serviceMode":"dine_in","status":"draft","checkedAt":"2026-10-06T00:00:00Z","validUntil":"2026-10-13T00:00:00Z","price":{"min":300000,"max":300000,"unit":"group","currency":"VND","servingSize":null,"sourceRef":"source-fixture"},"temperature":"hot","flavor":null},
+    {"id":"off-grill-a","venueId":"venue-a","dishId":"dish-grill","variantId":"variant-standard","variant":"Phần TEST","menuSource":"source-fixture","scheduleId":"schedule-grill-a","serviceMode":"dine_in","status":"draft","checkedAt":"2026-10-06T00:00:00Z","validUntil":"2026-10-13T00:00:00Z","price":null,"temperature":"warm","flavor":null},
+    {"id":"off-combo-a","venueId":"venue-a","dishId":"dish-combo","variantId":"variant-standard","variant":"Combo TEST","menuSource":"source-fixture","scheduleId":"schedule-combo-a","serviceMode":"dine_in","status":"draft","checkedAt":"2026-10-06T00:00:00Z","validUntil":"2026-10-13T00:00:00Z","price":null,"temperature":"unknown","flavor":null}
+  ],
+  "schedules": [
+    {"id":"schedule-venue-a","ownerType":"venue","ownerId":"venue-a","timezone":"Asia/Ho_Chi_Minh","sourceRef":"source-fixture","checkedAt":"2026-10-06T00:00:00Z","validUntil":"2026-10-13T00:00:00Z","weekly":[
+      {"dayOfWeek":1,"status":"unknown","intervals":[]},{"dayOfWeek":2,"status":"unknown","intervals":[]},{"dayOfWeek":3,"status":"unknown","intervals":[]},{"dayOfWeek":4,"status":"unknown","intervals":[]},{"dayOfWeek":5,"status":"open","intervals":[{"startTime":"22:00","endTime":"02:00","endDayOffset":1,"is24Hours":false}]},{"dayOfWeek":6,"status":"open","intervals":[{"startTime":"22:00","endTime":"02:00","endDayOffset":1,"is24Hours":false}]},{"dayOfWeek":7,"status":"closed","intervals":[]}]},
+    {"id":"schedule-venue-b","ownerType":"venue","ownerId":"venue-b","timezone":"Asia/Ho_Chi_Minh","sourceRef":"source-fixture","checkedAt":"2026-10-06T00:00:00Z","validUntil":"2026-10-13T00:00:00Z","weekly":[
+      {"dayOfWeek":1,"status":"unknown","intervals":[]},{"dayOfWeek":2,"status":"unknown","intervals":[]},{"dayOfWeek":3,"status":"unknown","intervals":[]},{"dayOfWeek":4,"status":"unknown","intervals":[]},{"dayOfWeek":5,"status":"unknown","intervals":[]},{"dayOfWeek":6,"status":"open","intervals":[{"startTime":"08:00","endTime":"12:00","endDayOffset":0,"is24Hours":false},{"startTime":"14:00","endTime":"22:00","endDayOffset":0,"is24Hours":false}]},{"dayOfWeek":7,"status":"closed","intervals":[]}]},
+    {"id":"schedule-rice-a","ownerType":"offering","ownerId":"off-rice-a","timezone":"Asia/Ho_Chi_Minh","sourceRef":"source-fixture","checkedAt":"2026-10-06T00:00:00Z","validUntil":"2026-10-13T00:00:00Z","weekly":[
+      {"dayOfWeek":1,"status":"unknown","intervals":[]},{"dayOfWeek":2,"status":"unknown","intervals":[]},{"dayOfWeek":3,"status":"unknown","intervals":[]},{"dayOfWeek":4,"status":"unknown","intervals":[]},{"dayOfWeek":5,"status":"open","intervals":[{"startTime":"22:00","endTime":"01:00","endDayOffset":1,"is24Hours":false}]},{"dayOfWeek":6,"status":"open","intervals":[{"startTime":"22:00","endTime":"01:00","endDayOffset":1,"is24Hours":false}]},{"dayOfWeek":7,"status":"closed","intervals":[]}]},
+    {"id":"schedule-rice-b","ownerType":"offering","ownerId":"off-rice-b","timezone":"Asia/Ho_Chi_Minh","sourceRef":"source-fixture","checkedAt":"2026-10-06T00:00:00Z","validUntil":"2026-10-13T00:00:00Z","weekly":[
+      {"dayOfWeek":1,"status":"unknown","intervals":[]},{"dayOfWeek":2,"status":"unknown","intervals":[]},{"dayOfWeek":3,"status":"unknown","intervals":[]},{"dayOfWeek":4,"status":"unknown","intervals":[]},{"dayOfWeek":5,"status":"unknown","intervals":[]},{"dayOfWeek":6,"status":"open","intervals":[{"startTime":"08:00","endTime":"22:00","endDayOffset":0,"is24Hours":false}]},{"dayOfWeek":7,"status":"closed","intervals":[]}]},
+    {"id":"schedule-hotpot-b","ownerType":"offering","ownerId":"off-hotpot-b","timezone":"Asia/Ho_Chi_Minh","sourceRef":"source-fixture","checkedAt":"2026-10-06T00:00:00Z","validUntil":"2026-10-13T00:00:00Z","weekly":[
+      {"dayOfWeek":1,"status":"unknown","intervals":[]},{"dayOfWeek":2,"status":"unknown","intervals":[]},{"dayOfWeek":3,"status":"unknown","intervals":[]},{"dayOfWeek":4,"status":"unknown","intervals":[]},{"dayOfWeek":5,"status":"unknown","intervals":[]},{"dayOfWeek":6,"status":"open","intervals":[{"startTime":"14:00","endTime":"22:00","endDayOffset":0,"is24Hours":false}]},{"dayOfWeek":7,"status":"closed","intervals":[]}]},
+    {"id":"schedule-grill-a","ownerType":"offering","ownerId":"off-grill-a","timezone":"Asia/Ho_Chi_Minh","sourceRef":"source-fixture","checkedAt":"2026-10-06T00:00:00Z","validUntil":"2026-10-13T00:00:00Z","weekly":[
+      {"dayOfWeek":1,"status":"unknown","intervals":[]},{"dayOfWeek":2,"status":"unknown","intervals":[]},{"dayOfWeek":3,"status":"unknown","intervals":[]},{"dayOfWeek":4,"status":"unknown","intervals":[]},{"dayOfWeek":5,"status":"open","intervals":[{"startTime":"22:00","endTime":"00:00","endDayOffset":1,"is24Hours":false}]},{"dayOfWeek":6,"status":"open","intervals":[{"startTime":"22:00","endTime":"00:00","endDayOffset":1,"is24Hours":false}]},{"dayOfWeek":7,"status":"closed","intervals":[]}]},
+    {"id":"schedule-combo-a","ownerType":"offering","ownerId":"off-combo-a","timezone":"Asia/Ho_Chi_Minh","sourceRef":"source-fixture","checkedAt":"2026-10-06T00:00:00Z","validUntil":"2026-10-13T00:00:00Z","weekly":[
+      {"dayOfWeek":1,"status":"unknown","intervals":[]},{"dayOfWeek":2,"status":"unknown","intervals":[]},{"dayOfWeek":3,"status":"unknown","intervals":[]},{"dayOfWeek":4,"status":"unknown","intervals":[]},{"dayOfWeek":5,"status":"open","intervals":[{"startTime":"22:00","endTime":"02:00","endDayOffset":1,"is24Hours":false}]},{"dayOfWeek":6,"status":"open","intervals":[{"startTime":"22:00","endTime":"02:00","endDayOffset":1,"is24Hours":false}]},{"dayOfWeek":7,"status":"closed","intervals":[]}]}
+  ],
+  "dateExceptions": [
+    {"id":"exception-next-day-closed","scheduleId":"schedule-venue-a","localDate":"2026-10-11","status":"closed","intervals":[],"lastOrder":null,"sourceRef":"source-fixture","checkedAt":"2026-10-06T00:00:00Z","validUntil":"2026-10-13T00:00:00Z"}
+  ],
+  "availabilityOverrides": [
+    {"id":"override-grill-sold-out","offeringId":"off-grill-a","state":"sold_out","sourceRef":"source-fixture","observedAt":"2026-10-10T15:00:00Z","expiresAt":"2026-10-10T16:00:00Z"}
+  ],
+  "coverageAreas": [
+    {"id":"coverage-a","name":"Vùng TEST-A tổng hợp","boundary":[[0,0],[0.02,0],[0.02,0.02],[0,0.02],[0,0]],"datasetVersion":"fixture-gm03-v1","sourceRef":"source-fixture","checkedAt":"2026-10-06T00:00:00Z","validUntil":"2026-10-13T00:00:00Z"},
+    {"id":"coverage-b","name":"Vùng TEST-B tổng hợp","boundary":[[1,1],[1.02,1],[1.02,1.02],[1,1.02],[1,1]],"datasetVersion":"fixture-gm03-v1","sourceRef":"source-fixture","checkedAt":"2026-10-06T00:00:00Z","validUntil":"2026-10-13T00:00:00Z"}
+  ],
+  "publicAnchors": [
+    {"id":"anchor-a","name":"Điểm công cộng TEST-A tổng hợp","lat":0.01,"lng":0.01,"coverageId":"coverage-a"},
+    {"id":"anchor-b","name":"Điểm công cộng TEST-B tổng hợp","lat":1.01,"lng":1.01,"coverageId":"coverage-b"}
+  ],
+  "sources": [
+    {"id":"source-fixture","locator":"fixture://gm03-authored","usageRights":"fixture-only","appliesTo":["editorial","menu","price","hours","location"],"enteredBy":"fixture-author","reviewedBy":null,"status":"draft","checkedAt":"2026-10-06T00:00:00Z","validUntil":"2026-10-13T00:00:00Z"}
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "contractVersion": "food-v1.gm03-draft.1",
+  "datasetVersion": "replace-with-dataset-version",
+  "kind": "survey",
+  "status": "draft",
+  "enteredBy": "replace-with-editor-id",
+  "reviewedBy": null,
+  "checkedAt": "2026-10-08T00:00:00Z",
+  "validUntil": "2026-10-09T00:00:00Z",
+  "taxonomy": [],
+  "dishes": [],
+  "venues": [],
+  "offerings": [],
+  "schedules": [],
+  "dateExceptions": [],
+  "availabilityOverrides": [],
+  "coverageAreas": [],
+  "publicAnchors": [],
+  "sources": []
+}

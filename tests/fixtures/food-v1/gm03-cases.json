@@ -1,0 +1,76 @@
+{
+  "kind": "fixture",
+  "description": "Authored expectations for review/GM-11, not output from an eligibility algorithm. All prices/locations/hours are synthetic.",
+  "cases": [
+    {
+      "id":"category-conflict","kind":"fixture","datasetVersion":"fixture-gm03-v1","contextVersion":"context-v1","poolSeed":"seed-gm03-a",
+      "context":{"anchorId":"anchor-a","coverageId":"coverage-a","radiusM":1000,"desiredAt":"2026-10-09T16:00:00Z","mealSlot":"dinner","serviceMode":"dine_in","timeHint":"late_night","budget":null},
+      "preferenceCategoryIds":[["category-hotpot"],["category-grill"]],
+      "expectedPool":[{"dishId":"dish-combo","variantId":"variant-standard","offeringIds":["off-combo-a"]},{"dishId":"dish-grill","variantId":"variant-standard","offeringIds":["off-grill-a"]},{"dishId":"dish-rice","variantId":"variant-standard","offeringIds":["off-rice-a"]}],
+      "expectedReason":"SOFT_CATEGORY_PREFERENCES","notes":"Category preferences are not an intersection veto; combo has two labels. Friday 23:00 local, before override."
+    },
+    {
+      "id":"seed-replay","kind":"fixture","datasetVersion":"fixture-gm03-v1","contextVersion":"context-v1","poolSeed":"seed-gm03-a",
+      "context":{"anchorId":"anchor-a","coverageId":"coverage-a","radiusM":1000,"desiredAt":"2026-10-09T16:00:00Z","mealSlot":"dinner","serviceMode":"dine_in","timeHint":"late_night","budget":null},
+      "preferenceCategoryIds":[["category-hotpot"],["category-grill"]],
+      "expectedPool":[{"dishId":"dish-combo","variantId":"variant-standard","offeringIds":["off-combo-a"]},{"dishId":"dish-grill","variantId":"variant-standard","offeringIds":["off-grill-a"]},{"dishId":"dish-rice","variantId":"variant-standard","offeringIds":["off-rice-a"]}],
+      "expectedReason":"SOFT_CATEGORY_PREFERENCES","notes":"Same input/version/seed should reproduce the authored snapshot; GM-11 must prove algorithm determinism."
+    },
+    {
+      "id":"overnight-valid","kind":"fixture","datasetVersion":"fixture-gm03-v1","contextVersion":"context-v1","poolSeed":"seed-night",
+      "context":{"anchorId":"anchor-a","coverageId":"coverage-a","radiusM":1000,"desiredAt":"2026-10-09T17:30:00Z","mealSlot":"dinner","serviceMode":"dine_in","timeHint":"scheduled","budget":null},
+      "preferenceCategoryIds":[],"expectedPool":[{"dishId":"dish-rice","variantId":"variant-standard","offeringIds":["off-rice-a"]},{"dishId":"dish-combo","variantId":"variant-standard","offeringIds":["off-combo-a"]}],
+      "expectedReason":"OVERNIGHT_SCHEDULE","notes":"Saturday 00:30 local belongs to Friday overnight shifts. Grill ends at 00:00."
+    },
+    {
+      "id":"offering-end-exclusive","kind":"fixture","datasetVersion":"fixture-gm03-v1","contextVersion":"context-v1","poolSeed":"seed-night",
+      "context":{"anchorId":"anchor-a","coverageId":"coverage-a","radiusM":1000,"desiredAt":"2026-10-09T18:00:00Z","mealSlot":"dinner","serviceMode":"dine_in","timeHint":"scheduled","budget":null},
+      "preferenceCategoryIds":[],"expectedPool":[{"dishId":"dish-combo","variantId":"variant-standard","offeringIds":["off-combo-a"]}],
+      "expectedReason":"OFFERING_CLOSED","notes":"Saturday 01:00 local: rice ends exactly now; venue/combo still open. [start,end)."
+    },
+    {
+      "id":"next-day-exception","kind":"fixture","datasetVersion":"fixture-gm03-v1","contextVersion":"context-v1","poolSeed":"seed-night",
+      "context":{"anchorId":"anchor-a","coverageId":"coverage-a","radiusM":1000,"desiredAt":"2026-10-10T17:30:00Z","mealSlot":"dinner","serviceMode":"dine_in","timeHint":"scheduled","budget":null},
+      "preferenceCategoryIds":[],"expectedPool":[],"expectedReason":"DATE_CLOSED","notes":"Sunday 00:30 local: date exception closes venue A; Saturday overnight cannot bypass it."
+    },
+    {
+      "id":"unknown-meal","kind":"fixture","datasetVersion":"fixture-gm03-v1","contextVersion":"context-v2","poolSeed":"seed-meal",
+      "context":{"anchorId":"anchor-a","coverageId":"coverage-a","radiusM":1000,"desiredAt":"2026-10-09T16:00:00Z","mealSlot":"breakfast","serviceMode":"dine_in","timeHint":"scheduled","budget":null},
+      "preferenceCategoryIds":[],"expectedPool":[],"expectedReason":"NO_MEAL_MATCH","notes":"None of these dishes is tagged breakfast. A late hour does not silently rewrite the user's mealSlot."
+    },
+    {
+      "id":"unknown-budget-soft","kind":"fixture","datasetVersion":"fixture-gm03-v1","contextVersion":"context-budget","poolSeed":"seed-budget",
+      "context":{"anchorId":"anchor-a","coverageId":"coverage-a","radiusM":1000,"desiredAt":"2026-10-09T16:00:00Z","mealSlot":"dinner","serviceMode":"dine_in","timeHint":"late_night","budget":{"min":30000,"max":60000,"unit":"person","currency":"VND"}},
+      "preferenceCategoryIds":[],"expectedPool":[{"dishId":"dish-rice","variantId":"variant-standard","offeringIds":["off-rice-a"]},{"dishId":"dish-combo","variantId":"variant-standard","offeringIds":["off-combo-a"]},{"dishId":"dish-grill","variantId":"variant-standard","offeringIds":["off-grill-a"]}],
+      "expectedReason":"UNKNOWN_PRICE_NOT_ZERO","notes":"Budget is soft. Null price remains null; no invented value or exclusion solely due to unknown price."
+    },
+    {
+      "id":"origin-not-location","kind":"fixture","datasetVersion":"fixture-gm03-v1","contextVersion":"context-origin","poolSeed":"seed-origin",
+      "context":{"anchorId":"anchor-a","coverageId":"coverage-a","radiusM":1000,"desiredAt":"2026-10-09T16:00:00Z","mealSlot":"dinner","serviceMode":"dine_in","timeHint":"late_night","budget":null},
+      "preferenceCategoryIds":[["category-rice"]],"expectedPool":[{"dishId":"dish-rice","variantId":"variant-standard","offeringIds":["off-rice-a"]},{"dishId":"dish-combo","variantId":"variant-standard","offeringIds":["off-combo-a"]},{"dishId":"dish-grill","variantId":"variant-standard","offeringIds":["off-grill-a"]}],
+      "expectedReason":"ORIGIN_IS_NOT_COVERAGE","notes":"Rice origin-south can be offered by TEST-A area-test-north. Hotpot only sold at B is excluded from A."
+    },
+    {
+      "id":"out-of-radius-empty","kind":"fixture","datasetVersion":"fixture-gm03-v1","contextVersion":"context-radius","poolSeed":"seed-radius",
+      "context":{"anchorId":"anchor-a","coverageId":"coverage-a","radiusM":1,"desiredAt":"2026-10-10T03:00:00Z","mealSlot":"lunch","serviceMode":"dine_in","timeHint":"scheduled","budget":null},
+      "preferenceCategoryIds":[],"expectedPool":[],"expectedReason":"NO_VALID_OFFERING","notes":"A is closed at local 10:00; open B is far outside A/radius. Never widen radius or copy B into A."
+    },
+    {
+      "id":"sold-out-excluded","kind":"fixture","datasetVersion":"fixture-gm03-v1","contextVersion":"context-stock","poolSeed":"seed-stock",
+      "context":{"anchorId":"anchor-a","coverageId":"coverage-a","radiusM":1000,"desiredAt":"2026-10-10T15:30:00Z","mealSlot":"dinner","serviceMode":"dine_in","timeHint":"scheduled","budget":null},
+      "preferenceCategoryIds":[],"expectedPool":[{"dishId":"dish-rice","variantId":"variant-standard","offeringIds":["off-rice-a"]},{"dishId":"dish-combo","variantId":"variant-standard","offeringIds":["off-combo-a"]}],
+      "expectedReason":"SOLD_OUT","notes":"Grill sold_out override active; no recovery from category preferences."
+    },
+    {
+      "id":"group-price-not-person","kind":"fixture","datasetVersion":"fixture-gm03-v1","contextVersion":"context-group","poolSeed":"seed-group",
+      "context":{"anchorId":"anchor-b","coverageId":"coverage-b","radiusM":1000,"desiredAt":"2026-10-10T08:00:00Z","mealSlot":"dinner","serviceMode":"dine_in","timeHint":"scheduled","budget":{"min":30000,"max":60000,"unit":"person","currency":"VND"}},
+      "preferenceCategoryIds":[["category-hotpot"]],"expectedPool":[{"dishId":"dish-hotpot","variantId":"variant-group","offeringIds":["off-hotpot-b"]},{"dishId":"dish-rice","variantId":"variant-standard","offeringIds":["off-rice-b"]}],
+      "expectedReason":"PRICE_UNIT_PRESERVED","notes":"Local 15:00, group/portion prices cannot be divided into per-person prices without serving evidence."
+    },
+    {
+      "id":"unknown-hours","kind":"fixture","datasetVersion":"fixture-gm03-v1","contextVersion":"context-hours","poolSeed":"seed-hours",
+      "context":{"anchorId":"anchor-a","coverageId":"coverage-a","radiusM":1000,"desiredAt":"2026-10-08T15:30:00Z","mealSlot":"dinner","serviceMode":"dine_in","timeHint":"scheduled","budget":null},
+      "preferenceCategoryIds":[],"expectedPool":[],"expectedReason":"AVAILABILITY_UNKNOWN","notes":"Thursday hours unknown for venue and offerings; no fabricated availability."
+    }
+  ]
+}

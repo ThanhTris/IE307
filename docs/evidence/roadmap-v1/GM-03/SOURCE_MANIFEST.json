@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-08",
+  "branch": "sanbox",
+  "base_commit": "36132e9e35041292b24ac13ddbc4c3037e7ae18c",
+  "contract_version": "food-v1.gm03-draft.1",
+  "scope": "SHA-256 of working-tree bytes of GM-03 source/test/JSON inputs; uncommitted draft, not approval; excludes docs/evidence",
+  "files": [
+    {"path":"mobile/src/domain/catalogue/index.ts","sha256":"17ff18281251c332985b37b7c34b127a0d652657575ab3f94235c99c7db0ff0b"},
+    {"path":"mobile/src/domain/catalogue/taxonomy.ts","sha256":"04f5fc6c9985adcb9e42d9abca387e9f07f0a36edb9caa96180963db87fdb577"},
+    {"path":"mobile/src/domain/catalogue/types.ts","sha256":"17c000e987b8b04f95d18440766d96b439e02dd541647f66696a6d8ae191b03a"},
+    {"path":"mobile/src/domain/catalogue/validateDataset.ts","sha256":"02fdc08a31e2a4fb7ac93e49b8a6e2c0acff687afccb7bad5c08602b4eb5959e"},
+    {"path":"mobile/tests/catalogueContract.test.ts","sha256":"a48fcf8eca865679eff7f7262e26471d09854dda4afc52ad51bb96f1080d5abc"},
+    {"path":"tests/fixtures/food-v1/gm03-cases.json","sha256":"aa6eb33f56d4aa4c263ff0604a5b5d9b120a10f22a505a52d571160a07047f73"},
+    {"path":"tests/fixtures/food-v1/gm03-dataset.json","sha256":"b709df2a7777318ad8eafdecf04a5feadd2d76f74b0de613a9b1ae0193fa18f1"},
+    {"path":"supabase/seed/templates/food-v1.template.json","sha256":"dbcc26c9582b0166608625e19f107e565dc26b9725d7d29538001acc3b840135"}
+  ]
+}

@@ -1,0 +1,35 @@
+2026-10-08 — sanbox, GM-03 draft
+Command: npm.cmd run check (mobile/)
+Exit code: 0
+
+> gi-cung-duoc-mobile@0.1.0 check
+> npm run typecheck && npm run lint && npm test && npm run check:architecture
+
+> gi-cung-duoc-mobile@0.1.0 typecheck
+> tsc --noEmit
+
+> gi-cung-duoc-mobile@0.1.0 lint
+> eslint .
+
+> gi-cung-duoc-mobile@0.1.0 test
+> jest --runInBand
+
+PASS tests/BootstrapScreen.test.tsx
+PASS tests/catalogueContract.test.ts
+PASS tests/JoinSpikeScreen.test.tsx
+PASS tests/counterStore.test.ts
+PASS tests/localNotifications.test.ts
+PASS tests/joinLink.test.ts
+
+Test Suites: 6 passed, 6 total
+Tests:       150 passed, 150 total
+Snapshots:   0 total
+Time:        6.486 s, estimated 7 s
+Ran all test suites.
+
+> gi-cung-duoc-mobile@0.1.0 check:architecture
+> node scripts/check-architecture.cjs
+
+Domain boundary OK: local pure imports only.
+
+Native/SQL/real dataset publication: not executed in GM-03.

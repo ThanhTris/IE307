@@ -56,3 +56,5 @@ features/notifications dự kiến chứa inbox/permission/token/navigation; dat
 ## Food-v1
 
 GM-10 bổ sung feature/context và adapter vị trí/anchor trước create UI; GM-11 domain/eligibility thuần và SQL query; GM-08 verified seed/coverage/schedules. Đây là đích task, chưa có implementation. `scripts/task_readiness.py` kiểm gate và sinh các task indexes từ frontmatter. [Dependency map](TASK_DEPENDENCIES.md).
+
+GM-03 bản nháp trên sanbox bổ sung `mobile/src/domain/catalogue` (DTO/enums/validator thuần), `tests/fixtures/food-v1` (dữ liệu mô phỏng/context expected) và `supabase/seed/templates` (JSON envelope rỗng). [Data dictionary](../data/FOOD_DATA_DICTIONARY.md) chỉ rõ ID/field/null/unit/source/review và mapping draft; không có SQL importer hoặc data quán thật. Test tại `mobile/tests/catalogueContract.test.ts`, không cần mở Expo Go.
