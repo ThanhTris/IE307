@@ -1,0 +1,67 @@
+{
+  "dishes": 39,
+  "populated": {
+    "description": 34,
+    "aliases": 1,
+    "cuisineIds": 5,
+    "categoryIds": 39,
+    "mealSlots": 2,
+    "timeHints": 0,
+    "artwork": 0,
+    "ingredientTags": 0,
+    "flavor": 0,
+    "temperature": 2,
+    "origin": 1
+  },
+  "categoryCounts": {
+    "family:banh_bao": 1,
+    "family:banh_cuon": 1,
+    "family:banh_cuon_wrap": 1,
+    "family:banh_mi": 1,
+    "family:banh_uot": 1,
+    "family:bun": 10,
+    "family:burger": 1,
+    "family:hu_tieu": 1,
+    "family:mien": 1,
+    "family:noodles": 3,
+    "family:nui": 1,
+    "family:pho": 2,
+    "family:rice": 13,
+    "family:salad": 1,
+    "family:sticky_rice": 1,
+    "preparation:steamed": 2
+  },
+  "cuisineCounts": {
+    "vi": 5,
+    "zh": 1
+  },
+  "mealCounts": {
+    "breakfast": 2,
+    "snack": 1
+  },
+  "missingDescriptions": [
+    "Bún mọc",
+    "Cơm canh khổ qua",
+    "Cơm cá kho",
+    "Cơm tôm rim",
+    "Cơm đậu hủ sốt cà"
+  ],
+  "imageStatuses": {
+    "needs_visual_review": 23,
+    "rejected": 5,
+    "no_eligible_image": 32
+  },
+  "prices": 247,
+  "knownPrices": 247,
+  "venues": 21,
+  "imageCandidates": 28,
+  "mapping": {
+    "mapped": 216,
+    "needs_review": 2,
+    "excluded": 1
+  },
+  "apiCallsDuringReplay": 0,
+  "status": "draft",
+  "target": "60–80",
+  "expansionRequired": true
+}

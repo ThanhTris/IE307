@@ -6,6 +6,7 @@
 2. [Vilao full](../VILAO_CATALOGUE.md): 17 cột thêm, prompt/cache/usage và giới hạn.
 3. [Taxonomy](TAXONOMY.md): giá trị chuẩn, món gốc, alias/variant và quy tắc owner.
 4. [Data dictionary](DATA_DICTIONARY.md) và [forms](../templates/README.md): 11 entity, CSV/JSON, ID/version/unknown, kiểm FK/giá/lịch/source/review.
+5. [Catalogue biên tập](EDITORIAL_CATALOGUE.md): 39 UUID version 2, nguồn từng trường, bảng giá/ảnh, notebook offline và báo cáo 0.2.0.
 
 ## Bản dữ liệu đóng băng
 
@@ -30,3 +31,11 @@ Kiểm bằng Python runner, chưa Jupyter kernel/native/SQL. Không cài packag
 ## Bàn giao phần 2
 
 Dictionary/contract/forms có 11 entity và 14 bản ghi fixture tổng hợp. Notebook inspect_data_contract chạy 5/5 cells offline; JSON/CSV đọc lại tương đương. 138 tests đạt (49 contract mới); evidence và các giới hạn tại [DATA_PREPARATION](../../docs/evidence/GM-03/DATA_PREPARATION.md). Không chuyển snapshot nghiên cứu thành dữ liệu verified/published. Validator chỉ kiểm contract, không import hay cấp approval.
+
+## Bàn giao phần 3
+
+Catalogue mới [editorial-v0.2.0](../snapshots/editorial-v0.2.0/catalogue.json) gồm 39 món/UUID giữ nguyên, món version 2; contract 1.0.0. 34 mô tả có nguồn, 39 category, 5 cuisine, 2 mealSlots, 2 temperature, 1 origin và 1 món có alias; các trường còn thiếu giữ unknown/null/array rỗng. Mapping 216/2/1 và snapshot trước nguyên trạng. Không đạt mục tiêu 60–80, không thêm biến thể để đủ số.
+
+247 giá quan sát từ 21 chi nhánh có source/đơn vị/ngày snapshot; không giá chung hoặc giá/người. 28 ứng viên ảnh có metadata nhưng chưa xem được nội dung vì Wikimedia 403/429, 0 artwork được chọn. Bảng ảnh phân biệt bị loại/cần rà/chưa có ứng viên. Venue/offering/lịch/coverage arrays rỗng, chưa dùng cho gợi ý thực tế. [Báo cáo](../snapshots/editorial-v0.2.0/QUALITY_REPORT.md), [manifest](../snapshots/editorial-v0.2.0/manifest.json) và field_evidence.csv cung cấp bằng chứng chi tiết; raw web cache Git-ignored, clone chạy offline từ evidence trích xuất.
+
+158 tests đạt (20 editorial mới), repository validator/task index/diff check đạt. Hai lần notebook offline 7/7 cells, 19 artifact cùng checksum, JSON/CSV tương đương. Kiểm Python runner; chưa Jupyter kernel hoặc reviewer Approved. Evidence phần 3 nằm trong DATA_PREPARATION.md liên kết ở trên; chưa commit/push phần 3.

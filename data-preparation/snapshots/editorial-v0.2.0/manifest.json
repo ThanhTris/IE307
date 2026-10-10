@@ -1,0 +1,157 @@
+{
+  "datasetVersion": "0.2.0",
+  "contractVersion": "1.0.0",
+  "status": "draft",
+  "editedAt": "2026-10-10T02:26:05Z",
+  "sourceSnapshots": {
+    "thu_duc_dishes_taxonomy.csv": "e441ecfca93846da6596284f969149d2fef3e53f3397daa537cd8ba24dbcff37",
+    "thu_duc_base_dishes.csv": "d992deda724e7dc8f600443b68354ceae20a24216795a35cd0f615113e881e97",
+    "source_to_base_mapping.csv": "29ffa3cd95dff82d396b6a7664135c0540c00b2ae151e49b9ff013db9ef5078f"
+  },
+  "evidenceInputs": {
+    "editorial_source_evidence_v1.json": "677f04809f791b245b9b3ec719ac78bf9280d190ed3db657dfbbedc23fae136d",
+    "editorial_image_candidates_v1.json": "ed296a260165b5c992594dbd69a41fccedbd87e0424cea6a48bc83c2c554bba5"
+  },
+  "configSha256": "d8d51e9a3c897dfea739ba56b97a47a070e17dc26e3724b6a6a888ec97b9b426",
+  "files": {
+    "QUALITY_REPORT.md": {
+      "sha256": "66b4dbdc01ca12976fbce84a9a6a5bb40e9b30e14f23bd2baaeecf3ec189b9c1",
+      "bytes": 5223
+    },
+    "catalogue.json": {
+      "sha256": "cfaff47b0c65833983fe8de748428f25d26d7e1d49c539a5d1045676a08b9e90",
+      "bytes": 77546
+    },
+    "csv/availabilityOverrides.csv": {
+      "sha256": "167f6e75b6deeb47dd1506927b86bd0a5f08d400e04a216fe74e80a30a9a839d",
+      "bytes": 137
+    },
+    "csv/bundle.json": {
+      "sha256": "ee23b5cbff413a5e0d485d3a71c147b7c9e3abca03f6d98bbf96ecdc9332b70f",
+      "bytes": 86
+    },
+    "csv/coverageAreas.csv": {
+      "sha256": "f84d62dcc36af1c535115e23743d52748fad642029569598d5cde305a7d9dc32",
+      "bytes": 125
+    },
+    "csv/dataSources.csv": {
+      "sha256": "29821f7f7c2d32717b006358825b88d5ceaf815c22675e256ec065e030ef7460",
+      "bytes": 5250
+    },
+    "csv/datasetVersions.csv": {
+      "sha256": "8c4b53a475e2a8df90270d1c99c9addab48d5633445b8aeb427abf7fd7cf3dc1",
+      "bytes": 524
+    },
+    "csv/dateExceptions.csv": {
+      "sha256": "1d10f0b99d5fa2f11071726f562c7a84c7f193b5f88041415b5d4bda25ead01e",
+      "bytes": 140
+    },
+    "csv/dishes.csv": {
+      "sha256": "6eb5fd20970e8ba28ca78d344b7bdad29d0dcfaa22e32354396fc62ce76fc56a",
+      "bytes": 25654
+    },
+    "csv/publicAnchors.csv": {
+      "sha256": "5d38c2960f2dc81a96f3e9021126b509d5125cc50c3d6d70b57ded32b98cb910",
+      "bytes": 131
+    },
+    "csv/taxonomy.csv": {
+      "sha256": "eab593aad5063bb35258a5b5779608e4f5b0f209ac7087376e01012c83f8208d",
+      "bytes": 3142
+    },
+    "csv/venueDishes.csv": {
+      "sha256": "86d50120c77eb23d1c2c7254e34f388fbdfbe68df34aa134506abc97cdc9c7f9",
+      "bytes": 242
+    },
+    "csv/venues.csv": {
+      "sha256": "2feb600bb08324759d8d694442ae8ab25d27f727b3f2e6a56d07f5f13ed06c6f",
+      "bytes": 160
+    },
+    "csv/weeklySchedules.csv": {
+      "sha256": "e678885f459f430398a40b268d0d49abc1534eae8b7c1dbb109ec3087a25fbef",
+      "bytes": 188
+    },
+    "field_evidence.csv": {
+      "sha256": "8ee141a8f74a4d795096bf05fd017aed3fffd7adb546a03b089594be1f6902ed",
+      "bytes": 49371
+    },
+    "image_references.csv": {
+      "sha256": "7ac1105600098deb854fc66fd8be8fede36061685c626dff36790d5e2f3f65fd",
+      "bytes": 33599
+    },
+    "price_references.csv": {
+      "sha256": "2bac7da6f7a5a9e61fa28bdcd2c45ea5cf332c605735515edf0e7fd290dc416f",
+      "bytes": 136987
+    },
+    "quality.json": {
+      "sha256": "f5accf77f7f352af1777164fdffb31f411a15f83ffcd18e75ddecf9d55f92488",
+      "bytes": 1317
+    }
+  },
+  "statistics": {
+    "dishes": 39,
+    "populated": {
+      "description": 34,
+      "aliases": 1,
+      "cuisineIds": 5,
+      "categoryIds": 39,
+      "mealSlots": 2,
+      "timeHints": 0,
+      "artwork": 0,
+      "ingredientTags": 0,
+      "flavor": 0,
+      "temperature": 2,
+      "origin": 1
+    },
+    "categoryCounts": {
+      "family:banh_bao": 1,
+      "family:banh_cuon": 1,
+      "family:banh_cuon_wrap": 1,
+      "family:banh_mi": 1,
+      "family:banh_uot": 1,
+      "family:bun": 10,
+      "family:burger": 1,
+      "family:hu_tieu": 1,
+      "family:mien": 1,
+      "family:noodles": 3,
+      "family:nui": 1,
+      "family:pho": 2,
+      "family:rice": 13,
+      "family:salad": 1,
+      "family:sticky_rice": 1,
+      "preparation:steamed": 2
+    },
+    "cuisineCounts": {
+      "vi": 5,
+      "zh": 1
+    },
+    "mealCounts": {
+      "breakfast": 2,
+      "snack": 1
+    },
+    "missingDescriptions": [
+      "Bún mọc",
+      "Cơm canh khổ qua",
+      "Cơm cá kho",
+      "Cơm tôm rim",
+      "Cơm đậu hủ sốt cà"
+    ],
+    "imageStatuses": {
+      "needs_visual_review": 23,
+      "rejected": 5,
+      "no_eligible_image": 32
+    },
+    "prices": 247,
+    "knownPrices": 247,
+    "venues": 21,
+    "imageCandidates": 28,
+    "mapping": {
+      "mapped": 216,
+      "needs_review": 2,
+      "excluded": 1
+    },
+    "apiCallsDuringReplay": 0,
+    "status": "draft",
+    "target": "60–80",
+    "expansionRequired": true
+  }
+}

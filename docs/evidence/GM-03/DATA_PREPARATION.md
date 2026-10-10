@@ -32,3 +32,23 @@ Hai lượt notebook món gốc 7/7 code cells, SHA-256 giống nhau, 0 API call
 ## Giới hạn và review còn lại
 
 Không chứng minh menu đang bán, dine_in, còn hàng, phủ toàn vùng, quyền ảnh hoặc kết quả AI đúng. Quy tắc owner gộp món không thay reviewer độc lập. validUntil chưa có policy chốt để tự điền. Chưa có fixtures đầy đủ pool/budget/context/native/SQL; GM-03 chưa đủ Done. GM-04/27/30 tiếp nhận theo gate chính thức khi GM-28 được Approved. Không push/PR hoặc đổi GitHub issue.
+
+## Phần 3 — catalogue có nguồn, 2026-10-10
+
+Owner yêu cầu giữ 39 món đã chốt, chỉ điền có nguồn và tìm ảnh Commons. [Hướng dẫn](../../../data-preparation/docs/EDITORIAL_CATALOGUE.md), [quality report](../../../data-preparation/snapshots/editorial-v0.2.0/QUALITY_REPORT.md) và [manifest](../../../data-preparation/snapshots/editorial-v0.2.0/manifest.json) bàn giao dataset 0.2.0/contract 1.0.0. 39 UUID giữ nguyên, version món tăng lên 2; không sửa snapshot phần 1/codebook/cache GPT. Mapping vẫn 216 mapped / 2 needs_review / 1 excluded. Chưa đạt 60–80 món.
+
+34 mô tả, 39 category family, 5 món có cuisine (vi 5, zh 1 đa nhãn), 2 mealSlots, 2 temperature, 1 origin, 1 món có alias. 247/247 giá quan sát có nguồn từ 21 chi nhánh, giữ nguyên giá/đơn vị/URL/ngày snapshot, không tính giá/người hay giá chung. field_evidence có 123 dòng tham chiếu từng trường. Tất cả draft/needs_review, validUntil/reviewedBy=null; ingredientTags/flavor chưa có bằng chứng chung giữ null. Các entity nơi bán/lịch/coverage chưa xác minh để rỗng.
+
+Commons API 10/39 lượt lấy metadata, 29 lỗi 429; API bài tham khảo 0/20 thành công (429). Collector khảo sát ban đầu dùng 3 worker và tiếp tục sau lỗi; module refresh đã thay bằng tuần tự, dừng 403/429, không tự retry. Web tool đọc được bài tham khảo và một số trang file; browser kiểm trang/ảnh bị 403/429. Lưu 28 ứng viên (23 cần kiểm hình ảnh, 5 bị loại), **0 artwork được chọn**. Metadata/license không thay kiểm nội dung ảnh. Raw captures/checksum trong datasets Git-ignored; evidence trích xuất và bảng ghi công được Git theo dõi, clone không cần tải web để replay. Không gọi API phân loại mới, tải ảnh vào assets hoặc cài package.
+
+```text
+<bundled-python> data-preparation/scripts/run_notebook.py data-preparation/notebooks/prepare_editorial_catalogue.ipynb --offline
+<bundled-python> -m unittest discover -s tests -p 'test_*.py'
+python3 data-preparation/scripts/data_contract.py data-preparation/snapshots/editorial-v0.2.0/catalogue.json
+python3 data-preparation/scripts/data_contract.py data-preparation/snapshots/editorial-v0.2.0/csv
+python3 scripts/validate_repository.py
+python3 scripts/task_readiness.py --check-docs
+git diff --check
+```
+
+Hai lượt notebook offline cuối cùng đạt 7/7 code cells; 19 artifact giống checksum (kể cả manifest), 0 network/API calls trong replay. Catalogue SHA-256: cfaff47b0c65833983fe8de748428f25d26d7e1d49c539a5d1045676a08b9e90. JSON và 11 CSV entity tương đương; bảng giá CSV đọc lại khớp từng ô nguồn, UTF-8 BOM. 158 regression tests đạt, gồm 20 tests editorial mới: nguồn theo trường, không promote GPT/ảnh menu, không lẫn giá chi nhánh, reject cache drift, clone offline, output deterministic, refresh lưu bytes/checksum và dừng 429, draft không vượt publish guard. Refresh tests dùng mock response, không gọi mạng. Kiểm bằng Python runner, chưa Jupyter kernel hay reviewer độc lập. Không commit/push/PR phần 3 trong lượt này.

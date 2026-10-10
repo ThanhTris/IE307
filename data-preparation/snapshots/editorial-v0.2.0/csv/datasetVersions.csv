@@ -1,0 +1,2 @@
+﻿id,datasetVersion,contractVersion,status,checksum,artifactLocator,previousVersionId,qualityReport,rollbackLocator,version,reviewStatus,sourceRef,fieldSources,checkedAt,validUntil,enteredBy,reviewedBy
+ff13bc50-ed20-5e4a-bf25-41644cf558af,0.2.0,1.0.0,draft,,data-preparation/snapshots/editorial-v0.2.0/catalogue.json,,data-preparation/snapshots/editorial-v0.2.0/QUALITY_REPORT.md,data-preparation/snapshots/thu_duc_base_dishes.csv,1,draft,ed058b8a-d0db-5944-9af4-962df535ba27,{},2026-10-10T02:26:05Z,,gm03-editorial-agent,

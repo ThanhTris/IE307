@@ -2,6 +2,8 @@
 
 [Handoff GM-03](docs/HANDOFF.md) và [taxonomy/món gốc](docs/TAXONOMY.md): snapshot Git 219 tên, 39 món gốc, mapping và notebook chạy offline.
 
+[Catalogue biên tập 0.2.0](docs/EDITORIAL_CATALOGUE.md): notebook prepare_editorial_catalogue, bundle CSV/JSON 39 món theo contract, 247 giá tham khảo và nguồn ảnh/ghi công. Mặc định chạy offline, không gọi lại GPT; artwork chưa kiểm nội dung giữ null. [Báo cáo từng món](snapshots/editorial-v0.2.0/QUALITY_REPORT.md) ghi số liệu và trường còn thiếu.
+
 # Danh mục món từ thực đơn khu Thủ Đức cũ
 
 [Tổng quan dữ liệu](DATASET_OVERVIEW.md): quy mô/số dòng/dung lượng, nguồn và phạm vi, danh sách quán, ý nghĩa đủ 35 cột của file cuối và các giới hạn của snapshot ngày 2026-10-09.
