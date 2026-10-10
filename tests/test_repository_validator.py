@@ -16,7 +16,7 @@ spec.loader.exec_module(validator)
 
 
 class MemorySource:
-    def __init__(self):
+    def __init__(self, controlled_statuses=False):
         source = validator.Source(None)
         self.files = set(source.files)
         self.contents = {
@@ -24,9 +24,37 @@ class MemorySource:
             for path in self.files
             if path.endswith((".md", ".json"))
         }
+        if controlled_statuses:
+            # Explicit test fixture, independent of later human approvals in the repo.
+            # Never change real task status/evidence to manufacture a gate result.
+            record = validator.task_records(self)['GM-01']
+            old, new = record['path'], 'tasks/review/GM-01.md'
+            text = re.sub(r'^status:.*$', 'status: review', record['text'], flags=re.M)
+            text = re.sub(r'^(Reviewed-by|Reviewed-at|Decision|Review-evidence):.*\n?', '', text, flags=re.M)
+            text = text.replace('- [x]', '- [ ]')
+            self.files.remove(old)
+            self.contents.pop(old)
+            self.files.add(new)
+            self.contents[new] = text
+            for tid in ('GM-02', 'GM-03'):
+                current = self.task_path(tid)
+                if current != f'tasks/backlog/{tid}.md':
+                    baseline = self.contents.pop(current)
+                    baseline = re.sub(r'^status:.*$', 'status: backlog', baseline, flags=re.M)
+                    baseline = re.sub(r'^assignment_status:.*$', 'assignment_status: proposed', baseline, flags=re.M)
+                    backlog = f'tasks/backlog/{tid}.md'
+                    self.files.remove(current)
+                    self.files.add(backlog)
+                    self.contents[backlog] = baseline
+            import task_readiness
+            self.contents.update(task_readiness.task_link_updates(self))
+            self.contents.update(task_readiness.render_documents(self))
 
     def read(self, path):
         return self.contents[path]
+
+    def task_path(self, tid):
+        return next(path for path in self.files if re.fullmatch(rf'tasks/(?:backlog|in-progress|review|done)/{tid}\.md', path))
 
     def exists(self, path):
         return path in self.files or any(
@@ -45,13 +73,24 @@ def deliver_in_memory(source, tid):
 
 class ManifestValidationTests(unittest.TestCase):
     def setUp(self):
-        self.source = MemorySource()
+        self.source = MemorySource(controlled_statuses=True)
 
     def errors(self):
         return "\n".join(validator.validate(self.source))
 
     def test_current_baseline(self):
         self.assertEqual(self.errors(), "")
+
+    def test_live_repository_with_current_human_approval_is_valid(self):
+        self.assertEqual(validator.validate(MemorySource()), [])
+
+    def test_only_known_archived_task_paths_are_historical_references(self):
+        path = 'docs/evidence/roadmap-v1/GM-01/FINAL_AUDIT_2026-10-08.md'
+        target = 'tasks/review/GM-01.md'
+        self.assertTrue(validator.historical_task_reference(self.source, path, target))
+        self.assertFalse(validator.historical_task_reference(self.source, path, 'tasks/review/GM-99.md'))
+        self.assertFalse(validator.historical_task_reference(self.source, path, 'missing-artifact.md'))
+        self.assertFalse(validator.historical_task_reference(self.source, 'docs/project/START_HERE.md', target))
 
     def test_declared_task_missing_is_rejected(self):
         self.source.files.remove("tasks/backlog/GM-18.md")
@@ -63,7 +102,7 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn("unique implementation task IDs", self.errors())
 
     def test_dependency_cycle_is_rejected(self):
-        path = "tasks/backlog/GM-02.md"
+        path = self.source.task_path('GM-02')
         self.source.contents[path] = re.sub(r'^merge_dependencies:.*$', 'merge_dependencies: GM-02', self.source.read(path), flags=re.M)
         self.assertIn("dependency cycle", self.errors())
 
@@ -119,7 +158,7 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn('active task with unreviewed dependency: GM-01 -> GM-00', self.errors())
 
     def test_scope_gate_cannot_be_bypassed(self):
-        path = 'tasks/backlog/GM-02.md'
+        path = self.source.task_path('GM-02')
         self.source.contents[path] = re.sub(r'^start_dependencies:.*$', 'start_dependencies: GM-00', self.source.read(path), flags=re.M)
         self.assertIn('task bypasses current baseline gate: GM-02', self.errors())
 
@@ -134,22 +173,22 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn('parallel tasks share owner', self.errors())
 
     def test_unknown_parallel_task_is_rejected(self):
-        path = 'tasks/backlog/GM-02.md'
+        path = self.source.task_path('GM-02')
         self.source.contents[path] = re.sub(r'^parallel_with:.*$', 'parallel_with: GM-99', self.source.read(path), flags=re.M)
         self.assertIn('unknown parallel task', self.errors())
 
     def test_missing_reverse_parallel_declaration_is_rejected(self):
-        path = 'tasks/backlog/GM-02.md'
+        path = self.source.task_path('GM-02')
         self.source.contents[path] = re.sub(r'^parallel_with:.*$', 'parallel_with:', self.source.read(path), flags=re.M)
         self.assertIn('asymmetric parallel declaration', self.errors())
 
     def test_duplicate_dependency_is_rejected(self):
-        path = 'tasks/backlog/GM-02.md'
+        path = self.source.task_path('GM-02')
         self.source.contents[path] = re.sub(r'^merge_dependencies:.*$', 'merge_dependencies: GM-01, GM-01', self.source.read(path), flags=re.M)
         self.assertIn('duplicate merge_dependencies', self.errors())
 
     def test_invalid_dependency_text_is_rejected(self):
-        path = 'tasks/backlog/GM-02.md'
+        path = self.source.task_path('GM-02')
         self.source.contents[path] = re.sub(r'^merge_dependencies:.*$', 'merge_dependencies: GM-01 or optional', self.source.read(path), flags=re.M)
         self.assertIn('invalid merge_dependencies IDs', self.errors())
 
@@ -159,7 +198,7 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn('active task without accepted assignment', self.errors())
 
     def test_core_cannot_depend_on_extension(self):
-        path = 'tasks/backlog/GM-02.md'
+        path = self.source.task_path('GM-02')
         self.source.contents[path] = re.sub(r'^merge_dependencies:.*$', 'merge_dependencies: GM-01, GM-38', self.source.read(path), flags=re.M)
         self.assertIn('core blocked by extension', self.errors())
 
@@ -171,7 +210,7 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn('missing required file: .github/pull_request_template.md', self.errors())
 
     def test_dependency_checkbox_cannot_drift_from_metadata(self):
-        path = 'tasks/backlog/GM-02.md'
+        path = self.source.task_path('GM-02')
         self.source.contents[path] = self.source.read(path).replace('- [ ] [GM-01]', '- [ ] [GM-00]')
         self.assertIn('dependency checklist differs from metadata', self.errors())
 
@@ -240,12 +279,12 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn('obsolete dependencies field', self.errors())
 
     def test_unknown_start_dependency_is_rejected(self):
-        path = 'tasks/backlog/GM-02.md'
+        path = self.source.task_path('GM-02')
         self.source.contents[path] = re.sub(r'^start_dependencies:.*$', 'start_dependencies: GM-99', self.source.read(path), flags=re.M)
         self.assertIn('unknown dependency: GM-02 -> GM-99', self.errors())
 
     def test_combined_start_merge_cycle_is_rejected(self):
-        path = 'tasks/backlog/GM-02.md'
+        path = self.source.task_path('GM-02')
         self.source.contents[path] = re.sub(r'^start_dependencies:.*$', 'start_dependencies: GM-05', self.source.read(path), flags=re.M)
         self.assertIn('dependency cycle', self.errors())
 
@@ -260,12 +299,12 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn('missing parallel scope boundary', self.errors())
 
     def test_start_dependency_cannot_point_to_a_later_number_even_without_cycle(self):
-        path = 'tasks/backlog/GM-02.md'
+        path = self.source.task_path('GM-02')
         self.source.contents[path] = re.sub(r'^start_dependencies:.*$', 'start_dependencies: GM-03', self.source.read(path), flags=re.M)
         self.assertIn('dependency must have a smaller task ID: GM-02 -> GM-03', self.errors())
 
     def test_merge_dependency_cannot_point_to_a_later_number_even_without_cycle(self):
-        path = 'tasks/backlog/GM-02.md'
+        path = self.source.task_path('GM-02')
         self.source.contents[path] = re.sub(r'^merge_dependencies:.*$', 'merge_dependencies: GM-03', self.source.read(path), flags=re.M)
         self.assertIn('dependency must have a smaller task ID: GM-02 -> GM-03', self.errors())
 
@@ -338,6 +377,50 @@ class ManifestValidationTests(unittest.TestCase):
     def test_done_needs_actual_handoff_file(self):
         self.set_status_in_memory('GM-01', 'done', approve=True)
         self.source.files.remove('docs/evidence/roadmap-v2/GM-01/HANDOFF.md')
+        self.assertIn('missing delivered artifact', self.errors())
+
+    def test_every_task_declares_runnable_output_checks(self):
+        records = validator.task_records(self.source)
+        for entry in validator.roadmap(self.source)['entries']:
+            tid = entry['new_id']
+            self.assertIn(f'docs/evidence/roadmap-v2/{tid}/CHECKS.md', entry['outputs'])
+            self.assertIn('## Đầu ra chạy được và nghiệm thu', records[tid]['text'])
+            for value in entry['verification'].values():
+                self.assertIn(value, records[tid]['text'])
+
+    def test_missing_verification_is_rejected(self):
+        mapping = validator.roadmap(self.source)
+        del mapping['entries'][1]['verification']
+        self.source.contents['tasks/task-id-map.json'] = json.dumps(mapping)
+        self.assertIn('missing runnable output verification', self.errors())
+
+    def test_ui_cannot_claim_api_only_verification(self):
+        mapping = validator.roadmap(self.source)
+        mapping['entries'][8]['verification']['mode'] = 'api'
+        self.source.contents['tasks/task-id-map.json'] = json.dumps(mapping)
+        self.assertIn('verification mode does not match track/stage', self.errors())
+
+    def test_missing_checks_output_is_rejected(self):
+        mapping = validator.roadmap(self.source)
+        mapping['entries'][3]['outputs'].remove('docs/evidence/roadmap-v2/GM-04/CHECKS.md')
+        self.source.contents['tasks/task-id-map.json'] = json.dumps(mapping)
+        self.assertIn('output checks artifact must be declared', self.errors())
+
+    def test_api_requires_request_examples(self):
+        mapping = validator.roadmap(self.source)
+        mapping['entries'][18]['outputs'].remove('supabase/tests/http/GM-19.http')
+        self.source.contents['tasks/task-id-map.json'] = json.dumps(mapping)
+        self.assertIn('API request examples must be declared', self.errors())
+
+    def test_verification_and_task_body_must_match(self):
+        mapping = validator.roadmap(self.source)
+        mapping['entries'][3]['verification']['expected'] = 'Changed output contract not in task'
+        self.source.contents['tasks/task-id-map.json'] = json.dumps(mapping)
+        self.assertIn('verification differs from task body', self.errors())
+
+    def test_done_needs_actual_checks_file(self):
+        self.set_status_in_memory('GM-01', 'done', approve=True)
+        self.source.files.remove('docs/evidence/roadmap-v2/GM-01/CHECKS.md')
         self.assertIn('missing delivered artifact', self.errors())
 
 

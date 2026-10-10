@@ -82,7 +82,7 @@ def task_link_updates(src):
     records = repository.task_records(src)
     changes = {}
     for path in sorted(src.files):
-        if not path.endswith('.md'):
+        if not path.endswith('.md') or repository.frozen_evidence(path):
             continue
         original = src.read(path)
 
@@ -142,6 +142,21 @@ def render_documents(src):
 
     path = 'docs/project/TASK_HANDOFFS.md'
     mapping = repository.roadmap(src)
+    check_path = 'docs/project/TASK_OUTPUT_CHECKLIST.md'
+    checks = '# Checklist đầu ra chạy được — roadmap-v2\n\n' + notice
+    checks += ('Theo [chuẩn đầu ra](TASK_OUTPUT_REQUIREMENTS.md). Các route/request/lệnh bên dưới là yêu cầu bàn giao, '
+               'chưa chứng minh implementation đã có. Mọi task cần CHECKS.md và HANDOFF.md; '
+               'checker kiểm metadata/path, reviewer kiểm output và assertion thật.\n\n'
+               '| Task / owner | Loại kiểm / công cụ | Điểm mở hoặc gọi | Expected output | Ca tối thiểu |\n'
+               '| --- | --- | --- | --- | --- |\n')
+    for entry in mapping['entries']:
+        tid, verification = entry['new_id'], entry['verification']
+        cells = [f"{link(tid,check_path)} — {records[tid]['meta']['owner']}",
+                 f"`{verification['mode']}`<br>{verification['tool']}",
+                 verification['entrypoint'], verification['expected'], verification['cases']]
+        checks += '| ' + ' | '.join(cell.replace('|', '&#124;').replace('\n', '<br>') for cell in cells) + ' |\n'
+    checks += '\n[Mẫu CHECKS](../../tasks/templates/CHECKS_TEMPLATE.md) · [Mẫu HANDOFF](../../tasks/templates/HANDOFF_TEMPLATE.md). Not run của AC bắt buộc vẫn là blocker; mock không nghiệm thu API/native/dataset thật.\n'
+    outputs[check_path] = checks
     text = '# Bảng nhận đầu vào và bàn giao — roadmap-v2\n\n' + notice
     text += ('Path dưới đây là đầu ra dự kiến, không chứng minh file đã có. Người nhận đối chiếu HANDOFF/PR/commit/version và chạy smoke sau khi cập nhật nhánh. '
              'Trước start dùng readiness; thêm --base-ref origin/main để kiểm target. Merge bắt buộc --gate merge --base-ref origin/main. '

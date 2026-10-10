@@ -1,5 +1,7 @@
 # Dependencies and build outputs
 node_modules/
+supabase/.temp/
+supabase/.branches/
 .expo/
 dist/
 build/

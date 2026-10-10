@@ -29,4 +29,4 @@ Nhánh viết sớm có thể phải sửa adapter khi implementation đổi. Gi
 
 Regression: merge deps pending không chặn in-progress; start deps pending vẫn chặn; merge ancestor được song song; start ancestor/cycle/unknown/same owner bị từ chối; Done không bypass merge deps; target thiếu/khác evidence bị chặn; indexes khớp metadata.
 
-[Workflow](../../project/TEAM_WORKFLOW.md) · [Dependency map](../../project/TASK_DEPENDENCIES.md) · [GM-01](../../../tasks/review/GM-01.md).
+[Workflow](../../project/TEAM_WORKFLOW.md) · [Dependency map](../../project/TASK_DEPENDENCIES.md) · [GM-01](../../../tasks/done/GM-01.md).

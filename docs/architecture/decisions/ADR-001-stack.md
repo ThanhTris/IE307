@@ -1,6 +1,6 @@
 # ADR-001 — Expo + Supabase
 
-Status: Proposed, chưa được reviewer chấp thuận. Ngày 2026-10-06.
+Status: Accepted — chủ dự án xác nhận reviewer Trí đã duyệt ngày 2026-10-10. Đề xuất ban đầu ngày 2026-10-06.
 
 6 người, 8 tuần, React Native, chi phí gần 0; nhiều máy và phiếu kín đối với cả host. Firebase ở hội thoại là gợi ý, chưa là quyết định triển khai.
 
@@ -12,4 +12,4 @@ Status: Proposed, chưa được reviewer chấp thuận. Ngày 2026-10-06.
 | Firebase | Expo bắt đầu nhanh, realtime phổ biến | Tổng hợp private votes cần trusted backend; không để host đọc mọi phiếu |
 | Node server riêng | Kiểm soát đầy đủ | Tăng deploy/auth/hosting |
 
-Gate: reviewer kiểm free tier, anonymous auth/abuse control, RPC security; chấp thuận hoặc sửa ADR. Đợt này chưa tạo database/deployment.
+Xác nhận: chủ dự án trả lời “duyệt rồi” cho câu hỏi GM-01/ADR-001, rồi đồng ý bộ package nền và cho phép cập nhật hồ sơ GM-01. Xem [evidence](../../evidence/roadmap-v2/GM-01/REVIEW.md). Approval chọn Expo + Supabase và cấu trúc, không chứng minh free tier/quota, anonymous auth/abuse control hoặc RPC security đã được kiểm trên deployment. Những phần đó vẫn phải kiểm tại task triển khai tương ứng; không tạo remote project/paid plan trong GM-03.

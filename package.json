@@ -1,0 +1,16 @@
+{
+  "name": "gi-cung-duoc-backend-tooling",
+  "version": "0.1.0",
+  "private": true,
+  "engines": { "node": ">=22.13.0" },
+  "scripts": {
+    "backend:start": "node scripts/backend.mjs start",
+    "backend:status": "node scripts/backend.mjs status",
+    "backend:stop": "node scripts/backend.mjs stop",
+    "backend:smoke": "node scripts/backend.mjs smoke",
+    "backend:test": "node scripts/backend.mjs test",
+    "backend:reset:local": "node scripts/backend.mjs reset",
+    "test": "node --test tests/backend-runner.test.mjs"
+  },
+  "devDependencies": { "supabase": "2.120.0" }
+}

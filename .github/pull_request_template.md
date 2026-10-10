@@ -62,3 +62,16 @@ HANDOFF.md: docs/evidence/roadmap-v2/GM-XX/HANDOFF.md
 
 - [ ] Scope UI mock được nghiệm thu riêng; không ghi API/native pass từ fixture.
 - [ ] Đầu vào thực tế đủ để tiếp tục, không tự tạo lại scaffold/contract hoặc bỏ prerequisite.
+
+## Output chạy được — UI / BE / Data
+
+Theo docs/project/TASK_OUTPUT_REQUIREMENTS.md và TASK_OUTPUT_CHECKLIST.md. CHECKS.md: docs/evidence/roadmap-v2/GM-XX/CHECKS.md, tested commit/version/environment:
+
+| Screen/component hoặc endpoint/field | Cách mở Expo / request/lệnh | Input | Expected + assertion | Actual + evidence thật | Mock/thật / Pass-Fail-Not run |
+| --- | --- | --- | --- | --- | --- |
+| | | | | | |
+
+- [ ] UI mở được trên Expo và hiển thị/tương tác các mục trong scope; giới hạn Expo Go/native ghi rõ, có screenshot/video thật.
+- [ ] API có Postman/curl/runner request suite và HTTP/body/error/state/version assertions; nền/contract/domain kiểm scope riêng, không đòi API task sau.
+- [ ] Data đủ field/schema/template/FK/unit/null/privacy/version và valid/invalid fixture; SQL/import/query thật khi task yêu cầu, BE không phải đoán field.
+- [ ] Output/evidence che secret/GPS/phiếu thật; AC bắt buộc chưa chạy/không đạt vẫn là blocker, không lấy CI/docs thay nghiệm thu.

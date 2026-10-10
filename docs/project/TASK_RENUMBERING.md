@@ -4,8 +4,8 @@
 
 | Task roadmap-v1 | Task nhận scope roadmap-v2 |
 | --- | --- |
-| GM-01 — Review baseline food-v1, dependency và quy trình PR | [GM-01](../../tasks/review/GM-01.md) |
-| GM-02 — Bootstrap Expo Android và native capability spike | [GM-02](../../tasks/backlog/GM-02.md), [GM-24](../../tasks/backlog/GM-24.md), [GM-29](../../tasks/backlog/GM-29.md), [GM-30](../../tasks/backlog/GM-30.md), [GM-31](../../tasks/backlog/GM-31.md) |
+| GM-01 — Review baseline food-v1, dependency và quy trình PR | [GM-01](../../tasks/done/GM-01.md) |
+| GM-02 — Bootstrap Expo Android và native capability spike | [GM-02](../../tasks/review/GM-02.md), [GM-24](../../tasks/backlog/GM-24.md), [GM-29](../../tasks/backlog/GM-29.md), [GM-30](../../tasks/backlog/GM-30.md), [GM-31](../../tasks/backlog/GM-31.md) |
 | GM-03 — Taxonomy món ăn và hợp đồng dataset | [GM-04](../../tasks/backlog/GM-04.md), [GM-07](../../tasks/backlog/GM-07.md) |
 | GM-04 — Design system và UI primitives | [GM-05](../../tasks/backlog/GM-05.md) |
 | GM-05 — Schema món–quán–lịch bán và migrations | [GM-06](../../tasks/backlog/GM-06.md) |

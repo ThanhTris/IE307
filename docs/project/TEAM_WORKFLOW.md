@@ -10,7 +10,13 @@ Roadmap-v2 theo [ADR-009](../architecture/decisions/ADR-009-foundation-first-tas
 4. Owner/reviewer xác nhận nhận việc, chốt patch/test plan và file ownership; dùng nhánh riêng, mặc định `codex/gm-xx-mo-ta`.
 5. Thực hiện phần đã có đầu vào. GM-09..14 là màn mock có thể hoàn thành độc lập; task INTEGRATION mới nghiệm thu API/native thật. Không gộp gallery/capability test vào việc dựng màn mẫu.
 
-GM-01 hiện review, GM-00 chỉ approval v0.2. Yêu cầu hiện tại cho phép Codex soạn lại task/docs/tooling; không tự duyệt baseline/code hoặc chuyển task Done. Review sandbox của chủ dự án được ghi nhận cho đúng scope/revision; không tự mở gate cho phần mới ở main.
+GM-01 đã được ghi nhận duyệt theo xác nhận và ủy quyền trực tiếp của chủ dự án ngày 2026-10-10, xem [evidence](../evidence/roadmap-v2/GM-01/REVIEW.md); GM-00 chỉ approval v0.2. Chủ dự án đã chốt cấu trúc, bộ package nền và yêu cầu Codex hỗ trợ GM-02/03, giữ nguyên owner/reviewer. Vẫn chạy start/merge gate; approval baseline không tự duyệt code hoặc AC task sau. Review sandbox không chuyển sang scope mới.
+
+## Đầu ra phải chạy và kiểm được
+
+Theo [chuẩn đầu ra](TASK_OUTPUT_REQUIREMENTS.md) và [checklist 38 task](TASK_OUTPUT_CHECKLIST.md): UI mở trên Expo và hiển thị/điều khiển được các mục trong scope; API có Postman/curl/runner request-response-assertions thật; Data đủ field/schema/template/fixture/version cho BE nhận làm song song. Task nền/contract/domain kiểm đúng scope, không chờ API/tính năng của task sau. Native ngoài Expo Go có guard và evidence development build riêng.
+
+Mỗi task bàn giao CHECKS.md theo [mẫu checks](../../tasks/templates/CHECKS_TEMPLATE.md) và HANDOFF, có đường mở/gọi/lệnh từ clone sạch, input/expected/actual/Pass-Fail-Not run và artifact thực tế đã che secret. Không ghi Done nếu AC bắt buộc còn Not run/Fail; file tồn tại hoặc docs validator xanh không thay phép kiểm thật. [Plan GM-02/03](FOUNDATION_IMPLEMENTATION_PLAN.md) ghi root BE tooling/mobile tooling và các phép smoke nền.
 
 ## Hai gate và song song
 

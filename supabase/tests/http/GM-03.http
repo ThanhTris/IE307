@@ -1,0 +1,20 @@
+# Run npm run backend:start first. No token is needed for platform health.
+# Postman: import this GET manually; Tests assertions shown below.
+# Runnable assertion equivalent: npm run backend:smoke
+@baseUrl = http://127.0.0.1:54321
+
+### Platform Auth health (not a business endpoint)
+# Expected: 200; JSON name="GoTrue", nonempty version and description strings.
+# Postman Tests:
+# pm.test("status 200", () => pm.response.to.have.status(200));
+# pm.test("GoTrue health", () => {
+#   const body = pm.response.json();
+#   pm.expect(body.name).to.eql("GoTrue");
+#   pm.expect(body.version).to.be.a("string").and.not.empty;
+#   pm.expect(body.description).to.be.a("string").and.not.empty;
+# });
+GET {{baseUrl}}/auth/v1/health
+Accept: application/json
+
+### After npm run backend:stop, repeat: expected connection failure, NOT HTTP 200.
+# No custom health/RPC endpoint is invented by GM-03.

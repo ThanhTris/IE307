@@ -26,4 +26,4 @@
 | FR-20 | [FOOD_DATA_SPEC](FOOD_DATA_SPEC.md) | UI-02/04/06/08/15 | [GM-06](../../tasks/backlog/GM-06.md), [GM-08](../../tasks/backlog/GM-08.md), [GM-13](../../tasks/backlog/GM-13.md), [GM-17](../../tasks/backlog/GM-17.md), [GM-18](../../tasks/backlog/GM-18.md), [GM-19](../../tasks/backlog/GM-19.md), [GM-27](../../tasks/backlog/GM-27.md) | T-14/T-23/T-25 |
 | FR-21 | [FOOD_DATA_SPEC](FOOD_DATA_SPEC.md) | UI-16 P2 | [GM-38](../../tasks/backlog/GM-38.md) | T-26 |
 
-[GM-01](../../tasks/review/GM-01.md) review food-v1 trước triển khai; [dependency map](../project/TASK_DEPENDENCIES.md). FOOD-01..14 và phân chia P0/P2 có mapping trong FOOD_DATA_SPEC.
+[GM-01](../../tasks/done/GM-01.md) review food-v1 trước triển khai; [dependency map](../project/TASK_DEPENDENCIES.md). FOOD-01..14 và phân chia P0/P2 có mapping trong FOOD_DATA_SPEC.

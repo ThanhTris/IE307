@@ -18,6 +18,10 @@ Roadmap-v1 đúng số nhưng mở phần độc lập quá sớm: UI chưa có 
 
 ## Hệ quả và phạm vi
 
+### Làm rõ đầu ra theo xác nhận chủ dự án — 2026-10-10
+
+Cấu trúc UI/BE được chủ dự án xác nhận trong hội thoại; tiêu chí bổ sung: UI mở Expo và hiển thị/tương tác các mục task, BE có Postman/curl/runner output/assertions, Data đủ fields/schema/templates/fixtures để BE làm song song. [Chuẩn đầu ra](../../project/TASK_OUTPUT_REQUIREMENTS.md), [checklist](../../project/TASK_OUTPUT_CHECKLIST.md) và [plan nền](../../project/FOUNDATION_IMPLEMENTATION_PLAN.md) ghi phạm vi cụ thể. GM-03 chỉ health/API nền + DB smoke, GM-07 client/mock contract, GM-15 domain runner; không kéo API task sau vào task nền. Native ngoài Expo Go nghiệm thu trên development build phù hợp. Không đổi graph/start/merge/owner, không tự duyệt GM-01/ADR-001/package hoặc triển khai trước gate. CHECKS.md/request suite bổ sung artifact bàn giao, không kế thừa Done.
+
 38 task giúp người làm có đầu ra nhỏ để merge: 6 nhóm màn UI độc lập và các task API/tích hợp rõ. Có thêm task structure/contract nhưng không thêm feature/provider/framework. Bộ luật food-v1/NO/hai vòng/privacy không thay đổi. Không triển khai code app, merge nhánh sandbox, đổi issue hoặc tự Approved trong lần chia kế hoạch này.
 
 Xem [lộ trình](../../project/IMPLEMENTATION_ROADMAP.md), [mapping](../../project/TASK_RENUMBERING.md), [evidence](../../evidence/roadmap-v2/GM-01/REPLAN_2026-10-10.md).

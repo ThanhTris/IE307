@@ -15,7 +15,8 @@
       "track": "PLAN",
       "stage": "baseline",
       "outputs": [
-        "docs/project/IMPLEMENTATION_ROADMAP.md"
+        "docs/project/IMPLEMENTATION_ROADMAP.md",
+        "docs/evidence/roadmap-v2/GM-01/CHECKS.md"
       ],
       "inputs": [
         {
@@ -23,7 +24,14 @@
           "artifact": "docs/evidence/GM-00/BASELINE_V02_2026-10-07.md",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "docs",
+        "tool": "Validator + kiểm graph",
+        "entrypoint": "Đọc roadmap/task/output matrix từ clone sạch",
+        "expected": "Đủ 38 task, dependency số nhỏ hơn, cấu trúc đã chốt và quy tắc nghiệm thu theo UI/BE/Data; chưa tự Approved.",
+        "cases": "graph/input-output; scope mock/native; stack và bộ package nền được chủ dự án xác nhận"
+      }
     },
     {
       "new_id": "GM-02",
@@ -36,7 +44,18 @@
       "outputs": [
         "mobile/src/app/_layout.tsx",
         "mobile/package.json",
-        "mobile/README.md"
+        "mobile/README.md",
+        "mobile/package-lock.json",
+        "mobile/app.config.ts",
+        "mobile/tsconfig.json",
+        "mobile/eslint.config.js",
+        "mobile/src/app/index.tsx",
+        "mobile/src/app/+not-found.tsx",
+        "mobile/src/bootstrap/AppProviders.tsx",
+        "mobile/src/features/home/screens/AppShellScreen.tsx",
+        "mobile/tests/README.md",
+        "mobile/tests/component/AppShellScreen.test.tsx",
+        "docs/evidence/roadmap-v2/GM-02/CHECKS.md"
       ],
       "inputs": [
         {
@@ -44,7 +63,14 @@
           "artifact": "docs/project/IMPLEMENTATION_ROADMAP.md",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "code-structure",
+        "tool": "TypeScript config/import guard + repository validator",
+        "entrypoint": "mobile/src/app, mobile/src/bootstrap, mobile/src/features, mobile/src/shared, mobile/src/domain, mobile/src/data",
+        "expected": "Cây thư mục, route/provider boundary, strict tooling và package boundary đúng foundation plan; không kéo business feature hoặc native capability vào shell.",
+        "cases": "thiếu path/file bắt buộc; sai import boundary; thiếu script/config; rò dependency nghiệp vụ/native"
+      }
     },
     {
       "new_id": "GM-03",
@@ -55,7 +81,14 @@
       "outputs": [
         "supabase/config.toml",
         "supabase/tests/README.md",
-        "supabase/functions/_shared/README.md"
+        "supabase/functions/_shared/README.md",
+        "package.json",
+        "package-lock.json",
+        "scripts/backend.mjs",
+        "supabase/.env.example",
+        "supabase/README.md",
+        "supabase/tests/database/00_local_smoke.test.sql",
+        "docs/evidence/roadmap-v2/GM-03/CHECKS.md"
       ],
       "inputs": [
         {
@@ -63,7 +96,14 @@
           "artifact": "docs/project/IMPLEMENTATION_ROADMAP.md",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "code-structure",
+        "tool": "Repository validator + backend runner unit tests",
+        "entrypoint": "package.json → scripts/backend.mjs → supabase/config.toml, .env.example, tests và functions/_shared",
+        "expected": "Cấu trúc BE, config/env boundary, local-only runner và test ownership đúng foundation plan; không dựng schema/API nghiệp vụ trong GM-03.",
+        "cases": "thiếu path/file bắt buộc; config/env sai; lộ secret; reset guard sai; lẫn API/schema nghiệp vụ"
+      }
     },
     {
       "new_id": "GM-04",
@@ -76,7 +116,12 @@
       "outputs": [
         "docs/data/FOOD_DATA_DICTIONARY.md",
         "supabase/seed/templates/food-v1.template.json",
-        "tests/fixtures/food-v1/contract-cases.json"
+        "tests/fixtures/food-v1/contract-cases.json",
+        "supabase/seed/templates/food-v1.schema.json",
+        "supabase/seed/templates/core-v1.template.json",
+        "supabase/seed/templates/core-v1.schema.json",
+        "docs/data/FIELD_COVERAGE.md",
+        "docs/evidence/roadmap-v2/GM-04/CHECKS.md"
       ],
       "inputs": [
         {
@@ -84,7 +129,14 @@
           "artifact": "docs/project/IMPLEMENTATION_ROADMAP.md",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "data-contract",
+        "tool": "JSON Schema/template validator + field coverage",
+        "entrypoint": "Dictionary → schema/template food và core → contract-cases",
+        "expected": "Mỗi field core có type/required/null/default/enum/unit/FK/unique/privacy/source/version và ví dụ; BE nhận contract/fixture dùng ngay, không cần dataset khảo sát hoàn tất.",
+        "cases": "food/place/schedule; room/member/preferences/vote/result/history/consent/friend/inbox; idempotency/version/expiry; valid/invalid/null/unknown"
+      }
     },
     {
       "new_id": "GM-05",
@@ -97,7 +149,8 @@
       "outputs": [
         "mobile/src/shared/theme/tokens.ts",
         "mobile/src/shared/ui/index.ts",
-        "docs/design/COMPONENT_MAP.md"
+        "docs/design/COMPONENT_MAP.md",
+        "docs/evidence/roadmap-v2/GM-05/CHECKS.md"
       ],
       "inputs": [
         {
@@ -110,7 +163,14 @@
           "artifact": "docs/data/FOOD_DATA_DICTIONARY.md",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "expo-go",
+        "tool": "Expo Go Android + component tests",
+        "entrypoint": "Component map → ví dụ ghép Home/card trong shell, có cách mở từng component/state",
+        "expected": "Các component trong scope hiển thị và tương tác được theo UI mẫu; không chỉ export thư viện hoặc tạo gallery riêng ngoài scope.",
+        "cases": "props/events; loading/disabled/error; dark/font scale; touch/accessibility; ảnh fallback"
+      }
     },
     {
       "new_id": "GM-06",
@@ -124,7 +184,8 @@
         "supabase/migrations/0001_core_schema.sql",
         "supabase/migrations/README.md",
         "supabase/tests/schema_contract.sql",
-        "docs/data/DATABASE_MAPPING.md"
+        "docs/data/DATABASE_MAPPING.md",
+        "docs/evidence/roadmap-v2/GM-06/CHECKS.md"
       ],
       "inputs": [
         {
@@ -137,7 +198,14 @@
           "artifact": "docs/data/FOOD_DATA_DICTIONARY.md",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "data-schema",
+        "tool": "SQL migration/constraint runner local",
+        "entrypoint": "DB local rỗng → migrate → schema_contract.sql → query đối chiếu dictionary",
+        "expected": "Đủ cột/constraint core theo field coverage, schemaVersion và query mẫu cho BE; fixtures tổng hợp không được gọi verified.",
+        "cases": "FK/unique/null/enum/version; default deny; upgrade/rollback; schema không chờ data khảo sát"
+      }
     },
     {
       "new_id": "GM-07",
@@ -151,7 +219,8 @@
         "mobile/src/data/api/contracts.ts",
         "mobile/src/data/api/client.ts",
         "mobile/src/data/api/mock.ts",
-        "docs/architecture/API_CONTRACT.md"
+        "docs/architecture/API_CONTRACT.md",
+        "docs/evidence/roadmap-v2/GM-07/CHECKS.md"
       ],
       "inputs": [
         {
@@ -174,7 +243,14 @@
           "artifact": "supabase/migrations/0001_core_schema.sql",
           "gate": "merge"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "contract",
+        "tool": "Contract/transport test runner; Postman/curl nếu có mock HTTP",
+        "entrypoint": "contracts/client/mock → request/response/error fixture cùng interface",
+        "expected": "Có ví dụ gọi client, input/output/error assertions và mode mock rõ; không tuyên bố RPC nghiệp vụ thật đã triển khai.",
+        "cases": "serialization/null/unit/timezone; token injection; timeout/error mapping; mock success/loading/empty/error/stale; schema parity trước merge"
+      }
     },
     {
       "new_id": "GM-08",
@@ -187,7 +263,8 @@
       "outputs": [
         "supabase/seed/import_food_data.py",
         "supabase/seed/verified/manifest.json",
-        "docs/data/DATASET_HANDOFF.md"
+        "docs/data/DATASET_HANDOFF.md",
+        "docs/evidence/roadmap-v2/GM-08/CHECKS.md"
       ],
       "inputs": [
         {
@@ -200,7 +277,14 @@
           "artifact": "supabase/migrations/0001_core_schema.sql",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "data-import",
+        "tool": "Importer dry-run + DB local/query runner",
+        "entrypoint": "Verified bundle → validate/staging/review/import → query mẫu",
+        "expected": "Đủ field theo schema, row counts/hash/schemaVersion/datasetVersion/coverage/timezone và provenance; BE truy vấn được offering thật trong coverage đã bàn giao.",
+        "cases": "reimport idempotent; missing required/FK/stale/fixture reject; giờ quán∩giờ món/qua đêm; rollback; quyền ảnh; coverage thiếu ghi rõ"
+      }
     },
     {
       "new_id": "GM-09",
@@ -213,7 +297,8 @@
       "outputs": [
         "mobile/src/features/home/screens/HomeScreen.tsx",
         "mobile/src/features/rooms/screens/CreateRoomScreen.tsx",
-        "mobile/src/features/rooms/screens/JoinRoomScreen.tsx"
+        "mobile/src/features/rooms/screens/JoinRoomScreen.tsx",
+        "docs/evidence/roadmap-v2/GM-09/CHECKS.md"
       ],
       "inputs": [
         {
@@ -226,7 +311,14 @@
           "artifact": "mobile/src/data/api/contracts.ts",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "expo-go",
+        "tool": "Expo Go Android + interaction tests",
+        "entrypoint": "Home → tạo phòng / nhập mã / quay lại, qua route bàn giao",
+        "expected": "Mở được cả Home/CreateRoom/JoinRoom và thấy đúng nội dung/validation theo scope; mock có nhãn.",
+        "cases": "create/join/back; input lỗi; loading/full/locked/expired/network; camera chưa triển khai"
+      }
     },
     {
       "new_id": "GM-10",
@@ -239,7 +331,8 @@
       "stage": "screens",
       "outputs": [
         "mobile/src/features/context/screens/ContextScreen.tsx",
-        "mobile/src/features/preferences/screens/PreferencesScreen.tsx"
+        "mobile/src/features/preferences/screens/PreferencesScreen.tsx",
+        "docs/evidence/roadmap-v2/GM-10/CHECKS.md"
       ],
       "inputs": [
         {
@@ -252,7 +345,14 @@
           "artifact": "mobile/src/data/api/contracts.ts",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "expo-go",
+        "tool": "Expo Go Android + interaction tests",
+        "entrypoint": "Context/Preferences từ navigation; điều khiển fixture các state",
+        "expected": "Hiển thị/chỉnh khu vực công cộng, giờ/buổi, cuisine/đặc tính/budget/consent/avoidRecent theo scope; chưa gọi GPS thật.",
+        "cases": "manual/denied/outside coverage/empty/stale; null price; buổi/giờ; reset-ready scenario"
+      }
     },
     {
       "new_id": "GM-11",
@@ -264,7 +364,8 @@
       "stage": "screens",
       "outputs": [
         "mobile/src/features/rooms/screens/LobbyScreen.tsx",
-        "mobile/src/features/rooms/screens/RoomStatusScreen.tsx"
+        "mobile/src/features/rooms/screens/RoomStatusScreen.tsx",
+        "docs/evidence/roadmap-v2/GM-11/CHECKS.md"
       ],
       "inputs": [
         {
@@ -277,7 +378,14 @@
           "artifact": "mobile/src/data/api/contracts.ts",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "expo-go",
+        "tool": "Expo Go Android + interaction tests",
+        "entrypoint": "Lobby/RoomStatus theo route và fixture host/member",
+        "expected": "Thấy roster/context/ready và các nút đúng role/state; leave/cancel có xác nhận.",
+        "cases": "ready/reset-ready; host/member; pending/error/offline/reconnect/expired/cancelled; không phiếu thô"
+      }
     },
     {
       "new_id": "GM-12",
@@ -290,7 +398,8 @@
       "stage": "screens",
       "outputs": [
         "mobile/src/features/voting/screens/VoteScreen.tsx",
-        "mobile/src/features/voting/screens/FinalRoundScreen.tsx"
+        "mobile/src/features/voting/screens/FinalRoundScreen.tsx",
+        "docs/evidence/roadmap-v2/GM-12/CHECKS.md"
       ],
       "inputs": [
         {
@@ -303,7 +412,14 @@
           "artifact": "mobile/src/data/api/contracts.ts",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "expo-go",
+        "tool": "Expo Go Android + interaction tests",
+        "entrypoint": "Vote → submit mock → FinalRound, có fixture đủ các state",
+        "expected": "Thấy WANT/OK/NO và KEEP/REMOVE, UNSET khác OK; tương tác/undo/Gửi đúng, không UI tự chốt.",
+        "cases": "button/double-tap/scroll; đủ phiếu; pending/ACK/error; round2 remove-all; không vòng3"
+      }
     },
     {
       "new_id": "GM-13",
@@ -315,7 +431,8 @@
       "stage": "screens",
       "outputs": [
         "mobile/src/features/result/screens/ResultScreen.tsx",
-        "mobile/src/features/result/screens/NoConsensusScreen.tsx"
+        "mobile/src/features/result/screens/NoConsensusScreen.tsx",
+        "docs/evidence/roadmap-v2/GM-13/CHECKS.md"
       ],
       "inputs": [
         {
@@ -328,7 +445,14 @@
           "artifact": "mobile/src/data/api/contracts.ts",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "expo-go",
+        "tool": "Expo Go Android + component/interaction tests",
+        "entrypoint": "Result/NoConsensus và các fixture offering/tier",
+        "expected": "Thấy kết quả, nơi bán, giá/đơn vị/lịch/nguồn hoặc trạng thái chưa biết; actions gọi callback đúng, không reroll.",
+        "cases": "perfect/consensus/compromise; empty/stale/closed/changed; no-consensus; new-session; Maps chỉ callback"
+      }
     },
     {
       "new_id": "GM-14",
@@ -343,7 +467,8 @@
       "outputs": [
         "mobile/src/features/friends/screens/FriendsScreen.tsx",
         "mobile/src/features/inbox/screens/InboxScreen.tsx",
-        "mobile/src/features/history/screens/HistoryScreen.tsx"
+        "mobile/src/features/history/screens/HistoryScreen.tsx",
+        "docs/evidence/roadmap-v2/GM-14/CHECKS.md"
       ],
       "inputs": [
         {
@@ -356,7 +481,14 @@
           "artifact": "mobile/src/data/api/contracts.ts",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "expo-go",
+        "tool": "Expo Go Android + interaction tests",
+        "entrypoint": "Friends/Inbox/History từ navigation với fixture",
+        "expected": "Cả ba màn mở được, social/notification/history consent và delete có nội dung, confirm và phản hồi.",
+        "cases": "accept/reject/unfriend/invite; pending/error/empty/expired; inbox denied; consent/delete; account P1 có nhãn"
+      }
     },
     {
       "new_id": "GM-15",
@@ -368,7 +500,8 @@
       "stage": "implementation",
       "outputs": [
         "mobile/src/domain/decision/index.ts",
-        "tests/fixtures/decision-cases.json"
+        "tests/fixtures/decision-cases.json",
+        "docs/evidence/roadmap-v2/GM-15/CHECKS.md"
       ],
       "inputs": [
         {
@@ -381,7 +514,14 @@
           "artifact": "mobile/src/data/api/contracts.ts",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "domain",
+        "tool": "TypeScript/domain test runner với input/output JSON",
+        "entrypoint": "decision engine + shared decision-cases → actual result assertions",
+        "expected": "Có input/seed/votes/round và output winner/tier/reason thực thi thật; chưa cần public API/SQL finalize của task sau.",
+        "cases": "NO/UNSET/KEEP/REMOVE; 2–8 người; tối đa2 vòng; tie/retry ổn định; remove-all→NO_CONSENSUS"
+      }
     },
     {
       "new_id": "GM-16",
@@ -393,7 +533,9 @@
       "stage": "implementation",
       "outputs": [
         "mobile/src/data/auth/session.ts",
-        "supabase/tests/auth.sql"
+        "supabase/tests/auth.sql",
+        "docs/evidence/roadmap-v2/GM-16/CHECKS.md",
+        "supabase/tests/http/GM-16.http"
       ],
       "inputs": [
         {
@@ -411,7 +553,14 @@
           "artifact": "mobile/src/data/api/contracts.ts",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "api",
+        "tool": "Postman hoặc curl/HTTP integration runner + session adapter tests",
+        "entrypoint": "Guest auth/session endpoints local và restore/refresh/logout adapter",
+        "expected": "Thành công và lỗi auth có HTTP/body/assertions thật; secure-storage/logout boundary được kiểm riêng, không suy từ Postman.",
+        "cases": "guest/refresh/expiry/lost session/retry/rate-limit; spoof userId; logout clear private; không lộ token"
+      }
     },
     {
       "new_id": "GM-17",
@@ -424,7 +573,9 @@
       "outputs": [
         "supabase/migrations/0017_access_policies.sql",
         "supabase/tests/rls.sql",
-        "docs/architecture/ACCESS_MATRIX.md"
+        "docs/architecture/ACCESS_MATRIX.md",
+        "docs/evidence/roadmap-v2/GM-17/CHECKS.md",
+        "supabase/tests/http/GM-17.http"
       ],
       "inputs": [
         {
@@ -437,7 +588,14 @@
           "artifact": "mobile/src/data/auth/session.ts",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "api",
+        "tool": "Postman hoặc curl multi-user + SQL RLS/retention tests",
+        "entrypoint": "API/table access đã có trong scope dưới identity outsider/member/host",
+        "expected": "Response cho phép/từ chối đúng access matrix; SQL kiểm policy/TTL; không cần endpoint room/vote chưa bàn giao.",
+        "cases": "outsider/host không đọc votes; own access; direct-write denied; publisher; TTL; privileged RPC boundary"
+      }
     },
     {
       "new_id": "GM-18",
@@ -450,7 +608,9 @@
       "outputs": [
         "supabase/migrations/0018_food_eligibility.sql",
         "supabase/tests/food_eligibility.sql",
-        "mobile/src/domain/eligibility/index.ts"
+        "mobile/src/domain/eligibility/index.ts",
+        "docs/evidence/roadmap-v2/GM-18/CHECKS.md",
+        "supabase/tests/http/GM-18.http"
       ],
       "inputs": [
         {
@@ -468,7 +628,14 @@
           "artifact": "supabase/migrations/0017_access_policies.sql",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "api",
+        "tool": "Postman hoặc curl/RPC runner + SQL/domain parity",
+        "entrypoint": "get_discovery_context / preview_food_pool / get_result_offerings phần thuộc scope",
+        "expected": "HTTP response/schema/assertions thật chứa offering hợp lệ/version/reasonCodes; fixture parity tách query verified.",
+        "cases": "coverage/radius; breakfast/late night/overnight/lastOrder; freshness/sold-out/unknown; price unit; <=8 unique; empty; TS/SQL parity"
+      }
     },
     {
       "new_id": "GM-19",
@@ -480,7 +647,9 @@
       "stage": "implementation",
       "outputs": [
         "supabase/migrations/0019_room_lifecycle.sql",
-        "supabase/tests/room_lifecycle.sql"
+        "supabase/tests/room_lifecycle.sql",
+        "docs/evidence/roadmap-v2/GM-19/CHECKS.md",
+        "supabase/tests/http/GM-19.http"
       ],
       "inputs": [
         {
@@ -498,7 +667,14 @@
           "artifact": "supabase/migrations/0018_food_eligibility.sql",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "api",
+        "tool": "Postman hoặc curl multi-user/concurrency runner",
+        "entrypoint": "create/join/snapshot/preferences/context/ready/start/leave/cancel RPC",
+        "expected": "Trả mã/state/version/context/pool đúng contract; server auth/lock/revalidate/idempotency và snapshot privacy thực thi thật.",
+        "cases": "happy path; invalid/outsider/not-host/full/locked/expired/version; context reset-ready; join/start/cancel races"
+      }
     },
     {
       "new_id": "GM-20",
@@ -510,7 +686,9 @@
       "stage": "implementation",
       "outputs": [
         "supabase/migrations/0020_finalize.sql",
-        "supabase/tests/finalize.sql"
+        "supabase/tests/finalize.sql",
+        "docs/evidence/roadmap-v2/GM-20/CHECKS.md",
+        "supabase/tests/http/GM-20.http"
       ],
       "inputs": [
         {
@@ -523,7 +701,14 @@
           "artifact": "supabase/migrations/0019_room_lifecycle.sql",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "api",
+        "tool": "Postman hoặc curl multi-user/concurrency + SQL/domain parity",
+        "entrypoint": "submit_ballot → transition/finalize → get snapshot/result",
+        "expected": "ACK và result/tier/reason ổn định; kết quả/history/event transaction thật, không gọi sender network trong transaction.",
+        "cases": "incomplete/NO/UNSET; duplicate/requestId reused; timeout/retry; last-submit/cancel race; 2round/remove-all; không raw votes"
+      }
     },
     {
       "new_id": "GM-21",
@@ -535,7 +720,9 @@
       "stage": "implementation",
       "outputs": [
         "supabase/migrations/0021_history.sql",
-        "supabase/tests/history.sql"
+        "supabase/tests/history.sql",
+        "docs/evidence/roadmap-v2/GM-21/CHECKS.md",
+        "supabase/tests/http/GM-21.http"
       ],
       "inputs": [
         {
@@ -548,7 +735,14 @@
           "artifact": "supabase/migrations/0020_finalize.sql",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "api",
+        "tool": "Postman hoặc curl multi-user + SQL query assertions",
+        "entrypoint": "history/consent/delete RPC và recent input cho room",
+        "expected": "Output personal/group đúng consent/ACL/cursor/TTL; query chứng minh delete/summary/retention thật.",
+        "cases": "partial consent; forged groupKey; roster reset-ready; recent<=3/30days; opt-out/delete; không GPS/mood"
+      }
     },
     {
       "new_id": "GM-22",
@@ -560,7 +754,9 @@
       "stage": "implementation",
       "outputs": [
         "supabase/migrations/0022_social.sql",
-        "supabase/tests/social.sql"
+        "supabase/tests/social.sql",
+        "docs/evidence/roadmap-v2/GM-22/CHECKS.md",
+        "supabase/tests/http/GM-22.http"
       ],
       "inputs": [
         {
@@ -578,7 +774,14 @@
           "artifact": "supabase/migrations/0019_room_lifecycle.sql",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "api",
+        "tool": "Postman hoặc curl multi-user/concurrency runner",
+        "entrypoint": "partner/invite/accept/reject/unfriend và room invitation RPC",
+        "expected": "Output pair/invite/membership đúng auth/recipient/capacity/expiry; không tự ready, event không nhân đôi.",
+        "cases": "happy/reject; outsider/not-partner; expired/full/locked; duplicate; unfriend/invite/accept race"
+      }
     },
     {
       "new_id": "GM-23",
@@ -590,7 +793,9 @@
       "stage": "implementation",
       "outputs": [
         "supabase/functions/push-sender/index.ts",
-        "supabase/tests/notifications.sql"
+        "supabase/tests/notifications.sql",
+        "docs/evidence/roadmap-v2/GM-23/CHECKS.md",
+        "supabase/tests/http/GM-23.http"
       ],
       "inputs": [
         {
@@ -603,7 +808,14 @@
           "artifact": "supabase/migrations/0022_social.sql",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "api",
+        "tool": "Postman hoặc curl + sender transport/integration runner",
+        "entrypoint": "Inbox/register/unregister device RPC → notification event → trusted sender",
+        "expected": "HTTP/output/assertions thật cho inbox/device/event; sender fake-transport và delivery thật báo riêng, chưa có credential thì không ghi delivery pass.",
+        "cases": "own-device ACL; denied inbox; duplicate/expired/dead-token/retry/logout; không votes/token trong payload/log"
+      }
     },
     {
       "new_id": "GM-24",
@@ -615,7 +827,8 @@
       "track": "INTEGRATION",
       "stage": "native",
       "outputs": [
-        "mobile/src/features/context/services/location.ts"
+        "mobile/src/features/context/services/location.ts",
+        "docs/evidence/roadmap-v2/GM-24/CHECKS.md"
       ],
       "inputs": [
         {
@@ -638,7 +851,14 @@
           "artifact": "supabase/migrations/0018_food_eligibility.sql",
           "gate": "merge"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "expo-native",
+        "tool": "Expo Go shell + Expo Android/native + API runner",
+        "entrypoint": "Màn Context dùng location adapter và discovery API thật",
+        "expected": "Hiển thị quyền/manual/coverage/server time; raw GPS không gửi server/log; thực tế grant/deny trên môi trường hỗ trợ.",
+        "cases": "grant/deny/GPS-off/manual/outside/empty/offline; server-now/buffer; không cộng giờ lại"
+      }
     },
     {
       "new_id": "GM-25",
@@ -652,7 +872,8 @@
       "track": "INTEGRATION",
       "stage": "integration",
       "outputs": [
-        "mobile/src/features/rooms/services/roomRepository.ts"
+        "mobile/src/features/rooms/services/roomRepository.ts",
+        "docs/evidence/roadmap-v2/GM-25/CHECKS.md"
       ],
       "inputs": [
         {
@@ -690,7 +911,14 @@
           "artifact": "mobile/src/features/context/services/location.ts",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "expo-api",
+        "tool": "Expo Android + multi-user API runner",
+        "entrypoint": "Home/Create/Join/Context/Preferences/Lobby nối repositories thật",
+        "expected": "Các màn đã dựng mở được và dùng auth/room/context thật; hai máy cùng server snapshot, không fallback fixture.",
+        "cases": "2 máy create/join/ready/start/refetch; full/expired/network; context/roster/consent reset-ready; empty pool"
+      }
     },
     {
       "new_id": "GM-26",
@@ -702,7 +930,8 @@
       "track": "INTEGRATION",
       "stage": "integration",
       "outputs": [
-        "mobile/src/features/voting/services/voteRepository.ts"
+        "mobile/src/features/voting/services/voteRepository.ts",
+        "docs/evidence/roadmap-v2/GM-26/CHECKS.md"
       ],
       "inputs": [
         {
@@ -720,7 +949,14 @@
           "artifact": "mobile/src/features/rooms/services/roomRepository.ts",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "expo-api",
+        "tool": "Expo Android + API/retry integration runner",
+        "entrypoint": "Vote/FinalRound nối voteRepository thật",
+        "expected": "UI thể hiện pending/unknown/ACK theo server, không tự winner/count pending; thực thi tối đa hai vòng.",
+        "cases": "button/gesture/undo/submit; 2–8 users; late ACK/timeout/retry/stale/version; remove-all"
+      }
     },
     {
       "new_id": "GM-27",
@@ -731,7 +967,8 @@
       "track": "INTEGRATION",
       "stage": "integration",
       "outputs": [
-        "mobile/src/features/result/services/resultRepository.ts"
+        "mobile/src/features/result/services/resultRepository.ts",
+        "docs/evidence/roadmap-v2/GM-27/CHECKS.md"
       ],
       "inputs": [
         {
@@ -749,7 +986,14 @@
           "artifact": "mobile/src/features/voting/services/voteRepository.ts",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "expo-api",
+        "tool": "Expo Android + API/query runner",
+        "entrypoint": "Result/NoConsensus nối resultRepository và offering API thật",
+        "expected": "Màn hiển thị server winner/tier/reason/offerings, lịch/nguồn/đơn vị; reconnect/refetch không đổi winner.",
+        "cases": "retry/back/reconnect; stale/changed/closed offering; no-consensus/new-session; Maps callbacks"
+      }
     },
     {
       "new_id": "GM-28",
@@ -764,7 +1008,8 @@
       "outputs": [
         "mobile/src/features/friends/services/socialRepository.ts",
         "mobile/src/features/inbox/services/inboxRepository.ts",
-        "mobile/src/features/history/services/historyRepository.ts"
+        "mobile/src/features/history/services/historyRepository.ts",
+        "docs/evidence/roadmap-v2/GM-28/CHECKS.md"
       ],
       "inputs": [
         {
@@ -792,7 +1037,14 @@
           "artifact": "mobile/src/features/rooms/services/roomRepository.ts",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "expo-api",
+        "tool": "Expo Android + multi-user API runner",
+        "entrypoint": "Friends/Inbox/History nối API thật",
+        "expected": "Ba màn hiển thị output thật và xử lý social/inbox/consent/delete theo server, không fixture production.",
+        "cases": "invite/accept/reject/unfriend; expired/outsider/lost-session; dedup/refetch; group ACL/delete/opt-out/network"
+      }
     },
     {
       "new_id": "GM-29",
@@ -804,7 +1056,8 @@
       "track": "INTEGRATION",
       "stage": "native",
       "outputs": [
-        "mobile/src/features/inbox/services/nativePush.ts"
+        "mobile/src/features/inbox/services/nativePush.ts",
+        "docs/evidence/roadmap-v2/GM-29/CHECKS.md"
       ],
       "inputs": [
         {
@@ -822,7 +1075,14 @@
           "artifact": "mobile/src/features/friends/services/socialRepository.ts",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "expo-native",
+        "tool": "Expo Go startup + development build thiết bị Android + API runner",
+        "entrypoint": "Inbox/native push permission → register device → nhận remote push → tap/refetch",
+        "expected": "Expo Go không crash và có chỉ dẫn giới hạn; remote delivery cold/warm phải có evidence thật trên build hỗ trợ.",
+        "cases": "grant/deny; remote delivery/cold/warm; duplicate/expired; token refresh/logout; thiếu credential→Not run, không local-notification thay remote"
+      }
     },
     {
       "new_id": "GM-30",
@@ -835,7 +1095,8 @@
       "stage": "native",
       "outputs": [
         "mobile/src/features/rooms/services/joinLinks.ts",
-        "mobile/src/features/result/services/externalLinks.ts"
+        "mobile/src/features/result/services/externalLinks.ts",
+        "docs/evidence/roadmap-v2/GM-30/CHECKS.md"
       ],
       "inputs": [
         {
@@ -858,7 +1119,14 @@
           "artifact": "mobile/src/features/result/services/resultRepository.ts",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "expo-native",
+        "tool": "Expo Go UI + Android build phù hợp + API/link runner",
+        "entrypoint": "Join QR/manual/incoming link → auth/confirm; Result → Maps/review/copy",
+        "expected": "Các mục UI mở được; QR/link/Maps thật theo capability, không auto-join/ready hoặc chia GPS.",
+        "cases": "camera deny/manual; cold/warm/malformed/duplicate/allowlist; room full/expired; browser/copy fallback"
+      }
     },
     {
       "new_id": "GM-31",
@@ -871,7 +1139,8 @@
       "stage": "integration",
       "outputs": [
         "mobile/src/data/local/outbox.ts",
-        "mobile/src/data/local/migrations.ts"
+        "mobile/src/data/local/migrations.ts",
+        "docs/evidence/roadmap-v2/GM-31/CHECKS.md"
       ],
       "inputs": [
         {
@@ -884,7 +1153,14 @@
           "artifact": "mobile/src/features/friends/services/socialRepository.ts",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "expo-native",
+        "tool": "Expo Go startup + Android persistence/restart + API runner",
+        "entrypoint": "UI pending/unknown/cache → process restart/offline/reconnect → server reconcile",
+        "expected": "Trạng thái hiển thị đúng và SQLite/outbox/cache thực thi thật; snapshot trước replay, không nhóm offline giả.",
+        "cases": "restart; ACK/retry/stale/auth isolation; gap realtime; TTL/logout/cache<=50; schema upgrade/recovery"
+      }
     },
     {
       "new_id": "GM-32",
@@ -895,7 +1171,8 @@
       "track": "QA",
       "stage": "regression",
       "outputs": [
-        "docs/evidence/roadmap-v2/GM-32/REGRESSION.md"
+        "docs/evidence/roadmap-v2/GM-32/REGRESSION.md",
+        "docs/evidence/roadmap-v2/GM-32/CHECKS.md"
       ],
       "inputs": [
         {
@@ -928,7 +1205,14 @@
           "artifact": "mobile/src/data/local/outbox.ts",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "qa",
+        "tool": "API/SQL/domain/outbox regression runner",
+        "entrypoint": "Core suites với dataset/schema/contract revision đã bàn giao",
+        "expected": "Báo cáo input/expected/actual và failure owner; kiểm thực thi thật, không docs validator thay regression.",
+        "cases": "FOOD/security/NO/UNSET/2round/parity; transactions/races; source expiry; consent; no sensitive logs"
+      }
     },
     {
       "new_id": "GM-33",
@@ -939,7 +1223,8 @@
       "track": "QA",
       "stage": "qa",
       "outputs": [
-        "docs/evidence/roadmap-v2/GM-33/ANDROID_PILOT.md"
+        "docs/evidence/roadmap-v2/GM-33/ANDROID_PILOT.md",
+        "docs/evidence/roadmap-v2/GM-33/CHECKS.md"
       ],
       "inputs": [
         {
@@ -977,7 +1262,14 @@
           "artifact": "docs/evidence/roadmap-v2/GM-32/REGRESSION.md",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "qa",
+        "tool": "Expo/native Android end-to-end + API/data pilot",
+        "entrypoint": "UI-01..13/15 và kịch bản 2/4/8 người, dataset coverage thực",
+        "expected": "Screenshot/video và kết quả pilot có build/device/data revision; case thiếu người/credential ghi giới hạn, không bịa research.",
+        "cases": "loading/empty/error/font200/dark/TalkBack; multi-device; push/camera/restart; coverage/hours/freshness"
+      }
     },
     {
       "new_id": "GM-34",
@@ -988,7 +1280,8 @@
       "track": "RELEASE",
       "stage": "release",
       "outputs": [
-        "docs/evidence/roadmap-v2/GM-34/RELEASE.md"
+        "docs/evidence/roadmap-v2/GM-34/RELEASE.md",
+        "docs/evidence/roadmap-v2/GM-34/CHECKS.md"
       ],
       "inputs": [
         {
@@ -996,7 +1289,14 @@
           "artifact": "docs/evidence/roadmap-v2/GM-33/ANDROID_PILOT.md",
           "gate": "start"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "release",
+        "tool": "Build/install APK + API/data runbook smoke",
+        "entrypoint": "APK version/hash → cài máy Android → luồng core và setup từ clone sạch",
+        "expected": "APK/demo thật, input/output/API/data/import/rollback runbook tái lập; P1/P2 không chặn release.",
+        "cases": "install/start/core flow; artifact checksum; final dependencies/review; coverage/license/freshness limits"
+      }
     },
     {
       "new_id": "GM-35",
@@ -1007,7 +1307,8 @@
       "track": "EXTENSION",
       "stage": "extension",
       "outputs": [
-        "mobile/src/features/account/index.ts"
+        "mobile/src/features/account/index.ts",
+        "docs/evidence/roadmap-v2/GM-35/CHECKS.md"
       ],
       "inputs": [
         {
@@ -1025,7 +1326,14 @@
           "artifact": "docs/evidence/roadmap-v2/GM-34/RELEASE.md",
           "gate": "merge"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "expo-api",
+        "tool": "Expo Android + provider/auth API integration runner",
+        "entrypoint": "Account link/recovery/history sync theo UI-14",
+        "expected": "UI và response auth thật đúng identity mapping, conflict/recovery/history quyền; provider thiếu thì Not run phần tích hợp.",
+        "cases": "nonce/conflict/lost guest; logout/failure giữ guest; sync không đổi winner/quyền nhóm"
+      }
     },
     {
       "new_id": "GM-36",
@@ -1036,7 +1344,9 @@
       "track": "EXTENSION",
       "stage": "extension",
       "outputs": [
-        "supabase/functions/menu-ocr/index.ts"
+        "supabase/functions/menu-ocr/index.ts",
+        "docs/evidence/roadmap-v2/GM-36/CHECKS.md",
+        "supabase/tests/http/GM-36.http"
       ],
       "inputs": [
         {
@@ -1059,7 +1369,14 @@
           "artifact": "docs/evidence/roadmap-v2/GM-34/RELEASE.md",
           "gate": "merge"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "api-extension",
+        "tool": "Postman hoặc curl Edge Function + schema validator",
+        "entrypoint": "menu-ocr request với ảnh có quyền → draft fields/confidence/errors",
+        "expected": "HTTP/status/body/output fields thật theo schema; provider stub và request provider thật tách evidence; không tự publish.",
+        "cases": "invalid image/input; timeout/quota; low-confidence/null; auth/privacy; thiếu offering/coverage/hours không thành verified"
+      }
     },
     {
       "new_id": "GM-37",
@@ -1070,7 +1387,9 @@
       "track": "EXTENSION",
       "stage": "extension",
       "outputs": [
-        "supabase/functions/preference-ai/index.ts"
+        "supabase/functions/preference-ai/index.ts",
+        "docs/evidence/roadmap-v2/GM-37/CHECKS.md",
+        "supabase/tests/http/GM-37.http"
       ],
       "inputs": [
         {
@@ -1088,7 +1407,14 @@
           "artifact": "docs/evidence/roadmap-v2/GM-34/RELEASE.md",
           "gate": "merge"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "api-extension",
+        "tool": "Postman hoặc curl Edge Function + taxonomy validator",
+        "entrypoint": "preference-ai request → preference draft/user confirmation",
+        "expected": "Response taxonomy/unknown/error đúng contract, không winner/vote/GPS; provider/license/cost approval trước call thật.",
+        "cases": "valid/invalid output; injection/timeout/quota; manual fallback; provider stub vs actual"
+      }
     },
     {
       "new_id": "GM-38",
@@ -1100,7 +1426,9 @@
       "stage": "extension",
       "outputs": [
         "supabase/functions/weather-context/index.ts",
-        "mobile/src/features/context/services/mood.ts"
+        "mobile/src/features/context/services/mood.ts",
+        "docs/evidence/roadmap-v2/GM-38/CHECKS.md",
+        "supabase/tests/http/GM-38.http"
       ],
       "inputs": [
         {
@@ -1128,7 +1456,14 @@
           "artifact": "docs/evidence/roadmap-v2/GM-34/RELEASE.md",
           "gate": "merge"
         }
-      ]
+      ],
+      "verification": {
+        "mode": "expo-api-extension",
+        "tool": "Expo Android mood UI + Postman/curl weather API + rank tests",
+        "entrypoint": "Màn Context mood optional và weather-context theo public anchor/desiredAt",
+        "expected": "UI mood opt-in/opt-out và weather source/timezone/observedAt/expiresAt/version hiện đúng; soft rank chỉ tập eligible.",
+        "cases": "timeout/stale/forecast-vs-observation; consent/TTL/opt-out; không override NO/REMOVE/coverage/hours; frozen pool"
+      }
     }
   ]
 }

@@ -1,6 +1,6 @@
 # GM-01 — bàn giao bản chia task để review
 
-2026-10-10. Owner Codex; reviewer Trí. Contract `food-v1/roadmap-v2/GM-01.1`. Trạng thái: chờ review, không phải Approved/Done. Revision là working tree trên `aeb1a83`, chưa có commit/PR mới; reviewer phải gắn SHA thực tế khi duyệt.
+2026-10-10. Owner Codex; reviewer Trí. Contract `food-v1/roadmap-v2/GM-01.1`. Chủ dự án xác nhận đã duyệt và cho phép ghi Done/Approved, xem [review](REVIEW.md). Revision nền `4f154af714411e81351e7761ceca281b1436fa68` + working-tree cập nhật chuẩn đầu ra; chưa có commit mới. Không giả SHA review độc lập do người dùng cung cấp.
 
 ## Đầu vào và đầu ra
 
@@ -13,8 +13,8 @@
 
 ## Cách dùng và giới hạn
 
-Từ root chạy `python scripts/validate_repository.py`, `python -m unittest discover -s tests -p "test_*.py"`, `python scripts/task_readiness.py --check-docs`. Kỳ vọng PASS và 80 tests. `python scripts/task_readiness.py --task GM-02` hiện phải BLOCKED bởi GM-01 đang review; đây là kết quả đúng, không tự mở gate.
+Từ root chạy `python scripts/validate_repository.py`, `python -m unittest discover -s tests -p "test_*.py"`, `python scripts/task_readiness.py --check-docs`. Kết quả trước ghi nhận review: PASS và 87 tests, xem [checks](CHECKS.md). Sau ghi nhận chạy lại indexes/readiness; start input GM-01 được mở theo approval của chủ dự án, không bỏ gate merge với target.
 
-Sau review GM-01 đúng revision, GM-02 (Tuấn), GM-03 (Trí), GM-04 (Vinh) có thể nhận việc độc lập. Những owner/reviewer khác là đề xuất, cần xác nhận. Khi chuyển status sinh lại indexes. Trước merge kiểm target ref đã cập nhật, artifact thật và review/commit upstream.
+GM-02 (Tuấn), GM-03 (Trí), GM-04 (Vinh) nhận baseline độc lập; Codex hỗ trợ GM-02/03 theo yêu cầu triển khai của chủ dự án. Những owner/reviewer vẫn giữ nguyên; không giả assignment GitHub đã được thành viên nhận. Khi chuyển status sinh lại indexes. Trước merge kiểm target ref đã cập nhật, artifact thật và review/commit upstream; bản approval working tree chưa tồn tại trên origin/main.
 
 Chưa import code sandbox, chưa có schema/API/dataset thật ở main, chưa sync GitHub issues, chưa commit/push. Bản task/mock/placeholder không chứng minh native hoặc dữ liệu đã chạy. Nếu cần đổi scope, cập nhật task map, task, ADR liên quan và sinh lại indexes; không sửa snapshot/evidence cũ.

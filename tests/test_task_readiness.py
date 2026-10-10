@@ -14,7 +14,11 @@ from test_repository_validator import MemorySource, deliver_in_memory
 
 class ReadinessTests(unittest.TestCase):
     def setUp(self):
-        self.source = MemorySource()
+        self.source = MemorySource(controlled_statuses=True)
+        original_source = gates.repository.Source
+        source_patch = patch.object(gates.repository, 'Source', side_effect=lambda ref: self.source if ref is None else original_source(ref))
+        source_patch.start()
+        self.addCleanup(source_patch.stop)
 
     def records(self):
         return gates.repository.task_records(self.source)
@@ -88,7 +92,7 @@ class ReadinessTests(unittest.TestCase):
 
     def test_missing_target_handoff_blocks_start_and_merge(self):
         self.approve_in_memory('GM-01')
-        base = MemorySource()
+        base = MemorySource(controlled_statuses=True)
         base.contents.update(self.source.contents)
         base.files.update(self.source.files)
         base.files.remove('docs/evidence/roadmap-v2/GM-01/HANDOFF.md')
@@ -98,7 +102,7 @@ class ReadinessTests(unittest.TestCase):
 
     def test_accepted_owner_distinguishes_ready_to_start(self):
         self.approve_in_memory('GM-01')
-        path = 'tasks/backlog/GM-02.md'
+        path = self.source.task_path('GM-02')
         self.source.contents[path] = self.source.read(path).replace('assignment_status: proposed', 'assignment_status: accepted')
         self.assertEqual(gates.readiness(self.source, self.records(), 'GM-02')[0], 'READY_TO_START')
 
@@ -112,7 +116,7 @@ class ReadinessTests(unittest.TestCase):
         self.assertEqual(gates.readiness(self.source, self.records(), 'GM-02', 'merge'), ('NEEDS_BASE_CHECK', []))
 
     def test_approved_local_dependency_missing_on_base_still_blocks(self):
-        base = MemorySource()
+        base = MemorySource(controlled_statuses=True)
         self.approve_in_memory('GM-01')
         self.assertEqual(gates.readiness(self.source, self.records(), 'GM-02', 'merge', base), ('BLOCKED_ON_BASE', ['GM-01']))
 
@@ -122,7 +126,7 @@ class ReadinessTests(unittest.TestCase):
 
     def test_changed_evidence_or_task_revision_on_base_blocks(self):
         self.approve_in_memory('GM-01')
-        base = MemorySource()
+        base = MemorySource(controlled_statuses=True)
         base.contents.update(self.source.contents)
         base.files.update(self.source.files)
         evidence = 'docs/evidence/GM-28/REPOSITORY_AUDIT.md'
@@ -167,8 +171,18 @@ class ReadinessTests(unittest.TestCase):
         for path, expected in gates.render_documents(self.source).items():
             self.assertEqual(self.source.read(path), expected, path)
 
+    def test_live_repository_indexes_match_current_status(self):
+        live = MemorySource()
+        for path, expected in gates.render_documents(live).items():
+            self.assertEqual(live.read(path), expected, path)
+
+    def test_moving_tasks_does_not_rewrite_historical_evidence(self):
+        path = 'docs/evidence/roadmap-v1/GM-01/FINAL_AUDIT_2026-10-08.md'
+        self.source.contents[path] = '[old task](../../../../tasks/backlog/GM-01.md)\n'
+        self.assertNotIn(path, gates.task_link_updates(self.source))
+
     def test_owner_change_makes_generated_indexes_stale(self):
-        path = 'tasks/backlog/GM-02.md'
+        path = self.source.task_path('GM-02')
         self.source.contents[path] = self.source.read(path).replace('owner: Tuấn', 'owner: Trang')
         result = gates.render_documents(self.source)
         name = 'docs/project/TEAM_AND_RESPONSIBILITIES.md'
@@ -181,7 +195,7 @@ class ReadinessTests(unittest.TestCase):
         original = self.source.contents.pop(old)
         self.source.contents[new] = original.replace('status: review', 'status: done')
         updates = gates.task_link_updates(self.source)
-        task = updates['tasks/backlog/GM-02.md']
+        task = updates[self.source.task_path('GM-02')]
         self.assertIn('[GM-01](../done/GM-01.md)', task)
         self.assertIn('status: backlog', task)
         self.assertNotIn('Decision: Approved', task)

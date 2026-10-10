@@ -1,6 +1,6 @@
 # Lộ trình triển khai UI–BE–Data — roadmap-v2
 
-2026-10-10. Chủ dự án yêu cầu chia lại task sau thử nghiệm sandbox: tạo nền trước, component/contract tiếp theo, hoàn thiện tính năng rồi tích hợp. Đây là kế hoạch hiện hành; 38 task sau GM-00, gồm 34 P0 (kể cả GM-01 review), 1 P1 và 3 P2. [Tổng hợp task/owner](TASK_SUMMARY.md) · [dependency](TASK_DEPENDENCIES.md) · [mapping](TASK_RENUMBERING.md).
+2026-10-10. Chủ dự án yêu cầu chia lại task sau thử nghiệm sandbox: tạo nền trước, component/contract tiếp theo, hoàn thiện tính năng rồi tích hợp. Đây là kế hoạch hiện hành; 38 task sau GM-00, gồm 34 P0 (kể cả GM-01 đã xác nhận duyệt), 1 P1 và 3 P2. [Tổng hợp task/owner](TASK_SUMMARY.md) · [dependency](TASK_DEPENDENCIES.md) · [mapping](TASK_RENUMBERING.md).
 
 ## Ba luồng và đầu ra nhận được
 
@@ -16,9 +16,9 @@ UI component chỉ phụ thuộc UI shell và định nghĩa field cần hiển 
 
 | Task | Luồng | Đầu ra | Owner / reviewer |
 | --- | --- | --- | --- |
-| [GM-01](../../tasks/review/GM-01.md) | PLAN / baseline | Chốt lộ trình UI–BE–Data và bàn giao đầu vào | Codex / Trí |
-| [GM-02](../../tasks/backlog/GM-02.md) | UI / structure | UI: cấu trúc thư mục và app Expo chạy được | Tuấn / Trí |
-| [GM-03](../../tasks/backlog/GM-03.md) | BE / structure | BE: cấu trúc thư mục và môi trường chạy local | Trí / Tâm |
+| [GM-01](../../tasks/done/GM-01.md) | PLAN / baseline | Chốt lộ trình UI–BE–Data và bàn giao đầu vào | Codex / Trí |
+| [GM-02](../../tasks/review/GM-02.md) | UI / structure | UI: cấu trúc thư mục và app Expo chạy được | Tuấn / ThanhTris |
+| [GM-03](../../tasks/review/GM-03.md) | BE / structure | BE: cấu trúc thư mục và môi trường chạy local | Trí / ThanhTris |
 | [GM-04](../../tasks/backlog/GM-04.md) | DATA / fields | Data: trường thông tin, taxonomy và mẫu nhập liệu | Vinh / Tâm |
 | [GM-05](../../tasks/backlog/GM-05.md) | UI / components | UI: component dùng chung theo UI mẫu | Trang / Tuấn |
 | [GM-06](../../tasks/backlog/GM-06.md) | DATA / database | Data: thiết lập database và migrations từ dictionary | Tâm / Trí |
@@ -66,6 +66,8 @@ Merge theo số tăng dần 01 → 38 luôn hợp lệ vì mọi prerequisite c�
 - GM-35..38 P1/P2: draft độc lập nếu đủ contract và còn người, merge sau core. Weather/mood không chặn bộ lọc địa điểm/giờ.
 
 ## Contract bàn giao trước khi làm tiếp
+
+Chủ dự án xác nhận cấu trúc UI/BE 2026-10-10, xem [plan GM-02/03](FOUNDATION_IMPLEMENTATION_PLAN.md) và [cấu trúc](REPOSITORY_STRUCTURE.md). [Chuẩn đầu ra](TASK_OUTPUT_REQUIREMENTS.md)/[checklist 38 task](TASK_OUTPUT_CHECKLIST.md) bắt buộc UI mở Expo thấy các mục scope, API chạy request/output/assertions, Data đủ fields/schema/templates/fixtures/version cho BE làm song song. Mỗi task bàn giao CHECKS.md + HANDOFF; API có request suite riêng. Chưa triển khai app/API, không tự chuyển Approved/Done hoặc cài package trước gate/review.
 
 Mỗi task có bảng “Đầu vào bắt buộc và đầu ra bàn giao”: upstream, path, trước start hay trước merge; source machine-readable là [task map](../../tasks/task-id-map.json). Path là đích dự kiến, không phải chứng nhận file đã tồn tại. Task hoàn thành cần [HANDOFF](../../tasks/templates/HANDOFF_TEMPLATE.md) gồm:
 

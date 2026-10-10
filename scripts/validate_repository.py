@@ -41,8 +41,28 @@ REQUIRED = (
     'tasks/templates/HANDOFF_TEMPLATE.md',
     'tasks/archive/roadmap-v1/task-snapshot.json',
     'tasks/archive/roadmap-v1/task-id-map.json',
+    'docs/project/TASK_OUTPUT_REQUIREMENTS.md',
+    'docs/project/TASK_OUTPUT_CHECKLIST.md',
+    'docs/project/FOUNDATION_IMPLEMENTATION_PLAN.md',
+    'tasks/templates/CHECKS_TEMPLATE.md',
 )
 LINK = re.compile(r'(?<!!)\[[^\]]+\]\(([^)]+)\)')
+
+
+def frozen_evidence(path: str) -> bool:
+    """Historical evidence keeps its bytes and references from the reviewed revision."""
+    return path.startswith('docs/evidence/roadmap-v1/') or bool(re.match(r'^docs/evidence/GM-\d{2}/', path))
+
+
+def historical_task_reference(src, path: str, resolved: str) -> bool:
+    """Only archived task locations may be absent; never waive active artifact gates."""
+    if not frozen_evidence(path) or not re.fullmatch(r'tasks/(backlog|in-progress|review|done)/GM-\d{2}\.md', resolved):
+        return False
+    try:
+        snapshot = json.loads(src.read('tasks/archive/roadmap-v1/task-snapshot.json'))
+        return resolved in snapshot['tasks']
+    except (KeyError, ValueError):
+        return False
 
 
 def task_records(src: Source) -> dict:
@@ -171,6 +191,44 @@ def validate_roadmap(src: Source, records: dict) -> tuple[list[str], dict]:
                 errors.append(f'{tid}: missing roadmap-v2 numbering/previous_ids')
             if not meta.get('contract_version'):
                 errors.append(f'{tid}: missing contract_version')
+            verification = entry.get('verification', {})
+            fields = ('mode', 'tool', 'entrypoint', 'expected', 'cases')
+            if (not isinstance(verification, dict)
+                    or set(verification) != set(fields)
+                    or any(not isinstance(verification.get(key), str)
+                           or not verification[key].strip() for key in fields)):
+                errors.append(f'{tid}: missing runnable output verification')
+                verification = {}
+            allowed_modes = {
+                ('PLAN', 'baseline'): {'docs'},
+                ('UI', 'structure'): {'code-structure'},
+                ('UI', 'components'): {'expo-go'},
+                ('UI', 'screens'): {'expo-go'},
+                ('DATA', 'fields'): {'data-contract'},
+                ('DATA', 'database'): {'data-schema'},
+                ('DATA', 'import'): {'data-import'},
+                ('BE', 'structure'): {'code-structure'},
+                ('BE', 'api-contract'): {'contract'},
+                ('BE', 'implementation'): {'api', 'domain'},
+                ('INTEGRATION', 'native'): {'expo-native'},
+                ('INTEGRATION', 'integration'): {'expo-api', 'expo-native'},
+                ('QA', 'regression'): {'qa'},
+                ('QA', 'qa'): {'qa'},
+                ('RELEASE', 'release'): {'release'},
+                ('EXTENSION', 'extension'): {'expo-api', 'api-extension', 'expo-api-extension'},
+            }
+            mode = verification.get('mode')
+            if mode not in allowed_modes.get((entry['track'], entry['stage']), set()):
+                errors.append(f'{tid}: verification mode does not match track/stage')
+            if '## Đầu ra chạy được và nghiệm thu' not in text:
+                errors.append(f'{tid}: missing runnable output acceptance section')
+            if any(value not in text for value in verification.values()):
+                errors.append(f'{tid}: verification differs from task body')
+            if f'docs/evidence/roadmap-v2/{tid}/CHECKS.md' not in outputs:
+                errors.append(f'{tid}: output checks artifact must be declared')
+            if mode in {'api-smoke', 'api', 'api-extension', 'expo-api-extension'}:
+                if f'supabase/tests/http/{tid}.http' not in outputs:
+                    errors.append(f'{tid}: API request examples must be declared')
             if '## Đầu vào bắt buộc và đầu ra bàn giao' not in text:
                 errors.append(f'{tid}: missing artifact handoff section')
             if any(f'`{p}`' not in text for p in outputs):
@@ -259,7 +317,7 @@ def validate(src: Source) -> list[str]:
                 if not target or re.match(r'^[a-z]+:', target):
                     continue
                 resolved = posixpath.normpath(posixpath.join(posixpath.dirname(p), target))
-                if not src.exists(resolved):
+                if not src.exists(resolved) and not historical_task_reference(src, p, resolved):
                     errors.append(f'broken link: {p} -> {target}')
         if p.endswith('.json') and p.startswith('tests/fixtures/'):
             try:

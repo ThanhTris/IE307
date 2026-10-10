@@ -27,7 +27,7 @@ planned_week: Theo dependency
 ---
 ```
 
-Khai báo entry tương ứng trong tasks/task-id-map.json: new_id, previous_ids (scope cũ nếu có), title, track, stage, inputs [{task, artifact, gate}], outputs [path]. ID producer nhỏ hơn consumer, input path có trong outputs producer. Path dự kiến phải nằm trong scope; không thêm placeholder chỉ để qua kiểm.
+Khai báo entry tương ứng trong tasks/task-id-map.json: new_id, previous_ids (scope cũ nếu có), title, track, stage, inputs [{task, artifact, gate}], outputs [path], verification {mode, tool, entrypoint, expected, cases}. ID producer nhỏ hơn consumer, input path có trong outputs producer. Output phải có docs/evidence/roadmap-v2/GM-XX/CHECKS.md; API task có supabase/tests/http/GM-XX.http. Path dự kiến phải nằm trong scope; không thêm placeholder chỉ để qua kiểm.
 
 ## Mục tiêu và phạm vi
 
@@ -46,6 +46,8 @@ Liệt kê output paths, cách chạy/đọc, task nhận. Các path chưa tồn
 - [ ] AC theo scope và loại evidence; UI mock được nghiệm thu riêng, API/native có task riêng.
 
 ## Context và patch plan
+
+Trước phần này thêm mục `## Đầu ra chạy được và nghiệm thu`: mode/tool/entrypoint/expected/cases khớp verification, output request suite/CHECKS.md và checklist tái lập. Theo [chuẩn đầu ra](../../docs/project/TASK_OUTPUT_REQUIREMENTS.md) và [mẫu checks](CHECKS_TEMPLATE.md), UI phải mở Expo, API có actual response/assertions, Data đủ field/schema/fixture cho BE; task nền/contract/domain kiểm đúng stage. Không chỉ file hoặc hình thiết kế.
 
 File cụ thể; reuse scaffold/component/contract; ai sở hữu shared file; migration/rollback.
 

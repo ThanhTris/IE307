@@ -1,6 +1,6 @@
 # Food data spec — food-v1
 
-2026-10-07. Yêu cầu hiện hành được soạn theo chỉ dẫn chủ dự án; review kỹ thuật/triển khai chờ [GM-01](../../tasks/review/GM-01.md). Nguồn chi tiết: [plan data](../project/FOOD_DATA_REQUIREMENTS_PLAN.md), [ADR-005](../architecture/decisions/ADR-005-food-location-time-data.md). FR-04/10/15/20/21; T-03/10/14/19/23/25/26. GM-04, GM-06, GM-08, GM-24, GM-18 là đầu vào core, GM-38 nâng cao.
+2026-10-07. Yêu cầu hiện hành được soạn theo chỉ dẫn chủ dự án; review kỹ thuật/triển khai chờ [GM-01](../../tasks/done/GM-01.md). Nguồn chi tiết: [plan data](../project/FOOD_DATA_REQUIREMENTS_PLAN.md), [ADR-005](../architecture/decisions/ADR-005-food-location-time-data.md). FR-04/10/15/20/21; T-03/10/14/19/23/25/26. GM-04, GM-06, GM-08, GM-24, GM-18 là đầu vào core, GM-38 nâng cao.
 
 ## Data contract bắt buộc
 

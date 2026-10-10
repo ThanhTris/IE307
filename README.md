@@ -2,7 +2,7 @@
 
 Ứng dụng Android React Native giúp nhóm 2–8 người chọn món thỏa hiệp có giải thích trong tối đa hai vòng, với bộ món có nơi bán phù hợp khu vực/giờ ăn, rồi xem quán/review. Card có ba nút; chạm hai lần chọn Muốn ăn. NO luôn loại món, server chốt kết quả một lần.
 
-Baseline food-v1 • workflow cập nhật 2026-10-08. GM-00 đã review v0.2; GM-01 đang review scope mới. Repo có spec/task/prototype/skeleton, chưa app/backend. Hai gate: đủ start deps thì viết phần độc lập trên nhánh riêng; đủ merge deps và tích hợp thật mới merge.
+Baseline food-v1/roadmap-v2 • cập nhật 2026-10-10. GM-00 đã review v0.2; GM-01 được chủ dự án xác nhận Approved. Repo có spec/task/prototype, shell Expo GM-02 và BE local tooling GM-03 đang kiểm/nghiệm thu, chưa tính năng/schema/API nghiệp vụ. Hai gate: đủ start deps thì viết phần độc lập; đủ merge deps và tích hợp thật mới merge.
 
 ## Đọc để hiểu dự án
 
@@ -17,16 +17,18 @@ Task đã đánh số theo lộ trình GM-01 → GM-38; dependency chỉ trỏ s
 Core có guest/QR/link, friends/push, realtime/outbox/history, taxonomy món, data quán–món–lịch bán/coverage và lọc trước khi vote. Account P1; OCR/AI/weather–mood P2. Owner/reviewer đề xuất, thành viên tự nhận/đổi; không tự coi task Done. [GitHub mapping](docs/project/GITHUB_TASKS.md) ghi riêng phần chưa đồng bộ.
 
 ```text
-mobile/       Expo Router/features/domain/adapters (skeleton)
-supabase/     migrations/RPC/RLS/tests/trusted sender dự kiến
+mobile/       Expo Router shell chạy được; feature/domain/adapters quy hoạch
+supabase/     local config/HTTP/DB smoke; schema/RPC/RLS/sender task sau
 docs/         mô tả/PRD/spec/ADR/plan/test/evidence
-tasks/        GM-00 done, GM-01 review, task triển khai backlog
+tasks/        GM-00/01 done theo human review; triển khai task sau chưa Approved
 design/       design system/prototype HTML mô phỏng cũ
 tests/        fixtures/E2E và validator regression
-scripts/      validator, dependency gate và task indexes
+scripts/      validator, dependency gate/indexes và backend local runner
 ```
 
 Kiểm tài liệu: `python scripts/validate_repository.py`, `git diff --check`. Validator không thay independent review/native evidence.
+
+Chạy UI: theo [mobile README](mobile/README.md), `cd mobile`, `npm ci`, `npm start` (Expo Go LAN). Chạy BE: theo [Supabase README](supabase/README.md), tại root `npm ci`, bật Docker Linux engine, `npm run backend:start`, `npm run backend:smoke`, `npm run backend:test`. [Chuẩn output UI/BE/Data](docs/project/TASK_OUTPUT_REQUIREMENTS.md) và [checklist 38 task](docs/project/TASK_OUTPUT_CHECKLIST.md) ghi phép nghiệm thu từng task, không chỉ file/checkbox.
 
 [Prototype HTML](design/prototypes/gi-cung-duoc.html) không là bằng chứng đáp ứng food-v1. Mở bằng browser hoặc local HTTP; nó không chứng minh QR/push/SQL/realtime. [Bắt đầu](docs/project/START_HERE.md).
 

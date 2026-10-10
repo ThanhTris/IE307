@@ -26,13 +26,13 @@ READY_TO_CLAIM: đủ start deps, chưa nhận việc; READY_TO_START: đã nh�
 | Task | Start | Chờ start | Merge local | Chờ merge (gồm start) |
 | --- | --- | --- | --- | --- |
 | [GM-00](../../tasks/done/GM-00.md) | DONE_REVIEWED | — | NEEDS_BASE_CHECK | — |
-| [GM-01](../../tasks/review/GM-01.md) | IN_REVIEW | — | NEEDS_BASE_CHECK | — |
-| [GM-02](../../tasks/backlog/GM-02.md) | BLOCKED | [GM-01](../../tasks/review/GM-01.md) | BLOCKED | [GM-01](../../tasks/review/GM-01.md) |
-| [GM-03](../../tasks/backlog/GM-03.md) | BLOCKED | [GM-01](../../tasks/review/GM-01.md) | BLOCKED | [GM-01](../../tasks/review/GM-01.md) |
-| [GM-04](../../tasks/backlog/GM-04.md) | BLOCKED | [GM-01](../../tasks/review/GM-01.md) | BLOCKED | [GM-01](../../tasks/review/GM-01.md) |
-| [GM-05](../../tasks/backlog/GM-05.md) | BLOCKED | [GM-02](../../tasks/backlog/GM-02.md), [GM-04](../../tasks/backlog/GM-04.md) | BLOCKED | [GM-02](../../tasks/backlog/GM-02.md), [GM-04](../../tasks/backlog/GM-04.md) |
-| [GM-06](../../tasks/backlog/GM-06.md) | BLOCKED | [GM-03](../../tasks/backlog/GM-03.md), [GM-04](../../tasks/backlog/GM-04.md) | BLOCKED | [GM-03](../../tasks/backlog/GM-03.md), [GM-04](../../tasks/backlog/GM-04.md) |
-| [GM-07](../../tasks/backlog/GM-07.md) | BLOCKED | [GM-02](../../tasks/backlog/GM-02.md), [GM-03](../../tasks/backlog/GM-03.md), [GM-04](../../tasks/backlog/GM-04.md) | BLOCKED | [GM-02](../../tasks/backlog/GM-02.md), [GM-03](../../tasks/backlog/GM-03.md), [GM-04](../../tasks/backlog/GM-04.md), [GM-06](../../tasks/backlog/GM-06.md) |
+| [GM-01](../../tasks/done/GM-01.md) | DONE_REVIEWED | — | NEEDS_BASE_CHECK | — |
+| [GM-02](../../tasks/review/GM-02.md) | IN_REVIEW | — | NEEDS_BASE_CHECK | — |
+| [GM-03](../../tasks/review/GM-03.md) | IN_REVIEW | — | NEEDS_BASE_CHECK | — |
+| [GM-04](../../tasks/backlog/GM-04.md) | READY_TO_CLAIM | — | NEEDS_BASE_CHECK | — |
+| [GM-05](../../tasks/backlog/GM-05.md) | BLOCKED | [GM-02](../../tasks/review/GM-02.md), [GM-04](../../tasks/backlog/GM-04.md) | BLOCKED | [GM-02](../../tasks/review/GM-02.md), [GM-04](../../tasks/backlog/GM-04.md) |
+| [GM-06](../../tasks/backlog/GM-06.md) | BLOCKED | [GM-03](../../tasks/review/GM-03.md), [GM-04](../../tasks/backlog/GM-04.md) | BLOCKED | [GM-03](../../tasks/review/GM-03.md), [GM-04](../../tasks/backlog/GM-04.md) |
+| [GM-07](../../tasks/backlog/GM-07.md) | BLOCKED | [GM-02](../../tasks/review/GM-02.md), [GM-03](../../tasks/review/GM-03.md), [GM-04](../../tasks/backlog/GM-04.md) | BLOCKED | [GM-02](../../tasks/review/GM-02.md), [GM-03](../../tasks/review/GM-03.md), [GM-04](../../tasks/backlog/GM-04.md), [GM-06](../../tasks/backlog/GM-06.md) |
 | [GM-08](../../tasks/backlog/GM-08.md) | BLOCKED | [GM-04](../../tasks/backlog/GM-04.md), [GM-06](../../tasks/backlog/GM-06.md) | BLOCKED | [GM-04](../../tasks/backlog/GM-04.md), [GM-06](../../tasks/backlog/GM-06.md) |
 | [GM-09](../../tasks/backlog/GM-09.md) | BLOCKED | [GM-05](../../tasks/backlog/GM-05.md), [GM-07](../../tasks/backlog/GM-07.md) | BLOCKED | [GM-05](../../tasks/backlog/GM-05.md), [GM-07](../../tasks/backlog/GM-07.md) |
 | [GM-10](../../tasks/backlog/GM-10.md) | BLOCKED | [GM-05](../../tasks/backlog/GM-05.md), [GM-07](../../tasks/backlog/GM-07.md) | BLOCKED | [GM-05](../../tasks/backlog/GM-05.md), [GM-07](../../tasks/backlog/GM-07.md) |
@@ -41,7 +41,7 @@ READY_TO_CLAIM: đủ start deps, chưa nhận việc; READY_TO_START: đã nh�
 | [GM-13](../../tasks/backlog/GM-13.md) | BLOCKED | [GM-05](../../tasks/backlog/GM-05.md), [GM-07](../../tasks/backlog/GM-07.md) | BLOCKED | [GM-05](../../tasks/backlog/GM-05.md), [GM-07](../../tasks/backlog/GM-07.md) |
 | [GM-14](../../tasks/backlog/GM-14.md) | BLOCKED | [GM-05](../../tasks/backlog/GM-05.md), [GM-07](../../tasks/backlog/GM-07.md) | BLOCKED | [GM-05](../../tasks/backlog/GM-05.md), [GM-07](../../tasks/backlog/GM-07.md) |
 | [GM-15](../../tasks/backlog/GM-15.md) | BLOCKED | [GM-04](../../tasks/backlog/GM-04.md), [GM-07](../../tasks/backlog/GM-07.md) | BLOCKED | [GM-04](../../tasks/backlog/GM-04.md), [GM-07](../../tasks/backlog/GM-07.md) |
-| [GM-16](../../tasks/backlog/GM-16.md) | BLOCKED | [GM-03](../../tasks/backlog/GM-03.md), [GM-06](../../tasks/backlog/GM-06.md), [GM-07](../../tasks/backlog/GM-07.md) | BLOCKED | [GM-03](../../tasks/backlog/GM-03.md), [GM-06](../../tasks/backlog/GM-06.md), [GM-07](../../tasks/backlog/GM-07.md) |
+| [GM-16](../../tasks/backlog/GM-16.md) | BLOCKED | [GM-03](../../tasks/review/GM-03.md), [GM-06](../../tasks/backlog/GM-06.md), [GM-07](../../tasks/backlog/GM-07.md) | BLOCKED | [GM-03](../../tasks/review/GM-03.md), [GM-06](../../tasks/backlog/GM-06.md), [GM-07](../../tasks/backlog/GM-07.md) |
 | [GM-17](../../tasks/backlog/GM-17.md) | BLOCKED | [GM-06](../../tasks/backlog/GM-06.md), [GM-16](../../tasks/backlog/GM-16.md) | BLOCKED | [GM-06](../../tasks/backlog/GM-06.md), [GM-16](../../tasks/backlog/GM-16.md) |
 | [GM-18](../../tasks/backlog/GM-18.md) | BLOCKED | [GM-07](../../tasks/backlog/GM-07.md), [GM-08](../../tasks/backlog/GM-08.md), [GM-17](../../tasks/backlog/GM-17.md) | BLOCKED | [GM-07](../../tasks/backlog/GM-07.md), [GM-08](../../tasks/backlog/GM-08.md), [GM-17](../../tasks/backlog/GM-17.md) |
 | [GM-19](../../tasks/backlog/GM-19.md) | BLOCKED | [GM-16](../../tasks/backlog/GM-16.md), [GM-17](../../tasks/backlog/GM-17.md), [GM-18](../../tasks/backlog/GM-18.md) | BLOCKED | [GM-16](../../tasks/backlog/GM-16.md), [GM-17](../../tasks/backlog/GM-17.md), [GM-18](../../tasks/backlog/GM-18.md) |
@@ -54,7 +54,7 @@ READY_TO_CLAIM: đủ start deps, chưa nhận việc; READY_TO_START: đã nh�
 | [GM-26](../../tasks/backlog/GM-26.md) | BLOCKED | [GM-12](../../tasks/backlog/GM-12.md), [GM-20](../../tasks/backlog/GM-20.md), [GM-25](../../tasks/backlog/GM-25.md) | BLOCKED | [GM-12](../../tasks/backlog/GM-12.md), [GM-20](../../tasks/backlog/GM-20.md), [GM-25](../../tasks/backlog/GM-25.md) |
 | [GM-27](../../tasks/backlog/GM-27.md) | BLOCKED | [GM-13](../../tasks/backlog/GM-13.md), [GM-18](../../tasks/backlog/GM-18.md), [GM-26](../../tasks/backlog/GM-26.md) | BLOCKED | [GM-13](../../tasks/backlog/GM-13.md), [GM-18](../../tasks/backlog/GM-18.md), [GM-26](../../tasks/backlog/GM-26.md) |
 | [GM-28](../../tasks/backlog/GM-28.md) | BLOCKED | [GM-14](../../tasks/backlog/GM-14.md), [GM-21](../../tasks/backlog/GM-21.md), [GM-22](../../tasks/backlog/GM-22.md), [GM-23](../../tasks/backlog/GM-23.md), [GM-25](../../tasks/backlog/GM-25.md) | BLOCKED | [GM-14](../../tasks/backlog/GM-14.md), [GM-21](../../tasks/backlog/GM-21.md), [GM-22](../../tasks/backlog/GM-22.md), [GM-23](../../tasks/backlog/GM-23.md), [GM-25](../../tasks/backlog/GM-25.md) |
-| [GM-29](../../tasks/backlog/GM-29.md) | BLOCKED | [GM-02](../../tasks/backlog/GM-02.md), [GM-23](../../tasks/backlog/GM-23.md), [GM-28](../../tasks/backlog/GM-28.md) | BLOCKED | [GM-02](../../tasks/backlog/GM-02.md), [GM-23](../../tasks/backlog/GM-23.md), [GM-28](../../tasks/backlog/GM-28.md) |
+| [GM-29](../../tasks/backlog/GM-29.md) | BLOCKED | [GM-02](../../tasks/review/GM-02.md), [GM-23](../../tasks/backlog/GM-23.md), [GM-28](../../tasks/backlog/GM-28.md) | BLOCKED | [GM-02](../../tasks/review/GM-02.md), [GM-23](../../tasks/backlog/GM-23.md), [GM-28](../../tasks/backlog/GM-28.md) |
 | [GM-30](../../tasks/backlog/GM-30.md) | BLOCKED | [GM-22](../../tasks/backlog/GM-22.md), [GM-24](../../tasks/backlog/GM-24.md), [GM-25](../../tasks/backlog/GM-25.md), [GM-27](../../tasks/backlog/GM-27.md) | BLOCKED | [GM-22](../../tasks/backlog/GM-22.md), [GM-24](../../tasks/backlog/GM-24.md), [GM-25](../../tasks/backlog/GM-25.md), [GM-27](../../tasks/backlog/GM-27.md) |
 | [GM-31](../../tasks/backlog/GM-31.md) | BLOCKED | [GM-26](../../tasks/backlog/GM-26.md), [GM-28](../../tasks/backlog/GM-28.md) | BLOCKED | [GM-26](../../tasks/backlog/GM-26.md), [GM-28](../../tasks/backlog/GM-28.md) |
 | [GM-32](../../tasks/backlog/GM-32.md) | BLOCKED | [GM-18](../../tasks/backlog/GM-18.md), [GM-20](../../tasks/backlog/GM-20.md), [GM-21](../../tasks/backlog/GM-21.md), [GM-22](../../tasks/backlog/GM-22.md), [GM-23](../../tasks/backlog/GM-23.md), [GM-31](../../tasks/backlog/GM-31.md) | BLOCKED | [GM-18](../../tasks/backlog/GM-18.md), [GM-20](../../tasks/backlog/GM-20.md), [GM-21](../../tasks/backlog/GM-21.md), [GM-22](../../tasks/backlog/GM-22.md), [GM-23](../../tasks/backlog/GM-23.md), [GM-31](../../tasks/backlog/GM-31.md) |
@@ -72,8 +72,8 @@ Lớp topo không là barrier cả nhóm hay deadline. Chỉ chờ dependency c�
 | Lớp | Tasks | Owner cần điều phối |
 | --- | --- | --- |
 | 0 | [GM-00](../../tasks/done/GM-00.md) | GM-00: Codex |
-| 1 | [GM-01](../../tasks/review/GM-01.md) | GM-01: Codex |
-| 2 | [GM-02](../../tasks/backlog/GM-02.md), [GM-03](../../tasks/backlog/GM-03.md), [GM-04](../../tasks/backlog/GM-04.md) | GM-02: Tuấn; GM-03: Trí; GM-04: Vinh |
+| 1 | [GM-01](../../tasks/done/GM-01.md) | GM-01: Codex |
+| 2 | [GM-02](../../tasks/review/GM-02.md), [GM-03](../../tasks/review/GM-03.md), [GM-04](../../tasks/backlog/GM-04.md) | GM-02: Tuấn; GM-03: Trí; GM-04: Vinh |
 | 3 | [GM-05](../../tasks/backlog/GM-05.md), [GM-06](../../tasks/backlog/GM-06.md), [GM-07](../../tasks/backlog/GM-07.md) | GM-05: Trang; GM-06: Tâm; GM-07: Trung |
 | 4 | [GM-08](../../tasks/backlog/GM-08.md), [GM-09](../../tasks/backlog/GM-09.md), [GM-10](../../tasks/backlog/GM-10.md), [GM-11](../../tasks/backlog/GM-11.md), [GM-12](../../tasks/backlog/GM-12.md), [GM-13](../../tasks/backlog/GM-13.md), [GM-14](../../tasks/backlog/GM-14.md), [GM-15](../../tasks/backlog/GM-15.md), [GM-16](../../tasks/backlog/GM-16.md), [GM-24](../../tasks/backlog/GM-24.md), [GM-35](../../tasks/backlog/GM-35.md), [GM-36](../../tasks/backlog/GM-36.md), [GM-37](../../tasks/backlog/GM-37.md), [GM-38](../../tasks/backlog/GM-38.md) | GM-08: Vinh; GM-09: Trang; GM-10: Tuấn; GM-11: Tuấn; GM-12: Trang; GM-13: Tuấn; GM-14: Trang; GM-15: Vinh; GM-16: Trung; GM-24: Tuấn; GM-35: Trung; GM-36: Tâm; GM-37: Trung; GM-38: Trung |
 | 5 | [GM-17](../../tasks/backlog/GM-17.md) | GM-17: Trí |
@@ -95,8 +95,8 @@ Lớp topo không là barrier cả nhóm hay deadline. Chỉ chờ dependency c�
 | Lớp | Tasks | Owner cần điều phối |
 | --- | --- | --- |
 | 0 | [GM-00](../../tasks/done/GM-00.md) | GM-00: Codex |
-| 1 | [GM-01](../../tasks/review/GM-01.md) | GM-01: Codex |
-| 2 | [GM-02](../../tasks/backlog/GM-02.md), [GM-03](../../tasks/backlog/GM-03.md), [GM-04](../../tasks/backlog/GM-04.md) | GM-02: Tuấn; GM-03: Trí; GM-04: Vinh |
+| 1 | [GM-01](../../tasks/done/GM-01.md) | GM-01: Codex |
+| 2 | [GM-02](../../tasks/review/GM-02.md), [GM-03](../../tasks/review/GM-03.md), [GM-04](../../tasks/backlog/GM-04.md) | GM-02: Tuấn; GM-03: Trí; GM-04: Vinh |
 | 3 | [GM-05](../../tasks/backlog/GM-05.md), [GM-06](../../tasks/backlog/GM-06.md) | GM-05: Trang; GM-06: Tâm |
 | 4 | [GM-07](../../tasks/backlog/GM-07.md), [GM-08](../../tasks/backlog/GM-08.md) | GM-07: Trung; GM-08: Vinh |
 | 5 | [GM-09](../../tasks/backlog/GM-09.md), [GM-10](../../tasks/backlog/GM-10.md), [GM-11](../../tasks/backlog/GM-11.md), [GM-12](../../tasks/backlog/GM-12.md), [GM-13](../../tasks/backlog/GM-13.md), [GM-14](../../tasks/backlog/GM-14.md), [GM-15](../../tasks/backlog/GM-15.md), [GM-16](../../tasks/backlog/GM-16.md) | GM-09: Trang; GM-10: Tuấn; GM-11: Tuấn; GM-12: Trang; GM-13: Tuấn; GM-14: Trang; GM-15: Vinh; GM-16: Trung |
@@ -117,9 +117,9 @@ Lớp topo không là barrier cả nhóm hay deadline. Chỉ chờ dependency c�
 
 | Tasks | Điều kiện |
 | --- | --- |
-| [GM-02](../../tasks/backlog/GM-02.md), [GM-03](../../tasks/backlog/GM-03.md) | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |
-| [GM-02](../../tasks/backlog/GM-02.md), [GM-04](../../tasks/backlog/GM-04.md) | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |
-| [GM-03](../../tasks/backlog/GM-03.md), [GM-04](../../tasks/backlog/GM-04.md) | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |
+| [GM-02](../../tasks/review/GM-02.md), [GM-03](../../tasks/review/GM-03.md) | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |
+| [GM-02](../../tasks/review/GM-02.md), [GM-04](../../tasks/backlog/GM-04.md) | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |
+| [GM-03](../../tasks/review/GM-03.md), [GM-04](../../tasks/backlog/GM-04.md) | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |
 | [GM-05](../../tasks/backlog/GM-05.md), [GM-06](../../tasks/backlog/GM-06.md) | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |
 | [GM-05](../../tasks/backlog/GM-05.md), [GM-07](../../tasks/backlog/GM-07.md) | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |
 | [GM-07](../../tasks/backlog/GM-07.md), [GM-08](../../tasks/backlog/GM-08.md) | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |
