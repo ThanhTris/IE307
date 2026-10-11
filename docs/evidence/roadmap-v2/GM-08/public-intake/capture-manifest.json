@@ -1,0 +1,102 @@
+[
+  {
+    "url": "https://www.foody.vn/ho-chi-minh/tiem-com-nha-tron-hoang-dieu-2",
+    "attemptedAtUTC": "2026-10-11T05:09:10.739561+00:00",
+    "status": 200,
+    "resolvedUrl": "https://www.foody.vn/ho-chi-minh/tiem-com-nha-tron-hoang-dieu-2",
+    "contentType": "text/html; charset=utf-8",
+    "fetchedAtUTC": "2026-10-11T05:09:11.333437+00:00",
+    "sha256": "96d0d8f88118176194ddd824704b4eab9be9fe215022015726b2e941ef089a31",
+    "bytes": 185939,
+    "file": "dd27882a0b40b2e8.html"
+  },
+  {
+    "url": "https://www.foody.vn/ho-chi-minh/bun-dau-mam-tom-ba-anh-em-220-hoang-dieu-2",
+    "attemptedAtUTC": "2026-10-11T05:09:10.740677+00:00",
+    "status": 200,
+    "resolvedUrl": "https://www.foody.vn/ho-chi-minh/bun-dau-mam-tom-ba-anh-em-220-hoang-dieu-2",
+    "contentType": "text/html; charset=utf-8",
+    "fetchedAtUTC": "2026-10-11T05:09:11.270354+00:00",
+    "sha256": "2f6674a8ef8a441b9318410b6a39d4974aa3426db37a00bd0028a1a2bf5e6353",
+    "bytes": 186395,
+    "file": "cff067d574d2f1ed.html"
+  },
+  {
+    "url": "https://www.foody.vn/ho-chi-minh/banh-cuon-banh-uot-129-chuong-duong",
+    "attemptedAtUTC": "2026-10-11T05:09:10.740801+00:00",
+    "status": 200,
+    "resolvedUrl": "https://www.foody.vn/ho-chi-minh/banh-cuon-banh-uot-129-chuong-duong",
+    "contentType": "text/html; charset=utf-8",
+    "fetchedAtUTC": "2026-10-11T05:09:11.415366+00:00",
+    "sha256": "8026f9911c6f51967c579f4b7ab70a223f4538d6ce9817ca7ef024d448ec1215",
+    "bytes": 187951,
+    "file": "6a6c710a452b02d8.html"
+  },
+  {
+    "url": "https://www.foody.vn/ho-chi-minh/pha-lau-co-phuong-hiep-binh",
+    "attemptedAtUTC": "2026-10-11T05:09:10.740919+00:00",
+    "status": 200,
+    "resolvedUrl": "https://www.foody.vn/ho-chi-minh/pha-lau-co-phuong-hiep-binh",
+    "contentType": "text/html; charset=utf-8",
+    "fetchedAtUTC": "2026-10-11T05:09:11.399471+00:00",
+    "sha256": "6878b9aecb8cfdab73a423657481f7727aadadf8e13ca99533c6dc2c335b7090",
+    "bytes": 185409,
+    "file": "30289472dcdb7171.html"
+  },
+  {
+    "url": "https://www.foody.vn/ho-chi-minh/wallace-burger-chicken-1098-kha-van-can",
+    "attemptedAtUTC": "2026-10-11T05:09:11.271440+00:00",
+    "status": 200,
+    "resolvedUrl": "https://www.foody.vn/ho-chi-minh/wallace-burger-chicken-1098-kha-van-can",
+    "contentType": "text/html; charset=utf-8",
+    "fetchedAtUTC": "2026-10-11T05:09:12.173936+00:00",
+    "sha256": "5ca2b92469253b7de931e68a3937b724a1c8b91fd639edac80df014be6d5d909",
+    "bytes": 187247,
+    "file": "ed917ff5722993c7.html"
+  },
+  {
+    "url": "https://www.foody.vn/ho-chi-minh/bun-bo-ngon-anh-linh-banh-canh-my-y-24h",
+    "attemptedAtUTC": "2026-10-11T05:09:11.334672+00:00",
+    "status": 200,
+    "resolvedUrl": "https://www.foody.vn/ho-chi-minh/bun-bo-ngon-anh-linh-banh-canh-my-y-24h",
+    "contentType": "text/html; charset=utf-8",
+    "fetchedAtUTC": "2026-10-11T05:09:11.779214+00:00",
+    "sha256": "98cd4873ef8af1e4afba7580088f4677d3fcdc0ee8a2d3f7212d96ef25ff2269",
+    "bytes": 188986,
+    "file": "ec7cdc5f43db79d7.html"
+  },
+  {
+    "url": "https://www.foody.vn/ho-chi-minh/pho-ly-quoc-su-218a-hoang-dieu-2",
+    "attemptedAtUTC": "2026-10-11T05:09:11.400779+00:00",
+    "status": 200,
+    "resolvedUrl": "https://www.foody.vn/ho-chi-minh/pho-ly-quoc-su-218a-hoang-dieu-2",
+    "contentType": "text/html; charset=utf-8",
+    "fetchedAtUTC": "2026-10-11T05:09:12.096565+00:00",
+    "sha256": "273ce1a8f9bfb6362a65ac9f93bbb3ed829b8aefe49563b4081afad8fe7c5a28",
+    "bytes": 186219,
+    "file": "15ab50cfa5065956.html"
+  },
+  {
+    "url": "https://help.jollibee.com.vn/hc/vi/articles/14378093877775-Danh-s%C3%A1ch-c%E1%BB%ADa-h%C3%A0ng",
+    "attemptedAtUTC": "2026-10-11T05:09:11.416763+00:00",
+    "status": "Failed",
+    "error": "HTTP Error 403: Forbidden"
+  },
+  {
+    "url": "https://be.com.vn/doi-tac-nha-hang/dieu-khoan-hop-tac/",
+    "attemptedAtUTC": "2026-10-11T05:09:11.709732+00:00",
+    "status": 200,
+    "resolvedUrl": "https://be.com.vn/doi-tac-nha-hang/dieu-khoan-hop-tac/",
+    "contentType": "text/html; charset=UTF-8",
+    "fetchedAtUTC": "2026-10-11T05:09:12.249523+00:00",
+    "sha256": "9e2884062f014b1bb4249e2aae90331db2fd4fa8c3c5a5260890f52c075aef1e",
+    "bytes": 94512,
+    "file": "10da6cf37b3bdcf7.html"
+  },
+  {
+    "url": "https://nemnuongnhatranghungvietdian.com/",
+    "attemptedAtUTC": "2026-10-11T05:09:11.780233+00:00",
+    "status": "Failed",
+    "error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'nemnuongnhatranghungvietdian.com'. (_ssl.c:1028)>"
+  }
+]

@@ -1,0 +1,183 @@
+{
+  "state": "Pending",
+  "verified": false,
+  "publicationPerformed": false,
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "venueId": "30cacf32-9afb-5c37-aec1-ca032510a070",
+  "branchName": "Kim Nga Quán - Cơm Phần, Bún Riêu & Bánh Canh - Lê Văn Chí",
+  "observedVenue": {
+    "address": "179 Lê Văn Chí, Phường Linh Xuân, Hồ Chí Minh",
+    "lat": 10.861639976501465,
+    "lng": 106.77924346923828,
+    "sourceUrl": "https://food.be.com.vn/ho-chi-minh/kim-nga-quan-com-phan-bun-rieu-banh-canh-le-van-chi-130264",
+    "fetchedAtUTC": "2026-10-11T04:27:25.595674+00:00",
+    "htmlSha256": "338d94b56666e8734aa3a9ca47c9e33fb0ca90b536d5e0492e2092dc81d5c89e",
+    "platformWeeklyHours": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Sunday"
+        ],
+        "opens": "00:01"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Monday"
+        ],
+        "opens": "00:01"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Tuesday"
+        ],
+        "opens": "00:01"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Wednesday"
+        ],
+        "opens": "00:01"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Thursday"
+        ],
+        "opens": "00:01"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Friday"
+        ],
+        "opens": "00:01"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Saturday"
+        ],
+        "opens": "00:01"
+      }
+    ],
+    "serviceScope": "delivery_platform_listing; physical dine_in/takeaway/availability unknown"
+  },
+  "additionalPublicObservations": [],
+  "offerings": [
+    {
+      "offeringId": "34e4e463-09a1-58cb-881a-5170f053f300",
+      "menuItemId": "menu_3fab60bacc6b85b97dff",
+      "observedMenuName": "Cơm sườn non ram",
+      "observedPriceVND": 45000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/kim-nga-quan-com-phan-bun-rieu-banh-canh-le-van-chi-130264",
+      "sourceRef": "67454d1b-dafa-506c-a960-cf7cb29e7866",
+      "fetchedAtUTC": "2026-10-11T04:27:25.595674+00:00",
+      "htmlSha256": "338d94b56666e8734aa3a9ca47c9e33fb0ca90b536d5e0492e2092dc81d5c89e",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "3d80f512-ce8e-5e13-87ee-23b4acb0150d",
+      "menuItemId": "menu_a654cb46f37e50e7c289",
+      "observedMenuName": "Cơm gà kho sả ớt",
+      "observedPriceVND": 45000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/kim-nga-quan-com-phan-bun-rieu-banh-canh-le-van-chi-130264",
+      "sourceRef": "67454d1b-dafa-506c-a960-cf7cb29e7866",
+      "fetchedAtUTC": "2026-10-11T04:27:25.595674+00:00",
+      "htmlSha256": "338d94b56666e8734aa3a9ca47c9e33fb0ca90b536d5e0492e2092dc81d5c89e",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "75b89e62-c6b3-5439-b5df-64c93941d3b9",
+      "menuItemId": "menu_f3b1dce2424b2af175d2",
+      "observedMenuName": "Cơm gà chiên mắm",
+      "observedPriceVND": 50000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/kim-nga-quan-com-phan-bun-rieu-banh-canh-le-van-chi-130264",
+      "sourceRef": "67454d1b-dafa-506c-a960-cf7cb29e7866",
+      "fetchedAtUTC": "2026-10-11T04:27:25.595674+00:00",
+      "htmlSha256": "338d94b56666e8734aa3a9ca47c9e33fb0ca90b536d5e0492e2092dc81d5c89e",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "af231cc2-7c50-5cc4-bfd9-0fd1b170ea17",
+      "menuItemId": "menu_809116427eff03becc18",
+      "observedMenuName": "Bún riêu",
+      "observedPriceVND": 45000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Bún"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/kim-nga-quan-com-phan-bun-rieu-banh-canh-le-van-chi-130264",
+      "sourceRef": "67454d1b-dafa-506c-a960-cf7cb29e7866",
+      "fetchedAtUTC": "2026-10-11T04:27:25.595674+00:00",
+      "htmlSha256": "338d94b56666e8734aa3a9ca47c9e33fb0ca90b536d5e0492e2092dc81d5c89e",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "b4d7bda4-0ba8-5ddf-9444-84343df6fc1c",
+      "menuItemId": "menu_9088be3e1160f96e4100",
+      "observedMenuName": "Cơm sườn ram",
+      "observedPriceVND": 45000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/kim-nga-quan-com-phan-bun-rieu-banh-canh-le-van-chi-130264",
+      "sourceRef": "67454d1b-dafa-506c-a960-cf7cb29e7866",
+      "fetchedAtUTC": "2026-10-11T04:27:25.595674+00:00",
+      "htmlSha256": "338d94b56666e8734aa3a9ca47c9e33fb0ca90b536d5e0492e2092dc81d5c89e",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    }
+  ],
+  "confirmedFieldsApplied": false,
+  "independentReviewer": null,
+  "validUntil": null
+}

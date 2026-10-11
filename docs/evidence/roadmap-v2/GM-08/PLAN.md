@@ -88,3 +88,32 @@ Evidence mới: fresh-crawl.txt, fresh-start-gate.txt, fresh-staging-result.json
 fresh-review-template.json, fresh-publish-guard.json, fresh-regression.txt và
 verification.json. Các phần0.3.0/501tests phía trên là lịch sử, không thay kiểm
 revision mới. Không commit/push.
+
+
+## Bước khảo sát/xác minh tiếp theo —2026-10-11
+
+User yêu cầu lệnh commit và tiếp tục GM-08; xác nhận chưa có ghi nhận tại quán,
+chọn tiếp tục đối chiếu nguồn công khai và chuẩn bị phiếu từng quán.
+[21phiếu chi nhánh/190offering](completion-survey/README.md) gắn đúng staged hash
+0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02.
+Có lịch7ngày platform để đối chiếu, các cột physical hours/serviceMode/giờ món/
+quyền nguồn/ngày kiểm/expiry/reviewer chưa điền. Đây là phiếu khảo sát, không
+phải verified bundle. [Coverage worksheet](completion-survey/COVERAGE.md) Pending.
+
+completion-public-comparison.json ghi6chênh lệch khoảng giờ từ nguồn công khai
+và1nguồn đối chiếu địa chỉ Texas; search cache không thay survey hiện tại,
+không áp giờ hoặc nhãn tiện ích vào bundle. OSMrelation7138136 thực tế là phường
+hiện tại/lịch sử Bình Thọ, loại khỏi candidate ranh giới quận Thủ Đức cũ.
+Không sinh polygon/anchor/stock/rights/review giả để đóng AC.
+
+Script gm08_prepare_survey_packet.py chạy offline, kiểm candidate hash/FK/draft,
+không overwrite phiếu; record190offering thuộc đúng21venue được kiểm thực tế.
+Negative checks wrong-hash/unknown-venue/no-overwrite Pass trong
+completion-packet-check.json. Candidate0.4.1/verified manifest không thay đổi.
+Không commit/push trong lượt này. Source rights/policy và independent survey/review
+still Pending; actual verified publish/query Not run.
+
+Evidence tổng hợp của bước chuẩn bị: [completion-survey-preparation.json](completion-survey-preparation.json).
+Full regression macOS: 508/508 Pass, 0 skip; CLI tạo phiếu thực tế trên Linux
+C/cp1252: Pass. Native Windows chưa chạy. Đây là kiểm công cụ/hồ sơ,
+không thay nghiệm thu dataset thật hoặc quyết định của reviewer độc lập.

@@ -1,0 +1,99 @@
+{
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "checkedAt": null,
+  "collector": null,
+  "comparisonNotes": {
+    "flags": [
+      "Khác khoảng giờ giữa nguồn công khai"
+    ],
+    "observations": [
+      {
+        "displayedHours": {
+          "end": "22:00",
+          "start": "06:00",
+          "weekdays": "unspecified"
+        },
+        "independentApproval": false,
+        "kind": "Foody listing",
+        "note": "Nguồn bổ sung hiển thị 06:00–22:00; platform có 06:00–17:00. Search result crawl4months old; weekday unspecified.",
+        "serviceModesConfirmed": false,
+        "url": "https://www.foody.vn/ho-chi-minh/banh-cuon-banh-uot-129-chuong-duong"
+      }
+    ],
+    "offeringHoursConfirmed": false,
+    "rightsConfirmed": false,
+    "serviceModesConfirmed": false
+  },
+  "confirmedVenue": {
+    "address": null,
+    "adminAreaId": null,
+    "branchName": null,
+    "coordinates": null,
+    "dateExceptions": [],
+    "fieldSources": {},
+    "serviceModes": [],
+    "status": "unknown",
+    "validUntil": null,
+    "weeklySchedules": []
+  },
+  "evidence": [],
+  "independentReviewer": null,
+  "offerings": [
+    {
+      "checkedAt": null,
+      "confirmedMenuName": null,
+      "currency": null,
+      "dateExceptions": [],
+      "dishId": "441e70be-0b06-521d-b5b9-7349386f14ad",
+      "fieldSources": {},
+      "label": "M01",
+      "observedMenuName": "Bún thịt nướng",
+      "observedPrice": 32000,
+      "observedSourceRef": "274f6cc1-8d26-54af-9d61-522bc9b2dab4",
+      "observedUnit": "menu_item_unspecified",
+      "offeringId": "3a313b4b-f12c-5c1c-b305-541cfae2e070",
+      "priceMax": null,
+      "priceMin": null,
+      "sameAsVenueHoursEvidence": [],
+      "serviceMode": null,
+      "unit": null,
+      "validUntil": null,
+      "weeklySchedules": []
+    },
+    {
+      "checkedAt": null,
+      "confirmedMenuName": null,
+      "currency": null,
+      "dateExceptions": [],
+      "dishId": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
+      "fieldSources": {},
+      "label": "M02",
+      "observedMenuName": "Bánh mì thịt nướng",
+      "observedPrice": 22000,
+      "observedSourceRef": "274f6cc1-8d26-54af-9d61-522bc9b2dab4",
+      "observedUnit": "menu_item_unspecified",
+      "offeringId": "ea6e9e2e-e3a9-5d64-9758-606a1a9cd9f7",
+      "priceMax": null,
+      "priceMin": null,
+      "sameAsVenueHoursEvidence": [],
+      "serviceMode": null,
+      "unit": null,
+      "validUntil": null,
+      "weeklySchedules": []
+    }
+  ],
+  "publicationPerformed": false,
+  "reviewedAt": null,
+  "sourceRights": {
+    "attribution": null,
+    "evidence": [],
+    "license": null,
+    "permittedUses": null,
+    "sourceRef": "274f6cc1-8d26-54af-9d61-522bc9b2dab4",
+    "usageRights": "unknown",
+    "validUntil": null
+  },
+  "state": "Pending",
+  "venueId": "ac83ebe5-4640-5c50-b67f-e751bb5d8476",
+  "verified": false
+}

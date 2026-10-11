@@ -1,0 +1,187 @@
+{
+  "areaId": null,
+  "boundary": null,
+  "boundaryRightsEvidence": [],
+  "boundarySourceRef": null,
+  "branches": [
+    {
+      "coordinatesConfirmed": false,
+      "evidence": [],
+      "insideSurveyBoundaryConfirmed": false,
+      "observedLat": 10.856399536132812,
+      "observedLng": 106.76609802246094,
+      "venueId": "d8ab56a2-ebf7-597c-bc2c-a53bf002700a"
+    },
+    {
+      "coordinatesConfirmed": false,
+      "evidence": [],
+      "insideSurveyBoundaryConfirmed": false,
+      "observedLat": 10.836359977722168,
+      "observedLng": 106.72821807861328,
+      "venueId": "337cbf18-7479-5ea7-94c5-e7f780be2940"
+    },
+    {
+      "coordinatesConfirmed": false,
+      "evidence": [],
+      "insideSurveyBoundaryConfirmed": false,
+      "observedLat": 10.873880386352539,
+      "observedLng": 106.76741027832031,
+      "venueId": "ec6f429d-908d-5a5a-a80f-5aae04c8ccf4"
+    },
+    {
+      "coordinatesConfirmed": false,
+      "evidence": [],
+      "insideSurveyBoundaryConfirmed": false,
+      "observedLat": 10.854220390319824,
+      "observedLng": 106.76924133300781,
+      "venueId": "5ab3f60f-dfa8-5582-9f3a-828c1372d8c2"
+    },
+    {
+      "coordinatesConfirmed": false,
+      "evidence": [],
+      "insideSurveyBoundaryConfirmed": false,
+      "observedLat": 10.853949546813965,
+      "observedLng": 106.77104949951172,
+      "venueId": "e9179bac-f048-5d75-ad2f-fb6b6525fb01"
+    },
+    {
+      "coordinatesConfirmed": false,
+      "evidence": [],
+      "insideSurveyBoundaryConfirmed": false,
+      "observedLat": 10.850859642028809,
+      "observedLng": 106.76480102539062,
+      "venueId": "265904b9-2d5e-5bdf-88cc-2ee59fe262dd"
+    },
+    {
+      "coordinatesConfirmed": false,
+      "evidence": [],
+      "insideSurveyBoundaryConfirmed": false,
+      "observedLat": 10.855669975280762,
+      "observedLng": 106.7569808959961,
+      "venueId": "ac83ebe5-4640-5c50-b67f-e751bb5d8476"
+    },
+    {
+      "coordinatesConfirmed": false,
+      "evidence": [],
+      "insideSurveyBoundaryConfirmed": false,
+      "observedLat": 10.854220390319824,
+      "observedLng": 106.76921844482422,
+      "venueId": "d8f7291d-bfea-59ba-937c-732ea3c098f1"
+    },
+    {
+      "coordinatesConfirmed": false,
+      "evidence": [],
+      "insideSurveyBoundaryConfirmed": false,
+      "observedLat": 10.851189613342285,
+      "observedLng": 106.75594329833984,
+      "venueId": "789307f3-d3f5-54e9-9fb9-245c84466987"
+    },
+    {
+      "coordinatesConfirmed": false,
+      "evidence": [],
+      "insideSurveyBoundaryConfirmed": false,
+      "observedLat": 10.855629920959473,
+      "observedLng": 106.7668228149414,
+      "venueId": "aea51b1c-5e17-52e2-99fa-d981657d077b"
+    },
+    {
+      "coordinatesConfirmed": false,
+      "evidence": [],
+      "insideSurveyBoundaryConfirmed": false,
+      "observedLat": 10.856980323791504,
+      "observedLng": 106.76441955566406,
+      "venueId": "7d282d6a-3daf-5c2f-a469-5eb382f35245"
+    },
+    {
+      "coordinatesConfirmed": false,
+      "evidence": [],
+      "insideSurveyBoundaryConfirmed": false,
+      "observedLat": 10.856459617614746,
+      "observedLng": 106.7656021118164,
+      "venueId": "eeecb47e-54fa-5845-95eb-9fed8b83db56"
+    },
+    {
+      "coordinatesConfirmed": false,
+      "evidence": [],
+      "insideSurveyBoundaryConfirmed": false,
+      "observedLat": 10.844659805297852,
+      "observedLng": 106.73004150390625,
+      "venueId": "668b13d9-fbfe-5391-ad26-e4499447e9e0"
+    },
+    {
+      "coordinatesConfirmed": false,
+      "evidence": [],
+      "insideSurveyBoundaryConfirmed": false,
+      "observedLat": 10.844420433044434,
+      "observedLng": 106.76219177246094,
+      "venueId": "e1c4c0d1-9fff-5639-93a7-20893ee73e30"
+    },
+    {
+      "coordinatesConfirmed": false,
+      "evidence": [],
+      "insideSurveyBoundaryConfirmed": false,
+      "observedLat": 10.857950210571289,
+      "observedLng": 106.75830841064453,
+      "venueId": "ab5f6e1e-1cbb-573c-a9b7-7e8cf5234e60"
+    },
+    {
+      "coordinatesConfirmed": false,
+      "evidence": [],
+      "insideSurveyBoundaryConfirmed": false,
+      "observedLat": 10.856109619140625,
+      "observedLng": 106.75778198242188,
+      "venueId": "27d5dd37-ffd7-5a57-b2ea-e53457ba1ec5"
+    },
+    {
+      "coordinatesConfirmed": false,
+      "evidence": [],
+      "insideSurveyBoundaryConfirmed": false,
+      "observedLat": 10.85630989074707,
+      "observedLng": 106.76761627197266,
+      "venueId": "a42979e3-d070-53a8-9bac-b9d994bc5d2f"
+    },
+    {
+      "coordinatesConfirmed": false,
+      "evidence": [],
+      "insideSurveyBoundaryConfirmed": false,
+      "observedLat": 10.861639976501465,
+      "observedLng": 106.77924346923828,
+      "venueId": "30cacf32-9afb-5c37-aec1-ca032510a070"
+    },
+    {
+      "coordinatesConfirmed": false,
+      "evidence": [],
+      "insideSurveyBoundaryConfirmed": false,
+      "observedLat": 10.840609550476074,
+      "observedLng": 106.7372817993164,
+      "venueId": "3d7ec92b-075d-5485-8843-dcff94f5db09"
+    },
+    {
+      "coordinatesConfirmed": false,
+      "evidence": [],
+      "insideSurveyBoundaryConfirmed": false,
+      "observedLat": 10.847310066223145,
+      "observedLng": 106.75192260742188,
+      "venueId": "2caf02b6-b3a0-5768-999b-840da0a26274"
+    },
+    {
+      "coordinatesConfirmed": false,
+      "evidence": [],
+      "insideSurveyBoundaryConfirmed": false,
+      "observedLat": 10.85923957824707,
+      "observedLng": 106.7464599609375,
+      "venueId": "a35c7d52-8e72-5d04-a265-bfef58c8ea1a"
+    }
+  ],
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "collector": null,
+  "noPersonalGPSConfirmed": null,
+  "publicAnchors": [],
+  "publicationPerformed": false,
+  "reviewer": null,
+  "state": "Pending",
+  "surveyScope": "Selected public-address branches in old Thu Duc; not full-area completeness",
+  "surveyedOn": null,
+  "validUntil": null,
+  "verified": false
+}

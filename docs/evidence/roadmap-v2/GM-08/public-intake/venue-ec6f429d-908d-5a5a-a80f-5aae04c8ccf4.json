@@ -1,0 +1,489 @@
+{
+  "state": "Pending",
+  "verified": false,
+  "publicationPerformed": false,
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "venueId": "ec6f429d-908d-5a5a-a80f-5aae04c8ccf4",
+  "branchName": "Cơm Tấm 49 - Đường Số 4",
+  "observedVenue": {
+    "address": "49 Đường Số 4, Linh Xuân, Thủ Đức, Hồ Chí Minh",
+    "lat": 10.873880386352539,
+    "lng": 106.76741027832031,
+    "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-tam-49-duong-so-4-64909",
+    "fetchedAtUTC": "2026-10-11T04:26:58.619966+00:00",
+    "htmlSha256": "13e773ae994577b9cb2b1e9e4f4a0a9224982101d7d582317bee85da8fb202bb",
+    "platformWeeklyHours": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "21:00",
+        "dayOfWeek": [
+          "Sunday"
+        ],
+        "opens": "05:30"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "20:00",
+        "dayOfWeek": [
+          "Monday"
+        ],
+        "opens": "05:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "20:00",
+        "dayOfWeek": [
+          "Tuesday"
+        ],
+        "opens": "05:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "20:03",
+        "dayOfWeek": [
+          "Wednesday"
+        ],
+        "opens": "05:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "20:00",
+        "dayOfWeek": [
+          "Thursday"
+        ],
+        "opens": "05:30"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "20:00",
+        "dayOfWeek": [
+          "Friday"
+        ],
+        "opens": "05:30"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "20:30",
+        "dayOfWeek": [
+          "Saturday"
+        ],
+        "opens": "05:30"
+      }
+    ],
+    "serviceScope": "delivery_platform_listing; physical dine_in/takeaway/availability unknown"
+  },
+  "additionalPublicObservations": [],
+  "offerings": [
+    {
+      "offeringId": "0f96060f-9b16-54bc-953e-ebe68a773c50",
+      "menuItemId": "menu_7e770ee9a93604f7edd1",
+      "observedMenuName": "Cơm sườn trứng ốp la",
+      "observedPriceVND": 60000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Món phải thử",
+        "món cơm bán từ 5h30 -19h"
+      ],
+      "hoursHint": {
+        "start": "05:30",
+        "end": "19:00",
+        "weekdays": "unspecified",
+        "scope": "Group label mentions rice; same group also includes noodles/drinks.",
+        "applicableToOfferingConfirmed": false,
+        "note": "Rice items are candidates to confirm; do not apply this range automatically to every item in the group or to all seven weekdays."
+      },
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-tam-49-duong-so-4-64909",
+      "sourceRef": "79db7b66-bb3b-5fa6-9a7c-0a1c68610fce",
+      "fetchedAtUTC": "2026-10-11T04:26:58.619966+00:00",
+      "htmlSha256": "13e773ae994577b9cb2b1e9e4f4a0a9224982101d7d582317bee85da8fb202bb",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "159553df-2bb8-5401-9d31-de9dd2c2f347",
+      "menuItemId": "menu_eb31c70ae1612e482edb",
+      "observedMenuName": "MÌ TRỘN COLUSA",
+      "observedPriceVND": 40000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "món cơm bán từ 5h30 -19h"
+      ],
+      "hoursHint": {
+        "start": "05:30",
+        "end": "19:00",
+        "weekdays": "unspecified",
+        "scope": "Group label mentions rice; same group also includes noodles/drinks.",
+        "applicableToOfferingConfirmed": false,
+        "note": "Rice items are candidates to confirm; do not apply this range automatically to every item in the group or to all seven weekdays."
+      },
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-tam-49-duong-so-4-64909",
+      "sourceRef": "79db7b66-bb3b-5fa6-9a7c-0a1c68610fce",
+      "fetchedAtUTC": "2026-10-11T04:26:58.619966+00:00",
+      "htmlSha256": "13e773ae994577b9cb2b1e9e4f4a0a9224982101d7d582317bee85da8fb202bb",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "2bc09059-b6e3-56f3-aaaa-1e6a7a22e40f",
+      "menuItemId": "menu_42e351d60faa9b17eb3c",
+      "observedMenuName": "Bún thịt nướng",
+      "observedPriceVND": 55000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Món phải thử",
+        "món cơm bán từ 5h30 -19h"
+      ],
+      "hoursHint": {
+        "start": "05:30",
+        "end": "19:00",
+        "weekdays": "unspecified",
+        "scope": "Group label mentions rice; same group also includes noodles/drinks.",
+        "applicableToOfferingConfirmed": false,
+        "note": "Rice items are candidates to confirm; do not apply this range automatically to every item in the group or to all seven weekdays."
+      },
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-tam-49-duong-so-4-64909",
+      "sourceRef": "79db7b66-bb3b-5fa6-9a7c-0a1c68610fce",
+      "fetchedAtUTC": "2026-10-11T04:26:58.619966+00:00",
+      "htmlSha256": "13e773ae994577b9cb2b1e9e4f4a0a9224982101d7d582317bee85da8fb202bb",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "3b3d94b4-283c-5d61-86c4-67a0fb0e9989",
+      "menuItemId": "menu_48438c228897db92d83c",
+      "observedMenuName": "MÌ HOẢ TỐC, MÌ TRỘN PHÔ MAI HÀN QUỐC COLUSA",
+      "observedPriceVND": 26000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "món cơm bán từ 5h30 -19h"
+      ],
+      "hoursHint": {
+        "start": "05:30",
+        "end": "19:00",
+        "weekdays": "unspecified",
+        "scope": "Group label mentions rice; same group also includes noodles/drinks.",
+        "applicableToOfferingConfirmed": false,
+        "note": "Rice items are candidates to confirm; do not apply this range automatically to every item in the group or to all seven weekdays."
+      },
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-tam-49-duong-so-4-64909",
+      "sourceRef": "79db7b66-bb3b-5fa6-9a7c-0a1c68610fce",
+      "fetchedAtUTC": "2026-10-11T04:26:58.619966+00:00",
+      "htmlSha256": "13e773ae994577b9cb2b1e9e4f4a0a9224982101d7d582317bee85da8fb202bb",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "42e96649-e821-5f4c-b4d3-a40bad6d0160",
+      "menuItemId": "menu_f3d440a69d633aa5dea5",
+      "observedMenuName": "Cơm tấm sườn bì",
+      "observedPriceVND": 60000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Món phải thử",
+        "món cơm bán từ 5h30 -19h"
+      ],
+      "hoursHint": {
+        "start": "05:30",
+        "end": "19:00",
+        "weekdays": "unspecified",
+        "scope": "Group label mentions rice; same group also includes noodles/drinks.",
+        "applicableToOfferingConfirmed": false,
+        "note": "Rice items are candidates to confirm; do not apply this range automatically to every item in the group or to all seven weekdays."
+      },
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-tam-49-duong-so-4-64909",
+      "sourceRef": "79db7b66-bb3b-5fa6-9a7c-0a1c68610fce",
+      "fetchedAtUTC": "2026-10-11T04:26:58.619966+00:00",
+      "htmlSha256": "13e773ae994577b9cb2b1e9e4f4a0a9224982101d7d582317bee85da8fb202bb",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "489aa892-760d-5564-a089-454e150aaa33",
+      "menuItemId": "menu_e2b3d5c2f85e31e3ce89",
+      "observedMenuName": "cơm tấm chả",
+      "observedPriceVND": 55000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "món cơm bán từ 5h30 -19h"
+      ],
+      "hoursHint": {
+        "start": "05:30",
+        "end": "19:00",
+        "weekdays": "unspecified",
+        "scope": "Group label mentions rice; same group also includes noodles/drinks.",
+        "applicableToOfferingConfirmed": false,
+        "note": "Rice items are candidates to confirm; do not apply this range automatically to every item in the group or to all seven weekdays."
+      },
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-tam-49-duong-so-4-64909",
+      "sourceRef": "79db7b66-bb3b-5fa6-9a7c-0a1c68610fce",
+      "fetchedAtUTC": "2026-10-11T04:26:58.619966+00:00",
+      "htmlSha256": "13e773ae994577b9cb2b1e9e4f4a0a9224982101d7d582317bee85da8fb202bb",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "4d1a7e88-69ab-5a05-bcbd-8fc8cf4f9776",
+      "menuItemId": "menu_9b900050d66d8e4d4430",
+      "observedMenuName": "CƠM GÀ KHO XÃ ỚT",
+      "observedPriceVND": 60000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "món cơm bán từ 5h30 -19h"
+      ],
+      "hoursHint": {
+        "start": "05:30",
+        "end": "19:00",
+        "weekdays": "unspecified",
+        "scope": "Group label mentions rice; same group also includes noodles/drinks.",
+        "applicableToOfferingConfirmed": false,
+        "note": "Rice items are candidates to confirm; do not apply this range automatically to every item in the group or to all seven weekdays."
+      },
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-tam-49-duong-so-4-64909",
+      "sourceRef": "79db7b66-bb3b-5fa6-9a7c-0a1c68610fce",
+      "fetchedAtUTC": "2026-10-11T04:26:58.619966+00:00",
+      "htmlSha256": "13e773ae994577b9cb2b1e9e4f4a0a9224982101d7d582317bee85da8fb202bb",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "4ea69870-d307-52c1-adad-4f34bbf07c43",
+      "menuItemId": "menu_f089ebdf1cf0409a152f",
+      "observedMenuName": "cơm tấm trứng ốp la",
+      "observedPriceVND": 55000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "món cơm bán từ 5h30 -19h"
+      ],
+      "hoursHint": {
+        "start": "05:30",
+        "end": "19:00",
+        "weekdays": "unspecified",
+        "scope": "Group label mentions rice; same group also includes noodles/drinks.",
+        "applicableToOfferingConfirmed": false,
+        "note": "Rice items are candidates to confirm; do not apply this range automatically to every item in the group or to all seven weekdays."
+      },
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-tam-49-duong-so-4-64909",
+      "sourceRef": "79db7b66-bb3b-5fa6-9a7c-0a1c68610fce",
+      "fetchedAtUTC": "2026-10-11T04:26:58.619966+00:00",
+      "htmlSha256": "13e773ae994577b9cb2b1e9e4f4a0a9224982101d7d582317bee85da8fb202bb",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "528d4d55-859c-5b5f-bae4-a9ebbe2d87c3",
+      "menuItemId": "menu_910c92238d15099cc004",
+      "observedMenuName": "BÚN BÒ GIÒ HEO",
+      "observedPriceVND": 60000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "món cơm bán từ 5h30 -19h"
+      ],
+      "hoursHint": {
+        "start": "05:30",
+        "end": "19:00",
+        "weekdays": "unspecified",
+        "scope": "Group label mentions rice; same group also includes noodles/drinks.",
+        "applicableToOfferingConfirmed": false,
+        "note": "Rice items are candidates to confirm; do not apply this range automatically to every item in the group or to all seven weekdays."
+      },
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-tam-49-duong-so-4-64909",
+      "sourceRef": "79db7b66-bb3b-5fa6-9a7c-0a1c68610fce",
+      "fetchedAtUTC": "2026-10-11T04:26:58.619966+00:00",
+      "htmlSha256": "13e773ae994577b9cb2b1e9e4f4a0a9224982101d7d582317bee85da8fb202bb",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "54d3c205-98d4-5bc5-9faa-5f4b198675dc",
+      "menuItemId": "menu_4a9609802452ab5ebc7c",
+      "observedMenuName": "BÚN RIÊU",
+      "observedPriceVND": 50000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "món cơm bán từ 5h30 -19h"
+      ],
+      "hoursHint": {
+        "start": "05:30",
+        "end": "19:00",
+        "weekdays": "unspecified",
+        "scope": "Group label mentions rice; same group also includes noodles/drinks.",
+        "applicableToOfferingConfirmed": false,
+        "note": "Rice items are candidates to confirm; do not apply this range automatically to every item in the group or to all seven weekdays."
+      },
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-tam-49-duong-so-4-64909",
+      "sourceRef": "79db7b66-bb3b-5fa6-9a7c-0a1c68610fce",
+      "fetchedAtUTC": "2026-10-11T04:26:58.619966+00:00",
+      "htmlSha256": "13e773ae994577b9cb2b1e9e4f4a0a9224982101d7d582317bee85da8fb202bb",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "7dda30ea-02d4-5d73-a2fe-c540bf580417",
+      "menuItemId": "menu_7b42359df8a71ec9ff28",
+      "observedMenuName": "BÚN CHAY TÀU HỦ NƯỚC TƯƠNG",
+      "observedPriceVND": 35000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "món cơm bán từ 5h30 -19h"
+      ],
+      "hoursHint": {
+        "start": "05:30",
+        "end": "19:00",
+        "weekdays": "unspecified",
+        "scope": "Group label mentions rice; same group also includes noodles/drinks.",
+        "applicableToOfferingConfirmed": false,
+        "note": "Rice items are candidates to confirm; do not apply this range automatically to every item in the group or to all seven weekdays."
+      },
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-tam-49-duong-so-4-64909",
+      "sourceRef": "79db7b66-bb3b-5fa6-9a7c-0a1c68610fce",
+      "fetchedAtUTC": "2026-10-11T04:26:58.619966+00:00",
+      "htmlSha256": "13e773ae994577b9cb2b1e9e4f4a0a9224982101d7d582317bee85da8fb202bb",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "caa6650e-00d7-5a9d-952c-fdaeb2deb89f",
+      "menuItemId": "menu_47d4c659bdd81c277d02",
+      "observedMenuName": "BÚN RIÊU GIÒ HEO",
+      "observedPriceVND": 55000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "món cơm bán từ 5h30 -19h"
+      ],
+      "hoursHint": {
+        "start": "05:30",
+        "end": "19:00",
+        "weekdays": "unspecified",
+        "scope": "Group label mentions rice; same group also includes noodles/drinks.",
+        "applicableToOfferingConfirmed": false,
+        "note": "Rice items are candidates to confirm; do not apply this range automatically to every item in the group or to all seven weekdays."
+      },
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-tam-49-duong-so-4-64909",
+      "sourceRef": "79db7b66-bb3b-5fa6-9a7c-0a1c68610fce",
+      "fetchedAtUTC": "2026-10-11T04:26:58.619966+00:00",
+      "htmlSha256": "13e773ae994577b9cb2b1e9e4f4a0a9224982101d7d582317bee85da8fb202bb",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "ecc16d30-cb93-596a-9aee-674e674a56cd",
+      "menuItemId": "menu_2f83ae6572afa0131c04",
+      "observedMenuName": "MÌ TRỘN HƯƠNG VỊ KEBAB COLUSA",
+      "observedPriceVND": 20000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "món cơm bán từ 5h30 -19h"
+      ],
+      "hoursHint": {
+        "start": "05:30",
+        "end": "19:00",
+        "weekdays": "unspecified",
+        "scope": "Group label mentions rice; same group also includes noodles/drinks.",
+        "applicableToOfferingConfirmed": false,
+        "note": "Rice items are candidates to confirm; do not apply this range automatically to every item in the group or to all seven weekdays."
+      },
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-tam-49-duong-so-4-64909",
+      "sourceRef": "79db7b66-bb3b-5fa6-9a7c-0a1c68610fce",
+      "fetchedAtUTC": "2026-10-11T04:26:58.619966+00:00",
+      "htmlSha256": "13e773ae994577b9cb2b1e9e4f4a0a9224982101d7d582317bee85da8fb202bb",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "f5203495-2fb5-55bd-b022-1c53dd4cdc5d",
+      "menuItemId": "menu_52042c9911fad6fa81c1",
+      "observedMenuName": "BÚN BÒ HUẾ",
+      "observedPriceVND": 65000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "món cơm bán từ 5h30 -19h"
+      ],
+      "hoursHint": {
+        "start": "05:30",
+        "end": "19:00",
+        "weekdays": "unspecified",
+        "scope": "Group label mentions rice; same group also includes noodles/drinks.",
+        "applicableToOfferingConfirmed": false,
+        "note": "Rice items are candidates to confirm; do not apply this range automatically to every item in the group or to all seven weekdays."
+      },
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-tam-49-duong-so-4-64909",
+      "sourceRef": "79db7b66-bb3b-5fa6-9a7c-0a1c68610fce",
+      "fetchedAtUTC": "2026-10-11T04:26:58.619966+00:00",
+      "htmlSha256": "13e773ae994577b9cb2b1e9e4f4a0a9224982101d7d582317bee85da8fb202bb",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "ff9e34e3-1af1-56ef-9ad2-23203c597477",
+      "menuItemId": "menu_cee94deafa33c33c963f",
+      "observedMenuName": "BÚN RIÊU TÔM",
+      "observedPriceVND": 55000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "món cơm bán từ 5h30 -19h"
+      ],
+      "hoursHint": {
+        "start": "05:30",
+        "end": "19:00",
+        "weekdays": "unspecified",
+        "scope": "Group label mentions rice; same group also includes noodles/drinks.",
+        "applicableToOfferingConfirmed": false,
+        "note": "Rice items are candidates to confirm; do not apply this range automatically to every item in the group or to all seven weekdays."
+      },
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-tam-49-duong-so-4-64909",
+      "sourceRef": "79db7b66-bb3b-5fa6-9a7c-0a1c68610fce",
+      "fetchedAtUTC": "2026-10-11T04:26:58.619966+00:00",
+      "htmlSha256": "13e773ae994577b9cb2b1e9e4f4a0a9224982101d7d582317bee85da8fb202bb",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    }
+  ],
+  "confirmedFieldsApplied": false,
+  "independentReviewer": null,
+  "validUntil": null
+}

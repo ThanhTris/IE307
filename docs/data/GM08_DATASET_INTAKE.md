@@ -126,3 +126,15 @@ User xác nhận chưa có căn cứ quyền nguồn và policy; [hồ sơ Propo
 được soạn để review. Dùng worksheet theo IDs/hash mới để thu dữ kiện thiếu.
 0.3.0 và audit catalogue ở trên là lịch sử; không phải phần hiện vẫn thiếu venue
 record. Khảo sát/review content, rights/freshness/coverage/giờ món vẫn chưa hoàn tất.
+
+
+## Phiếu xác minh theo chi nhánh
+
+[21phiếu/190offering](../evidence/roadmap-v2/GM-08/completion-survey/README.md)
+đã gắn candidate0.4.1hash; user xác nhận chưa có khảo sát thực tế, cần nhóm điền
+physical hours/giờ món/serviceModes/quyền/freshness/coverage evidence.
+6chênh lệch giờ listing để ưu tiên kiểm, không tự chọn giờ một nguồn làm verified.
+Phường Thủ Đức OSM hiện tại không là ranh giới quận Thủ Đức cũ. Phiếu giữ Pending,
+không phải JSON import. Sau bổ sung phải stage mới và independent review thật.
+
+Bổ sung Internet2026-10-11: [21hồ sơ nguồn đã điền quan sát công khai](../evidence/roadmap-v2/GM-08/public-intake/README.md). Dữ kiện này cần review; confirmed fields và quyền nguồn chưa tự chốt.

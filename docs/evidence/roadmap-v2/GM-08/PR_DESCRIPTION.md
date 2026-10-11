@@ -32,3 +32,9 @@ stage mới và independent review đúng hash trước publish/DB query.
 Evidence: docs/evidence/roadmap-v2/GM-08/verification.json;
 pilot: supabase/seed/draft/gm08-survey-v0.4.1/README.md.
 Upstream: GM-04 PR#62, GM-06 PR#102, implementation base7060b88.
+
+
+Chuẩn bị21phiếu chi nhánh/190offering gắn hash, kèm6đối chiếu khoảng giờ công khai
+và phiếu coverage/anchor. User xác nhận chưa có khảo sát; các ô xác nhận/review
+còn Pending. CLI tạo phiếu offline kiểm hash/FK, reject mismatched notes và tránh
+overwrite; không đổi verified manifest/bundle.

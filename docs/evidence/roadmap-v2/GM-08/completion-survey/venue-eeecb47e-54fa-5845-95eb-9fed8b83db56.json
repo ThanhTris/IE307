@@ -1,0 +1,63 @@
+{
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "checkedAt": null,
+  "collector": null,
+  "comparisonNotes": {
+    "flags": [],
+    "observations": [],
+    "offeringHoursConfirmed": false,
+    "rightsConfirmed": false,
+    "serviceModesConfirmed": false
+  },
+  "confirmedVenue": {
+    "address": null,
+    "adminAreaId": null,
+    "branchName": null,
+    "coordinates": null,
+    "dateExceptions": [],
+    "fieldSources": {},
+    "serviceModes": [],
+    "status": "unknown",
+    "validUntil": null,
+    "weeklySchedules": []
+  },
+  "evidence": [],
+  "independentReviewer": null,
+  "offerings": [
+    {
+      "checkedAt": null,
+      "confirmedMenuName": null,
+      "currency": null,
+      "dateExceptions": [],
+      "dishId": "441e70be-0b06-521d-b5b9-7349386f14ad",
+      "fieldSources": {},
+      "label": "M01",
+      "observedMenuName": "Bún thịt nướng",
+      "observedPrice": 75000,
+      "observedSourceRef": "601eb901-c804-58ac-a21c-08efe786648c",
+      "observedUnit": "menu_item_unspecified",
+      "offeringId": "6c74ccbc-f263-53ee-ba87-4d1d389f48d1",
+      "priceMax": null,
+      "priceMin": null,
+      "sameAsVenueHoursEvidence": [],
+      "serviceMode": null,
+      "unit": null,
+      "validUntil": null,
+      "weeklySchedules": []
+    }
+  ],
+  "publicationPerformed": false,
+  "reviewedAt": null,
+  "sourceRights": {
+    "attribution": null,
+    "evidence": [],
+    "license": null,
+    "permittedUses": null,
+    "sourceRef": "601eb901-c804-58ac-a21c-08efe786648c",
+    "usageRights": "unknown",
+    "validUntil": null
+  },
+  "state": "Pending",
+  "venueId": "eeecb47e-54fa-5845-95eb-9fed8b83db56",
+  "verified": false
+}

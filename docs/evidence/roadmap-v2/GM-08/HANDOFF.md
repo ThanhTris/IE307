@@ -135,3 +135,53 @@ Evidence mới: fresh-crawl.txt, fresh-start-gate.txt, fresh-staging-result.json
 fresh-review-template.json, fresh-publish-guard.json, fresh-regression.txt và
 verification.json. Các phần0.3.0/501tests phía trên là lịch sử, không thay kiểm
 revision mới. Không commit/push.
+
+
+## Bước khảo sát/xác minh tiếp theo —2026-10-11
+
+User yêu cầu lệnh commit và tiếp tục GM-08; xác nhận chưa có ghi nhận tại quán,
+chọn tiếp tục đối chiếu nguồn công khai và chuẩn bị phiếu từng quán.
+[21phiếu chi nhánh/190offering](completion-survey/README.md) gắn đúng staged hash
+0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02.
+Có lịch7ngày platform để đối chiếu, các cột physical hours/serviceMode/giờ món/
+quyền nguồn/ngày kiểm/expiry/reviewer chưa điền. Đây là phiếu khảo sát, không
+phải verified bundle. [Coverage worksheet](completion-survey/COVERAGE.md) Pending.
+
+completion-public-comparison.json ghi6chênh lệch khoảng giờ từ nguồn công khai
+và1nguồn đối chiếu địa chỉ Texas; search cache không thay survey hiện tại,
+không áp giờ hoặc nhãn tiện ích vào bundle. OSMrelation7138136 thực tế là phường
+hiện tại/lịch sử Bình Thọ, loại khỏi candidate ranh giới quận Thủ Đức cũ.
+Không sinh polygon/anchor/stock/rights/review giả để đóng AC.
+
+Script gm08_prepare_survey_packet.py chạy offline, kiểm candidate hash/FK/draft,
+không overwrite phiếu; record190offering thuộc đúng21venue được kiểm thực tế.
+Negative checks wrong-hash/unknown-venue/no-overwrite Pass trong
+completion-packet-check.json. Candidate0.4.1/verified manifest không thay đổi.
+Không commit/push trong lượt này. Source rights/policy và independent survey/review
+still Pending; actual verified publish/query Not run.
+
+Evidence tổng hợp của bước chuẩn bị: [completion-survey-preparation.json](completion-survey-preparation.json).
+Full regression macOS: 508/508 Pass, 0 skip; CLI tạo phiếu thực tế trên Linux
+C/cp1252: Pass. Native Windows chưa chạy. Đây là kiểm công cụ/hồ sơ,
+không thay nghiệm thu dataset thật hoặc quyết định của reviewer độc lập.
+
+## Thu thập bổ sung từ internet — 2026-10-11
+
+[Hồ sơ nguồn theo 21 quán](public-intake/README.md) có190offering, dùng lại
+cache beFood thật lấy hôm nay, thêm7Foody HTML trực tiếp và bảng chi nhánh
+Jollibee official. Lịch platform/ngày nguồn/hash HTML và nhóm menu nằm trong JSON
+đúngvenueId/offeringId; giữ riêng các confirmed fields chưa có bằng chứng.
+Cơm Tấm49 có15 mục pilot trong nhóm ghi05:30–19:00 nhưng bao gồm cả món không
+phải cơm, chưa rõ ngày trong tuần; không tự tạo lịch15món. Ánh Linh: HTTP Foody
+hiện ghi Quán tạm nghỉ, không dùng giờ09:00–22:00 từ search cache làm giờ hiện tại.
+Phở Lý Quốc Sư: listing00:01–23:59 không coi là24h. Jollibee255VõVănNgân:
+official09:00–22:00 khác giờ platform08:30–22:00, giữ cả hai để review.
+Trang điều khoản beFood hiện hành tải dynamic; thông báo2026 đã tìm thấy nhưng
+chưa có quyền dùng nguồn cấp cho project. Nguồn Nem Hùng Việt Dĩ An không đủ xác
+nhận118HoàngDiệu2; lỗiTLS/HTTP403 giữ đúng trong capture-manifest, không bỏTLS.
+Không áp dữ kiện này vào bundle0.4.1/verified manifest hoặc điền approval thay
+người review. GM-08 In Progress, actual verified publish/query Not run.
+
+Kiểm tra bổ sung: [public-intake/validation.json](public-intake/validation.json),
+508tests Pass/0skip; repo/docs/diff và21venue/190offering integrity Pass.
+Chỉ nghiệm thu thu thập hồ sơ; dataset verified/publish/query vẫn Not run.

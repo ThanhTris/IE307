@@ -1,0 +1,498 @@
+{
+  "state": "Pending",
+  "verified": false,
+  "publicationPerformed": false,
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "venueId": "337cbf18-7479-5ea7-94c5-e7f780be2940",
+  "branchName": "Bún Bò Ngon Ánh Linh - Bánh Canh & Mì Ý 24h - Đường 49",
+  "observedVenue": {
+    "address": "1/43/6 Đường 49, Phường Hiệp Bình Chánh, Thành Phố Thủ Đức, Hồ Chí Minh",
+    "lat": 10.836359977722168,
+    "lng": 106.72821807861328,
+    "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-ngon-anh-linh-banh-canh-mi-y-24h-duong-49-94430",
+    "fetchedAtUTC": "2026-10-11T04:27:35.600836+00:00",
+    "htmlSha256": "2c638d22a37f3de5f070aee28fbdef41d494e06430f07abce71269e889b7be74",
+    "platformWeeklyHours": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Sunday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Monday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Tuesday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Wednesday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Thursday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Friday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Saturday"
+        ],
+        "opens": "00:00"
+      }
+    ],
+    "serviceScope": "delivery_platform_listing; physical dine_in/takeaway/availability unknown"
+  },
+  "additionalPublicObservations": [
+    {
+      "kind": "Foody direct HTTPS capture",
+      "url": "https://www.foody.vn/ho-chi-minh/bun-bo-ngon-anh-linh-banh-canh-my-y-24h",
+      "fetchedAtUTC": "2026-10-11T05:09:11.779214+00:00",
+      "sha256": "98cd4873ef8af1e4afba7580088f4677d3fcdc0ee8a2d3f7212d96ef25ff2269",
+      "observedAddress": "1/43/6 Tổ 42a Khu Phố 6 Đường 49, Tp. Thủ Đức, TP. HCM",
+      "observedHours": null,
+      "listingStatusLabel": "Quán tạm nghỉ",
+      "physicalVenueConfirmed": false,
+      "serviceModesConfirmed": false,
+      "note": "Static listing observation only; no seven-day schedule or offering hours confirmed. Amenities with active/inactive ambiguity not used."
+    }
+  ],
+  "offerings": [
+    {
+      "offeringId": "258e85be-adcd-5668-897c-9b1aa18d20e9",
+      "menuItemId": "menu_f2005d073454d5eead81",
+      "observedMenuName": "mỳ spaghetti - size L",
+      "observedPriceVND": 55000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "mỳ spaghetti"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-ngon-anh-linh-banh-canh-mi-y-24h-duong-49-94430",
+      "sourceRef": "6f69256a-a101-5bc7-b230-9c4a13b32e0c",
+      "fetchedAtUTC": "2026-10-11T04:27:35.600836+00:00",
+      "htmlSha256": "2c638d22a37f3de5f070aee28fbdef41d494e06430f07abce71269e889b7be74",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "286de37c-aeff-53b4-8a42-945c5052ddcb",
+      "menuItemId": "menu_ac5eec97a6e8cfff4f7d",
+      "observedMenuName": "mỳ spaghetti - size S",
+      "observedPriceVND": 35000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "mỳ spaghetti"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-ngon-anh-linh-banh-canh-mi-y-24h-duong-49-94430",
+      "sourceRef": "6f69256a-a101-5bc7-b230-9c4a13b32e0c",
+      "fetchedAtUTC": "2026-10-11T04:27:35.600836+00:00",
+      "htmlSha256": "2c638d22a37f3de5f070aee28fbdef41d494e06430f07abce71269e889b7be74",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "2f09d018-6f69-584e-9ab6-85af018fa4e2",
+      "menuItemId": "menu_19a3dd1c2e3c740387e2",
+      "observedMenuName": "bún bò giò bắp bò viên",
+      "observedPriceVND": 64000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-ngon-anh-linh-banh-canh-mi-y-24h-duong-49-94430",
+      "sourceRef": "6f69256a-a101-5bc7-b230-9c4a13b32e0c",
+      "fetchedAtUTC": "2026-10-11T04:27:35.600836+00:00",
+      "htmlSha256": "2c638d22a37f3de5f070aee28fbdef41d494e06430f07abce71269e889b7be74",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "3bfdafb6-a690-5722-ab19-21cac77040de",
+      "menuItemId": "menu_d990c1bcba36dad1919f",
+      "observedMenuName": "bún bò bắp bò viên",
+      "observedPriceVND": 62000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-ngon-anh-linh-banh-canh-mi-y-24h-duong-49-94430",
+      "sourceRef": "6f69256a-a101-5bc7-b230-9c4a13b32e0c",
+      "fetchedAtUTC": "2026-10-11T04:27:35.600836+00:00",
+      "htmlSha256": "2c638d22a37f3de5f070aee28fbdef41d494e06430f07abce71269e889b7be74",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "3ff96f44-b566-5daa-9f22-85ed027fa556",
+      "menuItemId": "menu_93b8acb014059b29195e",
+      "observedMenuName": "Bún bò sườn bắp",
+      "observedPriceVND": 62000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-ngon-anh-linh-banh-canh-mi-y-24h-duong-49-94430",
+      "sourceRef": "6f69256a-a101-5bc7-b230-9c4a13b32e0c",
+      "fetchedAtUTC": "2026-10-11T04:27:35.600836+00:00",
+      "htmlSha256": "2c638d22a37f3de5f070aee28fbdef41d494e06430f07abce71269e889b7be74",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "679a2cfd-df96-5379-a947-9c4b608939d4",
+      "menuItemId": "menu_6aecf265e0b3dd38db25",
+      "observedMenuName": "bún bò chả",
+      "observedPriceVND": 47000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-ngon-anh-linh-banh-canh-mi-y-24h-duong-49-94430",
+      "sourceRef": "6f69256a-a101-5bc7-b230-9c4a13b32e0c",
+      "fetchedAtUTC": "2026-10-11T04:27:35.600836+00:00",
+      "htmlSha256": "2c638d22a37f3de5f070aee28fbdef41d494e06430f07abce71269e889b7be74",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "691b62ef-f137-5b35-aee4-b0d8129d50fa",
+      "menuItemId": "menu_3dc76f5695b35349f545",
+      "observedMenuName": "bún bò bắp chả bò viên",
+      "observedPriceVND": 64000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-ngon-anh-linh-banh-canh-mi-y-24h-duong-49-94430",
+      "sourceRef": "6f69256a-a101-5bc7-b230-9c4a13b32e0c",
+      "fetchedAtUTC": "2026-10-11T04:27:35.600836+00:00",
+      "htmlSha256": "2c638d22a37f3de5f070aee28fbdef41d494e06430f07abce71269e889b7be74",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "7eba84f1-0ea5-5439-8d29-2940444b93e8",
+      "menuItemId": "menu_f3910940e2bc77fe66c7",
+      "observedMenuName": "Bún bắp bò",
+      "observedPriceVND": 47000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-ngon-anh-linh-banh-canh-mi-y-24h-duong-49-94430",
+      "sourceRef": "6f69256a-a101-5bc7-b230-9c4a13b32e0c",
+      "fetchedAtUTC": "2026-10-11T04:27:35.600836+00:00",
+      "htmlSha256": "2c638d22a37f3de5f070aee28fbdef41d494e06430f07abce71269e889b7be74",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "8acadc26-0db6-566f-8244-3f5ff72fe99b",
+      "menuItemId": "menu_650cc70ac8049e2847ed",
+      "observedMenuName": "bún bò đặc biệt full topping",
+      "observedPriceVND": 79000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-ngon-anh-linh-banh-canh-mi-y-24h-duong-49-94430",
+      "sourceRef": "6f69256a-a101-5bc7-b230-9c4a13b32e0c",
+      "fetchedAtUTC": "2026-10-11T04:27:35.600836+00:00",
+      "htmlSha256": "2c638d22a37f3de5f070aee28fbdef41d494e06430f07abce71269e889b7be74",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "8cae18ce-8efa-5765-9cf3-c7b749f094c3",
+      "menuItemId": "menu_09d13c1382a6c3b65b7a",
+      "observedMenuName": "mỳ spaghetti - size M",
+      "observedPriceVND": 45000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "mỳ spaghetti"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-ngon-anh-linh-banh-canh-mi-y-24h-duong-49-94430",
+      "sourceRef": "6f69256a-a101-5bc7-b230-9c4a13b32e0c",
+      "fetchedAtUTC": "2026-10-11T04:27:35.600836+00:00",
+      "htmlSha256": "2c638d22a37f3de5f070aee28fbdef41d494e06430f07abce71269e889b7be74",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "95569382-6c56-5b34-81fc-5775c1b55172",
+      "menuItemId": "menu_6b01a9cad699439ad9b4",
+      "observedMenuName": "bún bò sườn bắp bò viên",
+      "observedPriceVND": 64000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-ngon-anh-linh-banh-canh-mi-y-24h-duong-49-94430",
+      "sourceRef": "6f69256a-a101-5bc7-b230-9c4a13b32e0c",
+      "fetchedAtUTC": "2026-10-11T04:27:35.600836+00:00",
+      "htmlSha256": "2c638d22a37f3de5f070aee28fbdef41d494e06430f07abce71269e889b7be74",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "9556d449-b82b-5a76-bd18-ce8c882275d1",
+      "menuItemId": "menu_18405c461501c1ded2b1",
+      "observedMenuName": "bún bò sườn chả bò viên",
+      "observedPriceVND": 64000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-ngon-anh-linh-banh-canh-mi-y-24h-duong-49-94430",
+      "sourceRef": "6f69256a-a101-5bc7-b230-9c4a13b32e0c",
+      "fetchedAtUTC": "2026-10-11T04:27:35.600836+00:00",
+      "htmlSha256": "2c638d22a37f3de5f070aee28fbdef41d494e06430f07abce71269e889b7be74",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "9d7030c1-5def-5fb4-b060-ea69ffe2be6c",
+      "menuItemId": "menu_1d385a20dd405ebff270",
+      "observedMenuName": "bún bò sườn chả",
+      "observedPriceVND": 62000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-ngon-anh-linh-banh-canh-mi-y-24h-duong-49-94430",
+      "sourceRef": "6f69256a-a101-5bc7-b230-9c4a13b32e0c",
+      "fetchedAtUTC": "2026-10-11T04:27:35.600836+00:00",
+      "htmlSha256": "2c638d22a37f3de5f070aee28fbdef41d494e06430f07abce71269e889b7be74",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "a1ca6b44-cbb1-5825-85e6-7ed1dd8e1816",
+      "menuItemId": "menu_46b445684f87d612e38b",
+      "observedMenuName": "bún bò giò bò viên",
+      "observedPriceVND": 62000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-ngon-anh-linh-banh-canh-mi-y-24h-duong-49-94430",
+      "sourceRef": "6f69256a-a101-5bc7-b230-9c4a13b32e0c",
+      "fetchedAtUTC": "2026-10-11T04:27:35.600836+00:00",
+      "htmlSha256": "2c638d22a37f3de5f070aee28fbdef41d494e06430f07abce71269e889b7be74",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "a2dce7c4-cc7f-5495-a2d3-e4891409e8fb",
+      "menuItemId": "menu_b32814962796589cf8f1",
+      "observedMenuName": "Bún bò sườn bò viên",
+      "observedPriceVND": 62000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-ngon-anh-linh-banh-canh-mi-y-24h-duong-49-94430",
+      "sourceRef": "6f69256a-a101-5bc7-b230-9c4a13b32e0c",
+      "fetchedAtUTC": "2026-10-11T04:27:35.600836+00:00",
+      "htmlSha256": "2c638d22a37f3de5f070aee28fbdef41d494e06430f07abce71269e889b7be74",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "b6da9a52-8c94-55b3-ab45-29612016b58b",
+      "menuItemId": "menu_bf5f8b9c923deb5f19e4",
+      "observedMenuName": "bún bò giò bắp",
+      "observedPriceVND": 62000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-ngon-anh-linh-banh-canh-mi-y-24h-duong-49-94430",
+      "sourceRef": "6f69256a-a101-5bc7-b230-9c4a13b32e0c",
+      "fetchedAtUTC": "2026-10-11T04:27:35.600836+00:00",
+      "htmlSha256": "2c638d22a37f3de5f070aee28fbdef41d494e06430f07abce71269e889b7be74",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "c63a2765-911e-5b76-95e3-75e8e1ef9ce3",
+      "menuItemId": "menu_0aa1ced4d41357d1a929",
+      "observedMenuName": "bún bò giò bắp chả",
+      "observedPriceVND": 62000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-ngon-anh-linh-banh-canh-mi-y-24h-duong-49-94430",
+      "sourceRef": "6f69256a-a101-5bc7-b230-9c4a13b32e0c",
+      "fetchedAtUTC": "2026-10-11T04:27:35.600836+00:00",
+      "htmlSha256": "2c638d22a37f3de5f070aee28fbdef41d494e06430f07abce71269e889b7be74",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "cb1b51fa-1ce4-55b0-be6f-7b1adbfb047e",
+      "menuItemId": "menu_fe5f7aebe3e0b0877f60",
+      "observedMenuName": "Bún bò bắp chả",
+      "observedPriceVND": 62000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-ngon-anh-linh-banh-canh-mi-y-24h-duong-49-94430",
+      "sourceRef": "6f69256a-a101-5bc7-b230-9c4a13b32e0c",
+      "fetchedAtUTC": "2026-10-11T04:27:35.600836+00:00",
+      "htmlSha256": "2c638d22a37f3de5f070aee28fbdef41d494e06430f07abce71269e889b7be74",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "e54e0752-56bf-52d9-bca5-5e702667cfd7",
+      "menuItemId": "menu_3665369c8910b0fff0d1",
+      "observedMenuName": "bún bò giò chả",
+      "observedPriceVND": 62000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-ngon-anh-linh-banh-canh-mi-y-24h-duong-49-94430",
+      "sourceRef": "6f69256a-a101-5bc7-b230-9c4a13b32e0c",
+      "fetchedAtUTC": "2026-10-11T04:27:35.600836+00:00",
+      "htmlSha256": "2c638d22a37f3de5f070aee28fbdef41d494e06430f07abce71269e889b7be74",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "f601f461-8baa-57c6-a52c-cb2df9078cca",
+      "menuItemId": "menu_713c13813856ec31cd41",
+      "observedMenuName": "bún bò bò viên",
+      "observedPriceVND": 52000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-ngon-anh-linh-banh-canh-mi-y-24h-duong-49-94430",
+      "sourceRef": "6f69256a-a101-5bc7-b230-9c4a13b32e0c",
+      "fetchedAtUTC": "2026-10-11T04:27:35.600836+00:00",
+      "htmlSha256": "2c638d22a37f3de5f070aee28fbdef41d494e06430f07abce71269e889b7be74",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    }
+  ],
+  "confirmedFieldsApplied": false,
+  "independentReviewer": null,
+  "validUntil": null
+}

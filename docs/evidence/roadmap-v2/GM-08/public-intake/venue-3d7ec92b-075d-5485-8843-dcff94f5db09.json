@@ -1,0 +1,161 @@
+{
+  "state": "Pending",
+  "verified": false,
+  "publicationPerformed": false,
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "venueId": "3d7ec92b-075d-5485-8843-dcff94f5db09",
+  "branchName": "THE BEOSO HEALTHY FOOD - Kha Vạn Cân",
+  "observedVenue": {
+    "address": "575/1/4 Kha Vạn Cân, Phường Hiệp Bình, Hồ Chí Minh",
+    "lat": 10.840609550476074,
+    "lng": 106.7372817993164,
+    "sourceUrl": "https://food.be.com.vn/ho-chi-minh/the-beoso-healthy-food-kha-van-can-138734",
+    "fetchedAtUTC": "2026-10-11T04:27:06.939418+00:00",
+    "htmlSha256": "bb7b6d0d7d3d756750e7250fbc98c9294409f9426fd64093408b592545f31103",
+    "platformWeeklyHours": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "20:00",
+        "dayOfWeek": [
+          "Sunday"
+        ],
+        "opens": "08:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "20:00",
+        "dayOfWeek": [
+          "Monday"
+        ],
+        "opens": "08:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "20:00",
+        "dayOfWeek": [
+          "Tuesday"
+        ],
+        "opens": "08:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "20:00",
+        "dayOfWeek": [
+          "Wednesday"
+        ],
+        "opens": "08:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "20:00",
+        "dayOfWeek": [
+          "Thursday"
+        ],
+        "opens": "08:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "20:00",
+        "dayOfWeek": [
+          "Friday"
+        ],
+        "opens": "08:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "20:00",
+        "dayOfWeek": [
+          "Saturday"
+        ],
+        "opens": "08:00"
+      }
+    ],
+    "serviceScope": "delivery_platform_listing; physical dine_in/takeaway/availability unknown"
+  },
+  "additionalPublicObservations": [],
+  "offerings": [
+    {
+      "offeringId": "6d53dd51-fe2e-5819-a137-53cb79f29d49",
+      "menuItemId": "menu_e42e740072c89390bbb1",
+      "observedMenuName": "Bún trộn bò lúc lắc",
+      "observedPriceVND": 65000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Bún Healthy"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/the-beoso-healthy-food-kha-van-can-138734",
+      "sourceRef": "6304e8d5-110e-509f-855a-aa2680636f82",
+      "fetchedAtUTC": "2026-10-11T04:27:06.939418+00:00",
+      "htmlSha256": "bb7b6d0d7d3d756750e7250fbc98c9294409f9426fd64093408b592545f31103",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "7e185650-77b3-5f0f-aac0-56d0132bd58d",
+      "menuItemId": "menu_eefa618e0a50dffdaa5c",
+      "observedMenuName": "Cơm gà sous vide original",
+      "observedPriceVND": 48000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm Healthy"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/the-beoso-healthy-food-kha-van-can-138734",
+      "sourceRef": "6304e8d5-110e-509f-855a-aa2680636f82",
+      "fetchedAtUTC": "2026-10-11T04:27:06.939418+00:00",
+      "htmlSha256": "bb7b6d0d7d3d756750e7250fbc98c9294409f9426fd64093408b592545f31103",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "9883a599-5768-5d47-ad8a-0f95f9ce666f",
+      "menuItemId": "menu_bae66c3ae66e0322eaac",
+      "observedMenuName": "Cơm gà xá xíu",
+      "observedPriceVND": 55000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Món Nên Thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/the-beoso-healthy-food-kha-van-can-138734",
+      "sourceRef": "6304e8d5-110e-509f-855a-aa2680636f82",
+      "fetchedAtUTC": "2026-10-11T04:27:06.939418+00:00",
+      "htmlSha256": "bb7b6d0d7d3d756750e7250fbc98c9294409f9426fd64093408b592545f31103",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "aa56f556-06ca-529c-a1a0-b40ef4d46723",
+      "menuItemId": "menu_0adeae409eb0ad26ef33",
+      "observedMenuName": "Cơm gà sốt tiêu đen",
+      "observedPriceVND": 55000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm Healthy"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/the-beoso-healthy-food-kha-van-can-138734",
+      "sourceRef": "6304e8d5-110e-509f-855a-aa2680636f82",
+      "fetchedAtUTC": "2026-10-11T04:27:06.939418+00:00",
+      "htmlSha256": "bb7b6d0d7d3d756750e7250fbc98c9294409f9426fd64093408b592545f31103",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    }
+  ],
+  "confirmedFieldsApplied": false,
+  "independentReviewer": null,
+  "validUntil": null
+}

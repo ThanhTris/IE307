@@ -1,0 +1,380 @@
+{
+  "state": "Pending",
+  "verified": false,
+  "publicationPerformed": false,
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "venueId": "2caf02b6-b3a0-5768-999b-840da0a26274",
+  "branchName": "Cơm Tấm Mỹ Mỹ - Kha Vạn Cân",
+  "observedVenue": {
+    "address": "754 Kha Vạn Cân, Phường Thủ Đức, Hồ Chí Minh",
+    "lat": 10.847310066223145,
+    "lng": 106.75192260742188,
+    "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-tam-my-my-kha-van-can-148809",
+    "fetchedAtUTC": "2026-10-11T04:27:08.583975+00:00",
+    "htmlSha256": "be820f3f165d4e16385dda5d024268c1be35887f3b9b374952a55ddce03edf7c",
+    "platformWeeklyHours": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "02:00",
+        "dayOfWeek": [
+          "Sunday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Sunday"
+        ],
+        "opens": "18:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "02:00",
+        "dayOfWeek": [
+          "Monday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Monday"
+        ],
+        "opens": "18:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "02:00",
+        "dayOfWeek": [
+          "Tuesday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Tuesday"
+        ],
+        "opens": "18:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "02:00",
+        "dayOfWeek": [
+          "Wednesday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Wednesday"
+        ],
+        "opens": "18:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "02:00",
+        "dayOfWeek": [
+          "Thursday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Thursday"
+        ],
+        "opens": "18:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "02:00",
+        "dayOfWeek": [
+          "Friday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Friday"
+        ],
+        "opens": "18:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "02:00",
+        "dayOfWeek": [
+          "Saturday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Saturday"
+        ],
+        "opens": "18:00"
+      }
+    ],
+    "serviceScope": "delivery_platform_listing; physical dine_in/takeaway/availability unknown"
+  },
+  "additionalPublicObservations": [],
+  "offerings": [
+    {
+      "offeringId": "0a453a64-6ccc-5668-86a3-904518a762aa",
+      "menuItemId": "menu_ca65442aa17ebc4d00d8",
+      "observedMenuName": "Cơm tấm sườn trứng",
+      "observedPriceVND": 50000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm Tấm",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-tam-my-my-kha-van-can-148809",
+      "sourceRef": "c12d820b-bc32-5743-81af-50400684cced",
+      "fetchedAtUTC": "2026-10-11T04:27:08.583975+00:00",
+      "htmlSha256": "be820f3f165d4e16385dda5d024268c1be35887f3b9b374952a55ddce03edf7c",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "38233296-ffac-5806-85d2-36467a3d0267",
+      "menuItemId": "menu_8d4be8fd39b0d561440e",
+      "observedMenuName": "Cơm tấm bì lạp xưởng",
+      "observedPriceVND": 40000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm Tấm"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-tam-my-my-kha-van-can-148809",
+      "sourceRef": "c12d820b-bc32-5743-81af-50400684cced",
+      "fetchedAtUTC": "2026-10-11T04:27:08.583975+00:00",
+      "htmlSha256": "be820f3f165d4e16385dda5d024268c1be35887f3b9b374952a55ddce03edf7c",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "507a2f54-d914-53c3-9663-0687abeb78a7",
+      "menuItemId": "menu_319b55951dcf88a201c6",
+      "observedMenuName": "Cơm tấm sườn chả",
+      "observedPriceVND": 50000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm Tấm"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-tam-my-my-kha-van-can-148809",
+      "sourceRef": "c12d820b-bc32-5743-81af-50400684cced",
+      "fetchedAtUTC": "2026-10-11T04:27:08.583975+00:00",
+      "htmlSha256": "be820f3f165d4e16385dda5d024268c1be35887f3b9b374952a55ddce03edf7c",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "50d2f6ad-dfcf-5de7-a0df-746eae59a2c0",
+      "menuItemId": "menu_119cfebac0e8cbcbcc5c",
+      "observedMenuName": "Cơm tấm sườn bì trứng",
+      "observedPriceVND": 60000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm Tấm",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-tam-my-my-kha-van-can-148809",
+      "sourceRef": "c12d820b-bc32-5743-81af-50400684cced",
+      "fetchedAtUTC": "2026-10-11T04:27:08.583975+00:00",
+      "htmlSha256": "be820f3f165d4e16385dda5d024268c1be35887f3b9b374952a55ddce03edf7c",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "5433169c-d6cb-5959-85f2-78040eefb38c",
+      "menuItemId": "menu_d819fcd8bb3b1c0f989a",
+      "observedMenuName": "Cơm tấm bì chả",
+      "observedPriceVND": 40000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm Tấm"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-tam-my-my-kha-van-can-148809",
+      "sourceRef": "c12d820b-bc32-5743-81af-50400684cced",
+      "fetchedAtUTC": "2026-10-11T04:27:08.583975+00:00",
+      "htmlSha256": "be820f3f165d4e16385dda5d024268c1be35887f3b9b374952a55ddce03edf7c",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "64fbec4a-dd39-57ee-a98d-f6c0ead5ad05",
+      "menuItemId": "menu_c3f2ed4ff03882701a20",
+      "observedMenuName": "Cơm tấm sườn",
+      "observedPriceVND": 40000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm Tấm",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-tam-my-my-kha-van-can-148809",
+      "sourceRef": "c12d820b-bc32-5743-81af-50400684cced",
+      "fetchedAtUTC": "2026-10-11T04:27:08.583975+00:00",
+      "htmlSha256": "be820f3f165d4e16385dda5d024268c1be35887f3b9b374952a55ddce03edf7c",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "70b25ae4-ca46-52ef-aaef-00951bd0cb3c",
+      "menuItemId": "menu_acccc5e3f6bf86ab9c32",
+      "observedMenuName": "Cơm tấm đặc biệt 4 món sườn bì chả trứng",
+      "observedPriceVND": 70000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm Tấm"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-tam-my-my-kha-van-can-148809",
+      "sourceRef": "c12d820b-bc32-5743-81af-50400684cced",
+      "fetchedAtUTC": "2026-10-11T04:27:08.583975+00:00",
+      "htmlSha256": "be820f3f165d4e16385dda5d024268c1be35887f3b9b374952a55ddce03edf7c",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "8084705d-8119-5858-9e1b-221b19fabbf8",
+      "menuItemId": "menu_f89f2b0e8831e718d80f",
+      "observedMenuName": "Cơm tấm đặc biệt 5 món sườn bì chả trứng lạp xưởng",
+      "observedPriceVND": 80000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm Tấm"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-tam-my-my-kha-van-can-148809",
+      "sourceRef": "c12d820b-bc32-5743-81af-50400684cced",
+      "fetchedAtUTC": "2026-10-11T04:27:08.583975+00:00",
+      "htmlSha256": "be820f3f165d4e16385dda5d024268c1be35887f3b9b374952a55ddce03edf7c",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "b554b931-ddc7-5d04-9f47-b865db2ab54b",
+      "menuItemId": "menu_813ed0d2e7a127d00b47",
+      "observedMenuName": "Cơm tấm bì trứng",
+      "observedPriceVND": 40000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm Tấm"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-tam-my-my-kha-van-can-148809",
+      "sourceRef": "c12d820b-bc32-5743-81af-50400684cced",
+      "fetchedAtUTC": "2026-10-11T04:27:08.583975+00:00",
+      "htmlSha256": "be820f3f165d4e16385dda5d024268c1be35887f3b9b374952a55ddce03edf7c",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "bfd13f23-2a60-5907-8914-952af67508d7",
+      "menuItemId": "menu_1d4d9f73066a4548670f",
+      "observedMenuName": "Cơm tấm sườn bì chả",
+      "observedPriceVND": 60000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm Tấm"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-tam-my-my-kha-van-can-148809",
+      "sourceRef": "c12d820b-bc32-5743-81af-50400684cced",
+      "fetchedAtUTC": "2026-10-11T04:27:08.583975+00:00",
+      "htmlSha256": "be820f3f165d4e16385dda5d024268c1be35887f3b9b374952a55ddce03edf7c",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "c5926d47-8acd-54ac-8427-c9d7efea7959",
+      "menuItemId": "menu_28efc43664aa320f0ad5",
+      "observedMenuName": "Cơm tấm sườn bì",
+      "observedPriceVND": 50000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm Tấm"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-tam-my-my-kha-van-can-148809",
+      "sourceRef": "c12d820b-bc32-5743-81af-50400684cced",
+      "fetchedAtUTC": "2026-10-11T04:27:08.583975+00:00",
+      "htmlSha256": "be820f3f165d4e16385dda5d024268c1be35887f3b9b374952a55ddce03edf7c",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "fd51e48b-d19c-5b1c-a098-5d7084a840d1",
+      "menuItemId": "menu_b7e3442a37aec60f0886",
+      "observedMenuName": "Cơm tấm sườn bì lạp xưởng",
+      "observedPriceVND": 60000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm Tấm"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-tam-my-my-kha-van-can-148809",
+      "sourceRef": "c12d820b-bc32-5743-81af-50400684cced",
+      "fetchedAtUTC": "2026-10-11T04:27:08.583975+00:00",
+      "htmlSha256": "be820f3f165d4e16385dda5d024268c1be35887f3b9b374952a55ddce03edf7c",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    }
+  ],
+  "confirmedFieldsApplied": false,
+  "independentReviewer": null,
+  "validUntil": null
+}

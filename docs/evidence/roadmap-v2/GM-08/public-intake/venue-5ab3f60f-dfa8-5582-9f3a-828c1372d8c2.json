@@ -1,0 +1,261 @@
+{
+  "state": "Pending",
+  "verified": false,
+  "publicationPerformed": false,
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "venueId": "5ab3f60f-dfa8-5582-9f3a-828c1372d8c2",
+  "branchName": "Bún Đậu Mắm Tôm Ba Anh Em - Hoàng Diệu 2",
+  "observedVenue": {
+    "address": "220 Hoàng Diệu 2, Linh Chiểu, Thủ Đức, Hồ Chí Minh",
+    "lat": 10.854220390319824,
+    "lng": 106.76924133300781,
+    "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-dau-mam-tom-ba-anh-em-hoang-dieu-2-75616",
+    "fetchedAtUTC": "2026-10-11T04:27:45.391866+00:00",
+    "htmlSha256": "1a671e0134a0f00e9f0a53416c99a503b587a669d2a76f53015b0aa930550dc2",
+    "platformWeeklyHours": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "22:30",
+        "dayOfWeek": [
+          "Sunday"
+        ],
+        "opens": "10:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "22:30",
+        "dayOfWeek": [
+          "Monday"
+        ],
+        "opens": "10:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:00",
+        "dayOfWeek": [
+          "Tuesday"
+        ],
+        "opens": "10:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:00",
+        "dayOfWeek": [
+          "Wednesday"
+        ],
+        "opens": "10:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:00",
+        "dayOfWeek": [
+          "Thursday"
+        ],
+        "opens": "10:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:00",
+        "dayOfWeek": [
+          "Friday"
+        ],
+        "opens": "10:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:00",
+        "dayOfWeek": [
+          "Saturday"
+        ],
+        "opens": "10:00"
+      }
+    ],
+    "serviceScope": "delivery_platform_listing; physical dine_in/takeaway/availability unknown"
+  },
+  "additionalPublicObservations": [
+    {
+      "kind": "Foody direct HTTPS capture",
+      "url": "https://www.foody.vn/ho-chi-minh/bun-dau-mam-tom-ba-anh-em-220-hoang-dieu-2",
+      "fetchedAtUTC": "2026-10-11T05:09:11.270354+00:00",
+      "sha256": "2f6674a8ef8a441b9318410b6a39d4974aa3426db37a00bd0028a1a2bf5e6353",
+      "observedAddress": "220 Hoàng Diệu 2, P. Linh Chiểu, Tp. Thủ Đức, TP. HCM",
+      "observedHours": {
+        "start": "10:00",
+        "end": "22:30",
+        "weekdays": "unspecified"
+      },
+      "listingStatusLabel": null,
+      "physicalVenueConfirmed": false,
+      "serviceModesConfirmed": false,
+      "note": "Static listing observation only; no seven-day schedule or offering hours confirmed. Amenities with active/inactive ambiguity not used."
+    }
+  ],
+  "offerings": [
+    {
+      "offeringId": "46656db4-05b3-5984-828b-6016673419fc",
+      "menuItemId": "menu_099ff3f77ffb57f57be2",
+      "observedMenuName": "Bún đậu thịt",
+      "observedPriceVND": 39000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Bún Đậu (Độc Lập - Tự Do)"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-dau-mam-tom-ba-anh-em-hoang-dieu-2-75616",
+      "sourceRef": "81e6c76a-5c44-524a-bddf-6467d24d0348",
+      "fetchedAtUTC": "2026-10-11T04:27:45.391866+00:00",
+      "htmlSha256": "1a671e0134a0f00e9f0a53416c99a503b587a669d2a76f53015b0aa930550dc2",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "5e5c0720-270c-5ce3-b4dc-0f98a9ef03d3",
+      "menuItemId": "menu_e05608e52c8999235009",
+      "observedMenuName": "Bún đậu chả cốm",
+      "observedPriceVND": 39000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Bún Đậu (Độc Lập - Tự Do)",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-dau-mam-tom-ba-anh-em-hoang-dieu-2-75616",
+      "sourceRef": "81e6c76a-5c44-524a-bddf-6467d24d0348",
+      "fetchedAtUTC": "2026-10-11T04:27:45.391866+00:00",
+      "htmlSha256": "1a671e0134a0f00e9f0a53416c99a503b587a669d2a76f53015b0aa930550dc2",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "6ca260b8-e0d6-5f61-a9c6-22013b3d6784",
+      "menuItemId": "menu_7e35ac25f061e4e594fa",
+      "observedMenuName": "Bún đậu",
+      "observedPriceVND": 29000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Bún Đậu (Độc Lập - Tự Do)"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-dau-mam-tom-ba-anh-em-hoang-dieu-2-75616",
+      "sourceRef": "81e6c76a-5c44-524a-bddf-6467d24d0348",
+      "fetchedAtUTC": "2026-10-11T04:27:45.391866+00:00",
+      "htmlSha256": "1a671e0134a0f00e9f0a53416c99a503b587a669d2a76f53015b0aa930550dc2",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "7bace56f-ab69-5f67-9b0a-a847f99d15a2",
+      "menuItemId": "menu_cf554dc3ccc79bbaf901",
+      "observedMenuName": "Bún đậu đặc biệt",
+      "observedPriceVND": 82000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Bún Đậu (Độc Lập - Tự Do)",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-dau-mam-tom-ba-anh-em-hoang-dieu-2-75616",
+      "sourceRef": "81e6c76a-5c44-524a-bddf-6467d24d0348",
+      "fetchedAtUTC": "2026-10-11T04:27:45.391866+00:00",
+      "htmlSha256": "1a671e0134a0f00e9f0a53416c99a503b587a669d2a76f53015b0aa930550dc2",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "af77efe7-b6d7-5ff5-9f23-c58b506ec6e1",
+      "menuItemId": "menu_4488322a439a10abcd15",
+      "observedMenuName": "Bún đậu chả cua",
+      "observedPriceVND": 44000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Bún Đậu (Độc Lập - Tự Do)"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-dau-mam-tom-ba-anh-em-hoang-dieu-2-75616",
+      "sourceRef": "81e6c76a-5c44-524a-bddf-6467d24d0348",
+      "fetchedAtUTC": "2026-10-11T04:27:45.391866+00:00",
+      "htmlSha256": "1a671e0134a0f00e9f0a53416c99a503b587a669d2a76f53015b0aa930550dc2",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "d4c13bec-dda0-5574-99ac-9b5df16f2ad6",
+      "menuItemId": "menu_758b1c3c06b57a5f0756",
+      "observedMenuName": "Bún đậu nem chiên",
+      "observedPriceVND": 44000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Bún Đậu (Độc Lập - Tự Do)"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-dau-mam-tom-ba-anh-em-hoang-dieu-2-75616",
+      "sourceRef": "81e6c76a-5c44-524a-bddf-6467d24d0348",
+      "fetchedAtUTC": "2026-10-11T04:27:45.391866+00:00",
+      "htmlSha256": "1a671e0134a0f00e9f0a53416c99a503b587a669d2a76f53015b0aa930550dc2",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "e92688a3-9fad-5c16-990c-95bebb35b370",
+      "menuItemId": "menu_a7731ed4812777124ba1",
+      "observedMenuName": "Bún đậu chả mực",
+      "observedPriceVND": 49000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Bún Đậu (Độc Lập - Tự Do)"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-dau-mam-tom-ba-anh-em-hoang-dieu-2-75616",
+      "sourceRef": "81e6c76a-5c44-524a-bddf-6467d24d0348",
+      "fetchedAtUTC": "2026-10-11T04:27:45.391866+00:00",
+      "htmlSha256": "1a671e0134a0f00e9f0a53416c99a503b587a669d2a76f53015b0aa930550dc2",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "ec04c6cf-0fdc-5c8f-b84b-18fe19a010d0",
+      "menuItemId": "menu_a830517fa3c3d2454f1d",
+      "observedMenuName": "Bún đậu thập cẩm",
+      "observedPriceVND": 62000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Bún Đậu (Độc Lập - Tự Do)",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-dau-mam-tom-ba-anh-em-hoang-dieu-2-75616",
+      "sourceRef": "81e6c76a-5c44-524a-bddf-6467d24d0348",
+      "fetchedAtUTC": "2026-10-11T04:27:45.391866+00:00",
+      "htmlSha256": "1a671e0134a0f00e9f0a53416c99a503b587a669d2a76f53015b0aa930550dc2",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    }
+  ],
+  "confirmedFieldsApplied": false,
+  "independentReviewer": null,
+  "validUntil": null
+}

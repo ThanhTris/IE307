@@ -1,0 +1,383 @@
+{
+  "state": "Pending",
+  "verified": false,
+  "publicationPerformed": false,
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "venueId": "7d282d6a-3daf-5c2f-a469-5eb382f35245",
+  "branchName": "Cơm Chay Thập Phương - Hoàng Diệu 2",
+  "observedVenue": {
+    "address": "69B Hoàng Diệu 2, Phường Linh Xuân, Hồ Chí Minh",
+    "lat": 10.856980323791504,
+    "lng": 106.76441955566406,
+    "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-chay-thap-phuong-hoang-dieu-2-125649",
+    "fetchedAtUTC": "2026-10-11T04:27:23.810918+00:00",
+    "htmlSha256": "842ceff0f7cd8276ccaa5d9438be7e3ed71965f7edfedab521f192f2b7c928ef",
+    "platformWeeklyHours": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "20:00",
+        "dayOfWeek": [
+          "Sunday"
+        ],
+        "opens": "07:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "20:00",
+        "dayOfWeek": [
+          "Monday"
+        ],
+        "opens": "07:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "20:00",
+        "dayOfWeek": [
+          "Tuesday"
+        ],
+        "opens": "07:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "20:00",
+        "dayOfWeek": [
+          "Wednesday"
+        ],
+        "opens": "07:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "20:00",
+        "dayOfWeek": [
+          "Thursday"
+        ],
+        "opens": "07:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "20:00",
+        "dayOfWeek": [
+          "Friday"
+        ],
+        "opens": "07:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "20:00",
+        "dayOfWeek": [
+          "Saturday"
+        ],
+        "opens": "07:00"
+      }
+    ],
+    "serviceScope": "delivery_platform_listing; physical dine_in/takeaway/availability unknown"
+  },
+  "additionalPublicObservations": [],
+  "offerings": [
+    {
+      "offeringId": "03124d68-2844-5b71-9326-0d1b6b708a70",
+      "menuItemId": "menu_a0c2ffd89122ec2495d7",
+      "observedMenuName": "Cơm Xúc Xích",
+      "observedPriceVND": 30000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm Chay Thập Phương"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-chay-thap-phuong-hoang-dieu-2-125649",
+      "sourceRef": "4feff167-bbd1-5742-8c74-887247a9e043",
+      "fetchedAtUTC": "2026-10-11T04:27:23.810918+00:00",
+      "htmlSha256": "842ceff0f7cd8276ccaa5d9438be7e3ed71965f7edfedab521f192f2b7c928ef",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "05b0d354-ab0e-5e65-8ba4-34bd5504ba0c",
+      "menuItemId": "menu_c7fe75b991b64a5b6e0a",
+      "observedMenuName": "Cơm Thập Cẩm",
+      "observedPriceVND": 27000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm Chay Thập Phương",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-chay-thap-phuong-hoang-dieu-2-125649",
+      "sourceRef": "4feff167-bbd1-5742-8c74-887247a9e043",
+      "fetchedAtUTC": "2026-10-11T04:27:23.810918+00:00",
+      "htmlSha256": "842ceff0f7cd8276ccaa5d9438be7e3ed71965f7edfedab521f192f2b7c928ef",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "10404a1f-1ff4-5049-8dce-f6c64c4e68eb",
+      "menuItemId": "menu_2f89f3d1c5509bf46b72",
+      "observedMenuName": "Bún Măng",
+      "observedPriceVND": 35000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Bún Chay Thập Phương"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-chay-thap-phuong-hoang-dieu-2-125649",
+      "sourceRef": "4feff167-bbd1-5742-8c74-887247a9e043",
+      "fetchedAtUTC": "2026-10-11T04:27:23.810918+00:00",
+      "htmlSha256": "842ceff0f7cd8276ccaa5d9438be7e3ed71965f7edfedab521f192f2b7c928ef",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "43d5ae49-c75a-53c8-90da-ba30793ab5e2",
+      "menuItemId": "menu_f103efc59644a7da92fe",
+      "observedMenuName": "Cơm Cánh Gà",
+      "observedPriceVND": 30000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm Chay Thập Phương"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-chay-thap-phuong-hoang-dieu-2-125649",
+      "sourceRef": "4feff167-bbd1-5742-8c74-887247a9e043",
+      "fetchedAtUTC": "2026-10-11T04:27:23.810918+00:00",
+      "htmlSha256": "842ceff0f7cd8276ccaa5d9438be7e3ed71965f7edfedab521f192f2b7c928ef",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "4a6d9b53-2a30-5710-a9b7-9a75ad515504",
+      "menuItemId": "menu_cad894f8ad34ec7ffd4a",
+      "observedMenuName": "Cơm Sườn",
+      "observedPriceVND": 30000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm Chay Thập Phương",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-chay-thap-phuong-hoang-dieu-2-125649",
+      "sourceRef": "4feff167-bbd1-5742-8c74-887247a9e043",
+      "fetchedAtUTC": "2026-10-11T04:27:23.810918+00:00",
+      "htmlSha256": "842ceff0f7cd8276ccaa5d9438be7e3ed71965f7edfedab521f192f2b7c928ef",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "56fcbd16-cfd1-5d09-95f4-2e0ae1b6586a",
+      "menuItemId": "menu_34154d376528426660a2",
+      "observedMenuName": "Cơm Heo Quay",
+      "observedPriceVND": 30000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm Chay Thập Phương"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-chay-thap-phuong-hoang-dieu-2-125649",
+      "sourceRef": "4feff167-bbd1-5742-8c74-887247a9e043",
+      "fetchedAtUTC": "2026-10-11T04:27:23.810918+00:00",
+      "htmlSha256": "842ceff0f7cd8276ccaa5d9438be7e3ed71965f7edfedab521f192f2b7c928ef",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "790eea41-14c4-5d3f-b20e-48a04c651274",
+      "menuItemId": "menu_b2c630badddaeeaa5e5e",
+      "observedMenuName": "Cơm Ba Rọi",
+      "observedPriceVND": 30000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm Chay Thập Phương"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-chay-thap-phuong-hoang-dieu-2-125649",
+      "sourceRef": "4feff167-bbd1-5742-8c74-887247a9e043",
+      "fetchedAtUTC": "2026-10-11T04:27:23.810918+00:00",
+      "htmlSha256": "842ceff0f7cd8276ccaa5d9438be7e3ed71965f7edfedab521f192f2b7c928ef",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "8c4fc4ca-2fbc-568c-ab4d-11b86213e69a",
+      "menuItemId": "menu_745e01a04f03f773a2e6",
+      "observedMenuName": "Cơm Đậu Nhồi",
+      "observedPriceVND": 30000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm Chay Thập Phương"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-chay-thap-phuong-hoang-dieu-2-125649",
+      "sourceRef": "4feff167-bbd1-5742-8c74-887247a9e043",
+      "fetchedAtUTC": "2026-10-11T04:27:23.810918+00:00",
+      "htmlSha256": "842ceff0f7cd8276ccaa5d9438be7e3ed71965f7edfedab521f192f2b7c928ef",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "8ca3da61-63a3-59c5-95c6-d893b56f1c35",
+      "menuItemId": "menu_48850a82a1392cbe6e81",
+      "observedMenuName": "Cơm Đậu Tương",
+      "observedPriceVND": 30000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm Chay Thập Phương"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-chay-thap-phuong-hoang-dieu-2-125649",
+      "sourceRef": "4feff167-bbd1-5742-8c74-887247a9e043",
+      "fetchedAtUTC": "2026-10-11T04:27:23.810918+00:00",
+      "htmlSha256": "842ceff0f7cd8276ccaa5d9438be7e3ed71965f7edfedab521f192f2b7c928ef",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "9542c882-a96c-522b-9e58-adb537607268",
+      "menuItemId": "menu_500fcb94fc244e992461",
+      "observedMenuName": "Cơm Rau Củ",
+      "observedPriceVND": 30000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm Chay Thập Phương"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-chay-thap-phuong-hoang-dieu-2-125649",
+      "sourceRef": "4feff167-bbd1-5742-8c74-887247a9e043",
+      "fetchedAtUTC": "2026-10-11T04:27:23.810918+00:00",
+      "htmlSha256": "842ceff0f7cd8276ccaa5d9438be7e3ed71965f7edfedab521f192f2b7c928ef",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "b5402447-f75b-5608-9f71-d12ffbed742f",
+      "menuItemId": "menu_277d212aca4c58a7e1e9",
+      "observedMenuName": "Cơm Đậu Xả",
+      "observedPriceVND": 30000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm Chay Thập Phương"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-chay-thap-phuong-hoang-dieu-2-125649",
+      "sourceRef": "4feff167-bbd1-5742-8c74-887247a9e043",
+      "fetchedAtUTC": "2026-10-11T04:27:23.810918+00:00",
+      "htmlSha256": "842ceff0f7cd8276ccaa5d9438be7e3ed71965f7edfedab521f192f2b7c928ef",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "cb405c61-a594-59ab-8875-1e8a1e7de17f",
+      "menuItemId": "menu_32f5ee4efd43201cc667",
+      "observedMenuName": "Cơm Tôm",
+      "observedPriceVND": 30000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm Chay Thập Phương"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-chay-thap-phuong-hoang-dieu-2-125649",
+      "sourceRef": "4feff167-bbd1-5742-8c74-887247a9e043",
+      "fetchedAtUTC": "2026-10-11T04:27:23.810918+00:00",
+      "htmlSha256": "842ceff0f7cd8276ccaa5d9438be7e3ed71965f7edfedab521f192f2b7c928ef",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "e99e409a-58de-5fb1-8c14-900e851aa349",
+      "menuItemId": "menu_d77c7a48447b5f5a09ff",
+      "observedMenuName": "Cơm Đậu Ki",
+      "observedPriceVND": 30000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm Chay Thập Phương"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-chay-thap-phuong-hoang-dieu-2-125649",
+      "sourceRef": "4feff167-bbd1-5742-8c74-887247a9e043",
+      "fetchedAtUTC": "2026-10-11T04:27:23.810918+00:00",
+      "htmlSha256": "842ceff0f7cd8276ccaa5d9438be7e3ed71965f7edfedab521f192f2b7c928ef",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "ede6155a-f8c5-536d-bf09-714b57ad7bc3",
+      "menuItemId": "menu_c4b9236e3c96bd16ad15",
+      "observedMenuName": "Cơm Cá Thu",
+      "observedPriceVND": 30000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm Chay Thập Phương"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-chay-thap-phuong-hoang-dieu-2-125649",
+      "sourceRef": "4feff167-bbd1-5742-8c74-887247a9e043",
+      "fetchedAtUTC": "2026-10-11T04:27:23.810918+00:00",
+      "htmlSha256": "842ceff0f7cd8276ccaa5d9438be7e3ed71965f7edfedab521f192f2b7c928ef",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "f2894f69-8554-520a-b55c-a3668b0c42e1",
+      "menuItemId": "menu_82ccacfdf7c5fa3b0279",
+      "observedMenuName": "Cơm Nấm",
+      "observedPriceVND": 30000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Cơm Chay Thập Phương"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/com-chay-thap-phuong-hoang-dieu-2-125649",
+      "sourceRef": "4feff167-bbd1-5742-8c74-887247a9e043",
+      "fetchedAtUTC": "2026-10-11T04:27:23.810918+00:00",
+      "htmlSha256": "842ceff0f7cd8276ccaa5d9438be7e3ed71965f7edfedab521f192f2b7c928ef",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    }
+  ],
+  "confirmedFieldsApplied": false,
+  "independentReviewer": null,
+  "validUntil": null
+}

@@ -1,0 +1,665 @@
+{
+  "state": "Pending",
+  "verified": false,
+  "publicationPerformed": false,
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "venueId": "e9179bac-f048-5d75-ad2f-fb6b6525fb01",
+  "branchName": "LÒ BÁNH MỲ BẢO CHÂU - Hoàng Diệu 2",
+  "observedVenue": {
+    "address": "242 Đường Hoàng Diệu 2, Linh Chiểu, Thủ Đức, Hồ Chí Minh, Việt Nam",
+    "lat": 10.853949546813965,
+    "lng": 106.77104949951172,
+    "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+    "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+    "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+    "platformWeeklyHours": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Sunday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Monday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Tuesday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Wednesday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Thursday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Friday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Saturday"
+        ],
+        "opens": "00:00"
+      }
+    ],
+    "serviceScope": "delivery_platform_listing; physical dine_in/takeaway/availability unknown"
+  },
+  "additionalPublicObservations": [],
+  "offerings": [
+    {
+      "offeringId": "028d1dbf-bb63-54cc-b337-11c8bb35045c",
+      "menuItemId": "menu_68cc3a5bc4ea0edad7f8",
+      "observedMenuName": "Bánh mì trứng - 1 trứng",
+      "observedPriceVND": 25000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BÁNH MÌ"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+      "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "183fb090-f566-5b5d-b297-8bdca64dc299",
+      "menuItemId": "menu_206664a65c17551bb094",
+      "observedMenuName": "Xôi chả lụa - nhỏ",
+      "observedPriceVND": 30000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "XÔI MẶN"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+      "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "26e89c92-66c9-5475-94ce-65042e7a7734",
+      "menuItemId": "menu_383cc04c7c1b9b9b3db9",
+      "observedMenuName": "Bánh mì phô mai - lớn",
+      "observedPriceVND": 35000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BÁNH MÌ"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+      "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "328229b5-4b9f-5639-83ae-00d06a527159",
+      "menuItemId": "menu_ecaf179619d8bd198b15",
+      "observedMenuName": "Xôi thập Cẩm - lớn",
+      "observedPriceVND": 40000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Món phải thử",
+        "XÔI MẶN"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+      "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "34825486-ca33-5bea-88c6-87dffadeefc8",
+      "menuItemId": "menu_4f6eeb02e5f6592edada",
+      "observedMenuName": "Bánh mì xúc xích - nhỏ",
+      "observedPriceVND": 30000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BÁNH MÌ"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+      "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "422f1f81-1be9-57a2-af8f-e2e5d45d44e5",
+      "menuItemId": "menu_26952d6eb7082c6ec130",
+      "observedMenuName": "Bánh mì xúc xích - lớn",
+      "observedPriceVND": 35000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BÁNH MÌ"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+      "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "4ca35359-c18b-5d99-ad30-d7028383c22a",
+      "menuItemId": "menu_f39dd0d60d35ba5cfe41",
+      "observedMenuName": "Bánh mì xíu mại - nhỏ",
+      "observedPriceVND": 30000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BÁNH MÌ"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+      "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "53d6a0b9-740b-5353-96f9-0a5a6734b5e7",
+      "menuItemId": "menu_9487bba63d26fc45a821",
+      "observedMenuName": "Bánh mì heo quay - lớn",
+      "observedPriceVND": 40000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BÁNH MÌ",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+      "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "63bcd908-4ca3-5935-856c-6283ba5d2753",
+      "menuItemId": "menu_1af6e5195f4fc77f97f7",
+      "observedMenuName": "Bánh mì chà bông - lớn",
+      "observedPriceVND": 40000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BÁNH MÌ"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+      "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "662ab672-68c5-52d0-86aa-0ab5e5bae7d3",
+      "menuItemId": "menu_8ab8064fac2bdb7042d1",
+      "observedMenuName": "Bánh mì chả lụa - nhỏ",
+      "observedPriceVND": 30000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BÁNH MÌ"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+      "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "71e9d85e-523e-5990-aa1b-25b12cb5bc9b",
+      "menuItemId": "menu_a182dcac9cefa6b29ac4",
+      "observedMenuName": "Bánh mì xíu mại - lớn",
+      "observedPriceVND": 40000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BÁNH MÌ"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+      "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "739dd36d-3ab4-5694-8b66-a250b176710d",
+      "menuItemId": "menu_9f8bf55d47b0535cb6a1",
+      "observedMenuName": "Bánh mì chả lụa - lớn",
+      "observedPriceVND": 40000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BÁNH MÌ"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+      "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "7b6d25b3-e873-5e67-b20a-840501368aa1",
+      "menuItemId": "menu_109164ade65bd31f6422",
+      "observedMenuName": "Xôi trứng - nhỏ",
+      "observedPriceVND": 30000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "XÔI MẶN"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+      "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "87592e94-c179-5a0e-bd27-dda7cad6a3c2",
+      "menuItemId": "menu_d9a8e2975d3a958c41bd",
+      "observedMenuName": "Bánh mì cá hộp - nhỏ",
+      "observedPriceVND": 30000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BÁNH MÌ"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+      "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "8f8ee8db-657d-538b-a326-c3657cfc7288",
+      "menuItemId": "menu_d0ec65277f25c495dc7c",
+      "observedMenuName": "Bánh mì thập Cẩm - lớn",
+      "observedPriceVND": 40000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BÁNH MÌ"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+      "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "a005f1aa-2e6e-59fd-8f9e-6eae3a0ba969",
+      "menuItemId": "menu_35bc18bd766ffd63bc2f",
+      "observedMenuName": "Bánh mì thịt nguội - nhỏ",
+      "observedPriceVND": 30000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BÁNH MÌ"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+      "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "a52bf4c0-f158-5fbd-8515-8da47479917a",
+      "menuItemId": "menu_4068b5d1934ddc98557a",
+      "observedMenuName": "Bánh mì cá hộp - lớn",
+      "observedPriceVND": 40000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BÁNH MÌ"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+      "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "a7e1003d-8c2e-5080-bf61-ae7d56f9fbfc",
+      "menuItemId": "menu_30ab487df9a065681f6c",
+      "observedMenuName": "Xôi heo quay - nhỏ",
+      "observedPriceVND": 30000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "XÔI MẶN"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+      "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "b9f89123-a073-5245-969b-380112d93181",
+      "menuItemId": "menu_9f27a7f9309b73e5eed1",
+      "observedMenuName": "Bánh mì thập Cẩm - nhỏ",
+      "observedPriceVND": 30000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BÁNH MÌ",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+      "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "be665304-371f-5bdd-8134-d27adc4c42a6",
+      "menuItemId": "menu_64a31ed90738e2e76a7a",
+      "observedMenuName": "Xôi thập cẩm - nhỏ",
+      "observedPriceVND": 30000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "XÔI MẶN"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+      "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "c89682d2-84a6-50ba-9c61-cf9d2e937136",
+      "menuItemId": "menu_22543e90a67f3d31d0ba",
+      "observedMenuName": "Bánh mì trứng - 2 trứng",
+      "observedPriceVND": 30000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BÁNH MÌ"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+      "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "d4c2b038-3283-51b1-9fa0-4f7f722b2254",
+      "menuItemId": "menu_5d6a5a1e085e5d1862af",
+      "observedMenuName": "Bánh mì thịt nguội - lớn",
+      "observedPriceVND": 40000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BÁNH MÌ"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+      "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "d97a1192-bf7a-5b43-93e5-820a6d236e8e",
+      "menuItemId": "menu_652ab22a3d90c0a31b6d",
+      "observedMenuName": "Xôi trứng - lớn",
+      "observedPriceVND": 40000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "XÔI MẶN"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+      "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "dc70d790-6252-5944-92f0-f070603d901e",
+      "menuItemId": "menu_bd3a30bec5022b82dbc7",
+      "observedMenuName": "Bánh mì đặc biệt",
+      "observedPriceVND": 40000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BÁNH MÌ"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+      "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "e5941815-ebcd-55e8-9ac9-dd4f0f74a493",
+      "menuItemId": "menu_3fd4c27c0ad56ae0e99b",
+      "observedMenuName": "Xôi heo quay - lớn",
+      "observedPriceVND": 40000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "XÔI MẶN"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+      "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "ea2bc27c-43f3-56c5-abbc-34c62fdc7cd6",
+      "menuItemId": "menu_6b551ae6af3cd7f32eb0",
+      "observedMenuName": "Bánh mì phô mai - nhỏ",
+      "observedPriceVND": 30000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BÁNH MÌ"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+      "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "f53e4a13-8040-5c44-8498-fd7f8c513254",
+      "menuItemId": "menu_6f067a34bfeceba57d3e",
+      "observedMenuName": "Xôi chả lụa - lớn",
+      "observedPriceVND": 40000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "XÔI MẶN"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+      "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "f75fa135-fcb6-51fb-bcb4-16f1c66c8f83",
+      "menuItemId": "menu_8f7565e50ea716d86c62",
+      "observedMenuName": "Bánh mì chà bông - nhỏ",
+      "observedPriceVND": 30000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BÁNH MÌ"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+      "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "ffebd545-5f1e-5562-9e97-aa869267be0d",
+      "menuItemId": "menu_063738d6919ba8af4d4d",
+      "observedMenuName": "Bánh mì heo quay - nhỏ",
+      "observedPriceVND": 30000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BÁNH MÌ",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "sourceRef": "9c82f366-7255-5f9d-bf6a-19699d27c058",
+      "fetchedAtUTC": "2026-10-11T04:27:33.322316+00:00",
+      "htmlSha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    }
+  ],
+  "confirmedFieldsApplied": false,
+  "independentReviewer": null,
+  "validUntil": null
+}

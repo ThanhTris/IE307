@@ -1,0 +1,22 @@
+{
+  "state": "Rejected candidate for old district coverage",
+  "verified": false,
+  "publicationPerformed": false,
+  "relationId": 7138136,
+  "version": 39,
+  "objectTimestampUTC": "2026-09-03T02:40:13Z",
+  "retrievedAtUTC": "2026-10-11T04:53:38.555088Z",
+  "sourceUrl": "https://api.openstreetmap.org/api/0.6/relation/7138136.json",
+  "sourceSha256": "bf11230538fb9b9fafc437865e9203544bd37c57cee0869a7d4ab5326d54dd08",
+  "observedTags": {
+    "name": "Phường Thủ Đức",
+    "admin_level": "6",
+    "boundary": "administrative",
+    "type": "boundary"
+  },
+  "historySource": "https://api.openstreetmap.org/api/0.6/relation/7138136/history.json",
+  "finding": "Current Phuong Thu Duc, historical Binh Tho Ward; not the former Thu Duc district boundary. Do not import as old-district coverage.",
+  "licenseReference": "https://www.openstreetmap.org/copyright",
+  "licenseScope": "OSM geographic data ODbL; does not grant menu/image/hour rights",
+  "requiredNext": "Obtain actual survey boundary/anchor evidence for chosen public branches; independent review before coverage import. No guessed bounding box or personal GPS."
+}

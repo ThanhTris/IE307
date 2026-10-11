@@ -1,0 +1,321 @@
+{
+  "state": "Pending",
+  "verified": false,
+  "publicationPerformed": false,
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "venueId": "789307f3-d3f5-54e9-9fb9-245c84466987",
+  "branchName": "Gà Rán Texas Chicken - Võ Văn Ngân",
+  "observedVenue": {
+    "address": "13-13/1 Võ Văn Ngân, Khu Phố 2, Phường Linh Chiểu, Thành phố Thủ Đức, Hồ Chí Minh",
+    "lat": 10.851189613342285,
+    "lng": 106.75594329833984,
+    "sourceUrl": "https://food.be.com.vn/ho-chi-minh/ga-ran-texas-chicken-vo-van-ngan-67488",
+    "fetchedAtUTC": "2026-10-11T04:27:27.713517+00:00",
+    "htmlSha256": "dd838222a0b7df98506ba44f64cfe03ee81f77e208a386c94312c34b0bf6eb22",
+    "platformWeeklyHours": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "21:15",
+        "dayOfWeek": [
+          "Sunday"
+        ],
+        "opens": "10:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "21:15",
+        "dayOfWeek": [
+          "Monday"
+        ],
+        "opens": "10:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "21:15",
+        "dayOfWeek": [
+          "Tuesday"
+        ],
+        "opens": "10:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "21:15",
+        "dayOfWeek": [
+          "Wednesday"
+        ],
+        "opens": "11:30"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "21:15",
+        "dayOfWeek": [
+          "Thursday"
+        ],
+        "opens": "10:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "21:15",
+        "dayOfWeek": [
+          "Friday"
+        ],
+        "opens": "10:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "21:15",
+        "dayOfWeek": [
+          "Saturday"
+        ],
+        "opens": "10:00"
+      }
+    ],
+    "serviceScope": "delivery_platform_listing; physical dine_in/takeaway/availability unknown"
+  },
+  "additionalPublicObservations": [],
+  "offerings": [
+    {
+      "offeringId": "1e722907-1c02-54ea-a880-860dc41abe8f",
+      "menuItemId": "menu_d98fe949288438d189b1",
+      "observedMenuName": "Burger Tôm - Không Cay",
+      "observedPriceVND": 49000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BURGER ĐẬM ĐÀ, MĂM LÀ MÊ LY"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/ga-ran-texas-chicken-vo-van-ngan-67488",
+      "sourceRef": "09685886-f124-54d4-be95-f9b6180fbad3",
+      "fetchedAtUTC": "2026-10-11T04:27:27.713517+00:00",
+      "htmlSha256": "dd838222a0b7df98506ba44f64cfe03ee81f77e208a386c94312c34b0bf6eb22",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "2a8339a9-1923-5525-b5d5-4d843800f249",
+      "menuItemId": "menu_e0eba3c9b78f4cb77910",
+      "observedMenuName": "Bánh cuộn Tex - Không Cay",
+      "observedPriceVND": 59000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BÁNH CUỘN NGON XỈU, AI ĂN CŨNG GHIỀN"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/ga-ran-texas-chicken-vo-van-ngan-67488",
+      "sourceRef": "09685886-f124-54d4-be95-f9b6180fbad3",
+      "fetchedAtUTC": "2026-10-11T04:27:27.713517+00:00",
+      "htmlSha256": "dd838222a0b7df98506ba44f64cfe03ee81f77e208a386c94312c34b0bf6eb22",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "2cdc98db-01ec-5a4c-93b3-699a862bc855",
+      "menuItemId": "menu_41699bd827eafde21687",
+      "observedMenuName": "Burger Tex Supreme - Cay",
+      "observedPriceVND": 59000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BURGER ĐẬM ĐÀ, MĂM LÀ MÊ LY"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/ga-ran-texas-chicken-vo-van-ngan-67488",
+      "sourceRef": "09685886-f124-54d4-be95-f9b6180fbad3",
+      "fetchedAtUTC": "2026-10-11T04:27:27.713517+00:00",
+      "htmlSha256": "dd838222a0b7df98506ba44f64cfe03ee81f77e208a386c94312c34b0bf6eb22",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "3cf1a577-ce5d-5b01-83bc-f4de2980a1cd",
+      "menuItemId": "menu_2d48fa143efbcbc76485",
+      "observedMenuName": "Bánh cuộn Mexicana - Không Cay",
+      "observedPriceVND": 69000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BÁNH CUỘN NGON XỈU, AI ĂN CŨNG GHIỀN"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/ga-ran-texas-chicken-vo-van-ngan-67488",
+      "sourceRef": "09685886-f124-54d4-be95-f9b6180fbad3",
+      "fetchedAtUTC": "2026-10-11T04:27:27.713517+00:00",
+      "htmlSha256": "dd838222a0b7df98506ba44f64cfe03ee81f77e208a386c94312c34b0bf6eb22",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "4ee208ec-1642-55cf-81a8-df4916d22107",
+      "menuItemId": "menu_56b43d7d9125ab1978c1",
+      "observedMenuName": "01 Burger Bóng Đêm",
+      "observedPriceVND": 69000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Deal Ngon Hú Vía"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/ga-ran-texas-chicken-vo-van-ngan-67488",
+      "sourceRef": "09685886-f124-54d4-be95-f9b6180fbad3",
+      "fetchedAtUTC": "2026-10-11T04:27:27.713517+00:00",
+      "htmlSha256": "dd838222a0b7df98506ba44f64cfe03ee81f77e208a386c94312c34b0bf6eb22",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "658dac5d-f19e-5c2e-b9dd-ec347920962f",
+      "menuItemId": "menu_312ee6a1237733f43a12",
+      "observedMenuName": "Burger Mexicana - Cay",
+      "observedPriceVND": 69000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BURGER ĐẬM ĐÀ, MĂM LÀ MÊ LY"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/ga-ran-texas-chicken-vo-van-ngan-67488",
+      "sourceRef": "09685886-f124-54d4-be95-f9b6180fbad3",
+      "fetchedAtUTC": "2026-10-11T04:27:27.713517+00:00",
+      "htmlSha256": "dd838222a0b7df98506ba44f64cfe03ee81f77e208a386c94312c34b0bf6eb22",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "6e20c29d-dd6c-55a2-9240-12c246b6d126",
+      "menuItemId": "menu_12e8ac2a393d2436fb17",
+      "observedMenuName": "Burger Tôm - Cay",
+      "observedPriceVND": 49000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BURGER ĐẬM ĐÀ, MĂM LÀ MÊ LY"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/ga-ran-texas-chicken-vo-van-ngan-67488",
+      "sourceRef": "09685886-f124-54d4-be95-f9b6180fbad3",
+      "fetchedAtUTC": "2026-10-11T04:27:27.713517+00:00",
+      "htmlSha256": "dd838222a0b7df98506ba44f64cfe03ee81f77e208a386c94312c34b0bf6eb22",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "6ff15e0d-1d1f-58bf-a016-5b1841fe3a2b",
+      "menuItemId": "menu_f9adec3a9043d7afe2f8",
+      "observedMenuName": "01 Bánh Cuộn Hải Sản",
+      "observedPriceVND": 49000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Bánh Cuộn Hải Sản, Vị Cuốn Miễn Bàn"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/ga-ran-texas-chicken-vo-van-ngan-67488",
+      "sourceRef": "09685886-f124-54d4-be95-f9b6180fbad3",
+      "fetchedAtUTC": "2026-10-11T04:27:27.713517+00:00",
+      "htmlSha256": "dd838222a0b7df98506ba44f64cfe03ee81f77e208a386c94312c34b0bf6eb22",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "80189b0f-423a-54f7-987d-fa34c9e19696",
+      "menuItemId": "menu_9d9ba1ff47265d7c5600",
+      "observedMenuName": "Bánh cuộn Mexicana - Cay",
+      "observedPriceVND": 69000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BÁNH CUỘN NGON XỈU, AI ĂN CŨNG GHIỀN"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/ga-ran-texas-chicken-vo-van-ngan-67488",
+      "sourceRef": "09685886-f124-54d4-be95-f9b6180fbad3",
+      "fetchedAtUTC": "2026-10-11T04:27:27.713517+00:00",
+      "htmlSha256": "dd838222a0b7df98506ba44f64cfe03ee81f77e208a386c94312c34b0bf6eb22",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "c62b8a36-8549-52a2-ad1c-a80254b8a218",
+      "menuItemId": "menu_7ed821780e5843c769cc",
+      "observedMenuName": "Burger Mexicana - Không Cay",
+      "observedPriceVND": 69000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BURGER ĐẬM ĐÀ, MĂM LÀ MÊ LY"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/ga-ran-texas-chicken-vo-van-ngan-67488",
+      "sourceRef": "09685886-f124-54d4-be95-f9b6180fbad3",
+      "fetchedAtUTC": "2026-10-11T04:27:27.713517+00:00",
+      "htmlSha256": "dd838222a0b7df98506ba44f64cfe03ee81f77e208a386c94312c34b0bf6eb22",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "d7e82ab5-740f-5be6-a9d7-6e5b9203fac7",
+      "menuItemId": "menu_e153e24190f97d8b307f",
+      "observedMenuName": "Bánh cuộn Tex - Cay",
+      "observedPriceVND": 59000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BÁNH CUỘN NGON XỈU, AI ĂN CŨNG GHIỀN"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/ga-ran-texas-chicken-vo-van-ngan-67488",
+      "sourceRef": "09685886-f124-54d4-be95-f9b6180fbad3",
+      "fetchedAtUTC": "2026-10-11T04:27:27.713517+00:00",
+      "htmlSha256": "dd838222a0b7df98506ba44f64cfe03ee81f77e208a386c94312c34b0bf6eb22",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "d95383e9-3732-5d3e-8d50-fb0f1c8e72eb",
+      "menuItemId": "menu_a92109465d8c6cbebee6",
+      "observedMenuName": "Burger Tex Supreme - Không Cay",
+      "observedPriceVND": 59000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "BURGER ĐẬM ĐÀ, MĂM LÀ MÊ LY"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/ga-ran-texas-chicken-vo-van-ngan-67488",
+      "sourceRef": "09685886-f124-54d4-be95-f9b6180fbad3",
+      "fetchedAtUTC": "2026-10-11T04:27:27.713517+00:00",
+      "htmlSha256": "dd838222a0b7df98506ba44f64cfe03ee81f77e208a386c94312c34b0bf6eb22",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    }
+  ],
+  "confirmedFieldsApplied": false,
+  "independentReviewer": null,
+  "validUntil": null
+}

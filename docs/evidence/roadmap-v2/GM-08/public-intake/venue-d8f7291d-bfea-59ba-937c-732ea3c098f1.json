@@ -1,0 +1,278 @@
+{
+  "state": "Pending",
+  "verified": false,
+  "publicationPerformed": false,
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "venueId": "d8f7291d-bfea-59ba-937c-732ea3c098f1",
+  "branchName": "Phở Lý Quốc Sư - Hoàng Diệu 2",
+  "observedVenue": {
+    "address": "218A Hoàng Diệu 2, Phường Thủ Đức, Hồ Chí Minh",
+    "lat": 10.854220390319824,
+    "lng": 106.76921844482422,
+    "sourceUrl": "https://food.be.com.vn/ho-chi-minh/pho-ly-quoc-su-hoang-dieu-2-86590",
+    "fetchedAtUTC": "2026-10-11T04:27:41.655323+00:00",
+    "htmlSha256": "60b2bd77ca0f48a1774248012c1d5d73c6f49a7f9ae3fdb1b40c6a5a59fe1c27",
+    "platformWeeklyHours": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Sunday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Monday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Tuesday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Wednesday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Thursday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Friday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Saturday"
+        ],
+        "opens": "00:00"
+      }
+    ],
+    "serviceScope": "delivery_platform_listing; physical dine_in/takeaway/availability unknown"
+  },
+  "additionalPublicObservations": [
+    {
+      "kind": "Foody direct HTTPS capture",
+      "url": "https://www.foody.vn/ho-chi-minh/pho-ly-quoc-su-218a-hoang-dieu-2",
+      "fetchedAtUTC": "2026-10-11T05:09:12.096565+00:00",
+      "sha256": "273ce1a8f9bfb6362a65ac9f93bbb3ed829b8aefe49563b4081afad8fe7c5a28",
+      "observedAddress": "218a Hoàng Diệu 2, P. Linh Chiểu, Tp. Thủ Đức, TP. HCM",
+      "observedHours": {
+        "start": "00:01",
+        "end": "23:59",
+        "weekdays": "unspecified"
+      },
+      "listingStatusLabel": null,
+      "physicalVenueConfirmed": false,
+      "serviceModesConfirmed": false,
+      "note": "Static listing observation only; no seven-day schedule or offering hours confirmed. Amenities with active/inactive ambiguity not used."
+    }
+  ],
+  "offerings": [
+    {
+      "offeringId": "11e5b7f8-0e80-5fa7-ad6a-1bf678b9c748",
+      "menuItemId": "menu_8f27d2705fe659681eca",
+      "observedMenuName": "Bún nạm gân",
+      "observedPriceVND": 45000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Bún"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/pho-ly-quoc-su-hoang-dieu-2-86590",
+      "sourceRef": "5dd7d319-9918-5389-ad80-817f8de98fd6",
+      "fetchedAtUTC": "2026-10-11T04:27:41.655323+00:00",
+      "htmlSha256": "60b2bd77ca0f48a1774248012c1d5d73c6f49a7f9ae3fdb1b40c6a5a59fe1c27",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "2442a0af-cd45-524e-8dad-42776ab30c6b",
+      "menuItemId": "menu_c181071d9145bb1563ae",
+      "observedMenuName": "Bún tái chả",
+      "observedPriceVND": 45000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Bún"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/pho-ly-quoc-su-hoang-dieu-2-86590",
+      "sourceRef": "5dd7d319-9918-5389-ad80-817f8de98fd6",
+      "fetchedAtUTC": "2026-10-11T04:27:41.655323+00:00",
+      "htmlSha256": "60b2bd77ca0f48a1774248012c1d5d73c6f49a7f9ae3fdb1b40c6a5a59fe1c27",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "34843590-0a60-5fb7-a311-51cc85478535",
+      "menuItemId": "menu_028a60e0c694af9d1dd9",
+      "observedMenuName": "Bún bò",
+      "observedPriceVND": 45000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Bún"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/pho-ly-quoc-su-hoang-dieu-2-86590",
+      "sourceRef": "5dd7d319-9918-5389-ad80-817f8de98fd6",
+      "fetchedAtUTC": "2026-10-11T04:27:41.655323+00:00",
+      "htmlSha256": "60b2bd77ca0f48a1774248012c1d5d73c6f49a7f9ae3fdb1b40c6a5a59fe1c27",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "37a365ea-42e9-5426-ad07-8958836fc6a2",
+      "menuItemId": "menu_c2a09df0ebf10b8bb2e8",
+      "observedMenuName": "Phở gà",
+      "observedPriceVND": 45000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Phở"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/pho-ly-quoc-su-hoang-dieu-2-86590",
+      "sourceRef": "5dd7d319-9918-5389-ad80-817f8de98fd6",
+      "fetchedAtUTC": "2026-10-11T04:27:41.655323+00:00",
+      "htmlSha256": "60b2bd77ca0f48a1774248012c1d5d73c6f49a7f9ae3fdb1b40c6a5a59fe1c27",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "3f2a60e0-924a-5afb-9348-239fa823fa10",
+      "menuItemId": "menu_bb2bf3d856e95b1e2f82",
+      "observedMenuName": "Miến gà",
+      "observedPriceVND": 45000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Mì - Miến"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/pho-ly-quoc-su-hoang-dieu-2-86590",
+      "sourceRef": "5dd7d319-9918-5389-ad80-817f8de98fd6",
+      "fetchedAtUTC": "2026-10-11T04:27:41.655323+00:00",
+      "htmlSha256": "60b2bd77ca0f48a1774248012c1d5d73c6f49a7f9ae3fdb1b40c6a5a59fe1c27",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "61cf2ccf-f88a-5d43-b51d-da2486c4ce2d",
+      "menuItemId": "menu_1631d466455cd52472a0",
+      "observedMenuName": "Mì bò",
+      "observedPriceVND": 45000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Mì - Miến"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/pho-ly-quoc-su-hoang-dieu-2-86590",
+      "sourceRef": "5dd7d319-9918-5389-ad80-817f8de98fd6",
+      "fetchedAtUTC": "2026-10-11T04:27:41.655323+00:00",
+      "htmlSha256": "60b2bd77ca0f48a1774248012c1d5d73c6f49a7f9ae3fdb1b40c6a5a59fe1c27",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "620dd7ab-064c-5afa-8b42-439565f858e3",
+      "menuItemId": "menu_70ba964c0626f7b44a93",
+      "observedMenuName": "Mì gà",
+      "observedPriceVND": 45000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Mì - Miến"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/pho-ly-quoc-su-hoang-dieu-2-86590",
+      "sourceRef": "5dd7d319-9918-5389-ad80-817f8de98fd6",
+      "fetchedAtUTC": "2026-10-11T04:27:41.655323+00:00",
+      "htmlSha256": "60b2bd77ca0f48a1774248012c1d5d73c6f49a7f9ae3fdb1b40c6a5a59fe1c27",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "831e73b9-389e-5e04-9b2d-41ea89f464b6",
+      "menuItemId": "menu_8b0862121e4192954850",
+      "observedMenuName": "Bún nạm viên",
+      "observedPriceVND": 45000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Bún"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/pho-ly-quoc-su-hoang-dieu-2-86590",
+      "sourceRef": "5dd7d319-9918-5389-ad80-817f8de98fd6",
+      "fetchedAtUTC": "2026-10-11T04:27:41.655323+00:00",
+      "htmlSha256": "60b2bd77ca0f48a1774248012c1d5d73c6f49a7f9ae3fdb1b40c6a5a59fe1c27",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "c90377de-2167-547b-8a4b-09bc5e84d6f1",
+      "menuItemId": "menu_3188e4590e77e87204d5",
+      "observedMenuName": "Miến bò",
+      "observedPriceVND": 35000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Mì - Miến"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/pho-ly-quoc-su-hoang-dieu-2-86590",
+      "sourceRef": "5dd7d319-9918-5389-ad80-817f8de98fd6",
+      "fetchedAtUTC": "2026-10-11T04:27:41.655323+00:00",
+      "htmlSha256": "60b2bd77ca0f48a1774248012c1d5d73c6f49a7f9ae3fdb1b40c6a5a59fe1c27",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    }
+  ],
+  "confirmedFieldsApplied": false,
+  "independentReviewer": null,
+  "validUntil": null
+}

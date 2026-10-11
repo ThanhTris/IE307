@@ -1,0 +1,284 @@
+{
+  "state": "Pending",
+  "verified": false,
+  "publicationPerformed": false,
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "venueId": "a35c7d52-8e72-5d04-a265-bfef58c8ea1a",
+  "branchName": "Bún Bò Huế Sông Hương - Đường 2",
+  "observedVenue": {
+    "address": "2 Đường 2 Khu Phố 1, Phường Linh Đông, Thành Phố Thủ Đức, Hồ Chí Minh",
+    "lat": 10.85923957824707,
+    "lng": 106.7464599609375,
+    "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-hue-song-huong-duong-2-19461",
+    "fetchedAtUTC": "2026-10-11T04:27:37.548346+00:00",
+    "htmlSha256": "357ec922751597c7e278c917dbde3bf0aa7f88c274288d4d9ed3120b5225de75",
+    "platformWeeklyHours": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "20:00",
+        "dayOfWeek": [
+          "Sunday"
+        ],
+        "opens": "06:30"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "20:00",
+        "dayOfWeek": [
+          "Monday"
+        ],
+        "opens": "06:30"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "20:00",
+        "dayOfWeek": [
+          "Tuesday"
+        ],
+        "opens": "06:30"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "20:00",
+        "dayOfWeek": [
+          "Wednesday"
+        ],
+        "opens": "06:30"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "20:00",
+        "dayOfWeek": [
+          "Thursday"
+        ],
+        "opens": "06:30"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "20:00",
+        "dayOfWeek": [
+          "Friday"
+        ],
+        "opens": "06:30"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "20:00",
+        "dayOfWeek": [
+          "Saturday"
+        ],
+        "opens": "06:30"
+      }
+    ],
+    "serviceScope": "delivery_platform_listing; physical dine_in/takeaway/availability unknown"
+  },
+  "additionalPublicObservations": [],
+  "offerings": [
+    {
+      "offeringId": "12e12361-9a2e-5772-88a3-0683a0399d2f",
+      "menuItemId": "menu_9d336919d4840a16eca7",
+      "observedMenuName": "Bún bò tái",
+      "observedPriceVND": 40000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Bún Bò Huế",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-hue-song-huong-duong-2-19461",
+      "sourceRef": "4c0b0268-6756-56a9-b24f-96483f7e841a",
+      "fetchedAtUTC": "2026-10-11T04:27:37.548346+00:00",
+      "htmlSha256": "357ec922751597c7e278c917dbde3bf0aa7f88c274288d4d9ed3120b5225de75",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "264ac8b5-96a2-53f4-9473-95c4f4cca22e",
+      "menuItemId": "menu_61423f3d1f9f358fe551",
+      "observedMenuName": "Bún bò tô trẻ em",
+      "observedPriceVND": 30000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Bún Bò Huế"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-hue-song-huong-duong-2-19461",
+      "sourceRef": "4c0b0268-6756-56a9-b24f-96483f7e841a",
+      "fetchedAtUTC": "2026-10-11T04:27:37.548346+00:00",
+      "htmlSha256": "357ec922751597c7e278c917dbde3bf0aa7f88c274288d4d9ed3120b5225de75",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "3a11fccb-84af-5d10-853f-6d0e8a953422",
+      "menuItemId": "menu_79f2d1afde50f57879b7",
+      "observedMenuName": "Bún bò nạm",
+      "observedPriceVND": 40000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Bún Bò Huế",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-hue-song-huong-duong-2-19461",
+      "sourceRef": "4c0b0268-6756-56a9-b24f-96483f7e841a",
+      "fetchedAtUTC": "2026-10-11T04:27:37.548346+00:00",
+      "htmlSha256": "357ec922751597c7e278c917dbde3bf0aa7f88c274288d4d9ed3120b5225de75",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "3a2cd232-ca31-5598-83f5-10835eb962b2",
+      "menuItemId": "menu_a3228b632124109f14be",
+      "observedMenuName": "Bún bò gân",
+      "observedPriceVND": 40000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Bún Bò Huế"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-hue-song-huong-duong-2-19461",
+      "sourceRef": "4c0b0268-6756-56a9-b24f-96483f7e841a",
+      "fetchedAtUTC": "2026-10-11T04:27:37.548346+00:00",
+      "htmlSha256": "357ec922751597c7e278c917dbde3bf0aa7f88c274288d4d9ed3120b5225de75",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "8bab1dd7-ac68-5659-9a73-16bf81393571",
+      "menuItemId": "menu_e0610254b162c14bd764",
+      "observedMenuName": "Bún bò tái chả",
+      "observedPriceVND": 45000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Bún Bò Huế"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-hue-song-huong-duong-2-19461",
+      "sourceRef": "4c0b0268-6756-56a9-b24f-96483f7e841a",
+      "fetchedAtUTC": "2026-10-11T04:27:37.548346+00:00",
+      "htmlSha256": "357ec922751597c7e278c917dbde3bf0aa7f88c274288d4d9ed3120b5225de75",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "ad385cc3-fc0a-527e-8f17-001d3430ddb7",
+      "menuItemId": "menu_24cf32183c0789bb727d",
+      "observedMenuName": "Bún bò nạm - chả",
+      "observedPriceVND": 45000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Bún Bò Huế",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-hue-song-huong-duong-2-19461",
+      "sourceRef": "4c0b0268-6756-56a9-b24f-96483f7e841a",
+      "fetchedAtUTC": "2026-10-11T04:27:37.548346+00:00",
+      "htmlSha256": "357ec922751597c7e278c917dbde3bf0aa7f88c274288d4d9ed3120b5225de75",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "ae8a44e4-8a4d-5e26-813d-d4e8f498f2f8",
+      "menuItemId": "menu_e0176818122939dfd7b1",
+      "observedMenuName": "Bún bò bắp - gân",
+      "observedPriceVND": 45000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Bún Bò Huế"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-hue-song-huong-duong-2-19461",
+      "sourceRef": "4c0b0268-6756-56a9-b24f-96483f7e841a",
+      "fetchedAtUTC": "2026-10-11T04:27:37.548346+00:00",
+      "htmlSha256": "357ec922751597c7e278c917dbde3bf0aa7f88c274288d4d9ed3120b5225de75",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "b15302f1-e9c6-58a3-af59-c3babb0c2055",
+      "menuItemId": "menu_ecf8f37e28fb63142f81",
+      "observedMenuName": "Bún bò nạm - giò heo",
+      "observedPriceVND": 45000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Bún Bò Huế"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-hue-song-huong-duong-2-19461",
+      "sourceRef": "4c0b0268-6756-56a9-b24f-96483f7e841a",
+      "fetchedAtUTC": "2026-10-11T04:27:37.548346+00:00",
+      "htmlSha256": "357ec922751597c7e278c917dbde3bf0aa7f88c274288d4d9ed3120b5225de75",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "e9e05222-1b7b-521b-a813-5056b170cdca",
+      "menuItemId": "menu_21477da06ac5d200903f",
+      "observedMenuName": "Bún bò nạm - gân",
+      "observedPriceVND": 45000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Bún Bò Huế"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-hue-song-huong-duong-2-19461",
+      "sourceRef": "4c0b0268-6756-56a9-b24f-96483f7e841a",
+      "fetchedAtUTC": "2026-10-11T04:27:37.548346+00:00",
+      "htmlSha256": "357ec922751597c7e278c917dbde3bf0aa7f88c274288d4d9ed3120b5225de75",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "f9f9905a-09d5-5818-97be-d9882e8d026a",
+      "menuItemId": "menu_185b58930610477e92a0",
+      "observedMenuName": "Bún bò bắp",
+      "observedPriceVND": 40000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Bún Bò Huế"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/bun-bo-hue-song-huong-duong-2-19461",
+      "sourceRef": "4c0b0268-6756-56a9-b24f-96483f7e841a",
+      "fetchedAtUTC": "2026-10-11T04:27:37.548346+00:00",
+      "htmlSha256": "357ec922751597c7e278c917dbde3bf0aa7f88c274288d4d9ed3120b5225de75",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    }
+  ],
+  "confirmedFieldsApplied": false,
+  "independentReviewer": null,
+  "validUntil": null
+}

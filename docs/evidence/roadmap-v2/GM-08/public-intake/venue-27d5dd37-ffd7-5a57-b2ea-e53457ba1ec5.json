@@ -1,0 +1,123 @@
+{
+  "state": "Pending",
+  "verified": false,
+  "publicationPerformed": false,
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "venueId": "27d5dd37-ffd7-5a57-b2ea-e53457ba1ec5",
+  "branchName": "Mì Trộn Nhà Min - Kha Vạn Cân",
+  "observedVenue": {
+    "address": "1060/22 Kha Vạn Cân, Phường Thủ Đức, Hồ Chí Minh",
+    "lat": 10.856109619140625,
+    "lng": 106.75778198242188,
+    "sourceUrl": "https://food.be.com.vn/ho-chi-minh/mi-tron-nha-min-kha-van-can-147476",
+    "fetchedAtUTC": "2026-10-11T04:27:04.766992+00:00",
+    "htmlSha256": "65f8bd6b977796a63bd0657ed0e5eb24b6c6a2849aa6dfdaee25f114921eaa28",
+    "platformWeeklyHours": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:00",
+        "dayOfWeek": [
+          "Sunday"
+        ],
+        "opens": "06:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:00",
+        "dayOfWeek": [
+          "Monday"
+        ],
+        "opens": "06:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:00",
+        "dayOfWeek": [
+          "Tuesday"
+        ],
+        "opens": "06:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:00",
+        "dayOfWeek": [
+          "Wednesday"
+        ],
+        "opens": "06:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:00",
+        "dayOfWeek": [
+          "Thursday"
+        ],
+        "opens": "06:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:00",
+        "dayOfWeek": [
+          "Friday"
+        ],
+        "opens": "06:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:00",
+        "dayOfWeek": [
+          "Saturday"
+        ],
+        "opens": "06:00"
+      }
+    ],
+    "serviceScope": "delivery_platform_listing; physical dine_in/takeaway/availability unknown"
+  },
+  "additionalPublicObservations": [],
+  "offerings": [
+    {
+      "offeringId": "13e86c33-411e-544c-a2e6-669f996c66fc",
+      "menuItemId": "menu_85d40bace981273f315c",
+      "observedMenuName": "Mì trộn indo",
+      "observedPriceVND": 39000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/mi-tron-nha-min-kha-van-can-147476",
+      "sourceRef": "11dd6ec4-4037-55d0-930c-ab5e47a42452",
+      "fetchedAtUTC": "2026-10-11T04:27:04.766992+00:00",
+      "htmlSha256": "65f8bd6b977796a63bd0657ed0e5eb24b6c6a2849aa6dfdaee25f114921eaa28",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "17f83c41-91b8-50eb-aff6-d774c6769e54",
+      "menuItemId": "menu_fa4567bd7a33d7ccc0bc",
+      "observedMenuName": "Mì trộn phô mai",
+      "observedPriceVND": 46000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/mi-tron-nha-min-kha-van-can-147476",
+      "sourceRef": "11dd6ec4-4037-55d0-930c-ab5e47a42452",
+      "fetchedAtUTC": "2026-10-11T04:27:04.766992+00:00",
+      "htmlSha256": "65f8bd6b977796a63bd0657ed0e5eb24b6c6a2849aa6dfdaee25f114921eaa28",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    }
+  ],
+  "confirmedFieldsApplied": false,
+  "independentReviewer": null,
+  "validUntil": null
+}
