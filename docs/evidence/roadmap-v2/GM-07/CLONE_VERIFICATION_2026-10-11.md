@@ -4,7 +4,7 @@ Ngày 2026-10-11. Kiểm tra trên Windows PowerShell sau khi clone `ThanhTris/I
 
 ## Follow-up code patch
 
-Trên nhánh `codex/gm-07-trung-verification`, commit `b39e081f53d4623f07184746282fab38cbb539f2` yêu cầu truyền mode API rõ ràng (`real`/`mock`) và làm fixture `loading` pending tối thiểu 300 ms. Runtime test mới xác nhận loading mock trả dữ liệu sau khoảng chờ. `npm run check` pass với 6 suites / 267 tests; Python GM-07 pass 10/10. Full Python regression chạy 524 tests, có 5 lỗi do `test_vilao_catalogue` yêu cầu Linux/macOS/WSL locking. Validator, task docs và diff check pass. Chi tiết có trong [CHECKS.md](CHECKS.md).
+Trên nhánh `codex/gm-07-trung-verification`, code commit `77941b56146969ec562063f7b7c9351f69d0b675` kiểm mode chính xác ở runtime: omitted/undefined/null/chuỗi sai đều throw thay vì tạo mock; `'real'`/`'mock'` hợp lệ giữ nguyên. Loading fixture với delay mặc định tối thiểu và delay 600 ms tường minh đều được test. `npm run check` pass với 6 suites / 272 tests; Python GM-07 pass 10/10. Full Python regression chạy 524 tests, có 5 lỗi do `test_vilao_catalogue` yêu cầu Linux/macOS/WSL locking. Validator, task docs và diff check pass. Chi tiết có trong [CHECKS.md](CHECKS.md).
 
 ## Revision và môi trường
 
