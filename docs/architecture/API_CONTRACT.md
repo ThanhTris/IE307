@@ -71,14 +71,14 @@ GM-17 bảo vệ tables/RPC/retention, từng task API thêm auth/membership/ver
 | :--- | :--- | :--- | :--- |
 | `PoolDish.roundDishId` | `string` (UUID / slug) | `round_dishes.id` | Bắt buộc, định danh lượt vote |
 | `PoolDish.dishId` | `string` (UUID) | `dishes.id` / `venue_dishes.dish_id` | Bắt buộc, tham chiếu món gốc |
-| `PoolDish.name` | `string` | `dishes.name_vi` | Bắt buộc |
-| `PoolDish.priceMin` | `number \| null` (VND) | `venue_dishes.price_min` | Nullable khi quán chưa niêm yết |
-| `PoolDish.priceMax` | `number \| null` (VND) | `venue_dishes.price_max` | Nullable khi món đồng giá hoặc chưa rõ |
-| `PoolDish.currency` | `'VND'` | `dishes.currency` | Cố định `'VND'` theo GM-04 |
-| `PoolDish.unit` | `'menu_item_unspecified'` | `dishes.unit` | Đơn vị khẩu phần theo menu |
-| `PoolDish.servingSize` | `1` | `dishes.serving_size` | Mặc định 1 người |
-| `PoolDish.price` | `DishPrice \| null` | `venue_dishes` pricing object | Projection có cấu trúc cho UI |
-| `PoolDish.temperature` | `'warm_hot' \| 'cold_iced' \| 'ambient'` | `dishes.temperature` | Enum taxonomy GM-04 |
+| `PoolDish.name` | `string` | `dishes.name` | Bắt buộc (bảng `dishes` dùng cột `name`) |
+| `PoolDish.priceMin` | `number \| null` (nguyên tệ) | `round_dishes.price.priceMin` / `venue_dishes.price_min` | Nullable khi quán chưa niêm yết |
+| `PoolDish.priceMax` | `number \| null` (nguyên tệ) | `round_dishes.price.priceMax` / `venue_dishes.price_max` | Nullable khi món đồng giá hoặc chưa rõ |
+| `PoolDish.currency` | `CurrencyCode \| null` | `round_dishes.price.currency` (enum `currency_code`) | Enum: `'VND'`, `'USD'`, `'THB'`, `'KRW'`, `'JPY'`, `'CNY'`, `'EUR'`, `'other'`. Nullable khi chưa rõ giá |
+| `PoolDish.unit` | `PriceUnit \| null` | `round_dishes.price.unit` (enum `price_unit`) | Enum: `'portion'`, `'item'`, `'person'`, `'group'`, `'kg'`, `'menu_item_unspecified'`. Nullable khi chưa rõ |
+| `PoolDish.servingSize` | `string \| null` | `round_dishes.price.servingSize` / `venue_dishes.serving_size` | Chuỗi mô tả khẩu phần (ví dụ: `'1 phần'`, `'2–3 người'`). Nullable |
+| `PoolDish.price` | `DishPrice \| null` | `round_dishes.price` JSON object / `venue_dishes` pricing | Projection có cấu trúc cho UI |
+| `PoolDish.temperature` | `'hot' \| 'warm' \| 'cold' \| 'ambient' \| 'unknown'` | `round_dishes.effective_profile.temperature` / `dishes.temperature` | Enum nhiệt độ chuẩn hóa |
 | `RoomSnapshot.ownSubmission` | `SubmissionReceipt \| null` | `submissions` | Receipt nộp phiếu (`round`, `intentId`, `requestId`, `submittedAt`, `voteCount`) dùng reconcile sau timeout |
 | `RoomSnapshot.datasetVersion` | `string` | Metadata / `food_datasets.version` | Phiên bản dataset hiện hành (ví dụ: `2026-10-11-core-01`) |
 | `RoomSnapshot.eligibilityVersion`| `string` | Metadata eligibility | Phiên bản quy tắc eligibility (`1.0.0`) |

@@ -26,13 +26,13 @@ Upstream artifact đã nhận:
    ```sh
    cd mobile && npm test -- tests/unit/apiContract.test.ts
    ```
-   Kết quả: 16 test cases pass (bao gồm error normalization, requestId retry idempotency, mock consensus scenarios, permission mapping, baseUrl configuration).
+   Kết quả: 24 test cases pass (bao gồm error normalization, requestId retry idempotency, mock consensus scenarios, permission mapping, baseUrl configuration, FetchTransport status retention & timeout abort).
 
 3. Chạy toàn bộ test suites trong mobile:
    ```sh
    cd mobile && npm test
    ```
-   Kết quả: 3 test suites passed, 22 tests passed (`apiContract.test.ts`, `routes.test.tsx`, `AppShellScreen.test.tsx`).
+   Kết quả: 3 test suites passed, 24 tests passed (`apiContract.test.ts`, `routes.test.tsx`, `AppShellScreen.test.tsx`).
 
 4. Chạy bộ kiểm thử hợp đồng tự động GM-07 bằng Python:
    ```sh
@@ -54,11 +54,13 @@ Upstream artifact đã nhận:
 
 | Hạng mục review | Vị trí code / Test case | Thiết lập kiểm thử | Kết quả mong đợi | Kết quả thực tế | Trạng thái |
 | :--- | :--- | :--- | :--- | :--- | :---: |
-| **1. [P1] Error Normalization** | `client.ts:normalizeRpcResponse()`, `apiContract.test.ts` (Block 1) | Giả lập HTTP 200 trả `{ ok: false, error: { messageKey: 'VERSION_CONFLICT' } }` và malformed `{ foo: 'bar' }` cho `setReady`, `submitBallot` | Không bao giờ biến lỗi server thành thành công; bảo toàn `messageKey`, trả `MALFORMED_RESPONSE` khi rỗng cờ `ok` | Caller nhận đúng `{ ok: false, error: { messageKey: 'VERSION_CONFLICT' } }`; malformed nhận `MALFORMED_RESPONSE` | **Pass** |
-| **2. [P1] RequestId Retention khi Retry** | `contracts.ts`, `client.ts`, `mock.ts`, `apiContract.test.ts` (Block 2) | Caller cung cấp `requestId` cố định khi gọi `submitBallot`. Gọi lần 1 thành công, lần 2 retry cùng ID/payload; lần 3 retry cùng ID khác payload | Lần 2 nhận ACK idempotent cũ; lần 3 bị từ chối với `REQUEST_ID_REUSED`. Không âm thầm sinh lại ID | Lần 2 trả đúng version/state cũ; lần 3 trả lỗi `REQUEST_ID_REUSED` | **Pass** |
-| **3. [P2] Cấu hình Real Client & BaseUrl** | `client.ts:ClientConfig`, `apiContract.test.ts` (Block 3) | Khởi tạo `new ApiClientImpl({ baseUrl: 'https://api.mycustomdomain.com', fetchFn })` | Client gửi HTTP request tới đúng domain cấu hình; không ngầm fallback localhost | URL gửi đi khớp 100% với `baseUrl` truyền vào; compile TypeScript không lỗi type | **Pass** |
-| **4. [P2] DTO Parity GM-04 / GM-06** | `contracts.ts`, `API_CONTRACT.md`, `test_api_contract_gm07.py` | Kiểm tra projection giá, đơn vị, khẩu phần, submission receipt và enum permission | `PoolDish` có `priceMin`, `priceMax`, `currency: VND`, `unit: menu_item_unspecified`, `servingSize: 1`, `DishPrice`; `RoomSnapshot` có `ownSubmission`, `datasetVersion`, `eligibilityVersion`, `evaluatedAt`; `toStoragePermission` map `'provisional' -> 'unknown'` | Các trường định nghĩa chặt chẽ, khớp bảng ánh xạ trong `API_CONTRACT.md` | **Pass** |
-| **5. [P2] Mock Consensus Rules** | `mock.ts:submitBallot()`, `apiContract.test.ts` (Block 4) | Nộp ballot khi phòng ở `LOBBY`; kịch bản all-NO; kịch bản `round_two`; kịch bản `unanimous` | `LOBBY` bị từ chối với `INVALID_ROOM_STATE`; all-NO trả `winner: null, reasonCode: 'NO_CONSENSUS'`; `round_two` chuyển phòng sang `ROUND_2` | NO không bao giờ thắng; state machine hoạt động đúng kịch bản thiết lập | **Pass** |
+| **1. [P1] Error Normalization** | `client.ts:normalizeWriteResponse()`, `apiContract.test.ts` (Block 1) | Giả lập HTTP 200 trả `{ ok: false, error: { messageKey: 'VERSION_CONFLICT' } }`, primitive `42`, string, non-object, `{ foo: 'bar' }`, `{ ok: 'true' }` | Bắt buộc boolean `ok`; không bao giờ biến lỗi server thành thành công; trả `MALFORMED_RESPONSE` khi thiếu/sai `ok` | Caller nhận đúng `{ ok: false, error: { messageKey: 'VERSION_CONFLICT' } }`; mọi payload không đạt nhận `MALFORMED_RESPONSE` | **Pass** |
+| **2. [P1] RequestId Retention khi Retry & Mock Idempotency** | `contracts.ts`, `client.ts`, `mock.ts`, `apiContract.test.ts` (Block 2) | Caller cung cấp `requestId` cố định khi gọi `createRoom`, `setReady`, `submitBallot`. Gọi lần 1 thành công, lần 2 retry cùng ID/payload; lần 3 retry cùng ID khác payload signature | Lần 2 nhận ACK idempotent cũ (cùng `roomId`, không lỗi `VERSION_CONFLICT`); lần 3 bị từ chối với `REQUEST_ID_REUSED`. Không âm thầm sinh lại ID | Lần 2 trả đúng version/state cũ; lần 3 trả lỗi `REQUEST_ID_REUSED` | **Pass** |
+| **3. [P2] HTTP Transport Body Consumption & Abort Controller** | `client.ts:FetchTransport`, `apiContract.test.ts` | Giả lập server trả lỗi non-JSON (HTTP 403 `Forbidden`); giả lập slow RPC với combined signal | Body stream đọc duy nhất 1 lần bằng `.text()`, giữ nguyên status 403 mapping `AUTH_REQUIRED`; timeout tự hủy dù có external signal | Tránh lỗi stream locked/consumed; map chuẩn mã lỗi HTTP; hủy fetch chính xác | **Pass** |
+| **4. [P2] Cấu hình Real Client & BaseUrl** | `client.ts:ClientConfig`, `apiContract.test.ts` | Khởi tạo `new ApiClientImpl({ baseUrl: 'https://api.mycustomdomain.com', fetchFn, timeoutMs: 15000 })` | Client gửi HTTP request tới đúng domain cấu hình; không ngầm fallback localhost; type-safe 100% | URL gửi đi khớp 100% với `baseUrl` truyền vào; compile TypeScript không lỗi type | **Pass** |
+| **5. [P2] DTO Parity GM-04 / GM-06** | `contracts.ts`, `API_CONTRACT.md`, `test_api_contract_gm07.py` | Kiểm tra projection giá, đơn vị, khẩu phần, submission receipt và enum permission | `PoolDish` có `priceMin`, `priceMax`, `currency: CurrencyCode | null`, `unit: PriceUnit | null`, `servingSize: string | null`, `DishPrice`; `RoomSnapshot` có `ownSubmission`, `datasetVersion`, `eligibilityVersion`, `evaluatedAt`; `toStoragePermission` map `'provisional' -> 'unknown'` | Các trường định nghĩa chặt chẽ, khớp bảng ánh xạ trong `API_CONTRACT.md` (`dishes.name`, `round_dishes.price`) | **Pass** |
+| **6. [P2] Mock Consensus Rules & Error/Empty Modes** | `mock.ts`, `apiContract.test.ts` | Nộp ballot khi phòng ở `LOBBY`; kịch bản all-NO; kịch bản `round_two`; `error`/`empty` mode trên friends/inbox/history/offerings | `LOBBY` bị từ chối với `INVALID_ROOM_STATE`; all-NO trả `winner: null, reasonCode: 'NO_CONSENSUS'`; `round_two` chuyển sang `ROUND_2`; error mode không gây mutate state | NO không bao giờ thắng; error/empty mode hoạt động đồng bộ trên toàn bộ endpoints UI | **Pass** |
+| **7. [P2] Clean Base Artifact** | `mobile/app.config.ts` | So sánh working tree với `origin/main` | Không thay đổi artifact thuộc phạm vi GM-02 | `git diff origin/main mobile/app.config.ts` trả về 0 diff; Expo config đọc bình thường | **Pass** |UND_2` | NO không bao giờ thắng; state machine hoạt động đúng kịch bản thiết lập | **Pass** |
 | **6. [P2] Clean Base Artifact** | `mobile/app.config.ts` | So sánh working tree với `origin/main` | Không thay đổi artifact thuộc phạm vi GM-02 | `git diff origin/main mobile/app.config.ts` trả về 0 diff; Expo config đọc bình thường | **Pass** |
 
 ---
