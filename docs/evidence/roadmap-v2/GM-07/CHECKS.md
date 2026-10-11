@@ -1,5 +1,17 @@
 # Output checks — GM-07 / roadmap-v2
 
+## Lượt sửa read / caller isolation hiện tại
+
+Ngày 2026-10-11: tested code commit **`3f7f2412ed253eb67109368373e997599e916689`**, base PR `e482ccb3d9fec8051d71550a75916c9541fd2476`, target đã fetch `00c4f27a97d4f1487dfed7c54c1253c766709a1a`. [Manifest mới](read-isolation-fix/PATCH_MANIFEST.json) ghi hash code/spec/tests đã kiểm. Mobile/Python contract chạy lại trên commit này theo yêu cầu push của Trí; commit evidence tiếp theo chỉ đổi tài liệu/output. Nhánh đích PR #104: `codex/gm-07-api-contract-and-mock`; CI/review cần kiểm HEAD sau push.
+
+Client kiểm cả 8 read DTO/array trước success; restore session lỗi không lưu token. Mock ownPreferences/ownVotes/ownSubmission theo room + caller, trả bản sao private DTO. Thêm 125 tests trong apiReadValidation.test.ts và apiMockIsolation.test.ts, giữ 141 tests trước đó.
+
+Full mobile **6 suites / 266 tests Pass**, typecheck/architecture Pass, lint 0 errors/4 warnings cũ; [output](read-isolation-fix/MOBILE_CHECK.txt). Full Python lần này **476 tests / 1 failure + 5 errors**, đúng 6 lỗi encoding/legacy locking đã đối chiếu main ở lượt trước; [output mới](read-isolation-fix/PYTHON_REGRESSION.txt). Không báo full regression Pass. Các checks contract/repo/indexes/diff/live gate và cách tái hiện nằm trong [bàn giao lượt sửa](read-isolation-fix/README.md).
+
+Owner/reviewer/contract/Status Project giữ nguyên; chưa có review độc lập cho patch này. Các kết quả bên dưới là **lịch sử patch write/join f0599f8 → e482ccb**, không là kết quả của code read/isolation mới.
+
+## Lịch sử patch write / join đã push
+
 Status: Patch verified locally — awaiting independent review; full regression has baseline failures.
 
 Task / owner / reviewer / scope: GM-07 / Trang (@rosy179) / Trí (@ThanhTris) / API contract, client, mock. Codex hỗ trợ patch theo yêu cầu Trí; không là approval.

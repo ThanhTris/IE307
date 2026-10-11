@@ -125,3 +125,13 @@ Lần lập plan dùng Python 3.14.5 trong sandbox đã gặp nhiều lỗi môi
 - Hai checks mobile của revision được push phải xanh; reviewer kiểm lại B/C, Trí nghiệm thu. AI không approve, merge hoặc chuyển Done.
 
 Giữ các phần A đã sửa: pricing parity, caller requestId, idempotency create/ready/ballot, HTTP body/status, timeout với external signal, mock error/empty modes và Expo config. Không mở rộng sang SQL/RLS, production decision engine, verified import hoặc native feature.
+
+## Lượt tiếp theo — read validation và mock caller isolation
+
+Trí yêu cầu sửa tiếp hai P2 từ chat main / báo cáo review `pr104-v4`, base PR `e482ccb3d9fec8051d71550a75916c9541fd2476`, ngày 2026-10-11. Đây là hai đường đi có sẵn, không là hồi quy của patch write/join. Start gate live trước code đạt READY_TO_CLAIM lúc 16:01:53 UTC+7; owner/reviewer/contract/scope GM-07 giữ nguyên.
+
+1. Bổ sung endpoint guard cho 8 read methods trong client.ts/responseGuards.ts. Kiểm cả DTO/array trực tiếp và envelope, field/nested/enum/time/null/optional và mọi array item. Snapshot `42`, friends `{}`, restored user thiếu field phải trả MALFORMED_RESPONSE; restore lỗi không thay token. Giữ business error, array rỗng và payload hợp lệ.
+2. Tách shared room khỏi `ownPreferences`, `ownVotes`, `ownSubmission` trong mock.ts; map private theo roomId chuẩn và userId. Caller chưa submit không nhận receipt/votes của caller khác; đổi lại caller cũ giữ dữ liệu của họ. Sao chép request/private output để tránh alias mutation, giữ consensus fixtures và cache idempotency theo caller.
+3. Test public factory/transport và mock hai caller, đổi qua lại, cùng requestId, hai vòng, phòng khác và object mutation trong apiReadValidation.test.ts/apiMockIsolation.test.ts. Chạy full mobile, Python contract/regression, repo/indexes/diff; ghi manifest/output riêng tại read-isolation-fix để giữ lịch sử lần trước.
+
+Đạt khi dữ liệu đọc sai không vào success/token và own fields của từng caller độc lập. Không nghiệm thu production RLS/native bằng các test này; không tự approve/Done/merge. Theo yêu cầu push tiếp của Trí, code được commit tại `3f7f2412ed253eb67109368373e997599e916689`, chạy lại mobile/Python contract trên SHA này và commit evidence riêng trước khi push lên nhánh PR #104.

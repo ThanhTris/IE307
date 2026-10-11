@@ -1,0 +1,6 @@
+Gi Cung Duoc: documents, links, JSON, task manifest, dependencies and current FR traceability OK.
+Scope: documentation validation only; no native build/backend execution or human approval verified.
+Dependency approval uses live GitHub Project; run task_readiness --task before code/merge. This offline validator does not unlock tasks.
+Task indexes match task metadata.
+warning: in the working copy of 'docs/evidence/roadmap-v2/GM-07/read-isolation-fix/PATCH_MANIFEST.json', CRLF will be replaced by LF the next time Git touches it
+Tracked and untracked diff checks passed (no-index exit 1 means files differ).

@@ -1,0 +1,46 @@
+{
+  "status": "tested code commit; following evidence commit changes docs/output only",
+  "baseCommit": "e482ccb3d9fec8051d71550a75916c9541fd2476",
+  "targetCommit": "00c4f27a97d4f1487dfed7c54c1253c766709a1a",
+  "contractVersion": "food-v1/roadmap-v2/GM-07.1",
+  "checkedAt": "2026-10-11T09:13:00.0617242Z",
+  "files": [
+    {
+      "path": "mobile/src/data/api/client.ts",
+      "sha256": "9c5ff7b91cf0c73855e94d5fbe12e0c3130c19c66587c1fe1179806fb6c5d029"
+    },
+    {
+      "path": "mobile/src/data/api/mock.ts",
+      "sha256": "e1856ee9330e0babc26d7e2fee540a2bbc107d2d757c96541516d063e2c18120"
+    },
+    {
+      "path": "mobile/src/data/api/responseGuards.ts",
+      "sha256": "7914b4545ff6bfb8acc5b33e5195e7974c0d8fe5c24c1f6cf955144f91964d4c"
+    },
+    {
+      "path": "mobile/tests/unit/apiReadValidation.test.ts",
+      "sha256": "278635b5cc0827e8a896c22de6dc9508ea4c9e82e4fb6b863517c8aa2b3c067a"
+    },
+    {
+      "path": "mobile/tests/unit/apiMockIsolation.test.ts",
+      "sha256": "e864a72da6ce3d1c2f811f82cc2d34b86de67eb80eb41f84b78f6c2a94bf25e3"
+    },
+    {
+      "path": "mobile/tests/unit/apiContract.test.ts",
+      "sha256": "65a19e7d719bbe47e3cf7a346fea14fbbe2b2f2b78fa1a02f196a0ae67062ae8"
+    },
+    {
+      "path": "mobile/tests/unit/apiResponseValidation.test.ts",
+      "sha256": "4a5c4bca8fbc2d939cf790fac41f5308df9aa57cf8f555fa77f39b685ed47fd0"
+    },
+    {
+      "path": "docs/architecture/API_CONTRACT.md",
+      "sha256": "3a2884fde1725fdf8c7565dac18b22c336c2a0100742c4eec5b72dfa640b2c49"
+    },
+    {
+      "path": "tests/test_api_contract_gm07.py",
+      "sha256": "cb29d1f7c960afd30d3fada05678c985c0a0be4b79d20fe8e875c9623fee33fe"
+    }
+  ],
+  "testedCodeCommit": "3f7f2412ed253eb67109368373e997599e916689"
+}

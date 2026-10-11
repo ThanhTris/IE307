@@ -2,7 +2,7 @@
 
 Owner Trang (@rosy179), reviewer Trí (@ThanhTris). Codex hỗ trợ patch theo yêu cầu Trí. [Issue #68](https://github.com/ThanhTris/IE307/issues/68), [PR #104](https://github.com/ThanhTris/IE307/pull/104), [Project #2](https://github.com/users/ThanhTris/projects/2).
 
-Tested code commit: `f0599f8c4b92bf372fc6e3e497389cd59cadf914` (base PR `67f00e6d5b7016c44895617241ab41e0aa7583f1`); [manifest hash code/spec/test](PATCH_MANIFEST.json). Target `00c4f27a97d4f1487dfed7c54c1253c766709a1a`, ngày 2026-10-11 UTC+7. Đã tạo commit code và chạy lại checks theo yêu cầu Trí; evidence được commit riêng sau code. Nhánh đích push: `codex/gm-07-api-contract-and-mock` của PR #104. Chưa approve, merge hoặc đổi Done.
+Lượt sửa hiện tại: tested code commit **`3f7f2412ed253eb67109368373e997599e916689`** trên base PR `e482ccb3d9fec8051d71550a75916c9541fd2476`, target đã fetch `00c4f27a97d4f1487dfed7c54c1253c766709a1a`, ngày 2026-10-11 UTC+7. [Manifest hiện tại](read-isolation-fix/PATCH_MANIFEST.json) ghi hash code/spec/tests đã kiểm; [bàn giao/output mới](read-isolation-fix/README.md). Mobile/Python contract chạy lại trên commit này theo yêu cầu push của Trí; commit evidence tiếp theo chỉ đổi tài liệu/output. Nhánh đích PR #104: `codex/gm-07-api-contract-and-mock`; review độc lập/CI cần kiểm HEAD sau push. Lịch sử write/join: code `f0599f8c4b92bf372fc6e3e497389cd59cadf914` rồi evidence e482ccb, [manifest cũ](PATCH_MANIFEST.json). Chưa approve, merge hoặc đổi Done.
 
 API contract `food-v1/roadmap-v2/GM-07.1`; adapter GM-04 proposal `1.1.0`; schema GM-06 `0.1.0`. Mock datasetVersion là fixture, không là verified dataset GM-08. Input GM-02/03/04/06 lấy trên target SHA trên; không thêm package/đổi lockfile/schema.
 
@@ -10,11 +10,12 @@ API contract `food-v1/roadmap-v2/GM-07.1`; adapter GM-04 proposal `1.1.0`; schem
 
 | Artifact | Thay đổi / task nhận |
 | --- | --- |
-| mobile/src/data/api/mock.ts | joinRoom dùng room.roomId, hết TS2552/ReferenceError; GM-09..14 |
-| mobile/src/data/api/responseGuards.ts | Guard typed-write DTO/version/state/timestamp/receipt; module nội bộ GM-07 |
-| mobile/src/data/api/client.ts | Validate trước success, flat/nested/void riêng, giữ metadata, malformed auth không ghi token; GM-24..31 |
+| mobile/src/data/api/mock.ts | joinRoom dùng room.roomId; own fields riêng theo phòng/caller, private DTO được copy; GM-09..14 |
+| mobile/src/data/api/responseGuards.ts | Guard typed-write và 8 read DTO/array/nested/version/state/timestamp/receipt; module nội bộ GM-07 |
+| mobile/src/data/api/client.ts | Validate đọc/ghi trước success; restore lỗi giữ token; flat/nested/void writes giữ metadata; GM-24..31 |
 | mobile/tests/unit/apiResponseValidation.test.ts | 117 runtime cases mới qua factory/mock; join/retry/invite, malformed success, receipt/metadata/void, wire retry |
-| mobile/tests/unit/apiContract.test.ts | 18 runtime cases cũ tiếp tục pass; tổng API 135 |
+| mobile/tests/unit/apiContract.test.ts | 18 runtime cases cũ tiếp tục pass |
+| mobile/tests/unit/apiReadValidation.test.ts + apiMockIsolation.test.ts | 125 cases bổ sung; 8 reads, token, 2 caller/2 phòng/2 vòng/retry/private object mutation |
 | docs/architecture/API_CONTRACT.md | Required payload, optional/null/void và metadata consistency |
 | tests/test_api_contract_gm07.py | Chỉ dọn whitespace; 10 source contract checks, không thay runtime tests |
 
@@ -33,7 +34,7 @@ python --version
 python -c "from zoneinfo import ZoneInfo; print(ZoneInfo('Asia/Ho_Chi_Minh'))"
 Push-Location mobile
 npm ci --no-audit --no-fund
-npm test -- tests/unit/apiContract.test.ts tests/unit/apiResponseValidation.test.ts
+npm test -- tests/unit/apiReadValidation.test.ts tests/unit/apiMockIsolation.test.ts
 npm run check
 Pop-Location
 python -m unittest discover -s tests -p test_api_contract_gm07.py
@@ -43,7 +44,7 @@ git diff origin/main --check
 git diff --check
 ```
 
-Expected: API 2 suites/135 tests Pass; full mobile 4 suites/141 tests Pass; typecheck/lint/architecture exit 0 (4 lint warnings hiện có); Python GM-07 10 tests OK; validator/indexes/diff sạch. npm ci dùng lockfile hiện có, có thể bỏ nếu đã cài đúng dependencies. Cold Jest từng timeout shell 5s; chạy lại nguyên lệnh, lưu cả hai kết quả, không tự tăng timeout để kết luận Pass.
+Expected: 2 suites mới/125 tests Pass; full mobile 6 suites/266 tests Pass; typecheck/lint/architecture exit 0 (4 lint warnings hiện có); Python GM-07 10 tests OK; validator/indexes/diff sạch. npm ci dùng lockfile hiện có, có thể bỏ nếu đã cài đúng dependencies. Cold Jest ở lượt trước từng timeout shell 5s; không tự tăng timeout để kết luận Pass.
 
 Full regression và gate (gate cần read:project credential hiện có):
 
@@ -93,8 +94,8 @@ baseUrl/token/request do cấu hình/caller cung cấp; không chứa secret tro
 
 ## Review và giới hạn
 
-- B/C của review mới nhất có sửa code và assertions hành vi, giữ phần A đã đạt.
+- Hai P2 read validation/caller isolation của review trên e482ccb đã có patch và assertions hành vi; write/join của lượt trước tiếp tục pass.
 - acceptRoomInvite mock vẫn là fixture delegate join GCD1, không nghiệm thu auth/pair/expiry RPC thật.
 - Normalizer nội bộ giờ cần guard endpoint khi gọi trực tiếp; UI dùng ApiClient/factory, signature UI không đổi.
-- Code SHA đã ghi rõ và chạy lại checks; commit evidence tiếp theo không đổi source/test. CI và review cần áp dụng HEAD cuối của PR sau push.
+- Lượt hiện tại ghi tested code SHA và hash file đã test, evidence được commit riêng; CI và review phải áp dụng HEAD mới sau push, không dùng CI e482ccb để duyệt patch này.
 - Chưa nghiệm thu SQL/RLS/RPC nghiệp vụ/native/verified data, không tự tick approval/Done. Nếu Trí làm owner code, reviewer cuối phải khác Trí theo workflow.
