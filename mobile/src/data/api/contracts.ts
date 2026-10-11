@@ -83,6 +83,7 @@ export interface SessionResponse {
 
 export interface CreateGuestSessionRequest {
   displayName: string;
+  requestId?: string;
 }
 
 // ============================================================================
@@ -133,12 +134,17 @@ export type ServiceMode = 'dine_in' | 'takeaway' | 'delivery';
 export type MealSlot = 'breakfast' | 'lunch' | 'dinner' | 'snack';
 export type TimeHint = 'late_night';
 
+export type CurrencyCode = 'VND' | 'USD' | 'THB' | 'KRW' | 'JPY' | 'CNY' | 'EUR' | 'other';
+export type PriceUnit = 'portion' | 'item' | 'person' | 'group' | 'kg' | 'menu_item_unspecified';
+
 export interface DishPrice {
   priceMin: number | null;
   priceMax: number | null;
-  currency: 'VND' | string;
-  unit: 'menu_item_unspecified' | 'portion' | 'per_person' | 'per_group' | string;
-  servingSize: number | null;
+  currency: CurrencyCode | null;
+  unit: PriceUnit | null;
+  servingSize: string | null;
+  sourceRef?: string | null;
+  pricingStrategy?: string | null;
 }
 
 export interface PoolDish {
@@ -155,9 +161,9 @@ export interface PoolDish {
   artwork?: DishArtwork | null;
   priceMin?: number | null;
   priceMax?: number | null;
-  currency?: string | null;
-  unit?: 'menu_item_unspecified' | 'portion' | 'per_person' | 'per_group' | string | null;
-  servingSize?: number | null;
+  currency?: CurrencyCode | null;
+  unit?: PriceUnit | null;
+  servingSize?: string | null;
   price?: DishPrice | null;
   venueId?: string;
   venueName?: string;
@@ -406,17 +412,20 @@ export interface RoomInvitation {
 export interface InvitePartnerRequest {
   friendCode?: string;
   partnerId?: string;
+  requestId?: string;
 }
 
 export interface InviteToRoomRequest {
   roomId: string;
   partnerId: string;
   expectedVersion: number;
+  requestId?: string;
 }
 
 export interface AcceptRoomInviteRequest {
   invitationId: string;
   displayName: string;
+  requestId?: string;
 }
 
 // ============================================================================
@@ -464,6 +473,7 @@ export interface HistoryItem {
 export interface UpdateHistoryConsentRequest {
   scope: 'personal' | 'group';
   consent: boolean;
+  requestId?: string;
 }
 
 // ============================================================================
@@ -474,7 +484,7 @@ export interface ApiClient {
   // Auth
   createGuestSession(req: CreateGuestSessionRequest): Promise<WriteResult<SessionResponse>>;
   restoreSession(token: string): Promise<ReadResult<SessionUser>>;
-  logout(): Promise<WriteResult<void>>;
+  logout(requestId?: string): Promise<WriteResult<void>>;
 
   // Discovery
   getDiscoveryContext(areaId?: string, anchorId?: string): Promise<ReadResult<DiscoveryContextResponse>>;
@@ -498,19 +508,19 @@ export interface ApiClient {
   // Social
   listFriends(): Promise<ReadResult<Friend[]>>;
   invitePartner(req: InvitePartnerRequest): Promise<WriteResult<FriendInvitation>>;
-  acceptPartner(invitationId: string): Promise<WriteResult<void>>;
-  rejectPartner(invitationId: string): Promise<WriteResult<void>>;
-  unfriend(partnerId: string): Promise<WriteResult<void>>;
+  acceptPartner(invitationId: string, requestId?: string): Promise<WriteResult<void>>;
+  rejectPartner(invitationId: string, requestId?: string): Promise<WriteResult<void>>;
+  unfriend(partnerId: string, requestId?: string): Promise<WriteResult<void>>;
   inviteToRoom(req: InviteToRoomRequest): Promise<WriteResult<RoomInvitation>>;
   acceptRoomInvite(req: AcceptRoomInviteRequest): Promise<WriteResult<JoinRoomResponse>>;
 
   // Inbox & Devices
   listPartnerInbox(cursor?: string): Promise<ReadResult<InboxItem[]>>;
   registerPushDevice(req: RegisterPushDeviceRequest): Promise<WriteResult<void>>;
-  unregisterPushDevice(deviceId: string): Promise<WriteResult<void>>;
+  unregisterPushDevice(deviceId: string, requestId?: string): Promise<WriteResult<void>>;
 
   // History
   getHistory(scope: 'personal' | 'group', cursor?: string): Promise<ReadResult<HistoryItem[]>>;
   updateHistoryConsent(req: UpdateHistoryConsentRequest): Promise<WriteResult<void>>;
-  deleteHistory(historyId: string): Promise<WriteResult<void>>;
+  deleteHistory(historyId: string, requestId?: string): Promise<WriteResult<void>>;
 }

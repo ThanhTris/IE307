@@ -117,13 +117,13 @@ export const MOCK_DISHES: PoolDish[] = [
     priceMax: 75000,
     currency: 'VND',
     unit: 'menu_item_unspecified',
-    servingSize: 1,
+    servingSize: '1 phần',
     price: {
       priceMin: 55000,
       priceMax: 75000,
       currency: 'VND',
       unit: 'menu_item_unspecified',
-      servingSize: 1,
+      servingSize: '1 phần',
     },
     venueId: 'ven_pho_phu_vuong',
     venueName: 'Phở Phú Vương',
@@ -156,13 +156,13 @@ export const MOCK_DISHES: PoolDish[] = [
     priceMax: 65000,
     currency: 'VND',
     unit: 'menu_item_unspecified',
-    servingSize: 1,
+    servingSize: '1 phần',
     price: {
       priceMin: 45000,
       priceMax: 65000,
       currency: 'VND',
       unit: 'menu_item_unspecified',
-      servingSize: 1,
+      servingSize: '1 phần',
     },
     venueId: 'ven_com_tam_ba_ghien',
     venueName: 'Cơm Tấm Ba Ghiền',
@@ -195,13 +195,13 @@ export const MOCK_DISHES: PoolDish[] = [
     priceMax: 65000,
     currency: 'VND',
     unit: 'menu_item_unspecified',
-    servingSize: 1,
+    servingSize: '1 phần',
     price: {
       priceMin: 50000,
       priceMax: 65000,
       currency: 'VND',
       unit: 'menu_item_unspecified',
-      servingSize: 1,
+      servingSize: '1 phần',
     },
     venueId: 'ven_bun_cha_145',
     venueName: 'Bún Chả 145 Bùi Viện',
@@ -234,13 +234,13 @@ export const MOCK_DISHES: PoolDish[] = [
     priceMax: 70000,
     currency: 'VND',
     unit: 'menu_item_unspecified',
-    servingSize: 1,
+    servingSize: '1 phần',
     price: {
       priceMin: 55000,
       priceMax: 70000,
       currency: 'VND',
       unit: 'menu_item_unspecified',
-      servingSize: 1,
+      servingSize: '1 phần',
     },
     venueId: 'ven_bun_dau_a_chanh',
     venueName: 'Bún Đậu A Chảnh',
@@ -449,6 +449,45 @@ export class MockApiClient implements ApiClient {
     return null;
   }
 
+  private checkIdempotency<T>(
+    operation: string,
+    requestId: string,
+    payload: unknown
+  ): { cachedResponse?: WriteResult<T>; conflictError?: WriteResult<T>; signature: string } {
+    const signature = JSON.stringify(payload);
+    const cacheKey = `${this.currentUser.id}:${operation}:${requestId}`;
+    const existing = this.idempotencyMap.get(cacheKey);
+
+    if (existing) {
+      if (existing.payloadSignature === signature) {
+        return { cachedResponse: existing.response as WriteResult<T>, signature };
+      }
+      return {
+        conflictError: {
+          ok: false,
+          requestId,
+          error: {
+            messageKey: 'REQUEST_ID_REUSED',
+            message: 'Mã requestId đã được sử dụng cho một payload khác',
+          },
+        },
+        signature,
+      };
+    }
+
+    return { signature };
+  }
+
+  private recordIdempotency<T>(
+    operation: string,
+    requestId: string,
+    signature: string,
+    response: WriteResult<T>
+  ): void {
+    const cacheKey = `${this.currentUser.id}:${operation}:${requestId}`;
+    this.idempotencyMap.set(cacheKey, { payloadSignature: signature, response });
+  }
+
   // ==========================================================================
   // Auth RPCs
   // ==========================================================================
@@ -458,6 +497,15 @@ export class MockApiClient implements ApiClient {
     const fail = this.checkFailure();
     if (fail) return { ok: false, error: { messageKey: fail } };
 
+    const requestId = req.requestId ?? ('req_' + Math.random().toString(36).substring(2, 9));
+    const { cachedResponse, conflictError, signature } = this.checkIdempotency<SessionResponse>(
+      'createGuestSession',
+      requestId,
+      { displayName: req.displayName }
+    );
+    if (cachedResponse) return cachedResponse;
+    if (conflictError) return conflictError;
+
     const user: SessionUser = {
       id: 'usr_guest_' + Math.random().toString(36).substring(2, 8),
       displayName: req.displayName || 'Khách',
@@ -466,14 +514,17 @@ export class MockApiClient implements ApiClient {
     };
     this.currentUser = user;
 
-    return {
+    const response: WriteResult<SessionResponse> = {
       ok: true,
+      requestId,
       data: {
         token: 'mock_jwt_' + user.id,
         user,
         expiresAt: new Date(Date.now() + 86400000).toISOString(),
       },
     };
+    this.recordIdempotency('createGuestSession', requestId, signature, response);
+    return response;
   }
 
   async restoreSession(_token: string): Promise<ReadResult<SessionUser>> {
@@ -484,9 +535,23 @@ export class MockApiClient implements ApiClient {
     return { ok: true, data: this.currentUser };
   }
 
-  async logout(): Promise<WriteResult<void>> {
+  async logout(customRequestId?: string): Promise<WriteResult<void>> {
     await this.wait();
-    return { ok: true, data: undefined };
+    const fail = this.checkFailure();
+    if (fail) return { ok: false, error: { messageKey: fail } };
+
+    const requestId = customRequestId ?? ('req_' + Math.random().toString(36).substring(2, 9));
+    const { cachedResponse, conflictError, signature } = this.checkIdempotency<void>(
+      'logout',
+      requestId,
+      { action: 'logout' }
+    );
+    if (cachedResponse) return cachedResponse;
+    if (conflictError) return conflictError;
+
+    const response: WriteResult<void> = { ok: true, requestId, data: undefined };
+    this.recordIdempotency('logout', requestId, signature, response);
+    return response;
   }
 
   // ==========================================================================
@@ -555,6 +620,14 @@ export class MockApiClient implements ApiClient {
     if (fail) return { ok: false, error: { messageKey: fail } };
 
     const requestId = req.requestId ?? ('req_' + Math.random().toString(36).substring(2, 9));
+    const { cachedResponse, conflictError, signature } = this.checkIdempotency<CreateRoomResponse>(
+      'createRoom',
+      requestId,
+      { displayName: req.displayName, context: req.context }
+    );
+    if (cachedResponse) return cachedResponse;
+    if (conflictError) return conflictError;
+
     const roomId = 'room_' + Math.random().toString(36).substring(2, 9);
     const code = ('GCD' + Math.floor(100 + Math.random() * 900)).substring(0, 4);
 
@@ -591,7 +664,7 @@ export class MockApiClient implements ApiClient {
     this.rooms.set(roomId, snapshot);
     this.rooms.set(code, snapshot);
 
-    return {
+    const response: WriteResult<CreateRoomResponse> = {
       ok: true,
       requestId,
       roomId,
@@ -604,6 +677,8 @@ export class MockApiClient implements ApiClient {
         expiresAt: snapshot.expiresAt,
       },
     };
+    this.recordIdempotency('createRoom', requestId, signature, response);
+    return response;
   }
 
   async joinRoom(req: JoinRoomRequest): Promise<WriteResult<JoinRoomResponse>> {
@@ -611,15 +686,24 @@ export class MockApiClient implements ApiClient {
     const fail = this.checkFailure();
     if (fail) return { ok: false, error: { messageKey: fail } };
 
+    const requestId = req.requestId ?? ('req_' + Math.random().toString(36).substring(2, 9));
+    const { cachedResponse, conflictError, signature } = this.checkIdempotency<JoinRoomResponse>(
+      'joinRoom',
+      requestId,
+      { code: req.code, displayName: req.displayName }
+    );
+    if (cachedResponse) return cachedResponse;
+    if (conflictError) return conflictError;
+
     const room = this.rooms.get(req.code.trim().toUpperCase());
     if (!room) {
-      return { ok: false, error: { messageKey: 'ROOM_NOT_FOUND', message: 'Không tìm thấy phòng với mã này' } };
+      return { ok: false, requestId, error: { messageKey: 'ROOM_NOT_FOUND', message: 'Không tìm thấy phòng với mã này' } };
     }
     if (room.state !== 'LOBBY') {
-      return { ok: false, error: { messageKey: 'ROOM_LOCKED', message: 'Phòng đã bắt đầu hoặc kết thúc' } };
+      return { ok: false, requestId, roomId: room.roomId, error: { messageKey: 'ROOM_LOCKED', message: 'Phòng đã bắt đầu hoặc kết thúc' } };
     }
     if (room.members.length >= 8) {
-      return { ok: false, error: { messageKey: 'ROOM_FULL', message: 'Phòng đã đủ số lượng thành viên' } };
+      return { ok: false, requestId, roomId: room.roomId, error: { messageKey: 'ROOM_FULL', message: 'Phòng đã đủ số lượng thành viên' } };
     }
 
     const existing = room.members.find((m) => m.userId === this.currentUser.id);
@@ -634,17 +718,20 @@ export class MockApiClient implements ApiClient {
       room.version += 1;
     }
 
-    return {
+    const response: WriteResult<JoinRoomResponse> = {
       ok: true,
+      requestId,
       roomId: room.roomId,
       version: room.version,
       data: {
-        roomId: room.roomId,
+        roomId,
         code: room.code,
         version: room.version,
         memberId: this.currentUser.id,
       },
     };
+    this.recordIdempotency('joinRoom', requestId, signature, response);
+    return response;
   }
 
   async getRoomSnapshot(roomId: string): Promise<ReadResult<RoomSnapshot>> {
@@ -665,10 +752,19 @@ export class MockApiClient implements ApiClient {
     const fail = this.checkFailure();
     if (fail) return { ok: false, error: { messageKey: fail } };
 
+    const requestId = req.requestId ?? ('req_' + Math.random().toString(36).substring(2, 9));
+    const { cachedResponse, conflictError, signature } = this.checkIdempotency<void>(
+      'updatePreferences',
+      requestId,
+      { roomId: req.roomId, expectedVersion: req.expectedVersion, preferences: req.preferences }
+    );
+    if (cachedResponse) return cachedResponse;
+    if (conflictError) return conflictError;
+
     const room = this.rooms.get(req.roomId);
-    if (!room) return { ok: false, error: { messageKey: 'ROOM_NOT_FOUND' } };
+    if (!room) return { ok: false, requestId, error: { messageKey: 'ROOM_NOT_FOUND' } };
     if (room.version !== req.expectedVersion) {
-      return { ok: false, error: { messageKey: 'VERSION_CONFLICT' } };
+      return { ok: false, requestId, roomId: room.roomId, error: { messageKey: 'VERSION_CONFLICT' } };
     }
 
     room.ownPreferences = req.preferences;
@@ -676,7 +772,9 @@ export class MockApiClient implements ApiClient {
     if (member) member.ready = false;
     room.version += 1;
 
-    return { ok: true, roomId: room.roomId, version: room.version, data: undefined };
+    const response: WriteResult<void> = { ok: true, requestId, roomId: room.roomId, version: room.version, data: undefined };
+    this.recordIdempotency('updatePreferences', requestId, signature, response);
+    return response;
   }
 
   async updateContext(req: UpdateContextRequest): Promise<WriteResult<void>> {
@@ -684,17 +782,28 @@ export class MockApiClient implements ApiClient {
     const fail = this.checkFailure();
     if (fail) return { ok: false, error: { messageKey: fail } };
 
+    const requestId = req.requestId ?? ('req_' + Math.random().toString(36).substring(2, 9));
+    const { cachedResponse, conflictError, signature } = this.checkIdempotency<void>(
+      'updateContext',
+      requestId,
+      { roomId: req.roomId, expectedVersion: req.expectedVersion, context: req.context }
+    );
+    if (cachedResponse) return cachedResponse;
+    if (conflictError) return conflictError;
+
     const room = this.rooms.get(req.roomId);
-    if (!room) return { ok: false, error: { messageKey: 'ROOM_NOT_FOUND' } };
+    if (!room) return { ok: false, requestId, error: { messageKey: 'ROOM_NOT_FOUND' } };
     if (room.version !== req.expectedVersion) {
-      return { ok: false, error: { messageKey: 'VERSION_CONFLICT' } };
+      return { ok: false, requestId, roomId: room.roomId, error: { messageKey: 'VERSION_CONFLICT' } };
     }
 
     room.context = { ...req.context };
     room.members.forEach((m) => (m.ready = false));
     room.version += 1;
 
-    return { ok: true, roomId: room.roomId, version: room.version, data: undefined };
+    const response: WriteResult<void> = { ok: true, requestId, roomId: room.roomId, version: room.version, data: undefined };
+    this.recordIdempotency('updateContext', requestId, signature, response);
+    return response;
   }
 
   async setReady(req: SetReadyRequest): Promise<WriteResult<void>> {
@@ -703,8 +812,16 @@ export class MockApiClient implements ApiClient {
     if (fail) return { ok: false, error: { messageKey: fail } };
 
     const requestId = req.requestId ?? ('req_' + Math.random().toString(36).substring(2, 9));
+    const { cachedResponse, conflictError, signature } = this.checkIdempotency<void>(
+      'setReady',
+      requestId,
+      { roomId: req.roomId, expectedVersion: req.expectedVersion, ready: req.ready }
+    );
+    if (cachedResponse) return cachedResponse;
+    if (conflictError) return conflictError;
+
     const room = this.rooms.get(req.roomId);
-    if (!room) return { ok: false, error: { messageKey: 'ROOM_NOT_FOUND' } };
+    if (!room) return { ok: false, requestId, error: { messageKey: 'ROOM_NOT_FOUND' } };
     if (room.version !== req.expectedVersion) {
       return { ok: false, requestId, roomId: room.roomId, error: { messageKey: 'VERSION_CONFLICT' } };
     }
@@ -715,7 +832,9 @@ export class MockApiClient implements ApiClient {
       room.version += 1;
     }
 
-    return { ok: true, requestId, roomId: room.roomId, version: room.version, state: room.state, data: undefined };
+    const response: WriteResult<void> = { ok: true, requestId, roomId: room.roomId, version: room.version, state: room.state, data: undefined };
+    this.recordIdempotency('setReady', requestId, signature, response);
+    return response;
   }
 
   async startRound(req: StartRoundRequest): Promise<WriteResult<void>> {
@@ -724,8 +843,16 @@ export class MockApiClient implements ApiClient {
     if (fail) return { ok: false, error: { messageKey: fail } };
 
     const requestId = req.requestId ?? ('req_' + Math.random().toString(36).substring(2, 9));
+    const { cachedResponse, conflictError, signature } = this.checkIdempotency<void>(
+      'startRound',
+      requestId,
+      { roomId: req.roomId, expectedVersion: req.expectedVersion }
+    );
+    if (cachedResponse) return cachedResponse;
+    if (conflictError) return conflictError;
+
     const room = this.rooms.get(req.roomId);
-    if (!room) return { ok: false, error: { messageKey: 'ROOM_NOT_FOUND' } };
+    if (!room) return { ok: false, requestId, error: { messageKey: 'ROOM_NOT_FOUND' } };
     if (room.version !== req.expectedVersion) {
       return { ok: false, requestId, roomId: room.roomId, error: { messageKey: 'VERSION_CONFLICT' } };
     }
@@ -735,27 +862,59 @@ export class MockApiClient implements ApiClient {
     room.version += 1;
     room.members.forEach((m) => (m.hasSubmitted = false));
 
-    return { ok: true, requestId, roomId: room.roomId, version: room.version, state: room.state, data: undefined };
+    const response: WriteResult<void> = { ok: true, requestId, roomId: room.roomId, version: room.version, state: room.state, data: undefined };
+    this.recordIdempotency('startRound', requestId, signature, response);
+    return response;
   }
 
   async leaveRoom(req: LeaveRoomRequest): Promise<WriteResult<void>> {
     await this.wait();
+    const fail = this.checkFailure();
+    if (fail) return { ok: false, error: { messageKey: fail } };
+
+    const requestId = req.requestId ?? ('req_' + Math.random().toString(36).substring(2, 9));
+    const { cachedResponse, conflictError, signature } = this.checkIdempotency<void>(
+      'leaveRoom',
+      requestId,
+      { roomId: req.roomId, expectedVersion: req.expectedVersion }
+    );
+    if (cachedResponse) return cachedResponse;
+    if (conflictError) return conflictError;
+
     const room = this.rooms.get(req.roomId);
     if (room) {
       room.members = room.members.filter((m) => m.userId !== this.currentUser.id);
       room.version += 1;
     }
-    return { ok: true, roomId: req.roomId, data: undefined };
+
+    const response: WriteResult<void> = { ok: true, requestId, roomId: req.roomId, data: undefined };
+    this.recordIdempotency('leaveRoom', requestId, signature, response);
+    return response;
   }
 
   async cancelRoom(req: CancelRoomRequest): Promise<WriteResult<void>> {
     await this.wait();
+    const fail = this.checkFailure();
+    if (fail) return { ok: false, error: { messageKey: fail } };
+
+    const requestId = req.requestId ?? ('req_' + Math.random().toString(36).substring(2, 9));
+    const { cachedResponse, conflictError, signature } = this.checkIdempotency<void>(
+      'cancelRoom',
+      requestId,
+      { roomId: req.roomId, expectedVersion: req.expectedVersion, confirmCancel: req.confirmCancel }
+    );
+    if (cachedResponse) return cachedResponse;
+    if (conflictError) return conflictError;
+
     const room = this.rooms.get(req.roomId);
     if (room && req.confirmCancel) {
       room.state = 'CANCELLED';
       room.version += 1;
     }
-    return { ok: true, roomId: req.roomId, data: undefined };
+
+    const response: WriteResult<void> = { ok: true, requestId, roomId: req.roomId, data: undefined };
+    this.recordIdempotency('cancelRoom', requestId, signature, response);
+    return response;
   }
 
   // ==========================================================================
@@ -769,31 +928,22 @@ export class MockApiClient implements ApiClient {
 
     const requestId = req.requestId || ('req_' + req.intentId);
 
-    // Contract: check idempotency cache BEFORE room state/version
-    const payloadSignature = JSON.stringify({
-      roomId: req.roomId,
-      round: req.round,
-      poolVersion: req.poolVersion,
-      votes: req.votes,
-    });
-    const existingAttempt = this.idempotencyMap.get(requestId);
-    if (existingAttempt) {
-      if (existingAttempt.payloadSignature === payloadSignature) {
-        // Idempotent retry: return exact previous response
-        return existingAttempt.response as WriteResult<SubmitBallotResponse>;
-      } else {
-        // Reusing requestId with different body is forbidden
-        return {
-          ok: false,
-          requestId,
-          roomId: req.roomId,
-          error: {
-            messageKey: 'REQUEST_ID_REUSED',
-            message: 'Mã requestId đã được sử dụng cho một payload khác',
-          },
-        };
+    // Contract: check idempotency cache BEFORE room state/version.
+    // Signature MUST include intentId and expectedVersion to catch reuses with different payload!
+    const { cachedResponse, conflictError, signature } = this.checkIdempotency<SubmitBallotResponse>(
+      'submitBallot',
+      requestId,
+      {
+        roomId: req.roomId,
+        round: req.round,
+        poolVersion: req.poolVersion,
+        intentId: req.intentId,
+        expectedVersion: req.expectedVersion,
+        votes: req.votes,
       }
-    }
+    );
+    if (cachedResponse) return cachedResponse;
+    if (conflictError) return conflictError;
 
     const room = this.rooms.get(req.roomId);
     if (!room) return { ok: false, requestId, error: { messageKey: 'ROOM_NOT_FOUND' } };
@@ -823,19 +973,16 @@ export class MockApiClient implements ApiClient {
     req.votes.forEach((v) => (voteMap[v.roundDishId] = v.vote));
     room.ownVotes = voteMap;
 
-    // In mock adapter, submitting caller's ballot triggers mock participants submission
     room.members.forEach((m) => (m.hasSubmitted = true));
     const allSubmitted = true;
 
     if (allSubmitted) {
       // Consensus rule: NO KHÔNG THỂ THÀNH WINNER!
-      // Collect candidate evaluations
       const candidateMap = new Map<string, { wantCount: number; okCount: number; hasNo: boolean; dish: PoolDish }>();
       for (const d of room.pool) {
         candidateMap.set(d.roundDishId, { wantCount: 0, okCount: 0, hasNo: false, dish: d });
       }
 
-      // Count caller votes
       for (const v of req.votes) {
         const item = candidateMap.get(v.roundDishId);
         if (item) {
@@ -845,40 +992,32 @@ export class MockApiClient implements ApiClient {
         }
       }
 
-      // Simulate other members' votes based on scenario
       if (this.scenario === 'no_consensus') {
-        // Force all dishes to have at least one NO
         for (const item of candidateMap.values()) {
           item.hasNo = true;
         }
       } else if (this.scenario === 'round_two' && req.round === 1) {
-        // Force round 1 to lack viable dishes so room transitions to round 2
         for (const item of candidateMap.values()) {
           item.hasNo = true;
         }
       } else {
-        // Normal consensus: mock partners join on first non-NO dish to achieve unanimous
         const nonNoCandidates = Array.from(candidateMap.values()).filter((c) => !c.hasNo);
         if (nonNoCandidates.length > 0 && nonNoCandidates[0]) {
           nonNoCandidates[0].wantCount = room.members.length;
         }
       }
 
-      // Filter viable: strictly dishes without any NO
       const viable = Array.from(candidateMap.values())
         .filter((c) => !c.hasNo)
         .sort((a, b) => (b.wantCount * 2 + b.okCount) - (a.wantCount * 2 + a.okCount));
 
       if (viable.length === 0) {
-        // No consensus possible (all dishes were voted NO by someone)
         if (req.round === 1 && this.scenario === 'round_two') {
-          // Transition to round 2
           room.round = 2;
           room.state = 'ROUND_2';
           room.pool = room.pool.slice(0, Math.max(2, Math.floor(room.pool.length / 2)));
           room.members.forEach((m) => (m.hasSubmitted = false));
         } else {
-          // Terminal NO_CONSENSUS
           room.state = 'NO_CONSENSUS';
           room.result = {
             resultId: 'res_' + Math.random().toString(36).substring(2, 9),
@@ -893,7 +1032,6 @@ export class MockApiClient implements ApiClient {
           };
         }
       } else {
-        // Viable winner exists
         const top = viable[0]!;
         const isUnanimous = top.wantCount === room.members.length;
         const winner = top.dish;
@@ -915,7 +1053,6 @@ export class MockApiClient implements ApiClient {
 
     room.version += 1;
 
-    // Build submission receipt
     const receipt: SubmissionReceipt = {
       round: req.round,
       intentId: req.intentId,
@@ -942,14 +1079,17 @@ export class MockApiClient implements ApiClient {
       },
     };
 
-    // Cache idempotency record
-    this.idempotencyMap.set(requestId, { payloadSignature, response });
-
+    this.recordIdempotency('submitBallot', requestId, signature, response);
     return response;
   }
 
   async getResultOfferings(roomId: string, _resultId: string): Promise<ReadResult<PoolDish[]>> {
     await this.wait();
+    const fail = this.checkFailure();
+    if (fail) return { ok: false, error: { messageKey: fail } };
+
+    if (this.mode === 'empty') return { ok: true, data: [] };
+
     const room = this.rooms.get(roomId);
     if (!room || !room.result) {
       return { ok: false, error: { messageKey: 'ROOM_NOT_FOUND' } };
@@ -963,12 +1103,27 @@ export class MockApiClient implements ApiClient {
 
   async listFriends(): Promise<ReadResult<Friend[]>> {
     await this.wait();
+    const fail = this.checkFailure();
+    if (fail) return { ok: false, error: { messageKey: fail } };
+
     if (this.mode === 'empty') return { ok: true, data: [] };
     return { ok: true, data: [...this.friends] };
   }
 
   async invitePartner(req: InvitePartnerRequest): Promise<WriteResult<FriendInvitation>> {
     await this.wait();
+    const fail = this.checkFailure();
+    if (fail) return { ok: false, error: { messageKey: fail } };
+
+    const requestId = req.requestId ?? ('req_' + Math.random().toString(36).substring(2, 9));
+    const { cachedResponse, conflictError, signature } = this.checkIdempotency<FriendInvitation>(
+      'invitePartner',
+      requestId,
+      { friendCode: req.friendCode, partnerId: req.partnerId }
+    );
+    if (cachedResponse) return cachedResponse;
+    if (conflictError) return conflictError;
+
     const invitation: FriendInvitation = {
       id: 'inv_' + Math.random().toString(36).substring(2, 8),
       inviterUserId: this.currentUser.id,
@@ -978,27 +1133,83 @@ export class MockApiClient implements ApiClient {
       createdAt: new Date().toISOString(),
       expiresAt: new Date(Date.now() + 604800000).toISOString(),
     };
-    return { ok: true, data: invitation };
+    const response: WriteResult<FriendInvitation> = { ok: true, requestId, data: invitation };
+    this.recordIdempotency('invitePartner', requestId, signature, response);
+    return response;
   }
 
-  async acceptPartner(_invitationId: string): Promise<WriteResult<void>> {
+  async acceptPartner(invitationId: string, customRequestId?: string): Promise<WriteResult<void>> {
     await this.wait();
-    return { ok: true, data: undefined };
+    const fail = this.checkFailure();
+    if (fail) return { ok: false, error: { messageKey: fail } };
+
+    const requestId = customRequestId ?? ('req_' + Math.random().toString(36).substring(2, 9));
+    const { cachedResponse, conflictError, signature } = this.checkIdempotency<void>(
+      'acceptPartner',
+      requestId,
+      { invitationId }
+    );
+    if (cachedResponse) return cachedResponse;
+    if (conflictError) return conflictError;
+
+    const response: WriteResult<void> = { ok: true, requestId, data: undefined };
+    this.recordIdempotency('acceptPartner', requestId, signature, response);
+    return response;
   }
 
-  async rejectPartner(_invitationId: string): Promise<WriteResult<void>> {
+  async rejectPartner(invitationId: string, customRequestId?: string): Promise<WriteResult<void>> {
     await this.wait();
-    return { ok: true, data: undefined };
+    const fail = this.checkFailure();
+    if (fail) return { ok: false, error: { messageKey: fail } };
+
+    const requestId = customRequestId ?? ('req_' + Math.random().toString(36).substring(2, 9));
+    const { cachedResponse, conflictError, signature } = this.checkIdempotency<void>(
+      'rejectPartner',
+      requestId,
+      { invitationId }
+    );
+    if (cachedResponse) return cachedResponse;
+    if (conflictError) return conflictError;
+
+    const response: WriteResult<void> = { ok: true, requestId, data: undefined };
+    this.recordIdempotency('rejectPartner', requestId, signature, response);
+    return response;
   }
 
-  async unfriend(partnerId: string): Promise<WriteResult<void>> {
+  async unfriend(partnerId: string, customRequestId?: string): Promise<WriteResult<void>> {
     await this.wait();
+    const fail = this.checkFailure();
+    if (fail) return { ok: false, error: { messageKey: fail } };
+
+    const requestId = customRequestId ?? ('req_' + Math.random().toString(36).substring(2, 9));
+    const { cachedResponse, conflictError, signature } = this.checkIdempotency<void>(
+      'unfriend',
+      requestId,
+      { partnerId }
+    );
+    if (cachedResponse) return cachedResponse;
+    if (conflictError) return conflictError;
+
     this.friends = this.friends.filter((f) => f.friendUserId !== partnerId);
-    return { ok: true, data: undefined };
+    const response: WriteResult<void> = { ok: true, requestId, data: undefined };
+    this.recordIdempotency('unfriend', requestId, signature, response);
+    return response;
   }
 
   async inviteToRoom(req: InviteToRoomRequest): Promise<WriteResult<RoomInvitation>> {
     await this.wait();
+    const fail = this.checkFailure();
+    if (fail) return { ok: false, error: { messageKey: fail } };
+
+    const requestId = req.requestId ?? ('req_' + Math.random().toString(36).substring(2, 9));
+    const { cachedResponse, conflictError, signature } = this.checkIdempotency<RoomInvitation>(
+      'inviteToRoom',
+      requestId,
+      { roomId: req.roomId, partnerId: req.partnerId, expectedVersion: req.expectedVersion }
+    );
+    if (cachedResponse) return cachedResponse;
+    if (conflictError) return conflictError;
+
     const room = this.rooms.get(req.roomId);
     const invitation: RoomInvitation = {
       id: 'rinv_' + Math.random().toString(36).substring(2, 8),
@@ -1011,12 +1222,13 @@ export class MockApiClient implements ApiClient {
       createdAt: new Date().toISOString(),
       expiresAt: new Date(Date.now() + 1800000).toISOString(),
     };
-    return { ok: true, data: invitation };
+    const response: WriteResult<RoomInvitation> = { ok: true, requestId, data: invitation };
+    this.recordIdempotency('inviteToRoom', requestId, signature, response);
+    return response;
   }
 
   async acceptRoomInvite(req: AcceptRoomInviteRequest): Promise<WriteResult<JoinRoomResponse>> {
-    await this.wait();
-    return this.joinRoom({ code: 'GCD1', displayName: req.displayName });
+    return this.joinRoom({ code: 'GCD1', displayName: req.displayName, requestId: req.requestId });
   }
 
   // ==========================================================================
@@ -1025,38 +1237,100 @@ export class MockApiClient implements ApiClient {
 
   async listPartnerInbox(_cursor?: string): Promise<ReadResult<InboxItem[]>> {
     await this.wait();
+    const fail = this.checkFailure();
+    if (fail) return { ok: false, error: { messageKey: fail } };
+
     if (this.mode === 'empty') return { ok: true, data: [] };
     return { ok: true, data: [...this.inbox] };
   }
 
-  async registerPushDevice(_req: RegisterPushDeviceRequest): Promise<WriteResult<void>> {
+  async registerPushDevice(req: RegisterPushDeviceRequest): Promise<WriteResult<void>> {
     await this.wait();
-    return { ok: true, data: undefined };
+    const fail = this.checkFailure();
+    if (fail) return { ok: false, error: { messageKey: fail } };
+
+    const requestId = req.requestId ?? ('req_' + Math.random().toString(36).substring(2, 9));
+    const { cachedResponse, conflictError, signature } = this.checkIdempotency<void>(
+      'registerPushDevice',
+      requestId,
+      { deviceId: req.deviceId, token: req.token, permission: req.permission }
+    );
+    if (cachedResponse) return cachedResponse;
+    if (conflictError) return conflictError;
+
+    const response: WriteResult<void> = { ok: true, requestId, data: undefined };
+    this.recordIdempotency('registerPushDevice', requestId, signature, response);
+    return response;
   }
 
-  async unregisterPushDevice(_deviceId: string): Promise<WriteResult<void>> {
+  async unregisterPushDevice(deviceId: string, customRequestId?: string): Promise<WriteResult<void>> {
     await this.wait();
-    return { ok: true, data: undefined };
+    const fail = this.checkFailure();
+    if (fail) return { ok: false, error: { messageKey: fail } };
+
+    const requestId = customRequestId ?? ('req_' + Math.random().toString(36).substring(2, 9));
+    const { cachedResponse, conflictError, signature } = this.checkIdempotency<void>(
+      'unregisterPushDevice',
+      requestId,
+      { deviceId }
+    );
+    if (cachedResponse) return cachedResponse;
+    if (conflictError) return conflictError;
+
+    const response: WriteResult<void> = { ok: true, requestId, data: undefined };
+    this.recordIdempotency('unregisterPushDevice', requestId, signature, response);
+    return response;
   }
 
   // ==========================================================================
   // History RPCs
   // ==========================================================================
 
-  async getHistory(_scope: 'personal' | 'group', _cursor?: string): Promise<ReadResult<HistoryItem[]>> {
+  async getHistory(scope: 'personal' | 'group', _cursor?: string): Promise<ReadResult<HistoryItem[]>> {
     await this.wait();
+    const fail = this.checkFailure();
+    if (fail) return { ok: false, error: { messageKey: fail } };
+
     if (this.mode === 'empty') return { ok: true, data: [] };
-    return { ok: true, data: [...this.history] };
+    return { ok: true, data: this.history.filter((h) => h.scope === scope) };
   }
 
-  async updateHistoryConsent(_req: UpdateHistoryConsentRequest): Promise<WriteResult<void>> {
+  async updateHistoryConsent(req: UpdateHistoryConsentRequest): Promise<WriteResult<void>> {
     await this.wait();
-    return { ok: true, data: undefined };
+    const fail = this.checkFailure();
+    if (fail) return { ok: false, error: { messageKey: fail } };
+
+    const requestId = req.requestId ?? ('req_' + Math.random().toString(36).substring(2, 9));
+    const { cachedResponse, conflictError, signature } = this.checkIdempotency<void>(
+      'updateHistoryConsent',
+      requestId,
+      { scope: req.scope, consent: req.consent }
+    );
+    if (cachedResponse) return cachedResponse;
+    if (conflictError) return conflictError;
+
+    const response: WriteResult<void> = { ok: true, requestId, data: undefined };
+    this.recordIdempotency('updateHistoryConsent', requestId, signature, response);
+    return response;
   }
 
-  async deleteHistory(historyId: string): Promise<WriteResult<void>> {
+  async deleteHistory(historyId: string, customRequestId?: string): Promise<WriteResult<void>> {
     await this.wait();
+    const fail = this.checkFailure();
+    if (fail) return { ok: false, error: { messageKey: fail } };
+
+    const requestId = customRequestId ?? ('req_' + Math.random().toString(36).substring(2, 9));
+    const { cachedResponse, conflictError, signature } = this.checkIdempotency<void>(
+      'deleteHistory',
+      requestId,
+      { historyId }
+    );
+    if (cachedResponse) return cachedResponse;
+    if (conflictError) return conflictError;
+
     this.history = this.history.filter((h) => h.id !== historyId);
-    return { ok: true, data: undefined };
+    const response: WriteResult<void> = { ok: true, requestId, data: undefined };
+    this.recordIdempotency('deleteHistory', requestId, signature, response);
+    return response;
   }
 }

@@ -57,6 +57,7 @@ export interface ApiTransport {
 export interface ClientConfig {
   baseUrl?: string;
   transport?: ApiTransport;
+  timeoutMs?: number;
   defaultTimeoutMs?: number;
   initialToken?: string | null;
   fetchFn?: typeof fetch;
@@ -82,7 +83,27 @@ export class FetchTransport implements ApiTransport {
     const url = `${this.baseUrl}/rest/v1/rpc/${rpcName}`;
     const timeoutMs = options?.timeoutMs ?? 15000;
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    let didTimeout = false;
+
+    if (timeoutMs > 0) {
+      timeoutId = setTimeout(() => {
+        didTimeout = true;
+        controller.abort(new Error('TIMEOUT'));
+      }, timeoutMs);
+    }
+
+    let externalAbortListener: (() => void) | null = null;
+    if (options?.signal) {
+      if (options.signal.aborted) {
+        controller.abort(options.signal.reason);
+      } else {
+        externalAbortListener = () => {
+          controller.abort(options.signal?.reason);
+        };
+        options.signal.addEventListener('abort', externalAbortListener, { once: true });
+      }
+    }
 
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
@@ -103,22 +124,35 @@ export class FetchTransport implements ApiTransport {
         method: 'POST',
         headers,
         body: JSON.stringify(params),
-        signal: options?.signal ?? controller.signal,
+        signal: controller.signal,
       });
 
-      if (!response.ok) {
-        let errorBody: unknown;
+      // Read response body stream strictly ONCE
+      const text = await response.text();
+      let body: unknown = null;
+      if (text) {
         try {
-          errorBody = await response.json();
+          body = JSON.parse(text);
         } catch {
-          errorBody = await response.text();
+          body = text;
         }
-        throw { status: response.status, body: errorBody };
       }
 
-      return (await response.json()) as T;
+      if (!response.ok) {
+        throw { status: response.status, body };
+      }
+
+      return body as T;
+    } catch (err: any) {
+      if (didTimeout || err?.message === 'TIMEOUT') {
+        throw { name: 'AbortError', message: 'TIMEOUT' };
+      }
+      throw err;
     } finally {
-      clearTimeout(timeoutId);
+      if (timeoutId) clearTimeout(timeoutId);
+      if (options?.signal && externalAbortListener) {
+        options.signal.removeEventListener('abort', externalAbortListener);
+      }
     }
   }
 }
@@ -138,7 +172,7 @@ export class ApiClientImpl implements ApiClient {
       const baseUrl = config?.baseUrl ?? defaultUrl;
       this.transport = new FetchTransport(baseUrl, config?.fetchFn);
     }
-    this.defaultTimeoutMs = config?.defaultTimeoutMs ?? 15000;
+    this.defaultTimeoutMs = config?.defaultTimeoutMs ?? config?.timeoutMs ?? 15000;
     if (config?.initialToken) {
       this.token = config.initialToken;
     }
@@ -235,83 +269,113 @@ export class ApiClientImpl implements ApiClient {
   }
 
   /**
-   * Unifies and normalizes RPC responses from Postgres functions.
-   * Ensures business errors in HTTP 200 responses are never converted to success,
-   * unwraps success envelope, and guards against malformed envelopes.
+   * Normalizes RPC response for WRITE operations.
+   * Write envelopes MUST be an object with boolean ok: { ok: boolean, ... }.
+   * Any non-object, primitive, missing ok, or non-boolean ok is rejected as MALFORMED_RESPONSE.
    */
-  private normalizeRpcResponse<T>(
+  normalizeWriteResponse<T>(
     raw: unknown,
     fallbackRequestId: string,
     roomId?: string
   ):
     | { ok: true; data: T; requestId: string; roomId?: string; version?: number; state?: RoomState | string }
     | { ok: false; requestId: string; roomId?: string; error: ApiError } {
-    if (raw === null || raw === undefined) {
+    if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) {
       return {
         ok: false,
         requestId: fallbackRequestId,
         roomId,
-        error: { messageKey: 'MALFORMED_RESPONSE', message: 'RPC returned empty response' },
+        error: { messageKey: 'MALFORMED_RESPONSE', message: 'RPC write returned non-object response' },
       };
     }
 
-    if (typeof raw === 'object') {
-      const env = raw as Record<string, any>;
-      const resRequestId = typeof env.requestId === 'string' ? env.requestId : fallbackRequestId;
-      const resRoomId = typeof env.roomId === 'string' ? env.roomId : roomId;
+    const env = raw as Record<string, unknown>;
+    if (typeof env.ok !== 'boolean') {
+      return {
+        ok: false,
+        requestId: fallbackRequestId,
+        roomId,
+        error: { messageKey: 'MALFORMED_RESPONSE', message: 'RPC write response missing boolean ok field' },
+      };
+    }
 
-      // Explicit business error envelope: ok === false or presence of error object
-      if (env.ok === false || env.error) {
-        const errObj = env.error || {};
+    const resRequestId = typeof env.requestId === 'string' ? env.requestId : fallbackRequestId;
+    const resRoomId = typeof env.roomId === 'string' ? env.roomId : roomId;
+
+    if (env.ok === false) {
+      const errObj = (typeof env.error === 'object' && env.error !== null) ? (env.error as Record<string, unknown>) : {};
+      let messageKey: ErrorCode = 'UNKNOWN_ERROR';
+      if (typeof errObj.messageKey === 'string' && this.isValidErrorCode(errObj.messageKey)) {
+        messageKey = errObj.messageKey;
+      } else if (typeof env.messageKey === 'string' && this.isValidErrorCode(env.messageKey)) {
+        messageKey = env.messageKey as ErrorCode;
+      }
+      return {
+        ok: false,
+        requestId: resRequestId,
+        roomId: resRoomId,
+        error: {
+          messageKey,
+          message: typeof errObj.message === 'string' ? errObj.message : (typeof env.message === 'string' ? env.message : 'Operation failed'),
+          details: (typeof errObj.details === 'object' && errObj.details !== null) ? (errObj.details as Record<string, unknown>) : undefined,
+        },
+      };
+    }
+
+    // env.ok === true
+    const version = typeof env.version === 'number' ? env.version : undefined;
+    const state = typeof env.state === 'string' ? (env.state as RoomState) : undefined;
+    const dataPayload = (env.data !== undefined) ? env.data : (env as unknown);
+
+    return {
+      ok: true,
+      data: dataPayload as T,
+      requestId: resRequestId,
+      roomId: resRoomId,
+      version,
+      state,
+    };
+  }
+
+  /**
+   * Normalizes RPC response for READ operations.
+   */
+  normalizeReadResponse<T>(raw: unknown): ReadResult<T> {
+    if (raw === null || raw === undefined) {
+      return {
+        ok: false,
+        error: { messageKey: 'MALFORMED_RESPONSE', message: 'Read RPC returned empty response' },
+      };
+    }
+
+    if (typeof raw === 'object' && !Array.isArray(raw)) {
+      const env = raw as Record<string, unknown>;
+      if (env.ok === false || (env.error && typeof env.error === 'object')) {
+        const errObj = (env.error && typeof env.error === 'object') ? (env.error as Record<string, unknown>) : {};
         let messageKey: ErrorCode = 'UNKNOWN_ERROR';
         if (typeof errObj.messageKey === 'string' && this.isValidErrorCode(errObj.messageKey)) {
           messageKey = errObj.messageKey;
         } else if (typeof env.messageKey === 'string' && this.isValidErrorCode(env.messageKey)) {
-          messageKey = env.messageKey;
+          messageKey = env.messageKey as ErrorCode;
         }
         return {
           ok: false,
-          requestId: resRequestId,
-          roomId: resRoomId,
           error: {
             messageKey,
-            message: errObj.message ?? env.message ?? 'Operation failed',
-            details: errObj.details ?? env.details,
+            message: typeof errObj.message === 'string' ? errObj.message : 'Read operation failed',
           },
         };
       }
-
-      // Explicit success envelope: ok === true
-      if (env.ok === true) {
-        const dataPayload = env.data !== undefined ? env.data : env;
-        return {
-          ok: true,
-          data: dataPayload as T,
-          requestId: resRequestId,
-          roomId: resRoomId,
-          version: typeof env.version === 'number' ? env.version : undefined,
-          state: typeof env.state === 'string' ? env.state : undefined,
-        };
+      if (env.ok === true && env.data !== undefined) {
+        return { ok: true, data: env.data as T };
       }
-
-      // Direct representation object (without ok wrapper)
-      return {
-        ok: true,
-        data: raw as T,
-        requestId: resRequestId,
-        roomId: resRoomId,
-        version: typeof env.version === 'number' ? env.version : undefined,
-        state: typeof env.state === 'string' ? env.state : undefined,
-      };
     }
 
-    // Primitive return values (e.g., boolean, number)
-    return {
-      ok: true,
-      data: raw as T,
-      requestId: fallbackRequestId,
-      roomId,
-    };
+    return { ok: true, data: raw as T };
+  }
+
+  normalizeRpcResponse<T>(raw: unknown, fallbackRequestId: string, roomId?: string) {
+    return this.normalizeWriteResponse<T>(raw, fallbackRequestId, roomId);
   }
 
   private async callRpc<T>(rpcName: string, params: Record<string, unknown>): Promise<T> {
@@ -325,14 +389,14 @@ export class ApiClientImpl implements ApiClient {
   // Auth RPCs
   // ==========================================================================
 
-  async createGuestSession(req: CreateGuestSessionRequest & { requestId?: string }): Promise<WriteResult<SessionResponse>> {
+  async createGuestSession(req: CreateGuestSessionRequest): Promise<WriteResult<SessionResponse>> {
     const requestId = req.requestId ?? this.generateRequestId();
     try {
       const raw = await this.callRpc<unknown>('create_guest_session', {
         requestId,
         display_name: req.displayName,
       });
-      const norm = this.normalizeRpcResponse<SessionResponse>(raw, requestId);
+      const norm = this.normalizeWriteResponse<SessionResponse>(raw, requestId);
       if (!norm.ok) return norm;
       if (norm.data?.token) {
         this.setAuthToken(norm.data.token);
@@ -346,8 +410,8 @@ export class ApiClientImpl implements ApiClient {
   async restoreSession(token: string): Promise<ReadResult<SessionUser>> {
     try {
       const raw = await this.transport.invoke<unknown>('restore_session', {}, { token });
-      const norm = this.normalizeRpcResponse<SessionUser>(raw, '');
-      if (!norm.ok) return { ok: false, error: norm.error };
+      const norm = this.normalizeReadResponse<SessionUser>(raw);
+      if (!norm.ok) return norm;
       this.setAuthToken(token);
       return { ok: true, data: norm.data };
     } catch (err) {
@@ -355,11 +419,11 @@ export class ApiClientImpl implements ApiClient {
     }
   }
 
-  async logout(): Promise<WriteResult<void>> {
-    const requestId = this.generateRequestId();
+  async logout(customRequestId?: string): Promise<WriteResult<void>> {
+    const requestId = customRequestId ?? this.generateRequestId();
     try {
       const raw = await this.callRpc<unknown>('logout', { requestId });
-      const norm = this.normalizeRpcResponse<void>(raw, requestId);
+      const norm = this.normalizeWriteResponse<void>(raw, requestId);
       if (!norm.ok) return norm;
       this.setAuthToken(null);
       return { ok: true, requestId: norm.requestId, data: undefined };
@@ -378,9 +442,7 @@ export class ApiClientImpl implements ApiClient {
         area_id: areaId ?? null,
         anchor_id: anchorId ?? null,
       });
-      const norm = this.normalizeRpcResponse<DiscoveryContextResponse>(raw, '');
-      if (!norm.ok) return { ok: false, error: norm.error };
-      return { ok: true, data: norm.data };
+      return this.normalizeReadResponse<DiscoveryContextResponse>(raw);
     } catch (err) {
       return { ok: false, error: this.mapError(err) };
     }
@@ -399,9 +461,7 @@ export class ApiClientImpl implements ApiClient {
         category_ids: req.categoryIds ?? null,
         budget: req.budget ?? null,
       });
-      const norm = this.normalizeRpcResponse<PreviewFoodPoolResponse>(raw, '');
-      if (!norm.ok) return { ok: false, error: norm.error };
-      return { ok: true, data: norm.data };
+      return this.normalizeReadResponse<PreviewFoodPoolResponse>(raw);
     } catch (err) {
       return { ok: false, error: this.mapError(err) };
     }
@@ -426,14 +486,14 @@ export class ApiClientImpl implements ApiClient {
         budget: req.context.budget ?? null,
         avoid_recent: req.context.avoidRecent,
       });
-      const norm = this.normalizeRpcResponse<CreateRoomResponse>(raw, requestId);
+      const norm = this.normalizeWriteResponse<CreateRoomResponse>(raw, requestId);
       if (!norm.ok) return norm;
       return {
         ok: true,
         requestId: norm.requestId,
         roomId: norm.data?.roomId ?? norm.roomId,
-        version: norm.version ?? norm.data?.version ?? 1,
-        state: norm.state ?? 'LOBBY',
+        version: norm.version ?? norm.data?.version,
+        state: norm.state,
         data: norm.data,
       };
     } catch (err) {
@@ -449,14 +509,14 @@ export class ApiClientImpl implements ApiClient {
         code: req.code,
         display_name: req.displayName,
       });
-      const norm = this.normalizeRpcResponse<JoinRoomResponse>(raw, requestId);
+      const norm = this.normalizeWriteResponse<JoinRoomResponse>(raw, requestId);
       if (!norm.ok) return norm;
       return {
         ok: true,
         requestId: norm.requestId,
         roomId: norm.data?.roomId ?? norm.roomId,
-        version: norm.version ?? norm.data?.version ?? 1,
-        state: norm.state ?? 'LOBBY',
+        version: norm.version ?? norm.data?.version,
+        state: norm.state,
         data: norm.data,
       };
     } catch (err) {
@@ -469,9 +529,7 @@ export class ApiClientImpl implements ApiClient {
       const raw = await this.callRpc<unknown>('get_room_snapshot', {
         room_id: roomId,
       });
-      const norm = this.normalizeRpcResponse<RoomSnapshot>(raw, '', roomId);
-      if (!norm.ok) return { ok: false, error: norm.error };
-      return { ok: true, data: norm.data };
+      return this.normalizeReadResponse<RoomSnapshot>(raw);
     } catch (err) {
       return { ok: false, error: this.mapError(err) };
     }
@@ -490,14 +548,14 @@ export class ApiClientImpl implements ApiClient {
         flavor: req.preferences.flavor ?? null,
         history_consent: req.preferences.historyConsent,
       });
-      const norm = this.normalizeRpcResponse<void>(raw, requestId, req.roomId);
+      const norm = this.normalizeWriteResponse<void>(raw, requestId, req.roomId);
       if (!norm.ok) return norm;
       return {
         ok: true,
         requestId: norm.requestId,
         roomId: req.roomId,
-        version: norm.version ?? req.expectedVersion + 1,
-        state: norm.state ?? 'LOBBY',
+        version: norm.version,
+        state: norm.state,
         data: undefined,
       };
     } catch (err) {
@@ -521,14 +579,14 @@ export class ApiClientImpl implements ApiClient {
         budget: req.context.budget ?? null,
         avoid_recent: req.context.avoidRecent,
       });
-      const norm = this.normalizeRpcResponse<void>(raw, requestId, req.roomId);
+      const norm = this.normalizeWriteResponse<void>(raw, requestId, req.roomId);
       if (!norm.ok) return norm;
       return {
         ok: true,
         requestId: norm.requestId,
         roomId: req.roomId,
-        version: norm.version ?? req.expectedVersion + 1,
-        state: norm.state ?? 'LOBBY',
+        version: norm.version,
+        state: norm.state,
         data: undefined,
       };
     } catch (err) {
@@ -545,14 +603,14 @@ export class ApiClientImpl implements ApiClient {
         expected_version: req.expectedVersion,
         ready: req.ready,
       });
-      const norm = this.normalizeRpcResponse<void>(raw, requestId, req.roomId);
+      const norm = this.normalizeWriteResponse<void>(raw, requestId, req.roomId);
       if (!norm.ok) return norm;
       return {
         ok: true,
         requestId: norm.requestId,
         roomId: req.roomId,
-        version: norm.version ?? req.expectedVersion,
-        state: norm.state ?? 'LOBBY',
+        version: norm.version,
+        state: norm.state,
         data: undefined,
       };
     } catch (err) {
@@ -568,14 +626,14 @@ export class ApiClientImpl implements ApiClient {
         room_id: req.roomId,
         expected_version: req.expectedVersion,
       });
-      const norm = this.normalizeRpcResponse<void>(raw, requestId, req.roomId);
+      const norm = this.normalizeWriteResponse<void>(raw, requestId, req.roomId);
       if (!norm.ok) return norm;
       return {
         ok: true,
         requestId: norm.requestId,
         roomId: req.roomId,
-        version: norm.version ?? req.expectedVersion + 1,
-        state: norm.state ?? 'ROUND_1',
+        version: norm.version,
+        state: norm.state,
         data: undefined,
       };
     } catch (err) {
@@ -591,13 +649,14 @@ export class ApiClientImpl implements ApiClient {
         room_id: req.roomId,
         expected_version: req.expectedVersion,
       });
-      const norm = this.normalizeRpcResponse<void>(raw, requestId, req.roomId);
+      const norm = this.normalizeWriteResponse<void>(raw, requestId, req.roomId);
       if (!norm.ok) return norm;
       return {
         ok: true,
         requestId: norm.requestId,
         roomId: req.roomId,
-        version: norm.version ?? req.expectedVersion + 1,
+        version: norm.version,
+        state: norm.state,
         data: undefined,
       };
     } catch (err) {
@@ -614,14 +673,14 @@ export class ApiClientImpl implements ApiClient {
         expected_version: req.expectedVersion,
         confirm_cancel: req.confirmCancel,
       });
-      const norm = this.normalizeRpcResponse<void>(raw, requestId, req.roomId);
+      const norm = this.normalizeWriteResponse<void>(raw, requestId, req.roomId);
       if (!norm.ok) return norm;
       return {
         ok: true,
         requestId: norm.requestId,
         roomId: req.roomId,
-        version: norm.version ?? req.expectedVersion + 1,
-        state: norm.state ?? 'CANCELLED',
+        version: norm.version,
+        state: norm.state,
         data: undefined,
       };
     } catch (err) {
@@ -645,7 +704,7 @@ export class ApiClientImpl implements ApiClient {
         expected_version: req.expectedVersion,
         votes: req.votes,
       });
-      const norm = this.normalizeRpcResponse<SubmitBallotResponse>(raw, requestId, req.roomId);
+      const norm = this.normalizeWriteResponse<SubmitBallotResponse>(raw, requestId, req.roomId);
       if (!norm.ok) return norm;
       return {
         ok: true,
@@ -666,9 +725,7 @@ export class ApiClientImpl implements ApiClient {
         room_id: roomId,
         result_id: resultId,
       });
-      const norm = this.normalizeRpcResponse<PoolDish[]>(raw, '', roomId);
-      if (!norm.ok) return { ok: false, error: norm.error };
-      return { ok: true, data: norm.data };
+      return this.normalizeReadResponse<PoolDish[]>(raw);
     } catch (err) {
       return { ok: false, error: this.mapError(err) };
     }
@@ -681,15 +738,13 @@ export class ApiClientImpl implements ApiClient {
   async listFriends(): Promise<ReadResult<Friend[]>> {
     try {
       const raw = await this.callRpc<unknown>('list_friends', {});
-      const norm = this.normalizeRpcResponse<Friend[]>(raw, '');
-      if (!norm.ok) return { ok: false, error: norm.error };
-      return { ok: true, data: norm.data };
+      return this.normalizeReadResponse<Friend[]>(raw);
     } catch (err) {
       return { ok: false, error: this.mapError(err) };
     }
   }
 
-  async invitePartner(req: InvitePartnerRequest & { requestId?: string }): Promise<WriteResult<FriendInvitation>> {
+  async invitePartner(req: InvitePartnerRequest): Promise<WriteResult<FriendInvitation>> {
     const requestId = req.requestId ?? this.generateRequestId();
     try {
       const raw = await this.callRpc<unknown>('invite_partner', {
@@ -697,7 +752,7 @@ export class ApiClientImpl implements ApiClient {
         friend_code: req.friendCode ?? null,
         partner_id: req.partnerId ?? null,
       });
-      const norm = this.normalizeRpcResponse<FriendInvitation>(raw, requestId);
+      const norm = this.normalizeWriteResponse<FriendInvitation>(raw, requestId);
       if (!norm.ok) return norm;
       return { ok: true, requestId: norm.requestId, data: norm.data };
     } catch (err) {
@@ -712,7 +767,7 @@ export class ApiClientImpl implements ApiClient {
         requestId,
         invitation_id: invitationId,
       });
-      const norm = this.normalizeRpcResponse<void>(raw, requestId);
+      const norm = this.normalizeWriteResponse<void>(raw, requestId);
       if (!norm.ok) return norm;
       return { ok: true, requestId: norm.requestId, data: undefined };
     } catch (err) {
@@ -727,7 +782,7 @@ export class ApiClientImpl implements ApiClient {
         requestId,
         invitation_id: invitationId,
       });
-      const norm = this.normalizeRpcResponse<void>(raw, requestId);
+      const norm = this.normalizeWriteResponse<void>(raw, requestId);
       if (!norm.ok) return norm;
       return { ok: true, requestId: norm.requestId, data: undefined };
     } catch (err) {
@@ -742,7 +797,7 @@ export class ApiClientImpl implements ApiClient {
         requestId,
         partner_id: partnerId,
       });
-      const norm = this.normalizeRpcResponse<void>(raw, requestId);
+      const norm = this.normalizeWriteResponse<void>(raw, requestId);
       if (!norm.ok) return norm;
       return { ok: true, requestId: norm.requestId, data: undefined };
     } catch (err) {
@@ -750,7 +805,7 @@ export class ApiClientImpl implements ApiClient {
     }
   }
 
-  async inviteToRoom(req: InviteToRoomRequest & { requestId?: string }): Promise<WriteResult<RoomInvitation>> {
+  async inviteToRoom(req: InviteToRoomRequest): Promise<WriteResult<RoomInvitation>> {
     const requestId = req.requestId ?? this.generateRequestId();
     try {
       const raw = await this.callRpc<unknown>('invite_to_room', {
@@ -759,7 +814,7 @@ export class ApiClientImpl implements ApiClient {
         partner_id: req.partnerId,
         expected_version: req.expectedVersion,
       });
-      const norm = this.normalizeRpcResponse<RoomInvitation>(raw, requestId, req.roomId);
+      const norm = this.normalizeWriteResponse<RoomInvitation>(raw, requestId, req.roomId);
       if (!norm.ok) return norm;
       return { ok: true, requestId: norm.requestId, roomId: req.roomId, data: norm.data };
     } catch (err) {
@@ -767,7 +822,7 @@ export class ApiClientImpl implements ApiClient {
     }
   }
 
-  async acceptRoomInvite(req: AcceptRoomInviteRequest & { requestId?: string }): Promise<WriteResult<JoinRoomResponse>> {
+  async acceptRoomInvite(req: AcceptRoomInviteRequest): Promise<WriteResult<JoinRoomResponse>> {
     const requestId = req.requestId ?? this.generateRequestId();
     try {
       const raw = await this.callRpc<unknown>('accept_room_invite', {
@@ -775,7 +830,7 @@ export class ApiClientImpl implements ApiClient {
         invitation_id: req.invitationId,
         display_name: req.displayName,
       });
-      const norm = this.normalizeRpcResponse<JoinRoomResponse>(raw, requestId);
+      const norm = this.normalizeWriteResponse<JoinRoomResponse>(raw, requestId);
       if (!norm.ok) return norm;
       return { ok: true, requestId: norm.requestId, roomId: norm.data?.roomId ?? norm.roomId, data: norm.data };
     } catch (err) {
@@ -792,9 +847,7 @@ export class ApiClientImpl implements ApiClient {
       const raw = await this.callRpc<unknown>('list_partner_inbox', {
         cursor: cursor ?? null,
       });
-      const norm = this.normalizeRpcResponse<InboxItem[]>(raw, '');
-      if (!norm.ok) return { ok: false, error: norm.error };
-      return { ok: true, data: norm.data };
+      return this.normalizeReadResponse<InboxItem[]>(raw);
     } catch (err) {
       return { ok: false, error: this.mapError(err) };
     }
@@ -809,7 +862,7 @@ export class ApiClientImpl implements ApiClient {
         token: req.token,
         permission: req.permission,
       });
-      const norm = this.normalizeRpcResponse<void>(raw, requestId);
+      const norm = this.normalizeWriteResponse<void>(raw, requestId);
       if (!norm.ok) return norm;
       return { ok: true, requestId: norm.requestId, data: undefined };
     } catch (err) {
@@ -824,7 +877,7 @@ export class ApiClientImpl implements ApiClient {
         requestId,
         device_id: deviceId,
       });
-      const norm = this.normalizeRpcResponse<void>(raw, requestId);
+      const norm = this.normalizeWriteResponse<void>(raw, requestId);
       if (!norm.ok) return norm;
       return { ok: true, requestId: norm.requestId, data: undefined };
     } catch (err) {
@@ -842,15 +895,13 @@ export class ApiClientImpl implements ApiClient {
         scope,
         cursor: cursor ?? null,
       });
-      const norm = this.normalizeRpcResponse<HistoryItem[]>(raw, '');
-      if (!norm.ok) return { ok: false, error: norm.error };
-      return { ok: true, data: norm.data };
+      return this.normalizeReadResponse<HistoryItem[]>(raw);
     } catch (err) {
       return { ok: false, error: this.mapError(err) };
     }
   }
 
-  async updateHistoryConsent(req: UpdateHistoryConsentRequest & { requestId?: string }): Promise<WriteResult<void>> {
+  async updateHistoryConsent(req: UpdateHistoryConsentRequest): Promise<WriteResult<void>> {
     const requestId = req.requestId ?? this.generateRequestId();
     try {
       const raw = await this.callRpc<unknown>('update_history_consent', {
@@ -858,7 +909,7 @@ export class ApiClientImpl implements ApiClient {
         scope: req.scope,
         consent: req.consent,
       });
-      const norm = this.normalizeRpcResponse<void>(raw, requestId);
+      const norm = this.normalizeWriteResponse<void>(raw, requestId);
       if (!norm.ok) return norm;
       return { ok: true, requestId: norm.requestId, data: undefined };
     } catch (err) {
@@ -873,7 +924,7 @@ export class ApiClientImpl implements ApiClient {
         requestId,
         history_id: historyId,
       });
-      const norm = this.normalizeRpcResponse<void>(raw, requestId);
+      const norm = this.normalizeWriteResponse<void>(raw, requestId);
       if (!norm.ok) return norm;
       return { ok: true, requestId: norm.requestId, data: undefined };
     } catch (err) {

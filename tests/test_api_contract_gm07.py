@@ -146,9 +146,12 @@ class ApiContractGM07Tests(unittest.TestCase):
         # PoolDish parity fields
         self.assertIn('priceMin: number | null', contracts_content)
         self.assertIn('priceMax: number | null', contracts_content)
-        self.assertIn("currency: 'VND'", contracts_content)
-        self.assertIn("unit: 'menu_item_unspecified'", contracts_content)
+        self.assertIn('currency: CurrencyCode | null', contracts_content)
+        self.assertIn('unit: PriceUnit | null', contracts_content)
+        self.assertIn('servingSize: string | null', contracts_content)
         self.assertIn('DishPrice', contracts_content)
+        self.assertIn("'VND'", contracts_content)
+        self.assertIn("'menu_item_unspecified'", contracts_content)
 
         # RoomSnapshot parity fields
         self.assertIn('ownSubmission?: SubmissionReceipt | null', contracts_content)
