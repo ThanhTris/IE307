@@ -3,10 +3,11 @@
 Owner HoaiTam/Tâm đã nhận việc ngày2026-10-11 theo user; ThanhTris/Trí review cuối
 (Issue#69). In progress, không Approved/Done. Branch codex/gm-08-verified-data-import;
 input origin/main7060b8825ad72ee9442d8890719f82451d473c33, PR#62 GM-04/PR#102 GM-06.
-Baseline đã commit/push `1d247fe387ee9461277eb0141517a298675f6419`,
+Baseline hiện hành đã commit/push `b59d6107953f40a4b5afa2aa46b875bfae4f77c6`,
 [PR #103](https://github.com/ThanhTris/IE307/pull/103) Open, không Draft; chưa Approved/merge.
 Bản sửa comment review đang local, chưa commit/push; tested hashes trong verification.json
-và sql-results.json. [Evidence baseline](baseline-1d247fe/manifest.json) giữ nguyên bytes.
+và sql-results.json. [Evidence baseline đầu](baseline-1d247fe/manifest.json) và
+[b59d610](baseline-b59d610/manifest.json) giữ nguyên bytes/kết quả local, ghi rõ CI Fail sau đó.
 
 Contract food-v1/roadmap-v2/GM-08.1; food1.1.0/schema0.1.0. GM-04/06 Done trên
 Project#2, gate live đã đạt; Markdown upstream chậm không tự là blocker theo ADR-011.
@@ -55,3 +56,12 @@ Query encoding test mock riêng DB boundary; 31 ca SQL dùng PostgreSQL thật r
 Không có bộ dữ liệu thật mới được bàn giao; verified counts vẫn0, publish/query thật
 Not run. Merge riêng phần công cụ cần chủ dự án chấp nhận phạm vi partial delivery;
 chưa có quyết định đó, GM-08 vẫn In Progress.
+
+## Sửa CI ASCII locale
+
+CI b59d610 lỗi4 ca encoding và job validate do tên file/probe Unicode trong LC_ALL=C,
+khác macOS filesystem UTF-8. Tái lập Linux thật:28 tests/4 errors trước sửa,28/28 Pass
+sau sửa dưới filesystem ASCII/stdout cp1252/UTF-8 mode0. Dùng path ASCII và Python
+Unicode escape cho probe; tên món và nội dung lỗi JSON vẫn tiếng Việt, không bỏ kiểm.
+CLI/import SQL không đổi; workflow giữ LC_ALL=C và in metadata runtime để tái kiểm.
+Bản sửa mới cần commit/push và kiểm CI đúng SHA; không coi CI failed của b59d610 đã xanh.

@@ -1,0 +1,62 @@
+{
+  "revision": "b59d6107953f40a4b5afa2aa46b875bfae4f77c6",
+  "purpose": "Prior local-only repair evidence preserved verbatim. Its macOS Pass does not prove Linux CI Pass; later CI failures recorded below. Original Markdown archived as text to preserve historical links.",
+  "files": {
+    "CHECKS.md": {
+      "archiveFile": "CHECKS.md.txt",
+      "sha256": "33ace987064d8249643e598f9afeaa686c4a768bf39f83f804b94b71c4b3ef5b"
+    },
+    "HANDOFF.md": {
+      "archiveFile": "HANDOFF.md.txt",
+      "sha256": "0397e406b12406b4a990c5d527d38588c9e8232b30da44982eb465991cae33ec"
+    },
+    "PLAN.md": {
+      "archiveFile": "PLAN.md.txt",
+      "sha256": "44b1bc88b444587cd23564ddaaa7b093afd8324047dbc161d8e8d8b29bc5f93d"
+    },
+    "PR_DESCRIPTION.md": {
+      "archiveFile": "PR_DESCRIPTION.md.txt",
+      "sha256": "c803ca01aba4531f79da1ee23538a073ea0a9942f8b9d53f198f00f692174d49"
+    },
+    "verification.json": {
+      "archiveFile": "verification.json",
+      "sha256": "f7a38ade0c5a09321cd416be7a1aab72fb607174789e23bba2008e51c3fd2954"
+    },
+    "sql-results.json": {
+      "archiveFile": "sql-results.json",
+      "sha256": "35a1fe9a7b80656e3019e80d9b53ca429ba50cbcb0afdd432aa01b0d873b0c2b"
+    },
+    "regression.txt": {
+      "archiveFile": "regression.txt",
+      "sha256": "f9ebf6daf7e320a88f34238515e0e538ac7942c8f6115db4c268412a6a394374"
+    },
+    "unit-results.txt": {
+      "archiveFile": "unit-results.txt",
+      "sha256": "41dbd20ef6908a212a0ef5af8d74765cec116bcfe2a8496001441ae3ea00cfa1"
+    },
+    "cp1252-unit-results.txt": {
+      "archiveFile": "cp1252-unit-results.txt",
+      "sha256": "77c3edf48a90dd433b71647294025ff73596abccb502f73e35ca9abd7f857433"
+    },
+    "merge-gate.txt": {
+      "archiveFile": "merge-gate.txt",
+      "sha256": "170eda840befbabb59514e8d407b37d31f5b94649a60b11838d2a497e28c575f"
+    }
+  },
+  "ciAtRevision": {
+    "encodingJob": "https://github.com/ThanhTris/IE307/actions/runs/38102929443/job/114362427281",
+    "encodingResult": "Fail: 28 tests, 4 errors under LC_ALL=C; filesystem/argv encoding failed before CLI",
+    "documentsJob": "https://github.com/ThanhTris/IE307/actions/runs/38102929498/job/114362427294",
+    "documentsResult": "Fail: 494 tests, 3 failures, 1 error, 6 skipped",
+    "gm08SqlJob": "https://github.com/ThanhTris/IE307/actions/runs/38102929443/job/114362427310",
+    "gm08SqlResult": "Pass: disposable SQL; applies b59d610 test hashes only"
+  },
+  "localLinuxReproduction": {
+    "log": "linux-ascii-before.txt",
+    "baselineResult": "28 tests,4 errors",
+    "captureEncoding": "cp1252 stderr under LC_ALL=C",
+    "repositoryLogEncoding": "UTF-8; decoded from cp1252 without changing diagnostic content",
+    "rawCaptureSha256": "ebba6efbe509a1ad9be5431e338a7e4cc5f726b7d7d31378803469cf4f0fd3ae",
+    "normalizedLogSha256": "a69b79d011a3d593b9055b2e1b890b9a0d913b16620af613f667781d72b92cd4"
+  }
+}

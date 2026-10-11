@@ -28,6 +28,6 @@ test_stale_child_not_hidden_by_dataset_validity (test_food_import.FoodImportTest
 test_unknown_incomplete_and_disjoint_hours_block_publish (test_food_import.FoodImportTests.test_unknown_incomplete_and_disjoint_hours_block_publish) ... ok
 
 ----------------------------------------------------------------------
-Ran 28 tests in 0.919s
+Ran 28 tests in 12.188s
 
 OK

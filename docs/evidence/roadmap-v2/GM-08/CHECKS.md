@@ -3,12 +3,15 @@
 2026-10-11 (UTC+7). In progress; tooling đã kiểm, dataset thật còn blocker.
 Owner HoaiTam/Tâm, reviewer ThanhTris/Trí; chưa Approved/Done.
 Branch codex/gm-08-verified-data-import; main input7060b8825ad72ee9442d8890719f82451d473c33.
-Baseline đã commit/push `1d247fe387ee9461277eb0141517a298675f6419`, [PR #103](https://github.com/ThanhTris/IE307/pull/103) Open, không Draft.
+Baseline hiện hành đã commit/push `b59d6107953f40a4b5afa2aa46b875bfae4f77c6`, [PR #103](https://github.com/ThanhTris/IE307/pull/103) Open, không Draft.
 Bản sửa review kiểm trên working tree của baseline đó; chưa commit/push bản sửa.
 Exact source hashes tại sql-results.json/verification.json. Evidence gốc được giữ nguyên
-ở [baseline manifest](baseline-1d247fe/manifest.json); không thay lịch sử bằng kết quả mới.
+ở [baseline đầu](baseline-1d247fe/manifest.json) và [baseline b59d610](baseline-b59d610/manifest.json);
+không thay lịch sử bằng kết quả mới. CI b59d610 thực tế Fail dù các kiểm local macOS đã Pass.
 ContractGM-08.1, food1.1.0, schema0.1.0; draft dataset0.2.0, verified dataset chưa có.
 Runtime macOS/Python3.13.3/Node26; real local Supabase PostgreSQL17 (version trong report).
+Unit encoding còn kiểm Linux aarch64/Python3.13.3 bằng image python:3.13.3-slim,
+filesystem ASCII/stdout cp1252/UTF-8 mode0, không network, repo mount chỉ đọc.
 
 ## Cách chạy lại
 
@@ -38,7 +41,9 @@ Lệnh publish thật cần independent review theo [README](../../../../supabas
 | --- | --- | --- | --- |
 | Preflight/reject | missing/FK/duplicate/nonfinite/stale/fixture/rights/self-review/coverage/unknown hours |28 Python checks, reject report UTF-8/LF; fixture CLI exit1 không DB | Pass tooling, synthetic |
 | Quota reason | thiếu/null/empty/whitespace/boolean/number/list/object reject; chuỗi có nội dung giữ nguyên số thật | 12 invalid subcases; template null không vượt gate; positive counts 1 venue/1 dish | Pass tooling; bundle/review chỉ synthetic |
-| CLI encoding | stdout cp1252, UTF-8 mode tắt; success/reject/query/error phải decode UTF-8 + parse JSON | [unit log](unit-results.txt), [cp1252 log](cp1252-unit-results.txt); tên Cơm gà — Việt giữ nguyên, không traceback/CR | Pass mô phỏng locale trên macOS; query boundary mock |
+| CLI encoding | filesystem ASCII/stdout cp1252, UTF-8 mode tắt; success/reject/query/error phải decode UTF-8 + parse JSON | [macOS unit](unit-results.txt), [Linux cp1252](cp1252-unit-results.txt); tên Cơm gà — Việt giữ nguyên, không traceback/CR | Pass trên Linux thật qua Docker; query boundary mock |
+| Linux test harness | path/probe truyền qua argv phải ASCII; nội dung dữ liệu/reject vẫn tiếng Việt | [trước sửa](baseline-b59d610/linux-ascii-before.txt):28 tests/4 errors; sau sửa:28/28 Pass, không đổi LC_ALL=C để né lỗi | Pass; không thay contract UTF-8 của CLI |
+| Linux validate parent | parent locale mặc định UTF-8, subprocess LC_ALL=C như job validate | [actual](linux-default-unit-results.txt):28/28 Pass | Pass Linux; full regression494 được kiểm trên macOS |
 | Lỗi output sau DB | report write/stdout failure không tuyên bố rollback | JSON stderr UTF-8, publicationPerformed=null, yêu cầu kiểm receipt | Pass mô phỏng committed response; SQL riêng kiểm transaction thật |
 | Hours/intersection | weekly7 ngày, overnight lastOrder01:30, actual-day closed exception, disjoint/unknown reject | unit intervals: overnight[0,90), closed[]; schedule audit từng offering | Pass tooling; GM-18 vẫn thực thi eligibility |
 | Staging/review | immutable bytes/hash, Pending/tamper/mismatch/evidence traversal reject | staged bundle preserved, strict review hash; draft không được promote chỉ bằng JSON approval | Pass tooling; không chứng minh provenance thật |
@@ -50,8 +55,12 @@ Lệnh publish thật cần independent review theo [README](../../../../supabas
 
 [Staging actual](staging-result.json) ghi draft source hash/counts, không verified.
 SQL report ghi synthetic mode, tested hashes, version, từng expected/actual và cleanup.
+Lượt SQL đầu chồng thời điểm Supabase startup/resource load gặp55P03 lock timeout;
+database riêng đã cleanup. Sau backend:start hoàn tất và services healthy,31/31 đạt
+với hashes hiện hành. Không đổi timeout/production code để bỏ qua lỗi.
 Regression/repo/gate/backend results chốt ở verification.json và regression.txt.
-Windows/Linux riêng chưa chạy bản sửa trên máy tác giả; không copy evidence GM-06 làm evidence task này.
+Metadata/digest/giới hạn của Linux tại [linux-runtime](linux-runtime.json).
+Windows chưa chạy bản sửa. Linux unit đã chạy qua Docker; không copy evidence GM-06 làm evidence task này.
 
 ## CI và revision review
 
@@ -59,7 +68,13 @@ Theo [comment review](https://github.com/ThanhTris/IE307/pull/103#issuecomment-6
 workflow [gm08-import.yml](../../../../.github/workflows/gm08-import.yml) chạy unit/encoding
 cp1252 trên Linux và 31 case importer trong PostgreSQL disposable, upload artifact
 `gm08-sql-results-linux`, cleanup local project luôn chạy. YAML đã parse local.
-CI của bản sửa còn Pending vì chưa push; không dùng job SQL GM-06 thay GM-08.
+CI của bản sửa mới còn Pending vì chưa push; không dùng job SQL GM-06 thay GM-08.
+[Encoding CI b59d610](https://github.com/ThanhTris/IE307/actions/runs/38102929443/job/114362427281)
+Fail:28 tests/4 errors; [validate CI b59d610](https://github.com/ThanhTris/IE307/actions/runs/38102929498/job/114362427294)
+Fail:494 tests/3 failures/1 error/6 skipped. Nguyên nhân path/Unicode -c trong ASCII locale,
+CLI chưa được chạy hoặc argv bị surrogateescape. Test dùng path ASCII và Unicode escape trong probe;
+vẫn kiểm tiếng Việt JSON, publicationPerformed và recovery, không hạ assertions.
+SQL GM-08 tại b59d610 [đã Pass](https://github.com/ThanhTris/IE307/actions/runs/38102929443/job/114362427310).
 [Workflow runs](https://github.com/ThanhTris/IE307/actions/workflows/gm08-import.yml) sẽ có
 run/report sau push; reviewer đối chiếu SHA của commit và artifactHashes.
 Baseline [docs CI](https://github.com/ThanhTris/IE307/actions/runs/38073939317) và

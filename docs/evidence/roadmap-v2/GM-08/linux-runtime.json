@@ -1,0 +1,56 @@
+{
+  "checkedAtUTC": "2026-10-11T02:05:02.912488+00:00",
+  "mode": "Real Linux Docker container; synthetic unit data/review, no actual dataset publish or DB query",
+  "image": "python:3.13.3-slim",
+  "imageDigest": "sha256:56a11364ffe0fee3bd60af6d6d5209eba8a99c2c16dc4c7c5861dc06261503cc",
+  "platform": "Linux-6.10.14-linuxkit-aarch64-with-glibc2.36",
+  "python": "3.13.3",
+  "architecture": "arm64",
+  "security": "--rm --network none --read-only --tmpfs /tmp; repository mounted read-only; no Docker socket mount",
+  "baselineRevision": "b59d6107953f40a4b5afa2aa46b875bfae4f77c6",
+  "before": {
+    "tests": 28,
+    "errors": 4,
+    "result": "Fail",
+    "filesystemEncoding": "ascii",
+    "stdoutEncoding": "cp1252",
+    "utf8Mode": 0,
+    "log": "baseline-b59d610/linux-ascii-before.txt",
+    "logEncoding": "UTF-8 normalized from cp1252 capture",
+    "rawCaptureSha256": "ebba6efbe509a1ad9be5431e338a7e4cc5f726b7d7d31378803469cf4f0fd3ae",
+    "normalizedLogSha256": "a69b79d011a3d593b9055b2e1b890b9a0d913b16620af613f667781d72b92cd4"
+  },
+  "afterAscii": {
+    "tests": 28,
+    "pass": 28,
+    "result": "Pass",
+    "filesystemEncoding": "ascii",
+    "stdoutEncoding": "cp1252",
+    "utf8Mode": 0,
+    "env": {
+      "LC_ALL": "C",
+      "PYTHONUTF8": "0",
+      "PYTHONCOERCECLOCALE": "0",
+      "PYTHONIOENCODING": "cp1252"
+    },
+    "log": "cp1252-unit-results.txt"
+  },
+  "afterDefault": {
+    "tests": 28,
+    "pass": 28,
+    "result": "Pass",
+    "parentLocale": "default Python image locale; UTF-8 filesystem",
+    "subprocessLocale": "C with UTF8 mode0 and stdout cp1252",
+    "log": "linux-default-unit-results.txt"
+  },
+  "sourceSha256": {
+    "tests/test_food_import.py": "571b7491bfa0932db0e05f77531a1d2b296f2ca39b223b0a519f9c8de1daa5a2",
+    "supabase/seed/import_food_data.py": "03da1971b502b26a87ebaee0936d718bc415e26f297731d4fd9bd698fab00edc",
+    ".github/workflows/gm08-import.yml": "2a1fbea374b5f0a55be7230d83446d9e3d9c299b8d4e44e77b52cfa7c3409415"
+  },
+  "limits": [
+    "CI uses Python3.12.15/x64; current repair not pushed and CI not run yet",
+    "Query/rejection boundaries simulated to isolate CLI JSON; no real dataset verification asserted",
+    "Windows direct checks not run for this repair"
+  ]
+}

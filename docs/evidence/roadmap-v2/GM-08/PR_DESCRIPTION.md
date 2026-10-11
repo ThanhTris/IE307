@@ -23,6 +23,9 @@ xác nhận partial delivery; task tiếp tục In Progress và không tự đó
   `publicationPerformed: null` và yêu cầu kiểm receipt, không khẳng định đã rollback.
 - Thêm workflow GM-08 riêng chạy encoding regression và SQL importer trên DB disposable,
   upload report `gm08-sql-results-linux` và cleanup luôn chạy.
+- Sửa test harness cho Linux filesystem ASCII: path dùng ASCII, probe Python -c
+  escape Unicode, vẫn kiểm JSON tiếng Việt. Giữ LC_ALL=C/cp1252/UTF-8 mode0,
+  thêm log runtime; không thay production importer/schema hoặc bỏ assertions.
 
 Review nguồn: https://github.com/ThanhTris/IE307/pull/103#issuecomment-6101624086.
 
@@ -30,7 +33,7 @@ Review nguồn: https://github.com/ThanhTris/IE307/pull/103#issuecomment-6101624
 
 - GM-04 PR #62 và GM-06 PR #102: Done trên Project #2; artifact/HANDOFF khớp target.
 - GM-06 merge/base implementation: `7060b8825ad72ee9442d8890719f82451d473c33`.
-- Baseline PR đã commit/push: `1d247fe387ee9461277eb0141517a298675f6419`.
+- Baseline PR hiện hành đã commit/push: `b59d6107953f40a4b5afa2aa46b875bfae4f77c6`.
 - Target ref đã fetch: `00c4f27a97d4f1487dfed7c54c1253c766709a1a`; thay đổi sau base
   chỉ là hướng dẫn AGENTS, không đổi artifact upstream. Nhánh cần nhận target trước merge.
 - Bản sửa được kiểm trên working tree của baseline; exact source hashes, thời điểm
@@ -42,24 +45,31 @@ Review nguồn: https://github.com/ThanhTris/IE307/pull/103#issuecomment-6101624
 | Kiểm tra bản sửa local | Kết quả |
 | --- | --- |
 | Unit GM-08 | 28/28 Pass |
-| Unit với cp1252, UTF-8 mode tắt | 28/28 Pass |
+| Linux filesystem ASCII/cp1252, UTF-8 mode tắt | Trước sửa:28 tests/4 errors; sau sửa:28/28 Pass |
+| Linux default parent / ASCII subprocess | 28/28 Pass |
 | SQL importer/PostgreSQL 17.11 | 31/31 Pass |
 | Python regression | 494 tests: 489 Pass, 5 Skipped, 0 Fail |
-| Node unit / foundation SQL | 8/8 và 3/3 Pass |
-| Local backend health | HTTP 200 |
+| Node unit / foundation SQL / HTTP health | Giữ evidence Pass của baseline b59d610; tooling nền không đổi |
 | Validator / docs freshness / whitespace | Pass |
 
 SQL dùng PostgreSQL thật và database tự tạo/xóa; dữ liệu/review chỉ synthetic.
 Encoding query test mock DB boundary; không tuyên bố query dataset thật.
 
-CI của bản sửa Pending cho đến khi push/chạy xong. Workflow/report sẽ nằm tại
+CI b59d610 encoding và validate Fail do filesystem/argv trước CLI; SQL disposable Pass.
+CI của bản sửa mới Pending cho đến khi push/chạy xong. Workflow/report sẽ nằm tại
 https://github.com/ThanhTris/IE307/actions/workflows/gm08-import.yml.
 Reviewer kiểm đúng commit SHA và `artifactHashes` trong artifact `gm08-sql-results-linux`.
 CI SQL GM-06 ở baseline không chứng minh GM-08 SQL đã chạy trên CI.
-Windows/Linux của bản sửa chưa chạy trực tiếp trên máy tác giả; cp1252 đã mô phỏng local.
+Linux đã kiểm qua Docker Python3.13.3/aarch64, repo mount chỉ đọc/tắt mạng,
+filesystem ASCII và default locale. CI Python3.12.15/x64 của bản sửa còn pending;
+Windows chưa chạy bản sửa trực tiếp.
 
 Evidence gốc của head1d247fe giữ nguyên ở
 `docs/evidence/roadmap-v2/GM-08/baseline-1d247fe/manifest.json`.
+Evidence local/CI Fail của b59d610 giữ nguyên ở
+`docs/evidence/roadmap-v2/GM-08/baseline-b59d610/manifest.json`.
+Fail logs: https://github.com/ThanhTris/IE307/actions/runs/38102929443/job/114362427281;
+https://github.com/ThanhTris/IE307/actions/runs/38102929498/job/114362427294.
 Baseline CI: https://github.com/ThanhTris/IE307/actions/runs/38073939317;
 https://github.com/ThanhTris/IE307/actions/runs/38073939190.
 

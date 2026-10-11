@@ -261,6 +261,11 @@ class FoodImportTests(unittest.TestCase):
 
     def cp1252_cli(self,arguments,probe=None):
         env=dict(os.environ,PYTHONIOENCODING='cp1252',PYTHONUTF8='0',PYTHONCOERCECLOCALE='0',LC_ALL='C')
+        # Under a genuine Linux C locale, both the parent argv encoder and the
+        # child -c decoder are ASCII. Keep launch metadata ASCII; Unicode data
+        # still reaches the CLI through Python string escapes or UTF-8 JSON.
+        if probe is not None:
+            probe=probe.encode('ascii',errors='backslashreplace').decode('ascii')
         command=([sys.executable,str(ROOT/'supabase/seed/import_food_data.py')] if probe is None else
                  [sys.executable,'-c',probe,str(ROOT/'supabase/seed/import_food_data.py')])
         result=subprocess.run(command+arguments,env=env,capture_output=True)
@@ -308,14 +313,21 @@ sys.exit(namespace['cli']())
         self.assertFalse(report['eligibilityPerformed'])
 
     def test_cli_cp1252_error_json_preserves_vietnamese(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            missing=Path(tmp)/'Cơm gà — Việt.json'
-            status,out,err=self.cp1252_cli(['validate','--input',str(missing),'--as-of',AS_OF])
-            self.assertEqual(status,1)
-            self.assertEqual(err,'')
-            report=json.loads(out)
-            self.assertIn('Cơm gà — Việt',report['error'])
-            self.assertFalse(report['publicationPerformed'])
+        # Test a Unicode rejection message without relying on Unicode filenames.
+        probe='''import runpy, sys
+path=sys.argv.pop(1)
+namespace=runpy.run_path(path)
+def reject(args):
+    raise ValueError('Synthetic preflight rejected Cơm gà — Việt')
+namespace['main'].__globals__['dispatch']=reject
+sys.exit(namespace['cli']())
+'''
+        status,out,err=self.cp1252_cli(['validate','--input','synthetic-input.json','--as-of',AS_OF],probe)
+        self.assertEqual(status,1)
+        self.assertEqual(err,'')
+        report=json.loads(out)
+        self.assertIn('Cơm gà — Việt',report['error'])
+        self.assertFalse(report['publicationPerformed'])
 
     def test_cli_cp1252_report_failure_after_db_does_not_claim_rollback(self):
         # Simulate a committed DB response, then force a report write error.
@@ -326,12 +338,12 @@ namespace['main'].__globals__['dispatch']=lambda args: {'valid':True,'publicatio
 sys.exit(namespace['cli']())
 '''
         with tempfile.TemporaryDirectory() as tmp:
-            report_dir=Path(tmp)/'Cơm gà — Việt';report_dir.mkdir()
+            report_dir=Path(tmp)/'report-directory';report_dir.mkdir()
             status,out,err=self.cp1252_cli(['publish','--stage',tmp,'--review',tmp,'--confirm-local','--report',str(report_dir)],probe)
             self.assertEqual(status,1)
             self.assertEqual(out,'')
             report=json.loads(err)
-            self.assertIn('Cơm gà — Việt',report['error'])
+            self.assertIn('report-directory',report['error'])
             self.assertIsNone(report['publicationPerformed'])
             self.assertIn('Inspect receipt',report['recovery'])
 

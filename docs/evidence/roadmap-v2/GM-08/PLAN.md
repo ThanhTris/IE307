@@ -45,3 +45,11 @@ trước parse/DB, kiểm bytes JSON dưới cp1252 và lỗi output sau DB; th�
 unit encoding và real disposable SQL/report. Không sửa frozen0001/contract/dataset thật.
 Giữ evidence cũ tại baseline-1d247fe, chạy lại unit/SQL/regression và ghi source hashes.
 Bản sửa này chưa commit/push; không tự Approve/Done hoặc chấp nhận merge partial.
+
+## Sửa Linux CI locale — baseline b59d610
+
+Không đổi production importer/schema. Test harness giữ LC_ALL=C, dùng path ASCII
+và escape Unicode trong Python -c; nội dung JSON/reject/query vẫn tiếng Việt.
+Workflow in Python/filesystem/stdout/UTF8-mode. Tái lập trước/sau trên Linux Docker
+filesystem ASCII + cp1252 + UTF8 mode0; chạy lại root regression/SQL/hash/gate.
+Giữ evidence b59d610 và link CI Fail, không dùng local macOS Pass thay Linux CI.

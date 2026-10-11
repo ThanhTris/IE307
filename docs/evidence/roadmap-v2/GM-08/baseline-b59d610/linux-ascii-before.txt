@@ -1,0 +1,153 @@
+test_cli_cp1252_error_json_preserves_vietnamese (test_food_import.FoodImportTests.test_cli_cp1252_error_json_preserves_vietnamese) ... ERROR
+test_cli_cp1252_query_response_preserves_vietnamese_without_db (test_food_import.FoodImportTests.test_cli_cp1252_query_response_preserves_vietnamese_without_db) ... ERROR
+test_cli_cp1252_report_failure_after_db_does_not_claim_rollback (test_food_import.FoodImportTests.test_cli_cp1252_report_failure_after_db_does_not_claim_rollback) ... ERROR
+test_cli_cp1252_stdout_failure_after_db_does_not_claim_rollback (test_food_import.FoodImportTests.test_cli_cp1252_stdout_failure_after_db_does_not_claim_rollback) ... ERROR
+test_cli_cp1252_success_and_reject_are_utf8_json (test_food_import.FoodImportTests.test_cli_cp1252_success_and_reject_are_utf8_json) ... ok
+test_cli_writes_reject_report_without_db_access (test_food_import.FoodImportTests.test_cli_writes_reject_report_without_db_access) ... ok
+test_draft_is_stagable_but_not_publishable (test_food_import.FoodImportTests.test_draft_is_stagable_but_not_publishable) ... ok
+test_draft_review_status_not_promoted_by_approval_json (test_food_import.FoodImportTests.test_draft_review_status_not_promoted_by_approval_json) ... ok
+test_duplicate_json_keys_nonfinite_and_utf8_lf (test_food_import.FoodImportTests.test_duplicate_json_keys_nonfinite_and_utf8_lf) ... ok
+test_fixture_blocked_even_when_shape_valid (test_food_import.FoodImportTests.test_fixture_blocked_even_when_shape_valid) ... ok
+test_last_order_clips_overlap_and_interval_end_is_exclusive (test_food_import.FoodImportTests.test_last_order_clips_overlap_and_interval_end_is_exclusive) ... ok
+test_missing_required_and_broken_reference_rejected (test_food_import.FoodImportTests.test_missing_required_and_broken_reference_rejected) ... ok
+test_pending_wrong_hash_reviewer_and_evidence_fail (test_food_import.FoodImportTests.test_pending_wrong_hash_reviewer_and_evidence_fail) ... ok
+test_polygon_hole_and_boundaries (test_food_import.FoodImportTests.test_polygon_hole_and_boundaries) ... ok
+test_quota_shortfall_reason_preserves_actual_coverage_counts (test_food_import.FoodImportTests.test_quota_shortfall_reason_preserves_actual_coverage_counts) ... ok
+test_quota_shortfall_requires_a_nonempty_string_reason (test_food_import.FoodImportTests.test_quota_shortfall_requires_a_nonempty_string_reason) ... ok
+test_remote_docker_context_and_host_override_refused (test_food_import.FoodImportTests.test_remote_docker_context_and_host_override_refused) ... ok
+test_reserved_sources_outside_coverage_and_provenance (test_food_import.FoodImportTests.test_reserved_sources_outside_coverage_and_provenance) ... ok
+test_review_path_traversal_and_self_review_rejected (test_food_import.FoodImportTests.test_review_path_traversal_and_self_review_rejected) ... ok
+test_review_template_null_reason_cannot_publish_after_accepting_shortfall (test_food_import.FoodImportTests.test_review_template_null_reason_cannot_publish_after_accepting_shortfall) ... ok
+test_reviewed_bytes_publish_conversion_and_checksum (test_food_import.FoodImportTests.test_reviewed_bytes_publish_conversion_and_checksum) ... ok
+test_reviewed_structural_bundle_passes_without_asserting_real_approval (test_food_import.FoodImportTests.test_reviewed_structural_bundle_passes_without_asserting_real_approval) ... ok
+test_schedule_intersection_and_closed_exception_block_overnight (test_food_import.FoodImportTests.test_schedule_intersection_and_closed_exception_block_overnight) ... ok
+test_source_rights_image_rights_and_independence (test_food_import.FoodImportTests.test_source_rights_image_rights_and_independence) ... ok
+test_sql_dollar_delimiter_text_stays_in_data_literal (test_food_import.FoodImportTests.test_sql_dollar_delimiter_text_stays_in_data_literal) ... ok
+test_staging_immutable_and_hash_tamper_rejected (test_food_import.FoodImportTests.test_staging_immutable_and_hash_tamper_rejected) ... ok
+test_stale_child_not_hidden_by_dataset_validity (test_food_import.FoodImportTests.test_stale_child_not_hidden_by_dataset_validity) ... ok
+test_unknown_incomplete_and_disjoint_hours_block_publish (test_food_import.FoodImportTests.test_unknown_incomplete_and_disjoint_hours_block_publish) ... ok
+
+======================================================================
+ERROR: test_cli_cp1252_error_json_preserves_vietnamese (test_food_import.FoodImportTests.test_cli_cp1252_error_json_preserves_vietnamese)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/work/tests/test_food_import.py", line 313, in test_cli_cp1252_error_json_preserves_vietnamese
+    status,out,err=self.cp1252_cli(['validate','--input',str(missing),'--as-of',AS_OF])
+                   ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/work/tests/test_food_import.py", line 266, in cp1252_cli
+    result=subprocess.run(command+arguments,env=env,capture_output=True)
+  File "/usr/local/lib/python3.13/subprocess.py", line 554, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/subprocess.py", line 1039, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        pass_fds, cwd, env,
+                        ^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/subprocess.py", line 1854, in _execute_child
+    self._posix_spawn(args, executable, env, restore_signals, close_fds,
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                      p2cread, p2cwrite,
+                      ^^^^^^^^^^^^^^^^^^
+                      c2pread, c2pwrite,
+                      ^^^^^^^^^^^^^^^^^^
+                      errread, errwrite)
+                      ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/subprocess.py", line 1798, in _posix_spawn
+    self.pid = os.posix_spawn(executable, args, env, **kwargs)
+               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'ascii' codec can't encode character '\u01a1' in position 18: ordinal not in range(128)
+
+======================================================================
+ERROR: test_cli_cp1252_query_response_preserves_vietnamese_without_db (test_food_import.FoodImportTests.test_cli_cp1252_query_response_preserves_vietnamese_without_db)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/work/tests/test_food_import.py", line 302, in test_cli_cp1252_query_response_preserves_vietnamese_without_db
+    status,out,err=self.cp1252_cli(['query','--bundle-sha256','a'*64],probe)
+                   ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/work/tests/test_food_import.py", line 266, in cp1252_cli
+    result=subprocess.run(command+arguments,env=env,capture_output=True)
+  File "/usr/local/lib/python3.13/subprocess.py", line 554, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/subprocess.py", line 1039, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        pass_fds, cwd, env,
+                        ^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/subprocess.py", line 1854, in _execute_child
+    self._posix_spawn(args, executable, env, restore_signals, close_fds,
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                      p2cread, p2cwrite,
+                      ^^^^^^^^^^^^^^^^^^
+                      c2pread, c2pwrite,
+                      ^^^^^^^^^^^^^^^^^^
+                      errread, errwrite)
+                      ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/subprocess.py", line 1798, in _posix_spawn
+    self.pid = os.posix_spawn(executable, args, env, **kwargs)
+               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'ascii' codec can't encode character '\u01a1' in position 182: ordinal not in range(128)
+
+======================================================================
+ERROR: test_cli_cp1252_report_failure_after_db_does_not_claim_rollback (test_food_import.FoodImportTests.test_cli_cp1252_report_failure_after_db_does_not_claim_rollback)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/work/tests/test_food_import.py", line 329, in test_cli_cp1252_report_failure_after_db_does_not_claim_rollback
+    report_dir=Path(tmp)/'C\u01a1m gà — Vi\u1ec7t';report_dir.mkdir()
+                                         ~~~~~~~~~~~~~~~~^^
+  File "/usr/local/lib/python3.13/pathlib/_local.py", line 722, in mkdir
+    os.mkdir(self, mode)
+    ~~~~~~~~^^^^^^^^^^^^
+UnicodeEncodeError: 'ascii' codec can't encode character '\u01a1' in position 18: ordinal not in range(128)
+
+======================================================================
+ERROR: test_cli_cp1252_stdout_failure_after_db_does_not_claim_rollback (test_food_import.FoodImportTests.test_cli_cp1252_stdout_failure_after_db_does_not_claim_rollback)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/work/tests/test_food_import.py", line 353, in test_cli_cp1252_stdout_failure_after_db_does_not_claim_rollback
+    status,out,err=self.cp1252_cli(['rollback','--bundle-sha256','a'*64,'--confirm-local'],probe)
+                   ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/work/tests/test_food_import.py", line 266, in cp1252_cli
+    result=subprocess.run(command+arguments,env=env,capture_output=True)
+  File "/usr/local/lib/python3.13/subprocess.py", line 554, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/subprocess.py", line 1039, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        pass_fds, cwd, env,
+                        ^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/subprocess.py", line 1854, in _execute_child
+    self._posix_spawn(args, executable, env, restore_signals, close_fds,
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                      p2cread, p2cwrite,
+                      ^^^^^^^^^^^^^^^^^^
+                      c2pread, c2pwrite,
+                      ^^^^^^^^^^^^^^^^^^
+                      errread, errwrite)
+                      ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/subprocess.py", line 1798, in _posix_spawn
+    self.pid = os.posix_spawn(executable, args, env, **kwargs)
+               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'ascii' codec can't encode character '\u2014' in position 341: ordinal not in range(128)
+
+----------------------------------------------------------------------
+Ran 28 tests in 8.932s
+
+FAILED (errors=4)

@@ -100,3 +100,7 @@ Workflow `.github/workflows/gm08-import.yml` chạy unit/encoding với stdout c
 UTF-8 mode tắt và SQL importer trên PostgreSQL disposable ở Linux. Artifact
 `gm08-sql-results-linux` chứa assertions/hash/cleanup; kiểm run của đúng commit
 trước nghiệm thu. CI tooling xanh không thay dataset thật/review độc lập.
+
+Encoding tests giữ filesystem ASCII (`LC_ALL=C`) và dùng path/argv probe ASCII;
+tiếng Việt được giữ trong UTF-8 JSON hoặc Python Unicode escape. Điều này tránh
+lỗi trong subprocess launcher trước khi CLI chạy, vẫn kiểm output JSON tiếng Việt.
