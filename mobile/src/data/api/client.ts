@@ -43,6 +43,11 @@ import {
   UpdateHistoryConsentRequest,
   RoomState,
 } from './contracts';
+import {
+  ResponseGuard, isRecord, isNonEmptyString, isVersion, isRoomState, isVoidPayload,
+  isCreateRoomResponse, isJoinRoomResponse, isSessionResponse, isSubmitBallotResponse,
+  isFriendInvitation, isRoomInvitation,
+} from './responseGuards';
 
 export interface TransportOptions {
   token?: string;
@@ -276,6 +281,7 @@ export class ApiClientImpl implements ApiClient {
   normalizeWriteResponse<T>(
     raw: unknown,
     fallbackRequestId: string,
+    guard: ResponseGuard<T>,
     roomId?: string
   ):
     | { ok: true; data: T; requestId: string; roomId?: string; version?: number; state?: RoomState | string }
@@ -322,14 +328,35 @@ export class ApiClientImpl implements ApiClient {
       };
     }
 
-    // env.ok === true
-    const version = typeof env.version === 'number' ? env.version : undefined;
-    const state = typeof env.state === 'string' ? (env.state as RoomState) : undefined;
-    const dataPayload = (env.data !== undefined) ? env.data : (env as unknown);
+    // Validate the endpoint payload and any supplied metadata before success.
+    // Explicit data:null must not fall back to a flat DTO. Void ACKs may omit data.
+    const payload = Object.prototype.hasOwnProperty.call(env, 'data')
+      ? (env.data === null ? undefined : env.data)
+      : (guard === isVoidPayload ? undefined : env);
+    const metadataValid = (env.requestId === undefined || isNonEmptyString(env.requestId))
+      && (env.roomId === undefined || isNonEmptyString(env.roomId))
+      && (env.version === undefined || isVersion(env.version))
+      && (env.state === undefined || isRoomState(env.state));
+    const payloadRecord = isRecord(payload) ? payload : undefined;
+    const receipt = isRecord(payloadRecord?.receipt) ? payloadRecord.receipt : undefined;
+    const payloadVersion = payloadRecord?.version ?? payloadRecord?.roomVersion;
+    const identifiersMatch = (roomId === undefined || env.roomId === undefined || env.roomId === roomId)
+      && (payloadRecord?.roomId === undefined || resRoomId === undefined || payloadRecord.roomId === resRoomId)
+      && (env.version === undefined || payloadVersion === undefined || env.version === payloadVersion)
+      && (payloadRecord?.requestId === undefined || payloadRecord.requestId === resRequestId)
+      && (receipt === undefined || receipt.requestId === resRequestId);
+    if (!metadataValid || !guard(payload) || !identifiersMatch) {
+      return {
+        ok: false, requestId: resRequestId, roomId,
+        error: { messageKey: 'MALFORMED_RESPONSE', message: 'RPC write response does not match endpoint contract' },
+      };
+    }
+    const version = isVersion(env.version) ? env.version : undefined;
+    const state = isRoomState(env.state) ? env.state : undefined;
 
     return {
       ok: true,
-      data: dataPayload as T,
+      data: payload,
       requestId: resRequestId,
       roomId: resRoomId,
       version,
@@ -374,8 +401,8 @@ export class ApiClientImpl implements ApiClient {
     return { ok: true, data: raw as T };
   }
 
-  normalizeRpcResponse<T>(raw: unknown, fallbackRequestId: string, roomId?: string) {
-    return this.normalizeWriteResponse<T>(raw, fallbackRequestId, roomId);
+  normalizeRpcResponse<T>(raw: unknown, fallbackRequestId: string, guard: ResponseGuard<T>, roomId?: string) {
+    return this.normalizeWriteResponse<T>(raw, fallbackRequestId, guard, roomId);
   }
 
   private async callRpc<T>(rpcName: string, params: Record<string, unknown>): Promise<T> {
@@ -396,12 +423,12 @@ export class ApiClientImpl implements ApiClient {
         requestId,
         display_name: req.displayName,
       });
-      const norm = this.normalizeWriteResponse<SessionResponse>(raw, requestId);
+      const norm = this.normalizeWriteResponse<SessionResponse>(raw, requestId, isSessionResponse);
       if (!norm.ok) return norm;
       if (norm.data?.token) {
         this.setAuthToken(norm.data.token);
       }
-      return { ok: true, requestId: norm.requestId, data: norm.data };
+      return norm;
     } catch (err) {
       return { ok: false, requestId, error: this.mapError(err) };
     }
@@ -423,10 +450,10 @@ export class ApiClientImpl implements ApiClient {
     const requestId = customRequestId ?? this.generateRequestId();
     try {
       const raw = await this.callRpc<unknown>('logout', { requestId });
-      const norm = this.normalizeWriteResponse<void>(raw, requestId);
+      const norm = this.normalizeWriteResponse<void>(raw, requestId, isVoidPayload);
       if (!norm.ok) return norm;
       this.setAuthToken(null);
-      return { ok: true, requestId: norm.requestId, data: undefined };
+      return norm;
     } catch (err) {
       return { ok: false, requestId, error: this.mapError(err) };
     }
@@ -486,7 +513,7 @@ export class ApiClientImpl implements ApiClient {
         budget: req.context.budget ?? null,
         avoid_recent: req.context.avoidRecent,
       });
-      const norm = this.normalizeWriteResponse<CreateRoomResponse>(raw, requestId);
+      const norm = this.normalizeWriteResponse<CreateRoomResponse>(raw, requestId, isCreateRoomResponse);
       if (!norm.ok) return norm;
       return {
         ok: true,
@@ -509,7 +536,7 @@ export class ApiClientImpl implements ApiClient {
         code: req.code,
         display_name: req.displayName,
       });
-      const norm = this.normalizeWriteResponse<JoinRoomResponse>(raw, requestId);
+      const norm = this.normalizeWriteResponse<JoinRoomResponse>(raw, requestId, isJoinRoomResponse);
       if (!norm.ok) return norm;
       return {
         ok: true,
@@ -548,7 +575,7 @@ export class ApiClientImpl implements ApiClient {
         flavor: req.preferences.flavor ?? null,
         history_consent: req.preferences.historyConsent,
       });
-      const norm = this.normalizeWriteResponse<void>(raw, requestId, req.roomId);
+      const norm = this.normalizeWriteResponse<void>(raw, requestId, isVoidPayload, req.roomId);
       if (!norm.ok) return norm;
       return {
         ok: true,
@@ -579,7 +606,7 @@ export class ApiClientImpl implements ApiClient {
         budget: req.context.budget ?? null,
         avoid_recent: req.context.avoidRecent,
       });
-      const norm = this.normalizeWriteResponse<void>(raw, requestId, req.roomId);
+      const norm = this.normalizeWriteResponse<void>(raw, requestId, isVoidPayload, req.roomId);
       if (!norm.ok) return norm;
       return {
         ok: true,
@@ -603,7 +630,7 @@ export class ApiClientImpl implements ApiClient {
         expected_version: req.expectedVersion,
         ready: req.ready,
       });
-      const norm = this.normalizeWriteResponse<void>(raw, requestId, req.roomId);
+      const norm = this.normalizeWriteResponse<void>(raw, requestId, isVoidPayload, req.roomId);
       if (!norm.ok) return norm;
       return {
         ok: true,
@@ -626,7 +653,7 @@ export class ApiClientImpl implements ApiClient {
         room_id: req.roomId,
         expected_version: req.expectedVersion,
       });
-      const norm = this.normalizeWriteResponse<void>(raw, requestId, req.roomId);
+      const norm = this.normalizeWriteResponse<void>(raw, requestId, isVoidPayload, req.roomId);
       if (!norm.ok) return norm;
       return {
         ok: true,
@@ -649,7 +676,7 @@ export class ApiClientImpl implements ApiClient {
         room_id: req.roomId,
         expected_version: req.expectedVersion,
       });
-      const norm = this.normalizeWriteResponse<void>(raw, requestId, req.roomId);
+      const norm = this.normalizeWriteResponse<void>(raw, requestId, isVoidPayload, req.roomId);
       if (!norm.ok) return norm;
       return {
         ok: true,
@@ -673,7 +700,7 @@ export class ApiClientImpl implements ApiClient {
         expected_version: req.expectedVersion,
         confirm_cancel: req.confirmCancel,
       });
-      const norm = this.normalizeWriteResponse<void>(raw, requestId, req.roomId);
+      const norm = this.normalizeWriteResponse<void>(raw, requestId, isVoidPayload, req.roomId);
       if (!norm.ok) return norm;
       return {
         ok: true,
@@ -704,7 +731,7 @@ export class ApiClientImpl implements ApiClient {
         expected_version: req.expectedVersion,
         votes: req.votes,
       });
-      const norm = this.normalizeWriteResponse<SubmitBallotResponse>(raw, requestId, req.roomId);
+      const norm = this.normalizeWriteResponse<SubmitBallotResponse>(raw, requestId, isSubmitBallotResponse, req.roomId);
       if (!norm.ok) return norm;
       return {
         ok: true,
@@ -752,9 +779,9 @@ export class ApiClientImpl implements ApiClient {
         friend_code: req.friendCode ?? null,
         partner_id: req.partnerId ?? null,
       });
-      const norm = this.normalizeWriteResponse<FriendInvitation>(raw, requestId);
+      const norm = this.normalizeWriteResponse<FriendInvitation>(raw, requestId, isFriendInvitation);
       if (!norm.ok) return norm;
-      return { ok: true, requestId: norm.requestId, data: norm.data };
+      return norm;
     } catch (err) {
       return { ok: false, requestId, error: this.mapError(err) };
     }
@@ -767,9 +794,9 @@ export class ApiClientImpl implements ApiClient {
         requestId,
         invitation_id: invitationId,
       });
-      const norm = this.normalizeWriteResponse<void>(raw, requestId);
+      const norm = this.normalizeWriteResponse<void>(raw, requestId, isVoidPayload);
       if (!norm.ok) return norm;
-      return { ok: true, requestId: norm.requestId, data: undefined };
+      return norm;
     } catch (err) {
       return { ok: false, requestId, error: this.mapError(err) };
     }
@@ -782,9 +809,9 @@ export class ApiClientImpl implements ApiClient {
         requestId,
         invitation_id: invitationId,
       });
-      const norm = this.normalizeWriteResponse<void>(raw, requestId);
+      const norm = this.normalizeWriteResponse<void>(raw, requestId, isVoidPayload);
       if (!norm.ok) return norm;
-      return { ok: true, requestId: norm.requestId, data: undefined };
+      return norm;
     } catch (err) {
       return { ok: false, requestId, error: this.mapError(err) };
     }
@@ -797,9 +824,9 @@ export class ApiClientImpl implements ApiClient {
         requestId,
         partner_id: partnerId,
       });
-      const norm = this.normalizeWriteResponse<void>(raw, requestId);
+      const norm = this.normalizeWriteResponse<void>(raw, requestId, isVoidPayload);
       if (!norm.ok) return norm;
-      return { ok: true, requestId: norm.requestId, data: undefined };
+      return norm;
     } catch (err) {
       return { ok: false, requestId, error: this.mapError(err) };
     }
@@ -814,9 +841,9 @@ export class ApiClientImpl implements ApiClient {
         partner_id: req.partnerId,
         expected_version: req.expectedVersion,
       });
-      const norm = this.normalizeWriteResponse<RoomInvitation>(raw, requestId, req.roomId);
+      const norm = this.normalizeWriteResponse<RoomInvitation>(raw, requestId, isRoomInvitation, req.roomId);
       if (!norm.ok) return norm;
-      return { ok: true, requestId: norm.requestId, roomId: req.roomId, data: norm.data };
+      return norm;
     } catch (err) {
       return { ok: false, requestId, error: this.mapError(err) };
     }
@@ -830,9 +857,9 @@ export class ApiClientImpl implements ApiClient {
         invitation_id: req.invitationId,
         display_name: req.displayName,
       });
-      const norm = this.normalizeWriteResponse<JoinRoomResponse>(raw, requestId);
+      const norm = this.normalizeWriteResponse<JoinRoomResponse>(raw, requestId, isJoinRoomResponse);
       if (!norm.ok) return norm;
-      return { ok: true, requestId: norm.requestId, roomId: norm.data?.roomId ?? norm.roomId, data: norm.data };
+      return { ok: true, requestId: norm.requestId, roomId: norm.data.roomId, version: norm.version ?? norm.data.version, state: norm.state, data: norm.data };
     } catch (err) {
       return { ok: false, requestId, error: this.mapError(err) };
     }
@@ -862,9 +889,9 @@ export class ApiClientImpl implements ApiClient {
         token: req.token,
         permission: req.permission,
       });
-      const norm = this.normalizeWriteResponse<void>(raw, requestId);
+      const norm = this.normalizeWriteResponse<void>(raw, requestId, isVoidPayload);
       if (!norm.ok) return norm;
-      return { ok: true, requestId: norm.requestId, data: undefined };
+      return norm;
     } catch (err) {
       return { ok: false, requestId, error: this.mapError(err) };
     }
@@ -877,9 +904,9 @@ export class ApiClientImpl implements ApiClient {
         requestId,
         device_id: deviceId,
       });
-      const norm = this.normalizeWriteResponse<void>(raw, requestId);
+      const norm = this.normalizeWriteResponse<void>(raw, requestId, isVoidPayload);
       if (!norm.ok) return norm;
-      return { ok: true, requestId: norm.requestId, data: undefined };
+      return norm;
     } catch (err) {
       return { ok: false, requestId, error: this.mapError(err) };
     }
@@ -909,9 +936,9 @@ export class ApiClientImpl implements ApiClient {
         scope: req.scope,
         consent: req.consent,
       });
-      const norm = this.normalizeWriteResponse<void>(raw, requestId);
+      const norm = this.normalizeWriteResponse<void>(raw, requestId, isVoidPayload);
       if (!norm.ok) return norm;
-      return { ok: true, requestId: norm.requestId, data: undefined };
+      return norm;
     } catch (err) {
       return { ok: false, requestId, error: this.mapError(err) };
     }
@@ -924,9 +951,9 @@ export class ApiClientImpl implements ApiClient {
         requestId,
         history_id: historyId,
       });
-      const norm = this.normalizeWriteResponse<void>(raw, requestId);
+      const norm = this.normalizeWriteResponse<void>(raw, requestId, isVoidPayload);
       if (!norm.ok) return norm;
-      return { ok: true, requestId: norm.requestId, data: undefined };
+      return norm;
     } catch (err) {
       return { ok: false, requestId, error: this.mapError(err) };
     }

@@ -724,7 +724,7 @@ export class MockApiClient implements ApiClient {
       roomId: room.roomId,
       version: room.version,
       data: {
-        roomId,
+        roomId: room.roomId,
         code: room.code,
         version: room.version,
         memberId: this.currentUser.id,

@@ -58,6 +58,24 @@ GM-17 bảo vệ tables/RPC/retention, từng task API thêm auth/membership/ver
 - Client normalizer (`normalizeRpcResponse<T>()` trong `mobile/src/data/api/client.ts`) bảo toàn tuyệt đối cờ `ok`, `error.messageKey`, `requestId`, `version`, `state` và chỉ unwrap `data` khi `ok === true`.
 - Nếu response thiếu cờ `ok` hoặc không đúng cấu trúc envelope: bắt buộc chuẩn hóa thành lỗi `{ ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } }`, tuyệt đối không chuyển thành thành công.
 
+#### Runtime validation của write payload (PR #104)
+
+`normalizeWriteResponse` / alias `normalizeRpcResponse` nhận guard của endpoint; không cast JSON chưa kiểm thành DTO. Success typed write hỗ trợ `{ok:true,data:DTO}` và dạng flat `{ok:true,...DTO}`. Nếu key `data` có mặt, chỉ kiểm giá trị đó; `data:null`/sai kiểu không được fallback sang field flat. Field required thiếu/sai trả `MALFORMED_RESPONSE`.
+
+| Endpoint | Payload thành công bắt buộc |
+| --- | --- |
+| create_guest_session | token, user.id/displayName/isGuest/createdAt, expiresAt; token chỉ lưu sau validation |
+| create_room | roomId, code, version, expiresAt |
+| join_room / accept_room_invite | roomId, code, version, memberId |
+| submit_ballot | accepted, round (1/2), allMembersSubmitted, roomVersion; receipt/requestId optional nhưng phải đúng shape khi có |
+| invite_partner | id, inviterUserId, inviterName, inviteeUserId, status, createdAt, expiresAt |
+| invite_to_room | các field invite_partner cộng roomId và roomCode |
+| write trả void | `data` vắng, undefined hoặc JSON null → client `data:undefined`; không yêu cầu object DTO; data object/primitive ngoài contract bị từ chối |
+
+ID/code/token là string không rỗng; version là số nguyên hữu hạn an toàn trong JavaScript, >=1 theo dictionary GM-04. Timestamp là ISO8601 có timezone và ngày/giờ hợp lệ. Invitation status dùng enum của DTO. Optional không tự tương đương nullable: receipt null là malformed vì DTO chỉ cho vắng, còn void data cho JSON null rõ ràng.
+
+Metadata requestId/roomId/version/state được kiểm kiểu và enum khi có, giữ optional khi vắng. roomId/version ở envelope phải khớp payload và roomId của request khi có; không fabricate version/state. Ballot payload requestId phải khớp ACK requestId; receipt khi có phải khớp round của payload và requestId của ACK. Các guard chỉ kiểm contract GM-07, không chứng minh auth/membership, transaction hay RPC nghiệp vụ các task sau.
+
 ### 2. Idempotency & Bảo toàn RequestId khi Retry
 - Mọi RPC ghi (`createRoom`, `setReady`, `startRound`, `submitBallot`, `registerPushDevice`) đều hỗ trợ `requestId?: string` do caller hoặc outbox truyền vào.
 - Khi timeout mà chưa rõ server đã commit hay chưa, caller retry với **cùng requestId + cùng body**. Client không tự ý sinh lại ID mới cho cùng một attempt.

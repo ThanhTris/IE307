@@ -28,7 +28,7 @@ class ApiContractGM07Tests(unittest.TestCase):
 
     def test_contracts_cover_all_api_contract_error_codes(self):
         content = self.contracts_path.read_text(encoding='utf-8')
-        
+
         # Explicit error list from API_CONTRACT.md
         expected_errors = [
             'AUTH_REQUIRED',
@@ -63,7 +63,7 @@ class ApiContractGM07Tests(unittest.TestCase):
 
     def test_contracts_cover_core_endpoints(self):
         content = self.contracts_path.read_text(encoding='utf-8')
-        
+
         expected_methods = [
             'createGuestSession',
             'restoreSession',
