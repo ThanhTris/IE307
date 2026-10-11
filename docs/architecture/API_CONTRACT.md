@@ -50,3 +50,68 @@ GM-07 chốt request/response/error/version từ dictionary GM-04, đối chiế
 | inbox / register/unregister push device / sender | GM-23 | GM-14 | GM-28/29 |
 
 GM-17 bảo vệ tables/RPC/retention, từng task API thêm auth/membership/version/expiry/lock/idempotency đúng endpoint. Client không import SQL/SDK vào UI; production không fallback sang mock khi API lỗi. Lệnh smoke/API example và response mẫu là bắt buộc trong HANDOFF.
+
+## Chi tiết Contract Projection & Parity GM-04 / GM-06 (GM-07)
+
+### 1. Chuẩn hóa phong bì lỗi (Error Normalization)
+- RPC Supabase có thể trả HTTP 200 kèm business envelope `{ ok: false, error: { messageKey: '...' } }`.
+- Client normalizer (`normalizeRpcResponse<T>()` trong `mobile/src/data/api/client.ts`) bảo toàn tuyệt đối cờ `ok`, `error.messageKey`, `requestId`, `version`, `state` và chỉ unwrap `data` khi `ok === true`.
+- Nếu response thiếu cờ `ok` hoặc không đúng cấu trúc envelope: bắt buộc chuẩn hóa thành lỗi `{ ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } }`, tuyệt đối không chuyển thành thành công.
+
+#### Runtime validation của write payload (PR #104)
+
+`normalizeWriteResponse` / alias `normalizeRpcResponse` nhận guard của endpoint; không cast JSON chưa kiểm thành DTO. Success typed write hỗ trợ `{ok:true,data:DTO}` và dạng flat `{ok:true,...DTO}`. Nếu key `data` có mặt, chỉ kiểm giá trị đó; `data:null`/sai kiểu không được fallback sang field flat. Field required thiếu/sai trả `MALFORMED_RESPONSE`.
+
+| Endpoint | Payload thành công bắt buộc |
+| --- | --- |
+| create_guest_session | token, user.id/displayName/isGuest/createdAt, expiresAt; token chỉ lưu sau validation |
+| create_room | roomId, code, version, expiresAt |
+| join_room / accept_room_invite | roomId, code, version, memberId |
+| submit_ballot | accepted, round (1/2), allMembersSubmitted, roomVersion; receipt/requestId optional nhưng phải đúng shape khi có |
+| invite_partner | id, inviterUserId, inviterName, inviteeUserId, status, createdAt, expiresAt |
+| invite_to_room | các field invite_partner cộng roomId và roomCode |
+| write trả void | `data` vắng, undefined hoặc JSON null → client `data:undefined`; không yêu cầu object DTO; data object/primitive ngoài contract bị từ chối |
+
+ID/code/token là string không rỗng; version là số nguyên hữu hạn an toàn trong JavaScript, >=1 theo dictionary GM-04. Timestamp là ISO8601 có timezone và ngày/giờ hợp lệ. Invitation status dùng enum của DTO. Optional không tự tương đương nullable: receipt null là malformed vì DTO chỉ cho vắng, còn void data cho JSON null rõ ràng.
+
+Metadata requestId/roomId/version/state được kiểm kiểu và enum khi có, giữ optional khi vắng. roomId/version ở envelope phải khớp payload và roomId của request khi có; không fabricate version/state. Ballot payload requestId phải khớp ACK requestId; receipt khi có phải khớp round của payload và requestId của ACK. Các guard chỉ kiểm contract GM-07, không chứng minh auth/membership, transaction hay RPC nghiệp vụ các task sau.
+
+Read RPC hỗ trợ DTO/array trực tiếp hoặc `{ok:true,data:DTO}`. Cả 8 endpoint đọc phải kiểm required field, nested DTO, enum, timestamp, nullable/optional field và từng phần tử array trước success; payload thiếu/sai cấu trúc trả `MALFORMED_RESPONSE`. Danh sách rỗng `[]` hợp lệ; object `{}` không thay array. Business error hợp lệ được giữ, mã lỗi lạ thành `UNKNOWN_ERROR`. `restoreSession` chỉ lưu token sau khi `SessionUser` hợp lệ; dữ liệu lỗi giữ nguyên token đang có.
+
+Mock lưu `ownPreferences`, `ownVotes`, `ownSubmission` theo roomId chuẩn + caller userId và chỉ chiếu dữ liệu caller hiện tại vào snapshot. Caller chưa có phiếu/receipt nhận ownVotes vắng và ownSubmission null; đổi về caller cũ khôi phục dữ liệu của người đó. Request và snapshot/receipt không dùng chung object private có thể bị UI sửa. Consensus scenarios vẫn mô phỏng peer submission để chạy UI; isolation mock không là nghiệm thu RLS/RPC production.
+
+### 2. Idempotency & Bảo toàn RequestId khi Retry
+- Mọi RPC ghi (`createRoom`, `setReady`, `startRound`, `submitBallot`, `registerPushDevice`) đều hỗ trợ `requestId?: string` do caller hoặc outbox truyền vào.
+- Khi timeout mà chưa rõ server đã commit hay chưa, caller retry với **cùng requestId + cùng body**. Client không tự ý sinh lại ID mới cho cùng một attempt.
+- Server và Mock tra cứu `requestId` **trước** khi kiểm tra trạng thái phòng (`room.state`) và phiên bản (`room.version`):
+  - Cùng `requestId` + cùng payload signature: trả lại ACK thành công của lần trước.
+  - Cùng `requestId` + khác payload signature: từ chối với mã lỗi `REQUEST_ID_REUSED`.
+
+### 3. Bảng ánh xạ thuộc tính DTO và Cơ sở dữ liệu (GM-04 / GM-06)
+
+| DTO Client (`contracts.ts`) | Kiểu dữ liệu / Đơn vị | Bảng & Cột Database (GM-06 / GM-04) | Quy tắc chuyển đổi / Nullability |
+| :--- | :--- | :--- | :--- |
+| `PoolDish.roundDishId` | `string` (UUID / slug) | `round_dishes.id` | Bắt buộc, định danh lượt vote |
+| `PoolDish.dishId` | `string` (UUID) | `dishes.id` / `venue_dishes.dish_id` | Bắt buộc, tham chiếu món gốc |
+| `PoolDish.name` | `string` | `dishes.name` | Bắt buộc (bảng `dishes` dùng cột `name`) |
+| `PoolDish.priceMin` | `number \| null` (nguyên tệ) | `round_dishes.price.priceMin` / `venue_dishes.price_min` | Nullable khi quán chưa niêm yết |
+| `PoolDish.priceMax` | `number \| null` (nguyên tệ) | `round_dishes.price.priceMax` / `venue_dishes.price_max` | Nullable khi món đồng giá hoặc chưa rõ |
+| `PoolDish.currency` | `CurrencyCode \| null` | `round_dishes.price.currency` (enum `currency_code`) | Enum: `'VND'`, `'USD'`, `'THB'`, `'KRW'`, `'JPY'`, `'CNY'`, `'EUR'`, `'other'`. Nullable khi chưa rõ giá |
+| `PoolDish.unit` | `PriceUnit \| null` | `round_dishes.price.unit` (enum `price_unit`) | Enum: `'portion'`, `'item'`, `'person'`, `'group'`, `'kg'`, `'menu_item_unspecified'`. Nullable khi chưa rõ |
+| `PoolDish.servingSize` | `string \| null` | `round_dishes.price.servingSize` / `venue_dishes.serving_size` | Chuỗi mô tả khẩu phần (ví dụ: `'1 phần'`, `'2–3 người'`). Nullable |
+| `PoolDish.price` | `DishPrice \| null` | `round_dishes.price` JSON object / `venue_dishes` pricing | Projection có cấu trúc cho UI |
+| `PoolDish.temperature` | `'hot' \| 'warm' \| 'cold' \| 'ambient' \| 'unknown'` | `round_dishes.effective_profile.temperature` / `dishes.temperature` | Enum nhiệt độ chuẩn hóa |
+| `RoomSnapshot.ownSubmission` | `SubmissionReceipt \| null` | `submissions` | Receipt nộp phiếu (`round`, `intentId`, `requestId`, `submittedAt`, `voteCount`) dùng reconcile sau timeout |
+| `RoomSnapshot.datasetVersion` | `string` | Metadata / `food_datasets.version` | Phiên bản dataset hiện hành (ví dụ: `2026-10-11-core-01`) |
+| `RoomSnapshot.eligibilityVersion`| `string` | Metadata eligibility | Phiên bản quy tắc eligibility (`1.0.0`) |
+| `RoomSnapshot.evaluatedAt` | `string` (ISO8601) | Snapshot calculation time | Thời điểm đánh giá pool |
+| `PushPermissionStatus` | `'granted' \| 'denied' \| 'provisional'` | `devices.permission` | Client dùng 3 trạng thái; lưu DB qua `toStoragePermission`: `'provisional' -> 'unknown'` |
+
+### 4. Quy tắc đồng thuận & Kịch bản Mock
+- **NO không thể thành winner:** Bất kỳ món nào nhận dù chỉ 1 phiếu `NO` hoặc `REMOVE` lập tức bị loại khỏi tập ứng viên thắng cuộc.
+- Nếu toàn bộ ứng viên đều có phiếu `NO`: kết quả trả về `winnerDish = null`, `reasonCode = 'NO_CONSENSUS'`, `matchTier = 'TIER_NONE'`.
+- Mock hỗ trợ 3 kịch bản kiểm thử:
+  - `unanimous`: Đồng thuận tuyệt đối vòng 1 (`UNANIMOUS_WANT` / `TIER_1`).
+  - `no_consensus`: Bế tắc hoàn toàn, không có món thắng (`NO_CONSENSUS`).
+  - `round_two`: Vòng 1 thiếu món khả thi, phòng tự động chuyển sang `ROUND_2` với tập món thu gọn.
+- Nộp phiếu khi phòng ở trạng thái ngoài vòng bầu chọn (`LOBBY`, `CANCELLED`, `DECIDED`, `NO_CONSENSUS`) sẽ bị từ chối với lỗi `INVALID_ROOM_STATE`.

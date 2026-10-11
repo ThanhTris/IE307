@@ -1,0 +1,1 @@
+PASS: both TypeScript snippets extracted from HANDOFF compile in the mobile project context against the actual public API.

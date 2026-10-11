@@ -1,0 +1,4 @@
+Approval source: https://github.com/users/ThanhTris/projects/2 | checked at 2026-10-11T09:29:20.266012+00:00 | no cached/local fallback
+Target snapshot: origin/main = 00c4f27a97d4f1487dfed7c54c1253c766709a1a (local ref; freshness not verified)
+GM-07: READY_FOR_MERGE_REVIEW | owner=Trung reviewer=Trí | tasks/backlog/GM-07.md
+Gate checks approval source and delivered files, not execution. Merge still requires review of this PR, upstream PR/commit verification and real integration tests. No status/task edits performed.
