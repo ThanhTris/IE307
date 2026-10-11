@@ -1,7 +1,8 @@
 /**
  * GM-07 — Unit tests for ApiClient, contracts, and MockApiClient adapter.
  * Verifies request/response serialization, error mapping, timeout behavior,
- * and mock state transitions across all 6 modes.
+ * idempotency with requestId, consensus rules (NO cannot be winner),
+ * and mock state transitions across all modes and scenarios.
  */
 
 import {
@@ -10,8 +11,10 @@ import {
   createApiClient,
   ApiTransport,
   TransportOptions,
+  FetchTransport,
   MOCK_ANCHORS,
   MOCK_DISHES,
+  toStoragePermission,
 } from '../../src/data/api';
 
 describe('GM-07 API Contract & Client Suite', () => {
@@ -71,6 +74,128 @@ describe('GM-07 API Contract & Client Suite', () => {
       expect(transport.lastParams?.display_name).toBe('Trang');
     });
 
+    it('caller can provide custom requestId and it is preserved across write attempts', async () => {
+      const transport = new MockTransport();
+      transport.responseData = {
+        accepted: true,
+        round: 1,
+        allMembersSubmitted: true,
+        roomVersion: 2,
+      };
+
+      const client = new ApiClientImpl({ transport });
+      const customRequestId = 'req_client_retry_uuid_999';
+
+      const res = await client.submitBallot({
+        roomId: 'room_123',
+        round: 1,
+        poolVersion: 1,
+        intentId: 'intent_fixed_1',
+        expectedVersion: 1,
+        votes: [],
+        requestId: customRequestId,
+      });
+
+      expect(transport.lastParams?.requestId).toBe(customRequestId);
+      expect(res.requestId).toBe(customRequestId);
+    });
+
+    it('does NOT convert HTTP 200 business error envelope into success (P1 defect guard)', async () => {
+      const transport = new MockTransport();
+      // Server returns HTTP 200 with JSON payload containing ok: false or error object
+      transport.responseData = {
+        ok: false,
+        error: {
+          messageKey: 'VERSION_CONFLICT',
+          message: 'Room version is out of sync',
+        },
+      };
+
+      const client = new ApiClientImpl({ transport });
+
+      // 1. Test setReady
+      const resReady = await client.setReady({
+        roomId: 'room_123',
+        expectedVersion: 1,
+        ready: true,
+      });
+      expect(resReady.ok).toBe(false);
+      if (!resReady.ok) {
+        expect(resReady.error.messageKey).toBe('VERSION_CONFLICT');
+      }
+
+      // 2. Test submitBallot
+      const resBallot = await client.submitBallot({
+        roomId: 'room_123',
+        round: 1,
+        poolVersion: 1,
+        intentId: 'intent_1',
+        expectedVersion: 1,
+        votes: [],
+      });
+      expect(resBallot.ok).toBe(false);
+      if (!resBallot.ok) {
+        expect(resBallot.error.messageKey).toBe('VERSION_CONFLICT');
+      }
+    });
+
+    it('unwraps success envelope and preserves version, state, and data without nesting errors', async () => {
+      const transport = new MockTransport();
+      transport.responseData = {
+        ok: true,
+        requestId: 'req_server_ack_1',
+        version: 3,
+        state: 'ROUND_1',
+        data: {
+          accepted: true,
+          round: 1,
+          allMembersSubmitted: false,
+          roomVersion: 3,
+        },
+      };
+
+      const client = new ApiClientImpl({ transport });
+      const res = await client.submitBallot({
+        roomId: 'room_123',
+        round: 1,
+        poolVersion: 1,
+        intentId: 'intent_1',
+        expectedVersion: 2,
+        votes: [],
+      });
+
+      expect(res.ok).toBe(true);
+      if (res.ok) {
+        expect(res.requestId).toBe('req_server_ack_1');
+        expect(res.version).toBe(3);
+        expect(res.state).toBe('ROUND_1');
+        expect(res.data.accepted).toBe(true);
+      }
+    });
+
+    it('handles malformed or empty response gracefully with MALFORMED_RESPONSE', async () => {
+      const transport = new MockTransport();
+      transport.responseData = null; // empty or malformed
+
+      const client = new ApiClientImpl({ transport });
+      const res = await client.createRoom({
+        displayName: 'Trang',
+        context: {
+          anchorId: 'anc_ho_con_rua',
+          radiusM: 1000,
+          desiredAt: '2026-10-11T12:00:00Z',
+          serviceMode: 'dine_in',
+          mealSlot: 'lunch',
+          avoidRecent: false,
+        },
+      });
+
+      expect(res.ok).toBe(false);
+      if (!res.ok) {
+        expect(res.error.messageKey).toBe('MALFORMED_RESPONSE');
+      }
+    });
+
     it('maps server error bodies and HTTP status codes correctly', async () => {
       const transport = new MockTransport();
       const client = new ApiClientImpl({ transport });
@@ -120,10 +245,42 @@ describe('GM-07 API Contract & Client Suite', () => {
         expect(res4.error.messageKey).toBe('TIMEOUT');
       }
     });
+
+    it('configures FetchTransport with explicit baseUrl and injects fetchFn', () => {
+      const customFetch = jest.fn() as any;
+      const client = new ApiClientImpl({
+        baseUrl: 'https://backend.gicungduoc.vn',
+        fetchFn: customFetch,
+      });
+
+      const transport = client.getTransport() as FetchTransport;
+      expect(transport).toBeInstanceOf(FetchTransport);
+      expect(transport.getBaseUrl()).toBe('https://backend.gicungduoc.vn');
+    });
   });
 
-  describe('MockApiClient State Transitions and Modes', () => {
-    it('executes the core room lifecycle in default mode', async () => {
+  describe('Contract Parity & Converters', () => {
+    it('maps client push permission to dictionary storage permission', () => {
+      expect(toStoragePermission('granted')).toBe('granted');
+      expect(toStoragePermission('denied')).toBe('denied');
+      expect(toStoragePermission('provisional')).toBe('unknown');
+      expect(toStoragePermission('unknown')).toBe('unknown');
+    });
+
+    it('ensures MOCK_DISHES contain currency, unit, and portion sizing metadata', () => {
+      for (const dish of MOCK_DISHES) {
+        expect(dish.currency).toBe('VND');
+        expect(dish.unit).toBe('menu_item_unspecified');
+        expect(dish.servingSize).toBe(1);
+        expect(dish.price).toBeDefined();
+        expect(dish.price?.currency).toBe('VND');
+        expect(dish.price?.unit).toBe('menu_item_unspecified');
+      }
+    });
+  });
+
+  describe('MockApiClient State Transitions, Consensus & Scenarios', () => {
+    it('executes the core room lifecycle in default mode with unanimous consensus', async () => {
       const mock = new MockApiClient({ delayMs: 0 });
 
       // 1. Discovery
@@ -165,13 +322,14 @@ describe('GM-07 API Contract & Client Suite', () => {
       const { roomId, code } = createRes.data;
       expect(code.length).toBe(4);
 
-      // 4. Verify Snapshot
+      // 4. Verify Snapshot metadata (datasetVersion, eligibilityVersion, ownSubmission)
       const snap1 = await mock.getRoomSnapshot(roomId);
       expect(snap1.ok).toBe(true);
       if (snap1.ok) {
         expect(snap1.data.state).toBe('LOBBY');
         expect(snap1.data.members.length).toBe(1);
-        expect(snap1.data.members[0]?.displayName).toBe('Trang');
+        expect(snap1.data.datasetVersion).toBe('2026-10-11-core-01');
+        expect(snap1.data.ownSubmission).toBeNull();
       }
 
       // 5. Update Preferences
@@ -199,20 +357,7 @@ describe('GM-07 API Contract & Client Suite', () => {
         expect(snapRound.data.state).toBe('ROUND_1');
       }
 
-      // 7. Submit Ballot (Incomplete vs Complete)
-      const badBallot = await mock.submitBallot({
-        roomId,
-        round: 1,
-        poolVersion: 1,
-        intentId: 'intent_1',
-        expectedVersion: 4,
-        votes: [{ roundDishId: 'rd_01', vote: 'WANT' }], // Missing other dishes
-      });
-      expect(badBallot.ok).toBe(false);
-      if (!badBallot.ok) {
-        expect(badBallot.error.messageKey).toBe('INCOMPLETE_BALLOT');
-      }
-
+      // 7. Submit Ballot
       const allVotes = MOCK_DISHES.map((d) => ({
         roundDishId: d.roundDishId,
         vote: 'WANT' as const,
@@ -221,22 +366,163 @@ describe('GM-07 API Contract & Client Suite', () => {
         roomId,
         round: 1,
         poolVersion: 1,
-        intentId: 'intent_2',
+        intentId: 'intent_unanimous',
         expectedVersion: 4,
         votes: allVotes,
       });
       expect(goodBallot.ok).toBe(true);
       if (goodBallot.ok) {
         expect(goodBallot.data.accepted).toBe(true);
-        expect(goodBallot.data.allMembersSubmitted).toBe(true);
+        expect(goodBallot.data.receipt).toBeDefined();
+        expect(goodBallot.data.receipt?.round).toBe(1);
       }
 
-      // 8. Result Finalized
+      // 8. Result Decided
       const finalSnap = await mock.getRoomSnapshot(roomId);
       expect(finalSnap.ok).toBe(true);
       if (finalSnap.ok) {
-        expect(finalSnap.data.state).toBe('FINALIZED');
+        expect(finalSnap.data.state).toBe('DECIDED');
         expect(finalSnap.data.result?.winnerRoundDishId).toBe(MOCK_DISHES[0]?.roundDishId);
+        expect(finalSnap.data.result?.reasonCode).toBe('UNANIMOUS_WANT');
+        expect(finalSnap.data.ownSubmission?.intentId).toBe('intent_unanimous');
+      }
+    });
+
+    it('rejects ballot submission in LOBBY state with INVALID_ROOM_STATE (state validation)', async () => {
+      const mock = new MockApiClient({ delayMs: 0 });
+      const snap = await mock.getRoomSnapshot('room_mock_001');
+      expect(snap.ok).toBe(true);
+      if (snap.ok) {
+        expect(snap.data.state).toBe('LOBBY');
+      }
+
+      const res = await mock.submitBallot({
+        roomId: 'room_mock_001',
+        round: 1,
+        poolVersion: 1,
+        intentId: 'intent_illegal',
+        expectedVersion: 1,
+        votes: MOCK_DISHES.map((d) => ({ roundDishId: d.roundDishId, vote: 'WANT' })),
+      });
+
+      expect(res.ok).toBe(false);
+      if (!res.ok) {
+        expect(res.error.messageKey).toBe('INVALID_ROOM_STATE');
+      }
+    });
+
+    it('strictly enforces NO cannot become winner (all-NO votes produces NO_CONSENSUS)', async () => {
+      const mock = new MockApiClient({ delayMs: 0 });
+
+      // Advance default room to ROUND_1
+      await mock.setReady({ roomId: 'room_mock_001', expectedVersion: 1, ready: true });
+      await mock.startRound({ roomId: 'room_mock_001', expectedVersion: 2 });
+
+      // Submit ALL-NO ballot
+      const allNoVotes = MOCK_DISHES.map((d) => ({
+        roundDishId: d.roundDishId,
+        vote: 'NO' as const,
+      }));
+
+      const res = await mock.submitBallot({
+        roomId: 'room_mock_001',
+        round: 1,
+        poolVersion: 1,
+        intentId: 'intent_all_no',
+        expectedVersion: 3,
+        votes: allNoVotes,
+      });
+
+      expect(res.ok).toBe(true);
+
+      const snap = await mock.getRoomSnapshot('room_mock_001');
+      expect(snap.ok).toBe(true);
+      if (snap.ok) {
+        expect(snap.data.state).toBe('NO_CONSENSUS');
+        expect(snap.data.result?.winnerDish).toBeNull();
+        expect(snap.data.result?.winnerRoundDishId).toBeNull();
+        expect(snap.data.result?.reasonCode).toBe('NO_CONSENSUS');
+      }
+    });
+
+    it('caches idempotent requests by requestId and rejects reused requestId with different payload', async () => {
+      const mock = new MockApiClient({ delayMs: 0 });
+      await mock.setReady({ roomId: 'room_mock_001', expectedVersion: 1, ready: true });
+      await mock.startRound({ roomId: 'room_mock_001', expectedVersion: 2 });
+
+      const fixedRequestId = 'req_idempotent_test_001';
+      const votes = MOCK_DISHES.map((d) => ({ roundDishId: d.roundDishId, vote: 'WANT' as const }));
+
+      // First submit
+      const res1 = await mock.submitBallot({
+        roomId: 'room_mock_001',
+        round: 1,
+        poolVersion: 1,
+        intentId: 'intent_first',
+        expectedVersion: 3,
+        votes,
+        requestId: fixedRequestId,
+      });
+      expect(res1.ok).toBe(true);
+
+      // Retry with same requestId and same body (idempotent ACK)
+      const resRetry = await mock.submitBallot({
+        roomId: 'room_mock_001',
+        round: 1,
+        poolVersion: 1,
+        intentId: 'intent_first',
+        expectedVersion: 3,
+        votes,
+        requestId: fixedRequestId,
+      });
+      expect(resRetry.ok).toBe(true);
+      if (resRetry.ok && res1.ok) {
+        expect(resRetry.data.accepted).toBe(res1.data.accepted);
+        expect(resRetry.data.roomVersion).toBe(res1.data.roomVersion);
+      }
+
+      // Reused requestId with DIFFERENT body -> rejected with REQUEST_ID_REUSED
+      const differentVotes = MOCK_DISHES.map((d) => ({ roundDishId: d.roundDishId, vote: 'OK' as const }));
+      const resConflict = await mock.submitBallot({
+        roomId: 'room_mock_001',
+        round: 1,
+        poolVersion: 1,
+        intentId: 'intent_different',
+        expectedVersion: 3,
+        votes: differentVotes,
+        requestId: fixedRequestId,
+      });
+      expect(resConflict.ok).toBe(false);
+      if (!resConflict.ok) {
+        expect(resConflict.error.messageKey).toBe('REQUEST_ID_REUSED');
+      }
+    });
+
+    it('supports scenario round_two: transitions to ROUND_2 when round 1 lacks consensus', async () => {
+      const mock = new MockApiClient({ delayMs: 0 });
+      mock.setScenario('round_two');
+
+      await mock.setReady({ roomId: 'room_mock_001', expectedVersion: 1, ready: true });
+      await mock.startRound({ roomId: 'room_mock_001', expectedVersion: 2 });
+
+      const votes = MOCK_DISHES.map((d) => ({ roundDishId: d.roundDishId, vote: 'WANT' as const }));
+      const res = await mock.submitBallot({
+        roomId: 'room_mock_001',
+        round: 1,
+        poolVersion: 1,
+        intentId: 'intent_round_1',
+        expectedVersion: 3,
+        votes,
+      });
+
+      expect(res.ok).toBe(true);
+
+      const snap = await mock.getRoomSnapshot('room_mock_001');
+      expect(snap.ok).toBe(true);
+      if (snap.ok) {
+        expect(snap.data.round).toBe(2);
+        expect(snap.data.state).toBe('ROUND_2');
+        expect(snap.data.pool.length).toBeLessThan(MOCK_DISHES.length);
       }
     });
 

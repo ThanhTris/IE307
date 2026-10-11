@@ -43,12 +43,15 @@ import {
   PublicAnchor,
   CoverageArea,
   RoomResult,
+  SubmissionReceipt,
 } from './contracts';
 
 export type MockMode = 'default' | 'loading' | 'empty' | 'error' | 'expired' | 'stale';
+export type MockConsensusScenario = 'unanimous' | 'no_consensus' | 'round_two';
 
 export interface MockConfig {
   mode?: MockMode;
+  scenario?: MockConsensusScenario;
   delayMs?: number;
   simulatedErrorCode?: ErrorCode;
   currentUser?: SessionUser;
@@ -113,6 +116,15 @@ export const MOCK_DISHES: PoolDish[] = [
     priceMin: 55000,
     priceMax: 75000,
     currency: 'VND',
+    unit: 'menu_item_unspecified',
+    servingSize: 1,
+    price: {
+      priceMin: 55000,
+      priceMax: 75000,
+      currency: 'VND',
+      unit: 'menu_item_unspecified',
+      servingSize: 1,
+    },
     venueId: 'ven_pho_phu_vuong',
     venueName: 'Phở Phú Vương',
     venueAddress: '339 Lê Văn Sỹ, Quận 3',
@@ -143,6 +155,15 @@ export const MOCK_DISHES: PoolDish[] = [
     priceMin: 45000,
     priceMax: 65000,
     currency: 'VND',
+    unit: 'menu_item_unspecified',
+    servingSize: 1,
+    price: {
+      priceMin: 45000,
+      priceMax: 65000,
+      currency: 'VND',
+      unit: 'menu_item_unspecified',
+      servingSize: 1,
+    },
     venueId: 'ven_com_tam_ba_ghien',
     venueName: 'Cơm Tấm Ba Ghiền',
     venueAddress: '84 Đặng Văn Ngữ, Phú Nhuận',
@@ -173,6 +194,15 @@ export const MOCK_DISHES: PoolDish[] = [
     priceMin: 50000,
     priceMax: 65000,
     currency: 'VND',
+    unit: 'menu_item_unspecified',
+    servingSize: 1,
+    price: {
+      priceMin: 50000,
+      priceMax: 65000,
+      currency: 'VND',
+      unit: 'menu_item_unspecified',
+      servingSize: 1,
+    },
     venueId: 'ven_bun_cha_145',
     venueName: 'Bún Chả 145 Bùi Viện',
     venueAddress: '145 Bùi Viện, Quận 1',
@@ -203,6 +233,15 @@ export const MOCK_DISHES: PoolDish[] = [
     priceMin: 55000,
     priceMax: 70000,
     currency: 'VND',
+    unit: 'menu_item_unspecified',
+    servingSize: 1,
+    price: {
+      priceMin: 55000,
+      priceMax: 70000,
+      currency: 'VND',
+      unit: 'menu_item_unspecified',
+      servingSize: 1,
+    },
     venueId: 'ven_bun_dau_a_chanh',
     venueName: 'Bún Đậu A Chảnh',
     venueAddress: '175 Thành Thái, Quận 10',
@@ -304,6 +343,7 @@ export const MOCK_HISTORY_ITEMS: HistoryItem[] = [
 
 export class MockApiClient implements ApiClient {
   private mode: MockMode;
+  private scenario: MockConsensusScenario;
   private delayMs: number;
   private simulatedErrorCode: ErrorCode;
   private currentUser: SessionUser;
@@ -313,9 +353,11 @@ export class MockApiClient implements ApiClient {
   private friends: Friend[] = [...MOCK_FRIENDS];
   private inbox: InboxItem[] = [...MOCK_INBOX_ITEMS];
   private history: HistoryItem[] = [...MOCK_HISTORY_ITEMS];
+  private idempotencyMap: Map<string, { payloadSignature: string; response: WriteResult<any> }> = new Map();
 
   constructor(config?: MockConfig) {
     this.mode = config?.mode ?? 'default';
+    this.scenario = config?.scenario ?? 'unanimous';
     this.delayMs = config?.delayMs ?? 100;
     this.simulatedErrorCode = config?.simulatedErrorCode ?? 'NETWORK_ERROR';
     this.currentUser = config?.currentUser ?? MOCK_CURRENT_USER;
@@ -328,6 +370,10 @@ export class MockApiClient implements ApiClient {
     if (errorCode) {
       this.simulatedErrorCode = errorCode;
     }
+  }
+
+  setScenario(scenario: MockConsensusScenario): void {
+    this.scenario = scenario;
   }
 
   setDelayMs(delayMs: number): void {
@@ -374,6 +420,10 @@ export class MockApiClient implements ApiClient {
       round: 1,
       poolVersion: 1,
       pool: [...MOCK_DISHES],
+      datasetVersion: '2026-10-11-core-01',
+      eligibilityVersion: '1.0.0',
+      evaluatedAt: '2026-10-11T12:00:00Z',
+      ownSubmission: null,
       expiresAt: '2026-10-11T13:00:00Z',
     };
     this.rooms.set(defaultRoom.roomId, defaultRoom);
@@ -504,6 +554,7 @@ export class MockApiClient implements ApiClient {
     const fail = this.checkFailure();
     if (fail) return { ok: false, error: { messageKey: fail } };
 
+    const requestId = req.requestId ?? ('req_' + Math.random().toString(36).substring(2, 9));
     const roomId = 'room_' + Math.random().toString(36).substring(2, 9);
     const code = ('GCD' + Math.floor(100 + Math.random() * 900)).substring(0, 4);
 
@@ -530,6 +581,10 @@ export class MockApiClient implements ApiClient {
       round: 1,
       poolVersion: 1,
       pool: [...MOCK_DISHES],
+      datasetVersion: '2026-10-11-core-01',
+      eligibilityVersion: '1.0.0',
+      evaluatedAt: new Date().toISOString(),
+      ownSubmission: null,
       expiresAt: new Date(Date.now() + 7200000).toISOString(),
     };
 
@@ -538,8 +593,10 @@ export class MockApiClient implements ApiClient {
 
     return {
       ok: true,
+      requestId,
       roomId,
       version: snapshot.version,
+      state: snapshot.state,
       data: {
         roomId,
         code,
@@ -645,10 +702,11 @@ export class MockApiClient implements ApiClient {
     const fail = this.checkFailure();
     if (fail) return { ok: false, error: { messageKey: fail } };
 
+    const requestId = req.requestId ?? ('req_' + Math.random().toString(36).substring(2, 9));
     const room = this.rooms.get(req.roomId);
     if (!room) return { ok: false, error: { messageKey: 'ROOM_NOT_FOUND' } };
     if (room.version !== req.expectedVersion) {
-      return { ok: false, error: { messageKey: 'VERSION_CONFLICT' } };
+      return { ok: false, requestId, roomId: room.roomId, error: { messageKey: 'VERSION_CONFLICT' } };
     }
 
     const member = room.members.find((m) => m.userId === this.currentUser.id);
@@ -657,7 +715,7 @@ export class MockApiClient implements ApiClient {
       room.version += 1;
     }
 
-    return { ok: true, roomId: room.roomId, version: room.version, data: undefined };
+    return { ok: true, requestId, roomId: room.roomId, version: room.version, state: room.state, data: undefined };
   }
 
   async startRound(req: StartRoundRequest): Promise<WriteResult<void>> {
@@ -665,17 +723,19 @@ export class MockApiClient implements ApiClient {
     const fail = this.checkFailure();
     if (fail) return { ok: false, error: { messageKey: fail } };
 
+    const requestId = req.requestId ?? ('req_' + Math.random().toString(36).substring(2, 9));
     const room = this.rooms.get(req.roomId);
     if (!room) return { ok: false, error: { messageKey: 'ROOM_NOT_FOUND' } };
     if (room.version !== req.expectedVersion) {
-      return { ok: false, error: { messageKey: 'VERSION_CONFLICT' } };
+      return { ok: false, requestId, roomId: room.roomId, error: { messageKey: 'VERSION_CONFLICT' } };
     }
 
     room.state = 'ROUND_1';
     room.round = 1;
     room.version += 1;
+    room.members.forEach((m) => (m.hasSubmitted = false));
 
-    return { ok: true, roomId: room.roomId, version: room.version, data: undefined };
+    return { ok: true, requestId, roomId: room.roomId, version: room.version, state: room.state, data: undefined };
   }
 
   async leaveRoom(req: LeaveRoomRequest): Promise<WriteResult<void>> {
@@ -707,13 +767,55 @@ export class MockApiClient implements ApiClient {
     const fail = this.checkFailure();
     if (fail) return { ok: false, error: { messageKey: fail } };
 
+    const requestId = req.requestId || ('req_' + req.intentId);
+
+    // Contract: check idempotency cache BEFORE room state/version
+    const payloadSignature = JSON.stringify({
+      roomId: req.roomId,
+      round: req.round,
+      poolVersion: req.poolVersion,
+      votes: req.votes,
+    });
+    const existingAttempt = this.idempotencyMap.get(requestId);
+    if (existingAttempt) {
+      if (existingAttempt.payloadSignature === payloadSignature) {
+        // Idempotent retry: return exact previous response
+        return existingAttempt.response as WriteResult<SubmitBallotResponse>;
+      } else {
+        // Reusing requestId with different body is forbidden
+        return {
+          ok: false,
+          requestId,
+          roomId: req.roomId,
+          error: {
+            messageKey: 'REQUEST_ID_REUSED',
+            message: 'Mã requestId đã được sử dụng cho một payload khác',
+          },
+        };
+      }
+    }
+
     const room = this.rooms.get(req.roomId);
-    if (!room) return { ok: false, error: { messageKey: 'ROOM_NOT_FOUND' } };
+    if (!room) return { ok: false, requestId, error: { messageKey: 'ROOM_NOT_FOUND' } };
+
+    // Contract: only allow submitting in voting states
+    if (room.state !== 'ROUND_1' && room.state !== 'ROUND_2' && room.state !== 'VOTING') {
+      return {
+        ok: false,
+        requestId,
+        roomId: room.roomId,
+        error: {
+          messageKey: 'INVALID_ROOM_STATE',
+          message: 'Chỉ có thể nộp phiếu khi phòng ở trạng thái bình chọn (ROUND_1 / ROUND_2 / VOTING)',
+        },
+      };
+    }
+
     if (room.version !== req.expectedVersion) {
-      return { ok: false, error: { messageKey: 'VERSION_CONFLICT' } };
+      return { ok: false, requestId, roomId: room.roomId, error: { messageKey: 'VERSION_CONFLICT' } };
     }
     if (req.votes.length !== room.pool.length) {
-      return { ok: false, error: { messageKey: 'INCOMPLETE_BALLOT', message: 'Chưa bình chọn đủ tất cả các món' } };
+      return { ok: false, requestId, roomId: room.roomId, error: { messageKey: 'INCOMPLETE_BALLOT', message: 'Chưa bình chọn đủ tất cả các món' } };
     }
 
     // Save own votes
@@ -721,41 +823,129 @@ export class MockApiClient implements ApiClient {
     req.votes.forEach((v) => (voteMap[v.roundDishId] = v.vote));
     room.ownVotes = voteMap;
 
-    const member = room.members.find((m) => m.userId === this.currentUser.id);
-    if (member) member.hasSubmitted = true;
+    // In mock adapter, submitting caller's ballot triggers mock participants submission
+    room.members.forEach((m) => (m.hasSubmitted = true));
+    const allSubmitted = true;
 
-    // Simulate finalization if both submitted
-    const allSubmitted = room.members.every((m) => m.hasSubmitted);
     if (allSubmitted) {
-      const winner = room.pool[0];
-      const result: RoomResult = {
-        resultId: 'res_' + Math.random().toString(36).substring(2, 9),
-        roomId: room.roomId,
-        round: req.round,
-        winnerRoundDishId: winner?.roundDishId ?? null,
-        winnerDish: winner ?? null,
-        reasonCode: 'CONSENSUS_UNANIMOUS',
-        matchTier: 'TIER_1',
-        finalizedAt: new Date().toISOString(),
-        policyVersion: 'food-v1',
-      };
-      room.result = result;
-      room.state = 'FINALIZED';
+      // Consensus rule: NO KHÔNG THỂ THÀNH WINNER!
+      // Collect candidate evaluations
+      const candidateMap = new Map<string, { wantCount: number; okCount: number; hasNo: boolean; dish: PoolDish }>();
+      for (const d of room.pool) {
+        candidateMap.set(d.roundDishId, { wantCount: 0, okCount: 0, hasNo: false, dish: d });
+      }
+
+      // Count caller votes
+      for (const v of req.votes) {
+        const item = candidateMap.get(v.roundDishId);
+        if (item) {
+          if (v.vote === 'NO' || v.vote === 'REMOVE') item.hasNo = true;
+          else if (v.vote === 'WANT') item.wantCount += 1;
+          else if (v.vote === 'OK' || v.vote === 'KEEP') item.okCount += 1;
+        }
+      }
+
+      // Simulate other members' votes based on scenario
+      if (this.scenario === 'no_consensus') {
+        // Force all dishes to have at least one NO
+        for (const item of candidateMap.values()) {
+          item.hasNo = true;
+        }
+      } else if (this.scenario === 'round_two' && req.round === 1) {
+        // Force round 1 to lack viable dishes so room transitions to round 2
+        for (const item of candidateMap.values()) {
+          item.hasNo = true;
+        }
+      } else {
+        // Normal consensus: mock partners join on first non-NO dish to achieve unanimous
+        const nonNoCandidates = Array.from(candidateMap.values()).filter((c) => !c.hasNo);
+        if (nonNoCandidates.length > 0 && nonNoCandidates[0]) {
+          nonNoCandidates[0].wantCount = room.members.length;
+        }
+      }
+
+      // Filter viable: strictly dishes without any NO
+      const viable = Array.from(candidateMap.values())
+        .filter((c) => !c.hasNo)
+        .sort((a, b) => (b.wantCount * 2 + b.okCount) - (a.wantCount * 2 + a.okCount));
+
+      if (viable.length === 0) {
+        // No consensus possible (all dishes were voted NO by someone)
+        if (req.round === 1 && this.scenario === 'round_two') {
+          // Transition to round 2
+          room.round = 2;
+          room.state = 'ROUND_2';
+          room.pool = room.pool.slice(0, Math.max(2, Math.floor(room.pool.length / 2)));
+          room.members.forEach((m) => (m.hasSubmitted = false));
+        } else {
+          // Terminal NO_CONSENSUS
+          room.state = 'NO_CONSENSUS';
+          room.result = {
+            resultId: 'res_' + Math.random().toString(36).substring(2, 9),
+            roomId: room.roomId,
+            round: req.round,
+            winnerRoundDishId: null,
+            winnerDish: null,
+            reasonCode: 'NO_CONSENSUS',
+            matchTier: 'TIER_NONE',
+            finalizedAt: new Date().toISOString(),
+            policyVersion: 'food-v1',
+          };
+        }
+      } else {
+        // Viable winner exists
+        const top = viable[0]!;
+        const isUnanimous = top.wantCount === room.members.length;
+        const winner = top.dish;
+        const result: RoomResult = {
+          resultId: 'res_' + Math.random().toString(36).substring(2, 9),
+          roomId: room.roomId,
+          round: req.round,
+          winnerRoundDishId: winner.roundDishId,
+          winnerDish: winner,
+          reasonCode: isUnanimous ? 'UNANIMOUS_WANT' : 'HIGHEST_SCORE',
+          matchTier: isUnanimous ? 'TIER_1' : 'TIER_2',
+          finalizedAt: new Date().toISOString(),
+          policyVersion: 'food-v1',
+        };
+        room.result = result;
+        room.state = 'DECIDED';
+      }
     }
 
     room.version += 1;
 
-    return {
+    // Build submission receipt
+    const receipt: SubmissionReceipt = {
+      round: req.round,
+      intentId: req.intentId,
+      requestId,
+      submittedAt: new Date().toISOString(),
+      voteCount: req.votes.length,
+      votesSummary: req.votes.map((v) => ({ roundDishId: v.roundDishId, vote: v.vote })),
+    };
+    room.ownSubmission = receipt;
+
+    const response: WriteResult<SubmitBallotResponse> = {
       ok: true,
+      requestId,
       roomId: room.roomId,
       version: room.version,
+      state: room.state,
       data: {
         accepted: true,
         round: req.round,
         allMembersSubmitted: allSubmitted,
         roomVersion: room.version,
+        requestId,
+        receipt,
       },
     };
+
+    // Cache idempotency record
+    this.idempotencyMap.set(requestId, { payloadSignature, response });
+
+    return response;
   }
 
   async getResultOfferings(roomId: string, _resultId: string): Promise<ReadResult<PoolDish[]>> {

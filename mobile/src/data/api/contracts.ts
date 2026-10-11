@@ -28,6 +28,7 @@ export type ErrorCode =
   | 'ROOM_LOCKED'
   | 'ROOM_EXPIRED'
   | 'ROOM_TERMINAL'
+  | 'INVALID_ROOM_STATE'
   | 'CONTEXT_CHANGED'
   // Voting & Submission
   | 'ALREADY_SUBMITTED'
@@ -45,6 +46,7 @@ export type ErrorCode =
   | 'RATE_LIMITED'
   | 'NETWORK_ERROR'
   | 'TIMEOUT'
+  | 'MALFORMED_RESPONSE'
   | 'UNKNOWN_ERROR';
 
 export interface ApiError {
@@ -58,8 +60,8 @@ export type ReadResult<T> =
   | { ok: false; error: ApiError };
 
 export type WriteResult<T = void> =
-  | { ok: true; requestId?: string; roomId?: string; version?: number; state?: string; data: T }
-  | { ok: false; requestId?: string; error: ApiError };
+  | { ok: true; requestId?: string; roomId?: string; version?: number; state?: RoomState | string; data: T }
+  | { ok: false; requestId?: string; roomId?: string; error: ApiError };
 
 // ============================================================================
 // 2. Auth & Session DTOs (GM-16)
@@ -131,21 +133,32 @@ export type ServiceMode = 'dine_in' | 'takeaway' | 'delivery';
 export type MealSlot = 'breakfast' | 'lunch' | 'dinner' | 'snack';
 export type TimeHint = 'late_night';
 
+export interface DishPrice {
+  priceMin: number | null;
+  priceMax: number | null;
+  currency: 'VND' | string;
+  unit: 'menu_item_unspecified' | 'portion' | 'per_person' | 'per_group' | string;
+  servingSize: number | null;
+}
+
 export interface PoolDish {
   roundDishId: string;
   choiceId: string;
   dishId: string;
   name: string;
-  description?: string;
+  description?: string | null;
   cuisineIds: string[];
   categoryIds: string[];
   origin?: 'north' | 'central' | 'south' | 'unknown' | 'not_applicable';
-  temperature?: 'hot' | 'warm' | 'cold' | 'ambient' | 'unknown';
+  temperature?: 'hot' | 'warm' | 'cold' | 'ambient' | 'unknown' | null;
   flavor?: FlavorProfile | null;
   artwork?: DishArtwork | null;
   priceMin?: number | null;
   priceMax?: number | null;
-  currency?: string;
+  currency?: string | null;
+  unit?: 'menu_item_unspecified' | 'portion' | 'per_person' | 'per_group' | string | null;
+  servingSize?: number | null;
+  price?: DishPrice | null;
   venueId?: string;
   venueName?: string;
   venueAddress?: string;
@@ -176,7 +189,17 @@ export interface PreviewFoodPoolResponse {
 // 4. Room Lifecycle DTOs (GM-19)
 // ============================================================================
 
-export type RoomState = 'LOBBY' | 'ROUND_1' | 'ROUND_2' | 'FINALIZED' | 'CANCELLED';
+export type RoomState =
+  | 'LOBBY'
+  | 'ROUND_1'
+  | 'ROUND_2'
+  | 'DECIDED'
+  | 'NO_CONSENSUS'
+  | 'CANCELLED'
+  | 'EXPIRED'
+  | 'FINALIZED'
+  | 'VOTING'
+  | 'COMPLETED';
 
 export interface RoomContext {
   anchorId: string;
@@ -210,6 +233,7 @@ export interface UserPreferences {
 export interface CreateRoomRequest {
   displayName: string;
   context: RoomContext;
+  requestId?: string;
 }
 
 export interface CreateRoomResponse {
@@ -222,6 +246,7 @@ export interface CreateRoomResponse {
 export interface JoinRoomRequest {
   code: string;
   displayName: string;
+  requestId?: string;
 }
 
 export interface JoinRoomResponse {
@@ -235,34 +260,40 @@ export interface UpdatePreferencesRequest {
   roomId: string;
   expectedVersion: number;
   preferences: UserPreferences;
+  requestId?: string;
 }
 
 export interface UpdateContextRequest {
   roomId: string;
   expectedVersion: number;
   context: RoomContext;
+  requestId?: string;
 }
 
 export interface SetReadyRequest {
   roomId: string;
   expectedVersion: number;
   ready: boolean;
+  requestId?: string;
 }
 
 export interface StartRoundRequest {
   roomId: string;
   expectedVersion: number;
+  requestId?: string;
 }
 
 export interface LeaveRoomRequest {
   roomId: string;
   expectedVersion: number;
+  requestId?: string;
 }
 
 export interface CancelRoomRequest {
   roomId: string;
   expectedVersion: number;
   confirmCancel: boolean;
+  requestId?: string;
 }
 
 // ============================================================================
@@ -283,6 +314,16 @@ export interface SubmitBallotRequest {
   intentId: string;
   expectedVersion: number;
   votes: BallotVoteItem[];
+  requestId?: string;
+}
+
+export interface SubmissionReceipt {
+  round: 1 | 2;
+  intentId: string;
+  requestId: string;
+  submittedAt: string;
+  voteCount: number;
+  votesSummary?: Array<{ roundDishId: string; vote: BallotVoteValue }>;
 }
 
 export interface SubmitBallotResponse {
@@ -290,6 +331,8 @@ export interface SubmitBallotResponse {
   round: 1 | 2;
   allMembersSubmitted: boolean;
   roomVersion: number;
+  requestId?: string;
+  receipt?: SubmissionReceipt;
 }
 
 export interface RoomResult {
@@ -317,6 +360,10 @@ export interface RoomSnapshot {
   poolVersion: number;
   pool: PoolDish[];
   ownVotes?: Record<string, BallotVoteValue>;
+  ownSubmission?: SubmissionReceipt | null;
+  datasetVersion?: string | null;
+  eligibilityVersion?: string | null;
+  evaluatedAt?: string | null;
   result?: RoomResult | null;
   expiresAt: string;
 }
@@ -387,10 +434,20 @@ export interface InboxItem {
   createdAt: string;
 }
 
+export type PushPermissionStatus = 'granted' | 'denied' | 'provisional' | 'unknown';
+export type StoragePushPermission = 'granted' | 'denied' | 'unknown';
+
+export function toStoragePermission(permission: PushPermissionStatus): StoragePushPermission {
+  if (permission === 'granted') return 'granted';
+  if (permission === 'denied') return 'denied';
+  return 'unknown';
+}
+
 export interface RegisterPushDeviceRequest {
   deviceId: string;
   token: string;
-  permission: 'granted' | 'denied' | 'provisional';
+  permission: PushPermissionStatus;
+  requestId?: string;
 }
 
 export interface HistoryItem {

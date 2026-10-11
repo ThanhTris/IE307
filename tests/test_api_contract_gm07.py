@@ -120,6 +120,55 @@ class ApiContractGM07Tests(unittest.TestCase):
         self.assertIn('MOCK_ANCHORS', content)
         self.assertIn('MOCK_DISHES', content)
 
+    def test_review_p1_error_normalization_and_request_id_retention(self):
+        client_content = self.client_path.read_text(encoding='utf-8')
+        contracts_content = self.contracts_path.read_text(encoding='utf-8')
+        mock_content = self.mock_path.read_text(encoding='utf-8')
+
+        # Error normalization helper
+        self.assertIn('normalizeRpcResponse', client_content)
+        self.assertIn("'MALFORMED_RESPONSE'", client_content)
+
+        # RequestId preservation in contracts and write results
+        self.assertIn('requestId?: string', contracts_content)
+        self.assertIn('const requestId = req.requestId ?? this.generateRequestId();', client_content)
+        self.assertIn('this.idempotencyMap', mock_content)
+        self.assertIn("'REQUEST_ID_REUSED'", mock_content)
+
+    def test_review_p2_real_client_config_and_base_url(self):
+        client_content = self.client_path.read_text(encoding='utf-8')
+        self.assertIn('baseUrl?: string', client_content)
+        self.assertIn('getBaseUrl', client_content)
+
+    def test_review_p2_parity_dtos_and_permission_mapping(self):
+        contracts_content = self.contracts_path.read_text(encoding='utf-8')
+
+        # PoolDish parity fields
+        self.assertIn('priceMin: number | null', contracts_content)
+        self.assertIn('priceMax: number | null', contracts_content)
+        self.assertIn("currency: 'VND'", contracts_content)
+        self.assertIn("unit: 'menu_item_unspecified'", contracts_content)
+        self.assertIn('DishPrice', contracts_content)
+
+        # RoomSnapshot parity fields
+        self.assertIn('ownSubmission?: SubmissionReceipt | null', contracts_content)
+        self.assertIn('datasetVersion?: string', contracts_content)
+        self.assertIn('eligibilityVersion?: string', contracts_content)
+        self.assertIn('evaluatedAt?: string', contracts_content)
+
+        # Permission mapping
+        self.assertIn('toStoragePermission', contracts_content)
+        self.assertIn("return 'unknown'", contracts_content)
+
+    def test_review_p2_mock_consensus_scenarios_and_no_cannot_win(self):
+        mock_content = self.mock_path.read_text(encoding='utf-8')
+        self.assertIn('MockConsensusScenario', mock_content)
+        self.assertIn("'unanimous'", mock_content)
+        self.assertIn("'no_consensus'", mock_content)
+        self.assertIn("'round_two'", mock_content)
+        self.assertIn("'NO_CONSENSUS'", mock_content)
+        self.assertIn("'INVALID_ROOM_STATE'", mock_content)
+
     def test_index_exports_factory(self):
         content = self.index_path.read_text(encoding='utf-8')
         self.assertIn('export function createApiClient', content)
