@@ -22,5 +22,8 @@ export function createApiClient(mode: ApiMode, options?: ClientConfig & MockConf
   if (mode === 'real') {
     return new ApiClientImpl(options);
   }
-  return new MockApiClient(options);
+  if (mode === 'mock') {
+    return new MockApiClient(options);
+  }
+  throw new Error('API mode must be explicitly real or mock');
 }
