@@ -59,6 +59,8 @@ Full regression Windows/UTF-8 hiện 476 tests, 1 failure + 5 errors; chính 6 c
 
 ## Dùng adapter
 
+Chọn mode tường minh khi tạo client: `createApiClient('real', ...)` dùng transport thật; `createApiClient('mock', ...)` dùng fixture. TypeScript không cho bỏ tham số mode, tránh vô tình dùng mock do thiếu cấu hình. `MockApiClient` hỗ trợ `default`, `loading`, `empty`, `error`, `expired` và `stale`; `loading` giữ request pending ít nhất 300 ms để UI render trạng thái chờ, còn `delayMs` có thể đặt lâu hơn.
+
 ```typescript
 import { createApiClient, MockApiClient } from '@/data/api';
 const mock = createApiClient('mock');

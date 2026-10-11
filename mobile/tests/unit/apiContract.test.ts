@@ -731,5 +731,15 @@ describe('GM-07 API Contract & Client Suite', () => {
       const mockClient = createApiClient('mock');
       expect(mockClient).toBeInstanceOf(MockApiClient);
     });
+
+    it('keeps the loading fixture pending long enough for UI loading states', async () => {
+      const mock = new MockApiClient({ mode: 'loading', delayMs: 0 });
+      const startedAt = Date.now();
+
+      const result = await mock.getHistory('personal');
+
+      expect(Date.now() - startedAt).toBeGreaterThanOrEqual(280);
+      expect(result.ok).toBe(true);
+    });
   });
 });
