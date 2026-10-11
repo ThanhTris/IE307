@@ -68,7 +68,8 @@ def main():
         admin.psql('create database '+name+' template template0;');created=True
         db=importer.LocalDB(name)
         db.psql('create schema auth;\n'+ddl)
-        for file in ('0001_core_schema.sql','0002_food_import_receipts.sql'):
+        for file in ('0001_core_schema.sql','0002_food_import_receipts.sql',
+                     '0003_food_provenance_description.sql'):
             db.psql((ROOT/'supabase/migrations'/file).read_text(encoding='utf-8'))
         check('journal enabled/forced RLS',db.psql("select relrowsecurity and relforcerowsecurity from pg_class where oid='gm08_private.import_receipts'::regclass;").strip(),'t')
         for role in ('anon','authenticated','gm06_publisher'):
@@ -158,7 +159,8 @@ def main():
                 'checkedAt':importer.now(),'cases':tests,'caseCount':len(tests),
                 'artifactHashes':{str(path.relative_to(ROOT)):importer.digest(path.read_bytes()) for path in
                     (ROOT/'supabase/seed/import_food_data.py',Path(__file__),ROOT/'tests/test_food_import.py',
-                     ROOT/'supabase/migrations/0001_core_schema.sql',ROOT/'supabase/migrations/0002_food_import_receipts.sql')},
+                     ROOT/'supabase/migrations/0001_core_schema.sql',ROOT/'supabase/migrations/0002_food_import_receipts.sql',
+                     ROOT/'supabase/migrations/0003_food_provenance_description.sql')},
                 'cleanup':'pending'}
     finally:
         if created:

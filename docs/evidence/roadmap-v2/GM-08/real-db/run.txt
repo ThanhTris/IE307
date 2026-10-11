@@ -1,0 +1,1 @@
+{"result": "Pass", "caseCount": 44, "rowCounts": {"availabilityOverrides": 0, "coverageAreas": 0, "dataSources": 27, "datasetVersions": 1, "dateExceptions": 0, "dishes": 18, "publicAnchors": 0, "taxonomy": 18, "venueDishes": 190, "venues": 21, "weeklySchedules": 154}, "publicationPerformed": false}

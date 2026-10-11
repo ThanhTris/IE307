@@ -22,6 +22,7 @@ jobs:
           python -c "import sys; print('Python:', sys.version.split()[0], 'filesystem:', sys.getfilesystemencoding(), 'stdout:', sys.stdout.encoding, 'UTF8 mode:', sys.flags.utf8_mode)"
           python -m unittest discover -s tests -p 'test_food_import.py' -v
           python -m unittest discover -s tests -p 'test_gm08_survey.py' -v
+          python -m unittest discover -s tests -p 'test_gm08_real_bundle.py' -v
           python -m unittest discover -s tests -p 'test_menu_notebook.py' -v
   sql:
     name: GM-08 disposable PostgreSQL import
@@ -45,12 +46,25 @@ jobs:
           PYTHONUTF8: '0'
           PYTHONCOERCECLOCALE: '0'
         run: python scripts/gm08_import_check.py --report "$RUNNER_TEMP/gm08-sql-results-linux.json"
+      - name: Load and query the unchanged actual pilot in a disposable DB
+        env:
+          LC_ALL: C
+          PYTHONUTF8: '0'
+          PYTHONCOERCECLOCALE: '0'
+        run: >-
+          python scripts/gm08_real_bundle_check.py
+          --input supabase/seed/draft/gm08-survey-v0.4.1/bundle.json
+          --report "$RUNNER_TEMP/gm08-real-bundle-results.json"
+          --readback "$RUNNER_TEMP/gm08-real-bundle-readback.json"
       - name: Upload GM-08 SQL assertions and tested source hashes
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: gm08-sql-results-linux
-          path: ${{ runner.temp }}/gm08-sql-results-linux.json
+          path: |
+            ${{ runner.temp }}/gm08-sql-results-linux.json
+            ${{ runner.temp }}/gm08-real-bundle-results.json
+            ${{ runner.temp }}/gm08-real-bundle-readback.json
           if-no-files-found: warn
       - name: Stop the local project
         if: always()

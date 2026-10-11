@@ -65,3 +65,14 @@ Rollback dataset/published revision thực tế thuộc GM-08, khác rollback sc
 
 Sau kiểm thử, có thể dùng `npm run backend:stop` cho project local này. Runner
 không dừng các project/container khác.
+
+
+## GM-08 provenance parity fix
+
+0003_food_provenance_description.sql mở đúng khóa description đã có trong
+contract GM-04 food1.1.0 trên11ràng buộc field_sources_shape. Numeric prefix mới,
+không sửa0001 đã bàn giao; không đổi columns/wire version, schema identity0.1.0
+hoặc grants/status defaults. Existing nested FK vẫn kiểm description source UUID.
+Unknown keys/null/non-UUID/dangling source vẫn bị reject. Migration chạy atomic
+và validate các row đang có. Không dùng schema down để rollback dataset test.
+Kiểm thực tế trong [GM-08 real DB](../../docs/evidence/roadmap-v2/GM-08/real-db/README.md).

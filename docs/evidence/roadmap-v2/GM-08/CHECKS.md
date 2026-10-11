@@ -1,6 +1,6 @@
 # GM-08 — Output checks
 
-Cập nhật hiện hành: [fresh pilot0.4.1](../../../../supabase/seed/draft/gm08-survey-v0.4.1/README.md), 21branches/18dishes/190offerings; 508/508 tests macOS, 0 skipped. Candidate vẫn draft, policy/quyền/review Pending; publish/query Not run. Các mục trước phần “Cập nhật dùng lại crawler” bên dưới giữ evidence lịch sử.
+Cập nhật hiện hành: [DB test với bundle thật 0.4.1](real-db/README.md) đã Pass 44 cases; SQL hồi quy 31 cases và Python 514 tests Pass / 0 skip. Nạp/query/reimport/rollback giữ draft/null/unknown; verified publish chưa chạy. Các mục bên dưới là evidence lịch sử của từng revision.
 
 2026-10-11 (UTC+7). In progress; tooling đã kiểm, dataset thật còn blocker.
 Owner HoaiTam/Tâm, reviewer ThanhTris/Trí; chưa Approved/Done.
@@ -215,3 +215,15 @@ người review. GM-08 In Progress, actual verified publish/query Not run.
 Kiểm tra bổ sung: [public-intake/validation.json](public-intake/validation.json),
 508tests Pass/0skip; repo/docs/diff và21venue/190offering integrity Pass.
 Chỉ nghiệm thu thu thập hồ sơ; dataset verified/publish/query vẫn Not run.
+
+## Nghiệm thu bổ sung DB test với bundle thật —2026-10-11
+
+Theo yêu cầu hiện hành, nạp chính bundle0.4.1 vào DB test trước xác minh publish.
+[Handoff thực thi](real-db/README.md), [results 44 cases](real-db/results.json) và
+[query/readback](real-db/readback.json) Pass: counts/typed fields/quán–món/giá/tọa
+độ/null, reimport giữ nguyên, transaction rollback và committed-load rollback.
+Migration0003 sửa11closed provenance constraints để nhận description đúng GM-04;
+không sửa0001, không mở unknown keys/invalid UUID/dangling source FK. Giữ toàn bộ
+450food/group rows draft/nonfixture,0publish receipts; verified manifest không đổi.
+SQL production regression 31 cases và Python 514 tests đều Pass. Task vẫn In Progress,
+review/merge decision chưa tự ghi Approved/Done; verified app publish chưa chạy.

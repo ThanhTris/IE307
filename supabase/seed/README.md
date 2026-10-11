@@ -135,3 +135,31 @@ riêng;21branches/18dishes/190offerings/154venue schedule rows, quota đạt. Va
 và stage hợp lệ; tất cả draft, source rights/freshness policy và review Pending.
 Không publish candidate này. Manifest verified counts vẫn0, actual offering query
 Not run. Bản0.3.0/catalogue0.2.0 là lịch sử; policy đề xuất không tự tạo validUntil.
+
+
+## Kiểm bundle thật draft trên DB test — không publish
+
+Có thể nạp bundle0.4.1 nguyên trạng để kiểm storage trước khi xác minh publish.
+Runner giữ null/unknown/draft/fixtureOnly=false, không tạo reviewer hoặc receipt
+publish. Nó tạo DB gm08_check_<random> trên đúng Supabase local PostgreSQL17,
+copy auth.users DDL thật, áp0001/0002/0003, nạp/query/reimport/rollback rồi drop
+đúng DB đó. Input bundle và verified manifest giữ nguyên.
+
+```sh
+npm run backend:start
+python3 scripts/gm08_real_bundle_check.py \
+  --input supabase/seed/draft/gm08-survey-v0.4.1/bundle.json \
+  --report /tmp/gm08-real-bundle-results.json \
+  --readback /tmp/gm08-real-bundle-readback.json
+```
+
+Expected: result=Pass, publicationPerformed=false, counts21venues/18dishes/
+190venueDishes/154weeklySchedules/27dataSources/18taxonomy/1datasetVersions và
+21scheduleGroups. readback giữ tất cả typed rows, null counts, query joins thực.
+Nạp lại không đổi rows/counts/versions; rollback giữ sentinel và auth baseline.
+Schedule group version là storage-derived: GM-06 tăng mỗi lần chèn interval;
+không thay version input của154weekly rows.
+
+Migration0003 sửa closed provenance vocabulary cho khớp fieldSources.description
+trong GM-04, không bỏ additionalProperties/UUID/FK checks hoặc mở quyền client.
+[Evidence](../../docs/evidence/roadmap-v2/GM-08/real-db/README.md).

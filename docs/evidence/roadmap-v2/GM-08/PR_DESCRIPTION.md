@@ -1,40 +1,43 @@
-# feat(data): add verified importer and prepare fresh Thu Duc pilot for review
+# fix(data): align description provenance and test real GM-08 bundle
 
-GM-08 cần dữ liệu quán–món thật được xác minh trước publish. Bổ sung importer
-validate → stage → independent review → publish/query/idempotency/rollback,
-reject stale/fixture/broken refs và schema food1.1.0/GM-06 receipt migration.
+## Task và phạm vi
 
-Dùng lại crawler GM-04, thêm capture directory riêng và UTF-8 CLI; lấy mới27 nguồn
-ngày2026-10-11. Adapter kiểm HTML/CSV hashes và provenance, giữ247 mapping cũ,
-không tự gán dish cho item mới/đổi tên. Pilot0.4.1 có21branches/18dishes/190offerings/
-154platform venue schedules; quota đạt. Source snapshots/catalogue gốc giữ nguyên.
+GM-08 (Issue #69), owner HoaiTam/Tâm, reviewer ThanhTris/Trí.
+Branch codex/gm-08-verified-data-import → main; upstream GM-04 PR #62 / GM-06 PR #102.
+Food 1.1.0 / schema 0.1.0; dataset 0.4.1.
 
-Hồ sơ Pending gồm worksheet theo IDs, source rights/consent draft và freshness
-policy proposal. User xác nhận chưa có quyền/policy được chốt. Giờ món/serviceMode,
-physical venue hours (có conflict Jollibee), coverage/anchors và independent review
-vẫn cần bằng chứng thật. Không dùng platform hours làm giờ món, không gán TTL/
-license/reviewer giả. Candidate chưa verified/published; manifest verified counts0.
+Bundle thật có fieldSources.description hợp lệ theo GM-04 nhưng DB 0001 chưa cho
+khóa đó, khiến transaction nạp bị reject 23514. Thêm migration 0003 sửa 11 ràng buộc
+provenance; giữ 0001 frozen và UUID/FK/closed-key checks.
 
-Validation:
+Bổ sung runner nạp chính bundle vào DB test riêng, query và đối chiếu mọi typed
+field/count/quan hệ/giá/tọa độ/null, nạp lại không trùng và rollback. Dùng cùng typed
+upsert engine của importer; giữ draft/nonfixture và các trường chưa biết. CI có
+step actual bundle và lưu results/readback để tái lập.
 
-- Full macOS bundled Python3.13.3:508/508 Pass,0 skipped (pandas/lxml đầy đủ).
-- Linux localeC/cp1252:60cases/54Pass/6dependency skips; current notebook22cases/
-  16Pass/6dependency skips. Parser/export có kiểm trong full macOS suite.
-- Actual crawler27captures; fresh pilot validate/stage Pass; Pending-review publish
-  reject trước DB Pass. Native Windows Not run.
-- Repository/docs-freshness/diff/YAML checks Pass. Importer/schema SQL31/31 từ local/
-  CI head1021560 có source hashes unchanged; synthetic data, không thay real publish.
+## Start gate và merge gate
 
-GM-08 giữ In Progress. Actual verified dataset publish/query Not run; chưa đủ AC
-để nghiệm thu Done hoặc merge toàn bộ task. Sau bổ sung facts/rights/policy phải
-stage mới và independent review đúng hash trước publish/DB query.
+- Start gate đọc live Project: xem docs/evidence/roadmap-v2/GM-08/real-db/start-gate.txt.
+- Merge gate/ref target và reviewer nghiệm thu revision cuối: chưa kiểm trong lượt này.
+- Không đổi wire fields/privacy/grants hoặc tạo API; chỉ sửa storage parity và DB-test runner.
 
-Evidence: docs/evidence/roadmap-v2/GM-08/verification.json;
-pilot: supabase/seed/draft/gm08-survey-v0.4.1/README.md.
-Upstream: GM-04 PR#62, GM-06 PR#102, implementation base7060b88.
+## Verification
 
+| Kiểm | Kết quả | Evidence |
+| --- | --- | --- |
+| Actual bundle DB load/query/typed fields/counts/null/reimport/rollback | 44/44 Pass; 21 venues / 18 dishes / 190 offerings / 154 intervals | real-db/results.json, real-db/readback.json |
+| Production import/receipt/concurrency/rollback regression (fixture riêng) | 31/31 Pass | real-db/synthetic-regression.json |
+| Full Python | 514/514 Pass, 0 skip | real-db/python-regression.txt |
+| Linux locale C / cp1252 guard tests | 6/6 Pass | real-db/linux-encoding.txt |
+| Repo validator/docs freshness/diff | Pass | real-db/verification.json |
 
-Chuẩn bị21phiếu chi nhánh/190offering gắn hash, kèm6đối chiếu khoảng giờ công khai
-và phiếu coverage/anchor. User xác nhận chưa có khảo sát; các ô xác nhận/review
-còn Pending. CLI tạo phiếu offline kiểm hash/FK, reject mismatched notes và tránh
-overwrite; không đổi verified manifest/bundle.
+Bundle hash 0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02
+không đổi. DB test đã drop; dữ liệu readback giữ nguyên draft/null/unknown,
+0 publish receipts. Verified catalogue publish chưa chạy; verified manifest giữ nguyên.
+
+## Bàn giao
+
+Cách chạy: docs/evidence/roadmap-v2/GM-08/real-db/README.md và supabase/seed/README.md.
+Source hashes/tested base eaa96d7 + patch trong real-db/results.json.
+HANDOFF: docs/evidence/roadmap-v2/GM-08/HANDOFF.md.
+Review/merge và chuyển Done do reviewer/nhóm thực hiện trên revision cuối.

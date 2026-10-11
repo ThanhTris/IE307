@@ -1,5 +1,12 @@
 # GM-08 — Dataset và importer handoff
 
+Cập nhật2026-10-11: [bundle thật trên DB test](../evidence/roadmap-v2/GM-08/real-db/README.md)
+Pass44cases,21quán/18món/190offering; query/counts/typed fields/null/reimport/rollback
+đã kiểm. Nạp draft vào DB test không cần chờ verified publish; giữ input/unknowns.
+Verified manifest vẫn0, không phải dataset đã publish cho app. Các mục dưới giữ
+lịch sử theo revision; xem real-db/ cho kiểm storage hiện hành.
+
+
 2026-10-11. Owner HoaiTam/Tâm, reviewer ThanhTris/Trí. Contract
 food-v1/roadmap-v2/GM-08.1; food1.1.0, schema0.1.0. In progress, chưa Done/Approved.
 

@@ -1,13 +1,13 @@
 # GM-08 — Handoff
 
-Cập nhật hiện hành: [fresh pilot0.4.1](../../../../supabase/seed/draft/gm08-survey-v0.4.1/README.md), 21branches/18dishes/190offerings; 508/508 tests macOS, 0 skipped. Candidate vẫn draft, policy/quyền/review Pending; publish/query Not run. Các mục trước phần “Cập nhật dùng lại crawler” bên dưới giữ evidence lịch sử.
+Cập nhật hiện hành: [DB test với bundle thật 0.4.1](real-db/README.md) đã Pass 44 cases; SQL hồi quy 31 cases và Python 514 tests Pass / 0 skip. Nạp/query/reimport/rollback giữ draft/null/unknown; verified publish chưa chạy. Các mục bên dưới là evidence lịch sử của từng revision.
 
 Owner HoaiTam/Tâm đã nhận việc ngày2026-10-11 theo user; ThanhTris/Trí review cuối
 (Issue#69). In progress, không Approved/Done. Branch codex/gm-08-verified-data-import;
 input origin/main7060b8825ad72ee9442d8890719f82451d473c33, PR#62 GM-04/PR#102 GM-06.
-Head hiện hành đã commit/push `1021560ce336db84509c1e05f7507937d7cc5a69`,
+Head tại mốc sửa encoding lịch sử: `1021560ce336db84509c1e05f7507937d7cc5a69`,
 [PR #103](https://github.com/ThanhTris/IE307/pull/103) Open, không Draft; chưa Approved/merge.
-Bản sửa encoding đã lên CI12/12 SUCCESS; follow-up mới chỉ docs/evidence local chưa commit/push.
+Mốc encoding có CI12/12 SUCCESS. Current DB-test base eaa96d7; patch/source hashes và actual results ở real-db/.
 Tested hashes trong verification.json và SQL local/CI; record thực thi gốc ở
 [verification1021560](verification-1021560-original.json). [Evidence baseline đầu](baseline-1d247fe/manifest.json) và
 [b59d610](baseline-b59d610/manifest.json) giữ nguyên bytes/kết quả local, ghi rõ CI Fail sau đó.
@@ -185,3 +185,15 @@ người review. GM-08 In Progress, actual verified publish/query Not run.
 Kiểm tra bổ sung: [public-intake/validation.json](public-intake/validation.json),
 508tests Pass/0skip; repo/docs/diff và21venue/190offering integrity Pass.
 Chỉ nghiệm thu thu thập hồ sơ; dataset verified/publish/query vẫn Not run.
+
+## Nghiệm thu bổ sung DB test với bundle thật —2026-10-11
+
+Theo yêu cầu hiện hành, nạp chính bundle0.4.1 vào DB test trước xác minh publish.
+[Handoff thực thi](real-db/README.md), [results 44 cases](real-db/results.json) và
+[query/readback](real-db/readback.json) Pass: counts/typed fields/quán–món/giá/tọa
+độ/null, reimport giữ nguyên, transaction rollback và committed-load rollback.
+Migration0003 sửa11closed provenance constraints để nhận description đúng GM-04;
+không sửa0001, không mở unknown keys/invalid UUID/dangling source FK. Giữ toàn bộ
+450food/group rows draft/nonfixture,0publish receipts; verified manifest không đổi.
+SQL production regression 31 cases và Python 514 tests đều Pass. Task vẫn In Progress,
+review/merge decision chưa tự ghi Approved/Done; verified app publish chưa chạy.

@@ -1,0 +1,47 @@
+{
+  "result": "Pass",
+  "checkedAtUTC": "2026-10-11T06:10:48.175760+00:00",
+  "testedBaseCommit": "eaa96d7ae1f8ce19ca350bfd69a58ad6a8de8565",
+  "workingTreePatchIncluded": true,
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "actualBundleSQLAssertions": 44,
+  "productionSQLSyntheticRegression": 31,
+  "macOSPythonTests": 514,
+  "pythonSkipped": 0,
+  "linuxCP1252GuardTests": 6,
+  "repositoryValidation": "Pass",
+  "docFreshness": "Pass",
+  "diffCheck": "Pass",
+  "publicationPerformed": false,
+  "verifiedDatasetPublished": false,
+  "ciCurrentRevision": "Not run before push",
+  "nativeWindows": "Not run",
+  "sourceHashes": {
+    "scripts/gm08_real_bundle_check.py": "53d5adc06ca9456d9e9ce33c3ba9884bfe1a95b31c8a32429bab1ca592992a9a",
+    "scripts/gm08_import_check.py": "0f6ee2842d1b950b9a068cd4ce281a9f5b1aa6b2a78ba917e6f66fbc210c9bc7",
+    "tests/test_gm08_real_bundle.py": "d4b46f001bfe81379185df52d7c8a8479d740ad7fdee5bcccb0bff82ca81948b",
+    "supabase/seed/import_food_data.py": "03da1971b502b26a87ebaee0936d718bc415e26f297731d4fd9bd698fab00edc",
+    ".github/workflows/gm08-import.yml": "89d26761f51360352b0f1bb88d4b8de557c48fced4941950845b63ce25061cb8",
+    "supabase/migrations/0001_core_schema.sql": "6733e28f282f600e627e675dccede3afef1efd37cf4a7cfe8d94af4cd02d30f5",
+    "supabase/migrations/0002_food_import_receipts.sql": "eb80acba1f69bfb68b014a1ab5807e42d65db940a36d201f28db88172157f55e",
+    "supabase/migrations/0003_food_provenance_description.sql": "8972c1dfa5e07a2350e644a7e79ea36cc7f9208e0a89371cbe1bdfdb52d6cb16"
+  },
+  "evidenceHashes": {
+    "README.md": "500e12b072fe308f81b7ebd504409b08afd8670e5b461dcd72219b53640f33b7",
+    "docs-freshness.txt": "234e22deda2572ad8d8420bfa25a7cea614925c4fa044041d60412051aec8327",
+    "linux-encoding.txt": "e377d750acc26979cc0d69d2e7e6c89e45b68c7f97860ab56f74bf63a000c41f",
+    "python-regression.txt": "c02af68dc5de022cb8cd0ace131f4a2d98b56589a5ea8bc39900a891365bce25",
+    "readback.json": "0ae8e113281fffd164a5bbf1780a8f7742bd422f95fbcdcc9f3512b3d084e334",
+    "repository-check.txt": "bafde887d56a88dbd066df4e7f6ddd50cdc3b6ff4526f7f4a192620fb81637aa",
+    "results.json": "9cc173b5892cea3be96cfa644d763779c770748a13f500fda45fc5bc6799ed9f",
+    "run.txt": "e201b5269f5cd5b1c37cafde16c31b1672bc7a1994e8a3bc68e0f36b622150a0",
+    "start-gate.txt": "9065ea93c13fc36e88a396e55e6802623bba87bddaa28042a89e841d50996b86",
+    "synthetic-regression.json": "695c57abcc9cc4c7e4d3e3eb4d8ebeb1bf77af3394c8d7312974bfca06d489c5",
+    "synthetic-regression.txt": "9fec411b93ca960558edcde417b7e952e0720aa4786197f58de719c6c6c1c1bb"
+  },
+  "limits": [
+    "Actual draft storage/query/reimport/rollback has been tested; no verified app publication claimed.",
+    "Actual data remains unchanged; unknown fields stay null/empty and all records draft.",
+    "Committed draft rollback applies only to an initially empty process-created test DB; production receipt rollback has a separate synthetic regression."
+  ]
+}
