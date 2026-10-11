@@ -1,0 +1,15 @@
+
+> gi-cung-duoc-mobile@0.1.0 lint
+> eslint .
+
+
+/private/tmp/anyfood-gm15-check-20261011/mobile/src/data/api/contracts.ts
+  333:18  warning  Array type using 'Array<T>' is forbidden. Use 'T[]' instead  @typescript-eslint/array-type
+
+/private/tmp/anyfood-gm15-check-20261011/mobile/src/data/api/index.ts
+  10:1  warning  Import in body of module; reorder to top  import/first
+  11:1  warning  Import in body of module; reorder to top  import/first
+  12:1  warning  Import in body of module; reorder to top  import/first
+
+✖ 4 problems (0 errors, 4 warnings)
+  0 errors and 4 warnings potentially fixable with the `--fix` option.
