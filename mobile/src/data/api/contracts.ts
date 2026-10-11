@@ -4,6 +4,7 @@
  * Database parity: supabase/migrations/0001_core_schema.sql
  * Dictionary parity: docs/data/FOOD_DATA_DICTIONARY.md
  * Contract version: food-v1/roadmap-v2/GM-07.1
+ * GM-15 supplement: decision-v2 result vocabulary (selection 1.0.0), pending review.
  */
 
 // ============================================================================
@@ -341,16 +342,20 @@ export interface SubmitBallotResponse {
   receipt?: SubmissionReceipt;
 }
 
+export type DecisionReasonCode = 'UNANIMOUS_WANT' | 'ACCEPTABLE_FINAL'
+  | 'EMPTY_INTERSECTION' | 'ALL_REMOVED';
+export type DecisionMatchTier = 'PERFECT' | 'CONSENSUS' | 'COMPROMISE' | 'NO_CONSENSUS';
+
 export interface RoomResult {
   resultId: string;
   roomId: string;
   round: 1 | 2;
   winnerRoundDishId: string | null;
   winnerDish: PoolDish | null;
-  reasonCode: string;
-  matchTier: string;
+  reasonCode: DecisionReasonCode;
+  matchTier: DecisionMatchTier;
   finalizedAt: string;
-  policyVersion: string;
+  policyVersion: 'decision-v2';
 }
 
 export interface RoomSnapshot {

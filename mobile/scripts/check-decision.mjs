@@ -5,7 +5,8 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync, mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { evaluateDecision, classifyTier, POLICY_VERSION, ENGINE_CONTRACT_VERSION } from '../src/domain/decision/index.ts';
+import { evaluateDecision, decideWithSeed, classifyTier, POLICY_VERSION, ENGINE_CONTRACT_VERSION,
+  SELECTION_CONTRACT_VERSION, SELECTION_ALGORITHM } from '../src/domain/decision/index.ts';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const read = path => JSON.parse(readFileSync(resolve(root, path), 'utf8'));
@@ -39,6 +40,13 @@ for (const m of mapping.historical.cases) {
   });
 }
 assert.equal(new Set(vectors.map(c => c.id)).size, vectors.length, 'unique vector IDs');
+const seeded = read('tests/fixtures/decision-v2/seeded-cases.json');
+assert.equal(seeded.fixtureOnly, true);
+assert.equal(seeded.selectionContractVersion, SELECTION_CONTRACT_VERSION);
+assert.equal(seeded.selectionAlgorithm, SELECTION_ALGORITHM);
+for (const c of seeded.cases) vectors.push({ ...c, source: 'tests/fixtures/decision-v2/seeded-cases.json',
+  projection: 'full', operation: 'decideWithSeed' });
+assert.equal(new Set(vectors.map(c => c.id)).size, vectors.length);
 
 const reverse = value => Array.isArray(value) ? [...value].reverse() :
   value && typeof value === 'object' ? Object.fromEntries(Object.entries(value).reverse()
@@ -51,9 +59,10 @@ const freeze = value => {
   return value;
 };
 const results = vectors.map(c => {
+  const evaluate = c.operation === 'decideWithSeed' ? decideWithSeed : evaluateDecision;
   const input = freeze(structuredClone(c.input));
   const before = JSON.stringify(input);
-  const actual = evaluateDecision(input);
+  const actual = evaluate(input);
   const projected = c.projection === 'full' ? actual :
     { status: actual.status, candidateIds: actual.candidateIds };
   const assertions = {};
@@ -61,17 +70,21 @@ const results = vectors.map(c => {
     try { assertion(); assertions[name] = true; } catch { assertions[name] = false; }
   };
   check('expectedMatchesActual', () => assert.deepEqual(projected, c.expected));
-  check('repeat', () => assert.deepEqual(evaluateDecision(input), actual));
-  check('permutation', () => assert.deepEqual(evaluateDecision(reverse(input)), actual));
+  check('repeat', () => assert.deepEqual(evaluate(input), actual));
+  check('permutation', () => assert.deepEqual(evaluate(reverse(input)), actual));
   check('inputUnchanged', () => assert.equal(JSON.stringify(input), before));
-  return { id: c.id, source: c.source, projection: c.projection, input: c.input,
+  return { id: c.id, source: c.source, operation: c.operation ?? 'evaluateDecision', projection: c.projection, input: c.input,
     expected: c.expected, actual, assertions, passed: Object.values(assertions).every(Boolean) };
 });
 const paths = ['mobile/src/domain/decision/index.ts', 'mobile/tests/decision.test.mjs',
   'mobile/scripts/check-decision.mjs', 'tests/fixtures/decision-cases.json',
   'tests/fixtures/consensus-tier-cases.json', 'tests/fixtures/decision-v2/cases.json',
   'tests/fixtures/decision-v2/roster-cases.json', 'tests/fixtures/decision-v2/parity-map.json',
-  '.github/workflows/decision.yml'];
+  '.github/workflows/decision.yml', 'mobile/src/domain/decision/choiceMapping.ts',
+  'mobile/tests/decisionSeeded.test.mjs', 'mobile/tests/unit/decisionContract.test.ts',
+  'tests/fixtures/decision-v2/seeded-cases.json', 'mobile/src/data/api/contracts.ts',
+  'mobile/src/data/api/mock.ts', 'mobile/src/data/api/responseGuards.ts',
+  'mobile/tests/unit/apiContract.test.ts'];
 const tiers = read(mapping.tierHelpers.path);
 assert.deepEqual(tiers.cases.map(c => c.id), mapping.tierHelpers.caseIds);
 const helperResults = tiers.cases.map(c => {
@@ -82,13 +95,14 @@ const helperResults = tiers.cases.map(c => {
 const allResults = [...results, ...helperResults];
 const report = {
   fixtureOnly: true, policyVersion: POLICY_VERSION, engineContractVersion: ENGINE_CONTRACT_VERSION,
+  selectionContractVersion: SELECTION_CONTRACT_VERSION, selectionAlgorithm: SELECTION_ALGORITHM,
   sourceRevision: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
   node: process.version,
   artifactSha256: Object.fromEntries(paths.map(path => [path,
     createHash('sha256').update(readFileSync(resolve(root, path))).digest('hex')])),
   summary: { evaluations: results.length, tierChecks: helperResults.length, total: allResults.length,
     passed: allResults.filter(c => c.passed).length, failed: allResults.filter(c => !c.passed).length },
-  boundary: 'Candidate-only synthetic domain vectors; no SQL, winner selection, RPC or persisted retry assertions.',
+  boundary: 'Synthetic evaluator/seeded winner vectors. No SQL parity, RPC, transaction, secure entropy or persisted retry assertions. API conventions checked separately by Jest.',
   cases: results,
   helperCases: helperResults,
 };

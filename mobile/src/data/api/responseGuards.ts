@@ -178,10 +178,19 @@ function isPreferences(value: unknown): boolean {
 }
 
 function isResult(value: unknown): boolean {
-  return isRecord(value) && isNonEmptyString(value.resultId) && isNonEmptyString(value.roomId)
+  if (!(isRecord(value) && isNonEmptyString(value.resultId) && isNonEmptyString(value.roomId)
     && (value.round === 1 || value.round === 2) && nullable(value.winnerRoundDishId, isNonEmptyString)
-    && nullable(value.winnerDish, isPoolDish) && isNonEmptyString(value.reasonCode)
-    && isNonEmptyString(value.matchTier) && isTimestamp(value.finalizedAt) && isNonEmptyString(value.policyVersion);
+    && nullable(value.winnerDish, isPoolDish) && isTimestamp(value.finalizedAt)
+    && value.policyVersion === 'decision-v2')) return false;
+  if (value.reasonCode === 'EMPTY_INTERSECTION' || value.reasonCode === 'ALL_REMOVED') {
+    return value.matchTier === 'NO_CONSENSUS'
+      && value.winnerRoundDishId === null && value.winnerDish === null;
+  }
+  const tierValid = value.reasonCode === 'UNANIMOUS_WANT' ? value.matchTier === 'PERFECT'
+    : value.reasonCode === 'ACCEPTABLE_FINAL'
+      && (value.matchTier === 'CONSENSUS' || value.matchTier === 'COMPROMISE');
+  return tierValid && isRecord(value.winnerDish)
+    && value.winnerRoundDishId === value.winnerDish.roundDishId;
 }
 
 export function isRoomSnapshot(value: unknown): value is RoomSnapshot {

@@ -1,6 +1,9 @@
 /** Internal decision-v2 rules. Never send ballot matrices to a public client. */
 export const POLICY_VERSION = "decision-v2" as const;
 export const ENGINE_CONTRACT_VERSION = "1.0.0" as const;
+/** Additive selector contract; the evaluator/old vectors remain 1.0.0. */
+export const SELECTION_CONTRACT_VERSION = "1.0.0" as const;
+export const SELECTION_ALGORITHM = "u32-murmur3-rejection-v1" as const;
 
 export type RoundOneVote = "WANT" | "OK" | "NO";
 export type RoundTwoVote = "KEEP" | "REMOVE";
@@ -61,7 +64,7 @@ function validIds(value: unknown): value is string[] {
     && new Set(value).size === value.length;
 }
 
-function invalid(issues: ValidationIssue[]): DecisionEvaluation {
+function invalid(issues: ValidationIssue[]): Extract<DecisionEvaluation, { status: "INVALID_INPUT" }> {
   issues.sort((a, b) => {
     if (a.path !== b.path) return a.path < b.path ? -1 : 1;
     return a.code < b.code ? -1 : a.code > b.code ? 1 : 0;
@@ -216,4 +219,59 @@ export function evaluateDecision(value: unknown): DecisionEvaluation {
   const tier = classifyTier(roster.length, wants(candidates[0]!), true) as Exclude<MatchTier, "NO_CONSENSUS">;
   return { ...base, status: "DECISION_READY", candidateIds: candidates,
     reasonCode: "ACCEPTABLE_FINAL", matchTier: tier };
+}
+
+export type SeededDecisionInput = DecisionInput & { readonly seed: string };
+export type SelectedDecision = Omit<Extract<DecisionEvaluation,
+  { status: "DECISION_READY" }>, "status"> & {
+  readonly status: "DECISION_SELECTED";
+  readonly winnerId: string;
+};
+export type SeededDecision = Exclude<DecisionEvaluation,
+  { status: "DECISION_READY" }> | SelectedDecision;
+
+// MurmurHash3's bijective 32-bit finalizer. Only unsigned integer arithmetic;
+// no platform hash, locale, clock, ambient entropy or Node/native dependency.
+function mix32(value: number): number {
+  let x = value >>> 0;
+  x = Math.imul(x ^ (x >>> 16), 0x85ebca6b);
+  x = Math.imul(x ^ (x >>> 13), 0xc2b2ae35);
+  return (x ^ (x >>> 16)) >>> 0;
+}
+
+/**
+ * Canonical seed: exactly eight lowercase hexadecimal characters (uint32).
+ * Server supplies private uniformly generated seed, then persists it/result.
+ * Sorted choice IDs + rejection sampling avoid order-dependent/modulo picks.
+ * This deterministic generator is not cryptographic or an auth primitive.
+ */
+export function selectWinner(candidateIds: readonly string[], seed: string): string {
+  if (!validIds(candidateIds) || typeof seed !== "string" || !/^[0-9a-f]{8}$/.test(seed)) {
+    throw new RangeError("Unique nonempty choice IDs and canonical uint32 seed required");
+  }
+  const sorted = [...candidateIds].sort();
+  const bound = sorted.length;
+  const range = 0x100000000;
+  const limit = range - (range % bound);
+  let counter = Number.parseInt(seed, 16);
+  let draw: number;
+  do {
+    draw = mix32(counter);
+    counter = (counter + 1) >>> 0;
+  } while (draw >= limit);
+  return sorted[draw % bound]!;
+}
+
+/** Input/seed -> one private winner. Not a persisted DECIDED room/result. */
+export function decideWithSeed(value: unknown): SeededDecision {
+  if (!isRecord(value)) return invalid([{ code: "INVALID_INPUT", path: "" }]);
+  if (!own(value, "seed") || typeof value.seed !== "string"
+    || !/^[0-9a-f]{8}$/.test(value.seed)) {
+    return invalid([{ code: "INVALID_INPUT", path: "/seed" }]);
+  }
+  const { seed, ...snapshot } = value;
+  const result = evaluateDecision(snapshot);
+  if (result.status !== "DECISION_READY") return result;
+  return { ...result, status: "DECISION_SELECTED",
+    winnerId: selectWinner(result.candidateIds, seed) };
 }

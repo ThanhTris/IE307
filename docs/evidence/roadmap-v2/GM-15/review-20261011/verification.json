@@ -1,0 +1,54 @@
+{
+  "reviewPending": true,
+  "fixtureOnly": true,
+  "baseRevision": "3076c3deb2937223a007b82211a61a2d61b63c84",
+  "testedSourceRevision": "a056ce992ff0655572fe098ed4d126b3d3efc96d",
+  "sourceHashes": {
+    "mobile/src/domain/decision/index.ts": "aa1f2276d7ec2583e5f25d64a993021c3b36af1bc4d7a772b5f9a8ff99935a81",
+    "mobile/src/domain/decision/choiceMapping.ts": "7f5edea0a46dc82d33b41d92f8ed081bef4a4eb6e56acaab966df4b007d5a813",
+    "mobile/src/data/api/contracts.ts": "3832a9fb4a3b4c64ec28ac8dbc0515c099896c977ed7244435249b33a7162f66",
+    "mobile/src/data/api/mock.ts": "f67fe20b0d93dea709e1bd83c43cd3d899e48d3eb08f6700bc4b17346ffaa834",
+    "mobile/src/data/api/responseGuards.ts": "88017932ddb71df687adbae357ebd371fe0c6af3141f43b8a47fa36f4217b1c9",
+    "mobile/tests/unit/apiContract.test.ts": "8deee8fcf35112a9b101543730e73a4254aa26538db7bb55dffb861ae4fccc6d",
+    "mobile/tests/unit/decisionContract.test.ts": "45fe357537350b9673d9fc46cd713e1e06cbaae4b40ab5e800d157de8fb28af1",
+    "mobile/tests/decisionSeeded.test.mjs": "be101b87ce02daa63de5c6054a3b9974ed537f08287ee8b47f17523eef7dd834",
+    "mobile/tests/decision.test.mjs": "9e7bf439906a61c8f47ada21f2a960ced8a363a50cf164cff266953fbf4ee984",
+    "mobile/scripts/check-decision.mjs": "0b23841949f65841865d9b2e0b8694690d45293ee14218c376aa7631f9782bb9",
+    "tests/fixtures/decision-v2/seeded-cases.json": "e964aea7b4ce0b1fcf3773ab9e0e48f6ba685422eb83c1df5aaa0e4cd5c47caa",
+    ".github/workflows/decision.yml": "817cbcd79137efca535d42f874834bdf0008d190262d1a73abfeb0f28865e1ab"
+  },
+  "temporaryWorktreeSourcesIdentical": true,
+  "runtime": {
+    "node": "v24.15.0",
+    "python": "3.12.14",
+    "platform": "macOS"
+  },
+  "results": {
+    "nodeTests": 169,
+    "nodePassed": 169,
+    "reportChecks": 153,
+    "reportPassed": 153,
+    "jestSuites": 7,
+    "jestTests": 282,
+    "jestPassed": 282,
+    "pythonTests": 524,
+    "pythonPassed": 524,
+    "typecheck": "Pass",
+    "lint": "Pass,4 upstream warnings",
+    "architecture": "Pass",
+    "repository": "Pass",
+    "taskIndexes": "Pass",
+    "diff": "Pass",
+    "projectGate": "BLOCKED_PROJECT_UNVERIFIED: available credential lacks read:project"
+  },
+  "notRun": [
+    "SQL/domain parity",
+    "API auth/transaction/concurrency",
+    "persisted retry",
+    "secure server entropy validation",
+    "native Android",
+    "Windows"
+  ],
+  "reportRepeatByteIdentical": true,
+  "historicalFixturesAndDataSnapshotsUnchanged": true
+}

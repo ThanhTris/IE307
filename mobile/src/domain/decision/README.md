@@ -1,92 +1,57 @@
-# GM-15 — decision-v2 engine (legacy GM-06)
+# GM-15 — decision-v2 domain (legacy GM-06)
 
-Engine TypeScript thuần, draft theo yêu cầu owner; reviewer Trung còn Pending.
-Policy `decision-v2`, **engine contract** `1.0.0` (namespace riêng, không phải food
-contract). Parent lịch sử GM-03: `42a821c28144c0667839d485edf2b9462d463937`.
-[Patch/test plan](../../../../docs/evidence/roadmap-v1/GM-06/PATCH_TEST_PLAN.md) và
-[handoff/evidence](../../../../docs/evidence/roadmap-v1/GM-06/HANDOFF.md).
+Draft implementation, review Pending. Task contract GM-15.2; evaluator contract1.0.0, additive selection contract1.0.0, algorithm u32-murmur3-rejection-v1. Owner ngày2026-10-11 đã chốt bổ sung selector theo seed để giữ AC, xem [ADR012](../../../../docs/architecture/decisions/ADR-012-seeded-domain-selection.md). Engine legacyGM-06 chuyển sang GM-15; currentGM-06 là DB schema.
 
 ## Interface
 
-`index.ts` xuất DecisionInput, DecisionEvaluation, Ballots, các loại phiếu/tier,
-constants và ba hàm đồng bộ:
-
-- `evaluateDecision(input: unknown): DecisionEvaluation`: kiểm input runtime.
-- `scoreVotes(want: number, ok: number): number`: trả 2W+OK; không thay veto.
-- `classifyTier(n: number, want: number, eligible: boolean): MatchTier`: áp ngưỡng
-  spec; eligible=false trả NO_CONSENSUS. Helpers ném RangeError nếu count không
-  là số nguyên an toàn/âm, WANT vượt n hoặc eligibility sai kiểu.
+- `evaluateDecision(input: unknown): DecisionEvaluation` kiểm locked roster/pool/policy/round và matrices, trả candidate set nội bộ; không đổi hành vi evaluator/fixtures cũ.
+- `decideWithSeed(input: unknown): SeededDecision` nhận `SeededDecisionInput = DecisionInput & { seed: string }`, validate seed rồi evaluate. Chỉ DECISION_READY chuyển sang DECISION_SELECTED + winnerId; các nhánh khác giữ nguyên, không winner.
+- `selectWinner(candidateIds: readonly string[], seed: string): string` chọn một choice; unique/nonempty IDs và seed canonical8 lowercase hex bắt buộc, sai ném RangeError. Seed0/ffffffff hợp lệ, không trim/coerce/default.
+- `scoreVotes(want, ok)` =2W+OK, `classifyTier(n, want, eligible)` theo DECISION_SPEC; số đếm sai ném RangeError, không bù veto bằng điểm.
+- `choiceMapping.ts`: `mapAcceptedBallots` map row IDs sang choice IDs từ locked rows và accepted server ballots; `selectedResultFields` map winner choice về row vòng kết quả và whitelist4 fields policy/reason/tier/winnerRoundDishId. Không import API/network/database.
 
 ```typescript
-const input: DecisionInput = {
-  policyVersion: "decision-v2",
-  roster: ["a", "b"], pool: ["choice-pho"], round: 2,
-  round1: { a: { "choice-pho": "WANT" }, b: { "choice-pho": "OK" } },
-  round2: { a: { "choice-pho": "KEEP" }, b: { "choice-pho": "KEEP" } },
-};
-// DECISION_READY, candidateIds=[choice-pho], ACCEPTABLE_FINAL, COMPROMISE.
-// Chưa có winnerId/resultId và chưa persist DECIDED.
+const selected = decideWithSeed({
+  policyVersion: "decision-v2", seed: "00000001", roster: ["a", "b"],
+  pool: ["bun", "pho"], round: 1,
+  round1: { a: { bun: "WANT", pho: "WANT" }, b: { bun: "WANT", pho: "WANT" } },
+});
+// DECISION_SELECTED, winnerId="pho", UNANIMOUS_WANT/PERFECT.
+// Still not a persisted RoomResult/DECIDED room.
 ```
 
-Roster/pool bắt buộc là arrays khác rỗng, ID chuỗi không rỗng/blank, không trùng.
-ID giữ nguyên, so sánh chính xác; không trim/gộp alias/suy ID từ tên. Pool chứa ID
-**lựa chọn đã khóa**; upstream giữ dishId/variant/offering metadata. Engine không
-kiểm UUID/nơi bán. Capacity/pool limit, context, version khóa và quyền truy cập
-do start/RPC adapter kiểm theo spec.
+## Input và invariants
 
-round bắt buộc 1 hoặc 2. round1 bắt buộc object; `{}` là chưa có phiếu. round2 chỉ
-được có ở round=2; bỏ field tương đương chưa ai gửi, không tương đương KEEP.
-Matrices: memberId → object choiceId → vote. Chỉ own properties được tính;
-nhận object thường/null-prototype, không array/class instance. Thiếu key/UNSET
-khiến WAITING; null, enum khác và own key mang undefined là sai kiểu, không phải
-phiếu gửi. JSON không dùng null thay phiếu chưa gửi. Root field lạ bị từ chối.
+Roster/pool explicit nonempty arrays of unique nonblank strings, exact identity (no trim/name/alias merge). Pool contains immutable **choiceId**, not dishId/offeringId/round row ID. Capacity/context/poolVersion/auth/expiry do GM-19/20 kiểm trước call. Cùng dish/khác venue hoặc variant giữ lựa chọn và metadata riêng theo locked pool.
 
-**Caller chỉ đưa phiếu đã được server chấp nhận sau hành động Gửi/xác nhận.**
-Không dùng draft KEEP UI làm submission. Engine không xác thực người gửi hoặc
-phân biệt draft tự điền với hành động người dùng; đây là boundary của RPC.
+Matrices own memberUserId→choiceId→vote; regular/null-prototype records only. Missing member/choice hoặc UNSET → WAITING, không default OK/KEEP. Unknown IDs, null/array/enum/round/rootfield sai → INVALID_INPUT với escaped deterministic JSON Pointer, không chứa vote value. `round2` absent là chưa gửi, không null/default KEEP. Caller đưa **server accepted/ACK sau Gửi/xác nhận**, không public ownVotes/snapshot/draft KEEP. Mapper từ chối UNSET và duplicate member/row votes; phiếu thiếu giữ absent cho evaluator chờ.
 
-## Kết quả nội bộ
+Đợi đủ vòng1: M mọi WANT → exact M/PERFECT; nếu M rỗng, A không NO: A rỗng EMPTY_INTERSECTION, còn A phải vòng2 kể cả một lựa chọn. Vòng2 tính lại A, đợi mọi KEEP/REMOVE, không thêm món/vòng3; REMOVE loại, S rỗng ALL_REMOVED. Max2W+OK trong S, ties exact set, tier PERFECT/CONSENSUS/COMPROMISE theo WANT vòng1.
 
-Mọi output có policyVersion và candidateIds, ID sắp xếp bằng JS sort ổn định,
-không là thứ tự xếp hạng. Status đánh giá không bổ sung RoomState.
-
-| status | Fields thêm | Ý nghĩa |
+| status | Fields thêm | Boundary |
 | --- | --- | --- |
-| INVALID_INPUT | issues: `{code,path}[]` | candidateIds rỗng; sai schema/version/reference/transition |
-| WAITING | waitingRound: 1 hoặc 2; reasonCode=INCOMPLETE_BALLOT | candidateIds rỗng; chưa đủ xác nhận |
-| ROUND_2 | không thêm field | candidateIds đúng A, kể cả một món |
-| DECISION_READY | reasonCode, matchTier | tập M hoặc toàn bộ tập điểm cao nhất; server phải chọn/lưu |
-| NO_CONSENSUS | reasonCode, matchTier=NO_CONSENSUS | EMPTY_INTERSECTION hoặc ALL_REMOVED |
+| INVALID_INPUT | issues | private diagnostic, candidateIds=[] |
+| WAITING | waitingRound, INCOMPLETE_BALLOT | không finalize |
+| ROUND_2 | candidateIds=A | server chuyển vòng |
+| DECISION_READY | reasonCode, matchTier | evaluator private tie set |
+| DECISION_SELECTED | reasonCode, matchTier, winnerId | private choice sau seed selection |
+| NO_CONSENSUS | EMPTY_INTERSECTION/ALL_REMOVED, tier NO_CONSENSUS | winner absent, server persist null |
 
-Ready: UNANIMOUS_WANT/PERFECT hoặc ACCEPTABLE_FINAL với tier theo WANT vòng 1.
-Không trả score/count/matrix/ai veto trong kết quả hợp lệ. Fields không áp dụng
-được bỏ, không điền null. Diagnostics có codes INVALID_INPUT/NOT_MEMBER/
-INVALID_DISH, path JSON Pointer đã escape, không chứa giá trị phiếu. Chúng vẫn
-chứa ID nội bộ và **không được public/log tùy ý**; không là API error envelope.
-Issues sắp xếp theo path rồi code, không phụ thuộc thứ tự input.
+All outputs contain policyVersion/candidateIds sorted ordinal; không phải ranking/RoomState. Diagnostics/ties/matrix/score/count không public/log. selectedResultFields không thêm resultId/finalizedAt/winnerDish: backend lấy toàn bộ metadata từ đúng locked row rồi persist transaction. GM-07 types/guard/mock dùng canonical decision-v2 labels, không TIER_1/2 hoặc policy food-v1.
 
-Sau kiểm schema, đợi đủ vòng 1 kể cả input round=2; không early unanimous hoặc
-no-consensus. Vòng 2 tính lại A, từ chối món bị NO hoặc mở vòng 2 khi M khác rỗng/
-A rỗng. Đợi tất cả KEEP/REMOVE trước tính S. Không round=3/field round3, không sửa
-input hoặc dùng I/O/RNG/clock.
+## Seed / backend
 
-## Boundary tích hợp
+Selector copy/sort IDs theo JS UTF-16 ordinal; counter uint32 seed; Murmur3 finalizer, counter+1 mod2^32; reject draw>=2^32-(2^32 mod n), sau đó draw mod n. Constants/vectors/format ở ADR012. Không ambient RNG/clock/locale/mutation/I/O/package. Đây là deterministic noncrypto PRNG, không chứng minh entropy/security/uniform distribution bằng vài vectors. GM-20 tạo private decision seed phù hợp một lần (không tự reuse opaque poolSeed), lock/persist seed+algorithm+winner và trả result cũ khi retry; terminal không reroll. Seed không do client chọn/gửi.
 
-Deterministic evaluation không chứng minh retry transaction. Backend phải lock
-room, kiểm auth/membership/poolVersion/expiry/idempotency; chọn ngẫu nhiên đều
-**một lần** trong candidateIds; persist resultId/winnerId/tiedIds/policyVersion/
-finalizedAt và trả kết quả cũ khi retry/reconnect. Terminal không được gọi engine
-để reroll/mở vòng 2. Không gửi matrix/tie set ra client; public snapshot theo
-API_CONTRACT. Client không có phiếu người khác để tính engine.
+## Chạy và evidence
 
-## Chạy tests
-
-Từ repo root với Node 24 có type stripping/node:test:
+Node24 từ root:
 
 ```sh
-node --test mobile/tests/decision.test.mjs
+node --test mobile/tests/decision.test.mjs mobile/tests/decisionSeeded.test.mjs
+node mobile/scripts/check-decision.mjs --report /tmp/decision-actual.json
 ```
 
-Bản bổ sung review: Node24.15.0,104 domain tests; strict typecheck/lint GM-02 đã chạy riêng bằng dependencies đã khóa. Package/config/lockfile không đổi. SQL parity/seeded winner/persisted retry chưa kiểm; upstream/reviewer Pending.
-[CHECKS v2](../../../../docs/evidence/roadmap-v2/GM-15/CHECKS.md) và [mapping/boundary proposal](../../../../docs/evidence/roadmap-v2/GM-15/CONTRACT_MAPPING.md).
-CI Decision domain chạy Node suite riêng; từ root chạy node mobile/scripts/check-decision.mjs --report /tmp/decision-actual.json để xuất94 checks mô phỏng, không live votes.
+Mobile đã có locked dependencies: `npm run typecheck`, `npm run lint`, `npm test -- --watchman=false`, `npm run check:architecture`. Node type stripping không thay tsc. CI domain chạy cả hai suites/report riêng vì Jest chỉ nhận .test.ts/tsx.
+
+[CHECKS](../../../../docs/evidence/roadmap-v2/GM-15/CHECKS.md), [HANDOFF](../../../../docs/evidence/roadmap-v2/GM-15/HANDOFF.md), [mapping](../../../../docs/evidence/roadmap-v2/GM-15/CONTRACT_MAPPING.md), [fixtures](../../../../tests/fixtures/decision-v2/README.md) ghi revision/actual/giới hạn. Historical [v1 handoff](../../../../docs/evidence/roadmap-v1/GM-06/HANDOFF.md) và domain-case-results.json giữ nguyên, không dùng làm output của seed patch. Không SQL parity/transaction/auth/race/persisted retry/native claims hoặc tự Approved/Done.

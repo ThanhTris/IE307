@@ -1,45 +1,28 @@
-# GM-15 — bàn giao engine decision-v2 legacy GM-06
+# GM-15 — bàn giao sau review ngày 2026-10-11
 
-Owner Vinh; reviewer đề xuất Trung trong repo, Trí review cuối theo comment PR. Review Pending.
-Branch codex/gm-06-decision-engine; PR #101 đã retarget main sau PR #62 merge.
-Main d9e83d9; parent d428a80384d3dc238936d8a0311c4d4b1ee247f9. Engine1.0.0/policy decision-v2.
-GM-06 hiện hành là DB schema của Tâm; engine legacy GM-06 → GM-15, không sửa task schema.
+Owner Vinh; Trí review cuối theo issue76/PR101. Review Pending, không tự Done/merge. Branch codex/gm-06-decision-engine (legacy name), PR101 base main. Nhận main **3076c3deb2937223a007b82211a61a2d61b63c84** chứa PR62/102/103/104; rebase6 engine commits không conflict. GM-06 hiện hành là DB schema, không sửa task đó.
 
-## Upstream / version
+## Version / scope
 
-GM-04 proposal food-v1/roadmap-v2/GM-04.2, food shape1.1.0/core1.1.0 trên parentd428a80, feature8f90af5 đã nhận; review Trí Pending. GM-07 mobile/src/data/api/contracts.ts chưa bàn giao/Approved.
-[Mapping](CONTRACT_MAPPING.md) chỉ rõ roster/pool/ACK/vote → input và internal output → server finalize. Đây là mapping draft, không DTO/adapter đã review.
-Start/merge gate BLOCKED GM-04/07. Owner cho làm phần draft độc lập không là dependency Approved.
+Task GM-15.2; policy decision-v2; evaluator1.0.0 không đổi behavior/old expected; selector1.0.0/algorithm u32-murmur3-rejection-v1. Owner đã chọn bổ sung seed→winner ngày11/10 để giữ AC; [ADR012](../../../architecture/decisions/ADR-012-seeded-domain-selection.md). GM-04 food/core1.1.0, GM-06 schema0.1.0, GM-07 base GM-07.1 (PR104 merge0711782, reviewed code3f7f241) đã nhận. Data migration0003 không đổi luật decision hoặc biến190 offering thành eligible pool.
 
-## Output / cách chạy
+GM-07 supplement trong patch: narrow RoomResult labels/types/guard/mock theo DECISION_SPEC/schema (fields không đổi). Trang/Trí cần review supplement này; không tự đổi approval của GM-07. [Mapping](CONTRACT_MAPPING.md) + Jest assertions chỉ kiểm domain↔DTO vocabulary/choice identity; không backend integration.
 
-- [Engine](../../../../mobile/src/domain/decision/index.ts) và [contract](../../../../mobile/src/domain/decision/README.md): roster/pool khóa tường minh, WANT/OK/NO, KEEP/REMOVE, missing/UNSET chờ, score/tier/reason, hai vòng, candidate-only.
-- [Fixtures](../../../../tests/fixtures/decision-v2/README.md):53 golden giữ byte +28 roster2–8, expected tĩnh độc lập. [Parity map](../../../../tests/fixtures/decision-v2/parity-map.json) kê IDs/projection và6 decision/7 tier legacy giữ nguyên.
-- [Tests](../../../../mobile/tests/decision.test.mjs): node --test mobile/tests/decision.test.mjs (root,Node24) →104/104 Pass.
-- [Reporter](../../../../mobile/scripts/check-decision.mjs): node mobile/scripts/check-decision.mjs --report /tmp/decision-actual.json →87 evaluator +7 helper,94/94 Pass. [Actual](domain-case-results.json) có input/expected/actual/assertions/runtime/revision/code hashes.
-- [CI Node riêng](../../../../.github/workflows/decision.yml): chạy suite .mjs và reporter, upload artifact decision-domain-actual. Không dựa Jest để khám phá .mjs.
-- [CHECKS](CHECKS.md) ghi commands/environments/Pass/Not run; [patch plan](PATCH_TEST_PLAN.md).
+## Output / cách gọi
 
-## Kết quả trên revision hiện hành
+- [Engine](../../../../mobile/src/domain/decision/index.ts): evaluator roster/pool khóa + selected winner qua explicit seed; seed canonical8 lowercase hex. [README](../../../../mobile/src/domain/decision/README.md) có ví dụ và invalid/nullability.
+- [Mapper](../../../../mobile/src/domain/decision/choiceMapping.ts): accepted row IDs→choice, missing ACK không tự KEEP; winner choice→result row. Caller auth/room/round/poolVersion/expiry/ACK check trước mapping; roster server khóa, không public ownVotes.
+- [Fixtures](../../../../tests/fixtures/decision-v2/README.md):53golden+28roster lịch sử giữ byte; seeded59 vectors mới, expected độc lập; [parity map](../../../../tests/fixtures/decision-v2/parity-map.json) + seeded-cases.json cho SQL GM-20. No SQL parity yet.
+- Từ root Node24: `node --test mobile/tests/decision.test.mjs mobile/tests/decisionSeeded.test.mjs` →169 tests; `node mobile/scripts/check-decision.mjs --report /tmp/decision-actual.json` →153 checks. Separate CI `.github/workflows/decision.yml`; không suy Jest nhận .mjs.
+- Mobile: `npm run typecheck`; `npm run lint`; `npm test -- --watchman=false`; `npm run check:architecture`. New Jest decisionContract kiểm actual mock/type/guard/rows cùng all suites.
+- [CHECKS](CHECKS.md) và [review-fix actual](review-20261011/domain-case-results.json) pin sourceRevision+SHA256/input/expected/actual/repeat/permutation/unchanged. Historical output/hashes không bị rewrite thành lần chạy mới.
 
-Mac Node24.15.0. npm ci khôi phục dependencies đã khóa; package/lock/config nền GM-02 giữ nguyên. npm run typecheck và npm run lint Pass; npm test -- --watchman=false →6/6 foundation tests; npm run check:architecture Pass.
-npm run check ban đầu dừng ở Jest do sandbox Watchman fchmod. Chạy lại với flag CLI (không sửa config/quyền Watchman) Pass; không báo aggregate ban đầu Pass.
-Bundled Python3.12.14/pandas/lxml:435 regression OK/0 skipped; repository/index/diff checks Pass. Node report sinh hai lượt cùng revision/runtime byte-identical, frozen input/repeat/permutation đều đạt.
-Engine index.ts,53 golden và2 fixture lịch sử giữ nguyên byte. Docs/test suite/CI mới có diff rõ; không claim cả5 historical artifacts bất biến sau bổ sung này.
-Code không thêm RNG/clock/log/network/database. No API/GPT/crawl or app dependency additions.
+## Downstream / review còn lại
 
-## AC còn chờ / boundary
+GM-20 gọi decideWithSeed trên accepted locked snapshot, lưu seed/algorithm/winner/result/history/event dưới transaction, đọc ACK/result cũ trước version/retry. Server entropy/private seed không do client cung cấp, không implicit conversion từ rooms.poolSeed. selectedResultFields whitelist policy/reason/tier/winnerRoundDishId; winnerDish lấy đúng locked row; resultId/finalizedAt/persist mới chứng minh DECIDED. Không gửi matrices/counts/scores/ties/diagnostics/seed ra public.
 
-Veto/UNSET/two rounds/score/tier/exact candidate set/purity có tests. Candidate-only chưa đạt AC mới input/seed → winner. Owner đã chọn candidate-only: proposal giữ evaluator thuần và để GM-20 chọn đều một lần dưới lock, persist winner/result/version, trả ACK/result cũ qua retry.
-Trí cần chốt proposal đó hoặc selector có seed tại GM-15; chưa tự thêm RNG, đổi task/spec/AC hoặc ghi Done. No seed/winner selector implementation.
-GM-20 nhận parity map/vectors; SQL parity/auth/transaction/concurrency/expiry/terminal/persisted retry Not run. Repeat evaluator không thay backend retry. Không cần API/Postman/native task sau để test domain.
-Caller chỉ dùng ACK của hành động Gửi/xác nhận, không draft KEEP; internal output/candidate/ties/raw matrix/count/score không public. Projection/DTO GM-07/20 chưa review; cross-contract integration Not run.
+Seeded domain/vector/repeat != cryptographic randomness, SQL parity, terminal immutability, auth/RLS, concurrency hoặc persisted retry. Những phép này Not run ở GM-15, thuộc GM-20; eligibility/location/hours GM-18/19 chưa được nghiệm thu bởi engine. Không API/network/GPT/crawl hoặc thay package/lockfile/config.
 
-## Rebase / review / rollback
+Review comment11/10 báo checker READY_FOR_MERGE_REVIEW do ProjectGM-04/07 Done. Local gate hiện BLOCKED_PROJECT_UNVERIFIED vì credential không đọc được Project; không còn ghi GM-07 absent hoặc dependency BLOCKED theo hồ sơ cũ. Reviewer chạy gate với quyền read:project, review seed/GM-07 supplement và revision mới trước merge; không dùng CI/tooling tự approve.
 
-Data PR #62 đã merge tại d9e83d9; PR #101 đã rebase lên origin/main và retarget main. Diff chỉ engine/fixtures/tests/evidence/CI, không lặp data. Không tự merge hoặc Approved/Done.
-Đã rebase3 engine commits từ parentf5a8304 lên d428a80; không conflict, giữ main foundation và data snapshots. Feature/evidence revision mới được pin trong CHECKS/PR.
-Evidence lần trước [REBASE_CHECKS](REBASE_CHECKS.json), [MAIN_SYNC](MAIN_SYNC_20261010.json) và [v1](../../roadmap-v1/GM-06/HANDOFF.md) là historical, không claim tests/typecheck mới từ những file cũ.
-Rollback riêng engine commits, giữ parent data/catalogue nguyên trạng.
-
-Retarget cuối: PR #62 merged d9e83d9c091b4487f7188bdfb7906e8f950db378. Engine rebase5 commits, no conflict, PR #101 base main; gate vẫn BLOCKED do metadata GM-04/07, không coi merge là Decision Approved. Post-rebase actual report/source revision trong domain-case-results.json.
+Mac execution dùng temporary worktree với bytes patch identical và existing locked node_modules do root package.json/lockfile OneDrive dataless đang chặn npm trong checkout chính. Hai root files giữ nguyên và skip-worktree tạm được gỡ sau thao tác; không commit flag/config/package. CHECKS ghi commands thật, lỗi Watchman ban đầu và rerun --watchman=false; native/Windows chưa chạy. Rollback seed/convention supplement riêng, giữ old evaluator/fixtures/data. Historical MAIN_SYNC/REBASE_CHECKS/MAIN_RETARGET_20261010 và v1 evidence giữ nguyên.
