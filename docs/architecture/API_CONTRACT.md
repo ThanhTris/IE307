@@ -76,6 +76,10 @@ ID/code/token là string không rỗng; version là số nguyên hữu hạn an 
 
 Metadata requestId/roomId/version/state được kiểm kiểu và enum khi có, giữ optional khi vắng. roomId/version ở envelope phải khớp payload và roomId của request khi có; không fabricate version/state. Ballot payload requestId phải khớp ACK requestId; receipt khi có phải khớp round của payload và requestId của ACK. Các guard chỉ kiểm contract GM-07, không chứng minh auth/membership, transaction hay RPC nghiệp vụ các task sau.
 
+Read RPC hỗ trợ DTO/array trực tiếp hoặc `{ok:true,data:DTO}`. Cả 8 endpoint đọc phải kiểm required field, nested DTO, enum, timestamp, nullable/optional field và từng phần tử array trước success; payload thiếu/sai cấu trúc trả `MALFORMED_RESPONSE`. Danh sách rỗng `[]` hợp lệ; object `{}` không thay array. Business error hợp lệ được giữ, mã lỗi lạ thành `UNKNOWN_ERROR`. `restoreSession` chỉ lưu token sau khi `SessionUser` hợp lệ; dữ liệu lỗi giữ nguyên token đang có.
+
+Mock lưu `ownPreferences`, `ownVotes`, `ownSubmission` theo roomId chuẩn + caller userId và chỉ chiếu dữ liệu caller hiện tại vào snapshot. Caller chưa có phiếu/receipt nhận ownVotes vắng và ownSubmission null; đổi về caller cũ khôi phục dữ liệu của người đó. Request và snapshot/receipt không dùng chung object private có thể bị UI sửa. Consensus scenarios vẫn mô phỏng peer submission để chạy UI; isolation mock không là nghiệm thu RLS/RPC production.
+
 ### 2. Idempotency & Bảo toàn RequestId khi Retry
 - Mọi RPC ghi (`createRoom`, `setReady`, `startRound`, `submitBallot`, `registerPushDevice`) đều hỗ trợ `requestId?: string` do caller hoặc outbox truyền vào.
 - Khi timeout mà chưa rõ server đã commit hay chưa, caller retry với **cùng requestId + cùng body**. Client không tự ý sinh lại ID mới cho cùng một attempt.

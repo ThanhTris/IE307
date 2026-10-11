@@ -47,6 +47,8 @@ import {
   ResponseGuard, isRecord, isNonEmptyString, isVersion, isRoomState, isVoidPayload,
   isCreateRoomResponse, isJoinRoomResponse, isSessionResponse, isSubmitBallotResponse,
   isFriendInvitation, isRoomInvitation,
+  isSessionUser, isDiscoveryContext, isPreviewFoodPool, isRoomSnapshot,
+  arrayOf, isPoolDish, isFriend, isInboxItem, isHistoryItem,
 } from './responseGuards';
 
 export interface TransportOptions {
@@ -367,7 +369,7 @@ export class ApiClientImpl implements ApiClient {
   /**
    * Normalizes RPC response for READ operations.
    */
-  normalizeReadResponse<T>(raw: unknown): ReadResult<T> {
+  normalizeReadResponse<T>(raw: unknown, guard: ResponseGuard<T>): ReadResult<T> {
     if (raw === null || raw === undefined) {
       return {
         ok: false,
@@ -393,12 +395,14 @@ export class ApiClientImpl implements ApiClient {
           },
         };
       }
-      if (env.ok === true && env.data !== undefined) {
-        return { ok: true, data: env.data as T };
+      if ('ok' in env) {
+        if (env.ok === true && guard(env.data)) return { ok: true, data: env.data };
+        return { ok: false, error: { messageKey: 'MALFORMED_RESPONSE', message: 'Read RPC returned invalid envelope or data' } };
       }
     }
 
-    return { ok: true, data: raw as T };
+    return guard(raw) ? { ok: true, data: raw }
+      : { ok: false, error: { messageKey: 'MALFORMED_RESPONSE', message: 'Read RPC returned invalid data' } };
   }
 
   normalizeRpcResponse<T>(raw: unknown, fallbackRequestId: string, guard: ResponseGuard<T>, roomId?: string) {
@@ -437,7 +441,7 @@ export class ApiClientImpl implements ApiClient {
   async restoreSession(token: string): Promise<ReadResult<SessionUser>> {
     try {
       const raw = await this.transport.invoke<unknown>('restore_session', {}, { token });
-      const norm = this.normalizeReadResponse<SessionUser>(raw);
+      const norm = this.normalizeReadResponse<SessionUser>(raw, isSessionUser);
       if (!norm.ok) return norm;
       this.setAuthToken(token);
       return { ok: true, data: norm.data };
@@ -469,7 +473,7 @@ export class ApiClientImpl implements ApiClient {
         area_id: areaId ?? null,
         anchor_id: anchorId ?? null,
       });
-      return this.normalizeReadResponse<DiscoveryContextResponse>(raw);
+      return this.normalizeReadResponse<DiscoveryContextResponse>(raw, isDiscoveryContext);
     } catch (err) {
       return { ok: false, error: this.mapError(err) };
     }
@@ -488,7 +492,7 @@ export class ApiClientImpl implements ApiClient {
         category_ids: req.categoryIds ?? null,
         budget: req.budget ?? null,
       });
-      return this.normalizeReadResponse<PreviewFoodPoolResponse>(raw);
+      return this.normalizeReadResponse<PreviewFoodPoolResponse>(raw, isPreviewFoodPool);
     } catch (err) {
       return { ok: false, error: this.mapError(err) };
     }
@@ -556,7 +560,7 @@ export class ApiClientImpl implements ApiClient {
       const raw = await this.callRpc<unknown>('get_room_snapshot', {
         room_id: roomId,
       });
-      return this.normalizeReadResponse<RoomSnapshot>(raw);
+      return this.normalizeReadResponse<RoomSnapshot>(raw, isRoomSnapshot);
     } catch (err) {
       return { ok: false, error: this.mapError(err) };
     }
@@ -752,7 +756,7 @@ export class ApiClientImpl implements ApiClient {
         room_id: roomId,
         result_id: resultId,
       });
-      return this.normalizeReadResponse<PoolDish[]>(raw);
+      return this.normalizeReadResponse<PoolDish[]>(raw, arrayOf(isPoolDish));
     } catch (err) {
       return { ok: false, error: this.mapError(err) };
     }
@@ -765,7 +769,7 @@ export class ApiClientImpl implements ApiClient {
   async listFriends(): Promise<ReadResult<Friend[]>> {
     try {
       const raw = await this.callRpc<unknown>('list_friends', {});
-      return this.normalizeReadResponse<Friend[]>(raw);
+      return this.normalizeReadResponse<Friend[]>(raw, arrayOf(isFriend));
     } catch (err) {
       return { ok: false, error: this.mapError(err) };
     }
@@ -874,7 +878,7 @@ export class ApiClientImpl implements ApiClient {
       const raw = await this.callRpc<unknown>('list_partner_inbox', {
         cursor: cursor ?? null,
       });
-      return this.normalizeReadResponse<InboxItem[]>(raw);
+      return this.normalizeReadResponse<InboxItem[]>(raw, arrayOf(isInboxItem));
     } catch (err) {
       return { ok: false, error: this.mapError(err) };
     }
@@ -922,7 +926,7 @@ export class ApiClientImpl implements ApiClient {
         scope,
         cursor: cursor ?? null,
       });
-      return this.normalizeReadResponse<HistoryItem[]>(raw);
+      return this.normalizeReadResponse<HistoryItem[]>(raw, arrayOf(isHistoryItem));
     } catch (err) {
       return { ok: false, error: this.mapError(err) };
     }

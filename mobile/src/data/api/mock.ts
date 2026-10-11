@@ -341,6 +341,13 @@ export const MOCK_HISTORY_ITEMS: HistoryItem[] = [
   },
 ];
 
+type OwnRoomData = Pick<RoomSnapshot, 'ownPreferences' | 'ownVotes' | 'ownSubmission'>;
+type SharedRoomData = Omit<RoomSnapshot, keyof OwnRoomData>;
+
+function cloneDto<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value)) as T;
+}
+
 export class MockApiClient implements ApiClient {
   private mode: MockMode;
   private scenario: MockConsensusScenario;
@@ -349,7 +356,8 @@ export class MockApiClient implements ApiClient {
   private currentUser: SessionUser;
 
   // In-memory mutable states
-  private rooms: Map<string, RoomSnapshot> = new Map();
+  private rooms: Map<string, SharedRoomData> = new Map();
+  private ownRoomData: Map<string, Map<string, OwnRoomData>> = new Map();
   private friends: Friend[] = [...MOCK_FRIENDS];
   private inbox: InboxItem[] = [...MOCK_INBOX_ITEMS];
   private history: HistoryItem[] = [...MOCK_HISTORY_ITEMS];
@@ -384,8 +392,22 @@ export class MockApiClient implements ApiClient {
     this.currentUser = user;
   }
 
+  private getOwnRoomData(roomId: string): OwnRoomData {
+    let users = this.ownRoomData.get(roomId);
+    if (!users) {
+      users = new Map();
+      this.ownRoomData.set(roomId, users);
+    }
+    let own = users.get(this.currentUser.id);
+    if (!own) {
+      own = {};
+      users.set(this.currentUser.id, own);
+    }
+    return own;
+  }
+
   private initDefaultRoom(): void {
-    const defaultRoom: RoomSnapshot = {
+    const defaultRoom: SharedRoomData = {
       roomId: 'room_mock_001',
       code: 'GCD1',
       state: 'LOBBY',
@@ -423,7 +445,6 @@ export class MockApiClient implements ApiClient {
       datasetVersion: '2026-10-11-core-01',
       eligibilityVersion: '1.0.0',
       evaluatedAt: '2026-10-11T12:00:00Z',
-      ownSubmission: null,
       expiresAt: '2026-10-11T13:00:00Z',
     };
     this.rooms.set(defaultRoom.roomId, defaultRoom);
@@ -632,7 +653,7 @@ export class MockApiClient implements ApiClient {
     const code = ('GCD' + Math.floor(100 + Math.random() * 900)).substring(0, 4);
 
     const anchor = MOCK_ANCHORS.find((a) => a.id === req.context.anchorId);
-    const snapshot: RoomSnapshot = {
+    const snapshot: SharedRoomData = {
       roomId,
       code,
       state: 'LOBBY',
@@ -657,7 +678,6 @@ export class MockApiClient implements ApiClient {
       datasetVersion: '2026-10-11-core-01',
       eligibilityVersion: '1.0.0',
       evaluatedAt: new Date().toISOString(),
-      ownSubmission: null,
       expiresAt: new Date(Date.now() + 7200000).toISOString(),
     };
 
@@ -744,7 +764,8 @@ export class MockApiClient implements ApiClient {
       return { ok: false, error: { messageKey: 'ROOM_NOT_FOUND' } };
     }
 
-    return { ok: true, data: { ...room, members: [...room.members], pool: [...room.pool] } };
+    const own = this.getOwnRoomData(room.roomId);
+    return { ok: true, data: cloneDto({ ...room, ...own, ownSubmission: own.ownSubmission ?? null }) };
   }
 
   async updatePreferences(req: UpdatePreferencesRequest): Promise<WriteResult<void>> {
@@ -767,7 +788,7 @@ export class MockApiClient implements ApiClient {
       return { ok: false, requestId, roomId: room.roomId, error: { messageKey: 'VERSION_CONFLICT' } };
     }
 
-    room.ownPreferences = req.preferences;
+    this.getOwnRoomData(room.roomId).ownPreferences = cloneDto(req.preferences);
     const member = room.members.find((m) => m.userId === this.currentUser.id);
     if (member) member.ready = false;
     room.version += 1;
@@ -971,7 +992,7 @@ export class MockApiClient implements ApiClient {
     // Save own votes
     const voteMap: Record<string, typeof req.votes[0]['vote']> = {};
     req.votes.forEach((v) => (voteMap[v.roundDishId] = v.vote));
-    room.ownVotes = voteMap;
+    this.getOwnRoomData(room.roomId).ownVotes = voteMap;
 
     room.members.forEach((m) => (m.hasSubmitted = true));
     const allSubmitted = true;
@@ -1061,7 +1082,7 @@ export class MockApiClient implements ApiClient {
       voteCount: req.votes.length,
       votesSummary: req.votes.map((v) => ({ roundDishId: v.roundDishId, vote: v.vote })),
     };
-    room.ownSubmission = receipt;
+    this.getOwnRoomData(room.roomId).ownSubmission = cloneDto(receipt);
 
     const response: WriteResult<SubmitBallotResponse> = {
       ok: true,
