@@ -4,6 +4,8 @@ Roadmap-v2 theo [ADR-009](../architecture/decisions/ADR-009-foundation-first-tas
 
 ## Trước bắt đầu
 
+Phân công hiện hành lấy assignee trên [Project #2](https://github.com/users/ThanhTris/projects/2); task metadata và bảng tổng hợp đã được chủ dự án yêu cầu đồng bộ ngày 2026-10-11. Lịch/Deadline quản lý trên Project. Đổi phân công hoặc start/merge gate cần cập nhật task, bảng artifact/task map và sinh lại indexes; checker chỉ đọc Done, không tự cập nhật metadata. Owner hiện hành không thay tác giả/evidence lịch sử. Không phân công reviewer thành viên riêng: Trí review/merge cuối; phần Trí trực tiếp viết cần người kiểm độc lập được xác nhận riêng.
+
 1. Chọn đúng task roadmap-v2 và xem bảng đầu vào. UI cần shell → components → contract/mock trước màn; BE cần structure/field/contract trước API; Data cần fields → schema → import.
 2. Chạy `python scripts/task_readiness.py --task GM-XX`. Checker mặc định đọc mới cột Status=Done trên Project cho đúng issue mapping và kiểm output/HANDOFF của start deps. Sau fetch đúng remote, có thể thêm `--base-ref origin/main` để đối chiếu contract/manifest và artifact trên target. Thiếu read:project/mạng/item phải chặn; Issue Closed không thay Project Done. [Cách chạy và cấp quyền đọc](PROJECT_READINESS.md).
 3. Đọc HANDOFF upstream: file/commit/version, lệnh chạy, expected output, limitations; cập nhật nhánh nhận đúng code. Thiếu file hoặc contract thì báo blocker cụ thể, không tự dựng lại hoặc đoán response.

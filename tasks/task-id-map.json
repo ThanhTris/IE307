@@ -621,11 +621,26 @@
         {
           "task": "GM-08",
           "artifact": "supabase/seed/import_food_data.py",
-          "gate": "start"
+          "gate": "merge"
+        },
+        {
+          "task": "GM-08",
+          "artifact": "supabase/seed/verified/manifest.json",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-08",
+          "artifact": "docs/data/DATASET_HANDOFF.md",
+          "gate": "merge"
         },
         {
           "task": "GM-17",
           "artifact": "supabase/migrations/0017_access_policies.sql",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-06",
+          "artifact": "supabase/migrations/0001_core_schema.sql",
           "gate": "start"
         }
       ],
@@ -665,6 +680,16 @@
         {
           "task": "GM-18",
           "artifact": "supabase/migrations/0018_food_eligibility.sql",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-06",
+          "artifact": "supabase/migrations/0001_core_schema.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
           "gate": "start"
         }
       ],
@@ -699,6 +724,16 @@
         {
           "task": "GM-19",
           "artifact": "supabase/migrations/0019_room_lifecycle.sql",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-06",
+          "artifact": "supabase/migrations/0001_core_schema.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
           "gate": "start"
         }
       ],
@@ -733,6 +768,16 @@
         {
           "task": "GM-20",
           "artifact": "supabase/migrations/0020_finalize.sql",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-06",
+          "artifact": "supabase/migrations/0001_core_schema.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
           "gate": "start"
         }
       ],
@@ -842,6 +887,11 @@
           "gate": "start"
         },
         {
+          "task": "GM-10",
+          "artifact": "mobile/src/features/context/screens/ContextScreen.tsx",
+          "gate": "merge"
+        },
+        {
           "task": "GM-16",
           "artifact": "mobile/src/data/auth/session.ts",
           "gate": "merge"
@@ -894,21 +944,26 @@
         {
           "task": "GM-16",
           "artifact": "mobile/src/data/auth/session.ts",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-19",
           "artifact": "supabase/migrations/0019_room_lifecycle.sql",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-21",
           "artifact": "supabase/migrations/0021_history.sql",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-24",
           "artifact": "mobile/src/features/context/services/location.ts",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
           "gate": "start"
         }
       ],
@@ -942,11 +997,16 @@
         {
           "task": "GM-20",
           "artifact": "supabase/migrations/0020_finalize.sql",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-25",
           "artifact": "mobile/src/features/rooms/services/roomRepository.ts",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
           "gate": "start"
         }
       ],
@@ -979,11 +1039,16 @@
         {
           "task": "GM-18",
           "artifact": "supabase/migrations/0018_food_eligibility.sql",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-26",
           "artifact": "mobile/src/features/voting/services/voteRepository.ts",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
           "gate": "start"
         }
       ],
@@ -1020,21 +1085,26 @@
         {
           "task": "GM-21",
           "artifact": "supabase/migrations/0021_history.sql",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-22",
           "artifact": "supabase/migrations/0022_social.sql",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-23",
           "artifact": "supabase/functions/push-sender/index.ts",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-25",
           "artifact": "mobile/src/features/rooms/services/roomRepository.ts",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
           "gate": "start"
         }
       ],
@@ -1068,11 +1138,26 @@
         {
           "task": "GM-23",
           "artifact": "supabase/functions/push-sender/index.ts",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-28",
           "artifact": "mobile/src/features/friends/services/socialRepository.ts",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-28",
+          "artifact": "mobile/src/features/inbox/services/inboxRepository.ts",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-14",
+          "artifact": "mobile/src/features/friends/screens/FriendsScreen.tsx",
           "gate": "start"
         }
       ],
@@ -1102,21 +1187,41 @@
         {
           "task": "GM-22",
           "artifact": "supabase/migrations/0022_social.sql",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-24",
           "artifact": "mobile/src/features/context/services/location.ts",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-25",
           "artifact": "mobile/src/features/rooms/services/roomRepository.ts",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-27",
           "artifact": "mobile/src/features/result/services/resultRepository.ts",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-09",
+          "artifact": "mobile/src/features/home/screens/HomeScreen.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-11",
+          "artifact": "mobile/src/features/rooms/screens/LobbyScreen.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-13",
+          "artifact": "mobile/src/features/result/screens/ResultScreen.tsx",
           "gate": "start"
         }
       ],
@@ -1146,12 +1251,42 @@
         {
           "task": "GM-26",
           "artifact": "mobile/src/features/voting/services/voteRepository.ts",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-28",
           "artifact": "mobile/src/features/friends/services/socialRepository.ts",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
           "gate": "start"
+        },
+        {
+          "task": "GM-12",
+          "artifact": "mobile/src/features/voting/screens/VoteScreen.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-14",
+          "artifact": "mobile/src/features/friends/screens/FriendsScreen.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-16",
+          "artifact": "mobile/src/data/auth/session.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-25",
+          "artifact": "mobile/src/features/rooms/services/roomRepository.ts",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-28",
+          "artifact": "mobile/src/features/history/services/historyRepository.ts",
+          "gate": "merge"
         }
       ],
       "verification": {
@@ -1178,31 +1313,41 @@
         {
           "task": "GM-18",
           "artifact": "supabase/migrations/0018_food_eligibility.sql",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-20",
           "artifact": "supabase/migrations/0020_finalize.sql",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-21",
           "artifact": "supabase/migrations/0021_history.sql",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-22",
           "artifact": "supabase/migrations/0022_social.sql",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-23",
           "artifact": "supabase/functions/push-sender/index.ts",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-31",
           "artifact": "mobile/src/data/local/outbox.ts",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-06",
+          "artifact": "supabase/migrations/0001_core_schema.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
           "gate": "start"
         }
       ],
@@ -1233,33 +1378,53 @@
           "gate": "start"
         },
         {
+          "task": "GM-08",
+          "artifact": "supabase/seed/verified/manifest.json",
+          "gate": "start"
+        },
+        {
+          "task": "GM-08",
+          "artifact": "docs/data/DATASET_HANDOFF.md",
+          "gate": "start"
+        },
+        {
           "task": "GM-27",
           "artifact": "mobile/src/features/result/services/resultRepository.ts",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-28",
           "artifact": "mobile/src/features/friends/services/socialRepository.ts",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-29",
           "artifact": "mobile/src/features/inbox/services/nativePush.ts",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-30",
           "artifact": "mobile/src/features/rooms/services/joinLinks.ts",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-31",
           "artifact": "mobile/src/data/local/outbox.ts",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-32",
           "artifact": "docs/evidence/roadmap-v2/GM-32/REGRESSION.md",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-14",
+          "artifact": "mobile/src/features/friends/screens/FriendsScreen.tsx",
           "gate": "start"
         }
       ],
@@ -1317,8 +1482,18 @@
           "gate": "start"
         },
         {
+          "task": "GM-16",
+          "artifact": "mobile/src/data/auth/session.ts",
+          "gate": "merge"
+        },
+        {
           "task": "GM-28",
           "artifact": "mobile/src/features/friends/services/socialRepository.ts",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-28",
+          "artifact": "mobile/src/features/history/services/historyRepository.ts",
           "gate": "merge"
         },
         {

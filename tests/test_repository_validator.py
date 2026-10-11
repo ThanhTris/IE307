@@ -181,8 +181,11 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn('parallel tasks have dependency', self.errors())
 
     def test_parallel_same_owner_is_rejected(self):
+        records = validator.task_records(self.source)
         path = 'tasks/backlog/GM-09.md'
         self.source.contents[path] = re.sub(r'^parallel_with:.*$', 'parallel_with: GM-12', self.source.read(path), flags=re.M)
+        self.source.contents[path] = re.sub(r'^owner:.*$',
+            f"owner: {records['GM-12']['meta']['owner']}", self.source.read(path), flags=re.M)
         self.assertIn('parallel tasks share owner', self.errors())
 
     def test_unknown_parallel_task_is_rejected(self):
@@ -277,7 +280,9 @@ class ManifestValidationTests(unittest.TestCase):
         for tid, peer in (('GM-07', 'GM-06'), ('GM-06', 'GM-07')):
             path = records[tid]['path']
             self.source.contents[path] = re.sub(r'^parallel_with: (.*)$',
-                lambda m: f'parallel_with: {m[1]}, {peer}', self.source.read(path), flags=re.M)
+                lambda m: 'parallel_with: ' + ', '.join(sorted(set(
+                    [value.strip() for value in m[1].split(',') if value.strip()] + [peer]))),
+                self.source.read(path), flags=re.M)
         self.assertIn('GM-06', records['GM-07']['meta']['merge_dependencies'])
         self.assertEqual(self.errors(), '')
 

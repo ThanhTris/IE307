@@ -14,54 +14,56 @@ UI component chỉ phụ thuộc UI shell và định nghĩa field cần hiển 
 
 ## Thứ tự task cụ thể
 
+Phân công đồng bộ theo assignee hiện hành trên [Project #2](https://github.com/users/ThanhTris/projects/2) ngày 2026-10-11. Lịch và Deadline quản lý trên Project; bảng này không đổi trạng thái nghiệm thu hoặc tác giả/evidence lịch sử. Trí review cuối; task Trí viết cần người kiểm độc lập, chưa tự chỉ định.
+
 | Task | Luồng | Đầu ra | Owner / reviewer |
 | --- | --- | --- | --- |
 | [GM-01](../../tasks/done/GM-01.md) | PLAN / baseline | Chốt lộ trình UI–BE–Data và bàn giao đầu vào | Codex / Trí |
-| [GM-02](../../tasks/review/GM-02.md) | UI / structure | UI: cấu trúc thư mục và app Expo chạy được | Tuấn / ThanhTris |
-| [GM-03](../../tasks/review/GM-03.md) | BE / structure | BE: cấu trúc thư mục và môi trường chạy local | Trí / ThanhTris |
-| [GM-04](../../tasks/backlog/GM-04.md) | DATA / fields | Data: trường thông tin, taxonomy và mẫu nhập liệu | Vinh / Tâm |
-| [GM-05](../../tasks/backlog/GM-05.md) | UI / components | UI: component dùng chung theo UI mẫu | Trang / Tuấn |
+| [GM-02](../../tasks/review/GM-02.md) | UI / structure | UI: cấu trúc thư mục và app Expo chạy được | Trí / Người kiểm độc lập (chờ xác nhận) |
+| [GM-03](../../tasks/review/GM-03.md) | BE / structure | BE: cấu trúc thư mục và môi trường chạy local | Trí / Người kiểm độc lập (chờ xác nhận) |
+| [GM-04](../../tasks/backlog/GM-04.md) | DATA / fields | Data: trường thông tin, taxonomy và mẫu nhập liệu | Vinh / Trí |
+| [GM-05](../../tasks/backlog/GM-05.md) | UI / components | UI: component dùng chung theo UI mẫu | Trung / Trí |
 | [GM-06](../../tasks/backlog/GM-06.md) | DATA / database | Data: thiết lập database và migrations từ dictionary | Tâm / Trí |
-| [GM-07](../../tasks/backlog/GM-07.md) | BE / api-contract | BE: hợp đồng API, lớp gọi API và mock adapter | Trung / Trí |
-| [GM-08](../../tasks/in-progress/GM-08.md) | DATA / import | Data: nhập, kiểm và bàn giao dataset thật | Vinh / Tâm |
-| [GM-09](../../tasks/backlog/GM-09.md) | UI / screens | UI: Home, tạo phòng và nhập mã theo mẫu | Trang / Tuấn |
-| [GM-10](../../tasks/backlog/GM-10.md) | UI / screens | UI: chọn khu vực, giờ ăn và sở thích theo mẫu | Tuấn / Trang |
-| [GM-11](../../tasks/backlog/GM-11.md) | UI / screens | UI: lobby, ready và trạng thái phòng theo mẫu | Tuấn / Trang |
-| [GM-12](../../tasks/backlog/GM-12.md) | UI / screens | UI: bình chọn và vòng hai theo mẫu | Trang / Tuấn |
-| [GM-13](../../tasks/backlog/GM-13.md) | UI / screens | UI: kết quả, nơi bán và không đồng thuận theo mẫu | Tuấn / Trang |
-| [GM-14](../../tasks/backlog/GM-14.md) | UI / screens | UI: bạn bè, inbox và lịch sử theo mẫu | Trang / Tuấn |
-| [GM-15](../../tasks/backlog/GM-15.md) | BE / implementation | BE: engine quyết định thuần và fixture chuẩn | Vinh / Trung |
-| [GM-16](../../tasks/backlog/GM-16.md) | BE / implementation | BE: guest auth và session API | Trung / Trí |
-| [GM-17](../../tasks/backlog/GM-17.md) | BE / implementation | BE: RLS, quyền RPC và retention | Trí / Tâm |
-| [GM-18](../../tasks/backlog/GM-18.md) | BE / implementation | BE: API catalogue, coverage và lọc món khả thi | Tâm / Vinh |
-| [GM-19](../../tasks/backlog/GM-19.md) | BE / implementation | BE: API phòng, context, ready và start | Tâm / Trí |
-| [GM-20](../../tasks/backlog/GM-20.md) | BE / implementation | BE: API nộp phiếu, hai vòng và chốt kết quả | Trí / Tâm |
-| [GM-21](../../tasks/backlog/GM-21.md) | BE / implementation | BE: API history, consent và chống lặp | Tâm / Vinh |
-| [GM-22](../../tasks/backlog/GM-22.md) | BE / implementation | BE: API bạn bè và lời mời phòng | Trung / Trí |
-| [GM-23](../../tasks/backlog/GM-23.md) | BE / implementation | BE: API inbox, thiết bị push và sender | Trung / Trí |
-| [GM-24](../../tasks/backlog/GM-24.md) | INTEGRATION / native | UI: nối vị trí thiết bị với coverage API | Tuấn / Trang |
-| [GM-25](../../tasks/backlog/GM-25.md) | INTEGRATION / integration | UI–BE: nối Home, context, preferences và lobby | Trang / Tuấn |
-| [GM-26](../../tasks/backlog/GM-26.md) | INTEGRATION / integration | UI–BE: nối bình chọn, nộp phiếu và vòng hai | Trang / Tuấn |
-| [GM-27](../../tasks/backlog/GM-27.md) | INTEGRATION / integration | UI–BE: nối kết quả và nơi bán thực tế | Tuấn / Vinh |
-| [GM-28](../../tasks/backlog/GM-28.md) | INTEGRATION / integration | UI–BE: nối bạn bè, inbox và history | Trung / Trang |
+| [GM-07](../../tasks/backlog/GM-07.md) | BE / api-contract | BE: hợp đồng API, lớp gọi API và mock adapter | Trang / Trí |
+| [GM-08](../../tasks/in-progress/GM-08.md) | DATA / import | Data: nhập, kiểm và bàn giao dataset thật | Tâm / Trí |
+| [GM-09](../../tasks/backlog/GM-09.md) | UI / screens | UI: Home, tạo phòng và nhập mã theo mẫu | Tuấn / Trí |
+| [GM-10](../../tasks/backlog/GM-10.md) | UI / screens | UI: chọn khu vực, giờ ăn và sở thích theo mẫu | Tuấn / Trí |
+| [GM-11](../../tasks/backlog/GM-11.md) | UI / screens | UI: lobby, ready và trạng thái phòng theo mẫu | Trung / Trí |
+| [GM-12](../../tasks/backlog/GM-12.md) | UI / screens | UI: bình chọn và vòng hai theo mẫu | Trang / Trí |
+| [GM-13](../../tasks/backlog/GM-13.md) | UI / screens | UI: kết quả, nơi bán và không đồng thuận theo mẫu | Tuấn / Trí |
+| [GM-14](../../tasks/backlog/GM-14.md) | UI / screens | UI: bạn bè, inbox và lịch sử theo mẫu | Trung / Trí |
+| [GM-15](../../tasks/backlog/GM-15.md) | BE / implementation | BE: engine quyết định thuần và fixture chuẩn | Vinh / Trí |
+| [GM-16](../../tasks/backlog/GM-16.md) | BE / implementation | BE: guest auth và session API | Trí / Người kiểm độc lập (chờ xác nhận) |
+| [GM-17](../../tasks/backlog/GM-17.md) | BE / implementation | BE: RLS, quyền RPC và retention | Trí / Người kiểm độc lập (chờ xác nhận) |
+| [GM-18](../../tasks/backlog/GM-18.md) | BE / implementation | BE: API catalogue, coverage và lọc món khả thi | Tâm / Trí |
+| [GM-19](../../tasks/backlog/GM-19.md) | BE / implementation | BE: API phòng, context, ready và start | Trí / Người kiểm độc lập (chờ xác nhận) |
+| [GM-20](../../tasks/backlog/GM-20.md) | BE / implementation | BE: API nộp phiếu, hai vòng và chốt kết quả | Vinh / Trí |
+| [GM-21](../../tasks/backlog/GM-21.md) | BE / implementation | BE: API history, consent và chống lặp | Tâm / Trí |
+| [GM-22](../../tasks/backlog/GM-22.md) | BE / implementation | BE: API bạn bè và lời mời phòng | Trí / Người kiểm độc lập (chờ xác nhận) |
+| [GM-23](../../tasks/backlog/GM-23.md) | BE / implementation | BE: API inbox, thiết bị push và sender | Trí / Người kiểm độc lập (chờ xác nhận) |
+| [GM-24](../../tasks/backlog/GM-24.md) | INTEGRATION / native | UI: nối vị trí thiết bị với coverage API | Trang / Trí |
+| [GM-25](../../tasks/backlog/GM-25.md) | INTEGRATION / integration | UI–BE: nối Home, context, preferences và lobby | Trang / Trí |
+| [GM-26](../../tasks/backlog/GM-26.md) | INTEGRATION / integration | UI–BE: nối bình chọn, nộp phiếu và vòng hai | Trang / Trí |
+| [GM-27](../../tasks/backlog/GM-27.md) | INTEGRATION / integration | UI–BE: nối kết quả và nơi bán thực tế | Trang / Trí |
+| [GM-28](../../tasks/backlog/GM-28.md) | INTEGRATION / integration | UI–BE: nối bạn bè, inbox và history | Trung / Trí |
 | [GM-29](../../tasks/backlog/GM-29.md) | INTEGRATION / native | UI–BE: push native và mở app từ thông báo | Trung / Trí |
-| [GM-30](../../tasks/backlog/GM-30.md) | INTEGRATION / native | UI–BE: QR, incoming links và Maps/review | Tuấn / Trang |
-| [GM-31](../../tasks/backlog/GM-31.md) | INTEGRATION / integration | UI–BE: SQLite outbox, cache và reconnect | Trí / Tâm |
-| [GM-32](../../tasks/backlog/GM-32.md) | QA / regression | QA: regression API, data, quyền và race | Vinh / Tâm |
-| [GM-33](../../tasks/backlog/GM-33.md) | QA / qa | QA: đối chiếu UI mẫu và pilot Android end-to-end | Vinh / Trang |
-| [GM-34](../../tasks/backlog/GM-34.md) | RELEASE / release | Release: APK, demo và bàn giao core | Trí / Tuấn |
-| [GM-35](../../tasks/backlog/GM-35.md) | EXTENSION / extension | P1: account link/recovery và history sync | Trung / Trí |
-| [GM-36](../../tasks/backlog/GM-36.md) | EXTENSION / extension | P2: OCR menu qua quy trình nhập dữ liệu | Tâm / Vinh |
-| [GM-37](../../tasks/backlog/GM-37.md) | EXTENSION / extension | P2: AI hiểu sở thích | Trung / Trí |
-| [GM-38](../../tasks/backlog/GM-38.md) | EXTENSION / extension | P2: weather và mood tự khai để xếp hạng | Trung / Trí |
+| [GM-30](../../tasks/backlog/GM-30.md) | INTEGRATION / native | UI–BE: QR, incoming links và Maps/review | Trang / Trí |
+| [GM-31](../../tasks/backlog/GM-31.md) | INTEGRATION / integration | UI–BE: SQLite outbox, cache và reconnect | Trung / Trí |
+| [GM-32](../../tasks/backlog/GM-32.md) | QA / regression | QA: regression API, data, quyền và race | Vinh / Trí |
+| [GM-33](../../tasks/backlog/GM-33.md) | QA / qa | QA: đối chiếu UI mẫu và pilot Android end-to-end | Vinh / Trí |
+| [GM-34](../../tasks/backlog/GM-34.md) | RELEASE / release | Release: APK, demo và bàn giao core | Trí / Người kiểm độc lập (chờ xác nhận) |
+| [GM-35](../../tasks/backlog/GM-35.md) | EXTENSION / extension | P1: account link/recovery và history sync | Tuấn / Trí |
+| [GM-36](../../tasks/backlog/GM-36.md) | EXTENSION / extension | P2: OCR menu qua quy trình nhập dữ liệu | Tâm / Trí |
+| [GM-37](../../tasks/backlog/GM-37.md) | EXTENSION / extension | P2: AI hiểu sở thích | Tuấn / Trí |
+| [GM-38](../../tasks/backlog/GM-38.md) | EXTENSION / extension | P2: weather và mood tự khai để xếp hạng | Tâm / Trí |
 
 Merge theo số tăng dần 01 → 38 luôn hợp lệ vì mọi prerequisite có số nhỏ hơn. Tuy vậy, không phải task 10 phải chờ tất cả 01..09: chỉ chờ đầu vào được khai báo; những task độc lập có thể làm/merge cùng đợt. Nếu chủ dự án chọn merge tuyệt đối theo số, các nhánh vẫn được làm song song khi start inputs đã có. Không chạy task có prerequisite chưa merge bằng cách dựng lại scaffold hoặc đoán API.
 
 ## Các đợt phối hợp
 
-- Sau GM-01: Tuấn GM-02 UI structure, Trí GM-03 BE structure, Vinh GM-04 fields. Trang đọc mẫu/lập component inventory, Tâm/Trung review field và API plan; chưa code thiếu nền.
-- Sau UI shell/fields: Trang GM-05 components; Tâm GM-06 database sau BE shell; Trung GM-07 contract/client có thể soạn từ dictionary, đối chiếu schema trước merge.
-- Sau schema: Vinh GM-08 nạp data. Sau component+contract: Trang/Tuấn chia GM-09..14 theo màn, cùng owner xếp ca. BE làm engine/auth/RLS và các API sau đúng đầu vào.
+- Sau GM-01: Trí đảm nhận GM-02 UI structure và GM-03 BE structure theo ca; Vinh GM-04 fields. Không chạy song song hai task chính cùng người hoặc code thiếu nền.
+- Sau UI shell/fields: Trung GM-05 components; Tâm GM-06 database sau BE shell; Trang GM-07 contract/client có thể soạn từ dictionary, đối chiếu schema trước merge.
+- Sau schema: Tâm GM-08 nạp data. Sau component+contract: Tuấn/Trung/Trang chia GM-09..14 theo assignee trên Project, cùng owner xếp ca. BE làm phần độc lập theo start gate; tích hợp/nghiệm thu sau đủ merge inputs.
 - GM-24..31: tích hợp theo module đã có UI + API, native capability vào đúng chức năng. GM-32..34 regression → QA/pilot → APK.
 - GM-35..38 P1/P2: draft độc lập nếu đủ contract và còn người, merge sau core. Weather/mood không chặn bộ lọc địa điểm/giờ.
 
