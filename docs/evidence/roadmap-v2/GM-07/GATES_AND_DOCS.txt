@@ -1,0 +1,11 @@
+Approval source: https://github.com/users/ThanhTris/projects/2 | checked at 2026-10-11T05:47:01.302457+00:00 | no cached/local fallback
+Target snapshot: origin/main = 00c4f27a97d4f1487dfed7c54c1253c766709a1a (local ref; freshness not verified)
+GM-07: READY_FOR_MERGE_REVIEW | owner=Trung reviewer=Trí | tasks/backlog/GM-07.md
+Gate checks approval source and delivered files, not execution. Merge still requires review of this PR, upstream PR/commit verification and real integration tests. No status/task edits performed.
+Failed to find real location of C:\Python314\python.exe
+Gi Cung Duoc: documents, links, JSON, task manifest, dependencies and current FR traceability OK.
+Scope: documentation validation only; no native build/backend execution or human approval verified.
+Dependency approval uses live GitHub Project; run task_readiness --task before code/merge. This offline validator does not unlock tasks.
+Failed to find real location of C:\Python314\python.exe
+Task indexes match task metadata.
+PASS: offline validator, indexes and complete PR plus working-tree diff checks.

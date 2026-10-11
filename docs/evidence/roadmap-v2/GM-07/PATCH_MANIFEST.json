@@ -1,0 +1,37 @@
+{
+  "status": "tested code commit; following evidence commit does not change code",
+  "baseCommit": "67f00e6d5b7016c44895617241ab41e0aa7583f1",
+  "targetCommit": "00c4f27a97d4f1487dfed7c54c1253c766709a1a",
+  "contractVersion": "food-v1/roadmap-v2/GM-07.1",
+  "files": [
+    {
+      "path": "mobile/src/data/api/client.ts",
+      "sha256": "ab983a99dec456b449a198e2403d69468fa96e96af455000d416389cdb1fcf8a"
+    },
+    {
+      "path": "mobile/src/data/api/mock.ts",
+      "sha256": "149cdbac3276453e646fafd7f39ac40a89f28e2b7df540d9e5de16a2b43432d7"
+    },
+    {
+      "path": "mobile/src/data/api/responseGuards.ts",
+      "sha256": "b13a9ebf853be15699d2adf2541be331a8c36ab0596fa9274ac8bf3510e8b583"
+    },
+    {
+      "path": "mobile/tests/unit/apiContract.test.ts",
+      "sha256": "65a19e7d719bbe47e3cf7a346fea14fbbe2b2f2b78fa1a02f196a0ae67062ae8"
+    },
+    {
+      "path": "mobile/tests/unit/apiResponseValidation.test.ts",
+      "sha256": "4a5c4bca8fbc2d939cf790fac41f5308df9aa57cf8f555fa77f39b685ed47fd0"
+    },
+    {
+      "path": "tests/test_api_contract_gm07.py",
+      "sha256": "cb29d1f7c960afd30d3fada05678c985c0a0be4b79d20fe8e875c9623fee33fe"
+    },
+    {
+      "path": "docs/architecture/API_CONTRACT.md",
+      "sha256": "d36f31927850c2e50eb3f76af92f70ab408b153831ffea0b2fd8ed3658bcf798"
+    }
+  ],
+  "testedCodeCommit": "f0599f8c4b92bf372fc6e3e497389cd59cadf914"
+}

@@ -1,78 +1,45 @@
 # Output checks — GM-07 / roadmap-v2
 
-Status: Executed — Pass
-Task / owner / reviewer / scope: GM-07 / Trang (@rosy179) / Trí (@ThanhTris) / BE: API contract, client và mock
-Branch / target / thời điểm: `codex/gm-07-api-contract-and-mock` / `main` / 2026-10-11
-Contract version / schema version / dataset version: `food-v1/roadmap-v2/GM-07.1` / `0.1.0` (GM-06) / `1.1.0` (GM-04)
-Mode: `contract`
-Tool/runtime versions / OS: Node.js v22.11.0, Python 3.11, Windows 11
-Upstream artifact đã nhận:
-- GM-02: `mobile/src/app/_layout.tsx` (shell layout), `mobile/app.config.ts` (khớp chính xác `origin/main`)
-- GM-03: `supabase/config.toml` (local BE config)
-- GM-04: `docs/data/FOOD_DATA_DICTIONARY.md` (contract proposal 1.1.0), `docs/data/FIELD_COVERAGE.md`
-- GM-06: `supabase/migrations/0001_core_schema.sql` (frozen schema 0.1.0, PR #102)
+Status: Patch verified locally — awaiting independent review; full regression has baseline failures.
 
----
+Task / owner / reviewer / scope: GM-07 / Trang (@rosy179) / Trí (@ThanhTris) / API contract, client, mock. Codex hỗ trợ patch theo yêu cầu Trí; không là approval.
 
-## Setup và cách chạy lại
+Tested code commit: `f0599f8c4b92bf372fc6e3e497389cd59cadf914` (base PR `67f00e6d5b7016c44895617241ab41e0aa7583f1`), xác định thêm bằng [PATCH_MANIFEST.json](PATCH_MANIFEST.json). Mobile check và Python contract chạy lại trên commit này; commit evidence tiếp theo chỉ đổi tài liệu/output. CI của HEAD push mới cần kiểm riêng.
 
-1. Kiểm tra boundary kiến trúc module:
-   ```sh
-   node mobile/scripts/check-architecture.mjs
-   ```
-   Kết quả: `Architecture boundaries OK (static guard, not a substitute for review).`
+Target: `origin/main` = `00c4f27a97d4f1487dfed7c54c1253c766709a1a`; ngày kiểm 2026-10-11 (UTC+7); nhánh local `codex/pr104-fix-plan`.
 
-2. Chạy bộ kiểm thử Jest cho API contracts, client và mock:
-   ```sh
-   cd mobile && npm test -- tests/unit/apiContract.test.ts
-   ```
-   Kết quả: 24 test cases pass (bao gồm error normalization, requestId retry idempotency, mock consensus scenarios, permission mapping, baseUrl configuration, FetchTransport status retention & timeout abort).
+Contract API: `food-v1/roadmap-v2/GM-07.1`; adapter/dictionary GM-04 proposal `1.1.0`; schema GM-06 `0.1.0`. Dataset mock là fixture, **không phải verified dataset GM-08**. Không thêm dependency/đổi lockfile/schema.
 
-3. Chạy toàn bộ test suites trong mobile:
-   ```sh
-   cd mobile && npm test
-   ```
-   Kết quả: 3 test suites passed, 24 tests passed (`apiContract.test.ts`, `routes.test.tsx`, `AppShellScreen.test.tsx`).
+Runtime: Windows / PowerShell, Node v24.15.0, npm 11.12.1, Python bundled 3.12.14 có tzdata, `PYTHONUTF8=1`. Node đáp ứng engines `>=22.13.0`. Mobile/full regression chạy ngoài sandbox vì sandbox chặn TEMP; không cần credential production cho contract tests.
 
-4. Chạy bộ kiểm thử hợp đồng tự động GM-07 bằng Python:
-   ```sh
-   python -m unittest tests/test_api_contract_gm07.py
-   ```
-   Kết quả: `Ran 10 tests in 0.005s ... OK`.
+## Input và gate
 
-5. Kiểm tra tính hợp lệ toàn bộ tài liệu và liên kết repo:
-   ```sh
-   python scripts/validate_repository.py
-   python scripts/task_readiness.py --check-docs
-   git diff origin/main mobile/app.config.ts
-   ```
-   Kết quả: Tài liệu hợp lệ, diff rỗng trên base artifact `app.config.ts`.
+GM-02 `_layout.tsx`/`app.config.ts`, GM-03 `supabase/config.toml`, GM-04 dictionary/field coverage và GM-06 `0001_core_schema.sql` có trên nhánh, đối chiếu target SHA trên. `app.config.ts` không đổi so với target.
 
----
+Live start gate trước code: `READY_TO_CLAIM` lúc 12:24:09 UTC+7. Checker hiển thị owner Trung/proposed theo task Markdown cũ, trong khi issue #68/Project giao Trang. Không tự sửa assignment/approval; quyền sửa patch đến từ yêu cầu trực tiếp của Trí. Gate merge sau patch và offline docs checks: [GATES_AND_DOCS.txt](GATES_AND_DOCS.txt). Gate chỉ kiểm đầu vào/artifact, không thay review hoặc quyền merge. PR #104 đã có đúng ở GM-07 → PR review; giữ nguyên link/Status.
 
-## Chi tiết kết quả kiểm tra theo các điểm Review PR #104
+## Kết quả thật
 
-| Hạng mục review | Vị trí code / Test case | Thiết lập kiểm thử | Kết quả mong đợi | Kết quả thực tế | Trạng thái |
-| :--- | :--- | :--- | :--- | :--- | :---: |
-| **1. [P1] Error Normalization** | `client.ts:normalizeWriteResponse()`, `apiContract.test.ts` (Block 1) | Giả lập HTTP 200 trả `{ ok: false, error: { messageKey: 'VERSION_CONFLICT' } }`, primitive `42`, string, non-object, `{ foo: 'bar' }`, `{ ok: 'true' }` | Bắt buộc boolean `ok`; không bao giờ biến lỗi server thành thành công; trả `MALFORMED_RESPONSE` khi thiếu/sai `ok` | Caller nhận đúng `{ ok: false, error: { messageKey: 'VERSION_CONFLICT' } }`; mọi payload không đạt nhận `MALFORMED_RESPONSE` | **Pass** |
-| **2. [P1] RequestId Retention khi Retry & Mock Idempotency** | `contracts.ts`, `client.ts`, `mock.ts`, `apiContract.test.ts` (Block 2) | Caller cung cấp `requestId` cố định khi gọi `createRoom`, `setReady`, `submitBallot`. Gọi lần 1 thành công, lần 2 retry cùng ID/payload; lần 3 retry cùng ID khác payload signature | Lần 2 nhận ACK idempotent cũ (cùng `roomId`, không lỗi `VERSION_CONFLICT`); lần 3 bị từ chối với `REQUEST_ID_REUSED`. Không âm thầm sinh lại ID | Lần 2 trả đúng version/state cũ; lần 3 trả lỗi `REQUEST_ID_REUSED` | **Pass** |
-| **3. [P2] HTTP Transport Body Consumption & Abort Controller** | `client.ts:FetchTransport`, `apiContract.test.ts` | Giả lập server trả lỗi non-JSON (HTTP 403 `Forbidden`); giả lập slow RPC với combined signal | Body stream đọc duy nhất 1 lần bằng `.text()`, giữ nguyên status 403 mapping `AUTH_REQUIRED`; timeout tự hủy dù có external signal | Tránh lỗi stream locked/consumed; map chuẩn mã lỗi HTTP; hủy fetch chính xác | **Pass** |
-| **4. [P2] Cấu hình Real Client & BaseUrl** | `client.ts:ClientConfig`, `apiContract.test.ts` | Khởi tạo `new ApiClientImpl({ baseUrl: 'https://api.mycustomdomain.com', fetchFn, timeoutMs: 15000 })` | Client gửi HTTP request tới đúng domain cấu hình; không ngầm fallback localhost; type-safe 100% | URL gửi đi khớp 100% với `baseUrl` truyền vào; compile TypeScript không lỗi type | **Pass** |
-| **5. [P2] DTO Parity GM-04 / GM-06** | `contracts.ts`, `API_CONTRACT.md`, `test_api_contract_gm07.py` | Kiểm tra projection giá, đơn vị, khẩu phần, submission receipt và enum permission | `PoolDish` có `priceMin`, `priceMax`, `currency: CurrencyCode | null`, `unit: PriceUnit | null`, `servingSize: string | null`, `DishPrice`; `RoomSnapshot` có `ownSubmission`, `datasetVersion`, `eligibilityVersion`, `evaluatedAt`; `toStoragePermission` map `'provisional' -> 'unknown'` | Các trường định nghĩa chặt chẽ, khớp bảng ánh xạ trong `API_CONTRACT.md` (`dishes.name`, `round_dishes.price`) | **Pass** |
-| **6. [P2] Mock Consensus Rules & Error/Empty Modes** | `mock.ts`, `apiContract.test.ts` | Nộp ballot khi phòng ở `LOBBY`; kịch bản all-NO; kịch bản `round_two`; `error`/`empty` mode trên friends/inbox/history/offerings | `LOBBY` bị từ chối với `INVALID_ROOM_STATE`; all-NO trả `winner: null, reasonCode: 'NO_CONSENSUS'`; `round_two` chuyển sang `ROUND_2`; error mode không gây mutate state | NO không bao giờ thắng; error/empty mode hoạt động đồng bộ trên toàn bộ endpoints UI | **Pass** |
-| **7. [P2] Clean Base Artifact** | `mobile/app.config.ts` | So sánh working tree với `origin/main` | Không thay đổi artifact thuộc phạm vi GM-02 | `git diff origin/main mobile/app.config.ts` trả về 0 diff; Expo config đọc bình thường | **Pass** |UND_2` | NO không bao giờ thắng; state machine hoạt động đúng kịch bản thiết lập | **Pass** |
-| **6. [P2] Clean Base Artifact** | `mobile/app.config.ts` | So sánh working tree với `origin/main` | Không thay đổi artifact thuộc phạm vi GM-02 | `git diff origin/main mobile/app.config.ts` trả về 0 diff; Expo config đọc bình thường | **Pass** |
+| Kiểm / AC | Input, expected, actual | Kết quả / evidence |
+| --- | --- | --- |
+| P1 joinRoom | Caller mới join GCD1; data/envelope cùng roomId/version; retry cùng body/ID trả ACK cũ; khác body bị REQUEST_ID_REUSED; chỉ 1 member mới và 1 lần tăng version | Pass; test cả joinRoom và acceptRoomInvite |
+| P2 typed-write validation | Create/join/accept invite/auth/ballot/partner invite/room invite: flat/nested đầy đủ pass; data/field thiếu hoặc sai type/enum/timestamp/null/array/primitive → MALFORMED_RESPONSE | Pass; table theo endpoint trong apiResponseValidation.test.ts |
+| Metadata / receipt | Version số nguyên an toàn >=1, state hợp lệ, room/version/requestId nhất quán; optional được vắng, receipt khi có kiểm shape/round/ID/count/votes/time | Pass; không fabricate version/state; malformed auth không đổi token |
+| Void ACK | 14 writes void nhận data vắng/undefined/null, giữ metadata; metadata/data sai bị từ chối | Pass; không đòi object DTO giả |
+| Public client / retry | Factory real + configured URL/defaultTimeoutMs; timeout rồi retry cùng body/requestId trên wire; ACK đúng version/state | Pass; fetch giả và Response thật, không là RPC production |
+| API Jest | 18 cases cũ + 117 cases mới | 2 suites / 135 tests Pass; [API_TESTS.txt](API_TESTS.txt) |
+| Ví dụ HANDOFF | Trích cả 2 fenced TypeScript snippets vào harness dùng context tsconfig mobile thực tế | Compile Pass; [HANDOFF_TYPECHECK.txt](HANDOFF_TYPECHECK.txt) |
+| Full mobile check | Typecheck, lint, Jest, architecture | 4 suites / 141 tests Pass; lint 0 errors/4 warnings có sẵn; [MOBILE_CHECK.txt](MOBILE_CHECK.txt) |
+| Python GM-07 | Assertions nguồn, không thay runtime/schema parity | 10/10 Pass; [PYTHON_CONTRACT.txt](PYTHON_CONTRACT.txt) |
+| Full Python regression | 476 tests bằng Python 3.12.14/UTF-8 | **Fail: 1 failure + 5 errors**; [PYTHON_REGRESSION.txt](PYTHON_REGRESSION.txt). Chính 6 ca trên snapshot main cùng runtime cũng 1 failure + 5 errors; [MAIN_BASELINE.txt](MAIN_BASELINE.txt) |
+| Repo/indexes/diff | Validator, check-docs, diff so target gồm patch chưa commit; base Expo diff rỗng | Pass; [GATES_AND_DOCS.txt](GATES_AND_DOCS.txt) |
 
----
+Mobile cold run có 1 shell timeout 5s, 136/137 tests pass trước khi bổ sung 4 receipt cases; giữ [MOBILE_CHECK_COLD.txt](MOBILE_CHECK_COLD.txt). Chạy lại nguyên check với cache đã nạp/timeout mặc định pass; patch cuối chạy check 141 cases. Không tăng timeout/sửa shell test để che lỗi.
 
-## Bao phủ đầu ra bàn giao
+Full Python còn `test_fixture_under_windows_cp1252_default` thất bại khi ép UTF-8 và 5 `test_vilao_catalogue` lỗi vì locking yêu cầu Linux/macOS/WSL. Cả 6 tái hiện trên main; không ghi toàn regression Pass hoặc sửa legacy trong GM-07. Lần lập plan dùng Python 3.14.5/sandbox có thêm thiếu tzdata/TEMP/encoding; đó không phải runtime của kết quả ở đây.
 
-| Artifact | Phạm vi | Version | Task nhận | Trạng thái |
-| :--- | :--- | :--- | :--- | :---: |
-| `mobile/src/data/api/contracts.ts` | DTOs, Enums, Error Envelopes, Pricing, Receipts, `ApiClient` interface | `food-v1/roadmap-v2/GM-07.1` | GM-09..14, GM-24..31 | **Sẵn sàng** |
-| `mobile/src/data/api/client.ts` | `ApiClientImpl` + `FetchTransport` (Supabase RPC) + Response Normalizer | `food-v1/roadmap-v2/GM-07.1` | GM-24..31 (Integration) | **Sẵn sàng** |
-| `mobile/src/data/api/mock.ts` | `MockApiClient` + 6 Modes + 3 Scenarios + Idempotency Map | `food-v1/roadmap-v2/GM-07.1` | GM-09..14 (UI screens) | **Sẵn sàng** |
-| `mobile/src/data/api/index.ts` | Re-exports + `createApiClient(mode, config)` factory | `food-v1/roadmap-v2/GM-07.1` | Toàn bộ UI & Features | **Sẵn sàng** |
-| `mobile/tests/unit/apiContract.test.ts` | Test suite 16 test cases cho client, mock, consensus và normalizer | `food-v1/roadmap-v2/GM-07.1` | Reviewer | **Sẵn sàng** |
-| `tests/test_api_contract_gm07.py` | Kiểm tra tự động tính bao phủ và parity (10 tests) | `food-v1/roadmap-v2/GM-07.1` | Reviewer / CI | **Sẵn sàng** |
-| `docs/architecture/API_CONTRACT.md` | Bổ sung chi tiết projection, mapping DB và quy tắc đồng thuận | `food-v1/roadmap-v2/GM-07.1` | Reviewer / Core Team | **Sẵn sàng** |
+## Chạy lại và giới hạn
+
+Setup/lệnh trong [HANDOFF.md](HANDOFF.md). API: `npm test -- tests/unit/apiContract.test.ts tests/unit/apiResponseValidation.test.ts` trong mobile. Toàn mobile: `npm run check`.
+
+Đã commit và chạy lại check trên code SHA nêu trên theo yêu cầu push của Trí. Review độc lập/CI revision mới/nghiệm thu Trí: **Not run / pending**. SQL/RLS/RPC nghiệp vụ/native/verified import ngoài scope contract GM-07; không ghi Pass từ mock.

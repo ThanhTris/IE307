@@ -1,0 +1,12 @@
+
+> gi-cung-duoc-mobile@0.1.0 test
+> jest --runInBand tests/unit/apiContract.test.ts tests/unit/apiResponseValidation.test.ts
+
+PASS tests/unit/apiContract.test.ts
+PASS tests/unit/apiResponseValidation.test.ts
+
+Test Suites: 2 passed, 2 total
+Tests:       135 passed, 135 total
+Snapshots:   0 total
+Time:        2.454 s
+Ran all test suites matching /tests\\unit\\apiContract.test.ts|tests\\unit\\apiResponseValidation.test.ts/i.
