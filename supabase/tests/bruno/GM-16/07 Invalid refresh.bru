@@ -1,0 +1,26 @@
+meta {
+  name: 07 Invalid refresh
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{baseUrl}}/auth/v1/token?grant_type=refresh_token
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {"refresh_token":"not-a-refresh-token"}
+}
+
+tests {
+  test('Invalid refresh token is rejected', function () {
+    expect([400, 401].includes(res.getStatus())).to.equal(true);
+    expect(Boolean(res.getBody().access_token)).to.equal(false);
+  });
+}

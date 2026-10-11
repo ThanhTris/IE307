@@ -10,7 +10,7 @@
 | GM-04 — Design system và UI primitives | [GM-05](../../tasks/backlog/GM-05.md) |
 | GM-05 — Schema món–quán–lịch bán và migrations | [GM-06](../../tasks/backlog/GM-06.md) |
 | GM-06 — Engine decision-v2 và fixtures | [GM-15](../../tasks/backlog/GM-15.md) |
-| GM-07 — Guest identity và secure session | [GM-16](../../tasks/backlog/GM-16.md) |
+| GM-07 — Guest identity và secure session | [GM-16](../../tasks/in-progress/GM-16.md) |
 | GM-08 — Dataset quán–món–lịch bán đã kiểm trong coverage | [GM-08](../../tasks/in-progress/GM-08.md) |
 | GM-09 — RLS/quyền RPC nền và retention | [GM-17](../../tasks/backlog/GM-17.md) |
 | GM-10 — Vị trí foreground, coverage và điểm ăn chung | [GM-10](../../tasks/backlog/GM-10.md), [GM-24](../../tasks/backlog/GM-24.md), [GM-25](../../tasks/backlog/GM-25.md) |

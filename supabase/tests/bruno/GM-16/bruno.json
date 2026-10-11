@@ -1,0 +1,6 @@
+{
+  "version": "1",
+  "name": "GM-16 Guest Session Local",
+  "type": "collection",
+  "ignore": ["node_modules", ".git"]
+}

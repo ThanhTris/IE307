@@ -50,6 +50,7 @@ import {
   isSessionUser, isDiscoveryContext, isPreviewFoodPool, isRoomSnapshot,
   arrayOf, isPoolDish, isFriend, isInboxItem, isHistoryItem,
 } from './responseGuards';
+import type { SessionApi } from '../auth/types';
 
 export interface TransportOptions {
   token?: string;
@@ -62,6 +63,8 @@ export interface ApiTransport {
 }
 
 export interface ClientConfig {
+  authSession?: SessionApi;
+  publicKey?: string;
   baseUrl?: string;
   transport?: ApiTransport;
   timeoutMs?: number;
@@ -76,10 +79,12 @@ export interface ClientConfig {
 export class FetchTransport implements ApiTransport {
   private readonly baseUrl: string;
   private readonly fetchFn?: typeof fetch;
+  private readonly publicKey?: string;
 
-  constructor(baseUrl: string, fetchFn?: typeof fetch) {
+  constructor(baseUrl: string, fetchFn?: typeof fetch, publicKey?: string) {
     this.baseUrl = baseUrl.replace(/\/+$/, '');
     this.fetchFn = fetchFn;
+    this.publicKey = publicKey;
   }
 
   getBaseUrl(): string {
@@ -116,6 +121,7 @@ export class FetchTransport implements ApiTransport {
       'Content-Type': 'application/json',
       'Prefer': 'return=representation',
     };
+    if (this.publicKey) headers.apikey = this.publicKey;
 
     if (options?.token) {
       headers.Authorization = `Bearer ${options.token}`;
@@ -165,11 +171,13 @@ export class FetchTransport implements ApiTransport {
 }
 
 export class ApiClientImpl implements ApiClient {
+  private readonly authSession?: SessionApi;
   private transport: ApiTransport;
   private token: string | null = null;
   private defaultTimeoutMs: number;
 
   constructor(config?: ClientConfig) {
+    this.authSession = config?.authSession;
     if (config?.transport) {
       this.transport = config.transport;
     } else {
@@ -177,7 +185,7 @@ export class ApiClientImpl implements ApiClient {
         ? process.env.EXPO_PUBLIC_SUPABASE_URL
         : 'http://127.0.0.1:54321';
       const baseUrl = config?.baseUrl ?? defaultUrl;
-      this.transport = new FetchTransport(baseUrl, config?.fetchFn);
+      this.transport = new FetchTransport(baseUrl, config?.fetchFn, config?.publicKey);
     }
     this.defaultTimeoutMs = config?.defaultTimeoutMs ?? config?.timeoutMs ?? 15000;
     if (config?.initialToken) {
@@ -410,10 +418,22 @@ export class ApiClientImpl implements ApiClient {
   }
 
   private async callRpc<T>(rpcName: string, params: Record<string, unknown>): Promise<T> {
-    return this.transport.invoke<T>(rpcName, params, {
-      token: this.token ?? undefined,
+    const generation = this.authSession?.getGeneration();
+    let token = this.token ?? undefined;
+    if (this.authSession) {
+      const result = await this.authSession.getAccessToken();
+      if (!result.ok) throw { body: result.error };
+      token = result.data;
+      if (generation !== this.authSession.getGeneration()) throw { body: { messageKey: 'AUTH_REQUIRED' } };
+    }
+    const response = await this.transport.invoke<T>(rpcName, params, {
+      token,
       timeoutMs: this.defaultTimeoutMs,
     });
+    if (this.authSession && generation !== this.authSession.getGeneration()) {
+      throw { body: { messageKey: 'AUTH_REQUIRED' } };
+    }
+    return response;
   }
 
   // ==========================================================================
@@ -421,6 +441,7 @@ export class ApiClientImpl implements ApiClient {
   // ==========================================================================
 
   async createGuestSession(req: CreateGuestSessionRequest): Promise<WriteResult<SessionResponse>> {
+    if (this.authSession) return this.authSession.createGuestSession(req);
     const requestId = req.requestId ?? this.generateRequestId();
     try {
       const raw = await this.callRpc<unknown>('create_guest_session', {
@@ -439,6 +460,7 @@ export class ApiClientImpl implements ApiClient {
   }
 
   async restoreSession(token: string): Promise<ReadResult<SessionUser>> {
+    if (this.authSession) return this.authSession.restoreSession(token);
     try {
       const raw = await this.transport.invoke<unknown>('restore_session', {}, { token });
       const norm = this.normalizeReadResponse<SessionUser>(raw, isSessionUser);
@@ -451,6 +473,7 @@ export class ApiClientImpl implements ApiClient {
   }
 
   async logout(customRequestId?: string): Promise<WriteResult<void>> {
+    if (this.authSession) return this.authSession.logout(customRequestId);
     const requestId = customRequestId ?? this.generateRequestId();
     try {
       const raw = await this.callRpc<unknown>('logout', { requestId });

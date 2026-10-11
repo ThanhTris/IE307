@@ -36,7 +36,10 @@ class MemorySource:
             self.contents.pop(old)
             self.files.add(new)
             self.contents[new] = text
-            for tid in ('GM-02', 'GM-03', 'GM-08'):
+            # Normalize every implementation task in this in-memory fixture.
+            # A newly active task on the real Project must not leak its stale
+            # local dependency approvals into tests of the legacy local gate.
+            for tid in sorted(set(validator.task_records(self)) - {'GM-00', 'GM-01'}):
                 current = self.task_path(tid)
                 if current != f'tasks/backlog/{tid}.md':
                     baseline = self.contents.pop(current)

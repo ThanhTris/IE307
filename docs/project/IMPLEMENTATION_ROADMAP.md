@@ -31,7 +31,7 @@ UI component chỉ phụ thuộc UI shell và định nghĩa field cần hiển 
 | [GM-13](../../tasks/backlog/GM-13.md) | UI / screens | UI: kết quả, nơi bán và không đồng thuận theo mẫu | Tuấn / Trang |
 | [GM-14](../../tasks/backlog/GM-14.md) | UI / screens | UI: bạn bè, inbox và lịch sử theo mẫu | Trang / Tuấn |
 | [GM-15](../../tasks/backlog/GM-15.md) | BE / implementation | BE: engine quyết định thuần và fixture chuẩn | Vinh / Trung |
-| [GM-16](../../tasks/backlog/GM-16.md) | BE / implementation | BE: guest auth và session API | Trung / Trí |
+| [GM-16](../../tasks/in-progress/GM-16.md) | BE / implementation | BE: guest auth và session API | Trung / Trí |
 | [GM-17](../../tasks/backlog/GM-17.md) | BE / implementation | BE: RLS, quyền RPC và retention | Trí / Tâm |
 | [GM-18](../../tasks/backlog/GM-18.md) | BE / implementation | BE: API catalogue, coverage và lọc món khả thi | Tâm / Vinh |
 | [GM-19](../../tasks/backlog/GM-19.md) | BE / implementation | BE: API phòng, context, ready và start | Tâm / Trí |

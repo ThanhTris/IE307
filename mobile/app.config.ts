@@ -18,7 +18,7 @@ const config: ExpoConfig = {
       'android.permission.POST_NOTIFICATIONS',
     ],
   },
-  plugins: ['expo-router', 'expo-system-ui'],
+  plugins: ['expo-router', 'expo-system-ui', ['expo-secure-store', { configureAndroidBackup: true }]],
 };
 
 export default config;

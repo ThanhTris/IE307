@@ -1,0 +1,58 @@
+
+> gi-cung-duoc-mobile@0.1.0 check
+> npm run typecheck && npm run lint && npm test && npm run check:architecture
+
+
+> gi-cung-duoc-mobile@0.1.0 typecheck
+> tsc --noEmit
+
+
+> gi-cung-duoc-mobile@0.1.0 lint
+> eslint .
+
+
+C:\Users\ADMIN\.codex\worktrees\b39c\Project\mobile\src\data\api\contracts.ts
+  333:18  warning  Array type using 'Array<T>' is forbidden. Use 'T[]' instead  @typescript-eslint/array-type
+
+C:\Users\ADMIN\.codex\worktrees\b39c\Project\mobile\src\data\api\index.ts
+  10:1  warning  Import in body of module; reorder to top  import/first
+  11:1  warning  Import in body of module; reorder to top  import/first
+  12:1  warning  Import in body of module; reorder to top  import/first
+
+✖ 4 problems (0 errors, 4 warnings)
+  0 errors and 4 warnings potentially fixable with the `--fix` option.
+
+
+> gi-cung-duoc-mobile@0.1.0 test
+> jest --runInBand
+
+PASS tests/unit/apiContract.test.ts (6.882 s)
+PASS tests/unit/apiResponseValidation.test.ts
+PASS tests/unit/apiReadValidation.test.ts
+PASS tests/unit/apiMockIsolation.test.ts
+PASS tests/unit/decisionContract.test.ts
+FAIL tests/component/AppShellScreen.test.tsx (13.306 s)
+  ● shell renders without backend env and clearly states its scope
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      4 | import { NotFoundScreen } from '../../src/features/home/screens/NotFoundScreen';
+      5 |
+    > 6 | test('shell renders without backend env and clearly states its scope', async () => {
+        | ^
+      7 |   await render(<AppShellScreen onOpenFoundation={jest.fn()} />);
+      8 |   expect(screen.getByText(/Chọn một món/)).toBeOnTheScreen();
+      9 |   expect(screen.getByText(/Chưa kết nối API/)).toBeOnTheScreen();
+
+      at Object.test (tests/component/AppShellScreen.test.tsx:6:1)
+
+PASS tests/integration/routes.test.tsx (37.775 s)
+PASS tests/unit/authSession.test.ts
+PASS tests/unit/authTransport.test.ts
+
+Test Suites: 1 failed, 8 passed, 9 total
+Tests:       1 failed, 349 passed, 350 total
+Snapshots:   0 total
+Time:        63.977 s
+Ran all test suites.

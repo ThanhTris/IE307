@@ -1,0 +1,19 @@
+Gi Cung Duoc: documents, links, JSON, task manifest, dependencies and current FR traceability OK.
+Scope: documentation validation only; no native build/backend execution or human approval verified.
+Dependency approval uses live GitHub Project; run task_readiness --task before code/merge. This offline validator does not unlock tasks.
+Task indexes match task metadata.
+warning: in the working copy of 'docs/project/IMPLEMENTATION_ROADMAP.md', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'docs/project/TASK_DEPENDENCIES.md', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'docs/project/TASK_HANDOFFS.md', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'docs/project/TASK_OUTPUT_CHECKLIST.md', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'docs/project/TASK_RENUMBERING.md', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'docs/project/TASK_SUMMARY.md', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'docs/project/TEAM_AND_RESPONSIBILITIES.md', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'docs/specs/TRACEABILITY.md', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'tasks/backlog/GM-15.md', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'tasks/backlog/GM-17.md', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'tasks/backlog/GM-19.md', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'tasks/backlog/GM-22.md', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'tasks/backlog/GM-24.md', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'tasks/backlog/GM-25.md', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'tasks/backlog/MASTER_BACKLOG.md', CRLF will be replaced by LF the next time Git touches it
