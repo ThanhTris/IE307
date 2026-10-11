@@ -1,0 +1,101 @@
+{
+  "state": "Pending",
+  "verified": false,
+  "publicationPerformed": false,
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "venueId": "eeecb47e-54fa-5845-95eb-9fed8b83db56",
+  "branchName": "Nem Nướng Nha Trang Hùng Việt - Hoàng Diệu 2",
+  "observedVenue": {
+    "address": "118 Hoàng Diệu 2, Phường Linh Chiểu, Thành Phố Thủ Đức, Hồ Chí Minh",
+    "lat": 10.856459617614746,
+    "lng": 106.7656021118164,
+    "sourceUrl": "https://food.be.com.vn/ho-chi-minh/nem-nuong-nha-trang-hung-viet-hoang-dieu-2-105890",
+    "fetchedAtUTC": "2026-10-11T04:27:50.957424+00:00",
+    "htmlSha256": "25649d334fff04cce23313467683cb22e47d7f8610e861ac01ebebfcf6b53475",
+    "platformWeeklyHours": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "22:00",
+        "dayOfWeek": [
+          "Sunday"
+        ],
+        "opens": "10:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "22:00",
+        "dayOfWeek": [
+          "Monday"
+        ],
+        "opens": "10:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "22:00",
+        "dayOfWeek": [
+          "Tuesday"
+        ],
+        "opens": "10:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "22:00",
+        "dayOfWeek": [
+          "Wednesday"
+        ],
+        "opens": "10:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "22:00",
+        "dayOfWeek": [
+          "Thursday"
+        ],
+        "opens": "11:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "22:00",
+        "dayOfWeek": [
+          "Friday"
+        ],
+        "opens": "10:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "22:00",
+        "dayOfWeek": [
+          "Saturday"
+        ],
+        "opens": "10:00"
+      }
+    ],
+    "serviceScope": "delivery_platform_listing; physical dine_in/takeaway/availability unknown"
+  },
+  "additionalPublicObservations": [],
+  "offerings": [
+    {
+      "offeringId": "6c74ccbc-f263-53ee-ba87-4d1d389f48d1",
+      "menuItemId": "menu_69b7785601a6f668ac45",
+      "observedMenuName": "Bún thịt nướng",
+      "observedPriceVND": 75000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Món Chính"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/nem-nuong-nha-trang-hung-viet-hoang-dieu-2-105890",
+      "sourceRef": "601eb901-c804-58ac-a21c-08efe786648c",
+      "fetchedAtUTC": "2026-10-11T04:27:50.957424+00:00",
+      "htmlSha256": "25649d334fff04cce23313467683cb22e47d7f8610e861ac01ebebfcf6b53475",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    }
+  ],
+  "confirmedFieldsApplied": false,
+  "independentReviewer": null,
+  "validUntil": null
+}

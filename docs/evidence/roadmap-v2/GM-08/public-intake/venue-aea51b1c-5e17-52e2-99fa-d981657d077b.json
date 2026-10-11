@@ -1,0 +1,121 @@
+{
+  "state": "Pending",
+  "verified": false,
+  "publicationPerformed": false,
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "venueId": "aea51b1c-5e17-52e2-99fa-d981657d077b",
+  "branchName": "Phở & Bún Bò Tươi - Hoàng Diệu 2",
+  "observedVenue": {
+    "address": "127-1 Hoàng Diệu 2, Phường Linh Xuân, Hồ Chí Minh",
+    "lat": 10.855629920959473,
+    "lng": 106.7668228149414,
+    "sourceUrl": "https://food.be.com.vn/ho-chi-minh/pho-bun-bo-tuoi-hoang-dieu-2-137270",
+    "fetchedAtUTC": "2026-10-11T04:27:43.439456+00:00",
+    "htmlSha256": "5b9df8f7831e311e7d9be5fd3103c7d30d1be87ab1eb5b99b93ac909db2d251f",
+    "platformWeeklyHours": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Sunday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Monday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Tuesday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Wednesday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Thursday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Friday"
+        ],
+        "opens": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Saturday"
+        ],
+        "opens": "00:00"
+      }
+    ],
+    "serviceScope": "delivery_platform_listing; physical dine_in/takeaway/availability unknown"
+  },
+  "additionalPublicObservations": [],
+  "offerings": [
+    {
+      "offeringId": "1dc31b4d-77d3-5eae-a69d-3e6702d1cc9e",
+      "menuItemId": "menu_88966dfa8a9163a7a409",
+      "observedMenuName": "Miến gà",
+      "observedPriceVND": 65000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Phở - Bún Bò - Hủ Tiếu - Miến - Mì"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/pho-bun-bo-tuoi-hoang-dieu-2-137270",
+      "sourceRef": "bd7249fc-fec6-55d3-9ba0-3a06cee8a859",
+      "fetchedAtUTC": "2026-10-11T04:27:43.439456+00:00",
+      "htmlSha256": "5b9df8f7831e311e7d9be5fd3103c7d30d1be87ab1eb5b99b93ac909db2d251f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "2fc80c02-21c6-5782-9b61-707f30cc96f0",
+      "menuItemId": "menu_93c677af17d612620a14",
+      "observedMenuName": "Phở gà",
+      "observedPriceVND": 65000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Phở - Bún Bò - Hủ Tiếu - Miến - Mì"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/pho-bun-bo-tuoi-hoang-dieu-2-137270",
+      "sourceRef": "bd7249fc-fec6-55d3-9ba0-3a06cee8a859",
+      "fetchedAtUTC": "2026-10-11T04:27:43.439456+00:00",
+      "htmlSha256": "5b9df8f7831e311e7d9be5fd3103c7d30d1be87ab1eb5b99b93ac909db2d251f",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    }
+  ],
+  "confirmedFieldsApplied": false,
+  "independentReviewer": null,
+  "validUntil": null
+}

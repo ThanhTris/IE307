@@ -1,0 +1,89 @@
+{
+  "task": "GM-08",
+  "contractVersion": "food-v1/roadmap-v2/GM-08.1",
+  "status": "in-progress",
+  "owner": "HoaiTam",
+  "reviewer": "ThanhTris",
+  "reviewDecision": "Pending",
+  "schemaVersion": "0.1.0",
+  "foodContractVersion": "1.1.0",
+  "verifiedDatasetVersion": null,
+  "testedRevision": {
+    "baseCommit": "7060b8825ad72ee9442d8890719f82451d473c33",
+    "mode": "uncommitted working tree; source SHA256 below"
+  },
+  "environment": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "python": "3.13.3",
+    "node": "26.0.0",
+    "postgresVersion": "17.11",
+    "Windows": "Not run",
+    "Linux": "Not run"
+  },
+  "gate": {
+    "authority": "https://github.com/users/ThanhTris/projects/2",
+    "start": "READY_TO_CLAIM before implementation",
+    "merge": "READY_FOR_MERGE_REVIEW",
+    "checkedAtUTC": "2026-10-10T17:48:22.525618+00:00",
+    "baseRef": "origin/main",
+    "baseSha": "7060b8825ad72ee9442d8890719f82451d473c33",
+    "baseFetched": true,
+    "localApprovalFallback": false,
+    "tls": "SSL_CERT_FILE=/etc/ssl/cert.pem; full certificate verification retained"
+  },
+  "checks": {
+    "unit": {
+      "total": 20,
+      "pass": 20
+    },
+    "sql": {
+      "total": 31,
+      "pass": 31,
+      "syntheticDataAndReview": true
+    },
+    "regression": {
+      "total": 486,
+      "pass": 481,
+      "skipped": 5,
+      "fail": 0,
+      "log": "regression.txt"
+    },
+    "node": {
+      "total": 8,
+      "pass": 8
+    },
+    "foundationSQL": {
+      "total": 3,
+      "pass": 3
+    },
+    "httpHealth": {
+      "status": 200,
+      "assertions": "status/name/version/description Pass",
+      "GoTrue": "v2.197.0"
+    },
+    "repositoryValidator": "Pass",
+    "docsFreshness": "Pass",
+    "trackedDiffWhitespace": "Pass",
+    "untrackedTextWhitespace": "Pass",
+    "verifiedDatasetPublish": "Not run",
+    "realOfferingQuery": "Not run"
+  },
+  "cleanup": "process-created database dropped; unrelated containers/data untouched",
+  "sourceSha256": {
+    "supabase/seed/import_food_data.py": "4e59d087bc40c48b3d97ac413b8d6a62dc6839cfa65cf9116c88c6a416d680f2",
+    "scripts/gm08_import_check.py": "8bbf46c999dfef4c2f4c4d3aab10c57f1f22e1e1934c4efe29c2805f66812cfb",
+    "scripts/gm08_prepare_draft.py": "28cdd710bc0ba5eaf764ad5ebf9a8182734fb3f04d44fe58acac5ea3542a153a",
+    "supabase/migrations/0001_core_schema.sql": "6733e28f282f600e627e675dccede3afef1efd37cf4a7cfe8d94af4cd02d30f5",
+    "supabase/migrations/0002_food_import_receipts.sql": "eb80acba1f69bfb68b014a1ab5807e42d65db940a36d201f28db88172157f55e",
+    "tests/test_food_import.py": "d61ed4200a271abc2abb5eeecd8b59df09d6f2dcfff9c7ae45b58e5a8af4be87",
+    "tests/test_repository_validator.py": "f3d95d68bd8041171adcc9f3d9ef14429ccedcb00247a5c0e07d95750e487caa",
+    "supabase/seed/verified/manifest.json": "33349dc48fe02298bc9f86d5affd762ee7f6fa76e200ee1c06a08b57eb3ab582",
+    "docs/evidence/roadmap-v2/GM-08/draft-audit.json": "8fb1da2cd0f11640056f5e771bca73d29608dc34a2c1259900d1aaee65b8fca1"
+  },
+  "limits": [
+    "Real pilot data/rights/hours/coverage and independent dataset review pending",
+    "Receipt migration0002/code pending reviewer; no business schema/0001 changes",
+    "Rollback restores content with monotonic versions; old receipt may need reviewed new version",
+    "No commit/push/GitHub status change/remote database operation performed"
+  ]
+}

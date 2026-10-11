@@ -1,0 +1,15 @@
+{
+  "result": "Pass",
+  "fullRegression": {
+    "tests": 508,
+    "skipped": 0,
+    "evidence": "regression.txt",
+    "sha256": "fa7f6b4fc1df55281dd517341f56cc9b5aa47354e4b4d534668d71409909e31d"
+  },
+  "repositoryValidation": "Pass",
+  "docFreshness": "Pass",
+  "diffCheck": "Pass",
+  "integrityEvidence": "integrity-check.json",
+  "verifiedDataset": false,
+  "publicationPerformed": false
+}

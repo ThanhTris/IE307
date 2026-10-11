@@ -1,0 +1,438 @@
+{
+  "state": "Pending",
+  "verified": false,
+  "publicationPerformed": false,
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "venueId": "e1c4c0d1-9fff-5639-93a7-20893ee73e30",
+  "branchName": "Bánh Mì, Xôi Xíu Mại & Xá Xíu - Đặng Văn Bi",
+  "observedVenue": {
+    "address": "104 Đặng Văn Bi, Phường Thủ Đức, Hồ Chí Minh",
+    "lat": 10.844420433044434,
+    "lng": 106.76219177246094,
+    "sourceUrl": "https://food.be.com.vn/ho-chi-minh/banh-mi-xoi-xiu-mai-xa-xiu-dang-van-bi-120584",
+    "fetchedAtUTC": "2026-10-11T04:27:31.754708+00:00",
+    "htmlSha256": "9b3bc5597de4c69789beada90602ff164f34bb68332aae88e6e85ff92673d063",
+    "platformWeeklyHours": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "10:00",
+        "dayOfWeek": [
+          "Monday"
+        ],
+        "opens": "06:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "10:00",
+        "dayOfWeek": [
+          "Tuesday"
+        ],
+        "opens": "06:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "10:00",
+        "dayOfWeek": [
+          "Wednesday"
+        ],
+        "opens": "06:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "10:00",
+        "dayOfWeek": [
+          "Thursday"
+        ],
+        "opens": "06:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "10:00",
+        "dayOfWeek": [
+          "Friday"
+        ],
+        "opens": "06:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "10:00",
+        "dayOfWeek": [
+          "Saturday"
+        ],
+        "opens": "06:00"
+      }
+    ],
+    "serviceScope": "delivery_platform_listing; physical dine_in/takeaway/availability unknown"
+  },
+  "additionalPublicObservations": [],
+  "offerings": [
+    {
+      "offeringId": "0e5b87a2-e449-5c5d-b096-5dce64942eb4",
+      "menuItemId": "menu_2cf63c6d6bd87952292f",
+      "observedMenuName": "Bánh mì chả cá",
+      "observedPriceVND": 29000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/banh-mi-xoi-xiu-mai-xa-xiu-dang-van-bi-120584",
+      "sourceRef": "cd026318-9480-5df6-a3a9-6fe05474f62c",
+      "fetchedAtUTC": "2026-10-11T04:27:31.754708+00:00",
+      "htmlSha256": "9b3bc5597de4c69789beada90602ff164f34bb68332aae88e6e85ff92673d063",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "1b308bc6-59cc-5ec4-af81-213b44d91d8b",
+      "menuItemId": "menu_3c768f03949d8ec04107",
+      "observedMenuName": "Xôi thập cẩm",
+      "observedPriceVND": 43000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/banh-mi-xoi-xiu-mai-xa-xiu-dang-van-bi-120584",
+      "sourceRef": "cd026318-9480-5df6-a3a9-6fe05474f62c",
+      "fetchedAtUTC": "2026-10-11T04:27:31.754708+00:00",
+      "htmlSha256": "9b3bc5597de4c69789beada90602ff164f34bb68332aae88e6e85ff92673d063",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "1b6da100-b8e4-513a-8f6f-e2a4d1f15555",
+      "menuItemId": "menu_68a2d7913c64e73e0f33",
+      "observedMenuName": "Bánh mì xíu mại",
+      "observedPriceVND": 29000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/banh-mi-xoi-xiu-mai-xa-xiu-dang-van-bi-120584",
+      "sourceRef": "cd026318-9480-5df6-a3a9-6fe05474f62c",
+      "fetchedAtUTC": "2026-10-11T04:27:31.754708+00:00",
+      "htmlSha256": "9b3bc5597de4c69789beada90602ff164f34bb68332aae88e6e85ff92673d063",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "2eb8d98e-d9db-5893-9006-f46506470bde",
+      "menuItemId": "menu_eb37c1ae9cb2febc5595",
+      "observedMenuName": "Bánh mì 2 trứng",
+      "observedPriceVND": 29000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/banh-mi-xoi-xiu-mai-xa-xiu-dang-van-bi-120584",
+      "sourceRef": "cd026318-9480-5df6-a3a9-6fe05474f62c",
+      "fetchedAtUTC": "2026-10-11T04:27:31.754708+00:00",
+      "htmlSha256": "9b3bc5597de4c69789beada90602ff164f34bb68332aae88e6e85ff92673d063",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "42d48967-c067-58be-928c-fb726672a087",
+      "menuItemId": "menu_93899b73a95322812895",
+      "observedMenuName": "Bánh mì chấm đặc biệt",
+      "observedPriceVND": 50000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/banh-mi-xoi-xiu-mai-xa-xiu-dang-van-bi-120584",
+      "sourceRef": "cd026318-9480-5df6-a3a9-6fe05474f62c",
+      "fetchedAtUTC": "2026-10-11T04:27:31.754708+00:00",
+      "htmlSha256": "9b3bc5597de4c69789beada90602ff164f34bb68332aae88e6e85ff92673d063",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "48c01277-23c3-5356-bbd6-283b1c12146a",
+      "menuItemId": "menu_f9c0db4092f5b6de8900",
+      "observedMenuName": "Bánh mì A xíu",
+      "observedPriceVND": 36000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/banh-mi-xoi-xiu-mai-xa-xiu-dang-van-bi-120584",
+      "sourceRef": "cd026318-9480-5df6-a3a9-6fe05474f62c",
+      "fetchedAtUTC": "2026-10-11T04:27:31.754708+00:00",
+      "htmlSha256": "9b3bc5597de4c69789beada90602ff164f34bb68332aae88e6e85ff92673d063",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "5c974aae-8720-5916-bcb9-a52d2dd8d56b",
+      "menuItemId": "menu_5ff0e72ad10181494431",
+      "observedMenuName": "Xôi xá xíu",
+      "observedPriceVND": 36000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/banh-mi-xoi-xiu-mai-xa-xiu-dang-van-bi-120584",
+      "sourceRef": "cd026318-9480-5df6-a3a9-6fe05474f62c",
+      "fetchedAtUTC": "2026-10-11T04:27:31.754708+00:00",
+      "htmlSha256": "9b3bc5597de4c69789beada90602ff164f34bb68332aae88e6e85ff92673d063",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "70746e53-4161-515d-95e3-7c1ec89c7480",
+      "menuItemId": "menu_b3e1acfbbd15c50ba691",
+      "observedMenuName": "Bánh mì thập cẩm",
+      "observedPriceVND": 45000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/banh-mi-xoi-xiu-mai-xa-xiu-dang-van-bi-120584",
+      "sourceRef": "cd026318-9480-5df6-a3a9-6fe05474f62c",
+      "fetchedAtUTC": "2026-10-11T04:27:31.754708+00:00",
+      "htmlSha256": "9b3bc5597de4c69789beada90602ff164f34bb68332aae88e6e85ff92673d063",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "8103e4b0-cb43-5c27-b69c-5799a2d7eb81",
+      "menuItemId": "menu_e8e1abae674db0ae945f",
+      "observedMenuName": "Xôi A xíu",
+      "observedPriceVND": 43000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/banh-mi-xoi-xiu-mai-xa-xiu-dang-van-bi-120584",
+      "sourceRef": "cd026318-9480-5df6-a3a9-6fe05474f62c",
+      "fetchedAtUTC": "2026-10-11T04:27:31.754708+00:00",
+      "htmlSha256": "9b3bc5597de4c69789beada90602ff164f34bb68332aae88e6e85ff92673d063",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "91a1e5ba-3f1c-5b32-b4a4-1d3148f01857",
+      "menuItemId": "menu_58abffbc7f2b8d6a5261",
+      "observedMenuName": "Xôi xíu mại",
+      "observedPriceVND": 36000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/banh-mi-xoi-xiu-mai-xa-xiu-dang-van-bi-120584",
+      "sourceRef": "cd026318-9480-5df6-a3a9-6fe05474f62c",
+      "fetchedAtUTC": "2026-10-11T04:27:31.754708+00:00",
+      "htmlSha256": "9b3bc5597de4c69789beada90602ff164f34bb68332aae88e6e85ff92673d063",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "9507c4f6-d418-5429-8a9a-88643283f55e",
+      "menuItemId": "menu_a5f55b9de72226c5207b",
+      "observedMenuName": "Xôi chả",
+      "observedPriceVND": 29000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/banh-mi-xoi-xiu-mai-xa-xiu-dang-van-bi-120584",
+      "sourceRef": "cd026318-9480-5df6-a3a9-6fe05474f62c",
+      "fetchedAtUTC": "2026-10-11T04:27:31.754708+00:00",
+      "htmlSha256": "9b3bc5597de4c69789beada90602ff164f34bb68332aae88e6e85ff92673d063",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "9c0ea5b4-5239-5b3c-8ec4-7b1f8cff7177",
+      "menuItemId": "menu_faf75d80dc8c7aa7b422",
+      "observedMenuName": "Bánh mì xá xíu",
+      "observedPriceVND": 29000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/banh-mi-xoi-xiu-mai-xa-xiu-dang-van-bi-120584",
+      "sourceRef": "cd026318-9480-5df6-a3a9-6fe05474f62c",
+      "fetchedAtUTC": "2026-10-11T04:27:31.754708+00:00",
+      "htmlSha256": "9b3bc5597de4c69789beada90602ff164f34bb68332aae88e6e85ff92673d063",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "9d775b28-efb3-505e-8bbc-5784e896aca0",
+      "menuItemId": "menu_952e852803be93374319",
+      "observedMenuName": "Bánh mì chả",
+      "observedPriceVND": 29000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/banh-mi-xoi-xiu-mai-xa-xiu-dang-van-bi-120584",
+      "sourceRef": "cd026318-9480-5df6-a3a9-6fe05474f62c",
+      "fetchedAtUTC": "2026-10-11T04:27:31.754708+00:00",
+      "htmlSha256": "9b3bc5597de4c69789beada90602ff164f34bb68332aae88e6e85ff92673d063",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "bb04a635-b53b-57f5-8d47-023a3a1ed578",
+      "menuItemId": "menu_aabe636b97d179594b59",
+      "observedMenuName": "Bánh Mì Thịt Nướng",
+      "observedPriceVND": 45000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/banh-mi-xoi-xiu-mai-xa-xiu-dang-van-bi-120584",
+      "sourceRef": "cd026318-9480-5df6-a3a9-6fe05474f62c",
+      "fetchedAtUTC": "2026-10-11T04:27:31.754708+00:00",
+      "htmlSha256": "9b3bc5597de4c69789beada90602ff164f34bb68332aae88e6e85ff92673d063",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "cab361bd-f6d0-51f1-8f49-7be743905333",
+      "menuItemId": "menu_5689cd84ba37921bbe23",
+      "observedMenuName": "Xôi Thịt nướng",
+      "observedPriceVND": 45000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/banh-mi-xoi-xiu-mai-xa-xiu-dang-van-bi-120584",
+      "sourceRef": "cd026318-9480-5df6-a3a9-6fe05474f62c",
+      "fetchedAtUTC": "2026-10-11T04:27:31.754708+00:00",
+      "htmlSha256": "9b3bc5597de4c69789beada90602ff164f34bb68332aae88e6e85ff92673d063",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "cbad9a92-0aea-5237-a590-7e0ed443977a",
+      "menuItemId": "menu_590f0f5edde6d0347d3e",
+      "observedMenuName": "Bánh mì phô mai lát",
+      "observedPriceVND": 29000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/banh-mi-xoi-xiu-mai-xa-xiu-dang-van-bi-120584",
+      "sourceRef": "cd026318-9480-5df6-a3a9-6fe05474f62c",
+      "fetchedAtUTC": "2026-10-11T04:27:31.754708+00:00",
+      "htmlSha256": "9b3bc5597de4c69789beada90602ff164f34bb68332aae88e6e85ff92673d063",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "d3c44e20-eb6a-5512-bc63-fd51f328e891",
+      "menuItemId": "menu_328db74816c52c8178bc",
+      "observedMenuName": "Bánh mì chấm",
+      "observedPriceVND": 45000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/banh-mi-xoi-xiu-mai-xa-xiu-dang-van-bi-120584",
+      "sourceRef": "cd026318-9480-5df6-a3a9-6fe05474f62c",
+      "fetchedAtUTC": "2026-10-11T04:27:31.754708+00:00",
+      "htmlSha256": "9b3bc5597de4c69789beada90602ff164f34bb68332aae88e6e85ff92673d063",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "f5359c9f-7f63-5c68-99bc-4771ba4ad7e0",
+      "menuItemId": "menu_78afa09cec806e769bd2",
+      "observedMenuName": "Bánh mì 1 trứng",
+      "observedPriceVND": 22000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/banh-mi-xoi-xiu-mai-xa-xiu-dang-van-bi-120584",
+      "sourceRef": "cd026318-9480-5df6-a3a9-6fe05474f62c",
+      "fetchedAtUTC": "2026-10-11T04:27:31.754708+00:00",
+      "htmlSha256": "9b3bc5597de4c69789beada90602ff164f34bb68332aae88e6e85ff92673d063",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    }
+  ],
+  "confirmedFieldsApplied": false,
+  "independentReviewer": null,
+  "validUntil": null
+}

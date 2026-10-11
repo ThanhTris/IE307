@@ -1,0 +1,32 @@
+{
+  "state": "Pending",
+  "verified": false,
+  "publicationPerformed": false,
+  "observedOn": "2026-10-11",
+  "primarySourceChecks": [
+    {
+      "venueId": "265904b9-2d5e-5bdf-88cc-2ee59fe262dd",
+      "source": "https://help.jollibee.com.vn/hc/vi/articles/14378093877775-Danh-s%C3%A1ch-c%E1%BB%ADa-h%C3%A0ng",
+      "sourceUpdatedOn": "2026-09-22",
+      "branchCode": "JBVN256",
+      "opens": "09:00",
+      "closes": "22:00",
+      "comparison": "Platform snapshot opens08:30/closes22:00. Official list opens09:00. Physical venue hours vs platform hours need separate confirmation. No explicit seven-day offering schedule provided.",
+      "resolution": "Pending; source not applied to bundle"
+    }
+  ],
+  "rightsChecks": [
+    {
+      "source": "https://jollibee.com.vn/chinh-sach-va-quy-dinh-chung",
+      "method": "Primary-site search result; cached crawl about3months old, not a new direct capture",
+      "sections": [
+        5,
+        10
+      ],
+      "finding": "Source terms restrict copying/sharing and require written consent for reproduction. No project permission evidence obtained.",
+      "decision": "Pending"
+    }
+  ],
+  "branchIdentityWarning": "Texas13-13/1 and352-354 Vo Van Ngan are different addresses; never copy service/hours across them",
+  "imagePolicy": "No image binaries collected; artwork null; image URLs/metadata do not grant usage rights"
+}

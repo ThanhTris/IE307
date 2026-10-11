@@ -1,0 +1,118 @@
+{
+  "blockers": [
+    "Fresh pilot21branches/18dishes/190offerings/154platform venue schedule rows remains draft",
+    "Offering schedules/service modes, physical-venue hour conflicts, admin IDs/coverage/anchors need survey and independent review",
+    "Source usage rights/freshness policy/validUntil and independent review missing",
+    "No verified dataset publication/query; no artwork rights or live-stock assertion"
+  ],
+  "bundleSha256": null,
+  "catalogueDraft": {
+    "bundleSha256": "82bbbcef3eddbb72415aa908359f07c0cd41db3106b7baf315ea6e8bfdfd309d",
+    "datasetVersion": "0.2.0",
+    "rowCounts": {
+      "availabilityOverrides": 0,
+      "coverageAreas": 0,
+      "dataSources": 27,
+      "datasetVersions": 1,
+      "dateExceptions": 0,
+      "dishes": 39,
+      "publicAnchors": 0,
+      "taxonomy": 18,
+      "venueDishes": 0,
+      "venues": 0,
+      "weeklySchedules": 0
+    },
+    "sourcePath": "data-preparation/snapshots/editorial-v0.2.0/catalogue.json",
+    "sourceSha256": "cfaff47b0c65833983fe8de748428f25d26d7e1d49c539a5d1045676a08b9e90"
+  },
+  "contractVersion": "food-v1/roadmap-v2/GM-08.1",
+  "coverageIds": [],
+  "datasetVersion": null,
+  "draftCandidate": {
+    "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+    "captureManifest": "supabase/seed/draft/gm08-survey-v0.4.1/capture-manifest.json",
+    "coverageIds": [],
+    "datasetVersion": "0.4.1",
+    "pilotTarget": {
+      "dishes": "15–20",
+      "quotaMet": true,
+      "venues": "20–30"
+    },
+    "publicationPerformed": false,
+    "rowCounts": {
+      "availabilityOverrides": 0,
+      "coverageAreas": 0,
+      "dataSources": 27,
+      "datasetVersions": 1,
+      "dateExceptions": 0,
+      "dishes": 18,
+      "publicAnchors": 0,
+      "taxonomy": 18,
+      "venueDishes": 190,
+      "venues": 21,
+      "weeklySchedules": 154
+    },
+    "sourceFiles": {
+      "data-preparation/snapshots/editorial-v0.2.0/catalogue.json": "cfaff47b0c65833983fe8de748428f25d26d7e1d49c539a5d1045676a08b9e90",
+      "data-preparation/snapshots/editorial-v0.2.0/price_references.csv": "2bac7da6f7a5a9e61fa28bdcd2c45ea5cf332c605735515edf0e7fd290dc416f",
+      "data-preparation/snapshots/thu_duc_base_dishes.csv": "d992deda724e7dc8f600443b68354ceae20a24216795a35cd0f615113e881e97"
+    },
+    "sourcePath": "supabase/seed/draft/gm08-survey-v0.4.1/bundle.json",
+    "sourceSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+    "state": "fresh_survey_draft",
+    "surveyWorksheet": "supabase/seed/draft/gm08-survey-v0.4.1/survey-input-template.json",
+    "timezones": [
+      "Asia/Ho_Chi_Minh"
+    ],
+    "verified": false
+  },
+  "evidence": "supabase/seed/draft/gm08-survey-v0.4.1/audit.json",
+  "fixtureOnly": false,
+  "foodContractVersion": "1.1.0",
+  "historicalSurveyDraft": {
+    "bundleSha256": "838c426987eda765e560e0909022f8870e2545941bf9965a65b552830e57045c",
+    "datasetVersion": "0.3.0",
+    "publicationPerformed": false,
+    "rowCounts": {
+      "availabilityOverrides": 0,
+      "coverageAreas": 0,
+      "dataSources": 27,
+      "datasetVersions": 1,
+      "dateExceptions": 0,
+      "dishes": 39,
+      "publicAnchors": 0,
+      "taxonomy": 18,
+      "venueDishes": 247,
+      "venues": 21,
+      "weeklySchedules": 154
+    },
+    "sourceFiles": {
+      "data-preparation/snapshots/editorial-v0.2.0/catalogue.json": "cfaff47b0c65833983fe8de748428f25d26d7e1d49c539a5d1045676a08b9e90",
+      "data-preparation/snapshots/editorial-v0.2.0/price_references.csv": "2bac7da6f7a5a9e61fa28bdcd2c45ea5cf332c605735515edf0e7fd290dc416f",
+      "data-preparation/snapshots/thu_duc_base_dishes.csv": "d992deda724e7dc8f600443b68354ceae20a24216795a35cd0f615113e881e97"
+    },
+    "sourcePath": "supabase/seed/draft/gm08-survey-v0.3.0/bundle.json",
+    "state": "survey_draft",
+    "verified": false
+  },
+  "note": "Status manifest only; no verified bundle published. Draft counts are not verified coverage.",
+  "owner": "HoaiTam",
+  "publicationPerformed": false,
+  "reviewer": "ThanhTris",
+  "schemaVersion": "0.1.0",
+  "state": "awaiting_independent_dataset_verification",
+  "timezones": [],
+  "verifiedRowCounts": {
+    "availabilityOverrides": 0,
+    "coverageAreas": 0,
+    "dataSources": 0,
+    "datasetVersions": 0,
+    "dateExceptions": 0,
+    "dishes": 0,
+    "publicAnchors": 0,
+    "taxonomy": 0,
+    "venueDishes": 0,
+    "venues": 0,
+    "weeklySchedules": 0
+  }
+}

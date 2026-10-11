@@ -1,0 +1,544 @@
+{
+  "artifactHashes": {
+    "scripts/gm08_real_bundle_check.py": "53d5adc06ca9456d9e9ce33c3ba9884bfe1a95b31c8a32429bab1ca592992a9a",
+    "supabase/migrations/0001_core_schema.sql": "6733e28f282f600e627e675dccede3afef1efd37cf4a7cfe8d94af4cd02d30f5",
+    "supabase/migrations/0002_food_import_receipts.sql": "eb80acba1f69bfb68b014a1ab5807e42d65db940a36d201f28db88172157f55e",
+    "supabase/migrations/0003_food_provenance_description.sql": "8972c1dfa5e07a2350e644a7e79ea36cc7f9208e0a89371cbe1bdfdb52d6cb16",
+    "supabase/seed/import_food_data.py": "03da1971b502b26a87ebaee0936d718bc415e26f297731d4fd9bd698fab00edc"
+  },
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "caseCount": 44,
+  "cases": [
+    {
+      "actual": true,
+      "case": "fresh test DB has no food/group rows",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "reproduce original description shape rejection",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "failed original load rolls back every row",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": "keep unrelated data",
+      "case": "upgrade preserves unrelated row",
+      "expected": "keep unrelated data",
+      "result": "Pass"
+    },
+    {
+      "actual": "11",
+      "case": "all eleven provenance checks include description",
+      "expected": "11",
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "successful draft load can transactionally ROLLBACK",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "exact typed roundtrip: schedule_groups",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": 21,
+      "case": "row count: schedule_groups",
+      "expected": 21,
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "exact typed roundtrip: data_sources",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": 27,
+      "case": "row count: data_sources",
+      "expected": 27,
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "exact typed roundtrip: taxonomy",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": 18,
+      "case": "row count: taxonomy",
+      "expected": 18,
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "exact typed roundtrip: dataset_versions",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": 1,
+      "case": "row count: dataset_versions",
+      "expected": 1,
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "exact typed roundtrip: coverage_areas",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": 0,
+      "case": "row count: coverage_areas",
+      "expected": 0,
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "exact typed roundtrip: dishes",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": 18,
+      "case": "row count: dishes",
+      "expected": 18,
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "exact typed roundtrip: venues",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": 21,
+      "case": "row count: venues",
+      "expected": 21,
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "exact typed roundtrip: venue_dishes",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": 190,
+      "case": "row count: venue_dishes",
+      "expected": 190,
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "exact typed roundtrip: weekly_schedules",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": 154,
+      "case": "row count: weekly_schedules",
+      "expected": 154,
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "exact typed roundtrip: date_exceptions",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": 0,
+      "case": "row count: date_exceptions",
+      "expected": 0,
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "exact typed roundtrip: availability_overrides",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": 0,
+      "case": "row count: availability_overrides",
+      "expected": 0,
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "exact typed roundtrip: public_anchors",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": 0,
+      "case": "row count: public_anchors",
+      "expected": 0,
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "all loaded rows remain draft and nonfixture",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": 190,
+      "case": "query joins every actual venue-dish offering",
+      "expected": 190,
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "unknown offering hours/service mode stay null",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": "0",
+      "case": "draft does not create a publish receipt",
+      "expected": "0",
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "committed reimport has identical rows, keys and versions",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "invalid description UUID rejected",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "null description source rejected",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "dangling description source FK rejected",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "unknown provenance key still rejected",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "rejected provenance changes leave actual bundle intact",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "committed dataset rollback restores empty baseline",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": true,
+      "case": "dataset rollback retry is idempotent",
+      "expected": true,
+      "result": "Pass"
+    },
+    {
+      "actual": [
+        "keep unrelated data",
+        "0"
+      ],
+      "case": "rollback preserves unrelated row and real auth baseline",
+      "expected": [
+        "keep unrelated data",
+        "0"
+      ],
+      "result": "Pass"
+    },
+    {
+      "actual": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+      "case": "input bytes are unchanged",
+      "expected": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+      "result": "Pass"
+    }
+  ],
+  "checkedAt": "2026-10-11T06:09:59.552834Z",
+  "cleanup": "process-created database dropped",
+  "dataMode": "Unchanged real draft bundle; no fabricated review or facts",
+  "databaseMode": "process-created isolated database; real Supabase auth.users DDL",
+  "datasetVersion": "0.4.1",
+  "fixtureOnly": false,
+  "foodContractVersion": "1.1.0",
+  "inputPath": "/Users/hoaitam/Desktop/Learn/23521394/HK1-Nam-4/IE307/ThanhTris-IE307/supabase/seed/draft/gm08-survey-v0.4.1/bundle.json",
+  "nullCounts": {
+    "availability_overrides": {
+      "checked_at": 0,
+      "entered_by": 0,
+      "expires_at": 0,
+      "field_sources": 0,
+      "fixture_only": 0,
+      "id": 0,
+      "observed_at": 0,
+      "offering_id": 0,
+      "review_status": 0,
+      "reviewed_by": 0,
+      "source": 0,
+      "source_ref": 0,
+      "state": 0,
+      "valid_until": 0,
+      "version": 0
+    },
+    "coverage_areas": {
+      "area_id": 0,
+      "boundary": 0,
+      "checked_at": 0,
+      "dataset_version": 0,
+      "entered_by": 0,
+      "field_sources": 0,
+      "fixture_only": 0,
+      "name": 0,
+      "review_status": 0,
+      "reviewed_by": 0,
+      "source_ref": 0,
+      "valid_until": 0,
+      "version": 0
+    },
+    "data_sources": {
+      "attribution": 24,
+      "checked_at": 0,
+      "entered_by": 0,
+      "field_sources": 0,
+      "fixture_only": 0,
+      "license": 24,
+      "locator": 0,
+      "review_status": 0,
+      "reviewed_by": 27,
+      "source_ref": 0,
+      "status": 0,
+      "usage_rights": 0,
+      "valid_until": 27,
+      "version": 0
+    },
+    "dataset_versions": {
+      "artifact_locator": 0,
+      "checked_at": 0,
+      "checksum": 1,
+      "contract_version": 0,
+      "dataset_version": 0,
+      "entered_by": 0,
+      "field_sources": 0,
+      "fixture_only": 0,
+      "id": 0,
+      "previous_version_id": 1,
+      "quality_report": 0,
+      "review_status": 0,
+      "reviewed_by": 1,
+      "rollback_locator": 0,
+      "source_ref": 0,
+      "status": 0,
+      "valid_until": 1,
+      "version": 0
+    },
+    "date_exceptions": {
+      "checked_at": 0,
+      "entered_by": 0,
+      "field_sources": 0,
+      "fixture_only": 0,
+      "id": 0,
+      "intervals": 0,
+      "last_order": 0,
+      "last_order_day_offset": 0,
+      "local_date": 0,
+      "review_status": 0,
+      "reviewed_by": 0,
+      "schedule_id": 0,
+      "source_ref": 0,
+      "status": 0,
+      "valid_until": 0,
+      "version": 0
+    },
+    "dishes": {
+      "aliases": 0,
+      "artwork": 18,
+      "category_ids": 0,
+      "checked_at": 0,
+      "classification_status": 0,
+      "cuisine_ids": 0,
+      "description": 0,
+      "entered_by": 0,
+      "field_sources": 0,
+      "fixture_only": 0,
+      "flavor": 18,
+      "id": 0,
+      "ingredient_tags": 18,
+      "meal_slots": 0,
+      "name": 0,
+      "origin": 0,
+      "review_status": 0,
+      "reviewed_by": 18,
+      "source_dish_ids": 0,
+      "source_ref": 0,
+      "status": 0,
+      "temperature": 0,
+      "time_hints": 0,
+      "valid_until": 18,
+      "version": 0
+    },
+    "public_anchors": {
+      "anchor_id": 0,
+      "checked_at": 0,
+      "coverage_id": 0,
+      "entered_by": 0,
+      "field_sources": 0,
+      "fixture_only": 0,
+      "is_public": 0,
+      "lat": 0,
+      "lng": 0,
+      "name": 0,
+      "review_status": 0,
+      "reviewed_by": 0,
+      "source_ref": 0,
+      "valid_until": 0,
+      "version": 0
+    },
+    "schedule_groups": {
+      "fixture_only": 0,
+      "owner_id": 0,
+      "owner_type": 0,
+      "review_status": 0,
+      "schedule_id": 0,
+      "timezone": 0,
+      "version": 0
+    },
+    "taxonomy": {
+      "checked_at": 0,
+      "code": 0,
+      "description": 18,
+      "entered_by": 0,
+      "field_sources": 0,
+      "fixture_only": 0,
+      "id": 0,
+      "label": 0,
+      "origin": 18,
+      "review_status": 0,
+      "reviewed_by": 18,
+      "source_ref": 0,
+      "status": 0,
+      "type": 0,
+      "valid_until": 18,
+      "version": 0
+    },
+    "venue_dishes": {
+      "artwork": 190,
+      "checked_at": 0,
+      "currency": 0,
+      "dish_id": 0,
+      "entered_by": 0,
+      "field_sources": 0,
+      "fixture_only": 0,
+      "menu_name": 0,
+      "menu_source": 0,
+      "offering_id": 0,
+      "price_max": 0,
+      "price_min": 0,
+      "profile_overrides": 190,
+      "review_status": 0,
+      "reviewed_by": 190,
+      "schedule_id": 190,
+      "service_mode": 190,
+      "serving_size": 190,
+      "source_ref": 0,
+      "status": 0,
+      "unit": 0,
+      "valid_until": 190,
+      "variant": 0,
+      "venue_id": 0,
+      "version": 0
+    },
+    "venues": {
+      "address": 0,
+      "admin_area_id": 21,
+      "branch_name": 0,
+      "checked_at": 0,
+      "entered_by": 0,
+      "field_sources": 0,
+      "fixture_only": 0,
+      "id": 0,
+      "lat": 0,
+      "lng": 0,
+      "review_status": 0,
+      "reviewed_by": 21,
+      "schedule_id": 0,
+      "service_modes": 0,
+      "source_ref": 0,
+      "status": 0,
+      "timezone": 0,
+      "valid_until": 21,
+      "version": 0
+    },
+    "weekly_schedules": {
+      "checked_at": 0,
+      "day_of_week": 0,
+      "end_day_offset": 1,
+      "end_time": 1,
+      "entered_by": 0,
+      "field_sources": 0,
+      "fixture_only": 0,
+      "id": 0,
+      "is24_hours": 0,
+      "last_order": 154,
+      "last_order_day_offset": 154,
+      "owner_id": 0,
+      "owner_type": 0,
+      "review_status": 0,
+      "reviewed_by": 154,
+      "schedule_id": 0,
+      "source_ref": 0,
+      "start_time": 1,
+      "status": 0,
+      "timezone": 0,
+      "valid_until": 154,
+      "version": 0
+    }
+  },
+  "postgresVersion": "17.11",
+  "publicationPerformed": false,
+  "readbackPath": "/Users/hoaitam/Desktop/Learn/23521394/HK1-Nam-4/IE307/ThanhTris-IE307/docs/evidence/roadmap-v2/GM-08/real-db/readback.json",
+  "readbackSha256": "0ae8e113281fffd164a5bbf1780a8f7742bd422f95fbcdcc9f3512b3d084e334",
+  "result": "Pass",
+  "rowCounts": {
+    "availabilityOverrides": 0,
+    "coverageAreas": 0,
+    "dataSources": 27,
+    "datasetVersions": 1,
+    "dateExceptions": 0,
+    "dishes": 18,
+    "publicAnchors": 0,
+    "taxonomy": 18,
+    "venueDishes": 190,
+    "venues": 21,
+    "weeklySchedules": 154
+  },
+  "scheduleGroups": 21,
+  "schemaVersion": "0.1.0",
+  "startedAt": "2026-10-11T06:09:02.120368Z",
+  "verifiedDatasetPublished": false
+}

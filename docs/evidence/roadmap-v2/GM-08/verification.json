@@ -1,0 +1,463 @@
+{
+  "checks": {
+    "changedTextWhitespace": "Pass: tracked/new UTF-8 files LF/final newline/no trailing whitespace; cp1252 failure log normalized with raw capture hash",
+    "ciSql": {
+      "artifactHashesMatchCurrentSource": true,
+      "pass": 31,
+      "report": "ci-1021560-sql-results.json",
+      "syntheticDataAndReview": true,
+      "total": 31
+    },
+    "cp1252Unit": {
+      "coverageReasonInvalidSubcases": 12,
+      "filesystemEncoding": "ascii",
+      "log": "cp1252-unit-results.txt",
+      "pass": 28,
+      "platform": "real Linux arm64 Docker",
+      "queryDbBoundary": "mock only",
+      "realPilotClaim": false,
+      "stdoutEncoding": "cp1252",
+      "total": 28,
+      "utf8Mode": 0
+    },
+    "currentDocumentationFollowup": {
+      "checkedAtUTC": "2026-10-11T02:41:59.792041+00:00",
+      "docsFreshness": {
+        "report": "data-intake-docs-freshness.txt",
+        "result": "Pass"
+      },
+      "regression": {
+        "fail": 0,
+        "pass": 489,
+        "report": "data-intake-regression.txt",
+        "skipped": 5,
+        "total": 494
+      },
+      "repositoryValidator": {
+        "report": "data-intake-repository-check.txt",
+        "result": "Pass"
+      },
+      "startDependencyGate": {
+        "checkedAtUTC": "2026-10-11T02:41:20.710381+00:00",
+        "localFallback": false,
+        "report": "data-intake-start-gate.txt",
+        "result": "IN_PROGRESS"
+      },
+      "whitespace": "Pass; tracked diff and new UTF-8 files checked"
+    },
+    "docsFreshness": "Pass",
+    "fieldContractCases": {
+      "fixtureOnly": true,
+      "pass": 166,
+      "report": "field-contract-case-results.json",
+      "total": 166
+    },
+    "foundationSQL": {
+      "baselineCommit": "b59d6107953f40a4b5afa2aa46b875bfae4f77c6",
+      "executionThisRepair": false,
+      "pass": 3,
+      "total": 3,
+      "unchangedBaselineEvidence": "baseline-b59d610/verification.json"
+    },
+    "freshCapture": {
+      "candidateMenuItems": 252,
+      "captureManifest": "supabase/seed/draft/gm08-survey-v0.4.1/capture-manifest.json",
+      "excludedMenuItems": 189,
+      "freshnessApproval": false,
+      "log": "fresh-crawl.txt",
+      "mappedHistoricalMenuItems": 247,
+      "needsReviewMenuItems": 253,
+      "rawCache": "data-preparation/datasets/gm08-capture-20261011/",
+      "rawMenuItems": 694,
+      "sourcesCaptured": 27,
+      "sourcesNeedingRender": 4,
+      "sourcesWithMenu": 23,
+      "state": "Pass"
+    },
+    "freshLinuxCp1252": {
+      "coverage": "Importer28 +survey11 +notebook21 before additional UTF8 CLI regression test",
+      "fail": 0,
+      "log": "fresh-linux-cp1252.txt",
+      "pass": 54,
+      "platform": "Real Linux arm64 Python3.13.3-slim, locale C/filesystem ASCII/stdout cp1252/UTF8 mode0",
+      "skipped": 6,
+      "skippedReason": "5 lxml parser +1 pandas export tests; all covered by macOS full508 suite",
+      "total": 60
+    },
+    "freshLinuxRunner": {
+      "coverage": "Current notebook tests including UTF8 CLI output/isolation; lxml/pandas absent in container",
+      "fail": 0,
+      "log": "fresh-linux-runner.txt",
+      "pass": 16,
+      "skipped": 6,
+      "total": 22
+    },
+    "freshPilot": {
+      "pendingReviewReject": "fresh-publish-guard.json",
+      "publicationPerformed": false,
+      "publishBlockerCount": 1735,
+      "publishBlockersByCode": {
+        "COVERAGE": 23,
+        "HOURS": 208,
+        "PROVENANCE": 191,
+        "REVIEW": 429,
+        "RIGHTS": 24,
+        "SOURCE": 2,
+        "STALE": 429,
+        "UNREVIEWED": 429
+      },
+      "quotaMet": true,
+      "rowCounts": {
+        "availabilityOverrides": 0,
+        "coverageAreas": 0,
+        "dataSources": 27,
+        "datasetVersions": 1,
+        "dateExceptions": 0,
+        "dishes": 18,
+        "publicAnchors": 0,
+        "taxonomy": 18,
+        "venueDishes": 190,
+        "venues": 21,
+        "weeklySchedules": 154
+      },
+      "staging": "fresh-staging-result.json",
+      "state": "Pass for validate/stage only",
+      "verified": false,
+      "worksheet": "supabase/seed/draft/gm08-survey-v0.4.1/survey-input-template.json"
+    },
+    "httpHealth": {
+      "GoTrue": "v2.197.0",
+      "assertions": "status/name/version/description Pass",
+      "baselineCommit": "b59d6107953f40a4b5afa2aa46b875bfae4f77c6",
+      "executionThisRepair": false,
+      "status": 200,
+      "unchangedBaselineEvidence": "baseline-b59d610/verification.json"
+    },
+    "linuxBeforeRepair": {
+      "baselineCommit": "b59d6107953f40a4b5afa2aa46b875bfae4f77c6",
+      "errors": 4,
+      "log": "baseline-b59d610/linux-ascii-before.txt",
+      "result": "Fail",
+      "total": 28
+    },
+    "linuxDefaultUnit": {
+      "log": "linux-default-unit-results.txt",
+      "pass": 28,
+      "total": 28
+    },
+    "node": {
+      "baselineCommit": "b59d6107953f40a4b5afa2aa46b875bfae4f77c6",
+      "executionThisRepair": false,
+      "pass": 8,
+      "total": 8,
+      "unchangedBaselineEvidence": "baseline-b59d610/verification.json"
+    },
+    "realOfferingQuery": "Not run",
+    "regression": {
+      "coverage": "Current source, full repository test suite",
+      "fail": 0,
+      "log": "fresh-regression.txt",
+      "pass": 508,
+      "platform": "macOS bundled Python3.13.3 with pandas2.2.3/lxml6.1.1",
+      "skipped": 0,
+      "total": 508
+    },
+    "repositoryValidator": "Pass",
+    "sql": {
+      "attempts": [
+        "First attempt overlapped local Supabase startup/resource load: DB_ERROR 55P03 lock timeout; process-created database cleaned",
+        "After backend:start completed and services healthy: 31/31 Pass"
+      ],
+      "coverage": "Existing local/CI proofs for unchanged importer/schema; not evidence of real survey dataset publish/query",
+      "executionThisSurveyFollowup": false,
+      "log": "sql-results.json",
+      "pass": 31,
+      "rerunForCurrentSourceHashes": true,
+      "syntheticDataAndReview": true,
+      "total": 31
+    },
+    "surveyAdapter": {
+      "fixtureOnly": false,
+      "log": "survey-unit-results.txt",
+      "meaning": "Tests real frozen observations plus synthetic negative cases; no independent dataset approval",
+      "pass": 7,
+      "total": 7
+    },
+    "surveyFollowupRegression": {
+      "checkedAtUTC": "2026-10-11T04:18:33.337059+00:00",
+      "docsFreshness": "survey-docs-freshness.txt",
+      "regression": "survey-regression.txt",
+      "repositoryValidator": "survey-repository-check.txt",
+      "result": "Pass",
+      "whitespace": "Pass",
+      "workflowYaml": "Pass Ruby YAML parse; new survey unit command added, remote CI not run"
+    },
+    "surveyLinuxUnit": {
+      "environment": {
+        "LC_ALL": "C",
+        "PYTHONCOERCECLOCALE": "0",
+        "PYTHONIOENCODING": "cp1252",
+        "PYTHONUTF8": "0"
+      },
+      "image": "python:3.13.3-slim",
+      "isolation": "Container --rm, image --pull never, no network, readonly filesystem/repo, tmpfs only; no Docker socket mounted or DB calls",
+      "log": "survey-linux-unit-results.txt",
+      "pass": 7,
+      "total": 7
+    },
+    "surveyStage": {
+      "bundleSha256": "838c426987eda765e560e0909022f8870e2545941bf9965a65b552830e57045c",
+      "datasetVersion": "0.3.0",
+      "publicationPerformed": false,
+      "report": "survey-staging-result.json",
+      "result": "Pass draft only",
+      "reviewDecision": "Pending",
+      "reviewTemplate": "survey-review-template.json"
+    },
+    "trackedDiffWhitespace": "Pass",
+    "unit": {
+      "log": "unit-results.txt",
+      "pass": 28,
+      "platform": "macOS",
+      "total": 28
+    },
+    "verifiedDatasetPublish": "Not run",
+    "workflowYaml": "Pass: original local YAML parse; current head1021560 encoding and disposable SQL jobs SUCCESS"
+  },
+  "ci": {
+    "artifact": "gm08-sql-results-linux",
+    "baselineDocsRun": "https://github.com/ThanhTris/IE307/actions/runs/38073939317",
+    "baselineDocuments": "FAILURE:494 tests,3 failures,1 error,6 skipped; https://github.com/ThanhTris/IE307/actions/runs/38102929498/job/114362427294",
+    "baselineEncoding": "FAILURE:28 tests,4 errors; https://github.com/ThanhTris/IE307/actions/runs/38102929443/job/114362427281",
+    "baselineGm06Run": "https://github.com/ThanhTris/IE307/actions/runs/38073939190",
+    "baselineGm08Sql": "SUCCESS; https://github.com/ThanhTris/IE307/actions/runs/38102929443/job/114362427310",
+    "baselineReviewReportedRegression": "486 tests, 6 skipped on CI; applies baseline only, not repair",
+    "checksReport": "ci-1021560-checks.json",
+    "currentBaselineCommit": "1021560ce336db84509c1e05f7507937d7cc5a69",
+    "documentationFollowup": "Not run until commit/push",
+    "gm06SqlIsNotGm08Evidence": true,
+    "jobs": [
+      "cp1252 subprocess unit regression on Linux ASCII filesystem",
+      "real GM-08 SQL in process-created disposable database on Linux"
+    ],
+    "repairExecution": "SUCCESS: all 12 head1021560 PR checks, including both encoding, validate and GM-08 SQL jobs",
+    "sqlReport": "ci-1021560-sql-results.json",
+    "surveyFollowup": "Not run until commit/push; head1021560 report only covers committed tooling",
+    "workflow": ".github/workflows/gm08-import.yml",
+    "workflowUrl": "https://github.com/ThanhTris/IE307/actions/workflows/gm08-import.yml"
+  },
+  "cleanup": "Both SQL test databases cleaned, final pg_database gm08_check count=0; auth.users/rooms/venues/dataset_versions counts each 0; own Supabase stopped with backup=true, volumes preserved; --rm unit containers exited; unrelated project untouched; Fresh survey work accessed no DB; new --rm Linux containers exited; isolated raw capture intentionally preserved in ignored directory",
+  "contractVersion": "food-v1/roadmap-v2/GM-08.1",
+  "dataIntakeFollowup": "data-intake-followup.json",
+  "environment": {
+    "Linux": "Pass: original local Python3.13.3/arm64 unit runs plus current head1021560 Linux CI encoding and SQL; CI SQL report downloaded and source hashes verified",
+    "Windows": "Not run for current repair",
+    "encodingProbe": "Linux filesystem ASCII + stdout cp1252 + UTF8 mode0; launch path/probes ASCII, JSON Unicode retained",
+    "linuxEvidence": "linux-runtime.json",
+    "node": "26.0.0",
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "postgresVersion": "17.11",
+    "python": "3.13.3"
+  },
+  "evidenceSha256": {
+    "ci-1021560-checks.json": "01e2f18b4d91882e97ff55670930569251819c76633383b1d53744471cdc5839",
+    "ci-1021560-sql-results.json": "c23aa96a2e0b48948d05a47d7ef3541b067ca1beb2b2b073e44716f72cc7e1e5",
+    "cp1252-unit-results.txt": "748ab851901d0944144f41d984a63f9bb2167d319868024667eabf73f6afd79b",
+    "data-intake-docs-freshness.txt": "234e22deda2572ad8d8420bfa25a7cea614925c4fa044041d60412051aec8327",
+    "data-intake-followup.json": "300e8c329d6cd95362303af5197db467abd83920efac56d20aba3a383a150839",
+    "data-intake-regression.txt": "3eeb934da6e1da4ef3874b8f00bcff7b05b9151c66f68b47db1e19874ac21629",
+    "data-intake-repository-check.txt": "bafde887d56a88dbd066df4e7f6ddd50cdc3b6ff4526f7f4a192620fb81637aa",
+    "data-intake-start-gate.txt": "c3743439051c71feaff348e896cf722f61704bc65057b7df947080194a920979",
+    "field-contract-case-results.json": "b888ae1061f8ac60a2fcd10671070aa1bb2a2705c8fcd3fc361824de4ca7aa1f",
+    "fresh-crawl.txt": "445982454cfecf4503ec86d22245185ae54711f7ccfefd21bf713534c7a79612",
+    "fresh-docs-freshness.txt": "234e22deda2572ad8d8420bfa25a7cea614925c4fa044041d60412051aec8327",
+    "fresh-linux-cp1252.txt": "424ead9941f113cbb5c31bd2d00df0c0d0aea9c4462f8e4562bb8625210d0efa",
+    "fresh-linux-runner.txt": "f01e44fde90e0133b7365459b3bcae42464bed64a249646b26dc2bd7e7887602",
+    "fresh-publish-guard.json": "3635b2d5290912e1f357d5ffafdf925ab64b979ebf251274f65253854659c0d0",
+    "fresh-regression.txt": "c0dbea8ca2876794fedaf17d22f025ade7276ac5a97c6f85393a14e5b3a03281",
+    "fresh-repository-check.txt": "bafde887d56a88dbd066df4e7f6ddd50cdc3b6ff4526f7f4a192620fb81637aa",
+    "fresh-review-template.json": "bee95372e6d7515ef5682cddc78183a8b8e8ce0c3d3736452ba46d0331c9cf32",
+    "fresh-staging-result.json": "fdd182d7292f8a945871058f2958ec747ccaa0ee0db6802065118dd8e4510fb5",
+    "fresh-start-gate.txt": "9483df279e7a582a33fd0a8f9d711fc57c4e2401f7312955260b0c24a16f1d85",
+    "linux-default-unit-results.txt": "803c2f55ec119dbb65b3eb02391f32a394b7bb010abb2a09b62fb4b64c2e0524",
+    "linux-runtime.json": "0c15f08ef3a3e382fb904748417e00119a1c9a2afe7fd866907eedfc07106675",
+    "merge-gate.txt": "a1e9977ae96f8e31ada83e346ef55d861121ffea8cc9b7c0eaf70b6eefb3029e",
+    "regression.txt": "70dc80eabd2ef0cdb5ed9caff1cdc6e362a99302d009578b3a5b0f605d6410c2",
+    "sql-results.json": "59c32a9b3a9a0cc3056ceedaebf40f7040d600e9869eb31db970608d0113aaa1",
+    "survey-docs-freshness.txt": "234e22deda2572ad8d8420bfa25a7cea614925c4fa044041d60412051aec8327",
+    "survey-linux-unit-results.txt": "ced7646770b9d39a9713810ebe8e35acec1c05573c6509a39f4618386db0f1d5",
+    "survey-regression.txt": "9b1f8edff74882b2c31c1b09a1ab16aeea5b7eab0f80954811c54116bae54229",
+    "survey-repository-check.txt": "bafde887d56a88dbd066df4e7f6ddd50cdc3b6ff4526f7f4a192620fb81637aa",
+    "survey-review-template.json": "852f49046b51cf7a1656ca27755b6b63af3a53b6965ce4ff2815e0895161bf4f",
+    "survey-staging-result.json": "583c7d8de9ec9143db9e369f69819e1fa29afa9d827c01cd9a1080305fcaf64e",
+    "survey-start-gate.txt": "565b3c44b979fb0255a9f174a2d0f158ef9f5aa1b5f339b04d286a8d6e7a705f",
+    "survey-unit-results.txt": "ac306f5ab62d2ffaf01059bf89ff0917833e47b654b97ed05c38e476abd2cc0e",
+    "unit-results.txt": "b7082d3c619455068468e78dea710bf690faaf88f9ad4b0639b79b0c89b1f47c",
+    "verification-1021560-original.json": "fe056981dba88e7f838e452ca6e0d4b9d5a672d822e85d541104be5c35b59acf"
+  },
+  "foodContractVersion": "1.1.0",
+  "freshArtifactSha256": {
+    "supabase/seed/draft/gm08-survey-v0.4.0/README.md": "10103992ae310f7dca0c6a06872a68028a917c0dd37ae80a65f5e1dde47464e5",
+    "supabase/seed/draft/gm08-survey-v0.4.0/audit.json": "29cf32143867c7e2887c8e31324bce5eb164e0eba705194475c442913827c4c0",
+    "supabase/seed/draft/gm08-survey-v0.4.0/bundle.json": "28c9d0c5cc8f2dc4c39bfb59fc8cc7957599a051b0329362def01a050ad55027",
+    "supabase/seed/draft/gm08-survey-v0.4.0/source-records.json": "9239075c8460f20c70ca67258f9be9b3815e8fcea7dfe26c04841731902ccb5e",
+    "supabase/seed/draft/gm08-survey-v0.4.1/README.md": "2c99b33d8fd0d44d134496d5249f42a96d39ad4cb20ad324e3aa33875c38bc72",
+    "supabase/seed/draft/gm08-survey-v0.4.1/SOURCE_RIGHTS_AND_FRESHNESS.md": "a500e306b7ae29fb71365d8c9acc98b6185ad1f12961e778f0b1e57e34585e69",
+    "supabase/seed/draft/gm08-survey-v0.4.1/audit.json": "60cb2d5192551a66361b40d10f82f04066da0b49b0115d5a4cb6bbf27dbb2fa0",
+    "supabase/seed/draft/gm08-survey-v0.4.1/bundle.json": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+    "supabase/seed/draft/gm08-survey-v0.4.1/capture-manifest.json": "864582e2b81a763d7834a81bbe1aa7874bc44cd323e0b05796011536ca50db26",
+    "supabase/seed/draft/gm08-survey-v0.4.1/output_checksums.json": "54f3f2ee1ca68b302512a9f0fc9f6e99f20e200503dab4aef8abb23caf5fea1a",
+    "supabase/seed/draft/gm08-survey-v0.4.1/quality_report.json": "5ee9c73f1f3a7cc93113fd9e6ff7e21b8e5c14be4cf480d45777217eb9c9d42a",
+    "supabase/seed/draft/gm08-survey-v0.4.1/source-records.json": "e1ce35418756695335fc37c853989da82b3ea99ad5e014034ccf8d0ddf5515a5",
+    "supabase/seed/draft/gm08-survey-v0.4.1/supplemental-source-checks.json": "67a8003076337cb58a982300ff7f8609c8e55dc66a7fb53b923d516c72dec682",
+    "supabase/seed/draft/gm08-survey-v0.4.1/survey-input-template.json": "2e3552d68d0828bc54edd67c3963d9060e096032024af1117187926f34401f6f"
+  },
+  "freshPilotDraft": {
+    "audit": "supabase/seed/draft/gm08-survey-v0.4.1/audit.json",
+    "bundle": "supabase/seed/draft/gm08-survey-v0.4.1/bundle.json",
+    "candidateSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+    "datasetVersion": "0.4.1",
+    "publicationPerformed": false,
+    "rightsPolicy": "supabase/seed/draft/gm08-survey-v0.4.1/SOURCE_RIGHTS_AND_FRESHNESS.md",
+    "rightsPolicyDecision": "Pending",
+    "rowCounts": {
+      "availabilityOverrides": 0,
+      "coverageAreas": 0,
+      "dataSources": 27,
+      "datasetVersions": 1,
+      "dateExceptions": 0,
+      "dishes": 18,
+      "publicAnchors": 0,
+      "taxonomy": 18,
+      "venueDishes": 190,
+      "venues": 21,
+      "weeklySchedules": 154
+    },
+    "userReply": "No existing usage-rights evidence/approved freshness policy; prepare dossier for review",
+    "verified": false
+  },
+  "gate": {
+    "authority": "https://github.com/users/ThanhTris/projects/2",
+    "baseFetched": true,
+    "baseRef": "origin/main",
+    "baseSha": "00c4f27a97d4f1487dfed7c54c1253c766709a1a",
+    "checkedAtUTC": "2026-10-11T02:03:48.347900+00:00",
+    "currentFollowupStart": {
+      "checkedAtUTC": "2026-10-11T02:41:20.710381+00:00",
+      "localFallback": false,
+      "log": "data-intake-start-gate.txt",
+      "mergeGateThisFollowup": "Not run; no merge requested; previous merge gate remains historical",
+      "result": "IN_PROGRESS"
+    },
+    "freshStart": {
+      "checkedAtUTC": "2026-10-11T04:25:01.573151+00:00",
+      "localFallback": false,
+      "log": "fresh-start-gate.txt",
+      "mergeThisFollowup": "Not run; no merge requested",
+      "result": "IN_PROGRESS"
+    },
+    "localApprovalFallback": false,
+    "log": "merge-gate.txt",
+    "merge": "READY_FOR_MERGE_REVIEW",
+    "start": "IN_PROGRESS; live start checked before repair",
+    "startCheckedAtUTC": "2026-10-11T01:57:22.793579+00:00",
+    "surveyStart": {
+      "checkedAtUTC": "2026-10-11T04:08:02.343840+00:00",
+      "localFallback": false,
+      "report": "survey-start-gate.txt",
+      "result": "IN_PROGRESS"
+    },
+    "tls": "SSL_CERT_FILE=/etc/ssl/cert.pem; full certificate verification retained"
+  },
+  "limits": [
+    "Production importer, frozen0001, receipt migration0002 and wire/schema contract unchanged by ASCII harness repair",
+    "SQL 31/31 after services healthy; first startup-overlap attempt hit 55P03 lock timeout, not hidden as Pass",
+    "Partial delivery merge requires project owner scope acceptance; none recorded; GM-08 In Progress",
+    "Native Windows not run; CI SQL and field cases remain synthetic, no real dataset published",
+    "No rights/TTL/physical service/offering schedule/coverage/anchor/reviewer invented; actual verified publish/query Not run",
+    "Fresh pilot0.4.1:21branches/18dishes/190offerings/154venue-hour rows, quota met, all draft",
+    "Offering hours/serviceModes, physical venue hour conflict/admin IDs, surveyed coverage/anchors, rights/policy/validUntil and independent review still Pending",
+    "Freshness7/30-day proposal only; user confirmed no existing rights/policy approval",
+    "Frozen catalogue/snapshots and prior0.3.0/0.4.0 drafts retained; current candidate0.4.1; no commit/push/remote CI",
+    "Full macOS508 tests passed with no skips; Linux parser/export skips explicitly separate; native Windows not run"
+  ],
+  "owner": "HoaiTam",
+  "pullRequest": {
+    "baselineHead": "1021560ce336db84509c1e05f7507937d7cc5a69",
+    "bodyUpdate": "Current CI and data intake follow-up prepared locally; PR body not changed remotely",
+    "isDraftAtReview": false,
+    "preparedBody": "PR_DESCRIPTION.md",
+    "reviewComment": "https://github.com/ThanhTris/IE307/pull/103#issuecomment-6104616256",
+    "stateAtReview": "OPEN",
+    "url": "https://github.com/ThanhTris/IE307/pull/103"
+  },
+  "reviewDecision": "Pending",
+  "reviewer": "ThanhTris",
+  "schemaVersion": "0.1.0",
+  "sourceSha256": {
+    ".github/workflows/gm08-import.yml": "c8c253754ec2956663f6886d38b3033ec999016fee30eef625d79059cc56f13d",
+    "data-preparation/notebooks/prepare_thu_duc_menus.ipynb": "d360da24d70b63829ce9ea79965306c62ba4f5d2b0c9a20372ff8ebbdbc5279b",
+    "data-preparation/scripts/run_notebook.py": "1446eec8f3b95cc7f1d9cff8f40c0c30970cb50303bbe2f9013d9dc955ce2193",
+    "docs/evidence/roadmap-v2/GM-08/draft-audit.json": "8fb1da2cd0f11640056f5e771bca73d29608dc34a2c1259900d1aaee65b8fca1",
+    "scripts/gm08_import_check.py": "8bbf46c999dfef4c2f4c4d3aab10c57f1f22e1e1934c4efe29c2805f66812cfb",
+    "scripts/gm08_prepare_draft.py": "28cdd710bc0ba5eaf764ad5ebf9a8182734fb3f04d44fe58acac5ea3542a153a",
+    "scripts/gm08_prepare_survey.py": "905de3ce85e281a833c25ea83af63d9796729eff9b5ec3840cb730e3ba3fee55",
+    "supabase/migrations/0001_core_schema.sql": "6733e28f282f600e627e675dccede3afef1efd37cf4a7cfe8d94af4cd02d30f5",
+    "supabase/migrations/0002_food_import_receipts.sql": "eb80acba1f69bfb68b014a1ab5807e42d65db940a36d201f28db88172157f55e",
+    "supabase/seed/import_food_data.py": "03da1971b502b26a87ebaee0936d718bc415e26f297731d4fd9bd698fab00edc",
+    "supabase/seed/verified/manifest.json": "9556a42e68ff1f3ef128ae4e645abba4972a1ea7ced66d9b6d97d688e256adc1",
+    "tasks/in-progress/GM-08.md": "6ac91b96527b508c900330dad65098fc15a3d8737033b2b965d9b69a09a95ea0",
+    "tests/test_food_import.py": "571b7491bfa0932db0e05f77531a1d2b296f2ca39b223b0a519f9c8de1daa5a2",
+    "tests/test_gm08_survey.py": "620cdfd5354a81550d054904554208f77f455ad588de05c5c7bd6fda199aa5cb",
+    "tests/test_menu_notebook.py": "5ccd49cc4143a16894e31ddb59affd5efb5a3c40919677643482445ec564384d",
+    "tests/test_repository_validator.py": "f3d95d68bd8041171adcc9f3d9ef14429ccedcb00247a5c0e07d95750e487caa"
+  },
+  "status": "in-progress",
+  "surveyArtifactSha256": {
+    "supabase/seed/draft/gm08-survey-v0.3.0/README.md": "d4113604de103e6da0f54a890847b3218a52be2e37f32e9645cc54a01f8762a0",
+    "supabase/seed/draft/gm08-survey-v0.3.0/audit.json": "39730f0c52cc6e9c6ae47f9e9b3ca7f5620218ef53bcb6598730fd64b689d825",
+    "supabase/seed/draft/gm08-survey-v0.3.0/bundle.json": "838c426987eda765e560e0909022f8870e2545941bf9965a65b552830e57045c",
+    "supabase/seed/draft/gm08-survey-v0.3.0/source-records.json": "d56c4da569f521a3d9de6b0680c6692b757ba02575c46b88b1f86b8050d4f747"
+  },
+  "surveyDraft": {
+    "audit": "supabase/seed/draft/gm08-survey-v0.3.0/audit.json",
+    "bundle": "supabase/seed/draft/gm08-survey-v0.3.0/bundle.json",
+    "datasetVersion": "0.3.0",
+    "owner": "HoaiTam",
+    "ownership": "GM-08 owner prepares/collects data; Vinh handoff optional, not a required start dependency",
+    "publicationPerformed": false,
+    "publishBlockerCount": 2084,
+    "rowCounts": {
+      "availabilityOverrides": 0,
+      "coverageAreas": 0,
+      "dataSources": 27,
+      "datasetVersions": 1,
+      "dateExceptions": 0,
+      "dishes": 39,
+      "publicAnchors": 0,
+      "taxonomy": 18,
+      "venueDishes": 247,
+      "venues": 21,
+      "weeklySchedules": 154
+    },
+    "sourceRecords": "supabase/seed/draft/gm08-survey-v0.3.0/source-records.json",
+    "verified": false
+  },
+  "task": "GM-08",
+  "testedRevision": {
+    "baseCommit": "7060b8825ad72ee9442d8890719f82451d473c33",
+    "baselineEvidence": [
+      "baseline-1d247fe/manifest.json",
+      "baseline-b59d610/manifest.json"
+    ],
+    "branchTargetIntegration": "Target fetch verified; branch has not yet incorporated the AGENTS-only target commit; integrate before merge",
+    "mode": "Local fresh crawler/output isolation + adapter/pilot0.4.1 on head1021560; no follow-up commit/push or remote CI",
+    "originalCommittedVerification": "verification-1021560-original.json",
+    "parentCommit": "b59d6107953f40a4b5afa2aa46b875bfae4f77c6",
+    "sourceCommit": "1021560ce336db84509c1e05f7507937d7cc5a69",
+    "targetChangesSinceImplementationBase": "AGENTS.md review-link instruction only; no upstream runtime/schema artifacts changed",
+    "targetRefCommit": "00c4f27a97d4f1487dfed7c54c1253c766709a1a",
+    "workingTreeParent": "1021560ce336db84509c1e05f7507937d7cc5a69"
+  },
+  "verifiedDatasetVersion": null
+}

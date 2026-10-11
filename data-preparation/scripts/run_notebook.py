@@ -8,16 +8,22 @@ import json
 import os
 from pathlib import Path
 import platform
+import sys
 import traceback
 
 BASE = Path(__file__).resolve().parents[1]
 DEFAULT_NOTEBOOK = BASE / 'notebooks/prepare_thu_duc_menus.ipynb'
 
 
-def execute(path: Path, offline: bool = False, refresh: bool = False, allow_api: bool = False) -> Path:
+def execute(path: Path, offline: bool = False, refresh: bool = False, allow_api: bool = False,
+            output_dir: Path | None = None) -> Path:
+    if output_dir is not None:
+        output_dir = output_dir.resolve()
+        output_dir.mkdir(parents=True, exist_ok=False)
     notebook = json.loads(path.read_text(encoding='utf-8'))
     namespace = {'__name__': '__main__', 'NOTEBOOK_OPTIONS': {
-        'offline': offline, 'refresh': refresh, 'allow_api': allow_api}}
+        'offline': offline, 'refresh': refresh, 'allow_api': allow_api,
+        'output_dir': str(output_dir) if output_dir else None}}
     outputs = []
     stream = io.StringIO()
 
@@ -68,13 +74,15 @@ def execute(path: Path, offline: bool = False, refresh: bool = False, allow_api:
                 break
     finally:
         os.chdir(original)
-    reports = Path(namespace.get('REPORTS_DIR', BASE / 'datasets/thu-duc-menus/reports'))
+    reports = Path(namespace.get('REPORTS_DIR',
+                   output_dir / 'reports' if output_dir else BASE / 'datasets/thu-duc-menus/reports'))
     reports.mkdir(parents=True, exist_ok=True)
     report = reports / f'{path.stem}.executed.ipynb'
     notebook['metadata']['language_info']['version'] = platform.python_version()
     notebook['metadata']['execution'] = {'engine': 'Python exec; no Jupyter kernel',
                                        'offline_override': offline, 'refresh_override': refresh,
-                                       'allow_api': allow_api}
+                                       'allow_api': allow_api,
+                                       'output_dir': str(output_dir) if output_dir else None}
     report.write_text(json.dumps(notebook, ensure_ascii=False, indent=1)+'\n', encoding='utf-8')
     print(f'Report: {report}', flush=True)
     if failure:
@@ -84,17 +92,22 @@ def execute(path: Path, offline: bool = False, refresh: bool = False, allow_api:
 
 
 def main():
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, 'reconfigure'):
+            stream.reconfigure(encoding='utf-8', errors='strict', newline='\n')
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('notebook', nargs='?', type=Path, default=DEFAULT_NOTEBOOK)
     parser.add_argument('--offline', action='store_true', help='Use snapshots only.')
     parser.add_argument('--refresh', action='store_true', help='Refresh public HTML snapshots.')
     parser.add_argument('--allow-api', action='store_true', help='Opt into bounded Vilao pilot calls (never offline).')
+    parser.add_argument('--output-dir', type=Path, help='New isolated menu dataset directory; never overwrite existing captures.')
     args = parser.parse_args()
     if args.offline and args.refresh:
         parser.error('--offline and --refresh cannot be combined')
     if args.offline and args.allow_api:
         parser.error('--offline and --allow-api cannot be combined')
-    execute(args.notebook.resolve(), offline=args.offline, refresh=args.refresh, allow_api=args.allow_api)
+    execute(args.notebook.resolve(), offline=args.offline, refresh=args.refresh,
+            allow_api=args.allow_api, output_dir=args.output_dir)
 
 
 if __name__ == '__main__':

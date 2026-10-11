@@ -1,0 +1,201 @@
+{
+  "state": "Pending",
+  "verified": false,
+  "publicationPerformed": false,
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "venueId": "668b13d9-fbfe-5391-ad26-e4499447e9e0",
+  "branchName": "Phá Lấu Cô Phương - Hiệp Bình",
+  "observedVenue": {
+    "address": "176 Hiệp Bình, Phường Hiệp Bình Chánh, Thành Phố Thủ Đức, Hồ Chí Minh",
+    "lat": 10.844659805297852,
+    "lng": 106.73004150390625,
+    "sourceUrl": "https://food.be.com.vn/ho-chi-minh/pha-lau-co-phuong-hiep-binh-46636",
+    "fetchedAtUTC": "2026-10-11T04:27:39.582961+00:00",
+    "htmlSha256": "5acf2f691a1adc86a0e6e99d9ce4d91d4642eff81ade1e469c9d2479e4c4fb51",
+    "platformWeeklyHours": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:00",
+        "dayOfWeek": [
+          "Sunday"
+        ],
+        "opens": "15:30"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:00",
+        "dayOfWeek": [
+          "Monday"
+        ],
+        "opens": "15:30"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:00",
+        "dayOfWeek": [
+          "Tuesday"
+        ],
+        "opens": "15:30"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:00",
+        "dayOfWeek": [
+          "Wednesday"
+        ],
+        "opens": "15:30"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:00",
+        "dayOfWeek": [
+          "Thursday"
+        ],
+        "opens": "15:30"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:00",
+        "dayOfWeek": [
+          "Friday"
+        ],
+        "opens": "15:30"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:00",
+        "dayOfWeek": [
+          "Saturday"
+        ],
+        "opens": "15:30"
+      }
+    ],
+    "serviceScope": "delivery_platform_listing; physical dine_in/takeaway/availability unknown"
+  },
+  "additionalPublicObservations": [
+    {
+      "kind": "Foody direct HTTPS capture",
+      "url": "https://www.foody.vn/ho-chi-minh/pha-lau-co-phuong-hiep-binh",
+      "fetchedAtUTC": "2026-10-11T05:09:11.399471+00:00",
+      "sha256": "6878b9aecb8cfdab73a423657481f7727aadadf8e13ca99533c6dc2c335b7090",
+      "observedAddress": "176 Hiệp Bình, P. Hiệp Bình Chánh, Tp. Thủ Đức, TP. HCM",
+      "observedHours": {
+        "start": "14:00",
+        "end": "23:00",
+        "weekdays": "unspecified"
+      },
+      "listingStatusLabel": null,
+      "physicalVenueConfirmed": false,
+      "serviceModesConfirmed": false,
+      "note": "Static listing observation only; no seven-day schedule or offering hours confirmed. Amenities with active/inactive ambiguity not used."
+    }
+  ],
+  "offerings": [
+    {
+      "offeringId": "0bed7317-1600-5119-a95e-571ab165a6aa",
+      "menuItemId": "menu_af2aefac7a2679359adb",
+      "observedMenuName": "Mì nước phá lấu",
+      "observedPriceVND": 45000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu food"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/pha-lau-co-phuong-hiep-binh-46636",
+      "sourceRef": "7653a338-3eb4-5ec9-851c-8d3574c3b0b8",
+      "fetchedAtUTC": "2026-10-11T04:27:39.582961+00:00",
+      "htmlSha256": "5acf2f691a1adc86a0e6e99d9ce4d91d4642eff81ade1e469c9d2479e4c4fb51",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "34a9aca3-f9aa-585f-a619-871f3ac76568",
+      "menuItemId": "menu_70350b71b7ba6cba96d3",
+      "observedMenuName": "Bánh mì phá lấu nhỏ",
+      "observedPriceVND": 40000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu food"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/pha-lau-co-phuong-hiep-binh-46636",
+      "sourceRef": "7653a338-3eb4-5ec9-851c-8d3574c3b0b8",
+      "fetchedAtUTC": "2026-10-11T04:27:39.582961+00:00",
+      "htmlSha256": "5acf2f691a1adc86a0e6e99d9ce4d91d4642eff81ade1e469c9d2479e4c4fb51",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "56bb9885-c40d-58d3-8d49-42508d55bc96",
+      "menuItemId": "menu_7113b8c4202af5727d94",
+      "observedMenuName": "Bánh mì phá lấu lớn",
+      "observedPriceVND": 60000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu food",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/pha-lau-co-phuong-hiep-binh-46636",
+      "sourceRef": "7653a338-3eb4-5ec9-851c-8d3574c3b0b8",
+      "fetchedAtUTC": "2026-10-11T04:27:39.582961+00:00",
+      "htmlSha256": "5acf2f691a1adc86a0e6e99d9ce4d91d4642eff81ade1e469c9d2479e4c4fb51",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "9494ab04-51b0-51cb-b9f0-1b9089509bf8",
+      "menuItemId": "menu_4dab87a2f831123787f2",
+      "observedMenuName": "Bánh mì phá lấu vừa",
+      "observedPriceVND": 50000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu food",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/pha-lau-co-phuong-hiep-binh-46636",
+      "sourceRef": "7653a338-3eb4-5ec9-851c-8d3574c3b0b8",
+      "fetchedAtUTC": "2026-10-11T04:27:39.582961+00:00",
+      "htmlSha256": "5acf2f691a1adc86a0e6e99d9ce4d91d4642eff81ade1e469c9d2479e4c4fb51",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "e008b7f6-9894-5b28-bd2f-02170eb8e24c",
+      "menuItemId": "menu_6f9d19fccbbe51ed301a",
+      "observedMenuName": "Mì xào phá lấu",
+      "observedPriceVND": 50000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Menu food",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/pha-lau-co-phuong-hiep-binh-46636",
+      "sourceRef": "7653a338-3eb4-5ec9-851c-8d3574c3b0b8",
+      "fetchedAtUTC": "2026-10-11T04:27:39.582961+00:00",
+      "htmlSha256": "5acf2f691a1adc86a0e6e99d9ce4d91d4642eff81ade1e469c9d2479e4c4fb51",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    }
+  ],
+  "confirmedFieldsApplied": false,
+  "independentReviewer": null,
+  "validUntil": null
+}

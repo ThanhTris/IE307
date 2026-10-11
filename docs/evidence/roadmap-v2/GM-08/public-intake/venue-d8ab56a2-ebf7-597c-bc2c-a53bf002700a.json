@@ -1,0 +1,158 @@
+{
+  "state": "Pending",
+  "verified": false,
+  "publicationPerformed": false,
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "venueId": "d8ab56a2-ebf7-597c-bc2c-a53bf002700a",
+  "branchName": "Tiệm Cơm Nhà Trộn - Hoàng Diệu 2",
+  "observedVenue": {
+    "address": "122 Hoàng Diệu 2, Phường Linh Trung, Thành Phố Thủ Đức, Hồ Chí Minh",
+    "lat": 10.856399536132812,
+    "lng": 106.76609802246094,
+    "sourceUrl": "https://food.be.com.vn/ho-chi-minh/tiem-com-nha-tron-hoang-dieu-2-102327",
+    "fetchedAtUTC": "2026-10-11T04:27:00.830372+00:00",
+    "htmlSha256": "c88c30cc079f688c56ff5e3e1ae25c22cf2299eea85fc21953afb44730223808",
+    "platformWeeklyHours": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "21:25",
+        "dayOfWeek": [
+          "Sunday"
+        ],
+        "opens": "09:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "21:25",
+        "dayOfWeek": [
+          "Monday"
+        ],
+        "opens": "09:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "21:25",
+        "dayOfWeek": [
+          "Tuesday"
+        ],
+        "opens": "09:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "21:25",
+        "dayOfWeek": [
+          "Wednesday"
+        ],
+        "opens": "09:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "19:25",
+        "dayOfWeek": [
+          "Thursday"
+        ],
+        "opens": "09:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "21:25",
+        "dayOfWeek": [
+          "Friday"
+        ],
+        "opens": "09:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "21:25",
+        "dayOfWeek": [
+          "Saturday"
+        ],
+        "opens": "09:00"
+      }
+    ],
+    "serviceScope": "delivery_platform_listing; physical dine_in/takeaway/availability unknown"
+  },
+  "additionalPublicObservations": [
+    {
+      "kind": "Foody direct HTTPS capture",
+      "url": "https://www.foody.vn/ho-chi-minh/tiem-com-nha-tron-hoang-dieu-2",
+      "fetchedAtUTC": "2026-10-11T05:09:11.333437+00:00",
+      "sha256": "96d0d8f88118176194ddd824704b4eab9be9fe215022015726b2e941ef089a31",
+      "observedAddress": "122 Hoàng Diệu 2, P. Linh Chiểu, Tp. Thủ Đức, TP. HCM",
+      "observedHours": {
+        "start": "10:00",
+        "end": "22:00",
+        "weekdays": "unspecified"
+      },
+      "listingStatusLabel": null,
+      "physicalVenueConfirmed": false,
+      "serviceModesConfirmed": false,
+      "note": "Static listing observation only; no seven-day schedule or offering hours confirmed. Amenities with active/inactive ambiguity not used."
+    }
+  ],
+  "offerings": [
+    {
+      "offeringId": "0f572e73-e8d1-5a9a-b923-cb71be79b75d",
+      "menuItemId": "menu_11ff051045a4eea958ae",
+      "observedMenuName": "Cơm Gà Phô Mai",
+      "observedPriceVND": 45000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Món mới"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/tiem-com-nha-tron-hoang-dieu-2-102327",
+      "sourceRef": "fa76dfbf-99bb-5760-ac20-2741a5862b50",
+      "fetchedAtUTC": "2026-10-11T04:27:00.830372+00:00",
+      "htmlSha256": "c88c30cc079f688c56ff5e3e1ae25c22cf2299eea85fc21953afb44730223808",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "d4bc92d5-5f5b-59d4-9c5d-50d9ef7968a6",
+      "menuItemId": "menu_60ade44cd0eaa58a79ec",
+      "observedMenuName": "Miến Hàn trộn",
+      "observedPriceVND": 35000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Món Sợi Khô"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/tiem-com-nha-tron-hoang-dieu-2-102327",
+      "sourceRef": "fa76dfbf-99bb-5760-ac20-2741a5862b50",
+      "fetchedAtUTC": "2026-10-11T04:27:00.830372+00:00",
+      "htmlSha256": "c88c30cc079f688c56ff5e3e1ae25c22cf2299eea85fc21953afb44730223808",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "e16520e4-84bf-5d29-83c9-7504312a7b75",
+      "menuItemId": "menu_484da662f67a20fd007d",
+      "observedMenuName": "Bún bò khô",
+      "observedPriceVND": 45000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Món Sợi Khô"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/tiem-com-nha-tron-hoang-dieu-2-102327",
+      "sourceRef": "fa76dfbf-99bb-5760-ac20-2741a5862b50",
+      "fetchedAtUTC": "2026-10-11T04:27:00.830372+00:00",
+      "htmlSha256": "c88c30cc079f688c56ff5e3e1ae25c22cf2299eea85fc21953afb44730223808",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    }
+  ],
+  "confirmedFieldsApplied": false,
+  "independentReviewer": null,
+  "validUntil": null
+}

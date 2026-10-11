@@ -1,0 +1,299 @@
+{
+  "state": "Pending",
+  "verified": false,
+  "publicationPerformed": false,
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "venueId": "ab5f6e1e-1cbb-573c-a9b7-7e8cf5234e60",
+  "branchName": "Wallace Burger & Chicken - Kha Vạn Cân",
+  "observedVenue": {
+    "address": "1098 Kha Vạn Cân, Khu Phố 1, Phường Thủ Đức, Hồ Chí Minh",
+    "lat": 10.857950210571289,
+    "lng": 106.75830841064453,
+    "sourceUrl": "https://food.be.com.vn/ho-chi-minh/wallace-burger-chicken-kha-van-can-126511",
+    "fetchedAtUTC": "2026-10-11T04:27:02.631374+00:00",
+    "htmlSha256": "70203da9af625138caf797509eb9817b3eb20ab380e7a23ef16fa8d8a5bb0d76",
+    "platformWeeklyHours": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "22:15",
+        "dayOfWeek": [
+          "Sunday"
+        ],
+        "opens": "09:30"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "22:15",
+        "dayOfWeek": [
+          "Monday"
+        ],
+        "opens": "09:30"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "22:15",
+        "dayOfWeek": [
+          "Tuesday"
+        ],
+        "opens": "09:30"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "22:15",
+        "dayOfWeek": [
+          "Wednesday"
+        ],
+        "opens": "09:30"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "22:15",
+        "dayOfWeek": [
+          "Thursday"
+        ],
+        "opens": "09:30"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "22:15",
+        "dayOfWeek": [
+          "Friday"
+        ],
+        "opens": "09:30"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "22:15",
+        "dayOfWeek": [
+          "Saturday"
+        ],
+        "opens": "09:30"
+      }
+    ],
+    "serviceScope": "delivery_platform_listing; physical dine_in/takeaway/availability unknown"
+  },
+  "additionalPublicObservations": [
+    {
+      "kind": "Foody direct HTTPS capture",
+      "url": "https://www.foody.vn/ho-chi-minh/wallace-burger-chicken-1098-kha-van-can",
+      "fetchedAtUTC": "2026-10-11T05:09:12.173936+00:00",
+      "sha256": "5ca2b92469253b7de931e68a3937b724a1c8b91fd639edac80df014be6d5d909",
+      "observedAddress": "1098 Kha Vạn Cân, Khu Phố 1, P. Linh Chiểu, Tp. Thủ Đức, TP. HCM",
+      "observedHours": {
+        "start": "09:30",
+        "end": "22:30",
+        "weekdays": "unspecified"
+      },
+      "listingStatusLabel": null,
+      "physicalVenueConfirmed": false,
+      "serviceModesConfirmed": false,
+      "note": "Static listing observation only; no seven-day schedule or offering hours confirmed. Amenities with active/inactive ambiguity not used."
+    }
+  ],
+  "offerings": [
+    {
+      "offeringId": "03d0b456-055d-5959-8113-498e8f7c6056",
+      "menuItemId": "menu_b247a4225fbecb0d5655",
+      "observedMenuName": "Burger gà giòn",
+      "observedPriceVND": 50000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Hamburger"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/wallace-burger-chicken-kha-van-can-126511",
+      "sourceRef": "a2bc1d40-2c9d-5f93-a2f7-ded6657b4673",
+      "fetchedAtUTC": "2026-10-11T04:27:02.631374+00:00",
+      "htmlSha256": "70203da9af625138caf797509eb9817b3eb20ab380e7a23ef16fa8d8a5bb0d76",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "21378a73-4c56-5334-8fa0-178012e28f90",
+      "menuItemId": "menu_7ccd7ce494621fbebb4b",
+      "observedMenuName": "Burger bò",
+      "observedPriceVND": 55000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Hamburger"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/wallace-burger-chicken-kha-van-can-126511",
+      "sourceRef": "a2bc1d40-2c9d-5f93-a2f7-ded6657b4673",
+      "fetchedAtUTC": "2026-10-11T04:27:02.631374+00:00",
+      "htmlSha256": "70203da9af625138caf797509eb9817b3eb20ab380e7a23ef16fa8d8a5bb0d76",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "5251aa2d-2550-523c-8a54-a4ce63dd23e8",
+      "menuItemId": "menu_87dc41f8a8356f182c55",
+      "observedMenuName": "Hambuger tôm",
+      "observedPriceVND": 55000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Hamburger"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/wallace-burger-chicken-kha-van-can-126511",
+      "sourceRef": "a2bc1d40-2c9d-5f93-a2f7-ded6657b4673",
+      "fetchedAtUTC": "2026-10-11T04:27:02.631374+00:00",
+      "htmlSha256": "70203da9af625138caf797509eb9817b3eb20ab380e7a23ef16fa8d8a5bb0d76",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "6a5f5ab4-5d8a-53a0-90c3-42a04936e8cc",
+      "menuItemId": "menu_048ebbedcd80fd5a4c0c",
+      "observedMenuName": "Hambuger gà điền viên",
+      "observedPriceVND": 50000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Hamburger"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/wallace-burger-chicken-kha-van-can-126511",
+      "sourceRef": "a2bc1d40-2c9d-5f93-a2f7-ded6657b4673",
+      "fetchedAtUTC": "2026-10-11T04:27:02.631374+00:00",
+      "htmlSha256": "70203da9af625138caf797509eb9817b3eb20ab380e7a23ef16fa8d8a5bb0d76",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "73bb8ef6-2723-5204-a6fa-3a64fd907206",
+      "menuItemId": "menu_7163161037896aab399c",
+      "observedMenuName": "Cơm gà sốt Teriyaki",
+      "observedPriceVND": 45000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Combo Cơm",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/wallace-burger-chicken-kha-van-can-126511",
+      "sourceRef": "a2bc1d40-2c9d-5f93-a2f7-ded6657b4673",
+      "fetchedAtUTC": "2026-10-11T04:27:02.631374+00:00",
+      "htmlSha256": "70203da9af625138caf797509eb9817b3eb20ab380e7a23ef16fa8d8a5bb0d76",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "88f25f20-3344-54db-b8a4-476e6237b0d7",
+      "menuItemId": "menu_3d14a5712e7f1edb7eaf",
+      "observedMenuName": "Hambuger heo nướng",
+      "observedPriceVND": 50000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Hamburger"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/wallace-burger-chicken-kha-van-can-126511",
+      "sourceRef": "a2bc1d40-2c9d-5f93-a2f7-ded6657b4673",
+      "fetchedAtUTC": "2026-10-11T04:27:02.631374+00:00",
+      "htmlSha256": "70203da9af625138caf797509eb9817b3eb20ab380e7a23ef16fa8d8a5bb0d76",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "9e8c0b55-989e-5598-b054-d9cecd9fc9dc",
+      "menuItemId": "menu_37b38ac2c9640e60d182",
+      "observedMenuName": "Burger thịt nướng",
+      "observedPriceVND": 50000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Hamburger"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/wallace-burger-chicken-kha-van-can-126511",
+      "sourceRef": "a2bc1d40-2c9d-5f93-a2f7-ded6657b4673",
+      "fetchedAtUTC": "2026-10-11T04:27:02.631374+00:00",
+      "htmlSha256": "70203da9af625138caf797509eb9817b3eb20ab380e7a23ef16fa8d8a5bb0d76",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "b668bc3b-68ae-5a9a-a99c-0183631526aa",
+      "menuItemId": "menu_3c80f11a5ee74a3347fa",
+      "observedMenuName": "Mì Ý",
+      "observedPriceVND": 35000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Đồ Ăn Vặt"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/wallace-burger-chicken-kha-van-can-126511",
+      "sourceRef": "a2bc1d40-2c9d-5f93-a2f7-ded6657b4673",
+      "fetchedAtUTC": "2026-10-11T04:27:02.631374+00:00",
+      "htmlSha256": "70203da9af625138caf797509eb9817b3eb20ab380e7a23ef16fa8d8a5bb0d76",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "eab3d99c-18d1-55ed-9522-fb714ecb8441",
+      "menuItemId": "menu_650eacdbe4cff00416d3",
+      "observedMenuName": "Bánh cuộn gà Mexico",
+      "observedPriceVND": 32000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Đồ Ăn Vặt"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/wallace-burger-chicken-kha-van-can-126511",
+      "sourceRef": "a2bc1d40-2c9d-5f93-a2f7-ded6657b4673",
+      "fetchedAtUTC": "2026-10-11T04:27:02.631374+00:00",
+      "htmlSha256": "70203da9af625138caf797509eb9817b3eb20ab380e7a23ef16fa8d8a5bb0d76",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "ed10b6e0-60c5-5a90-b4a9-f52f4b9b8c66",
+      "menuItemId": "menu_3d33d6cd7e6c3ab05d85",
+      "observedMenuName": "Burger cá",
+      "observedPriceVND": 50000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Hamburger"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/wallace-burger-chicken-kha-van-can-126511",
+      "sourceRef": "a2bc1d40-2c9d-5f93-a2f7-ded6657b4673",
+      "fetchedAtUTC": "2026-10-11T04:27:02.631374+00:00",
+      "htmlSha256": "70203da9af625138caf797509eb9817b3eb20ab380e7a23ef16fa8d8a5bb0d76",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    }
+  ],
+  "confirmedFieldsApplied": false,
+  "independentReviewer": null,
+  "validUntil": null
+}

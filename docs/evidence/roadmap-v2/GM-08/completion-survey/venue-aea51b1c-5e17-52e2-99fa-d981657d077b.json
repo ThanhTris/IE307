@@ -1,0 +1,86 @@
+{
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "checkedAt": null,
+  "collector": null,
+  "comparisonNotes": {
+    "flags": [
+      "23:59 chưa chứng minh24h/overnight"
+    ],
+    "observations": [],
+    "offeringHoursConfirmed": false,
+    "rightsConfirmed": false,
+    "serviceModesConfirmed": false
+  },
+  "confirmedVenue": {
+    "address": null,
+    "adminAreaId": null,
+    "branchName": null,
+    "coordinates": null,
+    "dateExceptions": [],
+    "fieldSources": {},
+    "serviceModes": [],
+    "status": "unknown",
+    "validUntil": null,
+    "weeklySchedules": []
+  },
+  "evidence": [],
+  "independentReviewer": null,
+  "offerings": [
+    {
+      "checkedAt": null,
+      "confirmedMenuName": null,
+      "currency": null,
+      "dateExceptions": [],
+      "dishId": "c3f1f939-20a4-55b1-89af-42e3c95a33fa",
+      "fieldSources": {},
+      "label": "M01",
+      "observedMenuName": "Miến gà",
+      "observedPrice": 65000,
+      "observedSourceRef": "bd7249fc-fec6-55d3-9ba0-3a06cee8a859",
+      "observedUnit": "menu_item_unspecified",
+      "offeringId": "1dc31b4d-77d3-5eae-a69d-3e6702d1cc9e",
+      "priceMax": null,
+      "priceMin": null,
+      "sameAsVenueHoursEvidence": [],
+      "serviceMode": null,
+      "unit": null,
+      "validUntil": null,
+      "weeklySchedules": []
+    },
+    {
+      "checkedAt": null,
+      "confirmedMenuName": null,
+      "currency": null,
+      "dateExceptions": [],
+      "dishId": "33c758d0-9f9b-5dd9-8976-c52b6f949d31",
+      "fieldSources": {},
+      "label": "M02",
+      "observedMenuName": "Phở gà",
+      "observedPrice": 65000,
+      "observedSourceRef": "bd7249fc-fec6-55d3-9ba0-3a06cee8a859",
+      "observedUnit": "menu_item_unspecified",
+      "offeringId": "2fc80c02-21c6-5782-9b61-707f30cc96f0",
+      "priceMax": null,
+      "priceMin": null,
+      "sameAsVenueHoursEvidence": [],
+      "serviceMode": null,
+      "unit": null,
+      "validUntil": null,
+      "weeklySchedules": []
+    }
+  ],
+  "publicationPerformed": false,
+  "reviewedAt": null,
+  "sourceRights": {
+    "attribution": null,
+    "evidence": [],
+    "license": null,
+    "permittedUses": null,
+    "sourceRef": "bd7249fc-fec6-55d3-9ba0-3a06cee8a859",
+    "usageRights": "unknown",
+    "validUntil": null
+  },
+  "state": "Pending",
+  "venueId": "aea51b1c-5e17-52e2-99fa-d981657d077b",
+  "verified": false
+}

@@ -1,0 +1,120 @@
+{
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "checkedAt": null,
+  "collector": null,
+  "comparisonNotes": {
+    "flags": [
+      "Khác khoảng giờ giữa nguồn công khai"
+    ],
+    "observations": [
+      {
+        "displayedHours": {
+          "end": "22:00",
+          "start": "10:00",
+          "weekdays": "unspecified"
+        },
+        "independentApproval": false,
+        "kind": "Foody listing",
+        "note": "Nguồn bổ sung hiển thị 10:00–22:00; platform có 09:00–19:25, 09:00–21:25. Search result crawl3months old; does not give explicit seven-day offering hours.",
+        "serviceModesConfirmed": false,
+        "url": "https://www.foody.vn/ho-chi-minh/tiem-com-nha-tron-hoang-dieu-2"
+      }
+    ],
+    "offeringHoursConfirmed": false,
+    "rightsConfirmed": false,
+    "serviceModesConfirmed": false
+  },
+  "confirmedVenue": {
+    "address": null,
+    "adminAreaId": null,
+    "branchName": null,
+    "coordinates": null,
+    "dateExceptions": [],
+    "fieldSources": {},
+    "serviceModes": [],
+    "status": "unknown",
+    "validUntil": null,
+    "weeklySchedules": []
+  },
+  "evidence": [],
+  "independentReviewer": null,
+  "offerings": [
+    {
+      "checkedAt": null,
+      "confirmedMenuName": null,
+      "currency": null,
+      "dateExceptions": [],
+      "dishId": "b115bf23-4277-5a5d-a439-002b0ceda3ce",
+      "fieldSources": {},
+      "label": "M01",
+      "observedMenuName": "Cơm Gà Phô Mai",
+      "observedPrice": 45000,
+      "observedSourceRef": "fa76dfbf-99bb-5760-ac20-2741a5862b50",
+      "observedUnit": "menu_item_unspecified",
+      "offeringId": "0f572e73-e8d1-5a9a-b923-cb71be79b75d",
+      "priceMax": null,
+      "priceMin": null,
+      "sameAsVenueHoursEvidence": [],
+      "serviceMode": null,
+      "unit": null,
+      "validUntil": null,
+      "weeklySchedules": []
+    },
+    {
+      "checkedAt": null,
+      "confirmedMenuName": null,
+      "currency": null,
+      "dateExceptions": [],
+      "dishId": "c3f1f939-20a4-55b1-89af-42e3c95a33fa",
+      "fieldSources": {},
+      "label": "M02",
+      "observedMenuName": "Miến Hàn trộn",
+      "observedPrice": 35000,
+      "observedSourceRef": "fa76dfbf-99bb-5760-ac20-2741a5862b50",
+      "observedUnit": "menu_item_unspecified",
+      "offeringId": "d4bc92d5-5f5b-59d4-9c5d-50d9ef7968a6",
+      "priceMax": null,
+      "priceMin": null,
+      "sameAsVenueHoursEvidence": [],
+      "serviceMode": null,
+      "unit": null,
+      "validUntil": null,
+      "weeklySchedules": []
+    },
+    {
+      "checkedAt": null,
+      "confirmedMenuName": null,
+      "currency": null,
+      "dateExceptions": [],
+      "dishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+      "fieldSources": {},
+      "label": "M03",
+      "observedMenuName": "Bún bò khô",
+      "observedPrice": 45000,
+      "observedSourceRef": "fa76dfbf-99bb-5760-ac20-2741a5862b50",
+      "observedUnit": "menu_item_unspecified",
+      "offeringId": "e16520e4-84bf-5d29-83c9-7504312a7b75",
+      "priceMax": null,
+      "priceMin": null,
+      "sameAsVenueHoursEvidence": [],
+      "serviceMode": null,
+      "unit": null,
+      "validUntil": null,
+      "weeklySchedules": []
+    }
+  ],
+  "publicationPerformed": false,
+  "reviewedAt": null,
+  "sourceRights": {
+    "attribution": null,
+    "evidence": [],
+    "license": null,
+    "permittedUses": null,
+    "sourceRef": "fa76dfbf-99bb-5760-ac20-2741a5862b50",
+    "usageRights": "unknown",
+    "validUntil": null
+  },
+  "state": "Pending",
+  "venueId": "d8ab56a2-ebf7-597c-bc2c-a53bf002700a",
+  "verified": false
+}

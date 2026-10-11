@@ -1,0 +1,1477 @@
+{
+  "candidateSha256": "82bbbcef3eddbb72415aa908359f07c0cd41db3106b7baf315ea6e8bfdfd309d",
+  "contractVersion": "food-v1/roadmap-v2/GM-08.1",
+  "coverageIds": [],
+  "datasetVersion": "0.2.0",
+  "errors": [],
+  "evaluatedAt": "2026-10-11T00:00:00Z",
+  "fixtureOnly": false,
+  "foodContractVersion": "1.1.0",
+  "limitations": [
+    "39 editorial draft dishes, not verified offerings",
+    "no actual venue/offering/schedule/coverage/anchor records",
+    "menu rights, dine_in, freshness and independent content review pending",
+    "no artwork selected; image metadata is not permission"
+  ],
+  "observedPriceBranches": 21,
+  "observedPriceReferences": 247,
+  "pilotTarget": {
+    "dishes": "15–20",
+    "quotaMet": false,
+    "venues": "20–30"
+  },
+  "publicationPerformed": false,
+  "publishBlockers": [
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.taxonomy[0].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.taxonomy[0].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.taxonomy[0].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.taxonomy[1].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.taxonomy[1].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.taxonomy[1].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.taxonomy[2].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.taxonomy[2].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.taxonomy[2].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.taxonomy[3].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.taxonomy[3].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.taxonomy[3].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.taxonomy[4].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.taxonomy[4].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.taxonomy[4].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.taxonomy[5].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.taxonomy[5].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.taxonomy[5].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.taxonomy[6].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.taxonomy[6].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.taxonomy[6].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.taxonomy[7].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.taxonomy[7].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.taxonomy[7].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.taxonomy[8].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.taxonomy[8].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.taxonomy[8].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.taxonomy[9].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.taxonomy[9].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.taxonomy[9].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.taxonomy[10].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.taxonomy[10].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.taxonomy[10].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.taxonomy[11].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.taxonomy[11].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.taxonomy[11].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.taxonomy[12].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.taxonomy[12].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.taxonomy[12].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.taxonomy[13].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.taxonomy[13].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.taxonomy[13].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.taxonomy[14].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.taxonomy[14].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.taxonomy[14].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.taxonomy[15].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.taxonomy[15].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.taxonomy[15].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.taxonomy[16].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.taxonomy[16].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.taxonomy[16].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.taxonomy[17].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.taxonomy[17].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.taxonomy[17].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[0].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[0].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[0].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[1].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[1].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[1].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[2].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[2].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[2].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[3].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[3].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[3].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[4].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[4].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[4].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[5].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[5].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[5].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[6].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[6].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[6].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[7].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[7].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[7].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[8].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[8].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[8].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[9].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[9].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[9].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[10].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[10].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[10].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[11].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[11].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[11].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[12].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[12].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[12].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[13].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[13].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[13].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[14].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[14].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[14].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[15].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[15].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[15].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[16].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[16].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[16].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[17].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[17].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[17].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[18].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[18].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[18].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[19].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[19].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[19].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[20].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[20].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[20].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[21].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[21].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[21].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[22].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[22].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[22].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[23].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[23].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[23].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[24].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[24].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[24].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[25].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[25].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[25].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[26].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[26].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[26].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[27].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[27].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[27].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[28].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[28].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[28].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[29].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[29].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[29].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[30].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[30].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[30].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[31].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[31].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[31].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[32].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[32].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[32].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[33].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[33].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[33].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[34].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[34].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[34].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[35].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[35].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[35].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[36].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[36].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[36].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[37].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[37].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[37].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dishes[38].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dishes[38].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dishes[38].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dataSources[0].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dataSources[0].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dataSources[0].reviewedBy"
+    },
+    {
+      "code": "RIGHTS",
+      "message": "License/agreement evidence required",
+      "path": "$.entities.dataSources[0].usageRights"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dataSources[1].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dataSources[1].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dataSources[1].reviewedBy"
+    },
+    {
+      "code": "RIGHTS",
+      "message": "License/agreement evidence required",
+      "path": "$.entities.dataSources[1].usageRights"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dataSources[2].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dataSources[2].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dataSources[2].reviewedBy"
+    },
+    {
+      "code": "RIGHTS",
+      "message": "License/agreement evidence required",
+      "path": "$.entities.dataSources[2].usageRights"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dataSources[3].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dataSources[3].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dataSources[3].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dataSources[4].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dataSources[4].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dataSources[4].reviewedBy"
+    },
+    {
+      "code": "RIGHTS",
+      "message": "License/agreement evidence required",
+      "path": "$.entities.dataSources[4].usageRights"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dataSources[5].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dataSources[5].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dataSources[5].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dataSources[6].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dataSources[6].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dataSources[6].reviewedBy"
+    },
+    {
+      "code": "RIGHTS",
+      "message": "License/agreement evidence required",
+      "path": "$.entities.dataSources[6].usageRights"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dataSources[7].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dataSources[7].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dataSources[7].reviewedBy"
+    },
+    {
+      "code": "RIGHTS",
+      "message": "License/agreement evidence required",
+      "path": "$.entities.dataSources[7].usageRights"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dataSources[8].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dataSources[8].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dataSources[8].reviewedBy"
+    },
+    {
+      "code": "RIGHTS",
+      "message": "License/agreement evidence required",
+      "path": "$.entities.dataSources[8].usageRights"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dataSources[9].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dataSources[9].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dataSources[9].reviewedBy"
+    },
+    {
+      "code": "RIGHTS",
+      "message": "License/agreement evidence required",
+      "path": "$.entities.dataSources[9].usageRights"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dataSources[10].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dataSources[10].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dataSources[10].reviewedBy"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dataSources[11].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dataSources[11].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dataSources[11].reviewedBy"
+    },
+    {
+      "code": "RIGHTS",
+      "message": "License/agreement evidence required",
+      "path": "$.entities.dataSources[11].usageRights"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dataSources[12].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dataSources[12].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dataSources[12].reviewedBy"
+    },
+    {
+      "code": "RIGHTS",
+      "message": "License/agreement evidence required",
+      "path": "$.entities.dataSources[12].usageRights"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dataSources[13].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dataSources[13].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dataSources[13].reviewedBy"
+    },
+    {
+      "code": "RIGHTS",
+      "message": "License/agreement evidence required",
+      "path": "$.entities.dataSources[13].usageRights"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dataSources[14].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dataSources[14].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dataSources[14].reviewedBy"
+    },
+    {
+      "code": "RIGHTS",
+      "message": "License/agreement evidence required",
+      "path": "$.entities.dataSources[14].usageRights"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dataSources[15].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dataSources[15].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dataSources[15].reviewedBy"
+    },
+    {
+      "code": "RIGHTS",
+      "message": "License/agreement evidence required",
+      "path": "$.entities.dataSources[15].usageRights"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dataSources[16].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dataSources[16].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dataSources[16].reviewedBy"
+    },
+    {
+      "code": "RIGHTS",
+      "message": "License/agreement evidence required",
+      "path": "$.entities.dataSources[16].usageRights"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dataSources[17].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dataSources[17].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dataSources[17].reviewedBy"
+    },
+    {
+      "code": "RIGHTS",
+      "message": "License/agreement evidence required",
+      "path": "$.entities.dataSources[17].usageRights"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dataSources[18].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dataSources[18].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dataSources[18].reviewedBy"
+    },
+    {
+      "code": "RIGHTS",
+      "message": "License/agreement evidence required",
+      "path": "$.entities.dataSources[18].usageRights"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dataSources[19].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dataSources[19].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dataSources[19].reviewedBy"
+    },
+    {
+      "code": "RIGHTS",
+      "message": "License/agreement evidence required",
+      "path": "$.entities.dataSources[19].usageRights"
+    },
+    {
+      "code": "SOURCE",
+      "message": "Real source locator required",
+      "path": "$.entities.dataSources[19].locator"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dataSources[20].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dataSources[20].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dataSources[20].reviewedBy"
+    },
+    {
+      "code": "RIGHTS",
+      "message": "License/agreement evidence required",
+      "path": "$.entities.dataSources[20].usageRights"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dataSources[21].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dataSources[21].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dataSources[21].reviewedBy"
+    },
+    {
+      "code": "RIGHTS",
+      "message": "License/agreement evidence required",
+      "path": "$.entities.dataSources[21].usageRights"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dataSources[22].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dataSources[22].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dataSources[22].reviewedBy"
+    },
+    {
+      "code": "RIGHTS",
+      "message": "License/agreement evidence required",
+      "path": "$.entities.dataSources[22].usageRights"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dataSources[23].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dataSources[23].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dataSources[23].reviewedBy"
+    },
+    {
+      "code": "RIGHTS",
+      "message": "License/agreement evidence required",
+      "path": "$.entities.dataSources[23].usageRights"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dataSources[24].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dataSources[24].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dataSources[24].reviewedBy"
+    },
+    {
+      "code": "RIGHTS",
+      "message": "License/agreement evidence required",
+      "path": "$.entities.dataSources[24].usageRights"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dataSources[25].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dataSources[25].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dataSources[25].reviewedBy"
+    },
+    {
+      "code": "RIGHTS",
+      "message": "License/agreement evidence required",
+      "path": "$.entities.dataSources[25].usageRights"
+    },
+    {
+      "code": "SOURCE",
+      "message": "Real source locator required",
+      "path": "$.entities.dataSources[25].locator"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.dataSources[26].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.dataSources[26].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.dataSources[26].reviewedBy"
+    },
+    {
+      "code": "RIGHTS",
+      "message": "License/agreement evidence required",
+      "path": "$.entities.dataSources[26].usageRights"
+    },
+    {
+      "code": "UNREVIEWED",
+      "message": "Every row must be independently reviewed",
+      "path": "$.entities.datasetVersions[0].reviewStatus"
+    },
+    {
+      "code": "STALE",
+      "message": "Every row requires current validity",
+      "path": "$.entities.datasetVersions[0].validUntil"
+    },
+    {
+      "code": "REVIEW",
+      "message": "Independent named reviewer required",
+      "path": "$.entities.datasetVersions[0].reviewedBy"
+    },
+    {
+      "code": "COVERAGE",
+      "message": "Pilot cannot publish without actual records",
+      "path": "$.entities.venues"
+    },
+    {
+      "code": "COVERAGE",
+      "message": "Pilot cannot publish without actual records",
+      "path": "$.entities.venueDishes"
+    },
+    {
+      "code": "COVERAGE",
+      "message": "Pilot cannot publish without actual records",
+      "path": "$.entities.weeklySchedules"
+    },
+    {
+      "code": "COVERAGE",
+      "message": "Pilot cannot publish without actual records",
+      "path": "$.entities.coverageAreas"
+    },
+    {
+      "code": "COVERAGE",
+      "message": "Pilot cannot publish without actual records",
+      "path": "$.entities.publicAnchors"
+    }
+  ],
+  "rowCounts": {
+    "availabilityOverrides": 0,
+    "coverageAreas": 0,
+    "dataSources": 27,
+    "datasetVersions": 1,
+    "dateExceptions": 0,
+    "dishes": 39,
+    "publicAnchors": 0,
+    "taxonomy": 18,
+    "venueDishes": 0,
+    "venues": 0,
+    "weeklySchedules": 0
+  },
+  "scheduleAudit": [],
+  "schemaVersion": "0.1.0",
+  "sourcePath": "data-preparation/snapshots/editorial-v0.2.0/catalogue.json",
+  "sourceSha256": "cfaff47b0c65833983fe8de748428f25d26d7e1d49c539a5d1045676a08b9e90",
+  "state": "draft_candidate",
+  "timezones": [],
+  "valid": true,
+  "verified": false
+}

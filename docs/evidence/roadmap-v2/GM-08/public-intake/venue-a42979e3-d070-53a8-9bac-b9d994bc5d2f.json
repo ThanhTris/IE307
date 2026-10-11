@@ -1,0 +1,121 @@
+{
+  "state": "Pending",
+  "verified": false,
+  "publicationPerformed": false,
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "venueId": "a42979e3-d070-53a8-9bac-b9d994bc5d2f",
+  "branchName": "Quie Tea & Food - Hoàng Diệu 2",
+  "observedVenue": {
+    "address": "127/6E Hoàng Diệu 2, Phường Linh Xuân, Hồ Chí Minh",
+    "lat": 10.85630989074707,
+    "lng": 106.76761627197266,
+    "sourceUrl": "https://food.be.com.vn/ho-chi-minh/quie-tea-food-hoang-dieu-2-148318",
+    "fetchedAtUTC": "2026-10-11T04:27:49.228795+00:00",
+    "htmlSha256": "ae4adb62abbb7e74b739a34ca7c1e967207a6eb6588aea1657cc559c5daeed0a",
+    "platformWeeklyHours": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Sunday"
+        ],
+        "opens": "06:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Monday"
+        ],
+        "opens": "06:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Tuesday"
+        ],
+        "opens": "06:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Wednesday"
+        ],
+        "opens": "06:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Thursday"
+        ],
+        "opens": "06:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Friday"
+        ],
+        "opens": "06:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "23:59",
+        "dayOfWeek": [
+          "Saturday"
+        ],
+        "opens": "06:00"
+      }
+    ],
+    "serviceScope": "delivery_platform_listing; physical dine_in/takeaway/availability unknown"
+  },
+  "additionalPublicObservations": [],
+  "offerings": [
+    {
+      "offeringId": "5b77bbb1-2a15-5120-87a7-bde7969be6f5",
+      "menuItemId": "menu_2452a32cf1c94fcb8ce3",
+      "observedMenuName": "Mì trộn Quie",
+      "observedPriceVND": 40000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Food"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/quie-tea-food-hoang-dieu-2-148318",
+      "sourceRef": "83199cc8-678e-592b-a02b-9cf6dce0d645",
+      "fetchedAtUTC": "2026-10-11T04:27:49.228795+00:00",
+      "htmlSha256": "ae4adb62abbb7e74b739a34ca7c1e967207a6eb6588aea1657cc559c5daeed0a",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "af176594-4c21-5dfc-a7a6-78d6bc4c0733",
+      "menuItemId": "menu_a6fb7148f478e6e05325",
+      "observedMenuName": "Mì trộn thập cẩm",
+      "observedPriceVND": 37500,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Food"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/quie-tea-food-hoang-dieu-2-148318",
+      "sourceRef": "83199cc8-678e-592b-a02b-9cf6dce0d645",
+      "fetchedAtUTC": "2026-10-11T04:27:49.228795+00:00",
+      "htmlSha256": "ae4adb62abbb7e74b739a34ca7c1e967207a6eb6588aea1657cc559c5daeed0a",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    }
+  ],
+  "confirmedFieldsApplied": false,
+  "independentReviewer": null,
+  "validUntil": null
+}

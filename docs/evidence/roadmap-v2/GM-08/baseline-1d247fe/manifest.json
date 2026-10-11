@@ -1,0 +1,26 @@
+{
+  "revision": "1d247fe387ee9461277eb0141517a298675f6419",
+  "purpose": "Original evidence preserved verbatim before addressing PR #103 review; Markdown archived as text to retain historical paths without treating them as current links.",
+  "files": {
+    "CHECKS.md": {
+      "archiveFile": "CHECKS.md.txt",
+      "sha256": "1a9a8e1bafb48e92f8b051bbb52b18235ce4fdbcd0ce29ad3c0804f134749256"
+    },
+    "HANDOFF.md": {
+      "archiveFile": "HANDOFF.md.txt",
+      "sha256": "c57f1a12854bd5d7e9517132bea484e9d57fd8c99e2cee11292e9e9359c6a783"
+    },
+    "verification.json": {
+      "archiveFile": "verification.json",
+      "sha256": "5aab12dca19921d6d6a3401499dfcf0fd7c503e5c676b130ffd22c8e8d1f6aad"
+    },
+    "sql-results.json": {
+      "archiveFile": "sql-results.json",
+      "sha256": "7f4464e3809f63c95609a1984cbc501decb6fc6e71c7e8aaaa7e17fb7a8826bc"
+    },
+    "regression.txt": {
+      "archiveFile": "regression.txt",
+      "sha256": "ad6a84392b7cee77580c2a006f477d5b5e2ab9448dc1f6296f7b0d124a976490"
+    }
+  }
+}

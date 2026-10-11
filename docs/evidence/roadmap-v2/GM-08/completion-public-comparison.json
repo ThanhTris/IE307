@@ -1,0 +1,274 @@
+{
+  "state": "Pending",
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "comparedAtUTC": "2026-10-11T04:53:38.555088Z",
+  "verified": false,
+  "publicationPerformed": false,
+  "method": "Primary platform/official listing crosschecks and source discovery; cached search results not a fresh field survey",
+  "branches": {
+    "d8ab56a2-ebf7-597c-bc2c-a53bf002700a": {
+      "flags": [
+        "Khác khoảng giờ giữa nguồn công khai"
+      ],
+      "observations": [
+        {
+          "kind": "Foody listing",
+          "url": "https://www.foody.vn/ho-chi-minh/tiem-com-nha-tron-hoang-dieu-2",
+          "displayedHours": {
+            "start": "10:00",
+            "end": "22:00",
+            "weekdays": "unspecified"
+          },
+          "note": "Nguồn bổ sung hiển thị 10:00–22:00; platform có 09:00–19:25, 09:00–21:25. Search result crawl3months old; does not give explicit seven-day offering hours.",
+          "independentApproval": false,
+          "serviceModesConfirmed": false
+        }
+      ],
+      "offeringHoursConfirmed": false,
+      "serviceModesConfirmed": false,
+      "rightsConfirmed": false
+    },
+    "337cbf18-7479-5ea7-94c5-e7f780be2940": {
+      "flags": [
+        "23:59 chưa chứng minh24h/overnight"
+      ],
+      "observations": [],
+      "offeringHoursConfirmed": false,
+      "serviceModesConfirmed": false,
+      "rightsConfirmed": false
+    },
+    "ec6f429d-908d-5a5a-a80f-5aae04c8ccf4": {
+      "flags": [],
+      "observations": [],
+      "offeringHoursConfirmed": false,
+      "serviceModesConfirmed": false,
+      "rightsConfirmed": false
+    },
+    "5ab3f60f-dfa8-5582-9f3a-828c1372d8c2": {
+      "flags": [
+        "Khác khoảng giờ giữa nguồn công khai"
+      ],
+      "observations": [
+        {
+          "kind": "Foody listing",
+          "url": "https://www.foody.vn/ho-chi-minh/bun-dau-mam-tom-ba-anh-em-220-hoang-dieu-2",
+          "displayedHours": {
+            "start": "10:00",
+            "end": "22:30",
+            "weekdays": "unspecified"
+          },
+          "note": "Nguồn bổ sung hiển thị 10:00–22:30; platform có 10:00–22:30, 10:00–23:00. Search result crawl3months old; weekday unspecified. Some beFood weekdays close23:00.",
+          "independentApproval": false,
+          "serviceModesConfirmed": false
+        }
+      ],
+      "offeringHoursConfirmed": false,
+      "serviceModesConfirmed": false,
+      "rightsConfirmed": false
+    },
+    "e9179bac-f048-5d75-ad2f-fb6b6525fb01": {
+      "flags": [
+        "23:59 chưa chứng minh24h/overnight"
+      ],
+      "observations": [],
+      "offeringHoursConfirmed": false,
+      "serviceModesConfirmed": false,
+      "rightsConfirmed": false
+    },
+    "265904b9-2d5e-5bdf-88cc-2ee59fe262dd": {
+      "flags": [
+        "Khác khoảng giờ giữa nguồn công khai"
+      ],
+      "observations": [
+        {
+          "kind": "Official Jollibee branch list",
+          "url": "https://help.jollibee.com.vn/hc/vi/articles/14378093877775-Danh-s%C3%A1ch-c%E1%BB%ADa-h%C3%A0ng",
+          "displayedHours": {
+            "start": "09:00",
+            "end": "22:00",
+            "weekdays": "unspecified"
+          },
+          "note": "Nguồn bổ sung hiển thị 09:00–22:00; platform có 08:30–22:00. JBVN256,255VoVanNgan; list updated2026-09-22. Does not give explicit seven-day offering hours.",
+          "independentApproval": false,
+          "serviceModesConfirmed": false
+        }
+      ],
+      "offeringHoursConfirmed": false,
+      "serviceModesConfirmed": false,
+      "rightsConfirmed": false
+    },
+    "ac83ebe5-4640-5c50-b67f-e751bb5d8476": {
+      "flags": [
+        "Khác khoảng giờ giữa nguồn công khai"
+      ],
+      "observations": [
+        {
+          "kind": "Foody listing",
+          "url": "https://www.foody.vn/ho-chi-minh/banh-cuon-banh-uot-129-chuong-duong",
+          "displayedHours": {
+            "start": "06:00",
+            "end": "22:00",
+            "weekdays": "unspecified"
+          },
+          "note": "Nguồn bổ sung hiển thị 06:00–22:00; platform có 06:00–17:00. Search result crawl4months old; weekday unspecified.",
+          "independentApproval": false,
+          "serviceModesConfirmed": false
+        }
+      ],
+      "offeringHoursConfirmed": false,
+      "serviceModesConfirmed": false,
+      "rightsConfirmed": false
+    },
+    "d8f7291d-bfea-59ba-937c-732ea3c098f1": {
+      "flags": [
+        "23:59 chưa chứng minh24h/overnight"
+      ],
+      "observations": [],
+      "offeringHoursConfirmed": false,
+      "serviceModesConfirmed": false,
+      "rightsConfirmed": false
+    },
+    "789307f3-d3f5-54e9-9fb9-245c84466987": {
+      "flags": [
+        "Không trộn với Texas352–354VoVanNgan"
+      ],
+      "observations": [
+        {
+          "kind": "MoMo merchant listing",
+          "url": "https://www.momo.vn/page/10020372",
+          "note": "Đúng địa chỉ13–13/1VoVanNgan; corroborates branch identity only. Không dùng giờ/service của địa chỉ352–354.",
+          "independentApproval": false,
+          "serviceModesConfirmed": false
+        }
+      ],
+      "offeringHoursConfirmed": false,
+      "serviceModesConfirmed": false,
+      "rightsConfirmed": false
+    },
+    "aea51b1c-5e17-52e2-99fa-d981657d077b": {
+      "flags": [
+        "23:59 chưa chứng minh24h/overnight"
+      ],
+      "observations": [],
+      "offeringHoursConfirmed": false,
+      "serviceModesConfirmed": false,
+      "rightsConfirmed": false
+    },
+    "7d282d6a-3daf-5c2f-a469-5eb382f35245": {
+      "flags": [],
+      "observations": [],
+      "offeringHoursConfirmed": false,
+      "serviceModesConfirmed": false,
+      "rightsConfirmed": false
+    },
+    "eeecb47e-54fa-5845-95eb-9fed8b83db56": {
+      "flags": [],
+      "observations": [],
+      "offeringHoursConfirmed": false,
+      "serviceModesConfirmed": false,
+      "rightsConfirmed": false
+    },
+    "668b13d9-fbfe-5391-ad26-e4499447e9e0": {
+      "flags": [
+        "Khác khoảng giờ giữa nguồn công khai"
+      ],
+      "observations": [
+        {
+          "kind": "Foody listing",
+          "url": "https://www.foody.vn/ho-chi-minh/pha-lau-co-phuong-hiep-binh",
+          "displayedHours": {
+            "start": "14:00",
+            "end": "23:00",
+            "weekdays": "unspecified"
+          },
+          "note": "Nguồn bổ sung hiển thị 14:00–23:00; platform có 15:30–23:00. Search result crawl5months old; weekday unspecified.",
+          "independentApproval": false,
+          "serviceModesConfirmed": false
+        }
+      ],
+      "offeringHoursConfirmed": false,
+      "serviceModesConfirmed": false,
+      "rightsConfirmed": false
+    },
+    "e1c4c0d1-9fff-5639-93a7-20893ee73e30": {
+      "flags": [
+        "Thiếu ngày trong tuần"
+      ],
+      "observations": [],
+      "offeringHoursConfirmed": false,
+      "serviceModesConfirmed": false,
+      "rightsConfirmed": false
+    },
+    "ab5f6e1e-1cbb-573c-a9b7-7e8cf5234e60": {
+      "flags": [
+        "Khác khoảng giờ giữa nguồn công khai"
+      ],
+      "observations": [
+        {
+          "kind": "Foody listing",
+          "url": "https://www.foody.vn/ho-chi-minh/wallace-burger-chicken-1098-kha-van-can",
+          "displayedHours": {
+            "start": "09:30",
+            "end": "22:30",
+            "weekdays": "unspecified"
+          },
+          "note": "Nguồn bổ sung hiển thị 09:30–22:30; platform có 09:30–22:15. Search result crawl2months old; weekday unspecified.",
+          "independentApproval": false,
+          "serviceModesConfirmed": false
+        }
+      ],
+      "offeringHoursConfirmed": false,
+      "serviceModesConfirmed": false,
+      "rightsConfirmed": false
+    },
+    "27d5dd37-ffd7-5a57-b2ea-e53457ba1ec5": {
+      "flags": [],
+      "observations": [],
+      "offeringHoursConfirmed": false,
+      "serviceModesConfirmed": false,
+      "rightsConfirmed": false
+    },
+    "a42979e3-d070-53a8-9bac-b9d994bc5d2f": {
+      "flags": [
+        "23:59 chưa chứng minh24h/overnight"
+      ],
+      "observations": [],
+      "offeringHoursConfirmed": false,
+      "serviceModesConfirmed": false,
+      "rightsConfirmed": false
+    },
+    "30cacf32-9afb-5c37-aec1-ca032510a070": {
+      "flags": [
+        "23:59 chưa chứng minh24h/overnight"
+      ],
+      "observations": [],
+      "offeringHoursConfirmed": false,
+      "serviceModesConfirmed": false,
+      "rightsConfirmed": false
+    },
+    "3d7ec92b-075d-5485-8843-dcff94f5db09": {
+      "flags": [],
+      "observations": [],
+      "offeringHoursConfirmed": false,
+      "serviceModesConfirmed": false,
+      "rightsConfirmed": false
+    },
+    "2caf02b6-b3a0-5768-999b-840da0a26274": {
+      "flags": [
+        "23:59 chưa chứng minh24h/overnight",
+        "Nhiều ca/ngày, cần kiểm khoảng nghỉ"
+      ],
+      "observations": [],
+      "offeringHoursConfirmed": false,
+      "serviceModesConfirmed": false,
+      "rightsConfirmed": false
+    },
+    "a35c7d52-8e72-5d04-a265-bfef58c8ea1a": {
+      "flags": [],
+      "observations": [],
+      "offeringHoursConfirmed": false,
+      "serviceModesConfirmed": false,
+      "rightsConfirmed": false
+    }
+  }
+}

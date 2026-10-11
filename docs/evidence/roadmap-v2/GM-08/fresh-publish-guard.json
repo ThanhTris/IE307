@@ -1,0 +1,9 @@
+{
+  "actual": "REVIEW_HASH: independent approval must bind exact staged bytes",
+  "databaseAccessed": false,
+  "expected": "Reject before DB",
+  "input": "Actual fresh pilot stage with Pending review",
+  "publicationPerformed": false,
+  "result": "Pass",
+  "verifiedDatasetAC": "Not run"
+}

@@ -3,8 +3,11 @@ import ast
 import hashlib
 import importlib.util
 import json
+import os
 from pathlib import Path
 import re
+import subprocess
+import sys
 import tempfile
 import unicodedata
 import unittest
@@ -185,6 +188,65 @@ class SnapshotIntegrityTests(unittest.TestCase):
                       digest=lambda data: hashlib.sha256(data).hexdigest())
             with self.assertRaisesRegex(ValueError, 'Snapshot không đúng manifest'):
                 exec(compile(retrieval, str(NOTEBOOK), 'exec'), ns)
+
+
+class NotebookOutputIsolationTests(unittest.TestCase):
+    def test_cli_emits_utf8_under_cp1252_with_ascii_launch_paths(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            notebook = root / 'sample.ipynb'
+            notebook.write_text(json.dumps(dict(metadata={'language_info':{}}, cells=[
+                dict(cell_type='code', source="stats = {'note': 'Giờ bán món chưa xác minh'}")
+            ])), encoding='utf-8')
+            result = subprocess.run([sys.executable,
+                str(NOTEBOOK.parents[1] / 'scripts/run_notebook.py'), str(notebook),
+                '--offline', '--output-dir', str(root / 'new')], capture_output=True,
+                env={**os.environ, 'PYTHONIOENCODING':'cp1252', 'PYTHONUTF8':'0',
+                     'PYTHONCOERCECLOCALE':'0', 'LC_ALL':'C'})
+            self.assertEqual(result.returncode, 0, result.stderr.decode('utf-8'))
+            self.assertIn('Giờ bán món chưa xác minh', result.stdout.decode('utf-8'))
+
+    def test_new_output_dir_and_failed_cell_never_touch_legacy_reports(self):
+        spec = importlib.util.spec_from_file_location('menu_runner',
+            NOTEBOOK.parents[1] / 'scripts/run_notebook.py')
+        runner = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(runner)
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            notebook = root / 'sample.ipynb'
+            notebook.write_text(json.dumps(dict(metadata={'language_info':{}}, cells=[
+                dict(cell_type='code', source='raise ValueError("survey stopped")')
+            ])), encoding='utf-8')
+            runner.BASE = root / 'legacy'
+            output = root / 'new-capture'
+            original = Path.cwd()
+            with self.assertRaisesRegex(RuntimeError, 'Cell 1 failed'):
+                runner.execute(notebook, output_dir=output)
+            self.assertEqual(Path.cwd(), original)
+            self.assertTrue((output / 'reports/sample.executed.ipynb').is_file())
+            self.assertFalse(runner.BASE.exists())
+            before = (output / 'reports/sample.executed.ipynb').read_bytes()
+            with self.assertRaises(FileExistsError):
+                runner.execute(notebook, output_dir=output)
+            self.assertEqual((output / 'reports/sample.executed.ipynb').read_bytes(), before)
+
+    def test_notebook_receives_output_and_network_flags(self):
+        spec = importlib.util.spec_from_file_location('menu_runner',
+            NOTEBOOK.parents[1] / 'scripts/run_notebook.py')
+        runner = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(runner)
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            notebook = root / 'sample.ipynb'
+            notebook.write_text(json.dumps(dict(metadata={'language_info':{}}, cells=[
+                dict(cell_type='code', source='stats = NOTEBOOK_OPTIONS')
+            ])), encoding='utf-8')
+            report = runner.execute(notebook, offline=True, output_dir=root / 'new')
+            execution = json.loads(report.read_text())['metadata']['execution']
+            self.assertTrue(execution['offline_override'])
+            self.assertFalse(execution['refresh_override'])
+            self.assertFalse(execution['allow_api'])
+            self.assertEqual(execution['output_dir'], str((root / 'new').resolve()))
 
 
 @unittest.skipUnless(importlib.util.find_spec('lxml'), 'Use the documented Python runtime with lxml for parser tests')

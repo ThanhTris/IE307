@@ -1,0 +1,139 @@
+{
+  "state": "Pending",
+  "verified": false,
+  "publicationPerformed": false,
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "venueId": "ac83ebe5-4640-5c50-b67f-e751bb5d8476",
+  "branchName": "Bánh Cuốn & Bánh Ướt - Chương Dương",
+  "observedVenue": {
+    "address": "129 Chương Dương, Linh Chiểu, Thủ Đức, Hồ Chí Minh, Việt Nam",
+    "lat": 10.855669975280762,
+    "lng": 106.7569808959961,
+    "sourceUrl": "https://food.be.com.vn/ho-chi-minh/banh-cuon-banh-uot-chuong-duong-33659",
+    "fetchedAtUTC": "2026-10-11T04:27:47.265108+00:00",
+    "htmlSha256": "5a61fb1dc3b999753aa37a34028e1cd79d71687d8979e307e8911beab57d1256",
+    "platformWeeklyHours": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "17:00",
+        "dayOfWeek": [
+          "Sunday"
+        ],
+        "opens": "06:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "17:00",
+        "dayOfWeek": [
+          "Monday"
+        ],
+        "opens": "06:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "17:00",
+        "dayOfWeek": [
+          "Tuesday"
+        ],
+        "opens": "06:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "17:00",
+        "dayOfWeek": [
+          "Wednesday"
+        ],
+        "opens": "06:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "17:00",
+        "dayOfWeek": [
+          "Thursday"
+        ],
+        "opens": "06:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "17:00",
+        "dayOfWeek": [
+          "Friday"
+        ],
+        "opens": "06:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "closes": "17:00",
+        "dayOfWeek": [
+          "Saturday"
+        ],
+        "opens": "06:00"
+      }
+    ],
+    "serviceScope": "delivery_platform_listing; physical dine_in/takeaway/availability unknown"
+  },
+  "additionalPublicObservations": [
+    {
+      "kind": "Foody direct HTTPS capture",
+      "url": "https://www.foody.vn/ho-chi-minh/banh-cuon-banh-uot-129-chuong-duong",
+      "fetchedAtUTC": "2026-10-11T05:09:11.415366+00:00",
+      "sha256": "8026f9911c6f51967c579f4b7ab70a223f4538d6ce9817ca7ef024d448ec1215",
+      "observedAddress": "129 Chương Dương, KP. 2, P. Linh Chiểu, Tp. Thủ Đức, TP. HCM",
+      "observedHours": {
+        "start": "06:00",
+        "end": "22:00",
+        "weekdays": "unspecified"
+      },
+      "listingStatusLabel": null,
+      "physicalVenueConfirmed": false,
+      "serviceModesConfirmed": false,
+      "note": "Static listing observation only; no seven-day schedule or offering hours confirmed. Amenities with active/inactive ambiguity not used."
+    }
+  ],
+  "offerings": [
+    {
+      "offeringId": "3a313b4b-f12c-5c1c-b305-541cfae2e070",
+      "menuItemId": "menu_5c335eeb61a699af929d",
+      "observedMenuName": "Bún thịt nướng",
+      "observedPriceVND": 32000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Bánh cuốn",
+        "Món phải thử"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/banh-cuon-banh-uot-chuong-duong-33659",
+      "sourceRef": "274f6cc1-8d26-54af-9d61-522bc9b2dab4",
+      "fetchedAtUTC": "2026-10-11T04:27:47.265108+00:00",
+      "htmlSha256": "5a61fb1dc3b999753aa37a34028e1cd79d71687d8979e307e8911beab57d1256",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    },
+    {
+      "offeringId": "ea6e9e2e-e3a9-5d64-9758-606a1a9cd9f7",
+      "menuItemId": "menu_3dc8d65c0a4a51beb35c",
+      "observedMenuName": "Bánh mì thịt nướng",
+      "observedPriceVND": 22000,
+      "observedUnit": "menu_item_unspecified",
+      "observedMenuGroups": [
+        "Bánh cuốn"
+      ],
+      "hoursHint": null,
+      "sourceUrl": "https://food.be.com.vn/ho-chi-minh/banh-cuon-banh-uot-chuong-duong-33659",
+      "sourceRef": "274f6cc1-8d26-54af-9d61-522bc9b2dab4",
+      "fetchedAtUTC": "2026-10-11T04:27:47.265108+00:00",
+      "htmlSha256": "5a61fb1dc3b999753aa37a34028e1cd79d71687d8979e307e8911beab57d1256",
+      "observedServiceScope": "delivery_platform_menu",
+      "confirmedServiceMode": null,
+      "confirmedWeeklySchedules": [],
+      "rightsConfirmed": false,
+      "independentApproval": false
+    }
+  ],
+  "confirmedFieldsApplied": false,
+  "independentReviewer": null,
+  "validUntil": null
+}

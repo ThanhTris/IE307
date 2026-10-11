@@ -1,0 +1,51 @@
+{
+  "state": "Pending actual survey and independent review",
+  "checkedAtUTC": "2026-10-11T05:00:30.586844+00:00",
+  "baseCommit": "d6a6331e3d35842a062bbbda8e889dad700b656d",
+  "workingTreeChangesIncluded": true,
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "branches": 21,
+  "offerings": 190,
+  "verified": false,
+  "publicationPerformed": false,
+  "verifiedPublishQuery": "Not run",
+  "independentReview": "Pending",
+  "rightsAndFreshnessPolicy": "Pending human review",
+  "tests": {
+    "macOSFullRegression": {
+      "tests": 508,
+      "passed": 508,
+      "skipped": 0,
+      "result": "Pass"
+    },
+    "linuxCP1252SurveyPacket": {
+      "result": "Pass",
+      "platform": "python:3.13.3-slim; LC_ALL=C, PYTHONIOENCODING=cp1252, PYTHONUTF8=0, PYTHONCOERCECLOCALE=0"
+    },
+    "nativeWindows": "Not run",
+    "repositoryValidation": "Pass",
+    "taskDocFreshness": "Pass",
+    "packetIntegrityAndNegativeChecks": "Pass"
+  },
+  "sourceSha256": {
+    "scripts/gm08_prepare_survey_packet.py": "7e9ea0c3adc93a9da27708657608f19c67dbf33c99285d94c4f298b970b86632"
+  },
+  "evidenceSha256": {
+    "completion-regression.txt": "467941cc24b8d333ae32a8573beb98b3e480206981d11b8e0da6ece5943cdd9b",
+    "completion-repository-check.txt": "bafde887d56a88dbd066df4e7f6ddd50cdc3b6ff4526f7f4a192620fb81637aa",
+    "completion-docs-freshness.txt": "234e22deda2572ad8d8420bfa25a7cea614925c4fa044041d60412051aec8327",
+    "completion-linux-packet.txt": "db0e1ba3247a992bab3558d5fe8663706dc4f67590f276c83a7557fc38114793",
+    "completion-packet-check.json": "d1a3ca238b9cfde32d9cc1aac60001fa01ec0cdae16d0d6433bc87c7ab6e836a",
+    "completion-start-gate.txt": "25d63166aab2e1d129ff9c6c092979ff5d4e05d05e77d2cb17bbec7ed32b075e",
+    "completion-public-comparison.json": "4192001257b210bd4058eae6d5712dec9ea6e1db90393c5d2648df831853d883",
+    "completion-coverage-source-check.json": "33dbd4ced3bd9c6310d2b275159c48656329b65fef7bbcd51d2170559bbc4389"
+  },
+  "limitations": [
+    "User confirms no existing field survey; forms contain unknown confirmation fields.",
+    "Public source comparison has six differences in hour ranges; cached pages do not verify current physical hours or offering availability.",
+    "OSM relation 7138136 is a ward, not the old Thu Duc district; no coverage polygon or anchors approved.",
+    "No source permissions, freshness policy approval, or independent reviewer decision invented.",
+    "508 tests cover the existing suite; the new packet CLI is additionally checked by actual generation and negative checks.",
+    "No commit, push, task Done or merge performed by the agent."
+  ]
+}

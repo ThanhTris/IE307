@@ -1,0 +1,12 @@
+test_ambiguous_hours_reject_and_overnight_remains_draft (test_gm08_survey.SurveyDraftTests.test_ambiguous_hours_reject_and_overnight_remains_draft) ... ok
+test_draft_valid_but_publication_blocked (test_gm08_survey.SurveyDraftTests.test_draft_valid_but_publication_blocked) ... ok
+test_missing_day_not_closed_and_2359_not_24_hours (test_gm08_survey.SurveyDraftTests.test_missing_day_not_closed_and_2359_not_24_hours) ... ok
+test_no_offering_hours_service_or_review_inference (test_gm08_survey.SurveyDraftTests.test_no_offering_hours_service_or_review_inference) ... ok
+test_real_menu_relations_and_prices_preserved (test_gm08_survey.SurveyDraftTests.test_real_menu_relations_and_prices_preserved) ... ok
+test_source_coordinates_dates_and_checksums_preserved (test_gm08_survey.SurveyDraftTests.test_source_coordinates_dates_and_checksums_preserved) ... ok
+test_stable_identifiers_and_deterministic_bundle (test_gm08_survey.SurveyDraftTests.test_stable_identifiers_and_deterministic_bundle) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.441s
+
+OK

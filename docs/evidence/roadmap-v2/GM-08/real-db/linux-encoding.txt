@@ -1,0 +1,11 @@
+test_actual_candidate_retains_unknowns_and_exact_input_hash (test_gm08_real_bundle.RealBundleGuardTests.test_actual_candidate_retains_unknowns_and_exact_input_hash) ... ok
+test_broken_real_offering_fk_is_rejected_before_database (test_gm08_real_bundle.RealBundleGuardTests.test_broken_real_offering_fk_is_rejected_before_database) ... ok
+test_duplicate_fixture_flag_cannot_hide_a_fixture (test_gm08_real_bundle.RealBundleGuardTests.test_duplicate_fixture_flag_cannot_hide_a_fixture) ... ok
+test_fixture_cannot_be_called_actual_data (test_gm08_real_bundle.RealBundleGuardTests.test_fixture_cannot_be_called_actual_data) ... ok
+test_migration_matches_all_food_contract_provenance_keys_and_types (test_gm08_real_bundle.RealBundleGuardTests.test_migration_matches_all_food_contract_provenance_keys_and_types) ... ok
+test_verified_or_published_candidate_is_outside_test_load_mode (test_gm08_real_bundle.RealBundleGuardTests.test_verified_or_published_candidate_is_outside_test_load_mode) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 1.829s
+
+OK

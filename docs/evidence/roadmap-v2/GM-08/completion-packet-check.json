@@ -1,0 +1,80 @@
+{
+  "artifactSha256": {
+    "completion-survey/COVERAGE.md": "7197b1032df6597f33ef95fd509229d8cf900f0bb189bf229f8c5bdef80a0e5c",
+    "completion-survey/README.md": "4aa9d656816e4a68eaf2c6b9f9977416848e1077beefc91be1f3399cd8c9fe02",
+    "completion-survey/coverage-survey.json": "a913b1c75e57abd2dc1dc74fe707375ff1532e85faeac350fc70377b03a81cd1",
+    "completion-survey/manifest.json": "4d6862326ff44eee283f4dde7880f265e1130a3f29433ce36acaaa3c9a44b8a6",
+    "completion-survey/venue-265904b9-2d5e-5bdf-88cc-2ee59fe262dd.json": "776e82de7b0a066bf6ce5af45e2d1a2d0d9388958c8ee32a485398e9b35dc383",
+    "completion-survey/venue-265904b9-2d5e-5bdf-88cc-2ee59fe262dd.md": "91908cea7170889b8448168a6c07c021ef562034f0862867ff398b1f33c0af6e",
+    "completion-survey/venue-27d5dd37-ffd7-5a57-b2ea-e53457ba1ec5.json": "b4b5687232282e0f5541d36aca515dd23917089144e95ccd6ee09eff55a24cce",
+    "completion-survey/venue-27d5dd37-ffd7-5a57-b2ea-e53457ba1ec5.md": "7846cbf5409684c7a60e9ea412a8d1122ec3c3da6a35e93ed917e2df0e3dcab4",
+    "completion-survey/venue-2caf02b6-b3a0-5768-999b-840da0a26274.json": "ad12e79114bc56d9aa1678750ec793293e22961daf39805c15dba408cb96036f",
+    "completion-survey/venue-2caf02b6-b3a0-5768-999b-840da0a26274.md": "cc5fdeaacdaccc3d3638d5c3312c5de63294048d642cdf75ba3c78b8c17c0f12",
+    "completion-survey/venue-30cacf32-9afb-5c37-aec1-ca032510a070.json": "3cb2d24729392c617823bb874bdd6f8c0c2e3352eb67c20931df338761003be0",
+    "completion-survey/venue-30cacf32-9afb-5c37-aec1-ca032510a070.md": "5ff1fcf2f5096d4efe5a3cb288485e7160bdb9d92c43805331e9c7bca8dbdbd0",
+    "completion-survey/venue-337cbf18-7479-5ea7-94c5-e7f780be2940.json": "150c177def112cadc10bf2477a83000bbbb7534b2cec4a30e7f6c6c5d56fa3e9",
+    "completion-survey/venue-337cbf18-7479-5ea7-94c5-e7f780be2940.md": "8db073fb9ee79df90958c13e4a6627d52e77eb6b523149466bb1e75e98851be6",
+    "completion-survey/venue-3d7ec92b-075d-5485-8843-dcff94f5db09.json": "29aa69e274b223d15371b1fefad2d960981e30b4ea2ebff7db8fe9fed91c0c2e",
+    "completion-survey/venue-3d7ec92b-075d-5485-8843-dcff94f5db09.md": "29d562582ee2a83e41efb9f7e4bd5fbc0d265b2fc362045ae7d3971e16d874f5",
+    "completion-survey/venue-5ab3f60f-dfa8-5582-9f3a-828c1372d8c2.json": "ec3584efc26e3224135c86f5474e554a8595d6338005df1bdfd9835876a47fee",
+    "completion-survey/venue-5ab3f60f-dfa8-5582-9f3a-828c1372d8c2.md": "d5986f01e3e3fdf94b65eec9004ac215559357ada93aaf6713d5988240c3ae72",
+    "completion-survey/venue-668b13d9-fbfe-5391-ad26-e4499447e9e0.json": "7a2b74ce02fd528658e600ec449071286f5448f26fb758d1a0983841786ee421",
+    "completion-survey/venue-668b13d9-fbfe-5391-ad26-e4499447e9e0.md": "0b07ff2fd350d3bfae71364065b20b9992bf5ee5e70b2d09c1c55d77a935c995",
+    "completion-survey/venue-789307f3-d3f5-54e9-9fb9-245c84466987.json": "777ef7e33bc85f3c271534d4cd91ec29a85bd4350d23855f9ba4156248cd2bec",
+    "completion-survey/venue-789307f3-d3f5-54e9-9fb9-245c84466987.md": "7e36c52795d8f2739ade8cbf41db03918f2c0e1a66bab2d05794b76f7c9f4e20",
+    "completion-survey/venue-7d282d6a-3daf-5c2f-a469-5eb382f35245.json": "9c3f7b37b8c19d5637c4e8edc0e0cafd2779d4a69b0eb526882d10a42e8562e4",
+    "completion-survey/venue-7d282d6a-3daf-5c2f-a469-5eb382f35245.md": "e513e3639bb91caf28e8270086b9d26b2576515a15ddff4786cbe03b3c4e62a3",
+    "completion-survey/venue-a35c7d52-8e72-5d04-a265-bfef58c8ea1a.json": "962479914530e85a839e5e96efdea2a76eefbce35f397490207e91922df5b137",
+    "completion-survey/venue-a35c7d52-8e72-5d04-a265-bfef58c8ea1a.md": "064c18df148b38cc160a832b43ee173306a1f286ac4c7d5cf9fc9d001d5d7e76",
+    "completion-survey/venue-a42979e3-d070-53a8-9bac-b9d994bc5d2f.json": "55ec921669d9b0ff3582787973df9b06075d282ad6f95c5d62e0c9b89ccf117d",
+    "completion-survey/venue-a42979e3-d070-53a8-9bac-b9d994bc5d2f.md": "8c069d4e5fdf12858d772426d59edb981c284f82f163efd678ac53ce55112714",
+    "completion-survey/venue-ab5f6e1e-1cbb-573c-a9b7-7e8cf5234e60.json": "c01ac52ed78127377b5cd79bc9c8f6985587aba4b6c2b71b6567c846b8a7b021",
+    "completion-survey/venue-ab5f6e1e-1cbb-573c-a9b7-7e8cf5234e60.md": "55ee1db19550d56badc183644502c603b5726e627c4331afb7d01babdaeb723f",
+    "completion-survey/venue-ac83ebe5-4640-5c50-b67f-e751bb5d8476.json": "2774a5bbaf1b1d153a33c3697ee9e7b74aa9ebc855c1a66ae51a4ca81280e179",
+    "completion-survey/venue-ac83ebe5-4640-5c50-b67f-e751bb5d8476.md": "ee166cb7f1c5d9b09298eb2a0107fd71c61ba9765b43e19843e77c900c680aa8",
+    "completion-survey/venue-aea51b1c-5e17-52e2-99fa-d981657d077b.json": "616e66250dd198d761b24dd848bdcfc00062a56e777dfff9f4e5c38055ca442c",
+    "completion-survey/venue-aea51b1c-5e17-52e2-99fa-d981657d077b.md": "8bb414e837329ad8cdba37927b32eab6d98325ba3338a1e665ad03f40aee8124",
+    "completion-survey/venue-d8ab56a2-ebf7-597c-bc2c-a53bf002700a.json": "09d9a8004facaf9d6f4daca6678262c7ece6bc377181808da833d9486e83be34",
+    "completion-survey/venue-d8ab56a2-ebf7-597c-bc2c-a53bf002700a.md": "edb01f43e48277366d36ce9e7c2013113fdf00a3d122d57056fc56974106ceed",
+    "completion-survey/venue-d8f7291d-bfea-59ba-937c-732ea3c098f1.json": "7c60dd72a6d38d5cda92d36649d4a922e94093cb283e3e52efa88e0575347cd8",
+    "completion-survey/venue-d8f7291d-bfea-59ba-937c-732ea3c098f1.md": "ceaca96368fb93ec976598a822b94d8d70dd36fe8d610bab8ba1493451077864",
+    "completion-survey/venue-e1c4c0d1-9fff-5639-93a7-20893ee73e30.json": "e7727b7809b0b89a4b9cf1507479b883f3cb3230858137b1447d6662f4e909e8",
+    "completion-survey/venue-e1c4c0d1-9fff-5639-93a7-20893ee73e30.md": "9975f869fee13b4dcc8d84af20196ad17fcd6623c5da71da894a7cc6e7b235c2",
+    "completion-survey/venue-e9179bac-f048-5d75-ad2f-fb6b6525fb01.json": "b51e9c8dfbb4037aa3fb074fe696ef8086651b9fdc4cabf534e2515f730da686",
+    "completion-survey/venue-e9179bac-f048-5d75-ad2f-fb6b6525fb01.md": "8974ebf033a49ef7bb310986acf89e8928a84248982392c7e3f36b3ffac8d665",
+    "completion-survey/venue-ec6f429d-908d-5a5a-a80f-5aae04c8ccf4.json": "d91edb8b5cf94af91c70c554da3b1bdf0a57e53a2e5d1c4695ac75b6b0102432",
+    "completion-survey/venue-ec6f429d-908d-5a5a-a80f-5aae04c8ccf4.md": "9a70a569ad008e319c83c179835254471c63d7f230c661c00d2ac4954743f3b0",
+    "completion-survey/venue-eeecb47e-54fa-5845-95eb-9fed8b83db56.json": "c8f85f1cf0366221ed2531913c8c426c05d7823e4ed10d68d93da00f472eb416",
+    "completion-survey/venue-eeecb47e-54fa-5845-95eb-9fed8b83db56.md": "8d7798be6d0589fcc7be55ed3a48e27930cf5cc163ff35b2900e31a2c8098975"
+  },
+  "branches": 21,
+  "bundleSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+  "cases": [
+    {
+      "name": "Exact190offering/21branch provenance and Pending checks",
+      "result": "Pass"
+    },
+    {
+      "actual": "Comparison notes must bind exact candidate bytes",
+      "name": "wrong bundle hash",
+      "result": "Pass"
+    },
+    {
+      "actual": "Comparison note refers to an unknown branch",
+      "name": "unknown branch",
+      "result": "Pass"
+    },
+    {
+      "name": "No overwrite existing survey responses",
+      "result": "Pass"
+    },
+    {
+      "name": "Coverage worksheet exact21venue IDs/no invented geometry/anchors",
+      "result": "Pass"
+    }
+  ],
+  "offerings": 190,
+  "publicationPerformed": false,
+  "state": "Pass for packet only",
+  "verified": false
+}

@@ -1,0 +1,126 @@
+{
+  "task": "GM-08",
+  "status": "In Progress",
+  "reviewDecision": "Pending",
+  "reviewComment": "https://github.com/ThanhTris/IE307/pull/103#issuecomment-6104616256",
+  "auditedSourceCommit": "1021560ce336db84509c1e05f7507937d7cc5a69",
+  "followupMode": "Local documentation/evidence only; no importer, schema, fixture or frozen snapshot changes",
+  "recordedAtUTC": "2026-10-11T02:40:29.553557+00:00",
+  "publicationPerformed": false,
+  "verifiedDatasetPublish": "Not run",
+  "realOfferingQuery": "Not run",
+  "draftAudit": {
+    "evaluatedAt": "2026-10-11T02:34:07.705136Z",
+    "sourcePath": "data-preparation/snapshots/editorial-v0.2.0/catalogue.json",
+    "sourceSha256": "cfaff47b0c65833983fe8de748428f25d26d7e1d49c539a5d1045676a08b9e90",
+    "candidateSha256": "82bbbcef3eddbb72415aa908359f07c0cd41db3106b7baf315ea6e8bfdfd309d",
+    "datasetVersion": "0.2.0",
+    "schemaVersion": "0.1.0",
+    "foodContractVersion": "1.1.0",
+    "fixtureOnly": false,
+    "valid": true,
+    "verified": false,
+    "publicationPerformed": false,
+    "rowCounts": {
+      "availabilityOverrides": 0,
+      "coverageAreas": 0,
+      "dataSources": 27,
+      "datasetVersions": 1,
+      "dateExceptions": 0,
+      "dishes": 39,
+      "publicAnchors": 0,
+      "taxonomy": 18,
+      "venueDishes": 0,
+      "venues": 0,
+      "weeklySchedules": 0
+    },
+    "observedPriceReferences": 247,
+    "observedPriceBranches": 21,
+    "coverageIds": [],
+    "timezones": []
+  },
+  "publishPreflight": {
+    "blockerCount": 286,
+    "blockersByCode": {
+      "COVERAGE": 5,
+      "REVIEW": 85,
+      "RIGHTS": 24,
+      "SOURCE": 2,
+      "STALE": 85,
+      "UNREVIEWED": 85
+    },
+    "meaning": "Missing real data and independent rights/freshness/review evidence; valid draft is not publishable"
+  },
+  "verifiedRowCounts": {
+    "availabilityOverrides": 0,
+    "coverageAreas": 0,
+    "dataSources": 0,
+    "datasetVersions": 0,
+    "dateExceptions": 0,
+    "dishes": 0,
+    "publicAnchors": 0,
+    "taxonomy": 0,
+    "venueDishes": 0,
+    "venues": 0,
+    "weeklySchedules": 0
+  },
+  "reviewTemplate": {
+    "decision": "Pending",
+    "reviewer": null,
+    "reviewedAt": null,
+    "independentReviewPerformed": false
+  },
+  "ci": {
+    "headCommit": "1021560ce336db84509c1e05f7507937d7cc5a69",
+    "total": 12,
+    "success": 12,
+    "checks": "ci-1021560-checks.json",
+    "sql": "ci-1021560-sql-results.json",
+    "caseCount": 31,
+    "result": "Pass",
+    "dataMode": "synthetic fixtures and simulated independent review ONLY",
+    "allArtifactHashesMatchCurrentSource": true,
+    "newDocumentationCi": "Not run until commit/push"
+  },
+  "fieldContractAssertions": {
+    "command": "python3 scripts/validate_field_contracts.py --cases --report /tmp/gm08-intake-1021560/contract-case-results.json",
+    "total": 166,
+    "pass": 166,
+    "fixtureOnly": true,
+    "publicationPerformed": false,
+    "report": "field-contract-case-results.json"
+  },
+  "intakeGuide": "../../../data/GM08_DATASET_INTAKE.md",
+  "remainingInputs": [
+    "Real branch/offering/menu/service observations with ID mappings",
+    "Surveyed coordinates, venue/offering weekly hours, coverage polygon/public anchors",
+    "Source usage-rights evidence, actual checkedAt and agreed freshness policy",
+    "Independent review binding staged bytes/hash",
+    "Actual reviewed dataset publication, offering query, receipt and verified manifest"
+  ],
+  "localChecks": {
+    "checkedAtUTC": "2026-10-11T02:41:59.792041+00:00",
+    "regression": {
+      "total": 494,
+      "pass": 489,
+      "skipped": 5,
+      "fail": 0,
+      "report": "data-intake-regression.txt"
+    },
+    "repositoryValidator": {
+      "result": "Pass",
+      "report": "data-intake-repository-check.txt"
+    },
+    "docsFreshness": {
+      "result": "Pass",
+      "report": "data-intake-docs-freshness.txt"
+    },
+    "startDependencyGate": {
+      "result": "IN_PROGRESS",
+      "checkedAtUTC": "2026-10-11T02:41:20.710381+00:00",
+      "report": "data-intake-start-gate.txt",
+      "localFallback": false
+    },
+    "whitespace": "Pass; tracked diff and new UTF-8 files checked"
+  }
+}
