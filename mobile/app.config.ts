@@ -1,6 +1,5 @@
-import type { ExpoConfig } from 'expo/config';
-
-const config: ExpoConfig = {
+/** @type {import('expo/config').ExpoConfig} */
+const config = {
   name: 'Gì Cũng Được',
   slug: 'gi-cung-duoc',
   version: '0.1.0',
