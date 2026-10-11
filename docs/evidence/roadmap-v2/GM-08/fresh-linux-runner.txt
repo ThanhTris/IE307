@@ -1,0 +1,37 @@
+test_merged_dish_preserves_each_venue_price_description_and_image (test_menu_notebook.FinalCatalogueTests.test_merged_dish_preserves_each_venue_price_description_and_image) ... skipped 'Use the documented runtime with pandas for export tests'
+test_accents_do_not_merge_different_dishes (test_menu_notebook.MenuNameTests.test_accents_do_not_merge_different_dishes) ... ok
+test_chay_group_is_explicit_evidence_and_stays_separate (test_menu_notebook.MenuNameTests.test_chay_group_is_explicit_evidence_and_stays_separate) ... ok
+test_combo_and_group_prices_are_not_individual_meals (test_menu_notebook.MenuNameTests.test_combo_and_group_prices_are_not_individual_meals) ... ok
+test_explicit_menu_groups_prevent_drinks_and_sides_from_entering_meals (test_menu_notebook.MenuNameTests.test_explicit_menu_groups_prevent_drinks_and_sides_from_entering_meals) ... ok
+test_fish_cake_and_pork_noodles_stay_separate (test_menu_notebook.MenuNameTests.test_fish_cake_and_pork_noodles_stay_separate) ... ok
+test_quantity_and_size_never_strip_a_combo_into_a_single_meal (test_menu_notebook.MenuNameTests.test_quantity_and_size_never_strip_a_combo_into_a_single_meal) ... ok
+test_short_ambiguous_names_need_review (test_menu_notebook.MenuNameTests.test_short_ambiguous_names_need_review) ... ok
+test_sides_and_sauce_do_not_create_main_dishes (test_menu_notebook.MenuNameTests.test_sides_and_sauce_do_not_create_main_dishes) ... ok
+test_size_can_share_dish_but_toppings_and_soup_cannot (test_menu_notebook.MenuNameTests.test_size_can_share_dish_but_toppings_and_soup_cannot) ... ok
+test_unicode_equivalence_and_ids_are_stable (test_menu_notebook.MenuNameTests.test_unicode_equivalence_and_ids_are_stable) ... ok
+test_vegetarian_context_is_not_merged_into_meat (test_menu_notebook.MenuNameTests.test_vegetarian_context_is_not_merged_into_meat) ... ok
+test_wrong_address_prevents_candidate (test_menu_notebook.MenuNameTests.test_wrong_address_prevents_candidate) ... ok
+test_card_missing_from_seo_menu_is_retained_for_review (test_menu_notebook.MenuParserTests.test_card_missing_from_seo_menu_is_retained_for_review) ... skipped 'Use the documented Python runtime with lxml for parser tests'
+test_discount_price_does_not_drop_image_or_overwrite_source_price (test_menu_notebook.MenuParserTests.test_discount_price_does_not_drop_image_or_overwrite_source_price) ... skipped 'Use the documented Python runtime with lxml for parser tests'
+test_featured_duplicate_keeps_groups_images_and_unknown_stock (test_menu_notebook.MenuParserTests.test_featured_duplicate_keeps_groups_images_and_unknown_stock) ... skipped 'Use the documented Python runtime with lxml for parser tests'
+test_identical_name_with_distinct_platform_ids_is_not_lost (test_menu_notebook.MenuParserTests.test_identical_name_with_distinct_platform_ids_is_not_lost) ... skipped 'Use the documented Python runtime with lxml for parser tests'
+test_no_menu_is_reported_instead_of_silent_success (test_menu_notebook.MenuParserTests.test_no_menu_is_reported_instead_of_silent_success) ... skipped 'Use the documented Python runtime with lxml for parser tests'
+test_cli_emits_utf8_under_cp1252_with_ascii_launch_paths (test_menu_notebook.NotebookOutputIsolationTests.test_cli_emits_utf8_under_cp1252_with_ascii_launch_paths) ... ok
+test_new_output_dir_and_failed_cell_never_touch_legacy_reports (test_menu_notebook.NotebookOutputIsolationTests.test_new_output_dir_and_failed_cell_never_touch_legacy_reports) ... ok
+test_notebook_receives_output_and_network_flags (test_menu_notebook.NotebookOutputIsolationTests.test_notebook_receives_output_and_network_flags) ... Cell 1: ERROR
+Report: /tmp/tmph8qkt_k6/new-capture/reports/sample.executed.ipynb
+Cell 1: OK
+Report: /tmp/tmpr4nr2qbw/new/reports/sample.executed.ipynb
+ok
+test_modified_snapshot_is_rejected_before_it_can_feed_catalogue (test_menu_notebook.SnapshotIntegrityTests.test_modified_snapshot_is_rejected_before_it_can_feed_catalogue) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 1.577s
+
+OK (skipped=6)
+{
+  "offline": true,
+  "refresh": false,
+  "allow_api": false,
+  "output_dir": "/tmp/tmpr4nr2qbw/new"
+}

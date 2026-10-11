@@ -4,6 +4,10 @@ Importer stdlib Python3.12+, food1.1.0/schema0.1.0, contractGM-08.1.
 Owner HoaiTam/Tâm; Trí review code, reviewer dữ liệu khác người nhập.
 Không có dữ liệu verified đã publish trong repo này. [Handoff](../../docs/data/DATASET_HANDOFF.md).
 
+Nhận khảo sát theo [hướng dẫn GM-08](../../docs/data/GM08_DATASET_INTAKE.md):
+required key khác nullable value; giữ unknown/null đúng schema ở draft, nhận nguồn/
+quyền/freshness/giờ/coverage thật trước review/publish.
+
 ## Offline: validate → stage → người khác review
 
 ```sh
@@ -81,6 +85,24 @@ DB lỗi chỉ SQLSTATE/GM08 code, không in SQL/payload/credential. Mất proce
 commit thì receipt trong DB là authority để query/retry; lỗi ghi report không có
 nghĩa transaction đã rollback. Không gọi schema down để rollback dataset.
 
+## Draft khảo sát GM-08
+
+[Dataset Thủ Đức cũ0.3.0](draft/gm08-survey-v0.3.0/README.md) chép quan sát thật từ
+menuOfferings snapshot gốc:21 chi nhánh/247 mục menu/154 lịch chi nhánh draft.
+Giữ tọa độ/giờ/giá/ngày nguồn, UUID món; không suy giờ món/service/dine_in/coverage,
+TTL hoặc quyền dùng. Tâm chịu trách nhiệm phần dữ liệu trong GM-08, nhận Vinh hỗ trợ nếu có.
+
+```sh
+python3 scripts/gm08_prepare_survey.py --output-dir /tmp/gm08-survey-new
+python3 supabase/seed/import_food_data.py stage --input /tmp/gm08-survey-new/bundle.json --output /tmp/gm08-survey-stage-new
+python3 -m unittest discover -s tests -p 'test_gm08_survey.py' -v
+```
+
+Stage vẫn Pending. Review metadata lịch nền tảng khác giờ phục vụ thật tại quán;
+thiếu1 ngày nguồn giữ unknown, lastOrder null,23:59 không suy thành24h.
+Chọn/review pilot15–20 món trước publish hoặc reviewer chấp nhận số thực/lý do;
+bản draft giữ đủ39 món/quan sát, không chọn theo quota bằng dữ liệu giả.
+
 ## Draft GM-04 và test
 
 ```sh
@@ -104,3 +126,12 @@ trước nghiệm thu. CI tooling xanh không thay dataset thật/review độc 
 Encoding tests giữ filesystem ASCII (`LC_ALL=C`) và dùng path/argv probe ASCII;
 tiếng Việt được giữ trong UTF-8 JSON hoặc Python Unicode escape. Điều này tránh
 lỗi trong subprocess launcher trước khi CLI chạy, vẫn kiểm output JSON tiếng Việt.
+
+
+### Fresh survey candidate0.4.1
+
+[Hồ sơ review](draft/gm08-survey-v0.4.1/README.md) dùng crawler hiện có với capture
+riêng;21branches/18dishes/190offerings/154venue schedule rows, quota đạt. Validate
+và stage hợp lệ; tất cả draft, source rights/freshness policy và review Pending.
+Không publish candidate này. Manifest verified counts vẫn0, actual offering query
+Not run. Bản0.3.0/catalogue0.2.0 là lịch sử; policy đề xuất không tự tạo validUntil.

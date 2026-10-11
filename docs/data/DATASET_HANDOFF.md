@@ -21,14 +21,24 @@ Project#2 GM-04 vàGM-06 Done. [Plan](../evidence/roadmap-v2/GM-08/PLAN.md).
   [CHECKS](../evidence/roadmap-v2/GM-08/CHECKS.md): test tooling với synthetic data,
   simulated review, real PostgreSQL; không thay verified dataset AC.
 
+Hướng dẫn nhập theo review mới: [GM08_DATASET_INTAKE](GM08_DATASET_INTAKE.md),
+gồm field/FK, nullable/unknown, đầu vào thiếu và trình tự review/publish.
+[CI head1021560](../evidence/roadmap-v2/GM-08/ci-1021560-checks.json) đạt12/12;
+[SQL CI](../evidence/roadmap-v2/GM-08/ci-1021560-sql-results.json) đạt31/31
+với source hashes khớp. Dữ liệu/review trong SQL vẫn synthetic.
+
 ## Dữ liệu và việc cần bàn giao
 
-39 món draft,18 taxonomy,27 sources,1 draft dataset0.2.0. Catalogue không có
+39 món draft,18 taxonomy,27 sources,1 draft dataset0.2.0. Catalogue0.2.0 không có
 venue/offering/weekly schedule/date exception/availability/coverage/public anchor.
+[Draft khảo sát0.3.0](../../supabase/seed/draft/gm08-survey-v0.3.0/README.md) đã chép metadata
+nguồn thành21 venue/247 offering/154 lịch chi nhánh draft, giữ nguyên tọa độ/giờ/giá/ngày nguồn.
+Giờ món/serviceMode/coverage/anchor/rights/freshness/review vẫn chưa xác minh; không là verified seed.
 247 giá menu tại21 chi nhánh là quan sát, không record quán đã xác minh, lịch bán,
 quyền menu/ảnh hoặc bằng chứng phục vụ dine_in. Artwork=null; không suy rights từ URL.
 
-Vinh bàn giao nguồn/ngày khảo sát/license/freshness/registries. Tâm nhập pilot
+Tâm chủ động thu thập/chuẩn bị nguồn/ngày khảo sát/license/freshness/registries;
+nhận handoff của Vinh nếu có. Phần dataset thật thuộc GM-08, không làm lại GM-04. Tâm nhập pilot
 20–30 chi nhánh/15–20 món có offering trong vùng đã xác minh; ghi thiếu quota bằng
 số thực. Trí hoặc người kiểm độc lập review bundle hash, các nhóm evidence và
 coverage shortfall trước publish. Chưa có bằng chứng này nên verifiedRows=0.
@@ -47,3 +57,15 @@ Rollback phục hồi nội dung, tăng row versions; strict drift/ref guards c�
 chặn rollback. Receipt cũ không tự reactivated; tái publish cần version mới review.
 Không sửa room/pool/result/history đang chạy. Migration0001 đã frozen; journal0002
 cần reviewer kiểm number/ownership trước merge cùng các nhánh BE có migration.
+
+
+## Fresh GM-08 pilot0.4.1
+
+User yêu cầu crawl mới và chuẩn bị hồ sơ quyền/freshness (chưa có căn cứ được chốt).
+[Hồ sơ hiện hành](../../supabase/seed/draft/gm08-survey-v0.4.1/README.md):21branches,
+18dishes,190offerings,154platform venue schedule rows; quota đạt, tất cả draft.
+27 nguồn crawl thành công,4 nguồn cần render; source dates/hash thật retained.
+Validate/staging Pass; Pending review reject trước DB. Worksheet và source-policy
+proposal có sẵn; giờ offering/serviceMode, coverage/anchors, nguồn/quyền/freshness
+và independent review vẫn Pending. Manifest verified0, publish/query Not run.
+Không dùng lịch nền tảng như giờ món/physical dine_in; không gán TTL giả.

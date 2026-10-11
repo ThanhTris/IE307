@@ -1,0 +1,183 @@
+{
+  "task": "GM-08",
+  "contractVersion": "food-v1/roadmap-v2/GM-08.1",
+  "status": "in-progress",
+  "owner": "HoaiTam",
+  "reviewer": "ThanhTris",
+  "reviewDecision": "Pending",
+  "schemaVersion": "0.1.0",
+  "foodContractVersion": "1.1.0",
+  "verifiedDatasetVersion": null,
+  "testedRevision": {
+    "baseCommit": "7060b8825ad72ee9442d8890719f82451d473c33",
+    "parentCommit": "b59d6107953f40a4b5afa2aa46b875bfae4f77c6",
+    "targetRefCommit": "00c4f27a97d4f1487dfed7c54c1253c766709a1a",
+    "mode": "Uncommitted ASCII harness repair on pushed b59d610 baseline; exact source SHA256 below",
+    "targetChangesSinceImplementationBase": "AGENTS.md review-link instruction only; no upstream runtime/schema artifacts changed",
+    "branchTargetIntegration": "Target fetch verified; branch has not yet incorporated the AGENTS-only target commit; integrate before merge",
+    "baselineEvidence": [
+      "baseline-1d247fe/manifest.json",
+      "baseline-b59d610/manifest.json"
+    ]
+  },
+  "environment": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "python": "3.13.3",
+    "node": "26.0.0",
+    "postgresVersion": "17.11",
+    "Windows": "Not run for current repair",
+    "Linux": "Pass: actual Python3.13.3/arm64 Docker unit suite under ASCII/cp1252 and default parent locale; CI Python3.12.15/x64 repair pending",
+    "encodingProbe": "Linux filesystem ASCII + stdout cp1252 + UTF8 mode0; launch path/probes ASCII, JSON Unicode retained",
+    "linuxEvidence": "linux-runtime.json"
+  },
+  "gate": {
+    "authority": "https://github.com/users/ThanhTris/projects/2",
+    "start": "IN_PROGRESS; live start checked before repair",
+    "merge": "READY_FOR_MERGE_REVIEW",
+    "checkedAtUTC": "2026-10-11T02:03:48.347900+00:00",
+    "baseRef": "origin/main",
+    "baseSha": "00c4f27a97d4f1487dfed7c54c1253c766709a1a",
+    "baseFetched": true,
+    "localApprovalFallback": false,
+    "tls": "SSL_CERT_FILE=/etc/ssl/cert.pem; full certificate verification retained",
+    "startCheckedAtUTC": "2026-10-11T01:57:22.793579+00:00",
+    "log": "merge-gate.txt"
+  },
+  "checks": {
+    "unit": {
+      "total": 28,
+      "pass": 28,
+      "platform": "macOS",
+      "log": "unit-results.txt"
+    },
+    "sql": {
+      "total": 31,
+      "pass": 31,
+      "syntheticDataAndReview": true,
+      "rerunForCurrentSourceHashes": true,
+      "log": "sql-results.json",
+      "attempts": [
+        "First attempt overlapped local Supabase startup/resource load: DB_ERROR 55P03 lock timeout; process-created database cleaned",
+        "After backend:start completed and services healthy: 31/31 Pass"
+      ]
+    },
+    "regression": {
+      "total": 494,
+      "pass": 489,
+      "skipped": 5,
+      "fail": 0,
+      "platform": "macOS",
+      "log": "regression.txt"
+    },
+    "node": {
+      "total": 8,
+      "pass": 8,
+      "executionThisRepair": false,
+      "unchangedBaselineEvidence": "baseline-b59d610/verification.json",
+      "baselineCommit": "b59d6107953f40a4b5afa2aa46b875bfae4f77c6"
+    },
+    "foundationSQL": {
+      "total": 3,
+      "pass": 3,
+      "executionThisRepair": false,
+      "unchangedBaselineEvidence": "baseline-b59d610/verification.json",
+      "baselineCommit": "b59d6107953f40a4b5afa2aa46b875bfae4f77c6"
+    },
+    "httpHealth": {
+      "status": 200,
+      "assertions": "status/name/version/description Pass",
+      "GoTrue": "v2.197.0",
+      "executionThisRepair": false,
+      "unchangedBaselineEvidence": "baseline-b59d610/verification.json",
+      "baselineCommit": "b59d6107953f40a4b5afa2aa46b875bfae4f77c6"
+    },
+    "repositoryValidator": "Pass",
+    "docsFreshness": "Pass",
+    "trackedDiffWhitespace": "Pass",
+    "verifiedDatasetPublish": "Not run",
+    "realOfferingQuery": "Not run",
+    "cp1252Unit": {
+      "total": 28,
+      "pass": 28,
+      "platform": "real Linux arm64 Docker",
+      "filesystemEncoding": "ascii",
+      "stdoutEncoding": "cp1252",
+      "utf8Mode": 0,
+      "log": "cp1252-unit-results.txt",
+      "queryDbBoundary": "mock only",
+      "coverageReasonInvalidSubcases": 12,
+      "realPilotClaim": false
+    },
+    "workflowYaml": "Pass Ruby YAML parse; LC_ALL=C/PYTHONUTF8=0 retained, runtime diagnostic and unit command checked; remote execution pending",
+    "changedTextWhitespace": "Pass: tracked/new UTF-8 files LF/final newline/no trailing whitespace; cp1252 failure log normalized with raw capture hash",
+    "linuxDefaultUnit": {
+      "total": 28,
+      "pass": 28,
+      "log": "linux-default-unit-results.txt"
+    },
+    "linuxBeforeRepair": {
+      "baselineCommit": "b59d6107953f40a4b5afa2aa46b875bfae4f77c6",
+      "total": 28,
+      "errors": 4,
+      "result": "Fail",
+      "log": "baseline-b59d610/linux-ascii-before.txt"
+    }
+  },
+  "cleanup": "Both SQL test databases cleaned, final pg_database gm08_check count=0; auth.users/rooms/venues/dataset_versions counts each 0; own Supabase stopped with backup=true, volumes preserved; --rm unit containers exited; unrelated project untouched",
+  "sourceSha256": {
+    "supabase/seed/import_food_data.py": "03da1971b502b26a87ebaee0936d718bc415e26f297731d4fd9bd698fab00edc",
+    "scripts/gm08_import_check.py": "8bbf46c999dfef4c2f4c4d3aab10c57f1f22e1e1934c4efe29c2805f66812cfb",
+    "scripts/gm08_prepare_draft.py": "28cdd710bc0ba5eaf764ad5ebf9a8182734fb3f04d44fe58acac5ea3542a153a",
+    "supabase/migrations/0001_core_schema.sql": "6733e28f282f600e627e675dccede3afef1efd37cf4a7cfe8d94af4cd02d30f5",
+    "supabase/migrations/0002_food_import_receipts.sql": "eb80acba1f69bfb68b014a1ab5807e42d65db940a36d201f28db88172157f55e",
+    "tests/test_food_import.py": "571b7491bfa0932db0e05f77531a1d2b296f2ca39b223b0a519f9c8de1daa5a2",
+    "tests/test_repository_validator.py": "f3d95d68bd8041171adcc9f3d9ef14429ccedcb00247a5c0e07d95750e487caa",
+    "supabase/seed/verified/manifest.json": "33349dc48fe02298bc9f86d5affd762ee7f6fa76e200ee1c06a08b57eb3ab582",
+    "docs/evidence/roadmap-v2/GM-08/draft-audit.json": "8fb1da2cd0f11640056f5e771bca73d29608dc34a2c1259900d1aaee65b8fca1",
+    ".github/workflows/gm08-import.yml": "2a1fbea374b5f0a55be7230d83446d9e3d9c299b8d4e44e77b52cfa7c3409415"
+  },
+  "limits": [
+    "Verified dataset counts remain zero; real data/source rights/hours/coverage and independent review pending",
+    "Production importer, frozen0001, receipt migration0002 and wire/schema contract unchanged by ASCII harness repair",
+    "SQL 31/31 after services healthy; first startup-overlap attempt hit 55P03 lock timeout, not hidden as Pass",
+    "Full regression494 on macOS, unit28 on Linux Docker Python3.13.3/arm64; repair CI Python3.12.15/x64 and native Windows pending",
+    "ASCII harness repair not committed/pushed; PR body prepared locally; no PR comment/status or Project change",
+    "Partial delivery merge requires project owner scope acceptance; none recorded; GM-08 In Progress"
+  ],
+  "pullRequest": {
+    "url": "https://github.com/ThanhTris/IE307/pull/103",
+    "stateAtReview": "OPEN",
+    "isDraftAtReview": false,
+    "baselineHead": "b59d6107953f40a4b5afa2aa46b875bfae4f77c6",
+    "reviewComment": "https://github.com/ThanhTris/IE307/pull/103#issuecomment-6101624086",
+    "preparedBody": "PR_DESCRIPTION.md",
+    "bodyUpdate": "New body prepared locally; apply after pushing ASCII harness repair"
+  },
+  "ci": {
+    "workflow": ".github/workflows/gm08-import.yml",
+    "workflowUrl": "https://github.com/ThanhTris/IE307/actions/workflows/gm08-import.yml",
+    "repairExecution": "Pending new commit/push; current b59d610 checks still fail",
+    "jobs": [
+      "cp1252 subprocess unit regression on Linux ASCII filesystem",
+      "real GM-08 SQL in process-created disposable database on Linux"
+    ],
+    "artifact": "gm08-sql-results-linux",
+    "baselineDocsRun": "https://github.com/ThanhTris/IE307/actions/runs/38073939317",
+    "baselineGm06Run": "https://github.com/ThanhTris/IE307/actions/runs/38073939190",
+    "baselineReviewReportedRegression": "486 tests, 6 skipped on CI; applies baseline only, not repair",
+    "gm06SqlIsNotGm08Evidence": true,
+    "currentBaselineCommit": "b59d6107953f40a4b5afa2aa46b875bfae4f77c6",
+    "baselineEncoding": "FAILURE:28 tests,4 errors; https://github.com/ThanhTris/IE307/actions/runs/38102929443/job/114362427281",
+    "baselineDocuments": "FAILURE:494 tests,3 failures,1 error,6 skipped; https://github.com/ThanhTris/IE307/actions/runs/38102929498/job/114362427294",
+    "baselineGm08Sql": "SUCCESS; https://github.com/ThanhTris/IE307/actions/runs/38102929443/job/114362427310"
+  },
+  "evidenceSha256": {
+    "sql-results.json": "59c32a9b3a9a0cc3056ceedaebf40f7040d600e9869eb31db970608d0113aaa1",
+    "unit-results.txt": "b7082d3c619455068468e78dea710bf690faaf88f9ad4b0639b79b0c89b1f47c",
+    "cp1252-unit-results.txt": "748ab851901d0944144f41d984a63f9bb2167d319868024667eabf73f6afd79b",
+    "linux-default-unit-results.txt": "803c2f55ec119dbb65b3eb02391f32a394b7bb010abb2a09b62fb4b64c2e0524",
+    "linux-runtime.json": "0c15f08ef3a3e382fb904748417e00119a1c9a2afe7fd866907eedfc07106675",
+    "regression.txt": "70dc80eabd2ef0cdb5ed9caff1cdc6e362a99302d009578b3a5b0f605d6410c2",
+    "merge-gate.txt": "a1e9977ae96f8e31ada83e346ef55d861121ffea8cc9b7c0eaf70b6eefb3029e"
+  }
+}

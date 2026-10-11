@@ -1,10 +1,13 @@
 # GM-08 — Output checks
 
+Cập nhật hiện hành: [fresh pilot0.4.1](../../../../supabase/seed/draft/gm08-survey-v0.4.1/README.md), 21branches/18dishes/190offerings; 508/508 tests macOS, 0 skipped. Candidate vẫn draft, policy/quyền/review Pending; publish/query Not run. Các mục trước phần “Cập nhật dùng lại crawler” bên dưới giữ evidence lịch sử.
+
 2026-10-11 (UTC+7). In progress; tooling đã kiểm, dataset thật còn blocker.
 Owner HoaiTam/Tâm, reviewer ThanhTris/Trí; chưa Approved/Done.
 Branch codex/gm-08-verified-data-import; main input7060b8825ad72ee9442d8890719f82451d473c33.
-Baseline hiện hành đã commit/push `b59d6107953f40a4b5afa2aa46b875bfae4f77c6`, [PR #103](https://github.com/ThanhTris/IE307/pull/103) Open, không Draft.
-Bản sửa review kiểm trên working tree của baseline đó; chưa commit/push bản sửa.
+Head hiện hành đã commit/push `1021560ce336db84509c1e05f7507937d7cc5a69`, [PR #103](https://github.com/ThanhTris/IE307/pull/103) Open, không Draft.
+Bản sửa encoding đã lên CI:12/12 checks SUCCESS. Follow-up mới chỉ docs/evidence local;
+chưa commit/push. Giữ record thực thi gốc tại [verification1021560](verification-1021560-original.json).
 Exact source hashes tại sql-results.json/verification.json. Evidence gốc được giữ nguyên
 ở [baseline đầu](baseline-1d247fe/manifest.json) và [baseline b59d610](baseline-b59d610/manifest.json);
 không thay lịch sử bằng kết quả mới. CI b59d610 thực tế Fail dù các kiểm local macOS đã Pass.
@@ -50,7 +53,7 @@ Lệnh publish thật cần independent review theo [README](../../../../supabas
 | Atomic SQL/idempotency | badFK không partial rows; concurrent same bundle một receipt, reimport không tăng version |31 SQL cases tại [actual](sql-results.json) | Pass real SQL/synthetic data |
 | Version/rollback | content thiếu version reject, latest rollback restores content/version tăng, drift/later-import/FK reject | source/name/count/state assertions thật, SQL-looking name được lưu literal | Pass real SQL |
 | Privacy/client/core | anon/authenticated/publisher không đọc journal; locked room/result/history không đổi | permission42501, core row fingerprints bằng nhau; sentinel/auth data assertions | Pass real SQL/synthetic users |
-| Pilot20–30/15–20 có offering | dữ liệu thật và coverage/giờ/source/reviewer độc lập | draft39 món/27 sources/18 taxonomy, venue/offering/schedule/coverage/anchors=0 | Not run: chờ Vinh/Trí bàn giao/xác minh |
+| Pilot20–30/15–20 có offering | dữ liệu thật và coverage/giờ/source/reviewer độc lập | survey draft0.3.0:21 venues/247 offerings/154 lịch chi nhánh,39 món; coverage/anchors=0 | Not run verified: Tâm bổ sung khảo sát/rights/freshness/giờ món và review độc lập |
 | Verified publish/query/manifest | reviewed real bundle, counts/hash/coverage/timezone, query offering thật | verifiedRowCounts=0; [manifest trạng thái](../../../../supabase/seed/verified/manifest.json), [draft audit](draft-audit.json) | Not run; chưa publish dataset thật |
 
 [Staging actual](staging-result.json) ghi draft source hash/counts, không verified.
@@ -68,23 +71,97 @@ Theo [comment review](https://github.com/ThanhTris/IE307/pull/103#issuecomment-6
 workflow [gm08-import.yml](../../../../.github/workflows/gm08-import.yml) chạy unit/encoding
 cp1252 trên Linux và 31 case importer trong PostgreSQL disposable, upload artifact
 `gm08-sql-results-linux`, cleanup local project luôn chạy. YAML đã parse local.
-CI của bản sửa mới còn Pending vì chưa push; không dùng job SQL GM-06 thay GM-08.
+CI của bản sửa ASCII tại head1021560 đã Pass; không dùng job SQL GM-06 thay GM-08.
 [Encoding CI b59d610](https://github.com/ThanhTris/IE307/actions/runs/38102929443/job/114362427281)
 Fail:28 tests/4 errors; [validate CI b59d610](https://github.com/ThanhTris/IE307/actions/runs/38102929498/job/114362427294)
 Fail:494 tests/3 failures/1 error/6 skipped. Nguyên nhân path/Unicode -c trong ASCII locale,
 CLI chưa được chạy hoặc argv bị surrogateescape. Test dùng path ASCII và Unicode escape trong probe;
 vẫn kiểm tiếng Việt JSON, publicationPerformed và recovery, không hạ assertions.
 SQL GM-08 tại b59d610 [đã Pass](https://github.com/ThanhTris/IE307/actions/runs/38102929443/job/114362427310).
-[Workflow runs](https://github.com/ThanhTris/IE307/actions/workflows/gm08-import.yml) sẽ có
-run/report sau push; reviewer đối chiếu SHA của commit và artifactHashes.
+Head1021560: [encoding](https://github.com/ThanhTris/IE307/actions/runs/38104154725/job/114365984579),
+[validate](https://github.com/ThanhTris/IE307/actions/runs/38104154702/job/114365984319),
+[GM-08 SQL](https://github.com/ThanhTris/IE307/actions/runs/38104154725/job/114365984453) đều SUCCESS.
+[Toàn bộ12 checks](ci-1021560-checks.json); [SQL artifact tải nguyên bản](ci-1021560-sql-results.json)
+ghi31/31 Pass, source hashes khớp current source và database tự tạo đã cleanup.
+Bản docs/evidence follow-up local chưa có CI; không gán CI1021560 cho commit tương lai.
 Baseline [docs CI](https://github.com/ThanhTris/IE307/actions/runs/38073939317) và
 [GM-06 CI](https://github.com/ThanhTris/IE307/actions/runs/38073939190) chỉ áp dụng head1d247fe.
 
+## Follow-up comment mới: dữ liệu và null
+
+[Review mới](https://github.com/ThanhTris/IE307/pull/103#issuecomment-6104616256) xác nhận
+code/encoding đã sửa,12 checks xanh. [Intake guide](../../../data/GM08_DATASET_INTAKE.md)
+liệt kê đầu vào thiếu và cách nhập null/unknown theo contract1.1.0.
+[Audit catalogue0.2.0 trước bổ sung khảo sát](data-intake-followup.json): candidate hash không đổi,39 draft dishes,
+247 quan sát giá/21 chi nhánh; chưa có venue/offering/schedule/coverage/anchor.
+286 publish blockers, review-template Pending; không đổi verified manifest hoặc TTL/reviewer.
+[Contract cases](field-contract-case-results.json):166/166 Pass, fixtureOnly=true,
+publicationPerformed=false; không nghiệm thu dữ liệu thật.
+Follow-up docs/evidence: [regression](data-intake-regression.txt)494 tests:489 Pass/5 Skipped/0 Fail;
+[validator](data-intake-repository-check.txt) và [docs freshness](data-intake-docs-freshness.txt) Pass.
+[Start gate live](data-intake-start-gate.txt) IN_PROGRESS, checked2026-10-11T02:41:20UTC,
+không cache/local fallback; không có merge hay đổi task/Project.
+
 ## Blocker / review
 
-Vinh bàn giao khảo sát/nguồn/quyền/ngày kiểm/lịch/dine_in/coverage/registries;
-HoaiTam nhập; người khác kiểm dataset, Trí nghiệm thu cuối. Không tự tick AC,
+HoaiTam chịu trách nhiệm khảo sát/nguồn/quyền/ngày kiểm/lịch/dine_in/coverage/registries
+và nhập GM-08; có thể nhận khảo sát Vinh nếu có. Người khác kiểm dataset, Trí nghiệm thu cuối. Không tự tick AC,
 Decision Approved/Done hoặc đổi draft/fixture để đủ quota. Journal0002 và ownership
-migration cần review trước merge. Bản sửa review chưa commit/push; không tự Approved/Done
+migration cần review trước merge. Follow-up docs/evidence chưa commit/push; không tự Approved/Done
 hoặc đổi trạng thái Project. Chủ dự án chưa xác nhận merge riêng công cụ là partial delivery.
 Mô tả PR cập nhật để copy/apply nằm tại [PR_DESCRIPTION](PR_DESCRIPTION.md).
+
+
+## Chuẩn bị pilot theo phạm vi user chọn
+
+User giữ phạm vi Thủ Đức cũ ngày2026-10-11. Phần dữ liệu thuộc GM-08 của Tâm,
+không yêu cầu Vinh bàn giao trước mới làm được. Metadata tọa độ/lịch nền tảng đã
+có trong menuOfferings snapshot gốc; trước đây chưa được adapter đưa vào food1.1.0.
+[Draft0.3.0](../../../../supabase/seed/draft/gm08-survey-v0.3.0/README.md) có21 venues,
+247 venueDishes và154 weeklySchedules draft,39 dishes; nguồn/giá/checksum/ngày giữ nguyên.
+[Audit](../../../../supabase/seed/draft/gm08-survey-v0.3.0/audit.json) ghi2084 publish blockers,
+1 unknown weekday,247 offering schedules chưa biết,coverage/anchor0; không verified/published.
+[Survey adapter](../../../../scripts/gm08_prepare_survey.py) chỉ offline, không DB/network;
+[7 regression cases](survey-unit-results.txt) kiểm lossless nguồn/giá/ID, không suy
+service/giờ món/24h, thiếu ngày unknown, reject forged approval và snapshot giữ nguyên.
+[Staging actual](survey-staging-result.json) là draft Pending, không approval/publish;
+[review template](survey-review-template.json) reviewer/reviewedAt null.
+CI12 xanh chỉ head1021560; helper/tests/dataset mới chưa commit/push/chạy CI.
+
+
+Kết quả follow-up khảo sát: [regression](survey-regression.txt)501 tests,
+496 Pass/5 Skipped/0 Fail; [7 Linux ASCII/cp1252 cases](survey-linux-unit-results.txt) Pass,
+container chỉ đọc/tắt mạng/tự xóa, không DB. [Validator](survey-repository-check.txt),
+[docs freshness](survey-docs-freshness.txt), YAML/diff/hash checks Pass.
+Manifest trạng thái trỏ draft0.3.0, giữ catalogue0.2.0 ở catalogueDraft;
+verified counts/datasetVersion/bundleSha256 vẫn0/null/null. Importer/migrations không đổi;
+không rerun SQL để coi draft này đã publish. Runtime/source/artifact hashes trong verification.json.
+
+
+## Cập nhật dùng lại crawler — 2026-10-11
+
+User giữ phạm vi Thủ Đức cũ, yêu cầu dùng lại crawler và xác nhận chưa có quyền
+nguồn/freshness policy được chốt; chuẩn bị hồ sơ để review. [fresh pilot0.4.1](../../../../supabase/seed/draft/gm08-survey-v0.4.1/README.md) là bản mới nhất.
+27 public HTML nguồn được lấy mới,23 có menu,4 ShopeeFood cần render;694 raw/252
+candidate/253 needs_review/189 excluded. Cả247 mục cũ khớp lại tên/chi nhánh/giá.
+Pilot chọn18 UUID món cũ,190 offering,21 branches và154 venue schedule rows; quota
+đạt. Dữ kiện này đều draft, không phải nghiệm thu physical venue hoặc giờ từng món.
+
+Runner có --output-dir mới, không overwrite captures/snapshot cũ. Adapter kiểm
+CSV/hash HTML/nguồn/ngày lấy, giữ item đổi tên/ID/mapping chưa rõ để review. Không
+tự kéo ngày cào sang classification biên tập hoặc gán validUntil/license/reviewer.
+Raw cache lưu riêng Git-ignored data-preparation/datasets/gm08-capture-20261011/.
+
+Validate/stage fresh pilot: Pass; Pending review bị reject trước DB: Pass.
+Hồ sơ source rights/freshness Proposed/Pending và worksheet21venues/190offerings/
+18classifications/27source rights đã chuẩn bị, không gửi yêu cầu xác nhận ra ngoài.
+Giờ Jollibee Võ Văn Ngân nguồn official khác platform, ghi conflict để kiểm.
+
+Dataset verified/publish/query: Not run. Offering hours/serviceMode, physical
+venue hours/admin IDs, coverage/anchors, quyền nguồn, policy và review độc lập
+vẫn cần bằng chứng thật. Manifest verified counts0, GM-08 In Progress, reviewer
+ThanhTris chưa Approved; không ghi Done/merge toàn bộ task từ CI hoặc quota.
+Evidence mới: fresh-crawl.txt, fresh-start-gate.txt, fresh-staging-result.json,
+fresh-review-template.json, fresh-publish-guard.json, fresh-regression.txt và
+verification.json. Các phần0.3.0/501tests phía trên là lịch sử, không thay kiểm
+revision mới. Không commit/push.

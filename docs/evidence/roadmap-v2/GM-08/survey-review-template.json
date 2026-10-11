@@ -1,0 +1,18 @@
+{
+  "bundleSha256": "838c426987eda765e560e0909022f8870e2545941bf9965a65b552830e57045c",
+  "checks": {
+    "coverage": false,
+    "freshness": false,
+    "imageRights": false,
+    "noPersonalGPS": false,
+    "priceUnits": false,
+    "sourceRights": false,
+    "venueOfferingHours": false
+  },
+  "coverageShortfallAccepted": false,
+  "coverageShortfallReason": null,
+  "decision": "Pending",
+  "evidence": [],
+  "reviewedAt": null,
+  "reviewer": null
+}

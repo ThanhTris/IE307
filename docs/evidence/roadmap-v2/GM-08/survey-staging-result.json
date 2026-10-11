@@ -1,0 +1,34 @@
+{
+  "bundleSha256": "838c426987eda765e560e0909022f8870e2545941bf9965a65b552830e57045c",
+  "contractVersion": "food-v1/roadmap-v2/GM-08.1",
+  "coverageIds": [],
+  "datasetVersion": "0.3.0",
+  "fixtureOnly": false,
+  "foodContractVersion": "1.1.0",
+  "pilotTarget": {
+    "dishes": "15–20",
+    "quotaMet": false,
+    "venues": "20–30"
+  },
+  "publicationPerformed": false,
+  "rowCounts": {
+    "availabilityOverrides": 0,
+    "coverageAreas": 0,
+    "dataSources": 27,
+    "datasetVersions": 1,
+    "dateExceptions": 0,
+    "dishes": 39,
+    "publicAnchors": 0,
+    "taxonomy": 18,
+    "venueDishes": 247,
+    "venues": 21,
+    "weeklySchedules": 154
+  },
+  "schemaVersion": "0.1.0",
+  "stagedAt": "2026-10-11T04:11:40.854571Z",
+  "state": "staged",
+  "timezones": [
+    "Asia/Ho_Chi_Minh"
+  ],
+  "validationAt": "2026-10-11T04:11:40.766510Z"
+}

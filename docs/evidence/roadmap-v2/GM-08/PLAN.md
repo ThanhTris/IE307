@@ -1,5 +1,7 @@
 # GM-08 — Import plan
 
+Cập nhật hiện hành: [fresh pilot0.4.1](../../../../supabase/seed/draft/gm08-survey-v0.4.1/README.md), 21branches/18dishes/190offerings; 508/508 tests macOS, 0 skipped. Candidate vẫn draft, policy/quyền/review Pending; publish/query Not run. Các mục trước phần “Cập nhật dùng lại crawler” bên dưới giữ evidence lịch sử.
+
 2026-10-11 (UTC+7). Owner HoaiTam/Tâm nhận việc theo yêu cầu trực tiếp của user;
 reviewer ThanhTris/Trí theo Issue #69. Branch codex/gm-08-verified-data-import.
 Scope food-v1/roadmap-v2/GM-08.1; food interchange1.1.0, schema0.1.0.
@@ -34,8 +36,12 @@ Python máy thiếu CA; SSL_CERT_FILE=/etc/ssl/cert.pem giữ kiểm TLS đầy 
 
 GM-04 bàn giao39 món draft,247 giá ở21 chi nhánh; venue/offering/schedule/coverage
 arrays rỗng. Menu usage rights/freshness/dine_in/lịch và review độc lập chưa có.
-Publish dataset thật và query offering thật còn chờ nguồn/biên bản từ Vinh/Trí;
-không tự Approve/Done hoặc hạ AC pilot. Tooling có thể hoàn thiện trước.
+Dataset thật thuộc scope GM-08: Tâm chủ động chuẩn bị/thu thập hoặc nhận handoff
+Vinh nếu có; không coi chờ Vinh là điều kiện bắt đầu. Publish/query thật cần source
+rights/freshness/coverage/giờ món và review độc lập; không tự Approve/Done hoặc hạ AC.
+Draft khảo sát0.3.0 đã chép metadata nguồn từ snapshot gốc thành21 quán/247 offering/
+154 lịch chi nhánh; [cách kiểm](../../../../supabase/seed/draft/gm08-survey-v0.3.0/README.md).
+Reuse GM-04 contract, không sửa snapshot/GM-06 schema, không crawl/GPT hoặc đoán dữ liệu thiếu.
 
 ## Bản sửa review PR #103 — 2026-10-11
 
@@ -53,3 +59,32 @@ và escape Unicode trong Python -c; nội dung JSON/reject/query vẫn tiếng V
 Workflow in Python/filesystem/stdout/UTF8-mode. Tái lập trước/sau trên Linux Docker
 filesystem ASCII + cp1252 + UTF8 mode0; chạy lại root regression/SQL/hash/gate.
 Giữ evidence b59d610 và link CI Fail, không dùng local macOS Pass thay Linux CI.
+
+
+## Cập nhật dùng lại crawler — 2026-10-11
+
+User giữ phạm vi Thủ Đức cũ, yêu cầu dùng lại crawler và xác nhận chưa có quyền
+nguồn/freshness policy được chốt; chuẩn bị hồ sơ để review. [fresh pilot0.4.1](../../../../supabase/seed/draft/gm08-survey-v0.4.1/README.md) là bản mới nhất.
+27 public HTML nguồn được lấy mới,23 có menu,4 ShopeeFood cần render;694 raw/252
+candidate/253 needs_review/189 excluded. Cả247 mục cũ khớp lại tên/chi nhánh/giá.
+Pilot chọn18 UUID món cũ,190 offering,21 branches và154 venue schedule rows; quota
+đạt. Dữ kiện này đều draft, không phải nghiệm thu physical venue hoặc giờ từng món.
+
+Runner có --output-dir mới, không overwrite captures/snapshot cũ. Adapter kiểm
+CSV/hash HTML/nguồn/ngày lấy, giữ item đổi tên/ID/mapping chưa rõ để review. Không
+tự kéo ngày cào sang classification biên tập hoặc gán validUntil/license/reviewer.
+Raw cache lưu riêng Git-ignored data-preparation/datasets/gm08-capture-20261011/.
+
+Validate/stage fresh pilot: Pass; Pending review bị reject trước DB: Pass.
+Hồ sơ source rights/freshness Proposed/Pending và worksheet21venues/190offerings/
+18classifications/27source rights đã chuẩn bị, không gửi yêu cầu xác nhận ra ngoài.
+Giờ Jollibee Võ Văn Ngân nguồn official khác platform, ghi conflict để kiểm.
+
+Dataset verified/publish/query: Not run. Offering hours/serviceMode, physical
+venue hours/admin IDs, coverage/anchors, quyền nguồn, policy và review độc lập
+vẫn cần bằng chứng thật. Manifest verified counts0, GM-08 In Progress, reviewer
+ThanhTris chưa Approved; không ghi Done/merge toàn bộ task từ CI hoặc quota.
+Evidence mới: fresh-crawl.txt, fresh-start-gate.txt, fresh-staging-result.json,
+fresh-review-template.json, fresh-publish-guard.json, fresh-regression.txt và
+verification.json. Các phần0.3.0/501tests phía trên là lịch sử, không thay kiểm
+revision mới. Không commit/push.

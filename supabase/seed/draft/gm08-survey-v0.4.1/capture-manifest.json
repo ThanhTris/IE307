@@ -1,0 +1,248 @@
+{
+  "schema_version": 1,
+  "sources": {
+    "src_3907593997cd1d49e3d3": {
+      "source_url": "https://food.be.com.vn/ho-chi-minh/com-tam-49-duong-so-4-64909",
+      "resolved_url": "https://food.be.com.vn/ho-chi-minh/com-tam-49-duong-so-4-64909",
+      "fetched_at": "2026-10-11T04:26:58.619966+00:00",
+      "sha256": "13e773ae994577b9cb2b1e9e4f4a0a9224982101d7d582317bee85da8fb202bb",
+      "bytes": 613082,
+      "content_type": "text/html; charset=utf-8",
+      "snapshot_file": "src_3907593997cd1d49e3d3.html"
+    },
+    "src_0332795a08d47aa23867": {
+      "source_url": "https://food.be.com.vn/ho-chi-minh/tiem-com-nha-tron-hoang-dieu-2-102327",
+      "resolved_url": "https://food.be.com.vn/ho-chi-minh/tiem-com-nha-tron-hoang-dieu-2-102327",
+      "fetched_at": "2026-10-11T04:27:00.830372+00:00",
+      "sha256": "c88c30cc079f688c56ff5e3e1ae25c22cf2299eea85fc21953afb44730223808",
+      "bytes": 836506,
+      "content_type": "text/html; charset=utf-8",
+      "snapshot_file": "src_0332795a08d47aa23867.html"
+    },
+    "src_9842483d30a05fd0fc3b": {
+      "source_url": "https://food.be.com.vn/ho-chi-minh/wallace-burger-chicken-kha-van-can-126511",
+      "resolved_url": "https://food.be.com.vn/ho-chi-minh/wallace-burger-chicken-kha-van-can-126511",
+      "fetched_at": "2026-10-11T04:27:02.631374+00:00",
+      "sha256": "70203da9af625138caf797509eb9817b3eb20ab380e7a23ef16fa8d8a5bb0d76",
+      "bytes": 736700,
+      "content_type": "text/html; charset=utf-8",
+      "snapshot_file": "src_9842483d30a05fd0fc3b.html"
+    },
+    "src_a19e3649185a0ffc6f99": {
+      "source_url": "https://food.be.com.vn/ho-chi-minh/mi-tron-nha-min-kha-van-can-147476",
+      "resolved_url": "https://food.be.com.vn/ho-chi-minh/mi-tron-nha-min-kha-van-can-147476",
+      "fetched_at": "2026-10-11T04:27:04.766992+00:00",
+      "sha256": "65f8bd6b977796a63bd0657ed0e5eb24b6c6a2849aa6dfdaee25f114921eaa28",
+      "bytes": 546106,
+      "content_type": "text/html; charset=utf-8",
+      "snapshot_file": "src_a19e3649185a0ffc6f99.html"
+    },
+    "src_ba269bd66855f6a50872": {
+      "source_url": "https://food.be.com.vn/ho-chi-minh/the-beoso-healthy-food-kha-van-can-138734",
+      "resolved_url": "https://food.be.com.vn/ho-chi-minh/the-beoso-healthy-food-kha-van-can-138734",
+      "fetched_at": "2026-10-11T04:27:06.939418+00:00",
+      "sha256": "bb7b6d0d7d3d756750e7250fbc98c9294409f9426fd64093408b592545f31103",
+      "bytes": 504082,
+      "content_type": "text/html; charset=utf-8",
+      "snapshot_file": "src_ba269bd66855f6a50872.html"
+    },
+    "src_bf9bd7fa5a3c16b442fb": {
+      "source_url": "https://food.be.com.vn/ho-chi-minh/com-tam-my-my-kha-van-can-148809",
+      "resolved_url": "https://food.be.com.vn/ho-chi-minh/com-tam-my-my-kha-van-can-148809",
+      "fetched_at": "2026-10-11T04:27:08.583975+00:00",
+      "sha256": "be820f3f165d4e16385dda5d024268c1be35887f3b9b374952a55ddce03edf7c",
+      "bytes": 568211,
+      "content_type": "text/html; charset=utf-8",
+      "snapshot_file": "src_bf9bd7fa5a3c16b442fb.html"
+    },
+    "src_3119eeedb6d505d753e1": {
+      "source_url": "https://food.be.com.vn/ho-chi-minh/quan-com-hoa-dao-kha-van-can-74716",
+      "resolved_url": "https://food.be.com.vn/ho-chi-minh/quan-com-hoa-dao-kha-van-can-74716",
+      "fetched_at": "2026-10-11T04:27:22.058472+00:00",
+      "sha256": "526de1c93cad0260ebcd449f1a826309a68c78aebf2c703d59b56ed3d22fc4df",
+      "bytes": 570216,
+      "content_type": "text/html; charset=utf-8",
+      "snapshot_file": "src_3119eeedb6d505d753e1.html"
+    },
+    "src_82360100fb9c96fa366b": {
+      "source_url": "https://food.be.com.vn/ho-chi-minh/com-chay-thap-phuong-hoang-dieu-2-125649",
+      "resolved_url": "https://food.be.com.vn/ho-chi-minh/com-chay-thap-phuong-hoang-dieu-2-125649",
+      "fetched_at": "2026-10-11T04:27:23.810918+00:00",
+      "sha256": "842ceff0f7cd8276ccaa5d9438be7e3ed71965f7edfedab521f192f2b7c928ef",
+      "bytes": 598870,
+      "content_type": "text/html; charset=utf-8",
+      "snapshot_file": "src_82360100fb9c96fa366b.html"
+    },
+    "src_adcfe6569f4180dc9bf9": {
+      "source_url": "https://food.be.com.vn/ho-chi-minh/kim-nga-quan-com-phan-bun-rieu-banh-canh-le-van-chi-130264",
+      "resolved_url": "https://food.be.com.vn/ho-chi-minh/kim-nga-quan-com-phan-bun-rieu-banh-canh-le-van-chi-130264",
+      "fetched_at": "2026-10-11T04:27:25.595674+00:00",
+      "sha256": "338d94b56666e8734aa3a9ca47c9e33fb0ca90b536d5e0492e2092dc81d5c89e",
+      "bytes": 567315,
+      "content_type": "text/html; charset=utf-8",
+      "snapshot_file": "src_adcfe6569f4180dc9bf9.html"
+    },
+    "src_6bf1b9fce64e57242970": {
+      "source_url": "https://food.be.com.vn/ho-chi-minh/ga-ran-texas-chicken-vo-van-ngan-67488",
+      "resolved_url": "https://food.be.com.vn/ho-chi-minh/ga-ran-texas-chicken-vo-van-ngan-67488",
+      "fetched_at": "2026-10-11T04:27:27.713517+00:00",
+      "sha256": "dd838222a0b7df98506ba44f64cfe03ee81f77e208a386c94312c34b0bf6eb22",
+      "bytes": 897054,
+      "content_type": "text/html; charset=utf-8",
+      "snapshot_file": "src_6bf1b9fce64e57242970.html"
+    },
+    "src_4bfab8de4972ca050165": {
+      "source_url": "https://food.be.com.vn/ho-chi-minh/ga-ran-va-my-y-jollibee-vo-van-ngan-98881",
+      "resolved_url": "https://food.be.com.vn/ho-chi-minh/ga-ran-va-my-y-jollibee-vo-van-ngan-98881",
+      "fetched_at": "2026-10-11T04:27:29.366759+00:00",
+      "sha256": "44698a80e0e5823827c91025a88390492eac420ff667dd8bab69dc05a6c5f6a4",
+      "bytes": 862784,
+      "content_type": "text/html; charset=utf-8",
+      "snapshot_file": "src_4bfab8de4972ca050165.html"
+    },
+    "src_96cb183c657714899fc9": {
+      "source_url": "https://food.be.com.vn/ho-chi-minh/banh-mi-xoi-xiu-mai-xa-xiu-dang-van-bi-120584",
+      "resolved_url": "https://food.be.com.vn/ho-chi-minh/banh-mi-xoi-xiu-mai-xa-xiu-dang-van-bi-120584",
+      "fetched_at": "2026-10-11T04:27:31.754708+00:00",
+      "sha256": "9b3bc5597de4c69789beada90602ff164f34bb68332aae88e6e85ff92673d063",
+      "bytes": 554144,
+      "content_type": "text/html; charset=utf-8",
+      "snapshot_file": "src_96cb183c657714899fc9.html"
+    },
+    "src_437e34621677d067cf12": {
+      "source_url": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "resolved_url": "https://food.be.com.vn/ho-chi-minh/lo-banh-my-bao-chau-hoang-dieu-2-25690",
+      "fetched_at": "2026-10-11T04:27:33.322316+00:00",
+      "sha256": "acbec713bb69f094a161335029b18731b1d3af4aacae9aba7655dd96b203326f",
+      "bytes": 613876,
+      "content_type": "text/html; charset=utf-8",
+      "snapshot_file": "src_437e34621677d067cf12.html"
+    },
+    "src_03bac5075757df75477f": {
+      "source_url": "https://food.be.com.vn/ho-chi-minh/bun-bo-ngon-anh-linh-banh-canh-mi-y-24h-duong-49-94430",
+      "resolved_url": "https://food.be.com.vn/ho-chi-minh/bun-bo-ngon-anh-linh-banh-canh-mi-y-24h-duong-49-94430",
+      "fetched_at": "2026-10-11T04:27:35.600836+00:00",
+      "sha256": "2c638d22a37f3de5f070aee28fbdef41d494e06430f07abce71269e889b7be74",
+      "bytes": 749244,
+      "content_type": "text/html; charset=utf-8",
+      "snapshot_file": "src_03bac5075757df75477f.html"
+    },
+    "src_d40c318d0255f494fee4": {
+      "source_url": "https://food.be.com.vn/ho-chi-minh/bun-bo-hue-song-huong-duong-2-19461",
+      "resolved_url": "https://food.be.com.vn/ho-chi-minh/bun-bo-hue-song-huong-duong-2-19461",
+      "fetched_at": "2026-10-11T04:27:37.548346+00:00",
+      "sha256": "357ec922751597c7e278c917dbde3bf0aa7f88c274288d4d9ed3120b5225de75",
+      "bytes": 653483,
+      "content_type": "text/html; charset=utf-8",
+      "snapshot_file": "src_d40c318d0255f494fee4.html"
+    },
+    "src_9251309d510552dc4282": {
+      "source_url": "https://food.be.com.vn/ho-chi-minh/pha-lau-co-phuong-hiep-binh-46636",
+      "resolved_url": "https://food.be.com.vn/ho-chi-minh/pha-lau-co-phuong-hiep-binh-46636",
+      "fetched_at": "2026-10-11T04:27:39.582961+00:00",
+      "sha256": "5acf2f691a1adc86a0e6e99d9ce4d91d4642eff81ade1e469c9d2479e4c4fb51",
+      "bytes": 530818,
+      "content_type": "text/html; charset=utf-8",
+      "snapshot_file": "src_9251309d510552dc4282.html"
+    },
+    "src_554ee5d1ce5a2abf1fa7": {
+      "source_url": "https://food.be.com.vn/ho-chi-minh/pho-ly-quoc-su-hoang-dieu-2-86590",
+      "resolved_url": "https://food.be.com.vn/ho-chi-minh/pho-ly-quoc-su-hoang-dieu-2-86590",
+      "fetched_at": "2026-10-11T04:27:41.655323+00:00",
+      "sha256": "60b2bd77ca0f48a1774248012c1d5d73c6f49a7f9ae3fdb1b40c6a5a59fe1c27",
+      "bytes": 671109,
+      "content_type": "text/html; charset=utf-8",
+      "snapshot_file": "src_554ee5d1ce5a2abf1fa7.html"
+    },
+    "src_7cfc5cbe89ee1080c161": {
+      "source_url": "https://food.be.com.vn/ho-chi-minh/pho-bun-bo-tuoi-hoang-dieu-2-137270",
+      "resolved_url": "https://food.be.com.vn/ho-chi-minh/pho-bun-bo-tuoi-hoang-dieu-2-137270",
+      "fetched_at": "2026-10-11T04:27:43.439456+00:00",
+      "sha256": "5b9df8f7831e311e7d9be5fd3103c7d30d1be87ab1eb5b99b93ac909db2d251f",
+      "bytes": 590129,
+      "content_type": "text/html; charset=utf-8",
+      "snapshot_file": "src_7cfc5cbe89ee1080c161.html"
+    },
+    "src_3bb479654359bd9ddfe3": {
+      "source_url": "https://food.be.com.vn/ho-chi-minh/bun-dau-mam-tom-ba-anh-em-hoang-dieu-2-75616",
+      "resolved_url": "https://food.be.com.vn/ho-chi-minh/bun-dau-mam-tom-ba-anh-em-hoang-dieu-2-75616",
+      "fetched_at": "2026-10-11T04:27:45.391866+00:00",
+      "sha256": "1a671e0134a0f00e9f0a53416c99a503b587a669d2a76f53015b0aa930550dc2",
+      "bytes": 699929,
+      "content_type": "text/html; charset=utf-8",
+      "snapshot_file": "src_3bb479654359bd9ddfe3.html"
+    },
+    "src_50fe72c94e4623506c0f": {
+      "source_url": "https://food.be.com.vn/ho-chi-minh/banh-cuon-banh-uot-chuong-duong-33659",
+      "resolved_url": "https://food.be.com.vn/ho-chi-minh/banh-cuon-banh-uot-chuong-duong-33659",
+      "fetched_at": "2026-10-11T04:27:47.265108+00:00",
+      "sha256": "5a61fb1dc3b999753aa37a34028e1cd79d71687d8979e307e8911beab57d1256",
+      "bytes": 634231,
+      "content_type": "text/html; charset=utf-8",
+      "snapshot_file": "src_50fe72c94e4623506c0f.html"
+    },
+    "src_a5a12f3859548ad799da": {
+      "source_url": "https://food.be.com.vn/ho-chi-minh/quie-tea-food-hoang-dieu-2-148318",
+      "resolved_url": "https://food.be.com.vn/ho-chi-minh/quie-tea-food-hoang-dieu-2-148318",
+      "fetched_at": "2026-10-11T04:27:49.228795+00:00",
+      "sha256": "ae4adb62abbb7e74b739a34ca7c1e967207a6eb6588aea1657cc559c5daeed0a",
+      "bytes": 570070,
+      "content_type": "text/html; charset=utf-8",
+      "snapshot_file": "src_a5a12f3859548ad799da.html"
+    },
+    "src_8b9a13e5128f0e1273ea": {
+      "source_url": "https://food.be.com.vn/ho-chi-minh/nem-nuong-nha-trang-hung-viet-hoang-dieu-2-105890",
+      "resolved_url": "https://food.be.com.vn/ho-chi-minh/nem-nuong-nha-trang-hung-viet-hoang-dieu-2-105890",
+      "fetched_at": "2026-10-11T04:27:50.957424+00:00",
+      "sha256": "25649d334fff04cce23313467683cb22e47d7f8610e861ac01ebebfcf6b53475",
+      "bytes": 748136,
+      "content_type": "text/html; charset=utf-8",
+      "snapshot_file": "src_8b9a13e5128f0e1273ea.html"
+    },
+    "src_dd5105d2a5827bba8d1b": {
+      "source_url": "https://food.be.com.vn/ho-chi-minh/lau-ga-ot-hiem-109-hoang-dieu-2-98673",
+      "resolved_url": "https://food.be.com.vn/ho-chi-minh/lau-ga-ot-hiem-109-hoang-dieu-2-98673",
+      "fetched_at": "2026-10-11T04:27:52.584315+00:00",
+      "sha256": "ebdf5a43f462cf135734199e41fdc76fd16f34de1cdcacae3650a1ccf2aa7acc",
+      "bytes": 664428,
+      "content_type": "text/html; charset=utf-8",
+      "snapshot_file": "src_dd5105d2a5827bba8d1b.html"
+    },
+    "src_1acab7771ba08bdc61ac": {
+      "source_url": "https://shopeefood.vn/ho-chi-minh/tep-thu-duc-com-tam-chao-long-to-vinh-dien",
+      "resolved_url": "https://shopeefood.vn/ho-chi-minh/tep-thu-duc-com-tam-chao-long-to-vinh-dien",
+      "fetched_at": "2026-10-11T04:27:53.918751+00:00",
+      "sha256": "be3050ffe2ed7d5eb5d136e0ac4d155d0e3e662f65478fcb0788c760d7ca4626",
+      "bytes": 5127,
+      "content_type": "text/html",
+      "snapshot_file": "src_1acab7771ba08bdc61ac.html"
+    },
+    "src_d5b74d0bd743b9f85130": {
+      "source_url": "https://shopeefood.vn/ho-chi-minh/bun-bo-bo-ne-bo-kho-134-hoang-dieu-2",
+      "resolved_url": "https://shopeefood.vn/ho-chi-minh/bun-bo-bo-ne-bo-kho-134-hoang-dieu-2",
+      "fetched_at": "2026-10-11T04:27:55.182057+00:00",
+      "sha256": "be3050ffe2ed7d5eb5d136e0ac4d155d0e3e662f65478fcb0788c760d7ca4626",
+      "bytes": 5127,
+      "content_type": "text/html",
+      "snapshot_file": "src_d5b74d0bd743b9f85130.html"
+    },
+    "src_c3ac7ad9a17eff3c0eb1": {
+      "source_url": "https://shopeefood.vn/ho-chi-minh/bun-thit-nuong-com-tam-tem-hoang-dieu-2",
+      "resolved_url": "https://shopeefood.vn/ho-chi-minh/bun-thit-nuong-com-tam-tem-hoang-dieu-2",
+      "fetched_at": "2026-10-11T04:27:56.414372+00:00",
+      "sha256": "be3050ffe2ed7d5eb5d136e0ac4d155d0e3e662f65478fcb0788c760d7ca4626",
+      "bytes": 5127,
+      "content_type": "text/html",
+      "snapshot_file": "src_c3ac7ad9a17eff3c0eb1.html"
+    },
+    "src_5249e2329854b3d88885": {
+      "source_url": "https://shopeefood.vn/ho-chi-minh/tra-dau-nha-pao-vo-van-ngan",
+      "resolved_url": "https://shopeefood.vn/ho-chi-minh/tra-dau-nha-pao-vo-van-ngan",
+      "fetched_at": "2026-10-11T04:27:57.681321+00:00",
+      "sha256": "be3050ffe2ed7d5eb5d136e0ac4d155d0e3e662f65478fcb0788c760d7ca4626",
+      "bytes": 5127,
+      "content_type": "text/html",
+      "snapshot_file": "src_5249e2329854b3d88885.html"
+    }
+  }
+}

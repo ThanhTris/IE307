@@ -1,0 +1,36 @@
+Cell 1: OK
+Cell 2: OK
+Cell 3: OK
+Cell 4: OK
+Cell 5: OK
+Cell 6: OK
+Cell 7: OK
+Cell 8: OK
+Report: /private/tmp/gm08-fresh-20261011-1/reports/prepare_thu_duc_menus.executed.ipynb
+{
+  "sources_selected": 27,
+  "sources_with_menu": 23,
+  "venues_with_menu": 23,
+  "raw_menu_items": 694,
+  "catalogue_candidates": 221,
+  "mapping_counts": {
+    "needs_review": 253,
+    "candidate": 252,
+    "excluded": 189
+  },
+  "items_with_images": 259,
+  "sources_needing_render": 4,
+  "selected_sources_without_menu": 4,
+  "scope": "Selected public-address branches in old Thu Duc; no full-area completeness claim",
+  "final_dishes": 221,
+  "final_columns": 35,
+  "final_menu_items": 252,
+  "final_venues": 21,
+  "final_dishes_with_images": 110,
+  "final_dishes_with_descriptions": 126,
+  "source_fetch_counts": {
+    "fetched": 27
+  },
+  "final_csv": "/private/tmp/gm08-fresh-20261011-1/processed/thu_duc_dishes_final.csv",
+  "final_sha256": "545142551804a0fc5ed75691134c3f125a84117c34e6a37053d22529ba4e30ac"
+}
