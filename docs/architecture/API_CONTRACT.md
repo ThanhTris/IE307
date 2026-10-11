@@ -50,3 +50,46 @@ GM-07 chốt request/response/error/version từ dictionary GM-04, đối chiế
 | inbox / register/unregister push device / sender | GM-23 | GM-14 | GM-28/29 |
 
 GM-17 bảo vệ tables/RPC/retention, từng task API thêm auth/membership/version/expiry/lock/idempotency đúng endpoint. Client không import SQL/SDK vào UI; production không fallback sang mock khi API lỗi. Lệnh smoke/API example và response mẫu là bắt buộc trong HANDOFF.
+
+## Chi tiết Contract Projection & Parity GM-04 / GM-06 (GM-07)
+
+### 1. Chuẩn hóa phong bì lỗi (Error Normalization)
+- RPC Supabase có thể trả HTTP 200 kèm business envelope `{ ok: false, error: { messageKey: '...' } }`.
+- Client normalizer (`normalizeRpcResponse<T>()` trong `mobile/src/data/api/client.ts`) bảo toàn tuyệt đối cờ `ok`, `error.messageKey`, `requestId`, `version`, `state` và chỉ unwrap `data` khi `ok === true`.
+- Nếu response thiếu cờ `ok` hoặc không đúng cấu trúc envelope: bắt buộc chuẩn hóa thành lỗi `{ ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } }`, tuyệt đối không chuyển thành thành công.
+
+### 2. Idempotency & Bảo toàn RequestId khi Retry
+- Mọi RPC ghi (`createRoom`, `setReady`, `startRound`, `submitBallot`, `registerPushDevice`) đều hỗ trợ `requestId?: string` do caller hoặc outbox truyền vào.
+- Khi timeout mà chưa rõ server đã commit hay chưa, caller retry với **cùng requestId + cùng body**. Client không tự ý sinh lại ID mới cho cùng một attempt.
+- Server và Mock tra cứu `requestId` **trước** khi kiểm tra trạng thái phòng (`room.state`) và phiên bản (`room.version`):
+  - Cùng `requestId` + cùng payload signature: trả lại ACK thành công của lần trước.
+  - Cùng `requestId` + khác payload signature: từ chối với mã lỗi `REQUEST_ID_REUSED`.
+
+### 3. Bảng ánh xạ thuộc tính DTO và Cơ sở dữ liệu (GM-04 / GM-06)
+
+| DTO Client (`contracts.ts`) | Kiểu dữ liệu / Đơn vị | Bảng & Cột Database (GM-06 / GM-04) | Quy tắc chuyển đổi / Nullability |
+| :--- | :--- | :--- | :--- |
+| `PoolDish.roundDishId` | `string` (UUID / slug) | `round_dishes.id` | Bắt buộc, định danh lượt vote |
+| `PoolDish.dishId` | `string` (UUID) | `dishes.id` / `venue_dishes.dish_id` | Bắt buộc, tham chiếu món gốc |
+| `PoolDish.name` | `string` | `dishes.name_vi` | Bắt buộc |
+| `PoolDish.priceMin` | `number \| null` (VND) | `venue_dishes.price_min` | Nullable khi quán chưa niêm yết |
+| `PoolDish.priceMax` | `number \| null` (VND) | `venue_dishes.price_max` | Nullable khi món đồng giá hoặc chưa rõ |
+| `PoolDish.currency` | `'VND'` | `dishes.currency` | Cố định `'VND'` theo GM-04 |
+| `PoolDish.unit` | `'menu_item_unspecified'` | `dishes.unit` | Đơn vị khẩu phần theo menu |
+| `PoolDish.servingSize` | `1` | `dishes.serving_size` | Mặc định 1 người |
+| `PoolDish.price` | `DishPrice \| null` | `venue_dishes` pricing object | Projection có cấu trúc cho UI |
+| `PoolDish.temperature` | `'warm_hot' \| 'cold_iced' \| 'ambient'` | `dishes.temperature` | Enum taxonomy GM-04 |
+| `RoomSnapshot.ownSubmission` | `SubmissionReceipt \| null` | `submissions` | Receipt nộp phiếu (`round`, `intentId`, `requestId`, `submittedAt`, `voteCount`) dùng reconcile sau timeout |
+| `RoomSnapshot.datasetVersion` | `string` | Metadata / `food_datasets.version` | Phiên bản dataset hiện hành (ví dụ: `2026-10-11-core-01`) |
+| `RoomSnapshot.eligibilityVersion`| `string` | Metadata eligibility | Phiên bản quy tắc eligibility (`1.0.0`) |
+| `RoomSnapshot.evaluatedAt` | `string` (ISO8601) | Snapshot calculation time | Thời điểm đánh giá pool |
+| `PushPermissionStatus` | `'granted' \| 'denied' \| 'provisional'` | `devices.permission` | Client dùng 3 trạng thái; lưu DB qua `toStoragePermission`: `'provisional' -> 'unknown'` |
+
+### 4. Quy tắc đồng thuận & Kịch bản Mock
+- **NO không thể thành winner:** Bất kỳ món nào nhận dù chỉ 1 phiếu `NO` hoặc `REMOVE` lập tức bị loại khỏi tập ứng viên thắng cuộc.
+- Nếu toàn bộ ứng viên đều có phiếu `NO`: kết quả trả về `winnerDish = null`, `reasonCode = 'NO_CONSENSUS'`, `matchTier = 'TIER_NONE'`.
+- Mock hỗ trợ 3 kịch bản kiểm thử:
+  - `unanimous`: Đồng thuận tuyệt đối vòng 1 (`UNANIMOUS_WANT` / `TIER_1`).
+  - `no_consensus`: Bế tắc hoàn toàn, không có món thắng (`NO_CONSENSUS`).
+  - `round_two`: Vòng 1 thiếu món khả thi, phòng tự động chuyển sang `ROUND_2` với tập món thu gọn.
+- Nộp phiếu khi phòng ở trạng thái ngoài vòng bầu chọn (`LOBBY`, `CANCELLED`, `DECIDED`, `NO_CONSENSUS`) sẽ bị từ chối với lỗi `INVALID_ROOM_STATE`.

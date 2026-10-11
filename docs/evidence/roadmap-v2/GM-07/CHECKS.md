@@ -7,10 +7,12 @@ Contract version / schema version / dataset version: `food-v1/roadmap-v2/GM-07.1
 Mode: `contract`
 Tool/runtime versions / OS: Node.js v22.11.0, Python 3.11, Windows 11
 Upstream artifact đã nhận:
-- GM-02: `mobile/src/app/_layout.tsx` (shell layout)
+- GM-02: `mobile/src/app/_layout.tsx` (shell layout), `mobile/app.config.ts` (khớp chính xác `origin/main`)
 - GM-03: `supabase/config.toml` (local BE config)
-- GM-04: `docs/data/FOOD_DATA_DICTIONARY.md` (contract proposal 1.1.0)
+- GM-04: `docs/data/FOOD_DATA_DICTIONARY.md` (contract proposal 1.1.0), `docs/data/FIELD_COVERAGE.md`
 - GM-06: `supabase/migrations/0001_core_schema.sql` (frozen schema 0.1.0, PR #102)
+
+---
 
 ## Setup và cách chạy lại
 
@@ -18,43 +20,57 @@ Upstream artifact đã nhận:
    ```sh
    node mobile/scripts/check-architecture.mjs
    ```
-   Kết quả mong đợi: `Architecture boundaries OK (static guard, not a substitute for review).`
+   Kết quả: `Architecture boundaries OK (static guard, not a substitute for review).`
 
-2. Chạy bộ kiểm thử hợp đồng tự động GM-07:
+2. Chạy bộ kiểm thử Jest cho API contracts, client và mock:
+   ```sh
+   cd mobile && npm test -- tests/unit/apiContract.test.ts
+   ```
+   Kết quả: 16 test cases pass (bao gồm error normalization, requestId retry idempotency, mock consensus scenarios, permission mapping, baseUrl configuration).
+
+3. Chạy toàn bộ test suites trong mobile:
+   ```sh
+   cd mobile && npm test
+   ```
+   Kết quả: 3 test suites passed, 22 tests passed (`apiContract.test.ts`, `routes.test.tsx`, `AppShellScreen.test.tsx`).
+
+4. Chạy bộ kiểm thử hợp đồng tự động GM-07 bằng Python:
    ```sh
    python -m unittest tests/test_api_contract_gm07.py
    ```
-   Kết quả mong đợi: `Ran 6 tests ... OK`
+   Kết quả: `Ran 10 tests in 0.005s ... OK`.
 
-3. Chạy kiểm tra tính hợp lệ toàn bộ tài liệu và liên kết repo:
+5. Kiểm tra tính hợp lệ toàn bộ tài liệu và liên kết repo:
    ```sh
    python scripts/validate_repository.py
    python scripts/task_readiness.py --check-docs
-   git diff --check
+   git diff origin/main mobile/app.config.ts
    ```
+   Kết quả: Tài liệu hợp lệ, diff rỗng trên base artifact `app.config.ts`.
 
-## Kết quả từng case / AC
+---
 
-| AC / case | Tool + lệnh | Input / setup | Expected + assertion | Actual + artifact thật | Pass/Fail/Not run | Ghi chú |
-| :--- | :--- | :--- | :--- | :--- | :---: | :--- |
-| **AC1: Bao phủ endpoints core** | Python test runner `test_api_contract_gm07.py` | Quét interface `ApiClient` trong `mobile/src/data/api/contracts.ts` | Khai báo đủ 29 methods (auth, discovery, room, preferences, ready, vote, friends, inbox, device, history) | 29/29 methods được định nghĩa với DTO tường minh, khớp `API_CONTRACT.md` | **Pass** | Khung hợp đồng hoàn chỉnh cho BE và UI |
-| **AC2: Đối chiếu schema & error codes** | Python test runner `test_api_contract_gm07.py` | Đối chiếu danh sách `ErrorCode` với `API_CONTRACT.md` & `0001_core_schema.sql` | Đầy đủ 25 mã lỗi nghiệp vụ chuẩn + 3 mã lỗi hạ tầng (`NETWORK_ERROR`, `TIMEOUT`, `UNKNOWN_ERROR`) | Mọi mã lỗi đều có enum type, không lỗi tự do | **Pass** | Chuẩn hóa lỗi cho toàn app |
-| **AC3: Mock adapter cùng interface, đủ 6 mode** | Test suite `apiContract.test.ts` & Python runner | Khởi tạo `MockApiClient` với mode: `default`, `loading`, `empty`, `error`, `expired`, `stale` | Khớp interface `ApiClient`, cho phép chuyển đổi mode; không fallback ngầm | `MockApiClient` thực thi đầy đủ 6 mode, có dữ liệu mẫu thực tế và in-memory state transition | **Pass** | Phục vụ màn hình GM-09..14 |
-| **AC4: Transport & bảo mật token / privacy** | `mobile/src/data/api/client.ts` | Gọi `ApiClientImpl` với `MockTransport` | Tự sinh `requestId` idempotency; inject `Authorization: Bearer <token>`; map lỗi timeout/status; không log token/vote thô | Header token được gán đúng, requestId có tiền tố `req_`, error envelope sạch dữ liệu nhạy cảm | **Pass** | Bảo mật danh tính & phiếu bầu |
-| **AC5: Khung API / client kiểm contract** | Architecture guard & repository validator | Quét cấu trúc `mobile/src/data/api/` | Không vi phạm ranh giới kiến trúc (data không gọi trực tiếp UI, features dùng repository) | `check-architecture.mjs` trả về mã 0, static guard OK | **Pass** | Đạt chuẩn scaffold sạch |
+## Chi tiết kết quả kiểm tra theo các điểm Review PR #104
+
+| Hạng mục review | Vị trí code / Test case | Thiết lập kiểm thử | Kết quả mong đợi | Kết quả thực tế | Trạng thái |
+| :--- | :--- | :--- | :--- | :--- | :---: |
+| **1. [P1] Error Normalization** | `client.ts:normalizeRpcResponse()`, `apiContract.test.ts` (Block 1) | Giả lập HTTP 200 trả `{ ok: false, error: { messageKey: 'VERSION_CONFLICT' } }` và malformed `{ foo: 'bar' }` cho `setReady`, `submitBallot` | Không bao giờ biến lỗi server thành thành công; bảo toàn `messageKey`, trả `MALFORMED_RESPONSE` khi rỗng cờ `ok` | Caller nhận đúng `{ ok: false, error: { messageKey: 'VERSION_CONFLICT' } }`; malformed nhận `MALFORMED_RESPONSE` | **Pass** |
+| **2. [P1] RequestId Retention khi Retry** | `contracts.ts`, `client.ts`, `mock.ts`, `apiContract.test.ts` (Block 2) | Caller cung cấp `requestId` cố định khi gọi `submitBallot`. Gọi lần 1 thành công, lần 2 retry cùng ID/payload; lần 3 retry cùng ID khác payload | Lần 2 nhận ACK idempotent cũ; lần 3 bị từ chối với `REQUEST_ID_REUSED`. Không âm thầm sinh lại ID | Lần 2 trả đúng version/state cũ; lần 3 trả lỗi `REQUEST_ID_REUSED` | **Pass** |
+| **3. [P2] Cấu hình Real Client & BaseUrl** | `client.ts:ClientConfig`, `apiContract.test.ts` (Block 3) | Khởi tạo `new ApiClientImpl({ baseUrl: 'https://api.mycustomdomain.com', fetchFn })` | Client gửi HTTP request tới đúng domain cấu hình; không ngầm fallback localhost | URL gửi đi khớp 100% với `baseUrl` truyền vào; compile TypeScript không lỗi type | **Pass** |
+| **4. [P2] DTO Parity GM-04 / GM-06** | `contracts.ts`, `API_CONTRACT.md`, `test_api_contract_gm07.py` | Kiểm tra projection giá, đơn vị, khẩu phần, submission receipt và enum permission | `PoolDish` có `priceMin`, `priceMax`, `currency: VND`, `unit: menu_item_unspecified`, `servingSize: 1`, `DishPrice`; `RoomSnapshot` có `ownSubmission`, `datasetVersion`, `eligibilityVersion`, `evaluatedAt`; `toStoragePermission` map `'provisional' -> 'unknown'` | Các trường định nghĩa chặt chẽ, khớp bảng ánh xạ trong `API_CONTRACT.md` | **Pass** |
+| **5. [P2] Mock Consensus Rules** | `mock.ts:submitBallot()`, `apiContract.test.ts` (Block 4) | Nộp ballot khi phòng ở `LOBBY`; kịch bản all-NO; kịch bản `round_two`; kịch bản `unanimous` | `LOBBY` bị từ chối với `INVALID_ROOM_STATE`; all-NO trả `winner: null, reasonCode: 'NO_CONSENSUS'`; `round_two` chuyển phòng sang `ROUND_2` | NO không bao giờ thắng; state machine hoạt động đúng kịch bản thiết lập | **Pass** |
+| **6. [P2] Clean Base Artifact** | `mobile/app.config.ts` | So sánh working tree với `origin/main` | Không thay đổi artifact thuộc phạm vi GM-02 | `git diff origin/main mobile/app.config.ts` trả về 0 diff; Expo config đọc bình thường | **Pass** |
+
+---
 
 ## Bao phủ đầu ra bàn giao
 
-| Artifact | Phạm vi | Version/commit | Task nhận | Trạng thái |
+| Artifact | Phạm vi | Version | Task nhận | Trạng thái |
 | :--- | :--- | :--- | :--- | :---: |
-| `mobile/src/data/api/contracts.ts` | DTOs, Enums, Error Envelopes, `ApiClient` interface | `food-v1/roadmap-v2/GM-07.1` | GM-09..14, GM-24..31 | **Sẵn sàng** |
-| `mobile/src/data/api/client.ts` | `ApiClientImpl` + `FetchTransport` (Supabase RPC) | `food-v1/roadmap-v2/GM-07.1` | GM-24..31 (Integration) | **Sẵn sàng** |
-| `mobile/src/data/api/mock.ts` | `MockApiClient` + Presets dữ liệu thực tế | `food-v1/roadmap-v2/GM-07.1` | GM-09..14 (UI screens) | **Sẵn sàng** |
-| `mobile/src/data/api/index.ts` | Re-exports + `createApiClient(mode)` factory | `food-v1/roadmap-v2/GM-07.1` | Toàn bộ UI & Features | **Sẵn sàng** |
-| `mobile/tests/unit/apiContract.test.ts` | Test suite cho client, mock và lifecycle | `food-v1/roadmap-v2/GM-07.1` | Reviewer | **Sẵn sàng** |
-| `tests/test_api_contract_gm07.py` | Kiểm tra tự động tính bao phủ và parity | `food-v1/roadmap-v2/GM-07.1` | Reviewer / CI | **Sẵn sàng** |
-
-## Blocker và giới hạn
-
-- Không có blocker. Tất cả các artifact đầu vào từ GM-02, GM-03, GM-04 và GM-06 đều đã sẵn sàng trên `main`.
-- Giới hạn đã ghi nhận: Task GM-07 chỉ bàn giao tầng Hợp đồng (Contracts), Lớp gọi API (Client) và Mock Adapter phục vụ phát triển độc lập cho UI và chuẩn bị tích hợp. Việc triển khai xử lý nghiệp vụ cụ thể trong database/RPC thuộc phạm vi các task BE tiếp theo (GM-15..23).
+| `mobile/src/data/api/contracts.ts` | DTOs, Enums, Error Envelopes, Pricing, Receipts, `ApiClient` interface | `food-v1/roadmap-v2/GM-07.1` | GM-09..14, GM-24..31 | **Sẵn sàng** |
+| `mobile/src/data/api/client.ts` | `ApiClientImpl` + `FetchTransport` (Supabase RPC) + Response Normalizer | `food-v1/roadmap-v2/GM-07.1` | GM-24..31 (Integration) | **Sẵn sàng** |
+| `mobile/src/data/api/mock.ts` | `MockApiClient` + 6 Modes + 3 Scenarios + Idempotency Map | `food-v1/roadmap-v2/GM-07.1` | GM-09..14 (UI screens) | **Sẵn sàng** |
+| `mobile/src/data/api/index.ts` | Re-exports + `createApiClient(mode, config)` factory | `food-v1/roadmap-v2/GM-07.1` | Toàn bộ UI & Features | **Sẵn sàng** |
+| `mobile/tests/unit/apiContract.test.ts` | Test suite 16 test cases cho client, mock, consensus và normalizer | `food-v1/roadmap-v2/GM-07.1` | Reviewer | **Sẵn sàng** |
+| `tests/test_api_contract_gm07.py` | Kiểm tra tự động tính bao phủ và parity (10 tests) | `food-v1/roadmap-v2/GM-07.1` | Reviewer / CI | **Sẵn sàng** |
+| `docs/architecture/API_CONTRACT.md` | Bổ sung chi tiết projection, mapping DB và quy tắc đồng thuận | `food-v1/roadmap-v2/GM-07.1` | Reviewer / Core Team | **Sẵn sàng** |
