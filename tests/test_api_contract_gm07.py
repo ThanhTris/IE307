@@ -175,7 +175,8 @@ class ApiContractGM07Tests(unittest.TestCase):
     def test_index_exports_factory(self):
         content = self.index_path.read_text(encoding='utf-8')
         self.assertIn('export function createApiClient', content)
-        self.assertIn("mode: ApiMode = 'mock'", content)
+        self.assertIn('createApiClient(mode: ApiMode,', content)
+        self.assertNotIn("mode: ApiMode = 'mock'", content)
 
 
 if __name__ == '__main__':

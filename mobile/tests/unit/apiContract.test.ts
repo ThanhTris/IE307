@@ -733,5 +733,34 @@ describe('GM-07 API Contract & Client Suite', () => {
       const mockClient = createApiClient('mock');
       expect(mockClient).toBeInstanceOf(MockApiClient);
     });
+
+    it.each([
+      ['omitted', () => (createApiClient as unknown as (mode?: unknown) => unknown)()],
+      ['undefined', () => (createApiClient as unknown as (mode?: unknown) => unknown)(undefined)],
+      ['null', () => (createApiClient as unknown as (mode?: unknown) => unknown)(null)],
+      ['invalid string', () => (createApiClient as unknown as (mode?: unknown) => unknown)('rea1')],
+    ])('rejects %s mode at runtime instead of selecting mock', (_label, invoke) => {
+      expect(invoke).toThrow('API mode must be explicitly real or mock');
+    });
+
+    it('keeps the loading fixture pending long enough for UI loading states', async () => {
+      const mock = new MockApiClient({ mode: 'loading', delayMs: 0 });
+      const startedAt = Date.now();
+
+      const result = await mock.getHistory('personal');
+
+      expect(Date.now() - startedAt).toBeGreaterThanOrEqual(280);
+      expect(result.ok).toBe(true);
+    });
+
+    it('preserves an explicitly longer loading fixture delay', async () => {
+      const mock = new MockApiClient({ mode: 'loading', delayMs: 600 });
+      const startedAt = Date.now();
+
+      const result = await mock.getHistory('personal');
+
+      expect(Date.now() - startedAt).toBeGreaterThanOrEqual(580);
+      expect(result.ok).toBe(true);
+    });
   });
 });

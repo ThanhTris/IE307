@@ -15,11 +15,15 @@ export type ApiMode = 'real' | 'mock';
 
 /**
  * Factory helper to construct the appropriate ApiClient instance.
- * Production mode defaults to 'real' Supabase client; tests and UI development use 'mock'.
+ * Callers must choose real or mock explicitly so a production client cannot
+ * silently receive a mock adapter when configuration is omitted.
  */
-export function createApiClient(mode: ApiMode = 'mock', options?: ClientConfig & MockConfig): ApiClient {
+export function createApiClient(mode: ApiMode, options?: ClientConfig & MockConfig): ApiClient {
   if (mode === 'real') {
     return new ApiClientImpl(options);
   }
-  return new MockApiClient(options);
+  if (mode === 'mock') {
+    return new MockApiClient(options);
+  }
+  throw new Error('API mode must be explicitly real or mock');
 }

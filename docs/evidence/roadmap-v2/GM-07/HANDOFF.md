@@ -2,6 +2,10 @@
 
 Owner Trang (@rosy179), reviewer Trí (@ThanhTris). Codex hỗ trợ patch theo yêu cầu Trí. [Issue #68](https://github.com/ThanhTris/IE307/issues/68), [PR #104](https://github.com/ThanhTris/IE307/pull/104), [Project #2](https://github.com/users/ThanhTris/projects/2).
 
+## Follow-up GM-07 trên nhánh Trung
+
+Nhánh `codex/gm-07-trung-verification`, tested code commit `77941b56146969ec562063f7b7c9351f69d0b675` trên base `main` `3076c3deb2937223a007b82211a61a2d61b63c84`. Factory kiểm tra runtime và chỉ chấp nhận chính xác `real` hoặc `mock`; thiếu, `undefined`, `null` và chuỗi sai đều throw lỗi cấu hình, không fallback sang mock. Public TypeScript mode vẫn bắt buộc. Test loading mặc định và delay tường minh 600 ms đều giữ thời gian chờ. Kết quả cập nhật ở [CHECKS.md](CHECKS.md#follow-up-patch-on-trungs-branch). Nhánh follow-up chưa merge; status/assignment/review của task không bị thay đổi.
+
 Lượt sửa hiện tại: tested code commit **`3f7f2412ed253eb67109368373e997599e916689`** trên base PR `e482ccb3d9fec8051d71550a75916c9541fd2476`, target đã fetch `00c4f27a97d4f1487dfed7c54c1253c766709a1a`, ngày 2026-10-11 UTC+7. [Manifest hiện tại](read-isolation-fix/PATCH_MANIFEST.json) ghi hash code/spec/tests đã kiểm; [bàn giao/output mới](read-isolation-fix/README.md). Mobile/Python contract chạy lại trên commit này theo yêu cầu push của Trí; commit evidence tiếp theo chỉ đổi tài liệu/output. Nhánh đích PR #104: `codex/gm-07-api-contract-and-mock`; review độc lập/CI cần kiểm HEAD sau push. Lịch sử write/join: code `f0599f8c4b92bf372fc6e3e497389cd59cadf914` rồi evidence e482ccb, [manifest cũ](PATCH_MANIFEST.json). Chưa approve, merge hoặc đổi Done.
 
 API contract `food-v1/roadmap-v2/GM-07.1`; adapter GM-04 proposal `1.1.0`; schema GM-06 `0.1.0`. Mock datasetVersion là fixture, không là verified dataset GM-08. Input GM-02/03/04/06 lấy trên target SHA trên; không thêm package/đổi lockfile/schema.
@@ -58,6 +62,8 @@ python scripts/task_readiness.py --task GM-07 --gate merge --base-ref origin/mai
 Full regression Windows/UTF-8 hiện 476 tests, 1 failure + 5 errors; chính 6 ca cũng fail/error trên main (encoding probe + taxonomy locking). Pipeline legacy dùng Linux/macOS/WSL. Nếu lỗi khác tên/số lượng, đối chiếu cùng runtime/target trước phân loại; không ghi full suite Pass khi chưa đạt. git diff origin/main --check gồm local patch, còn git diff origin/main HEAD --check chỉ kiểm revision đã commit.
 
 ## Dùng adapter
+
+Chọn mode tường minh khi tạo client: `createApiClient('real', ...)` dùng transport thật; `createApiClient('mock', ...)` dùng fixture. TypeScript không cho bỏ tham số mode, tránh vô tình dùng mock do thiếu cấu hình. `MockApiClient` hỗ trợ `default`, `loading`, `empty`, `error`, `expired` và `stale`; `loading` giữ request pending ít nhất 300 ms để UI render trạng thái chờ, còn `delayMs` có thể đặt lâu hơn.
 
 ```typescript
 import { createApiClient, MockApiClient } from '@/data/api';

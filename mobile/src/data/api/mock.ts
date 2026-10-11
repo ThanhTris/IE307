@@ -452,8 +452,11 @@ export class MockApiClient implements ApiClient {
   }
 
   private async wait(): Promise<void> {
-    if (this.delayMs > 0) {
-      await new Promise((r) => setTimeout(r, this.delayMs));
+    // Make the loading fixture visibly pending in UI previews, even when the
+    // caller uses the normal short mock delay. An explicit longer delay wins.
+    const effectiveDelayMs = this.mode === 'loading' ? Math.max(this.delayMs, 300) : this.delayMs;
+    if (effectiveDelayMs > 0) {
+      await new Promise((r) => setTimeout(r, effectiveDelayMs));
     }
   }
 
