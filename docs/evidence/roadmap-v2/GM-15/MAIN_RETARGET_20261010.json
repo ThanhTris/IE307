@@ -1,0 +1,27 @@
+{
+  "main": "d9e83d9c091b4487f7188bdfb7906e8f950db378",
+  "dataHead": "d428a80384d3dc238936d8a0311c4d4b1ee247f9",
+  "dataMergePr": 62,
+  "enginePr": 101,
+  "base": "main",
+  "testedEngineBeforeDocs": "14384a088d264a56a452082e7de2bae14abd06a6",
+  "engineCodeHashes": {
+    "mobile/src/domain/decision/index.ts": "85aff7a5c0d264cfc33777bcbf8382774c4f0d82f881c5b8f710658e7a172f85",
+    "mobile/tests/decision.test.mjs": "9e7bf439906a61c8f47ada21f2a960ced8a363a50cf164cff266953fbf4ee984",
+    "mobile/scripts/check-decision.mjs": "c52d2b7ce1b8130d737e7c1868eecfc664372cb121ee83569b3ae716378d8cf1",
+    "tests/fixtures/decision-cases.json": "4c0919c6933afc8f6a3e2c50a7c2b920f67d20dba3df338fad808bf02ad3dfb4",
+    "tests/fixtures/consensus-tier-cases.json": "65baa04b920e2d047c2ad3098fe6660d782ce36fe55259f2a88ae91b0f0063cf",
+    "tests/fixtures/decision-v2/cases.json": "6d2fa8cc89d18c32ccda5bb6c6a5805bd6d89d303d224d1a89019f8208b3dd30",
+    "tests/fixtures/decision-v2/roster-cases.json": "431e103588074d9033322c6056ea726615ab59fdc08883904fa0b33b417412f5",
+    "tests/fixtures/decision-v2/parity-map.json": "e7ecb328eb065edfd2d911b73ed1301fa32c22780dc64dd93aa409777709a9b6",
+    ".github/workflows/decision.yml": "3f474110f3c52c587e42befae2e00488c09cfdcefa60410387b5b039a20e44f5"
+  },
+  "domainTests": 104,
+  "reportChecks": 94,
+  "pythonRegression": 435,
+  "typecheckLint": "Pass; code unchanged by ancestry-only rebase",
+  "jest": "6/6 with --watchman=false",
+  "gate": "BLOCKED GM-04/07 metadata; merge not approval",
+  "seedWinner": "Not implemented, owner candidate-only boundary requires reviewer decision",
+  "publicCandidateSet": false
+}

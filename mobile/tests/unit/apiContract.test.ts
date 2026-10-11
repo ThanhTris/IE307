@@ -492,7 +492,9 @@ describe('GM-07 API Contract & Client Suite', () => {
         expect(snap.data.state).toBe('NO_CONSENSUS');
         expect(snap.data.result?.winnerDish).toBeNull();
         expect(snap.data.result?.winnerRoundDishId).toBeNull();
-        expect(snap.data.result?.reasonCode).toBe('NO_CONSENSUS');
+        expect(snap.data.result?.reasonCode).toBe('EMPTY_INTERSECTION');
+        expect(snap.data.result?.matchTier).toBe('NO_CONSENSUS');
+        expect(snap.data.result?.policyVersion).toBe('decision-v2');
       }
     });
 

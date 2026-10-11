@@ -1046,10 +1046,10 @@ export class MockApiClient implements ApiClient {
             round: req.round,
             winnerRoundDishId: null,
             winnerDish: null,
-            reasonCode: 'NO_CONSENSUS',
-            matchTier: 'TIER_NONE',
+            reasonCode: req.round === 1 ? 'EMPTY_INTERSECTION' : 'ALL_REMOVED',
+            matchTier: 'NO_CONSENSUS',
             finalizedAt: new Date().toISOString(),
-            policyVersion: 'food-v1',
+            policyVersion: 'decision-v2',
           };
         }
       } else {
@@ -1062,10 +1062,11 @@ export class MockApiClient implements ApiClient {
           round: req.round,
           winnerRoundDishId: winner.roundDishId,
           winnerDish: winner,
-          reasonCode: isUnanimous ? 'UNANIMOUS_WANT' : 'HIGHEST_SCORE',
-          matchTier: isUnanimous ? 'TIER_1' : 'TIER_2',
+          reasonCode: isUnanimous ? 'UNANIMOUS_WANT' : 'ACCEPTABLE_FINAL',
+          matchTier: isUnanimous ? 'PERFECT'
+            : top.wantCount > room.members.length / 2 ? 'CONSENSUS' : 'COMPROMISE',
           finalizedAt: new Date().toISOString(),
-          policyVersion: 'food-v1',
+          policyVersion: 'decision-v2',
         };
         room.result = result;
         room.state = 'DECIDED';

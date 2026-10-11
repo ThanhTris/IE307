@@ -109,9 +109,12 @@ Mock lưu `ownPreferences`, `ownVotes`, `ownSubmission` theo roomId chuẩn + ca
 
 ### 4. Quy tắc đồng thuận & Kịch bản Mock
 - **NO không thể thành winner:** Bất kỳ món nào nhận dù chỉ 1 phiếu `NO` hoặc `REMOVE` lập tức bị loại khỏi tập ứng viên thắng cuộc.
-- Nếu toàn bộ ứng viên đều có phiếu `NO`: kết quả trả về `winnerDish = null`, `reasonCode = 'NO_CONSENSUS'`, `matchTier = 'TIER_NONE'`.
+- Policy kết quả là `decision-v2` (khác food interchange `1.1.0`). Result dùng reason `UNANIMOUS_WANT`, `ACCEPTABLE_FINAL`, `EMPTY_INTERSECTION`, `ALL_REMOVED` và tier `PERFECT`, `CONSENSUS`, `COMPROMISE`, `NO_CONSENSUS` theo DECISION_SPEC/schema GM-06. DTO và runtime guard kiểm vocabulary/quan hệ winner; không nhận `food-v1`, `TIER_1/2/NONE` hoặc `HIGHEST_SCORE` như decision-v2.
+- Tập không NO rỗng ở vòng 1: winner null, `EMPTY_INTERSECTION/NO_CONSENSUS`; tất cả REMOVE vòng 2: winner null, `ALL_REMOVED/NO_CONSENSUS`.
 - Mock hỗ trợ 3 kịch bản kiểm thử:
-  - `unanimous`: Đồng thuận tuyệt đối vòng 1 (`UNANIMOUS_WANT` / `TIER_1`).
+  - `unanimous`: Đồng thuận tuyệt đối vòng 1 (`UNANIMOUS_WANT` / `PERFECT`).
   - `no_consensus`: Bế tắc hoàn toàn, không có món thắng (`NO_CONSENSUS`).
   - `round_two`: Vòng 1 thiếu món khả thi, phòng tự động chuyển sang `ROUND_2` với tập món thu gọn.
+- Các scenario mock là mô phỏng UI, không triển khai đầy đủ engine/ACK đa thành viên; không dùng để nghiệm thu GM-20. GM-15 nhận roster/pool khóa và phiếu đã chấp nhận phía server, không đọc `ownVotes` hoặc draft KEEP từ public snapshot.
+- Choice identity: `BallotVoteItem.roundDishId` → `round_dishes.id` của đúng room/round → `choiceId` khóa. Winner choice từ selector ánh xạ ngược về row của vòng kết quả để điền `RoomResult.winnerRoundDishId`; `winnerDish` lấy toàn bộ metadata từ đúng row đó. `DECISION_SELECTED` chỉ là kết quả domain nội bộ; GM-20 persist mới tạo `RoomResult`/state `DECIDED`.
 - Nộp phiếu khi phòng ở trạng thái ngoài vòng bầu chọn (`LOBBY`, `CANCELLED`, `DECIDED`, `NO_CONSENSUS`) sẽ bị từ chối với lỗi `INVALID_ROOM_STATE`.

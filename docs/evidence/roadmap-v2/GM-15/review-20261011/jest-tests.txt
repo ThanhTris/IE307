@@ -1,0 +1,17 @@
+
+> gi-cung-duoc-mobile@0.1.0 test
+> jest --runInBand --watchman=false
+
+PASS tests/integration/routes.test.tsx
+PASS tests/unit/apiContract.test.ts
+PASS tests/component/AppShellScreen.test.tsx
+PASS tests/unit/apiResponseValidation.test.ts
+PASS tests/unit/apiReadValidation.test.ts
+PASS tests/unit/decisionContract.test.ts
+PASS tests/unit/apiMockIsolation.test.ts
+
+Test Suites: 7 passed, 7 total
+Tests:       282 passed, 282 total
+Snapshots:   0 total
+Time:        2.959 s, estimated 3 s
+Ran all test suites.
