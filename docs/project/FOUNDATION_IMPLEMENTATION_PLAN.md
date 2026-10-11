@@ -67,7 +67,7 @@ Danh sách thư mục feature/shared/domain/data/seed là vị trí quy hoạch;
 - Root README, .gitignore/.gitattributes và CI thống nhất người sửa; chia file nhỏ để tránh conflict. Chỉ pin/change package theo review; checksum artifact nên có newline/UTF-8 xác định trên Windows/Linux.
 - Nhánh đề xuất `codex/gm-02-ui-foundation` và `codex/gm-03-be-foundation`; chưa tự tạo/commit/push trong đợt cập nhật plan.
 - Sau start gate, hai task làm song song; nếu chủ dự án chọn merge tuyệt đối theo số thì merge GM-02 rồi GM-03, không biến thứ tự merge thành dependency start.
-- Reviewer kiểm AC/CHECKS/HANDOFF và gate merge với ref đích cập nhật. Done/Approved chỉ do reviewer độc lập; backend/application smoke không được thay bằng repository docs validator.
+- Reviewer kiểm AC/CHECKS/HANDOFF và gate merge với ref đích cập nhật. Done/Approved chỉ do Trí review thực tế theo ADR-013, kể cả task Trí trực tiếp làm; backend/application smoke không được thay bằng repository docs validator.
 
 ## Task nhận tiếp
 

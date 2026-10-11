@@ -154,10 +154,50 @@ class ManifestValidationTests(unittest.TestCase):
         self.source.contents[path] = re.sub(r'^Reviewed-at:.*$', 'Reviewed-at: 2026-02-30', self.source.read(path), flags=re.M)
         self.assertIn('invalid review date', self.errors())
 
-    def test_recorded_reviewer_must_match_independent_reviewer(self):
+    def test_recorded_reviewer_must_match_declared_reviewer(self):
         path = 'tasks/done/GM-00.md'
         self.source.contents[path] = self.source.read(path).replace('Reviewed-by: Trí', 'Reviewed-by: Codex')
-        self.assertIn('independent reviewer mismatch', self.errors())
+        self.assertIn('reviewer mismatch', self.errors())
+
+    def test_project_owner_can_review_own_current_tasks(self):
+        records = validator.task_records(self.source)
+        for tid in ('GM-02', 'GM-03', 'GM-16', 'GM-17', 'GM-19', 'GM-22', 'GM-23', 'GM-34'):
+            with self.subTest(task=tid):
+                self.assertEqual(records[tid]['meta']['owner'], 'Trí')
+                self.assertEqual(records[tid]['meta']['reviewer'], 'Trí')
+                self.assertTrue(validator.owner_review_allowed(records[tid]['meta']))
+        self.assertEqual(self.errors(), '')
+
+    def test_member_self_review_is_still_rejected(self):
+        path = self.source.task_path('GM-04')
+        self.source.contents[path] = re.sub(r'^reviewer:.*$', 'reviewer: Vinh', self.source.read(path), flags=re.M)
+        self.assertIn('owner reviews own task: GM-04', self.errors())
+
+    def test_owner_review_exception_requires_current_roadmap_and_handle(self):
+        meta = dict(validator.task_records(self.source)['GM-16']['meta'])
+        for field, value in (('numbering', 'roadmap-v1'), ('proposed_reviewer', 'someone-else'),
+                             ('owner', 'Codex'), ('reviewer', 'Codex')):
+            with self.subTest(field=field):
+                self.assertFalse(validator.owner_review_allowed({**meta, field: value}))
+
+    def test_owner_review_still_requires_actual_approval_fields_and_complete_ac(self):
+        original = validator.task_records(self.source)['GM-16']
+        record = {**original, 'meta': {**original['meta'], 'status': 'done'}}
+        record['text'] = original['text'].replace('- [ ]', '- [x]') + (
+            '\nReviewed-by: Trí\nReviewed-at: 2026-10-12\nDecision: Approved\n'
+            'Review-evidence: docs/evidence/GM-28/REPOSITORY_AUDIT.md\n')
+        self.assertEqual(validator.approval_errors(self.source, record), [])
+        for old, new, error in (
+                ('Reviewed-by: Trí', 'Reviewed-by: Codex', 'reviewer mismatch'),
+                ('Reviewed-at: 2026-10-12', 'Reviewed-at: 2026-02-30', 'invalid review date'),
+                ('Decision: Approved', 'Decision: Pending', 'Decision is not Approved'),
+                ('docs/evidence/GM-28/REPOSITORY_AUDIT.md', 'missing.md', 'missing review evidence file'),
+                ('- [x]', '- [ ]', 'unchecked criteria in done task')):
+            with self.subTest(error=error):
+                changed = {**record, 'text': record['text'].replace(old, new)}
+                self.assertIn(error, validator.approval_errors(self.source, changed))
+        self.assertIn('Decision is not Approved', validator.approval_errors(self.source, {
+            **record, 'text': original['text']}))
 
     def test_done_with_unchecked_criteria_is_rejected(self):
         path = 'tasks/done/GM-00.md'

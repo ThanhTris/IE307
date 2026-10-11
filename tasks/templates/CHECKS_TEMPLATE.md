@@ -32,4 +32,4 @@ Not run/Fail/N/A có lý do, việc cần làm và người phụ trách. N/A ch
 
 ## Review
 
-Reviewer đối chiếu output và revision thật theo [chuẩn đầu ra](../../docs/project/TASK_OUTPUT_REQUIREMENTS.md), [DoD](../../docs/project/DEFINITION_OF_DONE.md). Không tick Approved hoặc copy kết quả lịch sử sang revision mới; review độc lập dùng REVIEW_TEMPLATE.md và HANDOFF_TEMPLATE.md.
+Reviewer đối chiếu output và revision thật theo [chuẩn đầu ra](../../docs/project/TASK_OUTPUT_REQUIREMENTS.md), [DoD](../../docs/project/DEFINITION_OF_DONE.md). Không tick Approved hoặc copy kết quả lịch sử sang revision mới; review của Trí dùng REVIEW_TEMPLATE.md và HANDOFF_TEMPLATE.md.

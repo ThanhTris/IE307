@@ -4,7 +4,7 @@ Roadmap-v2 theo [ADR-009](../architecture/decisions/ADR-009-foundation-first-tas
 
 ## Trước bắt đầu
 
-Phân công hiện hành lấy assignee trên [Project #2](https://github.com/users/ThanhTris/projects/2); task metadata và bảng tổng hợp đã được chủ dự án yêu cầu đồng bộ ngày 2026-10-11. Lịch/Deadline quản lý trên Project. Đổi phân công hoặc start/merge gate cần cập nhật task, bảng artifact/task map và sinh lại indexes; checker chỉ đọc Done, không tự cập nhật metadata. Owner hiện hành không thay tác giả/evidence lịch sử. Không phân công reviewer thành viên riêng: Trí review/merge cuối; phần Trí trực tiếp viết cần người kiểm độc lập được xác nhận riêng.
+Phân công hiện hành lấy assignee trên [Project #2](https://github.com/users/ThanhTris/projects/2); task metadata và bảng tổng hợp đã được chủ dự án yêu cầu đồng bộ ngày 2026-10-11. Lịch/Deadline quản lý trên Project. Đổi phân công hoặc start/merge gate cần cập nhật task, bảng artifact/task map và sinh lại indexes; checker chỉ đọc Done, không tự cập nhật metadata. Owner hiện hành không thay tác giả/evidence lịch sử. Không phân công reviewer thành viên riêng: Trí review/merge cuối cho mọi task, kể cả task Trí trực tiếp viết; không cần chỉ định người kiểm độc lập theo [ADR-013](../architecture/decisions/ADR-013-project-owner-final-review.md).
 
 1. Chọn đúng task roadmap-v2 và xem bảng đầu vào. UI cần shell → components → contract/mock trước màn; BE cần structure/field/contract trước API; Data cần fields → schema → import.
 2. Chạy `python scripts/task_readiness.py --task GM-XX`. Checker mặc định đọc mới cột Status=Done trên Project cho đúng issue mapping và kiểm output/HANDOFF của start deps. Sau fetch đúng remote, có thể thêm `--base-ref origin/main` để đối chiếu contract/manifest và artifact trên target. Thiếu read:project/mạng/item phải chặn; Issue Closed không thay Project Done. [Cách chạy và cấp quyền đọc](PROJECT_READINESS.md).
@@ -45,7 +45,7 @@ Task màn thêm route và feature file của mình, dùng components/repository 
 2. Kiểm cả start/merge dependencies Done trên Project, đúng scope/contract/manifest và nội dung output/HANDOFF trên target khớp local. Không bắt task Markdown/evidence Approved đồng bộ chỉ để nhận đầu vào. Checker không tự fetch, không chứng minh file chạy đúng hoặc thay việc kiểm PR/commit upstream thật.
 3. Điền PR/merge hoặc squash commit và artifact path trong [mẫu PR](../../.github/pull_request_template.md). Kiểm ancestry khi phù hợp; branch đã nhận đúng code, không chỉ bản ghi Done.
 4. Rebase/update/retarget stacked branch khi cần, diff chỉ scope mình; chạy tests tương ứng sau tích hợp. Task màn kiểm mock/visual; API/native/data kiểm đúng môi trường của chúng.
-5. Reviewer khác owner kiểm AC và [DoD](DEFINITION_OF_DONE.md) cho revision hiện tại; Trí nghiệm thu/chuyển Done trên Project. AI không tự chuyển Done. Hồ sơ review là bằng chứng nên lưu; khi cập nhật Markdown thành done vẫn cần approval fields/evidence thật và sinh indexes. Không bắt bước đồng bộ Markdown này để mở downstream. Done không đồng nghĩa code đã vào target.
+5. Trí kiểm AC, kể cả task Trí trực tiếp làm, và [DoD](DEFINITION_OF_DONE.md) cho revision hiện tại; Trí nghiệm thu/chuyển Done trên Project. AI không tự chuyển Done. Hồ sơ review là bằng chứng nên lưu; khi cập nhật Markdown thành done vẫn cần approval fields/evidence thật và sinh indexes. Không bắt bước đồng bộ Markdown này để mở downstream. Done không đồng nghĩa code đã vào target.
 6. Bàn giao [HANDOFF](../../tasks/templates/HANDOFF_TEMPLATE.md) và tag task nhận tiếp trong báo cáo/PR; thiếu đầu ra thì downstream vẫn bị chặn.
 
 Không bắt nghiệm thu production/APK cho task shell/mock. Mock không đóng AC của task API/native. P1/P2 merge sau GM-34, không chặn release.
@@ -55,7 +55,7 @@ Không bắt nghiệm thu production/APK cho task shell/mock. Mock không đóng
 Evidence mới ở `docs/evidence/roadmap-v2/GM-XX/`; giữ evidence roadmap-v1 nguyên trạng. Reviewer ghi:
 
 ```text
-Reviewed-by: tên khớp reviewer khác owner
+Reviewed-by: Trí
 Reviewed-at: YYYY-MM-DD
 Decision: Approved
 Review-evidence: docs/evidence/roadmap-v2/GM-XX/REVIEW.md

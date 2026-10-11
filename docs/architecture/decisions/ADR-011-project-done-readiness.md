@@ -3,6 +3,8 @@
 Date: 2026-10-10
 Status: quyết định quy trình theo xác nhận trực tiếp của chủ dự án “oke sửa giúp tui đi”; không approval implementation của task khác
 
+Cập nhật quy tắc review ngày 2026-10-12: [ADR-013](ADR-013-project-owner-final-review.md) thay yêu cầu người kiểm độc lập cho task Trí trực tiếp làm. Trí review cuối cả task mình làm; các gate và chuẩn đầu ra dưới đây giữ nguyên.
+
 ## Bối cảnh
 
 GM-03/04 đã được chủ dự án đóng issue/chuyển Done nhưng main còn task Markdown review/backlog. Checker local chặn GM-06 dù đầu ra đã merge. Chủ dự án yêu cầu dùng cột Done để mở task, tránh cập nhật trạng thái thủ công ở hai nơi.

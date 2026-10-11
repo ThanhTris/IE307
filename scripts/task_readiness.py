@@ -275,7 +275,7 @@ def render_documents(src):
              'Lịch và Deadline hiện hành xem trên Project, không nhân bản lịch 4 tuần tại đây. '
              'Phân công không tự là xác nhận nhận việc, approval hay Done; '
              'assignment_status giữ nguyên cho tới xác nhận phù hợp. '
-             'Trí review/merge cuối; task Trí trực tiếp viết cần người kiểm độc lập chưa được tự chỉ định. '
+             'Trí review/merge cuối cho mọi task, kể cả task Trí trực tiếp viết; không cần chỉ định người kiểm độc lập theo ADR-013. '
              'Owner hiện hành không thay tác giả hoặc bằng chứng review lịch sử.\n\n'
              '| Thành viên | Task được giao | GitHub |\n| --- | --- | --- |\n')
     for owner, handle in handles.items():

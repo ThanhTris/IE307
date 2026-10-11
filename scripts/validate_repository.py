@@ -36,6 +36,7 @@ REQUIRED = (
     'scripts/github_project_status.py', 'tasks/project-gate.json',
     'docs/project/PROJECT_READINESS.md',
     'docs/architecture/decisions/ADR-011-project-done-readiness.md',
+    'docs/architecture/decisions/ADR-013-project-owner-final-review.md',
     '.github/pull_request_template.md', '.github/ISSUE_TEMPLATE/task.yml',
     'docs/architecture/decisions/ADR-006-parallel-start-ordered-merge.md',
     'docs/architecture/decisions/ADR-007-task-roadmap-numbering.md',
@@ -83,15 +84,23 @@ def task_records(src: Source) -> dict:
     return records
 
 
+def owner_review_allowed(meta: dict) -> bool:
+    """ADR-013 permits only project-owner self-review in the current roadmap."""
+    return (meta.get('numbering') == 'roadmap-v2'
+            and meta.get('owner') == meta.get('reviewer') == 'Trí'
+            and meta.get('proposed_reviewer') == 'ThanhTris')
+
+
 def approval_errors(src: Source, record: dict) -> list[str]:
-    """Check recorded independent approval, not whether a human really reviewed."""
+    """Check recorded approval, not whether a human really reviewed."""
     meta, text = record['meta'], record['text']
     errors = []
     fields = dict(re.findall(r'^(Reviewed-by|Reviewed-at|Decision|Review-evidence):[ \t]*([^\n]+)$', text, re.M))
     if meta.get('status') != 'done':
         errors.append('status is not done')
-    if not fields.get('Reviewed-by') or fields.get('Reviewed-by') != meta.get('reviewer') or fields.get('Reviewed-by') == meta.get('owner'):
-        errors.append('independent reviewer mismatch')
+    if (not fields.get('Reviewed-by') or fields.get('Reviewed-by') != meta.get('reviewer')
+            or (fields.get('Reviewed-by') == meta.get('owner') and not owner_review_allowed(meta))):
+        errors.append('reviewer mismatch')
     try:
         value = fields.get('Reviewed-at', '')
         if not re.fullmatch(r'\d{4}-\d{2}-\d{2}', value):
@@ -356,7 +365,7 @@ def validate(src: Source, *, check_dependency_approvals=True) -> list[str]:
                 errors.append(f'{p}: missing {field}')
         if posixpath.basename(p) != tid + '.md' or meta.get('status') != p.split('/')[1]:
             errors.append(f'task path/status mismatch: {p}')
-        if meta.get('owner') == meta.get('reviewer'):
+        if meta.get('owner') == meta.get('reviewer') and not owner_review_allowed(meta):
             errors.append(f'owner reviews own task: {tid}')
         if meta.get('spec') not in src.files:
             errors.append(f'missing linked spec: {tid}')

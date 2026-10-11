@@ -1,6 +1,6 @@
 ## Task và phạm vi
 
-Task Markdown / owner / reviewer khác owner:
+Task Markdown / owner / reviewer Trí (ThanhTris, có thể cùng owner):
 Mã hiện hành roadmap-v2 / mã cũ nếu đối chiếu issue (xem docs/project/TASK_RENUMBERING.md):
 Assignment accepted / baseline / spec / ADR:
 Branch / target / PR cha (nếu stacked):
@@ -42,7 +42,7 @@ Scope và phần ngoài scope:
 - Artifact/commit/version bàn giao; task nhận đầu ra; blocker và owner:
 - Evidence mới dùng docs/evidence/roadmap-v2/GM-XX/; không ghi đè folder evidence mã cũ.
 
-## Review độc lập
+## Review cuối — Trí
 
 - [ ] Reviewer kiểm AC, cả hai gate và evidence cho revision PR hiện tại; AI không tự tick.
 - [ ] Trí nghiệm thu/chuyển Done trên Project; lưu review revision/evidence. Khi chuyển Markdown thành done vẫn cần review fields thật và sinh indexes; không bắt đồng bộ Markdown để mở downstream. Thay code sau review phải review lại.
