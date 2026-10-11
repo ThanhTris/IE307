@@ -2,6 +2,10 @@
 
 Owner Trang (@rosy179), reviewer Trí (@ThanhTris). Codex hỗ trợ patch theo yêu cầu Trí. [Issue #68](https://github.com/ThanhTris/IE307/issues/68), [PR #104](https://github.com/ThanhTris/IE307/pull/104), [Project #2](https://github.com/users/ThanhTris/projects/2).
 
+## Follow-up GM-07 trên nhánh Trung
+
+Nhánh `codex/gm-07-trung-verification`, tested code commit `b39e081f53d4623f07184746282fab38cbb539f2` trên base `main` `3076c3deb2937223a007b82211a61a2d61b63c84`. Follow-up yêu cầu chọn rõ `real`/`mock` khi khởi tạo factory và cho fixture `loading` thời gian chờ tối thiểu hiển thị được; có test mới cho hai điểm này. Kết quả cập nhật ở [CHECKS.md](CHECKS.md#follow-up-patch-on-trungs-branch). Nhánh follow-up chưa merge; status/assignment/review của task không bị thay đổi.
+
 Lượt sửa hiện tại: tested code commit **`3f7f2412ed253eb67109368373e997599e916689`** trên base PR `e482ccb3d9fec8051d71550a75916c9541fd2476`, target đã fetch `00c4f27a97d4f1487dfed7c54c1253c766709a1a`, ngày 2026-10-11 UTC+7. [Manifest hiện tại](read-isolation-fix/PATCH_MANIFEST.json) ghi hash code/spec/tests đã kiểm; [bàn giao/output mới](read-isolation-fix/README.md). Mobile/Python contract chạy lại trên commit này theo yêu cầu push của Trí; commit evidence tiếp theo chỉ đổi tài liệu/output. Nhánh đích PR #104: `codex/gm-07-api-contract-and-mock`; review độc lập/CI cần kiểm HEAD sau push. Lịch sử write/join: code `f0599f8c4b92bf372fc6e3e497389cd59cadf914` rồi evidence e482ccb, [manifest cũ](PATCH_MANIFEST.json). Chưa approve, merge hoặc đổi Done.
 
 API contract `food-v1/roadmap-v2/GM-07.1`; adapter GM-04 proposal `1.1.0`; schema GM-06 `0.1.0`. Mock datasetVersion là fixture, không là verified dataset GM-08. Input GM-02/03/04/06 lấy trên target SHA trên; không thêm package/đổi lockfile/schema.

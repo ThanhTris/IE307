@@ -1,5 +1,18 @@
 # Output checks — GM-07 / roadmap-v2
 
+## Follow-up patch on Trung's branch
+
+Tested code commit **`b39e081f53d4623f07184746282fab38cbb539f2`**, based on local `main` `3076c3deb2937223a007b82211a61a2d61b63c84`; branch `codex/gm-07-trung-verification`. The patch makes `createApiClient` require an explicit `real`/`mock` mode and makes the loading mock visibly pending for at least 300 ms. It adds runtime coverage and updates the HANDOFF. This does not alter backend RPC behavior or production dependencies.
+
+| Check | Input / expected | Actual |
+| --- | --- | --- |
+| `npm run check` in `mobile` | Typecheck, lint, all Jest suites, architecture guard | Pass; 6 suites / 267 tests; typecheck and architecture pass; lint 0 errors / 4 warnings. |
+| `python -m unittest discover -s tests -p test_api_contract_gm07.py` | GM-07 factory contract assertion | Pass; 10/10 tests. |
+| Full Python regression | `python -m unittest discover -s tests -p "test_*.py"` | 524 tests; 5 errors in `test_vilao_catalogue`, whose runner explicitly requires Linux/macOS/WSL taxonomy locking. No test failures. |
+| Repository and task docs | `python scripts/validate_repository.py`; `python scripts/task_readiness.py --check-docs`; `git diff --check` | Pass. |
+
+The mobile checks were run after the code changes and before the code commit; commit `b39e081` contains those exact tested changes. Raw local output for the clone-level run is summarized in [CLONE_VERIFICATION_2026-10-11.md](CLONE_VERIFICATION_2026-10-11.md). Project readiness/approval, independent review and merge have not been established by these tests.
+
 ## Lượt sửa read / caller isolation hiện tại
 
 Ngày 2026-10-11: tested code commit **`3f7f2412ed253eb67109368373e997599e916689`**, base PR `e482ccb3d9fec8051d71550a75916c9541fd2476`, target đã fetch `00c4f27a97d4f1487dfed7c54c1253c766709a1a`. [Manifest mới](read-isolation-fix/PATCH_MANIFEST.json) ghi hash code/spec/tests đã kiểm. Mobile/Python contract chạy lại trên commit này theo yêu cầu push của Trí; commit evidence tiếp theo chỉ đổi tài liệu/output. Nhánh đích PR #104: `codex/gm-07-api-contract-and-mock`; CI/review cần kiểm HEAD sau push.
