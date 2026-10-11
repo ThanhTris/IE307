@@ -291,7 +291,8 @@ def reviewed(stage_dir, review_path, as_of):
         raise ValueError('PUBLISH_PREFLIGHT: '+json.dumps(report['errors'],ensure_ascii=False))
     if not report['pilotTarget']['quotaMet'] and review.get('coverageShortfallAccepted') is not True:
         raise ValueError('REVIEW: pilot quota shortfall must be explicitly accepted and documented')
-    if not report['pilotTarget']['quotaMet'] and not str(review.get('coverageShortfallReason','')).strip():
+    reason = review.get('coverageShortfallReason')
+    if not report['pilotTarget']['quotaMet'] and (not isinstance(reason,str) or not reason.strip()):
         raise ValueError('REVIEW: document the actual coverage shortfall')
     if report['rowCounts'] != manifest['rowCounts'] or report['datasetVersion'] != manifest['datasetVersion']:
         raise ValueError('STAGE_MANIFEST: content/manifest differs')
@@ -598,7 +599,7 @@ def main():
             report['recovery'] = 'Inspect the import receipt before retrying; process failure does not prove rollback'
     if args.report:
         write_json(args.report,report)
-    print(json.dumps(report,ensure_ascii=False,indent=2))
+    print(json.dumps(report,ensure_ascii=False,indent=2),flush=True)
     return 1 if report.get('valid') is False else 0
 
 
@@ -623,11 +624,20 @@ def dispatch(args):
     return report
 
 
-if __name__=='__main__':
+def cli():
+    # Configure both channels before parsing arguments or attempting any DB work.
+    # JSON consumers always receive UTF-8/LF, including under Windows cp1252.
+    for stream in (sys.stdout,sys.stderr):
+        if hasattr(stream,'reconfigure'):
+            stream.reconfigure(encoding='utf-8',errors='strict',newline='\n')
     try:
-        sys.exit(main())
+        return main()
     except (ValueError,KeyError,OSError,RuntimeError,subprocess.TimeoutExpired) as exc:
         # Reject details identify fields/stages, never credentials or SQL text.
         print(json.dumps({'valid':False,'publicationPerformed':None,'error':str(exc),
-                         'recovery':'Inspect receipt if publish/rollback was attempted'},ensure_ascii=False),file=sys.stderr)
-        sys.exit(1)
+                         'recovery':'Inspect receipt if publish/rollback was attempted'},ensure_ascii=False),file=sys.stderr,flush=True)
+        return 1
+
+
+if __name__=='__main__':
+    sys.exit(cli())

@@ -36,3 +36,12 @@ GM-04 bàn giao39 món draft,247 giá ở21 chi nhánh; venue/offering/schedule/
 arrays rỗng. Menu usage rights/freshness/dine_in/lịch và review độc lập chưa có.
 Publish dataset thật và query offering thật còn chờ nguồn/biên bản từ Vinh/Trí;
 không tự Approve/Done hoặc hạ AC pilot. Tooling có thể hoàn thiện trước.
+
+## Bản sửa review PR #103 — 2026-10-11
+
+Baseline commit `1d247fe387ee9461277eb0141517a298675f6419`; PR Open, không Draft.
+Theo comment ThanhTris: strict string reason khi thiếu quota; UTF-8/LF stdout/stderr
+trước parse/DB, kiểm bytes JSON dưới cp1252 và lỗi output sau DB; thêm workflow GM-08
+unit encoding và real disposable SQL/report. Không sửa frozen0001/contract/dataset thật.
+Giữ evidence cũ tại baseline-1d247fe, chạy lại unit/SQL/regression và ghi source hashes.
+Bản sửa này chưa commit/push; không tự Approve/Done hoặc chấp nhận merge partial.

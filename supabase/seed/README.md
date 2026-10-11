@@ -28,7 +28,8 @@ Không có lệnh tự approve. Reviewer lưu review JSON theo template và biê
 với mỗi `{path,sha256}` trong `evidence`, đường dẫn tương đối dưới thư mục review.
 Các checks phải true; reviewedAt UTC Z sau stage, không tương lai. `bundleSha256`
 phải đúng staged bytes. Thiếu quota phải ghi `coverageShortfallAccepted=true` và
-`coverageShortfallReason`; số thực giữ nguyên. Đây là hồ sơ của workflow admin
+`coverageShortfallReason` phải là chuỗi có nội dung sau khi bỏ khoảng trắng;
+thiếu/null/boolean/number/list/object đều bị từ chối. Số thực giữ nguyên. Đây là hồ sơ của workflow admin
 trusted, không là chữ ký mật mã hoặc quyền auth của client.
 
 ## Local publish / query / rollback
@@ -74,7 +75,8 @@ và hết hạn; query chỉ admin kiểm join của receipt, không endpoint/el
 stock cho app. Override hết hạn giữ trạng thái lịch sử và báo trong preflight,
 không tuyên bố hiện còn/hết món.
 
-CLI `--report` ghi UTF-8/LF cho success và reject (code/path/index; array index0).
+CLI JSON stdout/stderr và `--report` ghi UTF-8/LF cho success và reject
+(code/path/index; array index0), kể cả locale cp1252 với UTF-8 mode tắt.
 DB lỗi chỉ SQLSTATE/GM08 code, không in SQL/payload/credential. Mất process sau
 commit thì receipt trong DB là authority để query/retry; lỗi ghi report không có
 nghĩa transaction đã rollback. Không gọi schema down để rollback dataset.
@@ -93,3 +95,8 @@ sửa legacy bytes/IDs hoặc bịa venue/coverage/giờ. Giá247/21 chi nhánh 
 menu delivery, không verified/dine_in. Không dùng draft hoặc test JSON review như
 approval thật. SQL runner chỉ DB `gm08_check_<random>` tự tạo/xóa; real auth.users
 DDL không user rows. Positive SQL data/review đều synthetic; không verified seed.
+
+Workflow `.github/workflows/gm08-import.yml` chạy unit/encoding với stdout cp1252,
+UTF-8 mode tắt và SQL importer trên PostgreSQL disposable ở Linux. Artifact
+`gm08-sql-results-linux` chứa assertions/hash/cleanup; kiểm run của đúng commit
+trước nghiệm thu. CI tooling xanh không thay dataset thật/review độc lập.

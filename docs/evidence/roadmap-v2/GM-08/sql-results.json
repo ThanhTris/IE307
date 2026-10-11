@@ -3,8 +3,8 @@
     "scripts/gm08_import_check.py": "8bbf46c999dfef4c2f4c4d3aab10c57f1f22e1e1934c4efe29c2805f66812cfb",
     "supabase/migrations/0001_core_schema.sql": "6733e28f282f600e627e675dccede3afef1efd37cf4a7cfe8d94af4cd02d30f5",
     "supabase/migrations/0002_food_import_receipts.sql": "eb80acba1f69bfb68b014a1ab5807e42d65db940a36d201f28db88172157f55e",
-    "supabase/seed/import_food_data.py": "4e59d087bc40c48b3d97ac413b8d6a62dc6839cfa65cf9116c88c6a416d680f2",
-    "tests/test_food_import.py": "d61ed4200a271abc2abb5eeecd8b59df09d6f2dcfff9c7ae45b58e5a8af4be87"
+    "supabase/seed/import_food_data.py": "03da1971b502b26a87ebaee0936d718bc415e26f297731d4fd9bd698fab00edc",
+    "tests/test_food_import.py": "6ab587ad9e9a2139d61988fa11a45cef0e0f6df35f89380f57d364fad19a5b74"
   },
   "caseCount": 31,
   "cases": [
@@ -247,7 +247,7 @@
       "result": "Pass"
     }
   ],
-  "checkedAt": "2026-10-10T17:49:43.915040Z",
+  "checkedAt": "2026-10-11T01:40:48.588219Z",
   "cleanup": "process-created database dropped; unrelated containers/data untouched",
   "dataMode": "synthetic fixtures and simulated independent review ONLY",
   "databaseMode": "process-created isolated database; real Supabase auth.users DDL",

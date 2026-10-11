@@ -184,6 +184,40 @@ class FoodImportTests(unittest.TestCase):
             (Path(tmp)/'checks.txt').write_text('changed',encoding='utf-8')
             with self.assertRaisesRegex(ValueError,'evidence'):importer.reviewed(stage,path,AS_OF)
 
+    def test_quota_shortfall_requires_a_nonempty_string_reason(self):
+        missing = object()
+        for reason in (missing, None, '', ' \t\n', True, False, 0, 1.5, [], ['reason'], {}, {'reason':'text'}):
+            with self.subTest(reason=reason),tempfile.TemporaryDirectory() as tmp:
+                stage,path=self.prepare_stage(Path(tmp))
+                review=importer.load_json(path)
+                if reason is missing:
+                    del review['coverageShortfallReason']
+                else:
+                    review['coverageShortfallReason']=reason
+                importer.write_json(path,review)
+                with self.assertRaisesRegex(ValueError,'actual coverage shortfall'):
+                    importer.reviewed(stage,path,AS_OF)
+
+    def test_quota_shortfall_reason_preserves_actual_coverage_counts(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            stage,path=self.prepare_stage(Path(tmp))
+            review=importer.load_json(path)
+            review['coverageShortfallReason']='  Synthetic test: only one surveyed venue and one dish; not actual pilot data.  '
+            importer.write_json(path,review)
+            _,_,_,report=importer.reviewed(stage,path,AS_OF)
+            self.assertFalse(report['pilotTarget']['quotaMet'])
+            self.assertEqual(report['rowCounts']['venues'],1)
+            self.assertEqual(report['rowCounts']['dishes'],1)
+
+    def test_review_template_null_reason_cannot_publish_after_accepting_shortfall(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            stage,path=self.prepare_stage(Path(tmp))
+            review=importer.load_json(path)
+            review['coverageShortfallReason']=importer.load_json(stage/'review-template.json')['coverageShortfallReason']
+            importer.write_json(path,review)
+            with self.assertRaisesRegex(ValueError,'actual coverage shortfall'):
+                importer.reviewed(stage,path,AS_OF)
+
     def test_review_path_traversal_and_self_review_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             stage,path=self.prepare_stage(Path(tmp))
@@ -217,11 +251,112 @@ class FoodImportTests(unittest.TestCase):
             report=Path(tmp)/'reject.json'
             result=subprocess.run([sys.executable,str(ROOT/'supabase/seed/import_food_data.py'),'validate',
                 '--input',str(ROOT/'supabase/seed/templates/food-v1.template.json'),
-                '--as-of',AS_OF,'--report',str(report)],capture_output=True,text=True,encoding='utf-8')
+                '--as-of',AS_OF,'--report',str(report)],capture_output=True)
             self.assertEqual(result.returncode,1)
             actual=importer.load_json(report)
+            self.assertEqual(json.loads(result.stdout.decode('utf-8')),actual)
+            self.assertEqual(result.stderr,b'')
             self.assertIn('FIXTURE',{e['code'] for e in actual['errors']})
             self.assertFalse(actual['publicationPerformed'])
+
+    def cp1252_cli(self,arguments,probe=None):
+        env=dict(os.environ,PYTHONIOENCODING='cp1252',PYTHONUTF8='0',PYTHONCOERCECLOCALE='0',LC_ALL='C')
+        command=([sys.executable,str(ROOT/'supabase/seed/import_food_data.py')] if probe is None else
+                 [sys.executable,'-c',probe,str(ROOT/'supabase/seed/import_food_data.py')])
+        result=subprocess.run(command+arguments,env=env,capture_output=True)
+        # Read bytes explicitly: a broken reader thread must not turn into a passing test.
+        stdout=result.stdout.decode('utf-8')
+        stderr=result.stderr.decode('utf-8')
+        self.assertNotIn('Traceback',stdout+stderr)
+        self.assertNotIn('\r',stdout+stderr)
+        return result.returncode,stdout,stderr
+
+    def test_cli_cp1252_success_and_reject_are_utf8_json(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source=Path(tmp)/'input.json'
+            self.bundle['entities']['dishes'][0]['name']='Cơm gà — Việt'
+            importer.write_json(source,self.bundle)
+            for fixture in (False,True):
+                with self.subTest(fixture=fixture):
+                    self.bundle['fixtureOnly']=fixture
+                    importer.write_json(source,self.bundle)
+                    status,out,err=self.cp1252_cli(['validate','--input',str(source),'--as-of',AS_OF])
+                    self.assertEqual(status,1 if fixture else 0)
+                    self.assertEqual(err,'')
+                    report=json.loads(out)
+                    self.assertEqual(report['valid'],not fixture)
+                    self.assertEqual(report['pilotTarget']['venues'],'20–30')
+                    self.assertFalse(report['publicationPerformed'])
+
+    def test_cli_cp1252_query_response_preserves_vietnamese_without_db(self):
+        # The DB boundary alone is simulated; exercise real dispatch/CLI JSON output.
+        probe='''import json, runpy, sys
+path=sys.argv.pop(1)
+namespace=runpy.run_path(path)
+class FakeDB:
+    def psql(self,sql):
+        return json.dumps({'offeringCount':1,'offerings':[{'dish':'Cơm gà — Việt','venue':'Quán thử nghiệm'}]},ensure_ascii=False)
+namespace['main'].__globals__['LocalDB']=FakeDB
+sys.exit(namespace['cli']())
+'''
+        status,out,err=self.cp1252_cli(['query','--bundle-sha256','a'*64],probe)
+        self.assertEqual(status,0)
+        self.assertEqual(err,'')
+        report=json.loads(out)
+        self.assertEqual(report['offerings'][0]['dish'],'Cơm gà — Việt')
+        self.assertEqual(report['offerings'][0]['venue'],'Quán thử nghiệm')
+        self.assertFalse(report['eligibilityPerformed'])
+
+    def test_cli_cp1252_error_json_preserves_vietnamese(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            missing=Path(tmp)/'Cơm gà — Việt.json'
+            status,out,err=self.cp1252_cli(['validate','--input',str(missing),'--as-of',AS_OF])
+            self.assertEqual(status,1)
+            self.assertEqual(err,'')
+            report=json.loads(out)
+            self.assertIn('Cơm gà — Việt',report['error'])
+            self.assertFalse(report['publicationPerformed'])
+
+    def test_cli_cp1252_report_failure_after_db_does_not_claim_rollback(self):
+        # Simulate a committed DB response, then force a report write error.
+        probe='''import runpy, sys
+path=sys.argv.pop(1)
+namespace=runpy.run_path(path)
+namespace['main'].__globals__['dispatch']=lambda args: {'valid':True,'publicationPerformed':True}
+sys.exit(namespace['cli']())
+'''
+        with tempfile.TemporaryDirectory() as tmp:
+            report_dir=Path(tmp)/'Cơm gà — Việt';report_dir.mkdir()
+            status,out,err=self.cp1252_cli(['publish','--stage',tmp,'--review',tmp,'--confirm-local','--report',str(report_dir)],probe)
+            self.assertEqual(status,1)
+            self.assertEqual(out,'')
+            report=json.loads(err)
+            self.assertIn('Cơm gà — Việt',report['error'])
+            self.assertIsNone(report['publicationPerformed'])
+            self.assertIn('Inspect receipt',report['recovery'])
+
+    def test_cli_cp1252_stdout_failure_after_db_does_not_claim_rollback(self):
+        probe='''import runpy, sys
+path=sys.argv.pop(1)
+namespace=runpy.run_path(path)
+namespace['main'].__globals__['dispatch']=lambda args: {'valid':True,'publicationPerformed':True}
+class BrokenOutput:
+    def reconfigure(self,**kwargs):
+        assert kwargs['encoding']=='utf-8'
+    def write(self,text):
+        raise OSError('Synthetic output failure — Việt')
+    def flush(self):
+        pass
+sys.stdout=BrokenOutput()
+sys.exit(namespace['cli']())
+'''
+        status,out,err=self.cp1252_cli(['rollback','--bundle-sha256','a'*64,'--confirm-local'],probe)
+        self.assertEqual(status,1)
+        self.assertEqual(out,'')
+        report=json.loads(err)
+        self.assertIn('— Việt',report['error'])
+        self.assertIsNone(report['publicationPerformed'])
+        self.assertIn('Inspect receipt',report['recovery'])
 
     def test_draft_review_status_not_promoted_by_approval_json(self):
         with tempfile.TemporaryDirectory() as tmp:

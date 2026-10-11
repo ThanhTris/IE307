@@ -1,0 +1,53 @@
+name: GM-08 food importer
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  encoding:
+    name: GM-08 cp1252 encoding regression
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Unit checks including cp1252 subprocess JSON success and error
+        env:
+          PYTHONUTF8: '0'
+          PYTHONCOERCECLOCALE: '0'
+          PYTHONIOENCODING: cp1252
+          LC_ALL: C
+        run: python -m unittest discover -s tests -p 'test_food_import.py' -v
+  sql:
+    name: GM-08 disposable PostgreSQL import
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm ci
+      - name: Start the local Supabase project
+        run: npm run backend:start
+      - name: Real import, idempotency, concurrency and rollback in a disposable DB
+        env:
+          LC_ALL: C
+          PYTHONUTF8: '0'
+          PYTHONCOERCECLOCALE: '0'
+        run: python scripts/gm08_import_check.py --report "$RUNNER_TEMP/gm08-sql-results-linux.json"
+      - name: Upload GM-08 SQL assertions and tested source hashes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm08-sql-results-linux
+          path: ${{ runner.temp }}/gm08-sql-results-linux.json
+          if-no-files-found: warn
+      - name: Stop the local project
+        if: always()
+        run: npm run backend:stop
