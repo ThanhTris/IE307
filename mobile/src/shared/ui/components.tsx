@@ -132,7 +132,7 @@ export type VoteValue = 'WANT' | 'OK' | 'NO';
 export type DishCardProps = ComponentThemeProps & { dish: DishCardData; selectedVote?: VoteValue; onVote?: (vote: VoteValue) => void; onPress?: () => void };
 
 export function DishCard({ dish, selectedVote, onVote, onPress, colors }: DishCardProps) {
-  const imageKey = dish.imageUrl ?? dish.imageSource;
+  const imageKey = dish.imageSource ?? dish.imageUrl;
   const [failedImageKey, setFailedImageKey] = useState<typeof imageKey>(undefined);
   const imageFailed = failedImageKey === imageKey;
   const source = dish.imageSource ?? (dish.imageUrl ? { uri: dish.imageUrl } : undefined);

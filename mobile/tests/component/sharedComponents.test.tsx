@@ -47,6 +47,21 @@ test('DishCard retries artwork when the image source changes after a failure', a
   expect((await screen.findByLabelText('Ảnh Phở bò')).props.source).toEqual({ uri: 'https://example.test/new.jpg' });
 });
 
+test('DishCard tracks imageSource when imageUrl is also provided', async () => {
+  const oldSource = { uri: 'https://example.test/old-source.jpg' };
+  const newSource = { uri: 'https://example.test/new-source.jpg' };
+  const view = await render(<DishCard dish={{ id: 'dish_1', name: 'Phở bò', imageUrl: 'https://example.test/fallback.jpg', imageSource: oldSource }} colors={colors} />);
+  const oldImage = screen.getByLabelText('Ảnh Phở bò');
+  expect(oldImage.props.source).toEqual(oldSource);
+  await act(async () => {
+    oldImage.props.onError();
+  });
+  expect(await screen.findByLabelText('Ảnh dự phòng Phở bò')).toBeOnTheScreen();
+
+  view.rerender(<DishCard dish={{ id: 'dish_1', name: 'Phở bò', imageUrl: 'https://example.test/fallback.jpg', imageSource: newSource }} colors={colors} />);
+  expect((await screen.findByLabelText('Ảnh Phở bò')).props.source).toEqual(newSource);
+});
+
 test('room/context/status/social components show fallback and state text', async () => {
   await render(<>
     <RoomCode code="GCD234" colors={colors} />
