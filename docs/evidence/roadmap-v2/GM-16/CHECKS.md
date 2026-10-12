@@ -1,9 +1,9 @@
 # GM-16 — Checks / food-v1 roadmap-v2
 
-Status: In progress; API/SQL/rate-limit và harness code đã Pass ở mức static/unit, expiry/native AC còn Not run,
-chưa Approved/Done.
+Status: In progress; API/SQL/rate-limit và harness code đã Pass, Android thật đã Pass
+create/check/refresh, nhưng restart/expiry/logout native AC còn Not run; chưa Approved/Done.
 Owner Trí / ThanhTris; reviewer Tâm / HoaiTam (chủ dự án chọn trực tiếp).
-Ngày kiểm: 2026-10-11 UTC+7. Nhánh `codex/gm-16-guest-session`, target main.
+Ngày kiểm: 2026-10-12 UTC+7. Nhánh `codex/gm-16-guest-session`, target main.
 Base `9188c736def7e125266f8cce2314b9f1f5c31b81`; implementation đang ở revision sau merge main.
 Tested hashes cuối tại MANIFEST.json khi các phép kiểm kết thúc.
 Contract GM-16.1; input GM-03.1 / GM-06.1 schema0.1.0 / GM-07.1.
@@ -51,24 +51,25 @@ kiểm `migration list --local` rồi `migration up --local`; không reset DB.
 | Guest/restore/refresh/logout/spoof HTTP | Status/body/assertions thật qua GoTrue local | HTTP_CHECK.txt:8 cases Pass; Bruno4.2.1:10/10 requests/tests Pass, BRUNO_CHECK.md | Pass |
 | SQL auth.uid/default deny | 7 pgTAP assertions trên schema0.1.0 thật, rollback | HTTP_CHECK.txt: auth.sql7 assertions Pass sau migration up --local0001..0003 | Pass |
 | Real HTTP429/expiry | GoTrue throttle và expiry thực | RATE_LIMIT_CHECK.txt/HTTP_CHECK.txt: bounded real HTTP429 Pass; JWT expiry thực chưa chờ | Pass (rate429; expiry Not run) |
-| Native restart/lost session/backup | Android thật cùng identity sau restart, uninstall không recover guest, backup exclude secure entry | Chưa có device/adb execution evidence | Not run |
+| Native restart/lost session/backup | Android thật cùng identity sau restart, uninstall không recover guest, backup exclude secure entry | `MOBILE_DEVICE_CHECK.txt`: Android thật đã nối ADB/reverse; create/check/refresh Pass. Restart/lost-session/backup chưa chạy | Partial (restart/lost/backup Not run) |
 | Expo compatibility | SDK dependency check exit0; Android bundle exit0 | check:expo “Dependencies are up to date”; bundle 1245 modules, dist/android | Pass (bundle, không native smoke) |
-| Internal Android harness route | Development flag only; guest/restore/refresh/check/private marker/logout actions; no token/raw response | `mobile/src/app/internal/gm16.tsx`, `mobile/src/features/auth/screens/Gm16InternalScreen.tsx`; Android device run chưa có | Pass (code/bundle; device Not run) |
+| Internal Android harness route | Development flag only; guest/restore/refresh/check/private marker/logout actions; no token/raw response | `MOBILE_DEVICE_CHECK.txt` records real Expo Go route, guest/check/refresh and sanitized backend logs; marker/logout still Not run | Partial (device create/check/refresh Pass) |
 | Full mobile checks | TypeScript/lint/Jest/architecture exit0 | `npm run typecheck`, `npm run lint`, `npm test`: 9 suites/357 tests Pass; Android bundle export Pass | Pass |
 | Repo validator/indexes/diff | Offline checks exit0 | Validator/indexes/diff đạt; DOCS_CHECK.txt lưu lần cuối | Pass |
 | Python regression | Runtime đủ timezone; không bỏ qua lỗi | PYTHON_REGRESSION.txt: 524 tests, 524 Pass, 0 failure/error; msvcrt locking và explicit cp1252 probe trên Windows | Pass |
 
-API flow, SQL assertions và bounded rate429 probe đã chạy thật ngày2026-10-12.
-AC tổng thể còn expiry/native Not run. Không đánh dấu checkbox AC tổng thể hoặc
-Done.
+API flow, SQL assertions, bounded rate429 probe và Android thật create/check/refresh
+đã chạy ngày 2026-10-12. AC tổng thể còn restart/expiry/lost-session/logout/backup
+Not run. Không đánh dấu checkbox AC tổng thể hoặc Done.
 
 ## Blocker / giới hạn
 
 - Docker blocker trước đây đã giải quyết: engine29.4.3 phản hồi,4 container
   Supabase của project local chạy, Auth health200. Migrations0001..0003 áp dụng
   local; không reset hoặc xóa volume. Backend được để chạy để owner test Bruno.
-- Chưa chạy Android device secure-storage/restart. Expo Go hỗ trợ package cần
-  được kiểm trên SDK57 thật; backup/native config cần development build phù hợp.
+- Android thật đã chạy qua Expo Go + ADB reverse; secure-storage/restart, expiry,
+  lost-session, logout cleanup và backup/native config vẫn cần development-build
+  evidence phù hợp.
 - Private cache port là contract bắt buộc cho GM-25/31; SQLite chưa triển khai.
   Signout revoke refresh không bảo đảm access JWT đã phát vô hiệu ngay.
 - Shared config/client/spec có bổ sung GM-16, reviewer phải đối chiếu với upstream

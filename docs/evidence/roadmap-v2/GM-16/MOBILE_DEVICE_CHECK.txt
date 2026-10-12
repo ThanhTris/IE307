@@ -1,0 +1,35 @@
+GM-16 native device check — 2026-10-12 (UTC+7)
+
+Device / transport
+- Device: OPPO Find X9, model CPH2797, Android 16.
+- Host: Windows; Expo Go with Expo SDK 57 Metro bundle.
+- ADB: platform-tools adb.exe; device was visible as `device` (serial intentionally omitted).
+- Port bridge: `adb reverse tcp:54321 tcp:54321`; `adb reverse --list` showed
+  `UsbFfs tcp:54321 tcp:54321`.
+- Backend: Docker Supabase local, API origin `http://127.0.0.1:54321`.
+- Harness flag: `EXPO_PUBLIC_GM16_INTERNAL=true` in development only.
+
+Evidence procedure
+1. Reloaded Expo Go on the mirrored Android device.
+2. Opened the development-only GM-16 route.
+3. Pressed `Tạo guest`.
+4. Pressed `Kiểm session`.
+5. Pressed `Refresh`.
+6. Read the device screen and sanitized GoTrue container logs. Tokens and raw
+   response bodies were not captured.
+
+Observed results
+| Case | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| Create guest | Real API succeeds and session becomes active | Device showed `Trạng thái: active` and a guest identity; GoTrue logged `POST /signup` status 200 | Pass |
+| Check session | Current identity is read without signup | Device kept the same guest identity; GoTrue logged `GET /user` status 200 | Pass |
+| Refresh | Rotated token, same identity | Device remained active with the same identity; GoTrue logged `/token` status 200 with `token_refreshed`, then `/user` status 200 | Pass |
+
+Not run in this device session
+- Force-stop and reopen with SecureStore restore.
+- Real access-token expiry and lost refresh-session path.
+- Harness marker creation followed by Logout and post-logout reopen.
+- Native development build / backup exclusion evidence; this run used Expo Go.
+
+The three passing cases prove the phone → adapter → loopback reverse → local
+GoTrue path. They do not complete the native restart, expiry, or logout AC.

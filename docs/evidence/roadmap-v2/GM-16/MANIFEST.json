@@ -42,7 +42,7 @@
     "supabase/tests/bruno/GM-16/collection.bru": "cbd31bd94a54a89d1ded5f8220209aa1d5d8d248ede1d40c2257b11110d6da57",
     "supabase/tests/bruno/GM-16/environments/Local.bru": "43f4bf8a285ed773f70fe83323841459430566eebfec52b151f846c9cf3ff629",
     "supabase/tests/http/GM-16.http": "74af915de2723404fad92ec8c0f4ee8deeee87884d77c7ce3be7e90ea5428878",
-    "tasks/in-progress/GM-16.md": "65be4c520f481f9ed8fed8ac98076e25b045e67d9a9078fc8ee688ea1cf7115b",
+    "tasks/in-progress/GM-16.md": "50d5e71cba37850eb09723e4949dd9a331334fcabf3f2b3163afca007787f7cb",
     "tests/test_repository_validator.py": "ecbcde9b5fca4219c011af2fe9291c31624278d6703d6859dc8b508d9e8274ee",
     "data-preparation/scripts/vilao_catalogue.py": "21529c2d62334b46827492fcc6bc1c2826f43f2e30bad9f4e4675253de8e4be0",
     "tests/test_vilao_catalogue.py": "c1ad1f4a15217378191333dd911b24de28f43575c89b5d0ca4276e5ac9aa8329",
@@ -57,7 +57,8 @@
     "tests": 357,
     "authTests": 69,
     "result": "Pass",
-    "nativeExecution": "Not run"
+    "nativeExecution": "Partial: Android real create/check/refresh Pass; restart/expiry/lost-session/logout/backup Not run",
+    "deviceEvidence": "MOBILE_DEVICE_CHECK.txt"
   },
   "apiSqlChecks": "Pass: 8 actual HTTP cases, 7 SQL rollback assertions, and bounded real HTTP429 probe; real expiry Not run",
   "brunoChecks": {
