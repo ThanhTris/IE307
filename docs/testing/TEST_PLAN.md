@@ -1,5 +1,7 @@
 # Test plan food-v1
 
+[Ma trận Android–API bổ sung ngày 2026-10-12](MOBILE_API_TEST_MATRIX.md) ánh xạ producer/consumer/người kiểm và case điện thoại thật. HTTP/SQL máy tính, unit/mock trong mobile và app Android gọi API thật là ba lớp evidence khác nhau; không hoán đổi Pass giữa các lớp hoặc thêm dependency ngược.
+
 2026-10-07. Đây là kế hoạch, chưa có kết quả native/backend. Test IDs dùng truy vết FR/task; dependency/package runner chốt ở GM-02.
 
 | ID | Kiểu | Scenario / expected |

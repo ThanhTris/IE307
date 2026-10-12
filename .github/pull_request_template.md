@@ -73,5 +73,6 @@ Theo docs/project/TASK_OUTPUT_REQUIREMENTS.md và TASK_OUTPUT_CHECKLIST.md. CHEC
 
 - [ ] UI mở được trên Expo và hiển thị/tương tác các mục trong scope; giới hạn Expo Go/native ghi rõ, có screenshot/video thật.
 - [ ] API có Postman/curl/runner request suite và HTTP/body/error/state/version assertions; nền/contract/domain kiểm scope riêng, không đòi API task sau.
+- [ ] Đối chiếu docs/testing/MOBILE_API_TEST_MATRIX.md: tách server/unit/device; API producer ghi consumer/cases/endpoint setup, task Android có app → API thật → UI/server assertions và build/device/revision/evidence. Case device/native bắt buộc thiếu vẫn Not run, không suy Pass từ curl/CI/bundle và không thêm dependency ngược.
 - [ ] Data đủ field/schema/template/FK/unit/null/privacy/version và valid/invalid fixture; SQL/import/query thật khi task yêu cầu, BE không phải đoán field.
 - [ ] Output/evidence che secret/GPS/phiếu thật; AC bắt buộc chưa chạy/không đạt vẫn là blocker, không lấy CI/docs thay nghiệm thu.
