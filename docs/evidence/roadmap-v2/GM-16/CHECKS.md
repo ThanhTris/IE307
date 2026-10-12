@@ -1,10 +1,10 @@
 # GM-16 — Checks / food-v1 roadmap-v2
 
-Status: In progress; API/SQL rate-limit đã Pass, expiry/native AC còn Not run,
+Status: In progress; API/SQL/rate-limit và harness code đã Pass ở mức static/unit, expiry/native AC còn Not run,
 chưa Approved/Done.
 Owner Trí / ThanhTris; reviewer Tâm / HoaiTam (chủ dự án chọn trực tiếp).
 Ngày kiểm: 2026-10-11 UTC+7. Nhánh `codex/gm-16-guest-session`, target main.
-Base `9f71bba64b21c2b0795e1a80edbd93cb91a8f0ed`; implementation chưa commit/push.
+Base `9188c736def7e125266f8cce2314b9f1f5c31b81`; implementation đang ở revision sau merge main.
 Tested hashes cuối tại MANIFEST.json khi các phép kiểm kết thúc.
 Contract GM-16.1; input GM-03.1 / GM-06.1 schema0.1.0 / GM-07.1.
 Dataset N/A: auth không phụ thuộc verified catalogue; identities/tests synthetic.
@@ -43,7 +43,7 @@ kiểm `migration list --local` rồi `migration up --local`; không reset DB.
 
 | Case/AC | Expected/assertions | Actual / artifact | Kết quả |
 | --- | --- | --- | --- |
-| Guest name/secure persist/restore | Invalid input không signup; persist trước publish; restore cùng caller qua server port | 68 authSession/authTransport tests Pass với synthetic port; MOBILE_CHECK.txt | Pass (adapter scope) |
+| Guest name/secure persist/restore | Invalid input không signup; persist trước publish; restore cùng caller qua server port | 69 authSession/authTransport tests Pass với synthetic port; MOBILE_CHECK.txt | Pass (adapter scope) |
 | Refresh/expiry/concurrency | Serialized rotation, cùng user, stale/revoked reject, không blind retry token rotation | Adapter tests; expire/reject qua port tổng hợp, không GoTrue thật | Pass (adapter scope) |
 | Failure/retry/rate limit | Timeout abort thật trong fetch test, max2 verify retry, Retry-After, safe errors | Adapter tests; HTTP429 fixture, không auth provider thật | Pass (adapter scope) |
 | Logout/privacy/isolation | Clear storage/cache cả offline; cleanup lỗi block đổi identity; response cũ sau logout/auth loss reject | Adapter tests; required cleanup callback không no-op mặc định | Pass (adapter scope) |
@@ -53,7 +53,8 @@ kiểm `migration list --local` rồi `migration up --local`; không reset DB.
 | Real HTTP429/expiry | GoTrue throttle và expiry thực | RATE_LIMIT_CHECK.txt/HTTP_CHECK.txt: bounded real HTTP429 Pass; JWT expiry thực chưa chờ | Pass (rate429; expiry Not run) |
 | Native restart/lost session/backup | Android thật cùng identity sau restart, uninstall không recover guest, backup exclude secure entry | Chưa có device/adb execution evidence | Not run |
 | Expo compatibility | SDK dependency check exit0; Android bundle exit0 | check:expo “Dependencies are up to date”; bundle 1245 modules, dist/android | Pass (bundle, không native smoke) |
-| Full mobile checks | TypeScript/lint/Jest/architecture exit0 | MOBILE_CHECK.txt: 9 suites/356 tests Pass; 4 lint warnings có sẵn; cold run timeout shell1 ca, chạy lại không tăng timeout đạt | Pass |
+| Internal Android harness route | Development flag only; guest/restore/refresh/check/private marker/logout actions; no token/raw response | `mobile/src/app/internal/gm16.tsx`, `mobile/src/features/auth/screens/Gm16InternalScreen.tsx`; Android device run chưa có | Pass (code/bundle; device Not run) |
+| Full mobile checks | TypeScript/lint/Jest/architecture exit0 | `npm run typecheck`, `npm run lint`, `npm test`: 9 suites/357 tests Pass; Android bundle export Pass | Pass |
 | Repo validator/indexes/diff | Offline checks exit0 | Validator/indexes/diff đạt; DOCS_CHECK.txt lưu lần cuối | Pass |
 | Python regression | Runtime đủ timezone; không bỏ qua lỗi | PYTHON_REGRESSION.txt: 524 tests, 524 Pass, 0 failure/error; msvcrt locking và explicit cp1252 probe trên Windows | Pass |
 

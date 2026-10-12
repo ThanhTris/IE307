@@ -23,6 +23,7 @@ export interface AuthPort {
 
 export interface SessionApi extends Pick<ApiClient, 'createGuestSession' | 'restoreSession' | 'logout'> {
   getAccessToken(): Promise<ReadResult<string>>;
+  refreshSession(): Promise<ReadResult<SessionUser>>;
   getGeneration(): number;
 }
 

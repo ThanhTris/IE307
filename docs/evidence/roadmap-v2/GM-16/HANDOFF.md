@@ -1,6 +1,6 @@
 # GM-16 — Guest auth/session handoff
 
-Owner Trí, reviewer Tâm, nhánh `codex/gm-16-guest-session` từ main9f71bba.
+Owner Trí, reviewer Tâm, nhánh `codex/gm-16-guest-session` sau merge main `9188c73`.
 Contract `food-v1/roadmap-v2/GM-16.1`; schema input0.1.0 không đổi.
 Chưa commit/push/review/Approved/Done; HTTP/SQL/rate429 đã Pass, native/expiry
 còn Not run trong CHECKS.
@@ -10,12 +10,13 @@ Package SecureStore57.0.4 được chủ dự án cho phép trực tiếp cùng 
 
 | File | Cách dùng / expected | Task nhận |
 | --- | --- | --- |
-| mobile/src/data/auth/session.ts | SessionManager + required auth/storage/clearPrivateData ports; restore/refresh/logout và generation guard | GM-17/19/22/25/31 |
+| mobile/src/data/auth/session.ts | SessionManager + required auth/storage/clearPrivateData ports; restore/refresh/explicit refreshSession/logout và generation guard | GM-17/19/22/25/31 |
 | mobile/src/data/auth/transport.ts | GoTrue HTTP, validated public key/origin, sanitized errors/timeout/Retry-After | GM-25 |
 | mobile/src/data/auth/storage.ts | Một SecureStore entry; encrypted native persistence, không plaintext fallback | GM-25/31 |
 | mobile/src/data/auth/index.ts / README.md | createAuthenticatedApiClient composition và ví dụ cho consumer | GM-25/31 |
 | mobile/src/data/api/client.ts | Optional authSession injection; business RPC lấy fresh token và drop stale auth generation | GM-25..31 |
 | mobile/tests/unit/authSession.test.ts / authTransport.test.ts | Behavioral/error/security/race tests, synthetic ports | Reviewer |
+| mobile/src/app/internal/gm16.tsx / mobile/src/features/auth/screens/Gm16InternalScreen.tsx | Development-only Expo shell harness; guest/restore/refresh/check/marker/logout; guarded by `__DEV__` and `EXPO_PUBLIC_GM16_INTERNAL=true`, no production route link | GM-25 wiring / reviewer |
 | supabase/config.toml | Anonymous auth local enabled; email signup disabled; finite rate limits | GM-17/BE APIs |
 | supabase/tests/auth.sql | 7 auth.uid/default-deny pgTAP assertions, transaction rollback | GM-17/reviewer |
 | supabase/tests/http/GM-16.http | Auth requests/expected responses/placeholders; không token thật | Reviewer/GM-25 |
@@ -76,7 +77,7 @@ là quyền. Native AppState/background refresh wiring và màn UI thuộc tích
 
 ## Kết quả / review còn lại
 
-68 adapter tests Pass; full mobile9 suites/356 tests, typecheck/lint/architecture
+69 adapter tests Pass; full mobile9 suites/357 tests, typecheck/lint/architecture
 Pass (4 warnings nền). Cold shell timeout được giữ report riêng; rerun không
 tăng timeout đạt. Python bundled524 tests Pass toàn bộ sau khi sửa khóa taxonomy
 Windows bằng msvcrt và probe cp1252 decode byte trực tiếp. In-memory
@@ -87,6 +88,12 @@ assertions Pass, Bruno4.2.1 desktop10/10 requests/tests Pass. Xem
 HTTP_CHECK.txt/RATE_LIMIT_CHECK.txt/BRUNO_CHECK.md. GoTrue error_code thực tế
 đã được xử lý, có5 regression cases bổ sung. Expiry thực và native secure
 persistence/restart chưa chạy.
+
+Harness mở bằng Expo shell khi cấu hình `EXPO_PUBLIC_GM16_INTERNAL=true` và public
+Supabase key hợp lệ. Trên Android thật cần USB debugging, `adb reverse tcp:54321
+tcp:54321`, development/native build có SecureStore; hiện chưa có device/adb
+evidence. Marker `gcd.gm16.harness.v1` chỉ là dữ liệu private của harness và bị
+xóa qua `clearPrivateData`; SQLite/outbox/cache sản phẩm vẫn thuộc GM-31.
 
 Trước merge: fetch target mới, kiểm gate merge, phối hợp shared config/client/spec
 bổ sung với producers GM-03/07 và review hash revision thật; upstream files có

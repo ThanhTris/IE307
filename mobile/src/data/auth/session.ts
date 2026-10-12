@@ -183,6 +183,27 @@ export class SessionManager implements SessionApi {
       } catch (error) { return { ok: false, error: await this.failure(error, generation) }; }
     });
   }
+  /** Explicitly rotate the refresh token for the internal harness and future app callers. */
+  async refreshSession(): Promise<ReadResult<SessionUser>> {
+    const generation = this.generation;
+    return this.exclusive(async () => {
+      try {
+        this.check(generation);
+        if (this.status === 'blocked') throw new AuthFailure({ messageKey: 'UNKNOWN_ERROR' });
+        const stored = this.current ?? await this.config.storage.load();
+        this.check(generation);
+        if (!stored || !isStoredSession(stored)) throw new AuthFailure({ messageKey: 'AUTH_REQUIRED' });
+        const refreshed = await this.refreshStored(stored, generation);
+        const user = await this.retry(() => this.config.auth.verify(refreshed.accessToken), generation);
+        if (user.id !== stored.user.id || !user.isGuest) throw new AuthFailure({ messageKey: 'AUTH_REQUIRED' });
+        await this.commit({ ...refreshed, user }, generation);
+        return { ok: true, data: { ...user } };
+      } catch (error) {
+        return { ok: false, error: await this.failure(error, generation) };
+      }
+    });
+  }
+
   async logout(requestId?: string): Promise<WriteResult<void>> {
     const token = this.current?.accessToken;
     ++this.generation; // Invalidates requests immediately, before asynchronous cleanup.

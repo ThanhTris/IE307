@@ -247,6 +247,18 @@ test('refresh rotation storage failure blocks token use until explicit cleanup',
   expect((await s.session.logout()).ok).toBe(true);
 });
 
+test('explicit refresh rotates credentials while preserving the same guest identity', async () => {
+  const s = setup(initial);
+  expect((await s.session.restoreSession()).ok).toBe(true);
+  const refreshed = await s.session.refreshSession();
+  expect(refreshed).toMatchObject({ ok: true, data: user });
+  expect(s.auth.refresh).toHaveBeenCalledWith(initial.refreshToken);
+  expect(s.storage.save).toHaveBeenLastCalledWith(expect.objectContaining({
+    accessToken: 'fixture-rotated', refreshToken: 'fixture-rotated-refresh', user,
+  }));
+  expect(s.session.getStatus()).toBe('active');
+});
+
 test('secure storage uses one device-only entry, rejects corruption, deletes exactly that key', async () => {
   let raw: string | null = null;
   const port = {
