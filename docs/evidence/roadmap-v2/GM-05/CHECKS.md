@@ -1,6 +1,6 @@
 # GM-05 checks — shared UI components
 
-Status: implementation branch, awaiting independent review and Expo Go visual check. Tested code commit: `b66d9e3` (`feat(gm-05): add shared components and align room codes`).
+Status: implementation branch, awaiting independent review and Expo Go visual check. Tested code commit: `31148c7` (`fix(gm-05): retry changed artwork and meet chip target`).
 
 Base: `origin/main` `9188c736def7e125266f8cce2314b9f1f5c31b81`; contract `food-v1/roadmap-v2/GM-05.1`; input GM-02 shell and GM-04 field contract. PR #105 is not used as GM-05 evidence; its scope is GM-07 API/mock/loading.
 
@@ -14,7 +14,7 @@ Base: `origin/main` `9188c736def7e125266f8cce2314b9f1f5c31b81`; contract `food-v
 | Sheet/dialog | `SheetDialog` modal with Android back handler and explicit close action | Implemented; route interaction not separately asserted |
 | Preview route | `/foundation` → `Mở component mẫu GM-05` → `/components`; fixture labelled and Home/card composed | Pass; 3 route tests |
 | Accessibility/layout code | touch controls min 48dp including Chip, labels/hints/states, safe-area screen, fallback text | Pass by source review; TalkBack/device visual not run |
-| Full mobile | typecheck, lint, Jest, architecture | Pass after final rerun; output in `MOBILE_CHECK.txt` |
+| Full mobile | typecheck, lint, Jest, architecture | Pass after final rerun; 8 suites / 296 tests; output in `MOBILE_CHECK.txt` |
 | Expo Go Android visual | Open route on real device, dark/font200/TalkBack/overflow | Not run; blocks final acceptance |
 | Live dependency gate | `task_readiness --task GM-05 --gate merge --base-ref origin/main` | Previous recorded result `READY_FOR_MERGE_REVIEW`; refresh currently blocked by missing `read:project` credential; see PLAN.md |
 

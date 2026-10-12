@@ -26,19 +26,19 @@ C:\Users\ADMIN\.codex\worktrees\b952\Project\mobile\src\data\api\index.ts
 > gi-cung-duoc-mobile@0.1.0 test
 > jest --runInBand
 
-PASS tests/integration/routes.test.tsx (5.632 s)
-PASS tests/unit/decisionContract.test.ts
-PASS tests/component/sharedComponents.test.tsx
+PASS tests/integration/routes.test.tsx (6.529 s)
 PASS tests/unit/apiContract.test.ts
+PASS tests/component/sharedComponents.test.tsx
 PASS tests/component/AppShellScreen.test.tsx
-PASS tests/unit/apiReadValidation.test.ts
-PASS tests/unit/apiMockIsolation.test.ts
 PASS tests/unit/apiResponseValidation.test.ts
+PASS tests/unit/apiReadValidation.test.ts
+PASS tests/unit/decisionContract.test.ts
+PASS tests/unit/apiMockIsolation.test.ts
 
 Test Suites: 8 passed, 8 total
-Tests:       295 passed, 295 total
+Tests:       296 passed, 296 total
 Snapshots:   0 total
-Time:        10.705 s, estimated 14 s
+Time:        12.527 s, estimated 13 s
 Ran all test suites.
 
 > gi-cung-duoc-mobile@0.1.0 check:architecture
