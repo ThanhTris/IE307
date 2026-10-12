@@ -1,0 +1,39 @@
+name: GM-18 independent eligibility
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  parity:
+    name: GM-18 TypeScript and disposable SQL parity
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm ci
+      - name: Pure domain fixtures and edge cases
+        run: node --test mobile/tests/eligibility.test.mjs
+      - name: Start local Supabase
+        run: npm run backend:start
+      - name: SQL parity, typed snapshot and actual draft rejection
+        env:
+          LC_ALL: C
+          PYTHONUTF8: '0'
+          PYTHONCOERCECLOCALE: '0'
+        run: python scripts/gm18_eligibility_check.py --report "$RUNNER_TEMP/gm18-sql-results.json"
+      - name: Upload assertions and tested source hashes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm18-independent-eligibility
+          path: ${{ runner.temp }}/gm18-sql-results.json
+          if-no-files-found: warn
+      - name: Stop local project
+        if: always()
+        run: npm run backend:stop

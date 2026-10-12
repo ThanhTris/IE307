@@ -76,3 +76,13 @@ hoặc grants/status defaults. Existing nested FK vẫn kiểm description sourc
 Unknown keys/null/non-UUID/dangling source vẫn bị reject. Migration chạy atomic
 và validate các row đang có. Không dùng schema down để rollback dataset test.
 Kiểm thực tế trong [GM-08 real DB](../../docs/evidence/roadmap-v2/GM-08/real-db/README.md).
+
+## GM-18 independent kernel — 0018
+
+0018_food_eligibility.sql adds private invoker functions only; previous migrations
+are frozen. No app grants, RLS changes or security-definer functions. Parameters
+include a trusted snapshot, server evaluation clock and explicit policy limits.
+Do not expose fixtureMode, arbitrary bundle/history or winner inputs to clients.
+Public RPC/auth/rate-limit integration waits for GM-17 and GM-18 review.
+Run scripts/gm18_eligibility_check.py in the existing guarded local setup; see
+[GM-18 HANDOFF](../../docs/evidence/roadmap-v2/GM-18/HANDOFF.md).

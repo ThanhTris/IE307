@@ -1,0 +1,4 @@
+Approval source: https://github.com/users/ThanhTris/projects/2 | checked at 2026-10-12T06:19:35.692962+00:00 | no cached/local fallback
+Target snapshot: origin/main = 9188c736def7e125266f8cce2314b9f1f5c31b81 (local ref; freshness not verified)
+GM-18: READY_TO_CLAIM | owner=Tâm reviewer=Trí | tasks/backlog/GM-18.md
+Gate checks approval source and delivered files, not execution. Merge still requires review of this PR, upstream PR/commit verification and real integration tests. No status/task edits performed.
