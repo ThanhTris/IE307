@@ -1,0 +1,24 @@
+meta {
+  name: 02 Restore caller
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/auth/v1/user
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{accessToken}}
+}
+
+tests {
+  test('Caller is the server user, not spoofed metadata', function () {
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getBody().id === bru.getVar('guestId')).to.equal(true);
+    expect(res.getBody().id === '16000000-0000-4000-8000-000000000002').to.equal(false);
+    expect(res.getBody().is_anonymous).to.equal(true);
+  });
+}

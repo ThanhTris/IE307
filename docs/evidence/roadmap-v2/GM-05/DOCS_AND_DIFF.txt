@@ -1,0 +1,12 @@
+=== validate_repository.py ===
+Gi Cung Duoc: documents, links, JSON, task manifest, dependencies and current FR traceability OK.
+Scope: documentation validation only; no native build/backend execution or human approval verified.
+Dependency approval uses live GitHub Project; run task_readiness --task before code/merge. This offline validator does not unlock tasks.
+exit=0
+=== task_readiness.py --check-docs ===
+Task indexes match task metadata.
+exit=0
+=== git diff origin/main --check ===
+exit=0
+=== git diff --check ===
+exit=0

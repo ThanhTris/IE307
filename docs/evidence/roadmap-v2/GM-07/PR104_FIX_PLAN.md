@@ -41,7 +41,7 @@ Link `<a href="https://github.com/ThanhTris/IE307/pull/104">PR #104</a>` đã c�
 Files: `mobile/src/data/api/mock.ts`, `mobile/tests/unit/apiContract.test.ts`.
 
 1. Sửa đúng field `data.roomId` thành `roomId: room.roomId`; giữ helper idempotency và thứ tự lookup trước kiểm state/version.
-2. Test join code `GCD1` bằng caller mới: tạo mock, sau đó `setCurrentUser()` sang user chưa nằm trong roster. Không chỉ join bằng host đã có sẵn, vì ca đó không kiểm được thêm member.
+2. Test join code `GCD234` bằng caller mới: tạo mock, sau đó `setCurrentUser()` sang user chưa nằm trong roster. Không chỉ join bằng host đã có sẵn, vì ca đó không kiểm được thêm member.
 3. Assert promise không reject, `ok === true`, requestId giữ nguyên, `data.roomId === envelope.roomId === 'room_mock_001'`, code/memberId đúng, `data.version === envelope.version` và snapshot sau join đúng.
 4. Retry nguyên requestId/body: ACK deep-equal lần đầu, member chỉ xuất hiện một lần, version chỉ tăng ở lần join đầu. Thêm cùng ID khác displayName → `REQUEST_ID_REUSED`, không mutation.
 5. Kiểm đường `acceptRoomInvite()` vì đang delegate `joinRoom()`: gọi invitation fixture hiện được mock hỗ trợ, assert cùng response contract và retry không mutation. Không triển khai toàn bộ invite business logic ở bước này.

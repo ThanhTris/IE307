@@ -17,6 +17,12 @@ npm run backend:stop
 
 CLI pin 2.120.0, runner gọi shim bằng Node, không phụ thuộc `.cmd`/Unix shell. Start tải Docker images nếu chưa có; cần mạng/dung lượng. Project `gi-cung-duoc-local`, API54321/DB54322. Không deploy/link/login, tạo remote project/paid plan. CLI/Docker cần quyền cache/profile/pipe nếu sandbox chặn.
 
+GM-16 rate-limit probe cần GoTrue có trusted client key. Sau `backend:start`, chạy
+`powershell -NoProfile -ExecutionPolicy Bypass -File scripts/gm16_rate_limit_setup.ps1`;
+script chỉ thay Auth container local, giữ database volume và đặt
+`GOTRUE_RATE_LIMIT_HEADER=X-Forwarded-For` để Kong cung cấp bucket key. Không
+đưa biến này vào mobile hoặc public client.
+
 HTTP: GET `http://127.0.0.1:54321/auth/v1/health` → 200 + JSON name=GoTrue, version/description nonempty; runner kiểm assertions, không theo redirect. SQL có 3 assertions: DB postgres, PostgreSQL>=17, query arithmetic; transaction rollback. Output/environment tại [CHECKS](../docs/evidence/roadmap-v2/GM-03/CHECKS.md). Đây không là nghiệm thu API nghiệp vụ.
 
 Status chỉ in project/API URL loopback, bỏ keys/password/token. Không paste raw CLI status vào Git/evidence. Credential local mặc định không dùng cho dữ liệu thật; runner chỉ target loopback, không cam kết Docker bind mọi port chỉ loopback. Kiểm firewall/network publishing trước chia sẻ LAN; không dùng mạng không tin cậy.

@@ -11,7 +11,7 @@ const layers = [
   ['data', 'API, auth và local adapters; contract/client tại GM-07.'],
 ] as const;
 
-export function FoundationScreen({ onBack }: { onBack: () => void }) {
+export function FoundationScreen({ onBack, onOpenComponents }: { onBack: () => void; onOpenComponents?: () => void }) {
   const { colors } = useShellTheme();
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
@@ -24,6 +24,9 @@ export function FoundationScreen({ onBack }: { onBack: () => void }) {
             <Text style={[styles.body, { color: colors.muted }]}>{description}</Text>
           </View>
         ))}
+        {onOpenComponents ? <Pressable accessibilityRole="button" accessibilityLabel="Mở component mẫu GM-05" onPress={onOpenComponents} style={[styles.button, { backgroundColor: colors.surface, borderColor: colors.primary, borderWidth: 1 }]}>
+          <Text style={[styles.buttonLabel, { color: colors.primary }]}>Mở component mẫu GM-05</Text>
+        </Pressable> : null}
         <Pressable accessibilityRole="button" onPress={onBack} style={[styles.button, { backgroundColor: colors.primary }]}>
           <Text style={[styles.buttonLabel, { color: colors.onPrimary }]}>Quay lại</Text>
         </Pressable>

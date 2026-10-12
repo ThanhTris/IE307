@@ -1,0 +1,45 @@
+meta {
+  name: 01 Create guest
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/auth/v1/signup
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {"data":{"display_name":"GM16 Bruno synthetic","userId":"16000000-0000-4000-8000-000000000002"}}
+}
+
+script:pre-request {
+  for (const key of ['accessToken', 'refreshToken', 'guestId', 'revokedRefreshToken']) bru.deleteVar(key);
+}
+
+script:post-response {
+  const body = res.getBody();
+  if (res.getStatus() === 200 && body.user && body.access_token && body.refresh_token) {
+    bru.setVar('accessToken', body.access_token);
+    bru.setVar('refreshToken', body.refresh_token);
+    bru.setVar('guestId', body.user.id);
+  } else bru.runner.stopExecution();
+}
+
+tests {
+  test('Creates anonymous server identity and tokens', function () {
+    const body = res.getBody();
+    expect(res.getStatus()).to.equal(200);
+    expect(body.user.id).to.be.a('string').and.not.empty;
+    expect(body.user.is_anonymous).to.equal(true);
+    expect(body.user.id === '16000000-0000-4000-8000-000000000002').to.equal(false);
+    expect(typeof body.access_token === 'string' && body.access_token.length > 0).to.equal(true);
+    expect(typeof body.refresh_token === 'string' && body.refresh_token.length > 0).to.equal(true);
+    expect(body.expires_in).to.be.a('number').and.above(0);
+  });
+}

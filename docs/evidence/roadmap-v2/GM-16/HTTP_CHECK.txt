@@ -1,0 +1,50 @@
+{
+  "contract": "GM-16.1",
+  "target": "loopback local only",
+  "cases": [
+    {
+      "case": "guest creates server identity",
+      "result": "Pass"
+    },
+    {
+      "case": "restore same caller",
+      "result": "Pass"
+    },
+    {
+      "case": "forged JWT rejected",
+      "result": "Pass"
+    },
+    {
+      "case": "missing JWT rejected over HTTP",
+      "result": "Pass"
+    },
+    {
+      "case": "spoof metadata cannot select caller identity",
+      "result": "Pass"
+    },
+    {
+      "case": "refresh preserves caller and produces usable session",
+      "result": "Pass"
+    },
+    {
+      "case": "invalid refresh rejected",
+      "result": "Pass"
+    },
+    {
+      "case": "logout revokes refresh",
+      "result": "Pass"
+    },
+    {
+      "case": "bounded real HTTP429 probe",
+      "result": "Pass"
+    },
+    {
+      "case": "auth.sql seven rollback assertions",
+      "result": "Pass"
+    }
+  ],
+  "limits": [
+    "Synthetic guests retained in local Auth; no admin key used for deletion",
+    "Native storage and real expiry require separate checks"
+  ]
+}

@@ -53,6 +53,34 @@ GM-17 bảo vệ tables/RPC/retention, từng task API thêm auth/membership/ver
 
 ## Chi tiết Contract Projection & Parity GM-04 / GM-06 (GM-07)
 
+### Bổ sung auth/session GM-16.1
+
+`createAuthenticatedApiClient` inject `SessionManager` vào `ApiClientImpl`.
+createGuestSession/restoreSession/logout dùng GoTrue `/auth/v1/signup`, `/user`,
+`/token?grant_type=refresh_token`, `/logout?scope=local`; không là SQL RPC phát JWT.
+Scaffold/mock GM-07 giữ interface cho consumers chưa tích hợp. Real client auth
+phải dùng composition này, public publishable/anon key và private cleanup callback.
+
+SessionResponse/error envelope GM-07 không đổi. Refresh token chỉ lưu nội bộ
+StoredSession/secure storage; không xuất vào UI, room DTO, SQLite, outbox hoặc log.
+SessionUser.id/isGuest từ response xác minh GoTrue; metadata userId/client userId
+không làm quyền. Display name tối đa24 ký tự, không rỗng/control chars.
+
+Restore xác minh server user trước expose identity; gần expiry refresh serialized,
+persist rotation trước publish. Logout/auth loss vô hiệu response đang chạy và
+clear memory/secure store/private-cache port. Cleanup lỗi chặn đổi identity;
+network restore/refresh lỗi giữ credential cho thử lại chủ động. Verify retry tối
+đa2 lần, respect Retry-After, không giảm thời gian server yêu cầu. Signup/refresh
+không blind retry vì GoTrue không dùng requestId idempotency của business RPC;
+unknown signup outcome chặn signup tiếp đến khi logout/reset local rõ ràng.
+
+Logout clear local cả khi revoke network fail và trả lỗi để UI biết revoke chưa
+xác nhận. Revoke refresh không bảo đảm access JWT hết hiệu lực ngay; quyền server/
+expiry vẫn là căn cứ. Account linking/recovery, room/profile RPC, push-device
+cleanup server và SQLite outbox thuộc task sau. HTTP auth tests và native secure
+persistence phải có evidence riêng. HTTP chỉ loopback; LAN dev cần HTTPS setup
+được review, không tự gửi token qua mạng HTTP không bảo vệ.
+
 ### 1. Chuẩn hóa phong bì lỗi (Error Normalization)
 - RPC Supabase có thể trả HTTP 200 kèm business envelope `{ ok: false, error: { messageKey: '...' } }`.
 - Client normalizer (`normalizeRpcResponse<T>()` trong `mobile/src/data/api/client.ts`) bảo toàn tuyệt đối cờ `ok`, `error.messageKey`, `requestId`, `version`, `state` và chỉ unwrap `data` khi `ok === true`.
@@ -72,7 +100,7 @@ GM-17 bảo vệ tables/RPC/retention, từng task API thêm auth/membership/ver
 | invite_to_room | các field invite_partner cộng roomId và roomCode |
 | write trả void | `data` vắng, undefined hoặc JSON null → client `data:undefined`; không yêu cầu object DTO; data object/primitive ngoài contract bị từ chối |
 
-ID/code/token là string không rỗng; version là số nguyên hữu hạn an toàn trong JavaScript, >=1 theo dictionary GM-04. Timestamp là ISO8601 có timezone và ngày/giờ hợp lệ. Invitation status dùng enum của DTO. Optional không tự tương đương nullable: receipt null là malformed vì DTO chỉ cho vắng, còn void data cho JSON null rõ ràng.
+ID/token là string không rỗng; mã phòng (`code`/`roomCode`) là đúng 6 ký tự theo ROOM_SPEC, dùng charset không gây nhầm (`A-H`, `J-N`, `P-Z`, `2-9`), và server chịu trách nhiệm uniqueness. Version là số nguyên hữu hạn an toàn trong JavaScript, >=1 theo dictionary GM-04. Timestamp là ISO8601 có timezone và ngày/giờ hợp lệ. Invitation status dùng enum của DTO. Optional không tự tương đương nullable: receipt null là malformed vì DTO chỉ cho vắng, còn void data cho JSON null rõ ràng.
 
 Metadata requestId/roomId/version/state được kiểm kiểu và enum khi có, giữ optional khi vắng. roomId/version ở envelope phải khớp payload và roomId của request khi có; không fabricate version/state. Ballot payload requestId phải khớp ACK requestId; receipt khi có phải khớp round của payload và requestId của ACK. Các guard chỉ kiểm contract GM-07, không chứng minh auth/membership, transaction hay RPC nghiệp vụ các task sau.
 

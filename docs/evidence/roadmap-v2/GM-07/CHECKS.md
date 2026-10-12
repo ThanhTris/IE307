@@ -47,7 +47,7 @@ Live start gate trước code: `READY_TO_CLAIM` lúc 12:24:09 UTC+7. Checker hi�
 
 | Kiểm / AC | Input, expected, actual | Kết quả / evidence |
 | --- | --- | --- |
-| P1 joinRoom | Caller mới join GCD1; data/envelope cùng roomId/version; retry cùng body/ID trả ACK cũ; khác body bị REQUEST_ID_REUSED; chỉ 1 member mới và 1 lần tăng version | Pass; test cả joinRoom và acceptRoomInvite |
+| P1 joinRoom | Caller mới join GCD234; data/envelope cùng roomId/version; retry cùng body/ID trả ACK cũ; khác body bị REQUEST_ID_REUSED; chỉ 1 member mới và 1 lần tăng version | Pass; test cả joinRoom và acceptRoomInvite |
 | P2 typed-write validation | Create/join/accept invite/auth/ballot/partner invite/room invite: flat/nested đầy đủ pass; data/field thiếu hoặc sai type/enum/timestamp/null/array/primitive → MALFORMED_RESPONSE | Pass; table theo endpoint trong apiResponseValidation.test.ts |
 | Metadata / receipt | Version số nguyên an toàn >=1, state hợp lệ, room/version/requestId nhất quán; optional được vắng, receipt khi có kiểm shape/round/ID/count/votes/time | Pass; không fabricate version/state; malformed auth không đổi token |
 | Void ACK | 14 writes void nhận data vắng/undefined/null, giữ metadata; metadata/data sai bị từ chối | Pass; không đòi object DTO giả |
