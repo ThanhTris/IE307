@@ -24,8 +24,11 @@ class SchemaRunnerEncodingTests(unittest.TestCase):
         with patch.object(Path,'open',windows_open):
             # Locale fallback is active; the explicit UTF-8 runner must survive.
             probe = ROOT/'supabase/seed/templates/food-v1.template.json'
+            # Decode the UTF-8 bytes explicitly as CP1252. This models the
+            # Windows locale fallback without depending on the test runner's
+            # actual locale (which may already be UTF-8).
             try:
-                wrong = probe.read_text()
+                wrong = probe.read_bytes().decode('cp1252')
             except UnicodeDecodeError:
                 wrong = ''
             self.assertNotIn('Cơm gà',wrong)

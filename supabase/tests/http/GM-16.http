@@ -1,0 +1,52 @@
+### GM-16 local GoTrue; never paste credentials into this tracked file.
+@baseUrl = http://127.0.0.1:54321
+@publicKey = {{$processEnv SUPABASE_ANON_KEY}}
+@accessToken = {{$processEnv GM16_ACCESS_TOKEN}}
+@refreshToken = {{$processEnv GM16_REFRESH_TOKEN}}
+
+### Create synthetic guest: expect 200, real user.id, is_anonymous=true,
+### access_token/refresh_token nonempty, expires_in>0; metadata.userId is NOT caller.
+POST {{baseUrl}}/auth/v1/signup
+apikey: {{publicKey}}
+Content-Type: application/json
+
+{"data":{"display_name":"GM16 test","userId":"16000000-0000-4000-8000-000000000002"}}
+
+### Restore identity: expect 200; id equals guest.id, not spoofed metadata.userId.
+GET {{baseUrl}}/auth/v1/user
+apikey: {{publicKey}}
+Authorization: Bearer {{accessToken}}
+
+### No session: expect 401/403, no private user response.
+GET {{baseUrl}}/auth/v1/user
+apikey: {{publicKey}}
+
+### Forged token: expect 401/403, never caller success.
+GET {{baseUrl}}/auth/v1/user
+apikey: {{publicKey}}
+Authorization: Bearer deliberately.invalid.token
+
+### Refresh: expect 200, same user.id, new usable tokens; never log response secrets.
+POST {{baseUrl}}/auth/v1/token?grant_type=refresh_token
+apikey: {{publicKey}}
+Content-Type: application/json
+
+{"refresh_token":"{{refreshToken}}"}
+
+### Invalid refresh: expect 400/401, auth error normalized to AUTH_REQUIRED.
+POST {{baseUrl}}/auth/v1/token?grant_type=refresh_token
+apikey: {{publicKey}}
+Content-Type: application/json
+
+{"refresh_token":"not-a-refresh-token"}
+
+### Logout current session: expect 204 (or 200 body supported by server version).
+### Subsequent refresh must fail. Already-issued access JWT can live until expiry.
+POST {{baseUrl}}/auth/v1/logout?scope=local
+apikey: {{publicKey}}
+Authorization: Bearer {{accessToken}}
+
+### Automated assertions: node scripts/gm16_auth_check.mjs
+### --rate-limit adds a bounded real HTTP429 probe; use isolated local demo only.
+### --sql runs auth.sql via this project's DB container; transaction rolls back.
+### Do not infer secure storage/native restart from this HTTP collection.

@@ -37,8 +37,18 @@ enabled = true
 site_url = "http://127.0.0.1:3000"
 additional_redirect_urls = []
 jwt_expiry = 3600
+enable_signup = true
+enable_anonymous_sign_ins = true
+
+# GM-16 local guest Auth. No email/password or account linking in core.
+[auth.email]
 enable_signup = false
-enable_anonymous_sign_ins = false
+
+[auth.rate_limit]
+# token_refresh is enforced by GoTrue once the local Auth container receives
+# GOTRUE_RATE_LIMIT_HEADER=X-Forwarded-For from the trusted Kong proxy.
+anonymous_users = 30
+token_refresh = 150
 
 [edge_runtime]
 enabled = false

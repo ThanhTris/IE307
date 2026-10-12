@@ -1,0 +1,38 @@
+meta {
+  name: 05 Refresh session
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/auth/v1/token?grant_type=refresh_token
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {"refresh_token":"{{refreshToken}}"}
+}
+
+script:post-response {
+  const body = res.getBody();
+  if (res.getStatus() === 200 && body.user && body.user.id === bru.getVar('guestId') && body.access_token && body.refresh_token) {
+    bru.setVar('accessToken', body.access_token);
+    bru.setVar('refreshToken', body.refresh_token);
+  } else bru.runner.stopExecution();
+}
+
+tests {
+  test('Refresh keeps caller and returns usable credentials', function () {
+    const body = res.getBody();
+    expect(res.getStatus()).to.equal(200);
+    expect(body.user.id === bru.getVar('guestId')).to.equal(true);
+    expect(typeof body.access_token === 'string' && body.access_token.length > 0).to.equal(true);
+    expect(typeof body.refresh_token === 'string' && body.refresh_token.length > 0).to.equal(true);
+    expect(body.expires_in).to.be.a('number').and.above(0);
+  });
+}

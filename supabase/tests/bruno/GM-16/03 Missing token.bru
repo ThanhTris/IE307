@@ -1,0 +1,18 @@
+meta {
+  name: 03 Missing token
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/auth/v1/user
+  body: none
+  auth: none
+}
+
+tests {
+  test('Missing JWT is rejected', function () {
+    expect([401, 403].includes(res.getStatus())).to.equal(true);
+    expect(Boolean(res.getBody().id)).to.equal(false);
+  });
+}

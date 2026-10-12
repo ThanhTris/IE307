@@ -1,0 +1,29 @@
+meta {
+  name: 08 Logout
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/auth/v1/logout?scope=local
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{accessToken}}
+}
+
+script:post-response {
+  if ([200, 204].includes(res.getStatus())) {
+    bru.setVar('revokedRefreshToken', bru.getVar('refreshToken'));
+    bru.deleteVar('accessToken');
+    bru.deleteVar('refreshToken');
+  } else bru.runner.stopExecution();
+}
+
+tests {
+  test('Logout succeeds', function () {
+    expect([200, 204].includes(res.getStatus())).to.equal(true);
+  });
+}

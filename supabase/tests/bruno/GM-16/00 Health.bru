@@ -1,0 +1,20 @@
+meta {
+  name: 00 Health
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/auth/v1/health
+  body: none
+  auth: none
+}
+
+tests {
+  test('Local GoTrue is healthy', function () {
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getBody().name).to.equal('GoTrue');
+    expect(res.getBody().version).to.be.a('string').and.not.empty;
+  });
+  if (res.getStatus() !== 200) bru.runner.stopExecution();
+}
