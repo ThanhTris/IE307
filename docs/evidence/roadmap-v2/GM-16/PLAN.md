@@ -6,11 +6,11 @@ Ngày: 2026-10-11 (UTC+7). Trạng thái: implementation in progress, chưa Appr
 
 - Owner: Trí / `ThanhTris`, theo xác nhận trực tiếp trong cuộc hội thoại và
   [issue #77](https://github.com/ThanhTris/IE307/issues/77) đã kiểm live.
-- Reviewer độc lập: Tâm / `HoaiTam`, do chủ dự án chọn trực tiếp trong cuộc hội thoại.
+- Reviewer cuối: Trí / `ThanhTris` theo ADR-013; không yêu cầu reviewer độc lập riêng.
 - Issue hiện hành giao Trí; hạn trình nghiệm thu 2026-10-19, 18:00 UTC+7.
   Deadline không thay dependency gate/AC/review.
 - File task trên main vẫn ghi owner Trung/proposed. Nhánh này đã đồng bộ owner
-  Trí/reviewer Tâm, assignment accepted và status in-progress; sinh lại indexes/
+  Trí/reviewer Trí, assignment accepted và status in-progress; sinh lại indexes/
   links, không ghi approval hoặc thay trạng thái Project.
 
 ## Baseline và đầu vào đã nhận
@@ -64,8 +64,8 @@ Trước sửa code, chốt bổ sung trong API_CONTRACT và auth-specific types
 
 ## Dependency cần reviewer chốt
 
-Chủ dự án chọn Tâm kiểm độc lập và cho phép `expo-secure-store` trực tiếp ngày
-2026-10-11. Đã pin package57.0.4 theo bundledNativeModules của Expo SDK57; cập nhật
+Chủ dự án cho phép `expo-secure-store` trực tiếp ngày 2026-10-11; reviewer cuối
+Trí theo task hiện hành. Đã pin package57.0.4 theo bundledNativeModules của Expo SDK57; cập nhật
 package/lockfile và backup config. Đây không là approval implementation/AC.
 Token không lưu AsyncStorage/SQLite/file plaintext.
 Ưu tiên auth HTTP adapter theo transport injection đang có để không thêm SDK
@@ -77,7 +77,7 @@ version thực tế. Shell không tự khởi tạo auth/gọi mạng hoặc cra
 
 ## Patch theo thứ tự
 
-1. Xác nhận reviewer độc lập và dependency; cập nhật phân công local đúng issue,
+1. Xác nhận reviewer cuối và dependency; cập nhật phân công local đúng issue,
    chốt supplement auth/error/types và migration number theo quy ước GM-06.
 2. Cấu hình anonymous auth chỉ local trong config GM-03, giữ rate limit hữu hạn.
    Kiểm phiên bản CLI/GoTrue thực tế; không deploy/link remote hoặc reset data.
