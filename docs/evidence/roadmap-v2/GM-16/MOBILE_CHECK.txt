@@ -37,7 +37,7 @@ PASS tests/unit/authTransport.test.ts (14.894 s)
 PASS tests/unit/apiMockIsolation.test.ts
 
 Test Suites: 9 passed, 9 total
-Tests:       356 passed, 356 total
+Tests:       357 passed, 357 total
 Snapshots:   0 total
 Time:        58.518 s
 Ran all test suites.
