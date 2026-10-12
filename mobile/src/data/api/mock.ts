@@ -268,6 +268,17 @@ export const MOCK_CURRENT_USER: SessionUser = {
   createdAt: '2026-10-10T12:00:00Z',
 };
 
+export const MOCK_DEFAULT_ROOM_CODE = 'GCD234';
+const MOCK_ROOM_CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+
+function generateMockRoomCode(): string {
+  let suffix = '';
+  for (let index = 0; index < 3; index += 1) {
+    suffix += MOCK_ROOM_CODE_ALPHABET[Math.floor(Math.random() * MOCK_ROOM_CODE_ALPHABET.length)];
+  }
+  return `GCD${suffix}`;
+}
+
 export const MOCK_FRIENDS: Friend[] = [
   {
     id: 'fr_01',
@@ -301,9 +312,9 @@ export const MOCK_INBOX_ITEMS: InboxItem[] = [
     eventId: 'evt_invite_01',
     type: 'room_invite',
     title: 'Lời mời ăn trưa',
-    body: 'Tuấn mời bạn tham gia phòng chọn món #GCD1',
+    body: `Tuấn mời bạn tham gia phòng chọn món #${MOCK_DEFAULT_ROOM_CODE}`,
     read: false,
-    metadata: { roomId: 'room_mock_001', roomCode: 'GCD1' },
+    metadata: { roomId: 'room_mock_001', roomCode: MOCK_DEFAULT_ROOM_CODE },
     createdAt: '2026-10-11T07:45:00Z',
   },
   {
@@ -322,7 +333,7 @@ export const MOCK_HISTORY_ITEMS: HistoryItem[] = [
   {
     id: 'hist_01',
     roomId: 'room_hist_01',
-    roomCode: 'PAST1',
+    roomCode: 'PAST23',
     mealDate: '2026-10-10T12:30:00Z',
     winnerName: 'Phở bò tái nạm',
     winnerArtworkUrl: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=600',
@@ -332,7 +343,7 @@ export const MOCK_HISTORY_ITEMS: HistoryItem[] = [
   {
     id: 'hist_02',
     roomId: 'room_hist_02',
-    roomCode: 'PAST2',
+    roomCode: 'PAST45',
     mealDate: '2026-10-08T18:45:00Z',
     winnerName: 'Cơm tấm sườn bì chả',
     winnerArtworkUrl: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=600',
@@ -409,7 +420,7 @@ export class MockApiClient implements ApiClient {
   private initDefaultRoom(): void {
     const defaultRoom: SharedRoomData = {
       roomId: 'room_mock_001',
-      code: 'GCD1',
+      code: MOCK_DEFAULT_ROOM_CODE,
       state: 'LOBBY',
       version: 1,
       hostUserId: this.currentUser.id,
@@ -653,7 +664,7 @@ export class MockApiClient implements ApiClient {
     if (conflictError) return conflictError;
 
     const roomId = 'room_' + Math.random().toString(36).substring(2, 9);
-    const code = ('GCD' + Math.floor(100 + Math.random() * 900)).substring(0, 4);
+    const code = generateMockRoomCode();
 
     const anchor = MOCK_ANCHORS.find((a) => a.id === req.context.anchorId);
     const snapshot: SharedRoomData = {
@@ -1239,7 +1250,7 @@ export class MockApiClient implements ApiClient {
     const invitation: RoomInvitation = {
       id: 'rinv_' + Math.random().toString(36).substring(2, 8),
       roomId: req.roomId,
-      roomCode: room?.code ?? 'GCD1',
+      roomCode: room?.code ?? MOCK_DEFAULT_ROOM_CODE,
       inviterUserId: this.currentUser.id,
       inviterName: this.currentUser.displayName,
       inviteeUserId: req.partnerId,
@@ -1253,7 +1264,7 @@ export class MockApiClient implements ApiClient {
   }
 
   async acceptRoomInvite(req: AcceptRoomInviteRequest): Promise<WriteResult<JoinRoomResponse>> {
-    return this.joinRoom({ code: 'GCD1', displayName: req.displayName, requestId: req.requestId });
+    return this.joinRoom({ code: MOCK_DEFAULT_ROOM_CODE, displayName: req.displayName, requestId: req.requestId });
   }
 
   // ==========================================================================

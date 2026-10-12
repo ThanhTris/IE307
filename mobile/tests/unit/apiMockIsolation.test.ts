@@ -33,7 +33,7 @@ describe('GM-07 mock caller projection isolation', () => {
     expect(Object.keys(owner.ownVotes ?? {})).toHaveLength(voting.pool.length);
 
     mock.setCurrentUser(otherUser);
-    const other = await snapshot(mock, 'GCD1');
+    const other = await snapshot(mock, 'GCD234');
     expect(other.ownVotes).toBeUndefined();
     expect(other.ownSubmission).toBeNull();
     expect(other.state).toBe(owner.state);

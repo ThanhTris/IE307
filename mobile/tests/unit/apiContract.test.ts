@@ -43,7 +43,7 @@ describe('GM-07 API Contract & Client Suite', () => {
       transport.responseData = {
         ok: true,
         roomId: 'room_123',
-        code: 'GCD9',
+        code: 'GCD345',
         version: 1,
         expiresAt: '2026-10-11T12:00:00Z',
       };
@@ -65,7 +65,7 @@ describe('GM-07 API Contract & Client Suite', () => {
 
       expect(result.ok).toBe(true);
       if (result.ok) {
-        expect(result.data.code).toBe('GCD9');
+        expect(result.data.code).toBe('GCD345');
         expect(result.requestId).toBeDefined();
         expect(result.requestId).toMatch(/^req_/);
       }
@@ -371,7 +371,7 @@ describe('GM-07 API Contract & Client Suite', () => {
       if (!createRes.ok) return;
 
       const { roomId, code } = createRes.data;
-      expect(code.length).toBe(4);
+      expect(code.length).toBe(6);
 
       // 4. Verify Snapshot metadata (datasetVersion, eligibilityVersion, ownSubmission)
       const snap1 = await mock.getRoomSnapshot(roomId);

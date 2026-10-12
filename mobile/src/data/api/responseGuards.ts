@@ -16,6 +16,11 @@ export function isNonEmptyString(value: unknown): value is string {
   return typeof value === 'string' && value.trim().length > 0;
 }
 
+/** Room invite codes are six unambiguous server-generated characters. */
+export function isRoomCode(value: unknown): value is string {
+  return typeof value === 'string' && /^[A-HJ-NP-Z2-9]{6}$/.test(value);
+}
+
 export function isVersion(value: unknown): value is number {
   return typeof value === 'number' && Number.isSafeInteger(value) && value >= 1;
 }
@@ -47,12 +52,12 @@ export function isVoidPayload(value: unknown): value is void {
 }
 
 export function isCreateRoomResponse(value: unknown): value is CreateRoomResponse {
-  return isRecord(value) && isNonEmptyString(value.roomId) && isNonEmptyString(value.code)
+  return isRecord(value) && isNonEmptyString(value.roomId) && isRoomCode(value.code)
     && isVersion(value.version) && isTimestamp(value.expiresAt);
 }
 
 export function isJoinRoomResponse(value: unknown): value is JoinRoomResponse {
-  return isRecord(value) && isNonEmptyString(value.roomId) && isNonEmptyString(value.code)
+  return isRecord(value) && isNonEmptyString(value.roomId) && isRoomCode(value.code)
     && isVersion(value.version) && isNonEmptyString(value.memberId);
 }
 
@@ -89,7 +94,7 @@ export function isFriendInvitation(value: unknown): value is FriendInvitation {
 
 export function isRoomInvitation(value: unknown): value is RoomInvitation {
   return isFriendInvitation(value) && isRecord(value)
-    && isNonEmptyString(value.roomId) && isNonEmptyString(value.roomCode);
+    && isNonEmptyString(value.roomId) && isRoomCode(value.roomCode);
 }
 
 export function arrayOf<T>(guard: ResponseGuard<T>): ResponseGuard<T[]> {
@@ -225,7 +230,7 @@ export function isInboxItem(value: unknown): value is InboxItem {
 
 export function isHistoryItem(value: unknown): value is HistoryItem {
   return isRecord(value) && isNonEmptyString(value.id) && isNonEmptyString(value.roomId)
-    && isNonEmptyString(value.roomCode) && isTimestamp(value.mealDate) && optional(value.winnerName, isString)
+    && isRoomCode(value.roomCode) && isTimestamp(value.mealDate) && optional(value.winnerName, isString)
     && optional(value.winnerArtworkUrl, v => nullable(v, isString)) && isCount(value.memberCount)
     && oneOf(value.scope, ['personal', 'group']);
 }

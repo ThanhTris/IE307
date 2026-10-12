@@ -7,7 +7,7 @@ const time = '2026-10-11T12:00:00Z';
 const user = { id: 'user_fixture', displayName: 'Review', isGuest: true, createdAt: time };
 const context = { anchorId: 'anchor_fixture', radiusM: 1000, desiredAt: time,
   serviceMode: 'dine_in' as const, mealSlot: 'lunch' as const, avoidRecent: false };
-const snapshot = { roomId: 'room_fixture', code: 'GCD1', state: 'LOBBY', version: 1,
+const snapshot = { roomId: 'room_fixture', code: 'GCD234', state: 'LOBBY', version: 1,
   hostUserId: user.id, context, members: [{ userId: user.id, displayName: user.displayName,
     isHost: true, ready: false, joinedAt: time }], round: 1, poolVersion: 1,
   pool: MOCK_DISHES, expiresAt: time };
@@ -39,7 +39,8 @@ const reads: { name: string; call: ReadCall; data: unknown; invalid: unknown[]; 
   { name: 'listPartnerInbox', call: c => c.listPartnerInbox(), data: MOCK_INBOX_ITEMS, list: true,
     invalid: [[{}], [{ ...MOCK_INBOX_ITEMS[0], read: 0 }], [{ ...MOCK_INBOX_ITEMS[0], metadata: [] }]] },
   { name: 'getHistory', call: c => c.getHistory('group'), data: MOCK_HISTORY_ITEMS, list: true,
-    invalid: [[{}], [{ ...MOCK_HISTORY_ITEMS[0], scope: 'public' }], [{ ...MOCK_HISTORY_ITEMS[0], memberCount: NaN }]] },
+    invalid: [[{}], [{ ...MOCK_HISTORY_ITEMS[0], scope: 'public' }], [{ ...MOCK_HISTORY_ITEMS[0], memberCount: NaN }],
+      [{ ...MOCK_HISTORY_ITEMS[0], roomCode: 'PAST1' }], [{ ...MOCK_HISTORY_ITEMS[0], roomCode: 'PASTIO0' }]] },
 ];
 
 function clientFor(response: unknown): ApiClient {
