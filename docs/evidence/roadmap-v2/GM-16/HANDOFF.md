@@ -2,8 +2,8 @@
 
 Owner Trí, reviewer Tâm, nhánh `codex/gm-16-guest-session` sau merge main `9188c73`.
 Contract `food-v1/roadmap-v2/GM-16.1`; schema input0.1.0 không đổi.
-HTTP/SQL/rate429 và Android thật create/check/refresh đã Pass; restart/expiry/
-lost-session/logout/backup native còn Not run; chưa Approved/Done.
+HTTP/SQL/rate429 và Android thật create/restore/refresh/expiry/lost-session/logout
+đã Pass; backup/native development-build còn Not run; chưa Approved/Done.
 Package SecureStore57.0.4 được chủ dự án cho phép trực tiếp cùng chọn reviewer Tâm.
 
 ## Artifact thực tế
@@ -91,9 +91,9 @@ persistence/restart chưa chạy.
 
 Harness mở bằng Expo shell khi cấu hình `EXPO_PUBLIC_GM16_INTERNAL=true` và public
 Supabase key hợp lệ. `MOBILE_DEVICE_CHECK.txt` ghi Android thật CPH2797 đã nhận ADB,
-đã chạy `adb reverse tcp:54321 tcp:54321`, và đã Pass create/check/refresh qua
-GoTrue local. Force-stop/restore SecureStore, expiry/lost-session, marker + Logout
-cleanup và backup/native build vẫn chưa có evidence. Marker
+đã chạy `adb reverse tcp:54321 tcp:54321`, và đã Pass create/check/refresh/restore,
+expiry/lost-session, marker + Logout cleanup qua GoTrue local. Uninstall/backup
+exclusion và native development-build vẫn chưa có evidence. Marker
 `gcd.gm16.harness.v1` chỉ là dữ liệu private của harness và bị xóa qua
 `clearPrivateData`; SQLite/outbox/cache sản phẩm vẫn thuộc GM-31.
 

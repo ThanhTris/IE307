@@ -50,26 +50,26 @@ kiểm `migration list --local` rồi `migration up --local`; không reset DB.
 | SecureStore boundary | Một encrypted entry/device-only option, corrupt reject, delete đúng key | SecureStore port mock, không thiết bị Android | Pass (adapter scope) |
 | Guest/restore/refresh/logout/spoof HTTP | Status/body/assertions thật qua GoTrue local | HTTP_CHECK.txt:8 cases Pass; Bruno4.2.1:10/10 requests/tests Pass, BRUNO_CHECK.md | Pass |
 | SQL auth.uid/default deny | 7 pgTAP assertions trên schema0.1.0 thật, rollback | HTTP_CHECK.txt: auth.sql7 assertions Pass sau migration up --local0001..0003 | Pass |
-| Real HTTP429/expiry | GoTrue throttle và expiry thực | RATE_LIMIT_CHECK.txt/HTTP_CHECK.txt: bounded real HTTP429 Pass; JWT expiry thực chưa chờ | Pass (rate429; expiry Not run) |
-| Native restart/lost session/backup | Android thật cùng identity sau restart, uninstall không recover guest, backup exclude secure entry | `MOBILE_DEVICE_CHECK.txt`: Android thật đã nối ADB/reverse; create/check/refresh Pass. Restart/lost-session/backup chưa chạy | Partial (restart/lost/backup Not run) |
+| Real HTTP429/expiry | GoTrue throttle và expiry thực | RATE_LIMIT_CHECK.txt/HTTP_CHECK.txt: bounded real HTTP429 Pass; `MOBILE_DEVICE_CHECK.txt`: JWT lifetime 120s, waited 135s, token refresh + same identity Pass | Pass |
+| Native restart/lost session/backup | Android thật cùng identity sau restart, uninstall không recover guest, backup exclude secure entry | `MOBILE_DEVICE_CHECK.txt`: force-stop/restore, lost-session và post-logout reopen Pass; uninstall/backup/native build chưa chạy | Partial (backup/native build Not run) |
 | Expo compatibility | SDK dependency check exit0; Android bundle exit0 | check:expo “Dependencies are up to date”; bundle 1245 modules, dist/android | Pass (bundle, không native smoke) |
-| Internal Android harness route | Development flag only; guest/restore/refresh/check/private marker/logout actions; no token/raw response | `MOBILE_DEVICE_CHECK.txt` records real Expo Go route, guest/check/refresh and sanitized backend logs; marker/logout still Not run | Partial (device create/check/refresh Pass) |
+| Internal Android harness route | Development flag only; guest/restore/refresh/check/private marker/logout actions; no token/raw response | `MOBILE_DEVICE_CHECK.txt` records real Expo Go route, guest/check/refresh/restore/expiry/lost/marker/logout and sanitized backend logs | Pass (Expo Go harness; native build Not run) |
 | Full mobile checks | TypeScript/lint/Jest/architecture exit0 | `npm run typecheck`, `npm run lint`, `npm test`: 9 suites/357 tests Pass; Android bundle export Pass | Pass |
 | Repo validator/indexes/diff | Offline checks exit0 | Validator/indexes/diff đạt; DOCS_CHECK.txt lưu lần cuối | Pass |
 | Python regression | Runtime đủ timezone; không bỏ qua lỗi | PYTHON_REGRESSION.txt: 524 tests, 524 Pass, 0 failure/error; msvcrt locking và explicit cp1252 probe trên Windows | Pass |
 
-API flow, SQL assertions, bounded rate429 probe và Android thật create/check/refresh
-đã chạy ngày 2026-10-12. AC tổng thể còn restart/expiry/lost-session/logout/backup
-Not run. Không đánh dấu checkbox AC tổng thể hoặc Done.
+API flow, SQL assertions, bounded rate429 probe và Android thật create/restore/
+refresh/expiry/lost-session/logout đã chạy ngày 2026-10-12. AC còn backup/native
+development-build Not run. Không đánh dấu checkbox AC tổng thể hoặc Done.
 
 ## Blocker / giới hạn
 
 - Docker blocker trước đây đã giải quyết: engine29.4.3 phản hồi,4 container
   Supabase của project local chạy, Auth health200. Migrations0001..0003 áp dụng
   local; không reset hoặc xóa volume. Backend được để chạy để owner test Bruno.
-- Android thật đã chạy qua Expo Go + ADB reverse; secure-storage/restart, expiry,
-  lost-session, logout cleanup và backup/native config vẫn cần development-build
-  evidence phù hợp.
+- Android thật đã chạy qua Expo Go + ADB reverse; create/restore/refresh, expiry,
+  lost-session và harness logout cleanup Pass. Uninstall/backup exclusion và
+  native development-build evidence vẫn cần kiểm riêng.
 - Private cache port là contract bắt buộc cho GM-25/31; SQLite chưa triển khai.
   Signout revoke refresh không bảo đảm access JWT đã phát vô hiệu ngay.
 - Shared config/client/spec có bổ sung GM-16, reviewer phải đối chiếu với upstream

@@ -44,7 +44,9 @@ export function Gm16InternalScreen({ onBack }: { onBack: () => void }) {
       const outcome = await action();
       setResult(outcome);
       if (outcome.user) setUser(outcome.user);
-      setStatus(client?.session.getStatus() ?? 'empty');
+      const nextStatus = client?.session.getStatus() ?? 'empty';
+      setStatus(nextStatus);
+      if (nextStatus !== 'active') setUser(null);
     } finally { setBusy(false); }
   };
   const invalid = (label: string): Result => ({ label, ok: false, error: { messageKey: 'INVALID_INPUT' } });
