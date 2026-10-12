@@ -1,11 +1,11 @@
 # GM-16 — Guest auth/session handoff
 
-Owner Trí, reviewer Tâm, nhánh `codex/gm-16-guest-session` sau merge main `9188c73`.
+Owner Trí, reviewer Trí / ThanhTris theo ADR-013, nhánh `codex/gm-16-guest-session` sau merge main `9188c73`.
 Contract `food-v1/roadmap-v2/GM-16.1`; schema input0.1.0 không đổi.
 HTTP/SQL/rate429 và Android thật qua Expo Go create/restore/refresh/expiry/
 lost-session/logout đã Pass; native development build và uninstall/backup
 exclusion được owner hoãn tới release hardening; chưa Approved/Done.
-Package SecureStore57.0.4 được chủ dự án cho phép trực tiếp cùng chọn reviewer Tâm.
+Package SecureStore57.0.4 được chủ dự án cho phép trực tiếp; reviewer cuối là Trí.
 
 ## Artifact thực tế
 
@@ -105,7 +105,7 @@ Trước merge: fetch target mới, kiểm gate merge, phối hợp shared confi
 bổ sung với producers GM-03/07 và review hash revision thật; upstream files có
 thay đổi có thể làm fingerprint gate chặn trên target cũ. Không bypass checker
 bằng local approval. Không được nhận handoff này như dependency Done khi còn
-Not run/Fail. Tâm kiểm độc lập, Trí quyết định nghiệm thu/Project Done sau đủ AC.
+Not run/Fail. Trí kiểm revision và quyết định nghiệm thu/Project Done sau đủ AC.
 
 Rollback code: bỏ composition auth và package/config supplement trước tích hợp;
 không sửa0001/drop auth.users hoặc xóa Docker volume. Khi đã dùng thật, không

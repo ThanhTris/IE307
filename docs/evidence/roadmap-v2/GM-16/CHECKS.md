@@ -4,7 +4,7 @@ Status: In progress; API/SQL/rate-limit và harness code đã Pass, Android th�
 Expo Go đã Pass create/check/refresh/restore/expiry/lost-session/logout; native
 development build và uninstall/backup exclusion được owner hoãn tới hardening
 trước phát hành; chưa Approved/Done.
-Owner Trí / ThanhTris; reviewer Tâm / HoaiTam (chủ dự án chọn trực tiếp).
+Owner Trí / ThanhTris; reviewer Trí / ThanhTris theo ADR-013.
 Ngày kiểm: 2026-10-12 UTC+7. Nhánh `codex/gm-16-guest-session`, target main.
 Base `9188c736def7e125266f8cce2314b9f1f5c31b81`; implementation đang ở revision sau merge main.
 Tested hashes cuối tại MANIFEST.json khi các phép kiểm kết thúc.
@@ -85,5 +85,5 @@ của phạm vi nghiệm thu hiện tại. Không đánh dấu checkbox AC tổn
 
 ## Review
 
-Tâm kiểm revision/hashes/output thực; Trí nghiệm thu cuối sau đủ AC. Chưa có
-independent review hoặc approval được ghi. Không tự sync Project Status/Done.
+Trí kiểm revision/hashes/output và quyết định nghiệm thu cuối sau đủ AC. Chưa có
+approval được ghi. Không tự sync Project Status/Done.

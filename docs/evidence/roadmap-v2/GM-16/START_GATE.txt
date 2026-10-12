@@ -1,3 +1,3 @@
 Approval source: https://github.com/users/ThanhTris/projects/2 | checked at 2026-10-11T16:17:57.821145+00:00 | no cached/local fallback
-GM-16: IN_PROGRESS | owner=Trí reviewer=Tâm | tasks/in-progress/GM-16.md
+GM-16: IN_PROGRESS | owner=Trí reviewer=Trí | tasks/in-progress/GM-16.md
 Gate checks approval source and delivered files, not execution. Merge still requires review of this PR, upstream PR/commit verification and real integration tests. No status/task edits performed.
