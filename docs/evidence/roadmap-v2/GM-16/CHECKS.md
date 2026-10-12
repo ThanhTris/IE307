@@ -10,7 +10,8 @@ Base `9188c736def7e125266f8cce2314b9f1f5c31b81`; implementation đang ở revisi
 Tested hashes cuối tại MANIFEST.json khi các phép kiểm kết thúc.
 Contract GM-16.1; input GM-03.1 / GM-06.1 schema0.1.0 / GM-07.1.
 Dataset N/A: auth không phụ thuộc verified catalogue; identities/tests synthetic.
-Windows, Node24.15.0, npm11.12.1, Expo57.0.27, SecureStore57.0.4.
+Windows, Node24.15.0, npm11.12.1, Expo57.0.28, Expo Router57.0.26,
+Jest Expo57.0.6, SecureStore57.0.4.
 Python bundled3.12.14 có Asia/Ho_Chi_Minh; Python3.14 ban đầu thiếu tzdata.
 
 ## Setup / kiểm lại
