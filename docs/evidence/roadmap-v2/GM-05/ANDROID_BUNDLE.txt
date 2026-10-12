@@ -5,11 +5,7 @@
 Using src/app as the root directory for Expo Router.
 Starting Metro Bundler
 
-| (node:17104) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
-| (Use `node --trace-warnings ...` to show where the warning was created)
-| (node:17104) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
-| (Use `node --trace-warnings ...` to show where the warning was created)
-Android Bundled 18313ms node_modules\expo-router\entry.js (1250 modules)
+Android Bundled 8299ms node_modules\expo-router\entry.js (1250 modules)
 
 › Assets (27):
 node_modules\@expo-google-fonts\material-symbols\400Regular\MaterialSymbols_400Regular.ttf (971KB)
@@ -35,3 +31,4 @@ _expo/static/js/android/entry-42eea398ceb30ba36205e7b609da7345.hbc (2.7MB)
 metadata.json (1.9KB)
 
 Exported: dist/android
+Something prevented Expo from exiting, forcefully exiting now.
