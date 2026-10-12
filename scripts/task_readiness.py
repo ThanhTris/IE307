@@ -269,14 +269,25 @@ def render_documents(src):
 
     path = 'docs/project/TEAM_AND_RESPONSIBILITIES.md'
     handles = {'Trí': 'ThanhTris', 'Trang': 'rosy179', 'Tâm': 'HoaiTam', 'Vinh': 'Vinh5905', 'Trung': 'TrungNQ2645', 'Tuấn': 'mtuan2491'}
-    text = '# Phân công đề xuất — food-v1\n\n' + notice + 'Một task chính/người; reviewer khác owner. Phân công vẫn proposed tới khi thành viên xác nhận.\n\n| Thành viên | Task đề xuất | GitHub |\n| --- | --- | --- |\n'
+    text = '# Phân công hiện hành — food-v1\n\n' + notice
+    text += ('Owner/assignee trong task được đồng bộ theo phân công của chủ dự án trên '
+             '[Project #2](https://github.com/users/ThanhTris/projects/2). '
+             'Lịch và Deadline hiện hành xem trên Project, không nhân bản lịch 4 tuần tại đây. '
+             'Phân công không tự là xác nhận nhận việc, approval hay Done; '
+             'assignment_status giữ nguyên cho tới xác nhận phù hợp. '
+             'Trí review/merge cuối cho mọi task, kể cả task Trí trực tiếp viết; không cần chỉ định người kiểm độc lập theo ADR-013. '
+             'Owner hiện hành không thay tác giả hoặc bằng chứng review lịch sử.\n\n'
+             '| Thành viên | Task được giao | GitHub |\n| --- | --- | --- |\n')
     for owner, handle in handles.items():
         owned = [tid for tid in ids if records[tid]['meta']['owner'] == owner]
         text += f'| {owner} | {links(owned,path)} | [@{handle}](https://github.com/{handle}) |\n'
+    owner = lambda tid: records[tid]['meta']['owner']
     text += (
-        '\nCodex soạn GM-01, Trí review baseline. Đợt nền: Tuấn GM-02 UI structure, Trí GM-03 BE structure, Vinh GM-04 fields. '
-        'Trang chuẩn bị inventory UI mẫu; Tâm/Trung review data/API plan. Sau đầu vào tương ứng: Trang GM-05 components, '
-        'Tâm GM-06 database, Trung GM-07 client/mock, Vinh GM-08 import. Trang/Tuấn chia màn GM-09..14 theo ca; '
+        f'\nCodex soạn GM-01, Trí review baseline. Đợt nền: {owner("GM-02")} GM-02 UI structure, '
+        f'{owner("GM-03")} GM-03 BE structure, {owner("GM-04")} GM-04 fields. '
+        f'Sau đầu vào tương ứng: {owner("GM-05")} GM-05 components, '
+        f'{owner("GM-06")} GM-06 database, {owner("GM-07")} GM-07 client/mock, {owner("GM-08")} GM-08 import. '
+        'Người được giao trong bảng chia màn GM-09..14 theo ca; '
         'BE và tích hợp theo task/owner trong bảng. Không yêu cầu người chưa có nền tự tạo scaffolding riêng. '
         'Đặt lịch review sớm, cùng owner xếp ca. Xem [lộ trình](IMPLEMENTATION_ROADMAP.md), [handoff](TASK_HANDOFFS.md) '
         'và [dependency](TASK_DEPENDENCIES.md).\n')

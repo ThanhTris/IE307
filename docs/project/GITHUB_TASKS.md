@@ -1,3 +1,5 @@
+> Phân công hiện hành đã đồng bộ theo [Project #2](https://github.com/users/ThanhTris/projects/2) ngày 2026-10-11; xem [bảng nhóm](TEAM_AND_RESPONSIBILITIES.md) và [issue mapping hiện hành](../../tasks/project-gate.json). Lịch/Deadline xem trên Project. Nội dung lịch sử bên dưới không dùng để giao việc hiện tại.
+
 > Lịch sử: các mã task trong tài liệu này thuộc thời điểm soạn/roadmap-v1 (hoặc mã cũ được ghi bên dưới). Lộ trình hiện hành: [roadmap-v2](IMPLEMENTATION_ROADMAP.md); không dùng mã trong tài liệu này để mở gate.
 
 > Lưu ý mã task: nội dung lịch sử bên dưới dùng mã cũ. Task hiện hành đã đánh số theo lộ trình; xem [bảng mã cũ–mới](TASK_RENUMBERING.md). Không suy task hiện tại từ số trong bản lịch sử.

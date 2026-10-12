@@ -1,10 +1,11 @@
 # Mẫu task có đầu vào/đầu ra — roadmap-v2
 
-Mỗi task có owner/reviewer khác nhau, một scope nghiệm thu. UI màn mock và nối API là task riêng. Tham khảo [lộ trình](../../docs/project/IMPLEMENTATION_ROADMAP.md).
+Mỗi task có owner và reviewer Trí (ThanhTris), một scope nghiệm thu; Trí tự review cả task mình làm theo [ADR-013](../../docs/architecture/decisions/ADR-013-project-owner-final-review.md), không cần người kiểm khác. UI màn mock và nối API là task riêng. Tham khảo [lộ trình](../../docs/project/IMPLEMENTATION_ROADMAP.md).
 
 ```yaml
 ---
 github_issue:
+proposed_reviewer: ThanhTris
 assignment_status: proposed
 id: GM-XX
 previous_ids:
@@ -12,7 +13,7 @@ numbering: roadmap-v2
 title: Đầu ra cần bàn giao
 status: backlog
 owner: Người làm
-reviewer: Người kiểm
+reviewer: Trí
 track: UI
 stage: screens
 contract_version: food-v1/roadmap-v2/GM-XX.1

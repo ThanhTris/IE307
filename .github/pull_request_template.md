@@ -1,6 +1,6 @@
 ## Task và phạm vi
 
-Task Markdown / owner / reviewer khác owner:
+Task Markdown / owner / reviewer Trí (ThanhTris, có thể cùng owner):
 Mã hiện hành roadmap-v2 / mã cũ nếu đối chiếu issue (xem docs/project/TASK_RENUMBERING.md):
 Assignment accepted / baseline / spec / ADR:
 Branch / target / PR cha (nếu stacked):
@@ -42,7 +42,7 @@ Scope và phần ngoài scope:
 - Artifact/commit/version bàn giao; task nhận đầu ra; blocker và owner:
 - Evidence mới dùng docs/evidence/roadmap-v2/GM-XX/; không ghi đè folder evidence mã cũ.
 
-## Review độc lập
+## Review cuối — Trí
 
 - [ ] Reviewer kiểm AC, cả hai gate và evidence cho revision PR hiện tại; AI không tự tick.
 - [ ] Trí nghiệm thu/chuyển Done trên Project; lưu review revision/evidence. Khi chuyển Markdown thành done vẫn cần review fields thật và sinh indexes; không bắt đồng bộ Markdown để mở downstream. Thay code sau review phải review lại.
@@ -73,5 +73,6 @@ Theo docs/project/TASK_OUTPUT_REQUIREMENTS.md và TASK_OUTPUT_CHECKLIST.md. CHEC
 
 - [ ] UI mở được trên Expo và hiển thị/tương tác các mục trong scope; giới hạn Expo Go/native ghi rõ, có screenshot/video thật.
 - [ ] API có Postman/curl/runner request suite và HTTP/body/error/state/version assertions; nền/contract/domain kiểm scope riêng, không đòi API task sau.
+- [ ] Đối chiếu docs/testing/MOBILE_API_TEST_MATRIX.md: tách server/unit/device; API producer ghi consumer/cases/endpoint setup, task Android có app → API thật → UI/server assertions và build/device/revision/evidence. Case device/native bắt buộc thiếu vẫn Not run, không suy Pass từ curl/CI/bundle và không thêm dependency ngược.
 - [ ] Data đủ field/schema/template/FK/unit/null/privacy/version và valid/invalid fixture; SQL/import/query thật khi task yêu cầu, BE không phải đoán field.
 - [ ] Output/evidence che secret/GPS/phiếu thật; AC bắt buộc chưa chạy/không đạt vẫn là blocker, không lấy CI/docs thay nghiệm thu.

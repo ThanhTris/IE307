@@ -556,10 +556,10 @@
       ],
       "verification": {
         "mode": "api",
-        "tool": "Postman hoặc curl/HTTP integration runner + session adapter tests",
+        "tool": "Postman hoặc curl/HTTP integration runner + session adapter tests + harness Android/Auth HTTP/SecureStore thật",
         "entrypoint": "Guest auth/session endpoints local và restore/refresh/logout adapter",
         "expected": "Thành công và lỗi auth có HTTP/body/assertions thật; secure-storage/logout boundary được kiểm riêng, không suy từ Postman.",
-        "cases": "guest/refresh/expiry/lost session/retry/rate-limit; spoof userId; logout clear private; không lộ token"
+        "cases": "guest/refresh/expiry/lost session/retry/rate-limit; spoof userId; logout clear private; không lộ token; Android thật: Auth HTTP/SecureStore, force-stop/restore/logout và expiry"
       }
     },
     {
@@ -621,11 +621,26 @@
         {
           "task": "GM-08",
           "artifact": "supabase/seed/import_food_data.py",
-          "gate": "start"
+          "gate": "merge"
+        },
+        {
+          "task": "GM-08",
+          "artifact": "supabase/seed/verified/manifest.json",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-08",
+          "artifact": "docs/data/DATASET_HANDOFF.md",
+          "gate": "merge"
         },
         {
           "task": "GM-17",
           "artifact": "supabase/migrations/0017_access_policies.sql",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-06",
+          "artifact": "supabase/migrations/0001_core_schema.sql",
           "gate": "start"
         }
       ],
@@ -665,6 +680,16 @@
         {
           "task": "GM-18",
           "artifact": "supabase/migrations/0018_food_eligibility.sql",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-06",
+          "artifact": "supabase/migrations/0001_core_schema.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
           "gate": "start"
         }
       ],
@@ -699,6 +724,16 @@
         {
           "task": "GM-19",
           "artifact": "supabase/migrations/0019_room_lifecycle.sql",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-06",
+          "artifact": "supabase/migrations/0001_core_schema.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
           "gate": "start"
         }
       ],
@@ -733,6 +768,16 @@
         {
           "task": "GM-20",
           "artifact": "supabase/migrations/0020_finalize.sql",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-06",
+          "artifact": "supabase/migrations/0001_core_schema.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
           "gate": "start"
         }
       ],
@@ -842,6 +887,11 @@
           "gate": "start"
         },
         {
+          "task": "GM-10",
+          "artifact": "mobile/src/features/context/screens/ContextScreen.tsx",
+          "gate": "merge"
+        },
+        {
           "task": "GM-16",
           "artifact": "mobile/src/data/auth/session.ts",
           "gate": "merge"
@@ -857,7 +907,7 @@
         "tool": "Expo Go shell + Expo Android/native + API runner",
         "entrypoint": "Màn Context dùng location adapter và discovery API thật",
         "expected": "Hiển thị quyền/manual/coverage/server time; raw GPS không gửi server/log; thực tế grant/deny trên môi trường hỗ trợ.",
-        "cases": "grant/deny/GPS-off/manual/outside/empty/offline; server-now/buffer; không cộng giờ lại"
+        "cases": "grant/deny/GPS-off/manual/outside/empty/offline; server-now/buffer; không cộng giờ lại; Android thật gọi API: endpoint/auth/network/lifecycle và đối chiếu state server theo ma trận"
       }
     },
     {
@@ -894,21 +944,26 @@
         {
           "task": "GM-16",
           "artifact": "mobile/src/data/auth/session.ts",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-19",
           "artifact": "supabase/migrations/0019_room_lifecycle.sql",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-21",
           "artifact": "supabase/migrations/0021_history.sql",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-24",
           "artifact": "mobile/src/features/context/services/location.ts",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
           "gate": "start"
         }
       ],
@@ -917,7 +972,7 @@
         "tool": "Expo Android + multi-user API runner",
         "entrypoint": "Home/Create/Join/Context/Preferences/Lobby nối repositories thật",
         "expected": "Các màn đã dựng mở được và dùng auth/room/context thật; hai máy cùng server snapshot, không fallback fixture.",
-        "cases": "2 máy create/join/ready/start/refetch; full/expired/network; context/roster/consent reset-ready; empty pool"
+        "cases": "2 máy create/join/ready/start/refetch; full/expired/network; context/roster/consent reset-ready; empty pool; Android thật gọi API: endpoint/auth/network/lifecycle và đối chiếu state server theo ma trận"
       }
     },
     {
@@ -942,11 +997,16 @@
         {
           "task": "GM-20",
           "artifact": "supabase/migrations/0020_finalize.sql",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-25",
           "artifact": "mobile/src/features/rooms/services/roomRepository.ts",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
           "gate": "start"
         }
       ],
@@ -955,7 +1015,7 @@
         "tool": "Expo Android + API/retry integration runner",
         "entrypoint": "Vote/FinalRound nối voteRepository thật",
         "expected": "UI thể hiện pending/unknown/ACK theo server, không tự winner/count pending; thực thi tối đa hai vòng.",
-        "cases": "button/gesture/undo/submit; 2–8 users; late ACK/timeout/retry/stale/version; remove-all"
+        "cases": "button/gesture/undo/submit; 2–8 users; late ACK/timeout/retry/stale/version; remove-all; Android thật gọi API: endpoint/auth/network/lifecycle và đối chiếu state server theo ma trận"
       }
     },
     {
@@ -979,11 +1039,16 @@
         {
           "task": "GM-18",
           "artifact": "supabase/migrations/0018_food_eligibility.sql",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-26",
           "artifact": "mobile/src/features/voting/services/voteRepository.ts",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
           "gate": "start"
         }
       ],
@@ -992,7 +1057,7 @@
         "tool": "Expo Android + API/query runner",
         "entrypoint": "Result/NoConsensus nối resultRepository và offering API thật",
         "expected": "Màn hiển thị server winner/tier/reason/offerings, lịch/nguồn/đơn vị; reconnect/refetch không đổi winner.",
-        "cases": "retry/back/reconnect; stale/changed/closed offering; no-consensus/new-session; Maps callbacks"
+        "cases": "retry/back/reconnect; stale/changed/closed offering; no-consensus/new-session; Maps callbacks; Android thật gọi API: endpoint/auth/network/lifecycle và đối chiếu state server theo ma trận"
       }
     },
     {
@@ -1020,21 +1085,26 @@
         {
           "task": "GM-21",
           "artifact": "supabase/migrations/0021_history.sql",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-22",
           "artifact": "supabase/migrations/0022_social.sql",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-23",
           "artifact": "supabase/functions/push-sender/index.ts",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-25",
           "artifact": "mobile/src/features/rooms/services/roomRepository.ts",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
           "gate": "start"
         }
       ],
@@ -1043,7 +1113,7 @@
         "tool": "Expo Android + multi-user API runner",
         "entrypoint": "Friends/Inbox/History nối API thật",
         "expected": "Ba màn hiển thị output thật và xử lý social/inbox/consent/delete theo server, không fixture production.",
-        "cases": "invite/accept/reject/unfriend; expired/outsider/lost-session; dedup/refetch; group ACL/delete/opt-out/network"
+        "cases": "invite/accept/reject/unfriend; expired/outsider/lost-session; dedup/refetch; group ACL/delete/opt-out/network; Android thật gọi API: endpoint/auth/network/lifecycle và đối chiếu state server theo ma trận"
       }
     },
     {
@@ -1068,11 +1138,26 @@
         {
           "task": "GM-23",
           "artifact": "supabase/functions/push-sender/index.ts",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-28",
           "artifact": "mobile/src/features/friends/services/socialRepository.ts",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-28",
+          "artifact": "mobile/src/features/inbox/services/inboxRepository.ts",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-14",
+          "artifact": "mobile/src/features/friends/screens/FriendsScreen.tsx",
           "gate": "start"
         }
       ],
@@ -1081,7 +1166,7 @@
         "tool": "Expo Go startup + development build thiết bị Android + API runner",
         "entrypoint": "Inbox/native push permission → register device → nhận remote push → tap/refetch",
         "expected": "Expo Go không crash và có chỉ dẫn giới hạn; remote delivery cold/warm phải có evidence thật trên build hỗ trợ.",
-        "cases": "grant/deny; remote delivery/cold/warm; duplicate/expired; token refresh/logout; thiếu credential→Not run, không local-notification thay remote"
+        "cases": "grant/deny; remote delivery/cold/warm; duplicate/expired; token refresh/logout; thiếu credential→Not run, không local-notification thay remote; Android thật gọi API: endpoint/auth/network/lifecycle và đối chiếu state server theo ma trận"
       }
     },
     {
@@ -1102,21 +1187,41 @@
         {
           "task": "GM-22",
           "artifact": "supabase/migrations/0022_social.sql",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-24",
           "artifact": "mobile/src/features/context/services/location.ts",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-25",
           "artifact": "mobile/src/features/rooms/services/roomRepository.ts",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-27",
           "artifact": "mobile/src/features/result/services/resultRepository.ts",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-09",
+          "artifact": "mobile/src/features/home/screens/HomeScreen.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-11",
+          "artifact": "mobile/src/features/rooms/screens/LobbyScreen.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-13",
+          "artifact": "mobile/src/features/result/screens/ResultScreen.tsx",
           "gate": "start"
         }
       ],
@@ -1125,7 +1230,7 @@
         "tool": "Expo Go UI + Android build phù hợp + API/link runner",
         "entrypoint": "Join QR/manual/incoming link → auth/confirm; Result → Maps/review/copy",
         "expected": "Các mục UI mở được; QR/link/Maps thật theo capability, không auto-join/ready hoặc chia GPS.",
-        "cases": "camera deny/manual; cold/warm/malformed/duplicate/allowlist; room full/expired; browser/copy fallback"
+        "cases": "camera deny/manual; cold/warm/malformed/duplicate/allowlist; room full/expired; browser/copy fallback; Android thật gọi API: endpoint/auth/network/lifecycle và đối chiếu state server theo ma trận"
       }
     },
     {
@@ -1146,12 +1251,42 @@
         {
           "task": "GM-26",
           "artifact": "mobile/src/features/voting/services/voteRepository.ts",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-28",
           "artifact": "mobile/src/features/friends/services/socialRepository.ts",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
           "gate": "start"
+        },
+        {
+          "task": "GM-12",
+          "artifact": "mobile/src/features/voting/screens/VoteScreen.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-14",
+          "artifact": "mobile/src/features/friends/screens/FriendsScreen.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-16",
+          "artifact": "mobile/src/data/auth/session.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-25",
+          "artifact": "mobile/src/features/rooms/services/roomRepository.ts",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-28",
+          "artifact": "mobile/src/features/history/services/historyRepository.ts",
+          "gate": "merge"
         }
       ],
       "verification": {
@@ -1159,7 +1294,7 @@
         "tool": "Expo Go startup + Android persistence/restart + API runner",
         "entrypoint": "UI pending/unknown/cache → process restart/offline/reconnect → server reconcile",
         "expected": "Trạng thái hiển thị đúng và SQLite/outbox/cache thực thi thật; snapshot trước replay, không nhóm offline giả.",
-        "cases": "restart; ACK/retry/stale/auth isolation; gap realtime; TTL/logout/cache<=50; schema upgrade/recovery"
+        "cases": "restart; ACK/retry/stale/auth isolation; gap realtime; TTL/logout/cache<=50; schema upgrade/recovery; Android thật gọi API: endpoint/auth/network/lifecycle và đối chiếu state server theo ma trận"
       }
     },
     {
@@ -1178,31 +1313,41 @@
         {
           "task": "GM-18",
           "artifact": "supabase/migrations/0018_food_eligibility.sql",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-20",
           "artifact": "supabase/migrations/0020_finalize.sql",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-21",
           "artifact": "supabase/migrations/0021_history.sql",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-22",
           "artifact": "supabase/migrations/0022_social.sql",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-23",
           "artifact": "supabase/functions/push-sender/index.ts",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-31",
           "artifact": "mobile/src/data/local/outbox.ts",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-06",
+          "artifact": "supabase/migrations/0001_core_schema.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
           "gate": "start"
         }
       ],
@@ -1233,33 +1378,53 @@
           "gate": "start"
         },
         {
+          "task": "GM-08",
+          "artifact": "supabase/seed/verified/manifest.json",
+          "gate": "start"
+        },
+        {
+          "task": "GM-08",
+          "artifact": "docs/data/DATASET_HANDOFF.md",
+          "gate": "start"
+        },
+        {
           "task": "GM-27",
           "artifact": "mobile/src/features/result/services/resultRepository.ts",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-28",
           "artifact": "mobile/src/features/friends/services/socialRepository.ts",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-29",
           "artifact": "mobile/src/features/inbox/services/nativePush.ts",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-30",
           "artifact": "mobile/src/features/rooms/services/joinLinks.ts",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-31",
           "artifact": "mobile/src/data/local/outbox.ts",
-          "gate": "start"
+          "gate": "merge"
         },
         {
           "task": "GM-32",
           "artifact": "docs/evidence/roadmap-v2/GM-32/REGRESSION.md",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-14",
+          "artifact": "mobile/src/features/friends/screens/FriendsScreen.tsx",
           "gate": "start"
         }
       ],
@@ -1268,7 +1433,7 @@
         "tool": "Expo/native Android end-to-end + API/data pilot",
         "entrypoint": "UI-01..13/15 và kịch bản 2/4/8 người, dataset coverage thực",
         "expected": "Screenshot/video và kết quả pilot có build/device/data revision; case thiếu người/credential ghi giới hạn, không bịa research.",
-        "cases": "loading/empty/error/font200/dark/TalkBack; multi-device; push/camera/restart; coverage/hours/freshness"
+        "cases": "loading/empty/error/font200/dark/TalkBack; multi-device; push/camera/restart; coverage/hours/freshness; đối chiếu ma trận API GM-16..23 trên điện thoại Android thật và release candidate"
       }
     },
     {
@@ -1317,8 +1482,18 @@
           "gate": "start"
         },
         {
+          "task": "GM-16",
+          "artifact": "mobile/src/data/auth/session.ts",
+          "gate": "merge"
+        },
+        {
           "task": "GM-28",
           "artifact": "mobile/src/features/friends/services/socialRepository.ts",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-28",
+          "artifact": "mobile/src/features/history/services/historyRepository.ts",
           "gate": "merge"
         },
         {
@@ -1332,7 +1507,7 @@
         "tool": "Expo Android + provider/auth API integration runner",
         "entrypoint": "Account link/recovery/history sync theo UI-14",
         "expected": "UI và response auth thật đúng identity mapping, conflict/recovery/history quyền; provider thiếu thì Not run phần tích hợp.",
-        "cases": "nonce/conflict/lost guest; logout/failure giữ guest; sync không đổi winner/quyền nhóm"
+        "cases": "nonce/conflict/lost guest; logout/failure giữ guest; sync không đổi winner/quyền nhóm; Android thật gọi API: endpoint/auth/network/lifecycle và đối chiếu state server theo ma trận"
       }
     },
     {
@@ -1462,7 +1637,108 @@
         "tool": "Expo Android mood UI + Postman/curl weather API + rank tests",
         "entrypoint": "Màn Context mood optional và weather-context theo public anchor/desiredAt",
         "expected": "UI mood opt-in/opt-out và weather source/timezone/observedAt/expiresAt/version hiện đúng; soft rank chỉ tập eligible.",
-        "cases": "timeout/stale/forecast-vs-observation; consent/TTL/opt-out; không override NO/REMOVE/coverage/hours; frozen pool"
+        "cases": "timeout/stale/forecast-vs-observation; consent/TTL/opt-out; không override NO/REMOVE/coverage/hours; frozen pool; Android thật gọi API: endpoint/auth/network/lifecycle và đối chiếu state server theo ma trận"
+      }
+    },
+    {
+      "new_id": "GM-39",
+      "previous_ids": [],
+      "title": "UI: cải thiện prototype HTML trước khi sửa app",
+      "track": "UI",
+      "stage": "prototype",
+      "outputs": [
+        "design/prototypes/gi-cung-duoc.html",
+        "docs/design/UI_REFINEMENT.md",
+        "docs/evidence/roadmap-v2/GM-39/CHECKS.md"
+      ],
+      "inputs": [
+        {
+          "task": "GM-05",
+          "artifact": "mobile/src/shared/theme/tokens.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-05",
+          "artifact": "mobile/src/shared/ui/index.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-09",
+          "artifact": "mobile/src/features/home/screens/HomeScreen.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-09",
+          "artifact": "mobile/src/features/rooms/screens/CreateRoomScreen.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-09",
+          "artifact": "mobile/src/features/rooms/screens/JoinRoomScreen.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-10",
+          "artifact": "mobile/src/features/context/screens/ContextScreen.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-10",
+          "artifact": "mobile/src/features/preferences/screens/PreferencesScreen.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-11",
+          "artifact": "mobile/src/features/rooms/screens/LobbyScreen.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-11",
+          "artifact": "mobile/src/features/rooms/screens/RoomStatusScreen.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-12",
+          "artifact": "mobile/src/features/voting/screens/VoteScreen.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-12",
+          "artifact": "mobile/src/features/voting/screens/FinalRoundScreen.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-13",
+          "artifact": "mobile/src/features/result/screens/ResultScreen.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-13",
+          "artifact": "mobile/src/features/result/screens/NoConsensusScreen.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-14",
+          "artifact": "mobile/src/features/friends/screens/FriendsScreen.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-14",
+          "artifact": "mobile/src/features/inbox/screens/InboxScreen.tsx",
+          "gate": "start"
+        },
+        {
+          "task": "GM-14",
+          "artifact": "mobile/src/features/history/screens/HistoryScreen.tsx",
+          "gate": "start"
+        }
+      ],
+      "verification": {
+        "mode": "html-prototype",
+        "tool": "Browser + responsive/keyboard/visual interaction checks",
+        "entrypoint": "design/prototypes/gi-cung-duoc.html trên browser qua local static server, dùng screen/scenario controls.",
+        "expected": "HTML tương tác đẹp và nhất quán hơn, đúng luồng/spec với nhãn mô phỏng; Trí duyệt bản HTML, chưa sửa app.",
+        "cases": "320/360/412px và màn rộng; light/dark; zoom200; keyboard/focus; reduced motion; loading/empty/error/disabled/unknown; navigation/vote/result mock."
       }
     }
   ]

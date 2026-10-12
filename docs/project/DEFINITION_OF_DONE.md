@@ -1,6 +1,6 @@
 # Definition of Done
 
-Trí nghiệm thu và chuyển Done trên Project sau khi AC/test của task đạt; task Trí viết vẫn cần người kiểm độc lập. Theo [ADR-011](../architecture/decisions/ADR-011-project-done-readiness.md), Done trên Project là xác nhận nghiệm thu cho dependency, không cần đồng bộ status Markdown để mở task tiếp. AI không tự đổi Done hoặc tạo approval. Nếu ghi task Markdown thành done, vẫn cần reviewer độc lập và quyết định/ngày/evidence thật.
+Trí nghiệm thu và chuyển Done trên Project sau khi AC/test của task đạt; Trí tự review task mình trực tiếp làm, không cần chỉ định người khác theo [ADR-013](../architecture/decisions/ADR-013-project-owner-final-review.md). Theo [ADR-011](../architecture/decisions/ADR-011-project-done-readiness.md), Done trên Project là xác nhận nghiệm thu cho dependency, không cần đồng bộ status Markdown để mở task tiếp. AI không tự đổi Done hoặc tạo approval. Nếu ghi task Markdown thành done, vẫn cần review thực tế của Trí và quyết định/ngày/evidence thật.
 
 - Theo [chuẩn đầu ra](TASK_OUTPUT_REQUIREMENTS.md), [checklist từng task](TASK_OUTPUT_CHECKLIST.md) và CHECKS.md: UI phải mở trên Expo thấy các mục/state/action thuộc scope; API phải có request/response/assertion thật bằng Postman/curl/runner; Data phải đủ field contract và kiểm schema/query/import đúng stage để BE dùng song song.
 - CHECKS.md/HANDOFF có tested revision/version/environment, cách mở/gọi/lệnh và artifact output thực tế. Not run/Fail của AC bắt buộc còn chặn Done; N/A chỉ phần ngoài scope được reviewer chấp nhận. Không báo request 200/empty output, placeholder hoặc runner 0 case thành hoàn tất nghiệp vụ.
@@ -10,6 +10,7 @@ Trí nghiệm thu và chuyển Done trên Project sau khi AC/test của task đ�
 - App: typecheck/lint/test liên quan và Android build/smoke; UI kiểm font scaling, TalkBack, dark/reduced motion, error/empty/loading.
 - Domain: NO exclusion, UNSET, 2 vòng, tie, retry/result stability; TypeScript/SQL dùng chung fixtures.
 - Backend: outsider/member/host quyền đúng, SQL transaction/concurrency, server expiry, cleanup, không token trong log.
+- Android–API: theo [ma trận kiểm trên điện thoại](../testing/MOBILE_API_TEST_MATRIX.md); server HTTP/SQL, unit/mock và device thật báo riêng. Task tích hợp có thao tác app → transport/API thật → UI/state server/assertion trên Android; native scope GM-16 kiểm qua harness, GM-31 kiểm persistent private cache, GM-33 đối chiếu coverage và GM-34 smoke APK. Thiếu device case bắt buộc chặn Done, không thêm dependency ngược về task UI tương lai.
 - Không còn blocker/critical do task; lỗi khác có owner/giới hạn được reviewer chấp nhận.
 - Spec/ADR/task và evidence đúng với thay đổi cuối; không dùng dữ liệu giả làm kết quả nghiên cứu.
 - Core v0.2: outbox restart/stale/auth isolation, remote push/inbox fallback, friend consent, history delete/group ACL và double-tap/button đều có native/backend evidence phù hợp.
@@ -28,3 +29,5 @@ Validator chỉ kiểm cấu trúc/truy vết, không chứng minh review có th
 ## Nghiệm thu theo scope roadmap-v2
 
 Task shell/component/màn mock được Done khi đạt đúng AC của task đó và review, không cần API/native của task sau. GM-02 không chờ camera/push/SQLite/APK; GM-05 không phải nghiệm thu gallery riêng; GM-09..14 bàn giao màn theo mẫu + mock đúng contract. Các task tích hợp GM-24..31 cần API/native thật theo AC. Mỗi task cung cấp file thực tế/lệnh dùng/version/commit/HANDOFF, người nhận kiểm đủ input trước làm; không dùng placeholder hoặc đổi mã để kế thừa approval. [Lộ trình](IMPLEMENTATION_ROADMAP.md).
+
+GM-39 chỉ nghiệm thu HTML tương tác đã chỉnh, browser checks/ảnh trước–sau và Trí duyệt revision; app/backend không được sửa trong scope này. Đọc brief/spec trước đề xuất. Không bắt Expo ở task prototype hoặc coi HTML đã chứng minh native/API; áp dụng thiết kế vào app chờ Trí giao scope riêng.

@@ -24,6 +24,7 @@ body:
     id: owner
     attributes:
       label: Owner và reviewer
+      description: Owner theo assignee Project; reviewer cuối là Trí (ThanhTris), kể cả task Trí trực tiếp làm theo ADR-013. Không cần chỉ định reviewer khác.
     validations:
       required: true
   - type: input

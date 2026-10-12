@@ -72,6 +72,12 @@ class ReadinessTests(unittest.TestCase):
                          ('READY_FOR_MERGE_REVIEW', []))
         state, blockers = gates.readiness(self.source, self.records(), 'GM-25')
         self.assertEqual(state, 'BLOCKED')
+        self.assertEqual(blockers, ['GM-09', 'GM-10', 'GM-11'])
+        for tid in ('GM-09', 'GM-10', 'GM-11'):
+            self.approve_in_memory(tid)
+        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-25')[0], 'READY_TO_CLAIM')
+        state, blockers = gates.readiness(self.source, self.records(), 'GM-25', 'merge', self.source)
+        self.assertEqual(state, 'BLOCKED')
         self.assertIn('GM-21', blockers)
 
     def test_approved_dependency_without_handoff_blocks(self):
@@ -183,10 +189,30 @@ class ReadinessTests(unittest.TestCase):
 
     def test_owner_change_makes_generated_indexes_stale(self):
         path = self.source.task_path('GM-02')
-        self.source.contents[path] = self.source.read(path).replace('owner: Tuấn', 'owner: Trang')
+        self.source.contents[path] = re.sub(r'^owner:.*$', 'owner: Trang', self.source.read(path), flags=re.M)
         result = gates.render_documents(self.source)
         name = 'docs/project/TEAM_AND_RESPONSIBILITIES.md'
         self.assertNotEqual(self.source.read(name), result[name])
+
+    def test_team_summary_uses_current_owners_not_hardcoded_assignments(self):
+        for tid, owner in (('GM-02', 'Trang'), ('GM-05', 'Vinh'), ('GM-07', 'Tâm'), ('GM-08', 'Trung')):
+            path = self.source.task_path(tid)
+            self.source.contents[path] = re.sub(r'^owner:.*$', f'owner: {owner}', self.source.read(path), flags=re.M)
+        text = gates.render_documents(self.source)['docs/project/TEAM_AND_RESPONSIBILITIES.md']
+        for expected in ('Trang GM-02 UI structure', 'Vinh GM-05 components',
+                         'Tâm GM-07 client/mock', 'Trung GM-08 import'):
+            self.assertIn(expected, text)
+        self.assertIn('Deadline hiện hành xem trên Project', text)
+
+    def test_independent_api_work_starts_before_integration_dependencies(self):
+        for tid in ('GM-01', 'GM-02', 'GM-03', 'GM-04', 'GM-06', 'GM-07', 'GM-15'):
+            self.approve_in_memory(tid)
+        for tid, merge_blocker in (('GM-18', 'GM-08'), ('GM-20', 'GM-19'), ('GM-32', 'GM-31')):
+            with self.subTest(task=tid):
+                self.assertEqual(gates.readiness(self.source, self.records(), tid)[0], 'READY_TO_CLAIM')
+                state, blockers = gates.readiness(self.source, self.records(), tid, 'merge', self.source)
+                self.assertEqual(state, 'BLOCKED')
+                self.assertIn(merge_blocker, blockers)
 
     def test_moved_task_links_are_repaired_without_changing_status(self):
         old, new = 'tasks/review/GM-01.md', 'tasks/done/GM-01.md'

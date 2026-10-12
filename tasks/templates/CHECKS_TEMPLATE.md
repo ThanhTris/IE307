@@ -22,6 +22,14 @@ UI: ảnh/video từ app thật, screen/state/action/device/build. API: method/p
 
 ## Bao phủ đầu ra
 
+### API trên Android (nếu task có scope device/app)
+
+Đối chiếu [ma trận Android–API](../../docs/testing/MOBILE_API_TEST_MATRIX.md). Tách kết quả server HTTP/SQL, unit/mock và điện thoại Android thật. Ghi API environment/endpoint không secret, app/API commit, model/Android/runtime/build, cách nối máy tính–điện thoại, thao tác → request/status/error → UI/state server/assertion và artifact đã che dữ liệu. Thiếu case device bắt buộc ghi Not run + owner; N/A chỉ ngoài scope, không suy Pass từ curl hoặc bundle.
+
+| Producer API / consumer / case | Device/runtime/build/revision | Thao tác/endpoint | Expected HTTP/UI/state server | Actual/assertion/artifact | Pass/Fail/Not run + owner |
+| --- | --- | --- | --- | --- | --- |
+| | | | | | Not run |
+
 | Artifact/schema field/endpoint/screen | Case/AC kiểm | Version/commit | Task nhận | Đã chạy lại từ clone sạch? |
 | --- | --- | --- | --- | --- |
 | | | | | |
@@ -32,4 +40,4 @@ Not run/Fail/N/A có lý do, việc cần làm và người phụ trách. N/A ch
 
 ## Review
 
-Reviewer đối chiếu output và revision thật theo [chuẩn đầu ra](../../docs/project/TASK_OUTPUT_REQUIREMENTS.md), [DoD](../../docs/project/DEFINITION_OF_DONE.md). Không tick Approved hoặc copy kết quả lịch sử sang revision mới; review độc lập dùng REVIEW_TEMPLATE.md và HANDOFF_TEMPLATE.md.
+Reviewer đối chiếu output và revision thật theo [chuẩn đầu ra](../../docs/project/TASK_OUTPUT_REQUIREMENTS.md), [DoD](../../docs/project/DEFINITION_OF_DONE.md). Không tick Approved hoặc copy kết quả lịch sử sang revision mới; review của Trí dùng REVIEW_TEMPLATE.md và HANDOFF_TEMPLATE.md.

@@ -28,7 +28,7 @@ Tạo/cập nhật token bằng quản lý credential hiện có; không đặt 
 - BLOCKED_ON_BASE: target thiếu/khác artifact, contract hoặc task-map entry; status/assignment Markdown khác nhau không tự là drift.
 - READY_FOR_MERGE_REVIEW: đầu vào trên target đạt; vẫn cần review AC của chính PR, kiểm PR/commit upstream và chạy tests tích hợp thật.
 
-Snapshot Project chỉ giữ trong RAM và in URL/thời điểm đọc; không ghi token/snapshot approval hoặc sửa status. Mapping [project-gate.json](../../tasks/project-gate.json) pin đủ issue GM-01..38, không đoán từ thứ tự issue hay lấy card cùng tên repo khác. Nếu đổi issue/scope phải cập nhật mapping và review lại; Done không tự xác định approved commit.
+Snapshot Project chỉ giữ trong RAM và in URL/thời điểm đọc; không ghi token/snapshot approval hoặc sửa status. Mapping [project-gate.json](../../tasks/project-gate.json) pin đủ issue GM-01..39, không đoán từ thứ tự issue hay lấy card cùng tên repo khác. Nếu đổi issue/scope phải cập nhật mapping và review lại; Done không tự xác định approved commit.
 
 ## Offline và CI
 

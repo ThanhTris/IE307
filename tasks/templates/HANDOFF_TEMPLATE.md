@@ -27,6 +27,7 @@ Theo [chuẩn đầu ra](../../docs/project/TASK_OUTPUT_REQUIREMENTS.md) và [ch
 - BE: request suite có local base URL/auth placeholder, setup/cleanup/lệnh hoặc import Postman, HTTP/body/error/state/version assertions và report thật; domain/contract/nền dùng runner đúng scope, không chờ task sau.
 - Data: field coverage/schema/template/FK/unit/null/privacy/version, valid/invalid fixtures, mapping/query/import/counts/hash/freshness; BE nhận đủ input để không đoán field.
 - Không lưu secret/phiếu thật/GPS; Not run/Fail là giới hạn/blocker thật, không đổi thành Pass vì CI hoặc có file.
+- API/mobile: theo [ma trận Android–API](../../docs/testing/MOBILE_API_TEST_MATRIX.md), ghi consumer/cases/người nhận, setup endpoint mà điện thoại truy cập được (khác Metro/localhost máy tính), auth placeholder/build/route-harness/cleanup; kết quả server/unit/device báo riêng. Case bắt buộc chưa chạy có owner/blocker, bàn giao không tự thay approval hoặc thêm dependency ngược.
 
 ## Checklist người nhận
 

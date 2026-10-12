@@ -1,6 +1,6 @@
 # Mẫu review và bàn giao hai gate
 
-Task / owner / reviewer độc lập:
+Task / owner / reviewer Trí (ThanhTris, có thể cùng owner):
 PR / revision / contract / dataset / migration version:
 Loại review: draft phần độc lập hay nghiệm thu toàn task?
 
@@ -30,7 +30,7 @@ Docs-only ghi N/A cho native/SQL có lý do. Với feature/data, mock/validator 
 
 ## Quyết định
 
-Reviewed-by: tên đúng reviewer khác owner
+Reviewed-by: Trí
 Reviewed-at: YYYY-MM-DD
 Decision: Pending
 Review-evidence: docs/evidence/roadmap-v2/GM-XX/REVIEW.md (file thật từ repo root)

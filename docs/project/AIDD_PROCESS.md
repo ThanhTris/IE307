@@ -1,6 +1,6 @@
 # AIDD — từ ý định đến bằng chứng
 
-Intent → Spec → Context → Patch plan → Implement → Verify → Independent review.
+Intent → Spec → Context → Patch plan → Implement → Verify → Trí review cuối.
 
 - Intent: kết quả thực tế cần đạt cho người chọn món, giới hạn và giả định.
 - Spec: ID yêu cầu, AC có thể kiểm, state machine, contract, quyền và tình huống lỗi.
@@ -8,7 +8,7 @@ Intent → Spec → Context → Patch plan → Implement → Verify → Independ
 - Patch plan: file sở hữu, contract version, phần độc lập với fixture và phần chờ tích hợp thật. Start deps chưa Done trên Project/thiếu output thì chưa dùng đầu vào đó; merge deps chưa xong vẫn được viết phần độc lập đã chốt.
 - Implement: code theo feature/domain/data; không để screen quyết định winner.
 - Verify: evidence thực tế cho từng AC; phân biệt test không chạy, test fail và test pass.
-- Review: người khác owner xác nhận; AI không tự đánh Done. Cập nhật task/spec/ADR nếu đổi quyết định.
+- Review: Trí xác nhận cho mọi task, kể cả task Trí trực tiếp làm theo [ADR-013](../architecture/decisions/ADR-013-project-owner-final-review.md); AI không tự đánh Done. Cập nhật task/spec/ADR nếu đổi quyết định.
 
 [Mẫu task](../../tasks/templates/TASK_TEMPLATE.md), [DoD](DEFINITION_OF_DONE.md), [traceability](../specs/TRACEABILITY.md).
 
