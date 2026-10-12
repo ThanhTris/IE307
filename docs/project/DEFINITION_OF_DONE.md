@@ -10,6 +10,7 @@ Trí nghiệm thu và chuyển Done trên Project sau khi AC/test của task đ�
 - App: typecheck/lint/test liên quan và Android build/smoke; UI kiểm font scaling, TalkBack, dark/reduced motion, error/empty/loading.
 - Domain: NO exclusion, UNSET, 2 vòng, tie, retry/result stability; TypeScript/SQL dùng chung fixtures.
 - Backend: outsider/member/host quyền đúng, SQL transaction/concurrency, server expiry, cleanup, không token trong log.
+- Android–API: theo [ma trận kiểm trên điện thoại](../testing/MOBILE_API_TEST_MATRIX.md); server HTTP/SQL, unit/mock và device thật báo riêng. Task tích hợp có thao tác app → transport/API thật → UI/state server/assertion trên Android; native scope GM-16 kiểm qua harness, GM-31 kiểm persistent private cache, GM-33 đối chiếu coverage và GM-34 smoke APK. Thiếu device case bắt buộc chặn Done, không thêm dependency ngược về task UI tương lai.
 - Không còn blocker/critical do task; lỗi khác có owner/giới hạn được reviewer chấp nhận.
 - Spec/ADR/task và evidence đúng với thay đổi cuối; không dùng dữ liệu giả làm kết quả nghiên cứu.
 - Core v0.2: outbox restart/stale/auth isolation, remote push/inbox fallback, friend consent, history delete/group ACL và double-tap/button đều có native/backend evidence phù hợp.
@@ -28,3 +29,5 @@ Validator chỉ kiểm cấu trúc/truy vết, không chứng minh review có th
 ## Nghiệm thu theo scope roadmap-v2
 
 Task shell/component/màn mock được Done khi đạt đúng AC của task đó và review, không cần API/native của task sau. GM-02 không chờ camera/push/SQLite/APK; GM-05 không phải nghiệm thu gallery riêng; GM-09..14 bàn giao màn theo mẫu + mock đúng contract. Các task tích hợp GM-24..31 cần API/native thật theo AC. Mỗi task cung cấp file thực tế/lệnh dùng/version/commit/HANDOFF, người nhận kiểm đủ input trước làm; không dùng placeholder hoặc đổi mã để kế thừa approval. [Lộ trình](IMPLEMENTATION_ROADMAP.md).
+
+GM-39 chỉ nghiệm thu HTML tương tác đã chỉnh, browser checks/ảnh trước–sau và Trí duyệt revision; app/backend không được sửa trong scope này. Đọc brief/spec trước đề xuất. Không bắt Expo ở task prototype hoặc coi HTML đã chứng minh native/API; áp dụng thiết kế vào app chờ Trí giao scope riêng.

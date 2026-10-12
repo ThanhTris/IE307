@@ -2,7 +2,7 @@
 
 Sinh từ task bằng `python scripts/task_readiness.py --write-docs`; không sửa tay. `--check-docs` kiểm độ mới. Đây là metadata/gate chẩn đoán local, không phải trạng thái GitHub. Gate thực tế đọc Done live trên Project theo ADR-011; xem docs/project/PROJECT_READINESS.md.
 
-38 task sau GM-00: 34 P0 (gồm GM-01), 1 P1, 3 P2. Mã roadmap-v2 tăng theo lộ trình; mọi dependency có số nhỏ hơn task. Owner/reviewer là đề xuất; không kế thừa approval khi đổi scope.
+39 task sau GM-00: 34 P0 (gồm GM-01), 2 P1, 3 P2. Mã roadmap-v2 tăng theo lộ trình; mọi dependency có số nhỏ hơn task. Owner/reviewer là đề xuất; không kế thừa approval khi đổi scope.
 
 | Task | Luồng / bước | Phạm vi | Owner / reviewer | Mức/cỡ | Status | Gate bắt đầu | Start deps | Merge deps | Song song |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -44,5 +44,6 @@ Sinh từ task bằng `python scripts/task_readiness.py --write-docs`; không s�
 | [GM-36](GM-36.md) | EXTENSION / extension | P2: OCR menu qua quy trình nhập dữ liệu | Tâm / Trí | P2/M | backlog | BLOCKED | [GM-04](GM-04.md), [GM-07](GM-07.md) | [GM-04](GM-04.md), [GM-07](GM-07.md), [GM-08](../in-progress/GM-08.md), [GM-34](GM-34.md) | [GM-28](GM-28.md), [GM-31](GM-31.md), [GM-37](GM-37.md) |
 | [GM-37](GM-37.md) | EXTENSION / extension | P2: AI hiểu sở thích | Tuấn / Trí | P2/M | backlog | BLOCKED | [GM-04](GM-04.md), [GM-07](GM-07.md) | [GM-04](GM-04.md), [GM-07](GM-07.md), [GM-34](GM-34.md) | [GM-36](GM-36.md) |
 | [GM-38](GM-38.md) | EXTENSION / extension | P2: weather và mood tự khai để xếp hạng | Tâm / Trí | P2/M | backlog | BLOCKED | [GM-04](GM-04.md), [GM-07](GM-07.md) | [GM-04](GM-04.md), [GM-07](GM-07.md), [GM-18](GM-18.md), [GM-21](GM-21.md), [GM-34](GM-34.md) | [GM-35](GM-35.md) |
+| [GM-39](GM-39.md) | UI / prototype | UI: cải thiện prototype HTML trước khi sửa app | Trang / Trí | P1/M | backlog | BLOCKED | [GM-05](GM-05.md), [GM-09](GM-09.md), [GM-10](GM-10.md), [GM-11](GM-11.md), [GM-12](GM-12.md), [GM-13](GM-13.md), [GM-14](GM-14.md) | [GM-05](GM-05.md), [GM-09](GM-09.md), [GM-10](GM-10.md), [GM-11](GM-11.md), [GM-12](GM-12.md), [GM-13](GM-13.md), [GM-14](GM-14.md) | — |
 
 [Hai gate và thứ tự merge](../../docs/project/TASK_DEPENDENCIES.md) · [Đầu vào/đầu ra](../../docs/project/TASK_HANDOFFS.md) · [Mã cũ–mới](../../docs/project/TASK_RENUMBERING.md). Merge cần cả start deps và merge deps. Song song chỉ áp dụng phần độc lập được ghi trong task; không tự xác nhận nhận việc.

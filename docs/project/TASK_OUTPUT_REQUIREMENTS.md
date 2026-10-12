@@ -7,7 +7,7 @@
 ## Quy tắc chung
 
 - File tồn tại, screenshot thiết kế, HTTP 200 hoặc CI xanh riêng lẻ chưa đủ. Phải đối chiếu input → expected → actual và assertions của chính scope.
-- Mỗi task GM-01..38 bàn giao `docs/evidence/roadmap-v2/GM-XX/CHECKS.md` theo [mẫu checks](../../tasks/templates/CHECKS_TEMPLATE.md), kèm HANDOFF. Output bổ sung này có trong task map và gate kiểm sự hiện diện khi Done/upstream được dùng.
+- Mỗi task GM-01..39 bàn giao `docs/evidence/roadmap-v2/GM-XX/CHECKS.md` theo [mẫu checks](../../tasks/templates/CHECKS_TEMPLATE.md), kèm HANDOFF. Output bổ sung này có trong task map và gate kiểm sự hiện diện khi Done/upstream được dùng.
 - CHECKS ghi revision, contract/schema/dataset version nếu áp dụng, công cụ và phiên bản, lệnh/route/request, environment, output thực tế và Pass/Fail/Not run. Screenshot/video/log/report phải có đường dẫn thật hoặc artifact truy cập được cho reviewer.
 - Chỉ ghi Pass sau kiểm thực tế; thiếu device/Docker/credential/data ghi Not run + blocker/owner. Not run của AC bắt buộc không cho task Done. N/A chỉ cho phần ngoài scope, có lý do reviewer chấp nhận.
 - Không commit/log token, service-role, raw phiếu thật, GPS hoặc dữ liệu cá nhân. HTTP dùng biến môi trường/placeholder auth; output che secret. Input phiếu trong ví dụ phải là fixture tổng hợp, không phải phiếu người dùng.
@@ -19,10 +19,17 @@
 - GM-02: kiểm cây thư mục, route/provider boundary, strict tooling và package boundary của shell UI bằng code-structure checks. Expo Go/Metro smoke là bằng chứng bổ sung; chưa yêu cầu thiết bị để chốt task nền và chưa yêu cầu màn nghiệp vụ.
 - GM-05: từng component trong scope có cách xem state/props/events trên Expo trong ví dụ ghép từ mẫu; gallery riêng không là sản phẩm bắt buộc. Không chỉ export component mà không có cách mở xem.
 - GM-09..14: mọi màn được liệt kê phải có route/navigation chạy được trên Expo Go. CHECKS ghi cách mở từng màn, scenario fixture, thao tác, expected/actual, screenshot/video theo AC. Fixture có nhãn mock; loading/empty/error và state tương tác liên quan phải xem được.
+- GM-39: scope riêng là prototype HTML, không sửa app. Đọc brief dự án/spec, audit và trình hướng để Trí chốt; sửa HTML/CSS/mock JS, mở browser kiểm responsive/theme/zoom/focus/luồng/states, có ảnh trước–sau/CHECKS/HANDOFF. Không đòi Expo/API/native ở task này; không dùng HTML miễn nghiệm thu app của các task khác. Áp dụng mẫu mới vào RN chờ Trí giao scope sau.
 - GM-24..31/35/38: các mục UI mở được trên môi trường Expo; tích hợp dùng API thật, không production fallback fixture. Shell/luồng cơ bản vẫn mở trên Expo Go; capability không được Expo Go hỗ trợ phải có guard/chỉ dẫn và nghiệm thu trên development/native build phù hợp. Không lấy Expo Go làm chứng cứ remote push hoặc persistence/native chưa chạy.
 - Typecheck/lint/component test/bundle bổ sung bằng chứng, không thay mở app thật. TalkBack/font scaling/dark/safe area/48dp theo scope; không bắt task shell chờ QA toàn bộ app.
 
 ## BE — request chạy thật và output có assertion
+
+### Android gọi API — không suy từ Postman
+
+Theo [ma trận Android–API](../testing/MOBILE_API_TEST_MATRIX.md) được chủ dự án yêu cầu ngày 2026-10-12: tách server HTTP/SQL, mobile unit/mock và Android app gọi API thật. GM-16 có native session harness trong scope; GM-24..31 kiểm API từ từng luồng app; GM-33 tổng hợp coverage/release candidate và GM-34 kiểm APK. HANDOFF API GM-16..23 ghi consumer/cases/setup endpoint điện thoại; không tạo dependency ngược BE → UI tương lai. AC native đã bắt buộc ở producer vẫn phải đạt, chưa có app không tự miễn AC.
+
+Case device có endpoint truy cập được, runtime/build/device/revision, thao tác → request/status/error → UI/state server và evidence/assertion che secret. Ít nhất một điện thoại Android thật cho nghiệm thu tích hợp; dùng thêm client/giả lập đúng kịch bản nhiều người. Localhost máy tính, Metro chạy hoặc bundle/unit test Pass không chứng minh device API/SecureStore/SQLite/push đã chạy. Thiếu case bắt buộc ghi Not run và chặn Done; không dồn mọi phép kiểm đến GM-33.
 
 - Endpoint task API có bộ request tái lập trong `supabase/tests/http/GM-XX.http` hoặc artifact tương đương được task map chốt trước code. Có base URL local, identity/role placeholder, preconditions/setup/cleanup chỉ local, method/path/headers/body, expected HTTP status và expected response fields/error codes.
 - Postman, curl/HTTP runner hoặc integration test đều hợp lệ; không bắt mua/cài Postman. HANDOFF chỉ rõ lệnh/import/file và cách tạo identity không chứa token thật. Test payload khác nhau theo outsider/member/host khi liên quan.

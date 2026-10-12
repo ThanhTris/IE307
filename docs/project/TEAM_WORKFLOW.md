@@ -16,7 +16,7 @@ GM-01 đã được ghi nhận duyệt theo xác nhận và ủy quyền trực 
 
 ## Đầu ra phải chạy và kiểm được
 
-Theo [chuẩn đầu ra](TASK_OUTPUT_REQUIREMENTS.md) và [checklist 38 task](TASK_OUTPUT_CHECKLIST.md): UI mở trên Expo và hiển thị/điều khiển được các mục trong scope; API có Postman/curl/runner request-response-assertions thật; Data đủ field/schema/template/fixture/version cho BE nhận làm song song. Task nền/contract/domain kiểm đúng scope, không chờ API/tính năng của task sau. Native ngoài Expo Go có guard và evidence development build riêng.
+Theo [chuẩn đầu ra](TASK_OUTPUT_REQUIREMENTS.md) và [checklist 39 task](TASK_OUTPUT_CHECKLIST.md): UI mở trên Expo và hiển thị/điều khiển được các mục trong scope; API có Postman/curl/runner request-response-assertions thật; Data đủ field/schema/template/fixture/version cho BE nhận làm song song. Task nền/contract/domain kiểm đúng scope, không chờ API/tính năng của task sau. Native ngoài Expo Go có guard và evidence development build riêng.
 
 Mỗi task bàn giao CHECKS.md theo [mẫu checks](../../tasks/templates/CHECKS_TEMPLATE.md) và HANDOFF, có đường mở/gọi/lệnh từ clone sạch, input/expected/actual/Pass-Fail-Not run và artifact thực tế đã che secret. Không ghi Done nếu AC bắt buộc còn Not run/Fail; file tồn tại hoặc docs validator xanh không thay phép kiểm thật. [Plan GM-02/03](FOUNDATION_IMPLEMENTATION_PLAN.md) ghi root BE tooling/mobile tooling và các phép smoke nền.
 
@@ -24,7 +24,7 @@ Mỗi task bàn giao CHECKS.md theo [mẫu checks](../../tasks/templates/CHECKS_
 
 Start dependency chặn phần dùng đầu vào đó. Merge dependency là phần chỉ cần khi tích hợp/nghiệm thu task; merge luôn cộng start deps. Ví dụ GM-07 soạn client/mock sau dictionary và cấu trúc, đối chiếu schema GM-06 trước merge. GM-24 có thể soạn adapter native theo contract rồi nghiệm thu cùng auth/eligibility API sau.
 
-Mọi dependency có ID nhỏ hơn task hiện tại. Merge tăng dần 01..38 luôn hợp lệ; không cần chờ task không liên quan nếu chọn merge theo graph. `parallel_with` chỉ cặp phối hợp: khác owner, không có start ancestor, có thể có quan hệ merge trước/sau. Chỉ chạy song song khi đủ input, có người và tách file rõ. Cùng owner xếp ca.
+Mọi dependency có ID nhỏ hơn task hiện tại. Merge tăng dần 01..39 luôn hợp lệ; không cần chờ task không liên quan nếu chọn merge theo graph. `parallel_with` chỉ cặp phối hợp: khác owner, không có start ancestor, có thể có quan hệ merge trước/sau. Chỉ chạy song song khi đủ input, có người và tách file rõ. Cùng owner xếp ca.
 
 ## File ownership
 
@@ -48,7 +48,7 @@ Task màn thêm route và feature file của mình, dùng components/repository 
 5. Trí kiểm AC, kể cả task Trí trực tiếp làm, và [DoD](DEFINITION_OF_DONE.md) cho revision hiện tại; Trí nghiệm thu/chuyển Done trên Project. AI không tự chuyển Done. Hồ sơ review là bằng chứng nên lưu; khi cập nhật Markdown thành done vẫn cần approval fields/evidence thật và sinh indexes. Không bắt bước đồng bộ Markdown này để mở downstream. Done không đồng nghĩa code đã vào target.
 6. Bàn giao [HANDOFF](../../tasks/templates/HANDOFF_TEMPLATE.md) và tag task nhận tiếp trong báo cáo/PR; thiếu đầu ra thì downstream vẫn bị chặn.
 
-Không bắt nghiệm thu production/APK cho task shell/mock. Mock không đóng AC của task API/native. P1/P2 merge sau GM-34, không chặn release.
+Không bắt nghiệm thu production/APK cho task shell/mock. Mock không đóng AC của task API/native. EXTENSION GM-35..38 P1/P2 merge sau GM-34, không chặn release. GM-39 là thiết kế lại HTML bổ sung, ưu tiên sau GM-05/GM-09..14, không chờ core và không tạo dependency ngược; đọc brief/spec, Trí chốt hướng rồi chỉnh HTML/kiểm browser, chưa sửa app.
 
 ## Evidence và kiểm tra repo
 

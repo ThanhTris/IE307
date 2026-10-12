@@ -163,7 +163,7 @@ def validate_roadmap(src: Source, records: dict) -> tuple[list[str], dict]:
         previous_ids = {Path(path).stem for path in snapshot['tasks']}
         covered = set()
         track_stages = {
-            'PLAN': {'baseline'}, 'UI': {'structure', 'components', 'screens'},
+            'PLAN': {'baseline'}, 'UI': {'structure', 'components', 'screens', 'prototype'},
             'DATA': {'fields', 'database', 'import'},
             'BE': {'structure', 'api-contract', 'implementation'},
             'INTEGRATION': {'native', 'integration'}, 'QA': {'regression', 'qa'},
@@ -218,6 +218,7 @@ def validate_roadmap(src: Source, records: dict) -> tuple[list[str], dict]:
                 ('UI', 'structure'): {'code-structure'},
                 ('UI', 'components'): {'expo-go'},
                 ('UI', 'screens'): {'expo-go'},
+                ('UI', 'prototype'): {'html-prototype'},
                 ('DATA', 'fields'): {'data-contract'},
                 ('DATA', 'database'): {'data-schema'},
                 ('DATA', 'import'): {'data-import'},
@@ -234,6 +235,10 @@ def validate_roadmap(src: Source, records: dict) -> tuple[list[str], dict]:
             mode = verification.get('mode')
             if mode not in allowed_modes.get((entry['track'], entry['stage']), set()):
                 errors.append(f'{tid}: verification mode does not match track/stage')
+            if (entry['track'], entry['stage']) == ('UI', 'prototype'):
+                if (not any(path.endswith('.html') for path in outputs)
+                        or any(path.startswith(('mobile/', 'supabase/')) for path in outputs)):
+                    errors.append(f'{tid}: HTML prototype must output HTML, not app/backend code')
             if '## Đầu ra chạy được và nghiệm thu' not in text:
                 errors.append(f'{tid}: missing runnable output acceptance section')
             if any(value not in text for value in verification.values()):

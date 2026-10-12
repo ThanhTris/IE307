@@ -458,6 +458,27 @@ class ManifestValidationTests(unittest.TestCase):
         self.source.contents['tasks/task-id-map.json'] = json.dumps(mapping)
         self.assertIn('verification mode does not match track/stage', self.errors())
 
+    def test_html_prototype_cannot_output_app_code(self):
+        mapping = validator.roadmap(self.source)
+        entry = next(item for item in mapping['entries'] if item['new_id'] == 'GM-39')
+        entry['outputs'].append('mobile/src/shared/theme/tokens.ts')
+        self.source.contents['tasks/task-id-map.json'] = json.dumps(mapping)
+        self.assertIn('HTML prototype must output HTML, not app/backend code', self.errors())
+
+    def test_html_prototype_cannot_skip_html_output(self):
+        mapping = validator.roadmap(self.source)
+        entry = next(item for item in mapping['entries'] if item['new_id'] == 'GM-39')
+        entry['outputs'] = [path for path in entry['outputs'] if not path.endswith('.html')]
+        self.source.contents['tasks/task-id-map.json'] = json.dumps(mapping)
+        self.assertIn('HTML prototype must output HTML, not app/backend code', self.errors())
+
+    def test_app_screen_cannot_use_html_verification(self):
+        mapping = validator.roadmap(self.source)
+        entry = next(item for item in mapping['entries'] if item['new_id'] == 'GM-09')
+        entry['verification']['mode'] = 'html-prototype'
+        self.source.contents['tasks/task-id-map.json'] = json.dumps(mapping)
+        self.assertIn('verification mode does not match track/stage', self.errors())
+
     def test_missing_checks_output_is_rejected(self):
         mapping = validator.roadmap(self.source)
         mapping['entries'][3]['outputs'].remove('docs/evidence/roadmap-v2/GM-04/CHECKS.md')

@@ -6,11 +6,11 @@ Baseline food-v1/roadmap-v2 • cập nhật 2026-10-10. GM-00 đã review v0.2;
 
 ## Đọc để hiểu dự án
 
-Task đã đánh số theo lộ trình GM-01 → GM-38; dependency chỉ trỏ số nhỏ hơn. [Bảng mã cũ–mới](docs/project/TASK_RENUMBERING.md) giúp tra issue/evidence cũ; không dùng mã cũ để nhận task hiện tại.
+Task đã đánh số theo lộ trình GM-01 → GM-39; dependency chỉ trỏ số nhỏ hơn. [Bảng mã cũ–mới](docs/project/TASK_RENUMBERING.md) giúp tra issue/evidence cũ; không dùng mã cũ để nhận task hiện tại.
 
 1. [Mô tả hệ thống cho cả nhóm](docs/product/SYSTEM_OVERVIEW.md).
 2. [PRD](docs/product/PRODUCT_REQUIREMENTS.md), [21 yêu cầu chức năng](docs/product/FUNCTIONAL_REQUIREMENTS.md), [spec index](docs/specs/README.md).
-3. [38 task và trạng thái](docs/project/TASK_SUMMARY.md), [tiến độ theo dependency](docs/project/PROJECT_PLAN.md), [phân công đề xuất](docs/project/TEAM_AND_RESPONSIBILITIES.md).
+3. [39 task và trạng thái](docs/project/TASK_SUMMARY.md), [tiến độ theo dependency](docs/project/PROJECT_PLAN.md), [phân công đề xuất](docs/project/TEAM_AND_RESPONSIBILITIES.md).
 4. [Kế hoạch UI](docs/project/UI_IMPLEMENTATION_PLAN.md), [test plan](docs/testing/TEST_PLAN.md), [AIDD/DoD](docs/project/TEAM_WORKFLOW.md).
 5. [Kiến trúc](docs/architecture/SYSTEM_ARCHITECTURE.md), [data](docs/architecture/DATA_MODEL.md), [API](docs/architecture/API_CONTRACT.md), [nghiên cứu 8 đối thủ](docs/research/LECTURER_APPS_REVIEW_2026-10-07.md).
 
@@ -29,7 +29,7 @@ data-preparation/ notebooks và công cụ khảo sát/xử lý dữ liệu
 
 Kiểm tài liệu: `python scripts/validate_repository.py`, `git diff --check`. Validator không thay independent review/native evidence.
 
-Chạy UI: theo [mobile README](mobile/README.md), `cd mobile`, `npm ci`, `npm start` (Expo Go LAN). Chạy BE: theo [Supabase README](supabase/README.md), tại root `npm ci`, bật Docker Linux engine, `npm run backend:start`, `npm run backend:smoke`, `npm run backend:test`. [Chuẩn output UI/BE/Data](docs/project/TASK_OUTPUT_REQUIREMENTS.md) và [checklist 38 task](docs/project/TASK_OUTPUT_CHECKLIST.md) ghi phép nghiệm thu từng task, không chỉ file/checkbox.
+Chạy UI: theo [mobile README](mobile/README.md), `cd mobile`, `npm ci`, `npm start` (Expo Go LAN). Chạy BE: theo [Supabase README](supabase/README.md), tại root `npm ci`, bật Docker Linux engine, `npm run backend:start`, `npm run backend:smoke`, `npm run backend:test`. [Chuẩn output UI/BE/Data](docs/project/TASK_OUTPUT_REQUIREMENTS.md) và [checklist 39 task](docs/project/TASK_OUTPUT_CHECKLIST.md) ghi phép nghiệm thu từng task, không chỉ file/checkbox.
 [Chuẩn bị dữ liệu](data-preparation/README.md): khảo sát thực đơn khu Thủ Đức cũ, chuẩn hóa tên món và truy vết về menu nguồn. Dữ liệu cục bộ cùng CSV sinh ra nằm trong thư mục datasets được Git bỏ qua.
 
 [Prototype HTML](design/prototypes/gi-cung-duoc.html) không là bằng chứng đáp ứng food-v1. Mở bằng browser hoặc local HTTP; nó không chứng minh QR/push/SQL/realtime. [Bắt đầu](docs/project/START_HERE.md).

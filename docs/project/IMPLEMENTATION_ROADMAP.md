@@ -1,6 +1,6 @@
 # Lộ trình triển khai UI–BE–Data — roadmap-v2
 
-2026-10-10. Chủ dự án yêu cầu chia lại task sau thử nghiệm sandbox: tạo nền trước, component/contract tiếp theo, hoàn thiện tính năng rồi tích hợp. Đây là kế hoạch hiện hành; 38 task sau GM-00, gồm 34 P0 (kể cả GM-01 đã xác nhận duyệt), 1 P1 và 3 P2. [Tổng hợp task/owner](TASK_SUMMARY.md) · [dependency](TASK_DEPENDENCIES.md) · [mapping](TASK_RENUMBERING.md).
+2026-10-10. Chủ dự án yêu cầu chia lại task sau thử nghiệm sandbox: tạo nền trước, component/contract tiếp theo, hoàn thiện tính năng rồi tích hợp. Đây là kế hoạch hiện hành; 39 task sau GM-00, gồm 34 P0 (kể cả GM-01 đã xác nhận duyệt), 2 P1 và 3 P2. [Tổng hợp task/owner](TASK_SUMMARY.md) · [dependency](TASK_DEPENDENCIES.md) · [mapping](TASK_RENUMBERING.md).
 
 ## Ba luồng và đầu ra nhận được
 
@@ -56,8 +56,13 @@ Phân công đồng bộ theo assignee hiện hành trên [Project #2](https://g
 | [GM-36](../../tasks/backlog/GM-36.md) | EXTENSION / extension | P2: OCR menu qua quy trình nhập dữ liệu | Tâm / Trí |
 | [GM-37](../../tasks/backlog/GM-37.md) | EXTENSION / extension | P2: AI hiểu sở thích | Tuấn / Trí |
 | [GM-38](../../tasks/backlog/GM-38.md) | EXTENSION / extension | P2: weather và mood tự khai để xếp hạng | Tâm / Trí |
+| [GM-39](../../tasks/backlog/GM-39.md) | UI / prototype | UI: cải thiện prototype HTML trước khi sửa app | Trang / Trí |
 
-Merge theo số tăng dần 01 → 38 luôn hợp lệ vì mọi prerequisite có số nhỏ hơn. Tuy vậy, không phải task 10 phải chờ tất cả 01..09: chỉ chờ đầu vào được khai báo; những task độc lập có thể làm/merge cùng đợt. Nếu chủ dự án chọn merge tuyệt đối theo số, các nhánh vẫn được làm song song khi start inputs đã có. Không chạy task có prerequisite chưa merge bằng cách dựng lại scaffold hoặc đoán API.
+Merge theo số tăng dần 01 → 39 luôn hợp lệ vì mọi prerequisite có số nhỏ hơn. Tuy vậy, không phải task 10 phải chờ tất cả 01..09: chỉ chờ đầu vào được khai báo; những task độc lập có thể làm/merge cùng đợt. Nếu chủ dự án chọn merge tuyệt đối theo số, các nhánh vẫn được làm song song khi start inputs đã có. Không chạy task có prerequisite chưa merge bằng cách dựng lại scaffold hoặc đoán API.
+
+## Task UI bổ sung — GM-39
+
+[GM-39](../../tasks/backlog/GM-39.md) do Trang thực hiện, Trí review, P1 thiết kế lại prototype HTML nhưng ưu tiên ngay sau GM-05/GM-09..14. Đọc [brief cho AI](../design/UI_REFINEMENT_BRIEF.md) trước audit/đề xuất; chỉnh `design/prototypes/gi-cung-duoc.html`, kiểm browser và Trí duyệt HTML, chưa sửa app. Không chờ API, GM-34 hoặc GM-35..38; không thêm dependency ngược/chặn core release. Số 39 là ID mới, không bắt làm cuối. Giữ thứ tự của 38 task cũ; áp dụng mẫu mới vào app chờ Trí giao scope riêng.
 
 ## Các đợt phối hợp
 
@@ -69,7 +74,7 @@ Merge theo số tăng dần 01 → 38 luôn hợp lệ vì mọi prerequisite c�
 
 ## Contract bàn giao trước khi làm tiếp
 
-Chủ dự án xác nhận cấu trúc UI/BE 2026-10-10, xem [plan GM-02/03](FOUNDATION_IMPLEMENTATION_PLAN.md) và [cấu trúc](REPOSITORY_STRUCTURE.md). [Chuẩn đầu ra](TASK_OUTPUT_REQUIREMENTS.md)/[checklist 38 task](TASK_OUTPUT_CHECKLIST.md) bắt buộc UI mở Expo thấy các mục scope, API chạy request/output/assertions, Data đủ fields/schema/templates/fixtures/version cho BE làm song song. Mỗi task bàn giao CHECKS.md + HANDOFF; API có request suite riêng. Chưa triển khai app/API, không tự chuyển Approved/Done hoặc cài package trước gate/review.
+Chủ dự án xác nhận cấu trúc UI/BE 2026-10-10, xem [plan GM-02/03](FOUNDATION_IMPLEMENTATION_PLAN.md) và [cấu trúc](REPOSITORY_STRUCTURE.md). [Chuẩn đầu ra](TASK_OUTPUT_REQUIREMENTS.md)/[checklist 39 task](TASK_OUTPUT_CHECKLIST.md) bắt buộc UI mở Expo thấy các mục scope, API chạy request/output/assertions, Data đủ fields/schema/templates/fixtures/version cho BE làm song song. Mỗi task bàn giao CHECKS.md + HANDOFF; API có request suite riêng. Chưa triển khai app/API, không tự chuyển Approved/Done hoặc cài package trước gate/review.
 
 Mỗi task có bảng “Đầu vào bắt buộc và đầu ra bàn giao”: upstream, path, trước start hay trước merge; source machine-readable là [task map](../../tasks/task-id-map.json). Path là đích dự kiến, không phải chứng nhận file đã tồn tại. Task hoàn thành cần [HANDOFF](../../tasks/templates/HANDOFF_TEMPLATE.md) gồm:
 
