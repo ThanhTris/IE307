@@ -4,7 +4,7 @@
   "reviewer": "Tâm",
   "approval": "Pending",
   "baseCommit": "9188c736def7e125266f8cce2314b9f1f5c31b81",
-  "workingTreeNotCommitted": true,
+  "workingTreeNotCommitted": false,
   "hashes": {
     "docs/architecture/API_CONTRACT.md": "ec19e69ed35c25b71957732f9e838f5355e994a6b87790aad43f9040fca11026",
     "mobile/app.config.ts": "b79fc85c65974e001ba1677faac3deeecd4c053f21e560209498c1e6530d9b08",
@@ -42,7 +42,7 @@
     "supabase/tests/bruno/GM-16/collection.bru": "cbd31bd94a54a89d1ded5f8220209aa1d5d8d248ede1d40c2257b11110d6da57",
     "supabase/tests/bruno/GM-16/environments/Local.bru": "43f4bf8a285ed773f70fe83323841459430566eebfec52b151f846c9cf3ff629",
     "supabase/tests/http/GM-16.http": "74af915de2723404fad92ec8c0f4ee8deeee87884d77c7ce3be7e90ea5428878",
-    "tasks/in-progress/GM-16.md": "c50d1a32d1138419acadbe7a526fb23c05ebd90495420d2008d18cd95a863a37",
+    "tasks/in-progress/GM-16.md": "810d467e980ea1d53707dfc0f77f85807b3f962ee7d2c0a590bf0240c1856641",
     "tests/test_repository_validator.py": "ecbcde9b5fca4219c011af2fe9291c31624278d6703d6859dc8b508d9e8274ee",
     "data-preparation/scripts/vilao_catalogue.py": "21529c2d62334b46827492fcc6bc1c2826f43f2e30bad9f4e4675253de8e4be0",
     "tests/test_vilao_catalogue.py": "c1ad1f4a15217378191333dd911b24de28f43575c89b5d0ca4276e5ac9aa8329",
@@ -57,10 +57,10 @@
     "tests": 357,
     "authTests": 69,
     "result": "Pass",
-    "nativeExecution": "Partial: Android real create/restore/refresh/expiry/lost-session/logout Pass; uninstall/backup/native-build Not run",
+    "nativeExecution": "Partial: Android real Expo Go create/restore/refresh/expiry/lost-session/logout Pass; native development build and uninstall/backup hardening deferred by owner",
     "deviceEvidence": "MOBILE_DEVICE_CHECK.txt"
   },
-  "apiSqlChecks": "Pass: 8 actual HTTP cases, 7 SQL rollback assertions, and bounded real HTTP429 probe; real expiry Not run",
+  "apiSqlChecks": "Pass: 8 actual HTTP cases, 7 SQL rollback assertions, bounded real HTTP429 probe; real expiry Pass in Android Expo Go evidence",
   "brunoChecks": {
     "date": "2026-10-12",
     "version": "4.2.1",

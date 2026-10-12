@@ -2,8 +2,9 @@
 
 Owner Trí, reviewer Tâm, nhánh `codex/gm-16-guest-session` sau merge main `9188c73`.
 Contract `food-v1/roadmap-v2/GM-16.1`; schema input0.1.0 không đổi.
-HTTP/SQL/rate429 và Android thật create/restore/refresh/expiry/lost-session/logout
-đã Pass; backup/native development-build còn Not run; chưa Approved/Done.
+HTTP/SQL/rate429 và Android thật qua Expo Go create/restore/refresh/expiry/
+lost-session/logout đã Pass; native development build và uninstall/backup
+exclusion được owner hoãn tới release hardening; chưa Approved/Done.
 Package SecureStore57.0.4 được chủ dự án cho phép trực tiếp cùng chọn reviewer Tâm.
 
 ## Artifact thực tế
@@ -86,14 +87,17 @@ Expo dependency check + Android bundle Pass. Ngày2026-10-12 Docker29.4.3 và
 Supabase local đã chạy: HTTP runner8 cases + bounded real HTTP429 Pass, SQL7
 assertions Pass, Bruno4.2.1 desktop10/10 requests/tests Pass. Xem
 HTTP_CHECK.txt/RATE_LIMIT_CHECK.txt/BRUNO_CHECK.md. GoTrue error_code thực tế
-đã được xử lý, có5 regression cases bổ sung. Expiry thực và native secure
-persistence/restart chưa chạy.
+đã được xử lý, có5 regression cases bổ sung. Expiry thực đã Pass qua Expo Go.
+Native development build và uninstall/backup exclusion không thuộc run hiện tại
+theo quyết định hoãn của owner; SecureStore adapter boundary vẫn có unit
+coverage và route Expo Go không hiển thị token.
 
 Harness mở bằng Expo shell khi cấu hình `EXPO_PUBLIC_GM16_INTERNAL=true` và public
 Supabase key hợp lệ. `MOBILE_DEVICE_CHECK.txt` ghi Android thật CPH2797 đã nhận ADB,
 đã chạy `adb reverse tcp:54321 tcp:54321`, và đã Pass create/check/refresh/restore,
-expiry/lost-session, marker + Logout cleanup qua GoTrue local. Uninstall/backup
-exclusion và native development-build vẫn chưa có evidence. Marker
+expiry/lost-session, marker + Logout cleanup qua GoTrue local. Native development
+build và uninstall/backup exclusion được owner hoãn tới release hardening, không
+phải blocker hiện tại. Marker
 `gcd.gm16.harness.v1` chỉ là dữ liệu private của harness và bị xóa qua
 `clearPrivateData`; SQLite/outbox/cache sản phẩm vẫn thuộc GM-31.
 

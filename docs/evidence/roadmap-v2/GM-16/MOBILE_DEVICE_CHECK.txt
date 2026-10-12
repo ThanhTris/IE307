@@ -38,9 +38,11 @@ Observed results
 | Lost session | Revoked server session yields AUTH_REQUIRED/lost and cleanup | Latest local auth session was revoked; Restore/Refresh showed `lost` and cleared the identity after the harness fix | Pass |
 | Real expiry | Expired access token refreshes and preserves identity | With temporary JWT lifetime 120s, after 135s Kiểm session kept identity; GoTrue logged `token_refreshed`, `/token` 200, then `/user` 200 | Pass |
 
-Not run in this device session
-- Uninstall/backup exclusion and a native development build; this run used Expo Go.
+Deferred by owner for release hardening
+- Uninstall/backup exclusion and a native development build; this verification
+  intentionally used Expo Go and does not include generated native artifacts.
 
 The passing cases prove the phone → adapter → loopback reverse → local GoTrue path
 for create, restore, refresh, expiry, lost-session, and harness logout cleanup.
-Native development-build and backup-exclusion evidence remain outside this run.
+Native development-build and backup-exclusion evidence are deferred follow-up
+work; they are not blockers for the current Expo Go/API harness scope.
