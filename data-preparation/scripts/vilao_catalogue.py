@@ -6,12 +6,8 @@ import csv
 from datetime import datetime, timezone
 try:
     import fcntl
-except ImportError:  # Windows uses msvcrt below.
+except ImportError:  # Offline imports remain possible; locked runs require POSIX.
     fcntl = None
-try:
-    import msvcrt
-except ImportError:  # POSIX uses fcntl above.
-    msvcrt = None
 import json
 from pathlib import Path
 
@@ -97,34 +93,18 @@ def read_samples(source: Path) -> tuple[list, list, list]:
 
 @contextmanager
 def single_run(path: Path):
-    if fcntl is None and msvcrt is None:
-        raise RuntimeError('Taxonomy locking is unavailable on this platform; run this pipeline in a supported environment.')
+    if fcntl is None:
+        raise RuntimeError('Taxonomy locking requires Linux/macOS/WSL. Run this pipeline inside WSL; no unlocked fallback is allowed.')
     path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open('a+b') as handle:
-        if fcntl is not None:
-            try:
-                fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
-            except BlockingIOError:
-                raise RuntimeError('Another taxonomy run holds this dataset lock.') from None
-        else:
-            # msvcrt locks bytes, so reserve one byte and always lock from offset 0.
-            handle.seek(0, 2)
-            if handle.tell() == 0:
-                handle.write(b'0')
-                handle.flush()
-            handle.seek(0)
-            try:
-                msvcrt.locking(handle.fileno(), msvcrt.LK_NBLCK, 1)
-            except OSError:
-                raise RuntimeError('Another taxonomy run holds this dataset lock.') from None
+    with path.open('a') as handle:
+        try:
+            fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            raise RuntimeError('Another taxonomy run holds this dataset lock.') from None
         try:
             yield
         finally:
-            handle.seek(0)
-            if fcntl is not None:
-                fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
-            else:
-                msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
+            fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
 
 
 class CatalogueRun:

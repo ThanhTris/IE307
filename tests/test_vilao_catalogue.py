@@ -34,8 +34,8 @@ class CatalogueTests(unittest.TestCase):
     def test_unsupported_lock_platform_fails_before_touching_cache(self):
         with tempfile.TemporaryDirectory() as tmp:
             path=Path(tmp)/'lock'
-            with patch.multiple('vilao_catalogue', fcntl=None, msvcrt=None):
-                with self.assertRaisesRegex(RuntimeError,'unavailable'):
+            with patch('vilao_catalogue.fcntl',None):
+                with self.assertRaisesRegex(RuntimeError,'WSL'):
                     with single_run(path):self.fail('must not run unlocked')
             self.assertFalse(path.exists())
 
