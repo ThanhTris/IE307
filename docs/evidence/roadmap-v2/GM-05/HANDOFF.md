@@ -24,6 +24,8 @@ Pop-Location
 
 Trong Expo Go Android mở `/foundation` → `Mở component mẫu GM-05`; kiểm dark mode, font scaling 200%, TalkBack labels, màn nhỏ 320–599dp, touch target, fallback ảnh và modal back/close. Ghi device/revision/screenshot vào CHECKS trước review. Preview dùng synthetic fixture, không gọi API và không chứng minh native/verified data.
 
+Xác nhận thủ công: Trí đã mở Expo Go và xác nhận các component hiển thị/tương tác ổn trên revision `31148c7` ngày 2026-10-12. Chưa có model thiết bị hoặc screenshot được lưu kèm evidence.
+
 ## Người nhận tiếp
 
 GM-09 có thể dùng component map và preview làm seam để dựng Home/create/join mock ngay sau khi GM-05 được review/merge; không chờ GM-25/30/39 hoặc dataset thật. GM-25/30 sau đó thay repository/native behavior tại composition/integration layer, không đưa API/GPS/QR/Maps vào shared component. Room code từ GM-07 mock/client hiện là 6 ký tự theo ROOM_SPEC (`GCD234` fixture); server production vẫn chịu uniqueness/authorization.
