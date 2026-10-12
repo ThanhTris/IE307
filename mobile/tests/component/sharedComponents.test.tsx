@@ -1,4 +1,5 @@
 import { render, screen, userEvent } from '@testing-library/react-native';
+import { act } from 'react';
 import { getThemeColors } from '../../src/shared/theme/tokens';
 import { AppButton, AvatarRow, Chip, ContextSummary, DishCard, FormField, RoomCode, StatusNotice } from '../../src/shared/ui';
 
@@ -32,6 +33,18 @@ test('DishCard keeps vote buttons available and falls back when artwork is absen
   expect(screen.getByLabelText('Ảnh dự phòng Phở bò')).toBeOnTheScreen();
   await user.press(screen.getByRole('button', { name: 'Muốn ăn' }));
   expect(onVote).toHaveBeenCalledWith('WANT');
+});
+
+test('DishCard retries artwork when the image source changes after a failure', async () => {
+  const view = await render(<DishCard dish={{ id: 'dish_1', name: 'Phở bò', imageUrl: 'https://example.test/old.jpg' }} colors={colors} />);
+  const oldImage = screen.getByLabelText('Ảnh Phở bò');
+  await act(async () => {
+    oldImage.props.onError();
+  });
+  expect(await screen.findByLabelText('Ảnh dự phòng Phở bò')).toBeOnTheScreen();
+
+  view.rerender(<DishCard dish={{ id: 'dish_1', name: 'Phở bò', imageUrl: 'https://example.test/new.jpg' }} colors={colors} />);
+  expect((await screen.findByLabelText('Ảnh Phở bò')).props.source).toEqual({ uri: 'https://example.test/new.jpg' });
 });
 
 test('room/context/status/social components show fallback and state text', async () => {

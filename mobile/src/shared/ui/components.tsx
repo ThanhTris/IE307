@@ -132,12 +132,14 @@ export type VoteValue = 'WANT' | 'OK' | 'NO';
 export type DishCardProps = ComponentThemeProps & { dish: DishCardData; selectedVote?: VoteValue; onVote?: (vote: VoteValue) => void; onPress?: () => void };
 
 export function DishCard({ dish, selectedVote, onVote, onPress, colors }: DishCardProps) {
-  const [imageFailed, setImageFailed] = useState(false);
+  const imageKey = dish.imageUrl ?? dish.imageSource;
+  const [failedImageKey, setFailedImageKey] = useState<typeof imageKey>(undefined);
+  const imageFailed = failedImageKey === imageKey;
   const source = dish.imageSource ?? (dish.imageUrl ? { uri: dish.imageUrl } : undefined);
   return (
     <View style={[styles.dishCard, { backgroundColor: colors?.surface, borderColor: colors?.line }]}>
       <Pressable accessibilityRole="button" accessibilityLabel={`Mở món ${dish.name}`} onPress={onPress} disabled={!onPress}>
-        {source && !imageFailed ? <Image accessibilityLabel={`Ảnh ${dish.name}`} source={source} onError={() => setImageFailed(true)} style={styles.dishImage as ImageStyle} /> : <View accessibilityLabel={`Ảnh dự phòng ${dish.name}`} style={[styles.dishFallback, { backgroundColor: colors?.warm }]}><Text style={styles.dishEmoji}>🍜</Text></View>}
+        {source && !imageFailed ? <Image accessibilityLabel={`Ảnh ${dish.name}`} source={source} onError={() => setFailedImageKey(imageKey)} style={styles.dishImage as ImageStyle} /> : <View accessibilityLabel={`Ảnh dự phòng ${dish.name}`} style={[styles.dishFallback, { backgroundColor: colors?.warm }]}><Text style={styles.dishEmoji}>🍜</Text></View>}
         <View style={styles.dishBody}>
           <Text style={[styles.dishName, { color: colors?.text }]}>{dish.name}</Text>
           {dish.description ? <Text style={[styles.dishDescription, { color: colors?.muted }]}>{dish.description}</Text> : null}
@@ -206,7 +208,7 @@ const styles = StyleSheet.create({
   field: { gap: spacing.xs }, fieldLabel: { ...typography.bodyBold },
   input: { minHeight: 48, borderRadius: radii.md, borderWidth: 1, paddingHorizontal: spacing.md, ...typography.body },
   helper: { ...typography.caption },
-  chip: { minHeight: 40, borderRadius: radii.pill, paddingHorizontal: spacing.md, borderWidth: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
+  chip: { minHeight: 48, borderRadius: radii.pill, paddingHorizontal: spacing.md, borderWidth: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
   chipIcon: { fontSize: 14, fontWeight: '700' }, chipText: { ...typography.caption },
   dishCard: { borderRadius: radii.xl, borderWidth: 1, overflow: 'hidden' },
   dishImage: { width: '100%', height: 160, backgroundColor: '#E2E8F0' }, dishFallback: { width: '100%', height: 160, justifyContent: 'center', alignItems: 'center' }, dishEmoji: { fontSize: 52 },

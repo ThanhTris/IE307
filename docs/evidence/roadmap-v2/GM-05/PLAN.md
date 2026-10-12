@@ -18,7 +18,7 @@ ROOM_SPEC quy định mã phòng 6 ký tự charset tránh nhầm. Mock trên ma
 
 | Bước | Owner / task | Điều kiện vào | Output / cách kiểm |
 | --- | --- | --- | --- |
-| 1 | Trung / GM-05 review | Reviewer Tuấn đối chiếu component map, UI spec và revision; Trí kiểm gate | Review độc lập, Expo Go component preview, dark/font200/TalkBack/touch48; cập nhật CHECKS/HANDOFF |
+| 1 | Trung / GM-05 review | Reviewer Trí đối chiếu component map, UI spec và revision | Review, Expo Go component preview, dark/font200/TalkBack/touch48; cập nhật CHECKS/HANDOFF |
 | 2 | Tuấn / GM-09 | GM-05 được review/merge; dùng `mobile/src/shared/ui` và GM-07 mock contract | Home/create/join mock screens, route/state/error/empty/loading; mã phòng dùng 6 ký tự; không chờ GM-25/30/39/data thật |
 | 3 | GM-10..14 theo owner roadmap | GM-05 + GM-07 đã có trên target | Các màn mock độc lập, fixture có nhãn, component test và Expo route |
 | 4 | GM-25 / GM-30 | Màn tương ứng đã bàn giao; API/native task đủ dependency | Tích hợp API/native thật, QR/link/location/Maps theo AC; giữ component/screens và không fallback mock trong production |

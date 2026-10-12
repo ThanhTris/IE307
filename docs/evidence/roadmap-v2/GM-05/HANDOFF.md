@@ -1,6 +1,6 @@
 # GM-05 handoff — shared UI components
 
-Owner Trang / reviewer Tuấn theo task metadata; Trí kiểm gate/tiếp nhận. Contract `food-v1/roadmap-v2/GM-05.1`. Nhánh được tạo từ `origin/main` `9188c736def7e125266f8cce2314b9f1f5c31b81`; tested code commit `b66d9e3`. Không tự Approved/Done.
+Owner Trung / reviewer Trí theo phân công hiện hành. Contract `food-v1/roadmap-v2/GM-05.1`. Nhánh được tạo từ `origin/main` `9188c736def7e125266f8cce2314b9f1f5c31b81`; tested code commit `b66d9e3`. Không tự Approved/Done.
 
 ## Artifacts
 
