@@ -101,7 +101,7 @@ baseUrl/token/request do cấu hình/caller cung cấp; không chứa secret tro
 ## Review và giới hạn
 
 - Hai P2 read validation/caller isolation của review trên e482ccb đã có patch và assertions hành vi; write/join của lượt trước tiếp tục pass.
-- acceptRoomInvite mock vẫn là fixture delegate join GCD1, không nghiệm thu auth/pair/expiry RPC thật.
+- acceptRoomInvite mock vẫn là fixture delegate join GCD234, không nghiệm thu auth/pair/expiry RPC thật. Mock room code hiện thống nhất 6 ký tự theo ROOM_SPEC; production uniqueness/charset vẫn do server kiểm.
 - Normalizer nội bộ giờ cần guard endpoint khi gọi trực tiếp; UI dùng ApiClient/factory, signature UI không đổi.
 - Lượt hiện tại ghi tested code SHA và hash file đã test, evidence được commit riêng; CI và review phải áp dụng HEAD mới sau push, không dùng CI e482ccb để duyệt patch này.
 - Chưa nghiệm thu SQL/RLS/RPC nghiệp vụ/native/verified data, không tự tick approval/Done. Nếu Trí làm owner code, reviewer cuối phải khác Trí theo workflow.

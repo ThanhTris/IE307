@@ -13,8 +13,8 @@ const ballotRequest: SubmitBallotRequest = {
   roomId: 'room_fixture', round: 1, poolVersion: 1, intentId: 'intent_fixture',
   expectedVersion: 1, votes: [], requestId: 'req_fixed',
 };
-const room = { roomId: 'room_fixture', code: 'GCD1', version: 2, expiresAt: timestamp };
-const join = { roomId: 'room_fixture', code: 'GCD1', version: 2, memberId: 'member_fixture' };
+const room = { roomId: 'room_fixture', code: 'GCD234', version: 2, expiresAt: timestamp };
+const join = { roomId: 'room_fixture', code: 'GCD234', version: 2, memberId: 'member_fixture' };
 const session = { token: 'fixture_token', expiresAt: timestamp,
   user: { id: 'user_fixture', displayName: 'Review', isGuest: true, createdAt: timestamp } };
 const ballot = { accepted: true, round: 1, allMembersSubmitted: false, roomVersion: 2 };
@@ -24,7 +24,7 @@ const invitation = { id: 'invite_fixture', inviterUserId: 'host_fixture', invite
 type Call = (client: ApiClient) => Promise<WriteResult<unknown>>;
 const writes: { name: string; call: Call; data: Record<string, unknown>; required: string; wrong: unknown }[] = [
   { name: 'createRoom', call: c => c.createRoom(roomRequest), data: room, required: 'roomId', wrong: 42 },
-  { name: 'joinRoom', call: c => c.joinRoom({ code: 'GCD1', displayName: 'Review', requestId: 'req_fixed' }),
+  { name: 'joinRoom', call: c => c.joinRoom({ code: 'GCD234', displayName: 'Review', requestId: 'req_fixed' }),
     data: join, required: 'memberId', wrong: 42 },
   { name: 'acceptRoomInvite', call: c => c.acceptRoomInvite({ invitationId: 'invite_fixture', displayName: 'Review', requestId: 'req_fixed' }),
     data: join, required: 'memberId', wrong: 42 },
@@ -34,7 +34,7 @@ const writes: { name: string; call: Call; data: Record<string, unknown>; require
   { name: 'invitePartner', call: c => c.invitePartner({ friendCode: 'FIXTURE', requestId: 'req_fixed' }),
     data: invitation, required: 'status', wrong: 'invalid_status' },
   { name: 'inviteToRoom', call: c => c.inviteToRoom({ roomId: 'room_fixture', partnerId: 'user_fixture', expectedVersion: 1, requestId: 'req_fixed' }),
-    data: { ...invitation, roomId: 'room_fixture', roomCode: 'GCD1' }, required: 'roomCode', wrong: 42 },
+    data: { ...invitation, roomId: 'room_fixture', roomCode: 'GCD234' }, required: 'roomCode', wrong: 42 },
 ];
 
 function clientFor(response: unknown): ApiClient {
@@ -79,7 +79,7 @@ describe('GM-07 endpoint response validation', () => {
   });
 
   it.each([
-    { ...room, roomId: 42 }, { ...room, code: 9 }, { ...room, version: 'bad' },
+    { ...room, roomId: 42 }, { ...room, code: 9 }, { ...room, code: 'GCD1' }, { ...room, code: 'GCDIO0' }, { ...room, version: 'bad' },
     { ...room, version: NaN }, { ...room, version: Infinity }, { ...room, version: 1.5 },
     { ...room, version: 0 }, { ...room, version: -1 },
     { ...room, expiresAt: undefined }, { ...room, expiresAt: 'tomorrow' },
@@ -174,11 +174,11 @@ describe('GM-07 join regression', () => {
     const mock = new MockApiClient({ delayMs: 0 });
     mock.setCurrentUser({ id: 'new_member_fixture', displayName: 'Review', isGuest: true, createdAt: timestamp });
     const joinCall = (displayName: string) => method === 'joinRoom'
-      ? mock.joinRoom({ code: 'GCD1', displayName, requestId: 'req_join_fixed' })
+      ? mock.joinRoom({ code: 'GCD234', displayName, requestId: 'req_join_fixed' })
       : mock.acceptRoomInvite({ invitationId: 'invite_fixture', displayName, requestId: 'req_join_fixed' });
     const first = await joinCall('Review');
     expect(first).toMatchObject({ ok: true, requestId: 'req_join_fixed', roomId: 'room_mock_001', version: 2,
-      data: { roomId: 'room_mock_001', code: 'GCD1', version: 2, memberId: 'new_member_fixture' } });
+      data: { roomId: 'room_mock_001', code: 'GCD234', version: 2, memberId: 'new_member_fixture' } });
     expect(await joinCall('Review')).toEqual(first);
     expect(await joinCall('Changed')).toMatchObject({ ok: false, error: { messageKey: 'REQUEST_ID_REUSED' } });
     const snapshot = await mock.getRoomSnapshot('room_mock_001');

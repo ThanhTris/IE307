@@ -72,7 +72,7 @@ GM-17 bảo vệ tables/RPC/retention, từng task API thêm auth/membership/ver
 | invite_to_room | các field invite_partner cộng roomId và roomCode |
 | write trả void | `data` vắng, undefined hoặc JSON null → client `data:undefined`; không yêu cầu object DTO; data object/primitive ngoài contract bị từ chối |
 
-ID/code/token là string không rỗng; version là số nguyên hữu hạn an toàn trong JavaScript, >=1 theo dictionary GM-04. Timestamp là ISO8601 có timezone và ngày/giờ hợp lệ. Invitation status dùng enum của DTO. Optional không tự tương đương nullable: receipt null là malformed vì DTO chỉ cho vắng, còn void data cho JSON null rõ ràng.
+ID/token là string không rỗng; mã phòng (`code`/`roomCode`) là đúng 6 ký tự theo ROOM_SPEC, dùng charset không gây nhầm (`A-H`, `J-N`, `P-Z`, `2-9`), và server chịu trách nhiệm uniqueness. Version là số nguyên hữu hạn an toàn trong JavaScript, >=1 theo dictionary GM-04. Timestamp là ISO8601 có timezone và ngày/giờ hợp lệ. Invitation status dùng enum của DTO. Optional không tự tương đương nullable: receipt null là malformed vì DTO chỉ cho vắng, còn void data cho JSON null rõ ràng.
 
 Metadata requestId/roomId/version/state được kiểm kiểu và enum khi có, giữ optional khi vắng. roomId/version ở envelope phải khớp payload và roomId của request khi có; không fabricate version/state. Ballot payload requestId phải khớp ACK requestId; receipt khi có phải khớp round của payload và requestId của ACK. Các guard chỉ kiểm contract GM-07, không chứng minh auth/membership, transaction hay RPC nghiệp vụ các task sau.
 
