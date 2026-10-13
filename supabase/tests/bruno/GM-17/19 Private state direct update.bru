@@ -1,0 +1,28 @@
+meta {
+  name: 19 Private state direct update
+  type: http
+  seq: 19
+}
+
+patch {
+  url: {{baseUrl}}/rest/v1/votes?id=not.is.null
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{hostToken}}
+  Content-Type: application/json
+}
+
+body:json {
+  {"value":"NO"}
+}
+
+tests {
+  test('Private state direct update denied', function () {
+    const status = res.getStatus();
+    expect([204, 403]).to.include(status);
+    if (status === 403) expect(res.getBody().code).to.equal("42501");
+  });
+}
