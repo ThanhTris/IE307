@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Guarded synthetic namespace setup/cleanup for real JWT HTTP/Bruno tests."""
 import argparse
+import json
 import uuid
 from gm17_access_check import guard_local,fixture_sql,psql,snake
 
@@ -25,7 +26,11 @@ def main():
     if args.mode=='prepare':
         psql('postgres',sql)
         psql('postgres',"notify pgrst,'reload schema';")
-        print('Synthetic namespace prepared; no dataset published.')
+        print(json.dumps({
+            'message':'Synthetic namespace prepared; no dataset published.',
+            'roomId':b['core']['entities']['rooms'][0]['id'],
+            'dishId':b['food']['entities']['dishes'][0]['id'],
+        }))
         return
     lines=['begin; set constraints all deferred;']
     for kind in ['core','food']:

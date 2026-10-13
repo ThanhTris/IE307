@@ -1,7 +1,7 @@
 {
   "contract": "food-v1/roadmap-v2/GM-17.1",
   "schema": "0.2.0",
-  "checkedAt": "2026-10-13T09:25:51.059Z",
+  "checkedAt": "2026-10-13T11:11:16.840Z",
   "environment": "loopback:54321 real GoTrue JWT and PostgREST",
   "cases": [
     {

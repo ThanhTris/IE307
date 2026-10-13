@@ -13,7 +13,7 @@ This runs real HTTP assertions, creates three anonymous test identities and an
 isolated synthetic namespace. Open collection `supabase/tests/bruno/GM-17`, select
 `Local.runtime.private`, run sequentially once. Tokens/public key are in ignored
 local environment, never commit/export/screenshot credentials. Collection read
-tests16cases; HTTP runner additionally proves write denial/forged/expired tokens.
+tests20cases; HTTP runner additionally proves signed-expired-token verification.
 Bruno collection execution is reported separately from the Node HTTP runner.
 
 ```powershell
@@ -27,5 +27,7 @@ No verified dataset publication. Published positive predicates/retention/RPC
 boundary/concurrency use disposable SQL, not this collection's draft namespace.
 
 Requests and expected assertions also at `supabase/tests/http/GM-17.http`.
-Missing/forged JWT401, explicit private columns403/42501; outsider authorized
-lists200/[] are expected RLS results, not a successful read of a room.
+Missing/forged JWT401, explicit private columns403/42501; direct writes are
+accepted only as 403 privilege denial or 204 with the target filtered by RLS.
+Outsider authorized lists200/[] are expected RLS results, not a successful read
+of a room. The HTTP runner separately asserts direct writes return403.

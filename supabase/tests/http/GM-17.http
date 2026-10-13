@@ -4,6 +4,8 @@
 @hostToken = HOST_JWT_PLACEHOLDER
 @memberToken = MEMBER_JWT_PLACEHOLDER
 @outsiderToken = OUTSIDER_JWT_PLACEHOLDER
+@roomId = ROOM_ID_PLACEHOLDER
+@dishId = DISH_ID_PLACEHOLDER
 
 ### Host room — expected HTTP 200, array length 1
 GET {{baseUrl}}/rest/v1/rooms?select=id,state,version
@@ -83,3 +85,32 @@ apikey: {{publicKey}}
 GET {{baseUrl}}/rest/v1/dishes?select=id,name
 apikey: {{publicKey}}
 Authorization: Bearer {{hostToken}}
+
+### Room direct update — expected HTTP 403, code 42501
+PATCH {{baseUrl}}/rest/v1/rooms?id=eq.{{roomId}}
+apikey: {{publicKey}}
+Authorization: Bearer {{hostToken}}
+Content-Type: application/json
+
+{"state":"CANCELLED"}
+
+### Dataset direct update — expected HTTP 403, code 42501
+PATCH {{baseUrl}}/rest/v1/dishes?id=eq.{{dishId}}
+apikey: {{publicKey}}
+Authorization: Bearer {{hostToken}}
+Content-Type: application/json
+
+{"name":"forged-by-gm17"}
+
+### Private state direct update — expected HTTP 403, code 42501
+PATCH {{baseUrl}}/rest/v1/votes?id=not.is.null
+apikey: {{publicKey}}
+Authorization: Bearer {{hostToken}}
+Content-Type: application/json
+
+{"value":"NO"}
+
+### Forged JWT — expected HTTP 401
+GET {{baseUrl}}/rest/v1/rooms?select=id
+apikey: {{publicKey}}
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxNyJ9.invalid

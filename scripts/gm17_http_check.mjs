@@ -9,7 +9,7 @@ const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const flags=process.argv.slice(2);
 if(flags.some(x=>!['--bruno-setup'].includes(x))) throw new Error('Only --bruno-setup is supported');
 const python=process.env.GM17_PYTHON ?? 'python';
-const cases=[];let key,base,status,namespace,lastErrorCode,brunoPrepared=false;const guests=[];
+const cases=[];let key,base,status,namespace,fixtureIds,lastErrorCode,brunoPrepared=false;const guests=[];
 async function request(path,token,method='GET',body) {
   const res=await fetch(base+path,{method,headers:{apikey:key,...(token?{Authorization:'Bearer '+token}:{}),...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined,redirect:'error',signal:AbortSignal.timeout(15000)});
   const data=await res.json();lastErrorCode=typeof data?.code==='string'&&/^[A-Z0-9]+$/.test(data.code)?data.code:undefined;
@@ -32,7 +32,9 @@ try {
     const result=await request('/auth/v1/signup',null,'POST',{data:{display_name:'GM17 synthetic '+i,gm17_test_namespace:namespace,userId:'17000000-0000-4000-8000-000000000099'}});
     assert.equal(result.status,200);assert.equal(result.body.user.is_anonymous,true);guests.push(result.body);
   }
-  await fixture('prepare');
+  fixtureIds=JSON.parse(await fixture('prepare'));
+  assert.match(fixtureIds.roomId,/^[0-9a-f-]{36}$/);
+  assert.match(fixtureIds.dishId,/^[0-9a-f-]{36}$/);
   const [a,b,o]=guests.map(g=>g.access_token);
   for(const [name,token,want] of [['host',a,1],['member',b,1],['outsider',o,0]]) {
     await check(name+' room projection',async()=>{const r=await request('/rest/v1/rooms?select=id,state,version',token);assert.equal(r.status,200);assert.equal(r.body.length,want);return {status:r.status,rows:r.body.length};});
@@ -68,7 +70,7 @@ try {
     const folder=resolve(root,'supabase/tests/bruno/GM-17/environments');await mkdir(folder,{recursive:true});await mkdir(resolve(root,'.work'),{recursive:true});
     await writeFile(resolve(folder,'Local.private.bru'),`vars {\n  baseUrl: ${base}\n  publicKey: ${key}\n}\nvars:secret [\n  hostToken,\n  memberToken,\n  outsiderToken\n]\n`,'utf8');
     // Tokens remain in an ignored local file only, never in tracked reports.
-    await writeFile(resolve(folder,'Local.runtime.private.bru'),`vars {\n  baseUrl: ${base}\n  publicKey: ${key}\n  hostToken: ${a}\n  memberToken: ${b}\n  outsiderToken: ${o}\n}\n`,'utf8');
+    await writeFile(resolve(folder,'Local.runtime.private.bru'),`vars {\n  baseUrl: ${base}\n  publicKey: ${key}\n  hostToken: ${a}\n  memberToken: ${b}\n  outsiderToken: ${o}\n  roomId: ${fixtureIds.roomId}\n  dishId: ${fixtureIds.dishId}\n}\n`,'utf8');
     await writeFile(resolve(root,'.work/gm17-bruno-state.json'),JSON.stringify({namespace,users:guests.map(g=>g.user.id)}),'utf8');
     brunoPrepared=true;
   }

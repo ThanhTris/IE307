@@ -20,7 +20,7 @@ paths. Food/core1.1.0 and mobile DTO/client contracts unchanged.
 | supabase/tests/rls.sql / scripts/gm17_access_check.py | Marker injection into disposable real PostgreSQL; SQL claims not JWT evidence |
 | scripts/gm17_http_check.mjs / gm17_http_fixture.py | Real GoTrue JWT + PostgREST assertions, random namespace/owned synthetic cleanup |
 | scripts/gm17_retention.mjs | Local60second worker, --once or --cycles=N; Ctrl+C stops, no background installation |
-| supabase/tests/http/GM-17.http / bruno/GM-17 | HTTP placeholders/expected statuses and Bruno16request collection/setup/cleanup README; Bru CLI4.2.1 execution evidence in BRUNO_CLI_CHECK.txt |
+| supabase/tests/http/GM-17.http / bruno/GM-17 | HTTP placeholders/expected statuses and Bruno20request collection/setup/cleanup README; Bru CLI4.2.1 execution evidence in BRUNO_CLI_CHECK.txt |
 
 ## Reproduce
 

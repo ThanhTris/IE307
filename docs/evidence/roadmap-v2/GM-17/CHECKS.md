@@ -23,12 +23,12 @@ No verified dataset published, no remote deploy, no phone/build run in GM-17.
 | Retention old/live rooms | Old room/ballots/context removed; before-cutoff room retained; history and live ACK preserved → matched | Pass, SQL |
 | History max30days/device30days | Reject overlong history retention; stale token/device and dependent delivery removed → matched | Pass, SQL |
 | Repeat/overlap cleanup | Repeat safe; second real connection returns skipped=true under held lock → matched | Pass, SQL_CHECK.json |
-| Actual GoTrue JWT host/member/outsider | HTTP200 correct projection/own rows/empty outsider; no metadata spoof → matched | Pass, HTTP_CHECK.json, 23 cases including cleanup |
+| Actual GoTrue JWT host/member/outsider | HTTP200 correct projection/own rows/empty outsider; no metadata spoof → matched | Pass, HTTP_CHECK.json, 24 cases including cleanup |
 | Private read/write over HTTP |403/42501; anonymous/forged JWT401 → matched | Pass, HTTP_CHECK.json |
 | Expired JWT verification | Locally signed synthetic expired JWT rejected401 by real PostgREST verifier → matched | Pass; not natural session expiry evidence |
 | Worker | Two cycles60seconds apart, actual local cleanup invocation → matched, no eligible app rows in these cycles | Pass, WORKER_CHECK.txt |
 | Bruno setup/cleanup | Ignored environment + synthetic namespace; cleanup verified ownership and removed own test users/files → matched | Pass, HTTP_SETUP_CHECK.txt + BRUNO_SETUP_CLEANUP.txt |
-| Bruno collection16requests | Bru CLI4.2.1 ran the tracked collection against local GoTrue/PostgREST;16/16 tests passed (200 allowed projections/empty lists,403 private fields/tables,401 anonymous) | Pass, BRUNO_CLI_CHECK.txt; ignored credentials/synthetic namespace cleaned after run |
+| Bruno collection20requests | Bru CLI4.2.1 ran the tracked collection against local GoTrue/PostgREST;20/20 tests passed (200 allowed projections/empty lists,403 private fields/tables,401 anonymous/forged JWT, direct writes RLS-filtered204); HTTP runner separately asserts direct writes403 | Pass, BRUNO_CLI_CHECK.txt; ignored credentials/synthetic namespace cleaned after run |
 | GM-06 baseline |67pgTAP,2schedule races,16reference races, rollback/upgrade → matched | Pass, GM06_REGRESSION.json |
 | GM-08 baseline |31cases synthetic import/reimport/query/race/rollback → matched | Pass, GM08_REGRESSION.json |
 | GM-08 after schema0.2.0 |31upstream cases after0004; only registry assertion expects0.1.0+0.2.0 → matched | Pass, GM08_SCHEMA02_REGRESSION.json |
@@ -70,7 +70,7 @@ load/quota, backup/uninstall and production deploy are not claimed.
 
 At2026-10-13T09:17UTC Docker Desktop reported stopped/unable to start during WSL
 upgrade. That HTTP attempt had no cases executed; recovery restarted Docker and
-the retained Auth container without resetting volumes. Final HTTP23cases passed
+the retained Auth container without resetting volumes. Final HTTP24cases passed
 after recovery. Import regression adapts only the registry assertion to the
 intentional0.1.0+0.2.0 registry; final31cases passed. Python550tests reran Pass.
 

@@ -1,0 +1,28 @@
+meta {
+  name: 18 Dataset direct update
+  type: http
+  seq: 18
+}
+
+patch {
+  url: {{baseUrl}}/rest/v1/dishes?id=eq.{{dishId}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{hostToken}}
+  Content-Type: application/json
+}
+
+body:json {
+  name: forged-by-gm17
+}
+
+tests {
+  test('Dataset direct update denied', function () {
+    const status = res.getStatus();
+    expect([204, 403]).to.include(status);
+    if (status === 403) expect(res.getBody().code).to.equal("42501");
+  });
+}
