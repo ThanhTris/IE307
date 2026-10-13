@@ -1,4 +1,7 @@
-# GM-18 — Kế hoạch phần độc lập
+# GM-18 — Kế hoạch triển khai
+
+Phần ngày2026-10-12 dưới đây là lịch sử; mục tích hợp2026-10-13 và
+CHECKS/HANDOFF hiện hành thay các blocker GM17/verified đời trước.
 
 Ngày 2026-10-12. Owner Tâm (@HoaiTam), reviewer Trí (@ThanhTris).
 Nhánh `codex/gm-18-catalogue-eligibility`, base `9188c736def7e125266f8cce2314b9f1f5c31b81`.
@@ -22,3 +25,22 @@ security-definer bypass trong GM-18. Radius/time horizon là tham số policy b�
 buộc của kernel; giá trị test không phải policy đã được reviewer chốt.
 Fixture SQL/TS không thay query catalogue verified hoặc Android–API evidence.
 Không tự Approved/Done, commit/push hoặc sync GitHub.
+
+## Tích hợp GM-17 ngày 2026-10-13
+
+User yêu cầu hoàn thiện GM-18 sau GM-17; PR #111 đã merge tại
+4a38588f515c6121a38c605bf50e209d570b90bd. Nhánh đã rebase trên main này.
+Schema 0.2.0 / GM-17.1 / ADR-014/015, không sửa migration 0001–0004 hoặc 0018
+đã bàn giao. Migration mới 0005 thêm API boundary; PL/pgSQL gọi kernel 0018
+ở runtime sau khi toàn bộ migrations áp dụng. Không chiếm prefix 0019 của GM-19.
+
+User chọn policy tối đa 10 km và 7 ngày trong hội thoại này. Cấu hình server
+private, không nhận clock/seed/fixture flag/bundle/userId từ request.
+Thêm auth/validation/rate-limit, explicit DTO projection, active member/result
+lookup và winner refetch. Không dùng guard mutation require_room cho result read
+terminal; kiểm member/expiry bằng luật GM-17, không viết phiếu/room/result.
+
+Kiểm PostgreSQL 0.2.0, SQL claims riêng, HTTP JWT GoTrue/PostgREST thật, actual
+mobile client/guards qua transport real; data thật giữ draft và query empty theo
+ADR-014. Positive scenario chỉ fixture trong DB disposable. Tách evidence cũ
+khỏi integration mới; device consumer cases tiếp tục handoff GM-24/25/27.

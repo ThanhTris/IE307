@@ -1,0 +1,214 @@
+{
+  "result": "Pass",
+  "contract": "food-v1/roadmap-v2/GM-18.1",
+  "schemaVersion": "0.2.0",
+  "checkedAt": "2026-10-13T13:17:37.276Z",
+  "environment": "loopback GoTrue + process-owned DB/PostgREST; mobile real client",
+  "syntheticPositiveDataOnly": true,
+  "actualDataPromoted": false,
+  "publicationPerformed": false,
+  "cases": [
+    {
+      "case": "actual draft discovery HTTP with real guest JWT",
+      "result": "Pass",
+      "status": 200
+    },
+    {
+      "case": "actual draft discovery DTO through real mobile client",
+      "result": "Pass",
+      "anchors": 0,
+      "areas": 0
+    },
+    {
+      "case": "actual draft preview empty with version and reason",
+      "result": "Pass",
+      "status": 200,
+      "choices": 0,
+      "datasetVersion": "0.4.1",
+      "reasonCodes": [
+        "OUT_OF_COVERAGE"
+      ]
+    },
+    {
+      "case": "actual draft empty reason through typed discovery adapter",
+      "result": "Pass",
+      "choices": 0,
+      "reasonCodes": [
+        "OUT_OF_COVERAGE"
+      ]
+    },
+    {
+      "case": "actual draft malformed date becomes INVALID_INPUT",
+      "result": "Pass",
+      "status": 400
+    },
+    {
+      "case": "synthetic published discovery through real client/guards",
+      "result": "Pass",
+      "anchors": 1,
+      "areas": 1,
+      "simulationOnly": true
+    },
+    {
+      "case": "positive preview DTO/offering refs through real client",
+      "result": "Pass",
+      "choices": 1,
+      "offeringReferences": 2,
+      "simulationOnly": true
+    },
+    {
+      "case": "discovery UUID filters preserve anchor-to-area relationship",
+      "result": "Pass",
+      "matchingAnchorArea": true,
+      "unknownAnchorEmpty": true
+    },
+    {
+      "case": "10km boundary and within7days accepted",
+      "result": "Pass",
+      "status": 200,
+      "maxRadiusM": 10000,
+      "maxFutureSeconds": 604800,
+      "staleCoverageReason": "OUT_OF_COVERAGE"
+    },
+    {
+      "case": "same snapshot context returns deterministic ordered pool and seed",
+      "result": "Pass",
+      "choices": 1
+    },
+    {
+      "case": "radius over10km rejected",
+      "result": "Pass",
+      "status": 400
+    },
+    {
+      "case": "zero radius rejected",
+      "result": "Pass",
+      "status": 400
+    },
+    {
+      "case": "radius string rejected",
+      "result": "Pass",
+      "status": 400
+    },
+    {
+      "case": "future beyond7days rejected",
+      "result": "Pass",
+      "status": 400
+    },
+    {
+      "case": "negative budget rejected",
+      "result": "Pass",
+      "status": 400
+    },
+    {
+      "case": "invalid meal rejected",
+      "result": "Pass",
+      "status": 400
+    },
+    {
+      "case": "category object rejected",
+      "result": "Pass",
+      "status": 400
+    },
+    {
+      "case": "category wrong type rejected",
+      "result": "Pass",
+      "status": 400
+    },
+    {
+      "case": "past target through real client maps DESIRED_TIME_PASSED",
+      "result": "Pass",
+      "messageKey": "DESIRED_TIME_PASSED"
+    },
+    {
+      "case": "missing auth denied",
+      "result": "Pass",
+      "status": 401
+    },
+    {
+      "case": "forged JWT denied",
+      "result": "Pass",
+      "status": 401
+    },
+    {
+      "case": "expired signed synthetic JWT denied by actual verifier",
+      "result": "Pass",
+      "status": 401,
+      "unexpiredControlStatus": 200
+    },
+    {
+      "case": "outsider result read through real client maps NOT_MEMBER",
+      "result": "Pass",
+      "messageKey": "NOT_MEMBER"
+    },
+    {
+      "case": "host/member result gives both venues for same immutable winner",
+      "result": "Pass",
+      "venues": 2
+    },
+    {
+      "case": "sold-out refetch returns empty without substitute winner",
+      "result": "Pass",
+      "choices": 0
+    },
+    {
+      "case": "RPCs never mutate room/result/winner snapshot",
+      "result": "Pass",
+      "unchanged": true
+    },
+    {
+      "case": "left member denied",
+      "result": "Pass",
+      "status": 403
+    },
+    {
+      "case": "expired member room maps ROOM_EXPIRED",
+      "result": "Pass",
+      "status": 410
+    },
+    {
+      "case": "projection has no private authors/source locators/preferences/ballots",
+      "result": "Pass",
+      "privateFields": 0
+    },
+    {
+      "case": "atomic concurrent read budget:60 allowed,61st429; caller isolated",
+      "result": "Pass",
+      "allowed": 60,
+      "limited": 1,
+      "otherCallerStatus": 200
+    },
+    {
+      "case": "real client maps HTTP429 RATE_LIMITED",
+      "result": "Pass",
+      "messageKey": "RATE_LIMITED"
+    }
+  ],
+  "artifactHashes": {
+    "scripts/gm18_http_check.mjs": "7557e14090a34e49322368ad1d7a385477783c4c573622086d6564fad2a9821b",
+    "scripts/gm18_http_fixture.py": "ce68fdc5cea82276fbcdd59c812771f3a29f66a823d2e37ea88d7181fc4a75ae",
+    "supabase/migrations/0005_gm18_discovery_rpc.sql": "b81e072da7ef75846615738905650ae5a337e32f5d678f843c9404e7f54e3307",
+    "supabase/migrations/0018_food_eligibility.sql": "e242876842e0c8decf645130b56a69143146ff942a78641f504c2883f3c86334",
+    "mobile/src/data/api/client.ts": "1a18a82c80fce79387a7540a5b3a5e43b771c115b2df4d066a5fd655d39b185e",
+    "mobile/src/data/api/responseGuards.ts": "ea8b597a5d7a894699f843ebdeb1a00beab30aac9553e5dc75e2b95a1664fa23",
+    "mobile/src/data/discovery/index.ts": "d11436eaf755f7a9ac7528d9f16e9f18db7be4d374f0e9e371b3e9081915d337"
+  },
+  "actualBundle": {
+    "sha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+    "counts": {
+      "availabilityOverrides": 0,
+      "coverageAreas": 0,
+      "dataSources": 27,
+      "datasetVersions": 1,
+      "dateExceptions": 0,
+      "dishes": 18,
+      "publicAnchors": 0,
+      "taxonomy": 18,
+      "venueDishes": 190,
+      "venues": 21,
+      "weeklySchedules": 154
+    }
+  },
+  "postgrestCleanup": "removed",
+  "databaseAndGuestCleanup": "owned namespace removed"
+}

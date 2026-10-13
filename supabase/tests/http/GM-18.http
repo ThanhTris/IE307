@@ -1,6 +1,7 @@
-# GM-18 target integration cases. NOT RUN: GM-17 auth/RLS/rate limit pending.
-# These public RPCs are not created or granted by the independent kernel patch.
-# Supply a local/LAN endpoint reachable from the test device; no real token in repo.
+# GM-18.1 implemented in0005 +0018 after GM17/schema0.2.0.
+# Automated real JWT/client assertions: node scripts/gm18_http_check.mjs.
+# Local loopback; phone requires adb reverse54321 or reviewed trusted HTTPS.
+# No real tokens in repo, no LAN HTTP/TLS bypass.
 @baseUrl = http://127.0.0.1:54321
 @publicKey = REPLACE_WITH_LOCAL_PUBLIC_KEY
 @userToken = REPLACE_WITH_TEST_USER_ACCESS_TOKEN
@@ -9,7 +10,8 @@
 @resultId = REPLACE_WITH_ITS_RESULT_UUID
 
 ### Discovery: authenticated caller, only current published public coverage/anchors.
-# After GM-17 integration: expect 200 DTO anchors/coverageAreas/serverTime.
+# Expect200 {ok:true,data:{anchors,coverageAreas,serverTime}}.
+# Actual GM08 draft has empty arrays; synthetic positive is separate test data.
 POST {{baseUrl}}/rest/v1/rpc/get_discovery_context
 apikey: {{publicKey}}
 Authorization: Bearer {{userToken}}
@@ -18,7 +20,9 @@ Content-Type: application/json
 {"area_id":null,"anchor_id":null}
 
 ### Preview: >=0 and <=8 unique choices, valid target-time/radius/version.
-# Adjust desired_at using server time. Never copy device clock as authority.
+# Adjust desired_at using serverTime: future <=7days; radius >0 and <=10000m.
+# Success adds poolSeed/policyVersion/reasonCodes, cards offeringIds/availability.
+# Empty actual bundle -> version0.4.1 + OUT_OF_COVERAGE; no invented anchors.
 # Fixture/draft data must not enter production pool; no expansion on empty output.
 POST {{baseUrl}}/rest/v1/rpc/preview_food_pool
 apikey: {{publicKey}}

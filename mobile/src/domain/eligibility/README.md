@@ -19,11 +19,11 @@ other eligible offering IDs are references, not sources to merge into that card.
 `roundDishId` is a preview key only; GM-19 must assign persisted round UUIDs.
 
 SQL private kernel and snapshot/preview/discovery/winner helpers are in 0018.
-No app RPC grants, security-definer functions or RLS changes. GM-17/19 must wrap
-trusted snapshot/policy/preferences/history/winner inputs with auth/rate-limit and
-membership checks. Do not expose private bundle/evaluation diagnostics to users.
-Public GM-07 DTO projection is additive; reasons/offering metadata are private
-kernel output until consumer contract review. No private preferences returned.
+The kernel remains private/invoker without app grants. GM-18 migration0005 wraps
+it after GM-17 with authenticated fixed-path public discovery/preview/result
+RPCs, bounded server policy and safe DTO projection. See
+[API supplement](../../../../docs/architecture/GM18_DISCOVERY_API.md).
+Private snapshots/diagnostics/preferences/history are never client inputs.
 
 Run `node --test mobile/tests/eligibility.test.mjs` at repo root. SQL parity uses
 `scripts/gm18_eligibility_check.py`. Fixture tests and draft DB queries do not prove

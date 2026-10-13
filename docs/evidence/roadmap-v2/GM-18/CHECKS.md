@@ -1,62 +1,70 @@
-# GM-18 — Checks phần độc lập
+# GM-18 — Checks tích hợp GM-17
 
-Ngày 2026-10-12; base 9188c736def7e125266f8cce2314b9f1f5c31b81 + working-tree patch.
-Node 26.0.0 / macOS, PostgreSQL 17 local GM-03; Python runner stdlib 3.13,
-Python regression bundled runtime. Contract GM-07.1 / GM-18.1 / food 1.1.0 / schema 0.1.0.
-Source hash và result cuối được ghi trong sql-results.json/PATCH_MANIFEST.json.
-Review Pending; không tự Approved/Done hoặc claim public RPC/device Pass.
+2026-10-13. Owner Tâm, reviewer Trí, review Pending. Branch
+`codex/gm-18-catalogue-eligibility`, tested HEAD `19aacc4186c78471893b4c052f67872f67ffb678`
++ working-tree patch; target `origin/main` `4a38588f515c6121a38c605bf50e209d570b90bd`
+(GM-17 PR #111). Contract GM-18.1/GM-07.1, food1.1.0/schema0.2.0,
+eligibility1.0.0/policy gm18-api-1.0.0. macOS, Node26.0.0, PostgreSQL17.11,
+Python3.13.3 SQL / bundled3.12.14 regression & HTTP helper.
+Source hashes: integration/sql-results.json, http-results.json, PATCH_MANIFEST.json.
 
-## Kiểm đã chạy
+## Output và assertion thật
 
-| Phép kiểm | Expected / actual | Kết quả / artifact |
-| --- | --- | --- |
-| Eligibility domain | 68/68, 0 skip | Pass; domain-regression.txt (gộp decision: 237/237) |
-| SQL/private permissions/parity/typed DB | 139/139 assertions; 60 cases (42 gốc + 18 bổ sung) | Pass; sql-results.json/sql-run.txt |
-| Mobile typecheck/lint/Jest/architecture | 288/288 tests; 4 warnings baseline, 0 errors | Pass; mobile-check.txt |
-| Full Python | 544/544 tests, 0 skip | Pass; python-regression.txt |
-| Actual draft | 21 venues / 18 dishes / 190 offerings; zero eligible choices | Pass rejection/query; sql-results.json actualDraft |
-| Repo/docs/diff | validator, indexes và whitespace | Pass; repository-check.txt/docs-freshness.txt/PATCH_MANIFEST.json |
+| Output / input | Expected + assertion | Actual / evidence | Loại / kết quả |
+| --- | --- | --- | --- |
+| Actual GM-08 0.4.1 load/query | 21 venues/18 dishes/190 offerings; no invented coverage or eligible pool; unchanged rows/version | Actual counts, empty OUT_OF_COVERAGE/version0.4.1; integration/sql-results.json + http-results.json | Data thật trong DB test; Pass |
+| Private SQL/kernel/access/rollback | Complete output parity, independent offering sets, scoped grants, rollback leaves upstream/data/sentinel | 147 assertions / 60 cases; integration/sql-results.json | PostgreSQL thật, positive fixtures rõ nhãn; Pass |
+| get_discovery_context | Correct typed coverage/anchors/serverTime; missing administrative linkage explicit unknown | Real guest JWT + GM-07 guards/GM-18 adapter, actual empty and synthetic positive; integration/http-results.json | HTTP thật; Pass |
+| preview_food_pool | <=8 unique, refs/prices/null, seed/version/reasons; validate shapes/date/radius/horizon; deterministic | 31 HTTP cases across suite; integration/http-results.json | JWT/PostgREST/network/client thật, positive data synthetic; Pass |
+| get_result_offerings | Host/member only, exact persisted winner, both venues, sold-out empty, immutable decision | Outsider/left403, expired410; room/result hash unchanged; integration/http-results.json | HTTP thật, fixture decision; Pass |
+| Auth/privacy/rate | Missing/forged/expired401, same signed unexpired control200; no private fields; concurrent60 allowed/61st429 | Assertions and mapped client errors; integration/http-results.json | HTTP/JWT thật; Pass |
+| TS domain regression | Hard eligibility, schedules/DST/lastOrder/unknown, soft ranking, rank-nine winner | 237/237 (68 eligibility); integration/domain-regression.txt | Pure domain/fixtures; Pass |
+| Mobile check | tsc/lint/Jest/architecture | 382/382; 4 baseline GM-07 warnings, 0 errors; integration/mobile-check.txt | Unit/contract, no device claim; Pass |
+| GM-17 regression | Existing access/retention unaffected, local definitions match fresh | 93 assertions; integration/gm17-regression.json | SQL claims, not JWT proof; Pass; optional concurrentCleanup skipped by upstream runner |
+| Local development API deployment | Final definitions/grants/policy match fresh migration | integration/local-deployment.json | Local-only own uncommitted functions refreshed; no data reset/publish; Pass |
+| Full Python | Repository/tooling/data regression | 550/550; integration/python-regression.txt | Offline regression; Pass |
+| Repository/docs/diff | Validator/indexes/whitespace | integration/repository-check.txt, docs-freshness.txt, diff-check.txt | Tooling; Pass |
+| Project gates | Start Done; merge deps/artifacts match fetched main | integration/start-gate.txt, merge-gate.txt; READY_FOR_MERGE_REVIEW at 2026-10-13T13:22:49Z | Live Project, no cache; Pass |
+| Android UI → real API | GM-24/25/27 app/device matrix | Not run here; HANDOFF lists endpoint setup and cases | Consumer integration; no reverse dependency |
+| Remote CI / Trí review | Current revision after commit/push | Not run / Pending | No automatic approval/Done |
 
-All 60 fixture outputs compare exact complete TS/SQL values, including ordered pool,
-profiles/prices/unit/null, reason sets, metadata and offering refs. Original expected
-offering sets are retained and checked independently. Four DST cases cover both
-fall-back folds and spring-forward before/after gap in America/New_York.
-Winner filtering before cap checks rank-nine winner. Physical fixture keeps its
-simulation flag; production mode rejects it. Actual draft queries keep every row
-and version unchanged. Runner dropped its process-created DB after the checks.
+The SQL report compares all 60 complete TS/SQL outputs including exact offering
+sets, ordered profiles/prices/unit/null, metadata and empty reasons. Original42
+cases retained; 18 edge cases include four DST fold/gap cases. Public API security
+is separately tested with real GoTrue guest JWTs (not just forged SQL claims).
+HTTP positive rows are newly generated synthetic published-state ACL simulation
+inside a disposable DB, never relabelled actual data or verified publication.
 
-Tested actual bundle SHA256:
-0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02.
-No publish performed. Original fixtures, verified manifest and migrations 0001–0003
-remain byte-identical to the base revision. Source hashes are captured before run
-and checked unchanged at the end, so a mid-run code change cannot be marked Pass.
+Actual bundle SHA256:
+`0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02`.
+Actual data retains draft/null/unknown; verified manifest remains0/null. Source,
+rights, schedules/service modes/coverage are not invented. ADR-014 accepts this
+actual-data test separately from synthetic positive coverage fixtures.
 
-Lệnh: node --test mobile/tests/eligibility.test.mjs; scripts/gm18_eligibility_check.py;
-mobile npm run check; Python unittest full; validate_repository/task_readiness --check-docs/diff.
+RPCs use auth.uid/server time, private fixed-path wrappers and explicit projections.
+User selected10km/7days, private read budget60/minute per identity/endpoint.
+Result read filters same winner before cap; sold-out does not reroll. New rollback
+removes only API objects without CASCADE; upstream schema/kernel/data remain.
+HTTP test cleanup removed its container, DB and namespaced synthetic guests.
 
-Mobile check lần đầu có 1 timeout shell 5000 ms (287/288 tests); không sửa test,
-không tăng timeout. Lần chạy lại giữ nguyên ngưỡng đã Pass 288/288. Xem
-[output đầu](mobile-first-run.txt), [output chạy lại trước chốt](mobile-rerun-before-final.txt)
-và mobile-check.txt cho revision cuối. Typecheck/lint/architecture kiểm riêng;
-4 lint warnings baseline ở GM-07 contracts/index, không có error.
+Initial integration runs exposed an ambiguous rate-window conflict target and
+an empty adminAreaId rejected by GM-07. Both are fixed in the final uncommitted
+migration. Synthetic setup was adjusted to satisfy published-state schema checks;
+this adjustment only applies to synthetic rows, not GM-08. Final HTTP31/SQL147
+reports refer to final bytes; local definitions/grants/policy were compared with
+fresh deployment. The developer draft had already been applied by local startup,
+so only its own function definitions were refreshed; no merged migration changed.
 
-## AC và giới hạn
+First merge-check attempt using system Python could not verify the live Project;
+re-run with bundled Python's CA store succeeded without TLS bypass/cache/fallback.
 
-- Coverage/radius, source freshness/unknown, lịch/ngoại lệ/timezone/DST/overnight/
-  last order, meal slot, sold-out/paused và expired override: expected fixture
-  sets độc lập, không dùng algorithm để sửa expected.
-- <=8 unique, category representation, budget/temperature/flavor/recent mềm,
-  price/unit/null, một representative offering/card, deterministic seed/order.
-- Complete TS/SQL parity trên cùng fixture, typed DB snapshot/preview,
-  winner refetch không đổi winner và query không sửa row/version.
-- Actual bundle GM-08 draft 0.4.1 được nạp trực tiếp/query riêng; không giả verified.
-- Private schema/functions deny anon/authenticated/service_role; không security
-  definer hoặc cấp quyền mới cho app. Scratch DB tự cleanup; giữ unrelated sentinel.
+## Tái lập và giới hạn
 
-Merge gate live lúc 13:34 UTC+7 ngày 2026-10-12: BLOCKED GM-17 (Todo),
-start gate vẫn đạt. Xem [merge-gate.txt](merge-gate.txt).
+See HANDOFF for commands and the real client composition. Server/SQL/HTTP assertions
+do not replace Android/native/Expo screen acceptance. No UI route, auth scaffold,
+upstream grants/schema, package or lockfile changes. GM-17 optional concurrent
+cleanup is skipped by that regression runner; GM-18 rate race is executed.
+Trí must review AC and this patch revision before moving Done/merging.
 
-Not run/blocker trước nghiệm thu toàn bộ GM-18: public RPC/auth/rate limit và
-member/result ACL sau GM-17; chốt radius/time horizon và projection theo GM-07;
-positive query dataset verified (manifest hiện 0); Android/API/device cases theo
-ma trận và HANDOFF. CI workflow đã thêm, revision hiện chưa push/chạy remote.
+Historical checks/logs remain under CHECKS-2026-10-12.md and the old root evidence;
+old GM-17/verified blockers no longer describe current acceptance (ADR-014).

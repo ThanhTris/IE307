@@ -31,6 +31,7 @@ def main():
         ROOT/'mobile/tests/eligibility.test.mjs',ROOT/'supabase/tests/food_eligibility.sql',
         ROOT/'.github/workflows/gm18-eligibility.yml',ROOT/'supabase/seed/import_food_data.py',
         ROOT/'scripts/gm08_real_bundle_check.py',ROOT/'tests/fixtures/food-data-v1/cases.json',
+        ROOT/'supabase/rollback/0005_gm18_discovery_rpc.down.sql',
         ROOT/'tests/fixtures/food-data-v1/datasets.json',*sorted((ROOT/'supabase/migrations').glob('*.sql'))]
     protected_paths=[*source_paths,ROOT/'supabase/seed/draft/gm08-survey-v0.4.1/bundle.json',
         ROOT/'supabase/seed/verified/manifest.json']
@@ -81,16 +82,17 @@ def main():
     report = dict(result='Fail', fixtureOnly=True, publicationPerformed=False, checkedAt=food.now(),
         testedBaseCommit=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
         workingTreePatchIncluded=True, cases=checks, fixtureResults=results,
-        integration=dict(appRPC='Not run: GM-17 auth/RLS/rate-limit wrapper not yet delivered',
-            verifiedCatalogue='Not run: GM-08 verified counts remain zero', androidAPI='Not run'))
+        integration=dict(appRPC='Separate integration/HTTP report after GM-17 schema 0.2.0',
+            dataAcceptance='ADR-014: actual draft DB query accepted; no verified publication required', androidAPI='Not run'))
     try:
         ddl = admin.run(['docker','exec',food.CONTAINER,'pg_dump','-U','postgres','-d','postgres',
             '--schema-only','--no-owner','--no-privileges','-t','auth.users'])
-        ddl = '\n'.join(line for line in ddl.splitlines() if not re.match(r'CREATE (?:CONSTRAINT )?TRIGGER gm06_',line))
+        ddl = '\n'.join(line for line in ddl.splitlines() if not re.match(r'CREATE (?:CONSTRAINT )?TRIGGER gm\d+_',line))
         admin.psql('create database ' + database + ' template template0;')
         created = True
         db = food.LocalDB(database)
-        db.psql('create schema auth;\n' + ddl)
+        uid=admin.psql("select pg_get_functiondef('auth.uid()'::regprocedure);")
+        db.psql('create schema auth;\n' + ddl+'\n'+uid+';')
         for path in sorted((ROOT/'supabase/migrations').glob('*.sql')):
             if path.name == '0018_food_eligibility.sql':
                 db.psql("create table public.gm18_sentinel(id int primary key,note text);insert into public.gm18_sentinel values(1,'keep');")
@@ -102,6 +104,16 @@ def main():
             "not exists(select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace cross join (values('anon'),('authenticated'),('service_role')) r(role) where n.nspname='gm18_private' and has_function_privilege(role,p.oid,'EXECUTE'))"))
         check('no security definer functions', query(db,
             "not exists(select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='gm18_private' and p.prosecdef)"))
+        check('API policy/rate schema denies every app role', query(db,
+            "not exists(select 1 from (values('anon'),('authenticated'),('service_role')) r(role) where has_schema_privilege(role,'gm18_api_private','USAGE'))"))
+        check('API private helpers deny every app role', query(db,
+            "not exists(select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace cross join (values('anon'),('authenticated'),('service_role')) r(role) where n.nspname='gm18_api_private' and has_function_privilege(role,p.oid,'EXECUTE'))"))
+        check('API private tables deny direct app reads and writes', query(db,
+            "not exists(select 1 from pg_tables t cross join (values('anon'),('authenticated'),('service_role')) r(role) where t.schemaname='gm18_api_private' and has_table_privilege(role,quote_ident(t.schemaname)||'.'||quote_ident(t.tablename),'SELECT,INSERT,UPDATE,DELETE'))"))
+        check('three public RPCs have fixed path and authenticated-only execute', query(db,
+            "(select count(*)=3 and bool_and(p.prosecdef and p.proconfig=array['search_path=pg_catalog'] and has_function_privilege('authenticated',p.oid,'EXECUTE') and not has_function_privilege('anon',p.oid,'EXECUTE') and not has_function_privilege('service_role',p.oid,'EXECUTE')) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='public' and p.proname in ('get_discovery_context','preview_food_pool','get_result_offerings'))"))
+        check('public boundary rejects absent identity', query(db,
+            "public.get_discovery_context()->>'messageKey'"), 'AUTH_REQUIRED')
         check('all original 42 fixture cases included', [c['id'] for c in cases[:42]], [c['id'] for c in expected['cases']])
         db.psql((ROOT/'supabase/tests/food_eligibility.sql').read_text(encoding='utf-8'))
         for c in cases:
@@ -151,6 +163,13 @@ def main():
         db.transaction(real.remove_loaded_sql(bundle))
         check('actual draft test cleanup returns empty baseline', real.readback(db), baseline)
         check('actual input bytes are unchanged', food.digest(path.read_bytes()), bundle_hash)
+        db.psql((ROOT/'supabase/rollback/0005_gm18_discovery_rpc.down.sql').read_text(encoding='utf-8'))
+        check('API rollback removes public RPCs and private API schema', query(db,
+            "to_regnamespace('gm18_api_private') is null and not exists(select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='public' and p.proname in ('get_discovery_context','preview_food_pool','get_result_offerings'))"))
+        check('API rollback preserves eligibility kernel and GM-17', query(db,
+            "to_regnamespace('gm18_private') is not null and to_regprocedure('gm17_private.is_member(uuid)') is not null"))
+        check('API rollback preserves food data baseline and unrelated sentinel',
+            [real.readback(db),db.psql('select note from public.gm18_sentinel;').strip()],[baseline,'keep'])
         report.update(caseCount=len(checks), fixtureCaseCount=len(cases),
             postgresVersion=db.psql("select current_setting('server_version');").strip(),
             actualDraft=dict(bundleSha256=bundle_hash,rowCounts=preflight['rowCounts'],query=actual,discovery=discovery),

@@ -1,12 +1,12 @@
-name: GM-18 independent eligibility
+name: GM-18 eligibility and API
 on: [push, pull_request]
 permissions:
   contents: read
 jobs:
   parity:
-    name: GM-18 TypeScript and disposable SQL parity
+    name: GM-18 SQL parity and authenticated HTTP
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -17,6 +17,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: npm ci
+      - run: npm ci --prefix mobile --no-audit --no-fund
       - name: Pure domain fixtures and edge cases
         run: node --test mobile/tests/eligibility.test.mjs
       - name: Start local Supabase
@@ -27,12 +28,18 @@ jobs:
           PYTHONUTF8: '0'
           PYTHONCOERCECLOCALE: '0'
         run: python scripts/gm18_eligibility_check.py --report "$RUNNER_TEMP/gm18-sql-results.json"
+      - name: Real JWT, mobile client and disposable API assertions
+        env:
+          GM18_PYTHON: python
+        run: node scripts/gm18_http_check.mjs
       - name: Upload assertions and tested source hashes
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: gm18-independent-eligibility
-          path: ${{ runner.temp }}/gm18-sql-results.json
+          name: gm18-eligibility-api
+          path: |
+            ${{ runner.temp }}/gm18-sql-results.json
+            docs/evidence/roadmap-v2/GM-18/integration/http-results.json
           if-no-files-found: warn
       - name: Stop local project
         if: always()
