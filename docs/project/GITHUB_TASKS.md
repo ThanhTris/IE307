@@ -8,6 +8,8 @@
 
 # Task GitHub — lần đồng bộ gần nhất 2026-10-06
 
+> Quy tắc review trong bản lịch sử bên dưới đã được thay bởi [ADR-013](../architecture/decisions/ADR-013-project-owner-final-review.md): hiện tại Trí review tất cả task, kể cả task Trí làm; không yêu cầu review chéo hoặc reviewer khác owner. Giữ nguyên nội dung cũ để truy vết, không dùng làm quy trình hiện hành.
+
 > Baseline local v0.2 ngày 2026-10-07 có 27 task triển khai. Bảng dưới là issue mapping đã công bố trước đó; scope/AC v0.2 chưa sync. GM-25/26/27 chưa có issue/Project item. Đọc [task summary](TASK_SUMMARY.md) để biết yêu cầu hiện hành; không suy tiến độ từ Assignee.
 Các Assignee dưới đây chỉ là đề xuất, không phải người đã nhận việc. Thành viên tự chọn cuối cùng, xác nhận trên issue rồi cập nhật Markdown/nhãn. Reviewer khác owner trước khi done.
 

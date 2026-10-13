@@ -37,6 +37,12 @@ def configuration(src):
             raise ValueError('invalid issue number')
         if len(set(issues.values())) != len(issues):
             raise ValueError('duplicate issue number')
+        aliases = config.get('approval_aliases', {})
+        # Owner-authorized baseline card only; never guess aliases from old IDs.
+        if aliases and (aliases != {'GM-01': 'GM-00'} or issues['GM-01'] != 37):
+            raise ValueError('unsupported approval alias')
+        if not isinstance(aliases, dict):
+            raise ValueError('invalid approval aliases')
         return config
     except (KeyError, OSError, TypeError, ValueError) as exc:
         raise ProjectUnavailable('Invalid tasks/project-gate.json; cannot verify Project.') from exc
@@ -117,7 +123,8 @@ class ProjectSnapshot:
         item = matches[0]
         if item.get('isArchived') is not False:
             return ['Project item archived or archive state unknown']
-        if not re.match(r'^' + re.escape(tid) + r'(?:\s|[—:\-]|$)', item['content'].get('title', '')):
+        project_tid = self.config.get('approval_aliases', {}).get(tid, tid)
+        if not re.match(r'^' + re.escape(project_tid) + r'(?:\s|[—:\-]|$)', item['content'].get('title', '')):
             return ['Project issue title does not match current task ID']
         status = (item.get('status') or {}).get('name')
         if status != self.config['done_option']:

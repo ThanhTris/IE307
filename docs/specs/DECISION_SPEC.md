@@ -1,6 +1,6 @@
 # Decision spec — v0.2
 
-2026-10-07 • policyVersion decision-v2 • FR-05..08. Thứ tự chọn giữ hai vòng; v2 bổ sung matchTier và contract lý do. Chờ review độc lập; [engine GM-15 draft (legacy GM-06)](../../mobile/src/domain/decision/README.md) đã có tests thuần, chưa có API triển khai hoặc SQL parity.
+2026-10-07 • policyVersion decision-v2 • FR-05..08. Thứ tự chọn giữ hai vòng; v2 bổ sung matchTier và contract lý do. Trí review task và revision tương ứng theo [ADR-013](../architecture/decisions/ADR-013-project-owner-final-review.md), không yêu cầu review chéo. [Engine GM-15 (legacy GM-06)](../../mobile/src/domain/decision/README.md) có tests thuần; nghiệm thu domain không thay nghiệm thu API hoặc SQL parity.
 
 ## Input và vòng 1
 

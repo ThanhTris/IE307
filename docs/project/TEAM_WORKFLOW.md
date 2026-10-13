@@ -4,6 +4,8 @@ Roadmap-v2 theo [ADR-009](../architecture/decisions/ADR-009-foundation-first-tas
 
 ## Trước bắt đầu
 
+Trí (`ThanhTris`) review tất cả task; task Trí làm cũng do Trí review. Không có bước review chéo bắt buộc hoặc yêu cầu thêm người duyệt theo ADR-013. Vẫn kiểm AC, test và evidence thật trước nghiệm thu.
+
 Phân công hiện hành lấy assignee trên [Project #2](https://github.com/users/ThanhTris/projects/2); task metadata và bảng tổng hợp đã được chủ dự án yêu cầu đồng bộ ngày 2026-10-11. Lịch/Deadline quản lý trên Project. Đổi phân công hoặc start/merge gate cần cập nhật task, bảng artifact/task map và sinh lại indexes; checker chỉ đọc Done, không tự cập nhật metadata. Owner hiện hành không thay tác giả/evidence lịch sử. Không phân công reviewer thành viên riêng: Trí review/merge cuối cho mọi task, kể cả task Trí trực tiếp viết; không cần chỉ định người kiểm độc lập theo [ADR-013](../architecture/decisions/ADR-013-project-owner-final-review.md).
 
 1. Chọn đúng task roadmap-v2 và xem bảng đầu vào. UI cần shell → components → contract/mock trước màn; BE cần structure/field/contract trước API; Data cần fields → schema → import.
@@ -13,6 +15,8 @@ Phân công hiện hành lấy assignee trên [Project #2](https://github.com/us
 5. Thực hiện phần đã có đầu vào. GM-09..14 là màn mock có thể hoàn thành độc lập; task INTEGRATION mới nghiệm thu API/native thật. Không gộp gallery/capability test vào việc dựng màn mẫu.
 
 GM-01 đã được ghi nhận duyệt theo xác nhận và ủy quyền trực tiếp của chủ dự án ngày 2026-10-10, xem [evidence](../evidence/roadmap-v2/GM-01/REVIEW.md); GM-00 chỉ approval v0.2. Chủ dự án đã chốt cấu trúc, bộ package nền và yêu cầu Codex hỗ trợ GM-02/03, giữ nguyên owner/reviewer. Vẫn chạy start/merge gate; approval baseline không tự duyệt code hoặc AC task sau. Review sandbox không chuyển sang scope mới.
+
+Theo chỉ định Trí ngày 2026-10-13/[ADR-014](../architecture/decisions/ADR-014-test-data-and-baseline-project-card.md), nguồn Done của baseline GM-01 là card Project GM-00/#37. Đây là alias pin cụ thể, không đổi scope/numbering/artifacts GM-01 hoặc tự duyệt task sau. GM-08 dùng bundle thật đã nạp/query DB test cho nghiệm thu/bàn giao BE, không chờ verified publish/review độc lập/coverage/anchor đầy đủ. Giữ nullable/unknown, bộ lọc và production publish guards; chi tiết tại DATASET_HANDOFF.
 
 ## Đầu ra phải chạy và kiểm được
 

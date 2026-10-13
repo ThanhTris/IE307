@@ -1,8 +1,12 @@
 """Fixture integrity and authored boundaries; does not run a GM-30 algorithm."""
 import copy
+import contextlib
 from datetime import datetime, timezone
+import io
 import json
+import os
 from pathlib import Path
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -26,6 +30,35 @@ class FoodFixtureTests(unittest.TestCase):
         self.assertEqual(len(self.suite['cases']), 42)
         self.assertEqual(len(self.datasets), 27)
         self.assertEqual({r['group'] for r in self.suite['cases']}, ff.GROUPS)
+
+    def test_json_reads_are_utf8_even_when_default_would_be_cp1252(self):
+        read_text = Path.read_text
+        calls = []
+
+        def windows_read_text(path, *args, **kwargs):
+            calls.append((path, kwargs.get('encoding')))
+            kwargs.setdefault('encoding', 'cp1252')
+            return read_text(path, *args, **kwargs)
+
+        with patch.object(Path, 'read_text', windows_read_text), \
+                patch.object(sys, 'argv', ['food_fixtures.py', '--check']), \
+                contextlib.redirect_stdout(io.StringIO()) as output:
+            with self.assertRaises(SystemExit) as result:
+                ff.main()
+        self.assertEqual(result.exception.code, 0)
+        self.assertTrue(json.loads(output.getvalue())['valid'])
+        self.assertTrue(calls)
+        self.assertTrue(all(encoding == 'utf-8' for _, encoding in calls), calls)
+        self.assertTrue({'base_dish_registry.json', 'base.json', 'manifest.json'} <=
+                        {path.name for path, _ in calls})
+
+    def test_cli_with_utf8_mode_disabled(self):
+        result = subprocess.run(
+            [sys.executable, '-X', 'utf8=0', str(Path(ff.__file__)), '--check'],
+            cwd=ROOT, env={**os.environ, 'PYTHONUTF8': '0', 'PYTHONIOENCODING': 'cp1252'},
+            capture_output=True, timeout=30)
+        self.assertEqual(result.returncode, 0, result.stderr.decode('cp1252', errors='replace'))
+        self.assertTrue(json.loads(result.stdout.decode('cp1252'))['valid'])
 
     def test_pool_counts_and_soft_conflict(self):
         for name, size in [('pool-ten', 8), ('pool-eight', 8), ('pool-three', 3), ('pool-empty', 0)]:
@@ -184,6 +217,12 @@ class FoodFixtureTests(unittest.TestCase):
             self.assertEqual(ff.dc.read_csv_bundle(out / 'base-csv'), self.datasets['base'])
             self.assertEqual(stats['networkCalls'], 0)
             self.assertFalse(stats['eligibilityExecuted'])
+            manifest = json.loads((out / 'manifest.json').read_text(encoding='utf-8'))
+            self.assertEqual(list(manifest['files']), sorted(manifest['files']))
+            self.assertTrue(all('\\' not in name for name in manifest['files']))
+            for name in ('base.json', 'cases.json', 'datasets.json', 'registry.json', 'quality.json'):
+                self.assertNotIn(b'\r\n', (out / name).read_bytes())
+                self.assertEqual((out / name).read_bytes(), (ff.OUTPUT / name).read_bytes())
             for p in (out / 'base-csv').glob('*.csv'):
                 self.assertTrue(p.read_bytes().startswith(b'\xef\xbb\xbf'))
 

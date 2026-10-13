@@ -1,12 +1,12 @@
 # Gì Cũng Được — mô tả hệ thống cho cả nhóm
 
-Baseline food-v1 • 2026-10-07. Đây là phạm vi yêu cầu hiện hành được soạn theo yêu cầu chủ dự án và góp ý giảng viên; chưa có app/API triển khai; review scope mới chờ GM-01.
+Baseline food-v1 • soạn ngày 2026-10-07. Đây là mô tả yêu cầu, không phải báo cáo tính năng đã triển khai. GM-01 đã được chủ dự án duyệt ngày 2026-10-10; trạng thái từng task xem trên Project và evidence tương ứng.
 
 ## Ứng dụng giải quyết việc gì?
 
 Khi hai người hoặc một nhóm chuẩn bị đi ăn, từng người có món muốn ăn, món vẫn ăn được và món không ăn. Ứng dụng lọc món có nơi bán phù hợp khu vực/giờ đã xác nhận, rồi giúp cả nhóm tìm một lựa chọn chung trong tối đa hai vòng, giải thích kết quả, rồi mở tìm quán/review theo khu vực. Không cần cả nhóm cùng thích nhất một món mới có kết quả; món thỏa hiệp phải được mọi người chấp nhận.
 
-Đối tượng: cặp đôi, bạn bè và đồng nghiệp 2–8 người. Android là nền tảng nghiệm thu, dùng React Native/Expo + TypeScript. Supabase là kiến trúc backend đề xuất chờ reviewer kiểm dependency/quota. Thời gian dự kiến 8 tuần, 6 thành viên, chi phí dịch vụ gần 0 ở quy mô demo.
+Đối tượng: cặp đôi, bạn bè và đồng nghiệp 2–8 người. Android là nền tảng nghiệm thu, dùng React Native/Expo + TypeScript. Supabase đã được chủ dự án duyệt tại ADR-001/hồ sơ GM-01; approval stack không thay kiểm bảo mật, dependency hoặc quota của từng task. Nhóm có 6 thành viên; lịch và Deadline xem trên Project, chi phí dịch vụ mục tiêu gần 0 ở quy mô demo.
 
 ## Một lần sử dụng diễn ra thế nào?
 
@@ -36,8 +36,8 @@ P1: tài khoản liên kết/khôi phục, history nhiều máy. P2: OCR/AI/weat
 
 ## Người làm và tiến độ là gì?
 
-Các tên trong backlog chỉ là gợi ý; thành viên có thể nhận/đổi việc và reviewer phải khác owner. GM-00 v0.2 đã được Trí duyệt; GM-01 food-v1 đang chờ review và mọi task triển khai vẫn backlog cho đến khi thành viên nhận việc. 8 tuần cũ cần ước lượng lại theo scope data mới; chưa có ngày bắt đầu/hạn môn học nên không tự đặt deadline lịch.
+Phân công, trạng thái nghiệm thu và Deadline hiện hành xem trên [Project #2](https://github.com/users/ThanhTris/projects/2). Trí (`ThanhTris`) review tất cả task, kể cả task Trí trực tiếp làm; không yêu cầu reviewer khác owner hoặc review chéo theo [ADR-013](../architecture/decisions/ADR-013-project-owner-final-review.md). GM-01 đã được chủ dự án xác nhận duyệt ngày 2026-10-10; approval baseline không tự nghiệm thu task sau. Lịch trong tài liệu cũ không thay Deadline trên Project.
 
-Đọc [task summary](../project/TASK_SUMMARY.md), [plan 8 tuần](../project/PROJECT_PLAN.md) và [spec index](../specs/README.md). Prototype HTML dùng để xem ý tưởng cũ, chưa chứng minh đủ food-v1 và không chứng minh native/realtime/push.
+Đọc [task summary](../project/TASK_SUMMARY.md), [lộ trình hiện hành](../project/IMPLEMENTATION_ROADMAP.md) và [spec index](../specs/README.md). Prototype HTML là mẫu thiết kế/mô phỏng, không chứng minh native/realtime/push.
 
 [Food data spec](../specs/FOOD_DATA_SPEC.md), [dependency map](../project/TASK_DEPENDENCIES.md): task nào trước/sau/song song và cách kiểm đã được phép bắt đầu. Không có data coverage thì báo thiếu dữ liệu; lịch kiểm không là cam kết còn hàng.

@@ -1,6 +1,6 @@
 # GM-16 auth adapter — GM-16.1
 
-Owner Trí, reviewer Tâm. Không có màn login/room integration tại task này.
+Owner Trí, reviewer Trí (`ThanhTris`), kể cả task Trí trực tiếp làm; không có bước review chéo bắt buộc theo [ADR-013](../../../../docs/architecture/decisions/ADR-013-project-owner-final-review.md). Không có màn login/room integration tại task này.
 Package được chủ dự án chấp thuận: expo-secure-store57.0.4 cho Expo SDK57.
 
 ```typescript
