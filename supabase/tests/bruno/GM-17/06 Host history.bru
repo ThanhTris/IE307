@@ -1,0 +1,22 @@
+meta {
+  name: 06 Host history
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/rest/v1/histories?select=id,scope
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{hostToken}}
+}
+
+tests {
+  test('Host history', function () {
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getBody()).to.be.an("array").with.lengthOf(2);
+  });
+}

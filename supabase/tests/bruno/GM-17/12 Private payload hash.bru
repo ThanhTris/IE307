@@ -1,0 +1,22 @@
+meta {
+  name: 12 Private payload hash
+  type: http
+  seq: 12
+}
+
+get {
+  url: {{baseUrl}}/rest/v1/submissions?select=payload_hash
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{hostToken}}
+}
+
+tests {
+  test('Private payload hash', function () {
+    expect(res.getStatus()).to.equal(403);
+    expect(res.getBody().code).to.equal("42501");
+  });
+}

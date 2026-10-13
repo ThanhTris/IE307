@@ -1,0 +1,13 @@
+GM-17 Bruno CLI evidence
+Checked at: 2026-10-13T10:31:19Z
+Runtime: Bru CLI 4.2.1, local GoTrue/PostgREST at http://127.0.0.1:54321
+Collection: supabase/tests/bruno/GM-17
+Environment: Local.runtime.private (created by --bruno-setup; removed after run)
+
+Result: Pass
+Requests: 16/16 passed, 0 failed, 0 skipped
+Tests: 16/16 passed
+Expected status coverage: 200 allowed projections/empty RLS lists; 403 private
+columns/tables; 401 anonymous access. No raw response bodies or credentials are
+retained in this evidence. The synthetic namespace and three anonymous users were
+removed with scripts/gm17_bruno_cleanup.mjs after the run.

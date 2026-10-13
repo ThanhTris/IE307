@@ -51,6 +51,15 @@ GM-07 chốt request/response/error/version từ dictionary GM-04, đối chiế
 
 GM-17 bảo vệ tables/RPC/retention, từng task API thêm auth/membership/version/expiry/lock/idempotency đúng endpoint. Client không import SQL/SDK vào UI; production không fallback sang mock khi API lỗi. Lệnh smoke/API example và response mẫu là bắt buộc trong HANDOFF.
 
+GM-17.1 implementation supplement (schema0.2.0): [ACCESS_MATRIX](ACCESS_MATRIX.md)
+và [ADR-015](decisions/ADR-015-retention-reference-identities.md) chốt column grants,
+RLS, private transaction guard và retention references. Client không SELECT *
+hoặc serialize base rows; direct REST errors42501/HTTP401/403 không tự là ApiError
+envelope. Endpoint owner ánh xạ lỗi, tra ACK trước version, giữ lock order đã bàn
+giao. History summary và ACK giữ stable IDs sau khi live room/result bị dọn;
+không join tới live parents để dựng history. DTO GM-07 không đổi, producer-specific
+business RPC và Android wiring vẫn thuộc các task phía dưới.
+
 ## Chi tiết Contract Projection & Parity GM-04 / GM-06 (GM-07)
 
 ### Bổ sung auth/session GM-16.1

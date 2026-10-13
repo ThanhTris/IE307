@@ -15,6 +15,7 @@ ios/build/
 .env
 .env.*
 !.env.example
+supabase/tests/bruno/**/environments/*.private.bru
 *.jks
 *.keystore
 *.p8

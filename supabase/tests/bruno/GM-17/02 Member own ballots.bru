@@ -1,0 +1,22 @@
+meta {
+  name: 02 Member own ballots
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/rest/v1/votes?select=id,value
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{memberToken}}
+}
+
+tests {
+  test('Member own ballots', function () {
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getBody()).to.be.an("array").with.lengthOf(1);
+  });
+}

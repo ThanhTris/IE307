@@ -1,0 +1,22 @@
+meta {
+  name: 09 Private consent snapshot
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{baseUrl}}/rest/v1/rooms?select=consent_snapshot
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{hostToken}}
+}
+
+tests {
+  test('Private consent snapshot', function () {
+    expect(res.getStatus()).to.equal(403);
+    expect(res.getBody().code).to.equal("42501");
+  });
+}

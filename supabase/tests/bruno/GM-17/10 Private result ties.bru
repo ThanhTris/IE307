@@ -1,0 +1,22 @@
+meta {
+  name: 10 Private result ties
+  type: http
+  seq: 10
+}
+
+get {
+  url: {{baseUrl}}/rest/v1/results?select=tied_choice_ids
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{hostToken}}
+}
+
+tests {
+  test('Private result ties', function () {
+    expect(res.getStatus()).to.equal(403);
+    expect(res.getBody().code).to.equal("42501");
+  });
+}

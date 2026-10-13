@@ -571,7 +571,7 @@
       "track": "BE",
       "stage": "implementation",
       "outputs": [
-        "supabase/migrations/0017_access_policies.sql",
+        "supabase/migrations/0004_access_policies.sql",
         "supabase/tests/rls.sql",
         "docs/architecture/ACCESS_MATRIX.md",
         "docs/evidence/roadmap-v2/GM-17/CHECKS.md",
@@ -635,7 +635,7 @@
         },
         {
           "task": "GM-17",
-          "artifact": "supabase/migrations/0017_access_policies.sql",
+          "artifact": "supabase/migrations/0004_access_policies.sql",
           "gate": "merge"
         },
         {
@@ -674,7 +674,7 @@
         },
         {
           "task": "GM-17",
-          "artifact": "supabase/migrations/0017_access_policies.sql",
+          "artifact": "supabase/migrations/0004_access_policies.sql",
           "gate": "start"
         },
         {
@@ -811,7 +811,7 @@
         },
         {
           "task": "GM-17",
-          "artifact": "supabase/migrations/0017_access_policies.sql",
+          "artifact": "supabase/migrations/0004_access_policies.sql",
           "gate": "start"
         },
         {

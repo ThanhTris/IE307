@@ -1,0 +1,85 @@
+# GM-17.1 / schema0.2.0. Setup: see Bruno README; tokens below are placeholders.
+@baseUrl = http://127.0.0.1:54321
+@publicKey = PUBLIC_KEY_PLACEHOLDER
+@hostToken = HOST_JWT_PLACEHOLDER
+@memberToken = MEMBER_JWT_PLACEHOLDER
+@outsiderToken = OUTSIDER_JWT_PLACEHOLDER
+
+### Host room — expected HTTP 200, array length 1
+GET {{baseUrl}}/rest/v1/rooms?select=id,state,version
+apikey: {{publicKey}}
+Authorization: Bearer {{hostToken}}
+
+### Member own ballots — expected HTTP 200, array length 1
+GET {{baseUrl}}/rest/v1/votes?select=id,value
+apikey: {{publicKey}}
+Authorization: Bearer {{memberToken}}
+
+### Outsider room — expected HTTP 200, array length 0
+GET {{baseUrl}}/rest/v1/rooms?select=id
+apikey: {{publicKey}}
+Authorization: Bearer {{outsiderToken}}
+
+### Outsider ballots — expected HTTP 200, array length 0
+GET {{baseUrl}}/rest/v1/votes?select=id
+apikey: {{publicKey}}
+Authorization: Bearer {{outsiderToken}}
+
+### Host own ballots — expected HTTP 200, array length 1
+GET {{baseUrl}}/rest/v1/votes?select=id,value
+apikey: {{publicKey}}
+Authorization: Bearer {{hostToken}}
+
+### Host history — expected HTTP 200, array length 2
+GET {{baseUrl}}/rest/v1/histories?select=id,scope
+apikey: {{publicKey}}
+Authorization: Bearer {{hostToken}}
+
+### Member group history — expected HTTP 200, array length 1
+GET {{baseUrl}}/rest/v1/histories?select=id,scope
+apikey: {{publicKey}}
+Authorization: Bearer {{memberToken}}
+
+### Outsider history — expected HTTP 200, array length 0
+GET {{baseUrl}}/rest/v1/histories?select=id
+apikey: {{publicKey}}
+Authorization: Bearer {{outsiderToken}}
+
+### Private consent snapshot — expected HTTP 403, code 42501
+GET {{baseUrl}}/rest/v1/rooms?select=consent_snapshot
+apikey: {{publicKey}}
+Authorization: Bearer {{hostToken}}
+
+### Private result ties — expected HTTP 403, code 42501
+GET {{baseUrl}}/rest/v1/results?select=tied_choice_ids
+apikey: {{publicKey}}
+Authorization: Bearer {{hostToken}}
+
+### Private token — expected HTTP 403, code 42501
+GET {{baseUrl}}/rest/v1/devices?select=push_token
+apikey: {{publicKey}}
+Authorization: Bearer {{memberToken}}
+
+### Private payload hash — expected HTTP 403, code 42501
+GET {{baseUrl}}/rest/v1/submissions?select=payload_hash
+apikey: {{publicKey}}
+Authorization: Bearer {{hostToken}}
+
+### Private events — expected HTTP 403, code 42501
+GET {{baseUrl}}/rest/v1/events?select=id
+apikey: {{publicKey}}
+Authorization: Bearer {{hostToken}}
+
+### Private ACK — expected HTTP 403, code 42501
+GET {{baseUrl}}/rest/v1/idempotency?select=response
+apikey: {{publicKey}}
+Authorization: Bearer {{hostToken}}
+
+### Anonymous private read — expected HTTP 401, code 42501
+GET {{baseUrl}}/rest/v1/rooms?select=id
+apikey: {{publicKey}}
+
+### Draft catalogue — expected HTTP 200, array length 0
+GET {{baseUrl}}/rest/v1/dishes?select=id,name
+apikey: {{publicKey}}
+Authorization: Bearer {{hostToken}}
