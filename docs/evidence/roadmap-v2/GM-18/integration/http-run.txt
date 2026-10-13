@@ -1,0 +1,32 @@
+Pass: actual draft discovery HTTP with real guest JWT
+Pass: actual draft discovery DTO through real mobile client
+Pass: actual draft preview empty with version and reason
+Pass: actual draft empty reason through typed discovery adapter
+Pass: actual draft malformed date becomes INVALID_INPUT
+Pass: synthetic published discovery through real client/guards
+Pass: positive preview DTO/offering refs through real client
+Pass: discovery UUID filters preserve anchor-to-area relationship
+Pass: 10km boundary and within7days accepted
+Pass: same snapshot context returns deterministic ordered pool and seed
+Pass: radius over10km rejected
+Pass: zero radius rejected
+Pass: radius string rejected
+Pass: future beyond7days rejected
+Pass: negative budget rejected
+Pass: invalid meal rejected
+Pass: category object rejected
+Pass: category wrong type rejected
+Pass: past target through real client maps DESIRED_TIME_PASSED
+Pass: missing auth denied
+Pass: forged JWT denied
+Pass: expired signed synthetic JWT denied by actual verifier
+Pass: outsider result read through real client maps NOT_MEMBER
+Pass: host/member result gives both venues for same immutable winner
+Pass: sold-out refetch returns empty without substitute winner
+Pass: RPCs never mutate room/result/winner snapshot
+Pass: left member denied
+Pass: expired member room maps ROOM_EXPIRED
+Pass: projection has no private authors/source locators/preferences/ballots
+Pass: atomic concurrent read budget:60 allowed,61st429; caller isolated
+Pass: real client maps HTTP429 RATE_LIMITED
+{"result":"Pass","cases":31,"postgrestCleanup":"removed","databaseAndGuestCleanup":"owned namespace removed"}
