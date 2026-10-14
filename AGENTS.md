@@ -2,7 +2,9 @@
 
 ## Bối cảnh
 
-Dự án Android-first React Native giúp nhóm chọn món. Bộ nền gồm plan/spec/prototype, shell Expo GM-02 và BE local runner GM-03 đang kiểm/nghiệm thu; chưa triển khai tính năng/schema/API nghiệp vụ.
+Dự án Android-first React Native giúp nhóm chọn món. Source hiện có shell/component Expo GM-02/05, field contract/schema/import GM-04/06/08, client/mock GM-07, engine GM-15, auth GM-16, RLS/retention GM-17, eligibility GM-18 và lifecycle phòng GM-19. Màn sản phẩm và tích hợp Android còn theo các task sau; không coi mock/HTTP server test là app đã hoàn thiện. Status/assignee/Deadline hiện hành đọc trực tiếp trên Project #2; mô tả artifact không tự ghi approval.
+
+Git pull không tự đồng bộ database đang chạy. Kiểm migration ledger và definitions/RPC thực tế trước dùng endpoint; health GoTrue hoặc schema registry không chứng minh deployed code khớp main. Có draft objects ngoài ledger thì cần kế hoạch reconcile/backup được chủ dự án duyệt, không reset hoặc sửa migration đã merge để vượt kiểm tra. GM-08 đã nghiệm thu bundle thật trên DB test theo ADR-014, không đồng nghĩa đã publish dataset production.
 
 Nguồn yêu cầu: chỉ dẫn hiện tại của chủ dự án → task/AC → spec/ADR → PRD/plan → prototype/research. [Migration plan](docs/project/MIGRATION_PLAN.md) ghi giả định chờ review. Không dùng commit đề tài cũ làm yêu cầu active.
 

@@ -14,6 +14,13 @@ an owned disposable database/PostgREST, and a gateway on :54331. GM-08 draft
 data remains unchanged; new GM-18 synthetic published-state rows exist only
 inside that database. No reset or publish into the app database occurs.
 
+Nếu runtime environment/state đã có, `--bruno` từ chối trước khi tạo fixture;
+hãy dừng đúng phiên sở hữu bằng stop script, không xóa/ghi đè file để chạy lại.
+File runtime được tạo exclusive; cleanup chỉ xóa file chính lượt chạy đã tạo
+và còn nguyên identity/nội dung. File bị thay thế/chỉnh sửa được giữ lại và báo
+cleanup Fail. Chạy một lượt thường (không `--bruno`) không xóa runtime của phiên
+khác; `--against` tiếp tục giữ fixture đang dùng.
+
 Open `supabase/tests/bruno/GM-19`, select **Local.runtime.private**, Run all
 50 requests sequentially once. They cover discovery/pool, all nine lifecycle
 RPCs, own preferences, ready reset, ACK replay/reuse, start/locked/terminal,

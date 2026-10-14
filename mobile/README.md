@@ -1,6 +1,6 @@
-# Mobile — GM-02 Expo shell
+# Mobile — Expo shell, components và adapters
 
-Expo SDK 57 + Expo Router + TypeScript strict. Shell thật `/`, kiểm navigation `/foundation`, `+not-found`. Chưa có tạo/join phòng, API/auth hoặc camera/push/SQLite; component GM-05, màn chi tiết GM-09..14.
+Expo SDK 57 + Expo Router + TypeScript strict. Có shell `/`, `/foundation`, `+not-found`, preview component GM-05, client/mock GM-07, auth/session GM-16 và domain GM-15/18. Harness `/internal/gm16` chỉ development và cần cấu hình theo [auth README](src/data/auth/README.md); không là màn sản phẩm. Màn tạo/join/context/vote và tích hợp Android còn theo GM-09..14/24..31; camera/push/SQLite chưa được coi hoàn thành.
 
 ## Chạy từ clone sạch
 
@@ -28,8 +28,8 @@ npm run bundle:android
 
 Smoke: tên/tagline/nhãn GM-02 và chưa kết nối API → **Xem cấu trúc ứng dụng** → `/foundation` → Quay lại/Android Back. Mở `exp://<LAN-IP>:8081/--/khong-co-trang` để kiểm not-found → Về trang đầu. Kiểm light/dark, TalkBack, font200%, portrait/landscape; không request vị trí/camera/push. Ghi device/revision/screenshot/Pass-Fail-Not run tại [CHECKS](../docs/evidence/roadmap-v2/GM-02/CHECKS.md).
 
-Routes mỏng `src/app`; UI theo feature; composition `src/bootstrap`; domain không React/SDK/network; shared không import feature. GM-07 lắp `data/api`, GM-16 auth, GM-31 local. Markers chỉ quy hoạch, không là implementation. GM-02 sở hữu package/config/lockfile, override khóa peer Expo/React, không force/legacy-peer-deps. [Dependencies](../docs/evidence/roadmap-v2/GM-02/DEPENDENCIES.md) · [Tests](tests/README.md) · [Cấu trúc](../docs/project/REPOSITORY_STRUCTURE.md) · [Handoff](../docs/evidence/roadmap-v2/GM-02/HANDOFF.md).
+Routes mỏng `src/app`; UI theo feature; composition `src/bootstrap`; domain không React/SDK/network; shared không import feature. GM-07 đã có `data/api`, GM-16 đã có auth/session; local persistence/outbox còn thuộc GM-31. Markers còn trống chỉ là quy hoạch, không là implementation. GM-02 sở hữu package/config/lockfile, override khóa peer Expo/React, không force/legacy-peer-deps. [Dependencies](../docs/evidence/roadmap-v2/GM-02/DEPENDENCIES.md) · [Tests](tests/README.md) · [Cấu trúc](../docs/project/REPOSITORY_STRUCTURE.md) · [Handoff](../docs/evidence/roadmap-v2/GM-02/HANDOFF.md).
 
 ## Engine decision-v2 legacy GM-06 → GM-15
 
-[Contract engine draft](src/domain/decision/README.md) có TypeScript thuần và fixtures kiểm phiếu hai vòng. Chạy `node --test mobile/tests/decision.test.mjs` bằng Node 24. Typecheck/lint/Jest/architecture đã kiểm riêng bằng tooling GM-02; CI Decision domain chạy suite Node .mjs riêng. SQL parity/seeded winner/persist/retry backend và tích hợp app/RPC còn chờ; xem CHECKS/handoff GM-15.
+[Contract engine](src/domain/decision/README.md) có TypeScript thuần, seeded selection và fixtures kiểm phiếu hai vòng. Từ root chạy `node --test mobile/tests/decision.test.mjs mobile/tests/decisionSeeded.test.mjs` bằng Node 24. Typecheck/lint/Jest/architecture kiểm riêng; CI Decision domain chạy suite Node .mjs riêng. SQL parity/persist/retry backend thuộc GM-20, không được chứng minh chỉ bằng winner thuần. [Eligibility domain](src/domain/eligibility/README.md) và SQL/HTTP GM-18 có bộ kiểm riêng; app integration/native evidence vẫn theo task tương ứng.

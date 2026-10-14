@@ -5,10 +5,11 @@ import { spawn } from 'node:child_process';
 import { createServer } from 'node:http';
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { mkdir, writeFile, rm } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { runCommand, validateConfig, validateApiUrl } from './backend.mjs';
+import { createOwnedRuntimeFiles } from './gm19_runtime_files.mjs';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const python = process.env.GM19_PYTHON ?? (process.platform === 'win32' ? 'python' : 'python3');
 const require=createRequire(import.meta.url),ts=require(resolve(root,'mobile/node_modules/typescript'));
@@ -23,8 +24,9 @@ const namespace = saved?.namespace ?? randomUUID(), guests = [], cases = [];
 const container = 'gm19-http-' + namespace.replaceAll('-', '').slice(0, 16);
 const envFile = resolve(root, 'supabase/tests/bruno/GM-19/environments/Local.runtime.private.bru');
 const stateFile=resolve(root,'supabase/tests/bruno/GM-19/environments/runtime.private.json');
+const runtimeFiles = createOwnedRuntimeFiles(envFile, stateFile);
 const control=randomUUID();let stopResolve;
-const sources = ['supabase/migrations/0019_room_lifecycle.sql','scripts/gm19_http_check.mjs','scripts/gm19_http_fixture.py'];
+const sources = ['supabase/migrations/0019_room_lifecycle.sql','scripts/gm19_http_check.mjs','scripts/gm19_http_fixture.py','scripts/gm19_runtime_files.mjs'];
 const report = {contract:'food-v1/roadmap-v2/GM-19.1', schemaVersion:'0.3.0',
   checkedAt:new Date().toISOString(), namespace, revision:await runCommand('git',['rev-parse','HEAD'],{quiet:true}),
   artifactHashes:Object.fromEntries(sources.map(p=>[p,createHash('sha256').update(readFileSync(resolve(root,p))).digest('hex')])),
@@ -296,6 +298,7 @@ async function tests() {
     }finally{await new Promise(r=>proxy.close(r));}});
 }
 try {
+  if (keep && !reuse) await runtimeFiles.assertAvailable();
   validateConfig(readFileSync(resolve(root,'supabase/config.toml'),'utf8'));
   status=JSON.parse(await runCommand(process.execPath,[resolve(root,'node_modules/supabase/dist/supabase.js'),'status','--output','json','--workdir',root],{quiet:true}));
   authBase=validateApiUrl(status.API_URL);key=status.ANON_KEY;
@@ -371,12 +374,12 @@ try {
         roster_user_ids=(select array_agg(user_id order by joined_at) from public.members where room_id='${emptyRoom.roomId}' and left_at is null)
         where id='${emptyRoom.roomId}';`);
     emptyVersion=Number((await fixture('sql',`select version from public.rooms where id='${emptyRoom.roomId}';`)).trim());
-    const run=randomUUID();await writeFile(envFile,'vars {\n'+Object.entries({baseUrl:base,publicKey:key,hostToken:host,memberToken:member,outsiderToken:outsider,
+    const run=randomUUID();await runtimeFiles.write(envFile,'vars {\n'+Object.entries({baseUrl:base,publicKey:key,hostToken:host,memberToken:member,outsiderToken:outsider,
       anchorId:ids.anchorId,desiredAt:new Date(Date.now()+3600000).toISOString(),runId:run,roomId:'',roomCode:'',roomVersion:'',
       variantRoomId:variantRoom.roomId,variantResultId,variantCayOffering:variantFixture.variants.find(v=>v.variant==='cay').offeringId,
       terminalRoomId:terminalRoom.roomId,emptyRoomId:emptyRoom.roomId,emptyRoomVersion:String(emptyVersion)}).map(([k,v])=>'  '+k+': '+v).join('\n')+'\n}\n');
     console.log('BRUNO_READY endpoint='+base+' namespace='+namespace+' (Ctrl+C to cleanup)');
-    await writeFile(stateFile,JSON.stringify({endpoint:base,control,namespace}));
+    await runtimeFiles.write(stateFile,JSON.stringify({endpoint:base,control,namespace}));
     console.log('Stop safely: node scripts/gm19_http_stop.mjs');
     await new Promise(resolve=>{stopResolve=resolve;process.once('SIGINT',resolve);process.once('SIGTERM',resolve);});
   }
@@ -385,10 +388,10 @@ try {
 finally {
   if(!reuse) {
   if(gateway)await new Promise(r=>gateway.close(r));
-  if(started)await docker(['stop',container]).catch(()=>{report.postgrestCleanup='Fail';report.result='Fail';});
-  if(guests.length)await fixture('cleanup').then(()=>report.cleanup='owned DB and guests removed').catch(e=>{report.cleanup=e.message;report.result='Fail';});
-  await rm(envFile,{force:true});await saveReport();console.log(JSON.stringify({result:report.result,cases:cases.length,cleanup:report.cleanup}));
-  await rm(stateFile,{force:true});
+  if(started)await docker(['stop',container]).catch(()=>{report.postgrestCleanup='Fail';report.result='Fail';process.exitCode=1;});
+  if(guests.length)await fixture('cleanup').then(()=>report.cleanup='owned DB and guests removed').catch(e=>{report.cleanup=e.message;report.result='Fail';process.exitCode=1;});
+  await runtimeFiles.cleanup().catch(()=>{report.runtimeCleanup='Fail; changed or inaccessible files preserved';report.result='Fail';process.exitCode=1;});
+  await saveReport();console.log(JSON.stringify({result:report.result,cases:cases.length,cleanup:report.cleanup}));
   } else {
     report.cleanup='active owned fixture retained for Bruno; use gm19_http_stop.mjs';await saveReport();
     console.log(JSON.stringify({result:report.result,cases:cases.length,fixture:'retained'}));
