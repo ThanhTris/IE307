@@ -190,6 +190,10 @@ begin
   ack:=gm19_private.ack_lookup('create_friend_invite',request_key,payload_key); if ack->>'kind'<>'missing' then return gm19_private.replay_or_reused(ack,null,request_key); end if;
   if not gm19_private.allow_call('invite_partner',10) then return gm22_private.social_error('RATE_LIMITED',429,null,request_key); end if;
   if exists(select 1 from public.friends where low_user_id=least(caller,target) and high_user_id=greatest(caller,target)) then return gm22_private.social_error('NOT_PARTNER',409,null,request_key); end if;
+  update public.friend_invitations set state='expired',responded_at=expires_at-interval '1 microsecond',version=version+1
+    where state='pending' and expires_at<=statement_timestamp()
+      and least(sender_user_id,recipient_user_id)=least(caller,target)
+      and greatest(sender_user_id,recipient_user_id)=greatest(caller,target);
   select * into inv from public.friend_invitations where state='pending' and least(sender_user_id,recipient_user_id)=least(caller,target) and greatest(sender_user_id,recipient_user_id)=greatest(caller,target) for update;
   if not found then
     inv.id:=gen_random_uuid(); inv.sender_user_id:=caller; inv.recipient_user_id:=target; inv.state:='pending'; inv.created_at:=statement_timestamp(); inv.expires_at:=statement_timestamp()+interval '7 days'; inv.version:=1;
@@ -259,12 +263,14 @@ begin
   if not found then return gm19_private.error('NOT_PARTNER',403,rid,request_key); end if;
   guard:=gm19_private.room_guard(rid,expected_version,false); if guard is not null then return guard; end if;
   select * into r from public.rooms where id=rid for update; if r.state<>'LOBBY' then return gm19_private.error('ROOM_LOCKED',409,rid,request_key); end if;
+  update public.room_invitations i set state='expired',responded_at=i.expires_at-interval '1 microsecond',version=version+1
+    where i.room_id=rid and i.recipient_user_id=target and i.state='pending' and i.expires_at<=statement_timestamp();
   select * into inv from public.room_invitations i where i.room_id=rid and i.recipient_user_id=target and i.state='pending' for update;
   if not found then
     inv.id:=gen_random_uuid(); inv.room_id:=rid; inv.friend_id:=f.id; inv.sender_user_id:=caller; inv.recipient_user_id:=target; inv.state:='pending'; inv.event_id:=gen_random_uuid(); inv.created_at:=statement_timestamp(); inv.expires_at:=least(r.expires_at,statement_timestamp()+interval '7 days'); inv.version:=1;
     insert into public.room_invitations(id,room_id,friend_id,sender_user_id,recipient_user_id,state,event_id,created_at,expires_at,version) values(inv.id,inv.room_id,inv.friend_id,inv.sender_user_id,inv.recipient_user_id,inv.state,inv.event_id,inv.created_at,inv.expires_at,inv.version);
     insert into public.events(id,kind,room_id,invitation_id,friend_invitation_id,result_id,recipient_user_ids,dedupe_key,created_at,expires_at,version)
-      values(inv.event_id,'ROOM_INVITED',rid,inv.id,null,null,array[target],'room:'||rid::text||':'||target::text,inv.created_at,inv.expires_at,1);
+      values(inv.event_id,'ROOM_INVITED',rid,inv.id,null,null,array[target],'room:'||rid::text||':'||target::text||':'||inv.id::text,inv.created_at,inv.expires_at,1);
     insert into public.inbox(id,owner_user_id,event_id,created_at,expires_at,version) values(gen_random_uuid(),target,inv.event_id,inv.created_at,inv.expires_at,1);
   end if;
   wire:=jsonb_build_object('ok',true,'requestId',"requestId",'roomId',rid,'version',r.version,'state','LOBBY','data',gm22_private.room_projection(inv));
@@ -330,11 +336,13 @@ begin
   if cursor is not null then begin cursor_id:=cursor::uuid; exception when others then return gm22_private.social_error('INVALID_INPUT',400); end; end if;
   if cursor_id is not null and not exists(select 1 from public.inbox where id=cursor_id and owner_user_id=caller) then return gm22_private.social_error('NOT_MEMBER',403); end if;
   return coalesce((select jsonb_agg(jsonb_build_object('id',q.id::text,'eventId',q.event_id::text,
-      'type',case when q.kind='FRIEND_INVITED' then 'friend_invite' else 'room_invite' end,
-      'title',case when q.kind='FRIEND_INVITED' then 'Lời mời kết bạn' else 'Lời mời vào phòng' end,
-      'body',case when q.kind='FRIEND_INVITED' then 'Bạn có lời mời kết bạn mới' else 'Bạn có lời mời vào phòng mới' end,
-      'read',q.read_at is not null,'metadata',jsonb_build_object('invitationId',coalesce(q.friend_invitation_id,q.invitation_id)::text),'createdAt',q.created_at) order by q.id desc)
-    from (select i.id,i.event_id,i.read_at,i.created_at,e.kind,e.friend_invitation_id,e.invitation_id
+      'type',case when q.kind='FRIEND_INVITED' then 'friend_invite' when q.kind='ROOM_INVITED' then 'room_invite' else 'room_result' end,
+      'title',case when q.kind='FRIEND_INVITED' then 'Lời mời kết bạn' when q.kind='ROOM_INVITED' then 'Lời mời vào phòng' else 'Kết quả phòng đã sẵn sàng' end,
+      'body',case when q.kind='FRIEND_INVITED' then 'Bạn có lời mời kết bạn mới' when q.kind='ROOM_INVITED' then 'Bạn có lời mời vào phòng mới' else 'Phòng của bạn đã có kết quả' end,
+      'read',q.read_at is not null,'metadata',case when q.kind='FRIEND_INVITED' then jsonb_build_object('invitationId',q.friend_invitation_id::text)
+        when q.kind='ROOM_INVITED' then jsonb_build_object('invitationId',q.invitation_id::text,'roomId',q.room_id::text)
+        else jsonb_build_object('roomId',q.room_id::text,'resultId',q.result_id::text) end,'createdAt',q.created_at) order by q.id desc)
+    from (select i.id,i.event_id,i.read_at,i.created_at,e.kind,e.friend_invitation_id,e.invitation_id,e.room_id,e.result_id
       from public.inbox i join public.events e on e.id=i.event_id
       where i.owner_user_id=caller and i.expires_at>statement_timestamp() and (cursor_id is null or i.id<cursor_id)
       order by i.id desc limit 50) q),'[]'::jsonb);
