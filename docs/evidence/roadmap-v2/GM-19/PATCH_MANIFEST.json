@@ -9,11 +9,11 @@
   "reviewer": "Trí / ThanhTris",
   "approval": "Pending",
   "sha256": {
-    "supabase/migrations/0019_room_lifecycle.sql": "6591c2a8e6daa093111cd55e2969172c54361b459c7f53c3b883f1a2364adc88",
-    "scripts/gm19_http_check.mjs": "9362720afd56d92e3306c5a17d3c787003fa06bd5c38339ac0926ab6f53db8cf",
-    "scripts/gm19_http_fixture.py": "e5ba1ede662b34afc46b6d327803e2ca6870d47673f8a81a0a1458640a1cd800"
+    "supabase/migrations/0019_room_lifecycle.sql": "ed76f679baa10bbfd4234e2be88f408ef292162f92efceac16217aa554f50926",
+    "scripts/gm19_http_check.mjs": "675a303e0d2f69b3372197d503ebeee1ce226f7f9887a6ee076d10ebc452a0c1",
+    "scripts/gm19_http_fixture.py": "acae283042bb128fef57332648c7ea527196691dcb71eacf1e6d89350dd601f2"
   },
-  "bruno": "supabase/tests/bruno/GM-19 (47 requests)",
+  "bruno": "supabase/tests/bruno/GM-19 (50 requests; final Runner 50/50)",
   "credentials": "Ignored local runtime files; excluded from evidence",
   "productionDataPromoted": false
 }

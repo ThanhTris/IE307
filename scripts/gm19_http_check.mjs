@@ -184,14 +184,36 @@ async function tests() {
     failure(await request('start_round',host,mutation(a.roomId,a.version+1)),400,'DESIRED_TIME_PASSED');
     assert.ok((await snapshot(a.roomId)).members.every(m=>!m.ready));return {status:400,readyReset:true};});
   await check('stale/empty offering pool cannot start',async()=>{
-    const a=await readyRoom();await fixture('sql',"update public.venue_dishes set valid_until=statement_timestamp()+interval '5 minutes',version=version+1 where review_status='published';");
+    const a=await readyRoom(),before=await snapshot(a.roomId);await fixture('sql',"update public.venue_dishes set valid_until=statement_timestamp()+interval '5 minutes',version=version+1 where review_status='published';");
     failure(await request('start_round',host,mutation(a.roomId,a.version)),409,'NO_ELIGIBLE_FOOD');
-    assert.equal((await snapshot(a.roomId)).state,'LOBBY');
+    const empty=await snapshot(a.roomId);assert.equal(empty.state,'LOBBY');assert.deepEqual(empty.pool,[]);
+    assert.equal(empty.version,before.version+1);assert.equal(empty.poolVersion,before.poolVersion+1);
+    assert.ok(empty.members.every(m=>!m.ready));
     await fixture('sql',"update public.venue_dishes set valid_until=statement_timestamp()+interval '6 days',version=version+1 where review_status='published';");
-    return {status:409,messageKey:'NO_ELIGIBLE_FOOD',state:'LOBBY'};});
+    let vv=success(await request('set_ready',host,mutation(a.roomId,empty.version,{ready:true}))).version;
+    vv=success(await request('set_ready',member,mutation(a.roomId,vv,{ready:true}))).version;
+    failure(await request('start_round',host,mutation(a.roomId,vv)),409,'CONTEXT_CHANGED');
+    const restored=await snapshot(a.roomId);assert.ok(restored.pool.length>0);assert.ok(restored.members.every(m=>!m.ready));
+    assert.equal(restored.poolVersion,empty.poolVersion+1);assert.equal(restored.version,vv+1);
+    return {emptyStatus:409,emptyPool:0,readyReset:true,restoredPool:restored.pool.length,versionBumps:2};});
   await check('expired room410 at database cutoff',async()=>{
     const a=await newRoom();await fixture('sql',`update public.rooms set expires_at=statement_timestamp(),version=version+1 where id='${a.roomId}';`);
     return failure(await request('get_room_snapshot',host,{room_id:a.roomId}),410,'ROOM_EXPIRED');});
+  await check('terminal room snapshots stay private after expiry',async()=>{
+    await fixture('sql','delete from gm19_private.rate_windows where operation=\'get_room_snapshot\';');
+    const states=['CANCELLED','DECIDED','NO_CONSENSUS','EXPIRED'];
+    for (const state of states) {
+      const a=state==='CANCELLED'?await newRoom():await readyRoom();
+      if (state==='CANCELLED') success(await request('cancel_room',host,mutation(a.roomId,a.version,{confirm_cancel:true})));
+      await fixture('sql',`update public.rooms r set state='${state}',expires_at=statement_timestamp(),version=version+1,
+        locked_at=case when '${state}' in ('DECIDED','NO_CONSENSUS') then statement_timestamp() else r.locked_at end,
+        evaluated_at=case when '${state}' in ('DECIDED','NO_CONSENSUS') then statement_timestamp() else r.evaluated_at end,
+        roster_user_ids=case when '${state}' in ('DECIDED','NO_CONSENSUS') then (select array_agg(m.user_id order by m.joined_at) from public.members m where m.room_id=r.id and m.left_at is null) else r.roster_user_ids end,
+        consent_snapshot=case when '${state}' in ('DECIDED','NO_CONSENSUS') then (select jsonb_agg(jsonb_build_object('userId',m.user_id,'historyConsent',m.history_consent) order by m.joined_at) from public.members m where m.room_id=r.id and m.left_at is null) else r.consent_snapshot end
+        where r.id='${a.roomId}';`);
+      failure(await request('get_room_snapshot',host,{room_id:a.roomId}),410,'ROOM_EXPIRED');
+    }
+    return {states,memberDeniedBeforeExpiry:true,status:410};});
   await check('atomic create budget10/min then429 with retry; ACK survives budget',async()=>{
     await fixture('sql',`delete from gm19_private.rate_windows where user_id='${guests[0].user.id}' and operation='create_room';`);
     const values=await Promise.all(Array.from({length:11},()=>request('create_room',host,create({anchor_id:randomUUID()}))));
@@ -245,6 +267,20 @@ async function tests() {
     const started=success(await request('start_round',host,mutation(a.roomId,vv)));assert.equal(started.state,'ROUND_1');
     report.datasetVersion=changed.datasetVersion;
     return {changedStatus:409,reconfirmedStatus:200,datasetVersion:changed.datasetVersion};});
+  await check('variant identity is retained and result offerings filter by variant',async()=>{
+    const fixtureIds=await fixture('variant');
+    const a=await newRoom();
+    const rows=JSON.parse((await fixture('sql',`select coalesce(jsonb_agg(jsonb_build_object('dishId',rd.dish_id,'variant',rd.variant,'offeringId',rd.offering_id) order by rd.ordinal),'[]') from public.round_dishes rd where rd.room_id='${a.roomId}' and rd.round=1;`)).trim());
+    const expected=new Set(fixtureIds.variants.map(v=>v.variant));
+    const targetRows=rows.filter(r=>r.dishId===fixtureIds.dishId);
+    assert.ok([...expected].every(v=>targetRows.some(r=>r.variant===v)),'round_dishes preserves each variant');
+    assert.equal(new Set(targetRows.map(r=>r.variant)).size,targetRows.length,`same dish variants remain distinct ${JSON.stringify(targetRows)}`);
+    const resultId=randomUUID();const cay=fixtureIds.variants.find(v=>v.variant==='cay');
+    await fixture('sql',`insert into public.results(id,room_id,winner_round_dish_id,reason_code,match_tier,policy_version,tied_choice_ids,finalized_at,version)
+      values('${resultId}','${a.roomId}',(select id from public.round_dishes where room_id='${a.roomId}' and variant='cay' limit 1),'UNANIMOUS_WANT','PERFECT','decision-v2',array[(select choice_id from public.round_dishes where room_id='${a.roomId}' and variant='cay' limit 1)],statement_timestamp(),1);`);
+    const offerings=success(await request('get_result_offerings',host,{room_id:a.roomId,result_id:resultId})).data;
+    assert.ok(offerings.length>0);assert.ok(offerings.every(o=>o.offeringIds.includes(cay.offeringId)));
+    return {roundVariants:targetRows.map(r=>r.variant),winnerVariant:'cay',filteredOfferings:offerings.length};});
   await check('response lost after database commit replays ACK without new mutation',async()=>{
     await fixture('sql',"delete from gm19_private.rate_windows where operation='create_room';");
     let drop=true;const proxy=createServer(async(req,res)=>{try{
@@ -276,7 +312,7 @@ try {
       'datasetVersion',(select dataset_version from public.coverage_areas where review_status='published' limit 1));`)).trim());
     report.datasetVersion=ids.datasetVersion;report.endpoint=base;
     const sql=await fixture('sql',readFileSync(resolve(root,'supabase/tests/database/GM-19_room_lifecycle.test.sql'),'utf8'));
-    assert.ok(!/^not ok /m.test(sql));assert.equal((sql.match(/^ok \d+ /gm)??[]).length,13);report.sql={result:'Pass',assertions:13};
+    assert.ok(!/^not ok /m.test(sql));assert.equal((sql.match(/^ok \d+ /gm)??[]).length,15);report.sql={result:'Pass',assertions:15};
     await writeFile(resolve(root,'docs/evidence/roadmap-v2/GM-19/sql-run.txt'),sql);
     await fixture('sql','delete from gm19_private.rate_windows;delete from gm18_api_private.read_windows;');
     await tests();report.result='Pass';await saveReport();
@@ -289,7 +325,7 @@ try {
   dbInfo=await fixture('create');ids=await fixture('positive');report.datasetVersion=ids.datasetVersion;
   const sql=await fixture('sql',readFileSync(resolve(root,'supabase/tests/database/GM-19_room_lifecycle.test.sql'),'utf8'));
   await writeFile(resolve(root,'docs/evidence/roadmap-v2/GM-19/sql-run.txt'),sql);
-  assert.ok(!/^not ok /m.test(sql));assert.equal((sql.match(/^ok \d+ /gm)??[]).length,13);report.sql={result:'Pass',assertions:13};
+  assert.ok(!/^not ok /m.test(sql));assert.equal((sql.match(/^ok \d+ /gm)??[]).length,15);report.sql={result:'Pass',assertions:15};
   const restInfo=JSON.parse(await docker(['inspect','supabase_rest_gi-cung-duoc-local']))[0];
   const dbUrl=new URL(status.DB_URL);assert.ok(['localhost','127.0.0.1'].includes(dbUrl.hostname));
   dbUrl.hostname='supabase_db_gi-cung-duoc-local';dbUrl.port='5432';dbUrl.pathname='/'+dbInfo.database;
@@ -316,8 +352,29 @@ try {
   await saveReport();
   if(keep){
     await fixture('sql','delete from gm19_private.rate_windows;delete from gm18_api_private.read_windows;');
+    // Prepare additional Bruno-only regression rooms after the core 47-case
+    // suite. All rows are synthetic and remain inside this owned disposable DB.
+    const variantFixture=await fixture('variant');
+    await fixture('sql','delete from gm19_private.rate_windows;delete from gm18_api_private.read_windows;');
+    const variantRoom=success(await request('create_room',host,create()));
+    const variantResultId=randomUUID();
+    await fixture('sql',`insert into public.results(id,room_id,winner_round_dish_id,reason_code,match_tier,policy_version,tied_choice_ids,finalized_at,version)
+      values('${variantResultId}','${variantRoom.roomId}',(select id from public.round_dishes where room_id='${variantRoom.roomId}' and variant='cay' limit 1),'UNANIMOUS_WANT','PERFECT','decision-v2',array[(select choice_id from public.round_dishes where room_id='${variantRoom.roomId}' and variant='cay' limit 1)],statement_timestamp(),1);`);
+    const terminalRoom=success(await request('create_room',host,create()));
+    success(await request('cancel_room',host,mutation(terminalRoom.roomId,terminalRoom.version,{confirm_cancel:true})));
+    await fixture('sql',`update public.rooms set expires_at=statement_timestamp(),version=version+1 where id='${terminalRoom.roomId}';`);
+    const emptyRoom=success(await request('create_room',host,create()));
+    let emptyVersion=emptyRoom.version;
+    await request('join_room',member,{requestId:randomUUID(),code:emptyRoom.data.code,display_name:'Bruno member'});
+    await fixture('sql',`update public.members set ready=true,version=version+1 where room_id='${emptyRoom.roomId}' and left_at is null;
+      update public.rooms set radius_m=1,service_mode='delivery',time_hint='late_night',budget='{"min":null,"max":1,"currency":"VND","unit":"person"}'::jsonb,version=version+1,
+        roster_user_ids=(select array_agg(user_id order by joined_at) from public.members where room_id='${emptyRoom.roomId}' and left_at is null)
+        where id='${emptyRoom.roomId}';`);
+    emptyVersion=Number((await fixture('sql',`select version from public.rooms where id='${emptyRoom.roomId}';`)).trim());
     const run=randomUUID();await writeFile(envFile,'vars {\n'+Object.entries({baseUrl:base,publicKey:key,hostToken:host,memberToken:member,outsiderToken:outsider,
-      anchorId:ids.anchorId,desiredAt:new Date(Date.now()+3600000).toISOString(),runId:run,roomId:'',roomCode:'',roomVersion:''}).map(([k,v])=>'  '+k+': '+v).join('\n')+'\n}\n');
+      anchorId:ids.anchorId,desiredAt:new Date(Date.now()+3600000).toISOString(),runId:run,roomId:'',roomCode:'',roomVersion:'',
+      variantRoomId:variantRoom.roomId,variantResultId,variantCayOffering:variantFixture.variants.find(v=>v.variant==='cay').offeringId,
+      terminalRoomId:terminalRoom.roomId,emptyRoomId:emptyRoom.roomId,emptyRoomVersion:String(emptyVersion)}).map(([k,v])=>'  '+k+': '+v).join('\n')+'\n}\n');
     console.log('BRUNO_READY endpoint='+base+' namespace='+namespace+' (Ctrl+C to cleanup)');
     await writeFile(stateFile,JSON.stringify({endpoint:base,control,namespace}));
     console.log('Stop safely: node scripts/gm19_http_stop.mjs');

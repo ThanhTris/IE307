@@ -13,7 +13,8 @@ def diagnostic_run(args, sql=None):
     if result.returncode:
         code=re.search(r'ERROR:\s+([A-Z0-9]{5})',result.stderr)
         missing=re.search(r'function ([A-Za-z_\.]+\([^\n]*\)) does not exist',result.stderr)
-        raise RuntimeError('GM19_DB_'+(code[1] if code else 'PROCESS')+((' missing '+missing[1]) if missing else ''))
+        detail=re.search(r'(?:DETAIL|CONTEXT):\s*([^\r\n]+)',result.stderr)
+        raise RuntimeError('GM19_DB_'+(code[1] if code else 'PROCESS')+((' missing '+missing[1]) if missing else '')+((' '+detail[1]) if detail else ''))
     return result.stdout
 
 
@@ -59,6 +60,42 @@ def main():
                 sql.append(clone('weekly_schedules','id',original,dict(id=new_id,schedule_id=new_schedule,owner_id=new_offer,version=1)))
             sql.append('set constraints all immediate;commit;');db.psql('\n'.join(sql))
         print(json.dumps(dict(dishId=new_dish,categoryId=new_cat,simulationOnly=True)))
+    elif mode == 'variant':
+        b,_,_=upstream.positive(namespace,users)
+        source=b['entities']['venueDishes'][0]
+        _,columns=upstream.food.mapping()['venue_dishes']
+        cols=','.join(columns); select=','.join('r.'+c for c in columns)
+        _,schedule_columns=upstream.food.mapping()['schedule_groups']
+        schedule_cols=','.join(schedule_columns); schedule_select=','.join('r.'+c for c in schedule_columns)
+        _,weekly_columns=upstream.food.mapping()['weekly_schedules']
+        weekly_cols=','.join(weekly_columns); weekly_select=','.join('r.'+c for c in weekly_columns)
+        variants=[('null',None),('cay','cay'),('khong-cay','không cay')]
+        rows=[]
+        statements=['begin;set constraints all deferred;']
+        for key,variant in variants:
+            offering=str(uuid.uuid5(namespace,'gm19-variant-'+key))
+            schedule=str(uuid.uuid5(namespace,'gm19-variant-schedule-'+key))
+            updates=dict(offering_id=offering,variant=variant,menu_name='GM19 '+(variant or 'plain'),version=1)
+            if db.psql(f"select count(*) from public.venue_dishes where offering_id='{offering}';").strip()=='0':
+                statements.append(
+                    f"insert into public.schedule_groups({schedule_cols}) select {schedule_select} from public.schedule_groups t "
+                    f"cross join lateral jsonb_populate_record(null::public.schedule_groups,to_jsonb(t)||{upstream.food.literal(json.dumps(dict(schedule_id=schedule,owner_id=offering)))}::jsonb) r "
+                    f"where t.schedule_id='{source['scheduleId']}';")
+                statements.append(
+                    f"insert into public.venue_dishes({cols}) select {select} from public.venue_dishes t "
+                    f"cross join lateral jsonb_populate_record(null::public.venue_dishes,to_jsonb(t)||{upstream.food.literal(json.dumps(dict(updates,schedule_id=schedule)))}::jsonb) r "
+                    f"where t.offering_id='{source['offeringId']}';")
+                for day in range(1,8):
+                    original=db.psql(f"select id from public.weekly_schedules where schedule_id='{source['scheduleId']}' and day_of_week={day} limit 1;").strip()
+                    new_weekly=str(uuid.uuid5(namespace,'gm19-variant-weekly-'+key+'-'+str(day)))
+                    statements.append(
+                        f"insert into public.weekly_schedules({weekly_cols}) select {weekly_select} from public.weekly_schedules t "
+                        f"cross join lateral jsonb_populate_record(null::public.weekly_schedules,to_jsonb(t)||{upstream.food.literal(json.dumps(dict(id=new_weekly,schedule_id=schedule,owner_id=offering)))}::jsonb) r "
+                        f"where t.id='{original}';")
+            rows.append(dict(offeringId=offering,variant=variant,scheduleId=schedule))
+        statements += ['set constraints all immediate;commit;']
+        db.psql('\n'.join(statements))
+        print(json.dumps(dict(dishId=source['dishId'],venueId=source['venueId'],variants=rows,simulationOnly=True),ensure_ascii=False))
     elif mode == 'dataset-next':
         from datetime import datetime,timezone
         import hashlib

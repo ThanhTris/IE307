@@ -3,7 +3,7 @@
 Owner/reviewer: Trí / ThanhTris. Contract GM-19.1, schema0.3.0; approval pending.
 See CHECKS.md for actual Pass/Not run and PATCH_MANIFEST.json for source hashes.
 
-Implemented artifacts: migration0019, SQL suites, HTTP examples, Bruno47 request
+Implemented artifacts: migration0019, SQL suites, HTTP examples, Bruno50 request
 collection, gm19_http_fixture.py and gm19_http_check.mjs/reset/stop scripts.
 Storage rationale: [GM19_STORAGE_SUPPLEMENT.md](../../../architecture/GM19_STORAGE_SUPPLEMENT.md).
 
@@ -33,10 +33,10 @@ GM-25 receives Android product wiring/forbidden/auth/version/retry UI tests.
 GM-20 receives voting/finalization; GM-21 provides trusted history inputs.
 Server SQL/HTTP/Bruno results above do not claim mobile integration/native pass.
 
-On 2026-10-14 Docker recovered and Auth was restarted. A fresh disposable database
-was created. After fixing offering/venue persistence and correcting the legal
-actor in the start/cancel race, SQL passed 13 assertions and HTTP passed all 30
-scenario groups, including ranking, dataset changes and response loss after
-commit. See CHECKS.md and the final report for source hashes and Bruno evidence.
-The fixture stays active for inspection; cleanup is not claimed for this run.
+On 2026-10-14 a fresh disposable database was created. SQL passed 15 assertions
+and HTTP passed all 32 scenario groups, including the four review regressions,
+variant identity, terminal expiry and empty-pool revalidation. Bruno desktop
+passed all 50 sequential requests. The final owned fixture was stopped and
+reported `owned DB and guests removed`; see CHECKS.md and the evidence files for
+source hashes and the captured Runner output.
 Trí's final review remains pending; do not mark Done.

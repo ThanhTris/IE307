@@ -182,7 +182,7 @@ end $$;
 create function gm19_private.persist_pool(room_key uuid, pool jsonb, pool_version_key bigint, dataset_version_key text default '0.0.0')
 returns jsonb language plpgsql security definer set search_path = pg_catalog, public, gm19_private as $$
 declare item jsonb; normalized jsonb := '[]'::jsonb; rd uuid; choice uuid; dish uuid; venue uuid; offering uuid;
-  schedule uuid; schedule_version bigint; profile jsonb; price_value jsonb; found boolean;
+  selected_variant text; schedule uuid; schedule_version bigint; profile jsonb; price_value jsonb; found boolean;
 begin
   delete from public.round_dishes where room_id = room_key;
   for item in select value from jsonb_array_elements(coalesce(pool,'[]'::jsonb)) loop
@@ -192,12 +192,12 @@ begin
     venue := gm19_private.uuid_or_null(item->>'venueId');
     offering := gm19_private.uuid_or_null(coalesce(item->'offeringIds'->>0,item->>'offeringId'));
     if dish is null or venue is null or offering is null then continue; end if;
-    select vd.offering_id, vd.schedule_id, coalesce(sg.version,1) into offering,schedule,schedule_version
+    select vd.offering_id, vd.variant, vd.schedule_id, coalesce(sg.version,1) into offering,selected_variant,schedule,schedule_version
       from public.venue_dishes vd left join public.schedule_groups sg on sg.schedule_id=vd.schedule_id
       where vd.venue_id=venue and vd.dish_id=dish
         and (vd.offering_id::text in (select jsonb_array_elements_text(coalesce(item->'offeringIds','[]'::jsonb)))
           or vd.offering_id=offering)
-      order by vd.offering_id limit 1;
+      order by (vd.offering_id=offering) desc, vd.offering_id limit 1;
     if schedule is null then continue; end if;
     profile := jsonb_build_object('cuisineIds',coalesce(item->'cuisineIds','[]'::jsonb),
       'categoryIds',coalesce(item->'categoryIds','[]'::jsonb),'mealSlots','[]'::jsonb,
@@ -206,7 +206,7 @@ begin
       'unit',item->'unit','currency',item->'currency','servingSize',item->'servingSize','sourceRef',null));
     insert into public.round_dishes(id,room_id,round,choice_id,dish_id,variant,offering_id,venue_id,ordinal,
       dataset_version,schedule_id,schedule_version,effective_profile,price,pool_version,version)
-    values(rd,room_key,1,choice,dish,null,offering,venue,
+    values(rd,room_key,1,choice,dish,selected_variant,offering,venue,
       coalesce((item->>'ordinal')::bigint, jsonb_array_length(normalized)),
       dataset_version_key,schedule,schedule_version,profile,price_value,pool_version_key,1)
     on conflict (room_id,round,choice_id) do nothing;
@@ -248,13 +248,12 @@ begin
     'poolSeed',seed,'evaluatedAt',evaluated->'evaluatedAt','reasonCodes',reasons);
 end $$;
 
-create function gm19_private.refresh_lobby_pool(room_key uuid) returns boolean
+create function gm19_private.apply_lobby_pool(room_key uuid, data jsonb) returns boolean
 language plpgsql security definer set search_path = pg_catalog as $$
-declare r public.rooms%rowtype; data jsonb; stored jsonb; fresh jsonb;
+declare r public.rooms%rowtype; stored jsonb; fresh jsonb;
 begin
   select * into r from public.rooms where id=room_key for update;
   if r.state<>'LOBBY' then return false; end if;
-  data:=gm19_private.pool_for_room(room_key);
   select coalesce(jsonb_agg(ps.projection-'roundDishId'-'choiceId' order by rd.ordinal),'[]'::jsonb) into stored
     from public.round_dishes rd join gm19_private.pool_snapshots ps on ps.round_dish_id=rd.id where rd.room_id=room_key and rd.round=1;
   select coalesce(jsonb_agg(value-'roundDishId'-'choiceId' order by ord),'[]'::jsonb) into fresh
@@ -265,6 +264,12 @@ begin
     eligibility_version=data->>'eligibilityVersion',version=version+1,updated_at=statement_timestamp() where id=room_key;
   update public.members set ready=false,version=version+1 where room_id=room_key and left_at is null;
   return true;
+end $$;
+
+create function gm19_private.refresh_lobby_pool(room_key uuid) returns boolean
+language plpgsql security definer set search_path = pg_catalog as $$
+begin
+  return gm19_private.apply_lobby_pool(room_key,gm19_private.pool_for_room(room_key));
 end $$;
 
 create function public.create_room("requestId" text, display_name text, anchor_id text, radius_m jsonb,
@@ -375,7 +380,7 @@ begin
   begin rid:=room_id::uuid; exception when others then return gm19_private.error('INVALID_INPUT',400); end;
   if not exists(select 1 from public.members where public.members.room_id=rid and user_id=caller and left_at is null) then return gm19_private.error('NOT_MEMBER',403); end if;
   select * into r from public.rooms where id=rid; if not found then return gm19_private.error('NOT_MEMBER',403); end if;
-  if r.expires_at<=statement_timestamp() and r.state not in ('CANCELLED','EXPIRED','DECIDED','NO_CONSENSUS') then return gm19_private.error('ROOM_EXPIRED',410,rid); end if;
+  if r.expires_at<=statement_timestamp() then return gm19_private.error('ROOM_EXPIRED',410,rid); end if;
   if not gm19_private.allow_call('get_room_snapshot',60) then return gm19_private.error('RATE_LIMITED',429,rid); end if;
   select coalesce(jsonb_agg(jsonb_build_object('userId',m.user_id,'displayName',m.nickname,'isHost',m.user_id=r.host_user_id,
       'ready',m.ready,'joinedAt',m.joined_at,'hasSubmitted',exists(select 1 from public.submissions s where s.member_id=m.id and s.round=case when r.state='ROUND_2' then 2 else 1 end))), '[]')
@@ -463,7 +468,7 @@ end $$;
 
 create function public.start_round("requestId" text, room_id text, expected_version bigint) returns jsonb
 language plpgsql security definer set search_path = pg_catalog, public, gm19_private as $$
-declare caller uuid:=gm19_private.require_auth(); request_key uuid; rid uuid; payload jsonb; payload_key text; ack jsonb; r public.rooms%rowtype; data jsonb; stored jsonb; fresh jsonb; active_count integer; not_ready integer; new_version bigint; roster uuid[]; consent jsonb; target_at text;
+declare caller uuid:=gm19_private.require_auth(); request_key uuid; rid uuid; payload jsonb; payload_key text; ack jsonb; r public.rooms%rowtype; data jsonb; active_count integer; not_ready integer; new_version bigint; roster uuid[]; consent jsonb; target_at text;
 begin
   begin request_key:=gm19_private.request_uuid("requestId"); rid:=room_id::uuid; exception when others then return gm19_private.error('INVALID_INPUT',400); end;
   payload:=jsonb_build_object('roomId',rid,'expectedVersion',expected_version); payload_key:=gm19_private.hash_payload(payload); ack:=gm19_private.ack_lookup('start_room',request_key,payload_key); if ack->>'kind'<>'missing' then return gm19_private.replay_or_reused(ack,rid,request_key); end if;
@@ -476,11 +481,15 @@ begin
     return gm19_private.error('DESIRED_TIME_PASSED',400,rid,request_key);
   end if;
   target_at:=to_char(r.desired_at at time zone 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"');
-  data:=gm19_private.pool_for_room(rid); if jsonb_array_length(coalesce(data->'pool','[]'::jsonb))=0 then return gm19_private.error('NO_ELIGIBLE_FOOD',409,rid,request_key); end if;
-  stored:=coalesce((select jsonb_agg(ps.projection-'roundDishId'-'choiceId' order by rd.ordinal) from public.round_dishes rd join gm19_private.pool_snapshots ps on ps.round_dish_id=rd.id where rd.room_id=rid and rd.round=1),'[]'::jsonb);
-  fresh:=coalesce((select jsonb_agg(value-'roundDishId'-'choiceId' order by ord) from jsonb_array_elements(data->'pool') with ordinality x(value,ord)),'[]'::jsonb);
-  if stored<>fresh or data->>'datasetVersion' is distinct from r.dataset_version then
-    perform gm19_private.refresh_lobby_pool(rid); return gm19_private.error('CONTEXT_CHANGED',409,rid,request_key);
+  data:=gm19_private.pool_for_room(rid);
+  if gm19_private.apply_lobby_pool(rid,data) then
+    if jsonb_array_length(coalesce(data->'pool','[]'::jsonb))=0 then
+      return gm19_private.error('NO_ELIGIBLE_FOOD',409,rid,request_key);
+    end if;
+    return gm19_private.error('CONTEXT_CHANGED',409,rid,request_key);
+  end if;
+  if jsonb_array_length(coalesce(data->'pool','[]'::jsonb))=0 then
+    return gm19_private.error('NO_ELIGIBLE_FOOD',409,rid,request_key);
   end if;
   select coalesce(array_agg(m.user_id order by m.joined_at),'{}') into roster from public.members m where m.room_id=rid and m.left_at is null;
   select coalesce(jsonb_agg(jsonb_build_object('userId',m.user_id,'historyConsent',m.history_consent) order by m.joined_at),'[]') into consent from public.members m where m.room_id=rid and m.left_at is null;

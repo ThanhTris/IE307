@@ -15,11 +15,14 @@ data remains unchanged; new GM-18 synthetic published-state rows exist only
 inside that database. No reset or publish into the app database occurs.
 
 Open `supabase/tests/bruno/GM-19`, select **Local.runtime.private**, Run all
-47 requests sequentially once. They cover discovery/pool, all nine lifecycle
+50 requests sequentially once. They cover discovery/pool, all nine lifecycle
 RPCs, own preferences, ready reset, ACK replay/reuse, start/locked/terminal,
-auth errors and create quota10/minute + HTTP429. An error status passes only
-when its specific assertion passes. HTTP tests separately check concurrency,
-expiry, revalidation, immutable snapshot and GM-07 DTO guards.
+auth errors and create quota10/minute + HTTP429. The runner prepares three
+additional owned rooms after the first 47 requests so the final three requests
+check variant-filtered result offerings, terminal expiry privacy and the
+empty-pool start boundary. An error status passes only when its specific
+assertion passes. HTTP tests separately check concurrency, expiry, revalidation,
+immutable snapshot and GM-07 DTO guards.
 
 Before clicking Run Again, reset only this test database's quota setup:
 

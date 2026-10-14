@@ -2,4 +2,5 @@ Approval source: https://github.com/users/ThanhTris/projects/2 | checked at 2026
 Target snapshot: origin/main = a33d5e85f1aeb7c7bda02310e02880a3af5e77da (local ref; freshness not verified)
 Baseline approval mapping: GM-01 -> Project GM-00 / issue #37 (owner-pinned; artifacts remain separate)
 GM-19: READY_FOR_MERGE_REVIEW | owner=Trí reviewer=Trí | tasks/backlog/GM-19.md
+Re-run 2026-10-14T08:33:09Z: origin/main=a33d5e85f1aeb7c7bda02310e02880a3af5e77da; local evidence updated for 15 SQL assertions, 32 HTTP groups and Bruno 50/50.
 Gate checks approval source and delivered files, not execution. Merge still requires review of this PR, upstream PR/commit verification and real integration tests. No status/task edits performed.

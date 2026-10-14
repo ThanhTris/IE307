@@ -1,4 +1,4 @@
-1..13
+1..15
 ok 1 - GM-19 contract is registered
 ok 2 - create_room is SECURITY DEFINER
 ok 3 - start_round fixes search_path
@@ -8,8 +8,12 @@ ok 6 - private ACK is not directly readable
 ok 7 - client cannot insert rooms directly
 ok 8 - client cannot update members directly
 ok 9 - anonymous create is rejected at SQL privilege boundary
-4cde3d90-0bf7-44d0-92d8-60f9d88a64e6
-ok 10 - malformed request returns INVALID_INPUT
-ok 11 - malformed join returns INVALID_INPUT
-ok 12 - malformed snapshot returns INVALID_INPUT
-ok 13 - create_room rate window returns one 429-domain response at request 11
+ok 10 - authenticated fixture identity is created inside the rollback
+604b7f47-ef24-415b-9a48-921e7825265a
+ok 11 - malformed request returns INVALID_INPUT
+ok 12 - malformed join returns INVALID_INPUT
+ok 13 - malformed snapshot returns INVALID_INPUT
+
+ok 14 - authenticated without a caller claim is rejected
+604b7f47-ef24-415b-9a48-921e7825265a
+ok 15 - create_room rate window returns one 429-domain response at request 11
