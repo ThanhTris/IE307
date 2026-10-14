@@ -3,8 +3,8 @@
   "task": "GM-22",
   "contract": "food-v1/roadmap-v2/GM-22.1",
   "schemaVersion": "0.4.0",
-  "revision": "8412e0022ee47bde0561e319ee3b719fa52f9953",
-  "checkedAt": "2026-10-14T12:41:03.863Z",
+  "revision": "69bbbabd1ee6c922850bdcc30244cc5aeeca5bf9",
+  "checkedAt": "2026-10-14T12:53:28.438Z",
   "cases": [
     {
       "case": "self identity has stable ten-character code",
@@ -52,6 +52,12 @@
       "result": "Pass",
       "status": 200,
       "newInvitation": true
+    },
+    {
+      "case": "concurrent room invites serialize to one pending invitation",
+      "result": "Pass",
+      "status": 200,
+      "singleInvitation": true
     },
     {
       "case": "expired room invite is replaced and rejected invite can be resent",

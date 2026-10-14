@@ -5,7 +5,7 @@
   "owner": "Trí",
   "reviewer": "ThanhTris",
   "upstreamRevision": "5b148de",
-  "sourceRevision": "8412e0022ee47bde0561e319ee3b719fa52f9953",
+  "sourceRevision": "69bbbabd1ee6c922850bdcc30244cc5aeeca5bf9",
   "artifacts": [
     "supabase/migrations/0022_social.sql",
     "supabase/tests/database/GM-22_social.test.sql",
@@ -30,7 +30,7 @@
     "supabase/migrations/0022_social.sql": "bede55e7a0c12a3dfce3d03f3e61121bd4611b73c8b8656ec0785a3c55097f54",
     "supabase/tests/database/GM-22_social.test.sql": "10b4aff7bf79953b97bc9674e89e0a4dbb3f37f15b850d6d9dddcba795e151db",
     "supabase/tests/http/GM-22.http": "f180eb48759fad58e7715ce7f433ad2faa31d3a358df59628fd56d4c451fdf4c",
-    "scripts/gm22_http_check.mjs": "2dc4b3fadbc13475c5cb86608cb1cdc869b7634c895cc166ab0b5df1146ef859",
+    "scripts/gm22_http_check.mjs": "dd0a628bee1a023d89822f2094f18cad2bf25f3f317aa3aa42216d6f41862db1",
     "scripts/gm22_http_stop.mjs": "1f979fbcbc32e5509630f54811a91a29652e96be3b4ea48b88a9e7385413aa93",
     "mobile/src/data/api/contracts.ts": "dd4c49040c04af177cf2cef4192e0cc95a056497fc97686e17fcc854e4a335c4",
     "mobile/src/data/api/client.ts": "c0988e5db5d636a7b354bad88586442dacbff04145a58a84afe02e28df85dd04",

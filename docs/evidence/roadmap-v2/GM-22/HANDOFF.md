@@ -20,7 +20,7 @@ node scripts/gm22_http_check.mjs --bruno
 
 The runner creates its own database/PostgREST gateway on loopback `54332`, three
 namespaced guest JWTs, and synthetic positive catalogue rows. The clean server
-run passed SQL `19/19` assertions and HTTP `13/13` scenario groups. The
+run passed SQL `19/19` assertions and HTTP `14/14` scenario groups. The
 `--bruno` mode writes a private runtime environment for manual desktop import;
 select `supabase/tests/bruno/GM-22` in Bruno and choose
 `environments/Local.runtime.private.bru`, then stop with
