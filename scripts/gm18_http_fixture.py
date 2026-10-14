@@ -95,6 +95,10 @@ def main():
         if admin.psql(f"select count(*) from pg_database where datname='{name}';").strip()=='1':
             owned(admin,args.namespace,users);admin.psql('drop database '+name+';')
         ids=','.join(food.literal(u)+'::uuid' for u in users)
+        # GM-22 creates a profile for every synthetic auth identity. Remove
+        # those owned test profiles before deleting auth.users because the
+        # core FK is intentionally deferrable without ON DELETE CASCADE.
+        admin.psql(f"delete from public.profiles where user_id=any(array[{ids}]);")
         admin.psql(f"delete from auth.users where id=any(array[{ids}]) and is_anonymous and raw_user_meta_data->>'gm18_test_namespace'='{args.namespace}';")
         print(json.dumps({'cleanup':'owned DB and synthetic guests removed'}));return
     if len(users)!=3: raise ValueError('Three guests required before setup')
