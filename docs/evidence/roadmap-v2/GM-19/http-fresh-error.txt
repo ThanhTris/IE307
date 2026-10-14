@@ -1,0 +1,1 @@
+GM19 case failed: ready both then start ROUND_1, replay after start

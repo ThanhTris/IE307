@@ -1,0 +1,14 @@
+{
+  "task": "GM-19",
+  "contract": "food-v1/roadmap-v2/GM-19.1",
+  "schemaVersion": "0.3.0",
+  "upstreamRevision": "GM-17 4a38588f + GM-18 a33d5e8",
+  "artifacts": [
+    "supabase/migrations/0019_room_lifecycle.sql",
+    "supabase/tests/room_lifecycle.sql",
+    "supabase/tests/http/GM-19.http",
+    "supabase/tests/bruno/GM-19/"
+  ],
+  "productionDataPromoted": false,
+  "androidTest": "Not run; GM-25 owns mobile consumer acceptance"
+}

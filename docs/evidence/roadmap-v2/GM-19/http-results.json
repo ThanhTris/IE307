@@ -1,0 +1,88 @@
+{
+  "contract": "food-v1/roadmap-v2/GM-19.1",
+  "schemaVersion": "0.3.0",
+  "checkedAt": "2026-10-14T02:17:13.939Z",
+  "namespace": "ecf55498-5764-4645-953b-41f328411381",
+  "revision": "a33d5e85f1aeb7c7bda02310e02880a3af5e77da\n",
+  "artifactHashes": {
+    "supabase/migrations/0019_room_lifecycle.sql": "88e1cd2a8d24d02e5f48599fc3530e30f4e37aac5b157349648ee8bd2ae6d122",
+    "scripts/gm19_http_check.mjs": "e4fd5b150f0833a9f2e8bdee6056e36b254e47a9840ff36c57477bbaac25c3f3",
+    "scripts/gm19_http_fixture.py": "e5ba1ede662b34afc46b6d327803e2ca6870d47673f8a81a0a1458640a1cd800"
+  },
+  "syntheticPositiveDataOnly": true,
+  "actualDataPromoted": false,
+  "cases": [
+    {
+      "case": "discovery published synthetic anchor and positive pool (GM-18)",
+      "result": "Pass",
+      "status": 200,
+      "anchors": 1,
+      "choices": 1
+    },
+    {
+      "case": "create host member, ready false, 60 minute TTL",
+      "result": "Pass",
+      "status": 200,
+      "state": "LOBBY",
+      "version": 1,
+      "pool": 1
+    },
+    {
+      "case": "ACK replay before state/version, same response; payload reuse409",
+      "result": "Pass",
+      "status": 409,
+      "messageKey": "REQUEST_ID_REUSED"
+    },
+    {
+      "case": "one ready host cannot start without second member",
+      "result": "Pass",
+      "status": 409,
+      "messageKey": "NOT_READY"
+    },
+    {
+      "case": "join member, duplicate membership and own preferences",
+      "result": "Pass",
+      "status": 200,
+      "members": 2,
+      "version": 3
+    },
+    {
+      "case": "outsider403 and member host guard403",
+      "result": "Pass",
+      "status": 403,
+      "messageKey": "NOT_HOST"
+    },
+    {
+      "case": "stale version409; start requires ready",
+      "result": "Pass",
+      "status": 409,
+      "messageKey": "NOT_READY"
+    },
+    {
+      "case": "preferences update own only and reset own ready",
+      "result": "Pass",
+      "status": 200,
+      "version": 6,
+      "privateProjection": true
+    },
+    {
+      "case": "context updates shared pool/version and reset all ready",
+      "result": "Pass",
+      "status": 200,
+      "version": 9
+    },
+    {
+      "case": "ready both then start ROUND_1, replay after start",
+      "result": "Fail",
+      "diagnostic": "{\"ok\":false,\"error\":{\"messageKey\":\"CONTEXT_CHANGED\"},\"roomId\":\"44a3ed8c-8b80-4587-87c6-cd296615bc38\",\"requestId\":\"cdcf1382-fc01-4720-b1f8-1c11a0ac6f33\",\"messageKey\":\"CONTEXT_CHANGED\",\"retryAfterSeconds\":null}\n\n409 !== 200\n"
+    }
+  ],
+  "result": "Fail",
+  "datasetVersion": "0.18.3975500952",
+  "sql": {
+    "result": "Pass",
+    "assertions": 13
+  },
+  "endpoint": "http://127.0.0.1:54331",
+  "failedCase": "ready both then start ROUND_1, replay after start"
+}

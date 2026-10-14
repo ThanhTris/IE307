@@ -1,0 +1,33 @@
+meta {
+  name: 21 Start round
+  type: http
+  seq: 21
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/start_round
+  body: json
+  auth: none
+}
+headers {
+  Authorization: Bearer {{hostToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"requestId":"{{requestId}}","room_id":"{{roomId}}","expected_version":{{roomVersion}}}
+}
+script:pre-request {
+  bru.setVar('requestId','xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.floor(Math.random()*16);return(c==='x'?r:(r&3|8)).toString(16);}));
+
+}
+script:post-response {
+  const body=res.getBody();
+  if(res.getStatus()===200 && body.ok===true) { bru.setVar('roomVersion',body.version); }
+}
+tests {
+  test('21 Start round status and contract',()=>{
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getBody().ok).to.equal(true);
+
+    expect(res.getBody().state).to.equal('ROUND_1');
+  });
+}

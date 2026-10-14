@@ -1,0 +1,34 @@
+meta {
+  name: 03 Create room
+  type: http
+  seq: 3
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/create_room
+  body: json
+  auth: none
+}
+headers {
+  Authorization: Bearer {{hostToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"requestId":"{{createId}}","display_name":"Bruno host","anchor_id":"{{anchorId}}","radius_m":1500,"desired_at":"{{desiredAt}}","service_mode":"dine_in","meal_slot":"dinner","time_hint":null,"budget":null,"avoid_recent":false}
+}
+script:pre-request {
+  bru.setVar('requestId','xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.floor(Math.random()*16);return(c==='x'?r:(r&3|8)).toString(16);}));
+  bru.setVar('createId','req_gm19_bruno_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2));
+}
+script:post-response {
+  const body=res.getBody();
+  if(res.getStatus()===200 && body.ok===true) { bru.setVar('roomId',body.roomId);bru.setVar('roomCode',body.data.code);bru.setVar('roomVersion',body.version);bru.setVar('createAck',JSON.stringify(body)); }
+}
+tests {
+  test('03 Create room status and contract',()=>{
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getBody().ok).to.equal(true);
+    expect(res.getBody().requestId).to.equal(bru.getVar('createId'));
+
+    expect(res.getBody().state).to.equal('LOBBY');expect(res.getBody().data.code).to.match(/^[A-HJ-NP-Z2-9]{6}$/);
+  });
+}

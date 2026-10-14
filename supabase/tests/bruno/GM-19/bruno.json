@@ -1,0 +1,6 @@
+{
+  "version": "1",
+  "name": "GM-19 Room Lifecycle Local",
+  "type": "collection",
+  "ignore": ["node_modules", ".git"]
+}

@@ -1,0 +1,30 @@
+meta {
+  name: 34 Terminal conflict
+  type: http
+  seq: 34
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/cancel_room
+  body: json
+  auth: none
+}
+headers {
+  Authorization: Bearer {{hostToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"requestId":"{{requestId}}","room_id":"{{roomId}}","expected_version":{{roomVersion}},"confirm_cancel":true}
+}
+script:pre-request {
+  bru.setVar('requestId','xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.floor(Math.random()*16);return(c==='x'?r:(r&3|8)).toString(16);}));
+}
+script:post-response {
+  const body=res.getBody();if(res.getStatus()===200 && body.ok===true) {  }
+}
+tests {
+  test('34 Terminal conflict status and contract',()=>{
+    expect(res.getStatus()).to.equal(409);
+
+    expect(res.getBody().messageKey).to.equal('ROOM_TERMINAL');
+  });
+}

@@ -1,0 +1,30 @@
+meta {
+  name: 45 Create budget 9
+  type: http
+  seq: 45
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/create_room
+  body: json
+  auth: none
+}
+headers {
+  Authorization: Bearer {{outsiderToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"requestId":"{{requestId}}","display_name":"Bruno budget","anchor_id":"00000000-0000-0000-0000-000000000000","radius_m":1500,"desired_at":"{{desiredAt}}","service_mode":"dine_in","meal_slot":"dinner","time_hint":null,"budget":null,"avoid_recent":false}
+}
+script:pre-request {
+  bru.setVar('requestId','xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.floor(Math.random()*16);return(c==='x'?r:(r&3|8)).toString(16);}));
+}
+script:post-response {
+  const body=res.getBody();if(res.getStatus()===200 && body.ok===true) {  }
+}
+tests {
+  test('45 Create budget 9 status and contract',()=>{
+    expect(res.getStatus()).to.equal(400);
+
+    expect(res.getBody().messageKey).to.equal('OUT_OF_COVERAGE');
+  });
+}

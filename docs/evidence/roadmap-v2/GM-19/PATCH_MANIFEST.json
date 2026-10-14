@@ -1,0 +1,19 @@
+{
+  "task": "GM-19",
+  "contract": "food-v1/roadmap-v2/GM-19.1",
+  "schemaVersion": "0.3.0",
+  "date": "2026-10-14",
+  "baseRevision": "a33d5e85f1aeb7c7bda02310e02880a3af5e77da",
+  "workingTree": "uncommitted",
+  "owner": "Trí / ThanhTris",
+  "reviewer": "Trí / ThanhTris",
+  "approval": "Pending",
+  "sha256": {
+    "supabase/migrations/0019_room_lifecycle.sql": "6591c2a8e6daa093111cd55e2969172c54361b459c7f53c3b883f1a2364adc88",
+    "scripts/gm19_http_check.mjs": "9362720afd56d92e3306c5a17d3c787003fa06bd5c38339ac0926ab6f53db8cf",
+    "scripts/gm19_http_fixture.py": "e5ba1ede662b34afc46b6d327803e2ca6870d47673f8a81a0a1458640a1cd800"
+  },
+  "bruno": "supabase/tests/bruno/GM-19 (47 requests)",
+  "credentials": "Ignored local runtime files; excluded from evidence",
+  "productionDataPromoted": false
+}
