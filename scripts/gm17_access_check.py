@@ -67,6 +67,11 @@ def fixture_sql(namespace, users=None, now=None):
         lines.append('insert into public.schedule_groups('+','.join(snake(k) for k in row)+') values('+','.join(sql_literal(v,'uuid' if k in ['scheduleId','ownerId'] else 'bigint' if k=='version' else 'text') for k,v in row.items())+');')
     for kind,b in bundles.items():
         for entity,rows in b['entities'].items():
+            # GM-22 provisions profiles from auth.users. When a caller
+            # supplies existing synthetic identities, keep those trigger-owned
+            # profiles instead of inserting a second row for the same user.
+            if users and kind == 'core' and entity == 'profiles':
+                continue
             for row in rows:
                 # UUID-free group/dedupe hashes are test namespace scoped too.
                 if 'groupKey' in row: row['groupKey']=hashlib.sha256(namespace.bytes).hexdigest()
