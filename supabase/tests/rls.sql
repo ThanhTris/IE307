@@ -3,7 +3,9 @@
 begin;
 set local search_path=public,extensions;
 select no_plan();
-select ok((select count(*)=2 from public.schema_versions),'upgrade installs schema0.2.0');
+select ok(exists(select 1 from public.schema_versions
+  where schema_version='0.2.0' and contract_id='food-v1/roadmap-v2/GM-17.1'),
+  'GM-17 contract remains registered after later migrations');
 select ok((select terminal_at is not null from public.rooms where id='__ROOM__'),'terminal timestamp backfilled with data');
 select ok(not has_table_privilege('authenticated','public.rooms','SELECT'),'no table-wide private SELECT');
 select ok(not has_column_privilege('authenticated','public.rooms','consent_snapshot','SELECT'),'consent snapshot private');
