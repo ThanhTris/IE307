@@ -3,8 +3,8 @@
   "task": "GM-22",
   "contract": "food-v1/roadmap-v2/GM-22.1",
   "schemaVersion": "0.4.0",
-  "revision": "69bbbabd1ee6c922850bdcc30244cc5aeeca5bf9",
-  "checkedAt": "2026-10-14T12:53:28.438Z",
+  "revision": "9454ff1c21b1d989b8b8b17d314b2f34bf9ac6d2",
+  "checkedAt": "2026-10-14T13:18:10.717Z",
   "cases": [
     {
       "case": "self identity has stable ten-character code",
@@ -54,10 +54,12 @@
       "newInvitation": true
     },
     {
-      "case": "concurrent room invites serialize to one pending invitation",
+      "case": "concurrent new room invites serialize to one invitation",
       "result": "Pass",
       "status": 200,
-      "singleInvitation": true
+      "singleInvitation": true,
+      "oneEvent": true,
+      "oneInbox": true
     },
     {
       "case": "expired room invite is replaced and rejected invite can be resent",
@@ -82,10 +84,11 @@
       "roomResult": true
     },
     {
-      "case": "unfriend removes pair and keeps room membership",
+      "case": "unfriend removes pair, cancels pending invite and keeps room membership",
       "result": "Pass",
       "status": 200,
-      "membershipPreserved": true
+      "membershipPreserved": true,
+      "acceptStatus": 409
     }
   ],
   "endpoint": "http://127.0.0.1:54332",

@@ -29,3 +29,7 @@ Tokens and raw response payloads are intentionally excluded from this file.
 Retained-mode cleanup regression: `node scripts/gm22_http_stop.mjs` returned
 `{"stopped":true,"cleaned":true}`; the owned gateway, database namespace and
 three guest identities were removed.
+
+The retained runtime records `stopped:true` before cleanup. If cleanup fails,
+the runtime files remain and a later `gm22_http_stop.mjs` invocation retries the
+owned cleanup without requiring the gateway to be reachable.

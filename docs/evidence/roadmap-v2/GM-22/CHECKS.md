@@ -1,7 +1,7 @@
 # GM-22 — checks
 
 Owner/reviewer: Trí / ThanhTris. Contract `food-v1/roadmap-v2/GM-22.1`, schema
-`0.4.0`. Clean-run revision: `69bbbabd1ee6c922850bdcc30244cc5aeeca5bf9`.
+`0.4.0`. Clean-run revision: `9454ff1c21b1d989b8b8b17d314b2f34bf9ac6d2`.
 
 | Check | Result | Evidence |
 |---|---|---|
@@ -28,4 +28,5 @@ one pending row; eight-member rooms return
 projected as `room_result` without an invitation ID; and unfriend preserves
 existing room membership. Retained Bruno mode was stopped with the stop script,
 which returned `stopped:true, cleaned:true` after dropping its owned database
-and guest identities.
+and guest identities. The runtime persists `stopped:true` before cleanup, so a
+later stop invocation retries cleanup without contacting the closed gateway.
