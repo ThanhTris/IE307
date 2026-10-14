@@ -1,0 +1,7 @@
+GM-19 direct fresh run — 2026-10-14
+Database: owned disposable database with synthetic published-state data and real GoTrue JWTs.
+SQL: Pass, 15 assertions.
+HTTP: Pass, 32 scenario groups.
+Regression coverage: variant identity, terminal expiry privacy, empty-pool persistence/reset, synthetic auth fixture, ACK replay, concurrency, quotas and GM-07 client guards.
+Cleanup: Pass — owned DB and guests removed.
+Authoritative structured output: http-results.json.

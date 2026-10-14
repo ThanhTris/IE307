@@ -1,0 +1,23 @@
+meta {
+  name: 49 Terminal expired snapshot
+  type: http
+  seq: 49
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/get_room_snapshot
+  body: json
+  auth: none
+}
+headers {
+  Authorization: Bearer {{hostToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"room_id":"{{terminalRoomId}}"}
+}
+tests {
+  test('49 terminal room after expiry is private',()=>{
+    expect(res.getStatus()).to.equal(410);
+    expect(res.getBody().messageKey).to.equal('ROOM_EXPIRED');
+  });
+}

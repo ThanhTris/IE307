@@ -1,0 +1,33 @@
+meta {
+  name: 02 Preview pool
+  type: http
+  seq: 2
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/preview_food_pool
+  body: json
+  auth: none
+}
+headers {
+  Authorization: Bearer {{hostToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"anchor_id":"{{anchorId}}","radius_m":1500,"desired_at":"{{desiredAt}}","service_mode":"dine_in","meal_slot":"dinner","time_hint":null,"budget":null}
+}
+script:pre-request {
+  bru.setVar('requestId','xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.floor(Math.random()*16);return(c==='x'?r:(r&3|8)).toString(16);}));
+
+}
+script:post-response {
+  const body=res.getBody();
+  if(res.getStatus()===200 && body.ok===true) {  }
+}
+tests {
+  test('02 Preview pool status and contract',()=>{
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getBody().ok).to.equal(true);
+
+    expect(res.getBody().data.pool.length).to.be.above(0);
+  });
+}

@@ -1,0 +1,9 @@
+script:pre-request {
+  const url = bru.interpolate(req.getUrl());
+  if (!/^http:\/\/(127\.0\.0\.1|localhost):54331\/rest\/v1\/rpc\//.test(url)) throw new Error('Start GM-19 owned fixture on loopback port 54331');
+  const key = bru.getEnvVar('publicKey');
+  if (!key || key.startsWith('sb_secret_')) throw new Error('Select a local anon/publishable key');
+  req.setHeader('apikey', key);
+  req.setTimeout(10000);
+  req.setMaxRedirects(0);
+}

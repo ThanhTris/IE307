@@ -1,0 +1,26 @@
+meta {
+  name: 48 Variant result offerings
+  type: http
+  seq: 48
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/get_result_offerings
+  body: json
+  auth: none
+}
+headers {
+  Authorization: Bearer {{hostToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"room_id":"{{variantRoomId}}","result_id":"{{variantResultId}}"}
+}
+tests {
+  test('48 result offerings retain the winning variant',()=>{
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getBody().ok).to.equal(true);
+    expect(res.getBody().data).to.be.an('array');
+    expect(res.getBody().data.length).to.be.above(0);
+    expect(res.getBody().data.every(card=>card.offeringIds.includes(bru.getEnvVar('variantCayOffering')))).to.equal(true);
+  });
+}

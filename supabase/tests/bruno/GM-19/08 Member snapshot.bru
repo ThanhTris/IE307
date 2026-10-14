@@ -1,0 +1,33 @@
+meta {
+  name: 08 Member snapshot
+  type: http
+  seq: 8
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/get_room_snapshot
+  body: json
+  auth: none
+}
+headers {
+  Authorization: Bearer {{memberToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"room_id":"{{roomId}}"}
+}
+script:pre-request {
+  bru.setVar('requestId','xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.floor(Math.random()*16);return(c==='x'?r:(r&3|8)).toString(16);}));
+
+}
+script:post-response {
+  const body=res.getBody();
+  if(res.getStatus()===200 && body.ok===true) {  }
+}
+tests {
+  test('08 Member snapshot status and contract',()=>{
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getBody().ok).to.equal(true);
+
+    expect(res.getBody().data.members).to.have.lengthOf(2);expect(res.getBody().data.ownPreferences).to.be.an('object');expect(res.getBody().data).not.to.have.property('consentSnapshot');expect(res.getBody().data).not.to.have.property('votesByParticipant');
+  });
+}

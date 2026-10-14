@@ -1,0 +1,8 @@
+Pass: discovery published synthetic anchor and positive pool (GM-18)
+Pass: create host member, ready false, 60 minute TTL
+Pass: ACK replay before state/version, same response; payload reuse409
+Pass: join member, duplicate membership and own preferences
+Pass: outsider403 and member host guard403
+Pass: stale version409; start requires ready
+BRUNO_READY endpoint=http://127.0.0.1:54331 namespace=4041a055-bee4-4dc6-a346-5941138e7bcf (Ctrl+C to cleanup)
+Stop safely: node scripts/gm19_http_stop.mjs

@@ -1,0 +1,31 @@
+Pass: discovery published synthetic anchor and positive pool (GM-18)
+Pass: create host member, ready false, 60 minute TTL
+Pass: ACK replay before state/version, same response; payload reuse409
+Pass: one ready host cannot start without second member
+Pass: join member, duplicate membership and own preferences
+Pass: outsider403 and member host guard403
+Pass: stale version409; start requires ready
+Pass: preferences update own only and reset own ready
+Pass: context updates shared pool/version and reset all ready
+Pass: ready both then start ROUND_1, replay after start
+Pass: started snapshot immutable after catalogue/anchor change
+Pass: started leave/join locked; member cancel requires confirmation
+Pass: lobby leave/rejoin; host leave cancels
+Pass: invalid input400 and missing/forged JWT401
+Pass: two concurrent retries produce same ACK and one mutation
+Pass: two real guests race final seat: one200 one409 capacity8
+Pass: start/cancel race has one200 and one409, stable terminal
+Pass: join/start race cannot admit guest into locked roster
+Pass: context/ready race has no lost update
+Pass: changed catalogue projection forces CONTEXT_CHANGED and reset ready
+Pass: past desiredAt resets ready and returns DESIRED_TIME_PASSED
+Pass: stale/empty offering pool cannot start
+Pass: expired room410 at database cutoff
+Pass: atomic create budget10/min then429 with retry; ACK survives budget
+Pass: snapshot budget60/min then429 isolated by identity
+Pass: ACK private payload cascades with public idempotency retention
+Pass: real GM-07 client consumes room lifecycle responses and typed errors
+Pass: multi-choice own preferences rerank shared pool and reset all ready
+Pass: dataset version change resets ready once; next confirmed start succeeds
+Pass: response lost after database commit replays ACK without new mutation
+{"result":"Pass","cases":30,"fixture":"retained"}
