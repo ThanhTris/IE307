@@ -1,7 +1,7 @@
 ﻿# GM-14 checks
 
 - Task/contract: GM-14 / `food-v1/roadmap-v2/GM-14.1`
-- Base revision: `c20f7c2a58bcce555a446722e744bd7f1f3ac1b6`; checks run against current working tree on `codex/gm-11-14-ui` (uncommitted).
+- Base revision: `c20f7c2a58bcce555a446722e744bd7f1f3ac1b6`; code checks were run on the working tree immediately before implementation commit `41eb135` on `codex/gm-11-14-ui`.
 - Schema/dataset: N/A for UI mock fixtures; synthetic rows only.
 - Environment: Windows, Node/npm versions from local mobile environment; Expo SDK 57; Android bundle export completed.
 
@@ -20,3 +20,4 @@
 ## Limits
 
 Friend/inbox/history actions are local mock calls; no actual social, server consent, notification permission, push, API, persistence, or deletion was exercised. Reject and standalone invite interactions are not independently asserted by the current component test. Expo Go device smoke remains Not run; do not mark accepted based only on CI/mock.
+

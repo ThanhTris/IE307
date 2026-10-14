@@ -3,7 +3,7 @@
 - Task / owner / reviewer: GM-11 / Trung / Trí
 - Contract: `food-v1/roadmap-v2/GM-11.1`
 - Branch / base: `codex/gm-11-14-ui` / `c20f7c2a58bcce555a446722e744bd7f1f3ac1b6`
-- Working revision: changes are uncommitted; rerun checks on the eventual review commit.
+- Implementation commit: `41eb135`. Evidence-only follow-up changes do not alter the checked mobile source; rerun checks if source changes.
 
 ## Artifacts and use
 
@@ -18,3 +18,4 @@
 ## Status and known limits
 
 Mock-only. Room code/QR are labeled placeholders; invites do not add or ready another person. Ready/start/reset are local fixture state. No server state or API fallback exists. Automated checks pass as recorded; Expo Go Android visual smoke is Not run and is required for task acceptance. Do not infer Done/Approved from these files.
+
