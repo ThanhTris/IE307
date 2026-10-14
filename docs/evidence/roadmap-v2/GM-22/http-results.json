@@ -3,8 +3,8 @@
   "task": "GM-22",
   "contract": "food-v1/roadmap-v2/GM-22.1",
   "schemaVersion": "0.4.0",
-  "revision": "d8b4926",
-  "checkedAt": "2026-10-14T11:17:01.208Z",
+  "revision": "8412e0022ee47bde0561e319ee3b719fa52f9953",
+  "checkedAt": "2026-10-14T12:41:03.863Z",
   "cases": [
     {
       "case": "self identity has stable ten-character code",
@@ -40,6 +40,40 @@
       "case": "wrong recipient and rejected invite are distinguished",
       "result": "Pass",
       "status": 200
+    },
+    {
+      "case": "rejected friend invite can be sent again with a new event",
+      "result": "Pass",
+      "status": 200,
+      "newInvitation": true
+    },
+    {
+      "case": "expired friend invite is retired before a new request",
+      "result": "Pass",
+      "status": 200,
+      "newInvitation": true
+    },
+    {
+      "case": "expired room invite is replaced and rejected invite can be resent",
+      "result": "Pass",
+      "status": 200,
+      "newInvitation": true
+    },
+    {
+      "case": "accept room invite rejects an eight-member room",
+      "result": "Pass",
+      "status": 409
+    },
+    {
+      "case": "locked room rejects a new invitation",
+      "result": "Pass",
+      "status": 409
+    },
+    {
+      "case": "inbox keeps room result separate from invitations",
+      "result": "Pass",
+      "status": 200,
+      "roomResult": true
     },
     {
       "case": "unfriend removes pair and keeps room membership",

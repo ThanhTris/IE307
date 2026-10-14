@@ -25,3 +25,7 @@ started without the accepted pair and returned 403 NOT_PARTNER for request 05.
 retained mode while the regular disposable HTTP suite continues to assert it.
 The fixture was rebuilt from scratch and the Runner was rerun after the fix.
 Tokens and raw response payloads are intentionally excluded from this file.
+
+Retained-mode cleanup regression: `node scripts/gm22_http_stop.mjs` returned
+`{"stopped":true,"cleaned":true}`; the owned gateway, database namespace and
+three guest identities were removed.

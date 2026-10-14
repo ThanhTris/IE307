@@ -20,7 +20,7 @@ node scripts/gm22_http_check.mjs --bruno
 
 The runner creates its own database/PostgREST gateway on loopback `54332`, three
 namespaced guest JWTs, and synthetic positive catalogue rows. The clean server
-run passed SQL `19/19` assertions and HTTP `7/7` scenario groups. The
+run passed SQL `19/19` assertions and HTTP `13/13` scenario groups. The
 `--bruno` mode writes a private runtime environment for manual desktop import;
 select `supabase/tests/bruno/GM-22` in Bruno and choose
 `environments/Local.runtime.private.bru`, then stop with
@@ -28,8 +28,10 @@ select `supabase/tests/bruno/GM-22` in Bruno and choose
 imported collection with all 10 requests selected: **10 passed, 0 failed, 0
 skipped**. Expected state responses included `409` for duplicate/replayed
 invites, `401` for missing JWT, and `403` for a non-recipient. Cleanup drops
-only that owned database and its namespaced guests. No app DB reset or real
-dataset publication is performed.
+only that owned database and its namespaced guests. Retained-mode stop was
+exercised and returned `stopped:true, cleaned:true`; stop or cleanup failures
+now return a non-zero result and preserve runtime state for diagnosis. No app
+DB reset or real dataset publication is performed.
 
 GM-28 receives Android UI/inbox/confirmation and device network configuration;
 GM-23 receives sender/delivery handling. Android is not claimed as tested here.
