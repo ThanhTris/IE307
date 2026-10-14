@@ -1,0 +1,53 @@
+{
+  "result": "Pass",
+  "task": "GM-22",
+  "contract": "food-v1/roadmap-v2/GM-22.1",
+  "schemaVersion": "0.4.0",
+  "revision": "5b148de7b296fa8bccb8385fbcebebdb32855892",
+  "checkedAt": "2026-10-14T10:51:24.724Z",
+  "cases": [
+    {
+      "case": "self identity has stable ten-character code",
+      "result": "Pass",
+      "status": 200
+    },
+    {
+      "case": "recipient accepts partner invite and pair lists",
+      "result": "Pass",
+      "status": 200,
+      "friends": 1
+    },
+    {
+      "case": "room invite does not join before recipient accepts",
+      "result": "Pass",
+      "status": 200,
+      "members": 1
+    },
+    {
+      "case": "recipient accepts room invitation with ready false",
+      "result": "Pass",
+      "status": 200,
+      "members": 2,
+      "ready": false
+    },
+    {
+      "case": "inbox is caller scoped and missing auth is rejected",
+      "result": "Pass",
+      "status": 200,
+      "unauthStatus": 401
+    },
+    {
+      "case": "wrong recipient and rejected invite are distinguished",
+      "result": "Pass",
+      "status": 200
+    },
+    {
+      "case": "unfriend removes pair and keeps room membership",
+      "result": "Pass",
+      "status": 200,
+      "membershipPreserved": true
+    }
+  ],
+  "endpoint": "http://127.0.0.1:54332",
+  "synthetic": true
+}

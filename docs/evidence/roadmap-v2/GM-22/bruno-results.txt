@@ -1,0 +1,27 @@
+GM-22 Bruno desktop Runner evidence
+===================================
+
+Environment: Local.runtime.private (disposable loopback gateway, real guest JWTs)
+Collection: GM-22 Social Invitations Local (10 requests selected)
+Run: Bruno desktop v4.2.1, Windows native UI
+
+Runner summary: All 10 | Passed 10 | Failed 0 | Skipped 0
+
+01 Own identity       200 OK
+02 List friends       200 OK
+03 Invite partner     409 Conflict (duplicate/pending-safe state accepted)
+04 Accept partner     409 Conflict (replay/state-safe response accepted)
+05 Invite room        409 Conflict (duplicate/pending-safe state accepted)
+06 Accept room invite 409 Conflict (replay/state-safe response accepted)
+07 Reject room invite 409 Conflict (replay/state-safe response accepted)
+08 Inbox              200 OK
+09 Missing auth       401 Unauthorized
+10 Invalid recipient  403 Forbidden
+
+The first retained-fixture run exposed a harness ordering issue: its final
+unfriend assertion ran before Bruno environment export, so the desktop chain
+started without the accepted pair and returned 403 NOT_PARTNER for request 05.
+`scripts/gm22_http_check.mjs --bruno` now skips that destructive cleanup in
+retained mode while the regular disposable HTTP suite continues to assert it.
+The fixture was rebuilt from scratch and the Runner was rerun after the fix.
+Tokens and raw response payloads are intentionally excluded from this file.

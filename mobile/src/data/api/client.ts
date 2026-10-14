@@ -32,6 +32,7 @@ import {
   SubmitBallotResponse,
   PoolDish,
   Friend,
+  SocialIdentity,
   InvitePartnerRequest,
   FriendInvitation,
   InviteToRoomRequest,
@@ -48,7 +49,7 @@ import {
   isCreateRoomResponse, isJoinRoomResponse, isSessionResponse, isSubmitBallotResponse,
   isFriendInvitation, isRoomInvitation,
   isSessionUser, isDiscoveryContext, isPreviewFoodPool, isRoomSnapshot,
-  arrayOf, isPoolDish, isFriend, isInboxItem, isHistoryItem,
+  arrayOf, isPoolDish, isFriend, isInboxItem, isHistoryItem, isSocialIdentity,
 } from './responseGuards';
 import type { SessionApi } from '../auth/types';
 
@@ -271,13 +272,13 @@ export class ApiClientImpl implements ApiClient {
 
   private isValidErrorCode(key: string): key is ErrorCode {
     const knownCodes: ErrorCode[] = [
-      'AUTH_REQUIRED', 'NOT_MEMBER', 'NOT_HOST', 'NOT_READY', 'NOT_PARTNER', 'CONSENT_REQUIRED',
+      'AUTH_REQUIRED', 'NOT_MEMBER', 'NOT_HOST', 'NOT_READY', 'NOT_PARTNER', 'NOT_RECIPIENT', 'CONSENT_REQUIRED',
       'INVALID_INPUT', 'INVALID_DISH', 'INCOMPLETE_BALLOT',
       'ROOM_NOT_FOUND', 'ROOM_FULL', 'ROOM_LOCKED', 'ROOM_EXPIRED', 'ROOM_TERMINAL',
       'INVALID_ROOM_STATE', 'CONTEXT_CHANGED',
       'ALREADY_SUBMITTED', 'VERSION_CONFLICT', 'REQUEST_ID_REUSED',
       'OUT_OF_COVERAGE', 'NO_ELIGIBLE_FOOD', 'AVAILABILITY_UNKNOWN', 'DESIRED_TIME_PASSED',
-      'INVITE_EXPIRED', 'INVITE_REJECTED', 'RATE_LIMITED', 'NETWORK_ERROR', 'TIMEOUT',
+      'INVITE_EXPIRED', 'INVITE_REJECTED', 'INVITE_CANCELLED', 'RATE_LIMITED', 'NETWORK_ERROR', 'TIMEOUT',
       'MALFORMED_RESPONSE', 'UNKNOWN_ERROR',
     ];
     return knownCodes.includes(key as ErrorCode);
@@ -789,6 +790,15 @@ export class ApiClientImpl implements ApiClient {
   // Social & Friends RPCs
   // ==========================================================================
 
+  async getMySocialIdentity(): Promise<ReadResult<SocialIdentity>> {
+    try {
+      const raw = await this.callRpc<unknown>('get_my_social_identity', {});
+      return this.normalizeReadResponse<SocialIdentity>(raw, isSocialIdentity);
+    } catch (err) {
+      return { ok: false, error: this.mapError(err) };
+    }
+  }
+
   async listFriends(): Promise<ReadResult<Friend[]>> {
     try {
       const raw = await this.callRpc<unknown>('list_friends', {});
@@ -895,6 +905,21 @@ export class ApiClientImpl implements ApiClient {
   // ==========================================================================
   // Inbox & Devices RPCs
   // ==========================================================================
+
+  async rejectRoomInvite(invitationId: string, customRequestId?: string): Promise<WriteResult<void>> {
+    const requestId = customRequestId ?? this.generateRequestId();
+    try {
+      const raw = await this.callRpc<unknown>('reject_room_invite', {
+        requestId,
+        invitation_id: invitationId,
+      });
+      const norm = this.normalizeWriteResponse<void>(raw, requestId, isVoidPayload);
+      if (!norm.ok) return norm;
+      return { ok: true, requestId: norm.requestId, roomId: norm.roomId, version: norm.version, state: norm.state, data: undefined };
+    } catch (err) {
+      return { ok: false, requestId, error: this.mapError(err) };
+    }
+  }
 
   async listPartnerInbox(cursor?: string): Promise<ReadResult<InboxItem[]>> {
     try {

@@ -1,0 +1,35 @@
+# GM-22 — handoff
+
+Owner/reviewer: Trí / ThanhTris. Contract `food-v1/roadmap-v2/GM-22.1`, schema
+`0.4.0`. Do not mark Done until Trí reviews the final revision.
+
+Migration: `supabase/migrations/0022_social.sql`. RPCs are
+`get_my_social_identity`, `list_friends`, `invite_partner`, `accept_partner`,
+`reject_partner`, `unfriend`, `invite_to_room`, `accept_room_invite`,
+`reject_room_invite`, and `list_partner_inbox`. They require the GM-07 JWT and
+use `friend_code`/partner or invitation IDs; no user directory or profile-edit
+API is exposed. Room accept returns the existing `JoinRoomResponse` and creates
+`ready=false` membership only after recipient confirmation.
+
+Disposable reproduction:
+
+```powershell
+$env:PYTHONUTF8='1'
+node scripts/gm22_http_check.mjs --bruno
+```
+
+The runner creates its own database/PostgREST gateway on loopback `54332`, three
+namespaced guest JWTs, and synthetic positive catalogue rows. The clean server
+run passed SQL `19/19` assertions and HTTP `7/7` scenario groups. The
+`--bruno` mode writes a private runtime environment for manual desktop import;
+select `supabase/tests/bruno/GM-22` in Bruno and choose
+`environments/Local.runtime.private.bru`, then stop with
+`node scripts/gm22_http_stop.mjs`. The desktop Runner was executed on the
+imported collection with all 10 requests selected: **10 passed, 0 failed, 0
+skipped**. Expected state responses included `409` for duplicate/replayed
+invites, `401` for missing JWT, and `403` for a non-recipient. Cleanup drops
+only that owned database and its namespaced guests. No app DB reset or real
+dataset publication is performed.
+
+GM-28 receives Android UI/inbox/confirmation and device network configuration;
+GM-23 receives sender/delivery handling. Android is not claimed as tested here.

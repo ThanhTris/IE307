@@ -1,0 +1,20 @@
+meta {
+  name: 08 Inbox
+  type: http
+  seq: 8
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/list_partner_inbox
+  body: json
+}
+headers {
+  Authorization: Bearer {{memberToken}}
+  apikey: {{anonKey}}
+  Content-Type: application/json
+}
+body:json {
+  {"cursor":null}
+}
+tests {
+  test('08 Inbox',()=>{ expect([200,409]).to.include(res.getStatus()); });
+}

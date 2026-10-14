@@ -1,0 +1,20 @@
+meta {
+  name: 10 Invalid recipient
+  type: http
+  seq: 10
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/accept_partner
+  body: json
+}
+headers {
+  Authorization: Bearer {{hostToken}}
+  apikey: {{anonKey}}
+  Content-Type: application/json
+}
+body:json {
+  {"requestId":"{{requestId}}-bad-recipient","invitation_id":"{{friendInvitationId}}"}
+}
+tests {
+  test('non-recipient is forbidden',()=>{ expect(res.getStatus()).to.equal(403); });
+}
