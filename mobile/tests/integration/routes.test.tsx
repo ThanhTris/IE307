@@ -6,8 +6,26 @@ import Index from '../../src/app/index';
 import Foundation from '../../src/app/foundation';
 import NotFound from '../../src/app/+not-found';
 import Components from '../../src/app/components';
+import Features from '../../src/app/features';
+import Lobby from '../../src/app/gm11/lobby';
+import RoomStatus from '../../src/app/gm11/status';
+import Friends from '../../src/app/gm14/friends';
+import Inbox from '../../src/app/gm14/inbox';
+import History from '../../src/app/gm14/history';
 
-const routes = { _layout: Layout, index: Index, foundation: Foundation, components: Components, '+not-found': NotFound };
+const routes = {
+  _layout: Layout,
+  index: Index,
+  foundation: Foundation,
+  components: Components,
+  features: Features,
+  'gm11/lobby': Lobby,
+  'gm11/status': RoomStatus,
+  'gm14/friends': Friends,
+  'gm14/inbox': Inbox,
+  'gm14/history': History,
+  '+not-found': NotFound,
+};
 afterEach(() => jest.useRealTimers());
 
 test('real route modules navigate from shell to foundation and back', async () => {
@@ -36,4 +54,14 @@ test('unknown deep link renders not-found and recovers to shell', async () => {
   await user.press(screen.getByRole('button', { name: 'Về trang đầu' }));
   await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/'));
   expect(screen.getByText(/Chọn một món/)).toBeOnTheScreen();
+});
+
+test('foundation preview opens GM-11 and GM-14 routes through Expo Router', async () => {
+  const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+  await renderRouter(routes, { initialUrl: '/foundation' });
+  await user.press(screen.getByRole('button', { name: 'Mở các màn mock GM-11 và GM-14' }));
+  await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/features'));
+  await user.press(screen.getByRole('button', { name: 'GM-14 · Lịch sử · Mở' }));
+  await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/gm14/history'));
+  expect(await screen.findByText('Quyền lưu lịch sử')).toBeOnTheScreen();
 });
