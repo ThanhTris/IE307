@@ -5,7 +5,7 @@ Owner/reviewer: Trí / ThanhTris. Contract `food-v1/roadmap-v2/GM-22.1`, schema
 
 | Check | Result | Evidence |
 |---|---|---|
-| SQL disposable ACL/identity/pair constraints | Pass: 19/19 assertions on a fresh disposable database | `supabase/tests/social.sql`, `sql-run.txt` |
+| SQL disposable ACL/identity/pair constraints | Pass: 19/19 assertions on a fresh disposable database | `supabase/tests/database/GM-22_social.test.sql`, `sql-run.txt` |
 | HTTP disposable real JWT social flow | Pass: 7/7 scenario groups; synthetic namespace, endpoint `127.0.0.1:54332` | `scripts/gm22_http_check.mjs`, `http-results.json` |
 | Bruno desktop | Pass: desktop Runner completed 10/10 selected requests; 10 passed, 0 failed, 0 skipped on a fresh retained fixture | `bruno-results.txt`, `supabase/tests/bruno/GM-22/` |
 | Mobile typecheck/lint/unit tests | Pass: TypeScript, lint 0 errors (4 existing warnings), Jest 11 suites/382 tests | command output |

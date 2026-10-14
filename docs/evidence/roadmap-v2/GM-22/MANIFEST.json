@@ -8,7 +8,6 @@
   "sourceRevision": "5b148de7b296fa8bccb8385fbcebebdb32855892",
   "artifacts": [
     "supabase/migrations/0022_social.sql",
-    "supabase/tests/social.sql",
     "supabase/tests/database/GM-22_social.test.sql",
     "supabase/tests/http/GM-22.http",
     "supabase/tests/bruno/GM-22/",
@@ -29,10 +28,9 @@
   ],
   "sourceSha256": {
     "supabase/migrations/0022_social.sql": "218f9de42ceb4b9ce38f9e8712161990c6935db99588f23afd30a4e44dd61c92",
-    "supabase/tests/social.sql": "10b4aff7bf79953b97bc9674e89e0a4dbb3f37f15b850d6d9dddcba795e151db",
-    "supabase/tests/database/GM-22_social.test.sql": "aecedd3feddeb75e5ccd0405796823595ed5d046cc8d3cac52e4f69ed9e28db0",
+    "supabase/tests/database/GM-22_social.test.sql": "10b4aff7bf79953b97bc9674e89e0a4dbb3f37f15b850d6d9dddcba795e151db",
     "supabase/tests/http/GM-22.http": "f180eb48759fad58e7715ce7f433ad2faa31d3a358df59628fd56d4c451fdf4c",
-    "scripts/gm22_http_check.mjs": "b4e8d84f9eb36051be5ed392db6054a07ebe613fcab87eb4206423437847f67e",
+    "scripts/gm22_http_check.mjs": "7c829aad9abcf4ce72f5ad254c31eea96502b878daf9bb1b14d00ddbdd13ce3c",
     "scripts/gm22_http_stop.mjs": "01616ff277cd4a8fbbf97c309b9e91446f0026e0b06d43c8e792e90ed2e00d2a",
     "mobile/src/data/api/contracts.ts": "dd4c49040c04af177cf2cef4192e0cc95a056497fc97686e17fcc854e4a335c4",
     "mobile/src/data/api/client.ts": "c0988e5db5d636a7b354bad88586442dacbff04145a58a84afe02e28df85dd04",

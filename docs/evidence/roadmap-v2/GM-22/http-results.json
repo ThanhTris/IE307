@@ -3,8 +3,8 @@
   "task": "GM-22",
   "contract": "food-v1/roadmap-v2/GM-22.1",
   "schemaVersion": "0.4.0",
-  "revision": "5b148de7b296fa8bccb8385fbcebebdb32855892",
-  "checkedAt": "2026-10-14T10:51:24.724Z",
+  "revision": "7b17c2964fa57c1ca52fb4815660db9a98e6a37e",
+  "checkedAt": "2026-10-14T11:17:01.208Z",
   "cases": [
     {
       "case": "self identity has stable ten-character code",

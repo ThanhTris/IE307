@@ -25,7 +25,7 @@ try {
   const auth=validateApiUrl(status.API_URL); key=status.ANON_KEY;
   for(let i=0;i<3;i++){let r;for(let attempt=0;attempt<5;attempt++){r=await fetch(auth+'/auth/v1/signup',{method:'POST',headers:{apikey:key,'Content-Type':'application/json'},body:JSON.stringify({data:{display_name:'GM22 guest '+i,gm18_test_namespace:ns,gm19_test_namespace:ns,gm22_test_namespace:ns}})});if(r.status!==429)break;await new Promise(resolveWait=>setTimeout(resolveWait,1500));}assert.equal(r.status,200);guests.push(await r.json());}
   dbInfo=await fixture('create');ids=await fixture('positive');
-  const sql=await fixture('sql',readFileSync(resolve(root,'supabase/tests/social.sql'),'utf8'));
+  const sql=await fixture('sql',readFileSync(resolve(root,'supabase/tests/database/GM-22_social.test.sql'),'utf8'));
   assert.ok(!/^not ok /m.test(sql),sql);assert.equal((sql.match(/^ok \d+ /gm)??[]).length,19);
   await mkdir(resolve(root,'docs/evidence/roadmap-v2/GM-22'),{recursive:true});await writeFile(resolve(root,'docs/evidence/roadmap-v2/GM-22/sql-run.txt'),sql.replace(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi,'<uuid>'),'utf8');
   const rest=JSON.parse(await docker(['inspect','supabase_rest_gi-cung-duoc-local']))[0];const dbUrl=new URL(status.DB_URL);dbUrl.hostname='supabase_db_gi-cung-duoc-local';dbUrl.port='5432';dbUrl.pathname='/'+dbInfo.database;

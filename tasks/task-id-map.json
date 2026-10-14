@@ -799,7 +799,7 @@
       "stage": "implementation",
       "outputs": [
         "supabase/migrations/0022_social.sql",
-        "supabase/tests/social.sql",
+        "supabase/tests/database/GM-22_social.test.sql",
         "docs/evidence/roadmap-v2/GM-22/CHECKS.md",
         "supabase/tests/http/GM-22.http"
       ],
