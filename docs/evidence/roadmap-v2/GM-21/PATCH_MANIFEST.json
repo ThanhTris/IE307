@@ -1,0 +1,37 @@
+{
+  "result": "Pass",
+  "checkedAt": "2026-10-14T04:49:57.017623+00:00",
+  "branch": "codex/gm-21-history-consent",
+  "testedBaseCommit": "a33d5e85f1aeb7c7bda02310e02880a3af5e77da",
+  "workingTreePatchIncluded": true,
+  "contract": "GM-21.1",
+  "schemaVersion": "0.2.0 +0021",
+  "sourceHashes": {
+    ".github/workflows/gm21-history.yml": "f2cc7123775c9fec4ade21b3e4ecf62f4b6048eb7e0b0f75eeb3395595b6cc4f",
+    "docs/architecture/GM21_HISTORY_API.md": "87e6c746fbd90c8322a42a004a9470f2bde47de4301c50d2d757aca96de4f3d1",
+    "scripts/gm21_history_check.py": "e24080f8d5f58c93117f63c003345e41a5d71239ff137efa38f210306ce78ae1",
+    "scripts/gm21_http_check.mjs": "d73d435f24c80bb890955b700a4ecb22d050637a06742fa4507f16a03b917704",
+    "scripts/gm21_http_fixture.py": "c9befc75f927e94103c2e94648921c150e4acc2172868c02a6a6336f784b8703",
+    "supabase/migrations/0021_history.sql": "9be964cc6c8b405f578e7f2528268f628266e7b121b96ce958244e20a116217e",
+    "supabase/tests/history.sql": "20cd75beb89054f0397b9a16f29dcaa66b25a93258b6cbabeb7ef0a63a76271e",
+    "supabase/tests/http/GM-21.http": "3a958692cd170fd901e68c38ad3299c8eef6cc96ed1f2694b4c80a0179863dcf",
+    "tasks/backlog/GM-21.md": "a9545a99c2609c20662cb81b164991e45ebb4f47f6f31b1eb2cdbd1fddfec4c2"
+  },
+  "protectedInputsUnchanged": true,
+  "results": {
+    "sql": 45,
+    "http": 21,
+    "gm17": 93,
+    "domain": 237,
+    "mobile": 382,
+    "python": 550
+  },
+  "startGate": "READY_TO_CLAIM",
+  "mergeGate": "BLOCKED GM20 Todo",
+  "realRoomFinalizeIntegration": "Not run; pending upstream",
+  "Android": "Not run; GM25/28/31",
+  "remoteCI": "Not run",
+  "review": "Pending ThanhTris",
+  "commitPushPerformed": false,
+  "publicationPerformed": false
+}
