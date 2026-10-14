@@ -251,8 +251,12 @@ def main():
     # Copy only the real Supabase auth.users DDL, never user rows/passwords/tokens.
     auth_ddl = run(['docker','exec',CONTAINER,'pg_dump','-U','postgres','-d','postgres',
                     '--schema-only','--no-owner','--no-privileges','-t','auth.users'])
+    # The running local project contains auth triggers from later migrations
+    # (for example GM-22's profile bootstrap trigger). The isolated GM-06
+    # database intentionally loads only the core schema, so copy the real
+    # auth.users DDL while excluding every project-owned trigger reference.
     auth_ddl = '\n'.join(line for line in auth_ddl.splitlines()
-                         if not re.match(r'CREATE (?:CONSTRAINT )?TRIGGER gm06_',line))
+                         if not re.match(r'CREATE (?:CONSTRAINT )?TRIGGER gm\d+_',line))
     database = 'gm06_check_'+uuid.uuid4().hex[:16]
     assert re.fullmatch(r'gm06_check_[0-9a-f]{16}',database)
     report = {'schemaVersion':'0.1.0','databaseMode':'isolated disposable DB; real Supabase auth.users DDL',

@@ -12,7 +12,7 @@
 | set_ready/start_round P0 | roomId/ready hoặc start | member/host; đủ người/ready; revalidate eligibility/dataset/desiredAt, reset ready nếu pool đổi; start snapshot roster/offerings/schedules/context/consent |
 | submit_ballot P0 | roomId/round/poolVersion/intentId/votes[] | đủ pool; unique submission, lock, hash, finalize atomically |
 | leave_room/cancel_room P0 | roomId/confirmCancel | đúng caller; active leave hủy với xác nhận; terminal immutable |
-| invite_partner/accept_partner/reject_partner/unfriend P0 | friendCode hoặc invitationId/partnerId | auth/pair ACL/expiry, recipient accept; không auto join |
+| get_my_social_identity/list_friends/invite_partner/accept_partner/reject_partner/unfriend P0 | caller hoặc friendCode/invitationId/partnerId | auth/pair ACL/expiry, recipient accept; không auto join; self projection chỉ displayName/friendCode/avatarSeed |
 | list_partner_inbox P0 | cursor | own pairs/invites tối thiểu, không list user tùy ý |
 | invite_to_room P0 | roomId/partnerId | accepted pair + member inviter, room LOBBY; unique idempotency/event |
 | accept_room_invite P0 | invitationId/displayName | recipient/pair/expiry/capacity, lock room/invite; join unique; user confirm; không expectedVersion trước membership |
@@ -25,7 +25,7 @@
 
 Success write {ok:true,requestId,roomId?,version?,state?,data}. Reads không cần requestId. Snapshot result {resultId,winnerId?,reasonCode,matchTier,policyVersion,finalizedAt}; tiedIds/score matrix không public.
 
-Errors: AUTH_REQUIRED, INVALID_INPUT, ROOM_NOT_FOUND/FULL/LOCKED/EXPIRED, NOT_MEMBER/HOST/READY, INCOMPLETE_BALLOT, INVALID_DISH, ALREADY_SUBMITTED, VERSION_CONFLICT, REQUEST_ID_REUSED, RATE_LIMITED, ROOM_TERMINAL, INVITE_EXPIRED/REJECTED, NOT_PARTNER, CONSENT_REQUIRED, OUT_OF_COVERAGE, NO_ELIGIBLE_FOOD, AVAILABILITY_UNKNOWN, CONTEXT_CHANGED, DESIRED_TIME_PASSED. Các lỗi dùng messageKey, không tiết lộ room/member khi outsider.
+Errors: AUTH_REQUIRED, INVALID_INPUT, ROOM_NOT_FOUND/FULL/LOCKED/EXPIRED, NOT_MEMBER/HOST/READY, INCOMPLETE_BALLOT, INVALID_DISH, ALREADY_SUBMITTED, VERSION_CONFLICT, REQUEST_ID_REUSED, RATE_LIMITED, ROOM_TERMINAL, INVITE_EXPIRED/REJECTED/CANCELLED, NOT_PARTNER/NOT_RECIPIENT, CONSENT_REQUIRED, OUT_OF_COVERAGE, NO_ELIGIBLE_FOOD, AVAILABILITY_UNKNOWN, CONTEXT_CHANGED, DESIRED_TIME_PASSED. Các lỗi dùng messageKey, không tiết lộ room/member khi outsider.
 
 Tra idempotency trước version. Cùng requestId/hash trả ACK cũ; khác body kể cả version phải REQUEST_ID_REUSED. Server lock serialize writes. VERSION_CONFLICT đã từ chối → refetch; nếu cùng vòng/pool/chưa nộp mới attempt requestId mới. Timeout chưa biết commit → giữ nguyên requestId/body hoặc ownSubmission reconcile. Chỉ intent bấm Gửi được queue/replay; terminal/stale/auth đổi không replay. [Outbox](../specs/OFFLINE_SYNC_SPEC.md).
 

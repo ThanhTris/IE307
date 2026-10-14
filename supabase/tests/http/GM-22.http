@@ -1,0 +1,64 @@
+# GM-22.1 social/invitations. Use real JWTs and synthetic fixture IDs only.
+# Base URL and tokens are placeholders; Bruno collection is the executable suite.
+
+### Own identity
+POST {{baseUrl}}/rest/v1/rpc/get_my_social_identity
+Authorization: Bearer {{hostToken}}
+apikey: {{anonKey}}
+Content-Type: application/json
+
+{}
+
+> {%
+  client.test('self identity is minimal', function() {
+    client.assert(response.status === 200);
+    client.assert(/^[A-HJ-NP-Z2-9]{10}$/.test(response.body.friendCode));
+  });
+%}
+
+### List friends
+POST {{baseUrl}}/rest/v1/rpc/list_friends
+Authorization: Bearer {{hostToken}}
+apikey: {{anonKey}}
+Content-Type: application/json
+
+{}
+
+### Invite by code
+POST {{baseUrl}}/rest/v1/rpc/invite_partner
+Authorization: Bearer {{hostToken}}
+apikey: {{anonKey}}
+Content-Type: application/json
+
+{"requestId":"{{requestId}}","friend_code":"{{memberFriendCode}}","partner_id":null}
+
+### Accept partner (recipient)
+POST {{baseUrl}}/rest/v1/rpc/accept_partner
+Authorization: Bearer {{memberToken}}
+apikey: {{anonKey}}
+Content-Type: application/json
+
+{"requestId":"{{requestId}}","invitation_id":"{{friendInvitationId}}"}
+
+### Reject room invitation (recipient)
+POST {{baseUrl}}/rest/v1/rpc/reject_room_invite
+Authorization: Bearer {{memberToken}}
+apikey: {{anonKey}}
+Content-Type: application/json
+
+{"requestId":"{{requestId}}","invitation_id":"{{roomInvitationId}}"}
+
+### Inbox keyset
+POST {{baseUrl}}/rest/v1/rpc/list_partner_inbox
+Authorization: Bearer {{memberToken}}
+apikey: {{anonKey}}
+Content-Type: application/json
+
+{"cursor":null}
+
+### Missing auth
+POST {{baseUrl}}/rest/v1/rpc/list_friends
+apikey: {{anonKey}}
+Content-Type: application/json
+
+{}

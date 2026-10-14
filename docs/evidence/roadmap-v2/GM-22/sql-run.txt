@@ -1,0 +1,22 @@
+1..19
+ok 1 - GM-22 contract is registered
+ok 2 - social schema is 0.4.0
+ok 3 - authenticated can read own identity
+ok 4 - authenticated can reject room invites
+ok 5 - anon cannot invite partners
+ok 6 - social helper schema is private
+ok 7 - client cannot insert profiles
+ok 8 - friend code shape is validated
+ok 9 - friend codes are unique
+ok 10 - friend event room is nullable
+ok 11 - friend event reference exists
+ok 12 - event shapes include friend invitations
+ok 13 - pending canonical pair is unique
+ok 14 - pending room invitation is unique
+ok 15 - synthetic identities receive stable codes
+{"sub": "<uuid>", "role": "authenticated"}
+ok 16 - self identity exposes unambiguous ten character code
+ok 17 - friend invite is pending
+ok 18 - duplicate pending invite replays the existing invitation
+{}
+ok 19 - missing claims are rejected at the SQL boundary

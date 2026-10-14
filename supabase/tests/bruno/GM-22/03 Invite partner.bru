@@ -1,0 +1,20 @@
+meta {
+  name: 03 Invite partner
+  type: http
+  seq: 3
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/invite_partner
+  body: json
+}
+headers {
+  Authorization: Bearer {{hostToken}}
+  apikey: {{anonKey}}
+  Content-Type: application/json
+}
+body:json {
+  {"requestId":"{{requestId}}","friend_code":"{{memberFriendCode}}","partner_id":null}
+}
+tests {
+  test('03 Invite partner',()=>{ expect([200,409]).to.include(res.getStatus()); });
+}

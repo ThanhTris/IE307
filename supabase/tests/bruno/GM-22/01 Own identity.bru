@@ -1,0 +1,23 @@
+meta {
+  name: 01 Own identity
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/rest/v1/rpc/get_my_social_identity
+  body: json
+}
+
+headers {
+  Authorization: Bearer {{hostToken}}
+  apikey: {{anonKey}}
+  Content-Type: application/json
+}
+
+body:json {
+  {}
+}
+tests {
+  test("identity is minimal", function() { expect(res.status).to.equal(200); expect(res.body.friendCode).to.match(/^[A-HJ-NP-Z2-9]{10}$/); });
+}

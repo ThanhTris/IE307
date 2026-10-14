@@ -3,7 +3,7 @@ import type {
   CreateRoomResponse, JoinRoomResponse, SessionResponse, SubmissionReceipt,
   SubmitBallotResponse, FriendInvitation, RoomInvitation, RoomState,
   SessionUser, DiscoveryContextResponse, PreviewFoodPoolResponse, PoolDish,
-  RoomSnapshot, Friend, InboxItem, HistoryItem,
+  RoomSnapshot, Friend, InboxItem, HistoryItem, SocialIdentity,
 } from './contracts';
 
 export type ResponseGuard<T> = (value: unknown) => value is T;
@@ -219,6 +219,11 @@ export function isFriend(value: unknown): value is Friend {
   return isRecord(value) && isNonEmptyString(value.id) && isNonEmptyString(value.friendUserId)
     && isNonEmptyString(value.displayName) && isNonEmptyString(value.friendCode)
     && value.status === 'active' && isTimestamp(value.since);
+}
+
+export function isSocialIdentity(value: unknown): value is SocialIdentity {
+  return isRecord(value) && isNonEmptyString(value.id) && isNonEmptyString(value.displayName)
+    && isNonEmptyString(value.friendCode) && isNonEmptyString(value.avatarSeed);
 }
 
 export function isInboxItem(value: unknown): value is InboxItem {

@@ -31,6 +31,7 @@ import {
   SubmitBallotResponse,
   PoolDish,
   Friend,
+  SocialIdentity,
   InvitePartnerRequest,
   FriendInvitation,
   InviteToRoomRequest,
@@ -1137,6 +1138,18 @@ export class MockApiClient implements ApiClient {
   // Social & Friends RPCs
   // ==========================================================================
 
+  async getMySocialIdentity(): Promise<ReadResult<SocialIdentity>> {
+    await this.wait();
+    const fail = this.checkFailure();
+    if (fail) return { ok: false, error: { messageKey: fail } };
+    return { ok: true, data: {
+      id: this.currentUser.id,
+      displayName: this.currentUser.displayName,
+      friendCode: 'MOCKFRIEND2',
+      avatarSeed: this.currentUser.avatarSeed ?? this.currentUser.id,
+    } };
+  }
+
   async listFriends(): Promise<ReadResult<Friend[]>> {
     await this.wait();
     const fail = this.checkFailure();
@@ -1265,6 +1278,19 @@ export class MockApiClient implements ApiClient {
 
   async acceptRoomInvite(req: AcceptRoomInviteRequest): Promise<WriteResult<JoinRoomResponse>> {
     return this.joinRoom({ code: MOCK_DEFAULT_ROOM_CODE, displayName: req.displayName, requestId: req.requestId });
+  }
+
+  async rejectRoomInvite(invitationId: string, customRequestId?: string): Promise<WriteResult<void>> {
+    await this.wait();
+    const fail = this.checkFailure();
+    if (fail) return { ok: false, error: { messageKey: fail } };
+    const requestId = customRequestId ?? ('req_' + Math.random().toString(36).substring(2, 9));
+    const { cachedResponse, conflictError, signature } = this.checkIdempotency<void>('rejectRoomInvite', requestId, { invitationId });
+    if (cachedResponse) return cachedResponse;
+    if (conflictError) return conflictError;
+    const response: WriteResult<void> = { ok: true, requestId, data: undefined };
+    this.recordIdempotency('rejectRoomInvite', requestId, signature, response);
+    return response;
   }
 
   // ==========================================================================

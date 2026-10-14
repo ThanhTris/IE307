@@ -1,0 +1,6 @@
+{
+  "version": "1",
+  "name": "GM-22 Social Invitations Local",
+  "type": "collection",
+  "ignore": ["environments/*.private.bru", "environments/*.json"]
+}
