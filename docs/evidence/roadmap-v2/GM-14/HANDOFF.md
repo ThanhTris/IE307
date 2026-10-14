@@ -1,4 +1,4 @@
-﻿# GM-14 handoff
+# GM-14 handoff
 
 - Task / owner / reviewer: GM-14 / Trung / Trí
 - Contract: `food-v1/roadmap-v2/GM-14.1`
@@ -18,4 +18,3 @@
 ## Status and known limits
 
 Screens use mock fixtures and mock API calls only. Denied notification permission is represented in the fixture; no OS permission prompt or remote push is invoked. History consent/deletion is ephemeral local state and fetchedAt is not durable cache. No real account linking is present; P1 is labeled unimplemented. Reject/invite flows need additional direct smoke assertions. Expo Go Android visual smoke is Not run and remains required for task acceptance. No Done/Approved status is implied.
-

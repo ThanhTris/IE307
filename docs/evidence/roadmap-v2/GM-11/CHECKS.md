@@ -1,4 +1,4 @@
-﻿# GM-11 checks
+# GM-11 checks
 
 - Task/contract: GM-11 / `food-v1/roadmap-v2/GM-11.1`
 - Base revision: `c20f7c2a58bcce555a446722e744bd7f1f3ac1b6`; code checks were run on the working tree immediately before implementation commit `41eb135` on `codex/gm-11-14-ui`.
@@ -19,4 +19,3 @@
 ## Limits
 
 All room actions are isolated mock behavior. No RPC, real invitation, QR, persistence, multi-device synchronization or production API was exercised. Task remains subject to Expo Go device smoke and reviewer acceptance; this file does not mark it Done/Approved.
-

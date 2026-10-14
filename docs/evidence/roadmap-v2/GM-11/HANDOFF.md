@@ -1,4 +1,4 @@
-﻿# GM-11 handoff
+# GM-11 handoff
 
 - Task / owner / reviewer: GM-11 / Trung / Trí
 - Contract: `food-v1/roadmap-v2/GM-11.1`
@@ -18,4 +18,3 @@
 ## Status and known limits
 
 Mock-only. Room code/QR are labeled placeholders; invites do not add or ready another person. Ready/start/reset are local fixture state. No server state or API fallback exists. Automated checks pass as recorded; Expo Go Android visual smoke is Not run and is required for task acceptance. Do not infer Done/Approved from these files.
-
