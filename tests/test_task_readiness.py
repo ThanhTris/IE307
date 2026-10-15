@@ -209,7 +209,15 @@ class ReadinessTests(unittest.TestCase):
             self.approve_in_memory(tid)
         for tid, merge_blocker in (('GM-18', 'GM-08'), ('GM-20', 'GM-19'), ('GM-32', 'GM-31')):
             with self.subTest(task=tid):
+                # Model both assignment phases explicitly; a real task may already
+                # be accepted without having its later integration dependency.
+                path = self.source.task_path(tid)
+                self.source.contents[path] = re.sub(r'^assignment_status:.*$',
+                    'assignment_status: proposed', self.source.read(path), flags=re.M)
                 self.assertEqual(gates.readiness(self.source, self.records(), tid)[0], 'READY_TO_CLAIM')
+                self.source.contents[path] = self.source.read(path).replace(
+                    'assignment_status: proposed', 'assignment_status: accepted')
+                self.assertEqual(gates.readiness(self.source, self.records(), tid)[0], 'READY_TO_START')
                 state, blockers = gates.readiness(self.source, self.records(), tid, 'merge', self.source)
                 self.assertEqual(state, 'BLOCKED')
                 self.assertIn(merge_blocker, blockers)

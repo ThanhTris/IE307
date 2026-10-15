@@ -1,0 +1,11 @@
+{
+  "checkedAt": "2026-10-14T15:04:57.162096+00:00",
+  "result": "Pass",
+  "namespace": "6dd8d885-edae-4fc8-9cbd-8ecb7d42a96a",
+  "privateFilesRemaining": 0,
+  "files": [
+    "supabase/tests/bruno/GM-20/environments/Local.runtime.private.bru",
+    "supabase/tests/bruno/GM-20/environments/runtime.private.json"
+  ],
+  "method": "owning runner identity/digest-checked cleanup"
+}

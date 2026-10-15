@@ -1,0 +1,14 @@
+{
+  "fixtureOnly": true,
+  "upstream": "scripts/gm19_http_check.mjs",
+  "upstreamSha256": "31046e5fcb4d11d4135272a4caa97d0b13cd9034de4599c58bc53a07aaa543c2",
+  "scenarioSha256": "945b7116d00ad64b99cfabd22727db48bf2da9dc25cc418b9449ad8ce0006de2",
+  "scenariosUnchanged": true,
+  "adapterSha256": "d5259bc47f07f13a26d73f64261ef06456ac556be68e5bccefa943df1a730919",
+  "exitCode": 0,
+  "adaptations": [
+    "owned GM20 runtime namespace/endpoint",
+    "evidence destination",
+    "existing public key bootstrap"
+  ]
+}

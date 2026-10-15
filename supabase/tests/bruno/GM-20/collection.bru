@@ -1,0 +1,6 @@
+script:pre-request {
+  const url=bru.interpolate(req.getUrl());
+  if(!/^http:\/\/127\.0\.0\.1:54332\/(rest\/v1\/rpc\/|__reset$)/.test(url)) throw Error('Use GM20 owned loopback fixture');
+  req.setHeader('apikey',bru.getEnvVar('publicKey'));
+  req.setTimeout(20000);req.setMaxRedirects(0);
+}

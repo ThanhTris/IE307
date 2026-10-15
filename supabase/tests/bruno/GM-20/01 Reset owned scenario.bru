@@ -1,0 +1,26 @@
+meta {
+  name: 01 Reset owned scenario
+  type: http
+  seq: 1
+}
+post {
+  url: {{baseUrl}}/__reset
+  body: json
+  auth: none
+}
+headers {
+  x-gm20-control: {{control}}
+  Content-Type: application/json
+}
+body:json {
+  {}
+}
+script:pre-request {
+
+}
+script:post-response {
+  const b=res.getBody();if(res.getStatus()===200) { bru.setVar('roomId',b.roomId);bru.setVar('version',b.version);bru.setVar('pv',b.poolVersion);bru.setVar('rn',1);bru.setVar('votes',JSON.stringify(b.pool.map(p=>({roundDishId:p.roundDishId,vote:'OK'}))));bru.setVar('requestHost','host_'+Date.now());bru.setVar('intentHost','ih_'+Date.now()); }
+}
+tests {
+  test('01 Reset owned scenario',()=>{expect(res.getStatus()).to.equal(200);const b=res.getBody();expect(b.pool.length).to.be.above(0);});
+}
