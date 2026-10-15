@@ -1,0 +1,6 @@
+{
+  "version": "1",
+  "name": "GM-23 Notifications Local",
+  "type": "collection",
+  "ignore": ["environments/*.private.bru", "environments/*.json"]
+}
