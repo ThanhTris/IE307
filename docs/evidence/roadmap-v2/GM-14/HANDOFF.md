@@ -2,8 +2,8 @@
 
 - Task / owner / reviewer: GM-14 / Trung / Trí
 - Contract: `food-v1/roadmap-v2/GM-14.1`
-- Branch / target: `codex/gm-11-14-ui` → `main` at `ce7b87a`; main integration commit `9033e3e`.
-- Tested source commit: `65734b3`; `npm run check` passed on this source revision. Inbox reference mapping is feature-local and does not alter GM-07 `mock.ts`.
+- Branch / target: `codex/gm-11-14-ui` integrates `main` at `ad393b8`; merge commit `fe29883`.
+- Tested integrated revision: `fe29883`; `cd mobile; npm run check` passed (16 suites / 476 tests). Current-main Android bundle was not rerun. Inbox reference mapping is feature-local and does not alter GM-07 `mock.ts`.
 - Review request: [owner comment on GM-14](https://github.com/ThanhTris/IE307/issues/75#issuecomment-6193240420).
 
 ## Artifacts and use
@@ -18,4 +18,4 @@
 
 ## Status and known limits
 
-Screens use mock fixtures and mock API calls only. Friend/room inbox accept and reject pass the explicit `metadata.invitationId` (not `eventId`); the default GM-07 room fixture is associated through a separate GM-14 mapping keyed by inbox item ID. Missing/expired reference is blocked; a strict test double rejects event IDs. Direct friends reject and outgoing-invite tests are included. Denied notification permission is represented in the fixture; no OS permission prompt or remote push is invoked. History consent/deletion is ephemeral local state and fetchedAt is not durable cache. No real account linking is present; P1 is labeled unimplemented. Expo Go Android visual/accessibility smoke is Not run and remains required for task acceptance. No Done/Approved status is implied.
+Screens use mock fixtures and mock API calls only. Friend/room inbox accept and reject pass the explicit `metadata.invitationId` (not `eventId`); the default GM-07 room fixture is associated through a separate GM-14 mapping keyed by inbox item ID. Missing/expired reference is blocked; a strict test double rejects event IDs. Direct friends reject and outgoing-invite tests are included. Denied notification permission is represented in the fixture; no OS permission prompt or remote push is invoked. History consent/deletion is ephemeral local state and fetchedAt is not durable cache. No real account linking is present; P1 is labeled unimplemented. Expo Go Android visual/accessibility smoke and fresh merge readiness remain unverified; GitHub Project query was rejected during the latest gate attempt. No Done/Approved status is implied.

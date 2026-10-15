@@ -2,8 +2,8 @@
 
 - Task / owner / reviewer: GM-11 / Trung / Trí
 - Contract: `food-v1/roadmap-v2/GM-11.1`
-- Branch / target: `codex/gm-11-14-ui` → `main` at `ce7b87a`; main integration commit `9033e3e`.
-- Tested source commit: `65734b3`; `npm run check` passed on this source revision. Lobby changes are in `c0bf8b1`.
+- Branch / target: `codex/gm-11-14-ui` integrates `main` at `ad393b8`; merge commit `fe29883`.
+- Tested integrated revision: `fe29883`; `cd mobile; npm run check` passed (16 suites / 476 tests). Current-main Android bundle was not rerun.
 - Review request: [owner comment on GM-11](https://github.com/ThanhTris/IE307/issues/72#issuecomment-6193239256).
 
 ## Artifacts and use
@@ -18,4 +18,4 @@
 
 ## Status and known limits
 
-Mock-only. Room code/QR are labeled placeholders; invites do not add or ready another person. Host/member selector changes the mock client identity without recreating the client; actions update the repository and the UI reloads its snapshot. Context reset/start/cancel controls are host-only by `hostUserId`. Expo Go Android visual/accessibility smoke remains Not run and is required for task acceptance. This handoff does not imply Done/Approved.
+Mock-only. Room code/QR are labeled placeholders; invites do not add or ready another person. Host/member selector changes the mock client identity without recreating the client; actions update the repository and the UI reloads its snapshot. Context reset/start/cancel controls are host-only by `hostUserId`. Expo Go Android visual/accessibility smoke and fresh merge readiness remain unverified; GitHub Project query was rejected during the latest gate attempt. This handoff does not imply Done/Approved.
