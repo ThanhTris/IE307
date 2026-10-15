@@ -48,3 +48,18 @@ consent ID is merged/regranted. Existing retention worker purges own metadata vi
 an idempotency DELETE statement hook; no extra service/provider. Scope/storage
 delta is for Trí review, not self approval. Actual ports are independently tested;
 GM19/20 wiring remains Not run.
+
+## Integration update — 2026-10-15
+
+User authorized completion after GM20 delivered. Received GM19/0019/schema0.3.0
+and GM20.3/0023/schema0.5.0 from main, rebase to991de66 including PR116 Expo fix.
+0024 forward migration owns adaptation: private pool wrapper, scoped consent
+preparation, materialized-lobby invalidation, transactional start snapshot, refreshed
+lobby on global consent/delete, GM20 writer receipts/opt-outs/detached exclusion.
+Reuse pinned metadata and shortest expiry; do not replace decision engine or DTOs.
+New lifecycle runner covers real producer transactions with synthetic food only.
+Upstream GM20 assertions unchanged; setup preferences for the entire roster before
+ready to respect GM21's conservative reset. GM17 assertions unchanged in owned DB;
+its separate app-deployment comparison found drift, and that app DB is preserved.
+Current CHECKS/HANDOFF replace the earlier pending-integration delivery summary;
+old integration/ remains dated historical evidence. Schema0.6.0/contractGM21.2.

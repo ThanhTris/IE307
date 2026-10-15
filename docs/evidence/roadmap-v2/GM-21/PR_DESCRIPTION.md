@@ -1,102 +1,97 @@
 ## Task và phạm vi
 
-Task tasks/backlog/GM-21.md, owner Tâm (@HoaiTam), reviewer Trí (@ThanhTris).
-Roadmap-v2 GM-21 / mã cũ GM-17 / issue #82. Tâm yêu cầu bắt đầu ngày2026-10-14.
-Baseline food-v1; API_CONTRACT/CONTEXT_HISTORY_SPEC/IDENTITY_PRIVACY_SPEC,
-ADR014/015, supplement docs/architecture/GM21_HISTORY_API.md. Review Pending.
-Branch codex/gm-21-history-consent → main, không stacked. Draft phần độc lập.
-
-Thêm API đọc/xóa history và consent theo caller, giữ summary tối đa30ngày,
-không lộ roster/groupKey/votes/location. Rút consent xóa summary liên quan,
-không đổi winner hoặc personal history của người khác. Retry cùng request/body
-không ghi lại; helper producer không hồi sinh history đã xóa. Canonical recent
-ports hỗ trợ<=3 kết quả đúng nhóm và snapshot khóa sau start.
-Ngoài scope hiện tại: GM19/20 thực tế chưa được nối; Android GM25/28/31,
-production scheduler/deploy/publish. Không thay package/GM07 DTO/frozen migrations.
+- Task Markdown: `tasks/backlog/GM-21.md`; owner Tâm (@HoaiTam), reviewer Trí (@ThanhTris).
+- Roadmap-v2 GM-21 / mã cũ GM-17 / issue #82.
+- Assignment: Tâm giao triển khai/tích hợp; baseline food-v1; API_CONTRACT, CONTEXT_HISTORY_SPEC, IDENTITY_PRIVACY_SPEC; ADR014/015. Review Trí Pending.
+- Branch `codex/gm-21-history-consent` → `main`, PR113, không stacked.
+- Scope: get/delete/history consent; summary personal/group đúng quyền; recent<=3 đúng nhóm; nối GM19 lobby/start và writer nguyên tử GM20. Ngoài scope: Android consumer GM25/28/31, production deploy/scheduler/publish. Không đổi luật phiếu/engine/DTO/package upstream.
 
 ## Start gate — trước viết phần độc lập
 
-- [x] task_readiness GM21 --base-ref origin/main đạt READY_TO_CLAIM; GM06/07/18 Done, input/HANDOFF có đúng version.
-- [ ] Trí review plan/revision. Owner đã giao việc; không package/provider mới.
-- Contract GM21.1/GM07.1/food1.1.0/schema0.2.0+0021; actual GM07 real client dùng nguyên trạng. Nullable/errors/cursor/opaque IDs tại supplement.
-- File ownership: mới0021_history/SQL+HTTP tests/runners/evidence; GM19/20 tiếp tục file riêng, không sửa/dựng lại producer.
-- Làm trước bằng synthetic persisted results/real SQL+HTTP; actual room/start/finalize wiring vẫn Not run, do GM21 bổ sung sau upstream. Không thêm dependency ngược lên GM19/20.
+- [x] Đã chạy `python scripts/task_readiness.py --task GM-21`; GM06/07/18 Done, đủ HANDOFF/artifact trên target.
+- [ ] Reviewer Trí duyệt plan/revision; owner đã giao việc, không package/provider/license mới.
+- Contract/input: GM07.1 client/contracts unchanged, food/core1.1.0; GM19/schema0.3.0; GM20.3/schema0.5.0; output GM21.2/schema0.6.0. Requests/errors/nullable/opaque IDs/cursor tại `docs/architecture/GM21_HISTORY_API.md`.
+- File ownership: GM21 owns0021/0024, runners/tests/docs; không sửa migrations đã merge. GM19/20 đã bàn giao, không thêm dependency ngược.
+- Giai đoạn trước dùng synthetic persisted state; hiện đã chạy actual room/start/submit/finalize. Positive food vẫn fixture, không verified publish.
 
 ## Merge gate — không bắt buộc hoàn tất khi mở draft PR
 
-| Dependency | Upstream | Project / checker2026-10-14T04:42:32Z | Merge commit thật | Target khớp? |
+| Start/merge dependency | Task/PR upstream | Project Done / checker | Merge commit thực tế | Artifact/version trên target khớp? |
 | --- | --- | --- | --- | --- |
-| GM06 | PR102 | Done |7060b8825ad72ee9442d8890719f82451d473c33 | Có |
-| GM07 | PR104/105 | Done |07117821 /9f71bba6 | Có; frozen client/contracts |
-| GM18 | PR108 | Done |a33d5e85f1aeb7c7bda02310e02880a3af5e77da | Có;0018/GM18.1 |
-| GM20 |0020 finalize/HANDOFF | Todo | Chưa có trên target | Chưa; merge blocker |
+| GM06 | PR102 | Done / merge-gate.txt |7060b882 | Có; frozen0001..0003 |
+| GM07 | PR104/105 | Done / merge-gate.txt |07117821 /9f71bba6 | Có; client/contract/guards |
+| GM18 | PR108 | Done / merge-gate.txt |a33d5e8 | Có;0018/GM18.1 |
+| GM20 | PR115 | Done / merge-gate.txt |ad8478d | Có;0023/GM20.3/schema0.5.0 |
 
-- [x] Target fetched main a33d5e8, nhánh mới bắt đầu từ commit này.
-- [ ] Merge gate đạt — hiện BLOCKED GM20, integration/merge-gate.txt; không bypass.
-- [ ] Người merge đối chiếu upstream merge commits/artifact/revision sau khi GM20 bàn giao.
-- [ ] Cập nhật nhánh và chạy lại integration room/start/finalize thật sau upstream.
-- Schema/privacy:0021 private settings/projection/receipts/ports, authenticated-only wrappers. Correct detached-consent uniqueness forward, giữ uniqueness scoped/active-global. Existing worker purges metadata qua DELETE hook; no extra scheduler service.
-- Rollback: stop consumers/revoke public execute; full down cần backup/forward migration vì old null uniqueness không chứa được nhiều retained meals, không xóa data để revert.
+- [x] Ref target fetched: `origin/main=991de6620715d1219da900499f4aa2d683b01bb4` (includes PR116 Expo fix).
+- [x] `python scripts/task_readiness.py --task GM-21 --gate merge --base-ref origin/main` đạt READY_FOR_MERGE_REVIEW, live Project; thời điểm trong `gm20-integration/merge-gate.txt`.
+- [ ] Người merge kiểm lại code/merge commit upstream thật và target ở thời điểm merge.
+- [x] Rebase target; actual integration tests có kết quả trong CHECKS/PATCH_MANIFEST. Diff giới hạn GM21.
+- Target/tested HEAD:991de66 /06d1d5b + working-tree patch và source hashes. New remote CI chưa chạy trước push.
+- Schema/privacy:0021 private settings/presentation/receipts, sửa uniqueness cho detached consents;0024 nối pool/start/writer, bỏ detached grants và giữ pinned name/TTL. Rollback dừng consumers/revoke execute, backup và forward migration; không reset/drop retained data. App DB có drift, chưa deploy/reconcile.
 
 ## AC và verification
 
-| AC | Result | Evidence/môi trường | Thật/giới hạn |
+| AC | Pass/Fail/Not run | Evidence/output/version/môi trường | Mock hay thật / giới hạn |
 | --- | --- | --- | --- |
-| Caller personal/group, privacy/consent/delete | Pass độc lập | SQL45/HTTP21, integration/ | Real PG/JWT/client; synthetic summaries |
-| Canonical roster/recent<=3/30days, frozen snapshot | Pass ports | SQL assertions | Consumer room/start wiring Not run |
-| ACK/hash/retry/rate | Pass | HTTP8 concurrent writes/1mutation;60/61 read budget | Real network; opaque GM07 req IDs |
-| TTL/multiple retained meals/display/50paging | Pass | Actual cleanup + retained projections/keyset | GM31 cache/Android Not run |
-| Actual finalize→history and create/start ranking | Not run | GM20 input absent | Merge blocker, not replaced by synthetic ports |
-| Handoff/device coverage | Bàn giao | HANDOFF + mobile matrix | GM25/28/31 device integration Not run |
+| Personal/group opt-in, ACL/TTL/delete/privacy/page50 | Pass | SQL45 + HTTP21, schema0.6.0/macOS/PG17 | Real PG/JWT/GM07, synthetic positive data |
+| Consent/roster reset-ready và <=3 recent đúng nhóm | Pass | Actual lifecycle10 + SQL45 | Real GM19→GM18 pool; eligibility giữ nguyên |
+| Frozen start, actual finalize history và retry | Pass | lifecycle + upstream GM20/22 scenarios | Real HTTP/result/history/event; no duplicate/resurrection |
+| Pinned name, min consent TTL, rollback | Pass | lifecycle assertions | DB fault injection riêng; retry3 histories |
+| Regression | Pass / skips ghi rõ | GM17/93, domain237, mobile382, Python550/5skips | Static/unit/owned DB; không Android |
+| Mobile consumer/API handoff | Bàn giao; device Not run | HANDOFF + MOBILE_API_TEST_MATRIX | GM25/28/31 app→API→UI/cache nhận tiếp |
 
-- [x] python scripts/validate_repository.py
-- [x] python -m unittest discover -s tests -p "test_*.py" —550/550
-- [x] python scripts/task_readiness.py --check-docs
-- [x] git diff --check
-- Mobile typecheck/lint/unit/architecture382/382,4baseline warnings/0errors; domain237/237; GM17 regression93 Pass (optional concurrentCleanup skipped by upstream runner).
-- Food source/license/coverage new collection N/A; no real publish, input/verified manifest/kernel/frozen migrations unchanged. Fixtures synthetic, no verified claim.
-- Artifact tested a33d5e8+patch, hashes in PATCH_MANIFEST.json. GM20 owner upstream; Trí review Pending. Remote CI Not run before push.
+- [x] `python scripts/validate_repository.py`
+- [x] `python -m unittest discover -s tests -p "test_*.py"` —550 tests,5 existing skips.
+- [x] `python scripts/task_readiness.py --check-docs`; metadata contract đổi đã `--write-docs`.
+- [x] `git diff --check`
+- Native/Android/a11y/offline Not run (consumer stage); typecheck/lint/mobile unit/architecture và SQL/RLS/race theo CHECKS. Không suy native Pass từ HTTP.
+- Food source/license/coverage/menu-hours/freshness/unknown/overnight giữ nguyên contract/kernel; positive fixtures tách verified data, không thu thập/publish mới.
+- Artifact/version/source hashes tại PATCH_MANIFEST; output GM21.2/schema0.6.0 nhận bởi GM25/28/31. Trí review Pending; không tự Done.
+- Evidence mới `docs/evidence/roadmap-v2/GM-21/gm20-integration/`; giữ evidence cũ.
 
 ## Review cuối — Trí
 
-- [ ] Trí kiểm AC, gate và revision evidence, không tự tick.
-- [ ] Trí nghiệm thu/chuyển Done sau actual upstream integration; lưu review revision/evidence.
+- [ ] Reviewer kiểm AC, cả hai gate và evidence cho revision PR hiện tại; AI không tự tick.
+- [ ] Trí nghiệm thu/chuyển Done trên Project; lưu review revision/evidence. Thay code sau review phải review lại.
 
-Checker/docs/mock không thay execution/review. Đây là draft partial delivery,
-không đề nghị merge/Done toàn bộ GM21 khi GM20 và actual wiring chưa đạt.
+READY_FOR_MERGE_REVIEW không là quyền tự merge. Checker đọc Project/artifacts;
+Done không tự chứng minh code đã vào target. Native/production deployment không
+được suy ra từ fixture/SQL/CI. Updated patch cần push và CI/review revision mới.
 
 ## Artifact bàn giao roadmap-v2
 
-BE / implementation / API+SQL thật trên data synthetic; không UI mock.
+Track BE / implementation / API+SQL thật, không mock UI.
 
-| Input task | Artifact/version | Có target/nhánh? | Smoke |
+| Input task | Artifact + version/commit | Có trên target/nhánh? | Smoke đã kiểm |
 | --- | --- | --- | --- |
-| GM06/17 |0001..0005/schema0.2.0/ADR015 | Có | Typed PG + ACL93 |
-| GM07 | contracts/client/guards GM07.1 | Có | HTTP client + mobile382 |
-| GM18 |0018/GM18.1 | Có | Existing domain237 + canonical recent ports |
-| GM20 |0020_finalize/HANDOFF | Chưa | Not run |
+| GM06/17 |0001..0005/schema0.2.0/ADR015 | Có | SQL typed constraints/RLS93 |
+| GM07 | GM07.1 client/contracts/guards | Có | Real client HTTP + mobile382 |
+| GM18 |0018/GM18.1 | Có |237 domain + actual rank port parity |
+| GM19 |0019/schema0.3.0/PR112 | Có | Actual lifecycle/start |
+| GM20 |0023/GM20.3/schema0.5.0/ad8478d | Có | Actual submit/finalize/history +22 regression |
 
-Output0021_history.sql/history.sql/GM21.http + runners, supplement/CHECKS/HANDOFF.
-Versions/commands/expected outputs trong docs/evidence/roadmap-v2/GM-21/HANDOFF.md.
-GM21 tiếp tục tự tích hợp vào producer upstream sau bàn giao; GM25/28/31 nhận API cases.
+Output:0021_history.sql +0024_history_integration.sql; history.sql; GM-21.http;
+GM21 runners; GM21_HISTORY_API.md. food/core1.1.0, schema0.6.0, GM21.2.
+Commands/expected results/tasks nhận: `docs/evidence/roadmap-v2/GM-21/HANDOFF.md`.
 
-- [ ] UI mock/native N/A ở phần API độc lập, không claim Pass từ fixture.
-- [x] Start inputs thực đủ; không tạo lại scaffold/contract/prerequisite.
+- [ ] UI mock/native không thuộc output API này; không ghi API/native Pass từ fixture.
+- [x] Đầu vào đủ; không tạo lại scaffold/contract/prerequisite.
 
 ## Output chạy được — UI / BE / Data
 
-CHECKS.md: docs/evidence/roadmap-v2/GM-21/CHECKS.md, tested a33d5e8+patch,
-macOS/Node26/PG17.11/Python3.12.14–3.13.3.
+CHECKS.md: `docs/evidence/roadmap-v2/GM-21/CHECKS.md`, tested06d1d5b + patch hashes,
+macOS/Node26/PG17/Python3.13; target991de66.
 
-| Endpoint/field | Lệnh/request | Input | Expected | Actual/evidence | Loại/result |
+| Endpoint/field | Request/lệnh | Input | Expected + assertion | Actual + evidence | Mock/thật / Result |
 | --- | --- | --- | --- | --- | --- |
-| get_history | gm21_http_check.mjs / GM21.http | JWT/scope/cursor | Only caller/valid group,50/page,safe DTO | HTTP21 + SQL45 | Real API synthetic data / Pass |
-| consent/delete | same suite | Opaque requestId/scope/bool/historyUUID | Same ACK; changed409; deletion scoped | Concurrent8/1,withdraw/peer/result assertions | Real API / Pass |
-| recent/freeze/record ports | gm21_history_check.py | Trusted room/version/result | Correct group/3recent/frozen/idempotent summary | SQL45 | Real PG/synthetic finalize / Pass ports |
-| Actual GM19/20 pipeline | Chờ upstream | Real room/start/finalize | History/ready/pool/consent atomic | Not run | Merge blocker |
+| get_history | gm21_http_check.mjs / GM-21.http | JWT/scope/cursor | Caller-only,<=50,safe DTO | HTTP21/SQL45 | Real API / Pass |
+| consent/delete | same runner | Opaque ID/bool/scope/history UUID | Same ACK,409 reuse, scoped delete | Concurrent8/1,withdraw/no resurrection | Real API / Pass |
+| pool/recent/start | gm21_lifecycle_check.mjs | Actual room/roster/consent |<=3,rank only eligible,ready reset,frozen | lifecycle10 | Real API/SQL / Pass |
+| finalize→history | lifecycle + gm21_upstream_regression.mjs gm20 | Actual ballots/server result | Atomic pinned summary/TTL/retry/rollback | Actual3 histories/rollback +22 regression | Real API/SQL / Pass |
 
-- [ ] Expo/Android UI cases không chạy ở đây.
-- [x] API request runner/examples có status/body/error assertions, không giả producer.
-- [x] Mobile matrix handoff tách server/unit/device, adb reverse54321 hoặc trusted HTTPS; GM31 cache<=50/identity isolation kiểm riêng.
-- [x] Data fields/FK/unit/null/privacy/version đủ theo scope; source hashes/physical query thật.
-- [x] Evidence không keys/JWT/raw ballots/private GPS. Mandatory actual integration chưa chạy giữ blocker.
+- [ ] Expo/device product UI not run; consumer Android scope bàn giao rõ.
+- [x] API request runner có HTTP/body/error/state/version assertions, không dựng lại producer.
+- [x] Ma trận mobile tách server/unit/device; HANDOFF endpoint/auth/setup và GM25/28/31 cases, không thêm dependency ngược.
+- [x] Data fields/schema/FK/unit/null/privacy/version và SQL/query thật theo API scope; không verified publish claim.
+- [x] Evidence che secrets/GPS/phiếu thật; app deployment drift và remote CI/device/review còn chưa kiểm được ghi rõ, không dùng CI/docs thay nghiệm thu.

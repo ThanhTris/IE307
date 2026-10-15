@@ -1,8 +1,9 @@
-# GM21.1 / GM07.1 / schema0.2.0 +0021. No secrets in repository.
+# GM21.2 / GM07.1 / schema0.6.0 via0021 +0024. No secrets in repository.
 # Root/mobile npm ci; backend:start. Real reproducible suite:
 # GM21_PYTHON=python3 node scripts/gm21_http_check.mjs
 # Runner uses owned disposable DB/PostgREST and real GoTrue test guests.
-# For app DB, apply0021 via reviewed local migration; no DB reset.
+# Actual room/start/finalize: GM21_PYTHON=python3 node scripts/gm21_lifecycle_check.mjs
+# App deployment needs ledger/definition review, backup and ordered0021/0023/0024; no reset.
 @baseUrl = http://127.0.0.1:54321
 @publicKey = REPLACE_WITH_LOCAL_PUBLIC_KEY
 @userToken = REPLACE_WITH_GOTRUE_GUEST_ACCESS_TOKEN

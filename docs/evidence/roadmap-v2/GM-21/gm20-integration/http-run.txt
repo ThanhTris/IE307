@@ -1,0 +1,22 @@
+Pass: real mobile client reads own personal history DTO
+Pass: group members read the same group summary
+Pass: outsider cannot read other group summaries
+Pass: forged cursor cannot select other users history
+Pass: wrong scope rejected with400
+Pass: missing JWT denied
+Pass: forged JWT denied
+Pass: real client default opaque requestId accepted
+Pass: concurrent identical writes apply once and replay same ACK
+Pass: same requestId changed payload maps REQUEST_ID_REUSED
+Pass: boolean string input rejected
+Pass: other-owner and missing-ID deletion are indistinguishable no-ops
+Pass: authentic summary remains readable after operational room cleanup
+Pass: history projection has no raw consent/roster/groupKey/location/ballot
+Pass: personal delete preserves peers personal history
+Pass: group withdrawal removes group summary for all members
+Pass: reopt-in does not resurrect deleted group summaries
+Pass: personal withdrawal leaves peers history untouched
+Pass: history reads/writes never alter decided room or winner
+Pass: concurrent rate budget is per caller and endpoint
+Pass: real client maps RATE_LIMITED from HTTP429
+{"result":"Pass","cases":21,"postgrestCleanup":"removed","databaseAndGuestCleanup":"owned namespace removed"}

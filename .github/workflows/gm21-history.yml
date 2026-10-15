@@ -24,6 +24,14 @@ jobs:
         env:
           GM21_PYTHON: python
         run: node scripts/gm21_http_check.mjs
+      - name: Actual room, consent, ranking and finalization integration
+        env:
+          GM21_PYTHON: python
+        run: node scripts/gm21_lifecycle_check.mjs
+      - name: Upstream finalize business regression
+        env:
+          GM20_PYTHON: python
+        run: node scripts/gm21_upstream_regression.mjs gm20
       - name: Upstream access regression
         run: python scripts/gm17_access_check.py --report "$RUNNER_TEMP/gm21-access-regression.json"
       - uses: actions/upload-artifact@v4
@@ -33,7 +41,8 @@ jobs:
           path: |
             ${{ runner.temp }}/gm21-sql.json
             ${{ runner.temp }}/gm21-access-regression.json
-            docs/evidence/roadmap-v2/GM-21/integration/http-results.json
+            docs/evidence/roadmap-v2/GM-21/gm20-integration/*-results.json
+            docs/evidence/roadmap-v2/GM-21/gm20-integration/upstream-gm20/
           if-no-files-found: warn
       - if: always()
         run: npm run backend:stop

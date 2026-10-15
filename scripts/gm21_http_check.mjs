@@ -8,10 +8,10 @@ import { readFileSync } from 'node:fs';
 import { mkdir,writeFile } from 'node:fs/promises';
 import { dirname,resolve,sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { runCommand,validateConfig,validateApiUrl } from './backend.mjs';
+import { runCommand,cliArgs,validateConfig,validateApiUrl } from './backend.mjs';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
-const python=process.env.GM21_PYTHON ?? 'python3';
-const reportFolder=resolve(root,'docs/evidence/roadmap-v2/GM-21/integration');
+const python=process.env.GM21_PYTHON ?? (process.platform==='win32'?'python':'python3');
+const reportFolder=resolve(root,'docs/evidence/roadmap-v2/GM-21/gm20-integration');
 if(process.argv.length>2) throw Error('Local-only runner has no remote/deploy options');
 const require=createRequire(import.meta.url),ts=require(resolve(root,'mobile/node_modules/typescript'));
 require.extensions['.ts']=(module,path)=> {
@@ -20,15 +20,15 @@ require.extensions['.ts']=(module,path)=> {
 };
 const {createApiClient}=require(resolve(root,'mobile/src/data/api'));
 const sources=['scripts/gm21_http_check.mjs','scripts/gm21_http_fixture.py','scripts/gm21_history_check.py',
-  'supabase/migrations/0021_history.sql','supabase/migrations/0004_access_policies.sql',
+  'supabase/migrations/0021_history.sql','supabase/migrations/0024_history_integration.sql','supabase/migrations/0004_access_policies.sql',
   'mobile/src/data/api/client.ts','mobile/src/data/api/contracts.ts','mobile/src/data/api/responseGuards.ts'];
 const hashes=()=>Object.fromEntries(sources.map(p=>[p,createHash('sha256').update(readFileSync(resolve(root,p))).digest('hex')]));
 const sourceHashes=hashes(),cases=[],guests=[];const namespace=randomUUID();
 const container='gm21-http-'+namespace.replaceAll('-','').slice(0,16);
 let key,authBase,base,status,dbInfo,ids,containerCreated=false,gateway,stage='setup';
-const report={result:'Fail',contract:'food-v1/roadmap-v2/GM-21.1',schemaVersion:'0.2.0',
+const report={result:'Fail',contract:'food-v1/roadmap-v2/GM-21.2',schemaVersion:'0.6.0',
   checkedAt:new Date().toISOString(),environment:'loopback GoTrue + process-owned DB/PostgREST; mobile real client',
-  fixtureOnly:true,finalizeIntegration:'Not run; GM20 merge dependency',publicationPerformed:false,cases,artifactHashes:sourceHashes};
+  fixtureOnly:true,finalizeIntegration:'Separate lifecycle runner; this suite covers independent APIs',publicationPerformed:false,cases,artifactHashes:sourceHashes};
 async function docker(args,env={}) {
   return new Promise((accept,reject)=>{
     const child=spawn('docker',args,{env:{...process.env,...env},shell:false,stdio:['ignore','pipe','pipe']});
@@ -50,7 +50,7 @@ async function check(name,work) {
 }
 try {
   validateConfig(readFileSync(resolve(root,'supabase/config.toml'),'utf8'));
-  status=JSON.parse(await runCommand(process.execPath,[resolve(root,'node_modules/supabase/dist/supabase.js'),'status','--output','json','--workdir',root],{quiet:true}));
+  status=JSON.parse(await runCommand(process.execPath,cliArgs('status'),{quiet:true}));
   authBase=validateApiUrl(status.API_URL);key=status.ANON_KEY;
   const dbUrl=new URL(status.DB_URL);assert.ok(['127.0.0.1','localhost'].includes(dbUrl.hostname)&&dbUrl.port==='54322');
   for(let i=0;i<3;i++) {

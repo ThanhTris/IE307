@@ -1,8 +1,8 @@
-# GM-21.1 — History/consent independent API and producer ports
+# GM-21.2 — History, consent and lifecycle integration
 
-2026-10-14. Owner Tâm, reviewer Trí, review Pending. Base main a33d5e8 (GM18
-PR108). GM07.1 unchanged; schema0.2.0 + forward0021. GM20 finalize and GM19
-room/start integration are separate work and are not claimed by these fixtures.
+2026-10-15. Owner Tâm, reviewer Trí, review Pending. Target main 991de66
+(includes GM19 PR112, GM20.3 PR115 and Expo fix PR116). GM07.1 unchanged;
+schema0.6.0 via0021 +0024. Actual lifecycle/finalize checks use disposable DBs.
 
 ## Wire contract
 
@@ -63,27 +63,32 @@ Lock order is GM17/GM06 reference_epoch before room locks; do not invert it.
 | prepare_consents(room, expected_version) | GM19, current member, LOBBY guard; explicit global + room opt-in; no active/terminal grants | Creates/renews current scoped consents, never retrospective |
 | recent_dishes(room) | GM19 server identity; LOBBY derives active canonical roster and all fresh scoped group consents | <=3 finalized results in30days from exactly the same sorted roster/group; unknown/partial ->[] |
 | freeze_recent(room, expected_version) | GM19 LOBBY lock, call before transition in same transaction after prepare/revalidation | Stores roster/hash/<=3IDs/contextVersion; returns IDs |
-| record_result(result) | GM20 in its atomic finalize transaction after actual immutable result/round winner exist; reference_epoch first | Personal per opted-in user; group only all frozen members/scoped consents; count inserted |
+| gm20_private.write_history(room,result) | Existing GM20 atomic finalize call, extended by0024 | Pinned winner card, shortest consent expiry, completion receipt; per-user personal/all-member group |
+| record_result(result) | Legacy0021 synthetic fixture helper; not called by production GM20 | Historical port regression only; not the authoritative writer |
 
 Canonical hash: SHA256 of gm21-group-v1: plus sorted unique UUIDs separated by
 commas. Client cannot provide it. recent_dishes checks both key and exact roster,
 scoped consents/TTL, server clock, and never reads personal summaries for groups.
 GM19 places returned IDs into existing GM18 input.recentDishIds and uses its own
 room context.avoidRecent. GM18 keeps this a soft rank on eligible offerings; NO,
-coverage/hours/unknown rules are unchanged. This handoff does not reimplement
-create/lobby/start or finalize. Their real integration is Not run until upstream.
+coverage/hours/unknown rules are unchanged. 0024 wraps the delivered GM19 pool port and uses its existing GM18 kernel;
+create (no roster yet) has no recents. Lobby/join/preferences/context/start use
+server-derived IDs. A before-state transition trigger freezes the exact roster/
+recent IDs/contextVersion in the same start transaction. All room-consent/roster
+changes invalidate ready/version; global changes/deletes refresh active lobby pools.
+The original GM19 and GM20 migrations remain unchanged.
 After start, recent_dishes returns the frozen snapshot; later withdrawal cannot
 change the locked voting pool/result, and is excluded from future sessions.
 
-record_result derives dish/variant identity from actual persisted winner and
-copies the current catalogue name into the immutable summary. No current winner
-or no consent -> no summary. Scoped consent.grantedAt <= actual finalizedAt,
-current enabled/not revoked/unexpired, frozen historyConsent and any explicit
-current global opt-out all apply. It accepts valid server clock_timestamp inside
-the same outer statement. Completion receipts prevent producer retries from
-recreating user-deleted/withdrawn rows or adding retrospective consent. Existing
-history results are marked completed on migration; explicit deletes/withdrawals
-also mark their result. Result IDs only, no ballots/context in receipts.
+GM20's existing atomic writer is replaced forward in0024, preserving pinned card
+metadata from gm19_private.pool_snapshots and TTL=min(finalizedAt+30days, relevant
+consent expiries). It checks frozen opt-in, scoped consent granted before finalize,
+current revocation/expiry and explicit global opt-out. Detached retained consents
+are never interpreted as global permissions. A completion receipt is written
+inside the same transaction, including no-history outcomes. Retry/delete/opt-in
+cannot add retrospective summaries. History failure rolls back the final ballot,
+result, event and receipt together. The original0021 record_result helper remains
+private only for legacy fixture regression; production never delegates to it.
 
 ## Storage/retention supplement
 
@@ -124,8 +129,19 @@ they are not GM20 finalize integration. No real publication/data promotion.
 GM25/28/31 receive history/consent/delete/TTL/auth/cursor and cache<=50 cases;
 Android app→API→UI is their integration work and remains Not run here.
 
-Integration ownership: the remaining adaptation of delivered GM19/20 transactions
-is GM21 work after their real outputs are available. The port signatures above
-do not add a dependency/AC to GM19/20 or block their completion on this task.
-GM21 will receive those producers, wire its own callbacks/adapters and rerun real
-create/lobby/start/finalize assertions before final completion.
+scripts/gm21_lifecycle_check.mjs exercises actual create/join/preferences/ready/
+start/submit/finalize/history via real JWTs, PostgREST and the unchanged GM07 client:
+default/partial/full consent, replay/delete, pinned name/TTL, <=3 matching recents,
+eligible set/rank port parity, frozen start, withdrawal/reopt-in, roster/ready,
+detached consent exclusion and transaction rollback. Ten scenario groups Pass.
+Positive food records are synthetic; actual HTTP/SQL execution is real. No publish.
+
+0024 renames the original private pool implementation to pool_without_history and
+keeps the original three-argument pool_for_room signature for upstream callers.
+The wrapper derives recents itself; no caller can inject history IDs. Missing
+catalogue version `unavailable` preserves the existing room's FK-backed version
+with an empty pool (or create sentinel0.0.0); no dish/coverage is invented.
+Empty initial rooms preserve the initial membership version rule; a materialized
+lobby pool counts as evaluated state for consent invalidation even before ready.
+Do not deploy0024 without0021/0019/0023. A dirty app migration ledger needs operator
+reconciliation/backup review; these tests never reset or reconcile that database.

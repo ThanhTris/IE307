@@ -1,57 +1,52 @@
-# GM-21 — Independent checks
+# GM-21 — Current integration checks
 
-2026-10-14; owner Tâm, reviewer Trí, Pending. Branch codex/gm-21-history-consent.
-Tested main/HEAD a33d5e85f1aeb7c7bda02310e02880a3af5e77da + working-tree patch.
-Contract GM21.1 / GM07.1 / food1.1.0; schema0.2.0 +0021 storage supplement.
-macOS/Node26.0.0/PostgreSQL17.11; SQL Python3.13.3, HTTP/regression bundled3.12.14.
-Source/result hashes: PATCH_MANIFEST.json and integration/*-results.json.
-No self approval, Done, commit/push, production publish or native claim.
+2026-10-15. Owner Tâm, reviewer Trí, Pending. Branch codex/gm-21-history-consent.
+Target991de6620715d1219da900499f4aa2d683b01bb4; rebased HEAD06d1d5b plus patch.
+GM21.2 / GM07.1 / GM20.3 / food-core1.1.0 / schema0.6.0. Source hashes and exact
+execution scope in PATCH_MANIFEST.json and gm20-integration/*.json.
+macOS, Node26, PostgreSQL17.11, Python3.13.3; live Project checker bundled Python.
+No self approval, commit/push, Project edits, production publish or native claim.
 
-| AC/output | Expected/assertion | Actual/evidence | Type/result/limit |
+| AC/output | Actual assertions | Evidence | Scope/result |
 | --- | --- | --- | --- |
-| Own/group read, scope/cursor, safe projection | No outsider/groupKey/roster/ballot/location leak | integration/sql-results.json + http-results.json | SQL/HTTP real, synthetic summaries; Pass |
-| Scoped opt-in/withdraw/delete | Default no grant; physical group removal; peers personal preserved; no result mutation | SQL45/HTTP21 suite | PostgreSQL and GoTrue JWT/GM07 client real; Pass |
-| Retry/idempotency | Opaque req_* IDs, same ACK, changed payload409, concurrent8 writes exactly1 mutation | HTTP case assertions, SQL stored version check | Real network/concurrent calls; Pass |
-| Anti-repeat | Server canonical exact roster, consent/TTL, <=3/30days, forged key ignored, frozen start snapshot | SQL assertions | Private trusted ports on real PG, synthetic contexts; Pass |
-| Recent ranking integration | GM19 calls ports and supplies IDs to existing GM18 soft ranking; actual room/start/finalize | Not run; upstream GM19/20 wiring pending | Mandatory final integration before task completion |
-| Record producer | Actual persisted synthetic winner/consents; same outer statement server time; retry/delete no resurrection | SQL port calls and completion receipts | Trusted helper real, GM20 producer Not run |
-| Retention | Two past meals detach consent independently; operational parents removed24h; summary authentic until30days; expired own metadata purged by GM17 worker | SQL45 incl cleanup/presentation/receipt checks | PG cleanup real, no deployed continuous scheduler claim |
-| Page/cache boundary | Stable ID cursor no overlap, <=50 rows/page | SQL51+ synthetic summaries | Server paging Pass; GM31 local cache<=50 Not run here |
-| Existing GM17 ACL/retention | Frozen upstream tests unchanged | 93 assertions Pass; integration/gm17-regression.json | SQL claims only; optional concurrentCleanup skipped by upstream runner |
-| Mobile contract/typecheck/lint/unit/architecture | Existing DTO/client unchanged | 382 tests Pass,4 baseline warnings/0 errors; integration/mobile-check.txt | Unit/static, no Android claim |
-| Domain regression | Eligibility/recent soft rank and decision invariants | 237 tests Pass; integration/domain-regression.txt | Existing synthetic domain fixtures |
-| Full Python | Regression suite | 550 tests Pass; integration/python-regression.txt | Offline regression |
-| Repository/index/diff | Links/JSON/task graph/freshness/whitespace | integration/repository-check.txt,docs-check.txt,diff-check.txt | Offline checks; not approval |
-| Start gate | GM06/07/18 Done + target artifacts | start-gate.txt; READY_TO_CLAIM 2026-10-14T03:53:46Z | Live Project and fetched main |
-| Merge gate | GM20 Done +0020 actual handoff | integration/merge-gate.txt; BLOCKED GM20 Todo at2026-10-14T04:42:32Z | Still blocked, not bypassed |
-| Android / remote CI / final review | App→API→UI + current pushed revision | Not run / Not run / Pending | Android consumers GM25/28/31; Trí review |
+| Own/group history and privacy | Owner/member/outsider/cursor, forged/missing JWT, no roster/ballot/location, <=50/page | sql-results.json45, http-results.json21 | Real PG/JWT/client; synthetic positive data; Pass |
+| Scoped opt-in and deletion | Default none, partial personal, all-member group, withdraw/delete peers unaffected | lifecycle-results.json10 + API suite | Actual lifecycle/finalize; Pass |
+| ACK/retry/rate | Opaque IDs, concurrent8 writes/one mutation, payload409,61 reads60success+1HTTP429 | HTTP21 | Real network/unchanged GM07; Pass |
+| Actual producer | Real create/join/prefs/ready/start/submit/result/history, one atomic receipt, pinned name, shortest consent TTL | lifecycle-results.json | Ten actual HTTP scenario groups; Pass |
+| Recent/lobby/start | <=3 matching server recents, kernel rank parity and same eligible set, consent/roster invalidation, stale version, frozen snapshot after withdrawal | lifecycle-results.json + SQL45 | Actual GM19→GM18 and GM20; Pass |
+| Withdrawal/reopt-in | Physically remove group, never regenerate old summaries, preserve locked pool/winner; detached consents cannot authorize new history | lifecycle + HTTP + upstream regression | Real SQL/HTTP; Pass |
+| Atomic failure | Force history insert failure: final ballot/result/event/receipt rollback; retry succeeds with3 histories | lifecycle-results.json | Owned disposable fault injection; Pass |
+| TTL/retention | Operational24h cleanup, multiple detached meals, authentic display,30day ceiling, receipts/windows expiry, paging51+ | SQL45 + original GM17 assertions | Real PG cleanup; no production scheduler claim |
+| GM20 regression | Original22 business scenario groups unchanged, SQL assertions and all decision parity vectors | upstream-gm20/http-results.json, adapter.json, parity.json, sql-run.txt | Owned test setup adapted consent-before-ready; Pass |
+| GM17 regression | Original93 RLS/retention assertions and cleanup lock contention | access-results.json, access-run.txt | Owned fresh DB; Pass; app deployment comparison explicitly excluded by adapter |
+| App database parity | Original runner found missing GM22 profiles avatar_seed/friend_code column grants; app ledger only0001..0005/0018 | app-deployment-check.txt | Drift found; app DB preserved, no claim that new migration is deployed |
+| Mobile regression | Typecheck/lint/unit382/architecture on PR116 dependencies | mobile-check.txt | Static/unit; no device claim; baseline lint warnings recorded |
+| Domain |237 eligibility/recent-rank/decision tests | domain-regression.txt | Existing fixtures; Pass |
+| Python |550 tests,5 existing skips | python-regression.txt | Offline; Pass with stated skips |
+| Repository/index/diff | Links/JSON/task contracts/index freshness/whitespace | repository-check.txt, docs-check.txt, diff-check.txt | Offline; not approval |
+| Expo dependency check | Dependencies up to date using bundled local map; remote versions endpoint unavailable/offline | expo-check-offline.txt | Local validation only; no online compatibility claim |
+| Start/merge gate | Live Project Done inputs + fetched target artifacts | start-gate.txt / merge-gate.txt | READY_TO_CLAIM / READY_FOR_MERGE_REVIEW |
+| Android / new remote CI / Trí review | Device integration/build, pushed CI, reviewer acceptance | Not run / Not run / Pending | Consumers GM25/28/31; not inferred from server tests |
 
-HTTP suite uses actual GoTrue guest tokens, actual PostgREST verifier/network and
-unchanged GM07 factory/client/response guards against its own loopback DB/gateway.
-No response/transport mock. Only synthetic persisted decisions/consents are loaded;
-this is not real GM20 finalize or actual user history. All21 cases Pass, including
-outsider/missing/forged JWT, errors, opaque request IDs, concurrent8/one mutation,
-physical group withdrawal, no resurrection, authentic retained history, unchanged
-room/result hash and61 concurrent reads with60success/1HTTP429 plus caller isolation.
-Runner removed owned container/DB/three namespaced guests. No JWT/key/raw ballots
-or private GPS is stored in artifacts. No publication/real data promotion.
+Paths in the table are relative to gm20-integration/. Historical integration/
+evidence records the earlier independent phase and its old blocked merge gate;
+it is not the current status. Runners hash tested sources and clean only their own
+DB/REST/namespace-tagged GoTrue guests. No real user tokens/keys/ballots/GPS in evidence.
 
-SQL45 assertions distinguish SQL JWT claims from JWT verification. Captures allow
-real cleanup of operational parents without fake room code; missing legacy display
-metadata fails closed with503/UNKNOWN_ERROR. Detached uniqueness correction is a
-forward storage change in0021, not editing0001/0004. Existing GM17 test64 initially
-caught a membership-trigger version bump; initial unready membership is now left
-alone and unchanged GM17 suite passes93. Same-statement producer test inserts a
-new result (does not mutate immutable result) then invokes record_result. Both
-results immutability and server timestamps are preserved.
+GM20 regression setup now applies every roster preference before any ready
+confirmation. This is necessary because GM21 invalidates all ready flags when a
+room consent changes; the frozen tests() business assertions remain byte-identical.
+Adapter/source/scenario hashes document this adjustment. Production GM20 continues
+calling its existing writer;0024 extends it instead of using the old fixture port.
 
-Trí must review storage/consent/API revision. GM20 remains the merge input; GM19
-must wire private prepare/recent/freeze hooks and revalidate/reset/freeze its pool.
-Existing GM18 pure tests cover ranking invariants; they do not prove that pending
-room/start integration. No API/UI task is marked Done from these checks.
+The GM17 original runner combines regression with a comparison of app deployment.
+That comparison failed due to existing GM22 column-grant drift. The GM21 adapter
+runs the unchanged assertion SQL on its own freshly migrated DB and explicitly
+labels app parity untested. App DB was neither reset nor reconciled. Deploying the
+PR needs ledger/definitions/grants/backup review, including any stale draft objects.
 
-Integration ownership: the remaining adaptation of delivered GM19/20 transactions
-is GM21 work after their real outputs are available. The port signatures above
-do not add a dependency/AC to GM19/20 or block their completion on this task.
-GM21 will receive those producers, wire its own callbacks/adapters and rerun real
-create/lobby/start/finalize assertions before final completion.
+One initial mobile run under concurrent setup load timed out2 component tests;
+a rerun passed382/382, followed by full checks after installing PR116 dependencies.
+Keep the initial failure log for traceability; it is not a hidden or skipped test.
+Current patch remote CI will run only after the user pushes. Trí reviews the current
+revision and output; READY_FOR_MERGE_REVIEW does not authorize automatic merge/Done.

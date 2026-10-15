@@ -18,6 +18,7 @@ def main():
  if a.mode=='cleanup':
   if t.admin.psql("select count(*) from pg_database where datname='"+t.name+"';").strip()=='1':
    t.db=food.LocalDB(t.name);t.created=True;t.marked=True;t.cleanup()
+  t.admin.psql("delete from public.profiles where user_id=any(array["+ids+"]) and exists(select 1 from auth.users u where u.id=profiles.user_id and u.raw_user_meta_data->>'gm21_test_namespace'='"+str(a.namespace)+"');")
   t.admin.psql("delete from auth.users where id=any(array["+ids+"]) and is_anonymous and raw_user_meta_data->>'gm21_test_namespace'='"+str(a.namespace)+"';")
   print(json.dumps({'cleanup':'owned DB and synthetic guests removed'}));return
  if len(users)!=3:raise ValueError('Three guests required')

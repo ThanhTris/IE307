@@ -183,8 +183,8 @@ def exercise(t):
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--report',type=Path,required=True);args=parser.parse_args()
-    report={'result':'Fail','contract':'GM-21.1','schemaVersion':'0.2.0','fixtureOnly':True,'mode':'disposable real PostgreSQL; SQL claims, not JWT','checkedAt':datetime.now(timezone.utc).isoformat(),'publicationPerformed':False}
-    sources=[Path(__file__),ROOT/'supabase/migrations/0021_history.sql'];hashes={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sources}
+    report={'result':'Fail','contract':'GM-21.2','schemaVersion':'0.6.0','fixtureOnly':True,'mode':'disposable real PostgreSQL; SQL claims, not JWT','checkedAt':datetime.now(timezone.utc).isoformat(),'publicationPerformed':False}
+    sources=[Path(__file__),*sorted((ROOT/'supabase/migrations').glob('*.sql'))];hashes={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sources}
     if args.report.resolve() in [p.resolve() for p in sources]:raise ValueError('Report cannot overwrite tested source')
     t=TestDB()
     try:
