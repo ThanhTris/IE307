@@ -1,5 +1,7 @@
 # GM-02 — bộ dependency nền
 
+Bảng ngày 2026-10-10 bên dưới là snapshot lúc bootstrap, giữ để truy vết. Bộ hiện hành và quy trình bảo trì/cài theo lockfile xem [EXPO_BASELINE](../../../project/EXPO_BASELINE.md); không dùng snapshot này để hạ patch của nhánh mới.
+
 2026-10-10. Bộ stack/package được chủ dự án chốt trong hội thoại, xem [GM-01 review](../GM-01/REVIEW.md). Package mobile riêng root BE; Node 24.15.0/npm11.12.1 đã dùng, engines >=22.13. Không cài global CLI hoặc camera/push/SQLite/dev-client.
 
 | Nhóm | Phiên bản pin |

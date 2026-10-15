@@ -29,6 +29,8 @@ GM-32 (Vinh) tổng hợp server regression và phần device còn thiếu, **kh
 
 ## Thiết lập điện thoại → backend bắt buộc
 
+- Cài và kiểm theo [baseline Expo hiện hành](../project/EXPO_BASELINE.md) trước chạy ma trận: npm ci + locked compatibility, ghi SDK/package-lock revision/runtime. Nâng package không tự tạo device evidence; native config/module đổi cần rebuild trước kiểm lại.
+
 - Ghi riêng Metro URL và backend API origin: mở app được không có nghĩa điện thoại gọi backend được. `localhost`/`127.0.0.1` trên điện thoại không tự trỏ tới máy tính.
 - HANDOFF có phương án kết nối tái lập: backend test HTTPS với certificate được thiết bị tin cậy, hoặc forwarding local được kiểm và ghi rõ phạm vi. Nếu dùng `adb reverse`, ghi port, lệnh setup/cleanup và kiểm đường đi thật; không tự public backend local/tạo tunnel hoặc deploy remote.
 - Auth transport hiện ở PR #106 chỉ cho HTTPS hoặc HTTP loopback; HTTP tới IP LAN bị từ chối. Không hướng dẫn đổi URL sang IP LAN HTTP rồi giả định chạy được. Không bỏ TLS/certificate validation hoặc dùng service_role trên app để vượt lỗi.
