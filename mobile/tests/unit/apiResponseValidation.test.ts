@@ -175,7 +175,7 @@ describe('GM-07 join regression', () => {
     mock.setCurrentUser({ id: 'new_member_fixture', displayName: 'Review', isGuest: true, createdAt: timestamp });
     const joinCall = (displayName: string) => method === 'joinRoom'
       ? mock.joinRoom({ code: 'GCD234', displayName, requestId: 'req_join_fixed' })
-      : mock.acceptRoomInvite({ invitationId: 'room_invite_01', displayName, requestId: 'req_join_fixed' });
+      : mock.acceptRoomInvite({ invitationId: 'invite_fixture', displayName, requestId: 'req_join_fixed' });
     const first = await joinCall('Review');
     expect(first).toMatchObject({ ok: true, requestId: 'req_join_fixed', roomId: 'room_mock_001', version: 2,
       data: { roomId: 'room_mock_001', code: 'GCD234', version: 2, memberId: 'new_member_fixture' } });

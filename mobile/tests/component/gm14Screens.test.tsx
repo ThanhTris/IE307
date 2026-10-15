@@ -1,12 +1,20 @@
 import { act } from 'react';
 import { fireEvent, render, screen, userEvent } from '@testing-library/react-native';
-import { MockApiClient } from '../../src/data/api';
+import { MockApiClient, type InboxItem } from '../../src/data/api';
 import { FriendsScreen } from '../../src/features/friends/screens/FriendsScreen';
 import { InboxScreen } from '../../src/features/inbox/screens/InboxScreen';
 import { HistoryScreen } from '../../src/features/history/screens/HistoryScreen';
 
 const nav = jest.fn();
 const home = jest.fn();
+const inboxInviteFixtures: InboxItem[] = [
+  { id: 'inbox_room_accept', eventId: 'evt_room_accept', type: 'room_invite', title: 'Room accept', body: 'Room accept fixture', read: false, metadata: { invitationId: 'room_invite_accept', roomCode: 'GCD234', expiresAt: '2099-01-01T00:00:00Z' }, createdAt: '2026-10-11T07:45:00Z' },
+  { id: 'inbox_room_reject', eventId: 'evt_room_reject', type: 'room_invite', title: 'Room reject', body: 'Room reject fixture', read: false, metadata: { invitationId: 'room_invite_reject', roomCode: 'GCD234', expiresAt: '2099-01-01T00:00:00Z' }, createdAt: '2026-10-11T07:46:00Z' },
+  { id: 'inbox_friend_accept', eventId: 'evt_friend_accept', type: 'friend_invite', title: 'Friend accept', body: 'Friend accept fixture', read: false, metadata: { invitationId: 'friend_invite_accept', expiresAt: '2099-01-01T00:00:00Z' }, createdAt: '2026-10-11T07:47:00Z' },
+  { id: 'inbox_friend_reject', eventId: 'evt_friend_reject', type: 'friend_invite', title: 'Friend reject', body: 'Friend reject fixture', read: false, metadata: { invitationId: 'friend_invite_reject', expiresAt: '2099-01-01T00:00:00Z' }, createdAt: '2026-10-11T07:48:00Z' },
+  { id: 'inbox_room_expired', eventId: 'evt_room_expired', type: 'room_invite', title: 'Expired invite', body: 'Expired invite fixture', read: true, metadata: { invitationId: 'room_invite_expired', roomCode: 'GCD234', expiresAt: '2020-01-01T00:00:00Z' }, createdAt: '2020-01-01T00:00:00Z' },
+  { id: 'inbox_friend_missing', eventId: 'evt_friend_missing', type: 'friend_invite', title: 'Missing reference', body: 'Missing reference fixture', read: false, metadata: { expiresAt: '2099-01-01T00:00:00Z' }, createdAt: '2026-10-11T07:49:00Z' },
+];
 
 beforeEach(() => { nav.mockClear(); home.mockClear(); });
 
@@ -73,48 +81,64 @@ test('inbox remains available with denied push permission and confirms invite ac
 test('inbox passes invitation IDs, distinct from event IDs, for all accept/reject types', async () => {
   const user = userEvent.setup();
   const mockClient = new MockApiClient({ delayMs: 0 });
+  jest.spyOn(mockClient, 'listPartnerInbox').mockResolvedValue({ ok: true, data: inboxInviteFixtures });
+  const acceptRoom = mockClient.acceptRoomInvite.bind(mockClient);
+  const rejectRoom = mockClient.rejectRoomInvite.bind(mockClient);
+  const acceptFriend = mockClient.acceptPartner.bind(mockClient);
+  const rejectFriend = mockClient.rejectPartner.bind(mockClient);
   const acceptRoomInvite = jest.spyOn(mockClient, 'acceptRoomInvite');
   const rejectRoomInvite = jest.spyOn(mockClient, 'rejectRoomInvite');
   const acceptPartner = jest.spyOn(mockClient, 'acceptPartner');
   const rejectPartner = jest.spyOn(mockClient, 'rejectPartner');
+  const valid = {
+    room: new Set(['room_invite_accept', 'room_invite_reject']),
+    friend: new Set(['friend_invite_accept', 'friend_invite_reject']),
+  };
+  const invalidInput = () => Promise.resolve({ ok: false as const, error: { messageKey: 'INVALID_INPUT' as const } });
+  acceptRoomInvite.mockImplementation(request => valid.room.has(request.invitationId) ? acceptRoom(request) : invalidInput());
+  rejectRoomInvite.mockImplementation((id, requestId) => valid.room.has(id) ? rejectRoom(id, requestId) : invalidInput());
+  acceptPartner.mockImplementation((id, requestId) => valid.friend.has(id) ? acceptFriend(id, requestId) : invalidInput());
+  rejectPartner.mockImplementation((id, requestId) => valid.friend.has(id) ? rejectFriend(id, requestId) : invalidInput());
   await render(<InboxScreen onNavigate={nav} onHome={home} mockClient={mockClient} />);
-  await screen.findByText('Lời mời ăn trưa');
+  await screen.findByText('Room accept');
 
-  await user.press(screen.getByRole('button', { name: 'Chấp nhận Lời mời ăn trưa' }));
+  await user.press(screen.getByRole('button', { name: 'Chấp nhận Room accept' }));
   await user.press(screen.getByRole('button', { name: 'Xác nhận chấp nhận' }));
+  expect(acceptRoomInvite).toHaveBeenCalledWith({ invitationId: 'room_invite_accept', displayName: 'Bạn mock', requestId: expect.any(String) });
   expect(await screen.findByText('Đã chấp nhận lời mời trong mock.')).toBeOnTheScreen();
-  expect(acceptRoomInvite).toHaveBeenCalledWith({ invitationId: 'room_invite_01', displayName: 'Bạn mock', requestId: expect.any(String) });
 
-  await user.press(screen.getByRole('button', { name: 'Từ chối Lời mời ăn tối' }));
+  await user.press(screen.getByRole('button', { name: 'Từ chối Room reject' }));
   await user.press(screen.getByRole('button', { name: 'Xác nhận từ chối' }));
   expect(await screen.findByText('Đã từ chối lời mời trong mock.')).toBeOnTheScreen();
-  expect(rejectRoomInvite).toHaveBeenCalledWith('room_invite_02', expect.any(String));
+  expect(rejectRoomInvite).toHaveBeenCalledWith('room_invite_reject', expect.any(String));
 
-  await user.press(screen.getByRole('button', { name: 'Chấp nhận Linh muốn kết bạn' }));
+  await user.press(screen.getByRole('button', { name: 'Chấp nhận Friend accept' }));
   await user.press(screen.getByRole('button', { name: 'Xác nhận chấp nhận' }));
   expect(await screen.findByText('Đã chấp nhận lời mời trong mock.')).toBeOnTheScreen();
-  expect(acceptPartner).toHaveBeenCalledWith('friend_invite_01', expect.any(String));
+  expect(acceptPartner).toHaveBeenCalledWith('friend_invite_accept', expect.any(String));
 
-  await user.press(screen.getByRole('button', { name: 'Từ chối Mai muốn kết bạn' }));
+  await user.press(screen.getByRole('button', { name: 'Từ chối Friend reject' }));
   await user.press(screen.getByRole('button', { name: 'Xác nhận từ chối' }));
   expect(await screen.findByText('Đã từ chối lời mời trong mock.')).toBeOnTheScreen();
-  expect(rejectPartner).toHaveBeenCalledWith('friend_invite_02', expect.any(String));
+  expect(rejectPartner).toHaveBeenCalledWith('friend_invite_reject', expect.any(String));
 
-  expect((await mockClient.acceptRoomInvite({ invitationId: 'evt_invite_01', displayName: 'Bạn mock' })).ok).toBe(false);
-  expect((await mockClient.rejectRoomInvite('evt_invite_01')).ok).toBe(false);
-  expect((await mockClient.acceptPartner('evt_friend_invite_01')).ok).toBe(false);
-  expect((await mockClient.rejectPartner('evt_friend_invite_01')).ok).toBe(false);
+  expect((await mockClient.acceptRoomInvite({ invitationId: 'evt_room_accept', displayName: 'Bạn mock' })).ok).toBe(false);
+  expect((await mockClient.rejectRoomInvite('evt_room_reject')).ok).toBe(false);
+  expect((await mockClient.acceptPartner('evt_friend_accept')).ok).toBe(false);
+  expect((await mockClient.rejectPartner('evt_friend_reject')).ok).toBe(false);
 });
 
 test('inbox disables expired invitations and entries without an invitation reference', async () => {
   const user = userEvent.setup();
-  await render(<InboxScreen onNavigate={nav} onHome={home} />);
-  await screen.findByText('Lời mời ăn trưa');
+  const mockClient = new MockApiClient({ delayMs: 0 });
+  jest.spyOn(mockClient, 'listPartnerInbox').mockResolvedValue({ ok: true, data: inboxInviteFixtures });
+  await render(<InboxScreen onNavigate={nav} onHome={home} mockClient={mockClient} />);
+  await screen.findByText('Room accept');
   expect(screen.getByText('Lời mời đã hết hạn; thao tác bị khóa.')).toBeOnTheScreen();
-  expect(screen.getByRole('button', { name: 'Chấp nhận Lời mời đã hết hạn' }).props.accessibilityState.disabled).toBe(true);
+  expect(screen.getByRole('button', { name: 'Chấp nhận Expired invite' }).props.accessibilityState.disabled).toBe(true);
   expect(screen.getByText('Thiếu mã lời mời; không thể xử lý mục này.')).toBeOnTheScreen();
-  expect(screen.getByRole('button', { name: 'Từ chối Thiếu mã lời mời' }).props.accessibilityState.disabled).toBe(true);
-  await user.press(screen.getByRole('button', { name: 'Chấp nhận Lời mời đã hết hạn' }));
+  expect(screen.getByRole('button', { name: 'Từ chối Missing reference' }).props.accessibilityState.disabled).toBe(true);
+  await user.press(screen.getByRole('button', { name: 'Chấp nhận Expired invite' }));
   expect(screen.queryByText('Chấp nhận lời mời?')).toBeNull();
 });
 
