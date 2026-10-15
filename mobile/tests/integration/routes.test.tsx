@@ -8,6 +8,7 @@ import NotFound from '../../src/app/+not-found';
 import Components from '../../src/app/components';
 import Gm12Vote from '../../src/app/gm12/vote';
 import Gm12Final from '../../src/app/gm12/final';
+import Gm24Context from '../../src/app/gm24/context';
 
 const routes = {
   _layout: Layout,
@@ -17,6 +18,7 @@ const routes = {
   '+not-found': NotFound,
   'gm12/vote': Gm12Vote,
   'gm12/final': Gm12Final,
+  'gm24/context': Gm24Context,
 };
 afterEach(() => jest.useRealTimers());
 
@@ -54,4 +56,12 @@ test('shell navigates to GM-12 vote route and renders voting screen', async () =
   await user.press(screen.getByRole('button', { name: 'Mở bình chọn GM-12' }));
   await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/gm12/vote'));
   expect(screen.getByText('GM-12 · UI Chọn món Vòng 1 (Flashcard Vote)')).toBeOnTheScreen();
+});
+
+test('shell navigates to GM-24 context route and renders location context screen', async () => {
+  await renderRouter(routes, { initialUrl: '/' });
+  const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+  await user.press(screen.getByRole('button', { name: 'Mở vị trí và bối cảnh GM-24' }));
+  await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/gm24/context'));
+  expect(screen.getByText('Bối cảnh & Vị trí phòng')).toBeOnTheScreen();
 });
