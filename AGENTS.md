@@ -32,6 +32,8 @@ Theo yêu cầu của chủ dự án ngày 2026-10-11, chỉ khi chính chủ d�
 
 ## React Native
 
+- Tooling/SDK dùng docs/project/EXPO_BASELINE.md và mobile/package-lock.json hiện hành. Sau nhận baseline chạy npm ci + npm run check:expo; check:expo:latest là kiểm online trong bảo trì GM-02. Không lấy patch từ evidence cũ, tắt dependency validation hoặc tự nâng major/native module ở task feature. Expo Go/device AC giữ đúng scope task.
+
 - Expo + TypeScript strict; routes mỏng trong `mobile/src/app`; screens/use cases theo feature; domain độc lập UI/network.
 - Chưa thêm package/lockfile hoặc thư viện native trước khi task bootstrap đủ dependency và reviewer chấp thuận dependency.
 - FlatList, safe area, dark mode, font scaling, TalkBack, nút thay thế swipe.
