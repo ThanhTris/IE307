@@ -1,0 +1,57 @@
+{
+  "result": "Pass",
+  "checkedAt": "2026-10-15T07:47:19.071520+00:00",
+  "branch": "codex/gm-21-history-consent",
+  "testedHead": "06d1d5bed12c254dcd423c00a67f662d1c42854d",
+  "targetRef": "origin/main",
+  "targetSha": "991de6620715d1219da900499f4aa2d683b01bb4",
+  "workingTreePatchIncluded": true,
+  "contract": "GM-21.2",
+  "schemaVersion": "0.6.0",
+  "sourceHashes": {
+    ".github/workflows/gm21-history.yml": "d0042c3739edfccfe0a82f17556d9195da45863a9efc0dc400dca2ecc0d2d8a0",
+    "docs/architecture/GM21_HISTORY_API.md": "8ad2270551345d8c3958a0dc4781e0ee7f6f0c0ffc18de0362c81a1c3d3b424e",
+    "scripts/gm21_access_regression.py": "b256916510c155c40f45f82fd230baac15eb55336af15c0411c982a1d39e2fb2",
+    "scripts/gm21_history_check.py": "bf084214a9391643f0e51bcc10c890a12c492514877e4766e9bf569d375be165",
+    "scripts/gm21_http_check.mjs": "32f7ee80d650085d220ff243a84f9ab2922314a06e3624f25e3abfca65581bc5",
+    "scripts/gm21_http_fixture.py": "df0c0b693f2e081f0657b0de8221848ea2d7bdbe3f758bb8d5723475950b1ad1",
+    "scripts/gm21_lifecycle_check.mjs": "3f3e6849197137785fa5b2254233a441640670d206f5f5488663b6a379c0b048",
+    "scripts/gm21_upstream_regression.mjs": "85865a80879ca7ad6026633d299908e0f268b880ba891c91b09a3f808ca5ef71",
+    "supabase/migrations/0021_history.sql": "9be964cc6c8b405f578e7f2528268f628266e7b121b96ce958244e20a116217e",
+    "supabase/migrations/0024_history_integration.sql": "48d8662cd1e4c70a7ef6147efb517bcb351365fc6e1f90ac49e4defa3c868ad9",
+    "supabase/tests/history.sql": "20cd75beb89054f0397b9a16f29dcaa66b25a93258b6cbabeb7ef0a63a76271e",
+    "supabase/tests/http/GM-21.http": "3d399355d8335d841fd4d32104e06ed77486cfa40c828f255969b3150c85ecb3",
+    "tasks/backlog/GM-21.md": "5ac860d6c3ecaa4e9ddf532edc6afea22f7df545af7cee4805edd9a9fec9aa7b"
+  },
+  "protectedInputsUnchanged": true,
+  "results": {
+    "sql": 45,
+    "http": 21,
+    "actualLifecycleScenarios": 10,
+    "upstreamGM20Scenarios": 22,
+    "upstreamGM20Sql": {
+      "result": "Pass",
+      "parityVectors": 140,
+      "assertions": 11
+    },
+    "gm17": 93,
+    "domain": 237,
+    "mobile": 382,
+    "python": {
+      "run": 550,
+      "skipped": 5
+    }
+  },
+  "startGate": "READY_TO_CLAIM",
+  "mergeGate": "READY_FOR_MERGE_REVIEW",
+  "realRoomFinalizeIntegration": "Pass; real JWT/SQL/HTTP with synthetic positive food only",
+  "appDeployment": "Not performed; read-only snapshot shows only0001..0005/0018, GM20/GM21 RPCs absent",
+  "Android": "Not run; GM25/28/31",
+  "remoteCI": "Not run for unpublished patch",
+  "review": "Pending ThanhTris",
+  "publicationPerformed": false,
+  "rebasedExistingCommit": true,
+  "newChangesCommitted": false,
+  "pushPerformed": false,
+  "mergePerformed": false
+}

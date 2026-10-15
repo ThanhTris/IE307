@@ -1,0 +1,94 @@
+{
+  "result": "Pass",
+  "contract": "GM-21.2",
+  "schemaVersion": "0.6.0",
+  "checkedAt": "2026-10-15T07:45:05.941Z",
+  "environment": "local GoTrue JWT + isolated PostgreSQL/PostgREST + actual GM07 client",
+  "fixtureOnly": true,
+  "publicationPerformed": false,
+  "cases": [
+    {
+      "case": "GM19 -> GM20 default opt-out produces no history",
+      "result": "Pass",
+      "histories": 0,
+      "state": "DECIDED"
+    },
+    {
+      "case": "partial group consent records only opted personal summary",
+      "result": "Pass",
+      "personal": 1,
+      "group": 0
+    },
+    {
+      "case": "real consent -> room/start -> ballots atomically writes two personal and group histories",
+      "result": "Pass",
+      "histories": 3,
+      "state": "DECIDED",
+      "realClient": true
+    },
+    {
+      "case": "exact final ACK replay and deleted history never resurrect summaries",
+      "result": "Pass",
+      "historyAfterDelete": 2,
+      "replaySame": true
+    },
+    {
+      "case": "pinned winner metadata and shortest consent expiry survive catalogue edit",
+      "result": "Pass",
+      "pinnedName": true,
+      "ttlBelowThreeDays": true
+    },
+    {
+      "case": "lobby pool consumes at most three server-derived recent results and freezes at start",
+      "result": "Pass",
+      "recentCount": 3,
+      "repeatedDishMovedBehindEligibleAlternative": true,
+      "eligibleSetPreserved": true,
+      "frozenAfterWithdrawal": true
+    },
+    {
+      "case": "withdrawal resets all lobby ready; reopt-in does not recreate old summaries",
+      "result": "Pass",
+      "resetAllReady": true,
+      "noResurrection": true
+    },
+    {
+      "case": "room flag and roster edits invalidate ready; another group has no borrowed recents",
+      "result": "Pass",
+      "roomFlagReset": true,
+      "rosterReset": true,
+      "leaveRefresh": true
+    },
+    {
+      "case": "global-looking detached consent cannot authorize future finalization",
+      "result": "Pass",
+      "detachedNotReused": true
+    },
+    {
+      "case": "history write failure rolls back final ballot/result/event atomically",
+      "result": "Pass",
+      "rollback": true,
+      "retryHistories": 3
+    }
+  ],
+  "artifactHashes": {
+    "scripts/gm21_lifecycle_check.mjs": "3f3e6849197137785fa5b2254233a441640670d206f5f5488663b6a379c0b048",
+    "scripts/gm20_http_fixture.py": "746d661433ab133a2bb124623ff9a554486d0f167669fb43b25c76195a4b689a",
+    "scripts/gm19_http_fixture.py": "acae283042bb128fef57332648c7ea527196691dcb71eacf1e6d89350dd601f2",
+    "scripts/gm18_http_fixture.py": "453ab2f4611363803addb1b717cdc5cacb9ac400d358adac000c34d2c0ae3fb2",
+    "supabase/migrations/0001_core_schema.sql": "6733e28f282f600e627e675dccede3afef1efd37cf4a7cfe8d94af4cd02d30f5",
+    "supabase/migrations/0002_food_import_receipts.sql": "eb80acba1f69bfb68b014a1ab5807e42d65db940a36d201f28db88172157f55e",
+    "supabase/migrations/0003_food_provenance_description.sql": "8972c1dfa5e07a2350e644a7e79ea36cc7f9208e0a89371cbe1bdfdb52d6cb16",
+    "supabase/migrations/0004_access_policies.sql": "508e9572ce50464d07a8ea1e19dc41ff7ba26cb2d0485aa59df9ac1422440dfb",
+    "supabase/migrations/0005_gm18_discovery_rpc.sql": "b81e072da7ef75846615738905650ae5a337e32f5d678f843c9404e7f54e3307",
+    "supabase/migrations/0018_food_eligibility.sql": "e242876842e0c8decf645130b56a69143146ff942a78641f504c2883f3c86334",
+    "supabase/migrations/0019_room_lifecycle.sql": "ed76f679baa10bbfd4234e2be88f408ef292162f92efceac16217aa554f50926",
+    "supabase/migrations/0021_history.sql": "9be964cc6c8b405f578e7f2528268f628266e7b121b96ce958244e20a116217e",
+    "supabase/migrations/0022_social.sql": "bede55e7a0c12a3dfce3d03f3e61121bd4611b73c8b8656ec0785a3c55097f54",
+    "supabase/migrations/0023_finalize.sql": "aff45864e57d634ced4bce6e3ce1997f439f90b2c974cc7f601d71f70bb3fea8",
+    "supabase/migrations/0024_history_integration.sql": "48d8662cd1e4c70a7ef6147efb517bcb351365fc6e1f90ac49e4defa3c868ad9"
+  },
+  "datasetVersion": "0.18.2860802925",
+  "endpoint": "http://127.0.0.1:53600",
+  "cleanup": "owned DB and guests removed"
+}

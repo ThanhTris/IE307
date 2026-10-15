@@ -1,0 +1,28 @@
+{
+  "result": "Pass",
+  "comparedTo": "HEAD a33d5e8",
+  "files": {
+    "supabase/migrations/0001_core_schema.sql": "6733e28f282f600e627e675dccede3afef1efd37cf4a7cfe8d94af4cd02d30f5",
+    "supabase/migrations/0002_food_import_receipts.sql": "eb80acba1f69bfb68b014a1ab5807e42d65db940a36d201f28db88172157f55e",
+    "supabase/migrations/0003_food_provenance_description.sql": "8972c1dfa5e07a2350e644a7e79ea36cc7f9208e0a89371cbe1bdfdb52d6cb16",
+    "supabase/migrations/0004_access_policies.sql": "508e9572ce50464d07a8ea1e19dc41ff7ba26cb2d0485aa59df9ac1422440dfb",
+    "supabase/migrations/0005_gm18_discovery_rpc.sql": "b81e072da7ef75846615738905650ae5a337e32f5d678f843c9404e7f54e3307",
+    "supabase/migrations/0018_food_eligibility.sql": "e242876842e0c8decf645130b56a69143146ff942a78641f504c2883f3c86334",
+    "mobile/src/data/api/client.ts": "1a18a82c80fce79387a7540a5b3a5e43b771c115b2df4d066a5fd655d39b185e",
+    "mobile/src/data/api/contracts.ts": "3832a9fb4a3b4c64ec28ac8dbc0515c099896c977ed7244435249b33a7162f66",
+    "mobile/src/data/api/index.ts": "9c39aa7e1c3319a0d91e9b4aa29b71dd487c82daada1601a3ee56d2cc7989589",
+    "mobile/src/data/api/mock.ts": "c501dd1653f45376e145bd53f04562584f32efd138646747db62498766cb1198",
+    "mobile/src/data/api/responseGuards.ts": "ea8b597a5d7a894699f843ebdeb1a00beab30aac9553e5dc75e2b95a1664fa23",
+    "mobile/package.json": "4c899a9a000756d95bd749c00d64b2125bb27d3a6cf22998914ef501b30db556",
+    "mobile/package-lock.json": "c9f5b4071df0d34b9c2e65703a0a4fdecadf41acb0f27a5fdd5760aaa4bb6a8e",
+    "package.json": "6885925f90232d82282c323b42f995b355425aca000aaefb493f7ebbdee24f80",
+    "package-lock.json": "b82ae1e3fb3e908c42bbbc9743c80b6024d5f1dd3f0621b7b2c1791671acb5a7",
+    "supabase/seed/verified/manifest.json": "9556a42e68ff1f3ef128ae4e645abba4972a1ea7ced66d9b6d97d688e256adc1",
+    "supabase/seed/draft/gm08-survey-v0.4.1/bundle.json": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+    "tests/fixtures/food-data-v1/cases.json": "04e7cd78166dc80c417fb21969c9ab8baf86385f6e06b21304a424caa8b0d676",
+    "tests/fixtures/food-data-v1/datasets.json": "f11085cb4bf18ed081698aefee2dc4025e435d2591f554858f609389ffe416e3",
+    "mobile/src/domain/eligibility/index.ts": "955b304435077c0e9132eab1d9775002acd567d23a22cd503d92bce4cf0e1091",
+    "scripts/gm17_access_check.py": "59115b43da7ae549c8e0946898174eec3de85484d4fa60f54163d94aa8598c0a",
+    "scripts/gm18_http_fixture.py": "ce68fdc5cea82276fbcdd59c812771f3a29f66a823d2e37ea88d7181fc4a75ae"
+  }
+}
