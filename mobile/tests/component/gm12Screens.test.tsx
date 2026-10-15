@@ -1,5 +1,5 @@
 import { render, screen, userEvent, waitFor } from '@testing-library/react-native';
-import { type PoolDish, type RoomResult } from '../../src/data/api';
+import { type ApiClient, type PoolDish, type RoomResult } from '../../src/data/api';
 import {
   FIXTURE_ROUND_TWO_CANDIDATES,
   FinalRoundScreen,
@@ -495,5 +495,67 @@ describe('GM-12 — FinalRoundScreen (Vòng 2 Chọn lọc)', () => {
     await waitFor(() => {
       expect(screen.getByText(/Đã nộp phiếu Vòng 2 thành công! \(Server ACK\)/)).toBeOnTheScreen();
     });
+  });
+
+  test('Nộp phiếu Vòng 2 gửi đúng payload KEEP/REMOVE (không bị đổi sai thành WANT/NO) với round: 2', async () => {
+    const user = userEvent.setup();
+    const submitBallotSpy = jest.fn().mockResolvedValue({
+      ok: true,
+      data: {
+        accepted: true,
+        round: 2,
+        allMembersSubmitted: true,
+        roomVersion: 3,
+        receipt: {
+          round: 2,
+          intentId: 'intent_test',
+          requestId: 'req_test',
+          submittedAt: new Date().toISOString(),
+          voteCount: 2,
+        },
+      },
+    });
+
+    const mockApi = {
+      submitBallot: submitBallotSpy,
+    } as unknown as ApiClient;
+
+    await render(
+      <FinalRoundScreen
+        candidates={TEST_POOL}
+        api={mockApi}
+        simulateDelayMs={0}
+      />
+    );
+
+    // Món A (Phở bò tái nạm) mặc định là KEEP; bấm Giữ món để đảm bảo KEEP
+    const keepPhoBtn = screen.getByRole('button', { name: 'Giữ món Phở bò tái nạm' });
+    await user.press(keepPhoBtn);
+
+    // Món B (Cơm tấm sườn bì chả) bấm Loại món để chuyển sang REMOVE
+    const removeComBtn = screen.getByRole('button', { name: 'Loại món Cơm tấm sườn bì chả' });
+    await user.press(removeComBtn);
+
+    // Bấm Xác nhận nộp Vòng 2 để mở SheetDialog
+    const submitBtn = screen.getByRole('button', { name: 'Xác nhận nộp Vòng 2' });
+    await user.press(submitBtn);
+
+    // Bấm Chốt phiếu ngay trong SheetDialog
+    const confirmSubmitBtn = screen.getByRole('button', { name: 'Chốt phiếu ngay' });
+    await user.press(confirmSubmitBtn);
+
+    await waitFor(() => {
+      expect(submitBallotSpy).toHaveBeenCalledTimes(1);
+    });
+
+    const calledPayload = submitBallotSpy.mock.calls[0][0];
+    expect(calledPayload.round).toBe(2);
+    expect(calledPayload.votes).toEqual([
+      { roundDishId: 'dish_test_01', vote: 'KEEP' },
+      { roundDishId: 'dish_test_02', vote: 'REMOVE' },
+    ]);
+    expect(calledPayload.votes[0].vote).toBe('KEEP');
+    expect(calledPayload.votes[1].vote).toBe('REMOVE');
+    expect(calledPayload.votes.some((v: { vote: string }) => v.vote === 'WANT' || v.vote === 'NO')).toBe(false);
   });
 });

@@ -121,7 +121,7 @@ export function FinalRoundScreen({
 
     const votes: BallotVoteItem[] = candidates.map(dish => ({
       roundDishId: dish.roundDishId,
-      vote: choices[dish.roundDishId] === 'KEEP' ? 'WANT' : 'NO',
+      vote: choices[dish.roundDishId] === 'REMOVE' ? 'REMOVE' : 'KEEP',
     }));
 
     const req = {
