@@ -3,5 +3,5 @@ import { FoundationScreen } from '../features/home/screens/FoundationScreen';
 
 export default function FoundationRoute() {
   const router = useRouter();
-  return <FoundationScreen onBack={() => router.canGoBack() ? router.back() : router.replace('/')} onOpenComponents={() => router.push('/components')} />;
+  return <FoundationScreen onBack={() => router.canGoBack() ? router.back() : router.replace('/')} onOpenComponents={() => router.push('/components')} onOpenFeaturePreview={() => router.push('/features')} />;
 }
