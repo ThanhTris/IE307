@@ -1,0 +1,17 @@
+............................................................................................................................................................................................................................................................................................................................................................................/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/dateutil/tz/tz.py:37: DeprecationWarning: datetime.datetime.utcfromtimestamp() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.fromtimestamp(timestamp, datetime.UTC).
+  EPOCH = datetime.datetime.utcfromtimestamp(0)
+.............sssss.Cell 1: ERROR
+Report: /private/var/folders/rl/_ggjv4bx7rx0w9xb28dptymh0000gn/T/tmpnvzsygpz/new-capture/reports/sample.executed.ipynb
+.Cell 1: OK
+Report: /private/var/folders/rl/_ggjv4bx7rx0w9xb28dptymh0000gn/T/tmpyb5h41ii/new/reports/sample.executed.ipynb
+......................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 550 tests in 39.569s
+
+OK (skipped=5)
+{
+  "offline": true,
+  "refresh": false,
+  "allow_api": false,
+  "output_dir": "/private/var/folders/rl/_ggjv4bx7rx0w9xb28dptymh0000gn/T/tmpyb5h41ii/new"
+}

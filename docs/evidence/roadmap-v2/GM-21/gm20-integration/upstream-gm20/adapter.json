@@ -1,0 +1,11 @@
+{
+  "upstream": "scripts/gm20_http_check.mjs",
+  "upstreamSha256": "e7dfb5e3da137f81e300fec7593941b7ca556d1f6a138461850a0096ddb5761a",
+  "scenarioSha256": "a53598f1d80ea63bc01d97984ac83535db73dffc09a670d381405cf3136407ea",
+  "scenariosUnchanged": true,
+  "adaptations": [
+    "evidence destination only",
+    "owned setup: all room consent preferences before all ready confirmations"
+  ],
+  "exitCode": 0
+}

@@ -1,0 +1,1 @@
+Local deployment differs: {"columnGrants": {"freshOnly": [["profiles", "avatar_seed"], ["profiles", "friend_code"]], "localOnly": []}}

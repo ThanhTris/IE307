@@ -1,0 +1,1 @@
+Task indexes match task metadata.

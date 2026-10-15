@@ -1,0 +1,26 @@
+meta {
+  name: 06 Host round2
+  type: http
+  seq: 6
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/submit_ballot
+  body: json
+  auth: none
+}
+headers {
+  Authorization: Bearer {{hostToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"requestId":"{{attempt}}","room_id":"{{roomId}}","round":{{rn}},"pool_version":{{pv}},"intent_id":"{{intent}}","expected_version":{{version}},"votes":{{votes}}}
+}
+script:pre-request {
+  const attempt='bruno_'+Date.now()+'_'+Math.random();bru.setVar('attempt',attempt);bru.setVar('intent','i_'+attempt);
+}
+script:post-response {
+  const b=res.getBody();if(res.getStatus()===200) { bru.setVar('version',b.version); }
+}
+tests {
+  test('06 Host round2',()=>{expect(res.getStatus()).to.equal(200);const b=res.getBody();expect(b.state).to.equal('ROUND_2');});
+}

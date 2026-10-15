@@ -12,6 +12,8 @@ import RoomStatus from '../../src/app/gm11/status';
 import Friends from '../../src/app/gm14/friends';
 import Inbox from '../../src/app/gm14/inbox';
 import History from '../../src/app/gm14/history';
+import Gm12Vote from '../../src/app/gm12/vote';
+import Gm12Final from '../../src/app/gm12/final';
 
 const routes = {
   _layout: Layout,
@@ -24,6 +26,8 @@ const routes = {
   'gm14/friends': Friends,
   'gm14/inbox': Inbox,
   'gm14/history': History,
+  'gm12/vote': Gm12Vote,
+  'gm12/final': Gm12Final,
   '+not-found': NotFound,
 };
 afterEach(() => jest.useRealTimers());
@@ -64,4 +68,12 @@ test('foundation preview opens GM-11 and GM-14 routes through Expo Router', asyn
   await user.press(screen.getByRole('button', { name: 'GM-14 · Lịch sử · Mở' }));
   await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/gm14/history'));
   expect(await screen.findByText('Quyền lưu lịch sử')).toBeOnTheScreen();
+});
+
+test('shell navigates to GM-12 vote route and renders voting screen', async () => {
+  await renderRouter(routes, { initialUrl: '/' });
+  const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+  await user.press(screen.getByRole('button', { name: 'Mở bình chọn GM-12' }));
+  await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/gm12/vote'));
+  expect(screen.getByText('GM-12 · UI Chọn món Vòng 1 (Flashcard Vote)')).toBeOnTheScreen();
 });

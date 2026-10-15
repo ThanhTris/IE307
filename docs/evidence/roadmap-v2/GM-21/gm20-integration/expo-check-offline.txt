@@ -1,0 +1,8 @@
+
+> gi-cung-duoc-mobile@0.1.0 check:expo
+> expo install --check
+
+Networking has been disabled
+Unable to reach well-known versions endpoint. Using local dependency map expo/bundledNativeModules.json for version validation
+Dependency validation is unreliable in offline-mode
+Dependencies are up to date

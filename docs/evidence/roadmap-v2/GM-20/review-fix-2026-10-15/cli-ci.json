@@ -1,0 +1,54 @@
+{
+  "checkedAt": "2026-10-15T02:14:33.500843+00:00",
+  "result": "Pass",
+  "runId": 38669720375,
+  "runUrl": "https://github.com/ThanhTris/IE307/actions/runs/38669720375",
+  "event": "pull_request",
+  "testedRevision": "7622fadba7ae6c98a16e95128e8cde7c9a03a7b5",
+  "scope": "Real native Supabase CLI entrypoint launch/version only; not SQL/HTTP",
+  "nativeLaunches": [
+    {
+      "platformArch": "win32/x64",
+      "version": "2.120.0",
+      "apiCases": 0
+    },
+    {
+      "platformArch": "darwin/arm64",
+      "version": "2.120.0",
+      "apiCases": 0
+    },
+    {
+      "platformArch": "linux/x64",
+      "version": "2.120.0",
+      "apiCases": 0
+    }
+  ],
+  "jobs": [
+    {
+      "name": "Supabase entrypoint (windows-latest)",
+      "conclusion": "success",
+      "url": "https://github.com/ThanhTris/IE307/actions/runs/38669720375/job/116209723784"
+    },
+    {
+      "name": "Supabase entrypoint (macos-latest)",
+      "conclusion": "success",
+      "url": "https://github.com/ThanhTris/IE307/actions/runs/38669720375/job/116209723959"
+    },
+    {
+      "name": "Supabase entrypoint (ubuntu-latest)",
+      "conclusion": "success",
+      "url": "https://github.com/ThanhTris/IE307/actions/runs/38669720375/job/116209724053"
+    }
+  ],
+  "sourceSha256": {
+    ".github/workflows/gm20-cli.yml": "5d33ba24f5ef7306866e0bbbf60624213529dad937388dc894815589255737d3",
+    "tests/gm20-cli.test.mjs": "cb046cc2eb275ee5f929f389133a43027b13ca9f644c4087568eb6ef560fa594",
+    "scripts/backend.mjs": "ee55282cde597e8d42b532ce6a63667c7f2da705dac71f69ed1a01b53f7529a3",
+    "scripts/gm20_http_check.mjs": "e7dfb5e3da137f81e300fec7593941b7ca556d1f6a138461850a0096ddb5761a",
+    "package.json": "6885925f90232d82282c323b42f995b355425aca000aaefb493f7ebbdee24f80",
+    "package-lock.json": "b82ae1e3fb3e908c42bbbc9743c80b6024d5f1dd3f0621b7b2c1791671acb5a7"
+  },
+  "windowsFullHttpTested": false,
+  "androidTested": false,
+  "reviewerApproved": false
+}

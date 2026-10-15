@@ -1,0 +1,65 @@
+# Local owned fixture only; node scripts/gm20_http_check.mjs --bruno
+# Values come from ignored Local.runtime.private.bru. Never paste tokens in evidence.
+@baseUrl = http://127.0.0.1:54332
+@publicKey = LOCAL_PUBLIC_KEY
+@guestJwt = LOCAL_GUEST_JWT
+@roomId = LOCKED_ROOM_UUID
+@requestId = opaque_attempt_1
+@intentId = opaque_intent_1
+@roomVersion = 7
+@poolVersion = 1
+@roundDishId = CURRENT_ROUND_ROW_UUID
+@outsiderJwt = LOCAL_OUTSIDER_GUEST_JWT
+
+### Submit EXACT current pool, all choices; this single-item example needs a one-item pool.
+# Expected 200, ok=true, data.accepted=true, receipt.requestId=requestId;
+# state stays ROUND_1 until every locked member submits. Same request/body replay
+# returns the same ACK, even after room version changes. See Bruno reset for full pool.
+POST {{baseUrl}}/rest/v1/rpc/submit_ballot
+Content-Type: application/json
+apikey: {{publicKey}}
+Authorization: Bearer {{guestJwt}}
+
+{"requestId":"{{requestId}}","room_id":"{{roomId}}","round":1,"pool_version":{{poolVersion}},"intent_id":"{{intentId}}","expected_version":{{roomVersion}},"votes":[{"roundDishId":"{{roundDishId}}","vote":"WANT"}]}
+
+### Reconnect: current own ballot and persisted result only
+# Expected 200, current/final round, ownSubmission/ownVotes only. Terminal resultId,
+# winnerRoundDishId and pinned winnerDish remain stable. No other votes/seed/ties.
+POST {{baseUrl}}/rest/v1/rpc/get_room_snapshot
+Content-Type: application/json
+apikey: {{publicKey}}
+Authorization: Bearer {{guestJwt}}
+
+{"room_id":"{{roomId}}"}
+
+### Round2: new row IDs and incremented poolVersion from ROUND_2 snapshot
+# Use a fresh intent/request. Do not reuse round1 row IDs or insert UNSET.
+# Expected 200, receipt.round=2; only final member triggers DECIDED or NO_CONSENSUS.
+POST {{baseUrl}}/rest/v1/rpc/submit_ballot
+Content-Type: application/json
+apikey: {{publicKey}}
+Authorization: Bearer {{guestJwt}}
+
+{"requestId":"opaque_round2_attempt","room_id":"{{roomId}}","round":2,"pool_version":{{poolVersion}},"intent_id":"opaque_round2_intent","expected_version":{{roomVersion}},"votes":[{"roundDishId":"{{roundDishId}}","vote":"KEEP"}]}
+
+### Outsider cannot submit or inspect private room snapshot
+# Expected 403, messageKey=NOT_MEMBER; no submission/version mutation.
+POST {{baseUrl}}/rest/v1/rpc/submit_ballot
+Content-Type: application/json
+apikey: {{publicKey}}
+Authorization: Bearer {{outsiderJwt}}
+
+{"requestId":"outsider_attempt","room_id":"{{roomId}}","round":1,"pool_version":{{poolVersion}},"intent_id":"outsider_intent","expected_version":{{roomVersion}},"votes":[{"roundDishId":"{{roundDishId}}","vote":"WANT"}]}
+
+### Incomplete ballot in a fresh/current, not-yet-submitted round
+# Expected 400, messageKey=INCOMPLETE_BALLOT; UNSET instead yields INVALID_INPUT.
+# Stale version/pool/round yields 409 VERSION_CONFLICT before accepting any ballot.
+POST {{baseUrl}}/rest/v1/rpc/submit_ballot
+Content-Type: application/json
+apikey: {{publicKey}}
+Authorization: Bearer {{guestJwt}}
+
+{"requestId":"incomplete_attempt","room_id":"{{roomId}}","round":1,"pool_version":{{poolVersion}},"intent_id":"incomplete_intent","expected_version":{{roomVersion}},"votes":[]}
+
+# For race/atomicity/consent/expiry assertions run gm20_http_check.mjs; examples
+# above need snapshot-derived values and do not claim automated execution alone.

@@ -1,0 +1,18 @@
+{
+  "scope": "read-only existing app database; no migration/reconcile/reset",
+  "checkedAt": "2026-10-15T07:45:59.3376+00:00",
+  "schemaVersions": [
+    "0.1.0",
+    "0.2.0"
+  ],
+  "gm20SubmitPresent": false,
+  "migrationVersions": [
+    "0001",
+    "0002",
+    "0003",
+    "0004",
+    "0005",
+    "0018"
+  ],
+  "gm21StartTriggerFunctionPresent": false
+}

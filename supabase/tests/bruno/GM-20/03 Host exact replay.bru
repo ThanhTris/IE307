@@ -1,0 +1,26 @@
+meta {
+  name: 03 Host exact replay
+  type: http
+  seq: 3
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/submit_ballot
+  body: json
+  auth: none
+}
+headers {
+  Authorization: Bearer {{hostToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"requestId":"{{requestHost}}","room_id":"{{roomId}}","round":{{rn}},"pool_version":{{pv}},"intent_id":"{{intentHost}}","expected_version":{{hostEv}},"votes":{{votes}}}
+}
+script:pre-request {
+  const attempt='bruno_'+Date.now()+'_'+Math.random();bru.setVar('attempt',attempt);bru.setVar('intent','i_'+attempt);
+}
+script:post-response {
+  const b=res.getBody();if(res.getStatus()===200) {  }
+}
+tests {
+  test('03 Host exact replay',()=>{expect(res.getStatus()).to.equal(200);const b=res.getBody();expect(JSON.stringify(b)).to.equal(bru.getVar('hostAck'));});
+}
