@@ -33,6 +33,7 @@ function jwt(payload) {
   return `${head}.${body}.${signature}`;
 }
 const anonKey = jwt({ role: 'anon', iss: 'supabase', exp: Math.floor(Date.now() / 1000) + 3600 });
+const serviceKey = jwt({ role: 'service_role', iss: 'supabase', exp: Math.floor(Date.now() / 1000) + 3600 });
 
 async function docker(args, env = {}) {
   return await new Promise((resolveValue, reject) => {
@@ -51,6 +52,10 @@ async function fixture(mode, sql = '') {
 }
 async function request(name, token, body) {
   const response = await fetch(`http://127.0.0.1:54332/rest/v1/rpc/${name}`, { method: 'POST', headers: { apikey: anonKey, 'content-type': 'application/json', ...(token ? { authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(body), signal: AbortSignal.timeout(20_000) });
+  return { status: response.status, body: await response.json().catch(() => ({})) };
+}
+async function senderRequest(name, body) {
+  const response = await fetch(`http://127.0.0.1:54332/rest/v1/rpc/${name}`, { method: 'POST', headers: { apikey: serviceKey, authorization: `Bearer ${serviceKey}`, 'content-type': 'application/json' }, body: JSON.stringify(body), signal: AbortSignal.timeout(20_000) });
   return { status: response.status, body: await response.json().catch(() => ({})) };
 }
 async function check(name, fn) { try { const actual = await fn(); cases.push({ case: name, result: 'Pass', ...actual }); console.log(`Pass: ${name}`); } catch (error) { cases.push({ case: name, result: 'Fail', diagnostic: error.message }); throw error; } }
@@ -134,10 +139,14 @@ async function main() {
         perform public.register_push_device('gm23-reregister-'||event_key::text,'${deviceId}','ExponentPushToken[synthetic-gm23-token]','granted');
         select count(*) into pending_after from public.deliveries where event_id=event_key and state='pending';
         if pending_after<>1 then raise exception 'sender re-register expired pending delivery'; end if;
+        perform public.register_push_device('gm23-rotate-'||event_key::text,'${deviceId}','ExponentPushToken[synthetic-gm23-rotated-token]','granted');
+        select count(*) into pending_after from public.deliveries where event_id=event_key and state='pending';
+        if pending_after<>1 then raise exception 'sender token rotation lost pending delivery'; end if;
         perform set_config('request.jwt.claim.role','service_role',true);
         claim:=public.claim_push_deliveries(1);
         if jsonb_array_length(claim)<>1 then raise exception 'sender claim failed: %',claim; end if;
         item:=claim->0;
+        if item->>'token' <> 'ExponentPushToken[synthetic-gm23-rotated-token]' then raise exception 'sender claim used stale token: %',item->>'token'; end if;
         completed:=public.complete_push_delivery((item->>'deliveryId')::uuid,(item->>'leaseId')::uuid,'gm23-ticket');
         if completed->>'ok' is distinct from 'true' then raise exception 'sender complete failed: %',completed; end if;
         update gm23_private.delivery_meta set provider_ticket_at=clock_timestamp()-interval '16 minutes' where gm23_private.delivery_meta.delivery_id=v_delivery_id;
@@ -153,10 +162,11 @@ async function main() {
     assert.match(output, /sender_sql_ok/);
     return { status: 200, claim: true, complete: true, receipt: true };
   });
+  await check('service role sender RPC is accepted over HTTP', async () => { const response = await senderRequest('claim_push_deliveries', { batch_size: 1 }); assert.equal(response.status, 200, JSON.stringify(response.body)); assert.ok(Array.isArray(response.body)); return { status: response.status, claimed: response.body.length }; });
   await check('denied permission does not retain token', async () => { success(await request('register_push_device', recipient, { requestId: randomUUID(), device_id: deviceId, token: 'ignored-token', permission: 'denied' })); const rows = (await fixture('sql', `select active::text||'|'||permission||'|'||(push_token is null)::text from public.devices where user_id='${guests[1].user.id}' and device_key='${deviceId}';`)).trim(); assert.equal(rows, 'false|denied|true'); return { status: 200, deviceProjection: 'inactive/denied/no-token' }; });
   await check('unregister clears token and is repeat-safe', async () => { const body = { requestId: randomUUID(), device_id: deviceId }; success(await request('unregister_push_device', recipient, body)); success(await request('unregister_push_device', recipient, { ...body, requestId: randomUUID() })); const rows = (await fixture('sql', `select active::text||'|'||(push_token is null)::text from public.devices where user_id='${guests[1].user.id}' and device_key='${deviceId}';`)).trim(); assert.equal(rows, 'false|true'); return { status: 200, cleaned: true }; });
   await check('client cannot read push token directly', async () => { const response = await fetch(`${upstream}/devices?select=push_token`, { headers: { authorization: `Bearer ${recipient}`, apikey: anonKey } }); assert.notEqual(response.status, 200); return { status: response.status }; });
-  const report = { result: 'Pass', task: 'GM-23', contract: 'food-v1/roadmap-v2/GM-23.1', schemaVersion: '0.6.0', checkedAt: new Date().toISOString(), revision: (await runCommand('git', ['rev-parse', 'HEAD'], { quiet: true })).trim(), sourceHashes: Object.fromEntries(['supabase/migrations/0024_notifications.sql', 'supabase/tests/notifications.sql', 'supabase/tests/http/GM-23.http', 'supabase/functions/push-sender/index.ts'].map(path => [path, createHash('sha256').update(readFileSync(resolve(root, path))).digest('hex')])), syntheticPositiveDataOnly: true, remoteExpoDelivery: 'Not run', cases };
+  const report = { result: 'Pass', task: 'GM-23', contract: 'food-v1/roadmap-v2/GM-23.1', schemaVersion: '0.7.0', checkedAt: new Date().toISOString(), revision: (await runCommand('git', ['rev-parse', 'HEAD'], { quiet: true })).trim(), sourceHashes: Object.fromEntries(['supabase/migrations/0025_notifications.sql', 'supabase/tests/notifications.sql', 'supabase/tests/http/GM-23.http', 'supabase/functions/push-sender/index.ts'].map(path => [path, createHash('sha256').update(readFileSync(resolve(root, path))).digest('hex')])), syntheticPositiveDataOnly: true, remoteExpoDelivery: 'Not run', cases };
   await mkdir(resolve(root, 'docs/evidence/roadmap-v2/GM-23'), { recursive: true });
   await writeFile(resolve(root, 'docs/evidence/roadmap-v2/GM-23/http-results.json'), JSON.stringify(report, null, 2) + '\n');
   if (keep) {

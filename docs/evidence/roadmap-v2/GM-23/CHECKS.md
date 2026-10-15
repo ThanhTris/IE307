@@ -1,12 +1,12 @@
 # GM-23 — Checks
 
 Checked on 2026-10-15, branch `codex/gm-23-notification-sender`, source base
-`a7a97f3d6bf1d7003bab713c3875b7adc1ef8a25` (working tree includes the fixes under test).
+`0fcdec9153f0e267d90a256dcdab496a20c1bec0` (working tree includes the fixes under test).
 
 | Area | Expected | Actual | Result |
 |---|---|---|---|
 | Fresh migration/ACL SQL | RPCs exist; client cannot read token/delivery lease; trusted sender only | `supabase/tests/notifications.sql`: 20 pgTAP assertions | Pass |
-| HTTP disposable fixture | own inbox <=50, missing auth 401, exact ACK replay, denied token cleanup, unregister retry, token projection denied, sender SQL claim/complete/receipt path | `scripts/gm23_http_check.mjs`: 7 named cases, real GoTrue JWTs, owned DB | Pass |
+| HTTP disposable fixture | own inbox <=50, missing auth 401, exact ACK replay, denied token cleanup, unregister retry, token projection denied, sender SQL claim/complete/receipt path, service-role HTTP authorization and token rotation | `scripts/gm23_http_check.mjs`: 8 named cases, real GoTrue JWTs, owned DB | Pass |
 | SQL mutation smoke | granted registration returns `ok:true,data:null`; token column is not client-readable | verified on fresh disposable DB | Pass |
 | Bruno desktop | exact request/response assertions and Runner output | Fresh disposable fixture selected as `Local.runtime.private`; Runner 5/5 Pass: Inbox `200 []`, Register granted `200 {ok:true,data:null}`, Register denied `200 {ok:true,data:null}`, Unregister `200 {ok:true,data:null}`, Missing auth `401 AUTH_REQUIRED` | Pass |
 | Expo transport fake | success ticket, `DeviceNotRegistered`, near-expiry lease, and `LEASE_LOST` completion | `node --experimental-strip-types scripts/gm23_sender_check.mjs`: 4/4 cases Pass with in-process provider/RPC shim | Pass |

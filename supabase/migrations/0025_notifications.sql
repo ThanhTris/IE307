@@ -1,5 +1,5 @@
 -- GM-23.1 inbox, push-device ownership, delivery leases and trusted sender.
--- GM-20 owns 0023_finalize.sql; this migration is intentionally 0024.
+-- GM-20 owns 0023_finalize.sql; this migration is intentionally 0025.
 begin;
 
 create schema if not exists gm23_private;
@@ -78,8 +78,17 @@ end $$;
 
 create or replace function gm23_private.service_only() returns void
 language plpgsql security definer set search_path = pg_catalog as $$
+declare claims jsonb; role_value text;
 begin
-  if coalesce(current_setting('request.jwt.claim.role',true),'')<>'service_role' then
+  -- PostgREST exposes the role both as the legacy scalar GUC and, depending
+  -- on the gateway version, only inside request.jwt.claims. Accept either
+  -- representation but never trust a caller supplied body field.
+  role_value:=nullif(current_setting('request.jwt.claim.role',true),'');
+  if role_value is null then
+    claims:=coalesce(nullif(current_setting('request.jwt.claims',true),''),'{}')::jsonb;
+    role_value:=claims->>'role';
+  end if;
+  if role_value<>'service_role' then
     raise sqlstate 'PT403' using message='SENDER_FORBIDDEN';
   end if;
 end $$;
@@ -91,10 +100,24 @@ begin
   if expiry<=clock_timestamp() then return; end if;
   insert into public.deliveries(id,event_id,recipient_user_id,device_id,state,attempts,ticket_id,receipt_id,last_attempt_at,expires_at,version)
     values(gen_random_uuid(),event_key,recipient,device_key,'pending',0,null,null,null,least(expiry,clock_timestamp()+interval '7 days'),1)
-    on conflict (event_id,recipient_user_id,device_id) do nothing returning id into delivery_key;
+    on conflict (event_id,recipient_user_id,device_id) do update set
+      state=case when public.deliveries.state in ('expired','failed') and public.deliveries.expires_at>clock_timestamp() then 'pending' else public.deliveries.state end,
+      attempts=case when public.deliveries.state in ('expired','failed') and public.deliveries.expires_at>clock_timestamp() then 0 else public.deliveries.attempts end,
+      ticket_id=case when public.deliveries.state in ('expired','failed') and public.deliveries.expires_at>clock_timestamp() then null else public.deliveries.ticket_id end,
+      receipt_id=case when public.deliveries.state in ('expired','failed') and public.deliveries.expires_at>clock_timestamp() then null else public.deliveries.receipt_id end,
+      last_attempt_at=case when public.deliveries.state in ('expired','failed') and public.deliveries.expires_at>clock_timestamp() then null else public.deliveries.last_attempt_at end,
+      expires_at=least(public.deliveries.expires_at,excluded.expires_at),
+      version=public.deliveries.version+1
+    returning id into delivery_key;
   if delivery_key is not null then
     insert into gm23_private.delivery_meta(delivery_id,registration_generation,next_attempt_at)
-      values(delivery_key,generation,clock_timestamp()) on conflict do nothing;
+      values(delivery_key,generation,clock_timestamp()) on conflict (delivery_id) do update set
+        registration_generation=excluded.registration_generation,
+        next_attempt_at=case when exists(select 1 from public.deliveries delivery_state where delivery_state.id=delivery_key and delivery_state.state='pending') then clock_timestamp() else gm23_private.delivery_meta.next_attempt_at end,
+        lease_id=case when exists(select 1 from public.deliveries delivery_state where delivery_state.id=delivery_key and delivery_state.state='pending') then null else gm23_private.delivery_meta.lease_id end,
+        lease_until=case when exists(select 1 from public.deliveries delivery_state where delivery_state.id=delivery_key and delivery_state.state='pending') then null else gm23_private.delivery_meta.lease_until end,
+        last_error=case when exists(select 1 from public.deliveries delivery_state where delivery_state.id=delivery_key and delivery_state.state='pending') then null else gm23_private.delivery_meta.last_error end,
+        version=gm23_private.delivery_meta.version+1;
   end if;
 end $$;
 
@@ -321,6 +344,6 @@ revoke all on function public.claim_push_receipts(integer) from public,anon,auth
 grant execute on function public.claim_push_deliveries(integer),public.claim_push_receipts(integer),public.complete_push_delivery(uuid,uuid,text),public.fail_push_delivery(uuid,uuid,text,integer),public.record_push_receipt(uuid,text,text,text) to service_role;
 
 insert into public.schema_versions(schema_version,contract_id,food_contract_version,core_contract_version,upstream_revision)
-values('0.6.0','food-v1/roadmap-v2/GM-23.1','1.1.0','1.1.0','991de66: GM-20.3 + GM-22.1')
+values('0.7.0','food-v1/roadmap-v2/GM-23.1','1.1.0','1.1.0','ce7b87a: GM-21 merged on main')
 on conflict (schema_version) do nothing;
 commit;

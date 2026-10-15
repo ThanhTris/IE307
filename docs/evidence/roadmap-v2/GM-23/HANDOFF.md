@@ -2,7 +2,7 @@
 
 ## Artifacts
 
-- `supabase/migrations/0024_notifications.sql` — schema `0.6.0`, RPCs,
+- `supabase/migrations/0025_notifications.sql` — schema `0.7.0`, RPCs,
   ownership generation, private delivery leases and receipt boundary.
 - `supabase/functions/push-sender/index.ts` — trusted Expo sender; no package
   or native module.

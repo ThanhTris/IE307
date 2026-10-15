@@ -2,11 +2,11 @@
   "result": "Pass",
   "task": "GM-23",
   "contract": "food-v1/roadmap-v2/GM-23.1",
-  "schemaVersion": "0.6.0",
-  "checkedAt": "2026-10-15T08:21:36.276Z",
-  "revision": "a7a97f3d6bf1d7003bab713c3875b7adc1ef8a25",
+  "schemaVersion": "0.7.0",
+  "checkedAt": "2026-10-15T12:14:12.984Z",
+  "revision": "0fcdec9153f0e267d90a256dcdab496a20c1bec0",
   "sourceHashes": {
-    "supabase/migrations/0024_notifications.sql": "e9ef3013a279eed756c86907aeee7eefd3ded56989e25b4e32dcaee37a120903",
+    "supabase/migrations/0025_notifications.sql": "21b839e8207508f8c185a4888fdafc08df3c5e5cf8ca70cda0634a73a0112705",
     "supabase/tests/notifications.sql": "b42fe4a9c066b0c6465d526562846683f0f825ad4f4c056ef11395947a31a4b6",
     "supabase/tests/http/GM-23.http": "887ff0eb27c8bbfea56b3f39dea41320013e603edcc3f7d4ab9d55b0566ece40",
     "supabase/functions/push-sender/index.ts": "3fc7ba9de45f635d50ee31e0e704b5dd21e224c47716bf9db76eb1925d931886"
@@ -38,6 +38,12 @@
       "claim": true,
       "complete": true,
       "receipt": true
+    },
+    {
+      "case": "service role sender RPC is accepted over HTTP",
+      "result": "Pass",
+      "status": 200,
+      "claimed": 0
     },
     {
       "case": "denied permission does not retain token",
