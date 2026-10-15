@@ -1,0 +1,1 @@
+{"contractVersion": "food-v1/roadmap-v2/GM-17.1", "schemaVersion": "0.2.0", "fixtureOnly": true, "checkedAt": "2026-10-14T04:38:41.454091+00:00", "mode": "disposable real PostgreSQL; SQL claims do not prove JWT validation", "localDeploymentMatchesFresh": true, "assertions": 93, "concurrentCleanup": {"skipped": true}, "result": "Pass"}

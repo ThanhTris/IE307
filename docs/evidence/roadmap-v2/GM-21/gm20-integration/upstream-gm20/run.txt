@@ -1,0 +1,28 @@
+GM20 runner initialization
+GM20 source manifest ready
+GM20 checking local status
+GM20 local status ready; setup owned fixture
+GM20 owned DB ready
+Pass: real GM07 client: opaque wire IDs, WAITING and unanimous persistent result
+Pass: ACK first: exact retry, changed request payload and semantic intent replay
+Pass: expired ACK cache/public key -> same accepted intent replays without duplicate
+Pass: reject auth/outsider, stale version-pool-round, incomplete/duplicate/UNSET/wrong enum
+Pass: NO veto -> exact round2 pool, new rows, no default KEEP, REMOVE veto
+Pass: round1 all NO -> EMPTY_INTERSECTION, no seed/history, one event
+Pass: cancel round2 before ballots -> retain locked pool and own receipt
+Pass: cancel round2 after one KEEP -> retain locked pool and own receipt
+Pass: lobby poolVersion greater than one remains round1
+Pass: fallback all OK -> round2 KEEP -> COMPROMISE and stable locked winner
+Pass: round2 score uses original WANT counts; strict majority tier and seed persisted
+Pass: rosters 2 through 8 wait for last and finalize exactly once
+Pass: concurrent identical request -> one submission and identical ACKs
+Pass: two members same version serialize; loser resubmits fresh attempt
+Pass: terminal/expiry guards; accepted retry survives terminal and expiry
+Pass: history requires frozen opt-in and actual scoped consent; partial/revoked/expired
+Pass: deleted history never resurrected by retry/reconnect
+Pass: fault after result/history creation rolls back submission/votes/version/result/event
+Pass: last submit/cancel both serialized orders cannot leave mixed terminal state
+Pass: concurrent last-submit/cancel produces exactly one terminal outcome
+Pass: host cannot read other raw votes/seed/ties; private functions denied
+Pass: response lost after commit -> exact final ACK, one result/event
+{"result":"Pass","cases":22,"cleanup":"owned DB and guests removed"}
