@@ -4,6 +4,12 @@ Expo SDK 57 + Expo Router + TypeScript strict. Có shell `/`, `/foundation`, `+n
 
 ## Chạy từ clone sạch
 
+GM-10 mới tách **Ngày ăn** (bấm mở lựa chọn/ngày khác) và **Giờ ăn** `HH:mm`, có ngân sách riêng và ô xác nhận xanh. Đổi ngày/giờ/budget cần xác nhận/xem món lại; xem [đối chiếu bugs.md mới](../docs/evidence/roadmap-v2/GM-10/DATE_UI_REVIEW.md).
+
+Sau lưu bối cảnh GM-10, **Chỉnh lại bối cảnh** tải version mới của cùng phòng và yêu cầu xác nhận/xem món lại. Logo **Về trang chủ** khác nút **Quay lại**; cả hai khóa lúc đang lưu/chưa rõ kết quả. Phân loại và sửa A1..A5 tại [SCOPE_FIX](../docs/evidence/roadmap-v2/GM-10/SCOPE_FIX.md); API/production/shared contrast còn theo ranh giới đã ghi.
+
+GM-10: tại Home `/` mở **Công cụ kiểm thử** cuối màn → **Chọn điểm ăn và khẩu vị** để mở `/gm10/context` → xác nhận/preview/lưu → `/gm10/preferences`; `/shell` cũng có entry. Public anchor/radius/giờ/buổi/budget/avoidRecent và khẩu vị/consent dùng mock GM-07, chưa GPS/API/history thật. Controls ở cuối màn có manual/denied/outside/empty/stale/ready/timeout. Xem [HANDOFF GM-10](../docs/evidence/roadmap-v2/GM-10/HANDOFF.md) và [CHECKS](../docs/evidence/roadmap-v2/GM-10/CHECKS.md). Đã nhận main có GM-09/GM-23 được Trí merge; hai phòng mẫu GM-09/GM-10 vẫn độc lập, tích hợp cùng session/room thuộc GM-25. Đã sửa theo phản hồi Expo Go tại [BUG_REVIEW](../docs/evidence/roadmap-v2/GM-10/BUG_REVIEW.md), chờ kiểm lại sau sửa. Lưu hoặc bỏ qua khẩu vị hiện biên nhận hoàn tất; bản mẫu chưa nối phòng chờ.
+
 Bộ package/lockfile và phạm vi Expo của từng task xem [baseline hiện hành](../docs/project/EXPO_BASELINE.md). `check:expo` kiểm phiên bản đã khóa + map SDK cài tại máy; `check:expo:latest` kiểm online khi bảo trì GM-02, không dùng patch trong evidence cũ làm yêu cầu cài hiện tại.
 
 Node >=22.13 (đã dùng 24.15.0), npm; Android có Expo Go hỗ trợ SDK 57. Không cần Android Studio/adb/APK để mở shell. Từ root:

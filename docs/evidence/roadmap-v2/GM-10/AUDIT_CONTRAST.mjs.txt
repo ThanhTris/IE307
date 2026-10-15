@@ -1,0 +1,14 @@
+import { readFileSync } from 'node:fs';
+const source = readFileSync('mobile/src/shared/theme/tokens.ts', 'utf8');
+function luminance(hex) {
+  const rgb = hex.match(/[\da-f]{2}/gi).map(v => parseInt(v, 16) / 255).map(v => v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
+  return rgb[0] * 0.2126 + rgb[1] * 0.7152 + rgb[2] * 0.0722;
+}
+for (const mode of ['light', 'dark']) {
+  const block = source.match(new RegExp(`export const ${mode}Colors = \\{([\\s\\S]*?)\\} as const`))[1];
+  const pick = name => block.match(new RegExp(`\\b${name}: '(#[\\da-fA-F]{6})'`))[1];
+  const background = pick('primary'), foreground = pick('onPrimary');
+  const values = [luminance(background), luminance(foreground)].sort((a, b) => b - a);
+  const ratio = (values[0] + 0.05) / (values[1] + 0.05);
+  process.stdout.write(JSON.stringify({ mode, foreground, background, ratio: Number(ratio.toFixed(3)), required: 4.5, passes: ratio >= 4.5 }) + '\n');
+}

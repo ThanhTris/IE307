@@ -1,0 +1,4 @@
+Approval source: https://github.com/users/ThanhTris/projects/2 | checked at 2026-10-15T15:37:09.079507+00:00 | no cached/local fallback
+Baseline approval mapping: GM-01 -> Project GM-00 / issue #37 (owner-pinned; artifacts remain separate)
+GM-10: READY_TO_CLAIM | owner=Tuấn reviewer=Trí | tasks/backlog/GM-10.md
+Gate checks approval source and delivered files, not execution. Merge still requires review of this PR, upstream PR/commit verification and real integration tests. No status/task edits performed.

@@ -1,7 +1,7 @@
 import { renderRouter } from 'expo-router/testing-library';
 import { router } from 'expo-router';
 import { act } from 'react';
-import { screen, userEvent, waitFor } from '@testing-library/react-native';
+import { fireEvent, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { store } from 'expo-router/build/global-state/router-store';
 import Layout from '../../src/app/_layout';
 import Index from '../../src/app/index';
@@ -21,6 +21,9 @@ import RoomPreview from '../../src/app/room-preview';
 import Gm12Vote from '../../src/app/gm12/vote';
 import Gm12Final from '../../src/app/gm12/final';
 import { rememberPreviewRoom, setPreviewScenario } from '../../src/bootstrap/roomPreview';
+import Gm10Layout from '../../src/app/gm10/_layout';
+import Gm10Context from '../../src/app/gm10/context';
+import Gm10Preferences from '../../src/app/gm10/preferences';
 
 const routes = {
   _layout: Layout,
@@ -40,9 +43,87 @@ const routes = {
   '+not-found': NotFound,
   'gm12/vote': Gm12Vote,
   'gm12/final': Gm12Final,
+  'gm10/_layout': Gm10Layout,
+  'gm10/context': Gm10Context,
+  'gm10/preferences': Gm10Preferences,
 };
 beforeEach(() => setPreviewScenario('default'));
 afterEach(() => jest.useRealTimers());
+
+test('GM-10 routes preserve the same saved room from home tools through context and preferences', async () => {
+  await renderRouter(routes, { initialUrl: '/' });
+  const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+  await user.press(screen.getByRole('button', { name: 'Công cụ kiểm thử' }));
+  await user.press(screen.getByRole('button', { name: 'Chọn điểm ăn và khẩu vị' }));
+  await screen.findByLabelText('Giờ ăn (UTC+7)');
+  await user.press(screen.getByRole('checkbox', { name: 'Tôi xác nhận điểm công cộng, buổi và giờ ăn' }));
+  await user.press(screen.getByRole('button', { name: 'Xem món mẫu theo bối cảnh' }));
+  await screen.findByText('Phở bò tái nạm');
+  await user.press(screen.getByRole('button', { name: 'Lưu bối cảnh mẫu' }));
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Chọn khẩu vị →' })).toBeEnabled());
+  await user.press(screen.getByRole('button', { name: 'Chọn khẩu vị →' }));
+  await screen.findByRole('button', { name: 'Gì cũng được' });
+  expect(store.getRouteInfo().pathname).toBe('/gm10/preferences');
+  await user.press(screen.getByRole('button', { name: 'Cơm' }));
+  await user.press(screen.getByRole('button', { name: 'Lưu khẩu vị mẫu' }));
+  await screen.findByText('Sẵn sàng của bạn: Chưa sẵn sàng');
+  expect(screen.getByText('Đã hoàn tất chọn khẩu vị')).toBeOnTheScreen();
+  expect(screen.queryByRole('button', { name: 'Tiếp tục đến phòng chờ' })).toBeNull();
+  await user.press(screen.getByRole('button', { name: '‹ Quay lại' }));
+  await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/gm10/context'));
+  await user.press(screen.getByRole('button', { name: 'Chỉnh lại bối cảnh' }));
+  await screen.findByLabelText('Giờ ăn (UTC+7)');
+  expect(screen.getByLabelText('Giờ ăn (UTC+7)')).toBeEnabled();
+  await user.press(screen.getByRole('button', { name: '2 km' }));
+  await user.press(screen.getByRole('checkbox', { name: 'Tôi xác nhận điểm công cộng, buổi và giờ ăn' }));
+  await user.press(screen.getByRole('button', { name: 'Xem món mẫu theo bối cảnh' }));
+  await screen.findByText('Phở bò tái nạm');
+  await user.press(screen.getByRole('button', { name: 'Lưu bối cảnh mẫu' }));
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Chọn khẩu vị →' })).toBeEnabled());
+  await user.press(screen.getByRole('button', { name: 'Chọn khẩu vị →' }));
+  await screen.findByRole('button', { name: 'Cơm' });
+  expect(screen.getByRole('button', { name: 'Cơm' }).props.accessibilityState.selected).toBe(true);
+});
+
+test.each(['form', 'receipt'] as const)('GM-10 Home brand on preferences %s returns to Home instead of context', async state => {
+  await renderRouter(routes, { initialUrl: '/gm10/context' });
+  const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+  await screen.findByLabelText('Giờ ăn (UTC+7)');
+  await user.press(screen.getByRole('checkbox', { name: 'Tôi xác nhận điểm công cộng, buổi và giờ ăn' }));
+  await user.press(screen.getByRole('button', { name: 'Xem món mẫu theo bối cảnh' }));
+  await screen.findByText('Phở bò tái nạm');
+  await user.press(screen.getByRole('button', { name: 'Lưu bối cảnh mẫu' }));
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Chọn khẩu vị →' })).toBeEnabled());
+  await user.press(screen.getByRole('button', { name: 'Chọn khẩu vị →' }));
+  await screen.findByRole('button', { name: 'Gì cũng được' });
+  if (state === 'receipt') {
+    await user.press(screen.getByRole('button', { name: 'Lưu khẩu vị mẫu' }));
+    await screen.findByText('Đã hoàn tất chọn khẩu vị');
+  }
+  await user.press(screen.getByRole('button', { name: 'Về trang chủ' }));
+  await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/'));
+  expect(screen.getByRole('button', { name: '＋ Tạo kèo ăn' })).toBeOnTheScreen();
+});
+
+test('GM-10 carries host anti-repeat into preferences and skip ends at an explicit receipt', async () => {
+  await renderRouter(routes, { initialUrl: '/gm10/context' });
+  const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+  await screen.findByLabelText('Giờ ăn (UTC+7)');
+  await fireEvent(screen.getByRole('switch', { name: 'Tránh lặp món gần đây' }), 'valueChange', true);
+  await user.press(screen.getByRole('checkbox', { name: 'Tôi xác nhận điểm công cộng, buổi và giờ ăn' }));
+  await user.press(screen.getByRole('button', { name: 'Xem món mẫu theo bối cảnh' }));
+  await screen.findByText('Phở bò tái nạm');
+  await user.press(screen.getByRole('button', { name: 'Lưu bối cảnh mẫu' }));
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Chọn khẩu vị →' })).toBeEnabled());
+  await user.press(screen.getByRole('button', { name: 'Chọn khẩu vị →' }));
+  await screen.findByRole('button', { name: 'Gì cũng được' });
+  expect(screen.getByText('Chống lặp của phòng: Đang bật · do chủ phòng chọn.')).toBeOnTheScreen();
+  await user.press(screen.getByRole('button', { name: 'Bỏ qua sở thích mềm' }));
+  await screen.findByText('Đã hoàn tất chọn khẩu vị');
+  expect(store.getRouteInfo().pathname).toBe('/gm10/preferences');
+  await user.press(screen.getByRole('button', { name: 'Quay lại bối cảnh' }));
+  await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/gm10/context'));
+});
 
 test('real route modules navigate from shell to foundation and back', async () => {
   await renderRouter(routes, { initialUrl: '/shell' });

@@ -1,0 +1,2 @@
+{"mode":"light","foreground":"#FFFFFF","background":"#FF5A36","ratio":3.103,"required":4.5,"passes":false}
+{"mode":"dark","foreground":"#FFFFFF","background":"#FF6F4E","ratio":2.75,"required":4.5,"passes":false}

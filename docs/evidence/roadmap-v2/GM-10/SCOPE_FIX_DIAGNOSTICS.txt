@@ -1,0 +1,1044 @@
+
+> gi-cung-duoc-mobile@0.1.0 test
+> jest --runInBand --runTestsByPath .work/gm10Audit.test.tsx --testMatch **/.work/gm10Audit.test.tsx
+
+FAIL .work/gm10Audit.test.tsx (10.833 s)
+  √ host can explicitly resume editing context after a successful save (477 ms)
+  √ a stale preview retains its reload action after a blocked save attempt (91 ms)
+  √ skip followed by possible-delivery retry displays the authoritative empty preferences (274 ms)
+  √ preview labels available distance as straight-line distance from public anchor (182 ms)
+  × consumer retains successful empty preview reason OUT_OF_COVERAGE from GM-18 (150 ms)
+  × consumer retains successful empty preview reason AVAILABILITY_UNKNOWN from GM-18 (123 ms)
+  √ brand labelled Home returns to Home rather than previous context screen (1941 ms)
+
+  ● consumer retains successful empty preview reason OUT_OF_COVERAGE from GM-18
+
+    Unable to find an element with text: Khu vực này chưa có dữ liệu. Hãy chọn một điểm công cộng trong vùng hỗ trợ.
+
+    <RNCSafeAreaView>
+      <View>
+        <View
+          accessibilityLabel="Về trang chủ"
+          accessibilityRole="button"
+          accessibilityState={
+            {
+              "disabled": true,
+            }
+          }
+          accessible={true}
+        >
+          <View>
+            <Text>
+              🍜
+            </Text>
+          </View>
+          <Text>
+            Gì Cũng Được
+          </Text>
+        </View>
+        <View>
+          <View
+            accessibilityLabel="Bạn ăn cùng"
+            accessibilityRole="button"
+            accessibilityState={
+              {
+                "disabled": true,
+              }
+            }
+            accessible={true}
+          >
+            <Text>
+              👥
+            </Text>
+          </View>
+          <View
+            accessibilityLabel="Thông báo"
+            accessibilityRole="button"
+            accessibilityState={
+              {
+                "disabled": true,
+              }
+            }
+            accessible={true}
+          >
+            <Text>
+              🔔
+            </Text>
+          </View>
+          <View
+            accessibilityLabel="Hồ sơ"
+            accessibilityRole="button"
+            accessibilityState={
+              {
+                "disabled": true,
+              }
+            }
+            accessible={true}
+          >
+            <Text>
+              🙂
+            </Text>
+          </View>
+        </View>
+      </View>
+      <View>
+        <RCTScrollView>
+          <View>
+            <View
+              accessibilityLabel="‹ Quay lại"
+              accessibilityRole="button"
+              accessible={true}
+            >
+              <Text>
+                ‹ Quay lại
+              </Text>
+            </View>
+            <Text>
+              Mô phỏng · GM-10 · dữ liệu mẫu
+            </Text>
+            <Text
+              accessibilityRole="header"
+            >
+              Hẹn nhau ăn ở đâu?
+            </Text>
+            <Text>
+              Chọn một điểm ăn công cộng cho cả nhóm. Không chia sẻ GPS cá nhân.
+            </Text>
+            <View>
+              <Text
+                accessibilityRole="header"
+              >
+                Điểm ăn chung
+              </Text>
+              <Text>
+                1. Chọn khu vực
+              </Text>
+              <View>
+                <View
+                  accessibilityLabel="Quận 1, TP. Hồ Chí Minh"
+                  accessibilityRole="button"
+                  accessibilityState={
+                    {
+                      "disabled": false,
+                      "selected": false,
+                    }
+                  }
+                  accessible={true}
+                >
+                  <Text>
+                    Quận 1, TP. Hồ Chí Minh
+                  </Text>
+                </View>
+                <View
+                  accessibilityLabel="Quận 3, TP. Hồ Chí Minh"
+                  accessibilityRole="button"
+                  accessibilityState={
+                    {
+                      "disabled": false,
+                      "selected": true,
+                    }
+                  }
+                  accessible={true}
+                >
+                  <Text>
+                    ✓
+                  </Text>
+                  <Text>
+                    Quận 3, TP. Hồ Chí Minh
+                  </Text>
+                </View>
+                <View
+                  accessibilityLabel="TP. Thủ Đức, TP. Hồ Chí Minh"
+                  accessibilityRole="button"
+                  accessibilityState={
+                    {
+                      "disabled": false,
+                      "selected": false,
+                    }
+                  }
+                  accessible={true}
+                >
+                  <Text>
+                    TP. Thủ Đức, TP. Hồ Chí Minh
+                  </Text>
+                </View>
+              </View>
+              <View>
+                <Text>
+                  2. Chọn điểm công cộng
+                   trong Quận 3, TP. Hồ Chí Minh
+                </Text>
+                <View>
+                  <View
+                    accessibilityLabel="Hồ Con Rùa"
+                    accessibilityRole="button"
+                    accessibilityState={
+                      {
+                        "disabled": false,
+                        "selected": true,
+                      }
+                    }
+                    accessible={true}
+                  >
+                    <Text>
+                      ✓
+                    </Text>
+                    <Text>
+                      Hồ Con Rùa
+                    </Text>
+                  </View>
+                  <Text>
+                    Vòng xoay Công trường Quốc Tế, Phường 6, Quận 3
+                  </Text>
+                </View>
+              </View>
+              <View
+                accessibilityLabel="Gợi ý điểm ăn từ vị trí"
+                accessibilityRole="button"
+                accessible={true}
+              >
+                <Text>
+                  Gợi ý điểm ăn từ vị trí
+                </Text>
+              </View>
+              <Text>
+                3. Chọn bán kính quanh điểm ăn
+              </Text>
+              <View>
+                <View
+                  accessibilityLabel="1 km"
+                  accessibilityRole="button"
+                  accessibilityState={
+                    {
+                      "disabled": false,
+                      "selected": true,
+                    }
+                  }
+                  accessible={true}
+                >
+                  <Text>
+                    ✓
+                  </Text>
+                  <Text>
+                    1 km
+                  </Text>
+                </View>
+                <View
+                  accessibilityLabel="2 km"
+                  accessibilityRole="button"
+                  accessibilityState={
+                    {
+                      "disabled": false,
+                      "selected": false,
+                    }
+                  }
+                  accessible={true}
+                >
+                  <Text>
+                    2 km
+                  </Text>
+                </View>
+                <View
+                  accessibilityLabel="5 km"
+                  accessibilityRole="button"
+                  accessibilityState={
+                    {
+                      "disabled": false,
+                      "selected": false,
+                    }
+                  }
+                  accessible={true}
+                >
+                  <Text>
+                    5 km
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <View>
+              <Text
+                accessibilityRole="header"
+              >
+                Buổi và giờ ăn
+              </Text>
+              <View
+                accessibilityLabel="Ăn ngay · sau 15 phút"
+                accessibilityRole="button"
+                accessible={true}
+              >
+                <Text>
+                  Ăn ngay · sau 15 phút
+                </Text>
+              </View>
+              <View>
+                <Text>
+                  Giờ ăn (UTC+7)
+                </Text>
+                <TextInput
+                  accessibilityLabel="Giờ ăn (UTC+7)"
+                  editable={true}
+                  placeholder="YYYY-MM-DD HH:mm"
+                  value="2026-10-15 22:38"
+                />
+                <Text>
+                  Giờ cụ thể giữ nguyên, không cộng thêm 15 phút khi lưu hoặc thử lại.
+                </Text>
+              </View>
+              <View>
+                <View
+                  accessibilityLabel="Bữa sáng"
+                  accessibilityRole="button"
+                  accessibilityState={
+                    {
+                      "disabled": false,
+                      "selected": false,
+                    }
+                  }
+                  accessible={true}
+                >
+                  <Text>
+                    Bữa sáng
+                  </Text>
+                </View>
+                <View
+                  accessibilityLabel="Bữa trưa"
+                  accessibilityRole="button"
+                  accessibilityState={
+                    {
+                      "disabled": false,
+                      "selected": false,
+                    }
+                  }
+                  accessible={true}
+                >
+                  <Text>
+                    Bữa trưa
+                  </Text>
+                </View>
+                <View
+                  accessibilityLabel="Bữa tối"
+                  accessibilityRole="button"
+                  accessibilityState={
+                    {
+                      "disabled": false,
+                      "selected": true,
+                    }
+                  }
+                  accessible={true}
+                >
+                  <Text>
+                    ✓
+                  </Text>
+                  <Text>
+                    Bữa tối
+                  </Text>
+                </View>
+                <View
+                  accessibilityLabel="Ăn nhẹ"
+                  accessibilityRole="button"
+                  accessibilityState={
+                    {
+                      "disabled": false,
+                      "selected": false,
+                    }
+                  }
+                  accessible={true}
+                >
+                  <Text>
+                    Ăn nhẹ
+                  </Text>
+                </View>
+              </View>
+              <Text>
+                Chọn buổi gợi ý giờ sáng 07:00, trưa 12:00, tối 19:00; mốc đã tới hoặc đã qua chuyển sang ngày mai. Ăn nhẹ giữ giờ đang chọn. Bạn có thể sửa giờ cụ thể.
+              </Text>
+              <View>
+                <Text>
+                  Ngân sách tham khảo (VNĐ/người)
+                </Text>
+                <TextInput
+                  accessibilityLabel="Ngân sách tham khảo (VNĐ/người)"
+                  editable={true}
+                  value=""
+                />
+                <Text>
+                  Để trống nếu chưa chọn. Thiếu giá không có nghĩa là rẻ; ngân sách là ưu tiên mềm.
+                </Text>
+              </View>
+            </View>
+            <View>
+              <Text
+                accessibilityRole="header"
+              >
+                Lịch sử và chống lặp
+              </Text>
+              <View>
+                <Text>
+                  Giảm ưu tiên món đã ăn gần đây
+                </Text>
+                <RCTSwitch
+                  accessibilityLabel="Tránh lặp món gần đây"
+                  accessibilityRole="switch"
+                  value={false}
+                />
+              </View>
+              <Text>
+                Tùy chọn chống lặp chung của phòng, do chủ phòng chọn. Chỉ có tác dụng khi có lịch sử và đồng ý phù hợp; không loại cứng món hoặc thay đổi phiếu.
+              </Text>
+            </View>
+            <View>
+              <Text>
+                BỐI CẢNH PHÒNG
+              </Text>
+              <Text>
+                Hồ Con Rùa
+              </Text>
+              <View>
+                <View>
+                  <Text>
+                    Bữa
+                  </Text>
+                  <Text>
+                    Bữa tối
+                  </Text>
+                </View>
+                <View>
+                  <Text>
+                    Thời gian
+                  </Text>
+                  <Text>
+                    2026-10-15 22:38 · UTC+7
+                  </Text>
+                </View>
+                <View>
+                  <Text>
+                    Bán kính
+                  </Text>
+                  <Text>
+                    1 km
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Tôi xác nhận điểm công cộng, buổi và giờ ăn"
+              accessibilityRole="button"
+              accessibilityState={
+                {
+                  "disabled": false,
+                  "selected": true,
+                }
+              }
+              accessible={true}
+            >
+              <Text>
+                ✓
+              </Text>
+              <Text>
+                Tôi xác nhận điểm công cộng, buổi và giờ ăn
+              </Text>
+            </View>
+            <View
+              accessibilityLabel="Xem món mẫu theo bối cảnh"
+              accessibilityRole="button"
+              accessibilityState={
+                {
+                  "busy": false,
+                  "disabled": false,
+                }
+              }
+              accessible={true}
+            >
+              <Text>
+                Xem món mẫu theo bối cảnh
+              </Text>
+            </View>
+            <View>
+              <Text
+                accessibilityRole="header"
+              >
+                Món có trong bối cảnh mẫu
+              </Text>
+              <Text>
+                Danh sách để xem trước, chưa chọn hay bỏ phiếu cho món ở bước này.
+              </Text>
+              <Text>
+                Đánh giá mẫu: 
+                2026-10-15 22:23
+                 · UTC+7. Không xác nhận đang bán trực tiếp.
+              </Text>
+              <View
+                accessibilityRole="summary"
+              >
+                <Text>
+                  Chưa có món cho buổi và giờ này
+                </Text>
+                <Text>
+                  Hãy sửa điểm ăn, giờ hoặc buổi rồi xác nhận lại. Không tự nới giờ/bán kính; khi lưu bối cảnh mới cả nhóm cần sẵn sàng lại.
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Lưu bối cảnh mẫu"
+              accessibilityRole="button"
+              accessibilityState={
+                {
+                  "busy": false,
+                  "disabled": false,
+                }
+              }
+              accessible={true}
+            >
+              <Text>
+                Lưu bối cảnh mẫu
+              </Text>
+            </View>
+            <View
+              accessibilityLabel="Chọn khẩu vị →"
+              accessibilityRole="button"
+              accessibilityState={
+                {
+                  "disabled": true,
+                }
+              }
+              accessible={true}
+            >
+              <Text>
+                Chọn khẩu vị →
+              </Text>
+            </View>
+          </View>
+        </RCTScrollView>
+      </View>
+    </RNCSafeAreaView>
+
+      74 |   await press('Tôi xác nhận điểm công cộng, buổi và giờ ăn');
+      75 |   await press('Xem món mẫu theo bối cảnh');
+    > 76 |   expect(screen.getByText(setupError(reason))).toBeOnTheScreen();
+         |                 ^
+      77 | });
+      78 |
+      79 | test('brand labelled Home returns to Home rather than previous context screen', async () => {
+
+      at getByText (.work/gm10Audit.test.tsx:76:17)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● consumer retains successful empty preview reason AVAILABILITY_UNKNOWN from GM-18
+
+    Unable to find an element with text: Chưa đủ dữ liệu để xác nhận giờ bán. Hãy sửa bối cảnh hoặc thử lại sau.
+
+    <RNCSafeAreaView>
+      <View>
+        <View
+          accessibilityLabel="Về trang chủ"
+          accessibilityRole="button"
+          accessibilityState={
+            {
+              "disabled": true,
+            }
+          }
+          accessible={true}
+        >
+          <View>
+            <Text>
+              🍜
+            </Text>
+          </View>
+          <Text>
+            Gì Cũng Được
+          </Text>
+        </View>
+        <View>
+          <View
+            accessibilityLabel="Bạn ăn cùng"
+            accessibilityRole="button"
+            accessibilityState={
+              {
+                "disabled": true,
+              }
+            }
+            accessible={true}
+          >
+            <Text>
+              👥
+            </Text>
+          </View>
+          <View
+            accessibilityLabel="Thông báo"
+            accessibilityRole="button"
+            accessibilityState={
+              {
+                "disabled": true,
+              }
+            }
+            accessible={true}
+          >
+            <Text>
+              🔔
+            </Text>
+          </View>
+          <View
+            accessibilityLabel="Hồ sơ"
+            accessibilityRole="button"
+            accessibilityState={
+              {
+                "disabled": true,
+              }
+            }
+            accessible={true}
+          >
+            <Text>
+              🙂
+            </Text>
+          </View>
+        </View>
+      </View>
+      <View>
+        <RCTScrollView>
+          <View>
+            <View
+              accessibilityLabel="‹ Quay lại"
+              accessibilityRole="button"
+              accessible={true}
+            >
+              <Text>
+                ‹ Quay lại
+              </Text>
+            </View>
+            <Text>
+              Mô phỏng · GM-10 · dữ liệu mẫu
+            </Text>
+            <Text
+              accessibilityRole="header"
+            >
+              Hẹn nhau ăn ở đâu?
+            </Text>
+            <Text>
+              Chọn một điểm ăn công cộng cho cả nhóm. Không chia sẻ GPS cá nhân.
+            </Text>
+            <View>
+              <Text
+                accessibilityRole="header"
+              >
+                Điểm ăn chung
+              </Text>
+              <Text>
+                1. Chọn khu vực
+              </Text>
+              <View>
+                <View
+                  accessibilityLabel="Quận 1, TP. Hồ Chí Minh"
+                  accessibilityRole="button"
+                  accessibilityState={
+                    {
+                      "disabled": false,
+                      "selected": false,
+                    }
+                  }
+                  accessible={true}
+                >
+                  <Text>
+                    Quận 1, TP. Hồ Chí Minh
+                  </Text>
+                </View>
+                <View
+                  accessibilityLabel="Quận 3, TP. Hồ Chí Minh"
+                  accessibilityRole="button"
+                  accessibilityState={
+                    {
+                      "disabled": false,
+                      "selected": true,
+                    }
+                  }
+                  accessible={true}
+                >
+                  <Text>
+                    ✓
+                  </Text>
+                  <Text>
+                    Quận 3, TP. Hồ Chí Minh
+                  </Text>
+                </View>
+                <View
+                  accessibilityLabel="TP. Thủ Đức, TP. Hồ Chí Minh"
+                  accessibilityRole="button"
+                  accessibilityState={
+                    {
+                      "disabled": false,
+                      "selected": false,
+                    }
+                  }
+                  accessible={true}
+                >
+                  <Text>
+                    TP. Thủ Đức, TP. Hồ Chí Minh
+                  </Text>
+                </View>
+              </View>
+              <View>
+                <Text>
+                  2. Chọn điểm công cộng
+                   trong Quận 3, TP. Hồ Chí Minh
+                </Text>
+                <View>
+                  <View
+                    accessibilityLabel="Hồ Con Rùa"
+                    accessibilityRole="button"
+                    accessibilityState={
+                      {
+                        "disabled": false,
+                        "selected": true,
+                      }
+                    }
+                    accessible={true}
+                  >
+                    <Text>
+                      ✓
+                    </Text>
+                    <Text>
+                      Hồ Con Rùa
+                    </Text>
+                  </View>
+                  <Text>
+                    Vòng xoay Công trường Quốc Tế, Phường 6, Quận 3
+                  </Text>
+                </View>
+              </View>
+              <View
+                accessibilityLabel="Gợi ý điểm ăn từ vị trí"
+                accessibilityRole="button"
+                accessible={true}
+              >
+                <Text>
+                  Gợi ý điểm ăn từ vị trí
+                </Text>
+              </View>
+              <Text>
+                3. Chọn bán kính quanh điểm ăn
+              </Text>
+              <View>
+                <View
+                  accessibilityLabel="1 km"
+                  accessibilityRole="button"
+                  accessibilityState={
+                    {
+                      "disabled": false,
+                      "selected": true,
+                    }
+                  }
+                  accessible={true}
+                >
+                  <Text>
+                    ✓
+                  </Text>
+                  <Text>
+                    1 km
+                  </Text>
+                </View>
+                <View
+                  accessibilityLabel="2 km"
+                  accessibilityRole="button"
+                  accessibilityState={
+                    {
+                      "disabled": false,
+                      "selected": false,
+                    }
+                  }
+                  accessible={true}
+                >
+                  <Text>
+                    2 km
+                  </Text>
+                </View>
+                <View
+                  accessibilityLabel="5 km"
+                  accessibilityRole="button"
+                  accessibilityState={
+                    {
+                      "disabled": false,
+                      "selected": false,
+                    }
+                  }
+                  accessible={true}
+                >
+                  <Text>
+                    5 km
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <View>
+              <Text
+                accessibilityRole="header"
+              >
+                Buổi và giờ ăn
+              </Text>
+              <View
+                accessibilityLabel="Ăn ngay · sau 15 phút"
+                accessibilityRole="button"
+                accessible={true}
+              >
+                <Text>
+                  Ăn ngay · sau 15 phút
+                </Text>
+              </View>
+              <View>
+                <Text>
+                  Giờ ăn (UTC+7)
+                </Text>
+                <TextInput
+                  accessibilityLabel="Giờ ăn (UTC+7)"
+                  editable={true}
+                  placeholder="YYYY-MM-DD HH:mm"
+                  value="2026-10-15 22:38"
+                />
+                <Text>
+                  Giờ cụ thể giữ nguyên, không cộng thêm 15 phút khi lưu hoặc thử lại.
+                </Text>
+              </View>
+              <View>
+                <View
+                  accessibilityLabel="Bữa sáng"
+                  accessibilityRole="button"
+                  accessibilityState={
+                    {
+                      "disabled": false,
+                      "selected": false,
+                    }
+                  }
+                  accessible={true}
+                >
+                  <Text>
+                    Bữa sáng
+                  </Text>
+                </View>
+                <View
+                  accessibilityLabel="Bữa trưa"
+                  accessibilityRole="button"
+                  accessibilityState={
+                    {
+                      "disabled": false,
+                      "selected": false,
+                    }
+                  }
+                  accessible={true}
+                >
+                  <Text>
+                    Bữa trưa
+                  </Text>
+                </View>
+                <View
+                  accessibilityLabel="Bữa tối"
+                  accessibilityRole="button"
+                  accessibilityState={
+                    {
+                      "disabled": false,
+                      "selected": true,
+                    }
+                  }
+                  accessible={true}
+                >
+                  <Text>
+                    ✓
+                  </Text>
+                  <Text>
+                    Bữa tối
+                  </Text>
+                </View>
+                <View
+                  accessibilityLabel="Ăn nhẹ"
+                  accessibilityRole="button"
+                  accessibilityState={
+                    {
+                      "disabled": false,
+                      "selected": false,
+                    }
+                  }
+                  accessible={true}
+                >
+                  <Text>
+                    Ăn nhẹ
+                  </Text>
+                </View>
+              </View>
+              <Text>
+                Chọn buổi gợi ý giờ sáng 07:00, trưa 12:00, tối 19:00; mốc đã tới hoặc đã qua chuyển sang ngày mai. Ăn nhẹ giữ giờ đang chọn. Bạn có thể sửa giờ cụ thể.
+              </Text>
+              <View>
+                <Text>
+                  Ngân sách tham khảo (VNĐ/người)
+                </Text>
+                <TextInput
+                  accessibilityLabel="Ngân sách tham khảo (VNĐ/người)"
+                  editable={true}
+                  value=""
+                />
+                <Text>
+                  Để trống nếu chưa chọn. Thiếu giá không có nghĩa là rẻ; ngân sách là ưu tiên mềm.
+                </Text>
+              </View>
+            </View>
+            <View>
+              <Text
+                accessibilityRole="header"
+              >
+                Lịch sử và chống lặp
+              </Text>
+              <View>
+                <Text>
+                  Giảm ưu tiên món đã ăn gần đây
+                </Text>
+                <RCTSwitch
+                  accessibilityLabel="Tránh lặp món gần đây"
+                  accessibilityRole="switch"
+                  value={false}
+                />
+              </View>
+              <Text>
+                Tùy chọn chống lặp chung của phòng, do chủ phòng chọn. Chỉ có tác dụng khi có lịch sử và đồng ý phù hợp; không loại cứng món hoặc thay đổi phiếu.
+              </Text>
+            </View>
+            <View>
+              <Text>
+                BỐI CẢNH PHÒNG
+              </Text>
+              <Text>
+                Hồ Con Rùa
+              </Text>
+              <View>
+                <View>
+                  <Text>
+                    Bữa
+                  </Text>
+                  <Text>
+                    Bữa tối
+                  </Text>
+                </View>
+                <View>
+                  <Text>
+                    Thời gian
+                  </Text>
+                  <Text>
+                    2026-10-15 22:38 · UTC+7
+                  </Text>
+                </View>
+                <View>
+                  <Text>
+                    Bán kính
+                  </Text>
+                  <Text>
+                    1 km
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Tôi xác nhận điểm công cộng, buổi và giờ ăn"
+              accessibilityRole="button"
+              accessibilityState={
+                {
+                  "disabled": false,
+                  "selected": true,
+                }
+              }
+              accessible={true}
+            >
+              <Text>
+                ✓
+              </Text>
+              <Text>
+                Tôi xác nhận điểm công cộng, buổi và giờ ăn
+              </Text>
+            </View>
+            <View
+              accessibilityLabel="Xem món mẫu theo bối cảnh"
+              accessibilityRole="button"
+              accessibilityState={
+                {
+                  "busy": false,
+                  "disabled": false,
+                }
+              }
+              accessible={true}
+            >
+              <Text>
+                Xem món mẫu theo bối cảnh
+              </Text>
+            </View>
+            <View>
+              <Text
+                accessibilityRole="header"
+              >
+                Món có trong bối cảnh mẫu
+              </Text>
+              <Text>
+                Danh sách để xem trước, chưa chọn hay bỏ phiếu cho món ở bước này.
+              </Text>
+              <Text>
+                Đánh giá mẫu: 
+                2026-10-15 22:23
+                 · UTC+7. Không xác nhận đang bán trực tiếp.
+              </Text>
+              <View
+                accessibilityRole="summary"
+              >
+                <Text>
+                  Chưa có món cho buổi và giờ này
+                </Text>
+                <Text>
+                  Hãy sửa điểm ăn, giờ hoặc buổi rồi xác nhận lại. Không tự nới giờ/bán kính; khi lưu bối cảnh mới cả nhóm cần sẵn sàng lại.
+                </Text>
+              </View>
+            </View>
+            <View
+              accessibilityLabel="Lưu bối cảnh mẫu"
+              accessibilityRole="button"
+              accessibilityState={
+                {
+                  "busy": false,
+                  "disabled": false,
+                }
+              }
+              accessible={true}
+            >
+              <Text>
+                Lưu bối cảnh mẫu
+              </Text>
+            </View>
+            <View
+              accessibilityLabel="Chọn khẩu vị →"
+              accessibilityRole="button"
+              accessibilityState={
+                {
+                  "disabled": true,
+                }
+              }
+              accessible={true}
+            >
+              <Text>
+                Chọn khẩu vị →
+              </Text>
+            </View>
+          </View>
+        </RCTScrollView>
+      </View>
+    </RNCSafeAreaView>
+
+      74 |   await press('Tôi xác nhận điểm công cộng, buổi và giờ ăn');
+      75 |   await press('Xem món mẫu theo bối cảnh');
+    > 76 |   expect(screen.getByText(setupError(reason))).toBeOnTheScreen();
+         |                 ^
+      77 | });
+      78 |
+      79 | test('brand labelled Home returns to Home rather than previous context screen', async () => {
+
+      at getByText (.work/gm10Audit.test.tsx:76:17)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+Test Suites: 1 failed, 1 total
+Tests:       2 failed, 5 passed, 7 total
+Snapshots:   0 total
+Time:        11.24 s, estimated 24 s
+Ran all test suites within paths ".work/gm10Audit.test.tsx".

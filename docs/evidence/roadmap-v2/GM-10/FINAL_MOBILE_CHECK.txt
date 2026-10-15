@@ -1,0 +1,55 @@
+
+> gi-cung-duoc-mobile@0.1.0 check
+> npm run typecheck && npm run lint && npm test && npm run check:architecture
+
+
+> gi-cung-duoc-mobile@0.1.0 typecheck
+> tsc --noEmit
+
+
+> gi-cung-duoc-mobile@0.1.0 lint
+> eslint .
+
+
+E:\Workspace\project\IE307\mobile\src\data\api\contracts.ts
+  342:18  warning  Array type using 'Array<T>' is forbidden. Use 'T[]' instead  @typescript-eslint/array-type
+
+E:\Workspace\project\IE307\mobile\src\data\api\index.ts
+  10:1  warning  Import in body of module; reorder to top  import/first
+  11:1  warning  Import in body of module; reorder to top  import/first
+  12:1  warning  Import in body of module; reorder to top  import/first
+
+✖ 4 problems (0 errors, 4 warnings)
+  0 errors and 4 warnings potentially fixable with the `--fix` option.
+
+
+> gi-cung-duoc-mobile@0.1.0 test
+> jest --runInBand
+
+PASS tests/component/roomSetupScreens.test.tsx (8.115 s)
+PASS tests/integration/routes.test.tsx (12.761 s)
+PASS tests/component/gm12Screens.test.tsx (8.72 s)
+PASS tests/component/roomEntryScreens.test.tsx (5.186 s)
+PASS tests/component/sharedComponents.test.tsx
+PASS tests/unit/apiContract.test.ts
+PASS tests/component/AppShellScreen.test.tsx
+PASS tests/unit/apiMockIsolation.test.ts
+PASS tests/unit/apiResponseValidation.test.ts
+PASS tests/unit/authTransport.test.ts
+PASS tests/unit/roomEntry.test.ts
+PASS tests/unit/authSession.test.ts
+PASS tests/unit/apiReadValidation.test.ts
+PASS tests/unit/decisionContract.test.ts
+PASS tests/unit/discovery.test.ts
+PASS tests/unit/roomSetup.test.ts
+
+Test Suites: 16 passed, 16 total
+Tests:       537 passed, 537 total
+Snapshots:   0 total
+Time:        43.418 s, estimated 45 s
+Ran all test suites.
+
+> gi-cung-duoc-mobile@0.1.0 check:architecture
+> node scripts/check-architecture.mjs
+
+Architecture boundaries OK (static guard, not a substitute for review).
