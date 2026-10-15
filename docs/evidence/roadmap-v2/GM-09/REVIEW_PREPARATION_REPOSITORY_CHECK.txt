@@ -1,0 +1,7 @@
+Gi Cung Duoc: documents, links, JSON, task manifest, dependencies and current FR traceability OK.
+Scope: documentation validation only; no native build/backend execution or human approval verified.
+Dependency approval uses live GitHub Project; run task_readiness --task before code/merge. This offline validator does not unlock tasks.
+Task indexes match task metadata.
+Source/test manifest: 11 files; mismatches: 0
+Task metadata unchanged: True
+validator_exit=0 indexes_exit=0 manifest_exit=0 diff_exit=0

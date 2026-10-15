@@ -1,0 +1,50 @@
+{
+  "task": "GM-09",
+  "contractVersion": "food-v1/roadmap-v2/GM-09.1",
+  "baseCommit": "9e9f5ba67899ea162b79b5c6ac17cd5479c505da",
+  "branch": "codex/gm-09-home-create-and-join-room",
+  "revision": "base + uncommitted working tree; hashes are raw SHA-256, not a commit",
+  "generatedAt": "2026-10-13T08:00:02.117928+00:00",
+  "files": {
+    "mobile/src/app/create-room.tsx": "49ca7a6156a3cdbf09852274166a06be625d99df8339cddbc73844dcf1215f48",
+    "mobile/src/app/index.tsx": "4af3be11a183a16e0c50b13717dc4407e989b1af53577a9443dcb1f7dd16d1f1",
+    "mobile/src/app/join-room.tsx": "4bfca7b5e32cc9c6bfb96a65b0435bab7f9a6a41e9ab32085ac16f5389f598d3",
+    "mobile/src/app/room-preview.tsx": "312c1267a6046a568cc420c36178b12f70cb6adfc3eb866932bf7d4d926d7ff4",
+    "mobile/src/app/shell.tsx": "17966c654da07a6583e1f7e2d22fbd961946f518187636823a10a9fe08ebfe4d",
+    "mobile/src/bootstrap/roomPreview.tsx": "26d3e4bc9c45fe3121f325938f0af889c1bcf9f4e2811d02d90b2e3ef88c6b5c",
+    "mobile/src/features/home/screens/HomeScreen.tsx": "6e8c752569e768189142ab2839904ee7aa445c8aa6a16cc165084a3020227351",
+    "mobile/src/features/rooms/components/RoomEntryFrame.tsx": "34d8f2e5d77ee4c5b4315adef335347930250d6890139ee3428e70342cd72430",
+    "mobile/src/features/rooms/hooks/useRoomEntry.ts": "3d3bc7d2c498988a86dac42a5360f952b2267e1c503df7302dc488f702c88023",
+    "mobile/src/features/rooms/screens/CreateRoomScreen.tsx": "91f57c0490d57e0f2cf757218f07dd987d27f366aa2b5474c1abb02b617b325f",
+    "mobile/src/features/rooms/screens/JoinRoomScreen.tsx": "f3dedc3395a41e234145b55112469e2c0b755331a97007a6d0b32ebf22fe2d83",
+    "mobile/src/features/rooms/screens/RoomEntryReceiptScreen.tsx": "4b5adab382c266d041c0703a944680c824cbe03d680cb60318473a5998549b72",
+    "mobile/src/features/rooms/services/roomEntry.ts": "9e5c556179c88c87b3ecda26fbf4345f24aa9484605bbb7bb2ef9e6aca1e4f59",
+    "mobile/tests/component/roomEntryScreens.test.tsx": "bfa2cec359807767d5b7276bfe4dad13d54fad30def7e69bf9f82ab1914d27fb",
+    "mobile/tests/integration/routes.test.tsx": "659c19ff13dbff5f1780f288cafb3e64bc3486f22158cc170012b974f1989abf",
+    "mobile/tests/unit/roomEntry.test.ts": "024d974ec360004466f3bfb651c882e2ed5b1cd7ea408784f521a017086ffdba"
+  },
+  "rulesSources": [
+    "AGENTS.md",
+    "tasks/backlog/GM-09.md",
+    "docs/project/TEAM_WORKFLOW.md",
+    "docs/project/DEFINITION_OF_DONE.md",
+    "docs/specs/UI_SPEC.md",
+    "docs/specs/UI_DESIGN_SPECIFICATION.md",
+    "docs/design/COMPONENT_MAP.md"
+  ],
+  "uiRework": {
+    "date": "2026-10-13",
+    "agentsDirectoryDeleted": true,
+    "reference": "docs/evidence/roadmap-v2/GM-09/UI_REWORK.md",
+    "readinessCheckedAt": "2026-10-13T07:38:01.320761+00:00",
+    "runtime": {
+      "node": "24.20.0",
+      "npm": "11.19.0",
+      "expo": "57.0.27",
+      "expoRouter": "57.0.25",
+      "reactNative": "0.86.3"
+    },
+    "deviceCheck": "Not run",
+    "approval": "Not granted"
+  }
+}

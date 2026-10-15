@@ -1,4 +1,4 @@
-import { render, screen, userEvent } from '@testing-library/react-native';
+import { fireEvent, render, screen, userEvent } from '@testing-library/react-native';
 import { act } from 'react';
 import { getThemeColors } from '../../src/shared/theme/tokens';
 import { AppButton, AvatarRow, Chip, ContextSummary, DishCard, FormField, RoomCode, StatusNotice } from '../../src/shared/ui';
@@ -15,6 +15,30 @@ test('shared controls expose labels, touch actions and selected state', async ()
   expect(onPress).toHaveBeenCalledTimes(1);
   expect(onChip).toHaveBeenCalledTimes(1);
   expect(screen.getByRole('button', { name: 'Món nước' }).props.accessibilityState.selected).toBe(true);
+});
+
+test.each(['primary', 'secondary'] as const)('AppButton %s accepts label and surface presses and preserves disabled/loading guards', async variant => {
+  const onPress = jest.fn();
+  const user = userEvent.setup();
+  const button = <AppButton label="Vào phòng" variant={variant} onPress={onPress} colors={colors} />;
+  const view = await render(button);
+
+  await user.press(screen.getByText('Vào phòng'));
+  expect(onPress).toHaveBeenCalledTimes(1);
+  await user.press(screen.getByRole('button', { name: 'Vào phòng' }));
+  expect(onPress).toHaveBeenCalledTimes(2);
+
+  for (const state of [{ disabled: true }, { loading: true }]) {
+    await view.rerender(<AppButton label="Vào phòng" variant={variant} onPress={onPress} colors={colors} {...state} />);
+    expect(screen.getByRole('button', { name: 'Vào phòng' })).toBeDisabled();
+    await fireEvent.press(screen.getByRole('button', { name: 'Vào phòng' }));
+    await fireEvent.press(screen.getByText(state.loading ? 'Đang xử lý…' : 'Vào phòng'));
+    expect(onPress).toHaveBeenCalledTimes(2);
+  }
+
+  await view.rerender(button);
+  await user.press(screen.getByText('Vào phòng'));
+  expect(onPress).toHaveBeenCalledTimes(3);
 });
 
 test('FormField reports errors and forwards editable input', async () => {
