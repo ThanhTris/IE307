@@ -3,8 +3,8 @@
   "task": "GM-23",
   "contract": "food-v1/roadmap-v2/GM-23.1",
   "schemaVersion": "0.7.0",
-  "checkedAt": "2026-10-15T13:22:15.924Z",
-  "revision": "c9d80e8028fe2e142942a5aa0a94bce3c10ee90c",
+  "checkedAt": "2026-10-15T13:25:22.720Z",
+  "revision": "ee99bd70032373507d6ea8032dfdae749bf7d360",
   "sourceHashes": {
     "supabase/migrations/0025_notifications.sql": "a1f8bab1b7853c52fb82e97afef470634b4776b75ae8a000bba2e24796f81ba1",
     "supabase/tests/notifications.sql": "b42fe4a9c066b0c6465d526562846683f0f825ad4f4c056ef11395947a31a4b6",

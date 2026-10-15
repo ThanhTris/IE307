@@ -1,7 +1,7 @@
 # GM-23 — Checks
 
 Checked on 2026-10-15, branch `codex/gm-23-notification-sender`, source base
-`60d884603e95129c313c69c9bac0a907002b2e22` (working tree includes the fixes under test).
+`ee99bd70032373507d6ea8032dfdae749bf7d360`.
 
 | Area | Expected | Actual | Result |
 |---|---|---|---|
