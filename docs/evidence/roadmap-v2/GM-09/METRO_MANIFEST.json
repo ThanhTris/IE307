@@ -1,0 +1,7 @@
+{
+  "statusCode": 200,
+  "sdkVersion": "57.0.0",
+  "runtimeVersion": "exposdk:57.0.0",
+  "launchAssetContentType": "application/javascript",
+  "launchAssetUrl": "http://127.0.0.1:8082/node_modules/expo-router/entry.bundle?platform=android&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=src%2Fapp&unstable_transformProfile=hermes-stable"
+}
