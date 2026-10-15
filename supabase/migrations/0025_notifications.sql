@@ -93,7 +93,7 @@ begin
   end if;
 end $$;
 
-create or replace function gm23_private.ensure_delivery(event_key uuid, recipient uuid, device_key uuid, generation bigint, expiry timestamptz)
+create or replace function gm23_private.ensure_delivery(event_key uuid, recipient uuid, device_key uuid, generation_key bigint, expiry timestamptz)
 returns void language plpgsql security definer set search_path = pg_catalog, public, gm23_private as $$
 declare delivery_key uuid;
 begin
@@ -101,23 +101,37 @@ begin
   insert into public.deliveries(id,event_id,recipient_user_id,device_id,state,attempts,ticket_id,receipt_id,last_attempt_at,expires_at,version)
     values(gen_random_uuid(),event_key,recipient,device_key,'pending',0,null,null,null,least(expiry,clock_timestamp()+interval '7 days'),1)
     on conflict (event_id,recipient_user_id,device_id) do update set
-      state=case when public.deliveries.state in ('expired','failed') and public.deliveries.expires_at>clock_timestamp() then 'pending' else public.deliveries.state end,
-      attempts=case when public.deliveries.state in ('expired','failed') and public.deliveries.expires_at>clock_timestamp() then 0 else public.deliveries.attempts end,
-      ticket_id=case when public.deliveries.state in ('expired','failed') and public.deliveries.expires_at>clock_timestamp() then null else public.deliveries.ticket_id end,
-      receipt_id=case when public.deliveries.state in ('expired','failed') and public.deliveries.expires_at>clock_timestamp() then null else public.deliveries.receipt_id end,
-      last_attempt_at=case when public.deliveries.state in ('expired','failed') and public.deliveries.expires_at>clock_timestamp() then null else public.deliveries.last_attempt_at end,
+      state=case when public.deliveries.state in ('expired','failed') and public.deliveries.expires_at>clock_timestamp()
+        and exists(select 1 from gm23_private.delivery_meta existing_meta where existing_meta.delivery_id=public.deliveries.id and existing_meta.registration_generation is distinct from generation_key)
+        then 'pending' else public.deliveries.state end,
+      attempts=case when public.deliveries.state in ('expired','failed') and public.deliveries.expires_at>clock_timestamp()
+        and exists(select 1 from gm23_private.delivery_meta existing_meta where existing_meta.delivery_id=public.deliveries.id and existing_meta.registration_generation is distinct from generation_key)
+        then 0 else public.deliveries.attempts end,
+      ticket_id=case when public.deliveries.state in ('expired','failed') and public.deliveries.expires_at>clock_timestamp()
+        and exists(select 1 from gm23_private.delivery_meta existing_meta where existing_meta.delivery_id=public.deliveries.id and existing_meta.registration_generation is distinct from generation_key)
+        then null else public.deliveries.ticket_id end,
+      receipt_id=case when public.deliveries.state in ('expired','failed') and public.deliveries.expires_at>clock_timestamp()
+        and exists(select 1 from gm23_private.delivery_meta existing_meta where existing_meta.delivery_id=public.deliveries.id and existing_meta.registration_generation is distinct from generation_key)
+        then null else public.deliveries.receipt_id end,
+      last_attempt_at=case when public.deliveries.state in ('expired','failed') and public.deliveries.expires_at>clock_timestamp()
+        and exists(select 1 from gm23_private.delivery_meta existing_meta where existing_meta.delivery_id=public.deliveries.id and existing_meta.registration_generation is distinct from generation_key)
+        then null else public.deliveries.last_attempt_at end,
       expires_at=least(public.deliveries.expires_at,excluded.expires_at),
       version=public.deliveries.version+1
     returning id into delivery_key;
   if delivery_key is not null then
     insert into gm23_private.delivery_meta(delivery_id,registration_generation,next_attempt_at)
-      values(delivery_key,generation,clock_timestamp()) on conflict (delivery_id) do update set
-        registration_generation=excluded.registration_generation,
-        next_attempt_at=case when exists(select 1 from public.deliveries delivery_state where delivery_state.id=delivery_key and delivery_state.state='pending') then clock_timestamp() else gm23_private.delivery_meta.next_attempt_at end,
-        lease_id=case when exists(select 1 from public.deliveries delivery_state where delivery_state.id=delivery_key and delivery_state.state='pending') then null else gm23_private.delivery_meta.lease_id end,
-        lease_until=case when exists(select 1 from public.deliveries delivery_state where delivery_state.id=delivery_key and delivery_state.state='pending') then null else gm23_private.delivery_meta.lease_until end,
-        last_error=case when exists(select 1 from public.deliveries delivery_state where delivery_state.id=delivery_key and delivery_state.state='pending') then null else gm23_private.delivery_meta.last_error end,
-        version=gm23_private.delivery_meta.version+1;
+      values(delivery_key,generation_key,clock_timestamp()) on conflict (delivery_id) do update set
+        registration_generation=case when gm23_private.delivery_meta.registration_generation is distinct from excluded.registration_generation then excluded.registration_generation else gm23_private.delivery_meta.registration_generation end,
+        next_attempt_at=case when gm23_private.delivery_meta.registration_generation is distinct from excluded.registration_generation
+          and exists(select 1 from public.deliveries delivery_state where delivery_state.id=delivery_key and delivery_state.state='pending') then clock_timestamp() else gm23_private.delivery_meta.next_attempt_at end,
+        lease_id=case when gm23_private.delivery_meta.registration_generation is distinct from excluded.registration_generation
+          and exists(select 1 from public.deliveries delivery_state where delivery_state.id=delivery_key and delivery_state.state='pending') then null else gm23_private.delivery_meta.lease_id end,
+        lease_until=case when gm23_private.delivery_meta.registration_generation is distinct from excluded.registration_generation
+          and exists(select 1 from public.deliveries delivery_state where delivery_state.id=delivery_key and delivery_state.state='pending') then null else gm23_private.delivery_meta.lease_until end,
+        last_error=case when gm23_private.delivery_meta.registration_generation is distinct from excluded.registration_generation
+          and exists(select 1 from public.deliveries delivery_state where delivery_state.id=delivery_key and delivery_state.state='pending') then null else gm23_private.delivery_meta.last_error end,
+        version=case when gm23_private.delivery_meta.registration_generation is distinct from excluded.registration_generation then gm23_private.delivery_meta.version+1 else gm23_private.delivery_meta.version end;
   end if;
 end $$;
 

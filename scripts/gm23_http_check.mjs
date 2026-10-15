@@ -162,6 +162,51 @@ async function main() {
     assert.match(output, /sender_sql_ok/);
     return { status: 200, claim: true, complete: true, receipt: true };
   });
+  await check('unchanged registration preserves lease and retry budget', async () => {
+    const sql = `begin;
+      do $fixture$
+      declare event_key uuid:=gen_random_uuid(); retry_event uuid:=gen_random_uuid(); room_key uuid; invitation_key uuid; delivery_key uuid; retry_delivery uuid; session_key uuid; claim jsonb; item jsonb; retry_claim jsonb; failed jsonb; retry_after jsonb;
+      begin
+        select e.room_id,e.invitation_id into room_key,invitation_key from public.events e where e.dedupe_key like 'gm23-sender:%' limit 1;
+        if room_key is null then raise exception 'lease fixture room missing'; end if;
+        insert into public.events(id,kind,room_id,invitation_id,result_id,recipient_user_ids,dedupe_key,created_at,expires_at,version)
+          values(event_key,'ROOM_INVITED',room_key,invitation_key,null,array['${guests[1].user.id}'::uuid],'gm23-lease-test:'||event_key::text,clock_timestamp(),clock_timestamp()+interval '1 hour',1);
+        select d.id into delivery_key from public.deliveries d where d.event_id=event_key;
+        if delivery_key is null then raise exception 'lease delivery missing'; end if;
+        perform set_config('request.jwt.claim.role','service_role',true);
+        claim:=public.claim_push_deliveries(1);
+        if jsonb_array_length(claim)<>1 then raise exception 'initial lease claim failed: %',claim; end if;
+        item:=claim->0;
+        perform set_config('request.jwt.claim.role','service_role',true);
+        perform set_config('request.jwt.claims',jsonb_build_object('sub','${guests[1].user.id}','session_id',(select d.session_id from public.devices d where d.id=(select device_id from public.deliveries where id=delivery_key)))::text,true);
+        perform public.register_push_device('gm23-lease-reregister-'||event_key::text,'${deviceId}','ExponentPushToken[synthetic-gm23-rotated-token]','granted');
+        retry_claim:=public.claim_push_deliveries(1);
+        if jsonb_array_length(retry_claim)<>0 then raise exception 'unchanged registration stole active lease: %',retry_claim; end if;
+        failed:=public.complete_push_delivery((item->>'deliveryId')::uuid,(item->>'leaseId')::uuid,'gm23-lease-ticket');
+        if failed->>'ok' is distinct from 'true' then raise exception 'original lease was lost: %',failed; end if;
+
+        insert into public.events(id,kind,room_id,invitation_id,result_id,recipient_user_ids,dedupe_key,created_at,expires_at,version)
+          values(retry_event,'ROOM_INVITED',room_key,invitation_key,null,array['${guests[1].user.id}'::uuid],'gm23-retry-test:'||retry_event::text,clock_timestamp(),clock_timestamp()+interval '1 hour',1);
+        select d.id into retry_delivery from public.deliveries d where d.event_id=retry_event;
+        claim:=public.claim_push_deliveries(1); item:=claim->0;
+        if jsonb_array_length(claim)<>1 then raise exception 'retry claim failed: %',claim; end if;
+        failed:=public.fail_push_delivery((item->>'deliveryId')::uuid,(item->>'leaseId')::uuid,'HTTP_429',600);
+        if failed->>'ok' is distinct from 'true' then raise exception 'retry scheduling failed: %',failed; end if;
+        perform public.register_push_device('gm23-backoff-reregister-'||retry_event::text,'${deviceId}','ExponentPushToken[synthetic-gm23-rotated-token]','granted');
+        retry_after:=public.claim_push_deliveries(1);
+        if jsonb_array_length(retry_after)<>0 then raise exception 'Retry-After was reset by unchanged registration: %',retry_after; end if;
+        update public.deliveries set attempts=5,state='failed',version=version+1 where id=retry_delivery;
+        update gm23_private.delivery_meta set next_attempt_at=clock_timestamp() where delivery_id=retry_delivery;
+        perform public.register_push_device('gm23-exhausted-reregister-'||retry_event::text,'${deviceId}','ExponentPushToken[synthetic-gm23-rotated-token]','granted');
+        retry_after:=public.claim_push_deliveries(1);
+        if jsonb_array_length(retry_after)<>0 then raise exception 'exhausted delivery was revived: %',retry_after; end if;
+      end $fixture$;
+      commit;
+      select 'lease_retry_ok';`;
+    const output = await fixture('sql', sql);
+    assert.match(output, /lease_retry_ok/);
+    return { status: 200, activeLeasePreserved: true, retryAfterPreserved: true, exhaustedAttemptsPreserved: true };
+  });
   await check('service role sender RPC is accepted over HTTP', async () => { const response = await senderRequest('claim_push_deliveries', { batch_size: 1 }); assert.equal(response.status, 200, JSON.stringify(response.body)); assert.ok(Array.isArray(response.body)); return { status: response.status, claimed: response.body.length }; });
   await check('denied permission does not retain token', async () => { success(await request('register_push_device', recipient, { requestId: randomUUID(), device_id: deviceId, token: 'ignored-token', permission: 'denied' })); const rows = (await fixture('sql', `select active::text||'|'||permission||'|'||(push_token is null)::text from public.devices where user_id='${guests[1].user.id}' and device_key='${deviceId}';`)).trim(); assert.equal(rows, 'false|denied|true'); return { status: 200, deviceProjection: 'inactive/denied/no-token' }; });
   await check('unregister clears token and is repeat-safe', async () => { const body = { requestId: randomUUID(), device_id: deviceId }; success(await request('unregister_push_device', recipient, body)); success(await request('unregister_push_device', recipient, { ...body, requestId: randomUUID() })); const rows = (await fixture('sql', `select active::text||'|'||(push_token is null)::text from public.devices where user_id='${guests[1].user.id}' and device_key='${deviceId}';`)).trim(); assert.equal(rows, 'false|true'); return { status: 200, cleaned: true }; });

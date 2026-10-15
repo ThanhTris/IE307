@@ -3,10 +3,10 @@
   "task": "GM-23",
   "contract": "food-v1/roadmap-v2/GM-23.1",
   "schemaVersion": "0.7.0",
-  "checkedAt": "2026-10-15T12:14:12.984Z",
-  "revision": "0fcdec9153f0e267d90a256dcdab496a20c1bec0",
+  "checkedAt": "2026-10-15T12:46:05.551Z",
+  "revision": "60d884603e95129c313c69c9bac0a907002b2e22",
   "sourceHashes": {
-    "supabase/migrations/0025_notifications.sql": "21b839e8207508f8c185a4888fdafc08df3c5e5cf8ca70cda0634a73a0112705",
+    "supabase/migrations/0025_notifications.sql": "d70c91b027180fb7777a840f77874921492094b2c0b2ce2b3c22a98e6ed8813f",
     "supabase/tests/notifications.sql": "b42fe4a9c066b0c6465d526562846683f0f825ad4f4c056ef11395947a31a4b6",
     "supabase/tests/http/GM-23.http": "887ff0eb27c8bbfea56b3f39dea41320013e603edcc3f7d4ab9d55b0566ece40",
     "supabase/functions/push-sender/index.ts": "3fc7ba9de45f635d50ee31e0e704b5dd21e224c47716bf9db76eb1925d931886"
@@ -38,6 +38,14 @@
       "claim": true,
       "complete": true,
       "receipt": true
+    },
+    {
+      "case": "unchanged registration preserves lease and retry budget",
+      "result": "Pass",
+      "status": 200,
+      "activeLeasePreserved": true,
+      "retryAfterPreserved": true,
+      "exhaustedAttemptsPreserved": true
     },
     {
       "case": "service role sender RPC is accepted over HTTP",
