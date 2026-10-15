@@ -1,1068 +1,188 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import type {
-  ApiClient,
-  MealSlot,
-  PublicAnchor,
-  RoomContext,
-  ServiceMode,
-} from '../../../data/api/contracts';
-import { ApiClientImpl } from '../../../data/api/client';
-import { MockApiClient } from '../../../data/api/mock';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { Pressable, Text, View } from 'react-native';
+import type { ErrorCode, MealSlot, PreviewFoodPoolResponse, RoomContext, RoomSnapshot, UpdateContextRequest } from '../../../data/api/contracts';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import {
-  AppButton,
-  Chip,
-  ContextSummary,
-  StatusNotice,
-} from '../../../shared/ui/components';
-import {
-  MockLocationAdapter,
-  createDefaultLocationAdapter,
-  LocationService,
-  sanitizeContextForServer,
-  type LocationAdapter,
-  type LocationResolution,
-  type TimeResolution,
-} from '../services/location';
+import { AppButton, Chip, ContextSummary, FormField, StatusNotice } from '../../../shared/ui';
+import { SetupFrame, SetupSection, SetupToggle, setupStyles as styles } from '../components/SetupFrame';
+import { MealDateTimeFields } from '../components/MealDateTimeFields';
+import { useRoomSetup, useSetupIntent, type RoomSetupData } from '../hooks/useRoomSetup';
+import { currentServerTime, dishDistance, dishPrice, localTime, mealLabels, nextMealTime, originLabels, parseBudget, parseLocalTime, setupError, suggestedMeal, temperatureLabels, type RequestIdFactory, type RoomSetupRepository, type SuggestAnchor } from '../services/roomSetup';
 
-export type ContextScenario =
-  | 'gps_grant_rua'
-  | 'gps_grant_dibo'
-  | 'gps_deny'
-  | 'gps_off'
-  | 'gps_outside_hanoi'
-  | 'manual_only'
-  | 'server_offline'
-  | 'server_empty'
-  | 'live_native';
+export type ContextScreenProps = {
+  repository: RoomSetupRepository; roomId: string; userId: string;
+  onBack: () => void; onHome?: () => void; onContinue: (room: RoomSnapshot) => void;
+  onSaved?: (room: RoomSnapshot) => void; suggestAnchor?: SuggestAnchor;
+  createRequestId?: RequestIdFactory; previewControls?: (busy: boolean) => ReactNode;
+};
 
-export type EnvironmentMode = 'mock' | 'real_api';
-
-export interface ContextScreenProps {
-  apiClient?: ApiClient;
-  initialScenario?: ContextScenario;
-  initialEnvironmentMode?: EnvironmentMode;
-  onSaveContext?: (context: RoomContext) => void;
-  onBack?: () => void;
-}
-
-const RADIUS_OPTIONS = [500, 1000, 1500, 2000, 3000, 5000];
-const MEAL_SLOTS: { label: string; value: MealSlot }[] = [
-  { label: 'Bữa sáng', value: 'breakfast' },
-  { label: 'Bữa trưa', value: 'lunch' },
-  { label: 'Bữa tối', value: 'dinner' },
-  { label: 'Ăn vặt', value: 'snack' },
-];
-const SERVICE_MODES: { label: string; value: ServiceMode }[] = [
-  { label: 'Ăn tại quán', value: 'dine_in' },
-  { label: 'Mang về', value: 'takeaway' },
-  { label: 'Giao hàng', value: 'delivery' },
-];
-
-export function ContextScreen({
-  apiClient,
-  initialScenario = 'gps_grant_rua',
-  initialEnvironmentMode = 'mock',
-  onSaveContext,
-  onBack,
-}: ContextScreenProps) {
+export function ContextScreen(props: ContextScreenProps) {
+  const data = useRoomSetup(props.repository, props.roomId);
   const { colors } = useShellTheme();
-  const [envMode, setEnvMode] = useState<EnvironmentMode>(initialEnvironmentMode);
-  const [scenario, setScenario] = useState<ContextScenario>(initialScenario);
-  const [loading, setLoading] = useState(false);
-  const [serverError, setServerError] = useState<string | null>(null);
-
-  // Real API endpoint & guest session state (for live verification without secrets)
-  const [realApiUrl] = useState<string>(
-    (typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_SUPABASE_URL)
-      ? process.env.EXPO_PUBLIC_SUPABASE_URL
-      : 'http://10.0.2.2:54321'
-  );
-  const [realClientStatus, setRealClientStatus] = useState<string>('Sẵn sàng');
-
-  // Discovery data from server
-  const [serverTime, setServerTime] = useState<string>('2026-10-15T11:30:00.000Z');
-  const [anchors, setAnchors] = useState<PublicAnchor[]>([]);
-
-  // Location resolution
-  const [locationState, setLocationState] = useState<LocationResolution>({
-    mode: 'gps',
-    permission: 'undetermined',
-    coords: null,
-    selectedAnchor: null,
-    distanceM: null,
-    isOutsideCoverage: false,
-    sortedAnchors: [],
-    errorMessage: null,
-  });
-
-  // Context selection states
-  const [radiusM, setRadiusM] = useState<number>(1500);
-  const [mealSlot, setMealSlot] = useState<MealSlot>('lunch');
-  const [serviceMode, setServiceMode] = useState<ServiceMode>('dine_in');
-  const [timeMode, setTimeMode] = useState<'now' | 'scheduled'>('now');
-  const [timeState, setTimeState] = useState<TimeResolution>({
-    mode: 'now',
-    serverTime: '2026-10-15T11:30:00.000Z',
-    bufferMinutes: 30,
-    desiredAt: '2026-10-15T12:00:00.000Z',
-    isPast: false,
-    requiresConfirmation: false,
-    confirmedPast: false,
-    isTooFarFuture: false,
-  });
-
-  // Real client instance (points to real Supabase endpoint)
-  const realClient = useMemo(() => {
-    return new ApiClientImpl({
-      baseUrl: realApiUrl,
-      defaultTimeoutMs: 15000,
-    });
-  }, [realApiUrl]);
-
-  // Active client: real or mock depending on envMode or explicit injection
-  const client = useMemo(() => {
-    if (apiClient) return apiClient;
-    if (envMode === 'real_api') return realClient;
-    return new MockApiClient();
-  }, [apiClient, envMode, realClient]);
-
-  // Location service setup based on current scenario
-  const service = useMemo(() => {
-    let adapter: LocationAdapter;
-    if (scenario === 'live_native') {
-      adapter = createDefaultLocationAdapter();
-    } else {
-      const mock = new MockLocationAdapter();
-      switch (scenario) {
-        case 'gps_grant_rua':
-          mock.setPermissionStatus('granted');
-          mock.setCoordinates({ latitude: 10.7828, longitude: 106.6958 }); // Hồ Con Rùa
-          break;
-        case 'gps_grant_dibo':
-          mock.setPermissionStatus('granted');
-          mock.setCoordinates({ latitude: 10.7743, longitude: 106.7034 }); // Phố Đi Bộ
-          break;
-        case 'gps_deny':
-          mock.setPermissionStatus('denied');
-          break;
-        case 'gps_off':
-          mock.setPermissionStatus('granted');
-          mock.setSimulateFailure(true);
-          break;
-        case 'gps_outside_hanoi':
-          mock.setPermissionStatus('granted');
-          mock.setCoordinates({ latitude: 21.0285, longitude: 105.8542 }); // Hà Nội (~1140km)
-          break;
-        case 'manual_only':
-          mock.setPermissionStatus('undetermined');
-          break;
-        default:
-          mock.setPermissionStatus('granted');
-      }
-      adapter = mock;
-    }
-    return new LocationService({ adapter });
-  }, [scenario]);
-
-  // Load discovery data on mount, scenario change, or environment switch
-  useEffect(() => {
-    let active = true;
-    const run = async () => {
-      try {
-        if (scenario === 'server_offline') {
-          throw new Error('NETWORK_TIMEOUT');
-        }
-
-        // When using real API mode without an active auth token, obtain a guest session first (GM-16)
-        const clientImpl = client instanceof ApiClientImpl ? client : null;
-        if (envMode === 'real_api' && clientImpl && !clientImpl.getAuthToken()) {
-          try {
-            setRealClientStatus('Đang xin phiên khách GM-16...');
-            const guestRes = await client.createGuestSession({ displayName: 'Khách GM-24' });
-            if (guestRes.ok && guestRes.data?.token) {
-              clientImpl.setAuthToken(guestRes.data.token);
-              setRealClientStatus('Đã cấp phiên khách GM-16: ' + guestRes.data.user.id.slice(0, 8));
-            }
-          } catch {
-            // If offline or unauthenticated, let discovery call surface the exact error code
-          }
-        }
-
-        const startTime = Date.now();
-        const response = await client.getDiscoveryContext();
-        if (!active) return;
-
-        if (!response.ok) {
-          setServerError(response.error.messageKey);
-          setAnchors([]);
-          if (envMode === 'real_api') {
-            setRealClientStatus(`Lỗi RPC: ${response.error.messageKey}`);
-          }
-          return;
-        }
-
-        // Clear stale error banner upon successful data load
-        setServerError(null);
-
-        const loadedTime = response.data.serverTime || new Date().toISOString();
-        setServerTime(loadedTime);
-
-        if (envMode === 'real_api') {
-          const latency = Date.now() - startTime;
-          setRealClientStatus(`200 OK (${latency}ms) · Server: ${loadedTime}`);
-        }
-
-        const loadedAnchors =
-          scenario === 'server_empty' ? [] : response.data.anchors ?? [];
-        setAnchors(loadedAnchors);
-
-        // Preserve scheduled mode if already selected; only reset to Eat Now if in now mode
-        setTimeState((prev) => {
-          if (prev.mode === 'scheduled') {
-            return service.resolveScheduledTime(prev.desiredAt, loadedTime, prev.confirmedPast);
-          }
-          return service.resolveEatNow(loadedTime, 30);
-        });
-
-        if (scenario === 'manual_only' || loadedAnchors.length === 0) {
-          const manual = service.resolveManual(
-            loadedAnchors[0]?.id ?? '',
-            loadedAnchors
-          );
-          setLocationState(manual);
-        } else {
-          const res = await service.resolveWithGps(loadedAnchors);
-          if (active) setLocationState(res);
-        }
-      } catch (err: unknown) {
-        if (!active) return;
-        const msg = (err as { message?: string })?.message ?? 'Lỗi kết nối máy chủ';
-        setServerError(msg);
-        setAnchors([]);
-        if (envMode === 'real_api') {
-          setRealClientStatus(`Lỗi mạng: ${msg}`);
-        }
-      }
-    };
-
-    void run();
-
-    return () => {
-      active = false;
-    };
-  }, [client, envMode, scenario, service]);
-
-  const handleRetry = async () => {
-    setLoading(true);
-    setServerError(null);
-    try {
-      const response = await client.getDiscoveryContext();
-      if (!response.ok) {
-        setServerError(response.error.messageKey);
-        setAnchors([]);
-        return;
-      }
-      setServerError(null);
-      const loadedTime = response.data.serverTime || new Date().toISOString();
-      setServerTime(loadedTime);
-      const loadedAnchors = response.data.anchors ?? [];
-      setAnchors(loadedAnchors);
-
-      // Preserve scheduled mode if already active
-      setTimeState((prev) => {
-        if (prev.mode === 'scheduled') {
-          return service.resolveScheduledTime(prev.desiredAt, loadedTime, prev.confirmedPast);
-        }
-        return service.resolveEatNow(loadedTime, 30);
-      });
-
-      const res = await service.resolveWithGps(loadedAnchors);
-      setLocationState(res);
-    } catch (err: unknown) {
-      const msg = (err as { message?: string })?.message ?? 'Lỗi kết nối máy chủ';
-      setServerError(msg);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Handlers
-  const handleSelectAnchor = (anchorId: string) => {
-    const res = service.resolveManual(anchorId, anchors, locationState.coords);
-    setLocationState(res);
-  };
-
-  const handleRefreshGps = async () => {
-    setLoading(true);
-    try {
-      const res = await service.resolveWithGps(anchors);
-      setLocationState(res);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleToggleTimeMode = (mode: 'now' | 'scheduled') => {
-    setTimeMode(mode);
-    if (mode === 'now') {
-      const nowRes = service.resolveEatNow(serverTime, 30);
-      setTimeState(nowRes);
-    } else {
-      // Scheduled mode: use current desiredAt directly without extra buffer
-      const schedRes = service.resolveScheduledTime(
-        timeState.desiredAt,
-        serverTime,
-        timeState.confirmedPast
-      );
-      setTimeState(schedRes);
-    }
-  };
-
-  const handleSetScheduledOffsetHours = (hours: number) => {
-    const serverTimestamp = Date.parse(serverTime);
-    const target = new Date(serverTimestamp + hours * 60 * 60 * 1000).toISOString();
-    const schedRes = service.resolveScheduledTime(target, serverTime, false);
-    setTimeState(schedRes);
-  };
-
-  const handleConfirmPastTime = () => {
-    const schedRes = service.resolveScheduledTime(
-      timeState.desiredAt,
-      serverTime,
-      true
-    );
-    setTimeState(schedRes);
-  };
-
-  const handleAdjustToValidNow = () => {
-    const adjusted = service.adjustToValidServerTime(serverTime, 30);
-    setTimeState(adjusted);
-  };
-
-  // Sanitized context payload for room / server
-  const sanitizedContext: RoomContext | null = useMemo(() => {
-    if (!locationState.selectedAnchor) return null;
-    try {
-      return sanitizeContextForServer({
-        anchorId: locationState.selectedAnchor.id,
-        anchorName: locationState.selectedAnchor.name,
-        radiusM,
-        desiredAt: timeState.desiredAt,
-        serviceMode,
-        mealSlot,
-        avoidRecent: false,
-      });
-    } catch {
-      return null;
-    }
-  }, [locationState.selectedAnchor, radiusM, timeState.desiredAt, serviceMode, mealSlot]);
-
-  // Guard for saving context: strictly disallow past time, pending confirmation, or out-of-bounds horizon
-  const canSaveContext = Boolean(
-    locationState.selectedAnchor &&
-    sanitizedContext &&
-    !timeState.requiresConfirmation &&
-    !timeState.isPast &&
-    !timeState.isTooFarFuture
-  );
-
-  const handleSaveContext = () => {
-    if (!canSaveContext || !sanitizedContext) return;
-    onSaveContext?.(sanitizedContext);
-  };
-
-  return (
-    <SafeAreaView
-      style={[styles.root, { backgroundColor: colors?.background ?? '#F8F6F2' }]}
-    >
-      <ScrollView contentContainerStyle={styles.content}>
-        {/* Header */}
-        <View style={styles.headerRow}>
-          <Text
-            accessibilityRole="header"
-            style={[styles.title, { color: colors?.text ?? '#1A202C' }]}
-          >
-            Bối cảnh & Vị trí phòng
-          </Text>
-          {onBack && (
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Quay lại"
-              onPress={onBack}
-              style={styles.backBtn}
-            >
-              <Text style={{ color: colors?.primary ?? '#FF5A36', fontWeight: '700' }}>
-                Quay lại
-              </Text>
-            </Pressable>
-          )}
-        </View>
-        <Text style={[styles.caption, { color: colors?.muted ?? '#64748B' }]}>
-          GM-24 · Foreground GPS gợi điểm công cộng · Không gửi GPS thô lên server
-        </Text>
-
-        {/* Environment Mode: Mock Scenarios vs Live Real API */}
-        <View
-          style={[
-            styles.card,
-            {
-              backgroundColor: colors?.surface ?? '#FFFFFF',
-              borderColor: colors?.line ?? '#E2E8F0',
-            },
-          ]}
-        >
-          <Text
-            accessibilityRole="header"
-            style={[styles.sectionTitle, { color: colors?.text ?? '#1A202C' }]}
-          >
-            ⚙️ Môi trường dữ liệu & API
-          </Text>
-          <View style={styles.chipGrid}>
-            <Chip
-              label="🧪 Môi trường kịch bản (Mock)"
-              selected={envMode === 'mock'}
-              onPress={() => setEnvMode('mock')}
-              colors={colors}
-            />
-            <Chip
-              label="🌐 Máy chủ thật (Live Supabase API)"
-              selected={envMode === 'real_api'}
-              onPress={() => {
-                setEnvMode('real_api');
-                setScenario('live_native');
-              }}
-              colors={colors}
-            />
-          </View>
-          {envMode === 'real_api' && (
-            <View style={{ gap: 6, marginTop: 4 }}>
-              <Text style={[styles.caption, { color: colors?.text ?? '#1A202C' }]}>
-                • Trạng thái kết nối: <Text style={{ fontWeight: '700' }}>{realClientStatus}</Text>
-              </Text>
-              <Text style={[styles.caption, { color: colors?.muted ?? '#64748B' }]}>
-                • Endpoint: {realApiUrl}
-              </Text>
-              <Text style={[styles.caption, { color: colors?.muted ?? '#64748B' }]}>
-                (Android Emulator: 10.0.2.2:54321 · Thiết bị thật qua WiFi: IP máy chủ LAN hoặc adb reverse tcp:54321 tcp:54321)
-              </Text>
-            </View>
-          )}
-        </View>
-
-        {/* Scenario Selector (for Testing & Verification on Android / Expo Go) */}
-        <View
-          style={[
-            styles.card,
-            {
-              backgroundColor: colors?.surface ?? '#FFFFFF',
-              borderColor: colors?.line ?? '#E2E8F0',
-            },
-          ]}
-        >
-          <Text
-            accessibilityRole="header"
-            style={[styles.sectionTitle, { color: colors?.text ?? '#1A202C' }]}
-          >
-            🧪 Kịch bản thử nghiệm
-          </Text>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.scenarioList}
-          >
-            <Chip
-              label="Hồ Con Rùa"
-              selected={scenario === 'gps_grant_rua'}
-              onPress={() => setScenario('gps_grant_rua')}
-              colors={colors}
-            />
-            <Chip
-              label="Phố Đi Bộ"
-              selected={scenario === 'gps_grant_dibo'}
-              onPress={() => setScenario('gps_grant_dibo')}
-              colors={colors}
-            />
-            <Chip
-              label="Từ chối GPS"
-              selected={scenario === 'gps_deny'}
-              onPress={() => setScenario('gps_deny')}
-              colors={colors}
-            />
-            <Chip
-              label="Tắt GPS"
-              selected={scenario === 'gps_off'}
-              onPress={() => setScenario('gps_off')}
-              colors={colors}
-            />
-            <Chip
-              label="Ngoài vùng (HN)"
-              selected={scenario === 'gps_outside_hanoi'}
-              onPress={() => setScenario('gps_outside_hanoi')}
-              colors={colors}
-            />
-            <Chip
-              label="Thủ công"
-              selected={scenario === 'manual_only'}
-              onPress={() => setScenario('manual_only')}
-              colors={colors}
-            />
-            <Chip
-              label="Server Offline"
-              selected={scenario === 'server_offline'}
-              onPress={() => setScenario('server_offline')}
-              colors={colors}
-            />
-            <Chip
-              label="Server Rỗng"
-              selected={scenario === 'server_empty'}
-              onPress={() => setScenario('server_empty')}
-              colors={colors}
-            />
-            <Chip
-              label="Thiết bị thực tế"
-              selected={scenario === 'live_native'}
-              onPress={() => setScenario('live_native')}
-              colors={colors}
-            />
-          </ScrollView>
-        </View>
-
-        {/* Server & Network Status Alert */}
-        {serverError && (
-          <StatusNotice
-            title="Lỗi tải dữ liệu khu vực"
-            message={`Không thể kết nối máy chủ: ${serverError}. Bạn có thể thử lại hoặc tiếp tục chọn thủ công.`}
-            tone="error"
-            actionLabel="Thử lại kết nối"
-            onAction={handleRetry}
-            colors={colors}
-          />
-        )}
-
-        {/* Location & Permission Status Notice */}
-        {locationState.errorMessage && (
-          <StatusNotice
-            title={
-              locationState.permission === 'denied'
-                ? 'Quyền vị trí bị từ chối'
-                : locationState.isOutsideCoverage
-                ? 'Vị trí ngoài vùng hỗ trợ'
-                : 'Thông báo định vị'
-            }
-            message={locationState.errorMessage}
-            tone={locationState.isOutsideCoverage ? 'warning' : 'info'}
-            colors={colors}
-          />
-        )}
-
-        {/* Section: Public Anchor Selection */}
-        <View
-          style={[
-            styles.card,
-            {
-              backgroundColor: colors?.surface ?? '#FFFFFF',
-              borderColor: colors?.line ?? '#E2E8F0',
-            },
-          ]}
-        >
-          <View style={styles.cardHeader}>
-            <Text
-              accessibilityRole="header"
-              style={[styles.sectionTitle, { color: colors?.text ?? '#1A202C' }]}
-            >
-              📍 Điểm hẹn công cộng
-            </Text>
-            <AppButton
-              label={loading ? 'Đang định vị…' : 'Định vị lại'}
-              variant="quiet"
-              disabled={loading}
-              onPress={handleRefreshGps}
-              colors={colors}
-            />
-          </View>
-
-          {locationState.selectedAnchor ? (
-            <View
-              style={[
-                styles.anchorBanner,
-                {
-                  backgroundColor: colors?.warm ?? '#FFF5ED',
-                  borderColor: colors?.primary ?? '#FF5A36',
-                },
-              ]}
-            >
-              <Text
-                style={[styles.anchorName, { color: colors?.primary ?? '#FF5A36' }]}
-              >
-                {locationState.selectedAnchor.name}
-              </Text>
-              <Text style={[styles.anchorAddress, { color: colors?.muted ?? '#64748B' }]}>
-                {locationState.selectedAnchor.address}
-              </Text>
-              <View style={styles.badgeRow}>
-                <View
-                  style={[
-                    styles.tagBadge,
-                    { backgroundColor: colors?.surface ?? '#FFFFFF' },
-                  ]}
-                >
-                  <Text style={{ fontSize: 12, fontWeight: '700' }}>
-                    {locationState.mode === 'gps' && locationState.distanceM !== null
-                      ? `🎯 Cách bạn ~${locationState.distanceM} m`
-                      : '✍️ Chọn thủ công'}
-                  </Text>
-                </View>
-                {locationState.isOutsideCoverage && (
-                  <View
-                    style={[
-                      styles.tagBadge,
-                      { backgroundColor: colors?.danger ?? '#EF4444' },
-                    ]}
-                  >
-                    <Text style={{ fontSize: 12, fontWeight: '700', color: '#FFFFFF' }}>
-                      Ngoài vùng phủ sóng
-                    </Text>
-                  </View>
-                )}
-              </View>
-            </View>
-          ) : (
-            <Text style={{ color: colors?.muted ?? '#64748B' }}>
-              Chưa có điểm hẹn công cộng nào được chọn.
-            </Text>
-          )}
-
-          {/* List of available public anchors for manual override */}
-          <Text
-            style={[
-              styles.fieldLabel,
-              { color: colors?.muted ?? '#64748B', marginTop: 12 },
-            ]}
-          >
-            Danh sách điểm hẹn sẵn có ({anchors.length}):
-          </Text>
-          <View style={styles.chipGrid}>
-            {anchors.map((anchor) => (
-              <Chip
-                key={anchor.id}
-                label={anchor.name}
-                selected={locationState.selectedAnchor?.id === anchor.id}
-                onPress={() => handleSelectAnchor(anchor.id)}
-                colors={colors}
-              />
-            ))}
-          </View>
-        </View>
-
-        {/* Section: Radius Selection */}
-        <View
-          style={[
-            styles.card,
-            {
-              backgroundColor: colors?.surface ?? '#FFFFFF',
-              borderColor: colors?.line ?? '#E2E8F0',
-            },
-          ]}
-        >
-          <Text
-            accessibilityRole="header"
-            style={[styles.sectionTitle, { color: colors?.text ?? '#1A202C' }]}
-          >
-            📏 Bán kính tìm quán
-          </Text>
-          <View style={styles.chipGrid}>
-            {RADIUS_OPTIONS.map((val) => (
-              <Chip
-                key={val}
-                label={val < 1000 ? `${val} m` : `${val / 1000} km`}
-                selected={radiusM === val}
-                onPress={() => setRadiusM(val)}
-                colors={colors}
-              />
-            ))}
-          </View>
-        </View>
-
-        {/* Section: Time & Server Buffer Resolution */}
-        <View
-          style={[
-            styles.card,
-            {
-              backgroundColor: colors?.surface ?? '#FFFFFF',
-              borderColor: colors?.line ?? '#E2E8F0',
-            },
-          ]}
-        >
-          <Text
-            accessibilityRole="header"
-            style={[styles.sectionTitle, { color: colors?.text ?? '#1A202C' }]}
-          >
-            ⏰ Thời gian ăn
-          </Text>
-
-          <View style={styles.tabRow}>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Chọn Ăn ngay"
-              onPress={() => handleToggleTimeMode('now')}
-              style={[
-                styles.tabButton,
-                timeMode === 'now' && {
-                  backgroundColor: colors?.primary ?? '#FF5A36',
-                },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.tabText,
-                  { color: timeMode === 'now' ? '#FFFFFF' : colors?.text ?? '#1A202C' },
-                ]}
-              >
-                ⚡ Ăn ngay (Buffer 30p)
-              </Text>
-            </Pressable>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Chọn Đặt giờ"
-              onPress={() => handleToggleTimeMode('scheduled')}
-              style={[
-                styles.tabButton,
-                timeMode === 'scheduled' && {
-                  backgroundColor: colors?.primary ?? '#FF5A36',
-                },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.tabText,
-                  {
-                    color:
-                      timeMode === 'scheduled'
-                        ? '#FFFFFF'
-                        : colors?.text ?? '#1A202C',
-                  },
-                ]}
-              >
-                🕒 Đặt giờ trước
-              </Text>
-            </Pressable>
-          </View>
-
-          <View style={styles.timeInfoBox}>
-            <Text style={[styles.bodySmall, { color: colors?.muted ?? '#64748B' }]}>
-              Giờ máy chủ: {new Date(serverTime).toLocaleTimeString('vi-VN')}
-            </Text>
-            <Text
-              style={[
-                styles.timeHighlight,
-                { color: colors?.primary ?? '#FF5A36' },
-              ]}
-            >
-              Mục tiêu ăn:{' '}
-              {new Date(timeState.desiredAt).toLocaleTimeString('vi-VN', {
-                hour: '2-digit',
-                minute: '2-digit',
-              })}{' '}
-              ({new Date(timeState.desiredAt).toLocaleDateString('vi-VN')})
-            </Text>
-            {timeMode === 'now' && (
-              <Text style={[styles.caption, { color: colors?.green ?? '#10B981' }]}>
-                ✓ Đã cộng 30 phút chuẩn bị một lần duy nhất từ giờ máy chủ.
-              </Text>
-            )}
-          </View>
-
-          {/* Scheduled mode controls */}
-          {timeMode === 'scheduled' && (
-            <View style={{ gap: 8, marginTop: 8 }}>
-              <Text style={[styles.caption, { color: colors?.muted ?? '#64748B' }]}>
-                Chọn mốc giờ tương đối:
-              </Text>
-              <View style={styles.chipGrid}>
-                <Chip
-                  label="+1 giờ"
-                  onPress={() => handleSetScheduledOffsetHours(1)}
-                  colors={colors}
-                />
-                <Chip
-                  label="+3 giờ"
-                  onPress={() => handleSetScheduledOffsetHours(3)}
-                  colors={colors}
-                />
-                <Chip
-                  label="+6 giờ"
-                  onPress={() => handleSetScheduledOffsetHours(6)}
-                  colors={colors}
-                />
-                <Chip
-                  label="Quá khứ (-1 giờ)"
-                  onPress={() => handleSetScheduledOffsetHours(-1)}
-                  colors={colors}
-                />
-              </View>
-
-              {timeState.isPast && (
-                <View
-                  style={[
-                    styles.warningBox,
-                    { backgroundColor: colors?.soft ?? '#F1EFE9' },
-                  ]}
-                >
-                  <Text style={{ color: colors?.danger ?? '#EF4444', fontWeight: '700' }}>
-                    ⚠️ Giờ đã chọn nằm trong quá khứ so với giờ máy chủ!
-                  </Text>
-                  <Text style={[styles.caption, { color: colors?.muted ?? '#64748B' }]}>
-                    Máy chủ từ chối tạo phòng nếu giờ ăn đã qua (DESIRED_TIME_PASSED). Vui lòng điều chỉnh về giờ hợp lệ.
-                  </Text>
-                  <View style={{ gap: 8, marginTop: 4 }}>
-                    <AppButton
-                      label="Điều chỉnh thành giờ hợp lệ (+30 phút từ giờ máy chủ)"
-                      variant="primary"
-                      onPress={handleAdjustToValidNow}
-                      colors={colors}
-                    />
-                    {timeState.requiresConfirmation && (
-                      <AppButton
-                        label="Xác nhận giờ này"
-                        variant="danger"
-                        onPress={handleConfirmPastTime}
-                        colors={colors}
-                      />
-                    )}
-                  </View>
-                </View>
-              )}
-            </View>
-          )}
-        </View>
-
-        {/* Section: Meal Slot & Service Mode */}
-        <View
-          style={[
-            styles.card,
-            {
-              backgroundColor: colors?.surface ?? '#FFFFFF',
-              borderColor: colors?.line ?? '#E2E8F0',
-            },
-          ]}
-        >
-          <Text
-            accessibilityRole="header"
-            style={[styles.sectionTitle, { color: colors?.text ?? '#1A202C' }]}
-          >
-            🍽️ Buổi ăn & Hình thức
-          </Text>
-          <Text style={[styles.fieldLabel, { color: colors?.muted ?? '#64748B' }]}>
-            Buổi ăn:
-          </Text>
-          <View style={styles.chipGrid}>
-            {MEAL_SLOTS.map((slot) => (
-              <Chip
-                key={slot.value}
-                label={slot.label}
-                selected={mealSlot === slot.value}
-                onPress={() => setMealSlot(slot.value)}
-                colors={colors}
-              />
-            ))}
-          </View>
-
-          <Text
-            style={[
-              styles.fieldLabel,
-              { color: colors?.muted ?? '#64748B', marginTop: 12 },
-            ]}
-          >
-            Hình thức:
-          </Text>
-          <View style={styles.chipGrid}>
-            {SERVICE_MODES.map((mode) => (
-              <Chip
-                key={mode.value}
-                label={mode.label}
-                selected={serviceMode === mode.value}
-                onPress={() => setServiceMode(mode.value)}
-                colors={colors}
-              />
-            ))}
-          </View>
-        </View>
-
-        {/* Summary Card */}
-        {sanitizedContext && (
-          <ContextSummary
-            anchorName={sanitizedContext.anchorName ?? 'Điểm công cộng'}
-            mealLabel={
-              MEAL_SLOTS.find((m) => m.value === sanitizedContext.mealSlot)?.label ??
-              sanitizedContext.mealSlot
-            }
-            desiredAtLabel={new Date(sanitizedContext.desiredAt).toLocaleTimeString('vi-VN', {
-              hour: '2-digit',
-              minute: '2-digit',
-            })}
-            radiusLabel={`${sanitizedContext.radiusM / 1000} km`}
-            serviceModeLabel={
-              SERVICE_MODES.find((s) => s.value === sanitizedContext.serviceMode)?.label
-            }
-            colors={colors}
-          />
-        )}
-
-        {/* Privacy Audit Card */}
-        <View
-          style={[
-            styles.card,
-            {
-              backgroundColor: colors?.surface ?? '#FFFFFF',
-              borderColor: colors?.green ?? '#10B981',
-              borderWidth: 1.5,
-            },
-          ]}
-        >
-          <Text
-            accessibilityRole="header"
-            style={[styles.sectionTitle, { color: colors?.green ?? '#10B981' }]}
-          >
-            🛡️ BẢO MẬT & QUYỀN RIÊNG TƯ (AUDIT)
-          </Text>
-          <Text style={[styles.bodySmall, { color: colors?.text ?? '#1A202C' }]}>
-            • Vị trí GPS thiết bị:{' '}
-            <Text style={{ fontWeight: '700' }}>
-              {locationState.coords
-                ? `Được giữ cục bộ (${locationState.coords.latitude.toFixed(4)}, ${locationState.coords.longitude.toFixed(4)})`
-                : 'Không lưu'}
-            </Text>
-          </Text>
-          <Text style={[styles.bodySmall, { color: colors?.text ?? '#1A202C' }]}>
-            • Payload gửi server:{' '}
-            <Text style={{ fontWeight: '700', color: colors?.primary ?? '#FF5A36' }}>
-              {sanitizedContext
-                ? JSON.stringify({
-                    anchorId: sanitizedContext.anchorId,
-                    radiusM: sanitizedContext.radiusM,
-                    desiredAt: sanitizedContext.desiredAt,
-                    mealSlot: sanitizedContext.mealSlot,
-                    serviceMode: sanitizedContext.serviceMode,
-                  })
-                : 'N/A'}
-            </Text>
-          </Text>
-          <Text style={[styles.caption, { color: colors?.green ?? '#10B981', marginTop: 4 }]}>
-            ✓ Bảo đảm quyền riêng tư: Payload gửi máy chủ chỉ chứa anchorId, không chứa tọa độ GPS thô (0 tọa độ GPS thô trong request payload và client log).
-          </Text>
-        </View>
-
-        {/* Save / Apply Context Button */}
-        {onSaveContext && sanitizedContext && (
-          <View style={{ gap: 6, marginTop: 4 }}>
-            <AppButton
-              label="Xác nhận bối cảnh phòng"
-              variant="primary"
-              disabled={!canSaveContext}
-              onPress={handleSaveContext}
-              colors={colors}
-            />
-            {!canSaveContext && (
-              <Text style={[styles.caption, { color: colors?.danger ?? '#EF4444', textAlign: 'center' }]}>
-                {!locationState.selectedAnchor
-                  ? 'Vui lòng chọn một điểm hẹn công cộng.'
-                  : timeState.isPast
-                  ? 'Không thể lưu: thời gian ăn đang ở quá khứ (DESIRED_TIME_PASSED).'
-                  : timeState.isTooFarFuture
-                  ? 'Không thể lưu: thời gian ăn vượt quá 7 ngày.'
-                  : timeState.requiresConfirmation
-                  ? 'Vui lòng xác nhận hoặc điều chỉnh thời gian ăn.'
-                  : 'Vui lòng hoàn tất cấu hình bối cảnh hợp lệ.'}
-              </Text>
-            )}
-          </View>
-        )}
-      </ScrollView>
-    </SafeAreaView>
-  );
+  if (data.value) return <ContextForm {...props} loaded={data.value} reload={data.reload} />;
+  return <SetupFrame title="Hẹn nhau ăn ở đâu?" onBack={props.onBack} onHome={props.onHome} controls={props.previewControls?.(false)}>
+    <StatusNotice title={data.loading ? 'Đang tải bối cảnh…' : 'Chưa tải được bối cảnh'} message={data.error ? setupError(data.error) : undefined} actionLabel={data.error ? 'Tải lại bối cảnh' : undefined} onAction={data.reload} colors={colors} />
+  </SetupFrame>;
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1 },
-  content: {
-    padding: 20,
-    gap: 16,
-    maxWidth: 600,
-    width: '100%',
-    alignSelf: 'center',
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  title: { fontSize: 24, fontWeight: '800', lineHeight: 30 },
-  backBtn: { padding: 8 },
-  caption: { fontSize: 13, lineHeight: 18 },
-  card: { padding: 16, borderRadius: 16, borderWidth: 1, gap: 12 },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  sectionTitle: { fontSize: 16, fontWeight: '700' },
-  fieldLabel: { fontSize: 13, fontWeight: '600' },
-  scenarioList: { gap: 8, paddingVertical: 4 },
-  chipGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  anchorBanner: {
-    padding: 14,
-    borderRadius: 12,
-    borderWidth: 1.5,
-    gap: 6,
-  },
-  anchorName: { fontSize: 17, fontWeight: '700' },
-  anchorAddress: { fontSize: 13 },
-  badgeRow: { flexDirection: 'row', gap: 8, marginTop: 4 },
-  tagBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-  },
-  tabRow: {
-    flexDirection: 'row',
-    borderRadius: 10,
-    backgroundColor: '#F1EFE9',
-    padding: 4,
-    gap: 4,
-  },
-  tabButton: {
-    flex: 1,
-    paddingVertical: 10,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  tabText: { fontSize: 13, fontWeight: '700' },
-  timeInfoBox: {
-    padding: 12,
-    borderRadius: 10,
-    backgroundColor: '#F8F6F2',
-    gap: 4,
-  },
-  bodySmall: { fontSize: 13, lineHeight: 18 },
-  timeHighlight: { fontSize: 16, fontWeight: '700' },
-  warningBox: {
-    padding: 12,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#EF4444',
-    gap: 8,
-    marginTop: 8,
-  },
-});
+function ContextForm({ repository, roomId, userId, onBack, onHome, onContinue, onSaved, suggestAnchor, createRequestId, previewControls, loaded, reload }: ContextScreenProps & { loaded: RoomSetupData; reload: () => void }) {
+  const { colors, dark } = useShellTheme();
+  const data = { value: loaded, reload };
+  const writer = useSetupIntent<UpdateContextRequest>(createRequestId);
+  const [draft, setDraft] = useState<RoomContext>({ ...loaded.room.context });
+  const [area, setArea] = useState(loaded.discovery.anchors.find(a => a.id === loaded.room.context.anchorId)?.coverageId ?? '');
+  const [date, setDate] = useState(localTime(loaded.room.context.desiredAt).slice(0, 10));
+  const [time, setTime] = useState(localTime(loaded.room.context.desiredAt).slice(11));
+  const [budget, setBudget] = useState(loaded.room.context.budget == null ? '' : String(loaded.room.context.budget));
+  const [confirmed, setConfirmed] = useState(false);
+  const [preview, setPreview] = useState<PreviewFoodPoolResponse>();
+  const [previewBusy, setPreviewBusy] = useState(false);
+  const [suggestBusy, setSuggestBusy] = useState(false);
+  const [notice, setNotice] = useState<string>();
+  const [error, setError] = useState<string>();
+  const [previewErrorCode, setPreviewErrorCode] = useState<ErrorCode>();
+  const [saved, setSaved] = useState<RoomSnapshot>();
+  const [snapshotError, setSnapshotError] = useState(false);
+  const alive = useRef(true);
+  useEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
+  const room = data.value?.room;
+  const discovery = data.value?.discovery;
+  const member = room?.members.some(m => m.userId === userId);
+  const host = room?.hostUserId === userId;
+  const serverNow = () => currentServerTime(loaded.discovery.serverTime, loaded.loadedAt);
+  const editable = !!room && room.state === 'LOBBY' && member && Date.parse(room.expiresAt) > Date.parse(loaded.discovery.serverTime);
+  const busy = writer.pending || writer.uncertain || previewBusy || suggestBusy;
+  const needsReload = [previewErrorCode, writer.error].some(code => code === 'VERSION_CONFLICT' || code === 'CONTEXT_CHANGED');
+  const disabled = writer.locked || previewBusy || suggestBusy || !editable || !host || needsReload;
+  const anchor = discovery?.anchors.find(a => a.id === draft?.anchorId && a.coverageId === area);
+  const resetPreview = () => { setConfirmed(false); setPreview(undefined); setPreviewErrorCode(undefined); setError(undefined); writer.clear(); };
+  const change = (patch: Partial<RoomContext>) => { setDraft(v => v ? { ...v, ...patch } : v); resetPreview(); };
+  function context(): RoomContext | undefined {
+    const desiredAt = parseLocalTime(`${date} ${time}`);
+    const amount = parseBudget(budget);
+    if (!draft || !anchor) { setError('Hãy chọn điểm ăn công cộng trong vùng hỗ trợ.'); return; }
+    if (Date.parse(room.expiresAt) <= serverNow()) { setError(setupError('ROOM_EXPIRED')); return; }
+    if (!desiredAt || Date.parse(desiredAt) <= serverNow()) { setError('Ngày ăn và giờ ăn phải hợp lệ, chưa qua; ngày YYYY-MM-DD, giờ HH:mm (UTC+7).'); return; }
+    if (amount === undefined) { setError('Ngân sách là số nguyên VNĐ/người từ 0 hoặc để trống.'); return; }
+    return { ...draft, anchorId: anchor.id, anchorName: anchor.name, desiredAt, budget: amount,
+      timeHint: draft.mealSlot === 'dinner' ? suggestedMeal(desiredAt).timeHint : undefined };
+  }
+  async function previewPool() {
+    const value = context();
+    if (!value || !editable) return;
+    if (!confirmed) { setError('Hãy xác nhận điểm công cộng, buổi và giờ trước khi xem món.'); return; }
+    setPreviewBusy(true); setPreview(undefined); setPreviewErrorCode(undefined); setError(undefined);
+    try {
+      const result = await repository.previewFoodPool({ anchorId: value.anchorId, radiusM: value.radiusM, desiredAt: value.desiredAt, serviceMode: value.serviceMode, mealSlot: value.mealSlot, timeHint: value.timeHint, budget: value.budget });
+      if (!alive.current) return;
+      if (result.ok) setPreview(result.data); else { setPreviewErrorCode(result.error.messageKey); setError(setupError(result.error.messageKey)); }
+    } catch { if (alive.current) setError('Chưa tải được món mẫu. Hãy thử lại.'); }
+    finally { if (alive.current) setPreviewBusy(false); }
+  }
+  async function readSaved() {
+    setSnapshotError(false);
+    try {
+      const result = await repository.getRoomSnapshot(roomId);
+      if (!alive.current) return;
+      if (result.ok) { setSaved(result.data); onSaved?.(result.data); }
+      else setSnapshotError(true);
+    } catch { if (alive.current) setSnapshotError(true); }
+  }
+  async function save() {
+    if (!editable || !host || needsReload) return;
+    if (!writer.uncertain && Date.parse(room.expiresAt) <= serverNow()) { setError(setupError('ROOM_EXPIRED')); return; }
+    const value = writer.uncertain ? draft : context();
+    if (!value || (!writer.uncertain && (!confirmed || !preview?.pool.length))) { setError('Hãy xác nhận bối cảnh và kiểm tra có món trước khi lưu.'); return; }
+    const result = await writer.submit({ roomId, expectedVersion: room!.version, context: value }, request => repository.updateContext(request));
+    if (result?.ok) await readSaved();
+  }
+  async function suggest() {
+    setSuggestBusy(true);
+    try {
+      const result = suggestAnchor ? await suggestAnchor() : { status: 'unavailable' as const };
+      if (!alive.current) return;
+      if (result.status === 'suggested') {
+        const next = discovery?.anchors.find(a => a.id === result.anchorId);
+        if (next) { setArea(next.coverageId); change({ anchorId: next.id }); setNotice('Điểm công cộng được gợi ý. Bạn cần kiểm tra và xác nhận trước khi lưu.'); }
+        else setNotice('Điểm gợi ý chưa nằm trong dữ liệu hỗ trợ. Hãy chọn bằng tay.');
+      } else setNotice(result.status === 'outside' ? 'Bạn đang ngoài vùng dữ liệu mẫu. Hãy chọn điểm công cộng bằng tay.' : 'Không có quyền hoặc chưa dùng được vị trí. Bạn vẫn chọn điểm ăn bằng tay.');
+    } catch { if (alive.current) setNotice('Chưa lấy được gợi ý vị trí. Hãy chọn điểm ăn bằng tay.'); }
+    finally { if (alive.current) setSuggestBusy(false); }
+  }
+  return <SetupFrame title="Hẹn nhau ăn ở đâu?" onBack={onBack} onHome={onHome} busy={busy} controls={previewControls?.(busy)}>
+    <Text style={[styles.body, { color: colors.muted }]}>Chọn một điểm ăn công cộng cho cả nhóm. Không chia sẻ GPS cá nhân.</Text>
+    {room && !editable ? <StatusNotice title="Chưa thể sửa phòng" message="Phiên không hợp lệ, phòng đã khóa hoặc hết hạn. Hãy quay lại kiểm tra." colors={colors} /> : null}
+    {editable && !host ? <StatusNotice title="Bối cảnh do chủ phòng xác nhận" message="Bạn có thể xem bối cảnh và chọn khẩu vị riêng; không thay điểm ăn hoặc giờ của nhóm." colors={colors} /> : null}
+    {draft && discovery ? <>
+      <SetupSection title="Điểm ăn chung">
+        <Text style={[styles.body, { color: colors.text }]}>1. Chọn khu vực</Text>
+        <View style={styles.row}>{discovery.coverageAreas.map(v => <Chip key={v.id} label={v.name} selected={area === v.id} disabled={disabled} onPress={() => { setArea(v.id); change({ anchorId: '' }); }} colors={colors} />)}</View>
+        <View style={[styles.anchorGroup, { backgroundColor: colors.background, borderColor: colors.border }]}>
+        <Text style={[styles.body, { color: colors.text }]}>2. Chọn điểm công cộng{area ? ` trong ${discovery.coverageAreas.find(v => v.id === area)?.name ?? 'khu vực đã chọn'}` : ''}</Text>
+        {discovery.anchors.filter(v => v.coverageId === area).map(v => <View key={v.id} style={styles.section}>
+          <Chip label={v.name} selected={draft.anchorId === v.id} disabled={disabled} onPress={() => change({ anchorId: v.id })} colors={colors} />
+          <Text style={[styles.caption, { color: colors.muted }]}>{v.address}</Text>
+        </View>)}
+        {!discovery.anchors.some(v => v.coverageId === area) ? <StatusNotice title="Chưa có điểm công cộng" message="Vùng này chưa có dữ liệu. Tải lại hoặc chọn vùng được hỗ trợ; không tự lấy vị trí cá nhân thay thế." colors={colors} /> : null}
+        </View>
+        <AppButton label="Gợi ý điểm ăn từ vị trí" variant="secondary" disabled={disabled} onPress={() => { void suggest(); }} colors={colors} />
+        {notice ? <StatusNotice title="Chọn điểm bằng tay luôn khả dụng" message={notice} colors={colors} /> : null}
+        <Text style={[styles.body, { color: colors.text }]}>3. Chọn bán kính quanh điểm ăn</Text>
+        <View style={styles.row}>{[1000, 2000, 5000].map(v => <Chip key={v} label={`${v / 1000} km`} selected={draft.radiusM === v} disabled={disabled} onPress={() => change({ radiusM: v })} colors={colors} />)}</View>
+      </SetupSection>
+      <SetupSection title="Buổi và giờ ăn">
+        <AppButton label="Ăn ngay · sau 15 phút" variant="secondary" disabled={disabled} colors={colors} onPress={() => {
+          const iso = new Date(serverNow() + 15 * 60000).toISOString(); setDate(localTime(iso).slice(0, 10)); setTime(localTime(iso).slice(11)); change({ desiredAt: iso, ...suggestedMeal(iso) });
+        }} />
+        <MealDateTimeFields date={date} time={time} disabled={disabled} getToday={() => localTime(new Date(serverNow()).toISOString()).slice(0, 10)} onDateChange={v => { setDate(v); resetPreview(); }} onTimeChange={v => { setTime(v); resetPreview(); }} />
+        <View style={styles.row}>{(Object.keys(mealLabels) as MealSlot[]).map(v => <Chip key={v} label={mealLabels[v]} selected={draft.mealSlot === v} disabled={disabled} onPress={() => {
+          const iso = nextMealTime(v, serverNow());
+          if (iso) { setDate(localTime(iso).slice(0, 10)); setTime(localTime(iso).slice(11)); }
+          change({ mealSlot: v, timeHint: undefined, ...(iso ? { desiredAt: iso } : {}) });
+        }} colors={colors} />)}</View>
+        <Text style={[styles.caption, { color: colors.muted }]}>Chọn buổi gợi ý giờ sáng 07:00, trưa 12:00, tối 19:00; mốc đã tới hoặc đã qua chuyển sang ngày mai. Ăn nhẹ giữ giờ đang chọn. Bạn có thể sửa giờ cụ thể.</Text>
+      </SetupSection>
+      <SetupSection title="Ngân sách tham khảo">
+        <FormField label="Ngân sách tham khảo (VNĐ/người)" value={budget} editable={!disabled} keyboardType="numeric" onChangeText={v => { setBudget(v); resetPreview(); }} helperText="Để trống nếu chưa chọn. Thiếu giá không có nghĩa là rẻ; ngân sách là ưu tiên mềm." colors={colors} />
+      </SetupSection>
+      <SetupSection title="Lịch sử và chống lặp">
+        <SetupToggle label="Giảm ưu tiên món đã ăn gần đây" accessibilityLabel="Tránh lặp món gần đây" disabled={disabled} value={draft.avoidRecent} onValueChange={v => change({ avoidRecent: v })} />
+        <Text style={[styles.caption, { color: colors.muted }]}>Tùy chọn chống lặp chung của phòng, do chủ phòng chọn. Chỉ có tác dụng khi có lịch sử và đồng ý phù hợp; không loại cứng món hoặc thay đổi phiếu.</Text>
+      </SetupSection>
+      <ContextSummary anchorName={anchor?.name ?? 'Chưa chọn điểm công cộng'} mealLabel={mealLabels[draft.mealSlot]} desiredAtLabel={`${date} ${time} · UTC+7`} radiusLabel={`${draft.radiusM / 1000} km`} colors={colors} />
+      {host ? <>
+        <Pressable accessibilityRole="checkbox" accessibilityLabel="Tôi xác nhận điểm công cộng, buổi và giờ ăn" accessibilityHint="Xác nhận bối cảnh đã chọn trước khi xem món và lưu" accessibilityState={{ checked: confirmed, disabled }} disabled={disabled} onPress={() => setConfirmed(v => !v)}
+          style={({ pressed }) => [styles.confirmation, { backgroundColor: confirmed ? colors.surface : colors.warm, borderColor: confirmed ? colors.green : colors.primary, opacity: disabled || pressed ? 0.65 : 1 }]}>
+          <View accessible={false} style={[styles.checkbox, { backgroundColor: confirmed ? colors.green : colors.surface, borderColor: confirmed ? colors.green : colors.border }]}>
+            {confirmed ? <Text allowFontScaling={false} style={[styles.checkboxTick, { color: dark ? colors.background : colors.text }]}>✓</Text> : null}
+          </View>
+          <View style={styles.confirmationLabel}>
+            <Text style={[styles.body, { color: colors.text }]}>Tôi xác nhận điểm công cộng, buổi và giờ ăn</Text>
+            <Text style={[styles.caption, { color: colors.muted }]}>{confirmed ? 'Đã xác nhận · Có thể xem món' : 'Chạm để xác nhận bối cảnh của nhóm'}</Text>
+          </View>
+        </Pressable>
+        <AppButton label="Xem món mẫu theo bối cảnh" disabled={disabled} loading={previewBusy} onPress={() => { void previewPool(); }} colors={colors} />
+      </> : null}
+      {preview ? <SetupSection title="Món có trong bối cảnh mẫu">
+        <Text style={[styles.body, { color: colors.muted }]}>Danh sách để xem trước, chưa chọn hay bỏ phiếu cho món ở bước này.</Text>
+        <Text style={[styles.caption, { color: colors.muted }]}>Đánh giá mẫu: {localTime(preview.evaluatedAt)} · UTC+7. Không xác nhận đang bán trực tiếp.</Text>
+        {!preview.pool.length ? <StatusNotice title="Chưa có món cho buổi và giờ này" message="Hãy sửa điểm ăn, giờ hoặc buổi rồi xác nhận lại. Không tự nới giờ/bán kính; khi lưu bối cảnh mới cả nhóm cần sẵn sàng lại." colors={colors} /> : null}
+        {preview.pool.slice(0, 8).map(dish => <View key={dish.roundDishId} style={styles.section}>
+          <Text style={[styles.heading, { color: colors.text }]}>{dish.name}</Text>
+          <Text style={[styles.body, { color: colors.text }]}>{dishPrice(dish)}</Text>
+          <Text style={[styles.caption, { color: colors.muted }]}>Nguồn gốc món: {dish.origin ? originLabels[dish.origin] : 'Chưa rõ nguồn gốc'}</Text>
+          <Text style={[styles.caption, { color: colors.muted }]}>Nơi bán mẫu: {dish.venueName ?? 'Chưa có quán'} · {dish.venueAddress ?? 'Chưa có địa chỉ'}</Text>
+          <Text style={[styles.caption, { color: colors.muted }]}>{dishDistance(dish.distanceM)}</Text>
+          <Text style={[styles.caption, { color: colors.muted }]}>Nhiệt độ món: {dish.temperature ? temperatureLabels[dish.temperature] : 'Chưa rõ nhiệt độ'} · vị cay là thông tin riêng.</Text>
+        </View>)}
+      </SetupSection> : null}
+      {error || writer.error ? <StatusNotice title="Cần kiểm tra lại" message={error ?? setupError(writer.error!)} tone="error" colors={colors} /> : null}
+      {!writer.uncertain && needsReload ? <AppButton label="Tải lại bối cảnh" onPress={data.reload} colors={colors} /> : null}
+      {host ? <AppButton label={writer.uncertain ? 'Thử lại cùng yêu cầu lưu bối cảnh' : writer.accepted ? 'Đã lưu bối cảnh mẫu' : 'Lưu bối cảnh mẫu'} loading={writer.pending} disabled={writer.accepted || previewBusy || suggestBusy || !editable || needsReload} onPress={() => { void save(); }} colors={colors} /> : null}
+      {writer.accepted ? <StatusNotice title="Đã lưu bối cảnh mẫu" message="Cả nhóm cần xác nhận sẵn sàng lại. Chưa tự bật sẵn sàng hoặc bắt đầu phiên." colors={colors} /> : null}
+      {snapshotError ? <StatusNotice title="Đã lưu, chưa tải lại được phòng" actionLabel="Tải lại phòng đã lưu" onAction={() => { void readSaved(); }} colors={colors} /> : null}
+      {saved ? <Text style={[styles.body, { color: colors.muted }]}>{`Sẵn sàng sau cập nhật: ${saved.members.filter(m => m.ready).length}/${saved.members.length}`}</Text> : null}
+      {host && writer.accepted && saved ? <AppButton label="Chỉnh lại bối cảnh" variant="secondary" onPress={data.reload} colors={colors} /> : null}
+      <AppButton label="Chọn khẩu vị →" disabled={host ? !saved : !editable} onPress={() => { const next = saved ?? room; if (next) onContinue(next); }} colors={colors} />
+    </> : null}
+  </SetupFrame>;
+}

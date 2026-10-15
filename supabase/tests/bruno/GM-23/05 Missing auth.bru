@@ -1,0 +1,18 @@
+meta {
+  name: 05 Missing auth
+  type: http
+  seq: 5
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/register_push_device
+  body: json
+}
+headers {
+  Content-Type: application/json
+}
+body:json {
+  {"requestId":"{{requestIdNoAuth}}","device_id":"device-no-auth","token":"ExponentPushToken[synthetic]","permission":"granted"}
+}
+tests {
+  test("auth boundary", function() { expect(res.status).to.equal(401); expect(res.body.messageKey).to.equal("AUTH_REQUIRED"); });
+}

@@ -1,0 +1,33 @@
+Command: cd mobile; npm run check
+Date: 2026-10-15
+Tested revision: HEAD 6735694 + completion working tree
+Exit code: 0
+Node 24.20.0 / npm 11.19.0
+Typecheck: Pass. ESLint: 0 errors, 4 existing warnings in data/api/contracts.ts and data/api/index.ts.
+Captured final test/architecture output:
+
+PASS tests/component/gm12Screens.test.tsx (8.527 s)
+PASS tests/integration/routes.test.tsx
+PASS tests/component/roomEntryScreens.test.tsx
+PASS tests/unit/apiContract.test.ts
+PASS tests/component/sharedComponents.test.tsx
+PASS tests/component/AppShellScreen.test.tsx
+PASS tests/unit/authSession.test.ts
+PASS tests/unit/authTransport.test.ts
+PASS tests/unit/apiResponseValidation.test.ts
+PASS tests/unit/apiReadValidation.test.ts
+PASS tests/unit/discovery.test.ts
+PASS tests/unit/apiMockIsolation.test.ts
+PASS tests/unit/decisionContract.test.ts
+PASS tests/unit/roomEntry.test.ts
+
+Test Suites: 14 passed, 14 total
+Tests:       460 passed, 460 total
+Snapshots:   0 total
+Time:        22.015 s
+Ran all test suites.
+
+> gi-cung-duoc-mobile@0.1.0 check:architecture
+> node scripts/check-architecture.mjs
+
+Architecture boundaries OK (static guard, not a substitute for review).

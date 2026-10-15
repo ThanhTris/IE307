@@ -7,6 +7,7 @@
  */
 
 import { PermissionsAndroid, Platform } from 'react-native';
+import * as ExpoLocation from 'expo-location';
 import type {
   MealSlot,
   PublicAnchor,
@@ -589,7 +590,7 @@ export const BrowserNativeLocationAdapter = WebLocationAdapter;
  */
 export function createDefaultLocationAdapter(): LocationAdapter {
   if (Platform.OS === 'android' || Platform.OS === 'ios') {
-    return new NativeLocationAdapter();
+    return new NativeLocationAdapter(ExpoLocation as unknown as NativeLocationProvider);
   }
   if (typeof window !== 'undefined' && typeof navigator !== 'undefined' && 'geolocation' in navigator) {
     return new WebLocationAdapter();

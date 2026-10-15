@@ -1,0 +1,11 @@
+meta {
+  name: GM-23 Notifications Local
+  type: collection
+}
+
+script:pre-request {
+  const url = bru.interpolate(req.getUrl());
+  if (!/^http:\/\/(127\.0\.0\.1|localhost):54332\/rest\/v1\/rpc\//.test(url)) throw new Error('Start the owned GM-23 disposable fixture on port 54332');
+  req.setHeader('apikey', bru.getEnvVar('anonKey'));
+  req.setTimeout(15000);
+}

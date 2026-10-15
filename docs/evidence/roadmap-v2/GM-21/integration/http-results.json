@@ -1,0 +1,134 @@
+{
+  "result": "Pass",
+  "contract": "food-v1/roadmap-v2/GM-21.1",
+  "schemaVersion": "0.2.0",
+  "checkedAt": "2026-10-14T04:43:36.510Z",
+  "environment": "loopback GoTrue + process-owned DB/PostgREST; mobile real client",
+  "fixtureOnly": true,
+  "finalizeIntegration": "Not run; GM20 merge dependency",
+  "publicationPerformed": false,
+  "cases": [
+    {
+      "case": "real mobile client reads own personal history DTO",
+      "result": "Pass",
+      "rows": 1
+    },
+    {
+      "case": "group members read the same group summary",
+      "result": "Pass",
+      "rows": 1
+    },
+    {
+      "case": "outsider cannot read other group summaries",
+      "result": "Pass",
+      "rows": 0
+    },
+    {
+      "case": "forged cursor cannot select other users history",
+      "result": "Pass",
+      "messageKey": "INVALID_INPUT"
+    },
+    {
+      "case": "wrong scope rejected with400",
+      "result": "Pass",
+      "status": 400
+    },
+    {
+      "case": "missing JWT denied",
+      "result": "Pass",
+      "status": 401
+    },
+    {
+      "case": "forged JWT denied",
+      "result": "Pass",
+      "status": 401
+    },
+    {
+      "case": "real client default opaque requestId accepted",
+      "result": "Pass",
+      "defaultRequestIdAccepted": true
+    },
+    {
+      "case": "concurrent identical writes apply once and replay same ACK",
+      "result": "Pass",
+      "concurrentRequests": 8,
+      "mutations": 1
+    },
+    {
+      "case": "same requestId changed payload maps REQUEST_ID_REUSED",
+      "result": "Pass",
+      "messageKey": "REQUEST_ID_REUSED"
+    },
+    {
+      "case": "boolean string input rejected",
+      "result": "Pass",
+      "status": 400
+    },
+    {
+      "case": "other-owner and missing-ID deletion are indistinguishable no-ops",
+      "result": "Pass",
+      "ownerRowsUnchanged": 1
+    },
+    {
+      "case": "authentic summary remains readable after operational room cleanup",
+      "result": "Pass",
+      "operationalRoomDeleted": true,
+      "summaryReadable": true
+    },
+    {
+      "case": "history projection has no raw consent/roster/groupKey/location/ballot",
+      "result": "Pass",
+      "privateFields": 0
+    },
+    {
+      "case": "personal delete preserves peers personal history",
+      "result": "Pass",
+      "peerSummaryPreserved": true
+    },
+    {
+      "case": "group withdrawal removes group summary for all members",
+      "result": "Pass",
+      "groupRows": 0
+    },
+    {
+      "case": "reopt-in does not resurrect deleted group summaries",
+      "result": "Pass",
+      "groupRows": 0
+    },
+    {
+      "case": "personal withdrawal leaves peers history untouched",
+      "result": "Pass",
+      "ownRows": 0,
+      "peerPreserved": true
+    },
+    {
+      "case": "history reads/writes never alter decided room or winner",
+      "result": "Pass",
+      "unchanged": true
+    },
+    {
+      "case": "concurrent rate budget is per caller and endpoint",
+      "result": "Pass",
+      "allowed": 60,
+      "limited": 1,
+      "otherCallerAllowed": true
+    },
+    {
+      "case": "real client maps RATE_LIMITED from HTTP429",
+      "result": "Pass",
+      "messageKey": "RATE_LIMITED"
+    }
+  ],
+  "artifactHashes": {
+    "scripts/gm21_http_check.mjs": "d73d435f24c80bb890955b700a4ecb22d050637a06742fa4507f16a03b917704",
+    "scripts/gm21_http_fixture.py": "c9befc75f927e94103c2e94648921c150e4acc2172868c02a6a6336f784b8703",
+    "scripts/gm21_history_check.py": "e24080f8d5f58c93117f63c003345e41a5d71239ff137efa38f210306ce78ae1",
+    "supabase/migrations/0021_history.sql": "9be964cc6c8b405f578e7f2528268f628266e7b121b96ce958244e20a116217e",
+    "supabase/migrations/0004_access_policies.sql": "508e9572ce50464d07a8ea1e19dc41ff7ba26cb2d0485aa59df9ac1422440dfb",
+    "mobile/src/data/api/client.ts": "1a18a82c80fce79387a7540a5b3a5e43b771c115b2df4d066a5fd655d39b185e",
+    "mobile/src/data/api/contracts.ts": "3832a9fb4a3b4c64ec28ac8dbc0515c099896c977ed7244435249b33a7162f66",
+    "mobile/src/data/api/responseGuards.ts": "ea8b597a5d7a894699f843ebdeb1a00beab30aac9553e5dc75e2b95a1664fa23"
+  },
+  "postgrestCleanup": "removed",
+  "databaseAndGuestCleanup": "owned namespace removed"
+}

@@ -1,0 +1,106 @@
+Cell 1: ERROR
+Report: C:\Users\saveb\AppData\Local\Temp\tmp8h9l33tw\new-capture\reports\sample.executed.ipynb
+Cell 1: OK
+Report: C:\Users\saveb\AppData\Local\Temp\tmpup9osbfq\new\reports\sample.executed.ipynb
+.......................................................................................................................................................................................................................................................................................................................................................F.....................................................................................................................................................................................EEEEE..............
+======================================================================
+ERROR: test_bad_evidence_gets_one_retry_and_raw_is_retained (test_vilao_catalogue.CatalogueTests.test_bad_evidence_gets_one_retry_and_raw_is_retained)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\Workspace\project\IE307\tests\test_vilao_catalogue.py", line 81, in test_bad_evidence_gets_one_retry_and_raw_is_retained
+    report=run.execute(allow_api=True,progress=lambda _:None)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Workspace\project\IE307\data-preparation\scripts\vilao_catalogue.py", line 249, in execute
+    with single_run(self.root / '.run.lock'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\saveb\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "E:\Workspace\project\IE307\data-preparation\scripts\vilao_catalogue.py", line 97, in single_run
+    raise RuntimeError('Taxonomy locking requires Linux/macOS/WSL. Run this pipeline inside WSL; no unlocked fallback is allowed.')
+RuntimeError: Taxonomy locking requires Linux/macOS/WSL. Run this pipeline inside WSL; no unlocked fallback is allowed.
+
+======================================================================
+ERROR: test_contract_change_invalidates_cache_namespace (test_vilao_catalogue.CatalogueTests.test_contract_change_invalidates_cache_namespace)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\Workspace\project\IE307\tests\test_vilao_catalogue.py", line 109, in test_contract_change_invalidates_cache_namespace
+    first.execute(allow_api=True,progress=lambda _:None)
+  File "E:\Workspace\project\IE307\data-preparation\scripts\vilao_catalogue.py", line 249, in execute
+    with single_run(self.root / '.run.lock'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\saveb\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "E:\Workspace\project\IE307\data-preparation\scripts\vilao_catalogue.py", line 97, in single_run
+    raise RuntimeError('Taxonomy locking requires Linux/macOS/WSL. Run this pipeline inside WSL; no unlocked fallback is allowed.')
+RuntimeError: Taxonomy locking requires Linux/macOS/WSL. Run this pipeline inside WSL; no unlocked fallback is allowed.
+
+======================================================================
+ERROR: test_crash_after_response_recovers_missing_item_cache (test_vilao_catalogue.CatalogueTests.test_crash_after_response_recovers_missing_item_cache)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\Workspace\project\IE307\tests\test_vilao_catalogue.py", line 91, in test_crash_after_response_recovers_missing_item_cache
+    run.execute(allow_api=True,progress=lambda _:None)
+  File "E:\Workspace\project\IE307\data-preparation\scripts\vilao_catalogue.py", line 249, in execute
+    with single_run(self.root / '.run.lock'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\saveb\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "E:\Workspace\project\IE307\data-preparation\scripts\vilao_catalogue.py", line 97, in single_run
+    raise RuntimeError('Taxonomy locking requires Linux/macOS/WSL. Run this pipeline inside WSL; no unlocked fallback is allowed.')
+RuntimeError: Taxonomy locking requires Linux/macOS/WSL. Run this pipeline inside WSL; no unlocked fallback is allowed.
+
+======================================================================
+ERROR: test_full_export_and_replay_no_api_calls_preserve_source (test_vilao_catalogue.CatalogueTests.test_full_export_and_replay_no_api_calls_preserve_source)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\Workspace\project\IE307\tests\test_vilao_catalogue.py", line 65, in test_full_export_and_replay_no_api_calls_preserve_source
+    report=first.execute(allow_api=True,progress=lambda _:None)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Workspace\project\IE307\data-preparation\scripts\vilao_catalogue.py", line 249, in execute
+    with single_run(self.root / '.run.lock'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\saveb\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "E:\Workspace\project\IE307\data-preparation\scripts\vilao_catalogue.py", line 97, in single_run
+    raise RuntimeError('Taxonomy locking requires Linux/macOS/WSL. Run this pipeline inside WSL; no unlocked fallback is allowed.')
+RuntimeError: Taxonomy locking requires Linux/macOS/WSL. Run this pipeline inside WSL; no unlocked fallback is allowed.
+
+======================================================================
+ERROR: test_network_error_checkpoint_then_resume (test_vilao_catalogue.CatalogueTests.test_network_error_checkpoint_then_resume)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\Workspace\project\IE307\tests\test_vilao_catalogue.py", line 122, in test_network_error_checkpoint_then_resume
+    incomplete=run.execute(allow_api=True,progress=lambda _:None)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Workspace\project\IE307\data-preparation\scripts\vilao_catalogue.py", line 249, in execute
+    with single_run(self.root / '.run.lock'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\saveb\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "E:\Workspace\project\IE307\data-preparation\scripts\vilao_catalogue.py", line 97, in single_run
+    raise RuntimeError('Taxonomy locking requires Linux/macOS/WSL. Run this pipeline inside WSL; no unlocked fallback is allowed.')
+RuntimeError: Taxonomy locking requires Linux/macOS/WSL. Run this pipeline inside WSL; no unlocked fallback is allowed.
+
+======================================================================
+FAIL: test_fixture_under_windows_cp1252_default (test_gm06_schema_runner.SchemaRunnerEncodingTests.test_fixture_under_windows_cp1252_default)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\Workspace\project\IE307\tests\test_gm06_schema_runner.py", line 31, in test_fixture_under_windows_cp1252_default
+    self.assertNotIn('Cơm gà',wrong)
+AssertionError: 'Cơm gà' unexpectedly found in '{\n  "contractVersion": "1.1.0",\n  "datasetVersion": "0.1.0",\n  "fixtureOnly": true,\n  "entities": {\n    "taxonomy": [\n      {\n        "id": "a0158904-2e08-5bee-9b94-b4267224e40a",\n        "type": "cuisine",\n        "code": "vi",\n        "label": "Việt",\n        "description": "Fixture tổng hợp, không phải dữ liệu thật",\n        "status": "draft",\n        "origin": null,\n        "version": 1,\n        "reviewStatus": "draft",\n        "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709",\n        "fieldSources": {},\n        "checkedAt": "2026-10-09T00:00:00Z",\n        "validUntil": null,\n        "enteredBy": "fixture-author",\n        "reviewedBy": null\n      },\n      {\n        "id": "e26fa8c3-e9c4-5f7a-a7f9-536d1696f872",\n        "type": "category",\n        "code": "family:rice",\n        "label": "Cơm",\n        "description": "Họ món",\n        "status": "draft",\n        "origin": null,\n        "version": 1,\n        "reviewStatus": "draft",\n        "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709",\n        "fieldSources": {},\n        "checkedAt": "2026-10-09T00:00:00Z",\n        "validUntil": null,\n        "enteredBy": "fixture-author",\n        "reviewedBy": null\n      }\n    ],\n    "dishes": [\n      {\n        "id": "0a3c8424-4faf-5e5b-ba98-26ad70f4c042",\n        "name": "Cơm gà — fixture",\n        "description": null,\n        "aliases": [],\n        "cuisineIds": [\n          "a0158904-2e08-5bee-9b94-b4267224e40a"\n        ],\n        "categoryIds": [\n          "e26fa8c3-e9c4-5f7a-a7f9-536d1696f872"\n        ],\n        "mealSlots": [\n          "lunch"\n        ],\n        "timeHints": [],\n        "classificationStatus": "needs_review",\n        "origin": "unknown",\n        "ingredientTags": null,\n        "temperature": "unknown",\n        "flavor": null,\n        "artwork": null,\n        "sourceDishIds": [],\n        "status": "draft",\n        "version": 1,\n        "reviewStatus": "draft",\n        "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709",\n        "fieldSources": {},\n        "checkedAt": "2026-10-09T00:00:00Z",\n        "validUntil": null,\n        "enteredBy": "fixture-author",\n        "reviewedBy": null\n      }\n    ],\n    "venues": [\n      {\n        "id": "9c4fe7c4-0a70-52f9-bf37-d43f86fc3290",\n        "branchName": "Chi nhánh giả lập",\n        "address": "Địa chỉ fixture, không tìm quán này",\n        "adminAreaId": "simulation-only",\n        "lat": 10.85,\n        "lng": 106.76,\n        "timezone": "Asia/Ho_Chi_Minh",\n        "status": "active",\n        "serviceModes": [\n          "delivery"\n        ],\n        "version": 1,\n        "reviewStatus": "draft",\n        "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709",\n        "fieldSources": {},\n        "checkedAt": "2026-10-09T00:00:00Z",\n        "validUntil": null,\n        "enteredBy": "fixture-author",\n        "reviewedBy": null,\n        "scheduleId": "c1dfc4d3-c73a-5492-b9ec-37aa8e308c9c"\n      }\n    ],\n    "venueDishes": [\n      {\n        "offeringId": "2ee54e31-5e7c-5130-b5ed-adf284726ddb",\n        "venueId": "9c4fe7c4-0a70-52f9-bf37-d43f86fc3290",\n        "dishId": "0a3c8424-4faf-5e5b-ba98-26ad70f4c042",\n        "variant": "sốt riêng — fixture",\n        "menuName": "Cơm gà sốt riêng — fixture",\n        "menuSource": "025b5393-d00c-5f8d-b26f-4ea436a89709",\n        "scheduleId": "e5879d8d-34a6-51ee-921e-06395f17fc1e",\n        "serviceMode": "delivery",\n        "priceMin": 30000,\n        "priceMax": 30000,\n        "unit": "menu_item_unspecified",\n        "currency": "VND",\n        "servingSize": null,\n        "profileOverrides": null,\n        "artwork": null,\n        "status": "draft",\n        "version": 1,\n        "reviewStatus": "draft",\n        "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709",\n        "fieldSources": {\n          "menu": "025b5393-d00c-5f8d-b26f-4ea436a89709",\n          "price": "025b5393-d00c-5f8d-b26f-4ea436a89709"\n        },\n        "checkedAt": "2026-10-09T00:00:00Z",\n        "validUntil": null,\n        "enteredBy": "fixture-author",\n        "reviewedBy": null\n      }\n    ],\n    "weeklySchedules": [\n      {\n        "id": "f94920c9-77d9-5a3c-8810-87c1e152b301",\n        "scheduleId": "e5879d8d-34a6-51ee-921e-06395f17fc1e",\n        "ownerType": "offering",\n        "ownerId": "2ee54e31-5e7c-5130-b5ed-adf284726ddb",\n        "dayOfWeek": 5,\n        "startTime": "22:00",\n        "endTime": "02:00",\n        "endDayOffset": 1,\n        "is24Hours": false,\n        "timezone": "Asia/Ho_Chi_Minh",\n        "status": "open",\n        "version": 1,\n        "reviewStatus": "draft",\n        "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709",\n        "fieldSources": {\n          "hours": "025b5393-d00c-5f8d-b26f-4ea436a89709"\n        },\n        "checkedAt": "2026-10-09T00:00:00Z",\n        "validUntil": null,\n        "enteredBy": "fixture-author",\n        "reviewedBy": null,\n        "lastOrder": "01:30",\n        "lastOrderDayOffset": 1\n      },\n      {\n        "id": "88d7fa24-6a52-5b5f-9fc2-098f0fe91d83",\n        "scheduleId": "e5879d8d-34a6-51ee-921e-06395f17fc1e",\n        "ownerType": "offering",\n        "ownerId": "2ee54e31-5e7c-5130-b5ed-adf284726ddb",\n        "dayOfWeek": 6,\n        "startTime": "11:00",\n        "endTime": "14:00",\n        "endDayOffset": 0,\n        "is24Hours": false,\n        "timezone": "Asia/Ho_Chi_Minh",\n        "status": "open",\n        "version": 1,\n        "reviewStatus": "draft",\n        "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709",\n        "fieldSources": {},\n        "checkedAt": "2026-10-09T00:00:00Z",\n        "validUntil": null,\n        "enteredBy": "fixture-author",\n        "reviewedBy": null,\n        "lastOrder": null,\n        "lastOrderDayOffset": null\n      },\n      {\n        "id": "df75e923-15c3-50b6-ae80-3bdaff7ca395",\n        "scheduleId": "c1dfc4d3-c73a-5492-b9ec-37aa8e308c9c",\n        "ownerType": "venue",\n        "ownerId": "9c4fe7c4-0a70-52f9-bf37-d43f86fc3290",\n        "dayOfWeek": 5,\n        "startTime": "21:00",\n        "endTime": "03:00",\n        "endDayOffset": 1,\n        "is24Hours": false,\n        "timezone": "Asia/Ho_Chi_Minh",\n        "status": "open",\n        "version": 1,\n        "reviewStatus": "draft",\n        "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709",\n        "fieldSources": {\n          "hours": "025b5393-d00c-5f8d-b26f-4ea436a89709"\n        },\n        "checkedAt": "2026-10-09T00:00:00Z",\n        "validUntil": null,\n        "enteredBy": "fixture-author",\n        "reviewedBy": null,\n        "lastOrder": "02:30",\n        "lastOrderDayOffset": 1\n      }\n    ],\n    "dateExceptions": [\n      {\n        "id": "842310be-ba48-53b8-9d08-99e7bd7ca152",\n        "scheduleId": "e5879d8d-34a6-51ee-921e-06395f17fc1e",\n        "localDate": "2026-10-10",\n        "status": "closed",\n        "intervals": [],\n        "lastOrder": null,\n        "version": 1,\n        "reviewStatus": "draft",\n        "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709",\n        "fieldSources": {},\n        "checkedAt": "2026-10-09T00:00:00Z",\n        "validUntil": null,\n        "enteredBy": "fixture-author",\n        "reviewedBy": null,\n        "lastOrderDayOffset": null\n      }\n    ],\n    "availabilityOverrides": [\n      {\n        "id": "679a1862-9f64-5b01-9b6b-ad8923f164a8",\n        "offeringId": "2ee54e31-5e7c-5130-b5ed-adf284726ddb",\n        "state": "sold_out",\n        "source": "025b5393-d00c-5f8d-b26f-4ea436a89709",\n        "observedAt": "2026-10-09T15:00:00Z",\n        "expiresAt": "2026-10-09T16:00:00Z",\n        "version": 1,\n        "reviewStatus": "draft",\n        "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709",\n        "fieldSources": {},\n        "checkedAt": "2026-10-09T00:00:00Z",\n        "validUntil": null,\n        "enteredBy": "fixture-author",\n        "reviewedBy": null\n      }\n    ],\n    "coverageAreas": [\n      {\n        "areaId": "9ae61a46-a66a-59e0-bac6-6d8c0237aece",\n        "name": "Vùng giả lập, không là coverage Thủ Đức",\n        "boundary": {\n          "type": "Polygon",\n          "coordinates": [\n            [\n              [\n                106.7,\n                10.8\n              ],\n              [\n                106.8,\n                10.8\n              ],\n              [\n                106.8,\n                10.9\n              ],\n              [\n                106.7,\n                10.9\n              ],\n              [\n                106.7,\n                10.8\n              ]\n            ]\n          ]\n        },\n        "datasetVersion": "0.1.0",\n        "version": 1,\n        "reviewStatus": "draft",\n        "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709",\n        "fieldSources": {},\n        "checkedAt": "2026-10-09T00:00:00Z",\n        "validUntil": null,\n        "enteredBy": "fixture-author",\n        "reviewedBy": null\n      }\n    ],\n    "publicAnchors": [\n      {\n        "anchorId": "604de193-b001-59fb-be36-7bcfa8867503",\n        "name": "Điểm công cộng giả lập",\n        "lat": 10.85,\n        "lng": 106.76,\n        "coverageId": "9ae61a46-a66a-59e0-bac6-6d8c0237aece",\n        "isPublic": true,\n        "version": 1,\n        "reviewStatus": "draft",\n        "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709",\n        "fieldSources": {},\n        "checkedAt": "2026-10-09T00:00:00Z",\n        "validUntil": null,\n        "enteredBy": "fixture-author",\n        "reviewedBy": null\n      }\n    ],\n    "dataSources": [\n      {\n        "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709",\n        "locator": "https://example.invalid/synthetic-menu",\n        "usageRights": "unknown",\n        "license": null,\n        "attribution": null,\n        "status": "draft",\n        "version": 1,\n        "reviewStatus": "draft",\n        "fieldSources": {},\n        "checkedAt": "2026-10-09T00:00:00Z",\n        "validUntil": null,\n        "enteredBy": "fixture-author",\n        "reviewedBy": null\n      }\n    ],\n    "datasetVersions": [\n      {\n        "id": "328152d3-090c-5a08-8665-5c0ad6f93ede",\n        "datasetVersion": "0.1.0",\n        "contractVersion": "1.1.0",\n        "status": "draft",\n        "checksum": null,\n        "artifactLocator": null,\n        "previousVersionId": null,\n        "qualityReport": null,\n        "rollbackLocator": null,\n        "version": 1,\n        "reviewStatus": "draft",\n        "sourceRef": "025b5393-d00c-5f8d-b26f-4ea436a89709",\n        "fieldSources": {},\n        "checkedAt": "2026-10-09T00:00:00Z",\n        "validUntil": null,\n        "enteredBy": "fixture-author",\n        "reviewedBy": null\n      }\n    ]\n  }\n}\n'
+
+----------------------------------------------------------------------
+Ran 544 tests in 84.786s
+
+FAILED (failures=1, errors=5)
+{
+  "offline": true,
+  "refresh": false,
+  "allow_api": false,
+  "output_dir": "C:\\Users\\saveb\\AppData\\Local\\Temp\\tmpup9osbfq\\new"
+}

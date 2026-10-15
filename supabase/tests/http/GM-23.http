@@ -1,0 +1,76 @@
+# GM-23.1 inbox/device registration. Tokens are placeholders; use real guest
+# JWTs from a disposable fixture and never commit a token or provider secret.
+
+### Inbox (own caller, <=50 keyset page)
+POST {{baseUrl}}/rest/v1/rpc/list_partner_inbox
+Authorization: Bearer {{recipientToken}}
+apikey: {{anonKey}}
+Content-Type: application/json
+
+{"cursor":null}
+
+> {%
+  client.test('inbox is a typed array', function() {
+    client.assert(response.status === 200);
+    client.assert(Array.isArray(response.body));
+    client.assert(response.body.length <= 50);
+    response.body.forEach(function(item) {
+      client.assert(['friend_invite','room_invite','room_result'].includes(item.type));
+      client.assert(item.invitationId === undefined || typeof item.invitationId === 'string');
+    });
+  });
+%}
+
+### Register granted Expo device
+POST {{baseUrl}}/rest/v1/rpc/register_push_device
+Authorization: Bearer {{recipientToken}}
+apikey: {{anonKey}}
+Content-Type: application/json
+
+{"requestId":"{{requestId}}","device_id":"{{deviceId}}","token":"ExponentPushToken[synthetic-gm23-token]","permission":"granted"}
+
+> {%
+  client.test('register returns void wire response', function() {
+    client.assert(response.status === 200);
+    client.assert(response.body.ok === true);
+    client.assert(response.body.data === null);
+  });
+%}
+
+### Register denied permission (token is discarded)
+POST {{baseUrl}}/rest/v1/rpc/register_push_device
+Authorization: Bearer {{recipientToken}}
+apikey: {{anonKey}}
+Content-Type: application/json
+
+{"requestId":"{{requestIdDenied}}","device_id":"{{deviceId}}","token":"ignored","permission":"denied"}
+
+### Unregister is idempotent
+POST {{baseUrl}}/rest/v1/rpc/unregister_push_device
+Authorization: Bearer {{recipientToken}}
+apikey: {{anonKey}}
+Content-Type: application/json
+
+{"requestId":"{{requestIdUnregister}}","device_id":"{{deviceId}}"}
+
+> {%
+  client.test('unregister returns void wire response', function() {
+    client.assert(response.status === 200);
+    client.assert(response.body.ok === true);
+    client.assert(response.body.data === null);
+  });
+%}
+
+### Missing authentication
+POST {{baseUrl}}/rest/v1/rpc/register_push_device
+apikey: {{anonKey}}
+Content-Type: application/json
+
+{"requestId":"{{requestIdNoAuth}}","device_id":"device-no-auth","token":"ExponentPushToken[synthetic]","permission":"granted"}
+
+> {%
+  client.test('missing JWT is rejected', function() {
+    client.assert(response.status === 401);
+    client.assert(response.body.messageKey === 'AUTH_REQUIRED');
+  });
+%}

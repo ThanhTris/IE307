@@ -1,0 +1,14 @@
+GM20 checking local status
+GM20 local status ready; setup owned fixture
+GM20 owned DB ready
+Pass: GM19 -> GM20 default opt-out produces no history
+Pass: partial group consent records only opted personal summary
+Pass: real consent -> room/start -> ballots atomically writes two personal and group histories
+Pass: exact final ACK replay and deleted history never resurrect summaries
+Pass: pinned winner metadata and shortest consent expiry survive catalogue edit
+Pass: lobby pool consumes at most three server-derived recent results and freezes at start
+Pass: withdrawal resets all lobby ready; reopt-in does not recreate old summaries
+Pass: room flag and roster edits invalidate ready; another group has no borrowed recents
+Pass: global-looking detached consent cannot authorize future finalization
+Pass: history write failure rolls back final ballot/result/event atomically
+{"result":"Pass","cases":10,"cleanup":"owned DB and guests removed"}

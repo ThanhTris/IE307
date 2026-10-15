@@ -98,11 +98,13 @@ def main():
         created=True
         psql(database,'create schema auth;\n'+auth+'\n'+uid+';\ngrant usage on schema auth to anon,authenticated; grant execute on function auth.uid() to anon,authenticated; create schema extensions; create extension pgtap with schema extensions; grant usage on schema extensions to anon,authenticated;')
         paths=sorted((ROOT/'supabase/migrations').glob('*.sql'))
+        fixture_namespace=uuid.UUID('17000000-0000-4000-8000-000000000017')
+        old_fixture_namespace=uuid.UUID('17000000-0000-4000-8000-000000000018')
         for path in paths:
             if path.name.startswith('0004_'):
-                fixture,bundles=fixture_sql(uuid.UUID('17000000-0000-4000-8000-000000000017'))
+                fixture,bundles=fixture_sql(fixture_namespace)
                 psql(database,fixture)
-                old_fixture,old=fixture_sql(uuid.UUID('17000000-0000-4000-8000-000000000018'),now=datetime.now(timezone.utc)-timedelta(hours=24,seconds=1))
+                old_fixture,old=fixture_sql(old_fixture_namespace,now=datetime.now(timezone.utc)-timedelta(hours=24,seconds=1))
                 psql(database,old_fixture)
             psql(database,path.read_text(encoding='utf-8'))
         # The local draft may have been applied while it was being edited. Check

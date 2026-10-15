@@ -1,0 +1,20 @@
+{
+  "task": "GM-09",
+  "contract": "food-v1/roadmap-v2/GM-09.1",
+  "date": "2026-10-15",
+  "baseHead": "67356949615c39134ba24b71301c45fed917089e",
+  "upstreamMain": "ce7b87a2d7510b40fac843ba4657f9bc87a38146",
+  "revision": "baseHead + working tree; no new commit",
+  "algorithm": "sha256 of working-tree bytes",
+  "files": {
+    "mobile/src/features/home/screens/HomeScreen.tsx": "fc66219971839accf5c9f3ba6afe9d1d690cf322f5d65dd9370cb34293c50f08",
+    "mobile/src/features/rooms/components/RoomEntryFrame.tsx": "bde18eb578a47a3262421dede4bfd640f473423a2d14606d776de91f15ca884c",
+    "mobile/src/features/rooms/hooks/useRoomEntry.ts": "a3db485f7a54e5ab0d62e896c43a175044567e365e8a031c008842c7bc2bb72a",
+    "mobile/src/features/rooms/screens/CreateRoomScreen.tsx": "d46333f34303e92abc4a6baa69d572c08f5f9e8ce27c6eb965317ac1dfbf8e8a",
+    "mobile/src/features/rooms/screens/JoinRoomScreen.tsx": "3b8a8b718f67d106a95c28199b4af38d703aaa24a7f11fe5d8ff52630de9ecc6",
+    "mobile/src/features/rooms/screens/RoomEntryReceiptScreen.tsx": "7dea41b61a588ceac5f8077f3144c0feb1308936356c8f623656a64abe8c39d2",
+    "mobile/src/features/rooms/services/roomEntry.ts": "f9ae39bd7cc9443315787196796b376e9b43158174f445e1087a88947147fe7f",
+    "mobile/tests/component/roomEntryScreens.test.tsx": "4ede13e769f5855385edd2803d99fea0c801bf41d2a3947686c390223fbdda63",
+    "mobile/tests/integration/routes.test.tsx": "fed002f7a7c0c023ced2167e297245cc7b6c0bb7802931219fb442b3b0acf1a8"
+  }
+}

@@ -11,7 +11,7 @@ const layers = [
   ['data', 'API, auth và local adapters; contract/client tại GM-07.'],
 ] as const;
 
-export function FoundationScreen({ onBack, onOpenComponents }: { onBack: () => void; onOpenComponents?: () => void }) {
+export function FoundationScreen({ onBack, onOpenComponents, onOpenFeaturePreview }: { onBack: () => void; onOpenComponents?: () => void; onOpenFeaturePreview?: () => void }) {
   const { colors } = useShellTheme();
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
@@ -26,6 +26,9 @@ export function FoundationScreen({ onBack, onOpenComponents }: { onBack: () => v
         ))}
         {onOpenComponents ? <Pressable accessibilityRole="button" accessibilityLabel="Mở component mẫu GM-05" onPress={onOpenComponents} style={[styles.button, { backgroundColor: colors.surface, borderColor: colors.primary, borderWidth: 1 }]}>
           <Text style={[styles.buttonLabel, { color: colors.primary }]}>Mở component mẫu GM-05</Text>
+        </Pressable> : null}
+        {onOpenFeaturePreview ? <Pressable accessibilityRole="button" accessibilityLabel="Mở các màn mock GM-11 và GM-14" onPress={onOpenFeaturePreview} style={[styles.button, { backgroundColor: colors.surface, borderColor: colors.primary, borderWidth: 1 }]}>
+          <Text style={[styles.buttonLabel, { color: colors.primary }]}>Mở màn mock GM-11/14</Text>
         </Pressable> : null}
         <Pressable accessibilityRole="button" onPress={onBack} style={[styles.button, { backgroundColor: colors.primary }]}>
           <Text style={[styles.buttonLabel, { color: colors.onPrimary }]}>Quay lại</Text>

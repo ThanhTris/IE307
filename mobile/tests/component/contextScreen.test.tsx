@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, userEvent, waitFor } from '@testing-library/react-native';
-import { ContextScreen } from '../../src/features/context/screens/ContextScreen';
+import { Gm24ContextScreen as ContextScreen } from '../../src/features/context/screens/Gm24ContextScreen';
 
 describe('GM-24 ContextScreen Component & Scenarios', () => {
   it('renders correctly with default scenario and displays all core sections', async () => {
@@ -75,12 +75,12 @@ describe('GM-24 ContextScreen Component & Scenarios', () => {
     });
   });
 
-  it('time resolution: Eat Now mode adds 30 min buffer once from server time', async () => {
+  it('time resolution: Eat Now mode adds 15 min buffer once from server time', async () => {
     await render(<ContextScreen initialScenario="gps_grant_rua" />);
 
     await waitFor(() => {
-      expect(screen.getByText(/⚡ Ăn ngay \(Buffer 30p\)/)).toBeOnTheScreen();
-      expect(screen.getByText(/Đã cộng 30 phút chuẩn bị một lần duy nhất từ giờ máy chủ\./)).toBeOnTheScreen();
+      expect(screen.getByText(/⚡ Ăn ngay \(Buffer 15p\)/)).toBeOnTheScreen();
+      expect(screen.getByText(/Đã cộng 15 phút chuẩn bị một lần duy nhất từ giờ máy chủ\./)).toBeOnTheScreen();
     });
   });
 
@@ -108,7 +108,7 @@ describe('GM-24 ContextScreen Component & Scenarios', () => {
     await waitFor(() => {
       expect(screen.getByText(/Giờ đã chọn nằm trong quá khứ so với giờ máy chủ!/)).toBeOnTheScreen();
       expect(screen.getAllByText(/DESIRED_TIME_PASSED/).length).toBeGreaterThanOrEqual(1);
-      expect(screen.getByText('Điều chỉnh thành giờ hợp lệ (+30 phút từ giờ máy chủ)')).toBeOnTheScreen();
+      expect(screen.getByText('Điều chỉnh thành giờ hợp lệ (+15 phút từ giờ máy chủ)')).toBeOnTheScreen();
     });
 
     // Attempting to press save button must NOT trigger handleSave because time is in past
@@ -116,7 +116,7 @@ describe('GM-24 ContextScreen Component & Scenarios', () => {
     expect(handleSave).not.toHaveBeenCalled();
 
     // User clicks "Điều chỉnh thành giờ hợp lệ"
-    await user.press(screen.getByText('Điều chỉnh thành giờ hợp lệ (+30 phút từ giờ máy chủ)'));
+    await user.press(screen.getByText('Điều chỉnh thành giờ hợp lệ (+15 phút từ giờ máy chủ)'));
 
     await waitFor(() => {
       expect(screen.queryByText(/Giờ đã chọn nằm trong quá khứ so với giờ máy chủ!/)).toBeNull();
@@ -176,7 +176,7 @@ describe('GM-24 ContextScreen Component & Scenarios', () => {
 
     await waitFor(() => {
       // Must still be in Scheduled mode, NOT reset to Eat Now
-      expect(screen.queryByText(/Đã cộng 30 phút chuẩn bị một lần duy nhất từ giờ máy chủ\./)).toBeNull();
+    expect(screen.queryByText(/Đã cộng 15 phút chuẩn bị một lần duy nhất từ giờ máy chủ\./)).toBeNull();
     });
   });
 

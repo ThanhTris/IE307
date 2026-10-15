@@ -1,0 +1,19 @@
+meta {
+  name: 02 Register granted
+  type: http
+  seq: 2
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/register_push_device
+  body: json
+}
+headers {
+  Authorization: Bearer {{recipientToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"requestId":"{{requestId}}","device_id":"{{deviceId}}","token":"ExponentPushToken[synthetic-gm23-token]","permission":"granted"}
+}
+tests {
+  test("void response", function() { expect(res.status).to.equal(200); expect(res.body.ok).to.equal(true); expect(res.body.data).to.equal(null); });
+}

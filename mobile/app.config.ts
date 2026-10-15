@@ -13,12 +13,15 @@ const config: ExpoConfig = {
     blockedPermissions: [
       'android.permission.CAMERA',
       'android.permission.RECORD_AUDIO',
-      'android.permission.ACCESS_FINE_LOCATION',
-      'android.permission.ACCESS_COARSE_LOCATION',
       'android.permission.POST_NOTIFICATIONS',
     ],
   },
-  plugins: ['expo-router', 'expo-system-ui', ['expo-secure-store', { configureAndroidBackup: true }]],
+  plugins: [
+    'expo-router',
+    'expo-system-ui',
+    ['expo-secure-store', { configureAndroidBackup: true }],
+    ['expo-location', { locationWhenInUsePermission: 'Cho phép Gì Cũng Được dùng vị trí khi bạn đang dùng ứng dụng.' }],
+  ],
 };
 
 export default config;

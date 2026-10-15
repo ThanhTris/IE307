@@ -4,6 +4,8 @@
 
 ## Trước triển khai code
 
+Các số patch trong plan ngày 2026-10-10 bên dưới là baseline lịch sử đã được chốt lúc bootstrap. Bộ đang cài và hướng dẫn task hiện hành đọc [EXPO_BASELINE](EXPO_BASELINE.md) cùng package-lock; không hạ package về patch cũ để khớp plan này.
+
 1. Nhận review GM-01 và contract/stack từ hồ sơ xác nhận; approval chỉ phạm vi baseline/stack, không thay review code/AC GM-02/03.
 2. Bộ package nền đã được chủ dự án chốt: Expo 57.0.27, Router 57.0.25, React 19.2.3, React Native 0.86.3, TypeScript 6.0.3, ESLint/Jest/testing-library 14.1.0, Supabase CLI 2.120.0. Dùng peer/tooling tương thích, Node 24.15.0 hiện có; không thêm capability native. Codex triển khai theo patch/test plan này, không đổi owner/reviewer hoặc giả assignment bên GitHub.
 3. Chạy readiness từng task; nhận HANDOFF baseline/commit trên nhánh. Giữ graph: GM-02/03 cùng chờ GM-01, không chờ GM-04/data PR hoặc nhau.

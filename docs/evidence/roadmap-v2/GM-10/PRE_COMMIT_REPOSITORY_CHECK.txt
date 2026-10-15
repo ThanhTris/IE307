@@ -1,0 +1,28 @@
+GM-10 documentation preparation checks — 2026-10-15; no commit/push/Project changes
+COMMAND: python scripts/validate_repository.py
+Gi Cung Duoc: documents, links, JSON, task manifest, dependencies and current FR traceability OK.
+Scope: documentation validation only; no native build/backend execution or human approval verified.
+Dependency approval uses live GitHub Project; run task_readiness --task before code/merge. This offline validator does not unlock tasks.
+EXIT: 0
+COMMAND: python scripts/task_readiness.py --check-docs
+Task indexes match task metadata.
+EXIT: 0
+COMMAND: git diff --check
+EXIT: 0
+{
+  "sourceTestHashes": 18,
+  "hashMismatches": [],
+  "headMatchesManifestBase": true,
+  "taskMetadataUnchanged": true,
+  "protectedChangedPaths": [],
+  "stagedPaths": [],
+  "newMarkdownTrailingWhitespace": []
+}
+FINAL DOCUMENT CHECK after recording regression: 2026-10-15
+Gi Cung Duoc: documents, links, JSON, task manifest, dependencies and current FR traceability OK.
+Scope: documentation validation only; no native build/backend execution or human approval verified.
+Dependency approval uses live GitHub Project; run task_readiness --task before code/merge. This offline validator does not unlock tasks.
+validate_repository EXIT: 0
+Task indexes match task metadata.
+check-docs EXIT: 0
+diff-check EXIT: 0

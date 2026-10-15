@@ -1,0 +1,46 @@
+Pass: personal owner can read own summary
+Pass: other user cannot read owner personal summary
+Pass: group member can read shared summary
+Pass: outsider sees no summaries
+Pass: wrong scope rejected
+Pass: forged outsider cursor rejected
+Pass: private schemas deny every app role
+Pass: private tables deny app reads and writes
+Pass: private helpers deny all app roles
+Pass: public wrappers fixed path and restricted grants
+Pass: canonical roster order and duplicates cannot change key
+Pass: history DTO contains no private context
+Pass: outsider delete is non-disclosing no-op
+Pass: opaque GM07 request IDs accepted
+Pass: same request ACK is identical
+Pass: same request has no repeated mutation
+Pass: reused request with another payload conflicts
+Pass: boolean string rejected
+Pass: no consent means no recent penalty
+Pass: forged or legacy group key ignored for anti-repeat
+Pass: recent reads at most3 results for exact group
+Pass: other roster cannot borrow recent history
+Pass: freeze stores the three canonical recent results
+Pass: withdrawal physically removes all that groups summaries
+Pass: withdrawal resets lobby ready
+Pass: withdrawal leaves persisted result unchanged
+Pass: withdrawal immediately stops recent penalty
+Pass: started recent snapshot remains frozen after withdrawal
+Pass: reopt-in does not resurrect deleted summaries
+Pass: producer accepts actual server finalization inside same outer statement
+Pass: trusted record creates personal and fully consented group rows
+Pass: trusted record is retry-idempotent
+Pass: producer retry cannot resurrect deleted summary
+Pass: personal delete does not delete another owner row
+Pass: personal opt-out clears own personal history
+Pass: personal opt-out preserves others personal history
+Pass: two retained meals detach consents without collision
+Pass: retention deletes operational room
+Pass: history survives operational cleanup with authentic room ID/code
+Pass: retained presentation contains only minimal fields
+Pass: history beyond30days never read
+Pass: expired presentations cascade with deleted history
+Pass: existing retention worker purges expired private completion receipts
+Pass: history page is capped at50
+Pass: keyset cursor has no overlap and returns remaining rows
+{"result": "Pass", "assertions": 45, "cleanup": "owned disposable DB removed"}

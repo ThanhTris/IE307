@@ -1,0 +1,55 @@
+# GM21.2 / GM07.1 / schema0.6.0 via0021 +0024. No secrets in repository.
+# Root/mobile npm ci; backend:start. Real reproducible suite:
+# GM21_PYTHON=python3 node scripts/gm21_http_check.mjs
+# Runner uses owned disposable DB/PostgREST and real GoTrue test guests.
+# Actual room/start/finalize: GM21_PYTHON=python3 node scripts/gm21_lifecycle_check.mjs
+# App deployment needs ledger/definition review, backup and ordered0021/0023/0024; no reset.
+@baseUrl = http://127.0.0.1:54321
+@publicKey = REPLACE_WITH_LOCAL_PUBLIC_KEY
+@userToken = REPLACE_WITH_GOTRUE_GUEST_ACCESS_TOKEN
+@historyId = REPLACE_WITH_OWN_HISTORY_UUID
+
+### Authenticated history. <=50 rows, newest finalizedAt/id first.
+# 200 {ok:true,data:[HistoryItem]}; no raw roster/groupKey/consent/GPS/ballot.
+# Scope group checks every scoped consent; cursor is last returned item.id.
+POST {{baseUrl}}/rest/v1/rpc/get_history
+apikey: {{publicKey}}
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{"scope":"personal","cursor":null}
+
+### Enable consent for future meals. No retrospective history/grant after start.
+# Request ID is opaque GM07 string. Same ID/body -> same ACK, no repeated write.
+# Same ID/different body ->409 REQUEST_ID_REUSED. 200 void data:null.
+POST {{baseUrl}}/rest/v1/rpc/update_history_consent
+apikey: {{publicKey}}
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{"requestId":"req_history_example_enable","scope":"personal","consent":true}
+
+### Group withdrawal. Physically removes affected group summaries.
+# 200 void. Peers personal summaries/result/winner are unchanged.
+POST {{baseUrl}}/rest/v1/rpc/update_history_consent
+apikey: {{publicKey}}
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{"requestId":"req_history_example_group_off","scope":"group","consent":false}
+
+### Own personal or member group deletion. No global result/peer personal delete.
+# Missing/other-owner UUID is the same successful no-op, no existence oracle.
+POST {{baseUrl}}/rest/v1/rpc/delete_history
+apikey: {{publicKey}}
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{"requestId":"req_history_example_delete","history_id":"{{historyId}}"}
+
+### Missing JWT ->401. Forged JWT also401; another valid caller sees only own rows.
+POST {{baseUrl}}/rest/v1/rpc/get_history
+apikey: {{publicKey}}
+Content-Type: application/json
+
+{"scope":"group","cursor":null}

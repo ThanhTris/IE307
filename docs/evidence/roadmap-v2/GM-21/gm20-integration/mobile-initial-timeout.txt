@@ -1,0 +1,104 @@
+
+> gi-cung-duoc-mobile@0.1.0 check
+> npm run typecheck && npm run lint && npm test && npm run check:architecture
+
+
+> gi-cung-duoc-mobile@0.1.0 typecheck
+> tsc --noEmit
+
+
+> gi-cung-duoc-mobile@0.1.0 lint
+> eslint .
+
+
+/Users/hoaitam/Desktop/Learn/23521394/HK1-Nam-4/IE307/ThanhTris-IE307/mobile/src/data/api/contracts.ts
+  342:18  warning  Array type using 'Array<T>' is forbidden. Use 'T[]' instead  @typescript-eslint/array-type
+
+/Users/hoaitam/Desktop/Learn/23521394/HK1-Nam-4/IE307/ThanhTris-IE307/mobile/src/data/api/index.ts
+  10:1  warning  Import in body of module; reorder to top  import/first
+  11:1  warning  Import in body of module; reorder to top  import/first
+  12:1  warning  Import in body of module; reorder to top  import/first
+
+✖ 4 problems (0 errors, 4 warnings)
+  0 errors and 4 warnings potentially fixable with the `--fix` option.
+
+
+> gi-cung-duoc-mobile@0.1.0 test
+> jest --runInBand
+
+PASS tests/unit/apiContract.test.ts (19.145 s)
+PASS tests/unit/authSession.test.ts
+PASS tests/unit/apiResponseValidation.test.ts
+PASS tests/unit/apiReadValidation.test.ts
+PASS tests/unit/apiMockIsolation.test.ts
+PASS tests/unit/decisionContract.test.ts
+PASS tests/unit/authTransport.test.ts
+FAIL tests/component/sharedComponents.test.tsx (22.51 s)
+  ● Console
+
+    console.error
+      The current testing environment is not configured to support act(...)
+
+      140 |     <View style={[styles.dishCard, { backgroundColor: colors?.surface, borderColor: colors?.line }]}>
+      141 |       <Pressable accessibilityRole="button" accessibilityLabel={`Mở món ${dish.name}`} onPress={onPress} disabled={!onPress}>
+    > 142 |         {source && !imageFailed ? <Image accessibilityLabel={`Ảnh ${dish.name}`} source={source} onError={() => setFailedImageKey(imageKey)} style={styles.dishImage as ImageStyle} /> : <View accessibilityLabel={`Ảnh dự phòng ${dish.name}`} style={[styles.dishFallback, { backgroundColor: colors?.warm }]}><Text style={styles.dishEmoji}>🍜</Text></View>}
+          |                                                                                                                 ^
+      143 |         <View style={styles.dishBody}>
+      144 |           <Text style={[styles.dishName, { color: colors?.text }]}>{dish.name}</Text>
+      145 |           {dish.description ? <Text style={[styles.dishDescription, { color: colors?.muted }]}>{dish.description}</Text> : null}
+
+      at isConcurrentActEnvironment (node_modules/react-reconciler/cjs/react-reconciler.development.js:13990:17)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-reconciler/cjs/react-reconciler.development.js:16304:7)
+      at scheduleUpdateOnFiber (node_modules/react-reconciler/cjs/react-reconciler.development.js:14070:11)
+      at dispatchSetStateInternal (node_modules/react-reconciler/cjs/react-reconciler.development.js:6784:13)
+      at dispatchSetState (node_modules/react-reconciler/cjs/react-reconciler.development.js:6741:7)
+      at Object.setFailedImageKey [as onError] (src/shared/ui/components.tsx:142:113)
+      at onError (tests/component/sharedComponents.test.tsx:42:20)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:814:22)
+      at Object.<anonymous> (tests/component/sharedComponents.test.tsx:41:12)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● FormField reports errors and forwards editable input
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      18 | });
+      19 |
+    > 20 | test('FormField reports errors and forwards editable input', async () => {
+         | ^
+      21 |   const onChange = jest.fn();
+      22 |   const user = userEvent.setup();
+      23 |   await render(<FormField label="Mã phòng" value="" onChangeText={onChange} error="Mã chưa đủ 6 ký tự" colors={colors} />);
+
+      at Object.test (tests/component/sharedComponents.test.tsx:20:1)
+
+  ● DishCard keeps vote buttons available and falls back when artwork is absent
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      27 | });
+      28 |
+    > 29 | test('DishCard keeps vote buttons available and falls back when artwork is absent', async () => {
+         | ^
+      30 |   const onVote = jest.fn();
+      31 |   const user = userEvent.setup();
+      32 |   await render(<DishCard dish={{ id: 'dish_1', name: 'Phở bò', tags: ['Món nước'], priceLabel: '~50k' }} onVote={onVote} colors={colors} />);
+
+      at Object.test (tests/component/sharedComponents.test.tsx:29:1)
+
+PASS tests/unit/discovery.test.ts
+PASS tests/integration/routes.test.tsx (27.238 s)
+PASS tests/component/AppShellScreen.test.tsx
+
+Test Suites: 1 failed, 10 passed, 11 total
+Tests:       2 failed, 380 passed, 382 total
+Snapshots:   0 total
+Time:        88.703 s
+Ran all test suites.

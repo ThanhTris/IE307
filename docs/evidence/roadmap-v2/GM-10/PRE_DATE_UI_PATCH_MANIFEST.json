@@ -1,0 +1,27 @@
+{
+  "task": "GM-10",
+  "date": "2026-10-15",
+  "baseHead": "30ecb5675104f13c64580018cad118647fb3d601",
+  "branch": "codex/gm-10-context-and-preferences",
+  "contract": "food-v1/roadmap-v2/GM-10.1",
+  "revision": "baseHead + working tree; no commit",
+  "algorithm": "sha256 of working-tree bytes",
+  "files": {
+    "mobile/src/app/gm10/_layout.tsx": "44c10b7eba8e8df79615915f168664d3117ddd7ab9d210a771ad7fe7528967bf",
+    "mobile/src/app/gm10/context.tsx": "0b2d288eeb95c4d0165f84235e366fa698825c5b9b2d2768b551a348b4224757",
+    "mobile/src/app/gm10/preferences.tsx": "f85d8369c907c2feedb03e7fe29817bcebc217cb75a2438d3b3e84999db06c1a",
+    "mobile/src/app/index.tsx": "3350268b3044fabbd3086bec46f4c66e52e9d60673ace20436f7360ee693d27b",
+    "mobile/src/app/shell.tsx": "8e8f83fec93b1b674989de7a78357b21638f22b9d2a5a444dbc486f25cd9a67e",
+    "mobile/src/bootstrap/roomSetupPreview.tsx": "1abbb80bfcffad83fb4ae2ae3e8f3e9077d7fe5ae3b99bbfcd60e65cd40ee447",
+    "mobile/src/features/context/components/SetupFrame.tsx": "9c07c72eafa348499e320530388c60aabe784071e76d667f2d51c2aa8a627e79",
+    "mobile/src/features/context/hooks/useRoomSetup.ts": "158949caf3fa22f4a3b4c71d7ef75955139dfd24732abedccf327e02d1cf2681",
+    "mobile/src/features/context/screens/ContextScreen.tsx": "b0cd044213bc082d8e7bf7e31a09ab3dd5bfdf537c5355b3058f471ea83d9edc",
+    "mobile/src/features/context/services/roomSetup.ts": "3ea3e93139d6ca3b7e04f371c63cac33dde2cd832c203913830a24e235f2fb17",
+    "mobile/src/features/home/screens/AppShellScreen.tsx": "5900db3edd5bb190ec3fc9d621230ec375159dfc825b144f93714e7dc642f676",
+    "mobile/src/features/home/screens/HomeScreen.tsx": "dfab36bf0c1c83b95e9776cdde0ea49dff996648fe237214cef942b8e6f23a45",
+    "mobile/src/features/preferences/screens/PreferencesScreen.tsx": "8881b068088296abe06b8222b36c8cf9339be8548046d6214f0bc7f6098b4983",
+    "mobile/tests/component/roomSetupScreens.test.tsx": "0a639f67d76a64c9bc0c8048120a8b9ea7d8d99298110f9c487482541a10632a",
+    "mobile/tests/integration/routes.test.tsx": "4ae399a7b4289b82f9ec5596368e1ed33c024c7806f27c12aea473fd042850e0",
+    "mobile/tests/unit/roomSetup.test.ts": "93e5c3a9263fa3f4d426485264cd77826b18dfa4edeb788e982d5f48292e58ca"
+  }
+}

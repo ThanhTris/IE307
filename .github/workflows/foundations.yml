@@ -14,8 +14,10 @@ jobs:
           cache: npm
           cache-dependency-path: mobile/package-lock.json
       - run: npm ci
+      - run: npm run test:expo-baseline
       - run: npm run check
-      - run: npm run check:expo
+      - name: Expo locked SDK compatibility (remote updates checked separately)
+        run: npm run check:expo
       - run: npm run bundle:android
   backend-runner:
     runs-on: ubuntu-latest
