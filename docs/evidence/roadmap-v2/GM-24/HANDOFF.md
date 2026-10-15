@@ -1,11 +1,20 @@
 # Bàn giao đầu ra task — GM-24 / roadmap-v2
 
+## Revision sau merge main — 2026-10-16
+
+- PR branch: `codex/gm-24-location-coverage`; merge commit `ad78d98` nhận `origin/main` tại `daa9174`.
+- GM-10 được giữ nguyên ở `ContextScreen`; harness GM-24 dùng `Gm24ContextScreen` tại `/gm24/context`, không tạo room hoặc ghi room context.
+- Live API dùng `createAuthenticatedApiClient`/GM-16 với restore session và explicit guest action. Không gọi `create_guest_session` legacy và không tự tạo guest khi mount.
+- Discovery/selection được xóa ngay khi đổi môi trường, đổi session hoặc request lỗi; response của generation cũ bị bỏ. 401/empty/malformed/timeout khóa preview/save và không dùng anchor mock cũ.
+- `expo-location ~57.0.21` đã được thêm theo lockfile; app config cho phép foreground fine/coarse location. Cần native rebuild để kiểm manifest/quyền thật.
+- Automated verification: mobile Jest 21 suites/610 tests, GM-24 component 16 tests, Python 550 tests (6 skipped), Expo checks và Android JS bundle đều Pass. Thiết bị Android/Expo Go và backend deployed vẫn `Not run`.
+
 - Task: GM-24 — UI: nối vị trí thiết bị với coverage API
 - Owner: Trang (@rosy179)
 - Reviewer: Trí (@ThanhTris)
 - Track / stage: INTEGRATION / native
 - Branch / target: `codex/gm-24-location-coverage` / `main`
-- Base revision: `e0b88c0` (origin/main)
+- Base revision: `daa9174` (origin/main at merge)
 - Contract version: `food-v1/roadmap-v2/GM-24.1`
 - CHECKS: `docs/evidence/roadmap-v2/GM-24/CHECKS.md`
 
@@ -14,7 +23,7 @@
 | Artifact thực tế | Producer task | Version/commit | Lệnh đọc/chạy | Expected output | Task nhận |
 | --- | --- | --- | --- | --- | --- |
 | `mobile/src/features/context/services/location.ts` | GM-24 | `food-v1/roadmap-v2/GM-24.1` | `import { locationService, LocationService, NativeLocationAdapter, WebLocationAdapter, calculateDistanceM, sanitizeContextForServer } from './services/location';` | Location service thuần túy, tính khoảng cách, gợi ý anchor, buffer server time, và sanitize GPS thô; tách biệt web/mock/native adapter | GM-25, GM-30 |
-| `mobile/src/features/context/screens/ContextScreen.tsx` | GM-24 | `food-v1/roadmap-v2/GM-24.1` | `import { ContextScreen } from './features/context';` | Màn hình bối cảnh tích hợp vị trí, chọn điểm hẹn công cộng, chọn bán kính, ăn ngay/đặt giờ (có guard giờ quá khứ và clear lỗi stale) và panel audit bảo mật | GM-25 |
+| `mobile/src/features/context/screens/Gm24ContextScreen.tsx` | GM-24 | `food-v1/roadmap-v2/GM-24.1` | Mở route `/gm24/context` hoặc import trực tiếp | Harness bối cảnh GM-24, chọn điểm hẹn công cộng, chọn bán kính, ăn ngay/đặt giờ, auth/session và panel audit bảo mật | GM-25 |
 | `mobile/src/app/gm24/context.tsx` | GM-24 | `food-v1/roadmap-v2/GM-24.1` | Mở route `/gm24/context` trên Expo Go hoặc Expo Router | Mở màn hình ContextScreen trực tiếp từ ứng dụng (hỗ trợ chuyển đổi Mock / Real API) | GM-25, Reviewer |
 | `mobile/tests/unit/locationService.test.ts` | GM-24 | `food-v1/roadmap-v2/GM-24.1` | `cd mobile; npm test tests/unit/locationService.test.ts` | 28 unit tests pass: khoảng cách Haversine, gợi ý anchor, buffer ăn ngay, validate đặt giờ, lọc GPS thô, adapter native & web | QA / Reviewer |
 | `mobile/tests/component/contextScreen.test.tsx` | GM-24 | `food-v1/roadmap-v2/GM-24.1` | `cd mobile; npm test tests/component/contextScreen.test.tsx` | 15 component tests pass: kịch bản grant/deny/off/outside/manual/offline, chặn lưu giờ quá khứ, hồi phục lỗi stale, bảo toàn giờ đặt | QA / Reviewer |
@@ -26,8 +35,8 @@
 | --- | --- | --- | --- | --- |
 | 1. Xin quyền đúng thao tác, deny/offline/no coverage vẫn manual; không background tracking | Pass | `cd mobile; npm test tests/unit/locationService.test.ts tests/component/contextScreen.test.tsx` | CHECKS.md mục 2, 6, 7 | Tự động hóa qua unit & component tests; `NativeLocationAdapter` sử dụng PermissionsAndroid; hỗ trợ chuyển đổi kịch bản trên UI |
 | 2. Server chỉ anchorId/radiusM/desiredAt; không GPS thô trong log/database/outbox | Pass | `cd mobile; npm test tests/unit/locationService.test.ts -t "Privacy Boundary"` | CHECKS.md mục 5; Panel Audit trên màn hình | Kiểm tra sanitizeContextForServer và redactLocationFromLog: 0 tọa độ GPS trong payload server |
-| 3. Ăn ngay lấy server now+buffer một lần; đặt giờ không cộng lại, quá giờ yêu cầu xác nhận và chặn lưu nếu không hợp lệ | Pass | `cd mobile; npm test tests/unit/locationService.test.ts tests/component/contextScreen.test.tsx -t "Scheduled"` | CHECKS.md mục 3, 4, 7 | Ăn ngay cộng 30 phút một lần từ serverTime; Đặt giờ trước không cộng lặp lại; cảnh báo `DESIRED_TIME_PASSED` và chặn nút lưu khi giờ ở quá khứ; cung cấp nút điều chỉnh về giờ hợp lệ |
-| 4. Harness component dùng lại màn context; kiểm adapter native và API thật trước merge | Pass | Route `/gm24/context` trong Expo Go / shell | CHECKS.md mục 7, 8, 9; `mobile/src/features/context/screens/ContextScreen.tsx` | Tái sử dụng component `ContextSummary` từ GM-05; tích hợp Scenario Picker và sẵn sàng chạy trên Expo Go / Real Supabase API |
+| 3. Ăn ngay lấy server now+buffer một lần; đặt giờ không cộng lại, quá giờ yêu cầu xác nhận và chặn lưu nếu không hợp lệ | Pass | `cd mobile; npm test tests/unit/locationService.test.ts tests/component/contextScreen.test.tsx -t "Scheduled"` | CHECKS.md mục 3, 4, 7 | Ăn ngay cộng 15 phút một lần từ serverTime; Đặt giờ trước không cộng lặp lại; cảnh báo `DESIRED_TIME_PASSED` và chặn nút lưu khi giờ ở quá khứ; cung cấp nút điều chỉnh về giờ hợp lệ |
+| 4. Harness component dùng lại màn context; kiểm adapter native và API thật trước merge | Pass | Route `/gm24/context` trong Expo Go / shell | CHECKS.md mục 7, 8, 9; `mobile/src/features/context/screens/Gm24ContextScreen.tsx` | Tái sử dụng component nền từ GM-05; tích hợp Scenario Picker và sẵn sàng chạy trên Expo Go / Real Supabase API |
 | 5. Đầu vào/đầu ra và cách kiểm được ghi trong HANDOFF.md; reviewer đối chiếu revision thật | Pass | Tài liệu này (`HANDOFF.md`) | `docs/evidence/roadmap-v2/GM-24/HANDOFF.md` | Đầy đủ bảng artifact, hướng dẫn khởi chạy, giới hạn |
 | 6. Đạt kiểm Android–API đúng scope trong ma trận mobile; evidence thiết bị/transport/native thật | Not run | Cần chạy trên thiết bị Android vật lý với Expo Go và backend thật | CHECKS.md mục 14 | Sẵn sàng chạy trên máy Android thật với ApiClientImpl; đánh dấu Not run chờ kiểm tra thực tế phần cứng |
 
@@ -54,14 +63,14 @@
    - Từ màn hình chính (App Shell), bấm nút **"Mở vị trí và bối cảnh GM-24"**.
    - Tại mục **⚙️ Môi trường dữ liệu & API**:
      - Chọn **🧪 Môi trường kịch bản (Mock)** để chạy các kịch bản thử nghiệm ngoại lệ (Hồ Con Rùa, Phố Đi Bộ, Từ chối GPS, Tắt GPS, Ngoài vùng HN, Server Offline, Server Rỗng).
-     - Chọn **🌐 Máy chủ thật (Live Supabase API)** để kết nối trực tiếp đến Supabase RPC `get_discovery_context` (GM-18) với phiên khách GM-16 tự động.
+     - Chọn **🌐 Máy chủ thật (Live Supabase API)** để khôi phục session GM-16. Nếu chưa có session, bấm **Tạo phiên khách GM-16**; không có guest session tự động khi mount.
 
 4. **Kiểm tra thời gian & Chặn lưu giờ quá khứ**:
-   - Bấm **⚡ Ăn ngay (Buffer 30p)**: Giờ ăn mục tiêu được cộng 30 phút từ giờ máy chủ một lần duy nhất.
+   - Bấm **⚡ Ăn ngay (Buffer 15p)**: Giờ ăn mục tiêu được cộng 15 phút từ giờ máy chủ một lần duy nhất.
    - Bấm **🕒 Đặt giờ trước** -> Chọn **Quá khứ (-1 giờ)**:
      - Cảnh báo đỏ `DESIRED_TIME_PASSED` xuất hiện.
      - Nút **"Xác nhận bối cảnh phòng"** bị khóa (`disabled={true}`).
-     - Bấm **"Điều chỉnh thành giờ hợp lệ (+30 phút từ giờ máy chủ)"**: thời gian được cập nhật thành mốc tương lai hợp lệ, cảnh báo biến mất và nút lưu được mở khóa.
+     - Bấm **"Điều chỉnh thành giờ hợp lệ (+15 phút từ giờ máy chủ)"**: thời gian được cập nhật thành mốc tương lai hợp lệ, cảnh báo biến mất và nút lưu được mở khóa.
 
 5. **Kiểm tra hồi phục lỗi mạng (Stale error recovery)**:
    - Chọn kịch bản **Server Offline** -> Thông báo `Lỗi tải dữ liệu khu vực` xuất hiện.

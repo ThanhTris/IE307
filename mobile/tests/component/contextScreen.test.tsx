@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, userEvent, waitFor } from '@testing-library/react-native';
+import type { ApiClient } from '../../src/data/api/contracts';
 import { Gm24ContextScreen as ContextScreen } from '../../src/features/context/screens/Gm24ContextScreen';
 
 describe('GM-24 ContextScreen Component & Scenarios', () => {
@@ -210,6 +211,51 @@ describe('GM-24 ContextScreen Component & Scenarios', () => {
       expect(screen.getByText(/Trạng thái kết nối:/)).toBeOnTheScreen();
       expect(screen.getByText(/Endpoint:/)).toBeOnTheScreen();
     });
+  });
+
+  it('clears a previously selected mock anchor when live discovery returns 401', async () => {
+    const user = userEvent.setup();
+    const handleSave = jest.fn();
+    const client = {
+      getDiscoveryContext: jest.fn()
+        .mockResolvedValueOnce({
+          ok: true,
+          data: {
+            serverTime: '2026-10-15T11:30:00.000Z',
+            anchors: [{
+              id: 'anc_ho_con_rua',
+              coverageId: 'cov_hcm',
+              name: 'Hồ Con Rùa',
+              address: 'Công trường Quốc Tế, Quận 3',
+              lat: 10.7828,
+              lng: 106.6958,
+            }],
+            coverageAreas: [],
+          },
+        })
+        .mockResolvedValue({ ok: false, error: { messageKey: 'AUTH_REQUIRED' } }),
+    } as unknown as ApiClient;
+
+    await render(
+      <ContextScreen
+        apiClient={client}
+        initialScenario="manual_only"
+        onSaveContext={handleSave}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getAllByText('Hồ Con Rùa').length).toBeGreaterThanOrEqual(1);
+    });
+
+    await user.press(screen.getByText('🌐 Máy chủ thật (Live Supabase API)'));
+
+    await waitFor(() => {
+      expect(screen.queryByText('Công trường Quốc Tế, Quận 3')).toBeNull();
+      expect(screen.getByText(/Lỗi tải dữ liệu khu vực/)).toBeOnTheScreen();
+    });
+
+    expect(handleSave).not.toHaveBeenCalled();
   });
 
   it('onSaveContext passes pure sanitized RoomContext without coordinates', async () => {

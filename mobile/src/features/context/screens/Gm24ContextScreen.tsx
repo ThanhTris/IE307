@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Pressable,
   ScrollView,
@@ -46,8 +46,6 @@ export type ContextScenario =
 
 export type EnvironmentMode = 'mock' | 'real_api';
 
-let livePrivateGeneration = 0;
-
 export interface ContextScreenProps {
   apiClient?: ApiClient;
   initialScenario?: ContextScenario;
@@ -90,6 +88,7 @@ export function Gm24ContextScreen({
   );
   const [realClientStatus, setRealClientStatus] = useState<string>('Sẵn sàng');
   const [loadGeneration, setLoadGeneration] = useState(0);
+  const requestGeneration = useRef(0);
 
   // Discovery data from server
   const [serverTime, setServerTime] = useState<string>('2026-10-15T11:30:00.000Z');
@@ -106,6 +105,19 @@ export function Gm24ContextScreen({
     sortedAnchors: [],
     errorMessage: null,
   });
+  const clearLivePrivateData = useCallback(async () => {
+    setAnchors([]);
+    setLocationState({
+      mode: 'manual',
+      permission: 'undetermined',
+      coords: null,
+      selectedAnchor: null,
+      distanceM: null,
+      isOutsideCoverage: false,
+      sortedAnchors: [],
+      errorMessage: null,
+    });
+  }, []);
 
   // Context selection states
   const [radiusM, setRadiusM] = useState<number>(1500);
@@ -131,13 +143,13 @@ export function Gm24ContextScreen({
       return createAuthenticatedApiClient({
         baseUrl: realApiUrl,
         publicKey,
-        clearPrivateData: async () => { livePrivateGeneration += 1; },
+        clearPrivateData: clearLivePrivateData,
         timeoutMs: 15000,
       });
     } catch {
       return null;
     }
-  }, [realApiUrl]);
+  }, [clearLivePrivateData, realApiUrl]);
   const realClient = liveAuth?.client;
 
   // Active client: real or mock depending on envMode or explicit injection
@@ -188,6 +200,7 @@ export function Gm24ContextScreen({
   // Load discovery data on mount, scenario change, or environment switch
   useEffect(() => {
     let active = true;
+    const generation = ++requestGeneration.current;
     const run = async () => {
       setLoading(true);
       setServerError(null);
@@ -206,6 +219,7 @@ export function Gm24ContextScreen({
         }
         if (envMode === 'real_api' && !apiClient && liveAuth) {
           const restored = await liveAuth.session.restoreSession();
+          if (!active || generation !== requestGeneration.current) return;
           if (!restored.ok) {
             setRealClientStatus('Chưa có phiên GM-16 · tạo phiên bằng nút bên dưới');
             setServerError('AUTH_REQUIRED');
@@ -218,7 +232,7 @@ export function Gm24ContextScreen({
 
         const startTime = Date.now();
         const response = await client.getDiscoveryContext();
-        if (!active) return;
+        if (!active || generation !== requestGeneration.current) return;
 
         if (!response.ok) {
           setServerError(response.error.messageKey);
@@ -261,10 +275,10 @@ export function Gm24ContextScreen({
           setLocationState(manual);
         } else {
           const res = await service.resolveWithGps(loadedAnchors);
-          if (active) setLocationState(res);
+          if (active && generation === requestGeneration.current) setLocationState(res);
         }
       } catch (err: unknown) {
-        if (!active) return;
+        if (!active || generation !== requestGeneration.current) return;
         const msg = (err as { message?: string })?.message ?? 'Lỗi kết nối máy chủ';
         setServerError(msg);
         setAnchors([]);
@@ -273,7 +287,7 @@ export function Gm24ContextScreen({
           setRealClientStatus(`Lỗi mạng: ${msg}`);
         }
       } finally {
-        if (active) setLoading(false);
+        if (active && generation === requestGeneration.current) setLoading(false);
       }
     };
 
@@ -282,7 +296,7 @@ export function Gm24ContextScreen({
     return () => {
       active = false;
     };
-  }, [client, envMode, scenario, service, liveAuth, loadGeneration]);
+  }, [apiClient, client, envMode, scenario, service, liveAuth, loadGeneration]);
 
   const createLiveGuest = async () => {
     if (!liveAuth) return;
@@ -299,10 +313,13 @@ export function Gm24ContextScreen({
 
   const handleRetry = async () => {
     if (!client) { setServerError('AUTH_REQUIRED'); return; }
+    const generation = ++requestGeneration.current;
     setLoading(true);
     setServerError(null);
+    void clearLivePrivateData();
     try {
       const response = await client.getDiscoveryContext();
+      if (generation !== requestGeneration.current) return;
       if (!response.ok) {
         setServerError(response.error.messageKey);
         setAnchors([]);
@@ -324,12 +341,13 @@ export function Gm24ContextScreen({
       });
 
       const res = await service.resolveWithGps(loadedAnchors);
-      setLocationState(res);
+      if (generation === requestGeneration.current) setLocationState(res);
     } catch (err: unknown) {
+      if (generation !== requestGeneration.current) return;
       const msg = (err as { message?: string })?.message ?? 'Lỗi kết nối máy chủ';
       setServerError(msg);
     } finally {
-      setLoading(false);
+      if (generation === requestGeneration.current) setLoading(false);
     }
   };
 
