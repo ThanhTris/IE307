@@ -1,4 +1,5 @@
 import { render, screen, userEvent, waitFor } from '@testing-library/react-native';
+import { MockApiClient } from '../../src/data/api';
 import { LobbyScreen } from '../../src/features/rooms/screens/LobbyScreen';
 import { RoomStatusScreen } from '../../src/features/rooms/screens/RoomStatusScreen';
 
@@ -29,6 +30,7 @@ test('member view does not expose host start action', async () => {
   await user.press(screen.getByRole('button', { name: 'Đang xem vai trò: Host · đổi vai trò' }));
   expect(screen.getByRole('button', { name: 'Tắt sẵn sàng' })).toBeOnTheScreen();
   expect(screen.queryByRole('button', { name: 'Bắt đầu chọn món' })).toBeNull();
+  expect(screen.queryByRole('button', { name: /đổi bối cảnh/ })).toBeNull();
   expect(screen.getByText('Ready là thao tác chủ động. Chỉ host bắt đầu khi tất cả thành viên trong fixture đã sẵn sàng.')).toBeOnTheScreen();
 });
 
@@ -38,9 +40,43 @@ test('changing the room context resets ready flags in the UI fixture', async () 
   await screen.findByText('Thành viên · 2/8');
   await user.press(screen.getByRole('button', { name: 'Tôi sẵn sàng' }));
   await screen.findByText('Đã ghi nhận bạn sẵn sàng trong fixture.');
-  await user.press(screen.getByRole('button', { name: 'Mô phỏng đổi bối cảnh · reset ready' }));
+  await user.press(screen.getByRole('button', { name: 'Mô phỏng đổi bối cảnh · reset ready (Host)' }));
   expect(await screen.findByText('Bối cảnh đổi; trạng thái sẵn sàng của mọi người đã được đặt lại.')).toBeOnTheScreen();
   expect(screen.getAllByText('Chưa sẵn sàng')).toHaveLength(2);
+});
+
+test('member ready and leave mutate that identity in the same mock room and refetch accurately', async () => {
+  const user = userEvent.setup();
+  const mockClient = new MockApiClient({ delayMs: 0 });
+  await render(<LobbyScreen onNavigate={nav} onHome={home} mockClient={mockClient} />);
+  await screen.findByText('Thành viên · 2/8');
+
+  await user.press(screen.getByRole('button', { name: 'Mô phỏng đổi bối cảnh · reset ready (Host)' }));
+  await screen.findByText('Bối cảnh đổi; trạng thái sẵn sàng của mọi người đã được đặt lại.');
+  await user.press(screen.getByRole('button', { name: 'Đang xem vai trò: Host · đổi vai trò' }));
+  expect(screen.getByRole('button', { name: 'Đang xem vai trò: Member · đổi vai trò' })).toBeOnTheScreen();
+  expect(screen.queryByRole('button', { name: 'Mô phỏng đổi bối cảnh · reset ready (Host)' })).toBeNull();
+  expect(screen.queryByRole('button', { name: 'Bắt đầu chọn món' })).toBeNull();
+
+  await user.press(screen.getByRole('button', { name: 'Tôi sẵn sàng' }));
+  await screen.findByText('Đã ghi nhận bạn sẵn sàng trong fixture.');
+  const afterReady = await mockClient.getRoomSnapshot('room_mock_001');
+  expect(afterReady.ok).toBe(true);
+  if (!afterReady.ok) throw new Error('Expected room snapshot after member ready');
+  expect(afterReady.data.members.find(member => member.userId === afterReady.data.hostUserId)?.ready).toBe(false);
+  const member = afterReady.data.members.find(member => member.userId !== afterReady.data.hostUserId);
+  expect(member?.displayName).toBe('Tuấn');
+  expect(member?.ready).toBe(true);
+
+  await user.press(screen.getByRole('button', { name: 'Rời phòng' }));
+  await user.press(screen.getByRole('button', { name: 'Xác nhận rời' }));
+  await screen.findByText('Bạn đã rời fixture này.');
+  const afterLeave = await mockClient.getRoomSnapshot('room_mock_001');
+  expect(afterLeave.ok).toBe(true);
+  if (!afterLeave.ok) throw new Error('Expected room snapshot after member leave');
+  expect(afterLeave.data.members.map(row => row.userId)).toEqual([afterLeave.data.hostUserId]);
+  expect(await screen.findByText('Thành viên · 1/8')).toBeOnTheScreen();
+  expect(screen.queryByRole('button', { name: 'Tôi sẵn sàng' })).toBeNull();
 });
 
 test('room status confirms cancellation and exposes expired and network states', async () => {

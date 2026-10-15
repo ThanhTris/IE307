@@ -1,20 +1,21 @@
 import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import type { Friend, ReadResult } from '../../../data/api/contracts';
+import { MockApiClient, type Friend, type ReadResult } from '../../../data/api';
 import { AppButton, FormField, SheetDialog, StatusNotice } from '../../../shared/ui';
 import { DemoFrame, useDemoColors, useMockDemoApi, type DemoDestination } from '../../shared/components/MockDemo';
 
-type Props = { onNavigate: (destination: DemoDestination) => void; onHome: () => void };
+type Props = { onNavigate: (destination: DemoDestination) => void; onHome: () => void; mockClient?: MockApiClient };
 type IncomingInvite = { id: string; name: string; friendCode: string; expired: boolean };
 type PendingAction = { kind: 'accept' | 'reject'; invite: IncomingInvite } | { kind: 'unfriend'; friend: Friend } | { kind: 'invite' } | null;
 
 const incomingFixture: IncomingInvite[] = [
-  { id: 'mock-friend-invite-01', name: 'Linh', friendCode: 'LINH42', expired: false },
+  { id: 'friend_invite_01', name: 'Linh', friendCode: 'LINH42', expired: false },
+  { id: 'friend_invite_02', name: 'Mai', friendCode: 'MAI67', expired: false },
   { id: 'mock-friend-invite-expired', name: 'An', friendCode: 'AN2026', expired: true },
 ];
 
-export function FriendsScreen({ onNavigate, onHome }: Props) {
-  const { api, mode, setMode, revision, reload } = useMockDemoApi();
+export function FriendsScreen({ onNavigate, onHome, mockClient }: Props) {
+  const { api, mode, setMode, revision, reload } = useMockDemoApi(mockClient);
   const colors = useDemoColors();
   const [friends, setFriends] = useState<Friend[]>([]);
   const [incoming, setIncoming] = useState(incomingFixture);

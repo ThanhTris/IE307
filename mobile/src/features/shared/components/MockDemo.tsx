@@ -1,7 +1,7 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { createApiClient, type ApiClient, type MockMode } from '../../../data/api';
+import { MockApiClient, type MockMode } from '../../../data/api';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppHeader, AppButton, StatusNotice } from '../../../shared/ui';
 
@@ -24,11 +24,15 @@ const modes: { id: MockMode; label: string }[] = [
   { id: 'expired', label: 'Hết hạn' },
 ];
 
-export function useMockDemoApi() {
+export function useMockDemoApi(injectedClient?: MockApiClient) {
   const [mode, setMode] = useState<MockMode>('default');
   const [revision, setRevision] = useState(0);
-  const api = useMemo<ApiClient>(() => createApiClient('mock', { mode, delayMs: 0 }), [mode]);
-  return { api, mode, setMode, revision, reload: () => setRevision(value => value + 1) };
+  const api = useMemo(() => injectedClient ?? new MockApiClient({ mode: 'default', delayMs: 0 }), [injectedClient]);
+  const changeMode = (nextMode: MockMode) => {
+    api.setMode(nextMode);
+    setMode(nextMode);
+  };
+  return { api, mode, setMode: changeMode, revision, reload: () => setRevision(value => value + 1) };
 }
 
 export function DemoModePicker({ mode, onChange }: { mode: MockMode; onChange: (mode: MockMode) => void }) {

@@ -315,8 +315,58 @@ export const MOCK_INBOX_ITEMS: InboxItem[] = [
     title: 'Lời mời ăn trưa',
     body: `Tuấn mời bạn tham gia phòng chọn món #${MOCK_DEFAULT_ROOM_CODE}`,
     read: false,
-    metadata: { roomId: 'room_mock_001', roomCode: MOCK_DEFAULT_ROOM_CODE },
+    metadata: { invitationId: 'room_invite_01', roomId: 'room_mock_001', roomCode: MOCK_DEFAULT_ROOM_CODE, expiresAt: '2099-10-11T08:15:00Z' },
     createdAt: '2026-10-11T07:45:00Z',
+  },
+  {
+    id: 'inbox_03',
+    eventId: 'evt_invite_02',
+    type: 'room_invite',
+    title: 'Lời mời ăn tối',
+    body: `Tuấn mời bạn tham gia phòng chọn món #${MOCK_DEFAULT_ROOM_CODE}`,
+    read: false,
+    metadata: { invitationId: 'room_invite_02', roomId: 'room_mock_001', roomCode: MOCK_DEFAULT_ROOM_CODE, expiresAt: '2099-10-11T18:15:00Z' },
+    createdAt: '2026-10-11T17:45:00Z',
+  },
+  {
+    id: 'inbox_04',
+    eventId: 'evt_invite_03',
+    type: 'room_invite',
+    title: 'Lời mời đã hết hạn',
+    body: 'Lời mời này đã quá hạn.',
+    read: true,
+    metadata: { invitationId: 'room_invite_expired', roomId: 'room_mock_001', roomCode: MOCK_DEFAULT_ROOM_CODE, expiresAt: '2026-10-01T08:15:00Z' },
+    createdAt: '2026-10-01T07:45:00Z',
+  },
+  {
+    id: 'inbox_friend_01',
+    eventId: 'evt_friend_invite_01',
+    type: 'friend_invite',
+    title: 'Linh muốn kết bạn',
+    body: 'Linh đã gửi lời mời kết bạn.',
+    read: false,
+    metadata: { invitationId: 'friend_invite_01', expiresAt: '2099-10-11T08:15:00Z' },
+    createdAt: '2026-10-11T07:45:00Z',
+  },
+  {
+    id: 'inbox_friend_02',
+    eventId: 'evt_friend_invite_02',
+    type: 'friend_invite',
+    title: 'Mai muốn kết bạn',
+    body: 'Mai đã gửi lời mời kết bạn.',
+    read: false,
+    metadata: { invitationId: 'friend_invite_02', expiresAt: '2099-10-11T08:15:00Z' },
+    createdAt: '2026-10-11T07:46:00Z',
+  },
+  {
+    id: 'inbox_friend_03',
+    eventId: 'evt_friend_invite_03',
+    type: 'friend_invite',
+    title: 'Thiếu mã lời mời',
+    body: 'Fixture bị thiếu invitationId.',
+    read: false,
+    metadata: { expiresAt: '2099-10-11T08:15:00Z' },
+    createdAt: '2026-10-11T07:47:00Z',
   },
   {
     id: 'inbox_02',
@@ -402,6 +452,18 @@ export class MockApiClient implements ApiClient {
 
   setCurrentUser(user: SessionUser): void {
     this.currentUser = user;
+  }
+
+  private findActiveInvitation(type: 'friend_invite' | 'room_invite', invitationId: string): InboxItem | undefined {
+    const invitation = this.inbox.find(item => item.type === type && item.metadata?.invitationId === invitationId);
+    if (!invitation) return undefined;
+    const expiresAt = invitation.metadata?.expiresAt;
+    if (typeof expiresAt !== 'string' || !Number.isFinite(Date.parse(expiresAt)) || Date.parse(expiresAt) <= Date.now()) return undefined;
+    return invitation;
+  }
+
+  private invalidInvitationResult<T>(): WriteResult<T> {
+    return { ok: false, error: { messageKey: 'INVALID_INPUT', message: 'Mã lời mời không tồn tại hoặc đã hết hạn.' } };
   }
 
   private getOwnRoomData(roomId: string): OwnRoomData {
@@ -1191,6 +1253,7 @@ export class MockApiClient implements ApiClient {
     await this.wait();
     const fail = this.checkFailure();
     if (fail) return { ok: false, error: { messageKey: fail } };
+    if (!this.findActiveInvitation('friend_invite', invitationId)) return this.invalidInvitationResult();
 
     const requestId = customRequestId ?? ('req_' + Math.random().toString(36).substring(2, 9));
     const { cachedResponse, conflictError, signature } = this.checkIdempotency<void>(
@@ -1210,6 +1273,7 @@ export class MockApiClient implements ApiClient {
     await this.wait();
     const fail = this.checkFailure();
     if (fail) return { ok: false, error: { messageKey: fail } };
+    if (!this.findActiveInvitation('friend_invite', invitationId)) return this.invalidInvitationResult();
 
     const requestId = customRequestId ?? ('req_' + Math.random().toString(36).substring(2, 9));
     const { cachedResponse, conflictError, signature } = this.checkIdempotency<void>(
@@ -1277,13 +1341,17 @@ export class MockApiClient implements ApiClient {
   }
 
   async acceptRoomInvite(req: AcceptRoomInviteRequest): Promise<WriteResult<JoinRoomResponse>> {
-    return this.joinRoom({ code: MOCK_DEFAULT_ROOM_CODE, displayName: req.displayName, requestId: req.requestId });
+    const invitation = this.findActiveInvitation('room_invite', req.invitationId);
+    const roomCode = invitation?.metadata?.roomCode;
+    if (!invitation || typeof roomCode !== 'string') return this.invalidInvitationResult();
+    return this.joinRoom({ code: roomCode, displayName: req.displayName, requestId: req.requestId });
   }
 
   async rejectRoomInvite(invitationId: string, customRequestId?: string): Promise<WriteResult<void>> {
     await this.wait();
     const fail = this.checkFailure();
     if (fail) return { ok: false, error: { messageKey: fail } };
+    if (!this.findActiveInvitation('room_invite', invitationId)) return this.invalidInvitationResult();
     const requestId = customRequestId ?? ('req_' + Math.random().toString(36).substring(2, 9));
     const { cachedResponse, conflictError, signature } = this.checkIdempotency<void>('rejectRoomInvite', requestId, { invitationId });
     if (cachedResponse) return cachedResponse;

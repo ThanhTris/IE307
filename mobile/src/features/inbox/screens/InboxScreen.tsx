@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Switch, Text, View } from 'react-native';
-import type { InboxItem } from '../../../data/api/contracts';
+import { MockApiClient, type InboxItem } from '../../../data/api';
 import { AppButton, SheetDialog, StatusNotice } from '../../../shared/ui';
 import { DemoFrame, useDemoColors, useMockDemoApi, type DemoDestination } from '../../shared/components/MockDemo';
 
-type Props = { onNavigate: (destination: DemoDestination) => void; onHome: () => void };
+type Props = { onNavigate: (destination: DemoDestination) => void; onHome: () => void; mockClient?: MockApiClient };
 type InboxAction = { item: InboxItem; kind: 'accept' | 'reject' } | null;
 
-export function InboxScreen({ onNavigate, onHome }: Props) {
-  const { api, mode, setMode, revision, reload } = useMockDemoApi();
+export function InboxScreen({ onNavigate, onHome, mockClient }: Props) {
+  const { api, mode, setMode, revision, reload } = useMockDemoApi(mockClient);
   const colors = useDemoColors();
   const [items, setItems] = useState<InboxItem[]>([]);
   const [loadedKey, setLoadedKey] = useState('');
@@ -38,15 +38,21 @@ export function InboxScreen({ onNavigate, onHome }: Props) {
     if (!action || busy) return;
     const pending = action;
     setAction(null);
+    const invitationId = getInvitationId(pending.item);
+    const unavailableReason = getInvitationUnavailableReason(pending.item);
+    if (!invitationId || unavailableReason) {
+      setMessage(!invitationId ? 'Không thể xử lý: thiếu mã lời mời.' : unavailableReason ?? 'Không thể xử lý lời mời.');
+      return;
+    }
     setBusy(true);
     const requestId = `gm14-inbox-${pending.kind}-${++sequence.current}`;
     const result = pending.item.type === 'friend_invite'
       ? pending.kind === 'accept'
-        ? await api.acceptPartner(pending.item.eventId, requestId)
-        : await api.rejectPartner(pending.item.eventId, requestId)
+        ? await api.acceptPartner(invitationId, requestId)
+        : await api.rejectPartner(invitationId, requestId)
       : pending.kind === 'accept'
-        ? await api.acceptRoomInvite({ invitationId: pending.item.eventId, displayName: 'Bạn mock', requestId })
-        : await api.rejectRoomInvite(pending.item.eventId, requestId);
+        ? await api.acceptRoomInvite({ invitationId, displayName: 'Bạn mock', requestId })
+        : await api.rejectRoomInvite(invitationId, requestId);
     setBusy(false);
     if (!result.ok) {
       setMessage(`Chưa xử lý được · ${result.error.messageKey}`);
@@ -72,6 +78,8 @@ export function InboxScreen({ onNavigate, onHome }: Props) {
       {!loading && !currentError && visibleItems.length === 0 && <StatusNotice title="Hộp thư trống" message="Không có thông báo mock để hiển thị." tone="info" colors={colors} />}
       {!loading && !currentError && visibleItems.map(item => {
         const invitation = item.type === 'friend_invite' || item.type === 'room_invite';
+        const invitationId = getInvitationId(item);
+        const unavailableReason = invitation ? getInvitationUnavailableReason(item) : undefined;
         return (
           <View key={item.id} style={[styles.item, { backgroundColor: colors.surface, borderColor: colors.line }]}>
             <View style={styles.itemTop}>
@@ -80,9 +88,11 @@ export function InboxScreen({ onNavigate, onHome }: Props) {
             </View>
             <Text style={[styles.body, { color: colors.text }]}>{item.body}</Text>
             <Text style={[styles.meta, { color: colors.muted }]}>{item.type === 'room_result' ? 'Kết quả phòng' : item.type === 'room_invite' ? 'Lời mời vào phòng' : 'Lời mời kết bạn'} · {new Date(item.createdAt).toLocaleString()}</Text>
+            {invitation && !invitationId ? <Text style={[styles.meta, { color: colors.warning }]}>Thiếu mã lời mời; không thể xử lý mục này.</Text> : null}
+            {unavailableReason ? <Text style={[styles.meta, { color: colors.warning }]}>{unavailableReason}</Text> : null}
             {invitation && <View style={styles.actions}>
-              <AppButton label="Chấp nhận" onPress={() => setAction({ item, kind: 'accept' })} disabled={busy} colors={colors} style={styles.actionButton} />
-              <AppButton label="Từ chối" variant="secondary" onPress={() => setAction({ item, kind: 'reject' })} disabled={busy} colors={colors} style={styles.actionButton} />
+              <AppButton label={`Chấp nhận ${item.title}`} onPress={() => setAction({ item, kind: 'accept' })} disabled={busy || !invitationId || Boolean(unavailableReason)} colors={colors} style={styles.actionButton} />
+              <AppButton label={`Từ chối ${item.title}`} variant="secondary" onPress={() => setAction({ item, kind: 'reject' })} disabled={busy || !invitationId || Boolean(unavailableReason)} colors={colors} style={styles.actionButton} />
             </View>}
           </View>
         );
@@ -94,6 +104,19 @@ export function InboxScreen({ onNavigate, onHome }: Props) {
       </SheetDialog>
     </DemoFrame>
   );
+}
+
+function getInvitationId(item: InboxItem): string | undefined {
+  const id = item.metadata?.invitationId;
+  return typeof id === 'string' && id.trim() ? id.trim() : undefined;
+}
+
+function getInvitationUnavailableReason(item: InboxItem): string | undefined {
+  if (item.metadata?.status === 'expired') return 'Lời mời đã hết hạn; thao tác bị khóa.';
+  const expiresAt = item.metadata?.expiresAt;
+  if (typeof expiresAt !== 'string' || !Number.isFinite(Date.parse(expiresAt))) return 'Thiếu thời hạn hợp lệ; thao tác bị khóa.';
+  if (Date.parse(expiresAt) <= Date.now()) return 'Lời mời đã hết hạn; thao tác bị khóa.';
+  return undefined;
 }
 
 const styles = StyleSheet.create({
