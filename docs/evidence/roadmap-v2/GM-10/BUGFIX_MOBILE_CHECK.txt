@@ -1,0 +1,26 @@
+GM-10 — bugs.md follow-up, 2026-10-15
+Command: cd mobile; npm.cmd run check
+Revision: base 30ecb5675104f13c64580018cad118647fb3d601 + uncommitted working tree
+Source/test byte hashes: PATCH_MANIFEST.json
+
+Recorded command result (summary, not a full terminal transcript):
+typecheck: PASS
+lint: PASS, 0 errors / 4 existing upstream warnings
+  contracts.ts:342 @typescript-eslint/array-type
+  index.ts:10/11/12 import/first
+
+Test Suites: 16 passed, 16 total
+Tests:       522 passed, 522 total
+Snapshots:   0 total
+Time:        30.133 s
+Ran all test suites.
+
+Architecture boundaries OK (static guard, not a substitute for review).
+Process exit: 0
+
+Coverage added for next meal times in UTC+7 (before/equal/after, day/month/year/leap rollover),
+snack preserving custom time, invalidation before preview/save, areas without anchors,
+multiple categories with deselection, preferences receipt/edit/new version,
+skip receipt/injected continuation and snapshot read retry without a second write,
+real routes carrying avoidRecent and stopping explicitly at the preview receipt.
+Automated component tests do not verify native layout or TalkBack on Android.

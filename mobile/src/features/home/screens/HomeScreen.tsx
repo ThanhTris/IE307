@@ -15,12 +15,13 @@ export type HomeScreenProps = PreviewControlsProps & {
   onJoin: () => void;
   onResume: () => void;
   onOpenFoundation?: () => void;
+  onOpenRoomSetup?: () => void;
   onFriends?: () => void;
   onInbox?: () => void;
   onProfile?: () => void;
 };
 
-export function HomeScreen({ repository, sessionToken, activeRoom, onCreate, onJoin, onResume, onOpenFoundation, onFriends, onInbox, onProfile, previewControls }: HomeScreenProps) {
+export function HomeScreen({ repository, sessionToken, activeRoom, onCreate, onJoin, onResume, onOpenFoundation, onOpenRoomSetup, onFriends, onInbox, onProfile, previewControls }: HomeScreenProps) {
   const { colors } = useShellTheme();
   const [panel, setPanel] = useState<string>();
   const loadSession = useCallback(() => repository.restoreSession(sessionToken), [repository, sessionToken]);
@@ -68,9 +69,10 @@ export function HomeScreen({ repository, sessionToken, activeRoom, onCreate, onJ
         <Text style={[entryStyles.body, { color: colors.text }]}>Điểm ăn chung, không chia sẻ GPS</Text>
         <Text style={[entryStyles.body, { color: colors.muted }]}>Chọn một điểm công cộng để cả nhóm dễ hẹn nhau. Bạn luôn có thể chọn bằng tay.</Text>
       </View>
-      {previewControls || onOpenFoundation ? <PreviewTools>
+      {previewControls || onOpenFoundation || onOpenRoomSetup ? <PreviewTools>
         {previewControls?.(false)}
         {onOpenFoundation ? <AppButton label="Xem cấu trúc ứng dụng" variant="quiet" onPress={onOpenFoundation} colors={colors} /> : null}
+        {onOpenRoomSetup ? <AppButton label="Chọn điểm ăn và khẩu vị" variant="quiet" onPress={onOpenRoomSetup} colors={colors} /> : null}
       </PreviewTools> : null}
     </ScrollView>
     <SheetDialog visible={!!panel} title={panel ?? 'Thông tin'} onClose={() => setPanel(undefined)} colors={colors}>

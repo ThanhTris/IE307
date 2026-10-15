@@ -1,0 +1,29 @@
+{
+  "task": "GM-10",
+  "date": "2026-10-15",
+  "baseHead": "30ecb5675104f13c64580018cad118647fb3d601",
+  "branch": "codex/gm-10-context-and-preferences",
+  "contract": "food-v1/roadmap-v2/GM-10.1",
+  "revision": "baseHead + working tree; no commit",
+  "algorithm": "sha256 of working-tree bytes",
+  "files": {
+    "mobile/src/app/gm10/_layout.tsx": "44c10b7eba8e8df79615915f168664d3117ddd7ab9d210a771ad7fe7528967bf",
+    "mobile/src/app/gm10/context.tsx": "0b2d288eeb95c4d0165f84235e366fa698825c5b9b2d2768b551a348b4224757",
+    "mobile/src/app/gm10/preferences.tsx": "f85d8369c907c2feedb03e7fe29817bcebc217cb75a2438d3b3e84999db06c1a",
+    "mobile/src/app/index.tsx": "3350268b3044fabbd3086bec46f4c66e52e9d60673ace20436f7360ee693d27b",
+    "mobile/src/app/shell.tsx": "8e8f83fec93b1b674989de7a78357b21638f22b9d2a5a444dbc486f25cd9a67e",
+    "mobile/src/bootstrap/roomSetupPreview.tsx": "1abbb80bfcffad83fb4ae2ae3e8f3e9077d7fe5ae3b99bbfcd60e65cd40ee447",
+    "mobile/src/features/context/components/SetupFrame.tsx": "06013ad9770f4d535e2b42f18e271257bed5955fe61341d93297e3867d8e44d9",
+    "mobile/src/features/context/hooks/useRoomSetup.ts": "158949caf3fa22f4a3b4c71d7ef75955139dfd24732abedccf327e02d1cf2681",
+    "mobile/src/features/context/screens/ContextScreen.tsx": "84247cde9c8dc9871839e7fbd605e7054f9f119ee83f135cbc428eb484963122",
+    "mobile/src/features/context/services/roomSetup.ts": "66b31cb6778610967d564b5055dea78a5494351b2be60563f13f8d90fa43ed51",
+    "mobile/src/features/home/screens/AppShellScreen.tsx": "5900db3edd5bb190ec3fc9d621230ec375159dfc825b144f93714e7dc642f676",
+    "mobile/src/features/home/screens/HomeScreen.tsx": "dfab36bf0c1c83b95e9776cdde0ea49dff996648fe237214cef942b8e6f23a45",
+    "mobile/src/features/preferences/screens/PreferencesScreen.tsx": "8881b068088296abe06b8222b36c8cf9339be8548046d6214f0bc7f6098b4983",
+    "mobile/tests/component/roomSetupScreens.test.tsx": "18ba47076104d22cd42156ebcb26df63309428c129c702d6b51d0b94fae06761",
+    "mobile/tests/integration/routes.test.tsx": "f35b5b52806b65f1197e9aacc5d8e6e50028e143f608fc67f540d09cd1ed0b0f",
+    "mobile/tests/unit/roomSetup.test.ts": "39537a38bee1f4556f0549b5ed98cbf79b8c86a5191a6b517cb9c963055316cf",
+    "mobile/src/features/context/components/MealDateTimeFields.tsx": "a69ca95b3ab9cc147372c65522e8ce5f40413037044a72b51387e5521f71eea9",
+    "mobile/tests/component/MealDateTimeFields.test.tsx": "c08dfdfaf16030b63772b999336fdc48b6981d09f44e7a09f69658c3c36b3bca"
+  }
+}

@@ -1,0 +1,13 @@
+
+> gi-cung-duoc-mobile@0.1.0 test
+> jest --runInBand --runTestsByPath tests/unit/roomSetup.test.ts tests/component/roomSetupScreens.test.tsx tests/integration/routes.test.tsx
+
+PASS tests/integration/routes.test.tsx (9.522 s)
+PASS tests/component/roomSetupScreens.test.tsx
+PASS tests/unit/roomSetup.test.ts
+
+Test Suites: 3 passed, 3 total
+Tests:       72 passed, 72 total
+Snapshots:   0 total
+Time:        14.841 s
+Ran all test suites within paths "tests/unit/roomSetup.test.ts", "tests/component/roomSetupScreens.test.tsx", "tests/integration/routes.test.tsx".

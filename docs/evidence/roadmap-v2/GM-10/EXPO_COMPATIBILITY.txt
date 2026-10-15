@@ -1,0 +1,5 @@
+
+> gi-cung-duoc-mobile@0.1.0 check:expo
+> expo install --check
+
+Dependencies are up to date

@@ -1,0 +1,91 @@
+import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
+import { createSetupPreview, setupCatalogue } from '../src/bootstrap/roomSetupPreview';
+import { ContextScreen } from '../src/features/context/screens/ContextScreen';
+import { PreferencesScreen } from '../src/features/preferences/screens/PreferencesScreen';
+import { renderRouter } from 'expo-router/testing-library';
+import { store } from 'expo-router/build/global-state/router-store';
+import RootLayout from '../src/app/_layout';
+import Index from '../src/app/index';
+import SetupLayout from '../src/app/gm10/_layout';
+import ContextRoute from '../src/app/gm10/context';
+import PreferencesRoute from '../src/app/gm10/preferences';
+import { setupError } from '../src/features/context/services/roomSetup';
+
+const press = async (label: string) => { await fireEvent.press(screen.getByRole('button', { name: label })); };
+async function preview() {
+  await press('Tôi xác nhận điểm công cộng, buổi và giờ ăn');
+  await press('Xem món mẫu theo bối cảnh');
+  await screen.findByText('Phở bò tái nạm');
+}
+
+test('host can explicitly resume editing context after a successful save', async () => {
+  const fixture = await createSetupPreview();
+  const onSaved = jest.fn();
+  await render(<ContextScreen {...fixture} onBack={jest.fn()} onContinue={jest.fn()} onSaved={onSaved} />);
+  await screen.findByLabelText('Giờ ăn (UTC+7)');
+  await preview(); await press('Lưu bối cảnh mẫu');
+  await waitFor(() => expect(onSaved).toHaveBeenCalledTimes(1));
+  const edit = screen.queryByRole('button', { name: 'Chỉnh lại bối cảnh' });
+  if (edit) await fireEvent.press(edit);
+  expect(await screen.findByLabelText('Giờ ăn (UTC+7)')).toBeEnabled();
+});
+
+test('a stale preview retains its reload action after a blocked save attempt', async () => {
+  const fixture = await createSetupPreview('stale');
+  await render(<ContextScreen {...fixture} onBack={jest.fn()} onContinue={jest.fn()} />);
+  await screen.findByLabelText('Giờ ăn (UTC+7)');
+  await press('Tôi xác nhận điểm công cộng, buổi và giờ ăn');
+  await press('Xem món mẫu theo bối cảnh');
+  await screen.findByRole('button', { name: 'Tải lại bối cảnh' });
+  await press('Lưu bối cảnh mẫu');
+  expect(screen.getByRole('button', { name: 'Tải lại bối cảnh' })).toBeEnabled();
+});
+
+test('skip followed by possible-delivery retry displays the authoritative empty preferences', async () => {
+  const fixture = await createSetupPreview('timeout');
+  await render(<PreferencesScreen {...fixture} catalogue={setupCatalogue} onBack={jest.fn()} />);
+  await screen.findByRole('button', { name: 'Gì cũng được' });
+  await press('Cơm'); await press('Bỏ qua sở thích mềm');
+  await screen.findByRole('button', { name: 'Thử lại cùng yêu cầu lưu khẩu vị' });
+  await press('Thử lại cùng yêu cầu lưu khẩu vị');
+  await screen.findByText('Đã hoàn tất chọn khẩu vị');
+  const saved = await fixture.repository.getRoomSnapshot(fixture.roomId);
+  expect(saved.ok && saved.data.ownPreferences?.categoryIds).toEqual([]);
+  expect(screen.getByText('Gì cũng được · Không có ưu tiên mềm')).toBeOnTheScreen();
+});
+
+test('preview labels available distance as straight-line distance from public anchor', async () => {
+  const fixture = await createSetupPreview();
+  await render(<ContextScreen {...fixture} onBack={jest.fn()} onContinue={jest.fn()} />);
+  await screen.findByLabelText('Giờ ăn (UTC+7)');
+  await preview();
+  expect(screen.getByText(/650\s*m.*đường chim bay.*điểm ăn chung/i)).toBeOnTheScreen();
+});
+
+test.each(['OUT_OF_COVERAGE', 'AVAILABILITY_UNKNOWN'] as const)('consumer retains successful empty preview reason %s from GM-18', async reason => {
+  const fixture = await createSetupPreview();
+  const room = await fixture.repository.getRoomSnapshot(fixture.roomId);
+  if (!room.ok) throw new Error('Expected room');
+  const sample = await fixture.repository.previewFoodPool(room.data.context);
+  if (!sample.ok) throw new Error('Expected sample');
+  jest.spyOn(fixture.repository, 'previewFoodPool').mockResolvedValue({ ok: true, data: { ...sample.data, pool: [], totalCandidateCount: 0, reasonCodes: [reason], poolSeed: 'fixture', policyVersion: 'gm18-api-1.0.0' } } as unknown as typeof sample);
+  await render(<ContextScreen {...fixture} onBack={jest.fn()} onContinue={jest.fn()} />);
+  await screen.findByLabelText('Giờ ăn (UTC+7)');
+  await press('Tôi xác nhận điểm công cộng, buổi và giờ ăn');
+  await press('Xem món mẫu theo bối cảnh');
+  expect(screen.getByText(setupError(reason))).toBeOnTheScreen();
+});
+
+test('brand labelled Home returns to Home rather than previous context screen', async () => {
+  await renderRouter({
+    _layout: RootLayout, index: Index, 'gm10/_layout': SetupLayout,
+    'gm10/context': ContextRoute, 'gm10/preferences': PreferencesRoute,
+  }, { initialUrl: '/gm10/context' });
+  await screen.findByLabelText('Giờ ăn (UTC+7)');
+  await preview(); await press('Lưu bối cảnh mẫu');
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Chọn khẩu vị →' })).toBeEnabled());
+  await press('Chọn khẩu vị →');
+  await screen.findByRole('button', { name: 'Gì cũng được' });
+  await press('Về trang chủ');
+  expect(store.getRouteInfo().pathname).toBe('/');
+});

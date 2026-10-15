@@ -1,0 +1,25 @@
+Cell 1: ERROR
+Report: C:\Users\saveb\AppData\Local\Temp\tmpk8icfri1\new-capture\reports\sample.executed.ipynb
+Cell 1: OK
+Report: C:\Users\saveb\AppData\Local\Temp\tmpscd54vsz\new\reports\sample.executed.ipynb
+{
+  "offline": true,
+  "refresh": false,
+  "allow_api": false,
+  "output_dir": "C:\\Users\\saveb\\AppData\\Local\\Temp\\tmpscd54vsz\\new"
+}
+....................................................................................................................................................................................................................................................................................................................................................................................................................................................................F.................................................................................................
+======================================================================
+FAIL: test_in_progress_with_unfinished_merge_dependencies_is_valid (test_repository_validator.ManifestValidationTests.test_in_progress_with_unfinished_merge_dependencies_is_valid)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\Workspace\project\IE307\tests\test_repository_validator.py", line 304, in test_in_progress_with_unfinished_merge_dependencies_is_valid
+    self.assertEqual(self.errors(), '')
+AssertionError: 'broken link: docs/evidence/roadmap-v2/GM-[51 chars]json' != ''
+- broken link: docs/evidence/roadmap-v2/GM-10/DATE_UI_REVIEW.md -> PRE_DATE_UI_PATCH_MANIFEST.json
+
+
+----------------------------------------------------------------------
+Ran 550 tests in 153.192s
+
+FAILED (failures=1)
