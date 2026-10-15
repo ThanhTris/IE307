@@ -23,76 +23,69 @@ import {
   type DishCardData,
   type VoteValue,
 } from '../../../shared/ui';
-
-export type SubmissionState = 'idle' | 'pending' | 'ack' | 'error';
+import {
+  FIXTURE_ROUND_TWO_CANDIDATES,
+  simulateDeferredRequest,
+  type VoteScreenScenario,
+} from '../fixtures';
 
 export type VoteScreenProps = {
   pool?: PoolDish[];
   roomId?: string;
   initialVotes?: Record<string, VoteValue>;
   api?: ApiClient;
+  initialScenario?: VoteScreenScenario;
   simulateError?: boolean;
+  simulateDelayMs?: number;
+  showScenarioPicker?: boolean;
   onGoToFinalRound?: (candidates: PoolDish[]) => void;
   onBack?: () => void;
 };
 
-export function poolDishToCardData(dish: PoolDish): DishCardData {
-  const priceMin = dish.priceMin ?? dish.price?.priceMin;
-  const priceMax = dish.priceMax ?? dish.price?.priceMax;
-  const serving = dish.servingSize ?? dish.price?.servingSize ?? 'phần';
-
-  let priceLabel = 'Chưa có giá';
-  if (priceMin) {
-    const minK = Math.round(priceMin / 1000);
-    const maxK = priceMax && priceMax !== priceMin ? Math.round(priceMax / 1000) : null;
-    priceLabel = maxK ? `~${minK}k–${maxK}k / ${serving}` : `~${minK}k / ${serving}`;
-  }
-
-  const tags: string[] = [];
-  if (dish.origin && dish.origin !== 'unknown' && dish.origin !== 'not_applicable') {
-    tags.push(dish.origin === 'north' ? 'Miền Bắc' : dish.origin === 'central' ? 'Miền Trung' : 'Miền Nam');
-  }
-  if (dish.temperature && dish.temperature !== 'unknown') {
-    tags.push(dish.temperature === 'hot' ? 'Món nóng' : dish.temperature === 'cold' ? 'Món lạnh' : 'Món vừa');
-  }
-
-  return {
-    id: dish.roundDishId,
-    name: dish.name,
-    description: dish.description ?? undefined,
-    imageUrl: dish.artwork?.url,
-    priceLabel,
-    venueLabel: dish.venueName,
-    tags,
-  };
-}
-
 export function VoteScreen({
   pool = MOCK_DISHES,
   roomId = 'room_demo_gm12',
-  initialVotes = {},
+  initialVotes,
   api,
+  initialScenario = 'round_two',
   simulateError = false,
+  simulateDelayMs = 400,
+  showScenarioPicker = true,
   onGoToFinalRound,
   onBack,
 }: VoteScreenProps) {
   const { colors } = useShellTheme();
-  const [votes, setVotes] = useState<Record<string, VoteValue>>(initialVotes);
-  const [submissionState, setSubmissionState] = useState<SubmissionState>('idle');
-  const [receipt, setReceipt] = useState<SubmissionReceipt | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string>('');
-  const [lastActionNotice, setLastActionNotice] = useState<string>('');
-  const [needsRoundTwo, setNeedsRoundTwo] = useState<boolean>(false);
 
-  // Track double tap per dish
+  const [votes, setVotes] = useState<Record<string, VoteValue>>(initialVotes || {});
+  const [scenario, setScenario] = useState<VoteScreenScenario>(initialScenario);
+  const [submissionState, setSubmissionState] = useState<'idle' | 'pending' | 'ack' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [receipt, setReceipt] = useState<SubmissionReceipt | null>(null);
+  const [isWaitingForMembers, setIsWaitingForMembers] = useState(false);
+  const [needsRoundTwo, setNeedsRoundTwo] = useState(false);
+  const [roundTwoCandidates, setRoundTwoCandidates] = useState<PoolDish[]>(FIXTURE_ROUND_TWO_CANDIDATES);
+  const [lastActionNotice, setLastActionNotice] = useState<string>('');
+
   const lastTapRef = useRef<Record<string, number>>({});
 
   const votedCount = pool.filter(dish => Boolean(votes[dish.roundDishId])).length;
   const allVoted = pool.length > 0 && votedCount === pool.length;
 
+  // Once submitted (pending or ack), all interaction is locked to prevent re-vote or double-submission
+  const isLocked = submissionState === 'pending' || submissionState === 'ack';
+
+  // Double-tap explicitly sets WANT without toggling off and without auto-submitting
+  const handleSetWant = (dishId: string) => {
+    if (isLocked) return;
+    setVotes(prev => ({ ...prev, [dishId]: 'WANT' }));
+    const dish = pool.find(d => d.roundDishId === dishId);
+    setLastActionNotice(`Double-tap: Đã đặt WANT (Muốn ăn) cho ${dish?.name || dishId} (chưa gửi)`);
+  };
+
+  // Button tap handles normal selection and toggle off to UNSET
   const handleVote = (dishId: string, vote: VoteValue) => {
+    if (isLocked) return;
     setVotes(prev => {
-      // Toggle off to UNSET if tapping same vote
       if (prev[dishId] === vote) {
         const next = { ...prev };
         delete next[dishId];
@@ -105,14 +98,13 @@ export function VoteScreen({
   };
 
   const handleCardPress = (dishId: string) => {
+    if (isLocked) return;
     // eslint-disable-next-line react-hooks/purity
     const now = Date.now();
     const last = lastTapRef.current[dishId] ?? 0;
     if (now - last < 350) {
-      // Double tap detected: sets WANT, never auto-submits
-      handleVote(dishId, 'WANT');
-      const dish = pool.find(d => d.roundDishId === dishId);
-      setLastActionNotice(`Double-tap: Đã đặt WANT (Muốn ăn) cho ${dish?.name || dishId} (chưa gửi)`);
+      // Double tap detected: sets WANT, never auto-submits, never toggles to UNSET
+      handleSetWant(dishId);
       lastTapRef.current[dishId] = 0;
     } else {
       lastTapRef.current[dishId] = now;
@@ -120,6 +112,7 @@ export function VoteScreen({
   };
 
   const handleClearVote = (dishId: string) => {
+    if (isLocked) return;
     setVotes(prev => {
       const next = { ...prev };
       delete next[dishId];
@@ -129,72 +122,98 @@ export function VoteScreen({
     setLastActionNotice(`Đã hoàn tác phiếu của ${dish?.name || dishId} về UNSET`);
   };
 
-  const handleSubmit = async () => {
-    if (!allVoted || submissionState === 'pending') return;
+  const handleSubmit = async (overrideScenario?: VoteScreenScenario) => {
+    if (!allVoted || (isLocked && typeof overrideScenario !== 'string')) return;
 
+    const activeScenario = typeof overrideScenario === 'string' ? overrideScenario : scenario;
     setSubmissionState('pending');
     setErrorMessage('');
 
-    if (simulateError) {
-      setSubmissionState('error');
-      setErrorMessage('Mô phỏng lỗi mạng khi gửi phiếu (Fixture Error). Vui lòng thử lại.');
-      return;
-    }
+    const ballotVotes: BallotVoteItem[] = pool.map(dish => ({
+      roundDishId: dish.roundDishId,
+      vote: votes[dish.roundDishId]!,
+    }));
+
+    const req = {
+      roomId,
+      round: 1 as const,
+      poolVersion: 1,
+      intentId: `intent_${Date.now()}`,
+      expectedVersion: 1,
+      votes: ballotVotes,
+      requestId: `req_vote_${Date.now()}`,
+    };
 
     try {
-      const ballotVotes: BallotVoteItem[] = pool.map(dish => ({
-        roundDishId: dish.roundDishId,
-        vote: votes[dish.roundDishId]!,
-      }));
+      if (api) {
+        const res = await api.submitBallot(req);
+        if (res.ok) {
+          setSubmissionState('ack');
+          setReceipt(res.data.receipt ?? {
+            round: 1,
+            intentId: req.intentId,
+            requestId: res.requestId ?? req.requestId,
+            submittedAt: new Date().toISOString(),
+            voteCount: ballotVotes.length,
+          });
 
-      const req = {
-        roomId,
-        round: 1 as const,
-        poolVersion: 1,
-        intentId: `intent_${Date.now()}`,
-        expectedVersion: 1,
-        votes: ballotVotes,
-        requestId: `req_vote_${Date.now()}`,
-      };
-
-      const res = api
-        ? await api.submitBallot(req)
-        : {
-            ok: true as const,
-            requestId: req.requestId,
-            roomId,
-            data: {
-              accepted: true,
-              round: 1 as const,
-              allMembersSubmitted: true,
-              roomVersion: 2,
-              receipt: {
-                round: 1 as const,
-                intentId: req.intentId,
-                requestId: req.requestId,
-                submittedAt: new Date().toISOString(),
-                voteCount: ballotVotes.length,
-              },
-            },
-          };
-
-      if (res.ok) {
-        setSubmissionState('ack');
-        setReceipt(res.data.receipt ?? {
-          round: 1,
-          intentId: `intent_${Date.now()}`,
-          requestId: res.requestId ?? `req_${Date.now()}`,
-          submittedAt: new Date().toISOString(),
-          voteCount: ballotVotes.length,
-        });
-
-        // Check if round 2 is needed
-        if (res.data.round === 2 || (res as { state?: string }).state === 'ROUND_2') {
-          setNeedsRoundTwo(true);
+          if (res.data.allMembersSubmitted === false) {
+            setIsWaitingForMembers(true);
+            setNeedsRoundTwo(false);
+          } else {
+            setIsWaitingForMembers(false);
+            if (res.data.round === 2 || res.state === 'ROUND_2') {
+              setNeedsRoundTwo(true);
+              setRoundTwoCandidates(FIXTURE_ROUND_TWO_CANDIDATES);
+            } else {
+              setNeedsRoundTwo(false);
+            }
+          }
+        } else {
+          setSubmissionState('error');
+          setErrorMessage(res.error.message || `Lỗi từ server: ${res.error.messageKey}`);
         }
       } else {
-        setSubmissionState('error');
-        setErrorMessage(res.error.message || `Lỗi từ server: ${res.error.messageKey}`);
+        // Fallback / stand-alone mock using simulated deferred request
+        const shouldFail = simulateError ? true : activeScenario === 'error';
+        const mockResultData = await simulateDeferredRequest(
+          {
+            accepted: true,
+            round: 1 as const,
+            allMembersSubmitted: activeScenario !== 'waiting',
+            roomVersion: 2,
+            requestId: req.requestId,
+            receipt: {
+              round: 1 as const,
+              intentId: req.intentId,
+              requestId: req.requestId,
+              submittedAt: new Date().toISOString(),
+              voteCount: ballotVotes.length,
+            },
+            needsRoundTwo: activeScenario === 'round_two',
+            candidates: FIXTURE_ROUND_TWO_CANDIDATES,
+          },
+          {
+            delayMs: simulateDelayMs,
+            shouldFail,
+            errorMessage: 'Mô phỏng lỗi kết nối máy chủ (Fixture Error). Vui lòng thử lại.',
+          }
+        );
+
+        setSubmissionState('ack');
+        setReceipt(mockResultData.receipt);
+        if (mockResultData.allMembersSubmitted === false) {
+          setIsWaitingForMembers(true);
+          setNeedsRoundTwo(false);
+        } else {
+          setIsWaitingForMembers(false);
+          if (mockResultData.needsRoundTwo) {
+            setNeedsRoundTwo(true);
+            setRoundTwoCandidates(mockResultData.candidates);
+          } else {
+            setNeedsRoundTwo(false);
+          }
+        }
       }
     } catch (err) {
       setSubmissionState('error');
@@ -205,13 +224,60 @@ export function VoteScreen({
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <AppHeader title="Bình chọn · Vòng 1" onPressBrand={onBack} colors={colors} />
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        onScrollBeginDrag={() => {
+          // Scrolling cancels double-tap detection to avoid accidental votes
+          lastTapRef.current = {};
+        }}
+      >
         <StatusNotice
           title="GM-12 · UI Chọn món Vòng 1 (Flashcard Vote)"
           message="Ba nút WANT/OK/NO luôn hiển thị. Double-tap thẻ đặt WANT nhưng không tự gửi. Scroll dọc không ghi nhận phiếu. UNSET khác OK. Dữ liệu mock fixture."
           tone="info"
           colors={colors}
         />
+
+        {/* Demo / QA Scenario Selector */}
+        {showScenarioPicker && submissionState === 'idle' ? (
+          <View style={[styles.scenarioCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+            <Text style={[styles.scenarioTitle, { color: colors.text }]}>
+              🧪 Kịch bản thử nghiệm (QA / Demo):
+            </Text>
+            <View style={styles.scenarioRow}>
+              {(['round_two', 'waiting', 'success', 'error'] as const).map(item => (
+                <Pressable
+                  key={item}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Chọn kịch bản ${item}`}
+                  onPress={() => setScenario(item)}
+                  style={[
+                    styles.scenarioChip,
+                    {
+                      borderColor: scenario === item ? colors.primary : colors.border,
+                      backgroundColor: scenario === item ? colors.soft : colors.surface,
+                    },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.scenarioChipText,
+                      { color: scenario === item ? colors.primary : colors.muted },
+                    ]}
+                  >
+                    {item === 'round_two'
+                      ? '⚡ Cần Vòng 2'
+                      : item === 'waiting'
+                      ? '⏳ Chờ nhóm'
+                      : item === 'success'
+                      ? '✓ Thành công'
+                      : '⚠ Lỗi/Retry'}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+        ) : null}
 
         {lastActionNotice ? (
           <StatusNotice title="Tương tác gần nhất" message={lastActionNotice} tone="success" colors={colors} />
@@ -220,7 +286,7 @@ export function VoteScreen({
         {submissionState === 'pending' && (
           <StatusNotice
             title="Đang gửi phiếu… (Pending)"
-            message="Đang truyền tải danh sách phiếu lên mock server. Chưa nhận ACK."
+            message="Đang truyền tải danh sách phiếu lên mock server. Chưa nhận ACK. Tất cả thao tác đang khóa."
             tone="info"
             colors={colors}
           />
@@ -234,20 +300,32 @@ export function VoteScreen({
               tone="success"
               colors={colors}
             />
-            {needsRoundTwo ? (
+
+            {isWaitingForMembers ? (
               <StatusNotice
-                title="Yêu cầu Vòng 2 (Chưa đồng thuận)"
-                message="Phiếu Vòng 1 chưa đạt đồng thuận tuyệt đối. Tiến hành Vòng 2 để chọn lọc."
-                tone="warning"
+                title="Đang đợi các thành viên khác nộp phiếu… (Chờ kết quả)"
+                message="Phiếu của bạn đã được ghi nhận. Chưa thể xác định kết quả do nhóm chưa nộp đủ."
+                tone="info"
                 colors={colors}
               />
             ) : null}
-            {onGoToFinalRound ? (
-              <AppButton
-                label="Tiến hành Vòng 2 · Chọn lọc →"
-                onPress={() => onGoToFinalRound(pool.slice(0, 2))}
-                colors={colors}
-              />
+
+            {needsRoundTwo && !isWaitingForMembers ? (
+              <View style={styles.roundTwoBox}>
+                <StatusNotice
+                  title="Yêu cầu Vòng 2 · Chọn lọc (Chưa đồng thuận)"
+                  message="Phiếu Vòng 1 chưa đạt đồng thuận tuyệt đối. Tiến hành Vòng 2 để chọn lọc giữa các ứng viên."
+                  tone="warning"
+                  colors={colors}
+                />
+                {onGoToFinalRound ? (
+                  <AppButton
+                    label="Tiến hành Vòng 2 · Chọn lọc →"
+                    onPress={() => onGoToFinalRound(roundTwoCandidates)}
+                    colors={colors}
+                  />
+                ) : null}
+              </View>
             ) : null}
           </View>
         )}
@@ -258,24 +336,30 @@ export function VoteScreen({
             message={errorMessage}
             tone="error"
             actionLabel="Thử lại"
-            onAction={handleSubmit}
+            onAction={() => {
+              setScenario('round_two');
+              handleSubmit('round_two');
+            }}
             colors={colors}
           />
         )}
 
-        <View style={styles.statusBar}>
-          <Text style={[styles.statusText, { color: colors.text }]}>
-            Tiến độ: {votedCount}/{pool.length} món
-          </Text>
-          <Text style={[styles.statusHelper, { color: allVoted ? colors.green : colors.warning }]}>
-            {allVoted ? '✓ Đã đủ phiếu cho tất cả các món' : `Còn ${pool.length - votedCount} món chưa chọn (UNSET)`}
-          </Text>
-        </View>
-
+        {/* Dish List */}
         <View style={styles.dishList}>
           {pool.map((dish, index) => {
-            const cardData = poolDishToCardData(dish);
             const currentVote = votes[dish.roundDishId];
+            const cardData: DishCardData = {
+              id: dish.roundDishId,
+              name: dish.name,
+              description: dish.description ?? undefined,
+              imageUrl: dish.artwork?.url ?? undefined,
+              tags: [dish.origin, dish.temperature, ...(dish.cuisineIds || []), ...(dish.categoryIds || [])].filter(Boolean) as string[],
+              priceLabel:
+                dish.priceMin != null && dish.priceMax != null
+                  ? `${dish.priceMin.toLocaleString()} - ${dish.priceMax.toLocaleString()} đ`
+                  : undefined,
+              venueLabel: dish.venueName,
+            };
 
             return (
               <View key={dish.roundDishId} style={styles.dishCardContainer}>
@@ -303,10 +387,12 @@ export function VoteScreen({
                   selectedVote={currentVote}
                   onVote={vote => handleVote(dish.roundDishId, vote)}
                   onPress={() => handleCardPress(dish.roundDishId)}
+                  disabled={isLocked}
+                  delayPressIn={100}
                   colors={colors}
                 />
 
-                {currentVote ? (
+                {currentVote && !isLocked ? (
                   <Pressable
                     accessibilityRole="button"
                     accessibilityLabel={`Bỏ chọn phiếu cho ${dish.name}`}
@@ -325,15 +411,25 @@ export function VoteScreen({
 
         <View style={styles.submitSection}>
           <Text style={[styles.submitHint, { color: colors.muted }]}>
-            {allVoted
+            {submissionState === 'ack'
+              ? 'Phiếu đã được nộp và ghi nhận trên hệ thống.'
+              : allVoted
               ? 'Tất cả các món đã được chọn. Nhấn Gửi phiếu để xác nhận.'
               : 'Nút gửi chỉ bật khi đã chọn đủ phiếu cho tất cả các món. UNSET không phải là OK.'}
           </Text>
           <AppButton
-            label={submissionState === 'pending' ? 'Đang gửi phiếu…' : 'Gửi phiếu'}
-            disabled={!allVoted || submissionState === 'pending'}
+            label={
+              submissionState === 'pending'
+                ? 'Đang gửi phiếu…'
+                : submissionState === 'ack'
+                ? 'Đã nộp phiếu (Đã xác nhận)'
+                : submissionState === 'error'
+                ? 'Thử lại gửi phiếu'
+                : 'Gửi phiếu'
+            }
+            disabled={!allVoted || isLocked}
             loading={submissionState === 'pending'}
-            onPress={handleSubmit}
+            onPress={() => handleSubmit(submissionState === 'error' ? 'round_two' : undefined)}
             colors={colors}
           />
         </View>
@@ -349,9 +445,11 @@ export function VoteScreen({
 const styles = StyleSheet.create({
   root: { flex: 1 },
   content: { padding: 16, gap: 16, maxWidth: 600, width: '100%', alignSelf: 'center' },
-  statusBar: { padding: 12, borderRadius: 12, borderWidth: 1, borderColor: '#E2E8F0', gap: 4 },
-  statusText: { fontSize: 16, fontWeight: '700' },
-  statusHelper: { fontSize: 13, fontWeight: '600' },
+  scenarioCard: { padding: 12, borderRadius: 12, borderWidth: 1, gap: 8 },
+  scenarioTitle: { fontSize: 13, fontWeight: '700' },
+  scenarioRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  scenarioChip: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8, borderWidth: 1 },
+  scenarioChipText: { fontSize: 12, fontWeight: '700' },
   dishList: { gap: 20 },
   dishCardContainer: { gap: 8 },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
@@ -362,4 +460,5 @@ const styles = StyleSheet.create({
   submitSection: { gap: 8, marginTop: 8 },
   submitHint: { fontSize: 12, lineHeight: 17, textAlign: 'center' },
   ackBox: { gap: 12 },
+  roundTwoBox: { gap: 12 },
 });

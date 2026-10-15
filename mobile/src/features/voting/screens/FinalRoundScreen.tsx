@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
-  MOCK_DISHES,
   type ApiClient,
   type BallotVoteItem,
   type PoolDish,
@@ -24,6 +23,13 @@ import {
   SheetDialog,
   StatusNotice,
 } from '../../../shared/ui';
+import {
+  FIXTURE_ROUND_TWO_ALL_REMOVED_RESULT,
+  FIXTURE_ROUND_TWO_CANDIDATES,
+  FIXTURE_ROUND_TWO_CONSENSUS_RESULT,
+  simulateDeferredRequest,
+  type FinalScreenScenario,
+} from '../fixtures';
 
 export type FinalChoice = 'KEEP' | 'REMOVE';
 
@@ -32,23 +38,30 @@ export type FinalRoundScreenProps = {
   roomId?: string;
   initialChoices?: Record<string, FinalChoice>;
   api?: ApiClient;
+  initialScenario?: FinalScreenScenario;
+  initialResult?: RoomResult | null;
   simulateError?: boolean;
+  simulateDelayMs?: number;
+  showScenarioPicker?: boolean;
   onFinish?: () => void;
   onBack?: () => void;
 };
 
 export function FinalRoundScreen({
-  candidates = MOCK_DISHES.slice(0, 2),
+  candidates = FIXTURE_ROUND_TWO_CANDIDATES,
   roomId = 'room_demo_gm12',
   initialChoices,
   api,
+  initialScenario = 'consensus',
+  initialResult = null,
   simulateError = false,
+  simulateDelayMs = 400,
+  showScenarioPicker = true,
   onFinish,
   onBack,
 }: FinalRoundScreenProps) {
   const { colors } = useShellTheme();
 
-  // Initialize choices with default KEEP or custom initialChoices
   const [choices, setChoices] = useState<Record<string, FinalChoice>>(() => {
     if (initialChoices) return initialChoices;
     const initial: Record<string, FinalChoice> = {};
@@ -58,123 +71,139 @@ export function FinalRoundScreen({
     return initial;
   });
 
-  const [confirmDialogVisible, setConfirmDialogVisible] = useState(false);
+  const [scenario, setScenario] = useState<FinalScreenScenario>(initialScenario);
   const [submitting, setSubmitting] = useState(false);
   const [submissionState, setSubmissionState] = useState<'idle' | 'pending' | 'ack' | 'error'>('idle');
-  const [receipt, setReceipt] = useState<SubmissionReceipt | null>(null);
-  const [result, setResult] = useState<RoomResult | null>(null);
+  const [confirmModalVisible, setConfirmModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [receipt, setReceipt] = useState<SubmissionReceipt | null>(null);
+  const [result, setResult] = useState<RoomResult | null>(initialResult);
+  const [isWaitingForMembers, setIsWaitingForMembers] = useState(false);
 
-  const keepCount = candidates.filter(dish => choices[dish.roundDishId] === 'KEEP').length;
-  const removeCount = candidates.filter(dish => choices[dish.roundDishId] === 'REMOVE').length;
-  const allRemoved = removeCount === candidates.length && candidates.length > 0;
+  const keptCount = candidates.filter(dish => choices[dish.roundDishId] === 'KEEP').length;
+  const removedCount = candidates.filter(dish => choices[dish.roundDishId] === 'REMOVE').length;
+  const allRemoved = candidates.length > 0 && removedCount === candidates.length;
 
-  const handleToggle = (roundDishId: string, choice: FinalChoice) => {
-    setChoices(prev => ({
-      ...prev,
-      [roundDishId]: choice,
-    }));
+  // Once submitted (pending or ack), all choices and submit buttons are locked
+  const isLocked = submitting || submissionState === 'pending' || submissionState === 'ack';
+
+  const handleToggleChoice = (dishId: string, choice: FinalChoice) => {
+    if (isLocked) return;
+    setChoices(prev => ({ ...prev, [dishId]: choice }));
   };
 
-  const handleOpenConfirm = () => {
-    setConfirmDialogVisible(true);
+  const handleSetAllKeep = () => {
+    if (isLocked) return;
+    const allKeep: Record<string, FinalChoice> = {};
+    for (const dish of candidates) {
+      allKeep[dish.roundDishId] = 'KEEP';
+    }
+    setChoices(allKeep);
   };
 
-  const handleConfirmSubmit = async () => {
-    setConfirmDialogVisible(false);
+  const handleSetAllRemove = () => {
+    if (isLocked) return;
+    const allRemove: Record<string, FinalChoice> = {};
+    for (const dish of candidates) {
+      allRemove[dish.roundDishId] = 'REMOVE';
+    }
+    setChoices(allRemove);
+  };
+
+  const handleSubmit = async (overrideScenario?: FinalScreenScenario) => {
+    if (isLocked && typeof overrideScenario !== 'string') return;
+
+    const activeScenario = typeof overrideScenario === 'string' ? overrideScenario : scenario;
+    setConfirmModalVisible(false);
     setSubmitting(true);
     setSubmissionState('pending');
     setErrorMessage('');
 
-    if (simulateError) {
-      setSubmitting(false);
-      setSubmissionState('error');
-      setErrorMessage('Mô phỏng lỗi mạng khi gửi phiếu Vòng 2. Vui lòng thử lại.');
-      return;
-    }
+    const votes: BallotVoteItem[] = candidates.map(dish => ({
+      roundDishId: dish.roundDishId,
+      vote: choices[dish.roundDishId] === 'KEEP' ? 'WANT' : 'NO',
+    }));
+
+    const req = {
+      roomId,
+      round: 2 as const,
+      poolVersion: 2,
+      intentId: `intent_r2_${Date.now()}`,
+      expectedVersion: 2,
+      votes,
+      requestId: `req_r2_${Date.now()}`,
+    };
 
     try {
-      const votes: BallotVoteItem[] = candidates.map(dish => ({
-        roundDishId: dish.roundDishId,
-        vote: choices[dish.roundDishId] || 'KEEP',
-      }));
+      if (api) {
+        const res = await api.submitBallot(req);
+        setSubmitting(false);
 
-      const req = {
-        roomId,
-        round: 2 as const,
-        poolVersion: 2,
-        intentId: `intent_r2_${Date.now()}`,
-        expectedVersion: 2,
-        votes,
-        requestId: `req_r2_${Date.now()}`,
-      };
-
-      const res = api
-        ? await api.submitBallot(req)
-        : {
-            ok: true as const,
-            requestId: req.requestId,
-            roomId,
-            data: {
-              accepted: true,
-              round: 2 as const,
-              allMembersSubmitted: true,
-              roomVersion: 3,
-              receipt: {
-                round: 2 as const,
-                intentId: req.intentId,
-                requestId: req.requestId,
-                submittedAt: new Date().toISOString(),
-                voteCount: votes.length,
-              },
-            },
-          };
-
-      setSubmitting(false);
-
-      if (res.ok) {
-        setSubmissionState('ack');
-        setReceipt(res.data.receipt ?? {
-          round: 2,
-          intentId: `intent_r2_${Date.now()}`,
-          requestId: res.requestId ?? `req_r2_${Date.now()}`,
-          submittedAt: new Date().toISOString(),
-          voteCount: votes.length,
-        });
-
-        // Server-decided result
-        if (allRemoved) {
-          setResult({
-            resultId: `res_r2_${Date.now()}`,
-            roomId,
+        if (res.ok) {
+          setSubmissionState('ack');
+          setReceipt(res.data.receipt ?? {
             round: 2,
-            winnerRoundDishId: null,
-            winnerDish: null,
-            reasonCode: 'ALL_REMOVED',
-            matchTier: 'NO_CONSENSUS',
-            finalizedAt: new Date().toISOString(),
-            policyVersion: 'decision-v2',
+            intentId: req.intentId,
+            requestId: res.requestId ?? req.requestId,
+            submittedAt: new Date().toISOString(),
+            voteCount: votes.length,
           });
-        } else {
-          // First kept dish as winner in mock
-          const keptDish = candidates.find(dish => choices[dish.roundDishId] === 'KEEP');
-          if (keptDish) {
-            setResult({
-              resultId: `res_r2_${Date.now()}`,
-              roomId,
-              round: 2,
-              winnerRoundDishId: keptDish.roundDishId,
-              winnerDish: keptDish,
-              reasonCode: 'ACCEPTABLE_FINAL',
-              matchTier: 'CONSENSUS',
-              finalizedAt: new Date().toISOString(),
-              policyVersion: 'decision-v2',
-            });
+
+          if (res.data.allMembersSubmitted === false) {
+            setIsWaitingForMembers(true);
+            setResult(null);
+          } else {
+            setIsWaitingForMembers(false);
+            if (initialResult) {
+              setResult(initialResult);
+            }
           }
+        } else {
+          setSubmissionState('error');
+          setErrorMessage(res.error.message || `Lỗi từ server: ${res.error.messageKey}`);
         }
       } else {
-        setSubmissionState('error');
-        setErrorMessage(res.error.message || `Lỗi từ server: ${res.error.messageKey}`);
+        // Fallback / stand-alone mock using simulated deferred request
+        const shouldFail = simulateError ? true : activeScenario === 'error';
+        const mockResultData = await simulateDeferredRequest(
+          {
+            accepted: true,
+            round: 2 as const,
+            allMembersSubmitted: activeScenario !== 'waiting',
+            roomVersion: 3,
+            requestId: req.requestId,
+            receipt: {
+              round: 2 as const,
+              intentId: req.intentId,
+              requestId: req.requestId,
+              submittedAt: new Date().toISOString(),
+              voteCount: votes.length,
+            },
+            result:
+              activeScenario === 'all_removed' || allRemoved
+                ? FIXTURE_ROUND_TWO_ALL_REMOVED_RESULT
+                : activeScenario === 'consensus'
+                ? FIXTURE_ROUND_TWO_CONSENSUS_RESULT
+                : null,
+          },
+          {
+            delayMs: simulateDelayMs,
+            shouldFail,
+            errorMessage: 'Mô phỏng lỗi kết nối máy chủ (Fixture Error). Vui lòng thử lại.',
+          }
+        );
+
+        setSubmitting(false);
+        setSubmissionState('ack');
+        setReceipt(mockResultData.receipt);
+
+        if (mockResultData.allMembersSubmitted === false) {
+          setIsWaitingForMembers(true);
+          setResult(null);
+        } else {
+          setIsWaitingForMembers(false);
+          setResult(initialResult || mockResultData.result);
+        }
       }
     } catch (err) {
       setSubmitting(false);
@@ -200,10 +229,51 @@ export function FinalRoundScreen({
           </Text>
         </View>
 
+        {/* Demo / QA Scenario Selector */}
+        {showScenarioPicker && submissionState === 'idle' ? (
+          <View style={[styles.scenarioCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+            <Text style={[styles.scenarioTitle, { color: colors.text }]}>
+              🧪 Kịch bản thử nghiệm (QA / Demo):
+            </Text>
+            <View style={styles.scenarioRow}>
+              {(['consensus', 'waiting', 'all_removed', 'error'] as const).map(item => (
+                <Pressable
+                  key={item}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Chọn kịch bản ${item}`}
+                  onPress={() => setScenario(item)}
+                  style={[
+                    styles.scenarioChip,
+                    {
+                      borderColor: scenario === item ? colors.primary : colors.border,
+                      backgroundColor: scenario === item ? colors.soft : colors.surface,
+                    },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.scenarioChipText,
+                      { color: scenario === item ? colors.primary : colors.muted },
+                    ]}
+                  >
+                    {item === 'consensus'
+                      ? '⚡ Đồng thuận (#2)'
+                      : item === 'waiting'
+                      ? '⏳ Chờ nhóm'
+                      : item === 'all_removed'
+                      ? '✕ Loại hết'
+                      : '⚠ Lỗi/Retry'}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+        ) : null}
+
         {submissionState === 'pending' && (
           <StatusNotice
             title="Đang gửi lựa chọn Vòng 2… (Pending)"
-            message="Đang truyền tải danh sách Giữ/Loại lên mock server. Chưa nhận ACK."
+            message="Đang truyền tải danh sách Giữ/Loại lên mock server. Chưa nhận ACK. Mọi thao tác đang khóa."
             tone="info"
             colors={colors}
           />
@@ -218,26 +288,59 @@ export function FinalRoundScreen({
               colors={colors}
             />
 
-            {result ? (
-              <View style={[styles.consensusCard, { backgroundColor: colors.surface, borderColor: colors.line }]}>
-                <Text style={[styles.consensusHeading, { color: colors.text }]}>
-                  {result.matchTier === 'NO_CONSENSUS'
-                    ? 'Chưa đồng thuận (No Consensus)'
-                    : 'Đã tìm thấy món đồng thuận! 🎉'}
-                </Text>
-                <Text style={[styles.consensusReason, { color: colors.muted }]}>
-                  {result.reasonCode === 'ALL_REMOVED'
-                    ? 'Tất cả các món đã bị loại bỏ ở vòng 2. Mỗi bạn hôm nay đều có gu ăn riêng.'
-                    : `Món được chọn: ${result.winnerDish?.name || 'Món chiến thắng'}`}
-                </Text>
-                <Text style={[styles.noRoundThreeHint, { color: colors.primary }]}>
-                  ✓ Hoàn tất phiên bình chọn (Tối đa 2 vòng — Không có Vòng 3).
-                </Text>
-              </View>
+            {isWaitingForMembers ? (
+              <StatusNotice
+                title="Đang đợi các thành viên khác nộp phiếu… (Chờ kết quả nhóm)"
+                message="Lựa chọn Vòng 2 của bạn đã được ghi nhận. Chưa có kết quả cuối cùng do các thành viên khác chưa nộp xong."
+                tone="info"
+                colors={colors}
+              />
+            ) : null}
+
+            {result && !isWaitingForMembers ? (
+              result.winnerDish ? (
+                <View style={[styles.winnerCard, { backgroundColor: colors.soft, borderColor: colors.primary }]}>
+                  <Text style={[styles.winnerHeading, { color: colors.primary }]}>
+                    🎉 ĐÃ TÌM THẤY MÓN ĐỒNG THUẬN!
+                  </Text>
+                  <Text style={[styles.winnerSubheading, { color: colors.muted }]}>
+                    Kết quả chốt từ hệ thống:
+                  </Text>
+                  <View style={styles.winnerContent}>
+                    <Text style={styles.winnerEmoji}>🏆</Text>
+                    <View style={styles.winnerInfo}>
+                      <Text style={[styles.winnerName, { color: colors.text }]}>
+                        {result.winnerDish.name}
+                      </Text>
+                      <Text style={[styles.winnerMeta, { color: colors.muted }]}>
+                        {result.winnerDish.venueName || 'Quán ăn được chọn'}
+                      </Text>
+                      {result.winnerDish.priceMin != null && result.winnerDish.priceMax != null ? (
+                        <Text style={[styles.winnerPrice, { color: colors.primary }]}>
+                          {result.winnerDish.priceMin.toLocaleString()} - {result.winnerDish.priceMax.toLocaleString()} đ
+                        </Text>
+                      ) : null}
+                    </View>
+                  </View>
+                </View>
+              ) : (
+                <View style={[styles.allRemovedCard, { backgroundColor: colors.warm, borderColor: colors.border }]}>
+                  <Text style={[styles.allRemovedTitle, { color: colors.danger }]}>
+                    🚫 KHÔNG TÌM THẤY MÓN ĐỒNG THUẬN
+                  </Text>
+                  <Text style={[styles.allRemovedBody, { color: colors.text }]}>
+                    Cả nhóm đã loại toàn bộ các món trong Vòng 2. Đạt trạng thái kết thúc (ALL_REMOVED).
+                  </Text>
+                </View>
+              )
             ) : null}
 
             {onFinish ? (
-              <AppButton label="Hoàn tất và về trang chủ" onPress={onFinish} colors={colors} />
+              <AppButton
+                label="Hoàn tất phiên chọn món"
+                onPress={onFinish}
+                colors={colors}
+              />
             ) : null}
           </View>
         )}
@@ -248,173 +351,227 @@ export function FinalRoundScreen({
             message={errorMessage}
             tone="error"
             actionLabel="Thử lại"
-            onAction={handleConfirmSubmit}
+            onAction={() => {
+              setScenario('consensus');
+              handleSubmit('consensus');
+            }}
             colors={colors}
           />
         )}
 
-        {/* Summary of current selections */}
-        <View style={[styles.summaryCard, { backgroundColor: colors.surface, borderColor: colors.line }]}>
-          <Text style={[styles.summaryTitle, { color: colors.text }]}>
-            Lựa chọn hiện tại: Giữ {keepCount} · Loại {removeCount}
-          </Text>
-          {allRemoved ? (
-            <Text style={[styles.allRemovedNotice, { color: colors.warning }]}>
-              ⚠️ Bạn đang chọn LOẠI HẾT tất cả món. Thao tác này hoàn toàn hợp lệ.
+        {/* Global batch actions */}
+        <View style={styles.batchActionsRow}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Chọn giữ tất cả"
+            onPress={handleSetAllKeep}
+            disabled={isLocked}
+            style={[
+              styles.batchButton,
+              {
+                borderColor: colors.primary,
+                backgroundColor: colors.soft,
+                opacity: isLocked ? 0.6 : 1,
+              },
+            ]}
+          >
+            <Text style={[styles.batchButtonText, { color: colors.primary }]}>
+              ✓ Giữ tất cả ({candidates.length})
             </Text>
-          ) : (
-            <Text style={[styles.summaryHint, { color: colors.muted }]}>
-              Chạm vào &quot;Giữ&quot; hoặc &quot;Đã loại&quot; trên từng thẻ món để thay đổi.
+          </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Chọn loại tất cả"
+            onPress={handleSetAllRemove}
+            disabled={isLocked}
+            style={[
+              styles.batchButton,
+              {
+                borderColor: colors.danger,
+                backgroundColor: colors.warm,
+                opacity: isLocked ? 0.6 : 1,
+              },
+            ]}
+          >
+            <Text style={[styles.batchButtonText, { color: colors.danger }]}>
+              ✕ Loại tất cả ({candidates.length})
             </Text>
-          )}
+          </Pressable>
         </View>
 
-        {/* Candidate dish cards */}
+        {/* Candidate List */}
         <View style={styles.candidateList}>
           {candidates.map((dish, index) => {
             const currentChoice = choices[dish.roundDishId] || 'KEEP';
-            const priceMin = dish.priceMin ?? dish.price?.priceMin;
-            const priceMax = dish.priceMax ?? dish.price?.priceMax;
-            const priceLabel = priceMin
-              ? `~${Math.round(priceMin / 1000)}k${priceMax && priceMax !== priceMin ? `–${Math.round(priceMax / 1000)}k` : ''} / phần`
-              : 'Chưa có giá';
+            const isKeep = currentChoice === 'KEEP';
+            const source = dish.artwork?.url ? { uri: dish.artwork.url } : undefined;
 
             return (
-              <View key={dish.roundDishId} style={[styles.dishCard, { backgroundColor: colors.surface, borderColor: colors.line }]}>
-                {dish.artwork?.url ? (
-                  <Image
-                    source={{ uri: dish.artwork.url }}
-                    style={styles.dishImage as ImageStyle}
-                    accessibilityLabel={`Ảnh ${dish.name}`}
-                  />
-                ) : (
+              <View
+                key={dish.roundDishId}
+                style={[
+                  styles.candidateCard,
+                  {
+                    backgroundColor: colors.surface,
+                    borderColor: isKeep ? colors.primary : colors.line,
+                    borderWidth: isKeep ? 2 : 1,
+                  },
+                ]}
+              >
+                <View style={styles.candidateHeader}>
+                  <Text style={[styles.candidateIndex, { color: colors.primary }]}>
+                    Ứng viên #{index + 1}
+                  </Text>
                   <View
-                    accessibilityLabel={`Ảnh dự phòng ${dish.name}`}
-                    style={[styles.dishFallback, { backgroundColor: colors.warm }]}
+                    style={[
+                      styles.statusPill,
+                      { backgroundColor: isKeep ? colors.primary : colors.danger },
+                    ]}
                   >
-                    <Text style={styles.dishEmoji}>🍜</Text>
-                  </View>
-                )}
-
-                <View style={styles.dishBody}>
-                  <View style={styles.dishHeader}>
-                    <Text style={[styles.dishName, { color: colors.text }]}>
-                      #{index + 1} · {dish.name}
-                    </Text>
-                    <Text style={[styles.priceTag, { color: colors.muted }]}>
-                      {priceLabel}
+                    <Text style={styles.statusPillText}>
+                      {isKeep ? '✓ GIỮ' : '✕ ĐÃ LOẠI'}
                     </Text>
                   </View>
+                </View>
 
-                  {dish.description ? (
-                    <Text style={[styles.dishDescription, { color: colors.muted }]}>
-                      {dish.description}
+                {/* Dish content summary */}
+                <View style={styles.candidateBody}>
+                  {source ? (
+                    <Image source={source} style={styles.candidateImage as ImageStyle} />
+                  ) : (
+                    <View style={[styles.candidateFallback, { backgroundColor: colors.warm }]}>
+                      <Text style={styles.candidateEmoji}>🍜</Text>
+                    </View>
+                  )}
+                  <View style={styles.candidateMeta}>
+                    <Text style={[styles.candidateName, { color: colors.text }]}>
+                      {dish.name}
                     </Text>
-                  ) : null}
-
-                  {dish.venueName ? (
-                    <Text style={[styles.venueLabel, { color: colors.primary }]}>
-                      📍 {dish.venueName}
+                    <Text style={[styles.candidateVenue, { color: colors.muted }]}>
+                      {dish.venueName || 'Quán ăn'}
                     </Text>
-                  ) : null}
+                    {dish.priceMin != null && dish.priceMax != null ? (
+                      <Text style={[styles.candidatePrice, { color: colors.primary }]}>
+                        {dish.priceMin.toLocaleString()} - {dish.priceMax.toLocaleString()} đ
+                      </Text>
+                    ) : null}
+                  </View>
+                </View>
 
-                  {/* Dual toggle: Giữ / Loại */}
-                  <View style={styles.toggleRow}>
-                    <Pressable
-                      accessibilityRole="button"
-                      accessibilityLabel={`Giữ món ${dish.name}`}
-                      accessibilityState={{ selected: currentChoice === 'KEEP' }}
-                      onPress={() => handleToggle(dish.roundDishId, 'KEEP')}
+                {/* Dual Toggle Buttons */}
+                <View style={styles.toggleRow}>
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={`Giữ món ${dish.name}`}
+                    accessibilityState={{ selected: isKeep, disabled: isLocked }}
+                    disabled={isLocked}
+                    onPress={() => handleToggleChoice(dish.roundDishId, 'KEEP')}
+                    style={[
+                      styles.toggleBtn,
+                      {
+                        backgroundColor: isKeep ? colors.primary : colors.surface,
+                        borderColor: colors.primary,
+                        opacity: isLocked ? 0.6 : 1,
+                      },
+                    ]}
+                  >
+                    <Text
                       style={[
-                        styles.toggleButton,
-                        {
-                          backgroundColor: currentChoice === 'KEEP' ? colors.green : colors.soft,
-                          borderColor: currentChoice === 'KEEP' ? colors.green : colors.line,
-                        },
+                        styles.toggleBtnText,
+                        { color: isKeep ? colors.onPrimary : colors.primary },
                       ]}
                     >
-                      <Text
-                        style={[
-                          styles.toggleText,
-                          { color: currentChoice === 'KEEP' ? '#FFFFFF' : colors.text },
-                        ]}
-                      >
-                        ✓ Giữ
-                      </Text>
-                    </Pressable>
+                      ✓ Giữ
+                    </Text>
+                  </Pressable>
 
-                    <Pressable
-                      accessibilityRole="button"
-                      accessibilityLabel={`Loại món ${dish.name}`}
-                      accessibilityState={{ selected: currentChoice === 'REMOVE' }}
-                      onPress={() => handleToggle(dish.roundDishId, 'REMOVE')}
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={`Loại món ${dish.name}`}
+                    accessibilityState={{ selected: !isKeep, disabled: isLocked }}
+                    disabled={isLocked}
+                    onPress={() => handleToggleChoice(dish.roundDishId, 'REMOVE')}
+                    style={[
+                      styles.toggleBtn,
+                      {
+                        backgroundColor: !isKeep ? colors.danger : colors.surface,
+                        borderColor: colors.danger,
+                        opacity: isLocked ? 0.6 : 1,
+                      },
+                    ]}
+                  >
+                    <Text
                       style={[
-                        styles.toggleButton,
-                        {
-                          backgroundColor: currentChoice === 'REMOVE' ? colors.danger : colors.soft,
-                          borderColor: currentChoice === 'REMOVE' ? colors.danger : colors.line,
-                        },
+                        styles.toggleBtnText,
+                        { color: !isKeep ? colors.onPrimary : colors.danger },
                       ]}
                     >
-                      <Text
-                        style={[
-                          styles.toggleText,
-                          { color: currentChoice === 'REMOVE' ? '#FFFFFF' : colors.text },
-                        ]}
-                      >
-                        ✕ Đã loại
-                      </Text>
-                    </Pressable>
-                  </View>
+                      ✕ Đã loại
+                    </Text>
+                  </Pressable>
                 </View>
               </View>
             );
           })}
         </View>
 
-        {/* Submit button with explicit confirmation */}
+        {/* Action Button Section */}
         <View style={styles.submitSection}>
+          <Text style={[styles.summaryText, { color: colors.text }]}>
+            Đang chọn giữ: <Text style={{ fontWeight: '700', color: colors.primary }}>{keptCount}</Text> món · Đã loại: <Text style={{ fontWeight: '700', color: colors.danger }}>{removedCount}</Text> món
+          </Text>
+          {allRemoved ? (
+            <Text style={[styles.allRemovedWarning, { color: colors.danger }]}>
+              ⚠ Bạn đang chọn LOẠI TẤT CẢ các món. Thao tác này hoàn toàn hợp lệ nếu bạn không thích món nào.
+            </Text>
+          ) : null}
+
           <AppButton
-            label={submitting ? 'Đang xử lý…' : 'Gửi lựa chọn Vòng 2 →'}
-            disabled={submitting || submissionState === 'pending'}
-            loading={submitting}
-            onPress={handleOpenConfirm}
+            label={
+              submissionState === 'pending'
+                ? 'Đang nộp lựa chọn…'
+                : submissionState === 'ack'
+                ? 'Đã nộp phiếu Vòng 2 (Đã xác nhận)'
+                : submissionState === 'error'
+                ? 'Thử lại nộp phiếu Vòng 2'
+                : 'Xác nhận nộp Vòng 2'
+            }
+            disabled={submissionState === 'pending' || submissionState === 'ack'}
+            loading={submissionState === 'pending'}
+            onPress={() => {
+              if (submissionState === 'error') {
+                handleSubmit('consensus');
+              } else {
+                setConfirmModalVisible(true);
+              }
+            }}
             colors={colors}
           />
         </View>
 
         {onBack ? (
-          <AppButton label="Quay lại Vòng 1" variant="quiet" onPress={onBack} colors={colors} />
+          <AppButton label="Quay lại" variant="quiet" onPress={onBack} colors={colors} />
         ) : null}
-      </ScrollView>
 
-      {/* Confirmation Dialog */}
-      <SheetDialog
-        visible={confirmDialogVisible}
-        title="Xác nhận nộp lựa chọn Vòng 2"
-        onClose={() => setConfirmDialogVisible(false)}
-        colors={colors}
-      >
-        <View style={styles.dialogBody}>
-          <Text style={[styles.dialogText, { color: colors.text }]}>
-            Bạn đã chọn Giữ {keepCount} món và Loại {removeCount} món.
+        {/* Confirmation Modal */}
+        <SheetDialog
+          visible={confirmModalVisible}
+          title="Xác nhận nộp phiếu Vòng 2"
+          onClose={() => setConfirmModalVisible(false)}
+          colors={colors}
+        >
+          <Text style={[styles.modalMessage, { color: colors.text }]}>
+            {allRemoved
+              ? 'Bạn đang chọn LOẠI TẤT CẢ các món trong danh sách. Sau khi gửi sẽ không thể hoàn tác. Bạn có chắc chắn muốn nộp?'
+              : `Bạn đã chọn GIỮ ${keptCount} món và LOẠI ${removedCount} món. Sau khi gửi sẽ không thể hoàn tác. Xác nhận chốt phiếu?`}
           </Text>
-          {allRemoved ? (
-            <Text style={[styles.dialogWarning, { color: colors.warning }]}>
-              Lưu ý: Bạn đang loại bỏ tất cả các món. Lựa chọn này là hợp lệ và sẽ được gửi lên server để chốt kết quả.
-            </Text>
-          ) : (
-            <Text style={[styles.dialogText, { color: colors.muted }]}>
-              Thao tác nộp phiếu là quyết định cuối cùng cho Vòng 2. Sau khi gửi sẽ không thể hoàn tác.
-            </Text>
-          )}
           <AppButton
-            label="Xác nhận nộp phiếu"
-            onPress={handleConfirmSubmit}
+            label="Chốt phiếu ngay"
+            onPress={handleSubmit}
             colors={colors}
           />
-        </View>
-      </SheetDialog>
+        </SheetDialog>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -422,35 +579,50 @@ export function FinalRoundScreen({
 const styles = StyleSheet.create({
   root: { flex: 1 },
   content: { padding: 16, gap: 16, maxWidth: 600, width: '100%', alignSelf: 'center' },
-  banner: { padding: 16, borderRadius: 16, borderWidth: 1.5, gap: 6 },
-  bannerTitle: { fontSize: 18, fontWeight: '800' },
-  bannerSubtitle: { fontSize: 14, fontWeight: '700', lineHeight: 20 },
+  banner: { padding: 16, borderRadius: 16, borderWidth: 1, gap: 6 },
+  bannerTitle: { fontSize: 18, fontWeight: '800', letterSpacing: 0.5 },
+  bannerSubtitle: { fontSize: 14, fontWeight: '600' },
   bannerRule: { fontSize: 12, lineHeight: 17 },
-  summaryCard: { padding: 12, borderRadius: 12, borderWidth: 1, gap: 4 },
-  summaryTitle: { fontSize: 15, fontWeight: '700' },
-  summaryHint: { fontSize: 12 },
-  allRemovedNotice: { fontSize: 12, fontWeight: '700' },
+  scenarioCard: { padding: 12, borderRadius: 12, borderWidth: 1, gap: 8 },
+  scenarioTitle: { fontSize: 13, fontWeight: '700' },
+  scenarioRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  scenarioChip: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8, borderWidth: 1 },
+  scenarioChipText: { fontSize: 12, fontWeight: '700' },
+  batchActionsRow: { flexDirection: 'row', gap: 10 },
+  batchButton: { flex: 1, paddingVertical: 10, borderRadius: 10, borderWidth: 1, alignItems: 'center' },
+  batchButtonText: { fontSize: 13, fontWeight: '700' },
   candidateList: { gap: 16 },
-  dishCard: { borderRadius: 16, borderWidth: 1, overflow: 'hidden' },
-  dishImage: { width: '100%', height: 140, backgroundColor: '#E2E8F0' },
-  dishFallback: { width: '100%', height: 140, justifyContent: 'center', alignItems: 'center' },
-  dishEmoji: { fontSize: 44 },
-  dishBody: { padding: 14, gap: 10 },
-  dishHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  dishName: { fontSize: 17, fontWeight: '700', flexShrink: 1 },
-  priceTag: { fontSize: 12, fontWeight: '600' },
-  dishDescription: { fontSize: 13, lineHeight: 18 },
-  venueLabel: { fontSize: 12, fontWeight: '600' },
-  toggleRow: { flexDirection: 'row', gap: 10, marginTop: 4 },
-  toggleButton: { flex: 1, minHeight: 44, borderRadius: 10, borderWidth: 1, justifyContent: 'center', alignItems: 'center' },
-  toggleText: { fontSize: 14, fontWeight: '700' },
+  candidateCard: { borderRadius: 16, padding: 14, gap: 12 },
+  candidateHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  candidateIndex: { fontSize: 13, fontWeight: '700' },
+  statusPill: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
+  statusPillText: { color: '#FFFFFF', fontSize: 11, fontWeight: '800' },
+  candidateBody: { flexDirection: 'row', gap: 12, alignItems: 'center' },
+  candidateImage: { width: 72, height: 72, borderRadius: 10, backgroundColor: '#E2E8F0' },
+  candidateFallback: { width: 72, height: 72, borderRadius: 10, justifyContent: 'center', alignItems: 'center' },
+  candidateEmoji: { fontSize: 32 },
+  candidateMeta: { flex: 1, gap: 4 },
+  candidateName: { fontSize: 16, fontWeight: '700' },
+  candidateVenue: { fontSize: 13 },
+  candidatePrice: { fontSize: 13, fontWeight: '600' },
+  toggleRow: { flexDirection: 'row', gap: 10 },
+  toggleBtn: { flex: 1, minHeight: 44, borderRadius: 10, borderWidth: 1.5, justifyContent: 'center', alignItems: 'center' },
+  toggleBtnText: { fontSize: 14, fontWeight: '700' },
   submitSection: { gap: 8, marginTop: 8 },
-  dialogBody: { gap: 12, paddingVertical: 8 },
-  dialogText: { fontSize: 14, lineHeight: 20 },
-  dialogWarning: { fontSize: 13, lineHeight: 18, fontWeight: '600' },
-  resultBox: { gap: 12 },
-  consensusCard: { padding: 16, borderRadius: 16, borderWidth: 1, gap: 8 },
-  consensusHeading: { fontSize: 18, fontWeight: '800' },
-  consensusReason: { fontSize: 14, lineHeight: 20 },
-  noRoundThreeHint: { fontSize: 13, fontWeight: '700' },
+  summaryText: { fontSize: 13, textAlign: 'center' },
+  allRemovedWarning: { fontSize: 12, textAlign: 'center', fontWeight: '600', paddingHorizontal: 16 },
+  resultBox: { gap: 14 },
+  winnerCard: { padding: 16, borderRadius: 16, borderWidth: 2, gap: 8 },
+  winnerHeading: { fontSize: 16, fontWeight: '800' },
+  winnerSubheading: { fontSize: 12 },
+  winnerContent: { flexDirection: 'row', gap: 12, alignItems: 'center', marginTop: 4 },
+  winnerEmoji: { fontSize: 40 },
+  winnerInfo: { flex: 1, gap: 4 },
+  winnerName: { fontSize: 18, fontWeight: '800' },
+  winnerMeta: { fontSize: 13 },
+  winnerPrice: { fontSize: 14, fontWeight: '700' },
+  allRemovedCard: { padding: 16, borderRadius: 16, borderWidth: 1, gap: 6 },
+  allRemovedTitle: { fontSize: 15, fontWeight: '800' },
+  allRemovedBody: { fontSize: 13, lineHeight: 18 },
+  modalMessage: { fontSize: 14, lineHeight: 20 },
 });
