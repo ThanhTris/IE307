@@ -37,3 +37,8 @@ Port54332 loopback dành GM20; không là URL của điện thoại. Không expo
 ra mạng hoặc dùng service_role trong client. HTTP suite tự động chứa race, fault
 injection và parity; Bruno9 requests chỉ walkthrough submit/snapshot/privacy,
 không được coi là đã chạy toàn bộ race hoặc Android integration.
+
+Runner gọi entrypoint Node Supabase qua `cliArgs` của nền, để package chính thức
+tự chọn windows/darwin/linux và kiến trúc. `node --test tests/gm20-cli.test.mjs`
+kiểm launch CLI thật không cần Docker; workflow GM-20 CLI portability chạy ba OS.
+CLI launch không là API Pass; HTTP suite vẫn cần Docker Linux và Python theo trên.

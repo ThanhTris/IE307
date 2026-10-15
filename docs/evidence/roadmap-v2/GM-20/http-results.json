@@ -1,12 +1,12 @@
 {
   "contract": "food-v1/roadmap-v2/GM-20.3",
   "schemaVersion": "0.5.0",
-  "checkedAt": "2026-10-14T14:57:50.674Z",
-  "namespace": "6dd8d885-edae-4fc8-9cbd-8ecb7d42a96a",
-  "revision": "c20f7c2a58bcce555a446722e744bd7f1f3ac1b6",
+  "checkedAt": "2026-10-15T02:02:14.420Z",
+  "namespace": "fbb85884-0051-4b91-a0a4-20f0c7cb3fdf",
+  "revision": "2c1b023cf4b3cccfd8f8a6039e039fcae6edb055",
   "artifactHashes": {
-    "supabase/migrations/0023_finalize.sql": "ab626772a80cf46a6f1b0243f090b82fb72e7408613a7ce79b916d62a18406b3",
-    "scripts/gm20_http_check.mjs": "21260e82d11fbfdf62b5e69fea2a0b457fabea0a61c3eb0083d423cf28bbee43",
+    "supabase/migrations/0023_finalize.sql": "aff45864e57d634ced4bce6e3ce1997f439f90b2c974cc7f601d71f70bb3fea8",
+    "scripts/gm20_http_check.mjs": "85f488978b539f49c03aa7f8c4a62a2e5a01e7a65906260c11e302c7ef89b6d4",
     "scripts/gm20_http_fixture.py": "746d661433ab133a2bb124623ff9a554486d0f167669fb43b25c76195a4b689a",
     "scripts/gm19_runtime_files.mjs": "1440ec3a51a7b5f83ba1ef663b45a12f64cbaf2e8cb38a2a9b2460d9eb91c486"
   },
@@ -82,6 +82,65 @@
         "results": 1,
         "submissions": 2
       }
+    },
+    {
+      "case": "cancel round2 before ballots -> retain locked pool and own receipt",
+      "result": "Pass",
+      "expected": {
+        "state": "CANCELLED",
+        "round": 2,
+        "ownRound2Submission": false,
+        "newBallot": "ROOM_TERMINAL"
+      },
+      "actual": {
+        "state": "CANCELLED",
+        "round": 2,
+        "poolVersion": 2,
+        "ownSubmissionRound": null,
+        "unchangedPool": true,
+        "otherVotesVisible": false,
+        "counts": {
+          "seeds": 0,
+          "votes": 4,
+          "events": 0,
+          "history": 0,
+          "results": 0,
+          "submissions": 2
+        }
+      }
+    },
+    {
+      "case": "cancel round2 after one KEEP -> retain locked pool and own receipt",
+      "result": "Pass",
+      "expected": {
+        "state": "CANCELLED",
+        "round": 2,
+        "ownRound2Submission": true,
+        "newBallot": "ROOM_TERMINAL"
+      },
+      "actual": {
+        "state": "CANCELLED",
+        "round": 2,
+        "poolVersion": 2,
+        "ownSubmissionRound": 2,
+        "unchangedPool": true,
+        "otherVotesVisible": false,
+        "counts": {
+          "seeds": 0,
+          "votes": 6,
+          "events": 0,
+          "history": 0,
+          "results": 0,
+          "submissions": 3
+        }
+      }
+    },
+    {
+      "case": "lobby poolVersion greater than one remains round1",
+      "result": "Pass",
+      "expectedRound": 1,
+      "actualRound": 1,
+      "poolVersion": 2
     },
     {
       "case": "fallback all OK -> round2 KEEP -> COMPROMISE and stable locked winner",
@@ -172,14 +231,14 @@
         200,
         409
       ],
-      "state": "DECIDED",
+      "state": "CANCELLED",
       "actual": {
-        "seeds": 1,
-        "votes": 4,
-        "events": 1,
+        "seeds": 0,
+        "votes": 2,
+        "events": 0,
         "history": 0,
-        "results": 1,
-        "submissions": 2
+        "results": 0,
+        "submissions": 1
       }
     },
     {
@@ -203,11 +262,11 @@
     }
   ],
   "result": "Pass",
-  "datasetVersion": "0.18.1842927749",
+  "datasetVersion": "0.18.4223162500",
   "sql": {
     "result": "Pass",
     "parityVectors": 140,
-    "assertions": 10
+    "assertions": 11
   },
   "endpoint": "http://127.0.0.1:54332",
   "cleanup": "owned DB and guests removed"

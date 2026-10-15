@@ -209,7 +209,7 @@ begin
  select * into old from public.submissions where public.submissions.room_id=rid and member_id=member_key and public.submissions.round=rn;
  if old.id is null then
   if r.expires_at<=clock_timestamp() then return gm20_private.error('ROOM_EXPIRED',410,rid,req); end if;
-  if ev<>r.version or pv<>r.pool_version or rn<>(case when r.state='ROUND_2' then 2 else 1 end) then return gm20_private.error('VERSION_CONFLICT',409,rid,req); end if;
+  if ev<>r.version or pv<>r.pool_version or rn<>(select coalesce(max(rd.round),1) from public.round_dishes rd where rd.room_id=rid) then return gm20_private.error('VERSION_CONFLICT',409,rid,req); end if;
   if r.state in ('DECIDED','NO_CONSENSUS','CANCELLED','EXPIRED') then return gm20_private.error('ROOM_TERMINAL',409,rid,req); end if;
   if r.state not in ('ROUND_1','ROUND_2') then return gm20_private.error('INVALID_ROOM_STATE',409,rid,req); end if;
  end if;
@@ -264,7 +264,9 @@ begin
   if not exists(select 1 from public.members m where m.room_id=rid and m.user_id=caller and m.left_at is null) then return gm19_private.error('NOT_MEMBER',403); end if;
   if r.expires_at<=clock_timestamp() then return gm19_private.error('ROOM_EXPIRED',410,rid); end if;
   if not gm19_private.allow_call('get_room_snapshot',60) then return gm19_private.error('RATE_LIMITED',429,rid); end if;
-  select case when r.state='ROUND_2' or exists(select 1 from public.results rs where rs.room_id=rid and rs.reason_code in ('ACCEPTABLE_FINAL','ALL_REMOVED')) then 2 else 1 end into current_round;
+  -- Terminal cancellation has no result and must retain the last locked round.
+  -- pool_version also changes in the lobby; it cannot identify a voting round.
+  select coalesce(max(rd.round),1) into current_round from public.round_dishes rd where rd.room_id=rid;
   select coalesce(jsonb_agg(jsonb_build_object('userId',m.user_id,'displayName',m.nickname,'isHost',m.user_id=r.host_user_id,
       'ready',m.ready,'joinedAt',m.joined_at,'hasSubmitted',exists(select 1 from public.submissions s where s.member_id=m.id and s.round=current_round))), '[]')
     into member_data from public.members m where m.room_id=rid and m.left_at is null;

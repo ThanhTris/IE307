@@ -18,7 +18,7 @@ chỉ ignored runtime. Không đưa token/evidence phiếu người khác vào s
 | GM-27: còn một choice | ROUND_2 vẫn đợi đủ mọi KEEP/REMOVE | Không tự mở vòng3 hoặc bypass xác nhận |
 | GM-27: unanimous/fallback | DECIDED, persisted resultId/winner/tier/reason | Không random lại client; pinned winner card |
 | GM-27: NO trên mọi choice/REMOVE hết | NO_CONSENSUS với EMPTY_INTERSECTION/ALL_REMOVED | Không tạo winner giả hoặc tự nới pool |
-| GM-27/31: reconnect terminal | snapshot current/final round và ownVotes/ownSubmission | Kết quả/round/resultId không đổi, không giữ phiếu vòng1 ở vòng2 |
+| GM-27/31: reconnect terminal | snapshot dùng vòng cuối từ locked rows, kể cả CANCELLED ở round2 chưa có result | Giữ pool row IDs/poolVersion, ownVotes/ownSubmission/hasSubmitted vòng2; không hiển thị lại phiếu vòng1 |
 | GM-26/31: outsider/switch account |403 NOT_MEMBER; JWT sai/mất401 | Xóa private cache đúng session; host không nhận phiếu người khác |
 | GM-21/27: history opt-in nhưng thiếu scoped consent | Result vẫn chốt; không tạo history chưa được cấp quyền | Không tự cho phép group/personal history từ UI flag |
 

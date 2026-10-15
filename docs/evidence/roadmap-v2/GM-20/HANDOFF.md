@@ -95,3 +95,18 @@ Local application DB kiểm chỉ đọc lúc2026-10-14T15:09Z vẫn có migrati
 và draft0020 từ lượt thử trước; chưa có0022/0023. Bản cuối chỉ được apply/kiểm trên
 DB disposable. Không dùng DB nền này làm evidence bản cuối hoặc reset nó để sửa
 lịch sử migration; nâng cấp môi trường ứng dụng cần plan riêng và giữ dữ liệu.
+
+## Sửa review PR115 ngày2026-10-15
+
+Theo [comment Trí](https://github.com/ThanhTris/IE307/pull/115#issuecomment-6182634572)
+trên commit2c1b023, snapshot đã đổi sang max round persist, không suy từ state/result
+hoặc poolVersion. Phiếu mới cũng kiểm cùng round persist để CANCELLED ở vòng2
+trả ROOM_TERMINAL với version hiện hành; retry accepted vẫn trả ACK gốc.
+
+Runner gọi entrypoint Node chính thức bằng process.execPath + cliArgs('status'),
+không tự ghép tên cli-win32. Tests mới bao phủ hai ca hủy vòng2 và lobby có
+poolVersion>1. Workflow `.github/workflows/gm20-cli.yml` launch CLI thật qua cùng
+entrypoint trên Windows/macOS/Linux, không là kiểm SQL/HTTP trên ba hệ điều hành.
+[Review fix evidence](review-fix-2026-10-15/README.md) ghi kết quả và CI revision.
+Hai mobile CI đỏ ở check Expo được reviewer chấp nhận ngoại lệ cho lần review này;
+không đổi package nền, không claim all checks passed hoặc tự Approved/Done.

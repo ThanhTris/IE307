@@ -45,8 +45,12 @@ modulo32bit tránh signed bigint overflow; rejection sampling giống GM-15.
 Result + private seed/algorithm + history + event + inbox cùng submission/votes
 và state/version trong transaction. Exception rollback toàn block. Unique room
 result, ACK replay không gọi lại finalize; không hồi sinh history đã xóa.
-Snapshot khóa đọc cùng thứ tự, trả final round theo reason persisted, pinned winner
-và current-round ownVotes/ownSubmission. Không public seed/ties/scores/matrices.
+Snapshot khóa đọc cùng thứ tự, lấy vòng mới nhất từ `max(round_dishes.round)`
+của pool đã persist, fallback1 nếu chưa có row. Giữ round2 kể cả CANCELLED
+không có result; poolVersion tăng ở lobby không đổi round. Kiểm vòng của phiếu mới
+cũng theo locked rows, nên hủy round2 trả ROOM_TERMINAL cho phiếu mới đúng version.
+Pool, ownVotes/ownSubmission/hasSubmitted cùng vòng; pinned winner không đổi.
+Không public seed/ties/scores/matrices.
 
 ## Writer bàn giao GM-21
 

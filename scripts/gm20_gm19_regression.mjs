@@ -13,6 +13,8 @@ function replace(from, to) {
 }
 replace('supabase/tests/bruno/GM-19/', 'supabase/tests/bruno/GM-20/');
 replace('docs/evidence/roadmap-v2/GM-19/', 'docs/evidence/roadmap-v2/GM-20/regression-gm19/');
+replace("'docs/evidence/roadmap-v2/GM-20/regression-gm19/sql-run.txt'),sql)",
+  "'docs/evidence/roadmap-v2/GM-20/regression-gm19/sql-run.txt'),sql.trimEnd()+'\\n')");
 replace('http://127.0.0.1:54331', 'http://127.0.0.1:54332');
 replace('gm19_test_namespace', 'gm20_test_namespace');
 replace("status=JSON.parse(await runCommand(process.execPath,[resolve(root,'node_modules/supabase/dist/supabase.js'),'status','--output','json','--workdir',root],{quiet:true}));",
@@ -33,7 +35,7 @@ try {
   await writeFile(report, JSON.stringify({ fixtureOnly: true, upstream: 'scripts/gm19_http_check.mjs',
     upstreamSha256: hash(original), scenarioSha256: hash(scenarios(original)),
     scenariosUnchanged: true, adapterSha256: hash(adapted), exitCode: code,
-    adaptations: ['owned GM20 runtime namespace/endpoint', 'evidence destination', 'existing public key bootstrap'],
+    adaptations: ['owned GM20 runtime namespace/endpoint', 'evidence destination and trailing blank line normalization', 'existing public key bootstrap'],
   }, null, 2) + '\n');
   process.exitCode = code;
 } finally {

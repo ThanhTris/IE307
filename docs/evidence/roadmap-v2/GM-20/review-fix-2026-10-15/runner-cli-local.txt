@@ -1,0 +1,29 @@
+✔ config pins project and ports (9.936542ms)
+✔ local URL guard rejects remote, credentials, paths, redirects and wrong port (0.458709ms)
+✔ commands never target remote or delete backups (0.231375ms)
+✔ status deliberately drops all secrets (3.359166ms)
+✔ health asserts HTTP status and GoTrue body, no redirect following (85.527167ms)
+✔ redaction strips JWT, keys, password and named credential fields (0.785375ms)
+✔ invalid reset rejected before any process (0.436209ms)
+✔ missing Docker fails actionable, not success (5.04525ms)
+✔ ordinary/no-write cleanup preserves another run's environment and state (16.626292ms)
+✔ Bruno preflight refuses existing env without changing it (4.379291ms)
+✔ Bruno preflight refuses existing state without changing it (9.145ms)
+✔ exclusive creation cannot overwrite a file appearing after preflight (8.156041ms)
+✔ state creation conflict only cleans the environment this run created (11.758875ms)
+✔ successful cleanup removes only owned files and is repeatable (11.210459ms)
+✔ cleanup preserves edited file, reports failure and still cleans unchanged owned state (6.766125ms)
+✔ cleanup rejects a replacement inode even if its contents are identical (5.251334ms)
+✔ already removed owned files do not fail cleanup (6.113625ms)
+✔ writes outside the declared runtime paths are refused (0.80625ms)
+✔ HTTP runner wires ownership preflight, exclusive publication and cleanup (1.286583ms)
+CLI launch Pass: darwin/arm64, Supabase 2.120.0; API cases=0 (not exercised)
+✔ GM20 launches the installed Supabase CLI through the foundation entrypoint (564.323375ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 697.87025

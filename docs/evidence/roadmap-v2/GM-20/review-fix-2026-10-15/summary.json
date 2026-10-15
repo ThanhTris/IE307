@@ -1,0 +1,38 @@
+{
+  "checkedAt": "2026-10-15T02:11:06.281287+00:00",
+  "reviewedInput": "2c1b023cf4b3cccfd8f8a6039e039fcae6edb055",
+  "reviewComment": "https://github.com/ThanhTris/IE307/pull/115#issuecomment-6182634572",
+  "baseRevision": "c20f7c2a58bcce555a446722e744bd7f1f3ac1b6",
+  "testedParentRevision": "2c1b023cf4b3cccfd8f8a6039e039fcae6edb055",
+  "dirtySource": true,
+  "sqlHttp": {
+    "result": "Pass",
+    "httpGroups": 22,
+    "sqlAssertions": 11,
+    "parityVectors": 140,
+    "nativeHost": "macOS arm64"
+  },
+  "gm19Regression": {
+    "result": "Pass",
+    "httpGroups": 32,
+    "sqlAssertions": 15
+  },
+  "python": {
+    "result": "Pass",
+    "tests": 550,
+    "elapsedSeconds": 40.323,
+    "logSha256": "17e470b43eea421de12080f68815f8c40fa2f2c405ab97eec1aaa0b8799e79cd"
+  },
+  "domain": {
+    "result": "Pass",
+    "tests": 169
+  },
+  "rootRunnerAndCli": {
+    "result": "Pass",
+    "tests": 20
+  },
+  "crossOsCliCi": "Pending push; no HTTP assertions claimed",
+  "expoCompatibilityCi": "Reviewer exception in cited comment; dependencies unchanged",
+  "reviewerApproved": false,
+  "applicationDatabaseReset": false
+}

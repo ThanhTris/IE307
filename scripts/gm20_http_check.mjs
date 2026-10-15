@@ -8,7 +8,7 @@ import { createRequire } from 'node:module';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { runCommand, validateConfig, validateApiUrl } from './backend.mjs';
+import { runCommand, cliArgs, validateConfig, validateApiUrl } from './backend.mjs';
 import { createOwnedRuntimeFiles } from './gm19_runtime_files.mjs';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const python = process.env.GM20_PYTHON ?? (process.platform === 'win32' ? 'python' : 'python3');
@@ -131,7 +131,7 @@ async function parity() {
  await writeFile(resolve(root,'docs/evidence/roadmap-v2/GM-20/parity.json'),JSON.stringify({fixtureOnly:true,algorithm:'u32-murmur3-rejection-v1',vectors:rows},null,2)+'\n');
  const sql=await fixture('sql',readFileSync(resolve(root,'supabase/tests/finalize.sql'),'utf8'));
  assert.ok(!/^not ok /m.test(sql));report.sql={result:'Pass',parityVectors:rows.length,assertions:(sql.match(/^ok \d+/gm)??[]).length};
- await writeFile(resolve(root,'docs/evidence/roadmap-v2/GM-20/sql-run.txt'),sql);
+ await writeFile(resolve(root,'docs/evidence/roadmap-v2/GM-20/sql-run.txt'),sql.trimEnd()+'\n');
 }
 const participantGuests=n=>[guests[0],guests[1],...guests.slice(3)].slice(0,n);
 async function startedRoom(n=2,history=false) {
@@ -213,6 +213,36 @@ async function tests() {
  });
  await check('round1 all NO -> EMPTY_INTERSECTION, no seed/history, one event',async()=>{
   const s=await submitAll(await startedRoom(),'NO');assert.equal(s.state,'NO_CONSENSUS');assert.equal(s.result.reasonCode,'EMPTY_INTERSECTION');const c=await count(s.roomId);assert.equal(c.results,1);assert.equal(c.seeds,0);assert.equal(c.history,0);assert.equal(c.events,1);return {actual:c};
+ });
+ for(const partial of [false,true]) await check(`cancel round2 ${partial?'after one KEEP':'before ballots'} -> retain locked pool and own receipt`,async()=>{
+  let s=await submitAll(await startedRoom(),'OK');assert.equal(s.state,'ROUND_2');
+  const lockedPool=s.pool,lockedPoolVersion=s.poolVersion,body=ballot(s,'KEEP');
+  let accepted=null;
+  if(partial){accepted=success(await request('submit_ballot',host,body));s.version=accepted.version;}
+  const cancelled=success(await request('cancel_room',host,mutation(s.roomId,s.version,{confirm_cancel:true})));
+  const final=await snapshot(s.roomId),other=await snapshot(s.roomId,member);
+  assert.equal(final.state,'CANCELLED');assert.equal(final.version,cancelled.version);
+  assert.equal(final.round,2);assert.equal(other.round,2);assert.equal(final.poolVersion,lockedPoolVersion);
+  assert.deepEqual(final.pool,lockedPool);assert.deepEqual(other.pool,lockedPool);assert.equal(final.result,null);
+  assert.deepEqual(final.ownVotes,partial?Object.fromEntries(body.votes.map(v=>[v.roundDishId,'KEEP'])):{});
+  assert.deepEqual(final.ownSubmission,accepted?.data.receipt??null);
+  assert.deepEqual(other.ownVotes,{});assert.equal(other.ownSubmission,null);
+  assert.equal(final.members.find(m=>m.isHost).hasSubmitted,partial);
+  assert.equal(final.members.find(m=>!m.isHost).hasSubmitted,false);
+  const before=await count(s.roomId);
+  failure(await request('submit_ballot',member,ballot(final,'KEEP')),409,'ROOM_TERMINAL');
+  if(partial)assert.deepEqual(success(await request('submit_ballot',host,body)),accepted);
+  assert.deepEqual(await count(s.roomId),before);assert.equal(before.results,0);
+  assert.equal(before.submissions,partial?3:2);assert.deepEqual((await snapshot(s.roomId)).pool,lockedPool);
+  return {expected:{state:'CANCELLED',round:2,ownRound2Submission:partial,newBallot:'ROOM_TERMINAL'},
+   actual:{state:final.state,round:final.round,poolVersion:final.poolVersion,ownSubmissionRound:final.ownSubmission?.round??null,unchangedPool:true,otherVotesVisible:false,counts:before}};
+ });
+ await check('lobby poolVersion greater than one remains round1',async()=>{
+  const made=await newRoom(),context=create();delete context.display_name;
+  success(await request('update_context',host,{...context,room_id:made.roomId,expected_version:made.version,radius_m:1600}));
+  const s=await snapshot(made.roomId);assert.equal(s.state,'LOBBY');assert.ok(s.poolVersion>1);
+  assert.equal(s.round,1);assert.deepEqual(s.ownVotes,{});assert.equal(s.ownSubmission,null);
+  return {expectedRound:1,actualRound:s.round,poolVersion:s.poolVersion};
  });
  await check('fallback all OK -> round2 KEEP -> COMPROMISE and stable locked winner',async()=>{
   let s=await submitAll(await startedRoom(),'OK');assert.equal(s.state,'ROUND_2');s=await submitAll(s,'KEEP');assert.equal(s.result.matchTier,'COMPROMISE');assert.equal(s.result.reasonCode,'ACCEPTABLE_FINAL');
@@ -314,9 +344,9 @@ try {
     await tests();report.result='Pass';await saveReport();
     await fixture('sql','delete from gm19_private.rate_windows;delete from gm18_api_private.read_windows;');
   } else {
-  const cli=resolve(root,`node_modules/@supabase/cli-${process.platform}-${process.arch}/bin/supabase${process.platform==='win32'?'.exe':''}`);
   console.log('GM20 checking local status');
-  status=JSON.parse(await runCommand(cli,['status','--output','json','--workdir',root],{quiet:true}));
+  // Let the official Node entrypoint map win32 to cli-windows and choose arch/libc.
+  status=JSON.parse(await runCommand(process.execPath,cliArgs('status'),{quiet:true}));
   authBase=validateApiUrl(status.API_URL);key=status.ANON_KEY;console.log('GM20 local status ready; setup owned fixture');
   for(let i=0;i<9;i++) {const res=await fetch(authBase+'/auth/v1/signup',{method:'POST',headers:{apikey:key,'Content-Type':'application/json'},
     signal:AbortSignal.timeout(20000),body:JSON.stringify({data:{display_name:'GM20 synthetic '+i,gm18_test_namespace:namespace,gm20_test_namespace:namespace}})});

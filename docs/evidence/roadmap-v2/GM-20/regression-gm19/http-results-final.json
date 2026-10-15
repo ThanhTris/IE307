@@ -1,9 +1,9 @@
 {
   "contract": "food-v1/roadmap-v2/GM-19.1",
   "schemaVersion": "0.3.0",
-  "checkedAt": "2026-10-14T15:00:49.128Z",
-  "namespace": "6dd8d885-edae-4fc8-9cbd-8ecb7d42a96a",
-  "revision": "c20f7c2a58bcce555a446722e744bd7f1f3ac1b6\n",
+  "checkedAt": "2026-10-15T02:06:16.930Z",
+  "namespace": "fbb85884-0051-4b91-a0a4-20f0c7cb3fdf",
+  "revision": "2c1b023cf4b3cccfd8f8a6039e039fcae6edb055\n",
   "artifactHashes": {
     "supabase/migrations/0019_room_lifecycle.sql": "ed76f679baa10bbfd4234e2be88f408ef292162f92efceac16217aa554f50926",
     "scripts/gm19_http_check.mjs": "31046e5fcb4d11d4135272a4caa97d0b13cd9034de4599c58bc53a07aaa543c2",
@@ -63,21 +63,21 @@
       "case": "preferences update own only and reset own ready",
       "result": "Pass",
       "status": 200,
-      "version": 6,
+      "version": 5,
       "privateProjection": true
     },
     {
       "case": "context updates shared pool/version and reset all ready",
       "result": "Pass",
       "status": 200,
-      "version": 8
+      "version": 7
     },
     {
       "case": "ready both then start ROUND_1, replay after start",
       "result": "Pass",
       "status": 200,
       "state": "ROUND_1",
-      "version": 11
+      "version": 10
     },
     {
       "case": "started snapshot immutable after catalogue/anchor change",
@@ -129,7 +129,7 @@
         200,
         409
       ],
-      "state": "ROUND_1"
+      "state": "CANCELLED"
     },
     {
       "case": "join/start race cannot admit guest into locked roster",
@@ -234,14 +234,14 @@
       "result": "Pass",
       "changedStatus": 409,
       "reconfirmedStatus": 200,
-      "datasetVersion": "0.19.1791990074280164"
+      "datasetVersion": "0.19.1792030008565895"
     },
     {
       "case": "variant identity is retained and result offerings filter by variant",
       "result": "Pass",
       "roundVariants": [
-        "sốt riêng — fixture",
         "không cay",
+        "sốt riêng — fixture",
         null,
         "cay"
       ],
@@ -257,7 +257,7 @@
     }
   ],
   "result": "Pass",
-  "datasetVersion": "0.19.1791990074280164",
+  "datasetVersion": "0.19.1792030008565895",
   "endpoint": "http://127.0.0.1:54332",
   "sql": {
     "result": "Pass",

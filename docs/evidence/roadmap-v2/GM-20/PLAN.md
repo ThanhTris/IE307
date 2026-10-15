@@ -100,3 +100,21 @@ MOBILE_API_TEST_MATRIX: producer server checks riêng; Android app/API/UI, durab
 outbox/restart và sender/native chưa thuộc kiểm nghiệm của GM20. Không package,
 UI, deployment hoặc dependency ngược. Trí review revision và fresh merge gate;
 AI không tự xác nhận nghiệm thu.
+
+## Sửa theo review PR115 ngày2026-10-15
+
+[Comment Trí](https://github.com/ThanhTris/IE307/pull/115#issuecomment-6182634572)
+kiểm commit2c1b023 và owner yêu cầu sửa/push lại trong chat.
+
+- Snapshot và kiểm round phiếu mới lấy max round đã persist trong locked rows,
+  fallback1; không suy từ CANCELLED/result hoặc poolVersion.
+- Thêm runtime cases hủy round2 trước phiếu và sau một KEEP, kiểm cả hai caller,
+  exact pool row IDs, own receipt/votes/submission, hasSubmitted, replay và terminal
+  từ chối phiếu mới. Thêm lobby poolVersion>1 vẫn round1.
+- Runner dùng process.execPath + cliArgs('status') của nền; official Node entrypoint
+  tự map Windows/Linux/macOS/arch. Không sửa package hoặc cài alias sai tên.
+- Chạy lại SQL/HTTP và GM19 regression trên DB disposable, domain/Python/root checks.
+  CI mới launch CLI executable thật trên Windows/macOS/Linux bằng Node24/npm ci.
+  Không gọi đây là HTTP/SQL Windows hoặc Android Pass.
+- Hai Expo compatibility jobs đỏ được reviewer chấp nhận riêng trong comment;
+  giữ dependency và workflow nền, không claim all checks passed hoặc approval/Done.

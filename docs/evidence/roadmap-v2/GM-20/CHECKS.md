@@ -22,11 +22,11 @@ thay review của Trí. Ref đã fetch trong lượt này; trước merge phải
 | --- | --- |
 | SQL/domain parity | Pass140 vectors evaluator/roster/seeded, expected giữ nguyên GM-15; [input–expected–actual](parity.json) |
 | SQL boundary | Pass11 pgTAP, gồm registry GM-22/schema0.4.0 không bị ghi đè; [output](sql-run.txt) |
-| HTTP GM-20 | Pass19 nhóm trên main mới qua client/guards GM-07; [report cuối](http-results-final.json) |
-| Reset owned / rerun | Pass19 nhóm và parity sau `--against --reset`; DB tạo lại đầy đủ migrations, không signup thêm hoặc đụng DB nền |
+| HTTP GM-20 | Pass22 nhóm trên main mới qua client/guards GM-07; [report cuối](http-results-final.json) |
+| Reset owned / rerun | Pass22 nhóm và parity sau `--against --reset`; DB tạo lại đầy đủ migrations, không signup thêm hoặc đụng DB nền |
 | Regression GM-19 | Pass32 HTTP +15 pgTAP trên nền GM-20/GM-22; [report](regression-gm19/http-results-final.json), [SQL](regression-gm19/sql-run.txt), [adapter](regression-gm19/adapter.json) |
 | Domain | Pass169 tests, Node24 node:test |
-| Backend/runtime runner | Pass19 tests, node:test |
+| Backend/runtime/CLI runner | Pass20 tests, node:test, gồm CLI native macOS |
 | Python regression | Pass550 tests bằng Python3.12.14, 32.634s |
 | Mobile typecheck | Pass `tsc --noEmit` |
 | Mobile lint | Pass0 errors,4 warnings có sẵn ở contracts.ts/index.ts |
@@ -37,8 +37,9 @@ thay review của Trí. Ref đã fetch trong lượt này; trước merge phải
 
 HTTP report giữ summary assertion đã che dữ liệu; input/request và expected chi tiết
 ở runner/Bruno/GM-20.http, parity dùng fixtureOnly=true. Không log raw votes/token.
-SQL report cuối11 là retest bổ sung sau suite10 để kiểm registry GM-22; mục sqlRetest
-trong HTTP report ghi checksum đúng file. Không sửa actual cũ thành kết quả chưa chạy.
+Lượt review fix ngày15/10 chạy trực tiếp đủ11 assertions SQL và22 nhóm HTTP,
+bao gồm ca cancel vòng2; report cuối ghi source hashes. Lượt ngày14/10 từng retest
+thêm assertion11 sau suite10. Không sửa actual cũ thành kết quả chưa chạy.
 
 ## Đối chiếu acceptance criteria
 
@@ -111,3 +112,25 @@ Trước PR ngày2026-10-15: Python regression chạy lại550 tests/52.885s, Pa
 [Attempt setup thất bại ban đầu](regression-gm19/attempts/2026-10-14-setup-failure.json)
 được giữ riêng để truy vết,0case/Fail do thiếu thư mục report; không tính vào lượt
 regression cuối32groups/15pgTAP đã đạt.
+
+## Review fix ngày2026-10-15 — input commit2c1b023
+
+[Comment reviewer](https://github.com/ThanhTris/IE307/pull/115#issuecomment-6182634572)
+yêu cầu giữ round2 sau cancel và sửa executable lookup trên Windows.
+Chi tiết phạm vi/test ở [review evidence](review-fix-2026-10-15/README.md).
+
+- Snapshot/new ballot guard dùng max persisted round, fallback1, không suy từ
+  state/result/poolVersion. Hai cancel cases và lobby context bump được thêm vào
+  suite, tăng19→22 groups; kiểm pinned rows/receipt/votes/progress và terminal.
+- Dùng official Node entrypoint theo helper nền, giữ dependency/lockfile. macOS
+  native CLI + backend/runtime tests20 Pass; Python550/40.323s, domain169 Pass.
+- Regression GM1932 HTTP/15pgTAP Pass. GM20 parity140/pgTAP11 và22 HTTP groups
+  được chạy trên DB disposable mới/reset; source hash phải khớp report cuối.
+- Windows/Linux/macOS CLI workflow launch executable thật; kết quả CI ghi riêng
+  sau push, không gọi0 API case là API Pass hoặc coi test Mac là Windows.
+- Không thay package Expo; hai job mobile compatibility đỏ đã được Trí chấp nhận
+  ngoại lệ riêng ở comment. Không claim all checks passed hoặc reviewer approval.
+
+Lượt review fix chốt sau reset:22 HTTP/140 parity/11 SQL Pass; GM1932/15 Pass,
+cleanup DB0/guest0/REST0/private files0. Parent revision2c1b023 + dirty source hash
+trong manifest xác định bản đã kiểm; workflow CLI native ba OS đang chờ chạy sau push.

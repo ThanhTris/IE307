@@ -9,11 +9,11 @@ ok 7 - client cannot insert rooms directly
 ok 8 - client cannot update members directly
 ok 9 - anonymous create is rejected at SQL privilege boundary
 ok 10 - authenticated fixture identity is created inside the rollback
-e458c345-3929-439f-b942-0c67cfc1b400
+53762a92-85c1-4d6c-bc0a-b43e48c317e4
 ok 11 - malformed request returns INVALID_INPUT
 ok 12 - malformed join returns INVALID_INPUT
 ok 13 - malformed snapshot returns INVALID_INPUT
 
 ok 14 - authenticated without a caller claim is rejected
-e458c345-3929-439f-b942-0c67cfc1b400
+53762a92-85c1-4d6c-bc0a-b43e48c317e4
 ok 15 - create_room rate window returns one 429-domain response at request 11
