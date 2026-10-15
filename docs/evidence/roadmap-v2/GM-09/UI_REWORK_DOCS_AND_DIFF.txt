@@ -1,0 +1,10 @@
+PASS: manifest raw SHA-256 matches all 16 source/test files.
+PASS: .agents directory absent; no agentRules in current manifest.
+PASS: project rules/tasks/design/spec, shared UI/API, package/config/lock and backend unchanged.
+PASS: hooks/services/receipt/bootstrap/unit source and prompt.txt unchanged from saved GM-09.
+Gi Cung Duoc: documents, links, JSON, task manifest, dependencies and current FR traceability OK.
+Scope: documentation validation only; no native build/backend execution or human approval verified.
+Dependency approval uses live GitHub Project; run task_readiness --task before code/merge. This offline validator does not unlock tasks.
+Task indexes match task metadata.
+PASS: git diff --check (tracked changes). Untracked files checked separately for whitespace.
+PASS: source/test/docs whitespace, GM-09 branch, .agents deletion verified.
