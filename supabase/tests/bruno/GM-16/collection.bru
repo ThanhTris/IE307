@@ -1,0 +1,16 @@
+script:pre-request {
+  const url = bru.interpolate(req.getUrl());
+  if (!/^http:\/\/(127\.0\.0\.1|localhost):54321\/auth\/v1\//.test(url)) {
+    throw new Error('GM-16 collection only supports loopback port 54321');
+  }
+  req.setTimeout(10000);
+  req.setMaxRedirects(0);
+  if (!url.endsWith('/health')) {
+    const key = bru.getEnvVar('publicKey');
+    if (typeof key !== 'string' || !key) {
+      throw new Error('Select Local.private environment with the local anon/publishable key');
+    }
+    if (key.startsWith('sb_secret_')) throw new Error('Never use a secret/service key');
+    req.setHeader('apikey', key);
+  }
+}

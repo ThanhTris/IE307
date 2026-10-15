@@ -1,0 +1,20 @@
+meta {
+  name: 04 Accept partner
+  type: http
+  seq: 4
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/accept_partner
+  body: json
+}
+headers {
+  Authorization: Bearer {{memberToken}}
+  apikey: {{anonKey}}
+  Content-Type: application/json
+}
+body:json {
+  {"requestId":"{{requestId}}-accept","invitation_id":"{{friendInvitationId}}"}
+}
+tests {
+  test('04 Accept partner',()=>{ expect([200,409]).to.include(res.getStatus()); });
+}

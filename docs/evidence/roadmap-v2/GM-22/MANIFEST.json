@@ -1,0 +1,41 @@
+{
+  "task": "GM-22",
+  "contract": "food-v1/roadmap-v2/GM-22.1",
+  "schemaVersion": "0.4.0",
+  "owner": "Trí",
+  "reviewer": "ThanhTris",
+  "upstreamRevision": "5b148de",
+  "sourceRevision": "9454ff1c21b1d989b8b8b17d314b2f34bf9ac6d2",
+  "artifacts": [
+    "supabase/migrations/0022_social.sql",
+    "supabase/tests/database/GM-22_social.test.sql",
+    "supabase/tests/http/GM-22.http",
+    "supabase/tests/bruno/GM-22/",
+    "scripts/gm22_http_check.mjs",
+    "scripts/gm22_http_stop.mjs",
+    "mobile/src/data/api/contracts.ts",
+    "mobile/src/data/api/client.ts",
+    "mobile/src/data/api/mock.ts",
+    "mobile/src/data/api/responseGuards.ts"
+  ],
+  "productionDataPromoted": false,
+  "androidConsumer": "Not run; GM-28 handoff",
+  "desktopBruno": "Pass; Bruno Runner 10/10 selected, 10 passed, 0 failed, 0 skipped",
+  "evidence": [
+    "docs/evidence/roadmap-v2/GM-22/sql-run.txt",
+    "docs/evidence/roadmap-v2/GM-22/http-results.json",
+    "docs/evidence/roadmap-v2/GM-22/bruno-results.txt"
+  ],
+  "sourceSha256": {
+    "supabase/migrations/0022_social.sql": "bede55e7a0c12a3dfce3d03f3e61121bd4611b73c8b8656ec0785a3c55097f54",
+    "supabase/tests/database/GM-22_social.test.sql": "10b4aff7bf79953b97bc9674e89e0a4dbb3f37f15b850d6d9dddcba795e151db",
+    "supabase/tests/http/GM-22.http": "f180eb48759fad58e7715ce7f433ad2faa31d3a358df59628fd56d4c451fdf4c",
+    "scripts/gm22_http_check.mjs": "f32275f17d1644f3c9ae8b771110353953a85505874b2220c03f9da56a728360",
+    "scripts/gm22_http_stop.mjs": "2a89a5ab9ad84876344121ea6d0147ab77a2846c333aedbb114e6e74dccb9f4a",
+    "mobile/src/data/api/contracts.ts": "dd4c49040c04af177cf2cef4192e0cc95a056497fc97686e17fcc854e4a335c4",
+    "mobile/src/data/api/client.ts": "c0988e5db5d636a7b354bad88586442dacbff04145a58a84afe02e28df85dd04",
+    "mobile/src/data/api/mock.ts": "07726b05078717c798f57f851b627a1aa277275e48d71ee6e970e82ce2354a27",
+    "mobile/src/data/api/responseGuards.ts": "900cfc0d141f62ad6d41e8fbb4b87a91a6cd54e1318176a223cf307b4d4161ca",
+    "docs/architecture/decisions/ADR-016-social-identity-and-invitation-references.md": "f5175cedd5a1ff146380fc0d49238cba5fb3b48a307a93c340bc3ccf128d3e2c"
+  }
+}

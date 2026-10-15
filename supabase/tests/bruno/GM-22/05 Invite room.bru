@@ -1,0 +1,20 @@
+meta {
+  name: 05 Invite room
+  type: http
+  seq: 5
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/invite_to_room
+  body: json
+}
+headers {
+  Authorization: Bearer {{hostToken}}
+  apikey: {{anonKey}}
+  Content-Type: application/json
+}
+body:json {
+  {"requestId":"{{requestId}}-room","room_id":"{{roomId}}","partner_id":"{{memberId}}","expected_version":{{roomVersion}}}
+}
+tests {
+  test('05 Invite room',()=>{ expect([200,409]).to.include(res.getStatus()); });
+}

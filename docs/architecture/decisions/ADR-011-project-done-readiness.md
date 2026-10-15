@@ -5,6 +5,8 @@ Status: quyết định quy trình theo xác nhận trực tiếp của chủ d�
 
 Cập nhật quy tắc review ngày 2026-10-12: [ADR-013](ADR-013-project-owner-final-review.md) thay yêu cầu người kiểm độc lập cho task Trí trực tiếp làm. Trí review cuối cả task mình làm; các gate và chuẩn đầu ra dưới đây giữ nguyên.
 
+Cập nhật 2026-10-13: [ADR-014](ADR-014-test-data-and-baseline-project-card.md) pin ngoại lệ baseline GM-01 → Project card GM-00/#37 theo chỉ định Trí; không tìm card #100. Scope/artifact GM-01 và các guard giữ nguyên, chỉ nguồn xác nhận baseline thay đổi. Không là cơ chế lấy approval task ID cũ cho task khác.
+
 ## Bối cảnh
 
 GM-03/04 đã được chủ dự án đóng issue/chuyển Done nhưng main còn task Markdown review/backlog. Checker local chặn GM-06 dù đầu ra đã merge. Chủ dự án yêu cầu dùng cột Done để mở task, tránh cập nhật trạng thái thủ công ở hai nơi.
@@ -15,7 +17,7 @@ GM-03/04 đã được chủ dự án đóng issue/chuyển Done nhưng main cò
 - Checker đọc snapshot mới mỗi lần chạy, phân trang đầy đủ; thiếu credential/quyền Project, mạng, item hoặc status không xác minh được thì chặn. Không cache/fallback local khi live thất bại, không mutation hay thêm package.
 - Start: chỉ các start deps cần Done, output và HANDOFF trong nhánh làm việc. Phần độc lập không phải đợi merge deps.
 - Merge: cộng start và merge deps, tất cả Done, bắt buộc --base-ref; contract/baseline/stage, task-map entry và nội dung output/HANDOFF local phải khớp snapshot target. Không so status/checklist/assignment trong task Markdown vì chúng có thể chậm cập nhật. Người merge vẫn kiểm upstream PR/commit, target freshness và integration tests thật.
-- Done là xác nhận nghiệm thu của chủ dự án theo quy trình đã chốt, không bằng chứng máy rằng người nào đã chuyển, revision nào đã review hoặc test đạt. Trí review/merge cuối; task Trí viết vẫn cần người kiểm độc lập. AC, bảo mật, nguồn data và chuẩn đầu ra không giảm.
+- Done là xác nhận nghiệm thu của chủ dự án theo quy trình đã chốt, không bằng chứng máy rằng người nào đã chuyển, revision nào đã review hoặc test đạt. Theo ADR-013, Trí review/merge cuối mọi task, kể cả task Trí viết; không yêu cầu review chéo hoặc người kiểm độc lập. AC, bảo mật, nguồn data và chuẩn đầu ra không giảm.
 - Không tự ghi Approved/Done vào repo/Project. Nếu chuyển Markdown thành done thì vẫn cần review fields/evidence thật theo DoD. Các bản ghi hiện hữu và evidence lịch sử không bị ghi đè.
 - Indexes và validator CI offline kiểm cấu trúc/truy vết; không thực thi Project gate hay mở task. --approval-source local giữ chẩn đoán lịch sử, không được dùng để vượt Project gate.
 

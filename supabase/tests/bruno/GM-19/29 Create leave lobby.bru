@@ -1,0 +1,30 @@
+meta {
+  name: 29 Create leave lobby
+  type: http
+  seq: 29
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/create_room
+  body: json
+  auth: none
+}
+headers {
+  Authorization: Bearer {{hostToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"requestId":"{{requestId}}","display_name":"Bruno leave","anchor_id":"{{anchorId}}","radius_m":1500,"desired_at":"{{desiredAt}}","service_mode":"dine_in","meal_slot":"dinner","time_hint":null,"budget":null,"avoid_recent":false}
+}
+script:pre-request {
+  bru.setVar('requestId','xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.floor(Math.random()*16);return(c==='x'?r:(r&3|8)).toString(16);}));
+}
+script:post-response {
+  const body=res.getBody();if(res.getStatus()===200 && body.ok===true) { bru.setVar('roomId',body.roomId);bru.setVar('roomCode',body.data.code);bru.setVar('roomVersion',body.version); }
+}
+tests {
+  test('29 Create leave lobby status and contract',()=>{
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getBody().ok).to.equal(true);
+    expect(res.getBody().state).to.equal('LOBBY');
+  });
+}

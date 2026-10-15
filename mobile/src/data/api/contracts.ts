@@ -18,6 +18,7 @@ export type ErrorCode =
   | 'NOT_HOST'
   | 'NOT_READY'
   | 'NOT_PARTNER'
+  | 'NOT_RECIPIENT'
   | 'CONSENT_REQUIRED'
   // Validation & Input
   | 'INVALID_INPUT'
@@ -43,6 +44,7 @@ export type ErrorCode =
   // Social & Invitations
   | 'INVITE_EXPIRED'
   | 'INVITE_REJECTED'
+  | 'INVITE_CANCELLED'
   // Rate limit & Infra
   | 'RATE_LIMITED'
   | 'NETWORK_ERROR'
@@ -80,6 +82,13 @@ export interface SessionResponse {
   token: string;
   user: SessionUser;
   expiresAt: string;
+}
+
+export interface SocialIdentity {
+  id: string;
+  displayName: string;
+  friendCode: string;
+  avatarSeed: string;
 }
 
 export interface CreateGuestSessionRequest {
@@ -511,6 +520,7 @@ export interface ApiClient {
   getResultOfferings(roomId: string, resultId: string): Promise<ReadResult<PoolDish[]>>;
 
   // Social
+  getMySocialIdentity(): Promise<ReadResult<SocialIdentity>>;
   listFriends(): Promise<ReadResult<Friend[]>>;
   invitePartner(req: InvitePartnerRequest): Promise<WriteResult<FriendInvitation>>;
   acceptPartner(invitationId: string, requestId?: string): Promise<WriteResult<void>>;
@@ -518,6 +528,7 @@ export interface ApiClient {
   unfriend(partnerId: string, requestId?: string): Promise<WriteResult<void>>;
   inviteToRoom(req: InviteToRoomRequest): Promise<WriteResult<RoomInvitation>>;
   acceptRoomInvite(req: AcceptRoomInviteRequest): Promise<WriteResult<JoinRoomResponse>>;
+  rejectRoomInvite(invitationId: string, requestId?: string): Promise<WriteResult<void>>;
 
   // Inbox & Devices
   listPartnerInbox(cursor?: string): Promise<ReadResult<InboxItem[]>>;

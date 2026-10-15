@@ -21,7 +21,7 @@ from test_repository_validator import MemorySource, deliver_in_memory
 def item(config, tid, status='Done', **extra):
     return {'id': tid, 'isArchived': False, 'status': {'name': status},
             'content': {'__typename': 'Issue', 'number': config['issues'][tid],
-                        'title': tid + ' — current task', 'url': 'https://github.com/ThanhTris/IE307/issues/' + str(config['issues'][tid]),
+                        'title': config.get('approval_aliases', {}).get(tid, tid) + ' — current task', 'url': 'https://github.com/ThanhTris/IE307/issues/' + str(config['issues'][tid]),
                         'repository': {'nameWithOwner': config['repository']}}, **extra}
 
 
@@ -44,6 +44,35 @@ class ProjectApiTests(unittest.TestCase):
         value = item(self.config, 'GM-04')
         value['content']['state'] = 'OPEN'
         self.assertEqual(self.snapshot(value).approval_errors('GM-04'), [])
+
+    def test_owner_pinned_baseline_alias_uses_gm00_card_for_gm01(self):
+        self.assertEqual(self.config['issues']['GM-01'], 37)
+        self.assertEqual(self.config['approval_aliases'], {'GM-01': 'GM-00'})
+        value = item(self.config, 'GM-01')
+        self.assertTrue(value['content']['title'].startswith('GM-00'))
+        self.assertEqual(self.snapshot(value).approval_errors('GM-01'), [])
+        for change in ('todo', 'wrong_title', 'wrong_issue', 'archived', 'duplicate'):
+            altered = copy.deepcopy(value)
+            if change == 'todo':
+                altered['status']['name'] = 'Todo'
+            elif change == 'wrong_title':
+                altered['content']['title'] = 'GM-01 — wrong card'
+            elif change == 'wrong_issue':
+                altered['content']['number'] = 100
+            elif change == 'archived':
+                altered['isArchived'] = True
+            snapshot = self.snapshot(altered, altered) if change == 'duplicate' else self.snapshot(altered)
+            self.assertTrue(snapshot.approval_errors('GM-01'), change)
+
+    def test_alias_is_not_a_general_old_task_approval_bypass(self):
+        for aliases, issue in (({'GM-04': 'GM-00'}, 37), ({'GM-01': 'GM-04'}, 37),
+                               ({'GM-01': 'GM-00'}, 100), ([], 37)):
+            config = copy.deepcopy(self.config)
+            config['approval_aliases'] = aliases
+            config['issues']['GM-01'] = issue
+            self.source.contents[project.CONFIG_PATH] = json.dumps(config)
+            with self.assertRaises(project.ProjectUnavailable):
+                project.configuration(self.source)
 
     def test_closed_issue_is_not_project_done(self):
         value = item(self.config, 'GM-04', 'Todo')
@@ -178,6 +207,19 @@ class ProjectGateTests(unittest.TestCase):
     def test_done_on_project_reports_source_not_ai_approval(self):
         record = gates.repository.task_records(self.source)
         self.assertEqual(gates.readiness(self.source, record, 'GM-04', project=self.snapshot), ('DONE_ON_PROJECT', []))
+
+    def test_gm00_card_done_unlocks_gm02_but_gm01_artifacts_still_required(self):
+        records = gates.repository.task_records(self.source)
+        self.assertEqual(gates.readiness(self.source, records, 'GM-02', project=self.snapshot)[0], 'READY_TO_CLAIM')
+        self.source.files.remove('docs/evidence/roadmap-v2/GM-01/HANDOFF.md')
+        self.assertEqual(gates.readiness(self.source, records, 'GM-02', project=self.snapshot),
+                         ('BLOCKED_ARTIFACTS', ['GM-01']))
+
+    def test_baseline_alias_todo_blocks_even_with_local_gm01_approval(self):
+        self.snapshot.items[0]['status']['name'] = 'Todo'
+        records = gates.repository.task_records(self.source)
+        self.assertEqual(gates.readiness(self.source, records, 'GM-02', project=self.snapshot),
+                         ('BLOCKED', ['GM-01']))
 
     def test_binary_fingerprints_are_used_without_text_decoding(self):
         source = type('BinarySource', (), {'digest': lambda self, path: 'blob-sha',

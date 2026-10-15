@@ -1,0 +1,46 @@
+
+> gi-cung-duoc-mobile@0.1.0 check
+> npm run typecheck && npm run lint && npm test && npm run check:architecture
+
+
+> gi-cung-duoc-mobile@0.1.0 typecheck
+> tsc --noEmit
+
+
+> gi-cung-duoc-mobile@0.1.0 lint
+> eslint .
+
+
+/Users/hoaitam/Desktop/Learn/23521394/HK1-Nam-4/IE307/ThanhTris-IE307/mobile/src/data/api/contracts.ts
+  333:18  warning  Array type using 'Array<T>' is forbidden. Use 'T[]' instead  @typescript-eslint/array-type
+
+/Users/hoaitam/Desktop/Learn/23521394/HK1-Nam-4/IE307/ThanhTris-IE307/mobile/src/data/api/index.ts
+  10:1  warning  Import in body of module; reorder to top  import/first
+  11:1  warning  Import in body of module; reorder to top  import/first
+  12:1  warning  Import in body of module; reorder to top  import/first
+
+✖ 4 problems (0 errors, 4 warnings)
+  0 errors and 4 warnings potentially fixable with the `--fix` option.
+
+
+> gi-cung-duoc-mobile@0.1.0 test
+> jest --runInBand
+
+PASS tests/component/AppShellScreen.test.tsx
+PASS tests/integration/routes.test.tsx
+PASS tests/unit/apiContract.test.ts
+PASS tests/unit/apiResponseValidation.test.ts
+PASS tests/unit/decisionContract.test.ts
+PASS tests/unit/apiReadValidation.test.ts
+PASS tests/unit/apiMockIsolation.test.ts
+
+Test Suites: 7 passed, 7 total
+Tests:       288 passed, 288 total
+Snapshots:   0 total
+Time:        8.211 s, estimated 71 s
+Ran all test suites.
+
+> gi-cung-duoc-mobile@0.1.0 check:architecture
+> node scripts/check-architecture.mjs
+
+Architecture boundaries OK (static guard, not a substitute for review).

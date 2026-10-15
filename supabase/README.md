@@ -1,6 +1,6 @@
-# BE — GM-03 Supabase local foundation
+# BE — Supabase local, schema và RPC
 
-Stack đã được chủ dự án xác nhận tại ADR-001. GM-03 chỉ tooling/config/start/HTTP health/pgTAP nền, chưa schema/RPC/verified dataset/project remote.
+Stack đã được chủ dự án xác nhận tại ADR-001. GM-03 là tooling/config/health nền. Source hiện có schema GM-06, importer GM-08, ACL/retention GM-17, eligibility/discovery GM-18 và room lifecycle GM-19 (schema registry0.3.0). GM-20..23 và app integration còn theo task; không coi source đầy đủ là database đang chạy đã được migrate hoặc dataset đã publish.
 
 ## Chạy từ clone sạch
 
@@ -17,9 +17,24 @@ npm run backend:stop
 
 CLI pin 2.120.0, runner gọi shim bằng Node, không phụ thuộc `.cmd`/Unix shell. Start tải Docker images nếu chưa có; cần mạng/dung lượng. Project `gi-cung-duoc-local`, API54321/DB54322. Không deploy/link/login, tạo remote project/paid plan. CLI/Docker cần quyền cache/profile/pipe nếu sandbox chặn.
 
+GM-16 rate-limit probe cần GoTrue có trusted client key. Sau `backend:start`, chạy
+`powershell -NoProfile -ExecutionPolicy Bypass -File scripts/gm16_rate_limit_setup.ps1`;
+script chỉ thay Auth container local, giữ database volume và đặt
+`GOTRUE_RATE_LIMIT_HEADER=X-Forwarded-For` để Kong cung cấp bucket key. Không
+đưa biến này vào mobile hoặc public client.
+
 HTTP: GET `http://127.0.0.1:54321/auth/v1/health` → 200 + JSON name=GoTrue, version/description nonempty; runner kiểm assertions, không theo redirect. SQL có 3 assertions: DB postgres, PostgreSQL>=17, query arithmetic; transaction rollback. Output/environment tại [CHECKS](../docs/evidence/roadmap-v2/GM-03/CHECKS.md). Đây không là nghiệm thu API nghiệp vụ.
 
 Status chỉ in project/API URL loopback, bỏ keys/password/token. Không paste raw CLI status vào Git/evidence. Credential local mặc định không dùng cho dữ liệu thật; runner chỉ target loopback, không cam kết Docker bind mọi port chỉ loopback. Kiểm firewall/network publishing trước chia sẻ LAN; không dùng mạng không tin cậy.
+
+## Kiểm đúng stage và deployed revision
+
+- GM-06: `python scripts/gm06_schema_check.py --report <local-report.json>`; schema/reference/schedule/rollback trên DB test riêng.
+- GM-17: `python scripts/gm17_access_check.py --report <local-report.json>`; SQL RLS/retention và đối chiếu ACL local với DB fresh. Assertion kiểm đúng registry contract GM-17, không giới hạn số migration về sau.
+- GM-18/19: xem [GM-18 HANDOFF](../docs/evidence/roadmap-v2/GM-18/HANDOFF.md) và [GM-19 HANDOFF](../docs/evidence/roadmap-v2/GM-19/HANDOFF.md) cho real-JWT HTTP/disposable fixtures/Bruno; không dùng health hoặc mock thay test nghiệp vụ.
+- Runtime ownership của runner GM-19 có regression `node --test tests/gm19-runtime-files.test.mjs`; không cleanup credential/control files của phiên khác.
+
+Git pull không tự nâng cấp database. Trước dùng endpoint kiểm migration ledger và functions/definitions thật, không chỉ schema_versions. Database local có draft objects ngoài ledger cần backup và kế hoạch reconcile được Trí chốt; không tự reset/drop schema, đánh dấu migration applied hoặc sửa migration đã merge để che drift. Bộ kiểm disposable không tự đồng bộ app DB. Khi API/màn mới chưa thuộc task Done thì ghi rõ Not implemented/Not run, không nghiệm thu toàn app.
 
 ## Lỗi và reset
 
@@ -37,4 +52,4 @@ Bắt xác nhận, kiểm config/project/ports/status; CLI luôn local/no-seed, 
 
 GM-06 sở hữu migrations sau dictionary GM-04; `YYYYMMDDHHMMSS_gmXX_description.sql`, không sửa migration đã merge. Seed templates GM-04, verified GM-08, chưa bật seed. GM-07 chốt DTO/errors/client, task API thêm xử lý theo [contract](../docs/architecture/API_CONTRACT.md). RPC kiểm auth/membership/state/version/expiry/lock/idempotency; security definer fixed search_path/qualified table/explicit GRANT; RLS giữ kín raw votes. Chưa triển khai/kiểm những bảo mật nghiệp vụ đó tại GM-03.
 
-[Tests](tests/README.md) · [Shared functions](functions/_shared/README.md) · [Handoff](../docs/evidence/roadmap-v2/GM-03/HANDOFF.md). GM-03 chưa Done nếu HTTP/SQL bắt buộc Not run/Fail hoặc thiếu review Tâm.
+[Tests](tests/README.md) · [Shared functions](functions/_shared/README.md) · [Handoff GM-03 lịch sử](../docs/evidence/roadmap-v2/GM-03/HANDOFF.md). Trí review mọi task theo ADR-013; Done đọc live trên Project, không suy từ hồ sơ Pending lịch sử. AC bắt buộc còn Fail/Not run vẫn cần xử lý ở đúng scope trước nghiệm thu.

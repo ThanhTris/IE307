@@ -1,6 +1,6 @@
 # Gì Cũng Được — yêu cầu sản phẩm
 
-Baseline food-v1 • 2026-10-07 • chờ review độc lập GM-01. [Mô tả dễ đọc](SYSTEM_OVERVIEW.md) là điểm bắt đầu cho thành viên mới. Spec/task food-v1 thay phần phạm vi data/location v0.2 trong tài liệu hiện hành; không phải xác nhận triển khai.
+Baseline food-v1 • soạn ngày 2026-10-07; GM-01 đã được chủ dự án xác nhận duyệt ngày 2026-10-10. Trí review mọi task, kể cả task Trí làm, không yêu cầu review chéo theo [ADR-013](../architecture/decisions/ADR-013-project-owner-final-review.md). [Mô tả dễ đọc](SYSTEM_OVERVIEW.md) là điểm bắt đầu cho thành viên mới. Spec/task food-v1 thay phần phạm vi data/location v0.2 trong tài liệu hiện hành; approval baseline không phải xác nhận triển khai toàn bộ sản phẩm.
 
 ## Vấn đề và giá trị
 

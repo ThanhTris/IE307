@@ -1,0 +1,16 @@
+✔ config pins project and ports (11.6653ms)
+✔ local URL guard rejects remote, credentials, paths, redirects and wrong port (0.7371ms)
+✔ commands never target remote or delete backups (0.5865ms)
+✔ status deliberately drops all secrets (3.7187ms)
+✔ health asserts HTTP status and GoTrue body, no redirect following (59.935ms)
+✔ redaction strips JWT, keys, password and named credential fields (0.918ms)
+✔ invalid reset rejected before any process (0.8312ms)
+✔ missing Docker fails actionable, not success (10.8544ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 226.0292

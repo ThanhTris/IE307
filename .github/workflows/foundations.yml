@@ -27,4 +27,6 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      - name: GM-19 runtime file ownership regression
+        run: node --test tests/gm19-runtime-files.test.mjs
       # Unit mocks only; real HTTP/DB and Android smoke need separate evidence.

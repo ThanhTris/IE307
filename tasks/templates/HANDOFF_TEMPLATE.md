@@ -38,4 +38,4 @@ Theo [chuẩn đầu ra](../../docs/project/TASK_OUTPUT_REQUIREMENTS.md) và [ch
 - [ ] Biết phần nào mock, phần nào API/dataset/native thật; blocker có người xử lý.
 - [ ] Chạy lại cách mở/gọi/lệnh trong CHECKS và đối chiếu expected/actual; đủ field/version/fixture trước làm phần phụ thuộc.
 
-Review độc lập dùng [mẫu review](REVIEW_TEMPLATE.md); HANDOFF không tự thay Approved.
+Trí review mọi task, kể cả task Trí trực tiếp làm, dùng [mẫu review](REVIEW_TEMPLATE.md) theo [ADR-013](../../docs/architecture/decisions/ADR-013-project-owner-final-review.md); không yêu cầu review chéo. HANDOFF không tự thay Approved.

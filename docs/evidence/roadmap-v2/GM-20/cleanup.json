@@ -1,0 +1,10 @@
+{
+  "checkedAt": "2026-10-15T02:10:20.352734+00:00",
+  "namespace": "fbb85884-0051-4b91-a0a4-20f0c7cb3fdf",
+  "result": "Pass",
+  "ownedDatabaseRemaining": 0,
+  "taggedGuestsRemaining": 0,
+  "ownedPostgrestRemaining": 0,
+  "platformStackKept": true,
+  "applicationDatabaseReset": false
+}

@@ -1,0 +1,26 @@
+meta {
+  name: 50 Empty pool start
+  type: http
+  seq: 50
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/start_round
+  body: json
+  auth: none
+}
+headers {
+  Authorization: Bearer {{hostToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"requestId":"{{requestId}}","room_id":"{{emptyRoomId}}","expected_version":{{emptyRoomVersion}}}
+}
+script:pre-request {
+  bru.setVar('requestId','xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.floor(Math.random()*16);return(c==='x'?r:(r&3|8)).toString(16);}));
+}
+tests {
+  test('50 empty pool is saved and start is rejected',()=>{
+    expect(res.getStatus()).to.equal(409);
+    expect(res.getBody().messageKey).to.equal('NO_ELIGIBLE_FOOD');
+  });
+}

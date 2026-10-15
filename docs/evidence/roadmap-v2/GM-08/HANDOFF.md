@@ -1,5 +1,7 @@
 # GM-08 — Handoff
 
+Phạm vi hiện hành ngày 2026-10-13 theo Trí/[ADR-014](../../../architecture/decisions/ADR-014-test-data-and-baseline-project-card.md): GM-08 đã Done trên Project; dùng bundle thật0.4.1 và DB-test/query/readback làm đầu vào BE. Không yêu cầu verified publish/review độc lập hoặc coverage/anchor đầy đủ để nghiệm thu/mở task sau. Giữ null/unknown và verified manifest0; không thay production publish guards. Xem [DATASET_HANDOFF](../../../data/DATASET_HANDOFF.md). Các đoạn In Progress/Pending/Not run bên dưới là lịch sử revision, không phải quyết định hiện hành hay bằng chứng đã publish.
+
 Cập nhật hiện hành: [DB test với bundle thật 0.4.1](real-db/README.md) đã Pass 44 cases; SQL hồi quy 31 cases và Python 514 tests Pass / 0 skip. Nạp/query/reimport/rollback giữ draft/null/unknown; verified publish chưa chạy. Các mục bên dưới là evidence lịch sử của từng revision.
 
 Owner HoaiTam/Tâm đã nhận việc ngày2026-10-11 theo user; ThanhTris/Trí review cuối

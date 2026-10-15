@@ -55,16 +55,16 @@ Case device có endpoint truy cập được, runtime/build/device/revision, tha
 - Mọi field core của GM-04 được map sang bảng/cột/type/null/check/FK/index/unique/default/access; drift báo lỗi hoặc có thay đổi contract được review.
 - Migration từ DB local rỗng chạy được, schemaVersion, constraints/default-deny/upgrade/rollback có tests và query output. BE nhận schema/test/query mẫu, không cần data khảo sát đã đủ trước thiết kế schema.
 
-### GM-08: importer và dữ liệu đã kiểm
+### GM-08: importer và dữ liệu thật trên DB test
 
-- Verified bundle đúng version schema/contract và đủ required fields; optional/unknown dùng đúng nghĩa, broken FK/missing required/stale/fixture không publish. Nguồn/license/freshness/coverage/timezone/reviewer và giờ thực tế phải có evidence theo spec.
-- Nạp DB local đã có schema; dry-run, reject logs, reimport idempotent, rollback và query sample có output thật. Bàn giao manifest/hash/counts, coverage/hạn và fixture tách biệt; không bịa dữ liệu để đủ quota.
+- Theo [ADR-014](../architecture/decisions/ADR-014-test-data-and-baseline-project-card.md), bundle thật đúng schema/contract và đủ required fields/FK; optional/unknown giữ đúng nghĩa. Không yêu cầu verified publish, review độc lập hoặc coverage/public anchors đầy đủ để nghiệm thu GM-08. Không bịa lịch, nguồn/quyền ảnh hoặc chuyển draft thành verified.
+- Nạp DB test đã có schema; dry-run, reject logs, reimport idempotent, rollback và typed query/readback có output thật. Bàn giao bundle/version/hash/counts/timezone/giới hạn, fixture tách biệt; verified manifest0 không chặn BE nhận input. Production publish guards giữ nguyên và ngoài scope hiện hành.
 
 ### Song song Data–BE
 
 1. Sau review GM-01, GM-02/03/04 làm độc lập theo file ownership; GM-03 không cần dictionary để test nền.
 2. Sau fields GM-04 và structure GM-02/03 được bàn giao/review, GM-06 làm schema; GM-07 soạn client/mock từ field contract, đối chiếu GM-06 trước merge như gate hiện hành.
-3. Sau GM-06, GM-08 nạp/xác minh data trong khi BE làm phần đã đủ start inputs theo contract/fixtures. Query data thật chỉ nghiệm thu sau verified dataset tương ứng có trên target.
+3. Sau GM-06, GM-08 nạp dữ liệu thật trên DB test trong khi BE làm phần đã đủ start inputs theo contract/fixtures. Query data thật dùng bundle/version/DB test đã bàn giao trên target theo ADR-014, không chờ verified publish; thiếu coverage/lịch không bỏ bộ lọc, trả empty/reasonCodes và kiểm positive scenarios bằng fixture tách biệt.
 
 Song song không là bỏ review/start deps hoặc dựng schema/data giả. Không thêm quan hệ start GM-04 ↔ GM-07 hoặc GM-08 ↔ API để gây phụ thuộc vòng; giữ nguyên graph hiện hành.
 

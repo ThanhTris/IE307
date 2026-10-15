@@ -1,0 +1,48 @@
+GM-16 native device check — 2026-10-12 (UTC+7)
+
+Device / transport
+- Device: OPPO Find X9, model CPH2797, Android 16.
+- Host: Windows; Expo Go with Expo SDK 57 Metro bundle.
+- ADB: platform-tools adb.exe; device was visible as `device` (serial intentionally omitted).
+- Port bridge: `adb reverse tcp:54321 tcp:54321`; `adb reverse --list` showed
+  `UsbFfs tcp:54321 tcp:54321`.
+- Backend: Docker Supabase local, API origin `http://127.0.0.1:54321`.
+- Harness flag: `EXPO_PUBLIC_GM16_INTERNAL=true` in development only.
+
+Evidence procedure
+1. Reloaded Expo Go on the mirrored Android device.
+2. Opened the development-only GM-16 route.
+3. Pressed `Tạo guest`.
+4. Pressed `Kiểm session` and `Refresh`.
+5. Force-stopped Expo Go with ADB, reopened the recent project, then pressed
+   `Restore`.
+6. Created the private harness marker, pressed `Logout`, force-stopped/reopened,
+   and pressed `Restore` again.
+7. Created a new guest, deleted only its latest local `auth.sessions` row in a
+   temporary SQL check, then pressed `Refresh`/`Restore` to exercise lost-session
+   cleanup.
+8. Temporarily set local `jwt_expiry = 120`, created a guest, waited 135 seconds,
+   and pressed `Kiểm session`; restored `jwt_expiry = 3600` and restarted the
+   backend afterward.
+9. Read the device screen and sanitized GoTrue container logs. Tokens and raw
+   response bodies were not captured.
+
+Observed results
+| Case | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| Create guest | Real API succeeds and session becomes active | Device showed `Trạng thái: active` and a guest identity; GoTrue logged `POST /signup` status 200 | Pass |
+| Check session | Current identity is read without signup | Device kept the same guest identity; GoTrue logged `GET /user` status 200 | Pass |
+| Refresh | Rotated token, same identity | Device remained active with the same identity; GoTrue logged `/token` status 200 with `token_refreshed`, then `/user` status 200 | Pass |
+| Force-stop/reopen + Restore | SecureStore restores the same identity | After ADB force-stop and Expo Go reopen, `Restore` showed the same guest identity; GoTrue logged `/user` status 200 | Pass |
+| Marker + Logout | Harness marker and session are cleared | Marker showed present, then `Logout: PASS`; screen became `empty`; after reopen, Restore did not recover the old identity | Pass |
+| Lost session | Revoked server session yields AUTH_REQUIRED/lost and cleanup | Latest local auth session was revoked; Restore/Refresh showed `lost` and cleared the identity after the harness fix | Pass |
+| Real expiry | Expired access token refreshes and preserves identity | With temporary JWT lifetime 120s, after 135s Kiểm session kept identity; GoTrue logged `token_refreshed`, `/token` 200, then `/user` 200 | Pass |
+
+Deferred by owner for release hardening
+- Uninstall/backup exclusion and a native development build; this verification
+  intentionally used Expo Go and does not include generated native artifacts.
+
+The passing cases prove the phone → adapter → loopback reverse → local GoTrue path
+for create, restore, refresh, expiry, lost-session, and harness logout cleanup.
+Native development-build and backup-exclusion evidence are deferred follow-up
+work; they are not blockers for the current Expo Go/API harness scope.

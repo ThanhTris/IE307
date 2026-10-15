@@ -1,0 +1,18 @@
+{
+  "task": "GM-19",
+  "contract": "food-v1/roadmap-v2/GM-19.1",
+  "date": "2026-10-14",
+  "environment": "Bruno desktop 4.2.1; loopback 54331; owned synthetic fixture",
+  "namespace": "ecf55498-5764-4645-953b-41f328411381",
+  "sourceManifest": "PATCH_MANIFEST.json",
+  "collection": "supabase/tests/bruno/GM-19",
+  "mode": "Sequential; 50 selected requests; observed directly in desktop Runner",
+  "result": "Pass",
+  "total": 50,
+  "passed": 50,
+  "failed": 0,
+  "skipped": 0,
+  "screenshot": "bruno-runner-50-pass.png",
+  "negativeCases": "400/401/403/409/429 are asserted expected responses, not failed tests",
+  "credentialsIncluded": false
+}

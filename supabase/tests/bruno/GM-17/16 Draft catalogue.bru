@@ -1,0 +1,22 @@
+meta {
+  name: 16 Draft catalogue
+  type: http
+  seq: 16
+}
+
+get {
+  url: {{baseUrl}}/rest/v1/dishes?select=id,name
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{hostToken}}
+}
+
+tests {
+  test('Draft catalogue', function () {
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getBody()).to.be.an("array").with.lengthOf(0);
+  });
+}

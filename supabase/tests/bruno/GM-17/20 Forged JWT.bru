@@ -1,0 +1,21 @@
+meta {
+  name: 20 Forged JWT
+  type: http
+  seq: 20
+}
+
+get {
+  url: {{baseUrl}}/rest/v1/rooms?select=id
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxNyJ9.invalid
+}
+
+tests {
+  test('Forged JWT denied', function () {
+    expect(res.getStatus()).to.equal(401);
+  });
+}

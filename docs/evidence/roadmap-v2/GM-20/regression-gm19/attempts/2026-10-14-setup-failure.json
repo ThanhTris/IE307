@@ -1,0 +1,20 @@
+{
+  "contract": "food-v1/roadmap-v2/GM-19.1",
+  "schemaVersion": "0.3.0",
+  "checkedAt": "2026-10-14T13:18:56.690Z",
+  "namespace": "4b778051-9142-49a9-8883-e73a9d3f09af",
+  "revision": "ad68526ae821232829525a668df62182e3df44ef\n",
+  "artifactHashes": {
+    "supabase/migrations/0019_room_lifecycle.sql": "ed76f679baa10bbfd4234e2be88f408ef292162f92efceac16217aa554f50926",
+    "scripts/gm19_http_check.mjs": "31046e5fcb4d11d4135272a4caa97d0b13cd9034de4599c58bc53a07aaa543c2",
+    "scripts/gm19_http_fixture.py": "acae283042bb128fef57332648c7ea527196691dcb71eacf1e6d89350dd601f2",
+    "scripts/gm19_runtime_files.mjs": "1440ec3a51a7b5f83ba1ef663b45a12f64cbaf2e8cb38a2a9b2460d9eb91c486"
+  },
+  "syntheticPositiveDataOnly": true,
+  "actualDataPromoted": false,
+  "cases": [],
+  "result": "Fail",
+  "datasetVersion": "0.18.1266122833",
+  "failedCase": "ENOENT: no such file or directory, open '/Users/hoangvinh/Library/CloudStorage/OneDrive-Personal/Workspace/anyfood/docs/evidence/roadmap-v2/GM-20/regression-gm19/sql-run.txt'",
+  "cleanup": "owned DB and guests removed"
+}

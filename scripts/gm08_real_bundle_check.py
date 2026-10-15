@@ -122,7 +122,7 @@ def main():
         ddl = admin.run(['docker', 'exec', importer.CONTAINER, 'pg_dump', '-U', 'postgres',
                          '-d', 'postgres', '--schema-only', '--no-owner', '--no-privileges', '-t', 'auth.users'])
         ddl = '\n'.join(line for line in ddl.splitlines()
-                        if not re.match(r'CREATE (?:CONSTRAINT )?TRIGGER gm06_', line))
+                        if not re.match(r'CREATE (?:CONSTRAINT )?TRIGGER gm\d+_', line))
         admin.psql('create database ' + name + ' template template0;')
         created = True
         db = importer.LocalDB(name)

@@ -25,6 +25,7 @@ export function suggestMeal(utc: string): Pick<RoomContext, 'mealSlot' | 'timeHi
 export const errorCopy: Record<ErrorCode, string> = {
   AUTH_REQUIRED: 'Phiên đã mất. Hãy khôi phục phiên trước khi tiếp tục.',
   NOT_MEMBER: 'Bạn chưa là thành viên phòng này.', NOT_HOST: 'Chỉ chủ phòng được thực hiện thao tác này.',
+  NOT_RECIPIENT: 'Lời mời này không dành cho bạn.',
   NOT_READY: 'Nhóm chưa sẵn sàng.', NOT_PARTNER: 'Chưa có quan hệ bạn ăn cùng.', CONSENT_REQUIRED: 'Cần xác nhận quyền lưu lịch sử.',
   INVALID_INPUT: 'Kiểm tra lại thông tin đã nhập.', INVALID_DISH: 'Món không còn hợp lệ.', INCOMPLETE_BALLOT: 'Lựa chọn chưa đầy đủ.',
   ROOM_NOT_FOUND: 'Không tìm thấy phòng. Kiểm tra lại mã với chủ phòng.',
@@ -40,6 +41,7 @@ export const errorCopy: Record<ErrorCode, string> = {
   AVAILABILITY_UNKNOWN: 'Chưa rõ lịch phục vụ. Hãy kiểm tra lại bối cảnh.',
   DESIRED_TIME_PASSED: 'Giờ ăn đã qua. Hãy chọn giờ mới và xác nhận lại.',
   INVITE_EXPIRED: 'Lời mời đã hết hạn.', INVITE_REJECTED: 'Lời mời không còn hiệu lực.',
+  INVITE_CANCELLED: 'Lời mời đã bị hủy.',
   RATE_LIMITED: 'Bạn thao tác quá nhanh. Vui lòng chờ rồi thử lại.',
   NETWORK_ERROR: 'Không kết nối được. Thử lại cùng yêu cầu khi có mạng.',
   TIMEOUT: 'Chưa rõ yêu cầu đã được nhận. Thử lại cùng yêu cầu.',

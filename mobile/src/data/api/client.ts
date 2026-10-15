@@ -32,6 +32,7 @@ import {
   SubmitBallotResponse,
   PoolDish,
   Friend,
+  SocialIdentity,
   InvitePartnerRequest,
   FriendInvitation,
   InviteToRoomRequest,
@@ -48,8 +49,9 @@ import {
   isCreateRoomResponse, isJoinRoomResponse, isSessionResponse, isSubmitBallotResponse,
   isFriendInvitation, isRoomInvitation,
   isSessionUser, isDiscoveryContext, isPreviewFoodPool, isRoomSnapshot,
-  arrayOf, isPoolDish, isFriend, isInboxItem, isHistoryItem,
+  arrayOf, isPoolDish, isFriend, isInboxItem, isHistoryItem, isSocialIdentity,
 } from './responseGuards';
+import type { SessionApi } from '../auth/types';
 
 export interface TransportOptions {
   token?: string;
@@ -62,6 +64,8 @@ export interface ApiTransport {
 }
 
 export interface ClientConfig {
+  authSession?: SessionApi;
+  publicKey?: string;
   baseUrl?: string;
   transport?: ApiTransport;
   timeoutMs?: number;
@@ -76,10 +80,12 @@ export interface ClientConfig {
 export class FetchTransport implements ApiTransport {
   private readonly baseUrl: string;
   private readonly fetchFn?: typeof fetch;
+  private readonly publicKey?: string;
 
-  constructor(baseUrl: string, fetchFn?: typeof fetch) {
+  constructor(baseUrl: string, fetchFn?: typeof fetch, publicKey?: string) {
     this.baseUrl = baseUrl.replace(/\/+$/, '');
     this.fetchFn = fetchFn;
+    this.publicKey = publicKey;
   }
 
   getBaseUrl(): string {
@@ -116,6 +122,7 @@ export class FetchTransport implements ApiTransport {
       'Content-Type': 'application/json',
       'Prefer': 'return=representation',
     };
+    if (this.publicKey) headers.apikey = this.publicKey;
 
     if (options?.token) {
       headers.Authorization = `Bearer ${options.token}`;
@@ -165,11 +172,13 @@ export class FetchTransport implements ApiTransport {
 }
 
 export class ApiClientImpl implements ApiClient {
+  private readonly authSession?: SessionApi;
   private transport: ApiTransport;
   private token: string | null = null;
   private defaultTimeoutMs: number;
 
   constructor(config?: ClientConfig) {
+    this.authSession = config?.authSession;
     if (config?.transport) {
       this.transport = config.transport;
     } else {
@@ -177,7 +186,7 @@ export class ApiClientImpl implements ApiClient {
         ? process.env.EXPO_PUBLIC_SUPABASE_URL
         : 'http://127.0.0.1:54321';
       const baseUrl = config?.baseUrl ?? defaultUrl;
-      this.transport = new FetchTransport(baseUrl, config?.fetchFn);
+      this.transport = new FetchTransport(baseUrl, config?.fetchFn, config?.publicKey);
     }
     this.defaultTimeoutMs = config?.defaultTimeoutMs ?? config?.timeoutMs ?? 15000;
     if (config?.initialToken) {
@@ -263,13 +272,13 @@ export class ApiClientImpl implements ApiClient {
 
   private isValidErrorCode(key: string): key is ErrorCode {
     const knownCodes: ErrorCode[] = [
-      'AUTH_REQUIRED', 'NOT_MEMBER', 'NOT_HOST', 'NOT_READY', 'NOT_PARTNER', 'CONSENT_REQUIRED',
+      'AUTH_REQUIRED', 'NOT_MEMBER', 'NOT_HOST', 'NOT_READY', 'NOT_PARTNER', 'NOT_RECIPIENT', 'CONSENT_REQUIRED',
       'INVALID_INPUT', 'INVALID_DISH', 'INCOMPLETE_BALLOT',
       'ROOM_NOT_FOUND', 'ROOM_FULL', 'ROOM_LOCKED', 'ROOM_EXPIRED', 'ROOM_TERMINAL',
       'INVALID_ROOM_STATE', 'CONTEXT_CHANGED',
       'ALREADY_SUBMITTED', 'VERSION_CONFLICT', 'REQUEST_ID_REUSED',
       'OUT_OF_COVERAGE', 'NO_ELIGIBLE_FOOD', 'AVAILABILITY_UNKNOWN', 'DESIRED_TIME_PASSED',
-      'INVITE_EXPIRED', 'INVITE_REJECTED', 'RATE_LIMITED', 'NETWORK_ERROR', 'TIMEOUT',
+      'INVITE_EXPIRED', 'INVITE_REJECTED', 'INVITE_CANCELLED', 'RATE_LIMITED', 'NETWORK_ERROR', 'TIMEOUT',
       'MALFORMED_RESPONSE', 'UNKNOWN_ERROR',
     ];
     return knownCodes.includes(key as ErrorCode);
@@ -410,10 +419,22 @@ export class ApiClientImpl implements ApiClient {
   }
 
   private async callRpc<T>(rpcName: string, params: Record<string, unknown>): Promise<T> {
-    return this.transport.invoke<T>(rpcName, params, {
-      token: this.token ?? undefined,
+    const generation = this.authSession?.getGeneration();
+    let token = this.token ?? undefined;
+    if (this.authSession) {
+      const result = await this.authSession.getAccessToken();
+      if (!result.ok) throw { body: result.error };
+      token = result.data;
+      if (generation !== this.authSession.getGeneration()) throw { body: { messageKey: 'AUTH_REQUIRED' } };
+    }
+    const response = await this.transport.invoke<T>(rpcName, params, {
+      token,
       timeoutMs: this.defaultTimeoutMs,
     });
+    if (this.authSession && generation !== this.authSession.getGeneration()) {
+      throw { body: { messageKey: 'AUTH_REQUIRED' } };
+    }
+    return response;
   }
 
   // ==========================================================================
@@ -421,6 +442,7 @@ export class ApiClientImpl implements ApiClient {
   // ==========================================================================
 
   async createGuestSession(req: CreateGuestSessionRequest): Promise<WriteResult<SessionResponse>> {
+    if (this.authSession) return this.authSession.createGuestSession(req);
     const requestId = req.requestId ?? this.generateRequestId();
     try {
       const raw = await this.callRpc<unknown>('create_guest_session', {
@@ -439,6 +461,7 @@ export class ApiClientImpl implements ApiClient {
   }
 
   async restoreSession(token: string): Promise<ReadResult<SessionUser>> {
+    if (this.authSession) return this.authSession.restoreSession(token);
     try {
       const raw = await this.transport.invoke<unknown>('restore_session', {}, { token });
       const norm = this.normalizeReadResponse<SessionUser>(raw, isSessionUser);
@@ -451,6 +474,7 @@ export class ApiClientImpl implements ApiClient {
   }
 
   async logout(customRequestId?: string): Promise<WriteResult<void>> {
+    if (this.authSession) return this.authSession.logout(customRequestId);
     const requestId = customRequestId ?? this.generateRequestId();
     try {
       const raw = await this.callRpc<unknown>('logout', { requestId });
@@ -766,6 +790,15 @@ export class ApiClientImpl implements ApiClient {
   // Social & Friends RPCs
   // ==========================================================================
 
+  async getMySocialIdentity(): Promise<ReadResult<SocialIdentity>> {
+    try {
+      const raw = await this.callRpc<unknown>('get_my_social_identity', {});
+      return this.normalizeReadResponse<SocialIdentity>(raw, isSocialIdentity);
+    } catch (err) {
+      return { ok: false, error: this.mapError(err) };
+    }
+  }
+
   async listFriends(): Promise<ReadResult<Friend[]>> {
     try {
       const raw = await this.callRpc<unknown>('list_friends', {});
@@ -872,6 +905,21 @@ export class ApiClientImpl implements ApiClient {
   // ==========================================================================
   // Inbox & Devices RPCs
   // ==========================================================================
+
+  async rejectRoomInvite(invitationId: string, customRequestId?: string): Promise<WriteResult<void>> {
+    const requestId = customRequestId ?? this.generateRequestId();
+    try {
+      const raw = await this.callRpc<unknown>('reject_room_invite', {
+        requestId,
+        invitation_id: invitationId,
+      });
+      const norm = this.normalizeWriteResponse<void>(raw, requestId, isVoidPayload);
+      if (!norm.ok) return norm;
+      return { ok: true, requestId: norm.requestId, roomId: norm.roomId, version: norm.version, state: norm.state, data: undefined };
+    } catch (err) {
+      return { ok: false, requestId, error: this.mapError(err) };
+    }
+  }
 
   async listPartnerInbox(cursor?: string): Promise<ReadResult<InboxItem[]>> {
     try {

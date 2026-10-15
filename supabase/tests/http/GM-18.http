@@ -1,0 +1,48 @@
+# GM-18.1 implemented in0005 +0018 after GM17/schema0.2.0.
+# Automated real JWT/client assertions: node scripts/gm18_http_check.mjs.
+# Local loopback; phone requires adb reverse54321 or reviewed trusted HTTPS.
+# No real tokens in repo, no LAN HTTP/TLS bypass.
+@baseUrl = http://127.0.0.1:54321
+@publicKey = REPLACE_WITH_LOCAL_PUBLIC_KEY
+@userToken = REPLACE_WITH_TEST_USER_ACCESS_TOKEN
+@anchorId = REPLACE_WITH_PUBLISHED_PUBLIC_ANCHOR_UUID
+@roomId = REPLACE_WITH_TEST_ROOM_UUID
+@resultId = REPLACE_WITH_ITS_RESULT_UUID
+
+### Discovery: authenticated caller, only current published public coverage/anchors.
+# Expect200 {ok:true,data:{anchors,coverageAreas,serverTime}}.
+# Actual GM08 draft has empty arrays; synthetic positive is separate test data.
+POST {{baseUrl}}/rest/v1/rpc/get_discovery_context
+apikey: {{publicKey}}
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{"area_id":null,"anchor_id":null}
+
+### Preview: >=0 and <=8 unique choices, valid target-time/radius/version.
+# Adjust desired_at using serverTime: future <=7days; radius >0 and <=10000m.
+# Success adds poolSeed/policyVersion/reasonCodes, cards offeringIds/availability.
+# Empty actual bundle -> version0.4.1 + OUT_OF_COVERAGE; no invented anchors.
+# Fixture/draft data must not enter production pool; no expansion on empty output.
+POST {{baseUrl}}/rest/v1/rpc/preview_food_pool
+apikey: {{publicKey}}
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{"anchor_id":"{{anchorId}}","radius_m":1000,"desired_at":"REPLACE_WITH_CONFIRMED_FUTURE_ISO_UTC","service_mode":"dine_in","meal_slot":"lunch","time_hint":null,"cuisine_ids":null,"category_ids":null,"budget":null}
+
+### Result offerings: member-only, same persisted winner/variant, never reroll.
+# Expect no substitute winner when its offerings become unavailable.
+POST {{baseUrl}}/rest/v1/rpc/get_result_offerings
+apikey: {{publicKey}}
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{"room_id":"{{roomId}}","result_id":"{{resultId}}"}
+
+### Missing auth: must reject; test outsider/left member using separate test token.
+POST {{baseUrl}}/rest/v1/rpc/get_result_offerings
+apikey: {{publicKey}}
+Content-Type: application/json
+
+{"room_id":"{{roomId}}","result_id":"{{resultId}}"}

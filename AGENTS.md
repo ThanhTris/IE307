@@ -2,13 +2,19 @@
 
 ## Bối cảnh
 
-Dự án Android-first React Native giúp nhóm chọn món. Bộ nền gồm plan/spec/prototype, shell Expo GM-02 và BE local runner GM-03 đang kiểm/nghiệm thu; chưa triển khai tính năng/schema/API nghiệp vụ.
+Dự án Android-first React Native giúp nhóm chọn món. Source hiện có shell/component Expo GM-02/05, field contract/schema/import GM-04/06/08, client/mock GM-07, engine GM-15, auth GM-16, RLS/retention GM-17, eligibility GM-18 và lifecycle phòng GM-19. Màn sản phẩm và tích hợp Android còn theo các task sau; không coi mock/HTTP server test là app đã hoàn thiện. Status/assignee/Deadline hiện hành đọc trực tiếp trên Project #2; mô tả artifact không tự ghi approval.
+
+Git pull không tự đồng bộ database đang chạy. Kiểm migration ledger và definitions/RPC thực tế trước dùng endpoint; health GoTrue hoặc schema registry không chứng minh deployed code khớp main. Có draft objects ngoài ledger thì cần kế hoạch reconcile/backup được chủ dự án duyệt, không reset hoặc sửa migration đã merge để vượt kiểm tra. GM-08 đã nghiệm thu bundle thật trên DB test theo ADR-014, không đồng nghĩa đã publish dataset production.
 
 Nguồn yêu cầu: chỉ dẫn hiện tại của chủ dự án → task/AC → spec/ADR → PRD/plan → prototype/research. [Migration plan](docs/project/MIGRATION_PLAN.md) ghi giả định chờ review. Không dùng commit đề tài cũ làm yêu cầu active.
 
 ## AIDD
 
+Trí (`ThanhTris`) review tất cả task, bao gồm task Trí trực tiếp làm; không yêu cầu review chéo hoặc người kiểm độc lập theo ADR-013. Không tự thay reviewer hoặc ghi approval thay Trí.
+
 Trước code: task có owner, reviewer Trí (ThanhTris) kể cả khi Trí là owner theo [ADR-013](docs/architecture/decisions/ADR-013-project-owner-final-review.md), scope, AC, spec, patch/test plan và contract version. Theo ADR-011 được chủ dự án chốt ngày 2026-10-10, `start_dependencies` lấy Done trên GitHub Project #2 làm xác nhận nghiệm thu của chủ dự án, không bắt đồng bộ Done/Approved trong Markdown để mở task. Được viết phần độc lập dù `merge_dependencies` chưa xong. Trước tích hợp/merge cần cả hai loại dependency Done trên Project, đủ output/HANDOFF, đúng contract/manifest/artifact trên nhánh đích, kiểm PR/commit và test thật. GM-00 là baseline lịch sử, vẫn kiểm approval local. Theo ADR-009, parallel_with không có quan hệ start trước/sau. GM-01 roadmap-v2 đã được chủ dự án xác nhận duyệt ngày 2026-10-10, xem docs/evidence/roadmap-v2/GM-01/REVIEW.md; không thay approval của task sau. Chạy `python scripts/task_readiness.py --task GM-XX` trước code; trước merge thêm `--gate merge --base-ref origin/main` sau cập nhật ref. Checker chỉ đọc Project, không tự fetch/merge, duyệt hoặc đổi trạng thái.
+
+Theo chủ dự án ngày 2026-10-13/[ADR-014](docs/architecture/decisions/ADR-014-test-data-and-baseline-project-card.md), baseline GM-01 dùng Done của card GM-00/#37 trên Project (alias pin trong tasks/project-gate.json), không tìm card GM-01/#100. Scope/artifact GM-01 vẫn riêng; GM-00 lịch sử kiểm local. GM-08 nghiệm thu bundle thật trên DB test: không bắt verified publish/review độc lập/coverage/anchor đầy đủ hoặc bổ sung lịch từng món/serviceMode chưa biết. BE nhận bundle test/query/version/hash ngay; thiếu đầu vào lọc trả unknown/empty, không bịa hoặc bỏ luật địa điểm/giờ. Manifest verified0 và production publish guards giữ nguyên; hồ sơ Pending đời trước không mở lại task.
 
 Đọc [workflow](docs/project/TEAM_WORKFLOW.md), [DoD](docs/project/DEFINITION_OF_DONE.md). AI không tự duyệt hoặc ghi Done. Thay phạm vi/kiến trúc/quyền riêng tư phải ghi ADR và hỏi owner khi chưa có ủy quyền. Cập nhật tài liệu/UI không cần task mới mỗi lần; gom vào task nền khi phù hợp.
 
@@ -62,3 +68,7 @@ GM-39 là ngoại lệ theo scope prototype HTML do chủ dự án chốt ngày 
 Chạy `python scripts/validate_repository.py`, regression `python -m unittest discover -s tests -p "test_*.py"`, `python scripts/task_readiness.py --check-docs`, kiểm diff và evidence. Sau đổi metadata task sinh lại indexes bằng `--write-docs`. Project Done là nguồn nghiệm thu dependency; AI không tự chuyển Done. Nếu chuyển task Markdown vào tasks/done thì vẫn phải có Decision Approved, reviewer Trí/ngày và Review-evidence thật, không tự tạo để khớp board. Validator/indexes là offline, không mở task. `--approval-source local` chỉ chẩn đoán lịch sử, không là cách vượt gate Project. Thiếu credential/quyền read:project/mạng hoặc item không xác minh được phải chặn, không dùng Issue Closed hay cache thay Done. Xem docs/project/PROJECT_READINESS.md. HTML phải ghi rõ mô phỏng; native build có evidence riêng. Không sinh tài liệu đề tài cũ để vượt kiểm tra. Sinh Word mới khi có yêu cầu/template chốt.
 
 Không tự commit/push nếu chưa được yêu cầu. Validator không thay review thực tế của Trí.
+
+## GM-20 — submit/finalize patch
+
+Đọc [handoff](docs/evidence/roadmap-v2/GM-20/HANDOFF.md) và [storage supplement](docs/evidence/roadmap-v2/GM-20/CONTRACT_STORAGE.md) cho GM-20.3/schema0.5.0, request/intent replay, wire IDs, private seed, scoped consent writer và event/inbox. Chạy `node scripts/gm20_http_check.mjs` trên Supabase local: owned disposable DB/JWT thật; `--bruno` giữ fixture và `scripts/gm20_http_stop.mjs` cleanup. Runtime private luôn ignore; không log votes/token hoặc reset DB ứng dụng. SQL/domain/HTTP evidence không thay Android GM-26/27/31 hoặc review Trí. Không gọi helper0021/GM-23 chưa merge, không tự Done/Approved.

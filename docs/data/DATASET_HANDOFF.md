@@ -1,5 +1,17 @@
 # GM-08 — Dataset và importer handoff
 
+## Phạm vi hiện hành — 2026-10-13
+
+Theo Trí và [ADR-014](../architecture/decisions/ADR-014-test-data-and-baseline-project-card.md), GM-08 đã Done trên Project với đầu ra **dữ liệu thật trên DB test**. Bỏ yêu cầu phải có verified publish/coverage/public anchors đầy đủ hoặc xác minh độc lập để nghiệm thu task. Lịch từng món/serviceMode chưa biết giữ null. Các mục sau phần này là hồ sơ theo revision, không là blocker hiện hành.
+
+BE/GM-18 được nhận [bundle0.4.1](../../supabase/seed/draft/gm08-survey-v0.4.1/bundle.json), version/hash/counts và [lệnh DB-test + query/readback](../evidence/roadmap-v2/GM-08/real-db/README.md) ngay, không chờ manifest verified có rows. 21 venues/18 dishes/190 offerings/154 venue schedule rows/27 sources/18 taxonomy/1 dataset; coverageAreas/publicAnchors bằng 0. Offering schedule/serviceMode chưa biết không được tự điền. Tái lập bằng `python scripts/gm08_real_bundle_check.py --input supabase/seed/draft/gm08-survey-v0.4.1/bundle.json` trên DB test riêng theo README; runner không nạp production hoặc DB đang dùng.
+
+Query thật có thể trả empty/reasonCodes khi thiếu đầu vào địa điểm/giờ; positive boundary/coverage cases dùng fixture riêng để kiểm bộ lọc, không gọi fixture là coverage thật. Không yêu cầu Tâm mở lại GM-08 để bổ sung phần thiếu này. Giữ luật lọc vùng/bán kính/thời gian, ACL/privacy và production publish guards. Chấp nhận data test không đồng nghĩa verified/published hoặc hoàn tất luồng recommendation production.
+
+Manifest `supabase/seed/verified/manifest.json` vẫn phản ánh 0/null; không sửa thành publish giả. Verified production publish không là AC của GM-08 hiện hành, cần phạm vi riêng do Trí giao nếu triển khai.
+
+## Hồ sơ lịch sử theo revision
+
 Cập nhật2026-10-11: [bundle thật trên DB test](../evidence/roadmap-v2/GM-08/real-db/README.md)
 Pass44cases,21quán/18món/190offering; query/counts/typed fields/null/reimport/rollback
 đã kiểm. Nạp draft vào DB test không cần chờ verified publish; giữ input/unknowns.

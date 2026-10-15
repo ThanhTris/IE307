@@ -30,6 +30,8 @@ Tạo/cập nhật token bằng quản lý credential hiện có; không đặt 
 
 Snapshot Project chỉ giữ trong RAM và in URL/thời điểm đọc; không ghi token/snapshot approval hoặc sửa status. Mapping [project-gate.json](../../tasks/project-gate.json) pin đủ issue GM-01..39, không đoán từ thứ tự issue hay lấy card cùng tên repo khác. Nếu đổi issue/scope phải cập nhật mapping và review lại; Done không tự xác định approved commit.
 
+Ngoại lệ baseline do Trí chỉ định ngày 2026-10-13/[ADR-014](../architecture/decisions/ADR-014-test-data-and-baseline-project-card.md): scope GM-01 nhận xác nhận Done từ card **GM-00/#37**, không phải GM-01/#100. Mapping pin issue37 và `approval_aliases: {"GM-01": "GM-00"}`; checker kiểm title GM-00, repo/issue/status/archive như bình thường và vẫn kiểm artifacts/contract riêng GM-01. Không kế thừa card cũ cho task khác; không tạo card hoặc tự chuyển Done. GM-00 lịch sử vẫn dùng hồ sơ local.
+
 ## Offline và CI
 
 ```text

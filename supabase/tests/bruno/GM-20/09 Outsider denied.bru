@@ -1,0 +1,26 @@
+meta {
+  name: 09 Outsider denied
+  type: http
+  seq: 9
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/get_room_snapshot
+  body: json
+  auth: none
+}
+headers {
+  Authorization: Bearer {{outsiderToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"room_id": "{{roomId}}"}
+}
+script:pre-request {
+
+}
+script:post-response {
+  const b=res.getBody();if(res.getStatus()===200) {  }
+}
+tests {
+  test('09 Outsider denied',()=>{expect(res.getStatus()).to.equal(403);const b=res.getBody();expect(b.messageKey).to.equal('NOT_MEMBER');});
+}

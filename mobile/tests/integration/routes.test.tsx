@@ -10,9 +10,23 @@ import Shell from '../../src/app/shell';
 import CreateRoom from '../../src/app/create-room';
 import JoinRoom from '../../src/app/join-room';
 import RoomPreview from '../../src/app/room-preview';
+import Gm12Vote from '../../src/app/gm12/vote';
+import Gm12Final from '../../src/app/gm12/final';
 import { rememberPreviewRoom, setPreviewScenario } from '../../src/bootstrap/roomPreview';
 
-const routes = { _layout: Layout, index: Index, foundation: Foundation, components: Components, shell: Shell, 'create-room': CreateRoom, 'join-room': JoinRoom, 'room-preview': RoomPreview, '+not-found': NotFound };
+const routes = {
+  _layout: Layout,
+  index: Index,
+  foundation: Foundation,
+  components: Components,
+  shell: Shell,
+  'create-room': CreateRoom,
+  'join-room': JoinRoom,
+  'room-preview': RoomPreview,
+  '+not-found': NotFound,
+  'gm12/vote': Gm12Vote,
+  'gm12/final': Gm12Final,
+};
 beforeEach(() => setPreviewScenario('default'));
 afterEach(() => jest.useRealTimers());
 
@@ -105,4 +119,12 @@ test.each(['/create-room', '/join-room'])('active receipt guards direct navigati
   expect(screen.getByText('Mock adapter đã nhận yêu cầu')).toBeOnTheScreen();
   expect(screen.queryByLabelText('Tên của bạn (chủ phòng)')).toBeNull();
   expect(screen.queryByLabelText('Tên của bạn')).toBeNull();
+});
+
+test('shell navigates to GM-12 vote route and renders voting screen', async () => {
+  await renderRouter(routes, { initialUrl: '/shell' });
+  const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+  await user.press(screen.getByRole('button', { name: 'Mở bình chọn GM-12' }));
+  await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/gm12/vote'));
+  expect(screen.getByText('GM-12 · UI Chọn món Vòng 1 (Flashcard Vote)')).toBeOnTheScreen();
 });

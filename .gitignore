@@ -15,6 +15,7 @@ ios/build/
 .env
 .env.*
 !.env.example
+supabase/tests/bruno/**/environments/*.private.bru
 *.jks
 *.keystore
 *.p8
@@ -57,3 +58,7 @@ docs/deliverables/release/*.apk
 docs/deliverables/release/*.ipa
 docs/deliverables/demo/*.mp4
 docs/deliverables/package/*.zip
+
+# GM-20 local fixture credentials/control
+supabase/tests/bruno/GM-20/environments/runtime.private.json
+scripts/.gm20-*.tmp.mjs

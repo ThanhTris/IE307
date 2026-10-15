@@ -281,9 +281,9 @@
       "verification": {
         "mode": "data-import",
         "tool": "Importer dry-run + DB local/query runner",
-        "entrypoint": "Verified bundle → validate/staging/review/import → query mẫu",
-        "expected": "Đủ field theo schema, row counts/hash/schemaVersion/datasetVersion/coverage/timezone và provenance; BE truy vấn được offering thật trong coverage đã bàn giao.",
-        "cases": "reimport idempotent; missing required/FK/stale/fixture reject; giờ quán∩giờ món/qua đêm; rollback; quyền ảnh; coverage thiếu ghi rõ"
+        "entrypoint": "Bundle thật → validate/staging → DB test/query/readback; verified publish không bắt buộc.",
+        "expected": "Đủ required fields/FK theo schema, bundle/version/hash/counts/timezone và query offering thật trên DB test; null/unknown/coverage thiếu ghi rõ, không chờ verified publish.",
+        "cases": "query/typed readback; reimport idempotent; missing required/FK reject; null/unknown giữ nguyên; transaction/committed-load rollback; fixture tách thật"
       }
     },
     {
@@ -571,7 +571,7 @@
       "track": "BE",
       "stage": "implementation",
       "outputs": [
-        "supabase/migrations/0017_access_policies.sql",
+        "supabase/migrations/0004_access_policies.sql",
         "supabase/tests/rls.sql",
         "docs/architecture/ACCESS_MATRIX.md",
         "docs/evidence/roadmap-v2/GM-17/CHECKS.md",
@@ -635,7 +635,7 @@
         },
         {
           "task": "GM-17",
-          "artifact": "supabase/migrations/0017_access_policies.sql",
+          "artifact": "supabase/migrations/0004_access_policies.sql",
           "gate": "merge"
         },
         {
@@ -648,7 +648,7 @@
         "mode": "api",
         "tool": "Postman hoặc curl/RPC runner + SQL/domain parity",
         "entrypoint": "get_discovery_context / preview_food_pool / get_result_offerings phần thuộc scope",
-        "expected": "HTTP response/schema/assertions thật chứa offering hợp lệ/version/reasonCodes; fixture parity tách query verified.",
+        "expected": "HTTP response/schema/assertions thật chứa offering hợp lệ/version/reasonCodes; fixture parity tách query bundle thật trên DB test, không chờ verified publish (ADR-014).",
         "cases": "coverage/radius; breakfast/late night/overnight/lastOrder; freshness/sold-out/unknown; price unit; <=8 unique; empty; TS/SQL parity"
       }
     },
@@ -674,7 +674,7 @@
         },
         {
           "task": "GM-17",
-          "artifact": "supabase/migrations/0017_access_policies.sql",
+          "artifact": "supabase/migrations/0004_access_policies.sql",
           "gate": "start"
         },
         {
@@ -710,7 +710,7 @@
       "track": "BE",
       "stage": "implementation",
       "outputs": [
-        "supabase/migrations/0020_finalize.sql",
+        "supabase/migrations/0023_finalize.sql",
         "supabase/tests/finalize.sql",
         "docs/evidence/roadmap-v2/GM-20/CHECKS.md",
         "supabase/tests/http/GM-20.http"
@@ -767,7 +767,7 @@
         },
         {
           "task": "GM-20",
-          "artifact": "supabase/migrations/0020_finalize.sql",
+          "artifact": "supabase/migrations/0023_finalize.sql",
           "gate": "merge"
         },
         {
@@ -799,7 +799,7 @@
       "stage": "implementation",
       "outputs": [
         "supabase/migrations/0022_social.sql",
-        "supabase/tests/social.sql",
+        "supabase/tests/database/GM-22_social.test.sql",
         "docs/evidence/roadmap-v2/GM-22/CHECKS.md",
         "supabase/tests/http/GM-22.http"
       ],
@@ -811,7 +811,7 @@
         },
         {
           "task": "GM-17",
-          "artifact": "supabase/migrations/0017_access_policies.sql",
+          "artifact": "supabase/migrations/0004_access_policies.sql",
           "gate": "start"
         },
         {
@@ -845,7 +845,7 @@
       "inputs": [
         {
           "task": "GM-20",
-          "artifact": "supabase/migrations/0020_finalize.sql",
+          "artifact": "supabase/migrations/0023_finalize.sql",
           "gate": "start"
         },
         {
@@ -996,7 +996,7 @@
         },
         {
           "task": "GM-20",
-          "artifact": "supabase/migrations/0020_finalize.sql",
+          "artifact": "supabase/migrations/0023_finalize.sql",
           "gate": "merge"
         },
         {
@@ -1317,7 +1317,7 @@
         },
         {
           "task": "GM-20",
-          "artifact": "supabase/migrations/0020_finalize.sql",
+          "artifact": "supabase/migrations/0023_finalize.sql",
           "gate": "merge"
         },
         {

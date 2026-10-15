@@ -5,6 +5,7 @@ Status: quyết định quy trình theo xác nhận trực tiếp của chủ d�
 
 ## Quyết định
 
+- Chủ dự án xác nhận lại ngày 2026-10-13: Trí review tất cả task, không có bước review chéo bắt buộc; task do Trí thực hiện cũng do Trí review. Góp ý kỹ thuật từ người khác không phải điều kiện có thêm reviewer để nghiệm thu.
 - Trí (`ThanhTris`) là reviewer và người nghiệm thu cuối của tất cả task roadmap-v2, kể cả task Trí trực tiếp làm. Không cần chỉ định reviewer độc lập hoặc thành viên khác cho các task đó.
 - Quyết định này thay yêu cầu reviewer khác owner của quy trình hiện hành và câu tương ứng trong ADR-011. Ngoại lệ owner đồng thời reviewer chỉ dành cho Trí trong roadmap-v2; không cho thành viên khác hoặc AI tự duyệt task của mình.
 - Reviewer metadata là Trí; `proposed_reviewer` là `ThanhTris`. Validator cho phép cặp owner/reviewer này, nhưng vẫn kiểm đúng người ghi review, ngày hợp lệ, `Decision: Approved`, evidence thật và AC hoàn tất khi chuyển Markdown thành done. Metadata reviewer không tự tạo approval.

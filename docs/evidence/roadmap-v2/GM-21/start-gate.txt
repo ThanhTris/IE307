@@ -1,0 +1,5 @@
+Approval source: https://github.com/users/ThanhTris/projects/2 | checked at 2026-10-14T03:53:46.992911+00:00 | no cached/local fallback
+Target snapshot: origin/main = a33d5e85f1aeb7c7bda02310e02880a3af5e77da
+GM-21: READY_TO_CLAIM | owner=Tâm reviewer=Trí | tasks/backlog/GM-21.md
+Command: python scripts/task_readiness.py --task GM-21 --base-ref origin/main
+No Project/task status edits or approval performed.

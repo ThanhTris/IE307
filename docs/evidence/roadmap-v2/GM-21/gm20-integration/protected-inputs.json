@@ -1,0 +1,26 @@
+{
+  "result": "Pass",
+  "baseRef": "origin/main",
+  "baseSha": "991de6620715d1219da900499f4aa2d683b01bb4",
+  "allUnchanged": true,
+  "sha256": {
+    "mobile/package-lock.json": "9bff51fb65debf2e9bdfa2bf3eee088bc57c63e7cb8c000060e5d918675a7e7e",
+    "mobile/package.json": "ac2914ee07f983133f0bca1058ce00eac8745ac7c80dea97992fcca6ceb65fa8",
+    "mobile/src/data/api/client.ts": "7ca5c9b1a9b39c2973e9bd9c237fbaaa84fb67f7a705fc51a4333cb9a97eed7a",
+    "mobile/src/data/api/contracts.ts": "ffeeb220efa695eda96e9fe74d62b82b0b5d2430a0556ee26d1a48c65e8c4c8f",
+    "mobile/src/data/api/responseGuards.ts": "484ea05c1cb332c9ad2513a47a270c1195180b2cddb85ef5635f65316e03eedb",
+    "scripts/gm17_access_check.py": "4761631a3652b070f6142d0a3e2570c39f70a874e700a5931e04f54b51851a36",
+    "scripts/gm19_http_check.mjs": "31046e5fcb4d11d4135272a4caa97d0b13cd9034de4599c58bc53a07aaa543c2",
+    "scripts/gm20_http_check.mjs": "e7dfb5e3da137f81e300fec7593941b7ca556d1f6a138461850a0096ddb5761a",
+    "supabase/migrations/0001_core_schema.sql": "6733e28f282f600e627e675dccede3afef1efd37cf4a7cfe8d94af4cd02d30f5",
+    "supabase/migrations/0002_food_import_receipts.sql": "eb80acba1f69bfb68b014a1ab5807e42d65db940a36d201f28db88172157f55e",
+    "supabase/migrations/0003_food_provenance_description.sql": "8972c1dfa5e07a2350e644a7e79ea36cc7f9208e0a89371cbe1bdfdb52d6cb16",
+    "supabase/migrations/0004_access_policies.sql": "508e9572ce50464d07a8ea1e19dc41ff7ba26cb2d0485aa59df9ac1422440dfb",
+    "supabase/migrations/0005_gm18_discovery_rpc.sql": "b81e072da7ef75846615738905650ae5a337e32f5d678f843c9404e7f54e3307",
+    "supabase/migrations/0018_food_eligibility.sql": "e242876842e0c8decf645130b56a69143146ff942a78641f504c2883f3c86334",
+    "supabase/migrations/0019_room_lifecycle.sql": "ed76f679baa10bbfd4234e2be88f408ef292162f92efceac16217aa554f50926",
+    "supabase/migrations/0022_social.sql": "bede55e7a0c12a3dfce3d03f3e61121bd4611b73c8b8656ec0785a3c55097f54",
+    "supabase/migrations/0023_finalize.sql": "aff45864e57d634ced4bce6e3ce1997f439f90b2c974cc7f601d71f70bb3fea8",
+    "supabase/tests/rls.sql": "321fe394619d51636f56d85bce4aec7c2d2ed43e54d2759caa6c161c9534008d"
+  }
+}

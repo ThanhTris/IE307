@@ -1,0 +1,9 @@
+script:pre-request {
+  const url = bru.interpolate(req.getUrl());
+  if (!/^http:\/\/(127\.0\.0\.1|localhost):54321\/rest\/v1\//.test(url)) throw new Error('Loopback REST only');
+  const key = bru.getEnvVar('publicKey');
+  if (!key || key.startsWith('sb_secret_')) throw new Error('Local public key required');
+  req.setHeader('apikey', key);
+  req.setTimeout(10000);
+  req.setMaxRedirects(0);
+}

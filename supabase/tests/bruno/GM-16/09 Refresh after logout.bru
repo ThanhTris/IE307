@@ -1,0 +1,31 @@
+meta {
+  name: 09 Refresh after logout
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{baseUrl}}/auth/v1/token?grant_type=refresh_token
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {"refresh_token":"{{revokedRefreshToken}}"}
+}
+
+script:post-response {
+  bru.deleteVar('revokedRefreshToken');
+  bru.deleteVar('guestId');
+}
+
+tests {
+  test('Logout revokes refresh token', function () {
+    expect([400, 401].includes(res.getStatus())).to.equal(true);
+    expect(Boolean(res.getBody().access_token)).to.equal(false);
+  });
+}

@@ -1,0 +1,33 @@
+meta {
+  name: 13 Update preferences
+  type: http
+  seq: 13
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/update_preferences
+  body: json
+  auth: none
+}
+headers {
+  Authorization: Bearer {{memberToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"requestId":"{{requestId}}","room_id":"{{roomId}}","expected_version":{{roomVersion}},"cuisine_ids":[],"category_ids":[],"temperature":"cold","flavor":null,"history_consent":false}
+}
+script:pre-request {
+  bru.setVar('requestId','xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.floor(Math.random()*16);return(c==='x'?r:(r&3|8)).toString(16);}));
+
+}
+script:post-response {
+  const body=res.getBody();
+  if(res.getStatus()===200 && body.ok===true) { bru.setVar('roomVersion',body.version); }
+}
+tests {
+  test('13 Update preferences status and contract',()=>{
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getBody().ok).to.equal(true);
+
+
+  });
+}

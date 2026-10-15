@@ -1,0 +1,34 @@
+{
+  "checkedAt": "2026-10-14T15:10:04.406202+00:00",
+  "baseRevision": "c20f7c2a58bcce555a446722e744bd7f1f3ac1b6",
+  "result": "Pass",
+  "counts": {
+    "python": 550,
+    "domain": 169,
+    "rootRunner": 19,
+    "jestSuites": 11,
+    "jestTests": 382,
+    "lintErrors": 0,
+    "baselineLintWarnings": 4
+  },
+  "logSha256": {
+    "pythonRegression": "7c6156c87baf58187f9b56cd827138de003d554c66a8f0925b4c2b37a44e2f2c",
+    "domain": "0f8dc432181d1446a3ac895034888b59bfff06dbf734f2e740874cea4003006e",
+    "rootRunner": "bad3c6b76c7778f83a056c6fe33af3d76ea074ffa58b6f7090506d89d7bac564",
+    "typecheck": "405e7870566f0a9d35b6229643a46a7a7e23f909bfec7c65ee6080398af515d1",
+    "lint": "10202c7f85a6022010b304f828f128cddb27430bac32a19802a32dbd8de3cca8",
+    "jest": "389ebdcc931ef5a31d787cbd3fb65ef830cae442d2e9448927199cb2a277bcb0",
+    "architecture": "6a88d64de17199a9836243305f72168b65e52c5d69062cee69dd47c17a87b4e2"
+  },
+  "commands": {
+    "python": "python -m unittest discover -s tests -p \"test_*.py\"",
+    "domain": "node --test mobile/tests/decision.test.mjs mobile/tests/decisionSeeded.test.mjs",
+    "rootRunner": "node --test tests/backend-runner.test.mjs tests/gm19-runtime-files.test.mjs",
+    "typecheck": "npm --prefix mobile run typecheck",
+    "lint": "npm --prefix mobile run lint",
+    "jest": "npm --prefix mobile test -- --watchman=false",
+    "architecture": "npm --prefix mobile run check:architecture"
+  },
+  "nativeDeviceTested": false,
+  "reviewerApproval": false
+}

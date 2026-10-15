@@ -59,7 +59,7 @@ def fixture_id(entity, key):
 def save_json(path, value):
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n', encoding='utf-8', newline='\n')
 
 
 def hash_file(path):
@@ -428,7 +428,7 @@ def validate_suite(datasets, suite, registry):
             if identity in registry_ids or entry['id'] != fixture_id(entry['entity'], entry['registryKey']):
                 error('registry', 'id', 'Duplicate or unstable fixture ID')
             registry_ids[identity] = entry['registryKey']
-        real_ids = {r['id'] for r in json.loads((BASE / 'config/base_dish_registry.json').read_text())['dishes']}
+        real_ids = {r['id'] for r in json.loads((BASE / 'config/base_dish_registry.json').read_text(encoding='utf-8'))['dishes']}
         for name, bundle in datasets.items():
             if bundle['fixtureOnly'] is not True:
                 error(name, 'fixtureOnly', 'Fixtures must not become real data')
@@ -618,8 +618,9 @@ def export(datasets, suite, registry, directory=OUTPUT):
         networkCalls=0, eligibilityExecuted=False, publicationPerformed=False)
     save_json(out / 'quality.json', stats)
     save_json(out / 'manifest.json', dict(statistics=stats, generatorSha256=hash_file(Path(__file__)),
-        files={str(p.relative_to(out)): dict(sha256=hash_file(p), bytes=p.stat().st_size)
-               for p in sorted(out.rglob('*')) if p.is_file() and p.name != 'manifest.json'}))
+        files={p.relative_to(out).as_posix(): dict(sha256=hash_file(p), bytes=p.stat().st_size)
+               for p in sorted(out.rglob('*'), key=lambda p: p.relative_to(out).as_posix())
+               if p.is_file() and p.name != 'manifest.json'}))
     return stats
 
 
@@ -634,9 +635,9 @@ def main():
         errors = validate_suite(datasets, suite, registry)
         if not errors and dc.read_csv_bundle(args.output / 'base-csv') != datasets['base']:
             errors.append(dict(location='base-csv', field='root', message='CSV/JSON mismatch'))
-        if not errors and json.loads((args.output / 'base.json').read_text()) != datasets['base']:
+        if not errors and json.loads((args.output / 'base.json').read_text(encoding='utf-8')) != datasets['base']:
             errors.append(dict(location='base.json', field='root', message='Base snapshot mismatch'))
-        manifest = json.loads((args.output / 'manifest.json').read_text())
+        manifest = json.loads((args.output / 'manifest.json').read_text(encoding='utf-8'))
         if manifest['generatorSha256'] != hash_file(Path(__file__)):
             errors.append(dict(location='manifest', field='generatorSha256', message='Generator changed; review and regenerate fixtures'))
         for filename, metadata in manifest['files'].items():

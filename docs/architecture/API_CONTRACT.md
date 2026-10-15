@@ -12,7 +12,7 @@
 | set_ready/start_round P0 | roomId/ready hoặc start | member/host; đủ người/ready; revalidate eligibility/dataset/desiredAt, reset ready nếu pool đổi; start snapshot roster/offerings/schedules/context/consent |
 | submit_ballot P0 | roomId/round/poolVersion/intentId/votes[] | đủ pool; unique submission, lock, hash, finalize atomically |
 | leave_room/cancel_room P0 | roomId/confirmCancel | đúng caller; active leave hủy với xác nhận; terminal immutable |
-| invite_partner/accept_partner/reject_partner/unfriend P0 | friendCode hoặc invitationId/partnerId | auth/pair ACL/expiry, recipient accept; không auto join |
+| get_my_social_identity/list_friends/invite_partner/accept_partner/reject_partner/unfriend P0 | caller hoặc friendCode/invitationId/partnerId | auth/pair ACL/expiry, recipient accept; không auto join; self projection chỉ displayName/friendCode/avatarSeed |
 | list_partner_inbox P0 | cursor | own pairs/invites tối thiểu, không list user tùy ý |
 | invite_to_room P0 | roomId/partnerId | accepted pair + member inviter, room LOBBY; unique idempotency/event |
 | accept_room_invite P0 | invitationId/displayName | recipient/pair/expiry/capacity, lock room/invite; join unique; user confirm; không expectedVersion trước membership |
@@ -25,7 +25,7 @@
 
 Success write {ok:true,requestId,roomId?,version?,state?,data}. Reads không cần requestId. Snapshot result {resultId,winnerId?,reasonCode,matchTier,policyVersion,finalizedAt}; tiedIds/score matrix không public.
 
-Errors: AUTH_REQUIRED, INVALID_INPUT, ROOM_NOT_FOUND/FULL/LOCKED/EXPIRED, NOT_MEMBER/HOST/READY, INCOMPLETE_BALLOT, INVALID_DISH, ALREADY_SUBMITTED, VERSION_CONFLICT, REQUEST_ID_REUSED, RATE_LIMITED, ROOM_TERMINAL, INVITE_EXPIRED/REJECTED, NOT_PARTNER, CONSENT_REQUIRED, OUT_OF_COVERAGE, NO_ELIGIBLE_FOOD, AVAILABILITY_UNKNOWN, CONTEXT_CHANGED, DESIRED_TIME_PASSED. Các lỗi dùng messageKey, không tiết lộ room/member khi outsider.
+Errors: AUTH_REQUIRED, INVALID_INPUT, ROOM_NOT_FOUND/FULL/LOCKED/EXPIRED, NOT_MEMBER/HOST/READY, INCOMPLETE_BALLOT, INVALID_DISH, ALREADY_SUBMITTED, VERSION_CONFLICT, REQUEST_ID_REUSED, RATE_LIMITED, ROOM_TERMINAL, INVITE_EXPIRED/REJECTED/CANCELLED, NOT_PARTNER/NOT_RECIPIENT, CONSENT_REQUIRED, OUT_OF_COVERAGE, NO_ELIGIBLE_FOOD, AVAILABILITY_UNKNOWN, CONTEXT_CHANGED, DESIRED_TIME_PASSED. Các lỗi dùng messageKey, không tiết lộ room/member khi outsider.
 
 Tra idempotency trước version. Cùng requestId/hash trả ACK cũ; khác body kể cả version phải REQUEST_ID_REUSED. Server lock serialize writes. VERSION_CONFLICT đã từ chối → refetch; nếu cùng vòng/pool/chưa nộp mới attempt requestId mới. Timeout chưa biết commit → giữ nguyên requestId/body hoặc ownSubmission reconcile. Chỉ intent bấm Gửi được queue/replay; terminal/stale/auth đổi không replay. [Outbox](../specs/OFFLINE_SYNC_SPEC.md).
 
@@ -51,7 +51,44 @@ GM-07 chốt request/response/error/version từ dictionary GM-04, đối chiế
 
 GM-17 bảo vệ tables/RPC/retention, từng task API thêm auth/membership/version/expiry/lock/idempotency đúng endpoint. Client không import SQL/SDK vào UI; production không fallback sang mock khi API lỗi. Lệnh smoke/API example và response mẫu là bắt buộc trong HANDOFF.
 
+GM-17.1 implementation supplement (schema0.2.0): [ACCESS_MATRIX](ACCESS_MATRIX.md)
+và [ADR-015](decisions/ADR-015-retention-reference-identities.md) chốt column grants,
+RLS, private transaction guard và retention references. Client không SELECT *
+hoặc serialize base rows; direct REST errors42501/HTTP401/403 không tự là ApiError
+envelope. Endpoint owner ánh xạ lỗi, tra ACK trước version, giữ lock order đã bàn
+giao. History summary và ACK giữ stable IDs sau khi live room/result bị dọn;
+không join tới live parents để dựng history. DTO GM-07 không đổi, producer-specific
+business RPC và Android wiring vẫn thuộc các task phía dưới.
+
 ## Chi tiết Contract Projection & Parity GM-04 / GM-06 (GM-07)
+
+### Bổ sung auth/session GM-16.1
+
+`createAuthenticatedApiClient` inject `SessionManager` vào `ApiClientImpl`.
+createGuestSession/restoreSession/logout dùng GoTrue `/auth/v1/signup`, `/user`,
+`/token?grant_type=refresh_token`, `/logout?scope=local`; không là SQL RPC phát JWT.
+Scaffold/mock GM-07 giữ interface cho consumers chưa tích hợp. Real client auth
+phải dùng composition này, public publishable/anon key và private cleanup callback.
+
+SessionResponse/error envelope GM-07 không đổi. Refresh token chỉ lưu nội bộ
+StoredSession/secure storage; không xuất vào UI, room DTO, SQLite, outbox hoặc log.
+SessionUser.id/isGuest từ response xác minh GoTrue; metadata userId/client userId
+không làm quyền. Display name tối đa24 ký tự, không rỗng/control chars.
+
+Restore xác minh server user trước expose identity; gần expiry refresh serialized,
+persist rotation trước publish. Logout/auth loss vô hiệu response đang chạy và
+clear memory/secure store/private-cache port. Cleanup lỗi chặn đổi identity;
+network restore/refresh lỗi giữ credential cho thử lại chủ động. Verify retry tối
+đa2 lần, respect Retry-After, không giảm thời gian server yêu cầu. Signup/refresh
+không blind retry vì GoTrue không dùng requestId idempotency của business RPC;
+unknown signup outcome chặn signup tiếp đến khi logout/reset local rõ ràng.
+
+Logout clear local cả khi revoke network fail và trả lỗi để UI biết revoke chưa
+xác nhận. Revoke refresh không bảo đảm access JWT hết hiệu lực ngay; quyền server/
+expiry vẫn là căn cứ. Account linking/recovery, room/profile RPC, push-device
+cleanup server và SQLite outbox thuộc task sau. HTTP auth tests và native secure
+persistence phải có evidence riêng. HTTP chỉ loopback; LAN dev cần HTTPS setup
+được review, không tự gửi token qua mạng HTTP không bảo vệ.
 
 ### 1. Chuẩn hóa phong bì lỗi (Error Normalization)
 - RPC Supabase có thể trả HTTP 200 kèm business envelope `{ ok: false, error: { messageKey: '...' } }`.

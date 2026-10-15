@@ -1,5 +1,7 @@
 # Definition of Done
 
+Reviewer duy nhất theo phân công hiện hành là Trí (`ThanhTris`) cho mọi task, gồm task Trí thực hiện; không yêu cầu review chéo theo ADR-013. Quy tắc này không miễn kiểm AC/test và không tự tạo approval.
+
 Trí nghiệm thu và chuyển Done trên Project sau khi AC/test của task đạt; Trí tự review task mình trực tiếp làm, không cần chỉ định người khác theo [ADR-013](../architecture/decisions/ADR-013-project-owner-final-review.md). Theo [ADR-011](../architecture/decisions/ADR-011-project-done-readiness.md), Done trên Project là xác nhận nghiệm thu cho dependency, không cần đồng bộ status Markdown để mở task tiếp. AI không tự đổi Done hoặc tạo approval. Nếu ghi task Markdown thành done, vẫn cần review thực tế của Trí và quyết định/ngày/evidence thật.
 
 - Theo [chuẩn đầu ra](TASK_OUTPUT_REQUIREMENTS.md), [checklist từng task](TASK_OUTPUT_CHECKLIST.md) và CHECKS.md: UI phải mở trên Expo thấy các mục/state/action thuộc scope; API phải có request/response/assertion thật bằng Postman/curl/runner; Data phải đủ field contract và kiểm schema/query/import đúng stage để BE dùng song song.
@@ -23,7 +25,7 @@ Validator chỉ kiểm cấu trúc/truy vết, không chứng minh review có th
 - Task có assignment accepted; start_dependencies phải Done trên Project và đủ output/HANDOFF khi bắt đầu; trước merge thêm merge_dependencies Done và artifact/version đúng target. GM-00 lịch sử vẫn kiểm local Approved. Review chỉ áp dụng scope/version đã kiểm; in-progress/draft có thể còn merge blocker. Done không được bỏ qua merge deps hoặc hạ AC.
 - Trước merge kiểm ref target đã cập nhật, bản task/evidence đúng revision, PR/merge commit upstream thực tế và integration tests sau cập nhật branch. Done không đồng nghĩa đã merge; checker không chứng minh code đã vào target. Mock không thay native/SQL/verified-data AC.
 - Reviewer nên lưu Reviewed-by, Reviewed-at, Decision: Approved và Review-evidence thật, PR/commit/version để truy vết; đây là bắt buộc khi ghi task Markdown thành done, không là bước đồng bộ bắt buộc để mở downstream đã Done trên Project. Không coi merge PR/Issue Closed là Project Done.
-- Dataset: nguồn/license/freshness/coverage, quán–món/lịch/ngoại lệ/unknown/giá đơn vị và người kiểm khác người nhập; fixture tách thật. FOOD-01..10/12..14 áp dụng P0; FOOD-11 và mood thuộc GM-38 P2.
+- Dataset: field/FK/quán–món/giá/nullable và query thật đúng stage, fixture tách thật. Theo [ADR-014](../architecture/decisions/ADR-014-test-data-and-baseline-project-card.md), GM-08 nghiệm thu DB test, không bắt verified publish/review độc lập/coverage/anchor đầy đủ; BE được dùng bundle test đã bàn giao, thiếu dữ liệu lọc phải trả unknown/empty đúng spec, không bịa. Production publish giữ guards riêng; FOOD-01..10/12..14 vẫn là luật bộ lọc P0, FOOD-11/mood thuộc GM-38 P2.
 - Gate checker, validator và regression đạt; sinh lại task indexes rồi --check-docs. Handoff nêu output/version/task sau, migration/rollback và lỗi còn lại.
 
 ## Nghiệm thu theo scope roadmap-v2

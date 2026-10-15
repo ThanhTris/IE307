@@ -1,0 +1,22 @@
+meta {
+  name: 13 Private events
+  type: http
+  seq: 13
+}
+
+get {
+  url: {{baseUrl}}/rest/v1/events?select=id
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{hostToken}}
+}
+
+tests {
+  test('Private events', function () {
+    expect(res.getStatus()).to.equal(403);
+    expect(res.getBody().code).to.equal("42501");
+  });
+}

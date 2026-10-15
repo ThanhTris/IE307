@@ -1,5 +1,11 @@
 # GM-09 — bàn giao màn Home / create / join
 
+## Bổ sung nhận main — 2026-10-15
+
+Đã hòa giải merge HEAD `606f040` với main `ce7b87a`: giữ Home `/` và toàn bộ luồng GM-09; shell `/shell` nhận điều hướng bình chọn GM-12 và công cụ GM-16, giữ guard development/env của GM-16. Bổ sung thông báo cho hai ErrorCode upstream `NOT_RECIPIENT` / `INVITE_CANCELLED`; không sửa contract. Test route giữ cả hai nhánh. Xem [kết quả tích hợp](MERGE_MAIN_2026-10-15.md). Merge commit chưa tạo; `GM-09-report.md` vẫn untracked, ngoài staging. Hồ sơ ngày 2026-10-13 bên dưới là lịch sử của revision trước, không là hashes/evidence của bản tích hợp mới.
+
+## Bàn giao trước khi nhận main
+
 Owner Tuấn (`mtuan2491`), reviewer Trí. [Issue #70](https://github.com/ThanhTris/IE307/issues/70), branch `codex/gm-09-home-create-and-join-room`. Contract `food-v1/roadmap-v2/GM-09.1`. Tested revision: HEAD `9e9f5ba67899ea162b79b5c6ac17cd5479c505da` **+ working tree chưa commit**, ngày 2026-10-13 UTC+7; hashes tại [PATCH_MANIFEST.json](PATCH_MANIFEST.json).
 
 Nhận GM-05.1 từ PR #109 (merge `9e9f5ba`), GM-07.1 từ PR #104 (`0711782`)/#105 (`9f71bba`). Hai dependency Done trên Project và code nằm trên base. Start gate `READY_TO_CLAIM` do local proposed; issue có `assignment:accepted`. Kiểm lại live ngày 2026-10-13 trước patch UI. Không thay task metadata/Project. [Plan](PLAN.md), [kết quả](CHECKS.md), [đối chiếu mẫu và thay đổi UI](UI_REWORK.md).

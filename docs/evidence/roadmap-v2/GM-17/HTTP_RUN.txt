@@ -1,0 +1,140 @@
+{
+  "contract": "food-v1/roadmap-v2/GM-17.1",
+  "schema": "0.2.0",
+  "checkedAt": "2026-10-13T11:11:16.840Z",
+  "environment": "loopback:54321 real GoTrue JWT and PostgREST",
+  "cases": [
+    {
+      "case": "host room projection",
+      "result": "Pass",
+      "status": 200,
+      "rows": 1
+    },
+    {
+      "case": "host own ballot",
+      "result": "Pass",
+      "status": 200,
+      "rows": 1
+    },
+    {
+      "case": "member room projection",
+      "result": "Pass",
+      "status": 200,
+      "rows": 1
+    },
+    {
+      "case": "member own ballot",
+      "result": "Pass",
+      "status": 200,
+      "rows": 1
+    },
+    {
+      "case": "outsider room projection",
+      "result": "Pass",
+      "status": 200,
+      "rows": 0
+    },
+    {
+      "case": "outsider own ballot",
+      "result": "Pass",
+      "status": 200,
+      "rows": 0
+    },
+    {
+      "case": "host cannot read member submission",
+      "result": "Pass",
+      "status": 200,
+      "rows": 0
+    },
+    {
+      "case": "private column/table denied: rooms:consent_snapshot",
+      "result": "Pass",
+      "status": 403,
+      "sqlstate": "42501"
+    },
+    {
+      "case": "private column/table denied: results:tied_choice_ids",
+      "result": "Pass",
+      "status": 403,
+      "sqlstate": "42501"
+    },
+    {
+      "case": "private column/table denied: devices:push_token",
+      "result": "Pass",
+      "status": 403,
+      "sqlstate": "42501"
+    },
+    {
+      "case": "private column/table denied: submissions:payload_hash",
+      "result": "Pass",
+      "status": 403,
+      "sqlstate": "42501"
+    },
+    {
+      "case": "private column/table denied: idempotency:response",
+      "result": "Pass",
+      "status": 403,
+      "sqlstate": "42501"
+    },
+    {
+      "case": "private column/table denied: events:id",
+      "result": "Pass",
+      "status": 403,
+      "sqlstate": "42501"
+    },
+    {
+      "case": "room direct update denied",
+      "result": "Pass",
+      "status": 403
+    },
+    {
+      "case": "dataset direct update denied",
+      "result": "Pass",
+      "status": 403
+    },
+    {
+      "case": "anonymous private read denied",
+      "result": "Pass",
+      "status": 401
+    },
+    {
+      "case": "forged JWT denied",
+      "result": "Pass",
+      "status": 401
+    },
+    {
+      "case": "expired synthetic signed JWT denied",
+      "result": "Pass",
+      "status": 401
+    },
+    {
+      "case": "host own plus group history",
+      "result": "Pass",
+      "status": 200,
+      "rows": 2
+    },
+    {
+      "case": "member group history only",
+      "result": "Pass",
+      "status": 200,
+      "rows": 1
+    },
+    {
+      "case": "outsider history hidden",
+      "result": "Pass",
+      "status": 200,
+      "rows": 0
+    },
+    {
+      "case": "draft synthetic catalogue hidden",
+      "result": "Pass",
+      "status": 200,
+      "rows": 0
+    },
+    {
+      "case": "namespace cleanup",
+      "result": "Pass"
+    }
+  ],
+  "result": "Pass"
+}

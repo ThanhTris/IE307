@@ -1,0 +1,107 @@
+# GM-19.1 room lifecycle. Use the isolated synthetic fixture for positive rows.
+# The examples use PostgREST's JSON object body and the real GM-07 transport shape.
+@baseUrl = http://127.0.0.1:54331
+@publicKey = REPLACE_WITH_LOCAL_PUBLIC_KEY
+@hostToken = REPLACE_WITH_GM16_ACCESS_TOKEN
+@memberToken = REPLACE_WITH_SECOND_GM16_ACCESS_TOKEN
+@roomId = REPLACE_WITH_CREATED_ROOM_UUID
+@anchorId = REPLACE_WITH_SYNTHETIC_PUBLISHED_ANCHOR_UUID
+@desiredAt = REPLACE_WITH_FUTURE_ISO_UTC
+@roomCode = REPLACE_WITH_CREATED_ROOM_CODE
+@version = REPLACE_WITH_LATEST_VERSION
+
+# Run the sequential Bruno collection for automatic variable capture/assertions.
+# These manual examples require updating version after every successful write.
+
+### Create room: host becomes the first member and the room starts in LOBBY.
+# Expect 200 {ok:true,state:LOBBY,roomId,version,data:{expiresAt}}.
+POST {{baseUrl}}/rest/v1/rpc/create_room
+apikey: {{publicKey}}
+Authorization: Bearer {{hostToken}}
+Content-Type: application/json
+
+{"requestId":"19000000-0000-4000-8000-000000000001","display_name":"GM19 host","anchor_id":"{{anchorId}}","radius_m":1500,"desired_at":"{{desiredAt}}","service_mode":"dine_in","meal_slot":"dinner","time_hint":null,"budget":null,"avoid_recent":false}
+
+### Snapshot: shared room fields plus caller-owned preferences/votes/submission only.
+# Expect 200 {ok:true,data:{roomId,state,version,context,members,pool,ownPreferences}}.
+POST {{baseUrl}}/rest/v1/rpc/get_room_snapshot
+apikey: {{publicKey}}
+Authorization: Bearer {{hostToken}}
+Content-Type: application/json
+
+{"room_id":"{{roomId}}"}
+
+### Invalid input: malformed code is a stable 400-domain error envelope.
+# Expect HTTP400 and messageKey=INVALID_INPUT.
+POST {{baseUrl}}/rest/v1/rpc/join_room
+apikey: {{publicKey}}
+Authorization: Bearer {{hostToken}}
+Content-Type: application/json
+
+{"requestId":"19000000-0000-4000-8000-000000000004","code":"bad","display_name":"x"}
+
+### Missing auth: gateway rejects before RPC execution.
+# Expect HTTP401 and no room data.
+POST {{baseUrl}}/rest/v1/rpc/get_room_snapshot
+apikey: {{publicKey}}
+Content-Type: application/json
+
+{"room_id":"{{roomId}}"}
+
+### Stale version: after a successful mutation, an old expectedVersion returns 409.
+# Expect HTTP409 {ok:false,messageKey:VERSION_CONFLICT}.
+POST {{baseUrl}}/rest/v1/rpc/set_ready
+apikey: {{publicKey}}
+Authorization: Bearer {{hostToken}}
+Content-Type: application/json
+
+{"requestId":"19000000-0000-4000-8000-000000000005","room_id":"{{roomId}}","expected_version":1,"ready":true}
+
+### Join: 200, caller becomes a member with ready=false.
+POST {{baseUrl}}/rest/v1/rpc/join_room
+Authorization: Bearer {{memberToken}}
+Content-Type: application/json
+
+{"requestId":"req_manual_join","code":"{{roomCode}}","display_name":"GM19 member"}
+
+### Preferences: 200, own preferences only; resets readiness.
+POST {{baseUrl}}/rest/v1/rpc/update_preferences
+Authorization: Bearer {{memberToken}}
+Content-Type: application/json
+
+{"requestId":"req_manual_preferences","room_id":"{{roomId}}","expected_version":{{version}},"cuisine_ids":[],"category_ids":[],"temperature":"cold","flavor":null,"history_consent":false}
+
+### Context: 200 for host in lobby; group readiness is reset.
+POST {{baseUrl}}/rest/v1/rpc/update_context
+Authorization: Bearer {{hostToken}}
+Content-Type: application/json
+
+{"requestId":"req_manual_context","room_id":"{{roomId}}","expected_version":{{version}},"anchor_id":"{{anchorId}}","radius_m":1500,"desired_at":"{{desiredAt}}","service_mode":"dine_in","meal_slot":"dinner","time_hint":null,"budget":null,"avoid_recent":false}
+
+### Ready: repeat for each member with a unique requestId and latest version.
+POST {{baseUrl}}/rest/v1/rpc/set_ready
+Authorization: Bearer {{hostToken}}
+Content-Type: application/json
+
+{"requestId":"req_manual_ready_host","room_id":"{{roomId}}","expected_version":{{version}},"ready":true}
+
+### Start: 200 ROUND_1 after at least two members are ready.
+POST {{baseUrl}}/rest/v1/rpc/start_round
+Authorization: Bearer {{hostToken}}
+Content-Type: application/json
+
+{"requestId":"req_manual_start","room_id":"{{roomId}}","expected_version":{{version}}}
+
+### Leave: 200 in lobby; 409 ROOM_LOCKED after start.
+POST {{baseUrl}}/rest/v1/rpc/leave_room
+Authorization: Bearer {{memberToken}}
+Content-Type: application/json
+
+{"requestId":"req_manual_leave","room_id":"{{roomId}}","expected_version":{{version}}}
+
+### Cancel: member confirms whole-session cancellation after start; 200 CANCELLED.
+POST {{baseUrl}}/rest/v1/rpc/cancel_room
+Authorization: Bearer {{memberToken}}
+Content-Type: application/json
+
+{"requestId":"req_manual_cancel","room_id":"{{roomId}}","expected_version":{{version}},"confirm_cancel":true}

@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "GM-17 Access Local",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

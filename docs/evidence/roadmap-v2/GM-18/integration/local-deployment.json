@@ -1,0 +1,11 @@
+{
+  "result": "Pass",
+  "checkedAt": "2026-10-13T13:20:46.451643+00:00",
+  "localDraftFunctionsRefreshed": true,
+  "sharedDataReset": false,
+  "publishedDataChanged": false,
+  "localDeploymentMatchesFresh": true,
+  "migrationSha256": "b81e072da7ef75846615738905650ae5a337e32f5d678f843c9404e7f54e3307",
+  "definitionSha256": "37ed8522329906559ae64c153416d15dd25ecdf9f05a26047a81541931fe02aa",
+  "environment": "local Supabase postgres/loopback; own uncommitted development draft only"
+}

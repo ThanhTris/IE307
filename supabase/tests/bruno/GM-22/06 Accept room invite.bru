@@ -1,0 +1,20 @@
+meta {
+  name: 06 Accept room invite
+  type: http
+  seq: 6
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/accept_room_invite
+  body: json
+}
+headers {
+  Authorization: Bearer {{memberToken}}
+  apikey: {{anonKey}}
+  Content-Type: application/json
+}
+body:json {
+  {"requestId":"{{requestId}}-room-accept","invitation_id":"{{roomInvitationId}}","display_name":"GM22 member"}
+}
+tests {
+  test('06 Accept room invite',()=>{ expect([200,409]).to.include(res.getStatus()); });
+}

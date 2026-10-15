@@ -1,0 +1,22 @@
+meta {
+  name: 07 Member group history
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{baseUrl}}/rest/v1/histories?select=id,scope
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{memberToken}}
+}
+
+tests {
+  test('Member group history', function () {
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getBody()).to.be.an("array").with.lengthOf(1);
+  });
+}

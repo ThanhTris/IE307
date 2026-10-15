@@ -1,0 +1,90 @@
+# GM-16 — Checks / food-v1 roadmap-v2
+
+Status: In progress; API/SQL/rate-limit và harness code đã Pass, Android thật qua
+Expo Go đã Pass create/check/refresh/restore/expiry/lost-session/logout; native
+development build và uninstall/backup exclusion được owner hoãn tới hardening
+trước phát hành; chưa Approved/Done.
+Owner Trí / ThanhTris; reviewer Trí / ThanhTris theo ADR-013.
+Ngày kiểm: 2026-10-12 UTC+7. Nhánh `codex/gm-16-guest-session`, target main.
+Base `9188c736def7e125266f8cce2314b9f1f5c31b81`; implementation đang ở revision sau merge main.
+Tested hashes cuối tại MANIFEST.json khi các phép kiểm kết thúc.
+Contract GM-16.1; input GM-03.1 / GM-06.1 schema0.1.0 / GM-07.1.
+Dataset N/A: auth không phụ thuộc verified catalogue; identities/tests synthetic.
+Windows, Node24.15.0, npm11.12.1, Expo57.0.28, Expo Router57.0.26,
+Jest Expo57.0.6, SecureStore57.0.4.
+Python bundled3.12.14 có Asia/Ho_Chi_Minh; Python3.14 ban đầu thiếu tzdata.
+
+## Setup / kiểm lại
+
+```powershell
+cd mobile
+npm ci --no-audit --no-fund
+npm run check
+npm run check:expo
+npm run bundle:android
+cd ..
+npm ci --no-audit --no-fund
+npm run backend:start
+node scripts/gm16_auth_check.mjs --sql --rate-limit
+```
+
+Backend cần Docker Linux engine đáp ứng và schema0001 hiện hành. Không reset hoặc
+đổi project để vượt lỗi. Trước rate probe chạy
+`powershell -NoProfile -ExecutionPolicy Bypass -File scripts/gm16_rate_limit_setup.ps1`;
+script chỉ thay Auth container local, giữ database volume và bật trusted
+`X-Forwarded-For`. Probe dùng một chuỗi refresh token hợp lệ có rotation, tối đa
+180 request paced, và phải nhận HTTP429. Runner không lưu token/response raw,
+không dùng service_role; synthetic guest records còn trong Auth local sau
+signout. SQL chạy transaction rollback với7 assertions thực.
+HTTP collection tại supabase/tests/http/GM-16.http dùng environment placeholders.
+Bruno collection tại supabase/tests/bruno/GM-16; chạy
+`node scripts/gm16_bruno_setup.mjs`, Open Collection, chọn Local.private,
+Run Collection tuần tự. Xem BRUNO_CHECK.md. Nếu DB local chưa có migration,
+kiểm `migration list --local` rồi `migration up --local`; không reset DB.
+
+## Kết quả thực tế
+
+| Case/AC | Expected/assertions | Actual / artifact | Kết quả |
+| --- | --- | --- | --- |
+| Guest name/secure persist/restore | Invalid input không signup; persist trước publish; restore cùng caller qua server port | 69 authSession/authTransport tests Pass với synthetic port; MOBILE_CHECK.txt | Pass (adapter scope) |
+| Refresh/expiry/concurrency | Serialized rotation, cùng user, stale/revoked reject, không blind retry token rotation | Adapter tests; expire/reject qua port tổng hợp, không GoTrue thật | Pass (adapter scope) |
+| Failure/retry/rate limit | Timeout abort thật trong fetch test, max2 verify retry, Retry-After, safe errors | Adapter tests; HTTP429 fixture, không auth provider thật | Pass (adapter scope) |
+| Logout/privacy/isolation | Clear storage/cache cả offline; cleanup lỗi block đổi identity; response cũ sau logout/auth loss reject | Adapter tests; required cleanup callback không no-op mặc định | Pass (adapter scope) |
+| SecureStore boundary | Một encrypted entry/device-only option, corrupt reject, delete đúng key | SecureStore port mock, không thiết bị Android | Pass (adapter scope) |
+| Guest/restore/refresh/logout/spoof HTTP | Status/body/assertions thật qua GoTrue local | HTTP_CHECK.txt:8 cases Pass; Bruno4.2.1:10/10 requests/tests Pass, BRUNO_CHECK.md | Pass |
+| SQL auth.uid/default deny | 7 pgTAP assertions trên schema0.1.0 thật, rollback | HTTP_CHECK.txt: auth.sql7 assertions Pass sau migration up --local0001..0003 | Pass |
+| Real HTTP429/expiry | GoTrue throttle và expiry thực | RATE_LIMIT_CHECK.txt/HTTP_CHECK.txt: bounded real HTTP429 Pass; `MOBILE_DEVICE_CHECK.txt`: JWT lifetime 120s, waited 135s, token refresh + same identity Pass | Pass |
+| Native restart/lost session/backup | Android thật cùng identity sau restart, uninstall không recover guest, backup exclude secure entry | `MOBILE_DEVICE_CHECK.txt`: force-stop/restore, lost-session và post-logout reopen Pass; uninstall/backup/native build được owner hoãn | Pass force-stop/lost/logout; hardening deferred |
+| Expo compatibility | SDK dependency check exit0; Android bundle exit0 | check:expo “Dependencies are up to date”; bundle 1245 modules, dist/android | Pass (bundle, không native smoke) |
+| Internal Android harness route | Development flag only; guest/restore/refresh/check/private marker/logout actions; no token/raw response | `MOBILE_DEVICE_CHECK.txt` records real Expo Go route, guest/check/refresh/restore/expiry/lost/marker/logout and sanitized backend logs | Pass (Expo Go harness) |
+| Full mobile checks | TypeScript/lint/Jest/architecture exit0 | `npm run typecheck`, `npm run lint`, `npm test`: 9 suites/357 tests Pass; Android bundle export Pass | Pass |
+| Repo validator/indexes/diff | Offline checks exit0 | Validator/indexes/diff đạt; DOCS_CHECK.txt lưu lần cuối | Pass |
+| Python regression | Runtime đủ timezone; không bỏ qua lỗi | PYTHON_REGRESSION.txt: 524 tests, 524 Pass, 0 failure/error; msvcrt locking và explicit cp1252 probe trên Windows | Pass |
+
+API flow, SQL assertions, bounded rate429 probe và Android thật create/restore/
+refresh/expiry/lost-session/logout đã chạy ngày 2026-10-12. Theo quyết định của
+owner Trí ngày 2026-10-12, native development build và uninstall/backup
+exclusion được deferred tới release hardening/follow-up; đây không phải blocker
+của phạm vi nghiệm thu hiện tại. Không đánh dấu checkbox AC tổng thể hoặc Done.
+
+## Blocker / giới hạn
+
+- Docker blocker trước đây đã giải quyết: engine29.4.3 phản hồi,4 container
+  Supabase của project local chạy, Auth health200. Migrations0001..0003 áp dụng
+  local; không reset hoặc xóa volume. Backend được để chạy để owner test Bruno.
+- Android thật đã chạy qua Expo Go + ADB reverse; create/restore/refresh, expiry,
+  lost-session và harness logout cleanup Pass. Native development build và
+  uninstall/backup exclusion được owner hoãn tới release hardening; không có
+  generated native tree hoặc uninstall step trong branch này.
+- Private cache port là contract bắt buộc cho GM-25/31; SQLite chưa triển khai.
+  Signout revoke refresh không bảo đảm access JWT đã phát vô hiệu ngay.
+- Shared config/client/spec có bổ sung GM-16, reviewer phải đối chiếu với upstream
+  producer/handoff trước merge. Gate merge không thay review nội dung thay đổi đó.
+- Python regression Windows đã Pass toàn bộ sau khi dùng `msvcrt` cho khóa file
+  taxonomy và decode byte trực tiếp trong cp1252 probe. Report trước sửa giữ
+  riêng để truy vết tại PYTHON_REGRESSION_BEFORE_FIXTURE.txt.
+
+## Review
+
+Trí kiểm revision/hashes/output và quyết định nghiệm thu cuối sau đủ AC. Chưa có
+approval được ghi. Không tự sync Project Status/Done.

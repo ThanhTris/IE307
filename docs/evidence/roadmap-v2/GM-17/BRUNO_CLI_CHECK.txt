@@ -1,0 +1,15 @@
+GM-17 Bruno CLI evidence
+Checked at: 2026-10-13T11:10:09Z
+Runtime: Bru CLI 4.2.1, local GoTrue/PostgREST at http://127.0.0.1:54321
+Collection: supabase/tests/bruno/GM-17
+Environment: Local.runtime.private (created by --bruno-setup; removed after run)
+
+Result: Pass
+Requests: 20/20 passed, 0 failed, 0 skipped
+Tests: 20/20 passed
+Expected status coverage: 200 allowed projections/empty RLS lists; 403 private
+columns/tables; 401 anonymous/forged JWT access; direct writes returned 204 when
+the target was filtered by RLS. The HTTP runner separately asserts direct writes
+as 403 privilege denial. No raw response bodies or credentials are retained in
+this evidence. The synthetic namespace and three anonymous users were removed
+with scripts/gm17_bruno_cleanup.mjs after the run.

@@ -1,0 +1,22 @@
+meta {
+  name: 04 Forged token
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/auth/v1/user
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer deliberately.invalid.token
+}
+
+tests {
+  test('Forged JWT is rejected', function () {
+    expect([401, 403].includes(res.getStatus())).to.equal(true);
+    expect(Boolean(res.getBody().id)).to.equal(false);
+  });
+}

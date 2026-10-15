@@ -1,5 +1,9 @@
 # GM-09 — checks
 
+## Cập nhật main — 2026-10-15
+
+Kết hợp HEAD `606f040` với `origin/main` `ce7b87a` trong phiên merge đang chờ commit. Chi tiết revision, scope, môi trường và kết quả tại [MERGE_MAIN_2026-10-15.md](MERGE_MAIN_2026-10-15.md). Mobile check đạt 14 suites / 448 tests; Python regression đạt 550 tests (6 skipped). Đây là kiểm tra tích hợp code, chưa nghiệm thu Expo Go hoặc Approved/Done.
+
 ## Revision làm lại UI — 2026-10-13
 
 Kết quả hiện hành áp dụng HEAD `9e9f5ba` + working tree chưa commit, hashes mới tại [PATCH_MANIFEST.json](PATCH_MANIFEST.json). Phạm vi và mẫu đối chiếu tại [UI_REWORK.md](UI_REWORK.md). Owner Tuấn, reviewer Trí; chưa nghiệm thu Expo Go, chưa Done.

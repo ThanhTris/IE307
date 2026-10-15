@@ -1,5 +1,7 @@
 # GM-08 — Output checks
 
+Phạm vi hiện hành ngày 2026-10-13 theo Trí/[ADR-014](../../../architecture/decisions/ADR-014-test-data-and-baseline-project-card.md): nghiệm thu bundle thật trên DB test theo [44 cases/query/readback](real-db/README.md); verified publish/review độc lập/coverage/anchor đầy đủ không còn là AC bắt buộc của GM-08. Project đã Done; trạng thái và Not run của verified production trong các revision bên dưới giữ làm lịch sử, không phải blocker hiện hành. Không sửa kết quả test gốc hoặc biến draft thành verified; production guards giữ nguyên.
+
 Cập nhật hiện hành: [DB test với bundle thật 0.4.1](real-db/README.md) đã Pass 44 cases; SQL hồi quy 31 cases và Python 514 tests Pass / 0 skip. Nạp/query/reimport/rollback giữ draft/null/unknown; verified publish chưa chạy. Các mục bên dưới là evidence lịch sử của từng revision.
 
 2026-10-11 (UTC+7). In progress; tooling đã kiểm, dataset thật còn blocker.

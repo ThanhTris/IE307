@@ -1,0 +1,7723 @@
+{
+  "fixtureOnly": true,
+  "algorithm": "u32-murmur3-rejection-v1",
+  "vectors": [
+    {
+      "id": "cases/unanimous",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "WANT"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_READY",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_READY",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/multiple-unanimous",
+      "input": {
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "bun": "WANT",
+            "pho": "WANT"
+          },
+          "b": {
+            "bun": "WANT",
+            "pho": "WANT"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_READY",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "bun",
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_READY",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "bun",
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/unanimous-over-acceptable",
+      "input": {
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "bun": "OK",
+            "pho": "WANT"
+          },
+          "b": {
+            "bun": "OK",
+            "pho": "WANT"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_READY",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_READY",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/single-fallback",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "ROUND_2",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "ROUND_2",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/fallback-veto",
+      "input": {
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "bun": "NO",
+            "pho": "WANT"
+          },
+          "b": {
+            "bun": "WANT",
+            "pho": "OK"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "ROUND_2",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "ROUND_2",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/empty-intersection",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "NO"
+          },
+          "b": {
+            "pho": "WANT"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "EMPTY_INTERSECTION",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "EMPTY_INTERSECTION",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/missing-member",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/missing-dish",
+      "input": {
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "bun": "OK",
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "WANT"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/entire-dish-missing",
+      "input": {
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "WANT"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/unset-round1",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "UNSET"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/veto-with-missing",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "NO"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/empty-matrix",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {},
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/single-confirmed",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "KEEP"
+          },
+          "b": {
+            "pho": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_READY",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_READY",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/round2-not-submitted",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 2,
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 2,
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/round2-missing-member",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 2,
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 2,
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/unset-round2",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "KEEP"
+          },
+          "b": {
+            "pho": "UNSET"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 2,
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 2,
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/all-removed",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "KEEP"
+          },
+          "b": {
+            "pho": "REMOVE"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/remove-with-missing",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "REMOVE"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 2,
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 2,
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/tie",
+      "input": {
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 2,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "bun": "OK",
+            "pho": "WANT"
+          },
+          "b": {
+            "bun": "WANT",
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "bun": "KEEP",
+            "pho": "KEEP"
+          },
+          "b": {
+            "bun": "KEEP",
+            "pho": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_READY",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "bun",
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_READY",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "bun",
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/missing-round2-dish",
+      "input": {
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 2,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "bun": "OK",
+            "pho": "WANT"
+          },
+          "b": {
+            "bun": "WANT",
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "bun": "KEEP",
+            "pho": "KEEP"
+          },
+          "b": {
+            "pho": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 2,
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 2,
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/removed-tie-member",
+      "input": {
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 2,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "bun": "OK",
+            "pho": "WANT"
+          },
+          "b": {
+            "bun": "WANT",
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "bun": "REMOVE",
+            "pho": "KEEP"
+          },
+          "b": {
+            "bun": "KEEP",
+            "pho": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_READY",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_READY",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/even-majority",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "roster": [
+          "u0",
+          "u1",
+          "u2",
+          "u3"
+        ],
+        "round1": {
+          "u0": {
+            "pho": "WANT"
+          },
+          "u1": {
+            "pho": "WANT"
+          },
+          "u2": {
+            "pho": "WANT"
+          },
+          "u3": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "u0": {
+            "pho": "KEEP"
+          },
+          "u1": {
+            "pho": "KEEP"
+          },
+          "u2": {
+            "pho": "KEEP"
+          },
+          "u3": {
+            "pho": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_READY",
+        "matchTier": "CONSENSUS",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_READY",
+        "matchTier": "CONSENSUS",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/even-half",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "roster": [
+          "u0",
+          "u1",
+          "u2",
+          "u3"
+        ],
+        "round1": {
+          "u0": {
+            "pho": "WANT"
+          },
+          "u1": {
+            "pho": "WANT"
+          },
+          "u2": {
+            "pho": "OK"
+          },
+          "u3": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "u0": {
+            "pho": "KEEP"
+          },
+          "u1": {
+            "pho": "KEEP"
+          },
+          "u2": {
+            "pho": "KEEP"
+          },
+          "u3": {
+            "pho": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_READY",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_READY",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/odd-majority",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "roster": [
+          "u0",
+          "u1",
+          "u2"
+        ],
+        "round1": {
+          "u0": {
+            "pho": "WANT"
+          },
+          "u1": {
+            "pho": "WANT"
+          },
+          "u2": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "u0": {
+            "pho": "KEEP"
+          },
+          "u1": {
+            "pho": "KEEP"
+          },
+          "u2": {
+            "pho": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_READY",
+        "matchTier": "CONSENSUS",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_READY",
+        "matchTier": "CONSENSUS",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/odd-minority",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "roster": [
+          "u0",
+          "u1",
+          "u2"
+        ],
+        "round1": {
+          "u0": {
+            "pho": "WANT"
+          },
+          "u1": {
+            "pho": "OK"
+          },
+          "u2": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "u0": {
+            "pho": "KEEP"
+          },
+          "u1": {
+            "pho": "KEEP"
+          },
+          "u2": {
+            "pho": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_READY",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_READY",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/all-ok",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "roster": [
+          "u0",
+          "u1"
+        ],
+        "round1": {
+          "u0": {
+            "pho": "OK"
+          },
+          "u1": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "u0": {
+            "pho": "KEEP"
+          },
+          "u1": {
+            "pho": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_READY",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_READY",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/score-spec-example",
+      "input": {
+        "pool": [
+          "pho",
+          "com",
+          "lau"
+        ],
+        "round": 2,
+        "roster": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ],
+        "round1": {
+          "a": {
+            "com": "WANT",
+            "lau": "WANT",
+            "pho": "WANT"
+          },
+          "b": {
+            "com": "WANT",
+            "lau": "WANT",
+            "pho": "WANT"
+          },
+          "c": {
+            "com": "WANT",
+            "lau": "WANT",
+            "pho": "OK"
+          },
+          "d": {
+            "com": "OK",
+            "lau": "NO",
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "com": "KEEP",
+            "pho": "KEEP"
+          },
+          "b": {
+            "com": "KEEP",
+            "pho": "KEEP"
+          },
+          "c": {
+            "com": "KEEP",
+            "pho": "KEEP"
+          },
+          "d": {
+            "com": "KEEP",
+            "pho": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_READY",
+        "matchTier": "CONSENSUS",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "com"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_READY",
+        "matchTier": "CONSENSUS",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "com"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/removed-high-score",
+      "input": {
+        "pool": [
+          "pho",
+          "com",
+          "lau"
+        ],
+        "round": 2,
+        "roster": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ],
+        "round1": {
+          "a": {
+            "com": "WANT",
+            "lau": "WANT",
+            "pho": "WANT"
+          },
+          "b": {
+            "com": "WANT",
+            "lau": "WANT",
+            "pho": "WANT"
+          },
+          "c": {
+            "com": "WANT",
+            "lau": "WANT",
+            "pho": "OK"
+          },
+          "d": {
+            "com": "OK",
+            "lau": "NO",
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "com": "REMOVE",
+            "pho": "KEEP"
+          },
+          "b": {
+            "com": "KEEP",
+            "pho": "KEEP"
+          },
+          "c": {
+            "com": "KEEP",
+            "pho": "KEEP"
+          },
+          "d": {
+            "com": "KEEP",
+            "pho": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_READY",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_READY",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/variant-choice-ids",
+      "input": {
+        "pool": [
+          "pho:bo",
+          "pho:ga"
+        ],
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho:bo": "WANT",
+            "pho:ga": "OK"
+          },
+          "b": {
+            "pho:bo": "OK",
+            "pho:ga": "WANT"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "ROUND_2",
+        "candidateIds": [
+          "pho:bo",
+          "pho:ga"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "ROUND_2",
+        "candidateIds": [
+          "pho:bo",
+          "pho:ga"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/wrong-policy",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "policyVersion": "decision-v1"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/policyVersion"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/policyVersion"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/third-round",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 3,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/duplicate-roster",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "roster": [
+          "a",
+          "a"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/roster"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/roster"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/duplicate-pool",
+      "input": {
+        "pool": [
+          "pho",
+          "pho"
+        ],
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/pool"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/pool"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/blank-id",
+      "input": {
+        "pool": [
+          " "
+        ],
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/pool"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/pool"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/empty-roster",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "roster": [],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/roster"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/roster"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/empty-pool",
+      "input": {
+        "pool": [],
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/pool"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/pool"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/null-round1",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": null,
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/array-matrix",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": [],
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/null-input",
+      "input": null,
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": ""
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": ""
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/missing-round",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/missing-round1",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/unknown-member",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          },
+          "c": {
+            "pho": "OK"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "NOT_MEMBER",
+            "path": "/round1/c"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "NOT_MEMBER",
+            "path": "/round1/c"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/unknown-dish",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "bun": "OK",
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_DISH",
+            "path": "/round1/a/bun"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_DISH",
+            "path": "/round1/a/bun"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/invalid-vote",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "LIKE"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1/a/pho"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1/a/pho"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/null-vote",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": null
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1/a/pho"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1/a/pho"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/null-ballot",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": null,
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1/a"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round1/a"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/unexpected-round3",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round3": {},
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round3"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round3"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/round2-in-round1",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round2": {},
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round2"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round2"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/round2-null",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round2": null,
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round2"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round2"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/round2-invalid-vote",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "OK"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round2/a/pho"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round2/a/pho"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/round2-vetoed-dish",
+      "input": {
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "round": 2,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "bun": "NO",
+            "pho": "WANT"
+          },
+          "b": {
+            "bun": "WANT",
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "bun": "KEEP",
+            "pho": "KEEP"
+          },
+          "b": {
+            "pho": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_DISH",
+            "path": "/round2/a/bun"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_DISH",
+            "path": "/round2/a/bun"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/round2-after-unanimous",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "WANT"
+          }
+        },
+        "round2": {},
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "cases/round2-after-empty",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 2,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "NO"
+          },
+          "b": {
+            "pho": "WANT"
+          }
+        },
+        "round2": {},
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "roster-cases/roster-2-unanimous",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "roster": [
+          "m1",
+          "m2"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_READY",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_READY",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "roster-cases/roster-2-unset",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "roster": [
+          "m1",
+          "m2"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "UNSET",
+            "choice-b": "NO"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "roster-cases/roster-2-tie",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "roster": [
+          "m1",
+          "m2"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_READY",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_READY",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "roster-cases/roster-2-all-removed",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "roster": [
+          "m1",
+          "m2"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "REMOVE",
+            "choice-b": "REMOVE"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "roster-cases/roster-3-unanimous",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "roster": [
+          "m1",
+          "m2",
+          "m3"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_READY",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_READY",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "roster-cases/roster-3-unset",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "roster": [
+          "m1",
+          "m2",
+          "m3"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "UNSET",
+            "choice-b": "NO"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "roster-cases/roster-3-tie",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "roster": [
+          "m1",
+          "m2",
+          "m3"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_READY",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_READY",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "roster-cases/roster-3-all-removed",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "roster": [
+          "m1",
+          "m2",
+          "m3"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "REMOVE",
+            "choice-b": "REMOVE"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "roster-cases/roster-4-unanimous",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_READY",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_READY",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "roster-cases/roster-4-unset",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "UNSET",
+            "choice-b": "NO"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "roster-cases/roster-4-tie",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_READY",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_READY",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "roster-cases/roster-4-all-removed",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "REMOVE",
+            "choice-b": "REMOVE"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "roster-cases/roster-5-unanimous",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_READY",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_READY",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "roster-cases/roster-5-unset",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "UNSET",
+            "choice-b": "NO"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "roster-cases/roster-5-tie",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_READY",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_READY",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "roster-cases/roster-5-all-removed",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "REMOVE",
+            "choice-b": "REMOVE"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "roster-cases/roster-6-unanimous",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m6": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_READY",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_READY",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "roster-cases/roster-6-unset",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m6": {
+            "choice-a": "UNSET",
+            "choice-b": "NO"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "roster-cases/roster-6-tie",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m6": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m6": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_READY",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_READY",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "roster-cases/roster-6-all-removed",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m6": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m6": {
+            "choice-a": "REMOVE",
+            "choice-b": "REMOVE"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "roster-cases/roster-7-unanimous",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m6": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m7": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_READY",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_READY",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "roster-cases/roster-7-unset",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m6": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m7": {
+            "choice-a": "UNSET",
+            "choice-b": "NO"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "roster-cases/roster-7-tie",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m6": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m7": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m6": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m7": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_READY",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_READY",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "roster-cases/roster-7-all-removed",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m6": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m7": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m6": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m7": {
+            "choice-a": "REMOVE",
+            "choice-b": "REMOVE"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "roster-cases/roster-8-unanimous",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7",
+          "m8"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m6": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m7": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m8": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_READY",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_READY",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "roster-cases/roster-8-unset",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 1,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7",
+          "m8"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m6": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m7": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m8": {
+            "choice-a": "UNSET",
+            "choice-b": "NO"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "roster-cases/roster-8-tie",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7",
+          "m8"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m6": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m7": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m8": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m6": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m7": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m8": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_READY",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_READY",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "roster-cases/roster-8-all-removed",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "round": 2,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7",
+          "m8"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m6": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m7": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m8": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m6": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m7": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m8": {
+            "choice-a": "REMOVE",
+            "choice-b": "REMOVE"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-unanimous",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "seed": "00000000",
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "WANT"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "pho",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "pho",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-multiple-unanimous",
+      "input": {
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "seed": "00000000",
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "bun": "WANT",
+            "pho": "WANT"
+          },
+          "b": {
+            "bun": "WANT",
+            "pho": "WANT"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "bun",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "bun",
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "bun",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "bun",
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-single-fallback",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "seed": "00000000",
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "ROUND_2",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "ROUND_2",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-fallback-veto",
+      "input": {
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "seed": "00000000",
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "bun": "NO",
+            "pho": "WANT"
+          },
+          "b": {
+            "bun": "WANT",
+            "pho": "OK"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "ROUND_2",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "ROUND_2",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-empty-intersection",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "seed": "00000000",
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "NO"
+          },
+          "b": {
+            "pho": "WANT"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "EMPTY_INTERSECTION",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "EMPTY_INTERSECTION",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-missing-member",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "seed": "00000000",
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-unset-round1",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "seed": "00000000",
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "UNSET"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-single-confirmed",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "seed": "00000000",
+        "round": 2,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "KEEP"
+          },
+          "b": {
+            "pho": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "pho",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "pho",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-round2-not-submitted",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "seed": "00000000",
+        "round": 2,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 2,
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 2,
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-unset-round2",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "seed": "00000000",
+        "round": 2,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "KEEP"
+          },
+          "b": {
+            "pho": "UNSET"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 2,
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 2,
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-all-removed",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "seed": "00000000",
+        "round": 2,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "pho": "KEEP"
+          },
+          "b": {
+            "pho": "REMOVE"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-tie",
+      "input": {
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "seed": "00000000",
+        "round": 2,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "bun": "OK",
+            "pho": "WANT"
+          },
+          "b": {
+            "bun": "WANT",
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "bun": "KEEP",
+            "pho": "KEEP"
+          },
+          "b": {
+            "bun": "KEEP",
+            "pho": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "bun",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "bun",
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "bun",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "bun",
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-even-majority",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "seed": "00000000",
+        "round": 2,
+        "roster": [
+          "u0",
+          "u1",
+          "u2",
+          "u3"
+        ],
+        "round1": {
+          "u0": {
+            "pho": "WANT"
+          },
+          "u1": {
+            "pho": "WANT"
+          },
+          "u2": {
+            "pho": "WANT"
+          },
+          "u3": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "u0": {
+            "pho": "KEEP"
+          },
+          "u1": {
+            "pho": "KEEP"
+          },
+          "u2": {
+            "pho": "KEEP"
+          },
+          "u3": {
+            "pho": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "pho",
+        "matchTier": "CONSENSUS",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "pho",
+        "matchTier": "CONSENSUS",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-even-half",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "seed": "00000000",
+        "round": 2,
+        "roster": [
+          "u0",
+          "u1",
+          "u2",
+          "u3"
+        ],
+        "round1": {
+          "u0": {
+            "pho": "WANT"
+          },
+          "u1": {
+            "pho": "WANT"
+          },
+          "u2": {
+            "pho": "OK"
+          },
+          "u3": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "u0": {
+            "pho": "KEEP"
+          },
+          "u1": {
+            "pho": "KEEP"
+          },
+          "u2": {
+            "pho": "KEEP"
+          },
+          "u3": {
+            "pho": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "pho",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "pho",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-odd-majority",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "seed": "00000000",
+        "round": 2,
+        "roster": [
+          "u0",
+          "u1",
+          "u2"
+        ],
+        "round1": {
+          "u0": {
+            "pho": "WANT"
+          },
+          "u1": {
+            "pho": "WANT"
+          },
+          "u2": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "u0": {
+            "pho": "KEEP"
+          },
+          "u1": {
+            "pho": "KEEP"
+          },
+          "u2": {
+            "pho": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "pho",
+        "matchTier": "CONSENSUS",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "pho",
+        "matchTier": "CONSENSUS",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-odd-minority",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "seed": "00000000",
+        "round": 2,
+        "roster": [
+          "u0",
+          "u1",
+          "u2"
+        ],
+        "round1": {
+          "u0": {
+            "pho": "WANT"
+          },
+          "u1": {
+            "pho": "OK"
+          },
+          "u2": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "u0": {
+            "pho": "KEEP"
+          },
+          "u1": {
+            "pho": "KEEP"
+          },
+          "u2": {
+            "pho": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "pho",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "pho",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-all-ok",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "seed": "00000000",
+        "round": 2,
+        "roster": [
+          "u0",
+          "u1"
+        ],
+        "round1": {
+          "u0": {
+            "pho": "OK"
+          },
+          "u1": {
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "u0": {
+            "pho": "KEEP"
+          },
+          "u1": {
+            "pho": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "pho",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "pho",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-removed-high-score",
+      "input": {
+        "pool": [
+          "pho",
+          "com",
+          "lau"
+        ],
+        "seed": "00000000",
+        "round": 2,
+        "roster": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ],
+        "round1": {
+          "a": {
+            "com": "WANT",
+            "lau": "WANT",
+            "pho": "WANT"
+          },
+          "b": {
+            "com": "WANT",
+            "lau": "WANT",
+            "pho": "WANT"
+          },
+          "c": {
+            "com": "WANT",
+            "lau": "WANT",
+            "pho": "OK"
+          },
+          "d": {
+            "com": "OK",
+            "lau": "NO",
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "com": "REMOVE",
+            "pho": "KEEP"
+          },
+          "b": {
+            "com": "KEEP",
+            "pho": "KEEP"
+          },
+          "c": {
+            "com": "KEEP",
+            "pho": "KEEP"
+          },
+          "d": {
+            "com": "KEEP",
+            "pho": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "pho",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "pho",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-round2-vetoed-dish",
+      "input": {
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "seed": "00000000",
+        "round": 2,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "bun": "NO",
+            "pho": "WANT"
+          },
+          "b": {
+            "bun": "WANT",
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "bun": "KEEP",
+            "pho": "KEEP"
+          },
+          "b": {
+            "pho": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_DISH",
+            "path": "/round2/a/bun"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_DISH",
+            "path": "/round2/a/bun"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-third-round",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "seed": "00000000",
+        "round": 3,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "OK"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/round"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seed-one-multiple-unanimous",
+      "input": {
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "seed": "00000001",
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "bun": "WANT",
+            "pho": "WANT"
+          },
+          "b": {
+            "bun": "WANT",
+            "pho": "WANT"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "pho",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "bun",
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "pho",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "bun",
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seed-one-tie",
+      "input": {
+        "pool": [
+          "pho",
+          "bun"
+        ],
+        "seed": "00000001",
+        "round": 2,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "bun": "OK",
+            "pho": "WANT"
+          },
+          "b": {
+            "bun": "WANT",
+            "pho": "OK"
+          }
+        },
+        "round2": {
+          "a": {
+            "bun": "KEEP",
+            "pho": "KEEP"
+          },
+          "b": {
+            "bun": "KEEP",
+            "pho": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "pho",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "bun",
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "pho",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "bun",
+          "pho"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/bad-seed-22",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "seed": "",
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "WANT"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/seed"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/seed"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/bad-seed-23",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "seed": "1",
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "WANT"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/seed"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/seed"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/bad-seed-24",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "seed": "FFFFFFFF",
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "WANT"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/seed"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/seed"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/bad-seed-25",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "seed": "000000000",
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "WANT"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/seed"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/seed"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/bad-seed-26",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "seed": null,
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "WANT"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/seed"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/seed"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/bad-seed-27",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "seed": 0,
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "WANT"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/seed"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/seed"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/missing-seed",
+      "input": {
+        "pool": [
+          "pho"
+        ],
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "pho": "WANT"
+          },
+          "b": {
+            "pho": "WANT"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/seed"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "issues": [
+          {
+            "code": "INVALID_INPUT",
+            "path": "/seed"
+          }
+        ],
+        "status": "INVALID_INPUT",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/three-way-331da083",
+      "input": {
+        "pool": [
+          "z",
+          "x",
+          "y"
+        ],
+        "seed": "331da083",
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "x": "WANT",
+            "y": "WANT",
+            "z": "WANT"
+          },
+          "b": {
+            "x": "WANT",
+            "y": "WANT",
+            "z": "WANT"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "x",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "x",
+          "y",
+          "z"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "x",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "x",
+          "y",
+          "z"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/three-way-ffffffff",
+      "input": {
+        "pool": [
+          "z",
+          "x",
+          "y"
+        ],
+        "seed": "ffffffff",
+        "round": 1,
+        "roster": [
+          "a",
+          "b"
+        ],
+        "round1": {
+          "a": {
+            "x": "WANT",
+            "y": "WANT",
+            "z": "WANT"
+          },
+          "b": {
+            "x": "WANT",
+            "y": "WANT",
+            "z": "WANT"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "y",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "x",
+          "y",
+          "z"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "y",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "x",
+          "y",
+          "z"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-roster-2-unanimous",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "seed": "00000000",
+        "round": 1,
+        "roster": [
+          "m1",
+          "m2"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "choice-a",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "choice-a",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-roster-2-unset",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "seed": "00000000",
+        "round": 1,
+        "roster": [
+          "m1",
+          "m2"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "UNSET",
+            "choice-b": "NO"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-roster-2-tie",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "seed": "00000000",
+        "round": 2,
+        "roster": [
+          "m1",
+          "m2"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "choice-a",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "choice-a",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-roster-2-all-removed",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "seed": "00000000",
+        "round": 2,
+        "roster": [
+          "m1",
+          "m2"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "REMOVE",
+            "choice-b": "REMOVE"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-roster-3-unanimous",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "seed": "00000000",
+        "round": 1,
+        "roster": [
+          "m1",
+          "m2",
+          "m3"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "choice-a",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "choice-a",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-roster-3-unset",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "seed": "00000000",
+        "round": 1,
+        "roster": [
+          "m1",
+          "m2",
+          "m3"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "UNSET",
+            "choice-b": "NO"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-roster-3-tie",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "seed": "00000000",
+        "round": 2,
+        "roster": [
+          "m1",
+          "m2",
+          "m3"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "choice-a",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "choice-a",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-roster-3-all-removed",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "seed": "00000000",
+        "round": 2,
+        "roster": [
+          "m1",
+          "m2",
+          "m3"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "REMOVE",
+            "choice-b": "REMOVE"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-roster-4-unanimous",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "seed": "00000000",
+        "round": 1,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "choice-a",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "choice-a",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-roster-4-unset",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "seed": "00000000",
+        "round": 1,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "UNSET",
+            "choice-b": "NO"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-roster-4-tie",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "seed": "00000000",
+        "round": 2,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "choice-a",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "choice-a",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-roster-4-all-removed",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "seed": "00000000",
+        "round": 2,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "REMOVE",
+            "choice-b": "REMOVE"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-roster-5-unanimous",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "seed": "00000000",
+        "round": 1,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "choice-a",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "choice-a",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-roster-5-unset",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "seed": "00000000",
+        "round": 1,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "UNSET",
+            "choice-b": "NO"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-roster-5-tie",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "seed": "00000000",
+        "round": 2,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "choice-a",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "choice-a",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-roster-5-all-removed",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "seed": "00000000",
+        "round": 2,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "REMOVE",
+            "choice-b": "REMOVE"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-roster-6-unanimous",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "seed": "00000000",
+        "round": 1,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m6": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "choice-a",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "choice-a",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-roster-6-unset",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "seed": "00000000",
+        "round": 1,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m6": {
+            "choice-a": "UNSET",
+            "choice-b": "NO"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-roster-6-tie",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "seed": "00000000",
+        "round": 2,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m6": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m6": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "choice-a",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "choice-a",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-roster-6-all-removed",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "seed": "00000000",
+        "round": 2,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m6": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m6": {
+            "choice-a": "REMOVE",
+            "choice-b": "REMOVE"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-roster-7-unanimous",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "seed": "00000000",
+        "round": 1,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m6": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m7": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "choice-a",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "choice-a",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-roster-7-unset",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "seed": "00000000",
+        "round": 1,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m6": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m7": {
+            "choice-a": "UNSET",
+            "choice-b": "NO"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-roster-7-tie",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "seed": "00000000",
+        "round": 2,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m6": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m7": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m6": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m7": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "choice-a",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "choice-a",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-roster-7-all-removed",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "seed": "00000000",
+        "round": 2,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m6": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m7": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m6": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m7": {
+            "choice-a": "REMOVE",
+            "choice-b": "REMOVE"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-roster-8-unanimous",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "seed": "00000000",
+        "round": 1,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7",
+          "m8"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m6": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m7": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m8": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "choice-a",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "choice-a",
+        "matchTier": "PERFECT",
+        "reasonCode": "UNANIMOUS_WANT",
+        "candidateIds": [
+          "choice-a"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-roster-8-unset",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "seed": "00000000",
+        "round": 1,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7",
+          "m8"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m2": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m3": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m4": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m5": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m6": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m7": {
+            "choice-a": "WANT",
+            "choice-b": "NO"
+          },
+          "m8": {
+            "choice-a": "UNSET",
+            "choice-b": "NO"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "WAITING",
+        "reasonCode": "INCOMPLETE_BALLOT",
+        "candidateIds": [],
+        "waitingRound": 1,
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-roster-8-tie",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "seed": "00000000",
+        "round": 2,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7",
+          "m8"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m6": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m7": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m8": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m6": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m7": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m8": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "choice-a",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "DECISION_SELECTED",
+        "winnerId": "choice-a",
+        "matchTier": "COMPROMISE",
+        "reasonCode": "ACCEPTABLE_FINAL",
+        "candidateIds": [
+          "choice-a",
+          "choice-b"
+        ],
+        "policyVersion": "decision-v2"
+      }
+    },
+    {
+      "id": "seeded-cases/seeded-roster-8-all-removed",
+      "input": {
+        "pool": [
+          "choice-a",
+          "choice-b"
+        ],
+        "seed": "00000000",
+        "round": 2,
+        "roster": [
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7",
+          "m8"
+        ],
+        "round1": {
+          "m1": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m2": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m3": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m4": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m5": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m6": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m7": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          },
+          "m8": {
+            "choice-a": "OK",
+            "choice-b": "OK"
+          }
+        },
+        "round2": {
+          "m1": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m2": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m3": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m4": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m5": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m6": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m7": {
+            "choice-a": "KEEP",
+            "choice-b": "KEEP"
+          },
+          "m8": {
+            "choice-a": "REMOVE",
+            "choice-b": "REMOVE"
+          }
+        },
+        "policyVersion": "decision-v2"
+      },
+      "actual": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      },
+      "expected": {
+        "status": "NO_CONSENSUS",
+        "matchTier": "NO_CONSENSUS",
+        "reasonCode": "ALL_REMOVED",
+        "candidateIds": [],
+        "policyVersion": "decision-v2"
+      }
+    }
+  ]
+}

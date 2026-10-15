@@ -360,6 +360,9 @@ def main():
         return 2
     if base:
         print(f'Target snapshot: {args.base_ref} = {base.ref} (local ref; freshness not verified)')
+    if project is not None:
+        for task_id, card_id in sorted(project.config.get('approval_aliases', {}).items()):
+            print(f'Baseline approval mapping: {task_id} -> Project {card_id} / issue #{project.config["issues"][task_id]} (owner-pinned; artifacts remain separate)')
     for tid in ([args.task] if args.task else sorted(records)):
         state, blocked = readiness(src, records, tid, args.gate, base, project)
         m = records[tid]['meta']

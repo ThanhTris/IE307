@@ -1,0 +1,22 @@
+meta {
+  name: 11 Private token
+  type: http
+  seq: 11
+}
+
+get {
+  url: {{baseUrl}}/rest/v1/devices?select=push_token
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{memberToken}}
+}
+
+tests {
+  test('Private token', function () {
+    expect(res.getStatus()).to.equal(403);
+    expect(res.getBody().code).to.equal("42501");
+  });
+}
