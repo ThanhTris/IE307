@@ -100,6 +100,59 @@ async function main() {
   await check('missing auth is rejected', async () => { const response = await request('register_push_device', null, { requestId: randomUUID(), device_id: 'gm23-no-auth', token: 'ExponentPushToken[synthetic-no-auth]', permission: 'granted' }); failure(response, 401, 'AUTH_REQUIRED'); return { status: response.status }; });
   const deviceId = 'gm23-android-device';
   await check('granted registration is idempotent', async () => { const requestId = `gm23-${randomUUID()}`; const body = { requestId, device_id: deviceId, token: 'ExponentPushToken[synthetic-gm23-token]', permission: 'granted' }; const first = success(await request('register_push_device', recipient, body)); const replay = success(await request('register_push_device', recipient, body)); assert.deepEqual(replay, first); failure(await request('register_push_device', recipient, { ...body, token: 'ExponentPushToken[changed-token]' }), 409, 'REQUEST_ID_REUSED'); return { status: 200, replay: true }; });
+  await check('sender SQL claim complete and receipt path', async () => {
+    const sql = `begin;
+      do $fixture$
+      declare dataset_key uuid:=gen_random_uuid(); coverage_key uuid:=gen_random_uuid(); anchor_key uuid:=gen_random_uuid(); room_key uuid:=gen_random_uuid(); friend_key uuid:=gen_random_uuid(); invitation_key uuid:=gen_random_uuid(); event_key uuid:=gen_random_uuid(); v_delivery_id uuid:=gen_random_uuid(); device_row_id uuid; session_key uuid; pending_before integer; pending_after integer; claim jsonb; item jsonb; completed jsonb; receipt_claim jsonb; receipt_item jsonb; recorded jsonb;
+      begin
+        select d.id into device_row_id from public.devices d where d.user_id='${guests[1].user.id}' and d.device_key='${deviceId}';
+        if device_row_id is null then raise exception 'sender fixture device missing'; end if;
+        select d.session_id into session_key from public.devices d where d.id=device_row_id;
+        insert into public.dataset_versions(id,dataset_version,contract_version,status,checksum,version,review_status,field_sources,entered_by)
+          values(dataset_key,'0.0.0','1.1.0','draft',repeat('a',64),1,'draft','{}','gm23');
+        insert into public.coverage_areas(area_id,name,boundary,dataset_version,version,review_status,field_sources,entered_by)
+          values(coverage_key,'GM23 coverage','{"type":"Polygon","coordinates":[[[0,0],[1,0],[1,1],[0,0]]]}','0.0.0',1,'draft','{}','gm23');
+        insert into public.public_anchors(anchor_id,name,lat,lng,coverage_id,is_public,version,review_status,field_sources,entered_by)
+          values(anchor_key,'GM23 anchor',0,0,coverage_key,true,1,'draft','{}','gm23');
+        insert into public.rooms(id,code,host_user_id,state,created_at,updated_at,expires_at,meal_slot,time_hint,budget,avoid_recent,
+          anchor_id,coverage_id,radius_m,desired_at,timezone,service_mode,catalogue_version,dataset_version,eligibility_version,
+          context_version,pool_version,policy_version,pool_seed,roster_user_ids,consent_snapshot,evaluated_at,locked_at,version,anchor_display_name)
+          values(room_key,'GM23A2','${guests[0].user.id}','LOBBY',clock_timestamp(),clock_timestamp(),clock_timestamp()+interval '1 hour','lunch',null,null,false,
+            anchor_key,coverage_key,1000,clock_timestamp()+interval '30 minutes','UTC','dine_in','0.0.0','0.0.0','gm18-api-1.0.0',1,1,'decision-v2','gm23-seed',array['${guests[0].user.id}'::uuid],jsonb_build_array(jsonb_build_object('userId','${guests[0].user.id}','historyConsent',false)),null,null,1,'GM23 anchor');
+        insert into public.friends(id,low_user_id,high_user_id,accepted_at,version)
+          values(friend_key,least('${guests[0].user.id}'::uuid,'${guests[1].user.id}'::uuid),greatest('${guests[0].user.id}'::uuid,'${guests[1].user.id}'::uuid),clock_timestamp(),1);
+        insert into public.room_invitations(id,room_id,friend_id,sender_user_id,recipient_user_id,state,event_id,created_at,expires_at,version)
+          values(invitation_key,room_key,friend_key,'${guests[0].user.id}','${guests[1].user.id}','pending',event_key,clock_timestamp(),clock_timestamp()+interval '1 hour',1);
+        insert into public.events(id,kind,room_id,invitation_id,result_id,recipient_user_ids,dedupe_key,created_at,expires_at,version)
+          values(event_key,'ROOM_INVITED',room_key,invitation_key,null,array['${guests[1].user.id}'::uuid],'gm23-sender:'||event_key,clock_timestamp(),clock_timestamp()+interval '1 hour',1);
+        select count(*) into pending_before from public.deliveries where event_id=event_key and state='pending';
+        select id into v_delivery_id from public.deliveries where event_id=event_key and state='pending' limit 1;
+        if pending_before<>1 then raise exception 'sender event delivery missing: %',pending_before; end if;
+        perform set_config('request.jwt.claim.role','service_role',true);
+        perform set_config('request.jwt.claim.sub','${guests[1].user.id}',true);
+        perform set_config('request.jwt.claims',jsonb_build_object('sub','${guests[1].user.id}','session_id',session_key)::text,true);
+        perform public.register_push_device('gm23-reregister-'||event_key::text,'${deviceId}','ExponentPushToken[synthetic-gm23-token]','granted');
+        select count(*) into pending_after from public.deliveries where event_id=event_key and state='pending';
+        if pending_after<>1 then raise exception 'sender re-register expired pending delivery'; end if;
+        perform set_config('request.jwt.claim.role','service_role',true);
+        claim:=public.claim_push_deliveries(1);
+        if jsonb_array_length(claim)<>1 then raise exception 'sender claim failed: %',claim; end if;
+        item:=claim->0;
+        completed:=public.complete_push_delivery((item->>'deliveryId')::uuid,(item->>'leaseId')::uuid,'gm23-ticket');
+        if completed->>'ok' is distinct from 'true' then raise exception 'sender complete failed: %',completed; end if;
+        update gm23_private.delivery_meta set provider_ticket_at=clock_timestamp()-interval '16 minutes' where gm23_private.delivery_meta.delivery_id=v_delivery_id;
+        receipt_claim:=public.claim_push_receipts(1);
+        if jsonb_array_length(receipt_claim)<>1 then raise exception 'sender receipt claim failed: %',receipt_claim; end if;
+        receipt_item:=receipt_claim->0;
+        recorded:=public.record_push_receipt((receipt_item->>'deliveryId')::uuid,'gm23-receipt','ok');
+        if recorded->>'ok' is distinct from 'true' then raise exception 'sender receipt record failed: %',recorded; end if;
+      end $fixture$;
+      commit;
+      select 'sender_sql_ok';`;
+    const output = await fixture('sql', sql);
+    assert.match(output, /sender_sql_ok/);
+    return { status: 200, claim: true, complete: true, receipt: true };
+  });
   await check('denied permission does not retain token', async () => { success(await request('register_push_device', recipient, { requestId: randomUUID(), device_id: deviceId, token: 'ignored-token', permission: 'denied' })); const rows = (await fixture('sql', `select active::text||'|'||permission||'|'||(push_token is null)::text from public.devices where user_id='${guests[1].user.id}' and device_key='${deviceId}';`)).trim(); assert.equal(rows, 'false|denied|true'); return { status: 200, deviceProjection: 'inactive/denied/no-token' }; });
   await check('unregister clears token and is repeat-safe', async () => { const body = { requestId: randomUUID(), device_id: deviceId }; success(await request('unregister_push_device', recipient, body)); success(await request('unregister_push_device', recipient, { ...body, requestId: randomUUID() })); const rows = (await fixture('sql', `select active::text||'|'||(push_token is null)::text from public.devices where user_id='${guests[1].user.id}' and device_key='${deviceId}';`)).trim(); assert.equal(rows, 'false|true'); return { status: 200, cleaned: true }; });
   await check('client cannot read push token directly', async () => { const response = await fetch(`${upstream}/devices?select=push_token`, { headers: { authorization: `Bearer ${recipient}`, apikey: anonKey } }); assert.notEqual(response.status, 200); return { status: response.status }; });

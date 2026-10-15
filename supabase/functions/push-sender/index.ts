@@ -16,6 +16,7 @@ type Delivery = {
   resultId?: string | null;
   token: string;
   expiresAt: string;
+  leaseUntil?: string;
   attempt: number;
 };
 
@@ -82,11 +83,18 @@ async function providerSend(messages: Record<string, unknown>[], fetcher = fetch
   });
 }
 
+const CLAIM_BATCH = 8; // 8 x 15s provider timeout fits inside the 120s lease with headroom.
+
 export async function sendBatch(deliveries: Delivery[], fetcher = fetch): Promise<{ sent: number; failed: number }> {
   let sent = 0;
   let failed = 0;
   for (const delivery of deliveries.slice(0, MAX_BATCH)) {
     try {
+      const leaseDeadline = delivery.leaseUntil ? Date.parse(delivery.leaseUntil) : Number.NaN;
+      if (Number.isFinite(leaseDeadline) && Date.now() + REQUEST_TIMEOUT_MS >= leaseDeadline) {
+        failed += 1;
+        continue;
+      }
       const response = await providerSend([notification(delivery)], fetcher);
       const retryAfter = Number(response.headers.get('retry-after') ?? 0) || null;
       const payload = await response.json().catch(() => ({}));
@@ -96,12 +104,22 @@ export async function sendBatch(deliveries: Delivery[], fetcher = fetch): Promis
         continue;
       }
       const ticket = Array.isArray(payload?.data) ? payload.data[0] : payload?.data;
+      const ticketError = typeof ticket?.details?.error === 'string' ? ticket.details.error : null;
+      if (ticket?.status === 'error' || ticketError) {
+        await rpc('fail_push_delivery', { delivery_id: delivery.deliveryId, lease_id: delivery.leaseId, reason: ticketError ?? 'PROVIDER_TICKET_ERROR', retry_after_seconds: null });
+        failed += 1;
+        continue;
+      }
       if (!ticket?.id) {
         await rpc('fail_push_delivery', { delivery_id: delivery.deliveryId, lease_id: delivery.leaseId, reason: 'INVALID_PROVIDER_RESPONSE', retry_after_seconds: null });
         failed += 1;
         continue;
       }
-      await rpc('complete_push_delivery', { delivery_id: delivery.deliveryId, lease_id: delivery.leaseId, ticket_id: ticket.id });
+      const completed = await rpc<RpcResult<unknown>>('complete_push_delivery', { delivery_id: delivery.deliveryId, lease_id: delivery.leaseId, ticket_id: ticket.id });
+      if (!completed?.ok) {
+        failed += 1;
+        continue;
+      }
       sent += 1;
     } catch (error) {
       // A timeout may have reached Expo. The database retry budget prevents an
@@ -117,7 +135,7 @@ export async function runOnce(): Promise<Record<string, unknown>> {
   // Missing credentials is reported before claim, so attempts and leases are
   // untouched and the inbox remains usable.
   supabaseConfig();
-  const claimed = await rpc<Delivery[]>('claim_push_deliveries', { batch_size: MAX_BATCH });
+  const claimed = await rpc<Delivery[]>('claim_push_deliveries', { batch_size: CLAIM_BATCH });
   const result = await sendBatch(Array.isArray(claimed) ? claimed : []);
   const receipts = await pollReceipts();
   return { ok: true, claimed: Array.isArray(claimed) ? claimed.length : 0, ...result, receipts };
@@ -169,4 +187,4 @@ export async function handler(request: Request): Promise<Response> {
 
 if (import.meta.main) Deno.serve(handler);
 
-export { EXPO_RECEIPTS_URL, MAX_BATCH, REQUEST_TIMEOUT_MS };
+export { CLAIM_BATCH, EXPO_RECEIPTS_URL, MAX_BATCH, REQUEST_TIMEOUT_MS };

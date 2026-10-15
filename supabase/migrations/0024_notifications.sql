@@ -143,7 +143,7 @@ end $$;
 create or replace function public.register_push_device("requestId" text, device_id text, token text, permission text)
 returns jsonb language plpgsql security definer set search_path = pg_catalog, public, gm19_private, gm23_private as $$
 declare caller uuid:=gm19_private.require_auth(); req uuid; session_key uuid; normalized text; active_value boolean; stored_token text;
-  payload jsonb; payload_key text; ack jsonb; current public.devices%rowtype; other public.devices%rowtype; new_generation bigint; wire jsonb;
+  payload jsonb; payload_key text; ack jsonb; current public.devices%rowtype; other public.devices%rowtype; new_generation bigint; wire jsonb; unchanged boolean;
 begin
   begin req:=gm19_private.request_uuid("requestId"); session_key:=gm23_private.jwt_session(); exception when others then return gm23_private.error('INVALID_INPUT',400); end;
   if device_id is null or length(btrim(device_id))<1 or length(btrim(device_id))>256 or device_id~'[[:cntrl:]]' then return gm23_private.error('INVALID_INPUT',400,null,req); end if;
@@ -160,18 +160,25 @@ begin
   if stored_token is not null then
     for other in select * from public.devices where push_token=stored_token and active
       and not(user_id=caller and device_key=device_id) for update loop
-      update public.deliveries set state='expired',version=version+1
+      update public.deliveries set state='expired',version=public.deliveries.version+1
         where public.deliveries.device_id=other.id and public.deliveries.state='pending';
       update public.devices set active=false,push_token=null,permission='unknown',
-        registration_generation=registration_generation+1,version=version+1 where id=other.id;
+        registration_generation=public.devices.registration_generation+1,version=public.devices.version+1 where public.devices.id=other.id;
     end loop;
   end if;
   select * into current from public.devices where user_id=caller and device_key=device_id for update;
   if found then
-    new_generation:=current.registration_generation+1;
-    update public.deliveries set state='expired',version=version+1 where public.deliveries.device_id=current.id and public.deliveries.state='pending';
+    unchanged:=current.active is not distinct from active_value
+      and current.push_token is not distinct from stored_token
+      and current.permission is not distinct from normalized
+      and current.session_id is not distinct from session_key;
+    new_generation:=case when unchanged then current.registration_generation else current.registration_generation+1 end;
+    if not unchanged then
+       update public.deliveries set state='expired',version=public.deliveries.version+1
+        where public.deliveries.device_id=current.id and public.deliveries.state='pending';
+    end if;
     update public.devices set session_id=session_key,push_token=stored_token,permission=normalized,active=active_value,
-      registration_generation=new_generation,last_seen_at=clock_timestamp(),version=version+1 where id=current.id;
+      registration_generation=new_generation,last_seen_at=clock_timestamp(),version=public.devices.version+1 where public.devices.id=current.id;
   else
     new_generation:=1;
     insert into public.devices(id,user_id,device_key,platform,push_token,permission,active,created_at,last_seen_at,version,session_id,registration_generation)
@@ -194,9 +201,9 @@ begin
   if not gm19_private.allow_call('unregister_push_device',30) then return gm23_private.error('RATE_LIMITED',429,null,req); end if;
   select * into current from public.devices where user_id=caller and device_key=device_id for update;
   if found then
-    update public.deliveries set state='expired',version=version+1 where public.deliveries.device_id=current.id and public.deliveries.state='pending';
+    update public.deliveries set state='expired',version=public.deliveries.version+1 where public.deliveries.device_id=current.id and public.deliveries.state='pending';
     update public.devices set active=false,push_token=null,permission='unknown',session_id=null,
-      registration_generation=registration_generation+1,last_seen_at=clock_timestamp(),version=version+1 where id=current.id;
+      registration_generation=public.devices.registration_generation+1,last_seen_at=clock_timestamp(),version=public.devices.version+1 where public.devices.id=current.id;
   end if;
   wire:=jsonb_build_object('ok',true,'requestId',"requestId",'data',null);
   perform gm19_private.save_ack('unregister_push_device',req,payload_key,null,null,null,1,wire); return wire;
@@ -207,26 +214,26 @@ end $$;
 -- granted to an authenticated client or exposed by the public device projection.
 create or replace function public.claim_push_deliveries(batch_size integer default 100)
 returns jsonb language plpgsql security definer set search_path = pg_catalog, public, gm23_private as $$
-declare d record; meta gm23_private.delivery_meta%rowtype; lease uuid; rows jsonb:='[]'::jsonb; now_at timestamptz:=clock_timestamp();
+declare delivery_row record; meta gm23_private.delivery_meta%rowtype; lease uuid; rows jsonb:='[]'::jsonb; now_at timestamptz:=clock_timestamp();
 begin
   perform gm23_private.service_only();
   if batch_size is null or batch_size<1 or batch_size>100 then raise sqlstate '22023' using message='INVALID_INPUT'; end if;
-  for d in select d.id,d.event_id,d.recipient_user_id,d.device_id,d.attempts,d.expires_at,e.kind,e.room_id,e.invitation_id,e.result_id,e.dedupe_key,dev.push_token,dev.registration_generation,dev.session_id
-    from public.deliveries d join public.events e on e.id=d.event_id join public.devices dev on dev.id=d.device_id
-    join gm23_private.delivery_meta m on m.delivery_id=d.id
-    where d.state='pending' and d.ticket_id is null and d.expires_at>now_at
-      and m.next_attempt_at<=now_at and (m.lease_until is null or m.lease_until<=now_at)
-      and dev.active and dev.permission='granted' and dev.push_token is not null
-      and gm23_private.session_valid(dev.user_id,dev.session_id)
-    order by d.id for update of d,m skip locked limit batch_size loop
+  for delivery_row in select delivery_src.id,delivery_src.event_id,delivery_src.recipient_user_id,delivery_src.device_id,delivery_src.attempts,delivery_src.expires_at,event_src.kind,event_src.room_id,event_src.invitation_id,event_src.result_id,event_src.dedupe_key,device_src.push_token,device_src.registration_generation,device_src.session_id
+    from public.deliveries delivery_src join public.events event_src on event_src.id=delivery_src.event_id join public.devices device_src on device_src.id=delivery_src.device_id
+    join gm23_private.delivery_meta meta_src on meta_src.delivery_id=delivery_src.id
+    where delivery_src.state='pending' and delivery_src.ticket_id is null and delivery_src.expires_at>now_at
+      and meta_src.next_attempt_at<=now_at and (meta_src.lease_until is null or meta_src.lease_until<=now_at)
+      and device_src.active and device_src.permission='granted' and device_src.push_token is not null
+      and gm23_private.session_valid(device_src.user_id,device_src.session_id)
+    order by delivery_src.id for update of delivery_src,meta_src skip locked limit batch_size loop
     lease:=gen_random_uuid();
     update gm23_private.delivery_meta set lease_id=lease,lease_until=now_at+interval '120 seconds',
-      registration_generation=d.registration_generation,last_error=null,version=version+1 where delivery_id=d.id returning * into meta;
-    update public.deliveries set attempts=attempts+1,last_attempt_at=now_at,version=version+1 where id=d.id;
-    rows:=rows||jsonb_build_array(jsonb_build_object('deliveryId',d.id,'leaseId',lease,'eventId',d.event_id,
-      'kind',d.kind,'roomId',d.room_id,'invitationId',d.invitation_id,'resultId',d.result_id,
-      'dedupeKey',d.dedupe_key,'token',d.push_token,'registrationGeneration',d.registration_generation,
-      'attempt',d.attempts+1,'expiresAt',d.expires_at));
+      registration_generation=delivery_row.registration_generation,last_error=null,version=gm23_private.delivery_meta.version+1 where gm23_private.delivery_meta.delivery_id=delivery_row.id returning * into meta;
+    update public.deliveries set attempts=public.deliveries.attempts+1,last_attempt_at=now_at,version=public.deliveries.version+1 where public.deliveries.id=delivery_row.id;
+    rows:=rows||jsonb_build_array(jsonb_build_object('deliveryId',delivery_row.id,'leaseId',lease,'leaseUntil',meta.lease_until,'eventId',delivery_row.event_id,
+      'kind',delivery_row.kind,'roomId',delivery_row.room_id,'invitationId',delivery_row.invitation_id,'resultId',delivery_row.result_id,
+      'dedupeKey',delivery_row.dedupe_key,'token',delivery_row.push_token,'registrationGeneration',delivery_row.registration_generation,
+      'attempt',delivery_row.attempts+1,'expiresAt',delivery_row.expires_at));
   end loop;
   return rows;
 exception when sqlstate 'PT403' then raise;
@@ -242,10 +249,10 @@ begin
   if not found or m.lease_id is distinct from complete_push_delivery.lease_id or m.lease_until<=clock_timestamp() then return jsonb_build_object('ok',false,'messageKey','LEASE_LOST'); end if;
   select * into d from public.deliveries where id=complete_push_delivery.delivery_id for update;
   if d.id is null or not exists(select 1 from public.devices dev where dev.id=d.device_id and dev.registration_generation=m.registration_generation and dev.active) then
-    update public.deliveries set state='expired',version=version+1 where id=d.id; return jsonb_build_object('ok',false,'messageKey','REGISTRATION_REVOKED');
+    update public.deliveries set state='expired',version=public.deliveries.version+1 where public.deliveries.id=d.id; return jsonb_build_object('ok',false,'messageKey','REGISTRATION_REVOKED');
   end if;
-  update public.deliveries set ticket_id=complete_push_delivery.ticket_id,version=version+1 where id=d.id;
-  update gm23_private.delivery_meta set provider_ticket_at=clock_timestamp(),lease_id=null,lease_until=null,version=version+1 where delivery_id=d.id;
+  update public.deliveries set ticket_id=complete_push_delivery.ticket_id,version=public.deliveries.version+1 where public.deliveries.id=d.id;
+  update gm23_private.delivery_meta set provider_ticket_at=clock_timestamp(),lease_id=null,lease_until=null,version=gm23_private.delivery_meta.version+1 where gm23_private.delivery_meta.delivery_id=d.id;
   return jsonb_build_object('ok',true);
 end $$;
 
@@ -260,9 +267,13 @@ begin
   if d.id is null then return jsonb_build_object('ok',false,'messageKey','DELIVERY_GONE'); end if;
   delay_seconds:=greatest(60,least(3600,coalesce(retry_after_seconds,(power(2,greatest(d.attempts-1,0))::integer*60))));
   if d.expires_at<=clock_timestamp() or d.attempts>=5 or lower(coalesce(reason,'')) in ('devicenotregistered','invalidcredential','invalidinput') then
-    update public.deliveries set state=case when d.expires_at<=clock_timestamp() then 'expired' else 'failed' end,version=version+1 where id=d.id;
+    update public.deliveries set state=case when d.expires_at<=clock_timestamp() then 'expired' else 'failed' end,version=public.deliveries.version+1 where public.deliveries.id=d.id;
   end if;
-  update gm23_private.delivery_meta set last_error=left(coalesce(reason,'provider_error'),256),next_attempt_at=clock_timestamp()+make_interval(secs=>delay_seconds),lease_id=null,lease_until=null,version=version+1 where delivery_id=d.id;
+  if lower(coalesce(reason,''))='devicenotregistered' then
+    update public.devices set active=false,push_token=null,permission='unknown',registration_generation=public.devices.registration_generation+1,version=public.devices.version+1
+      where public.devices.id=d.device_id and public.devices.registration_generation=m.registration_generation;
+  end if;
+  update gm23_private.delivery_meta set last_error=left(coalesce(reason,'provider_error'),256),next_attempt_at=clock_timestamp()+make_interval(secs=>delay_seconds),lease_id=null,lease_until=null,version=gm23_private.delivery_meta.version+1 where gm23_private.delivery_meta.delivery_id=d.id;
   return jsonb_build_object('ok',true,'retryAfterSeconds',delay_seconds);
 end $$;
 
@@ -275,30 +286,30 @@ begin
   select * into d from public.deliveries where id=record_push_receipt.delivery_id for update;
   if d.id is null or d.ticket_id is null then return jsonb_build_object('ok',false,'messageKey','RECEIPT_NOT_READY'); end if;
   select * into m from gm23_private.delivery_meta where gm23_private.delivery_meta.delivery_id=d.id for update;
-  update public.deliveries set receipt_id=record_push_receipt.receipt_id,state=case when receipt_status='ok' then 'sent' else 'failed' end,version=version+1 where id=d.id;
-  update gm23_private.delivery_meta set last_error=case when receipt_status='error' then left(reason,256) else null end,version=version+1 where delivery_id=d.id;
+  update public.deliveries set receipt_id=record_push_receipt.receipt_id,state=case when receipt_status='ok' then 'sent' else 'failed' end,version=public.deliveries.version+1 where public.deliveries.id=d.id;
+  update gm23_private.delivery_meta set last_error=case when receipt_status='error' then left(reason,256) else null end,version=gm23_private.delivery_meta.version+1 where gm23_private.delivery_meta.delivery_id=d.id;
   if lower(coalesce(reason,''))='devicenotregistered' then
-    update public.devices set active=false,push_token=null,permission='unknown',registration_generation=registration_generation+1,version=version+1
-      where id=d.device_id and registration_generation=m.registration_generation;
+     update public.devices set active=false,push_token=null,permission='unknown',registration_generation=public.devices.registration_generation+1,version=public.devices.version+1
+       where public.devices.id=d.device_id and public.devices.registration_generation=m.registration_generation;
   end if;
   return jsonb_build_object('ok',true);
 end $$;
 
 create or replace function public.claim_push_receipts(batch_size integer default 100)
 returns jsonb language plpgsql security definer set search_path = pg_catalog, public, gm23_private as $$
-declare d record; m gm23_private.delivery_meta%rowtype; lease uuid; rows jsonb:='[]'::jsonb; now_at timestamptz:=clock_timestamp();
+declare receipt_row record; m gm23_private.delivery_meta%rowtype; lease uuid; rows jsonb:='[]'::jsonb; now_at timestamptz:=clock_timestamp();
 begin
   perform gm23_private.service_only();
   if batch_size is null or batch_size<1 or batch_size>100 then raise sqlstate '22023' using message='INVALID_INPUT'; end if;
-  for d in select d.id,d.ticket_id,d.expires_at
-    from public.deliveries d join gm23_private.delivery_meta m on m.delivery_id=d.id
-    where d.ticket_id is not null and d.receipt_id is null and d.expires_at>now_at
-      and m.provider_ticket_at<=now_at-interval '15 minutes'
-      and (m.lease_until is null or m.lease_until<=now_at)
-    order by d.id for update of d,m skip locked limit batch_size loop
+  for receipt_row in select delivery_src.id,delivery_src.ticket_id,delivery_src.expires_at
+    from public.deliveries delivery_src join gm23_private.delivery_meta meta_src on meta_src.delivery_id=delivery_src.id
+    where delivery_src.ticket_id is not null and delivery_src.receipt_id is null and delivery_src.expires_at>now_at
+      and meta_src.provider_ticket_at<=now_at-interval '15 minutes'
+      and (meta_src.lease_until is null or meta_src.lease_until<=now_at)
+    order by delivery_src.id for update of delivery_src,meta_src skip locked limit batch_size loop
     lease:=gen_random_uuid();
-    update gm23_private.delivery_meta set lease_id=lease,lease_until=now_at+interval '120 seconds',version=version+1 where delivery_id=d.id;
-    rows:=rows||jsonb_build_array(jsonb_build_object('deliveryId',d.id,'leaseId',lease,'ticketId',d.ticket_id,'expiresAt',d.expires_at));
+    update gm23_private.delivery_meta set lease_id=lease,lease_until=now_at+interval '120 seconds',version=gm23_private.delivery_meta.version+1 where gm23_private.delivery_meta.delivery_id=receipt_row.id returning * into m;
+    rows:=rows||jsonb_build_array(jsonb_build_object('deliveryId',receipt_row.id,'leaseId',lease,'leaseUntil',m.lease_until,'ticketId',receipt_row.ticket_id,'expiresAt',receipt_row.expires_at));
   end loop;
   return rows;
 end $$;

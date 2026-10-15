@@ -19,5 +19,3 @@ ok 17 - push token column denied
 ok 18 - claim locks rows
 ok 19 - claim lease is 120 seconds
 ok 20 - claim caps batch at 100
-
-\n

@@ -2,13 +2,14 @@
   "task": "GM-23",
   "contract": "food-v1/roadmap-v2/GM-23.1",
   "schemaVersion": "0.6.0",
-  "revision": "991de6620715d1219da900499f4aa2d683b01bb4",
+  "revision": "a7a97f3d6bf1d7003bab713c3875b7adc1ef8a25",
   "migration": "supabase/migrations/0024_notifications.sql",
   "syntheticPositiveDataOnly": true,
   "remoteExpoDelivery": "Not run",
   "sqlAssertions": 20,
-  "httpCases": 6,
+  "httpCases": 7,
   "brunoDesktop": "Pass (5/5 Runner requests; fresh disposable fixture)",
+  "senderTransport": "Pass (4/4 fake transport cases)",
   "applicationDbRegression": "Not run: local ledger is pre-GM-22; no reset performed",
   "cleanup": "owned disposable database and tagged guests removed"
 }

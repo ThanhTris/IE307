@@ -9,6 +9,7 @@ const receiptsUrl = 'https://exp.host/--/api/v2/push/getReceipts';
 const lockPath = process.env.GM23_SENDER_LOCK ?? 'supabase/tests/bruno/GM-23/.sender.lock';
 const once = process.argv.includes('--once');
 const timeout = 15_000;
+const claimBatch = 8; // Keep the sequential provider loop inside the 120s lease.
 
 if (!serviceKey) {
   console.error('GM23 sender is not configured; set GM23_SERVICE_ROLE_KEY. No delivery was claimed.');
@@ -32,14 +33,20 @@ function message(item) {
   return { to: item.token, title: type === 'room_invite' ? 'Lời mời vào phòng' : 'Kết quả phòng đã sẵn sàng', body: type === 'room_invite' ? 'Bạn có lời mời vào phòng mới' : 'Phòng của bạn đã có kết quả', data: { type, eventId: item.eventId, ...(item.roomId ? { roomId: item.roomId } : {}), ...(item.invitationId ? { invitationId: item.invitationId } : {}), ...(item.resultId ? { resultId: item.resultId } : {}) } };
 }
 async function cycle() {
-  const claimed = await rpc('claim_push_deliveries', { batch_size: 100 });
+  const claimed = await rpc('claim_push_deliveries', { batch_size: claimBatch });
   let sent = 0;
   for (const item of Array.isArray(claimed) ? claimed : []) {
     try {
+      const leaseDeadline = item.leaseUntil ? Date.parse(item.leaseUntil) : Number.NaN;
+      if (Number.isFinite(leaseDeadline) && Date.now() + timeout >= leaseDeadline) continue;
       const response = await fetch(expoUrl, { method: 'POST', headers: { 'content-type': 'application/json', ...(process.env.EXPO_ACCESS_TOKEN ? { authorization: `Bearer ${process.env.EXPO_ACCESS_TOKEN}` } : {}) }, body: JSON.stringify([message(item)]), signal: AbortSignal.timeout(timeout) });
       const payload = await response.json().catch(() => ({}));
-      if (response.ok && payload?.data?.[0]?.id) { await rpc('complete_push_delivery', { delivery_id: item.deliveryId, lease_id: item.leaseId, ticket_id: payload.data[0].id }); sent += 1; }
-      else await rpc('fail_push_delivery', { delivery_id: item.deliveryId, lease_id: item.leaseId, reason: `HTTP_${response.status}`, retry_after_seconds: Number(response.headers.get('retry-after') ?? 0) || null });
+      const ticket = Array.isArray(payload?.data) ? payload.data[0] : payload?.data;
+      const ticketError = typeof ticket?.details?.error === 'string' ? ticket.details.error : null;
+      if (response.ok && ticket?.status !== 'error' && ticket?.id) {
+        const completed = await rpc('complete_push_delivery', { delivery_id: item.deliveryId, lease_id: item.leaseId, ticket_id: ticket.id });
+        if (completed?.ok) sent += 1;
+      } else await rpc('fail_push_delivery', { delivery_id: item.deliveryId, lease_id: item.leaseId, reason: ticketError ?? `HTTP_${response.status}`, retry_after_seconds: Number(response.headers.get('retry-after') ?? 0) || null });
     } catch (error) { await rpc('fail_push_delivery', { delivery_id: item.deliveryId, lease_id: item.leaseId, reason: error instanceof Error ? error.message.slice(0, 160) : 'PROVIDER_TIMEOUT', retry_after_seconds: null }); }
   }
   const receipts = await rpc('claim_push_receipts', { batch_size: 100 });
