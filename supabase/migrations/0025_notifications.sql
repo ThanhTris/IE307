@@ -322,6 +322,12 @@ begin
   if receipt_id is null or receipt_status not in ('ok','error') then raise sqlstate '22023' using message='INVALID_INPUT'; end if;
   select * into d from public.deliveries where id=record_push_receipt.delivery_id for update;
   if d.id is null or d.ticket_id is null then return jsonb_build_object('ok',false,'messageKey','RECEIPT_NOT_READY'); end if;
+  -- Expo receipt IDs are the provider tickets returned by complete_push_delivery.
+  -- A delayed receipt for an older token must never mutate the current ticket
+  -- or revoke a device that has already rotated to a new registration.
+  if d.ticket_id is distinct from record_push_receipt.receipt_id then
+    return jsonb_build_object('ok',true,'ignored',true,'messageKey','STALE_RECEIPT');
+  end if;
   select * into m from gm23_private.delivery_meta where gm23_private.delivery_meta.delivery_id=d.id for update;
   update public.deliveries set receipt_id=record_push_receipt.receipt_id,state=case when receipt_status='ok' then 'sent' else 'failed' end,version=public.deliveries.version+1 where public.deliveries.id=d.id;
   update gm23_private.delivery_meta set last_error=case when receipt_status='error' then left(reason,256) else null end,version=gm23_private.delivery_meta.version+1 where gm23_private.delivery_meta.delivery_id=d.id;

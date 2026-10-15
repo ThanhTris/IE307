@@ -162,6 +162,32 @@ async function main() {
     assert.match(output, /sender_sql_ok/);
     return { status: 200, claim: true, complete: true, receipt: true };
   });
+  await check('stale receipt cannot revoke rotated token', async () => {
+    const sql = `begin;
+      do $fixture$
+      declare delivery_key uuid; recorded jsonb; device_state text;
+      begin
+        select d.id into delivery_key
+          from public.deliveries d join public.events e on e.id=d.event_id
+          where e.dedupe_key like 'gm23-sender:%' order by e.created_at desc limit 1;
+        if delivery_key is null then raise exception 'receipt rotation fixture missing'; end if;
+        perform set_config('request.jwt.claim.role','service_role',true);
+        recorded:=public.record_push_receipt(delivery_key,'gm23-old-ticket','error','DeviceNotRegistered');
+        if recorded->>'ok' is distinct from 'true' or recorded->>'ignored' is distinct from 'true' or recorded->>'messageKey' is distinct from 'STALE_RECEIPT' then
+          raise exception 'stale receipt was not ignored: %',recorded;
+        end if;
+        select active::text||'|'||push_token||'|'||permission into device_state
+          from public.devices where user_id='${guests[1].user.id}' and device_key='${deviceId}';
+        if device_state <> 'true|ExponentPushToken[synthetic-gm23-rotated-token]|granted' then
+          raise exception 'stale receipt revoked current registration: %',device_state;
+        end if;
+      end $fixture$;
+      commit;
+      select 'stale_receipt_ok';`;
+    const output = await fixture('sql', sql);
+    assert.match(output, /stale_receipt_ok/);
+    return { status: 200, staleReceipt: 'ignored', rotatedTokenPreserved: true };
+  });
   await check('unchanged registration preserves lease and retry budget', async () => {
     const sql = `begin;
       do $fixture$

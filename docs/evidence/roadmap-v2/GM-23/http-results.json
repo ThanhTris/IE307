@@ -3,10 +3,10 @@
   "task": "GM-23",
   "contract": "food-v1/roadmap-v2/GM-23.1",
   "schemaVersion": "0.7.0",
-  "checkedAt": "2026-10-15T12:46:05.551Z",
-  "revision": "60d884603e95129c313c69c9bac0a907002b2e22",
+  "checkedAt": "2026-10-15T13:22:15.924Z",
+  "revision": "c9d80e8028fe2e142942a5aa0a94bce3c10ee90c",
   "sourceHashes": {
-    "supabase/migrations/0025_notifications.sql": "d70c91b027180fb7777a840f77874921492094b2c0b2ce2b3c22a98e6ed8813f",
+    "supabase/migrations/0025_notifications.sql": "a1f8bab1b7853c52fb82e97afef470634b4776b75ae8a000bba2e24796f81ba1",
     "supabase/tests/notifications.sql": "b42fe4a9c066b0c6465d526562846683f0f825ad4f4c056ef11395947a31a4b6",
     "supabase/tests/http/GM-23.http": "887ff0eb27c8bbfea56b3f39dea41320013e603edcc3f7d4ab9d55b0566ece40",
     "supabase/functions/push-sender/index.ts": "3fc7ba9de45f635d50ee31e0e704b5dd21e224c47716bf9db76eb1925d931886"
@@ -38,6 +38,13 @@
       "claim": true,
       "complete": true,
       "receipt": true
+    },
+    {
+      "case": "stale receipt cannot revoke rotated token",
+      "result": "Pass",
+      "status": 200,
+      "staleReceipt": "ignored",
+      "rotatedTokenPreserved": true
     },
     {
       "case": "unchanged registration preserves lease and retry budget",
