@@ -1,0 +1,19 @@
+meta {
+  name: 01 Inbox
+  type: http
+  seq: 1
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/list_partner_inbox
+  body: json
+}
+headers {
+  Authorization: Bearer {{recipientToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"cursor":null}
+}
+tests {
+  test("typed inbox", function() { expect(res.status).to.equal(200); expect(Array.isArray(res.body)).to.equal(true); expect(res.body.length).to.be.at.most(50); });
+}
