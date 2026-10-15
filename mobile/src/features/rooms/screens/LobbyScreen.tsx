@@ -17,6 +17,7 @@ export function LobbyScreen({ onNavigate, onHome, mockClient }: Props) {
   const [confirm, setConfirm] = useState<ConfirmAction>(null);
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
+  const busyRef = useRef(false);
   const requestSequence = useRef(0);
   const loadKey = `${mode}:${revision}`;
   const loading = loadedKey !== loadKey;
@@ -52,7 +53,7 @@ export function LobbyScreen({ onNavigate, onHome, mockClient }: Props) {
   const everyoneReady = Boolean(snapshot?.members.length && snapshot.members.every(member => member.ready));
 
   const chooseRole = () => {
-    if (!snapshot) return;
+    if (!snapshot || busyRef.current) return;
     const nextRole = role === 'host' ? 'member' : 'host';
     const nextMember = nextRole === 'host'
       ? snapshot.members.find(member => member.userId === snapshot.hostUserId)
@@ -73,55 +74,62 @@ export function LobbyScreen({ onNavigate, onHome, mockClient }: Props) {
   };
 
   const runWrite = async (action: 'ready' | 'start' | 'context' | 'leave' | 'cancel' | 'invite') => {
-    if (!snapshot || busy) return;
+    if (!snapshot || busyRef.current) return;
+    busyRef.current = true;
     setBusy(true);
     setNotice('');
-    let result;
     const requestId = nextRequestId(action);
-    if (action === 'ready') {
-      result = await api.setReady({ roomId: snapshot.roomId, expectedVersion: snapshot.version, ready: !viewer?.ready, requestId });
-    } else if (action === 'start') {
-      result = await api.startRound({ roomId: snapshot.roomId, expectedVersion: snapshot.version, requestId });
-    } else if (action === 'context') {
-      result = await api.updateContext({ roomId: snapshot.roomId, expectedVersion: snapshot.version, context: { ...snapshot.context, budget: snapshot.context.budget === 70000 ? 80000 : 70000 }, requestId });
-    } else if (action === 'leave') {
-      result = await api.leaveRoom({ roomId: snapshot.roomId, expectedVersion: snapshot.version, requestId });
-    } else if (action === 'cancel') {
-      result = await api.cancelRoom({ roomId: snapshot.roomId, expectedVersion: snapshot.version, confirmCancel: true, requestId });
-    } else {
-      result = await api.inviteToRoom({ roomId: snapshot.roomId, partnerId: 'usr_tuan_002', expectedVersion: snapshot.version, requestId });
-    }
-    setBusy(false);
-    if (!result.ok) {
-      setNotice(`Chưa thực hiện được · ${result.error.messageKey}`);
-      return;
-    }
-    if (action === 'ready') {
-      await refreshSnapshot(snapshot.roomId);
-      setNotice(viewer?.ready ? 'Bạn đã tắt trạng thái sẵn sàng.' : 'Đã ghi nhận bạn sẵn sàng trong fixture.');
-    } else if (action === 'context') {
-      await refreshSnapshot(snapshot.roomId);
-      setNotice('Bối cảnh đổi; trạng thái sẵn sàng của mọi người đã được đặt lại.');
-    } else if (action === 'start') {
-      await refreshSnapshot(snapshot.roomId);
-      setNotice('Fixture chuyển sang vòng 1. Chưa có lượt gọi nghiệp vụ thật.');
-    } else if (action === 'cancel') {
-      await refreshSnapshot(snapshot.roomId);
-      setNotice('Phòng mock đã hủy.');
-    } else if (action === 'leave') {
-      await refreshSnapshot(snapshot.roomId);
-      setNotice('Bạn đã rời fixture này.');
-    } else {
-      setNotice('Lời mời mock đã tạo; người nhận chưa tham gia và chưa được đặt sẵn sàng.');
+    try {
+      let result;
+      if (action === 'ready') {
+        result = await api.setReady({ roomId: snapshot.roomId, expectedVersion: snapshot.version, ready: !viewer?.ready, requestId });
+      } else if (action === 'start') {
+        result = await api.startRound({ roomId: snapshot.roomId, expectedVersion: snapshot.version, requestId });
+      } else if (action === 'context') {
+        result = await api.updateContext({ roomId: snapshot.roomId, expectedVersion: snapshot.version, context: { ...snapshot.context, budget: snapshot.context.budget === 70000 ? 80000 : 70000 }, requestId });
+      } else if (action === 'leave') {
+        result = await api.leaveRoom({ roomId: snapshot.roomId, expectedVersion: snapshot.version, requestId });
+      } else if (action === 'cancel') {
+        result = await api.cancelRoom({ roomId: snapshot.roomId, expectedVersion: snapshot.version, confirmCancel: true, requestId });
+      } else {
+        result = await api.inviteToRoom({ roomId: snapshot.roomId, partnerId: 'usr_tuan_002', expectedVersion: snapshot.version, requestId });
+      }
+      if (!result.ok) {
+        setNotice(`Chưa thực hiện được · ${result.error.messageKey}`);
+        return;
+      }
+      if (action === 'ready') {
+        await refreshSnapshot(snapshot.roomId);
+        setNotice(viewer?.ready ? 'Bạn đã tắt trạng thái sẵn sàng.' : 'Đã ghi nhận bạn sẵn sàng trong fixture.');
+      } else if (action === 'context') {
+        await refreshSnapshot(snapshot.roomId);
+        setNotice('Bối cảnh đổi; trạng thái sẵn sàng của mọi người đã được đặt lại.');
+      } else if (action === 'start') {
+        await refreshSnapshot(snapshot.roomId);
+        setNotice('Fixture chuyển sang vòng 1. Chưa có lượt gọi nghiệp vụ thật.');
+      } else if (action === 'cancel') {
+        await refreshSnapshot(snapshot.roomId);
+        setNotice('Phòng mock đã hủy.');
+      } else if (action === 'leave') {
+        await refreshSnapshot(snapshot.roomId);
+        setNotice('Bạn đã rời fixture này.');
+      } else {
+        setNotice('Lời mời mock đã tạo; người nhận chưa tham gia và chưa được đặt sẵn sàng.');
+      }
+    } catch {
+      setNotice('Không hoàn tất được thao tác fixture. Có thể thử lại khi đã tải được trạng thái mới.');
+    } finally {
+      busyRef.current = false;
+      setBusy(false);
     }
   };
 
   return (
-    <DemoFrame title="Phòng chờ" subtitle="GM-11 · host/member, context và ready" active="lobby" onNavigate={onNavigate} onHome={onHome} mode={mode} onModeChange={setMode}>
+    <DemoFrame title="Phòng chờ" subtitle="GM-11 · host/member, context và ready" active="lobby" onNavigate={destination => { if (!busyRef.current) onNavigate(destination); }} onHome={() => { if (!busyRef.current) onHome(); }} mode={mode} onModeChange={nextMode => { if (!busyRef.current) setMode(nextMode); }} controlsDisabled={busy}>
       {loadState === 'loading' && <StatusNotice title="Đang tải phòng mock…" message="Chờ adapter trả fixture." tone="info" colors={colors} />}
       {loadState === 'error' && <StatusNotice title="Không tải được phòng" message={`${loadError}. Không chuyển sang fixture khác.`} tone="error" actionLabel="Thử lại" onAction={reload} colors={colors} />}
       {snapshot && loadState === 'ready' && <>
-        <AppButton label={`Đang xem vai trò: ${isHost ? 'Host' : 'Member'} · đổi vai trò`} variant="secondary" onPress={chooseRole} colors={colors} />
+        <AppButton label={`Đang xem vai trò: ${isHost ? 'Host' : 'Member'} · đổi vai trò`} variant="secondary" onPress={chooseRole} disabled={busy} colors={colors} />
         <RoomCode code={snapshot.code} colors={colors} />
         <Text style={[styles.helper, { color: colors.muted }]}>Mã hiển thị là fixture; QR chưa được tạo và không thể tham gia phòng thật.</Text>
         <ContextSummary

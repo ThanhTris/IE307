@@ -35,7 +35,7 @@ export function useMockDemoApi(injectedClient?: MockApiClient) {
   return { api, mode, setMode: changeMode, revision, reload: () => setRevision(value => value + 1) };
 }
 
-export function DemoModePicker({ mode, onChange }: { mode: MockMode; onChange: (mode: MockMode) => void }) {
+export function DemoModePicker({ mode, onChange, disabled = false }: { mode: MockMode; onChange: (mode: MockMode) => void; disabled?: boolean }) {
   const { colors } = useShellTheme();
   return (
     <View style={styles.modeBlock}>
@@ -48,6 +48,7 @@ export function DemoModePicker({ mode, onChange }: { mode: MockMode; onChange: (
             accessibilityLabel={`Trạng thái ${option.label}`}
             accessibilityState={{ selected: mode === option.id }}
             onPress={() => onChange(option.id)}
+            disabled={disabled}
             style={[styles.modeChip, { backgroundColor: mode === option.id ? colors.warm : colors.surface, borderColor: mode === option.id ? colors.primary : colors.line }]}
           >
             <Text style={[styles.modeText, { color: mode === option.id ? colors.primary : colors.text }]}>{option.label}</Text>
@@ -66,6 +67,7 @@ export function DemoFrame({
   onHome,
   mode,
   onModeChange,
+  controlsDisabled = false,
   children,
 }: {
   title: string;
@@ -75,12 +77,13 @@ export function DemoFrame({
   onHome: () => void;
   mode: MockMode;
   onModeChange: (mode: MockMode) => void;
+  controlsDisabled?: boolean;
   children: ReactNode;
 }) {
   const { colors } = useShellTheme();
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <AppHeader title="Bản xem mock" onPressBrand={onHome} colors={colors} />
+      <AppHeader title="Bản xem mock" onPressBrand={controlsDisabled ? undefined : onHome} colors={colors} />
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.titleGroup}>
           <Text accessibilityRole="header" style={[styles.title, { color: colors.text }]}>{title}</Text>
@@ -92,7 +95,7 @@ export function DemoFrame({
           tone="info"
           colors={colors}
         />
-        <DemoModePicker mode={mode} onChange={onModeChange} />
+        <DemoModePicker mode={mode} onChange={onModeChange} disabled={controlsDisabled} />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.navRow}>
           {destinations.map(destination => (
             <Pressable
@@ -101,6 +104,7 @@ export function DemoFrame({
               accessibilityLabel={`Mở ${destination.label}`}
               accessibilityState={{ selected: active === destination.id }}
               onPress={() => onNavigate(destination.id)}
+              disabled={controlsDisabled}
               style={[styles.navItem, { backgroundColor: active === destination.id ? colors.primary : colors.surface, borderColor: colors.line }]}
             >
               <Text style={[styles.navText, { color: active === destination.id ? colors.onPrimary : colors.text }]}>{destination.label}</Text>
@@ -108,7 +112,7 @@ export function DemoFrame({
           ))}
         </ScrollView>
         <View style={styles.screenContent}>{children}</View>
-        <AppButton label="Về màn hình chính" variant="quiet" onPress={onHome} colors={colors} />
+        <AppButton label="Về màn hình chính" variant="quiet" onPress={onHome} disabled={controlsDisabled} colors={colors} />
       </ScrollView>
     </SafeAreaView>
   );

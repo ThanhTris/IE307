@@ -79,6 +79,48 @@ test('member ready and leave mutate that identity in the same mock room and refe
   expect(screen.queryByRole('button', { name: 'Tôi sẵn sàng' })).toBeNull();
 });
 
+test('loading write locks identity until the real mock write and snapshot refetch finish', async () => {
+  const user = userEvent.setup();
+  const mockClient = new MockApiClient({ delayMs: 0 });
+  await render(<LobbyScreen onNavigate={nav} onHome={home} mockClient={mockClient} />);
+  await screen.findByText('Thành viên · 2/8');
+  await user.press(screen.getByRole('button', { name: 'Mô phỏng đổi bối cảnh · reset ready (Host)' }));
+  expect(await screen.findByText('Bối cảnh đổi; trạng thái sẵn sàng của mọi người đã được đặt lại.')).toBeOnTheScreen();
+
+  await user.press(screen.getByRole('button', { name: 'Trạng thái Đang tải' }));
+  expect(await screen.findByText('Thành viên · 2/8')).toBeOnTheScreen();
+  await user.press(screen.getByRole('button', { name: 'Tôi sẵn sàng' }));
+
+  const roleButton = screen.getByRole('button', { name: 'Đang xem vai trò: Host · đổi vai trò' });
+  expect(roleButton).toBeDisabled();
+  await user.press(roleButton);
+  expect(screen.getByRole('button', { name: 'Đang xem vai trò: Host · đổi vai trò' })).toBeOnTheScreen();
+  expect(screen.getByRole('button', { name: 'Trạng thái Đang tải' })).toBeDisabled();
+  expect(screen.getByRole('button', { name: 'Mở Bạn bè' })).toBeDisabled();
+
+  expect(await screen.findByText('Đã ghi nhận bạn sẵn sàng trong fixture.')).toBeOnTheScreen();
+  const afterHostReady = await mockClient.getRoomSnapshot('room_mock_001');
+  expect(afterHostReady.ok).toBe(true);
+  if (!afterHostReady.ok) throw new Error('Expected real mock snapshot after host ready');
+  const hostId = afterHostReady.data.hostUserId;
+  expect(afterHostReady.data.members.find(member => member.userId === hostId)?.ready).toBe(true);
+  expect(afterHostReady.data.members.find(member => member.userId !== hostId)?.ready).toBe(false);
+
+  await user.press(screen.getByRole('button', { name: 'Đang xem vai trò: Host · đổi vai trò' }));
+  await user.press(screen.getByRole('button', { name: 'Tôi sẵn sàng' }));
+  expect(await screen.findByText('Đã ghi nhận bạn sẵn sàng trong fixture.')).toBeOnTheScreen();
+  await user.press(screen.getByRole('button', { name: 'Rời phòng' }));
+  await user.press(screen.getByRole('button', { name: 'Xác nhận rời' }));
+  expect(await screen.findByText('Bạn đã rời fixture này.')).toBeOnTheScreen();
+
+  const afterMemberLeave = await mockClient.getRoomSnapshot('room_mock_001');
+  expect(afterMemberLeave.ok).toBe(true);
+  if (!afterMemberLeave.ok) throw new Error('Expected real mock snapshot after member leave');
+  expect(afterMemberLeave.data.members).toHaveLength(1);
+  expect(afterMemberLeave.data.members[0]?.userId).toBe(hostId);
+  expect(afterMemberLeave.data.members[0]?.ready).toBe(true);
+});
+
 test('room status confirms cancellation and exposes expired and network states', async () => {
   const user = userEvent.setup();
   await render(<RoomStatusScreen onNavigate={nav} onHome={home} />);
