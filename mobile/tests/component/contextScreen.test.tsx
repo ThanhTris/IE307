@@ -84,9 +84,20 @@ describe('GM-24 ContextScreen Component & Scenarios', () => {
     });
   });
 
-  it('time resolution: Scheduled mode detects past time and requires confirmation', async () => {
+  it('time resolution: Scheduled mode detects past time, blocks saving, and allows adjustment to valid future time', async () => {
     const user = userEvent.setup();
-    await render(<ContextScreen initialScenario="gps_grant_rua" />);
+    const handleSave = jest.fn();
+
+    await render(
+      <ContextScreen
+        initialScenario="manual_only"
+        onSaveContext={handleSave}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('🕒 Đặt giờ trước')).toBeOnTheScreen();
+    });
 
     // Switch to Scheduled mode
     await user.press(screen.getByText('🕒 Đặt giờ trước'));
@@ -96,29 +107,40 @@ describe('GM-24 ContextScreen Component & Scenarios', () => {
 
     await waitFor(() => {
       expect(screen.getByText(/Giờ đã chọn nằm trong quá khứ so với giờ máy chủ!/)).toBeOnTheScreen();
-      expect(screen.getByText('Xác nhận giờ này')).toBeOnTheScreen();
+      expect(screen.getAllByText(/DESIRED_TIME_PASSED/).length).toBeGreaterThanOrEqual(1);
+      expect(screen.getByText('Điều chỉnh thành giờ hợp lệ (+30 phút từ giờ máy chủ)')).toBeOnTheScreen();
     });
 
-    // Press confirm
-    await user.press(screen.getByText('Xác nhận giờ này'));
+    // Attempting to press save button must NOT trigger handleSave because time is in past
+    await user.press(screen.getByText('Xác nhận bối cảnh phòng'));
+    expect(handleSave).not.toHaveBeenCalled();
+
+    // User clicks "Điều chỉnh thành giờ hợp lệ"
+    await user.press(screen.getByText('Điều chỉnh thành giờ hợp lệ (+30 phút từ giờ máy chủ)'));
 
     await waitFor(() => {
       expect(screen.queryByText(/Giờ đã chọn nằm trong quá khứ so với giờ máy chủ!/)).toBeNull();
     });
+
+    // Now saving is permitted and sends a valid future desiredAt
+    await user.press(screen.getByText('Xác nhận bối cảnh phòng'));
+    expect(handleSave).toHaveBeenCalledTimes(1);
+    const saved = handleSave.mock.calls[0][0];
+    expect(Date.parse(saved.desiredAt)).toBeGreaterThan(Date.parse('2026-10-15T11:30:00.000Z'));
   });
 
-  it('privacy audit panel explicitly confirms 0 raw GPS in server payload', async () => {
+  it('privacy audit panel explicitly confirms 0 raw GPS in server payload and client logs', async () => {
     await render(<ContextScreen initialScenario="gps_grant_rua" />);
 
     await waitFor(() => {
-      expect(screen.getByText(/Đã kiểm toán: 0 tọa độ GPS thô được gửi trong log, request hoặc cơ sở dữ liệu\./)).toBeOnTheScreen();
+      expect(screen.getByText(/Bảo đảm quyền riêng tư: Payload gửi máy chủ chỉ chứa anchorId, không chứa tọa độ GPS thô/)).toBeOnTheScreen();
       expect(screen.getByText(/anchorId/)).toBeOnTheScreen();
       expect(screen.queryByText(/"latitude":/)).toBeNull();
       expect(screen.queryByText(/"longitude":/)).toBeNull();
     });
   });
 
-  it('displays error and retry action when server is offline', async () => {
+  it('displays error and retry action when server is offline, then clears error on scenario recovery', async () => {
     const user = userEvent.setup();
     await render(<ContextScreen initialScenario="server_offline" />);
 
@@ -127,8 +149,35 @@ describe('GM-24 ContextScreen Component & Scenarios', () => {
       expect(screen.getByText('Thử lại kết nối')).toBeOnTheScreen();
     });
 
-    // Clicking retry attempts to reload
-    await user.press(screen.getByText('Thử lại kết nối'));
+    // Transition from server_offline error to "Thủ công"
+    await user.press(screen.getByText('Thủ công'));
+
+    // Stale server error must be completely cleared upon successful data load
+    await waitFor(() => {
+      expect(screen.queryByText('Lỗi tải dữ liệu khu vực')).toBeNull();
+      expect(screen.getAllByText('Hồ Con Rùa').length).toBeGreaterThanOrEqual(1);
+    });
+  });
+
+  it('preserves user selected scheduled time mode across data reloads and retries', async () => {
+    const user = userEvent.setup();
+    await render(<ContextScreen initialScenario="manual_only" />);
+
+    await waitFor(() => {
+      expect(screen.getByText('🕒 Đặt giờ trước')).toBeOnTheScreen();
+    });
+
+    // Switch to Scheduled mode and select +3 hours
+    await user.press(screen.getByText('🕒 Đặt giờ trước'));
+    await user.press(screen.getByText('+3 giờ'));
+
+    // Switch to another scenario that reloads discovery
+    await user.press(screen.getAllByText('Hồ Con Rùa')[0]!);
+
+    await waitFor(() => {
+      // Must still be in Scheduled mode, NOT reset to Eat Now
+      expect(screen.queryByText(/Đã cộng 30 phút chuẩn bị một lần duy nhất từ giờ máy chủ\./)).toBeNull();
+    });
   });
 
   it('scenario switching in UI dynamically reconfigures location service', async () => {
@@ -147,6 +196,22 @@ describe('GM-24 ContextScreen Component & Scenarios', () => {
     });
   });
 
+  it('supports toggling to real API mode with endpoint information', async () => {
+    const user = userEvent.setup();
+    await render(<ContextScreen initialScenario="gps_grant_rua" />);
+
+    await waitFor(() => {
+      expect(screen.getByText('🌐 Máy chủ thật (Live Supabase API)')).toBeOnTheScreen();
+    });
+
+    await user.press(screen.getByText('🌐 Máy chủ thật (Live Supabase API)'));
+
+    await waitFor(() => {
+      expect(screen.getByText(/Trạng thái kết nối:/)).toBeOnTheScreen();
+      expect(screen.getByText(/Endpoint:/)).toBeOnTheScreen();
+    });
+  });
+
   it('onSaveContext passes pure sanitized RoomContext without coordinates', async () => {
     const user = userEvent.setup();
     const handleSave = jest.fn();
@@ -159,6 +224,7 @@ describe('GM-24 ContextScreen Component & Scenarios', () => {
     );
 
     await waitFor(() => {
+      expect(screen.getAllByText('Hồ Con Rùa').length).toBeGreaterThanOrEqual(1);
       expect(screen.getByText('Xác nhận bối cảnh phòng')).toBeOnTheScreen();
     });
 

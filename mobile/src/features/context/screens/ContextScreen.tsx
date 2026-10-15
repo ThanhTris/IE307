@@ -14,6 +14,7 @@ import type {
   RoomContext,
   ServiceMode,
 } from '../../../data/api/contracts';
+import { ApiClientImpl } from '../../../data/api/client';
 import { MockApiClient } from '../../../data/api/mock';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import {
@@ -23,10 +24,11 @@ import {
   StatusNotice,
 } from '../../../shared/ui/components';
 import {
-  BrowserNativeLocationAdapter,
   MockLocationAdapter,
+  createDefaultLocationAdapter,
   LocationService,
   sanitizeContextForServer,
+  type LocationAdapter,
   type LocationResolution,
   type TimeResolution,
 } from '../services/location';
@@ -42,9 +44,12 @@ export type ContextScenario =
   | 'server_empty'
   | 'live_native';
 
+export type EnvironmentMode = 'mock' | 'real_api';
+
 export interface ContextScreenProps {
   apiClient?: ApiClient;
   initialScenario?: ContextScenario;
+  initialEnvironmentMode?: EnvironmentMode;
   onSaveContext?: (context: RoomContext) => void;
   onBack?: () => void;
 }
@@ -65,13 +70,23 @@ const SERVICE_MODES: { label: string; value: ServiceMode }[] = [
 export function ContextScreen({
   apiClient,
   initialScenario = 'gps_grant_rua',
+  initialEnvironmentMode = 'mock',
   onSaveContext,
   onBack,
 }: ContextScreenProps) {
   const { colors } = useShellTheme();
+  const [envMode, setEnvMode] = useState<EnvironmentMode>(initialEnvironmentMode);
   const [scenario, setScenario] = useState<ContextScenario>(initialScenario);
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+
+  // Real API endpoint & guest session state (for live verification without secrets)
+  const [realApiUrl] = useState<string>(
+    (typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_SUPABASE_URL)
+      ? process.env.EXPO_PUBLIC_SUPABASE_URL
+      : 'http://10.0.2.2:54321'
+  );
+  const [realClientStatus, setRealClientStatus] = useState<string>('Sẵn sàng');
 
   // Discovery data from server
   const [serverTime, setServerTime] = useState<string>('2026-10-15T11:30:00.000Z');
@@ -105,14 +120,26 @@ export function ContextScreen({
     isTooFarFuture: false,
   });
 
-  // Client initialization
-  const client = useMemo(() => apiClient ?? new MockApiClient(), [apiClient]);
+  // Real client instance (points to real Supabase endpoint)
+  const realClient = useMemo(() => {
+    return new ApiClientImpl({
+      baseUrl: realApiUrl,
+      defaultTimeoutMs: 15000,
+    });
+  }, [realApiUrl]);
+
+  // Active client: real or mock depending on envMode or explicit injection
+  const client = useMemo(() => {
+    if (apiClient) return apiClient;
+    if (envMode === 'real_api') return realClient;
+    return new MockApiClient();
+  }, [apiClient, envMode, realClient]);
 
   // Location service setup based on current scenario
   const service = useMemo(() => {
-    let adapter: MockLocationAdapter | BrowserNativeLocationAdapter;
+    let adapter: LocationAdapter;
     if (scenario === 'live_native') {
-      adapter = new BrowserNativeLocationAdapter();
+      adapter = createDefaultLocationAdapter();
     } else {
       const mock = new MockLocationAdapter();
       switch (scenario) {
@@ -146,7 +173,7 @@ export function ContextScreen({
     return new LocationService({ adapter });
   }, [scenario]);
 
-  // Load discovery data on mount or scenario change
+  // Load discovery data on mount, scenario change, or environment switch
   useEffect(() => {
     let active = true;
     const run = async () => {
@@ -155,24 +182,56 @@ export function ContextScreen({
           throw new Error('NETWORK_TIMEOUT');
         }
 
+        // When using real API mode without an active auth token, obtain a guest session first (GM-16)
+        const clientImpl = client instanceof ApiClientImpl ? client : null;
+        if (envMode === 'real_api' && clientImpl && !clientImpl.getAuthToken()) {
+          try {
+            setRealClientStatus('Đang xin phiên khách GM-16...');
+            const guestRes = await client.createGuestSession({ displayName: 'Khách GM-24' });
+            if (guestRes.ok && guestRes.data?.token) {
+              clientImpl.setAuthToken(guestRes.data.token);
+              setRealClientStatus('Đã cấp phiên khách GM-16: ' + guestRes.data.user.id.slice(0, 8));
+            }
+          } catch {
+            // If offline or unauthenticated, let discovery call surface the exact error code
+          }
+        }
+
+        const startTime = Date.now();
         const response = await client.getDiscoveryContext();
         if (!active) return;
 
         if (!response.ok) {
           setServerError(response.error.messageKey);
           setAnchors([]);
+          if (envMode === 'real_api') {
+            setRealClientStatus(`Lỗi RPC: ${response.error.messageKey}`);
+          }
           return;
         }
 
+        // Clear stale error banner upon successful data load
+        setServerError(null);
+
         const loadedTime = response.data.serverTime || new Date().toISOString();
         setServerTime(loadedTime);
+
+        if (envMode === 'real_api') {
+          const latency = Date.now() - startTime;
+          setRealClientStatus(`200 OK (${latency}ms) · Server: ${loadedTime}`);
+        }
 
         const loadedAnchors =
           scenario === 'server_empty' ? [] : response.data.anchors ?? [];
         setAnchors(loadedAnchors);
 
-        const initTime = service.resolveEatNow(loadedTime, 30);
-        setTimeState(initTime);
+        // Preserve scheduled mode if already selected; only reset to Eat Now if in now mode
+        setTimeState((prev) => {
+          if (prev.mode === 'scheduled') {
+            return service.resolveScheduledTime(prev.desiredAt, loadedTime, prev.confirmedPast);
+          }
+          return service.resolveEatNow(loadedTime, 30);
+        });
 
         if (scenario === 'manual_only' || loadedAnchors.length === 0) {
           const manual = service.resolveManual(
@@ -189,6 +248,9 @@ export function ContextScreen({
         const msg = (err as { message?: string })?.message ?? 'Lỗi kết nối máy chủ';
         setServerError(msg);
         setAnchors([]);
+        if (envMode === 'real_api') {
+          setRealClientStatus(`Lỗi mạng: ${msg}`);
+        }
       }
     };
 
@@ -197,7 +259,7 @@ export function ContextScreen({
     return () => {
       active = false;
     };
-  }, [client, scenario, service]);
+  }, [client, envMode, scenario, service]);
 
   const handleRetry = async () => {
     setLoading(true);
@@ -209,12 +271,20 @@ export function ContextScreen({
         setAnchors([]);
         return;
       }
+      setServerError(null);
       const loadedTime = response.data.serverTime || new Date().toISOString();
       setServerTime(loadedTime);
       const loadedAnchors = response.data.anchors ?? [];
       setAnchors(loadedAnchors);
-      const initTime = service.resolveEatNow(loadedTime, 30);
-      setTimeState(initTime);
+
+      // Preserve scheduled mode if already active
+      setTimeState((prev) => {
+        if (prev.mode === 'scheduled') {
+          return service.resolveScheduledTime(prev.desiredAt, loadedTime, prev.confirmedPast);
+        }
+        return service.resolveEatNow(loadedTime, 30);
+      });
+
       const res = await service.resolveWithGps(loadedAnchors);
       setLocationState(res);
     } catch (err: unknown) {
@@ -273,6 +343,11 @@ export function ContextScreen({
     setTimeState(schedRes);
   };
 
+  const handleAdjustToValidNow = () => {
+    const adjusted = service.adjustToValidServerTime(serverTime, 30);
+    setTimeState(adjusted);
+  };
+
   // Sanitized context payload for room / server
   const sanitizedContext: RoomContext | null = useMemo(() => {
     if (!locationState.selectedAnchor) return null;
@@ -290,6 +365,20 @@ export function ContextScreen({
       return null;
     }
   }, [locationState.selectedAnchor, radiusM, timeState.desiredAt, serviceMode, mealSlot]);
+
+  // Guard for saving context: strictly disallow past time, pending confirmation, or out-of-bounds horizon
+  const canSaveContext = Boolean(
+    locationState.selectedAnchor &&
+    sanitizedContext &&
+    !timeState.requiresConfirmation &&
+    !timeState.isPast &&
+    !timeState.isTooFarFuture
+  );
+
+  const handleSaveContext = () => {
+    if (!canSaveContext || !sanitizedContext) return;
+    onSaveContext?.(sanitizedContext);
+  };
 
   return (
     <SafeAreaView
@@ -320,6 +409,54 @@ export function ContextScreen({
         <Text style={[styles.caption, { color: colors?.muted ?? '#64748B' }]}>
           GM-24 · Foreground GPS gợi điểm công cộng · Không gửi GPS thô lên server
         </Text>
+
+        {/* Environment Mode: Mock Scenarios vs Live Real API */}
+        <View
+          style={[
+            styles.card,
+            {
+              backgroundColor: colors?.surface ?? '#FFFFFF',
+              borderColor: colors?.line ?? '#E2E8F0',
+            },
+          ]}
+        >
+          <Text
+            accessibilityRole="header"
+            style={[styles.sectionTitle, { color: colors?.text ?? '#1A202C' }]}
+          >
+            ⚙️ Môi trường dữ liệu & API
+          </Text>
+          <View style={styles.chipGrid}>
+            <Chip
+              label="🧪 Môi trường kịch bản (Mock)"
+              selected={envMode === 'mock'}
+              onPress={() => setEnvMode('mock')}
+              colors={colors}
+            />
+            <Chip
+              label="🌐 Máy chủ thật (Live Supabase API)"
+              selected={envMode === 'real_api'}
+              onPress={() => {
+                setEnvMode('real_api');
+                setScenario('live_native');
+              }}
+              colors={colors}
+            />
+          </View>
+          {envMode === 'real_api' && (
+            <View style={{ gap: 6, marginTop: 4 }}>
+              <Text style={[styles.caption, { color: colors?.text ?? '#1A202C' }]}>
+                • Trạng thái kết nối: <Text style={{ fontWeight: '700' }}>{realClientStatus}</Text>
+              </Text>
+              <Text style={[styles.caption, { color: colors?.muted ?? '#64748B' }]}>
+                • Endpoint: {realApiUrl}
+              </Text>
+              <Text style={[styles.caption, { color: colors?.muted ?? '#64748B' }]}>
+                (Android Emulator: 10.0.2.2:54321 · Thiết bị thật qua WiFi: IP máy chủ LAN hoặc adb reverse tcp:54321 tcp:54321)
+              </Text>
+            </View>
+          )}
+        </View>
 
         {/* Scenario Selector (for Testing & Verification on Android / Expo Go) */}
         <View
@@ -673,7 +810,7 @@ export function ContextScreen({
                 />
               </View>
 
-              {timeState.requiresConfirmation && (
+              {timeState.isPast && (
                 <View
                   style={[
                     styles.warningBox,
@@ -683,12 +820,25 @@ export function ContextScreen({
                   <Text style={{ color: colors?.danger ?? '#EF4444', fontWeight: '700' }}>
                     ⚠️ Giờ đã chọn nằm trong quá khứ so với giờ máy chủ!
                   </Text>
-                  <AppButton
-                    label="Xác nhận giờ này"
-                    variant="danger"
-                    onPress={handleConfirmPastTime}
-                    colors={colors}
-                  />
+                  <Text style={[styles.caption, { color: colors?.muted ?? '#64748B' }]}>
+                    Máy chủ từ chối tạo phòng nếu giờ ăn đã qua (DESIRED_TIME_PASSED). Vui lòng điều chỉnh về giờ hợp lệ.
+                  </Text>
+                  <View style={{ gap: 8, marginTop: 4 }}>
+                    <AppButton
+                      label="Điều chỉnh thành giờ hợp lệ (+30 phút từ giờ máy chủ)"
+                      variant="primary"
+                      onPress={handleAdjustToValidNow}
+                      colors={colors}
+                    />
+                    {timeState.requiresConfirmation && (
+                      <AppButton
+                        label="Xác nhận giờ này"
+                        variant="danger"
+                        onPress={handleConfirmPastTime}
+                        colors={colors}
+                      />
+                    )}
+                  </View>
                 </View>
               )}
             </View>
@@ -807,18 +957,34 @@ export function ContextScreen({
             </Text>
           </Text>
           <Text style={[styles.caption, { color: colors?.green ?? '#10B981', marginTop: 4 }]}>
-            ✓ Đã kiểm toán: 0 tọa độ GPS thô được gửi trong log, request hoặc cơ sở dữ liệu.
+            ✓ Bảo đảm quyền riêng tư: Payload gửi máy chủ chỉ chứa anchorId, không chứa tọa độ GPS thô (0 tọa độ GPS thô trong request payload và client log).
           </Text>
         </View>
 
         {/* Save / Apply Context Button */}
         {onSaveContext && sanitizedContext && (
-          <AppButton
-            label="Xác nhận bối cảnh phòng"
-            variant="primary"
-            onPress={() => onSaveContext(sanitizedContext)}
-            colors={colors}
-          />
+          <View style={{ gap: 6, marginTop: 4 }}>
+            <AppButton
+              label="Xác nhận bối cảnh phòng"
+              variant="primary"
+              disabled={!canSaveContext}
+              onPress={handleSaveContext}
+              colors={colors}
+            />
+            {!canSaveContext && (
+              <Text style={[styles.caption, { color: colors?.danger ?? '#EF4444', textAlign: 'center' }]}>
+                {!locationState.selectedAnchor
+                  ? 'Vui lòng chọn một điểm hẹn công cộng.'
+                  : timeState.isPast
+                  ? 'Không thể lưu: thời gian ăn đang ở quá khứ (DESIRED_TIME_PASSED).'
+                  : timeState.isTooFarFuture
+                  ? 'Không thể lưu: thời gian ăn vượt quá 7 ngày.'
+                  : timeState.requiresConfirmation
+                  ? 'Vui lòng xác nhận hoặc điều chỉnh thời gian ăn.'
+                  : 'Vui lòng hoàn tất cấu hình bối cảnh hợp lệ.'}
+              </Text>
+            )}
+          </View>
         )}
       </ScrollView>
     </SafeAreaView>

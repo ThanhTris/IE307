@@ -6,6 +6,7 @@
  * and strict privacy sanitization (raw GPS coordinates NEVER sent to server/log/database).
  */
 
+import { PermissionsAndroid, Platform } from 'react-native';
 import type {
   MealSlot,
   PublicAnchor,
@@ -384,13 +385,14 @@ export class MockLocationAdapter implements LocationAdapter {
 }
 
 /**
- * Standard Native Geolocation Adapter:
- * Uses standard foreground-only navigator.geolocation when available on the host platform.
- * Never requests background location tracking.
+ * Web Geolocation Adapter:
+ * Uses standard browser navigator.geolocation when available in web environments.
+ * Strictly checks for window and navigator.geolocation existence.
  */
-export class BrowserNativeLocationAdapter implements LocationAdapter {
+export class WebLocationAdapter implements LocationAdapter {
   async getPermissionStatus(): Promise<LocationPermissionStatus> {
     if (
+      typeof window !== 'undefined' &&
       typeof navigator !== 'undefined' &&
       navigator.permissions &&
       navigator.permissions.query
@@ -446,6 +448,153 @@ export class BrowserNativeLocationAdapter implements LocationAdapter {
       );
     });
   }
+}
+
+/**
+ * Interface for pluggable or dynamically injected native GPS providers
+ * (e.g. Expo Location API or custom native modules).
+ */
+export interface NativeLocationProvider {
+  requestForegroundPermissionsAsync?(): Promise<{ status: string; granted: boolean }>;
+  getForegroundPermissionsAsync?(): Promise<{ status: string; granted: boolean }>;
+  getCurrentPositionAsync?(options?: { accuracy?: number }): Promise<{
+    coords: { latitude: number; longitude: number; accuracy?: number };
+  }>;
+}
+
+/**
+ * Android Native Foreground Location Adapter:
+ * Uses React Native PermissionsAndroid on Android devices for foreground-only permission.
+ * Supports injected or runtime-detected NativeLocationProvider (such as Expo Location SDK57).
+ * Never requests background location tracking.
+ */
+export class NativeLocationAdapter implements LocationAdapter {
+  private readonly provider?: NativeLocationProvider;
+
+  constructor(provider?: NativeLocationProvider) {
+    this.provider = provider;
+  }
+
+  async getPermissionStatus(): Promise<LocationPermissionStatus> {
+    if (this.provider?.getForegroundPermissionsAsync) {
+      try {
+        const res = await this.provider.getForegroundPermissionsAsync();
+        if (res.status === 'granted' || res.granted) return 'granted';
+        if (res.status === 'denied') return 'denied';
+        return 'undetermined';
+      } catch {
+        return 'unavailable';
+      }
+    }
+
+    if (Platform.OS === 'android') {
+      try {
+        const hasPermission = await PermissionsAndroid.check(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+        );
+        return hasPermission ? 'granted' : 'undetermined';
+      } catch {
+        return 'unavailable';
+      }
+    }
+
+    return 'unavailable';
+  }
+
+  async requestPermission(): Promise<LocationPermissionStatus> {
+    if (this.provider?.requestForegroundPermissionsAsync) {
+      try {
+        const res = await this.provider.requestForegroundPermissionsAsync();
+        if (res.status === 'granted' || res.granted) return 'granted';
+        if (res.status === 'denied') return 'denied';
+        return 'undetermined';
+      } catch {
+        return 'unavailable';
+      }
+    }
+
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          {
+            title: 'Quyền truy cập vị trí',
+            message:
+              'Gì Cũng Được cần quyền vị trí để gợi ý điểm hẹn công cộng gần bạn nhất. Tọa độ không bao giờ được gửi lên máy chủ.',
+            buttonPositive: 'Đồng ý',
+            buttonNegative: 'Từ chối',
+          }
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          return 'granted';
+        }
+        if (granted === PermissionsAndroid.RESULTS.DENIED) {
+          return 'denied';
+        }
+        if (granted === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+          return 'denied';
+        }
+        return 'denied';
+      } catch {
+        return 'unavailable';
+      }
+    }
+
+    return 'unavailable';
+  }
+
+  async getCurrentCoordinates(): Promise<LocationCoordinates> {
+    if (this.provider?.getCurrentPositionAsync) {
+      try {
+        const res = await this.provider.getCurrentPositionAsync({ accuracy: 3 });
+        return {
+          latitude: res.coords.latitude,
+          longitude: res.coords.longitude,
+          accuracy: res.coords.accuracy,
+        };
+      } catch (err: unknown) {
+        throw new Error((err as { message?: string })?.message ?? 'GPS_POSITION_UNAVAILABLE');
+      }
+    }
+
+    // Check runtime Expo modules if available
+    const expoModules = (globalThis as unknown as { expo?: { modules?: Record<string, unknown> } })?.expo?.modules;
+    if (expoModules?.ExpoLocation) {
+      const expoLocation = expoModules.ExpoLocation as {
+        getCurrentPositionAsync?: (options?: unknown) => Promise<{
+          coords: { latitude: number; longitude: number; accuracy?: number };
+        }>;
+      };
+      if (typeof expoLocation.getCurrentPositionAsync === 'function') {
+        const res = await expoLocation.getCurrentPositionAsync({});
+        return {
+          latitude: res.coords.latitude,
+          longitude: res.coords.longitude,
+          accuracy: res.coords.accuracy,
+        };
+      }
+    }
+
+    throw new Error('NATIVE_GPS_UNAVAILABLE');
+  }
+}
+
+/**
+ * Backward compatibility alias for legacy imports
+ */
+export const BrowserNativeLocationAdapter = WebLocationAdapter;
+
+/**
+ * Automatically resolves the most appropriate location adapter based on runtime platform.
+ */
+export function createDefaultLocationAdapter(): LocationAdapter {
+  if (Platform.OS === 'android' || Platform.OS === 'ios') {
+    return new NativeLocationAdapter();
+  }
+  if (typeof window !== 'undefined' && typeof navigator !== 'undefined' && 'geolocation' in navigator) {
+    return new WebLocationAdapter();
+  }
+  return new MockLocationAdapter();
 }
 
 // ============================================================================
@@ -629,6 +778,27 @@ export class LocationService {
       requiresConfirmation: validation.isPast && !confirmedPast,
       confirmedPast,
       isTooFarFuture: validation.isTooFarFuture,
+    };
+  }
+
+  /**
+   * Adjusts an invalid or past scheduled time to a valid future time
+   * by applying the designated buffer once to the authoritative server time.
+   */
+  adjustToValidServerTime(
+    serverTimeIso: string,
+    bufferMinutes = DEFAULT_EAT_NOW_BUFFER_MINUTES
+  ): TimeResolution {
+    const desiredAt = computeEatNowTime(serverTimeIso, bufferMinutes);
+    return {
+      mode: 'scheduled',
+      serverTime: serverTimeIso,
+      bufferMinutes: 0,
+      desiredAt,
+      isPast: false,
+      requiresConfirmation: false,
+      confirmedPast: false,
+      isTooFarFuture: false,
     };
   }
 }

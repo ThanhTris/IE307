@@ -6,6 +6,8 @@ import {
   sanitizeContextForServer,
   redactLocationFromLog,
   MockLocationAdapter,
+  NativeLocationAdapter,
+  WebLocationAdapter,
   LocationService,
   DEFAULT_MAX_COVERAGE_RADIUS_M,
   DEFAULT_EAT_NOW_BUFFER_MINUTES,
@@ -316,6 +318,66 @@ describe('GM-24 Location Service & Domain Logic', () => {
       expect(confirmed.isPast).toBe(true);
       expect(confirmed.requiresConfirmation).toBe(false);
       expect(confirmed.confirmedPast).toBe(true);
+    });
+
+    it('adjustToValidServerTime resets past time to valid future time without past flags', () => {
+      const serverTime = '2026-10-15T12:00:00.000Z';
+      const adjusted = service.adjustToValidServerTime(serverTime, 30);
+
+      expect(adjusted.mode).toBe('scheduled');
+      expect(adjusted.desiredAt).toBe('2026-10-15T12:30:00.000Z');
+      expect(adjusted.isPast).toBe(false);
+      expect(adjusted.requiresConfirmation).toBe(false);
+      expect(adjusted.confirmedPast).toBe(false);
+    });
+  });
+
+  describe('NativeLocationAdapter & WebLocationAdapter', () => {
+    it('NativeLocationAdapter delegates to injected native provider when available', async () => {
+      const mockProvider = {
+        requestForegroundPermissionsAsync: jest.fn().mockResolvedValue({ status: 'granted', granted: true }),
+        getForegroundPermissionsAsync: jest.fn().mockResolvedValue({ status: 'granted', granted: true }),
+        getCurrentPositionAsync: jest.fn().mockResolvedValue({
+          coords: { latitude: 10.7828, longitude: 106.6958, accuracy: 5 },
+        }),
+      };
+
+      const nativeAdapter = new NativeLocationAdapter(mockProvider);
+      const permStatus = await nativeAdapter.getPermissionStatus();
+      expect(permStatus).toBe('granted');
+
+      const reqStatus = await nativeAdapter.requestPermission();
+      expect(reqStatus).toBe('granted');
+
+      const coords = await nativeAdapter.getCurrentCoordinates();
+      expect(coords.latitude).toBe(10.7828);
+      expect(coords.longitude).toBe(106.6958);
+      expect(coords.accuracy).toBe(5);
+    });
+
+    it('NativeLocationAdapter handles provider permission denial and coordinate errors', async () => {
+      const mockProvider = {
+        requestForegroundPermissionsAsync: jest.fn().mockResolvedValue({ status: 'denied', granted: false }),
+        getForegroundPermissionsAsync: jest.fn().mockResolvedValue({ status: 'denied', granted: false }),
+        getCurrentPositionAsync: jest.fn().mockRejectedValue(new Error('GPS_DISABLED')),
+      };
+
+      const nativeAdapter = new NativeLocationAdapter(mockProvider);
+      expect(await nativeAdapter.getPermissionStatus()).toBe('denied');
+      expect(await nativeAdapter.requestPermission()).toBe('denied');
+      await expect(nativeAdapter.getCurrentCoordinates()).rejects.toThrow('GPS_DISABLED');
+    });
+
+    it('NativeLocationAdapter throws NATIVE_GPS_UNAVAILABLE when no native provider is present', async () => {
+      const nativeAdapter = new NativeLocationAdapter();
+      await expect(nativeAdapter.getCurrentCoordinates()).rejects.toThrow('NATIVE_GPS_UNAVAILABLE');
+    });
+
+    it('WebLocationAdapter reports unavailable when navigator.geolocation is absent', async () => {
+      const webAdapter = new WebLocationAdapter();
+      // In node/jest environment, navigator.geolocation is not standard
+      const status = await webAdapter.getPermissionStatus();
+      expect(['undetermined', 'unavailable']).toContain(status);
     });
   });
 });
