@@ -26,9 +26,11 @@ Test chạy executable thật --version và so với version lock/package hiện
 CLI launch không gọi API (0 API case, không dùng làm API Pass).
 
 Workflow GM-20 CLI portability chạy npm ci/Node24 và launch CLI trên ba OS.
-Windows/Linux native CI cần đọc kết quả thực tế sau push; chưa coi workflow tồn tại
-là Pass. Full SQL/HTTP dùng PostgreSQL disposable trên macOS, không tuyên bố đã
-kiểm HTTP/SQL trên Windows hoặc Android.
+[CI native](cli-ci.json) đã Pass trên Windows x64, Linux x64 và macOS ARM64
+ở commit7622fad, [run38669720375](https://github.com/ThanhTris/IE307/actions/runs/38669720375).
+Mỗi job thực sự launch Supabase2.120.0 qua Node entrypoint; [summary](cli-ci.txt).
+Full SQL/HTTP dùng PostgreSQL disposable trên macOS, không tuyên bố đã kiểm
+HTTP/SQL trên Windows hoặc Android.
 
 ## Kết quả và giới hạn
 

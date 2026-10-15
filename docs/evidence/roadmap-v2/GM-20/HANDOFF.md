@@ -110,3 +110,8 @@ entrypoint trên Windows/macOS/Linux, không là kiểm SQL/HTTP trên ba hệ �
 [Review fix evidence](review-fix-2026-10-15/README.md) ghi kết quả và CI revision.
 Hai mobile CI đỏ ở check Expo được reviewer chấp nhận ngoại lệ cho lần review này;
 không đổi package nền, không claim all checks passed hoặc tự Approved/Done.
+
+CI portability đã Pass thật trên Windows x64, Linux x64 và macOS ARM64 tại
+[run38669720375](https://github.com/ThanhTris/IE307/actions/runs/38669720375),
+commit7622fad. Xem cli-ci.json/txt trong review evidence. Chỉ executable launch/
+version2.120.0 được kiểm ba OS; HTTP/SQL22 groups thuộc macOS, Android chưa chạy.

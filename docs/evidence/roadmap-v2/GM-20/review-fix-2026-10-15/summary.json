@@ -31,8 +31,31 @@
     "result": "Pass",
     "tests": 20
   },
-  "crossOsCliCi": "Pending push; no HTTP assertions claimed",
+  "crossOsCliCi": {
+    "result": "Pass",
+    "testedRevision": "7622fadba7ae6c98a16e95128e8cde7c9a03a7b5",
+    "runUrl": "https://github.com/ThanhTris/IE307/actions/runs/38669720375",
+    "nativeLaunches": [
+      {
+        "platformArch": "win32/x64",
+        "version": "2.120.0",
+        "apiCases": 0
+      },
+      {
+        "platformArch": "darwin/arm64",
+        "version": "2.120.0",
+        "apiCases": 0
+      },
+      {
+        "platformArch": "linux/x64",
+        "version": "2.120.0",
+        "apiCases": 0
+      }
+    ],
+    "scope": "Real native Supabase CLI entrypoint launch/version only; not SQL/HTTP"
+  },
   "expoCompatibilityCi": "Reviewer exception in cited comment; dependencies unchanged",
   "reviewerApproved": false,
-  "applicationDatabaseReset": false
+  "applicationDatabaseReset": false,
+  "ciEvidenceCheckedAt": "2026-10-15T02:14:33.500843+00:00"
 }

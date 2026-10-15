@@ -126,11 +126,13 @@ Chi tiết phạm vi/test ở [review evidence](review-fix-2026-10-15/README.md)
   native CLI + backend/runtime tests20 Pass; Python550/40.323s, domain169 Pass.
 - Regression GM1932 HTTP/15pgTAP Pass. GM20 parity140/pgTAP11 và22 HTTP groups
   được chạy trên DB disposable mới/reset; source hash phải khớp report cuối.
-- Windows/Linux/macOS CLI workflow launch executable thật; kết quả CI ghi riêng
-  sau push, không gọi0 API case là API Pass hoặc coi test Mac là Windows.
+- Windows/Linux/macOS CLI workflow đã Pass native executable/version trên cả ba
+  OS ở commit7622fad, xem [CI proof](review-fix-2026-10-15/cli-ci.json). Không gọi
+  0 API case là API Pass hoặc coi test Mac là Windows.
 - Không thay package Expo; hai job mobile compatibility đỏ đã được Trí chấp nhận
   ngoại lệ riêng ở comment. Không claim all checks passed hoặc reviewer approval.
 
 Lượt review fix chốt sau reset:22 HTTP/140 parity/11 SQL Pass; GM1932/15 Pass,
 cleanup DB0/guest0/REST0/private files0. Parent revision2c1b023 + dirty source hash
-trong manifest xác định bản đã kiểm; workflow CLI native ba OS đang chờ chạy sau push.
+trong manifest xác định bản đã kiểm. CLI native ba OS đã Pass sau push; source
+không đổi giữa commit7622fad được CI kiểm và commit bổ sung evidence này.
