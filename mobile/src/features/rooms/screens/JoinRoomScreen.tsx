@@ -5,17 +5,19 @@ import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import type { JoinRoomResponse } from '../../../data/api/contracts';
 import { EntryError, EntrySection, entryStyles, RoomEntryFrame, type PreviewControlsProps } from '../components/RoomEntryFrame';
 import { useRoomSubmission } from '../hooks/useRoomEntry';
-import { normalizeRoomCode, validDisplayName, validRoomCode, type CameraAction, type RoomEntryReceipt, type RoomEntryRepository } from '../services/roomEntry';
+import { normalizeRoomCode, validDisplayName, validRoomCode, type CameraAction, type RequestIdFactory, type RoomEntryReceipt, type RoomEntryRepository } from '../services/roomEntry';
 
-type Props = PreviewControlsProps & {
+export type JoinRoomScreenProps = PreviewControlsProps & {
   repository: RoomEntryRepository; onBack: () => void; onEntered: (room: RoomEntryReceipt) => void;
   sampleCode?: string; initialCode?: string; onScan?: CameraAction;
+  createRequestId?: RequestIdFactory;
 };
 
-export function JoinRoomScreen({ repository, onBack, onEntered, sampleCode, initialCode = '', onScan, previewControls }: Props) {
+export function JoinRoomScreen({ repository, onBack, onEntered, sampleCode, initialCode = '', onScan, previewControls, createRequestId }: JoinRoomScreenProps) {
   const { colors } = useShellTheme();
   const [name, setName] = useState('');
   const [code, setCode] = useState(normalizeRoomCode(initialCode));
+  const [incomingCode, setIncomingCode] = useState(normalizeRoomCode(initialCode));
   const [tab, setTab] = useState<'manual' | 'camera'>('manual');
   const [validation, setValidation] = useState<string>();
   const [confirm, setConfirm] = useState(false);
@@ -24,9 +26,20 @@ export function JoinRoomScreen({ repository, onBack, onEntered, sampleCode, init
   const scanLock = useRef(false);
   const mounted = useRef(false);
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
-  const submitted = useRoomSubmission<JoinRoomResponse>(data => onEntered({ roomId: data.roomId, code: data.code, version: data.version, role: 'member' }));
+  const submitted = useRoomSubmission<JoinRoomResponse>(data => onEntered({ roomId: data.roomId, code: data.code, version: data.version, role: 'member' }), createRequestId);
   const busy = submitted.busy || scanBusy;
-  const disabled = busy || submitted.uncertain;
+  const disabled = busy || submitted.uncertain || submitted.accepted;
+  const normalizedIncoming = normalizeRoomCode(initialCode);
+  // A warm incoming code invalidates the old confirmation. Never replace an
+  // intent while it is pending, possibly delivered, or already accepted.
+  if (incomingCode !== normalizedIncoming && !disabled) {
+    setIncomingCode(normalizedIncoming);
+    setCode(normalizedIncoming);
+    setTab('manual');
+    setConfirm(false);
+    setValidation(undefined);
+    submitted.clearError();
+  }
   const requestJoin = () => {
     if (!validDisplayName(name)) { setValidation('Tên của bạn cần từ 1 đến 24 ký tự.'); return; }
     if (!validRoomCode(code)) { setValidation('Mã cần đúng 6 chữ/số, không dùng I, O, 0 hoặc 1.'); return; }
@@ -66,7 +79,7 @@ export function JoinRoomScreen({ repository, onBack, onEntered, sampleCode, init
       {sampleCode ? <AppButton label={`Điền mã mẫu ${sampleCode}`} variant="quiet" disabled={disabled} onPress={() => { setCode(sampleCode); setValidation(undefined); submitted.clearError(); }} colors={colors} /> : null}
       {validation ? <Text accessibilityRole="alert" style={[entryStyles.body, { color: colors.danger }]}>{validation}</Text> : null}
       {submitted.error ? <EntryError code={submitted.error} /> : null}
-      <AppButton label={submitted.uncertain ? 'Thử lại cùng yêu cầu vào phòng' : 'Vào phòng →'} loading={submitted.busy} onPress={submitted.uncertain ? join : requestJoin} colors={colors} />
+      <AppButton label={submitted.accepted ? 'Đã vào phòng mô phỏng' : submitted.uncertain ? 'Thử lại cùng yêu cầu vào phòng' : 'Vào phòng →'} loading={submitted.busy} disabled={submitted.accepted} onPress={submitted.uncertain ? join : requestJoin} colors={colors} />
       <Text style={[entryStyles.caption, { color: colors.muted }]}>Bạn sẽ xác nhận tên và mã trước khi vào phòng.</Text>
     </EntrySection> : <EntrySection title="Quét mã từ chủ phòng">
       <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={[entryStyles.scanner, { backgroundColor: colors.soft, borderColor: colors.border }]}>

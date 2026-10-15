@@ -1,5 +1,70 @@
 # GM-09 — checks
 
+## Bàn giao review theo xác nhận người dùng — 2026-10-15
+
+Người dùng xác nhận “tôi đã kiểm tra GM-09 thành công và hoạt động” sau bản sửa cuối. Ghi **Pass kiểm thủ công tổng thể theo người dùng**, chưa phải approval của Trí. Theo chỉ dẫn hiện tại, lần bàn giao GM-09 dùng biên bản văn bản, không yêu cầu ảnh/video. [Biên bản và giới hạn xác nhận](MANUAL_DEVICE_CHECK.md) ghi thông số chưa cung cấp và các ca thiết bị chưa xác nhận riêng; không tự suy light/dark/font200/TalkBack/keyboard/Back hoặc từng fixture đạt từ xác nhận chung.
+
+Revision bàn giao: HEAD `67356949615c39134ba24b71301c45fed917089e` + working tree chưa commit, [manifest source/test cuối](REVIEW_PACKAGE_MANIFEST.json). Code/test không đổi trong lượt cập nhật tài liệu này; kết quả source mới nhất là 14 suites / **462 mobile tests**, Android Hermes export Pass, **550 Python tests không skipped**. Các log 460 tests/6 skipped/Fail ở dưới là lịch sử của revision trước.
+
+Owner Tuấn, reviewer Trí; chỉ Trí được review cuối, merge và chuyển GM-09 sang Done. Không đổi metadata task/Project/approval; [nội dung PR chuẩn bị](PR_BODY.md) và [hướng dẫn commit/push](COMMIT_AND_PUSH.md) để người dùng chạy sau kiểm diff.
+
+| Kiểm lượt chuẩn bị review | Actual / evidence | Kết quả |
+| --- | --- | --- |
+| Repository/indexes/diff | Validator, `task_readiness.py --check-docs`, `git diff --check` exit0; [output](REVIEW_PREPARATION_REPOSITORY_CHECK.txt). Task chỉ cập nhật body báo cáo, không đổi metadata nên indexes không cần sinh lại | Pass |
+| Manifest source/test | 11 file, không có hash lệch; [manifest](REVIEW_PACKAGE_MANIFEST.json), cùng output kiểm repository. Lượt này không đổi source/test nên không lặp mobile check/export | Pass |
+| Python regression sau cập nhật tài liệu | CPython3.12.14 / Windows, PYTHONUTF8=1, quyền fixture Temp; **550 tests / 98.964s, OK, không skipped**; [output](REVIEW_PREPARATION_PYTHON_REGRESSION.txt). Cell ERROR trong log là fixture kiểm failure path | Pass |
+| GitHub chỉ đọc | Start gate live `2026-10-15T12:56:34.670228+00:00`: READY_TO_CLAIM; remote main `ce7b87a`, chưa có nhánh cùng tên hoặc PR mở khi kiểm. Chưa stage/commit/push/tạo PR/merge hoặc đổi Project | Đã đọc; không thay review/gate merge của Trí |
+
+## Bản sửa tiếp sau lỗi box-only — 2026-10-15
+
+Người dùng báo cả hai CTA không bấm được sau patch trước. Ghi nhận **Fail trên thiết bị cho bản box-only**, không dùng 460 tests Pass của bản đó để kết luận native đạt. Revision mới: `6735694` + working tree; owner Tuấn, reviewer Trí, GM-09.1/GM-05.1 giữ nguyên. Gate live `2026-10-15T12:37:55.766142+00:00`: `READY_TO_CLAIM`.
+
+Bản hiện tại bỏ pointerEvents override, giữ Pressable mặc định. Nhãn stretch theo chiều ngang, minHeight46dp và nhận padding ngang/dọc; cùng border1dp của khung tạo touch target tối thiểu48dp, chữ vẫn căn giữa. Handler duy nhất ở Pressable; không gắn onPress vào Text, không thêm nút lồng/hitSlop hoặc bỏ disabled/loading.
+
+| Kiểm | Actual / evidence | Kết quả |
+| --- | --- | --- |
+| Mobile check | Exit0; typecheck/eslint/architecture đạt, 4 lint warnings upstream hiện có; 14 suites / **462 tests**, Jest50.174s; [output](BUTTON_LABEL_AREA_MOBILE_CHECK.txt). Hai case primary/secondary: bấm nhãn/khung gọi một lần mỗi thao tác, disabled/loading chặn cả hai, re-enable hoạt động | Pass tự động |
+| Android export | Exit0;1284 modules; Hermes `entry-616b817e965f225bf5519bc600b0dac4.hbc`; [output](BUTTON_LABEL_AREA_ANDROID_BUNDLE.txt) | Pass export, chưa là native smoke |
+| Python regression | CPython3.12.14 / Windows, PYTHONUTF8=1, quyền fixture Temp; **550 tests / 102.402s, OK, không skipped**; [output](BUTTON_LABEL_AREA_PYTHON_REGRESSION.txt). Cell ERROR là fixture kiểm failure path | Pass |
+| Repository/indexes/diff | Validator, `task_readiness.py --check-docs`, `git diff --check` exit0; [output](BUTTON_LABEL_AREA_REPOSITORY_CHECK.txt) | Pass |
+| Expo Go trên bản sửa mới | Sau bản sửa cuối, người dùng xác nhận GM-09 đã kiểm thành công và hoạt động; [biên bản](MANUAL_DEVICE_CHECK.md) phân biệt xác nhận chung với từng ca chưa báo riêng | **Pass tổng thể theo xác nhận người dùng; từng điểm chạm/guard trên thiết bị chưa được báo riêng** |
+
+Các kiểm nhãn/khung trong Jest kiểm callback/guard, không mô phỏng hình học hit testing Android. Xác nhận thủ công mới nhất ở đầu file; evidence cũ bên dưới chỉ là lịch sử. Không commit/push/Done/Approved trong lượt cập nhật tài liệu.
+
+## Lịch sử patch box-only không đạt trên thiết bị — 2026-10-15
+
+Theo báo lỗi Expo Go của người dùng: CTA tạo phòng/nhập mã chỉ phản hồi khi chạm chữ. Revision `6735694` + working tree hiện tại; owner Tuấn, reviewer Trí, contract GM-09.1. [Plan bổ sung](PLAN.md) ghi scope sửa AppButton dùng chung của GM-05 theo yêu cầu này. Pressable đặt `pointerEvents="box-only"` để cả khung nút nhận chạm trực tiếp; nhãn không là đích chạm riêng. Props/contract GM-05.1, layout/tokens và disabled/loading giữ nguyên. SHA256 `mobile/src/shared/ui/components.tsx`: `9c14509a8cedcc7590d7e9dcc0544f19edbf5e197bdc3c35df99b7484f9c4cc5`.
+
+| Kiểm | Actual / evidence | Kết quả |
+| --- | --- | --- |
+| Gate trước code | Live Project `2026-10-15T12:17:52.191954+00:00`, `READY_TO_CLAIM`; GM-05/07 đủ đầu vào | Pass dependency/artifact gate, không là approval |
+| `npm run check` | Typecheck/eslint/architecture exit0; 14 suites / 460 tests; 4 lint warnings upstream hiện có; [output](BUTTON_HIT_AREA_MOBILE_CHECK.txt) | Pass tự động, không kiểm hình học native |
+| `npm run bundle:android` | 1284 modules, Hermes `entry-4d3fb41e52c573e96c6bcd94e6aaf7fd.hbc`; [output](BUTTON_HIT_AREA_ANDROID_BUNDLE.txt). Sandbox chặn Hermes `spawn EPERM` ở lần đầu; lần cuối chạy với quyền phù hợp exit0 | Pass export, không là mở app |
+| Python regression | CPython3.12.14 / Windows, `PYTHONUTF8=1`, quyền tạo fixture Temp; **550 tests / 99.591s, OK, không skipped**; [output](BUTTON_HIT_AREA_PYTHON_REGRESSION.txt). Cell ERROR trong log là fixture kiểm failure path | Pass |
+| Repository/indexes/diff | Validator, `task_readiness.py --check-docs`, `git diff --check` đều exit0; [output](BUTTON_HIT_AREA_REPOSITORY_CHECK.txt) | Pass |
+| Expo Go: trái/giữa/phải trong nền hai CTA | Người dùng báo sau bản box-only cả nút tạo phòng và Tôi có mã phòng đều không bấm được; chưa có model/OS/ảnh kèm phản hồi | **Fail theo kiểm thực tế của người dùng — đã thay thế bản sửa này** |
+
+Không lấy Jest/bundle làm xác nhận đã hết lỗi trên thiết bị. Evidence hoàn thiện bên dưới là lượt trước thay đổi AppButton; manifest của 9 file cũ được giữ nguyên, chưa bao gồm file shared UI mới này. Không commit/push, đổi Project hoặc ghi Done/Approved.
+
+## Hoàn thiện theo UI đã Done — 2026-10-15
+
+Revision hiện hành: HEAD `6735694` + working tree, contract GM-09.1; [hashes của 9 file code/test](COMPLETION_PATCH_MANIFEST.json), [đối chiếu yêu cầu/patch/test plan và kết quả](COMPLETION_REVIEW_2026-10-15.md). Owner Tuấn, reviewer Trí. Nhận component/tokens GM-05, contract/mock GM-07 và đối chiếu UI GM-02/05/12 **Done trên Project**. Không áp GM-39 In Progress như mẫu app được duyệt.
+
+| AC / kiểm | Input và expected | Actual / evidence | Kết quả |
+| --- | --- | --- | --- |
+| Home/CTA/avatar/create/join/back/validation | Home → tạo/vào → receipt → Home/resume; dữ liệu/thời gian sai không gửi | Component và route tests đạt; summary GM-05 hiện đúng anchor/bữa/giờ/radius trước xác nhận | Pass tự động; [mobile output](COMPLETION_MOBILE_CHECK.txt) |
+| Mã theo contract, nhãn mô phỏng, không tự join | Trim/uppercase/6 ký tự; QR/incoming code cần xác nhận | Code từ adapter; incoming code mới hủy xác nhận cũ; pending/unknown/ACK không bị code mới thay intent | Pass tự động; cùng output |
+| Fixture loading/empty/network/full/locked/expired, camera interface | Có controls dưới Công cụ kiểm thử, manual fallback, retry không gửi trùng | Các case cũ tiếp tục đạt; bổ sung ACK lock, inject/reuse requestId, friends error riêng và bỏ phản hồi phiên cũ | Pass tự động; cùng output |
+| Mở/kiểm Expo Go Android thật | Home/Create/Join; dark/light, font200, TalkBack, keyboard/hardware Back và screenshots | Máy không có ADB; chưa có xác nhận thiết bị mới trong cuộc hội thoại | **Not run — chặn nghiệm thu AC này / Done** |
+| Đầu vào/đầu ra cho task sau | GM-25 dùng lại layout/props/repository; GM-30 incoming/camera interface; GM-39 đọc artifacts | Props export, Home navigation và RequestIdFactory inject được; [HANDOFF](HANDOFF.md) có cách mở/scenario/known limits | Pass tài liệu/interface; không thay API/native integration |
+| `npm run check` | Strict typecheck, eslint, Jest, architecture guard | Exit0; 14 suites / 460 tests, Jest22.015s; 4 warning upstream hiện có | Pass; [output](COMPLETION_MOBILE_CHECK.txt) |
+| `npm run check:expo` | Dependency compatibility | Exit0; Dependencies are up to date; không đổi package/lockfile | Pass |
+| `npm run bundle:android` | Metro/Hermes xuất bundle | Exit0; 1284 modules; bundle `entry-b3aa0a4b4d484df8018568ddc1bbdf65.hbc` | Pass export; [output](COMPLETION_ANDROID_BUNDLE.txt), chưa là mở app |
+| Python regression | Full suite có timezone data/quyền fixture tạm | 550 tests / 53.212s, OK (skipped=6), exit0 | Pass với 6 skipped; [output](COMPLETION_PYTHON_REGRESSION.txt) |
+| Validator/check-docs/diff/protected scope | Docs links/JSON/indexes hợp lệ; không đổi upstream | Tất cả exit0, 9 hashes khớp, 0 unmerged path; gate `READY_FOR_MERGE_REVIEW` trên main vừa fetch | Pass; [log cuối](COMPLETION_REPOSITORY_CHECK.txt) |
+
+Không thêm dependency/provider/native module hoặc triển khai task sau. Không commit/push hoặc sửa `GM-09-report.md`. Các mục bên dưới là lịch sử của revision trước.
+
 ## Cập nhật main — 2026-10-15
 
 Kết hợp HEAD `606f040` với `origin/main` `ce7b87a` trong phiên merge đang chờ commit. Chi tiết revision, scope, môi trường và kết quả tại [MERGE_MAIN_2026-10-15.md](MERGE_MAIN_2026-10-15.md). Mobile check đạt 14 suites / 448 tests; Python regression đạt 550 tests (6 skipped). Đây là kiểm tra tích hợp code, chưa nghiệm thu Expo Go hoặc Approved/Done.

@@ -1,4 +1,6 @@
 import { renderRouter } from 'expo-router/testing-library';
+import { router } from 'expo-router';
+import { act } from 'react';
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { store } from 'expo-router/build/global-state/router-store';
 import Layout from '../../src/app/_layout';
@@ -75,7 +77,7 @@ test('Home navigates create/join with back to Home and preserves foundation tool
 test('join deep link pre-fills code but waits for user confirmation', async () => {
   await renderRouter(routes, { initialUrl: '/join-room?code=gcd234' });
   expect(screen.getByLabelText('Mã phòng (6 ký tự)').props.value).toBe('GCD234');
-  expect(screen.queryByText('Mock adapter đã nhận yêu cầu')).toBeNull();
+  expect(screen.queryByText('Đã nhận yêu cầu mô phỏng')).toBeNull();
   const user = userEvent.setup();
   await user.type(screen.getByLabelText('Tên của bạn'), 'Tuấn');
   await user.press(screen.getByRole('button', { name: 'Vào phòng →' }));
@@ -86,6 +88,40 @@ test('join deep link pre-fills code but waits for user confirmation', async () =
   await screen.findByText('Phòng mẫu #GCD234');
   await user.press(screen.getByRole('button', { name: 'Quay lại phòng mô phỏng' }));
   await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/room-preview'));
+});
+
+test('Home create flow reaches the adapter receipt and preserves the room on return', async () => {
+  await renderRouter(routes, { initialUrl: '/' });
+  const user = userEvent.setup();
+  await screen.findByText(/Chào /);
+  await user.press(screen.getByRole('button', { name: '＋ Tạo kèo ăn' }));
+  await screen.findByRole('button', { name: 'Hồ Con Rùa' });
+  await user.type(screen.getByLabelText('Tên của bạn (chủ phòng)'), 'Tuấn');
+  await user.press(screen.getByRole('button', { name: 'Hồ Con Rùa' }));
+  expect(screen.getByText('BỐI CẢNH PHÒNG')).toBeOnTheScreen();
+  await user.press(screen.getByRole('button', { name: 'Tôi xác nhận điểm ăn, buổi và giờ' }));
+  await user.press(screen.getByRole('button', { name: 'Tạo phòng mô phỏng' }));
+  await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/room-preview'));
+  expect(await screen.findByText('Đã tạo phòng mẫu')).toBeOnTheScreen();
+  expect(screen.getByText('Đã nhận yêu cầu mô phỏng')).toBeOnTheScreen();
+  await user.press(screen.getByRole('button', { name: '‹ Quay lại' }));
+  await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/'));
+  expect(screen.getByRole('button', { name: 'Quay lại phòng mô phỏng' })).toBeOnTheScreen();
+  expect(screen.getByRole('button', { name: '＋ Tạo kèo ăn' })).toBeDisabled();
+});
+
+test('a warm route parameter updates the code without joining or keeping the previous confirmation', async () => {
+  await renderRouter(routes, { initialUrl: '/join-room?code=GCD234' });
+  const user = userEvent.setup();
+  await user.type(screen.getByLabelText('Tên của bạn'), 'Tuấn');
+  await user.press(screen.getByRole('button', { name: 'Vào phòng →' }));
+  expect(screen.getByRole('button', { name: 'Xác nhận vào phòng mô phỏng' })).toBeOnTheScreen();
+  await act(async () => router.setParams({ code: 'xyz789' }));
+  await waitFor(() => expect(screen.getByLabelText('Mã phòng (6 ký tự)').props.value).toBe('XYZ789'));
+  expect(screen.getByLabelText('Tên của bạn').props.value).toBe('Tuấn');
+  expect(screen.queryByRole('button', { name: 'Xác nhận vào phòng mô phỏng' })).toBeNull();
+  expect(screen.queryByText('Đã nhận yêu cầu mô phỏng')).toBeNull();
+  expect(store.getRouteInfo().pathname).toBe('/join-room');
 });
 
 test('changing fixture on join renders full error and can reset for retry', async () => {
@@ -116,7 +152,7 @@ test('receipt deep link without memory offers safe recovery instead of inventing
 test.each(['/create-room', '/join-room'])('active receipt guards direct navigation to %s', async initialUrl => {
   rememberPreviewRoom({ roomId: 'room_mock_001', code: 'GCD234', version: 1, role: 'host' });
   await renderRouter(routes, { initialUrl });
-  expect(screen.getByText('Mock adapter đã nhận yêu cầu')).toBeOnTheScreen();
+  expect(screen.getByText('Đã nhận yêu cầu mô phỏng')).toBeOnTheScreen();
   expect(screen.queryByLabelText('Tên của bạn (chủ phòng)')).toBeNull();
   expect(screen.queryByLabelText('Tên của bạn')).toBeNull();
 });

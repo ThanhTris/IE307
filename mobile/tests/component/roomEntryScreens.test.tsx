@@ -1,25 +1,25 @@
 import { act } from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
 import { createApiClient, MOCK_DEFAULT_ROOM_CODE } from '../../src/data/api';
-import type { CreateRoomRequest, CreateRoomResponse, JoinRoomRequest, WriteResult } from '../../src/data/api/contracts';
+import type { CreateRoomRequest, CreateRoomResponse, JoinRoomRequest, JoinRoomResponse, WriteResult } from '../../src/data/api/contracts';
 import { HomeScreen } from '../../src/features/home/screens/HomeScreen';
 import { CreateRoomScreen } from '../../src/features/rooms/screens/CreateRoomScreen';
 import { JoinRoomScreen } from '../../src/features/rooms/screens/JoinRoomScreen';
 import { RoomEntryReceiptScreen } from '../../src/features/rooms/screens/RoomEntryReceiptScreen';
-import { errorCopy, type RoomEntryRepository } from '../../src/features/rooms/services/roomEntry';
+import { errorCopy, type RequestIdFactory, type RoomEntryRepository } from '../../src/features/rooms/services/roomEntry';
 
 const client = () => createApiClient('mock', { delayMs: 0 });
 const press = async (name: string) => { await fireEvent.press(screen.getByRole('button', { name })); };
 const input = async (label: string, value: string) => { await fireEvent.changeText(screen.getByLabelText(label), value); };
 const homeProps = { sessionToken: 'fixture', onCreate: jest.fn(), onJoin: jest.fn(), onResume: jest.fn(), onOpenFoundation: jest.fn() };
 
-async function createForm(repository: RoomEntryRepository = client(), onEntered = jest.fn()) {
+async function createForm(repository: RoomEntryRepository = client(), onEntered = jest.fn(), createRequestId?: RequestIdFactory) {
   const original = repository.getDiscoveryContext.bind(repository);
   repository.getDiscoveryContext = async () => {
     const result = await original();
     return result.ok ? { ok: true, data: { ...result.data, serverTime: '2030-10-12T05:00:00.000Z' } } : result;
   };
-  await render(<CreateRoomScreen repository={repository} onBack={jest.fn()} onEntered={onEntered} />);
+  await render(<CreateRoomScreen repository={repository} onBack={jest.fn()} onEntered={onEntered} createRequestId={createRequestId} />);
   await screen.findByRole('button', { name: 'Hồ Con Rùa' });
   await input('Tên của bạn (chủ phòng)', ' Tuấn ');
   await press('Hồ Con Rùa');
@@ -58,11 +58,69 @@ test('home empty friends is distinct from session failure', async () => {
   expect(screen.getByRole('button', { name: '＋ Tạo kèo ăn' })).toBeEnabled();
 });
 
+test('friends failure keeps entry available and retries without restoring the session again', async () => {
+  const repository = client();
+  const restore = jest.spyOn(repository, 'restoreSession');
+  const friends = jest.spyOn(repository, 'listFriends').mockResolvedValueOnce({ ok: false, error: { messageKey: 'NETWORK_ERROR' } });
+  await render(<HomeScreen repository={repository} {...homeProps} />);
+  expect(await screen.findByText('Chưa tải được bạn ăn cùng')).toBeOnTheScreen();
+  expect(screen.getByRole('button', { name: '＋ Tạo kèo ăn' })).toBeEnabled();
+  expect(screen.getByRole('button', { name: 'Tôi có mã phòng' })).toBeEnabled();
+  expect(screen.queryByText('Chưa có bạn ăn cùng')).toBeNull();
+  await press('Tải lại bạn ăn cùng');
+  expect(await screen.findByLabelText('Danh sách bạn ăn cùng')).toBeOnTheScreen();
+  expect(restore).toHaveBeenCalledTimes(1);
+  expect(friends).toHaveBeenCalledTimes(2);
+});
+
+test('home navigation can be supplied by integration without showing placeholder sheets or tools', async () => {
+  const onFriends = jest.fn();
+  const onInbox = jest.fn();
+  const onProfile = jest.fn();
+  await render(<HomeScreen repository={client()} {...homeProps} onOpenFoundation={undefined} onFriends={onFriends} onInbox={onInbox} onProfile={onProfile} />);
+  await screen.findByLabelText('Danh sách bạn ăn cùng');
+  await press('Bạn ăn cùng');
+  await press('Xem tất cả bạn ăn cùng');
+  await press('Thêm bạn');
+  await press('Thông báo');
+  await press('Hồ sơ');
+  expect(onFriends).toHaveBeenCalledTimes(3);
+  expect(onInbox).toHaveBeenCalledTimes(1);
+  expect(onProfile).toHaveBeenCalledTimes(1);
+  expect(screen.queryByText(/Tính năng này đang được hoàn thiện/)).toBeNull();
+  expect(screen.queryByRole('button', { name: 'Công cụ kiểm thử' })).toBeNull();
+});
+
+test('home ignores friends from a previous session when its response arrives late', async () => {
+  const repository = client();
+  const restored = await repository.restoreSession('fixture');
+  const previousFriends = await repository.listFriends();
+  if (!restored.ok || !previousFriends.ok) throw new Error('Expected successful fixture reads');
+  jest.spyOn(repository, 'restoreSession')
+    .mockResolvedValueOnce({ ok: true, data: { ...restored.data, id: 'session-first', displayName: 'Phiên trước' } })
+    .mockResolvedValueOnce({ ok: true, data: { ...restored.data, id: 'session-next', displayName: 'Phiên mới' } });
+  let resolve!: (result: Awaited<ReturnType<RoomEntryRepository['listFriends']>>) => void;
+  const friends = jest.spyOn(repository, 'listFriends')
+    .mockImplementationOnce(() => new Promise(done => { resolve = done; }))
+    .mockResolvedValueOnce({ ok: true, data: [] });
+  await render(<HomeScreen repository={repository} {...homeProps} sessionToken="first-fixture" />);
+  await waitFor(() => expect(friends).toHaveBeenCalledTimes(1));
+  await screen.rerender(<HomeScreen repository={repository} {...homeProps} sessionToken="next-fixture" />);
+  await screen.findByText('Chào Phiên mới! 👋');
+  await screen.findByText('Chưa có bạn ăn cùng');
+  await act(async () => resolve({ ok: true, data: previousFriends.data.map(friend => ({ ...friend, displayName: 'Bạn của phiên trước' })) }));
+  expect(screen.queryByText('Bạn của phiên trước')).toBeNull();
+  expect(screen.getByText('Chưa có bạn ăn cùng')).toBeOnTheScreen();
+});
+
 test.each(['AUTH_REQUIRED', 'NETWORK_ERROR'] as const)('home %s disables entry and offers restore retry', async messageKey => {
-  await render(<HomeScreen repository={createApiClient('mock', { mode: 'error', simulatedErrorCode: messageKey, delayMs: 0 })} {...homeProps} />);
+  const repository = createApiClient('mock', { mode: 'error', simulatedErrorCode: messageKey, delayMs: 0 });
+  const friends = jest.spyOn(repository, 'listFriends');
+  await render(<HomeScreen repository={repository} {...homeProps} />);
   expect(await screen.findByText(errorCopy[messageKey])).toBeOnTheScreen();
   expect(screen.getByRole('button', { name: '＋ Tạo kèo ăn' })).toBeDisabled();
   expect(screen.getByRole('button', { name: 'Thử tải lại' })).toBeEnabled();
+  expect(friends).not.toHaveBeenCalled();
 });
 
 test('home active receipt prevents opening a second room and resumes through callback', async () => {
@@ -101,6 +159,42 @@ test('create sends DTO with public anchor, metres, nullable budget and adapter-g
   expect(onEntered.mock.calls[0]?.[0]).toMatchObject({ role: 'host', code: expect.stringMatching(/^[A-HJ-NP-Z2-9]{6}$/) });
 });
 
+test('create reviews the actual public context with the shared summary before confirming', async () => {
+  await createForm();
+  expect(screen.getByText('BỐI CẢNH PHÒNG')).toBeOnTheScreen();
+  expect(screen.getByText('2030-10-12 12:15 (UTC+7)')).toBeOnTheScreen();
+  expect(screen.getByText('Ăn tại quán')).toBeOnTheScreen();
+  await press('Hẹn giờ');
+  await input('Giờ hẹn (UTC+7)', '2030-10-12 13:30');
+  expect(screen.getByText('2030-10-12 13:30 (UTC+7)')).toBeOnTheScreen();
+  expect(screen.getByRole('button', { name: 'Tôi xác nhận điểm ăn, buổi và giờ' }).props.accessibilityState.selected).toBe(false);
+});
+
+test('create does not invent a meal or time while discovery has not supplied a clock', async () => {
+  const repository = client();
+  jest.spyOn(repository, 'getDiscoveryContext').mockImplementation(() => new Promise(() => {}));
+  await render(<CreateRoomScreen repository={repository} onBack={jest.fn()} onEntered={jest.fn()} />);
+  expect(screen.getByText('Đang tải điểm ăn mẫu…')).toBeOnTheScreen();
+  expect(screen.getByRole('button', { name: 'Bữa trưa' }).props.accessibilityState.selected).toBe(false);
+  expect(screen.queryByText('BỐI CẢNH PHÒNG')).toBeNull();
+  expect(screen.getByRole('button', { name: 'Tạo phòng mô phỏng' })).toBeDisabled();
+});
+
+test('create accepts an injected request ID and stays locked after ACK while navigation is pending', async () => {
+  const repository = client();
+  const createRequestId = jest.fn(() => 'composition-create-001');
+  const create = jest.spyOn(repository, 'createRoom');
+  const { onEntered } = await createForm(repository, jest.fn(), createRequestId);
+  await press('Tạo phòng mô phỏng');
+  await waitFor(() => expect(onEntered).toHaveBeenCalledTimes(1));
+  expect(create.mock.calls[0]?.[0].requestId).toBe('composition-create-001');
+  expect(screen.getByRole('button', { name: 'Đã tạo phòng mô phỏng' })).toBeDisabled();
+  expect(screen.getByLabelText('Tên của bạn (chủ phòng)').props.editable).toBe(false);
+  await press('Đã tạo phòng mô phỏng');
+  expect(create).toHaveBeenCalledTimes(1);
+  expect(createRequestId).toHaveBeenCalledTimes(1);
+});
+
 test('context edits clear confirmation; custom time is UTC+7 with no extra buffer', async () => {
   const repository = client();
   const spy = jest.spyOn(repository, 'createRoom');
@@ -123,7 +217,7 @@ test.each(['2030-10-12 11:59', '2030-02-31 13:00', '12:30'])('create rejects pas
   await input('Giờ hẹn (UTC+7)', value);
   await press('Tôi xác nhận điểm ăn, buổi và giờ');
   await press('Tạo phòng mô phỏng');
-  expect(screen.getByRole('alert')).toBeOnTheScreen();
+  expect(screen.getByRole('alert')).toHaveTextContent(/Giờ ăn đã qua|Giờ hẹn cần dạng/);
   expect(spy).not.toHaveBeenCalled();
 });
 
@@ -231,6 +325,65 @@ test('QR denial falls back to manual; scanned input never auto-joins', async () 
   expect(spy).not.toHaveBeenCalled();
 });
 
+test('a warm incoming code invalidates the old confirmation and still waits for explicit join', async () => {
+  const repository = client();
+  const join = jest.spyOn(repository, 'joinRoom');
+  const props = { repository, onBack: jest.fn(), onEntered: jest.fn() };
+  await render(<JoinRoomScreen {...props} initialCode="GCD234" />);
+  await input('Tên của bạn', 'Tuấn');
+  await press('Vào phòng →');
+  expect(screen.getByRole('button', { name: 'Xác nhận vào phòng mô phỏng' })).toBeOnTheScreen();
+  await screen.rerender(<JoinRoomScreen {...props} initialCode="xyz789" />);
+  expect(screen.getByLabelText('Mã phòng (6 ký tự)').props.value).toBe('XYZ789');
+  expect(screen.getByLabelText('Tên của bạn').props.value).toBe('Tuấn');
+  expect(screen.queryByRole('button', { name: 'Xác nhận vào phòng mô phỏng' })).toBeNull();
+  expect(join).not.toHaveBeenCalled();
+  await press('Vào phòng →');
+  expect(screen.getByText(/Vào phòng #XYZ789 với tên Tuấn/)).toBeOnTheScreen();
+  expect(join).not.toHaveBeenCalled();
+});
+
+test('a new incoming code cannot replace a pending or accepted join intent', async () => {
+  const repository = client();
+  let resolve!: (result: WriteResult<JoinRoomResponse>) => void;
+  const join = jest.spyOn(repository, 'joinRoom').mockImplementation(() => new Promise(done => { resolve = done; }));
+  const createRequestId = jest.fn(() => 'composition-join-001');
+  const props = { repository, onBack: jest.fn(), onEntered: jest.fn(), createRequestId };
+  await render(<JoinRoomScreen {...props} initialCode="GCD234" />);
+  await input('Tên của bạn', 'Tuấn');
+  await press('Vào phòng →');
+  await press('Xác nhận vào phòng mô phỏng');
+  await screen.rerender(<JoinRoomScreen {...props} initialCode="XYZ789" />);
+  expect(screen.getByLabelText('Mã phòng (6 ký tự)').props.value).toBe('GCD234');
+  expect(screen.getByRole('button', { name: '‹ Quay lại' })).toBeDisabled();
+  await act(async () => resolve({ ok: true, data: { roomId: 'r', code: 'GCD234', version: 2, memberId: 'member-response' } }));
+  expect(screen.getByLabelText('Mã phòng (6 ký tự)').props.value).toBe('GCD234');
+  expect(screen.getByRole('button', { name: 'Đã vào phòng mô phỏng' })).toBeDisabled();
+  await press('Đã vào phòng mô phỏng');
+  expect(join).toHaveBeenCalledTimes(1);
+  expect(createRequestId).toHaveBeenCalledTimes(1);
+  expect(join.mock.calls[0]?.[0]).toMatchObject({ code: 'GCD234', requestId: 'composition-join-001' });
+  expect(props.onEntered).toHaveBeenCalledWith({ roomId: 'r', code: 'GCD234', version: 2, role: 'member' });
+});
+
+test('a new incoming code cannot replace an uncertain request; retry reuses the injected ID', async () => {
+  const repository = client();
+  const join = jest.spyOn(repository, 'joinRoom').mockResolvedValueOnce({ ok: false, error: { messageKey: 'TIMEOUT' } });
+  const createRequestId = jest.fn(() => 'composition-retry-001');
+  const props = { repository, onBack: jest.fn(), onEntered: jest.fn(), createRequestId };
+  await render(<JoinRoomScreen {...props} initialCode="GCD234" />);
+  await input('Tên của bạn', 'Tuấn');
+  await press('Vào phòng →');
+  await press('Xác nhận vào phòng mô phỏng');
+  await screen.findByText(errorCopy.TIMEOUT);
+  await screen.rerender(<JoinRoomScreen {...props} initialCode="XYZ789" />);
+  expect(screen.getByLabelText('Mã phòng (6 ký tự)').props.value).toBe('GCD234');
+  await press('Thử lại cùng yêu cầu vào phòng');
+  await waitFor(() => expect(props.onEntered).toHaveBeenCalledTimes(1));
+  expect(join.mock.calls[0]?.[0]).toEqual(join.mock.calls[1]?.[0]);
+  expect(createRequestId).toHaveBeenCalledTimes(1);
+});
+
 test('unmount ignores a late create response instead of navigating stale screen', async () => {
   const repository = client();
   let resolve!: (result: WriteResult<CreateRoomResponse>) => void;
@@ -255,4 +408,24 @@ test('receipt keeps context from snapshot and offers typed downstream callbacks 
   expect(onPreferences).toHaveBeenCalledWith(receipt);
   expect(ready).not.toHaveBeenCalled();
   expect(start).not.toHaveBeenCalled();
+});
+
+test('receipt waits for a valid snapshot and can retry without creating or joining again', async () => {
+  const repository = client();
+  const snapshot = jest.spyOn(repository, 'getRoomSnapshot').mockResolvedValueOnce({ ok: false, error: { messageKey: 'NETWORK_ERROR' } });
+  const create = jest.spyOn(repository, 'createRoom');
+  const join = jest.spyOn(repository, 'joinRoom');
+  const onLobby = jest.fn();
+  const receipt = { roomId: 'room_mock_001', code: 'GCD234', version: 1, role: 'member' as const };
+  await render(<RoomEntryReceiptScreen repository={repository} receipt={receipt} onBack={jest.fn()} onLobby={onLobby} />);
+  expect(screen.getByRole('button', { name: 'Chọn khẩu vị →' })).toBeDisabled();
+  await screen.findByText(errorCopy.NETWORK_ERROR);
+  expect(screen.getByRole('button', { name: 'Xem bước phòng chờ' })).toBeDisabled();
+  await press('Thử tải lại');
+  await screen.findByText('Hồ Con Rùa');
+  await press('Xem bước phòng chờ');
+  expect(onLobby).toHaveBeenCalledWith(receipt);
+  expect(snapshot).toHaveBeenCalledTimes(2);
+  expect(create).not.toHaveBeenCalled();
+  expect(join).not.toHaveBeenCalled();
 });

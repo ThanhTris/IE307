@@ -69,12 +69,12 @@ export function EntryError({ code, onRetry }: { code: ErrorCode; onRetry?: () =>
 
 export const entryStyles = StyleSheet.create({
   root: { flex: 1 },
-  content: { flexGrow: 1, padding: spacing.lg, paddingBottom: spacing.xxxl, gap: spacing.xxl, width: '100%', maxWidth: 560, alignSelf: 'center' },
+  content: { flexGrow: 1, padding: spacing.lg, paddingBottom: spacing.xxxl, gap: spacing.xl, width: '100%', maxWidth: 600, alignSelf: 'center' },
   title: { ...typography.titleLarge }, body: { ...typography.body }, caption: { ...typography.caption },
   sectionTitle: { ...typography.titleMedium },
   section: { gap: spacing.md }, row: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   card: { borderWidth: 1, borderRadius: radii.xl, padding: spacing.lg, gap: spacing.lg },
-  hero: { borderWidth: 1, borderRadius: radii.xl, padding: spacing.xxl, gap: spacing.xl },
+  hero: { borderWidth: 1, borderRadius: radii.xl, padding: spacing.xl, gap: spacing.lg },
   heroArt: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: spacing.lg, paddingVertical: spacing.md },
   plate: { width: 96, height: 96, borderRadius: radii.pill, alignItems: 'center', justifyContent: 'center', borderWidth: 1 },
   foodEmoji: { fontSize: 52, lineHeight: 70 },

@@ -1,5 +1,74 @@
 # GM-09 — bàn giao màn Home / create / join
 
+## Bàn giao hiện tại để Trí review — 2026-10-15
+
+Người dùng đã xác nhận kiểm GM-09 thành công và hoạt động trên Expo Go sau bản sửa cuối. [Biên bản kiểm thủ công](MANUAL_DEVICE_CHECK.md) là evidence văn bản theo chỉ dẫn hiện tại, không yêu cầu ảnh/video cho lần bàn giao này. Chưa có model/Android/Expo Go và kết quả riêng light/dark/font200/TalkBack/keyboard/Back/từng fixture; biên bản giữ rõ giới hạn, Trí đối chiếu trước nghiệm thu.
+
+Nhánh `codex/gm-09-home-create-and-join-room`, target `main`; base HEAD `6735694` + working tree, contract GM-09.1, component props GM-05.1/client GM-07.1. [Manifest source/test cuối](REVIEW_PACKAGE_MANIFEST.json) bổ sung cả AppButton và shared component tests, không dùng manifest patch box-only làm bản hiện hành. Kiểm tự động cuối: mobile462 tests và Python550 tests không skipped, Android export Pass; xem [CHECKS](CHECKS.md). Phiên chuẩn bị này chỉ sửa tài liệu/manifest, không sửa source/test.
+
+Owner Tuấn, reviewer Trí. Người dùng sẽ commit/push nhánh và tạo PR bằng [body đã chuẩn bị](PR_BODY.md); hiện chưa thực hiện các thao tác đó. Trí là người duy nhất được review cuối, merge và chuyển task Done trên Project. Không ghi Approved/Done hoặc tự chuyển task Markdown; xác nhận UI hoạt động của người dùng không được coi là approval của Trí.
+
+### Cách commit/push và mở PR
+
+Lệnh PowerShell đầy đủ ở [COMMIT_AND_PUSH.md](COMMIT_AND_PUSH.md), gồm danh sách stage đúng phạm vi và body PR; người dùng chạy các lệnh, agent chưa stage/commit/push.
+
+Từ root, kiểm `git branch --show-current` đúng nhánh trên; dùng `git diff --check` và `git diff --stat`, chỉ stage source/test GM-09 cùng evidence và report. Kiểm `git diff --cached --stat` trước commit. Commit mới giữ hashes source/test trong manifest; lấy SHA bằng `git rev-parse HEAD` để ghi trên PR khi cần. Không amend hoặc force-push.
+
+Push bằng `git push -u origin codex/gm-09-home-create-and-join-room`; tạo PR target `main`, title `feat(gm09): complete Home and room entry UI`, body từ `docs/evidence/roadmap-v2/GM-09/PR_BODY.md`. Nếu nhánh đã có PR, push sẽ cập nhật PR đó; lúc đọc remote ngày 2026-10-15 chưa có nhánh cùng tên/PR mở. Chọn Trí review theo quy trình nhóm; không merge, auto-merge, tự đóng issue hoặc đổi Status/Done.
+
+Trước merge, Trí cập nhật origin/main, chạy gate merge theo AGENTS và kiểm CI/diff/revision cuối. Tài liệu lịch sử dưới đây giữ nguyên kết quả từng thời điểm; phần nào ghi chưa có xác nhận thiết bị được thay thế bởi biên bản mới ở đầu file, trong đúng giới hạn đã nêu.
+
+## Bản sửa hiện tại sau phản hồi hai CTA không bấm được — 2026-10-15
+
+Phản hồi Expo Go của người dùng xác nhận patch box-only trước đó làm cả hai CTA mất phản hồi. AppButton hiện tại đã bỏ pointerEvents override, giữ Pressable mặc định; nhãn stretch toàn chiều ngang, chuyển padding vào nhãn và minHeight46dp cộng border1dp mỗi cạnh của khung48dp. Cả khoảng trống và chữ nằm trong native bounds của nhãn, xử lý nhấn vẫn qua một callback tại khung. Props/contract GM-05.1/GM-09.1, palette và guard disabled/loading không đổi. Revision `6735694` + working tree hiện tại; kết quả mới ở [CHECKS](CHECKS.md), không dùng log/hash patch box-only làm evidence cho bản này.
+
+Nhấn `r` ở terminal Metro để reload đầy đủ (không chỉ Fast Refresh). Nếu đang có receipt, chọn lại fixture **Bình thường** trong Công cụ kiểm thử để xóa phòng mẫu trước khi kiểm hai CTA: ở trạng thái active cả hai nút khóa là hành vi có chủ đích. Chạm trái/giữa/phải trong nền **＋ Tạo kèo ăn** → Create → Back; làm tương tự **Tôi có mã phòng** → Join. Kiểm ngoài nền nút/scroll không mở form. Xác nhận tổng thể của người dùng đã bổ sung tại [biên bản](MANUAL_DEVICE_CHECK.md); không tự ghi kết quả chi tiết chưa được báo.
+
+## Lịch sử bổ sung vùng nhận chạm bằng box-only — đã thay thế
+
+Người dùng báo từ Expo Go rằng nút tạo phòng/nhập mã chỉ bấm được trên chữ. Bản sửa trên HEAD `6735694` + working tree đặt `pointerEvents="box-only"` tại AppButton trong `mobile/src/shared/ui/components.tsx`, để khung nút là đích chạm duy nhất trên cả nhãn và khoảng trống. Đây là sửa dùng chung được yêu cầu trong GM-09, producer GM-05, reviewer Trí; giữ props GM-05.1 và contract GM-09.1. Consumers dùng AppButton hiện có nhận cùng hành vi; không cần thay layout/screens hoặc thêm dependency. Hash và kết quả kiểm tại [CHECKS bổ sung](CHECKS.md).
+
+Sau khi Metro nhận bản sửa, nhấn `r` ở terminal để reload Expo Go. Tại Home, chọn fixture Bình thường và không có phòng active: chạm trong nền bên trái chữ, giữa chữ, bên phải chữ của **＋ Tạo kèo ăn**; mỗi lần phải mở Create, quay lại rồi thử **Tôi có mã phòng** phải mở Join. Kiểm thêm ngoài nút/scroll không kích hoạt và các trạng thái disabled/loading vẫn khóa thao tác. Chưa có kết quả trên thiết bị cho bản sửa này; không suy Pass từ 460 tests hoặc Android export. Mọi ảnh/video cũ chỉ áp revision đã kiểm trước đó.
+
+## Revision hoàn thiện hiện hành — 2026-10-15
+
+Tested revision HEAD `6735694` + working tree, contract `food-v1/roadmap-v2/GM-09.1`, [manifest](COMPLETION_PATCH_MANIFEST.json). [Audit/patch plan/kết quả](COMPLETION_REVIEW_2026-10-15.md), [CHECKS hiện hành](CHECKS.md). Merge main của lượt trước đã được người dùng hoàn tất tại `6735694`; không còn phiên merge đang dở. Lượt hoàn thiện này chưa commit/push, không tự Approved/Done. Owner Tuấn, reviewer Trí.
+
+### Mở từ checkout có dependencies theo lockfile
+
+```powershell
+cd mobile
+npm ci --no-audit --no-fund
+npm start
+```
+
+Expo Go Android: `/` → **＋ Tạo kèo ăn** hoặc **Tôi có mã phòng** → `/room-preview` → **‹ Quay lại** → **Quay lại phòng mô phỏng**. `/shell` giữ điều hướng GM-12/GM-16 đã nhận từ main; `/foundation` → component mẫu GM-05. Không cần backend, auth thật, quyền GPS/camera hoặc dữ liệu verified để kiểm scope mock.
+
+- Home dùng cùng AppHeader/CTA/AvatarRow/tokens GM-05 như UI GM-12 đã Done. Active room nằm trước hero; friends tải sau session, lỗi friends chỉ có retry riêng và không chặn tạo/vào. Mất session vẫn khóa entry; phản hồi phiên trước không được hiển thị ở phiên mới.
+- Create: nhập tên, chọn anchor, chỉnh buổi/giờ/radius/budget, xem **BỐI CẢNH PHÒNG** rồi **Tôi xác nhận điểm ăn, buổi và giờ** → **Tạo phòng mô phỏng**. Tóm tắt từ các giá trị đang chọn; không giả giờ/bữa khi chưa có discovery. Retry unknown giữ nguyên intent; sau ACK khóa gửi dù callback chưa chuyển màn.
+- Join: tên + mã, **Vào phòng →** → xác nhận. Mã route `?code=gcd234` chỉ điền trước; khi code prop/route đổi trong màn đang mở, hủy xác nhận cũ nhưng giữ tên. Không thay intent pending/unknown/ACK bằng code mới, không auto-join. QR chỉ action interface, deny/unavailable/error quay lại manual.
+- **Công cụ kiểm thử** có Bình thường / Tải chậm / Trống / Mất mạng / Đầy phòng / Đã khóa / Hết hạn / Mất phiên / Ngoài vùng / Giới hạn / Dữ liệu cũ. Muốn xem lỗi create/join, mở form trước rồi đổi fixture. Đổi fixture xóa receipt mẫu và remount form; cần mở lại disclosure để đổi tiếp. Trên Create có giả lập GPS-denied và cập nhật discovery/clock mẫu.
+- Receipt dùng snapshot để hiển thị context và khóa callback bước sau khi snapshot đang tải/lỗi; retry snapshot không tạo/vào lại. **Chọn khẩu vị** / **Xem bước phòng chờ** là seam chưa nối GM-10/11, thông báo bằng copy cho người dùng; không ready/start thật.
+
+### Interface task sau nhận
+
+| Consumer | Interface có sẵn | Việc consumer còn chịu trách nhiệm |
+| --- | --- | --- |
+| GM-25 | Export `HomeScreenProps`, `CreateRoomScreenProps`, `JoinRoomScreenProps`, `RoomEntryReceiptScreenProps`; `RoomEntryRepository`, `RoomEntryReceipt` | Compose API/auth thật, session lifecycle, refetch/version/consent/history, không fallback mock; thay copy/nhãn mock theo mode tích hợp, giữ layout |
+| GM-25 / GM-28 | Home `onFriends`, `onInbox`, `onProfile` tùy chọn; `onOpenFoundation` không bắt buộc | Nối navigation thật; thiếu callback ở bản mock chỉ hiện sheet, không gửi invite hoặc sửa profile |
+| GM-25 / GM-31 | Create/Join `createRequestId?: RequestIdFactory`, hook giữ ID/payload cùng intent retry, khóa sau ACK | Inject ID generator và durable intent/outbox/session isolation theo task riêng; default `newPreviewRequestId` chỉ dành mock, không dùng làm entropy/security production |
+| GM-30 | Join `initialCode`, `onScan: CameraAction`, `onEntered(receipt)` | Parse/allowlist URL, native auth/cold-warm/duplicate handling, permission/camera thật; code prop chỉ là mã đã parse, không phải raw URL |
+| GM-10 / GM-11 / GM-25 | Receipt `onPreferences(receipt)` / `onLobby(receipt)` với `{roomId,code,version,role}` từ response | Nối screen artifacts đã bàn giao, refetch snapshot trước writes dùng version mới; không coi receipt là state server còn hiệu lực mãi |
+| GM-39 | Ba screens + RoomEntryFrame, tokens và các state mẫu | Đọc code/version/HANDOFF để cải thiện HTML theo scope; task GM-09 không áp prototype chưa duyệt vào app |
+
+GM-25 phải chọn real/mock ở composition root, không nhập `bootstrap/roomPreview` vào production. Screens không import mock factory/data; mock factory chỉ ở bootstrap. Chưa có camera/GPS/native link, cache/outbox bền, nhiều máy hoặc API room thật trong revision này.
+
+### Kết quả và việc còn nghiệm thu
+
+14 suites / 460 mobile tests; typecheck/lint/architecture Pass (4 warnings cũ). Expo dependency check và Android Hermes export Pass. Python550 tests OK, 6 skipped. Native UI/font200/TalkBack/keyboard/device screenshots **Not run** vì chưa có device/ADB hoặc xác nhận mới của người dùng. Không ghi Done khi AC Expo Go còn thiếu; reviewer Trí đối chiếu revision và kiểm trên thiết bị. `GM-09-report.md` được giữ nguyên untracked; không stage tự động các thay đổi lượt này.
+
+## Lịch sử trước lượt hoàn thiện
+
 ## Bổ sung nhận main — 2026-10-15
 
 Đã hòa giải merge HEAD `606f040` với main `ce7b87a`: giữ Home `/` và toàn bộ luồng GM-09; shell `/shell` nhận điều hướng bình chọn GM-12 và công cụ GM-16, giữ guard development/env của GM-16. Bổ sung thông báo cho hai ErrorCode upstream `NOT_RECIPIENT` / `INVITE_CANCELLED`; không sửa contract. Test route giữ cả hai nhánh. Xem [kết quả tích hợp](MERGE_MAIN_2026-10-15.md). Merge commit chưa tạo; `GM-09-report.md` vẫn untracked, ngoài staging. Hồ sơ ngày 2026-10-13 bên dưới là lịch sử của revision trước, không là hashes/evidence của bản tích hợp mới.

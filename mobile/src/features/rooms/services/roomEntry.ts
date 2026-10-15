@@ -4,6 +4,7 @@ import type { ApiClient, ErrorCode, RoomContext } from '../../../data/api/contra
 export type RoomEntryRepository = Pick<ApiClient, 'restoreSession' | 'listFriends' | 'getDiscoveryContext' | 'createRoom' | 'joinRoom' | 'getRoomSnapshot'>;
 export type RoomEntryReceipt = { roomId: string; code: string; version: number; role: 'host' | 'member' };
 export type CameraAction = () => Promise<{ status: 'unavailable' | 'denied' } | { status: 'scanned'; code: string }>;
+export type RequestIdFactory = () => string;
 
 export const normalizeRoomCode = (value: string) => value.trim().toUpperCase();
 // ROOM_SPEC + GM-07 mock alphabet; keep the server as validation authority.
