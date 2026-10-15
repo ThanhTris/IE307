@@ -1,0 +1,3 @@
+win32/x64: Supabase 2.120.0 native CLI launch Pass; API cases=0 (not exercised)
+darwin/arm64: Supabase 2.120.0 native CLI launch Pass; API cases=0 (not exercised)
+linux/x64: Supabase 2.120.0 native CLI launch Pass; API cases=0 (not exercised)

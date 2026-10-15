@@ -1,0 +1,272 @@
+{
+  "contract": "food-v1/roadmap-v2/GM-20.3",
+  "schemaVersion": "0.5.0",
+  "checkedAt": "2026-10-15T02:02:14.420Z",
+  "namespace": "fbb85884-0051-4b91-a0a4-20f0c7cb3fdf",
+  "revision": "2c1b023cf4b3cccfd8f8a6039e039fcae6edb055",
+  "artifactHashes": {
+    "supabase/migrations/0023_finalize.sql": "aff45864e57d634ced4bce6e3ce1997f439f90b2c974cc7f601d71f70bb3fea8",
+    "scripts/gm20_http_check.mjs": "85f488978b539f49c03aa7f8c4a62a2e5a01e7a65906260c11e302c7ef89b6d4",
+    "scripts/gm20_http_fixture.py": "746d661433ab133a2bb124623ff9a554486d0f167669fb43b25c76195a4b689a",
+    "scripts/gm19_runtime_files.mjs": "1440ec3a51a7b5f83ba1ef663b45a12f64cbaf2e8cb38a2a9b2460d9eb91c486"
+  },
+  "syntheticPositiveDataOnly": true,
+  "actualDataPromoted": false,
+  "cases": [
+    {
+      "case": "real GM07 client: opaque wire IDs, WAITING and unanimous persistent result",
+      "result": "Pass",
+      "expected": {
+        "state": "DECIDED",
+        "results": 1,
+        "seeds": 1,
+        "events": 1,
+        "history": 0
+      },
+      "actual": {
+        "seeds": 1,
+        "votes": 4,
+        "events": 1,
+        "history": 0,
+        "results": 1,
+        "submissions": 2
+      }
+    },
+    {
+      "case": "ACK first: exact retry, changed request payload and semantic intent replay",
+      "result": "Pass",
+      "expectedSubmissions": 1,
+      "actual": {
+        "seeds": 0,
+        "votes": 2,
+        "events": 0,
+        "history": 0,
+        "results": 0,
+        "submissions": 1
+      },
+      "wireReceiptPreserved": true
+    },
+    {
+      "case": "expired ACK cache/public key -> same accepted intent replays without duplicate",
+      "result": "Pass",
+      "expectedSubmissions": 1,
+      "actual": {
+        "seeds": 0,
+        "votes": 2,
+        "events": 0,
+        "history": 0,
+        "results": 0,
+        "submissions": 1
+      }
+    },
+    {
+      "case": "reject auth/outsider, stale version-pool-round, incomplete/duplicate/UNSET/wrong enum",
+      "result": "Pass",
+      "mutations": 0
+    },
+    {
+      "case": "NO veto -> exact round2 pool, new rows, no default KEEP, REMOVE veto",
+      "result": "Pass",
+      "expected": "ALL_REMOVED",
+      "actual": "ALL_REMOVED",
+      "round": 2
+    },
+    {
+      "case": "round1 all NO -> EMPTY_INTERSECTION, no seed/history, one event",
+      "result": "Pass",
+      "actual": {
+        "seeds": 0,
+        "votes": 4,
+        "events": 1,
+        "history": 0,
+        "results": 1,
+        "submissions": 2
+      }
+    },
+    {
+      "case": "cancel round2 before ballots -> retain locked pool and own receipt",
+      "result": "Pass",
+      "expected": {
+        "state": "CANCELLED",
+        "round": 2,
+        "ownRound2Submission": false,
+        "newBallot": "ROOM_TERMINAL"
+      },
+      "actual": {
+        "state": "CANCELLED",
+        "round": 2,
+        "poolVersion": 2,
+        "ownSubmissionRound": null,
+        "unchangedPool": true,
+        "otherVotesVisible": false,
+        "counts": {
+          "seeds": 0,
+          "votes": 4,
+          "events": 0,
+          "history": 0,
+          "results": 0,
+          "submissions": 2
+        }
+      }
+    },
+    {
+      "case": "cancel round2 after one KEEP -> retain locked pool and own receipt",
+      "result": "Pass",
+      "expected": {
+        "state": "CANCELLED",
+        "round": 2,
+        "ownRound2Submission": true,
+        "newBallot": "ROOM_TERMINAL"
+      },
+      "actual": {
+        "state": "CANCELLED",
+        "round": 2,
+        "poolVersion": 2,
+        "ownSubmissionRound": 2,
+        "unchangedPool": true,
+        "otherVotesVisible": false,
+        "counts": {
+          "seeds": 0,
+          "votes": 6,
+          "events": 0,
+          "history": 0,
+          "results": 0,
+          "submissions": 3
+        }
+      }
+    },
+    {
+      "case": "lobby poolVersion greater than one remains round1",
+      "result": "Pass",
+      "expectedRound": 1,
+      "actualRound": 1,
+      "poolVersion": 2
+    },
+    {
+      "case": "fallback all OK -> round2 KEEP -> COMPROMISE and stable locked winner",
+      "result": "Pass",
+      "round": 2,
+      "tier": "COMPROMISE",
+      "pinned": true
+    },
+    {
+      "case": "round2 score uses original WANT counts; strict majority tier and seed persisted",
+      "result": "Pass",
+      "expectedTier": "CONSENSUS",
+      "actual": "CONSENSUS",
+      "persistedSeedMatchesWinner": true
+    },
+    {
+      "case": "rosters 2 through 8 wait for last and finalize exactly once",
+      "result": "Pass",
+      "rosters": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "expectedResultsPerRoom": 1
+    },
+    {
+      "case": "concurrent identical request -> one submission and identical ACKs",
+      "result": "Pass",
+      "requests": 8,
+      "submissions": 1
+    },
+    {
+      "case": "two members same version serialize; loser resubmits fresh attempt",
+      "result": "Pass",
+      "statuses": [
+        200,
+        409
+      ],
+      "freshRetry": "DECIDED"
+    },
+    {
+      "case": "terminal/expiry guards; accepted retry survives terminal and expiry",
+      "result": "Pass",
+      "replay": 200,
+      "newBallot": 410
+    },
+    {
+      "case": "history requires frozen opt-in and actual scoped consent; partial/revoked/expired",
+      "result": "Pass",
+      "expectedHistoryCounts": {
+        "none": 0,
+        "valid": 3,
+        "partial": 1,
+        "expired": 1,
+        "revoked": 1,
+        "noSnapshot": 0
+      }
+    },
+    {
+      "case": "deleted history never resurrected by retry/reconnect",
+      "result": "Pass",
+      "before": 3,
+      "afterDeleteRetry": 0
+    },
+    {
+      "case": "fault after result/history creation rolls back submission/votes/version/result/event",
+      "result": "Pass",
+      "rollback": true,
+      "sameRequestRetry": 200
+    },
+    {
+      "case": "last submit/cancel both serialized orders cannot leave mixed terminal state",
+      "result": "Pass",
+      "orders": [
+        "cancel then last",
+        "last then cancel"
+      ],
+      "mixedTerminal": false
+    },
+    {
+      "case": "concurrent last-submit/cancel produces exactly one terminal outcome",
+      "result": "Pass",
+      "statuses": [
+        200,
+        409
+      ],
+      "state": "CANCELLED",
+      "actual": {
+        "seeds": 0,
+        "votes": 2,
+        "events": 0,
+        "history": 0,
+        "results": 0,
+        "submissions": 1
+      }
+    },
+    {
+      "case": "host cannot read other raw votes/seed/ties; private functions denied",
+      "result": "Pass",
+      "otherVotes": 0,
+      "privateDenied": true
+    },
+    {
+      "case": "response lost after commit -> exact final ACK, one result/event",
+      "result": "Pass",
+      "lostAfterCommit": true,
+      "actual": {
+        "seeds": 1,
+        "votes": 4,
+        "events": 1,
+        "history": 0,
+        "results": 1,
+        "submissions": 2
+      }
+    }
+  ],
+  "result": "Pass",
+  "datasetVersion": "0.18.4223162500",
+  "sql": {
+    "result": "Pass",
+    "parityVectors": 140,
+    "assertions": 11
+  },
+  "endpoint": "http://127.0.0.1:54332"
+}

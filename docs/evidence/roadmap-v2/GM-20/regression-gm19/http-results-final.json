@@ -1,0 +1,267 @@
+{
+  "contract": "food-v1/roadmap-v2/GM-19.1",
+  "schemaVersion": "0.3.0",
+  "checkedAt": "2026-10-15T02:06:16.930Z",
+  "namespace": "fbb85884-0051-4b91-a0a4-20f0c7cb3fdf",
+  "revision": "2c1b023cf4b3cccfd8f8a6039e039fcae6edb055\n",
+  "artifactHashes": {
+    "supabase/migrations/0019_room_lifecycle.sql": "ed76f679baa10bbfd4234e2be88f408ef292162f92efceac16217aa554f50926",
+    "scripts/gm19_http_check.mjs": "31046e5fcb4d11d4135272a4caa97d0b13cd9034de4599c58bc53a07aaa543c2",
+    "scripts/gm19_http_fixture.py": "acae283042bb128fef57332648c7ea527196691dcb71eacf1e6d89350dd601f2",
+    "scripts/gm19_runtime_files.mjs": "1440ec3a51a7b5f83ba1ef663b45a12f64cbaf2e8cb38a2a9b2460d9eb91c486"
+  },
+  "syntheticPositiveDataOnly": true,
+  "actualDataPromoted": false,
+  "cases": [
+    {
+      "case": "discovery published synthetic anchor and positive pool (GM-18)",
+      "result": "Pass",
+      "status": 200,
+      "anchors": 1,
+      "choices": 2
+    },
+    {
+      "case": "create host member, ready false, 60 minute TTL",
+      "result": "Pass",
+      "status": 200,
+      "state": "LOBBY",
+      "version": 1,
+      "pool": 2
+    },
+    {
+      "case": "ACK replay before state/version, same response; payload reuse409",
+      "result": "Pass",
+      "status": 409,
+      "messageKey": "REQUEST_ID_REUSED"
+    },
+    {
+      "case": "one ready host cannot start without second member",
+      "result": "Pass",
+      "status": 409,
+      "messageKey": "NOT_READY"
+    },
+    {
+      "case": "join member, duplicate membership and own preferences",
+      "result": "Pass",
+      "status": 200,
+      "members": 2,
+      "version": 3
+    },
+    {
+      "case": "outsider403 and member host guard403",
+      "result": "Pass",
+      "status": 403,
+      "messageKey": "NOT_HOST"
+    },
+    {
+      "case": "stale version409; start requires ready",
+      "result": "Pass",
+      "status": 409,
+      "messageKey": "NOT_READY"
+    },
+    {
+      "case": "preferences update own only and reset own ready",
+      "result": "Pass",
+      "status": 200,
+      "version": 5,
+      "privateProjection": true
+    },
+    {
+      "case": "context updates shared pool/version and reset all ready",
+      "result": "Pass",
+      "status": 200,
+      "version": 7
+    },
+    {
+      "case": "ready both then start ROUND_1, replay after start",
+      "result": "Pass",
+      "status": 200,
+      "state": "ROUND_1",
+      "version": 10
+    },
+    {
+      "case": "started snapshot immutable after catalogue/anchor change",
+      "result": "Pass",
+      "status": 200,
+      "immutable": true
+    },
+    {
+      "case": "started leave/join locked; member cancel requires confirmation",
+      "result": "Pass",
+      "status": 200,
+      "state": "CANCELLED"
+    },
+    {
+      "case": "lobby leave/rejoin; host leave cancels",
+      "result": "Pass",
+      "status": 200,
+      "state": "CANCELLED"
+    },
+    {
+      "case": "invalid input400 and missing/forged JWT401",
+      "result": "Pass",
+      "invalid": 400,
+      "missing": 401,
+      "forged": 401
+    },
+    {
+      "case": "two concurrent retries produce same ACK and one mutation",
+      "result": "Pass",
+      "statuses": [
+        200,
+        200
+      ],
+      "mutations": 1
+    },
+    {
+      "case": "two real guests race final seat: one200 one409 capacity8",
+      "result": "Pass",
+      "statuses": [
+        200,
+        409
+      ],
+      "members": 8
+    },
+    {
+      "case": "start/cancel race has one200 and one409, stable terminal",
+      "result": "Pass",
+      "statuses": [
+        200,
+        409
+      ],
+      "state": "CANCELLED"
+    },
+    {
+      "case": "join/start race cannot admit guest into locked roster",
+      "result": "Pass",
+      "statuses": [
+        200,
+        409
+      ],
+      "state": "ROUND_1",
+      "members": 2
+    },
+    {
+      "case": "context/ready race has no lost update",
+      "result": "Pass",
+      "statuses": [
+        200,
+        409
+      ],
+      "mutations": 1
+    },
+    {
+      "case": "changed catalogue projection forces CONTEXT_CHANGED and reset ready",
+      "result": "Pass",
+      "status": 409,
+      "messageKey": "CONTEXT_CHANGED",
+      "readyReset": true
+    },
+    {
+      "case": "past desiredAt resets ready and returns DESIRED_TIME_PASSED",
+      "result": "Pass",
+      "status": 400,
+      "readyReset": true
+    },
+    {
+      "case": "stale/empty offering pool cannot start",
+      "result": "Pass",
+      "emptyStatus": 409,
+      "emptyPool": 0,
+      "readyReset": true,
+      "restoredPool": 2,
+      "versionBumps": 2
+    },
+    {
+      "case": "expired room410 at database cutoff",
+      "result": "Pass",
+      "status": 410,
+      "messageKey": "ROOM_EXPIRED"
+    },
+    {
+      "case": "terminal room snapshots stay private after expiry",
+      "result": "Pass",
+      "states": [
+        "CANCELLED",
+        "DECIDED",
+        "NO_CONSENSUS",
+        "EXPIRED"
+      ],
+      "memberDeniedBeforeExpiry": true,
+      "status": 410
+    },
+    {
+      "case": "atomic create budget10/min then429 with retry; ACK survives budget",
+      "result": "Pass",
+      "allowed": 10,
+      "limited": 1,
+      "replay": 200
+    },
+    {
+      "case": "snapshot budget60/min then429 isolated by identity",
+      "result": "Pass",
+      "allowed": 60,
+      "limited": 1,
+      "otherIdentity": 200
+    },
+    {
+      "case": "ACK private payload cascades with public idempotency retention",
+      "result": "Pass",
+      "dangling": 0,
+      "cascade": true
+    },
+    {
+      "case": "real GM-07 client consumes room lifecycle responses and typed errors",
+      "result": "Pass",
+      "rpcCount": 9,
+      "opaqueRequestIdReplay": true,
+      "typedErrors": [
+        "NOT_MEMBER",
+        "ROOM_LOCKED"
+      ]
+    },
+    {
+      "case": "multi-choice own preferences rerank shared pool and reset all ready",
+      "result": "Pass",
+      "choices": 2,
+      "private": true,
+      "readyReset": true,
+      "stableRepeatedInput": true,
+      "version": 7
+    },
+    {
+      "case": "dataset version change resets ready once; next confirmed start succeeds",
+      "result": "Pass",
+      "changedStatus": 409,
+      "reconfirmedStatus": 200,
+      "datasetVersion": "0.19.1792030008565895"
+    },
+    {
+      "case": "variant identity is retained and result offerings filter by variant",
+      "result": "Pass",
+      "roundVariants": [
+        "không cay",
+        "sốt riêng — fixture",
+        null,
+        "cay"
+      ],
+      "winnerVariant": "cay",
+      "filteredOfferings": 1
+    },
+    {
+      "case": "response lost after database commit replays ACK without new mutation",
+      "result": "Pass",
+      "droppedAfterCommit": true,
+      "retryStatus": 200,
+      "mutations": 1
+    }
+  ],
+  "result": "Pass",
+  "datasetVersion": "0.19.1792030008565895",
+  "endpoint": "http://127.0.0.1:54332",
+  "sql": {
+    "result": "Pass",
+    "assertions": 15
+  },
+  "cleanup": "active owned fixture retained for Bruno; use gm19_http_stop.mjs"
+}

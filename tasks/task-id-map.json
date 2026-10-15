@@ -710,7 +710,7 @@
       "track": "BE",
       "stage": "implementation",
       "outputs": [
-        "supabase/migrations/0020_finalize.sql",
+        "supabase/migrations/0023_finalize.sql",
         "supabase/tests/finalize.sql",
         "docs/evidence/roadmap-v2/GM-20/CHECKS.md",
         "supabase/tests/http/GM-20.http"
@@ -767,7 +767,7 @@
         },
         {
           "task": "GM-20",
-          "artifact": "supabase/migrations/0020_finalize.sql",
+          "artifact": "supabase/migrations/0023_finalize.sql",
           "gate": "merge"
         },
         {
@@ -845,7 +845,7 @@
       "inputs": [
         {
           "task": "GM-20",
-          "artifact": "supabase/migrations/0020_finalize.sql",
+          "artifact": "supabase/migrations/0023_finalize.sql",
           "gate": "start"
         },
         {
@@ -996,7 +996,7 @@
         },
         {
           "task": "GM-20",
-          "artifact": "supabase/migrations/0020_finalize.sql",
+          "artifact": "supabase/migrations/0023_finalize.sql",
           "gate": "merge"
         },
         {
@@ -1317,7 +1317,7 @@
         },
         {
           "task": "GM-20",
-          "artifact": "supabase/migrations/0020_finalize.sql",
+          "artifact": "supabase/migrations/0023_finalize.sql",
           "gate": "merge"
         },
         {

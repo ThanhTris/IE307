@@ -1,0 +1,17 @@
+begin;
+create extension if not exists pgtap with schema extensions;
+set search_path=public,extensions,pg_catalog;
+select plan(11);
+select ok(to_regprocedure('public.submit_ballot(jsonb,jsonb,jsonb,jsonb,jsonb,jsonb,jsonb)') is not null,'GM20 RPC registered');
+select ok((select prosecdef from pg_proc where oid='public.submit_ballot(jsonb,jsonb,jsonb,jsonb,jsonb,jsonb,jsonb)'::regprocedure),'definer RPC');
+select ok((select proconfig @> array['search_path=pg_catalog'] from pg_proc where oid='public.submit_ballot(jsonb,jsonb,jsonb,jsonb,jsonb,jsonb,jsonb)'::regprocedure),'fixed search path');
+select ok(has_function_privilege('authenticated','public.submit_ballot(jsonb,jsonb,jsonb,jsonb,jsonb,jsonb,jsonb)','execute'),'guest authenticated submit');
+select ok(not has_function_privilege('anon','public.submit_ballot(jsonb,jsonb,jsonb,jsonb,jsonb,jsonb,jsonb)','execute'),'anon denied');
+select ok(not has_function_privilege('authenticated','gm20_private.finalize(uuid,integer)','execute'),'no manual finalize');
+select ok(not has_schema_privilege('authenticated','gm20_private','usage'),'private schema denied');
+select ok(not has_table_privilege('authenticated','gm20_private.decision_seeds','select'),'seed private');
+select is(gm20_private.select_winner('["c","a","b"]','331da083'),'a','rejection vector');
+select is((select contract_id from public.schema_versions where schema_version='0.5.0'),'food-v1/roadmap-v2/GM-20.3','registered contract');
+select is((select contract_id from public.schema_versions where schema_version='0.4.0'),'food-v1/roadmap-v2/GM-22.1','upstream GM22 registry preserved');
+select * from finish();
+rollback;
