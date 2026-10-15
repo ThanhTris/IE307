@@ -1,0 +1,81 @@
+{
+  "result": "Pass",
+  "task": "GM-23",
+  "contract": "food-v1/roadmap-v2/GM-23.1",
+  "schemaVersion": "0.7.0",
+  "checkedAt": "2026-10-15T13:28:22.417Z",
+  "revision": "31b8f1e55f1bfab51a6ee79a8c53491dcf58862e",
+  "sourceHashes": {
+    "supabase/migrations/0025_notifications.sql": "a1f8bab1b7853c52fb82e97afef470634b4776b75ae8a000bba2e24796f81ba1",
+    "supabase/tests/notifications.sql": "b42fe4a9c066b0c6465d526562846683f0f825ad4f4c056ef11395947a31a4b6",
+    "supabase/tests/http/GM-23.http": "887ff0eb27c8bbfea56b3f39dea41320013e603edcc3f7d4ab9d55b0566ece40",
+    "supabase/functions/push-sender/index.ts": "3fc7ba9de45f635d50ee31e0e704b5dd21e224c47716bf9db76eb1925d931886"
+  },
+  "syntheticPositiveDataOnly": true,
+  "remoteExpoDelivery": "Not run",
+  "cases": [
+    {
+      "case": "own inbox returns a bounded typed page",
+      "result": "Pass",
+      "status": 200,
+      "count": 0
+    },
+    {
+      "case": "missing auth is rejected",
+      "result": "Pass",
+      "status": 401
+    },
+    {
+      "case": "granted registration is idempotent",
+      "result": "Pass",
+      "status": 200,
+      "replay": true
+    },
+    {
+      "case": "sender SQL claim complete and receipt path",
+      "result": "Pass",
+      "status": 200,
+      "claim": true,
+      "complete": true,
+      "receipt": true
+    },
+    {
+      "case": "stale receipt cannot revoke rotated token",
+      "result": "Pass",
+      "status": 200,
+      "staleReceipt": "ignored",
+      "rotatedTokenPreserved": true
+    },
+    {
+      "case": "unchanged registration preserves lease and retry budget",
+      "result": "Pass",
+      "status": 200,
+      "activeLeasePreserved": true,
+      "retryAfterPreserved": true,
+      "exhaustedAttemptsPreserved": true
+    },
+    {
+      "case": "service role sender RPC is accepted over HTTP",
+      "result": "Pass",
+      "status": 200,
+      "claimed": 0
+    },
+    {
+      "case": "denied permission does not retain token",
+      "result": "Pass",
+      "status": 200,
+      "deviceProjection": "inactive/denied/no-token"
+    },
+    {
+      "case": "unregister clears token and is repeat-safe",
+      "result": "Pass",
+      "status": 200,
+      "cleaned": true
+    },
+    {
+      "case": "client cannot read push token directly",
+      "result": "Pass",
+      "status": 403
+    }
+  ]
+}

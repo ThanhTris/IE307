@@ -6,6 +6,8 @@
 
 ## Quy tắc chung
 
+- Các task dùng mobile nhận cùng [baseline Expo hiện hành](EXPO_BASELINE.md): package-lock là nguồn cài, `npm ci` + `npm run check:expo` trước kiểm scope. Khuyến nghị patch online được kiểm riêng bằng `check:expo:latest` khi bảo trì GM-02; không pin lại patch theo evidence cũ. Bảng baseline liệt kê đủ task Expo Go/native/QA/release và các task BE/Data/HTML không cần mở Expo.
+
 - File tồn tại, screenshot thiết kế, HTTP 200 hoặc CI xanh riêng lẻ chưa đủ. Phải đối chiếu input → expected → actual và assertions của chính scope.
 - Mỗi task GM-01..39 bàn giao `docs/evidence/roadmap-v2/GM-XX/CHECKS.md` theo [mẫu checks](../../tasks/templates/CHECKS_TEMPLATE.md), kèm HANDOFF. Output bổ sung này có trong task map và gate kiểm sự hiện diện khi Done/upstream được dùng.
 - CHECKS ghi revision, contract/schema/dataset version nếu áp dụng, công cụ và phiên bản, lệnh/route/request, environment, output thực tế và Pass/Fail/Not run. Screenshot/video/log/report phải có đường dẫn thật hoặc artifact truy cập được cho reviewer.

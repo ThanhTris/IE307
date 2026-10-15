@@ -4,6 +4,8 @@ Expo SDK 57 + Expo Router + TypeScript strict. Có shell `/`, `/foundation`, `+n
 
 ## Chạy từ clone sạch
 
+Bộ package/lockfile và phạm vi Expo của từng task xem [baseline hiện hành](../docs/project/EXPO_BASELINE.md). `check:expo` kiểm phiên bản đã khóa + map SDK cài tại máy; `check:expo:latest` kiểm online khi bảo trì GM-02, không dùng patch trong evidence cũ làm yêu cầu cài hiện tại.
+
 Node >=22.13 (đã dùng 24.15.0), npm; Android có Expo Go hỗ trợ SDK 57. Không cần Android Studio/adb/APK để mở shell. Từ root:
 
 ```powershell
@@ -21,10 +23,13 @@ LAN lỗi: `npm run start:tunnel`. Tunnel cần dịch vụ ngoài và `@expo/ng
 ```powershell
 npm run check
 npm run check:expo
+npm run test:expo-baseline
 npm run bundle:android
 ```
 
 `check`: TypeScript → ESLint → Jest → static architecture guard. Bundle `dist/android` ignored; bundle Pass không thay mở trên điện thoại.
+
+Sau nhận thay đổi package từ main, chạy `npm ci` và `npm start -- --clear`. Native dependency/config thay đổi cần rebuild development client/APK; cập nhật Expo Go trên điện thoại không tự cập nhật package trong repo.
 
 Smoke: tên/tagline/nhãn GM-02 và chưa kết nối API → **Xem cấu trúc ứng dụng** → `/foundation` → Quay lại/Android Back. Mở `exp://<LAN-IP>:8081/--/khong-co-trang` để kiểm not-found → Về trang đầu. Kiểm light/dark, TalkBack, font200%, portrait/landscape; không request vị trí/camera/push. Ghi device/revision/screenshot/Pass-Fail-Not run tại [CHECKS](../docs/evidence/roadmap-v2/GM-02/CHECKS.md).
 

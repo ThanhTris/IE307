@@ -32,6 +32,8 @@ Mọi dependency có ID nhỏ hơn task hiện tại. Merge tăng dần 01..39 l
 
 ## File ownership
 
+Tất cả consumer mobile dùng [baseline Expo hiện hành](EXPO_BASELINE.md), không tự cài bản mới nhất theo từng task. GM-02 cập nhật package/lockfile và kiểm online; PR tính năng nhận baseline rồi chạy npm ci, locked compatibility và checks đúng scope. Không thay evidence revision cũ hoặc coi nâng package là đã kiểm điện thoại.
+
 | Phần dùng chung | Task điều phối |
 | --- | --- |
 | Mobile package/lockfile/config/runner/routes shell | GM-02 |

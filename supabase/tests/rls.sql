@@ -152,7 +152,7 @@ select is((select count(id) from public.taxonomy),0::bigint,'verified but unpubl
 reset role;
 select ok(statement_timestamp()-interval '24 hours'+interval '24 hours'<=statement_timestamp(),'exact 24h cutoff is inclusive');
 select ok(statement_timestamp()-interval '24 hours'+interval '1 microsecond'+interval '24 hours'>statement_timestamp(),'one microsecond before cutoff remains');
-update public.devices set created_at=statement_timestamp()-interval '32 days',last_seen_at=statement_timestamp()-interval '31 days',active=true,permission='granted',push_token='synthetic-not-a-real-token',version=version+1;
+update public.devices set created_at=statement_timestamp()-interval '32 days',last_seen_at=statement_timestamp()-interval '31 days',active=true,permission='granted',push_token='synthetic-not-a-real-token-'||id::text,version=version+1;
 select lives_ok('select gm17_private.cleanup()','inactive stale tokens cleanup');
 select is((select count(*) from public.devices),0::bigint,'30 day stale device/token removed');
 select is((select count(*) from public.deliveries),0::bigint,'dependent delivery removed safely');
