@@ -2,7 +2,7 @@
   "task": "GM-23",
   "contract": "food-v1/roadmap-v2/GM-23.1",
   "schemaVersion": "0.7.0",
-  "revision": "ee99bd70032373507d6ea8032dfdae749bf7d360",
+  "revision": "31b8f1e55f1bfab51a6ee79a8c53491dcf58862e",
   "migration": "supabase/migrations/0025_notifications.sql",
   "syntheticPositiveDataOnly": true,
   "remoteExpoDelivery": "Not run",
