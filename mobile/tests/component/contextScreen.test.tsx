@@ -3,6 +3,10 @@ import { render, screen, userEvent, waitFor } from '@testing-library/react-nativ
 import type { ApiClient } from '../../src/data/api/contracts';
 import { Gm24ContextScreen as ContextScreen } from '../../src/features/context/screens/Gm24ContextScreen';
 
+const waitForContextReady = async () => {
+  await waitFor(() => expect(screen.getByRole('button', { name: '🕒 Đặt giờ trước' })).toBeEnabled());
+};
+
 describe('GM-24 ContextScreen Component & Scenarios', () => {
   it('renders correctly with default scenario and displays all core sections', async () => {
     await render(<ContextScreen initialScenario="gps_grant_rua" />);
@@ -96,9 +100,7 @@ describe('GM-24 ContextScreen Component & Scenarios', () => {
       />
     );
 
-    await waitFor(() => {
-      expect(screen.getByText('🕒 Đặt giờ trước')).toBeOnTheScreen();
-    });
+    await waitForContextReady();
 
     // Switch to Scheduled mode
     await user.press(screen.getByText('🕒 Đặt giờ trước'));
@@ -168,9 +170,7 @@ describe('GM-24 ContextScreen Component & Scenarios', () => {
     const user = userEvent.setup();
     await render(<ContextScreen initialScenario="manual_only" />);
 
-    await waitFor(() => {
-      expect(screen.getByText('🕒 Đặt giờ trước')).toBeOnTheScreen();
-    });
+    await waitForContextReady();
 
     // Switch to Scheduled mode and select +3 hours
     await user.press(screen.getByText('🕒 Đặt giờ trước'));
@@ -405,5 +405,34 @@ describe('GM-24 ContextScreen Component & Scenarios', () => {
     await user.type(time, '20:');
     expect(time.props.value).toBe('20:');
     expect(screen.getByRole('button', { name: 'Xem món mẫu theo bối cảnh' })).toBeDisabled();
+  });
+
+  it('locks draft inputs until delayed discovery establishes the initial context', async () => {
+    const user = userEvent.setup();
+    let resolveDiscovery!: (value: unknown) => void;
+    const discovery = new Promise(resolve => { resolveDiscovery = resolve; });
+    const client = {
+      getDiscoveryContext: jest.fn().mockReturnValue(discovery),
+      previewFoodPool: jest.fn(),
+    } as unknown as ApiClient;
+
+    await render(<ContextScreen apiClient={client} initialScenario="manual_only" />);
+    const budget = screen.getByLabelText('Ngân sách tham khảo (VNĐ/người)');
+    expect(budget).toBeDisabled();
+    await user.clear(budget);
+    await user.type(budget, '60000');
+    expect(budget.props.value).toBe('');
+
+    resolveDiscovery({
+      ok: true,
+      data: {
+        serverTime: '2026-10-15T11:30:00.000Z',
+        anchors: [{ id: 'anc_ho_con_rua', coverageId: 'cov_hcm', name: 'Hồ Con Rùa', address: 'Công trường Quốc Tế', lat: 10.7828, lng: 106.6958 }],
+        coverageAreas: [],
+      },
+    });
+    await waitFor(() => expect(budget).toBeEnabled());
+    await user.type(budget, '60000');
+    expect(budget.props.value).toBe('60000');
   });
 });

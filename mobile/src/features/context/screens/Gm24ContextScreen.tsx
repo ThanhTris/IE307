@@ -80,7 +80,9 @@ export function Gm24ContextScreen({
   const { colors } = useShellTheme();
   const [envMode, setEnvMode] = useState<EnvironmentMode>(initialEnvironmentMode);
   const [scenario, setScenario] = useState<ContextScenario>(initialScenario);
-  const [loading, setLoading] = useState(false);
+  // Keep the shared form read-only until the first discovery response has
+  // established the server clock and anchor selection.
+  const [loading, setLoading] = useState(true);
   const [serverError, setServerError] = useState<string | null>(null);
 
   // Real API endpoint & guest session state (for live verification without secrets)
@@ -938,6 +940,7 @@ export function Gm24ContextScreen({
                 key={anchor.id}
                 label={anchor.name}
                 selected={locationState.selectedAnchor?.id === anchor.id}
+                disabled={loading}
                 onPress={() => handleSelectAnchor(anchor.id)}
                 colors={colors}
               />
@@ -947,10 +950,11 @@ export function Gm24ContextScreen({
 
         <ContextDraftFields
           draft={{ radiusM, mealSlot, serviceMode, budget: parseBudget(budget) ?? null, avoidRecent }}
-        budgetText={budget}
-        date={dateText}
-        time={timeText}
+          budgetText={budget}
+          date={dateText}
+          time={timeText}
           timeState={timeState}
+          disabled={loading}
           timeMode={timeMode}
           serverNow={() => currentServerTime(serverTime, serverLoadedAt)}
           eatNowLabel="⚡ Ăn ngay (Buffer 15p)"
