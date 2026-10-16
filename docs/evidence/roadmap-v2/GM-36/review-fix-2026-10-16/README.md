@@ -3,9 +3,10 @@
 Review: https://github.com/ThanhTris/IE307/pull/123#issuecomment-6209239517
 Published/reviewed PR head:858ef00d506435d59c5a5dfa87f5a8a2a103d6da.
 Target fetched for this review:4a8cd642c8d908d9e6d2c75d19c0935a44cba042.
-Current tests execute that PR head plus the uncommitted local fix; no new commit
-SHA is invented. PATCH_MANIFEST identifies exact tested source bytes. The original
-published implementation is already committed/pushed; only this fix is not.
+At execution time, tests used that PR head plus the then-uncommitted local fix.
+The tested fix is now committed/pushed as91c1dac48d80bcfcfb77b39bf99de793c703bd9e.
+PATCH_MANIFEST maps the original tested source bytes to this published revision;
+historical logs/HTTP reports are retained without changing their execution metadata.
 
 Before fixing, added regression produces48 tests:40 Pass /8 Fail. It reproduces
 both parseVndPrice output and normalizeDraft price/source claims for35-45k,
@@ -34,10 +35,12 @@ python3 scripts/gm36_contract_check.py --draft docs/evidence/roadmap-v2/GM-36/ht
 npm run backend:stop
 ```
 
-Nine workflow runs for published858ef00 were checked and were successful;
-ci-published-head.json records those IDs. They do not prove CI for this local fix.
+Nine workflow runs for baseline858ef00 were checked before the fix was published;
+ci-published-head.json is that historical baseline snapshot. The price fix91c1dac
+now has26/26 successful checks, recorded in ../revision-sync-91c1dac/ci-checks.json.
 The reviewer's earlier local Docker setup limitation is a separate historical
 execution scope; this local rerun completed14 HTTP groups and removed owned guests.
 GM34 and actual recognizer/provider/native/license/privacy/quota/cost/accuracy/pilot
 are still Pending, fullTaskComplete=false, no automatic Done/merge or review approval.
-Trí must review the new pushed revision after the user commits and pushes.
+Trí confirmed the price fix at91c1dac in the follow-up comment linked in
+../revision-sync-91c1dac/README.md. This is not full-task acceptance or merge approval.

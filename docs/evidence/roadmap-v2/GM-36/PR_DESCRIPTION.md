@@ -32,7 +32,7 @@ menu accuracy/pilot, reviewed source/publish, integration sau GM34. Không đổ
 - [ ] Merge gate đạt — hiện BLOCKED GM34, không bypass.
 - [ ] Người merge kiểm lại upstream commit/artifact/version thật và target tại revision merge.
 - [ ] Cập nhật branch + chạy actual recognizer/Edge/integration khi đủ output/review; unit/stub không thay bằng chứng đó.
-- Published PR head:858ef00d506435d59c5a5dfa87f5a8a2a103d6da. Tested:858ef00 + uncommitted review fix; hashes PATCH_MANIFEST.json. Fetched review target4a8cd64; original branch base daa9174.
+- Published/tested implementation:91c1dac48d80bcfcfb77b39bf99de793c703bd9e, gồm bản sửa giá đã push. Source hashes đối chiếu khớp; lượt bổ sung hiện tại chỉ sửa tài liệu/evidence. Target đã kiểm4a8cd64; base ban đầu daa9174.
 - Contract: thêm draft-only API supplement, không thay core. No DB migration; rollback giữ flags off và bỏ module độc lập, không xóa dữ liệu. Recognizer/quota production phải review trước bật.
 
 ## AC và verification
@@ -108,5 +108,7 @@ Giữ toàn bộ price/currency/unit/source giá null và thêm PRICE_UNKNOWN_OR
 kể cả confidence0.99. Không tự nhân1000.
 -35k-45k /35000-45000 đ vẫn35000..45000.48 Node tests,14 HTTP groups, schema/GM08
 import rejection và strict TypeScript đã chạy lại. Xem review-fix-2026-10-16.
-- CI published858ef00 xanh; CI của bản sửa chưa commit/push chưa chạy. Trí cần review
-revision mới sau push; GM34 và provider/native/pilot vẫn Pending, không đề nghị Done.
+- CI tại91c1dac:26/26 SUCCESS. Trí xác nhận bản sửa giá ổn trong
+[comment mới](https://github.com/ThanhTris/IE307/pull/123#issuecomment-6218965995).
+Hồ sơ đã đối chiếu revision; commit tài liệu tiếp theo chưa có CI trước push.
+GM34 và provider/native/pilot vẫn Pending, không đề nghị Done/merge toàn task.

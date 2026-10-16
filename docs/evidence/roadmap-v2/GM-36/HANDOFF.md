@@ -3,8 +3,9 @@
 2026-10-16. Owner Tâm (@HoaiTam); reviewer Trí (@ThanhTris), Pending.
 Branch `codex/gm-36-menu-ocr` from target main
 `daa917461e68353f6ba015f2f746e805ec19710e`. Published PR123 commit
-`858ef00d506435d59c5a5dfa87f5a8a2a103d6da`; this review fix remains uncommitted.
-Tests use858ef00 plus the current source-hashed fix; target inspected4a8cd64.
+`91c1dac48d80bcfcfb77b39bf99de793c703bd9e`, including the published price fix.
+Pre-commit test source hashes match that revision; target inspected4a8cd64.
+The follow-up in revision-sync-91c1dac changes documentation/evidence only.
 Live start gate READY_TO_CLAIM. Contract GM36.1; input GM04.2/food1.1.0/GM07.1.
 Merge/Done remains blocked by GM34 and unreviewed real recognizer/provider/pilot.
 
@@ -111,8 +112,9 @@ phone endpoint. Do not repoint the core app to this stub or bypass Edge JWT chec
 
 Rollback of this isolated patch: leave entrypoint/core flags off and remove its
 new feature modules/runners if rejected. No DB down migration or data deletion is
-needed. Baseline858ef00 has published CI; this uncommitted fix needs its own CI
-and Trí re-review after user commit/push.
+needed. Published91c1dac has26/26 successful checks. Trí confirmed the price fix
+in the follow-up comment; full-task acceptance and review of this documentation
+revision remain Pending. New documentation commit CI must be checked after push.
 
 ## Review fix continuation
 
@@ -124,7 +126,9 @@ confidence. Both parser and final price/source fields have regression assertions
 explicit0-45k remains0..45000 because zero does not change with scale. No values
 are multiplied or inherited. Curator confirmation is still required for a draft.
 
-Nine CI workflows for published858ef00 were checked green. That is baseline CI;
-current fix needs a new commit/push and its own CI/re-review. Review history and
-red/green/current output are in review-fix-2026-10-16; source hashes identify the
-actual tested patch instead of claiming it already has a new commit SHA.
+Published price fix91c1dac has26/26 successful checks; see
+revision-sync-91c1dac/ci-checks.json. Trí follow-up:
+https://github.com/ThanhTris/IE307/pull/123#issuecomment-6218965995.
+Review history and pre-commit red/green output remain in review-fix-2026-10-16.
+Their execution metadata is historical; PATCH_MANIFEST records source-hash parity
+with91c1dac. No new local HTTP run or actual recognizer execution is claimed.

@@ -1,0 +1,188 @@
+{
+  "checks": [
+    {
+      "conclusion": "success",
+      "head_sha": "91c1dac48d80bcfcfb77b39bf99de793c703bd9e",
+      "html_url": "https://github.com/ThanhTris/IE307/actions/runs/38865945532/job/116858684475",
+      "name": "backend-runner",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "91c1dac48d80bcfcfb77b39bf99de793c703bd9e",
+      "html_url": "https://github.com/ThanhTris/IE307/actions/runs/38865945479/job/116858684426",
+      "name": "Supabase entrypoint (macos-latest)",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "91c1dac48d80bcfcfb77b39bf99de793c703bd9e",
+      "html_url": "https://github.com/ThanhTris/IE307/actions/runs/38865945479/job/116858684330",
+      "name": "Supabase entrypoint (ubuntu-latest)",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "91c1dac48d80bcfcfb77b39bf99de793c703bd9e",
+      "html_url": "https://github.com/ThanhTris/IE307/actions/runs/38865945532/job/116858684316",
+      "name": "mobile",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "91c1dac48d80bcfcfb77b39bf99de793c703bd9e",
+      "html_url": "https://github.com/ThanhTris/IE307/actions/runs/38865945594/job/116858684313",
+      "name": "schema",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "91c1dac48d80bcfcfb77b39bf99de793c703bd9e",
+      "html_url": "https://github.com/ThanhTris/IE307/actions/runs/38865945507/job/116858684218",
+      "name": "GM-08 disposable PostgreSQL import",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "91c1dac48d80bcfcfb77b39bf99de793c703bd9e",
+      "html_url": "https://github.com/ThanhTris/IE307/actions/runs/38865945508/job/116858684133",
+      "name": "GM-18 SQL parity and authenticated HTTP",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "91c1dac48d80bcfcfb77b39bf99de793c703bd9e",
+      "html_url": "https://github.com/ThanhTris/IE307/actions/runs/38865945479/job/116858684101",
+      "name": "Supabase entrypoint (windows-latest)",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "91c1dac48d80bcfcfb77b39bf99de793c703bd9e",
+      "html_url": "https://github.com/ThanhTris/IE307/actions/runs/38865945469/job/116858683939",
+      "name": "validate",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "91c1dac48d80bcfcfb77b39bf99de793c703bd9e",
+      "html_url": "https://github.com/ThanhTris/IE307/actions/runs/38865945435/job/116858683924",
+      "name": "history",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "91c1dac48d80bcfcfb77b39bf99de793c703bd9e",
+      "html_url": "https://github.com/ThanhTris/IE307/actions/runs/38865945507/job/116858683910",
+      "name": "GM-08 cp1252 encoding regression",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "91c1dac48d80bcfcfb77b39bf99de793c703bd9e",
+      "html_url": "https://github.com/ThanhTris/IE307/actions/runs/38865945390/job/116858683259",
+      "name": "decision",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "91c1dac48d80bcfcfb77b39bf99de793c703bd9e",
+      "html_url": "https://github.com/ThanhTris/IE307/actions/runs/38865945349/job/116858682958",
+      "name": "independent",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "91c1dac48d80bcfcfb77b39bf99de793c703bd9e",
+      "html_url": "https://github.com/ThanhTris/IE307/actions/runs/38865939950/job/116858666772",
+      "name": "backend-runner",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "91c1dac48d80bcfcfb77b39bf99de793c703bd9e",
+      "html_url": "https://github.com/ThanhTris/IE307/actions/runs/38865939943/job/116858666758",
+      "name": "GM-18 SQL parity and authenticated HTTP",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "91c1dac48d80bcfcfb77b39bf99de793c703bd9e",
+      "html_url": "https://github.com/ThanhTris/IE307/actions/runs/38865940001/job/116858666726",
+      "name": "GM-08 disposable PostgreSQL import",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "91c1dac48d80bcfcfb77b39bf99de793c703bd9e",
+      "html_url": "https://github.com/ThanhTris/IE307/actions/runs/38865940000/job/116858666644",
+      "name": "Supabase entrypoint (ubuntu-latest)",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "91c1dac48d80bcfcfb77b39bf99de793c703bd9e",
+      "html_url": "https://github.com/ThanhTris/IE307/actions/runs/38865940000/job/116858666505",
+      "name": "Supabase entrypoint (macos-latest)",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "91c1dac48d80bcfcfb77b39bf99de793c703bd9e",
+      "html_url": "https://github.com/ThanhTris/IE307/actions/runs/38865939950/job/116858666482",
+      "name": "mobile",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "91c1dac48d80bcfcfb77b39bf99de793c703bd9e",
+      "html_url": "https://github.com/ThanhTris/IE307/actions/runs/38865940011/job/116858666477",
+      "name": "decision",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "91c1dac48d80bcfcfb77b39bf99de793c703bd9e",
+      "html_url": "https://github.com/ThanhTris/IE307/actions/runs/38865939998/job/116858666383",
+      "name": "history",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "91c1dac48d80bcfcfb77b39bf99de793c703bd9e",
+      "html_url": "https://github.com/ThanhTris/IE307/actions/runs/38865940001/job/116858666345",
+      "name": "GM-08 cp1252 encoding regression",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "91c1dac48d80bcfcfb77b39bf99de793c703bd9e",
+      "html_url": "https://github.com/ThanhTris/IE307/actions/runs/38865940000/job/116858666250",
+      "name": "Supabase entrypoint (windows-latest)",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "91c1dac48d80bcfcfb77b39bf99de793c703bd9e",
+      "html_url": "https://github.com/ThanhTris/IE307/actions/runs/38865940003/job/116858666111",
+      "name": "independent",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "91c1dac48d80bcfcfb77b39bf99de793c703bd9e",
+      "html_url": "https://github.com/ThanhTris/IE307/actions/runs/38865940018/job/116858666040",
+      "name": "schema",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "91c1dac48d80bcfcfb77b39bf99de793c703bd9e",
+      "html_url": "https://github.com/ThanhTris/IE307/actions/runs/38865939977/job/116858665662",
+      "name": "validate",
+      "status": "completed"
+    }
+  ],
+  "total_count": 26,
+  "checkedAt": "2026-10-16T15:40:41.459689+00:00"
+}

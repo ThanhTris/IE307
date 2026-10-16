@@ -1,8 +1,9 @@
 # GM36 independent checks
 
 2026-10-16. Owner Tâm; reviewer Trí (Pending). Branch codex/gm-36-menu-ocr.
-Published PR123 head:858ef00d506435d59c5a5dfa87f5a8a2a103d6da.
-Current tests: that HEAD + the uncommitted price-review fix, source hashes in manifest.
+Published/tested PR123 revision:91c1dac48d80bcfcfb77b39bf99de793c703bd9e.
+The source-hashed price fix tested before commit is now published in this revision.
+This follow-up changes documentation/evidence only; runtime and tests match91c1dac.
 Original branch base daa9174; fetched review target origin/main4a8cd64.
 GM36.1/food1.1.0; exact source/evidence hashes in PATCH_MANIFEST.json.
 macOS/Node26.0.0/TypeScript6.0.3/Python3.13.3; pinned CLI2.120.0, actual GoTrue local.
@@ -22,10 +23,10 @@ No app package/config/DB schema/core contract/dataset change or production publi
 | Regression | Existing Python suite + feature tests | python-regression.txt |558 tests,5 pre-existing skips; Pass with skips stated |
 | Repo/index/whitespace | Documents/JSON/link/task graph/index/diff | repository-check.txt/docs-check.txt/diff-check.txt | Offline only, not reviewer approval |
 | Start gate | Live Project Done GM04/07 + fetched artifacts/HANDOFF | start-gate.txt | READY_TO_CLAIM |
-| Merge gate | Live GM34 still Todo | merge-gate.txt | BLOCKED GM34; independent delivery only |
+| Merge gate | Live GM34 still Todo | revision-sync-91c1dac/merge-gate.txt | BLOCKED GM34; independent delivery only |
 | Real recognizer/provider/source/accuracy/license/quota/cost review | Real permitted-menu/native pilot and Trí decision | PROVIDER_REVIEW.md | Not run/Pending; blocks full task acceptance |
 | Deno/Edge, Android, production | Deployed Edge gateway; chosen native recognition/device flow | Not run | Current core edge_runtime remains false; no Android consumer in scope |
-| Remote CI / human review | Nine workflow runs for published858ef00 completed successfully | review-fix-2026-10-16/ci-published-head.json | New local fix CI Not run until push; Pending Trí re-review |
+| Remote CI / human review |26/26 checks SUCCESS on published91c1dac | revision-sync-91c1dac/ci-checks.json; Trí follow-up linked below | Price fix accepted in comment; full-task review Pending. New documentation commit CI not run |
 
 The positive PNG is a synthetic1×1 image, and the recognizer rows are manually
 written fixtures. No real menu is recognized or sent to an external OCR/AI service.
@@ -56,8 +57,15 @@ include PRICE_UNKNOWN_OR_AMBIGUOUS. Fully specified ranges and explicit zero rem
 supported. No inferred x1000 correction. New red/green evidence is in
 review-fix-2026-10-16/; original manifest/HTTP reports retained there as history.
 
-Published initial implementation is858ef00; it is no longer an unpublished patch.
-This review fix is still uncommitted/unpushed, and its own remote CI has not run.
-Do not attribute older green CI or reviewer environment setup failure to this fix.
+The initial implementation is858ef00; the price fix is committed/pushed as91c1dac.
+[Trí follow-up](https://github.com/ThanhTris/IE307/pull/123#issuecomment-6218965995)
+confirms the parser fix and no new blocking code issue in the inspected draft pipeline.
+Direct GitHub check-run lookup confirms26/26 SUCCESS at91c1dac. This is not approval
+of full GM36 or evidence of real OCR. Historical run metadata describes the
+pre-commit execution; PATCH_MANIFEST maps its source bytes to the published revision.
 Local review-fix HTTP completed all14 groups and cleaned its own synthetic guests.
 GM34/provider/native/license/privacy/quota/cost/accuracy/pilot remain Pending.
+
+Revision documentation follow-up:558 Python tests (5 existing skips), repository/
+indexes/diff checks Pass. See revision-sync-91c1dac/README.md. No runtime change or
+new local HTTP/provider run;26/26 remote checks above belong to91c1dac.
