@@ -1,0 +1,258 @@
+(node:72121) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/hoaitam/Desktop/Learn/23521394/HK1-Nam-4/IE307/ThanhTris-IE307/supabase/functions/menu-ocr/index.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/hoaitam/Desktop/Learn/23521394/HK1-Nam-4/IE307/ThanhTris-IE307/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ VND price 35.000 đ (4.428208ms)
+✔ VND price 35,000 VND (0.2875ms)
+✔ VND price 35 000 (0.071458ms)
+✔ VND price 35k (0.063459ms)
+✔ VND price 35,5k (0.079708ms)
+✔ VND price 35k - 45k (0.105791ms)
+✔ VND price 35000–45000 ₫ (0.450791ms)
+✔ VND price 0 (0.055042ms)
+✔ ambiguous/invalid price remains unknown:  (0.1075ms)
+✔ ambiguous/invalid price remains unknown: 35.5 (0.089417ms)
+✔ ambiguous/invalid price remains unknown: 35/45k (0.056584ms)
+✔ ambiguous/invalid price remains unknown: 35k-30k (0.039875ms)
+✔ ambiguous/invalid price remains unknown: 35.000,000 (0.038333ms)
+✔ ambiguous/invalid price remains unknown: USD 5 (0.027209ms)
+✔ ambiguous/invalid price remains unknown: từ 35k (0.125833ms)
+✔ ambiguous/invalid price remains unknown: -100 (0.027792ms)
+✔ ambiguous/invalid price remains unknown: 1000000001 (0.023375ms)
+✔ ambiguous/invalid price remains unknown: 35k-45k-50k (0.023958ms)
+✔ ambiguous/invalid price remains unknown: NaN (0.596583ms)
+✔ ambiguous/invalid price remains unknown: 35k đ đ (0.031333ms)
+✖ abbreviated range cannot confirm an implied thousand scale: 35-45k (1.474542ms)
+✖ high confidence cannot confirm ambiguous range or its price source: 35-45k (1.287791ms)
+✖ abbreviated range cannot confirm an implied thousand scale: 35-45.000 đ (0.140625ms)
+✖ high confidence cannot confirm ambiguous range or its price source: 35-45.000 đ (0.327417ms)
+✖ abbreviated range cannot confirm an implied thousand scale: 35-45000 đ (0.105542ms)
+✖ high confidence cannot confirm ambiguous range or its price source: 35-45000 đ (0.190875ms)
+✖ abbreviated range cannot confirm an implied thousand scale: 35-45 000 đ (0.087542ms)
+✖ high confidence cannot confirm ambiguous range or its price source: 35-45 000 đ (0.215708ms)
+✔ fully specified range retains explicit VND amounts: 35k-45k (0.222375ms)
+✔ fully specified range retains explicit VND amounts: 35000-45000 đ (0.170125ms)
+✔ fully specified range retains explicit VND amounts: 35000-45k (0.4585ms)
+✔ fully specified range retains explicit VND amounts: 0-45k (0.185209ms)
+✔ independent golden: Vietnamese NFC, price interval, low confidence and unknown unit (0.373083ms)
+✔ no category, allergy, location, schedule, version or verified data can come from provider (0.635583ms)
+✔ reject malformed/provider quantities instead of coercing confidence or currency (0.400375ms)
+✔ confidence boundary inclusive, never default price/currency/unit (0.234458ms)
+✔ request rejects URLs, unknown keys, arbitrary caller IDs and data URIs (0.262ms)
+✔ missing, unknown or unlicensed source rights and consent are not implicit (0.269875ms)
+✔ invalid image: MIME mismatch, malformed base64, truncated container, zero or excessive dimensions (0.504292ms)
+✔ no authentication, outsider and disabled/missing adapters never invoke recognizer (40.448459ms)
+✔ HTTP method, media type, malformed JSON and streaming length independent of Content-Length (3.325875ms)
+✔ handler returns the exact golden draft without images/tokens/provider raw text (1.470958ms)
+✔ slow request body times out before provider/quota work (11.23425ms)
+✔ empty/provider-malformed/failure paths are safe and do not echo provider exception (0.914833ms)
+✔ quota isolates callers, resets expired idle windows and bounds memory (0.077834ms)
+✔ concurrent duplicate attempts have only one recognizer call (11.446584ms)
+✔ provider timeout aborts and a late provider keeps its lease until actually settled (13.103708ms)
+✔ Auth verifier forwards only Authorization and public key to fixed project endpoint (1.256333ms)
+ℹ tests 48
+ℹ suites 0
+ℹ pass 40
+ℹ fail 8
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 266.176917
+
+✖ failing tests:
+
+test at tests/gm36-menu-ocr.test.mjs:23:3
+✖ abbreviated range cannot confirm an implied thousand scale: 35-45k (1.474542ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + [
+  +   35,
+  +   45000
+  + ]
+  - null
+  
+      at TestContext.<anonymous> (file:///Users/hoaitam/Desktop/Learn/23521394/HK1-Nam-4/IE307/ThanhTris-IE307/tests/gm36-menu-ocr.test.mjs:23:87)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 35, 45000 ],
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/gm36-menu-ocr.test.mjs:24:3
+✖ high confidence cannot confirm ambiguous range or its price source: 35-45k (1.287791ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  35 !== null
+  
+      at TestContext.<anonymous> (file:///Users/hoaitam/Desktop/Learn/23521394/HK1-Nam-4/IE307/ThanhTris-IE307/tests/gm36-menu-ocr.test.mjs:28:71)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 35,
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/gm36-menu-ocr.test.mjs:23:3
+✖ abbreviated range cannot confirm an implied thousand scale: 35-45.000 đ (0.140625ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + [
+  +   35,
+  +   45000
+  + ]
+  - null
+  
+      at TestContext.<anonymous> (file:///Users/hoaitam/Desktop/Learn/23521394/HK1-Nam-4/IE307/ThanhTris-IE307/tests/gm36-menu-ocr.test.mjs:23:87)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 35, 45000 ],
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/gm36-menu-ocr.test.mjs:24:3
+✖ high confidence cannot confirm ambiguous range or its price source: 35-45.000 đ (0.327417ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  35 !== null
+  
+      at TestContext.<anonymous> (file:///Users/hoaitam/Desktop/Learn/23521394/HK1-Nam-4/IE307/ThanhTris-IE307/tests/gm36-menu-ocr.test.mjs:28:71)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 35,
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/gm36-menu-ocr.test.mjs:23:3
+✖ abbreviated range cannot confirm an implied thousand scale: 35-45000 đ (0.105542ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + [
+  +   35,
+  +   45000
+  + ]
+  - null
+  
+      at TestContext.<anonymous> (file:///Users/hoaitam/Desktop/Learn/23521394/HK1-Nam-4/IE307/ThanhTris-IE307/tests/gm36-menu-ocr.test.mjs:23:87)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 35, 45000 ],
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/gm36-menu-ocr.test.mjs:24:3
+✖ high confidence cannot confirm ambiguous range or its price source: 35-45000 đ (0.190875ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  35 !== null
+  
+      at TestContext.<anonymous> (file:///Users/hoaitam/Desktop/Learn/23521394/HK1-Nam-4/IE307/ThanhTris-IE307/tests/gm36-menu-ocr.test.mjs:28:71)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 35,
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/gm36-menu-ocr.test.mjs:23:3
+✖ abbreviated range cannot confirm an implied thousand scale: 35-45 000 đ (0.087542ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + [
+  +   35,
+  +   45000
+  + ]
+  - null
+  
+      at TestContext.<anonymous> (file:///Users/hoaitam/Desktop/Learn/23521394/HK1-Nam-4/IE307/ThanhTris-IE307/tests/gm36-menu-ocr.test.mjs:23:87)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 35, 45000 ],
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/gm36-menu-ocr.test.mjs:24:3
+✖ high confidence cannot confirm ambiguous range or its price source: 35-45 000 đ (0.215708ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  35 !== null
+  
+      at TestContext.<anonymous> (file:///Users/hoaitam/Desktop/Learn/23521394/HK1-Nam-4/IE307/ThanhTris-IE307/tests/gm36-menu-ocr.test.mjs:28:71)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 35,
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

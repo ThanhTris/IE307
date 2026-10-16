@@ -77,6 +77,10 @@ without k, reversed/multiple ranges, mixed grouping, currency symbols/text that
 cannot be parsed remain unknown. Price zero is accepted only when explicitly read
 at sufficient confidence with currency/unit; missing price never becomes zero.
 No person-unit conversion, nutrition/allergen inference or location/hours fabrication.
+A range with a bare positive endpoint below1000 beside an amount>=1000 is ambiguous
+about a missing thousand scale:35-45k /35-45.000 đ /35-45000 stay wholly unknown.
+Never multiply or inherit a suffix. Explicit35k-45k and35000-45000 đ remain valid;
+explicit zero is unchanged by scale (0-45k stays0..45000).
 
 Success: `{ok:true,requestId,data:MenuDraft}`. Schema in
 `supabase/functions/menu-ocr/draft.schema.json`. Draft and every item are always

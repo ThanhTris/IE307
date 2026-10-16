@@ -17,7 +17,16 @@ export function parseVndPrice(text: string): [number, number] | null {
   const parts = clean.split(/\s*[-–—]\s*/u);
   if (parts.length < 1 || parts.length > 2) return null;
   const low = amount(parts[0]), high = parts.length === 1 ? low : amount(parts[1]);
-  return low !== null && high !== null && low <= high ? [low, high] : null;
+  if (low === null || high === null || low > high) return null;
+  if (parts.length === 2) {
+    // A short bare endpoint next to a thousand-valued endpoint may omit its
+    // scale: "35-45k" and "35-45.000" cannot confirm either 35 or 35000 VND.
+    // Keep the whole price unknown rather than inheriting/multiplying units.
+    const missingScale = (part: string, value: number, other: number) =>
+      /^\d+$/.test(part) && value > 0 && value < 1000 && other >= 1000;
+    if (missingScale(parts[0], low, high) || missingScale(parts[1], high, low)) return null;
+  }
+  return [low, high];
 }
 
 export function normalizeDraft(output: unknown, input: OcrInput, mode: OcrProvider['mode']): MenuDraft {

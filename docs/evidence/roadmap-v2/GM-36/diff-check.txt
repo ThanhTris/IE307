@@ -1,1 +1,1 @@
-Pass: git diff --check (tracked changes); new text files separately checked.
+Pass: git diff --check on review price fix.

@@ -2,7 +2,7 @@
 # Reproducible supported runner:
 # npm run backend:start
 # GM36_PYTHON=python3 node scripts/gm36_http_check.mjs
-# It creates its own loopback HTTP port, uses real GoTrue guests, asserts12 groups,
+# It creates its own loopback HTTP port, uses real GoTrue guests, asserts14 groups,
 # then removes guest identities/server. Recognizer is explicitly a test double.
 # These requests document the future reviewed Edge route. edge_runtime currently
 # remains false and index.ts remains disabled. Do not enable/deploy to run this file.

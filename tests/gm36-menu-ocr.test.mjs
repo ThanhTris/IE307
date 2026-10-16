@@ -19,6 +19,28 @@ for(const [text,expected] of [['35.000 đ',[35000,35000]],['35,000 VND',[35000,3
 for(const text of ['','35.5','35/45k','35k-30k','35.000,000','USD 5','từ 35k','-100','1000000001','35k-45k-50k','NaN','35k đ đ']) {
   test('ambiguous/invalid price remains unknown: '+text,()=>assert.equal(parseVndPrice(text),null));
 }
+for(const text of ['35-45k','35-45.000 đ','35-45000 đ','35-45 000 đ']) {
+  test('abbreviated range cannot confirm an implied thousand scale: '+text,()=>assert.equal(parseVndPrice(text),null));
+  test('high confidence cannot confirm ambiguous range or its price source: '+text,()=>{
+    const output=fixture('provider-output');
+    output.items=[{...output.items[0],priceText:text,priceConfidence:0.99,currency:'VND',unit:'portion'}];
+    const row=normalizeDraft(output,parseInput(fixture('request')),'test-double').items[0];
+    for(const key of ['priceMin','priceMax','currency','unit'])assert.equal(row[key],null);
+    assert.equal(row.fieldSources.price,null);
+    assert.ok(row.issues.includes('PRICE_UNKNOWN_OR_AMBIGUOUS'));
+    assert.equal(row.confidence.price,0.99);assert.equal(row.reviewStatus,'draft');
+  });
+}
+for(const [text,expected] of [['35k-45k',[35000,45000]],['35000-45000 đ',[35000,45000]],['35000-45k',[35000,45000]],['0-45k',[0,45000]]]) {
+  test('fully specified range retains explicit VND amounts: '+text,()=>{
+    assert.deepEqual(parseVndPrice(text),expected);
+    const output=fixture('provider-output');output.items=[{...output.items[0],priceText:text,priceConfidence:0.99}];
+    const row=normalizeDraft(output,parseInput(fixture('request')),'test-double').items[0];
+    assert.deepEqual([row.priceMin,row.priceMax],expected);
+    assert.equal(row.fieldSources.price,fixture('request').source.sourceRef);
+    assert.ok(!row.issues.includes('PRICE_UNKNOWN_OR_AMBIGUOUS'));
+  });
+}
 test('independent golden: Vietnamese NFC, price interval, low confidence and unknown unit',()=>{
   assert.deepEqual(normalizeDraft(fixture('provider-output'),parseInput(fixture('request')),'test-double'),fixture('expected-draft'));
 });
