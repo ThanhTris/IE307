@@ -8,5 +8,6 @@ export default function IndexRoute() {
   return <HomeScreen key={preview.revision} repository={preview.client} sessionToken={previewSessionToken} activeRoom={preview.active}
     onCreate={() => router.push('/create-room')} onJoin={() => router.push('/join-room')} onResume={() => router.push('/room-preview')}
     onOpenFoundation={() => router.push('/foundation')} onOpenRoomSetup={() => router.push('/gm10/context')}
+    onOpenGm24={() => router.push('/gm24/context')}
     previewControls={busy => <PreviewControls disabled={busy} />} />;
 }

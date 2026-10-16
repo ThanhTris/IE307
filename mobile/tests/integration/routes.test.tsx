@@ -24,6 +24,7 @@ import { rememberPreviewRoom, setPreviewScenario } from '../../src/bootstrap/roo
 import Gm10Layout from '../../src/app/gm10/_layout';
 import Gm10Context from '../../src/app/gm10/context';
 import Gm10Preferences from '../../src/app/gm10/preferences';
+import Gm24Context from '../../src/app/gm24/context';
 
 const routes = {
   _layout: Layout,
@@ -46,6 +47,7 @@ const routes = {
   'gm10/_layout': Gm10Layout,
   'gm10/context': Gm10Context,
   'gm10/preferences': Gm10Preferences,
+  'gm24/context': Gm24Context,
 };
 beforeEach(() => setPreviewScenario('default'));
 afterEach(() => jest.useRealTimers());
