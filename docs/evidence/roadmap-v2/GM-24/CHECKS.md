@@ -1,5 +1,13 @@
 # GM-24 checks
 
+## Revision follow-up — PR #119 / working tree after `8e8aac2`
+
+- Fixed the four post-form-extraction regressions: preview confirmation is bound to the exact draft context, invalidated preview requests clear busy state, GM-10/GM-24 budget fields render the raw input string, and GM-24 date/time fields retain incomplete keyboard input until it parses.
+- Every draft edit now invalidates preview/confirmation and request generations. Late success, error, rejection, and finally handlers cannot restore an older preview or stop a newer request. Retry preserves the selected target, while an explicit Eat Now action is the only operation that applies the server-time +15 minute buffer.
+- Native scenario discovery/retry does not request GPS automatically; foreground location is requested only from the explicit suggestion action. Live preview uses the GM-18 discovery adapter; Mock retains its deterministic fixture path.
+- Added intended-behaviour regressions for time changes, concurrent preview responses, raw keyboard input, and GM-10 budget display. Current mobile suite: 21 suites, 616 tests; Expo export and repository/Python checks pass. Android device, native rebuild/manifest, and deployed backend remain `Not run`.
+- Merge readiness was rerun against `origin/main=daa917461e68353f6ba015f2f746e805ec19710e`: `BLOCKED_ON_BASE` because the shared `ContextScreen.tsx` artifact differs from the GM-10 Project artifact. `main` is an ancestor of the working HEAD; no checker bypass or status change was made.
+
 ## Review follow-up — PR #119 / post-`321d1b2`
 
 - Live configuration no longer defaults to an emulator or LAN URL. Only HTTPS origins or HTTP loopback (`127.0.0.1`, `localhost`, `[::1]`) are accepted; missing, malformed, or unsafe values fail before a request. USB development uses `adb reverse tcp:54321 tcp:54321` with `EXPO_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321`; cleanup is `adb reverse --remove tcp:54321`.

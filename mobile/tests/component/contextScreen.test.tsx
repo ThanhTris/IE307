@@ -331,4 +331,79 @@ describe('GM-24 ContextScreen Component & Scenarios', () => {
     expect('longitude' in savedContext).toBe(false);
     expect('coords' in savedContext).toBe(false);
   });
+
+  it('requires a fresh preview after changing the scheduled time', async () => {
+    const user = userEvent.setup();
+    const onSaveContext = jest.fn();
+    await render(<ContextScreen initialScenario="gps_grant_rua" onSaveContext={onSaveContext} />);
+
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Xem món mẫu theo bối cảnh' })).toBeEnabled());
+    await user.press(screen.getByText('🕒 Đặt giờ trước'));
+    await user.press(screen.getByText('+1 giờ'));
+    await user.press(screen.getByRole('button', { name: 'Xem món mẫu theo bối cảnh' }));
+    await waitFor(() => expect(screen.getByRole('checkbox', { name: 'Tôi xác nhận điểm công cộng, buổi và giờ ăn' })).toBeEnabled());
+
+    await user.press(screen.getByText('+3 giờ'));
+    expect(screen.getByRole('checkbox', { name: 'Tôi xác nhận điểm công cộng, buổi và giờ ăn' })).not.toBeChecked();
+    expect(screen.getByRole('checkbox', { name: 'Tôi xác nhận điểm công cộng, buổi và giờ ăn' })).toBeDisabled();
+    expect(onSaveContext).not.toHaveBeenCalled();
+
+    await user.press(screen.getByRole('button', { name: 'Xem món mẫu theo bối cảnh' }));
+    await waitFor(() => expect(screen.getByRole('checkbox', { name: 'Tôi xác nhận điểm công cộng, buổi và giờ ăn' })).toBeEnabled());
+    await user.press(screen.getByRole('checkbox', { name: 'Tôi xác nhận điểm công cộng, buổi và giờ ăn' }));
+    await user.press(screen.getByRole('button', { name: 'Xác nhận bối cảnh phòng' }));
+    expect(onSaveContext).toHaveBeenCalledTimes(1);
+    expect(onSaveContext.mock.calls[0]![0].desiredAt).toBeTruthy();
+  });
+
+  it('ignores an older preview response and does not leave the new request busy', async () => {
+    const user = userEvent.setup();
+    let resolveFirst!: (value: unknown) => void;
+    const first = new Promise(resolve => { resolveFirst = resolve; });
+    const client = {
+      getDiscoveryContext: jest.fn().mockResolvedValue({
+        ok: true,
+        data: {
+          serverTime: '2026-10-15T11:30:00.000Z',
+          anchors: [{ id: 'anc_ho_con_rua', coverageId: 'cov_hcm', name: 'Hồ Con Rùa', address: 'Công trường Quốc Tế', lat: 10.7828, lng: 106.6958 }],
+          coverageAreas: [],
+        },
+      }),
+      previewFoodPool: jest.fn()
+        .mockImplementationOnce(() => first)
+        .mockResolvedValueOnce({ ok: true, data: { pool: [{ roundDishId: 'new', name: 'Món mới' }], datasetVersion: '1.1.0', eligibilityVersion: '1.0.0', evaluatedAt: '2026-10-15T11:30:00.000Z', totalCandidateCount: 1 } }),
+    } as unknown as ApiClient;
+
+    await render(<ContextScreen apiClient={client} initialScenario="manual_only" />);
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Xem món mẫu theo bối cảnh' })).toBeEnabled());
+    await user.press(screen.getByRole('button', { name: 'Xem món mẫu theo bối cảnh' }));
+    await waitFor(() => expect(client.previewFoodPool).toHaveBeenCalledTimes(1));
+
+    await user.press(screen.getByText('2 km'));
+    expect(screen.getByRole('button', { name: 'Xem món mẫu theo bối cảnh' }).props.accessibilityState.busy).toBe(false);
+    await user.press(screen.getByRole('button', { name: 'Xem món mẫu theo bối cảnh' }));
+    await waitFor(() => expect(client.previewFoodPool).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(screen.getByText('Món mới')).toBeOnTheScreen());
+
+    resolveFirst({ ok: true, data: { pool: [{ roundDishId: 'old', name: 'Món cũ' }], datasetVersion: '1.1.0', eligibilityVersion: '1.0.0', evaluatedAt: '2026-10-15T11:30:00.000Z', totalCandidateCount: 1 } });
+    await waitFor(() => expect(screen.getByText('Món mới')).toBeOnTheScreen());
+    expect(screen.queryByText('Món cũ')).toBeNull();
+  });
+
+  it('keeps raw budget and partial time text while the user is typing', async () => {
+    const user = userEvent.setup();
+    await render(<ContextScreen initialScenario="manual_only" />);
+    await waitFor(() => expect(screen.getByLabelText('Ngân sách tham khảo (VNĐ/người)')).toBeEnabled());
+
+    const budget = screen.getByLabelText('Ngân sách tham khảo (VNĐ/người)');
+    await user.clear(budget);
+    await user.type(budget, '60000');
+    expect(budget.props.value).toBe('60000');
+
+    const time = screen.getByLabelText('Giờ ăn (UTC+7)');
+    await user.clear(time);
+    await user.type(time, '20:');
+    expect(time.props.value).toBe('20:');
+    expect(screen.getByRole('button', { name: 'Xem món mẫu theo bối cảnh' })).toBeDisabled();
+  });
 });

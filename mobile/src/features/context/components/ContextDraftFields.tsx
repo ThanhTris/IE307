@@ -15,6 +15,7 @@ export type ContextDraftTime = Pick<RoomContext, 'desiredAt'> & {
 
 export type ContextDraftFieldsProps = {
   draft: Pick<RoomContext, 'radiusM' | 'mealSlot' | 'serviceMode' | 'budget' | 'avoidRecent'>;
+  budgetText?: string;
   date: string;
   time: string;
   timeState: ContextDraftTime;
@@ -45,6 +46,7 @@ const serviceModes: { label: string; value: ServiceMode }[] = [
 
 export function ContextDraftFields({
   draft,
+  budgetText,
   date,
   time,
   timeState,
@@ -74,7 +76,7 @@ export function ContextDraftFields({
     </SetupSection>
     <SetupSection title="⏰ Thời gian ăn">
       {onTimeModeChange ? <ViewRow>
-        <AppButton label="⚡ Ăn ngay (Buffer 15p)" variant={timeMode === 'now' ? 'primary' : 'secondary'} disabled={disabled} colors={colors} onPress={() => { onTimeModeChange('now'); onEatNow(); }} />
+        <AppButton label="⚡ Ăn ngay (Buffer 15p)" variant={timeMode === 'now' ? 'primary' : 'secondary'} disabled={disabled} colors={colors} onPress={() => onTimeModeChange('now')} />
         <AppButton label="🕒 Đặt giờ trước" variant={timeMode === 'scheduled' ? 'primary' : 'secondary'} disabled={disabled} colors={colors} onPress={() => onTimeModeChange('scheduled')} />
       </ViewRow> : <AppButton label={eatNowLabel} variant="secondary" disabled={disabled} colors={colors} onPress={onEatNow} />}
       <MealDateTimeFields date={date} time={time} disabled={disabled} getToday={() => new Date(serverNow() + 7 * 3600000).toISOString().slice(0, 10)} onDateChange={onDateChange} onTimeChange={onTimeChange} />
@@ -91,7 +93,7 @@ export function ContextDraftFields({
       </SetupSection> : null}
     </SetupSection>
     <SetupSection title="Ngân sách tham khảo">
-      <FormField label="Ngân sách tham khảo (VNĐ/người)" value={draft.budget == null ? '' : String(draft.budget)} editable={!disabled} keyboardType="numeric" onChangeText={onBudgetChange} helperText="Để trống nếu chưa chọn. Thiếu giá không có nghĩa là rẻ; ngân sách là ưu tiên mềm." colors={colors} />
+      <FormField label="Ngân sách tham khảo (VNĐ/người)" value={budgetText ?? (draft.budget == null ? '' : String(draft.budget))} editable={!disabled} keyboardType="numeric" onChangeText={onBudgetChange} helperText="Để trống nếu chưa chọn. Thiếu giá không có nghĩa là rẻ; ngân sách là ưu tiên mềm." colors={colors} />
     </SetupSection>
     <SetupSection title="Lịch sử và chống lặp">
       <SetupToggle label="Giảm ưu tiên món đã ăn gần đây" accessibilityLabel="Tránh lặp món gần đây" disabled={disabled} value={draft.avoidRecent} onValueChange={onAvoidRecentChange} />

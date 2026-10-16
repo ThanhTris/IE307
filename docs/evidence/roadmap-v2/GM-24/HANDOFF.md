@@ -1,5 +1,13 @@
 # Bàn giao đầu ra task — GM-24 / roadmap-v2
 
+## Revision follow-up — PR #119 / after review of `8e8aac2`
+
+- Shared `ContextDraftFields` now accepts the raw `budgetText`; GM-10 and GM-24 display exactly what is being typed while parsing only at action time.
+- GM-24 keeps `dateText`/`timeText` independently, so clearing or entering partial values such as `20:` does not snap back to the previous ISO timestamp. Invalid date, time, or budget blocks preview and shows a specific correction message.
+- Preview state carries a serialized context key and generation. Changing time, anchor, GPS result, radius, meal/service, budget, history, offsets, or clock adjustment clears preview and confirmation, cancels busy state, and requires a fresh preview. Old requests cannot alter the current draft.
+- Verification at this revision: focused context/room suites 52 tests pass; full mobile Jest 21 suites/616 tests pass; typecheck, architecture, Android JS bundle, repository validator, Python regression (550, 6 skipped), task indexes, and diff check pass. Lint has only the existing four warnings. Android hardware, Expo Go permission prompts, native manifest rebuild, and deployed API remain `Not run`.
+- Current merge gate: `BLOCKED_ON_BASE` due to the intentional shared `ContextScreen.tsx` artifact refactor versus the GM-10 Project artifact. This is recorded for reviewer resolution; the readiness checker was not changed.
+
 ## Revision sau merge main — 2026-10-16
 
 - PR branch: `codex/gm-24-location-coverage`; merge commit `ad78d98` nhận `origin/main` tại `daa9174`.

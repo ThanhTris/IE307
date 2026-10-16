@@ -17,6 +17,7 @@ import type {
 } from '../../../data/api/contracts';
 import { createAuthenticatedApiClient } from '../../../data/auth';
 import { MockApiClient } from '../../../data/api/mock';
+import { createDiscoveryApi } from '../../../data/discovery';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import {
   AppButton,
@@ -93,6 +94,7 @@ export function Gm24ContextScreen({
   const [privateDataEpoch, setPrivateDataEpoch] = useState(0);
   const requestGeneration = useRef(0);
   const previewGeneration = useRef(0);
+  const locationGeneration = useRef(0);
 
   // Discovery data from server
   const [serverTime, setServerTime] = useState<string>('2026-10-15T11:30:00.000Z');
@@ -102,6 +104,7 @@ export function Gm24ContextScreen({
   const [previewLoading, setPreviewLoading] = useState(false);
   const [previewError, setPreviewError] = useState<string | null>(null);
   const [confirmed, setConfirmed] = useState(false);
+  const [previewContextKey, setPreviewContextKey] = useState<string | null>(null);
 
   // Location resolution
   const [locationState, setLocationState] = useState<LocationResolution>({
@@ -118,7 +121,9 @@ export function Gm24ContextScreen({
     setPrivateDataEpoch(value => value + 1);
     setAnchors([]);
     setPreview(null);
+    setPreviewLoading(false);
     setPreviewError(null);
+    setPreviewContextKey(null);
     setConfirmed(false);
     setLocationState({
       mode: 'manual',
@@ -134,7 +139,14 @@ export function Gm24ContextScreen({
 
   useEffect(() => {
     previewGeneration.current += 1;
+    locationGeneration.current += 1;
   }, [privateDataEpoch]);
+
+  useEffect(() => () => {
+    requestGeneration.current += 1;
+    previewGeneration.current += 1;
+    locationGeneration.current += 1;
+  }, []);
 
   const liveEndpointConfig = useMemo(() => {
     const publicKey = process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? '';
@@ -169,6 +181,10 @@ export function Gm24ContextScreen({
     confirmedPast: false,
     isTooFarFuture: false,
   });
+  const initialDate = localTime(timeState.desiredAt).slice(0, 10);
+  const initialTime = localTime(timeState.desiredAt).slice(11);
+  const [dateText, setDateText] = useState(initialDate);
+  const [timeText, setTimeText] = useState(initialTime);
 
   // Real client instance (points to real Supabase endpoint)
   const liveAuth = useMemo(() => {
@@ -192,6 +208,10 @@ export function Gm24ContextScreen({
     if (envMode === 'real_api') return realClient;
     return new MockApiClient();
   }, [apiClient, envMode, realClient]);
+  const discoveryClient = useMemo(() => {
+    if (!client) return null;
+    return envMode === 'real_api' ? createDiscoveryApi(client) : client;
+  }, [client, envMode]);
 
   // Location service setup based on current scenario
   const service = useMemo(() => {
@@ -235,13 +255,16 @@ export function Gm24ContextScreen({
   useEffect(() => {
     let active = true;
     const generation = ++requestGeneration.current;
+    locationGeneration.current += 1;
     const run = async () => {
       setLoading(true);
       setServerError(null);
       setAnchors([]);
       previewGeneration.current += 1;
       setPreview(null);
+      setPreviewLoading(false);
       setPreviewError(null);
+      setPreviewContextKey(null);
       setConfirmed(false);
       setLocationState({ mode: 'manual', permission: 'undetermined', coords: null, selectedAnchor: null, distanceM: null, isOutsideCoverage: false, sortedAnchors: [], errorMessage: null });
       try {
@@ -303,10 +326,15 @@ export function Gm24ContextScreen({
 
         // Preserve scheduled mode if already selected; only reset to Eat Now if in now mode
         setTimeState((prev) => {
+          let next: TimeResolution;
           if (prev.mode === 'scheduled') {
-            return service.resolveScheduledTime(prev.desiredAt, loadedTime, prev.confirmedPast);
+            next = service.resolveScheduledTime(prev.desiredAt, loadedTime, prev.confirmedPast);
+          } else {
+            next = service.resolveEatNow(loadedTime, 15);
           }
-          return service.resolveEatNow(loadedTime, 15);
+          setDateText(localTime(next.desiredAt).slice(0, 10));
+          setTimeText(localTime(next.desiredAt).slice(11));
+          return next;
         });
 
         if (scenario === 'manual_only' || loadedAnchors.length === 0) {
@@ -315,7 +343,7 @@ export function Gm24ContextScreen({
             loadedAnchors
           );
           setLocationState(manual);
-        } else {
+        } else if (scenario !== 'live_native') {
           const res = await service.resolveWithGps(loadedAnchors);
           if (active && generation === requestGeneration.current) setLocationState(res);
         }
@@ -359,8 +387,15 @@ export function Gm24ContextScreen({
   const handleRetry = async () => {
     if (!client) { setServerError('AUTH_REQUIRED'); return; }
     const generation = ++requestGeneration.current;
+    previewGeneration.current += 1;
+    locationGeneration.current += 1;
     setLoading(true);
     setServerError(null);
+    setPreviewLoading(false);
+    setPreview(null);
+    setPreviewContextKey(null);
+    setPreviewError(null);
+    setConfirmed(false);
     void clearLivePrivateData();
     try {
       const response = await client.getDiscoveryContext();
@@ -383,14 +418,17 @@ export function Gm24ContextScreen({
 
       // Preserve scheduled mode if already active
       setTimeState((prev) => {
-        if (prev.mode === 'scheduled') {
-          return service.resolveScheduledTime(prev.desiredAt, loadedTime, prev.confirmedPast);
-        }
-        return service.resolveEatNow(loadedTime, 15);
+        const next = service.resolveScheduledTime(prev.desiredAt, loadedTime, prev.confirmedPast);
+        setDateText(localTime(next.desiredAt).slice(0, 10));
+        setTimeText(localTime(next.desiredAt).slice(11));
+        return { ...next, mode: prev.mode };
       });
 
-      const res = await service.resolveWithGps(loadedAnchors);
-      if (generation === requestGeneration.current) setLocationState(res);
+      if (scenario !== 'live_native') {
+        const locationRequest = ++locationGeneration.current;
+        const res = await service.resolveWithGps(loadedAnchors);
+        if (generation === requestGeneration.current && locationRequest === locationGeneration.current) setLocationState(res);
+      }
     } catch (err: unknown) {
       if (generation !== requestGeneration.current) return;
       const msg = (err as { message?: string })?.message ?? 'Lỗi kết nối máy chủ';
@@ -400,24 +438,37 @@ export function Gm24ContextScreen({
     }
   };
 
-  // Handlers
-  const handleSelectAnchor = (anchorId: string) => {
-    if (loading || serverError || !anchors.some(anchor => anchor.id === anchorId)) return;
-    const res = service.resolveManual(anchorId, anchors, locationState.coords);
-    setLocationState(res);
+  // A draft edit cancels every in-flight preview and invalidates its result.
+  const invalidateDraft = () => {
     previewGeneration.current += 1;
+    setPreviewLoading(false);
     setPreview(null);
     setPreviewError(null);
+    setPreviewContextKey(null);
     setConfirmed(false);
   };
 
+  // Handlers
+  const handleSelectAnchor = (anchorId: string) => {
+    if (loading || serverError || !anchors.some(anchor => anchor.id === anchorId)) return;
+    locationGeneration.current += 1;
+    const res = service.resolveManual(anchorId, anchors, locationState.coords);
+    setLocationState(res);
+    invalidateDraft();
+  };
+
   const handleRefreshGps = async () => {
+    if (!anchors.length) return;
+    const generation = ++locationGeneration.current;
     setLoading(true);
     try {
       const res = await service.resolveWithGps(anchors);
-      setLocationState(res);
+      if (generation === locationGeneration.current) {
+        setLocationState(res);
+        invalidateDraft();
+      }
     } finally {
-      setLoading(false);
+      if (generation === locationGeneration.current) setLoading(false);
     }
   };
 
@@ -426,6 +477,8 @@ export function Gm24ContextScreen({
     if (mode === 'now') {
       const nowRes = service.resolveEatNow(new Date(currentServerTime(serverTime, serverLoadedAt)).toISOString(), 15);
       setTimeState(nowRes);
+      setDateText(localTime(nowRes.desiredAt).slice(0, 10));
+      setTimeText(localTime(nowRes.desiredAt).slice(11));
     } else {
       // Scheduled mode: use current desiredAt directly without extra buffer
       const schedRes = service.resolveScheduledTime(
@@ -434,6 +487,8 @@ export function Gm24ContextScreen({
         timeState.confirmedPast
       );
       setTimeState(schedRes);
+      setDateText(localTime(schedRes.desiredAt).slice(0, 10));
+      setTimeText(localTime(schedRes.desiredAt).slice(11));
     }
   };
 
@@ -442,6 +497,9 @@ export function Gm24ContextScreen({
     const target = new Date(serverTimestamp + hours * 60 * 60 * 1000).toISOString();
     const schedRes = service.resolveScheduledTime(target, new Date(serverTimestamp).toISOString(), false);
     setTimeState(schedRes);
+    setDateText(localTime(target).slice(0, 10));
+    setTimeText(localTime(target).slice(11));
+    invalidateDraft();
   };
 
   const handleConfirmPastTime = () => {
@@ -451,34 +509,48 @@ export function Gm24ContextScreen({
       true
     );
     setTimeState(schedRes);
+    setDateText(localTime(schedRes.desiredAt).slice(0, 10));
+    setTimeText(localTime(schedRes.desiredAt).slice(11));
+    invalidateDraft();
   };
 
   const handleAdjustToValidNow = () => {
     const adjusted = service.adjustToValidServerTime(new Date(currentServerTime(serverTime, serverLoadedAt)).toISOString(), 15);
     setTimeState(adjusted);
+    setDateText(localTime(adjusted.desiredAt).slice(0, 10));
+    setTimeText(localTime(adjusted.desiredAt).slice(11));
+    invalidateDraft();
   };
+
+  const parsedDesiredAt = parseLocalTime(`${dateText} ${timeText}`);
+  const parsedBudget = parseBudget(budget);
 
   // Sanitized context payload for room / server
   const sanitizedContext: RoomContext | null = useMemo(() => {
-    if (!locationState.selectedAnchor) return null;
+    if (!locationState.selectedAnchor || !parsedDesiredAt || parsedBudget === undefined) return null;
     try {
       return sanitizeContextForServer({
         anchorId: locationState.selectedAnchor.id,
         anchorName: locationState.selectedAnchor.name,
         radiusM,
-        desiredAt: timeState.desiredAt,
+        desiredAt: parsedDesiredAt,
         serviceMode,
         mealSlot,
-        budget: parseBudget(budget),
+        budget: parsedBudget,
         avoidRecent,
       });
     } catch {
       return null;
     }
-  }, [locationState.selectedAnchor, radiusM, timeState.desiredAt, serviceMode, mealSlot, budget, avoidRecent]);
+  }, [locationState.selectedAnchor, radiusM, parsedDesiredAt, serviceMode, mealSlot, parsedBudget, avoidRecent]);
 
-  const desiredAtMs = Date.parse(timeState.desiredAt);
+  const desiredAtMs = Date.parse(parsedDesiredAt ?? '');
   const liveDesiredAtPast = !Number.isFinite(desiredAtMs) || desiredAtMs <= currentServerTime(serverTime, serverLoadedAt);
+  const draftInputError = !parsedDesiredAt
+    ? 'Ngày ăn và giờ ăn phải đúng định dạng YYYY-MM-DD và HH:mm (UTC+7).'
+    : parsedBudget === undefined
+      ? 'Ngân sách là số nguyên VNĐ/người từ 0 hoặc để trống.'
+      : null;
 
   // Guard for saving context: strictly disallow past time, pending confirmation, or out-of-bounds horizon
   const canSaveContext = Boolean(
@@ -491,12 +563,13 @@ export function Gm24ContextScreen({
     !timeState.isPast &&
     !liveDesiredAtPast &&
     !timeState.isTooFarFuture &&
-    Date.parse(timeState.desiredAt) > currentServerTime(serverTime, serverLoadedAt)
+    Date.parse(parsedDesiredAt ?? '') > currentServerTime(serverTime, serverLoadedAt) &&
+    !draftInputError
   );
 
   const handleSaveContext = () => {
     const liveServerTime = new Date(currentServerTime(serverTime, serverLoadedAt)).toISOString();
-    const freshTime = service.resolveScheduledTime(timeState.desiredAt, liveServerTime, timeState.confirmedPast);
+    const freshTime = service.resolveScheduledTime(parsedDesiredAt ?? timeState.desiredAt, liveServerTime, timeState.confirmedPast);
     if (freshTime.isPast || freshTime.isTooFarFuture) {
       setTimeMode('scheduled');
       setTimeState(freshTime);
@@ -505,26 +578,31 @@ export function Gm24ContextScreen({
       setConfirmed(false);
       return;
     }
-    if (!canSaveContext || !sanitizedContext || !confirmed || !preview?.pool.length) return;
+    const currentKey = sanitizedContext ? JSON.stringify(sanitizedContext) : null;
+    if (!canSaveContext || !sanitizedContext || !confirmed || !preview?.pool.length || previewContextKey !== currentKey) return;
     onSaveContext?.(sanitizedContext);
   };
 
   const handlePreview = async () => {
     const generation = ++previewGeneration.current;
     const liveServerTime = new Date(currentServerTime(serverTime, serverLoadedAt)).toISOString();
-    const freshTime = service.resolveScheduledTime(timeState.desiredAt, liveServerTime, false);
-    if (!sanitizedContext || !client || freshTime.isPast || freshTime.isTooFarFuture || serverError) {
+    const freshTime = service.resolveScheduledTime(parsedDesiredAt ?? timeState.desiredAt, liveServerTime, false);
+    const contextKey = sanitizedContext ? JSON.stringify(sanitizedContext) : null;
+    if (!sanitizedContext || !contextKey || !discoveryClient || freshTime.isPast || freshTime.isTooFarFuture || serverError || draftInputError) {
       setTimeState(freshTime);
       setTimeMode('scheduled');
       setPreview(null);
+      setPreviewContextKey(null);
       setConfirmed(false);
       return;
     }
     setPreviewLoading(true);
+    setPreview(null);
+    setPreviewContextKey(null);
     setPreviewError(null);
     setConfirmed(false);
     try {
-      const response = await client.previewFoodPool({
+      const response = await discoveryClient.previewFoodPool({
         anchorId: sanitizedContext.anchorId,
         radiusM: sanitizedContext.radiusM,
         desiredAt: sanitizedContext.desiredAt,
@@ -540,38 +618,42 @@ export function Gm24ContextScreen({
         setTimeState(responseTime);
         setTimeMode('scheduled');
         setPreview(null);
+        setPreviewContextKey(null);
         setPreviewError('DESIRED_TIME_PASSED');
         setConfirmed(false);
         return;
       }
       if (!response.ok) {
         setPreview(null);
+        setPreviewContextKey(null);
         setPreviewError(response.error.messageKey);
         return;
       }
       setPreview(response.data);
+      setPreviewContextKey(contextKey);
     } catch {
+      if (generation !== previewGeneration.current) return;
       setPreview(null);
+      setPreviewContextKey(null);
       setPreviewError('NETWORK_ERROR');
     } finally {
       if (generation === previewGeneration.current) setPreviewLoading(false);
     }
   };
 
-  const invalidateDraft = () => {
-    previewGeneration.current += 1;
-    setPreview(null);
-    setPreviewError(null);
-    setConfirmed(false);
-  };
-
   const handleConfirmDraft = () => {
     const liveServerTime = new Date(currentServerTime(serverTime, serverLoadedAt)).toISOString();
-    const freshTime = service.resolveScheduledTime(timeState.desiredAt, liveServerTime, false);
+    const freshTime = service.resolveScheduledTime(parsedDesiredAt ?? timeState.desiredAt, liveServerTime, false);
+    const currentKey = sanitizedContext ? JSON.stringify(sanitizedContext) : null;
+    if (!preview?.pool.length || previewContextKey !== currentKey) {
+      setConfirmed(false);
+      return;
+    }
     if (freshTime.isPast || freshTime.isTooFarFuture) {
       setTimeMode('scheduled');
       setTimeState(freshTime);
       setPreview(null);
+      setPreviewContextKey(null);
       setPreviewError('DESIRED_TIME_PASSED');
       setConfirmed(false);
       return;
@@ -865,18 +947,31 @@ export function Gm24ContextScreen({
 
         <ContextDraftFields
           draft={{ radiusM, mealSlot, serviceMode, budget: parseBudget(budget) ?? null, avoidRecent }}
-          date={localTime(timeState.desiredAt).slice(0, 10)}
-          time={localTime(timeState.desiredAt).slice(11)}
+        budgetText={budget}
+        date={dateText}
+        time={timeText}
           timeState={timeState}
           timeMode={timeMode}
           serverNow={() => currentServerTime(serverTime, serverLoadedAt)}
           eatNowLabel="⚡ Ăn ngay (Buffer 15p)"
           onRadiusChange={value => { setRadiusM(value); invalidateDraft(); }}
-          onDateChange={value => { const next = parseLocalTime(`${value} ${localTime(timeState.desiredAt).slice(11)}`); if (next) { setTimeState(service.resolveScheduledTime(next, new Date(currentServerTime(serverTime, serverLoadedAt)).toISOString(), false)); invalidateDraft(); } }}
-          onTimeChange={value => { const next = parseLocalTime(`${localTime(timeState.desiredAt).slice(0, 10)} ${value}`); if (next) { setTimeState(service.resolveScheduledTime(next, new Date(currentServerTime(serverTime, serverLoadedAt)).toISOString(), false)); invalidateDraft(); } }}
+          onDateChange={value => {
+            setDateText(value);
+            setTimeMode('scheduled');
+            const next = parseLocalTime(`${value} ${timeText}`);
+            if (next) setTimeState(service.resolveScheduledTime(next, new Date(currentServerTime(serverTime, serverLoadedAt)).toISOString(), false));
+            invalidateDraft();
+          }}
+          onTimeChange={value => {
+            setTimeText(value);
+            setTimeMode('scheduled');
+            const next = parseLocalTime(`${dateText} ${value}`);
+            if (next) setTimeState(service.resolveScheduledTime(next, new Date(currentServerTime(serverTime, serverLoadedAt)).toISOString(), false));
+            invalidateDraft();
+          }}
           onEatNow={() => { handleToggleTimeMode('now'); invalidateDraft(); }}
           onTimeModeChange={mode => { handleToggleTimeMode(mode); invalidateDraft(); }}
-          onMealSlotChange={value => { setMealSlot(value); const next = nextMealTime(value, currentServerTime(serverTime, serverLoadedAt)); if (next) setTimeState(service.resolveScheduledTime(next, new Date(currentServerTime(serverTime, serverLoadedAt)).toISOString(), false)); invalidateDraft(); }}
+          onMealSlotChange={value => { setMealSlot(value); const next = nextMealTime(value, currentServerTime(serverTime, serverLoadedAt)); if (next) { setTimeState(service.resolveScheduledTime(next, new Date(currentServerTime(serverTime, serverLoadedAt)).toISOString(), false)); setDateText(localTime(next).slice(0, 10)); setTimeText(localTime(next).slice(11)); } invalidateDraft(); }}
           onServiceModeChange={value => { setServiceMode(value); invalidateDraft(); }}
           onBudgetChange={value => { setBudget(value); invalidateDraft(); }}
           onAvoidRecentChange={value => { setAvoidRecent(value); invalidateDraft(); }}
@@ -905,7 +1000,7 @@ export function Gm24ContextScreen({
           />
         )}
 
-        {sanitizedContext && (
+        {locationState.selectedAnchor && (
           <View style={{ gap: 8, marginTop: 4 }}>
             <Pressable
               accessibilityRole="checkbox"
@@ -918,6 +1013,7 @@ export function Gm24ContextScreen({
               <Text style={{ color: colors?.text }}>{confirmed ? '✓ ' : ''}Tôi xác nhận điểm công cộng, buổi và giờ ăn</Text>
             </Pressable>
             <AppButton label="Xem món mẫu theo bối cảnh" loading={previewLoading} disabled={loading || !!serverError || !canSaveContext} onPress={() => { void handlePreview(); }} colors={colors} />
+            {draftInputError ? <StatusNotice title="Cần sửa bối cảnh" message={draftInputError} tone="error" colors={colors} /> : null}
             {previewError ? <StatusNotice title="Chưa thể xem bản nháp" message={previewError} tone="error" colors={colors} /> : null}
             {preview ? <View style={[styles.card, { backgroundColor: colors?.surface, borderColor: colors?.line }]}>
               <Text style={[styles.sectionTitle, { color: colors?.text }]}>Bản nháp món theo bối cảnh</Text>

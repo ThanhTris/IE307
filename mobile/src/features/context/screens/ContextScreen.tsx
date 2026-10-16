@@ -136,6 +136,7 @@ function ContextForm({ repository, roomId, userId, onBack, onHome, onContinue, o
       </SetupSection>
       <ContextDraftFields
         draft={draft}
+        budgetText={budget}
         date={date}
         time={time}
         timeState={draftTime}
