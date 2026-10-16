@@ -2,7 +2,9 @@
 
 2026-10-16. Owner Tâm (@HoaiTam); reviewer Trí (@ThanhTris), Pending.
 Branch `codex/gm-36-menu-ocr` from target main
-`daa917461e68353f6ba015f2f746e805ec19710e`; working-tree patch, no commit/push.
+`daa917461e68353f6ba015f2f746e805ec19710e`. Published PR123 commit
+`858ef00d506435d59c5a5dfa87f5a8a2a103d6da`; this review fix remains uncommitted.
+Tests use858ef00 plus the current source-hashed fix; target inspected4a8cd64.
 Live start gate READY_TO_CLAIM. Contract GM36.1; input GM04.2/food1.1.0/GM07.1.
 Merge/Done remains blocked by GM34 and unreviewed real recognizer/provider/pilot.
 
@@ -56,8 +58,8 @@ git diff --check
 npm run backend:stop
 ```
 
-Expected independent checks: strict TypeScript Pass,36 Node tests,8 Python feature
-tests,12 HTTP groups, validDraft=true + gm08DirectImportRejected=true.
+Expected independent checks: strict TypeScript Pass,48 Node tests,8 Python feature
+tests,14 HTTP groups, validDraft=true + gm08DirectImportRejected=true.
 Merge checker should remain BLOCKED GM34 until that real output is Done/delivered.
 A Mac system Python without CA certificates must use a trusted bundled Python for
 live gates, never disable TLS. Windows set GM36_PYTHON=python (CI already does).
@@ -109,4 +111,20 @@ phone endpoint. Do not repoint the core app to this stub or bypass Edge JWT chec
 
 Rollback of this isolated patch: leave entrypoint/core flags off and remove its
 new feature modules/runners if rejected. No DB down migration or data deletion is
-needed. Remote CI and Trí review apply only after user commit/push, not from local Pass.
+needed. Baseline858ef00 has published CI; this uncommitted fix needs its own CI
+and Trí re-review after user commit/push.
+
+## Review fix continuation
+
+The PR123 price review is addressed by conservative unknown handling for a bare
+positive endpoint below1000 next to a thousand-valued endpoint.35-45k,
+35-45.000 đ and equivalent plain/grouped variants remain unknown, even with0.99
+confidence. Both parser and final price/source fields have regression assertions.
+35k-45k /35000-45000 đ remain35000..45000; a fully specified35000-45k is valid;
+explicit0-45k remains0..45000 because zero does not change with scale. No values
+are multiplied or inherited. Curator confirmation is still required for a draft.
+
+Nine CI workflows for published858ef00 were checked green. That is baseline CI;
+current fix needs a new commit/push and its own CI/re-review. Review history and
+red/green/current output are in review-fix-2026-10-16; source hashes identify the
+actual tested patch instead of claiming it already has a new commit SHA.

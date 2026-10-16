@@ -28,7 +28,7 @@ const report={result:'Fail',checkedAt:new Date().toISOString(),contract:'GM-36.1
  providerMode:'test-double',edgeRuntime:'Not run; edge_runtime remains disabled',
  realProvider:'Not run; no approved recognizer/provider',publicationPerformed:false,
  artifactHashes:hashes(),cases:[]};
-const namespace=randomUUID(),guests=[];let server,base,authBase,key,scenario='golden',calls=0;
+const namespace=randomUUID(),guests=[];let server,base,authBase,key,scenario='golden',rangeText='',calls=0;
 let deps;
 async function check(name,work){
  try{const actual=await work();report.cases.push({case:name,result:'Pass',...actual});console.log('Pass:',name);}
@@ -55,6 +55,7 @@ try{
   if(scenario==='error')throw Error('private provider diagnostic must not be echoed');
   if(scenario==='empty')return {items:[]};
   if(scenario==='malformed')return {items:[{name:'invalid unstructured provider output'}]};
+  if(scenario==='range')return {items:[{...fixture('provider-output').items[0],priceText:rangeText,priceConfidence:0.99}]};
   if(scenario==='timeout')return new Promise((_,reject)=>signal.addEventListener('abort',()=>reject(Error('aborted')),{once:true}));
   if(scenario==='slow')await new Promise(r=>setTimeout(r,100));
   return fixture('provider-output');
@@ -85,6 +86,26 @@ try{
  await check('real authorized HTTP returns exact three-row draft, never verified',async()=>{
   const r=await request();assert.equal(r.status,200);assert.deepEqual(r.body.data,fixture('expected-draft'));assert.equal(r.body.requestId,fixture('request').requestId);
   await writeFile(resolve(folder,'actual-draft.json'),JSON.stringify(r.body.data,null,2)+'\n');return {status:200,rows:3,publishable:false,sourceRightsVerified:false};
+ });
+ await check('review regression: abbreviated ranges remain unknown even at confidence0.99',async()=>{
+  scenario='range';deps.quota=memoryQuota(10);const actual=[];
+  for(const text of ['35-45k','35-45.000 đ','35-45000 đ','35-45 000 đ']){
+   rangeText=text;const r=await request();assert.equal(r.status,200);const row=r.body.data.items[0];
+   for(const field of ['priceMin','priceMax','currency','unit'])assert.equal(row[field],null);
+   assert.equal(row.fieldSources.price,null);assert.ok(row.issues.includes('PRICE_UNKNOWN_OR_AMBIGUOUS'));
+   actual.push({input:text,priceMin:row.priceMin,priceMax:row.priceMax,priceSource:row.fieldSources.price,issues:row.issues});
+  }
+  scenario='golden';deps.quota=memoryQuota();return {status:200,actual};
+ });
+ await check('review regression: explicit ranges retain amounts and price source',async()=>{
+  scenario='range';deps.quota=memoryQuota();
+  for(const text of ['35k-45k','35000-45000 đ']){
+   rangeText=text;const r=await request();assert.equal(r.status,200);const row=r.body.data.items[0];
+   assert.deepEqual([row.priceMin,row.priceMax],[35000,45000]);
+   assert.equal(row.fieldSources.price,fixture('request').source.sourceRef);
+   assert.ok(!row.issues.includes('PRICE_UNKNOWN_OR_AMBIGUOUS'));
+  }
+  scenario='golden';deps.quota=memoryQuota();return {status:200,priceMin:35000,priceMax:45000};
  });
  await check('processing consent and source-rights declaration are mandatory',async()=>{
   const a=fixture('request');a.processingConsent=false;failure(await request(a),400,'CONSENT_REQUIRED');

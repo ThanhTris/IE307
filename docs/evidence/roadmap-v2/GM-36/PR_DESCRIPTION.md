@@ -32,15 +32,15 @@ menu accuracy/pilot, reviewed source/publish, integration sau GM34. Không đổ
 - [ ] Merge gate đạt — hiện BLOCKED GM34, không bypass.
 - [ ] Người merge kiểm lại upstream commit/artifact/version thật và target tại revision merge.
 - [ ] Cập nhật branch + chạy actual recognizer/Edge/integration khi đủ output/review; unit/stub không thay bằng chứng đó.
-- Target/tested: daa9174 + working-tree patch, source hashes PATCH_MANIFEST.json.
+- Published PR head:858ef00d506435d59c5a5dfa87f5a8a2a103d6da. Tested:858ef00 + uncommitted review fix; hashes PATCH_MANIFEST.json. Fetched review target4a8cd64; original branch base daa9174.
 - Contract: thêm draft-only API supplement, không thay core. No DB migration; rollback giữ flags off và bỏ module độc lập, không xóa dữ liệu. Recognizer/quota production phải review trước bật.
 
 ## AC và verification
 
 | AC | Pass/Fail/Not run | Evidence/output/version/môi trường | Mock hay thật / giới hạn |
 | --- | --- | --- | --- |
-| Confidence/null/errors không thành verified | Pass phần độc lập | Node36 + Python8 + actual HTTP draft | Recognizer simulated; schema/handler thật |
-| Auth/source/size/timeout/quota/privacy | Pass phần độc lập | HTTP12 + Node36, macOS/Node26/GoTrue | JWT/Auth/network thật; quota local-only |
+| Confidence/null/errors không thành verified | Pass phần độc lập | Node48 + Python8 + actual HTTP draft | Recognizer simulated; schema/handler thật |
+| Auth/source/size/timeout/quota/privacy | Pass phần độc lập | HTTP14 + Node48, macOS/Node26/GoTrue | JWT/Auth/network thật; quota local-only |
 | Không auto import/publish hoặc bypass giờ/vùng | Pass boundary | Actual output + unchanged GM08 preflight reject | Offline, không DB/publish |
 | Provider/license/quota/cost/privacy/ảnh thật được review | Not run/Pending | PROVIDER_REVIEW.md | Chưa chốt actual provider/native; không ghi approval |
 | Real OCR Vietnamese accuracy/Edge/native integration | Not run | Chờ GM34 và plan/provider approved | Mandatory full-task work còn lại |
@@ -50,7 +50,7 @@ menu accuracy/pilot, reviewed source/publish, integration sau GM34. Không đổ
 - [x] `python -m unittest discover -s tests -p "test_*.py"` —558 tests,5 existing skips.
 - [x] `python scripts/task_readiness.py --check-docs` (không đổi metadata task).
 - [x] `git diff --check`
-- Strict TypeScript OCR Pass;36 Node tests,8 Python feature tests,12 HTTP groups.
+- Strict TypeScript OCR Pass;48 Node tests,8 Python feature tests,14 HTTP groups.
 - Native/typecheck app/lint app/SQL/RLS/Android/a11y/offline app N/A trong phần độc lập không sửa app/schema. Actual Deno/Edge/provider Not run, không coi N/A để nghiệm thu full task.
 - Food source/license/coverage/menu-hours/freshness/unknown: giữ null/không suy diễn; synthetic fixtures tách thật, chưa publish.
 - Artifact/version/lệnh/task nhận tại HANDOFF; Trí review Pending; GM34 và actual recognizer là blocker đầy đủ task.
@@ -90,8 +90,8 @@ macOS/Node26/TypeScript6.0.3/Python3.13, GoTrue real local; no actual Edge deplo
 
 | Endpoint/field | Request/lệnh | Input | Expected + assertion | Actual + evidence | Mock/thật / Result |
 | --- | --- | --- | --- | --- | --- |
-| menu-ocr handler | gm36_http_check.mjs | Real JWT/operator + synthetic PNG |200 exact3-row draft; unknown fields null | http/results.json + actual-draft.json | HTTP/Auth thật; recognizer stub / Pass độc lập |
-| Error/permission/deadline/quota | same + Node tests | Forged JWT/outsider/image/body/provider failure/concurrency |401/403/400/413/422/429/502/503/504, no raw diagnostic | HTTP12 + unit36 | Boundary thật / Pass |
+| menu-ocr handler | gm36_http_check.mjs | Real JWT/operator + synthetic PNG |200 exact3-row draft + ambiguous-range regressions; unknown fields null | http/results.json + actual-draft.json | HTTP/Auth thật; recognizer stub / Pass độc lập |
+| Error/permission/deadline/quota | same + Node tests | Forged JWT/outsider/image/body/provider failure/concurrency |401/403/400/413/422/429/502/503/504, no raw diagnostic | HTTP14 + unit48 | Boundary thật / Pass |
 | Schema/import rejection | gm36_contract_check.py --draft actual-draft.json | Actual response.data | Valid draft; original GM08 refuses direct import | http/contract-results.json | Offline reuse / Pass |
 | Real Edge/on-device recognizer | Chưa bật | Real permitted menu/approved native/provider | Measured accuracy/privacy and actual runtime | Not run | Full-task blocker |
 
@@ -100,3 +100,13 @@ macOS/Node26/TypeScript6.0.3/Python3.13, GoTrue real local; no actual Edge deplo
 - [x] Matrix server/unit/device và future consumer boundary ghi HANDOFF; không thêm dependency ngược.
 - [x] Draft/schema/source/null/unit/privacy mapping và actual preflight đủ phần độc lập; không ép unknown thành verified.
 - [x] Evidence không secret/GPS/phiếu/photo thật; missing actual provider/runtime/review vẫn blocker, không dùng CI/docs thay nghiệm thu.
+
+## Sửa comment PR123 trên revision858ef00
+
+-35-45k /35-45.000 đ và dạng tương đương không còn trở thành35..45000 VND.
+Giữ toàn bộ price/currency/unit/source giá null và thêm PRICE_UNKNOWN_OR_AMBIGUOUS,
+kể cả confidence0.99. Không tự nhân1000.
+-35k-45k /35000-45000 đ vẫn35000..45000.48 Node tests,14 HTTP groups, schema/GM08
+import rejection và strict TypeScript đã chạy lại. Xem review-fix-2026-10-16.
+- CI published858ef00 xanh; CI của bản sửa chưa commit/push chưa chạy. Trí cần review
+revision mới sau push; GM34 và provider/native/pilot vẫn Pending, không đề nghị Done.

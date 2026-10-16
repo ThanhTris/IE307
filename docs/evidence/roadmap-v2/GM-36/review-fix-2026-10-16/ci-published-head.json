@@ -1,0 +1,97 @@
+{
+  "publishedRevision": "858ef00d506435d59c5a5dfa87f5a8a2a103d6da",
+  "checkedAt": "2026-10-16T07:09:55.387Z",
+  "scope": "published baseline only; uncommitted price fix CI not run",
+  "workflow_runs": [
+    {
+      "id": 38836950885,
+      "name": "GM-21 history and consent",
+      "status": "completed",
+      "conclusion": "success",
+      "run_number": 45,
+      "jobs_url": "https://api.github.com/repos/ThanhTris/IE307/actions/runs/38836950885/jobs",
+      "logs_url": "https://api.github.com/repos/ThanhTris/IE307/actions/runs/38836950885/logs",
+      "workflow_id": 383963126
+    },
+    {
+      "id": 38836950851,
+      "name": "Decision domain",
+      "status": "completed",
+      "conclusion": "success",
+      "run_number": 165,
+      "jobs_url": "https://api.github.com/repos/ThanhTris/IE307/actions/runs/38836950851/jobs",
+      "logs_url": "https://api.github.com/repos/ThanhTris/IE307/actions/runs/38836950851/logs",
+      "workflow_id": 380588001
+    },
+    {
+      "id": 38836950887,
+      "name": "Project documents",
+      "status": "completed",
+      "conclusion": "success",
+      "run_number": 229,
+      "jobs_url": "https://api.github.com/repos/ThanhTris/IE307/actions/runs/38836950887/jobs",
+      "logs_url": "https://api.github.com/repos/ThanhTris/IE307/actions/runs/38836950887/logs",
+      "workflow_id": 376356617
+    },
+    {
+      "id": 38836950837,
+      "name": "GM-06 PostgreSQL schema",
+      "status": "completed",
+      "conclusion": "success",
+      "run_number": 194,
+      "jobs_url": "https://api.github.com/repos/ThanhTris/IE307/actions/runs/38836950837/jobs",
+      "logs_url": "https://api.github.com/repos/ThanhTris/IE307/actions/runs/38836950837/logs",
+      "workflow_id": 380674892
+    },
+    {
+      "id": 38836950841,
+      "name": "GM-36 independent menu OCR",
+      "status": "completed",
+      "conclusion": "success",
+      "run_number": 2,
+      "jobs_url": "https://api.github.com/repos/ThanhTris/IE307/actions/runs/38836950841/jobs",
+      "logs_url": "https://api.github.com/repos/ThanhTris/IE307/actions/runs/38836950841/logs",
+      "workflow_id": 386197800
+    },
+    {
+      "id": 38836950896,
+      "name": "GM-20 CLI portability",
+      "status": "completed",
+      "conclusion": "success",
+      "run_number": 62,
+      "jobs_url": "https://api.github.com/repos/ThanhTris/IE307/actions/runs/38836950896/jobs",
+      "logs_url": "https://api.github.com/repos/ThanhTris/IE307/actions/runs/38836950896/logs",
+      "workflow_id": 385016284
+    },
+    {
+      "id": 38836950876,
+      "name": "UI and BE foundations",
+      "status": "completed",
+      "conclusion": "success",
+      "run_number": 209,
+      "jobs_url": "https://api.github.com/repos/ThanhTris/IE307/actions/runs/38836950876/jobs",
+      "logs_url": "https://api.github.com/repos/ThanhTris/IE307/actions/runs/38836950876/logs",
+      "workflow_id": 380380459
+    },
+    {
+      "id": 38836950856,
+      "name": "GM-08 food importer",
+      "status": "completed",
+      "conclusion": "success",
+      "run_number": 175,
+      "jobs_url": "https://api.github.com/repos/ThanhTris/IE307/actions/runs/38836950856/jobs",
+      "logs_url": "https://api.github.com/repos/ThanhTris/IE307/actions/runs/38836950856/logs",
+      "workflow_id": 380945262
+    },
+    {
+      "id": 38836950825,
+      "name": "GM-18 eligibility and API",
+      "status": "completed",
+      "conclusion": "success",
+      "run_number": 110,
+      "jobs_url": "https://api.github.com/repos/ThanhTris/IE307/actions/runs/38836950825/jobs",
+      "logs_url": "https://api.github.com/repos/ThanhTris/IE307/actions/runs/38836950825/logs",
+      "workflow_id": 381859654
+    }
+  ]
+}
