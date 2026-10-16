@@ -1,0 +1,1 @@
+Pass: strict noEmit TypeScript on menu-ocr/index.ts and reachable modules.

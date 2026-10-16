@@ -1,0 +1,41 @@
+name: GM-36 independent menu OCR
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  independent:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm ci
+      - run: npm ci --prefix mobile --no-audit --no-fund
+      - name: Strict isolated OCR TypeScript (no app package changes)
+        run: node mobile/node_modules/typescript/bin/tsc --noEmit --strict --target ES2022 --module ESNext --moduleResolution bundler --allowImportingTsExtensions --lib ES2022,DOM supabase/functions/menu-ocr/index.ts
+      - run: node --test tests/gm36-menu-ocr.test.mjs
+      - run: python -m unittest discover -s tests -p 'test_gm36_menu_ocr.py'
+      - run: npm run backend:start
+      - name: Real HTTP and GoTrue JWT, explicitly simulated recognizer
+        env:
+          GM36_PYTHON: python
+        run: node scripts/gm36_http_check.mjs
+      - name: Actual HTTP draft schema and unchanged GM08 import rejection
+        run: python scripts/gm36_contract_check.py --draft docs/evidence/roadmap-v2/GM-36/http/actual-draft.json --report docs/evidence/roadmap-v2/GM-36/http/contract-results.json
+      - run: python scripts/validate_repository.py
+      - run: python scripts/task_readiness.py --check-docs
+      - run: git diff --check
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gm36-independent-output
+          path: docs/evidence/roadmap-v2/GM-36/http/
+          if-no-files-found: warn
+      - if: always()
+        run: npm run backend:stop

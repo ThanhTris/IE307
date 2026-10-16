@@ -1,0 +1,5 @@
+
+> gi-cung-duoc-backend-tooling@0.1.0 backend:stop
+> node scripts/backend.mjs stop
+
+{"project_id_filter":"gi-cung-duoc-local","backup":true,"message":"Stopped supabase local development setup."}

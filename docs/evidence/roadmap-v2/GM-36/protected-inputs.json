@@ -1,0 +1,21 @@
+{
+  "allUnchanged": true,
+  "base": "daa917461e68353f6ba015f2f746e805ec19710e",
+  "sha256": {
+    "AGENTS.md": "313be168c375c5613a2dabd9467b4e2f3effd727297dd9d8f63d4d7f3c98c32d",
+    "package.json": "6885925f90232d82282c323b42f995b355425aca000aaefb493f7ebbdee24f80",
+    "package-lock.json": "b82ae1e3fb3e908c42bbbc9743c80b6024d5f1dd3f0621b7b2c1791671acb5a7",
+    "mobile/package.json": "81e7087175f35261c28ff2e4ebc78142029109843381818a683e7bd7aeb5550c",
+    "mobile/package-lock.json": "9feb590beb655e2623fc68f1077fde254e944ab96dfaffbe8f29bf885e755af3",
+    "supabase/config.toml": "4079037a8053f7d3b5b55831e3ad367125c07f33f96ebbfafc06b6daae7f468a",
+    "docs/data/FOOD_DATA_DICTIONARY.md": "6c4af19d6a5756da23e59784c2218361ee81b10df3885beb8107b25151c0346a",
+    "scripts/gm04_contract_model.py": "53e0c27192ca307b602334e52ed540ba67749b8a0b2a4c0447fcefcac210ffae",
+    "scripts/validate_field_contracts.py": "1d76d68fec8d1532c5cd4e7f2d1f30c19c36db0f2b09d23e6b7406ea80cb7ec7",
+    "supabase/seed/templates/food-v1.schema.json": "32725384fdb9ccface3100a55e2646257159d8ca07a613e18dbfd1c5623db255",
+    "supabase/seed/import_food_data.py": "03da1971b502b26a87ebaee0936d718bc415e26f297731d4fd9bd698fab00edc",
+    "mobile/src/data/api/contracts.ts": "ffeeb220efa695eda96e9fe74d62b82b0b5d2430a0556ee26d1a48c65e8c4c8f",
+    "mobile/src/data/api/client.ts": "7ca5c9b1a9b39c2973e9bd9c237fbaaa84fb67f7a705fc51a4333cb9a97eed7a",
+    "mobile/src/data/api/responseGuards.ts": "484ea05c1cb332c9ad2513a47a270c1195180b2cddb85ef5635f65316e03eedb",
+    "docs/specs/EXTENSIONS_SPEC.md": "156f24cb54e5f934df0f3c41969f325fa709f9de09ef1cbcd445c619ac3cbc7a"
+  }
+}
