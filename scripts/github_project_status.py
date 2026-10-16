@@ -97,7 +97,10 @@ def graphql(token, variables):
         with urlopen(request, timeout=20) as response:
             result = json.load(response)
     except HTTPError as exc:
-        exc.close()
+        try:
+            exc.close()
+        except Exception:
+            pass
         raise ProjectUnavailable(f'GitHub HTTP {exc.code}; verify read:project access. No local fallback.') from None
     except (URLError, OSError, ValueError) as exc:
         raise ProjectUnavailable('Cannot read GitHub Project (network/response error). No local fallback.') from None
