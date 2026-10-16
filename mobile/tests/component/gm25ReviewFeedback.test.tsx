@@ -1,7 +1,11 @@
+import { act, useState } from 'react';
 import { render, screen, userEvent, waitFor } from '@testing-library/react-native';
-import { HomeScreen } from '../../src/features/home/screens/HomeScreen';
-import { LobbyScreen } from '../../src/features/rooms/screens/LobbyScreen';
-import { RoomRepositoryProvider } from '../../src/bootstrap/RoomRepositoryProvider';
+import { Gm25HomeScreen } from '../../src/features/home/screens/Gm25HomeScreen';
+import { Gm25LiveLobbyScreen } from '../../src/features/rooms/screens/Gm25LiveLobbyScreen';
+import { RoomRepositoryProvider, useRoomRepository } from '../../src/bootstrap/RoomRepositoryProvider';
+import { RequireActiveSession } from '../../src/features/auth/components/RequireActiveSession';
+import { Gm25CreateRoomScreen } from '../../src/features/rooms/screens/Gm25CreateRoomScreen';
+import { Gm25JoinRoomScreen } from '../../src/features/rooms/screens/Gm25JoinRoomScreen';
 import {
   LiveRoomRepository,
   createDurableRequestId,
@@ -13,7 +17,7 @@ import type {
   RoomSnapshot,
   SessionUser,
 } from '../../src/data/api/contracts';
-import type { AuthPort, SessionStorage, StoredSession } from '../../src/data/auth/types';
+import { AuthFailure, type AuthPort, type SessionStorage, type StoredSession } from '../../src/data/auth/types';
 
 describe('GM-25 Review Feedback Regression Suite', () => {
   const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -34,7 +38,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
 
   function createSyntheticSessionManager(initialStored: StoredSession | null = null) {
     let stored = initialStored ? { ...initialStored } : null;
-    const auth: AuthPort = {
+    const auth: jest.Mocked<AuthPort> = {
       createGuest: jest.fn().mockImplementation(async (displayName: string) => ({
         accessToken: 'new_access_token',
         refreshToken: 'new_refresh_token',
@@ -51,7 +55,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
       clear: jest.fn().mockImplementation(async () => { stored = null; }),
     };
     const clearPrivateData = jest.fn().mockResolvedValue(undefined);
-    return new SessionManager({ auth, storage, clearPrivateData });
+    return { manager: new SessionManager({ auth, storage, clearPrivateData, sleep: async () => undefined }), auth, storage, clearPrivateData };
   }
 
   function createMockApiClient(overrides: Partial<ApiClient> = {}): jest.Mocked<ApiClient> {
@@ -121,51 +125,177 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     };
   }
 
-  // --- Point 1: Home session restore with real SessionManager ---
-
-  test('P1: Home restores saved session from SessionManager without passing fake tokens', async () => {
-    const sessionManager = createSyntheticSessionManager(sampleStoredSession);
-    const client = createMockApiClient();
-    const repository = new LiveRoomRepository({ client, session: sessionManager });
-
-    const onCreate = jest.fn();
-    const onJoin = jest.fn();
-
-    // Render Home without passing sessionToken (live mode)
-    await render(
-      <HomeScreen
+  function LiveEntryHarness({ repository, initialRoute = 'home' }: { repository: LiveRoomRepository; initialRoute?: 'home' | 'create' | 'join' }) {
+    const live = useRoomRepository();
+    const [route, setRoute] = useState(initialRoute);
+    if (route === 'create') return <RequireActiveSession onHome={() => setRoute('home')}>
+      <Gm25CreateRoomScreen
+        key={live.user?.id ?? 'missing'}
         repository={repository}
-        onCreate={onCreate}
-        onJoin={onJoin}
-        onResume={jest.fn()}
+        isLive
+        initialDisplayName={live.user?.displayName}
+        onBack={() => setRoute('home')}
+        onEntered={jest.fn()}
       />
-    );
+    </RequireActiveSession>;
+    if (route === 'join') return <RequireActiveSession onHome={() => setRoute('home')}>
+      <Gm25JoinRoomScreen
+        key={live.user?.id ?? 'missing'}
+        repository={repository}
+        isLive
+        initialDisplayName={live.user?.displayName}
+        initialCode="ABC234"
+        onBack={() => setRoute('home')}
+        onEntered={jest.fn()}
+      />
+    </RequireActiveSession>;
+    return <Gm25HomeScreen repository={repository} liveSession={live} onCreate={() => setRoute('create')} onJoin={() => setRoute('join')} onResume={jest.fn()} />;
+  }
 
-    // Should welcome the user by their display name
+  async function renderLiveEntry(repository: LiveRoomRepository, initialRoute: 'home' | 'create' | 'join' = 'home') {
+    let result!: ReturnType<typeof render>;
+    await act(async () => {
+      result = render(<RoomRepositoryProvider repository={repository} mode="real"><LiveEntryHarness repository={repository} initialRoute={initialRoute} /></RoomRepositoryProvider>);
+      await new Promise(resolve => setTimeout(resolve, 0));
+    });
+    return result;
+  }
+
+  // --- Point 1: explicit guest onboarding and one shared identity source ---
+
+  test('P1: stored session is restored by provider and enables both entry routes without signup', async () => {
+    const fixture = createSyntheticSessionManager(sampleStoredSession);
+    const client = createMockApiClient();
+    const repository = new LiveRoomRepository({ client, session: fixture.manager });
+    await renderLiveEntry(repository);
+
     expect(await screen.findByText(/Chào Trí Thanh! 👋/)).toBeOnTheScreen();
-    // Buttons should be ENABLED
+    expect(await screen.findByText('Chưa có bạn ăn cùng')).toBeOnTheScreen();
     expect(screen.getByRole('button', { name: '＋ Tạo kèo ăn' })).toBeEnabled();
     expect(screen.getByRole('button', { name: 'Tôi có mã phòng' })).toBeEnabled();
-    expect(screen.queryByText('Kiểm tra lại thông tin đã nhập.')).toBeNull();
+    expect(fixture.auth.createGuest).not.toHaveBeenCalled();
   });
 
-  test('P1: Home fresh open without stored session does not fail with INVALID_INPUT', async () => {
-    const sessionManager = createSyntheticSessionManager(null); // Fresh open, no stored session
+  test('P1: fresh Home creates one guest only after confirmation and mounts discovery with that identity', async () => {
+    const user = userEvent.setup();
+    const fixture = createSyntheticSessionManager(null);
     const client = createMockApiClient();
-    const repository = new LiveRoomRepository({ client, session: sessionManager });
+    const repository = new LiveRoomRepository({ client, session: fixture.manager });
+    await renderLiveEntry(repository);
 
-    await render(
-      <HomeScreen
-        repository={repository}
-        onCreate={jest.fn()}
-        onJoin={jest.fn()}
-        onResume={jest.fn()}
-      />
-    );
+    expect(await screen.findByText('Chưa có phiên')).toBeOnTheScreen();
+    await user.press(screen.getByRole('button', { name: '＋ Tạo kèo ăn' }));
+    expect(fixture.auth.createGuest).not.toHaveBeenCalled();
+    await user.type(screen.getByLabelText('Tên khách'), 'Trang');
+    await user.press(screen.getByRole('button', { name: 'Tạo phiên rồi chọn bối cảnh' }));
 
-    // Fresh open returns AUTH_REQUIRED (Phiên đã mất / chưa có phiên)
-    expect(await screen.findByText('Phiên đã mất. Hãy khôi phục phiên trước khi tiếp tục.')).toBeOnTheScreen();
-    expect(screen.queryByText('Kiểm tra lại thông tin đã nhập.')).toBeNull();
+    expect(await screen.findByRole('button', { name: 'Chợ Bến Thành' })).toBeOnTheScreen();
+    expect(fixture.auth.createGuest).toHaveBeenCalledTimes(1);
+    expect(repository.getSessionSnapshot()).toMatchObject({ status: 'active', user: { displayName: 'Trang' } });
+    expect(client.getDiscoveryContext).toHaveBeenCalledTimes(1);
+    expect(fixture.auth.createGuest.mock.invocationCallOrder[0]).toBeLessThan(client.getDiscoveryContext.mock.invocationCallOrder[0]!);
+    expect(screen.getByLabelText('Tên của bạn (chủ phòng)').props.value).toBe('Trang');
+
+    await user.press(screen.getByRole('button', { name: 'Chợ Bến Thành' }));
+    await user.press(screen.getByRole('button', { name: 'Tôi xác nhận điểm ăn, buổi và giờ' }));
+    await user.press(screen.getByRole('button', { name: 'Tạo phòng' }));
+    await waitFor(() => expect(client.createRoom).toHaveBeenCalledTimes(1));
+    expect(client.createRoom).toHaveBeenCalledWith(expect.objectContaining({ displayName: 'Trang' }));
+    expect(repository.getSessionSnapshot().user?.id).toBe(sampleUser.id);
+  });
+
+  test.each(['create', 'join'] as const)('P1: direct %s route is blocked before discovery or room API when session is absent', async route => {
+    const fixture = createSyntheticSessionManager(null);
+    const client = createMockApiClient();
+    const repository = new LiveRoomRepository({ client, session: fixture.manager });
+    await renderLiveEntry(repository, route);
+
+    expect(await screen.findByText('Chưa có phiên')).toBeOnTheScreen();
+    expect(client.getDiscoveryContext).not.toHaveBeenCalled();
+    expect(client.createRoom).not.toHaveBeenCalled();
+    expect(client.joinRoom).not.toHaveBeenCalled();
+  });
+
+  test('P1: Join starts exactly one guest session after the user confirms the name', async () => {
+    const user = userEvent.setup();
+    const fixture = createSyntheticSessionManager(null);
+    const client = createMockApiClient();
+    const repository = new LiveRoomRepository({ client, session: fixture.manager });
+    await renderLiveEntry(repository);
+    await screen.findByText('Chưa có phiên');
+
+    await user.press(screen.getByRole('button', { name: 'Tôi có mã phòng' }));
+    await user.type(screen.getByLabelText('Tên khách'), 'Hà');
+    expect(fixture.auth.createGuest).not.toHaveBeenCalled();
+    await user.press(screen.getByRole('button', { name: 'Tạo phiên rồi nhập mã' }));
+
+    expect(await screen.findByLabelText('Mã phòng (6 ký tự)')).toBeOnTheScreen();
+    expect(screen.getByLabelText('Tên của bạn').props.value).toBe('Hà');
+    expect(fixture.auth.createGuest).toHaveBeenCalledTimes(1);
+    expect(repository.getSessionSnapshot()).toMatchObject({ status: 'active', user: { displayName: 'Hà' } });
+    expect(client.joinRoom).not.toHaveBeenCalled();
+    await user.press(screen.getByRole('button', { name: 'Vào phòng →' }));
+    expect(screen.getByRole('button', { name: 'Xác nhận vào phòng' })).toBeOnTheScreen();
+    await user.press(screen.getByRole('button', { name: 'Xác nhận vào phòng' }));
+    await waitFor(() => expect(client.joinRoom).toHaveBeenCalledWith(expect.objectContaining({ displayName: 'Hà', code: 'ABC234' })));
+  });
+
+  test('P1: uncertain guest creation blocks navigation and another signup until local reset', async () => {
+    const user = userEvent.setup();
+    const fixture = createSyntheticSessionManager(null);
+    fixture.auth.createGuest
+      .mockRejectedValueOnce(new AuthFailure({ messageKey: 'TIMEOUT' }));
+    const client = createMockApiClient();
+    const repository = new LiveRoomRepository({ client, session: fixture.manager });
+    await renderLiveEntry(repository);
+    await screen.findByText('Chưa có phiên');
+
+    await user.press(screen.getByRole('button', { name: '＋ Tạo kèo ăn' }));
+    await user.type(screen.getByLabelText('Tên khách'), 'Trang');
+    await user.press(screen.getByRole('button', { name: 'Tạo phiên rồi chọn bối cảnh' }));
+
+    expect(await screen.findByText('Chưa xác định được kết quả tạo phiên')).toBeOnTheScreen();
+    expect(fixture.auth.createGuest).toHaveBeenCalledTimes(1);
+    expect(client.getDiscoveryContext).not.toHaveBeenCalled();
+    expect(client.createRoom).not.toHaveBeenCalled();
+
+    await user.press(screen.getByRole('button', { name: 'Xóa phiên cục bộ rồi thử lại' }));
+    await waitFor(() => expect(repository.getSessionSnapshot()).toMatchObject({ status: 'empty', issue: 'no-session' }));
+    await user.press(screen.getByRole('button', { name: 'Tạo phiên rồi chọn bối cảnh' }));
+    expect(await screen.findByRole('button', { name: 'Chợ Bến Thành' })).toBeOnTheScreen();
+    expect(fixture.auth.createGuest).toHaveBeenCalledTimes(2);
+  });
+
+  test('P1: restore network failure preserves credentials and never creates a replacement guest', async () => {
+    const user = userEvent.setup();
+    const fixture = createSyntheticSessionManager(sampleStoredSession);
+    fixture.auth.verify.mockRejectedValue(new AuthFailure({ messageKey: 'NETWORK_ERROR' }));
+    const repository = new LiveRoomRepository({ client: createMockApiClient(), session: fixture.manager });
+    await renderLiveEntry(repository);
+
+    expect(await screen.findByText('Chưa khôi phục được phiên')).toBeOnTheScreen();
+    expect(fixture.storage.clear).not.toHaveBeenCalled();
+    expect(fixture.auth.createGuest).not.toHaveBeenCalled();
+    expect(screen.getByRole('button', { name: '＋ Tạo kèo ăn' })).toBeDisabled();
+
+    fixture.auth.verify.mockImplementation(async () => sampleUser);
+    await user.press(screen.getByRole('button', { name: 'Thử khôi phục phiên' }));
+    expect(await screen.findByText(/Chào Trí Thanh! 👋/)).toBeOnTheScreen();
+    expect(fixture.auth.createGuest).not.toHaveBeenCalled();
+  });
+
+  test('P1: repository guest creation and logout update Home identity without remounting the provider', async () => {
+    const fixture = createSyntheticSessionManager(null);
+    const repository = new LiveRoomRepository({ client: createMockApiClient(), session: fixture.manager });
+    await renderLiveEntry(repository);
+    expect(await screen.findByText('Chưa có phiên')).toBeOnTheScreen();
+
+    await act(async () => { await repository.createGuestSession('Hà'); });
+    expect(await screen.findByText(/Chào Hà! 👋/)).toBeOnTheScreen();
+    expect(repository.getCurrentUser()).toMatchObject({ displayName: 'Hà' });
+    await act(async () => { await repository.logout(); });
+    expect(await screen.findByText('Chưa có phiên')).toBeOnTheScreen();
+    expect(screen.queryByText(/Chào Hà!/)).toBeNull();
   });
 
   // --- Point 2: Authoritative Taxonomy UUIDs ---
@@ -186,6 +316,25 @@ describe('GM-25 Review Feedback Regression Suite', () => {
   });
 
   // --- Point 3: Lobby recovery from VERSION_CONFLICT ---
+
+  test.each([undefined, 'foreign-user-id'])('P1: live lobby does not impersonate the first member when current user is %s', async currentUserId => {
+    const client = createMockApiClient({ getRoomSnapshot: jest.fn().mockResolvedValue({ ok: true, data: createSampleSnapshot() }) });
+    await render(
+      <Gm25LiveLobbyScreen
+        repository={client}
+        roomId="room_live_123"
+        currentUserId={currentUserId}
+        onHome={jest.fn()}
+      />
+    );
+
+    expect(await screen.findByText(currentUserId ? 'Bạn không thuộc phòng này' : 'Chưa xác định được danh tính phiên')).toBeOnTheScreen();
+    expect(screen.queryByText('Thành viên · 2/8')).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Tôi sẵn sàng' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Bắt đầu chọn món' })).toBeNull();
+    expect(client.setReady).not.toHaveBeenCalled();
+    expect(client.startRound).not.toHaveBeenCalled();
+  });
 
   test('P3: Lobby refetches snapshot on VERSION_CONFLICT and updates version', async () => {
     const user = userEvent.setup();
@@ -210,7 +359,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     });
 
     await render(
-      <LobbyScreen
+      <Gm25LiveLobbyScreen
         repository={client}
         roomId="room_live_123"
         currentUserId={sampleUser.id}
@@ -253,7 +402,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     });
 
     await render(
-      <LobbyScreen
+      <Gm25LiveLobbyScreen
         repository={client}
         roomId="room_live_123"
         currentUserId={sampleUser.id}
@@ -326,7 +475,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     });
 
     await render(
-      <LobbyScreen
+      <Gm25LiveLobbyScreen
         repository={client}
         roomId="room_live_123"
         currentUserId={sampleUser.id}

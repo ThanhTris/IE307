@@ -62,11 +62,12 @@ test('restart restores the same caller after server verification', async () => {
   expect(s.auth.createGuest).not.toHaveBeenCalled();
 });
 
-test('empty storage clears stale private cache; no automatic signup', async () => {
+test('empty storage is rejected by the auth manager and clears stale private cache', async () => {
   const s = setup();
   expect(await s.session.restoreSession()).toMatchObject({ ok: false, error: { messageKey: 'AUTH_REQUIRED' } });
   expect(s.clearPrivateData).toHaveBeenCalledTimes(1);
   expect(s.session.getStatus()).toBe('lost');
+  expect(s.storage.clear).toHaveBeenCalledTimes(1);
   expect(s.auth.createGuest).not.toHaveBeenCalled();
 });
 

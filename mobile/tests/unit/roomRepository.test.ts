@@ -14,7 +14,8 @@ import type {
   UpdateContextRequest,
   UpdatePreferencesRequest,
 } from '../../src/data/api/contracts';
-import type { SessionApi } from '../../src/data/auth/types';
+import type { SessionApi, SessionStorage, StoredSession } from '../../src/data/auth/types';
+import type { SessionStatus } from '../../src/features/rooms/services/sessionState';
 
 describe('LiveRoomRepository (GM-25)', () => {
   const mockUser: SessionUser = {
@@ -100,27 +101,24 @@ describe('LiveRoomRepository (GM-25)', () => {
     } as unknown as jest.Mocked<ApiClient>;
   }
 
-  function createMockSession(): jest.Mocked<SessionApi> {
-    let currentUser: SessionUser | null = mockUser;
-    let currentStatus = 'active';
+  function createMockSession(): jest.Mocked<SessionApi> & { getStatus: jest.Mock<SessionStatus> } {
     return {
-      restoreSession: jest.fn().mockImplementation(async () => ({ ok: true, data: mockUser })),
-      createGuestSession: jest.fn().mockImplementation(async req => ({
-        ok: true,
-        requestId: req.requestId,
-        data: { user: mockUser, token: 'tok_test', expiresAt: '2026-10-17T00:00:00Z' },
-      })),
-      logout: jest.fn().mockImplementation(async () => {
-        currentUser = null;
-        currentStatus = 'lost';
-        return { ok: true, data: undefined };
-      }),
+      restoreSession: jest.fn().mockResolvedValue({ ok: true, data: mockUser }),
+      createGuestSession: jest.fn().mockResolvedValue({ ok: true, requestId: 'guest', data: { user: mockUser, token: 'tok_test', expiresAt: '2026-10-17T00:00:00Z' } }),
+      logout: jest.fn().mockResolvedValue({ ok: true, data: undefined }),
       getAccessToken: jest.fn().mockResolvedValue({ ok: true, data: 'tok_test' }),
       refreshSession: jest.fn().mockResolvedValue({ ok: true, data: mockUser }),
       getGeneration: jest.fn().mockReturnValue(1),
-      getActiveUser: jest.fn().mockImplementation(() => currentUser),
-      getStatus: jest.fn().mockImplementation(() => currentStatus),
-    } as unknown as jest.Mocked<SessionApi>;
+      getStatus: jest.fn<SessionStatus, []>().mockReturnValue('active'),
+    } as unknown as jest.Mocked<SessionApi> & { getStatus: jest.Mock<SessionStatus> };
+  }
+
+  function createSessionStorage(record: StoredSession | null): jest.Mocked<SessionStorage> {
+    return {
+      load: jest.fn().mockResolvedValue(record),
+      save: jest.fn().mockResolvedValue(undefined),
+      clear: jest.fn().mockResolvedValue(undefined),
+    };
   }
 
   it('requires ApiClient on construction', () => {
@@ -144,6 +142,61 @@ describe('LiveRoomRepository (GM-25)', () => {
     expect(result.ok).toBe(true);
     expect(session.restoreSession).toHaveBeenCalled();
     expect(repo.getCurrentUser()?.displayName).toBe('Minh Trang');
+  });
+
+  it('publishes a token-free no-session state when secure storage is empty', async () => {
+    const client = createMockClient();
+    const session = createMockSession();
+    session.restoreSession.mockResolvedValueOnce({ ok: false, error: { messageKey: 'AUTH_REQUIRED' } });
+    session.getStatus.mockReturnValue('lost');
+    const repo = createRoomRepository({ client, session, sessionStorage: createSessionStorage(null) });
+    const listener = jest.fn();
+    repo.subscribeSession(listener);
+
+    await repo.restoreSession();
+
+    expect(repo.getSessionSnapshot()).toEqual({ status: 'empty', user: null, issue: 'no-session' });
+    expect(repo.getSessionSnapshot()).not.toHaveProperty('accessToken');
+    expect(listener).toHaveBeenCalled();
+  });
+
+  it('does not relabel a revoked stored session as a fresh guest opportunity', async () => {
+    const client = createMockClient();
+    const session = createMockSession();
+    session.restoreSession.mockResolvedValueOnce({ ok: false, error: { messageKey: 'AUTH_REQUIRED' } });
+    session.getStatus.mockReturnValue('lost');
+    const storage = createSessionStorage({} as StoredSession);
+    const repo = createRoomRepository({ client, session, sessionStorage: storage });
+
+    await repo.restoreSession();
+
+    expect(repo.getSessionSnapshot()).toMatchObject({ status: 'lost', issue: 'session-revoked' });
+    expect(storage.load).toHaveBeenCalled();
+  });
+
+  it('retains a retryable restore error when stored credentials cannot be verified online', async () => {
+    const client = createMockClient();
+    const session = createMockSession();
+    session.restoreSession.mockResolvedValueOnce({ ok: false, error: { messageKey: 'NETWORK_ERROR' } });
+    const storage = createSessionStorage({} as StoredSession);
+    const repo = createRoomRepository({ client, session, sessionStorage: storage });
+
+    await repo.restoreSession();
+
+    expect(repo.getSessionSnapshot()).toMatchObject({ status: 'empty', issue: 'restore-unavailable' });
+    expect(storage.clear).not.toHaveBeenCalled();
+  });
+
+  it('blocks a second signup after an ambiguous guest-creation response', async () => {
+    const client = createMockClient();
+    const session = createMockSession();
+    session.createGuestSession.mockResolvedValueOnce({ ok: false, error: { messageKey: 'TIMEOUT' } });
+    session.getStatus.mockReturnValue('blocked');
+    const repo = createRoomRepository({ client, session });
+
+    await repo.createGuestSession('Trang');
+
+    expect(repo.getSessionSnapshot()).toMatchObject({ status: 'blocked', issue: 'signup-uncertain' });
   });
 
   it('delegates createGuestSession and updates currentUser', async () => {
@@ -174,6 +227,8 @@ describe('LiveRoomRepository (GM-25)', () => {
     const client = createMockClient();
     const repo = createRoomRepository({ client });
 
+    await repo.restoreSession();
+
     await repo.getDiscoveryContext();
     expect(client.getDiscoveryContext).toHaveBeenCalled();
 
@@ -200,6 +255,20 @@ describe('LiveRoomRepository (GM-25)', () => {
     const snapshot = await repo.getRoomSnapshot('room_test_123');
     expect(snapshot.ok).toBe(true);
     expect(client.getRoomSnapshot).toHaveBeenCalledWith('room_test_123');
+  });
+
+  it('createRoom and joinRoom require an existing session and never create a guest implicitly', async () => {
+    const client = createMockClient();
+    const repo = createRoomRepository({ client });
+
+    const create = await repo.createRoom({ displayName: 'Minh', context: mockSnapshot.context, requestId: 'create-without-session' });
+    const join = await repo.joinRoom({ code: 'GCD789', displayName: 'Hà', requestId: 'join-without-session' });
+
+    expect(create).toMatchObject({ ok: false, requestId: 'create-without-session', error: { messageKey: 'AUTH_REQUIRED' } });
+    expect(join).toMatchObject({ ok: false, requestId: 'join-without-session', error: { messageKey: 'AUTH_REQUIRED' } });
+    expect(client.createGuestSession).not.toHaveBeenCalled();
+    expect(client.createRoom).not.toHaveBeenCalled();
+    expect(client.joinRoom).not.toHaveBeenCalled();
   });
 
   it('delegates room setup operations (context and preferences)', async () => {
@@ -270,6 +339,7 @@ describe('LiveRoomRepository (GM-25)', () => {
   it('preserves caller requestId when specified for idempotent retry', async () => {
     const client = createMockClient();
     const repo = createRoomRepository({ client });
+    await repo.restoreSession();
 
     const specifiedId = 'req_idempotent_fixed_123';
     await repo.createRoom({

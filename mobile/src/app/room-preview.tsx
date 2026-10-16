@@ -6,6 +6,7 @@ import { useShellTheme } from '../shared/lib/useShellTheme';
 import { PreviewControls, useRoomPreview } from '../bootstrap/roomPreview';
 import { useRoomRepository } from '../bootstrap/RoomRepositoryProvider';
 import type { RoomEntryReceipt } from '../features/rooms/services/roomEntry';
+import { RequireActiveSession } from '../features/auth/components/RequireActiveSession';
 
 export default function RoomPreviewRoute() {
   const router = useRouter();
@@ -24,11 +25,11 @@ export default function RoomPreviewRoute() {
 
   if (!activeReceipt) {
     if (isReal) {
-      return (
+      return <RequireActiveSession onHome={onBack}>
         <RoomEntryFrame title="Chưa có phòng" onBack={onBack}>
           <StatusNotice title="Chưa có phòng đang mở" message="Hãy tạo hoặc vào phòng từ màn hình chính." colors={colors} />
         </RoomEntryFrame>
-      );
+      </RequireActiveSession>;
     }
     return (
       <RoomEntryFrame title="Chưa có phòng mẫu" onBack={onBack} previewControls={busy => <PreviewControls disabled={busy} />}>
@@ -37,9 +38,9 @@ export default function RoomPreviewRoute() {
     );
   }
 
-  return (
+  const receiptScreen = (
     <RoomEntryReceiptScreen
-      key={isReal ? `live-${activeReceipt.roomId}` : preview.revision}
+      key={isReal ? `live-${activeReceipt.roomId}-${live.user?.id ?? 'unknown'}` : preview.revision}
       repository={repository}
       receipt={activeReceipt}
       onBack={onBack}
@@ -48,4 +49,5 @@ export default function RoomPreviewRoute() {
       previewControls={isReal ? undefined : (busy => <PreviewControls disabled={busy} />)}
     />
   );
+  return isReal ? <RequireActiveSession onHome={onBack}>{receiptScreen}</RequireActiveSession> : receiptScreen;
 }

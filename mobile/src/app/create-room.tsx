@@ -1,8 +1,9 @@
 import { useRouter } from 'expo-router';
-import { CreateRoomScreen } from '../features/rooms/screens/CreateRoomScreen';
+import { Gm25CreateRoomScreen } from '../features/rooms/screens/Gm25CreateRoomScreen';
 import { RoomEntryReceiptScreen } from '../features/rooms/screens/RoomEntryReceiptScreen';
 import { PreviewControls, rememberPreviewRoom, useRoomPreview } from '../bootstrap/roomPreview';
 import { useRoomRepository } from '../bootstrap/RoomRepositoryProvider';
+import { RequireActiveSession } from '../features/auth/components/RequireActiveSession';
 
 export default function CreateRoomRoute() {
   const router = useRouter();
@@ -12,8 +13,7 @@ export default function CreateRoomRoute() {
 
   const repository = isReal ? live.repository : preview.client;
 
-  if (!isReal && preview.active) {
-    return (
+  const content = !isReal && preview.active ? (
       <RoomEntryReceiptScreen
         repository={preview.client}
         receipt={preview.active}
@@ -22,13 +22,12 @@ export default function CreateRoomRoute() {
         onLobby={r => router.push({ pathname: '/gm11/lobby', params: { roomId: r.roomId } })}
         previewControls={busy => <PreviewControls disabled={busy} />}
       />
-    );
-  }
-
-  return (
-    <CreateRoomScreen
-      key={isReal ? 'real' : preview.revision}
+    ) : (
+    <Gm25CreateRoomScreen
+      key={isReal ? `real-${live.user?.id ?? 'anonymous'}` : preview.revision}
       repository={repository}
+      isLive={isReal}
+      initialDisplayName={isReal ? live.user?.displayName : undefined}
       onBack={() => (router.canGoBack() ? router.back() : router.replace('/'))}
       onEntered={room => {
         if (!isReal) rememberPreviewRoom(room);
@@ -37,4 +36,5 @@ export default function CreateRoomRoute() {
       previewControls={isReal ? undefined : (busy => <PreviewControls disabled={busy} />)}
     />
   );
+  return isReal ? <RequireActiveSession onHome={() => router.replace('/')}>{content}</RequireActiveSession> : content;
 }

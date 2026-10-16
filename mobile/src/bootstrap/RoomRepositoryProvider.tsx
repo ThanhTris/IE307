@@ -1,8 +1,8 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type PropsWithChildren } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, useSyncExternalStore, type PropsWithChildren } from 'react';
 import * as SecureStore from 'expo-secure-store';
-import { createAuthenticatedApiClient } from '../data/auth';
+import { createAuthenticatedApiClient, createSecureSessionStorage } from '../data/auth';
 import { createApiClient } from '../data/api';
-import type { SessionStatus } from '../data/auth/session';
+import type { SessionIssue, SessionSnapshot, SessionStatus } from '../features/rooms/services/sessionState';
 import type { SessionUser } from '../data/api/contracts';
 import {
   LiveRoomRepository,
@@ -13,11 +13,14 @@ import {
 export interface RoomRepositoryContextValue {
   repository: RoomRepository;
   status: SessionStatus;
+  issue: SessionIssue;
   user: SessionUser | null;
   mode: 'real' | 'mock';
   isInitializing: boolean;
   restoreSession: () => Promise<boolean>;
-  ensureSession: (fallbackDisplayName?: string) => Promise<boolean>;
+  /** Called only from an explicit user action; never creates after a restore/network failure. */
+  ensureSession: (displayName: string) => Promise<boolean>;
+  logout: () => Promise<boolean>;
 }
 
 const RoomRepositoryContext = createContext<RoomRepositoryContextValue | null>(null);
@@ -48,105 +51,83 @@ export function RoomRepositoryProvider({
       if (!publicKey) {
         throw new Error('RoomRepositoryProvider: EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY is required in real mode');
       }
+      const storage = createSecureSessionStorage();
       const { session, client } = createAuthenticatedApiClient({
         baseUrl,
         publicKey,
+        storage,
         clearPrivateData: async () => {
           try {
             await SecureStore.deleteItemAsync(PRIVATE_CACHE_KEY);
           } catch {
-            // SecureStore may fail in test environments without native modules
+            // SecureStore may be unavailable in test environments without native modules.
           }
         },
       });
-      return new LiveRoomRepository({ client, session, requestIdGenerator: createDurableRequestId });
+      return new LiveRoomRepository({ client, session, sessionStorage: storage, requestIdGenerator: createDurableRequestId });
     }
     const mockClient = createApiClient('mock', { mode: 'default' });
     return new LiveRoomRepository({ client: mockClient, requestIdGenerator: createDurableRequestId });
   }, [customRepository, isReal, baseUrl, publicKey]);
 
-  const [status, setStatus] = useState<SessionStatus>(repository.getSessionStatus());
-  const [user, setUser] = useState<SessionUser | null>(repository.getCurrentUser());
-  const [isInitializing, setIsInitializing] = useState(true);
+  const subscribe = useCallback((listener: () => void) => repository.subscribeSession(listener), [repository]);
+  const getSnapshot = useCallback((): SessionSnapshot => repository.getSessionSnapshot(), [repository]);
+  const snapshot = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  const [restoredRepository, setRestoredRepository] = useState<RoomRepository>();
+  const isInitializing = isReal && restoredRepository !== repository;
 
   const restoreSession = useCallback(async (): Promise<boolean> => {
-    try {
-      const result = await repository.restoreSession();
-      if (result.ok) {
-        setUser(result.data);
-        setStatus('active');
-        return true;
-      }
-      setUser(null);
-      setStatus(repository.getSessionStatus());
-      return false;
-    } catch {
-      setUser(null);
-      setStatus('lost');
-      return false;
-    }
+    const result = await repository.restoreSession();
+    return result.ok;
   }, [repository]);
 
-  const ensureSession = useCallback(async (fallbackDisplayName = 'Khách'): Promise<boolean> => {
-    const restored = await restoreSession();
-    if (restored) return true;
-    const result = await repository.createGuestSession(fallbackDisplayName);
-    if (result.ok) {
-      setUser(result.data.user);
-      setStatus('active');
-      return true;
+  const ensureSession = useCallback(async (displayName: string): Promise<boolean> => {
+    let current = repository.getSessionSnapshot();
+    if (current.status === 'active' && current.user) return true;
+    if (current.status === 'blocked' || current.status === 'lost') return false;
+
+    if (current.issue !== 'no-session') {
+      const restored = await repository.restoreSession();
+      if (restored.ok) return true;
+      current = repository.getSessionSnapshot();
+      if (current.issue !== 'no-session') return false;
     }
-    return false;
-  }, [repository, restoreSession]);
+
+    const created = await repository.createGuestSession(displayName);
+    return created.ok;
+  }, [repository]);
+
+  const logout = useCallback(async (): Promise<boolean> => {
+    const result = await repository.logout();
+    return result.ok;
+  }, [repository]);
 
   useEffect(() => {
-    let active = true;
-    const init = async () => {
-      try {
-        const result = await repository.restoreSession();
-        if (!active) return;
-        if (result.ok) {
-          setUser(result.data);
-          setStatus('active');
-        } else {
-          setUser(null);
-          setStatus(repository.getSessionStatus());
-        }
-      } catch {
-        if (!active) return;
-        setUser(null);
-        setStatus('lost');
-      } finally {
-        if (active) {
-          setIsInitializing(false);
-        }
-      }
-    };
-    void init();
-    return () => { active = false; };
-  }, [repository]);
+    let mounted = true;
+    if (!isReal) return;
+    void repository.restoreSession().catch(() => undefined).finally(() => {
+      if (mounted) setRestoredRepository(repository);
+    });
+    return () => { mounted = false; };
+  }, [repository, isReal]);
 
   const value = useMemo<RoomRepositoryContextValue>(() => ({
     repository,
-    status,
-    user,
+    status: snapshot.status,
+    issue: snapshot.issue,
+    user: snapshot.user,
     mode: isReal ? 'real' : 'mock',
     isInitializing,
     restoreSession,
     ensureSession,
-  }), [repository, status, user, isReal, isInitializing, restoreSession, ensureSession]);
+    logout,
+  }), [repository, snapshot, isReal, isInitializing, restoreSession, ensureSession, logout]);
 
-  return (
-    <RoomRepositoryContext.Provider value={value}>
-      {children}
-    </RoomRepositoryContext.Provider>
-  );
+  return <RoomRepositoryContext.Provider value={value}>{children}</RoomRepositoryContext.Provider>;
 }
 
 export function useRoomRepository(): RoomRepositoryContextValue {
   const context = useContext(RoomRepositoryContext);
-  if (!context) {
-    throw new Error('useRoomRepository must be used within RoomRepositoryProvider');
-  }
+  if (!context) throw new Error('useRoomRepository must be used within RoomRepositoryProvider');
   return context;
 }

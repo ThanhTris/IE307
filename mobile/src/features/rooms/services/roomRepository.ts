@@ -30,10 +30,10 @@ import type {
   UpdatePreferencesRequest,
   WriteResult,
 } from '../../../data/api/contracts';
-import type { SessionStatus } from '../../../data/auth/session';
-import type { SessionApi } from '../../../data/auth/types';
+import type { SessionApi, SessionStorage } from '../../../data/auth/types';
 import type { RoomEntryRepository } from './roomEntry';
 import type { PreferenceCatalogue, RoomSetupRepository } from '../../context/services/roomSetup';
+import type { SessionSnapshot, SessionStatus } from './sessionState';
 
 export type RequestIdGenerator = (prefix?: string) => string;
 
@@ -67,6 +67,7 @@ export const defaultPreferenceCatalogue: PreferenceCatalogue = {
 export interface RoomRepositoryConfig {
   client: ApiClient;
   session?: SessionApi;
+  sessionStorage?: SessionStorage;
   requestIdGenerator?: RequestIdGenerator;
 }
 
@@ -86,6 +87,8 @@ export interface RoomRepository extends Omit<RoomEntryRepository, 'restoreSessio
   logout(): Promise<WriteResult<void>>;
   getCurrentUser(): SessionUser | null;
   getSessionStatus(): SessionStatus;
+  getSessionSnapshot(): SessionSnapshot;
+  subscribeSession(listener: () => void): () => void;
   getApiClient(): ApiClient;
   getSessionApi(): SessionApi | undefined;
 }
@@ -93,8 +96,11 @@ export interface RoomRepository extends Omit<RoomEntryRepository, 'restoreSessio
 export class LiveRoomRepository implements RoomRepository {
   private readonly client: ApiClient;
   private readonly session?: SessionApi;
+  private readonly sessionStorage?: SessionStorage;
   private readonly nextRequestId: RequestIdGenerator;
-  private currentUser: SessionUser | null = null;
+  private sessionSnapshot: SessionSnapshot = { status: 'empty', user: null, issue: 'none' };
+  private readonly listeners = new Set<() => void>();
+  private identityRevision = 0;
 
   constructor(config: RoomRepositoryConfig) {
     if (!config || !config.client) {
@@ -102,60 +108,115 @@ export class LiveRoomRepository implements RoomRepository {
     }
     this.client = config.client;
     this.session = config.session;
+    this.sessionStorage = config.sessionStorage;
     this.nextRequestId = config.requestIdGenerator ?? createDurableRequestId;
   }
 
   // --- Session & Identity ---
 
   async restoreSession(sessionToken?: string): Promise<ReadResult<SessionUser>> {
+    const revision = ++this.identityRevision;
+    let storedSessionExists: boolean | undefined;
+    if (this.session && this.sessionStorage) {
+      try {
+        storedSessionExists = Boolean(await this.sessionStorage.load());
+      } catch {
+        this.updateSessionSnapshot({ status: 'blocked', user: null, issue: 'storage-unavailable' });
+        return { ok: false, error: { messageKey: 'UNKNOWN_ERROR' } };
+      }
+    }
+    if (revision !== this.identityRevision) return { ok: false, error: { messageKey: 'AUTH_REQUIRED' } };
+
     let result: ReadResult<SessionUser>;
     if (this.session) {
-      result = sessionToken !== undefined
-        ? await this.session.restoreSession(sessionToken)
-        : await (this.session as any).restoreSession();
+      const restore = this.session.restoreSession as (token?: string) => Promise<ReadResult<SessionUser>>;
+      result = await restore.call(this.session, sessionToken);
     } else {
       result = await this.client.restoreSession(sessionToken ?? '');
     }
+
+    if (revision !== this.identityRevision) return result;
     if (result.ok) {
-      this.currentUser = result.data;
+      this.updateSessionSnapshot({ status: 'active', user: result.data, issue: 'none' });
+    } else if (!this.session) {
+      this.updateSessionSnapshot({ status: 'empty', user: null, issue: result.error.messageKey === 'AUTH_REQUIRED' ? 'no-session' : 'restore-unavailable' });
     } else {
-      this.currentUser = null;
+      const status = readManagerStatus(this.session);
+      const noSavedSession = storedSessionExists === false
+        || (storedSessionExists === undefined && result.error.messageKey === 'AUTH_REQUIRED' && this.sessionSnapshot.status === 'empty');
+      const next = noSavedSession
+        ? { status: 'empty' as const, user: null, issue: 'no-session' as const }
+        : result.error.messageKey === 'AUTH_REQUIRED'
+          ? { status: 'lost' as const, user: null, issue: 'session-revoked' as const }
+          : status === 'blocked'
+            ? { status: 'blocked' as const, user: null, issue: result.error.messageKey === 'UNKNOWN_ERROR' ? 'storage-unavailable' as const : 'unknown-error' as const }
+            : { status: 'empty' as const, user: null, issue: 'restore-unavailable' as const };
+      this.updateSessionSnapshot(next);
     }
     return result;
+  }
+
+  private updateSessionSnapshot(snapshot: SessionSnapshot) {
+    this.sessionSnapshot = snapshot;
+    for (const listener of this.listeners) {
+      try { listener(); } catch { /* Session state observers must not block repository results. */ }
+    }
   }
 
   async createGuestSession(displayName: string, requestId?: string): Promise<WriteResult<SessionResponse>> {
     const rid = requestId ?? this.nextRequestId('guest');
     const req: CreateGuestSessionRequest = { displayName: displayName.trim(), requestId: rid };
+    const revision = ++this.identityRevision;
     let result: WriteResult<SessionResponse>;
     if (this.session) {
       result = await this.session.createGuestSession(req);
     } else {
       result = await this.client.createGuestSession(req);
     }
+    if (revision !== this.identityRevision) return result;
     if (result.ok) {
-      this.currentUser = result.data.user;
+      this.updateSessionSnapshot({ status: 'active', user: result.data.user, issue: 'none' });
+    } else if (this.session) {
+      const status = readManagerStatus(this.session);
+      if (['NETWORK_ERROR', 'TIMEOUT', 'MALFORMED_RESPONSE'].includes(result.error.messageKey)) {
+        this.updateSessionSnapshot({ status: 'blocked', user: null, issue: 'signup-uncertain' });
+      } else if (status === 'blocked') {
+        this.updateSessionSnapshot({ status: 'blocked', user: null, issue: result.error.messageKey === 'UNKNOWN_ERROR' ? 'storage-unavailable' : 'unknown-error' });
+      }
     }
     return result;
   }
 
   async logout(): Promise<WriteResult<void>> {
-    this.currentUser = null;
+    ++this.identityRevision;
+    this.updateSessionSnapshot({ status: 'blocked', user: null, issue: 'no-session' });
+    let result: WriteResult<void>;
     if (this.session) {
-      return this.session.logout();
+      result = await this.session.logout();
+    } else {
+      result = await this.client.logout();
     }
-    return this.client.logout();
+    this.updateSessionSnapshot(result.ok
+      ? { status: 'empty', user: null, issue: 'no-session' }
+      : { status: 'blocked', user: null, issue: 'unknown-error' });
+    return result;
   }
 
   getCurrentUser(): SessionUser | null {
-    return this.currentUser;
+    return this.getSessionSnapshot().user;
   }
 
   getSessionStatus(): SessionStatus {
-    if (this.session && 'getStatus' in this.session && typeof (this.session as any).getStatus === 'function') {
-      return (this.session as any).getStatus();
-    }
-    return this.currentUser ? 'active' : 'empty';
+    return this.getSessionSnapshot().status;
+  }
+
+  getSessionSnapshot(): SessionSnapshot {
+    return this.sessionSnapshot;
+  }
+
+  subscribeSession(listener: () => void): () => void {
+    this.listeners.add(listener);
+    return () => this.listeners.delete(listener);
   }
 
   getApiClient(): ApiClient {
@@ -170,81 +231,90 @@ export class LiveRoomRepository implements RoomRepository {
   // --- Room Entry (GM-09 / Home / Create / Join) ---
 
   async listFriends(): Promise<ReadResult<Friend[]>> {
-    return this.client.listFriends();
+    return this.request(() => this.client.listFriends());
   }
 
   async getDiscoveryContext(): Promise<ReadResult<DiscoveryContextResponse>> {
-    return this.client.getDiscoveryContext();
+    return this.request(() => this.client.getDiscoveryContext());
   }
 
   async createRoom(request: CreateRoomRequest): Promise<WriteResult<CreateRoomResponse>> {
     const rid = request.requestId || this.nextRequestId('room_create');
     if (this.getSessionStatus() !== 'active') {
-      const guestRes = await this.createGuestSession(request.displayName);
-      if (!guestRes.ok) {
-        return guestRes;
-      }
+      return { ok: false, requestId: rid, error: { messageKey: 'AUTH_REQUIRED' } };
     }
-    return this.client.createRoom({ ...request, requestId: rid });
+    return this.request(() => this.client.createRoom({ ...request, requestId: rid }));
   }
 
   async joinRoom(request: JoinRoomRequest): Promise<WriteResult<JoinRoomResponse>> {
     const rid = request.requestId || this.nextRequestId('room_join');
     if (this.getSessionStatus() !== 'active') {
-      const guestRes = await this.createGuestSession(request.displayName);
-      if (!guestRes.ok) {
-        return guestRes;
-      }
+      return { ok: false, requestId: rid, error: { messageKey: 'AUTH_REQUIRED' } };
     }
-    return this.client.joinRoom({ ...request, requestId: rid });
+    return this.request(() => this.client.joinRoom({ ...request, requestId: rid }));
   }
 
   async getRoomSnapshot(roomId: string): Promise<ReadResult<RoomSnapshot>> {
-    return this.client.getRoomSnapshot(roomId);
+    return this.request(() => this.client.getRoomSnapshot(roomId));
   }
 
   // --- Room Setup (GM-10 / Context / Preferences) ---
 
   async previewFoodPool(request: PreviewFoodPoolRequest): Promise<ReadResult<PreviewFoodPoolResponse>> {
-    return this.client.previewFoodPool(request);
+    return this.request(() => this.client.previewFoodPool(request));
   }
 
   async updateContext(request: UpdateContextRequest): Promise<WriteResult<void>> {
     const rid = request.requestId || this.nextRequestId('ctx_upd');
-    return this.client.updateContext({ ...request, requestId: rid });
+    return this.request(() => this.client.updateContext({ ...request, requestId: rid }));
   }
 
   async updatePreferences(request: UpdatePreferencesRequest): Promise<WriteResult<void>> {
     const rid = request.requestId || this.nextRequestId('pref_upd');
-    return this.client.updatePreferences({ ...request, requestId: rid });
+    return this.request(() => this.client.updatePreferences({ ...request, requestId: rid }));
   }
 
   // --- Lobby Actions (GM-11 / Ready / Start / Leave / Cancel) ---
 
   async setReady(request: SetReadyRequest): Promise<WriteResult<void>> {
     const rid = request.requestId || this.nextRequestId('ready');
-    return this.client.setReady({ ...request, requestId: rid });
+    return this.request(() => this.client.setReady({ ...request, requestId: rid }));
   }
 
   async startRound(request: StartRoundRequest): Promise<WriteResult<void>> {
     const rid = request.requestId || this.nextRequestId('start');
-    return this.client.startRound({ ...request, requestId: rid });
+    return this.request(() => this.client.startRound({ ...request, requestId: rid }));
   }
 
   async leaveRoom(request: LeaveRoomRequest): Promise<WriteResult<void>> {
     const rid = request.requestId || this.nextRequestId('leave');
-    return this.client.leaveRoom({ ...request, requestId: rid });
+    return this.request(() => this.client.leaveRoom({ ...request, requestId: rid }));
   }
 
   async cancelRoom(request: CancelRoomRequest): Promise<WriteResult<void>> {
     const rid = request.requestId || this.nextRequestId('cancel');
-    return this.client.cancelRoom({ ...request, requestId: rid });
+    return this.request(() => this.client.cancelRoom({ ...request, requestId: rid }));
   }
 
   async inviteToRoom(request: InviteToRoomRequest): Promise<WriteResult<RoomInvitation>> {
     const rid = request.requestId || this.nextRequestId('invite');
-    return this.client.inviteToRoom({ ...request, requestId: rid });
+    return this.request(() => this.client.inviteToRoom({ ...request, requestId: rid }));
   }
+
+  private async request<T>(operation: () => Promise<T>): Promise<T> {
+    const result = await operation();
+    const response = result as { ok?: boolean; error?: { messageKey?: string } };
+    if (!response.ok && response.error?.messageKey === 'AUTH_REQUIRED' && this.session && readManagerStatus(this.session) === 'lost') {
+      ++this.identityRevision;
+      this.updateSessionSnapshot({ status: 'lost', user: null, issue: 'session-revoked' });
+    }
+    return result;
+  }
+}
+
+function readManagerStatus(session: SessionApi): SessionStatus {
+  const getStatus = (session as SessionApi & { getStatus?: () => SessionStatus }).getStatus;
+  return typeof getStatus === 'function' ? getStatus.call(session) : 'empty';
 }
 
 /**

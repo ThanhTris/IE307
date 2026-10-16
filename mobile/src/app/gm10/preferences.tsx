@@ -6,6 +6,7 @@ import { StatusNotice } from '../../shared/ui';
 import { useShellTheme } from '../../shared/lib/useShellTheme';
 import { useRoomRepository } from '../../bootstrap/RoomRepositoryProvider';
 import { defaultPreferenceCatalogue } from '../../features/rooms/services/roomRepository';
+import { RequireActiveSession } from '../../features/auth/components/RequireActiveSession';
 
 export default function PreferencesRoute() {
   const router = useRouter();
@@ -18,7 +19,7 @@ export default function PreferencesRoute() {
 
   if (live.mode === 'real') {
     if (!roomId) {
-      return (
+      return <RequireActiveSession onHome={home}>
         <SetupFrame title="Khẩu vị phòng" onBack={back} onHome={home}>
           <StatusNotice
             title="Chưa chọn phòng"
@@ -29,11 +30,11 @@ export default function PreferencesRoute() {
             colors={colors}
           />
         </SetupFrame>
-      );
+      </RequireActiveSession>;
     }
-    return (
+    return <RequireActiveSession onHome={home}>
       <PreferencesScreen
-        key={`real-${roomId}`}
+        key={`real-${roomId}-${live.user?.id ?? 'unknown'}`}
         repository={live.repository}
         roomId={roomId}
         userId={live.user?.id ?? ''}
@@ -42,7 +43,7 @@ export default function PreferencesRoute() {
         onHome={home}
         onContinue={room => router.push({ pathname: '/gm11/lobby', params: { roomId: room.roomId } })}
       />
-    );
+    </RequireActiveSession>;
   }
 
   if (!preview.fixture) return <SetupFrame title="Khẩu vị mẫu" onBack={back} onHome={home} controls={<SetupPreviewControls />}><StatusNotice title={preview.error ? 'Chưa mở được phòng mẫu' : 'Đang mở phòng mẫu…'} colors={colors} /></SetupFrame>;

@@ -9,7 +9,7 @@ import { errorCopy, type RoomEntryReceipt, type RoomEntryRepository } from '../.
 
 export type HomeScreenProps = PreviewControlsProps & {
   repository: RoomEntryRepository;
-  sessionToken?: string;
+  sessionToken: string;
   activeRoom?: RoomEntryReceipt | null;
   onCreate: () => void;
   onJoin: () => void;
@@ -25,7 +25,7 @@ export type HomeScreenProps = PreviewControlsProps & {
 export function HomeScreen({ repository, sessionToken, activeRoom, onCreate, onJoin, onResume, onOpenFoundation, onOpenRoomSetup, onOpenGm24, onFriends, onInbox, onProfile, previewControls }: HomeScreenProps) {
   const { colors } = useShellTheme();
   const [panel, setPanel] = useState<string>();
-  const loadSession = useCallback(() => repository.restoreSession(sessionToken as string), [repository, sessionToken]);
+  const loadSession = useCallback(() => repository.restoreSession(sessionToken), [repository, sessionToken]);
   const session = useRead(loadSession);
   const loadFriends = useCallback(async () => {
     if (!session.data) return { ok: false as const, error: { messageKey: 'AUTH_REQUIRED' as const } };
