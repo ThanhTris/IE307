@@ -111,6 +111,13 @@ test('manual input, meal and budget changes invalidate confirmation and preview'
   await press('Xem món mẫu theo bối cảnh'); expect(fixture.preview).toHaveBeenCalledTimes(1);
 });
 
+test('GM-10 budget input keeps the raw value visible before parsing', async () => {
+  await context();
+  const budget = screen.getByLabelText('Ngân sách tham khảo (VNĐ/người)');
+  await fireEvent.changeText(budget, '60000');
+  expect(budget.props.value).toBe('60000');
+});
+
 test('date changes clear the checked confirmation and preview without changing time or writing', async () => {
   const fixture = await context(); await confirmAndPreview();
   expect(screen.getByRole('checkbox', { name: 'Tôi xác nhận điểm công cộng, buổi và giờ ăn' })).toBeChecked();

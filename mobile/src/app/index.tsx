@@ -10,11 +10,11 @@ export default function IndexRoute() {
   const isReal = live.mode === 'real';
 
   const repository = isReal ? live.repository : preview.client;
-  const sessionToken = isReal ? (live.user?.id ?? 'live-session') : previewSessionToken;
+  const sessionToken = isReal ? undefined : previewSessionToken;
 
   return (
     <HomeScreen
-      key={isReal ? `live-${live.user?.id}` : preview.revision}
+      key={isReal ? `live-${live.status}-${live.user?.id}` : preview.revision}
       repository={repository}
       sessionToken={sessionToken}
       activeRoom={isReal ? undefined : preview.active}
@@ -23,6 +23,7 @@ export default function IndexRoute() {
       onResume={() => router.push('/room-preview')}
       onOpenFoundation={() => router.push('/foundation')}
       onOpenRoomSetup={() => router.push('/gm10/context')}
+      onOpenGm24={() => router.push('/gm24/context')}
       previewControls={isReal ? undefined : (busy => <PreviewControls disabled={busy} />)}
     />
   );

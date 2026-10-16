@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Pressable, Text, View } from 'react-native';
-import type { ErrorCode, MealSlot, PreviewFoodPoolResponse, RoomContext, RoomSnapshot, UpdateContextRequest } from '../../../data/api/contracts';
+import type { ErrorCode, PreviewFoodPoolResponse, RoomContext, RoomSnapshot, UpdateContextRequest } from '../../../data/api/contracts';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { AppButton, Chip, ContextSummary, FormField, StatusNotice } from '../../../shared/ui';
-import { SetupFrame, SetupSection, SetupToggle, setupStyles as styles } from '../components/SetupFrame';
-import { MealDateTimeFields } from '../components/MealDateTimeFields';
+import { AppButton, Chip, ContextSummary, StatusNotice } from '../../../shared/ui';
+import { SetupFrame, SetupSection, setupStyles as styles } from '../components/SetupFrame';
+import { ContextDraftFields } from '../components/ContextDraftFields';
 import { useRoomSetup, useSetupIntent, type RoomSetupData } from '../hooks/useRoomSetup';
 import { currentServerTime, dishDistance, dishPrice, localTime, mealLabels, nextMealTime, originLabels, parseBudget, parseLocalTime, setupError, suggestedMeal, temperatureLabels, type RequestIdFactory, type RoomSetupRepository, type SuggestAnchor } from '../services/roomSetup';
 
@@ -108,6 +108,13 @@ function ContextForm({ repository, roomId, userId, onBack, onHome, onContinue, o
     } catch { if (alive.current) setNotice('Chưa lấy được gợi ý vị trí. Hãy chọn điểm ăn bằng tay.'); }
     finally { if (alive.current) setSuggestBusy(false); }
   }
+  const draftDesiredAt = parseLocalTime(`${date} ${time}`);
+  const draftTime = {
+    desiredAt: draftDesiredAt ?? new Date(serverNow()).toISOString(),
+    isPast: !draftDesiredAt || Date.parse(draftDesiredAt) <= serverNow(),
+    requiresConfirmation: false,
+    isTooFarFuture: !!draftDesiredAt && Date.parse(draftDesiredAt) > serverNow() + 7 * 86400000,
+  };
   return <SetupFrame title="Hẹn nhau ăn ở đâu?" onBack={onBack} onHome={onHome} busy={busy} controls={previewControls?.(busy)}>
     <Text style={[styles.body, { color: colors.muted }]}>Chọn một điểm ăn công cộng cho cả nhóm. Không chia sẻ GPS cá nhân.</Text>
     {room && !editable ? <StatusNotice title="Chưa thể sửa phòng" message="Phiên không hợp lệ, phòng đã khóa hoặc hết hạn. Hãy quay lại kiểm tra." colors={colors} /> : null}
@@ -126,28 +133,25 @@ function ContextForm({ repository, roomId, userId, onBack, onHome, onContinue, o
         </View>
         <AppButton label="Gợi ý điểm ăn từ vị trí" variant="secondary" disabled={disabled} onPress={() => { void suggest(); }} colors={colors} />
         {notice ? <StatusNotice title="Chọn điểm bằng tay luôn khả dụng" message={notice} colors={colors} /> : null}
-        <Text style={[styles.body, { color: colors.text }]}>3. Chọn bán kính quanh điểm ăn</Text>
-        <View style={styles.row}>{[1000, 2000, 5000].map(v => <Chip key={v} label={`${v / 1000} km`} selected={draft.radiusM === v} disabled={disabled} onPress={() => change({ radiusM: v })} colors={colors} />)}</View>
       </SetupSection>
-      <SetupSection title="Buổi và giờ ăn">
-        <AppButton label="Ăn ngay · sau 15 phút" variant="secondary" disabled={disabled} colors={colors} onPress={() => {
-          const iso = new Date(serverNow() + 15 * 60000).toISOString(); setDate(localTime(iso).slice(0, 10)); setTime(localTime(iso).slice(11)); change({ desiredAt: iso, ...suggestedMeal(iso) });
-        }} />
-        <MealDateTimeFields date={date} time={time} disabled={disabled} getToday={() => localTime(new Date(serverNow()).toISOString()).slice(0, 10)} onDateChange={v => { setDate(v); resetPreview(); }} onTimeChange={v => { setTime(v); resetPreview(); }} />
-        <View style={styles.row}>{(Object.keys(mealLabels) as MealSlot[]).map(v => <Chip key={v} label={mealLabels[v]} selected={draft.mealSlot === v} disabled={disabled} onPress={() => {
-          const iso = nextMealTime(v, serverNow());
-          if (iso) { setDate(localTime(iso).slice(0, 10)); setTime(localTime(iso).slice(11)); }
-          change({ mealSlot: v, timeHint: undefined, ...(iso ? { desiredAt: iso } : {}) });
-        }} colors={colors} />)}</View>
-        <Text style={[styles.caption, { color: colors.muted }]}>Chọn buổi gợi ý giờ sáng 07:00, trưa 12:00, tối 19:00; mốc đã tới hoặc đã qua chuyển sang ngày mai. Ăn nhẹ giữ giờ đang chọn. Bạn có thể sửa giờ cụ thể.</Text>
-      </SetupSection>
-      <SetupSection title="Ngân sách tham khảo">
-        <FormField label="Ngân sách tham khảo (VNĐ/người)" value={budget} editable={!disabled} keyboardType="numeric" onChangeText={v => { setBudget(v); resetPreview(); }} helperText="Để trống nếu chưa chọn. Thiếu giá không có nghĩa là rẻ; ngân sách là ưu tiên mềm." colors={colors} />
-      </SetupSection>
-      <SetupSection title="Lịch sử và chống lặp">
-        <SetupToggle label="Giảm ưu tiên món đã ăn gần đây" accessibilityLabel="Tránh lặp món gần đây" disabled={disabled} value={draft.avoidRecent} onValueChange={v => change({ avoidRecent: v })} />
-        <Text style={[styles.caption, { color: colors.muted }]}>Tùy chọn chống lặp chung của phòng, do chủ phòng chọn. Chỉ có tác dụng khi có lịch sử và đồng ý phù hợp; không loại cứng món hoặc thay đổi phiếu.</Text>
-      </SetupSection>
+      <ContextDraftFields
+        draft={draft}
+        budgetText={budget}
+        date={date}
+        time={time}
+        timeState={draftTime}
+        disabled={disabled}
+        serverNow={serverNow}
+        onRadiusChange={radiusM => change({ radiusM })}
+        onDateChange={value => { setDate(value); resetPreview(); }}
+        onTimeChange={value => { setTime(value); resetPreview(); }}
+        onEatNow={() => { const iso = new Date(serverNow() + 15 * 60000).toISOString(); setDate(localTime(iso).slice(0, 10)); setTime(localTime(iso).slice(11)); change({ desiredAt: iso, ...suggestedMeal(iso) }); }}
+        onMealSlotChange={value => { const iso = nextMealTime(value, serverNow()); if (iso) { setDate(localTime(iso).slice(0, 10)); setTime(localTime(iso).slice(11)); } change({ mealSlot: value, timeHint: undefined, ...(iso ? { desiredAt: iso } : {}) }); }}
+        onServiceModeChange={serviceMode => change({ serviceMode })}
+        onBudgetChange={value => { setBudget(value); resetPreview(); }}
+        onAvoidRecentChange={avoidRecent => change({ avoidRecent })}
+        onScheduledOffset={hours => { const target = new Date(serverNow() + hours * 3600000).toISOString(); setDate(localTime(target).slice(0, 10)); setTime(localTime(target).slice(11)); change({ desiredAt: target }); }}
+      />
       <ContextSummary anchorName={anchor?.name ?? 'Chưa chọn điểm công cộng'} mealLabel={mealLabels[draft.mealSlot]} desiredAtLabel={`${date} ${time} · UTC+7`} radiusLabel={`${draft.radiusM / 1000} km`} colors={colors} />
       {host ? <>
         <Pressable accessibilityRole="checkbox" accessibilityLabel="Tôi xác nhận điểm công cộng, buổi và giờ ăn" accessibilityHint="Xác nhận bối cảnh đã chọn trước khi xem món và lưu" accessibilityState={{ checked: confirmed, disabled }} disabled={disabled} onPress={() => setConfirmed(v => !v)}
