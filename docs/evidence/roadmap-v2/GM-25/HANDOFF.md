@@ -1,9 +1,9 @@
 # Bàn giao đầu ra task — GM-25 / roadmap-v2
 
 Task / owner / reviewer / track / stage: GM-25 / Trang (`rosy179`) / Trí (`ThanhTris`) / INTEGRATION / integration  
-PR / branch / target / commit: `continue_task_gm_twenty_five` -> `origin/main` (`daa9174`)  
+PR / branch / target / commit: PR #124 / `continue_task_gm_twenty_five` -> `origin/main` (`4a8cd64`)  
 Contract version / schema version / dataset version: `food-v1/roadmap-v2/GM-25.1` / schema `0.3.0` (GM-19) / dataset `food-v1`  
-CHECKS.md / tested revision: [CHECKS.md](CHECKS.md) / HEAD `daa9174` + uncommitted changes  
+CHECKS.md / tested revision: [CHECKS.md](CHECKS.md) / `continue_task_gm_twenty_five`  
 
 ---
 
@@ -11,18 +11,19 @@ CHECKS.md / tested revision: [CHECKS.md](CHECKS.md) / HEAD `daa9174` + uncommitt
 
 | Artifact thực tế | Producer task | Version/commit | Lệnh đọc/chạy | Expected output | Task nhận |
 | --- | --- | --- | --- | --- | --- |
-| `mobile/src/features/rooms/services/roomRepository.ts` | GM-25 | GM-25.1 | `import { LiveRoomRepository, createRoomRepository } from '@/features/rooms'` | Interface `RoomRepository` thống nhất gọi 12 RPC backend thật, chuẩn hóa lỗi `ErrorCode` | GM-26, GM-27, GM-31 |
+| `mobile/src/features/rooms/services/roomRepository.ts` | GM-25 | GM-25.1 | `import { LiveRoomRepository, createRoomRepository } from '@/features/rooms'` | Interface `RoomRepository` thống nhất gọi 12 RPC backend thật, chuẩn hóa lỗi `ErrorCode`, taxonomy UUIDs chuẩn hóa | GM-26, GM-27, GM-31 |
 | `mobile/src/features/rooms/index.ts` | GM-25 | GM-25.1 | `import { LiveRoomRepository } from '@/features/rooms'` | Barrel export đầy đủ các room services, hooks và screens | GM-26, GM-27 |
-| `mobile/src/bootstrap/RoomRepositoryProvider.tsx` | GM-25 | GM-25.1 | `import { useRoomRepository, RoomRepositoryProvider } from '@/bootstrap/RoomRepositoryProvider'` | Context provider quản lý session, toggle real/mock adapter ở composition root | App Shell, GM-31 |
+| `mobile/src/bootstrap/RoomRepositoryProvider.tsx` | GM-25 | GM-25.1 | `import { useRoomRepository, RoomRepositoryProvider } from '@/bootstrap/RoomRepositoryProvider'` | Context provider quản lý session, toggle real/mock adapter ở composition root, strict error khi thiếu public key | App Shell, GM-31 |
 | `mobile/src/bootstrap/AppProviders.tsx` | GM-25 | GM-25.1 | `import { AppProviders } from '@/bootstrap/AppProviders'` | Wrap toàn bộ app với `RoomRepositoryProvider` và `SafeAreaProvider` | App Bootstrap |
 | `mobile/src/app/create-room.tsx` | GM-25 | GM-25.1 | Mở route `/create-room` trên app | Tạo phòng thật trên backend, điều hướng sang `/room-preview` | UI Consumer |
 | `mobile/src/app/join-room.tsx` | GM-25 | GM-25.1 | Mở route `/join-room` trên app | Vào phòng bằng mã code thật, điều hướng sang `/room-preview` | UI Consumer |
 | `mobile/src/app/room-preview.tsx` | GM-25 | GM-25.1 | Mở route `/room-preview` trên app | Hiển thị receipt phòng thật kèm nút chuyển sang Khẩu vị và Phòng chờ | UI Consumer |
-| `mobile/src/app/gm10/context.tsx` | GM-25 | GM-25.1 | Mở route `/gm10/context` kèm `roomId` | Chỉnh sửa bối cảnh phòng thật thông qua `updateContext` | UI Consumer |
-| `mobile/src/app/gm10/preferences.tsx` | GM-25 | GM-25.1 | Mở route `/gm10/preferences` kèm `roomId` | Cập nhật khẩu vị cá nhân thông qua `updatePreferences` | UI Consumer |
-| `mobile/src/app/gm11/lobby.tsx` | GM-25 | GM-25.1 | Mở route `/gm11/lobby` kèm `roomId` | Phòng chờ thật: refresh snapshot, tôi sẵn sàng, bắt đầu chọn món, hủy phòng, rời phòng | UI Consumer |
-| `mobile/src/features/rooms/screens/LobbyScreen.tsx` | GM-25 | GM-25.1 | Component `LobbyScreen` | Hỗ trợ cả 2 chế độ: real repository cho sản phẩm và mock client cho demo/test GM-11 | UI Consumer |
-| `mobile/tests/unit/roomRepository.test.ts` | GM-25 | GM-25.1 | `npm test -- tests/unit/roomRepository.test.ts` | 10 unit tests bao phủ toàn bộ 12 phương thức RPC và xử lý lỗi | CI / Test Suite |
+| `mobile/src/app/gm10/context.tsx` | GM-25 | GM-25.1 | Mở route `/gm10/context` kèm `roomId` | Chỉnh sửa bối cảnh phòng thật thông qua `updateContext`; không fallback fixture khi thiếu id | UI Consumer |
+| `mobile/src/app/gm10/preferences.tsx` | GM-25 | GM-25.1 | Mở route `/gm10/preferences` kèm `roomId` | Cập nhật khẩu vị cá nhân thông qua `updatePreferences`; không fallback fixture khi thiếu id | UI Consumer |
+| `mobile/src/app/gm11/lobby.tsx` | GM-25 | GM-25.1 | Mở route `/gm11/lobby` kèm `roomId` | Phòng chờ thật: refresh snapshot, conflict recovery, durable request IDs, start button guard | UI Consumer |
+| `mobile/src/features/rooms/screens/LobbyScreen.tsx` | GM-25 | GM-25.1 | Component `LobbyScreen` | Hỗ trợ 2 chế độ: real repository cho sản phẩm và mock client cho GM-11; polling 4s, refresh manual, idempotency retry | UI Consumer |
+| `mobile/tests/unit/roomRepository.test.ts` | GM-25 | GM-25.1 | `npm test -- tests/unit/roomRepository.test.ts` | 10 unit tests bao phủ 12 phương thức RPC và xử lý lỗi | CI / Test Suite |
+| `mobile/tests/component/gm25ReviewFeedback.test.tsx` | GM-25 | GM-25.1 | `npm test -- tests/component/gm25ReviewFeedback.test.tsx` | 8 tests kiểm tra hồi quy toàn bộ 7 điểm phản hồi từ review Trí (comment #6209239533) | CI / Test Suite |
 
 ---
 
@@ -30,11 +31,11 @@ CHECKS.md / tested revision: [CHECKS.md](CHECKS.md) / HEAD `daa9174` + uncommitt
 
 | AC | Pass / Fail / Not run | Môi trường và lệnh | Evidence | Mock / thật và giới hạn |
 | --- | --- | --- | --- | --- |
-| **AC1: Đạt kiểm Android-API** | **Pass (automated)** | `cd mobile; npm test` (20 suites / 576 tests) | [CHECKS.md](CHECKS.md) | Unit test RPC call contract, session integration và error normalization đạt 100%. Kiểm thử thiết bị vật lý 2 máy cần reviewer thực hiện theo mục 3. |
+| **AC1: Đạt kiểm Android-API** | **Pass (automated)** / **Not run (thiết bị thật)** | `cd mobile; npm test` (23 suites / 635 tests) | [CHECKS.md](CHECKS.md) | Unit test RPC call contract, session integration và error normalization đạt 100%. Kiểm thử thiết bị vật lý 2 máy cần reviewer thực hiện theo mục 3. |
 | **AC2: Giữ nguyên layout UI, không fallback fixture ở production** | **Pass** | `mobile/src/bootstrap/RoomRepositoryProvider.tsx`, `mobile/src/app/` | `npm run check:architecture` | Layout gốc các màn giữ nguyên. Production mode dùng `LiveRoomRepository`, báo lỗi rõ ràng nếu mất mạng/hết hạn, không tự ý chuyển sang fixture mock. |
-| **AC3: Auth/session/validation/error, consent/history đúng thực tế** | **Pass** | `mobile/tests/unit/roomRepository.test.ts` | `npm test` | Tự động tạo guest session hoặc khôi phục session có sẵn qua SecureStore; error mapping chuẩn xác sang `ErrorCode`. |
-| **AC4: Nhiều máy nhận cùng snapshot, reset ready khi bối cảnh đổi** | **Pass** | `tests/unit/roomRepository.test.ts`, `tests/component/gm11Screens.test.tsx` | `npm test` | Server đồng bộ snapshot và reset ready khi bối cảnh đổi. Xử lý chuẩn `ROOM_EXPIRED`, `CANCELLED`, `ROOM_FULL`. |
-| **AC5: Out-of-coverage/empty báo lý do server, không start pool rỗng** | **Pass** | `mobile/src/features/rooms/services/roomRepository.ts`, `tests/unit/roomRepository.test.ts` | `npm test` | Trả về lý do `NO_ELIGIBLE_FOOD`, `OUT_OF_COVERAGE`; UI vô hiệu hóa nút bắt đầu nếu pool rỗng hoặc chưa đủ ready. |
+| **AC3: Auth/session/validation/error, consent/history đúng thực tế** | **Pass** | `mobile/tests/unit/roomRepository.test.ts`, `gm25ReviewFeedback.test.tsx` | `npm test` | Khôi phục session có sẵn qua `SessionManager` persistent storage; taxonomy UUIDs đồng bộ authoritative registry; error mapping chuẩn xác sang `ErrorCode`. |
+| **AC4: Nhiều máy nhận cùng snapshot, reset ready khi bối cảnh đổi** | **Pass** | `tests/unit/roomRepository.test.ts`, `gm25ReviewFeedback.test.tsx` | `npm test` | Server đồng bộ snapshot và reset ready khi bối cảnh đổi. Xử lý conflict tự động tải lại; durable requestId tránh trùng sau remount; retry idempotent trên lỗi mạng. |
+| **AC5: Out-of-coverage/empty báo lý do server, không start pool rỗng** | **Pass** | `mobile/src/features/rooms/services/roomRepository.ts`, `gm25ReviewFeedback.test.tsx` | `npm test` | Kiểm tra `previewFoodPool`, khóa nút "Bắt đầu chọn món" nếu pool rỗng hoặc `NO_ELIGIBLE_FOOD`/`OUT_OF_COVERAGE`. |
 | **AC6: Đầu vào/đầu ra và cách kiểm ghi trong HANDOFF.md** | **Pass** | `docs/evidence/roadmap-v2/GM-25/HANDOFF.md` | Tài liệu này | Hướng dẫn chi tiết cách cấu hình và nghiệm thu trên thiết bị Android thật. |
 
 ---
@@ -88,11 +89,12 @@ EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 ## 4. Checklist người nhận (Receiver Checklist)
 
-- [x] Upstream được review đúng scope và revision: GM-07, GM-09, GM-10, GM-11, GM-16, GM-19, GM-21 đã có mặt trên `main`.
+- [x] Upstream được review đúng scope và revision: GM-07, GM-09, GM-10, GM-11, GM-16, GM-19, GM-21, GM-24 đã có mặt trên `main`.
 - [x] File và hướng dẫn đủ chạy từ clone sạch; không có file placeholder hoặc hardcoded mock ở production mode.
 - [x] Input/output/errors/nullability/version đúng contract `food-v1/roadmap-v2/GM-25.1`.
-- [x] Cả 20/20 test suites Jest (576 tests) và 550 test cases Python pass 100%.
-- [x] Đã phân tách rõ ràng giữa unit mock tự động và kịch bản nghiệm thu thiết bị thật.
+- [x] Cả 23/23 test suites Jest (635 tests) và 550 test cases Python pass 100%.
+- [x] Đã xử lý toàn bộ 7/7 điểm phản hồi từ review comment #6209239533 của Trí trên PR #124.
+- [x] Đã phân tách rõ ràng giữa unit mock tự động và kịch bản nghiệm thu thiết bị thật (Not run).
 - [ ] Reviewer Trí (`ThanhTris`) tiến hành kiểm tra mã nguồn, đối chiếu revision và nghiệm thu theo [ADR-013](../../../architecture/decisions/ADR-013-project-owner-final-review.md).
 
 > [!NOTE]

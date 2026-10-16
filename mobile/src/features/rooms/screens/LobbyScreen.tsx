@@ -1,16 +1,19 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MockApiClient, type ApiClient, type ErrorCode, type RoomSnapshot } from '../../../data/api';
 import { AvatarRow, AppButton, AppHeader, ContextSummary, RoomCode, SheetDialog, StatusNotice } from '../../../shared/ui';
 import { DemoFrame, useDemoColors, useMockDemoApi, type DemoDestination } from '../../shared/components/MockDemo';
 import { errorCopy, mealLabels } from '../services/roomEntry';
+import { createDurableRequestId } from '../services/roomRepository';
 
 export type LobbyScreenProps = {
   onNavigate?: (destination: DemoDestination) => void;
   onHome: () => void;
   mockClient?: MockApiClient;
-  repository?: Pick<ApiClient, 'getRoomSnapshot' | 'setReady' | 'startRound' | 'updateContext' | 'leaveRoom' | 'cancelRoom' | 'inviteToRoom'>;
+  repository?: Pick<ApiClient, 'getRoomSnapshot' | 'setReady' | 'startRound' | 'updateContext' | 'leaveRoom' | 'cancelRoom' | 'inviteToRoom'> & {
+    previewFoodPool?: ApiClient['previewFoodPool'];
+  };
   roomId?: string;
   currentUserId?: string;
   createRequestId?: (action: string) => string;
@@ -31,32 +34,109 @@ export function LobbyScreen({ onNavigate, onHome, mockClient, repository, roomId
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
   const [realRevision, setRealRevision] = useState(0);
+  const [eligibilityError, setEligibilityError] = useState<string | null>(null);
   const busyRef = useRef(false);
-  const requestSequence = useRef(0);
-  const activeRoomId = roomId ?? 'room_mock_001';
+  const pendingIntentRef = useRef<{
+    action: string;
+    requestId: string;
+    version: number;
+    uncertain: boolean;
+  } | null>(null);
+
+  const activeRoomId = roomId ?? (isReal ? '' : 'room_mock_001');
   const loadKey = isReal ? `real:${activeRoomId}:${realRevision}` : `${mockApi.mode}:${mockApi.revision}`;
   const loading = loadedKey !== loadKey;
   const loadState = loading ? 'loading' : loadError ? 'error' : 'ready';
 
   const api = repository ?? mockApi.api;
 
+  const checkEligibility = useCallback(async (snap: RoomSnapshot) => {
+    if (!isReal || snap.state !== 'LOBBY') return;
+    if (typeof (api as any).previewFoodPool === 'function') {
+      try {
+        const preview = await (api as any).previewFoodPool({
+          anchorId: snap.context.anchorId,
+          radiusM: snap.context.radiusM,
+          desiredAt: snap.context.desiredAt,
+          serviceMode: snap.context.serviceMode,
+          mealSlot: snap.context.mealSlot,
+          timeHint: snap.context.timeHint,
+          budget: snap.context.budget,
+        });
+        if (!preview.ok) {
+          setEligibilityError(preview.error.messageKey);
+        } else if (preview.data.totalCandidateCount === 0 || preview.data.pool.length === 0) {
+          setEligibilityError('NO_ELIGIBLE_FOOD');
+        } else {
+          setEligibilityError(null);
+        }
+      } catch {
+        // Fall back to server enforcement on startRound
+      }
+    }
+  }, [isReal, api]);
+
   useEffect(() => {
     let active = true;
+    if (!activeRoomId) {
+      void Promise.resolve().then(() => {
+        if (!active) return;
+        setLoadedKey(loadKey);
+        setSnapshot(null);
+        setLoadError('ROOM_NOT_FOUND');
+      });
+      return;
+    }
     void api.getRoomSnapshot(activeRoomId).then(result => {
       if (!active) return;
       setLoadedKey(loadKey);
       if (result.ok) {
         setSnapshot(result.data);
         setLoadError('');
+        void checkEligibility(result.data);
       } else {
         setSnapshot(null);
         setLoadError(result.error.messageKey);
       }
     });
     return () => { active = false; };
-  }, [api, activeRoomId, loadKey]);
+  }, [api, activeRoomId, loadKey, checkEligibility]);
 
-  const nextRequestId = (action: string) => createRequestId ? createRequestId(action) : `gm11-${action}-${++requestSequence.current}`;
+  const refreshSnapshot = async (targetId: string) => {
+    if (!targetId) return;
+    const result = await api.getRoomSnapshot(targetId);
+    if (result.ok) {
+      setSnapshot(result.data);
+      void checkEligibility(result.data);
+    } else {
+      setNotice(`Không đọc lại được snapshot · ${result.error.messageKey}`);
+    }
+  };
+
+  useEffect(() => {
+    if (!isReal || !activeRoomId) return;
+    const interval = setInterval(() => {
+      if (!busyRef.current) {
+        void api.getRoomSnapshot(activeRoomId).then(result => {
+          if (result.ok) {
+            setSnapshot(result.data);
+            void checkEligibility(result.data);
+          }
+        });
+      }
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [isReal, activeRoomId, api, checkEligibility]);
+
+  const getRequestId = (action: string, version: number) => {
+    const pending = pendingIntentRef.current;
+    if (pending && pending.action === action && pending.version === version && pending.uncertain) {
+      return pending.requestId;
+    }
+    const nextId = createRequestId ? createRequestId(action) : createDurableRequestId(`lobby_${action}`);
+    pendingIntentRef.current = { action, requestId: nextId, version, uncertain: false };
+    return nextId;
+  };
 
   const viewer = isReal
     ? (currentUserId ? snapshot?.members.find(member => member.userId === currentUserId) : snapshot?.members[0])
@@ -90,12 +170,6 @@ export function LobbyScreen({ onNavigate, onHome, mockClient, repository, roomId
     setNotice(`Đang dùng danh tính mock ${nextMember.displayName}; adapter và trạng thái phòng được giữ nguyên.`);
   };
 
-  const refreshSnapshot = async (targetId: string) => {
-    const result = await api.getRoomSnapshot(targetId);
-    if (result.ok) setSnapshot(result.data);
-    else setNotice(`Không đọc lại được snapshot · ${result.error.messageKey}`);
-  };
-
   const reload = () => {
     if (isReal) setRealRevision(v => v + 1);
     else mockApi.reload();
@@ -106,7 +180,7 @@ export function LobbyScreen({ onNavigate, onHome, mockClient, repository, roomId
     busyRef.current = true;
     setBusy(true);
     setNotice('');
-    const requestId = nextRequestId(action);
+    const requestId = getRequestId(action, snapshot.version);
     try {
       let result;
       if (action === 'ready') {
@@ -124,8 +198,22 @@ export function LobbyScreen({ onNavigate, onHome, mockClient, repository, roomId
       }
       if (!result.ok) {
         setNotice(`Chưa thực hiện được · ${result.error.messageKey}`);
+        if (result.error.messageKey === 'TIMEOUT' || result.error.messageKey === 'NETWORK_ERROR') {
+          if (pendingIntentRef.current) {
+            pendingIntentRef.current.uncertain = true;
+          }
+        } else {
+          pendingIntentRef.current = null;
+        }
+        if (result.error.messageKey === 'VERSION_CONFLICT' || result.error.messageKey === 'CONTEXT_CHANGED') {
+          await refreshSnapshot(snapshot.roomId);
+        }
+        if (result.error.messageKey === 'NO_ELIGIBLE_FOOD' || result.error.messageKey === 'OUT_OF_COVERAGE') {
+          setEligibilityError(result.error.messageKey);
+        }
         return;
       }
+      pendingIntentRef.current = null;
       if (action === 'ready') {
         await refreshSnapshot(snapshot.roomId);
         setNotice(viewer?.ready
@@ -150,6 +238,9 @@ export function LobbyScreen({ onNavigate, onHome, mockClient, repository, roomId
         setNotice(isReal ? 'Lời mời đã tạo.' : 'Lời mời mock đã tạo; người nhận chưa tham gia và chưa được đặt sẵn sàng.');
       }
     } catch {
+      if (pendingIntentRef.current) {
+        pendingIntentRef.current.uncertain = true;
+      }
       setNotice(isReal
         ? 'Không hoàn tất được thao tác. Có thể thử lại khi đã tải được trạng thái mới.'
         : 'Không hoàn tất được thao tác fixture. Có thể thử lại khi đã tải được trạng thái mới.');
@@ -202,8 +293,17 @@ export function LobbyScreen({ onNavigate, onHome, mockClient, repository, roomId
           ))}
         </View>
         {notice ? <StatusNotice title={isReal ? 'Cập nhật' : 'Cập nhật fixture'} message={notice} tone="success" colors={colors} /> : null}
+        {eligibilityError ? (
+          <StatusNotice
+            title="Chưa thể bắt đầu"
+            message={errorCopy[eligibilityError as ErrorCode] ?? 'Chưa có món phù hợp với bối cảnh. Hãy sửa điểm ăn hoặc giờ.'}
+            tone="warning"
+            colors={colors}
+          />
+        ) : null}
+        <AppButton label="Tải lại phòng" variant="quiet" onPress={() => void refreshSnapshot(snapshot.roomId)} loading={busy} colors={colors} />
         {viewer ? <AppButton label={viewer.ready ? 'Tắt sẵn sàng' : 'Tôi sẵn sàng'} onPress={() => void runWrite('ready')} loading={busy} disabled={snapshot.state !== 'LOBBY'} colors={colors} /> : null}
-        {isHost ? <AppButton label="Bắt đầu chọn món" onPress={() => void runWrite('start')} disabled={!everyoneReady || snapshot.state !== 'LOBBY'} loading={busy} colors={colors} /> : null}
+        {isHost ? <AppButton label="Bắt đầu chọn món" onPress={() => void runWrite('start')} disabled={!everyoneReady || snapshot.state !== 'LOBBY' || Boolean(eligibilityError)} loading={busy} colors={colors} /> : null}
         {isHost && onEditContext ? <AppButton label="Chỉnh sửa bối cảnh" variant="secondary" onPress={() => onEditContext(snapshot)} disabled={snapshot.state !== 'LOBBY' || busy} colors={colors} /> : null}
         {isHost && !onEditContext && !isReal ? <AppButton label="Mô phỏng đổi bối cảnh · reset ready (Host)" variant="secondary" onPress={() => void runWrite('context')} disabled={snapshot.state !== 'LOBBY'} loading={busy} colors={colors} /> : null}
         {!isReal && <AppButton label="Mời thêm bạn (mock)" variant="secondary" onPress={() => void runWrite('invite')} loading={busy} colors={colors} />}

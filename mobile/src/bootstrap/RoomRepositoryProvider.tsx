@@ -15,6 +15,7 @@ export interface RoomRepositoryContextValue {
   status: SessionStatus;
   user: SessionUser | null;
   mode: 'real' | 'mock';
+  isInitializing: boolean;
   restoreSession: () => Promise<boolean>;
   ensureSession: (fallbackDisplayName?: string) => Promise<boolean>;
 }
@@ -43,7 +44,10 @@ export function RoomRepositoryProvider({
 
   const repository = useMemo<RoomRepository>(() => {
     if (customRepository) return customRepository;
-    if (isReal && publicKey) {
+    if (isReal) {
+      if (!publicKey) {
+        throw new Error('RoomRepositoryProvider: EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY is required in real mode');
+      }
       const { session, client } = createAuthenticatedApiClient({
         baseUrl,
         publicKey,
@@ -63,6 +67,7 @@ export function RoomRepositoryProvider({
 
   const [status, setStatus] = useState<SessionStatus>(repository.getSessionStatus());
   const [user, setUser] = useState<SessionUser | null>(repository.getCurrentUser());
+  const [isInitializing, setIsInitializing] = useState(true);
 
   const restoreSession = useCallback(async (): Promise<boolean> => {
     try {
@@ -73,7 +78,7 @@ export function RoomRepositoryProvider({
         return true;
       }
       setUser(null);
-      setStatus('lost');
+      setStatus(repository.getSessionStatus());
       return false;
     } catch {
       setUser(null);
@@ -103,35 +108,33 @@ export function RoomRepositoryProvider({
         if (result.ok) {
           setUser(result.data);
           setStatus('active');
-        } else if (isReal) {
-          const created = await repository.createGuestSession('Khách');
-          if (!active) return;
-          if (created.ok) {
-            setUser(created.data.user);
-            setStatus('active');
-          } else {
-            setUser(null);
-            setStatus('lost');
-          }
+        } else {
+          setUser(null);
+          setStatus(repository.getSessionStatus());
         }
       } catch {
         if (!active) return;
         setUser(null);
         setStatus('lost');
+      } finally {
+        if (active) {
+          setIsInitializing(false);
+        }
       }
     };
     void init();
     return () => { active = false; };
-  }, [repository, isReal]);
+  }, [repository]);
 
   const value = useMemo<RoomRepositoryContextValue>(() => ({
     repository,
     status,
     user,
     mode: isReal ? 'real' : 'mock',
+    isInitializing,
     restoreSession,
     ensureSession,
-  }), [repository, status, user, isReal, restoreSession, ensureSession]);
+  }), [repository, status, user, isReal, isInitializing, restoreSession, ensureSession]);
 
   return (
     <RoomRepositoryContext.Provider value={value}>

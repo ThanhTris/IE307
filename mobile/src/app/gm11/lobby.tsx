@@ -3,6 +3,8 @@ import { LobbyScreen } from '../../features/rooms/screens/LobbyScreen';
 import { pathForDemoDestination } from '../../features/shared/navigation';
 import { useRoomRepository } from '../../bootstrap/RoomRepositoryProvider';
 
+import { createDurableRequestId } from '../../features/rooms/services/roomRepository';
+
 export default function LobbyRoute() {
   const router = useRouter();
   const { roomId } = useLocalSearchParams<{ roomId?: string }>();
@@ -16,6 +18,7 @@ export default function LobbyRoute() {
       repository={isReal ? live.repository : undefined}
       roomId={typeof roomId === 'string' ? roomId : undefined}
       currentUserId={live.user?.id}
+      createRequestId={action => createDurableRequestId(`lobby_${action}`)}
       onEditContext={snapshot => router.push({ pathname: '/gm10/context', params: { roomId: snapshot.roomId } })}
     />
   );

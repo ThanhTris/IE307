@@ -12,12 +12,25 @@ export default function PreferencesRoute() {
   const { roomId } = useLocalSearchParams<{ roomId?: string }>();
   const preview = useSetupPreview();
   const live = useRoomRepository();
-  const isReal = live.mode === 'real' && Boolean(roomId);
   const { colors } = useShellTheme();
   const back = () => (router.canGoBack() ? router.back() : router.replace('/'));
   const home = () => router.dismissTo('/');
 
-  if (isReal && typeof roomId === 'string') {
+  if (live.mode === 'real') {
+    if (!roomId) {
+      return (
+        <SetupFrame title="Khẩu vị phòng" onBack={back} onHome={home}>
+          <StatusNotice
+            title="Chưa chọn phòng"
+            message="Cần có phòng để thiết lập khẩu vị. Hãy tạo phòng mới hoặc vào phòng có sẵn."
+            tone="warning"
+            actionLabel="Tạo phòng mới"
+            onAction={() => router.push('/create-room')}
+            colors={colors}
+          />
+        </SetupFrame>
+      );
+    }
     return (
       <PreferencesScreen
         key={`real-${roomId}`}

@@ -50,11 +50,17 @@ export function createDurableRequestId(prefix = 'req'): string {
 }
 
 export const defaultPreferenceCatalogue: PreferenceCatalogue = {
-  cuisines: [{ id: 'cui_vietnam', label: 'Món Việt' }],
+  cuisines: [
+    { id: 'd7bf6ad7-596c-5ee0-bf45-ccedfcf6460b', label: 'Món Việt' },
+    { id: '76754d62-96e1-5d54-bf87-048a0df60e3f', label: 'Món Hoa' },
+    { id: '9397254e-ad5f-5f85-9674-96933b6c0db2', label: 'Món Hàn' },
+    { id: '73e625b4-4d2f-50f8-8051-111b703f6f11', label: 'Món Nhật' },
+  ],
   categories: [
-    { id: 'cat_mon_nuoc', label: 'Món nước' },
-    { id: 'cat_mon_com', label: 'Cơm' },
-    { id: 'cat_an_vat', label: 'Ăn vặt' },
+    { id: 'e69b5f45-580d-5ee3-9e43-360650b4c650', label: 'Cơm' },
+    { id: '14bc9d6f-c43e-5c1d-9c13-eddc5cc80dcc', label: 'Bún' },
+    { id: '1f89baf1-52f8-5f1e-98d8-7a36cae7a596', label: 'Phở' },
+    { id: '811f6aa0-6b7f-5645-aeb9-c2f96cf50630', label: 'Bánh mì' },
   ],
 };
 
@@ -173,11 +179,23 @@ export class LiveRoomRepository implements RoomRepository {
 
   async createRoom(request: CreateRoomRequest): Promise<WriteResult<CreateRoomResponse>> {
     const rid = request.requestId || this.nextRequestId('room_create');
+    if (this.getSessionStatus() !== 'active') {
+      const guestRes = await this.createGuestSession(request.displayName);
+      if (!guestRes.ok) {
+        return guestRes;
+      }
+    }
     return this.client.createRoom({ ...request, requestId: rid });
   }
 
   async joinRoom(request: JoinRoomRequest): Promise<WriteResult<JoinRoomResponse>> {
     const rid = request.requestId || this.nextRequestId('room_join');
+    if (this.getSessionStatus() !== 'active') {
+      const guestRes = await this.createGuestSession(request.displayName);
+      if (!guestRes.ok) {
+        return guestRes;
+      }
+    }
     return this.client.joinRoom({ ...request, requestId: rid });
   }
 

@@ -29,20 +29,9 @@ interface Props {
   onNavigateTo?: (pathname: string, params?: Record<string, string>) => void;
 }
 
-const SAMPLE_CONTEXT: RoomContext = {
-  anchorId: 'anc_central_market',
-  anchorName: 'Hồ Con Rùa',
-  radiusM: 1500,
-  mealSlot: 'lunch',
-  desiredAt: '2026-10-16T12:00:00.000Z',
-  serviceMode: 'dine_in',
-  budget: 60000,
-  avoidRecent: true,
-};
-
-const SAMPLE_PREFERENCES: UserPreferences = {
-  cuisineIds: ['cui_vietnamese', 'cui_street_food'],
-  categoryIds: ['cat_noodle', 'cat_rice'],
+const DEFAULT_PREFERENCES: UserPreferences = {
+  cuisineIds: ['d7bf6ad7-596c-5ee0-bf45-ccedfcf6460b'], // Món Việt (authoritative taxonomy UUID)
+  categoryIds: ['e69b5f45-580d-5ee3-9e43-360650b4c650'], // Cơm (authoritative taxonomy UUID)
   temperature: 'hot',
   flavor: {
     spicy: { present: false, intensity: 'none' },
@@ -93,9 +82,29 @@ export function Gm25FlowCheckScreen({ onBack, onNavigateTo }: Props) {
   const handleCreateRoom = async () => {
     setBusy(true);
     try {
+      // Query live discovery context for valid public anchor and server time
+      const disc = await live.repository.getDiscoveryContext();
+      let anchorId = 'c0a80101-0000-0000-0000-000000000001';
+      let desiredAt = new Date(Date.now() + 30 * 60 * 1000).toISOString();
+      if (disc.ok && disc.data.anchors.length > 0) {
+        const first = disc.data.anchors[0];
+        if (first) {
+          anchorId = first.id;
+        }
+        desiredAt = new Date(Date.parse(disc.data.serverTime) + 30 * 60 * 1000).toISOString();
+      }
+      const context: RoomContext = {
+        anchorId,
+        radiusM: 2000,
+        mealSlot: 'lunch',
+        desiredAt,
+        serviceMode: 'dine_in',
+        budget: 60000,
+        avoidRecent: false,
+      };
       const res = await live.repository.createRoom({
         displayName: live.user?.displayName ?? 'Trang (Host)',
-        context: SAMPLE_CONTEXT,
+        context,
       });
       if (res.ok) {
         setActiveRoomId(res.data.roomId);
@@ -182,7 +191,7 @@ export function Gm25FlowCheckScreen({ onBack, onNavigateTo }: Props) {
       const res = await live.repository.updatePreferences({
         roomId: activeRoomId,
         expectedVersion: roomSnapshot.version,
-        preferences: SAMPLE_PREFERENCES,
+        preferences: DEFAULT_PREFERENCES,
       });
       if (res.ok) {
         addLog('updatePreferences', true, 'Đã cập nhật khẩu vị & đồng ý chống lặp');
