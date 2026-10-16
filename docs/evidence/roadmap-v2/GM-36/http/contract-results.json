@@ -1,0 +1,13 @@
+{
+  "contract": "GM-36.1",
+  "validDraft": true,
+  "errors": [],
+  "gm08DirectImportRejected": true,
+  "gm08ErrorCodes": [
+    "SCHEMA"
+  ],
+  "publicationPerformed": false,
+  "databaseAccessed": false,
+  "result": "Pass",
+  "checkedAt": "2026-10-16T01:33:41.030261+00:00"
+}

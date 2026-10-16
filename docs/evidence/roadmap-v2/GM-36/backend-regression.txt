@@ -1,0 +1,27 @@
+✔ config pins project and ports (5.853708ms)
+✔ local URL guard rejects remote, credentials, paths, redirects and wrong port (0.273ms)
+✔ commands never target remote or delete backups (0.172875ms)
+✔ status deliberately drops all secrets (1.403334ms)
+✔ health asserts HTTP status and GoTrue body, no redirect following (49.487ms)
+✔ redaction strips JWT, keys, password and named credential fields (2.875125ms)
+✔ invalid reset rejected before any process (0.919416ms)
+✔ missing Docker fails actionable, not success (4.769291ms)
+✔ ordinary/no-write cleanup preserves another run's environment and state (7.521375ms)
+✔ Bruno preflight refuses existing env without changing it (2.307875ms)
+✔ Bruno preflight refuses existing state without changing it (1.446041ms)
+✔ exclusive creation cannot overwrite a file appearing after preflight (3.096125ms)
+✔ state creation conflict only cleans the environment this run created (3.079208ms)
+✔ successful cleanup removes only owned files and is repeatable (1.4435ms)
+✔ cleanup preserves edited file, reports failure and still cleans unchanged owned state (1.306334ms)
+✔ cleanup rejects a replacement inode even if its contents are identical (2.05875ms)
+✔ already removed owned files do not fail cleanup (1.492167ms)
+✔ writes outside the declared runtime paths are refused (0.976709ms)
+✔ HTTP runner wires ownership preflight, exclusive publication and cleanup (1.715125ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 201.917125
