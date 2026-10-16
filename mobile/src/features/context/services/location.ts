@@ -85,7 +85,7 @@ export interface LocationAdapter {
 // ============================================================================
 
 export const DEFAULT_MAX_COVERAGE_RADIUS_M = 15000; // 15 km limit to be considered inside anchor area
-export const DEFAULT_EAT_NOW_BUFFER_MINUTES = 30; // 30 minutes buffer for "Ăn ngay"
+export const DEFAULT_EAT_NOW_BUFFER_MINUTES = 15; // 15 minutes buffer for "Ăn ngay"
 export const MAX_FUTURE_SECONDS = 7 * 24 * 60 * 60; // 7 days ahead limit per GM-18 API policy
 export const MAX_ALLOWED_RADIUS_M = 10000; // 10,000m maximum discovery radius
 
@@ -176,7 +176,7 @@ export function findNearestAnchor(
 
 /**
  * Computes the target timestamp for "Ăn ngay" (Eat Now).
- * Takes the authoritative server time and adds the designated buffer (e.g. 30 minutes) ONCE.
+ * Takes the authoritative server time and adds the designated buffer (15 minutes by default) ONCE.
  */
 export function computeEatNowTime(
   serverTimeIso: string,
@@ -558,24 +558,6 @@ export class NativeLocationAdapter implements LocationAdapter {
       }
     }
 
-    // Check runtime Expo modules if available
-    const expoModules = (globalThis as unknown as { expo?: { modules?: Record<string, unknown> } })?.expo?.modules;
-    if (expoModules?.ExpoLocation) {
-      const expoLocation = expoModules.ExpoLocation as {
-        getCurrentPositionAsync?: (options?: unknown) => Promise<{
-          coords: { latitude: number; longitude: number; accuracy?: number };
-        }>;
-      };
-      if (typeof expoLocation.getCurrentPositionAsync === 'function') {
-        const res = await expoLocation.getCurrentPositionAsync({});
-        return {
-          latitude: res.coords.latitude,
-          longitude: res.coords.longitude,
-          accuracy: res.coords.accuracy,
-        };
-      }
-    }
-
     throw new Error('NATIVE_GPS_UNAVAILABLE');
   }
 }
@@ -614,7 +596,7 @@ export class LocationService {
   private defaultBufferMinutes: number;
 
   constructor(options: LocationServiceOptions = {}) {
-    this.adapter = options.adapter ?? new BrowserNativeLocationAdapter();
+    this.adapter = options.adapter ?? createDefaultLocationAdapter();
     this.maxCoverageRadiusM = options.maxCoverageRadiusM ?? DEFAULT_MAX_COVERAGE_RADIUS_M;
     this.defaultBufferMinutes = options.defaultBufferMinutes ?? DEFAULT_EAT_NOW_BUFFER_MINUTES;
   }

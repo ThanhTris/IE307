@@ -11,6 +11,7 @@ import type {
   ApiClient,
   MealSlot,
   PublicAnchor,
+  PreviewFoodPoolResponse,
   RoomContext,
   ServiceMode,
 } from '../../../data/api/contracts';
@@ -32,6 +33,8 @@ import {
   type LocationResolution,
   type TimeResolution,
 } from '../services/location';
+import { currentServerTime, localTime, nextMealTime, parseBudget, parseLocalTime } from '../services/roomSetup';
+import { ContextDraftFields } from '../components/ContextDraftFields';
 
 export type ContextScenario =
   | 'gps_grant_rua'
@@ -54,7 +57,6 @@ export interface ContextScreenProps {
   onBack?: () => void;
 }
 
-const RADIUS_OPTIONS = [500, 1000, 1500, 2000, 3000, 5000];
 const MEAL_SLOTS: { label: string; value: MealSlot }[] = [
   { label: 'Bữa sáng', value: 'breakfast' },
   { label: 'Bữa trưa', value: 'lunch' },
@@ -84,15 +86,22 @@ export function Gm24ContextScreen({
   const [realApiUrl] = useState<string>(
     (typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_SUPABASE_URL)
       ? process.env.EXPO_PUBLIC_SUPABASE_URL
-      : 'http://10.0.2.2:54321'
+      : ''
   );
   const [realClientStatus, setRealClientStatus] = useState<string>('Sẵn sàng');
   const [loadGeneration, setLoadGeneration] = useState(0);
+  const [privateDataEpoch, setPrivateDataEpoch] = useState(0);
   const requestGeneration = useRef(0);
+  const previewGeneration = useRef(0);
 
   // Discovery data from server
   const [serverTime, setServerTime] = useState<string>('2026-10-15T11:30:00.000Z');
+  const [serverLoadedAt, setServerLoadedAt] = useState<number>(() => Date.now());
   const [anchors, setAnchors] = useState<PublicAnchor[]>([]);
+  const [preview, setPreview] = useState<PreviewFoodPoolResponse | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [previewError, setPreviewError] = useState<string | null>(null);
+  const [confirmed, setConfirmed] = useState(false);
 
   // Location resolution
   const [locationState, setLocationState] = useState<LocationResolution>({
@@ -106,7 +115,11 @@ export function Gm24ContextScreen({
     errorMessage: null,
   });
   const clearLivePrivateData = useCallback(async () => {
+    setPrivateDataEpoch(value => value + 1);
     setAnchors([]);
+    setPreview(null);
+    setPreviewError(null);
+    setConfirmed(false);
     setLocationState({
       mode: 'manual',
       permission: 'undetermined',
@@ -119,8 +132,30 @@ export function Gm24ContextScreen({
     });
   }, []);
 
+  useEffect(() => {
+    previewGeneration.current += 1;
+  }, [privateDataEpoch]);
+
+  const liveEndpointConfig = useMemo(() => {
+    const publicKey = process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? '';
+    if (!realApiUrl) return { error: 'CONFIG_MISSING_URL', publicKey };
+    if (!publicKey) return { error: 'CONFIG_MISSING_PUBLISHABLE_KEY', publicKey };
+    try {
+      const url = new URL(realApiUrl);
+      const loopback = ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname);
+      const allowedTransport = url.protocol === 'https:' || (url.protocol === 'http:' && loopback);
+      const originOnly = !url.username && !url.password && !url.search && !url.hash && url.pathname === '/';
+      if (!allowedTransport || !originOnly) return { error: 'CONFIG_ENDPOINT_UNSAFE', publicKey };
+    } catch {
+      return { error: 'CONFIG_ENDPOINT_INVALID', publicKey };
+    }
+    return { error: null, publicKey };
+  }, [realApiUrl]);
+
   // Context selection states
   const [radiusM, setRadiusM] = useState<number>(1500);
+  const [budget, setBudget] = useState<string>('');
+  const [avoidRecent, setAvoidRecent] = useState(false);
   const [mealSlot, setMealSlot] = useState<MealSlot>('lunch');
   const [serviceMode, setServiceMode] = useState<ServiceMode>('dine_in');
   const [timeMode, setTimeMode] = useState<'now' | 'scheduled'>('now');
@@ -137,19 +172,18 @@ export function Gm24ContextScreen({
 
   // Real client instance (points to real Supabase endpoint)
   const liveAuth = useMemo(() => {
-    const publicKey = process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? '';
-    if (!publicKey) return null;
+    if (liveEndpointConfig.error) return null;
     try {
       return createAuthenticatedApiClient({
         baseUrl: realApiUrl,
-        publicKey,
+        publicKey: liveEndpointConfig.publicKey,
         clearPrivateData: clearLivePrivateData,
         timeoutMs: 15000,
       });
     } catch {
       return null;
     }
-  }, [clearLivePrivateData, realApiUrl]);
+  }, [clearLivePrivateData, liveEndpointConfig, realApiUrl]);
   const realClient = liveAuth?.client;
 
   // Active client: real or mock depending on envMode or explicit injection
@@ -205,6 +239,10 @@ export function Gm24ContextScreen({
       setLoading(true);
       setServerError(null);
       setAnchors([]);
+      previewGeneration.current += 1;
+      setPreview(null);
+      setPreviewError(null);
+      setConfirmed(false);
       setLocationState({ mode: 'manual', permission: 'undetermined', coords: null, selectedAnchor: null, distanceM: null, isOutsideCoverage: false, sortedAnchors: [], errorMessage: null });
       try {
         if (scenario === 'server_offline') {
@@ -212,9 +250,9 @@ export function Gm24ContextScreen({
         }
 
         // When using real API mode without an active auth token, obtain a guest session first (GM-16)
-        if (envMode === 'real_api' && !apiClient && !liveAuth) {
-          setRealClientStatus('Thiếu URL hoặc publishable key GM-16');
-          setServerError('AUTH_REQUIRED');
+        if (envMode === 'real_api' && !apiClient && liveEndpointConfig.error) {
+          setRealClientStatus(`Lỗi cấu hình: ${liveEndpointConfig.error}`);
+          setServerError(liveEndpointConfig.error);
           return;
         }
         if (envMode === 'real_api' && !apiClient && liveAuth) {
@@ -237,6 +275,9 @@ export function Gm24ContextScreen({
         if (!response.ok) {
           setServerError(response.error.messageKey);
           setAnchors([]);
+          setPreview(null);
+          setPreviewError(response.error.messageKey);
+          setConfirmed(false);
           setLocationState({ mode: 'manual', permission: 'undetermined', coords: null, selectedAnchor: null, distanceM: null, isOutsideCoverage: false, sortedAnchors: [], errorMessage: null });
           if (envMode === 'real_api') {
             setRealClientStatus(`Lỗi RPC: ${response.error.messageKey}`);
@@ -249,6 +290,7 @@ export function Gm24ContextScreen({
 
         const loadedTime = response.data.serverTime || new Date().toISOString();
         setServerTime(loadedTime);
+        setServerLoadedAt(Date.now());
 
         if (envMode === 'real_api') {
           const latency = Date.now() - startTime;
@@ -282,6 +324,9 @@ export function Gm24ContextScreen({
         const msg = (err as { message?: string })?.message ?? 'Lỗi kết nối máy chủ';
         setServerError(msg);
         setAnchors([]);
+        setPreview(null);
+        setPreviewError(msg);
+        setConfirmed(false);
         setLocationState({ mode: 'manual', permission: 'undetermined', coords: null, selectedAnchor: null, distanceM: null, isOutsideCoverage: false, sortedAnchors: [], errorMessage: null });
         if (envMode === 'real_api') {
           setRealClientStatus(`Lỗi mạng: ${msg}`);
@@ -296,7 +341,7 @@ export function Gm24ContextScreen({
     return () => {
       active = false;
     };
-  }, [apiClient, client, envMode, scenario, service, liveAuth, loadGeneration]);
+  }, [apiClient, client, envMode, scenario, service, liveAuth, liveEndpointConfig.error, loadGeneration]);
 
   const createLiveGuest = async () => {
     if (!liveAuth) return;
@@ -323,12 +368,16 @@ export function Gm24ContextScreen({
       if (!response.ok) {
         setServerError(response.error.messageKey);
         setAnchors([]);
+        setPreview(null);
+        setPreviewError(response.error.messageKey);
+        setConfirmed(false);
         setLocationState({ mode: 'manual', permission: 'undetermined', coords: null, selectedAnchor: null, distanceM: null, isOutsideCoverage: false, sortedAnchors: [], errorMessage: null });
         return;
       }
       setServerError(null);
       const loadedTime = response.data.serverTime || new Date().toISOString();
       setServerTime(loadedTime);
+      setServerLoadedAt(Date.now());
       const loadedAnchors = response.data.anchors ?? [];
       setAnchors(loadedAnchors);
 
@@ -356,6 +405,10 @@ export function Gm24ContextScreen({
     if (loading || serverError || !anchors.some(anchor => anchor.id === anchorId)) return;
     const res = service.resolveManual(anchorId, anchors, locationState.coords);
     setLocationState(res);
+    previewGeneration.current += 1;
+    setPreview(null);
+    setPreviewError(null);
+    setConfirmed(false);
   };
 
   const handleRefreshGps = async () => {
@@ -371,13 +424,13 @@ export function Gm24ContextScreen({
   const handleToggleTimeMode = (mode: 'now' | 'scheduled') => {
     setTimeMode(mode);
     if (mode === 'now') {
-      const nowRes = service.resolveEatNow(serverTime, 15);
+      const nowRes = service.resolveEatNow(new Date(currentServerTime(serverTime, serverLoadedAt)).toISOString(), 15);
       setTimeState(nowRes);
     } else {
       // Scheduled mode: use current desiredAt directly without extra buffer
       const schedRes = service.resolveScheduledTime(
         timeState.desiredAt,
-        serverTime,
+        new Date(currentServerTime(serverTime, serverLoadedAt)).toISOString(),
         timeState.confirmedPast
       );
       setTimeState(schedRes);
@@ -385,23 +438,23 @@ export function Gm24ContextScreen({
   };
 
   const handleSetScheduledOffsetHours = (hours: number) => {
-    const serverTimestamp = Date.parse(serverTime);
+    const serverTimestamp = currentServerTime(serverTime, serverLoadedAt);
     const target = new Date(serverTimestamp + hours * 60 * 60 * 1000).toISOString();
-    const schedRes = service.resolveScheduledTime(target, serverTime, false);
+    const schedRes = service.resolveScheduledTime(target, new Date(serverTimestamp).toISOString(), false);
     setTimeState(schedRes);
   };
 
   const handleConfirmPastTime = () => {
     const schedRes = service.resolveScheduledTime(
       timeState.desiredAt,
-      serverTime,
+      new Date(currentServerTime(serverTime, serverLoadedAt)).toISOString(),
       true
     );
     setTimeState(schedRes);
   };
 
   const handleAdjustToValidNow = () => {
-    const adjusted = service.adjustToValidServerTime(serverTime, 15);
+    const adjusted = service.adjustToValidServerTime(new Date(currentServerTime(serverTime, serverLoadedAt)).toISOString(), 15);
     setTimeState(adjusted);
   };
 
@@ -416,12 +469,16 @@ export function Gm24ContextScreen({
         desiredAt: timeState.desiredAt,
         serviceMode,
         mealSlot,
-        avoidRecent: false,
+        budget: parseBudget(budget),
+        avoidRecent,
       });
     } catch {
       return null;
     }
-  }, [locationState.selectedAnchor, radiusM, timeState.desiredAt, serviceMode, mealSlot]);
+  }, [locationState.selectedAnchor, radiusM, timeState.desiredAt, serviceMode, mealSlot, budget, avoidRecent]);
+
+  const desiredAtMs = Date.parse(timeState.desiredAt);
+  const liveDesiredAtPast = !Number.isFinite(desiredAtMs) || desiredAtMs <= currentServerTime(serverTime, serverLoadedAt);
 
   // Guard for saving context: strictly disallow past time, pending confirmation, or out-of-bounds horizon
   const canSaveContext = Boolean(
@@ -432,12 +489,94 @@ export function Gm24ContextScreen({
     sanitizedContext &&
     !timeState.requiresConfirmation &&
     !timeState.isPast &&
-    !timeState.isTooFarFuture
+    !liveDesiredAtPast &&
+    !timeState.isTooFarFuture &&
+    Date.parse(timeState.desiredAt) > currentServerTime(serverTime, serverLoadedAt)
   );
 
   const handleSaveContext = () => {
-    if (!canSaveContext || !sanitizedContext) return;
+    const liveServerTime = new Date(currentServerTime(serverTime, serverLoadedAt)).toISOString();
+    const freshTime = service.resolveScheduledTime(timeState.desiredAt, liveServerTime, timeState.confirmedPast);
+    if (freshTime.isPast || freshTime.isTooFarFuture) {
+      setTimeMode('scheduled');
+      setTimeState(freshTime);
+      setPreview(null);
+      setPreviewError('DESIRED_TIME_PASSED');
+      setConfirmed(false);
+      return;
+    }
+    if (!canSaveContext || !sanitizedContext || !confirmed || !preview?.pool.length) return;
     onSaveContext?.(sanitizedContext);
+  };
+
+  const handlePreview = async () => {
+    const generation = ++previewGeneration.current;
+    const liveServerTime = new Date(currentServerTime(serverTime, serverLoadedAt)).toISOString();
+    const freshTime = service.resolveScheduledTime(timeState.desiredAt, liveServerTime, false);
+    if (!sanitizedContext || !client || freshTime.isPast || freshTime.isTooFarFuture || serverError) {
+      setTimeState(freshTime);
+      setTimeMode('scheduled');
+      setPreview(null);
+      setConfirmed(false);
+      return;
+    }
+    setPreviewLoading(true);
+    setPreviewError(null);
+    setConfirmed(false);
+    try {
+      const response = await client.previewFoodPool({
+        anchorId: sanitizedContext.anchorId,
+        radiusM: sanitizedContext.radiusM,
+        desiredAt: sanitizedContext.desiredAt,
+        serviceMode: sanitizedContext.serviceMode,
+        mealSlot: sanitizedContext.mealSlot,
+        budget: sanitizedContext.budget,
+        timeHint: sanitizedContext.timeHint,
+      });
+      if (generation !== previewGeneration.current) return;
+      const responseServerTime = new Date(currentServerTime(serverTime, serverLoadedAt)).toISOString();
+      const responseTime = service.resolveScheduledTime(sanitizedContext.desiredAt, responseServerTime, false);
+      if (responseTime.isPast || responseTime.isTooFarFuture) {
+        setTimeState(responseTime);
+        setTimeMode('scheduled');
+        setPreview(null);
+        setPreviewError('DESIRED_TIME_PASSED');
+        setConfirmed(false);
+        return;
+      }
+      if (!response.ok) {
+        setPreview(null);
+        setPreviewError(response.error.messageKey);
+        return;
+      }
+      setPreview(response.data);
+    } catch {
+      setPreview(null);
+      setPreviewError('NETWORK_ERROR');
+    } finally {
+      if (generation === previewGeneration.current) setPreviewLoading(false);
+    }
+  };
+
+  const invalidateDraft = () => {
+    previewGeneration.current += 1;
+    setPreview(null);
+    setPreviewError(null);
+    setConfirmed(false);
+  };
+
+  const handleConfirmDraft = () => {
+    const liveServerTime = new Date(currentServerTime(serverTime, serverLoadedAt)).toISOString();
+    const freshTime = service.resolveScheduledTime(timeState.desiredAt, liveServerTime, false);
+    if (freshTime.isPast || freshTime.isTooFarFuture) {
+      setTimeMode('scheduled');
+      setTimeState(freshTime);
+      setPreview(null);
+      setPreviewError('DESIRED_TIME_PASSED');
+      setConfirmed(false);
+      return;
+    }
+    setConfirmed(value => !value);
   };
 
   return (
@@ -512,7 +651,7 @@ export function Gm24ContextScreen({
                 • Endpoint: {realApiUrl}
               </Text>
               <Text style={[styles.caption, { color: colors?.muted ?? '#64748B' }]}>
-                (Android Emulator: 10.0.2.2:54321 · Thiết bị thật qua WiFi: IP máy chủ LAN hoặc adb reverse tcp:54321 tcp:54321)
+                (Chỉ dùng HTTPS; development qua USB dùng adb reverse và URL loopback 127.0.0.1. Expo tunnel chỉ là Metro, không mở backend.)
               </Text>
               {serverError === 'AUTH_REQUIRED' && liveAuth ? <AppButton label="Tạo phiên khách GM-16" onPress={() => { void createLiveGuest(); }} disabled={loading} colors={colors} /> : null}
             </View>
@@ -724,239 +863,27 @@ export function Gm24ContextScreen({
           </View>
         </View>
 
-        {/* Section: Radius Selection */}
-        <View
-          style={[
-            styles.card,
-            {
-              backgroundColor: colors?.surface ?? '#FFFFFF',
-              borderColor: colors?.line ?? '#E2E8F0',
-            },
-          ]}
-        >
-          <Text
-            accessibilityRole="header"
-            style={[styles.sectionTitle, { color: colors?.text ?? '#1A202C' }]}
-          >
-            📏 Bán kính tìm quán
-          </Text>
-          <View style={styles.chipGrid}>
-            {RADIUS_OPTIONS.map((val) => (
-              <Chip
-                key={val}
-                label={val < 1000 ? `${val} m` : `${val / 1000} km`}
-                selected={radiusM === val}
-                onPress={() => setRadiusM(val)}
-                colors={colors}
-              />
-            ))}
-          </View>
-        </View>
-
-        {/* Section: Time & Server Buffer Resolution */}
-        <View
-          style={[
-            styles.card,
-            {
-              backgroundColor: colors?.surface ?? '#FFFFFF',
-              borderColor: colors?.line ?? '#E2E8F0',
-            },
-          ]}
-        >
-          <Text
-            accessibilityRole="header"
-            style={[styles.sectionTitle, { color: colors?.text ?? '#1A202C' }]}
-          >
-            ⏰ Thời gian ăn
-          </Text>
-
-          <View style={styles.tabRow}>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Chọn Ăn ngay"
-              onPress={() => handleToggleTimeMode('now')}
-              style={[
-                styles.tabButton,
-                timeMode === 'now' && {
-                  backgroundColor: colors?.primary ?? '#FF5A36',
-                },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.tabText,
-                  { color: timeMode === 'now' ? '#FFFFFF' : colors?.text ?? '#1A202C' },
-                ]}
-              >
-                ⚡ Ăn ngay (Buffer 15p)
-              </Text>
-            </Pressable>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Chọn Đặt giờ"
-              onPress={() => handleToggleTimeMode('scheduled')}
-              style={[
-                styles.tabButton,
-                timeMode === 'scheduled' && {
-                  backgroundColor: colors?.primary ?? '#FF5A36',
-                },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.tabText,
-                  {
-                    color:
-                      timeMode === 'scheduled'
-                        ? '#FFFFFF'
-                        : colors?.text ?? '#1A202C',
-                  },
-                ]}
-              >
-                🕒 Đặt giờ trước
-              </Text>
-            </Pressable>
-          </View>
-
-          <View style={styles.timeInfoBox}>
-            <Text style={[styles.bodySmall, { color: colors?.muted ?? '#64748B' }]}>
-              Giờ máy chủ: {new Date(serverTime).toLocaleTimeString('vi-VN')}
-            </Text>
-            <Text
-              style={[
-                styles.timeHighlight,
-                { color: colors?.primary ?? '#FF5A36' },
-              ]}
-            >
-              Mục tiêu ăn:{' '}
-              {new Date(timeState.desiredAt).toLocaleTimeString('vi-VN', {
-                hour: '2-digit',
-                minute: '2-digit',
-              })}{' '}
-              ({new Date(timeState.desiredAt).toLocaleDateString('vi-VN')})
-            </Text>
-            {timeMode === 'now' && (
-              <Text style={[styles.caption, { color: colors?.green ?? '#10B981' }]}>
-                      ✓ Đã cộng 15 phút chuẩn bị một lần duy nhất từ giờ máy chủ.
-              </Text>
-            )}
-          </View>
-
-          {/* Scheduled mode controls */}
-          {timeMode === 'scheduled' && (
-            <View style={{ gap: 8, marginTop: 8 }}>
-              <Text style={[styles.caption, { color: colors?.muted ?? '#64748B' }]}>
-                Chọn mốc giờ tương đối:
-              </Text>
-              <View style={styles.chipGrid}>
-                <Chip
-                  label="+1 giờ"
-                  onPress={() => handleSetScheduledOffsetHours(1)}
-                  colors={colors}
-                />
-                <Chip
-                  label="+3 giờ"
-                  onPress={() => handleSetScheduledOffsetHours(3)}
-                  colors={colors}
-                />
-                <Chip
-                  label="+6 giờ"
-                  onPress={() => handleSetScheduledOffsetHours(6)}
-                  colors={colors}
-                />
-                <Chip
-                  label="Quá khứ (-1 giờ)"
-                  onPress={() => handleSetScheduledOffsetHours(-1)}
-                  colors={colors}
-                />
-              </View>
-
-              {timeState.isPast && (
-                <View
-                  style={[
-                    styles.warningBox,
-                    { backgroundColor: colors?.soft ?? '#F1EFE9' },
-                  ]}
-                >
-                  <Text style={{ color: colors?.danger ?? '#EF4444', fontWeight: '700' }}>
-                    ⚠️ Giờ đã chọn nằm trong quá khứ so với giờ máy chủ!
-                  </Text>
-                  <Text style={[styles.caption, { color: colors?.muted ?? '#64748B' }]}>
-                    Máy chủ từ chối tạo phòng nếu giờ ăn đã qua (DESIRED_TIME_PASSED). Vui lòng điều chỉnh về giờ hợp lệ.
-                  </Text>
-                  <View style={{ gap: 8, marginTop: 4 }}>
-                    <AppButton
-                      label="Điều chỉnh thành giờ hợp lệ (+15 phút từ giờ máy chủ)"
-                      variant="primary"
-                      onPress={handleAdjustToValidNow}
-                      colors={colors}
-                    />
-                    {timeState.requiresConfirmation && (
-                      <AppButton
-                        label="Xác nhận giờ này"
-                        variant="danger"
-                        onPress={handleConfirmPastTime}
-                        colors={colors}
-                      />
-                    )}
-                  </View>
-                </View>
-              )}
-            </View>
-          )}
-        </View>
-
-        {/* Section: Meal Slot & Service Mode */}
-        <View
-          style={[
-            styles.card,
-            {
-              backgroundColor: colors?.surface ?? '#FFFFFF',
-              borderColor: colors?.line ?? '#E2E8F0',
-            },
-          ]}
-        >
-          <Text
-            accessibilityRole="header"
-            style={[styles.sectionTitle, { color: colors?.text ?? '#1A202C' }]}
-          >
-            🍽️ Buổi ăn & Hình thức
-          </Text>
-          <Text style={[styles.fieldLabel, { color: colors?.muted ?? '#64748B' }]}>
-            Buổi ăn:
-          </Text>
-          <View style={styles.chipGrid}>
-            {MEAL_SLOTS.map((slot) => (
-              <Chip
-                key={slot.value}
-                label={slot.label}
-                selected={mealSlot === slot.value}
-                onPress={() => setMealSlot(slot.value)}
-                colors={colors}
-              />
-            ))}
-          </View>
-
-          <Text
-            style={[
-              styles.fieldLabel,
-              { color: colors?.muted ?? '#64748B', marginTop: 12 },
-            ]}
-          >
-            Hình thức:
-          </Text>
-          <View style={styles.chipGrid}>
-            {SERVICE_MODES.map((mode) => (
-              <Chip
-                key={mode.value}
-                label={mode.label}
-                selected={serviceMode === mode.value}
-                onPress={() => setServiceMode(mode.value)}
-                colors={colors}
-              />
-            ))}
-          </View>
-        </View>
+        <ContextDraftFields
+          draft={{ radiusM, mealSlot, serviceMode, budget: parseBudget(budget) ?? null, avoidRecent }}
+          date={localTime(timeState.desiredAt).slice(0, 10)}
+          time={localTime(timeState.desiredAt).slice(11)}
+          timeState={timeState}
+          timeMode={timeMode}
+          serverNow={() => currentServerTime(serverTime, serverLoadedAt)}
+          eatNowLabel="⚡ Ăn ngay (Buffer 15p)"
+          onRadiusChange={value => { setRadiusM(value); invalidateDraft(); }}
+          onDateChange={value => { const next = parseLocalTime(`${value} ${localTime(timeState.desiredAt).slice(11)}`); if (next) { setTimeState(service.resolveScheduledTime(next, new Date(currentServerTime(serverTime, serverLoadedAt)).toISOString(), false)); invalidateDraft(); } }}
+          onTimeChange={value => { const next = parseLocalTime(`${localTime(timeState.desiredAt).slice(0, 10)} ${value}`); if (next) { setTimeState(service.resolveScheduledTime(next, new Date(currentServerTime(serverTime, serverLoadedAt)).toISOString(), false)); invalidateDraft(); } }}
+          onEatNow={() => { handleToggleTimeMode('now'); invalidateDraft(); }}
+          onTimeModeChange={mode => { handleToggleTimeMode(mode); invalidateDraft(); }}
+          onMealSlotChange={value => { setMealSlot(value); const next = nextMealTime(value, currentServerTime(serverTime, serverLoadedAt)); if (next) setTimeState(service.resolveScheduledTime(next, new Date(currentServerTime(serverTime, serverLoadedAt)).toISOString(), false)); invalidateDraft(); }}
+          onServiceModeChange={value => { setServiceMode(value); invalidateDraft(); }}
+          onBudgetChange={value => { setBudget(value); invalidateDraft(); }}
+          onAvoidRecentChange={value => { setAvoidRecent(value); invalidateDraft(); }}
+          onScheduledOffset={handleSetScheduledOffsetHours}
+          onAdjustToValid={handleAdjustToValidNow}
+          onConfirmPast={handleConfirmPastTime}
+        />
 
         {/* Summary Card */}
         {sanitizedContext && (
@@ -976,6 +903,28 @@ export function Gm24ContextScreen({
             }
             colors={colors}
           />
+        )}
+
+        {sanitizedContext && (
+          <View style={{ gap: 8, marginTop: 4 }}>
+            <Pressable
+              accessibilityRole="checkbox"
+              accessibilityLabel="Tôi xác nhận điểm công cộng, buổi và giờ ăn"
+              accessibilityState={{ checked: confirmed, disabled: loading || !!serverError || !preview?.pool.length }}
+              disabled={loading || !!serverError || !preview?.pool.length}
+              onPress={handleConfirmDraft}
+              style={[styles.confirmation, { backgroundColor: confirmed ? colors?.surface : colors?.soft, borderColor: confirmed ? colors?.green : colors?.primary }]}
+            >
+              <Text style={{ color: colors?.text }}>{confirmed ? '✓ ' : ''}Tôi xác nhận điểm công cộng, buổi và giờ ăn</Text>
+            </Pressable>
+            <AppButton label="Xem món mẫu theo bối cảnh" loading={previewLoading} disabled={loading || !!serverError || !canSaveContext} onPress={() => { void handlePreview(); }} colors={colors} />
+            {previewError ? <StatusNotice title="Chưa thể xem bản nháp" message={previewError} tone="error" colors={colors} /> : null}
+            {preview ? <View style={[styles.card, { backgroundColor: colors?.surface, borderColor: colors?.line }]}>
+              <Text style={[styles.sectionTitle, { color: colors?.text }]}>Bản nháp món theo bối cảnh</Text>
+              {preview.pool.length ? preview.pool.slice(0, 8).map(dish => <Text key={dish.roundDishId} style={[styles.bodySmall, { color: colors?.text }]}>{dish.name}</Text>) : <Text style={[styles.caption, { color: colors?.muted }]}>Chưa có món phù hợp cho bối cảnh này.</Text>}
+              {confirmed ? <StatusNotice title="Bản nháp đã xác nhận" message="Bản nháp đã xác nhận, chưa lưu vào phòng." colors={colors} /> : null}
+            </View> : null}
+          </View>
         )}
 
         {/* Privacy Audit Card */}
@@ -1036,7 +985,7 @@ export function Gm24ContextScreen({
               <Text style={[styles.caption, { color: colors?.danger ?? '#EF4444', textAlign: 'center' }]}>
                 {!locationState.selectedAnchor
                   ? 'Vui lòng chọn một điểm hẹn công cộng.'
-                  : timeState.isPast
+                : timeState.isPast || liveDesiredAtPast
                   ? 'Không thể lưu: thời gian ăn đang ở quá khứ (DESIRED_TIME_PASSED).'
                   : timeState.isTooFarFuture
                   ? 'Không thể lưu: thời gian ăn vượt quá 7 ngày.'
@@ -1070,6 +1019,7 @@ const styles = StyleSheet.create({
   backBtn: { padding: 8 },
   caption: { fontSize: 13, lineHeight: 18 },
   card: { padding: 16, borderRadius: 16, borderWidth: 1, gap: 12 },
+  confirmation: { padding: 14, borderRadius: 12, borderWidth: 1.5 },
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',

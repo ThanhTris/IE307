@@ -9,6 +9,7 @@ import {
   NativeLocationAdapter,
   WebLocationAdapter,
   LocationService,
+  locationService,
   DEFAULT_MAX_COVERAGE_RADIUS_M,
   DEFAULT_EAT_NOW_BUFFER_MINUTES,
   type LocationCoordinates,
@@ -103,7 +104,7 @@ describe('GM-24 Location Service & Domain Logic', () => {
       expect(eatNowTime).toBe('2026-10-15T12:30:00.000Z');
     });
 
-    it('uses default 30 minutes buffer when omitted', () => {
+    it('uses default 15 minutes buffer when omitted', () => {
       const serverTime = '2026-10-15T10:00:00.000Z';
       const eatNowTime = computeEatNowTime(serverTime);
 
@@ -291,12 +292,12 @@ describe('GM-24 Location Service & Domain Logic', () => {
       expect(manualRes.coords).toBeNull();
     });
 
-    it('resolves Eat Now time context with 30-minute buffer once', () => {
+    it('resolves Eat Now time context with 15-minute buffer once', () => {
       const serverTime = '2026-10-15T09:00:00.000Z';
       const timeRes = service.resolveEatNow(serverTime);
 
       expect(timeRes.mode).toBe('now');
-      expect(timeRes.desiredAt).toBe('2026-10-15T09:30:00.000Z');
+      expect(timeRes.desiredAt).toBe('2026-10-15T09:15:00.000Z');
       expect(timeRes.isPast).toBe(false);
       expect(timeRes.requiresConfirmation).toBe(false);
     });
@@ -333,6 +334,11 @@ describe('GM-24 Location Service & Domain Logic', () => {
   });
 
   describe('NativeLocationAdapter & WebLocationAdapter', () => {
+    it('uses platform composition for the default service instead of the legacy web adapter', () => {
+      expect(new LocationService().getAdapter()).not.toBeInstanceOf(WebLocationAdapter);
+      expect(locationService.getAdapter()).not.toBeInstanceOf(WebLocationAdapter);
+    });
+
     it('NativeLocationAdapter delegates to injected native provider when available', async () => {
       const mockProvider = {
         requestForegroundPermissionsAsync: jest.fn().mockResolvedValue({ status: 'granted', granted: true }),

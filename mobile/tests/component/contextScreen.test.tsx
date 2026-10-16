@@ -113,7 +113,7 @@ describe('GM-24 ContextScreen Component & Scenarios', () => {
     });
 
     // Attempting to press save button must NOT trigger handleSave because time is in past
-    await user.press(screen.getByText('Xác nhận bối cảnh phòng'));
+    await user.press(screen.getByRole('button', { name: 'Xác nhận bối cảnh phòng' }));
     expect(handleSave).not.toHaveBeenCalled();
 
     // User clicks "Điều chỉnh thành giờ hợp lệ"
@@ -124,7 +124,11 @@ describe('GM-24 ContextScreen Component & Scenarios', () => {
     });
 
     // Now saving is permitted and sends a valid future desiredAt
-    await user.press(screen.getByText('Xác nhận bối cảnh phòng'));
+    await user.press(screen.getByText('Xem món mẫu theo bối cảnh'));
+    await waitFor(() => expect(screen.getByRole('checkbox', { name: 'Tôi xác nhận điểm công cộng, buổi và giờ ăn' })).toBeEnabled());
+    await user.press(screen.getByRole('checkbox', { name: 'Tôi xác nhận điểm công cộng, buổi và giờ ăn' }));
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Xác nhận bối cảnh phòng' })).toBeEnabled());
+    await user.press(screen.getByRole('button', { name: 'Xác nhận bối cảnh phòng' }));
     expect(handleSave).toHaveBeenCalledTimes(1);
     const saved = handleSave.mock.calls[0][0];
     expect(Date.parse(saved.desiredAt)).toBeGreaterThan(Date.parse('2026-10-15T11:30:00.000Z'));
@@ -258,6 +262,41 @@ describe('GM-24 ContextScreen Component & Scenarios', () => {
     expect(handleSave).not.toHaveBeenCalled();
   });
 
+  it('rechecks the server clock when Eat Now is confirmed after its target expires', async () => {
+    const user = userEvent.setup();
+    const handleSave = jest.fn();
+    const baseTime = Date.parse('2026-10-15T01:00:00.000Z');
+    const clock = jest.spyOn(Date, 'now').mockReturnValue(baseTime);
+    const client = {
+      getDiscoveryContext: jest.fn().mockResolvedValue({
+        ok: true,
+        data: {
+          serverTime: '2026-10-15T01:00:00.000Z',
+          anchors: [{ id: 'anc_ho_con_rua', coverageId: 'cov_hcm', name: 'Hồ Con Rùa', address: 'Công trường Quốc Tế', lat: 10.7828, lng: 106.6958 }],
+          coverageAreas: [],
+        },
+      }),
+      previewFoodPool: jest.fn().mockResolvedValue({
+        ok: true,
+        data: { pool: [{ roundDishId: 'dish_1', name: 'Món mẫu' }], datasetVersion: '1.1.0', eligibilityVersion: '1.0.0', evaluatedAt: '2026-10-15T01:00:00.000Z', totalCandidateCount: 1 },
+      }),
+    } as unknown as ApiClient;
+
+    try {
+      await render(<ContextScreen apiClient={client} initialScenario="manual_only" onSaveContext={handleSave} />);
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Xác nhận bối cảnh phòng' })).toBeEnabled());
+      await user.press(screen.getByRole('button', { name: 'Xem món mẫu theo bối cảnh' }));
+      await waitFor(() => expect(screen.getByRole('checkbox', { name: 'Tôi xác nhận điểm công cộng, buổi và giờ ăn' })).toBeEnabled());
+      clock.mockReturnValue(baseTime + 20 * 60 * 1000);
+      await user.press(screen.getByRole('checkbox', { name: 'Tôi xác nhận điểm công cộng, buổi và giờ ăn' }));
+      await user.press(screen.getByRole('button', { name: 'Xác nhận bối cảnh phòng' }));
+      expect(handleSave).not.toHaveBeenCalled();
+      expect(screen.getByText(/thời gian ăn đang ở quá khứ/)).toBeOnTheScreen();
+    } finally {
+      clock.mockRestore();
+    }
+  });
+
   it('onSaveContext passes pure sanitized RoomContext without coordinates', async () => {
     const user = userEvent.setup();
     const handleSave = jest.fn();
@@ -274,6 +313,10 @@ describe('GM-24 ContextScreen Component & Scenarios', () => {
       expect(screen.getByText('Xác nhận bối cảnh phòng')).toBeOnTheScreen();
     });
 
+    await user.press(screen.getByText('Xem món mẫu theo bối cảnh'));
+    await waitFor(() => expect(screen.getByRole('checkbox', { name: 'Tôi xác nhận điểm công cộng, buổi và giờ ăn' })).toBeEnabled());
+    await user.press(screen.getByRole('checkbox', { name: 'Tôi xác nhận điểm công cộng, buổi và giờ ăn' }));
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Xác nhận bối cảnh phòng' })).toBeEnabled());
     await user.press(screen.getByText('Xác nhận bối cảnh phòng'));
 
     expect(handleSave).toHaveBeenCalledTimes(1);
