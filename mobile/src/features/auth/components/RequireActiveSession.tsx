@@ -24,6 +24,11 @@ export function RequireActiveSession({ children, onHome }: { children: ReactNode
   if (live.isInitializing) {
     title = 'Đang khôi phục phiên…';
     message = 'Chờ xác nhận danh tính trước khi tải dữ liệu phòng.';
+  } else if (live.issue === 'session-recovery-required') {
+    title = 'Phiên cần khôi phục';
+    message = 'Máy chủ từ chối phiên hiện tại. Làm mới phiên trước khi tiếp tục.';
+    retryLabel = 'Thử khôi phục phiên';
+    retryAction = () => { void retryRestore(); };
   } else if (live.issue === 'restore-unavailable') {
     title = 'Chưa khôi phục được phiên';
     message = 'Kiểm tra kết nối rồi thử lại. Thông tin phiên đã lưu được giữ nguyên.';

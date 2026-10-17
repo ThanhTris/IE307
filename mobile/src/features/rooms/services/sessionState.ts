@@ -5,6 +5,7 @@ export type SessionIssue =
   | 'none'
   | 'no-session'
   | 'restore-unavailable'
+  | 'session-recovery-required'
   | 'session-revoked'
   | 'signup-uncertain'
   | 'storage-unavailable'

@@ -1,9 +1,9 @@
 # Bàn giao đầu ra task — GM-25 / roadmap-v2
 
 Task / owner / reviewer / track / stage: GM-25 / Trang (`rosy179`) / Trí (`ThanhTris`) / INTEGRATION / integration
-PR / branch / target / tested source: PR #124 / `continue_task_gm_twenty_five` -> `origin/main` (`4a8cd64`); local uncommitted tree based on `7412cf4`
+PR / branch / target / tested source: PR #124 / `continue_task_gm_twenty_five` -> `origin/main` (`4a8cd64`); local uncommitted API-recovery follow-up based on `11fe8a7`
 Contract version / schema version / dataset version: `food-v1/roadmap-v2/GM-25.1` / schema `0.3.0` (GM-19) / dataset `food-v1`
-CHECKS.md / tested revision: [CHECKS.md](CHECKS.md) / local uncommitted `continue_task_gm_twenty_five`
+CHECKS.md / tested revision: [CHECKS.md](CHECKS.md) / local uncommitted follow-up on `continue_task_gm_twenty_five`; not pushed yet
 
 ---
 
@@ -26,7 +26,7 @@ CHECKS.md / tested revision: [CHECKS.md](CHECKS.md) / local uncommitted `continu
 | `mobile/src/app/gm10/preferences.tsx` | GM-25 | GM-25.1 | Mở route `/gm10/preferences` kèm `roomId` | Cập nhật khẩu vị cá nhân thông qua `updatePreferences`; không fallback fixture khi thiếu id | UI Consumer |
 | `mobile/src/app/gm11/lobby.tsx` | GM-25 | GM-25.1 | Mở route `/gm11/lobby` kèm `roomId` | Phòng chờ thật: refresh snapshot, conflict recovery, durable request IDs, start button guard | UI Consumer |
 | `mobile/tests/unit/roomRepository.test.ts` | GM-25 | GM-25.1 | `npm test -- tests/unit/roomRepository.test.ts` | Unit tests bao phủ các phương thức RPC, session identity và lỗi auth | CI / Test Suite |
-| `mobile/tests/component/gm25ReviewFeedback.test.tsx` | GM-25 | GM-25.1 | `npm test -- tests/component/gm25ReviewFeedback.test.tsx` | 16 tests, gồm onboarding, route guard, session identity, lobby identity và các hồi quy GM-25 | CI / Test Suite |
+| `mobile/tests/component/gm25ReviewFeedback.test.tsx` | GM-25 | GM-25.1 | `npm test -- tests/component/gm25ReviewFeedback.test.tsx` | 17 tests, gồm onboarding, route guard, session identity recovery, lobby identity và các hồi quy GM-25 | CI / Test Suite |
 
 ---
 
@@ -36,7 +36,7 @@ CHECKS.md / tested revision: [CHECKS.md](CHECKS.md) / local uncommitted `continu
 | --- | --- | --- | --- | --- |
 | **AC1: Đạt kiểm Android-API** | **Not run** | Android thật + backend test; xem [CHECKS.md](CHECKS.md) | Chưa có điện thoại ADB kết nối hoặc xác nhận backend test hiện hành. | Jest/HTTP giả lập chỉ là regression tự động, chưa chứng minh app gọi backend thật. |
 | **AC2: Giữ nguyên layout UI, không fallback fixture ở production** | **Pass (code path) / Not run (Android)** | Route guard và composition root; xem [CHECKS.md](CHECKS.md) | Unit/component tests kiểm đường đi; cần kiểm thêm trên bản app chạy thật. | Architecture check không phải nghiệm thu production. |
-| **AC3: Auth/session/validation/error, consent/history đúng thực tế** | **Pass (synthetic session tests) / Not run (GoTrue thật)** | `authSession.test.ts`, `roomRepository.test.ts`, `gm25ReviewFeedback.test.tsx` | Test dùng SessionManager thật trong bộ nhớ, auth/storage/API tổng hợp. | Chưa xác minh endpoint hoặc migration/RPC đang deploy. |
+| **AC3: Auth/session/validation/error, consent/history đúng thực tế** | **Pass (synthetic session tests) / Not run (GoTrue thật)** | `authSession.test.ts`, `roomRepository.test.ts`, `gm25ReviewFeedback.test.tsx` | Test dùng SessionManager thật trong bộ nhớ; API `AUTH_REQUIRED` khóa identity, chặn request cũ và cần thao tác refresh rõ ràng trước khi gọi tiếp. | Chưa xác minh endpoint hoặc migration/RPC đang deploy. |
 | **AC4: Nhiều máy nhận cùng snapshot, reset ready khi bối cảnh đổi** | **Not run (multi-client API)** | Chạy kịch bản mục 3 bằng một Android và client thứ hai | Regression conflict/polling chỉ kiểm UI với API giả lập. | Chưa có bằng chứng đồng bộ server giữa hai identity. |
 | **AC5: Out-of-coverage/empty báo lý do server, không start pool rỗng** | **Pass (mocked contract) / Not run (server thật)** | Component tests và backend test environment | Test xác nhận UI khóa thao tác theo response giả lập. | Không tuyên bố parity hay coverage thật. |
 | **AC6: Đầu vào/đầu ra và cách kiểm ghi trong HANDOFF.md** | **Pass (documentation)** | File này | Lệnh và giới hạn thiết bị/backend được ghi dưới đây. | Không thay cho kiểm trên Android và backend. |
@@ -101,6 +101,13 @@ Metro và backend là hai endpoint riêng. QR/tunnel Expo chỉ đưa bundle Met
    - Trang bấm **"Bắt đầu chọn món"** -> Server chuyển trạng thái phòng sang vòng 1.
 4. **Kiểm tra Reset Ready khi đổi bối cảnh:**
    - Trước khi bắt đầu, nếu Host bấm **"Chỉnh sửa bối cảnh"** và thay đổi giờ ăn hoặc ngân sách, server cập nhật và cờ "Sẵn sàng" của cả hai thành viên tự động đặt lại về chưa sẵn sàng.
+
+5. **Khôi phục sau khi API từ chối session:**
+   - Cho API test trả `401/AUTH_REQUIRED` cho một request đang đăng nhập.
+   - Xác nhận identity đang hoạt động bị ẩn, Home/route guard hiện nút **"Thử khôi phục phiên"**, và request tiếp theo không gửi lại token cũ.
+   - Bấm khôi phục; client refresh session trước khi tải dữ liệu lại. Nếu refresh bị từ chối, UI chuyển sang trạng thái xóa phiên cục bộ trước khi tạo phiên khách mới.
+
+Kịch bản này có regression tổng hợp; chưa chạy trên GoTrue/backend test hoặc thiết bị Android thật.
 
 Các bước trên là kịch bản nghiệm thu cần chạy, chưa phải bằng chứng đã chạy. Bản hiện tại chỉ có regression tổng hợp; không có thiết bị ADB hoặc backend đã xác minh.
 

@@ -14,7 +14,8 @@ import type {
   UpdateContextRequest,
   UpdatePreferencesRequest,
 } from '../../src/data/api/contracts';
-import type { SessionApi, SessionStorage, StoredSession } from '../../src/data/auth/types';
+import { SessionManager } from '../../src/data/auth/session';
+import type { AuthPort, SessionApi, SessionStorage, StoredSession } from '../../src/data/auth/types';
 import type { SessionStatus } from '../../src/features/rooms/services/sessionState';
 
 describe('LiveRoomRepository (GM-25)', () => {
@@ -221,6 +222,86 @@ describe('LiveRoomRepository (GM-25)', () => {
     expect(repo.getCurrentUser()).not.toBeNull();
     await repo.logout();
     expect(repo.getCurrentUser()).toBeNull();
+  });
+
+  it('requires explicit session recovery after an API rejects the active token', async () => {
+    const client = createMockClient();
+    const session = createMockSession();
+    const repo = createRoomRepository({ client, session });
+    await repo.restoreSession();
+    client.listFriends.mockResolvedValueOnce({ ok: false, error: { messageKey: 'AUTH_REQUIRED' } });
+
+    expect(await repo.listFriends()).toMatchObject({ ok: false, error: { messageKey: 'AUTH_REQUIRED' } });
+    expect(repo.getSessionSnapshot()).toMatchObject({
+      status: 'lost', user: null, issue: 'session-recovery-required',
+    });
+
+    expect(await repo.listFriends()).toMatchObject({ ok: false, error: { messageKey: 'AUTH_REQUIRED' } });
+    expect(client.listFriends).toHaveBeenCalledTimes(1);
+
+    session.refreshSession.mockResolvedValueOnce({ ok: true, data: mockUser });
+    expect((await repo.restoreSession()).ok).toBe(true);
+    expect(session.refreshSession).toHaveBeenCalledTimes(1);
+    expect(session.restoreSession).toHaveBeenCalledTimes(1);
+    expect(repo.getSessionSnapshot()).toMatchObject({ status: 'active', user: mockUser, issue: 'none' });
+
+    expect((await repo.listFriends()).ok).toBe(true);
+    expect(client.listFriends).toHaveBeenCalledTimes(2);
+  });
+
+  it('refreshes a rejected token through the real SessionManager before allowing another API request', async () => {
+    const client = createMockClient();
+    const saved: StoredSession = {
+      accessToken: 'old_access', refreshToken: 'old_refresh',
+      expiresAt: new Date(Date.now() + 3600000).toISOString(), user: mockUser,
+    };
+    const rotated: StoredSession = {
+      ...saved, accessToken: 'new_access', refreshToken: 'new_refresh',
+      expiresAt: new Date(Date.now() + 7200000).toISOString(),
+    };
+    const storage = createSessionStorage(saved);
+    const auth: jest.Mocked<AuthPort> = {
+      createGuest: jest.fn(),
+      verify: jest.fn().mockResolvedValue(mockUser),
+      refresh: jest.fn().mockResolvedValue(rotated),
+      logout: jest.fn().mockResolvedValue(undefined),
+    };
+    const session = new SessionManager({ auth, storage, clearPrivateData: jest.fn().mockResolvedValue(undefined) });
+    const repo = createRoomRepository({ client, session, sessionStorage: storage });
+    await repo.restoreSession();
+    client.listFriends.mockResolvedValueOnce({ ok: false, error: { messageKey: 'AUTH_REQUIRED' } });
+
+    await repo.listFriends();
+    expect(repo.getSessionSnapshot()).toMatchObject({ status: 'lost', issue: 'session-recovery-required', user: null });
+    expect(await repo.listFriends()).toMatchObject({ ok: false, error: { messageKey: 'AUTH_REQUIRED' } });
+    expect(client.listFriends).toHaveBeenCalledTimes(1);
+
+    expect((await repo.restoreSession()).ok).toBe(true);
+    expect(auth.refresh).toHaveBeenCalledWith('old_refresh');
+    expect(storage.save).toHaveBeenLastCalledWith(rotated);
+    expect(await session.getAccessToken()).toEqual({ ok: true, data: 'new_access' });
+    expect(repo.getSessionSnapshot()).toMatchObject({ status: 'active', issue: 'none', user: mockUser });
+    expect((await repo.listFriends()).ok).toBe(true);
+    expect(client.listFriends).toHaveBeenCalledTimes(2);
+  });
+
+  it('discards an in-flight success after another request reports AUTH_REQUIRED', async () => {
+    const client = createMockClient();
+    const session = createMockSession();
+    const repo = createRoomRepository({ client, session });
+    await repo.restoreSession();
+    let resolveFirst!: (result: Awaited<ReturnType<ApiClient['listFriends']>>) => void;
+    client.listFriends
+      .mockImplementationOnce(() => new Promise(resolve => { resolveFirst = resolve; }))
+      .mockResolvedValueOnce({ ok: false, error: { messageKey: 'AUTH_REQUIRED' } });
+
+    const staleRead = repo.listFriends();
+    const rejectedRead = repo.listFriends();
+    await rejectedRead;
+    resolveFirst({ ok: true, data: [{ id: 'friend_old', friendUserId: 'usr_old', friendCode: 'OLD234', displayName: 'Phiên trước', status: 'active', since: '2026-10-16T00:00:00Z' }] });
+
+    expect(await staleRead).toMatchObject({ ok: false, error: { messageKey: 'AUTH_REQUIRED' } });
+    expect(repo.getSessionSnapshot()).toMatchObject({ status: 'lost', user: null, issue: 'session-recovery-required' });
   });
 
   it('delegates discovery and room entry operations', async () => {

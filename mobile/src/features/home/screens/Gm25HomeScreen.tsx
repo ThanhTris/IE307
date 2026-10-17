@@ -99,6 +99,8 @@ export function Gm25HomeScreen({ repository, sessionToken, liveSession, activeRo
   const sessionNotice = liveSession && !liveSession.isInitializing && !sessionUser
     ? liveSession.issue === 'no-session'
       ? <StatusNotice title="Chưa có phiên" message="Chọn Tạo kèo ăn hoặc Tôi có mã phòng để bắt đầu phiên khách bằng tên của bạn." colors={colors} />
+      : liveSession.issue === 'session-recovery-required'
+        ? <StatusNotice title="Phiên cần khôi phục" message="Máy chủ từ chối phiên hiện tại. Hãy làm mới phiên trước khi tiếp tục; nếu phiên đã bị thu hồi, bạn có thể xóa phiên cục bộ rồi bắt đầu phiên mới." actionLabel="Thử khôi phục phiên" onAction={() => { void liveSession.restoreSession(); }} tone="warning" colors={colors} />
       : liveSession.issue === 'restore-unavailable'
         ? <StatusNotice title="Chưa khôi phục được phiên" message="Thông tin phiên đã lưu được giữ nguyên. Kiểm tra kết nối rồi thử lại." actionLabel="Thử khôi phục phiên" onAction={() => { void liveSession.restoreSession(); }} tone="warning" colors={colors} />
         : liveSession.issue === 'session-revoked' || liveSession.status === 'lost'

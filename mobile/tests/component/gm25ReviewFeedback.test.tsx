@@ -284,6 +284,27 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     expect(fixture.auth.createGuest).not.toHaveBeenCalled();
   });
 
+  test('P1: Home offers explicit session recovery after an API auth rejection', async () => {
+    const user = userEvent.setup();
+    const restoreSession = jest.fn().mockResolvedValue(true);
+    const liveSession = {
+      status: 'lost' as const,
+      issue: 'session-recovery-required' as const,
+      user: null,
+      isInitializing: false,
+      ensureSession: jest.fn().mockResolvedValue(false),
+      restoreSession,
+      logout: jest.fn().mockResolvedValue(true),
+    };
+    await render(<Gm25HomeScreen repository={createMockApiClient()} liveSession={liveSession} onCreate={jest.fn()} onJoin={jest.fn()} onResume={jest.fn()} />);
+
+    expect(screen.getByText('Phiên cần khôi phục')).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Thử khôi phục phiên' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: '＋ Tạo kèo ăn' })).toBeDisabled();
+    await user.press(screen.getByRole('button', { name: 'Thử khôi phục phiên' }));
+    expect(restoreSession).toHaveBeenCalledTimes(1);
+  });
+
   test('P1: repository guest creation and logout update Home identity without remounting the provider', async () => {
     const fixture = createSyntheticSessionManager(null);
     const repository = new LiveRoomRepository({ client: createMockApiClient(), session: fixture.manager });

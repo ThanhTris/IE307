@@ -116,6 +116,7 @@ export class LiveRoomRepository implements RoomRepository {
 
   async restoreSession(sessionToken?: string): Promise<ReadResult<SessionUser>> {
     const revision = ++this.identityRevision;
+    const recoveringRejectedSession = this.sessionSnapshot.issue === 'session-recovery-required';
     let storedSessionExists: boolean | undefined;
     if (this.session && this.sessionStorage) {
       try {
@@ -129,8 +130,12 @@ export class LiveRoomRepository implements RoomRepository {
 
     let result: ReadResult<SessionUser>;
     if (this.session) {
-      const restore = this.session.restoreSession as (token?: string) => Promise<ReadResult<SessionUser>>;
-      result = await restore.call(this.session, sessionToken);
+      if (recoveringRejectedSession) {
+        result = await this.session.refreshSession();
+      } else {
+        const restore = this.session.restoreSession as (token?: string) => Promise<ReadResult<SessionUser>>;
+        result = await restore.call(this.session, sessionToken);
+      }
     } else {
       result = await this.client.restoreSession(sessionToken ?? '');
     }
@@ -144,7 +149,13 @@ export class LiveRoomRepository implements RoomRepository {
       const status = readManagerStatus(this.session);
       const noSavedSession = storedSessionExists === false
         || (storedSessionExists === undefined && result.error.messageKey === 'AUTH_REQUIRED' && this.sessionSnapshot.status === 'empty');
-      const next = noSavedSession
+      const next = recoveringRejectedSession && result.error.messageKey === 'AUTH_REQUIRED'
+        ? { status: 'lost' as const, user: null, issue: 'session-revoked' as const }
+        : recoveringRejectedSession && status === 'blocked'
+          ? { status: 'blocked' as const, user: null, issue: 'unknown-error' as const }
+          : recoveringRejectedSession
+            ? { status: 'lost' as const, user: null, issue: 'session-recovery-required' as const }
+            : noSavedSession
         ? { status: 'empty' as const, user: null, issue: 'no-session' as const }
         : result.error.messageKey === 'AUTH_REQUIRED'
           ? { status: 'lost' as const, user: null, issue: 'session-revoked' as const }
@@ -302,14 +313,29 @@ export class LiveRoomRepository implements RoomRepository {
   }
 
   private async request<T>(operation: () => Promise<T>): Promise<T> {
+    const revision = this.identityRevision;
+    if (this.session && this.sessionSnapshot.status !== 'active') {
+      return authRequiredResult() as T;
+    }
     const result = await operation();
     const response = result as { ok?: boolean; error?: { messageKey?: string } };
-    if (!response.ok && response.error?.messageKey === 'AUTH_REQUIRED' && this.session && readManagerStatus(this.session) === 'lost') {
+    if (this.session && revision !== this.identityRevision) {
+      return authRequiredResult(result) as T;
+    }
+    if (!response.ok && response.error?.messageKey === 'AUTH_REQUIRED' && this.session && this.sessionSnapshot.status === 'active') {
       ++this.identityRevision;
-      this.updateSessionSnapshot({ status: 'lost', user: null, issue: 'session-revoked' });
+      this.updateSessionSnapshot({ status: 'lost', user: null, issue: 'session-recovery-required' });
     }
     return result;
   }
+}
+
+function authRequiredResult<T>(previous?: unknown): T {
+  const result = previous && typeof previous === 'object'
+    ? { ...(previous as Record<string, unknown>) }
+    : {};
+  delete result.data;
+  return { ...result, ok: false, error: { messageKey: 'AUTH_REQUIRED' } } as T;
 }
 
 function readManagerStatus(session: SessionApi): SessionStatus {
