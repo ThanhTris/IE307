@@ -1,0 +1,48 @@
+# GM36.1 independent boundary, not an enabled production OCR API.
+# Reproducible supported runner:
+# npm run backend:start
+# GM36_PYTHON=python3 node scripts/gm36_http_check.mjs
+# It creates its own loopback HTTP port, uses real GoTrue guests, asserts14 groups,
+# then removes guest identities/server. Recognizer is explicitly a test double.
+# These requests document the future reviewed Edge route. edge_runtime currently
+# remains false and index.ts remains disabled. Do not enable/deploy to run this file.
+# Use a controlled harness/approved deployment and substitute URL/session manually.
+@baseUrl = REPLACE_WITH_REVIEWED_ENDPOINT
+@operatorToken = REPLACE_WITH_REAL_OPERATOR_SESSION
+@outsiderToken = REPLACE_WITH_VALID_NON_OPERATOR_SESSION
+
+### Proposed operator request: authorized test adapter ->200 draft only.
+# Actual disabled entry ->503 OCR_DISABLED after authentication.
+# Source declaration is not verified evidence. No URL fetches or direct publish.
+POST {{baseUrl}}/functions/v1/menu-ocr
+Authorization: Bearer {{operatorToken}}
+Content-Type: application/json
+
+{"requestId":"req_gm36_example","processingConsent":true,"source":{"sourceRef":"00000000-0036-4000-8000-000000000036","usageRights":"granted","license":"Synthetic test declaration only"},"image":{"mimeType":"image/png","dataBase64":"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/tZkAAAAASUVORK5CYII="}}
+
+### Missing JWT ->401 AUTH_REQUIRED; never invokes recognizer.
+POST {{baseUrl}}/functions/v1/menu-ocr
+Content-Type: application/json
+
+{}
+
+### Valid non-operator (even ocrOperator:true metadata) ->403 when test handler enabled.
+POST {{baseUrl}}/functions/v1/menu-ocr
+Authorization: Bearer {{outsiderToken}}
+Content-Type: application/json
+X-OCR-Role: operator
+
+{}
+
+### Unsupported media type ->415 after valid operator auth in test handler.
+POST {{baseUrl}}/functions/v1/menu-ocr
+Authorization: Bearer {{operatorToken}}
+Content-Type: text/plain
+
+not an image request
+
+# Actual assertions/status/body/confidence/null/no-publish and source hashes:
+# docs/evidence/roadmap-v2/GM-36/http/results.json
+# Provider timeout504, malformed502, unavailable503, empty422, quota429;
+# no secret/raw image/provider exception is returned. Actual output JSON is checked
+# by gm36_contract_check.py and the unchanged GM08 publish-ready preflight rejects it.
