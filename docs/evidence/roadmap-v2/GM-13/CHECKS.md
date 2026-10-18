@@ -1,73 +1,125 @@
 # GM-13 — kiểm màn Result/NoConsensus
 
-Kiểm mới nhất sau khi trình bày lại thẻ nơi bán:
-[OFFERING_CARD_REFINEMENT](OFFERING_CARD_REFINEMENT.md),
-657 tests mobile và 550 tests Python đạt; visual/device review của bố cục mới còn Not run.
+Ngày tổng hợp: 2026-10-19. Task [GM-13 / issue #74](../../../../tasks/backlog/GM-13.md),
+owner Tuấn (`mtuan2491`), reviewer cuối Trí (`ThanhTris`). Mode `expo-go`, màn
+UI-08/09 với fixture tổng hợp; không phải nghiệm thu API/native integration.
+Trạng thái bàn giao: chuẩn bị PR để trưởng nhóm review; chưa Approved/Done.
 
-Kết quả mới nhất ngày 2026-10-18: [rà soát và sửa local](RECHECK_2026-10-18.md).
-Phần ngày 2026-10-16 bên dưới là lịch sử, không thay xác minh gate/device hiện tại.
+## Revision và môi trường
 
-Ngày: 2026-10-16. Owner Tuấn (`mtuan2491`); reviewer Trí (`ThanhTris`).
-Nhánh `codex/gm-13-result-no-consensus`, base/HEAD
-`4a8cd642c8d908d9e6d2c75d19c0935a44cba042` + working tree theo
-[PATCH_MANIFEST](PATCH_MANIFEST.json). Chưa commit/push/merge hoặc Approved/Done.
-Contract task GM-13.1; API GM-07.1; result policy decision-v2. Fixture-only,
-không sử dụng dataset production, phòng hoặc phiếu người dùng thật.
+- Nhánh `codex/gm-13-result-no-consensus`, target dự kiến `main`.
+- Code nền `4d2cce7c161b4f11ccad5448f46d54a1ab4a67e8` + patch theo SHA256 từng
+  source/test trong [OFFERING_LOAD_MANIFEST](OFFERING_LOAD_MANIFEST.json).
+  Commit chứa hồ sơ này bàn giao patch cuối; không tự điền SHA commit chưa tạo.
+- Contract task `food-v1/roadmap-v2/GM-13.1`, API GM-07.1, policy `decision-v2`.
+  Dataset: fixture GM-13, không production/verified seed. Không thay schema.
+- Windows, Node 24.20.0/npm 11.19.0, Python 3.14; pandas/lxml/tzdata đã cài cho
+  regression. Expo 57.0.30/Router 57.0.28, React 19.2.3/RN 0.86.3 theo lockfile;
+  không đổi package/native module.
+- Expo Go trên Android, SDK57 theo thông tin người dùng. Chưa có số phiên bản
+  ứng dụng Expo Go và thông số máy GM-13 được xác nhận riêng.
 
-## Gate và môi trường
+## Kiểm thủ công do người dùng báo
 
-- Start gate đọc mới [Project #2](https://github.com/users/ThanhTris/projects/2) tại `2026-10-16T07:24:23.474977+00:00`: `GM-13: READY_TO_CLAIM`. Không lấy Closed/local/cache thay Done. Sau fetch, `git rev-list --left-right --count HEAD...origin/main` trả `0 0`. Gate này không phải approval GM-13.
-- Windows, Node 24.20.0 / npm 11.19.0; Expo 57.0.30/RN 0.86.3 theo lockfile hiện hành. Không đổi package/lockfile hoặc thêm thư viện native.
-- Python 3.14 với `tzdata` trong môi trường uv riêng ở cache `.work/uv-cache`; không cài vào Python hệ thống hoặc sửa dependency app. Các lỗi regression trước đăng nhập/thiếu timezone vẫn được ghi lịch sử trong REQUIREMENTS_AUDIT.
-- npm ci lần đầu bị offline cache miss, lần online gặp idle timeout; retry `--offline=false --prefer-offline --maxsockets=4 --fetch-retries=2` hoàn tất 1064 packages. Không bỏ dependency validation.
-- Bundle sandbox lỗi `spawn EPERM` khi gọi Hermes; chạy lại cùng lệnh ngoài sandbox Pass. Không đổi compiler/build config để vượt lỗi.
+Nguồn xác nhận ngày 2026-10-19 trong cuộc hội thoại sau sửa fixture, icon, ngắt
+dòng và bỏ viền nhấn Maps: **“tôi đã kiểm tra trên expo go xong”**. Ghi nhận hoàn
+thành lượt kiểm theo báo cáo tổng quát; người dùng không báo lỗi mới trước khi
+yêu cầu bàn giao. Agent không trực tiếp thao tác điện thoại và không diễn giải
+câu này thành Pass riêng mọi ca hoặc approval của trưởng nhóm.
 
-## Kết quả tự động
+Theo chỉ dẫn trực tiếp, **không yêu cầu ảnh/video** cho lần bàn giao này. Evidence
+thủ công là xác nhận bằng văn bản cùng revision/fixture/cách tái lập. Merge,
+quyết định nghiệm thu và chuyển Done do trưởng nhóm thực hiện.
 
-| Lệnh | Actual / assertion | Kết quả |
+Người dùng yêu cầu tra thiết bị từ issue trước. GitHub Project/issue live chưa
+truy cập được. Hồ sơ local GM-09/10 ghi chưa cung cấp model/Android;
+[GM-16 device check](../GM-16/MOBILE_DEVICE_CHECK.txt) ghi **OPPO Find X9,
+CPH2797, Android 16**. Đây là máy của phép kiểm GM-16, chưa có căn cứ xác nhận
+là máy của người dùng hoặc máy kiểm GM-13; không chép thành thông số đo mới.
+Không lấy trạng thái Markdown/cache làm Project Done hiện hành.
+
+| Mục trên điện thoại | Actual / nguồn | Trạng thái và giới hạn |
 | --- | --- | --- |
-| `npm ci --no-audit --no-fund` với tùy chọn cache/retry nêu trên | Cài theo lockfile, không diff manifest/lockfile | Pass |
-| `npm run check:expo` | Installed dependencies match lockfile, SDK bundled compatibility up to date; là locked/offline check, không phải kiểm online patch mới | Pass — [output](EXPO_CHECK.txt) |
-| `npm run check` | TypeScript strict; lint 0 errors, 4 warnings có sẵn trong data/api; Jest 24 suites / 655 tests; architecture boundaries OK | Pass — [output](MOBILE_CHECK.txt) |
-| `npm run bundle:android` | Android 1330 modules, Hermes `.hbc` xuất trong `mobile/dist/android`; đây là bundle JS/Hermes, chưa phải APK/native build hoặc device smoke | Pass — [output](ANDROID_BUNDLE.txt) |
-| `uv run --no-project --cache-dir .work/uv-cache --with tzdata --python <Python3.14> python -m unittest discover -s tests -p 'test_*.py'` | 550 tests, OK, skipped=6; chạy ngoài sandbox để Temp hoạt động. Các thông báo ERROR/HTTP429 do test scenario, kết luận unittest exit0 | Pass — [output](PYTHON_REGRESSION.txt) |
-| `python scripts/validate_repository.py` | Docs/links/JSON/task manifest/dependencies/FR traceability | Pass — [output](VALIDATION.txt) |
-| `python scripts/task_readiness.py --check-docs` | Indexes khớp, không đổi task metadata | Pass — [output](VALIDATION.txt) |
-| `git diff --check` và kiểm riêng files untracked | Không lỗi whitespace; no-index exit1 chỉ báo file mới khác file rỗng, lỗi whitespace có exit3 | Pass — [output](VALIDATION.txt) |
+| Mở app và kiểm bản sửa cuối trên Expo Go | Người dùng báo đã kiểm xong sau bản sửa cuối, không có báo lỗi mới | Đã kiểm theo báo cáo tổng quát; chưa phải review Approved |
+| Từng tier/fixture, refetch, action, new/Home/Back | Có assertions tự động bên dưới; chưa có báo cáo từng ca | Chưa xác nhận riêng trên thiết bị |
+| Light/dark, font200%, TalkBack, responsive/reduced motion | Chưa có báo cáo riêng cho GM-13 | Not run trong phiên agent; chưa xác nhận riêng từ người dùng |
+| Model/Android/Expo Go app version GM-13 | SDK57 đã được nêu; model lịch sử chỉ có ở GM-16 | Chưa xác nhận riêng; không suy thiết bị từ task khác |
 
-Metro local khởi động trên port8081; `GET /status` trả
-`packager-status:running`, Android manifest trả hostUri. Đây là kiểm dev server,
-chưa có request từ điện thoại hoặc xác nhận UI/device. Lần start đầu kết hợp
-`--offline` với script `--lan` bị CLI từ chối; dùng `npm start -- --port 8081`
-đúng script sẵn có, không sửa config.
+Các mục bắt buộc chưa có kết quả riêng cần trưởng nhóm đối chiếu khi nghiệm thu;
+vẫn bàn giao PR để review, không tự ghi toàn bộ device AC Pass hoặc Done.
 
-## Ma trận scope và AC
+## Kết quả tự động trên source bàn giao
 
-| Input/thao tác | Expected | Actual tự động | Android thật |
+| Lệnh / phạm vi | Actual | Kết quả / output |
+| --- | --- | --- |
+| `npm run check:expo` | Installed dependencies khớp lockfile; bundled compatibility đạt, đã chạy lại trong lượt patch | Pass locked/offline; không kiểm patch online |
+| `npm run check` | TypeScript strict, lint 0 errors/4 warnings sẵn trong API, 24 suites/669 tests, architecture guard | Pass — [log cuối](OFFERING_LOAD_MOBILE_CHECK.txt) |
+| `npm run bundle:android` | Hermes `entry-377a8b0b1f57294508a182cd30f86015.hbc`, export thành công | Pass — [log](OFFERING_LOAD_ANDROID_BUNDLE.txt); chưa phải APK |
+| Python full regression với pandas/lxml/tzdata | 550 tests, OK, không skipped | Pass — [log](OFFERING_LOAD_PYTHON.txt); Cell ERROR/HTTP429 là ca lỗi mô phỏng |
+| Repo validator / check-docs / diff / hash source | Docs/links/JSON/task indexes hợp lệ; source khớp manifest | Pass — [log patch](OFFERING_LOAD_VALIDATION.txt); kiểm lại sau tổng hợp hồ sơ trước commit |
+
+Sau tổng hợp CHECKS/HANDOFF đã chạy lại Python: **550 tests, OK, không skipped**
+([output bàn giao](HANDOFF_PYTHON.txt)); repo validator/check-docs/diff và đối
+chiếu hash source đạt ([output bàn giao](HANDOFF_VALIDATION.txt)). Không chạy
+lặp mobile check vì source/test không đổi so với manifest đã đạt 669 tests.
+
+Không sửa source sau lượt kiểm cuối; lần này tổng hợp CHECKS/HANDOFF và kết quả
+người dùng báo. Không dùng output lịch sử 655/657 tests hoặc 6 skipped thay kết
+quả bản cuối 669 tests mobile / 550 tests Python không skipped.
+
+## Ma trận AC và tái lập
+
+Chạy theo [HANDOFF](HANDOFF.md), mở `/gm13/result` và Công cụ kiểm thử GM-13.
+Mọi fixture có nhãn mô phỏng; không dùng phòng/phiếu/dataset người dùng thật.
+
+| Input / thao tác | Expected / assertion | Actual tự động | Android thật |
 | --- | --- | --- | --- |
-| PERFECT/CONSENSUS/COMPROMISE | Đúng tier/reason, cùng winner và không lộ matrix | Pass: unit witnesses dùng domain trên phiếu tổng hợp có alternative bị NO; component render đúng copy | Not run |
-| Nơi bán ready/empty/stale/closed/changed/unknown/loading/error | Thông báo đúng, refetch không reroll/pool change | Pass: rerender và preview refetch giữ resultId/winner/tier | Not run |
-| Null/0/giá nhóm/thiếu đơn vị hoặc nguồn | Chưa có/Chưa rõ khi thiếu, không tự đổi giá nhóm thành giá/người | Pass: formatter/component tests | Not run |
-| Khoảng cách 0/unknown/1500m | Có đơn vị và đường chim bay tới anchor; không lấy GPS/đường đi | Pass | Not run |
-| Hai offering hoặc offering lệch winner choice | Không trộn metadata; loại item lệch và có refetch | Pass: giá/target riêng, same dish/choice/round row assertions | Not run |
-| Maps/review/browser/copy thành công/lỗi/pending | Đúng public target, callback-only, bắt lỗi và khóa double action | Pass: spy target, reject promise, missing target disabled | Not run |
-| NoConsensus EMPTY_INTERSECTION/ALL_REMOVED | Lý do trung tính, không winner/người NO/vòng ba | Pass; result sai loại không bị gán là no consensus | Not run |
-| New/Home/Android Back | Phiên mới không carry dữ liệu phòng mẫu; terminal Back về Home | Pass: route modules thật và BackHandler test callback | Not run |
-| Home tools → Foundation → Result → NoConsensus | Mở đúng routes và banner mô phỏng | Pass: route integration | Not run |
-| Dark/light, 320–599dp, font200, TalkBack, reduced motion | Không tràn/cắt nút, nhãn đọc rõ; không animation bắt buộc | Unit dark semantic color Pass; không có animation trong feature. Không suy layout/device từ Jest | Not run |
+| PERFECT / CONSENSUS / COMPROMISE | Đúng winner/tier/reason; không lộ phiếu hoặc tự chọn winner | Pass; fixture đối chiếu domain, alternative có NO không thắng | Trong báo cáo chung, chưa tách kết quả từng ca |
+| Ready/empty/stale/closed/changed/unknown | Giá/đơn vị/nguồn/ngày kiểm/lịch và thông báo đúng; empty khác lỗi | Pass: formatter/component/route tests | Như trên |
+| Loading lần đầu | Winner còn nguyên; không thẻ quán/action/timestamp; refetch disabled | Pass | Như trên |
+| Loading cập nhật | Giữ thẻ quán, nhãn Dữ liệu cũ và thời điểm cũ; refetch disabled | Pass | Như trên |
+| Lỗi lần đầu | Không thẻ quán/timestamp; retry enabled; không kết luận empty thành công | Pass | Như trên |
+| Lỗi cập nhật | Giữ dữ liệu/thời điểm cũ; retry bỏ nhãn cũ, cập nhật timestamp | Pass, gồm cache rỗng và timestamp null | Như trên |
+| Refetch sau lỗi/cũ/đổi/đóng | Cùng winner/tier/resultId, chỉ đổi offering | Pass: assertions identity và callback | Như trên |
+| Hai offering / item lệch winner | Metadata/giá/target riêng; bỏ item sai choice/dish/round row | Pass | Chưa xác nhận riêng |
+| Maps/review/browser/copy thành công/lỗi/pending | Đúng public target, callback-only, fallback và khóa double action | Pass: spy/reject/pending/missing target | Trong báo cáo chung, chưa tách ca |
+| Bốn nút action | Icon nhỏ, cùng nền/viền; Mở bằng / trình duyệt và Sao chép / địa chỉ | Source đã chỉnh; callbacks/labels đạt test; Jest không chứng minh layout thật | Người dùng báo kiểm xong sau bản sửa; chưa có kết quả riêng từng nút |
+| No Consensus vòng 1/vòng 2 | Lý do trung tính, không winner/người NO/vòng ba | Pass: EMPTY_INTERSECTION/ALL_REMOVED | Trong báo cáo chung, chưa tách ca |
+| New/Home/Android Back, mở routes từ tools | Form mới không carry receipt/phiếu; terminal Back về Home | Pass: route integration và BackHandler | Như trên |
+| Light/dark/font200/TalkBack/responsive | Không cắt nội dung; touch48dp, labels/states rõ, font lớn một cột | Dark semantic color đạt; chưa đo layout/TalkBack thật | Chưa xác nhận riêng |
 
-## Kiểm Expo Go còn bắt buộc
+Loading fixtures giữ trạng thái để quan sát; chọn Fixture Có nơi bán để thoát.
+Giá tham khảo, lịch dự kiến, khoảng cách đường chim bay từ điểm ăn chung; không
+xác nhận còn hàng, chỗ ngồi hoặc quãng đường đi.
 
-Chưa có adb/Android device được kết nối trong môi trường agent. Theo HANDOFF,
-mở app trên Expo Go Android SDK57, đi tới `/gm13/result`, kiểm các fixture, actions,
-new/Home/Back, rồi `/gm13/no-consensus` với hai reason. Kiểm light/dark, font200,
-TalkBack, màn nhỏ/lớn và reduced motion; ghi model/OS/Expo/revision/thao tác/expected/
-actual. Màn mock chưa thay nghiệm thu API/native GM-27/30 hoặc QA GM-33.
+## Gate, giới hạn và người quyết định
 
-Contrast shared primary của GM-05 đã được GM-10 audit ghi chưa đạt NFR-06; giữ
-ownership, chưa tự sửa palette hoặc kết luận contrast/a11y Pass. Không tuyên bố
-ảnh/nguồn tổng hợp là dữ liệu verified hoặc lịch là tồn hàng trực tiếp.
+Start gate lịch sử ngày 2026-10-16: READY_TO_CLAIM. Lượt local mới trả
+`BLOCKED_PROJECT_UNVERIFIED` vì thiếu credential/quyền đọc Project; người dùng
+đã cho phép sửa local trong cùng cuộc hội thoại. Đây không phải gate trước merge
+đạt. CLI hiện không kết nối GitHub, `gh` báo credential không dùng được; không
+có browser khả dụng. Không tự thay approval hoặc suy Done từ cache.
 
-**Chưa đủ điều kiện Done:** device AC còn Not run và cần Trí review revision
-thật. Chưa chạy merge gate vì chưa yêu cầu merge; trước merge phải cập nhật ref,
-chạy `--gate merge --base-ref origin/main` và kiểm upstream/AC theo workflow.
+Trước merge, trưởng nhóm cập nhật ref và chạy
+`python scripts/task_readiness.py --task GM-13 --gate merge --base-ref origin/main`,
+đối chiếu GM-05/07 và artifact trên target, kiểm AC/DoD rồi quyết định nghiệm thu.
+Lần bàn giao này không merge, không đổi Project/issue Done và không tự Approved.
+
+Thử chuẩn bị stage bị chặn tạo `.git/index.lock` (Permission denied), nên agent
+chưa stage/commit/push hoặc tạo PR được trong phiên này. Người dùng có thể chạy
+script local `.work/gm13-submit.ps1` và xem nội dung PR `.work/gm13-pr-body.md`;
+hai file là công cụ local đã ignore, không thuộc artifact app hoặc yêu cầu chạy
+từ clone sạch. Script chỉ commit/push nhánh GM-13 và mở/reuse PR, không merge,
+approve, tạo tag, đóng issue hoặc đổi Project. PR tạo mới ở chế độ draft để giữ
+rõ gate/ca chưa xác nhận; trưởng nhóm quyết định review/ready/merge.
+
+Maps/review/browser/copy thật, server/API, cache/outbox/reconnect, multi-device
+và APK ngoài scope GM-13; giao GM-27/30/31 và QA tương ứng. Contrast shared palette
+đã được GM-10 ghi giới hạn theo ownership GM-05; không tự thay palette hoặc tuyên
+bố toàn bộ accessibility đạt.
+
+Hồ sơ lịch sử: [rà soát 2026-10-18](RECHECK_2026-10-18.md),
+[đổi bố cục thẻ](OFFERING_CARD_REFINEMENT.md),
+[bốn load states/icon](OFFERING_LOAD_STATES.md). Xác nhận người dùng mới trong
+CHECKS này bổ sung kết quả mở/kiểm app cho các hồ sơ trước; không thay kết quả
+riêng từng ca chưa được báo.

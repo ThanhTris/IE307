@@ -2,7 +2,8 @@ import type { PoolDish, RoomContext, RoomResult } from '../data/api/contracts';
 import type { OfferingState, ResultOffering } from '../features/result/model';
 
 export type WinnerTier = 'PERFECT' | 'CONSENSUS' | 'COMPROMISE';
-export type OfferingScenario = OfferingState['status'] | 'empty';
+export type OfferingScenario = Exclude<OfferingState['status'], 'loading' | 'error'> | 'empty'
+  | 'loading-initial' | 'loading-refresh' | 'error-initial' | 'error-refresh';
 export const resultContext: RoomContext = {
   anchorId: 'anchor_fixture_gm13', anchorName: 'Điểm ăn công cộng mẫu', radiusM: 2000,
   desiredAt: '2030-10-16T05:00:00Z', serviceMode: 'dine_in', mealSlot: 'lunch', avoidRecent: false,
@@ -21,6 +22,10 @@ export function noConsensusFixture(reason: 'EMPTY_INTERSECTION' | 'ALL_REMOVED' 
 }
 export function offeringFixture(result: RoomResult, scenario: OfferingScenario = 'ready', refreshed = false): OfferingState {
   const unknown = scenario === 'unknown';
+  const initial = scenario === 'loading-initial' || scenario === 'error-initial';
+  const status = scenario === 'loading-initial' || scenario === 'loading-refresh' ? 'loading'
+    : scenario === 'error-initial' || scenario === 'error-refresh' ? 'error'
+      : scenario === 'empty' ? 'ready' : scenario;
   const item: ResultOffering = {
     offeringId: 'offering_fixture_gm13',
     dish: { ...result.winnerDish!, venueId: unknown ? undefined : 'venue_fixture_gm13', venueName: unknown ? undefined : 'Quán phở mẫu',
@@ -33,6 +38,8 @@ export function offeringFixture(result: RoomResult, scenario: OfferingScenario =
     schedule: unknown ? null : '10:00–14:00 (UTC+7) · lịch quán và món mẫu',
     availability: scenario === 'closed' ? 'closed' : unknown ? 'unknown' : 'scheduled',
   };
-  return { status: scenario === 'empty' ? 'ready' : scenario, items: scenario === 'empty' ? [] : [item],
-    fetchedAt: scenario === 'stale' ? '2030-10-01T03:00:00Z' : refreshed ? '2030-10-16T04:32:00Z' : '2030-10-16T04:31:00Z' };
+  return { status,
+    items: initial || scenario === 'empty' ? [] : [item],
+    fetchedAt: initial ? null : scenario === 'stale' ? '2030-10-01T03:00:00Z'
+      : refreshed && status !== 'loading' && status !== 'error' ? '2030-10-16T04:32:00Z' : '2030-10-16T04:31:00Z' };
 }

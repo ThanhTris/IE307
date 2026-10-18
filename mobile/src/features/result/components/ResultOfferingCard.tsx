@@ -7,9 +7,13 @@ import { distanceLabel, priceLabel, timeLabel, type ResultAction, type ResultOff
 export const offeringActionLabels: Record<ResultAction, string> = {
   maps: 'Maps', review: 'Xem review', browser: 'Mở bằng trình duyệt', copy: 'Sao chép địa chỉ',
 };
+const buttonLabels: Record<ResultAction, string> = {
+  ...offeringActionLabels, browser: 'Mở bằng\ntrình duyệt', copy: 'Sao chép\nđịa chỉ',
+};
 
 type Props = {
   offering: ResultOffering;
+  isCached: boolean;
   hasPublicTarget: boolean;
   hasActionHandler: boolean;
   pending: boolean;
@@ -17,7 +21,23 @@ type Props = {
   onAction: (action: ResultAction) => void;
 };
 
-export function ResultOfferingCard({ offering, hasPublicTarget, hasActionHandler, pending, feedback, onAction }: Props) {
+// Small outline icons drawn with native Views, without adding a font/native dependency.
+function ActionIcon({ action, color, background }: { action: ResultAction; color: string; background: string }) {
+  return <View style={styles.actionIcon} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+    {action === 'maps' ? <View style={[styles.mapPin, { borderColor: color }]}><View style={[styles.pinDot, { backgroundColor: color }]} /></View>
+      : action === 'review' ? <>
+        <View style={[styles.reviewBubble, { borderColor: color }]} />
+        <View style={[styles.reviewTail, { borderColor: color, backgroundColor: background }]} />
+      </> : action === 'browser' ? <View style={[styles.globe, { borderColor: color }]}>
+        <View style={[styles.meridian, { borderColor: color }]} /><View style={[styles.equator, { backgroundColor: color }]} />
+      </View> : <>
+        <View style={[styles.copyBack, { borderColor: color }]} />
+        <View style={[styles.copyFront, { borderColor: color, backgroundColor: background }]} />
+      </>}
+  </View>;
+}
+
+export function ResultOfferingCard({ offering, isCached, hasPublicTarget, hasActionHandler, pending, feedback, onAction }: Props) {
   const { colors } = useShellTheme();
   const { fontScale } = useWindowDimensions();
   const dish = offering.dish;
@@ -27,7 +47,7 @@ export function ResultOfferingCard({ offering, hasPublicTarget, hasActionHandler
   const availability = offering.availability === 'closed' ? 'Đóng theo lịch'
     : offering.availability === 'scheduled' ? 'Lịch dự kiến' : 'Chưa rõ phục vụ';
   const disabled = !hasPublicTarget || !hasActionHandler || pending;
-  const actionButton = (action: ResultAction, prominent = false) => <Pressable
+  const actionButton = (action: ResultAction) => <Pressable
     key={action}
     accessibilityRole="button"
     accessibilityLabel={`${offeringActionLabels[action]} · ${dish.venueName ?? 'Nơi bán'}`}
@@ -36,14 +56,14 @@ export function ResultOfferingCard({ offering, hasPublicTarget, hasActionHandler
     disabled={disabled}
     onPress={() => onAction(action)}
     style={({ pressed }) => [styles.button, {
-      flexBasis: fontScale >= 1.5 ? '100%' : 124,
-      backgroundColor: prominent ? colors.warm : colors.surface,
-      borderColor: prominent ? colors.primary : colors.line,
+      flexBasis: fontScale >= 1.5 ? '100%' : 136 * fontScale,
+      backgroundColor: colors.surface,
+      borderColor: colors.line,
       opacity: disabled ? 0.55 : pressed ? 0.7 : 1,
     }]}
   >
-    <Text style={[styles.buttonLabel, { color: colors.text }]}>{offeringActionLabels[action]}</Text>
-    {action === 'maps' ? <Text accessible={false} style={[styles.buttonArrow, { color: colors.text }]}>↗</Text> : null}
+    <ActionIcon action={action} color={colors.text} background={colors.surface} />
+    <Text style={[styles.buttonLabel, { color: colors.text }]}>{buttonLabels[action]}</Text>
   </Pressable>;
 
   return <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.line }]}>
@@ -56,7 +76,7 @@ export function ResultOfferingCard({ offering, hasPublicTarget, hasActionHandler
         <Text accessibilityRole="header" style={[styles.venueName, { color: colors.text }]}>{dish.venueName ?? 'Chưa rõ tên nơi bán'}</Text>
         <View style={[styles.status, { backgroundColor: colors.surface, borderColor: colors.line }]}>
           <View style={[styles.statusDot, { backgroundColor: offering.availability === 'closed' ? colors.danger : colors.muted }]} />
-          <Text style={[styles.caption, { color: colors.text }]}>{availability}</Text>
+          <Text style={[styles.caption, { color: colors.text }]}>{isCached ? `Dữ liệu cũ · ${availability}` : availability}</Text>
         </View>
       </View>
     </View>
@@ -96,7 +116,7 @@ export function ResultOfferingCard({ offering, hasPublicTarget, hasActionHandler
       {hasPublicTarget && !hasActionHandler ? <Text style={[styles.caption, { color: colors.muted }]}>Thao tác nơi bán chưa được kết nối.</Text> : null}
 
       <View style={styles.actionGroup}>
-        <View style={styles.actionRow}>{actionButton('maps', true)}{actionButton('review')}</View>
+        <View style={styles.actionRow}>{actionButton('maps')}{actionButton('review')}</View>
         <View style={styles.actionRow}>{actionButton('browser')}{actionButton('copy')}</View>
       </View>
       {feedback ? <Text accessibilityLiveRegion="polite" style={[styles.bodyText, { color: colors.text }]}>{feedback}</Text> : null}
@@ -133,5 +153,16 @@ const styles = StyleSheet.create({
   button: { minHeight: 48, flexGrow: 1, flexShrink: 1, borderWidth: 1, borderRadius: radii.md,
     paddingVertical: spacing.md, paddingHorizontal: spacing.md, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: spacing.sm },
   buttonLabel: { ...typography.bodyBold, textAlign: 'center', flexShrink: 1 },
-  buttonArrow: { fontSize: 18, lineHeight: 24 },
+  actionIcon: { width: 22, height: 22, flexShrink: 0, alignItems: 'center', justifyContent: 'center' },
+  mapPin: { width: 15, height: 15, borderWidth: 1.5, borderRadius: 8, borderBottomRightRadius: 1,
+    transform: [{ rotate: '45deg' }], alignItems: 'center', justifyContent: 'center', marginTop: -4 },
+  pinDot: { width: 4, height: 4, borderRadius: 2 },
+  reviewBubble: { width: 19, height: 14, borderWidth: 1.5, borderRadius: 4, marginTop: -3 },
+  reviewTail: { position: 'absolute', width: 5, height: 5, left: 5, bottom: 3, borderLeftWidth: 1.5,
+    borderBottomWidth: 1.5, transform: [{ skewY: '-35deg' }] },
+  globe: { width: 19, height: 19, borderWidth: 1.5, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
+  meridian: { width: 8, height: 17, borderWidth: 1, borderRadius: 5 },
+  equator: { position: 'absolute', height: 1, width: 17 },
+  copyBack: { position: 'absolute', width: 12, height: 15, left: 3, top: 2, borderWidth: 1.5, borderRadius: 2 },
+  copyFront: { position: 'absolute', width: 12, height: 15, left: 7, top: 6, borderWidth: 1.5, borderRadius: 2 },
 });

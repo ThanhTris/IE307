@@ -12,7 +12,10 @@ const scenarios: { value: OfferingScenario; label: string }[] = [
   { value: 'ready', label: 'Có nơi bán' }, { value: 'empty', label: 'Không có nơi bán' },
   { value: 'stale', label: 'Nơi bán cũ' }, { value: 'closed', label: 'Đóng cửa' },
   { value: 'changed', label: 'Đổi thông tin' }, { value: 'unknown', label: 'Chưa rõ dữ liệu' },
-  { value: 'loading', label: 'Đang tải nơi bán' }, { value: 'error', label: 'Lỗi nơi bán' },
+  { value: 'loading-initial', label: 'Đang tải nơi bán lần đầu' },
+  { value: 'loading-refresh', label: 'Đang cập nhật nơi bán' },
+  { value: 'error-initial', label: 'Lỗi tải nơi bán lần đầu' },
+  { value: 'error-refresh', label: 'Lỗi cập nhật nơi bán' },
 ];
 export function ResultPreview({ noConsensus = false, onHome, onNewSession, onOtherScreen }: Props) {
   const { colors } = useShellTheme();

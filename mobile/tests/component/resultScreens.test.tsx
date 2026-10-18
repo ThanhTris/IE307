@@ -25,18 +25,73 @@ test.each([
   expect(screen.getByText(/45.000–65.000 VND/)).toBeOnTheScreen();
   expect(screen.queryByText('Mô phỏng · GM-13')).toBeNull();
 });
-test.each(['stale', 'closed', 'changed', 'empty', 'unknown', 'loading', 'error'] as const)('refetch %s keeps finalized winner and scopes callback to refresh only', async scenario => {
+test.each(['stale', 'closed', 'changed', 'empty', 'unknown', 'loading-initial', 'loading-refresh', 'error-initial', 'error-refresh'] as const)('refetch %s keeps finalized winner and scopes callback to refresh only', async scenario => {
   const p = props();
-  const { rerender } = await render(<ResultScreen {...p} offerings={offeringFixture(p.result!, scenario)} />);
+  const offerings = offeringFixture(p.result!, scenario);
+  const { rerender } = await render(<ResultScreen {...p} offerings={offerings} />);
   const before = JSON.stringify(p.result);
   const button = screen.getByRole('button', { name: 'Cập nhật nơi bán' });
-  if (scenario === 'loading') expect(button).toBeDisabled();
+  if (offerings.status === 'loading') expect(button).toBeDisabled();
   else { await fireEvent.press(button); expect(p.onRefetch).toHaveBeenCalledTimes(1); }
   await rerender(<ResultScreen {...p} offerings={offeringFixture(p.result!, 'changed', true)} />);
   expect(screen.getByText(/Hôm nay ăn/)).toHaveTextContent(/Phở bò mẫu/);
   expect(screen.getByText('24 Đường Minh Họa, điểm bán mẫu mới')).toBeOnTheScreen();
   expect(JSON.stringify(p.result)).toBe(before);
   expect(p.onNewSession).not.toHaveBeenCalled();
+});
+
+test.each([
+  ['loading-initial', 'Đang tải nơi bán'], ['error-initial', 'Chưa tải được nơi bán'],
+] as const)('%s has no invented venue, fetch time or successful-empty message', async (scenario, title) => {
+  const p = props();
+  await render(<ResultScreen {...p} offerings={offeringFixture(p.result!, scenario)} />);
+  expect(screen.getByText(title)).toBeOnTheScreen();
+  expect(screen.getByText(/Hôm nay ăn/)).toHaveTextContent(/Phở bò mẫu/);
+  expect(screen.queryByText('Quán phở mẫu')).toBeNull();
+  expect(screen.queryByRole('button', { name: /Maps ·/ })).toBeNull();
+  expect(screen.queryByText(/Lấy thông tin lúc:|Dữ liệu lần tải trước:/)).toBeNull();
+  expect(screen.queryByText('Chưa có nơi bán phù hợp')).toBeNull();
+});
+
+test.each([
+  ['loading-refresh', 'Đang cập nhật nơi bán'], ['error-refresh', 'Chưa cập nhật được nơi bán'],
+] as const)('%s clearly marks previous data and keeps public actions usable', async (scenario, title) => {
+  const p = props();
+  const { rerender } = await render(<ResultScreen {...p} offerings={offeringFixture(p.result!, scenario)} />);
+  expect(screen.getByText(title)).toBeOnTheScreen();
+  expect(screen.getByText('Quán phở mẫu')).toBeOnTheScreen();
+  expect(screen.getByText('Dữ liệu cũ · Lịch dự kiến')).toBeOnTheScreen();
+  expect(screen.getByText(/Dữ liệu lần tải trước:/)).toHaveTextContent(/11:31/);
+  expect(screen.queryByText(/Lấy thông tin lúc:/)).toBeNull();
+  await press('Maps · Quán phở mẫu');
+  expect(p.onExternalAction).toHaveBeenCalledWith('maps', expect.objectContaining({
+    resultId: p.result!.resultId, address: '12 Đường Minh Họa, địa chỉ mẫu',
+  }));
+  await rerender(<ResultScreen {...p} offerings={offeringFixture(p.result!, 'ready', true)} />);
+  expect(screen.queryByText(/Dữ liệu cũ|Dữ liệu lần tải trước:/)).toBeNull();
+  expect(screen.getByText(/Lấy thông tin lúc:/)).toHaveTextContent(/11:32/);
+});
+
+test('successful empty and failed refresh of empty cache have distinct notices', async () => {
+  const p = props();
+  const empty = offeringFixture(p.result!, 'empty');
+  const { rerender } = await render(<ResultScreen {...p} offerings={empty} />);
+  expect(screen.getByText('Chưa có nơi bán phù hợp')).toBeOnTheScreen();
+  await rerender(<ResultScreen {...p} offerings={{ ...empty, status: 'error' }} />);
+  expect(screen.getByText('Chưa cập nhật được nơi bán')).toBeOnTheScreen();
+  expect(screen.getByText(/Dữ liệu lần tải trước:/)).toHaveTextContent(/11:31/);
+  expect(screen.queryByText('Chưa có nơi bán phù hợp')).toBeNull();
+  expect(screen.queryByText('Quán phở mẫu')).toBeNull();
+  await press('Cập nhật nơi bán');
+  expect(p.onRefetch).toHaveBeenCalledTimes(1);
+});
+
+test('retained venue with an unknown fetch time stays explicitly unknown', async () => {
+  const p = props();
+  await render(<ResultScreen {...p} offerings={{ ...p.offerings, status: 'error', fetchedAt: null }} />);
+  expect(screen.getByText('Chưa cập nhật được nơi bán')).toBeOnTheScreen();
+  expect(screen.getByText('Dữ liệu lần tải trước: Chưa rõ')).toBeOnTheScreen();
+  expect(screen.getByText('Dữ liệu cũ · Lịch dự kiến')).toBeOnTheScreen();
 });
 test('missing data uses unknown labels and disables external actions rather than inventing a target', async () => {
   const p = props();
@@ -100,7 +155,7 @@ test('two queued presses dispatch an external action only once before the disabl
 
 test('result retry remains available when an unrelated offering request is still loading', async () => {
   const p = props();
-  await render(<ResultScreen {...p} result={null} readState="error" offerings={offeringFixture(p.result!, 'loading')} />);
+  await render(<ResultScreen {...p} result={null} readState="error" offerings={offeringFixture(p.result!, 'loading-initial')} />);
   expect(screen.getByRole('button', { name: 'Tải lại kết quả' })).toBeEnabled();
   await press('Tải lại kết quả');
   expect(p.onRefetch).toHaveBeenCalledTimes(1);

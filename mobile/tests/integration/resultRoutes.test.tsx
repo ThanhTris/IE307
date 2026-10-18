@@ -50,3 +50,36 @@ test('preview refetch restores offerings without switching tier or result identi
   expect(screen.queryByText('Đóng cửa theo lịch mới.')).toBeNull();
   expect(screen.getByText(/Phương án cả nhóm ăn được/)).toBeOnTheScreen();
 });
+
+test.each([
+  ['Đang tải nơi bán lần đầu', false, true, 'Đang tải nơi bán'],
+  ['Đang cập nhật nơi bán', true, true, 'Đang cập nhật nơi bán'],
+  ['Lỗi tải nơi bán lần đầu', false, false, 'Chưa tải được nơi bán'],
+  ['Lỗi cập nhật nơi bán', true, false, 'Chưa cập nhật được nơi bán'],
+] as const)('preview %s distinguishes initial and refresh data without changing the result', async (label, cached, loading, title) => {
+  await renderRouter(routes, { initialUrl: '/gm13/result' });
+  await press('Công cụ kiểm thử GM-13');
+  await press('Fixture CONSENSUS');
+  const identity = screen.getByText(/Fixture hiện tại: CONSENSUS/).props.children;
+  await press(`Fixture ${label}`);
+  expect(screen.getByText(title)).toBeOnTheScreen();
+  expect(screen.getByText(/Hôm nay ăn/)).toHaveTextContent(/Phở bò mẫu/);
+  if (cached) {
+    expect(screen.getByText('Quán phở mẫu')).toBeOnTheScreen();
+    expect(screen.getByText('Dữ liệu cũ · Lịch dự kiến')).toBeOnTheScreen();
+    expect(screen.getByText(/Dữ liệu lần tải trước:/)).toHaveTextContent(/11:31/);
+  } else {
+    expect(screen.queryByText('Quán phở mẫu')).toBeNull();
+    expect(screen.queryByText(/Lấy thông tin lúc:|Dữ liệu lần tải trước:/)).toBeNull();
+  }
+  expect(screen.queryByText('Chưa có nơi bán phù hợp')).toBeNull();
+  if (loading) expect(screen.getByRole('button', { name: 'Cập nhật nơi bán' })).toBeDisabled();
+  else {
+    await press('Cập nhật nơi bán');
+    expect(screen.getByText('Quán phở mẫu')).toBeOnTheScreen();
+    expect(screen.getByText(/Lấy thông tin lúc:/)).toHaveTextContent(/11:32/);
+    expect(screen.queryByText('Dữ liệu cũ · Lịch dự kiến')).toBeNull();
+    expect(screen.queryByText(title)).toBeNull();
+  }
+  expect(screen.getByText(/Fixture hiện tại: CONSENSUS/).props.children).toEqual(identity);
+});
