@@ -1,0 +1,18 @@
+Command: C:/Users/saveb/AppData/Roaming/uv/python/cpython-3.14-windows-x86_64-none/python.exe scripts/validate_repository.py
+Gi Cung Duoc: documents, links, JSON, task manifest, dependencies and current FR traceability OK.
+Scope: documentation validation only; no native build/backend execution or human approval verified.
+Dependency approval uses live GitHub Project; run task_readiness --task before code/merge. This offline validator does not unlock tasks.
+Exit: 0
+
+Command: C:/Users/saveb/AppData/Roaming/uv/python/cpython-3.14-windows-x86_64-none/python.exe scripts/task_readiness.py --check-docs
+Task indexes match task metadata.
+Exit: 0
+
+Command: git diff --check
+Exit: 0
+
+Untracked whitespace checks: 20 files; no-index exit 0/1 accepted (1 = file differs from empty), >1 is check error.
+
+Manifest: 14 source/test files verified; upstream hashes verified.
+
+Result: PASS
