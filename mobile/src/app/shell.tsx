@@ -9,6 +9,7 @@ export default function ShellRoute() {
       onOpenVoting={() => router.push('/gm12/vote')}
       onOpenRoomSetup={() => router.push('/gm10/context')}
       onOpenGm24={() => router.push('/gm24/context')}
+      onOpenGm25={() => router.push('/internal/gm25')}
       onOpenGm16={
         typeof __DEV__ !== 'undefined' && __DEV__ && process.env.EXPO_PUBLIC_GM16_INTERNAL === 'true'
           ? () => router.push('/internal/gm16')

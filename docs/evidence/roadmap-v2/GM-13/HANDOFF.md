@@ -1,5 +1,32 @@
 # GM-13 — bàn giao Result, nơi bán và No Consensus
 
+Bản mới nhất sau resolve main: HEAD `92962ed` + incoming main
+`8cf8084a021d56fae261da34503ed5a7a45681bd`, source/test theo
+[FOUNDATION_MERGE_MANIFEST](FOUNDATION_MERGE_MANIFEST.json). Hai file Foundation
+đã giữ cả GM-13/GM-25, không còn conflict markers trong nội dung. Người dùng đã
+stage phần resolve, hiện không còn unmerged paths; merge còn chờ commit trên
+nhánh GM-13. Agent chưa commit/push, chưa merge PR vào main hoặc đổi Done.
+
+Đã bổ sung route test mở thật GM-25, Back về Foundation, rồi Result/NoConsensus
+GM-13. Bản tích hợp đạt **26 suites/705 mobile tests**, TypeScript/lint/architecture,
+locked Expo compatibility, Android/Hermes export và **550 Python tests không
+skipped**; logs/giới hạn tại [CHECKS bản mới nhất](CHECKS.md). Source/test bản
+trước và log 669 tests bên dưới là lịch sử trước khi nhận GM-25 từ main.
+
+Người dùng đã xác nhận sau resolve: “tôi đã kiểm tra và xác nhận mở được màn
+GM25 và GM13”. **Mở hai màn: Pass theo kiểm thủ công do người dùng báo**;
+không yêu cầu ảnh/video. Không suy xác nhận này thành đã kiểm từng fixture/API/
+a11y hoặc review Approved; phạm vi chi tiết tại [CHECKS](CHECKS.md).
+
+Source/test không đổi so với bản kiểm tự động. Kiểm lại hồ sơ/Git/hash tại
+[output xác nhận](FOUNDATION_DEVICE_CONFIRMATION_VALIDATION.txt). Người dùng
+stage lại CHECKS/HANDOFF và log mới, kiểm không còn unmerged paths/whitespace,
+commit merge trên nhánh GM-13 rồi push cùng nhánh để cập nhật PR hiện có.
+Trưởng nhóm vẫn review, merge PR vào main và chuyển Done.
+
+Các mục tiếp theo ghi hồ sơ bàn giao trước main integration; không coi kết quả
+kiểm device của bản trước là nghiệm thu bản tích hợp mới.
+
 Ngày 2026-10-19. Task [GM-13 / #74](../../../../tasks/backlog/GM-13.md), owner Tuấn
 (`mtuan2491`), reviewer cuối Trí (`ThanhTris`). Nhánh
 `codex/gm-13-result-no-consensus`, target `main`. Bàn giao code/tài liệu để gửi

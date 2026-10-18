@@ -7,12 +7,30 @@ import Foundation from '../../src/app/foundation';
 import CreateRoom from '../../src/app/create-room';
 import Result from '../../src/app/gm13/result';
 import NoConsensus from '../../src/app/gm13/no-consensus';
+import Gm25FlowCheck from '../../src/app/internal/gm25';
 import { rememberPreviewRoom, setPreviewScenario } from '../../src/bootstrap/roomPreview';
 
 const routes = { _layout: Layout, index: Index, foundation: Foundation, 'create-room': CreateRoom,
-  'gm13/result': Result, 'gm13/no-consensus': NoConsensus };
+  'gm13/result': Result, 'gm13/no-consensus': NoConsensus, 'internal/gm25': Gm25FlowCheck };
 const press = async (name: string) => { await fireEvent.press(screen.getByRole('button', { name })); };
 beforeEach(() => setPreviewScenario('default'));
+
+test('merged Foundation opens GM-25 Flow Check and GM-13 terminal screens', async () => {
+  await renderRouter(routes, { initialUrl: '/foundation' });
+  expect(screen.getByRole('button', { name: 'Mở kết quả GM-13' })).toBeEnabled();
+  await press('Kiểm tra luồng GM-25');
+  await screen.findByText('Kiểm tra Luồng UI–BE (GM-25)');
+  expect(store.getRouteInfo().pathname).toBe('/internal/gm25');
+  await press('Quay lại');
+  await screen.findByRole('button', { name: 'Mở kết quả GM-13' });
+  await press('Mở kết quả GM-13');
+  await screen.findByText('Mô phỏng · GM-13');
+  expect(store.getRouteInfo().pathname).toBe('/gm13/result');
+  await press('Công cụ kiểm thử GM-13');
+  await press('Xem chưa đồng thuận');
+  await screen.findByText('Chưa chọn được món chung');
+  expect(store.getRouteInfo().pathname).toBe('/gm13/no-consensus');
+});
 
 test('Home tools → foundation → Result → NoConsensus → Home uses real routes', async () => {
   await renderRouter(routes, { initialUrl: '/' });

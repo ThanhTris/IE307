@@ -11,7 +11,15 @@ const layers = [
   ['data', 'API, auth và local adapters; contract/client tại GM-07.'],
 ] as const;
 
-export function FoundationScreen({ onBack, onOpenComponents, onOpenFeaturePreview, onOpenResultPreview }: { onBack: () => void; onOpenComponents?: () => void; onOpenFeaturePreview?: () => void; onOpenResultPreview?: () => void }) {
+export function FoundationScreen({
+  onBack, onOpenComponents, onOpenFeaturePreview, onOpenGm25, onOpenResultPreview,
+}: {
+  onBack: () => void;
+  onOpenComponents?: () => void;
+  onOpenFeaturePreview?: () => void;
+  onOpenGm25?: () => void;
+  onOpenResultPreview?: () => void;
+}) {
   const { colors } = useShellTheme();
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
@@ -29,6 +37,9 @@ export function FoundationScreen({ onBack, onOpenComponents, onOpenFeaturePrevie
         </Pressable> : null}
         {onOpenFeaturePreview ? <Pressable accessibilityRole="button" accessibilityLabel="Mở các màn mock GM-11 và GM-14" onPress={onOpenFeaturePreview} style={[styles.button, { backgroundColor: colors.surface, borderColor: colors.primary, borderWidth: 1 }]}>
           <Text style={[styles.buttonLabel, { color: colors.primary }]}>Mở màn mock GM-11/14</Text>
+        </Pressable> : null}
+        {onOpenGm25 ? <Pressable accessibilityRole="button" accessibilityLabel="Kiểm tra luồng GM-25" onPress={onOpenGm25} style={[styles.button, { backgroundColor: colors.surface, borderColor: colors.primary, borderWidth: 1 }]}>
+          <Text style={[styles.buttonLabel, { color: colors.primary }]}>Kiểm tra luồng GM-25 (Flow Check)</Text>
         </Pressable> : null}
         {onOpenResultPreview ? <Pressable accessibilityRole="button" accessibilityLabel="Mở kết quả GM-13" onPress={onOpenResultPreview} style={[styles.button, { backgroundColor: colors.surface, borderColor: colors.primary, borderWidth: 1 }]}>
           <Text style={[styles.buttonLabel, { color: colors.text }]}>Mở kết quả và chưa đồng thuận · GM-13</Text>

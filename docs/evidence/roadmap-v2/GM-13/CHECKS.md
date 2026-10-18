@@ -1,5 +1,47 @@
 # GM-13 — kiểm màn Result/NoConsensus
 
+## Bản mới nhất — resolve Foundation với main
+
+Theo yêu cầu người dùng, đã sửa hai file Foundation trong merge working tree
+trên nhánh GM-13: HEAD `92962ed`, incoming main
+`8cf8084a021d56fae261da34503ed5a7a45681bd`. Giữ cả `onOpenGm25` và
+`onOpenResultPreview`, nút Flow Check GM-25 và Result GM-13, cùng các nút cũ.
+Nội dung không còn conflict markers. Người dùng đã stage phần resolve; kiểm
+trạng thái mới không còn unmerged paths, merge còn chờ commit trên nhánh GM-13.
+Agent không tự stage/commit/push hoặc hoàn tất merge.
+
+Revision source/test và input GM-25 được định danh tại
+[FOUNDATION_MERGE_MANIFEST](FOUNDATION_MERGE_MANIFEST.json). Các manifest/log
+bản trước bên dưới giữ làm lịch sử, không thay phép kiểm bản tích hợp này.
+
+| Kiểm sau resolve | Actual | Kết quả / output |
+| --- | --- | --- |
+| Route regression Foundation | Mở route GM-25 thật, quay lại Foundation, mở Result và NoConsensus GM-13; assert nội dung và pathname | Pass; 13 tests trong 2 suites kiểm tập trung |
+| `npm run check` | TypeScript, lint 0 errors/4 warnings có sẵn, 26 suites/705 tests, architecture guard | Pass — [log](FOUNDATION_MERGE_MOBILE_CHECK.txt) |
+| `npm run check:expo` | Dependencies khớp lockfile/bundled compatibility | Pass locked/offline; package/lockfile không đổi giữa hai nhánh |
+| `npm run bundle:android` | Hermes entry `0da12b21d4918e2b62c5be931b52a63b`, export thành công | Pass — [log](FOUNDATION_MERGE_ANDROID_BUNDLE.txt); không phải APK/device smoke |
+| Python regression với pandas/lxml/tzdata | 550 tests, OK, không skipped | Pass — [log](FOUNDATION_MERGE_PYTHON.txt) |
+| Repo validator, check-docs, diff và hash source | Kiểm lại sau cập nhật hồ sơ; các source/test khớp manifest mới | [Output](FOUNDATION_MERGE_VALIDATION.txt) |
+
+Expo Go sau resolve: **Pass mở hai màn theo xác nhận của người dùng**. Ngày ghi
+nhận 2026-10-19, sau sửa Foundation, người dùng xác nhận nguyên văn: “tôi đã kiểm
+tra và xác nhận mở được màn GM25 và GM13”. Ghi nhận riêng việc mở được cả hai
+màn trên bản tích hợp theo manifest mới; agent không trực tiếp thao tác thiết
+bị. Không yêu cầu ảnh/video theo chỉ dẫn người dùng.
+
+Xác nhận này không tự mở rộng thành đã kiểm từng fixture, API GM-25, toàn bộ
+Result/NoConsensus, light/dark/font200/TalkBack hoặc approval. Các ca đó giữ
+đúng phạm vi đã báo trước và trưởng nhóm đối chiếu khi review. Source/test
+không đổi sau lần chạy 705 mobile tests và 550 Python tests; hồ sơ xác nhận và
+trạng thái Git được kiểm lại tại [output](FOUNDATION_DEVICE_CONFIRMATION_VALIDATION.txt).
+
+Checker trước sửa đã chạy lại, vẫn `BLOCKED_PROJECT_UNVERIFIED` vì phiên agent
+không có credential đọc Project. Tiếp tục sửa source local theo yêu cầu trực
+tiếp hiện tại và quyền local đã có; không thay gate hoặc approval. Trưởng nhóm
+kiểm live gate/target/revision cuối trước merge PR vào main.
+
+## Hồ sơ bản trước khi tích hợp main
+
 Ngày tổng hợp: 2026-10-19. Task [GM-13 / issue #74](../../../../tasks/backlog/GM-13.md),
 owner Tuấn (`mtuan2491`), reviewer cuối Trí (`ThanhTris`). Mode `expo-go`, màn
 UI-08/09 với fixture tổng hợp; không phải nghiệm thu API/native integration.
