@@ -22,6 +22,8 @@ export default function IndexRoute() {
       onCreate={() => router.push('/create-room')}
       onJoin={() => router.push('/join-room')}
       onResume={() => router.push('/room-preview')}
+      onFriends={isReal ? () => router.push('/gm28/friends') : undefined}
+      onInbox={isReal ? () => router.push('/gm28/inbox') : undefined}
       onOpenFoundation={isReal ? undefined : () => router.push('/foundation')}
       onOpenRoomSetup={isReal ? undefined : () => router.push('/gm10/context')}
       onOpenGm24={isReal ? undefined : () => router.push('/gm24/context')}
