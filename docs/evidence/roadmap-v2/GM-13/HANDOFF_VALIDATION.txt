@@ -1,0 +1,11 @@
+Gi Cung Duoc: documents, links, JSON, task manifest, dependencies and current FR traceability OK.
+Scope: documentation validation only; no native build/backend execution or human approval verified.
+Dependency approval uses live GitHub Project; run task_readiness --task before code/merge. This offline validator does not unlock tasks.
+Task indexes match task metadata.
+warning: in the working copy of 'mobile/src/bootstrap/resultFixtures.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'mobile/src/bootstrap/resultPreview.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'mobile/src/features/result/components/ResultOfferingCard.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'mobile/src/features/result/screens/ResultScreen.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'mobile/tests/component/resultScreens.test.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'mobile/tests/integration/resultRoutes.test.tsx', LF will be replaced by CRLF the next time Git touches it
+GM-13 source/test hashes match the last tested manifest; new document whitespace OK.

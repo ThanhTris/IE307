@@ -9,6 +9,7 @@ export default function FoundationRoute() {
       onOpenComponents={() => router.push('/components')}
       onOpenFeaturePreview={() => router.push('/features')}
       onOpenGm25={() => router.push('/internal/gm25')}
+      onOpenResultPreview={() => router.push('/gm13/result')}
     />
   );
 }

@@ -1,0 +1,80 @@
+................................................................................................C:\Users\saveb\AppData\Roaming\uv\python\cpython-3.14.7-windows-x86_64-none\Lib\tempfile.py:484: ResourceWarning: Implicitly cleaning up <HTTPError 429: 'Rate limit'>
+  _warnings.warn(self.warn_message, ResourceWarning)
+Cell 1: ERROR
+Report: C:\Users\saveb\AppData\Local\Temp\tmpzfo0sa39\new-capture\reports\sample.executed.ipynb
+Cell 1: OK
+Report: C:\Users\saveb\AppData\Local\Temp\tmpm3ppfyox\new\reports\sample.executed.ipynb
+............................................................................................................................................................................................................................................................................s............sssss.............................F..F.......F........F..........F...........................................................................................................
+======================================================================
+FAIL: test_cli_defaults_to_live_project_and_does_not_recheck_snapshot (test_project_gate.ProjectGateTests.test_cli_defaults_to_live_project_and_does_not_recheck_snapshot)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\Workspace\project\IE307\tests\test_project_gate.py", line 275, in test_cli_defaults_to_live_project_and_does_not_recheck_snapshot
+    self.assertEqual(gates.main(), 0)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+AssertionError: 2 != 0
+
+======================================================================
+FAIL: test_done_upstream_with_different_target_file_has_actionable_cli_output (test_project_gate.ProjectGateTests.test_done_upstream_with_different_target_file_has_actionable_cli_output)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\Workspace\project\IE307\tests\test_project_gate.py", line 235, in test_done_upstream_with_different_target_file_has_actionable_cli_output
+    self.assertEqual(gates.main(), 1)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+AssertionError: 2 != 1
+
+======================================================================
+FAIL: test_static_validation_delegates_live_dependency_review_but_not_structure (test_project_gate.ProjectGateTests.test_static_validation_delegates_live_dependency_review_but_not_structure)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\Workspace\project\IE307\tests\test_project_gate.py", line 299, in test_static_validation_delegates_live_dependency_review_but_not_structure
+    self.assertEqual(gates.repository.validate(self.source, check_dependency_approvals=False), [])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['broken link: docs/evidence/roadmap-v2/GM[246 chars]txt'] != []
+
+First list contains 3 additional elements.
+First extra element 0:
+'broken link: docs/evidence/roadmap-v2/GM-13/HANDOFF.md -> PATCH_MANIFEST_2026-10-18.json'
+
++ []
+- ['broken link: docs/evidence/roadmap-v2/GM-13/HANDOFF.md -> '
+-  'PATCH_MANIFEST_2026-10-18.json',
+-  'broken link: docs/evidence/roadmap-v2/GM-13/RECHECK_2026-10-18.md -> '
+-  'PATCH_MANIFEST_2026-10-18.json',
+-  'broken link: docs/evidence/roadmap-v2/GM-13/RECHECK_2026-10-18.md -> '
+-  'VALIDATION_2026-10-18.txt']
+
+======================================================================
+FAIL: test_current_baseline (test_repository_validator.ManifestValidationTests.test_current_baseline)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\Workspace\project\IE307\tests\test_repository_validator.py", line 85, in test_current_baseline
+    self.assertEqual(self.errors(), "")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+AssertionError: 'broken link: docs/evidence/roadmap-v2/GM-[240 chars].txt' != ''
+- broken link: docs/evidence/roadmap-v2/GM-13/HANDOFF.md -> PATCH_MANIFEST_2026-10-18.json
+- broken link: docs/evidence/roadmap-v2/GM-13/RECHECK_2026-10-18.md -> PATCH_MANIFEST_2026-10-18.json
+- broken link: docs/evidence/roadmap-v2/GM-13/RECHECK_2026-10-18.md -> VALIDATION_2026-10-18.txt
+
+
+======================================================================
+FAIL: test_draft_review_with_merge_blockers_is_valid (test_repository_validator.ManifestValidationTests.test_draft_review_with_merge_blockers_is_valid)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\Workspace\project\IE307\tests\test_repository_validator.py", line 310, in test_draft_review_with_merge_blockers_is_valid
+    self.assertEqual(self.errors(), '')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+AssertionError: 'broken link: docs/evidence/roadmap-v2/GM-[49 chars].txt' != ''
+- broken link: docs/evidence/roadmap-v2/GM-13/RECHECK_2026-10-18.md -> VALIDATION_2026-10-18.txt
+
+
+----------------------------------------------------------------------
+Ran 550 tests in 67.931s
+
+FAILED (failures=5, skipped=6)
+{
+  "offline": true,
+  "refresh": false,
+  "allow_api": false,
+  "output_dir": "C:\\Users\\saveb\\AppData\\Local\\Temp\\tmpm3ppfyox\\new"
+}
