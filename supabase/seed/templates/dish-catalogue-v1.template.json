@@ -1,0 +1,14 @@
+{
+  "profile": "dish-catalogue-v1",
+  "contractVersion": "1.0.0",
+  "datasetVersion": "1.0.0",
+  "usageScope": "test_demo",
+  "fixtureOnly": true,
+  "entities": {
+    "dishes": [],
+    "taxonomy": [],
+    "dataSources": [],
+    "priceReferences": [],
+    "fieldEvidence": []
+  }
+}

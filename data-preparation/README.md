@@ -98,3 +98,19 @@ python3 data-preparation/scripts/run_notebook.py data-preparation/notebooks/vali
 Audit CLI dùng stdlib; notebook dùng pandas runtime sẵn có. Mặc định chỉ đọc; thư mục report tự tạo khi chỉ định. Notebook 5 khối để xem nguồn/số liệu/thiếu thông tin/lỗi mô phỏng và kiểm replay. Không viết vào snapshots/fixtures, gọi API hoặc cài package. CLI trả 1 khi lỗi cấu trúc, 0 khi cấu trúc đạt dù vẫn có cảnh báo review/thiếu thông tin; readyForPublish luôn false vì đây là tooling draft.
 
 Clock catalogue/forms mặc định 2026-10-10T03:00:00Z để tái lập kiểm lịch sử; `--at` nhận UTC ISO 8601 khi muốn audit tại thời điểm khác. Fixture dùng validationAt riêng, không đổi evaluatedAt từng ca. Kết quả lịch sử không xác nhận dữ liệu đang còn hạn. `validStructure` không thay review Tâm, gate GM-28, quyền ảnh hoặc test thuật toán GM-30.
+
+## GM-40 — Profile catalogue món độc lập
+
+Mốc dữ liệu offline ở [dictionary](../docs/data/DISH_CATALOGUE_DICTIONARY.md) và
+[handoff](../docs/evidence/roadmap-v2/GM-40/HANDOFF.md). 39 món giữ ID; 18 món GM-08
+là tập con. Nguồn menu giữ provenance, profile mới không chứa dữ liệu quán.
+
+```sh
+python3 data-preparation/scripts/dish_catalogue.py --check
+python3 data-preparation/scripts/dish_catalogue.py --input supabase/seed/catalogue/dishes.json
+python3 -m unittest discover -s tests -p test_dish_catalogue.py -v
+```
+
+`--write` sinh lại schema/template/bundle/manifest/quality report từ snapshot offline,
+không import DB hoặc gọi API. Bộ mới giữ draft/test_demo; SQL/API chờ Trí duyệt ADR-018.
+Không chỉnh snapshot/cache hoặc pipeline GPT để sinh profile này.

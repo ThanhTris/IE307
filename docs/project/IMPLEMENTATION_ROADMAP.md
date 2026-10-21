@@ -103,3 +103,13 @@ Chat “Tạo branch sandbox và làm task”, worktree `1043/Project`, nhánh `
 | GM-04 prototype-app screens đang sửa | GM-09..14 | Đối chiếu rồi tách vào feature tương ứng, giữ mock repository cùng contract; không tự gọi toàn bộ draft là Done |
 
 Review sandbox được giữ đúng revision/phạm vi đã chấp thuận. Việc chia lại không phủ nhận review đó và không tự duyệt thêm phần mới hoặc ghi task main Done. Chi tiết nguồn/giới hạn tại [evidence](../evidence/roadmap-v2/GM-01/REPLAN_2026-10-10.md).
+
+## GM-40 — P0 bổ sung sau baseline food-v1
+
+Theo [issue #125](https://github.com/ThanhTris/IE307/issues/125), Vinh nhận Data P0
+chuẩn hóa catalogue món độc lập với dữ liệu nơi bán, Trí review. [Task GM-40](../../tasks/backlog/GM-40.md)
+nhận GM-04/06/07/08 trước start và GM-18/19/20 trước merge. Giữ GM-34 là release
+baseline legacy; không tạo dependency ngược từ task số nhỏ tới GM-40. Profile mới
+phải nghiệm thu riêng trước sử dụng, không mở lại bundle/evidence GM-08. Quyết định
+hẹp không đổi vote/cap/UI; [ADR-018](../architecture/decisions/ADR-018-dish-catalogue-profile.md)
+chờ Trí duyệt trước sửa DB/API.

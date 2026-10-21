@@ -1,0 +1,18 @@
+{
+  "target": "origin/main",
+  "targetRevision": "afb1dca13b91bef30062aca018e5457908d244bc",
+  "fetchResult": "success; HEAD equals origin/main before feature commit; 0 ahead / 0 behind",
+  "githubMainRevision": "afb1dca13b91bef30062aca018e5457908d244bc",
+  "projectReadAt": "2026-10-21T07:15:11.621304+00:00",
+  "gate": "READY_FOR_MERGE_REVIEW",
+  "gateLimit": "Upstream Project/artifact gate only; required SQL/API AC and ADR approval remain pending",
+  "command": "python3 scripts/task_readiness.py --task GM-40 --gate merge --base-ref origin/main",
+  "delivery": "milestone A only; regular PR for review, not completion of issue #125",
+  "issueClosing": "Related #125; no automatic closing reference",
+  "regression": {
+    "tests": 573,
+    "durationSeconds": 28.18,
+    "result": "OK",
+    "runtime": "Python 3.12.14"
+  }
+}

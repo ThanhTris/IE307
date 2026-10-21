@@ -503,6 +503,11 @@ def validate(src: Source, *, check_dependency_approvals=True) -> list[str]:
     if release_task in tasks:
         required_core = {tid for tid, meta in tasks.items()
                          if meta.get('priority') == 'P0' and tid != release_task}
+        # Owner decision in GM-40/#125: the new dish-only profile is a P0
+        # supplement after the food-v1 release baseline, never a reverse edge
+        # GM-34 -> GM-40. This exception cannot exempt any other P0 task.
+        if release_task == 'GM-34' and tasks.get('GM-40', {}).get('github_issue') == '125':
+            required_core.discard('GM-40')
         missing_core = required_core - ancestors(release_task)
         if missing_core:
             errors.append('release bypasses P0 tasks: ' + ', '.join(sorted(missing_core)))

@@ -278,6 +278,12 @@ class ManifestValidationTests(unittest.TestCase):
         self.source.contents[path] = re.sub(r'^(start|merge)_dependencies:.*$', r'\1_dependencies: GM-01', self.source.read(path), flags=re.M)
         self.assertIn('release bypasses P0 tasks', self.errors())
 
+    def test_gm40_owner_exception_does_not_exempt_other_core_tasks(self):
+        self.assertEqual(self.errors(), '')
+        path = self.source.task_path('GM-40')
+        self.source.contents[path] = self.source.read(path).replace('github_issue: 125', 'github_issue: 999')
+        self.assertIn('release bypasses P0 tasks: GM-40', self.errors())
+
     def set_status_in_memory(self, tid, status, approve=False):
         record = validator.task_records(self.source)[tid]
         old = record['path']
