@@ -6,7 +6,7 @@ Base `afb1dca13b91bef30062aca018e5457908d244bc`, feature branch
 macOS 26.1 (25B78), Python 3.12.14 bundled runtime cho regression; stdlib, không thêm package hoặc gọi AI.
 Contract suite cũng đạt trên system Python 3.9.6; toàn bộ regression cần Python >=3.11 do code upstream dùng tomllib.
 
-## Kết quả hiện tại
+## Kết quả mốc A ban đầu — 2026-10-21
 
 | Kiểm | Expected | Actual/status |
 | --- | --- | --- |
@@ -64,3 +64,24 @@ Clone khác dùng Python >=3.11 (khuyến nghị 3.12), stdlib; không bắt đ�
 Đã fetch main và kiểm GitHub: `afb1dca13b91bef30062aca018e5457908d244bc`; base khớp, không cần rebase.
 Live merge gate đọc Project lúc 07:15:11Z trả READY_FOR_MERGE_REVIEW (chỉ dependency/artifact).
 SQL/API AC và ADR approval vẫn pending; không tự merge hoặc đóng issue. Xem [PR preparation](PR_PREPARATION.json).
+
+## Review fix — 2026-10-22
+
+Rebase main `d8245a02c85d5b3bc4888a826589e99c1dc58a6d`, tiếp nhận ADR-019 về
+phạm vi consumer; không triển khai luật phòng trong GM-40. Live Project gate lúc
+09:20:45Z trả READY_FOR_MERGE_REVIEW; không thay ADR-018 approval hoặc AC mốc B.
+[Review fix](REVIEW_FIX.md) và [negative/control cases](review-fix-cases.json) ghi
+input–expected–actual: code taxonomy sai type/namespace bị chặn; price natural key
+trùng/sai UUIDv5 bị chặn; khác snapshot/menu hợp lệ và nullable vẫn Pass.
+
+Contract suite mới: **31 tests, OK**. Build/check vẫn 5 artifacts stale=[]; không đổi
+bundle/schema/manifest dữ liệu, registry hoặc snapshot legacy. Lượt full regression
+đầu có 7 lỗi link do chạy trong lúc REVIEW_FIX.md đang được tạo; validator đã đạt
+sau khi có đủ file, chạy lại full suite trên patch hoàn chỉnh để xác nhận kết quả cuối.
+Báo cáo review-fix-results.json được ghi sau lượt chạy này. SQL/API/Android vẫn Not run.
+
+Kết quả cuối sau nhận main PR131: **583 tests, OK; 31 contract tests, OK**.
+Repository/index/diff đạt, build 5 artifacts stale=[]; dữ liệu/schema/manifest giữ byte cũ.
+[Review results](review-fix-results.json) pin source/hash/tested target và
+[gate mới](readiness-review-fix.txt) đọc Project trên target 0d571b7. Kết quả cũ bên
+trên là lịch sử theo revision, không dùng base d8245a0 thay target cuối này.

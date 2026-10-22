@@ -51,3 +51,13 @@ SQL/HTTP/domain/mobile typecheck/lint/tests/architecture ở mốc B theo thay �
 CHECKS/HANDOFF phân biệt Pass/Fail/Not run; không tuyên bố SQL/API/Android từ offline
 test. Không thêm package, gọi AI, reset app DB hoặc Approved/Done.
 Ngoại lệ commit/push/PR: Vinh đã yêu cầu mở PR ngày 2026-10-21; chỉ bàn giao mốc A và ADR chờ review.
+
+## Patch review — 2026-10-22
+
+Nhận hai comment Trí trên PR129; rebase main d8245a0. Chỉ sửa validator admission:
+taxonomy type/namespace vocabulary; price natural-key uniqueness + UUIDv5 consistency.
+Thêm synthetic golden-ID/negative/CLI cases và kiểm toàn bộ mã trong registry riêng.
+Không đổi bundle/schema/nguồn, không cần API/AI/network để sinh dữ liệu. Chạy 31
+contract tests, full regression, offline build, repository/indexes/diff, live gate.
+Handoff bổ sung endpoint/contract pending và consumer theo ADR-019; không code luật
+phòng hoặc schema/API mốc B khi chưa được duyệt.

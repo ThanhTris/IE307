@@ -81,3 +81,12 @@ GM-08/18/19/20/21 regression giữ nguyên assertions. UI/Android không nằm t
 
 Pending. Chưa có xác nhận của Trí cho ADR này. Không tự điền Approved, ngày duyệt
 hoặc Review-evidence. Handoff hiện tại chỉ là mốc dữ liệu offline.
+
+## Cập nhật đầu vào — main PR #131, 2026-10-22
+
+Migration0026/dish-session-v3 đã merge sau bản đề xuất này, có private catalogue và
+snapshot/runtime riêng. Trước duyệt mốc B phải đối chiếu các mục storage/adapter/RPC
+với [handoff runtime mới](../../evidence/roadmap-v2/GM-20/dish-v3/HANDOFF.md),
+không triển khai lại một authority song song. ADR-019 chốt yêu cầu sản phẩm, chưa
+phê duyệt toàn bộ thiết kế SQL ADR-018. PR129 hiện chỉ sửa hai lỗi admission offline;
+API catalogue đọc/preview vẫn chưa có implementation hoặc test thật.

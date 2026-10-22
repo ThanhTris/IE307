@@ -75,8 +75,68 @@ chạy `python3 scripts/task_readiness.py --task GM-40 --gate merge --base-ref o
 và đủ AC thực. Merge gate không thay ADR approval hoặc test. Không thêm dependency
 ngược GM-40 vào task số nhỏ hơn, không mở lại GM-08 hoặc thay release GM-34.
 
-Kết quả cuối: **573/573 regression**, **21/21 contract**, repository/index/diff đạt.
+Kết quả ban đầu 2026-10-21: **573/573 regression**, **21/21 contract**, repository/index/diff đạt.
 [Offline results](offline-results.json) và [patch manifest](PATCH_MANIFEST.json) pin kết quả/source; chưa có SQL/HTTP evidence.
 
 [PR preparation](PR_PREPARATION.json): đã fetch và đối chiếu GitHub main; gate upstream đạt READY_FOR_MERGE_REVIEW.
 Kết quả gate không gỡ điểm duyệt ADR hoặc các AC SQL/API còn Not run. PR chỉ bàn giao mốc A, không tự đóng #125.
+
+## Sau review PR #129 — 2026-10-22
+
+Nhánh đã rebase từ main `d8245a02c85d5b3bc4888a826589e99c1dc58a6d` (PR #130).
+Yêu cầu chọn món không cần điểm đến/GPS/quán được tiếp nhận tại
+[ADR-019](../../../architecture/decisions/ADR-019-dish-first-room-policy.md).
+Hai lỗi admission trong comment đã sửa: code taxonomy ngoài type/namespace codebook
+bị từ chối, quan sát giá trùng natural key hoặc sai UUIDv5 bị từ chối. Bundle/schema/
+manifest dữ liệu giữ byte cũ; không sửa snapshot legacy hoặc khôi phục điều kiện quán.
+Chi tiết tái hiện/expected/actual tại [review fix](REVIEW_FIX.md).
+
+### Endpoint, contract/version và consumer mốc B
+
+| Đầu ra / interface | Contract/version | Tình trạng và nơi nhận |
+| --- | --- | --- |
+| File catalogue dishes.json / schema / template | dish-catalogue-v1 1.0.0; dataset1.0.0; GM-40.1 | Đã có, dữ liệu draft/test_demo; nguồn cho BE/DTO |
+| POST /rest/v1/rpc/read_dish_catalogue | Đề xuất ADR-018; đọc release theo profile1.0.0; runtime DTO/envelope chờ chốt với GM-07 | Chưa triển khai; chưa có endpoint/auth setup có thể gọi thử |
+| POST /rest/v1/rpc/preview_dish_catalogue | Đề xuất ADR-018, cùng profile; pin release/version/hash; runtime request/response guard chờ review | Chưa triển khai; không tự coi preview catalogue là pool phòng |
+| Adapter private ghi/đọc snapshot món | Đề xuất ADR-018, release + dish/record version + choice IDs | Chưa triển khai; phải kiểm snapshot/round/finalize và legacy compatibility |
+| Consumer DTO/client và create/preview/RoomContext | GM-07 nhận profile1.0.0; phiên runtime mới cần version được duyệt theo ADR-019 | GM-18/19 và GM-24/25 bỏ yêu cầu anchor/radius/GPS cho flow mới; không thuộc PR offline này |
+
+Catalogue API độc lập không tự làm public create_room/RoomContext hết phụ thuộc
+anchor/radius. Consumer phải nhận đúng version đã duyệt và thay API tạo phòng/pool,
+không gửi UUID anchor/quán giả để qua legacy guard. Policy/contract/snapshot phiên cũ
+được pin nguyên nghĩa; không đổi phiên đã bắt đầu hoặc sửa migration đã merge.
+Mốc B cần migration tiến và regression readback/transition/finalize/ACL trước dùng.
+Định dạng RPC/DTO ở bảng là đề xuất, chưa được ADR-018 approval và chưa có SQL/HTTP
+bằng chứng chạy thật. Không tuyên bố đã có endpoint hoạt động chỉ vì có tên trong docs.
+
+Luật phòng/pool/ready/timer/cap mới được điều phối riêng theo ADR-019 hiện hành;
+không thêm vào validator catalogue hoặc PR này. Kiểm điện thoại tích hợp theo đợt
+sau merge vẫn **Not run** tới khi có revision/kết quả thật; không coi việc hoãn kiểm
+là Pass hoặc toàn bộ GM-40 Done.
+
+### Nhận runtime mới từ main PR #131 — 2026-10-22
+
+Target cuối lượt sửa là `0d571b7316c0443bc766dca564407fd0abf521ac`.
+[Handoff runtime](../GM-20/dish-v3/HANDOFF.md) cung cấp endpoint **đã merge**
+`POST /rest/v1/rpc/dish_session`, wire `dish-session-v3/ADR-019`, policy
+`dish-decision-v3`, schema0.8.0/migration0026. Đây là RPC riêng; legacy
+create_room/RoomContext không tự đổi nghĩa. FE DTO/screens còn là consumer tiếp theo.
+
+GM-40 mốc B phải nhận contract đó để nối importer/release thay vì dựng lại runtime:
+`dishes[].id` → `cards[].dishId`, giữ name/mealSlots/cuisineIds/categoryIds đúng
+nguồn; release/source SHA/test flag phải nhất quán với immutable
+`dish_v3_private.catalogues`. Schema hiện tại chỉ nhận test_only=true; active
+mặc định false, không có dữ liệu thật được tự kích hoạt. Cơ chế load/activate/
+rollback và source validation của GM-40 còn chờ triển khai/review, không hand-edit
+active hash hoặc lấy fixture làm release thật. Hai RPC đọc/preview trong ADR-018
+vẫn là **đề xuất chưa triển khai**, không nhầm với dish_session đã có trên main.
+
+Private storage/room adapter đề xuất ở ADR-018 phải được đối chiếu lại với migration
+0026 trước khi duyệt mốc B; không tạo hai nguồn chốt runtime song song. Snapshot
+legacy giữ version/policy cũ; phiên v3 pin catalogue hash/cards theo handoff của nó.
+Không sửa migration0026 đã merge hoặc đổi luật phòng trong PR catalogue này.
+
+Dữ liệu hiện có chỉ 2/39 món có mealSlots được chứng minh. Runtime v3 đòi đúng
+10–20 món qua lọc, nên việc bundle valid **không chứng minh tạo được phòng thật**;
+không tự điền buổi ăn, hạ count hoặc bỏ lọc để vượt kiểm. Bàn giao nguồn/thiếu field
+cho mốc B và consumer; kiểm điện thoại vẫn Not run theo đợt tích hợp sau merge.

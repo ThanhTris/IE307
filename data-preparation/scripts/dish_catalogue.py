@@ -129,6 +129,11 @@ def parse_utc(value):
     return datetime.strptime(value, pattern).replace(tzinfo=timezone.utc)
 
 
+def price_reference_id(dish_id, menu_item_id, snapshot_sha256):
+    key = f'anyfood:gm40:price:{dish_id}:{menu_item_id}:{snapshot_sha256}'
+    return str(uuid.uuid5(uuid.NAMESPACE_URL, key))
+
+
 def validate(bundle, schema=None):
     schema = schema_document() if schema is None else schema
     audit_schema(schema)
@@ -156,6 +161,17 @@ def validate(bundle, schema=None):
     taxonomy_keys = [(r['type'], r['code']) for r in data['taxonomy']]
     if len(taxonomy_keys) != len(set(taxonomy_keys)):
         err('$.entities.taxonomy', 'DUPLICATE', 'Duplicate taxonomy type/code')
+    codebook = load_json(ROOT / INPUTS[1])
+    allowed_codes = {
+        'cuisine': set(codebook['cuisines']),
+        'origin': set(codebook['origins']),
+        'category': {f'{namespace}:{code}'
+                     for namespace, codes in codebook['categoryGroups'].items() for code in codes},
+    }
+    for i, row in enumerate(data['taxonomy']):
+        if row['code'] not in allowed_codes[row['type']]:
+            err(f'$.entities.taxonomy[{i}].code', 'TAXONOMY_CODE',
+                'Code is outside the declared type/namespace vocabulary')
     for entity in ['dishes', 'taxonomy', 'dataSources']:
         for i, row in enumerate(data[entity]):
             path = f'$.entities.{entity}[{i}]'
@@ -208,8 +224,15 @@ def validate(bundle, schema=None):
     for i, row in enumerate(data['fieldEvidence']):
         if row['dishId'] not in dishes or row['sourceRef'] not in sources:
             err(f'$.entities.fieldEvidence[{i}]', 'FK', 'Unknown dish/source')
+    price_keys = set()
     for i, row in enumerate(data['priceReferences']):
         path = f'$.entities.priceReferences[{i}]'
+        key = (row['dishId'], row['sourceMenuItemId'], row['snapshotSha256'])
+        if key in price_keys:
+            err(path, 'DUPLICATE', 'Duplicate price observation dish/menu/snapshot')
+        price_keys.add(key)
+        if row['id'] != price_reference_id(*key):
+            err(path + '.id', 'IDENTITY', 'Price ID must be the UUIDv5 of dish/menu/snapshot')
         if row['dishId'] not in dishes or row['sourceRef'] not in sources:
             err(path, 'FK', 'Unknown dish/source')
         if row['value'] is not None and (row['currency'] is None or row['unit'] is None):
@@ -238,9 +261,9 @@ def build():
             value = float(raw) if raw else None
             if value is not None and value.is_integer():
                 value = int(value)
-            key = f"anyfood:gm40:price:{row['dishId']}:{row['menuItemId']}:{row['snapshotSha256']}"
             prices.append({
-                'id': str(uuid.uuid5(uuid.NAMESPACE_URL, key)), 'dishId': row['dishId'],
+                'id': price_reference_id(row['dishId'], row['menuItemId'], row['snapshotSha256']),
+                'dishId': row['dishId'],
                 'sourceMenuItemId': row['menuItemId'], 'menuName': row['menuName'],
                 'priceRaw': row['priceRaw'], 'value': value, 'currency': row['currency'] or None,
                 'unit': row['unit'] or None, 'servingSize': row['portion'] or None,

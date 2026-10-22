@@ -212,3 +212,18 @@ categoryGroups.preparation trong taxonomy_v1.json; không thêm vocabulary mới
 Giữ mapping 219 dòng trong snapshot nguồn; manifest pin checksum mapping và quality
 report ghi trạng thái 216/2/1. Hai needs_review và một excluded không được biến thành
 món/alias chỉ để tăng số lượng. Chưa có importer SQL/API runtime cho profile này.
+
+## Bổ sung kiểm admission sau review PR #129 — 2026-10-22
+
+Vocabulary lấy từ taxonomy_v1.json: cuisine.code thuộc cuisines; origin.code thuộc
+origins; category.code bắt buộc namespace family: hoặc preparation: cùng mã trong
+categoryGroups tương ứng. Code đúng nhưng sai type/namespace vẫn bị từ chối tại
+entities.taxonomy[i].code (TAXONOMY_CODE), dù dish FK trỏ tới đúng UUID. Không sửa
+registry, suy code từ tên hoặc nhận mã mở rộng âm thầm.
+
+Price observation unique cả ID và natural key (dishId, sourceMenuItemId, snapshotSha256).
+ID bắt buộc bằng UUIDv5 với namespace UUID.NAMESPACE_URL và key UTF-8 chính xác:
+`anyfood:gm40:price:{dishId}:{sourceMenuItemId}:{snapshotSha256}`.
+UUID khác không hợp thức hóa quan sát trùng, kể cả thay amount. Khác snapshot hoặc
+khác menu item vẫn là quan sát riêng khi ID theo đúng công thức. --input và build
+cùng áp dụng các guard này; không đổi version/schema hoặc các ID hợp lệ đã xuất.

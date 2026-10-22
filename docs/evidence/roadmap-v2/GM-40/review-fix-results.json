@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-22",
+  "baseRevision": "0d571b7316c0443bc766dca564407fd0abf521ac",
+  "reviewedHead": "58890c274ebf5c67f370d946421f303762921141",
+  "runtime": "macOS / Python 3.12.14",
+  "contractTests": 31,
+  "regression": {
+    "tests": 583,
+    "seconds": 51.941,
+    "result": "OK"
+  },
+  "frozenBundleSchemaManifestUnchanged": true,
+  "repositoryValidator": "Pass",
+  "taskIndexes": "Pass",
+  "diffCheck": "Pass",
+  "projectGate": "READY_FOR_MERGE_REVIEW",
+  "reviewStatus": "Pending Tri review of updated revision",
+  "sqlApi": "Not run in offline milestone",
+  "phoneIntegration": "Not run; scheduled after merges by owner",
+  "sourceSha256": {
+    "data-preparation/scripts/dish_catalogue.py": "5d2e2d126408d4e70812b8494acf27aede421c12d8330e489748b408913a4d33",
+    "tests/test_dish_catalogue.py": "c353b05ba6a1621ee64d9a21ecf8be5bbc3893c44164259b2c2232e879473264",
+    "data-preparation/config/taxonomy_v1.json": "6cb1191446b06d93bc0c2eceb9c75bc2ad0ad9c28a8b71dba0361df0cd5d8e89",
+    "supabase/seed/catalogue/dishes.json": "4b34020265576a93fae4057f598adba9fb27a6a99a42eec0f8ed864f7f60b2f8",
+    "supabase/migrations/0026_dish_session_policy.sql": "24fba6d428e283bef7edd46d040b7e89c7ce2953c9cb7a4e04cb86a7dd682804"
+  }
+}

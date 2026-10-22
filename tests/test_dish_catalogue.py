@@ -4,6 +4,7 @@ import csv
 import json
 from pathlib import Path
 import sys
+import subprocess
 import tempfile
 import unittest
 
@@ -129,6 +130,37 @@ class DishCatalogueTests(unittest.TestCase):
         self.assertEqual(taxonomy['type'], 'category')
         self.assertIn('FK', {e['code'] for e in self.errors()})
 
+    def test_unknown_taxonomy_code_rejected_even_when_dish_fk_is_valid(self):
+        self.bundle = deepcopy(self.real)
+        self.bundle['entities']['taxonomy'][0]['code'] = 'unregistered-gm40-code'
+        errors = self.errors()
+        self.assertIn({'path': '$.entities.taxonomy[0].code', 'code': 'TAXONOMY_CODE',
+                       'message': 'Code is outside the declared type/namespace vocabulary'}, errors)
+        self.assertNotIn('FK', {e['code'] for e in errors})
+
+    def test_known_taxonomy_code_in_wrong_type_or_namespace_rejected(self):
+        row = deepcopy(self.real['entities']['taxonomy'][0])
+        row.update(sourceRef=self.source['sourceRef'], fieldSources={})
+        self.data['taxonomy'] = [row]
+        for kind, code in [('category', 'vi'), ('cuisine', 'family:rice'), ('origin', 'vi'),
+                           ('cuisine', 'north'), ('category', 'family:grilled'),
+                           ('category', 'preparation:rice'), ('category', 'grilled'),
+                           ('category', 'unknown:rice'), ('category', 'family:rice:extra')]:
+            with self.subTest(kind=kind, code=code):
+                row.update(type=kind, code=code)
+                self.assertIn('TAXONOMY_CODE', {e['code'] for e in self.errors()})
+
+    def test_registered_cuisine_origin_and_both_category_namespaces_pass(self):
+        row = deepcopy(self.real['entities']['taxonomy'][0])
+        row.update(sourceRef=self.source['sourceRef'], fieldSources={})
+        self.data['taxonomy'] = [row]
+        # UUID registry is a separate artifact from the validator's codebook.
+        registry = catalogue.load_json(ROOT / 'data-preparation/config/taxonomy_registry_v1.json')
+        for registered in registry['entries']:
+            with self.subTest(kind=registered['type'], code=registered['code']):
+                row.update(id=registered['id'], type=registered['type'], code=registered['code'])
+                self.assertEqual(self.errors(), [])
+
     def test_missing_source_and_field_evidence_rejected(self):
         self.data['dataSources'] = []
         self.assertIn('FK', {e['code'] for e in self.errors()})
@@ -155,10 +187,74 @@ class DishCatalogueTests(unittest.TestCase):
         self.assertEqual(self.errors(), [])
 
     def price(self):
-        row = deepcopy(self.real['entities']['priceReferences'][0])
-        row.update(dishId=self.dish['id'], sourceRef=self.source['sourceRef'])
+        # Independent synthetic golden identity; no real menu/source is copied.
+        row = {'id': '89b00a79-e933-50c6-be76-2ef35b626836', 'dishId': self.dish['id'],
+               'sourceMenuItemId': 'fixture-menu-a', 'menuName': 'Món mô phỏng A',
+               'priceRaw': '50.000 đ (mô phỏng)', 'value': 50000, 'currency': 'VND',
+               'unit': 'menu_item_unspecified', 'servingSize': None,
+               'sourceRef': self.source['sourceRef'], 'checkedAt': '2026-01-01T00:00:00Z',
+               'validUntil': None, 'snapshotSha256': 'a' * 64, 'status': 'snapshot_observation'}
         self.data['priceReferences'] = [row]
         return row
+
+    def test_synthetic_price_golden_uuid_and_no_input_mutation(self):
+        row = self.price()
+        before = deepcopy(self.bundle)
+        self.assertEqual(self.errors(), [])
+        self.assertEqual(self.bundle, before)
+        self.assertEqual(catalogue.price_reference_id(row['dishId'], 'fixture-menu-a', 'a' * 64),
+                         '89b00a79-e933-50c6-be76-2ef35b626836')
+
+    def test_duplicate_price_natural_key_with_other_uuid_rejected_for_any_amount(self):
+        row = self.price()
+        for amount in [50000, 70000]:
+            with self.subTest(amount=amount):
+                duplicate = {**row, 'id': '40000000-0000-5000-8000-000000000001', 'value': amount}
+                self.data['priceReferences'] = [row, duplicate]
+                errors = self.errors()
+                self.assertIn('DUPLICATE', {e['code'] for e in errors})
+                self.assertIn('IDENTITY', {e['code'] for e in errors})
+                self.assertTrue(any(e['path'] == '$.entities.priceReferences[1].id' for e in errors))
+
+    def test_single_price_with_wrong_uuid_rejected(self):
+        self.price()['id'] = '40000000-0000-5000-8000-000000000001'
+        self.assertIn('IDENTITY', {e['code'] for e in self.errors()})
+
+    def test_reused_price_id_rejected_even_for_different_observation(self):
+        row = self.price()
+        self.data['priceReferences'].append({**row, 'sourceMenuItemId': 'fixture-menu-b'})
+        self.assertIn('DUPLICATE', {e['code'] for e in self.errors()})
+
+    def test_same_menu_different_snapshot_observations_remain_separate(self):
+        row = self.price()
+        self.data['priceReferences'].append({**row, 'snapshotSha256': 'b' * 64, 'value': 60000,
+                                             'id': '6160de71-4c5e-5c93-a518-7133cbd61092'})
+        self.assertEqual(self.errors(), [])
+        self.assertEqual([r['value'] for r in self.data['priceReferences']], [50000, 60000])
+        self.assertTrue(all(r['unit'] == 'menu_item_unspecified' for r in self.data['priceReferences']))
+
+    def test_different_menu_same_snapshot_is_not_deduplicated(self):
+        row = self.price()
+        self.data['priceReferences'].append({**row, 'sourceMenuItemId': 'fixture-menu-b',
+                                             'id': '6c29cd27-d507-51bf-ae3b-3d5f261a66aa'})
+        self.assertEqual(self.errors(), [])
+
+    def test_cli_input_rejects_bad_taxonomy_and_duplicate_observation(self):
+        taxonomy = deepcopy(self.real)
+        taxonomy['entities']['taxonomy'][0]['code'] = 'unregistered-gm40-code'
+        row = self.price()
+        self.data['priceReferences'].append({**row, 'id': '40000000-0000-5000-8000-000000000001'})
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'invalid.json'
+            for bundle, code in [(taxonomy, 'TAXONOMY_CODE'), (self.bundle, 'DUPLICATE')]:
+                with self.subTest(code=code):
+                    path.write_bytes(catalogue.encoded(bundle))
+                    result = subprocess.run([sys.executable, str(ROOT / 'data-preparation/scripts/dish_catalogue.py'),
+                                             '--input', str(path)], text=True, capture_output=True, check=False)
+                    self.assertEqual(result.returncode, 1, result.stderr)
+                    response = json.loads(result.stdout)
+                    self.assertFalse(response['valid'])
+                    self.assertIn(code, {e['code'] for e in response['errors']})
 
     def test_null_price_is_not_zero_and_no_per_person_conversion(self):
         row = self.price()
