@@ -1,5 +1,7 @@
 # RPC contract — food-v1
 
+> Cập nhật hướng đích 2026-10-22: [ADR-019 — quyết định của Trí và phần còn chờ chốt](decisions/ADR-019-dish-first-room-policy.md) ưu tiên khi lập kế hoạch luồng mới: phòng 20 người, host chọn chính xác 10–20 món, bỏ ready, timeout 60 giây từ người đầu tiên hoàn tất lượt và vào phòng chờ kết quả mỗi vòng và host Chốt ngay; chọn món độc lập vị trí/quán. Nội dung legacy bên dưới mô tả baseline, chưa phải contract triển khai luật mới. Đã chốt cap min(3, floor((N-1)/2)), N=1 bỏ loại; tính phiếu hoàn chỉnh đã nhận với tối thiểu 1 người, phiếu thiếu không là OK; host chỉ bấm bắt đầu. Chi tiết còn mở xem ADR; không đổi nghĩa phiên cũ hoặc tự ghi test Pass.
+
 2026-10-07 • draft for independent review GM-01. Auth token xác định caller; mọi write có requestId, room mutation có expectedVersion. Các RPC discovery/join/accept_room_invite trước membership và register device không có room version; vẫn idempotency/auth/rate limit. Input schema validate, lỗi không expose SQL/token.
 
 | RPC / mức | Input chính | Gate/output |
