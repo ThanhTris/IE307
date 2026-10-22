@@ -1,0 +1,29 @@
+name: Dish session policy v3
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm ci
+      - run: node --test mobile/tests/decision.test.mjs mobile/tests/decisionSeeded.test.mjs mobile/tests/dishPolicy.test.mjs
+      - run: npm run backend:start
+      - name: Actual PostgreSQL, ACL, server worker, parity and authenticated HTTP
+        run: python scripts/dish_policy_sql_check.py | tee "${{ runner.temp }}/dish-policy.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dish-policy-backend
+          path: ${{ runner.temp }}/dish-policy.json
+      - if: always()
+        run: npm run backend:stop
