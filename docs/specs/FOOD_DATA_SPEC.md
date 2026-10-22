@@ -1,5 +1,7 @@
 # Food data spec — food-v1
 
+> Cập nhật hướng đích 2026-10-22: [ADR-019 — quyết định của Trí và phần còn chờ chốt](../architecture/decisions/ADR-019-dish-first-room-policy.md) ưu tiên khi lập kế hoạch luồng mới: phòng 20 người, host chọn chính xác 10–20 món, bỏ ready, timeout 60 giây từ người đầu tiên hoàn tất lượt và vào phòng chờ kết quả mỗi vòng và host Chốt ngay; chọn món độc lập vị trí/quán. Nội dung legacy bên dưới mô tả baseline, chưa phải contract triển khai luật mới. Đã chốt cap min(3, floor((N-1)/2)), N=1 bỏ loại; tính phiếu hoàn chỉnh đã nhận với tối thiểu 1 người, phiếu thiếu không là OK; host chỉ bấm bắt đầu. Chi tiết còn mở xem ADR; không đổi nghĩa phiên cũ hoặc tự ghi test Pass.
+
 2026-10-07. Yêu cầu hiện hành được soạn theo chỉ dẫn chủ dự án; review kỹ thuật/triển khai chờ [GM-01](../../tasks/done/GM-01.md). Nguồn chi tiết: [plan data](../project/FOOD_DATA_REQUIREMENTS_PLAN.md), [ADR-005](../architecture/decisions/ADR-005-food-location-time-data.md). FR-04/10/15/20/21; T-03/10/14/19/23/25/26. GM-04, GM-06, GM-08, GM-24, GM-18 là đầu vào core, GM-38 nâng cao.
 
 ## Data contract bắt buộc
