@@ -1,6 +1,8 @@
 # ADR-019 — Chọn món độc lập và điều phối phiên nhóm
 
 Ngày: 2026-10-22. Chủ quyết định/reviewer: Trí (ThanhTris).
+
+Phạm vi thực hiện cập nhật mới nhất của Trí: **đợt này chỉ Data/BE; FE làm sau**. Supplement UI vẫn là yêu cầu đích, chưa phải yêu cầu triển khai FE ngay. Patch backend/engine có version riêng và request suite; không dùng kết quả SQL/HTTP thay nghiệm thu màn ứng dụng.
 Trạng thái: **chấp nhận các yêu cầu tại mục 1 theo xác nhận trực tiếp trong hội thoại; cap vòng 2, quorum và cách vào phòng cũng đã được Trí xác nhận qua câu trả lời; chỉ các chi tiết được đánh dấu còn mở cần chốt**. Chưa là nghiệm thu implementation hoặc duyệt toàn bộ thiết kế SQL của ADR-018 trong PR #129.
 
 ## 1. Yêu cầu đã chốt
