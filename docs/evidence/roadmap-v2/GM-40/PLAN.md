@@ -1,63 +1,25 @@
-# GM-40 — Patch/test plan
+# GM-40 — Patch/test plan hiện hành
 
-Owner Vinh; reviewer Trí. Assignment accepted theo yêu cầu triển khai của Vinh
-ngày 2026-10-21; không xác nhận approval hoặc thay Status trên Project.
-Base `afb1dca13b91bef30062aca018e5457908d244bc`, branch `codex/gm-40-dish-catalogue`.
-Profile/schema 1.0.0; contract `dish-catalogue-v1/roadmap-v2/GM-40.1`.
+Owner Vinh; reviewer Trí. Scope tiếp nhận từ comment PR #129 ngày2026-10-23;
+start gate đọc Project thật READY_TO_START, base main0d571b7. Không tự Done/Approved.
+Contract file dish-catalogue-v1/GM-40.1 schema1.0.0, dataset1.1.0;
+runtime nhận sẵn dish-session-v3/ADR-019/schema0.8.0, migration0026.
 
-## Mốc A — dữ liệu độc lập
+1. Giữ39 UUID/18 GM-08 shared, mapping216/2/1, giá247 và snapshots lịch sử.
+   Supplement bữa có version/URL/hash/ngày kiểm, locator+observation tường minh;
+   chỉ tăng version30 món có biên tập, không suy nhãn từ tên/giờ quán để đạt quota.
+2. Tái sử dụng storage0026/RPC hiện hữu. Bổ sung đối chiếu ADR-018, giữ Proposed;
+   không thay schema/API, migration/room authority/luật chọn món. Đề xuất SQL ban đầu
+   chưa triển khai, cần Trí chốt nếu muốn thay schema/API về sau.
+3. Validate→stage→transaction→readback: projection tường minh, release/version/hash
+   pin; no-op/conflict, rollback/activation/restore; chỉ owned QA/test_only=true.
+4. QA DB/REST riêng có marker, JWT ký thật với synthetic QA identities, worker verify;
+   assertions nội dung pool trưa10/20/shortage, auth/ACL, chuyển vòng/kết quả/reconnect,
+   snapshot khóa, legacy fixture IDs/FK/results giữ nguyên. Không reset/migrate app DB.
+5. Offline unit/negative/source preservation/two builds; runtime regression riêng,
+   full Python/repository/index/diff, live merge gate sau fetch main. Evidence pin
+   nguồn/code/migration/hash/expected–actual; không log token hoặc phiếu.
 
-Nhận GM-04 dictionary, GM-06 schema, GM-07 DTO, GM-08 bundle/HANDOFF từ main;
-kiểm checksum tại [upstream inventory](UPSTREAM.json). Readiness live Project
-phải đạt trước code. Bổ sung đúng metadata issue #125 và ngoại lệ P0 bổ sung sau
-GM-34 theo issue; không thay approval/dependency task cũ hoặc trạng thái Project.
-
-Giữ 39 món/UUID, mapping 216/2/1; sinh bundle, schema, template, manifest và báo cáo
-từ snapshot offline. Giữ record version 2; preparationMethods=null vì chưa có
-evidence mới. Bỏ quán khỏi runtime profile, giữ menu URLs/IDs làm nguồn. Tách 247
-quan sát giá, giữ đơn vị/khẩu phần/ngày nguồn. Artwork chưa đủ review giữ null.
-Fixtures mô phỏng riêng, không biến dữ liệu thật thành fixture hoặc ngược lại.
-
-Test: required/null/unknown, alias/trùng/Unicode/ID/FK/taxonomy type, evidence,
-rights, price/unit/nonfinite/time, profile không nhận entity quán, template trống,
-two offline builds/hash, mọi giá trị món cũ và từng quan sát giá được bảo toàn.
-
-## Mốc duyệt — Trí
-
-[ADR-018](../../../architecture/decisions/ADR-018-dish-catalogue-profile.md) mô tả
-release storage, snapshot discriminator/FK, private adapter và RPC riêng. Issue
-yêu cầu “Chốt supplement/ADR hẹp với Trí trước thay schema/API”. Chờ quyết định
-thật cho ADR; không coi việc Vinh yêu cầu triển khai là review thay Trí.
-
-## Mốc B — sau ADR được duyệt
-
-Fetch main và kiểm artifact/Git/DB ledger lại; chọn migration còn trống. Importer
-và private storage thực hiện validate/stage/import/readback/reimport/rollback trên
-DB test riêng. RPC read/preview có auth, DTO/guard riêng. Conditional FK chỉ nới
-nguồn catalogue, giữ legacy offering guards. Adapter snapshot pin release; copy
-đủ metadata qua round 2 và giữ integrations GM-21/23. Không thêm public create-room
-flow/UI, không đổi cap hoặc eligibility food-v1.
-
-SQL assertions thật tại `supabase/tests/dish_catalogue.sql`, JWT HTTP runner và
-`supabase/tests/http/GM-40.http`: import atomicity/conflicts/rollback/ACL, catalogue
-không cần quán, old/new snapshot, old transition/finalize/retry/privacy/history.
-Trước merge chạy readiness --gate merge --base-ref origin/main; gate không thay
-test thực hoặc review Trí. Không tạo file placeholder báo Pass cho các đầu ra này.
-
-## Kiểm chung và bàn giao
-
-Python regression, repository validator, task index check, diff check ở mốc A.
-SQL/HTTP/domain/mobile typecheck/lint/tests/architecture ở mốc B theo thay đổi thật.
-CHECKS/HANDOFF phân biệt Pass/Fail/Not run; không tuyên bố SQL/API/Android từ offline
-test. Không thêm package, gọi AI, reset app DB hoặc Approved/Done.
-Ngoại lệ commit/push/PR: Vinh đã yêu cầu mở PR ngày 2026-10-21; chỉ bàn giao mốc A và ADR chờ review.
-
-## Patch review — 2026-10-22
-
-Nhận hai comment Trí trên PR129; rebase main d8245a0. Chỉ sửa validator admission:
-taxonomy type/namespace vocabulary; price natural-key uniqueness + UUIDv5 consistency.
-Thêm synthetic golden-ID/negative/CLI cases và kiểm toàn bộ mã trong registry riêng.
-Không đổi bundle/schema/nguồn, không cần API/AI/network để sinh dữ liệu. Chạy 31
-contract tests, full regression, offline build, repository/indexes/diff, live gate.
-Handoff bổ sung endpoint/contract pending và consumer theo ADR-019; không code luật
-phòng hoặc schema/API mốc B khi chưa được duyệt.
+Chưa kiểm Android/FE/Places hoặc production publish; đây là Data/BE, không thêm package,
+không tạo RPC preview đề xuất khi chưa cần, không gán approved theo kết quả validator.
+[HANDOFF](HANDOFF.md) ghi lệnh và khôi phục; [CHECKS](CHECKS.md) ghi kết quả thực.

@@ -1,142 +1,98 @@
-# GM-40 — Handoff mốc dữ liệu offline
+# GM-40 — Catalogue draft và đường nạp QA
 
-Owner Vinh; reviewer Trí; **chưa Approved/Done**. Branch `codex/gm-40-dish-catalogue`,
-base `afb1dca13b91bef30062aca018e5457908d244bc`. Mốc dữ liệu được đóng gói thành commit/PR theo yêu cầu Vinh ngày 2026-10-21;
-commit thực tế xem lịch sử Git/PR, không dùng base làm tested feature SHA. Schema/profile 1.0.0; contract `dish-catalogue-v1/roadmap-v2/GM-40.1`.
+Cập nhật 2026-10-23 theo [review PR #129](https://github.com/ThanhTris/IE307/pull/129#issuecomment-6346930509).
+Owner Vinh, reviewer Trí. **Review/chưa Done; không tự Approved hoặc đổi Project**.
+Target main `0d571b7316c0443bc766dca564407fd0abf521ac`; patch tiếp từ head `9e7a45b`.
+Revision/hash thực của lượt kiểm xem [QA results](qa-results.json) và [patch manifest](PATCH_MANIFEST.json).
 
-## Có thể dùng để review ngay
+## Đầu ra hiện hành
 
-| Artifact | Nội dung |
+| Artifact | Hợp đồng / nội dung |
 | --- | --- |
-| [Dictionary](../../../data/DISH_CATALOGUE_DICTIONARY.md) | Field/type/required/null/unknown/unit/source/ID/version, giới hạn legacy |
-| [Schema](../../../../supabase/seed/templates/dish-catalogue-v1.schema.json) / [template](../../../../supabase/seed/templates/dish-catalogue-v1.template.json) | Profile JSON độc lập, template trống fixtureOnly=true |
-| [Bundle](../../../../supabase/seed/catalogue/dishes.json) / [manifest](../../../../supabase/seed/catalogue/manifest.json) | 39 món draft, 18 taxonomy, 27 nguồn, 247 quan sát giá, 123 field evidence |
-| [Quality report](../../../../supabase/seed/catalogue/QUALITY_REPORT.md) | Coverage và thiếu thông tin của từng món; không phải review/publish |
-| [Builder/validator](../../../../data-preparation/scripts/dish_catalogue.py) | Offline CLI, không SQL/network/API |
-| [Fixture](../../../../tests/fixtures/dish-catalogue-v1/README.md) / [tests](../../../../tests/test_dish_catalogue.py) | Mô phỏng tách thật; structural/semantic/identity/source preservation |
-| [Patch/test plan](PLAN.md) / [ADR-018](../../../architecture/decisions/ADR-018-dish-catalogue-profile.md) | Đề xuất storage/API/private snapshot adapter chờ Trí |
-| [Upstream](UPSTREAM.json) / [checks](CHECKS.md) | Base/artifact commit+hash, lệnh và giới hạn kiểm |
+| [Dictionary](../../../data/DISH_CATALOGUE_DICTIONARY.md), [schema](../../../../supabase/seed/templates/dish-catalogue-v1.schema.json), [template](../../../../supabase/seed/templates/dish-catalogue-v1.template.json) | dish-catalogue-v1/GM-40.1, schema1.0.0 |
+| [Bundle](../../../../supabase/seed/catalogue/dishes.json), [manifest](../../../../supabase/seed/catalogue/manifest.json), [quality](../../../../supabase/seed/catalogue/QUALITY_REPORT.md) | Dataset1.1.0; 39 món, 18 taxonomy, 33 sources, 247 giá, 151 fieldEvidence; draft/test_demo |
+| [Meal supplement](../../../../data-preparation/config/meal_slot_evidence_v1.json) | v1.0.0, 5 nguồn/44 quan sát/30 UUID; snapshot URL/hash/ngày kiểm; không sửa lịch sử |
+| [Builder](../../../../data-preparation/scripts/dish_catalogue.py) | Offline deterministic, schema+semantic validation; giữ hai admission fixes đã được review |
+| [Importer](../../../../supabase/seed/import_dish_catalogue.py) | validate→stage→import nguyên tử→readback; chỉ QA sở hữu |
+| [QA runner](../../../../scripts/gm40_catalogue_check.py), [SQL assertions](../../../../supabase/tests/dish_catalogue.sql), [HTTP suite](../../../../supabase/tests/http/GM-40.http) | DB riêng, JWT HTTP thật, worker, expected–actual; cleanup có marker |
+| [Checks](CHECKS.md), [plan](PLAN.md), [ADR supplement](../../../architecture/decisions/ADR-018-dish-catalogue-profile.md) | Kết quả thật, scope và phần chưa nghiệm thu |
 
-Mọi giá trị món cũ giữ nguyên; thêm preparationMethods=null, không tự suy tag từ tên.
-39 UUID giữ nguyên; 18 món GM-08 là tập con, không cộng thành 57. Mapping nguồn đủ
-219 dòng: 216 mapped, 2 needs_review, 1 excluded, pin checksum ở manifest. Menu variants
-không tự thành aliases. Bundle mới không chứa entity quán/offering/lịch/coverage;
-nguồn URL menu/ID mục menu được giữ làm provenance. Snapshot/cache/GPT/GM-08 không đổi.
+39 UUID giữ nguyên, 18 GM-08 là tập con; mapping219 vẫn216/2/1. Giá và nguồn khảo sát
+cũ không sửa, menu variant không biến thành alias. 30 món tăng version2→3 vì bổ sung
+meal evidence; 9 giữ version2. Sáng14/trưa23/tối7/snack1, 9 chưa biết; chưa đủ20 món
+sáng/tối/snack. Nguồn mới có menu trường học và quốc tế, không là availability Thủ Đức.
+Ảnh/ingredient/flavor/preparation chưa đủ căn cứ giữ null, không suy an toàn dị ứng.
 
-## Tái lập từ clone sạch
+## Nhận runtime đã merge, không tạo schema/API song song
 
-Python 3 stdlib; regression toàn repo dùng Python >=3.11 (đã kiểm 3.12.14).
-Không cài package, không cần notebook/kernel/token hoặc Docker ở mốc A:
+Nhận [GM-20 dish-v3 handoff](../GM-20/dish-v3/HANDOFF.md): migration
+`0026_dish_session_policy.sql`, schema0.8.0, wire `dish-session-v3/ADR-019`, policy
+`dish-decision-v3`. Hash migration trong qa-results.json; không sửa file đã merge.
+
+Runtime authority là `dish_v3_private.catalogues` và snapshot runtime0026. Importer
+map id→dishId, giữ nguyên name/description/artwork/mealSlots/cuisineIds/categoryIds.
+Release ID `dish-catalogue-v1:1.1.0`, source_sha pin **toàn bundle bytes**. Staging
+lưu cả bundle đầy đủ và stage.json projection; runtime readback so đúng projection,
+không tuyên bố DB cards chứa toàn bộ price/evidence/record version. Không ghi đè18
+món legacy, không insert quán giả hoặc thêm entity nơi bán để tạo pool.
+
+Endpoint thật **POST /rest/v1/rpc/dish_session** (qua gateway) hoặc **/rpc/dish_session**
+(trên PostgREST QA riêng). Commands create/snapshot/join/start/submit/finalize có sẵn;
+request `{command,payload}`, response envelope `ok/data` hoặc `ok/error`. Auth JWT
+role authenticated; client giữ wire/guard của GM-20. Không thêm read_dish_catalogue/
+preview_dish_catalogue được đề xuất ban đầu; không quảng cáo các tên đó là API đã chạy.
+
+ADR-018 vẫn Proposed: supplement đối chiếu mới dùng **storage/RPC hiện hữu, không đổi
+schema/API**. Thiết kế gm40_private/discriminator/adapter SQL cũ chưa triển khai/chưa duyệt.
+Không đổi luật 10–20 món, timer, veto/score/tier/seed/history/consent hoặc ACL.
+
+## Tái lập offline và QA
+
+Python>=3.11 (đã kiểm3.12.14), Docker/Supabase local hiện có. Không cài package.
 
 ```sh
 python3 data-preparation/scripts/dish_catalogue.py --check
-python3 data-preparation/scripts/dish_catalogue.py --input supabase/seed/catalogue/dishes.json
-python3 -m unittest discover -s tests -p test_dish_catalogue.py -v
-python3 scripts/validate_repository.py
-python3 scripts/task_readiness.py --check-docs
+python3 -m unittest discover -s tests -p 'test_dish_catalogue*.py' -v
+python3 supabase/seed/import_dish_catalogue.py validate --manifest supabase/seed/catalogue/manifest.json
+python3 supabase/seed/import_dish_catalogue.py stage --manifest supabase/seed/catalogue/manifest.json --staging-dir data-preparation/datasets/gm40-stage
+python3 scripts/gm40_catalogue_check.py
 ```
 
-Sinh lại có chủ ý: `python3 data-preparation/scripts/dish_catalogue.py --write`.
-Build hai lần từ input không đổi cho cùng byte/hash; --check từ chối output bị sửa
-tay hoặc đầu vào lệch snapshot. Không ghi đè snapshot/cache/legacy manifest.
+Sinh lại có chủ ý bằng builder --write; không sửa trực tiếp JSON sinh ra. Raw PDF/HTML
+ở datasets bị ignore, builder chạy từ supplement có hash/locator nên không cần mạng
+hoặc cache để clone sạch chạy được. Re-capture/biên tập nguồn là thay đổi có version,
+không lấy ngày chạy mới thay checkedAt. Không crawl hoặc gọi AI khi build/test.
 
-## Điểm duyệt bắt buộc và phần chưa triển khai
+QA runner đọc auth schema/config local trong bộ nhớ, tạo DB `gm08_check_<random16hex>`
+template0 có gm40_qa_owner marker, áp migrations tại QA rồi verify schema/definitions.
+Tạo PostgREST loopback riêng và JWT ký hợp lệ cho synthetic auth.users QA, chạy tick
+worker đã verify. **Không phải đăng nhập GoTrue/Android thật**. Không in credential/
+ballot; không lưu token trong evidence. Runner finally stop worker/REST và drop đúng
+DB có marker. App DB chỉ đọc introspection, không migrate/reset/publish. App local
+hiện chưa có0026; không dùng health hoặc endpoint54321 làm bằng chứng triển khai main.
 
-Theo issue #125: “Chốt supplement/ADR hẹp với Trí trước thay schema/API”.
-**Trí cần duyệt ADR-018 trước mốc B**; đây là yêu cầu explicit của issue/plan,
-không phải approval do agent tự thêm. ADR hiện Proposed, chưa có quyết định Trí.
+CLI import/readback/activate yêu cầu --database và --namespace khớp marker + schema
+verify, từ chối postgres/app DB. Cùng release/version/hash là no-op; đổi bytes cùng
+version báo conflict. Version mới import inactive trừ --activate; activate đổi con trỏ
+trong transaction. Khôi phục dùng `activate --release-id dish-catalogue-v1:1.1.0` với
+cùng ownership flags; không xóa release hoặc sửa hash. Runner kiểm restore/rollback và
+snapshot đã khóa không đổi; bản1.1.1 trong test chỉ là candidate QA, không bundle phát hành.
+Không trỏ CLI vào DB ứng dụng hoặc tự tạo marker để vượt guard.
 
-Chưa tạo `supabase/seed/import_dish_catalogue.py`, migration tiến,
-`supabase/tests/dish_catalogue.sql`, `supabase/tests/http/GM-40.http`, RPC catalogue,
-DTO runtime/guard hoặc private room adapter. Không tạo placeholder để đánh dấu đạt
-AC. Số migration/path/hash sẽ ghi sau khi được duyệt và cập nhật main lại. Ledger
-và definitions DB chưa được kiểm tại mốc dữ liệu; chưa kết nối hoặc migrate DB.
+HTTP suite cung cấp placeholders; runner tự điền/gọi/assert trong vòng đời DB tạm rồi
+dọn. Không lưu endpoint/token dùng lại sau cleanup. Muốn kiểm tương tác cần harness
+QA có namespace/credential riêng do owner quản lý; không dùng fixture đã cleanup.
 
-Mốc B phải kiểm import/readback/reimport/conflict/atomicity/rollback, auth thật,
-new/old snapshots, round2/finalize/result stability và GM-21/23 integrations. Public
-create_room/RoomContext hiện tại chưa đổi; chưa cung cấp luồng public tạo phòng
-không cần địa điểm. Consumer UI/Android/Places nằm ngoài GM-40. Chưa chạy SQL/HTTP,
-không tuyên bố Done hoặc cho production dùng catalogue draft.
+## Bằng chứng và phần còn lại
 
-## Giới hạn dữ liệu
+qa-results.json ghi expected–actual từng ca: real bundle readback, reimport/conflict,
+atomic rollback/restore, pool trưa10/20 đúng tag/nội dung/ID/hash, shortage không giảm
+count, auth/outsider, real cards qua hai vòng/kết quả/reconnect, legacy fixture result/
+FK/IDs không đổi, ACL và worker. Legacy fixture mô phỏng tách dữ liệu thật. Không nhận
+đây là kiểm trên dữ liệu production hoặc chứng minh mọi possible category filter đủ20.
 
-34/39 mô tả; 1/39 có alias; 5/39 cuisine; 39/39 category; 2/39 meal slots;
-1/39 origin khác unknown; 2/39 temperature khác unknown. Flavor/ingredientTags/
-preparationMethods/artwork chưa có giá trị chung đủ evidence (giữ null/unknown).
-Các con số là coverage cấu trúc, không phải nhãn được review hoặc còn fresh.
-247 quan sát giá snapshot giữ đơn vị menu_item_unspecified khi không rõ khẩu phần;
-không tính giá/person, trung bình hoặc giá áp dụng toàn món. Quyền nguồn/ảnh chưa
-biết không được nâng thành licensed; source dates cũ không là ngày kiểm mới.
-
-## Bàn giao tiếp
-
-Trí review ADR và mốc A; sau đó Vinh làm mốc B đúng PLAN. Trước merge cập nhật main,
-chạy `python3 scripts/task_readiness.py --task GM-40 --gate merge --base-ref origin/main`
-và đủ AC thực. Merge gate không thay ADR approval hoặc test. Không thêm dependency
-ngược GM-40 vào task số nhỏ hơn, không mở lại GM-08 hoặc thay release GM-34.
-
-Kết quả ban đầu 2026-10-21: **573/573 regression**, **21/21 contract**, repository/index/diff đạt.
-[Offline results](offline-results.json) và [patch manifest](PATCH_MANIFEST.json) pin kết quả/source; chưa có SQL/HTTP evidence.
-
-[PR preparation](PR_PREPARATION.json): đã fetch và đối chiếu GitHub main; gate upstream đạt READY_FOR_MERGE_REVIEW.
-Kết quả gate không gỡ điểm duyệt ADR hoặc các AC SQL/API còn Not run. PR chỉ bàn giao mốc A, không tự đóng #125.
-
-## Sau review PR #129 — 2026-10-22
-
-Nhánh đã rebase từ main `d8245a02c85d5b3bc4888a826589e99c1dc58a6d` (PR #130).
-Yêu cầu chọn món không cần điểm đến/GPS/quán được tiếp nhận tại
-[ADR-019](../../../architecture/decisions/ADR-019-dish-first-room-policy.md).
-Hai lỗi admission trong comment đã sửa: code taxonomy ngoài type/namespace codebook
-bị từ chối, quan sát giá trùng natural key hoặc sai UUIDv5 bị từ chối. Bundle/schema/
-manifest dữ liệu giữ byte cũ; không sửa snapshot legacy hoặc khôi phục điều kiện quán.
-Chi tiết tái hiện/expected/actual tại [review fix](REVIEW_FIX.md).
-
-### Endpoint, contract/version và consumer mốc B
-
-| Đầu ra / interface | Contract/version | Tình trạng và nơi nhận |
-| --- | --- | --- |
-| File catalogue dishes.json / schema / template | dish-catalogue-v1 1.0.0; dataset1.0.0; GM-40.1 | Đã có, dữ liệu draft/test_demo; nguồn cho BE/DTO |
-| POST /rest/v1/rpc/read_dish_catalogue | Đề xuất ADR-018; đọc release theo profile1.0.0; runtime DTO/envelope chờ chốt với GM-07 | Chưa triển khai; chưa có endpoint/auth setup có thể gọi thử |
-| POST /rest/v1/rpc/preview_dish_catalogue | Đề xuất ADR-018, cùng profile; pin release/version/hash; runtime request/response guard chờ review | Chưa triển khai; không tự coi preview catalogue là pool phòng |
-| Adapter private ghi/đọc snapshot món | Đề xuất ADR-018, release + dish/record version + choice IDs | Chưa triển khai; phải kiểm snapshot/round/finalize và legacy compatibility |
-| Consumer DTO/client và create/preview/RoomContext | GM-07 nhận profile1.0.0; phiên runtime mới cần version được duyệt theo ADR-019 | GM-18/19 và GM-24/25 bỏ yêu cầu anchor/radius/GPS cho flow mới; không thuộc PR offline này |
-
-Catalogue API độc lập không tự làm public create_room/RoomContext hết phụ thuộc
-anchor/radius. Consumer phải nhận đúng version đã duyệt và thay API tạo phòng/pool,
-không gửi UUID anchor/quán giả để qua legacy guard. Policy/contract/snapshot phiên cũ
-được pin nguyên nghĩa; không đổi phiên đã bắt đầu hoặc sửa migration đã merge.
-Mốc B cần migration tiến và regression readback/transition/finalize/ACL trước dùng.
-Định dạng RPC/DTO ở bảng là đề xuất, chưa được ADR-018 approval và chưa có SQL/HTTP
-bằng chứng chạy thật. Không tuyên bố đã có endpoint hoạt động chỉ vì có tên trong docs.
-
-Luật phòng/pool/ready/timer/cap mới được điều phối riêng theo ADR-019 hiện hành;
-không thêm vào validator catalogue hoặc PR này. Kiểm điện thoại tích hợp theo đợt
-sau merge vẫn **Not run** tới khi có revision/kết quả thật; không coi việc hoãn kiểm
-là Pass hoặc toàn bộ GM-40 Done.
-
-### Nhận runtime mới từ main PR #131 — 2026-10-22
-
-Target cuối lượt sửa là `0d571b7316c0443bc766dca564407fd0abf521ac`.
-[Handoff runtime](../GM-20/dish-v3/HANDOFF.md) cung cấp endpoint **đã merge**
-`POST /rest/v1/rpc/dish_session`, wire `dish-session-v3/ADR-019`, policy
-`dish-decision-v3`, schema0.8.0/migration0026. Đây là RPC riêng; legacy
-create_room/RoomContext không tự đổi nghĩa. FE DTO/screens còn là consumer tiếp theo.
-
-GM-40 mốc B phải nhận contract đó để nối importer/release thay vì dựng lại runtime:
-`dishes[].id` → `cards[].dishId`, giữ name/mealSlots/cuisineIds/categoryIds đúng
-nguồn; release/source SHA/test flag phải nhất quán với immutable
-`dish_v3_private.catalogues`. Schema hiện tại chỉ nhận test_only=true; active
-mặc định false, không có dữ liệu thật được tự kích hoạt. Cơ chế load/activate/
-rollback và source validation của GM-40 còn chờ triển khai/review, không hand-edit
-active hash hoặc lấy fixture làm release thật. Hai RPC đọc/preview trong ADR-018
-vẫn là **đề xuất chưa triển khai**, không nhầm với dish_session đã có trên main.
-
-Private storage/room adapter đề xuất ở ADR-018 phải được đối chiếu lại với migration
-0026 trước khi duyệt mốc B; không tạo hai nguồn chốt runtime song song. Snapshot
-legacy giữ version/policy cũ; phiên v3 pin catalogue hash/cards theo handoff của nó.
-Không sửa migration0026 đã merge hoặc đổi luật phòng trong PR catalogue này.
-
-Dữ liệu hiện có chỉ 2/39 món có mealSlots được chứng minh. Runtime v3 đòi đúng
-10–20 món qua lọc, nên việc bundle valid **không chứng minh tạo được phòng thật**;
-không tự điền buổi ăn, hạ count hoặc bỏ lọc để vượt kiểm. Bàn giao nguồn/thiếu field
-cho mốc B và consumer; kiểm điện thoại vẫn Not run theo đợt tích hợp sau merge.
+Chưa có frontend/Expo/Android/Places integration, chưa publish production hoặc Trí
+nghiệm thu. Quyền ảnh unknown, nullable và thiếu nhãn theo quality report tiếp tục
+bàn giao. Không mở lại GM-08, không đổi Project status, không tự đóng #125/merge.
+Review Trí quyết định AC còn lại/approval. Lịch sử mốc A và sửa validator giữ trong
+CHECKS/offline-results/review-fix-results, không dùng kết quả cũ thay lượt QA hiện hành.

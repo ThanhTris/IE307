@@ -5,6 +5,34 @@ Status: **Proposed — chờ Trí (@ThanhTris) duyệt; chưa thay schema/API**.
 Task: [GM-40 / #125](https://github.com/ThanhTris/IE307/issues/125).
 Contract đề xuất: `dish-catalogue-v1/roadmap-v2/GM-40.1`, schema/profile `1.0.0`.
 
+## Supplement đối chiếu main — 2026-10-23
+
+Theo [comment của Trí](https://github.com/ThanhTris/IE307/pull/129#issuecomment-6346930509),
+GM-40 tiếp tục Data/BE trên storage/RPC đã merge của PR #131. **Không thay schema/API
+trong patch này**; thiết kế SQL ban đầu bên dưới vẫn Proposed, không được suy thành
+Approved từ comment. Nếu cần thay schema/API tiếp theo vẫn phải chốt với Trí trước.
+
+- Tái sử dụng `dish_v3_private.catalogues` của migration0026/schema0.8.0; release ID
+  `dish-catalogue-v1:1.1.0`, `source_sha` là hash toàn bundle, cards là projection
+  ổn định id→dishId/name/description/artwork/mealSlots/cuisineIds/categoryIds.
+- Không tạo `gm40_private`, release_dishes, FK/discriminator trong round_dishes,
+  canonical dish legacy hoặc room adapter thứ hai. Không sửa migration0026.
+  Món/taxonomy/giá/nguồn/evidence đầy đủ giữ ở bundle staging+manifest được hash-pin;
+  không tuyên bố runtime cards chứa toàn bộ metadata biên tập hoặc record version.
+- Snapshot mới dùng sessions/pools/result của runtime ADR-019 hiện có. API thực là
+  `dish_session`, wire `dish-session-v3/ADR-019`; read/preview RPC dưới đây chưa triển
+  khai và không cần thêm cho phép thử create/snapshot của đợt này. Legacy RPC/IDs giữ nguyên.
+- Importer admin chỉ nhận DB QA riêng có marker namespace, validate→stage→transaction→
+  readback, test_only=true. Cùng version/hash no-op, khác nội dung conflict; activation/
+  restore chỉ đổi con trỏ active nguyên tử, không sửa cards/hash đã khóa. Không xóa release.
+- Nguồn nhãn bữa mới là supplement version riêng; dữ liệu vẫn draft/test_demo, chưa
+  publish. DB ứng dụng không migrate/reset; QA runner tự dọn tài nguyên sở hữu.
+
+Đây là đối chiếu implementation tránh thay schema/API; chưa phải nghiệm thu ADR-018
+hoặc toàn bộ GM-40. Xem [handoff hiện hành](../../evidence/roadmap-v2/GM-40/HANDOFF.md).
+
+## Đề xuất ban đầu 2026-10-21 — lịch sử, chưa triển khai
+
 ## Căn cứ và điểm dừng
 
 Issue yêu cầu: “Chốt supplement/ADR hẹp với Trí trước thay schema/API”. Yêu cầu triển khai

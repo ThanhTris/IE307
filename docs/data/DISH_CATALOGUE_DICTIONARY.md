@@ -1,7 +1,7 @@
 # GM-40 — Data dictionary catalogue món
 
 Contract: **dish-catalogue-v1/roadmap-v2/GM-40.1**; profile/schema **1.0.0**;
-dataset **1.0.0** trong namespace catalogue riêng. Trạng thái: draft, test/demo,
+dataset **1.1.0** trong namespace catalogue riêng. Trạng thái: draft, test/demo,
 chưa review schema/API; [ADR-018](../architecture/decisions/ADR-018-dish-catalogue-profile.md).
 Schema JSON này là hợp đồng dữ liệu offline, không phải migration database.
 
@@ -18,7 +18,7 @@ python3 -m unittest discover -s tests -p test_dish_catalogue.py -v
 
 Sinh lại sau thay đổi đầu vào có chủ ý: `python3 data-preparation/scripts/dish_catalogue.py --write`.
 Không sửa tay artifact rồi dùng --write để che khác biệt. --check so byte output và
-hash input; chưa import/activate hoặc query DB. SQL importer/RPC chưa tồn tại, chờ Trí duyệt ADR.
+hash input. Lệnh build không import/activate DB. Importer QA riêng tái sử dụng storage0026 và RPC đã merge; xem HANDOFF GM-40. Không đổi schema/API hoặc coi ADR-018 đã Approved.
 
 ## Hình thức và liên kết
 
@@ -83,13 +83,13 @@ nghiên cứu test/demo, không là quyền tái phân phối hoặc approval pr
 
 ## Version và manifest
 
-Giữ version=2 cùng giá trị món cũ; bổ sung field preparationMethods=null không tạo
-nội dung suy luận mới. Nếu biên tập giá trị món, tăng record version, giữ UUID và pin
+Dataset1.1.0: 30 món có meal evidence mới tăng version2→3; 9 món giữ version2.
+Các giá trị khác giữ nguyên; preparationMethods=null không tạo nội dung suy luận mới. Nếu biên tập giá trị món, tăng record version, giữ UUID và pin
 release mới; dataset version SemVer tách record version/schema version/hash.
 Manifest chứa hash raw bytes UTF-8 LF của bundle và schema, counts từng entity,
 inputSha256 và reconciliation 39/18/216/2/1. Hash không chứa chính manifest và không
 là xác nhận review. Hai lần build offline phải cho cùng byte/checksum. Snapshot và
-legacy verified manifest không đổi. Activation hiện not_implemented_pending_ADR_018.
+legacy verified manifest không đổi. Build không activation; importer chỉ cho owned QA, không production publish.
 
 ## Các trường
 
@@ -211,7 +211,7 @@ categoryGroups.preparation trong taxonomy_v1.json; không thêm vocabulary mới
 [fixture mô phỏng](../../tests/fixtures/dish-catalogue-v1/README.md).
 Giữ mapping 219 dòng trong snapshot nguồn; manifest pin checksum mapping và quality
 report ghi trạng thái 216/2/1. Hai needs_review và một excluded không được biến thành
-món/alias chỉ để tăng số lượng. Chưa có importer SQL/API runtime cho profile này.
+món/alias chỉ để tăng số lượng. Importer QA dùng storage/runtime hiện có; không tạo RPC mới.
 
 ## Bổ sung kiểm admission sau review PR #129 — 2026-10-22
 
@@ -227,3 +227,22 @@ ID bắt buộc bằng UUIDv5 với namespace UUID.NAMESPACE_URL và key UTF-8 c
 UUID khác không hợp thức hóa quan sát trùng, kể cả thay amount. Khác snapshot hoặc
 khác menu item vẫn là quan sát riêng khi ID theo đúng công thức. --input và build
 cùng áp dụng các guard này; không đổi version/schema hoặc các ID hợp lệ đã xuất.
+
+## Supplement bữa ăn 1.0.0 / dataset1.1.0
+
+Đầu vào `data-preparation/config/meal_slot_evidence_v1.json` chứa 5 nguồn web/PDF,
+URL/ngày kiểm/checksum snapshot và 44 quan sát tường minh cho 30 UUID. Builder
+không tra cứu mạng, không suy nhãn từ tên hoặc giờ quán. fieldEvidence của mealSlots
+trỏ supplement, note chứa sourceRef/locator/observation và evidence legacy được giữ.
+Các nhóm fieldSources cũ giữ nguyên; không coi ngày kiểm mealSlots là kiểm lại giá.
+
+Nguồn gồm Vietnam Airlines breakfast guide, menu trưa SIS Đà Nẵng tháng10/2017,
+menu CVK Q7 tháng01/2026, Saigon Block lunch và Oppa Eatery lunch/dinner. PDF được
+đối chiếu vị trí hàng/cột trên ảnh render. Đây là bằng chứng xuất hiện dưới nhãn bữa
+cụ thể, có menu trường học và nguồn quốc tế; chưa chứng minh mọi biến thể phù hợp,
+dinh dưỡng người lớn, địa điểm Thủ Đức hoặc món đang bán. Bữa ăn vẫn là nhãn draft.
+
+Sáng14/trưa23/tối7/snack1; overlap, 9 món chưa có nhãn. Chỉ trưa đủ phép thử20 món
+không kèm bộ lọc khác. Shortfall chi tiết trong quality report; không điền unknown
+thành mọi bữa. 33 nguồn, 151 fieldEvidence, 247 giá cũ, artwork toàn null; các nguồn
+mới rights unknown, không tự cấp license. Snapshot/registry/meal labels legacy không sửa.

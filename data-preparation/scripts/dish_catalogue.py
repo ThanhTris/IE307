@@ -1,6 +1,6 @@
 """GM-40 offline data milestone. No database, network, activation or API calls.
 
-The SQL importer is intentionally deferred until Tri approves ADR-018.
+The separate QA importer reuses the reviewed 0026 runtime without schema/API changes.
 Run from any directory: python3 data-preparation/scripts/dish_catalogue.py --check
 """
 from __future__ import annotations
@@ -36,6 +36,7 @@ INPUTS = [
     'data-preparation/snapshots/editorial-v0.2.0/price_references.csv',
     'data-preparation/snapshots/editorial-v0.2.0/field_evidence.csv',
     'supabase/seed/draft/gm08-survey-v0.4.1/bundle.json',
+    'data-preparation/config/meal_slot_evidence_v1.json',
 ]
 
 
@@ -132,6 +133,50 @@ def parse_utc(value):
 def price_reference_id(dish_id, menu_item_id, snapshot_sha256):
     key = f'anyfood:gm40:price:{dish_id}:{menu_item_id}:{snapshot_sha256}'
     return str(uuid.uuid5(uuid.NAMESPACE_URL, key))
+
+
+def meal_supplement(dishes, evidence, sources):
+    """Apply only explicit, versioned editorial evidence; never infer from names."""
+    supplement = load_json(ROOT / INPUTS[8])
+    if supplement['version'] != '1.0.0' or supplement['status'] != 'draft':
+        raise ValueError('Unsupported meal supplement version/review status')
+    by_id = {d['id']: d for d in dishes}
+    source_refs = {}
+    common = dict(version=1, reviewStatus='draft', fieldSources={}, checkedAt=supplement['checkedAt'],
+                  validUntil=None, enteredBy='gm40-meal-editorial-agent', reviewedBy=None, status='draft')
+    for source in supplement['sources']:
+        if source['key'] in source_refs or len(source['snapshotSha256']) != 64:
+            raise ValueError('Duplicate source or missing capture hash')
+        source_refs[source['key']] = source['sourceRef']
+        sources.append({**common, 'sourceRef': source['sourceRef'], 'locator': source['url'],
+                        'usageRights': source['usageRights'], 'license': None, 'attribution': None})
+    editorial_ref = str(uuid.uuid5(uuid.NAMESPACE_URL, 'anyfood:gm40:meal-evidence:v1'))
+    sources.append({**common, 'sourceRef': editorial_ref, 'locator': INPUTS[8],
+                    'usageRights': 'unknown', 'license': None, 'attribution': None})
+    seen = set()
+    allowed = load_json(ROOT / INPUTS[1])['mealSlots']
+    for update in supplement['updates']:
+        dish_id = update['dishId']
+        if dish_id not in by_id or dish_id in seen or not update['observations']:
+            raise ValueError('Unknown/duplicate dish or absent meal evidence')
+        seen.add(dish_id)
+        d = by_id[dish_id]
+        observations = deepcopy(update['observations'])
+        for item in observations:
+            if (item['mealSlot'] not in allowed or item['sourceKey'] not in source_refs
+                    or item['basis'] != 'explicit_meal_context' or not item['locator'] or not item['observation']):
+                raise ValueError('Meal label requires explicit source/context')
+            item['sourceRef'] = source_refs[item['sourceKey']]
+        prior = [e for e in evidence if e['dishId'] == dish_id and e['field'] == 'mealSlots']
+        evidence[:] = [e for e in evidence if not (e['dishId'] == dish_id and e['field'] == 'mealSlots')]
+        d['mealSlots'] = [slot for slot in allowed if slot in set(d['mealSlots']) | {e['mealSlot'] for e in observations}]
+        d['version'] += 1
+        d['checkedAt'] = supplement['checkedAt']
+        evidence.append({'dishId': dish_id, 'field': 'mealSlots', 'sourceRef': editorial_ref,
+                         'basis': 'explicit_meal_context_draft', 'sourceMenuItemIds': [],
+                         'note': json.dumps({'supplement': INPUTS[8], 'observations': observations,
+                                             'preservedLegacyEvidence': prior}, ensure_ascii=False)})
+    return supplement['datasetVersion']
 
 
 def validate(bundle, schema=None):
@@ -279,11 +324,13 @@ def build():
                 'sourceRef': row['sourceRef'], 'basis': row['basis'], 'note': row['note'],
                 'sourceMenuItemIds': json.loads(row['menuItemIds']),
             })
+    sources = deepcopy(old['dataSources'])
+    version = meal_supplement(dishes, evidence, sources)
     bundle = {
-        'profile': 'dish-catalogue-v1', 'contractVersion': '1.0.0', 'datasetVersion': '1.0.0',
+        'profile': 'dish-catalogue-v1', 'contractVersion': '1.0.0', 'datasetVersion': version,
         'usageScope': 'test_demo', 'fixtureOnly': False,
         'entities': {'dishes': dishes, 'taxonomy': sorted(deepcopy(old['taxonomy']), key=lambda r: r['id']),
-                     'dataSources': sorted(deepcopy(old['dataSources']), key=lambda r: r['sourceRef']),
+                     'dataSources': sorted(sources, key=lambda r: r['sourceRef']),
                      'priceReferences': sorted(prices, key=lambda r: r['id']),
                      'fieldEvidence': sorted(evidence, key=lambda r: (r['dishId'], r['field']))},
     }
@@ -304,7 +351,7 @@ def build():
     manifest = {
         'profile': bundle['profile'], 'contractId': CONTRACT, 'schemaVersion': '1.0.0',
         'datasetVersion': bundle['datasetVersion'], 'usageScope': 'test_demo',
-        'status': 'draft', 'fixtureOnly': False, 'activation': 'not_implemented_pending_ADR_018',
+        'status': 'draft', 'fixtureOnly': False, 'activation': 'not_activated_by_build; owned_QA_import_only',
         'reviewedBy': None, 'generatedFrom': 'frozen offline inputs; no wall clock or network',
         'bundlePath': BUNDLE_PATH, 'bundleSha256': sha(encoded(bundle)),
         'schemaSha256': sha(encoded(schema_document())),
@@ -321,13 +368,19 @@ def build():
         gaps = [key for key in counts if row[key] in [None, [], 'unknown']]
         missing.append('| ' + row['name'] + ' | ' + ', '.join(gaps) + ' |')
     report = '# GM-40 — Offline quality report\n\n'
-    report += 'Draft/test-demo only; no DB import, API, activation or approval. No nearby/open venue claim.\n\n'
+    report += 'Draft/test-demo only. This offline build does not import/activate a DB or prove API/approval. Owned-QA importer/checks are separate. No nearby/open venue claim.\n\n'
     report += f'39 dishes; {len(legacy_ids)} shared GM-08 IDs; 0 GM-08-only IDs; mapping 216 mapped / 2 needs_review / 1 excluded.\n\n'
     report += f'{len(prices)} price observations, {sum(r["value"] is None for r in prices)} null amounts; no price/person conversion or dish average.\n\n'
     report += 'Equivalent-name collisions: 0 (accent-preserving NFC + case/whitespace normalization). Source menu names remain variants, not aliases.\n\n'
     report += '| Field | Known/nonempty dishes |\n| --- | --- |\n'
     report += '\n'.join(f'| {key} | {count}/39 |' for key, count in counts.items()) + '\n\n'
     report += 'Known/nonempty is structural coverage, not reviewed accuracy or current freshness. Empty arrays mean no evidenced labels.\n\n'
+    report += 'Meal evidence supplement v1; historical snapshot unchanged; references include school menus and international publishers.\n\n'
+    report += '| Meal | Unique dishes | Shortfall for 10 | Shortfall for 20 |\n| --- | --- | --- | --- |\n'
+    for slot in load_json(ROOT / INPUTS[1])['mealSlots']:
+        count = sum(slot in d['mealSlots'] for d in dishes)
+        report += f'| {slot} | {count} | {max(0, 10-count)} | {max(0, 20-count)} |\n'
+    report += '\nCounts overlap across meals; additional cuisine/category filters may reduce them. No unknown label matches all meals.\n\n'
     report += '\n'.join(missing) + '\n'
     return {
         SCHEMA_PATH: encoded(schema_document()), BUNDLE_PATH: encoded(bundle),

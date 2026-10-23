@@ -2,22 +2,22 @@
   "profile": "dish-catalogue-v1",
   "contractId": "dish-catalogue-v1/roadmap-v2/GM-40.1",
   "schemaVersion": "1.0.0",
-  "datasetVersion": "1.0.0",
+  "datasetVersion": "1.1.0",
   "usageScope": "test_demo",
   "status": "draft",
   "fixtureOnly": false,
-  "activation": "not_implemented_pending_ADR_018",
+  "activation": "not_activated_by_build; owned_QA_import_only",
   "reviewedBy": null,
   "generatedFrom": "frozen offline inputs; no wall clock or network",
   "bundlePath": "supabase/seed/catalogue/dishes.json",
-  "bundleSha256": "4b34020265576a93fae4057f598adba9fb27a6a99a42eec0f8ed864f7f60b2f8",
+  "bundleSha256": "776b1e4998d0b170b51a7c39a4ead74461bdfd721f167dafddf7f072bf117a2f",
   "schemaSha256": "cfbf6141d6641090ab0d79142ceddd6419077c419f0de916fb40339221a139bd",
   "counts": {
     "dishes": 39,
     "taxonomy": 18,
-    "dataSources": 27,
+    "dataSources": 33,
     "priceReferences": 247,
-    "fieldEvidence": 123
+    "fieldEvidence": 151
   },
   "identityReconciliation": {
     "editorialDishes": 39,
@@ -37,6 +37,7 @@
     "data-preparation/snapshots/editorial-v0.2.0/catalogue.json": "cfaff47b0c65833983fe8de748428f25d26d7e1d49c539a5d1045676a08b9e90",
     "data-preparation/snapshots/editorial-v0.2.0/price_references.csv": "2bac7da6f7a5a9e61fa28bdcd2c45ea5cf332c605735515edf0e7fd290dc416f",
     "data-preparation/snapshots/editorial-v0.2.0/field_evidence.csv": "8ee141a8f74a4d795096bf05fd017aed3fffd7adb546a03b089594be1f6902ed",
-    "supabase/seed/draft/gm08-survey-v0.4.1/bundle.json": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02"
+    "supabase/seed/draft/gm08-survey-v0.4.1/bundle.json": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+    "data-preparation/config/meal_slot_evidence_v1.json": "a4bcb1134eb8e2691e72f72fdfe9fb149903451bcea2577b04a80c0d27620840"
   }
 }

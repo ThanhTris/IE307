@@ -7,6 +7,7 @@ import sys
 import subprocess
 import tempfile
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'data-preparation/scripts'))
@@ -40,12 +41,42 @@ class DishCatalogueTests(unittest.TestCase):
     def test_all_legacy_dish_values_and_ids_preserved(self):
         old = catalogue.load_json(ROOT / catalogue.INPUTS[4])['entities']['dishes']
         expected = {r['id']: r for r in old}
-        actual = {r['id']: {k: v for k, v in r.items() if k != 'preparationMethods'} for r in self.real['entities']['dishes']}
-        self.assertEqual(expected, actual)
+        actual = {r['id']: r for r in self.real['entities']['dishes']}
+        updates = {r['dishId'] for r in catalogue.load_json(ROOT / catalogue.INPUTS[8])['updates']}
+        for key, original in expected.items():
+            current = actual[key]
+            changed_fields = {'version', 'checkedAt', 'mealSlots'} if key in updates else set()
+            self.assertEqual({k: v for k, v in current.items() if k not in changed_fields | {'preparationMethods'}},
+                             {k: v for k, v in original.items() if k not in changed_fields})
+            self.assertEqual(current['version'], original['version'] + int(key in updates))
+            self.assertTrue(set(original['mealSlots']) <= set(current['mealSlots']))
         self.assertEqual(len(actual), 39)
         gm08 = catalogue.load_json(ROOT / catalogue.INPUTS[7])['entities']['dishes']
         self.assertEqual(len(gm08), 18)
         self.assertTrue({r['id'] for r in gm08} <= actual.keys())
+
+    def test_meal_enrichment_coverage_and_unknown_preserved(self):
+        dishes = self.real['entities']['dishes']
+        self.assertEqual(self.real['datasetVersion'], '1.1.0')
+        self.assertEqual({slot: sum(slot in d['mealSlots'] for d in dishes)
+                          for slot in ['breakfast', 'lunch', 'dinner', 'snack']},
+                         {'breakfast': 14, 'lunch': 23, 'dinner': 7, 'snack': 1})
+        self.assertEqual(sum(d['mealSlots'] == [] for d in dishes), 9)
+        self.assertTrue(all(d['flavor'] is None and d['artwork'] is None for d in dishes))
+
+    def test_meal_supplement_rejects_absent_or_unknown_evidence(self):
+        original_loader = catalogue.load_json
+        source = original_loader(ROOT / catalogue.INPUTS[8])
+        for mutation in ['no_observation', 'bad_slot', 'bad_source', 'unknown_dish']:
+            bad = deepcopy(source)
+            if mutation == 'no_observation': bad['updates'][0]['observations'] = []
+            if mutation == 'bad_slot': bad['updates'][0]['observations'][0]['mealSlot'] = 'anytime'
+            if mutation == 'bad_source': bad['updates'][0]['observations'][0]['sourceKey'] = 'not-evidenced'
+            if mutation == 'unknown_dish': bad['updates'][0]['dishId'] = '40000000-0000-5000-8000-000000000001'
+            def loader(path):
+                return bad if Path(path) == ROOT / catalogue.INPUTS[8] else original_loader(path)
+            with self.subTest(mutation=mutation), patch.object(catalogue, 'load_json', side_effect=loader):
+                with self.assertRaises(ValueError): catalogue.build()
 
     def test_mapping_219_rows_and_no_variant_promoted_to_alias(self):
         mapping = catalogue.load_json(ROOT / catalogue.INPUTS[3])['mapping']

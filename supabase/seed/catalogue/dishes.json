@@ -1,13 +1,13 @@
 {
   "profile": "dish-catalogue-v1",
   "contractVersion": "1.0.0",
-  "datasetVersion": "1.0.0",
+  "datasetVersion": "1.1.0",
   "usageScope": "test_demo",
   "fixtureOnly": false,
   "entities": {
     "dishes": [
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
@@ -15,7 +15,7 @@
           "taxonomy": "ed058b8a-d0db-5944-9af4-962df535ba27",
           "description": "ed058b8a-d0db-5944-9af4-962df535ba27"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -27,7 +27,9 @@
         "categoryIds": [
           "811f6aa0-6b7f-5645-aeb9-c2f96cf50630"
         ],
-        "mealSlots": [],
+        "mealSlots": [
+          "breakfast"
+        ],
         "timeHints": [],
         "origin": "unknown",
         "ingredientTags": null,
@@ -64,7 +66,7 @@
         "preparationMethods": null
       },
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
@@ -72,7 +74,7 @@
           "taxonomy": "ed058b8a-d0db-5944-9af4-962df535ba27",
           "description": "ed058b8a-d0db-5944-9af4-962df535ba27"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -84,7 +86,9 @@
         "categoryIds": [
           "e69b5f45-580d-5ee3-9e43-360650b4c650"
         ],
-        "mealSlots": [],
+        "mealSlots": [
+          "lunch"
+        ],
         "timeHints": [],
         "origin": "unknown",
         "ingredientTags": null,
@@ -99,7 +103,7 @@
         "preparationMethods": null
       },
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
@@ -107,7 +111,7 @@
           "taxonomy": "ed058b8a-d0db-5944-9af4-962df535ba27",
           "description": "62568427-0d84-557f-a044-97dc526fa14e"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -121,7 +125,10 @@
         "categoryIds": [
           "1f89baf1-52f8-5f1e-98d8-7a36cae7a596"
         ],
-        "mealSlots": [],
+        "mealSlots": [
+          "breakfast",
+          "lunch"
+        ],
         "timeHints": [],
         "origin": "unknown",
         "ingredientTags": null,
@@ -151,7 +158,7 @@
         "preparationMethods": null
       },
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
@@ -159,7 +166,7 @@
           "taxonomy": "ed058b8a-d0db-5944-9af4-962df535ba27",
           "description": "ed058b8a-d0db-5944-9af4-962df535ba27"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -171,7 +178,9 @@
         "categoryIds": [
           "e69b5f45-580d-5ee3-9e43-360650b4c650"
         ],
-        "mealSlots": [],
+        "mealSlots": [
+          "lunch"
+        ],
         "timeHints": [],
         "origin": "unknown",
         "ingredientTags": null,
@@ -199,7 +208,7 @@
         "preparationMethods": null
       },
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
@@ -207,7 +216,7 @@
           "taxonomy": "ed058b8a-d0db-5944-9af4-962df535ba27",
           "description": "ed058b8a-d0db-5944-9af4-962df535ba27"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -219,7 +228,9 @@
         "categoryIds": [
           "87e3727e-5022-50a2-9a60-0b3dea21ca5d"
         ],
-        "mealSlots": [],
+        "mealSlots": [
+          "breakfast"
+        ],
         "timeHints": [],
         "origin": "unknown",
         "ingredientTags": null,
@@ -242,7 +253,7 @@
         "preparationMethods": null
       },
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
@@ -250,7 +261,7 @@
           "taxonomy": "ed058b8a-d0db-5944-9af4-962df535ba27",
           "description": "ed058b8a-d0db-5944-9af4-962df535ba27"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -262,7 +273,9 @@
         "categoryIds": [
           "bab170d6-9d47-57c9-8ca5-767954cbd111"
         ],
-        "mealSlots": [],
+        "mealSlots": [
+          "lunch"
+        ],
         "timeHints": [],
         "origin": "unknown",
         "ingredientTags": null,
@@ -279,7 +292,7 @@
         "preparationMethods": null
       },
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
@@ -287,7 +300,7 @@
           "taxonomy": "ed058b8a-d0db-5944-9af4-962df535ba27",
           "description": "62568427-0d84-557f-a044-97dc526fa14e"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -301,7 +314,9 @@
         "categoryIds": [
           "1f89baf1-52f8-5f1e-98d8-7a36cae7a596"
         ],
-        "mealSlots": [],
+        "mealSlots": [
+          "lunch"
+        ],
         "timeHints": [],
         "origin": "unknown",
         "ingredientTags": null,
@@ -316,7 +331,7 @@
         "preparationMethods": null
       },
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
@@ -324,7 +339,7 @@
           "taxonomy": "ed058b8a-d0db-5944-9af4-962df535ba27",
           "description": "ed058b8a-d0db-5944-9af4-962df535ba27"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -336,7 +351,9 @@
         "categoryIds": [
           "e69b5f45-580d-5ee3-9e43-360650b4c650"
         ],
-        "mealSlots": [],
+        "mealSlots": [
+          "lunch"
+        ],
         "timeHints": [],
         "origin": "unknown",
         "ingredientTags": null,
@@ -393,7 +410,7 @@
         "preparationMethods": null
       },
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
@@ -401,7 +418,7 @@
           "taxonomy": "ed058b8a-d0db-5944-9af4-962df535ba27",
           "description": "ed058b8a-d0db-5944-9af4-962df535ba27"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -413,7 +430,9 @@
         "categoryIds": [
           "14bc9d6f-c43e-5c1d-9c13-eddc5cc80dcc"
         ],
-        "mealSlots": [],
+        "mealSlots": [
+          "lunch"
+        ],
         "timeHints": [],
         "origin": "unknown",
         "ingredientTags": null,
@@ -428,14 +447,14 @@
         "preparationMethods": null
       },
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
           "name": "ed058b8a-d0db-5944-9af4-962df535ba27",
           "taxonomy": "ed058b8a-d0db-5944-9af4-962df535ba27"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -447,7 +466,9 @@
         "categoryIds": [
           "14bc9d6f-c43e-5c1d-9c13-eddc5cc80dcc"
         ],
-        "mealSlots": [],
+        "mealSlots": [
+          "breakfast"
+        ],
         "timeHints": [],
         "origin": "unknown",
         "ingredientTags": null,
@@ -503,7 +524,7 @@
         "preparationMethods": null
       },
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
@@ -511,7 +532,7 @@
           "taxonomy": "ed058b8a-d0db-5944-9af4-962df535ba27",
           "description": "ed058b8a-d0db-5944-9af4-962df535ba27"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -523,7 +544,9 @@
         "categoryIds": [
           "14bc9d6f-c43e-5c1d-9c13-eddc5cc80dcc"
         ],
-        "mealSlots": [],
+        "mealSlots": [
+          "lunch"
+        ],
         "timeHints": [],
         "origin": "unknown",
         "ingredientTags": null,
@@ -577,7 +600,7 @@
         "preparationMethods": null
       },
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
@@ -585,7 +608,7 @@
           "taxonomy": "ed058b8a-d0db-5944-9af4-962df535ba27",
           "description": "ed058b8a-d0db-5944-9af4-962df535ba27"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -597,7 +620,11 @@
         "categoryIds": [
           "ac9e12a4-0416-53fc-af30-5b8b11ee0b49"
         ],
-        "mealSlots": [],
+        "mealSlots": [
+          "breakfast",
+          "lunch",
+          "dinner"
+        ],
         "timeHints": [],
         "origin": "unknown",
         "ingredientTags": null,
@@ -615,7 +642,7 @@
         "preparationMethods": null
       },
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
@@ -623,7 +650,7 @@
           "taxonomy": "ed058b8a-d0db-5944-9af4-962df535ba27",
           "description": "ed058b8a-d0db-5944-9af4-962df535ba27"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -635,7 +662,9 @@
         "categoryIds": [
           "14bc9d6f-c43e-5c1d-9c13-eddc5cc80dcc"
         ],
-        "mealSlots": [],
+        "mealSlots": [
+          "breakfast"
+        ],
         "timeHints": [],
         "origin": "unknown",
         "ingredientTags": null,
@@ -688,7 +717,7 @@
         "preparationMethods": null
       },
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
@@ -696,7 +725,7 @@
           "taxonomy": "ed058b8a-d0db-5944-9af4-962df535ba27",
           "description": "ed058b8a-d0db-5944-9af4-962df535ba27"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -708,7 +737,11 @@
         "categoryIds": [
           "0a0fc007-2e29-5077-a43a-3f3fa54da0b5"
         ],
-        "mealSlots": [],
+        "mealSlots": [
+          "breakfast",
+          "lunch",
+          "dinner"
+        ],
         "timeHints": [],
         "origin": "unknown",
         "ingredientTags": null,
@@ -737,7 +770,7 @@
         "preparationMethods": null
       },
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
@@ -745,7 +778,7 @@
           "taxonomy": "ed058b8a-d0db-5944-9af4-962df535ba27",
           "description": "ed058b8a-d0db-5944-9af4-962df535ba27"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -757,7 +790,10 @@
         "categoryIds": [
           "e69b5f45-580d-5ee3-9e43-360650b4c650"
         ],
-        "mealSlots": [],
+        "mealSlots": [
+          "lunch",
+          "dinner"
+        ],
         "timeHints": [],
         "origin": "unknown",
         "ingredientTags": null,
@@ -772,7 +808,7 @@
         "preparationMethods": null
       },
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
@@ -780,7 +816,7 @@
           "taxonomy": "4b8e096d-2210-5cf6-b0e6-384a213b37aa",
           "description": "4b8e096d-2210-5cf6-b0e6-384a213b37aa"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -849,7 +885,7 @@
         "preparationMethods": null
       },
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
@@ -857,7 +893,7 @@
           "taxonomy": "ed058b8a-d0db-5944-9af4-962df535ba27",
           "description": "ed058b8a-d0db-5944-9af4-962df535ba27"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -869,7 +905,9 @@
         "categoryIds": [
           "e69b5f45-580d-5ee3-9e43-360650b4c650"
         ],
-        "mealSlots": [],
+        "mealSlots": [
+          "lunch"
+        ],
         "timeHints": [],
         "origin": "unknown",
         "ingredientTags": null,
@@ -887,7 +925,7 @@
         "preparationMethods": null
       },
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
@@ -895,7 +933,7 @@
           "taxonomy": "2a5af80d-cf4a-50ac-a903-5fbafd476685",
           "description": "2a5af80d-cf4a-50ac-a903-5fbafd476685"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -930,7 +968,7 @@
         "preparationMethods": null
       },
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
@@ -938,7 +976,7 @@
           "taxonomy": "ed058b8a-d0db-5944-9af4-962df535ba27",
           "description": "ed058b8a-d0db-5944-9af4-962df535ba27"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -950,7 +988,9 @@
         "categoryIds": [
           "5cc8224c-f7da-5c2e-9dcc-274504b977c4"
         ],
-        "mealSlots": [],
+        "mealSlots": [
+          "breakfast"
+        ],
         "timeHints": [],
         "origin": "unknown",
         "ingredientTags": null,
@@ -965,7 +1005,7 @@
         "preparationMethods": null
       },
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
@@ -973,7 +1013,7 @@
           "taxonomy": "ed058b8a-d0db-5944-9af4-962df535ba27",
           "description": "ed058b8a-d0db-5944-9af4-962df535ba27"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -985,7 +1025,10 @@
         "categoryIds": [
           "e69b5f45-580d-5ee3-9e43-360650b4c650"
         ],
-        "mealSlots": [],
+        "mealSlots": [
+          "lunch",
+          "dinner"
+        ],
         "timeHints": [],
         "origin": "unknown",
         "ingredientTags": null,
@@ -1008,7 +1051,7 @@
         "preparationMethods": null
       },
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
@@ -1016,7 +1059,7 @@
           "taxonomy": "ed058b8a-d0db-5944-9af4-962df535ba27",
           "description": "ed058b8a-d0db-5944-9af4-962df535ba27"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -1028,7 +1071,9 @@
         "categoryIds": [
           "ac9e12a4-0416-53fc-af30-5b8b11ee0b49"
         ],
-        "mealSlots": [],
+        "mealSlots": [
+          "lunch"
+        ],
         "timeHints": [],
         "origin": "unknown",
         "ingredientTags": null,
@@ -1046,7 +1091,7 @@
         "preparationMethods": null
       },
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
@@ -1054,7 +1099,7 @@
           "taxonomy": "ed058b8a-d0db-5944-9af4-962df535ba27",
           "description": "ed058b8a-d0db-5944-9af4-962df535ba27"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -1066,7 +1111,11 @@
         "categoryIds": [
           "a7033166-916f-5748-b9c3-6670424dbfcf"
         ],
-        "mealSlots": [],
+        "mealSlots": [
+          "breakfast",
+          "lunch",
+          "dinner"
+        ],
         "timeHints": [],
         "origin": "unknown",
         "ingredientTags": null,
@@ -1083,7 +1132,7 @@
         "preparationMethods": null
       },
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
@@ -1091,7 +1140,7 @@
           "taxonomy": "ed058b8a-d0db-5944-9af4-962df535ba27",
           "description": "ed058b8a-d0db-5944-9af4-962df535ba27"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -1103,7 +1152,10 @@
         "categoryIds": [
           "1af6a10b-2820-5c18-909f-40acfa83ec84"
         ],
-        "mealSlots": [],
+        "mealSlots": [
+          "breakfast",
+          "lunch"
+        ],
         "timeHints": [],
         "origin": "unknown",
         "ingredientTags": null,
@@ -1162,7 +1214,7 @@
         "preparationMethods": null
       },
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
@@ -1170,7 +1222,7 @@
           "taxonomy": "ed058b8a-d0db-5944-9af4-962df535ba27",
           "description": "ed058b8a-d0db-5944-9af4-962df535ba27"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -1182,7 +1234,10 @@
         "categoryIds": [
           "e69b5f45-580d-5ee3-9e43-360650b4c650"
         ],
-        "mealSlots": [],
+        "mealSlots": [
+          "lunch",
+          "dinner"
+        ],
         "timeHints": [],
         "origin": "unknown",
         "ingredientTags": null,
@@ -1200,7 +1255,7 @@
         "preparationMethods": null
       },
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
@@ -1208,7 +1263,7 @@
           "taxonomy": "ed058b8a-d0db-5944-9af4-962df535ba27",
           "description": "ed058b8a-d0db-5944-9af4-962df535ba27"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -1220,7 +1275,10 @@
         "categoryIds": [
           "e69b5f45-580d-5ee3-9e43-360650b4c650"
         ],
-        "mealSlots": [],
+        "mealSlots": [
+          "lunch",
+          "dinner"
+        ],
         "timeHints": [],
         "origin": "unknown",
         "ingredientTags": null,
@@ -1271,14 +1329,14 @@
         "preparationMethods": null
       },
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
           "name": "ed058b8a-d0db-5944-9af4-962df535ba27",
           "taxonomy": "ed058b8a-d0db-5944-9af4-962df535ba27"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -1290,7 +1348,9 @@
         "categoryIds": [
           "e69b5f45-580d-5ee3-9e43-360650b4c650"
         ],
-        "mealSlots": [],
+        "mealSlots": [
+          "lunch"
+        ],
         "timeHints": [],
         "origin": "unknown",
         "ingredientTags": null,
@@ -1305,7 +1365,7 @@
         "preparationMethods": null
       },
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
@@ -1313,7 +1373,7 @@
           "taxonomy": "ed058b8a-d0db-5944-9af4-962df535ba27",
           "description": "ed058b8a-d0db-5944-9af4-962df535ba27"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -1325,7 +1385,9 @@
         "categoryIds": [
           "14bc9d6f-c43e-5c1d-9c13-eddc5cc80dcc"
         ],
-        "mealSlots": [],
+        "mealSlots": [
+          "lunch"
+        ],
         "timeHints": [],
         "origin": "unknown",
         "ingredientTags": null,
@@ -1342,14 +1404,14 @@
         "preparationMethods": null
       },
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
           "name": "ed058b8a-d0db-5944-9af4-962df535ba27",
           "taxonomy": "ed058b8a-d0db-5944-9af4-962df535ba27"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -1361,7 +1423,9 @@
         "categoryIds": [
           "e69b5f45-580d-5ee3-9e43-360650b4c650"
         ],
-        "mealSlots": [],
+        "mealSlots": [
+          "lunch"
+        ],
         "timeHints": [],
         "origin": "unknown",
         "ingredientTags": null,
@@ -1412,7 +1476,7 @@
         "preparationMethods": null
       },
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
@@ -1420,7 +1484,7 @@
           "taxonomy": "ed058b8a-d0db-5944-9af4-962df535ba27",
           "description": "ed058b8a-d0db-5944-9af4-962df535ba27"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -1432,7 +1496,10 @@
         "categoryIds": [
           "e69b5f45-580d-5ee3-9e43-360650b4c650"
         ],
-        "mealSlots": [],
+        "mealSlots": [
+          "breakfast",
+          "lunch"
+        ],
         "timeHints": [],
         "origin": "unknown",
         "ingredientTags": null,
@@ -1495,7 +1562,7 @@
         "preparationMethods": null
       },
       {
-        "version": 2,
+        "version": 3,
         "reviewStatus": "draft",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "fieldSources": {
@@ -1503,7 +1570,7 @@
           "taxonomy": "ed058b8a-d0db-5944-9af4-962df535ba27",
           "description": "ed058b8a-d0db-5944-9af4-962df535ba27"
         },
-        "checkedAt": "2026-10-10T02:26:05Z",
+        "checkedAt": "2026-10-23T03:14:52Z",
         "validUntil": null,
         "enteredBy": "gm03-editorial-agent",
         "reviewedBy": null,
@@ -1515,7 +1582,10 @@
         "categoryIds": [
           "14bc9d6f-c43e-5c1d-9c13-eddc5cc80dcc"
         ],
-        "mealSlots": [],
+        "mealSlots": [
+          "breakfast",
+          "lunch"
+        ],
         "timeHints": [],
         "origin": "unknown",
         "ingredientTags": null,
@@ -1891,6 +1961,21 @@
       {
         "version": 1,
         "reviewStatus": "draft",
+        "fieldSources": {},
+        "checkedAt": "2026-10-23T03:14:52Z",
+        "validUntil": null,
+        "enteredBy": "gm40-meal-editorial-agent",
+        "reviewedBy": null,
+        "status": "draft",
+        "sourceRef": "0df016c3-c4f5-59a3-ad8e-d15da5b62827",
+        "locator": "https://www.saigon-block.com/m_menu_lunch.php",
+        "usageRights": "unknown",
+        "license": null,
+        "attribution": null
+      },
+      {
+        "version": 1,
+        "reviewStatus": "draft",
         "sourceRef": "11dd6ec4-4037-55d0-930c-ab5e47a42452",
         "fieldSources": {},
         "checkedAt": "2026-10-09T16:38:12Z",
@@ -1902,6 +1987,21 @@
         "license": null,
         "attribution": null,
         "status": "draft"
+      },
+      {
+        "version": 1,
+        "reviewStatus": "draft",
+        "fieldSources": {},
+        "checkedAt": "2026-10-23T03:14:52Z",
+        "validUntil": null,
+        "enteredBy": "gm40-meal-editorial-agent",
+        "reviewedBy": null,
+        "status": "draft",
+        "sourceRef": "1c5c660f-4ab7-58a1-bf2a-37123306d51e",
+        "locator": "https://www.vietnamairlines.com/go/en/plan-book/travel/travel-guide/vietnamese-breakfast",
+        "usageRights": "unknown",
+        "license": null,
+        "attribution": null
       },
       {
         "version": 1,
@@ -1951,6 +2051,36 @@
       {
         "version": 1,
         "reviewStatus": "draft",
+        "fieldSources": {},
+        "checkedAt": "2026-10-23T03:14:52Z",
+        "validUntil": null,
+        "enteredBy": "gm40-meal-editorial-agent",
+        "reviewedBy": null,
+        "status": "draft",
+        "sourceRef": "41faf3fb-b3c4-5fa0-9613-668976c60da4",
+        "locator": "https://oppaeatery.yumbojumbo.com.au/menu",
+        "usageRights": "unknown",
+        "license": null,
+        "attribution": null
+      },
+      {
+        "version": 1,
+        "reviewStatus": "draft",
+        "fieldSources": {},
+        "checkedAt": "2026-10-23T03:14:52Z",
+        "validUntil": null,
+        "enteredBy": "gm40-meal-editorial-agent",
+        "reviewedBy": null,
+        "status": "draft",
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "locator": "data-preparation/config/meal_slot_evidence_v1.json",
+        "usageRights": "unknown",
+        "license": null,
+        "attribution": null
+      },
+      {
+        "version": 1,
+        "reviewStatus": "draft",
         "sourceRef": "4b8e096d-2210-5cf6-b0e6-384a213b37aa",
         "fieldSources": {},
         "checkedAt": "2026-10-10T02:26:05Z",
@@ -1996,6 +2126,21 @@
       {
         "version": 1,
         "reviewStatus": "draft",
+        "fieldSources": {},
+        "checkedAt": "2026-10-23T03:14:52Z",
+        "validUntil": null,
+        "enteredBy": "gm40-meal-editorial-agent",
+        "reviewedBy": null,
+        "status": "draft",
+        "sourceRef": "5aedbe19-5a3b-53d6-8f7a-58c74bdef4c5",
+        "locator": "https://danang.sis.edu.vn/wp-content/uploads/pdf/Th%C3%A1ng-10.2017-Th%E1%BB%B1c-%C4%91%C6%A1n-ti%E1%BB%83u-h%E1%BB%8Dc-c%E1%BA%A5p-2-SIS@Danang.pdf",
+        "usageRights": "unknown",
+        "license": null,
+        "attribution": null
+      },
+      {
+        "version": 1,
+        "reviewStatus": "draft",
         "sourceRef": "5dd7d319-9918-5389-ad80-817f8de98fd6",
         "fieldSources": {},
         "checkedAt": "2026-10-09T16:38:48Z",
@@ -2007,6 +2152,21 @@
         "license": null,
         "attribution": null,
         "status": "draft"
+      },
+      {
+        "version": 1,
+        "reviewStatus": "draft",
+        "fieldSources": {},
+        "checkedAt": "2026-10-23T03:14:52Z",
+        "validUntil": null,
+        "enteredBy": "gm40-meal-editorial-agent",
+        "reviewedBy": null,
+        "status": "draft",
+        "sourceRef": "5fa58bd1-3e71-5634-9512-cbba48050ec2",
+        "locator": "https://cvk.sedbergh.edu.vn/wp-content/uploads/2025/12/CVKQ7HS_Thuc-don-Thang-01.2026.pdf",
+        "usageRights": "unknown",
+        "license": null,
+        "attribution": null
       },
       {
         "version": 1,
@@ -6328,6 +6488,14 @@
       },
       {
         "dishId": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
+        "field": "mealSlots",
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"breakfast\", \"sourceKey\": \"vna\", \"locator\": \"heading 2\", \"basis\": \"explicit_meal_context\", \"observation\": \"Dish/variant is explicitly discussed in the breakfast guide; supports a possible meal slot, not every variant or live sale.\", \"sourceRef\": \"1c5c660f-4ab7-58a1-bf2a-37123306d51e\"}], \"preservedLegacyEvidence\": []}"
+      },
+      {
+        "dishId": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
         "field": "name",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "basis": "owner_grouping",
@@ -6394,6 +6562,14 @@
       },
       {
         "dishId": "01e12db6-8014-5e84-bc53-398af27ad314",
+        "field": "mealSlots",
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"lunch\", \"sourceKey\": \"sis\", \"locator\": \"page 2, BỮA TRƯA, 10/10/2017\", \"basis\": \"explicit_meal_context\", \"observation\": \"Cá diêu hồng chiên with Cơm trắng is an explicitly listed lunch option; base-group variant mapping reviewed separately, not an ingredient inference.\", \"sourceRef\": \"5aedbe19-5a3b-53d6-8f7a-58c74bdef4c5\"}], \"preservedLegacyEvidence\": []}"
+      },
+      {
+        "dishId": "01e12db6-8014-5e84-bc53-398af27ad314",
         "field": "name",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "basis": "owner_grouping",
@@ -6445,6 +6621,14 @@
       },
       {
         "dishId": "0da7d12b-4e83-517b-9c26-b192e6d63fe9",
+        "field": "mealSlots",
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"breakfast\", \"sourceKey\": \"vna\", \"locator\": \"heading 1\", \"basis\": \"explicit_meal_context\", \"observation\": \"Dish/variant is explicitly discussed in the breakfast guide; supports a possible meal slot, not every variant or live sale.\", \"sourceRef\": \"1c5c660f-4ab7-58a1-bf2a-37123306d51e\"}, {\"mealSlot\": \"lunch\", \"sourceKey\": \"saigon\", \"locator\": \"LUNCH MENU, item 27 beef Pho\", \"basis\": \"explicit_meal_context\", \"observation\": \"Publisher explicitly places this dish/variant in its lunch menu. Reference abroad; no nearby/open-venue claim or tag inferred from opening hours.\", \"sourceRef\": \"0df016c3-c4f5-59a3-ad8e-d15da5b62827\"}], \"preservedLegacyEvidence\": []}"
+      },
+      {
+        "dishId": "0da7d12b-4e83-517b-9c26-b192e6d63fe9",
         "field": "name",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "basis": "owner_grouping",
@@ -6524,6 +6708,14 @@
       },
       {
         "dishId": "16ad89fb-0bc1-5d43-b8d0-4285916a69dc",
+        "field": "mealSlots",
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"lunch\", \"sourceKey\": \"saigon\", \"locator\": \"LUNCH MENU, item 81 vegetarian rice option\", \"basis\": \"explicit_meal_context\", \"observation\": \"Publisher explicitly places this dish/variant in its lunch menu. Reference abroad; no nearby/open-venue claim or tag inferred from opening hours.\", \"sourceRef\": \"0df016c3-c4f5-59a3-ad8e-d15da5b62827\"}], \"preservedLegacyEvidence\": []}"
+      },
+      {
+        "dishId": "16ad89fb-0bc1-5d43-b8d0-4285916a69dc",
         "field": "name",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "basis": "owner_grouping",
@@ -6593,6 +6785,14 @@
       },
       {
         "dishId": "1fdae49f-b6da-5574-82b6-4b7fc1cf09cd",
+        "field": "mealSlots",
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"breakfast\", \"sourceKey\": \"vna\", \"locator\": \"heading 3\", \"basis\": \"explicit_meal_context\", \"observation\": \"Dish/variant is explicitly discussed in the breakfast guide; supports a possible meal slot, not every variant or live sale.\", \"sourceRef\": \"1c5c660f-4ab7-58a1-bf2a-37123306d51e\"}], \"preservedLegacyEvidence\": []}"
+      },
+      {
+        "dishId": "1fdae49f-b6da-5574-82b6-4b7fc1cf09cd",
         "field": "name",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "basis": "owner_grouping",
@@ -6640,6 +6840,14 @@
       },
       {
         "dishId": "26448eef-8a0a-5934-bc0a-8936b205b389",
+        "field": "mealSlots",
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"lunch\", \"sourceKey\": \"oppa\", \"locator\": \"SALAD BOWL - LUNCH\", \"basis\": \"explicit_meal_context\", \"observation\": \"Named meal section contains a base-group variant. No recipe, price/person, location or stock inference.\", \"sourceRef\": \"41faf3fb-b3c4-5fa0-9613-668976c60da4\"}], \"preservedLegacyEvidence\": []}"
+      },
+      {
+        "dishId": "26448eef-8a0a-5934-bc0a-8936b205b389",
         "field": "name",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "basis": "owner_grouping",
@@ -6676,6 +6884,14 @@
         "basis": "reference",
         "note": "Nguồn tham khảo mô tả đúng món; biên tập ngắn và giữ phạm vi biến thể, chưa review độc lập.",
         "sourceMenuItemIds": []
+      },
+      {
+        "dishId": "33c758d0-9f9b-5dd9-8976-c52b6f949d31",
+        "field": "mealSlots",
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"lunch\", \"sourceKey\": \"saigon\", \"locator\": \"LUNCH MENU, item 29 Phở gà\", \"basis\": \"explicit_meal_context\", \"observation\": \"Publisher explicitly places this dish/variant in its lunch menu. Reference abroad; no nearby/open-venue claim or tag inferred from opening hours.\", \"sourceRef\": \"0df016c3-c4f5-59a3-ad8e-d15da5b62827\"}], \"preservedLegacyEvidence\": []}"
       },
       {
         "dishId": "33c758d0-9f9b-5dd9-8976-c52b6f949d31",
@@ -6722,6 +6938,14 @@
       },
       {
         "dishId": "37e032fb-1a78-5b5c-833d-c5362ba14445",
+        "field": "mealSlots",
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"lunch\", \"sourceKey\": \"sis\", \"locator\": \"page 2, BỮA TRƯA, 10/10/2017\", \"basis\": \"explicit_meal_context\", \"observation\": \"Sườn nướng with Cơm trắng is an explicitly listed lunch option; base-group variant mapping reviewed separately, not an ingredient inference.\", \"sourceRef\": \"5aedbe19-5a3b-53d6-8f7a-58c74bdef4c5\"}], \"preservedLegacyEvidence\": []}"
+      },
+      {
+        "dishId": "37e032fb-1a78-5b5c-833d-c5362ba14445",
         "field": "name",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "basis": "owner_grouping",
@@ -6803,6 +7027,14 @@
       },
       {
         "dishId": "441e70be-0b06-521d-b5b9-7349386f14ad",
+        "field": "mealSlots",
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"lunch\", \"sourceKey\": \"saigon\", \"locator\": \"LUNCH MENU, item 40 Bún thịt nướng chả giò\", \"basis\": \"explicit_meal_context\", \"observation\": \"Publisher explicitly places this dish/variant in its lunch menu. Reference abroad; no nearby/open-venue claim or tag inferred from opening hours.\", \"sourceRef\": \"0df016c3-c4f5-59a3-ad8e-d15da5b62827\"}], \"preservedLegacyEvidence\": []}"
+      },
+      {
+        "dishId": "441e70be-0b06-521d-b5b9-7349386f14ad",
         "field": "name",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "basis": "owner_grouping",
@@ -6825,6 +7057,14 @@
       },
       {
         "dishId": "4a8ac4a8-b566-5032-be38-48f00e6a53b9",
+        "field": "mealSlots",
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"breakfast\", \"sourceKey\": \"vna\", \"locator\": \"heading 19\", \"basis\": \"explicit_meal_context\", \"observation\": \"Dish/variant is explicitly discussed in the breakfast guide; supports a possible meal slot, not every variant or live sale.\", \"sourceRef\": \"1c5c660f-4ab7-58a1-bf2a-37123306d51e\"}], \"preservedLegacyEvidence\": []}"
+      },
+      {
+        "dishId": "4a8ac4a8-b566-5032-be38-48f00e6a53b9",
         "field": "name",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "basis": "owner_grouping",
@@ -6902,6 +7142,14 @@
           "menu_7b42359df8a71ec9ff28",
           "menu_2f89f3d1c5509bf46b72"
         ]
+      },
+      {
+        "dishId": "52c6435f-c967-5820-8e76-b1917291a1ef",
+        "field": "mealSlots",
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"lunch\", \"sourceKey\": \"saigon\", \"locator\": \"LUNCH MENU, item 81 vegetarian vermicelli option\", \"basis\": \"explicit_meal_context\", \"observation\": \"Publisher explicitly places this dish/variant in its lunch menu. Reference abroad; no nearby/open-venue claim or tag inferred from opening hours.\", \"sourceRef\": \"0df016c3-c4f5-59a3-ad8e-d15da5b62827\"}], \"preservedLegacyEvidence\": []}"
       },
       {
         "dishId": "52c6435f-c967-5820-8e76-b1917291a1ef",
@@ -6980,6 +7228,14 @@
       },
       {
         "dishId": "69073532-dba4-59ab-917e-42971d5e81c3",
+        "field": "mealSlots",
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"breakfast\", \"sourceKey\": \"cvk\", \"locator\": \"page 3, BREAKFAST / MÓN 1 or 2\", \"basis\": \"explicit_meal_context\", \"observation\": \"Mì rau củ nấu hải sản is a named breakfast item; school-menu context only, not an adult dietary/portion claim.\", \"sourceRef\": \"5fa58bd1-3e71-5634-9512-cbba48050ec2\"}, {\"mealSlot\": \"lunch\", \"sourceKey\": \"saigon\", \"locator\": \"LUNCH MENU, item 32 Mì bò viên saté\", \"basis\": \"explicit_meal_context\", \"observation\": \"Publisher explicitly places this dish/variant in its lunch menu. Reference abroad; no nearby/open-venue claim or tag inferred from opening hours.\", \"sourceRef\": \"0df016c3-c4f5-59a3-ad8e-d15da5b62827\"}, {\"mealSlot\": \"dinner\", \"sourceKey\": \"oppa\", \"locator\": \"NOODLES - DINNER\", \"basis\": \"explicit_meal_context\", \"observation\": \"Udon soup is explicitly in the dinner section; evidence of one variant in the established base group, not a claim about every variant.\", \"sourceRef\": \"41faf3fb-b3c4-5fa0-9613-668976c60da4\"}], \"preservedLegacyEvidence\": []}"
+      },
+      {
+        "dishId": "69073532-dba4-59ab-917e-42971d5e81c3",
         "field": "name",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "basis": "owner_grouping",
@@ -7019,6 +7275,14 @@
       },
       {
         "dishId": "79c72911-92fc-5af0-9f7f-b8c476542e7f",
+        "field": "mealSlots",
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"breakfast\", \"sourceKey\": \"vna\", \"locator\": \"heading 13\", \"basis\": \"explicit_meal_context\", \"observation\": \"Dish/variant is explicitly discussed in the breakfast guide; supports a possible meal slot, not every variant or live sale.\", \"sourceRef\": \"1c5c660f-4ab7-58a1-bf2a-37123306d51e\"}], \"preservedLegacyEvidence\": []}"
+      },
+      {
+        "dishId": "79c72911-92fc-5af0-9f7f-b8c476542e7f",
         "field": "name",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "basis": "owner_grouping",
@@ -7115,6 +7379,14 @@
       },
       {
         "dishId": "8131e3cd-bce2-5843-8800-9426c91382ba",
+        "field": "mealSlots",
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"breakfast\", \"sourceKey\": \"cvk\", \"locator\": \"page 3, BREAKFAST / MÓN 1 or 2\", \"basis\": \"explicit_meal_context\", \"observation\": \"Bánh burger gà xé sốt Teriyaki is a named breakfast item; school-menu context only, not an adult dietary/portion claim.\", \"sourceRef\": \"5fa58bd1-3e71-5634-9512-cbba48050ec2\"}, {\"mealSlot\": \"lunch\", \"sourceKey\": \"oppa\", \"locator\": \"BURGER - LUNCH\", \"basis\": \"explicit_meal_context\", \"observation\": \"Named meal section contains a base-group variant. No recipe, price/person, location or stock inference.\", \"sourceRef\": \"41faf3fb-b3c4-5fa0-9613-668976c60da4\"}, {\"mealSlot\": \"dinner\", \"sourceKey\": \"oppa\", \"locator\": \"OPPA BURGER - DINNER\", \"basis\": \"explicit_meal_context\", \"observation\": \"chicken burger is explicitly in the dinner section; evidence of one variant in the established base group, not a claim about every variant.\", \"sourceRef\": \"41faf3fb-b3c4-5fa0-9613-668976c60da4\"}], \"preservedLegacyEvidence\": []}"
+      },
+      {
+        "dishId": "8131e3cd-bce2-5843-8800-9426c91382ba",
         "field": "name",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "basis": "owner_grouping",
@@ -7157,6 +7429,14 @@
         "sourceMenuItemIds": [
           "menu_9b922b472a10f035ce17"
         ]
+      },
+      {
+        "dishId": "864f37d1-97e9-57bc-bce5-351668f703da",
+        "field": "mealSlots",
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"lunch\", \"sourceKey\": \"saigon\", \"locator\": \"LUNCH MENU, item 46 Cơm bò lúc lắc\", \"basis\": \"explicit_meal_context\", \"observation\": \"Publisher explicitly places this dish/variant in its lunch menu. Reference abroad; no nearby/open-venue claim or tag inferred from opening hours.\", \"sourceRef\": \"0df016c3-c4f5-59a3-ad8e-d15da5b62827\"}, {\"mealSlot\": \"dinner\", \"sourceKey\": \"oppa\", \"locator\": \"RICE BOWL - DINNER\", \"basis\": \"explicit_meal_context\", \"observation\": \"beef rice bowl is explicitly in the dinner section; evidence of one variant in the established base group, not a claim about every variant.\", \"sourceRef\": \"41faf3fb-b3c4-5fa0-9613-668976c60da4\"}], \"preservedLegacyEvidence\": []}"
       },
       {
         "dishId": "864f37d1-97e9-57bc-bce5-351668f703da",
@@ -7195,10 +7475,10 @@
       {
         "dishId": "990393dc-1b1d-5a1a-9ccd-2b0c4ac60572",
         "field": "mealSlots",
-        "sourceRef": "4b8e096d-2210-5cf6-b0e6-384a213b37aa",
-        "basis": "reference",
-        "note": "Nguồn nêu buổi ăn phổ biến; không thay lịch bán thực tế.",
-        "sourceMenuItemIds": []
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"breakfast\", \"sourceKey\": \"vna\", \"locator\": \"heading 9\", \"basis\": \"explicit_meal_context\", \"observation\": \"Dish/variant is explicitly discussed in the breakfast guide; supports a possible meal slot, not every variant or live sale.\", \"sourceRef\": \"1c5c660f-4ab7-58a1-bf2a-37123306d51e\"}], \"preservedLegacyEvidence\": [{\"dishId\": \"990393dc-1b1d-5a1a-9ccd-2b0c4ac60572\", \"field\": \"mealSlots\", \"sourceRef\": \"4b8e096d-2210-5cf6-b0e6-384a213b37aa\", \"basis\": \"reference\", \"note\": \"Nguồn nêu buổi ăn phổ biến; không thay lịch bán thực tế.\", \"sourceMenuItemIds\": []}]}"
       },
       {
         "dishId": "990393dc-1b1d-5a1a-9ccd-2b0c4ac60572",
@@ -7261,6 +7541,14 @@
       },
       {
         "dishId": "a7619de7-cecd-558c-9e8a-dcdedd82465a",
+        "field": "mealSlots",
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"lunch\", \"sourceKey\": \"sis\", \"locator\": \"page 1, BỮA TRƯA, 5/10/2017\", \"basis\": \"explicit_meal_context\", \"observation\": \"Heo kho tàu with Cơm trắng is an explicitly listed lunch option; base-group variant mapping reviewed separately, not an ingredient inference.\", \"sourceRef\": \"5aedbe19-5a3b-53d6-8f7a-58c74bdef4c5\"}], \"preservedLegacyEvidence\": []}"
+      },
+      {
+        "dishId": "a7619de7-cecd-558c-9e8a-dcdedd82465a",
         "field": "name",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "basis": "owner_grouping",
@@ -7308,10 +7596,10 @@
       {
         "dishId": "a785a621-2cbc-5f16-9274-a47141a8e3c8",
         "field": "mealSlots",
-        "sourceRef": "2a5af80d-cf4a-50ac-a903-5fbafd476685",
-        "basis": "reference",
-        "note": "Nguồn nêu buổi ăn phổ biến; không thay lịch bán thực tế.",
-        "sourceMenuItemIds": []
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"breakfast\", \"sourceKey\": \"vna\", \"locator\": \"heading 4\", \"basis\": \"explicit_meal_context\", \"observation\": \"Dish/variant is explicitly discussed in the breakfast guide; supports a possible meal slot, not every variant or live sale.\", \"sourceRef\": \"1c5c660f-4ab7-58a1-bf2a-37123306d51e\"}], \"preservedLegacyEvidence\": [{\"dishId\": \"a785a621-2cbc-5f16-9274-a47141a8e3c8\", \"field\": \"mealSlots\", \"sourceRef\": \"2a5af80d-cf4a-50ac-a903-5fbafd476685\", \"basis\": \"reference\", \"note\": \"Nguồn nêu buổi ăn phổ biến; không thay lịch bán thực tế.\", \"sourceMenuItemIds\": []}]}"
       },
       {
         "dishId": "a785a621-2cbc-5f16-9274-a47141a8e3c8",
@@ -7354,6 +7642,14 @@
       },
       {
         "dishId": "aa59b2ad-3c15-5133-bad9-122a8d2fe93b",
+        "field": "mealSlots",
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"breakfast\", \"sourceKey\": \"cvk\", \"locator\": \"page 3, BREAKFAST / MÓN 1 or 2\", \"basis\": \"explicit_meal_context\", \"observation\": \"Nui sốt bò bằm is a named breakfast item; school-menu context only, not an adult dietary/portion claim.\", \"sourceRef\": \"5fa58bd1-3e71-5634-9512-cbba48050ec2\"}], \"preservedLegacyEvidence\": []}"
+      },
+      {
+        "dishId": "aa59b2ad-3c15-5133-bad9-122a8d2fe93b",
         "field": "name",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "basis": "owner_grouping",
@@ -7400,6 +7696,14 @@
       },
       {
         "dishId": "b115bf23-4277-5a5d-a439-002b0ceda3ce",
+        "field": "mealSlots",
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"lunch\", \"sourceKey\": \"saigon\", \"locator\": \"LUNCH MENU, item 45 Cơm gà nướng\", \"basis\": \"explicit_meal_context\", \"observation\": \"Publisher explicitly places this dish/variant in its lunch menu. Reference abroad; no nearby/open-venue claim or tag inferred from opening hours.\", \"sourceRef\": \"0df016c3-c4f5-59a3-ad8e-d15da5b62827\"}, {\"mealSlot\": \"dinner\", \"sourceKey\": \"oppa\", \"locator\": \"RICE BOWL - DINNER\", \"basis\": \"explicit_meal_context\", \"observation\": \"chicken rice bowl is explicitly in the dinner section; evidence of one variant in the established base group, not a claim about every variant.\", \"sourceRef\": \"41faf3fb-b3c4-5fa0-9613-668976c60da4\"}], \"preservedLegacyEvidence\": []}"
+      },
+      {
+        "dishId": "b115bf23-4277-5a5d-a439-002b0ceda3ce",
         "field": "name",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "basis": "owner_grouping",
@@ -7450,6 +7754,14 @@
       },
       {
         "dishId": "b151781d-c641-593f-9aba-a1ac5d16e309",
+        "field": "mealSlots",
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"lunch\", \"sourceKey\": \"sis\", \"locator\": \"page 2, BỮA TRƯA, 11/10/2017\", \"basis\": \"explicit_meal_context\", \"observation\": \"Mì Ý sốt bò băm is an explicitly listed lunch option; base-group variant mapping reviewed separately, not an ingredient inference.\", \"sourceRef\": \"5aedbe19-5a3b-53d6-8f7a-58c74bdef4c5\"}], \"preservedLegacyEvidence\": []}"
+      },
+      {
+        "dishId": "b151781d-c641-593f-9aba-a1ac5d16e309",
         "field": "name",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "basis": "owner_grouping",
@@ -7492,6 +7804,14 @@
       },
       {
         "dishId": "c3f1f939-20a4-55b1-89af-42e3c95a33fa",
+        "field": "mealSlots",
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"breakfast\", \"sourceKey\": \"vna\", \"locator\": \"heading 12\", \"basis\": \"explicit_meal_context\", \"observation\": \"Dish/variant is explicitly discussed in the breakfast guide; supports a possible meal slot, not every variant or live sale.\", \"sourceRef\": \"1c5c660f-4ab7-58a1-bf2a-37123306d51e\"}, {\"mealSlot\": \"lunch\", \"sourceKey\": \"sis\", \"locator\": \"page 1, BỮA TRƯA, 6/10/2017\", \"basis\": \"explicit_meal_context\", \"observation\": \"Miến gà is an explicitly listed lunch option; base-group variant mapping reviewed separately, not an ingredient inference.\", \"sourceRef\": \"5aedbe19-5a3b-53d6-8f7a-58c74bdef4c5\"}, {\"mealSlot\": \"dinner\", \"sourceKey\": \"oppa\", \"locator\": \"NOODLES - DINNER\", \"basis\": \"explicit_meal_context\", \"observation\": \"Japchae is explicitly in the dinner section; evidence of one variant in the established base group, not a claim about every variant.\", \"sourceRef\": \"41faf3fb-b3c4-5fa0-9613-668976c60da4\"}], \"preservedLegacyEvidence\": []}"
+      },
+      {
+        "dishId": "c3f1f939-20a4-55b1-89af-42e3c95a33fa",
         "field": "name",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "basis": "owner_grouping",
@@ -7529,6 +7849,14 @@
       },
       {
         "dishId": "c5bbbe58-91c4-5819-8813-a531825073b6",
+        "field": "mealSlots",
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"breakfast\", \"sourceKey\": \"vna\", \"locator\": \"heading 7\", \"basis\": \"explicit_meal_context\", \"observation\": \"Dish/variant is explicitly discussed in the breakfast guide; supports a possible meal slot, not every variant or live sale.\", \"sourceRef\": \"1c5c660f-4ab7-58a1-bf2a-37123306d51e\"}, {\"mealSlot\": \"lunch\", \"sourceKey\": \"saigon\", \"locator\": \"LUNCH MENU, item 30 Hủ tiếu thập cẩm\", \"basis\": \"explicit_meal_context\", \"observation\": \"Publisher explicitly places this dish/variant in its lunch menu. Reference abroad; no nearby/open-venue claim or tag inferred from opening hours.\", \"sourceRef\": \"0df016c3-c4f5-59a3-ad8e-d15da5b62827\"}], \"preservedLegacyEvidence\": []}"
+      },
+      {
+        "dishId": "c5bbbe58-91c4-5819-8813-a531825073b6",
         "field": "name",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "basis": "owner_grouping",
@@ -7618,6 +7946,14 @@
       },
       {
         "dishId": "d9756559-2697-565c-86e0-36cf39c4da49",
+        "field": "mealSlots",
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"lunch\", \"sourceKey\": \"oppa\", \"locator\": \"BIBIMBAP - LUNCH\", \"basis\": \"explicit_meal_context\", \"observation\": \"Named meal section contains a base-group variant. No recipe, price/person, location or stock inference.\", \"sourceRef\": \"41faf3fb-b3c4-5fa0-9613-668976c60da4\"}, {\"mealSlot\": \"dinner\", \"sourceKey\": \"oppa\", \"locator\": \"BIBIMBAP - DINNER\", \"basis\": \"explicit_meal_context\", \"observation\": \"bibimbap is explicitly in the dinner section; evidence of one variant in the established base group, not a claim about every variant.\", \"sourceRef\": \"41faf3fb-b3c4-5fa0-9613-668976c60da4\"}], \"preservedLegacyEvidence\": []}"
+      },
+      {
+        "dishId": "d9756559-2697-565c-86e0-36cf39c4da49",
         "field": "name",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "basis": "owner_grouping",
@@ -7653,6 +7989,14 @@
       },
       {
         "dishId": "da40f225-25dd-5527-b535-ae5d48e15b9d",
+        "field": "mealSlots",
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"lunch\", \"sourceKey\": \"saigon\", \"locator\": \"LUNCH MENU, item 49 Cơm chiên Dương Châu\", \"basis\": \"explicit_meal_context\", \"observation\": \"Publisher explicitly places this dish/variant in its lunch menu. Reference abroad; no nearby/open-venue claim or tag inferred from opening hours.\", \"sourceRef\": \"0df016c3-c4f5-59a3-ad8e-d15da5b62827\"}, {\"mealSlot\": \"dinner\", \"sourceKey\": \"oppa\", \"locator\": \"RICE - DINNER\", \"basis\": \"explicit_meal_context\", \"observation\": \"Kimchi fried rice is explicitly in the dinner section; evidence of one variant in the established base group, not a claim about every variant.\", \"sourceRef\": \"41faf3fb-b3c4-5fa0-9613-668976c60da4\"}], \"preservedLegacyEvidence\": []}"
+      },
+      {
+        "dishId": "da40f225-25dd-5527-b535-ae5d48e15b9d",
         "field": "name",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "basis": "owner_grouping",
@@ -7704,6 +8048,14 @@
       },
       {
         "dishId": "e0a99abc-3bb4-54e5-85ea-0361df2098b7",
+        "field": "mealSlots",
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"lunch\", \"sourceKey\": \"cvk\", \"locator\": \"page 2, SET LUNCH MENU, MAIN DISH 2, Monday\", \"basis\": \"explicit_meal_context\", \"observation\": \"Caramelized shrimp and pork is listed in the rice lunch set; possible slot for the base rice/shrimp group, not a universal recipe.\", \"sourceRef\": \"5fa58bd1-3e71-5634-9512-cbba48050ec2\"}], \"preservedLegacyEvidence\": []}"
+      },
+      {
+        "dishId": "e0a99abc-3bb4-54e5-85ea-0361df2098b7",
         "field": "name",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "basis": "owner_grouping",
@@ -7740,6 +8092,14 @@
       },
       {
         "dishId": "e6558eda-db0f-5583-bbf5-be4f7da8f2f9",
+        "field": "mealSlots",
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"lunch\", \"sourceKey\": \"saigon\", \"locator\": \"LUNCH MENU, item 42B Bún nem nướng chả giò\", \"basis\": \"explicit_meal_context\", \"observation\": \"Publisher explicitly places this dish/variant in its lunch menu. Reference abroad; no nearby/open-venue claim or tag inferred from opening hours.\", \"sourceRef\": \"0df016c3-c4f5-59a3-ad8e-d15da5b62827\"}], \"preservedLegacyEvidence\": []}"
+      },
+      {
+        "dishId": "e6558eda-db0f-5583-bbf5-be4f7da8f2f9",
         "field": "name",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "basis": "owner_grouping",
@@ -7765,6 +8125,14 @@
       },
       {
         "dishId": "f518af1a-6744-545a-83b4-4fa14d590a43",
+        "field": "mealSlots",
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"lunch\", \"sourceKey\": \"sis\", \"locator\": \"page 3, BỮA TRƯA, 26/10/2017\", \"basis\": \"explicit_meal_context\", \"observation\": \"Cá ba sa kho tộ with Cơm trắng is an explicitly listed lunch option; base-group variant mapping reviewed separately, not an ingredient inference.\", \"sourceRef\": \"5aedbe19-5a3b-53d6-8f7a-58c74bdef4c5\"}], \"preservedLegacyEvidence\": []}"
+      },
+      {
+        "dishId": "f518af1a-6744-545a-83b4-4fa14d590a43",
         "field": "name",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "basis": "owner_grouping",
@@ -7845,6 +8213,14 @@
       },
       {
         "dishId": "fc959eeb-033c-54b6-b8a2-9d7c6982803e",
+        "field": "mealSlots",
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"breakfast\", \"sourceKey\": \"vna\", \"locator\": \"heading 8\", \"basis\": \"explicit_meal_context\", \"observation\": \"Dish/variant is explicitly discussed in the breakfast guide; supports a possible meal slot, not every variant or live sale.\", \"sourceRef\": \"1c5c660f-4ab7-58a1-bf2a-37123306d51e\"}, {\"mealSlot\": \"lunch\", \"sourceKey\": \"saigon\", \"locator\": \"LUNCH MENU, item 43 Cơm tấm bì sườn chả\", \"basis\": \"explicit_meal_context\", \"observation\": \"Publisher explicitly places this dish/variant in its lunch menu. Reference abroad; no nearby/open-venue claim or tag inferred from opening hours.\", \"sourceRef\": \"0df016c3-c4f5-59a3-ad8e-d15da5b62827\"}], \"preservedLegacyEvidence\": []}"
+      },
+      {
+        "dishId": "fc959eeb-033c-54b6-b8a2-9d7c6982803e",
         "field": "name",
         "sourceRef": "ed058b8a-d0db-5944-9af4-962df535ba27",
         "basis": "owner_grouping",
@@ -7984,6 +8360,14 @@
           "menu_e42e740072c89390bbb1",
           "menu_c181071d9145bb1563ae"
         ]
+      },
+      {
+        "dishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
+        "field": "mealSlots",
+        "sourceRef": "42c4e11a-4f67-5ad9-badb-15d1bf3d9f70",
+        "basis": "explicit_meal_context_draft",
+        "sourceMenuItemIds": [],
+        "note": "{\"supplement\": \"data-preparation/config/meal_slot_evidence_v1.json\", \"observations\": [{\"mealSlot\": \"breakfast\", \"sourceKey\": \"vna\", \"locator\": \"heading 5\", \"basis\": \"explicit_meal_context\", \"observation\": \"Dish/variant is explicitly discussed in the breakfast guide; supports a possible meal slot, not every variant or live sale.\", \"sourceRef\": \"1c5c660f-4ab7-58a1-bf2a-37123306d51e\"}, {\"mealSlot\": \"lunch\", \"sourceKey\": \"saigon\", \"locator\": \"LUNCH MENU, item 36 Bún bò Huế\", \"basis\": \"explicit_meal_context\", \"observation\": \"Publisher explicitly places this dish/variant in its lunch menu. Reference abroad; no nearby/open-venue claim or tag inferred from opening hours.\", \"sourceRef\": \"0df016c3-c4f5-59a3-ad8e-d15da5b62827\"}], \"preservedLegacyEvidence\": []}"
       },
       {
         "dishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
