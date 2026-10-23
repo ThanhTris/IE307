@@ -45,6 +45,16 @@ class ProjectApiTests(unittest.TestCase):
         value['content']['state'] = 'OPEN'
         self.assertEqual(self.snapshot(value).approval_errors('GM-04'), [])
 
+    def test_gm40_mapping_requires_live_done_and_complete_task_inventory(self):
+        self.assertEqual(self.config['issues']['GM-40'], 125)
+        self.assertTrue(self.snapshot(item(self.config, 'GM-40', 'Todo')).approval_errors('GM-40'))
+        self.assertEqual(self.snapshot(item(self.config, 'GM-40')).approval_errors('GM-40'), [])
+        missing = copy.deepcopy(self.config)
+        del missing['issues']['GM-40']
+        self.source.contents[project.CONFIG_PATH] = json.dumps(missing)
+        with self.assertRaises(project.ProjectUnavailable):
+            project.configuration(self.source)
+
     def test_owner_pinned_baseline_alias_uses_gm00_card_for_gm01(self):
         self.assertEqual(self.config['issues']['GM-01'], 37)
         self.assertEqual(self.config['approval_aliases'], {'GM-01': 'GM-00'})

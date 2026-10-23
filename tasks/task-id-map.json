@@ -1740,6 +1740,68 @@
         "expected": "HTML tương tác đẹp và nhất quán hơn, đúng luồng/spec với nhãn mô phỏng; Trí duyệt bản HTML, chưa sửa app.",
         "cases": "320/360/412px và màn rộng; light/dark; zoom200; keyboard/focus; reduced motion; loading/empty/error/disabled/unknown; navigation/vote/result mock."
       }
+    },
+    {
+      "new_id": "GM-40",
+      "previous_ids": [],
+      "title": "Data: chuẩn hóa món ăn và bỏ phụ thuộc dữ liệu quán",
+      "track": "DATA",
+      "stage": "import",
+      "outputs": [
+        "docs/data/DISH_CATALOGUE_DICTIONARY.md",
+        "supabase/seed/templates/dish-catalogue-v1.schema.json",
+        "supabase/seed/templates/dish-catalogue-v1.template.json",
+        "supabase/seed/import_dish_catalogue.py",
+        "supabase/seed/catalogue/dishes.json",
+        "supabase/seed/catalogue/manifest.json",
+        "supabase/tests/dish_catalogue.sql",
+        "supabase/tests/http/GM-40.http",
+        "docs/evidence/roadmap-v2/GM-40/CHECKS.md"
+      ],
+      "inputs": [
+        {
+          "task": "GM-04",
+          "artifact": "docs/data/FOOD_DATA_DICTIONARY.md",
+          "gate": "start"
+        },
+        {
+          "task": "GM-06",
+          "artifact": "supabase/migrations/0001_core_schema.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-07",
+          "artifact": "mobile/src/data/api/contracts.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-08",
+          "artifact": "docs/data/DATASET_HANDOFF.md",
+          "gate": "start"
+        },
+        {
+          "task": "GM-18",
+          "artifact": "supabase/migrations/0018_food_eligibility.sql",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-19",
+          "artifact": "supabase/migrations/0019_room_lifecycle.sql",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-20",
+          "artifact": "supabase/migrations/0023_finalize.sql",
+          "gate": "merge"
+        }
+      ],
+      "verification": {
+        "mode": "data-import",
+        "tool": "Schema validator + importer/SQL readback + HTTP request/assertions.",
+        "entrypoint": "Validate/import dish-catalogue-v1 trên DB test, query/readback và HTTP catalogue/preview không cần quán.",
+        "expected": "Bundle món có version/hash, import/readback đúng và API trả món không cần quán; mô hình nghiệp vụ và snapshot cũ được bảo toàn.",
+        "cases": "required/null/unknown; alias/trùng/ID cũ; ảnh/giá thiếu; không có quán; reimport/rollback; auth; phiên/kết quả cũ."
+      }
     }
   ]
 }

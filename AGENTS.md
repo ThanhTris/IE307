@@ -20,7 +20,7 @@ Theo chủ dự án ngày 2026-10-13/[ADR-014](docs/architecture/decisions/ADR-0
 
 Đọc [workflow](docs/project/TEAM_WORKFLOW.md), [DoD](docs/project/DEFINITION_OF_DONE.md). AI không tự duyệt hoặc ghi Done. Thay phạm vi/kiến trúc/quyền riêng tư phải ghi ADR và hỏi owner khi chưa có ủy quyền. Cập nhật tài liệu/UI không cần task mới mỗi lần; gom vào task nền khi phù hợp.
 
-Mã task hiện hành theo roadmap-v2: GM-01..39, dependency phải có số nhỏ hơn task. Xem docs/project/IMPLEMENTATION_ROADMAP.md, TASK_RENUMBERING.md và tasks/task-id-map.json (previous_ids chỉ truy vết scope cũ, có thể một–nhiều). Giữ snapshot/evidence roadmap-v1; evidence mới dùng docs/evidence/roadmap-v2/GM-XX/. UI: cấu trúc GM-02 → component theo mẫu GM-05 → màn mock GM-09..14 → tích hợp GM-24..31. BE: cấu trúc GM-03 → contract/client GM-07 → API; Data: field GM-04 → DB GM-06 → import GM-08. Mỗi task nhận artifact/version upstream, không tự đoán hoặc dựng lại nền. Không tự sync GitHub khi chỉ chia task local.
+Mã task hiện hành theo roadmap-v2: GM-01..40, dependency phải có số nhỏ hơn task. Xem docs/project/IMPLEMENTATION_ROADMAP.md, TASK_RENUMBERING.md và tasks/task-id-map.json (previous_ids chỉ truy vết scope cũ, có thể một–nhiều). Giữ snapshot/evidence roadmap-v1; evidence mới dùng docs/evidence/roadmap-v2/GM-XX/. UI: cấu trúc GM-02 → component theo mẫu GM-05 → màn mock GM-09..14 → tích hợp GM-24..31. BE: cấu trúc GM-03 → contract/client GM-07 → API; Data: field GM-04 → DB GM-06 → import GM-08. Mỗi task nhận artifact/version upstream, không tự đoán hoặc dựng lại nền. Không tự sync GitHub khi chỉ chia task local.
 
 ## Liên kết PR khi review
 
@@ -76,3 +76,17 @@ Không tự commit/push nếu chưa được yêu cầu. Validator không thay r
 ## GM-20 — submit/finalize patch
 
 Đọc [handoff](docs/evidence/roadmap-v2/GM-20/HANDOFF.md) và [storage supplement](docs/evidence/roadmap-v2/GM-20/CONTRACT_STORAGE.md) cho GM-20.3/schema0.5.0, request/intent replay, wire IDs, private seed, scoped consent writer và event/inbox. Chạy `node scripts/gm20_http_check.mjs` trên Supabase local: owned disposable DB/JWT thật; `--bruno` giữ fixture và `scripts/gm20_http_stop.mjs` cleanup. Runtime private luôn ignore; không log votes/token hoặc reset DB ứng dụng. SQL/domain/HTTP evidence không thay Android GM-26/27/31 hoặc review Trí. Không gọi helper0021/GM-23 chưa merge, không tự Done/Approved.
+
+## GM-40 — Catalogue món độc lập và QA import
+
+Theo [issue #125](https://github.com/ThanhTris/IE307/issues/125), GM-40 là Data P0 bổ sung;
+GM-34 giữ baseline food-v1, không thêm dependency ngược. Menu/quán vẫn là nguồn nghiên
+cứu; profile mới không yêu cầu entity nơi bán. Legacy FOOD_DATA_SPEC/GM-08/18 giữ nguyên.
+Đọc [dictionary catalogue](docs/data/DISH_CATALOGUE_DICTIONARY.md),
+[patch plan](docs/evidence/roadmap-v2/GM-40/PLAN.md) và
+[handoff](docs/evidence/roadmap-v2/GM-40/HANDOFF.md). Chạy
+`python3 data-preparation/scripts/dish_catalogue.py --check` để đối chiếu 39 món,
+18 ID dùng chung GM-08, mapping 216/2/1 và 247 giá quan sát. Không gọi lại AI/network.
+[ADR-018](docs/architecture/decisions/ADR-018-dish-catalogue-profile.md) **Proposed**;
+issue yêu cầu Trí duyệt trước sửa schema/API. Supplement ngày2026-10-23 dùng storage0026/schema0.8.0 và dish_session đã merge, không đổi schema/API hoặc tạo runtime thứ hai.
+Dataset1.1.0 giữ39 UUID, supplement meal có nguồn riêng; chạy `python3 scripts/gm40_catalogue_check.py` để validate/stage/import/readback và SQL/JWT HTTP trên owned QA DB/REST, worker verify rồi cleanup. CLI `supabase/seed/import_dish_catalogue.py` từ chối app DB, pin hash/version, atomic activation/restore; không migrate/reset app DB. Bundle vẫn draft/test_demo, không seed production/approval. ADR SQL ban đầu chưa duyệt; Android/FE/Places chưa kiểm.

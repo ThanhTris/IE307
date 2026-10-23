@@ -31,8 +31,8 @@ def configuration(src):
         if any(not isinstance(config[k], str) or not config[k] for k in ('status_field', 'done_option')):
             raise ValueError('missing status field/option')
         issues = config['issues']
-        if set(issues) != {f'GM-{n:02}' for n in range(1, 40)}:
-            raise ValueError('issue mapping must cover GM-01..39 exactly')
+        if set(issues) != {f'GM-{n:02}' for n in range(1, 41)}:
+            raise ValueError('issue mapping must cover GM-01..40 exactly')
         if any(type(n) is not int or n < 1 for n in issues.values()):
             raise ValueError('invalid issue number')
         if len(set(issues.values())) != len(issues):

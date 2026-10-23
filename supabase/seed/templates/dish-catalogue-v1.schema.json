@@ -1,0 +1,1202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:anyfood:dish-catalogue-v1:1.0.0",
+  "title": "GM-40 dish-only test/demo data contract",
+  "x-contractId": "dish-catalogue-v1/roadmap-v2/GM-40.1",
+  "$defs": {
+    "dishes": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "ID ổn định UUIDv5 từ registry key bất biến"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Tên món gốc"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Mô tả có nguồn"
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "uniqueItems": true,
+          "description": "Tên tương đương; không tự đưa topping vào alias"
+        },
+        "cuisineIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "uniqueItems": true,
+          "description": "Cuisine đa nhãn; [] + classificationStatus unknown khi chưa biết"
+        },
+        "categoryIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "uniqueItems": true,
+          "description": "Họ món và cách chế biến đa nhãn"
+        },
+        "mealSlots": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "breakfast",
+              "lunch",
+              "dinner",
+              "snack"
+            ]
+          },
+          "uniqueItems": true,
+          "description": "Buổi ăn; [] khi chưa xác minh"
+        },
+        "timeHints": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "late_night"
+            ]
+          },
+          "uniqueItems": true,
+          "description": "Thông tin bổ sung, không thay lịch"
+        },
+        "classificationStatus": {
+          "type": "string",
+          "enum": [
+            "unknown",
+            "needs_review",
+            "reviewed"
+          ],
+          "description": "Trạng thái xác minh thuộc tính"
+        },
+        "origin": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "north",
+                "central",
+                "south",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Nguồn gốc, tách nơi bán"
+        },
+        "ingredientTags": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "uniqueItems": true
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Thành phần có nguồn, không bảo đảm dị ứng"
+        },
+        "temperature": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "hot",
+                "warm",
+                "cold",
+                "ambient",
+                "unknown"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Nhiệt độ phục vụ"
+        },
+        "flavor": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "spicy": {
+                  "type": "object",
+                  "properties": {
+                    "present": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "intensity": {
+                      "type": "string",
+                      "enum": [
+                        "none",
+                        "low",
+                        "medium",
+                        "high",
+                        "unknown"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "present",
+                    "intensity"
+                  ],
+                  "additionalProperties": false
+                },
+                "salty": {
+                  "type": "object",
+                  "properties": {
+                    "present": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "intensity": {
+                      "type": "string",
+                      "enum": [
+                        "none",
+                        "low",
+                        "medium",
+                        "high",
+                        "unknown"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "present",
+                    "intensity"
+                  ],
+                  "additionalProperties": false
+                },
+                "sweet": {
+                  "type": "object",
+                  "properties": {
+                    "present": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "intensity": {
+                      "type": "string",
+                      "enum": [
+                        "none",
+                        "low",
+                        "medium",
+                        "high",
+                        "unknown"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "present",
+                    "intensity"
+                  ],
+                  "additionalProperties": false
+                },
+                "sour": {
+                  "type": "object",
+                  "properties": {
+                    "present": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "intensity": {
+                      "type": "string",
+                      "enum": [
+                        "none",
+                        "low",
+                        "medium",
+                        "high",
+                        "unknown"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "present",
+                    "intensity"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "spicy",
+                "salty",
+                "sweet",
+                "sour"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "4 vị: present true/false/null + intensity"
+        },
+        "artwork": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "pattern": "^https?://[^\\s]+$"
+                },
+                "sourceRef": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "usageRights": {
+                  "type": "string",
+                  "enum": [
+                    "unknown",
+                    "granted",
+                    "licensed",
+                    "public_domain",
+                    "denied"
+                  ]
+                },
+                "license": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "pattern": "\\S"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "attribution": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "pattern": "\\S"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "url",
+                "sourceRef",
+                "usageRights",
+                "license",
+                "attribution"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Ảnh: url/sourceRef/usageRights/license/attribution"
+        },
+        "sourceDishIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "uniqueItems": true,
+          "description": "ID khảo sát làm cầu nối, không thay canonical UUID"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "verified",
+            "published"
+          ],
+          "description": "Trạng thái món"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Phiên bản bản ghi, tăng khi nội dung đổi"
+        },
+        "reviewStatus": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "verified",
+            "published"
+          ],
+          "description": "Trạng thái kiểm dữ liệu; khác trạng thái đang bán"
+        },
+        "sourceRef": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Nguồn chính; bổ sung fieldSources cho từng nhóm thông tin"
+        },
+        "fieldSources": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "description": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "taxonomy": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "image": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "menu": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "price": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "coordinates": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "address": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "hours": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "availability": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "coverage": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Map nhóm thông tin → sourceRef; không dùng để suy quyền ảnh"
+        },
+        "checkedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Lần kiểm dữ liệu có bằng chứng, UTC"
+        },
+        "validUntil": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Hạn hiệu lực đã được chốt; draft thiếu để null"
+        },
+        "enteredBy": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Người nhập hoặc mã agent có thể truy vết"
+        },
+        "reviewedBy": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Reviewer độc lập; draft chưa review để null"
+        },
+        "preparationMethods": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "grilled",
+                  "fried",
+                  "stir_fried",
+                  "steamed",
+                  "boiled",
+                  "braised",
+                  "stewed",
+                  "roasted",
+                  "mixed",
+                  "sous_vide",
+                  "pan_seared",
+                  "other"
+                ]
+              },
+              "uniqueItems": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "aliases",
+        "cuisineIds",
+        "categoryIds",
+        "mealSlots",
+        "timeHints",
+        "classificationStatus",
+        "origin",
+        "ingredientTags",
+        "temperature",
+        "flavor",
+        "artwork",
+        "sourceDishIds",
+        "status",
+        "version",
+        "reviewStatus",
+        "sourceRef",
+        "fieldSources",
+        "checkedAt",
+        "validUntil",
+        "enteredBy",
+        "reviewedBy",
+        "preparationMethods"
+      ],
+      "additionalProperties": false
+    },
+    "taxonomy": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "ID ổn định UUIDv5 từ registry key bất biến"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "cuisine",
+            "origin",
+            "category"
+          ],
+          "description": "Loại taxonomy; temperature/flavor/meal là enum trong codebook"
+        },
+        "code": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Mã trong taxonomy_v1.json; category có family:/preparation:"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Tên hiển thị"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Giải thích ngắn, không suy nguồn gốc từ nơi bán"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "verified",
+            "published"
+          ],
+          "description": "Trạng thái taxonomy"
+        },
+        "origin": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "north",
+                "central",
+                "south",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Nguồn gốc Việt, không phải nơi bán"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Phiên bản bản ghi, tăng khi nội dung đổi"
+        },
+        "reviewStatus": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "verified",
+            "published"
+          ],
+          "description": "Trạng thái kiểm dữ liệu; khác trạng thái đang bán"
+        },
+        "sourceRef": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Nguồn chính; bổ sung fieldSources cho từng nhóm thông tin"
+        },
+        "fieldSources": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "description": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "taxonomy": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "image": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "menu": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "price": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "coordinates": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "address": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "hours": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "availability": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "coverage": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Map nhóm thông tin → sourceRef; không dùng để suy quyền ảnh"
+        },
+        "checkedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Lần kiểm dữ liệu có bằng chứng, UTC"
+        },
+        "validUntil": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Hạn hiệu lực đã được chốt; draft thiếu để null"
+        },
+        "enteredBy": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Người nhập hoặc mã agent có thể truy vết"
+        },
+        "reviewedBy": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Reviewer độc lập; draft chưa review để null"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "code",
+        "label",
+        "description",
+        "status",
+        "origin",
+        "version",
+        "reviewStatus",
+        "sourceRef",
+        "fieldSources",
+        "checkedAt",
+        "validUntil",
+        "enteredBy",
+        "reviewedBy"
+      ],
+      "additionalProperties": false
+    },
+    "dataSources": {
+      "type": "object",
+      "properties": {
+        "sourceRef": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "ID ổn định UUIDv5 từ registry key bất biến"
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "URL/file nguồn có thể truy vết"
+        },
+        "usageRights": {
+          "type": "string",
+          "enum": [
+            "unknown",
+            "granted",
+            "licensed",
+            "public_domain",
+            "denied"
+          ],
+          "description": "Quyền sử dụng dữ liệu, không suy từ công khai"
+        },
+        "license": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "License/thỏa thuận cụ thể"
+        },
+        "attribution": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Ghi công nếu yêu cầu"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "verified",
+            "published"
+          ],
+          "description": "Trạng thái nguồn"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Phiên bản bản ghi, tăng khi nội dung đổi"
+        },
+        "reviewStatus": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "verified",
+            "published"
+          ],
+          "description": "Trạng thái kiểm dữ liệu; khác trạng thái đang bán"
+        },
+        "fieldSources": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "description": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "taxonomy": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "image": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "menu": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "price": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "coordinates": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "address": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "hours": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "availability": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "coverage": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Map nhóm thông tin → sourceRef; không dùng để suy quyền ảnh"
+        },
+        "checkedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Lần kiểm dữ liệu có bằng chứng, UTC"
+        },
+        "validUntil": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Hạn hiệu lực đã được chốt; draft thiếu để null"
+        },
+        "enteredBy": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Người nhập hoặc mã agent có thể truy vết"
+        },
+        "reviewedBy": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Reviewer độc lập; draft chưa review để null"
+        }
+      },
+      "required": [
+        "sourceRef",
+        "locator",
+        "usageRights",
+        "license",
+        "attribution",
+        "status",
+        "version",
+        "reviewStatus",
+        "fieldSources",
+        "checkedAt",
+        "validUntil",
+        "enteredBy",
+        "reviewedBy"
+      ],
+      "additionalProperties": false
+    },
+    "priceReferences": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "dishId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "sourceMenuItemId": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "menuName": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "priceRaw": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "VND",
+                "USD",
+                "THB",
+                "KRW",
+                "JPY",
+                "CNY",
+                "EUR",
+                "other"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "portion",
+                "item",
+                "person",
+                "group",
+                "kg",
+                "menu_item_unspecified"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "servingSize": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sourceRef": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "checkedAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d(?:\\.\\d+)?Z$"
+        },
+        "validUntil": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d(?:\\.\\d+)?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "snapshotSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "status": {
+          "const": "snapshot_observation"
+        }
+      },
+      "required": [
+        "id",
+        "dishId",
+        "sourceMenuItemId",
+        "menuName",
+        "priceRaw",
+        "value",
+        "currency",
+        "unit",
+        "servingSize",
+        "sourceRef",
+        "checkedAt",
+        "validUntil",
+        "snapshotSha256",
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "fieldEvidence": {
+      "type": "object",
+      "properties": {
+        "dishId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "field": {
+          "type": "string",
+          "enum": [
+            "name",
+            "description",
+            "aliases",
+            "cuisineIds",
+            "categoryIds",
+            "mealSlots",
+            "timeHints",
+            "origin",
+            "temperature",
+            "flavor",
+            "ingredientTags",
+            "preparationMethods"
+          ]
+        },
+        "sourceRef": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "basis": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "note": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "sourceMenuItemIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "dishId",
+        "field",
+        "sourceRef",
+        "basis",
+        "note",
+        "sourceMenuItemIds"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "type": "object",
+  "properties": {
+    "profile": {
+      "const": "dish-catalogue-v1"
+    },
+    "contractVersion": {
+      "const": "1.0.0"
+    },
+    "datasetVersion": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$"
+    },
+    "usageScope": {
+      "const": "test_demo"
+    },
+    "fixtureOnly": {
+      "type": "boolean"
+    },
+    "entities": {
+      "type": "object",
+      "properties": {
+        "dishes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/dishes"
+          },
+          "uniqueItems": true
+        },
+        "taxonomy": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/taxonomy"
+          },
+          "uniqueItems": true
+        },
+        "dataSources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/dataSources"
+          },
+          "uniqueItems": true
+        },
+        "priceReferences": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/priceReferences"
+          },
+          "uniqueItems": true
+        },
+        "fieldEvidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/fieldEvidence"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "dishes",
+        "taxonomy",
+        "dataSources",
+        "priceReferences",
+        "fieldEvidence"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "profile",
+    "contractVersion",
+    "datasetVersion",
+    "usageScope",
+    "fixtureOnly",
+    "entities"
+  ],
+  "additionalProperties": false
+}

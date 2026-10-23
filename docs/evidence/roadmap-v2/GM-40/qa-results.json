@@ -1,0 +1,324 @@
+{
+  "result": "Pass",
+  "dataMode": "real draft test/demo; separate synthetic legacy fixture",
+  "datasetVersion": "1.1.0",
+  "sourceSha256": "776b1e4998d0b170b51a7c39a4ead74461bdfd721f167dafddf7f072bf117a2f",
+  "schemaVersion": "0.8.0",
+  "wire": "dish-session-v3/ADR-019",
+  "applicationDatabaseChanged": false,
+  "productionPublished": false,
+  "cases": [
+    {
+      "case": "deployed runtime definitions/schema verified",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "profile starts without venues/offerings/anchors",
+      "expected": "0",
+      "actual": "0",
+      "result": "Pass"
+    },
+    {
+      "case": "stage pins exact source bytes",
+      "expected": "776b1e4998d0b170b51a7c39a4ead74461bdfd721f167dafddf7f072bf117a2f",
+      "actual": "776b1e4998d0b170b51a7c39a4ead74461bdfd721f167dafddf7f072bf117a2f",
+      "result": "Pass"
+    },
+    {
+      "case": "staged cards equal explicit projection",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "committed typed readback equals all real cards",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "release/source version and QA flag pinned",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "reimport no duplicate or timestamp mutation",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "one installed release",
+      "expected": "1",
+      "actual": "1",
+      "result": "Pass"
+    },
+    {
+      "case": "same version different contents rejected",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "conflict retains previous release",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "HTTP real lunch pool exact 10",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "HTTP distinct actual source dishes 10",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "HTTP meal filter/release/hash 10",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "HTTP create retry retains room/pool 10",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "HTTP real lunch pool exact 20",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "HTTP distinct actual source dishes 20",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "HTTP meal filter/release/hash 20",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "HTTP create retry retains room/pool 20",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "HTTP shortage never truncates or fills unknown",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "HTTP restrictive filter shortage",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "HTTP unauthenticated denied",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "HTTP outsider denied",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "HTTP readback current member pool",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "HTTP second member joins",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "HTTP locks imported pool",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "injected failure rolls back insertion/activation",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "failed release absent",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "previous active release retained on failure",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "switch release active atomically",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "locked room retains old cards/source hash",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "HTTP real cards r1 accepted member 0",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "HTTP real cards r1 accepted member 1",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "HTTP imported cards retained in round two",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "HTTP real cards r2 accepted member 0",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "HTTP real cards r2 accepted member 1",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "HTTP winner is exact imported card",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "restore previous active release",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "terminal result stable after restore/reconnect",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "restore unknown release rejected",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "ownership mismatch blocked",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "legacy authenticated snapshot/result still readable",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "legacy rooms/results/round refs unchanged by import/switch/restore",
+      "expected": "4d0c04ff406ac1f7cd1285270b2afa56\n098af372cff165cab55bca47d128f679\nb91192de64f33b8052f4a418ad4425dd",
+      "actual": "4d0c04ff406ac1f7cd1285270b2afa56\n098af372cff165cab55bca47d128f679\nb91192de64f33b8052f4a418ad4425dd",
+      "result": "Pass"
+    },
+    {
+      "case": "legacy result stable through release restore",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "legacy FK and IDs retained",
+      "expected": "1",
+      "actual": "1",
+      "result": "Pass"
+    },
+    {
+      "case": "legacy fixtures separate from real catalogue",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "SQL ACL/consistency assertions",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "QA worker healthy",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    }
+  ],
+  "checkedAt": "2026-10-23T03:35:44.949760Z",
+  "testedHeadBeforePatchCommit": "9e7a45bcb31530a9f37a4b6aaf569bdfd3c0d2b1",
+  "sourceSha256ByPath": {
+    "scripts/gm40_catalogue_check.py": "131a5a28498026af60ea6edfe0a803a7d44243d8d9c2261a72846e7a282c7a30",
+    "supabase/seed/import_dish_catalogue.py": "d07d1984eb325f81b0015be8d9a0fbde0d230a1764c2efd0fab19f1f8fbba0b6",
+    "supabase/tests/dish_catalogue.sql": "53001ed62b2e7ffc7aacfbe5fddbbe5c2d02431aaf370e3f30545082e7fd48ab",
+    "data-preparation/config/meal_slot_evidence_v1.json": "a4bcb1134eb8e2691e72f72fdfe9fb149903451bcea2577b04a80c0d27620840"
+  },
+  "migrations": {
+    "supabase/migrations/0001_core_schema.sql": "6733e28f282f600e627e675dccede3afef1efd37cf4a7cfe8d94af4cd02d30f5",
+    "supabase/migrations/0002_food_import_receipts.sql": "eb80acba1f69bfb68b014a1ab5807e42d65db940a36d201f28db88172157f55e",
+    "supabase/migrations/0003_food_provenance_description.sql": "8972c1dfa5e07a2350e644a7e79ea36cc7f9208e0a89371cbe1bdfdb52d6cb16",
+    "supabase/migrations/0004_access_policies.sql": "508e9572ce50464d07a8ea1e19dc41ff7ba26cb2d0485aa59df9ac1422440dfb",
+    "supabase/migrations/0005_gm18_discovery_rpc.sql": "b81e072da7ef75846615738905650ae5a337e32f5d678f843c9404e7f54e3307",
+    "supabase/migrations/0018_food_eligibility.sql": "e242876842e0c8decf645130b56a69143146ff942a78641f504c2883f3c86334",
+    "supabase/migrations/0019_room_lifecycle.sql": "ed76f679baa10bbfd4234e2be88f408ef292162f92efceac16217aa554f50926",
+    "supabase/migrations/0021_history.sql": "9be964cc6c8b405f578e7f2528268f628266e7b121b96ce958244e20a116217e",
+    "supabase/migrations/0022_social.sql": "bede55e7a0c12a3dfce3d03f3e61121bd4611b73c8b8656ec0785a3c55097f54",
+    "supabase/migrations/0023_finalize.sql": "aff45864e57d634ced4bce6e3ce1997f439f90b2c974cc7f601d71f70bb3fea8",
+    "supabase/migrations/0024_history_integration.sql": "48d8662cd1e4c70a7ef6147efb517bcb351365fc6e1f90ac49e4defa3c868ad9",
+    "supabase/migrations/0025_notifications.sql": "a1f8bab1b7853c52fb82e97afef470634b4776b75ae8a000bba2e24796f81ba1",
+    "supabase/migrations/0026_dish_session_policy.sql": "24fba6d428e283bef7edd46d040b7e89c7ce2953c9cb7a4e04cb86a7dd682804"
+  },
+  "mealCounts": {
+    "breakfast": 14,
+    "lunch": 23,
+    "dinner": 7,
+    "snack": 1
+  },
+  "ownedResourcesCleaned": true
+}

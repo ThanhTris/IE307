@@ -98,3 +98,29 @@ python3 data-preparation/scripts/run_notebook.py data-preparation/notebooks/vali
 Audit CLI dùng stdlib; notebook dùng pandas runtime sẵn có. Mặc định chỉ đọc; thư mục report tự tạo khi chỉ định. Notebook 5 khối để xem nguồn/số liệu/thiếu thông tin/lỗi mô phỏng và kiểm replay. Không viết vào snapshots/fixtures, gọi API hoặc cài package. CLI trả 1 khi lỗi cấu trúc, 0 khi cấu trúc đạt dù vẫn có cảnh báo review/thiếu thông tin; readyForPublish luôn false vì đây là tooling draft.
 
 Clock catalogue/forms mặc định 2026-10-10T03:00:00Z để tái lập kiểm lịch sử; `--at` nhận UTC ISO 8601 khi muốn audit tại thời điểm khác. Fixture dùng validationAt riêng, không đổi evaluatedAt từng ca. Kết quả lịch sử không xác nhận dữ liệu đang còn hạn. `validStructure` không thay review Tâm, gate GM-28, quyền ảnh hoặc test thuật toán GM-30.
+
+## GM-40 — Profile catalogue món độc lập
+
+Mốc dữ liệu offline ở [dictionary](../docs/data/DISH_CATALOGUE_DICTIONARY.md) và
+[handoff](../docs/evidence/roadmap-v2/GM-40/HANDOFF.md). 39 món giữ ID; 18 món GM-08
+là tập con. Nguồn menu giữ provenance, profile mới không chứa dữ liệu quán.
+
+```sh
+python3 data-preparation/scripts/dish_catalogue.py --check
+python3 data-preparation/scripts/dish_catalogue.py --input supabase/seed/catalogue/dishes.json
+python3 -m unittest discover -s tests -p test_dish_catalogue.py -v
+```
+
+`--write` sinh lại schema/template/bundle/manifest/quality report từ snapshot offline,
+không import DB hoặc gọi API. Bộ mới giữ draft/test_demo; SQL/API chờ Trí duyệt ADR-018.
+Không chỉnh snapshot/cache hoặc pipeline GPT để sinh profile này.
+
+
+## GM-40 dataset1.1.0 / owned QA
+
+39 món giữ ID; supplement `data-preparation/config/meal_slot_evidence_v1.json` bổ sung
+meal evidence có version/URL/checksum, không sửa snapshots. Builder mặc định offline.
+Importer `supabase/seed/import_dish_catalogue.py` validate/stage/import/readback dùng
+storage0026 đã có, chỉ DB QA có ownership marker; không production publish hoặc đổi API.
+Chạy `python3 scripts/gm40_catalogue_check.py` từ root để tạo/kiểm/dọn QA DB+REST riêng.
+Xem [GM-40 HANDOFF](../docs/evidence/roadmap-v2/GM-40/HANDOFF.md) cho contract, nguồn, thiếu nhãn, lệnh và restore.
