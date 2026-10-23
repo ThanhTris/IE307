@@ -4,6 +4,7 @@ import { createAuthenticatedApiClient, createSecureSessionStorage } from '../dat
 import { createApiClient } from '../data/api';
 import type { SessionIssue, SessionSnapshot, SessionStatus } from '../features/rooms/services/sessionState';
 import type { SessionUser } from '../data/api/contracts';
+import { clearPrivateHistoryCache } from '../features/history/services/historyRepository';
 import {
   LiveRoomRepository,
   createDurableRequestId,
@@ -57,6 +58,7 @@ export function RoomRepositoryProvider({
         publicKey,
         storage,
         clearPrivateData: async () => {
+          clearPrivateHistoryCache();
           try {
             await SecureStore.deleteItemAsync(PRIVATE_CACHE_KEY);
           } catch {
