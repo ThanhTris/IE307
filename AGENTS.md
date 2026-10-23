@@ -10,6 +10,8 @@ Nguồn yêu cầu: chỉ dẫn hiện tại của chủ dự án → task/AC �
 
 ## AIDD
 
+**Cập nhật của Trí ngày 2026-10-24:** đợt này tạo PR hồ sơ yêu cầu bổ sung BE/Data để owner hiện tại làm tiếp, chưa code runtime và không sửa task/code UI. Đọc [audit](docs/project/BE_DATA_AUDIT_2026-10-24.md) và [gói việc bổ sung](docs/project/BE_DATA_FOLLOWUPS_2026-10-24.md). Trí xác nhận lại cap vòng2 theo 30%: N>=2 dùng max(1, floor(0.30*N)), N=1 bỏ loại, N=0 không mở vòng2; đây là trần cho phép, KEEP toàn bộ vẫn hợp lệ. N=2/3 là ngoại lệ một lượt. Yêu cầu này thay cap min(3, floor((N-1)/2)) ở đoạn lịch sử bên dưới cho policy sắp triển khai; main033693c vẫn chạy cap cũ và cần version/migration tiến để giữ phiên cũ. Mốc60s vẫn là transition vào chờ sau ACK, không ACK đơn thuần.
+
 Theo xác nhận Trí ngày 2026-10-22, đọc [ADR-019](docs/architecture/decisions/ADR-019-dish-first-room-policy.md) trước sửa luồng mới: tối đa 20 người, host chọn chính xác 10–20 món, bỏ ready, chờ 60 giây từ người đầu tiên hoàn tất lượt và vào phòng chờ kết quả mỗi vòng và host có Chốt ngay; chọn món không phụ thuộc vị trí/quán. Trí đã chốt cap vòng 2 min(3, floor((N-1)/2)) với N là số món vòng 2, N=1 bỏ loại; chốt tối thiểu 1 phiếu hoàn chỉnh đã nhận, thiếu phiếu không là OK; host chỉ bấm bắt đầu, không duyệt từng người. Giữ Chưa đồng thuận nếu hết ứng viên; các chi tiết còn mở được ghi riêng trong ADR. Contract/code cũ vẫn là legacy đến khi có migration tiến/version/consumer mới; không coi cập nhật tài liệu là đã triển khai. Kiểm thiết bị theo đợt sau merge theo chỉ dẫn owner, vẫn ghi Not run đến khi chạy thật.
 
 Trí (`ThanhTris`) review tất cả task, bao gồm task Trí trực tiếp làm; không yêu cầu review chéo hoặc người kiểm độc lập theo ADR-013. Không tự thay reviewer hoặc ghi approval thay Trí.

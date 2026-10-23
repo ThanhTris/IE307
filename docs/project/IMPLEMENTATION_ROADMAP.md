@@ -1,6 +1,6 @@
 # Lộ trình triển khai UI–BE–Data — roadmap-v2
 
-2026-10-10. Chủ dự án yêu cầu chia lại task sau thử nghiệm sandbox: tạo nền trước, component/contract tiếp theo, hoàn thiện tính năng rồi tích hợp. Đây là kế hoạch hiện hành; 39 task sau GM-00, gồm 34 P0 (kể cả GM-01 đã xác nhận duyệt), 2 P1 và 3 P2. [Tổng hợp task/owner](TASK_SUMMARY.md) · [dependency](TASK_DEPENDENCIES.md) · [mapping](TASK_RENUMBERING.md).
+Baseline 2026-10-10, bổ sung GM40 và cập nhật 2026-10-24: 40 task sau GM-00, gồm 35 P0 (kể cả GM01 và GM40), 2 P1 và 3 P2. Phần BE/Data mới theo [audit](BE_DATA_AUDIT_2026-10-24.md) và [thứ tự supplement](BE_DATA_FOLLOWUPS_2026-10-24.md); không lấy Done baseline thay artifact mới, không sửa task UI trong đợt này. [Tổng hợp task/owner](TASK_SUMMARY.md) · [dependency](TASK_DEPENDENCIES.md) · [mapping](TASK_RENUMBERING.md).
 
 ## Ba luồng và đầu ra nhận được
 
@@ -74,7 +74,7 @@ Merge theo số tăng dần 01 → 39 luôn hợp lệ vì mọi prerequisite c�
 
 ## Contract bàn giao trước khi làm tiếp
 
-Chủ dự án xác nhận cấu trúc UI/BE 2026-10-10, xem [plan GM-02/03](FOUNDATION_IMPLEMENTATION_PLAN.md) và [cấu trúc](REPOSITORY_STRUCTURE.md). [Chuẩn đầu ra](TASK_OUTPUT_REQUIREMENTS.md)/[checklist 39 task](TASK_OUTPUT_CHECKLIST.md) bắt buộc UI mở Expo thấy các mục scope, API chạy request/output/assertions, Data đủ fields/schema/templates/fixtures/version cho BE làm song song. Mỗi task bàn giao CHECKS.md + HANDOFF; API có request suite riêng. Chưa triển khai app/API, không tự chuyển Approved/Done hoặc cài package trước gate/review.
+Chủ dự án xác nhận cấu trúc UI/BE 2026-10-10, xem [plan GM-02/03](FOUNDATION_IMPLEMENTATION_PLAN.md) và [cấu trúc](REPOSITORY_STRUCTURE.md). [Chuẩn đầu ra](TASK_OUTPUT_REQUIREMENTS.md)/[checklist 40 task](TASK_OUTPUT_CHECKLIST.md) bắt buộc UI mở Expo thấy các mục scope, API chạy request/output/assertions, Data đủ fields/schema/templates/fixtures/version cho BE làm song song. Mỗi task bàn giao CHECKS.md + HANDOFF; API có request suite riêng. Source đã có các phần theo [audit hiện hành](BE_DATA_AUDIT_2026-10-24.md); không tự chuyển Approved/Done hoặc cài package trước gate/review.
 
 Mỗi task có bảng “Đầu vào bắt buộc và đầu ra bàn giao”: upstream, path, trước start hay trước merge; source machine-readable là [task map](../../tasks/task-id-map.json). Path là đích dự kiến, không phải chứng nhận file đã tồn tại. Task hoàn thành cần [HANDOFF](../../tasks/templates/HANDOFF_TEMPLATE.md) gồm:
 

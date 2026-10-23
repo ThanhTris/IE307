@@ -1550,7 +1550,7 @@
         "tool": "Postman hoặc curl Edge Function + schema validator",
         "entrypoint": "menu-ocr request với ảnh có quyền → draft fields/confidence/errors",
         "expected": "HTTP/status/body/output fields thật theo schema; provider stub và request provider thật tách evidence; không tự publish.",
-        "cases": "invalid image/input; timeout/quota; low-confidence/null; auth/privacy; thiếu offering/coverage/hours không thành verified"
+        "cases": "invalid image/input; timeout/quota; low-confidence/null; auth/privacy; dish-only draft không bắt quán/offering/lịch nhưng phải có source và không tự publish; legacy adapter kiểm riêng"
       }
     },
     {
@@ -1637,7 +1637,7 @@
         "tool": "Expo Android mood UI + Postman/curl weather API + rank tests",
         "entrypoint": "Màn Context mood optional và weather-context theo public anchor/desiredAt",
         "expected": "UI mood opt-in/opt-out và weather source/timezone/observedAt/expiresAt/version hiện đúng; soft rank chỉ tập eligible.",
-        "cases": "timeout/stale/forecast-vs-observation; consent/TTL/opt-out; không override NO/REMOVE/coverage/hours; frozen pool; Android thật gọi API: endpoint/auth/network/lifecycle và đối chiếu state server theo ma trận"
+        "cases": "timeout/stale/forecast-vs-observation; consent/TTL/opt-out; không override NO/REMOVE hoặc pool đã khóa; dish-only không bắt anchor/coverage/reset-ready, legacy kiểm riêng; Android thật gọi API: endpoint/auth/network/lifecycle và đối chiếu state server theo ma trận"
       }
     },
     {
