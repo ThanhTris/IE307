@@ -1,6 +1,6 @@
 # Lộ trình triển khai UI–BE–Data — roadmap-v2
 
-Baseline 2026-10-10, bổ sung GM40 và cập nhật 2026-10-24: 40 task sau GM-00, gồm 35 P0 (kể cả GM01 và GM40), 2 P1 và 3 P2. Phần BE/Data mới theo [audit](BE_DATA_AUDIT_2026-10-24.md) và [thứ tự supplement](BE_DATA_FOLLOWUPS_2026-10-24.md); không lấy Done baseline thay artifact mới, không sửa task UI trong đợt này. [Tổng hợp task/owner](TASK_SUMMARY.md) · [dependency](TASK_DEPENDENCIES.md) · [mapping](TASK_RENUMBERING.md).
+Baseline 2026-10-10, bổ sung GM40 và cập nhật 2026-10-25: 40 task sau GM-00, gồm 35 P0 (kể cả GM01 và GM40), 2 P1 và 3 P2. Bản yêu cầu hiện hành đồng bộ BE/Data/UI với Figma tại [alignment matrix](FIGMA_BE_UI_DATA_ALIGNMENT_2026-10-24.md), [GM-07.B](../architecture/DISH_SESSION_API_CONTRACT_B.md), [ADR-019](../architecture/decisions/ADR-019-dish-first-room-policy.md) và [ADR-020](../architecture/decisions/ADR-020-public-top-three-result.md). Giữ baseline approval riêng với follow-up; không đổi assignee/deadline hoặc tạo dependency ngược. [Tổng hợp task/owner](TASK_SUMMARY.md) · [dependency](TASK_DEPENDENCIES.md) · [mapping](TASK_RENUMBERING.md).
 
 ## Ba luồng và đầu ra nhận được
 

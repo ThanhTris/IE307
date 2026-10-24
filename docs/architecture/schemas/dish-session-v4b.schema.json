@@ -1,0 +1,2115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gi-cung-duoc.local/schemas/dish-session-v4b.schema.json",
+  "title": "Dish session v4.B proposed wire contract",
+  "description": "GM-07.B forward-only proposal. It extends GM-07.A with room preferences, join preview, member submission status and immutable aggregate Top 3 results. It is not a deployed runtime contract.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/requestEnvelope"
+    },
+    {
+      "$ref": "#/$defs/successEnvelope"
+    },
+    {
+      "$ref": "#/$defs/errorEnvelope"
+    }
+  ],
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "requestId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9_-]+$"
+    },
+    "command": {
+      "enum": [
+        "create",
+        "previewJoin",
+        "join",
+        "snapshot",
+        "updateSettings",
+        "updatePreferences",
+        "start",
+        "submit",
+        "waiting",
+        "finalize",
+        "cancel",
+        "leave"
+      ]
+    },
+    "mealSlot": {
+      "enum": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack"
+      ]
+    },
+    "poolDish": {
+      "type": "object",
+      "required": [
+        "roundDishId",
+        "dishId",
+        "name",
+        "description",
+        "mealSlots",
+        "cuisineIds",
+        "cuisineLabels",
+        "categoryIds",
+        "categoryLabels",
+        "temperature",
+        "flavor",
+        "artwork",
+        "priceReference"
+      ],
+      "properties": {
+        "roundDishId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "dishId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 2000
+        },
+        "mealSlots": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/mealSlot"
+          }
+        },
+        "cuisineIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/uuid"
+          }
+        },
+        "categoryIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/uuid"
+          }
+        },
+        "cuisineLabels": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          }
+        },
+        "categoryLabels": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          }
+        },
+        "temperature": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "hot",
+            "warm",
+            "cold",
+            "ambient",
+            "unknown",
+            null
+          ]
+        },
+        "flavor": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/flavorProjection"
+            }
+          ]
+        },
+        "artwork": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/artworkProjection"
+            }
+          ]
+        },
+        "priceReference": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/priceReference"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "member": {
+      "type": "object",
+      "required": [
+        "userId",
+        "displayName",
+        "role",
+        "submissionStatus"
+      ],
+      "properties": {
+        "userId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 24
+        },
+        "role": {
+          "enum": [
+            "HOST",
+            "MEMBER"
+          ]
+        },
+        "submissionStatus": {
+          "enum": [
+            "NOT_SUBMITTED",
+            "ACCEPTED"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "round1Vote": {
+      "type": "object",
+      "required": [
+        "roundDishId",
+        "choice"
+      ],
+      "properties": {
+        "roundDishId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "choice": {
+          "enum": [
+            "WANT",
+            "OK",
+            "NO"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "round2Vote": {
+      "type": "object",
+      "required": [
+        "roundDishId",
+        "choice"
+      ],
+      "properties": {
+        "roundDishId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "choice": {
+          "enum": [
+            "KEEP",
+            "REMOVE"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "createRequest": {
+      "type": "object",
+      "required": [
+        "requestId",
+        "displayName",
+        "settings",
+        "preferences"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/requestId"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 24
+        },
+        "settings": {
+          "$ref": "#/$defs/roomSettings"
+        },
+        "preferences": {
+          "$ref": "#/$defs/softPreferences"
+        }
+      },
+      "additionalProperties": false
+    },
+    "joinRequest": {
+      "type": "object",
+      "required": [
+        "requestId",
+        "code",
+        "displayName"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/requestId"
+        },
+        "code": {
+          "type": "string",
+          "minLength": 6,
+          "maxLength": 6
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 24
+        }
+      },
+      "additionalProperties": false
+    },
+    "snapshotRequest": {
+      "type": "object",
+      "required": [
+        "roomId"
+      ],
+      "properties": {
+        "roomId": {
+          "$ref": "#/$defs/uuid"
+        }
+      },
+      "additionalProperties": false
+    },
+    "roomVersionRequest": {
+      "type": "object",
+      "required": [
+        "requestId",
+        "roomId",
+        "expectedVersion"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/requestId"
+        },
+        "roomId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "expectedVersion": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "submitRequest": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "requestId",
+            "roomId",
+            "expectedVersion",
+            "round",
+            "poolVersion",
+            "votes"
+          ],
+          "properties": {
+            "requestId": {
+              "$ref": "#/$defs/requestId"
+            },
+            "roomId": {
+              "$ref": "#/$defs/uuid"
+            },
+            "expectedVersion": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "round": {
+              "const": 1
+            },
+            "poolVersion": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "votes": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/round1Vote"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "requestId",
+            "roomId",
+            "expectedVersion",
+            "round",
+            "poolVersion",
+            "votes"
+          ],
+          "properties": {
+            "requestId": {
+              "$ref": "#/$defs/requestId"
+            },
+            "roomId": {
+              "$ref": "#/$defs/uuid"
+            },
+            "expectedVersion": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "round": {
+              "const": 2
+            },
+            "poolVersion": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "votes": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/round2Vote"
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "waitingRequest": {
+      "type": "object",
+      "required": [
+        "requestId",
+        "roomId",
+        "expectedVersion",
+        "round",
+        "poolVersion"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/requestId"
+        },
+        "roomId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "expectedVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "round": {
+          "type": "integer",
+          "enum": [
+            1,
+            2
+          ]
+        },
+        "poolVersion": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "finalizeRequest": {
+      "$ref": "#/$defs/roomVersionRequest"
+    },
+    "requestEnvelope": {
+      "type": "object",
+      "required": [
+        "command",
+        "payload"
+      ],
+      "properties": {
+        "command": {
+          "$ref": "#/$defs/command"
+        },
+        "payload": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "command": {
+                "const": "create"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "payload": {
+                "$ref": "#/$defs/createRequest"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "command": {
+                "const": "join"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "payload": {
+                "$ref": "#/$defs/joinRequest"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "command": {
+                "const": "snapshot"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "payload": {
+                "$ref": "#/$defs/snapshotRequest"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "command": {
+                "enum": [
+                  "start",
+                  "cancel",
+                  "leave"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "payload": {
+                "$ref": "#/$defs/roomVersionRequest"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "command": {
+                "const": "submit"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "payload": {
+                "$ref": "#/$defs/submitRequest"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "command": {
+                "const": "waiting"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "payload": {
+                "$ref": "#/$defs/waitingRequest"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "command": {
+                "const": "finalize"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "payload": {
+                "$ref": "#/$defs/finalizeRequest"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "command": {
+                "const": "previewJoin"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "payload": {
+                "$ref": "#/$defs/previewJoinRequest"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "command": {
+                "const": "updateSettings"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "payload": {
+                "$ref": "#/$defs/updateSettingsRequest"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "command": {
+                "const": "updatePreferences"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "payload": {
+                "$ref": "#/$defs/updatePreferencesRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "snapshot": {
+      "type": "object",
+      "required": [
+        "contractVersion",
+        "policyVersion",
+        "catalogueVersion",
+        "catalogueSha",
+        "roomId",
+        "code",
+        "state",
+        "version",
+        "round",
+        "poolVersion",
+        "dishCount",
+        "pool",
+        "members",
+        "submittedCount",
+        "memberCount",
+        "ownBallot",
+        "ownWaiting",
+        "waitingStartedAt",
+        "deadline",
+        "serverTime",
+        "result",
+        "hostUserId",
+        "settings",
+        "ownPreferences",
+        "removalCap",
+        "expiresAt"
+      ],
+      "properties": {
+        "contractVersion": {
+          "const": "dish-session-v4/roadmap-v2/GM-07.B"
+        },
+        "policyVersion": {
+          "const": "dish-decision-v4/ADR-019-30PCT-MIN1"
+        },
+        "catalogueVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "catalogueSha": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "roomId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "code": {
+          "type": "string",
+          "minLength": 6,
+          "maxLength": 6
+        },
+        "state": {
+          "enum": [
+            "LOBBY",
+            "ROUND_1",
+            "WAITING_1",
+            "ROUND_2",
+            "WAITING_2",
+            "DECIDED",
+            "NO_CONSENSUS",
+            "CANCELLED"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "round": {
+          "type": "integer",
+          "enum": [
+            1,
+            2
+          ]
+        },
+        "poolVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "dishCount": {
+          "type": "integer",
+          "minimum": 10,
+          "maximum": 20
+        },
+        "pool": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "$ref": "#/$defs/poolDish"
+          }
+        },
+        "members": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 20,
+          "items": {
+            "$ref": "#/$defs/member"
+          }
+        },
+        "submittedCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 20
+        },
+        "memberCount": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
+        },
+        "ownBallot": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/round1Vote"
+                  },
+                  {
+                    "$ref": "#/$defs/round2Vote"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "ownWaiting": {
+          "type": "boolean"
+        },
+        "waitingStartedAt": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/timestamp"
+            }
+          ]
+        },
+        "deadline": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/timestamp"
+            }
+          ]
+        },
+        "serverTime": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "result": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/terminalResult"
+            }
+          ]
+        },
+        "hostUserId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "settings": {
+          "$ref": "#/$defs/roomSettings"
+        },
+        "ownPreferences": {
+          "$ref": "#/$defs/softPreferences"
+        },
+        "removalCap": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 6
+        },
+        "expiresAt": {
+          "$ref": "#/$defs/timestamp"
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "LOBBY"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "round": {
+                "const": 1
+              },
+              "poolVersion": {
+                "const": 1
+              },
+              "pool": {
+                "minItems": 10,
+                "maxItems": 20
+              },
+              "ownWaiting": {
+                "const": false
+              },
+              "waitingStartedAt": {
+                "type": "null"
+              },
+              "deadline": {
+                "type": "null"
+              },
+              "result": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "enum": [
+                  "ROUND_1",
+                  "WAITING_1"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "round": {
+                "const": 1
+              },
+              "pool": {
+                "minItems": 10,
+                "maxItems": 20
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "enum": [
+                  "ROUND_2",
+                  "WAITING_2"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "round": {
+                "const": 2
+              },
+              "pool": {
+                "minItems": 1,
+                "maxItems": 20
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "DECIDED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "const": "DECIDED"
+                  },
+                  "winner": {
+                    "$ref": "#/$defs/poolDish"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "NO_CONSENSUS"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "pool": {
+                "maxItems": 0
+              },
+              "result": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "const": "NO_CONSENSUS"
+                  },
+                  "winner": {
+                    "type": "null"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "NO_CONSENSUS"
+              },
+              "round": {
+                "const": 1
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "properties": {
+                  "reasonCode": {
+                    "const": "EMPTY_INTERSECTION"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "NO_CONSENSUS"
+              },
+              "round": {
+                "const": 2
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "properties": {
+                  "reasonCode": {
+                    "const": "ALL_REMOVED"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "round": {
+                "const": 1
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "ownBallot": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/$defs/round1Vote"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "round": {
+                "const": 2
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "ownBallot": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/$defs/round2Vote"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "enum": [
+                  "ROUND_2",
+                  "WAITING_2"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "removalCap": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 6
+              }
+            }
+          }
+        }
+      ]
+    },
+    "createAck": {
+      "type": "object",
+      "required": [
+        "roomId",
+        "code",
+        "version",
+        "expiresAt"
+      ],
+      "properties": {
+        "roomId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "code": {
+          "type": "string",
+          "minLength": 6,
+          "maxLength": 6
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "expiresAt": {
+          "$ref": "#/$defs/timestamp"
+        }
+      },
+      "additionalProperties": false
+    },
+    "joinAck": {
+      "type": "object",
+      "required": [
+        "roomId",
+        "code",
+        "version",
+        "memberId"
+      ],
+      "properties": {
+        "roomId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "code": {
+          "type": "string",
+          "minLength": 6,
+          "maxLength": 6
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "memberId": {
+          "$ref": "#/$defs/uuid"
+        }
+      },
+      "additionalProperties": false
+    },
+    "submitAck": {
+      "type": "object",
+      "required": [
+        "accepted",
+        "round",
+        "poolVersion",
+        "submittedAt"
+      ],
+      "properties": {
+        "accepted": {
+          "const": true
+        },
+        "round": {
+          "type": "integer",
+          "enum": [
+            1,
+            2
+          ]
+        },
+        "poolVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "submittedAt": {
+          "$ref": "#/$defs/timestamp"
+        }
+      },
+      "additionalProperties": false
+    },
+    "waitingAck": {
+      "type": "object",
+      "required": [
+        "accepted",
+        "round",
+        "poolVersion",
+        "waitingStartedAt",
+        "deadline"
+      ],
+      "properties": {
+        "accepted": {
+          "const": true
+        },
+        "round": {
+          "type": "integer",
+          "enum": [
+            1,
+            2
+          ]
+        },
+        "poolVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "waitingStartedAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "deadline": {
+          "$ref": "#/$defs/timestamp"
+        }
+      },
+      "additionalProperties": false
+    },
+    "finalizeAck": {
+      "type": "object",
+      "required": [
+        "accepted",
+        "outcome",
+        "state",
+        "round"
+      ],
+      "properties": {
+        "accepted": {
+          "const": true
+        },
+        "outcome": {
+          "enum": [
+            "ROUND_ADVANCED",
+            "TERMINAL"
+          ]
+        },
+        "state": {
+          "enum": [
+            "ROUND_2",
+            "DECIDED",
+            "NO_CONSENSUS"
+          ]
+        },
+        "round": {
+          "type": "integer",
+          "enum": [
+            1,
+            2
+          ]
+        },
+        "resultId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "finalizedAt": {
+          "$ref": "#/$defs/timestamp"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "const": "ROUND_ADVANCED"
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "state": {
+                "const": "ROUND_2"
+              },
+              "round": {
+                "const": 2
+              }
+            },
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "resultId"
+                  ]
+                },
+                {
+                  "required": [
+                    "finalizedAt"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "const": "TERMINAL"
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "state": {
+                "enum": [
+                  "DECIDED",
+                  "NO_CONSENSUS"
+                ]
+              }
+            },
+            "required": [
+              "resultId",
+              "finalizedAt"
+            ]
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "terminalResult": {
+      "type": "object",
+      "required": [
+        "resultId",
+        "contractVersion",
+        "policyVersion",
+        "status",
+        "round",
+        "winner",
+        "reasonCode",
+        "finalizedAt",
+        "scoreVersion",
+        "rankingVersion",
+        "topDishes"
+      ],
+      "properties": {
+        "resultId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "contractVersion": {
+          "const": "dish-session-v4/roadmap-v2/GM-07.B"
+        },
+        "policyVersion": {
+          "const": "dish-decision-v4/ADR-019-30PCT-MIN1"
+        },
+        "status": {
+          "enum": [
+            "DECIDED",
+            "NO_CONSENSUS"
+          ]
+        },
+        "round": {
+          "type": "integer",
+          "enum": [
+            1,
+            2
+          ]
+        },
+        "winner": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/poolDish"
+            }
+          ]
+        },
+        "reasonCode": {
+          "enum": [
+            "UNANIMOUS_WANT",
+            "ACCEPTABLE_FINAL",
+            "EMPTY_INTERSECTION",
+            "ALL_REMOVED"
+          ]
+        },
+        "finalizedAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "scoreVersion": {
+          "const": "want2-ok1-round1-v1"
+        },
+        "rankingVersion": {
+          "const": "score-desc-dense-rank-v1"
+        },
+        "topDishes": {
+          "type": "array",
+          "maxItems": 3,
+          "items": {
+            "$ref": "#/$defs/topDish"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "DECIDED"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "winner": {
+                "$ref": "#/$defs/poolDish"
+              },
+              "reasonCode": {
+                "enum": [
+                  "UNANIMOUS_WANT",
+                  "ACCEPTABLE_FINAL"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "NO_CONSENSUS"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "winner": {
+                "type": "null"
+              },
+              "reasonCode": {
+                "enum": [
+                  "EMPTY_INTERSECTION",
+                  "ALL_REMOVED"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "DECIDED"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "topDishes": {
+                "minItems": 1,
+                "contains": {
+                  "properties": {
+                    "isWinner": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "isWinner"
+                  ]
+                }
+              }
+            },
+            "not": {
+              "properties": {
+                "topDishes": {
+                  "contains": {
+                    "properties": {
+                      "isWinner": {
+                        "const": true
+                      }
+                    },
+                    "required": [
+                      "isWinner"
+                    ]
+                  },
+                  "minContains": 2
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "NO_CONSENSUS"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "topDishes": {
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "voidAck": {
+      "type": "object",
+      "required": [
+        "accepted"
+      ],
+      "properties": {
+        "accepted": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "successEnvelope": {
+      "type": "object",
+      "required": [
+        "ok",
+        "data"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "requestId": {
+          "$ref": "#/$defs/requestId"
+        },
+        "roomId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "state": {
+          "type": "string"
+        },
+        "data": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/snapshot"
+            },
+            {
+              "$ref": "#/$defs/createAck"
+            },
+            {
+              "$ref": "#/$defs/joinAck"
+            },
+            {
+              "$ref": "#/$defs/submitAck"
+            },
+            {
+              "$ref": "#/$defs/waitingAck"
+            },
+            {
+              "$ref": "#/$defs/finalizeAck"
+            },
+            {
+              "$ref": "#/$defs/terminalResult"
+            },
+            {
+              "$ref": "#/$defs/voidAck"
+            },
+            {
+              "$ref": "#/$defs/previewJoinAck"
+            },
+            {
+              "$ref": "#/$defs/settingsAck"
+            },
+            {
+              "$ref": "#/$defs/preferencesAck"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "errorCode": {
+      "enum": [
+        "INVALID_INPUT",
+        "UNSUPPORTED_FIELD",
+        "AUTH_REQUIRED",
+        "NOT_MEMBER",
+        "NOT_HOST",
+        "ROOM_NOT_FOUND",
+        "ROOM_FULL",
+        "ROOM_LOCKED",
+        "ROOM_EXPIRED",
+        "VERSION_CONFLICT",
+        "REQUEST_ID_REUSED",
+        "INCOMPLETE_BALLOT",
+        "ROOM_TERMINAL",
+        "INSUFFICIENT_DISHES",
+        "RATE_LIMITED",
+        "WORKER_NOT_READY"
+      ]
+    },
+    "errorEnvelope": {
+      "type": "object",
+      "required": [
+        "ok",
+        "error"
+      ],
+      "properties": {
+        "ok": {
+          "const": false
+        },
+        "requestId": {
+          "$ref": "#/$defs/requestId"
+        },
+        "error": {
+          "type": "object",
+          "required": [
+            "messageKey"
+          ],
+          "properties": {
+            "messageKey": {
+              "$ref": "#/$defs/errorCode"
+            },
+            "details": {
+              "type": "object"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "flavorProjection": {
+      "type": "object",
+      "required": [
+        "spicy",
+        "salty",
+        "sweet",
+        "sour"
+      ],
+      "properties": {
+        "spicy": {
+          "type": "object",
+          "required": [
+            "present",
+            "intensity"
+          ],
+          "properties": {
+            "present": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "intensity": {
+              "enum": [
+                "none",
+                "low",
+                "medium",
+                "high",
+                "unknown"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "salty": {
+          "type": "object",
+          "required": [
+            "present",
+            "intensity"
+          ],
+          "properties": {
+            "present": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "intensity": {
+              "enum": [
+                "none",
+                "low",
+                "medium",
+                "high",
+                "unknown"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "sweet": {
+          "type": "object",
+          "required": [
+            "present",
+            "intensity"
+          ],
+          "properties": {
+            "present": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "intensity": {
+              "enum": [
+                "none",
+                "low",
+                "medium",
+                "high",
+                "unknown"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "sour": {
+          "type": "object",
+          "required": [
+            "present",
+            "intensity"
+          ],
+          "properties": {
+            "present": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "intensity": {
+              "enum": [
+                "none",
+                "low",
+                "medium",
+                "high",
+                "unknown"
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "artworkProjection": {
+      "type": "object",
+      "required": [
+        "uri",
+        "altText",
+        "attribution"
+      ],
+      "properties": {
+        "uri": {
+          "type": "string",
+          "format": "uri",
+          "minLength": 1
+        },
+        "altText": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "attribution": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 500
+        }
+      },
+      "additionalProperties": false
+    },
+    "priceReference": {
+      "type": "object",
+      "required": [
+        "amount",
+        "currency",
+        "unit",
+        "servingSize",
+        "sourceRef",
+        "checkedAt"
+      ],
+      "properties": {
+        "amount": {
+          "type": "number",
+          "minimum": 0
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "unit": {
+          "enum": [
+            "portion",
+            "item",
+            "person",
+            "group",
+            "kg",
+            "menu_item_unspecified"
+          ]
+        },
+        "servingSize": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 160
+        },
+        "sourceRef": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "checkedAt": {
+          "$ref": "#/$defs/timestamp"
+        }
+      },
+      "additionalProperties": false
+    },
+    "softPreferences": {
+      "type": "object",
+      "required": [
+        "cuisineIds",
+        "categoryIds",
+        "temperature",
+        "flavor",
+        "budget",
+        "avoidRecent"
+      ],
+      "properties": {
+        "cuisineIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/uuid"
+          }
+        },
+        "categoryIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/uuid"
+          }
+        },
+        "temperature": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "hot",
+            "warm",
+            "cold",
+            "ambient",
+            "unknown",
+            null
+          ]
+        },
+        "flavor": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/flavorProjection"
+            }
+          ]
+        },
+        "budget": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "required": [
+                "maximum",
+                "currency",
+                "unit"
+              ],
+              "properties": {
+                "maximum": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "currency": {
+                  "type": "string",
+                  "pattern": "^[A-Z]{3}$"
+                },
+                "unit": {
+                  "enum": [
+                    "portion",
+                    "item",
+                    "person",
+                    "group",
+                    "kg",
+                    "menu_item_unspecified"
+                  ]
+                }
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        "avoidRecent": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "roomSettings": {
+      "type": "object",
+      "required": [
+        "dishCount",
+        "mealSlot",
+        "desiredAt"
+      ],
+      "properties": {
+        "dishCount": {
+          "type": "integer",
+          "minimum": 10,
+          "maximum": 20
+        },
+        "mealSlot": {
+          "$ref": "#/$defs/mealSlot"
+        },
+        "desiredAt": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/timestamp"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "previewJoinRequest": {
+      "type": "object",
+      "required": [
+        "requestId",
+        "code"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/requestId"
+        },
+        "code": {
+          "type": "string",
+          "minLength": 6,
+          "maxLength": 6
+        }
+      },
+      "additionalProperties": false
+    },
+    "updateSettingsRequest": {
+      "type": "object",
+      "required": [
+        "requestId",
+        "roomId",
+        "expectedVersion",
+        "settings"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/requestId"
+        },
+        "roomId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "expectedVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "settings": {
+          "$ref": "#/$defs/roomSettings"
+        }
+      },
+      "additionalProperties": false
+    },
+    "updatePreferencesRequest": {
+      "type": "object",
+      "required": [
+        "requestId",
+        "roomId",
+        "expectedVersion",
+        "preferences"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/requestId"
+        },
+        "roomId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "expectedVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "preferences": {
+          "$ref": "#/$defs/softPreferences"
+        }
+      },
+      "additionalProperties": false
+    },
+    "previewJoinAck": {
+      "type": "object",
+      "required": [
+        "joinable",
+        "memberCount",
+        "memberLimit",
+        "dishCount",
+        "mealSlot",
+        "roomState"
+      ],
+      "properties": {
+        "joinable": {
+          "type": "boolean"
+        },
+        "memberCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 20
+        },
+        "memberLimit": {
+          "const": 20
+        },
+        "dishCount": {
+          "type": "integer",
+          "minimum": 10,
+          "maximum": 20
+        },
+        "mealSlot": {
+          "$ref": "#/$defs/mealSlot"
+        },
+        "roomState": {
+          "enum": [
+            "LOBBY",
+            "ROUND_1",
+            "WAITING_1",
+            "ROUND_2",
+            "WAITING_2",
+            "DECIDED",
+            "NO_CONSENSUS",
+            "CANCELLED"
+          ]
+        },
+        "reasonCode": {
+          "enum": [
+            "ROOM_FULL",
+            "ROOM_LOCKED",
+            "ROOM_EXPIRED",
+            "ROOM_TERMINAL"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "settingsAck": {
+      "type": "object",
+      "required": [
+        "accepted",
+        "version",
+        "poolVersion",
+        "settings"
+      ],
+      "properties": {
+        "accepted": {
+          "const": true
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "poolVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "settings": {
+          "$ref": "#/$defs/roomSettings"
+        }
+      },
+      "additionalProperties": false
+    },
+    "preferencesAck": {
+      "type": "object",
+      "required": [
+        "accepted",
+        "version",
+        "poolVersion"
+      ],
+      "properties": {
+        "accepted": {
+          "const": true
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "poolVersion": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "topDish": {
+      "type": "object",
+      "required": [
+        "dish",
+        "score",
+        "rank",
+        "isWinner"
+      ],
+      "properties": {
+        "dish": {
+          "$ref": "#/$defs/poolDish"
+        },
+        "score": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rank": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "isWinner": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

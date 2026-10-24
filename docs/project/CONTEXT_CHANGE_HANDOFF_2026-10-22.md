@@ -1,5 +1,7 @@
 # Bàn giao cập nhật yêu cầu chọn món — 2026-10-22
 
+> Cập nhật sau buổi chốt 2026-10-24: Top 3/điểm/privacy không còn Pending; xem [ADR-020](../architecture/decisions/ADR-020-public-top-three-result.md), [GM-07.B](../architecture/DISH_SESSION_API_CONTRACT_B.md) và [alignment matrix](FIGMA_BE_UI_DATA_ALIGNMENT_2026-10-24.md). Dòng bên dưới giữ nguyên như lịch sử tại ngày 22/10.
+
 Chủ dự án Trí đã yêu cầu đưa ngữ cảnh lên main, comment task còn mở/Review và thực hiện code bổ sung qua PR mới cho task Done. ADR-019 ghi yêu cầu đã chốt; đây là PR ngữ cảnh/phân định phạm vi trước implementation.
 
 Không mở lại lịch sử nghiệm thu, không coi thay mô tả là feature đã chạy. Các supplement trong task là yêu cầu patch tiếp theo, giữ nguyên assignee và deadline trên Project. Không thêm task Data thứ hai hoặc ép task cũ phụ thuộc ngược GM-40.

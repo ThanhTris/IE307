@@ -1,5 +1,7 @@
 # Rà soát BE/Data và task — 2026-10-24
 
+> Đây là ảnh chụp audit trước khi chốt Top 3 và các làm rõ tiếp theo ngày 2026-10-25. Top3 “chờ duyệt”, R2 N=1 bỏ REMOVE/tự chốt, Maps-only và Dark trong các đoạn dưới là ghi nhận lịch sử, không phải yêu cầu hiện hành. Dùng [ADR-019](../architecture/decisions/ADR-019-dish-first-room-policy.md), [ADR-020](../architecture/decisions/ADR-020-public-top-three-result.md), [alignment Figma–BE–Data–UI](FIGMA_BE_UI_DATA_ALIGNMENT_2026-10-24.md) và [GM-07.B](../architecture/DISH_SESSION_API_CONTRACT_B.md) để lấy yêu cầu mới nhất.
+
 Baseline: `033693c74d8380244b0ee78325b394b033330b93` (main sau PR129).
 Đối chiếu trực tiếp source, Project #2 (40 card), ba PR mở #123/#126/#127 và lịch sử “Data & UI”.
 Ngày báo cáo UTC+7. Đây là audit và yêu cầu bàn giao; không phải nghiệm thu tính năng mới.
@@ -15,7 +17,7 @@ Không có task mới: các khoảng thiếu bên dưới đã thuộc task hi�
 - **30% vòng 2 và pool survivor**: Trí xác nhận trong hội thoại, cập nhật clarification 2026-10-24. Kiểm winner vòng1 trước; nếu chưa có, N là pool ban đầu trừ hợp NO của mọi ballot vòng1 hoàn chỉnh đã ACK. N=0 chốt `EMPTY_INTERSECTION/NO_CONSENSUS` ở round1, không mở round2. N=1 không có bước REMOVE; N>=2 cap=max(1,floor(0.30*N)); N=2/3 có ngoại lệ một lượt dù lớn hơn30%. Đây là trần, không bắt buộc REMOVE; KEEP toàn bộ hợp lệ. Pool round2 có thể dưới10, không bù; nếu bị loại hết chốt `ALL_REMOVED/NO_CONSENSUS`. Runtime main vẫn dùng policy cũ; cần version/migration mới, không sửa nghĩa phiên cũ.
 - **60s từ transition vào chờ hợp lệ sau ACK đủ phiếu**, không từ submit/ACK đơn thuần. Bảng “sau ACK” thiếu điều kiện này; giữ hai command submit/waiting. Mỗi vòng có mốc riêng.
 - Quorum >=1 phiếu hoàn chỉnh; thiếu phiếu không được tính OK. Terminal ổn định; quán/Places không ảnh hưởng winner.
-- Top3/điểm là yêu cầu cần contract và privacy decision: chưa có phép công khai phiếu thô, chưa tự chọn công thức hoặc quy tắc nhóm ít người. Giao GM07/20/17 viết đề xuất để Trí duyệt trước implementation.
+- Top3/điểm tại thời điểm audit còn chờ quyết định. Quyết định sau audit đã được ghi trong ADR-020; xem alignment matrix/GM-07.B. Điều này không có nghĩa runtime đã triển khai.
 - Bộ39 món là dữ liệu thật draft để kiểm test/demo. Không đòi quota lớn hoặc đủ20 mọi bữa để mở lại nghiệm thu data; tăng độ phủ sau khi chốt bộ lọc và tích hợp.
 
 ## Đối chiếu BE

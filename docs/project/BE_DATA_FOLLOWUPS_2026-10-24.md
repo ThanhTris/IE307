@@ -1,5 +1,7 @@
 # Phần việc bổ sung BE/Data — 2026-10-24
 
+> **Cập nhật hiện hành 2026-10-25:** Trí chốt lại rằng sau R1 chưa có winner, pool N>=1 luôn mở R2 thật, kể cả N=1. R2 cho người chơi quyết định REMOVE hoặc không; cap là `max(1,floor(.30*N))` với N=1..20; không auto-finalize, không tự ghi KEEP cho người chưa gửi. N=0 kết thúc `EMPTY_INTERSECTION` ở R1. Đồng thời Places + Google Map phải nằm trong màn kết quả cho winner; mở Google Maps chỉ là hành động bổ sung. Dark của UI supplement hoãn. Top 3/điểm/privacy theo [ADR-020](../architecture/decisions/ADR-020-public-top-three-result.md). Dùng [GM-07.B](../architecture/DISH_SESSION_API_CONTRACT_B.md), [bảng Figma–BE–Data–UI](FIGMA_BE_UI_DATA_ALIGNMENT_2026-10-24.md) và [review plan](UI_MAIN_SYNC_REVIEW_PLAN_2026-10-24.md) làm nguồn AC/thứ tự mới nhất. Các phát biểu N=1/Places/Dark bên dưới đã bị thay thế nếu không khớp phần cập nhật này. Không sửa runtime hoặc tự nghiệm thu chỉ bằng hồ sơ này.
+
 Trí chọn **tạo PR yêu cầu bổ sung để người đang phụ trách làm tiếp**, chưa code các phần thiếu.
 Các gói dưới đây thuộc task cũ, không tạo task mới, đổi assignee/Deadline hoặc mở lại Done.
 Baseline: main033693c, schema0.8.0, dish-session-v3/ADR-019, catalogue1.1.0.
@@ -14,7 +16,7 @@ Clarification mới nhất của Trí áp dụng cho supplement v4 và implement
 
 - 0 survivor: chốt round1 `NO_CONSENSUS/EMPTY_INTERSECTION`; không tạo ROUND_2/WAITING_2, pool vòng2 rỗng hoặc timer vòng2.
 - 1–20 survivors: mở vòng2 với đúng survivor set; pool có thể dưới10. Đây không phải lỗi thiếu catalogue/GM-40.
-- Vòng2 N=1: bỏ thao tác REMOVE. N>=2: mỗi người được REMOVE tối đa `max(1, floor(0.30*N))`; KEEP toàn bộ hợp lệ. Nếu cả nhóm loại hết thì chốt `NO_CONSENSUS/ALL_REMOVED` ở round2.
+- Vòng2 mọi N=1..20: mỗi người được REMOVE tối đa `max(1, floor(0.30*N))`. N=1 cap1, người chơi tự quyết định REMOVE hoặc không; không auto-finalize và không tạo phiếu cho người chưa gửi. Nếu cả nhóm loại hết thì chốt `NO_CONSENSUS/ALL_REMOVED` ở round2.
 - Snapshot terminal no-consensus trả `winner=null`, active candidate pool rỗng và reason/round ổn định. Lịch sử/event chỉ tham chiếu terminal result, không dựng winner giả.
 - Phiên đang chạy/legacy giữ contract và policy đã pin; triển khai cần contract/policy version và migration tiến.
 
@@ -45,18 +47,18 @@ HANDOFF phải ghi SHA/version và kiểm nhận đầu vào. Nếu stacked PR, 
 - Snapshot tối thiểu: roomId, state, version, policyVersion, round, **poolVersion**, pool, catalogueVersion/catalogueSha, ownBallot/ownWaiting, submittedCount, deadline/serverTime/result. Không dùng round thay poolVersion.
 - Phân biệt ACK lịch sử khi replay với snapshot mới nhất. RequestId ổn định; waiting chỉ sau phiếu đủ đã ACK và vào chờ, không bắt đầu timer từ submit.
 - Chốt preview/filter/giá/nullable/unknown và discriminator result/history/event. Budget, flavor, thời gian hẹn, avoidRecent chỉ được bật sau khi có semantics thống nhất; không nhận rồi bỏ qua.
-- Top3: đề xuất rank/score/scoreVersion, tập món được công bố, tie-break, 0–3 món và quyền xem ở nhóm ít người. Trí duyệt privacy trước implementation. Không sửa luật winner để khớp hình bục.
+- Top3: thực hiện theo ADR-020: `2*WANT + OK` từ ballot vòng1 hoàn chỉnh đã ACK; vòng2 KEEP không cộng; NO/REMOVE bị loại; tối đa3 với dense shared ranks; winner nằm trong projection; kết quả cố định và chỉ lộ aggregate sau finalize cho thành viên phòng. Không public ballot/contribution và không đổi luật winner.
 - AC: actual HTTP response khớp schema; request kế tiếp lấy hoàn toàn từ response; invalid/unknown version/error fixtures. Lưu contract và HANDOFF supplement. Mobile client/mock/screens làm sau.
 
 ## GM-15 / GM-20 — Vinh: cap30%, kết quả và điểm nối
 
 - N là pool vòng2 sau NO của toàn bộ phiếu vòng1 hoàn chỉnh đã nhận, không phải dishCount ban đầu hoặc số món riêng một người giữ lại.
-- N là số món sống sót sau khi bỏ hợp các món NO trong ballot vòng1 hoàn chỉnh đã ACK; không phải dishCount ban đầu hoặc số món một người tự giữ. Kiểm winner vòng1 trước. N=0 chốt `EMPTY_INTERSECTION` tại round1. N=1 bỏ thao tác loại; N>=2 cap=max(1,floor(3*N/10)). KEEP toàn bộ hợp lệ; N=2/3 áp dụng mức tối thiểu một lượt loại. Cap lần lượt N=2–6:1; 7–9:2; 10–13:3; 14–16:4; 17–19:5; 20:6.
+- N là số món sống sót sau khi bỏ hợp các món NO trong ballot vòng1 hoàn chỉnh đã ACK; không phải dishCount ban đầu hoặc số món một người tự giữ. Kiểm winner vòng1 trước. N=0 chốt `EMPTY_INTERSECTION` tại round1. N>=1 luôn mở R2; cap=max(1,floor(3*N/10)), gồm N=1 cap1. Người chơi tự chọn REMOVE hoặc không REMOVE; không auto-finalize, không tự ghi KEEP cho người chưa gửi. KEEP toàn bộ đã submit và không REMOVE là hợp lệ; N=2/3 là ngoại lệ tối thiểu một lượt loại. Cap lần lượt N=1–6:1; 7–9:2; 10–13:3; 14–16:4; 17–19:5; 20:6.
 - Thêm policy version và migration tiến cho phiên mới; pin policy theo phiên. Không sửa0026 hoặc đổi tất cả phiên đang chạy sang30%. SQL/domain cùng fixtures.
 - Giữ waiting60s, quorum1, host-only finalize, replay, late request và winner ổn định. PoolVersion được phát trong projection cùng GM19.
 - Bàn giao seam terminal cho GM21/23: resultId/policy/status/round/finalizedAt, winner nullable và idempotency. Storage/FK/ACL mới cần GM06/17 review; không để consumer đọc raw ballots.
-- Top3/score chỉ thực hiện sau contract A và quyết định privacy/tie; không public candidates/matrix của evaluator.
-- AC: ưu tiên winner vòng1 trước khi xử lý pool rỗng; survivors tính từ hợp NO của ballot hoàn chỉnh đã ACK; N=0 lưu terminal round1 EMPTY_INTERSECTION, không round2/timer; N=1..20 mở round2 với đúng survivor list kể cả dưới10; cap+1 bị từ chối, 0 REMOVE hợp lệ, nhóm loại hết thành ALL_REMOVED, món NO không quay lại; thiếu ballot không là OK; snapshot/retry/reconnect, 59/60/61s, host/tick/submit race; v2/v3 không đổi.
+- Top3/score phải theo contract B và ADR-020; chỉ lưu projection allowlist, không public raw candidates/matrix của evaluator.
+- AC: ưu tiên winner vòng1 trước khi xử lý pool rỗng; survivors tính từ hợp NO của ballot hoàn chỉnh đã ACK; N=0 lưu terminal round1 EMPTY_INTERSECTION, không round2/timer; N=1..20 mở round2 với đúng survivor list kể cả dưới10; N=1 removalCap=1 và phải chờ ballot/finalize thật, không auto-finalize; cap+1 bị từ chối, 0 REMOVE hợp lệ cho ballot đã submit, nhóm loại hết thành ALL_REMOVED, món NO không quay lại; thiếu ballot không là OK hoặc KEEP; snapshot/retry/reconnect, 59/60/61s, host/tick/submit race; v2/v3 không đổi.
 - Output: forward SQL, domain version, HTTP suite, CHECKS/HANDOFF supplement có commit và giới hạn.
 
 ## GM-18 / GM-19 — Tâm / Trí: catalogue API và phiên
@@ -125,5 +127,5 @@ PR129 đã merge; Project vẫn Review. Baseline39 món nghiệm thu theo test/d
 
 ## Hoàn tất hồ sơ và giới hạn
 
-PR tài liệu có thể được review riêng; merge hồ sơ không hoàn tất các yêu cầu runtime bên trên.
+PR tài liệu có thể được review riêng; merge hồ sơ không hoàn tất các yêu cầu runtime bên trên. Từ quyết định bổ sung Top3/Figma, dùng bảng mapping làm đầu vào task UI; không coi các task baseline đã Done là đã làm follow-up.
 Chỉ sau khi implementation PR đạt AC, Trí mới nghiệm thu phần bổ sung.

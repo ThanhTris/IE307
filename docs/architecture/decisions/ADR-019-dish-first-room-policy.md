@@ -4,15 +4,15 @@ Ngày: 2026-10-22. Chủ quyết định/reviewer: Trí (ThanhTris).
 
 ## Supplement hiện hành — 2026-10-24
 
-Trí xác nhận lại cap vòng2 theo **30% số món còn sau NO vòng1**: N>=2 dùng max(1, floor(0.30*N)); N=1 bỏ loại. Trước hết xét winner vòng1; nếu đã có winner thì chốt DECIDED. Nếu chưa có winner, pool vòng2 là pool ban đầu trừ hợp của mọi món được đánh dấu NO trong tất cả ballot vòng1 hoàn chỉnh đã ACK. N=0 thì chốt NO_CONSENSUS/EMPTY_INTERSECTION ngay ở round1, không mở vòng2 rỗng. N=1 bỏ thao tác REMOVE; N>=2 cap là mức tối đa được loại, không bắt buộc người chơi phải loại. N=2/3 là ngoại lệ một lượt vượt30%; N=2–6/7–9/10–13/14–16/17–19/20 có cap1/2/3/4/5/6. Pool vòng2 có thể ít hơn10 món, không thêm món bù. Nếu toàn bộ món vòng2 bị REMOVE, chốt NO_CONSENSUS/ALL_REMOVED.
+Trí xác nhận cap vòng2 theo **30% số món còn sau NO vòng1**, với mức tối thiểu một lượt loại: mọi N=1..20 dùng `max(1, floor(0.30*N))`. Trước hết xét winner vòng1; nếu đã có winner thì chốt DECIDED. Nếu chưa có winner, pool vòng2 là pool ban đầu trừ hợp của mọi món được đánh dấu NO trong tất cả ballot vòng1 hoàn chỉnh đã ACK. N=0 thì chốt NO_CONSENSUS/EMPTY_INTERSECTION ngay ở round1, không mở vòng2 rỗng. Với N>=1, luôn mở vòng2 thực sự; N=1 vẫn cho người chơi quyết định REMOVE món duy nhất hoặc không REMOVE. Không auto-finalize. Cap là mức tối đa được loại, không bắt buộc người chơi phải loại; 0 REMOVE hợp lệ. N=1/2/3 là ngoại lệ tối thiểu một lượt. Pool vòng2 có thể ít hơn10 món, không thêm món bù. Nếu toàn bộ món vòng2 bị REMOVE, chốt NO_CONSENSUS/ALL_REMOVED.
 
 Quyết định này thay mục cap ngày22/10 cho **policy mới sắp triển khai**. Mục cũ bên dưới là lịch sử và vẫn mô tả runtime dish-decision-v3 ở main033693c. Cần policy version/migration tiến và SQL/domain parity; không sửa0026 hoặc đổi nghĩa phiên v2/v3 đang chạy. Mốc60s vẫn từ command waiting hợp lệ sau ACK và vào phòng chờ, không từ submit hoặc ACK đơn thuần.
 
-Theo lựa chọn trực tiếp của Trí, đợt này **PR yêu cầu bổ sung để người đang phụ trách triển khai tiếp**, chỉ BE/Data; UI giữ nguyên. [Audit](../../project/BE_DATA_AUDIT_2026-10-24.md) ghi những phần PR131/129 đã triển khai và phần còn thiếu. [Gói việc/AC/thứ tự](../../project/BE_DATA_FOLLOWUPS_2026-10-24.md) là đầu vào cho PR implementation tiếp theo. Top3/score/privacy, filter budget/giá và các chi tiết chưa chốt vẫn cần review trước code; tài liệu không tự phê duyệt phát dữ liệu mới.
+Theo xác nhận trực tiếp tiếp theo của Trí ngày 2026-10-24, Top 3/điểm tổng hợp được chấp nhận theo [ADR-020](ADR-020-public-top-three-result.md); Figma–BE–Data–UI handoff hiện hành nằm tại [alignment matrix](../../project/FIGMA_BE_UI_DATA_ALIGNMENT_2026-10-24.md) và [GM-07.B](../DISH_SESSION_API_CONTRACT_B.md). Đây là yêu cầu/contract cho task owner triển khai, không phải runtime đã chạy. UI code vẫn theo task và mốc bàn giao, không được suy pass từ Figma/HTML.
 
 Các nhận xét bên dưới về PR129 còn lỗi/chưa import là **trạng thái tại ngày22/10**, đã được PR129 và kiểm QA sau đó cập nhật; giữ để truy vết, không dùng làm blocker hiện hành.
 
-Phạm vi thực hiện cập nhật mới nhất của Trí: **đợt này chỉ Data/BE; FE làm sau**. Supplement UI vẫn là yêu cầu đích, chưa phải yêu cầu triển khai FE ngay. Patch backend/engine có version riêng và request suite; không dùng kết quả SQL/HTTP thay nghiệm thu màn ứng dụng.
+Phạm vi yêu cầu cập nhật hiện tại: **BE, Data và task UI được đồng bộ theo cùng contract/Figma**; việc triển khai UI vẫn do task owner thực hiện sau khi artifact producer sẵn sàng. Patch backend/engine có version riêng và request suite; không dùng kết quả SQL/HTTP thay nghiệm thu màn ứng dụng.
 Trạng thái: **chấp nhận các yêu cầu tại mục 1 theo xác nhận trực tiếp trong hội thoại; cap vòng 2, quorum và cách vào phòng cũng đã được Trí xác nhận qua câu trả lời; chỉ các chi tiết được đánh dấu còn mở cần chốt**. Chưa là nghiệm thu implementation hoặc duyệt toàn bộ thiết kế SQL của ADR-018 trong PR #129.
 
 ## 1. Yêu cầu đã chốt
@@ -37,7 +37,7 @@ Giới hạn cố định 3 không phù hợp mọi kích thước pool: N=4 cho
 
 Phương án `min(3, floor((N-1)/2))` ở trao đổi ngày 2026-10-22 **đã bị thay thế** bởi supplement ngày 2026-10-24 ở đầu ADR. Không dùng phương án lịch sử này cho contract/policy mới; runtime v2/v3 vẫn giữ semantics đã pin của chúng.
 
-Luật hiện hành: trước tiên chốt winner vòng 1 nếu đã có. Nếu chưa có, vòng 2 dùng pool ban đầu trừ hợp mọi món `NO` trong các ballot vòng 1 hoàn chỉnh đã ACK; pool này có thể dưới 10. Pool rỗng kết thúc `EMPTY_INTERSECTION` ở round 1, không tạo vòng 2. Trong vòng 2, N=1 bỏ thao tác loại; N>=2 mỗi người được REMOVE tối đa `max(1, floor(0.30*N))`, KEEP toàn bộ hợp lệ; nhóm loại hết thì `ALL_REMOVED`. Các mã kết thúc và snapshot phải theo GM-07.A.
+Luật hiện hành: trước tiên chốt winner vòng 1 nếu đã có. Nếu chưa có, vòng 2 dùng pool ban đầu trừ hợp mọi món `NO` trong các ballot vòng 1 hoàn chỉnh đã ACK; pool này có thể dưới 10. Pool rỗng kết thúc `EMPTY_INTERSECTION` ở round 1, không tạo vòng 2. Với N>=1, luôn mở vòng 2 thật. Mỗi người được REMOVE tối đa `max(1, floor(0.30*N))`, kể cả N=1; không tự chốt một món và không tạo KEEP cho người chưa gửi. Không bắt buộc REMOVE, nên không REMOVE nào cũng hợp lệ. Nhóm loại hết thì `ALL_REMOVED`; các mã kết thúc và snapshot thuộc contract version mới, không sửa semantics GM-07.A/v2/v3.
 
 ### Timeout/chốt sớm và phiếu thiếu
 
@@ -51,7 +51,7 @@ Trí chốt reconnect: thành viên khôi phục mạng đọc trạng thái ser
 
 - Admission đã chốt: host chỉ bấm bắt đầu, không duyệt từng người xin vào.
 - Số món: host chọn chính xác 10–20; lựa chọn UI cần hỗ trợ từng số nguyên, không chỉ các mốc 10/15/20. Mặc định và bố cục cụ thể sẽ được duyệt cùng thiết kế; không coi đề xuất UI là đã sửa app.
-- Flashcard tự gửi ở thẻ cuối, thời điểm khóa Undo; Top 3/điểm tổng hợp và privacy của nhóm ít người chưa được phản hồi này phê duyệt.
+- Flashcard tự gửi ở thẻ cuối và thời điểm khóa Undo vẫn là chi tiết chưa chốt tại phản hồi này. Top 3/điểm đã được chốt sau đó trong [ADR-020](ADR-020-public-top-three-result.md); áp dụng ADR-020 cho contract mới.
 - Giữ thứ tự chọn món trước tìm quán; budget/giá unknown và taxonomy buổi ăn cần policy rõ, không suy giờ quán thành giờ phù hợp món.
 
 ### UI số lượng món — phạm vi bổ sung đã được yêu cầu
@@ -67,7 +67,7 @@ Màn Tạo phòng có mục “Số món để lựa chọn”, điều khiển 
 - Start khóa roster/pool theo policy; kiểm join/start đồng thời, slot thứ 20/21, reconnect không tạo thêm người, join sau start, host rời/hủy. Không set ready ngầm để vượt guard cũ.
 - Snapshot có policy/catalogue/contract version, replay ổn định; phiên legacy dùng luật legacy, phiên mới dùng luật mới. Migration thêm mới, không sửa migration đã merge.
 - Android hiển thị loading/error/ACK/deadline/chốt sớm/quá hạn; retry không lặp submission hoặc dùng pool cũ.
-- Test bổ sung: count 9/21/số lẻ/null không hợp lệ; mỗi số nguyên 10–20 tạo đúng số món duy nhất; chọn 20 nhưng chỉ có 15 món không tự hạ count. Kiểm winner vòng1 trước pool rỗng; không winner + tất cả ballot ACK đã NO toàn bộ thì chốt EMPTY_INTERSECTION/NO_CONSENSUS round1; chỉ món còn lại mới vào vòng2 và pool2 dưới10 hợp lệ; N=0 không có snapshot ROUND_2/WAITING_2; mọi món vòng2 bị REMOVE thì chốt ALL_REMOVED/NO_CONSENSUS. Không nạp/bốc món bù. Chọn món quá 60 giây trước khi ai vào chờ không bị timeout; phiếu từng món không kích hoạt timer; hai người vào chờ đồng thời chỉ có một mốc; vòng 2 có mốc riêng. Reconnect dùng trạng thái/kết quả server, không gia hạn.
+- Test bổ sung: count 9/21/số lẻ/null không hợp lệ; mỗi số nguyên 10–20 tạo đúng số món duy nhất; chọn 20 nhưng chỉ có 15 món không tự hạ count. Kiểm winner vòng1 trước pool rỗng; không winner + tất cả ballot ACK đã NO toàn bộ thì chốt EMPTY_INTERSECTION/NO_CONSENSUS round1; chỉ món còn lại mới vào vòng2 và pool2 dưới10 hợp lệ; N=0 không có snapshot ROUND_2/WAITING_2; N=1 chuyển ROUND_2 và removalCap=1, người gửi được REMOVE hoặc không REMOVE; không auto-finalize và không sinh phiếu cho người chưa gửi; mọi món vòng2 bị REMOVE thì chốt ALL_REMOVED/NO_CONSENSUS. Không nạp/bốc món bù. Chọn món quá 60 giây trước khi ai vào chờ không bị timeout; phiếu từng món không kích hoạt timer; hai người vào chờ đồng thời chỉ có một mốc; vòng 2 có mốc riêng. Reconnect dùng trạng thái/kết quả server, không gia hạn.
 
 ## 4. Bản đồ tác động để lập lại task
 
@@ -80,7 +80,7 @@ Owner dưới đây là assignee Project đọc ngày 2026-10-22, **không phả
 | Pool và tạo phòng độc lập | GM-18 Tâm; GM-19 Trí; GM-24/25 Trang | Catalogue mới + create/preview/RoomContext không yêu cầu anchor/radius; host chọn 10–20 món; schema tiến | Count đúng và đủ; thiếu không tự hạ; không GPS vẫn tạo/chọn; legacy còn đọc được |
 | Phòng 20 người, bỏ ready | GM-19 Trí; GM-11 Trung; GM-25 Trang | ROOM_SPEC, lifecycle RPC, lobby/repository, join/start contract | 20/21, join/start race, context update, host/member; không chờ ready |
 | Loại món, đồng hồ và chốt | GM-15/20 Vinh; GM-12/26 Trang | DECISION_SPEC, domain/SQL parity, submit/finalize, server scheduling và screen | N=0..20; quorum; 59/60/61s; late/retry/race; không phiếu; cả nhóm disconnect |
-| Kết quả | GM-13 Tuấn; GM-27 Trang; GM-21 Tâm | RoomResult/history projection; đợi policy Top3/privacy; terminal theo round/reason | Winner ổn định; thiếu phiếu không OK; 0/1/2/3 candidates; không lộ phiếu |
+| Kết quả | GM-13 Tuấn; GM-27 Trang; GM-21 Tâm | RoomResult/history projection theo ADR-020; terminal theo round/reason | Winner ổn định; Top3 aggregate sau finalize; thiếu phiếu không OK; 0/1/2/3 candidates; không lộ phiếu thô |
 | Reconnect/social | GM-31/28 Trung | Nhận ACK/deadline/policy mới; cache identity và lịch sử đúng version | restart/offline/retry, timeout khi không mở app, auth isolation |
 | Thiết kế và trợ năng | GM-05 Trung; GM-39 Trang | Brief + mapping tokens/Figma; scope HTML khác sửa mobile | Contrast, dark/font/TalkBack, tutorial độc lập, Figma không thay test app |
 | QA/release | GM-32/33 Vinh; GM-34 Trí | Contract/version đã merge, suite và báo cáo Android/API sau merge | Ghi SHA/thiết bị/request assertions, Pass/Fail/Not run; APK riêng |
