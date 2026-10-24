@@ -28,8 +28,11 @@ def configuration(src):
             raise ValueError('invalid project number')
         if not re.fullmatch(r'[\w.-]+/[\w.-]+', config['repository']):
             raise ValueError('invalid repository')
-        if any(not isinstance(config[k], str) or not config[k] for k in ('status_field', 'done_option')):
+        if any(not isinstance(config[k], str) or not config[k]
+               for k in ('status_field', 'done_option', 'needs_update_option')):
             raise ValueError('missing status field/option')
+        if config['done_option'] == config['needs_update_option']:
+            raise ValueError('dependency status options must be distinct')
         issues = config['issues']
         if set(issues) != {f'GM-{n:02}' for n in range(1, 41)}:
             raise ValueError('issue mapping must cover GM-01..40 exactly')
@@ -115,7 +118,7 @@ class ProjectSnapshot:
         self.config, self.url, self.checked_at = config, project_url, checked_at
         self.items = items
 
-    def approval_errors(self, tid):
+    def _status_errors(self, tid, accepted_statuses):
         issue = self.config['issues'].get(tid)
         matches = [item for item in self.items
                    if item.get('content', {}).get('__typename') == 'Issue'
@@ -130,9 +133,29 @@ class ProjectSnapshot:
         if not re.match(r'^' + re.escape(project_tid) + r'(?:\s|[—:\-]|$)', item['content'].get('title', '')):
             return ['Project issue title does not match current task ID']
         status = (item.get('status') or {}).get('name')
-        if status != self.config['done_option']:
-            return [f'Project {self.config["status_field"]} is {status or "unset"}, not {self.config["done_option"]}']
+        if status not in accepted_statuses:
+            expected = ' or '.join(sorted(accepted_statuses))
+            return [f'Project {self.config["status_field"]} is {status or "unset"}, not {expected}']
         return []
+
+    def approval_errors(self, tid):
+        """A task itself is accepted only when its current status is Done."""
+        return self._status_errors(tid, {self.config['done_option']})
+
+    def dependency_errors(self, tid):
+        """Needs Update preserves baseline acceptance while its supplement is pending."""
+        return self._status_errors(tid, {
+            self.config['done_option'], self.config['needs_update_option']})
+
+    def status_for(self, tid):
+        issue = self.config['issues'].get(tid)
+        matches = [item for item in self.items
+                   if item.get('content', {}).get('__typename') == 'Issue'
+                   and item['content'].get('repository', {}).get('nameWithOwner') == self.config['repository']
+                   and item['content'].get('number') == issue]
+        if len(matches) != 1:
+            return None
+        return (matches[0].get('status') or {}).get('name')
 
 
 def load_project(src, root):

@@ -55,6 +55,11 @@ class ProjectApiTests(unittest.TestCase):
         with self.assertRaises(project.ProjectUnavailable):
             project.configuration(self.source)
 
+    def test_needs_update_preserves_dependency_baseline_but_not_task_completion(self):
+        snapshot = self.snapshot(item(self.config, 'GM-40', 'Needs Update'))
+        self.assertTrue(snapshot.approval_errors('GM-40'))
+        self.assertEqual(snapshot.dependency_errors('GM-40'), [])
+
     def test_owner_pinned_baseline_alias_uses_gm00_card_for_gm01(self):
         self.assertEqual(self.config['issues']['GM-01'], 37)
         self.assertEqual(self.config['approval_aliases'], {'GM-01': 'GM-00'})
@@ -210,7 +215,18 @@ class ProjectGateTests(unittest.TestCase):
         self.snapshot.items[1]['status']['name'] = 'Todo'
         self.assertEqual(self.gate(), ('BLOCKED', ['GM-03']))
 
+    def test_needs_update_satisfies_dependency_without_completing_current_task(self):
+        self.snapshot.items[1]['status']['name'] = 'Needs Update'
+        self.assertEqual(self.gate(), ('READY_TO_CLAIM', []))
+        records = gates.repository.task_records(self.source)
+        self.assertIn(gates.readiness(self.source, records, 'GM-03', project=self.snapshot)[0],
+                      {'READY_TO_CLAIM', 'READY_TO_START'})
+        self.snapshot.items[2]['status']['name'] = 'Needs Update'
+        self.assertEqual(gates.readiness(self.source, records, 'GM-04', project=self.snapshot)[0],
+                         'READY_TO_CLAIM')
+
     def test_done_without_output_or_handoff_blocks(self):
+        self.snapshot.items[2]['status']['name'] = 'Needs Update'
         self.source.files.remove('docs/evidence/roadmap-v2/GM-04/HANDOFF.md')
         self.assertEqual(self.gate(), ('BLOCKED_ARTIFACTS', ['GM-04']))
 
@@ -243,7 +259,7 @@ class ProjectGateTests(unittest.TestCase):
         base.contents[artifact] += 'changed'
         with patch.object(gates.repository, 'Source', side_effect=lambda ref: self.source if ref is None else base), patch.object(project, 'load_project', return_value=self.snapshot), patch.object(sys, 'argv', ['task_readiness.py', '--task', 'GM-06', '--gate', 'merge', '--base-ref', 'target']), contextlib.redirect_stdout(io.StringIO()) as output:
             self.assertEqual(gates.main(), 1)
-        self.assertIn('Project=Done', output.getvalue())
+        self.assertIn('Project=baseline accepted (Done/Needs Update)', output.getvalue())
         self.assertIn('target artifact content differs: ' + artifact, output.getvalue())
 
     def test_merge_still_needs_base(self):

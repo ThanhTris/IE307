@@ -7,22 +7,24 @@ Cập nhật quy tắc review ngày 2026-10-12: [ADR-013](ADR-013-project-owner-
 
 Cập nhật 2026-10-13: [ADR-014](ADR-014-test-data-and-baseline-project-card.md) pin ngoại lệ baseline GM-01 → Project card GM-00/#37 theo chỉ định Trí; không tìm card #100. Scope/artifact GM-01 và các guard giữ nguyên, chỉ nguồn xác nhận baseline thay đổi. Không là cơ chế lấy approval task ID cũ cho task khác.
 
+Cập nhật 2026-10-24: Theo chỉ đạo trực tiếp của Trí, Status=`Needs Update` trên Project nghĩa là baseline của task đã được nghiệm thu và phần bổ sung theo ngữ cảnh mới còn mở. Gate dùng `Done` hoặc `Needs Update` để xác nhận baseline dependency; `Needs Update` không xác nhận AC/evidence supplement và không làm task hiện tại thành DONE_ON_PROJECT. Owner/reviewer vẫn nghiệm thu supplement riêng.
+
 ## Bối cảnh
 
 GM-03/04 đã được chủ dự án đóng issue/chuyển Done nhưng main còn task Markdown review/backlog. Checker local chặn GM-06 dù đầu ra đã merge. Chủ dự án yêu cầu dùng cột Done để mở task, tránh cập nhật trạng thái thủ công ở hai nơi.
 
 ## Quyết định
 
-- Nguồn nghiệm thu hiện hành là Status=Done trên [Project #2](https://github.com/users/ThanhTris/projects/2), đúng repo/issue của GM-01..38 trong [mapping](../../../tasks/project-gate.json). Không lấy Issue Closed, PR merged, draft/PR card, item archived hoặc task ID cũ làm Done. GM-00 là baseline lưu trữ, vẫn kiểm local Approved.
+- Nguồn nghiệm thu baseline hiện hành là Status=Done hoặc Needs Update trên [Project #2](https://github.com/users/ThanhTris/projects/2), đúng repo/issue trong [mapping](../../../tasks/project-gate.json). Needs Update xác nhận baseline, nhưng không nghiệm thu supplement. Không lấy Issue Closed, PR merged, draft/PR card, item archived hoặc task ID cũ làm xác nhận. GM-00 là baseline lưu trữ, vẫn kiểm local Approved.
 - Checker đọc snapshot mới mỗi lần chạy, phân trang đầy đủ; thiếu credential/quyền Project, mạng, item hoặc status không xác minh được thì chặn. Không cache/fallback local khi live thất bại, không mutation hay thêm package.
 - Start: chỉ các start deps cần Done, output và HANDOFF trong nhánh làm việc. Phần độc lập không phải đợi merge deps.
 - Merge: cộng start và merge deps, tất cả Done, bắt buộc --base-ref; contract/baseline/stage, task-map entry và nội dung output/HANDOFF local phải khớp snapshot target. Không so status/checklist/assignment trong task Markdown vì chúng có thể chậm cập nhật. Người merge vẫn kiểm upstream PR/commit, target freshness và integration tests thật.
-- Done là xác nhận nghiệm thu của chủ dự án theo quy trình đã chốt, không bằng chứng máy rằng người nào đã chuyển, revision nào đã review hoặc test đạt. Theo ADR-013, Trí review/merge cuối mọi task, kể cả task Trí viết; không yêu cầu review chéo hoặc người kiểm độc lập. AC, bảo mật, nguồn data và chuẩn đầu ra không giảm.
+- Done là xác nhận nghiệm thu toàn scope hiện hành của chủ dự án. Needs Update giữ nghiệm thu baseline nhưng để supplement mở; không xác nhận supplement đã đạt. Status không chứng minh bằng máy người chuyển, revision review hoặc test đạt. Theo ADR-013, Trí review/merge cuối mọi task, kể cả task Trí viết; không yêu cầu review chéo hoặc người kiểm độc lập. AC, bảo mật, nguồn data và chuẩn đầu ra không giảm.
 - Không tự ghi Approved/Done vào repo/Project. Nếu chuyển Markdown thành done thì vẫn cần review fields/evidence thật theo DoD. Các bản ghi hiện hữu và evidence lịch sử không bị ghi đè.
 - Indexes và validator CI offline kiểm cấu trúc/truy vết; không thực thi Project gate hay mở task. --approval-source local giữ chẩn đoán lịch sử, không được dùng để vượt Project gate.
 
 ## Hệ quả
 
-Task tiếp theo không còn phải chờ ghi lại trạng thái vào Markdown. Mỗi máy cần quyền đọc Project; token repo-only/GITHUB_TOKEN CI không mặc nhiên có quyền này. Done nhưng chưa nhận đầu ra vẫn bị chặn; Done chưa merge không cho tích hợp. Thay scope/artifact cần review lại và bỏ Done trong lúc làm lại. Checker không chứng minh quyền tác giả review hoặc approved commit chỉ bằng cột Done.
+Task tiếp theo không còn phải chờ ghi lại trạng thái vào Markdown. Mỗi máy cần quyền đọc Project; token repo-only/GITHUB_TOKEN CI không mặc nhiên có quyền này. Done/Needs Update nhưng chưa nhận đầu ra vẫn bị chặn; Needs Update chỉ mở dependency baseline, không cho tích hợp supplement nếu artifact/contract chưa đúng target. Checker không chứng minh quyền tác giả review hoặc approved commit chỉ bằng cột Status.
 
 [Hướng dẫn chạy](../../project/PROJECT_READINESS.md) · [Workflow](../../project/TEAM_WORKFLOW.md) · [DoD](../../project/DEFINITION_OF_DONE.md).

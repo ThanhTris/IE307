@@ -1,6 +1,6 @@
 # Phân công hiện hành — food-v1
 
-Sinh từ task bằng `python scripts/task_readiness.py --write-docs`; không sửa tay. `--check-docs` kiểm độ mới. Đây là metadata/gate chẩn đoán local, không phải trạng thái GitHub. Gate thực tế đọc Done live trên Project theo ADR-011; xem docs/project/PROJECT_READINESS.md.
+Sinh từ task bằng `python scripts/task_readiness.py --write-docs`; không sửa tay. `--check-docs` kiểm độ mới. Đây là metadata/gate chẩn đoán local, không phải trạng thái GitHub. Gate thực tế đọc Done hoặc Needs Update live trên Project theo ADR-011; xem docs/project/PROJECT_READINESS.md.
 
 Owner/assignee trong task được đồng bộ theo phân công của chủ dự án trên [Project #2](https://github.com/users/ThanhTris/projects/2). Lịch và Deadline hiện hành xem trên Project, không nhân bản lịch 4 tuần tại đây. Phân công không tự là xác nhận nhận việc, approval hay Done; assignment_status giữ nguyên cho tới xác nhận phù hợp. Trí review/merge cuối cho mọi task, kể cả task Trí trực tiếp viết; không cần chỉ định người kiểm độc lập theo ADR-013. Owner hiện hành không thay tác giả hoặc bằng chứng review lịch sử.
 

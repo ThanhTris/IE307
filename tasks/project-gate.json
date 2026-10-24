@@ -6,6 +6,7 @@
   "repository": "ThanhTris/IE307",
   "status_field": "Status",
   "done_option": "Done",
+  "needs_update_option": "Needs Update",
   "issues": {
     "GM-01": 37, "GM-02": 63, "GM-03": 64, "GM-04": 65,
     "GM-05": 66, "GM-06": 67, "GM-07": 68, "GM-08": 69,

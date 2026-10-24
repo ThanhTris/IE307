@@ -26,7 +26,7 @@ def dependencies(record, gate='merge'):
 def dependency_approval_errors(src, record, project=None):
     # GM-00 is an immutable historical baseline, not a current Project issue.
     if project is not None and record['meta']['id'] != 'GM-00':
-        return project.approval_errors(record['meta']['id'])
+        return project.dependency_errors(record['meta']['id'])
     return repository.approval_errors(src, record)
 
 
@@ -97,7 +97,14 @@ def readiness(src, records, tid, gate='start', base=None, project=None):
             return 'BLOCKED_ON_BASE', blocked
     if gate == 'merge':
         return 'READY_FOR_MERGE_REVIEW', []
-    if project is not None and not dependency_approval_errors(src, record, project):
+    if (project is not None and tid != 'GM-00'
+            and not project.dependency_errors(tid)
+            and project.status_for(tid) == project.config['needs_update_option']):
+        return ('READY_TO_START' if record['meta'].get('assignment_status') == 'accepted'
+                else 'READY_TO_CLAIM'), []
+    own_approval_errors = (project.approval_errors(tid) if project is not None and tid != 'GM-00'
+                           else dependency_approval_errors(src, record, project))
+    if project is not None and not own_approval_errors:
         reasons = repository.delivery_errors(src, record)
         return ('BLOCKED_ARTIFACTS', [tid]) if reasons else ('DONE_ON_PROJECT', [])
     if status == 'review':
@@ -164,7 +171,7 @@ def render_documents(src):
 
     notice = ('Sinh từ task bằng `python scripts/task_readiness.py --write-docs`; không sửa tay. '
               '`--check-docs` kiểm độ mới. Đây là metadata/gate chẩn đoán local, không phải trạng thái GitHub. '
-              'Gate thực tế đọc Done live trên Project theo ADR-011; xem docs/project/PROJECT_READINESS.md.\n\n')
+              'Gate thực tế đọc Done hoặc Needs Update live trên Project theo ADR-011; xem docs/project/PROJECT_READINESS.md.\n\n')
     counts = {p: sum(records[t]['meta']['priority'] == p for t in ids) for p in ('P0', 'P1', 'P2')}
     summary = (f"{len(ids)} task sau GM-00: {counts['P0']} P0 (gồm GM-01), "
                f"{counts['P1']} P1, {counts['P2']} P2. Mã roadmap-v2 tăng theo lộ trình; "
@@ -220,8 +227,8 @@ def render_documents(src):
     text = '# Làm song song, merge theo dependency — food-v1\n\n' + notice + summary
     text += (
         '## Hai gate khác nhau\n\n'
-        '- `start_dependencies`: đầu vào phải Done trên Project và đủ output/HANDOFF trước viết phần độc lập. Mặc định CLI đọc Project live, gate start.\n'
-        '- `merge_dependencies`: đầu vào phải Done trên Project và artifact/version khớp nhánh đích trước tích hợp/merge; luôn cộng thêm start deps. Có thể viết branch/draft PR trong khi các task này đang làm.\n'
+        '- `start_dependencies`: đầu vào phải Done hoặc Needs Update trên Project và đủ output/HANDOFF trước viết phần độc lập. Needs Update giữ nghiệm thu baseline, không nghiệm thu supplement. Mặc định CLI đọc Project live, gate start.\n'
+        '- `merge_dependencies`: đầu vào phải Done hoặc Needs Update trên Project và artifact/version khớp nhánh đích trước tích hợp/merge; luôn cộng thêm start deps. Supplement vẫn cần AC/review riêng. Có thể viết branch/draft PR trong khi các task này đang làm.\n'
         '- `parallel_with`: cặp làm phần độc lập trên nhánh riêng, có thể có quan hệ merge trước/sau. Không được có quan hệ start trước/sau hoặc cùng owner.\n\n'
         '```text\n'
         'python scripts/task_readiness.py --task GM-20\n'
@@ -230,11 +237,11 @@ def render_documents(src):
         'python scripts/task_readiness.py --all\n'
         '```\n\n'
         'Trước kiểm merge, cập nhật ref nhánh đích bằng fetch phù hợp remote đã xác nhận. Checker không tự fetch/merge. '
-        'Nó in SHA snapshot, đọc Done Project và kiểm contract/manifest/output/HANDOFF của dependency khớp local; '
+        'Nó in SHA snapshot, đọc Done/Needs Update trên Project và kiểm contract/manifest/output/HANDOFF của dependency khớp local; '
         'không chứng minh code của PR đã merge hoặc remote ref còn mới. Người merge phải kiểm PR/merge commit thực tế, ancestry, cập nhật nhánh và chạy lại integration tests.\n\n'
-        'READY_TO_CLAIM: đủ start deps, chưa nhận việc; READY_TO_START: đã nhận; IN_PROGRESS: đang làm; '
+        'READY_TO_CLAIM: đủ start deps, chưa nhận việc (bao gồm task Needs Update có baseline accepted); READY_TO_START: đã nhận; IN_PROGRESS: đang làm; '
         'IN_REVIEW: chờ reviewer; DONE_REVIEWED: bản ghi review đạt, không đồng nghĩa đã merge. '
-        'BLOCKED: dependency chưa được nghiệm thu; BLOCKED_PROJECT_UNVERIFIED: không xác minh được Project, không fallback local/cache; DONE_ON_PROJECT: task Done live và đủ output; BLOCKED_ARTIFACTS: upstream thiếu file bàn giao/HANDOFF; BLOCKED_ON_BASE: đầu vào thiếu/khác revision trên nhánh đích; '
+        'BLOCKED: dependency không ở Done/Needs Update; BLOCKED_PROJECT_UNVERIFIED: không xác minh được Project, không fallback local/cache; DONE_ON_PROJECT: task Done live và đủ output; BLOCKED_ARTIFACTS: upstream ở Done/Needs Update nhưng thiếu file bàn giao/HANDOFF; BLOCKED_ON_BASE: đầu vào thiếu/khác revision trên nhánh đích; '
         'NEEDS_BASE_CHECK: metadata local đạt nhưng chưa kiểm ref đích; READY_FOR_MERGE_REVIEW: đầu vào trên ref đạt, vẫn cần reviewer của chính PR và AC/test thật. '
         'Exit 0 của --task chỉ là gate tương ứng đạt; 1 là chờ; 2 là dữ liệu/lệnh lỗi. --all exit 0 chỉ là báo cáo chạy được.\n\n'
         '## Snapshot chẩn đoán hồ sơ local (offline, không là gate Project)\n\n'
@@ -263,7 +270,7 @@ def render_documents(src):
         'GM-09..14 màn mock nghiệm thu riêng sau components+contract, không chờ API nghiệp vụ. '
         'GM-15..23 hoàn thiện BE; GM-24..31 tích hợp UI/API/native; GM-32..34 kiểm thử và release. '
         f"GM-35..38 chỉ merge sau core. Trạng thái GM-01 theo hồ sơ local: {records['GM-01']['meta']['status']}; "
-        'Project Done mở dependency theo ADR-011 nhưng không tự viết lại review evidence local. Mock không đóng AC native/SQL/dataset thật của task tích hợp.\n\n'
+        'Project Done/Needs Update mở dependency baseline theo ADR-011 nhưng không tự viết lại review evidence local hoặc nghiệm thu supplement. Mock không đóng AC native/SQL/dataset thật của task tích hợp.\n\n'
         '[Lộ trình](IMPLEMENTATION_ROADMAP.md) · [Đầu vào/đầu ra](TASK_HANDOFFS.md) · [Workflow](TEAM_WORKFLOW.md) · [Mapping](TASK_RENUMBERING.md) · [ADR-009](../architecture/decisions/ADR-009-foundation-first-task-slicing.md).\n')
     outputs[path] = text
 
@@ -371,7 +378,9 @@ def main():
             if dep in records:
                 if project is not None:
                     approval_errors = dependency_approval_errors(src, records[dep], project)
-                    label = 'not approved' if approval_errors else ('Approved local (archive)' if dep == 'GM-00' else 'Done')
+                    label = ('not approved' if approval_errors else
+                             ('Approved local (archive)' if dep == 'GM-00' else
+                              'baseline accepted (Done/Needs Update)'))
                     print(f"  WAIT {dep}: Project={label} | local_status={records[dep]['meta']['status']} | {records[dep]['path']}")
                     for reason in approval_errors:
                         print('    ' + reason)
