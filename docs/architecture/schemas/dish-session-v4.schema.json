@@ -167,7 +167,7 @@
         "round": { "type": "integer", "enum": [1, 2] },
         "poolVersion": { "type": "integer", "minimum": 1 },
         "dishCount": { "type": "integer", "minimum": 10, "maximum": 20 },
-        "pool": { "type": "array", "minItems": 10, "maxItems": 20, "items": { "$ref": "#/$defs/poolDish" } },
+        "pool": { "type": "array", "maxItems": 20, "items": { "$ref": "#/$defs/poolDish" } },
         "members": { "type": "array", "minItems": 1, "maxItems": 20, "items": { "$ref": "#/$defs/member" } },
         "submittedCount": { "type": "integer", "minimum": 0, "maximum": 20 },
         "memberCount": { "type": "integer", "minimum": 1, "maximum": 20 },
@@ -180,7 +180,13 @@
       },
       "additionalProperties": false,
       "allOf": [
-        { "if": { "properties": { "state": { "const": "LOBBY" } } }, "then": { "properties": { "round": { "const": 1 }, "poolVersion": { "const": 1 }, "ownWaiting": { "const": false }, "waitingStartedAt": { "type": "null" }, "deadline": { "type": "null" }, "result": { "type": "null" } } } },
+        { "if": { "properties": { "state": { "const": "LOBBY" } } }, "then": { "properties": { "round": { "const": 1 }, "poolVersion": { "const": 1 }, "pool": { "minItems": 10, "maxItems": 20 }, "ownWaiting": { "const": false }, "waitingStartedAt": { "type": "null" }, "deadline": { "type": "null" }, "result": { "type": "null" } } } },
+        { "if": { "properties": { "state": { "enum": ["ROUND_1", "WAITING_1"] } } }, "then": { "properties": { "round": { "const": 1 }, "pool": { "minItems": 10, "maxItems": 20 } } } },
+        { "if": { "properties": { "state": { "enum": ["ROUND_2", "WAITING_2"] } } }, "then": { "properties": { "round": { "const": 2 }, "pool": { "minItems": 1, "maxItems": 20 } } } },
+        { "if": { "properties": { "state": { "const": "DECIDED" } } }, "then": { "properties": { "result": { "type": "object", "properties": { "status": { "const": "DECIDED" }, "winner": { "$ref": "#/$defs/poolDish" } } } } } },
+        { "if": { "properties": { "state": { "const": "NO_CONSENSUS" } } }, "then": { "properties": { "pool": { "maxItems": 0 }, "result": { "type": "object", "properties": { "status": { "const": "NO_CONSENSUS" }, "winner": { "type": "null" } } } } } },
+        { "if": { "properties": { "state": { "const": "NO_CONSENSUS" }, "round": { "const": 1 } } }, "then": { "properties": { "result": { "properties": { "reasonCode": { "const": "EMPTY_INTERSECTION" } } } } } },
+        { "if": { "properties": { "state": { "const": "NO_CONSENSUS" }, "round": { "const": 2 } } }, "then": { "properties": { "result": { "properties": { "reasonCode": { "const": "ALL_REMOVED" } } } } } },
         { "if": { "properties": { "round": { "const": 1 } } }, "then": { "properties": { "ownBallot": { "oneOf": [{ "type": "null" }, { "type": "array", "items": { "$ref": "#/$defs/round1Vote" } }] } } } },
         { "if": { "properties": { "round": { "const": 2 } } }, "then": { "properties": { "ownBallot": { "oneOf": [{ "type": "null" }, { "type": "array", "items": { "$ref": "#/$defs/round2Vote" } }] } } } }
       ]
@@ -228,6 +234,16 @@
         "reasonCode": { "enum": ["UNANIMOUS_WANT", "ACCEPTABLE_FINAL", "EMPTY_INTERSECTION", "ALL_REMOVED"] },
         "finalizedAt": { "$ref": "#/$defs/timestamp" }
       },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "DECIDED" } }, "required": ["status"] },
+          "then": { "properties": { "winner": { "$ref": "#/$defs/poolDish" }, "reasonCode": { "enum": ["UNANIMOUS_WANT", "ACCEPTABLE_FINAL"] } } }
+        },
+        {
+          "if": { "properties": { "status": { "const": "NO_CONSENSUS" } }, "required": ["status"] },
+          "then": { "properties": { "winner": { "type": "null" }, "reasonCode": { "enum": ["EMPTY_INTERSECTION", "ALL_REMOVED"] } } }
+        }
+      ],
       "additionalProperties": false
     },
     "voidAck": {

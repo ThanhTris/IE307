@@ -1,6 +1,6 @@
 # RPC contract — food-v1
 
-> Cập nhật hướng đích 2026-10-22: [ADR-019 — quyết định của Trí và phần còn chờ chốt](decisions/ADR-019-dish-first-room-policy.md) ưu tiên khi lập kế hoạch luồng mới: phòng 20 người, host chọn chính xác 10–20 món, bỏ ready, timeout 60 giây từ người đầu tiên hoàn tất lượt và vào phòng chờ kết quả mỗi vòng và host Chốt ngay; chọn món độc lập vị trí/quán. Nội dung legacy bên dưới mô tả baseline, chưa phải contract triển khai luật mới. Đã chốt cap min(3, floor((N-1)/2)), N=1 bỏ loại; tính phiếu hoàn chỉnh đã nhận với tối thiểu 1 người, phiếu thiếu không là OK; host chỉ bấm bắt đầu. Chi tiết còn mở xem ADR; không đổi nghĩa phiên cũ hoặc tự ghi test Pass.
+> Cập nhật hướng đích 2026-10-24: [ADR-019](decisions/ADR-019-dish-first-room-policy.md) và contract [dish-session-v4](DISH_SESSION_API_CONTRACT.md) ưu tiên cho luồng mới: pool đầu đúng 10–20 món, host start, tối đa20 người, không ready, timer 60 giây theo transition vào chờ; chọn món độc lập quán/GPS. Winner vòng1 được ưu tiên; nếu chưa có thì round2 dùng pool đầu trừ hợp NO từ ballot vòng1 hoàn chỉnh đã ACK. Pool2 rỗng chốt `NO_CONSENSUS/EMPTY_INTERSECTION`, không mở vòng2; pool2 có thể dưới10, không bù; vòng2 loại hết chốt `NO_CONSENSUS/ALL_REMOVED`. Cap REMOVE là max(1,floor(0.30*N)) khi N>=2; N=1 bỏ loại. Nội dung legacy bên dưới tiếp tục mô tả contract/mock cũ, không đổi nghĩa phiên cũ hoặc tự ghi test Pass.
 
 > **GM-07.A supplement (proposed):** contract wire cho phiên dish-only v4 được tách tại [DISH_SESSION_API_CONTRACT.md](DISH_SESSION_API_CONTRACT.md), với schema đầy đủ request `{command,payload}` và response success/error tại [dish-session-v4.schema.json](schemas/dish-session-v4.schema.json). Đây là đề xuất forward-only cho policy 30% đã chốt ngày 2026-10-24; không thay đổi v2/v3 đang chạy và chưa được runtime triển khai. Top3/score fields tiếp tục tắt đến khi có quyết định privacy/ties.
 
@@ -148,7 +148,9 @@ Mock lưu `ownPreferences`, `ownVotes`, `ownSubmission` theo roomId chuẩn + ca
 | `RoomSnapshot.evaluatedAt` | `string` (ISO8601) | Snapshot calculation time | Thời điểm đánh giá pool |
 | `PushPermissionStatus` | `'granted' \| 'denied' \| 'provisional'` | `devices.permission` | Client dùng 3 trạng thái; lưu DB qua `toStoragePermission`: `'provisional' -> 'unknown'` |
 
-### 4. Quy tắc đồng thuận & Kịch bản Mock
+### 4. Quy tắc đồng thuận & Kịch bản Mock — decision-v2 legacy
+
+Các quy tắc và scenario trong mục này mô tả baseline decision-v2/food-v1 và mock lịch sử. Không dùng chúng làm tiêu chí cho session v4; xem [DISH_SESSION_API_CONTRACT.md](DISH_SESSION_API_CONTRACT.md) cho policy mới.
 - **NO không thể thành winner:** Bất kỳ món nào nhận dù chỉ 1 phiếu `NO` hoặc `REMOVE` lập tức bị loại khỏi tập ứng viên thắng cuộc.
 - Policy kết quả là `decision-v2` (khác food interchange `1.1.0`). Result dùng reason `UNANIMOUS_WANT`, `ACCEPTABLE_FINAL`, `EMPTY_INTERSECTION`, `ALL_REMOVED` và tier `PERFECT`, `CONSENSUS`, `COMPROMISE`, `NO_CONSENSUS` theo DECISION_SPEC/schema GM-06. DTO và runtime guard kiểm vocabulary/quan hệ winner; không nhận `food-v1`, `TIER_1/2/NONE` hoặc `HIGHEST_SCORE` như decision-v2.
 - Tập không NO rỗng ở vòng 1: winner null, `EMPTY_INTERSECTION/NO_CONSENSUS`; tất cả REMOVE vòng 2: winner null, `ALL_REMOVED/NO_CONSENSUS`.

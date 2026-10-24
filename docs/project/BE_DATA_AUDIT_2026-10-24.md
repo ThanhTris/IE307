@@ -12,7 +12,7 @@ Không có task mới: các khoảng thiếu bên dưới đã thuộc task hi�
 ## Quyết định hiện hành và baseline thực thi
 
 - Chọn món độc lập quán/GPS; host chọn chính xác 10–20 món, tối đa 20 người, không ready.
-- **30% vòng 2**: Trí xác nhận lại trong cuộc hội thoại này. N là số món còn sau NO vòng 1. Với N>=2, cap=max(1,floor(0.30*N)); N=1 không có bước loại, N=0 không mở vòng 2. N=2/3 có ngoại lệ một lượt dù lớn hơn30%. Đây là trần được phép, không bắt buộc REMOVE; KEEP toàn bộ hợp lệ. Runtime main vẫn dùng min(3,floor((N-1)/2)); cần version mới, không sửa nghĩa phiên cũ.
+- **30% vòng 2 và pool survivor**: Trí xác nhận trong hội thoại, cập nhật clarification 2026-10-24. Kiểm winner vòng1 trước; nếu chưa có, N là pool ban đầu trừ hợp NO của mọi ballot vòng1 hoàn chỉnh đã ACK. N=0 chốt `EMPTY_INTERSECTION/NO_CONSENSUS` ở round1, không mở round2. N=1 không có bước REMOVE; N>=2 cap=max(1,floor(0.30*N)); N=2/3 có ngoại lệ một lượt dù lớn hơn30%. Đây là trần, không bắt buộc REMOVE; KEEP toàn bộ hợp lệ. Pool round2 có thể dưới10, không bù; nếu bị loại hết chốt `ALL_REMOVED/NO_CONSENSUS`. Runtime main vẫn dùng policy cũ; cần version/migration mới, không sửa nghĩa phiên cũ.
 - **60s từ transition vào chờ hợp lệ sau ACK đủ phiếu**, không từ submit/ACK đơn thuần. Bảng “sau ACK” thiếu điều kiện này; giữ hai command submit/waiting. Mỗi vòng có mốc riêng.
 - Quorum >=1 phiếu hoàn chỉnh; thiếu phiếu không được tính OK. Terminal ổn định; quán/Places không ảnh hưởng winner.
 - Top3/điểm là yêu cầu cần contract và privacy decision: chưa có phép công khai phiếu thô, chưa tự chọn công thức hoặc quy tắc nhóm ít người. Giao GM07/20/17 viết đề xuất để Trí duyệt trước implementation.

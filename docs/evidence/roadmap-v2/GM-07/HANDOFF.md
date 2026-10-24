@@ -1,5 +1,11 @@
 # Bàn giao patch PR #104 — GM-07 / roadmap-v2
 
+## Clarification pool vòng 2 — 2026-10-24
+
+Local follow-up trên PR #133 head `36d7f6f40b6fc2c2fdd152b2443263a8c29b7b71`, chưa commit/review/deploy. Contract v4 ghi rõ pool 10–20 chỉ là pool ban đầu; winner round1 được ưu tiên; nếu không có thì pool2 là survivors sau union-NO của ballot hoàn chỉnh đã ACK, không bù món, có thể dưới10. N=0 chốt `NO_CONSENSUS/EMPTY_INTERSECTION` ở round1 và không mở vòng2; all-REMOVE chốt `NO_CONSENSUS/ALL_REMOVED` ở round2. Schema/fixtures phân biệt terminal empty active pool với pool vòng2 phải có ít nhất một survivor. Focused checker, repository validator, task index check, Draft 2020-12 smoke (6 valid/7 invalid) và 594 Python tests (6 skipped) pass. Có thể chạy smoke schema bằng `python docs/evidence/roadmap-v2/GM-07/gm07a_schema_smoke.py` khi `jsonschema==4.26.0` đã có trong Python path. Runtime API/SQL và HTTP parity chưa được kiểm trong đợt hồ sơ này.
+
+Lệnh kiểm và kết quả thực tế cho local follow-up nằm trong phần đầu của [CHECKS.md](CHECKS.md). Không dùng kết quả này thay review của Trí, merge hoặc nghiệm thu runtime.
+
 ## GM-07.A contract supplement — 2026-10-24
 
 Draft contract artifact prepared on baseline `fdb03ea097ddea49a601fce2ac045d161bfc76a2`:

@@ -1,5 +1,21 @@
 # Output checks — GM-07 / roadmap-v2
 
+## Round-2 pool clarification — 2026-10-24 local supplement
+
+This local follow-up is based on PR #133 head `36d7f6f40b6fc2c2fdd152b2443263a8c29b7b71`; it is not yet committed, reviewed or deployed. It updates the proposed v4 contract only. The new assertions cover exact initial pool bounds, a nonempty round-2 survivor pool that may be under 10, no empty round-2 state, `EMPTY_INTERSECTION` for round-1 zero survivors, `ALL_REMOVED` for round-2 elimination, empty candidate pool on terminal no-consensus and a required winner on `DECIDED`.
+
+| Check | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| `python scripts/gm07a_contract_check.py` | Schema structure and wire fixtures enforce state-specific pool and terminal rules | 27 assertions passed | Pass |
+| `python scripts/validate_repository.py` | Repository documents, links, JSON, task manifest and FR traceability valid | Passed | Pass |
+| `python scripts/task_readiness.py --check-docs` | Task indexes match task metadata | Passed | Pass |
+| `python -m unittest discover -s tests -p "test_*.py"` | Full Python regression | 594 tests; 6 skipped; 0 failures/errors | Pass |
+| `python docs/evidence/roadmap-v2/GM-07/gm07a_schema_smoke.py` (`jsonschema==4.26.0`, ephemeral temp target) | Accept valid initial/R2/terminal snapshots; reject undersized initial pool, empty R2, nonempty no-consensus pool, mismatched no-consensus reason, and DECIDED without winner | 6 valid snapshots accepted; 7 invalid snapshots rejected | Pass |
+| `git diff --check` | No whitespace errors | Passed | Pass |
+| Actual HTTP/schema parity | New v4 runtime and forward migration | Main does not deploy v4 | Not run |
+
+The Python suite emitted an external-source HTTP 429 warning, but finished successfully with six skipped tests. The JSON-Schema package and smoke script were kept under the OS temp directory; no repository dependency or lockfile changed.
+
 ## GM-07.A proposed contract supplement — 2026-10-24
 
 Baseline: `fdb03ea097ddea49a601fce2ac045d161bfc76a2`; draft artifact only. It

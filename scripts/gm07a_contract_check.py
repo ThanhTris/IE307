@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = ROOT / "docs/architecture/schemas/dish-session-v4.schema.json"
 UUID = "00000000-0000-4000-8000-000000000001"
 ROOM = {"requestId": "req_001", "roomId": UUID, "expectedVersion": 4}
+ASSERTIONS = 0
 
 
 def fail(message: str) -> None:
@@ -24,6 +25,8 @@ def fail(message: str) -> None:
 
 
 def require(condition: bool, message: str) -> None:
+    global ASSERTIONS
+    ASSERTIONS += 1
     if not condition:
         fail(message)
 
@@ -51,9 +54,25 @@ def valid_request(document: dict) -> bool:
 
 
 def valid_snapshot(snapshot: dict) -> bool:
-    if snapshot.get("state") == "LOBBY":
-        return snapshot.get("round") == 1 and snapshot.get("poolVersion") == 1 and snapshot.get("ownWaiting") is False and snapshot.get("waitingStartedAt") is None and snapshot.get("deadline") is None and snapshot.get("result") is None and len(snapshot.get("pool", [])) == snapshot.get("dishCount")
-    return True
+    state = snapshot.get("state")
+    round_number = snapshot.get("round")
+    pool = snapshot.get("pool")
+    result = snapshot.get("result")
+    dish_count = snapshot.get("dishCount")
+    if not isinstance(pool, list):
+        return False
+    if state == "LOBBY":
+        return round_number == 1 and snapshot.get("poolVersion") == 1 and snapshot.get("ownWaiting") is False and snapshot.get("waitingStartedAt") is None and snapshot.get("deadline") is None and result is None and 10 <= len(pool) <= 20 and len(pool) == dish_count
+    if state in {"ROUND_1", "WAITING_1"}:
+        return round_number == 1 and 10 <= len(pool) <= 20 and len(pool) == dish_count
+    if state in {"ROUND_2", "WAITING_2"}:
+        return round_number == 2 and 1 <= len(pool) <= 20
+    if state == "DECIDED":
+        return isinstance(result, dict) and result.get("status") == "DECIDED" and isinstance(result.get("winner"), dict)
+    if state == "NO_CONSENSUS":
+        expected_reason = "EMPTY_INTERSECTION" if round_number == 1 else "ALL_REMOVED" if round_number == 2 else None
+        return not pool and isinstance(result, dict) and result.get("status") == "NO_CONSENSUS" and result.get("winner", "missing") is None and result.get("reasonCode") == expected_reason
+    return state == "CANCELLED"
 
 
 def main() -> int:
@@ -69,6 +88,28 @@ def main() -> int:
     require(valid_snapshot(lobby), "lobby sentinel example rejected")
     invalid_lobby = {**lobby, "round": 2, "poolVersion": 2}
     require(not valid_snapshot(invalid_lobby), "lobby accepted round-2 sentinel")
+    round_one = {"state": "ROUND_1", "round": 1, "dishCount": 12, "pool": [{}] * 12}
+    require(valid_snapshot(round_one), "round 1 exact initial pool rejected")
+    invalid_round_one = {**round_one, "pool": [{}] * 9}
+    require(not valid_snapshot(invalid_round_one), "round 1 accepted fewer than 10 initial dishes")
+    round_two = {"state": "ROUND_2", "round": 2, "dishCount": 12, "pool": [{}] * 4}
+    require(valid_snapshot(round_two), "round 2 survivor pool below 10 rejected")
+    invalid_round_two = {**round_two, "pool": []}
+    require(not valid_snapshot(invalid_round_two), "round 2 accepted an empty survivor pool")
+    no_survivors = {"state": "NO_CONSENSUS", "round": 1, "pool": [], "result": {"status": "NO_CONSENSUS", "winner": None, "reasonCode": "EMPTY_INTERSECTION"}}
+    require(valid_snapshot(no_survivors), "empty round-1 intersection terminal rejected")
+    invalid_empty_round_two = {**no_survivors, "state": "ROUND_2", "round": 2}
+    require(not valid_snapshot(invalid_empty_round_two), "empty survivor set was allowed to open round 2")
+    invalid_no_consensus = {**no_survivors, "pool": [{}]}
+    require(not valid_snapshot(invalid_no_consensus), "no-consensus terminal exposed active candidates")
+    all_removed = {"state": "NO_CONSENSUS", "round": 2, "pool": [], "result": {"status": "NO_CONSENSUS", "winner": None, "reasonCode": "ALL_REMOVED"}}
+    require(valid_snapshot(all_removed), "all-removed round-2 terminal rejected")
+    invalid_reason = {**all_removed, "result": {**all_removed["result"], "reasonCode": "EMPTY_INTERSECTION"}}
+    require(not valid_snapshot(invalid_reason), "round-2 no-consensus accepted wrong terminal reason")
+    decided = {"state": "DECIDED", "round": 1, "pool": [{}], "result": {"status": "DECIDED", "winner": {}}}
+    require(valid_snapshot(decided), "round-1 winner terminal rejected")
+    invalid_decided = {**decided, "result": {"status": "DECIDED", "winner": None}}
+    require(not valid_snapshot(invalid_decided), "DECIDED accepted a missing winner")
     create = {"command": "create", "payload": {"requestId": "req_001", "displayName": "Host", "dishCount": 12, "mealSlot": "dinner", "cuisineIds": [], "categoryIds": []}}
     waiting = {"command": "waiting", "payload": {**ROOM, "round": 1, "poolVersion": 1}}
     finalize = {"command": "finalize", "payload": ROOM}
@@ -79,7 +120,7 @@ def main() -> int:
     require(not valid_request({**submit_r2, "payload": {**submit_r2["payload"], "votes": [{"roundDishId": UUID, "choice": "WANT"}]}}), "round 2 accepted WANT")
     error = {"ok": False, "requestId": "req_001", "error": {"messageKey": "VERSION_CONFLICT", "details": {"actualVersion": 5}}}
     require(error["ok"] is False and error["error"]["messageKey"] == "VERSION_CONFLICT", "error envelope example malformed")
-    print("Pass: GM-07.A schema structure and wire fixtures (11 assertions)")
+    print(f"Pass: GM-07.A schema structure and wire fixtures ({ASSERTIONS} assertions)")
     return 0
 
 

@@ -73,7 +73,9 @@ projection are reviewed. A caller sending these fields receives
 
 Every successful v4 snapshot includes these fields, including nulls where shown.
 `poolVersion` is an independent monotonically increasing pool revision and must
-never be inferred from `round`.
+never be inferred from `round`. `dishCount` is the requested initial pool size
+and remains 10–20 for the room lifetime; it does not constrain survivors after
+round 1.
 
 ```json
 {
@@ -140,13 +142,16 @@ The state/round relationship is therefore:
 | State | Round | Pool/timer rule |
 | --- | --- | --- |
 | `LOBBY` | `1` | Exact initial pool, `poolVersion=1`, no waiting timer |
-| `ROUND_1` / `WAITING_1` | `1` | Initial locked pool; waiting fields are null in `ROUND_1` and populated in `WAITING_1` |
-| `ROUND_2` / `WAITING_2` | `2` | Revalidated survivor pool with a new `poolVersion`; timer is independent of round 1 |
-| `DECIDED` / `NO_CONSENSUS` / `CANCELLED` | `1` or `2` | Terminal result is stable; no new ballot or waiting transition |
+| `ROUND_1` / `WAITING_1` | `1` | Initial locked pool of exactly `dishCount` (10–20); waiting fields are null in `ROUND_1` and populated in `WAITING_1` |
+| `ROUND_2` / `WAITING_2` | `2` | Only round-1 survivors; 1–20 dishes, possibly fewer than 10; a new `poolVersion`; timer is independent of round 1 |
+| `DECIDED` | `1` or `2` | Winner exists; terminal result is stable and no new ballot/waiting transition is allowed |
+| `NO_CONSENSUS` | `1` or `2` | No winner; active candidate `pool` is empty; terminal result is stable |
+| `CANCELLED` | `1` or `2` | Terminal state is stable; no new ballot or waiting transition |
 
-`poolVersion` is an independent server revision. The schema enforces the lobby
-sentinels and the round-specific private ballot choice vocabulary; the server
-still enforces `pool.length=dishCount` and exact ballot coverage transactionally.
+`poolVersion` is an independent server revision. The schema enforces state-based
+pool bounds, lobby sentinels and round-specific private ballot choices. The
+server enforces `pool.length=dishCount` for the initial pool, derives round-2
+survivors from accepted ballots, and checks exact ballot coverage transactionally.
 
 ## Submit, waiting and replay
 
@@ -206,14 +211,23 @@ defined in the schema and are not inferred from a generic `data` object.
 
 ## Round 2 policy
 
-For the new policy only, `N` is the number of dishes entering round 2 after all
-complete accepted round-1 ballots' NO choices are applied. If `N=0`, do not open
-round 2. If `N=1`, skip elimination and finalize using the established decision
-rules. If `N>=2`, an individual may REMOVE at most
+For the new policy only, first evaluate whether round 1 already produced a
+winner. If it did, persist and return that winner; do not let an empty survivor
+pool overwrite a `DECIDED` result. Otherwise derive the round-2 pool from the
+locked round-1 pool by removing the union of dishes marked `NO` in all complete,
+server-accepted round-1 ballots. Missing ballots are not `OK` and do not add
+choices to this union. `N` is the size of this derived pool, not `dishCount` and
+not the count a single player kept. If `N=0`, immediately persist
+`NO_CONSENSUS` with `EMPTY_INTERSECTION` in round 1; do not create an empty
+round-2 state or start its timer. If `N>0`, round 2 uses exactly those `N`
+dishes; do not add or draw replacement dishes, and `N` may be below 10. If
+`N=1`, skip elimination and finalize using the established decision rules. If
+`N>=2`, an individual may REMOVE at most
 `max(1, floor(0.30 * N))` dishes. This is a limit, not a required number of
 removals; KEEP all is valid. All NO dishes remain excluded. If all candidates
-are removed, terminal state is `NO_CONSENSUS`; never restore a NO dish as winner.
-This rule is pinned only to the proposed v4 policy; v2/v3 are unchanged.
+are removed in round 2, persist `NO_CONSENSUS` with `ALL_REMOVED`; the terminal
+snapshot has an empty active candidate pool. Never restore a NO/REMOVE dish as
+winner. This rule is pinned only to the proposed v4 policy; v2/v3 are unchanged.
 
 ## Terminal result, history and event references
 
@@ -232,8 +246,10 @@ The terminal result is a stable, private-reference projection:
 }
 ```
 
-For `NO_CONSENSUS`, `winner` is null and `reasonCode` is a stable no-consensus
-reason; do not create a fake winner or offering. `resultId`, status, policy,
+For `NO_CONSENSUS`, `winner` is null, the terminal snapshot's active candidate
+pool is empty, and `reasonCode` is `EMPTY_INTERSECTION` (no round-1 survivors)
+or `ALL_REMOVED` (round-2 ballots removed every survivor); do not create a fake
+winner or offering. `resultId`, status, policy,
 round, finalizedAt and nullable winner form the terminal seam consumed by
 history and events. History projections expose only results allowed by explicit
 consent, ACL and retention rules. Event/inbox payloads reference IDs/status and

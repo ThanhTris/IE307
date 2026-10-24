@@ -3,28 +3,31 @@
   "contractVersion": "dish-session-v4/roadmap-v2/GM-07.A",
   "policyVersion": "dish-decision-v4/ADR-019-30PCT",
   "status": "proposed contract supplement; runtime not deployed",
-  "baseRevision": "fdb03ea097ddea49a601fce2ac045d161bfc76a2",
+  "baseRevision": "36d7f6f40b6fc2c2fdd152b2443263a8c29b7b71",
   "artifacts": [
     "docs/architecture/DISH_SESSION_API_CONTRACT.md",
     "docs/architecture/schemas/dish-session-v4.schema.json",
     "scripts/gm07a_contract_check.py",
+    "docs/evidence/roadmap-v2/GM-07/gm07a_schema_smoke.py",
     "tests/test_gm07a_contract.py",
     "docs/evidence/roadmap-v2/GM-07/CHECKS.md",
     "docs/evidence/roadmap-v2/GM-07/HANDOFF.md"
   ],
-  "fixtureAssertions": 21,
+  "fixtureAssertions": 27,
   "httpRoundTrip": "Not run: no v4 runtime/migration is deployed",
-  "jsonSchemaEngine": "jsonschema 4.26.0 in an ephemeral temp target; 6 representative envelopes Pass; no repository dependency",
+  "jsonSchemaEngine": "jsonschema 4.26.0 ephemeral temp target; Draft 2020-12 check_schema Pass; 6 valid snapshots accepted and 7 invalid snapshots rejected; no repository dependency",
   "top3Score": "Pending privacy/tie/group-size decision",
-  "checkedRevision": "3c32df25d62016dbb6d324d26c514575634b234a",
+  "checkedRevision": null,
+  "workingTreeBaseRevision": "36d7f6f40b6fc2c2fdd152b2443263a8c29b7b71",
   "sourceHashes": {
-    "docs/architecture/API_CONTRACT.md": "c1fe6d3814ca1ab82d5c001104aa3ebafaa53ca4ae1dde4974e974aa29896742",
-    "docs/architecture/DISH_SESSION_API_CONTRACT.md": "3cfd8fa8b95aaf1cbfe64aa2362ed0776a8ad1864a8628ca2aa46c71a6db1d23",
-    "docs/architecture/schemas/dish-session-v4.schema.json": "7e4ec0ce531db79a6eb9ce2029aa74ad8d97c1a31dfaf37553d7c3f33d7dc802",
-    "scripts/gm07a_contract_check.py": "641947338abcf138fca583210298f0fa21ef7979f0d23be4da529dd8d1d931d3",
+    "docs/architecture/API_CONTRACT.md": "dc018aa928cbdb3021277cd889592203d143e722ee3ab605e114f3dea02fdbe0",
+    "docs/architecture/DISH_SESSION_API_CONTRACT.md": "78575d103b0f652496283bae7945801316c3724a3e2e11f5617518130c5422d6",
+    "docs/architecture/schemas/dish-session-v4.schema.json": "caf114d7a22048ff3c8a6bc4cb0cf3cd9a1d6a9580a34be139edfcdc577f0a67",
+    "scripts/gm07a_contract_check.py": "ea86f75e08809cd415240e02c43a96f7f698a092f4dd17eacdfc24375c36e673",
     "tests/test_gm07a_contract.py": "417ba76eb967e5df7f6bda38297c63e07696e67e260e12e57787abdbcc5e1336",
-    "docs/evidence/roadmap-v2/GM-07/CHECKS.md": "ba52565d04acf43b90bf367fdfb70a3c4a0c7d0ae0fede21b0847225f91717ce",
-    "docs/evidence/roadmap-v2/GM-07/HANDOFF.md": "67402757c202325290030ba703bcc1585e045df3ca34e9875d41b2e6320d5a9f"
+    "docs/evidence/roadmap-v2/GM-07/gm07a_schema_smoke.py": "73119ffdae090a3303898a052611ca200bb000fa6c9f9c5fd2ed262258785085",
+    "docs/evidence/roadmap-v2/GM-07/CHECKS.md": "88bb211a0f8595ed6e991d58d5c8a1e0732bb9975b7a51b2f0fe769dc55d6048",
+    "docs/evidence/roadmap-v2/GM-07/HANDOFF.md": "b58f908a5989bdef1660e665c6f081c9afb9645f9f6aac864d4dfd0b1391c1c8"
   },
   "workingTreeChanges": true
 }

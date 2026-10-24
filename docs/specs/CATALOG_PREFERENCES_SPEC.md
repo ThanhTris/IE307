@@ -1,6 +1,6 @@
 # CATALOG & PREFERENCES SPEC
 
-> Cập nhật hướng đích 2026-10-22: [ADR-019 — quyết định của Trí và phần còn chờ chốt](../architecture/decisions/ADR-019-dish-first-room-policy.md) ưu tiên khi lập kế hoạch luồng mới: phòng 20 người, host chọn chính xác 10–20 món, bỏ ready, timeout 60 giây từ người đầu tiên hoàn tất lượt và vào phòng chờ kết quả mỗi vòng và host Chốt ngay; chọn món độc lập vị trí/quán. Nội dung legacy bên dưới mô tả baseline, chưa phải contract triển khai luật mới. Đã chốt cap min(3, floor((N-1)/2)), N=1 bỏ loại; tính phiếu hoàn chỉnh đã nhận với tối thiểu 1 người, phiếu thiếu không là OK; host chỉ bấm bắt đầu. Chi tiết còn mở xem ADR; không đổi nghĩa phiên cũ hoặc tự ghi test Pass.
+> **Dish-only v4 policy update — 2026-10-24:** [ADR-019](../architecture/decisions/ADR-019-dish-first-room-policy.md) là luật backend/data mới: pool đầu host chọn chính xác 10–20 món; sau vòng1 kiểm winner trước, nếu chưa có thì pool2 là pool đầu trừ hợp NO của ballot hoàn chỉnh đã ACK. Pool2 có thể dưới10, không bù món; pool rỗng kết thúc `EMPTY_INTERSECTION`, loại hết ở vòng2 là `ALL_REMOVED`. Các nội dung phía dưới mô tả food-v1/decision-v2 baseline và không chốt giao diện mới hoặc thay semantics phiên cũ.
 
 food-v1 • 2026-10-07 • FR-03..04/20; chờ GM-01 review.
 
@@ -14,7 +14,7 @@ Catalogue xuất bản có version; phiên đã mở giữ snapshot. Món không
 
 - Từng người chọn nhiều loại, có thể bỏ qua. Chọn “nướng” không có nghĩa cấm mọi món thuộc “lẩu”.
 - Trước hết lọc offering verified theo coverage/anchor/radius/giờ quán–món/ngoại lệ/buổi ở [food spec](FOOD_DATA_SPEC.md); rồi xếp sở thích mềm và xen nhóm để tránh chỉ có món của một người.
-- Bộ vòng 1 tối đa 8 món, mỗi category được chọn có đại diện khi catalogue cho phép; deterministic khi cùng seed/version. Nếu ít hơn 8 thì dùng số có sẵn, không lặp món.
+- **Legacy food-v1/decision-v2:** pool vòng1 tối đa 8 món; nếu thiếu thì dùng số đang có. Đây không áp dụng cho dish-only v4. Luồng v4 phải tạo đúng 10–20 món theo `dishCount` hoặc trả lỗi shortage; thuật toán chọn representative vẫn không được lặp món.
 - Món đa nhãn, ví dụ “lẩu nướng”, chỉ được đưa vào catalogue nếu nhóm đã xác định nó là một lựa chọn có nghĩa. Không tự ghép tên bằng AI.
 - Khi không có món theo buổi ăn, UI báo catalogue chưa có và cho host đổi buổi ở lobby; không phát phòng bỏ phiếu rỗng.
 
