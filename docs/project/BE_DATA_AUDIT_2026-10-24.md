@@ -92,7 +92,8 @@ Thay thế những điều kiện không còn áp dụng cho luồng mới, khô
 - Catalogue offline builder:5artifact, stale=[].
 - Node domain:179/179 Pass, theo luật runtime hiện hành (chưa kiểm luật30% mới).
 - Python regression: 591 tests OK, skipped=6, 212.028s trên Windows/Python3.14. Lượt sandbox trước đó bị PermissionError thư mục temp; lượt ngoài sandbox không còn lỗi này.
-- SQL/HTTP runtime: 108 assertions baseline Pass; probe response mới phát hiện thiếu poolVersion (Fail). Chỉ owned disposable DB, không migrate DB app. Lượt catalogue QA trước bị ngắt chưa có báo cáo; đang chạy lại, chưa tính Pass.
+- SQL/HTTP runtime: 108 assertions baseline Pass; probe response mới phát hiện thiếu poolVersion (Fail). Chỉ owned disposable DB, không migrate DB app.
+- Catalogue QA chạy lại: **47/47 ca Pass**, schema0.8.0 và catalogue1.1.0. Kiểm import/readback/reimport, activation/restore, SQL/JWT HTTP với món thật, hai vòng và tham chiếu legacy. Báo cáo xác nhận ownedResourcesCleaned=true, applicationDatabaseChanged=false. Suites vẫn hardcode poolVersion nên kết quả này không phủ nhận lỗi contract ở trên. Lượt trước bị ngắt không tính là evidence Pass.
 - FE/Expo/Android, provider Places/remote push, host deployment: không chạy trong scope này.
 - Đọc source và chạy suites không chứng minh mọi nhánh đều không có lỗi; các nhánh cross-policy còn thiếu ca kiểm được giao rõ trong phần việc.
 
