@@ -4,7 +4,7 @@ Ngày: 2026-10-22. Chủ quyết định/reviewer: Trí (ThanhTris).
 
 ## Supplement hiện hành — 2026-10-24
 
-Trí xác nhận lại cap vòng2 theo **30% số món còn sau NO vòng1**: N>=2 dùng max(1, floor(0.30*N)); N=1 bỏ loại, N=0 không mở vòng2. Trần được phép tối thiểu một lượt với N>=2, không bắt buộc người chơi phải loại. N=2/3 là ngoại lệ một lượt vượt30%; N=2–6/7–9/10–13/14–16/17–19/20 có cap1/2/3/4/5/6. Giữ Chưa đồng thuận nếu cả nhóm loại hết.
+Trí xác nhận lại cap vòng2 theo **30% số món còn sau NO vòng1**: N>=2 dùng max(1, floor(0.30*N)); N=1 bỏ loại. Trước hết xét winner vòng1; nếu đã có winner thì chốt DECIDED. Nếu chưa có winner, pool vòng2 là pool ban đầu trừ hợp của mọi món được đánh dấu NO trong tất cả ballot vòng1 hoàn chỉnh đã ACK. N=0 thì chốt NO_CONSENSUS/EMPTY_INTERSECTION ngay ở round1, không mở vòng2 rỗng. N=1 bỏ thao tác REMOVE; N>=2 cap là mức tối đa được loại, không bắt buộc người chơi phải loại. N=2/3 là ngoại lệ một lượt vượt30%; N=2–6/7–9/10–13/14–16/17–19/20 có cap1/2/3/4/5/6. Pool vòng2 có thể ít hơn10 món, không thêm món bù. Nếu toàn bộ món vòng2 bị REMOVE, chốt NO_CONSENSUS/ALL_REMOVED.
 
 Quyết định này thay mục cap ngày22/10 cho **policy mới sắp triển khai**. Mục cũ bên dưới là lịch sử và vẫn mô tả runtime dish-decision-v3 ở main033693c. Cần policy version/migration tiến và SQL/domain parity; không sửa0026 hoặc đổi nghĩa phiên v2/v3 đang chạy. Mốc60s vẫn từ command waiting hợp lệ sau ACK và vào phòng chờ, không từ submit hoặc ACK đơn thuần.
 
@@ -31,17 +31,13 @@ Yêu cầu này thay hướng đích 8 người/ready và chọn món theo cover
 
 ## 2. Quyết định bổ sung và chi tiết triển khai
 
-### Loại ở vòng 2
+### Luật vòng 2 đã thay thế phương án lịch sử
 
 Giới hạn cố định 3 không phù hợp mọi kích thước pool: N=4 cho phép một người chỉ chừa đúng 1 món; N<=3 có thể loại hết. Giới hạn N-1 cũng vẫn cho một người ép về một món. N là số món server thực sự chuyển sang vòng 2, không mặc định bằng số món host đã chọn hoặc trừ số món bị loại bởi riêng một người.
 
-**Trí đã chọn phương án A trong hội thoại ngày 2026-10-22:** mỗi người loại tối đa min(3, floor((N-1)/2)).
-Ví dụ N=1/2/3/4/5/6/7/8/12 thì cap=0/0/1/1/2/2/3/3/3.
-Khi N=1, bỏ bước loại; khi N=0, không mở vòng 2. Việc tự chốt N=1 và tiêu chí thắng vẫn phải khớp policy được duyệt, không biến món từng bị veto thành hợp lệ.
+Phương án `min(3, floor((N-1)/2))` ở trao đổi ngày 2026-10-22 **đã bị thay thế** bởi supplement ngày 2026-10-24 ở đầu ADR. Không dùng phương án lịch sử này cho contract/policy mới; runtime v2/v3 vẫn giữ semantics đã pin của chúng.
 
-A ngăn một người loại hết hoặc chừa duy nhất một món khi N>=3, nhưng **không bảo đảm nhóm luôn có winner**: ba người với N=3 vẫn có thể mỗi người loại một món. Giữ nhánh Chưa đồng thuận, tối đa hai vòng; không tự bỏ veto để buộc chọn.
-
-Phương án B không được chọn: vòng 2 chỉ chọn món thích nhất trong tập hợp hợp lệ, không có lượt loại mới. Cần chốt lại ý nghĩa NO vòng 1, tiêu chí thắng và đồng điểm trước dùng; đây là thay đổi policy, không được tự coi là đã duyệt. Dị ứng/hạn chế an toàn không được biến thành lựa chọn mềm bằng suy đoán.
+Luật hiện hành: trước tiên chốt winner vòng 1 nếu đã có. Nếu chưa có, vòng 2 dùng pool ban đầu trừ hợp mọi món `NO` trong các ballot vòng 1 hoàn chỉnh đã ACK; pool này có thể dưới 10. Pool rỗng kết thúc `EMPTY_INTERSECTION` ở round 1, không tạo vòng 2. Trong vòng 2, N=1 bỏ thao tác loại; N>=2 mỗi người được REMOVE tối đa `max(1, floor(0.30*N))`, KEEP toàn bộ hợp lệ; nhóm loại hết thì `ALL_REMOVED`. Các mã kết thúc và snapshot phải theo GM-07.A.
 
 ### Timeout/chốt sớm và phiếu thiếu
 
@@ -71,7 +67,7 @@ Màn Tạo phòng có mục “Số món để lựa chọn”, điều khiển 
 - Start khóa roster/pool theo policy; kiểm join/start đồng thời, slot thứ 20/21, reconnect không tạo thêm người, join sau start, host rời/hủy. Không set ready ngầm để vượt guard cũ.
 - Snapshot có policy/catalogue/contract version, replay ổn định; phiên legacy dùng luật legacy, phiên mới dùng luật mới. Migration thêm mới, không sửa migration đã merge.
 - Android hiển thị loading/error/ACK/deadline/chốt sớm/quá hạn; retry không lặp submission hoặc dùng pool cũ.
-- Test bổ sung: count 9/21/số lẻ/null không hợp lệ; mỗi số nguyên 10–20 tạo đúng số món duy nhất; chọn 20 nhưng chỉ có 15 món không tự hạ count; pool vòng 2 nhỏ hơn 10 vẫn hợp lệ. Chọn món quá 60 giây trước khi ai vào chờ không bị timeout; phiếu từng món không kích hoạt timer; hai người vào chờ đồng thời chỉ có một mốc; vòng 2 có mốc riêng. Reconnect dùng trạng thái/kết quả server, không gia hạn.
+- Test bổ sung: count 9/21/số lẻ/null không hợp lệ; mỗi số nguyên 10–20 tạo đúng số món duy nhất; chọn 20 nhưng chỉ có 15 món không tự hạ count. Kiểm winner vòng1 trước pool rỗng; không winner + tất cả ballot ACK đã NO toàn bộ thì chốt EMPTY_INTERSECTION/NO_CONSENSUS round1; chỉ món còn lại mới vào vòng2 và pool2 dưới10 hợp lệ; N=0 không có snapshot ROUND_2/WAITING_2; mọi món vòng2 bị REMOVE thì chốt ALL_REMOVED/NO_CONSENSUS. Không nạp/bốc món bù. Chọn món quá 60 giây trước khi ai vào chờ không bị timeout; phiếu từng món không kích hoạt timer; hai người vào chờ đồng thời chỉ có một mốc; vòng 2 có mốc riêng. Reconnect dùng trạng thái/kết quả server, không gia hạn.
 
 ## 4. Bản đồ tác động để lập lại task
 

@@ -1,5 +1,31 @@
 # Bàn giao patch PR #104 — GM-07 / roadmap-v2
 
+## Clarification pool vòng 2 — 2026-10-24
+
+Local follow-up trên PR #133 head `36d7f6f40b6fc2c2fdd152b2443263a8c29b7b71`, chưa commit/review/deploy. Contract v4 ghi rõ pool 10–20 chỉ là pool ban đầu; winner round1 được ưu tiên; nếu không có thì pool2 là survivors sau union-NO của ballot hoàn chỉnh đã ACK, không bù món, có thể dưới10. N=0 chốt `NO_CONSENSUS/EMPTY_INTERSECTION` ở round1 và không mở vòng2; all-REMOVE chốt `NO_CONSENSUS/ALL_REMOVED` ở round2. Schema/fixtures phân biệt terminal empty active pool với pool vòng2 phải có ít nhất một survivor. Focused checker, repository validator, task index check, Draft 2020-12 smoke (6 valid/7 invalid) và 594 Python tests (6 skipped) pass. Có thể chạy smoke schema bằng `python docs/evidence/roadmap-v2/GM-07/gm07a_schema_smoke.py` khi `jsonschema==4.26.0` đã có trong Python path. Runtime API/SQL và HTTP parity chưa được kiểm trong đợt hồ sơ này.
+
+Lệnh kiểm và kết quả thực tế cho local follow-up nằm trong phần đầu của [CHECKS.md](CHECKS.md). Không dùng kết quả này thay review của Trí, merge hoặc nghiệm thu runtime.
+
+## GM-07.A contract supplement — 2026-10-24
+
+Draft contract artifact prepared on baseline `fdb03ea097ddea49a601fce2ac045d161bfc76a2`:
+
+- [Dish session API contract](../../../architecture/DISH_SESSION_API_CONTRACT.md) proposes `dish-session-v4/roadmap-v2/GM-07.A` and `dish-decision-v4/ADR-019-30PCT` as forward-only IDs. Current dish-session-v3 and legacy API contracts remain unchanged.
+- [JSON Schema](../../../architecture/schemas/dish-session-v4.schema.json) covers the full `{command,payload}` request envelope, success/error response envelopes, snapshot, create/join, submit, waiting/finalize ACKs and terminal result DTOs.
+- [API_CONTRACT.md](../../../architecture/API_CONTRACT.md) links the legacy baseline to this proposed supplement without replacing historical semantics.
+
+The supplement records exact-count dish-only create, explicit `LOBBY` sentinels (`round=1`, `poolVersion=1`, exact initial pool, no timer/result), a snapshot containing independent `round` and `poolVersion`, caller-private ballot/waiting fields, complete-ballot ACK/replay behavior, typed waiting/finalize DTOs, waiting timer transition, round-specific choice enums, 30% round-2 policy, and terminal references for history/events. It deliberately excludes budget/flavor/time/recent filters pending semantics. Top3/score is disabled pending the owner's privacy, ties, rank and small-group visibility decision.
+
+`python scripts/gm07a_contract_check.py` runs the schema structure and wire
+fixture regression (11 assertions) without adding a runtime dependency. It
+checks both round choice vocabularies and rejects invalid lobby sentinels.
+An ephemeral `jsonschema==4.26.0` Draft 2020-12 smoke also accepted seven
+representative create/waiting/finalize/submit/error/lobby envelopes and rejected
+three cross-round/lobby-sentinel fixtures; the package was installed outside
+the repository and no lockfile changed.
+
+No client, mock, screen, SQL migration or deployed API was changed. HTTP schema parity and consumer round-trip are **Not run** because main still implements v3 and lacks the forward migration. This artifact needs Trí's review before GM-18/19/20/21/22/23 implementation adopts it. Do not treat it as approval, task Done, or deployed contract.
+
 Owner Trang (@rosy179), reviewer Trí (@ThanhTris). Codex hỗ trợ patch theo yêu cầu Trí. [Issue #68](https://github.com/ThanhTris/IE307/issues/68), [PR #104](https://github.com/ThanhTris/IE307/pull/104), [Project #2](https://github.com/users/ThanhTris/projects/2).
 
 ## Follow-up GM-07 trên nhánh Trung

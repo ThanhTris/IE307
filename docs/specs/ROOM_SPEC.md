@@ -1,6 +1,8 @@
 # ROOM SPEC — vòng đời phòng
 
-> Cập nhật hướng đích 2026-10-22: [ADR-019 — quyết định của Trí và phần còn chờ chốt](../architecture/decisions/ADR-019-dish-first-room-policy.md) ưu tiên khi lập kế hoạch luồng mới: phòng 20 người, host chọn chính xác 10–20 món, bỏ ready, timeout 60 giây từ người đầu tiên hoàn tất lượt và vào phòng chờ kết quả mỗi vòng và host Chốt ngay; chọn món độc lập vị trí/quán. Nội dung legacy bên dưới mô tả baseline, chưa phải contract triển khai luật mới. Đã chốt cap min(3, floor((N-1)/2)), N=1 bỏ loại; tính phiếu hoàn chỉnh đã nhận với tối thiểu 1 người, phiếu thiếu không là OK; host chỉ bấm bắt đầu. Chi tiết còn mở xem ADR; không đổi nghĩa phiên cũ hoặc tự ghi test Pass.
+> **Dish-only v4 supplement (ADR-019):** Khi hoàn tất vòng1, server kiểm winner trước. Có winner thì DECIDED. Nếu chưa có winner, pool vòng2 bằng pool khóa ban đầu trừ hợp món NO trong tất cả ballot vòng1 hoàn chỉnh đã ACK. Pool rỗng kết thúc NO_CONSENSUS/EMPTY_INTERSECTION ngay, không mở vòng2. Pool vòng2 có thể dưới10 món; không thêm món bù. Nếu vòng2 loại hết món, kết thúc NO_CONSENSUS/ALL_REMOVED. ROOM SPEC bên dưới tiếp tục mô tả baseline legacy; task mới dùng contract/version v4.
+
+> Cập nhật hướng đích 2026-10-24: [ADR-019](../architecture/decisions/ADR-019-dish-first-room-policy.md) là nguồn luật mới: pool khởi tạo đúng 10–20 món; host start, tối đa20 người, không ready, timer 60 giây theo transition chờ. Sau vòng1, ưu tiên winner; nếu chưa có thì pool vòng2 = pool khởi tạo trừ hợp món NO từ ballot hoàn chỉnh đã ACK. Pool rỗng kết thúc `NO_CONSENSUS/EMPTY_INTERSECTION`; pool vòng2 có thể dưới10 và không bù món; N=1 bỏ loại; cap REMOVE N>=2 là max(1,floor(0.30*N)); loại hết kết thúc `NO_CONSENSUS/ALL_REMOVED`. Nội dung bên dưới là baseline legacy; không áp dụng cap min(3, floor((N-1)/2)) cho policy mới và không đổi nghĩa phiên cũ.
 
 food-v1 • 2026-10-07 • FR-01..03, FR-09 • [API](../architecture/API_CONTRACT.md).
 
