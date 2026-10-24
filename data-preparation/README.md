@@ -1,3 +1,5 @@
+Hướng bàn giao hiện hành là [catalogue món GM-40](../docs/data/DISH_CATALOGUE_DICTIONARY.md) và [phạm vi BE/Data](../docs/project/BE_DATA_ONLY_SCOPE_2026-10-25.md): món độc lập quán/GPS, metadata nullable/unknown, ID/version/hash và projection cho BE. Bundle39 món draft/test_demo phục vụ kiểm thử; không chứng minh đủ mọi bữa hoặc production. [Audit coverage/projection](../docs/project/UI_BE_DATA_SYNC_AUDIT_2026-10-25.md) chỉ rõ phần còn bổ sung. Các mô tả GM-03/data và food/place bên dưới là pipeline lịch sử, không phải task GM-03 BE hiện tại.
+
 [Data dictionary](docs/DATA_DICTIONARY.md) và [CSV/JSON forms](templates/README.md): hợp đồng draft 11 entity, ví dụ giả lập, validator không publish. Mở thêm notebooks/inspect_data_contract.ipynb để xem trường, ví dụ, lỗi và chuyển đổi CSV offline.
 
 [Handoff GM-03](docs/HANDOFF.md) và [taxonomy/món gốc](docs/TAXONOMY.md): snapshot Git 219 tên, 39 món gốc, mapping và notebook chạy offline.

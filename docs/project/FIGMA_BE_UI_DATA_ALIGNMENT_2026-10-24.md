@@ -7,7 +7,7 @@ This is the current implementation handoff for the product-owner decisions recor
 - Figma file: [Gì Cũng Được](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j).
 - Repository baseline inspected: `3f77789cfa451f24967428985e8a444ec2821114` (`main`).
 - Current deployed dish-session: v3 / migration `0026`; v4.A/B are proposals, not deployed runtime.
-- Task owner/status source: [GitHub Project #2](https://github.com/users/ThanhTris/projects/2). Owner and primary Status are preserved. This supplement does not mark implementation done or approve a task.
+- Task owner/status source: [GitHub Project #2](https://github.com/users/ThanhTris/projects/2). Assignee and Deadline remain assigned on Project. Accepted BE/Data baselines with unfinished supplements use the primary Status **Needs Update**, as requested on 2026-10-25; deferred FE retains its prior Status. This supplement does not approve implementation.
 - Related decisions/contracts: [ADR-019](../architecture/decisions/ADR-019-dish-first-room-policy.md), [ADR-020 Top 3](../architecture/decisions/ADR-020-public-top-three-result.md), [GM-07.B](../architecture/DISH_SESSION_API_CONTRACT_B.md).
 
 ## What Figma asks the code to render
@@ -49,7 +49,7 @@ GM-40/06 must supply a locked card with stable dish identity, labels/IDs, meal s
 
 ## Task-by-task supplement (existing IDs and owners)
 
-All owners below match Project #2 at inspection time. Only the BE/Data rows are active under the scope correction above. Preserve the primary Status, assignee and Deadline; use **Follow-up** for active BE/Data supplements on accepted baselines, not for deferred FE work. Do not add a new task or numeric dependency that points backward. Baseline acceptance remains intact; follow-up acceptance is separate. PR #132 / GM-07.A is not runtime evidence.
+All owners below match Project #2 at inspection time. Only the BE/Data rows are active under the scope correction above. Preserve assignee and Deadline. Use the primary Status **Needs Update** for accepted BE/Data baselines still requiring work; do not leave them Done or substitute the Follow-up field. Unstarted tasks retain their actual Todo/In Progress/Review state, and FE remains deferred. Do not add a new task or numeric dependency that points backward. Baseline acceptance remains intact; follow-up acceptance is separate. PR #132 / GM-07.A is not runtime evidence.
 
 | Task / owner | Supplement deliverable and acceptance |
 |---|---|

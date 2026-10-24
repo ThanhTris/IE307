@@ -2,6 +2,28 @@
 
 Trí làm rõ: báo cáo UI/Figma chỉ cung cấp ngữ cảnh để BE và Data chuẩn bị đầu ra phù hợp. FE giữ nguyên phần việc trước đợt supplement Figma/contract B. Trí sẽ chốt Figma rồi giao kế hoạch làm lại FE riêng. Phạm vi này ưu tiên hơn các dòng giao FE trong matrix/review plan ngày 2026-10-24.
 
+## Trạng thái code và trạng thái Project
+
+Theo [audit tại main97f5dac](UI_BE_DATA_SYNC_AUDIT_2026-10-25.md), runtime source mới nhất là v3/schema0.8.0 (0026); contract B/v4 là đề xuất, chưa deploy. Cap cũ và nhánh một survivor tự chốt vẫn còn trong v3, result chưa có Top 3. History vẫn winner-only/nhóm tối đa8 và chưa nối result dish-only/no-consensus. Không coi các quyết định mới đã thành code chỉ vì có ADR hoặc task baseline đã nghiệm thu.
+
+Task BE/Data baseline đã nghiệm thu còn cần bổ sung dùng cột Status **Needs Update** trên Project; giữ evidence cũ. Không để Done kèm cờ Follow-up thay cột Status. Task chưa làm giữ Todo/In Progress/Review phù hợp; task FE đã merge giữ Done trong đợt hoãn FE. Agent không tự ghi nghiệm thu hoặc đổi status ngoài yêu cầu Trí.
+
+## Luật và dữ liệu bàn giao hiện hành
+
+- Host chọn chính xác 10–20 món unique; tối đa 20 thành viên, host bấm start, không ready/duyệt từng người. Pool độc lập quán/offering/coverage/giờ bán/GPS. Thiếu món trả available/requested; không tự giảm hoặc bù món.
+- R1 kiểm winner trước. Nếu chưa winner, survivors là pool khóa trừ hợp NO của mọi ballot R1 hoàn chỉnh đã ACK. N=0 kết thúc R1 EMPTY_INTERSECTION; N>=1 luôn mở R2 thật, kể cả một món.
+- R2 cap=max(1,floor(0.30*N)) với N khóa từ đầu R2. Người dùng có thể REMOVE hoặc không; không bắt phải loại. N=1 vẫn loại món duy nhất được; không auto-finalize/sinh KEEP. Loại hết trả ALL_REMOVED; không bù món/R3.
+- Timer 60s bắt đầu khi người đầu tiên hoàn tất lượt, nhận ACK và vào waiting hợp lệ. Người khác còn gửi được tới deadline; không waiting thì chưa chạy timer. Host chốt cần ít nhất 1 ballot hoàn chỉnh; BE/worker xử lý khi client tắt.
+- Score=2*WANT+OK trên ballot R1 thực sự được tính, R2 chỉ loại. Top3 từ toàn eligible set sau veto, tối đa3, dense shared ranks, luôn có winner, cutoff/subset/order lưu cố định. NO_CONSENSUS có winner=null và Top3 rỗng. Aggregate chỉ sau terminal, không raw ballots/contributions/seed.
+- History summary/detail đọc cùng projection đã lưu: result/version, status/reason/round, winner nullable, score/rank versions, Top3/locked card và cohort R1. Participants theo consent/ACL; phân biệt intended meal time và finalizedAt. Giữ dữ liệu qua operational cleanup đúng retention, không dựng lại bản đã xóa; legacy không backfill điểm/Top3 giả.
+- Catalogue test_demo hiện 39 món là baseline kiểm thử, không quota production. Bổ sung taxonomy ID/code/label/version, temp/flavor unknown, nullable ảnh có quyền và giá đúng currency/unit/source/time. Giá menu-item không là giá/người. Báo coverage thật, không đoán nhãn hoặc nới guard importer để đủ pool.
+
+## Chi tiết owner phải chốt trước tích hợp
+
+GM-07 đề xuất và Trí review transport opt-in B, concurrency/waiting/expiry, aggregation ưu tiên mềm và DTO history/cohort. GM-18 cùng GM-40 phân biệt meal eligibility với soft preferences và quy tắc chọn price observation. GM-17/21 chốt participant identity/time projection theo consent. Có thể làm phần độc lập trước; chưa được tuyên bố tất cả consumer đủ đầu vào tích hợp khi các chi tiết này chưa có artifact reviewed/version/hash.
+
+Các AC/ca kiểm cụ thể được đồng bộ trong task GM-03/06/07/15/17..23/32/40 và checklist sinh từ task map. Phần bổ sung là yêu cầu owner triển khai tiếp; đợt đồng bộ hồ sơ này không sửa runtime v3, mobile, schema B hoặc migration đã merge. Places/provider interface có thể chuẩn bị ở contract, triển khai sau theo phạm vi Trí giao; quán/vị trí không quay lại điều kiện pool.
+
 ## Phân công phần bổ sung
 
 Giữ người phụ trách theo Project #2. Trí review tất cả task. Các mục sau là phần bổ sung cần thực hiện, không là xác nhận hoàn thành.

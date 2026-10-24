@@ -100,9 +100,9 @@
       "verification": {
         "mode": "code-structure",
         "tool": "Repository validator + backend runner unit tests",
-        "entrypoint": "package.json → scripts/backend.mjs → supabase/config.toml, .env.example, tests và functions/_shared",
-        "expected": "Cấu trúc BE, config/env boundary, local-only runner và test ownership đúng foundation plan; không dựng schema/API nghiệp vụ trong GM-03.",
-        "cases": "thiếu path/file bắt buộc; config/env sai; lộ secret; reset guard sai; lẫn API/schema nghiệp vụ"
+        "entrypoint": "Runner QA biệt lập → GoTrue session + REST RPC + worker/version preflight",
+        "expected": "Cấu trúc/runner BE có Auth và REST cùng origin, env placeholders, ledger/definition/hash và cleanup đúng tài nguyên QA; không dựng nghiệp vụ thay các API task.",
+        "cases": "config/auth/REST sai origin; version/hash mismatch; ownership/reset guard; worker down; restart/cleanup; không secret"
       }
     },
     {
@@ -203,8 +203,8 @@
         "mode": "data-schema",
         "tool": "SQL migration/constraint runner local",
         "entrypoint": "DB local rỗng → migrate → schema_contract.sql → query đối chiếu dictionary",
-        "expected": "Đủ cột/constraint core theo field coverage, schemaVersion và query mẫu cho BE; fixtures tổng hợp không được gọi verified.",
-        "cases": "FK/unique/null/enum/version; default deny; upgrade/rollback; schema không chờ data khảo sát"
+        "expected": "Migration tiến giữ v2/v3 và catalogue IDs/FKs; lưu canonical result/Top3 cùng history tới20 người và NO_CONSENSUS, đúng consent/retention sau operational cleanup.",
+        "cases": "FK/unique/null/version; group20/no-consensus; result registry; upgrade/restore; mixed-policy; cleanup/revoke/delete/retry"
       }
     },
     {
@@ -247,9 +247,9 @@
       "verification": {
         "mode": "contract",
         "tool": "Contract/transport test runner; Postman/curl nếu có mock HTTP",
-        "entrypoint": "contracts/client/mock → request/response/error fixture cùng interface",
-        "expected": "Có ví dụ gọi client, input/output/error assertions và mode mock rõ; không tuyên bố RPC nghiệp vụ thật đã triển khai.",
-        "cases": "serialization/null/unit/timezone; token injection; timeout/error mapping; mock success/loading/empty/error/stale; schema parity trước merge"
+        "entrypoint": "Contract B wire/schema/DTO độc lập → fixtures và semantic checker B; chưa sửa mobile consumer",
+        "expected": "Schema/DTO/request-response-error B có version, snapshot/ACK/terminal/history và ví dụ nhất quán; đề xuất chưa được gọi là runtime API đã deploy.",
+        "cases": "version routing; lobby poolVersion>1; expiry/waiting; finalize advance/terminal; history legacy; score/rank/winner semantics; nullable/unit; B schema parity"
       }
     },
     {
@@ -519,8 +519,8 @@
         "mode": "domain",
         "tool": "TypeScript/domain test runner với input/output JSON",
         "entrypoint": "decision engine + shared decision-cases → actual result assertions",
-        "expected": "Có input/seed/votes/round và output winner/tier/reason thực thi thật; chưa cần public API/SQL finalize của task sau.",
-        "cases": "NO/UNSET/KEEP/REMOVE; 2–8 người; tối đa2 vòng; tie/retry ổn định; remove-all→NO_CONSENSUS"
+        "expected": "Domain version mới thực thi R1 winner-first, R2 thật kể cả N=1, cap30% min1 và Top3/điểm R1; fixture v2/v3 giữ nguyên để đối chiếu SQL.",
+        "cases": "2–20 người; R1 survivors0/1/nhiều; R2 N1..20/cap+1/0REMOVE/all-removed; dense/cutoff ties; winner/order ổn định; không R3"
       }
     },
     {
@@ -593,8 +593,8 @@
         "mode": "api",
         "tool": "Postman hoặc curl multi-user + SQL RLS/retention tests",
         "entrypoint": "API/table access đã có trong scope dưới identity outsider/member/host",
-        "expected": "Response cho phép/từ chối đúng access matrix; SQL kiểm policy/TTL; không cần endpoint room/vote chưa bàn giao.",
-        "cases": "outsider/host không đọc votes; own access; direct-write denied; publisher; TTL; privileged RPC boundary"
+        "expected": "ACL bảo vệ raw ballots/seed và cho aggregate sau terminal; result/history/participants projection đúng consent, registry và retention qua cleanup trên nhiều policy.",
+        "cases": "outsider/member/host; small-group aggregate; direct-write denied; personal/group consent; revoke/delete/TTL/cleanup; mixed-policy"
       }
     },
     {
@@ -647,9 +647,9 @@
       "verification": {
         "mode": "api",
         "tool": "Postman hoặc curl/RPC runner + SQL/domain parity",
-        "entrypoint": "get_discovery_context / preview_food_pool / get_result_offerings phần thuộc scope",
-        "expected": "HTTP response/schema/assertions thật chứa offering hợp lệ/version/reasonCodes; fixture parity tách query bundle thật trên DB test, không chờ verified publish (ADR-014).",
-        "cases": "coverage/radius; breakfast/late night/overnight/lastOrder; freshness/sold-out/unknown; price unit; <=8 unique; empty; TS/SQL parity"
+        "entrypoint": "Catalogue/taxonomy dish-only → preview/create pool B theo projection version GM-40; legacy offering suite kiểm riêng",
+        "expected": "Pool ban đầu đúng10–20 unique không cần quán/GPS/lịch bán; shortage available/requested; ưu tiên mềm và unknown/unit/recent theo contract, không nạp bù R2.",
+        "cases": "count9/10..20/21/fraction; shortage; unknown meal/taxonomy; soft preferences; price currency/unit; exact count; legacy parity"
       }
     },
     {
@@ -696,9 +696,9 @@
       "verification": {
         "mode": "api",
         "tool": "Postman hoặc curl multi-user/concurrency runner",
-        "entrypoint": "create/join/snapshot/preferences/context/ready/start/leave/cancel RPC",
-        "expected": "Trả mã/state/version/context/pool đúng contract; server auth/lock/revalidate/idempotency và snapshot privacy thực thi thật.",
-        "cases": "happy path; invalid/outsider/not-host/full/locked/expired/version; context reset-ready; join/start/cancel races"
+        "entrypoint": "create/previewJoin/join/snapshot/updateSettings/updatePreferences/start/leave/cancel và waiting lifecycle theo B",
+        "expected": "Snapshot response-driven đủ version/poolVersion/settings/roster-status; admission20/no-ready, lobby edits/start lock và reconnect/expiry/deadline theo server.",
+        "cases": "20/21 members; preview privacy; stale pool/version; lobby edit/start/invite race; first-waiting60s; quorum1; N0 terminal/N1 R2; cancel/expiry"
       }
     },
     {
@@ -740,9 +740,9 @@
       "verification": {
         "mode": "api",
         "tool": "Postman hoặc curl multi-user/concurrency + SQL/domain parity",
-        "entrypoint": "submit_ballot → transition/finalize → get snapshot/result",
-        "expected": "ACK và result/tier/reason ổn định; kết quả/history/event transaction thật, không gọi sender network trong transaction.",
-        "cases": "incomplete/NO/UNSET; duplicate/requestId reused; timeout/retry; last-submit/cancel race; 2round/remove-all; không raw votes"
+        "entrypoint": "Complete ballot → ACK → waiting → finalize advance/terminal → canonical result/history/event",
+        "expected": "Winner/Top3/score/rank/locked card và cohort R1 được persist ổn định, atomic cùng terminal/outbox; retry không duplicate hoặc reroll; giữ v2/v3.",
+        "cases": "R1 winner/survivors; R2 N1..20/cap/all-removed; incomplete/replay/stale; waiting59/60/61s; quorum1; host/tick/cancel race; history/event parity"
       }
     },
     {
@@ -785,8 +785,8 @@
         "mode": "api",
         "tool": "Postman hoặc curl multi-user + SQL query assertions",
         "entrypoint": "history/consent/delete RPC và recent input cho room",
-        "expected": "Output personal/group đúng consent/ACL/cursor/TTL; query chứng minh delete/summary/retention thật.",
-        "cases": "partial consent; forged groupKey; roster reset-ready; recent<=3/30days; opt-out/delete; không GPS/mood"
+        "expected": "History DECIDED/NO_CONSENSUS tới20 người đọc cùng result/Top3/điểm đã lưu, participants và thời gian theo consent/ACL; legacy không có điểm giả và summary sống qua cleanup đúng TTL.",
+        "cases": "personal/group/partial consent; outsider; group20; no-consensus; planned/finalized time; revoke/delete/retry/cleanup; legacy winner-only; recent<=3/30days"
       }
     },
     {
@@ -824,8 +824,8 @@
         "mode": "api",
         "tool": "Postman hoặc curl multi-user/concurrency runner",
         "entrypoint": "partner/invite/accept/reject/unfriend và room invitation RPC",
-        "expected": "Output pair/invite/membership đúng auth/recipient/capacity/expiry; không tự ready, event không nhân đôi.",
-        "cases": "happy/reject; outsider/not-partner; expired/full/locked; duplicate; unfriend/invite/accept race"
+        "expected": "Pair/invite/membership đúng auth/recipient/expiry; room invitation dùng chung admission20 theo policy, không reset-ready/refresh legacy hoặc tạo event trùng.",
+        "cases": "8/9/20/21 members; reject/outsider/expired/full/locked; duplicate/rejoin; start/unfriend/accept race; preview privacy"
       }
     },
     {
@@ -858,8 +858,8 @@
         "mode": "api",
         "tool": "Postman hoặc curl + sender transport/integration runner",
         "entrypoint": "Inbox/register/unregister device RPC → notification event → trusted sender",
-        "expected": "HTTP/output/assertions thật cho inbox/device/event; sender fake-transport và delivery thật báo riêng, chưa có credential thì không ghi delivery pass.",
-        "cases": "own-device ACL; denied inbox; duplicate/expired/dead-token/retry/logout; không votes/token trong payload/log"
+        "expected": "Inbox/device/event canonical đúng một lần cho DECIDED/NO_CONSENSUS; notification chỉ reference và fetch có quyền; fake transport tách delivery thật, thiếu credential không ghi delivery Pass.",
+        "cases": "result/event dedupe; authorized fetch; own-device ACL; revoke/expired/dead-token/retry/logout; không ballots/seed/token trong payload/log"
       }
     },
     {
@@ -1355,8 +1355,8 @@
         "mode": "qa",
         "tool": "API/SQL/domain/outbox regression runner",
         "entrypoint": "Core suites với dataset/schema/contract revision đã bàn giao",
-        "expected": "Báo cáo input/expected/actual và failure owner; kiểm thực thi thật, không docs validator thay regression.",
-        "cases": "FOOD/security/NO/UNSET/2round/parity; transactions/races; source expiry; consent; no sensitive logs"
+        "expected": "Báo cáo response-driven trên đúng producer version cho v2/v3 và B: policy/score/Top3/history/invite/event/ACL/race, ghi input/expected/actual và failure owner; Android kiểm riêng.",
+        "cases": "contract B schema/wire; R2 N0/1..20; exact count/member20; 59/60/61s; SQL-domain parity; dense ties/cutoff; retention/revoke/cleanup; worker/host races"
       }
     },
     {
@@ -1799,8 +1799,8 @@
         "mode": "data-import",
         "tool": "Schema validator + importer/SQL readback + HTTP request/assertions.",
         "entrypoint": "Validate/import dish-catalogue-v1 trên DB test, query/readback và HTTP catalogue/preview không cần quán.",
-        "expected": "Bundle món có version/hash, import/readback đúng và API trả món không cần quán; mô hình nghiệp vụ và snapshot cũ được bảo toàn.",
-        "cases": "required/null/unknown; alias/trùng/ID cũ; ảnh/giá thiếu; không có quán; reimport/rollback; auth; phiên/kết quả cũ."
+        "expected": "Catalogue test_demo có ID/version/hash và projection taxonomy/labels/nullable artwork/price đúng đơn vị/nguồn; import/readback không cần quán, card kết quả cũ ổn định qua đổi catalogue.",
+        "cases": "required/null/unknown; alias/ID/hash; taxonomy labels; price unit/source/time; artwork rights/fallback; coverage/shortage; activation/restore; không bù R2"
       }
     }
   ]

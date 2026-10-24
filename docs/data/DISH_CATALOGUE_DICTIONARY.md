@@ -5,6 +5,10 @@ dataset **1.1.0** trong namespace catalogue riêng. Trạng thái: draft, test/d
 chưa review schema/API; [ADR-018](../architecture/decisions/ADR-018-dish-catalogue-profile.md).
 Schema JSON này là hợp đồng dữ liệu offline, không phải migration database.
 
+## Phần projection cần bàn giao tiếp — 2026-10-25
+
+Baseline catalogue1.1.0 giữ nguyên39 UUID/draft/test_demo. [Phần bổ sung GM-40](../../tasks/backlog/GM-40.md) nhận taxonomy ID/code/label/version và card nullable ảnh/giá; importer hiện mới chiếu một phần field offline. Không coi bundle có nhiều price observations là API đã trả đúng giá/người: unit hiện menu_item_unspecified, cần quy tắc chọn nguồn/observation, không đổi đơn vị tùy ý. Báo coverage thực theo bữa/bộ lọc, không bịa tag hoặc coi mealSlots=[] hợp mọi bữa. Locked result/history giữ card/version cũ sau catalogue đổi; Data không tính score/rank. [Audit chi tiết](../project/UI_BE_DATA_SYNC_AUDIT_2026-10-25.md).
+
 ## Cách chạy và giới hạn
 
 Từ root repository, Python 3 stdlib, không cài package và không dùng network.

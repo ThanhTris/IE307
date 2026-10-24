@@ -1,5 +1,7 @@
 # Gì Cũng Được — mô tả hệ thống cho cả nhóm
 
+> **Ngữ cảnh hiện hành 2026-10-25:** [phạm vi BE/Data](../project/BE_DATA_ONLY_SCOPE_2026-10-25.md), [ADR-019](../architecture/decisions/ADR-019-dish-first-room-policy.md), [ADR-020](../architecture/decisions/ADR-020-public-top-three-result.md) và [audit source/UI](../project/UI_BE_DATA_SYNC_AUDIT_2026-10-25.md) ưu tiên cho phần bổ sung mới: max20 người, pool đầu10–20 độc lập quán/GPS, không ready, R2 thật với N>=1/cap30% min1, canonical Top3/history. Runtime B chưa triển khai. Nội dung food-v1 bên dưới là baseline cho truy vết/phiên legacy; không dùng luật8 người/ready/quán bắt buộc để triển khai policy mới. FE giữ scope cũ tới khi Trí giao riêng.
+
 Baseline food-v1 • soạn ngày 2026-10-07. Đây là mô tả yêu cầu, không phải báo cáo tính năng đã triển khai. GM-01 đã được chủ dự án duyệt ngày 2026-10-10; trạng thái từng task xem trên Project và evidence tương ứng.
 
 ## Ứng dụng giải quyết việc gì?

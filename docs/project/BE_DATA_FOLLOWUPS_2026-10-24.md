@@ -5,8 +5,8 @@
 > **Cập nhật hiện hành 2026-10-25:** Trí chốt lại rằng sau R1 chưa có winner, pool N>=1 luôn mở R2 thật, kể cả N=1. R2 cho người chơi quyết định REMOVE hoặc không; cap là `max(1,floor(.30*N))` với N=1..20; không auto-finalize, không tự ghi KEEP cho người chưa gửi. N=0 kết thúc `EMPTY_INTERSECTION` ở R1. Đồng thời Places + Google Map phải nằm trong màn kết quả cho winner; mở Google Maps chỉ là hành động bổ sung. Dark của UI supplement hoãn. Top 3/điểm/privacy theo [ADR-020](../architecture/decisions/ADR-020-public-top-three-result.md). Dùng [GM-07.B](../architecture/DISH_SESSION_API_CONTRACT_B.md), [bảng Figma–BE–Data–UI](FIGMA_BE_UI_DATA_ALIGNMENT_2026-10-24.md) và [review plan](UI_MAIN_SYNC_REVIEW_PLAN_2026-10-24.md) làm nguồn AC/thứ tự mới nhất. Các phát biểu N=1/Places/Dark bên dưới đã bị thay thế nếu không khớp phần cập nhật này. Không sửa runtime hoặc tự nghiệm thu chỉ bằng hồ sơ này.
 
 Trí chọn **tạo PR yêu cầu bổ sung để người đang phụ trách làm tiếp**, chưa code các phần thiếu.
-Các gói dưới đây thuộc task cũ, không tạo task mới, đổi assignee/Deadline hoặc mở lại Done.
-Baseline: main033693c, schema0.8.0, dish-session-v3/ADR-019, catalogue1.1.0.
+Các gói dưới đây thuộc task cũ, không tạo task mới hoặc đổi assignee/Deadline. Theo chỉ đạo Trí ngày 2026-10-25, baseline đã nghiệm thu còn phần bổ sung dùng cột Status **Needs Update**; giữ evidence nghiệm thu cũ. Không dùng cờ Follow-up thay Status. Task chưa làm không tự chuyển Needs Update; FE giữ theo phạm vi hoãn.
+Baseline khảo sát ban đầu: main033693c, schema0.8.0, dish-session-v3/ADR-019, catalogue1.1.0. [Audit mới tại main97f5dac](UI_BE_DATA_SYNC_AUDIT_2026-10-25.md) bổ sung khoảng trống contract/history/storage/invite; các AC mới trong task BE/Data ưu tiên hơn ghi chú cũ chưa triển khai.
 [Audit source và Project](BE_DATA_AUDIT_2026-10-24.md) · [ADR-019](../architecture/decisions/ADR-019-dish-first-room-policy.md).
 
 Mỗi implementation PR phải có scope, version, CHECKS và HANDOFF supplement riêng. Giữ evidence lịch sử.
@@ -65,9 +65,9 @@ HANDOFF phải ghi SHA/version và kiểm nhận đầu vào. Nếu stacked PR, 
 
 ## GM-18 / GM-19 — Tâm / Trí: catalogue API và phiên
 
-- GM18 nhận projection GM40 và contract A: preview/discovery có available/requested, taxonomy nếu cần; không GPS/quán. Giữ exact10–20 unique **chỉ cho pool khởi tạo**; shortage thì báo, không nới lọc. Pool vòng2 lấy từ ballot, có thể dưới10 hoặc rỗng; tuyệt đối không replenish.
+- GM18 nhận projection GM40 và contract B đã chốt: preview/discovery có available/requested, taxonomy nếu cần; không GPS/quán. Giữ exact10–20 unique **chỉ cho pool khởi tạo**; shortage thì báo, không nới lọc. Pool vòng2 lấy từ ballot, có thể dưới10 hoặc rỗng; tuyệt đối không replenish.
 - GM19 sửa thiếu poolVersion qua migration tiến. Kiểm create → snapshot → start → submit → waiting/vòng2 chỉ dùng field response. Không tạo round2/timer khi survivor pool=0; terminal no-consensus snapshot dùng active pool rỗng; pool round2 khác 0 có thể <10.
-- Không làm lại max20/bỏ ready đã có. Nếu A chốt update context/preferences trước start: kiểm quyền/version, recompute có chủ ý; không reset ready hoặc đổi pool đã khóa.
+- Không làm lại max20/bỏ ready đã có. Theo B, update settings/preferences chỉ trước start: kiểm quyền/version, recompute có chủ ý; không reset ready hoặc đổi pool đã khóa.
 - Bàn giao helper admission theo policy cho GM22. Direct join và lời mời dùng cùng capacity/auth/state/lock; không nới writer_guard toàn cục.
 - Budget/giá/thời gian/flavor/recent chưa đủ contract/data: ghi Pending hoặc lỗi unsupported đúng contract; không dùng giá menu khác đơn vị làm giá/người.
 - AC: create count9/10..20/21/fraction/null, shortage/unknown; pool2 0/1/2..9/10..20, không món bù; pool2=0 terminal EMPTY_INTERSECTION không mở round2; poolVersion stale/current, join20/21/start/invite race, legacy vẫn đúng. Bàn giao request suite và output schema.
@@ -102,7 +102,7 @@ HANDOFF phải ghi SHA/version và kiểm nhận đầu vào. Nếu stacked PR, 
 
 ## GM-40 — Vinh: dữ liệu và projection bàn giao
 
-PR129 đã merge; Project vẫn Review. Baseline39 món nghiệm thu theo test/demo, không thêm quota làm blocker.
+PR129 đã merge; baseline39 món nghiệm thu theo test/demo. Phần projection/metadata còn bổ sung theo cột Needs Update trên Project, không mở lại baseline hoặc thêm quota làm blocker.
 
 - Đối chiếu field A/B cần: taxonomy IDs/labels, meal/flavor/temperature unknown, price/currency/unit/source/date, artwork rights/null. Projection phải có version/hash/readback; runtime thiếu giá khác với bundle thiếu giá. Chỉ pool khởi tạo 10–20 tạo quota catalogue; GM-40 không cung cấp món bù hoặc quota riêng để round2 đủ10. Survivors dưới10 hoặc bằng0 là kết quả ballot/policy, không phải thiếu Data.
 - Mở rộng dữ liệu sau khi chốt bộ lọc cần đạt; báo độ phủ, không đoán tag hoặc biến null thành0. Giữ UUID, release immutable, atomic activation/restore.

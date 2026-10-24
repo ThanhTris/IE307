@@ -80,6 +80,20 @@ The v4.B schema constrains envelopes and DTO shapes; semantic checks still requi
 - Members can read post-final aggregate; outsider cannot; individual ballots/contributions remain unavailable; history follows consent/delete/TTL.
 - Create/preview/join/settings/preferences with shortage and capacity race; preferences change only in lobby and pool version changes with the pool.
 
+
+## Required closure before implementation handoff — 2026-10-25
+
+[The source audit](../project/UI_BE_DATA_SYNC_AUDIT_2026-10-25.md) found gaps in this proposed artifact. GM-07 must close these in the schema, DTOs, examples and a B-specific checker together; the current A checker is not B acceptance:
+
+- Select an explicit B opt-in transport/version discriminator and concurrency guards per command. Do not apply an undifferentiated latest room-version rule that makes concurrent complete-ballot submissions conflict unnecessarily; pool/round and idempotency semantics must be specified.
+- Remove the LOBBY poolVersion=1 invariant when lobby edits can recompute the pool. Define expiry as an authorized terminal/error route, and distinguish shared room state from caller waiting so other members remain able to submit.
+- Define the accepted/scored R1 cohort metadata for terminal/history score bounds. Current-round submittedCount cannot substitute for R1 count after advancing rounds.
+- Publish shared history summary/detail DTOs, including no-consensus, immutable podium, allowed participants, planned-vs-finalized times and legacy capability. Do not infer consent for identity storage or fabricate legacy scores.
+- Specify aggregation/tie-break for soft host/member preferences, meal eligibility separately, and selection of a comparable price observation. Unresolved choices require an owner proposal reviewed by Trí rather than silently accepted fields with no effect.
+- Prove sorted/dense ranks, unique dishes, score bound, winner identity and cutoff stability with semantic fixtures. Shape validation alone is insufficient.
+
+These are task requirements, not a declaration that the schema or runtime has already been corrected. Only BE/Data contract artifacts are active in this phase; mobile consumer changes await the separate FE scope.
+
 ## Implementation boundary
 
 This file and its schema are proposed contract artifacts. They do not implement GM-06/15/17/18/19/20/21/22/23, mobile client/mock, UI, migrations, data release, Android QA, or production publication. Those remain with task owners in [the alignment matrix](../project/FIGMA_BE_UI_DATA_ALIGNMENT_2026-10-24.md). Keep current main runtime v3 and legacy consumers unchanged until a reviewed forward migration, producer and versioned consumer are merged.
