@@ -2,6 +2,16 @@
 
 Ngày: 2026-10-22. Chủ quyết định/reviewer: Trí (ThanhTris).
 
+## Supplement hiện hành — 2026-10-24
+
+Trí xác nhận lại cap vòng2 theo **30% số món còn sau NO vòng1**: N>=2 dùng max(1, floor(0.30*N)); N=1 bỏ loại, N=0 không mở vòng2. Trần được phép tối thiểu một lượt với N>=2, không bắt buộc người chơi phải loại. N=2/3 là ngoại lệ một lượt vượt30%; N=2–6/7–9/10–13/14–16/17–19/20 có cap1/2/3/4/5/6. Giữ Chưa đồng thuận nếu cả nhóm loại hết.
+
+Quyết định này thay mục cap ngày22/10 cho **policy mới sắp triển khai**. Mục cũ bên dưới là lịch sử và vẫn mô tả runtime dish-decision-v3 ở main033693c. Cần policy version/migration tiến và SQL/domain parity; không sửa0026 hoặc đổi nghĩa phiên v2/v3 đang chạy. Mốc60s vẫn từ command waiting hợp lệ sau ACK và vào phòng chờ, không từ submit hoặc ACK đơn thuần.
+
+Theo lựa chọn trực tiếp của Trí, đợt này **PR yêu cầu bổ sung để người đang phụ trách triển khai tiếp**, chỉ BE/Data; UI giữ nguyên. [Audit](../../project/BE_DATA_AUDIT_2026-10-24.md) ghi những phần PR131/129 đã triển khai và phần còn thiếu. [Gói việc/AC/thứ tự](../../project/BE_DATA_FOLLOWUPS_2026-10-24.md) là đầu vào cho PR implementation tiếp theo. Top3/score/privacy, filter budget/giá và các chi tiết chưa chốt vẫn cần review trước code; tài liệu không tự phê duyệt phát dữ liệu mới.
+
+Các nhận xét bên dưới về PR129 còn lỗi/chưa import là **trạng thái tại ngày22/10**, đã được PR129 và kiểm QA sau đó cập nhật; giữ để truy vết, không dùng làm blocker hiện hành.
+
 Phạm vi thực hiện cập nhật mới nhất của Trí: **đợt này chỉ Data/BE; FE làm sau**. Supplement UI vẫn là yêu cầu đích, chưa phải yêu cầu triển khai FE ngay. Patch backend/engine có version riêng và request suite; không dùng kết quả SQL/HTTP thay nghiệm thu màn ứng dụng.
 Trạng thái: **chấp nhận các yêu cầu tại mục 1 theo xác nhận trực tiếp trong hội thoại; cap vòng 2, quorum và cách vào phòng cũng đã được Trí xác nhận qua câu trả lời; chỉ các chi tiết được đánh dấu còn mở cần chốt**. Chưa là nghiệm thu implementation hoặc duyệt toàn bộ thiết kế SQL của ADR-018 trong PR #129.
 

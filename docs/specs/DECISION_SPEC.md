@@ -1,5 +1,7 @@
 # Decision spec — v0.2
 
+> Hướng đích cập nhật 2026-10-24: cap vòng2 theo [supplement ADR-019](../architecture/decisions/ADR-019-dish-first-room-policy.md): N>=2 dùng max(1, floor(0.30*N)), N=1 bỏ loại, N=0 không mở vòng2; không bắt buộc REMOVE. Chờ version/migration tiến; các luật min(3,...) và decision-v2 bên dưới mô tả baseline/lịch sử, không là yêu cầu cho patch mới. [AC và thứ tự BE/Data](../project/BE_DATA_FOLLOWUPS_2026-10-24.md).
+
 > Cập nhật hướng đích 2026-10-22: [ADR-019 — quyết định của Trí và phần còn chờ chốt](../architecture/decisions/ADR-019-dish-first-room-policy.md) ưu tiên khi lập kế hoạch luồng mới: phòng 20 người, host chọn chính xác 10–20 món, bỏ ready, timeout 60 giây từ người đầu tiên hoàn tất lượt và vào phòng chờ kết quả mỗi vòng và host Chốt ngay; chọn món độc lập vị trí/quán. Nội dung legacy bên dưới mô tả baseline, chưa phải contract triển khai luật mới. Đã chốt cap min(3, floor((N-1)/2)), N=1 bỏ loại; tính phiếu hoàn chỉnh đã nhận với tối thiểu 1 người, phiếu thiếu không là OK; host chỉ bấm bắt đầu. Chi tiết còn mở xem ADR; không đổi nghĩa phiên cũ hoặc tự ghi test Pass.
 
 2026-10-07 • policyVersion decision-v2 • FR-05..08. Thứ tự chọn giữ hai vòng; v2 bổ sung matchTier và contract lý do. Trí review task và revision tương ứng theo [ADR-013](../architecture/decisions/ADR-013-project-owner-final-review.md), không yêu cầu review chéo. [Engine GM-15 (legacy GM-06)](../../mobile/src/domain/decision/README.md) có tests thuần; nghiệm thu domain không thay nghiệm thu API hoặc SQL parity.
