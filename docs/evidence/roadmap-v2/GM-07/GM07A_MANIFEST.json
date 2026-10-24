@@ -1,0 +1,30 @@
+{
+  "task": "GM-07.A",
+  "contractVersion": "dish-session-v4/roadmap-v2/GM-07.A",
+  "policyVersion": "dish-decision-v4/ADR-019-30PCT",
+  "status": "proposed contract supplement; runtime not deployed",
+  "baseRevision": "fdb03ea097ddea49a601fce2ac045d161bfc76a2",
+  "artifacts": [
+    "docs/architecture/DISH_SESSION_API_CONTRACT.md",
+    "docs/architecture/schemas/dish-session-v4.schema.json",
+    "scripts/gm07a_contract_check.py",
+    "tests/test_gm07a_contract.py",
+    "docs/evidence/roadmap-v2/GM-07/CHECKS.md",
+    "docs/evidence/roadmap-v2/GM-07/HANDOFF.md"
+  ],
+  "fixtureAssertions": 21,
+  "httpRoundTrip": "Not run: no v4 runtime/migration is deployed",
+  "jsonSchemaEngine": "jsonschema 4.26.0 in an ephemeral temp target; 6 representative envelopes Pass; no repository dependency",
+  "top3Score": "Pending privacy/tie/group-size decision",
+  "checkedRevision": "3c32df25d62016dbb6d324d26c514575634b234a",
+  "sourceHashes": {
+    "docs/architecture/API_CONTRACT.md": "c1fe6d3814ca1ab82d5c001104aa3ebafaa53ca4ae1dde4974e974aa29896742",
+    "docs/architecture/DISH_SESSION_API_CONTRACT.md": "3cfd8fa8b95aaf1cbfe64aa2362ed0776a8ad1864a8628ca2aa46c71a6db1d23",
+    "docs/architecture/schemas/dish-session-v4.schema.json": "7e4ec0ce531db79a6eb9ce2029aa74ad8d97c1a31dfaf37553d7c3f33d7dc802",
+    "scripts/gm07a_contract_check.py": "641947338abcf138fca583210298f0fa21ef7979f0d23be4da529dd8d1d931d3",
+    "tests/test_gm07a_contract.py": "417ba76eb967e5df7f6bda38297c63e07696e67e260e12e57787abdbcc5e1336",
+    "docs/evidence/roadmap-v2/GM-07/CHECKS.md": "ba52565d04acf43b90bf367fdfb70a3c4a0c7d0ae0fede21b0847225f91717ce",
+    "docs/evidence/roadmap-v2/GM-07/HANDOFF.md": "67402757c202325290030ba703bcc1585e045df3ca34e9875d41b2e6320d5a9f"
+  },
+  "workingTreeChanges": true
+}

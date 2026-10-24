@@ -11,11 +11,31 @@ new contract for implementation review. It does not change the deployed
   rule, not implemented on main).
 - Existing v2/v3 rooms retain their pinned contract and policy. A new session
   advertises both IDs in every snapshot and terminal result.
-- The transport envelope remains `{ok:true,data:...}` for reads and writes;
-  errors carry a stable `messageKey`. `requestId` is opaque, nonempty and at
-  most 128 ASCII characters. Exact retries use the same ID and identical body.
+- The wire request is always `{command,payload}` and the response is always
+  `{ok:true,data,...metadata}` or `{ok:false,error:{messageKey,details?},requestId?}`.
+  The complete envelope, not only `payload`, is covered by the JSON Schema.
+  `requestId` is opaque, nonempty and at most 128 ASCII characters. Exact
+  retries use the same ID and identical body.
 - Public request fields are camelCase at the RPC JSON boundary. The SQL wrapper
   may map them to its existing snake_case storage/input names.
+
+The command set is `create`, `join`, `snapshot`, `start`, `submit`, `waiting`,
+`finalize`, `cancel` and `leave`. `waiting` and `finalize` are first-class
+commands; they are not undocumented variants of `submit` or `snapshot`.
+
+Example request and response envelopes:
+
+```json
+{"command":"waiting","payload":{"requestId":"req_wait_001","roomId":"00000000-0000-4000-8000-000000000001","expectedVersion":4,"round":1,"poolVersion":1}}
+{"ok":true,"requestId":"req_wait_001","data":{"accepted":true,"round":1,"poolVersion":1,"waitingStartedAt":"2026-10-24T10:00:10Z","deadline":"2026-10-24T10:01:10Z"}}
+```
+
+Business errors use the same response envelope, including errors for waiting
+and finalize:
+
+```json
+{"ok":false,"requestId":"req_wait_001","error":{"messageKey":"VERSION_CONFLICT","details":{"actualVersion":5}}}
+```
 
 ## Dish-only create and pool
 
@@ -106,8 +126,27 @@ waiting flag may appear in the response. `submittedCount` counts complete,
 server-accepted ballots only. A missing ballot is never interpreted as OK.
 
 In LOBBY the host may start after joining has been opened under the room's
-admission rules. Starting pins roster, pool, catalogue hash/version, contract
-and policy. There is no ready phase. New sessions admit at most 20 members.
+admission rules. In `LOBBY`, the server has already selected the exact
+`dishCount` pool, so the snapshot is deterministic before the host starts:
+`round=1`, `poolVersion=1`, `pool.length=dishCount`, `ownWaiting=false`,
+`waitingStartedAt=null`, `deadline=null`, and `result=null`. `state=LOBBY`
+never carries round-2 choices. The pool and its catalogue identity remain
+visible to members while the host admits up to 20 people. Starting pins the
+roster, pool, catalogue hash/version, contract and policy. There is no ready
+phase.
+
+The state/round relationship is therefore:
+
+| State | Round | Pool/timer rule |
+| --- | --- | --- |
+| `LOBBY` | `1` | Exact initial pool, `poolVersion=1`, no waiting timer |
+| `ROUND_1` / `WAITING_1` | `1` | Initial locked pool; waiting fields are null in `ROUND_1` and populated in `WAITING_1` |
+| `ROUND_2` / `WAITING_2` | `2` | Revalidated survivor pool with a new `poolVersion`; timer is independent of round 1 |
+| `DECIDED` / `NO_CONSENSUS` / `CANCELLED` | `1` or `2` | Terminal result is stable; no new ballot or waiting transition |
+
+`poolVersion` is an independent server revision. The schema enforces the lobby
+sentinels and the round-specific private ballot choice vocabulary; the server
+still enforces `pool.length=dishCount` and exact ballot coverage transactionally.
 
 ## Submit, waiting and replay
 
@@ -130,8 +169,12 @@ one from the other.
 ```
 
 The vote set must cover the full current pool exactly once. Choices are
-`WANT`/`OK`/`NO` in round 1 and `KEEP`/`REMOVE` in round 2; the server validates
-round-specific values. The ACK describes the committed request only:
+`WANT`/`OK`/`NO` in round 1 and `KEEP`/`REMOVE` in round 2. The schema has
+separate `round1Vote` and `round2Vote` definitions selected by the request's
+`round`, so a round-1 request containing `KEEP` or a round-2 request containing
+`WANT` is invalid before the server evaluates business state. The server still
+validates exact pool coverage and room membership transactionally. The ACK
+describes the committed request only:
 
 ```json
 {"ok":true,"requestId":"req_example_002","data":{"accepted":true,"round":1,"poolVersion":1,"submittedAt":"2026-10-24T10:00:10Z"}}
@@ -154,6 +197,12 @@ Timeout/finalize quorum is at least one complete accepted ballot. Missing
 members do not contribute choices. Final state is stable under retry and
 reconnect; late submissions cannot change a terminal result. A member who missed
 round 1 may submit in an open round 2 using its current snapshot and locked pool.
+
+`waiting` returns `WaitingAck` with `accepted`, `round`, `poolVersion`,
+`waitingStartedAt` and `deadline`. `finalize` returns `FinalizeAck` with
+`accepted`, terminal `state`, `round`, `resultId` and `finalizedAt`; the full
+terminal result remains available through the next snapshot. These DTOs are
+defined in the schema and are not inferred from a generic `data` object.
 
 ## Round 2 policy
 

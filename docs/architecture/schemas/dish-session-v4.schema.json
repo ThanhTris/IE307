@@ -1,126 +1,262 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Dish session v4 proposed wire DTOs",
-  "description": "GM-07.A draft. Not a deployed runtime contract; see DISH_SESSION_API_CONTRACT.md.",
+  "$id": "https://gi-cung-duoc.local/schemas/dish-session-v4.schema.json",
+  "title": "Dish session v4 proposed wire contract",
+  "description": "GM-07.A draft. The top-level document is either a command envelope or a response envelope; it is not a deployed runtime contract.",
   "oneOf": [
-    {
-      "title": "Snapshot",
-      "type": "object",
-      "required": [
-        "contractVersion", "policyVersion", "catalogueVersion", "catalogueSha",
-        "roomId", "code", "state", "version", "round", "poolVersion", "dishCount",
-        "pool", "members", "submittedCount", "memberCount", "ownBallot", "ownWaiting",
-        "waitingStartedAt", "deadline", "serverTime", "result"
-      ],
-      "properties": {
-        "contractVersion": {"const": "dish-session-v4/roadmap-v2/GM-07.A"},
-        "policyVersion": {"const": "dish-decision-v4/ADR-019-30PCT"},
-        "catalogueVersion": {"type": "string", "minLength": 1},
-        "catalogueSha": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-        "roomId": {"$ref": "#/$defs/uuid"},
-        "code": {"type": "string", "minLength": 6, "maxLength": 6},
-        "state": {"enum": ["LOBBY", "ROUND_1", "WAITING_1", "ROUND_2", "WAITING_2", "DECIDED", "NO_CONSENSUS", "CANCELLED"]},
-        "version": {"type": "integer", "minimum": 1},
-        "round": {"type": "integer", "enum": [1, 2]},
-        "poolVersion": {"type": "integer", "minimum": 1},
-        "dishCount": {"type": "integer", "minimum": 10, "maximum": 20},
-        "pool": {"type": "array", "items": {"$ref": "#/$defs/poolDish"}},
-        "members": {"type": "array", "maxItems": 20, "items": {"$ref": "#/$defs/member"}},
-        "submittedCount": {"type": "integer", "minimum": 0, "maximum": 20},
-        "memberCount": {"type": "integer", "minimum": 1, "maximum": 20},
-        "ownBallot": {"oneOf": [{"type": "null"}, {"type": "array", "items": {"$ref": "#/$defs/vote"}}]},
-        "ownWaiting": {"type": "boolean"},
-        "waitingStartedAt": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/timestamp"}]},
-        "deadline": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/timestamp"}]},
-        "serverTime": {"$ref": "#/$defs/timestamp"},
-        "result": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/terminalResult"}]}
-      },
-      "additionalProperties": false
-    },
-    {
-      "title": "Create request",
-      "type": "object",
-      "required": ["requestId", "displayName", "dishCount", "mealSlot", "cuisineIds", "categoryIds"],
-      "properties": {
-        "requestId": {"type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9_-]+$"},
-        "displayName": {"type": "string", "minLength": 1, "maxLength": 24},
-        "dishCount": {"type": "integer", "minimum": 10, "maximum": 20},
-        "mealSlot": {"enum": ["breakfast", "lunch", "dinner", "snack"]},
-        "cuisineIds": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/uuid"}},
-        "categoryIds": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/uuid"}}
-      },
-      "additionalProperties": false
-    },
-    {
-      "title": "Submit request",
-      "type": "object",
-      "required": ["requestId", "roomId", "expectedVersion", "round", "poolVersion", "votes"],
-      "properties": {
-        "requestId": {"type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9_-]+$"},
-        "roomId": {"$ref": "#/$defs/uuid"},
-        "expectedVersion": {"type": "integer", "minimum": 1},
-        "round": {"type": "integer", "enum": [1, 2]},
-        "poolVersion": {"type": "integer", "minimum": 1},
-        "votes": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/vote"}}
-      },
-      "additionalProperties": false
-    },
-    {
-      "title": "Submit ACK data",
-      "type": "object",
-      "required": ["accepted", "round", "poolVersion", "submittedAt"],
-      "properties": {
-        "accepted": {"const": true},
-        "round": {"type": "integer", "enum": [1, 2]},
-        "poolVersion": {"type": "integer", "minimum": 1},
-        "submittedAt": {"$ref": "#/$defs/timestamp"}
-      },
-      "additionalProperties": false
-    },
-    {"$ref": "#/$defs/terminalResult"}
+    { "$ref": "#/$defs/requestEnvelope" },
+    { "$ref": "#/$defs/successEnvelope" },
+    { "$ref": "#/$defs/errorEnvelope" }
   ],
   "$defs": {
-    "uuid": {"type": "string", "format": "uuid"},
-    "timestamp": {"type": "string", "format": "date-time"},
-    "choice": {"enum": ["WANT", "OK", "NO", "KEEP", "REMOVE"]},
+    "uuid": { "type": "string", "format": "uuid" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "requestId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9_-]+$" },
+    "command": { "enum": ["create", "join", "snapshot", "start", "submit", "waiting", "finalize", "cancel", "leave"] },
+    "mealSlot": { "enum": ["breakfast", "lunch", "dinner", "snack"] },
     "poolDish": {
       "type": "object",
       "required": ["roundDishId", "dishId", "name"],
       "properties": {
-        "roundDishId": {"$ref": "#/$defs/uuid"},
-        "dishId": {"$ref": "#/$defs/uuid"},
-        "name": {"type": "string", "minLength": 1, "maxLength": 256},
-        "description": {"type": ["string", "null"], "maxLength": 2000},
-        "mealSlots": {"type": "array", "uniqueItems": true, "items": {"enum": ["breakfast", "lunch", "dinner", "snack"]}},
-        "cuisineIds": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/uuid"}},
-        "categoryIds": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/uuid"}}
+        "roundDishId": { "$ref": "#/$defs/uuid" },
+        "dishId": { "$ref": "#/$defs/uuid" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "description": { "type": ["string", "null"], "maxLength": 2000 },
+        "mealSlots": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/mealSlot" } },
+        "cuisineIds": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/uuid" } },
+        "categoryIds": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/uuid" } }
       },
       "additionalProperties": false
     },
     "member": {
       "type": "object",
       "required": ["userId", "displayName"],
-      "properties": {"userId": {"$ref": "#/$defs/uuid"}, "displayName": {"type": "string", "minLength": 1, "maxLength": 24}},
+      "properties": {
+        "userId": { "$ref": "#/$defs/uuid" },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 24 }
+      },
       "additionalProperties": false
     },
-    "vote": {
+    "round1Vote": {
       "type": "object",
       "required": ["roundDishId", "choice"],
-      "properties": {"roundDishId": {"$ref": "#/$defs/uuid"}, "choice": {"$ref": "#/$defs/choice"}},
+      "properties": {
+        "roundDishId": { "$ref": "#/$defs/uuid" },
+        "choice": { "enum": ["WANT", "OK", "NO"] }
+      },
+      "additionalProperties": false
+    },
+    "round2Vote": {
+      "type": "object",
+      "required": ["roundDishId", "choice"],
+      "properties": {
+        "roundDishId": { "$ref": "#/$defs/uuid" },
+        "choice": { "enum": ["KEEP", "REMOVE"] }
+      },
+      "additionalProperties": false
+    },
+    "createRequest": {
+      "type": "object",
+      "required": ["requestId", "displayName", "dishCount", "mealSlot", "cuisineIds", "categoryIds"],
+      "properties": {
+        "requestId": { "$ref": "#/$defs/requestId" },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 24 },
+        "dishCount": { "type": "integer", "minimum": 10, "maximum": 20 },
+        "mealSlot": { "$ref": "#/$defs/mealSlot" },
+        "cuisineIds": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/uuid" } },
+        "categoryIds": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/uuid" } }
+      },
+      "additionalProperties": false
+    },
+    "joinRequest": {
+      "type": "object",
+      "required": ["requestId", "code", "displayName"],
+      "properties": {
+        "requestId": { "$ref": "#/$defs/requestId" },
+        "code": { "type": "string", "minLength": 6, "maxLength": 6 },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 24 }
+      },
+      "additionalProperties": false
+    },
+    "snapshotRequest": {
+      "type": "object",
+      "required": ["roomId"],
+      "properties": { "roomId": { "$ref": "#/$defs/uuid" } },
+      "additionalProperties": false
+    },
+    "roomVersionRequest": {
+      "type": "object",
+      "required": ["requestId", "roomId", "expectedVersion"],
+      "properties": {
+        "requestId": { "$ref": "#/$defs/requestId" },
+        "roomId": { "$ref": "#/$defs/uuid" },
+        "expectedVersion": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "submitRequest": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["requestId", "roomId", "expectedVersion", "round", "poolVersion", "votes"],
+          "properties": {
+            "requestId": { "$ref": "#/$defs/requestId" },
+            "roomId": { "$ref": "#/$defs/uuid" },
+            "expectedVersion": { "type": "integer", "minimum": 1 },
+            "round": { "const": 1 },
+            "poolVersion": { "type": "integer", "minimum": 1 },
+            "votes": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/round1Vote" } }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["requestId", "roomId", "expectedVersion", "round", "poolVersion", "votes"],
+          "properties": {
+            "requestId": { "$ref": "#/$defs/requestId" },
+            "roomId": { "$ref": "#/$defs/uuid" },
+            "expectedVersion": { "type": "integer", "minimum": 1 },
+            "round": { "const": 2 },
+            "poolVersion": { "type": "integer", "minimum": 1 },
+            "votes": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/round2Vote" } }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "waitingRequest": {
+      "type": "object",
+      "required": ["requestId", "roomId", "expectedVersion", "round", "poolVersion"],
+      "properties": {
+        "requestId": { "$ref": "#/$defs/requestId" },
+        "roomId": { "$ref": "#/$defs/uuid" },
+        "expectedVersion": { "type": "integer", "minimum": 1 },
+        "round": { "type": "integer", "enum": [1, 2] },
+        "poolVersion": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "finalizeRequest": { "$ref": "#/$defs/roomVersionRequest" },
+    "requestEnvelope": {
+      "type": "object",
+      "required": ["command", "payload"],
+      "properties": { "command": { "$ref": "#/$defs/command" }, "payload": { "type": "object" } },
+      "additionalProperties": false,
+      "allOf": [
+        { "if": { "properties": { "command": { "const": "create" } } }, "then": { "properties": { "payload": { "$ref": "#/$defs/createRequest" } } } },
+        { "if": { "properties": { "command": { "const": "join" } } }, "then": { "properties": { "payload": { "$ref": "#/$defs/joinRequest" } } } },
+        { "if": { "properties": { "command": { "const": "snapshot" } } }, "then": { "properties": { "payload": { "$ref": "#/$defs/snapshotRequest" } } } },
+        { "if": { "properties": { "command": { "enum": ["start", "cancel", "leave"] } } }, "then": { "properties": { "payload": { "$ref": "#/$defs/roomVersionRequest" } } } },
+        { "if": { "properties": { "command": { "const": "submit" } } }, "then": { "properties": { "payload": { "$ref": "#/$defs/submitRequest" } } } },
+        { "if": { "properties": { "command": { "const": "waiting" } } }, "then": { "properties": { "payload": { "$ref": "#/$defs/waitingRequest" } } } },
+        { "if": { "properties": { "command": { "const": "finalize" } } }, "then": { "properties": { "payload": { "$ref": "#/$defs/finalizeRequest" } } } }
+      ]
+    },
+    "snapshot": {
+      "type": "object",
+      "required": ["contractVersion", "policyVersion", "catalogueVersion", "catalogueSha", "roomId", "code", "state", "version", "round", "poolVersion", "dishCount", "pool", "members", "submittedCount", "memberCount", "ownBallot", "ownWaiting", "waitingStartedAt", "deadline", "serverTime", "result"],
+      "properties": {
+        "contractVersion": { "const": "dish-session-v4/roadmap-v2/GM-07.A" },
+        "policyVersion": { "const": "dish-decision-v4/ADR-019-30PCT" },
+        "catalogueVersion": { "type": "string", "minLength": 1 },
+        "catalogueSha": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "roomId": { "$ref": "#/$defs/uuid" },
+        "code": { "type": "string", "minLength": 6, "maxLength": 6 },
+        "state": { "enum": ["LOBBY", "ROUND_1", "WAITING_1", "ROUND_2", "WAITING_2", "DECIDED", "NO_CONSENSUS", "CANCELLED"] },
+        "version": { "type": "integer", "minimum": 1 },
+        "round": { "type": "integer", "enum": [1, 2] },
+        "poolVersion": { "type": "integer", "minimum": 1 },
+        "dishCount": { "type": "integer", "minimum": 10, "maximum": 20 },
+        "pool": { "type": "array", "minItems": 10, "maxItems": 20, "items": { "$ref": "#/$defs/poolDish" } },
+        "members": { "type": "array", "minItems": 1, "maxItems": 20, "items": { "$ref": "#/$defs/member" } },
+        "submittedCount": { "type": "integer", "minimum": 0, "maximum": 20 },
+        "memberCount": { "type": "integer", "minimum": 1, "maximum": 20 },
+        "ownBallot": { "oneOf": [{ "type": "null" }, { "type": "array", "items": { "oneOf": [{ "$ref": "#/$defs/round1Vote" }, { "$ref": "#/$defs/round2Vote" }] } }] },
+        "ownWaiting": { "type": "boolean" },
+        "waitingStartedAt": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/timestamp" }] },
+        "deadline": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/timestamp" }] },
+        "serverTime": { "$ref": "#/$defs/timestamp" },
+        "result": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/terminalResult" }] }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        { "if": { "properties": { "state": { "const": "LOBBY" } } }, "then": { "properties": { "round": { "const": 1 }, "poolVersion": { "const": 1 }, "ownWaiting": { "const": false }, "waitingStartedAt": { "type": "null" }, "deadline": { "type": "null" }, "result": { "type": "null" } } } },
+        { "if": { "properties": { "round": { "const": 1 } } }, "then": { "properties": { "ownBallot": { "oneOf": [{ "type": "null" }, { "type": "array", "items": { "$ref": "#/$defs/round1Vote" } }] } } } },
+        { "if": { "properties": { "round": { "const": 2 } } }, "then": { "properties": { "ownBallot": { "oneOf": [{ "type": "null" }, { "type": "array", "items": { "$ref": "#/$defs/round2Vote" } }] } } } }
+      ]
+    },
+    "createAck": {
+      "type": "object",
+      "required": ["roomId", "code", "version", "expiresAt"],
+      "properties": { "roomId": { "$ref": "#/$defs/uuid" }, "code": { "type": "string", "minLength": 6, "maxLength": 6 }, "version": { "type": "integer", "minimum": 1 }, "expiresAt": { "$ref": "#/$defs/timestamp" } },
+      "additionalProperties": false
+    },
+    "joinAck": {
+      "type": "object",
+      "required": ["roomId", "code", "version", "memberId"],
+      "properties": { "roomId": { "$ref": "#/$defs/uuid" }, "code": { "type": "string", "minLength": 6, "maxLength": 6 }, "version": { "type": "integer", "minimum": 1 }, "memberId": { "$ref": "#/$defs/uuid" } },
+      "additionalProperties": false
+    },
+    "submitAck": {
+      "type": "object",
+      "required": ["accepted", "round", "poolVersion", "submittedAt"],
+      "properties": { "accepted": { "const": true }, "round": { "type": "integer", "enum": [1, 2] }, "poolVersion": { "type": "integer", "minimum": 1 }, "submittedAt": { "$ref": "#/$defs/timestamp" } },
+      "additionalProperties": false
+    },
+    "waitingAck": {
+      "type": "object",
+      "required": ["accepted", "round", "poolVersion", "waitingStartedAt", "deadline"],
+      "properties": { "accepted": { "const": true }, "round": { "type": "integer", "enum": [1, 2] }, "poolVersion": { "type": "integer", "minimum": 1 }, "waitingStartedAt": { "$ref": "#/$defs/timestamp" }, "deadline": { "$ref": "#/$defs/timestamp" } },
+      "additionalProperties": false
+    },
+    "finalizeAck": {
+      "type": "object",
+      "required": ["accepted", "state", "round", "resultId", "finalizedAt"],
+      "properties": { "accepted": { "const": true }, "state": { "enum": ["DECIDED", "NO_CONSENSUS"] }, "round": { "type": "integer", "enum": [1, 2] }, "resultId": { "$ref": "#/$defs/uuid" }, "finalizedAt": { "$ref": "#/$defs/timestamp" } },
       "additionalProperties": false
     },
     "terminalResult": {
       "type": "object",
       "required": ["resultId", "contractVersion", "policyVersion", "status", "round", "winner", "reasonCode", "finalizedAt"],
       "properties": {
-        "resultId": {"$ref": "#/$defs/uuid"},
-        "contractVersion": {"const": "dish-session-v4/roadmap-v2/GM-07.A"},
-        "policyVersion": {"const": "dish-decision-v4/ADR-019-30PCT"},
-        "status": {"enum": ["DECIDED", "NO_CONSENSUS"]},
-        "round": {"type": "integer", "enum": [1, 2]},
-        "winner": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/poolDish"}]},
-        "reasonCode": {"type": "string", "minLength": 1},
-        "finalizedAt": {"$ref": "#/$defs/timestamp"}
+        "resultId": { "$ref": "#/$defs/uuid" },
+        "contractVersion": { "const": "dish-session-v4/roadmap-v2/GM-07.A" },
+        "policyVersion": { "const": "dish-decision-v4/ADR-019-30PCT" },
+        "status": { "enum": ["DECIDED", "NO_CONSENSUS"] },
+        "round": { "type": "integer", "enum": [1, 2] },
+        "winner": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/poolDish" }] },
+        "reasonCode": { "enum": ["UNANIMOUS_WANT", "ACCEPTABLE_FINAL", "EMPTY_INTERSECTION", "ALL_REMOVED"] },
+        "finalizedAt": { "$ref": "#/$defs/timestamp" }
+      },
+      "additionalProperties": false
+    },
+    "voidAck": {
+      "type": "object",
+      "required": ["accepted"],
+      "properties": { "accepted": { "const": true } },
+      "additionalProperties": false
+    },
+    "successEnvelope": {
+      "type": "object",
+      "required": ["ok", "data"],
+      "properties": {
+        "ok": { "const": true },
+        "requestId": { "$ref": "#/$defs/requestId" },
+        "roomId": { "$ref": "#/$defs/uuid" },
+        "version": { "type": "integer", "minimum": 1 },
+        "state": { "type": "string" },
+        "data": { "oneOf": [{ "$ref": "#/$defs/snapshot" }, { "$ref": "#/$defs/createAck" }, { "$ref": "#/$defs/joinAck" }, { "$ref": "#/$defs/submitAck" }, { "$ref": "#/$defs/waitingAck" }, { "$ref": "#/$defs/finalizeAck" }, { "$ref": "#/$defs/terminalResult" }, { "$ref": "#/$defs/voidAck" }] }
+      },
+      "additionalProperties": false
+    },
+    "errorCode": { "enum": ["INVALID_INPUT", "UNSUPPORTED_FIELD", "AUTH_REQUIRED", "NOT_MEMBER", "NOT_HOST", "ROOM_NOT_FOUND", "ROOM_FULL", "ROOM_LOCKED", "ROOM_EXPIRED", "VERSION_CONFLICT", "REQUEST_ID_REUSED", "INCOMPLETE_BALLOT", "ROOM_TERMINAL", "INSUFFICIENT_DISHES", "RATE_LIMITED", "WORKER_NOT_READY"] },
+    "errorEnvelope": {
+      "type": "object",
+      "required": ["ok", "error"],
+      "properties": {
+        "ok": { "const": false },
+        "requestId": { "$ref": "#/$defs/requestId" },
+        "error": { "type": "object", "required": ["messageKey"], "properties": { "messageKey": { "$ref": "#/$defs/errorCode" }, "details": { "type": "object" } }, "additionalProperties": false }
       },
       "additionalProperties": false
     }
