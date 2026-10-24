@@ -1,5 +1,24 @@
 # Output checks — GM-07 / roadmap-v2
 
+## GM-07.A proposed contract supplement — 2026-10-24
+
+Baseline: `fdb03ea097ddea49a601fce2ac045d161bfc76a2`; draft artifact only. It
+does not replace the PR #104 baseline evidence below.
+
+| Case | Input / command | Expected | Actual | Result |
+| --- | --- | --- | --- | --- |
+| Contract identity | Read `DISH_SESSION_API_CONTRACT.md` against ADR-019, audit and follow-ups | New forward-only version; legacy v2/v3 unchanged | Draft marks `dish-session-v4/roadmap-v2/GM-07.A` and proposed policy ID; owner review pending | Pass (document consistency only) |
+| Snapshot DTO | Compare contract example and JSON Schema required fields | Includes independent poolVersion, catalogue identity, own-only state, server deadline and terminal | All listed in schema; `poolVersion` is not derived from `round` | Pass (schema artifact only) |
+| Create and vote semantics | Compare with ADR-019 and 2026-10-24 owner confirmation | Exact 10-20; no location; 30% round-2 cap with N=0/1 cases and KEEP-all valid | Contract records these rules; unsupported filters are rejected rather than ignored | Pass (document consistency only) |
+| ACK/waiting | Compare retry and waiting rules to follow-up package | ACK is historical; waiting starts only after valid complete-ballot transition; 60 seconds | Separate command and timestamp semantics documented | Pass (document consistency only) |
+| Top3/privacy | Check proposed response fields | No unreviewed score/rank/aggregate exposed | Top3/score omitted pending owner privacy/tie/group-size decision | Pending by design |
+| JSON syntax | `python -m json.tool docs/architecture/schemas/dish-session-v4.schema.json` | Valid JSON | Exit 0; schema parsed successfully | Pass (JSON syntax only; JSON Schema engine unavailable) |
+| Actual HTTP/schema roundtrip | New v4 runtime + real HTTP response drives next request | Pass only against implemented forward migration | Main implements v3; no v4 runtime/migration is present | Not run; downstream GM-18/19/20 |
+| Client/mock/screens | GM-07.A explicitly leaves consumers for later | No consumer changes in this contract-only supplement | No mobile files changed | N/A |
+
+The schema is a proposed artifact and does not establish runtime parity, endpoint
+deployment, privacy approval, or task acceptance.
+
 ## Follow-up patch on Trung's branch
 
 Tested code commit **`77941b56146969ec562063f7b7c9351f69d0b675`**, based on local `main` `3076c3deb2937223a007b82211a61a2d61b63c84`; branch `codex/gm-07-trung-verification`. The patch makes `createApiClient` require an explicit `real`/`mock` mode at both TypeScript and JavaScript runtime, rejects missing/undefined/null/invalid strings instead of choosing mock, and tests preservation of the loading mock's explicit 600 ms delay. It adds runtime coverage and updates the HANDOFF. This does not alter backend RPC behavior or production dependencies.
