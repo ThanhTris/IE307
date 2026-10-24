@@ -1,8 +1,10 @@
-# Rà soát UI đã chốt và kế hoạch đồng bộ Data–BE–UI
+# Đối chiếu báo cáo UI để chuẩn bị BE và Data
+
+> **Phạm vi Trí làm rõ ngày 2026-10-25:** chỉ cập nhật và giao BE/Data. Báo cáo UI dùng để hiểu yêu cầu đầu ra, không giao sửa FE. Các gói H/I/J và phần việc mobile/Places UI/Android/release bên dưới chỉ là tham chiếu hoãn; FE giữ như trước, chờ Figma chốt rồi Trí giao làm lại riêng. [Bảng phân công BE/Data hiện hành](BE_DATA_ONLY_SCOPE_2026-10-25.md) là nguồn thực thi của đợt này; GM-07 chưa sửa mobile client/mock.
 
 Ngày kiểm: **24/10/2026, 23:49 UTC+7**. Chủ dự án/reviewer cuối: Trí (`ThanhTris`).
 
-**Kết luận:** giữ cấu trúc dự án và mã/owner của các task. Cần hoàn thiện contract B, projection dữ liệu, policy/producer BE và consumer theo thứ tự artifact. UI đã có màn kết quả 1/2/3 món; không tạo lại các màn này. Hai thay đổi so với kế hoạch trước là hoãn Dark của đợt bổ sung UI và triển khai Places + Google Map ngay trong trang kết quả. Một thay đổi nghiệp vụ được Trí làm rõ tiếp trong cuộc trao đổi này: **vòng 2 vẫn cho quyết định loại/không loại khi chỉ còn một món; không tự chốt**.
+**Phần giao thực hiện hiện hành:** giữ cấu trúc BE/Data và mã/owner các task; hoàn thiện contract B, projection dữ liệu, policy/producer và consumer BE theo thứ tự artifact. Báo cáo UI chỉ mô tả dữ liệu/hành vi cần phục vụ; Figma và kế hoạch làm lại FE do Trí chốt ở đợt sau. Các đề xuất giao UI cũ trong tài liệu không còn là yêu cầu thực hiện của đợt này. Luật nghiệp vụ vẫn giữ: **vòng 2 cho quyết định loại/không loại khi chỉ còn một món; không tự chốt**.
 
 Tài liệu này là **báo cáo và kế hoạch**, chưa triển khai runtime, cài package, sửa migration, cập nhật task/PR/Project hoặc xác nhận nghiệm thu. Các trường wire mới nêu dưới đây là đề xuất để GM-07 chốt trong schema/DTO trước implementation.
 

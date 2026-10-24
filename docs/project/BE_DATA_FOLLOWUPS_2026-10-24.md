@@ -1,5 +1,7 @@
 # Phần việc bổ sung BE/Data — 2026-10-24
 
+> **Phạm vi Trí xác nhận lại ngày 2026-10-25:** chỉ giao BE/Data trong đợt này. UI/Figma là nguồn tham chiếu cho đầu ra server/dữ liệu. FE giữ như trước; chờ Trí chốt Figma và giao lại. Xem [phân công BE/Data hiện hành](BE_DATA_ONLY_SCOPE_2026-10-25.md); phần giao FE trong matrix/review plan được hoãn. GM-07 chỉ cập nhật contract/schema/DTO, mobile client/mock chưa thực hiện.
+
 > **Cập nhật hiện hành 2026-10-25:** Trí chốt lại rằng sau R1 chưa có winner, pool N>=1 luôn mở R2 thật, kể cả N=1. R2 cho người chơi quyết định REMOVE hoặc không; cap là `max(1,floor(.30*N))` với N=1..20; không auto-finalize, không tự ghi KEEP cho người chưa gửi. N=0 kết thúc `EMPTY_INTERSECTION` ở R1. Đồng thời Places + Google Map phải nằm trong màn kết quả cho winner; mở Google Maps chỉ là hành động bổ sung. Dark của UI supplement hoãn. Top 3/điểm/privacy theo [ADR-020](../architecture/decisions/ADR-020-public-top-three-result.md). Dùng [GM-07.B](../architecture/DISH_SESSION_API_CONTRACT_B.md), [bảng Figma–BE–Data–UI](FIGMA_BE_UI_DATA_ALIGNMENT_2026-10-24.md) và [review plan](UI_MAIN_SYNC_REVIEW_PLAN_2026-10-24.md) làm nguồn AC/thứ tự mới nhất. Các phát biểu N=1/Places/Dark bên dưới đã bị thay thế nếu không khớp phần cập nhật này. Không sửa runtime hoặc tự nghiệm thu chỉ bằng hồ sơ này.
 
 Trí chọn **tạo PR yêu cầu bổ sung để người đang phụ trách làm tiếp**, chưa code các phần thiếu.

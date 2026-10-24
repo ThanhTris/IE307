@@ -1,5 +1,7 @@
 # Figma–BE–Data–UI alignment and task follow-ups — 2026-10-24
 
+> **Owner scope correction — 2026-10-25:** only BE/Data follow-ups are assigned in the current iteration. Figma/UI observations below are input requirements for API/data, not authorization to change FE. The FE rows, foundation/theme/font work, mobile consumers, in-app Places UI, Android and release work below are deferred references. Preserve previous FE tasks/status/owners/deadlines until Trí finalizes Figma and explicitly assigns the rebuild. See [current BE/Data scope and owners](BE_DATA_ONLY_SCOPE_2026-10-25.md). GM-07 currently covers shared wire contract/schema/DTO only; mobile client/mock implementation is deferred.
+
 This is the current implementation handoff for the product-owner decisions recorded on 2026-10-24. It supersedes the earlier “Top 3 pending” notes in [the BE/Data audit](BE_DATA_AUDIT_2026-10-24.md), [BE/Data follow-ups](BE_DATA_FOLLOWUPS_2026-10-24.md), and GM-07.A proposal where they conflict. GM-07.A remains an immutable historical draft; GM-07.B is the active proposed contract for new sessions.
 
 - Figma file: [Gì Cũng Được](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j).
@@ -47,7 +49,7 @@ GM-40/06 must supply a locked card with stable dish identity, labels/IDs, meal s
 
 ## Task-by-task supplement (existing IDs and owners)
 
-All owners below match Project #2 at inspection time. Preserve the primary Status, assignee and Deadline; use the Project’s **Follow-up** field for this new work. Do not add a new task or numeric dependency that points backward. Baseline acceptance remains intact; follow-up acceptance is separate. PR #132 / GM-07.A is not runtime evidence.
+All owners below match Project #2 at inspection time. Only the BE/Data rows are active under the scope correction above. Preserve the primary Status, assignee and Deadline; use **Follow-up** for active BE/Data supplements on accepted baselines, not for deferred FE work. Do not add a new task or numeric dependency that points backward. Baseline acceptance remains intact; follow-up acceptance is separate. PR #132 / GM-07.A is not runtime evidence.
 
 | Task / owner | Supplement deliverable and acceptance |
 |---|---|
@@ -66,18 +68,19 @@ All owners below match Project #2 at inspection time. Preserve the primary Statu
 | GM-26/27 — Trang | Use v4.B live ballot/ACK/refetch and server result. A one-item R2 remains an actual ballot. Result screen integrates Places-backed restaurant/map search for the winner; opening Google Maps is supplementary; permission denied offers permission or Maps; provider failure never changes winner. |
 | GM-28/29/31 — Trung | History, inbox/push route, cache/outbox and reconnect use result IDs and current snapshot; no duplicate submit/notification or private payload. Keep push native limits and device evidence separate. |
 | GM-30 — Trang | Join links/QR preview are minimal and race-safe. Integrate an in-app Places-backed list/map for the winning dish on result; Google Maps link is supplementary. Define provider configuration/key handling, attribution, permission fallback, loading/empty/error/quota states, and ensure Places failure cannot change the winner. |
-| GM-03 — Trí; GM-32/33 — Vinh; GM-34 — Trí | QA/release matrices separate schema fixtures, actual HTTP, Expo/mobile and Android. Report contract/schema/data hashes and Not run accurately; new API/mobile gaps remain assigned to their owning task. |
+| GM-03 — Trí; GM-32 — Vinh | Active BE/Data QA: authenticated Auth+REST environment/worker, ledger and artifact hashes, actual API/Data/security/race assertions. Record schema fixtures separately from deployed API proof. |
+| GM-33 — Vinh; GM-34 — Trí | Deferred Android/release reference: FE scope and execution will be assigned after Trí finalizes Figma. Existing tasks/statuses remain unchanged. |
 
 ## Ordered delivery and handoff gates
 
 These are artifact gates, not newly-added backward task dependencies. Independent rows may be developed in parallel after their listed artifact exists.
 
-1. **Contract/design** — GM-07 B and this matrix are reviewed; Trang finishes design states in GM-39. Upstream consumers use exact contract B/schema hash.
-2. **Data/storage + UI foundation** — GM-40/06 define projection and migration plan; GM-02/05 align approved tokens/font. Data work and foundation work can run in parallel. Storage must have forward migration and old-version preservation plan before engine persistence.
+1. **BE/Data contract** — Review GM-07 B, wire examples and Data projection together. Upstream consumers use the exact contract B/schema hash. Figma states remain reference input; no GM-39 design work is assigned by this iteration.
+2. **Data/storage** — GM-40/06 define projection and migration plan. Storage must have a forward migration and old-version preservation plan before engine persistence. The previous GM-02/05 theme/font proposal is deferred; it is not parallel work assigned in this iteration.
 3. **BE producers** — GM-18/19 implement pool/lifecycle; GM-15/20 implement deterministic ranking/result after contract and projection. The pool branch may run alongside the engine branch once contracts are reviewed; Vinh does GM-40 before the part of GM-15/20 that consumes the projection.
 4. **Privacy and consumers** — GM-17 reviews ACL/storage; GM-21 history and GM-22/23 events consume the persisted result seam. Social/event and history may proceed in parallel once the terminal DTO and ACL rules are stable.
-5. **UI integration** — GM-09..14 update their assigned screens after GM-39 design handoff; GM-24..31 consume only reviewed producer versions. Figma/HTML evidence does not substitute for app/API checks.
-6. **QA/release** — GM-32 API/data/security/race, GM-33 mobile/Android and GM-34 release use merged producer artifacts. No Test/Done claim from schema-only or mock-only execution.
+5. **BE/Data QA** — GM-32 API/data/security/race uses merged/deployed producer artifacts and GM-03 QA setup. No Test/Done claim from schema-only or mock-only execution.
+6. **Deferred FE/Android/release** — Trí will finalize Figma and assign the FE rebuild separately. This matrix does not assign screen, mobile integration, theme/font, Android or release changes now.
 
 If a producer is not merged yet, a consumer may prepare independent layout/mapping but must not hardcode its output or merge integrated code until that version is available. Do not make GM-03, GM-06, GM-07, GM-18/19 or GM-20 depend numerically on later GM-40; record the concrete manifest/schema/version in HANDOFF instead.
 
