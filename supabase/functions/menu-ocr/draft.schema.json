@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": {
+      "const": "food-v1/roadmap-v2/GM-36.1"
+    },
+    "foodContractVersion": {
+      "const": "1.1.0"
+    },
+    "providerMode": {
+      "enum": [
+        "on-device",
+        "test-double"
+      ]
+    },
+    "reviewStatus": {
+      "const": "draft"
+    },
+    "publishable": {
+      "const": false
+    },
+    "sourceRef": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
+    },
+    "sourceRightsVerified": {
+      "const": false
+    },
+    "venueId": {
+      "const": null
+    },
+    "coverageId": {
+      "const": null
+    },
+    "scheduleId": {
+      "const": null
+    },
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "priceMin": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 1000000000
+          },
+          "priceMax": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 1000000000
+          },
+          "currency": {
+            "enum": [
+              "VND",
+              null
+            ]
+          },
+          "unit": {
+            "enum": [
+              "portion",
+              "item",
+              "person",
+              "group",
+              "kg",
+              "menu_item_unspecified",
+              null
+            ]
+          },
+          "sourceRef": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
+          },
+          "fieldSources": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "menu": {
+                "type": "string",
+                "pattern": "^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
+              },
+              "price": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
+                  },
+                  {
+                    "const": null
+                  }
+                ]
+              }
+            },
+            "required": [
+              "menu",
+              "price"
+            ]
+          },
+          "confidence": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 1
+              },
+              "price": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 1
+              }
+            },
+            "required": [
+              "name",
+              "price"
+            ]
+          },
+          "issues": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "HUMAN_REVIEW_REQUIRED",
+                "NAME_UNKNOWN_OR_LOW_CONFIDENCE",
+                "PRICE_UNKNOWN_OR_AMBIGUOUS",
+                "PRICE_LOW_CONFIDENCE",
+                "CURRENCY_UNKNOWN",
+                "UNIT_UNKNOWN"
+              ]
+            }
+          },
+          "reviewStatus": {
+            "const": "draft"
+          }
+        },
+        "required": [
+          "name",
+          "priceMin",
+          "priceMax",
+          "currency",
+          "unit",
+          "sourceRef",
+          "fieldSources",
+          "confidence",
+          "issues",
+          "reviewStatus"
+        ]
+      }
+    }
+  },
+  "required": [
+    "contractVersion",
+    "foodContractVersion",
+    "providerMode",
+    "reviewStatus",
+    "publishable",
+    "sourceRef",
+    "sourceRightsVerified",
+    "venueId",
+    "coverageId",
+    "scheduleId",
+    "items"
+  ]
+}
