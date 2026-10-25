@@ -172,17 +172,31 @@ def build() -> dict:
         {"if": {"properties": {"command": {"const": "updateSettings"}}}, "then": {"properties": {"payload": {"$ref": "#/$defs/updateSettingsRequest"}}}},
         {"if": {"properties": {"command": {"const": "updatePreferences"}}}, "then": {"properties": {"payload": {"$ref": "#/$defs/updatePreferencesRequest"}}}},
     ])
-    defs["snapshot"]["required"].extend(["hostUserId", "settings", "ownPreferences", "removalCap", "expiresAt"])
+    defs["snapshot"]["required"].extend(["hostUserId", "settings", "ownPreferences", "removalCap", "expiresAt", "canEndWaiting"])
     defs["snapshot"]["properties"].update({
         "hostUserId": {"$ref": "#/$defs/uuid"},
         "settings": {"$ref": "#/$defs/roomSettings"},
         "ownPreferences": {"$ref": "#/$defs/softPreferences"},
         "removalCap": {"type": ["integer", "null"], "minimum": 0, "maximum": 6},
         "expiresAt": {"$ref": "#/$defs/timestamp"},
+        "canEndWaiting": {
+            "type": "boolean",
+            "description": "True only for the host while this round is waiting and submittedCount > memberCount / 2; the server rechecks the action.",
+        },
     })
+    defs["snapshot"]["properties"]["submittedCount"]["description"] = (
+        "Complete ballots accepted and ACKed by the server for this snapshot's current round only."
+    )
+    defs["snapshot"]["properties"]["memberCount"]["description"] = (
+        "Locked started-session roster size including the host; not online presence and not reduced by disconnects."
+    )
     defs["snapshot"]["allOf"].append({
         "if": {"properties": {"state": {"enum": ["ROUND_2", "WAITING_2"]}}},
         "then": {"properties": {"removalCap": {"type": "integer", "minimum": 1, "maximum": 6}}},
+    })
+    defs["snapshot"]["allOf"].append({
+        "if": {"properties": {"state": {"enum": ["LOBBY", "ROUND_1", "ROUND_2", "DECIDED", "NO_CONSENSUS", "CANCELLED"]}}},
+        "then": {"properties": {"canEndWaiting": {"const": False}}},
     })
     defs["previewJoinAck"] = {
         "type": "object", "required": ["joinable", "memberCount", "memberLimit", "dishCount", "mealSlot", "roomState"],
@@ -242,6 +256,11 @@ def build() -> dict:
             "not": {"properties": {"topDishes": {"contains": {"properties": {"isWinner": {"const": True}}, "required": ["isWinner"]}, "minContains": 2}}},
         },
     })
+    if "NOT_READY" not in defs["errorCode"]["enum"]:
+        defs["errorCode"]["enum"].append("NOT_READY")
+    defs["errorCode"]["description"] = (
+        "NOT_READY rejects a manual host early-end request before the current-round strict-majority gate is met."
+    )
     result["allOf"].append({
         "if": {"properties": {"status": {"const": "NO_CONSENSUS"}}, "required": ["status"]},
         "then": {"properties": {"topDishes": {"maxItems": 0}}},

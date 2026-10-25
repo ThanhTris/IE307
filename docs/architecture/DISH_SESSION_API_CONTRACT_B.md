@@ -36,6 +36,8 @@ The v4.B snapshot extends A with:
 
 The server remains authoritative for `version`, `poolVersion`, timer, ACK status, round transition, terminal reason, scores and ranks. Keep `ownBallot`/`ownWaiting` caller-private; do not add other members' ballot details.
 
+For a started session, snapshot `submittedCount` is `A_r`: complete ballots accepted and ACKed by the server for the snapshot's current round only. `memberCount` is `M`, the locked roster size including the host; it is not an online-presence count and never shrinks on disconnect. `canEndWaiting` is caller-specific and true only for the host while the current round is in active waiting and `A_r > M/2`. It is an availability projection, not an authorization token; the write path rechecks host, current round/version, active waiting, and quorum under the transaction lock. A rejected manual early-end request uses the normal error envelope with `messageKey=NOT_READY`. No R1 ACK contributes to R2's `A_r`.
+
 ## Locked dish-card projection
 
 Each `poolDish` preserves the stable `dishId` and `roundDishId` and may include nullable `description`, cuisine/category IDs and display labels, meal slots, known temperature/flavor labels, `artwork` (`uri`, `altText`, optional attribution) and one `priceReference` (`amount`, `currency`, `unit`, required source/time, optional serving size). Unknown fields are explicit `null` or empty arrays; no missing price becomes zero and no missing artwork gets an invented URL. UI uses its approved fallback. Artwork can enter a public projection only after GM-40 verifies display/use rights; an unlicensed or unknown-rights image stays null. Price keeps its observed unit and provenance. Result/history cards use the locked projection, never the current catalogue.
