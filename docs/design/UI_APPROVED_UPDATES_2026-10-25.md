@@ -1,5 +1,7 @@
 # Cập nhật Figma theo sáu UI đề xuất đã duyệt — 2026-10-25
 
+> **Trạng thái hiện hành:** Trí đã chốt bộ UI sau các cập nhật; dùng các node dưới đây làm đầu vào BE/Data và implementation. Việc này không ghi approval thay Trí cho code/runtime. Các dòng bên dưới nói GitHub issue/Project chưa được sửa là snapshot tại thời điểm lập báo cáo; task body đã được đồng bộ sau đó theo handoff hiện hành.
+
 > Sau lượt rà cuối, Trí xác nhận không cần các đề xuất bổ sung tiếp. [Phạm vi UI hiện tại đã chốt để rà BE/Data](UI_SCOPE_CONFIRMED_2026-10-25.md). Các ghi chú auth/mapping bên dưới không tự mở thêm điều kiện thiếu frame.
 
 Trí đã xem sáu màn đề xuất và yêu cầu cập nhật Figma, sắp xếp đúng quy trình. Đã áp dụng U01–U05 tại file `3Ysh0mOAEkAgA5DgZPSC1j` bằng layer chỉnh sửa được; màn chạy ở `33:2`, component ở `8:2`. Giữ ID các màn hiện có và đúng 12 điểm bắt đầu prototype. Không nhập ảnh AI làm UI, không sửa code app/API/DB, không commit/push hoặc đổi Project status/owner/deadline.

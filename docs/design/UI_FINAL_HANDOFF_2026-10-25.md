@@ -38,7 +38,7 @@ Các trạng thái lỗi/chờ đã thể hiện rõ trong luồng cốt lõi g�
 
 ## Trạng thái phụ chưa có màn riêng tại thời điểm rà ban đầu
 
-Cập nhật tiếp ngày 25/10: 12 frame G01–G05 đã được dựng trên trang 03 và kiểm ảnh. Xem [bổ sung G01–G05](UI_GAPS_FIGMA_UPDATE_2026-10-25.md) và task map. Danh sách thiếu bên dưới phản ánh thời điểm rà ban đầu; không còn là hiện trạng frame. Bổ sung còn chờ Trí review cuối, Present và runtime chưa chạy trong lượt này.
+Cập nhật tiếp ngày 25/10: 12 frame G01–G05 đã được dựng trên trang 03 và kiểm ảnh. Xem [bổ sung G01–G05](UI_GAPS_FIGMA_UPDATE_2026-10-25.md) và task map. Danh sách thiếu bên dưới phản ánh thời điểm rà ban đầu; không còn là hiện trạng frame. Trí xác nhận bộ UI hoàn tất để chuyển sang đồng bộ BE/Data. Prototype Present/runtime vẫn là kiểm tra riêng và chưa được xác nhận Pass bởi handoff này.
 
 Rà soát không thấy frame riêng cho các trạng thái sau ở các khu vực ngoài luồng chọn món:
 

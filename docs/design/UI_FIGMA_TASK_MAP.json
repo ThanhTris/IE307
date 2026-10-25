@@ -239,15 +239,15 @@
       "scope": [
         "Dựng bạn bè, tìm trong danh sách hiện có, thêm bằng mã, lời mời, inbox và history DECIDED/NO_CONSENSUS theo Figma; không giả trạng thái online.",
         "Dựng Cá nhân khách và cài đặt cỡ chữ/nút thay gesture/consent/xóa lịch sử bằng mock; luồng tài khoản thật vẫn thuộc GM-35/P1.",
-        "Bổ sung Figma và mock cho G01–G03: tìm bạn loading/empty/error, inbox empty/error, lịch sử lỗi tải/offline. Dùng pattern GM-05 nếu phù hợp và ghi node mới vào map.",
+        "Dùng 8 frame G01–G03 đã có trong task map để dựng mock states; không tạo lại frame hoặc chờ bổ sung Figma.",
         "G01 loading giữ truy vấn; empty cho sửa truy vấn; error giữ truy vấn và retry, không tự gửi lời mời.",
         "G02 là inbox thông báo, không phải lời mời vào phòng; empty có điều hướng hợp lý, error có retry và giữ màn.",
         "G03 lỗi tải đầu có retry; offline có cache hiển thị fetchedAt/stale; offline không cache có lỗi/retry. Không tạo/xóa lịch sử cục bộ giả."
       ],
       "ac": [
         "Expo mở được từng màn và tương tác confirm/retry/empty/error/consent/delete. Mock không xin push hoặc gọi provider thật.",
-        "G01–G03 có frame hoặc variant Figma trước nghiệm thu; lịch sử legacy ẩn điểm/Top 3 thiếu và tôn trọng ACL.",
-        "G01–G03 đã có 8 frame thiết kế; nghiệm thu cần Trí review node/evidence và implementation đúng scope."
+        "Dựng đúng G01–G03 theo node map; lịch sử legacy ẩn điểm/Top 3 thiếu và tôn trọng ACL.",
+        "Các frame G01–G03 đã hoàn tất theo xác nhận scope của Trí; nghiệm thu implementation vẫn theo task/reviewer và evidence runtime riêng."
       ],
       "issue": 75,
       "owner": [
@@ -274,7 +274,8 @@
       "scope": [
         "Thay điều kiện location/coverage bắt buộc bằng setup và preview catalogue dish-only. Nhận số món 10–20 và ưu tiên mềm; không lọc pool bằng GPS/quán/giờ bán.",
         "Nối discovery/preview đã version: shortage có available/requested, chỉ giảm sau host xác nhận ≥10. Sửa tham số làm preview cũ hết hiệu lực; chặn response cũ khi pending.",
-        "Giữ nháp khi lỗi/retry. Preview chưa tạo phòng; GM-25 nối create/join/update. Location legacy tách riêng, quyền vị trí sau kết quả thuộc GM-30."
+        "Giữ nháp khi lỗi/retry. Preview chưa tạo phòng; GM-25 nối create/join/update. Location legacy tách riêng, quyền vị trí sau kết quả thuộc GM-30.",
+        "Nạp và lưu preference mặc định theo tài khoản của caller; snapshot theo phòng, raw choice chỉ chính chủ đọc. Ranking nâng cao không chặn luồng chính."
       ],
       "ac": [
         "Android gọi API thật: exact count, shortage, available<10, sửa khi pending, response cũ, offline/retry và giờ quá hạn.",
@@ -305,7 +306,8 @@
       "scope": [
         "Nối guest create/restore/refresh/logout GM-16 vào entry rồi Home, tạo phòng, preview/confirm join, settings, khẩu vị và lobby.",
         "Consumer UI nhận schema/DTO đã duyệt từ GM-07; triển khai parser/adapter riêng cho version mới, không coi response v3 là B hoặc tự fallback mock khi lỗi.",
-        "Snapshot điều khiển host/settings/khẩu vị/poolVersion/receipt/expiry; tối đa 20 người, không ready, host start. Reconnect đi theo phase server, trước join chỉ hiện số thành viên."
+        "Snapshot điều khiển host/settings/khẩu vị/poolVersion/receipt/expiry; tối đa 20 người, không ready, host start. Reconnect đi theo phase server, trước join chỉ hiện số thành viên.",
+        "Nạp preference mặc định của caller từ tài khoản và lưu lựa chọn caller; snapshot phòng không trả raw preference cho người khác. Ranking nâng cao không chặn core flow."
       ],
       "ac": [
         "Android Auth+REST thật: create → preview join → join → sửa lobby → start → snapshot, với hai identity.",
@@ -363,7 +365,7 @@
       "scope": [
         "Đọc resultId/winner/topDishes/score/rank/projection/version canonical từ GM-20; giữ thứ tự đã lưu, không tự tính điểm/tie-break.",
         "NO_CONSENSUS và legacy nullable đúng shape; refetch/cache/history theo ACL, không dùng catalogue mới để thay kết quả cũ.",
-        "Ghép phần Places/map GM-13 với capability GM-30. Có thể kiểm result trước bằng mock Places có nhãn; phần Places thật chờ GM-30 và được kiểm ghép ở GM-33."
+        "Ghép Google Places được gọi trực tiếp từ app qua GM-30 cho món thắng; không backend proxy. Có thể kiểm result trước bằng mock Places có nhãn; phần Places thật được kiểm ghép ở GM-33. Permission/quota/provider error không đổi canonical winner."
       ],
       "ac": [
         "Kiểm Top 1/2/3 và đồng hạng, malformed/thiếu field mới báo lỗi contract, legacy ẩn trường thiếu.",
@@ -454,12 +456,12 @@
       ],
       "scope": [
         "QR/camera/manual/incoming link có allowlist, restore auth và preview/confirm; không auto-join hoặc hiện tên trước join.",
-        "Sở hữu adapter Places, map thật và quyền vị trí trên màn kết quả cho winner. Location chỉ dùng sau kết quả; khi chưa cấp quyền hiện xin quyền hoặc mở Maps.",
-        "Provider/config/permission đúng scope; marker/list dùng response thật, không quán/khoảng cách mẫu. Mất map/Places không đổi winner; Maps/copy fallback là hỗ trợ."
+        "Sở hữu Google Places client integration, map thật và quyền vị trí trên màn kết quả cho winner. Google Places gọi trực tiếp từ app, không backend proxy. Location chỉ dùng sau kết quả; khi chưa cấp quyền hiện xin quyền hoặc mở Maps.",
+        "Cấu hình key theo môi trường/restrictions, attribution, quota và permission; marker/list dùng response thật, không quán/khoảng cách mẫu. Mất map/Places không đổi winner; Maps/copy fallback là hỗ trợ. Native dependency/build theo dependency review."
       ],
       "ac": [
         "Android kiểm QR grant/deny/manual/invalid/duplicate/full/expired và cold/warm link.",
-        "Places/map loading/empty/error/permission có evidence thật hoặc Not run rõ. Không coi search URL là dữ liệu nơi bán được xác minh."
+        "Google Places gọi trực tiếp từ app; config/key restrictions, attribution, quota, loading/empty/error/permission có evidence thật hoặc Not run rõ. Không coi search URL là dữ liệu nơi bán được xác minh."
       ],
       "issue": 91,
       "owner": [
@@ -518,7 +520,7 @@
       "scope": [
         "Lập ma trận từng task/node/state, đối chiếu Figma với app cùng viewport/font/data/role bằng ảnh cạnh nhau hoặc overlay.",
         "Kiểm luồng guest → create/join → lobby → R1/ACK/wait → R2 → Top 3 → history/inbox; phân biệt UI-MOCK, API-only, Android-API và native.",
-        "Kiểm 320/360/412dp, chữ 200%, TalkBack, reduced motion, bàn phím/Back/safe area, 10–20 món và nhóm tối đa 20. P1 và Dark redesign vẫn hoãn."
+        "Kiểm 320/360/412dp, chữ 200%, TalkBack, reduced motion, bàn phím/Back/safe area, 10–20 món và nhóm tối đa 20. Kiểm preference owner-only, ranking không chặn core flow, price timestamp/null/tie, Google Places direct app sau winner. P1 và Dark redesign vẫn hoãn."
       ],
       "ac": [
         "Có ảnh Figma/app, revision thiết kế/commit/build/device, input/expected/actual/assertion cho từng case.",
@@ -571,7 +573,7 @@
       ],
       "scope": [
         "Giữ P1 làm sau core; triển khai login/register/email verify/recovery/link account/profile/password/logout theo Figma khi đến task.",
-        "Bổ sung Figma G04–G05: lỗi lưu hồ sơ/đổi mật khẩu, pending/retry; giữ input phù hợp và không log trường bí mật.",
+        "Dùng 4 frame G04–G05 đã có trong task map để dựng pending/retry; không tạo lại frame hoặc chờ bổ sung Figma.",
         "G04 lỗi mạng/server giữ màn và giá trị hồ sơ để sửa/retry; chỉ báo thành công sau ACK.",
         "G05 lỗi mạng/server giữ màn và lỗi có retry nhưng xóa mọi ô mật khẩu hiện tại/mới/xác nhận để nhập lại; validation cục bộ có thể giữ form để sửa field. Không log/cache password.",
         "Provider/session identity/conflict/chuyển guest/history ACL theo upstream; có màn thiết kế không đồng nghĩa provider đã triển khai."
@@ -579,7 +581,7 @@
       "ac": [
         "Frame lỗi G04–G05 gắn với case; kiểm auth/provider và Android đúng scope, mất mạng/invalid code/conflict/recovery.",
         "Thiếu provider ghi Not run; không nâng P1 chỉ vì Figma đã có màn.",
-        "G04–G05 đã có 4 frame state; nghiệm thu cần Trí review node/evidence và implementation đúng scope."
+        "Các frame G04–G05 đã hoàn tất theo xác nhận scope của Trí; nghiệm thu implementation vẫn theo task/reviewer và evidence runtime riêng."
       ],
       "issue": 96,
       "owner": [
@@ -605,12 +607,12 @@
       ],
       "scope": [
         "Figma final handoff là nguồn thiết kế hiện hành; HTML cũ giữ làm tham chiếu, không yêu cầu sửa HTML để mở task app.",
-        "Quản lý task → frame/component → code → case và revision/ngày review. Hỗ trợ owner GM-14/35 bổ sung G01–G05; Trí review thiết kế bổ sung.",
+        "Quản lý task → frame/component → code → case và revision/ngày review. Hỗ trợ consistency giữa UI đã chốt, task map và parity evidence; không giao vẽ lại G01–G05.",
         "Kiểm đồng hạng, CTA tương phản, privacy join, legacy history; giữ router QA/frame cũ ngoài luồng sản phẩm. Design handoff làm độc lập, không thêm dependency GM-39 vào task số nhỏ."
       ],
       "ac": [
         "Node/link đọc được qua Figma MCP và bấm được; inventory/page/state, ảnh và gap log khớp thiết kế.",
-        "Mỗi gap có task/owner/status/frame hoặc Pending. Chưa vẽ thì không ghi đã xong; nghiệm thu thiết kế không thay Expo/API."
+        "G01–G05 có frame thật và owner-confirmed complete cho scope hiện tại; gap mới nếu phát hiện vẫn cần task/owner/frame. Nghiệm thu thiết kế không thay Expo/API."
       ],
       "issue": 107,
       "owner": [
@@ -633,7 +635,7 @@
         "GM-28"
       ],
       "owner": "TrungNQ2645",
-      "status": "Designed — pending final review",
+      "status": "Designed — owner-confirmed complete for current scope; implementation review remains separate",
       "screenNodeId": "801:9510",
       "noteNodeId": "664:94",
       "noteUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-94",
@@ -641,7 +643,7 @@
         "Loading giữ truy vấn.",
         "Empty nêu không có kết quả và cho sửa truy vấn.",
         "Error giữ truy vấn, có retry; không tự gửi lời mời hoặc tạo quan hệ bạn bè.",
-        "GM-14/TrungNQ2645 thêm frame; GM-28 nối API và bảo đảm retry không nhân đôi mutation."
+        "Frame đã có; GM-28 nối API và bảo đảm retry không nhân đôi mutation."
       ],
       "screens": [
         {
@@ -672,14 +674,14 @@
         "GM-28"
       ],
       "owner": "TrungNQ2645",
-      "status": "Designed — pending final review",
+      "status": "Designed — owner-confirmed complete for current scope; implementation review remains separate",
       "screenNodeId": "801:9627",
       "noteNodeId": "664:97",
       "noteUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-97",
       "gapRequirements": [
         "Inbox là hộp thư thông báo, không phải lời mời vào phòng.",
         "Empty có điều hướng hợp lý; error giữ màn và có retry.",
-        "GM-14/TrungNQ2645 thêm frame; GM-28 refetch dữ liệu canonical dưới ACL."
+        "Frame đã có; GM-28 refetch dữ liệu canonical dưới ACL."
       ],
       "screens": [
         {
@@ -706,14 +708,14 @@
         "GM-31"
       ],
       "owner": "TrungNQ2645",
-      "status": "Designed — pending final review",
+      "status": "Designed — owner-confirmed complete for current scope; implementation review remains separate",
       "screenNodeId": "801:9695",
       "noteNodeId": "664:100",
       "noteUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-100",
       "gapRequirements": [
         "Lỗi tải đầu có retry; offline có cache hiện fetchedAt/stale; offline không cache báo lỗi và retry khi có mạng.",
         "Cache không tạo/xóa history; consent/ACL/revoke/delete/TTL luôn có hiệu lực.",
-        "GM-14/TrungNQ2645 thêm frame; GM-28 cung cấp history canonical, GM-31 quản lý cache riêng tư."
+        "Frame đã có; GM-28 cung cấp history canonical, GM-31 quản lý cache riêng tư."
       ],
       "screens": [
         {
@@ -744,14 +746,14 @@
         "GM-35"
       ],
       "owner": "mtuan2491",
-      "status": "Designed — pending final review",
+      "status": "Designed — owner-confirmed complete for current scope; implementation review remains separate",
       "screenNodeId": "801:9899",
       "noteNodeId": "664:103",
       "noteUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-103",
       "gapRequirements": [
         "Pending chặn submit lặp; chỉ báo lưu sau ACK.",
         "Lỗi mạng/server giữ màn và giá trị profile, có retry/chỉnh sửa; không báo thành công cục bộ.",
-        "GM-35/mtuan2491 thêm frame; semantics xung đột profile theo provider/server handoff."
+        "Frame đã có; semantics xung đột profile theo provider/server handoff."
       ],
       "screens": [
         {
@@ -777,14 +779,14 @@
         "GM-35"
       ],
       "owner": "mtuan2491",
-      "status": "Designed — pending final review",
+      "status": "Designed — owner-confirmed complete for current scope; implementation review remains separate",
       "screenNodeId": "801:9991",
       "noteNodeId": "664:106",
       "noteUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-106",
       "gapRequirements": [
         "Pending chặn submit lặp.",
         "Lỗi mạng/server giữ màn và lỗi có retry nhưng xóa mọi ô password để nhập lại; validation cục bộ có thể giữ form để sửa field. Không log/cache password.",
-        "GM-35/mtuan2491 thêm frame; provider/session invalidation theo auth contract đã bàn giao."
+        "Frame đã có; provider/session invalidation theo auth contract đã bàn giao."
       ],
       "screens": [
         {
@@ -4046,7 +4048,7 @@
       "998:1775"
     ],
     "report": "docs/design/UI_GAPS_FIGMA_UPDATE_2026-10-25.md",
-    "review": "Pending Trí review; no task approval or runtime acceptance"
+    "review": "Trí confirmed UI scope complete for BE/Data alignment; no implementation approval or runtime acceptance"
   },
   "approvedUiUpdate": {
     "date": "2026-10-25",
@@ -4061,7 +4063,7 @@
       "notifications": "330:3079",
       "home": "330:3067"
     },
-    "visualReview": "Screens and workflow rows reviewed; awaiting Trí final review",
+    "visualReview": "UI scope confirmed complete by Trí for BE/Data alignment; implementation review and prototype validation remain separate",
     "prototypeValidation": "Not run",
     "report": "docs/design/UI_APPROVED_UPDATES_2026-10-25.md"
   },

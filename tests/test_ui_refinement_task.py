@@ -45,7 +45,7 @@ class UiRefinementTaskTests(unittest.TestCase):
         self.assertEqual(self.entry['verification']['mode'], 'figma-handoff')
         for value in self.entry['verification'].values():
             self.assertIn(value, self.text)
-        for requirement in ('Figma MCP', 'screenshot', 'Pending design',
+        for requirement in ('Figma MCP', 'screenshot',
                             'Trí review', 'không là dependency ngược'):
             self.assertIn(requirement, self.text)
 
@@ -60,7 +60,7 @@ class UiRefinementTaskTests(unittest.TestCase):
         # Supplemental designs have real frames; this does not approve runtime.
         screen_ids = set()
         for gap in mapping['gaps']:
-            self.assertEqual(gap['status'], 'Designed — pending final review')
+            self.assertIn('owner-confirmed complete', gap['status'])
             self.assertEqual(gap['screenNodeId'], gap['screens'][0]['nodeId'])
             self.assertEqual(gap['prototypeValidation'], 'Not run')
             for screen in gap['screens']:

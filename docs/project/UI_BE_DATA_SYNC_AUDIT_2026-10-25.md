@@ -1,5 +1,7 @@
 # Đối chiếu hội thoại FE với Data và BE trên main — 2026-10-25
 
+> **Lưu ý về phạm vi hiện hành:** nội dung này là audit runtime/source trước khi Trí xác nhận UI hoàn tất. Dùng [handoff đồng bộ UI–BE–Data hiện hành](UI_BE_DATA_SYNC_HANDOFF_2026-10-25.md) và [scope UI đã chốt](../design/UI_SCOPE_CONFIRMED_2026-10-25.md) làm căn cứ giao task. Các câu “chờ Figma/review rồi mới rà BE/Data” bên dưới là ghi nhận lịch sử, không còn là gate. Trí đã chọn Google Places gọi trực tiếp từ app; preference ranking nâng cao không chặn luồng chính; giá lấy observation mới nhất theo thời gian và metadata khác nullable. Không có nghĩa runtime đã thay đổi.
+
 > **Cập nhật sau final Figma handoff 2026-10-25:** phần mô tả lịch sử bên dưới ghi đúng trạng thái của audit trước khi Trí giao lại toàn bộ task UI. Task/UI owner hiện hành lấy từ [kế hoạch Figma mới](../design/UI_FIGMA_IMPLEMENTATION_2026-10-25.md) và [map máy đọc](../design/UI_FIGMA_TASK_MAP.json); các task cần đồng bộ theo Figma mới, còn producer BE/Data được rà sau mốc cập nhật UI/gap. Handoff cũ không còn là căn cứ để trì hoãn UI. Ma trận đầu ra UI → field/command → producer/thiếu hụt → task BE/Data đã được thêm vào kế hoạch Figma. Runtime observations và B01–B16 bên dưới vẫn là evidence audit tại baseline; không có nghĩa runtime đã thay đổi.
 
 Mốc kiểm: **25/10/2026, khoảng 03:30 UTC+7**. Reviewer/chủ quyết định: Trí (`ThanhTris`).

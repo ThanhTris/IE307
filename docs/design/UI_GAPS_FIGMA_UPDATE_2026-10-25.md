@@ -1,6 +1,8 @@
 # Bổ sung UI G01–G05 — 2026-10-25
 
-Theo yêu cầu của Trí sau khi xem và đồng ý các đề xuất, đã cập nhật 12 frame bằng layer chỉnh sửa được trong Figma. Không sửa app, API, database, Project status, owner hoặc deadline. Đây là bàn giao thiết kế bổ sung, chưa là nghiệm thu task/runtime; Trí review cuối.
+> **Trạng thái hiện hành:** Trí xác nhận bộ UI hoàn tất để chuyển sang đồng bộ BE/Data. Các frame dưới đây là thiết kế đã chốt cho scope này; prototype/runtime/task implementation vẫn có kiểm và review riêng.
+
+Theo yêu cầu của Trí sau khi xem và đồng ý các đề xuất, đã cập nhật 12 frame bằng layer chỉnh sửa được trong Figma. Không sửa app, API, database, Project status, owner hoặc deadline. Trí xác nhận scope UI hiện tại hoàn tất để chuyển sang BE/Data; implementation/runtime vẫn có review và evidence riêng.
 
 File `3Ysh0mOAEkAgA5DgZPSC1j`, trang màn hình `33:2`, trang component `8:2`. Không lấy được revision Figma; định danh bằng ngày kiểm, file/page/node và ảnh xuất. Baseline repo đối chiếu khi cập nhật: `f64713df1760cb6be534e42a16872467073c1904`.
 
@@ -41,16 +43,16 @@ Các frame nằm cùng hàng với nhóm gốc Bạn bè, Thông báo, Lịch s�
 | Bố cục và điểm bắt đầu | Pass structural | Cùng nhóm xếp ngang, readback 12 starting points; ghi chú handoff trỏ frame thật |
 | Retry, lưu, Back và Present | Not run | Lượt này cập nhật UI; chưa nối/chạy tương tác các state bổ sung |
 | Android, TalkBack, 200%, API/ACL/cache | Not run | Cần implementation và kiểm thực tế tại task tương ứng |
-| Review cuối | Chờ Trí | Không tự ghi Approved/Done |
+| Trạng thái thiết kế | Trí xác nhận scope UI hiện tại hoàn tất | Không tự ghi Approved/Done cho implementation/runtime |
 
 Ảnh và ledger trên máy: `C:/Users/ADMIN/.codex/visualizations/2026/10/16/01a145b9-5d6a-7e00-ae1f-a2f72809de03/ui-gap-proposals-2026-10-25/`. Trong `figma-evidence/`, ảnh có hậu tố `final` và `components-final.png` thay các bản trước khi sửa. Ledger lưu node và phạm vi kiểm; đây không phải revision giả hoặc bằng chứng runtime.
 
-GM-14 nhận G01–G03, GM-28/31 nhận tích hợp; GM-35 giữ G04/G05 ở P1. Task map ghi `Designed — pending final review`, khác với Pending design chưa có frame và khác với nghiệm thu implementation. Chưa cập nhật GitHub issue/Project trong lượt này.
+GM-14 nhận G01–G03, GM-28/31 nhận tích hợp; GM-35 giữ G04/G05 ở P1. Trí đã xác nhận các frame là UI đầu vào hoàn tất cho phạm vi hiện tại; prototype validation và implementation acceptance vẫn riêng. Issue/Project sync diễn ra trong lượt handoff hiện tại.
 
 ## Kiểm tra hồ sơ local
 
 - `python scripts/validate_repository.py`: Pass.
 - `python scripts/task_readiness.py --check-docs`: Pass, indexes khớp metadata.
-- `python -m unittest discover -s tests -p 'test_ui_refinement_task.py'`: 5/5 Pass. Cập nhật assertion map từ note Pending design/null sang 12 frame thật, review cuối còn chờ và Present Not run.
+- `python -m unittest discover -s tests -p 'test_ui_refinement_task.py'`: assertion hiện hành kiểm owner-confirmed design scope và vẫn giữ Present Not run.
 - `git diff --check`: Pass.
 - Regression toàn repo: 594 tests, 21 failures, 6 skipped. Các lỗi nằm trong `test_mobile_api_test_plan.py`: task/handoff GM-24..31/33/35 không còn khớp assertion link `MOBILE_API_TEST_MATRIX.md` và cụm `Android thật`. Các task/manifest/test này không được sửa trong lượt bổ sung Figma; không sửa lan sang chúng để làm xanh regression. Không báo toàn repo Pass.

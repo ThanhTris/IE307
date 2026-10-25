@@ -1,5 +1,9 @@
 # Báo cáo đồng bộ task UI theo Figma — 2026-10-25
 
+> **Snapshot lịch sử trước khi bổ sung frame G01–G05.** Phần dưới đây ghi đúng phát hiện lúc rà ban đầu; G01–G05 hiện đã có frame và Trí xác nhận UI hoàn tất. Dùng [UI implementation](../design/UI_FIGMA_IMPLEMENTATION_2026-10-25.md) và [BE/Data handoff](UI_BE_DATA_SYNC_HANDOFF_2026-10-25.md) làm nguồn hiện hành.
+
+> **Cập nhật hiện hành:** các việc từ lần báo cáo này đã được hoàn tất hoặc thay thế. Không dùng mục “Chưa hoàn tất” bên dưới làm danh sách blocker hiện tại. Tình trạng đồng bộ task/UI–BE–Data và kiểm tra nằm trong [báo cáo handoff hiện hành](UI_BE_DATA_SYNC_HANDOFF_2026-10-25.md).
+
 ## Trạng thái push
 
 Các thay đổi tài liệu/task trong lượt này đã được push lên `main`.

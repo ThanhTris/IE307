@@ -1,5 +1,7 @@
 # Figma–BE–Data–UI alignment and task follow-ups — 2026-10-24
 
+> **Tài liệu lịch sử trước khi UI chốt:** Figma đã được Trí xác nhận hoàn tất ngày 2026-10-25 và BE/Data đang được đồng bộ theo bộ UI đó. Dùng [handoff hiện hành](UI_BE_DATA_SYNC_HANDOFF_2026-10-25.md) thay cho các câu bên dưới về chờ finalize Figma, hoãn FE hoặc chưa giao Places UI. Trí đã chọn Google Places trực tiếp từ app. Nội dung runtime/policy vẫn là yêu cầu, không phải bằng chứng đã deploy.
+
 > **Owner scope correction — 2026-10-25:** only BE/Data follow-ups are assigned in the current iteration. Figma/UI observations below are input requirements for API/data, not authorization to change FE. The FE rows, foundation/theme/font work, mobile consumers, in-app Places UI, Android and release work below are deferred references. Preserve previous FE tasks/status/owners/deadlines until Trí finalizes Figma and explicitly assigns the rebuild. See [current BE/Data scope and owners](BE_DATA_ONLY_SCOPE_2026-10-25.md). GM-07 currently covers shared wire contract/schema/DTO only; mobile client/mock implementation is deferred.
 
 This is the current implementation handoff for the product-owner decisions recorded on 2026-10-24. It supersedes the earlier “Top 3 pending” notes in [the BE/Data audit](BE_DATA_AUDIT_2026-10-24.md), [BE/Data follow-ups](BE_DATA_FOLLOWUPS_2026-10-24.md), and GM-07.A proposal where they conflict. GM-07.A remains an immutable historical draft; GM-07.B is the active proposed contract for new sessions.

@@ -1,10 +1,12 @@
 # Đối chiếu báo cáo UI để chuẩn bị BE và Data
 
-> **Phạm vi Trí làm rõ ngày 2026-10-25:** chỉ cập nhật và giao BE/Data. Báo cáo UI dùng để hiểu yêu cầu đầu ra, không giao sửa FE. Các gói H/I/J và phần việc mobile/Places UI/Android/release bên dưới chỉ là tham chiếu hoãn; FE giữ như trước, chờ Figma chốt rồi Trí giao làm lại riêng. [Bảng phân công BE/Data hiện hành](BE_DATA_ONLY_SCOPE_2026-10-25.md) là nguồn thực thi của đợt này; GM-07 chưa sửa mobile client/mock.
+> **Kế hoạch lịch sử đã được supersede:** Figma UI được Trí xác nhận hoàn tất ngày 2026-10-25; scope UI và BE/Data đã được đồng bộ trong [handoff hiện hành](UI_BE_DATA_SYNC_HANDOFF_2026-10-25.md) và [UI implementation](../design/UI_FIGMA_IMPLEMENTATION_2026-10-25.md). Không dùng các dòng “đợt sau”, “chờ Figma” hoặc scope cũ bên dưới để chặn task.
+
+> **Lưu ý lịch sử:** đoạn kế tiếp ghi quyết định tạm hoãn FE tại thời điểm 2026-10-25 trước khi Trí giao đồng bộ UI theo Figma. Quyết định đó đã được thay thế; task UI hiện hành nằm trong [UI implementation](../design/UI_FIGMA_IMPLEMENTATION_2026-10-25.md). Bảng phân công BE/Data vẫn dùng cho producer, không thay task UI mới.
 
 Ngày kiểm: **24/10/2026, 23:49 UTC+7**. Chủ dự án/reviewer cuối: Trí (`ThanhTris`).
 
-**Phần giao thực hiện hiện hành:** giữ cấu trúc BE/Data và mã/owner các task; hoàn thiện contract B, projection dữ liệu, policy/producer và consumer BE theo thứ tự artifact. Báo cáo UI chỉ mô tả dữ liệu/hành vi cần phục vụ; Figma và kế hoạch làm lại FE do Trí chốt ở đợt sau. Các đề xuất giao UI cũ trong tài liệu không còn là yêu cầu thực hiện của đợt này. Luật nghiệp vụ vẫn giữ: **vòng 2 cho quyết định loại/không loại khi chỉ còn một món; không tự chốt**.
+**Phần giao thực hiện tại thời điểm lập kế hoạch (đã supersede):** giữ cấu trúc BE/Data và mã/owner các task; hoàn thiện contract B, projection dữ liệu, policy/producer và consumer BE theo thứ tự artifact. Khi đó báo cáo UI chỉ mô tả dữ liệu/hành vi cần phục vụ và Figma/FE chờ giao riêng. Trí sau đó đã chốt Figma và giao đồng bộ UI; xem liên kết hiện hành ở banner đầu tài liệu. Luật nghiệp vụ vẫn giữ: **vòng 2 cho quyết định loại/không loại khi chỉ còn một món; không tự chốt**.
 
 Tài liệu này là **báo cáo và kế hoạch**, chưa triển khai runtime, cài package, sửa migration, cập nhật task/PR/Project hoặc xác nhận nghiệm thu. Các trường wire mới nêu dưới đây là đề xuất để GM-07 chốt trong schema/DTO trước implementation.
 
