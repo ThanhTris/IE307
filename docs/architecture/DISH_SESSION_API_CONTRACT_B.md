@@ -5,12 +5,27 @@ Status: proposed v4.B contract, accepted product rules recorded in [ADR-020](dec
 - Contract ID: `dish-session-v4/roadmap-v2/GM-07.B`.
 - Lifecycle policy: `dish-decision-v4/ADR-019-30PCT-MIN1`.
 - Score/rank: `want2-ok1-round1-v1` / `score-desc-dense-rank-v1`.
+- Soft-ranking and history participant proposal: [ADR-021](decisions/ADR-021-soft-preference-and-history-projection.md), **Proposed** until Trí reviews the exact formula.
 - JSON Schema: [dish-session-v4b.schema.json](schemas/dish-session-v4b.schema.json).
 - Parent proposal: [GM-07.A](DISH_SESSION_API_CONTRACT.md).
 
 ## Compatibility and transport
 
-Use the existing `{command,payload}` and `{ok:true,data}` / `{ok:false,error}` envelopes. Every v4.B create, preview, mutation, snapshot and terminal projection identifies contract B. Existing unversioned and v3 traffic remains routed to its existing behavior; room contract/policy are pinned at creation. Do not infer v4 behavior from an HTTP 200, health endpoint, schema registry, or the proposal alone.
+Use `POST /rest/v1/rpc/dish_session_v4` as the explicit opt-in route. Its PostgREST argument object is `{command,payload}`; the B JSON Schema validates that object. Do not dispatch B through the legacy `dish_session` RPC. Every function-level B success and business-error envelope contains `contractVersion=dish-session-v4/roadmap-v2/GM-07.B` and `policyVersion=dish-decision-v4/ADR-019-30PCT-MIN1`; snapshots and terminal results repeat both. A gateway rejection before the RPC runs (for example, missing/invalid JWT `401`) remains the native Supabase transport error and is normalized by the caller's transport; it cannot be treated as function-level B output. Rooms pin these versions at creation. Calling a legacy room through B fails with `UNSUPPORTED_CONTRACT_VERSION`; no automatic upgrade or reinterpretation occurs. Existing unversioned and v3 traffic remains routed to its existing behavior. Do not infer v4 behavior from HTTP 200, health, schema registry, or this proposal alone.
+
+The B transport and command guards are:
+
+| Command | Required guard | Concurrency and replay rule |
+|---|---|---|
+| `create` | Authenticated caller; exact unique dish count 10–20 and eligible pool | `requestId` plus canonical payload hash; exact ACK replay before re-evaluation |
+| `previewJoin` | Valid room code; server clock | Read-only, minimal projection, no seat reservation or user-supplied identity |
+| `join` | Authenticated caller, code, not expired/locked/full | Admission serialized with invite acceptance; same caller cannot create duplicate membership |
+| `snapshot` | Caller is a current room member; expiry is checked after membership | At/after expiry return `410 ROOM_EXPIRED`; outsider remains `403 NOT_MEMBER`; no expired room body is returned |
+| `updateSettings`, `updatePreferences`, `start`, `cancel`, `leave`, `finalize` | `expectedVersion` plus command-specific host/member/state guard | Exact request replay is resolved before state/version/quota checks; successful mutation bumps room version once |
+| `submit` | Current member, open round, matching `round` and `poolVersion`, complete ballot over exactly the locked pool | No room-version precondition: other members' accepted ballots do not stale this caller. Exact own ACK replay is stable; a different payload after an accepted ballot is rejected |
+| `waiting` | Current member, open round, matching `round` and `poolVersion`, caller has an accepted complete ballot | No room-version precondition. First valid caller sets the round-wide timer once; retries do not extend it |
+
+All writes use opaque `requestId` and a server-computed canonical payload hash. Same ID/body returns the original ACK before mutable business guards; same ID/different body returns `REQUEST_ID_REUSED`. `expectedVersion` is not a substitute for `round`/`poolVersion` on ballot commands. `submissionStatus` is shared current-round receipt state; `ownWaiting` is caller-private. `WAITING_1`/`WAITING_2` does not close submissions until the server deadline, so a member who has not submitted can still send a complete ballot before it expires. At deadline the server closes the round once; host finalize requires at least one complete accepted ballot. A timer is never created before a valid ballot ACK and waiting transition.
 
 GM-07.B adds `previewJoin`, `updateSettings` and `updatePreferences`. `join` always rechecks membership, expiry, capacity, room state and invitation/code under the server transaction; preview is informative and does not reserve a seat. Mutations require the latest `expectedVersion`; any changed pool increments an independent `poolVersion`. A stale pool/version rejects the mutation without partially changing the room.
 
@@ -21,6 +36,12 @@ The host requests an integer initial pool size from 10 through 20 and chooses me
 Budget comparisons are allowed only when the observation and preference share currency and unit. The server never converts a portion/group/item/kg/menu-item observation into a per-person price. Unknown price stays eligible. Recent-dish adjustment can read only history allowed by existing consent/ACL; it is a soft ranking input and never changes ballot points. `desiredAt` records the intended meal time; the host still explicitly starts, and no venue schedule, GPS, anchor or location is required.
 
 Create/start must produce exactly the host-confirmed number of unique dishes. If available is lower than requested, return `INSUFFICIENT_DISHES` with integer `available` and `requested`. The UI may ask the host to explicitly set a lower count only when the confirmed value remains at least 10; the server does not auto-reduce or relax preferences. The current pool is immutable after start.
+
+### Soft preference, meal and price defaults
+
+Host and each member have equal person weight, as confirmed by Trí on 2026-10-25. Within each person, cuisine, category, temperature and flavor each contribute at most one match point: cuisine/category match on any intersection, temperature on an exact known match, and flavor on all explicitly selected known flavor attributes matching. Multiple tags in one dimension do not add points. Unknown, unselected or unavailable values contribute zero and never exclude a dish. Rank by the sum of those equal person/dimension points; next rank by the share of comparable member budgets that the observed price fits; then by the count of eligible recent-history hits from consent-authorized data; then by the pinned server seed hash ascending and stable dish ID. A missing/noncomparable price is neutral for eligibility and budget rank. The exact numeric ranking formula and tie-break remain proposed in ADR-021 for Trí's final review; they do not change the hard meal eligibility rule.
+
+Meal eligibility is independent of preferences. A dish is eligible for a requested meal only when its source-backed meal evidence matches; `mealSlots=[]` means unknown and does not match every meal. If fewer than the requested exact unique count remain, return the real `available` and `requested`; never refill or lower the count. For a price display, choose among valid-source observations by greatest `checkedAt`, breaking a timestamp tie by stable observation UUID ascending. Never average, convert currencies/units, or present `menu_item_unspecified` as per-person. If no valid-source observation exists, project `priceReference=null`.
 
 `previewJoin` returns only a confirmation summary (joinable state, room code/name if already public, member count/capacity, meal context and dish count). It does not return the roster, preferences, pool, ballots, result or private room metadata. The full member roster is returned only after successful join.
 
@@ -35,6 +56,8 @@ The v4.B snapshot extends A with:
 - Locked pool-card projection fields listed below. Every pool, result, history and inbox fetch refers to the same immutable result snapshot once the session is terminal.
 
 The server remains authoritative for `version`, `poolVersion`, timer, ACK status, round transition, terminal reason, scores and ranks. Keep `ownBallot`/`ownWaiting` caller-private; do not add other members' ballot details.
+
+`poolVersion` may be greater than 1 while state is `LOBBY`; changing settings/preferences advances it only when the resulting pool content changes. A changed lobby pool also increments room `version` once and invalidates prior assumptions. `WAITING_1`/`WAITING_2` means the shared timer has started, not that all members submitted or that new ballots are closed. The member list exposes only each member's `NOT_SUBMITTED`/`ACCEPTED` status. Expired snapshots are not returned: after authenticating membership, `snapshot` returns the B error envelope with HTTP 410 and `ROOM_EXPIRED`; outsiders get 403 first. `previewJoin` may report `roomState=EXPIRED`, `joinable=false`, and `reasonCode=ROOM_EXPIRED`, without exposing roster or pool.
 
 ## Locked dish-card projection
 
@@ -55,11 +78,19 @@ When round one is finalized, evaluate and persist a round-one winner before chec
 
 ## Top 3 terminal result
 
-`DECIDED` results contain `scoreVersion`, `rankingVersion`, and `topDishes` (1–3 entries). Each entry has the locked `dish` projection, nonnegative integer `score`, dense `rank`, and `isWinner`. Score is `2 × WANT + OK`, summed over complete, server-ACKed round-one ballots only. Round-two KEEP contributes no score. NO dishes and round-two REMOVE dishes are ineligible. Ties share the same dense rank. At the third-place tie boundary, the server stores a deterministic fixed subset of at most three entries that includes the already-persisted winner. The ordered array is the immutable presentation order; equal-rank entries have equal semantic rank even if the array needs a stable order.
+`DECIDED` results contain `scoreVersion`, `rankingVersion`, `scoredRound1BallotCount`, and `topDishes` (1–3 entries). Each entry has the locked `dish` projection, nonnegative integer `score`, dense `rank`, and `isWinner`. Score is `2 × WANT + OK`, summed over complete, server-ACKed round-one ballots only. Round-two KEEP contributes no score. NO dishes and round-two REMOVE dishes are ineligible. At the third-place tie boundary, the server stores a deterministic fixed subset of at most three entries that includes the already-persisted winner. The podium is ordered by descending score, then the private seeded tie key, then stable `roundDishId`; if winner inclusion replaces the cutoff item, that selected subset is sorted by the same order. Dense ranks are recomputed over the persisted selected subset, so ties share rank and ranks have no gaps. The ordered array is immutable. The winner entry's locked dish identity must equal `winner`.
 
 `NO_CONSENSUS` has `winner=null` and `topDishes=[]`. The result projection contains no raw vote, per-member score contribution, candidate matrix, seed, or hidden evaluator diagnostics. All authorized room members may read aggregate scores only after finalization, including small groups, as accepted in ADR-020. History reads the stored result subject to current consent/ACL/retention; notification payloads contain a reference only.
 
 Persist result, winner, podium rows, score/rank versions, terminal room state and history/event references atomically or through the reviewed transactional outbox. Consumers never recalculate score from the current dataset or ballots.
+
+`scoredRound1BallotCount` is the count of complete R1 ballots whose ACKed choices were included in the score projection (0–20). Every displayed score must be at most `2 × scoredRound1BallotCount`; this field remains pinned through R2 and terminal history. Do not use current `submittedCount` after the round changes. Rank is dense over equal scores. The stored podium order sorts score descending, then the private seeded tie key ascending, then `roundDishId` ascending. Select the top three by this stable order; if that subset would omit the persisted winner, replace the final included item with the winner and apply the same stable order to the selected subset. This rule is evaluated once and stored, so retries return the same subset and order.
+
+## History summary and detail DTO
+
+GM-21 keeps its existing history RPC, <=50-item array DTO and cursor semantics; this section defines the immutable per-item summary/detail projection and does not add a page wrapper or `nextCursor`. A summary and detail both carry `generation=LEGACY_V2|LEGACY_V3|V4_B`, `contractVersion`, `policyVersion`, terminal status/reason/round, `desiredAt`, `finalizedAt`, winner and podium capability, plus `scoredRound1BallotCount` when known. V4.B stores `scoreVersion`, `rankingVersion`, the scored R1 count, winner and immutable `topDishes`; detail may include the locked dish-card list. A legacy record with no stored Top 3 or score capability returns `topDishes=null`, `lockedDishes=null`, `scoredRound1BallotCount=null`, and null score/ranking versions. A stored legacy winner may be projected only as its available `{name,artworkUrl}`; absent round/reason/time/capability remains null. Do not infer a finalized time from `desiredAt`/legacy `mealDate`, or fabricate score zero or a podium. Legacy group history without a stored consented name projection uses `GROUP_COUNT_ONLY` and an empty names array; it does not infer consent from a group row.
+
+The participant projection is scope-specific: personal history contains `memberCount` and the caller's own user ID only; it contains no other member identity. Group history contains names only, with no user IDs, and is written/read only when every participant had valid explicit consent frozen for that session. Consent revocation immediately denies access and removes the associated participant projection/summary under GM-21 semantics; retry cannot recreate deleted history. Group/history DTOs never include roster membership roles, consent snapshots, group key, raw ballot, per-person score, location or seed. Planned meal time is `desiredAt`; it is not `finalizedAt` and never determines the 60-second decision timer.
 
 ## Figma consumer contract
 
@@ -67,7 +98,7 @@ The screen-to-contract mapping and Figma node references are in [FIGMA_BE_UI_DAT
 
 ## Errors and acceptance examples
 
-Keep GM-07.A error envelope and existing keys. `INSUFFICIENT_DISHES` includes `{available,requested}`. Add `ROOM_FULL`, `ROOM_LOCKED`, `ROOM_EXPIRED`, `NOT_HOST`, `NOT_MEMBER`, `VERSION_CONFLICT`, `REQUEST_ID_REUSED`, `UNSUPPORTED_FIELD` and `INVALID_INPUT` where relevant. Errors are safe for display, contain no secret or ballot.
+Keep GM-07.A error envelope and existing keys. `INSUFFICIENT_DISHES` includes `{available,requested}`. Add `ROOM_FULL`, `ROOM_LOCKED`, `ROOM_EXPIRED`, `NOT_HOST`, `NOT_MEMBER`, `VERSION_CONFLICT`, `REQUEST_ID_REUSED`, `UNSUPPORTED_CONTRACT_VERSION`, `BALLOT_ALREADY_ACCEPTED`, `UNSUPPORTED_FIELD` and `INVALID_INPUT` where relevant. HTTP mapping: auth missing/invalid `401`; authenticated outsider/not-host `403`; malformed input `400`; stale version, duplicate accepted ballot with a different request, reused request ID, and invalid state `409`; expired room `410`; rate limit `429`. Errors are safe for display, contain no secret or ballot. ACK retries remain stable and do not consume quota.
 
 The v4.B schema constrains envelopes and DTO shapes; semantic checks still require server tests for:
 
