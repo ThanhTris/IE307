@@ -5,6 +5,7 @@ Run from the repository root with Python 3: python docs/evidence/roadmap-v2/GM-0
 """
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -12,10 +13,30 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[4]
 SOURCE = ROOT / "docs/architecture/schemas/dish-session-v4.schema.json"
 TARGET = ROOT / "docs/architecture/schemas/dish-session-v4b.schema.json"
+MANIFEST = ROOT / "docs/evidence/roadmap-v2/GM-07/GM07B_MANIFEST_2026-10-25.json"
 VERSION = "dish-session-v4/roadmap-v2/GM-07.B"
 POLICY_VERSION = "dish-decision-v4/ADR-019-30PCT-MIN1"
 SCORE_VERSION = "want2-ok1-round1-v1"
 RANKING_VERSION = "score-desc-dense-rank-v1"
+HASHED_SOURCES = (
+    "docs/architecture/DISH_SESSION_API_CONTRACT_B.md",
+    "docs/architecture/schemas/dish-session-v4b.schema.json",
+    "docs/evidence/roadmap-v2/GM-07/gm07b_schema_build.py",
+    "docs/evidence/roadmap-v2/GM-07/gm07b_schema_smoke.py",
+    "docs/evidence/roadmap-v2/GM-07/GM07B_WIRE_EXAMPLES_2026-10-25.md",
+    "docs/evidence/roadmap-v2/GM-07/GM07B_CHECKS_2026-10-25.md",
+    "docs/evidence/roadmap-v2/GM-07/GM07B_HANDOFF_2026-10-25.md",
+    "docs/architecture/decisions/ADR-021-soft-preference-and-history-projection.md",
+    "docs/architecture/ACCESS_MATRIX.md",
+    "docs/architecture/ACCESS_MATRIX_GM17_B_SUPPLEMENT_2026-10-25.md",
+    "tasks/backlog/GM-07.md",
+    "tasks/review/GM-03.md",
+    "tasks/backlog/GM-17.md",
+    "tasks/backlog/GM-19.md",
+    "tasks/backlog/GM-22.md",
+    "tasks/backlog/GM-23.md",
+    "docs/project/BE_DATA_ONLY_SCOPE_2026-10-25.md",
+)
 
 
 def replace_version(value):
@@ -251,7 +272,13 @@ def build() -> dict:
     result["properties"].update({
         "scoreVersion": {"const": "want2-ok1-round1-v1"},
         "rankingVersion": {"const": "score-desc-dense-rank-v1"},
-        "topDishes": {"type": "array", "maxItems": 3, "items": {"$ref": "#/$defs/topDish"}},
+        "topDishes": {
+            "type": "array", "maxItems": 3, "items": {"$ref": "#/$defs/topDish"},
+            "description": (
+                "Semantic checks require the persisted winner to have the maximum score among eligible dishes; "
+                "equal scores share a dense rank, including a tie for rank 1."
+            ),
+        },
     })
     result["allOf"].append({
         "if": {"properties": {"status": {"const": "DECIDED"}}, "required": ["status"]},
@@ -337,7 +364,7 @@ def build() -> dict:
     # Result bounds must use the complete, server-ACKed R1 cohort, not the
     # current-round submittedCount (which is different after R1 advances).
     result["required"].append("scoredRound1BallotCount")
-    result["properties"]["scoredRound1BallotCount"] = {"type": "integer", "minimum": 0, "maximum": 20}
+    result["properties"]["scoredRound1BallotCount"] = {"type": "integer", "minimum": 1, "maximum": 20}
     result["allOf"].extend([
         {"if": {"properties": {"status": {"const": "NO_CONSENSUS"}, "round": {"const": 1}}, "required": ["status", "round"]}, "then": {"properties": {"reasonCode": {"const": "EMPTY_INTERSECTION"}}}},
         {"if": {"properties": {"status": {"const": "NO_CONSENSUS"}, "round": {"const": 2}}, "required": ["status", "round"]}, "then": {"properties": {"reasonCode": {"const": "ALL_REMOVED"}}}},
@@ -387,8 +414,8 @@ def build() -> dict:
         }, "additionalProperties": False,
         "allOf": [
             {"if": {"properties": {"generation": {"enum": ["LEGACY_V2", "LEGACY_V3"]}}, "required": ["generation"]}, "then": {"properties": {"topDishes": {"type": "null"}, "scoredRound1BallotCount": {"type": "null"}, "scoreVersion": {"type": "null"}, "rankingVersion": {"type": "null"}}}},
-            {"if": {"properties": {"generation": {"const": "V4_B"}}, "required": ["generation"]}, "then": {"required": ["round", "finalizedAt"], "properties": {"round": {"type": "integer"}, "finalizedAt": {"$ref": "#/$defs/timestamp"}, "policyVersion": {"const": POLICY_VERSION}, "participants": {"properties": {"visibility": {"enum": ["PERSONAL_SELF", "CONSENTED_GROUP_NAMES"]}}}, "topDishes": {"type": "array"}, "scoredRound1BallotCount": {"type": "integer"}, "scoreVersion": {"const": SCORE_VERSION}, "rankingVersion": {"const": RANKING_VERSION}}}},
-            {"if": {"properties": {"generation": {"const": "V4_B"}, "status": {"const": "DECIDED"}}, "required": ["generation", "status"]}, "then": {"properties": {"winner": {"$ref": "#/$defs/poolDish"}}}},
+            {"if": {"properties": {"generation": {"const": "V4_B"}}, "required": ["generation"]}, "then": {"required": ["round", "finalizedAt"], "properties": {"contractVersion": {"const": VERSION}, "round": {"type": "integer", "enum": [1, 2]}, "finalizedAt": {"$ref": "#/$defs/timestamp"}, "policyVersion": {"const": POLICY_VERSION}, "reasonCode": {"enum": ["UNANIMOUS_WANT", "ACCEPTABLE_FINAL", "EMPTY_INTERSECTION", "ALL_REMOVED"]}, "participants": {"properties": {"visibility": {"enum": ["PERSONAL_SELF", "CONSENTED_GROUP_NAMES"]}}}, "topDishes": {"type": "array"}, "scoredRound1BallotCount": {"type": "integer", "minimum": 1, "maximum": 20}, "scoreVersion": {"const": SCORE_VERSION}, "rankingVersion": {"const": RANKING_VERSION}}}},
+            {"if": {"properties": {"generation": {"const": "V4_B"}, "status": {"const": "DECIDED"}}, "required": ["generation", "status"]}, "then": {"properties": {"winner": {"$ref": "#/$defs/poolDish"}, "topDishes": {"minItems": 1, "contains": {"properties": {"isWinner": {"const": True}}, "required": ["isWinner"]}}, "reasonCode": {"enum": ["UNANIMOUS_WANT", "ACCEPTABLE_FINAL"]}}, "not": {"properties": {"topDishes": {"contains": {"properties": {"isWinner": {"const": True}}, "required": ["isWinner"]}, "minContains": 2}}}}},
             {"if": {"properties": {"generation": {"const": "V4_B"}, "status": {"const": "NO_CONSENSUS"}}, "required": ["generation", "status"]}, "then": {"properties": {"winner": {"type": "null"}, "topDishes": {"maxItems": 0}}}},
             {"if": {"properties": {"generation": {"const": "V4_B"}, "status": {"const": "NO_CONSENSUS"}, "round": {"const": 1}}, "required": ["generation", "status", "round"]}, "then": {"properties": {"reasonCode": {"const": "EMPTY_INTERSECTION"}}}},
             {"if": {"properties": {"generation": {"const": "V4_B"}, "status": {"const": "NO_CONSENSUS"}, "round": {"const": 2}}, "required": ["generation", "status", "round"]}, "then": {"properties": {"reasonCode": {"const": "ALL_REMOVED"}}}},
@@ -413,6 +440,23 @@ def build() -> dict:
     return schema
 
 
+def write_manifest() -> None:
+    manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    manifest["branch"] = "codex/be-data-contract-sync-2026-10-25"
+    manifest["reviewedBaseRevision"] = "cc73ef4397d9b14f0ebd9956d0690bedb21feb5e"
+    manifest["sourceSha256"] = {
+        relative: hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+        for relative in HASHED_SOURCES
+    }
+    manifest["validation"]["resultSemanticRules"] = [
+        "B terminal results require at least one server-ACKed complete round-one ballot.",
+        "The persisted winner has the maximum score among eligible dishes; equal scores share a dense rank.",
+        "V4_B history pins contract, policy, score, ranking, and terminal-reason values; legacy capability nulls remain unchanged.",
+    ]
+    MANIFEST.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+
+
 if __name__ == "__main__":
     TARGET.write_text(json.dumps(build(), ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
-    print(f"Wrote {TARGET.relative_to(ROOT)} from immutable GM-07.A schema")
+    write_manifest()
+    print(f"Wrote {TARGET.relative_to(ROOT)} and updated {MANIFEST.relative_to(ROOT)} from immutable GM-07.A schema")

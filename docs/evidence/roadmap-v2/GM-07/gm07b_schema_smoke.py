@@ -64,13 +64,19 @@ def result(status: str, top_dishes: list[dict[str, Any]], *, count: int = 4) -> 
     }
 
 
-def assert_result_semantics(value: dict[str, Any]) -> None:
+def assert_result_semantics(
+    value: dict[str, Any], eligible_candidates: list[dict[str, Any]] | None = None
+) -> None:
     entries = value["topDishes"]
     count = value["scoredRound1BallotCount"]
+    assert value["round"] in {1, 2}, "terminal result round must be 1 or 2"
+    assert 1 <= count <= 20, "a B terminal result requires at least one ACKed complete R1 ballot"
     if value["status"] == "NO_CONSENSUS":
         assert value["winner"] is None and entries == [], "NO_CONSENSUS must have no winner or podium"
+        assert value["reasonCode"] == ("EMPTY_INTERSECTION" if value["round"] == 1 else "ALL_REMOVED")
         return
     assert value["status"] == "DECIDED"
+    assert value["reasonCode"] in {"UNANIMOUS_WANT", "ACCEPTABLE_FINAL"}
     assert 1 <= len(entries) <= 3
     assert all(item["score"] <= 2 * count for item in entries), "score exceeds the acknowledged R1 cohort bound"
     dish_ids = [item["dish"]["dishId"] for item in entries]
@@ -91,6 +97,12 @@ def assert_result_semantics(value: dict[str, Any]) -> None:
     winners = [item for item in entries if item["isWinner"]]
     assert len(winners) == 1, "DECIDED podium must contain exactly one winner"
     assert winners[0]["dish"] == value["winner"], "podium winner must be the persisted result winner"
+    maximum_podium_score = max(scores)
+    assert winners[0]["score"] == maximum_podium_score, "winner must have the maximum score"
+    if eligible_candidates is not None:
+        assert eligible_candidates, "DECIDED result requires at least one eligible candidate"
+        maximum_eligible_score = max(item["score"] for item in eligible_candidates)
+        assert winners[0]["score"] == maximum_eligible_score, "winner must be highest-scoring among all eligible dishes"
 
 
 def assert_complete_ballot(votes: list[dict[str, Any]], locked_pool_ids: list[str]) -> None:
@@ -113,13 +125,18 @@ def assert_waiting_window(started_at: str, deadline: str) -> None:
 
 
 def select_podium(candidates: list[dict[str, Any]], winner_id: str, seed: bytes) -> list[dict[str, Any]]:
-    """Contract reference: stable seeded cutoff, with persisted winner retained."""
+    """Contract reference: max-score winner, stable seeded cutoff, and dense tied ranks."""
     def order(item: dict[str, Any]) -> tuple[int, bytes, str]:
         round_dish_id = item["dish"]["roundDishId"]
         return (-item["score"], hashlib.sha256(seed + round_dish_id.encode("ascii")).digest(), round_dish_id)
 
     ordered = sorted(candidates, key=order)
     winner = next(item for item in ordered if item["dish"]["roundDishId"] == winner_id)
+    assert winner["score"] == max(item["score"] for item in ordered), (
+        "persisted winner must be among the highest-scoring eligible dishes"
+    )
+    for item in ordered:
+        item["isWinner"] = item is winner
     selected = ordered[:3]
     if winner not in selected:
         selected[-1] = winner
@@ -168,11 +185,19 @@ def assert_history_semantics(value: dict[str, Any]) -> None:
         assert value["topDishes"] is None and value["scoredRound1BallotCount"] is None
         assert value["scoreVersion"] is None and value["rankingVersion"] is None
         return
-    if value["status"] == "NO_CONSENSUS":
-        assert value["winner"] is None and value["topDishes"] == []
-        return
+    assert value["contractVersion"] == CONTRACT_VERSION
+    assert value["policyVersion"] == POLICY_VERSION
+    assert value["scoreVersion"] == SCORE_VERSION
+    assert value["rankingVersion"] == RANKING_VERSION
+    assert 1 <= value["scoredRound1BallotCount"] <= 20
+    if value["status"] == "DECIDED":
+        assert value["reasonCode"] in {"UNANIMOUS_WANT", "ACCEPTABLE_FINAL"}
+    else:
+        expected_reason = "EMPTY_INTERSECTION" if value["round"] == 1 else "ALL_REMOVED"
+        assert value["reasonCode"] == expected_reason
     result_projection = {
-        "status": value["status"], "winner": value["winner"], "topDishes": value["topDishes"],
+        "status": value["status"], "round": value["round"], "reasonCode": value["reasonCode"],
+        "winner": value["winner"], "topDishes": value["topDishes"],
         "scoredRound1BallotCount": value["scoredRound1BallotCount"],
     }
     assert_result_semantics(result_projection)
@@ -294,7 +319,7 @@ def main() -> int:
     valid_result = result("DECIDED", [top(1, 8, 1, True), top(2, 8, 1), top(3, 7, 2)], count=4)
     result_validator.validate(valid_result)
     assert_result_semantics(valid_result)
-    no_consensus = result("NO_CONSENSUS", [], count=0)
+    no_consensus = result("NO_CONSENSUS", [], count=1)
     result_validator.validate(no_consensus)
     assert_result_semantics(no_consensus)
     invalid_results = []
@@ -303,9 +328,25 @@ def main() -> int:
     invalid_results.append(result("DECIDED", [top(1, 8, 1, True), top(2, 7, 3)], count=4))
     invalid_results.append(result("DECIDED", [top(1, 7, 1, True), top(2, 8, 2)], count=4))
     invalid_results.append(result("NO_CONSENSUS", [top(1, 0, 1)], count=0))
+    invalid_results.append(result("DECIDED", [top(1, 0, 1, True)], count=0))
+    invalid_results.append(result("NO_CONSENSUS", [], count=0))
     winner_mismatch = result("DECIDED", [top(1, 8, 1, True), top(2, 7, 2)], count=4)
     winner_mismatch["winner"] = dish(2)
     invalid_results.append(winner_mismatch)
+    lower_scoring_winner = result(
+        "DECIDED", [top(1, 9, 1), top(2, 8, 2), top(3, 2, 3, True)], count=5
+    )
+    assert result_validator.is_valid(lower_scoring_winner), (
+        "cross-item winner score fixture must pass shape validation to exercise the semantic guard"
+    )
+    invalid_results.append(lower_scoring_winner)
+    zero_ballot_terminal_results = [
+        result("DECIDED", [top(1, 0, 1, True)], count=0),
+        result("NO_CONSENSUS", [], count=0),
+    ]
+    assert all(not result_validator.is_valid(item) for item in zero_ballot_terminal_results), (
+        "JSON Schema accepted a terminal B result without an ACKed complete R1 ballot"
+    )
     for invalid in invalid_results:
         try:
             assert_result_semantics(invalid)
@@ -314,20 +355,28 @@ def main() -> int:
         else:
             raise AssertionError("Semantic checker accepted an invalid result fixture")
 
-    # A deterministic tied cutoff and winner-inclusion replacement are stable.
-    tied_candidates = [top(1, 10, 0, True), top(2, 9, 0), top(3, 8, 0), top(4, 8, 0), top(5, 8, 0)]
-    tied_first = select_podium(json.loads(json.dumps(tied_candidates)), tied_candidates[0]["dish"]["roundDishId"], b"fixture-seed")
-    tied_second = select_podium(json.loads(json.dumps(tied_candidates)), tied_candidates[0]["dish"]["roundDishId"], b"fixture-seed")
-    assert tied_first == tied_second and [item["dish"]["dishId"] for item in tied_first] == [item["dish"]["dishId"] for item in tied_second]
+    # Four highest-score dishes tie across the three-entry cutoff. The selected
+    # subset stays <=3, includes the persisted winner, and gives every tied
+    # selected dish the same dense rank, including rank 1.
+    tied_candidates = [top(i, 10, 0) for i in range(1, 5)] + [top(5, 9, 0)]
+    tied_winner_id = tied_candidates[3]["dish"]["roundDishId"]
+    tied_first = select_podium(json.loads(json.dumps(tied_candidates)), tied_winner_id, b"fixture-seed")
+    tied_second = select_podium(json.loads(json.dumps(tied_candidates)), tied_winner_id, b"fixture-seed")
+    assert tied_first == tied_second, "seeded cutoff must be stable"
     assert len(tied_first) == 3 and sum(item["isWinner"] for item in tied_first) == 1
-    assert_result_semantics(result("DECIDED", tied_first, count=5))
+    assert tied_winner_id in {item["dish"]["roundDishId"] for item in tied_first}
+    assert all(item["score"] == 10 and item["rank"] == 1 for item in tied_first)
+    tied_result = result("DECIDED", tied_first, count=5)
+    result_validator.validate(tied_result)
+    assert_result_semantics(tied_result, eligible_candidates=tied_candidates)
 
-    candidates = [top(i, 10 - i, 0, i == 8) for i in range(1, 9)]
-    first = select_podium(json.loads(json.dumps(candidates)), candidates[7]["dish"]["roundDishId"], b"fixture-seed")
-    second = select_podium(json.loads(json.dumps(candidates)), candidates[7]["dish"]["roundDishId"], b"fixture-seed")
-    assert first == second and len(first) == 3
-    assert sum(item["isWinner"] for item in first) == 1 and first[-1]["dish"]["roundDishId"] == candidates[7]["dish"]["roundDishId"]
-    assert_result_semantics(result("DECIDED", first, count=5))
+    lower_winner_candidates = [top(1, 9, 0), top(2, 8, 0), top(3, 2, 0)]
+    try:
+        select_podium(lower_winner_candidates, lower_winner_candidates[2]["dish"]["roundDishId"], b"fixture-seed")
+    except AssertionError:
+        pass
+    else:
+        raise AssertionError("Podium selection accepted a winner below the maximum eligible score")
 
     # History capability and consent projections: legacy stays null; group names have no user IDs.
     history_validator = root_validator.evolve(schema=defs["historySummary"])
@@ -360,14 +409,42 @@ def main() -> int:
     else:
         raise AssertionError("History semantic checker accepted a winner/podium mismatch")
     empty_v4_history = history_base("V4_B")
-    empty_v4_history.update({"status": "NO_CONSENSUS", "reasonCode": "EMPTY_INTERSECTION", "winner": None, "topDishes": [], "scoredRound1BallotCount": 0})
+    empty_v4_history.update({"status": "NO_CONSENSUS", "reasonCode": "EMPTY_INTERSECTION", "winner": None, "topDishes": [], "scoredRound1BallotCount": 1})
     history_validator.validate(empty_v4_history)
     assert_history_semantics(empty_v4_history)
+    invalid_history_fields = []
+    for key, value in (
+        ("contractVersion", "dish-session-v3/ADR-019"),
+        ("policyVersion", "dish-decision-v3"),
+        ("scoreVersion", "unknown-score-version"),
+        ("rankingVersion", "unknown-ranking-version"),
+        ("reasonCode", None),
+        ("reasonCode", "NOT_A_TERMINAL_REASON"),
+        ("reasonCode", "EMPTY_INTERSECTION"),
+        ("scoredRound1BallotCount", 0),
+    ):
+        invalid_history = json.loads(json.dumps(group_history))
+        invalid_history[key] = value
+        invalid_history_fields.append(invalid_history)
+    invalid_history_reason = json.loads(json.dumps(empty_v4_history))
+    invalid_history_reason["reasonCode"] = "ALL_REMOVED"
+    invalid_history_fields.append(invalid_history_reason)
+    for invalid_history in invalid_history_fields:
+        assert not history_validator.is_valid(invalid_history), "V4_B history schema accepted an unpinned version/count/reason"
+        assert not history_detail_validator.is_valid({**invalid_history, "lockedDishes": [dish(1)]}), (
+            "V4_B history detail schema accepted an unpinned version/count/reason"
+        )
+        try:
+            assert_history_semantics(invalid_history)
+        except AssertionError:
+            pass
+        else:
+            raise AssertionError("History semantic checker accepted an unpinned version/count/reason")
     invalid_group = json.loads(json.dumps(group_history))
     invalid_group["participants"]["otherUserIds"] = [ROOM_ID]
     assert not history_validator.is_valid(invalid_group), "group history must contain names only, not member IDs"
 
-    print("Pass: Draft 2020-12 schema, B RPC/version routing, per-command guards, complete ballots, 60-second waiting deadline, expiry shapes, lobby poolVersion>1, finalize ACK, R1 score/count, rank/winner semantics, stable cutoff, and legacy/group history projections.")
+    print("Pass: Draft 2020-12 schema, B RPC/version routing, per-command guards, complete ballots, 60-second waiting deadline, expiry shapes, lobby poolVersion>1, finalize ACK, positive R1 terminal count, maximum-score winner, tied dense ranks, stable <=3 cutoff, pinned B history versions/reasons, and legacy null capabilities.")
     print("Boundary: contract/schema fixtures only; no B runtime, SQL ACL, producer integration, or mobile consumer was exercised.")
     return 0
 

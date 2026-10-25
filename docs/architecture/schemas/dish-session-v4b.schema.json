@@ -1395,11 +1395,12 @@
           "maxItems": 3,
           "items": {
             "$ref": "#/$defs/topDish"
-          }
+          },
+          "description": "Semantic checks require the persisted winner to have the maximum score among eligible dishes; equal scores share a dense rank, including a tie for rank 1."
         },
         "scoredRound1BallotCount": {
           "type": "integer",
-          "minimum": 0,
+          "minimum": 1,
           "maximum": 20
         }
       },
@@ -2536,14 +2537,29 @@
               "finalizedAt"
             ],
             "properties": {
+              "contractVersion": {
+                "const": "dish-session-v4/roadmap-v2/GM-07.B"
+              },
               "round": {
-                "type": "integer"
+                "type": "integer",
+                "enum": [
+                  1,
+                  2
+                ]
               },
               "finalizedAt": {
                 "$ref": "#/$defs/timestamp"
               },
               "policyVersion": {
                 "const": "dish-decision-v4/ADR-019-30PCT-MIN1"
+              },
+              "reasonCode": {
+                "enum": [
+                  "UNANIMOUS_WANT",
+                  "ACCEPTABLE_FINAL",
+                  "EMPTY_INTERSECTION",
+                  "ALL_REMOVED"
+                ]
               },
               "participants": {
                 "properties": {
@@ -2559,7 +2575,9 @@
                 "type": "array"
               },
               "scoredRound1BallotCount": {
-                "type": "integer"
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 20
               },
               "scoreVersion": {
                 "const": "want2-ok1-round1-v1"
@@ -2589,6 +2607,42 @@
             "properties": {
               "winner": {
                 "$ref": "#/$defs/poolDish"
+              },
+              "topDishes": {
+                "minItems": 1,
+                "contains": {
+                  "properties": {
+                    "isWinner": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "isWinner"
+                  ]
+                }
+              },
+              "reasonCode": {
+                "enum": [
+                  "UNANIMOUS_WANT",
+                  "ACCEPTABLE_FINAL"
+                ]
+              }
+            },
+            "not": {
+              "properties": {
+                "topDishes": {
+                  "contains": {
+                    "properties": {
+                      "isWinner": {
+                        "const": true
+                      }
+                    },
+                    "required": [
+                      "isWinner"
+                    ]
+                  },
+                  "minContains": 2
+                }
               }
             }
           }
@@ -2877,14 +2931,29 @@
               "finalizedAt"
             ],
             "properties": {
+              "contractVersion": {
+                "const": "dish-session-v4/roadmap-v2/GM-07.B"
+              },
               "round": {
-                "type": "integer"
+                "type": "integer",
+                "enum": [
+                  1,
+                  2
+                ]
               },
               "finalizedAt": {
                 "$ref": "#/$defs/timestamp"
               },
               "policyVersion": {
                 "const": "dish-decision-v4/ADR-019-30PCT-MIN1"
+              },
+              "reasonCode": {
+                "enum": [
+                  "UNANIMOUS_WANT",
+                  "ACCEPTABLE_FINAL",
+                  "EMPTY_INTERSECTION",
+                  "ALL_REMOVED"
+                ]
               },
               "participants": {
                 "properties": {
@@ -2900,7 +2969,9 @@
                 "type": "array"
               },
               "scoredRound1BallotCount": {
-                "type": "integer"
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 20
               },
               "scoreVersion": {
                 "const": "want2-ok1-round1-v1"
@@ -2930,6 +3001,42 @@
             "properties": {
               "winner": {
                 "$ref": "#/$defs/poolDish"
+              },
+              "topDishes": {
+                "minItems": 1,
+                "contains": {
+                  "properties": {
+                    "isWinner": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "isWinner"
+                  ]
+                }
+              },
+              "reasonCode": {
+                "enum": [
+                  "UNANIMOUS_WANT",
+                  "ACCEPTABLE_FINAL"
+                ]
+              }
+            },
+            "not": {
+              "properties": {
+                "topDishes": {
+                  "contains": {
+                    "properties": {
+                      "isWinner": {
+                        "const": true
+                      }
+                    },
+                    "required": [
+                      "isWinner"
+                    ]
+                  },
+                  "minContains": 2
+                }
               }
             }
           }
