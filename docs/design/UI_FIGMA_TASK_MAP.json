@@ -45,7 +45,11 @@
         "379:1510",
         "10:164",
         "379:1273",
-        "617:1671"
+        "617:1671",
+        "998:1746",
+        "998:1663",
+        "998:1775",
+        "1012:1702"
       ],
       "scope": [
         "Đồng bộ Light tokens, Inter, spacing/radius và các component button/form/header/nav/card/khẩu vị/số món/lobby/waiting/podium theo Figma.",
@@ -106,7 +110,8 @@
         "388:7816",
         "76:851",
         "76:852",
-        "321:1236"
+        "321:1236",
+        "1015:9957"
       ],
       "scope": [
         "Dựng thiết lập buổi/thời điểm ăn, số món nguyên 10–20, ngân sách và ưu tiên khác ba bữa gần. Pool không phụ thuộc vị trí, quán hay coverage.",
@@ -228,7 +233,8 @@
         "330:3079",
         "330:3081",
         "330:3083",
-        "330:3085"
+        "330:3085",
+        "1015:10152"
       ],
       "scope": [
         "Dựng bạn bè, tìm trong danh sách hiện có, thêm bằng mã, lời mời, inbox và history DECIDED/NO_CONSENSUS theo Figma; không giả trạng thái online.",
@@ -241,7 +247,7 @@
       "ac": [
         "Expo mở được từng màn và tương tác confirm/retry/empty/error/consent/delete. Mock không xin push hoặc gọi provider thật.",
         "G01–G03 có frame hoặc variant Figma trước nghiệm thu; lịch sử legacy ẩn điểm/Top 3 thiếu và tôn trọng ACL.",
-        "G01–G03 giữ trạng thái Pending design cho tới khi owner bổ sung frame, cập nhật node/revision và Trí review."
+        "G01–G03 đã có 8 frame thiết kế; nghiệm thu cần Trí review node/evidence và implementation đúng scope."
       ],
       "issue": 75,
       "owner": [
@@ -262,7 +268,8 @@
         "323:2664",
         "451:13066",
         "451:13189",
-        "388:7816"
+        "388:7816",
+        "1015:9957"
       ],
       "scope": [
         "Thay điều kiện location/coverage bắt buộc bằng setup và preview catalogue dish-only. Nhận số món 10–20 và ưu tiên mềm; không lọc pool bằng GPS/quán/giờ bán.",
@@ -410,7 +417,8 @@
         "382:8859",
         "380:1440",
         "286:2245",
-        "277:2140"
+        "277:2140",
+        "1015:10152"
       ],
       "scope": [
         "Quyền thông báo theo Figma với grant/deny/settings; từ chối vẫn dùng inbox.",
@@ -571,7 +579,7 @@
       "ac": [
         "Frame lỗi G04–G05 gắn với case; kiểm auth/provider và Android đúng scope, mất mạng/invalid code/conflict/recovery.",
         "Thiếu provider ghi Not run; không nâng P1 chỉ vì Figma đã có màn.",
-        "G04–G05 Pending design đến khi có frame state, node ID/revision và Trí review."
+        "G04–G05 đã có 4 frame state; nghiệm thu cần Trí review node/evidence và implementation đúng scope."
       ],
       "issue": 96,
       "owner": [
@@ -625,11 +633,36 @@
         "GM-28"
       ],
       "owner": "TrungNQ2645",
-      "status": "Pending design",
-      "screenNodeId": null,
+      "status": "Designed — pending final review",
+      "screenNodeId": "801:9510",
       "noteNodeId": "664:94",
       "noteUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-94",
-      "gapRequirements": ["Loading giữ truy vấn.", "Empty nêu không có kết quả và cho sửa truy vấn.", "Error giữ truy vấn, có retry; không tự gửi lời mời hoặc tạo quan hệ bạn bè.", "GM-14/TrungNQ2645 thêm frame; GM-28 nối API và bảo đảm retry không nhân đôi mutation."]
+      "gapRequirements": [
+        "Loading giữ truy vấn.",
+        "Empty nêu không có kết quả và cho sửa truy vấn.",
+        "Error giữ truy vấn, có retry; không tự gửi lời mời hoặc tạo quan hệ bạn bè.",
+        "GM-14/TrungNQ2645 thêm frame; GM-28 nối API và bảo đảm retry không nhân đôi mutation."
+      ],
+      "screens": [
+        {
+          "nodeId": "801:9510",
+          "state": "Đang tìm",
+          "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=801-9510"
+        },
+        {
+          "nodeId": "801:9542",
+          "state": "Không có kết quả",
+          "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=801-9542"
+        },
+        {
+          "nodeId": "801:9575",
+          "state": "Tải lỗi",
+          "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=801-9575"
+        }
+      ],
+      "designEvidence": "docs/design/UI_GAPS_FIGMA_UPDATE_2026-10-25.md",
+      "checkedAt": "2026-10-25",
+      "prototypeValidation": "Not run"
     },
     {
       "id": "G02",
@@ -639,11 +672,30 @@
         "GM-28"
       ],
       "owner": "TrungNQ2645",
-      "status": "Pending design",
-      "screenNodeId": null,
+      "status": "Designed — pending final review",
+      "screenNodeId": "801:9627",
       "noteNodeId": "664:97",
       "noteUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-97",
-      "gapRequirements": ["Inbox là hộp thư thông báo, không phải lời mời vào phòng.", "Empty có điều hướng hợp lý; error giữ màn và có retry.", "GM-14/TrungNQ2645 thêm frame; GM-28 refetch dữ liệu canonical dưới ACL."]
+      "gapRequirements": [
+        "Inbox là hộp thư thông báo, không phải lời mời vào phòng.",
+        "Empty có điều hướng hợp lý; error giữ màn và có retry.",
+        "GM-14/TrungNQ2645 thêm frame; GM-28 refetch dữ liệu canonical dưới ACL."
+      ],
+      "screens": [
+        {
+          "nodeId": "801:9627",
+          "state": "Rỗng",
+          "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=801-9627"
+        },
+        {
+          "nodeId": "801:9655",
+          "state": "Tải lỗi",
+          "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=801-9655"
+        }
+      ],
+      "designEvidence": "docs/design/UI_GAPS_FIGMA_UPDATE_2026-10-25.md",
+      "checkedAt": "2026-10-25",
+      "prototypeValidation": "Not run"
     },
     {
       "id": "G03",
@@ -654,11 +706,35 @@
         "GM-31"
       ],
       "owner": "TrungNQ2645",
-      "status": "Pending design",
-      "screenNodeId": null,
+      "status": "Designed — pending final review",
+      "screenNodeId": "801:9695",
       "noteNodeId": "664:100",
       "noteUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-100",
-      "gapRequirements": ["Lỗi tải đầu có retry; offline có cache hiện fetchedAt/stale; offline không cache báo lỗi và retry khi có mạng.", "Cache không tạo/xóa history; consent/ACL/revoke/delete/TTL luôn có hiệu lực.", "GM-14/TrungNQ2645 thêm frame; GM-28 cung cấp history canonical, GM-31 quản lý cache riêng tư."]
+      "gapRequirements": [
+        "Lỗi tải đầu có retry; offline có cache hiện fetchedAt/stale; offline không cache báo lỗi và retry khi có mạng.",
+        "Cache không tạo/xóa history; consent/ACL/revoke/delete/TTL luôn có hiệu lực.",
+        "GM-14/TrungNQ2645 thêm frame; GM-28 cung cấp history canonical, GM-31 quản lý cache riêng tư."
+      ],
+      "screens": [
+        {
+          "nodeId": "801:9695",
+          "state": "Lỗi tải lần đầu",
+          "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=801-9695"
+        },
+        {
+          "nodeId": "801:9846",
+          "state": "Ngoại tuyến có bản lưu",
+          "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=801-9846"
+        },
+        {
+          "nodeId": "801:9775",
+          "state": "Ngoại tuyến chưa có bản lưu",
+          "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=801-9775"
+        }
+      ],
+      "designEvidence": "docs/design/UI_GAPS_FIGMA_UPDATE_2026-10-25.md",
+      "checkedAt": "2026-10-25",
+      "prototypeValidation": "Not run"
     },
     {
       "id": "G04",
@@ -668,11 +744,30 @@
         "GM-35"
       ],
       "owner": "mtuan2491",
-      "status": "Pending design",
-      "screenNodeId": null,
+      "status": "Designed — pending final review",
+      "screenNodeId": "801:9899",
       "noteNodeId": "664:103",
       "noteUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-103",
-      "gapRequirements": ["Pending chặn submit lặp; chỉ báo lưu sau ACK.", "Lỗi mạng/server giữ màn và giá trị profile, có retry/chỉnh sửa; không báo thành công cục bộ.", "GM-35/mtuan2491 thêm frame; semantics xung đột profile theo provider/server handoff."]
+      "gapRequirements": [
+        "Pending chặn submit lặp; chỉ báo lưu sau ACK.",
+        "Lỗi mạng/server giữ màn và giá trị profile, có retry/chỉnh sửa; không báo thành công cục bộ.",
+        "GM-35/mtuan2491 thêm frame; semantics xung đột profile theo provider/server handoff."
+      ],
+      "screens": [
+        {
+          "nodeId": "801:9899",
+          "state": "Đang lưu",
+          "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=801-9899"
+        },
+        {
+          "nodeId": "801:9939",
+          "state": "Lưu lỗi giữ nội dung",
+          "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=801-9939"
+        }
+      ],
+      "designEvidence": "docs/design/UI_GAPS_FIGMA_UPDATE_2026-10-25.md",
+      "checkedAt": "2026-10-25",
+      "prototypeValidation": "Not run"
     },
     {
       "id": "G05",
@@ -682,11 +777,30 @@
         "GM-35"
       ],
       "owner": "mtuan2491",
-      "status": "Pending design",
-      "screenNodeId": null,
+      "status": "Designed — pending final review",
+      "screenNodeId": "801:9991",
       "noteNodeId": "664:106",
       "noteUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-106",
-      "gapRequirements": ["Pending chặn submit lặp.", "Lỗi mạng/server giữ màn và lỗi có retry nhưng xóa mọi ô password để nhập lại; validation cục bộ có thể giữ form để sửa field. Không log/cache password.", "GM-35/mtuan2491 thêm frame; provider/session invalidation theo auth contract đã bàn giao."]
+      "gapRequirements": [
+        "Pending chặn submit lặp.",
+        "Lỗi mạng/server giữ màn và lỗi có retry nhưng xóa mọi ô password để nhập lại; validation cục bộ có thể giữ form để sửa field. Không log/cache password.",
+        "GM-35/mtuan2491 thêm frame; provider/session invalidation theo auth contract đã bàn giao."
+      ],
+      "screens": [
+        {
+          "nodeId": "801:9991",
+          "state": "Đang cập nhật",
+          "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=801-9991"
+        },
+        {
+          "nodeId": "801:10030",
+          "state": "Lỗi xóa các ô",
+          "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=801-10030"
+        }
+      ],
+      "designEvidence": "docs/design/UI_GAPS_FIGMA_UPDATE_2026-10-25.md",
+      "checkedAt": "2026-10-25",
+      "prototypeValidation": "Not run"
     }
   ],
   "designInventory": [
@@ -3032,7 +3146,7 @@
     },
     {
       "id": "276:2037",
-      "name": "Bạn bè · Tìm bạn",
+      "name": "Bạn bè · Thêm bạn bằng mã",
       "type": "FRAME",
       "parentId": "330:3076",
       "parentName": "12 · Bạn bè / Tìm bạn / Lời mời",
@@ -3739,7 +3853,217 @@
       "pageId": "76:853",
       "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=77-23",
       "role": "design-target"
+    },
+    {
+      "id": "801:9510",
+      "name": "G01 · Đang tìm",
+      "type": "FRAME",
+      "parentId": "330:3076",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=801-9510",
+      "role": "design-target"
+    },
+    {
+      "id": "801:9542",
+      "name": "G01 · Không có kết quả",
+      "type": "FRAME",
+      "parentId": "330:3076",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=801-9542",
+      "role": "design-target"
+    },
+    {
+      "id": "801:9575",
+      "name": "G01 · Tải lỗi",
+      "type": "FRAME",
+      "parentId": "330:3076",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=801-9575",
+      "role": "design-target"
+    },
+    {
+      "id": "801:9627",
+      "name": "G02 · Rỗng",
+      "type": "FRAME",
+      "parentId": "330:3079",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=801-9627",
+      "role": "design-target"
+    },
+    {
+      "id": "801:9655",
+      "name": "G02 · Tải lỗi",
+      "type": "FRAME",
+      "parentId": "330:3079",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=801-9655",
+      "role": "design-target"
+    },
+    {
+      "id": "801:9695",
+      "name": "G03 · Lỗi tải lần đầu",
+      "type": "FRAME",
+      "parentId": "330:3081",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=801-9695",
+      "role": "design-target"
+    },
+    {
+      "id": "801:9846",
+      "name": "G03 · Ngoại tuyến có bản lưu",
+      "type": "FRAME",
+      "parentId": "330:3081",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=801-9846",
+      "role": "design-target"
+    },
+    {
+      "id": "801:9775",
+      "name": "G03 · Ngoại tuyến chưa có bản lưu",
+      "type": "FRAME",
+      "parentId": "330:3081",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=801-9775",
+      "role": "design-target"
+    },
+    {
+      "id": "801:9899",
+      "name": "G04 · Đang lưu",
+      "type": "FRAME",
+      "parentId": "330:3083",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=801-9899",
+      "role": "design-target"
+    },
+    {
+      "id": "801:9939",
+      "name": "G04 · Lưu lỗi giữ nội dung",
+      "type": "FRAME",
+      "parentId": "330:3083",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=801-9939",
+      "role": "design-target"
+    },
+    {
+      "id": "801:9991",
+      "name": "G05 · Đang cập nhật",
+      "type": "FRAME",
+      "parentId": "330:3083",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=801-9991",
+      "role": "design-target"
+    },
+    {
+      "id": "801:10030",
+      "name": "G05 · Lỗi xóa các ô",
+      "type": "FRAME",
+      "parentId": "330:3083",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=801-10030",
+      "role": "design-target"
+    },
+    {
+      "id": "1015:9957",
+      "name": "Tạo phòng — Không đủ tối thiểu 10 món",
+      "type": "FRAME",
+      "parentId": "330:3068",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=1015-9957",
+      "role": "design-target"
+    },
+    {
+      "id": "1015:10152",
+      "name": "Thông báo — Nội dung không còn khả dụng",
+      "type": "FRAME",
+      "parentId": "330:3079",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=1015-10152",
+      "role": "design-target"
+    },
+    {
+      "id": "998:1746",
+      "name": "GCD / Collection State",
+      "type": "COMPONENT_SET",
+      "parentId": "998:1651",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=998-1746",
+      "role": "design-target"
+    },
+    {
+      "id": "998:1663",
+      "name": "GCD / Search Skeleton Row",
+      "type": "COMPONENT",
+      "parentId": "998:1651",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=998-1663",
+      "role": "design-target"
+    },
+    {
+      "id": "998:1775",
+      "name": "GCD / Request Banner",
+      "type": "COMPONENT_SET",
+      "parentId": "998:1651",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=998-1775",
+      "role": "design-target"
+    },
+    {
+      "id": "1012:1702",
+      "name": "GCD / Insufficient Dishes",
+      "type": "COMPONENT_SET",
+      "parentId": "998:1651",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=1012-1702",
+      "role": "design-target"
+    },
+    {
+      "id": "1012:1681",
+      "name": "State=Below minimum",
+      "type": "COMPONENT",
+      "parentId": "1012:1702",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=1012-1681",
+      "role": "design-target"
+    },
+    {
+      "id": "1012:1703",
+      "name": "GCD / Icon / Content Unavailable",
+      "type": "COMPONENT",
+      "parentId": "998:1651",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=1012-1703",
+      "role": "design-target"
     }
   ],
-  "runtimeAcceptance": "Not run in this documentation/task update"
+  "runtimeAcceptance": "Not run in this documentation/task update",
+  "gapUpdate": {
+    "date": "2026-10-25",
+    "screenCount": 12,
+    "flowStartingPointCount": 12,
+    "components": [
+      "998:1746",
+      "998:1663",
+      "998:1775"
+    ],
+    "report": "docs/design/UI_GAPS_FIGMA_UPDATE_2026-10-25.md",
+    "review": "Pending Trí review; no task approval or runtime acceptance"
+  },
+  "approvedUiUpdate": {
+    "date": "2026-10-25",
+    "scope": "U01–U05, six approved proposals",
+    "minimumDishScreen": "1015:9957",
+    "unavailableContentScreen": "1015:10152",
+    "flowStartingPointCount": 12,
+    "workflowRows": {
+      "create": "330:3068",
+      "join": "330:3069",
+      "friends": "330:3076",
+      "notifications": "330:3079",
+      "home": "330:3067"
+    },
+    "visualReview": "Screens and workflow rows reviewed; awaiting Trí final review",
+    "prototypeValidation": "Not run",
+    "report": "docs/design/UI_APPROVED_UPDATES_2026-10-25.md"
+  },
+  "scopeDecision": "docs/design/UI_SCOPE_CONFIRMED_2026-10-25.md"
 }

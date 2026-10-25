@@ -1,5 +1,9 @@
 # UI final handoff — Figma chốt, 2026-10-25
 
+> Chỉ dẫn mới nhất: [phạm vi UI sau hai đợt đã chốt](UI_SCOPE_CONFIRMED_2026-10-25.md). Các đề xuất thêm ở lượt rà cuối không cần bổ sung, không dùng để tiếp tục báo thiếu frame; chuyển sang rà BE/Data.
+
+> Cập nhật sau khi duyệt đề xuất: U01–U05 đã được áp dụng lên Figma, gồm hai state mới và sửa các màn hiện có; xem [bàn giao cập nhật](UI_APPROVED_UPDATES_2026-10-25.md). Các phát hiện cũ bên dưới là lịch sử trước khi sửa; không dùng để báo thiếu lại. Present và runtime vẫn theo phạm vi kiểm riêng.
+
 ## Mục đích
 
 Ghi nhận kết quả rà soát cuối bộ UI Figma để main đồng bộ tài liệu/spec/AC và chuẩn bị triển khai theo quy trình task hiện hành. Figma hiện là hình ảnh mục tiêu cho UI đã chốt; repo vẫn có các màn và hành vi cũ vì chưa đồng bộ sau khi hoàn thiện Figma. Source trong repo dùng để xác định khoảng cách triển khai, không dùng làm lý do hạ yêu cầu thiết kế mới.
@@ -32,7 +36,9 @@ Figma có màn cho mở app, đăng nhập/đăng ký/khách và khôi phục t�
 
 Các trạng thái lỗi/chờ đã thể hiện rõ trong luồng cốt lõi gồm: tạo phòng thất bại/mất mạng, mã sai/phòng đầy/hết hạn/camera bị từ chối, phòng mất kết nối/reconnect/start thất bại, khẩu vị lưu/tải thất bại hoặc phòng đã đóng, phiếu đang gửi/chưa rõ ACK/gửi lỗi/vòng đã đóng, chốt sớm, không có món thắng, lỗi tải kết quả, cần bật vị trí, không có địa điểm và map tải lỗi.
 
-## Trạng thái phụ chưa có màn riêng
+## Trạng thái phụ chưa có màn riêng tại thời điểm rà ban đầu
+
+Cập nhật tiếp ngày 25/10: 12 frame G01–G05 đã được dựng trên trang 03 và kiểm ảnh. Xem [bổ sung G01–G05](UI_GAPS_FIGMA_UPDATE_2026-10-25.md) và task map. Danh sách thiếu bên dưới phản ánh thời điểm rà ban đầu; không còn là hiện trạng frame. Bổ sung còn chờ Trí review cuối, Present và runtime chưa chạy trong lượt này.
 
 Rà soát không thấy frame riêng cho các trạng thái sau ở các khu vực ngoài luồng chọn món:
 

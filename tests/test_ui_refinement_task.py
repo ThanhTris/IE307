@@ -57,11 +57,19 @@ class UiRefinementTaskTests(unittest.TestCase):
         mapping = json.loads((ROOT / 'docs/design/UI_FIGMA_TASK_MAP.json').read_text(encoding='utf-8'))
         self.assertEqual(mapping['fileKey'], '3Ysh0mOAEkAgA5DgZPSC1j')
         self.assertEqual(len(mapping['tasks']), 20)
-        # Missing-state notes cannot be treated as implemented screen designs.
+        # Supplemental designs have real frames; this does not approve runtime.
+        screen_ids = set()
         for gap in mapping['gaps']:
-            self.assertEqual(gap['status'], 'Pending design')
-            self.assertIsNone(gap['screenNodeId'])
+            self.assertEqual(gap['status'], 'Designed — pending final review')
+            self.assertEqual(gap['screenNodeId'], gap['screens'][0]['nodeId'])
+            self.assertEqual(gap['prototypeValidation'], 'Not run')
+            for screen in gap['screens']:
+                self.assertNotEqual(screen['nodeId'], gap['noteNodeId'])
+                self.assertIn(screen['nodeId'].replace(':', '-'), screen['url'])
+                self.assertNotIn(screen['nodeId'], screen_ids)
+                screen_ids.add(screen['nodeId'])
             self.assertIn(gap['designTask'], {'GM-14', 'GM-35'})
+        self.assertEqual(len(screen_ids), 12)
         for number in range(9, 15):
             entry = next(item for item in self.entries if item['new_id'] == f'GM-{number:02d}')
             self.assertEqual(entry['verification']['mode'], 'expo-go')
