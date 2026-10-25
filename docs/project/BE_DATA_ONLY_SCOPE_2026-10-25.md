@@ -20,7 +20,7 @@ Task BE/Data baseline đã nghiệm thu còn cần bổ sung dùng cột Status 
 
 ## Chi tiết owner phải chốt trước tích hợp
 
-GM-07 đề xuất và Trí review transport opt-in B, concurrency/waiting/expiry, aggregation ưu tiên mềm và DTO history/cohort. GM-18 cùng GM-40 phân biệt meal eligibility với soft preferences và quy tắc chọn price observation. GM-17/21 chốt participant identity/time projection theo consent. Có thể làm phần độc lập trước; chưa được tuyên bố tất cả consumer đủ đầu vào tích hợp khi các chi tiết này chưa có artifact reviewed/version/hash.
+GM-07.B hiện chốt trong contract proposal transport opt-in, concurrency/waiting/expiry và DTO history/cohort. Trí đã xác nhận equal weighting giữa host/member và quy tắc participant privacy personal/group; công thức điểm soft preference, budget fit và seeded tie-break vẫn phải được Trí review rõ trong contract trước khi producer triển khai. GM-18/40 cung cấp meal eligibility, pool inputs, price observation và card projection. GM-17/21 áp dụng participant identity/time projection theo consent. Có thể làm phần độc lập trước; chưa tuyên bố đủ đầu vào tích hợp khi producer chưa bàn giao artifact reviewed/version/hash.
 
 Các AC/ca kiểm cụ thể được đồng bộ trong task GM-03/06/07/15/17..23/32/40 và checklist sinh từ task map. Phần bổ sung là yêu cầu owner triển khai tiếp; đợt đồng bộ hồ sơ này không sửa runtime v3, mobile, schema B hoặc migration đã merge. Places/provider interface có thể chuẩn bị ở contract, triển khai sau theo phạm vi Trí giao; quán/vị trí không quay lại điều kiện pool.
 
@@ -57,3 +57,9 @@ GM-04/08 và nghiệm thu baseline giữ để truy vết. P1/P2 tiếp tục l�
 Thu hồi block supplement `followup-figma-be-data-20261024` / `figma-be-data-followup-20261024-vB` đã thêm vào GM-02/05/09..14/24..31/33/34/39 và bỏ cờ Follow-up của đợt này trên card FE. Giữ các nhiệm vụ, yêu cầu, evidence và PR trước supplement. Không hủy PR đang làm, đổi Status/assignee/Deadline, sửa app hay cài font/package.
 
 Màu/font/components, các màn và mobile integration, Places/map trong app, Android và release sau đợt FE sẽ do Trí giao lại khi Figma chốt. Mô tả UI trong báo cáo giữ làm tham chiếu; không dùng để bắt đầu FE hoặc coi là nghiệm thu thiết kế. Backend vẫn chuẩn bị dữ liệu/hành vi cần thiết cho các màn, độc lập với layout cuối.
+
+## Quyết định bổ sung của Trí — 2026-10-25
+
+- Soft preference aggregation: host and every joined member have equal person weight; the host still owns the meal/count settings. Contract B records the per-dimension cap and ranking proposal; the exact formula stays reviewer-visible rather than becoming implicit runtime behavior.
+- History participant privacy: personal history retains only the caller identity and member count; group history may retain display names only when every member has valid explicit consent frozen for that session. No new avatar projection or inferred consent is added.
+- These decisions update BE/Data contract and access requirements only. They do not reopen or change FE assignment, status, assignee, deadline, baseline evidence, mobile app, or deployed v2/v3 policy.

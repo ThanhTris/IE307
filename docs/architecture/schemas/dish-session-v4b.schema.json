@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gi-cung-duoc.local/schemas/dish-session-v4b.schema.json",
   "title": "Dish session v4.B proposed wire contract",
-  "description": "GM-07.B forward-only proposal. It extends GM-07.A with room preferences, join preview, member submission status and immutable aggregate Top 3 results. It is not a deployed runtime contract.",
+  "description": "GM-07.B forward-only proposal. It extends GM-07.A with room preferences, join preview, explicit concurrency guards, history projections and immutable aggregate Top 3 results. Transport is the opt-in dish_session_v4 RPC. It is not a deployed runtime contract.",
   "oneOf": [
     {
       "$ref": "#/$defs/requestEnvelope"
@@ -202,7 +202,8 @@
           "enum": [
             "NOT_SUBMITTED",
             "ACCEPTED"
-          ]
+          ],
+          "description": "Current-round complete ACK status only; does not imply that the caller is waiting."
         }
       },
       "additionalProperties": false
@@ -336,7 +337,6 @@
           "required": [
             "requestId",
             "roomId",
-            "expectedVersion",
             "round",
             "poolVersion",
             "votes"
@@ -347,10 +347,6 @@
             },
             "roomId": {
               "$ref": "#/$defs/uuid"
-            },
-            "expectedVersion": {
-              "type": "integer",
-              "minimum": 1
             },
             "round": {
               "const": 1
@@ -374,7 +370,6 @@
           "required": [
             "requestId",
             "roomId",
-            "expectedVersion",
             "round",
             "poolVersion",
             "votes"
@@ -385,10 +380,6 @@
             },
             "roomId": {
               "$ref": "#/$defs/uuid"
-            },
-            "expectedVersion": {
-              "type": "integer",
-              "minimum": 1
             },
             "round": {
               "const": 2
@@ -414,7 +405,6 @@
       "required": [
         "requestId",
         "roomId",
-        "expectedVersion",
         "round",
         "poolVersion"
       ],
@@ -424,10 +414,6 @@
         },
         "roomId": {
           "$ref": "#/$defs/uuid"
-        },
-        "expectedVersion": {
-          "type": "integer",
-          "minimum": 1
         },
         "round": {
           "type": "integer",
@@ -830,9 +816,6 @@
               "round": {
                 "const": 1
               },
-              "poolVersion": {
-                "const": 1
-              },
               "pool": {
                 "minItems": 10,
                 "maxItems": 20
@@ -1064,6 +1047,56 @@
                 "type": "integer",
                 "minimum": 1,
                 "maximum": 6
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "enum": [
+                  "WAITING_1",
+                  "WAITING_2"
+                ]
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "waitingStartedAt": {
+                "$ref": "#/$defs/timestamp"
+              },
+              "deadline": {
+                "$ref": "#/$defs/timestamp"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "enum": [
+                  "ROUND_1",
+                  "ROUND_2"
+                ]
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "waitingStartedAt": {
+                "type": "null"
+              },
+              "deadline": {
+                "type": "null"
               }
             }
           }
@@ -1304,7 +1337,8 @@
         "finalizedAt",
         "scoreVersion",
         "rankingVersion",
-        "topDishes"
+        "topDishes",
+        "scoredRound1BallotCount"
       ],
       "properties": {
         "resultId": {
@@ -1361,7 +1395,13 @@
           "maxItems": 3,
           "items": {
             "$ref": "#/$defs/topDish"
-          }
+          },
+          "description": "Semantic checks require the persisted winner to have the maximum score among eligible dishes; equal scores share a dense rank, including a tie for rank 1."
+        },
+        "scoredRound1BallotCount": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
         }
       },
       "allOf": [
@@ -1479,6 +1519,52 @@
               }
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "NO_CONSENSUS"
+              },
+              "round": {
+                "const": 1
+              }
+            },
+            "required": [
+              "status",
+              "round"
+            ]
+          },
+          "then": {
+            "properties": {
+              "reasonCode": {
+                "const": "EMPTY_INTERSECTION"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "NO_CONSENSUS"
+              },
+              "round": {
+                "const": 2
+              }
+            },
+            "required": [
+              "status",
+              "round"
+            ]
+          },
+          "then": {
+            "properties": {
+              "reasonCode": {
+                "const": "ALL_REMOVED"
+              }
+            }
+          }
         }
       ],
       "additionalProperties": false
@@ -1498,6 +1584,8 @@
     "successEnvelope": {
       "type": "object",
       "required": [
+        "contractVersion",
+        "policyVersion",
         "ok",
         "data"
       ],
@@ -1554,6 +1642,12 @@
               "$ref": "#/$defs/preferencesAck"
             }
           ]
+        },
+        "contractVersion": {
+          "const": "dish-session-v4/roadmap-v2/GM-07.B"
+        },
+        "policyVersion": {
+          "const": "dish-decision-v4/ADR-019-30PCT-MIN1"
         }
       },
       "additionalProperties": false
@@ -1575,12 +1669,16 @@
         "ROOM_TERMINAL",
         "INSUFFICIENT_DISHES",
         "RATE_LIMITED",
-        "WORKER_NOT_READY"
+        "WORKER_NOT_READY",
+        "UNSUPPORTED_CONTRACT_VERSION",
+        "BALLOT_ALREADY_ACCEPTED"
       ]
     },
     "errorEnvelope": {
       "type": "object",
       "required": [
+        "contractVersion",
+        "policyVersion",
         "ok",
         "error"
       ],
@@ -1605,6 +1703,12 @@
             }
           },
           "additionalProperties": false
+        },
+        "contractVersion": {
+          "const": "dish-session-v4/roadmap-v2/GM-07.B"
+        },
+        "policyVersion": {
+          "const": "dish-decision-v4/ADR-019-30PCT-MIN1"
         }
       },
       "additionalProperties": false
@@ -2023,7 +2127,8 @@
             "WAITING_2",
             "DECIDED",
             "NO_CONSENSUS",
-            "CANCELLED"
+            "CANCELLED",
+            "EXPIRED"
           ]
         },
         "reasonCode": {
@@ -2099,17 +2204,979 @@
         },
         "score": {
           "type": "integer",
-          "minimum": 0
+          "minimum": 0,
+          "maximum": 40
         },
         "rank": {
           "type": "integer",
-          "minimum": 1
+          "minimum": 1,
+          "maximum": 3
         },
         "isWinner": {
           "type": "boolean"
         }
       },
       "additionalProperties": false
+    },
+    "historyParticipantProjection": {
+      "type": "object",
+      "required": [
+        "visibility",
+        "memberCount",
+        "selfUserId",
+        "names"
+      ],
+      "properties": {
+        "visibility": {
+          "enum": [
+            "PERSONAL_SELF",
+            "GROUP_COUNT_ONLY",
+            "CONSENTED_GROUP_NAMES"
+          ]
+        },
+        "memberCount": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
+        },
+        "selfUserId": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/uuid"
+            }
+          ]
+        },
+        "names": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 24
+          }
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "visibility": {
+                "const": "PERSONAL_SELF"
+              }
+            },
+            "required": [
+              "visibility"
+            ]
+          },
+          "then": {
+            "properties": {
+              "selfUserId": {
+                "$ref": "#/$defs/uuid"
+              },
+              "names": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "visibility": {
+                "const": "GROUP_COUNT_ONLY"
+              }
+            },
+            "required": [
+              "visibility"
+            ]
+          },
+          "then": {
+            "properties": {
+              "selfUserId": {
+                "type": "null"
+              },
+              "names": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "visibility": {
+                "const": "CONSENTED_GROUP_NAMES"
+              }
+            },
+            "required": [
+              "visibility"
+            ]
+          },
+          "then": {
+            "properties": {
+              "selfUserId": {
+                "type": "null"
+              },
+              "names": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "legacyWinner": {
+      "type": "object",
+      "required": [
+        "name",
+        "artworkUrl"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "artworkUrl": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "historySummary": {
+      "type": "object",
+      "required": [
+        "historyId",
+        "generation",
+        "contractVersion",
+        "policyVersion",
+        "status",
+        "round",
+        "reasonCode",
+        "desiredAt",
+        "finalizedAt",
+        "participants",
+        "winner",
+        "topDishes",
+        "scoredRound1BallotCount",
+        "scoreVersion",
+        "rankingVersion"
+      ],
+      "properties": {
+        "historyId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "generation": {
+          "enum": [
+            "LEGACY_V2",
+            "LEGACY_V3",
+            "V4_B"
+          ]
+        },
+        "contractVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policyVersion": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "enum": [
+            "DECIDED",
+            "NO_CONSENSUS"
+          ]
+        },
+        "round": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "integer",
+              "enum": [
+                1,
+                2
+              ]
+            }
+          ]
+        },
+        "reasonCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "desiredAt": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/timestamp"
+            }
+          ]
+        },
+        "finalizedAt": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/timestamp"
+            }
+          ]
+        },
+        "participants": {
+          "$ref": "#/$defs/historyParticipantProjection"
+        },
+        "winner": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/poolDish"
+            },
+            {
+              "$ref": "#/$defs/legacyWinner"
+            }
+          ]
+        },
+        "topDishes": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "array",
+              "maxItems": 3,
+              "items": {
+                "$ref": "#/$defs/topDish"
+              }
+            }
+          ]
+        },
+        "scoredRound1BallotCount": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 20
+        },
+        "scoreVersion": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rankingVersion": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "generation": {
+                "enum": [
+                  "LEGACY_V2",
+                  "LEGACY_V3"
+                ]
+              }
+            },
+            "required": [
+              "generation"
+            ]
+          },
+          "then": {
+            "properties": {
+              "topDishes": {
+                "type": "null"
+              },
+              "scoredRound1BallotCount": {
+                "type": "null"
+              },
+              "scoreVersion": {
+                "type": "null"
+              },
+              "rankingVersion": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "generation": {
+                "const": "V4_B"
+              }
+            },
+            "required": [
+              "generation"
+            ]
+          },
+          "then": {
+            "required": [
+              "round",
+              "finalizedAt"
+            ],
+            "properties": {
+              "contractVersion": {
+                "const": "dish-session-v4/roadmap-v2/GM-07.B"
+              },
+              "round": {
+                "type": "integer",
+                "enum": [
+                  1,
+                  2
+                ]
+              },
+              "finalizedAt": {
+                "$ref": "#/$defs/timestamp"
+              },
+              "policyVersion": {
+                "const": "dish-decision-v4/ADR-019-30PCT-MIN1"
+              },
+              "reasonCode": {
+                "enum": [
+                  "UNANIMOUS_WANT",
+                  "ACCEPTABLE_FINAL",
+                  "EMPTY_INTERSECTION",
+                  "ALL_REMOVED"
+                ]
+              },
+              "participants": {
+                "properties": {
+                  "visibility": {
+                    "enum": [
+                      "PERSONAL_SELF",
+                      "CONSENTED_GROUP_NAMES"
+                    ]
+                  }
+                }
+              },
+              "topDishes": {
+                "type": "array"
+              },
+              "scoredRound1BallotCount": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 20
+              },
+              "scoreVersion": {
+                "const": "want2-ok1-round1-v1"
+              },
+              "rankingVersion": {
+                "const": "score-desc-dense-rank-v1"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "generation": {
+                "const": "V4_B"
+              },
+              "status": {
+                "const": "DECIDED"
+              }
+            },
+            "required": [
+              "generation",
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "winner": {
+                "$ref": "#/$defs/poolDish"
+              },
+              "topDishes": {
+                "minItems": 1,
+                "contains": {
+                  "properties": {
+                    "isWinner": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "isWinner"
+                  ]
+                }
+              },
+              "reasonCode": {
+                "enum": [
+                  "UNANIMOUS_WANT",
+                  "ACCEPTABLE_FINAL"
+                ]
+              }
+            },
+            "not": {
+              "properties": {
+                "topDishes": {
+                  "contains": {
+                    "properties": {
+                      "isWinner": {
+                        "const": true
+                      }
+                    },
+                    "required": [
+                      "isWinner"
+                    ]
+                  },
+                  "minContains": 2
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "generation": {
+                "const": "V4_B"
+              },
+              "status": {
+                "const": "NO_CONSENSUS"
+              }
+            },
+            "required": [
+              "generation",
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "winner": {
+                "type": "null"
+              },
+              "topDishes": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "generation": {
+                "const": "V4_B"
+              },
+              "status": {
+                "const": "NO_CONSENSUS"
+              },
+              "round": {
+                "const": 1
+              }
+            },
+            "required": [
+              "generation",
+              "status",
+              "round"
+            ]
+          },
+          "then": {
+            "properties": {
+              "reasonCode": {
+                "const": "EMPTY_INTERSECTION"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "generation": {
+                "const": "V4_B"
+              },
+              "status": {
+                "const": "NO_CONSENSUS"
+              },
+              "round": {
+                "const": 2
+              }
+            },
+            "required": [
+              "generation",
+              "status",
+              "round"
+            ]
+          },
+          "then": {
+            "properties": {
+              "reasonCode": {
+                "const": "ALL_REMOVED"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "historyDetail": {
+      "type": "object",
+      "required": [
+        "historyId",
+        "generation",
+        "contractVersion",
+        "policyVersion",
+        "status",
+        "round",
+        "reasonCode",
+        "desiredAt",
+        "finalizedAt",
+        "participants",
+        "winner",
+        "topDishes",
+        "scoredRound1BallotCount",
+        "scoreVersion",
+        "rankingVersion",
+        "lockedDishes"
+      ],
+      "properties": {
+        "historyId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "generation": {
+          "enum": [
+            "LEGACY_V2",
+            "LEGACY_V3",
+            "V4_B"
+          ]
+        },
+        "contractVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policyVersion": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "enum": [
+            "DECIDED",
+            "NO_CONSENSUS"
+          ]
+        },
+        "round": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "integer",
+              "enum": [
+                1,
+                2
+              ]
+            }
+          ]
+        },
+        "reasonCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "desiredAt": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/timestamp"
+            }
+          ]
+        },
+        "finalizedAt": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/timestamp"
+            }
+          ]
+        },
+        "participants": {
+          "$ref": "#/$defs/historyParticipantProjection"
+        },
+        "winner": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/poolDish"
+            },
+            {
+              "$ref": "#/$defs/legacyWinner"
+            }
+          ]
+        },
+        "topDishes": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "array",
+              "maxItems": 3,
+              "items": {
+                "$ref": "#/$defs/topDish"
+              }
+            }
+          ]
+        },
+        "scoredRound1BallotCount": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 20
+        },
+        "scoreVersion": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rankingVersion": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "lockedDishes": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "array",
+              "maxItems": 20,
+              "items": {
+                "$ref": "#/$defs/poolDish"
+              }
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "generation": {
+                "enum": [
+                  "LEGACY_V2",
+                  "LEGACY_V3"
+                ]
+              }
+            },
+            "required": [
+              "generation"
+            ]
+          },
+          "then": {
+            "properties": {
+              "topDishes": {
+                "type": "null"
+              },
+              "scoredRound1BallotCount": {
+                "type": "null"
+              },
+              "scoreVersion": {
+                "type": "null"
+              },
+              "rankingVersion": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "generation": {
+                "const": "V4_B"
+              }
+            },
+            "required": [
+              "generation"
+            ]
+          },
+          "then": {
+            "required": [
+              "round",
+              "finalizedAt"
+            ],
+            "properties": {
+              "contractVersion": {
+                "const": "dish-session-v4/roadmap-v2/GM-07.B"
+              },
+              "round": {
+                "type": "integer",
+                "enum": [
+                  1,
+                  2
+                ]
+              },
+              "finalizedAt": {
+                "$ref": "#/$defs/timestamp"
+              },
+              "policyVersion": {
+                "const": "dish-decision-v4/ADR-019-30PCT-MIN1"
+              },
+              "reasonCode": {
+                "enum": [
+                  "UNANIMOUS_WANT",
+                  "ACCEPTABLE_FINAL",
+                  "EMPTY_INTERSECTION",
+                  "ALL_REMOVED"
+                ]
+              },
+              "participants": {
+                "properties": {
+                  "visibility": {
+                    "enum": [
+                      "PERSONAL_SELF",
+                      "CONSENTED_GROUP_NAMES"
+                    ]
+                  }
+                }
+              },
+              "topDishes": {
+                "type": "array"
+              },
+              "scoredRound1BallotCount": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 20
+              },
+              "scoreVersion": {
+                "const": "want2-ok1-round1-v1"
+              },
+              "rankingVersion": {
+                "const": "score-desc-dense-rank-v1"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "generation": {
+                "const": "V4_B"
+              },
+              "status": {
+                "const": "DECIDED"
+              }
+            },
+            "required": [
+              "generation",
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "winner": {
+                "$ref": "#/$defs/poolDish"
+              },
+              "topDishes": {
+                "minItems": 1,
+                "contains": {
+                  "properties": {
+                    "isWinner": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "isWinner"
+                  ]
+                }
+              },
+              "reasonCode": {
+                "enum": [
+                  "UNANIMOUS_WANT",
+                  "ACCEPTABLE_FINAL"
+                ]
+              }
+            },
+            "not": {
+              "properties": {
+                "topDishes": {
+                  "contains": {
+                    "properties": {
+                      "isWinner": {
+                        "const": true
+                      }
+                    },
+                    "required": [
+                      "isWinner"
+                    ]
+                  },
+                  "minContains": 2
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "generation": {
+                "const": "V4_B"
+              },
+              "status": {
+                "const": "NO_CONSENSUS"
+              }
+            },
+            "required": [
+              "generation",
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "winner": {
+                "type": "null"
+              },
+              "topDishes": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "generation": {
+                "const": "V4_B"
+              },
+              "status": {
+                "const": "NO_CONSENSUS"
+              },
+              "round": {
+                "const": 1
+              }
+            },
+            "required": [
+              "generation",
+              "status",
+              "round"
+            ]
+          },
+          "then": {
+            "properties": {
+              "reasonCode": {
+                "const": "EMPTY_INTERSECTION"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "generation": {
+                "const": "V4_B"
+              },
+              "status": {
+                "const": "NO_CONSENSUS"
+              },
+              "round": {
+                "const": 2
+              }
+            },
+            "required": [
+              "generation",
+              "status",
+              "round"
+            ]
+          },
+          "then": {
+            "properties": {
+              "reasonCode": {
+                "const": "ALL_REMOVED"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "generation": {
+                "enum": [
+                  "LEGACY_V2",
+                  "LEGACY_V3"
+                ]
+              }
+            },
+            "required": [
+              "generation"
+            ]
+          },
+          "then": {
+            "properties": {
+              "lockedDishes": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "generation": {
+                "const": "V4_B"
+              }
+            },
+            "required": [
+              "generation"
+            ]
+          },
+          "then": {
+            "properties": {
+              "lockedDishes": {
+                "type": "array"
+              }
+            }
+          }
+        }
+      ]
     }
+  },
+  "x-rpc-transport": {
+    "method": "POST",
+    "path": "/rest/v1/rpc/dish_session_v4",
+    "arguments": [
+      "command",
+      "payload"
+    ],
+    "legacyPath": "/rest/v1/rpc/dish_session",
+    "legacyBehaviorChanges": false
+  },
+  "x-decision-supplement": {
+    "path": "docs/architecture/decisions/ADR-021-soft-preference-and-history-projection.md",
+    "status": "Proposed"
   }
 }

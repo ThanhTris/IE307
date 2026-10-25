@@ -1,0 +1,49 @@
+{
+  "task": "GM-07",
+  "supplement": "GM-07.B",
+  "baselineRevision": "346dc7c",
+  "branch": "codex/be-data-contract-sync-2026-10-25",
+  "workingTreeEvidence": true,
+  "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+  "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
+  "scoreVersion": "want2-ok1-round1-v1",
+  "rankingVersion": "score-desc-dense-rank-v1",
+  "review": {
+    "owner": "Trang",
+    "finalReviewer": "Trí",
+    "adr021Status": "Proposed"
+  },
+  "validation": {
+    "jsonSchemaDraft": "2020-12",
+    "jsonschemaVersion": "4.26.0",
+    "dependencyLocation": "OS temp directory; not added to repository manifests",
+    "checker": "docs/evidence/roadmap-v2/GM-07/gm07b_schema_smoke.py",
+    "wireExampleCount": 9,
+    "runtimeB": "Not run; no v4.B RPC or forward migration exists on baseline",
+    "resultSemanticRules": [
+      "B terminal results require at least one server-ACKed complete round-one ballot.",
+      "The persisted winner has the maximum score among eligible dishes; equal scores share a dense rank.",
+      "V4_B history pins contract, policy, score, ranking, and terminal-reason values; legacy capability nulls remain unchanged."
+    ]
+  },
+  "sourceSha256": {
+    "docs/architecture/DISH_SESSION_API_CONTRACT_B.md": "6dd011153f50c629795e25b6f7178eb0f6b07adafb3ad01470cd1255c4eee7b4",
+    "docs/architecture/schemas/dish-session-v4b.schema.json": "7b8d4d09347d64a065660e070ccd5ce92419176cadab00ea30863af2d0d9e69a",
+    "docs/evidence/roadmap-v2/GM-07/gm07b_schema_build.py": "80f1c94189ee40e3e12a140abe5a61a94cac17d51f25362edc4b81f937e1cfd7",
+    "docs/evidence/roadmap-v2/GM-07/gm07b_schema_smoke.py": "e025e016b797baf92da916f47ca1cc2fd9673989d2ff44de8e86a3f821e277f8",
+    "docs/evidence/roadmap-v2/GM-07/GM07B_WIRE_EXAMPLES_2026-10-25.md": "9a6edf16152e8aa2ec6be82508d53c2aa118899748840e9929b10b3621fa9c67",
+    "docs/evidence/roadmap-v2/GM-07/GM07B_CHECKS_2026-10-25.md": "db20e2eaae1b3ae8328c4ad0c8089b2aa322ca77fb743358ecda481970fa2f61",
+    "docs/evidence/roadmap-v2/GM-07/GM07B_HANDOFF_2026-10-25.md": "c1ecfb38d5d6f9353c2efe6eee27ee0768870152c0e0d0e8251738522406c413",
+    "docs/architecture/decisions/ADR-021-soft-preference-and-history-projection.md": "5ba41fb712f7dfbd8de8e483d4ceada7ed1b61a0a78116c0e756187325572152",
+    "docs/architecture/ACCESS_MATRIX.md": "32b6d87aeaa4bcd6495f7ea15be87eb1db84016b0e3b2a0ed3f2bb626f8d4276",
+    "docs/architecture/ACCESS_MATRIX_GM17_B_SUPPLEMENT_2026-10-25.md": "98304d92e77a6258830876626076923f970d7a5372d69d601592b0e40970e5d7",
+    "tasks/backlog/GM-07.md": "61aeae76770f61ea410a1b9e617799fa5336c491b97bf6f22c0d96c97b240c50",
+    "tasks/review/GM-03.md": "a6a75ca09ee47078e81f67fa1e12ac01ae3f84fee30c1d1fc772f5f3df7b8e14",
+    "tasks/backlog/GM-17.md": "c68b0a382bcfd23eeb1c65e36a25744df6ab202d80111fe9752e7c53bd9a5390",
+    "tasks/backlog/GM-19.md": "05ad77180293a8a5aebc03d228f44767f3468ec1f47d51405e313939cd06ed44",
+    "tasks/backlog/GM-22.md": "4caed51f76994fa104c87632ca12c150dd42910bc8cf2e624d7b04e6aa5c49a2",
+    "tasks/backlog/GM-23.md": "cbdad92a848055731129f15515008b1309647ca978288ed50f0d1dd1e6411c4c",
+    "docs/project/BE_DATA_ONLY_SCOPE_2026-10-25.md": "001895ff507ea8056d13946cbc095d648e4ee18b0b6fd0c3e7aced735e180902"
+  },
+  "reviewedBaseRevision": "cc73ef4397d9b14f0ebd9956d0690bedb21feb5e"
+}
