@@ -12,7 +12,7 @@
 
 ## Task và trạng thái Project
 
-Status/owner được đọc trực tiếp từ Project #2 trước khi đồng bộ issue và đọc lại sau đó. Cột Status trước/sau giống nhau; assignee, Deadline, priority và PR review không bị chỉnh. “Issue state” Closed/Open không được dùng thay cho Project Status.
+Status/owner được đọc trực tiếp từ Project #2 trước khi đồng bộ issue và đọc lại sau đó. Cột Status trước/sau giống nhau; assignee, Deadline, priority và PR review không bị chỉnh. Trường `Figma UI` của cả 20 task UI đã được kiểm và đều trỏ đúng frame/task-map tương ứng, nên giữ nguyên. “Issue state” Closed/Open không được dùng thay cho Project Status.
 
 | Task | Issue | Owner hiện hành | Status trước → sau |
 | --- | ---: | --- | --- |
@@ -73,7 +73,7 @@ BE/Data matrix đã được chuyển từ “sơ bộ do thiếu frame” thàn
 - `python -m unittest discover -s tests -p "test_*.py"`: 594 tests, 21 failures và 6 skipped. Cả 21 lỗi nằm trong `test_mobile_api_test_plan.py` (handoff link và literal `Android thật` trong checklist/manifest), trùng nhóm đã ghi nhận trước đợt này; không sửa ngoài phạm vi tài liệu đồng bộ.
 - `git diff --check`: Pass; còn cảnh báo chuyển CRLF của `tasks/backlog/GM-39.md`.
 - GitHub Issues: 33 body được bổ sung scope hiện hành lên đầu, giữ nguyên phần lịch sử phía dưới; trạng thái issue không đổi.
-- Project #2: xác minh trước/sau, status và owner giữ nguyên; không ghi hoặc thay đổi Done/Approved.
+- Project #2: xác minh trước/sau; status và owner giữ nguyên; 20 liên kết Figma UI hiện có đã kiểm; không ghi hoặc thay đổi Done/Approved.
 - Chưa chạy app Expo, Android/native build, API, DB hay migration. Không có runtime Pass trong báo cáo này.
 
 ## Phần chưa nghiệm thu
