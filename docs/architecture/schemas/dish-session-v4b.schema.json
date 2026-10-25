@@ -656,7 +656,8 @@
         "settings",
         "ownPreferences",
         "removalCap",
-        "expiresAt"
+        "expiresAt",
+        "canEndWaiting"
       ],
       "properties": {
         "contractVersion": {
@@ -731,12 +732,14 @@
         "submittedCount": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 20
+          "maximum": 20,
+          "description": "Complete ballots accepted and ACKed by the server for this snapshot's current round only."
         },
         "memberCount": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 20
+          "maximum": 20,
+          "description": "Locked started-session roster size including the host; not online presence and not reduced by disconnects."
         },
         "ownBallot": {
           "oneOf": [
@@ -813,6 +816,10 @@
         },
         "expiresAt": {
           "$ref": "#/$defs/timestamp"
+        },
+        "canEndWaiting": {
+          "type": "boolean",
+          "description": "True only for the host while this round is waiting and submittedCount > memberCount / 2; the server rechecks the action."
         }
       },
       "additionalProperties": false,
@@ -1064,6 +1071,29 @@
                 "type": "integer",
                 "minimum": 1,
                 "maximum": 6
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "enum": [
+                  "LOBBY",
+                  "ROUND_1",
+                  "ROUND_2",
+                  "DECIDED",
+                  "NO_CONSENSUS",
+                  "CANCELLED"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "canEndWaiting": {
+                "const": false
               }
             }
           }
@@ -1575,8 +1605,10 @@
         "ROOM_TERMINAL",
         "INSUFFICIENT_DISHES",
         "RATE_LIMITED",
-        "WORKER_NOT_READY"
-      ]
+        "WORKER_NOT_READY",
+        "NOT_READY"
+      ],
+      "description": "NOT_READY rejects a manual host early-end request before the current-round strict-majority gate is met."
     },
     "errorEnvelope": {
       "type": "object",

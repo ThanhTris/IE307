@@ -2,6 +2,14 @@
 
 Ngày: 2026-10-22. Chủ quyết định/reviewer: Trí (ThanhTris).
 
+## Làm rõ hiện hành — 2026-10-25: host kết thúc chờ
+
+Theo chỉ dẫn trực tiếp mới nhất của Trí, nút host chỉ kết thúc sớm **vòng chờ**, không cho host chọn món thắng. Với mỗi vòng r, M là tổng thành viên roster đã khóa khi start (gồm host); A_r là số thành viên có ballot hoàn chỉnh của chính vòng r đã được server ACK. Host chỉ được kết thúc chờ khi waiting của vòng đó đã bắt đầu và `A_r > M/2`, tức tối thiểu `floor(M/2)+1`. Ví dụ M=2/3/4/5/20 cần A_r=2/2/3/3/11. Đúng một nửa chưa đủ; phiếu R1 không cấp quyền kết thúc chờ R2. Server kiểm host/membership/round/version/waiting và ngưỡng dưới cùng lock; client không tự cấp quyền qua nút hoặc counter.
+
+Người đầu tiên hoàn tất ballot và vào waiting hợp lệ sau ACK kích hoạt deadline riêng `waitingStartedAt + 60s`. Các thành viên khác vẫn chọn/gửi trước deadline. Timer không bắt đầu chỉ vì vào R2, nhận ACK đơn thuần hoặc mở route waiting. Khi host đủ điều kiện kết thúc chờ, mọi người đã gửi đủ hoặc deadline đến, server dùng cùng đường xử lý phiếu/transaction để quyết định chuyển vòng hay kết quả; không nhận winner do host chọn. Timeout vẫn tính các ballot hoàn chỉnh đã ACK với tối thiểu một ballot, kể cả chưa quá nửa; điều kiện majority chỉ dành cho thao tác kết thúc chờ sớm của host. A_r được tính riêng cho từng vòng; rời app/mất mạng không giảm mẫu số M, không xóa phiếu đã ACK hoặc gia hạn deadline. Phiếu thiếu không là OK; R2 vẫn cho 0 REMOVE và không có phiếu KEEP tự sinh.
+
+Bổ sung này thay điều kiện host chỉ cần một phiếu của trao đổi trước cho policy mới. Giữ phiên v2/v3 đã pin; chưa có runtime/migration triển khai yêu cầu này. Ownership admission: GM-19 bàn giao helper chung trước, GM-22 tái sử dụng cho invite accept; không chờ đầu ra task số lớn để làm task số nhỏ.
+
 ## Supplement hiện hành — 2026-10-24
 
 Trí xác nhận cap vòng2 theo **30% số món còn sau NO vòng1**, với mức tối thiểu một lượt loại: mọi N=1..20 dùng `max(1, floor(0.30*N))`. Trước hết xét winner vòng1; nếu đã có winner thì chốt DECIDED. Nếu chưa có winner, pool vòng2 là pool ban đầu trừ hợp của mọi món được đánh dấu NO trong tất cả ballot vòng1 hoàn chỉnh đã ACK. N=0 thì chốt NO_CONSENSUS/EMPTY_INTERSECTION ngay ở round1, không mở vòng2 rỗng. Với N>=1, luôn mở vòng2 thực sự; N=1 vẫn cho người chơi quyết định REMOVE món duy nhất hoặc không REMOVE. Không auto-finalize. Cap là mức tối đa được loại, không bắt buộc người chơi phải loại; 0 REMOVE hợp lệ. N=1/2/3 là ngoại lệ tối thiểu một lượt. Pool vòng2 có thể ít hơn10 món, không thêm món bù. Nếu toàn bộ món vòng2 bị REMOVE, chốt NO_CONSENSUS/ALL_REMOVED.
@@ -41,7 +49,7 @@ Luật hiện hành: trước tiên chốt winner vòng 1 nếu đã có. Nếu 
 
 ### Timeout/chốt sớm và phiếu thiếu
 
-**Trí đã chốt:** chỉ tính phiếu hoàn chỉnh đã được server ACK; thiếu phiếu là Không tham gia vòng này, tuyệt đối không tính OK. Quorum tối thiểu 1 phiếu hợp lệ; UI hiện số người đã gửi/tổng roster. Không bắt quá nửa nhóm. Chưa ai vào phòng chờ kết quả thì chưa chạy đồng hồ 60 giây; không dùng đồng hồ này làm giới hạn tổng thời gian game.
+**Trí đã chốt:** chỉ tính phiếu hoàn chỉnh đã được server ACK; thiếu phiếu là Không tham gia vòng này, tuyệt đối không tính OK. Timeout có quorum tối thiểu 1 phiếu hợp lệ; UI hiện số người đã gửi/tổng roster. Thao tác host kết thúc chờ sớm áp dụng ngưỡng quá nửa theo làm rõ ngày 25/10 ở đầu ADR; ngưỡng host một phiếu đời trước đã được thay thế. Chưa ai vào phòng chờ kết quả thì chưa chạy đồng hồ 60 giây; không dùng đồng hồ này làm giới hạn tổng thời gian game.
 
 Người đầu tiên hoàn tất lượt chọn vào màn chờ kết quả sẽ kích hoạt khoảng chờ chung 60 giây; người còn lại tiếp tục chọn trong khoảng đó. Ví dụ bắt đầu lúc 10:00, người đầu tiên vào chờ lúc 10:03 thì deadline là 10:04, không phải 10:01. Vòng 2 có lần kích hoạt độc lập. Server ghi nhận transition vào chờ hợp lệ sau khi lưu đủ phiếu; sự kiện chọn từng món, lưu nháp hoặc mở route chờ khi chưa hoàn tất không được kích hoạt timer.
 

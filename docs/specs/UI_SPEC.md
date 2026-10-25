@@ -27,7 +27,7 @@ R1 WANT/OK/NO; không gửi phiếu là chưa tham gia, không phải OK. Cuối
 
 R1 kiểm winner trước; nếu chưa có, survivors từ pool khóa trừ NO của các ballot hoàn chỉnh ACK. N=0 → NO_CONSENSUS/EMPTY_INTERSECTION, N≥1 mở R2 thật. R2 là quyết định REMOVE hoặc không, cap max(1,floor(0.30*N)) kể cả N1; không bắt buộc loại ít nhất một món, không tự KEEP cho người chưa gửi, không auto-finalize. Loại hết → ALL_REMOVED; không bù món/R3.
 
-Waiting60s từ lần vào chờ hợp lệ đầu tiên sau ACK; các thành viên khác vẫn chọn/gửi trước deadline. Host Chốt ngay cần ít nhất một ballot hợp lệ. Client dùng server time/deadline/snapshot, không khởi countdown cả game từ start.
+Waiting60s từ lần vào chờ hợp lệ đầu tiên sau ACK; các thành viên khác vẫn chọn/gửi trước deadline. Host chỉ kết thúc chờ sớm khi quá nửa roster khóa đã ACK ballot của vòng hiện tại; server quyết định kết quả, timeout giữ quorum tối thiểu 1. Client dùng server time/deadline/snapshot, không khởi countdown cả game từ start.
 
 Top3 lấy score R1=2*WANT+OK, R2 chỉ loại; tối đa3 món còn hợp lệ. Dense rank, đồng điểm cùng hạng/cùng chiều cao; winner có nhãn riêng và nằm trong Top3. NO_CONSENSUS không dựng podium. History/result giữ projection đã lưu, legacy thiếu trường thì ẩn. Phiếu cá nhân/seed không public.
 

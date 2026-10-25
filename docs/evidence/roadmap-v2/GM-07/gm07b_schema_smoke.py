@@ -53,6 +53,22 @@ def result(status: str, top_dishes: list[dict]) -> dict:
     }
 
 
+def may_host_end_waiting(*, host: bool, waiting_started: bool, accepted_current_round: int, locked_members: int) -> bool:
+    """Manual early-end gate; the server still rechecks this under its lock."""
+    return (
+        host
+        and waiting_started
+        and locked_members > 0
+        and 0 <= accepted_current_round <= locked_members
+        and accepted_current_round > locked_members / 2
+    )
+
+
+def timeout_is_due(*, deadline_elapsed_seconds: int, accepted_current_round: int) -> bool:
+    """Timeout is independent of majority but requires a complete accepted ballot."""
+    return deadline_elapsed_seconds >= 60 and accepted_current_round >= 1
+
+
 def main() -> int:
     schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
     Draft202012Validator.check_schema(schema)
@@ -125,13 +141,75 @@ def main() -> int:
         "ownPreferences": {"cuisineIds": [], "categoryIds": [], "temperature": None, "flavor": None, "budget": None, "avoidRecent": False},
         "removalCap": 1,
         "expiresAt": "2026-10-24T12:00:00Z",
+        "canEndWaiting": False,
     }
     snapshot_validator.validate(single_dish_round_two)
     invalid_single_dish_snapshot = {**single_dish_round_two, "removalCap": 0}
     if snapshot_validator.is_valid(invalid_single_dish_snapshot):
         raise AssertionError("A one-dish round two must allow one removal, not skip the ballot")
+    invalid_early_end_projection = {**single_dish_round_two, "canEndWaiting": True}
+    if snapshot_validator.is_valid(invalid_early_end_projection):
+        raise AssertionError("canEndWaiting must be false outside a WAITING state")
 
-    print("Pass: Draft 2020-12 schema; result fixtures, finalize ACK shapes, and a real one-dish round-two snapshot with removalCap=1.")
+    waiting_snapshot = {
+        **single_dish_round_two,
+        "state": "WAITING_2",
+        "submittedCount": 3,
+        "memberCount": 4,
+        "members": [
+            {"userId": ROOM_ID, "displayName": "Host", "role": "HOST", "submissionStatus": "ACCEPTED"},
+            {"userId": "00000000-0000-4000-8000-000000000002", "displayName": "Member 2", "role": "MEMBER", "submissionStatus": "ACCEPTED"},
+            {"userId": "00000000-0000-4000-8000-000000000003", "displayName": "Member 3", "role": "MEMBER", "submissionStatus": "ACCEPTED"},
+            {"userId": "00000000-0000-4000-8000-000000000004", "displayName": "Member 4", "role": "MEMBER", "submissionStatus": "NOT_SUBMITTED"},
+        ],
+        "ownBallot": [{"roundDishId": dish(1)["roundDishId"], "choice": "KEEP"}],
+        "ownWaiting": True,
+        "waitingStartedAt": "2026-10-24T10:00:00Z",
+        "deadline": "2026-10-24T10:01:00Z",
+        "canEndWaiting": True,
+    }
+    snapshot_validator.validate(waiting_snapshot)
+    if not waiting_snapshot["canEndWaiting"] or not may_host_end_waiting(
+        host=True,
+        waiting_started=waiting_snapshot["waitingStartedAt"] is not None,
+        accepted_current_round=waiting_snapshot["submittedCount"],
+        locked_members=waiting_snapshot["memberCount"],
+    ):
+        raise AssertionError("A current-round 3/4 host snapshot should expose canEndWaiting=true")
+    if may_host_end_waiting(host=True, waiting_started=False, accepted_current_round=3, locked_members=4):
+        raise AssertionError("Host cannot end before this round's waiting starts")
+    if may_host_end_waiting(host=True, waiting_started=True, accepted_current_round=2, locked_members=4):
+        raise AssertionError("Exactly half of the locked roster is insufficient")
+    if not may_host_end_waiting(host=True, waiting_started=True, accepted_current_round=3, locked_members=4):
+        raise AssertionError("A strict majority of current-round ACKs should allow early end")
+    if may_host_end_waiting(host=True, waiting_started=True, accepted_current_round=1, locked_members=3):
+        raise AssertionError("One of three ACKs is below the strict-majority threshold")
+    if not may_host_end_waiting(host=True, waiting_started=True, accepted_current_round=2, locked_members=3):
+        raise AssertionError("Two of three current-round ACKs meet the threshold")
+    if may_host_end_waiting(host=True, waiting_started=True, accepted_current_round=2, locked_members=5):
+        raise AssertionError("Two of five current-round ACKs are below the threshold")
+    if not may_host_end_waiting(host=True, waiting_started=True, accepted_current_round=3, locked_members=5):
+        raise AssertionError("Three of five current-round ACKs meet the threshold")
+    if may_host_end_waiting(host=True, waiting_started=True, accepted_current_round=10, locked_members=20):
+        raise AssertionError("Ten of twenty current-round ACKs are exactly half and insufficient")
+    if may_host_end_waiting(host=True, waiting_started=True, accepted_current_round=0, locked_members=3):
+        raise AssertionError("An R1 ACK must not carry into round-two early-end eligibility")
+    if not may_host_end_waiting(host=True, waiting_started=True, accepted_current_round=11, locked_members=20):
+        raise AssertionError("Eleven of a locked twenty-member roster meet the threshold")
+    if may_host_end_waiting(host=False, waiting_started=True, accepted_current_round=3, locked_members=4):
+        raise AssertionError("A non-host cannot invoke manual early end")
+    if not timeout_is_due(deadline_elapsed_seconds=60, accepted_current_round=1):
+        raise AssertionError("A due timeout must proceed with one ACK, even below majority")
+    if timeout_is_due(deadline_elapsed_seconds=59, accepted_current_round=1):
+        raise AssertionError("A timeout must not fire before the 60-second deadline")
+    if not timeout_is_due(deadline_elapsed_seconds=61, accepted_current_round=1):
+        raise AssertionError("A timeout remains due after the 60-second deadline")
+    if timeout_is_due(deadline_elapsed_seconds=60, accepted_current_round=0):
+        raise AssertionError("Timeout processing requires at least one current-round accepted ballot")
+    error_validator = root_validator.evolve(schema=schema["$defs"]["errorCode"])
+    error_validator.validate("NOT_READY")
+
+    print("Pass: Draft 2020-12 schema; result/finalize fixtures, one-dish R2, strict-majority host gate, waiting-start gate, timeout minimum-one rule, and NOT_READY error.")
     return 0
 
 

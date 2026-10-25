@@ -418,7 +418,7 @@
         "tool": "Expo Go Android + interaction tests",
         "entrypoint": "Figma task map → node thiết kế → route/scenario bàn giao của GM-12",
         "expected": "R1 dùng flashcard: trái NO, phải OK, chạm hai lần WANT và có nút thay gesture. Undo trước gửi; thẻ cuối gửi một ballot rồi khóa Undo.",
-        "cases": "Fixture N=0/1/2/3/4/10/20, cap/cap+1, không loại và cả nhóm loại hết. N=1 có chưa loại/đã loại/gửi/chờ. Kiểm ACK muộn, người bỏ lỡ R1 và reconnect; counter chỉ tính ACK, host Chốt ngay cần ≥1 ballot hợp lệ."
+        "cases": "Fixture N=0/1/2/3/4/10/20, cap/cap+1, không loại và cả nhóm loại hết. N=1 có chưa loại/đã loại/gửi/chờ. Kiểm ACK muộn, người bỏ lỡ R1 và reconnect; counter chỉ tính ACK, host chỉ kết thúc chờ sớm khi quá nửa roster khóa đã ACK ballot của vòng hiện tại; server quyết định kết quả."
       }
     },
     {
@@ -698,7 +698,7 @@
         "tool": "Postman hoặc curl multi-user/concurrency runner",
         "entrypoint": "create/previewJoin/join/snapshot/updateSettings/updatePreferences/start/leave/cancel và waiting lifecycle theo B",
         "expected": "Snapshot response-driven đủ version/poolVersion/settings/roster-status; admission20/no-ready, lobby edits/start lock và reconnect/expiry/deadline theo server.",
-        "cases": "20/21 members; preview privacy; stale pool/version; lobby edit/start/invite race; first-waiting60s; quorum1; N0 terminal/N1 R2; cancel/expiry"
+        "cases": "20/21 members; preview privacy; stale pool/version; lobby edit/start/invite race; first-waiting60s; host-majority-current-round / timeout-min1; N0 terminal/N1 R2; cancel/expiry"
       }
     },
     {
@@ -742,7 +742,7 @@
         "tool": "Postman hoặc curl multi-user/concurrency + SQL/domain parity",
         "entrypoint": "Complete ballot → ACK → waiting → finalize advance/terminal → canonical result/history/event",
         "expected": "Winner/Top3/score/rank/locked card và cohort R1 được persist ổn định, atomic cùng terminal/outbox; retry không duplicate hoặc reroll; giữ v2/v3.",
-        "cases": "R1 winner/survivors; R2 N1..20/cap/all-removed; incomplete/replay/stale; waiting59/60/61s; quorum1; host/tick/cancel race; history/event parity"
+        "cases": "R1 winner/survivors; R2 N1..20/cap/all-removed; incomplete/replay/stale; waiting59/60/61s; host-majority-current-round / timeout-min1; host/tick/cancel race; history/event parity"
       }
     },
     {

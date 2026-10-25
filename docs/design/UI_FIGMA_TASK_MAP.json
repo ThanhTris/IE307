@@ -180,7 +180,7 @@
       ],
       "ac": [
         "Fixture N=0/1/2/3/4/10/20, cap/cap+1, không loại và cả nhóm loại hết. N=1 có chưa loại/đã loại/gửi/chờ.",
-        "Kiểm ACK muộn, người bỏ lỡ R1 và reconnect; counter chỉ tính ACK, host Chốt ngay cần ≥1 ballot hợp lệ."
+        "Kiểm ACK muộn, người bỏ lỡ R1 và reconnect; counter chỉ tính ACK, host chỉ kết thúc chờ sớm khi quá nửa roster khóa đã ACK ballot của vòng hiện tại; server quyết định kết quả."
       ],
       "issue": 73,
       "owner": [

@@ -29,6 +29,12 @@ Baseline repo là `f7b7fdb` (`main` = `origin/main`) trước đợt cập nhậ
 - **Đã chốt — Places:** Google Places gọi trực tiếp từ app, không qua backend proxy. GM-30 cần bàn giao config/key restrictions, attribution, quota, permission, loading/empty/error và Android capability; không thêm package/native dependency trước dependency review theo repo.
 - **Giữ nguyên các luật đã chốt:** R1 kiểm winner trước; N=0 là `EMPTY_INTERSECTION`; N>=1 mở R2 thật; cap `max(1,floor(.30*N))`; không auto-finalize, tự sinh KEEP, bù món hoặc R3; `ALL_REMOVED`; timer 60 giây sau ACK và vào waiting; Top 3 theo ADR-020; raw ballots và đóng góp cá nhân luôn riêng tư.
 
+## Làm rõ host kết thúc chờ — 2026-10-25
+
+Host chỉ kết thúc sớm thời gian chờ của vòng hiện tại khi số thành viên có ballot hoàn chỉnh đã ACK lớn hơn một nửa roster đã khóa: A_r > M/2, tương đương A_r >= floor(M/2)+1. Host không chọn hoặc ép món thắng; server tự tính chuyển vòng/kết quả. Đồng hồ riêng mỗi vòng bắt đầu tại lần vào waiting hợp lệ đầu tiên sau ACK, deadline = waitingStartedAt + 60s. Người khác vẫn gửi trước deadline. Hết 60s, server xử lý các ballot hợp lệ đã nhận theo quorum timeout tối thiểu 1, không áp ngưỡng quá nửa của thao tác host cho timeout. Mất mạng/reconnect không giảm M hoặc gia hạn deadline. Đây là yêu cầu policy mới, không đổi semantics phiên v2/v3 đã pin.
+
+GM-07 định nghĩa counts/capability/error và request không chọn winner; GM-19 cung cấp admission helper trước, GM-22 nhận helper để xử lý invite. GM-19/20 xử lý waiting và guard server; GM-12/26 nhận quyền/đếm từ server để bật/tắt hành động; GM-32/33 kiểm ngưỡng và race. Các nhãn “Chốt ngay” trên thiết kế cũ phải được hiểu là kết thúc chờ, không là quyền chọn món. Nếu fixture Figma còn bật nút với 1/3 đã gửi, owner UI ghi và đồng bộ trạng thái theo luật mới; lượt tài liệu này chưa sửa Figma/app.
+
 ## Task, status và bàn giao
 
 Snapshot Project #2 được đọc trong lượt đồng bộ: GM-03, GM-06/07, GM-15, GM-17..23, GM-32 và GM-40 đều `Needs Update`; assignee/deadline hiện hành được giữ trên Project. GM-04, GM-08 và GM-16 đang `Done`, không được mở lại nếu task này không có đầu ra cần làm lại cụ thể. UI status hiện tại: Needs Update GM-02/05/09–14/24/25; Review GM-28/29; In Progress GM-39; Todo GM-26/27/30/31/33/34/35. Không tự chuyển cột. Không suy lịch sử Done từ trạng thái Needs Update.
