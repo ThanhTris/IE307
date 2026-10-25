@@ -1,0 +1,3731 @@
+{
+  "version": "ui-figma-final/2026-10-25",
+  "fileKey": "3Ysh0mOAEkAgA5DgZPSC1j",
+  "verifiedAt": "2026-10-25",
+  "baselineMain": "9aa9696be62010351bb81ff4e3bcd19cd2f4050f",
+  "handoffPageId": "663:2",
+  "handoffNodeId": "664:2",
+  "handoffUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-2",
+  "tasks": [
+    {
+      "id": "GM-02",
+      "title": "Nền Expo, font Inter và điều hướng UI Figma",
+      "nodes": [
+        "0:1",
+        "8:2",
+        "298:2309"
+      ],
+      "scope": [
+        "Bổ sung font Inter, cơ chế tải/fallback font và route cho bộ UI mới trong bootstrap hiện có. GM-05 nhận nền này để làm token/component.",
+        "Giữ cấu trúc Expo Router, provider và ranh giới feature; bàn giao danh sách route để các task sau mở đúng màn. Package mới phải theo quy trình review dependency."
+      ],
+      "ac": [
+        "Kiểm cây code, import boundary, config và font; GM-02 vẫn là task nền, không nhận nghiệm thu toàn bộ màn sản phẩm.",
+        "Tải font lỗi/chậm có fallback; không tạo shell hoặc hệ điều hướng thứ hai."
+      ],
+      "issue": 63,
+      "owner": [
+        "ThanhTris"
+      ],
+      "beforeStatus": "Done",
+      "afterStatus": "Needs Update",
+      "itemId": "PVTI_lAHOCnL5Fs4Bl7Fjzg_zwp4",
+      "path": "tasks/review/GM-02.md",
+      "taskNoteNodeId": "664:13",
+      "figmaUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=0-1"
+    },
+    {
+      "id": "GM-05",
+      "title": "Component và token theo Figma đã chốt",
+      "nodes": [
+        "0:1",
+        "8:2",
+        "9:77",
+        "379:1510",
+        "10:164",
+        "379:1273",
+        "617:1671"
+      ],
+      "scope": [
+        "Đồng bộ Light tokens, Inter, spacing/radius và các component button/form/header/nav/card/khẩu vị/số món/lobby/waiting/podium theo Figma.",
+        "Lập component map: node Figma → props/events/variants → file React Native → route preview. Tái sử dụng nền hiện có; JSX web từ Figma phải chuyển sang React Native.",
+        "Xanh #46C34F chỉ trang trí; CTA dùng token action có tương phản. Logo/icon dùng asset được phép, ảnh món giữ dynamic và có fallback."
+      ],
+      "ac": [
+        "Expo mở được từng variant với props/events, loading/disabled/error, tên dài, thiếu ảnh và thiếu giá.",
+        "Đạt touch target ≥48dp, chữ 200%, TalkBack và nút thay gesture. Dark redesign hoãn; giữ capability hiện có."
+      ],
+      "issue": 66,
+      "owner": [
+        "TrungNQ2645"
+      ],
+      "beforeStatus": "Done",
+      "afterStatus": "Needs Update",
+      "itemId": "PVTI_lAHOCnL5Fs4Bl7Fjzg_z7ZM",
+      "path": "tasks/backlog/GM-05.md",
+      "taskNoteNodeId": "664:17",
+      "figmaUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=0-1"
+    },
+    {
+      "id": "GM-09",
+      "title": "UI Home, khách, tạo/tham gia phòng và hướng dẫn",
+      "nodes": [
+        "298:2309",
+        "330:3067",
+        "330:3068",
+        "330:3069",
+        "368:16837"
+      ],
+      "scope": [
+        "Dựng welcome/chọn khách, nhập tên, Home/tiếp tục phiên, entry tạo/vào phòng và hướng dẫn lần đầu theo Figma.",
+        "Setup dùng component GM-10; preview join chỉ hiện số thành viên, tên hiện sau join. Xử lý mã sai, phòng đầy/hết hạn/mất mạng; QR thật thuộc GM-30.",
+        "Tutorial dùng state và thẻ mẫu riêng; skip/replay/Back không tạo phòng hoặc gửi phiếu thật. Auth thật thuộc GM-25, tài khoản P1 thuộc GM-35."
+      ],
+      "ac": [
+        "Expo thao tác được Home → setup/khẩu vị → preview join → lobby với fixture có nhãn.",
+        "Đối chiếu ảnh Home/guest/join/tutorial; kiểm Back, keyboard và các lỗi. Không giả online hoặc bắt GPS ở tạo phòng."
+      ],
+      "issue": 70,
+      "owner": [
+        "mtuan2491"
+      ],
+      "beforeStatus": "Done",
+      "afterStatus": "Needs Update",
+      "itemId": "PVTI_lAHOCnL5Fs4Bl7Fjzg_zxDI",
+      "path": "tasks/backlog/GM-09.md",
+      "taskNoteNodeId": "664:21",
+      "figmaUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=298-2309"
+    },
+    {
+      "id": "GM-10",
+      "title": "UI thiết lập phòng và khẩu vị dish-only",
+      "nodes": [
+        "43:106",
+        "330:3068",
+        "388:7816",
+        "76:851",
+        "76:852",
+        "321:1236"
+      ],
+      "scope": [
+        "Dựng thiết lập buổi/thời điểm ăn, số món nguyên 10–20, ngân sách và ưu tiên khác ba bữa gần. Pool không phụ thuộc vị trí, quán hay coverage.",
+        "Khẩu vị dùng taxonomy được bàn giao: Anything, một/nhiều lựa chọn và sửa từ lobby; ưu tiên mềm, null/unknown giữ đúng.",
+        "Hẹn giờ giữ buổi và nháp; có kiểm giờ đã qua, loading, lưu lỗi, offline, bỏ thay đổi và phòng đóng theo các frame tình huống."
+      ],
+      "ac": [
+        "Kiểm biên 10/20, giờ không hợp lệ, giữ nháp và shortage available/requested; chỉ giảm sau host xác nhận và vẫn ≥10.",
+        "Có fixture đầy đủ P01–P11/R01–R15. Thiếu giá không thành 0; bỏ ready và vị trí bắt buộc."
+      ],
+      "issue": 71,
+      "owner": [
+        "mtuan2491"
+      ],
+      "beforeStatus": "Done",
+      "afterStatus": "Needs Update",
+      "itemId": "PVTI_lAHOCnL5Fs4Bl7Fjzg_zxFc",
+      "path": "tasks/backlog/GM-10.md",
+      "taskNoteNodeId": "664:25",
+      "figmaUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=43-106"
+    },
+    {
+      "id": "GM-11",
+      "title": "UI lobby và trạng thái phòng không ready",
+      "nodes": [
+        "68:429",
+        "330:3070",
+        "76:853",
+        "321:1663"
+      ],
+      "scope": [
+        "Dựng lobby host/member, tối đa 20 người, code/QR/share/invite và chỉnh settings/khẩu vị trong lobby. Host bấm bắt đầu, không ready hoặc duyệt từng người.",
+        "Có tình huống người vào/rời, thiết lập thay đổi, đang bắt đầu/lỗi, mất mạng/kết nối lại, bắt đầu ở nơi khác, hủy/rời/hết hạn/đóng phòng.",
+        "QR/share thật thuộc GM-30, lifecycle thật thuộc GM-25. Chỉ hiện trạng thái gửi được phép; không lộ lựa chọn riêng của người khác."
+      ],
+      "ac": [
+        "Fixture 1/3/20 người; quyền host/member, confirm hủy/rời/Back và chống bấm bắt đầu lặp.",
+        "Đối chiếu L01–L22; danh sách đông cuộn được và không che hành động chính."
+      ],
+      "issue": 72,
+      "owner": [
+        "TrungNQ2645"
+      ],
+      "beforeStatus": "Done",
+      "afterStatus": "Needs Update",
+      "itemId": "PVTI_lAHOCnL5Fs4Bl7Fjzg_zxHA",
+      "path": "tasks/backlog/GM-11.md",
+      "taskNoteNodeId": "664:29",
+      "figmaUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=68-429"
+    },
+    {
+      "id": "GM-12",
+      "title": "UI flashcard, vòng hai, ACK và chờ kết quả",
+      "nodes": [
+        "330:3071",
+        "330:3072",
+        "330:3073",
+        "330:3074",
+        "638:9369",
+        "617:1671"
+      ],
+      "scope": [
+        "R1 dùng flashcard: trái NO, phải OK, chạm hai lần WANT và có nút thay gesture. Undo trước gửi; thẻ cuối gửi một ballot rồi khóa Undo.",
+        "Dựng đang gửi, chưa rõ ACK, retry, vòng đóng và waiting host/member. Countdown 60 giây theo deadline server sau lần vào waiting hợp lệ đầu tiên; không giới hạn cả game từ lúc bắt đầu.",
+        "R1 kiểm winner trước; chưa có winner thì N=0 kết thúc EMPTY_INTERSECTION, N≥1 mở R2 thật. R2 quyết định REMOVE hoặc không, cap max(1,floor(0.30*N)) kể cả N=1; không bắt loại, không tự KEEP/finalize."
+      ],
+      "ac": [
+        "Fixture N=0/1/2/3/4/10/20, cap/cap+1, không loại và cả nhóm loại hết. N=1 có chưa loại/đã loại/gửi/chờ.",
+        "Kiểm ACK muộn, người bỏ lỡ R1 và reconnect; counter chỉ tính ACK, host Chốt ngay cần ≥1 ballot hợp lệ."
+      ],
+      "issue": 73,
+      "owner": [
+        "rosy179"
+      ],
+      "beforeStatus": "Done",
+      "afterStatus": "Needs Update",
+      "itemId": "PVTI_lAHOCnL5Fs4Bl7Fjzg_zxJA",
+      "path": "tasks/backlog/GM-12.md",
+      "taskNoteNodeId": "664:33",
+      "figmaUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=330-3071"
+    },
+    {
+      "id": "GM-13",
+      "title": "UI kết quả, Top 3 đồng hạng và Places/map",
+      "nodes": [
+        "330:3075",
+        "379:1401",
+        "617:1671",
+        "617:1428",
+        "379:1478",
+        "622:8962"
+      ],
+      "scope": [
+        "Dựng winner và bục 1/2/3 món với điểm, dense rank và biến thể đồng hạng: cùng hạng cùng chiều cao, winner có nhãn Món được chọn.",
+        "NO_CONSENSUS có winner null/Top 3 rỗng; phân biệt EMPTY_INTERSECTION/ALL_REMOVED, finalizing/lỗi tải và các nút tạo phiên/Home/Back.",
+        "Places + map ở sau kết quả có xin quyền, loading/empty/error và mở Maps; lỗi Places không đổi winner. GM-27 nối result thật, GM-30 nối Places/map thật. Legacy thiếu điểm/Top 3 thì ẩn."
+      ],
+      "ac": [
+        "Fixture 1/2/3 món, đồng hạng đầu/cuối/tất cả, thiếu ảnh/giá. Điểm không vượt 2 × số ballot R1 đã ACK.",
+        "Không dùng frame Tham khảo cũ hoặc router QA làm màn sản phẩm; Maps link không thay map trong app."
+      ],
+      "issue": 74,
+      "owner": [
+        "mtuan2491"
+      ],
+      "beforeStatus": "Done",
+      "afterStatus": "Needs Update",
+      "itemId": "PVTI_lAHOCnL5Fs4Bl7Fjzg_zxLw",
+      "path": "tasks/backlog/GM-13.md",
+      "taskNoteNodeId": "664:37",
+      "figmaUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=330-3075"
+    },
+    {
+      "id": "GM-14",
+      "title": "UI bạn bè, thông báo, lịch sử và cài đặt",
+      "nodes": [
+        "330:3076",
+        "330:3077",
+        "330:3079",
+        "330:3081",
+        "330:3083",
+        "330:3085"
+      ],
+      "scope": [
+        "Dựng bạn bè, tìm trong danh sách hiện có, thêm bằng mã, lời mời, inbox và history DECIDED/NO_CONSENSUS theo Figma; không giả trạng thái online.",
+        "Dựng Cá nhân khách và cài đặt cỡ chữ/nút thay gesture/consent/xóa lịch sử bằng mock; luồng tài khoản thật vẫn thuộc GM-35/P1.",
+        "Bổ sung Figma và mock cho G01–G03: tìm bạn loading/empty/error, inbox empty/error, lịch sử lỗi tải/offline. Dùng pattern GM-05 nếu phù hợp và ghi node mới vào map."
+      ],
+      "ac": [
+        "Expo mở được từng màn và tương tác confirm/retry/empty/error/consent/delete. Mock không xin push hoặc gọi provider thật.",
+        "G01–G03 có frame hoặc variant Figma trước nghiệm thu; lịch sử legacy ẩn điểm/Top 3 thiếu và tôn trọng ACL."
+      ],
+      "issue": 75,
+      "owner": [
+        "TrungNQ2645"
+      ],
+      "beforeStatus": "Done",
+      "afterStatus": "Needs Update",
+      "itemId": "PVTI_lAHOCnL5Fs4Bl7Fjzg_zxNA",
+      "path": "tasks/backlog/GM-14.md",
+      "taskNoteNodeId": "664:41",
+      "figmaUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=330-3076"
+    },
+    {
+      "id": "GM-24",
+      "title": "UI–API preview pool và thiết lập dish-only",
+      "nodes": [
+        "43:106",
+        "323:2664",
+        "451:13066",
+        "451:13189",
+        "388:7816"
+      ],
+      "scope": [
+        "Thay điều kiện location/coverage bắt buộc bằng setup và preview catalogue dish-only. Nhận số món 10–20 và ưu tiên mềm; không lọc pool bằng GPS/quán/giờ bán.",
+        "Nối discovery/preview đã version: shortage có available/requested, chỉ giảm sau host xác nhận ≥10. Sửa tham số làm preview cũ hết hiệu lực; chặn response cũ khi pending.",
+        "Giữ nháp khi lỗi/retry. Preview chưa tạo phòng; GM-25 nối create/join/update. Location legacy tách riêng, quyền vị trí sau kết quả thuộc GM-30."
+      ],
+      "ac": [
+        "Android gọi API thật: exact count, shortage, available<10, sửa khi pending, response cũ, offline/retry và giờ quá hạn.",
+        "Có request/response/assertions và UI đối chiếu Figma. Thiếu producer B thì phần tích hợp ghi Not run, không dùng mock thay Pass."
+      ],
+      "issue": 85,
+      "owner": [
+        "rosy179"
+      ],
+      "beforeStatus": "Done",
+      "afterStatus": "Needs Update",
+      "itemId": "PVTI_lAHOCnL5Fs4Bl7Fjzg_zxcs",
+      "path": "tasks/backlog/GM-24.md",
+      "taskNoteNodeId": "664:45",
+      "figmaUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=43-106"
+    },
+    {
+      "id": "GM-25",
+      "title": "UI–API guest, Home, phòng, khẩu vị và lobby",
+      "nodes": [
+        "298:2309",
+        "330:3067",
+        "330:3068",
+        "330:3069",
+        "388:7816",
+        "330:3070"
+      ],
+      "scope": [
+        "Nối guest create/restore/refresh/logout GM-16 vào entry rồi Home, tạo phòng, preview/confirm join, settings, khẩu vị và lobby.",
+        "Consumer UI nhận schema/DTO đã duyệt từ GM-07; triển khai parser/adapter riêng cho version mới, không coi response v3 là B hoặc tự fallback mock khi lỗi.",
+        "Snapshot điều khiển host/settings/khẩu vị/poolVersion/receipt/expiry; tối đa 20 người, không ready, host start. Reconnect đi theo phase server, trước join chỉ hiện số thành viên."
+      ],
+      "ac": [
+        "Android Auth+REST thật: create → preview join → join → sửa lobby → start → snapshot, với hai identity.",
+        "Kiểm refresh, mất mạng, stale version, full/21 người, expiry/cancel/race. Ghi version/hash/PR producer; P1 không chặn core."
+      ],
+      "issue": 86,
+      "owner": [
+        "rosy179"
+      ],
+      "beforeStatus": "Done",
+      "afterStatus": "Needs Update",
+      "itemId": "PVTI_lAHOCnL5Fs4Bl7Fjzg_zxd8",
+      "path": "tasks/backlog/GM-25.md",
+      "taskNoteNodeId": "664:49",
+      "figmaUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=298-2309"
+    },
+    {
+      "id": "GM-26",
+      "title": "UI–API ballot, waiting và vòng hai",
+      "nodes": [
+        "330:3071",
+        "330:3072",
+        "330:3073",
+        "330:3074",
+        "638:9369"
+      ],
+      "scope": [
+        "Nối flashcard R1 và ballot cuối lượt; idempotency key ổn định qua ACK unknown/retry. Nháp/đang gửi/ACK khác nhau, pending không tính hoàn thành.",
+        "Waiting theo deadline server; host finalize cần ≥1 ACK. Phân biệt finalize chuyển vòng và kết thúc theo contract.",
+        "R2 N=1 vẫn cho quyết định loại hoặc không; cap 30% min1, không loại cũng hợp lệ. Xử lý EMPTY_INTERSECTION/ALL_REMOVED và không khôi phục món NO khi reconnect."
+      ],
+      "ac": [
+        "Hai client có cùng pool/deadline/kết quả; retry không ghi trùng, cap+1 bị server từ chối, ACK muộn/deadline/finalize race đúng.",
+        "Kiểm trên Android gọi API thật, đối chiếu server và che dữ liệu nhạy cảm trong evidence."
+      ],
+      "issue": 87,
+      "owner": [
+        "rosy179"
+      ],
+      "beforeStatus": "Todo",
+      "afterStatus": "Todo",
+      "itemId": "PVTI_lAHOCnL5Fs4Bl7Fjzg_zxfs",
+      "path": "tasks/backlog/GM-26.md",
+      "taskNoteNodeId": "664:53",
+      "figmaUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=330-3071"
+    },
+    {
+      "id": "GM-27",
+      "title": "UI–API kết quả Top 3 và Places độc lập",
+      "nodes": [
+        "330:3075",
+        "617:1671",
+        "379:1478"
+      ],
+      "scope": [
+        "Đọc resultId/winner/topDishes/score/rank/projection/version canonical từ GM-20; giữ thứ tự đã lưu, không tự tính điểm/tie-break.",
+        "NO_CONSENSUS và legacy nullable đúng shape; refetch/cache/history theo ACL, không dùng catalogue mới để thay kết quả cũ.",
+        "Ghép phần Places/map GM-13 với capability GM-30. Có thể kiểm result trước bằng mock Places có nhãn; phần Places thật chờ GM-30 và được kiểm ghép ở GM-33."
+      ],
+      "ac": [
+        "Kiểm Top 1/2/3 và đồng hạng, malformed/thiếu field mới báo lỗi contract, legacy ẩn trường thiếu.",
+        "Android refetch/retry/reconnect giữ nguyên winner/Top 3; lỗi Places không ảnh hưởng kết quả."
+      ],
+      "issue": 88,
+      "owner": [
+        "rosy179"
+      ],
+      "beforeStatus": "Todo",
+      "afterStatus": "Todo",
+      "itemId": "PVTI_lAHOCnL5Fs4Bl7Fjzg_zxgs",
+      "path": "tasks/backlog/GM-27.md",
+      "taskNoteNodeId": "664:57",
+      "figmaUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=330-3075"
+    },
+    {
+      "id": "GM-28",
+      "title": "UI–API bạn bè, inbox và lịch sử",
+      "nodes": [
+        "330:3076",
+        "330:3077",
+        "330:3079",
+        "330:3081",
+        "263:1880"
+      ],
+      "scope": [
+        "Nối GM-14 với history/social/inbox producer theo version bàn giao; tìm tên trong danh sách bạn, thêm bằng mã và admission 20 người không ready.",
+        "History đọc projection đã lưu cùng consent/ACL/TTL/revoke/delete; legacy ẩn field thiếu. Notification refetch canonical dưới auth.",
+        "Nối G01–G03 với API thật; cache offline có fetchedAt/stale, retry không nhân đôi hành động, không fallback fixture."
+      ],
+      "ac": [
+        "Android nhiều identity: invite/accept/reject/unfriend/full/expiry, inbox empty/error, history opt-out/delete/revoke.",
+        "Result/history/inbox trỏ cùng kết quả đã lưu; xác minh node Figma bổ sung và không lộ phiếu/token."
+      ],
+      "issue": 89,
+      "owner": [
+        "TrungNQ2645"
+      ],
+      "beforeStatus": "Review",
+      "afterStatus": "Review",
+      "itemId": "PVTI_lAHOCnL5Fs4Bl7Fjzg_zxig",
+      "path": "tasks/backlog/GM-28.md",
+      "taskNoteNodeId": "664:61",
+      "figmaUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=330-3076"
+    },
+    {
+      "id": "GM-29",
+      "title": "UI quyền thông báo và mở app từ push",
+      "nodes": [
+        "382:8859",
+        "380:1440",
+        "286:2245",
+        "277:2140"
+      ],
+      "scope": [
+        "Quyền thông báo theo Figma với grant/deny/settings; từ chối vẫn dùng inbox.",
+        "Remote push/token rotation/logout; cold/warm tap → restore auth → refetch snapshot/result/ACL → route hiện hành. Không auto-join hoặc lấy payload làm nguồn quyền.",
+        "Phiên hết hạn/xóa/outsider có UI an toàn; thông báo không làm thay đổi winner/Top 3."
+      ],
+      "ac": [
+        "Expo Go không crash; phần remote push cần môi trường native hỗ trợ và ghi rõ Not run nếu chưa kiểm.",
+        "Có remote delivery thật trên thiết bị và kiểm cold/warm/duplicate/denied/token rotation/logout; local notification không thay remote."
+      ],
+      "issue": 90,
+      "owner": [
+        "TrungNQ2645"
+      ],
+      "beforeStatus": "Review",
+      "afterStatus": "Review",
+      "itemId": "PVTI_lAHOCnL5Fs4Bl7Fjzg_zxjk",
+      "path": "tasks/backlog/GM-29.md",
+      "taskNoteNodeId": "664:65",
+      "figmaUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=382-8859"
+    },
+    {
+      "id": "GM-30",
+      "title": "UI native QR, liên kết, vị trí và Places/map kết quả",
+      "nodes": [
+        "268:2019",
+        "275:2088",
+        "268:2081",
+        "368:12182",
+        "622:8962",
+        "206:913",
+        "379:1478"
+      ],
+      "scope": [
+        "QR/camera/manual/incoming link có allowlist, restore auth và preview/confirm; không auto-join hoặc hiện tên trước join.",
+        "Sở hữu adapter Places, map thật và quyền vị trí trên màn kết quả cho winner. Location chỉ dùng sau kết quả; khi chưa cấp quyền hiện xin quyền hoặc mở Maps.",
+        "Provider/config/permission đúng scope; marker/list dùng response thật, không quán/khoảng cách mẫu. Mất map/Places không đổi winner; Maps/copy fallback là hỗ trợ."
+      ],
+      "ac": [
+        "Android kiểm QR grant/deny/manual/invalid/duplicate/full/expired và cold/warm link.",
+        "Places/map loading/empty/error/permission có evidence thật hoặc Not run rõ. Không coi search URL là dữ liệu nơi bán được xác minh."
+      ],
+      "issue": 91,
+      "owner": [
+        "rosy179"
+      ],
+      "beforeStatus": "Todo",
+      "afterStatus": "Todo",
+      "itemId": "PVTI_lAHOCnL5Fs4Bl7Fjzg_zxkY",
+      "path": "tasks/backlog/GM-30.md",
+      "taskNoteNodeId": "664:69",
+      "figmaUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=268-2019"
+    },
+    {
+      "id": "GM-31",
+      "title": "UI cache, outbox và phục hồi phiên",
+      "nodes": [
+        "277:2140",
+        "368:11605",
+        "368:12586",
+        "368:12644",
+        "323:3581",
+        "382:7201",
+        "559:8768"
+      ],
+      "scope": [
+        "Lưu cache/nháp/outbox theo identity, room, round, poolVersion và contract. Không ghi log token hoặc phiếu.",
+        "Restart/foreground/reconnect refetch server trước replay; route đúng R2/waiting/result, ACK unknown không tạo phiếu trùng hay mở lại Undo.",
+        "History offline dùng fetchedAt/stale theo G03; logout/delete/TTL dọn cache riêng tư, không tự tạo KEEP/OK cho người chưa gửi."
+      ],
+      "ac": [
+        "Android kiểm process restart, mất mạng, realtime gap, expiry/round closed, replay và auth isolation.",
+        "Winner/Top 3/pool khóa giữ nguyên; món bị loại không quay lại, retry giữ idempotency key."
+      ],
+      "issue": 92,
+      "owner": [
+        "TrungNQ2645"
+      ],
+      "beforeStatus": "Todo",
+      "afterStatus": "Todo",
+      "itemId": "PVTI_lAHOCnL5Fs4Bl7Fjzg_zxnQ",
+      "path": "tasks/backlog/GM-31.md",
+      "taskNoteNodeId": "664:73",
+      "figmaUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=277-2140"
+    },
+    {
+      "id": "GM-33",
+      "title": "QA Android đối chiếu Figma và UI–API",
+      "nodes": [
+        "33:2",
+        "8:2",
+        "76:851",
+        "76:852",
+        "76:853"
+      ],
+      "scope": [
+        "Lập ma trận từng task/node/state, đối chiếu Figma với app cùng viewport/font/data/role bằng ảnh cạnh nhau hoặc overlay.",
+        "Kiểm luồng guest → create/join → lobby → R1/ACK/wait → R2 → Top 3 → history/inbox; phân biệt UI-MOCK, API-only, Android-API và native.",
+        "Kiểm 320/360/412dp, chữ 200%, TalkBack, reduced motion, bàn phím/Back/safe area, 10–20 món và nhóm tối đa 20. P1 và Dark redesign vẫn hoãn."
+      ],
+      "ac": [
+        "Có ảnh Figma/app, revision thiết kế/commit/build/device, input/expected/actual/assertion cho từng case.",
+        "Thiết bị thật, hai client và native capability đúng scope; Not run/Fail bắt buộc chặn Done."
+      ],
+      "issue": 94,
+      "owner": [
+        "Vinh5905"
+      ],
+      "beforeStatus": "Todo",
+      "afterStatus": "Todo",
+      "itemId": "PVTI_lAHOCnL5Fs4Bl7Fjzg_zxtM",
+      "path": "tasks/backlog/GM-33.md",
+      "taskNoteNodeId": "664:77",
+      "figmaUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=33-2"
+    },
+    {
+      "id": "GM-34",
+      "title": "Release UI Figma và bàn giao ứng dụng",
+      "nodes": [
+        "33:2"
+      ],
+      "scope": [
+        "Chốt artifact release sau GM-33: contract/runtime/dataset version/hash và ma trận visual đúng Figma.",
+        "Đóng gói font/static asset, loại URL asset Figma tạm, entry sản phẩm không dẫn vào gallery/harness nội bộ; bàn giao runbook demo/clean clone/rollback."
+      ],
+      "ac": [
+        "Build/install APK theo scope release, ghi checksum và kiểm startup/core flow trên đúng bản.",
+        "Expo Go Pass không thay APK/native evidence; P1/P2 không chặn release core."
+      ],
+      "issue": 95,
+      "owner": [
+        "ThanhTris"
+      ],
+      "beforeStatus": "Todo",
+      "afterStatus": "Todo",
+      "itemId": "PVTI_lAHOCnL5Fs4Bl7Fjzg_zxvA",
+      "path": "tasks/backlog/GM-34.md",
+      "taskNoteNodeId": "664:81",
+      "figmaUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=33-2"
+    },
+    {
+      "id": "GM-35",
+      "title": "P1 UI tài khoản, hồ sơ và recovery",
+      "nodes": [
+        "330:3066",
+        "330:3083",
+        "261:1731",
+        "260:1857"
+      ],
+      "scope": [
+        "Giữ P1 làm sau core; triển khai login/register/email verify/recovery/link account/profile/password/logout theo Figma khi đến task.",
+        "Bổ sung Figma G04–G05: lỗi lưu hồ sơ/đổi mật khẩu, pending/retry; giữ input phù hợp và không log trường bí mật.",
+        "Provider/session identity/conflict/chuyển guest/history ACL theo upstream; có màn thiết kế không đồng nghĩa provider đã triển khai."
+      ],
+      "ac": [
+        "Frame lỗi G04–G05 gắn với case; kiểm auth/provider và Android đúng scope, mất mạng/invalid code/conflict/recovery.",
+        "Thiếu provider ghi Not run; không nâng P1 chỉ vì Figma đã có màn."
+      ],
+      "issue": 96,
+      "owner": [
+        "mtuan2491"
+      ],
+      "beforeStatus": "Todo",
+      "afterStatus": "Todo",
+      "itemId": "PVTI_lAHOCnL5Fs4Bl7Fjzg_zxw8",
+      "path": "tasks/backlog/GM-35.md",
+      "taskNoteNodeId": "664:85",
+      "figmaUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=330-3066"
+    },
+    {
+      "id": "GM-39",
+      "title": "Bàn giao Figma và kiểm tra thiết kế bổ sung",
+      "nodes": [
+        "0:1",
+        "8:2",
+        "33:2",
+        "76:851",
+        "76:852",
+        "76:853"
+      ],
+      "scope": [
+        "Figma final handoff là nguồn thiết kế hiện hành; HTML cũ giữ làm tham chiếu, không yêu cầu sửa HTML để mở task app.",
+        "Quản lý task → frame/component → code → case và revision/ngày review. Hỗ trợ owner GM-14/35 bổ sung G01–G05; Trí review thiết kế bổ sung.",
+        "Kiểm đồng hạng, CTA tương phản, privacy join, legacy history; giữ router QA/frame cũ ngoài luồng sản phẩm. Design handoff làm độc lập, không thêm dependency GM-39 vào task số nhỏ."
+      ],
+      "ac": [
+        "Node/link đọc được qua Figma MCP và bấm được; inventory/page/state, ảnh và gap log khớp thiết kế.",
+        "Mỗi gap có task/owner/status/frame hoặc Pending. Chưa vẽ thì không ghi đã xong; nghiệm thu thiết kế không thay Expo/API."
+      ],
+      "issue": 107,
+      "owner": [
+        "rosy179"
+      ],
+      "beforeStatus": "In Progress",
+      "afterStatus": "In Progress",
+      "itemId": "PVTI_lAHOCnL5Fs4Bl7FjzhAFP2o",
+      "path": "tasks/backlog/GM-39.md",
+      "taskNoteNodeId": "664:89",
+      "figmaUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=0-1"
+    }
+  ],
+  "gaps": [
+    {
+      "id": "G01",
+      "title": "Tìm bạn: loading / không có kết quả / tải lỗi",
+      "designTask": "GM-14",
+      "integrationTasks": [
+        "GM-28"
+      ],
+      "owner": "TrungNQ2645",
+      "status": "Pending design",
+      "screenNodeId": null,
+      "noteNodeId": "664:94",
+      "noteUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-94"
+    },
+    {
+      "id": "G02",
+      "title": "Inbox: rỗng / tải lỗi",
+      "designTask": "GM-14",
+      "integrationTasks": [
+        "GM-28"
+      ],
+      "owner": "TrungNQ2645",
+      "status": "Pending design",
+      "screenNodeId": null,
+      "noteNodeId": "664:97",
+      "noteUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-97"
+    },
+    {
+      "id": "G03",
+      "title": "Lịch sử: tải lỗi / mất mạng / cache có nhãn",
+      "designTask": "GM-14",
+      "integrationTasks": [
+        "GM-28",
+        "GM-31"
+      ],
+      "owner": "TrungNQ2645",
+      "status": "Pending design",
+      "screenNodeId": null,
+      "noteNodeId": "664:100",
+      "noteUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-100"
+    },
+    {
+      "id": "G04",
+      "title": "Lưu hồ sơ: pending / thất bại / retry",
+      "designTask": "GM-35",
+      "integrationTasks": [
+        "GM-35"
+      ],
+      "owner": "mtuan2491",
+      "status": "Pending design",
+      "screenNodeId": null,
+      "noteNodeId": "664:103",
+      "noteUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-103"
+    },
+    {
+      "id": "G05",
+      "title": "Đổi mật khẩu: pending / thất bại / retry",
+      "designTask": "GM-35",
+      "integrationTasks": [
+        "GM-35"
+      ],
+      "owner": "mtuan2491",
+      "status": "Pending design",
+      "screenNodeId": null,
+      "noteNodeId": "664:106",
+      "noteUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-106"
+    }
+  ],
+  "designInventory": [
+    {
+      "id": "2:17",
+      "name": "Header",
+      "type": "FRAME",
+      "parentId": "2:16",
+      "parentName": "Brand Colors / Gì Cũng Được",
+      "pageId": "0:1",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=2-17",
+      "role": "design-target"
+    },
+    {
+      "id": "2:21",
+      "name": "Ba màu thương hiệu",
+      "type": "FRAME",
+      "parentId": "2:16",
+      "parentName": "Brand Colors / Gì Cũng Được",
+      "pageId": "0:1",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=2-21",
+      "role": "design-target"
+    },
+    {
+      "id": "2:43",
+      "name": "Cách phối màu",
+      "type": "FRAME",
+      "parentId": "2:16",
+      "parentName": "Brand Colors / Gì Cũng Được",
+      "pageId": "0:1",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=2-43",
+      "role": "design-target"
+    },
+    {
+      "id": "2:54",
+      "name": "Quy tắc sử dụng",
+      "type": "FRAME",
+      "parentId": "2:16",
+      "parentName": "Brand Colors / Gì Cũng Được",
+      "pageId": "0:1",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=2-54",
+      "role": "design-target"
+    },
+    {
+      "id": "13:204",
+      "name": "GCD / Artwork / Phở",
+      "type": "COMPONENT",
+      "parentId": "331:1216",
+      "parentName": "01 · Logo / Banner / Minh họa",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=13-204",
+      "role": "design-target"
+    },
+    {
+      "id": "13:213",
+      "name": "GCD / Artwork / Thiếu ảnh",
+      "type": "COMPONENT",
+      "parentId": "331:1216",
+      "parentName": "01 · Logo / Banner / Minh họa",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=13-213",
+      "role": "design-target"
+    },
+    {
+      "id": "13:218",
+      "name": "GCD / Artwork / Bạn 1",
+      "type": "COMPONENT",
+      "parentId": "331:1216",
+      "parentName": "01 · Logo / Banner / Minh họa",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=13-218",
+      "role": "design-target"
+    },
+    {
+      "id": "13:229",
+      "name": "GCD / Artwork / Bạn 2",
+      "type": "COMPONENT",
+      "parentId": "331:1216",
+      "parentName": "01 · Logo / Banner / Minh họa",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=13-229",
+      "role": "design-target"
+    },
+    {
+      "id": "13:240",
+      "name": "GCD / Artwork / Bạn 3",
+      "type": "COMPONENT",
+      "parentId": "331:1216",
+      "parentName": "01 · Logo / Banner / Minh họa",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=13-240",
+      "role": "design-target"
+    },
+    {
+      "id": "22:394",
+      "name": "GCD / Brand / Logo master",
+      "type": "COMPONENT",
+      "parentId": "331:1216",
+      "parentName": "01 · Logo / Banner / Minh họa",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=22-394",
+      "role": "design-target"
+    },
+    {
+      "id": "34:820",
+      "name": "GCD / Brand Banner",
+      "type": "COMPONENT",
+      "parentId": "331:1216",
+      "parentName": "01 · Logo / Banner / Minh họa",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=34-820",
+      "role": "design-target"
+    },
+    {
+      "id": "70:871",
+      "name": "GCD / Decoration / Lobby leaves",
+      "type": "COMPONENT",
+      "parentId": "331:1216",
+      "parentName": "01 · Logo / Banner / Minh họa",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=70-871",
+      "role": "design-target"
+    },
+    {
+      "id": "9:2",
+      "name": "GCD / Icon / Arrow",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=9-2",
+      "role": "design-target"
+    },
+    {
+      "id": "9:5",
+      "name": "GCD / Icon / Check",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=9-5",
+      "role": "design-target"
+    },
+    {
+      "id": "9:8",
+      "name": "GCD / Icon / Close",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=9-8",
+      "role": "design-target"
+    },
+    {
+      "id": "9:11",
+      "name": "GCD / Icon / Minus",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=9-11",
+      "role": "design-target"
+    },
+    {
+      "id": "9:14",
+      "name": "GCD / Icon / Loader",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=9-14",
+      "role": "design-target"
+    },
+    {
+      "id": "23:394",
+      "name": "GCD / Icon / Home",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=23-394",
+      "role": "design-target"
+    },
+    {
+      "id": "23:397",
+      "name": "GCD / Icon / Friends",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=23-397",
+      "role": "design-target"
+    },
+    {
+      "id": "23:401",
+      "name": "GCD / Icon / History",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=23-401",
+      "role": "design-target"
+    },
+    {
+      "id": "23:405",
+      "name": "GCD / Icon / Profile",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=23-405",
+      "role": "design-target"
+    },
+    {
+      "id": "23:409",
+      "name": "GCD / Icon / Bell",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=23-409",
+      "role": "design-target"
+    },
+    {
+      "id": "23:412",
+      "name": "GCD / Icon / Back",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=23-412",
+      "role": "design-target"
+    },
+    {
+      "id": "23:415",
+      "name": "GCD / Icon / More",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=23-415",
+      "role": "design-target"
+    },
+    {
+      "id": "34:799",
+      "name": "GCD / Icon / Plus",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=34-799",
+      "role": "design-target"
+    },
+    {
+      "id": "34:800",
+      "name": "GCD / Icon / Enter",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=34-800",
+      "role": "design-target"
+    },
+    {
+      "id": "34:801",
+      "name": "GCD / Icon / Lightning",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=34-801",
+      "role": "design-target"
+    },
+    {
+      "id": "44:797",
+      "name": "GCD / Icon / sun",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=44-797",
+      "role": "design-target"
+    },
+    {
+      "id": "44:800",
+      "name": "GCD / Icon / bowl",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=44-800",
+      "role": "design-target"
+    },
+    {
+      "id": "44:803",
+      "name": "GCD / Icon / moon",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=44-803",
+      "role": "design-target"
+    },
+    {
+      "id": "44:806",
+      "name": "GCD / Icon / snack",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=44-806",
+      "role": "design-target"
+    },
+    {
+      "id": "44:809",
+      "name": "GCD / Icon / wallet",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=44-809",
+      "role": "design-target"
+    },
+    {
+      "id": "44:813",
+      "name": "GCD / Icon / coins",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=44-813",
+      "role": "design-target"
+    },
+    {
+      "id": "44:817",
+      "name": "GCD / Icon / banknotes",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=44-817",
+      "role": "design-target"
+    },
+    {
+      "id": "44:820",
+      "name": "GCD / Icon / infinity",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=44-820",
+      "role": "design-target"
+    },
+    {
+      "id": "53:819",
+      "name": "GCD / Icon / noodles",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=53-819",
+      "role": "design-target"
+    },
+    {
+      "id": "53:822",
+      "name": "GCD / Icon / noodleFork",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=53-822",
+      "role": "design-target"
+    },
+    {
+      "id": "53:825",
+      "name": "GCD / Icon / hotpot",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=53-825",
+      "role": "design-target"
+    },
+    {
+      "id": "53:828",
+      "name": "GCD / Icon / rolls",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=53-828",
+      "role": "design-target"
+    },
+    {
+      "id": "53:831",
+      "name": "GCD / Icon / cake",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=53-831",
+      "role": "design-target"
+    },
+    {
+      "id": "53:835",
+      "name": "GCD / Icon / hat",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=53-835",
+      "role": "design-target"
+    },
+    {
+      "id": "53:838",
+      "name": "GCD / Icon / sushi",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=53-838",
+      "role": "design-target"
+    },
+    {
+      "id": "53:843",
+      "name": "GCD / Icon / dimsum",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=53-843",
+      "role": "design-target"
+    },
+    {
+      "id": "53:847",
+      "name": "GCD / Icon / temple",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=53-847",
+      "role": "design-target"
+    },
+    {
+      "id": "53:850",
+      "name": "GCD / Icon / tower",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=53-850",
+      "role": "design-target"
+    },
+    {
+      "id": "53:853",
+      "name": "GCD / Icon / leaf",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=53-853",
+      "role": "design-target"
+    },
+    {
+      "id": "53:856",
+      "name": "GCD / Icon / garlic",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=53-856",
+      "role": "design-target"
+    },
+    {
+      "id": "53:859",
+      "name": "GCD / Icon / citrus",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=53-859",
+      "role": "design-target"
+    },
+    {
+      "id": "53:864",
+      "name": "GCD / Icon / chili",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=53-864",
+      "role": "design-target"
+    },
+    {
+      "id": "53:867",
+      "name": "GCD / Icon / info",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=53-867",
+      "role": "design-target"
+    },
+    {
+      "id": "70:849",
+      "name": "GCD / Icon / lobby-copy",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=70-849",
+      "role": "design-target"
+    },
+    {
+      "id": "70:853",
+      "name": "GCD / Icon / lobby-share",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=70-853",
+      "role": "design-target"
+    },
+    {
+      "id": "70:859",
+      "name": "GCD / Icon / lobby-qr",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=70-859",
+      "role": "design-target"
+    },
+    {
+      "id": "70:865",
+      "name": "GCD / Icon / lobby-chevron",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=70-865",
+      "role": "design-target"
+    },
+    {
+      "id": "70:868",
+      "name": "GCD / Icon / lobby-utensils",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=70-868",
+      "role": "design-target"
+    },
+    {
+      "id": "105:861",
+      "name": "GCD / Icon / Hourglass",
+      "type": "COMPONENT",
+      "parentId": "331:1218",
+      "parentName": "02 · Icon",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=105-861",
+      "role": "design-target"
+    },
+    {
+      "id": "9:77",
+      "name": "GCD / Button",
+      "type": "COMPONENT_SET",
+      "parentId": "331:1220",
+      "parentName": "03 · Nút bấm",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=9-77",
+      "role": "design-target"
+    },
+    {
+      "id": "23:438",
+      "name": "GCD / Icon Button",
+      "type": "COMPONENT_SET",
+      "parentId": "331:1220",
+      "parentName": "03 · Nút bấm",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=23-438",
+      "role": "design-target"
+    },
+    {
+      "id": "23:451",
+      "name": "GCD / Nav Item — Đề xuất",
+      "type": "COMPONENT_SET",
+      "parentId": "331:1222",
+      "parentName": "04 · Header / Thanh điều hướng / Trang chủ",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=23-451",
+      "role": "design-target"
+    },
+    {
+      "id": "23:604",
+      "name": "GCD / Bottom Navigation — Đề xuất",
+      "type": "COMPONENT_SET",
+      "parentId": "331:1222",
+      "parentName": "04 · Header / Thanh điều hướng / Trang chủ",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=23-604",
+      "role": "design-target"
+    },
+    {
+      "id": "23:661",
+      "name": "GCD / Header — Đề xuất",
+      "type": "COMPONENT_SET",
+      "parentId": "331:1222",
+      "parentName": "04 · Header / Thanh điều hướng / Trang chủ",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=23-661",
+      "role": "design-target"
+    },
+    {
+      "id": "187:919",
+      "name": "GCD / Home Action Tile",
+      "type": "COMPONENT_SET",
+      "parentId": "331:1222",
+      "parentName": "04 · Header / Thanh điều hướng / Trang chủ",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=187-919",
+      "role": "design-target"
+    },
+    {
+      "id": "9:118",
+      "name": "GCD / Friend Avatar",
+      "type": "COMPONENT_SET",
+      "parentId": "331:1224",
+      "parentName": "05 · Bạn bè / Thành viên",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=9-118",
+      "role": "design-target"
+    },
+    {
+      "id": "34:819",
+      "name": "GCD / Quick Friend",
+      "type": "COMPONENT_SET",
+      "parentId": "331:1224",
+      "parentName": "05 · Bạn bè / Thành viên",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=34-819",
+      "role": "design-target"
+    },
+    {
+      "id": "44:889",
+      "name": "GCD / Invite Friend Chip",
+      "type": "COMPONENT_SET",
+      "parentId": "331:1224",
+      "parentName": "05 · Bạn bè / Thành viên",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=44-889",
+      "role": "design-target"
+    },
+    {
+      "id": "70:874",
+      "name": "GCD / Lobby Member",
+      "type": "COMPONENT",
+      "parentId": "331:1224",
+      "parentName": "05 · Bạn bè / Thành viên",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=70-874",
+      "role": "design-target"
+    },
+    {
+      "id": "321:1663",
+      "name": "GCD / Compact Room Member",
+      "type": "COMPONENT",
+      "parentId": "331:1224",
+      "parentName": "05 · Bạn bè / Thành viên",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=321-1663",
+      "role": "design-target"
+    },
+    {
+      "id": "44:861",
+      "name": "GCD / Room Choice",
+      "type": "COMPONENT_SET",
+      "parentId": "331:1226",
+      "parentName": "06 · Form / Khẩu vị / Số món",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=44-861",
+      "role": "design-target"
+    },
+    {
+      "id": "44:867",
+      "name": "GCD / Checkbox",
+      "type": "COMPONENT_SET",
+      "parentId": "331:1226",
+      "parentName": "06 · Form / Khẩu vị / Số món",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=44-867",
+      "role": "design-target"
+    },
+    {
+      "id": "53:923",
+      "name": "GCD / Preference Choice",
+      "type": "COMPONENT_SET",
+      "parentId": "331:1226",
+      "parentName": "06 · Form / Khẩu vị / Số món",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=53-923",
+      "role": "design-target"
+    },
+    {
+      "id": "70:881",
+      "name": "GCD / Preference Summary Chip",
+      "type": "COMPONENT",
+      "parentId": "331:1226",
+      "parentName": "06 · Form / Khẩu vị / Số món",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=70-881",
+      "role": "design-target"
+    },
+    {
+      "id": "76:857",
+      "name": "GCD / Wheel Column",
+      "type": "COMPONENT",
+      "parentId": "331:1226",
+      "parentName": "06 · Form / Khẩu vị / Số món",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=76-857",
+      "role": "design-target"
+    },
+    {
+      "id": "321:1236",
+      "name": "GCD / Dish Count",
+      "type": "COMPONENT_SET",
+      "parentId": "331:1226",
+      "parentName": "06 · Form / Khẩu vị / Số món",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=321-1236",
+      "role": "design-target"
+    },
+    {
+      "id": "379:1510",
+      "name": "GCD / Form Field",
+      "type": "COMPONENT_SET",
+      "parentId": "331:1226",
+      "parentName": "06 · Form / Khẩu vị / Số món",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=379-1510",
+      "role": "design-target"
+    },
+    {
+      "id": "10:164",
+      "name": "GCD / Dish Card",
+      "type": "COMPONENT_SET",
+      "parentId": "331:1228",
+      "parentName": "07 · Card món / Loại món",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=10-164",
+      "role": "design-target"
+    },
+    {
+      "id": "127:920",
+      "name": "GCD / Round 2 Dish Row",
+      "type": "COMPONENT_SET",
+      "parentId": "331:1228",
+      "parentName": "07 · Card món / Loại món",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=127-920",
+      "role": "design-target"
+    },
+    {
+      "id": "321:1415",
+      "name": "GCD / Elimination Summary",
+      "type": "COMPONENT",
+      "parentId": "331:1228",
+      "parentName": "07 · Card món / Loại món",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=321-1415",
+      "role": "design-target"
+    },
+    {
+      "id": "76:854",
+      "name": "GCD / State Banner",
+      "type": "COMPONENT",
+      "parentId": "331:1230",
+      "parentName": "08 · Chờ kết quả / Hộp thoại / Trạng thái",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=76-854",
+      "role": "design-target"
+    },
+    {
+      "id": "105:860",
+      "name": "GCD / Submission Member",
+      "type": "COMPONENT_SET",
+      "parentId": "331:1230",
+      "parentName": "08 · Chờ kết quả / Hộp thoại / Trạng thái",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=105-860",
+      "role": "design-target"
+    },
+    {
+      "id": "321:1303",
+      "name": "GCD / Waiting Summary",
+      "type": "COMPONENT",
+      "parentId": "331:1230",
+      "parentName": "08 · Chờ kết quả / Hộp thoại / Trạng thái",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=321-1303",
+      "role": "design-target"
+    },
+    {
+      "id": "321:1506",
+      "name": "GCD / Decision Dialog",
+      "type": "COMPONENT",
+      "parentId": "331:1230",
+      "parentName": "08 · Chờ kết quả / Hộp thoại / Trạng thái",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=321-1506",
+      "role": "design-target"
+    },
+    {
+      "id": "321:1761",
+      "name": "GCD / Result State Message",
+      "type": "COMPONENT",
+      "parentId": "331:1230",
+      "parentName": "08 · Chờ kết quả / Hộp thoại / Trạng thái",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=321-1761",
+      "role": "design-target"
+    },
+    {
+      "id": "379:1273",
+      "name": "GCD / Process State",
+      "type": "COMPONENT_SET",
+      "parentId": "331:1230",
+      "parentName": "08 · Chờ kết quả / Hộp thoại / Trạng thái",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=379-1273",
+      "role": "design-target"
+    },
+    {
+      "id": "113:866",
+      "name": "GCD / Result Podium Dish",
+      "type": "COMPONENT_SET",
+      "parentId": "331:1232",
+      "parentName": "09 · Bục kết quả / Bản đồ",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=113-866",
+      "role": "design-target"
+    },
+    {
+      "id": "113:867",
+      "name": "GCD / Winner Medal",
+      "type": "COMPONENT",
+      "parentId": "331:1232",
+      "parentName": "09 · Bục kết quả / Bản đồ",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=113-867",
+      "role": "design-target"
+    },
+    {
+      "id": "118:859",
+      "name": "GCD / Top 3 Podium",
+      "type": "COMPONENT",
+      "parentId": "331:1232",
+      "parentName": "09 · Bục kết quả / Bản đồ",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=118-859",
+      "role": "design-target"
+    },
+    {
+      "id": "206:913",
+      "name": "GCD / Nearby Places Map",
+      "type": "COMPONENT",
+      "parentId": "331:1232",
+      "parentName": "09 · Bục kết quả / Bản đồ",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=206-913",
+      "role": "design-target"
+    },
+    {
+      "id": "379:1401",
+      "name": "GCD / Result Podium",
+      "type": "COMPONENT_SET",
+      "parentId": "331:1232",
+      "parentName": "09 · Bục kết quả / Bản đồ",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=379-1401",
+      "role": "design-target"
+    },
+    {
+      "id": "379:1478",
+      "name": "GCD / Nearby Places State",
+      "type": "COMPONENT_SET",
+      "parentId": "331:1232",
+      "parentName": "09 · Bục kết quả / Bản đồ",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=379-1478",
+      "role": "design-target"
+    },
+    {
+      "id": "379:1479",
+      "name": "GCD / Result Participants",
+      "type": "COMPONENT",
+      "parentId": "331:1232",
+      "parentName": "09 · Bục kết quả / Bản đồ",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=379-1479",
+      "role": "design-target"
+    },
+    {
+      "id": "284:1108",
+      "name": "GCD / Notification Item",
+      "type": "COMPONENT_SET",
+      "parentId": "331:1234",
+      "parentName": "10 · Thông báo",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=284-1108",
+      "role": "design-target"
+    },
+    {
+      "id": "380:1440",
+      "name": "GCD / Notification Permission",
+      "type": "COMPONENT",
+      "parentId": "331:1234",
+      "parentName": "10 · Thông báo",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=380-1440",
+      "role": "design-target"
+    },
+    {
+      "id": "308:1085",
+      "name": "GCD / Tutorial Gesture",
+      "type": "COMPONENT_SET",
+      "parentId": "331:1236",
+      "parentName": "11 · Hướng dẫn thao tác",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=308-1085",
+      "role": "design-target"
+    },
+    {
+      "id": "308:1145",
+      "name": "GCD / Tutorial Header",
+      "type": "COMPONENT",
+      "parentId": "331:1236",
+      "parentName": "11 · Hướng dẫn thao tác",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=308-1145",
+      "role": "design-target"
+    },
+    {
+      "id": "308:1150",
+      "name": "GCD / Tutorial Coach",
+      "type": "COMPONENT",
+      "parentId": "331:1236",
+      "parentName": "11 · Hướng dẫn thao tác",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=308-1150",
+      "role": "design-target"
+    },
+    {
+      "id": "308:1153",
+      "name": "GCD / Tutorial Inline Tip",
+      "type": "COMPONENT",
+      "parentId": "331:1236",
+      "parentName": "11 · Hướng dẫn thao tác",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=308-1153",
+      "role": "design-target"
+    },
+    {
+      "id": "11:44",
+      "name": "Component showcase / GCD",
+      "type": "FRAME",
+      "parentId": "331:1238",
+      "parentName": "12 · Mẫu kiểm tra component",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=11-44",
+      "role": "design-target"
+    },
+    {
+      "id": "286:3038",
+      "name": "Component showcase / Thông báo",
+      "type": "FRAME",
+      "parentId": "331:1238",
+      "parentName": "12 · Mẫu kiểm tra component",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=286-3038",
+      "role": "design-target"
+    },
+    {
+      "id": "308:1156",
+      "name": "Component showcase / Tay hướng dẫn",
+      "type": "FRAME",
+      "parentId": "331:1238",
+      "parentName": "12 · Mẫu kiểm tra component",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=308-1156",
+      "role": "design-target"
+    },
+    {
+      "id": "321:1910",
+      "name": "Component showcase / Điều phối phòng",
+      "type": "FRAME",
+      "parentId": "331:1238",
+      "parentName": "12 · Mẫu kiểm tra component",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=321-1910",
+      "role": "design-target"
+    },
+    {
+      "id": "513:1422",
+      "name": "Selected=No",
+      "type": "COMPONENT",
+      "parentId": "513:1432",
+      "parentName": "GCD / Preference Anything Wide",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=513-1422",
+      "role": "design-target"
+    },
+    {
+      "id": "513:1427",
+      "name": "Selected=Yes",
+      "type": "COMPONENT",
+      "parentId": "513:1432",
+      "parentName": "GCD / Preference Anything Wide",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=513-1427",
+      "role": "design-target"
+    },
+    {
+      "id": "515:1430",
+      "name": "Dải QA 1",
+      "type": "FRAME",
+      "parentId": "515:1426",
+      "parentName": "QA · Vòng 2 · Ma trận cap 0–20 (tham chiếu, không phải màn app)",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=515-1430",
+      "role": "reference-only"
+    },
+    {
+      "id": "515:1452",
+      "name": "Dải QA 2",
+      "type": "FRAME",
+      "parentId": "515:1426",
+      "parentName": "QA · Vòng 2 · Ma trận cap 0–20 (tham chiếu, không phải màn app)",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=515-1452",
+      "role": "reference-only"
+    },
+    {
+      "id": "515:1474",
+      "name": "Dải QA 3",
+      "type": "FRAME",
+      "parentId": "515:1426",
+      "parentName": "QA · Vòng 2 · Ma trận cap 0–20 (tham chiếu, không phải màn app)",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=515-1474",
+      "role": "reference-only"
+    },
+    {
+      "id": "617:1435",
+      "name": "Count=2, Pattern=All",
+      "type": "COMPONENT",
+      "parentId": "617:1671",
+      "parentName": "GCD / Result Podium · Đồng hạng",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=617-1435",
+      "role": "design-target"
+    },
+    {
+      "id": "617:1479",
+      "name": "Count=3, Pattern=First two",
+      "type": "COMPONENT",
+      "parentId": "617:1671",
+      "parentName": "GCD / Result Podium · Đồng hạng",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=617-1479",
+      "role": "design-target"
+    },
+    {
+      "id": "617:1543",
+      "name": "Count=3, Pattern=Last two",
+      "type": "COMPONENT",
+      "parentId": "617:1671",
+      "parentName": "GCD / Result Podium · Đồng hạng",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=617-1543",
+      "role": "design-target"
+    },
+    {
+      "id": "617:1607",
+      "name": "Count=3, Pattern=All",
+      "type": "COMPONENT",
+      "parentId": "617:1671",
+      "parentName": "GCD / Result Podium · Đồng hạng",
+      "pageId": "8:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=617-1607",
+      "role": "design-target"
+    },
+    {
+      "id": "298:2309",
+      "name": "Mở app · Chọn cách tham gia",
+      "type": "FRAME",
+      "parentId": "330:3066",
+      "parentName": "01 · Mở đầu / Đăng nhập / Đăng ký",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=298-2309",
+      "role": "design-target"
+    },
+    {
+      "id": "261:1639",
+      "name": "Tài khoản · Đăng nhập",
+      "type": "FRAME",
+      "parentId": "330:3066",
+      "parentName": "01 · Mở đầu / Đăng nhập / Đăng ký",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=261-1639",
+      "role": "design-target"
+    },
+    {
+      "id": "261:1687",
+      "name": "Tài khoản · Đăng ký",
+      "type": "FRAME",
+      "parentId": "330:3066",
+      "parentName": "01 · Mở đầu / Đăng nhập / Đăng ký",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=261-1687",
+      "role": "design-target"
+    },
+    {
+      "id": "263:1705",
+      "name": "Cá nhân · Xác minh email",
+      "type": "FRAME",
+      "parentId": "330:3066",
+      "parentName": "01 · Mở đầu / Đăng nhập / Đăng ký",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=263-1705",
+      "role": "design-target"
+    },
+    {
+      "id": "263:1664",
+      "name": "Cá nhân · Quên mật khẩu",
+      "type": "FRAME",
+      "parentId": "330:3066",
+      "parentName": "01 · Mở đầu / Đăng nhập / Đăng ký",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=263-1664",
+      "role": "design-target"
+    },
+    {
+      "id": "264:6293",
+      "name": "Cá nhân · Liên kết đặt lại mật khẩu",
+      "type": "FRAME",
+      "parentId": "330:3066",
+      "parentName": "01 · Mở đầu / Đăng nhập / Đăng ký",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=264-6293",
+      "role": "design-target"
+    },
+    {
+      "id": "382:8566",
+      "name": "Tài khoản — Đặt mật khẩu mới",
+      "type": "FRAME",
+      "parentId": "330:3066",
+      "parentName": "01 · Mở đầu / Đăng nhập / Đăng ký",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=382-8566",
+      "role": "design-target"
+    },
+    {
+      "id": "382:8626",
+      "name": "Tài khoản — Email đã được sử dụng",
+      "type": "FRAME",
+      "parentId": "330:3066",
+      "parentName": "01 · Mở đầu / Đăng nhập / Đăng ký",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=382-8626",
+      "role": "design-target"
+    },
+    {
+      "id": "372:10951",
+      "name": "A03B · Đăng nhập đã dùng app",
+      "type": "FRAME",
+      "parentId": "330:3066",
+      "parentName": "01 · Mở đầu / Đăng nhập / Đăng ký",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=372-10951",
+      "role": "design-target"
+    },
+    {
+      "id": "277:2104",
+      "name": "Mở app · Nhập tên khách",
+      "type": "FRAME",
+      "parentId": "330:3067",
+      "parentName": "02 · Khách / Trang chủ / Tiếp tục phiên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=277-2104",
+      "role": "design-target"
+    },
+    {
+      "id": "277:2190",
+      "name": "Mở app · Phiên khách hết hạn",
+      "type": "FRAME",
+      "parentId": "330:3067",
+      "parentName": "02 · Khách / Trang chủ / Tiếp tục phiên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=277-2190",
+      "role": "design-target"
+    },
+    {
+      "id": "33:3",
+      "name": "Trang chủ",
+      "type": "FRAME",
+      "parentId": "330:3067",
+      "parentName": "02 · Khách / Trang chủ / Tiếp tục phiên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=33-3",
+      "role": "design-target"
+    },
+    {
+      "id": "277:2140",
+      "name": "Mở app · Tiếp tục phiên",
+      "type": "FRAME",
+      "parentId": "330:3067",
+      "parentName": "02 · Khách / Trang chủ / Tiếp tục phiên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=277-2140",
+      "role": "design-target"
+    },
+    {
+      "id": "43:106",
+      "name": "Tạo phòng",
+      "type": "FRAME",
+      "parentId": "330:3068",
+      "parentName": "03 · Tạo phòng / Hẹn giờ / Tình huống",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=43-106",
+      "role": "design-target"
+    },
+    {
+      "id": "323:2664",
+      "name": "Tạo phòng — Chỉ có 15 / Chọn 20 món",
+      "type": "FRAME",
+      "parentId": "330:3068",
+      "parentName": "03 · Tạo phòng / Hẹn giờ / Tình huống",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=323-2664",
+      "role": "design-target"
+    },
+    {
+      "id": "368:10249",
+      "name": "R · Tình huống Tạo phòng · Bảng chạy",
+      "type": "FRAME",
+      "parentId": "330:3068",
+      "parentName": "03 · Tạo phòng / Hẹn giờ / Tình huống",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-10249",
+      "role": "reference-only"
+    },
+    {
+      "id": "368:10252",
+      "name": "R01 · Thiết lập ban đầu",
+      "type": "FRAME",
+      "parentId": "330:3068",
+      "parentName": "03 · Tạo phòng / Hẹn giờ / Tình huống",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-10252",
+      "role": "design-target"
+    },
+    {
+      "id": "368:10310",
+      "name": "R02 · Đổi sang ăn sáng",
+      "type": "FRAME",
+      "parentId": "330:3068",
+      "parentName": "03 · Tạo phòng / Hẹn giờ / Tình huống",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-10310",
+      "role": "design-target"
+    },
+    {
+      "id": "368:10368",
+      "name": "R03 · Ăn tối · Đã hẹn giờ",
+      "type": "FRAME",
+      "parentId": "330:3068",
+      "parentName": "03 · Tạo phòng / Hẹn giờ / Tình huống",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-10368",
+      "role": "design-target"
+    },
+    {
+      "id": "368:10429",
+      "name": "R04 · Ăn vặt",
+      "type": "FRAME",
+      "parentId": "330:3068",
+      "parentName": "03 · Tạo phòng / Hẹn giờ / Tình huống",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-10429",
+      "role": "design-target"
+    },
+    {
+      "id": "368:10487",
+      "name": "R05 · Không giới hạn ngân sách",
+      "type": "FRAME",
+      "parentId": "330:3068",
+      "parentName": "03 · Tạo phòng / Hẹn giờ / Tình huống",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-10487",
+      "role": "design-target"
+    },
+    {
+      "id": "368:10545",
+      "name": "R06 · Hẹn giờ · Bộ cuộn",
+      "type": "FRAME",
+      "parentId": "330:3068",
+      "parentName": "03 · Tạo phòng / Hẹn giờ / Tình huống",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-10545",
+      "role": "design-target"
+    },
+    {
+      "id": "368:10621",
+      "name": "R07 · Hẹn ngày khác",
+      "type": "FRAME",
+      "parentId": "330:3068",
+      "parentName": "03 · Tạo phòng / Hẹn giờ / Tình huống",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-10621",
+      "role": "design-target"
+    },
+    {
+      "id": "368:10773",
+      "name": "R08 · Giờ đã qua",
+      "type": "FRAME",
+      "parentId": "330:3068",
+      "parentName": "03 · Tạo phòng / Hẹn giờ / Tình huống",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-10773",
+      "role": "design-target"
+    },
+    {
+      "id": "368:10836",
+      "name": "R09 · Chọn bạn để mời",
+      "type": "FRAME",
+      "parentId": "330:3068",
+      "parentName": "03 · Tạo phòng / Hẹn giờ / Tình huống",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-10836",
+      "role": "design-target"
+    },
+    {
+      "id": "368:10906",
+      "name": "R10 · Không tìm thấy bạn",
+      "type": "FRAME",
+      "parentId": "330:3068",
+      "parentName": "03 · Tạo phòng / Hẹn giờ / Tình huống",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-10906",
+      "role": "design-target"
+    },
+    {
+      "id": "368:10974",
+      "name": "R11 · Đang tạo phòng",
+      "type": "FRAME",
+      "parentId": "330:3068",
+      "parentName": "03 · Tạo phòng / Hẹn giờ / Tình huống",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-10974",
+      "role": "design-target"
+    },
+    {
+      "id": "368:11032",
+      "name": "R12 · Tạo phòng thất bại",
+      "type": "FRAME",
+      "parentId": "330:3068",
+      "parentName": "03 · Tạo phòng / Hẹn giờ / Tình huống",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-11032",
+      "role": "design-target"
+    },
+    {
+      "id": "368:11092",
+      "name": "R13 · Mất mạng khi thiết lập",
+      "type": "FRAME",
+      "parentId": "330:3068",
+      "parentName": "03 · Tạo phòng / Hẹn giờ / Tình huống",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-11092",
+      "role": "design-target"
+    },
+    {
+      "id": "368:11152",
+      "name": "R14 · Quay lại khi đang chỉnh",
+      "type": "FRAME",
+      "parentId": "330:3068",
+      "parentName": "03 · Tạo phòng / Hẹn giờ / Tình huống",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-11152",
+      "role": "design-target"
+    },
+    {
+      "id": "368:11217",
+      "name": "R15 · Chưa có lịch sử bữa ăn",
+      "type": "FRAME",
+      "parentId": "330:3068",
+      "parentName": "03 · Tạo phòng / Hẹn giờ / Tình huống",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-11217",
+      "role": "design-target"
+    },
+    {
+      "id": "416:7816",
+      "name": "Tạo phòng — Ăn trưa · Đã hẹn giờ",
+      "type": "FRAME",
+      "parentId": "330:3068",
+      "parentName": "03 · Tạo phòng / Hẹn giờ / Tình huống",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=416-7816",
+      "role": "design-target"
+    },
+    {
+      "id": "416:7984",
+      "name": "Tạo phòng — Hẹn giờ · Giữ Ăn trưa",
+      "type": "FRAME",
+      "parentId": "330:3068",
+      "parentName": "03 · Tạo phòng / Hẹn giờ / Tình huống",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=416-7984",
+      "role": "design-target"
+    },
+    {
+      "id": "451:13066",
+      "name": "Tạo phòng — 10 món · Biên dưới",
+      "type": "FRAME",
+      "parentId": "330:3068",
+      "parentName": "03 · Tạo phòng / Hẹn giờ / Tình huống",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=451-13066",
+      "role": "design-target"
+    },
+    {
+      "id": "451:13189",
+      "name": "Tạo phòng — 20 món · Biên trên",
+      "type": "FRAME",
+      "parentId": "330:3068",
+      "parentName": "03 · Tạo phòng / Hẹn giờ / Tình huống",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=451-13189",
+      "role": "design-target"
+    },
+    {
+      "id": "268:1952",
+      "name": "Vào phòng · Nhập mã",
+      "type": "FRAME",
+      "parentId": "330:3069",
+      "parentName": "05 · Tham gia phòng / QR / Lỗi vào phòng",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=268-1952",
+      "role": "design-target"
+    },
+    {
+      "id": "268:2019",
+      "name": "Vào phòng · Quét QR",
+      "type": "FRAME",
+      "parentId": "330:3069",
+      "parentName": "05 · Tham gia phòng / QR / Lỗi vào phòng",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=268-2019",
+      "role": "design-target"
+    },
+    {
+      "id": "268:2081",
+      "name": "Vào phòng · Xác nhận",
+      "type": "FRAME",
+      "parentId": "330:3069",
+      "parentName": "05 · Tham gia phòng / QR / Lỗi vào phòng",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=268-2081",
+      "role": "design-target"
+    },
+    {
+      "id": "280:2276",
+      "name": "Vào phòng · Xác nhận từ lời mời",
+      "type": "FRAME",
+      "parentId": "330:3069",
+      "parentName": "05 · Tham gia phòng / QR / Lỗi vào phòng",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=280-2276",
+      "role": "design-target"
+    },
+    {
+      "id": "275:1987",
+      "name": "Vào phòng · Mã không hợp lệ",
+      "type": "FRAME",
+      "parentId": "330:3069",
+      "parentName": "05 · Tham gia phòng / QR / Lỗi vào phòng",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=275-1987",
+      "role": "design-target"
+    },
+    {
+      "id": "323:2838",
+      "name": "Vào phòng — Phòng đã đầy",
+      "type": "FRAME",
+      "parentId": "330:3069",
+      "parentName": "05 · Tham gia phòng / QR / Lỗi vào phòng",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=323-2838",
+      "role": "design-target"
+    },
+    {
+      "id": "275:2044",
+      "name": "Vào phòng · Phòng hết hạn",
+      "type": "FRAME",
+      "parentId": "330:3069",
+      "parentName": "05 · Tham gia phòng / QR / Lỗi vào phòng",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=275-2044",
+      "role": "design-target"
+    },
+    {
+      "id": "275:2088",
+      "name": "Vào phòng · Camera bị từ chối",
+      "type": "FRAME",
+      "parentId": "330:3069",
+      "parentName": "05 · Tham gia phòng / QR / Lỗi vào phòng",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=275-2088",
+      "role": "design-target"
+    },
+    {
+      "id": "275:2131",
+      "name": "Vào phòng · Mất kết nối",
+      "type": "FRAME",
+      "parentId": "330:3069",
+      "parentName": "05 · Tham gia phòng / QR / Lỗi vào phòng",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=275-2131",
+      "role": "design-target"
+    },
+    {
+      "id": "68:429",
+      "name": "Phòng chờ",
+      "type": "FRAME",
+      "parentId": "330:3070",
+      "parentName": "06 · Phòng chờ / Chủ phòng / Thành viên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=68-429",
+      "role": "design-target"
+    },
+    {
+      "id": "68:430",
+      "name": "Phòng chờ — Khẩu vị cụ thể",
+      "type": "FRAME",
+      "parentId": "330:3070",
+      "parentName": "06 · Phòng chờ / Chủ phòng / Thành viên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=68-430",
+      "role": "design-target"
+    },
+    {
+      "id": "323:2719",
+      "name": "Phòng chờ — Đủ 20 người",
+      "type": "FRAME",
+      "parentId": "330:3070",
+      "parentName": "06 · Phòng chờ / Chủ phòng / Thành viên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=323-2719",
+      "role": "design-target"
+    },
+    {
+      "id": "368:11805",
+      "name": "L · Tình huống Phòng chờ · Bảng chạy",
+      "type": "FRAME",
+      "parentId": "330:3070",
+      "parentName": "06 · Phòng chờ / Chủ phòng / Thành viên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-11805",
+      "role": "reference-only"
+    },
+    {
+      "id": "368:11808",
+      "name": "L01 · Chủ phòng · Ba thành viên",
+      "type": "FRAME",
+      "parentId": "330:3070",
+      "parentName": "06 · Phòng chờ / Chủ phòng / Thành viên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-11808",
+      "role": "design-target"
+    },
+    {
+      "id": "368:11865",
+      "name": "L02 · Góc nhìn thành viên",
+      "type": "FRAME",
+      "parentId": "330:3070",
+      "parentName": "06 · Phòng chờ / Chủ phòng / Thành viên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-11865",
+      "role": "design-target"
+    },
+    {
+      "id": "368:11933",
+      "name": "L03 · Mới có một người",
+      "type": "FRAME",
+      "parentId": "330:3070",
+      "parentName": "06 · Phòng chờ / Chủ phòng / Thành viên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-11933",
+      "role": "design-target"
+    },
+    {
+      "id": "368:11989",
+      "name": "L04 · Danh sách đông người",
+      "type": "FRAME",
+      "parentId": "330:3070",
+      "parentName": "06 · Phòng chờ / Chủ phòng / Thành viên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-11989",
+      "role": "design-target"
+    },
+    {
+      "id": "368:12066",
+      "name": "L05 · Có người mới tham gia",
+      "type": "FRAME",
+      "parentId": "330:3070",
+      "parentName": "06 · Phòng chờ / Chủ phòng / Thành viên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-12066",
+      "role": "design-target"
+    },
+    {
+      "id": "368:12125",
+      "name": "L06 · Có người rời phòng",
+      "type": "FRAME",
+      "parentId": "330:3070",
+      "parentName": "06 · Phòng chờ / Chủ phòng / Thành viên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-12125",
+      "role": "design-target"
+    },
+    {
+      "id": "368:12182",
+      "name": "L07 · Mở mã QR",
+      "type": "FRAME",
+      "parentId": "330:3070",
+      "parentName": "06 · Phòng chờ / Chủ phòng / Thành viên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-12182",
+      "role": "design-target"
+    },
+    {
+      "id": "368:12249",
+      "name": "L08 · Chia sẻ lời mời",
+      "type": "FRAME",
+      "parentId": "330:3070",
+      "parentName": "06 · Phòng chờ / Chủ phòng / Thành viên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-12249",
+      "role": "design-target"
+    },
+    {
+      "id": "368:12314",
+      "name": "L09 · Sao chép thành công",
+      "type": "FRAME",
+      "parentId": "330:3070",
+      "parentName": "06 · Phòng chờ / Chủ phòng / Thành viên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-12314",
+      "role": "design-target"
+    },
+    {
+      "id": "368:12372",
+      "name": "L10 · Mời thêm bạn",
+      "type": "FRAME",
+      "parentId": "330:3070",
+      "parentName": "06 · Phòng chờ / Chủ phòng / Thành viên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-12372",
+      "role": "design-target"
+    },
+    {
+      "id": "368:12440",
+      "name": "L11 · Sửa bữa ăn",
+      "type": "FRAME",
+      "parentId": "330:3070",
+      "parentName": "06 · Phòng chờ / Chủ phòng / Thành viên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-12440",
+      "role": "design-target"
+    },
+    {
+      "id": "368:12517",
+      "name": "L12 · Bữa ăn được cập nhật",
+      "type": "FRAME",
+      "parentId": "330:3070",
+      "parentName": "06 · Phòng chờ / Chủ phòng / Thành viên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-12517",
+      "role": "design-target"
+    },
+    {
+      "id": "368:12586",
+      "name": "L13 · Mất kết nối",
+      "type": "FRAME",
+      "parentId": "330:3070",
+      "parentName": "06 · Phòng chờ / Chủ phòng / Thành viên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-12586",
+      "role": "design-target"
+    },
+    {
+      "id": "368:12644",
+      "name": "L14 · Đang kết nối lại",
+      "type": "FRAME",
+      "parentId": "330:3070",
+      "parentName": "06 · Phòng chờ / Chủ phòng / Thành viên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-12644",
+      "role": "design-target"
+    },
+    {
+      "id": "368:12702",
+      "name": "L15 · Đang bắt đầu phiên",
+      "type": "FRAME",
+      "parentId": "330:3070",
+      "parentName": "06 · Phòng chờ / Chủ phòng / Thành viên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-12702",
+      "role": "design-target"
+    },
+    {
+      "id": "368:12759",
+      "name": "L16 · Bắt đầu thất bại",
+      "type": "FRAME",
+      "parentId": "330:3070",
+      "parentName": "06 · Phòng chờ / Chủ phòng / Thành viên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-12759",
+      "role": "design-target"
+    },
+    {
+      "id": "368:12817",
+      "name": "L17 · Phiên đã bắt đầu ở nơi khác",
+      "type": "FRAME",
+      "parentId": "330:3070",
+      "parentName": "06 · Phòng chờ / Chủ phòng / Thành viên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-12817",
+      "role": "design-target"
+    },
+    {
+      "id": "368:12840",
+      "name": "L18 · Menu của chủ phòng",
+      "type": "FRAME",
+      "parentId": "330:3070",
+      "parentName": "06 · Phòng chờ / Chủ phòng / Thành viên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-12840",
+      "role": "design-target"
+    },
+    {
+      "id": "368:12905",
+      "name": "L19 · Chủ phòng hủy phòng",
+      "type": "FRAME",
+      "parentId": "330:3070",
+      "parentName": "06 · Phòng chờ / Chủ phòng / Thành viên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-12905",
+      "role": "design-target"
+    },
+    {
+      "id": "368:12969",
+      "name": "L20 · Thành viên rời phòng",
+      "type": "FRAME",
+      "parentId": "330:3070",
+      "parentName": "06 · Phòng chờ / Chủ phòng / Thành viên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-12969",
+      "role": "design-target"
+    },
+    {
+      "id": "368:13044",
+      "name": "L21 · Phòng hết hạn",
+      "type": "FRAME",
+      "parentId": "330:3070",
+      "parentName": "06 · Phòng chờ / Chủ phòng / Thành viên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-13044",
+      "role": "design-target"
+    },
+    {
+      "id": "368:13068",
+      "name": "L22 · Phòng bị hủy",
+      "type": "FRAME",
+      "parentId": "330:3070",
+      "parentName": "06 · Phòng chờ / Chủ phòng / Thành viên",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-13068",
+      "role": "design-target"
+    },
+    {
+      "id": "94:558",
+      "name": "Vòng 1 — Chọn món",
+      "type": "FRAME",
+      "parentId": "330:3071",
+      "parentName": "07 · Vòng 1 / Chọn món / Gửi phiếu",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=94-558",
+      "role": "design-target"
+    },
+    {
+      "id": "99:626",
+      "name": "Vòng 1 — Không ăn",
+      "type": "FRAME",
+      "parentId": "330:3071",
+      "parentName": "07 · Vòng 1 / Chọn món / Gửi phiếu",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=99-626",
+      "role": "design-target"
+    },
+    {
+      "id": "99:746",
+      "name": "Vòng 1 — Ăn được",
+      "type": "FRAME",
+      "parentId": "330:3071",
+      "parentName": "07 · Vòng 1 / Chọn món / Gửi phiếu",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=99-746",
+      "role": "design-target"
+    },
+    {
+      "id": "99:864",
+      "name": "Vòng 1 — Muốn ăn",
+      "type": "FRAME",
+      "parentId": "330:3071",
+      "parentName": "07 · Vòng 1 / Chọn món / Gửi phiếu",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=99-864",
+      "role": "design-target"
+    },
+    {
+      "id": "277:6509",
+      "name": "Vòng 1 · Hiện nút chọn món",
+      "type": "FRAME",
+      "parentId": "330:3071",
+      "parentName": "07 · Vòng 1 / Chọn món / Gửi phiếu",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=277-6509",
+      "role": "design-target"
+    },
+    {
+      "id": "323:3246",
+      "name": "Vòng 1 — Chưa gửi được lựa chọn",
+      "type": "FRAME",
+      "parentId": "330:3071",
+      "parentName": "07 · Vòng 1 / Chọn món / Gửi phiếu",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=323-3246",
+      "role": "design-target"
+    },
+    {
+      "id": "382:7148",
+      "name": "Vòng 1 — Đang gửi lựa chọn",
+      "type": "FRAME",
+      "parentId": "330:3071",
+      "parentName": "07 · Vòng 1 / Chọn món / Gửi phiếu",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=382-7148",
+      "role": "design-target"
+    },
+    {
+      "id": "382:7201",
+      "name": "Vòng 1 — Chưa xác nhận phiếu đã nhận",
+      "type": "FRAME",
+      "parentId": "330:3071",
+      "parentName": "07 · Vòng 1 / Chọn món / Gửi phiếu",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=382-7201",
+      "role": "design-target"
+    },
+    {
+      "id": "382:7258",
+      "name": "Vòng 1 — Đã đóng khi còn chọn",
+      "type": "FRAME",
+      "parentId": "330:3071",
+      "parentName": "07 · Vòng 1 / Chọn món / Gửi phiếu",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=382-7258",
+      "role": "design-target"
+    },
+    {
+      "id": "430:8028",
+      "name": "V1 · Thẻ cuối · Kiểm gửi tự động",
+      "type": "FRAME",
+      "parentId": "330:3071",
+      "parentName": "07 · Vòng 1 / Chọn món / Gửi phiếu",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=430-8028",
+      "role": "design-target"
+    },
+    {
+      "id": "460:8517",
+      "name": "Vòng 1 · Mô phỏng kéo thẻ",
+      "type": "FRAME",
+      "parentId": "330:3071",
+      "parentName": "07 · Vòng 1 / Chọn món / Gửi phiếu",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=460-8517",
+      "role": "design-target"
+    },
+    {
+      "id": "107:657",
+      "name": "Vòng 1 — Chờ kết quả · Chủ phòng",
+      "type": "FRAME",
+      "parentId": "330:3072",
+      "parentName": "08 · Chờ vòng 1 / Chốt ngay / Rời phòng",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=107-657",
+      "role": "design-target"
+    },
+    {
+      "id": "323:2951",
+      "name": "Vòng 1 — Chờ kết quả · Thành viên",
+      "type": "FRAME",
+      "parentId": "330:3072",
+      "parentName": "08 · Chờ vòng 1 / Chốt ngay / Rời phòng",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=323-2951",
+      "role": "design-target"
+    },
+    {
+      "id": "323:3155",
+      "name": "Vòng 1 — Xác nhận Chốt ngay",
+      "type": "FRAME",
+      "parentId": "330:3072",
+      "parentName": "08 · Chờ vòng 1 / Chốt ngay / Rời phòng",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=323-3155",
+      "role": "design-target"
+    },
+    {
+      "id": "107:755",
+      "name": "Vòng 1 — Xác nhận rời màn chờ",
+      "type": "FRAME",
+      "parentId": "330:3072",
+      "parentName": "08 · Chờ vòng 1 / Chốt ngay / Rời phòng",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=107-755",
+      "role": "design-target"
+    },
+    {
+      "id": "141:1148",
+      "name": "Vòng 1 → Vòng 2 — Thông báo tự chuyển",
+      "type": "FRAME",
+      "parentId": "330:3073",
+      "parentName": "09 · Vòng 2 / Pool còn lại / Giới hạn loại",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=141-1148",
+      "role": "design-target"
+    },
+    {
+      "id": "130:965",
+      "name": "Vòng 2 — Còn 4 món · Chưa loại",
+      "type": "FRAME",
+      "parentId": "330:3073",
+      "parentName": "09 · Vòng 2 / Pool còn lại / Giới hạn loại",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=130-965",
+      "role": "design-target"
+    },
+    {
+      "id": "136:995",
+      "name": "Vòng 2 — Còn 4 món · Đạt giới hạn 1",
+      "type": "FRAME",
+      "parentId": "330:3073",
+      "parentName": "09 · Vòng 2 / Pool còn lại / Giới hạn loại",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=136-995",
+      "role": "design-target"
+    },
+    {
+      "id": "323:3543",
+      "name": "Vòng 2 — Còn 2 món · Chưa loại",
+      "type": "FRAME",
+      "parentId": "330:3073",
+      "parentName": "09 · Vòng 2 / Pool còn lại / Giới hạn loại",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=323-3543",
+      "role": "design-target"
+    },
+    {
+      "id": "136:1055",
+      "name": "Vòng 2 — Còn 10 món · Đã loại 2",
+      "type": "FRAME",
+      "parentId": "330:3073",
+      "parentName": "09 · Vòng 2 / Pool còn lại / Giới hạn loại",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=136-1055",
+      "role": "design-target"
+    },
+    {
+      "id": "136:1115",
+      "name": "Vòng 2 — Còn 10 món · Đạt giới hạn 3",
+      "type": "FRAME",
+      "parentId": "330:3073",
+      "parentName": "09 · Vòng 2 / Pool còn lại / Giới hạn loại",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=136-1115",
+      "role": "design-target"
+    },
+    {
+      "id": "488:11662",
+      "name": "Vòng 2 — Còn 1 món · Chưa loại",
+      "type": "FRAME",
+      "parentId": "330:3073",
+      "parentName": "09 · Vòng 2 / Pool còn lại / Giới hạn loại",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=488-11662",
+      "role": "design-target"
+    },
+    {
+      "id": "488:11721",
+      "name": "Vòng 2 — Còn 2 món · Đạt giới hạn 1",
+      "type": "FRAME",
+      "parentId": "330:3073",
+      "parentName": "09 · Vòng 2 / Pool còn lại / Giới hạn loại",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=488-11721",
+      "role": "design-target"
+    },
+    {
+      "id": "638:9291",
+      "name": "Vòng 1 → Vòng 2 · Còn 1 món · Tự chuyển",
+      "type": "FRAME",
+      "parentId": "330:3073",
+      "parentName": "09 · Vòng 2 / Pool còn lại / Giới hạn loại",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=638-9291",
+      "role": "design-target"
+    },
+    {
+      "id": "638:9369",
+      "name": "Vòng 2 — Còn 1 món · Đã loại",
+      "type": "FRAME",
+      "parentId": "330:3073",
+      "parentName": "09 · Vòng 2 / Pool còn lại / Giới hạn loại",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=638-9369",
+      "role": "design-target"
+    },
+    {
+      "id": "136:1175",
+      "name": "Vòng 2 — Chờ kết quả · Chủ phòng",
+      "type": "FRAME",
+      "parentId": "330:3074",
+      "parentName": "10 · Chờ vòng 2 / Xác nhận / Gửi lỗi / Kết nối lại",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=136-1175",
+      "role": "design-target"
+    },
+    {
+      "id": "323:3088",
+      "name": "Vòng 2 — Chờ kết quả · Thành viên",
+      "type": "FRAME",
+      "parentId": "330:3074",
+      "parentName": "10 · Chờ vòng 2 / Xác nhận / Gửi lỗi / Kết nối lại",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=323-3088",
+      "role": "design-target"
+    },
+    {
+      "id": "323:3581",
+      "name": "Kết nối lại — Nhóm đang ở vòng 2",
+      "type": "FRAME",
+      "parentId": "330:3074",
+      "parentName": "10 · Chờ vòng 2 / Xác nhận / Gửi lỗi / Kết nối lại",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=323-3581",
+      "role": "design-target"
+    },
+    {
+      "id": "559:8633",
+      "name": "Vòng 2 — Xác nhận Chốt ngay",
+      "type": "FRAME",
+      "parentId": "330:3074",
+      "parentName": "10 · Chờ vòng 2 / Xác nhận / Gửi lỗi / Kết nối lại",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=559-8633",
+      "role": "design-target"
+    },
+    {
+      "id": "559:8739",
+      "name": "Vòng 2 — Đang gửi lựa chọn",
+      "type": "FRAME",
+      "parentId": "330:3074",
+      "parentName": "10 · Chờ vòng 2 / Xác nhận / Gửi lỗi / Kết nối lại",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=559-8739",
+      "role": "design-target"
+    },
+    {
+      "id": "559:8768",
+      "name": "Vòng 2 — Chưa xác nhận phiếu đã nhận",
+      "type": "FRAME",
+      "parentId": "330:3074",
+      "parentName": "10 · Chờ vòng 2 / Xác nhận / Gửi lỗi / Kết nối lại",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=559-8768",
+      "role": "design-target"
+    },
+    {
+      "id": "559:8796",
+      "name": "Vòng 2 — Đã đóng khi còn chọn",
+      "type": "FRAME",
+      "parentId": "330:3074",
+      "parentName": "10 · Chờ vòng 2 / Xác nhận / Gửi lỗi / Kết nối lại",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=559-8796",
+      "role": "design-target"
+    },
+    {
+      "id": "559:8824",
+      "name": "Vòng 2 — Chưa gửi được lựa chọn",
+      "type": "FRAME",
+      "parentId": "330:3074",
+      "parentName": "10 · Chờ vòng 2 / Xác nhận / Gửi lỗi / Kết nối lại",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=559-8824",
+      "role": "design-target"
+    },
+    {
+      "id": "638:9436",
+      "name": "Vòng 2 N=1 · Chờ kết quả · Chủ phòng · 1/3",
+      "type": "FRAME",
+      "parentId": "330:3074",
+      "parentName": "10 · Chờ vòng 2 / Xác nhận / Gửi lỗi / Kết nối lại",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=638-9436",
+      "role": "design-target"
+    },
+    {
+      "id": "638:9535",
+      "name": "Vòng 2 N=1 · Chờ kết quả · Thành viên · 1/3",
+      "type": "FRAME",
+      "parentId": "330:3074",
+      "parentName": "10 · Chờ vòng 2 / Xác nhận / Gửi lỗi / Kết nối lại",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=638-9535",
+      "role": "design-target"
+    },
+    {
+      "id": "638:9632",
+      "name": "Vòng 2 N=1 · Xác nhận Chốt ngay",
+      "type": "FRAME",
+      "parentId": "330:3074",
+      "parentName": "10 · Chờ vòng 2 / Xác nhận / Gửi lỗi / Kết nối lại",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=638-9632",
+      "role": "design-target"
+    },
+    {
+      "id": "638:9752",
+      "name": "Vòng 2 N=1 · Đang gửi · Giữ món",
+      "type": "FRAME",
+      "parentId": "330:3074",
+      "parentName": "10 · Chờ vòng 2 / Xác nhận / Gửi lỗi / Kết nối lại",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=638-9752",
+      "role": "design-target"
+    },
+    {
+      "id": "638:9816",
+      "name": "Vòng 2 N=1 · Đang gửi · Loại món",
+      "type": "FRAME",
+      "parentId": "330:3074",
+      "parentName": "10 · Chờ vòng 2 / Xác nhận / Gửi lỗi / Kết nối lại",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=638-9816",
+      "role": "design-target"
+    },
+    {
+      "id": "638:9897",
+      "name": "Router · Vòng 2 N=1 · Vai trò",
+      "type": "FRAME",
+      "parentId": "330:3074",
+      "parentName": "10 · Chờ vòng 2 / Xác nhận / Gửi lỗi / Kết nối lại",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=638-9897",
+      "role": "reference-only"
+    },
+    {
+      "id": "114:825",
+      "name": "Kết quả — Vinh danh món chiến thắng",
+      "type": "FRAME",
+      "parentId": "330:3075",
+      "parentName": "11 · Vinh danh / Kết quả / Bản đồ",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=114-825",
+      "role": "design-target"
+    },
+    {
+      "id": "114:753",
+      "name": "Kết quả — Top 3",
+      "type": "FRAME",
+      "parentId": "330:3075",
+      "parentName": "11 · Vinh danh / Kết quả / Bản đồ",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=114-753",
+      "role": "design-target"
+    },
+    {
+      "id": "323:3619",
+      "name": "Kết quả vòng 1 — Chưa đồng thuận",
+      "type": "FRAME",
+      "parentId": "330:3075",
+      "parentName": "11 · Vinh danh / Kết quả / Bản đồ",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=323-3619",
+      "role": "design-target"
+    },
+    {
+      "id": "226:1286",
+      "name": "Kết quả vòng 2 — Chưa chốt được món",
+      "type": "FRAME",
+      "parentId": "330:3075",
+      "parentName": "11 · Vinh danh / Kết quả / Bản đồ",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=226-1286",
+      "role": "design-target"
+    },
+    {
+      "id": "382:7313",
+      "name": "Kết quả — Lỗi tải kết quả",
+      "type": "FRAME",
+      "parentId": "330:3075",
+      "parentName": "11 · Vinh danh / Kết quả / Bản đồ",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=382-7313",
+      "role": "design-target"
+    },
+    {
+      "id": "382:7461",
+      "name": "Kết quả — Đang chốt · Có winner",
+      "type": "FRAME",
+      "parentId": "330:3075",
+      "parentName": "11 · Vinh danh / Kết quả / Bản đồ",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=382-7461",
+      "role": "design-target"
+    },
+    {
+      "id": "382:7598",
+      "name": "Kết quả — Còn 1 món",
+      "type": "FRAME",
+      "parentId": "330:3075",
+      "parentName": "11 · Vinh danh / Kết quả / Bản đồ",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=382-7598",
+      "role": "design-target"
+    },
+    {
+      "id": "382:7884",
+      "name": "Kết quả — Còn 2 món",
+      "type": "FRAME",
+      "parentId": "330:3075",
+      "parentName": "11 · Vinh danh / Kết quả / Bản đồ",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=382-7884",
+      "role": "design-target"
+    },
+    {
+      "id": "382:8164",
+      "name": "Kết quả — Bản đồ không có quán",
+      "type": "FRAME",
+      "parentId": "330:3075",
+      "parentName": "11 · Vinh danh / Kết quả / Bản đồ",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=382-8164",
+      "role": "design-target"
+    },
+    {
+      "id": "382:8362",
+      "name": "Kết quả — Bản đồ tải lỗi",
+      "type": "FRAME",
+      "parentId": "330:3075",
+      "parentName": "11 · Vinh danh / Kết quả / Bản đồ",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=382-8362",
+      "role": "design-target"
+    },
+    {
+      "id": "488:11783",
+      "name": "Tham khảo cũ · Pool Vòng 2 rỗng (không dùng)",
+      "type": "FRAME",
+      "parentId": "330:3075",
+      "parentName": "11 · Vinh danh / Kết quả / Bản đồ",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=488-11783",
+      "role": "reference-only"
+    },
+    {
+      "id": "622:8962",
+      "name": "Kết quả — Cần bật vị trí",
+      "type": "FRAME",
+      "parentId": "330:3075",
+      "parentName": "11 · Vinh danh / Kết quả / Bản đồ",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=622-8962",
+      "role": "design-target"
+    },
+    {
+      "id": "623:14586",
+      "name": "Router · Kết quả 2 món",
+      "type": "FRAME",
+      "parentId": "330:3075",
+      "parentName": "11 · Vinh danh / Kết quả / Bản đồ",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=623-14586",
+      "role": "reference-only"
+    },
+    {
+      "id": "626:9291",
+      "name": "Kết quả — Vinh danh · 1 món",
+      "type": "FRAME",
+      "parentId": "330:3075",
+      "parentName": "11 · Vinh danh / Kết quả / Bản đồ",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=626-9291",
+      "role": "design-target"
+    },
+    {
+      "id": "626:9328",
+      "name": "Kết quả — Vinh danh · 2 món",
+      "type": "FRAME",
+      "parentId": "330:3075",
+      "parentName": "11 · Vinh danh / Kết quả / Bản đồ",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=626-9328",
+      "role": "design-target"
+    },
+    {
+      "id": "232:2",
+      "name": "Bạn bè",
+      "type": "FRAME",
+      "parentId": "330:3076",
+      "parentName": "12 · Bạn bè / Tìm bạn / Lời mời",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=232-2",
+      "role": "design-target"
+    },
+    {
+      "id": "276:2037",
+      "name": "Bạn bè · Tìm bạn",
+      "type": "FRAME",
+      "parentId": "330:3076",
+      "parentName": "12 · Bạn bè / Tìm bạn / Lời mời",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=276-2037",
+      "role": "design-target"
+    },
+    {
+      "id": "276:2079",
+      "name": "Bạn bè · Lời mời đã gửi",
+      "type": "FRAME",
+      "parentId": "330:3076",
+      "parentName": "12 · Bạn bè / Tìm bạn / Lời mời",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=276-2079",
+      "role": "design-target"
+    },
+    {
+      "id": "276:2117",
+      "name": "Bạn bè · Đã đồng ý",
+      "type": "FRAME",
+      "parentId": "330:3076",
+      "parentName": "12 · Bạn bè / Tìm bạn / Lời mời",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=276-2117",
+      "role": "design-target"
+    },
+    {
+      "id": "276:2163",
+      "name": "Bạn bè · Đã từ chối",
+      "type": "FRAME",
+      "parentId": "330:3076",
+      "parentName": "12 · Bạn bè / Tìm bạn / Lời mời",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=276-2163",
+      "role": "design-target"
+    },
+    {
+      "id": "276:2204",
+      "name": "Bạn bè · Hộp thư lời mời",
+      "type": "FRAME",
+      "parentId": "330:3077",
+      "parentName": "13 · Lời mời phòng / Gửi / Từ chối",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=276-2204",
+      "role": "design-target"
+    },
+    {
+      "id": "276:2247",
+      "name": "Bạn bè · Rủ bạn vào phòng",
+      "type": "FRAME",
+      "parentId": "330:3077",
+      "parentName": "13 · Lời mời phòng / Gửi / Từ chối",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=276-2247",
+      "role": "design-target"
+    },
+    {
+      "id": "276:2297",
+      "name": "Bạn bè · Đã gửi lời mời phòng",
+      "type": "FRAME",
+      "parentId": "330:3077",
+      "parentName": "13 · Lời mời phòng / Gửi / Từ chối",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=276-2297",
+      "role": "design-target"
+    },
+    {
+      "id": "278:6561",
+      "name": "Bạn bè · Đã từ chối lời mời phòng",
+      "type": "FRAME",
+      "parentId": "330:3077",
+      "parentName": "13 · Lời mời phòng / Gửi / Từ chối",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=278-6561",
+      "role": "design-target"
+    },
+    {
+      "id": "286:2245",
+      "name": "Thông báo",
+      "type": "FRAME",
+      "parentId": "330:3079",
+      "parentName": "14 · Thông báo",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=286-2245",
+      "role": "design-target"
+    },
+    {
+      "id": "232:226",
+      "name": "Lịch sử",
+      "type": "FRAME",
+      "parentId": "330:3081",
+      "parentName": "15 · Lịch sử / Chi tiết",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=232-226",
+      "role": "design-target"
+    },
+    {
+      "id": "260:1526",
+      "name": "Lịch sử · Chi tiết đã chốt",
+      "type": "FRAME",
+      "parentId": "330:3081",
+      "parentName": "15 · Lịch sử / Chi tiết",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=260-1526",
+      "role": "design-target"
+    },
+    {
+      "id": "261:1773",
+      "name": "Lịch sử · Chi tiết Cơm tấm",
+      "type": "FRAME",
+      "parentId": "330:3081",
+      "parentName": "15 · Lịch sử / Chi tiết",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=261-1773",
+      "role": "design-target"
+    },
+    {
+      "id": "260:1597",
+      "name": "Lịch sử · Chi tiết chưa chốt",
+      "type": "FRAME",
+      "parentId": "330:3081",
+      "parentName": "15 · Lịch sử / Chi tiết",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=260-1597",
+      "role": "design-target"
+    },
+    {
+      "id": "263:2012",
+      "name": "Lịch sử · Chưa có bữa đã lưu",
+      "type": "FRAME",
+      "parentId": "330:3081",
+      "parentName": "15 · Lịch sử / Chi tiết",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=263-2012",
+      "role": "design-target"
+    },
+    {
+      "id": "232:349",
+      "name": "Cá nhân · Khách",
+      "type": "FRAME",
+      "parentId": "330:3083",
+      "parentName": "16 · Cá nhân / Hồ sơ / Tài khoản",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=232-349",
+      "role": "design-target"
+    },
+    {
+      "id": "260:1649",
+      "name": "Cá nhân · Đã đăng nhập",
+      "type": "FRAME",
+      "parentId": "330:3083",
+      "parentName": "16 · Cá nhân / Hồ sơ / Tài khoản",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=260-1649",
+      "role": "design-target"
+    },
+    {
+      "id": "260:1813",
+      "name": "Cá nhân · Thông tin tài khoản",
+      "type": "FRAME",
+      "parentId": "330:3083",
+      "parentName": "16 · Cá nhân / Hồ sơ / Tài khoản",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=260-1813",
+      "role": "design-target"
+    },
+    {
+      "id": "261:1731",
+      "name": "Cá nhân · Sửa hồ sơ",
+      "type": "FRAME",
+      "parentId": "330:3083",
+      "parentName": "16 · Cá nhân / Hồ sơ / Tài khoản",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=261-1731",
+      "role": "design-target"
+    },
+    {
+      "id": "260:1857",
+      "name": "Cá nhân · Đổi mật khẩu",
+      "type": "FRAME",
+      "parentId": "330:3083",
+      "parentName": "16 · Cá nhân / Hồ sơ / Tài khoản",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=260-1857",
+      "role": "design-target"
+    },
+    {
+      "id": "263:1946",
+      "name": "Cá nhân · Xác nhận đăng xuất",
+      "type": "FRAME",
+      "parentId": "330:3083",
+      "parentName": "16 · Cá nhân / Hồ sơ / Tài khoản",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=263-1946",
+      "role": "design-target"
+    },
+    {
+      "id": "263:1742",
+      "name": "Cá nhân · Chọn chủ đề",
+      "type": "FRAME",
+      "parentId": "330:3085",
+      "parentName": "17 · Cài đặt / Trợ năng / Đăng xuất",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=263-1742",
+      "role": "design-target"
+    },
+    {
+      "id": "263:1811",
+      "name": "Cá nhân · Cỡ chữ",
+      "type": "FRAME",
+      "parentId": "330:3085",
+      "parentName": "17 · Cài đặt / Trợ năng / Đăng xuất",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=263-1811",
+      "role": "design-target"
+    },
+    {
+      "id": "278:6453",
+      "name": "Cá nhân · Hiện nút chọn món đã bật",
+      "type": "FRAME",
+      "parentId": "330:3085",
+      "parentName": "17 · Cài đặt / Trợ năng / Đăng xuất",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=278-6453",
+      "role": "design-target"
+    },
+    {
+      "id": "263:1880",
+      "name": "Cá nhân · Xóa lịch sử",
+      "type": "FRAME",
+      "parentId": "330:3085",
+      "parentName": "17 · Cài đặt / Trợ năng / Đăng xuất",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=263-1880",
+      "role": "design-target"
+    },
+    {
+      "id": "382:8859",
+      "name": "Cá nhân — Xin bật thông báo",
+      "type": "FRAME",
+      "parentId": "330:3085",
+      "parentName": "17 · Cài đặt / Trợ năng / Đăng xuất",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=382-8859",
+      "role": "design-target"
+    },
+    {
+      "id": "309:2331",
+      "name": "Hướng dẫn lần đầu · Quy trình rút gọn",
+      "type": "FRAME",
+      "parentId": "330:3087",
+      "parentName": "19 · Hướng dẫn · Storyboard tham khảo",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=309-2331",
+      "role": "reference-only"
+    },
+    {
+      "id": "368:16838",
+      "name": "T01 · Tạo phòng",
+      "type": "FRAME",
+      "parentId": "368:16837",
+      "parentName": "18 · Hướng dẫn lần đầu · Bản chạy",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-16838",
+      "role": "design-target"
+    },
+    {
+      "id": "368:16963",
+      "name": "T02 · Thiết lập phòng",
+      "type": "FRAME",
+      "parentId": "368:16837",
+      "parentName": "18 · Hướng dẫn lần đầu · Bản chạy",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-16963",
+      "role": "design-target"
+    },
+    {
+      "id": "368:17115",
+      "name": "T03 · Thẻ mẫu · Không ăn",
+      "type": "FRAME",
+      "parentId": "368:16837",
+      "parentName": "18 · Hướng dẫn lần đầu · Bản chạy",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-17115",
+      "role": "design-target"
+    },
+    {
+      "id": "368:17189",
+      "name": "T04 · Thẻ mẫu · Ăn được",
+      "type": "FRAME",
+      "parentId": "368:16837",
+      "parentName": "18 · Hướng dẫn lần đầu · Bản chạy",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-17189",
+      "role": "design-target"
+    },
+    {
+      "id": "368:17263",
+      "name": "T05 · Thẻ mẫu · Muốn ăn",
+      "type": "FRAME",
+      "parentId": "368:16837",
+      "parentName": "18 · Hướng dẫn lần đầu · Bản chạy",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-17263",
+      "role": "design-target"
+    },
+    {
+      "id": "368:17336",
+      "name": "T06 · Hoàn tác · Thẻ mẫu",
+      "type": "FRAME",
+      "parentId": "368:16837",
+      "parentName": "18 · Hướng dẫn lần đầu · Bản chạy",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-17336",
+      "role": "design-target"
+    },
+    {
+      "id": "50:235",
+      "name": "Khẩu vị",
+      "type": "FRAME",
+      "parentId": "388:7816",
+      "parentName": "04 · Khẩu vị / Lưu nháp / Lỗi",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=50-235",
+      "role": "design-target"
+    },
+    {
+      "id": "59:330",
+      "name": "Khẩu vị — Chọn theo sở thích",
+      "type": "FRAME",
+      "parentId": "388:7816",
+      "parentName": "04 · Khẩu vị / Lưu nháp / Lỗi",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=59-330",
+      "role": "design-target"
+    },
+    {
+      "id": "368:11277",
+      "name": "P · Tình huống Khẩu vị · Bảng chạy",
+      "type": "FRAME",
+      "parentId": "388:7816",
+      "parentName": "04 · Khẩu vị / Lưu nháp / Lỗi",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-11277",
+      "role": "reference-only"
+    },
+    {
+      "id": "368:11280",
+      "name": "P01 · Ăn gì cũng được",
+      "type": "FRAME",
+      "parentId": "388:7816",
+      "parentName": "04 · Khẩu vị / Lưu nháp / Lỗi",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-11280",
+      "role": "design-target"
+    },
+    {
+      "id": "368:11334",
+      "name": "P02 · Một khẩu vị cụ thể",
+      "type": "FRAME",
+      "parentId": "388:7816",
+      "parentName": "04 · Khẩu vị / Lưu nháp / Lỗi",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-11334",
+      "role": "design-target"
+    },
+    {
+      "id": "368:11388",
+      "name": "P03 · Nhiều nhóm khẩu vị",
+      "type": "FRAME",
+      "parentId": "388:7816",
+      "parentName": "04 · Khẩu vị / Lưu nháp / Lỗi",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-11388",
+      "role": "design-target"
+    },
+    {
+      "id": "368:11442",
+      "name": "P04 · Sửa từ phòng chờ",
+      "type": "FRAME",
+      "parentId": "388:7816",
+      "parentName": "04 · Khẩu vị / Lưu nháp / Lỗi",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-11442",
+      "role": "design-target"
+    },
+    {
+      "id": "368:11496",
+      "name": "P05 · Đang lưu khẩu vị",
+      "type": "FRAME",
+      "parentId": "388:7816",
+      "parentName": "04 · Khẩu vị / Lưu nháp / Lỗi",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-11496",
+      "role": "design-target"
+    },
+    {
+      "id": "368:11550",
+      "name": "P06 · Lưu thất bại",
+      "type": "FRAME",
+      "parentId": "388:7816",
+      "parentName": "04 · Khẩu vị / Lưu nháp / Lỗi",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-11550",
+      "role": "design-target"
+    },
+    {
+      "id": "368:11605",
+      "name": "Khẩu vị — Mất kết nối · Giữ nháp",
+      "type": "FRAME",
+      "parentId": "388:7816",
+      "parentName": "04 · Khẩu vị / Lưu nháp / Lỗi",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-11605",
+      "role": "design-target"
+    },
+    {
+      "id": "368:11660",
+      "name": "P08 · Đang tải lựa chọn",
+      "type": "FRAME",
+      "parentId": "388:7816",
+      "parentName": "04 · Khẩu vị / Lưu nháp / Lỗi",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-11660",
+      "role": "design-target"
+    },
+    {
+      "id": "368:11690",
+      "name": "P09 · Không tải được lựa chọn",
+      "type": "FRAME",
+      "parentId": "388:7816",
+      "parentName": "04 · Khẩu vị / Lưu nháp / Lỗi",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-11690",
+      "role": "design-target"
+    },
+    {
+      "id": "368:11718",
+      "name": "P10 · Bỏ thay đổi khẩu vị",
+      "type": "FRAME",
+      "parentId": "388:7816",
+      "parentName": "04 · Khẩu vị / Lưu nháp / Lỗi",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-11718",
+      "role": "design-target"
+    },
+    {
+      "id": "368:11779",
+      "name": "P11 · Phòng không còn hoạt động",
+      "type": "FRAME",
+      "parentId": "388:7816",
+      "parentName": "04 · Khẩu vị / Lưu nháp / Lỗi",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=368-11779",
+      "role": "design-target"
+    },
+    {
+      "id": "472:8533",
+      "name": "Ba trạng thái flashcard",
+      "type": "FRAME",
+      "parentId": "472:8531",
+      "parentName": "07A · Thẻ flashcard · Mẫu tham khảo",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=472-8533",
+      "role": "reference-only"
+    },
+    {
+      "id": "559:8899",
+      "name": "Bảng chạy fixture vote",
+      "type": "FRAME",
+      "parentId": "559:8898",
+      "parentName": "QA NỘI BỘ · Vote v4 · Fixtures & routers (không phải luồng người dùng)",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=559-8899",
+      "role": "reference-only"
+    },
+    {
+      "id": "570:8852",
+      "name": "Router · Vòng 1 · Pool rỗng?",
+      "type": "FRAME",
+      "parentId": "559:8898",
+      "parentName": "QA NỘI BỘ · Vote v4 · Fixtures & routers (không phải luồng người dùng)",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=570-8852",
+      "role": "reference-only"
+    },
+    {
+      "id": "570:8853",
+      "name": "Router · Vòng 1 · Còn nhiều món?",
+      "type": "FRAME",
+      "parentId": "559:8898",
+      "parentName": "QA NỘI BỘ · Vote v4 · Fixtures & routers (không phải luồng người dùng)",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=570-8853",
+      "role": "reference-only"
+    },
+    {
+      "id": "570:8854",
+      "name": "Router · Vòng 1 · Còn 1 món?",
+      "type": "FRAME",
+      "parentId": "559:8898",
+      "parentName": "QA NỘI BỘ · Vote v4 · Fixtures & routers (không phải luồng người dùng)",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=570-8854",
+      "role": "reference-only"
+    },
+    {
+      "id": "570:8855",
+      "name": "Router · Vòng 1 · Vai trò",
+      "type": "FRAME",
+      "parentId": "559:8898",
+      "parentName": "QA NỘI BỘ · Vote v4 · Fixtures & routers (không phải luồng người dùng)",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=570-8855",
+      "role": "reference-only"
+    },
+    {
+      "id": "570:8856",
+      "name": "Router · Vòng 2 · Kết quả",
+      "type": "FRAME",
+      "parentId": "559:8898",
+      "parentName": "QA NỘI BỘ · Vote v4 · Fixtures & routers (không phải luồng người dùng)",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=570-8856",
+      "role": "reference-only"
+    },
+    {
+      "id": "570:8857",
+      "name": "Router · Vòng 2 · Vai trò",
+      "type": "FRAME",
+      "parentId": "559:8898",
+      "parentName": "QA NỘI BỘ · Vote v4 · Fixtures & routers (không phải luồng người dùng)",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=570-8857",
+      "role": "reference-only"
+    },
+    {
+      "id": "570:13577",
+      "name": "Router · Lỗi tải kết quả · Vòng 2 rỗng?",
+      "type": "FRAME",
+      "parentId": "559:8898",
+      "parentName": "QA NỘI BỘ · Vote v4 · Fixtures & routers (không phải luồng người dùng)",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=570-13577",
+      "role": "reference-only"
+    },
+    {
+      "id": "582:8853",
+      "name": "Router · Gửi Vòng 2 · Hết ứng viên?",
+      "type": "FRAME",
+      "parentId": "559:8898",
+      "parentName": "QA NỘI BỘ · Vote v4 · Fixtures & routers (không phải luồng người dùng)",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=582-8853",
+      "role": "reference-only"
+    },
+    {
+      "id": "582:8855",
+      "name": "Router · Gửi Vòng 2 · Có winner?",
+      "type": "FRAME",
+      "parentId": "559:8898",
+      "parentName": "QA NỘI BỘ · Vote v4 · Fixtures & routers (không phải luồng người dùng)",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=582-8855",
+      "role": "reference-only"
+    },
+    {
+      "id": "582:8857",
+      "name": "Router · Gửi Vòng 1 · Có winner?",
+      "type": "FRAME",
+      "parentId": "559:8898",
+      "parentName": "QA NỘI BỘ · Vote v4 · Fixtures & routers (không phải luồng người dùng)",
+      "pageId": "33:2",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=582-8857",
+      "role": "reference-only"
+    },
+    {
+      "id": "77:5",
+      "name": "01 · Thiết lập / Buổi ăn / Ngân sách",
+      "type": "FRAME",
+      "parentId": "77:2",
+      "parentName": "Bộ tình huống",
+      "pageId": "76:851",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=77-5",
+      "role": "design-target"
+    },
+    {
+      "id": "77:6",
+      "name": "02 · Hẹn giờ / Chọn ngày / Giờ không hợp lệ",
+      "type": "FRAME",
+      "parentId": "77:2",
+      "parentName": "Bộ tình huống",
+      "pageId": "76:851",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=77-6",
+      "role": "design-target"
+    },
+    {
+      "id": "77:7",
+      "name": "03 · Mời bạn / Không tìm thấy",
+      "type": "FRAME",
+      "parentId": "77:2",
+      "parentName": "Bộ tình huống",
+      "pageId": "76:851",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=77-7",
+      "role": "design-target"
+    },
+    {
+      "id": "77:8",
+      "name": "04 · Đang xử lý / Thất bại / Ngoại tuyến / Quay lại",
+      "type": "FRAME",
+      "parentId": "77:2",
+      "parentName": "Bộ tình huống",
+      "pageId": "76:851",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=77-8",
+      "role": "design-target"
+    },
+    {
+      "id": "77:12",
+      "name": "01 · Không kén món / Một / Nhiều khẩu vị / Chỉnh sửa",
+      "type": "FRAME",
+      "parentId": "77:9",
+      "parentName": "Bộ tình huống",
+      "pageId": "76:852",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=77-12",
+      "role": "design-target"
+    },
+    {
+      "id": "77:13",
+      "name": "02 · Lưu / Lỗi lưu / Nháp ngoại tuyến",
+      "type": "FRAME",
+      "parentId": "77:9",
+      "parentName": "Bộ tình huống",
+      "pageId": "76:852",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=77-13",
+      "role": "design-target"
+    },
+    {
+      "id": "77:14",
+      "name": "03 · Tải / Lỗi tải / Bỏ thay đổi / Phòng đóng",
+      "type": "FRAME",
+      "parentId": "77:9",
+      "parentName": "Bộ tình huống",
+      "pageId": "76:852",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=77-14",
+      "role": "design-target"
+    },
+    {
+      "id": "77:18",
+      "name": "01 · Chủ phòng / Thành viên / Quy mô nhóm",
+      "type": "FRAME",
+      "parentId": "77:15",
+      "parentName": "Bộ tình huống",
+      "pageId": "76:853",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=77-18",
+      "role": "design-target"
+    },
+    {
+      "id": "77:19",
+      "name": "02 · Thành viên vào / Rời phòng",
+      "type": "FRAME",
+      "parentId": "77:15",
+      "parentName": "Bộ tình huống",
+      "pageId": "76:853",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=77-19",
+      "role": "design-target"
+    },
+    {
+      "id": "77:20",
+      "name": "03 · QR / Chia sẻ / Sao chép / Mời bạn",
+      "type": "FRAME",
+      "parentId": "77:15",
+      "parentName": "Bộ tình huống",
+      "pageId": "76:853",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=77-20",
+      "role": "design-target"
+    },
+    {
+      "id": "77:21",
+      "name": "04 · Chỉnh sửa / Cập nhật bữa ăn",
+      "type": "FRAME",
+      "parentId": "77:15",
+      "parentName": "Bộ tình huống",
+      "pageId": "76:853",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=77-21",
+      "role": "design-target"
+    },
+    {
+      "id": "77:22",
+      "name": "05 · Mất mạng / Kết nối lại / Bắt đầu phiên",
+      "type": "FRAME",
+      "parentId": "77:15",
+      "parentName": "Bộ tình huống",
+      "pageId": "76:853",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=77-22",
+      "role": "design-target"
+    },
+    {
+      "id": "77:23",
+      "name": "06 · Menu / Hủy / Rời / Hết hạn / Đã đóng",
+      "type": "FRAME",
+      "parentId": "77:15",
+      "parentName": "Bộ tình huống",
+      "pageId": "76:853",
+      "url": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=77-23",
+      "role": "design-target"
+    }
+  ],
+  "runtimeAcceptance": "Not run in this documentation/task update"
+}

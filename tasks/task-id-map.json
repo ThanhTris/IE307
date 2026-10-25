@@ -38,7 +38,7 @@
       "previous_ids": [
         "GM-02"
       ],
-      "title": "UI: cấu trúc thư mục và app Expo chạy được",
+      "title": "Nền Expo, font Inter và điều hướng UI Figma",
       "track": "UI",
       "stage": "structure",
       "outputs": [
@@ -67,9 +67,9 @@
       "verification": {
         "mode": "code-structure",
         "tool": "TypeScript config/import guard + repository validator",
-        "entrypoint": "mobile/src/app, mobile/src/bootstrap, mobile/src/features, mobile/src/shared, mobile/src/domain, mobile/src/data",
-        "expected": "Cây thư mục, route/provider boundary, strict tooling và package boundary đúng foundation plan; không kéo business feature hoặc native capability vào shell.",
-        "cases": "thiếu path/file bắt buộc; sai import boundary; thiếu script/config; rò dependency nghiệp vụ/native"
+        "entrypoint": "Cây code/bootstrap/routes/font theo GM-02; Figma tham chiếu nhận diện",
+        "expected": "Bổ sung font Inter, cơ chế tải/fallback font và route cho bộ UI mới trong bootstrap hiện có. GM-05 nhận nền này để làm token/component.",
+        "cases": "Kiểm cây code, import boundary, config và font; GM-02 vẫn là task nền, không nhận nghiệm thu toàn bộ màn sản phẩm. Tải font lỗi/chậm có fallback; không tạo shell hoặc hệ điều hướng thứ hai."
       }
     },
     {
@@ -143,7 +143,7 @@
       "previous_ids": [
         "GM-04"
       ],
-      "title": "UI: component dùng chung theo UI mẫu",
+      "title": "Component và token theo Figma đã chốt",
       "track": "UI",
       "stage": "components",
       "outputs": [
@@ -167,9 +167,9 @@
       "verification": {
         "mode": "expo-go",
         "tool": "Expo Go Android + component tests",
-        "entrypoint": "Component map → ví dụ ghép Home/card trong shell, có cách mở từng component/state",
-        "expected": "Các component trong scope hiển thị và tương tác được theo UI mẫu; không chỉ export thư viện hoặc tạo gallery riêng ngoài scope.",
-        "cases": "props/events; loading/disabled/error; dark/font scale; touch/accessibility; ảnh fallback"
+        "entrypoint": "Figma task map → node thiết kế → route/scenario bàn giao của GM-05",
+        "expected": "Đồng bộ Light tokens, Inter, spacing/radius và các component button/form/header/nav/card/khẩu vị/số món/lobby/waiting/podium theo Figma.",
+        "cases": "Expo mở được từng variant với props/events, loading/disabled/error, tên dài, thiếu ảnh và thiếu giá. Đạt touch target ≥48dp, chữ 200%, TalkBack và nút thay gesture. Dark redesign hoãn; giữ capability hiện có."
       }
     },
     {
@@ -291,7 +291,7 @@
       "previous_ids": [
         "GM-13"
       ],
-      "title": "UI: Home, tạo phòng và nhập mã theo mẫu",
+      "title": "UI Home, khách, tạo/tham gia phòng và hướng dẫn",
       "track": "UI",
       "stage": "screens",
       "outputs": [
@@ -315,9 +315,9 @@
       "verification": {
         "mode": "expo-go",
         "tool": "Expo Go Android + interaction tests",
-        "entrypoint": "Home → tạo phòng / nhập mã / quay lại, qua route bàn giao",
-        "expected": "Mở được cả Home/CreateRoom/JoinRoom và thấy đúng nội dung/validation theo scope; mock có nhãn.",
-        "cases": "create/join/back; input lỗi; loading/full/locked/expired/network; camera chưa triển khai"
+        "entrypoint": "Figma task map → node thiết kế → route/scenario bàn giao của GM-09",
+        "expected": "Dựng welcome/chọn khách, nhập tên, Home/tiếp tục phiên, entry tạo/vào phòng và hướng dẫn lần đầu theo Figma.",
+        "cases": "Expo thao tác được Home → setup/khẩu vị → preview join → lobby với fixture có nhãn. Đối chiếu ảnh Home/guest/join/tutorial; kiểm Back, keyboard và các lỗi. Không giả online hoặc bắt GPS ở tạo phòng."
       }
     },
     {
@@ -326,7 +326,7 @@
         "GM-10",
         "GM-19"
       ],
-      "title": "UI: chọn khu vực, giờ ăn và sở thích theo mẫu",
+      "title": "UI thiết lập phòng và khẩu vị dish-only",
       "track": "UI",
       "stage": "screens",
       "outputs": [
@@ -349,9 +349,9 @@
       "verification": {
         "mode": "expo-go",
         "tool": "Expo Go Android + interaction tests",
-        "entrypoint": "Context/Preferences từ navigation; điều khiển fixture các state",
-        "expected": "Hiển thị/chỉnh khu vực công cộng, giờ/buổi, cuisine/đặc tính/budget/consent/avoidRecent theo scope; chưa gọi GPS thật.",
-        "cases": "manual/denied/outside coverage/empty/stale; null price; buổi/giờ; reset-ready scenario"
+        "entrypoint": "Figma task map → node thiết kế → route/scenario bàn giao của GM-10",
+        "expected": "Dựng thiết lập buổi/thời điểm ăn, số món nguyên 10–20, ngân sách và ưu tiên khác ba bữa gần. Pool không phụ thuộc vị trí, quán hay coverage.",
+        "cases": "Kiểm biên 10/20, giờ không hợp lệ, giữ nháp và shortage available/requested; chỉ giảm sau host xác nhận và vẫn ≥10. Có fixture đầy đủ P01–P11/R01–R15. Thiếu giá không thành 0; bỏ ready và vị trí bắt buộc."
       }
     },
     {
@@ -359,7 +359,7 @@
       "previous_ids": [
         "GM-16"
       ],
-      "title": "UI: lobby, ready và trạng thái phòng theo mẫu",
+      "title": "UI lobby và trạng thái phòng không ready",
       "track": "UI",
       "stage": "screens",
       "outputs": [
@@ -382,9 +382,9 @@
       "verification": {
         "mode": "expo-go",
         "tool": "Expo Go Android + interaction tests",
-        "entrypoint": "Lobby/RoomStatus theo route và fixture host/member",
-        "expected": "Thấy roster/context/ready và các nút đúng role/state; leave/cancel có xác nhận.",
-        "cases": "ready/reset-ready; host/member; pending/error/offline/reconnect/expired/cancelled; không phiếu thô"
+        "entrypoint": "Figma task map → node thiết kế → route/scenario bàn giao của GM-11",
+        "expected": "Dựng lobby host/member, tối đa 20 người, code/QR/share/invite và chỉnh settings/khẩu vị trong lobby. Host bấm bắt đầu, không ready hoặc duyệt từng người.",
+        "cases": "Fixture 1/3/20 người; quyền host/member, confirm hủy/rời/Back và chống bấm bắt đầu lặp. Đối chiếu L01–L22; danh sách đông cuộn được và không che hành động chính."
       }
     },
     {
@@ -393,7 +393,7 @@
         "GM-20",
         "GM-22"
       ],
-      "title": "UI: bình chọn và vòng hai theo mẫu",
+      "title": "UI flashcard, vòng hai, ACK và chờ kết quả",
       "track": "UI",
       "stage": "screens",
       "outputs": [
@@ -416,9 +416,9 @@
       "verification": {
         "mode": "expo-go",
         "tool": "Expo Go Android + interaction tests",
-        "entrypoint": "Vote → submit mock → FinalRound, có fixture đủ các state",
-        "expected": "Thấy WANT/OK/NO và KEEP/REMOVE, UNSET khác OK; tương tác/undo/Gửi đúng, không UI tự chốt.",
-        "cases": "button/double-tap/scroll; đủ phiếu; pending/ACK/error; round2 remove-all; không vòng3"
+        "entrypoint": "Figma task map → node thiết kế → route/scenario bàn giao của GM-12",
+        "expected": "R1 dùng flashcard: trái NO, phải OK, chạm hai lần WANT và có nút thay gesture. Undo trước gửi; thẻ cuối gửi một ballot rồi khóa Undo.",
+        "cases": "Fixture N=0/1/2/3/4/10/20, cap/cap+1, không loại và cả nhóm loại hết. N=1 có chưa loại/đã loại/gửi/chờ. Kiểm ACK muộn, người bỏ lỡ R1 và reconnect; counter chỉ tính ACK, host Chốt ngay cần ≥1 ballot hợp lệ."
       }
     },
     {
@@ -426,7 +426,7 @@
       "previous_ids": [
         "GM-21"
       ],
-      "title": "UI: kết quả, nơi bán và không đồng thuận theo mẫu",
+      "title": "UI kết quả, Top 3 đồng hạng và Places/map",
       "track": "UI",
       "stage": "screens",
       "outputs": [
@@ -449,9 +449,9 @@
       "verification": {
         "mode": "expo-go",
         "tool": "Expo Go Android + component/interaction tests",
-        "entrypoint": "Result/NoConsensus và các fixture offering/tier",
-        "expected": "Thấy kết quả, nơi bán, giá/đơn vị/lịch/nguồn hoặc trạng thái chưa biết; actions gọi callback đúng, không reroll.",
-        "cases": "perfect/consensus/compromise; empty/stale/closed/changed; no-consensus; new-session; Maps chỉ callback"
+        "entrypoint": "Figma task map → node thiết kế → route/scenario bàn giao của GM-13",
+        "expected": "Dựng winner và bục 1/2/3 món với điểm, dense rank và biến thể đồng hạng: cùng hạng cùng chiều cao, winner có nhãn Món được chọn.",
+        "cases": "Fixture 1/2/3 món, đồng hạng đầu/cuối/tất cả, thiếu ảnh/giá. Điểm không vượt 2 × số ballot R1 đã ACK. Không dùng frame Tham khảo cũ hoặc router QA làm màn sản phẩm; Maps link không thay map trong app."
       }
     },
     {
@@ -461,7 +461,7 @@
         "GM-17",
         "GM-18"
       ],
-      "title": "UI: bạn bè, inbox và lịch sử theo mẫu",
+      "title": "UI bạn bè, thông báo, lịch sử và cài đặt",
       "track": "UI",
       "stage": "screens",
       "outputs": [
@@ -485,9 +485,9 @@
       "verification": {
         "mode": "expo-go",
         "tool": "Expo Go Android + interaction tests",
-        "entrypoint": "Friends/Inbox/History từ navigation với fixture",
-        "expected": "Cả ba màn mở được, social/notification/history consent và delete có nội dung, confirm và phản hồi.",
-        "cases": "accept/reject/unfriend/invite; pending/error/empty/expired; inbox denied; consent/delete; account P1 có nhãn"
+        "entrypoint": "Figma task map → node thiết kế → route/scenario bàn giao của GM-14",
+        "expected": "Dựng bạn bè, tìm trong danh sách hiện có, thêm bằng mã, lời mời, inbox và history DECIDED/NO_CONSENSUS theo Figma; không giả trạng thái online.",
+        "cases": "Expo mở được từng màn và tương tác confirm/retry/empty/error/consent/delete. Mock không xin push hoặc gọi provider thật. G01–G03 có frame hoặc variant Figma trước nghiệm thu; lịch sử legacy ẩn điểm/Top 3 thiếu và tôn trọng ACL."
       }
     },
     {
@@ -868,11 +868,11 @@
         "GM-02",
         "GM-10"
       ],
-      "title": "UI: nối vị trí thiết bị với coverage API",
+      "title": "UI–API preview pool và thiết lập dish-only",
       "track": "INTEGRATION",
-      "stage": "native",
+      "stage": "integration",
       "outputs": [
-        "mobile/src/features/context/services/location.ts",
+        "mobile/src/features/context/services/roomSetup.ts",
         "docs/evidence/roadmap-v2/GM-24/CHECKS.md"
       ],
       "inputs": [
@@ -903,11 +903,11 @@
         }
       ],
       "verification": {
-        "mode": "expo-native",
-        "tool": "Expo Go shell + Expo Android/native + API runner",
-        "entrypoint": "Màn Context dùng location adapter và discovery API thật",
-        "expected": "Hiển thị quyền/manual/coverage/server time; raw GPS không gửi server/log; thực tế grant/deny trên môi trường hỗ trợ.",
-        "cases": "grant/deny/GPS-off/manual/outside/empty/offline; server-now/buffer; không cộng giờ lại; Android thật gọi API: endpoint/auth/network/lifecycle và đối chiếu state server theo ma trận"
+        "mode": "expo-api",
+        "tool": "Expo Android + Auth/REST API runner",
+        "entrypoint": "Figma task map → node thiết kế → route/scenario bàn giao của GM-24",
+        "expected": "Thay điều kiện location/coverage bắt buộc bằng setup và preview catalogue dish-only. Nhận số món 10–20 và ưu tiên mềm; không lọc pool bằng GPS/quán/giờ bán.",
+        "cases": "Android gọi API thật: exact count, shortage, available<10, sửa khi pending, response cũ, offline/retry và giờ quá hạn. Có request/response/assertions và UI đối chiếu Figma. Thiếu producer B thì phần tích hợp ghi Not run, không dùng mock thay Pass."
       }
     },
     {
@@ -918,7 +918,7 @@
         "GM-16",
         "GM-19"
       ],
-      "title": "UI–BE: nối Home, context, preferences và lobby",
+      "title": "UI–API guest, Home, phòng, khẩu vị và lobby",
       "track": "INTEGRATION",
       "stage": "integration",
       "outputs": [
@@ -958,7 +958,7 @@
         },
         {
           "task": "GM-24",
-          "artifact": "mobile/src/features/context/services/location.ts",
+          "artifact": "mobile/src/features/context/services/roomSetup.ts",
           "gate": "merge"
         },
         {
@@ -970,9 +970,9 @@
       "verification": {
         "mode": "expo-api",
         "tool": "Expo Android + multi-user API runner",
-        "entrypoint": "Home/Create/Join/Context/Preferences/Lobby nối repositories thật",
-        "expected": "Các màn đã dựng mở được và dùng auth/room/context thật; hai máy cùng server snapshot, không fallback fixture.",
-        "cases": "2 máy create/join/ready/start/refetch; full/expired/network; context/roster/consent reset-ready; empty pool; Android thật gọi API: endpoint/auth/network/lifecycle và đối chiếu state server theo ma trận"
+        "entrypoint": "Figma task map → node thiết kế → route/scenario bàn giao của GM-25",
+        "expected": "Nối guest create/restore/refresh/logout GM-16 vào entry rồi Home, tạo phòng, preview/confirm join, settings, khẩu vị và lobby.",
+        "cases": "Android Auth+REST thật: create → preview join → join → sửa lobby → start → snapshot, với hai identity. Kiểm refresh, mất mạng, stale version, full/21 người, expiry/cancel/race. Ghi version/hash/PR producer; P1 không chặn core."
       }
     },
     {
@@ -981,7 +981,7 @@
         "GM-20",
         "GM-22"
       ],
-      "title": "UI–BE: nối bình chọn, nộp phiếu và vòng hai",
+      "title": "UI–API ballot, waiting và vòng hai",
       "track": "INTEGRATION",
       "stage": "integration",
       "outputs": [
@@ -1013,9 +1013,9 @@
       "verification": {
         "mode": "expo-api",
         "tool": "Expo Android + API/retry integration runner",
-        "entrypoint": "Vote/FinalRound nối voteRepository thật",
-        "expected": "UI thể hiện pending/unknown/ACK theo server, không tự winner/count pending; thực thi tối đa hai vòng.",
-        "cases": "button/gesture/undo/submit; 2–8 users; late ACK/timeout/retry/stale/version; remove-all; Android thật gọi API: endpoint/auth/network/lifecycle và đối chiếu state server theo ma trận"
+        "entrypoint": "Figma task map → node thiết kế → route/scenario bàn giao của GM-26",
+        "expected": "Nối flashcard R1 và ballot cuối lượt; idempotency key ổn định qua ACK unknown/retry. Nháp/đang gửi/ACK khác nhau, pending không tính hoàn thành.",
+        "cases": "Hai client có cùng pool/deadline/kết quả; retry không ghi trùng, cap+1 bị server từ chối, ACK muộn/deadline/finalize race đúng. Kiểm trên Android gọi API thật, đối chiếu server và che dữ liệu nhạy cảm trong evidence."
       }
     },
     {
@@ -1023,7 +1023,7 @@
       "previous_ids": [
         "GM-21"
       ],
-      "title": "UI–BE: nối kết quả và nơi bán thực tế",
+      "title": "UI–API kết quả Top 3 và Places độc lập",
       "track": "INTEGRATION",
       "stage": "integration",
       "outputs": [
@@ -1055,9 +1055,9 @@
       "verification": {
         "mode": "expo-api",
         "tool": "Expo Android + API/query runner",
-        "entrypoint": "Result/NoConsensus nối resultRepository và offering API thật",
-        "expected": "Màn hiển thị server winner/tier/reason/offerings, lịch/nguồn/đơn vị; reconnect/refetch không đổi winner.",
-        "cases": "retry/back/reconnect; stale/changed/closed offering; no-consensus/new-session; Maps callbacks; Android thật gọi API: endpoint/auth/network/lifecycle và đối chiếu state server theo ma trận"
+        "entrypoint": "Figma task map → node thiết kế → route/scenario bàn giao của GM-27",
+        "expected": "Đọc resultId/winner/topDishes/score/rank/projection/version canonical từ GM-20; giữ thứ tự đã lưu, không tự tính điểm/tie-break.",
+        "cases": "Kiểm Top 1/2/3 và đồng hạng, malformed/thiếu field mới báo lỗi contract, legacy ẩn trường thiếu. Android refetch/retry/reconnect giữ nguyên winner/Top 3; lỗi Places không ảnh hưởng kết quả."
       }
     },
     {
@@ -1067,7 +1067,7 @@
         "GM-17",
         "GM-18"
       ],
-      "title": "UI–BE: nối bạn bè, inbox và history",
+      "title": "UI–API bạn bè, inbox và lịch sử",
       "track": "INTEGRATION",
       "stage": "integration",
       "outputs": [
@@ -1111,9 +1111,9 @@
       "verification": {
         "mode": "expo-api",
         "tool": "Expo Android + multi-user API runner",
-        "entrypoint": "Friends/Inbox/History nối API thật",
-        "expected": "Ba màn hiển thị output thật và xử lý social/inbox/consent/delete theo server, không fixture production.",
-        "cases": "invite/accept/reject/unfriend; expired/outsider/lost-session; dedup/refetch; group ACL/delete/opt-out/network; Android thật gọi API: endpoint/auth/network/lifecycle và đối chiếu state server theo ma trận"
+        "entrypoint": "Figma task map → node thiết kế → route/scenario bàn giao của GM-28",
+        "expected": "Nối GM-14 với history/social/inbox producer theo version bàn giao; tìm tên trong danh sách bạn, thêm bằng mã và admission 20 người không ready.",
+        "cases": "Android nhiều identity: invite/accept/reject/unfriend/full/expiry, inbox empty/error, history opt-out/delete/revoke. Result/history/inbox trỏ cùng kết quả đã lưu; xác minh node Figma bổ sung và không lộ phiếu/token."
       }
     },
     {
@@ -1122,7 +1122,7 @@
         "GM-02",
         "GM-18"
       ],
-      "title": "UI–BE: push native và mở app từ thông báo",
+      "title": "UI quyền thông báo và mở app từ push",
       "track": "INTEGRATION",
       "stage": "native",
       "outputs": [
@@ -1164,9 +1164,9 @@
       "verification": {
         "mode": "expo-native",
         "tool": "Expo Go startup + development build thiết bị Android + API runner",
-        "entrypoint": "Inbox/native push permission → register device → nhận remote push → tap/refetch",
-        "expected": "Expo Go không crash và có chỉ dẫn giới hạn; remote delivery cold/warm phải có evidence thật trên build hỗ trợ.",
-        "cases": "grant/deny; remote delivery/cold/warm; duplicate/expired; token refresh/logout; thiếu credential→Not run, không local-notification thay remote; Android thật gọi API: endpoint/auth/network/lifecycle và đối chiếu state server theo ma trận"
+        "entrypoint": "Figma task map → node thiết kế → route/scenario bàn giao của GM-29",
+        "expected": "Quyền thông báo theo Figma với grant/deny/settings; từ chối vẫn dùng inbox.",
+        "cases": "Expo Go không crash; phần remote push cần môi trường native hỗ trợ và ghi rõ Not run nếu chưa kiểm. Có remote delivery thật trên thiết bị và kiểm cold/warm/duplicate/denied/token rotation/logout; local notification không thay remote."
       }
     },
     {
@@ -1175,13 +1175,14 @@
         "GM-02",
         "GM-23"
       ],
-      "title": "UI–BE: QR, incoming links và Maps/review",
+      "title": "UI native QR, liên kết, vị trí và Places/map kết quả",
       "track": "INTEGRATION",
       "stage": "native",
       "outputs": [
         "mobile/src/features/rooms/services/joinLinks.ts",
         "mobile/src/features/result/services/externalLinks.ts",
-        "docs/evidence/roadmap-v2/GM-30/CHECKS.md"
+        "docs/evidence/roadmap-v2/GM-30/CHECKS.md",
+        "mobile/src/features/result/services/placesRepository.ts"
       ],
       "inputs": [
         {
@@ -1191,7 +1192,7 @@
         },
         {
           "task": "GM-24",
-          "artifact": "mobile/src/features/context/services/location.ts",
+          "artifact": "mobile/src/features/context/services/roomSetup.ts",
           "gate": "merge"
         },
         {
@@ -1228,9 +1229,9 @@
       "verification": {
         "mode": "expo-native",
         "tool": "Expo Go UI + Android build phù hợp + API/link runner",
-        "entrypoint": "Join QR/manual/incoming link → auth/confirm; Result → Maps/review/copy",
-        "expected": "Các mục UI mở được; QR/link/Maps thật theo capability, không auto-join/ready hoặc chia GPS.",
-        "cases": "camera deny/manual; cold/warm/malformed/duplicate/allowlist; room full/expired; browser/copy fallback; Android thật gọi API: endpoint/auth/network/lifecycle và đối chiếu state server theo ma trận"
+        "entrypoint": "Figma task map → node thiết kế → route/scenario bàn giao của GM-30",
+        "expected": "QR/camera/manual/incoming link có allowlist, restore auth và preview/confirm; không auto-join hoặc hiện tên trước join.",
+        "cases": "Android kiểm QR grant/deny/manual/invalid/duplicate/full/expired và cold/warm link. Places/map loading/empty/error/permission có evidence thật hoặc Not run rõ. Không coi search URL là dữ liệu nơi bán được xác minh."
       }
     },
     {
@@ -1239,7 +1240,7 @@
         "GM-02",
         "GM-24"
       ],
-      "title": "UI–BE: SQLite outbox, cache và reconnect",
+      "title": "UI cache, outbox và phục hồi phiên",
       "track": "INTEGRATION",
       "stage": "integration",
       "outputs": [
@@ -1292,9 +1293,9 @@
       "verification": {
         "mode": "expo-native",
         "tool": "Expo Go startup + Android persistence/restart + API runner",
-        "entrypoint": "UI pending/unknown/cache → process restart/offline/reconnect → server reconcile",
-        "expected": "Trạng thái hiển thị đúng và SQLite/outbox/cache thực thi thật; snapshot trước replay, không nhóm offline giả.",
-        "cases": "restart; ACK/retry/stale/auth isolation; gap realtime; TTL/logout/cache<=50; schema upgrade/recovery; Android thật gọi API: endpoint/auth/network/lifecycle và đối chiếu state server theo ma trận"
+        "entrypoint": "Figma task map → node thiết kế → route/scenario bàn giao của GM-31",
+        "expected": "Lưu cache/nháp/outbox theo identity, room, round, poolVersion và contract. Không ghi log token hoặc phiếu.",
+        "cases": "Android kiểm process restart, mất mạng, realtime gap, expiry/round closed, replay và auth isolation. Winner/Top 3/pool khóa giữ nguyên; món bị loại không quay lại, retry giữ idempotency key."
       }
     },
     {
@@ -1364,7 +1365,7 @@
       "previous_ids": [
         "GM-26"
       ],
-      "title": "QA: đối chiếu UI mẫu và pilot Android end-to-end",
+      "title": "QA Android đối chiếu Figma và UI–API",
       "track": "QA",
       "stage": "qa",
       "outputs": [
@@ -1431,9 +1432,9 @@
       "verification": {
         "mode": "qa",
         "tool": "Expo/native Android end-to-end + API/data pilot",
-        "entrypoint": "UI-01..13/15 và kịch bản 2/4/8 người, dataset coverage thực",
-        "expected": "Screenshot/video và kết quả pilot có build/device/data revision; case thiếu người/credential ghi giới hạn, không bịa research.",
-        "cases": "loading/empty/error/font200/dark/TalkBack; multi-device; push/camera/restart; coverage/hours/freshness; đối chiếu ma trận API GM-16..23 trên điện thoại Android thật và release candidate"
+        "entrypoint": "Figma task map → node thiết kế → route/scenario bàn giao của GM-33",
+        "expected": "Lập ma trận từng task/node/state, đối chiếu Figma với app cùng viewport/font/data/role bằng ảnh cạnh nhau hoặc overlay.",
+        "cases": "Có ảnh Figma/app, revision thiết kế/commit/build/device, input/expected/actual/assertion cho từng case. Thiết bị thật, hai client và native capability đúng scope; Not run/Fail bắt buộc chặn Done."
       }
     },
     {
@@ -1441,7 +1442,7 @@
       "previous_ids": [
         "GM-27"
       ],
-      "title": "Release: APK, demo và bàn giao core",
+      "title": "Release UI Figma và bàn giao ứng dụng",
       "track": "RELEASE",
       "stage": "release",
       "outputs": [
@@ -1458,9 +1459,9 @@
       "verification": {
         "mode": "release",
         "tool": "Build/install APK + API/data runbook smoke",
-        "entrypoint": "APK version/hash → cài máy Android → luồng core và setup từ clone sạch",
-        "expected": "APK/demo thật, input/output/API/data/import/rollback runbook tái lập; P1/P2 không chặn release.",
-        "cases": "install/start/core flow; artifact checksum; final dependencies/review; coverage/license/freshness limits"
+        "entrypoint": "Figma task map → node thiết kế → route/scenario bàn giao của GM-34",
+        "expected": "Chốt artifact release sau GM-33: contract/runtime/dataset version/hash và ma trận visual đúng Figma.",
+        "cases": "Build/install APK theo scope release, ghi checksum và kiểm startup/core flow trên đúng bản. Expo Go Pass không thay APK/native evidence; P1/P2 không chặn release core."
       }
     },
     {
@@ -1468,7 +1469,7 @@
       "previous_ids": [
         "GM-28"
       ],
-      "title": "P1: account link/recovery và history sync",
+      "title": "P1 UI tài khoản, hồ sơ và recovery",
       "track": "EXTENSION",
       "stage": "extension",
       "outputs": [
@@ -1505,9 +1506,9 @@
       "verification": {
         "mode": "expo-api",
         "tool": "Expo Android + provider/auth API integration runner",
-        "entrypoint": "Account link/recovery/history sync theo UI-14",
-        "expected": "UI và response auth thật đúng identity mapping, conflict/recovery/history quyền; provider thiếu thì Not run phần tích hợp.",
-        "cases": "nonce/conflict/lost guest; logout/failure giữ guest; sync không đổi winner/quyền nhóm; Android thật gọi API: endpoint/auth/network/lifecycle và đối chiếu state server theo ma trận"
+        "entrypoint": "Figma task map → node thiết kế → route/scenario bàn giao của GM-35",
+        "expected": "Giữ P1 làm sau core; triển khai login/register/email verify/recovery/link account/profile/password/logout theo Figma khi đến task.",
+        "cases": "Frame lỗi G04–G05 gắn với case; kiểm auth/provider và Android đúng scope, mất mạng/invalid code/conflict/recovery. Thiếu provider ghi Not run; không nâng P1 chỉ vì Figma đã có màn."
       }
     },
     {
@@ -1643,12 +1644,13 @@
     {
       "new_id": "GM-39",
       "previous_ids": [],
-      "title": "UI: cải thiện prototype HTML trước khi sửa app",
+      "title": "Bàn giao Figma và kiểm tra thiết kế bổ sung",
       "track": "UI",
       "stage": "prototype",
       "outputs": [
-        "design/prototypes/gi-cung-duoc.html",
-        "docs/design/UI_REFINEMENT.md",
+        "docs/design/UI_FINAL_HANDOFF_2026-10-25.md",
+        "docs/design/UI_FIGMA_TASK_MAP.json",
+        "docs/design/UI_FIGMA_IMPLEMENTATION_2026-10-25.md",
         "docs/evidence/roadmap-v2/GM-39/CHECKS.md"
       ],
       "inputs": [
@@ -1734,11 +1736,11 @@
         }
       ],
       "verification": {
-        "mode": "html-prototype",
-        "tool": "Browser + responsive/keyboard/visual interaction checks",
-        "entrypoint": "design/prototypes/gi-cung-duoc.html trên browser qua local static server, dùng screen/scenario controls.",
-        "expected": "HTML tương tác đẹp và nhất quán hơn, đúng luồng/spec với nhãn mô phỏng; Trí duyệt bản HTML, chưa sửa app.",
-        "cases": "320/360/412px và màn rộng; light/dark; zoom200; keyboard/focus; reduced motion; loading/empty/error/disabled/unknown; navigation/vote/result mock."
+        "mode": "figma-handoff",
+        "tool": "Figma MCP + screenshot + kiểm link/node/state và bàn giao thiết kế",
+        "entrypoint": "Figma task map → node thiết kế → route/scenario bàn giao của GM-39",
+        "expected": "Figma final handoff là nguồn thiết kế hiện hành; HTML cũ giữ làm tham chiếu, không yêu cầu sửa HTML để mở task app.",
+        "cases": "Node/link đọc được qua Figma MCP và bấm được; inventory/page/state, ảnh và gap log khớp thiết kế. Mỗi gap có task/owner/status/frame hoặc Pending. Chưa vẽ thì không ghi đã xong; nghiệm thu thiết kế không thay Expo/API."
       }
     },
     {

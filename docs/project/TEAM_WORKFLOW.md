@@ -54,7 +54,7 @@ Task màn thêm route và feature file của mình, dùng components/repository 
 5. Trí kiểm AC, kể cả task Trí trực tiếp làm, và [DoD](DEFINITION_OF_DONE.md) cho revision hiện tại; Trí nghiệm thu/chuyển Done trên Project. AI không tự chuyển Done. Hồ sơ review là bằng chứng nên lưu; khi cập nhật Markdown thành done vẫn cần approval fields/evidence thật và sinh indexes. Không bắt bước đồng bộ Markdown này để mở downstream. Done không đồng nghĩa code đã vào target.
 6. Bàn giao [HANDOFF](../../tasks/templates/HANDOFF_TEMPLATE.md) và tag task nhận tiếp trong báo cáo/PR; thiếu đầu ra thì downstream vẫn bị chặn.
 
-Không bắt nghiệm thu production/APK cho task shell/mock. Mock không đóng AC của task API/native. EXTENSION GM-35..38 P1/P2 merge sau GM-34, không chặn release. GM-39 là thiết kế lại HTML bổ sung, ưu tiên sau GM-05/GM-09..14, không chờ core và không tạo dependency ngược; đọc brief/spec, Trí chốt hướng rồi chỉnh HTML/kiểm browser, chưa sửa app.
+Không bắt nghiệm thu production/APK cho task shell/mock. Mock không đóng AC của task API/native. EXTENSION GM-35..38 P1/P2 merge sau GM-34, không chặn release. Theo final handoff ngày 2026-10-25, GM-39 bàn giao Figma/map task và hỗ trợ thiết kế bổ sung, không ép sửa HTML trước app hoặc tạo dependency ngược. Các task UI thực hiện theo [kế hoạch Figma mới](../design/UI_FIGMA_IMPLEMENTATION_2026-10-25.md); GM-14/35 bổ sung frame còn thiếu trong scope của mình. Trí review visual, CHECKS/HANDOFF và bằng chứng app đúng tầng.
 
 ## Evidence và kiểm tra repo
 

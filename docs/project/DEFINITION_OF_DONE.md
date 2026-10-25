@@ -32,4 +32,9 @@ Validator chỉ kiểm cấu trúc/truy vết, không chứng minh review có th
 
 Task shell/component/màn mock được Done khi đạt đúng AC của task đó và review, không cần API/native của task sau. GM-02 không chờ camera/push/SQLite/APK; GM-05 không phải nghiệm thu gallery riêng; GM-09..14 bàn giao màn theo mẫu + mock đúng contract. Các task tích hợp GM-24..31 cần API/native thật theo AC. Mỗi task cung cấp file thực tế/lệnh dùng/version/commit/HANDOFF, người nhận kiểm đủ input trước làm; không dùng placeholder hoặc đổi mã để kế thừa approval. [Lộ trình](IMPLEMENTATION_ROADMAP.md).
 
-GM-39 chỉ nghiệm thu HTML tương tác đã chỉnh, browser checks/ảnh trước–sau và Trí duyệt revision; app/backend không được sửa trong scope này. Đọc brief/spec trước đề xuất. Không bắt Expo ở task prototype hoặc coi HTML đã chứng minh native/API; áp dụng thiết kế vào app chờ Trí giao scope riêng.
+GM-39 nghiệm thu handoff Figma: node/link/component/state, ảnh review và gap log theo final handoff 2026-10-25. HTML cũ giữ tham chiếu, không yêu cầu sửa HTML để mở task app. GM-14/35 bổ sung frame còn thiếu; GM-39 hỗ trợ thiết kế. Không báo Expo/API/native Pass từ handoff.
+
+
+## Bổ sung UI Figma final 2026-10-25
+
+Theo [kế hoạch UI](../design/UI_FIGMA_IMPLEMENTATION_2026-10-25.md), task màn/component phải có ảnh đối chiếu Figma/app cùng node/state/data/viewport và CHECKS/HANDOFF/FIGMA_PARITY. Task cấu trúc GM-02 kiểm nền/font; task thiết kế GM-39 kiểm handoff/link, không nhận toàn bộ UI/API. Task tích hợp phải có evidence API/Android/native phù hợp. G01–G03 giao GM-14 bổ sung Figma, GM-28/31 nối; G04/G05 GM-35/P1. Dark redesign hoãn; giữ accessibility/capability hiện có.

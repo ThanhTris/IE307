@@ -1,5 +1,8 @@
 # Chuẩn đầu ra chạy được — roadmap-v2
 
+**Bổ sung UI Figma final 2026-10-25:** Task UI theo [kế hoạch và chuẩn visual](../design/UI_FIGMA_IMPLEMENTATION_2026-10-25.md), có node/route/state, ảnh Figma và app cùng viewport, CHECKS/HANDOFF/FIGMA_PARITY. GM-02 kiểm nền/font; GM-39 kiểm handoff Figma/link/gap, HTML là lịch sử; GM-05/09..14 Expo mock; GM-24..31/35 API/native theo capability. Figma đủ màn chưa là app Pass. P1/P2 và Dark redesign giữ làm sau; nếu dòng legacy bên dưới khác phạm vi này thì task/UI spec mới ưu tiên.
+
+
 2026-10-10. Chủ dự án xác nhận cấu trúc UI/BE và yêu cầu đầu ra task phải kiểm được theo đúng stage: UI màn/component phải chạy trên Expo và hiển thị scope; BE API phải gọi bằng Postman hoặc công cụ tương đương có output/assertion; task structure chỉ kiểm cây code/config/runner; Data đủ trường để BE làm song song. Đây là chuẩn nghiệm thu, không là approval GM-01, package, code, provider hoặc quyền tự merge.
 
 [Checklist từng task](TASK_OUTPUT_CHECKLIST.md) sinh từ `tasks/task-id-map.json`; task Markdown giữ AC/scope/owner/reviewer. [Cấu trúc](REPOSITORY_STRUCTURE.md) và [plan GM-02/03](FOUNDATION_IMPLEMENTATION_PLAN.md) là đích triển khai, không chứng minh đã có app/API.

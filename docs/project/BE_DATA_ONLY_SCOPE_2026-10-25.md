@@ -1,5 +1,8 @@
 # Phạm vi hiện hành: BE và Data — 2026-10-25
 
+> Cập nhật sau final handoff UI ngày 2026-10-25: Trí đã giao task UI theo Figma tại [kế hoạch mới](../design/UI_FIGMA_IMPLEMENTATION_2026-10-25.md). Phần BE/Data và phân công producer trong tài liệu này giữ nguyên. Các đoạn tạm hoãn/thu hồi FE bên dưới ghi lại phạm vi của đợt BE/Data trước, không tiếp tục cấm task UI mới đã được giao.
+
+
 Trí làm rõ: báo cáo UI/Figma chỉ cung cấp ngữ cảnh để BE và Data chuẩn bị đầu ra phù hợp. FE giữ nguyên phần việc trước đợt supplement Figma/contract B. Trí sẽ chốt Figma rồi giao kế hoạch làm lại FE riêng. Phạm vi này ưu tiên hơn các dòng giao FE trong matrix/review plan ngày 2026-10-24.
 
 ## Trạng thái code và trạng thái Project

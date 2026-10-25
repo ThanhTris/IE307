@@ -50,7 +50,7 @@ Bảo trì GM-02: kiểm online → cập nhật package và sinh lockfile bằn
 | GM-33, GM-34 | QA Android và APK/release trên đúng SDK/build/API revision; đổi native package phải rebuild trước kiểm |
 | GM-35, GM-38 | P1/P2 có UI/API Android theo scope, nhận cùng baseline khi triển khai |
 | GM-07, GM-15..23, GM-32 khi runner dùng mobile client/domain | Cài mobile dependencies theo lockfile nếu runner cần; không biến output API/domain thành yêu cầu mở Expo Go |
-| GM-00/01/03/04/06/08/36/37/39 | Không thêm nghiệm thu Expo: baseline/BE/Data/API draft/HTML theo AC hiện hành. GM-39 vẫn chỉ sửa prototype HTML |
+| GM-00/01/03/04/06/08/36/37/39 | Không thêm nghiệm thu Expo: baseline/BE/Data/API draft/HTML theo AC hiện hành. GM-39 kiểm handoff Figma theo scope UI ngày 2026-10-25, không cần Expo |
 
 21 task đã có link về bộ này trong Test plan: GM-02/05/09/10/11/12/13/14/16/24/25/26/27/28/29/30/31/33/34/35/38. [Checklist output](TASK_OUTPUT_CHECKLIST.md) và [ma trận Android–API](../testing/MOBILE_API_TEST_MATRIX.md) giữ đúng loại kiểm, không tự miễn Not run thiết bị.
 

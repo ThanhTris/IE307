@@ -1,5 +1,8 @@
 # Brief dự án cho AI — GM-39, cải thiện HTML trước
 
+> **Tham chiếu lịch sử HTML:** từ final handoff UI ngày 2026-10-25, yêu cầu hiện hành nằm ở [Figma final](UI_FINAL_HANDOFF_2026-10-25.md) và [kế hoạch task UI](UI_FIGMA_IMPLEMENTATION_2026-10-25.md). Không dùng brief cũ để làm lại ready, pool phụ thuộc vị trí hoặc yêu cầu GM-39 sửa HTML trước app.
+
+
 > Cập nhật hướng đích 2026-10-22: [ADR-019 — quyết định của Trí và phần còn chờ chốt](../architecture/decisions/ADR-019-dish-first-room-policy.md) ưu tiên khi lập kế hoạch luồng mới: phòng 20 người, host chọn chính xác 10–20 món, bỏ ready, timeout 60 giây từ người đầu tiên hoàn tất lượt và vào phòng chờ kết quả mỗi vòng và host Chốt ngay; chọn món độc lập vị trí/quán. Nội dung legacy bên dưới mô tả baseline, chưa phải contract triển khai luật mới. Đã chốt cap min(3, floor((N-1)/2)), N=1 bỏ loại; tính phiếu hoàn chỉnh đã nhận với tối thiểu 1 người, phiếu thiếu không là OK; host chỉ bấm bắt đầu. Chi tiết còn mở xem ADR; không đổi nghĩa phiên cũ hoặc tự ghi test Pass.
 
 Yêu cầu chủ dự án ngày 2026-10-12. Đây là context/plan cho Trang và công cụ AI, **không phải bản thiết kế đã duyệt hay evidence app**. [Task GM-39](../../tasks/backlog/GM-39.md) / [Issue #107](https://github.com/ThanhTris/IE307/issues/107): ưu tiên sau UI cơ bản, sửa HTML trước, chưa sửa app.

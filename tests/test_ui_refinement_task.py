@@ -28,7 +28,7 @@ class UiRefinementTaskTests(unittest.TestCase):
             line = re.search(rf'^{key}: (.*)$', self.text, re.M).group(1)
             self.assertEqual(set(re.findall(r'GM-\d{2}', line)), BASIC_UI)
         self.assertEqual({item['task'] for item in self.entry['inputs']}, BASIC_UI)
-        self.assertIn('GM-39 không chờ GM-15..38 hoặc API/release', self.text)
+        self.assertIn('không là dependency ngược', self.text)
 
     def test_no_backward_dependency_or_replaced_legacy_task(self):
         self.assertEqual(self.entry['previous_ids'], [])
@@ -42,23 +42,26 @@ class UiRefinementTaskTests(unittest.TestCase):
 
     def test_visual_and_runtime_evidence_are_required(self):
         self.assertEqual(self.entry['stage'], 'prototype')
-        self.assertEqual(self.entry['verification']['mode'], 'html-prototype')
+        self.assertEqual(self.entry['verification']['mode'], 'figma-handoff')
         for value in self.entry['verification'].values():
             self.assertIn(value, self.text)
-        for requirement in ('Ảnh/video trước–sau', 'TalkBack', 'zoom 200%',
-                            'không tự Approved/Done', 'giữ interface'):
+        for requirement in ('Figma MCP', 'screenshot', 'Pending design',
+                            'Trí review', 'không là dependency ngược'):
             self.assertIn(requirement, self.text)
 
-    def test_html_only_scope_and_project_context(self):
-        self.assertIn('design/prototypes/gi-cung-duoc.html', self.entry['outputs'])
+    def test_figma_only_scope_and_project_context(self):
+        self.assertIn('docs/design/UI_FINAL_HANDOFF_2026-10-25.md', self.entry['outputs'])
+        self.assertIn('docs/design/UI_FIGMA_TASK_MAP.json', self.entry['outputs'])
         self.assertFalse(any(path.startswith(('mobile/', 'supabase/'))
                              for path in self.entry['outputs']))
-        self.assertIn('Không sửa `mobile/`, `supabase/`', self.text)
-        self.assertIn('UI_REFINEMENT_BRIEF.md', self.text)
-        brief = (ROOT / 'docs/design/UI_REFINEMENT_BRIEF.md').read_text(encoding='utf-8')
-        for phrase in ('2–8 người', 'WANT', 'UNSET', 'GPS', 'coverage',
-                       'không sửa app', 'Prompt khởi đầu', 'Trí chọn', 'mô phỏng'):
-            self.assertIn(phrase, brief)
+        mapping = json.loads((ROOT / 'docs/design/UI_FIGMA_TASK_MAP.json').read_text(encoding='utf-8'))
+        self.assertEqual(mapping['fileKey'], '3Ysh0mOAEkAgA5DgZPSC1j')
+        self.assertEqual(len(mapping['tasks']), 20)
+        # Missing-state notes cannot be treated as implemented screen designs.
+        for gap in mapping['gaps']:
+            self.assertEqual(gap['status'], 'Pending design')
+            self.assertIsNone(gap['screenNodeId'])
+            self.assertIn(gap['designTask'], {'GM-14', 'GM-35'})
         for number in range(9, 15):
             entry = next(item for item in self.entries if item['new_id'] == f'GM-{number:02d}')
             self.assertEqual(entry['verification']['mode'], 'expo-go')
