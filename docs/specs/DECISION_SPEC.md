@@ -1,5 +1,7 @@
 # Decision spec — v0.2
 
+> Làm rõ 2026-10-25: manual host end-waiting cần A_r > M/2 (ballot ACK của vòng hiện tại / roster khóa) và waiting đã bắt đầu; host không chọn winner. Timeout 60s từ first valid waiting sau ACK vẫn tính >=1 phiếu dù chưa majority. Tách hai guard trong policy mới, giữ phiên v2/v3.
+
 > Hướng đích cập nhật 2026-10-25 theo làm rõ mới nhất tại [supplement ADR-019](../architecture/decisions/ADR-019-dish-first-room-policy.md): ưu tiên winner vòng1; nếu chưa có winner thì survivors = pool khóa ban đầu trừ hợp NO từ ballot vòng1 hoàn chỉnh đã ACK. N=0 chốt EMPTY_INTERSECTION/NO_CONSENSUS ở round1, không mở vòng2; N>=1 luôn mở R2 thật, kể cả một món. Mỗi người được REMOVE tối đa max(1,floor(0.30*N)) cho N=1..20; N=1 có quyền REMOVE món duy nhất hoặc không REMOVE. Không auto-finalize, không tự ghi KEEP cho người chưa gửi; không bù món. Nếu mọi món R2 bị REMOVE thì ALL_REMOVED/NO_CONSENSUS. Chờ version/migration tiến; luật min(3,...) và decision-v2 bên dưới mô tả baseline/lịch sử, không là yêu cầu cho patch mới. [AC và thứ tự BE/Data](../project/BE_DATA_FOLLOWUPS_2026-10-24.md).
 
 > Bản ghi hướng đích 2026-10-22/24 đã được làm rõ tiếp ngày 2026-10-25 tại đoạn ngay trên: N>=1 luôn mở R2; cap tối thiểu một REMOVE áp dụng cả N=1, người chơi tự quyết định REMOVE hoặc không; không tự finalize. Nội dung legacy bên dưới mô tả baseline, chưa phải contract triển khai. Chờ version/migration tiến; không đổi nghĩa phiên cũ hoặc tự ghi test Pass.

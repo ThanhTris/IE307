@@ -40,6 +40,12 @@ The server remains authoritative for `version`, `poolVersion`, timer, ACK status
 
 Each `poolDish` preserves the stable `dishId` and `roundDishId` and may include nullable `description`, cuisine/category IDs and display labels, meal slots, known temperature/flavor labels, `artwork` (`uri`, `altText`, optional attribution) and one `priceReference` (`amount`, `currency`, `unit`, required source/time, optional serving size). Unknown fields are explicit `null` or empty arrays; no missing price becomes zero and no missing artwork gets an invented URL. UI uses its approved fallback. Artwork can enter a public projection only after GM-40 verifies display/use rights; an unlicensed or unknown-rights image stays null. Price keeps its observed unit and provenance. Result/history cards use the locked projection, never the current catalogue.
 
+## Waiting and host end-waiting authority — 2026-10-25
+
+The host action ends the current round's waiting period early; it never selects or overrides the winning dish. For each round r, let M be the locked session roster size (including the host), and A_r the number of complete ballots accepted by the server for that round. Early host end-waiting requires an active waiting timestamp and `A_r > M/2`, equivalently `A_r >= floor(M/2)+1`. Exactly half is insufficient. Round-one ACKs do not count toward round-two permission. Publish the current-round accepted count, locked denominator and authoritative action availability/rejection in the reviewed DTO; the server rechecks authority, round/version, waiting and quorum under its transaction lock. Do not accept a caller-selected winner.
+
+Each round starts its own 60-second deadline on the first valid waiting transition after that caller's complete-ballot ACK. Entering ROUND_2 or receiving an ACK alone does not start it. Other members may submit before the deadline. The majority condition applies only to manual host early end-waiting; timeout processing retains at least one accepted complete ballot and must run even if a majority never finishes. Disconnects do not shrink M or extend the deadline. All-complete, timeout and authorized host early end-waiting use the same idempotent server outcome path, which determines ROUND_ADVANCED or TERMINAL from ballots and policy. Pinned v2/v3 semantics stay unchanged.
+
 ## Finalize acknowledgement
 
 `finalizeAck` must represent both outcomes:
