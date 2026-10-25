@@ -56,18 +56,52 @@ Gate số task giữ nguyên và chỉ trỏ số nhỏ hơn. Checklist suppleme
 
 | Gap | Trạng thái cần bổ sung | Task thiết kế/mock / owner | Task nhận tích hợp | Hiện trạng |
 | --- | --- | --- | --- | --- |
-| G01 | Tìm bạn: loading / không có kết quả / tải lỗi | GM-14 / TrungNQ2645 | GM-28 | [Pending design](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-94); chưa có frame riêng |
-| G02 | Inbox: rỗng / tải lỗi | GM-14 / TrungNQ2645 | GM-28 | [Pending design](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-97); chưa có frame riêng |
-| G03 | Lịch sử: tải lỗi / mất mạng / cache có nhãn | GM-14 / TrungNQ2645 | GM-28, GM-31 | [Pending design](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-100); chưa có frame riêng |
-| G04 | Lưu hồ sơ: pending / thất bại / retry | GM-35 / mtuan2491 | GM-35 | [Pending design](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-103); chưa có frame riêng |
-| G05 | Đổi mật khẩu: pending / thất bại / retry | GM-35 / mtuan2491 | GM-35 | [Pending design](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-106); chưa có frame riêng |
+| G01 | Tìm bạn: loading giữ truy vấn / empty cho sửa truy vấn / error có retry | GM-14 / TrungNQ2645 | GM-28 | [Pending design](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-94); chưa có frame riêng |
+| G02 | Inbox thông báo (không phải lời mời phòng): empty / error có retry | GM-14 / TrungNQ2645 | GM-28 | [Pending design](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-97); chưa có frame riêng |
+| G03 | Lịch sử: lỗi tải đầu / offline có cache gắn fetchedAt-stale / offline không cache | GM-14 / TrungNQ2645 | GM-28, GM-31 | [Pending design](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-100); chưa có frame riêng |
+| G04 | Lưu hồ sơ: pending / thất bại giữ giá trị / retry hoặc sửa | GM-35 / mtuan2491 | GM-35 | [Pending design](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-103); chưa có frame riêng |
+| G05 | Đổi mật khẩu: pending / mạng-server lỗi xóa mọi ô mật khẩu / retry nhập lại | GM-35 / mtuan2491 | GM-35 | [Pending design](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-106); chưa có frame riêng |
 
-Các ghi chú trên Figma là backlog, chưa là màn lỗi đã vẽ. Khi làm task, owner tái dùng pattern GM-05 nếu có; thêm frame/variant thể hiện state trên đúng màn, ghi node ID, screenshot và cập nhật map/issue. GM-39 hỗ trợ consistency; Trí review. Không chỉ ghi “xử lý lỗi” rồi để màn trắng hoặc đường cụt. G04/G05 tiếp tục P1.
+Các ghi chú trên Figma là backlog, chưa là màn lỗi đã vẽ. Khi làm task, owner tái dùng pattern GM-05 nếu có; thêm frame/variant thể hiện state trên đúng màn, ghi node ID, screenshot và cập nhật map/issue. GM-39 hỗ trợ consistency; Trí review. Không chỉ ghi “xử lý lỗi” rồi để màn trắng hoặc đường cụt. G04/G05 tiếp tục P1. Với G05, lỗi mạng/server xóa mọi trường password để nhập lại; lỗi validation cục bộ có thể giữ form để sửa. Không tự chốt semantics xung đột profile, recovery hoặc session invalidation ngoài contract đã giao.
+
+### Scenarios cần thể hiện hoặc xác nhận trong frame hiện có
+
+Các mục dưới đây làm rõ hành vi thoát/retry và quyền owner, không thay luật sản phẩm đã chốt. Tình huống vượt contract hoặc liên quan quyền riêng tư cần Trí chốt trước khi implementation.
+
+| Tình huống | State và đường thoát đề xuất | Task UI owner | Producer / contract cần cấp |
+| --- | --- | --- | --- |
+| Tạo phòng gặp lỗi mạng hoặc ACK create không rõ | Giữ setup; phân biệt submitting/unknown; retry cùng intent nếu contract hỗ trợ hoặc đọc trạng thái trước create lại để tránh phòng trùng. | GM-09/10 | GM-24/25; GM-07/19/20 replay/status semantics |
+| Join sai mã, phòng đầy/hết hạn, mạng lỗi | Giữ mã để sửa/retry/thoát; trước join chỉ hiện số thành viên, không lộ roster. | GM-09/11 | GM-25/28; GM-07/19/22 |
+| Host/member action cũ sau role/state change | Chặn mutation, refetch, giải thích phiên đã đổi và hiển thị CTA hợp role mới; confirm trước leave/cancel. | GM-11 | GM-25/26; GM-07/19/22 |
+| Reconnect giữa lobby hoặc round | Hiện offline/reconnecting; sau reconnect nhận phase/deadline/poolVersion từ server; không giả ACK, gia hạn deadline hoặc phục hồi candidate đã bị loại. | GM-11/12 | GM-25/26/31; GM-07/19/20 |
+| Submit xong nhưng ACK unknown/muộn | Giữ pending/unknown khác submitted; retry idempotent theo intent; nếu round đóng thì refetch snapshot/result, không báo thành công giả. | GM-12 | GM-26/31; GM-07/20 |
+| Session hết hạn trong form/lobby/waiting | Báo expired, chặn mutation, cho về Home/tạo phiên mới; không tự khôi phục hoặc gửi dữ liệu cũ. | GM-09/11/12 | GM-25/26; GM-07/19/20 |
+| `EMPTY_INTERSECTION` hoặc `ALL_REMOVED` | Result NO_CONSENSUS ghi đúng reason, không podium/winner; CTA Home/tạo phiên mới; không bù món/R3. | GM-13 | GM-27; GM-15/20 |
+| Result loading/error hoặc Places quyền/lỗi | Retry tải result; giữ canonical result; Places chỉ ảnh hưởng vùng tìm quán, không đổi/chặn winner. | GM-13 | GM-27/30; GM-07/20 |
+| History thiếu field legacy, offline, opt-out/revoke/delete | Ẩn field thiếu; lỗi tải có retry; cache hiện fetchedAt/stale; không hồi sinh history đã revoke/delete hoặc vượt ACL/TTL. | GM-14 | GM-28/31; GM-06/17/21 |
+| Profile save/password/recovery/session conflict | G04 giữ profile khi lỗi; G05 xóa password sau lỗi mạng/server; auth conflict/recovery theo response provider, có retry/thoát rõ. | GM-35 (P1) | GM-16/35; hỏi Trí nếu cần thay privacy hoặc semantics provider |
+
+### Rà sơ bộ tác động BE/Data
+
+UI là nguồn chốt trải nghiệm. Yêu cầu task UI đã được đồng bộ, nhưng G01–G05 chưa có frame bổ sung; cả năm vẫn Pending design. Vì vậy bảng dưới là rà sơ bộ từ UI hiện có và audit runtime, chưa phải mốc rà BE/Data cuối theo kế hoạch. Sau khi owner bổ sung frame/node/revision và Trí review, cập nhật lại mapping state/field và chốt phần BE/Data cần giao. Bảng chỉ đối chiếu producer hiện tại và task BE/Data liên quan; không khẳng định runtime đã triển khai. Contract B/schema B vẫn là đề xuất cho đến khi có version, implementation và HANDOFF thật. Task BE/Data giữ owner/status live; phiên v2/v3 đã pin không đổi nghĩa.
+
+| Yêu cầu UI | Field/command cần tiêu thụ | Producer hiện có / khoảng trống đã xác minh | Task nhận phần bổ sung |
+|---|---|---|---|
+| Setup/count 10–20, shortage, host xác nhận | catalogue card/id/label, available/requested, preview revision, settings/poolVersion | Count/shortage có trong v3; thiếu wire B ổn định, previewJoin/updateSettings/updatePreferences và taxonomy projection đầy đủ; 39 món hiện draft/test-demo | GM-40 (Vinh), GM-18 (Tâm), GM-07 (Trang), GM-19 (Trí); consumer GM-24/25 |
+| Host/member lobby, expiry, reconnect | room phase/role/host/expiry/poolVersion/member aggregate, command result/error | v3 có host/expiry và admission direct join 20; schema B còn invariant/version routing và snapshot fields; invite legacy còn cap 8 | GM-07 (Trang), GM-19/22/17 (Trí); consumer GM-25 |
+| Ballot, ACK unknown, waiting, R2, no-consensus | intent/replay/ACK, round/deadline, ownSubmission, candidates/cap, terminal reason | v3 có ACK/waiting nền nhưng policy R2 cũ; B cần discriminator/version và snapshot; không dùng baseline làm bằng chứng policy mới | GM-15/20 (Vinh), GM-07 (Trang), GM-06 (Tâm); consumer GM-26/31 |
+| Winner/Top 3/score/tie | resultId, winner nullable, ranked topDishes/score/rank, scoreVersion và số ballot R1 tính điểm | v3 winner-only, không lưu Top3/score; contract B chưa đủ DTO history và metadata A; legacy fields null/ẩn | GM-15/20 (Vinh), GM-06 (Tâm), GM-07 (Trang); consumer GM-27 |
+| Result → Places/map | winner identity/card fields, Places query/detail, permission/attribution/provider errors | Result canonical chưa có projection mới; Places provider/interface và client/proxy boundary chưa chốt; Places không lọc pool | GM-07 (Trang) hỗ trợ contract, GM-30 (rosy179) integration; consumer GM-27/33 |
+| Friends/inbox/history | canonical result reference, notification reference, history summary/detail, participant projection, consent/ACL/TTL | History legacy 2–8 winner-only, no-consensus writer thiếu; event/result linkage chưa đủ; G01–G03 cần empty/error/cache metadata | GM-06/21 (Tâm), GM-17/20/23 (Trí), GM-07 (Trang); consumer GM-28/31 |
+| Profile/password/recovery | provider response/error category, session identity/conflict, retryability | UI frame lỗi chưa có; auth baseline thuộc GM-16, semantics provider/conflict phải theo contract, không tự mở rộng lưu danh tính | GM-16/07 theo artifact; GM-35 consumer P1 |
+| Regression và QA | schema/version manifest, Auth+REST, worker verification, scenario assertions | Checker hiện chỉ schema A; worker pin baseline migration; HTTP/DB v4 chưa chạy trong audit | GM-03 (Trí), GM-06 (Tâm), GM-32 (Vinh); visual/API consumer QA GM-33 |
+
+Ma trận chi tiết B01–B16, source evidence, câu hỏi semantics còn mở và kiểm runtime nằm trong [audit UI–BE–Data](../project/UI_BE_DATA_SYNC_AUDIT_2026-10-25.md). Trước giao API/UI tích hợp, producer cần có output/version/HANDOFF tương ứng; nội dung trên không tự chuyển status hoặc chứng minh Pass.
 
 ## Quy trình để AI lấy đúng thiết kế
 
 - Đọc task, final handoff và `UI_FIGMA_TASK_MAP.json`; xác minh fileKey/nodeId qua Figma MCP, không đoán ID.
-- Dùng skill `figma-design-to-code` trước `get_design_context`, giữ screenshot làm đích visual. Nếu response sparse thì đọc các node con liên quan. Đọc Code Connect nếu có và reuse đúng component phù hợp; map ở đây chưa tự chứng nhận Code Connect hoặc code hiện tại đã khớp Figma.
+- Dùng skill `figma-design-to-code` trước `get_design_context`, giữ screenshot làm đích visual. Gọi context cho đúng frame/state, lưu node/revision/thời điểm; nếu response sparse thì đọc node con liên quan. Đọc Code Connect nếu có và reuse đúng component phù hợp; map ở đây chưa tự chứng nhận Code Connect hoặc code hiện tại đã khớp Figma.
 - Đọc component/variables/text styles. Theme hiện có `GCD / UI colors` mode Light, font Inter. Xanh trang trí #46C34F không dùng làm nền chữ cần đọc; primary action dùng token contrast thực tế. Không tự lấy lại palette cam từ code cũ.
 - Download asset theo hướng dẫn Figma, giữ provenance/quyền sử dụng và geometry. Không dùng temporary asset URL ở runtime. Ảnh món từ API có thể thiếu; hiển thị fallback, không suy dữ liệu thật từ artwork minh họa.
 - Chuyển reference React/web sang React Native theo feature/domain/data boundaries; không cài Tailwind hoặc chụp nguyên màn làm asset.
@@ -83,7 +117,7 @@ Mỗi task có CHECKS/HANDOFF và FIGMA_PARITY: node/revision/thời điểm l�
 
 ## Quy tắc cập nhật Project
 
-Giữ assignee, Deadline, PR review, priority và lịch sử nghiệm thu baseline. Chỉ 10 task UI trước ở Done được chuyển Needs Update do có phần UI mới: GM-02/05/09/10/11/12/13/14/24/25. Todo vẫn Todo, Review vẫn Review, In Progress vẫn In Progress; không dùng Follow-up để tạo thêm một cột Needs Update cạnh Status. Task UI hoàn thành bổ sung phải được Trí review mới Done. Không tự mở lại BE/Data hoặc đổi trạng thái task ngoài scope.
+Giữ assignee, Deadline, PR review, priority và lịch sử nghiệm thu baseline. Snapshot live tại lúc đồng bộ không có task UI nào Done; 10 task đã Needs Update tiếp tục nguyên trạng. Todo vẫn Todo, Review vẫn Review, In Progress vẫn In Progress; không dùng Follow-up để tạo thêm một cột Needs Update cạnh Status. Task UI hoàn thành bổ sung phải được Trí review mới Done. Không tự mở lại BE/Data hoặc đổi trạng thái task ngoài scope.
 
 ## Trạng thái bàn giao của đợt này
 

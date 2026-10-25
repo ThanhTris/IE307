@@ -1,5 +1,7 @@
 # Đối chiếu hội thoại FE với Data và BE trên main — 2026-10-25
 
+> **Cập nhật sau final Figma handoff 2026-10-25:** phần mô tả lịch sử bên dưới ghi đúng trạng thái của audit trước khi Trí giao lại toàn bộ task UI. Task/UI owner hiện hành lấy từ [kế hoạch Figma mới](../design/UI_FIGMA_IMPLEMENTATION_2026-10-25.md) và [map máy đọc](../design/UI_FIGMA_TASK_MAP.json); các task cần đồng bộ theo Figma mới, còn producer BE/Data được rà sau mốc cập nhật UI/gap. Handoff cũ không còn là căn cứ để trì hoãn UI. Ma trận đầu ra UI → field/command → producer/thiếu hụt → task BE/Data đã được thêm vào kế hoạch Figma. Runtime observations và B01–B16 bên dưới vẫn là evidence audit tại baseline; không có nghĩa runtime đã thay đổi.
+
 Mốc kiểm: **25/10/2026, khoảng 03:30 UTC+7**. Reviewer/chủ quyết định: Trí (`ThanhTris`).
 
 **Kết quả: yêu cầu sản phẩm đã được ghi khá đầy đủ, nhưng runtime Data–BE trên main chưa đồng bộ với UI mong muốn.** Main có nền dish-only v3; contract B/Top 3 là đề xuất và phần việc đang chờ thực hiện. Ngoài các phần đã giao, lần rà này xác định thêm các chi tiết contract/storage cần viết rõ trước khi tích hợp: version của lobby có thể sửa, lịch sử 20 người/chưa đồng thuận, số ballot R1 dùng tính điểm, projection thành viên, và giao diện dữ liệu của Places.

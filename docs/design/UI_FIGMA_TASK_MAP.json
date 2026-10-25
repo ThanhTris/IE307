@@ -17,7 +17,8 @@
       ],
       "scope": [
         "Bổ sung font Inter, cơ chế tải/fallback font và route cho bộ UI mới trong bootstrap hiện có. GM-05 nhận nền này để làm token/component.",
-        "Giữ cấu trúc Expo Router, provider và ranh giới feature; bàn giao danh sách route để các task sau mở đúng màn. Package mới phải theo quy trình review dependency."
+        "Giữ cấu trúc Expo Router, provider và ranh giới feature; bàn giao danh sách route để các task sau mở đúng màn. Package mới phải theo quy trình review dependency.",
+        "Với mỗi node trong map, mở Figma MCP get_design_context trên đúng node/frame state, lưu screenshot và revision/thời điểm; đọc component/variables/assets liên quan và mở node con khi group trả context thiếu. Không dùng ảnh group hoặc prototype thay frame cụ thể."
       ],
       "ac": [
         "Kiểm cây code, import boundary, config và font; GM-02 vẫn là task nền, không nhận nghiệm thu toàn bộ màn sản phẩm.",
@@ -232,11 +233,15 @@
       "scope": [
         "Dựng bạn bè, tìm trong danh sách hiện có, thêm bằng mã, lời mời, inbox và history DECIDED/NO_CONSENSUS theo Figma; không giả trạng thái online.",
         "Dựng Cá nhân khách và cài đặt cỡ chữ/nút thay gesture/consent/xóa lịch sử bằng mock; luồng tài khoản thật vẫn thuộc GM-35/P1.",
-        "Bổ sung Figma và mock cho G01–G03: tìm bạn loading/empty/error, inbox empty/error, lịch sử lỗi tải/offline. Dùng pattern GM-05 nếu phù hợp và ghi node mới vào map."
+        "Bổ sung Figma và mock cho G01–G03: tìm bạn loading/empty/error, inbox empty/error, lịch sử lỗi tải/offline. Dùng pattern GM-05 nếu phù hợp và ghi node mới vào map.",
+        "G01 loading giữ truy vấn; empty cho sửa truy vấn; error giữ truy vấn và retry, không tự gửi lời mời.",
+        "G02 là inbox thông báo, không phải lời mời vào phòng; empty có điều hướng hợp lý, error có retry và giữ màn.",
+        "G03 lỗi tải đầu có retry; offline có cache hiển thị fetchedAt/stale; offline không cache có lỗi/retry. Không tạo/xóa lịch sử cục bộ giả."
       ],
       "ac": [
         "Expo mở được từng màn và tương tác confirm/retry/empty/error/consent/delete. Mock không xin push hoặc gọi provider thật.",
-        "G01–G03 có frame hoặc variant Figma trước nghiệm thu; lịch sử legacy ẩn điểm/Top 3 thiếu và tôn trọng ACL."
+        "G01–G03 có frame hoặc variant Figma trước nghiệm thu; lịch sử legacy ẩn điểm/Top 3 thiếu và tôn trọng ACL.",
+        "G01–G03 giữ trạng thái Pending design cho tới khi owner bổ sung frame, cập nhật node/revision và Trí review."
       ],
       "issue": 75,
       "owner": [
@@ -474,7 +479,8 @@
       "scope": [
         "Lưu cache/nháp/outbox theo identity, room, round, poolVersion và contract. Không ghi log token hoặc phiếu.",
         "Restart/foreground/reconnect refetch server trước replay; route đúng R2/waiting/result, ACK unknown không tạo phiếu trùng hay mở lại Undo.",
-        "History offline dùng fetchedAt/stale theo G03; logout/delete/TTL dọn cache riêng tư, không tự tạo KEEP/OK cho người chưa gửi."
+        "History offline dùng fetchedAt/stale theo G03; logout/delete/TTL dọn cache riêng tư, không tự tạo KEEP/OK cho người chưa gửi.",
+        "G03 offline: có cache thì hiện fetchedAt/stale, không cache thì báo lỗi có retry; refetch không tạo mutation và không làm hồi sinh dữ liệu đã revoke/delete."
       ],
       "ac": [
         "Android kiểm process restart, mất mạng, realtime gap, expiry/round closed, replay và auth isolation.",
@@ -558,11 +564,14 @@
       "scope": [
         "Giữ P1 làm sau core; triển khai login/register/email verify/recovery/link account/profile/password/logout theo Figma khi đến task.",
         "Bổ sung Figma G04–G05: lỗi lưu hồ sơ/đổi mật khẩu, pending/retry; giữ input phù hợp và không log trường bí mật.",
+        "G04 lỗi mạng/server giữ màn và giá trị hồ sơ để sửa/retry; chỉ báo thành công sau ACK.",
+        "G05 lỗi mạng/server giữ màn và lỗi có retry nhưng xóa mọi ô mật khẩu hiện tại/mới/xác nhận để nhập lại; validation cục bộ có thể giữ form để sửa field. Không log/cache password.",
         "Provider/session identity/conflict/chuyển guest/history ACL theo upstream; có màn thiết kế không đồng nghĩa provider đã triển khai."
       ],
       "ac": [
         "Frame lỗi G04–G05 gắn với case; kiểm auth/provider và Android đúng scope, mất mạng/invalid code/conflict/recovery.",
-        "Thiếu provider ghi Not run; không nâng P1 chỉ vì Figma đã có màn."
+        "Thiếu provider ghi Not run; không nâng P1 chỉ vì Figma đã có màn.",
+        "G04–G05 Pending design đến khi có frame state, node ID/revision và Trí review."
       ],
       "issue": 96,
       "owner": [
@@ -619,7 +628,8 @@
       "status": "Pending design",
       "screenNodeId": null,
       "noteNodeId": "664:94",
-      "noteUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-94"
+      "noteUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-94",
+      "gapRequirements": ["Loading giữ truy vấn.", "Empty nêu không có kết quả và cho sửa truy vấn.", "Error giữ truy vấn, có retry; không tự gửi lời mời hoặc tạo quan hệ bạn bè.", "GM-14/TrungNQ2645 thêm frame; GM-28 nối API và bảo đảm retry không nhân đôi mutation."]
     },
     {
       "id": "G02",
@@ -632,7 +642,8 @@
       "status": "Pending design",
       "screenNodeId": null,
       "noteNodeId": "664:97",
-      "noteUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-97"
+      "noteUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-97",
+      "gapRequirements": ["Inbox là hộp thư thông báo, không phải lời mời vào phòng.", "Empty có điều hướng hợp lý; error giữ màn và có retry.", "GM-14/TrungNQ2645 thêm frame; GM-28 refetch dữ liệu canonical dưới ACL."]
     },
     {
       "id": "G03",
@@ -646,7 +657,8 @@
       "status": "Pending design",
       "screenNodeId": null,
       "noteNodeId": "664:100",
-      "noteUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-100"
+      "noteUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-100",
+      "gapRequirements": ["Lỗi tải đầu có retry; offline có cache hiện fetchedAt/stale; offline không cache báo lỗi và retry khi có mạng.", "Cache không tạo/xóa history; consent/ACL/revoke/delete/TTL luôn có hiệu lực.", "GM-14/TrungNQ2645 thêm frame; GM-28 cung cấp history canonical, GM-31 quản lý cache riêng tư."]
     },
     {
       "id": "G04",
@@ -659,7 +671,8 @@
       "status": "Pending design",
       "screenNodeId": null,
       "noteNodeId": "664:103",
-      "noteUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-103"
+      "noteUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-103",
+      "gapRequirements": ["Pending chặn submit lặp; chỉ báo lưu sau ACK.", "Lỗi mạng/server giữ màn và giá trị profile, có retry/chỉnh sửa; không báo thành công cục bộ.", "GM-35/mtuan2491 thêm frame; semantics xung đột profile theo provider/server handoff."]
     },
     {
       "id": "G05",
@@ -672,7 +685,8 @@
       "status": "Pending design",
       "screenNodeId": null,
       "noteNodeId": "664:106",
-      "noteUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-106"
+      "noteUrl": "https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=664-106",
+      "gapRequirements": ["Pending chặn submit lặp.", "Lỗi mạng/server giữ màn và lỗi có retry nhưng xóa mọi ô password để nhập lại; validation cục bộ có thể giữ form để sửa field. Không log/cache password.", "GM-35/mtuan2491 thêm frame; provider/session invalidation theo auth contract đã bàn giao."]
     }
   ],
   "designInventory": [
