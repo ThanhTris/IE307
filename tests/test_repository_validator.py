@@ -470,6 +470,7 @@ class ManifestValidationTests(unittest.TestCase):
     def test_html_prototype_cannot_output_app_code(self):
         mapping = validator.roadmap(self.source)
         entry = next(item for item in mapping['entries'] if item['new_id'] == 'GM-39')
+        entry['verification']['mode'] = 'html-prototype'
         entry['outputs'].append('mobile/src/shared/theme/tokens.ts')
         self.source.contents['tasks/task-id-map.json'] = json.dumps(mapping)
         self.assertIn('HTML prototype must output HTML, not app/backend code', self.errors())
@@ -477,6 +478,7 @@ class ManifestValidationTests(unittest.TestCase):
     def test_html_prototype_cannot_skip_html_output(self):
         mapping = validator.roadmap(self.source)
         entry = next(item for item in mapping['entries'] if item['new_id'] == 'GM-39')
+        entry['verification']['mode'] = 'html-prototype'
         entry['outputs'] = [path for path in entry['outputs'] if not path.endswith('.html')]
         self.source.contents['tasks/task-id-map.json'] = json.dumps(mapping)
         self.assertIn('HTML prototype must output HTML, not app/backend code', self.errors())

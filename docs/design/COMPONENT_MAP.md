@@ -1,24 +1,28 @@
-# GM-05 component map
+# Component map — Figma target và code baseline
 
-Contract: `food-v1/roadmap-v2/GM-05.1`. Source: `docs/specs/UI_DESIGN_SPECIFICATION.md`, `docs/specs/UI_SPEC.md`, and `design/prototypes/gi-cung-duoc.html`. This map describes reusable React Native primitives; it does not claim that screens or native integrations are complete.
+Revision yêu cầu `ui-figma-final/2026-10-25/GM-05.2`. Bảng là **đích GM-05 cần thực hiện**, không chứng nhận các component hiện đã khớp Figma. Code primitives đang ở `mobile/src/shared/ui/components.tsx`, export `index.ts`, theme `mobile/src/shared/theme/tokens.ts`; reuse và mở rộng theo node. [Task map](UI_FIGMA_TASK_MAP.json) và [handoff](UI_FINAL_HANDOFF_2026-10-25.md).
 
-| Prototype / UI need | React Native component | Source | Props / events | Required states and limits |
-| --- | --- | --- | --- | --- |
-| appbar / brand / friends / inbox / avatar | `AppHeader` | `mobile/src/shared/ui/components.tsx` | title, badges, `onPressBrand`, `onFriends`, `onInbox`, `onProfile` | Buttons are labelled and 48dp; no navigation or API inside |
-| primary / quiet / secondary / danger action | `AppButton` | same | label, variant, disabled/loading, `onPress` | Loading and disabled expose state; no implicit submit |
-| text / code / context input | `FormField` | same | label, value, `onChangeText`, hint/error, keyboard props | Label is always present; error uses alert role; keyboard/secure behavior is caller-owned |
-| `.chip`, preference option | `Chip` | same | label, selected, disabled, `onPress` | Selected state has text/check and accessibility state; no vote semantics |
-| `.flashcard`, dish summary | `DishCard` | same | view-only `DishCardData`, selected vote, `onVote`, `onPress` | Artwork fallback; price/source strings are supplied by caller; vote action remains draft/caller-owned |
-| `.friends-row` | `AvatarRow` | same | avatar items, status, `onAdd` | Horizontal scroll; status has text label and is decorative only |
-| `.roomcode` | `RoomCode` | same | six-character code, `onCopy` | Displays server code; copy action is injected; does not authorize membership or generate QR |
-| context section | `ContextSummary` | same | public anchor, meal/time/radius/service labels | Only supplied confirmed context is displayed; no GPS/API call |
-| loading/error/empty/stale banner | `StatusNotice` | same | title/message/tone/action | Tone includes text; retry/refetch action injected |
-| bottom sheet / confirmation dialog | `SheetDialog` | same | visible/title/children/`onClose` | Modal has Android back handler; caller provides explicit confirmation content |
+| Node thiết kế | Component Figma | React Native / tình trạng | Props/state cần giữ |
+| --- | --- | --- | --- |
+| [GCD / Button](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=9-77) (`9:77`) | GCD / Button | AppButton hiện có; đồng bộ role/variants | loading/disabled/pressed và CTA contrast |
+| [GCD / Form Field](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=379-1510) (`379:1510`) | GCD / Form Field | FormField hiện có; bổ sung theo Figma | error giữ input và nhãn lỗi |
+| [GCD / Header](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=23-661) (`23:661`) | GCD / Header | AppHeader hiện có; sửa cấu trúc theo variant | Home/Back/Room, menu/rời có confirm |
+| [GCD / Bottom Navigation](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=23-604) (`23:604`) | GCD / Bottom Navigation | bổ sung component dùng chung | selected/tab label/48dp |
+| [GCD / Dish Card](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=10-164) (`10:164`) | GCD / Dish Card | DishCard hiện có; flashcard props | WANT/OK/NO, fallback ảnh/giá, gesture do feature |
+| [GCD / Dish Count](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=321-1236) (`321:1236`) | GCD / Dish Count | bổ sung controlled input | min10/max20 và disabled biên |
+| [GCD / Preference Choice](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=53-923) (`53:923`) | GCD / Preference Choice | Chip hiện có + choice layout | Anything/selected/unknown, không tự lọc pool |
+| [GCD / Lobby Member](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=70-874) (`70:874`) | GCD / Lobby Member | AvatarRow + member row | role/roster, không fake online |
+| [GCD / Waiting Summary](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=321-1303) (`321:1303`) | GCD / Waiting Summary | bổ sung component | server deadline và ACK counter |
+| [GCD / Process State](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=379-1273) (`379:1273`) | GCD / Process State | StatusNotice/SheetDialog + overlay | sending/unknown/closed/error/finalizing |
+| [GCD / Result Podium · Đồng hạng](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=617-1671) (`617:1671`) | GCD / Result Podium · Đồng hạng | bổ sung podium renderer | 1/2/3, dense rank, equal height, winner badge |
+| [GCD / Nearby Places State](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=379-1478) (`379:1478`) | GCD / Nearby Places State | bổ sung presenter state | loading/empty/error/permission, provider ở GM-30 |
+| [GCD / Notification Item](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=284-1108) (`284:1108`) | GCD / Notification Item | bổ sung notification item | read/unread/kind, không chứa phiếu |
+| [GCD / Tutorial Gesture](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=308-1085) (`308:1085`) | GCD / Tutorial Gesture | bổ sung hướng dẫn/coach | thẻ mẫu tách phiên thật; nút thay gesture |
+| [GCD / Collection State](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=998-1746) (`998:1746`) | GCD / Collection State | presenter dùng chung | loading/empty/error, title/message/icon/action |
+| [GCD / Search Skeleton Row](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=998-1663) (`998:1663`) | GCD / Search Skeleton Row | skeleton danh sách | loading không giả dữ liệu thật |
+| [GCD / Request Banner](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=998-1775) (`998:1775`) | GCD / Request Banner | banner request/cache | offline/error, fetchedAt copy và retry tùy chọn |
+| [GCD / Insufficient Dishes](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=1012-1702) (`1012:1702`) | GCD / Insufficient Dishes | shortage dialog | Can reduce ≥10 / Below minimum0–9; không giảm dưới10 |
 
-Tokens live in `mobile/src/shared/theme/tokens.ts`: light/dark colors, spacing, typography, radius and 48dp control minimum. `useShellTheme` exposes token aliases for the GM-02 shell. Components accept colors from the composition root and do not import API clients, feature screens, native permissions or domain logic.
+GM-05 bàn giao source/props/event/variant/route preview cụ thể và ảnh so thiết kế. Component chỉ trình bày, callback do feature inject; không import API/domain/network vào component. `RoomCode` hiển thị mã server; QR/link native ở GM-30. ContextSummary mới mô tả thiết lập dish-only, không bắt public anchor/radius cho pool.
 
-## Example route
-
-Open Expo Go at `/foundation`, then choose `Mở component mẫu GM-05`, or deep-link to `/components`. `ComponentPreviewScreen` composes header, notice, form, chips, context, room code, avatars, dish card, buttons and a sheet using synthetic fixture data. The fixture is labelled in the UI and is not a verified food dataset or production room.
-
-GM-09 can reuse these components with mock API DTO-to-view mapping. GM-25/30 can later inject real repositories and native QR/link behavior without changing component contracts. GM-09 does not need to wait for those integration tasks.
+Token Light/Inter và logo/icon theo Figma. #46C34F trang trí; action contrast cho chữ cần đọc. Touch48dp/font200/TalkBack, ảnh/giá fallback, tên dài và disabled/error. G01–G05 đã có 12 frame composition; UI dưới10 món và nội dung không khả dụng đã bổ sung. Có thiết kế không chứng minh component code đã đáp ứng. Code Connect chưa được chứng nhận trong bảng này; chỉ thêm mapping khi component code thật đã khớp.

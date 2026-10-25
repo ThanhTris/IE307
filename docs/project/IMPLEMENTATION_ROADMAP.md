@@ -1,5 +1,8 @@
 # Lộ trình triển khai UI–BE–Data — roadmap-v2
 
+**UI final handoff 2026-10-25:** Trí đã giao lại task UI theo Figma. [Bảng task/node/AC/gap và thứ tự](../design/UI_FIGMA_IMPLEMENTATION_2026-10-25.md) thay các phần UI theo HTML/ready/location bắt buộc bên dưới. GM-24 là preview setup dish-only; GM-39 handoff Figma, không ép sửa HTML. Producer BE/Data vẫn theo task hiện hành và contract/version thật; supplement chưa được nghiệm thu chỉ vì đã có thiết kế.
+
+
 Baseline 2026-10-10, bổ sung GM40 và cập nhật 2026-10-25: 40 task sau GM-00, gồm 35 P0 (kể cả GM01 và GM40), 2 P1 và 3 P2. Bản yêu cầu hiện hành đồng bộ BE/Data/UI với Figma tại [alignment matrix](FIGMA_BE_UI_DATA_ALIGNMENT_2026-10-24.md), [GM-07.B](../architecture/DISH_SESSION_API_CONTRACT_B.md), [ADR-019](../architecture/decisions/ADR-019-dish-first-room-policy.md) và [ADR-020](../architecture/decisions/ADR-020-public-top-three-result.md). Giữ baseline approval riêng với follow-up; không đổi assignee/deadline hoặc tạo dependency ngược. [Tổng hợp task/owner](TASK_SUMMARY.md) · [dependency](TASK_DEPENDENCIES.md) · [mapping](TASK_RENUMBERING.md).
 
 ## Ba luồng và đầu ra nhận được
@@ -19,19 +22,19 @@ Phân công đồng bộ theo assignee hiện hành trên [Project #2](https://g
 | Task | Luồng | Đầu ra | Owner / reviewer |
 | --- | --- | --- | --- |
 | [GM-01](../../tasks/done/GM-01.md) | PLAN / baseline | Chốt lộ trình UI–BE–Data và bàn giao đầu vào | Codex / Trí |
-| [GM-02](../../tasks/review/GM-02.md) | UI / structure | UI: cấu trúc thư mục và app Expo chạy được | Trí / Trí |
+| [GM-02](../../tasks/review/GM-02.md) | UI / structure | Nền Expo, font Inter và điều hướng UI Figma | Trí / Trí |
 | [GM-03](../../tasks/review/GM-03.md) | BE / structure | BE: cấu trúc thư mục và môi trường chạy local | Trí / Trí |
 | [GM-04](../../tasks/backlog/GM-04.md) | DATA / fields | Data: trường thông tin, taxonomy và mẫu nhập liệu | Vinh / Trí |
-| [GM-05](../../tasks/backlog/GM-05.md) | UI / components | UI: component dùng chung theo UI mẫu | Trung / Trí |
+| [GM-05](../../tasks/backlog/GM-05.md) | UI / components | Component và token theo Figma đã chốt | Trung / Trí |
 | [GM-06](../../tasks/backlog/GM-06.md) | DATA / database | Data: thiết lập database và migrations từ dictionary | Tâm / Trí |
 | [GM-07](../../tasks/backlog/GM-07.md) | BE / api-contract | BE: hợp đồng API, lớp gọi API và mock adapter | Trang / Trí |
 | [GM-08](../../tasks/in-progress/GM-08.md) | DATA / import | Data: nhập, kiểm và bàn giao dataset thật | Tâm / Trí |
-| [GM-09](../../tasks/backlog/GM-09.md) | UI / screens | UI: Home, tạo phòng và nhập mã theo mẫu | Tuấn / Trí |
-| [GM-10](../../tasks/backlog/GM-10.md) | UI / screens | UI: chọn khu vực, giờ ăn và sở thích theo mẫu | Tuấn / Trí |
-| [GM-11](../../tasks/backlog/GM-11.md) | UI / screens | UI: lobby, ready và trạng thái phòng theo mẫu | Trung / Trí |
-| [GM-12](../../tasks/backlog/GM-12.md) | UI / screens | UI: bình chọn và vòng hai theo mẫu | Trang / Trí |
-| [GM-13](../../tasks/backlog/GM-13.md) | UI / screens | UI: kết quả, nơi bán và không đồng thuận theo mẫu | Tuấn / Trí |
-| [GM-14](../../tasks/backlog/GM-14.md) | UI / screens | UI: bạn bè, inbox và lịch sử theo mẫu | Trung / Trí |
+| [GM-09](../../tasks/backlog/GM-09.md) | UI / screens | UI Home, khách, tạo/tham gia phòng và hướng dẫn | Tuấn / Trí |
+| [GM-10](../../tasks/backlog/GM-10.md) | UI / screens | UI thiết lập phòng và khẩu vị dish-only | Tuấn / Trí |
+| [GM-11](../../tasks/backlog/GM-11.md) | UI / screens | UI lobby và trạng thái phòng không ready | Trung / Trí |
+| [GM-12](../../tasks/backlog/GM-12.md) | UI / screens | UI flashcard, vòng hai, ACK và chờ kết quả | Trang / Trí |
+| [GM-13](../../tasks/backlog/GM-13.md) | UI / screens | UI kết quả, Top 3 đồng hạng và Places/map | Tuấn / Trí |
+| [GM-14](../../tasks/backlog/GM-14.md) | UI / screens | UI bạn bè, thông báo, lịch sử và cài đặt | Trung / Trí |
 | [GM-15](../../tasks/backlog/GM-15.md) | BE / implementation | BE: engine quyết định thuần và fixture chuẩn | Vinh / Trí |
 | [GM-16](../../tasks/in-progress/GM-16.md) | BE / implementation | BE: guest auth và session API | Trí / Trí |
 | [GM-17](../../tasks/backlog/GM-17.md) | BE / implementation | BE: RLS, quyền RPC và retention | Trí / Trí |
@@ -41,28 +44,28 @@ Phân công đồng bộ theo assignee hiện hành trên [Project #2](https://g
 | [GM-21](../../tasks/backlog/GM-21.md) | BE / implementation | BE: API history, consent và chống lặp | Tâm / Trí |
 | [GM-22](../../tasks/backlog/GM-22.md) | BE / implementation | BE: API bạn bè và lời mời phòng | Trí / Trí |
 | [GM-23](../../tasks/backlog/GM-23.md) | BE / implementation | BE: API inbox, thiết bị push và sender | Trí / Trí |
-| [GM-24](../../tasks/backlog/GM-24.md) | INTEGRATION / native | UI: nối vị trí thiết bị với coverage API | Trang / Trí |
-| [GM-25](../../tasks/backlog/GM-25.md) | INTEGRATION / integration | UI–BE: nối Home, context, preferences và lobby | Trang / Trí |
-| [GM-26](../../tasks/backlog/GM-26.md) | INTEGRATION / integration | UI–BE: nối bình chọn, nộp phiếu và vòng hai | Trang / Trí |
-| [GM-27](../../tasks/backlog/GM-27.md) | INTEGRATION / integration | UI–BE: nối kết quả và nơi bán thực tế | Trang / Trí |
-| [GM-28](../../tasks/backlog/GM-28.md) | INTEGRATION / integration | UI–BE: nối bạn bè, inbox và history | Trung / Trí |
-| [GM-29](../../tasks/backlog/GM-29.md) | INTEGRATION / native | UI–BE: push native và mở app từ thông báo | Trung / Trí |
-| [GM-30](../../tasks/backlog/GM-30.md) | INTEGRATION / native | UI–BE: QR, incoming links và Maps/review | Trang / Trí |
-| [GM-31](../../tasks/backlog/GM-31.md) | INTEGRATION / integration | UI–BE: SQLite outbox, cache và reconnect | Trung / Trí |
+| [GM-24](../../tasks/backlog/GM-24.md) | INTEGRATION / integration | UI–API preview pool và thiết lập dish-only | Trang / Trí |
+| [GM-25](../../tasks/backlog/GM-25.md) | INTEGRATION / integration | UI–API guest, Home, phòng, khẩu vị và lobby | Trang / Trí |
+| [GM-26](../../tasks/backlog/GM-26.md) | INTEGRATION / integration | UI–API ballot, waiting và vòng hai | Trang / Trí |
+| [GM-27](../../tasks/backlog/GM-27.md) | INTEGRATION / integration | UI–API kết quả Top 3 và Places độc lập | Trang / Trí |
+| [GM-28](../../tasks/backlog/GM-28.md) | INTEGRATION / integration | UI–API bạn bè, inbox và lịch sử | Trung / Trí |
+| [GM-29](../../tasks/backlog/GM-29.md) | INTEGRATION / native | UI quyền thông báo và mở app từ push | Trung / Trí |
+| [GM-30](../../tasks/backlog/GM-30.md) | INTEGRATION / native | UI native QR, liên kết, vị trí và Places/map kết quả | Trang / Trí |
+| [GM-31](../../tasks/backlog/GM-31.md) | INTEGRATION / integration | UI cache, outbox và phục hồi phiên | Trung / Trí |
 | [GM-32](../../tasks/backlog/GM-32.md) | QA / regression | QA: regression API, data, quyền và race | Vinh / Trí |
-| [GM-33](../../tasks/backlog/GM-33.md) | QA / qa | QA: đối chiếu UI mẫu và pilot Android end-to-end | Vinh / Trí |
-| [GM-34](../../tasks/backlog/GM-34.md) | RELEASE / release | Release: APK, demo và bàn giao core | Trí / Trí |
-| [GM-35](../../tasks/backlog/GM-35.md) | EXTENSION / extension | P1: account link/recovery và history sync | Tuấn / Trí |
+| [GM-33](../../tasks/backlog/GM-33.md) | QA / qa | QA Android đối chiếu Figma và UI–API | Vinh / Trí |
+| [GM-34](../../tasks/backlog/GM-34.md) | RELEASE / release | Release UI Figma và bàn giao ứng dụng | Trí / Trí |
+| [GM-35](../../tasks/backlog/GM-35.md) | EXTENSION / extension | P1 UI tài khoản, hồ sơ và recovery | Tuấn / Trí |
 | [GM-36](../../tasks/backlog/GM-36.md) | EXTENSION / extension | P2: OCR menu qua quy trình nhập dữ liệu | Tâm / Trí |
 | [GM-37](../../tasks/backlog/GM-37.md) | EXTENSION / extension | P2: AI hiểu sở thích | Tuấn / Trí |
 | [GM-38](../../tasks/backlog/GM-38.md) | EXTENSION / extension | P2: weather và mood tự khai để xếp hạng | Tâm / Trí |
-| [GM-39](../../tasks/backlog/GM-39.md) | UI / prototype | UI: cải thiện prototype HTML trước khi sửa app | Trang / Trí |
+| [GM-39](../../tasks/backlog/GM-39.md) | UI / prototype | Bàn giao Figma và kiểm tra thiết kế bổ sung | Trang / Trí |
 
 Merge theo số tăng dần 01 → 39 luôn hợp lệ vì mọi prerequisite có số nhỏ hơn. Tuy vậy, không phải task 10 phải chờ tất cả 01..09: chỉ chờ đầu vào được khai báo; những task độc lập có thể làm/merge cùng đợt. Nếu chủ dự án chọn merge tuyệt đối theo số, các nhánh vẫn được làm song song khi start inputs đã có. Không chạy task có prerequisite chưa merge bằng cách dựng lại scaffold hoặc đoán API.
 
 ## Task UI bổ sung — GM-39
 
-[GM-39](../../tasks/backlog/GM-39.md) do Trang thực hiện, Trí review, P1 thiết kế lại prototype HTML nhưng ưu tiên ngay sau GM-05/GM-09..14. Đọc [brief cho AI](../design/UI_REFINEMENT_BRIEF.md) trước audit/đề xuất; chỉnh `design/prototypes/gi-cung-duoc.html`, kiểm browser và Trí duyệt HTML, chưa sửa app. Không chờ API, GM-34 hoặc GM-35..38; không thêm dependency ngược/chặn core release. Số 39 là ID mới, không bắt làm cuối. Giữ thứ tự của 38 task cũ; áp dụng mẫu mới vào app chờ Trí giao scope riêng.
+[GM-39](../../tasks/backlog/GM-39.md) do Trang thực hiện, Trí review, giữ P1. Sau final handoff ngày 2026-10-25, task quản lý bàn giao Figma, map task/node và hỗ trợ thiết kế còn thiếu; HTML cũ là tham chiếu. GM-14/35 sở hữu bổ sung các frame thiếu trong phạm vi màn, GM-39 hỗ trợ consistency song song. Không chờ API/release hoặc thêm dependency ngược vào task số nhỏ. UI app được giao theo [kế hoạch Figma mới](../design/UI_FIGMA_IMPLEMENTATION_2026-10-25.md), không phải chờ duyệt lại HTML.
 
 ## Các đợt phối hợp
 

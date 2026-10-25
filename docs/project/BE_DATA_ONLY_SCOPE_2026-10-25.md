@@ -1,6 +1,9 @@
 # Phạm vi hiện hành: BE và Data — 2026-10-25
 
-Trí làm rõ: báo cáo UI/Figma chỉ cung cấp ngữ cảnh để BE và Data chuẩn bị đầu ra phù hợp. FE giữ nguyên phần việc trước đợt supplement Figma/contract B. Trí sẽ chốt Figma rồi giao kế hoạch làm lại FE riêng. Phạm vi này ưu tiên hơn các dòng giao FE trong matrix/review plan ngày 2026-10-24.
+> Cập nhật sau final handoff UI ngày 2026-10-25: Trí đã giao task UI theo Figma tại [kế hoạch mới](../design/UI_FIGMA_IMPLEMENTATION_2026-10-25.md). Phần BE/Data và phân công producer trong tài liệu này giữ nguyên. Các đoạn tạm hoãn/thu hồi FE bên dưới ghi lại phạm vi của đợt BE/Data trước, không tiếp tục cấm task UI mới đã được giao.
+
+
+Trí đã xác nhận Figma hoàn tất và chuyển sang đồng bộ BE/Data theo UI hiện hành. Các đoạn dưới đây về hoãn/thu hồi FE là lịch sử của đợt trước khi Figma chốt, không còn là lệnh cấm UI task mới hoặc căn cứ chờ thiết kế. Dùng [handoff UI–BE–Data hiện hành](UI_BE_DATA_SYNC_HANDOFF_2026-10-25.md) cho mapping và blocker; scope này tiếp tục quy định ownership của producer BE/Data và không giao sửa app/runtime trong lượt tài liệu.
 
 ## Trạng thái code và trạng thái Project
 
@@ -16,13 +19,13 @@ Task BE/Data baseline đã nghiệm thu còn cần bổ sung dùng cột Status 
 - Timer 60s bắt đầu khi người đầu tiên hoàn tất lượt, nhận ACK và vào waiting hợp lệ. Người khác còn gửi được tới deadline; không waiting thì chưa chạy timer. Host chốt cần ít nhất 1 ballot hoàn chỉnh; BE/worker xử lý khi client tắt.
 - Score=2*WANT+OK trên ballot R1 thực sự được tính, R2 chỉ loại. Top3 từ toàn eligible set sau veto, tối đa3, dense shared ranks, luôn có winner, cutoff/subset/order lưu cố định. NO_CONSENSUS có winner=null và Top3 rỗng. Aggregate chỉ sau terminal, không raw ballots/contributions/seed.
 - History summary/detail đọc cùng projection đã lưu: result/version, status/reason/round, winner nullable, score/rank versions, Top3/locked card và cohort R1. Participants theo consent/ACL; phân biệt intended meal time và finalizedAt. Giữ dữ liệu qua operational cleanup đúng retention, không dựng lại bản đã xóa; legacy không backfill điểm/Top3 giả.
-- Catalogue test_demo hiện 39 món là baseline kiểm thử, không quota production. Bổ sung taxonomy ID/code/label/version, temp/flavor unknown, nullable ảnh có quyền và giá đúng currency/unit/source/time. Giá menu-item không là giá/người. Báo coverage thật, không đoán nhãn hoặc nới guard importer để đủ pool.
+- Catalogue test_demo hiện 39 món là baseline kiểm thử, không quota production. Bổ sung taxonomy ID/code/label/version, temp/flavor unknown, nullable ảnh có quyền và chọn price observation mới nhất theo `observedAt`; amount/currency/unit/source có thể null, amount null hoặc timestamp trùng thì giá unknown, không fallback cũ hay đổi menu-item thành giá/người. Báo coverage thật, không đoán nhãn hoặc nới guard importer để đủ pool.
 
 ## Chi tiết owner phải chốt trước tích hợp
 
-GM-07 đề xuất và Trí review transport opt-in B, concurrency/waiting/expiry, aggregation ưu tiên mềm và DTO history/cohort. GM-18 cùng GM-40 phân biệt meal eligibility với soft preferences và quy tắc chọn price observation. GM-17/21 chốt participant identity/time projection theo consent. Có thể làm phần độc lập trước; chưa được tuyên bố tất cả consumer đủ đầu vào tích hợp khi các chi tiết này chưa có artifact reviewed/version/hash.
+GM-07 đề xuất và Trí review transport opt-in B, concurrency/waiting/expiry và DTO history/cohort. Preference mặc định được lưu theo tài khoản, snapshot theo từng phòng, lựa chọn thô chỉ người đó xem; ranking là chức năng nâng cao, không chặn luồng chính, và nếu có thì mọi thành viên ngang trọng số. GM-18 cùng GM-40 phân biệt meal eligibility và selection price observation. Giá chọn theo timestamp mới nhất; field khác nullable, amount null hoặc timestamp trùng thì unknown. GM-17/21 chốt participant identity/time projection theo consent. Có thể làm phần độc lập trước; chưa được tuyên bố mọi consumer đủ đầu vào tích hợp khi artifact/version/privacy chưa được review.
 
-Các AC/ca kiểm cụ thể được đồng bộ trong task GM-03/06/07/15/17..23/32/40 và checklist sinh từ task map. Phần bổ sung là yêu cầu owner triển khai tiếp; đợt đồng bộ hồ sơ này không sửa runtime v3, mobile, schema B hoặc migration đã merge. Places/provider interface có thể chuẩn bị ở contract, triển khai sau theo phạm vi Trí giao; quán/vị trí không quay lại điều kiện pool.
+Các AC/ca kiểm cụ thể được đồng bộ trong task GM-03/06/07/15/17..23/32/40 và [handoff hiện hành](UI_BE_DATA_SYNC_HANDOFF_2026-10-25.md). Phần bổ sung là yêu cầu owner triển khai tiếp; đợt đồng bộ hồ sơ này không sửa runtime v3, mobile, schema B hoặc migration đã merge. Trí đã chọn Google Places gọi trực tiếp từ app cho màn kết quả; GM-30 sở hữu adapter/permission/config/native evidence, không tạo backend proxy. Quán/vị trí không quay lại điều kiện pool.
 
 ## Phân công phần bổ sung
 
@@ -30,7 +33,7 @@ Giữ người phụ trách theo Project #2. Trí review tất cả task. Các m
 
 | Owner | Task | Đầu ra BE/Data cần bàn giao |
 | --- | --- | --- |
-| Trang | GM-07 | Contract B có version, request/response/error schema, DTO/guards và ví dụ wire cho phòng, pool, ACK/waiting/finalize, Top 3, history/event. Chỉ hợp đồng dùng chung; mobile client/mock chờ đợt FE. |
+| Trang | GM-07 | Contract B có version, request/response/error schema, DTO/guards và ví dụ wire cho phòng, pool, ACK/waiting/finalize, Top 3, history/event. Xác định consumer boundary cho Google Places direct app theo GM-30; không tự chọn vendor-specific API details ngoài phần Trí đã chốt. |
 | Vinh | GM-40 | Catalogue độc lập quán: ID/version/hash ổn định, taxonomy/nhãn, ảnh và giá nullable kèm đơn vị/nguồn, độ phủ đủ điều kiện và import/readback thật. Làm trước phần engine cần projection món. |
 | Tâm | GM-06 | Migration tiến và schema/projection lưu kết quả ổn định; bảo toàn phiên cũ, ledger, kế hoạch upgrade/backup và handoff hash/version. |
 | Tâm | GM-18 | Pool độc lập quán/vị trí, exact count 10–20, ưu tiên mềm, shortage rõ và không tự nới lọc. |
@@ -48,7 +51,7 @@ GM-04/08 và nghiệm thu baseline giữ để truy vết. P1/P2 tiếp tục l�
 1. Trang chốt contract B/schema/DTO và Vinh chuẩn bị catalogue/projection song song; chốt shape/version trước khi tích hợp.
 2. Tâm chuẩn bị migration/storage và pool; Vinh làm engine/finalize theo projection; Trí làm lifecycle/ACL và runner QA. Phần độc lập được làm song song.
 3. History, social và event nhận đúng terminal DTO/ID/projection và quyền đã bàn giao; không suy nội dung từ mock hoặc catalogue hiện tại.
-4. GM-32 kiểm trên các producer đã merge/triển khai đúng version. FE chỉ nhận handoff sau; không lấy UI/API mock làm bằng chứng BE đã đạt.
+4. GM-32 kiểm trên các producer đã merge/triển khai đúng version. UI dùng mock hoặc producer thật theo scope từng task; không lấy UI/API mock làm bằng chứng BE đã đạt.
 
 Đây là gate theo artifact/PR/version, không thêm dependency số lớn vào task số nhỏ. Giữ policy/contract đã pin của phiên v2/v3. N=0 sau R1 kết thúc EMPTY_INTERSECTION; N>=1 mở R2 thật, kể cả một món; cap=max(1,floor(.30*N)); REMOVE hết thành ALL_REMOVED; Top 3 theo ADR-020.
 
