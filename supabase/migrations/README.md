@@ -76,3 +76,19 @@ hoặc grants/status defaults. Existing nested FK vẫn kiểm description sourc
 Unknown keys/null/non-UUID/dangling source vẫn bị reject. Migration chạy atomic
 và validate các row đang có. Không dùng schema down để rollback dataset test.
 Kiểm thực tế trong [GM-08 real DB](../../docs/evidence/roadmap-v2/GM-08/real-db/README.md).
+
+
+## GM06.2 canonical storage — schema0.9.0
+
+[0027](0027_canonical_result_storage.sql) là migration tiến riêng, không sửa0026 hoặc
+migrate/backfill phiên v2/v3. Bổ sung storage private cho kết quả/podium cố định,
+history2–20/no-consensus, preference account/room và quan sát giá nullable. Không có
+public API hoặc writer v4. [Mapping/upgrade/rollback](../../docs/data/GM06_CANONICAL_STORAGE.md)
+và [handoff](../../docs/evidence/roadmap-v2/GM-06/canonical-storage/HANDOFF.md) nêu ranh giới.
+
+Retention wrapper giữ body cleanup cũ theo rename, thêm hooks chỉ cho rows mới để
+registry/consent còn được history tham chiếu sống qua cleanup. Trí/GM17 review trước
+tích hợp. Runner `python3 scripts/gm06_canonical_check.py` chạy fresh/populated upgrade,
+constraints/privacy/cleanup/receipt race/rollback trên DB QA có marker, không thay app DB.
+Down0027 nằm ngoài migrations, từ chối storage mới còn dữ liệu; operational rollback
+phải tắt future writer và giữ dữ liệu đến khi có backup/reconcile được review.

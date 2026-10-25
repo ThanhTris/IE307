@@ -27,13 +27,17 @@ jobs:
         run: |
           python -m unittest discover -s tests -p 'test_gm06_schema_runner.py' -v
           python scripts/gm06_schema_check.py --report "$RUNNER_TEMP/gm06-sql-results-linux.json"
+      - name: Canonical result/history storage, populated upgrade and retention
+        run: python scripts/gm06_canonical_check.py --report "${{ runner.temp }}/gm06-canonical-results.json"
       - run: npm run backend:test
       - name: Upload the actual SQL report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: gm06-sql-results-linux
-          path: ${{ runner.temp }}/gm06-sql-results-linux.json
+          path: |
+            ${{ runner.temp }}/gm06-sql-results-linux.json
+            ${{ runner.temp }}/gm06-canonical-results.json
           if-no-files-found: warn
       - name: Stop the local project
         if: always()

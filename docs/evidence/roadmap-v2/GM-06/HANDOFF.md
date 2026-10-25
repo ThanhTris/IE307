@@ -1,5 +1,7 @@
 # GM-06 — Schema handoff
 
+> Bổ sung hiện hành ngày2026-10-25: [GM06.2 canonical storage](canonical-storage/HANDOFF.md) và [checks mới](canonical-storage/CHECKS.md). Phần bên dưới giữ evidence baseline GM06.1 lịch sử; không là trạng thái supplement hoặc runtime v4.
+
 Owner Tâm (@HoaiTam), reviewer Trí (@ThanhTris), review Pending.
 Branch `codex/gm-06-database-schema`, [PR #102](https://github.com/ThanhTris/IE307/pull/102), target main.
 Reviewed head `b6690708a04850593300c8af2166d997d5b038a3`; nhận main

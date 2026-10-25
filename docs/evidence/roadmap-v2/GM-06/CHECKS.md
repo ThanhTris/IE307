@@ -1,5 +1,7 @@
 # GM-06 — Output checks sau review PR #102
 
+> Bổ sung hiện hành ngày2026-10-25: [GM06.2 canonical storage](canonical-storage/HANDOFF.md) và [checks mới](canonical-storage/CHECKS.md). Phần bên dưới giữ evidence baseline GM06.1 lịch sử; không là trạng thái supplement hoặc runtime v4.
+
 Owner Tâm (@HoaiTam), reviewer Trí (@ThanhTris), mode data-schema; review Pending.
 Task ở `tasks/backlog/GM-06.md`, metadata backlog/proposed như baseline PR; owner đã nhận việc, Trí đang review bản sửa, chưa Approved/Done.
 Reviewed PR head `b6690708a04850593300c8af2166d997d5b038a3`; nhận main
