@@ -1,23 +1,40 @@
 import {spawnSync,execFileSync} from 'node:child_process';
-import {readFile,writeFile} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import {readFileSync,readdirSync} from 'node:fs';
+import {writeFile} from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import {resolve} from 'node:path';
-const root=process.cwd(), qa=process.env.GM03_QA_WORKDIR, manifestPath=process.env.GM03_QA_MANIFEST;
-assert.ok(qa&&manifestPath,'Use the GM-03 owned QA runner. The dated app/QA workdir is not a fallback.');
-const manifest=JSON.parse(await readFile(manifestPath,'utf8'));
-const container=manifest.containerName;
-assert.equal(manifest.format,'gm03-qa-manifest-v1');
-const status=JSON.parse(spawnSync(process.execPath,[resolve(root,'node_modules/supabase/dist/supabase.js'),'status','--output','json','--workdir',qa],{encoding:'utf8'}).stdout);
-const base=status.API_URL, key=status.ANON_KEY, contractVersion='dish-session-v4/roadmap-v2/GM-07.B';
+const root=process.cwd();
+const gm03Signals=['GM03_QA_WORKDIR','GM03_QA_MANIFEST'].some(name=>Boolean(process.env[name]));
+const ciSignals=['GM_V4_QA_WORKDIR','GM_V4_QA_PROJECT_ID','GM_V4_QA_CONTAINER'].some(name=>Boolean(process.env[name]));
+assert.notEqual(gm03Signals,ciSignals,'Set exactly one QA interface: GM-03 manifest or GM_V4_QA_* CI environment');
+const qaMode=gm03Signals?'gm03':'ci';
+const qa=qaMode==='gm03'?process.env.GM03_QA_WORKDIR:process.env.GM_V4_QA_WORKDIR;
+const manifestPath=qaMode==='gm03'?process.env.GM03_QA_MANIFEST:null;
+const manifest=manifestPath?JSON.parse(readFileSync(manifestPath,'utf8')):null;
+if(qaMode==='gm03')assert.ok(qa&&manifestPath&&manifest?.format==='gm03-qa-manifest-v1','GM-03 QA requires its sealed run manifest and workdir');
+const project=qaMode==='gm03'?manifest.projectId:process.env.GM_V4_QA_PROJECT_ID;
+const container=qaMode==='gm03'?manifest.containerName:(process.env.GM_V4_QA_CONTAINER||'supabase_db_'+project);
+const expectedWorkdir=qaMode==='gm03'?manifest.workdir:qa;
+const validProject=qaMode==='gm03'?/^gm03qa-[a-z0-9](?:[a-z0-9-]{0,28}[a-z0-9])?$/.test(project||''):/^ie307-dish-v4-qa-\d{8}(?:-\d+-\d+)?$/.test(project||'');
+assert.ok(qa&&project&&container&&validProject,'QA setup must identify an isolated project; refusing the app database');
+assert.equal(container,'supabase_db_'+project,'QA container must match the exact run project');
+const statusRun=spawnSync(process.execPath,[resolve(root,'node_modules/supabase/dist/supabase.js'),'status','--output','json','--workdir',qa],{encoding:'utf8',maxBuffer:1024*1024});
+assert.equal(statusRun.status,0,'QA Supabase status failed; inspect the setup report');
+const status=JSON.parse(statusRun.stdout);
+const base=status.API_URL||status.api?.url, key=status.ANON_KEY||status.PUBLISHABLE_KEY, contractVersion='dish-session-v4/roadmap-v2/GM-07.B';
+assert.ok(base&&key,'QA Supabase status omitted the local API URL or publishable key');
 assert.equal(new URL(base).hostname,'127.0.0.1','QA API must bind to loopback');
-assert.equal(new URL(base).port,String(manifest.endpoint.apiPort),'QA API must use the owned GM-03 port');
-assert.equal(base,manifest.endpoint.baseUrl,'QA API origin must match the sealed manifest');
+const apiPort=qaMode==='gm03'?manifest.endpoint.apiPort:54361;
+assert.equal(new URL(base).port,String(apiPort),'QA API must use its explicitly owned port');
+if(qaMode==='gm03')assert.equal(base,manifest.endpoint.baseUrl,'QA API origin must match the sealed manifest');
 const policyVersion='dish-decision-v4/ADR-019-30PCT-MIN1', pref={cuisineIds:[],categoryIds:[],temperature:null,flavor:null,budget:null,avoidRecent:false};
-const results=[];const users=[];
-function sql(q){const inspected=JSON.parse(execFileSync('docker',['inspect',container],{encoding:'utf8'}))[0];const labels=inspected.Config.Labels||{};assert.equal(labels['com.supabase.cli.project'],manifest.projectId);assert.equal(String(labels['com.supabase.cli.workdir']||'').replaceAll('\\','/').toLowerCase(),String(manifest.workdir).replaceAll('\\','/').toLowerCase());assert.equal(inspected.State.Running,true);const owner=execFileSync('docker',['exec','-i',container,'psql','-X','-q','-U','postgres','-d','postgres','-v','ON_ERROR_STOP=1','-At','-c',"select owner_uuid::text from gm03_qa_private.owner_manifest where run_id='"+manifest.runId.replaceAll("'","''")+"';"],{encoding:'utf8'}).trim();assert.equal(owner,manifest.ownerUuid);return execFileSync('docker',['exec','-i',container,'psql','-X','-q','-U','postgres','-d','postgres','-v','ON_ERROR_STOP=1','-At','-c',q],{encoding:'utf8'}).trim();}
-async function guest(name){const r=await fetch(base+'/auth/v1/signup',{method:'POST',headers:{apikey:key,'content-type':'application/json'},body:JSON.stringify({data:{display_name:name,gm07_v4_qa:'dish-v4-qa-20261026'}})});const b=await r.json();assert.equal(r.status,200,'guest signup failed '+r.status);assert.ok(b.access_token);const u={id:b.user.id,token:b.access_token,refresh:b.refresh_token};users.push(u);return u;}
-async function api(u,command,args={}){const payload={contractVersion,...args};const r=await fetch(base+'/rest/v1/rpc/dish_session',{method:'POST',headers:{apikey:key,...(u?{authorization:'Bearer '+u.token}:{}),'content-type':'application/json'},body:JSON.stringify({command,payload})});let body;try{body=await r.json();}catch{body={};}return {status:r.status,body};}
+const results=[];const users=[];const contractSamples=[];
+function sqlRaw(q){return execFileSync('docker',['exec','-i',container,'psql','-X','-q','-U','postgres','-d','postgres','-v','ON_ERROR_STOP=1','-At','-c',q],{encoding:'utf8'}).trim();}
+function sql(q){const inspected=JSON.parse(execFileSync('docker',['inspect',container],{encoding:'utf8'}))[0];const labels=inspected.Config.Labels||{};assert.equal(inspected.Name,'/'+container);assert.equal(labels['com.supabase.cli.project'],project);assert.equal(String(labels['com.supabase.cli.workdir']||'').replaceAll('\\','/').toLowerCase(),String(expectedWorkdir).replaceAll('\\','/').toLowerCase());assert.equal(inspected.State.Running,true);const owner=qaMode==='gm03'?sqlRaw("select owner_uuid::text from gm03_qa_private.owner_manifest where run_id='"+manifest.runId.replaceAll("'","''")+"';"):sqlRaw('select namespace::text from public.gm40_qa_owner');assert.equal(owner,qaMode==='gm03'?manifest.ownerUuid:process.env.GM_V4_OWNER_NAMESPACE,'QA owner marker must match this run');return sqlRaw(q);}
+async function guest(name){const r=await fetch(base+'/auth/v1/signup',{method:'POST',headers:{apikey:key,'content-type':'application/json'},body:JSON.stringify({data:{display_name:name,gm07_v4_qa:project}})});const b=await r.json();assert.equal(r.status,200,'guest signup failed '+r.status);assert.ok(b.access_token);const u={id:b.user.id,token:b.access_token,refresh:b.refresh_token};users.push(u);return u;}
+async function api(u,command,args={},options={}){const payload={contractVersion,...args},request={command,payload};const r=await fetch(base+'/rest/v1/rpc/dish_session',{method:'POST',headers:{apikey:key,...(u?{authorization:'Bearer '+u.token}:{}),'content-type':'application/json'},body:JSON.stringify(request)});let body;try{body=await r.json();}catch{body={};}contractSamples.push({request,response:body,...(options.requestValid===false?{requestValid:false}:{})});return {status:r.status,body};}
 async function legacyRpc(u,name,args={}){const r=await fetch(base+'/rest/v1/rpc/'+name,{method:'POST',headers:{apikey:key,...(u?{authorization:'Bearer '+u.token}:{}),'content-type':'application/json'},body:JSON.stringify(args)});let body;try{body=await r.json();}catch{body={};}return {status:r.status,body};}
 function pass(name,expected,actual){assert.deepEqual(actual,expected,name);results.push({case:name,result:'Pass',expected,actual});console.log('PASS',name);}
 function expectOk(response,name){assert.equal(response.status,200,name+' http '+response.status+' '+(response.body.error?.messageKey??response.body.message??''));assert.equal(response.body.ok,true,name+' rpc rejected '+(response.body.error?.messageKey??''));return response.body.data;}
@@ -30,18 +47,28 @@ async function join(u,code,name){return expectOk(await api(u,'join',{requestId:r
 function votesFor(pool,fn){return pool.map((d,i)=>({roundDishId:d.roundDishId,choice:fn(d,i)}));}
 function versionArgs(room,s,round){return {roomId:room,expectedVersion:s.version,round:s.round,poolVersion:s.poolVersion};}
 async function submit(u,room,s,votes,id){return api(u,'submit',{...versionArgs(room,s,s.round),requestId:id||requestId('submit'),votes});}
-async function setActive(id){const ns=sql("select owner_uuid::text from gm03_qa_private.owner_manifest where run_id='"+manifest.runId.replaceAll("'","''")+"'");assert.equal(ns,manifest.ownerUuid);sql("update dish_v3_private.catalogues set active=false where active; update dish_v3_private.catalogues set active=true where id='"+id.replaceAll("'","''")+"';");}
+async function setActive(id){sql("update dish_v3_private.catalogues set active=false where active; update dish_v3_private.catalogues set active=true where id='"+id.replaceAll("'","''")+"';");}
 
 await waitWorker();
 assert.equal(sql("select count(*) from public.schema_versions where schema_version='0.9.1' and contract_id='dish-session-v4/roadmap-v2/GM-07.B';"),'1','v4 account-consent migration must be present in the owned QA database');
 const host=await guest('v4-host'), member=await guest('v4-member'), outsider=await guest('v4-outsider');
 // Real GM-40 catalogue shortage checks before switching to isolated synthetic coverage.
-await setActive('dish-catalogue-v1:1.1.0');
-for(const [meal,available] of [['dinner',7],['snack',1]]){
+const realRelease=qaMode==='gm03'?manifest.catalogues.real.releaseId:process.env.GM_V4_REAL_RELEASE_ID;
+const syntheticRelease=qaMode==='gm03'?manifest.catalogues.synthetic.releaseId:process.env.GM_V4_SYNTHETIC_RELEASE_ID;
+const realCount=qaMode==='gm03'?manifest.catalogues.real.count:Number(process.env.GM_V4_REAL_DISH_COUNT);
+const realSourceSha256=qaMode==='gm03'?(manifest.catalogues.real.sourceSha256||manifest.catalogues.real.sourceSha):process.env.GM_V4_REAL_SOURCE_SHA256;
+const syntheticSha256=qaMode==='gm03'?(manifest.catalogues.synthetic.sourceSha256||manifest.catalogues.synthetic.sha256):process.env.GM_V4_SYNTHETIC_SHA256;
+const syntheticCount=qaMode==='gm03'?manifest.catalogues.synthetic.count:20;
+const syntheticFixtureOnly=qaMode==='gm03'?manifest.catalogues.synthetic.fixtureOnly===true:true;
+assert.ok(realRelease&&syntheticRelease&&Number.isInteger(Number(realCount))&&Number.isInteger(Number(syntheticCount)),'QA catalogue metadata must come from the runtime manifest/setup');
+assert.equal(syntheticFixtureOnly,true,'Positive cases must use an explicitly synthetic fixture');
+await setActive(realRelease);
+const mealCount=meal=>Number(sql("select count(*) from dish_v3_private.catalogues c cross join lateral jsonb_array_elements(c.cards) as dishes(value) where c.id='"+realRelease.replaceAll("'","''")+"' and dishes.value->'mealSlots' ? '"+meal.replaceAll("'","''")+"'"));
+for(const [meal,available] of [['dinner',mealCount('dinner')],['snack',mealCount('snack')]]){
  const err=expectFail(await api(host,'create',{requestId:requestId('shortage'),displayName:'QA host',settings:{dishCount:10,mealSlot:meal,desiredAt:null},preferences:pref}),'INSUFFICIENT_DISHES',409,'real catalogue shortage '+meal);
  pass('real catalogue reports exact availability '+meal,{available,requested:10},err.details);
 }
-await setActive(manifest.catalogues.synthetic.releaseId);
+await setActive(syntheticRelease);
 
 // Default preference is account-scoped; room copy is member-only and ranking is explicitly unsupported.
 const before=expectOk(await api(member,'getDefaultPreferences'),'default preferences initial');
@@ -65,7 +92,7 @@ pass('host can request exactly 20 dishes',20,edit.settings.dishCount);
 let s2=await snapshot(host,roomId);pass('pool contains exactly 20 after settings change',20,s2.pool.length);assert.ok(s2.poolVersion>s1.poolVersion);
 edit=expectOk(await api(host,'updateSettings',{requestId:requestId('settings'),roomId,expectedVersion:s2.version,settings:{dishCount:10,mealSlot:'lunch',desiredAt:null}}),'restore settings 10');
 let s3=await snapshot(host,roomId);pass('pool contains exact requested 10',10,s3.pool.length);
-expectFail(await api(host,'updateSettings',{requestId:requestId('settings'),roomId,expectedVersion:s3.version,settings:{dishCount:21,mealSlot:'lunch',desiredAt:null}}),'INVALID_INPUT',400,'dish count 21 rejected');
+expectFail(await api(host,'updateSettings',{requestId:requestId('settings'),roomId,expectedVersion:s3.version,settings:{dishCount:21,mealSlot:'lunch',desiredAt:null}},{requestValid:false}),'INVALID_INPUT',400,'dish count 21 rejected');
 const prefAckRoom=expectOk(await api(host,'updatePreferences',{requestId:requestId('room-pref'),roomId,expectedVersion:s3.version,preferences:{...pref,temperature:'cold'}}),'update room preferences');
 const s4=await snapshot(host,roomId);pass('room preference change increments room version',s3.version+1,s4.version);pass('own preference is room-scoped','cold',s4.ownPreferences.temperature);
 
@@ -262,9 +289,19 @@ expectFail(overflow2,'ROOM_FULL',409,'21st member rejected');
 const inbox=await fetch(base+'/rest/v1/rpc/list_partner_inbox',{method:'POST',headers:{apikey:key,authorization:'Bearer '+member.token,'content-type':'application/json'},body:JSON.stringify({cursor:null})});
 const inboxBody=await inbox.json();pass('inbox API callable for authenticated member',200,inbox.status);
 
-await setActive(manifest.catalogues.real.releaseId);
-const report={runId:manifest.runId,target:`owned Supabase QA project ${manifest.projectId}`,branch:manifest.branch,baseline:manifest.sourceRevision,contractVersion,policyVersion,dataset:{realRelease:manifest.catalogues.real.releaseId,realCount:manifest.catalogues.real.count,realFixtureOnly:manifest.catalogues.real.fixtureOnly,syntheticRelease:manifest.catalogues.synthetic.releaseId,syntheticCount:manifest.catalogues.synthetic.count,syntheticFixtureOnly:manifest.catalogues.synthetic.fixtureOnly},caseCount:results.length,cases:results,credentialsWritten:false,applicationDatabaseChanged:false};
-await writeFile(resolve(qa,'api-check-results.json'),JSON.stringify(report,null,2)+'\n','utf8');
-console.log(JSON.stringify({result:'PASS',caseCount:results.length,report:qa+'/api-check-results.json',applicationDatabaseChanged:false}));
+const schemaCheck=spawnSync(process.env.GM_V4_PYTHON||'python',['scripts/validate_dish_v4_schema.py','--schema','docs/architecture/schemas/dish-session-v4b.schema.json','--stdin'],{cwd:root,encoding:'utf8',input:JSON.stringify(contractSamples),maxBuffer:2*1024*1024});
+assert.equal(schemaCheck.status,0,'Actual GM-07.B HTTP request/response samples failed JSON Schema 2020-12 validation: '+(schemaCheck.stderr||'').slice(0,1200));
+const schemaSummary=JSON.parse(schemaCheck.stdout);assert.equal(schemaSummary.result,'Pass');
+results.push({case:'actual HTTP requests and responses validate as JSON Schema 2020-12',result:'Pass',expected:'all v4 dish_session envelopes valid',actual:{envelopesValidated:schemaSummary.envelopesValidated}});
+assert.ok(results.length>=82,'The established v4 coverage floor of 82 assertions must remain');
+if(qaMode==='gm03')await setActive(realRelease);
+const revision=qaMode==='gm03'?manifest.sourceRevision:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim();
+const migrationPaths=readdirSync(resolve(root,'supabase/migrations')).filter(name=>name.endsWith('.sql')).sort().map(name=>'supabase/migrations/'+name);
+const hashedPaths=['docs/architecture/schemas/dish-session-v4b.schema.json','tests/fixtures/dish-catalogue-v1/qa-v4-synthetic.json','scripts/dish_policy_worker.py',...migrationPaths];
+const sourceHashes=Object.fromEntries(hashedPaths.map(path=>[path,createHash('sha256').update(readFileSync(resolve(root,path))).digest('hex')]));
+const report={result:'Pass',runId:qaMode==='gm03'?manifest.runId:project,target:'dedicated Supabase QA project '+project,branch:qaMode==='gm03'?manifest.branch:(process.env.GITHUB_REF_NAME||'local'),sha:revision,contractVersion,policyVersion,schemaVersion:'0.9.1',schemaSha256:sourceHashes['docs/architecture/schemas/dish-session-v4b.schema.json'],sourceHashes,dataset:{realRelease,realSourceSha256,realCount,realMealCounts:{breakfast:mealCount('breakfast'),lunch:mealCount('lunch'),dinner:mealCount('dinner'),snack:mealCount('snack')},syntheticRelease,syntheticSha256,syntheticCount,syntheticFixtureOnly},schemaValidation:schemaSummary,caseCount:results.length,cases:results,credentialsWritten:false,applicationDatabaseChanged:false};
+const reportPath=qaMode==='ci'&&process.env.GM_V4_REPORT_PATH?process.env.GM_V4_REPORT_PATH:resolve(qa,'api-check-results.json');
+await writeFile(reportPath,JSON.stringify(report,null,2)+'\n','utf8');
+console.log(JSON.stringify({result:'PASS',caseCount:results.length,contractEnvelopesValidated:schemaSummary.envelopesValidated,report:reportPath,applicationDatabaseChanged:false}));
 
 

@@ -1,0 +1,388 @@
+{
+  "profile": "dish-catalogue-v1",
+  "datasetVersion": "qa-synthetic-ci-v1",
+  "fixtureOnly": true,
+  "seed": "6f406910-48cc-4b9f-9e98-155501773878",
+  "cards": [
+    {
+      "dishId": "9618c4f4-70ef-56e5-9bbe-d6ab9ef834a4",
+      "name": "QA dish 01",
+      "description": null,
+      "mealSlots": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack"
+      ],
+      "cuisineIds": [],
+      "cuisineLabels": [],
+      "categoryIds": [],
+      "categoryLabels": [],
+      "temperature": null,
+      "flavor": null,
+      "artwork": null,
+      "priceReference": null
+    },
+    {
+      "dishId": "43fb9c2b-428a-58ee-a7c7-ffff45f4e8b8",
+      "name": "QA dish 02",
+      "description": null,
+      "mealSlots": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack"
+      ],
+      "cuisineIds": [],
+      "cuisineLabels": [],
+      "categoryIds": [],
+      "categoryLabels": [],
+      "temperature": null,
+      "flavor": null,
+      "artwork": null,
+      "priceReference": null
+    },
+    {
+      "dishId": "e0b6c953-83cb-5679-8e1d-2281f931f50d",
+      "name": "QA dish 03",
+      "description": null,
+      "mealSlots": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack"
+      ],
+      "cuisineIds": [],
+      "cuisineLabels": [],
+      "categoryIds": [],
+      "categoryLabels": [],
+      "temperature": null,
+      "flavor": null,
+      "artwork": null,
+      "priceReference": null
+    },
+    {
+      "dishId": "6ab0dd8e-4ca5-5eb2-93f9-df116add592b",
+      "name": "QA dish 04",
+      "description": null,
+      "mealSlots": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack"
+      ],
+      "cuisineIds": [],
+      "cuisineLabels": [],
+      "categoryIds": [],
+      "categoryLabels": [],
+      "temperature": null,
+      "flavor": null,
+      "artwork": null,
+      "priceReference": null
+    },
+    {
+      "dishId": "37211e9d-e122-5e07-883f-4b5f2e86a2db",
+      "name": "QA dish 05",
+      "description": null,
+      "mealSlots": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack"
+      ],
+      "cuisineIds": [],
+      "cuisineLabels": [],
+      "categoryIds": [],
+      "categoryLabels": [],
+      "temperature": null,
+      "flavor": null,
+      "artwork": null,
+      "priceReference": null
+    },
+    {
+      "dishId": "83bb0b27-8117-5887-9543-5b53c5b9a87f",
+      "name": "QA dish 06",
+      "description": null,
+      "mealSlots": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack"
+      ],
+      "cuisineIds": [],
+      "cuisineLabels": [],
+      "categoryIds": [],
+      "categoryLabels": [],
+      "temperature": null,
+      "flavor": null,
+      "artwork": null,
+      "priceReference": null
+    },
+    {
+      "dishId": "b6a827c6-8bad-59fe-a773-93e07c2dee0d",
+      "name": "QA dish 07",
+      "description": null,
+      "mealSlots": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack"
+      ],
+      "cuisineIds": [],
+      "cuisineLabels": [],
+      "categoryIds": [],
+      "categoryLabels": [],
+      "temperature": null,
+      "flavor": null,
+      "artwork": null,
+      "priceReference": null
+    },
+    {
+      "dishId": "e838eebf-b7d6-5c3c-b28d-456d2f63f827",
+      "name": "QA dish 08",
+      "description": null,
+      "mealSlots": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack"
+      ],
+      "cuisineIds": [],
+      "cuisineLabels": [],
+      "categoryIds": [],
+      "categoryLabels": [],
+      "temperature": null,
+      "flavor": null,
+      "artwork": null,
+      "priceReference": null
+    },
+    {
+      "dishId": "f3ff7698-7dfc-52e5-8d83-9ce04e7a1a21",
+      "name": "QA dish 09",
+      "description": null,
+      "mealSlots": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack"
+      ],
+      "cuisineIds": [],
+      "cuisineLabels": [],
+      "categoryIds": [],
+      "categoryLabels": [],
+      "temperature": null,
+      "flavor": null,
+      "artwork": null,
+      "priceReference": null
+    },
+    {
+      "dishId": "555d2e4d-66f1-586f-9cb8-8c90d06b3038",
+      "name": "QA dish 10",
+      "description": null,
+      "mealSlots": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack"
+      ],
+      "cuisineIds": [],
+      "cuisineLabels": [],
+      "categoryIds": [],
+      "categoryLabels": [],
+      "temperature": null,
+      "flavor": null,
+      "artwork": null,
+      "priceReference": null
+    },
+    {
+      "dishId": "a851124d-4e8c-5b4c-8304-b8ba103c9ce0",
+      "name": "QA dish 11",
+      "description": null,
+      "mealSlots": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack"
+      ],
+      "cuisineIds": [],
+      "cuisineLabels": [],
+      "categoryIds": [],
+      "categoryLabels": [],
+      "temperature": null,
+      "flavor": null,
+      "artwork": null,
+      "priceReference": null
+    },
+    {
+      "dishId": "ea205665-7649-555a-9625-94e8020757b5",
+      "name": "QA dish 12",
+      "description": null,
+      "mealSlots": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack"
+      ],
+      "cuisineIds": [],
+      "cuisineLabels": [],
+      "categoryIds": [],
+      "categoryLabels": [],
+      "temperature": null,
+      "flavor": null,
+      "artwork": null,
+      "priceReference": null
+    },
+    {
+      "dishId": "1eaf9849-ec59-5833-a0d0-eedfba6afbf6",
+      "name": "QA dish 13",
+      "description": null,
+      "mealSlots": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack"
+      ],
+      "cuisineIds": [],
+      "cuisineLabels": [],
+      "categoryIds": [],
+      "categoryLabels": [],
+      "temperature": null,
+      "flavor": null,
+      "artwork": null,
+      "priceReference": null
+    },
+    {
+      "dishId": "0766960f-62a2-5bbf-b08d-2312f051597b",
+      "name": "QA dish 14",
+      "description": null,
+      "mealSlots": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack"
+      ],
+      "cuisineIds": [],
+      "cuisineLabels": [],
+      "categoryIds": [],
+      "categoryLabels": [],
+      "temperature": null,
+      "flavor": null,
+      "artwork": null,
+      "priceReference": null
+    },
+    {
+      "dishId": "e2322792-5e09-5160-8149-758cf4146cf7",
+      "name": "QA dish 15",
+      "description": null,
+      "mealSlots": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack"
+      ],
+      "cuisineIds": [],
+      "cuisineLabels": [],
+      "categoryIds": [],
+      "categoryLabels": [],
+      "temperature": null,
+      "flavor": null,
+      "artwork": null,
+      "priceReference": null
+    },
+    {
+      "dishId": "0705f210-02ee-5e69-a1fd-7c6718574f6c",
+      "name": "QA dish 16",
+      "description": null,
+      "mealSlots": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack"
+      ],
+      "cuisineIds": [],
+      "cuisineLabels": [],
+      "categoryIds": [],
+      "categoryLabels": [],
+      "temperature": null,
+      "flavor": null,
+      "artwork": null,
+      "priceReference": null
+    },
+    {
+      "dishId": "3118abaf-223a-59db-af74-58829d5bb47a",
+      "name": "QA dish 17",
+      "description": null,
+      "mealSlots": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack"
+      ],
+      "cuisineIds": [],
+      "cuisineLabels": [],
+      "categoryIds": [],
+      "categoryLabels": [],
+      "temperature": null,
+      "flavor": null,
+      "artwork": null,
+      "priceReference": null
+    },
+    {
+      "dishId": "86ddea63-68ef-51e3-a813-c0452633031a",
+      "name": "QA dish 18",
+      "description": null,
+      "mealSlots": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack"
+      ],
+      "cuisineIds": [],
+      "cuisineLabels": [],
+      "categoryIds": [],
+      "categoryLabels": [],
+      "temperature": null,
+      "flavor": null,
+      "artwork": null,
+      "priceReference": null
+    },
+    {
+      "dishId": "61a8e49b-cbe8-565b-be43-afc4b71f6f28",
+      "name": "QA dish 19",
+      "description": null,
+      "mealSlots": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack"
+      ],
+      "cuisineIds": [],
+      "cuisineLabels": [],
+      "categoryIds": [],
+      "categoryLabels": [],
+      "temperature": null,
+      "flavor": null,
+      "artwork": null,
+      "priceReference": null
+    },
+    {
+      "dishId": "ffdbafd4-f398-5783-8d45-819870f460d3",
+      "name": "QA dish 20",
+      "description": null,
+      "mealSlots": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack"
+      ],
+      "cuisineIds": [],
+      "cuisineLabels": [],
+      "categoryIds": [],
+      "categoryLabels": [],
+      "temperature": null,
+      "flavor": null,
+      "artwork": null,
+      "priceReference": null
+    }
+  ]
+}

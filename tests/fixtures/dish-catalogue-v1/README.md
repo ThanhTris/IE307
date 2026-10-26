@@ -13,3 +13,7 @@ Expected được viết bằng assertions độc lập: giữ ID, 39/18/219/216
 món/giá nguồn; chấp nhận null, từ chối missing required, duplicate, FK sai, thiếu
 evidence, rights unknown, giá âm/NaN, thiếu đơn vị và entity quán ngoài profile.
 Fixtures và assertions hiện chỉ kiểm contract/offline; SQL/API chờ ADR-018.
+
+## Disposable v4 CI fixture
+
+`qa-v4-synthetic.json` is a fixed 20-card, fixture-only catalogue used to exercise the GM-07.B pool-count and two-round API cases. Its IDs are deterministic; fields without evidence remain null/empty. It is not a real or verified dataset and must not be used as production seed. The v4 CI setup imports the committed GM-40 draft bundle separately to assert real availability and shortage responses.

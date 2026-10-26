@@ -15,7 +15,7 @@ ROOT=Path(__file__).resolve().parents[1]
 
 
 def run_hidden_process(args, **kwargs):
-    """Keep recurring console commands from opening terminal windows on Windows."""
+    """Keep recurring Docker calls from opening console windows on Windows."""
     if os.name == 'nt':
         kwargs['creationflags'] = kwargs.get('creationflags', 0) | subprocess.CREATE_NO_WINDOW
     return subprocess.run(args, **kwargs)
@@ -23,27 +23,40 @@ def run_hidden_process(args, **kwargs):
 
 class QAContainerDB:
     """Read/tick only the explicitly named, project-labeled v4 QA container."""
-    def __init__(self,container):
-        if not re.fullmatch(r"supabase_db_ie307-dish-v4-qa-[0-9]{8}",container):
+    def __init__(self,container,project_id=None,workdir=None):
+        project_id=project_id or container.removeprefix("supabase_db_")
+        expected_suffix=re.sub(r"^supabase_db_ie307-dish-v4-qa-", "", container)
+        if (not re.fullmatch(r"supabase_db_ie307-dish-v4-qa-[0-9]{8}(?:-[0-9]+-[0-9]+)?",container)
+                or project_id!="ie307-dish-v4-qa-"+expected_suffix
+                or container!="supabase_db_"+project_id
+                or not re.fullmatch(r"ie307-dish-v4-qa-[0-9]{8}(?:-[0-9]+-[0-9]+)?",project_id)):
             raise ValueError("QA worker accepts only the dedicated IE307 dish-v4 QA container")
         result=run_hidden_process(["docker","inspect",container],capture_output=True,text=True,encoding="utf-8",timeout=15)
         if result.returncode: raise RuntimeError("QA_DB_CONTAINER_NOT_FOUND")
         info=json.loads(result.stdout)[0]
-        project="ie307-dish-v4-qa-"+container.rsplit("-",1)[1]
         labels=info.get("Config",{}).get("Labels") or {}
-        workdir=labels.get("com.supabase.cli.workdir","")
+        actual_workdir=Path(labels.get("com.supabase.cli.workdir","")).resolve()
         if info.get("Name")!="/"+container or not info.get("State",{}).get("Running"):
             raise RuntimeError("QA_DB_CONTAINER_NOT_RUNNING")
-        workdir_parts=re.split(r"[/\\]",workdir)
-        if labels.get("com.supabase.cli.project")!=project or workdir_parts[-2:]!=["review-results",project.removeprefix("ie307-")]:
+        workdir_parts=re.split(r"[/\\]",str(actual_workdir))
+        if (labels.get("com.supabase.cli.project")!=project_id
+                or workdir_parts[-2:]!=["review-results",project_id.removeprefix("ie307-")]
+                or not (actual_workdir.is_relative_to(ROOT/".work"/"ci") or actual_workdir.is_relative_to(ROOT/"review-results"))):
             raise RuntimeError("QA_DB_CONTAINER_OWNERSHIP_MISMATCH")
+        if workdir and Path(workdir).resolve()!=actual_workdir:
+            raise RuntimeError("QA_DB_WORKDIR_MISMATCH")
+        config=(actual_workdir/"supabase"/"config.toml").read_text(encoding="utf-8")
+        if (not re.search(r'^project_id\s*=\s*"'+re.escape(project_id)+r'"\s*$',config,re.M)
+                or not re.search(r'^port\s*=\s*54361\s*$',config,re.M)
+                or not re.search(r'^port\s*=\s*54362\s*$',config,re.M)):
+            raise RuntimeError("QA_DB_CONFIG_MISMATCH")
         image=info.get("Config",{}).get("Image","")
         if not image.startswith(("public.ecr.aws/supabase/postgres:17","ghcr.io/supabase/postgres:17","supabase/postgres:17")):
             raise RuntimeError("QA_DB_POSTGRES17_REQUIRED")
         self.container=container
         self.database="postgres"
         self.is_dish_v4_qa=True
-        self.qa_project_id=project
+        self.qa_project_id=project_id
         if not self.psql("select current_setting('server_version');").strip().startswith("17."):
             raise RuntimeError("QA_DB_POSTGRES17_REQUIRED")
 
@@ -59,7 +72,7 @@ class QAContainerDB:
 
 
 class ManifestQAContainerDB:
-    """Read/tick only the disposable QA project named by a sealed GM-03 manifest."""
+    """Read/tick only the project named by a sealed GM-03 runtime manifest."""
     def __init__(self, manifest_path, worker_nonce):
         self.manifest_path = Path(manifest_path).resolve(strict=True)
         self.manifest = json.loads(self.manifest_path.read_text(encoding='utf-8'))
@@ -82,7 +95,7 @@ class ManifestQAContainerDB:
         if not re.fullmatch(r'[0-9a-f-]{36}', self.owner_uuid or ''):
             raise ValueError('QA_OWNER_UUID_INVALID')
         result = run_hidden_process(['docker', 'inspect', self.container], capture_output=True, text=True,
-                                encoding='utf-8', timeout=20)
+                                    encoding='utf-8', timeout=20)
         if result.returncode:
             raise RuntimeError('QA_DB_CONTAINER_NOT_FOUND')
         info = json.loads(result.stdout)[0]
@@ -101,8 +114,8 @@ class ManifestQAContainerDB:
 
     def psql(self, sql):
         result = run_hidden_process(['docker', 'exec', '-i', self.container, 'psql', '-X', '-q', '-U', 'postgres',
-                                 '-d', 'postgres', '-v', 'ON_ERROR_STOP=1', '-v', 'VERBOSITY=sqlstate', '-At',
-                                 '-c', sql], capture_output=True, text=True, encoding='utf-8', timeout=60)
+                                     '-d', 'postgres', '-v', 'ON_ERROR_STOP=1', '-v', 'VERBOSITY=sqlstate', '-At'],
+                                    input=sql, capture_output=True, text=True, encoding='utf-8', timeout=60)
         if result.returncode:
             code = re.search(r'ERROR:\s+([0-9A-Z]{5})(?:[:\s]|$)', result.stderr)
             suffix = code.group(1) if code else 'PROCESS_' + str(result.returncode)
@@ -141,20 +154,19 @@ class ManifestQAContainerDB:
             'functions': json.loads(self.psql(function_sql)),
             'catalogues': json.loads(self.psql(catalogue_sql)),
         }
-        expected = self.manifest
         canonical = lambda value: json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(',', ':'))
-        if canonical(actual['migrationLedger']) != canonical(expected.get('migrationLedger')):
+        if canonical(actual['migrationLedger']) != canonical(self.manifest.get('migrationLedger')):
             raise RuntimeError('QA_DATABASE_MIGRATION_LEDGER_DRIFT')
-        if canonical(actual['schemaVersions']) != canonical(expected.get('schemaVersions')):
+        if canonical(actual['schemaVersions']) != canonical(self.manifest.get('schemaVersions')):
             raise RuntimeError('QA_DATABASE_SCHEMA_VERSIONS_DRIFT')
-        if canonical(actual['functions']) != canonical(expected.get('functions')):
+        if canonical(actual['functions']) != canonical(self.manifest.get('functions')):
             raise RuntimeError('QA_DATABASE_FUNCTION_DEFINITION_OR_ACL_DRIFT')
-        if canonical(actual['catalogues']) != canonical(expected.get('catalogues', {}).get('observed')):
+        expected_catalogues = self.manifest.get('catalogues', {}).get('observed')
+        if canonical(actual['catalogues']) != canonical(expected_catalogues):
             raise RuntimeError('QA_DATABASE_CATALOGUE_DRIFT')
         marker = self.psql("select owner_uuid::text from gm03_qa_private.owner_manifest where run_id='" + self.run_id + "';").strip()
         if marker != self.owner_uuid:
             raise RuntimeError('QA_DATABASE_OWNER_MARKER_MISMATCH')
-        self.manifest_inventory = actual
 
 
 def verify(db):
@@ -192,10 +204,7 @@ def verify(db):
         actual=db.psql("select encode(extensions.digest(convert_to(replace(p.prosrc,chr(13)||chr(10),chr(10)),'UTF8'),'sha256'),'hex') from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='"+name.split(".")[0]+"' and p.proname='"+name.split(".")[1]+"';").strip()
         if actual!=expected:
             raise RuntimeError("Deployed function differs from checked source: "+name+"; reconcile draft/ledger before running")
-        try:
-            safe=db.psql("select p.prosecdef and p.proconfig @> array['search_path=pg_catalog'] from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='"+name.split(".")[0]+"' and p.proname='"+name.split(".")[1]+"';").strip()
-        except RuntimeError as error:
-            raise RuntimeError('QA_WORKER_SECURITY_QUERY_FAILED_' + name.replace('.', '_') + '_' + str(error)) from None
+        safe=db.psql("select p.prosecdef and p.proconfig @> array['search_path=pg_catalog'] from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='"+name.split(".")[0]+"' and p.proname='"+name.split(".")[1]+"';").strip()
         if safe!="t": raise RuntimeError("Deployed security/search_path differs: "+name)
     return has_v4
 
@@ -203,30 +212,31 @@ def verify(db):
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--qa-db-container",help="Explicit disposable v4 QA container; rejects application DB names")
-    parser.add_argument("--qa-manifest",help="Sealed GM-03 disposable-QA manifest; verifies source, ledger, definitions and ownership")
-    parser.add_argument("--worker-nonce",help="Run-scoped process ownership nonce required with --qa-manifest")
+    parser.add_argument("--qa-manifest",help="Sealed GM-03 QA manifest; verifies source, ledger, definitions and ownership")
+    parser.add_argument("--worker-nonce",help="Run-scoped process nonce required with --qa-manifest")
+    parser.add_argument("--qa-project-id",help="Exact Supabase project id reported by Docker labels")
+    parser.add_argument("--qa-workdir",help="Exact isolated Supabase workdir; must be under .work/ci or review-results")
     args=parser.parse_args()
-    if args.qa_manifest and args.qa_db_container:
-        parser.error("choose either --qa-manifest or the legacy --qa-db-container QA adapter")
+    legacy_args = (args.qa_db_container, args.qa_project_id, args.qa_workdir)
     if args.qa_manifest:
-        if not args.worker_nonce:
-            parser.error("--worker-nonce is required with --qa-manifest")
+        if any(legacy_args) or not args.worker_nonce:
+            parser.error("--qa-manifest requires --worker-nonce and cannot be combined with CI QA arguments")
         db=ManifestQAContainerDB(args.qa_manifest,args.worker_nonce)
-        has_v4=verify(db)
-        if not has_v4:
-            raise RuntimeError("GM03 QA manifest requires the v4 policy runtime")
-        print("Dish policy worker: sealed GM-03 QA manifest verified; v3/v4 timeout reconciliation every second")
-    elif args.qa_db_container:
-        db=QAContainerDB(args.qa_db_container)
-        has_v4=verify(db)
-        print("Dish policy worker: verified legacy owned QA runtime, heartbeat and timeout reconcile every second")
+    elif any(legacy_args):
+        if not all(legacy_args) or args.worker_nonce:
+            parser.error("CI QA requires --qa-db-container, --qa-project-id and --qa-workdir")
+        db=QAContainerDB(args.qa_db_container,args.qa_project_id,args.qa_workdir)
     else:
+        if args.worker_nonce:
+            parser.error("--worker-nonce requires --qa-manifest")
         spec=importlib.util.spec_from_file_location("dish_food_db",ROOT/"supabase/seed/import_food_data.py")
         food=importlib.util.module_from_spec(spec)
         spec.loader.exec_module(food)
         db=food.LocalDB()
-        has_v4=verify(db)
-        print("Dish policy worker: verified local Supabase, heartbeat and timeout reconcile every second")
+    has_v4=verify(db)
+    if args.qa_manifest and not has_v4:
+        raise RuntimeError("GM03 QA manifest requires the v4 policy runtime")
+    print("Dish policy worker: verified local Supabase, heartbeat and timeout reconcile every second")
     try:
         while True:
             db.psql("select dish_v3_private.tick();")
