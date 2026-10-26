@@ -1,0 +1,85 @@
+name: BE and Data v4
+on:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  runtime:
+    name: GM-07.B disposable Auth and REST runtime
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - run: npm ci
+      - name: Install pinned contract validator (CI tooling only)
+        run: python -m pip install --requirement scripts/ci-requirements.txt
+      - name: Provision isolated QA, apply current migrations, import GM-40 and start worker
+        run: python scripts/dish_v4_ci.py setup
+      - name: Run response-driven v4 HTTP, privacy, timeout and schema assertions
+        if: success()
+        env:
+          GM_V4_PYTHON: python
+          GM_V4_REPORT_PATH: ${{ runner.temp }}/dish-v4-api-results.json
+        run: python scripts/dish_v4_ci.py run-api
+      - name: Stop the owned worker and remove only this QA project
+        if: always()
+        run: python scripts/dish_v4_ci.py cleanup
+      - name: Upload v4 runtime and API evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: dish-v4-runtime-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/dish-v4-ci-report.json
+            ${{ runner.temp }}/dish-v4-api-results.json
+            ${{ runner.temp }}/dish-v4-worker.stdout.log
+            ${{ runner.temp }}/dish-v4-worker.stderr.log
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Report final job state
+        if: always()
+        uses: ./.github/actions/ci-report
+        with:
+          name: dish-v4-runtime
+
+  gm40-importer:
+    name: GM-40 real draft bundle importer on disposable DB
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - run: npm ci
+      - name: Start this job's disposable Supabase project
+        run: npm run backend:start
+      - name: Run the maintained GM-40 validate/import/readback/restore checks
+        run: python scripts/gm40_catalogue_check.py --report "$RUNNER_TEMP/gm40-importer-results.json"
+      - name: Stop this job's Supabase project
+        if: always()
+        run: npm run backend:stop
+      - name: Upload GM-40 importer evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: gm40-importer-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/gm40-importer-results.json
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Report final job state
+        if: always()
+        uses: ./.github/actions/ci-report
+        with:
+          name: gm40-importer

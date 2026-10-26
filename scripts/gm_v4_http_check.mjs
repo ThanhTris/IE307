@@ -1,18 +1,25 @@
 import {spawnSync,execFileSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
+import {readFileSync,readdirSync} from 'node:fs';
 import {writeFile} from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import {resolve} from 'node:path';
-const root=process.cwd(), qa='review-results/dish-v4-qa-20261026', container='supabase_db_ie307-dish-v4-qa-20261026';
-const status=JSON.parse(spawnSync('node',['node_modules/supabase/dist/supabase.js','status','--output','json','--workdir',qa],{encoding:'utf8'}).stdout);
-const base=status.API_URL, key=status.ANON_KEY, contractVersion='dish-session-v4/roadmap-v2/GM-07.B';
+const root=process.cwd(), qa=process.env.GM_V4_QA_WORKDIR, project=process.env.GM_V4_QA_PROJECT_ID;
+assert.ok(qa&&project&&/^ie307-dish-v4-qa-\d{8}(?:-\d+-\d+)?$/.test(project),'QA setup must provide an isolated run project; refusing the app database');
+const container='supabase_db_'+project;
+const statusRun=spawnSync('node',['node_modules/supabase/dist/supabase.js','status','--output','json','--workdir',qa],{encoding:'utf8'});
+assert.equal(statusRun.status,0,'QA Supabase status failed; inspect the setup report');
+const status=JSON.parse(statusRun.stdout);
+const base=status.API_URL||status.api?.url, key=status.ANON_KEY||status.PUBLISHABLE_KEY, contractVersion='dish-session-v4/roadmap-v2/GM-07.B';
+assert.ok(base&&key,'QA Supabase status omitted the local API URL or publishable key');
 assert.equal(new URL(base).hostname,'127.0.0.1','QA API must bind to loopback');
 assert.equal(new URL(base).port,'54361','QA API must use the dedicated v4 port');
 const policyVersion='dish-decision-v4/ADR-019-30PCT-MIN1', pref={cuisineIds:[],categoryIds:[],temperature:null,flavor:null,budget:null,avoidRecent:false};
-const results=[];const users=[];
-function sql(q){const inspected=JSON.parse(execFileSync('docker',['inspect',container],{encoding:'utf8'}))[0];assert.equal(inspected.Config.Labels['com.supabase.cli.project'],'ie307-dish-v4-qa-20261026');assert.equal(inspected.State.Running,true);return execFileSync('docker',['exec','-i',container,'psql','-X','-q','-U','postgres','-d','postgres','-v','ON_ERROR_STOP=1','-At','-c',q],{encoding:'utf8'}).trim();}
-async function guest(name){const r=await fetch(base+'/auth/v1/signup',{method:'POST',headers:{apikey:key,'content-type':'application/json'},body:JSON.stringify({data:{display_name:name,gm07_v4_qa:'dish-v4-qa-20261026'}})});const b=await r.json();assert.equal(r.status,200,'guest signup failed '+r.status);assert.ok(b.access_token);const u={id:b.user.id,token:b.access_token,refresh:b.refresh_token};users.push(u);return u;}
-async function api(u,command,args={}){const payload={contractVersion,...args};const r=await fetch(base+'/rest/v1/rpc/dish_session',{method:'POST',headers:{apikey:key,...(u?{authorization:'Bearer '+u.token}:{}),'content-type':'application/json'},body:JSON.stringify({command,payload})});let body;try{body=await r.json();}catch{body={};}return {status:r.status,body};}
+const results=[];const users=[];const contractSamples=[];
+function sql(q){const inspected=JSON.parse(execFileSync('docker',['inspect',container],{encoding:'utf8'}))[0];assert.equal(inspected.Config.Labels['com.supabase.cli.project'],project);assert.equal(inspected.State.Running,true);return execFileSync('docker',['exec','-i',container,'psql','-X','-q','-U','postgres','-d','postgres','-v','ON_ERROR_STOP=1','-At','-c',q],{encoding:'utf8'}).trim();}
+async function guest(name){const r=await fetch(base+'/auth/v1/signup',{method:'POST',headers:{apikey:key,'content-type':'application/json'},body:JSON.stringify({data:{display_name:name,gm07_v4_qa:project}})});const b=await r.json();assert.equal(r.status,200,'guest signup failed '+r.status);assert.ok(b.access_token);const u={id:b.user.id,token:b.access_token,refresh:b.refresh_token};users.push(u);return u;}
+async function api(u,command,args={},options={}){const payload={contractVersion,...args},request={command,payload};const r=await fetch(base+'/rest/v1/rpc/dish_session',{method:'POST',headers:{apikey:key,...(u?{authorization:'Bearer '+u.token}:{}),'content-type':'application/json'},body:JSON.stringify(request)});let body;try{body=await r.json();}catch{body={};}contractSamples.push({request,response:body,...(options.requestValid===false?{requestValid:false}:{})});return {status:r.status,body};}
 async function legacyRpc(u,name,args={}){const r=await fetch(base+'/rest/v1/rpc/'+name,{method:'POST',headers:{apikey:key,...(u?{authorization:'Bearer '+u.token}:{}),'content-type':'application/json'},body:JSON.stringify(args)});let body;try{body=await r.json();}catch{body={};}return {status:r.status,body};}
 function pass(name,expected,actual){assert.deepEqual(actual,expected,name);results.push({case:name,result:'Pass',expected,actual});console.log('PASS',name);}
 function expectOk(response,name){assert.equal(response.status,200,name+' http '+response.status+' '+(response.body.error?.messageKey??response.body.message??''));assert.equal(response.body.ok,true,name+' rpc rejected '+(response.body.error?.messageKey??''));return response.body.data;}
@@ -25,18 +32,21 @@ async function join(u,code,name){return expectOk(await api(u,'join',{requestId:r
 function votesFor(pool,fn){return pool.map((d,i)=>({roundDishId:d.roundDishId,choice:fn(d,i)}));}
 function versionArgs(room,s,round){return {roomId:room,expectedVersion:s.version,round:s.round,poolVersion:s.poolVersion};}
 async function submit(u,room,s,votes,id){return api(u,'submit',{...versionArgs(room,s,s.round),requestId:id||requestId('submit'),votes});}
-async function setActive(id){const ns=sql('select namespace::text from public.gm40_qa_owner');assert.ok(ns);sql("update dish_v3_private.catalogues set active=false where active; update dish_v3_private.catalogues set active=true where id='"+id.replaceAll("'","''")+"';");}
+async function setActive(id){const ns=sql('select namespace::text from public.gm40_qa_owner');assert.equal(ns,process.env.GM_V4_OWNER_NAMESPACE,'QA fixture ownership marker must match this run');sql("update dish_v3_private.catalogues set active=false where active; update dish_v3_private.catalogues set active=true where id='"+id.replaceAll("'","''")+"';");}
 
 await waitWorker();
 assert.equal(sql("select count(*) from public.schema_versions where schema_version='0.9.1' and contract_id='dish-session-v4/roadmap-v2/GM-07.B';"),'1','v4 account-consent migration must be present in the owned QA database');
 const host=await guest('v4-host'), member=await guest('v4-member'), outsider=await guest('v4-outsider');
 // Real GM-40 catalogue shortage checks before switching to isolated synthetic coverage.
-await setActive('dish-catalogue-v1:1.1.0');
-for(const [meal,available] of [['dinner',7],['snack',1]]){
+const realRelease=process.env.GM_V4_REAL_RELEASE_ID,syntheticRelease=process.env.GM_V4_SYNTHETIC_RELEASE_ID;
+assert.ok(realRelease&&syntheticRelease,'QA catalogue releases must come from the setup manifest');
+await setActive(realRelease);
+const mealCount=meal=>Number(sql("select count(*) from dish_v3_private.catalogues c cross join lateral jsonb_array_elements(c.cards) as dishes(value) where c.id='"+realRelease.replaceAll("'","''")+"' and dishes.value->'mealSlots' ? '"+meal+"'"));
+for(const [meal,available] of [['dinner',mealCount('dinner')],['snack',mealCount('snack')]]){
  const err=expectFail(await api(host,'create',{requestId:requestId('shortage'),displayName:'QA host',settings:{dishCount:10,mealSlot:meal,desiredAt:null},preferences:pref}),'INSUFFICIENT_DISHES',409,'real catalogue shortage '+meal);
  pass('real catalogue reports exact availability '+meal,{available,requested:10},err.details);
 }
-await setActive('dish-catalogue-v1:qa-synthetic-2026-10-26');
+await setActive(syntheticRelease);
 
 // Default preference is account-scoped; room copy is member-only and ranking is explicitly unsupported.
 const before=expectOk(await api(member,'getDefaultPreferences'),'default preferences initial');
@@ -60,7 +70,7 @@ pass('host can request exactly 20 dishes',20,edit.settings.dishCount);
 let s2=await snapshot(host,roomId);pass('pool contains exactly 20 after settings change',20,s2.pool.length);assert.ok(s2.poolVersion>s1.poolVersion);
 edit=expectOk(await api(host,'updateSettings',{requestId:requestId('settings'),roomId,expectedVersion:s2.version,settings:{dishCount:10,mealSlot:'lunch',desiredAt:null}}),'restore settings 10');
 let s3=await snapshot(host,roomId);pass('pool contains exact requested 10',10,s3.pool.length);
-expectFail(await api(host,'updateSettings',{requestId:requestId('settings'),roomId,expectedVersion:s3.version,settings:{dishCount:21,mealSlot:'lunch',desiredAt:null}}),'INVALID_INPUT',400,'dish count 21 rejected');
+expectFail(await api(host,'updateSettings',{requestId:requestId('settings'),roomId,expectedVersion:s3.version,settings:{dishCount:21,mealSlot:'lunch',desiredAt:null}},{requestValid:false}),'INVALID_INPUT',400,'dish count 21 rejected');
 const prefAckRoom=expectOk(await api(host,'updatePreferences',{requestId:requestId('room-pref'),roomId,expectedVersion:s3.version,preferences:{...pref,temperature:'cold'}}),'update room preferences');
 const s4=await snapshot(host,roomId);pass('room preference change increments room version',s3.version+1,s4.version);pass('own preference is room-scoped','cold',s4.ownPreferences.temperature);
 
@@ -257,8 +267,19 @@ expectFail(overflow2,'ROOM_FULL',409,'21st member rejected');
 const inbox=await fetch(base+'/rest/v1/rpc/list_partner_inbox',{method:'POST',headers:{apikey:key,authorization:'Bearer '+member.token,'content-type':'application/json'},body:JSON.stringify({cursor:null})});
 const inboxBody=await inbox.json();pass('inbox API callable for authenticated member',200,inbox.status);
 
-const report={runId:'dish-v4-qa-20261026',target:'dedicated Supabase QA project ie307-dish-v4-qa-20261026',branch:'main',baseline:'dd12cd7d75d651726f27507746fc703daf114500',contractVersion,policyVersion,dataset:{realRelease:'dish-catalogue-v1:1.1.0',realCount:39,realMealCounts:{breakfast:14,lunch:23,dinner:7,snack:1},syntheticRelease:'dish-catalogue-v1:qa-synthetic-2026-10-26',syntheticCount:20,syntheticFixtureOnly:true},caseCount:results.length,cases:results,credentialsWritten:false,applicationDatabaseChanged:false};
-await writeFile(resolve(qa,'api-check-results.json'),JSON.stringify(report,null,2)+'\n','utf8');
-console.log(JSON.stringify({result:'PASS',caseCount:results.length,report:qa+'/api-check-results.json',applicationDatabaseChanged:false}));
+const schemaCheck=spawnSync(process.env.GM_V4_PYTHON||'python',['scripts/validate_dish_v4_schema.py','--schema','docs/architecture/schemas/dish-session-v4b.schema.json','--stdin'],{cwd:root,encoding:'utf8',input:JSON.stringify(contractSamples),maxBuffer:2*1024*1024});
+assert.equal(schemaCheck.status,0,'Actual GM-07.B HTTP request/response samples failed JSON Schema 2020-12 validation: '+(schemaCheck.stderr||'').slice(0,1200));
+const schemaSummary=JSON.parse(schemaCheck.stdout);assert.equal(schemaSummary.result,'Pass');
+results.push({case:'actual HTTP requests and responses validate as JSON Schema 2020-12',result:'Pass',expected:'all v4 dish_session envelopes valid',actual:{envelopesValidated:schemaSummary.envelopesValidated}});
+assert.ok(results.length>=82,'The established v4 coverage floor of 82 assertions must remain');
+const revision=execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim();
+const migrationPaths=readdirSync(resolve(root,'supabase/migrations')).filter(name=>name.endsWith('.sql')).sort().map(name=>'supabase/migrations/'+name);
+const hashedPaths=['docs/architecture/schemas/dish-session-v4b.schema.json','tests/fixtures/dish-catalogue-v1/qa-v4-synthetic.json','scripts/dish_policy_worker.py',...migrationPaths];
+const sourceHashes=Object.fromEntries(hashedPaths.map(path=>[path,createHash('sha256').update(readFileSync(resolve(root,path))).digest('hex')]));
+const realCount=Number(process.env.GM_V4_REAL_DISH_COUNT);
+const report={result:'Pass',runId:project,target:'dedicated Supabase QA project '+project,branch:process.env.GITHUB_REF_NAME||'local',sha:revision,contractVersion,policyVersion,schemaVersion:'0.9.1',schemaSha256:sourceHashes['docs/architecture/schemas/dish-session-v4b.schema.json'],sourceHashes,dataset:{realRelease,realSourceSha256:process.env.GM_V4_REAL_SOURCE_SHA256,realCount,realMealCounts:{breakfast:mealCount('breakfast'),lunch:mealCount('lunch'),dinner:mealCount('dinner'),snack:mealCount('snack')},syntheticRelease,syntheticSha256:process.env.GM_V4_SYNTHETIC_SHA256,syntheticCount:20,syntheticFixtureOnly:true},schemaValidation:schemaSummary,caseCount:results.length,cases:results,credentialsWritten:false,applicationDatabaseChanged:false};
+const reportPath=process.env.GM_V4_REPORT_PATH||resolve(qa,'api-check-results.json');
+await writeFile(reportPath,JSON.stringify(report,null,2)+'\n','utf8');
+console.log(JSON.stringify({result:'PASS',caseCount:results.length,contractEnvelopesValidated:schemaSummary.envelopesValidated,report:reportPath,applicationDatabaseChanged:false}));
 
 

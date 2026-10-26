@@ -1,5 +1,6 @@
 name: GM-18 eligibility and API
-on: [push, pull_request]
+on:
+  workflow_call:
 permissions:
   contents: read
 jobs:
@@ -8,12 +9,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '24'
           cache: npm
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: '3.12'
       - run: npm ci
@@ -34,13 +35,19 @@ jobs:
         run: node scripts/gm18_http_check.mjs
       - name: Upload assertions and tested source hashes
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: gm18-eligibility-api
           path: |
             ${{ runner.temp }}/gm18-sql-results.json
             docs/evidence/roadmap-v2/GM-18/integration/http-results.json
           if-no-files-found: warn
+          retention-days: 14
       - name: Stop local project
         if: always()
         run: npm run backend:stop
+      - name: Report final job state
+        if: always()
+        uses: ./.github/actions/ci-report
+        with:
+          name: gm18-eligibility

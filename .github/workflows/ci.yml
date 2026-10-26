@@ -1,0 +1,71 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+jobs:
+  repository:
+    name: Repository validation
+    uses: ./.github/workflows/documents.yml
+  mobile:
+    name: Mobile baseline
+    uses: ./.github/workflows/foundations.yml
+  decision:
+    name: Decision domain
+    uses: ./.github/workflows/decision.yml
+  dish_policy_legacy:
+    name: Legacy dish policy
+    uses: ./.github/workflows/dish-policy.yml
+  gm06_schema:
+    name: GM-06 schema
+    uses: ./.github/workflows/gm06-schema.yml
+  gm08_import:
+    name: GM-08 import
+    uses: ./.github/workflows/gm08-import.yml
+  gm18_eligibility:
+    name: GM-18 eligibility
+    uses: ./.github/workflows/gm18-eligibility.yml
+  portability:
+    name: CLI portability
+    uses: ./.github/workflows/gm20-cli.yml
+  gm21_history:
+    name: GM-21 history and consent
+    uses: ./.github/workflows/gm21-history.yml
+  dish_v4:
+    name: Dish v4 BE/Data
+    uses: ./.github/workflows/dish-v4.yml
+  required:
+    name: CI / required
+    if: always()
+    needs:
+      - repository
+      - mobile
+      - decision
+      - dish_policy_legacy
+      - gm06_schema
+      - gm08_import
+      - gm18_eligibility
+      - portability
+      - gm21_history
+      - dish_v4
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require every validation group
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          python - <<'PY'
+          import json, os, sys
+          results = json.loads(os.environ['RESULTS'])
+          failures = {name: job['result'] for name, job in results.items() if job['result'] != 'success'}
+          if failures:
+              print('Required CI groups failed or were skipped: ' + json.dumps(failures, sort_keys=True))
+              sys.exit(1)
+          print('All required CI groups passed.')
+          PY
