@@ -1,0 +1,29 @@
+meta {
+  name: 04 Member default preferences
+  type: http
+  seq: 4
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/dish_session
+  body: json
+  auth: none
+}
+headers {
+  Authorization: Bearer {{memberToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"command":"getDefaultPreferences","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B"}}
+}
+script:post-response {
+  const b = res.getBody();
+  if (res.getStatus() === 200 && b.ok) bru.setVar('memberPreferenceRevision', String(b.data.revision));
+}
+tests {
+  test('Reads only caller default preferences with explicit revision', () => {
+    const b = res.getBody();
+    expect(res.getStatus()).to.equal(200);
+    expect(b.ok).to.equal(true);
+    expect(b.data.revision).to.be.a('number');
+  });
+}

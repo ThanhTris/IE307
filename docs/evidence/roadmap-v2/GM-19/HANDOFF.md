@@ -40,3 +40,7 @@ passed all 50 sequential requests. The final owned fixture was stopped and
 reported `owned DB and guests removed`; see CHECKS.md and the evidence files for
 source hashes and the captured Runner output.
 Trí's final review remains pending; do not mark Done.
+
+## v4 account-consent supplement — 2026-10-26 (local QA candidate)
+
+For v4 only, account-level personal/group consent is inherited through the shared membership/admission path for host creation, direct join and invitation acceptance. The current account settings are synchronized again when the host starts, then each scope is frozen per member in the v4 session snapshot. Missing settings mean opt-out. Keep v2/v3 admission and consent semantics unchanged; already-started sessions are not granted new scopes. Migration 0029 implements a membership trigger plus start-time synchronization on the owned QA project; it is not merged or deployed. The 82-case local run is recorded in `review-results/dish-v4-qa-20261026/api-check-results.json` and does not replace GM-19's approved baseline or human review.

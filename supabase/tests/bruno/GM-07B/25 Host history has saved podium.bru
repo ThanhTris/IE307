@@ -1,0 +1,28 @@
+meta {
+  name: 25 Host history has saved podium
+  type: http
+  seq: 25
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/dish_session
+  body: json
+  auth: none
+}
+headers {
+  Authorization: Bearer {{hostToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"command":"history","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B"}}
+}
+tests {
+  test('History reuses the persisted result and keeps podium capped at three', () => {
+    const b = res.getBody();
+    const item = b.data.items.find(x => x.roomId === bru.getVar('roomId'));
+    expect(res.getStatus()).to.equal(200);
+    expect(item).to.exist;
+    expect(item.result.resultId).to.equal(bru.getVar('resultId'));
+    expect(item.result.topDishes).to.have.length(3);
+    expect(item.result.topDishes.some(d => d.isWinner)).to.equal(true);
+  });
+}

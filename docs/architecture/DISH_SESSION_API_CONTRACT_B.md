@@ -69,6 +69,12 @@ When round one is finalized, evaluate and persist a round-one winner before chec
 
 Persist result, winner, podium rows, score/rank versions, terminal room state and history/event references atomically or through the reviewed transactional outbox. Consumers never recalculate score from the current dataset or ballots.
 
+## Account-scoped history consent — schema 0.9.1 candidate
+
+The two history permissions are account settings (`personal` and `group`) managed by `update_history_consent`; a missing setting means opted out. For v4, host creation, direct join and invitation admission inherit the caller's currently enabled scope choices. Start synchronizes current account choices for the locked roster and freezes each scope independently in the session snapshot in the same transaction. A grant made after start applies only to later rooms. A revocation before result persistence suppresses and removes the affected scope without changing the winner, score or podium. Personal history is written for each member whose personal scope was locked and remains active; group history is written only when every locked roster member's group scope was locked and remains active. History reads return the stored result projection, including the same `resultId` and Top 3, subject to existing ACL, deletion and retention. No ballot details are included.
+
+This is a forward-only v4 behavior. Existing v2/v3 rooms and already-started v4 sessions keep their pinned consent snapshot; do not grant them retroactively or backfill completed sessions. Migration `0029_dish_v4_history_consent.sql` registers schema `0.9.1`; its current implementation is a local QA candidate only until reviewed and deployed. This section does not claim the proposed contract or runtime is approved/merged.
+
 ## Figma consumer contract
 
 The screen-to-contract mapping and Figma node references are in [FIGMA_BE_UI_DATA_ALIGNMENT_2026-10-24.md](../project/FIGMA_BE_UI_DATA_ALIGNMENT_2026-10-24.md). Result, history and notification consumers must read the same terminal projection. The API returns semantic ranks; the UI renders tied ranks at equal height and gives the selected winner a separate “Món được chọn” label. No mock restaurant/distance is returned as real data. The result screen uses Places-backed nearby restaurant/map content for the winning dish; opening Google Maps is a supplementary action, not a substitute for the in-app Places/map experience.

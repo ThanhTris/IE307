@@ -112,3 +112,7 @@ Trí must review this PR revision, storage delta, both gates and execution evide
 Remote CI for the updated unpublished patch and app deployment remain unverified.
 Historical `integration/` outputs describe the old independent phase; current
 results are under `gm20-integration/`. This is review readiness, not permission to merge.
+
+## v4 account-consent supplement — 2026-10-26 (local QA candidate)
+
+The historical “explicit scoped consent only in LOBBY” flow above is the earlier GM-21 baseline. For v4, users set independent `personal` and `group` choices at account scope; v4 admission/start inherits enabled settings, while a missing setting remains opt-out. Start atomically locks each enabled scope for each member. Post-start opt-in applies only to future rooms; revocation before finalize deletes/suppresses the affected scope. Personal rows belong to each opted-in member; group requires all locked members. History must return the persisted result projection with the same `resultId` and podium, and continue honoring ACL/delete/TTL. Do not rewrite v2/v3 or already-started v4 snapshots, and do not backfill completed rooms. Migration 0029/schema 0.9.1 and the expanded 82-case run are local QA evidence only, not PR approval or deployed runtime.

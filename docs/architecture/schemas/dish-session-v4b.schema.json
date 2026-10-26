@@ -42,7 +42,12 @@
         "waiting",
         "finalize",
         "cancel",
-        "leave"
+        "leave",
+        "getDefaultPreferences",
+        "updateDefaultPreferences",
+        "result",
+        "history",
+        "deleteHistory"
       ]
     },
     "mealSlot": {
@@ -249,6 +254,7 @@
     "createRequest": {
       "type": "object",
       "required": [
+        "contractVersion",
         "requestId",
         "displayName",
         "settings",
@@ -268,6 +274,10 @@
         },
         "preferences": {
           "$ref": "#/$defs/softPreferences"
+        },
+        "contractVersion": {
+          "type": "string",
+          "const": "dish-session-v4/roadmap-v2/GM-07.B"
         }
       },
       "additionalProperties": false
@@ -275,6 +285,7 @@
     "joinRequest": {
       "type": "object",
       "required": [
+        "contractVersion",
         "requestId",
         "code",
         "displayName"
@@ -292,6 +303,10 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 24
+        },
+        "contractVersion": {
+          "type": "string",
+          "const": "dish-session-v4/roadmap-v2/GM-07.B"
         }
       },
       "additionalProperties": false
@@ -299,11 +314,16 @@
     "snapshotRequest": {
       "type": "object",
       "required": [
+        "contractVersion",
         "roomId"
       ],
       "properties": {
         "roomId": {
           "$ref": "#/$defs/uuid"
+        },
+        "contractVersion": {
+          "type": "string",
+          "const": "dish-session-v4/roadmap-v2/GM-07.B"
         }
       },
       "additionalProperties": false
@@ -311,6 +331,7 @@
     "roomVersionRequest": {
       "type": "object",
       "required": [
+        "contractVersion",
         "requestId",
         "roomId",
         "expectedVersion"
@@ -325,6 +346,10 @@
         "expectedVersion": {
           "type": "integer",
           "minimum": 1
+        },
+        "contractVersion": {
+          "type": "string",
+          "const": "dish-session-v4/roadmap-v2/GM-07.B"
         }
       },
       "additionalProperties": false
@@ -334,6 +359,7 @@
         {
           "type": "object",
           "required": [
+            "contractVersion",
             "requestId",
             "roomId",
             "expectedVersion",
@@ -365,6 +391,10 @@
               "items": {
                 "$ref": "#/$defs/round1Vote"
               }
+            },
+            "contractVersion": {
+              "type": "string",
+              "const": "dish-session-v4/roadmap-v2/GM-07.B"
             }
           },
           "additionalProperties": false
@@ -372,6 +402,7 @@
         {
           "type": "object",
           "required": [
+            "contractVersion",
             "requestId",
             "roomId",
             "expectedVersion",
@@ -403,6 +434,10 @@
               "items": {
                 "$ref": "#/$defs/round2Vote"
               }
+            },
+            "contractVersion": {
+              "type": "string",
+              "const": "dish-session-v4/roadmap-v2/GM-07.B"
             }
           },
           "additionalProperties": false
@@ -412,6 +447,7 @@
     "waitingRequest": {
       "type": "object",
       "required": [
+        "contractVersion",
         "requestId",
         "roomId",
         "expectedVersion",
@@ -439,6 +475,10 @@
         "poolVersion": {
           "type": "integer",
           "minimum": 1
+        },
+        "contractVersion": {
+          "type": "string",
+          "const": "dish-session-v4/roadmap-v2/GM-07.B"
         }
       },
       "additionalProperties": false
@@ -625,6 +665,86 @@
               }
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "command": {
+                "const": "getDefaultPreferences"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "payload": {
+                "$ref": "#/$defs/defaultPreferencesRequest"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "command": {
+                "const": "updateDefaultPreferences"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "payload": {
+                "$ref": "#/$defs/updateDefaultPreferencesRequest"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "command": {
+                "const": "result"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "payload": {
+                "$ref": "#/$defs/resultRequest"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "command": {
+                "const": "history"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "payload": {
+                "$ref": "#/$defs/historyRequest"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "command": {
+                "const": "deleteHistory"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "payload": {
+                "$ref": "#/$defs/deleteHistoryRequest"
+              }
+            }
+          }
         }
       ]
     },
@@ -655,6 +775,8 @@
         "hostUserId",
         "settings",
         "ownPreferences",
+        "ownPreferenceRevision",
+        "preferenceRanking",
         "removalCap",
         "expiresAt",
         "canEndWaiting"
@@ -691,7 +813,8 @@
             "WAITING_2",
             "DECIDED",
             "NO_CONSENSUS",
-            "CANCELLED"
+            "CANCELLED",
+            "EXPIRED"
           ]
         },
         "version": {
@@ -806,6 +929,13 @@
         "ownPreferences": {
           "$ref": "#/$defs/softPreferences"
         },
+        "ownPreferenceRevision": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
         "removalCap": {
           "type": [
             "integer",
@@ -820,6 +950,9 @@
         "canEndWaiting": {
           "type": "boolean",
           "description": "True only for the host while this round is waiting and submittedCount > memberCount / 2; the server rechecks the action."
+        },
+        "preferenceRanking": {
+          "const": "UNSUPPORTED"
         }
       },
       "additionalProperties": false,
@@ -835,9 +968,6 @@
           "then": {
             "properties": {
               "round": {
-                "const": 1
-              },
-              "poolVersion": {
                 "const": 1
               },
               "pool": {
@@ -1381,10 +1511,24 @@
           "$ref": "#/$defs/timestamp"
         },
         "scoreVersion": {
-          "const": "want2-ok1-round1-v1"
+          "oneOf": [
+            {
+              "const": "want2-ok1-round1-v1"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "rankingVersion": {
-          "const": "score-desc-dense-rank-v1"
+          "oneOf": [
+            {
+              "const": "score-desc-dense-rank-v1"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "topDishes": {
           "type": "array",
@@ -1509,6 +1653,50 @@
               }
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "NO_CONSENSUS"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "scoreVersion": {
+                "type": "null"
+              },
+              "rankingVersion": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "DECIDED"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "scoreVersion": {
+                "const": "want2-ok1-round1-v1"
+              },
+              "rankingVersion": {
+                "const": "score-desc-dense-rank-v1"
+              }
+            }
+          }
         }
       ],
       "additionalProperties": false
@@ -1582,6 +1770,15 @@
             },
             {
               "$ref": "#/$defs/preferencesAck"
+            },
+            {
+              "$ref": "#/$defs/defaultPreferencesView"
+            },
+            {
+              "$ref": "#/$defs/defaultPreferencesAck"
+            },
+            {
+              "$ref": "#/$defs/historyPage"
             }
           ]
         }
@@ -1606,7 +1803,16 @@
         "INSUFFICIENT_DISHES",
         "RATE_LIMITED",
         "WORKER_NOT_READY",
-        "NOT_READY"
+        "NOT_READY",
+        "UNSUPPORTED_CONTRACT_VERSION",
+        "CATALOGUE_NOT_READY",
+        "CONTRACT_MISMATCH",
+        "ALREADY_SUBMITTED",
+        "REMOVE_LIMIT",
+        "RESULT_NOT_READY",
+        "INVALID_ROOM_STATE",
+        "NOT_ENOUGH_MEMBERS",
+        "CONFLICT"
       ],
       "description": "NOT_READY rejects a manual host early-end request before the current-round strict-majority gate is met."
     },
@@ -1951,6 +2157,7 @@
     "previewJoinRequest": {
       "type": "object",
       "required": [
+        "contractVersion",
         "requestId",
         "code"
       ],
@@ -1962,6 +2169,10 @@
           "type": "string",
           "minLength": 6,
           "maxLength": 6
+        },
+        "contractVersion": {
+          "type": "string",
+          "const": "dish-session-v4/roadmap-v2/GM-07.B"
         }
       },
       "additionalProperties": false
@@ -1969,6 +2180,7 @@
     "updateSettingsRequest": {
       "type": "object",
       "required": [
+        "contractVersion",
         "requestId",
         "roomId",
         "expectedVersion",
@@ -1987,6 +2199,10 @@
         },
         "settings": {
           "$ref": "#/$defs/roomSettings"
+        },
+        "contractVersion": {
+          "type": "string",
+          "const": "dish-session-v4/roadmap-v2/GM-07.B"
         }
       },
       "additionalProperties": false
@@ -1994,6 +2210,7 @@
     "updatePreferencesRequest": {
       "type": "object",
       "required": [
+        "contractVersion",
         "requestId",
         "roomId",
         "expectedVersion",
@@ -2012,6 +2229,13 @@
         },
         "preferences": {
           "$ref": "#/$defs/softPreferences"
+        },
+        "contractVersion": {
+          "type": "string",
+          "const": "dish-session-v4/roadmap-v2/GM-07.B"
+        },
+        "historyConsent": {
+          "type": "boolean"
         }
       },
       "additionalProperties": false
@@ -2055,7 +2279,8 @@
             "WAITING_2",
             "DECIDED",
             "NO_CONSENSUS",
-            "CANCELLED"
+            "CANCELLED",
+            "EXPIRED"
           ]
         },
         "reasonCode": {
@@ -2139,6 +2364,226 @@
         },
         "isWinner": {
           "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "defaultPreferencesRequest": {
+      "type": "object",
+      "required": [
+        "contractVersion"
+      ],
+      "properties": {
+        "contractVersion": {
+          "type": "string",
+          "const": "dish-session-v4/roadmap-v2/GM-07.B"
+        }
+      },
+      "additionalProperties": false
+    },
+    "updateDefaultPreferencesRequest": {
+      "type": "object",
+      "required": [
+        "contractVersion",
+        "requestId",
+        "expectedRevision",
+        "preferences"
+      ],
+      "properties": {
+        "contractVersion": {
+          "type": "string",
+          "const": "dish-session-v4/roadmap-v2/GM-07.B"
+        },
+        "requestId": {
+          "$ref": "#/$defs/requestId"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "preferences": {
+          "$ref": "#/$defs/softPreferences"
+        }
+      },
+      "additionalProperties": false
+    },
+    "resultRequest": {
+      "type": "object",
+      "required": [
+        "contractVersion",
+        "roomId"
+      ],
+      "properties": {
+        "contractVersion": {
+          "type": "string",
+          "const": "dish-session-v4/roadmap-v2/GM-07.B"
+        },
+        "roomId": {
+          "$ref": "#/$defs/uuid"
+        }
+      },
+      "additionalProperties": false
+    },
+    "historyRequest": {
+      "type": "object",
+      "required": [
+        "contractVersion"
+      ],
+      "properties": {
+        "contractVersion": {
+          "type": "string",
+          "const": "dish-session-v4/roadmap-v2/GM-07.B"
+        }
+      },
+      "additionalProperties": false
+    },
+    "deleteHistoryRequest": {
+      "type": "object",
+      "required": [
+        "contractVersion",
+        "requestId",
+        "historyId"
+      ],
+      "properties": {
+        "contractVersion": {
+          "type": "string",
+          "const": "dish-session-v4/roadmap-v2/GM-07.B"
+        },
+        "requestId": {
+          "$ref": "#/$defs/requestId"
+        },
+        "historyId": {
+          "$ref": "#/$defs/uuid"
+        }
+      },
+      "additionalProperties": false
+    },
+    "defaultPreferencesView": {
+      "type": "object",
+      "required": [
+        "revision",
+        "preferences"
+      ],
+      "properties": {
+        "revision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "preferences": {
+          "$ref": "#/$defs/softPreferences"
+        }
+      },
+      "additionalProperties": false
+    },
+    "defaultPreferencesAck": {
+      "type": "object",
+      "required": [
+        "accepted",
+        "revision",
+        "preferences"
+      ],
+      "properties": {
+        "accepted": {
+          "const": true
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "preferences": {
+          "$ref": "#/$defs/softPreferences"
+        }
+      },
+      "additionalProperties": false
+    },
+    "historyPage": {
+      "type": "object",
+      "required": [
+        "items"
+      ],
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "historyId",
+              "roomId",
+              "resultId",
+              "scope",
+              "createdAt",
+              "expiresAt",
+              "result"
+            ],
+            "properties": {
+              "historyId": {
+                "$ref": "#/$defs/uuid"
+              },
+              "roomId": {
+                "$ref": "#/$defs/uuid"
+              },
+              "resultId": {
+                "$ref": "#/$defs/uuid"
+              },
+              "scope": {
+                "enum": [
+                  "personal",
+                  "group"
+                ]
+              },
+              "createdAt": {
+                "$ref": "#/$defs/timestamp"
+              },
+              "expiresAt": {
+                "$ref": "#/$defs/timestamp"
+              },
+              "result": {
+                "type": "object",
+                "required": [
+                  "status"
+                ],
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "DECIDED",
+                      "NO_CONSENSUS"
+                    ]
+                  },
+                  "winner": {
+                    "oneOf": [
+                      {
+                        "type": "null"
+                      },
+                      {
+                        "$ref": "#/$defs/poolDish"
+                      }
+                    ]
+                  },
+                  "topDishes": {
+                    "type": "array",
+                    "maxItems": 3,
+                    "items": {
+                      "$ref": "#/$defs/topDish"
+                    }
+                  },
+                  "scoreVersion": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "rankingVersion": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "additionalProperties": true
+              }
+            },
+            "additionalProperties": false
+          }
         }
       },
       "additionalProperties": false
