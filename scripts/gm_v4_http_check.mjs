@@ -1,16 +1,21 @@
 import {spawnSync,execFileSync} from 'node:child_process';
-import {writeFile} from 'node:fs/promises';
+import {readFile,writeFile} from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import {resolve} from 'node:path';
-const root=process.cwd(), qa='review-results/dish-v4-qa-20261026', container='supabase_db_ie307-dish-v4-qa-20261026';
-const status=JSON.parse(spawnSync('node',['node_modules/supabase/dist/supabase.js','status','--output','json','--workdir',qa],{encoding:'utf8'}).stdout);
+const root=process.cwd(), qa=process.env.GM03_QA_WORKDIR, manifestPath=process.env.GM03_QA_MANIFEST;
+assert.ok(qa&&manifestPath,'Use the GM-03 owned QA runner. The dated app/QA workdir is not a fallback.');
+const manifest=JSON.parse(await readFile(manifestPath,'utf8'));
+const container=manifest.containerName;
+assert.equal(manifest.format,'gm03-qa-manifest-v1');
+const status=JSON.parse(spawnSync(process.execPath,[resolve(root,'node_modules/supabase/dist/supabase.js'),'status','--output','json','--workdir',qa],{encoding:'utf8'}).stdout);
 const base=status.API_URL, key=status.ANON_KEY, contractVersion='dish-session-v4/roadmap-v2/GM-07.B';
 assert.equal(new URL(base).hostname,'127.0.0.1','QA API must bind to loopback');
-assert.equal(new URL(base).port,'54361','QA API must use the dedicated v4 port');
+assert.equal(new URL(base).port,String(manifest.endpoint.apiPort),'QA API must use the owned GM-03 port');
+assert.equal(base,manifest.endpoint.baseUrl,'QA API origin must match the sealed manifest');
 const policyVersion='dish-decision-v4/ADR-019-30PCT-MIN1', pref={cuisineIds:[],categoryIds:[],temperature:null,flavor:null,budget:null,avoidRecent:false};
 const results=[];const users=[];
-function sql(q){const inspected=JSON.parse(execFileSync('docker',['inspect',container],{encoding:'utf8'}))[0];assert.equal(inspected.Config.Labels['com.supabase.cli.project'],'ie307-dish-v4-qa-20261026');assert.equal(inspected.State.Running,true);return execFileSync('docker',['exec','-i',container,'psql','-X','-q','-U','postgres','-d','postgres','-v','ON_ERROR_STOP=1','-At','-c',q],{encoding:'utf8'}).trim();}
+function sql(q){const inspected=JSON.parse(execFileSync('docker',['inspect',container],{encoding:'utf8'}))[0];const labels=inspected.Config.Labels||{};assert.equal(labels['com.supabase.cli.project'],manifest.projectId);assert.equal(String(labels['com.supabase.cli.workdir']||'').replaceAll('\\','/').toLowerCase(),String(manifest.workdir).replaceAll('\\','/').toLowerCase());assert.equal(inspected.State.Running,true);const owner=execFileSync('docker',['exec','-i',container,'psql','-X','-q','-U','postgres','-d','postgres','-v','ON_ERROR_STOP=1','-At','-c',"select owner_uuid::text from gm03_qa_private.owner_manifest where run_id='"+manifest.runId.replaceAll("'","''")+"';"],{encoding:'utf8'}).trim();assert.equal(owner,manifest.ownerUuid);return execFileSync('docker',['exec','-i',container,'psql','-X','-q','-U','postgres','-d','postgres','-v','ON_ERROR_STOP=1','-At','-c',q],{encoding:'utf8'}).trim();}
 async function guest(name){const r=await fetch(base+'/auth/v1/signup',{method:'POST',headers:{apikey:key,'content-type':'application/json'},body:JSON.stringify({data:{display_name:name,gm07_v4_qa:'dish-v4-qa-20261026'}})});const b=await r.json();assert.equal(r.status,200,'guest signup failed '+r.status);assert.ok(b.access_token);const u={id:b.user.id,token:b.access_token,refresh:b.refresh_token};users.push(u);return u;}
 async function api(u,command,args={}){const payload={contractVersion,...args};const r=await fetch(base+'/rest/v1/rpc/dish_session',{method:'POST',headers:{apikey:key,...(u?{authorization:'Bearer '+u.token}:{}),'content-type':'application/json'},body:JSON.stringify({command,payload})});let body;try{body=await r.json();}catch{body={};}return {status:r.status,body};}
 async function legacyRpc(u,name,args={}){const r=await fetch(base+'/rest/v1/rpc/'+name,{method:'POST',headers:{apikey:key,...(u?{authorization:'Bearer '+u.token}:{}),'content-type':'application/json'},body:JSON.stringify(args)});let body;try{body=await r.json();}catch{body={};}return {status:r.status,body};}
@@ -25,7 +30,7 @@ async function join(u,code,name){return expectOk(await api(u,'join',{requestId:r
 function votesFor(pool,fn){return pool.map((d,i)=>({roundDishId:d.roundDishId,choice:fn(d,i)}));}
 function versionArgs(room,s,round){return {roomId:room,expectedVersion:s.version,round:s.round,poolVersion:s.poolVersion};}
 async function submit(u,room,s,votes,id){return api(u,'submit',{...versionArgs(room,s,s.round),requestId:id||requestId('submit'),votes});}
-async function setActive(id){const ns=sql('select namespace::text from public.gm40_qa_owner');assert.ok(ns);sql("update dish_v3_private.catalogues set active=false where active; update dish_v3_private.catalogues set active=true where id='"+id.replaceAll("'","''")+"';");}
+async function setActive(id){const ns=sql("select owner_uuid::text from gm03_qa_private.owner_manifest where run_id='"+manifest.runId.replaceAll("'","''")+"'");assert.equal(ns,manifest.ownerUuid);sql("update dish_v3_private.catalogues set active=false where active; update dish_v3_private.catalogues set active=true where id='"+id.replaceAll("'","''")+"';");}
 
 await waitWorker();
 assert.equal(sql("select count(*) from public.schema_versions where schema_version='0.9.1' and contract_id='dish-session-v4/roadmap-v2/GM-07.B';"),'1','v4 account-consent migration must be present in the owned QA database');
@@ -36,7 +41,7 @@ for(const [meal,available] of [['dinner',7],['snack',1]]){
  const err=expectFail(await api(host,'create',{requestId:requestId('shortage'),displayName:'QA host',settings:{dishCount:10,mealSlot:meal,desiredAt:null},preferences:pref}),'INSUFFICIENT_DISHES',409,'real catalogue shortage '+meal);
  pass('real catalogue reports exact availability '+meal,{available,requested:10},err.details);
 }
-await setActive('dish-catalogue-v1:qa-synthetic-2026-10-26');
+await setActive(manifest.catalogues.synthetic.releaseId);
 
 // Default preference is account-scoped; room copy is member-only and ranking is explicitly unsupported.
 const before=expectOk(await api(member,'getDefaultPreferences'),'default preferences initial');
@@ -257,7 +262,8 @@ expectFail(overflow2,'ROOM_FULL',409,'21st member rejected');
 const inbox=await fetch(base+'/rest/v1/rpc/list_partner_inbox',{method:'POST',headers:{apikey:key,authorization:'Bearer '+member.token,'content-type':'application/json'},body:JSON.stringify({cursor:null})});
 const inboxBody=await inbox.json();pass('inbox API callable for authenticated member',200,inbox.status);
 
-const report={runId:'dish-v4-qa-20261026',target:'dedicated Supabase QA project ie307-dish-v4-qa-20261026',branch:'main',baseline:'dd12cd7d75d651726f27507746fc703daf114500',contractVersion,policyVersion,dataset:{realRelease:'dish-catalogue-v1:1.1.0',realCount:39,realMealCounts:{breakfast:14,lunch:23,dinner:7,snack:1},syntheticRelease:'dish-catalogue-v1:qa-synthetic-2026-10-26',syntheticCount:20,syntheticFixtureOnly:true},caseCount:results.length,cases:results,credentialsWritten:false,applicationDatabaseChanged:false};
+await setActive(manifest.catalogues.real.releaseId);
+const report={runId:manifest.runId,target:`owned Supabase QA project ${manifest.projectId}`,branch:manifest.branch,baseline:manifest.sourceRevision,contractVersion,policyVersion,dataset:{realRelease:manifest.catalogues.real.releaseId,realCount:manifest.catalogues.real.count,realFixtureOnly:manifest.catalogues.real.fixtureOnly,syntheticRelease:manifest.catalogues.synthetic.releaseId,syntheticCount:manifest.catalogues.synthetic.count,syntheticFixtureOnly:manifest.catalogues.synthetic.fixtureOnly},caseCount:results.length,cases:results,credentialsWritten:false,applicationDatabaseChanged:false};
 await writeFile(resolve(qa,'api-check-results.json'),JSON.stringify(report,null,2)+'\n','utf8');
 console.log(JSON.stringify({result:'PASS',caseCount:results.length,report:qa+'/api-check-results.json',applicationDatabaseChanged:false}));
 

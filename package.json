@@ -10,7 +10,14 @@
     "backend:smoke": "node scripts/backend.mjs smoke",
     "backend:test": "node scripts/backend.mjs test",
     "backend:reset:local": "node scripts/backend.mjs reset",
-    "test": "node --test tests/backend-runner.test.mjs"
+    "qa:start": "node scripts/backend-qa.mjs start",
+    "qa:status": "node scripts/backend-qa.mjs status",
+    "qa:verify": "node scripts/backend-qa.mjs verify",
+    "qa:test": "node scripts/backend-qa.mjs test",
+    "qa:worker-start": "node scripts/backend-qa.mjs worker-start",
+    "qa:worker-stop": "node scripts/backend-qa.mjs worker-stop",
+    "qa:stop": "node scripts/backend-qa.mjs stop",
+    "test": "node --test tests/backend-runner.test.mjs tests/backend-qa.test.mjs"
   },
   "devDependencies": { "supabase": "2.120.0" }
 }
