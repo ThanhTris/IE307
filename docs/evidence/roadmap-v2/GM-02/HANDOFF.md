@@ -1,5 +1,11 @@
 # GM-02 — UI foundation handoff
 
+## Supplement 2026-10-26 — font foundation
+
+The current PR adds local Inter 4.1 static weights 400/500/600/700 and an `AppFontProvider` that loads them through Expo Font while keeping system-font fallback available. The provider wraps the existing app providers without gating navigation/session startup. `/foundation` demonstrates the four weights and loading/fallback state; Figma node screenshots and asset/license hashes are linked in [FIGMA_PARITY](FIGMA_PARITY.md).
+
+Expo dependencies were upgraded from SDK 57 to SDK 58 at the owner's request. Compatibility checks, Android rendering, navigation, font scaling and TalkBack checks have **not** been run on this revision; the older SDK 57 evidence below does not validate it. The owner requested deferring UI verification until the UI tasks are ready. Treat this as implementation handoff only, not GM-02 acceptance.
+
 2026-10-10. Contract `food-v1/roadmap-v2/GM-02.1`. Owner Tuấn/reviewer ThanhTris; Codex hỗ trợ triển khai theo yêu cầu. Trạng thái: implementation local đang review, chưa Approved/Done; assignment đã accepted theo yêu cầu triển khai. Base `4f154af714411e81351e7761ceca281b1436fa68` + working tree, chưa commit/PR mới.
 
 Input: GM-01 roadmap-v2/GM-01.1 và cấu trúc/stack/package được chủ dự án xác nhận, [review](../GM-01/REVIEW.md). Không nhập capability spike sandbox hoặc chờ data/API nghiệp vụ.

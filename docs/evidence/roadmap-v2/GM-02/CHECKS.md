@@ -1,5 +1,17 @@
 # GM-02 — output checks
 
+## Supplement 2026-10-26 — Inter foundation implementation
+
+This supplement records the new implementation on top of the current `main` baseline; it does not replace the historical SDK 57 checks below. GM-02 adds bundled Inter 4.1 weights 400/500/600/700, an Expo Font provider with system-font fallback, `/foundation` samples, and Figma node evidence. The project dependencies were also upgraded to Expo SDK 58 at the owner's request.
+
+| Case | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| Font asset/source and mapping | Licensed local assets for all four weights and a stable public mapping | Inter assets, license, hashes, and provider mapping added | Implemented; not runtime-verified |
+| SDK 58 dependency compatibility | Expo SDK 58 compatible dependency tree and clean project checks | Package manifest/lockfile updated; compatibility/typecheck/lint/Jest/bundle were not run after the upgrade | Not run |
+| Android UI parity | `/foundation` and shell render Inter correctly on Android, including navigation/accessibility checks | No Android UI run or screenshot for this revision | Not run |
+
+Do not treat the historical SDK 57 results below as validation of the SDK 58 revision. Follow-up UI-task verification is intentionally deferred; no GM-02 runtime/device acceptance is claimed here.
+
 2026-10-10. Owner Tuấn/reviewer ThanhTris; Codex hỗ trợ theo yêu cầu chủ dự án. Contract `food-v1/roadmap-v2/GM-02.1`; input GM-01 đã duyệt theo hội thoại. Tested revision: working tree trên `4f154af714411e81351e7761ceca281b1436fa68`, chưa commit mới. Windows, Node24.15.0/npm11.12.1; Expo57.0.27, React19.2.3/RN0.86.3; package versions tại [dependencies](DEPENDENCIES.md). Không auth/API/dataset thật.
 
 | Case | Command/route/input | Expected | Actual | Kết quả |

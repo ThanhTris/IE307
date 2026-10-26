@@ -2,6 +2,8 @@
 
 Expo SDK 57 + Expo Router + TypeScript strict. Có shell `/`, `/foundation`, `+not-found`, preview component GM-05, client/mock GM-07, auth/session GM-16 và domain GM-15/18. Harness `/internal/gm16` chỉ development và cần cấu hình theo [auth README](src/data/auth/README.md); không là màn sản phẩm. Màn tạo/join/context/vote và tích hợp Android còn theo GM-09..14/24..31; camera/push/SQLite chưa được coi hoàn thành.
 
+GM-02 bundles Inter 4.1 static weights 400/500/600/700 under `assets/fonts/` (SIL OFL 1.1; hashes in `assets/fonts/SOURCE.md`). `AppFontProvider` loads through Expo Font at runtime and always renders children with system weights while loading or after an error. It does not gate or remount Expo Router/session providers. GM-05 may use `useAppFonts()` for the family-to-weight map and readiness state; typography tokens/components remain GM-05's scope. `/foundation` includes Vietnamese samples for all four weights and the load/fallback status. Figma screenshots, node notes and scope boundaries are recorded in [GM-02 Figma parity](../docs/evidence/roadmap-v2/GM-02/FIGMA_PARITY.md).
+
 ## Chạy từ clone sạch
 
 GM-10 mới tách **Ngày ăn** (bấm mở lựa chọn/ngày khác) và **Giờ ăn** `HH:mm`, có ngân sách riêng và ô xác nhận xanh. Đổi ngày/giờ/budget cần xác nhận/xem món lại; xem [đối chiếu bugs.md mới](../docs/evidence/roadmap-v2/GM-10/DATE_UI_REVIEW.md).

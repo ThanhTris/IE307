@@ -1,6 +1,7 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
+import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 
 type Props = {
   onOpenFoundation: () => void;
@@ -13,36 +14,37 @@ type Props = {
 
 export function AppShellScreen({ onOpenFoundation, onOpenGm16, onOpenVoting, onOpenRoomSetup, onOpenGm24, onOpenGm25 }: Props) {
   const { colors } = useShellTheme();
+  const { textStyle } = useAppFonts();
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={[styles.eyebrow, { color: colors.primary }]}>GÌ CŨNG ĐƯỢC</Text>
-        <Text accessibilityRole="header" style={[styles.title, { color: colors.text }]}>Chọn một món.{ '\n' }Vui cả nhóm.</Text>
-        <Text style={[styles.body, { color: colors.muted }]}>Không cần tranh luận ăn gì. Cùng chọn món phù hợp cho cả nhóm.</Text>
+        <Text style={[styles.eyebrow, { color: colors.primary }, textStyle(700)]}>GÌ CŨNG ĐƯỢC</Text>
+        <Text accessibilityRole="header" style={[styles.title, { color: colors.text }, textStyle(700)]}>Chọn một món.{ '\n' }Vui cả nhóm.</Text>
+        <Text style={[styles.body, { color: colors.muted }, textStyle(400)]}>Không cần tranh luận ăn gì. Cùng chọn món phù hợp cho cả nhóm.</Text>
         <View style={[styles.panel, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          <Text accessibilityRole="header" style={[styles.heading, { color: colors.text }]}>Nền ứng dụng đã sẵn sàng</Text>
-          <Text style={[styles.body, { color: colors.muted }]}>Bản GM-02 chỉ có app shell và điều hướng. Tạo phòng, chọn món và kết quả sẽ được triển khai trong các task tiếp theo.</Text>
-          <Text style={[styles.body, { color: colors.muted }]}>Chưa kết nối API. Không yêu cầu tài khoản hay quyền vị trí để mở bản nền này.</Text>
+          <Text accessibilityRole="header" style={[styles.heading, { color: colors.text }, textStyle(600)]}>Nền ứng dụng đã sẵn sàng</Text>
+          <Text style={[styles.body, { color: colors.muted }, textStyle(400)]}>Bản GM-02 chỉ có app shell và điều hướng. Tạo phòng, chọn món và kết quả sẽ được triển khai trong các task tiếp theo.</Text>
+          <Text style={[styles.body, { color: colors.muted }, textStyle(400)]}>Chưa kết nối API. Không yêu cầu tài khoản hay quyền vị trí để mở bản nền này.</Text>
         </View>
         <Pressable accessibilityRole="button" accessibilityLabel="Xem cấu trúc ứng dụng" onPress={onOpenFoundation} style={({ pressed }) => [styles.button, { backgroundColor: colors.primary, opacity: pressed ? 0.8 : 1 }]}>
-          <Text style={[styles.buttonLabel, { color: colors.onPrimary }]}>Xem cấu trúc ứng dụng</Text>
+          <Text style={[styles.buttonLabel, { color: colors.onPrimary }, textStyle(600)]}>Xem cấu trúc ứng dụng</Text>
         </Pressable>
         {onOpenRoomSetup && <Pressable accessibilityRole="button" accessibilityLabel="Chọn điểm ăn và khẩu vị" onPress={onOpenRoomSetup} style={({ pressed }) => [styles.button, { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, opacity: pressed ? 0.8 : 1 }]}>
-          <Text style={[styles.buttonLabel, { color: colors.text }]}>Chọn điểm ăn và khẩu vị · mô phỏng</Text>
+          <Text style={[styles.buttonLabel, { color: colors.text }, textStyle(600)]}>Chọn điểm ăn và khẩu vị · mô phỏng</Text>
         </Pressable>}
         {onOpenGm24 && <Pressable accessibilityRole="button" accessibilityLabel="Mở vị trí và bối cảnh GM-24" onPress={onOpenGm24} style={({ pressed }) => [styles.button, { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, opacity: pressed ? 0.8 : 1 }]}>
-          <Text style={[styles.buttonLabel, { color: colors.text }]}>Mở vị trí & bối cảnh GM-24</Text>
+          <Text style={[styles.buttonLabel, { color: colors.text }, textStyle(600)]}>Mở vị trí & bối cảnh GM-24</Text>
         </Pressable>}
         {onOpenVoting && <Pressable accessibilityRole="button" accessibilityLabel="Mở bình chọn GM-12" onPress={onOpenVoting} style={({ pressed }) => [styles.button, { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, opacity: pressed ? 0.8 : 1 }]}>
-          <Text style={[styles.buttonLabel, { color: colors.text }]}>Mở bình chọn GM-12 (Vòng 1 & 2)</Text>
+          <Text style={[styles.buttonLabel, { color: colors.text }, textStyle(600)]}>Mở bình chọn GM-12 (Vòng 1 & 2)</Text>
         </Pressable>}
         {onOpenGm25 && <Pressable accessibilityRole="button" accessibilityLabel="Kiểm tra luồng GM-25" onPress={onOpenGm25} style={({ pressed }) => [styles.button, { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, opacity: pressed ? 0.8 : 1 }]}>
-          <Text style={[styles.buttonLabel, { color: colors.text }]}>Kiểm tra luồng UI–BE (GM-25)</Text>
+          <Text style={[styles.buttonLabel, { color: colors.text }, textStyle(600)]}>Kiểm tra luồng UI–BE (GM-25)</Text>
         </Pressable>}
         {onOpenGm16 && <Pressable accessibilityRole="button" accessibilityLabel="Mở kiểm thử GM-16" onPress={onOpenGm16} style={({ pressed }) => [styles.button, { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, opacity: pressed ? 0.8 : 1 }]}>
-          <Text style={[styles.buttonLabel, { color: colors.text }]}>Mở kiểm thử GM-16</Text>
+          <Text style={[styles.buttonLabel, { color: colors.text }, textStyle(600)]}>Mở kiểm thử GM-16</Text>
         </Pressable>}
-        <Text style={[styles.caption, { color: colors.muted }]}>Expo Go · Android-first · GM-02</Text>
+        <Text style={[styles.caption, { color: colors.muted }, textStyle(400)]}>Expo Go · Android-first · GM-02</Text>
       </ScrollView>
     </SafeAreaView>
   );
