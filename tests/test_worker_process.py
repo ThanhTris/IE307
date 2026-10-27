@@ -1,5 +1,7 @@
 """Regression for recurring worker commands flashing Windows console windows."""
 import importlib.util
+import hashlib
+import json
 from pathlib import Path
 import subprocess
 import unittest
@@ -12,6 +14,23 @@ spec.loader.exec_module(worker)
 
 
 class WorkerProcessTests(unittest.TestCase):
+    def test_manifest_schema_tracks_current_consent_patch(self):
+        manifest = {'format': 'gm03-qa-manifest-v1', 'schemaVersion': '0.9.2',
+                    'contractVersion': 'dish-session-v4/roadmap-v2/GM-07.B'}
+        manifest['sealSha256'] = hashlib.sha256(json.dumps(manifest, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+        db = worker.ManifestQAContainerDB.__new__(worker.ManifestQAContainerDB)
+        db.manifest = manifest
+        db._verify_manifest_file()
+
+    def test_old_schema_manifest_is_rejected_even_with_valid_seal(self):
+        manifest = {'format': 'gm03-qa-manifest-v1', 'schemaVersion': '0.9.1',
+                    'contractVersion': 'dish-session-v4/roadmap-v2/GM-07.B'}
+        manifest['sealSha256'] = hashlib.sha256(json.dumps(manifest, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+        db = worker.ManifestQAContainerDB.__new__(worker.ManifestQAContainerDB)
+        db.manifest = manifest
+        with self.assertRaisesRegex(ValueError, 'QA_MANIFEST_VERSION_INVALID'):
+            db._verify_manifest_file()
+
     def test_both_qa_tick_adapters_hide_windows_console_and_keep_output(self):
         for adapter in (worker.QAContainerDB, worker.ManifestQAContainerDB):
             with self.subTest(adapter=adapter.__name__):

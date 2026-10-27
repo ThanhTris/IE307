@@ -127,7 +127,7 @@ class ManifestQAContainerDB:
 
     def _verify_manifest_file(self):
         manifest = self.manifest
-        if manifest.get('format') != 'gm03-qa-manifest-v1' or manifest.get('schemaVersion') != '0.9.1':
+        if manifest.get('format') != 'gm03-qa-manifest-v1' or manifest.get('schemaVersion') != '0.9.2':
             raise ValueError('QA_MANIFEST_VERSION_INVALID')
         if manifest.get('contractVersion') != 'dish-session-v4/roadmap-v2/GM-07.B':
             raise ValueError('QA_MANIFEST_CONTRACT_INVALID')
@@ -177,6 +177,7 @@ def verify(db):
     source=(ROOT/"supabase/migrations/0026_dish_session_policy.sql").read_text(encoding="utf-8")
     has_v4=db.psql("select count(*) from public.schema_versions where schema_version='0.9.0' and contract_id='dish-session-v4/roadmap-v2/GM-07.B';").strip()=="1"
     has_v4_consent=db.psql("select count(*) from public.schema_versions where schema_version='0.9.1' and contract_id='dish-session-v4/roadmap-v2/GM-07.B';").strip()=="1"
+    has_consent_policy_isolation=db.psql("select count(*) from public.schema_versions where schema_version='0.9.2' and contract_id='dish-session-v4/roadmap-v2/GM-07.B';").strip()=="1"
     legacy_entrypoint="public.dish_session_unversioned_legacy" if has_v4 else "public.dish_session"
     legacy_names=[(legacy_entrypoint,"public.dish_session"),("dish_v3_private.tick","dish_v3_private.tick"),
       ("dish_v3_private.finish","dish_v3_private.finish"),("dish_v3_private.reconcile","dish_v3_private.reconcile"),
@@ -191,10 +192,12 @@ def verify(db):
         expected_sources[ROOT/"supabase/migrations/0029_dish_v4_history_consent.sql"]=[
           ("dish_v4_private.account_history_consent","dish_v4_private.account_history_consent"),
           ("dish_v4_private.member_history_default","dish_v4_private.member_history_default"),
-          ("gm21_private.prepare_consents","gm21_private.prepare_consents"),
           ("dish_v4_private.has_locked_history_consent","dish_v4_private.has_locked_history_consent"),
           ("dish_v4_private.pin_history_consent_scopes","dish_v4_private.pin_history_consent_scopes"),
           ("dish_v4_private.save_history","dish_v4_private.save_history")]
+        consent_source="0031_history_consent_policy_isolation.sql" if has_consent_policy_isolation else "0029_dish_v4_history_consent.sql"
+        expected_sources.setdefault(ROOT/"supabase/migrations"/consent_source,[]).append(
+          ("gm21_private.prepare_consents","gm21_private.prepare_consents"))
     for source_path,functions in expected_sources.items():
       source=source_path.read_text(encoding="utf-8")
       for name,source_name in functions:

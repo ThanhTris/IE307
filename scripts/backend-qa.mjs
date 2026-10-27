@@ -435,8 +435,8 @@ async function sealManifest(state, status, catalogueInfo) {
   const expectedVersions = state.migrations.map(migration => migration.version);
   const actualVersions = inventory.migrationLedger.map(item => item.version);
   if (canonicalJson(actualVersions) !== canonicalJson(expectedVersions)) throw new Error('QA_MIGRATION_LEDGER_DOES_NOT_MATCH_CLEAN_SOURCE');
-  const expectedSchemas = inventory.schemaVersions.filter(row => row.schema_version === '0.9.1' && row.contract_id === 'dish-session-v4/roadmap-v2/GM-07.B');
-  if (expectedSchemas.length !== 1) throw new Error('QA_V4_SCHEMA_0_9_1_MISSING');
+  const expectedSchemas = inventory.schemaVersions.filter(row => row.schema_version === '0.9.2' && row.contract_id === 'dish-session-v4/roadmap-v2/GM-07.B');
+  if (expectedSchemas.length !== 1) throw new Error('QA_V4_SCHEMA_0_9_2_MISSING');
   const sourceFiles = await sourceHashMap(state.migrations);
   for (const migration of state.migrations) {
     if (sourceFiles[`supabase/migrations/${migration.file}`] !== migration.sha256) throw new Error('QA_MIGRATION_SOURCE_HASH_MISMATCH');
@@ -450,7 +450,7 @@ async function sealManifest(state, status, catalogueInfo) {
     endpoint: { baseUrl: `http://127.0.0.1:${state.ports.api}`, apiPort: state.ports.api, dbPort: state.ports.db },
     configSha256: state.configSha256, cliVersion: state.cliVersion,
     contractVersion: 'dish-session-v4/roadmap-v2/GM-07.B',
-    schemaVersion: '0.9.1',
+    schemaVersion: '0.9.2',
     migrations: state.migrations, sourceFiles,
     migrationLedger: inventory.migrationLedger, schemaVersions: inventory.schemaVersions,
     functions: inventory.functions, functionInventorySha256: sha256(canonicalJson(inventory.functions)),
@@ -504,7 +504,7 @@ async function validateManifestSeal(manifest) {
   if (manifest?.format !== 'gm03-qa-manifest-v1' || !manifest.sealSha256 || hashWithoutSeal(manifest) !== manifest.sealSha256) {
     throw new Error('QA_MANIFEST_SEAL_INVALID');
   }
-  if (manifest.schemaVersion !== '0.9.1' || manifest.contractVersion !== 'dish-session-v4/roadmap-v2/GM-07.B') throw new Error('QA_MANIFEST_CONTRACT_MISMATCH');
+  if (manifest.schemaVersion !== '0.9.2' || manifest.contractVersion !== 'dish-session-v4/roadmap-v2/GM-07.B') throw new Error('QA_MANIFEST_CONTRACT_MISMATCH');
 }
 
 async function verifySourceAndRuntime(state, manifest) {

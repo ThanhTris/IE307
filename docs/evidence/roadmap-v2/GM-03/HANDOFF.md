@@ -37,3 +37,8 @@ Task đang `review`; owner Trí, reviewer `ThanhTris`. Reviewer cũ đã bỏ th
 Từ root: `npm ci`; bật Docker Linux engine; `npm run backend:start`; `npm run backend:status`; `npm run backend:smoke`; `npm run backend:test`; sau đó `npm run backend:stop`.
 
 Đã kiểm local start/status/HTTP health/SQL smoke và ca stop. Chưa có migration nghiệp vụ, RPC/RLS, data import, API room/vote hoặc remote deployment. GM-04/06/07/08 nhận đầu vào từ task này theo dependency graph; reviewer kiểm target branch sau push.
+# Merge integration — 2026-10-27
+
+PR #137 integrates main `9871137`, including migrations 0030/0031 and schema 0.9.2. The dual GM03/CI QA modes are preserved. Manifest production, worker validation and API reporting now require/read back 0.9.2; old 0.9.1 manifests are rejected even with a valid seal. Recreate QA from current source rather than resealing an earlier run. GM-07.B wire contract remains unchanged.
+
+Trí explicitly requested merge and Project status updates in the current owner conversation, accepting the reported CI limitation (GM-40 setup port 54322 occupied). This instruction does not convert unrun tests into Pass: the prior loopback-only host failure/fault-injection gaps and Android exclusions remain as recorded in CHECKS. Project status is the owner's disposition; runtime evidence retains its actual results.

@@ -100,6 +100,20 @@ def exercise(t):
         if actual!=expected:raise AssertionError(name)
         checks.append({'case':name,'result':'Pass'});print('Pass:',name,flush=True)
     a,b,c=t.users
+    # v4 account defaults must never overwrite a legacy room's explicit opt-in.
+    legacy=t.clone('legacy-consent-policy-isolation',lobby=True)['roomId']
+    try:
+        def prepare_legacy():
+            version=t.scalar("(select version from public.rooms where id='"+legacy+"')")
+            t.db.psql("begin;set local request.jwt.claims="+food.literal(json.dumps({'sub':a,'role':'authenticated'}))+";select gm21_private.prepare_consents('"+legacy+"',"+str(version)+');commit;')
+        t.db.psql("update public.members set history_consent=true,version=version+1 where room_id='"+legacy+"';")
+        prepare_legacy()
+        check('legacy explicit opt-in survives missing account defaults',t.scalar("(select count(*)=2 and bool_and(history_consent) from public.members where room_id='"+legacy+"')"))
+        t.db.psql("update public.members set history_consent=false,version=version+1 where room_id='"+legacy+"';insert into gm21_private.settings(user_id,scope,enabled,changed_at,version) values('"+a+"','personal',true,statement_timestamp(),1),('"+b+"','personal',true,statement_timestamp(),1);")
+        prepare_legacy()
+        check('account opt-in cannot enable legacy room consent',t.scalar("(select count(*)=2 and not bool_or(history_consent) from public.members where room_id='"+legacy+"')"))
+    finally:
+        t.db.psql("delete from public.consents where room_id='"+legacy+"';delete from public.members where room_id='"+legacy+"';delete from public.rooms where id='"+legacy+"';delete from gm21_private.settings where user_id in ('"+a+"','"+b+"');")
     check('personal owner can read own summary',len(t.history(a)['data']),1)
     check('other user cannot read owner personal summary',t.history(b)['data'],[])
     check('group member can read shared summary',len(t.history(b,'group')['data']),1)

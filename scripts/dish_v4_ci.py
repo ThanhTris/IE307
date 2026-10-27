@@ -219,8 +219,8 @@ def setup():
         raise RuntimeError('QA Auth/REST API is not bound to an approved host interface on port 54361')
     record('qa-bindings', 'Pass', apiPort=54361, dbPort=54362,
            bindingPolicy='hosted-ci-wildcard' if hosted_ci else 'explicit-local-wildcard' if local_wildcard else 'loopback-only')
-    ledger = db.psql("select schema_version||'/'||contract_id from public.schema_versions where schema_version in ('0.9.0','0.9.1') order by schema_version;")
-    if '0.9.0/dish-session-v4/roadmap-v2/GM-07.B' not in ledger or '0.9.1/dish-session-v4/roadmap-v2/GM-07.B' not in ledger:
+    ledger = db.psql("select schema_version||'/'||contract_id from public.schema_versions where schema_version in ('0.9.0','0.9.1','0.9.2') order by schema_version;")
+    if any(version+'/dish-session-v4/roadmap-v2/GM-07.B' not in ledger for version in ('0.9.0','0.9.1','0.9.2')):
         raise RuntimeError('Migration ledger is missing the v4 policy or consent schema')
     db.psql('create table public.gm40_qa_owner(namespace uuid primary key);revoke all on public.gm40_qa_owner from public,anon,authenticated,service_role;')
     namespace = str(uuid.uuid4())
@@ -250,7 +250,7 @@ def setup():
     real_slots = {slot: sum(slot in item.get('mealSlots', []) for item in importer.cards(real_bundle))
                   for slot in ('breakfast', 'lunch', 'dinner', 'snack')}
     report = load_report()
-    report['schemaVersion'] = '0.9.1'
+    report['schemaVersion'] = '0.9.2'
     report['catalogue'] = {'realRelease': real_id, 'realSourceSha256': real_sha,
                            'realDishCount': len(real['cards']), 'mealCounts': real_slots,
                            'syntheticRelease': synthetic_id, 'syntheticSha256': synthetic_sha,
@@ -268,7 +268,7 @@ def setup():
             for name in ('GM_V4_REAL_RELEASE_ID', 'GM_V4_REAL_DISH_COUNT', 'GM_V4_REAL_SOURCE_SHA256',
                          'GM_V4_SYNTHETIC_RELEASE_ID', 'GM_V4_SYNTHETIC_SHA256', 'GM_V4_OWNER_NAMESPACE'):
                 stream.write(f'{name}={os.environ[name]}\n')
-    record('migrations-and-catalogue-fixtures', 'Pass', schemaVersion='0.9.1',
+    record('migrations-and-catalogue-fixtures', 'Pass', schemaVersion='0.9.2',
            realRelease=real_id, realDishCount=len(real['cards']), syntheticRelease=synthetic_id,
            syntheticDishCount=len(cards), syntheticFixtureOnly=True, apiOrigin=api_url)
 

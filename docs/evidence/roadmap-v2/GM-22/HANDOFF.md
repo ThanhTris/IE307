@@ -35,3 +35,7 @@ DB reset or real dataset publication is performed.
 
 GM-28 receives Android UI/inbox/confirmation and device network configuration;
 GM-23 receives sender/delivery handling. Android is not claimed as tested here.
+
+### v4-compatible SQL boundary tests — 2026-10-27
+
+Run `supabase/tests/database/GM-22_social.test.sql` after all target migrations. The suite has 29 assertions and checks event semantics instead of requiring the legacy constraint name `events_social_shape`. It accepts both legacy and v4 result references separately, rejects malformed shapes, and retains actual friend-invitation RPC assertions. Local current-schema evidence is 29/29 (47/47 across all database TAP files); see CHECKS for transport and coverage limits. No event API, grants or task status changes accompany this test fix.

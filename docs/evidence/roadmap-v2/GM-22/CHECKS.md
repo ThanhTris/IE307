@@ -30,3 +30,9 @@ existing room membership. Retained Bruno mode was stopped with the stop script,
 which returned `stopped:true, cleaned:true` after dropping its owned database
 and guest identities. The runtime persists `stopped:true` before cleanup, so a
 later stop invocation retries cleanup without contacting the closed gateway.
+
+## Current-schema event regression — 2026-10-27 (local)
+
+Reproduced the obsolete `events_social_shape` name assertion on fully migrated v4 QA. Migration 0027 intentionally replaces that constraint with the v4-compatible result reference check. The TAP suite now exercises copied production CHECK/NOT NULL rules on a temporary table: valid friend, room invitation, legacy result and v4 result shapes must be accepted; missing references, conflicting result references, invalid friend room and unknown kind must be rejected. The existing real invitation RPC checks remain. Temporary shape checks do not claim foreign-key/trigger coverage; those remain the responsibility of actual persisted RPC suites.
+
+GM-22 TAP passed **29/29**, and all three database TAP files passed **47/47** on owned PostgreSQL. The original 19-case GM-22 file failed at case 12 before this change. Input, before/after JSON and TAP logs are local under `review-results/ci-sql-fix-20261027/`; no CI assertion was disabled, and no event runtime constraint was changed. Remote CI and Android were not run by these SQL checks.

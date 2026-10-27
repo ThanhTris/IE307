@@ -43,3 +43,6 @@ Task nhận GM-05 (component), GM-07 (contract/client) dùng cấu trúc này sa
 Root → cd mobile → npm ci → npm start. Check: npm run check, check:expo, bundle:android. Shell không yêu cầu env/auth/permission. Metro LAN lúc kiểm: exp://192.168.31.202:8081; URL tùy máy/mạng.
 
 6 Jest tests, typecheck/lint/architecture/Expo compatibility/Android export/Metro manifest Pass. Điện thoại Expo Go chưa có kết quả/screenshot; clean clone độc lập chưa chạy. ThanhTris đối chiếu đúng revision, font200%/TalkBack/dark/navigation thật trước nghiệm thu. Không Approved task sau từ bundle hoặc evidence này. GitHub chưa sync, code chưa commit/push; merge gate GM-01 trên origin/main vẫn phải đối chiếu riêng.
+# Merge disposition — 2026-10-27
+
+Trí requested merging PR #137 and updating its primary GM-02/03 Project cards in the current owner conversation, accepting the reported CI limitation. The Inter/Expo/UI code keeps its existing test evidence; this merge instruction is not a new Android/device or visual-parity test result. Previously deferred UI verification remains deferred and must not be relabeled Pass. GM-05/09 receive partial changes from this PR and are not treated as fully completed by this disposition.
