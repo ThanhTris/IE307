@@ -12,29 +12,29 @@ function fixture(t) {
   const save = (path, value) => writeFileSync(join(root, path), JSON.stringify(value));
   mkdirSync(join(root, 'node_modules/expo/bin'), { recursive: true });
   mkdirSync(join(root, 'node_modules/expo-router'), { recursive: true });
-  const pkg = { dependencies: { expo: '~57.0.30', 'expo-router': '~57.0.28' } };
+  const pkg = { dependencies: { expo: '~58.0.19', 'expo-router': '~58.0.26' } };
   save('package.json', pkg);
   save('package-lock.json', { lockfileVersion: 3, packages: {
     '': pkg,
-    'node_modules/expo': { version: '57.0.30' },
-    'node_modules/expo-router': { version: '57.0.28' },
+    'node_modules/expo': { version: '58.0.19' },
+    'node_modules/expo-router': { version: '58.0.26' },
   } });
-  save('node_modules/expo/package.json', { version: '57.0.30' });
-  save('node_modules/expo-router/package.json', { version: '57.0.28' });
+  save('node_modules/expo/package.json', { version: '58.0.19' });
+  save('node_modules/expo-router/package.json', { version: '58.0.26' });
   return { root, save };
 }
 
 test('the checked-out manifest and installed dependencies match their lock', t => {
   const { root } = fixture(t);
-  assert.equal(validateInstalledLock(root), '57.0.30');
+  assert.equal(validateInstalledLock(root), '58.0.19');
 });
 
 test('a stale manifest or another branch node_modules fails instead of reporting Pass', t => {
   const { root, save } = fixture(t);
-  save('node_modules/expo-router/package.json', { version: '57.0.27' });
-  assert.throws(() => validateInstalledLock(root), /expo-router: installed 57.0.27, lockfile 57.0.28/);
-  save('node_modules/expo-router/package.json', { version: '57.0.28' });
-  save('package.json', { dependencies: { expo: '~57.0.30', 'expo-router': '~57.0.27' } });
+  save('node_modules/expo-router/package.json', { version: '58.0.25' });
+  assert.throws(() => validateInstalledLock(root), /expo-router: installed 58.0.25, lockfile 58.0.26/);
+  save('node_modules/expo-router/package.json', { version: '58.0.26' });
+  save('package.json', { dependencies: { expo: '~58.0.19', 'expo-router': '~58.0.25' } });
   assert.throws(() => validateInstalledLock(root), /differs from package-lock/);
 });
 

@@ -1,6 +1,8 @@
 # Mobile — Expo shell, components và adapters
 
-Expo SDK 57 + Expo Router + TypeScript strict. Có shell `/`, `/foundation`, `+not-found`, preview component GM-05, client/mock GM-07, auth/session GM-16 và domain GM-15/18. Harness `/internal/gm16` chỉ development và cần cấu hình theo [auth README](src/data/auth/README.md); không là màn sản phẩm. Màn tạo/join/context/vote và tích hợp Android còn theo GM-09..14/24..31; camera/push/SQLite chưa được coi hoàn thành.
+Expo SDK 58 + Expo Router + TypeScript strict. Có shell `/`, `/foundation`, `+not-found`, preview component GM-05, client/mock GM-07, auth/session GM-16 và domain GM-15/18. Harness `/internal/gm16` chỉ development và cần cấu hình theo [auth README](src/data/auth/README.md); không là màn sản phẩm. Màn tạo/join/context/vote và tích hợp Android còn theo GM-09..14/24..31; camera/push/SQLite chưa được coi hoàn thành.
+
+GM-02 bundles Inter 4.1 static weights 400/500/600/700 under `assets/fonts/` (SIL OFL 1.1; hashes in `assets/fonts/SOURCE.md`). `AppFontProvider` loads through Expo Font at runtime and always renders children with system weights while loading or after an error. It does not gate or remount Expo Router/session providers. GM-05 may use `useAppFonts()` for the family-to-weight map and readiness state; typography tokens/components remain GM-05's scope. `/foundation` includes Vietnamese samples for all four weights and the load/fallback status. Figma screenshots, node notes and scope boundaries are recorded in [GM-02 Figma parity](../docs/evidence/roadmap-v2/GM-02/FIGMA_PARITY.md).
 
 ## Chạy từ clone sạch
 
@@ -12,7 +14,7 @@ GM-10: tại Home `/` mở **Công cụ kiểm thử** cuối màn → **Chọn 
 
 Bộ package/lockfile và phạm vi Expo của từng task xem [baseline hiện hành](../docs/project/EXPO_BASELINE.md). `check:expo` kiểm phiên bản đã khóa + map SDK cài tại máy; `check:expo:latest` kiểm online khi bảo trì GM-02, không dùng patch trong evidence cũ làm yêu cầu cài hiện tại.
 
-Node >=22.13 (đã dùng 24.15.0), npm; Android có Expo Go hỗ trợ SDK 57. Không cần Android Studio/adb/APK để mở shell. Từ root:
+Node >=22.13 (đã dùng 24.15.0), npm; Android có Expo Go 58.0.5 cho emulator/device checks. Không cần Android Studio/adb/APK để mở shell qua Expo Go. Từ root:
 
 ```powershell
 cd mobile

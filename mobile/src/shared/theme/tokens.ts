@@ -26,17 +26,17 @@ export const typography = {
 } as const;
 
 export const lightColors = {
-  bg: '#F8F6F2',
-  surface: '#FFFFFF',
-  soft: '#F1EFE9',
-  warm: '#FFF5ED',
-  primary: '#FF5A36',
-  primaryPressed: '#E04724',
+  bg: '#FFFCF3',
+  surface: '#FFFCF3',
+  soft: '#F0F4E9',
+  warm: '#ECF8EB',
+  primary: '#238633',
+  primaryPressed: '#1B6B29',
   onPrimary: '#FFFFFF',
-  text: '#1A202C',
-  muted: '#64748B',
-  line: '#E2E8F0',
-  green: '#10B981',
+  text: '#043B22',
+  muted: '#043B22',
+  line: '#B9CB9B',
+  green: '#46C34F',
   danger: '#EF4444',
   warning: '#D97706',
 } as const;

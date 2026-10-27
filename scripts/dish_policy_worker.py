@@ -2,14 +2,23 @@
 """Local server timeout worker. Never resets/migrates a database or reads votes."""
 import importlib.util
 import hashlib
+import hmac
 import argparse
 import json
+import os
 from pathlib import Path
 import re
 import subprocess
 import time
 
 ROOT=Path(__file__).resolve().parents[1]
+
+
+def run_hidden_process(args, **kwargs):
+    """Keep recurring Docker calls from opening console windows on Windows."""
+    if os.name == 'nt':
+        kwargs['creationflags'] = kwargs.get('creationflags', 0) | subprocess.CREATE_NO_WINDOW
+    return subprocess.run(args, **kwargs)
 
 
 class QAContainerDB:
@@ -22,7 +31,7 @@ class QAContainerDB:
                 or container!="supabase_db_"+project_id
                 or not re.fullmatch(r"ie307-dish-v4-qa-[0-9]{8}(?:-[0-9]+-[0-9]+)?",project_id)):
             raise ValueError("QA worker accepts only the dedicated IE307 dish-v4 QA container")
-        result=subprocess.run(["docker","inspect",container],capture_output=True,text=True,encoding="utf-8",timeout=15)
+        result=run_hidden_process(["docker","inspect",container],capture_output=True,text=True,encoding="utf-8",timeout=15)
         if result.returncode: raise RuntimeError("QA_DB_CONTAINER_NOT_FOUND")
         info=json.loads(result.stdout)[0]
         labels=info.get("Config",{}).get("Labels") or {}
@@ -52,7 +61,7 @@ class QAContainerDB:
             raise RuntimeError("QA_DB_POSTGRES17_REQUIRED")
 
     def psql(self,sql):
-        result=subprocess.run(["docker","exec","-i",self.container,"psql","-X","-q","-U","postgres","-d","postgres","-v","ON_ERROR_STOP=1","-v","VERBOSITY=sqlstate","-At"],input=sql,capture_output=True,text=True,encoding="utf-8",timeout=30)
+        result=run_hidden_process(["docker","exec","-i",self.container,"psql","-X","-q","-U","postgres","-d","postgres","-v","ON_ERROR_STOP=1","-v","VERBOSITY=sqlstate","-At"],input=sql,capture_output=True,text=True,encoding="utf-8",timeout=30)
         if result.returncode:
             code=re.search(r"ERROR:\s+([0-9A-Z]{5})(?:[:\s]|$)",result.stderr)
             raise RuntimeError("QA_PSQL_ERROR_"+(code.group(1) if code else "PROCESS"))
@@ -60,6 +69,104 @@ class QAContainerDB:
 
     def transaction(self,sql):
         return self.psql(sql)
+
+
+class ManifestQAContainerDB:
+    """Read/tick only the project named by a sealed GM-03 runtime manifest."""
+    def __init__(self, manifest_path, worker_nonce):
+        self.manifest_path = Path(manifest_path).resolve(strict=True)
+        self.manifest = json.loads(self.manifest_path.read_text(encoding='utf-8'))
+        self._verify_manifest_file()
+        if not re.fullmatch(r'[0-9a-f-]{36}', worker_nonce or ''):
+            raise ValueError('QA_WORKER_NONCE_INVALID')
+        self.worker_nonce = worker_nonce
+        self.container = self.manifest.get('containerName')
+        self.database = 'postgres'
+        self.is_dish_v4_qa = True
+        self.qa_project_id = self.manifest.get('projectId')
+        self.run_id = self.manifest.get('runId')
+        self.owner_uuid = self.manifest.get('ownerUuid')
+        if not re.fullmatch(r'supabase_db_gm03qa-[a-z0-9](?:[a-z0-9-]{0,28}[a-z0-9])?', self.container or ''):
+            raise ValueError('QA_CONTAINER_NAME_INVALID')
+        if not re.fullmatch(r'gm03qa-[a-z0-9](?:[a-z0-9-]{0,28}[a-z0-9])?', self.qa_project_id or ''):
+            raise ValueError('QA_PROJECT_ID_INVALID')
+        if not re.fullmatch(r'[a-z0-9](?:[a-z0-9-]{0,28}[a-z0-9])?', self.run_id or ''):
+            raise ValueError('QA_RUN_ID_INVALID')
+        if not re.fullmatch(r'[0-9a-f-]{36}', self.owner_uuid or ''):
+            raise ValueError('QA_OWNER_UUID_INVALID')
+        result = run_hidden_process(['docker', 'inspect', self.container], capture_output=True, text=True,
+                                    encoding='utf-8', timeout=20)
+        if result.returncode:
+            raise RuntimeError('QA_DB_CONTAINER_NOT_FOUND')
+        info = json.loads(result.stdout)[0]
+        labels = info.get('Config', {}).get('Labels') or {}
+        expected_workdir = str(self.manifest.get('workdir', '')).replace('\\', '/').rstrip('/').casefold()
+        actual_workdir = str(labels.get('com.supabase.cli.workdir', '')).replace('\\', '/').rstrip('/').casefold()
+        if (info.get('Name') != '/' + self.container or not info.get('State', {}).get('Running')
+                or labels.get('com.supabase.cli.project') != self.qa_project_id or actual_workdir != expected_workdir):
+            raise RuntimeError('QA_DB_CONTAINER_OWNERSHIP_MISMATCH')
+        image = info.get('Config', {}).get('Image', '')
+        if not image.startswith(('public.ecr.aws/supabase/postgres:17', 'ghcr.io/supabase/postgres:17', 'supabase/postgres:17')):
+            raise RuntimeError('QA_DB_POSTGRES17_REQUIRED')
+        if not self.psql("select current_setting('server_version');").strip().startswith('17.'):
+            raise RuntimeError('QA_DB_POSTGRES17_REQUIRED')
+        self.verify_manifest_runtime()
+
+    def psql(self, sql):
+        result = run_hidden_process(['docker', 'exec', '-i', self.container, 'psql', '-X', '-q', '-U', 'postgres',
+                                     '-d', 'postgres', '-v', 'ON_ERROR_STOP=1', '-v', 'VERBOSITY=sqlstate', '-At'],
+                                    input=sql, capture_output=True, text=True, encoding='utf-8', timeout=60)
+        if result.returncode:
+            code = re.search(r'ERROR:\s+([0-9A-Z]{5})(?:[:\s]|$)', result.stderr)
+            suffix = code.group(1) if code else 'PROCESS_' + str(result.returncode)
+            raise RuntimeError('QA_PSQL_ERROR_' + suffix)
+        return result.stdout
+
+    def transaction(self, sql):
+        return self.psql(sql)
+
+    def _verify_manifest_file(self):
+        manifest = self.manifest
+        if manifest.get('format') != 'gm03-qa-manifest-v1' or manifest.get('schemaVersion') != '0.9.2':
+            raise ValueError('QA_MANIFEST_VERSION_INVALID')
+        if manifest.get('contractVersion') != 'dish-session-v4/roadmap-v2/GM-07.B':
+            raise ValueError('QA_MANIFEST_CONTRACT_INVALID')
+        expected = manifest.get('sealSha256')
+        body = {key: value for key, value in manifest.items() if key != 'sealSha256'}
+        canonical = json.dumps(body, ensure_ascii=False, sort_keys=True, separators=(',', ':'))
+        actual = hashlib.sha256(canonical.encode('utf-8')).hexdigest()
+        if not expected or not hmac.compare_digest(expected, actual):
+            raise ValueError('QA_MANIFEST_SEAL_INVALID')
+
+    def verify_manifest_runtime(self):
+        root = Path(__file__).resolve().parents[1]
+        for relative, expected in self.manifest.get('sourceFiles', {}).items():
+            path = (root / relative).resolve(strict=True)
+            if not path.is_relative_to(root) or hashlib.sha256(path.read_bytes()).hexdigest() != expected:
+                raise RuntimeError('QA_SOURCE_HASH_DRIFT')
+        ledger_sql = "select coalesce(json_agg(json_build_object('version',version::text,'name',name) order by version),'[]'::json)::text from supabase_migrations.schema_migrations;"
+        schema_sql = "select coalesce(json_agg(to_jsonb(v) order by v.schema_version),'[]'::json)::text from public.schema_versions v;"
+        function_sql = (root / 'scripts/gm03_function_inventory.sql').read_text(encoding='utf-8')
+        catalogue_sql = "select coalesce(json_agg(json_build_object('id',id,'sourceSha256',source_sha,'cardCount',jsonb_array_length(cards),'testOnly',test_only,'active',active) order by id),'[]'::json)::text from dish_v3_private.catalogues;"
+        actual = {
+            'migrationLedger': json.loads(self.psql(ledger_sql)),
+            'schemaVersions': json.loads(self.psql(schema_sql)),
+            'functions': json.loads(self.psql(function_sql)),
+            'catalogues': json.loads(self.psql(catalogue_sql)),
+        }
+        canonical = lambda value: json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(',', ':'))
+        if canonical(actual['migrationLedger']) != canonical(self.manifest.get('migrationLedger')):
+            raise RuntimeError('QA_DATABASE_MIGRATION_LEDGER_DRIFT')
+        if canonical(actual['schemaVersions']) != canonical(self.manifest.get('schemaVersions')):
+            raise RuntimeError('QA_DATABASE_SCHEMA_VERSIONS_DRIFT')
+        if canonical(actual['functions']) != canonical(self.manifest.get('functions')):
+            raise RuntimeError('QA_DATABASE_FUNCTION_DEFINITION_OR_ACL_DRIFT')
+        expected_catalogues = self.manifest.get('catalogues', {}).get('observed')
+        if canonical(actual['catalogues']) != canonical(expected_catalogues):
+            raise RuntimeError('QA_DATABASE_CATALOGUE_DRIFT')
+        marker = self.psql("select owner_uuid::text from gm03_qa_private.owner_manifest where run_id='" + self.run_id + "';").strip()
+        if marker != self.owner_uuid:
+            raise RuntimeError('QA_DATABASE_OWNER_MARKER_MISMATCH')
 
 
 def verify(db):
@@ -108,19 +215,30 @@ def verify(db):
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--qa-db-container",help="Explicit disposable v4 QA container; rejects application DB names")
+    parser.add_argument("--qa-manifest",help="Sealed GM-03 QA manifest; verifies source, ledger, definitions and ownership")
+    parser.add_argument("--worker-nonce",help="Run-scoped process nonce required with --qa-manifest")
     parser.add_argument("--qa-project-id",help="Exact Supabase project id reported by Docker labels")
     parser.add_argument("--qa-workdir",help="Exact isolated Supabase workdir; must be under .work/ci or review-results")
     args=parser.parse_args()
-    if args.qa_db_container:
-        if not args.qa_project_id or not args.qa_workdir:
-            raise SystemExit("QA v4 worker requires --qa-project-id and --qa-workdir")
+    legacy_args = (args.qa_db_container, args.qa_project_id, args.qa_workdir)
+    if args.qa_manifest:
+        if any(legacy_args) or not args.worker_nonce:
+            parser.error("--qa-manifest requires --worker-nonce and cannot be combined with CI QA arguments")
+        db=ManifestQAContainerDB(args.qa_manifest,args.worker_nonce)
+    elif any(legacy_args):
+        if not all(legacy_args) or args.worker_nonce:
+            parser.error("CI QA requires --qa-db-container, --qa-project-id and --qa-workdir")
         db=QAContainerDB(args.qa_db_container,args.qa_project_id,args.qa_workdir)
     else:
+        if args.worker_nonce:
+            parser.error("--worker-nonce requires --qa-manifest")
         spec=importlib.util.spec_from_file_location("dish_food_db",ROOT/"supabase/seed/import_food_data.py")
         food=importlib.util.module_from_spec(spec)
         spec.loader.exec_module(food)
         db=food.LocalDB()
     has_v4=verify(db)
+    if args.qa_manifest and not has_v4:
+        raise RuntimeError("GM03 QA manifest requires the v4 policy runtime")
     print("Dish policy worker: verified local Supabase, heartbeat and timeout reconcile every second")
     try:
         while True:

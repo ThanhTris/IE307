@@ -169,10 +169,10 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     const repository = new LiveRoomRepository({ client, session: fixture.manager });
     await renderLiveEntry(repository);
 
-    expect(await screen.findByText(/Chào Trí Thanh! 👋/)).toBeOnTheScreen();
-    expect(await screen.findByText('Chưa có bạn ăn cùng')).toBeOnTheScreen();
-    expect(screen.getByRole('button', { name: '＋ Tạo kèo ăn' })).toBeEnabled();
-    expect(screen.getByRole('button', { name: 'Tôi có mã phòng' })).toBeEnabled();
+    expect(await screen.findByRole('button', { name: 'Tạo phòng' })).toBeEnabled();
+    expect(await screen.findByText('Mời bạn để bắt đầu kèo nhanh.')).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Tham gia phòng' })).toBeEnabled();
+    expect(repository.getSessionSnapshot()).toMatchObject({ status: 'active', user: { displayName: 'Trí Thanh' } });
     expect(fixture.auth.createGuest).not.toHaveBeenCalled();
   });
 
@@ -184,7 +184,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     await renderLiveEntry(repository);
 
     expect(await screen.findByText('Chưa có phiên')).toBeOnTheScreen();
-    await user.press(screen.getByRole('button', { name: '＋ Tạo kèo ăn' }));
+    await user.press(screen.getByRole('button', { name: 'Tạo phòng' }));
     expect(fixture.auth.createGuest).not.toHaveBeenCalled();
     await user.type(screen.getByLabelText('Tên khách'), 'Trang');
     await user.press(screen.getByRole('button', { name: 'Tạo phiên rồi chọn bối cảnh' }));
@@ -224,7 +224,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     await renderLiveEntry(repository);
     await screen.findByText('Chưa có phiên');
 
-    await user.press(screen.getByRole('button', { name: 'Tôi có mã phòng' }));
+    await user.press(screen.getByRole('button', { name: 'Tham gia phòng' }));
     await user.type(screen.getByLabelText('Tên khách'), 'Hà');
     expect(fixture.auth.createGuest).not.toHaveBeenCalled();
     await user.press(screen.getByRole('button', { name: 'Tạo phiên rồi nhập mã' }));
@@ -250,7 +250,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     await renderLiveEntry(repository);
     await screen.findByText('Chưa có phiên');
 
-    await user.press(screen.getByRole('button', { name: '＋ Tạo kèo ăn' }));
+    await user.press(screen.getByRole('button', { name: 'Tạo phòng' }));
     await user.type(screen.getByLabelText('Tên khách'), 'Trang');
     await user.press(screen.getByRole('button', { name: 'Tạo phiên rồi chọn bối cảnh' }));
 
@@ -276,11 +276,12 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     expect(await screen.findByText('Chưa khôi phục được phiên')).toBeOnTheScreen();
     expect(fixture.storage.clear).not.toHaveBeenCalled();
     expect(fixture.auth.createGuest).not.toHaveBeenCalled();
-    expect(screen.getByRole('button', { name: '＋ Tạo kèo ăn' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Tạo phòng' })).toBeDisabled();
 
     fixture.auth.verify.mockImplementation(async () => sampleUser);
     await user.press(screen.getByRole('button', { name: 'Thử khôi phục phiên' }));
-    expect(await screen.findByText(/Chào Trí Thanh! 👋/)).toBeOnTheScreen();
+    expect(await screen.findByRole('button', { name: 'Tạo phòng' })).toBeEnabled();
+    expect(repository.getSessionSnapshot()).toMatchObject({ status: 'active', user: { displayName: 'Trí Thanh' } });
     expect(fixture.auth.createGuest).not.toHaveBeenCalled();
   });
 
@@ -300,7 +301,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
 
     expect(screen.getByText('Phiên cần khôi phục')).toBeOnTheScreen();
     expect(screen.getByRole('button', { name: 'Thử khôi phục phiên' })).toBeEnabled();
-    expect(screen.getByRole('button', { name: '＋ Tạo kèo ăn' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Tạo phòng' })).toBeDisabled();
     await user.press(screen.getByRole('button', { name: 'Thử khôi phục phiên' }));
     expect(restoreSession).toHaveBeenCalledTimes(1);
   });
@@ -312,11 +313,11 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     expect(await screen.findByText('Chưa có phiên')).toBeOnTheScreen();
 
     await act(async () => { await repository.createGuestSession('Hà'); });
-    expect(await screen.findByText(/Chào Hà! 👋/)).toBeOnTheScreen();
+    expect(await screen.findByRole('button', { name: 'Tạo phòng' })).toBeEnabled();
     expect(repository.getCurrentUser()).toMatchObject({ displayName: 'Hà' });
     await act(async () => { await repository.logout(); });
     expect(await screen.findByText('Chưa có phiên')).toBeOnTheScreen();
-    expect(screen.queryByText(/Chào Hà!/)).toBeNull();
+    expect(screen.getByText('Chưa có phiên')).toBeOnTheScreen();
   });
 
   // --- Point 2: Authoritative Taxonomy UUIDs ---

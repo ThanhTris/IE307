@@ -2,7 +2,6 @@ import { renderRouter } from 'expo-router/testing-library';
 import { router } from 'expo-router';
 import { act } from 'react';
 import { fireEvent, screen, userEvent, waitFor } from '@testing-library/react-native';
-import { store } from 'expo-router/build/global-state/router-store';
 import Layout from '../../src/app/_layout';
 import Index from '../../src/app/index';
 import Foundation from '../../src/app/foundation';
@@ -65,14 +64,14 @@ test('GM-10 routes preserve the same saved room from home tools through context 
   await waitFor(() => expect(screen.getByRole('button', { name: 'Chọn khẩu vị →' })).toBeEnabled());
   await user.press(screen.getByRole('button', { name: 'Chọn khẩu vị →' }));
   await screen.findByRole('button', { name: 'Gì cũng được' });
-  expect(store.getRouteInfo().pathname).toBe('/gm10/preferences');
+  expect(screen).toHavePathname('/gm10/preferences');
   await user.press(screen.getByRole('button', { name: 'Cơm' }));
   await user.press(screen.getByRole('button', { name: 'Lưu khẩu vị mẫu' }));
   await screen.findByText('Sẵn sàng của bạn: Chưa sẵn sàng');
   expect(screen.getByText('Đã hoàn tất chọn khẩu vị')).toBeOnTheScreen();
   expect(screen.queryByRole('button', { name: 'Tiếp tục đến phòng chờ' })).toBeNull();
   await user.press(screen.getByRole('button', { name: '‹ Quay lại' }));
-  await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/gm10/context'));
+  await waitFor(() => expect(screen).toHavePathname('/gm10/context'));
   await user.press(screen.getByRole('button', { name: 'Chỉnh lại bối cảnh' }));
   await screen.findByLabelText('Giờ ăn (UTC+7)');
   expect(screen.getByLabelText('Giờ ăn (UTC+7)')).toBeEnabled();
@@ -103,8 +102,8 @@ test.each(['form', 'receipt'] as const)('GM-10 Home brand on preferences %s retu
     await screen.findByText('Đã hoàn tất chọn khẩu vị');
   }
   await user.press(screen.getByRole('button', { name: 'Về trang chủ' }));
-  await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/'));
-  expect(screen.getByRole('button', { name: '＋ Tạo kèo ăn' })).toBeOnTheScreen();
+  await waitFor(() => expect(screen).toHavePathname('/'));
+  expect(screen.getByRole('button', { name: 'Tạo phòng' })).toBeOnTheScreen();
 });
 
 test('GM-10 carries host anti-repeat into preferences and skip ends at an explicit receipt', async () => {
@@ -122,26 +121,26 @@ test('GM-10 carries host anti-repeat into preferences and skip ends at an explic
   expect(screen.getByText('Chống lặp của phòng: Đang bật · do chủ phòng chọn.')).toBeOnTheScreen();
   await user.press(screen.getByRole('button', { name: 'Bỏ qua sở thích mềm' }));
   await screen.findByText('Đã hoàn tất chọn khẩu vị');
-  expect(store.getRouteInfo().pathname).toBe('/gm10/preferences');
+  expect(screen).toHavePathname('/gm10/preferences');
   await user.press(screen.getByRole('button', { name: 'Quay lại bối cảnh' }));
-  await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/gm10/context'));
+  await waitFor(() => expect(screen).toHavePathname('/gm10/context'));
 });
 
 test('real route modules navigate from shell to foundation and back', async () => {
   await renderRouter(routes, { initialUrl: '/shell' });
-  expect(store.getRouteInfo().pathname).toBe('/shell');
+  expect(screen).toHavePathname('/shell');
   const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
   await user.press(screen.getByRole('button', { name: 'Xem cấu trúc ứng dụng' }));
-  await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/foundation'));
+  await waitFor(() => expect(screen).toHavePathname('/foundation'));
   await user.press(screen.getByRole('button', { name: 'Quay lại' }));
-  await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/shell'));
+  await waitFor(() => expect(screen).toHavePathname('/shell'));
 });
 
 test('foundation exposes the GM-05 component preview route', async () => {
   await renderRouter(routes, { initialUrl: '/foundation' });
   const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
   await user.press(screen.getByRole('button', { name: 'Mở component mẫu GM-05' }));
-  await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/components'));
+  await waitFor(() => expect(screen).toHavePathname('/components'));
   expect(screen.getByText('GM-05 · Component dùng chung')).toBeOnTheScreen();
   expect(screen.getByText('Phở bò tái nạm')).toBeOnTheScreen();
 });
@@ -151,32 +150,55 @@ test('unknown deep link renders not-found and recovers to shell', async () => {
   expect(screen.getByText('Không tìm thấy trang')).toBeOnTheScreen();
   const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
   await user.press(screen.getByRole('button', { name: 'Về trang đầu' }));
-  await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/'));
-  expect(screen.getByText(/Chọn một món/)).toBeOnTheScreen();
+  await waitFor(() => expect(screen).toHavePathname('/'));
+  expect(screen.getByText(/Chọn món hợp ý/)).toBeOnTheScreen();
 });
 
 test('foundation preview opens GM-11 and GM-14 routes through Expo Router', async () => {
   const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
   await renderRouter(routes, { initialUrl: '/foundation' });
   await user.press(screen.getByRole('button', { name: 'Mở các màn mock GM-11 và GM-14' }));
-  await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/features'));
+  await waitFor(() => expect(screen).toHavePathname('/features'));
   await user.press(screen.getByRole('button', { name: 'GM-14 · Lịch sử · Mở' }));
-  await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/gm14/history'));
+  await waitFor(() => expect(screen).toHavePathname('/gm14/history'));
   expect(await screen.findByText('Quyền lưu lịch sử')).toBeOnTheScreen();
 });
 
 test('Home navigates create/join with back to Home and preserves foundation tools', async () => {
   await renderRouter(routes, { initialUrl: '/' });
   const user = userEvent.setup();
-  await screen.findByText(/Chào /);
-  await user.press(screen.getByRole('button', { name: '＋ Tạo kèo ăn' }));
-  await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/create-room'));
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Tạo phòng' })).toBeEnabled());
+  await user.press(screen.getByRole('button', { name: 'Tạo phòng' }));
+  await waitFor(() => expect(screen).toHavePathname('/create-room'));
   await user.press(screen.getByRole('button', { name: '‹ Quay lại' }));
-  await screen.findByText(/Chào /);
-  await user.press(screen.getByRole('button', { name: 'Tôi có mã phòng' }));
-  await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/join-room'));
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Tạo phòng' })).toBeEnabled());
+  await user.press(screen.getByRole('button', { name: 'Tham gia phòng' }));
+  await waitFor(() => expect(screen).toHavePathname('/join-room'));
   await user.press(screen.getByRole('button', { name: '‹ Quay lại' }));
-  await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/'));
+  await waitFor(() => expect(screen).toHavePathname('/'));
+});
+
+test('Figma Home uses the shared banner/action/nav components and routes its tabs', async () => {
+  await renderRouter(routes, { initialUrl: '/' });
+  const user = userEvent.setup();
+  expect(await screen.findByText('Hôm nay\ncả nhóm ăn gì?')).toBeOnTheScreen();
+  expect(screen.getByTestId('brand-banner-illustration')).toBeOnTheScreen();
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Tạo phòng' })).toBeEnabled());
+  expect(screen.getByRole('button', { name: 'Tham gia phòng' })).toBeEnabled();
+  expect(screen.getByRole('tab', { name: 'Trang chủ' }).props.accessibilityState.selected).toBe(true);
+
+  await user.press(screen.getByRole('tab', { name: 'Bạn bè' }));
+  await waitFor(() => expect(screen).toHavePathname('/gm14/friends'));
+  await user.press(screen.getByRole('button', { name: 'Về màn hình chính' }));
+  await waitFor(() => expect(screen).toHavePathname('/'));
+
+  await user.press(screen.getByRole('tab', { name: 'Lịch sử' }));
+  await waitFor(() => expect(screen).toHavePathname('/gm14/history'));
+  await user.press(screen.getByRole('button', { name: 'Về màn hình chính' }));
+  await waitFor(() => expect(screen).toHavePathname('/'));
+
+  await user.press(screen.getByRole('button', { name: 'Thông báo' }));
+  await waitFor(() => expect(screen).toHavePathname('/gm14/inbox'));
 });
 
 test('join deep link pre-fills code but waits for user confirmation', async () => {
@@ -187,32 +209,32 @@ test('join deep link pre-fills code but waits for user confirmation', async () =
   await user.type(screen.getByLabelText('Tên của bạn'), 'Tuấn');
   await user.press(screen.getByRole('button', { name: 'Vào phòng →' }));
   await user.press(screen.getByRole('button', { name: 'Xác nhận vào phòng mô phỏng' }));
-  await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/room-preview'));
+  await waitFor(() => expect(screen).toHavePathname('/room-preview'));
   expect(await screen.findByLabelText('Mã phòng GCD234')).toBeOnTheScreen();
   await user.press(screen.getByRole('button', { name: '‹ Quay lại' }));
   await screen.findByText('Phòng mẫu #GCD234');
   await user.press(screen.getByRole('button', { name: 'Quay lại phòng mô phỏng' }));
-  await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/room-preview'));
+  await waitFor(() => expect(screen).toHavePathname('/room-preview'));
 });
 
 test('Home create flow reaches the adapter receipt and preserves the room on return', async () => {
   await renderRouter(routes, { initialUrl: '/' });
   const user = userEvent.setup();
-  await screen.findByText(/Chào /);
-  await user.press(screen.getByRole('button', { name: '＋ Tạo kèo ăn' }));
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Tạo phòng' })).toBeEnabled());
+  await user.press(screen.getByRole('button', { name: 'Tạo phòng' }));
   await screen.findByRole('button', { name: 'Hồ Con Rùa' });
   await user.type(screen.getByLabelText('Tên của bạn (chủ phòng)'), 'Tuấn');
   await user.press(screen.getByRole('button', { name: 'Hồ Con Rùa' }));
   expect(screen.getByText('BỐI CẢNH PHÒNG')).toBeOnTheScreen();
   await user.press(screen.getByRole('button', { name: 'Tôi xác nhận điểm ăn, buổi và giờ' }));
   await user.press(screen.getByRole('button', { name: 'Tạo phòng mô phỏng' }));
-  await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/room-preview'));
+  await waitFor(() => expect(screen).toHavePathname('/room-preview'));
   expect(await screen.findByText('Đã tạo phòng mẫu')).toBeOnTheScreen();
   expect(screen.getByText('Đã nhận yêu cầu mô phỏng')).toBeOnTheScreen();
   await user.press(screen.getByRole('button', { name: '‹ Quay lại' }));
-  await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/'));
+  await waitFor(() => expect(screen).toHavePathname('/'));
   expect(screen.getByRole('button', { name: 'Quay lại phòng mô phỏng' })).toBeOnTheScreen();
-  expect(screen.getByRole('button', { name: '＋ Tạo kèo ăn' })).toBeDisabled();
+  expect(screen.getByRole('button', { name: 'Tạo phòng' })).toBeDisabled();
 });
 
 test('a warm route parameter updates the code without joining or keeping the previous confirmation', async () => {
@@ -226,7 +248,7 @@ test('a warm route parameter updates the code without joining or keeping the pre
   expect(screen.getByLabelText('Tên của bạn').props.value).toBe('Tuấn');
   expect(screen.queryByRole('button', { name: 'Xác nhận vào phòng mô phỏng' })).toBeNull();
   expect(screen.queryByText('Đã nhận yêu cầu mô phỏng')).toBeNull();
-  expect(store.getRouteInfo().pathname).toBe('/join-room');
+  expect(screen).toHavePathname('/join-room');
 });
 
 test('changing fixture on join renders full error and can reset for retry', async () => {
@@ -240,7 +262,7 @@ test('changing fixture on join renders full error and can reset for retry', asyn
   await user.press(screen.getByRole('button', { name: 'Vào phòng →' }));
   await user.press(screen.getByRole('button', { name: 'Xác nhận vào phòng mô phỏng' }));
   expect(await screen.findByText(/Phòng đã đủ người/)).toBeOnTheScreen();
-  expect(store.getRouteInfo().pathname).toBe('/join-room');
+  expect(screen).toHavePathname('/join-room');
   await user.press(screen.getByRole('button', { name: 'Công cụ kiểm thử' }));
   await user.press(screen.getByRole('button', { name: 'Bình thường' }));
   expect(screen.queryByText(/Phòng đã đủ người/)).toBeNull();
@@ -251,7 +273,7 @@ test('receipt deep link without memory offers safe recovery instead of inventing
   expect(screen.getByText('Phiên mẫu chỉ lưu trong bộ nhớ')).toBeOnTheScreen();
   const user = userEvent.setup();
   await user.press(screen.getByRole('button', { name: '‹ Quay lại' }));
-  await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/'));
+  await waitFor(() => expect(screen).toHavePathname('/'));
 });
 
 test.each(['/create-room', '/join-room'])('active receipt guards direct navigation to %s', async initialUrl => {
@@ -266,6 +288,6 @@ test('shell navigates to GM-12 vote route and renders voting screen', async () =
   await renderRouter(routes, { initialUrl: '/shell' });
   const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
   await user.press(screen.getByRole('button', { name: 'Mở bình chọn GM-12' }));
-  await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/gm12/vote'));
+  await waitFor(() => expect(screen).toHavePathname('/gm12/vote'));
   expect(screen.getByText('GM-12 · UI Chọn món Vòng 1 (Flashcard Vote)')).toBeOnTheScreen();
 });

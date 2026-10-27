@@ -1,9 +1,24 @@
 import { fireEvent, render, screen, userEvent } from '@testing-library/react-native';
 import { act } from 'react';
 import { getThemeColors } from '../../src/shared/theme/tokens';
-import { AppButton, AvatarRow, Chip, ContextSummary, DishCard, FormField, RoomCode, StatusNotice } from '../../src/shared/ui';
+import { AppBottomNavigation, AppButton, AppHeader, AvatarRow, BrandBanner, Chip, ContextSummary, DishCard, FormField, RoomCode, StatusNotice } from '../../src/shared/ui';
 
 const colors = getThemeColors('light');
+
+test('light theme uses the approved Figma brand and accessible action colors', () => {
+  expect(colors).toMatchObject({
+    bg: '#FFFCF3',
+    surface: '#FFFCF3',
+    soft: '#F0F4E9',
+    warm: '#ECF8EB',
+    primary: '#238633',
+    primaryPressed: '#1B6B29',
+    onPrimary: '#FFFFFF',
+    text: '#043B22',
+    line: '#B9CB9B',
+    green: '#46C34F',
+  });
+});
 
 test('shared controls expose labels, touch actions and selected state', async () => {
   const onPress = jest.fn();
@@ -15,6 +30,50 @@ test('shared controls expose labels, touch actions and selected state', async ()
   expect(onPress).toHaveBeenCalledTimes(1);
   expect(onChip).toHaveBeenCalledTimes(1);
   expect(screen.getByRole('button', { name: 'Món nước' }).props.accessibilityState.selected).toBe(true);
+});
+
+test('Figma Home building blocks render the dining banner, branded header and selected bottom tab', async () => {
+  const onInbox = jest.fn();
+  const onFriends = jest.fn();
+  const view = await render(<>
+    <AppHeader colors={colors} onInbox={onInbox} showFriends={false} showInbox showProfile={false} />
+    <BrandBanner colors={colors} />
+    <AppBottomNavigation
+      activeId="home"
+      colors={colors}
+      items={[
+        { id: 'home', label: 'Trang chủ', iconSource: require('../../assets/brand/icons/home.png'), onPress: jest.fn() },
+        { id: 'friends', label: 'Bạn bè', iconSource: require('../../assets/brand/icons/friends.png'), onPress: onFriends },
+      ]}
+    />
+  </>);
+
+  expect(screen.getByText('Gì Cũng Được')).toBeOnTheScreen();
+  expect(screen.getByRole('button', { name: 'Thông báo' })).toBeOnTheScreen();
+  expect(screen.queryByRole('button', { name: 'Bạn ăn cùng' })).toBeNull();
+  expect(screen.queryByRole('button', { name: 'Hồ sơ' })).toBeNull();
+  expect(screen.getByText(/Hợp gu cả nhóm/)).toBeOnTheScreen();
+  expect(screen.getByTestId('brand-banner-illustration')).toBeOnTheScreen();
+  expect(screen.getByRole('tab', { name: 'Trang chủ' }).props.accessibilityState.selected).toBe(true);
+  await userEvent.setup().press(screen.getByRole('tab', { name: 'Bạn bè' }));
+  expect(onFriends).toHaveBeenCalledTimes(1);
+  await view.unmount();
+});
+
+test('icon action tile and quick-friend add affordance keep accessible button names', async () => {
+  const onCreate = jest.fn();
+  const onAdd = jest.fn();
+  await render(<>
+    <AppButton label="Tạo phòng" iconSource={require('../../assets/brand/icons/plus.png')} iconLayout="stacked" onPress={onCreate} colors={colors} />
+    <AvatarRow items={[{ id: 'linh', label: 'Linh' }]} onAdd={onAdd} colors={colors} />
+  </>);
+
+  expect(screen.getByTestId('app-button-icon')).toBeOnTheScreen();
+  await userEvent.setup().press(screen.getByRole('button', { name: 'Tạo phòng' }));
+  await userEvent.setup().press(screen.getByRole('button', { name: 'Thêm bạn' }));
+  expect(onCreate).toHaveBeenCalledTimes(1);
+  expect(onAdd).toHaveBeenCalledTimes(1);
+  expect(screen.getByText('Linh')).toBeOnTheScreen();
 });
 
 test.each(['primary', 'secondary'] as const)('AppButton %s accepts label and surface presses and preserves disabled/loading guards', async variant => {
