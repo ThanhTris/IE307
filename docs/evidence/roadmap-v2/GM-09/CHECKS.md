@@ -1,5 +1,18 @@
 # GM-09 — checks
 
+## Supplement 2026-10-27 — Home aligned to approved Figma frame
+
+After the owner reported that Home still looked old, the current working tree updates it to the approved [Home frame 330:3067](figma/330-3067-home.png): G mark/title and inbox action, headline/subtitle, friends-dining banner, square create/join actions, quick-friends card and four-item bottom navigation. It uses GM-05 shared `AppHeader`, `AppButton`, `AvatarRow`, `BrandBanner`, and `AppBottomNavigation`; brand artwork/icons are bundled from Figma with hashes in `mobile/assets/brand/SOURCE.md`. Create/join/session/repository callbacks and explicit mock label remain. Empty friend results are represented honestly; no sample identities are added.
+
+| Check | Expected | Actual | Result |
+|---|---|---|---|
+| Component + route regressions | Shared components render; Home navigation/create/join remains available | Targeted Jest: 3 suites / 46 tests passed; strict typecheck passed | Pass (automated) |
+| Lint / architecture | No new lint errors or dependency-boundary violations | Lint exit 0, four existing warnings in upstream API files; architecture guard passed | Pass with warnings |
+| Android export | Updated screen and all Figma assets bundle | Expo Android export passed, 1,407 modules, 40 assets, Hermes 3.4 MB | Pass (export only) |
+| Updated Home on Android emulator | See composition, spacing, artwork and navigation on rendered app | AVD `Medium_Phone_API_37.0` booted and ADB reported `emulator-5554` online; Expo Go 58.0.5 is installed, but Android could not resolve its launcher/`exp://` activity (`No activities found` / `Activity class ... does not exist`). App did not render and no screenshot was obtained | Not run |
+
+This section supersedes descriptions below that say the Home layout/artwork remain old, for the current working tree only. Earlier screenshots and hashes refer to older source and remain historical. It does not claim pixel-perfect parity or GM-09 acceptance.
+
 ## Bàn giao review theo xác nhận người dùng — 2026-10-15
 
 Người dùng xác nhận “tôi đã kiểm tra GM-09 thành công và hoạt động” sau bản sửa cuối. Ghi **Pass kiểm thủ công tổng thể theo người dùng**, chưa phải approval của Trí. Theo chỉ dẫn hiện tại, lần bàn giao GM-09 dùng biên bản văn bản, không yêu cầu ảnh/video. [Biên bản và giới hạn xác nhận](MANUAL_DEVICE_CHECK.md) ghi thông số chưa cung cấp và các ca thiết bị chưa xác nhận riêng; không tự suy light/dark/font200/TalkBack/keyboard/Back hoặc từng fixture đạt từ xác nhận chung.

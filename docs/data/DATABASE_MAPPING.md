@@ -1,6 +1,6 @@
 # GM-06 — Mapping dictionary → PostgreSQL
 
-> Mapping bổ sung GM06.2/schema0.9.0: [canonical result/history storage](GM06_CANONICAL_STORAGE.md). Mapping food/core1.1.0 bên dưới giữ nguyên cho legacy; không thay DTO hoặc runtime v4.
+> Mapping bổ sung GM06.3/schema0.10.0: [independent canonical storage và tương thích v4](GM06_CANONICAL_STORAGE.md), migration0032 sau main0031. API v4 tiếp tục dùng `dish_v4_private`; chưa nối vào model độc lập. Mapping food/core1.1.0 bên dưới giữ nguyên cho legacy.
 
 Schema **0.1.0**, task contract `food-v1/roadmap-v2/GM-06.1`, nhận GM-04.2,
 food/core interchange **1.1.0** tại `d9e83d9c091b4487f7188bdfb7906e8f950db378`.

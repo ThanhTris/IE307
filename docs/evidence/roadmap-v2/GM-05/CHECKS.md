@@ -1,5 +1,15 @@
 # GM-05 checks — shared UI components
 
+## Supplement 2026-10-27 — components used by the updated Home
+
+The Home Figma frame now consumes the shared `AppHeader`, `AppButton` with stacked icon support, and `AvatarRow`; GM-05 also exports reusable `BrandBanner` and `AppBottomNavigation` components for its dining illustration and four-tab navigation. Components accept theme/font styles and route callbacks rather than embedding API behavior. The targeted shared-component and Home route/review-feedback suites pass **46/46 tests**; strict typecheck and architecture guard pass. The Android export includes the Figma assets. Updated Home visual verification on emulator is **Not run**.
+
+This supersedes the later 2026-10-27 paragraph that said the Home layout remained GM-09 work: the actual screen composition is GM-09, and this supplement records which shared components it reuses. It does not complete GM-05 or claim pixel parity.
+
+## Supplement 2026-10-27 — shared brand update on PR #137
+
+The current branch updates shared light tokens to the approved Figma palette, replaces the AppHeader ramen mark with the official G logo asset, and applies Figma pressed colors to primary/secondary AppButton states. `sharedComponents.test.tsx` asserts the palette; targeted result is 9/9 tests, typecheck passes, and lint has zero errors (four pre-existing warnings). Android visual verification after this patch is Not run. This records shared-component changes only; GM-05 remains subject to its own task gate/review, and the Home screen composition remains GM-09 scope.
+
 Status: implementation branch, Expo Go visual check confirmed by Trí in chat on 2026-10-12; awaiting final PR review. Tested code commit: `8f6f363` (`fix(gm-05): track the rendered dish image source`).
 
 Base: `origin/main` `9188c736def7e125266f8cce2314b9f1f5c31b81`; contract `food-v1/roadmap-v2/GM-05.1`; input GM-02 shell and GM-04 field contract. PR #105 is not used as GM-05 evidence; its scope is GM-07 API/mock/loading.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""GM06.2 real PostgreSQL storage checks in one namespace-owned disposable DB.
+"""GM06.3 real PostgreSQL storage checks in one namespace-owned disposable DB.
 
 Application DB is read only (auth DDL + introspection). Never reset/reconcile it.
 No user data, JWT, credentials or real ballots are copied into reports.
@@ -19,12 +19,14 @@ import uuid
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts'))
 from dish_policy_worker import verify as verify_v3
+from gm06_v4_compat import V4Compatibility
+from gm06_canonical_validation import exercise as validate_regressions
 import gm06_schema_check as baseline
 spec = importlib.util.spec_from_file_location('gm06_canonical_food', ROOT/'supabase/seed/import_food_data.py')
 food = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(food)
-MIGRATION = ROOT/'supabase/migrations/0027_canonical_result_storage.sql'
-DOWN = ROOT/'supabase/rollback/0027_canonical_result_storage.down.sql'
+MIGRATION = ROOT/'supabase/migrations/0032_canonical_result_storage.sql'
+DOWN = ROOT/'supabase/rollback/0032_canonical_result_storage.down.sql'
 
 
 def literal(value):
@@ -44,7 +46,7 @@ def typed(value):
 
 
 def source_hashes():
-    paths = [MIGRATION, DOWN, Path(__file__), ROOT/'docs/data/GM06_CANONICAL_STORAGE.md']
+    paths = [MIGRATION, DOWN, Path(__file__), ROOT/'docs/data/GM06_CANONICAL_STORAGE.md', ROOT/'scripts/gm06_v4_compat.py', ROOT/'scripts/gm06_canonical_validation.py']
     return {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths if p.exists()}
 
 
@@ -52,18 +54,18 @@ def definitions(db):
     return json.loads(db.psql("""select coalesce(jsonb_object_agg(n.nspname||'.'||p.proname||'('||oidvectortypes(p.proargtypes)||')',
     md5(p.prosrc||coalesce(array_to_string(p.proconfig,','),'')||p.prosecdef::text)),'{}') from pg_proc p
     join pg_namespace n on n.oid=p.pronamespace where n.nspname in
-    ('dish_v3_private','gm17_private','gm20_private','gm21_private','public') and p.prokind='f';"""))
+    ('dish_v3_private','dish_v4_private','gm17_private','gm20_private','gm21_private','public') and p.prokind='f';"""))
 
 
-def run(report_path):
+def run(report_path, previous_ref=None):
     namespace = uuid.uuid4()
     database = 'gm08_check_'+namespace.hex[:16]
     admin = food.LocalDB()
     db = None
     created = False
     checks = []
-    report = {'result': 'Fail', 'scope': 'GM06.2 storage only; no v4 producer/API',
-              'schemaVersion': '0.9.0', 'dataMode': 'synthetic fixtures only',
+    report = {'result': 'Fail', 'scope': 'independent GM06.3 model; existing dish_v4_private remains API authority',
+              'schemaVersion': '0.10.0', 'dataMode': 'synthetic fixtures only',
               'applicationDatabaseChanged': False, 'productionPublished': False,
               'checkedAt': datetime.now(timezone.utc).isoformat(),
               'testedHeadBeforePatchCommit': subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
@@ -110,7 +112,7 @@ def run(report_path):
 
     def room(key='room'):
         payload = {'requestId': uid('create-'+key), 'displayName': 'GM06 QA', 'dishCount': 10, 'mealSlot': 'dinner'}
-        lines = db.psql("begin;set local role authenticated;select set_config('request.jwt.claim.sub',"+literal(users[0])+",true);select public.dish_session('create',"+typed(payload)+");commit;").splitlines()
+        lines = db.psql("begin;select dish_v3_private.tick();set local role authenticated;select set_config('request.jwt.claim.sub',"+literal(users[0])+",true);select public.dish_session('create',"+typed(payload)+");commit;").splitlines()
         response = json.loads(next(s for s in reversed(lines) if s.startswith('{')))
         if not response['ok']:
             raise AssertionError('V3 room setup failed: '+str(response))
@@ -118,7 +120,7 @@ def run(report_path):
 
     def result(overrides=None, selected_members=None):
         values = {'result_id': result_id, 'room_ref_id': room_id, 'catalogue_id': release,
-                  'catalogue_sha': sha, 'storage_version': 'GM06.2',
+                  'catalogue_sha': sha, 'storage_version': 'GM06.3',
                   'policy_version': 'dish-decision-v4/ADR-019-30PCT-MIN1',
                   'score_version': 'want2-ok1-round1-v1', 'ranking_version': 'score-desc-dense-rank-v1',
                   'status': 'DECIDED', 'reason': 'ACCEPTABLE_FINAL', 'terminal_round': 2,
@@ -159,9 +161,26 @@ def run(report_path):
                     return "'"+(stamp+delta).isoformat()+"'::timestamptz"
                 fixture=re.sub(r"'(\d{4}-\d\d-\d\dT[^']+Z)'::timestamptz",shifted,baseline.fixture_sql())
                 db.psql('begin;'+fixture+'commit;')
+        if previous_ref:
+            if not re.fullmatch(r'[0-9a-f]{40}',previous_ref):
+                raise ValueError('Previous source must be an exact commit SHA')
+            old=subprocess.check_output(['git','show',previous_ref+':supabase/migrations/0027_canonical_result_storage.sql'],cwd=ROOT,text=True,encoding='utf-8')
+            rejects('published0027/schema0.9.0 collision reproduced on current main',old,'23505')
+            defs=[]
+            for name in ('valid_price','valid_card','valid_terminal'):
+                found=re.search(r'create function gm06_canonical\.'+name+r'\(.*?\$\$;',old,re.S)
+                if not found: raise ValueError('Published validator definition unavailable')
+                defs.append(found[0])
+            broken_card={**locked[0],'priceReference':{}}
+            broken_pool=[broken_card,*locked[1:]]
+            probe="select jsonb_build_object('priceSQLNull',gm06_canonical.valid_price('{}'::jsonb) is null,'cardSQLNull',gm06_canonical.valid_card("+typed(broken_card)+") is null,'terminalAcceptedInvalidPrice',gm06_canonical.valid_terminal("+typed(broken_pool)+",'[]',null,'NO_CONSENSUS','EMPTY_INTERSECTION',1,1));"
+            lines=db.psql('begin;create schema gm06_canonical;'+''.join(defs)+probe+'rollback;').splitlines()
+            actual=json.loads(next(line for line in lines if line.startswith('{')))
+            check('published SQL NULL bypass reproduced before fix',all(actual.values()))
+            report['publishedRegressionBefore']={'commit':previous_ref,'actual':actual,'result':'Reproduced'}
         before = definitions(db)
         db.psql(MIGRATION.read_text(encoding='utf-8'))
-        query('fresh empty canonical migration succeeds', "select exists(select 1 from public.schema_versions where schema_version='0.9.0');")
+        query('fresh empty canonical migration succeeds', "select exists(select 1 from public.schema_versions where schema_version='0.10.0');")
         db.psql(DOWN.read_text(encoding='utf-8'))
         check('empty down preserves all original definitions', definitions(db), before)
         checks[-1]={'case':'empty down preserves all original definitions','expected':True,'actual':True,'result':'Pass'}
@@ -170,12 +189,15 @@ def run(report_path):
             db.psql('insert into auth.users(id,is_anonymous) values('+literal(u)+',true);')
         db.psql('insert into dish_v3_private.catalogues(id,source_sha,cards,test_only,active) values('+literal(release)+','+literal(sha)+','+typed(cards)+',true,true);')
         db.psql('insert into dish_v3_private.runtime(singleton,last_tick,last_cleanup) values(true,statement_timestamp(),statement_timestamp());')
+        v4=V4Compatibility(db,users,check,literal)
+        v4.setup()
         room_id = room()
         existing_room = db.psql('select to_jsonb(r) from public.rooms r where id='+literal(room_id)+';').strip()
         legacy = db.psql("select jsonb_build_array((select coalesce(jsonb_agg(to_jsonb(r)),'[]') from public.results r),(select coalesce(jsonb_agg(to_jsonb(h)),'[]') from public.histories h));").strip()
         # Upgrade with populated legacy winner/history + v3 room/catalogue/identities.
         db.psql(MIGRATION.read_text(encoding='utf-8'))
-        query('schema version is storage-only, v3 ledger retained', "select count(*)=2 from public.schema_versions where schema_version in('0.8.0','0.9.0');")
+        query('v4 ledger versions and independent storage version coexist', "select count(*)=5 from public.schema_versions where schema_version in('0.8.0','0.9.0','0.9.1','0.9.2','0.10.0');")
+        v4.after_upgrade()
         check('populated legacy result/history unchanged by upgrade', db.psql("select jsonb_build_array((select coalesce(jsonb_agg(to_jsonb(r)),'[]') from public.results r),(select coalesce(jsonb_agg(to_jsonb(h)),'[]') from public.histories h));").strip()==legacy)
         check('populated v3 room unchanged by upgrade', db.psql('select to_jsonb(r) from public.rooms r where id='+literal(room_id)+';').strip()==existing_room)
         after = definitions(db)
@@ -189,6 +211,7 @@ def run(report_path):
         for role in ['anon','authenticated','service_role','gm06_publisher']:
             query(role+' has no schema/table/function access', "select not has_schema_privilege('"+role+"','gm06_canonical','USAGE') and not exists(select 1 from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='gm06_canonical' and c.relkind='r' and has_table_privilege('"+role+"',c.oid,'SELECT,INSERT,UPDATE,DELETE')) and not exists(select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='gm06_canonical' and has_function_privilege('"+role+"',p.oid,'EXECUTE'));")
         rejects('authenticated direct raw preference read denied', 'set role authenticated;select * from gm06_canonical.account_preferences;', '42501')
+        validate_regressions(query,rejects,result,locked,typed)
         rejects('canonical ID cannot collide with legacy registry', 'begin;insert into gm17_private.result_refs values('+literal(result_id)+');'+result().removeprefix('begin;'), '23505')
         rejects('catalogue SHA must match installed release', result({'catalogue_sha': '0'*64}))
         rejects('legacy dish ID outside catalogue rejected', result({'locked_pool': [{**locked[0],'dishId': uid('outside')},*locked[1:]]}))
@@ -318,15 +341,17 @@ def run(report_path):
         query('cleanup purges revoked history payload but keeps replay receipt', 'select not exists(select 1 from gm06_canonical.histories where history_id='+literal(hid)+') and exists(select 1 from gm06_canonical.history_receipts where result_id='+literal(result_id)+" and scope='group');")
         rejects('revoked/deleted group history cannot resurrect',history('recreated-group'),'23505')
         check('legacy history/results unchanged',db.psql("select jsonb_build_array((select coalesce(jsonb_agg(to_jsonb(r)),'[]') from public.results r),(select coalesce(jsonb_agg(to_jsonb(h)),'[]') from public.histories h));").strip()==legacy)
+        v4.after_storage_checks()
         rejects('rollback refuses retained canonical data', DOWN.read_text(encoding='utf-8'))
         # Only this namespace-owned QA DB is purged for empty rollback/reapply.
         db.psql('truncate gm06_canonical.history_audience,gm06_canonical.histories,gm06_canonical.history_receipts,gm06_canonical.result_members,gm06_canonical.results,gm06_canonical.room_preferences,gm06_canonical.account_preferences,gm06_canonical.price_observations;')
         db.psql(DOWN.read_text(encoding='utf-8'))
         check('rollback restores original cleanup function', definitions(db)['gm17_private.cleanup()'],before['gm17_private.cleanup()'])
-        query('rollback removes only supplement schema/ledger', "select to_regnamespace('gm06_canonical') is null and exists(select 1 from public.schema_versions where schema_version='0.8.0') and not exists(select 1 from public.schema_versions where schema_version='0.9.0');")
+        query('rollback removes only supplement schema/ledger', "select to_regnamespace('gm06_canonical') is null and exists(select 1 from public.schema_versions where schema_version='0.8.0') and not exists(select 1 from public.schema_versions where schema_version='0.10.0');")
+        v4.after_down()
         query('rollback preserves baseline catalogue', 'select exists(select 1 from dish_v3_private.catalogues where id='+literal(release)+' and source_sha='+literal(sha)+');')
         db.psql(MIGRATION.read_text(encoding='utf-8'))
-        query('empty reapply succeeds', "select exists(select 1 from public.schema_versions where schema_version='0.9.0');")
+        query('empty reapply succeeds', "select exists(select 1 from public.schema_versions where schema_version='0.10.0');")
         check('application function definitions unchanged',definitions(admin),app_before)
         # Do not serialize all function hashes as expected/actual duplicated maps.
         checks[-1]={'case':'application function definitions unchanged','expected':True,'actual':True,'result':'Pass'}
@@ -353,13 +378,14 @@ def run(report_path):
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--report',type=Path,default=Path('/tmp/gm06-canonical-results.json'))
+    parser.add_argument('--previous-source-ref', help='Optional exact published SHA for local red regression reproduction')
     args=parser.parse_args()
     try:
-        run(args.report)
+        run(args.report,args.previous_source_ref)
     except Exception as exc:
-        print('GM06.2 SQL check failed: '+str(exc)[:1600],file=sys.stderr)
+        print('GM06.3 SQL check failed: '+str(exc)[:1600],file=sys.stderr)
         return 1
-    print('GM06.2 SQL checks Pass; report: '+str(args.report))
+    print('GM06.3 SQL checks Pass; report: '+str(args.report))
     return 0
 
 

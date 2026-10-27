@@ -1,0 +1,31 @@
+meta {
+  name: 02 Refresh guest
+  type: http
+  seq: 3
+}
+post {
+  url: {{baseUrl}}/auth/v1/token?grant_type=refresh_token
+  body: json
+  auth: none
+}
+headers {
+  Content-Type: application/json
+}
+body:json {
+  {"refresh_token":"{{gm03RefreshToken}}"}
+}
+script:post-response {
+  const b = res.getBody();
+  if (res.getStatus() === 200 && b.access_token && b.user?.id === bru.getVar('gm03UserId')) {
+    bru.setVar('gm03AccessToken', b.access_token);
+    bru.setVar('gm03RefreshToken', b.refresh_token);
+  } else bru.runner.stopExecution();
+}
+tests {
+  test('Refresh retains the guest identity', () => {
+    const b = res.getBody();
+    expect(res.getStatus()).to.equal(200);
+    expect(b.user.id).to.equal(bru.getVar('gm03UserId'));
+    expect(b.refresh_token).to.be.a('string').and.not.empty;
+  });
+}

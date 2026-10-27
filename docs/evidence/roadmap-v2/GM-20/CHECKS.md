@@ -136,3 +136,6 @@ Lượt review fix chốt sau reset:22 HTTP/140 parity/11 SQL Pass; GM1932/15 Pa
 cleanup DB0/guest0/REST0/private files0. Parent revision2c1b023 + dirty source hash
 trong manifest xác định bản đã kiểm. CLI native ba OS đã Pass sau push; source
 không đổi giữa commit7622fad được CI kiểm và commit bổ sung evidence này.
+# Legacy consent compatibility regression — 2026-10-27
+
+Migration 0031/schema 0.9.2 corrects account-default inheritance leaking into legacy room consent preparation. GM-20 history expectations remain unchanged: none/no snapshot 0, valid 3, partial/expired/revoked 1. The complete frozen GM-20 HTTP scenarios passed **22/22** on an ownership-verified disposable Auth+REST QA target. The local adapter preserves the `tests()` body byte-for-byte and only binds QA transport/evidence plus the existing GM-21 preference-before-ready fixture ordering. Delete/retry, rollback, races and privacy remain asserted. Evidence stays local under `review-results/ci-legacy-consent-fix-20261027/`; see GM-21 CHECKS/HANDOFF for the forward migration, worker pin and other regressions. Application DB deployment, remote CI and Android are not inferred from this local run.

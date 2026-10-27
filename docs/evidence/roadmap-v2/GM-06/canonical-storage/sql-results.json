@@ -1,20 +1,34 @@
 {
   "result": "Pass",
-  "scope": "GM06.2 storage only; no v4 producer/API",
-  "schemaVersion": "0.9.0",
+  "scope": "independent GM06.3 model; existing dish_v4_private remains API authority",
+  "schemaVersion": "0.10.0",
   "dataMode": "synthetic fixtures only",
   "applicationDatabaseChanged": false,
   "productionPublished": false,
-  "checkedAt": "2026-10-25T15:10:37.794261+00:00",
-  "testedHeadBeforePatchCommit": "a31f403fbcdc4cfdb03e03fe77506ccdd9a4cbea",
+  "checkedAt": "2026-10-27T08:37:20.961000+00:00",
+  "testedHeadBeforePatchCommit": "a7f54d8e404a2d988d390fbd724938fea623e98b",
   "workingTreePatchIncluded": true,
   "sourceHashes": {
-    "supabase/migrations/0027_canonical_result_storage.sql": "d5f03894d2f65bee4768bfffac4e929e38c2874be12257b6ee767839ba426a43",
-    "supabase/rollback/0027_canonical_result_storage.down.sql": "133923a32bdaf9dc9187402db985bf2794646bddcdc1f05256c518ad801d2ad6",
-    "scripts/gm06_canonical_check.py": "9fb66c6ee5f999cd12924921cf5dd6062a9c89891b75b2cd4d4757fafc8e5bbc",
-    "docs/data/GM06_CANONICAL_STORAGE.md": "b0c5509c879a8fc57e6c18b790c927d4a949e4dad3f7989a611d7c6a82e52146"
+    "supabase/migrations/0032_canonical_result_storage.sql": "8f1184820fdcf90909af2db7b9845706fdee11e2ccebd3f595b8e3ebc4214330",
+    "supabase/rollback/0032_canonical_result_storage.down.sql": "54f3afc17bdeea38336d533baa0061584183964d0850514a9d969633cf861d46",
+    "scripts/gm06_canonical_check.py": "0b164669f4f0f632ed5b5b48ab1f97cab3fd47b75cdd53ff04589881256a9cf6",
+    "docs/data/GM06_CANONICAL_STORAGE.md": "8a5dde07b5685e0877d906be5886ee0fc0788af8957cd26fcb8b5f5a736bf954",
+    "scripts/gm06_v4_compat.py": "4c6048aad92d55c14d2175e2fb79d30a324263a818962694156bc1c08385f68e",
+    "scripts/gm06_canonical_validation.py": "6b1886e03478e56e7089b98994581fe04724d8fdfce0baa56386efbc0ee47c78"
   },
   "cases": [
+    {
+      "case": "published0027/schema0.9.0 collision reproduced on current main",
+      "expected": "23505",
+      "actual": "23505",
+      "result": "Pass"
+    },
+    {
+      "case": "published SQL NULL bypass reproduced before fix",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
     {
       "case": "fresh empty canonical migration succeeds",
       "expected": "t",
@@ -28,9 +42,69 @@
       "result": "Pass"
     },
     {
-      "case": "schema version is storage-only, v3 ledger retained",
+      "case": "v4 pre-upgrade real writer decided20",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "v4 pre-upgrade real writer none2",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "v4 pre-upgrade group20 uses persisted result",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "v4 pre-upgrade cohort20 is actually stored",
+      "expected": "20",
+      "actual": "20",
+      "result": "Pass"
+    },
+    {
+      "case": "v4 ledger versions and independent storage version coexist",
       "expected": "t",
       "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "v4 persisted result/history/preferences/consents unchanged by migration",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "v4 result RPC reads same stored projection after upgrade",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "v4 result RPC reads same stored projection after upgrade",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "v4 history RPC reads same stored projection after upgrade",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "v4 default-preference RPC unchanged by upgrade",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "v4 rows are not silently mirrored into independent storage",
+      "expected": "0",
+      "actual": "0",
       "result": "Pass"
     },
     {
@@ -103,6 +177,582 @@
       "case": "authenticated direct raw preference read denied",
       "expected": "42501",
       "actual": "42501",
+      "result": "Pass"
+    },
+    {
+      "case": "price SQL NULL returns false",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "unknown price JSON null returns true",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "complete zero price with nullable metadata returns true",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "complete null amount remains a valid unknown observation",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "card SQL NULL returns false",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "card empty object returns false",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "preference SQL NULLs return false",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "price empty object strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "nested card empty object strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "terminal pool empty object strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "storage CHECK rejects price empty object",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "price array strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "nested card array strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "terminal pool array strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "storage CHECK rejects price array",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "price string strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "nested card string strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "terminal pool string strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "storage CHECK rejects price string",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "price number strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "nested card number strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "terminal pool number strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "storage CHECK rejects price number",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "price boolean strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "nested card boolean strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "terminal pool boolean strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "storage CHECK rejects price boolean",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "price extra field strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "nested card extra field strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "terminal pool extra field strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "storage CHECK rejects price extra field",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "price negative amount strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "nested card negative amount strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "terminal pool negative amount strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "storage CHECK rejects price negative amount",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "price invalid timestamp strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "nested card invalid timestamp strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "terminal pool invalid timestamp strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "storage CHECK rejects price invalid timestamp",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "price missing amount strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "nested card missing amount strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "terminal pool missing amount strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "storage CHECK rejects price missing amount",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "price wrong type amount strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "nested card wrong type amount strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "terminal pool wrong type amount strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "storage CHECK rejects price wrong type amount",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "price missing currency strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "nested card missing currency strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "terminal pool missing currency strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "storage CHECK rejects price missing currency",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "price wrong type currency strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "nested card wrong type currency strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "terminal pool wrong type currency strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "storage CHECK rejects price wrong type currency",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "price missing unit strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "nested card missing unit strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "terminal pool missing unit strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "storage CHECK rejects price missing unit",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "price wrong type unit strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "nested card wrong type unit strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "terminal pool wrong type unit strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "storage CHECK rejects price wrong type unit",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "price missing sourceRef strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "nested card missing sourceRef strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "terminal pool missing sourceRef strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "storage CHECK rejects price missing sourceRef",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "price wrong type sourceRef strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "nested card wrong type sourceRef strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "terminal pool wrong type sourceRef strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "storage CHECK rejects price wrong type sourceRef",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "price missing servingSize strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "nested card missing servingSize strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "terminal pool missing servingSize strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "storage CHECK rejects price missing servingSize",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "price wrong type servingSize strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "nested card wrong type servingSize strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "terminal pool wrong type servingSize strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "storage CHECK rejects price wrong type servingSize",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "price missing observedAt strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "nested card missing observedAt strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "terminal pool missing observedAt strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "storage CHECK rejects price missing observedAt",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "price wrong type observedAt strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "nested card wrong type observedAt strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "terminal pool wrong type observedAt strictly rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "storage CHECK rejects price wrong type observedAt",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "JSON null price remains valid in terminal pool",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "terminal SQL NULL pool returns false",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "terminal SQL NULL podium returns false",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "terminal SQL NULL status returns false",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "terminal SQL NULL reason returns false",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "terminal SQL NULL round returns false",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "terminal SQL NULL scored returns false",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "empty podium object cannot bypass exact key guard",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "empty podium object cannot bypass exact key guard",
+      "expected": "t",
+      "actual": "t",
       "result": "Pass"
     },
     {
@@ -466,6 +1116,48 @@
       "result": "Pass"
     },
     {
+      "case": "v4 delete + exact terminal replay does not resurrect history",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "actual shared cleanup removes v4 operational room/session",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "shared cleanup restores v4 writer guard setting",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "v4 history still reads fixed result after operational cleanup",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "v4 result source survives operational cleanup",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "v4 revocation removes authorized group history after cleanup",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "v4 group revoke preserves separately consented personal history",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
       "case": "rollback refuses retained canonical data",
       "expected": "23514",
       "actual": "23514",
@@ -481,6 +1173,12 @@
       "case": "rollback removes only supplement schema/ledger",
       "expected": "t",
       "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "down leaves retained v4 result/history/preferences/consents intact",
+      "expected": true,
+      "actual": true,
       "result": "Pass"
     },
     {
@@ -516,8 +1214,22 @@
     "0024_history_integration.sql": "48d8662cd1e4c70a7ef6147efb517bcb351365fc6e1f90ac49e4defa3c868ad9",
     "0025_notifications.sql": "a1f8bab1b7853c52fb82e97afef470634b4776b75ae8a000bba2e24796f81ba1",
     "0026_dish_session_policy.sql": "24fba6d428e283bef7edd46d040b7e89c7ce2953c9cb7a4e04cb86a7dd682804",
-    "0027_canonical_result_storage.sql": "d5f03894d2f65bee4768bfffac4e929e38c2874be12257b6ee767839ba426a43"
+    "0027_dish_session_v4.sql": "504936d84652d92dc322e63160f5d435dffe5c466d38807220040480e621114c",
+    "0028_dish_v4_top_three_cutoff.sql": "373c7d28d2ffae3de5510a4d5ebba0d5bd756feb05db5b1e03883ae85feccb55",
+    "0029_dish_v4_history_consent.sql": "9a6545904cbaa80e7461c3077a2c3f4c1bf6bc1362e364b566c0ce4012fe5533",
+    "0030_history_consent_search_path.sql": "c50737fa0dad65a3eebf2ed8423b3313f508b4d754fe4626d3ff300af510996e",
+    "0031_history_consent_policy_isolation.sql": "75eefa6f4975fa88a4fede0cc934aaed216144b1ca51efe3e31ea86a06f789e8",
+    "0032_canonical_result_storage.sql": "8f1184820fdcf90909af2db7b9845706fdee11e2ccebd3f595b8e3ebc4214330"
+  },
+  "publishedRegressionBefore": {
+    "commit": "a7f54d8e404a2d988d390fbd724938fea623e98b",
+    "actual": {
+      "cardSQLNull": true,
+      "priceSQLNull": true,
+      "terminalAcceptedInvalidPrice": true
+    },
+    "result": "Reproduced"
   },
   "cleanup": "namespace-owned QA database removed",
-  "assertions": 80
+  "assertions": 196
 }

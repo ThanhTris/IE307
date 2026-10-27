@@ -39,5 +39,5 @@ drop function gm06_canonical.valid_price(jsonb);
 drop function gm06_canonical.unique_uuids(uuid[]);
 drop schema gm06_canonical;
 -- Shared minimal registry IDs are deliberately retained, never reused/deleted here.
-delete from public.schema_versions where schema_version='0.9.0' and contract_id='GM06.2-canonical-storage';
+delete from public.schema_versions where schema_version='0.10.0' and contract_id='GM06.3-canonical-storage';
 commit;

@@ -1,0 +1,31 @@
+meta {
+  name: 13 Member snapshot lobby
+  type: http
+  seq: 13
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/dish_session
+  body: json
+  auth: none
+}
+headers {
+  Authorization: Bearer {{memberToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"command":"snapshot","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B","roomId":"{{roomId}}"}}
+}
+script:post-response {
+  const b = res.getBody();
+  if (res.getStatus() === 200 && b.ok) bru.setVar('roomVersion', String(b.data.version));
+}
+tests {
+  test('Joined member sees own copied default preference and no ready field', () => {
+    const b = res.getBody().data;
+    expect(res.getStatus()).to.equal(200);
+    expect(b.state).to.equal('LOBBY');
+    expect(b.members).to.have.length(2);
+    expect(b.members.some(m => Object.hasOwn(m, 'ready'))).to.equal(false);
+    expect(b.ownPreferences.temperature).to.equal('warm');
+  });
+}

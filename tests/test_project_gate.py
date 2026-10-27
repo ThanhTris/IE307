@@ -58,7 +58,8 @@ class ProjectApiTests(unittest.TestCase):
     def test_needs_update_preserves_dependency_baseline_but_not_task_completion(self):
         snapshot = self.snapshot(item(self.config, 'GM-40', 'Needs Update'))
         self.assertTrue(snapshot.approval_errors('GM-40'))
-        self.assertEqual(snapshot.dependency_errors('GM-40'), [])
+        self.assertTrue(snapshot.dependency_errors('GM-40'))  # Needs Update never unlocks children
+        self.assertEqual(snapshot.claimable_errors('GM-40'), [])
 
     def test_owner_pinned_baseline_alias_uses_gm00_card_for_gm01(self):
         self.assertEqual(self.config['issues']['GM-01'], 37)
@@ -215,9 +216,9 @@ class ProjectGateTests(unittest.TestCase):
         self.snapshot.items[1]['status']['name'] = 'Todo'
         self.assertEqual(self.gate(), ('BLOCKED', ['GM-03']))
 
-    def test_needs_update_satisfies_dependency_without_completing_current_task(self):
+    def test_needs_update_blocks_children_but_task_itself_stays_claimable(self):
         self.snapshot.items[1]['status']['name'] = 'Needs Update'
-        self.assertEqual(self.gate(), ('READY_TO_CLAIM', []))
+        self.assertEqual(self.gate(), ('BLOCKED', ['GM-03']))
         records = gates.repository.task_records(self.source)
         self.assertIn(gates.readiness(self.source, records, 'GM-03', project=self.snapshot)[0],
                       {'READY_TO_CLAIM', 'READY_TO_START'})
@@ -226,7 +227,6 @@ class ProjectGateTests(unittest.TestCase):
                          'READY_TO_CLAIM')
 
     def test_done_without_output_or_handoff_blocks(self):
-        self.snapshot.items[2]['status']['name'] = 'Needs Update'
         self.source.files.remove('docs/evidence/roadmap-v2/GM-04/HANDOFF.md')
         self.assertEqual(self.gate(), ('BLOCKED_ARTIFACTS', ['GM-04']))
 
@@ -259,7 +259,7 @@ class ProjectGateTests(unittest.TestCase):
         base.contents[artifact] += 'changed'
         with patch.object(gates.repository, 'Source', side_effect=lambda ref: self.source if ref is None else base), patch.object(project, 'load_project', return_value=self.snapshot), patch.object(sys, 'argv', ['task_readiness.py', '--task', 'GM-06', '--gate', 'merge', '--base-ref', 'target']), contextlib.redirect_stdout(io.StringIO()) as output:
             self.assertEqual(gates.main(), 1)
-        self.assertIn('Project=baseline accepted (Done/Needs Update)', output.getvalue())
+        self.assertIn('Project=baseline accepted (Done)', output.getvalue())
         self.assertIn('target artifact content differs: ' + artifact, output.getvalue())
 
     def test_merge_still_needs_base(self):
@@ -292,7 +292,8 @@ class ProjectGateTests(unittest.TestCase):
             deliver_in_memory(self.source, tid)
             self.snapshot.items.append(item(self.snapshot.config, tid))
         records = gates.repository.task_records(self.source)
-        self.assertEqual(gates.readiness(self.source, records, 'GM-07', project=self.snapshot)[0], 'READY_TO_CLAIM')
+        # Every dependency (including the former merge-only GM-06) gates the start too.
+        self.assertEqual(gates.readiness(self.source, records, 'GM-07', project=self.snapshot), ('BLOCKED', ['GM-06']))
         self.assertEqual(gates.readiness(self.source, records, 'GM-07', 'merge', self.source, self.snapshot), ('BLOCKED', ['GM-06']))
 
     def test_cli_defaults_to_live_project_and_does_not_recheck_snapshot(self):

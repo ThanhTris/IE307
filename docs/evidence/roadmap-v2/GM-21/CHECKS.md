@@ -50,3 +50,19 @@ a rerun passed382/382, followed by full checks after installing PR116 dependenci
 Keep the initial failure log for traceability; it is not a hidden or skipped test.
 Current patch remote CI will run only after the user pushes. Trí reviews the current
 revision and output; READY_FOR_MERGE_REVIEW does not authorize automatic merge/Done.
+
+## Consent wrapper security fix — 2026-10-27 (local)
+
+Reproduced the main/PR #137 CI failure at `public wrappers fixed path and restricted grants` on owned disposable PostgreSQL. Migration `0030_history_consent_search_path.sql` changes only `public.update_history_consent(text,text,jsonb)` to `search_path=pg_catalog`; the existing function body, grants, consent behavior and contract are preserved. Earlier migrations and the security assertion are unchanged.
+
+The unchanged GM-21 `exercise()` assertions passed **45/45** after the fix, including private schemas/helpers, authenticated/anon grants, replay, revoke/delete, pagination and retention. The local transport adapter binds TestDB to an ownership-verified QA container instead of the application container; this is real SQL with claims, not JWT or Android evidence. Before/after JSON and TAP logs are local under `review-results/ci-sql-fix-20261027/`. Both disposable history databases were removed. Remote CI, application deployment and human approval are not claimed by this local check.
+
+A subsequent fresh `python scripts/dish_v4_ci.py run` applied all source migrations, including 0030, and passed **83/83 real Auth+REST assertions**, validating 439 contract envelopes and cleaning its owned worker/container/workdir. Full offline Python regression: **604 tests, OK, 6 skipped**. Validator, generated indexes and diff checks passed. These are local uncommitted-source results, not CI on a pushed commit.
+
+## Legacy history compatibility follow-up — 2026-10-27
+
+CI on `4677f6b` passed GM-06 TAP and GM-21 SQL/JWT/lifecycle stages, then failed the frozen GM-20 history scenario at `History count valid: 0/3`. A separate local regression reproduced a legacy room's explicit opt-in being overwritten when no account default exists. The v4 account-default helper in migration 0029 was unintentionally applied to legacy rooms as well.
+
+Migration 0031/schema 0.9.2 makes that behavior policy-specific. New checks fail before the migration and pass afterwards: explicit legacy opt-in survives absent account defaults, and an account opt-in cannot enable an opted-out legacy room. The full history SQL exercise now passes **47/47**; database TAP remains **47/47**. Real Auth+REST v4 passes **83/83**, 439 schema envelopes, with the runtime schema patch read back as 0.9.2. GM-17 access/privacy/retention passes **93 assertions** against the owned QA deployment (its optional concurrent cleanup branch is skipped). Worker definition verification passes against deployed 0031. Full Python regression: **604 tests OK, 6 skipped**. Evidence is local under `review-results/ci-legacy-consent-fix-20261027/`; no application DB migration or reset is claimed.
+
+The complete frozen GM-20 HTTP business scenarios also passed **22/22**, including the previously failing valid/partial/expired/revoked history cases, delete/retry, fault rollback, concurrent finalize/cancel and lost-response replay. The local adapter changes only QA Auth/REST/fixture transport, evidence destination and the already reviewed GM-21 fixture ordering (all preferences before ready). It asserts that the `tests()` scenario body is unchanged and records its hash. It uses real GoTrue JWTs and a namespace-owned PostgREST/database; owned fixture DB/guests were removed. See local `gm20-after/http-results.json`, `gm20-adapter.json` and `gm20-after.log`. This local pass does not claim remote CI success before the patch is pushed and executed there.

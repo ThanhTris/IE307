@@ -98,9 +98,9 @@ Expo Go Android cùng LAN, SDK 57. Home `/` → **＋ Tạo kèo ăn** (`/create
 
 | Artifact | Cách dùng / task nhận |
 | --- | --- |
-| `mobile/src/features/home/screens/HomeScreen.tsx` | Inject `repository`, `sessionToken`, `activeRoom`, callbacks create/join/resume/foundation; GM-25. Avatar preview tối đa 5, không suy online từ Friend.status=active. |
-| `mobile/src/features/rooms/screens/CreateRoomScreen.tsx` | Inject repository + `onEntered(RoomEntryReceipt)`; `CreateRoomRequest` đúng GM-07, không thêm room title/lat/lng; GM-10/25. |
-| `mobile/src/features/rooms/screens/JoinRoomScreen.tsx` | `initialCode`, `sampleCode` chỉ mock, `onScan: CameraAction`, `onEntered`; GM-25/30 thay camera/link tại composition, giữ explicit confirmation. |
+| `mobile/src/features/home/screens/Gm25HomeScreen.tsx` | Inject `repository`, `sessionToken`, `activeRoom`, callbacks create/join/resume/foundation; GM-25. Avatar preview tối đa 5, không suy online từ Friend.status=active. |
+| `mobile/src/features/rooms/screens/Gm25CreateRoomScreen.tsx` | Inject repository + `onEntered(RoomEntryReceipt)`; `CreateRoomRequest` đúng GM-07, không thêm room title/lat/lng; GM-10/25. |
+| `mobile/src/features/rooms/screens/Gm25JoinRoomScreen.tsx` | `initialCode`, `sampleCode` chỉ mock, `onScan: CameraAction`, `onEntered`; GM-25/30 thay camera/link tại composition, giữ explicit confirmation. |
 | `mobile/src/features/rooms/screens/RoomEntryReceiptScreen.tsx` | `onPreferences(receipt)` / `onLobby(receipt)` nhận `{roomId, code, version, role}`; GM-10/11/25. Chưa setReady/start. |
 | `services/roomEntry.ts`, `hooks/useRoomEntry.ts` trong feature rooms | Narrow `Pick<ApiClient,…>`, validation/timezone/error copy; read hủy response cũ, write chống bấm trùng/late response. |
 | `mobile/src/bootstrap/roomPreview.tsx` | Factory mode `'mock'` tường minh + store RAM + controls. GM-25 thay wiring/session/requestId và nhãn mock theo task integration; không dùng store mẫu làm cache/persistence production. |
@@ -113,3 +113,10 @@ Expo Go Android cùng LAN, SDK 57. Home `/` → **＋ Tạo kèo ăn** (`/create
 - Python 3.12.14 hiện hành: 544 tests, **Fail (1 failure, 5 errors)**; encoding probe và taxonomy locking Windows đã ghi ở GM-07. Không sửa data/runner trong GM-09; cần maintainer/Trí xử lý hoặc kiểm Linux/WSL. [Output](UI_REWORK_PYTHON_REGRESSION.txt).
 - Không đổi package/lockfile/shared UI/DTO/schema/luật phiếu; không thêm provider, GPS/camera/native module. Không có RPC thật, lobby/preferences/social thật, SecureStore/outbox hay dataset verified; các phần này thuộc task nhận sau.
 - `.agents/` tự tạo đã xóa hoàn toàn khỏi workspace theo yêu cầu ngày 2026-10-13; không tạo rules/skills thay thế. Chỉ dùng AGENTS/task/spec/workflow và artifact hiện hành trong project. `prompt.txt` không bị sửa. Không commit/push/Approved/Done; việc bàn giao này không thay review Trí.
+# GM-09 Home Figma implementation supplement — 2026-10-27
+
+The current working tree updates the Home screen against [approved frame 330:3067](figma/330-3067-home.png), including the official G mark, headline, friends-dining banner, create/join tiles, quick-friends section and bottom navigation. It reuses GM-05 shared components (`AppHeader`, `AppButton`, `AvatarRow`, `BrandBanner`, `AppBottomNavigation`) and keeps existing session/repository/navigation callbacks. Figma asset provenance and hashes are in [`mobile/assets/brand/SOURCE.md`](../../../../mobile/assets/brand/SOURCE.md).
+
+Automated evidence: targeted Jest 3 suites / 46 tests, typecheck and architecture guard pass; lint has four existing API-file warnings; Android JS export passes with 1,407 modules/40 assets. **The updated Home has not been visually rechecked on Android emulator**, so treat Figma parity as implementation-aligned but visually unverified. This supplement does not mark GM-09 Done or replace the reviewer/device acceptance.
+
+# GM-09 handoff — Home, create and join

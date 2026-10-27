@@ -1,5 +1,6 @@
 name: GM-06 PostgreSQL schema
-on: [push, pull_request]
+on:
+  workflow_call:
 permissions:
   contents: read
 jobs:
@@ -7,12 +8,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '24'
           cache: npm
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: '3.12'
       - run: npm ci
@@ -27,18 +28,38 @@ jobs:
         run: |
           python -m unittest discover -s tests -p 'test_gm06_schema_runner.py' -v
           python scripts/gm06_schema_check.py --report "$RUNNER_TEMP/gm06-sql-results-linux.json"
-      - name: Canonical result/history storage, populated upgrade and retention
+      - name: Canonical result/history storage, v4 populated upgrade and validation
         run: python scripts/gm06_canonical_check.py --report "${{ runner.temp }}/gm06-canonical-results.json"
-      - run: npm run backend:test
+      - name: Fresh isolated v4 HTTP compatibility
+        run: python scripts/gm06_isolated_http_check.py --report "${{ runner.temp }}/gm06-isolated-http-results.json"
+      - name: Full PostgreSQL TAP suite
+        env:
+          GM06_TAP_LOG_PATH: ${{ runner.temp }}/gm06-pgtap.log
+        run: npm run backend:test
       - name: Upload the actual SQL report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: gm06-sql-results-linux
           path: |
             ${{ runner.temp }}/gm06-sql-results-linux.json
             ${{ runner.temp }}/gm06-canonical-results.json
+            ${{ runner.temp }}/gm06-isolated-http-results.json
           if-no-files-found: warn
+          retention-days: 14
+      - name: Upload sanitized PostgreSQL TAP diagnostics
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: gm06-pgtap-diagnostics
+          path: ${{ runner.temp }}/gm06-pgtap.log
+          if-no-files-found: warn
+          retention-days: 14
       - name: Stop the local project
         if: always()
         run: npm run backend:stop
+      - name: Report final job state
+        if: always()
+        uses: ./.github/actions/ci-report
+        with:
+          name: gm06-schema

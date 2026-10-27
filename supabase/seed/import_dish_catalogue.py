@@ -75,7 +75,10 @@ def stage(path, directory, manifest_path=None):
 
 def owned(db, namespace):
     namespace = str(uuid.UUID(str(namespace)))
-    if not re.fullmatch(r'gm08_check_[0-9a-f]{16}', db.database):
+    isolated_v4_qa = (getattr(db, 'is_dish_v4_qa', False) is True
+                      and getattr(db, 'database', None) == 'postgres'
+                      and re.fullmatch(r'ie307-dish-v4-qa-[0-9]{8}(?:-[0-9]+-[0-9]+)?', getattr(db, 'qa_project_id', '')))
+    if not isolated_v4_qa and not re.fullmatch(r'gm08_check_[0-9a-f]{16}', db.database):
         raise ValueError('Only process-owned disposable QA database allowed')
     marker = db.psql('select namespace::text from public.gm40_qa_owner;').strip()
     if marker != namespace:

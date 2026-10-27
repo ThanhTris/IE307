@@ -303,14 +303,14 @@ class ManifestValidationTests(unittest.TestCase):
         self.source.contents.update(task_readiness.task_link_updates(self.source))
         self.source.contents.update(task_readiness.render_documents(self.source))
 
-    def test_in_progress_with_unfinished_merge_dependencies_is_valid(self):
-        for tid in ('GM-01', 'GM-02', 'GM-03', 'GM-04'):
+    def test_in_progress_with_all_dependencies_done_is_valid(self):
+        for tid in ('GM-01', 'GM-02', 'GM-03', 'GM-04', 'GM-06'):
             self.set_status_in_memory(tid, 'done', approve=True)
         self.set_status_in_memory('GM-07', 'in-progress')
         self.assertEqual(self.errors(), '')
 
-    def test_draft_review_with_merge_blockers_is_valid(self):
-        for tid in ('GM-01', 'GM-02', 'GM-03', 'GM-04'):
+    def test_review_with_all_dependencies_done_is_valid(self):
+        for tid in ('GM-01', 'GM-02', 'GM-03', 'GM-04', 'GM-06'):
             self.set_status_in_memory(tid, 'done', approve=True)
         self.set_status_in_memory('GM-07', 'review')
         self.assertEqual(self.errors(), '')
@@ -324,7 +324,7 @@ class ManifestValidationTests(unittest.TestCase):
         self.set_status_in_memory('GM-20', 'done', approve=True)
         self.assertIn('active task with unreviewed dependency: GM-20 -> GM-19', self.errors())
 
-    def test_parallel_merge_ancestor_is_allowed(self):
+    def test_parallel_with_any_dependency_is_rejected(self):
         records = validator.task_records(self.source)
         for tid, peer in (('GM-07', 'GM-06'), ('GM-06', 'GM-07')):
             path = records[tid]['path']
@@ -333,7 +333,8 @@ class ManifestValidationTests(unittest.TestCase):
                     [value.strip() for value in m[1].split(',') if value.strip()] + [peer]))),
                 self.source.read(path), flags=re.M)
         self.assertIn('GM-06', records['GM-07']['meta']['merge_dependencies'])
-        self.assertEqual(self.errors(), '')
+        # Every dependency is now a start gate, so a dependency pair can never be parallel.
+        self.assertIn('parallel tasks have dependency', self.errors())
 
     def test_missing_start_metadata_is_rejected(self):
         path = 'tasks/backlog/GM-20.md'

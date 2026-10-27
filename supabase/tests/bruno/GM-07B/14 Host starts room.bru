@@ -1,0 +1,37 @@
+meta {
+  name: 14 Host starts room
+  type: http
+  seq: 14
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/dish_session
+  body: json
+  auth: none
+}
+headers {
+  Authorization: Bearer {{hostToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"command":"start","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B","requestId":"start_{{timestamp}}","roomId":"{{roomId}}","expectedVersion":{{roomVersion}}}}
+}
+script:pre-request {
+  bru.setVar('timestamp', String(Date.now()));
+}
+script:post-response {
+  const b = res.getBody();
+  if (res.getStatus() === 200 && b.ok) {
+    bru.setVar('roomVersion', String(b.data.version));
+    bru.setVar('poolVersion', String(b.data.poolVersion));
+    bru.setVar('r1Votes', JSON.stringify(b.data.pool.map(d => ({roundDishId:d.roundDishId,choice:'OK'}))));
+  } else bru.runner.stopExecution();
+}
+tests {
+  test('Host starts with exact pool; ready state is absent', () => {
+    const b = res.getBody().data;
+    expect(res.getStatus()).to.equal(200);
+    expect(b.state).to.equal('ROUND_1');
+    expect(b.pool).to.have.length(10);
+    expect(b.members.some(m => Object.hasOwn(m, 'ready'))).to.equal(false);
+  });
+}

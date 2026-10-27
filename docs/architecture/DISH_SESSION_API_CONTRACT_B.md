@@ -36,6 +36,8 @@ The v4.B snapshot extends A with:
 
 The server remains authoritative for `version`, `poolVersion`, timer, ACK status, round transition, terminal reason, scores and ranks. Keep `ownBallot`/`ownWaiting` caller-private; do not add other members' ballot details.
 
+For a started session, snapshot `submittedCount` is `A_r`: complete ballots accepted and ACKed by the server for the snapshot's current round only. `memberCount` is `M`, the locked roster size including the host; it is not an online-presence count and never shrinks on disconnect. `canEndWaiting` is caller-specific and true only for the host while the current round is in active waiting and `A_r > M/2`. It is an availability projection, not an authorization token; the write path rechecks host, current round/version, active waiting, and quorum under the transaction lock. A rejected manual early-end request uses the normal error envelope with `messageKey=NOT_READY`. No R1 ACK contributes to R2's `A_r`.
+
 ## Locked dish-card projection
 
 Each `poolDish` preserves the stable `dishId` and `roundDishId` and may include nullable `description`, cuisine/category IDs and display labels, meal slots, known temperature/flavor labels, `artwork` (`uri`, `altText`, optional attribution) and one `priceReference` (`amount`, `currency`, `unit`, required source/time, optional serving size). Unknown fields are explicit `null` or empty arrays; no missing price becomes zero and no missing artwork gets an invented URL. UI uses its approved fallback. Artwork can enter a public projection only after GM-40 verifies display/use rights; an unlicensed or unknown-rights image stays null. Price keeps its observed unit and provenance. Result/history cards use the locked projection, never the current catalogue.
@@ -66,6 +68,12 @@ When round one is finalized, evaluate and persist a round-one winner before chec
 `NO_CONSENSUS` has `winner=null` and `topDishes=[]`. The result projection contains no raw vote, per-member score contribution, candidate matrix, seed, or hidden evaluator diagnostics. All authorized room members may read aggregate scores only after finalization, including small groups, as accepted in ADR-020. History reads the stored result subject to current consent/ACL/retention; notification payloads contain a reference only.
 
 Persist result, winner, podium rows, score/rank versions, terminal room state and history/event references atomically or through the reviewed transactional outbox. Consumers never recalculate score from the current dataset or ballots.
+
+## Account-scoped history consent — schema 0.9.1 candidate
+
+The two history permissions are account settings (`personal` and `group`) managed by `update_history_consent`; a missing setting means opted out. For v4, host creation, direct join and invitation admission inherit the caller's currently enabled scope choices. Start synchronizes current account choices for the locked roster and freezes each scope independently in the session snapshot in the same transaction. A grant made after start applies only to later rooms. A revocation before result persistence suppresses and removes the affected scope without changing the winner, score or podium. Personal history is written for each member whose personal scope was locked and remains active; group history is written only when every locked roster member's group scope was locked and remains active. History reads return the stored result projection, including the same `resultId` and Top 3, subject to existing ACL, deletion and retention. No ballot details are included.
+
+This is a forward-only v4 behavior. Existing v2/v3 rooms and already-started v4 sessions keep their pinned consent snapshot; do not grant them retroactively or backfill completed sessions. Migration `0029_dish_v4_history_consent.sql` registers schema `0.9.1`; its current implementation is a local QA candidate only until reviewed and deployed. This section does not claim the proposed contract or runtime is approved/merged.
 
 ## Figma consumer contract
 

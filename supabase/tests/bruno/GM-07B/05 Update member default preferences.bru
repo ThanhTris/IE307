@@ -1,0 +1,29 @@
+meta {
+  name: 05 Update member default preferences
+  type: http
+  seq: 5
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/dish_session
+  body: json
+  auth: none
+}
+headers {
+  Authorization: Bearer {{memberToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"command":"updateDefaultPreferences","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B","requestId":"pref_{{timestamp}}","expectedRevision":{{memberPreferenceRevision}},"preferences":{"cuisineIds":[],"categoryIds":[],"temperature":"warm","flavor":null,"budget":null,"avoidRecent":false}}}
+}
+script:pre-request {
+  bru.setVar('timestamp', String(Date.now()));
+}
+tests {
+  test('Preference update advances only the caller revision', () => {
+    const b = res.getBody();
+    expect(res.getStatus()).to.equal(200);
+    expect(b.ok).to.equal(true);
+    expect(b.data.revision).to.equal(Number(bru.getVar('memberPreferenceRevision')) + 1);
+    expect(b.data.preferences.temperature).to.equal('warm');
+  });
+}

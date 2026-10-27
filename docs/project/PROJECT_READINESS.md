@@ -1,4 +1,4 @@
-# Mở task theo Done hoặc Needs Update trên GitHub Project
+# Mở task theo Done trên GitHub Project
 
 Theo [ADR-011](../architecture/decisions/ADR-011-project-done-readiness.md), chủ dự án chuyển Done sau nghiệm thu. Task Markdown giữ scope/version; không cần chuyển Markdown sang done để mở task sau. AI không tự Approved/Done.
 
@@ -10,9 +10,9 @@ python scripts/task_readiness.py --task GM-06 --base-ref origin/main
 python scripts/task_readiness.py --task GM-06 --gate merge --base-ref origin/main
 ```
 
-`Needs Update` nghĩa là baseline của task đã được nghiệm thu nhưng supplement theo ngữ cảnh mới còn mở. Gate chấp nhận trạng thái này cho dependency baseline và cho phép claim/start chính supplement sau khi dependencies và output/HANDOFF đạt; task đó không được báo DONE_ON_PROJECT cho tới khi toàn bộ scope hiện hành được nghiệm thu bằng `Done`.
+`Needs Update` nghĩa là baseline của task đã được nghiệm thu nhưng supplement theo ngữ cảnh mới còn mở. Gate KHÔNG chấp nhận trạng thái này làm dependency cho task phía sau (chỉ `Done` mở khóa); task đang `Needs Update` vẫn được claim/start chính supplement của nó sau khi mọi dependency đã `Done` và output/HANDOFF đạt; task đó không được báo DONE_ON_PROJECT cho tới khi toàn bộ scope hiện hành được nghiệm thu bằng `Done`.
 
-Trước đối chiếu target, fetch đúng remote đã xác nhận. Checker không fetch/checkout/merge; origin/main chỉ là local ref, phải kiểm freshness. Nhánh làm việc phải nhận artifact upstream; Done/Needs Update không tự tải code. Không merge/reset một workspace đang có thay đổi chưa lưu chỉ để vượt gate.
+Trước đối chiếu target, fetch đúng remote đã xác nhận. Checker không fetch/checkout/merge; origin/main chỉ là local ref, phải kiểm freshness. Nhánh làm việc phải nhận artifact upstream; Done không tự tải code. Không merge/reset một workspace đang có thay đổi chưa lưu chỉ để vượt gate.
 
 ## Quyền đọc
 
@@ -22,15 +22,15 @@ Tạo/cập nhật token bằng quản lý credential hiện có; không đặt 
 
 ## Ý nghĩa kết quả
 
-- READY_TO_CLAIM / READY_TO_START: start deps Done hoặc Needs Update trên Project và có đủ output/HANDOFF; member acceptance vẫn kiểm riêng.
+- READY_TO_CLAIM / READY_TO_START: start deps Done trên Project và có đủ output/HANDOFF; member acceptance vẫn kiểm riêng.
 - DONE_ON_PROJECT: task đó Done trên Project và có output, không phải AI duyệt; không chứng minh code đã merge. Needs Update không trả trạng thái này.
-- BLOCKED: có dependency không ở Done/Needs Update, item thiếu/trùng/archived hoặc sai task/repo/issue.
+- BLOCKED: có dependency không ở Done, item thiếu/trùng/archived hoặc sai task/repo/issue.
 - BLOCKED_PROJECT_UNVERIFIED: thiếu credential/quyền đọc, mất mạng hoặc API trả lỗi/không đầy đủ. Không dùng local/cache hoặc Issue Closed thay Done.
-- BLOCKED_ARTIFACTS: upstream Done/Needs Update nhưng nhánh làm việc thiếu output/HANDOFF; nhận code đúng version trước.
+- BLOCKED_ARTIFACTS: upstream Done nhưng nhánh làm việc thiếu output/HANDOFF; nhận code đúng version trước.
 - BLOCKED_ON_BASE: target thiếu/khác artifact, contract hoặc task-map entry; status/assignment Markdown khác nhau không tự là drift.
 - READY_FOR_MERGE_REVIEW: đầu vào trên target đạt; vẫn cần review AC của chính PR, kiểm PR/commit upstream và chạy tests tích hợp thật.
 
-Snapshot Project chỉ giữ trong RAM và in URL/thời điểm đọc; không ghi token/snapshot approval hoặc sửa status. Mapping [project-gate.json](../../tasks/project-gate.json) pin đủ issue GM-01..40, không đoán từ thứ tự issue hay lấy card cùng tên repo khác. Nếu đổi issue/scope phải cập nhật mapping và review lại; Done/Needs Update không tự xác định approved commit.
+Snapshot Project chỉ giữ trong RAM và in URL/thời điểm đọc; không ghi token/snapshot approval hoặc sửa status. Mapping [project-gate.json](../../tasks/project-gate.json) pin đủ issue GM-01..40, không đoán từ thứ tự issue hay lấy card cùng tên repo khác. Nếu đổi issue/scope phải cập nhật mapping và review lại; Done không tự xác định approved commit.
 
 Ngoại lệ baseline do Trí chỉ định ngày 2026-10-13/[ADR-014](../architecture/decisions/ADR-014-test-data-and-baseline-project-card.md): scope GM-01 nhận xác nhận Done từ card **GM-00/#37**, không phải GM-01/#100. Mapping pin issue37 và `approval_aliases: {"GM-01": "GM-00"}`; checker kiểm title GM-00, repo/issue/status/archive như bình thường và vẫn kiểm artifacts/contract riêng GM-01. Không kế thừa card cũ cho task khác; không tạo card hoặc tự chuyển Done. GM-00 lịch sử vẫn dùng hồ sơ local.
 

@@ -1,0 +1,27 @@
+meta {
+  name: 03 Authenticated REST identity
+  type: http
+  seq: 4
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/get_my_social_identity
+  body: json
+  auth: none
+}
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{gm03AccessToken}}
+}
+body:json {
+  {}
+}
+tests {
+  test('Authenticated REST RPC returns the caller projection', () => {
+    const b = res.getBody();
+    expect(res.getStatus()).to.equal(200);
+    expect(b.id).to.equal(bru.getVar('gm03UserId'));
+    expect(b.displayName).to.be.a('string').and.not.empty;
+    expect(b.friendCode).to.be.a('string').and.not.empty;
+    expect(b.avatarSeed).to.be.a('string').and.not.empty;
+  });
+}

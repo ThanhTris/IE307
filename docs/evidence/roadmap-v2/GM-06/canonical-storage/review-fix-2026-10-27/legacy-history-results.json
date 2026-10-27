@@ -1,0 +1,223 @@
+{
+  "artifactHashes": {
+    "scripts/gm21_history_check.py": "9b390304c7a4af5157efef8d20207fa7e0d4488c17aba26ab2a7e632b1e019a8",
+    "supabase/migrations/0001_core_schema.sql": "6733e28f282f600e627e675dccede3afef1efd37cf4a7cfe8d94af4cd02d30f5",
+    "supabase/migrations/0002_food_import_receipts.sql": "eb80acba1f69bfb68b014a1ab5807e42d65db940a36d201f28db88172157f55e",
+    "supabase/migrations/0003_food_provenance_description.sql": "8972c1dfa5e07a2350e644a7e79ea36cc7f9208e0a89371cbe1bdfdb52d6cb16",
+    "supabase/migrations/0004_access_policies.sql": "508e9572ce50464d07a8ea1e19dc41ff7ba26cb2d0485aa59df9ac1422440dfb",
+    "supabase/migrations/0005_gm18_discovery_rpc.sql": "b81e072da7ef75846615738905650ae5a337e32f5d678f843c9404e7f54e3307",
+    "supabase/migrations/0018_food_eligibility.sql": "e242876842e0c8decf645130b56a69143146ff942a78641f504c2883f3c86334",
+    "supabase/migrations/0019_room_lifecycle.sql": "ed76f679baa10bbfd4234e2be88f408ef292162f92efceac16217aa554f50926",
+    "supabase/migrations/0021_history.sql": "9be964cc6c8b405f578e7f2528268f628266e7b121b96ce958244e20a116217e",
+    "supabase/migrations/0022_social.sql": "bede55e7a0c12a3dfce3d03f3e61121bd4611b73c8b8656ec0785a3c55097f54",
+    "supabase/migrations/0023_finalize.sql": "aff45864e57d634ced4bce6e3ce1997f439f90b2c974cc7f601d71f70bb3fea8",
+    "supabase/migrations/0024_history_integration.sql": "48d8662cd1e4c70a7ef6147efb517bcb351365fc6e1f90ac49e4defa3c868ad9",
+    "supabase/migrations/0025_notifications.sql": "a1f8bab1b7853c52fb82e97afef470634b4776b75ae8a000bba2e24796f81ba1",
+    "supabase/migrations/0026_dish_session_policy.sql": "24fba6d428e283bef7edd46d040b7e89c7ce2953c9cb7a4e04cb86a7dd682804",
+    "supabase/migrations/0027_dish_session_v4.sql": "504936d84652d92dc322e63160f5d435dffe5c466d38807220040480e621114c",
+    "supabase/migrations/0028_dish_v4_top_three_cutoff.sql": "373c7d28d2ffae3de5510a4d5ebba0d5bd756feb05db5b1e03883ae85feccb55",
+    "supabase/migrations/0029_dish_v4_history_consent.sql": "9a6545904cbaa80e7461c3077a2c3f4c1bf6bc1362e364b566c0ce4012fe5533",
+    "supabase/migrations/0030_history_consent_search_path.sql": "c50737fa0dad65a3eebf2ed8423b3313f508b4d754fe4626d3ff300af510996e",
+    "supabase/migrations/0031_history_consent_policy_isolation.sql": "75eefa6f4975fa88a4fede0cc934aaed216144b1ca51efe3e31ea86a06f789e8",
+    "supabase/migrations/0032_canonical_result_storage.sql": "8f1184820fdcf90909af2db7b9845706fdee11e2ccebd3f595b8e3ebc4214330"
+  },
+  "assertions": 47,
+  "cases": [
+    {
+      "case": "legacy explicit opt-in survives missing account defaults",
+      "result": "Pass"
+    },
+    {
+      "case": "account opt-in cannot enable legacy room consent",
+      "result": "Pass"
+    },
+    {
+      "case": "personal owner can read own summary",
+      "result": "Pass"
+    },
+    {
+      "case": "other user cannot read owner personal summary",
+      "result": "Pass"
+    },
+    {
+      "case": "group member can read shared summary",
+      "result": "Pass"
+    },
+    {
+      "case": "outsider sees no summaries",
+      "result": "Pass"
+    },
+    {
+      "case": "wrong scope rejected",
+      "result": "Pass"
+    },
+    {
+      "case": "forged outsider cursor rejected",
+      "result": "Pass"
+    },
+    {
+      "case": "private schemas deny every app role",
+      "result": "Pass"
+    },
+    {
+      "case": "private tables deny app reads and writes",
+      "result": "Pass"
+    },
+    {
+      "case": "private helpers deny all app roles",
+      "result": "Pass"
+    },
+    {
+      "case": "public wrappers fixed path and restricted grants",
+      "result": "Pass"
+    },
+    {
+      "case": "canonical roster order and duplicates cannot change key",
+      "result": "Pass"
+    },
+    {
+      "case": "history DTO contains no private context",
+      "result": "Pass"
+    },
+    {
+      "case": "outsider delete is non-disclosing no-op",
+      "result": "Pass"
+    },
+    {
+      "case": "opaque GM07 request IDs accepted",
+      "result": "Pass"
+    },
+    {
+      "case": "same request ACK is identical",
+      "result": "Pass"
+    },
+    {
+      "case": "same request has no repeated mutation",
+      "result": "Pass"
+    },
+    {
+      "case": "reused request with another payload conflicts",
+      "result": "Pass"
+    },
+    {
+      "case": "boolean string rejected",
+      "result": "Pass"
+    },
+    {
+      "case": "no consent means no recent penalty",
+      "result": "Pass"
+    },
+    {
+      "case": "forged or legacy group key ignored for anti-repeat",
+      "result": "Pass"
+    },
+    {
+      "case": "recent reads at most3 results for exact group",
+      "result": "Pass"
+    },
+    {
+      "case": "other roster cannot borrow recent history",
+      "result": "Pass"
+    },
+    {
+      "case": "freeze stores the three canonical recent results",
+      "result": "Pass"
+    },
+    {
+      "case": "withdrawal physically removes all that groups summaries",
+      "result": "Pass"
+    },
+    {
+      "case": "withdrawal resets lobby ready",
+      "result": "Pass"
+    },
+    {
+      "case": "withdrawal leaves persisted result unchanged",
+      "result": "Pass"
+    },
+    {
+      "case": "withdrawal immediately stops recent penalty",
+      "result": "Pass"
+    },
+    {
+      "case": "started recent snapshot remains frozen after withdrawal",
+      "result": "Pass"
+    },
+    {
+      "case": "reopt-in does not resurrect deleted summaries",
+      "result": "Pass"
+    },
+    {
+      "case": "producer accepts actual server finalization inside same outer statement",
+      "result": "Pass"
+    },
+    {
+      "case": "trusted record creates personal and fully consented group rows",
+      "result": "Pass"
+    },
+    {
+      "case": "trusted record is retry-idempotent",
+      "result": "Pass"
+    },
+    {
+      "case": "producer retry cannot resurrect deleted summary",
+      "result": "Pass"
+    },
+    {
+      "case": "personal delete does not delete another owner row",
+      "result": "Pass"
+    },
+    {
+      "case": "personal opt-out clears own personal history",
+      "result": "Pass"
+    },
+    {
+      "case": "personal opt-out preserves others personal history",
+      "result": "Pass"
+    },
+    {
+      "case": "two retained meals detach consents without collision",
+      "result": "Pass"
+    },
+    {
+      "case": "retention deletes operational room",
+      "result": "Pass"
+    },
+    {
+      "case": "history survives operational cleanup with authentic room ID/code",
+      "result": "Pass"
+    },
+    {
+      "case": "retained presentation contains only minimal fields",
+      "result": "Pass"
+    },
+    {
+      "case": "history beyond30days never read",
+      "result": "Pass"
+    },
+    {
+      "case": "expired presentations cascade with deleted history",
+      "result": "Pass"
+    },
+    {
+      "case": "existing retention worker purges expired private completion receipts",
+      "result": "Pass"
+    },
+    {
+      "case": "history page is capped at50",
+      "result": "Pass"
+    },
+    {
+      "case": "keyset cursor has no overlap and returns remaining rows",
+      "result": "Pass"
+    }
+  ],
+  "checkedAt": "2026-10-27T08:26:07.582678+00:00",
+  "cleanup": "owned disposable DB removed",
+  "contract": "GM-21.2",
+  "fixtureOnly": true,
+  "mode": "disposable real PostgreSQL; SQL claims, not JWT",
+  "publicationPerformed": false,
+  "result": "Pass",
+  "schemaVersion": "0.6.0"
+}

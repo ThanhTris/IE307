@@ -1,0 +1,37 @@
+meta {
+  name: 19 Host snapshot round 2
+  type: http
+  seq: 19
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/dish_session
+  body: json
+  auth: none
+}
+headers {
+  Authorization: Bearer {{hostToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"command":"snapshot","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B","roomId":"{{roomId}}"}}
+}
+script:post-response {
+  const b = res.getBody();
+  if (res.getStatus() === 200 && b.ok) {
+    bru.setVar('roomVersion', String(b.data.version));
+    bru.setVar('poolVersion', String(b.data.poolVersion));
+    bru.setVar('r2VotesKeep', JSON.stringify(b.data.pool.map(d => ({roundDishId:d.roundDishId,choice:'KEEP'}))));
+    bru.setVar('r2VotesOverCap', JSON.stringify(b.data.pool.map((d,i) => ({roundDishId:d.roundDishId,choice:i<4?'REMOVE':'KEEP'}))));
+    bru.setVar('r2PoolCount', String(b.data.pool.length));
+    bru.setVar('r2RemovalCap', String(b.data.removalCap));
+  }
+}
+tests {
+  test('R2 opens with survivors, current version and dynamic cap', () => {
+    const b = res.getBody().data;
+    expect(res.getStatus()).to.equal(200);
+    expect(b.round).to.equal(2);
+    expect(b.pool.length).to.be.above(0);
+    expect(b.removalCap).to.equal(Math.max(1, Math.floor(b.pool.length * 0.3)));
+  });
+}

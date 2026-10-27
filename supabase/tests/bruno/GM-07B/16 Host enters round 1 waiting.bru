@@ -1,0 +1,31 @@
+meta {
+  name: 16 Host enters round 1 waiting
+  type: http
+  seq: 16
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/dish_session
+  body: json
+  auth: none
+}
+headers {
+  Authorization: Bearer {{hostToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"command":"waiting","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B","requestId":"wait1_{{timestamp}}","roomId":"{{roomId}}","expectedVersion":{{roomVersion}},"round":1,"poolVersion":{{poolVersion}}}}
+}
+script:pre-request {
+  bru.setVar('timestamp', String(Date.now()));
+}
+script:post-response {
+  const b = res.getBody();
+  if (res.getStatus() === 200 && b.ok) { bru.setVar('roomVersion', String(b.version)); bru.setVar('waitStart', b.data.waitingStartedAt); }
+}
+tests {
+  test('Waiting starts after ACK and exposes a 60 second deadline', () => {
+    const d = res.getBody().data;
+    expect(res.getStatus()).to.equal(200);
+    expect(Date.parse(d.deadline) - Date.parse(d.waitingStartedAt)).to.equal(60000);
+  });
+}

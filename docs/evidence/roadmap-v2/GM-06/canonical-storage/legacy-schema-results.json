@@ -37,7 +37,7 @@
       "result": "Pass"
     }
   ],
-  "checkedAt": "2026-10-25T15:11:04.854639+00:00",
+  "checkedAt": "2026-10-27T08:26:36.126328+00:00",
   "artifactHashes": {
     "scripts/gm06_schema_check.py": "30d19e525f1a543a73ebdb40a4a5d85aaa58a9be4808e1b7b55139c12326e6ee",
     "supabase/tests/schema_contract.sql": "c20f17ad89f5d5e641e69815a6ac8eefc6cc55bc79e8f05acfaa4af18b078f1d",

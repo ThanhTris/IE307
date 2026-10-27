@@ -80,3 +80,7 @@ GM-26/27/31 nhận: accepted receipt, incomplete/stale/expiry/error, exact retry
 mất response, current-round snapshot, round2 row/poolVersion mới, persisted result.
 Producer runner kiểm server HTTP qua client GM-07. Chưa chứng minh Android
 UI/outbox restart/reconnect/session isolation; xem HANDOFF và ma trận mobile.
+
+### v4 account-consent supplement — schema 0.9.1 candidate, 2026-10-26
+
+The rules above describe the earlier integration baseline where the writer received explicit room-scoped grants; do not interpret them as requiring users to opt in again for each room. For v4, account settings are inherited at admission and synchronized at start, then personal/group scopes are independently pinned per member. The result writer consumes only those pinned scopes and verifies that the corresponding account choice remains active at persistence. Personal history is written for each eligible owner; group history requires the full locked roster. A post-start grant cannot authorize the current session, and a pre-finalize revoke suppresses that scope. Stored history continues to reuse the immutable result/podium and existing TTL/ACL rules. Migration 0029 is local-QA-only and has not changed the merged GM-20.3 baseline or legacy v2/v3 sessions.

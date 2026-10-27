@@ -1,0 +1,8 @@
+script:pre-request {
+  const url = bru.interpolate(req.getUrl());
+  if (!/^http:\/\/127\.0\.0\.1:(54361|54371)\//.test(url)) throw new Error('GM-03 QA requests must target an owned loopback QA port');
+  if (!bru.getEnvVar('publicKey') || !bru.getEnvVar('runId')) throw new Error('Select the generated GM-03 private QA environment');
+  req.setHeader('apikey', bru.getEnvVar('publicKey'));
+  req.setTimeout(15000);
+  req.setMaxRedirects(0);
+}

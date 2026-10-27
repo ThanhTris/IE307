@@ -1,4 +1,4 @@
--- GM06.2 storage producer only. Does not enable/change v2/v3/v4 routing or writers.
+-- GM06.3 storage producer only. Does not enable/change v2/v3/v4 routing or writers.
 begin;
 create schema gm06_canonical;
 revoke all on schema gm06_canonical from public,anon,authenticated,service_role,gm06_publisher;
@@ -13,17 +13,19 @@ $$;
 create function gm06_canonical.valid_price(p jsonb) returns boolean
 language plpgsql immutable set search_path=pg_catalog as $$
 begin
+ if p is null then return false; end if;
  if p='null'::jsonb then return true; end if;
  if jsonb_typeof(p) is distinct from 'object' or
- (select array_agg(k order by k) from jsonb_object_keys(p) k) <>
+ (select array_agg(k order by k) from jsonb_object_keys(p) k) is distinct from
  array['amount','currency','observedAt','servingSize','sourceRef','unit'] then return false; end if;
  if p->'amount'<>'null'::jsonb and (jsonb_typeof(p->'amount')<>'number' or (p->>'amount')::numeric<0) then return false; end if;
  if p->'currency'<>'null'::jsonb and (jsonb_typeof(p->'currency')<>'string' or p->>'currency'!~'^[A-Z]{3}$') then return false; end if;
  if p->'unit'<>'null'::jsonb and (jsonb_typeof(p->'unit')<>'string' or p->>'unit' not in('portion','item','person','group','kg','menu_item_unspecified')) then return false; end if;
  if p->'sourceRef'<>'null'::jsonb and (jsonb_typeof(p->'sourceRef')<>'string' or length(btrim(p->>'sourceRef')) not between 1 and 500) then return false; end if;
  if p->'servingSize'<>'null'::jsonb and (jsonb_typeof(p->'servingSize')<>'string' or length(p->>'servingSize')>160) then return false; end if;
- return jsonb_typeof(p->'observedAt')='string' and p->>'observedAt'~'^\d{4}-\d\d-\d\dT.*(Z|[+-]\d\d:\d\d)$'
- and isfinite((p->>'observedAt')::timestamptz);
+ if jsonb_typeof(p->'observedAt') is distinct from 'string' then return false; end if;
+ return coalesce( p->>'observedAt'~'^\d{4}-\d\d-\d\dT.*(Z|[+-]\d\d:\d\d)$'
+ and isfinite((p->>'observedAt')::timestamptz),false);
 exception when invalid_datetime_format or datetime_field_overflow or invalid_text_representation then return false;
 end $$;
 create function gm06_canonical.valid_card(c jsonb) returns boolean
@@ -31,7 +33,7 @@ language plpgsql immutable set search_path=pg_catalog as $$
 declare k text; a jsonb; v jsonb;
 begin
  if jsonb_typeof(c) is distinct from 'object' or
- (select array_agg(key order by key) from jsonb_object_keys(c) key) <>
+ (select array_agg(key order by key) from jsonb_object_keys(c) key) is distinct from
  array['artwork','categoryIds','categoryLabels','cuisineIds','cuisineLabels','description','dishId','flavor','mealSlots','name','priceReference','roundDishId','temperature'] then return false; end if;
  if jsonb_typeof(c->'dishId')<>'string' or gm19_private.uuid_or_null(c->>'dishId') is null or (c->>'dishId')::uuid::text<>c->>'dishId' or
  jsonb_typeof(c->'roundDishId')<>'string' or gm19_private.uuid_or_null(c->>'roundDishId') is null or (c->>'roundDishId')::uuid::text<>c->>'roundDishId' or
@@ -55,17 +57,18 @@ begin
  if not gm06_private.flavor_valid(nullif(c->'flavor','null'::jsonb)) then return false; end if;
  if c->'artwork'<>'null'::jsonb and not gm06_private.json_matches(c->'artwork',
  '{"type":"object","properties":{"uri":{"type":"string","minLength":1,"maxLength":2000},"altText":{"type":"string","minLength":1,"maxLength":300},"attribution":{"type":["string","null"],"maxLength":500}},"required":["uri","altText","attribution"],"additionalProperties":false}'::jsonb) then return false; end if;
- return gm06_canonical.valid_price(c->'priceReference');
+ return gm06_canonical.valid_price(c->'priceReference') is true;
 end $$;
 
 create function gm06_canonical.valid_terminal(pool jsonb,podium jsonb,winner uuid,status text,reason text,round_no int,scored int) returns boolean
 language plpgsql immutable set search_path=pg_catalog as $$
 declare c jsonb; p jsonb; previous_score int; dense int:=0; score int; winners int:=0;
 begin
+ if status is null or status not in('DECIDED','NO_CONSENSUS') or reason is null or round_no is null or round_no not in(1,2) or scored is null or scored not between 1 and 20 then return false; end if;
  if jsonb_typeof(pool) is distinct from 'array' or jsonb_array_length(pool) not between 10 and 20 or
     jsonb_typeof(podium) is distinct from 'array' then return false; end if;
  for c in select * from jsonb_array_elements(pool) loop
-  if not gm06_canonical.valid_card(c) then return false; end if;
+  if gm06_canonical.valid_card(c) is not true then return false; end if;
  end loop;
  if (select count(*)<>count(distinct value->>'dishId') or count(*)<>count(distinct value->>'roundDishId') from jsonb_array_elements(pool)) then return false; end if;
  if status='NO_CONSENSUS' then
@@ -76,7 +79,7 @@ begin
  not ((reason='UNANIMOUS_WANT' and round_no=1) or (reason='ACCEPTABLE_FINAL' and round_no=2)) then return false; end if;
  if (select count(*)<>count(distinct value->>'dishId') from jsonb_array_elements(podium)) then return false; end if;
  for p in select * from jsonb_array_elements(podium) loop
-  if jsonb_typeof(p)<>'object' or (select array_agg(k order by k) from jsonb_object_keys(p) k)<>array['dishId','isWinner','rank','score'] or
+  if jsonb_typeof(p)<>'object' or (select array_agg(k order by k) from jsonb_object_keys(p) k) is distinct from array['dishId','isWinner','rank','score'] or
     jsonb_typeof(p->'dishId')<>'string' or gm19_private.uuid_or_null(p->>'dishId') is null or
     jsonb_typeof(p->'isWinner')<>'boolean' or jsonb_typeof(p->'score')<>'number' or
     p->>'score'!~'^(0|[1-9][0-9]*)$' or length(p->>'score')>2 or
@@ -102,7 +105,7 @@ create table gm06_canonical.results (
  room_ref_id uuid not null unique references gm17_private.room_refs(id),
  catalogue_id text not null references dish_v3_private.catalogues(id),
  catalogue_sha text not null check(catalogue_sha~'^[a-f0-9]{64}$'),
- storage_version text not null check(storage_version='GM06.2'),
+ storage_version text not null check(storage_version='GM06.3'),
  policy_version text not null check(policy_version='dish-decision-v4/ADR-019-30PCT-MIN1'),
  score_version text not null check(score_version='want2-ok1-round1-v1'),
  ranking_version text not null check(ranking_version='score-desc-dense-rank-v1'),
@@ -117,7 +120,7 @@ create table gm06_canonical.results (
  finalized_at timestamptz not null check(isfinite(finalized_at)),
  retain_until timestamptz not null check(isfinite(retain_until)),
  check(retain_until>finalized_at and retain_until<=finalized_at+interval '30 days'),
- check(gm06_canonical.valid_terminal(locked_pool,top_dishes,winner_dish_id,status,reason,terminal_round,scored_r1_count))
+ check(gm06_canonical.valid_terminal(locked_pool,top_dishes,winner_dish_id,status,reason,terminal_round,scored_r1_count) is true)
 );
 create index gm06_canonical_result_retention on gm06_canonical.results(retain_until);
 create function gm06_canonical.register_result() returns trigger language plpgsql set search_path=pg_catalog as $$
@@ -249,21 +252,21 @@ create constraint trigger gm06_canonical_audience_consent after insert on gm06_c
 -- Account defaults and per-room copies: never implicitly opt in to ranking/history.
 create function gm06_canonical.valid_preferences(cuisines uuid[],categories uuid[],temperature text,flavor jsonb,budget jsonb) returns boolean
 language sql immutable set search_path=pg_catalog as $$
- select gm06_canonical.unique_uuids(cuisines) and cardinality(cuisines)<=100
+ select coalesce(gm06_canonical.unique_uuids(cuisines) and cardinality(cuisines)<=100
  and gm06_canonical.unique_uuids(categories) and cardinality(categories)<=100
  and (temperature is null or temperature in('hot','warm','cold','ambient','unknown'))
  and (flavor='null'::jsonb or gm06_private.json_matches(flavor,
  '{"type":"object","required":["spicy","salty","sweet","sour"],"properties":{"spicy":{"type":"object","required":["present","intensity"],"properties":{"present":{"type":["boolean","null"]},"intensity":{"enum":["none","low","medium","high","unknown"]}},"additionalProperties":false},"salty":{"type":"object","required":["present","intensity"],"properties":{"present":{"type":["boolean","null"]},"intensity":{"enum":["none","low","medium","high","unknown"]}},"additionalProperties":false},"sweet":{"type":"object","required":["present","intensity"],"properties":{"present":{"type":["boolean","null"]},"intensity":{"enum":["none","low","medium","high","unknown"]}},"additionalProperties":false},"sour":{"type":"object","required":["present","intensity"],"properties":{"present":{"type":["boolean","null"]},"intensity":{"enum":["none","low","medium","high","unknown"]}},"additionalProperties":false}},"additionalProperties":false}'::jsonb))
  and gm06_private.flavor_valid(nullif(flavor,'null'::jsonb))
  and (budget='null'::jsonb or gm06_private.json_matches(budget,
- '{"type":"object","properties":{"maximum":{"type":"number","minimum":0},"currency":{"type":"string","pattern":"^[A-Z]{3}$"},"unit":{"type":"string","enum":["portion","item","person","group","kg","menu_item_unspecified"]}},"required":["maximum","currency","unit"],"additionalProperties":false}'::jsonb))
+ '{"type":"object","properties":{"maximum":{"type":"number","minimum":0},"currency":{"type":"string","pattern":"^[A-Z]{3}$"},"unit":{"type":"string","enum":["portion","item","person","group","kg","menu_item_unspecified"]}},"required":["maximum","currency","unit"],"additionalProperties":false}'::jsonb)),false)
 $$;
 create table gm06_canonical.account_preferences (
  user_id uuid primary key references auth.users(id) on delete cascade,
  cuisine_ids uuid[] not null, category_ids uuid[] not null, temperature text,
  flavor jsonb not null, budget jsonb not null, avoid_recent boolean not null,
  version bigint not null check(version>0), updated_at timestamptz not null check(isfinite(updated_at)),
- check(gm06_canonical.valid_preferences(cuisine_ids,category_ids,temperature,flavor,budget))
+ check(gm06_canonical.valid_preferences(cuisine_ids,category_ids,temperature,flavor,budget) is true)
 );
 create table gm06_canonical.room_preferences (
  room_id uuid not null references public.rooms(id) on delete cascade,
@@ -274,7 +277,7 @@ create table gm06_canonical.room_preferences (
  version bigint not null check(version>0), updated_at timestamptz not null check(isfinite(updated_at)),
  primary key(room_id,user_id),
  foreign key(room_id,user_id) references public.members(room_id,user_id) on delete cascade,
- check(gm06_canonical.valid_preferences(cuisine_ids,category_ids,temperature,flavor,budget))
+ check(gm06_canonical.valid_preferences(cuisine_ids,category_ids,temperature,flavor,budget) is true)
 );
 create function gm06_canonical.preference_guard() returns trigger language plpgsql set search_path=pg_catalog as $$
 begin
@@ -342,7 +345,7 @@ create trigger gm06_canonical_keep_consent before delete on public.consents for 
 alter function gm17_private.cleanup() rename to cleanup_before_gm06_canonical;
 revoke all on function gm17_private.cleanup_before_gm06_canonical() from public,anon,authenticated,service_role,gm06_publisher;
 create function gm17_private.cleanup() returns jsonb language plpgsql security definer set search_path=pg_catalog as $$
-declare now_at timestamptz:=statement_timestamp(); answer jsonb;
+declare now_at timestamptz:=statement_timestamp(); answer jsonb; previous_v4 text:=current_setting('dish_v4.writer',true);
 begin
  if not pg_try_advisory_xact_lock(170017) then return jsonb_build_object('skipped',true); end if;
  update gm06_private.reference_epoch set epoch=epoch+1 where singleton;
@@ -355,7 +358,11 @@ begin
  update public.consents c set room_id=null,retention_detached=true,version=version+1
  where room_id in(select id from public.rooms where least(coalesce(terminal_at,expires_at),expires_at)+interval '24 hours'<=now_at)
  and exists(select 1 from gm06_canonical.history_audience a where a.consent_id=c.id);
+ -- The shared retention chain may remove v4 rooms too; use its trusted writer
+ -- guard only for this call and restore the transaction's previous setting.
+ perform set_config('dish_v4.writer','on',true);
  answer:=gm17_private.cleanup_before_gm06_canonical();
+ perform set_config('dish_v4.writer',coalesce(previous_v4,'off'),true);
  return answer;
 end $$;
 revoke all on function gm17_private.cleanup() from public,anon,authenticated,service_role,gm06_publisher;
@@ -369,7 +376,7 @@ do $$ declare t text; begin
  end loop;
 end $$;
 revoke all on all functions in schema gm06_canonical from public,anon,authenticated,service_role,gm06_publisher;
-comment on schema gm06_canonical is 'GM06.2 canonical storage only; no v4 runtime/ACL/API enabled. Review producer integration separately.';
+comment on schema gm06_canonical is 'GM06.3 canonical storage only; no v4 runtime/ACL/API enabled. Review producer integration separately.';
 insert into public.schema_versions(schema_version,contract_id,food_contract_version,core_contract_version,upstream_revision)
-values('0.9.0','GM06.2-canonical-storage','1.1.0','1.1.0','a31f403fbcdc4cfdb03e03fe77506ccdd9a4cbea');
+values('0.10.0','GM06.3-canonical-storage','1.1.0','1.1.0','79eb0b94c7ba39d2699d5d59d3898753674cc0be');
 commit;
