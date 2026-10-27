@@ -120,3 +120,7 @@ The historical “explicit scoped consent only in LOBBY” flow above is the ear
 ### Security follow-up — 2026-10-27
 
 Apply forward migration `0030_history_consent_search_path.sql` through the normal migration ledger. It removes the unnecessary `public` search path from the v4 consent SECURITY DEFINER wrapper without replacing its body, changing grants, adding endpoints or changing the GM-07.B DTO/schema identity. Do not edit migration 0027 or weaken the existing GM-21 fixed-path assertion. The same 45 history SQL assertions passed on owned QA after reproducing the earlier failure; see CHECKS. Existing application databases were not migrated in this local verification.
+
+### Legacy policy isolation — 2026-10-27
+
+CI on `4677f6b` passed the earlier SQL failures but reached a subsequent legacy GM-20 history regression (`valid` history count 0/3). Migration `0031_history_consent_policy_isolation.sql` / schema 0.9.2 restores policy isolation: only v4 inherits account defaults; legacy `prepare_consents` preserves explicit room flags and still requires actual scoped consent. It neither retroactively grants consent nor rewrites locked sessions/results. New regression assertions cover both missing account defaults and account opt-in with a legacy room opt-out. Worker verification resolves `prepare_consents` against migration 0031 when schema 0.9.2 is deployed, while earlier version pins keep their original source. CI/API manifests report the new schema patch without changing GM-07.B DTOs.
