@@ -143,7 +143,11 @@ class ProjectSnapshot:
         return self._status_errors(tid, {self.config['done_option']})
 
     def dependency_errors(self, tid):
-        """Needs Update preserves baseline acceptance while its supplement is pending."""
+        """Every upstream dependency must be Done on Project; Needs Update does not unlock children."""
+        return self._status_errors(tid, {self.config['done_option']})
+
+    def claimable_errors(self, tid):
+        """A task being reworked may be claimed while Needs Update (its own status, not a dependency)."""
         return self._status_errors(tid, {
             self.config['done_option'], self.config['needs_update_option']})
 

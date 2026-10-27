@@ -241,7 +241,7 @@
         {
           "task": "GM-06",
           "artifact": "supabase/migrations/0001_core_schema.sql",
-          "gate": "merge"
+          "gate": "start"
         }
       ],
       "verification": {
@@ -621,22 +621,22 @@
         {
           "task": "GM-08",
           "artifact": "supabase/seed/import_food_data.py",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-08",
           "artifact": "supabase/seed/verified/manifest.json",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-08",
           "artifact": "docs/data/DATASET_HANDOFF.md",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-17",
           "artifact": "supabase/migrations/0004_access_policies.sql",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-06",
@@ -647,7 +647,7 @@
       "verification": {
         "mode": "api",
         "tool": "Postman hoặc curl/RPC runner + SQL/domain parity",
-        "entrypoint": "Catalogue/taxonomy dish-only → preview/create pool B theo projection version GM-40; legacy offering suite kiểm riêng",
+        "entrypoint": "Catalogue/taxonomy dish-only → preview/create pool B theo projection version đã bàn giao từ GM-04/GM-08; legacy offering suite kiểm riêng",
         "expected": "Pool ban đầu đúng10–20 unique không cần quán/GPS/lịch bán; shortage available/requested; ưu tiên mềm và unknown/unit/recent theo contract, không nạp bù R2.",
         "cases": "count9/10..20/21/fraction; shortage; unknown meal/taxonomy; soft preferences; price currency/unit; exact count; legacy parity"
       }
@@ -680,7 +680,7 @@
         {
           "task": "GM-18",
           "artifact": "supabase/migrations/0018_food_eligibility.sql",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-06",
@@ -724,7 +724,7 @@
         {
           "task": "GM-19",
           "artifact": "supabase/migrations/0019_room_lifecycle.sql",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-06",
@@ -768,7 +768,7 @@
         {
           "task": "GM-20",
           "artifact": "supabase/migrations/0023_finalize.sql",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-06",
@@ -889,17 +889,17 @@
         {
           "task": "GM-10",
           "artifact": "mobile/src/features/context/screens/ContextScreen.tsx",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-16",
           "artifact": "mobile/src/data/auth/session.ts",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-18",
           "artifact": "supabase/migrations/0018_food_eligibility.sql",
-          "gate": "merge"
+          "gate": "start"
         }
       ],
       "verification": {
@@ -944,22 +944,22 @@
         {
           "task": "GM-16",
           "artifact": "mobile/src/data/auth/session.ts",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-19",
           "artifact": "supabase/migrations/0019_room_lifecycle.sql",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-21",
           "artifact": "supabase/migrations/0021_history.sql",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-24",
           "artifact": "mobile/src/features/context/services/roomSetup.ts",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-07",
@@ -997,12 +997,12 @@
         {
           "task": "GM-20",
           "artifact": "supabase/migrations/0023_finalize.sql",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-25",
           "artifact": "mobile/src/features/rooms/services/roomRepository.ts",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-07",
@@ -1039,12 +1039,12 @@
         {
           "task": "GM-18",
           "artifact": "supabase/migrations/0018_food_eligibility.sql",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-26",
           "artifact": "mobile/src/features/voting/services/voteRepository.ts",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-07",
@@ -1085,22 +1085,22 @@
         {
           "task": "GM-21",
           "artifact": "supabase/migrations/0021_history.sql",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-22",
           "artifact": "supabase/migrations/0022_social.sql",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-23",
           "artifact": "supabase/functions/push-sender/index.ts",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-25",
           "artifact": "mobile/src/features/rooms/services/roomRepository.ts",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-07",
@@ -1138,17 +1138,17 @@
         {
           "task": "GM-23",
           "artifact": "supabase/functions/push-sender/index.ts",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-28",
           "artifact": "mobile/src/features/friends/services/socialRepository.ts",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-28",
           "artifact": "mobile/src/features/inbox/services/inboxRepository.ts",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-07",
@@ -1188,22 +1188,22 @@
         {
           "task": "GM-22",
           "artifact": "supabase/migrations/0022_social.sql",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-24",
           "artifact": "mobile/src/features/context/services/roomSetup.ts",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-25",
           "artifact": "mobile/src/features/rooms/services/roomRepository.ts",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-27",
           "artifact": "mobile/src/features/result/services/resultRepository.ts",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-07",
@@ -1252,12 +1252,12 @@
         {
           "task": "GM-26",
           "artifact": "mobile/src/features/voting/services/voteRepository.ts",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-28",
           "artifact": "mobile/src/features/friends/services/socialRepository.ts",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-07",
@@ -1282,12 +1282,12 @@
         {
           "task": "GM-25",
           "artifact": "mobile/src/features/rooms/services/roomRepository.ts",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-28",
           "artifact": "mobile/src/features/history/services/historyRepository.ts",
-          "gate": "merge"
+          "gate": "start"
         }
       ],
       "verification": {
@@ -1314,32 +1314,32 @@
         {
           "task": "GM-18",
           "artifact": "supabase/migrations/0018_food_eligibility.sql",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-20",
           "artifact": "supabase/migrations/0023_finalize.sql",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-21",
           "artifact": "supabase/migrations/0021_history.sql",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-22",
           "artifact": "supabase/migrations/0022_social.sql",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-23",
           "artifact": "supabase/functions/push-sender/index.ts",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-31",
           "artifact": "mobile/src/data/local/outbox.ts",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-06",
@@ -1391,32 +1391,32 @@
         {
           "task": "GM-27",
           "artifact": "mobile/src/features/result/services/resultRepository.ts",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-28",
           "artifact": "mobile/src/features/friends/services/socialRepository.ts",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-29",
           "artifact": "mobile/src/features/inbox/services/nativePush.ts",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-30",
           "artifact": "mobile/src/features/rooms/services/joinLinks.ts",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-31",
           "artifact": "mobile/src/data/local/outbox.ts",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-32",
           "artifact": "docs/evidence/roadmap-v2/GM-32/REGRESSION.md",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-07",
@@ -1485,22 +1485,22 @@
         {
           "task": "GM-16",
           "artifact": "mobile/src/data/auth/session.ts",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-28",
           "artifact": "mobile/src/features/friends/services/socialRepository.ts",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-28",
           "artifact": "mobile/src/features/history/services/historyRepository.ts",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-34",
           "artifact": "docs/evidence/roadmap-v2/GM-34/RELEASE.md",
-          "gate": "merge"
+          "gate": "start"
         }
       ],
       "verification": {
@@ -1538,12 +1538,12 @@
         {
           "task": "GM-08",
           "artifact": "supabase/seed/import_food_data.py",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-34",
           "artifact": "docs/evidence/roadmap-v2/GM-34/RELEASE.md",
-          "gate": "merge"
+          "gate": "start"
         }
       ],
       "verification": {
@@ -1581,7 +1581,7 @@
         {
           "task": "GM-34",
           "artifact": "docs/evidence/roadmap-v2/GM-34/RELEASE.md",
-          "gate": "merge"
+          "gate": "start"
         }
       ],
       "verification": {
@@ -1620,17 +1620,17 @@
         {
           "task": "GM-18",
           "artifact": "supabase/migrations/0018_food_eligibility.sql",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-21",
           "artifact": "supabase/migrations/0021_history.sql",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-34",
           "artifact": "docs/evidence/roadmap-v2/GM-34/RELEASE.md",
-          "gate": "merge"
+          "gate": "start"
         }
       ],
       "verification": {
@@ -1784,17 +1784,17 @@
         {
           "task": "GM-18",
           "artifact": "supabase/migrations/0018_food_eligibility.sql",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-19",
           "artifact": "supabase/migrations/0019_room_lifecycle.sql",
-          "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-20",
           "artifact": "supabase/migrations/0023_finalize.sql",
-          "gate": "merge"
+          "gate": "start"
         }
       ],
       "verification": {

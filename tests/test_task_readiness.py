@@ -62,8 +62,9 @@ class ReadinessTests(unittest.TestCase):
     def test_contract_can_start_before_database_merge(self):
         for tid in ('GM-01', 'GM-02', 'GM-03', 'GM-04'):
             self.approve_in_memory(tid)
+        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-07'), ('BLOCKED', ['GM-06']))
+        self.approve_in_memory('GM-06')
         self.assertEqual(gates.readiness(self.source, self.records(), 'GM-07')[0], 'READY_TO_CLAIM')
-        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-07', 'merge'), ('BLOCKED', ['GM-06']))
 
     def test_mock_preferences_merge_without_backend_but_integration_waits(self):
         for tid in ('GM-01', 'GM-02', 'GM-03', 'GM-04', 'GM-05', 'GM-06', 'GM-07'):
@@ -72,10 +73,11 @@ class ReadinessTests(unittest.TestCase):
                          ('READY_FOR_MERGE_REVIEW', []))
         state, blockers = gates.readiness(self.source, self.records(), 'GM-25')
         self.assertEqual(state, 'BLOCKED')
-        self.assertEqual(blockers, ['GM-09', 'GM-10', 'GM-11'])
+        self.assertEqual(blockers, ['GM-09', 'GM-10', 'GM-11', 'GM-16', 'GM-19', 'GM-21', 'GM-24'])
         for tid in ('GM-09', 'GM-10', 'GM-11'):
             self.approve_in_memory(tid)
-        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-25')[0], 'READY_TO_CLAIM')
+        # Integration waits for every producer, not only the UI screens.
+        self.assertEqual(gates.readiness(self.source, self.records(), 'GM-25')[0], 'BLOCKED')
         state, blockers = gates.readiness(self.source, self.records(), 'GM-25', 'merge', self.source)
         self.assertEqual(state, 'BLOCKED')
         self.assertIn('GM-21', blockers)
@@ -204,23 +206,31 @@ class ReadinessTests(unittest.TestCase):
             self.assertIn(expected, text)
         self.assertIn('Deadline hiện hành xem trên Project', text)
 
-    def test_independent_api_work_starts_before_integration_dependencies(self):
-        for tid in ('GM-01', 'GM-02', 'GM-03', 'GM-04', 'GM-06', 'GM-07', 'GM-15'):
+    def test_dependencies_block_start_until_approved(self):
+        for tid in ('GM-01', 'GM-02', 'GM-03', 'GM-04', 'GM-06', 'GM-07', 'GM-15', 'GM-17'):
             self.approve_in_memory(tid)
-        for tid, merge_blocker in (('GM-18', 'GM-08'), ('GM-20', 'GM-19'), ('GM-32', 'GM-31')):
+        # GM-18 requires GM-08; GM-20 requires GM-19
+        cases = [
+            ('GM-18', 'GM-08', []),
+            ('GM-20', 'GM-19', []),
+            ('GM-32', 'GM-31', ['GM-08', 'GM-18', 'GM-19', 'GM-20', 'GM-21', 'GM-22', 'GM-23']),
+        ]
+        for tid, blocker, prereqs in cases:
+            for p in prereqs:
+                self.approve_in_memory(p)
             with self.subTest(task=tid):
-                # Model both assignment phases explicitly; a real task may already
-                # be accepted without having its later integration dependency.
                 path = self.source.task_path(tid)
                 self.source.contents[path] = re.sub(r'^assignment_status:.*$',
                     'assignment_status: proposed', self.source.read(path), flags=re.M)
+                state, blockers = gates.readiness(self.source, self.records(), tid)
+                self.assertEqual(state, 'BLOCKED')
+                self.assertIn(blocker, blockers)
+                # Once blocker is approved, task transitions to READY_TO_CLAIM / READY_TO_START
+                self.approve_in_memory(blocker)
                 self.assertEqual(gates.readiness(self.source, self.records(), tid)[0], 'READY_TO_CLAIM')
                 self.source.contents[path] = self.source.read(path).replace(
                     'assignment_status: proposed', 'assignment_status: accepted')
                 self.assertEqual(gates.readiness(self.source, self.records(), tid)[0], 'READY_TO_START')
-                state, blockers = gates.readiness(self.source, self.records(), tid, 'merge', self.source)
-                self.assertEqual(state, 'BLOCKED')
-                self.assertIn(merge_blocker, blockers)
 
     def test_moved_task_links_are_repaired_without_changing_status(self):
         old, new = 'tasks/review/GM-01.md', 'tasks/done/GM-01.md'
