@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   ALTERNATE_QA_PORTS, DEFAULT_QA_PORTS, assertOwnedResource, assertOwnedVolume,
-  canonicalJson, makeNames, parseArgs, runTrackedStep, validatePorts, validateRunId,
+  assertLoopbackPublishedPort, canonicalJson, makeNames, parseArgs, runTrackedStep, validatePorts, validateRunId,
   workerProcessMatches,
 } from '../scripts/backend-qa.mjs';
 
@@ -48,6 +48,19 @@ test('volumes need both Supabase and Compose project labels', () => {
   } };
   assert.equal(assertOwnedVolume(volume, { name: volume.Name, projectId: 'gm03qa-run-1' }), true);
   assert.throws(() => assertOwnedVolume({ ...volume, Labels: {} }, { name: volume.Name, projectId: 'gm03qa-run-1' }), /OWNERSHIP/);
+});
+
+test('published QA ports must be bound only to loopback interfaces', () => {
+  const api = { NetworkSettings: { Ports: { '8000/tcp': [{ HostIp: '127.0.0.1', HostPort: '54361' }] } } };
+  const database = { NetworkSettings: { Ports: { '5432/tcp': [{ HostIp: '::1', HostPort: '54362' }] } } };
+  assert.equal(assertLoopbackPublishedPort(api, '8000', 54361), true);
+  assert.equal(assertLoopbackPublishedPort(database, '5432', 54362), true);
+  for (const hostIp of ['', '0.0.0.0', '::']) {
+    assert.throws(() => assertLoopbackPublishedPort({ NetworkSettings: { Ports: {
+      '8000/tcp': [{ HostIp: hostIp, HostPort: '54361' }],
+    } } }, '8000', 54361), /QA_HOST_BINDING_NOT_LOOPBACK/);
+  }
+  assert.throws(() => assertLoopbackPublishedPort(api, '8000', 54360), /QA_HOST_BINDING_NOT_LOOPBACK/);
 });
 
 test('manifest canonicalization is independent of object key order', () => {

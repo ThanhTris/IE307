@@ -7,10 +7,12 @@ import {
   Text,
   TextInput,
   View,
+  type StyleProp,
   type ImageSourcePropType,
   type ImageStyle,
   type KeyboardTypeOptions,
   type TextInputProps,
+  type TextStyle,
   type ViewStyle,
 } from 'react-native';
 import { useState, type ReactNode } from 'react';
@@ -26,9 +28,13 @@ export type AppHeaderProps = ComponentThemeProps & {
   onProfile?: () => void;
   friendBadge?: number;
   inboxBadge?: number;
+  showFriends?: boolean;
+  showInbox?: boolean;
+  showProfile?: boolean;
+  brandTextStyle?: TextStyle;
 };
 
-export function AppHeader({ title = 'Gì Cũng Được', onPressBrand, onFriends, onInbox, onProfile, friendBadge, inboxBadge, colors }: AppHeaderProps) {
+export function AppHeader({ title = 'Gì Cũng Được', onPressBrand, onFriends, onInbox, onProfile, friendBadge, inboxBadge, showFriends = true, showInbox = true, showProfile = true, brandTextStyle, colors }: AppHeaderProps) {
   return (
     <View style={[styles.header, { backgroundColor: colors?.surface, borderBottomColor: colors?.line }]}>
       <Pressable
@@ -38,22 +44,22 @@ export function AppHeader({ title = 'Gì Cũng Được', onPressBrand, onFriend
         disabled={!onPressBrand}
         style={styles.brand}
       >
-        <View style={[styles.mark, { backgroundColor: colors?.primary }]}><Text style={{ color: colors?.onPrimary }}>🍜</Text></View>
-        <Text numberOfLines={1} style={[styles.brandText, { color: colors?.text }]}>{title}</Text>
+        <Image source={require('../../../assets/brand/gcd-logo-master.png')} accessible={false} resizeMode="contain" style={styles.mark} />
+        <Text numberOfLines={1} style={[styles.brandText, { color: colors?.text }, brandTextStyle]}>{title}</Text>
       </Pressable>
       <View style={styles.headerActions}>
-        <HeaderAction label="Bạn ăn cùng" icon="👥" badge={friendBadge} onPress={onFriends} colors={colors} />
-        <HeaderAction label="Thông báo" icon="🔔" badge={inboxBadge} onPress={onInbox} colors={colors} />
-        <HeaderAction label="Hồ sơ" icon="🙂" onPress={onProfile} colors={colors} />
+        {showFriends ? <HeaderAction label="Bạn ăn cùng" iconSource={require('../../../assets/brand/icons/friends.png')} badge={friendBadge} onPress={onFriends} colors={colors} /> : null}
+        {showInbox ? <HeaderAction label="Thông báo" iconSource={require('../../../assets/brand/icons/bell.png')} badge={inboxBadge} onPress={onInbox} colors={colors} /> : null}
+        {showProfile ? <HeaderAction label="Hồ sơ" iconSource={require('../../../assets/brand/icons/profile.png')} onPress={onProfile} colors={colors} /> : null}
       </View>
     </View>
   );
 }
 
-function HeaderAction({ label, icon, badge, onPress, colors }: { label: string; icon: string; badge?: number; onPress?: () => void; colors?: ThemeColors }) {
+function HeaderAction({ label, iconSource, badge, onPress, colors }: { label: string; iconSource: ImageSourcePropType; badge?: number; onPress?: () => void; colors?: ThemeColors }) {
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress} disabled={!onPress} style={styles.headerAction}>
-      <Text style={styles.headerIcon}>{icon}</Text>
+    <Pressable accessibilityRole="button" accessibilityLabel={label} accessibilityState={{ disabled: !onPress }} onPress={onPress} disabled={!onPress} style={({ pressed }) => [styles.headerAction, { backgroundColor: pressed ? colors?.soft : 'transparent', opacity: onPress ? 1 : 0.65 }]}>
+      <Image source={iconSource} accessible={false} resizeMode="contain" style={[styles.headerIcon, { tintColor: colors?.text }]} />
       {badge !== undefined && badge > 0 ? <View style={[styles.badge, { backgroundColor: colors?.danger }]}><Text style={styles.badgeText}>{badge > 99 ? '99+' : badge}</Text></View> : null}
     </Pressable>
   );
@@ -66,10 +72,14 @@ export type AppButtonProps = ComponentThemeProps & {
   disabled?: boolean;
   loading?: boolean;
   accessibilityHint?: string;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
+  iconSource?: ImageSourcePropType;
+  iconTintColor?: string;
+  iconLayout?: 'inline' | 'stacked';
+  textStyle?: TextStyle;
 };
 
-export function AppButton({ label, onPress, variant = 'primary', disabled, loading, accessibilityHint, style, colors }: AppButtonProps) {
+export function AppButton({ label, onPress, variant = 'primary', disabled, loading, accessibilityHint, style, colors, iconSource, iconTintColor, iconLayout = 'inline', textStyle }: AppButtonProps) {
   const background = variant === 'primary' ? colors?.primary : variant === 'danger' ? colors?.danger : variant === 'secondary' ? colors?.surface : colors?.soft;
   const foreground = variant === 'primary' || variant === 'danger' ? colors?.onPrimary : colors?.text;
   return (
@@ -80,10 +90,70 @@ export function AppButton({ label, onPress, variant = 'primary', disabled, loadi
       accessibilityState={{ disabled: disabled || loading, busy: loading }}
       disabled={disabled || loading}
       onPress={onPress}
-      style={({ pressed }) => [styles.button, { backgroundColor: background, borderColor: colors?.line, opacity: pressed || disabled || loading ? 0.65 : 1 }, variant === 'secondary' && styles.buttonSecondary, style]}
+      style={({ pressed }) => [
+        styles.button,
+        {
+          backgroundColor: pressed && variant === 'primary'
+            ? colors?.primaryPressed
+            : pressed && variant === 'secondary'
+              ? colors?.soft
+              : background,
+          borderColor: colors?.line,
+          opacity: disabled || loading ? 0.55 : pressed && variant === 'danger' ? 0.65 : 1,
+        },
+        variant === 'secondary' && styles.buttonSecondary,
+        iconSource && iconLayout === 'stacked' ? styles.iconButtonStacked : undefined,
+        style,
+      ]}
     >
-      <Text style={[styles.buttonText, { color: foreground }]}>{loading ? 'Đang xử lý…' : label}</Text>
+      {iconSource && !loading ? <Image testID="app-button-icon" source={iconSource} accessible={false} resizeMode="contain" style={[styles.buttonIcon, { tintColor: iconTintColor ?? foreground }]} /> : null}
+      <Text style={[styles.buttonText, iconSource && iconLayout === 'stacked' ? styles.iconButtonText : undefined, { color: foreground }, textStyle]}>{loading ? 'Đang xử lý…' : label}</Text>
     </Pressable>
+  );
+}
+
+export type HomeBottomNavigationItem = {
+  id: string;
+  label: string;
+  iconSource: ImageSourcePropType;
+  onPress: () => void;
+};
+
+export function AppBottomNavigation({ items, activeId, bottomInset = 0, labelTextStyle, colors }: ComponentThemeProps & { items: HomeBottomNavigationItem[]; activeId: string; bottomInset?: number; labelTextStyle?: TextStyle }) {
+  return (
+    <View style={[styles.bottomNav, { backgroundColor: colors?.surface, borderTopColor: colors?.line, paddingBottom: Math.max(bottomInset, spacing.lg) }]}>
+      {items.map(item => {
+        const selected = item.id === activeId;
+        return (
+          <Pressable
+            key={item.id}
+            accessibilityRole="tab"
+            accessibilityLabel={item.label}
+            accessibilityState={{ selected }}
+            onPress={item.onPress}
+            style={({ pressed }) => [styles.bottomNavItem, { opacity: pressed ? 0.42 : selected ? 1 : 0.6 }]}
+          >
+            <Image source={item.iconSource} accessible={false} resizeMode="contain" style={[styles.bottomNavIcon, { tintColor: colors?.text }]} />
+            <Text numberOfLines={1} style={[styles.bottomNavLabel, { color: colors?.text }, labelTextStyle]}>{item.label}</Text>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
+
+export function BrandBanner({ title = 'Hợp gu cả nhóm,\nvui trọn bữa ăn.', titleTextStyle, colors }: ComponentThemeProps & { title?: string; titleTextStyle?: TextStyle }) {
+  return (
+    <View style={[styles.brandBanner, { backgroundColor: colors?.warm }]}>
+      <Text accessibilityRole="summary" style={[styles.brandBannerTitle, { color: colors?.text }, titleTextStyle]}>{title}</Text>
+      <Image
+        testID="brand-banner-illustration"
+        source={require('../../../assets/brand/friends-dining.png')}
+        accessible={false}
+        resizeMode="contain"
+        style={styles.brandBannerImage}
+      />
+    </View>
   );
 }
 
@@ -194,10 +264,10 @@ function VoteButton({ label, vote, selectedVote, onPress, colors, disabled }: { 
 }
 
 export type AvatarItem = { id: string; label: string; initial?: string; imageSource?: ImageSourcePropType; status?: 'online' | 'idle' | 'offline' };
-export function AvatarRow({ items, onAdd, colors }: ComponentThemeProps & { items: AvatarItem[]; onAdd?: () => void }) {
+export function AvatarRow({ items, onAdd, labelTextStyle, colors }: ComponentThemeProps & { items: AvatarItem[]; onAdd?: () => void; labelTextStyle?: TextStyle }) {
   return <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.avatarRow} accessibilityLabel="Danh sách bạn ăn cùng">
-    {items.map(item => <View key={item.id} style={styles.avatarItem}><View style={[styles.avatar, { backgroundColor: colors?.warm, borderColor: colors?.line }]}>{item.imageSource ? <Image source={item.imageSource} style={styles.avatarImage as ImageStyle} /> : <Text style={[styles.avatarInitial, { color: colors?.primary }]}>{item.initial ?? item.label.slice(0, 1).toUpperCase()}</Text>}{item.status && item.status !== 'offline' ? <View style={[styles.statusDot, { backgroundColor: item.status === 'online' ? colors?.green : colors?.warning }]} /> : null}</View><Text numberOfLines={1} style={[styles.avatarLabel, { color: colors?.text }]}>{item.label}</Text></View>)}
-    {onAdd ? <Pressable accessibilityRole="button" accessibilityLabel="Thêm bạn" onPress={onAdd} style={[styles.addAvatar, { borderColor: colors?.primary }]}><Text style={[styles.addAvatarText, { color: colors?.primary }]}>＋</Text><Text style={[styles.avatarLabel, { color: colors?.primary }]}>Thêm</Text></Pressable> : null}
+    {items.map(item => <View key={item.id} style={styles.avatarItem}><View style={[styles.avatar, { backgroundColor: colors?.surface, borderColor: colors?.line }]}>{item.imageSource ? <Image source={item.imageSource} style={styles.avatarImage as ImageStyle} /> : <Text style={[styles.avatarInitial, { color: colors?.text }]}>{item.initial ?? item.label.slice(0, 1).toUpperCase()}</Text>}{item.status && item.status !== 'offline' ? <View style={[styles.statusDot, { backgroundColor: item.status === 'online' ? colors?.green : colors?.warning }]} /> : null}</View><Text numberOfLines={1} style={[styles.avatarLabel, { color: colors?.text }, labelTextStyle]}>{item.label}</Text></View>)}
+    {onAdd ? <Pressable accessibilityRole="button" accessibilityLabel="Thêm bạn" onPress={onAdd} style={({ pressed }) => [styles.avatarItem, { opacity: pressed ? 0.6 : 1 }]}><View style={[styles.addAvatar, { borderColor: colors?.line }]}><Image source={require('../../../assets/brand/icons/plus.png')} accessible={false} resizeMode="contain" style={[styles.addAvatarIcon, { tintColor: colors?.text }]} /></View><Text style={[styles.avatarLabel, { color: colors?.text }, labelTextStyle]}>Thêm</Text></Pressable> : null}
   </ScrollView>;
 }
 
@@ -224,18 +294,28 @@ export function SheetDialog({ visible, title, children, onClose, colors }: Compo
 }
 
 const styles = StyleSheet.create({
-  header: { minHeight: 64, paddingHorizontal: spacing.lg, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: StyleSheet.hairlineWidth },
+  header: { minHeight: 72, paddingHorizontal: spacing.lg, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: StyleSheet.hairlineWidth },
   brand: { minHeight: 48, flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flexShrink: 1 },
-  mark: { width: 36, height: 36, borderRadius: radii.md, justifyContent: 'center', alignItems: 'center' },
-  brandText: { ...typography.bodyBold, flexShrink: 1 },
+  mark: { width: 44, height: 44 },
+  brandText: { ...typography.titleMedium, lineHeight: 28, flexShrink: 1 },
   headerActions: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
-  headerAction: { width: 48, height: 48, justifyContent: 'center', alignItems: 'center' },
-  headerIcon: { fontSize: 19 },
+  headerAction: { width: 48, height: 48, borderRadius: radii.pill, justifyContent: 'center', alignItems: 'center' },
+  headerIcon: { width: 24, height: 24 },
   badge: { position: 'absolute', right: 1, top: 3, minWidth: 18, height: 18, paddingHorizontal: 3, borderRadius: 9, justifyContent: 'center', alignItems: 'center' },
   badgeText: { color: '#FFFFFF', fontSize: 10, fontWeight: '800' },
   button: { minHeight: 48, borderRadius: radii.md, justifyContent: 'center', alignItems: 'stretch', borderWidth: 1 },
   buttonSecondary: { borderWidth: 1 },
   buttonText: { ...typography.bodyBold, minHeight: 46, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, textAlign: 'center', textAlignVertical: 'center' },
+  buttonIcon: { width: 24, height: 24 },
+  iconButtonStacked: { alignItems: 'center', gap: spacing.md },
+  iconButtonText: { minHeight: 0, paddingHorizontal: 0, paddingVertical: 0 },
+  bottomNav: { minHeight: 88, borderTopWidth: StyleSheet.hairlineWidth, flexDirection: 'row', alignItems: 'center', paddingHorizontal: spacing.sm, paddingTop: spacing.xs },
+  bottomNavItem: { flex: 1, minWidth: 0, minHeight: 64, alignItems: 'center', justifyContent: 'center', gap: spacing.xs },
+  bottomNavIcon: { width: 24, height: 24 },
+  bottomNavLabel: { ...typography.caption, fontSize: 12, lineHeight: 18, fontWeight: '500' },
+  brandBanner: { minHeight: 116, borderRadius: radii.xl, overflow: 'hidden', flexDirection: 'row', alignItems: 'center', paddingLeft: spacing.xl },
+  brandBannerTitle: { flex: 1, fontSize: 18, lineHeight: 25, fontWeight: '700' },
+  brandBannerImage: { width: '46%', height: 116, alignSelf: 'center' },
   field: { gap: spacing.xs }, fieldLabel: { ...typography.bodyBold },
   input: { minHeight: 48, borderRadius: radii.md, borderWidth: 1, paddingHorizontal: spacing.md, ...typography.body },
   helper: { ...typography.caption },
@@ -245,7 +325,7 @@ const styles = StyleSheet.create({
   dishImage: { width: '100%', height: 160, backgroundColor: '#E2E8F0' }, dishFallback: { width: '100%', height: 160, justifyContent: 'center', alignItems: 'center' }, dishEmoji: { fontSize: 52 },
   dishBody: { padding: spacing.lg, gap: spacing.sm }, dishName: { ...typography.titleMedium }, dishDescription: { ...typography.body }, tagRow: { gap: spacing.sm }, dishMeta: { ...typography.caption },
   voteRow: { padding: spacing.md, gap: spacing.sm, flexDirection: 'row' }, voteButton: { flex: 1, minHeight: 48, borderRadius: radii.md, borderWidth: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: spacing.xs },
-  avatarRow: { gap: spacing.md, paddingVertical: spacing.xs }, avatarItem: { width: 64, alignItems: 'center', gap: spacing.xs }, avatar: { width: 48, height: 48, borderRadius: 24, borderWidth: 1, justifyContent: 'center', alignItems: 'center' }, avatarImage: { width: 46, height: 46, borderRadius: 23 }, avatarInitial: { fontSize: 18, fontWeight: '800' }, statusDot: { position: 'absolute', width: 12, height: 12, borderRadius: 6, right: -1, bottom: 1, borderWidth: 2, borderColor: '#FFFFFF' }, avatarLabel: { ...typography.caption, textAlign: 'center' }, addAvatar: { width: 64, height: 64, borderRadius: radii.md, borderWidth: 1, borderStyle: 'dashed', justifyContent: 'center', alignItems: 'center' }, addAvatarText: { fontSize: 22, lineHeight: 24 },
+  avatarRow: { gap: spacing.md, paddingVertical: spacing.xs }, avatarItem: { width: 64, alignItems: 'center', gap: spacing.xs }, avatar: { width: 48, height: 48, borderRadius: 24, borderWidth: 1, justifyContent: 'center', alignItems: 'center' }, avatarImage: { width: 46, height: 46, borderRadius: 23 }, avatarInitial: { fontSize: 18, fontWeight: '800' }, statusDot: { position: 'absolute', width: 12, height: 12, borderRadius: 6, right: -1, bottom: 1, borderWidth: 2, borderColor: '#FFFFFF' }, avatarLabel: { ...typography.caption, textAlign: 'center' }, addAvatar: { width: 48, height: 48, borderRadius: radii.pill, borderWidth: 1, borderStyle: 'dashed', justifyContent: 'center', alignItems: 'center' }, addAvatarIcon: { width: 24, height: 24 },
   roomCodeCard: { padding: spacing.xl, borderRadius: radii.xl, borderWidth: 1, alignItems: 'center', gap: spacing.md }, roomCode: { ...typography.roomCode }, caption: { ...typography.caption },
   contextCard: { padding: spacing.lg, borderRadius: radii.xl, borderWidth: 1, gap: spacing.sm }, contextTitle: { ...typography.titleMedium }, contextGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.lg }, contextValue: { minWidth: 84, gap: spacing.xs }, contextValueText: { ...typography.bodyBold },
   notice: { padding: spacing.lg, borderRadius: radii.lg, borderLeftWidth: 4, gap: spacing.sm }, noticeTitle: { ...typography.bodyBold }, body: { ...typography.body },

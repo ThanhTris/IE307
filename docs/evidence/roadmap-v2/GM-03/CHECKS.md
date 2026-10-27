@@ -1,5 +1,22 @@
 # GM-03 — output checks
 
+## Supplement 2026-10-27 — PR #137 QA and Bruno run
+
+Run `gm03-pr137-20261027`, based on revision `b6efb50229feae7a54df8923796ff9af056872da` with a dirty working tree, contract `dish-session-v4/roadmap-v2/GM-07.B`, schema `0.9.1`, API `54371`, DB `54372`. Runtime reports are under ignored `.work/qa/gm03-pr137-20261027/`; the report records no credentials, identity IDs, or changes to the application database.
+
+| Case | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| GM-03 Auth + REST | Health, guest signup/refresh with same identity, authenticated REST; missing/forged JWT denied | 7 assertions passed; HTTP `200` for healthy/authenticated calls and `401` for missing/forged JWT | Pass |
+| GM-07.B/v4 API suite | Response-driven cases against disposable QA DB; schema and runtime fingerprint match | 83 API cases passed; 439 response envelopes validated against JSON Schema 2020-12; 16 migrations, schema `0.9.1`, 172 functions, two catalogues verified | Pass |
+| Bruno desktop | Six GM-03 requests return exact expected statuses `200,200,200,200,401,401` | Runner All 6 / Passed 6 / Failed 0 / Skipped 0. [Runner screenshot](bruno-runner-gm03-20261027.jpg) | Pass |
+| Worker recovery | Stop/restart worker and verify it resumes against owned manifest | Worker restart and post-restart verification passed | Pass |
+| QA cleanup | Remove only owned worker/project/network and close QA ports | QA run stopped; owned resources removed; application DB left unchanged | Pass |
+| Docker loopback binding | Effective published API/DB host bindings remain loopback-only | Docker Desktop published `0.0.0.0` and `::` despite the custom bridge loopback option. The QA run was stopped after observing this. `backend-qa.mjs` now checks effective published bindings and fails closed; helper tests pass, but the guarded start has not been rerun on this host | **Fail on this host** |
+| v4 CI disposable run | Explicitly configured test binding, suite completes, and cleanup succeeds | 83 cases passed on `54361/54362`; report says `bindingPolicy: explicit-local-wildcard`; worker/project/workdir cleanup passed | Pass, explicit wildcard test mode only |
+| Regression and repository checks | Worker/ownership/unit and repository checks pass | Node `npm test` 19/19; worker process tests 2/2; QA ownership tests 4/4; Python suite 607 run / 6 skipped / all passed; repository validator and docs checker pass | Pass |
+
+Do not treat the v4 CI run's explicitly allowed wildcard binding as proof of GM-03 loopback isolation. The checked host's Docker Desktop binding behavior prevents full GM-03 acceptance until the guarded QA runtime can be run with effective loopback-only mappings. The API/Bruno results above were captured before the fail-closed binding check was added; no container or port remains open now.
+
 ## Supplement 2026-10-26 — isolated QA and Windows worker
 
 Working tree based on `fe5b5f363d94787f4dac6fcfb1933698fb534830`, branch `codex/gm-02-03-foundations`; owner/reviewer Trí / ThanhTris. These are implementation checks, not human approval. Exact runtime/source fingerprints are in [QA manifest](QA_MANIFEST.json), and input/expected/actual assertions are in [QA results](QA_TEST_RESULTS.json).

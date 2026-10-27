@@ -20,6 +20,7 @@ function brunoPrivatePath(runId) {
 const allowedSourceFiles = [
   'scripts/backend-qa.mjs', 'scripts/gm03_qa_http_check.mjs', 'scripts/gm_v4_http_check.mjs',
   'scripts/dish_policy_worker.py', 'scripts/gm03_function_inventory.sql', 'scripts/gm40_catalogue_check.py', 'supabase/seed/import_dish_catalogue.py',
+  'scripts/validate_dish_v4_schema.py', 'tests/fixtures/dish-catalogue-v1/qa-v4-synthetic.json', 'scripts/ci-requirements.txt',
   'docs/architecture/DISH_SESSION_API_CONTRACT_B.md', 'docs/architecture/schemas/dish-session-v4b.schema.json',
   'supabase/config.toml', 'supabase/seed/catalogue/dishes.json', 'supabase/seed/catalogue/manifest.json',
   'supabase/tests/fixtures/gm03-dish-catalogue-synthetic.json',
@@ -246,6 +247,17 @@ function assertLocalServiceStatus(status, ports) {
   return { apiUrl: `http://127.0.0.1:${ports.api}`, dbUrl: `postgresql://127.0.0.1:${ports.db}/postgres` };
 }
 
+export function assertLoopbackPublishedPort(container, containerPort, hostPort) {
+  const bindings = container?.NetworkSettings?.Ports?.[`${containerPort}/tcp`];
+  const loopbackAddresses = new Set(['127.0.0.1', '::1']);
+  if (!Array.isArray(bindings) || bindings.length === 0
+    || bindings.some(binding => !loopbackAddresses.has(binding.HostIp)
+      || String(binding.HostPort) !== String(hostPort))) {
+    throw new Error('QA_HOST_BINDING_NOT_LOOPBACK');
+  }
+  return true;
+}
+
 async function readCliStatus(workdir) {
   const result = await run(process.execPath, [cli, 'status', '--output', 'json', '--workdir', workdir], { label: 'QA_STATUS_FAILED', timeoutMs: 60_000 });
   try { return JSON.parse(result.stdout); }
@@ -265,7 +277,10 @@ async function assertQaOwnership(state, requireMarker = true) {
   const network = await dockerNetworkInfo(state.networkName);
   if (!network || (state.networkId && network.Id !== state.networkId)
     || network.Labels?.['com.gm03.owner_uuid'] !== state.ownerUuid
-    || network.Labels?.['com.gm03.run_id'] !== state.runId) throw new Error('QA_NETWORK_OWNERSHIP_OR_ID_MISMATCH');
+    || network.Labels?.['com.gm03.run_id'] !== state.runId
+    || network.Options?.['com.docker.network.bridge.host_binding_ipv4'] !== '127.0.0.1') {
+    throw new Error('QA_NETWORK_OWNERSHIP_OR_BINDING_MISMATCH');
+  }
   const container = await inspectDocker('container', state.containerName);
   if (!container) throw new Error('QA_DATABASE_CONTAINER_MISSING');
   assertOwnedResource(container, { name: state.containerName, projectId: state.projectId, workdir: state.workdir });
@@ -273,6 +288,16 @@ async function assertQaOwnership(state, requireMarker = true) {
     const marker = await psql(state, `select owner_uuid::text from gm03_qa_private.owner_manifest where run_id=${sqlLiteral(state.runId)};`, 'QA_DATABASE_OWNER_MARKER_READ_FAILED');
     if (marker !== state.ownerUuid) throw new Error('QA_DATABASE_OWNER_MARKER_MISMATCH');
   }
+}
+
+async function assertActualLoopbackBindings(state) {
+  const api = await inspectDocker('container', `supabase_kong_${state.projectId}`);
+  const database = await inspectDocker('container', state.containerName);
+  if (!api || !database) throw new Error('QA_PUBLISHED_SERVICE_CONTAINER_MISSING');
+  assertOwnedResource(api, { name: `supabase_kong_${state.projectId}`, projectId: state.projectId, workdir: state.workdir });
+  assertOwnedResource(database, { name: state.containerName, projectId: state.projectId, workdir: state.workdir });
+  assertLoopbackPublishedPort(api, '8000', state.ports.api);
+  assertLoopbackPublishedPort(database, '5432', state.ports.db);
 }
 
 function sqlLiteral(value) { return `'${String(value).replaceAll("'", "''")}'`; }
@@ -352,6 +377,9 @@ async function createOwnedNetwork(state) {
   const network = await dockerNetworkInfo(state.networkName);
   if (!network || network.Labels?.['com.gm03.owner_uuid'] !== state.ownerUuid || network.Labels?.['com.gm03.run_id'] !== state.runId) {
     throw new Error('QA_NETWORK_OWNERSHIP_MISMATCH');
+  }
+  if (network.Options?.['com.docker.network.bridge.host_binding_ipv4'] !== '127.0.0.1') {
+    throw new Error('QA_NETWORK_LOOPBACK_OPTION_MISSING');
   }
   state.networkId = network.Id;
   state.networkCreated = true;
@@ -604,6 +632,7 @@ async function doStart(runId, ports) {
     await createOwnedNetwork(state);
     state.phase = 'network-created'; await saveJson(state.stateFile, state);
     await run(process.execPath, [cli, 'start', '--workdir', state.workdir, '--network-id', state.networkId], { label: 'QA_SUPABASE_START_FAILED', timeoutMs: 900_000, print: true });
+    await assertActualLoopbackBindings(state);
     const status = await readCliStatus(state.workdir);
     const endpoints = assertLocalServiceStatus(status, ports);
     if (endpoints.apiUrl !== `http://127.0.0.1:${ports.api}`) throw new Error('QA_API_ENDPOINT_MISMATCH');
@@ -708,18 +737,36 @@ async function doTest(runId) {
   await assertWorkerRunning(state);
   await waitForWorkerHeartbeat(state);
   const env = { ...process.env, GM03_QA_WORKDIR: state.workdir, GM03_QA_MANIFEST: state.manifestFile };
-  await run(process.execPath, [resolve(root, 'scripts', 'gm03_qa_http_check.mjs')], { label: 'GM03_AUTH_REST_TEST_FAILED', timeoutMs: 120_000, env, print: true });
-  await run(process.execPath, [resolve(root, 'scripts', 'gm_v4_http_check.mjs')], { label: 'GM_V4_HTTP_TEST_FAILED', timeoutMs: 900_000, env, print: true });
-  const after = await loadAndVerify(runId);
+  const reportPath = resolve(state.workdir, 'test-report.json');
   const report = {
-    runId, sourceRevision: manifest.sourceRevision, contractVersion: manifest.contractVersion,
+    result: 'Not run', runId, sourceRevision: manifest.sourceRevision, contractVersion: manifest.contractVersion,
     schemaVersion: manifest.schemaVersion, projectId: state.projectId, endpoint: manifest.endpoint,
-    applicationDatabaseChanged: false, credentialsWrittenToReport: false,
-    gm03: JSON.parse(await readFile(resolve(state.workdir, 'gm03-auth-rest-report.json'), 'utf8')),
-    v4: JSON.parse(await readFile(resolve(state.workdir, 'api-check-results.json'), 'utf8')),
-    verificationAfterSuite: after.counts, completedAt: new Date().toISOString(),
+    applicationDatabaseChanged: false, credentialsWrittenToReport: false, completedAt: null,
   };
-  await saveJson(resolve(state.workdir, 'test-report.json'), report);
+  let stage = 'GM03_AUTH_REST';
+  try {
+    await run(process.execPath, [resolve(root, 'scripts', 'gm03_qa_http_check.mjs')], { label: 'GM03_AUTH_REST_TEST_FAILED', timeoutMs: 120_000, env, print: true });
+    report.gm03 = JSON.parse(await readFile(resolve(state.workdir, 'gm03-auth-rest-report.json'), 'utf8'));
+    stage = 'GM_V4_SCHEMA_HTTP';
+    await run(process.execPath, [resolve(root, 'scripts', 'gm_v4_http_check.mjs')], { label: 'GM_V4_HTTP_TEST_FAILED', timeoutMs: 900_000, env, print: true });
+    report.v4 = JSON.parse(await readFile(resolve(state.workdir, 'api-check-results.json'), 'utf8'));
+    stage = 'POST_SUITE_VERIFY';
+    const after = await loadAndVerify(runId);
+    report.verificationAfterSuite = after.counts;
+    report.result = 'Pass';
+    report.completedAt = new Date().toISOString();
+    await saveJson(reportPath, report);
+  } catch (error) {
+    report.result = 'Fail';
+    report.failedStage = stage;
+    report.failure = safeOutput(error?.message).slice(0, 1200);
+    report.completedAt = new Date().toISOString();
+    for (const [key, path] of [['gm03', resolve(state.workdir, 'gm03-auth-rest-report.json')], ['v4', resolve(state.workdir, 'api-check-results.json')]]) {
+      try { report[key] ??= JSON.parse(await readFile(path, 'utf8')); } catch { /* Preserve partial evidence when a suite wrote it. */ }
+    }
+    await saveJson(reportPath, report);
+    throw error;
+  }
   console.log(JSON.stringify({ result: 'PASS', runId, gm03Assertions: report.gm03.assertionCount, v4Assertions: report.v4.caseCount, report: safeRelative(resolve(state.workdir, 'test-report.json')), sourceRevision: manifest.sourceRevision, credentialsPrinted: false }, null, 2));
 }
 

@@ -1,5 +1,13 @@
 # GM-03 — BE foundation handoff
 
+## Supplement 2026-10-27 — QA, Bruno, and loopback limitation
+
+The PR #137 revision was exercised with an owned disposable Supabase project (`gm03-pr137-20261027`, contract B/schema `0.9.1`) and then cleaned up. Seven Auth/REST assertions and 83 v4 API cases passed; the Bruno desktop Runner showed the exact six expected responses `200,200,200,200,401,401` in [this screenshot](bruno-runner-gm03-20261027.jpg). Worker restart/verification passed. Detailed assertions and limitations are in [CHECKS](CHECKS.md); raw reports remain under ignored `.work/`.
+
+**Open acceptance issue:** Docker Desktop published the QA ports on `0.0.0.0` and `::` even though the isolated bridge was configured for `127.0.0.1`. The runtime was stopped to close those ports. A fail-closed check now inspects the effective mappings, and unit coverage passes, but the guarded startup has not been rerun because this Docker Desktop host does not provide the required loopback-only binding. The separately approved v4 CI wildcard run is recorded as explicit wildcard test mode, not GM-03 isolation evidence. Do not claim GM-03 fully accepted until an environment produces loopback-only mappings and the complete QA lifecycle passes there.
+
+The app's mobile check is separately recorded in [GM-02](../GM-02/CHECKS.md). Current Home visual parity with Figma is not achieved; that UI gap is not changed by this backend QA runner PR.
+
 ## Supplement 2026-10-26
 
 Implementation working tree on `fe5b5f3`, reviewer Trí / ThanhTris; no commit/push or approval recorded. Use [isolated QA runbook](RUNBOOK_QA.md) for `qa:start`, `qa:status`, `qa:verify`, `qa:test`, `qa:worker-start` and `qa:stop`. [Manifest](QA_MANIFEST.json) pins the tested code and runtime; [results](QA_TEST_RESULTS.json) contains the 7 Auth/REST and 82 v4 assertions from run `gm03-20261026m`. Bruno desktop independently passed all 6 requests on that same run.

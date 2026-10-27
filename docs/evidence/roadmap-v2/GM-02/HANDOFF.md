@@ -1,5 +1,23 @@
 # GM-02 — UI foundation handoff
 
+## Supplement 2026-10-27 — Home now uses Figma shared components
+
+Following the stale-UI report, the current working tree updates the Home composition against [GM-09 frame 330:3067](../GM-09/figma/330-3067-home.png). `Gm25HomeScreen` uses the shared `AppHeader`, `AppButton`, and `AvatarRow`, plus reusable `BrandBanner` and `AppBottomNavigation`; the official G mark, dining banner, and Home icons are bundled from Figma exports. Existing navigation/session/repository handlers are retained. Targeted automated checks passed (46 tests, typecheck, architecture, Android export); lint has four existing warnings. The updated Home has not yet been visually checked on emulator, so this is implementation evidence, not visual acceptance or task completion. See [CHECKS](CHECKS.md), [FIGMA_PARITY](FIGMA_PARITY.md), and [GM-09 handoff](../GM-09/HANDOFF.md).
+
+## Supplement 2026-10-27 — partial Figma brand alignment
+
+The current PR branch now uses the approved light theme colors (`#FFFCF3`, `#F0F4E9`, `#ECF8EB`, `#043B22`, `#B9CB9B`, `#238633`, `#1B6B29`, `#46C34F`) and the official G logo export in the shared `AppHeader`. Primary/secondary pressed states use the corresponding approved colors. Logo provenance and hash: `mobile/assets/brand/SOURCE.md`.
+
+This is a limited shared-foundation update in response to the stale visual direction. It does not rebuild the Figma Home layout, banner illustration, friend section, or bottom navigation; those remain with GM-09. Targeted component test (9/9), typecheck, lint (zero errors; four existing warnings), and Android JS export (1,398 modules; logo included) passed. Android rendering of this exact patch is **Not run**; older screenshots are pre-patch only. Do not mark GM-05/GM-09 complete or claim full Figma parity.
+
+## Supplement 2026-10-27 — SDK 58 and emulator verification
+
+SDK 58 was installed and checked from a clean source copy. Baseline, typecheck, lint, all 708 Jest tests, architecture checks, Expo dependency compatibility, and Android JavaScript export passed. `AppFontProvider` loading/delay/fallback behavior and the 400/500/600/700 mapping are covered by controlled-loader component tests.
+
+Android Studio AVD `Medium_Phone_API_37.0` (Android 17) ran the app through Expo Go 58.0.5. `/foundation`, Back navigation, 100%/200% font scaling and observed TalkBack labels/focus were checked. See [CHECKS](CHECKS.md) for limits and screenshots. This is emulator + Expo Go evidence, not a physical-phone, APK, or native development-build check. Font scaling was restored to 100%, TalkBack to off.
+
+**Visual design handoff:** the later brand supplement applies shared colors and the G mark. The retained [Home capture](android-emulator-home-100.png) predates that change; the Home composition/banner artwork/bottom navigation remain old and need GM-09 implementation. Do not describe this PR as full Figma visual parity. See [FIGMA_PARITY](FIGMA_PARITY.md).
+
 ## Supplement 2026-10-26 — font foundation
 
 The current PR adds local Inter 4.1 static weights 400/500/600/700 and an `AppFontProvider` that loads them through Expo Font while keeping system-font fallback available. The provider wraps the existing app providers without gating navigation/session startup. `/foundation` demonstrates the four weights and loading/fallback state; Figma node screenshots and asset/license hashes are linked in [FIGMA_PARITY](FIGMA_PARITY.md).

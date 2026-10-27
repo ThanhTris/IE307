@@ -1,6 +1,5 @@
 import { renderRouter } from 'expo-router/testing-library';
 import { fireEvent, screen, waitFor } from '@testing-library/react-native';
-import { store } from 'expo-router/build/global-state/router-store';
 import Layout from '../../src/app/_layout';
 import Index from '../../src/app/index';
 import Foundation from '../../src/app/foundation';
@@ -20,16 +19,16 @@ test('merged Foundation opens GM-25 Flow Check and GM-13 terminal screens', asyn
   expect(screen.getByRole('button', { name: 'Mở kết quả GM-13' })).toBeEnabled();
   await press('Kiểm tra luồng GM-25');
   await screen.findByText('Kiểm tra Luồng UI–BE (GM-25)');
-  expect(store.getRouteInfo().pathname).toBe('/internal/gm25');
+  expect(screen).toHavePathname('/internal/gm25');
   await press('Quay lại');
   await screen.findByRole('button', { name: 'Mở kết quả GM-13' });
   await press('Mở kết quả GM-13');
   await screen.findByText('Mô phỏng · GM-13');
-  expect(store.getRouteInfo().pathname).toBe('/gm13/result');
+  expect(screen).toHavePathname('/gm13/result');
   await press('Công cụ kiểm thử GM-13');
   await press('Xem chưa đồng thuận');
   await screen.findByText('Chưa chọn được món chung');
-  expect(store.getRouteInfo().pathname).toBe('/gm13/no-consensus');
+  expect(screen).toHavePathname('/gm13/no-consensus');
 });
 
 test('Home tools → foundation → Result → NoConsensus → Home uses real routes', async () => {
@@ -39,20 +38,20 @@ test('Home tools → foundation → Result → NoConsensus → Home uses real ro
   await screen.findByRole('button', { name: 'Mở kết quả GM-13' });
   await press('Mở kết quả GM-13');
   await screen.findByText('Mô phỏng · GM-13');
-  expect(store.getRouteInfo().pathname).toBe('/gm13/result');
+  expect(screen).toHavePathname('/gm13/result');
   await press('Công cụ kiểm thử GM-13');
   await press('Xem chưa đồng thuận');
   await screen.findByText('Chưa chọn được món chung');
-  expect(store.getRouteInfo().pathname).toBe('/gm13/no-consensus');
+  expect(screen).toHavePathname('/gm13/no-consensus');
   await press('Về trang chủ');
-  await waitFor(() => expect(store.getRouteInfo().pathname).toBe('/'));
+  await waitFor(() => expect(screen).toHavePathname('/'));
 });
 test.each(['/gm13/result', '/gm13/no-consensus'])('new session from %s clears only synthetic receipt and opens a fresh create form', async initialUrl => {
   rememberPreviewRoom({ roomId: 'old-fixture-room', code: 'GCD234', version: 2, role: 'host' });
   await renderRouter(routes, { initialUrl });
   await press('＋ Tạo phiên mới');
   await screen.findByLabelText('Tên của bạn (chủ phòng)');
-  expect(store.getRouteInfo().pathname).toBe('/create-room');
+  expect(screen).toHavePathname('/create-room');
   expect(screen.getByLabelText('Tên của bạn (chủ phòng)')).toHaveDisplayValue('');
   expect(screen.queryByText('Đã nhận yêu cầu mô phỏng')).toBeNull();
 });

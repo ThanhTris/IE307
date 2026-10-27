@@ -10,13 +10,13 @@ Kết quả/lệnh thực tế và giới hạn của lượt bảo trì: [CHECK
 
 | Thành phần nền | Phiên bản của lượt cập nhật này |
 | --- | --- |
-| Expo SDK / Router | SDK57: Expo57.0.30 / Router57.0.28 |
-| React / React Native | 19.2.3 / 0.86.3 |
-| constants / linking | 57.0.22 / 57.0.13 |
-| SecureStore / status-bar / system-ui | 57.0.4 / 57.0.1 / 57.0.4 |
-| safe-area / screens | 5.7.0 / 4.26.2 |
+| Expo SDK / Router | SDK58: Expo58.0.19 / Router58.0.26 |
+| React / React Native | 19.3.0 / 0.88.0 |
+| constants / linking | 58.0.13 / 58.0.14 |
+| SecureStore / status-bar / system-ui | 58.0.2 / 58.0.4 / 58.0.6 |
+| safe-area / screens | 5.10.1 / 4.30.0 |
 
-Nâng patch trong SDK57; không tự nâng SDK lớn, React hoặc thêm native capability. Giữ [override peer nền GM-02](../evidence/roadmap-v2/GM-02/DEPENDENCIES.md). Lockfile/revision/CHECKS là nguồn cho từng lượt bảo trì sau.
+SDK 58 được chủ dự án yêu cầu ngày 2026-10-26; đây là baseline package hiện hành của nhánh PR #137, đang được kiểm lại từ source sạch. Giữ [override peer nền GM-02](../evidence/roadmap-v2/GM-02/DEPENDENCIES.md) khi chúng còn cần thiết. Lockfile/revision/CHECKS là nguồn cho từng lượt bảo trì sau.
 
 ## Kiểm tái lập và kiểm cập nhật mới
 
@@ -43,7 +43,7 @@ Bảo trì GM-02: kiểm online → cập nhật package và sinh lockfile bằn
 | Task | Đầu ra/runtime giữ đúng scope |
 | --- | --- |
 | GM-02 | Sở hữu package/config/lockfile/runner; nghiệm thu cấu trúc/tooling, không tự đòi thiết bị để mở lại task nền |
-| GM-05, GM-09..14 | Components/màn mock trên Expo Go hỗ trợ SDK57; giữ state/interaction và nhãn mock; chưa cần API task sau |
+| GM-05, GM-09..14 | Components/màn mock trên Expo Go hỗ trợ SDK58; giữ state/interaction và nhãn mock; chưa cần API task sau |
 | GM-16 | Auth/session/SecureStore harness theo runtime task; HTTP máy tính không thay device |
 | GM-24..28 | Location/room/vote/result/social nối API thật trên Android; location native dùng provider/build phù hợp |
 | GM-29..31 | Push, QR/links, SQLite/outbox: shell Expo Go có capability guard; native kiểm development/native build hỗ trợ |
@@ -56,6 +56,6 @@ Bảo trì GM-02: kiểm online → cập nhật package và sinh lockfile bằn
 
 ## Expo Go và nhánh đang mở
 
-Expo Go trên điện thoại và dependency repo là hai thứ riêng. Dùng Expo Go hỗ trợ SDK57; cập nhật Expo Go không tự sửa package-lock dự án. Sau đổi dependency, chạy npm ci và Metro --clear. Nếu native dependency/config đổi, rebuild development client/APK thay vì chỉ reload Metro. [Tương thích Expo Go](https://docs.expo.dev/troubleshooting/expo-go-version-mismatch/).
+Expo Go trên điện thoại và dependency repo là hai thứ riêng. Baseline hiện hành là SDK58; cập nhật Expo Go không tự sửa package-lock dự án. Sau đổi dependency, chạy npm ci và Metro --clear. Nếu native dependency/config đổi, rebuild development client/APK thay vì chỉ reload Metro. [Tương thích Expo Go](https://docs.expo.dev/troubleshooting/expo-go-version-mismatch/).
 
 Nhánh PR cũ phải nhận package/lockfile/runner mới từ nhánh đích sau khi phần bảo trì được đưa lên GitHub, giữ thay đổi tính năng rồi chạy npm ci/checks lại. Sửa local chưa thay CI remote. Không sửa evidence cũ thành Pass cho bộ mới; ghi evidence mới theo revision.
