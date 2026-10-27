@@ -1,0 +1,1 @@
+Pass: git diff --check and git diff --cached --check; no unresolved index entries.

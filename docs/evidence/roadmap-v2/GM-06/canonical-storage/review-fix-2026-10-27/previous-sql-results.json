@@ -1,0 +1,523 @@
+{
+  "result": "Pass",
+  "scope": "GM06.2 storage only; no v4 producer/API",
+  "schemaVersion": "0.9.0",
+  "dataMode": "synthetic fixtures only",
+  "applicationDatabaseChanged": false,
+  "productionPublished": false,
+  "checkedAt": "2026-10-25T15:10:37.794261+00:00",
+  "testedHeadBeforePatchCommit": "a31f403fbcdc4cfdb03e03fe77506ccdd9a4cbea",
+  "workingTreePatchIncluded": true,
+  "sourceHashes": {
+    "supabase/migrations/0027_canonical_result_storage.sql": "d5f03894d2f65bee4768bfffac4e929e38c2874be12257b6ee767839ba426a43",
+    "supabase/rollback/0027_canonical_result_storage.down.sql": "133923a32bdaf9dc9187402db985bf2794646bddcdc1f05256c518ad801d2ad6",
+    "scripts/gm06_canonical_check.py": "9fb66c6ee5f999cd12924921cf5dd6062a9c89891b75b2cd4d4757fafc8e5bbc",
+    "docs/data/GM06_CANONICAL_STORAGE.md": "b0c5509c879a8fc57e6c18b790c927d4a949e4dad3f7989a611d7c6a82e52146"
+  },
+  "cases": [
+    {
+      "case": "fresh empty canonical migration succeeds",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "empty down preserves all original definitions",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "schema version is storage-only, v3 ledger retained",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "populated legacy result/history unchanged by upgrade",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "populated v3 room unchanged by upgrade",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "legacy winner/history fixture rows present after upgrade",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "all preexisting decision/API/helper bodies unchanged except named cleanup bridge",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "old cleanup body preserved under rename",
+      "expected": "727a51ba8542ce510d245d02da1de761",
+      "actual": "727a51ba8542ce510d245d02da1de761",
+      "result": "Pass"
+    },
+    {
+      "case": "v3 source-hash worker verifier still passes",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "all eight new tables force RLS",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "anon has no schema/table/function access",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "authenticated has no schema/table/function access",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "service_role has no schema/table/function access",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "gm06_publisher has no schema/table/function access",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "authenticated direct raw preference read denied",
+      "expected": "42501",
+      "actual": "42501",
+      "result": "Pass"
+    },
+    {
+      "case": "canonical ID cannot collide with legacy registry",
+      "expected": "23505",
+      "actual": "23505",
+      "result": "Pass"
+    },
+    {
+      "case": "catalogue SHA must match installed release",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "legacy dish ID outside catalogue rejected",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "dangling room registry rejected",
+      "expected": "23503",
+      "actual": "23503",
+      "result": "Pass"
+    },
+    {
+      "case": "only supported policy version may use new storage",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "21 participants rejected",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "missing participant rejected at commit",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "same count wrong roster fingerprint rejected",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "score above accepted R1 cohort bound rejected",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "scored R1 count must match actual stored accepted cohort",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "ties require dense equal ranks",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "winner must be present in stored podium",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "noncanonical duplicate-capable round UUID rejected",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "unknown raw ballot keys in card rejected",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "duplicate pool identities rejected",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "no consensus cannot retain a winner or podium",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "20 members stored without public.dishes FK",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "roster cannot be appended in a later replay transaction",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "shared result registry contains canonical result",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "terminal projection cannot change after persistence",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "same result retry cannot reroll/overwrite",
+      "expected": "23505",
+      "actual": "23505",
+      "result": "Pass"
+    },
+    {
+      "case": "winner/tie/ordered podium roundtrip exact",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "EMPTY_INTERSECTION persists no fake winner, no legacy result",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "ALL_REMOVED persists no fake winner, no legacy result",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "nullable source/unit/currency do not become fake values",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "unknown timestamp is excluded",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "latest null amount hides price without fallback",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "latest known amount preserves nullable metadata",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "tied newest timestamps hide price without fallback",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "invalid infinite observation timestamp rejected",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "price cannot refer to unknown dish",
+      "expected": "23503",
+      "actual": "23503",
+      "result": "Pass"
+    },
+    {
+      "case": "installed observation immutable",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "locked result does not read live price changes",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "known flavor uses existing GM07 nested projection",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "contradictory flavor data rejected",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "budget maximum/currency/unit matches proposed preferences",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "account change does not rewrite room snapshot",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "preference version must increment",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "outsider cannot have raw room preference snapshot",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "duplicate taxonomy preference IDs rejected",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "non-lobby preference changes rejected",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "history audience cannot be rewritten by later insert",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "20-person group history uses canonical snapshot",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "outsider history predicate denied",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "history expiry hides summary",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "partial group audience rejected",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "room-scoped consent cannot authorize another result room",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "concurrent history retry persists exactly one receipt/entry",
+      "expected": [
+        "accepted",
+        "duplicate"
+      ],
+      "actual": [
+        "accepted",
+        "duplicate"
+      ],
+      "result": "Pass"
+    },
+    {
+      "case": "no-consensus history needs neither dish FK nor winner",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "actual cleanup deletes operational room/session",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "history still readable after actual cleanup",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "room-bound consent detached without losing live authorization",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "canonical result/ref/consent survive cleanup",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "room preference cleans up, account default retained",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "deleted personal history cannot be recreated by retry",
+      "expected": "23505",
+      "actual": "23505",
+      "result": "Pass"
+    },
+    {
+      "case": "revocation immediately hides history",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "cleanup purges revoked history payload but keeps replay receipt",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "revoked/deleted group history cannot resurrect",
+      "expected": "23505",
+      "actual": "23505",
+      "result": "Pass"
+    },
+    {
+      "case": "legacy history/results unchanged",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    },
+    {
+      "case": "rollback refuses retained canonical data",
+      "expected": "23514",
+      "actual": "23514",
+      "result": "Pass"
+    },
+    {
+      "case": "rollback restores original cleanup function",
+      "expected": "727a51ba8542ce510d245d02da1de761",
+      "actual": "727a51ba8542ce510d245d02da1de761",
+      "result": "Pass"
+    },
+    {
+      "case": "rollback removes only supplement schema/ledger",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "rollback preserves baseline catalogue",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "empty reapply succeeds",
+      "expected": "t",
+      "actual": "t",
+      "result": "Pass"
+    },
+    {
+      "case": "application function definitions unchanged",
+      "expected": true,
+      "actual": true,
+      "result": "Pass"
+    }
+  ],
+  "migrationHashes": {
+    "0001_core_schema.sql": "6733e28f282f600e627e675dccede3afef1efd37cf4a7cfe8d94af4cd02d30f5",
+    "0002_food_import_receipts.sql": "eb80acba1f69bfb68b014a1ab5807e42d65db940a36d201f28db88172157f55e",
+    "0003_food_provenance_description.sql": "8972c1dfa5e07a2350e644a7e79ea36cc7f9208e0a89371cbe1bdfdb52d6cb16",
+    "0004_access_policies.sql": "508e9572ce50464d07a8ea1e19dc41ff7ba26cb2d0485aa59df9ac1422440dfb",
+    "0005_gm18_discovery_rpc.sql": "b81e072da7ef75846615738905650ae5a337e32f5d678f843c9404e7f54e3307",
+    "0018_food_eligibility.sql": "e242876842e0c8decf645130b56a69143146ff942a78641f504c2883f3c86334",
+    "0019_room_lifecycle.sql": "ed76f679baa10bbfd4234e2be88f408ef292162f92efceac16217aa554f50926",
+    "0021_history.sql": "9be964cc6c8b405f578e7f2528268f628266e7b121b96ce958244e20a116217e",
+    "0022_social.sql": "bede55e7a0c12a3dfce3d03f3e61121bd4611b73c8b8656ec0785a3c55097f54",
+    "0023_finalize.sql": "aff45864e57d634ced4bce6e3ce1997f439f90b2c974cc7f601d71f70bb3fea8",
+    "0024_history_integration.sql": "48d8662cd1e4c70a7ef6147efb517bcb351365fc6e1f90ac49e4defa3c868ad9",
+    "0025_notifications.sql": "a1f8bab1b7853c52fb82e97afef470634b4776b75ae8a000bba2e24796f81ba1",
+    "0026_dish_session_policy.sql": "24fba6d428e283bef7edd46d040b7e89c7ce2953c9cb7a4e04cb86a7dd682804",
+    "0027_canonical_result_storage.sql": "d5f03894d2f65bee4768bfffac4e929e38c2874be12257b6ee767839ba426a43"
+  },
+  "cleanup": "namespace-owned QA database removed",
+  "assertions": 80
+}
