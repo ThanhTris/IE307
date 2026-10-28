@@ -657,7 +657,7 @@
       "previous_ids": [
         "GM-12"
       ],
-      "title": "BE: API phòng, context, ready và start",
+      "title": "BE: API phòng, thiết lập, lobby không ready và start",
       "track": "BE",
       "stage": "implementation",
       "outputs": [

@@ -1,5 +1,8 @@
 # Handoff đồng bộ UI Figma với BE/Data — 2026-10-25
 
+> **Hiện trạng sau merge — 28/10:** [Rà main/task/source](MAIN_FIGMA_READINESS_2026-10-28.md) tại `1bf28d8`: runtime v4 đã có trong0027–0031;0032 là storage độc lập. Nhận định runtime/status của ngày25/10 bên dưới giữ làm lịch sử. Mobile chưa hoàn tất Figma; task ownership/AC vẫn dùng, còn status đọc Project live. Dependency chỉ Done mới mở; Needs Update không đủ.
+
+
 ## Căn cứ và phạm vi
 
 Figma đã được Trí xác nhận hoàn tất cho đợt này trong [phạm vi UI đã chốt](../design/UI_SCOPE_CONFIRMED_2026-10-25.md). Dùng [final handoff](../design/UI_FINAL_HANDOFF_2026-10-25.md), [task implementation](../design/UI_FIGMA_IMPLEMENTATION_2026-10-25.md), [task map](../design/UI_FIGMA_TASK_MAP.json) và [component map](../design/COMPONENT_MAP.md) làm đầu vào. G01–G05 có frame thật; không giao vẽ lại hoặc chờ tạo frame. UI Figma là nguồn quyết định trải nghiệm; BE/Data cung cấp contract và dữ liệu tương ứng.

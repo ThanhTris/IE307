@@ -1,6 +1,6 @@
 # Dish session API contract — GM-07.B
 
-Status: proposed v4.B contract, accepted product rules recorded in [ADR-020](decisions/ADR-020-public-top-three-result.md). **No v4.B runtime is deployed.** This addendum extends the forward-only GM-07.A wire proposal; it does not modify `dish-session-v3/ADR-019`, decision-v2, existing migrations, or legacy clients.
+Status as of 2026-10-28: this contract has a v4 runtime implementation in main migrations0027–0031; schema/examples/semantic-checker closure and consumer handoff remain under GM-07. Deployment of any running DB must be verified separately. Accepted product rules are recorded in [ADR-020](decisions/ADR-020-public-top-three-result.md). Pinned v2/v3 sessions and legacy clients keep their behavior. See [current audit](../project/MAIN_FIGMA_READINESS_2026-10-28.md). The independent0032/GM06.3 storage does not automatically replace `dish_v4_private` or prove API integration.
 
 - Contract ID: `dish-session-v4/roadmap-v2/GM-07.B`.
 - Lifecycle policy: `dish-decision-v4/ADR-019-30PCT-MIN1`.

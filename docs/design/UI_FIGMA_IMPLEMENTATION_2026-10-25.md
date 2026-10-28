@@ -1,5 +1,8 @@
 # UI theo Figma đã chốt — giao việc ngày 2026-10-25
 
+> **Hiện trạng sau merge — 28/10:** [Rà main/task/source](../project/MAIN_FIGMA_READINESS_2026-10-28.md) tại `1bf28d8`: runtime v4 đã có trong0027–0031;0032 là storage độc lập. Nhận định runtime/status của ngày25/10 bên dưới giữ làm lịch sử. Mobile chưa hoàn tất Figma; task ownership/AC vẫn dùng, còn status đọc Project live. Dependency chỉ Done mới mở; Needs Update không đủ.
+
+
 > Phạm vi bổ sung thiết kế hiện hành theo [xác nhận của Trí sau hai đợt](UI_SCOPE_CONFIRMED_2026-10-25.md); không tự mở thêm gap từ các đề xuất cuối đã được loại khỏi phạm vi.
 
 > Cập nhật sau khi duyệt đề xuất: U01–U05 đã được áp dụng lên Figma, gồm hai state mới và sửa các màn hiện có; xem [bàn giao cập nhật](UI_APPROVED_UPDATES_2026-10-25.md). Các phát hiện cũ bên dưới là lịch sử trước khi sửa; không dùng để báo thiếu lại. Present và runtime vẫn theo phạm vi kiểm riêng.

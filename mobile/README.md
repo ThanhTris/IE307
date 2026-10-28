@@ -1,5 +1,8 @@
 # Mobile — Expo shell, components và adapters
 
+> **Chuẩn bị UI Figma — 28/10:** nền Inter/SDK58 và một phần Home/token đã có; các route/screens legacy bên dưới chưa đồng bộ đầy đủ thiết kế mới. Dùng [task map](../docs/design/UI_FIGMA_TASK_MAP.json) và [bảng source → task thay thế](../docs/project/MAIN_FIGMA_READINESS_2026-10-28.md). Không lấy nút ready, anchor/coverage setup hoặc offering fixture trong code cũ làm yêu cầu cho UI mới. Chủ task thay route/import/test và dọn phần UI cũ trong cùng PR sau kiểm màn thay thế; giữ regression/API phiên cũ. QA harness chỉ development.
+
+
 Expo SDK 58 + Expo Router + TypeScript strict. Có shell `/`, `/foundation`, `+not-found`, preview component GM-05, client/mock GM-07, auth/session GM-16 và domain GM-15/18. Harness `/internal/gm16` chỉ development và cần cấu hình theo [auth README](src/data/auth/README.md); không là màn sản phẩm. Màn tạo/join/context/vote và tích hợp Android còn theo GM-09..14/24..31; camera/push/SQLite chưa được coi hoàn thành.
 
 GM-02 bundles Inter 4.1 static weights 400/500/600/700 under `assets/fonts/` (SIL OFL 1.1; hashes in `assets/fonts/SOURCE.md`). `AppFontProvider` loads through Expo Font at runtime and always renders children with system weights while loading or after an error. It does not gate or remount Expo Router/session providers. GM-05 may use `useAppFonts()` for the family-to-weight map and readiness state; typography tokens/components remain GM-05's scope. `/foundation` includes Vietnamese samples for all four weights and the load/fallback status. Figma screenshots, node notes and scope boundaries are recorded in [GM-02 Figma parity](../docs/evidence/roadmap-v2/GM-02/FIGMA_PARITY.md).

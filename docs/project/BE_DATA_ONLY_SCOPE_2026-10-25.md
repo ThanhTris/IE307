@@ -1,5 +1,8 @@
 # Phạm vi hiện hành: BE và Data — 2026-10-25
 
+> **Hiện trạng sau merge — 28/10:** [Rà main/task/source](MAIN_FIGMA_READINESS_2026-10-28.md) tại `1bf28d8`: runtime v4 đã có trong0027–0031;0032 là storage độc lập. Nhận định runtime/status của ngày25/10 bên dưới giữ làm lịch sử. Mobile chưa hoàn tất Figma; task ownership/AC vẫn dùng, còn status đọc Project live. Dependency chỉ Done mới mở; Needs Update không đủ.
+
+
 > Cập nhật sau final handoff UI ngày 2026-10-25: Trí đã giao task UI theo Figma tại [kế hoạch mới](../design/UI_FIGMA_IMPLEMENTATION_2026-10-25.md). Phần BE/Data và phân công producer trong tài liệu này giữ nguyên. Các đoạn tạm hoãn/thu hồi FE bên dưới ghi lại phạm vi của đợt BE/Data trước, không tiếp tục cấm task UI mới đã được giao.
 
 
