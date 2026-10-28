@@ -2,6 +2,7 @@
 
 Executed during CI unittest regression (python -m unittest discover -s tests -p "test_*.py").
 """
+import copy
 import importlib.util
 import json
 from pathlib import Path
@@ -22,6 +23,38 @@ SPEC.loader.exec_module(MODULE)
 
 
 class Gm07bContractTests(unittest.TestCase):
+    def request_fixtures(self):
+        """Explicit wire examples, including both voting rounds and all commands."""
+        settings = {"dishCount": 10, "mealSlot": "dinner", "desiredAt": None}
+        preferences = {
+            "cuisineIds": [], "categoryIds": [], "temperature": None,
+            "flavor": None, "budget": None, "avoidRecent": False,
+        }
+        room = {"roomId": MODULE.ROOM_ID}
+        write = {**room, "requestId": "request-contract-version-001", "expectedVersion": 3}
+        ballot = {**write, "poolVersion": 1}
+        return [
+            ("create", {"requestId": "create-version-001", "displayName": "Host", "settings": settings, "preferences": preferences}),
+            ("previewJoin", {"requestId": "preview-version-001", "code": "ABC123"}),
+            ("join", {"requestId": "join-version-001", "code": "ABC123", "displayName": "Member"}),
+            ("snapshot", room),
+            ("updateSettings", {**write, "settings": settings}),
+            ("updatePreferences", {**write, "preferences": preferences}),
+            ("start", write),
+            ("submit", {**ballot, "round": 1, "votes": [{"roundDishId": self.d1["roundDishId"], "choice": "WANT"}]}),
+            ("submit", {**ballot, "round": 2, "votes": [{"roundDishId": self.d1["roundDishId"], "choice": "REMOVE"}]}),
+            ("waiting", {**ballot, "round": 1}),
+            ("waiting", {**ballot, "round": 2}),
+            ("finalize", write),
+            ("cancel", write),
+            ("leave", write),
+            ("getDefaultPreferences", {}),
+            ("updateDefaultPreferences", {"requestId": "defaults-version-001", "expectedRevision": 0, "preferences": preferences}),
+            ("result", room),
+            ("history", {}),
+            ("deleteHistory", {"requestId": "delete-version-001", "historyId": MODULE.ROOM_ID}),
+        ]
+
     def setUp(self):
         self.d1 = MODULE.dish(1)
         self.d2 = MODULE.dish(2)
@@ -39,6 +72,29 @@ class Gm07bContractTests(unittest.TestCase):
     def test_schema_smoke_and_semantic_suite(self):
         """Runs the complete GM-07.B smoke suite covering schema and semantic validations."""
         self.assertEqual(MODULE.main(), 0)
+
+    def test_all_request_commands_require_their_own_contract_version(self):
+        baseline = "dish-session-v4/roadmap-v2/GM-07.B"
+        supplement = baseline + "-supplement"
+        fixtures = self.request_fixtures()
+        expected_commands = set(self.base_schema["$defs"]["command"]["enum"])
+        self.assertEqual({command for command, _ in fixtures}, expected_commands)
+        self.assertEqual(set(self.supp_schema["$defs"]["command"]["enum"]), expected_commands)
+        for command, fields in fixtures:
+            for version, own, other in (
+                (baseline, self.base_validator, self.supp_validator),
+                (supplement, self.supp_validator, self.base_validator),
+            ):
+                with self.subTest(command=command, round=fields.get("round"), contractVersion=version):
+                    request = {"command": command, "payload": {"contractVersion": version, **copy.deepcopy(fields)}}
+                    own.validate(request)
+                    self.assertFalse(other.is_valid(request), "Cross-version request must not silently route to the other contract")
+                    missing = copy.deepcopy(request)
+                    del missing["payload"]["contractVersion"]
+                    self.assertFalse(own.is_valid(missing), "Version opt-in is required")
+                    unknown = copy.deepcopy(request)
+                    unknown["payload"]["contractVersion"] = "dish-session-v4/roadmap-v2/GM-07.UNKNOWN"
+                    self.assertFalse(own.is_valid(unknown), "Unknown version must not be accepted")
 
     def test_semantic_rejects_tied_rank_mismatch(self):
         """Dishes with identical scores must share the identical dense rank."""
