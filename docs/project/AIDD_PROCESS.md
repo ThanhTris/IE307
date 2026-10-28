@@ -5,7 +5,7 @@ Intent → Spec → Context → Patch plan → Implement → Verify → Trí rev
 - Intent: kết quả thực tế cần đạt cho người chọn món, giới hạn và giả định.
 - Spec: ID yêu cầu, AC có thể kiểm, state machine, contract, quyền và tình huống lỗi.
 - Context: đưa cho AI đúng task, linked spec/ADR, fixture; không đưa secret/phiếu thật vào prompt.
-- Patch plan: file sở hữu, contract version, phần độc lập với fixture và phần chờ tích hợp thật. Start deps chưa Done/Needs Update trên Project hoặc thiếu output thì chưa dùng đầu vào đó; Needs Update giữ nghiệm thu baseline, không nghiệm thu supplement. Merge deps chưa xong vẫn được viết phần độc lập đã chốt.
+- Patch plan: file sở hữu, contract version, phần độc lập với fixture và phần chờ tích hợp thật. Start deps phải Done trên Project và đủ output/HANDOFF; Needs Update không mở task phụ thuộc. Merge deps chưa xong vẫn được viết phần độc lập đã chốt khi start gate đạt.
 - Implement: code theo feature/domain/data; không để screen quyết định winner.
 - Verify: evidence thực tế cho từng AC; phân biệt test không chạy, test fail và test pass.
 - Review: Trí xác nhận cho mọi task, kể cả task Trí trực tiếp làm theo [ADR-013](../architecture/decisions/ADR-013-project-owner-final-review.md); AI không tự đánh Done. Cập nhật task/spec/ADR nếu đổi quyết định.

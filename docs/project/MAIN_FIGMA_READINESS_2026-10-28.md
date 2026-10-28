@@ -106,4 +106,13 @@ Kết quả kiểm cuối ngày 28/10:
 - HTTP compatibility hiện có đạt 27/27; ba ca GM-19 bổ sung Fail như bảng trên. Chưa sửa runtime và chưa chạy kiểm giao diện trên Android.
 - Evidence đồng bộ local: `review-results/main-ui-audit-20261028/sync-verification.json`; log Python và schema B nằm cùng thư mục. Các file này không đưa lên Git.
 
-Trong lượt này: audit source/task/PR, đọc node Figma, chạy QA regression chọn lọc và validator tài liệu. Không chạy visual app/Expo Go/Android, không sửa FE/SQL runtime, không deploy/migrate DB ứng dụng. Báo cáo/task/AGENTS sửa local chờ yêu cầu push; Issue bodies/Project được cập nhật theo yêu cầu rà giao việc. Source cũ còn dùng được ghi rõ, không tuyên bố đã xóa hoặc UI đã làm mới.
+Trong lượt này: audit source/task/PR, đọc node Figma, chạy QA regression chọn lọc và validator tài liệu. Không chạy visual app/Expo Go/Android, không sửa FE/SQL runtime, không deploy/migrate DB ứng dụng. Báo cáo/task/AGENTS được đưa lên main ở commit `d521ac3`; Issue bodies/Project được cập nhật theo yêu cầu rà giao việc. Source cũ còn dùng được ghi rõ, không tuyên bố đã xóa hoặc UI đã làm mới.
+
+## Rà lại sau push
+
+- [CI của commit d521ac3](https://github.com/ThanhTris/IE307/actions/runs/40631318281) đạt cả 16 job, gồm job tổng hợp `CI / required`. CI xanh không thay các ca GM-07/19 đã phát hiện ngoài coverage hiện hành.
+- Đọc lại live Project xác nhận 40 card/33 Issue bodies khớp; chỉ GM-19 đổi Status, giữ assignee và link PR/Figma.
+- Phát hiện tài liệu quy trình còn sót cách mở gate cũ dù checker đã Done-only. Đã đồng bộ ADR-011, TEAM_WORKFLOW, DEFINITION_OF_DONE, AIDD_PROCESS và phần gate trong kế hoạch UI. Nội dung 24/10 được đánh dấu là lịch sử khi khác quyết định 28/10. Không sửa evidence review lịch sử.
+- Bỏ hướng dẫn tổng quát giao vẽ frame G01–G05 còn thiếu: các frame này đã tồn tại; GM-14/35 dùng node đã chốt và chỉ bổ sung variant khi có gap cụ thể.
+- Kiểm lại 69 test Project gate/readiness (36 + 33): đạt. Validator, indexes và diff check đạt. Báo cáo readiness live xác nhận GM-05 và GM-07 đủ start input; các dependency Needs Update chặn task sau đúng luật Done-only. Readiness BLOCKED không tự thay Status của task đã Done trên Project.
+- Phần sửa tài liệu còn sót trong lượt rà sau push đang local, chưa commit/push; không sửa app, migration hoặc trạng thái Project trong lượt rà lại này.

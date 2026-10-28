@@ -1,6 +1,6 @@
 # Workflow — nhận đủ đầu vào, dựng nền trước rồi tích hợp
 
-Roadmap-v2 theo [ADR-009](../architecture/decisions/ADR-009-foundation-first-task-slicing.md) và [lộ trình](IMPLEMENTATION_ROADMAP.md). Task Markdown/task map là nguồn scope/contract/producer/input/output; Done hoặc Needs Update trên Project #2 mở dependency baseline theo [ADR-011](../architecture/decisions/ADR-011-project-done-readiness.md). Needs Update không nghiệm thu supplement. Status Markdown có thể chậm hơn board; không tự viết lại approval của con người.
+Roadmap-v2 theo [ADR-009](../architecture/decisions/ADR-009-foundation-first-task-slicing.md) và [lộ trình](IMPLEMENTATION_ROADMAP.md). Task Markdown/task map là nguồn scope/contract/producer/input/output; chỉ Done trên Project #2 mở dependency theo [ADR-011](../architecture/decisions/ADR-011-project-done-readiness.md), được Trí xác nhận lại ngày 2026-10-28. Needs Update không mở dependency. Status Markdown có thể chậm hơn board; không tự viết lại approval của con người.
 
 ## Trước bắt đầu
 
@@ -9,7 +9,7 @@ Trí (`ThanhTris`) review tất cả task; task Trí làm cũng do Trí review. 
 Phân công hiện hành lấy assignee trên [Project #2](https://github.com/users/ThanhTris/projects/2); task metadata và bảng tổng hợp đã được chủ dự án yêu cầu đồng bộ ngày 2026-10-11. Lịch/Deadline quản lý trên Project. Đổi phân công hoặc start/merge gate cần cập nhật task, bảng artifact/task map và sinh lại indexes; checker chỉ đọc, không tự cập nhật metadata. Owner hiện hành không thay tác giả/evidence lịch sử. Không phân công reviewer thành viên riêng: Trí review/merge cuối cho mọi task, kể cả task Trí trực tiếp viết; không cần chỉ định người kiểm độc lập theo [ADR-013](../architecture/decisions/ADR-013-project-owner-final-review.md).
 
 1. Chọn đúng task roadmap-v2 và xem bảng đầu vào. UI cần shell → components → contract/mock trước màn; BE cần structure/field/contract trước API; Data cần fields → schema → import.
-2. Chạy `python scripts/task_readiness.py --task GM-XX`. Checker mặc định đọc mới cột Status=Done hoặc Needs Update trên Project cho đúng issue mapping và kiểm output/HANDOFF của start deps. Needs Update chỉ giữ baseline accepted, không nghiệm thu supplement. Sau fetch đúng remote, có thể thêm `--base-ref origin/main` để đối chiếu contract/manifest và artifact trên target. Thiếu read:project/mạng/item phải chặn; Issue Closed không thay Project Status. [Cách chạy và cấp quyền đọc](PROJECT_READINESS.md).
+2. Chạy `python scripts/task_readiness.py --task GM-XX`. Checker mặc định yêu cầu Status=Done trên Project cho đúng issue mapping và kiểm output/HANDOFF của start deps. Needs Update giữ lịch sử baseline nhưng không mở dependency. Sau fetch đúng remote, có thể thêm `--base-ref origin/main` để đối chiếu contract/manifest và artifact trên target. Thiếu read:project/mạng/item phải chặn; Issue Closed không thay Project Status. [Cách chạy và cấp quyền đọc](PROJECT_READINESS.md).
 3. Đọc HANDOFF upstream: file/commit/version, lệnh chạy, expected output, limitations; cập nhật nhánh nhận đúng code. Thiếu file hoặc contract thì báo blocker cụ thể, không tự dựng lại hoặc đoán response.
 4. Owner/reviewer xác nhận nhận việc, chốt patch/test plan và file ownership; dùng nhánh riêng, mặc định `codex/gm-xx-mo-ta`.
 5. Thực hiện phần đã có đầu vào. GM-09..14 là màn mock có thể hoàn thành độc lập; task INTEGRATION mới nghiệm thu API/native thật. Không gộp gallery/capability test vào việc dựng màn mẫu.
@@ -48,13 +48,13 @@ Task màn thêm route và feature file của mình, dùng components/repository 
 ## Trước merge
 
 1. Cập nhật ref nhánh đích; chạy `python scripts/task_readiness.py --task GM-XX --gate merge --base-ref origin/main`.
-2. Kiểm cả start/merge dependencies Done hoặc Needs Update trên Project, đúng scope/contract/manifest và nội dung output/HANDOFF trên target khớp local. Với supplement, reviewer vẫn kiểm artifact/AC mới trước khi chuyển task Done. Không bắt task Markdown/evidence Approved đồng bộ chỉ để nhận đầu vào. Checker không tự fetch, không chứng minh file chạy đúng hoặc thay việc kiểm PR/commit upstream thật.
+2. Kiểm cả start/merge dependencies đều Done trên Project, đúng scope/contract/manifest và nội dung output/HANDOFF trên target khớp local. Needs Update không đủ. Với supplement, reviewer vẫn kiểm artifact/AC mới trước khi chuyển task Done. Không bắt task Markdown/evidence Approved đồng bộ chỉ để nhận đầu vào. Checker không tự fetch, không chứng minh file chạy đúng hoặc thay việc kiểm PR/commit upstream thật.
 3. Điền PR/merge hoặc squash commit và artifact path trong [mẫu PR](../../.github/pull_request_template.md). Kiểm ancestry khi phù hợp; branch đã nhận đúng code, không chỉ bản ghi Done.
 4. Rebase/update/retarget stacked branch khi cần, diff chỉ scope mình; chạy tests tương ứng sau tích hợp. Task màn kiểm mock/visual; API/native/data kiểm đúng môi trường của chúng.
 5. Trí kiểm AC, kể cả task Trí trực tiếp làm, và [DoD](DEFINITION_OF_DONE.md) cho revision hiện tại; Trí nghiệm thu/chuyển Done trên Project. AI không tự chuyển Done. Hồ sơ review là bằng chứng nên lưu; khi cập nhật Markdown thành done vẫn cần approval fields/evidence thật và sinh indexes. Không bắt bước đồng bộ Markdown này để mở downstream. Done không đồng nghĩa code đã vào target.
 6. Bàn giao [HANDOFF](../../tasks/templates/HANDOFF_TEMPLATE.md) và tag task nhận tiếp trong báo cáo/PR; thiếu đầu ra thì downstream vẫn bị chặn.
 
-Không bắt nghiệm thu production/APK cho task shell/mock. Mock không đóng AC của task API/native. EXTENSION GM-35..38 P1/P2 merge sau GM-34, không chặn release. Theo final handoff ngày 2026-10-25, GM-39 bàn giao Figma/map task và hỗ trợ thiết kế bổ sung, không ép sửa HTML trước app hoặc tạo dependency ngược. Các task UI thực hiện theo [kế hoạch Figma mới](../design/UI_FIGMA_IMPLEMENTATION_2026-10-25.md); GM-14/35 bổ sung frame còn thiếu trong scope của mình. Trí review visual, CHECKS/HANDOFF và bằng chứng app đúng tầng.
+Không bắt nghiệm thu production/APK cho task shell/mock. Mock không đóng AC của task API/native. EXTENSION GM-35..38 P1/P2 merge sau GM-34, không chặn release. Theo final handoff ngày 2026-10-25, GM-39 bàn giao Figma/map task và hỗ trợ thiết kế bổ sung, không ép sửa HTML trước app hoặc tạo dependency ngược. Các task UI thực hiện theo [kế hoạch Figma mới](../design/UI_FIGMA_IMPLEMENTATION_2026-10-25.md); G01–G05 đã có frame, GM-14/35 nhận node hiện có và chỉ bổ sung variant mới nếu phát hiện gap cụ thể. Trí review visual, CHECKS/HANDOFF và bằng chứng app đúng tầng.
 
 ## Evidence và kiểm tra repo
 

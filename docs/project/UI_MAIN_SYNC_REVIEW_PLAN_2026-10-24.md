@@ -164,7 +164,7 @@ Mã và owner giữ theo Project. Tên PR dưới đây là **gói việc dự k
 5. **I/J/L** nhận từng producer đã bàn giao: setup → lobby → vote/chờ → result → history/inbox/reconnect. Layout/mock có thể làm trước, không merge wiring giả là API thật.
 6. **M** chạy full flow và regression sau các producer/consumer liên quan; không chờ tất cả màn/P1/P2 mới kiểm từng endpoint.
 
-Không thêm dependency ngược bằng số task. Supplement ghi artifact/version/schema hash/PR cụ thể; `Done` hoặc `Needs Update` chỉ xác nhận baseline để bắt đầu, không chứng minh producer v4.B đã merge. Giữ assignee/Deadline; baseline BE/Data còn supplement dùng Status Needs Update theo chỉ đạo mới. Không dùng Follow-up thay cột Status hoặc đổi task FE đang hoãn. AC/comment/PR phải trỏ đúng artifact supplement; xem audit ngày2026-10-25 và task hiện hành.
+Không thêm dependency ngược bằng số task. Supplement ghi artifact/version/schema hash/PR cụ thể. **Gate đã được Trí thay thế ngày 2026-10-28: chỉ Done mới mở dependency; Needs Update không đủ.** Status không chứng minh producer v4.B đã merge. Giữ assignee/Deadline; baseline BE/Data còn supplement dùng Status Needs Update theo chỉ đạo mới. Không dùng Follow-up thay cột Status. Phạm vi FE hoãn tại thời điểm lập kế hoạch này đã được thay bằng UI handoff 25/10. AC/comment/PR phải trỏ đúng artifact supplement và task hiện hành.
 
 ## 8. Ma trận QA cần chạy sau implementation
 

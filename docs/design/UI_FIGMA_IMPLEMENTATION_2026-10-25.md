@@ -57,7 +57,7 @@ Các group chứa frame con theo tình huống; AI đọc metadata rồi lấy d
 4. GM-28 social/history/inbox, GM-29 push, GM-30 QR/links/Places/map, GM-31 cache/outbox nhận artifact đúng phiên bản. GM-27 kiểm result trước, Places thật nhận tiếp từ GM-30; GM-33 kiểm ghép. Không gắn GM-30 như dependency số lớn của GM-27.
 5. GM-33 visual + Android/API end-to-end; GM-34 release. GM-35 giữ P1 sau core. Dark redesign chưa có bộ Figma được chốt nên hoãn; vẫn giữ hỗ trợ/a11y hiện có.
 
-Gate số task giữ nguyên và chỉ trỏ số nhỏ hơn. Checklist supplement cần artifact/PR/version cụ thể: GM-07 contract B/DTO; GM-06 storage; GM-18 pool; GM-19 lifecycle/snapshot; GM-20 result/Top 3; GM-21 history; GM-22 admission; GM-23 inbox. Done/Needs Update trên Project chỉ chứng minh baseline, không tự đáp ứng các producer này. Migration legacy được giữ làm truy vết, không dùng để chứng minh policy mới.
+Gate số task giữ nguyên và chỉ trỏ số nhỏ hơn. Checklist supplement cần artifact/PR/version cụ thể: GM-07 contract B/DTO; GM-06 storage; GM-18 pool; GM-19 lifecycle/snapshot; GM-20 result/Top 3; GM-21 history; GM-22 admission; GM-23 inbox. Chỉ Done trên Project mở dependency theo xác nhận Trí ngày 2026-10-28; Needs Update không đủ. Status không thay kiểm artifact/version của producer. Migration legacy được giữ làm truy vết, không dùng để chứng minh policy mới.
 
 ## UI bổ sung G01–G05: frame và task nhận
 
