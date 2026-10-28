@@ -783,7 +783,10 @@
       ],
       "properties": {
         "contractVersion": {
-          "const": "dish-session-v4/roadmap-v2/GM-07.B"
+          "enum": [
+            "dish-session-v4/roadmap-v2/GM-07.B",
+            "dish-session-v4/roadmap-v2/GM-07.B-supplement"
+          ]
         },
         "policyVersion": {
           "const": "dish-decision-v4/ADR-019-30PCT-MIN1"
@@ -1471,7 +1474,10 @@
           "$ref": "#/$defs/uuid"
         },
         "contractVersion": {
-          "const": "dish-session-v4/roadmap-v2/GM-07.B"
+          "enum": [
+            "dish-session-v4/roadmap-v2/GM-07.B",
+            "dish-session-v4/roadmap-v2/GM-07.B-supplement"
+          ]
         },
         "policyVersion": {
           "const": "dish-decision-v4/ADR-019-30PCT-MIN1"
@@ -1536,6 +1542,12 @@
           "items": {
             "$ref": "#/$defs/topDish"
           }
+        },
+        "round1BallotCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 20,
+          "description": "Total complete server-ACKed round-one ballots in the scoring cohort; upper bound for any dish score is 2 * round1BallotCount."
         }
       },
       "allOf": [
@@ -1694,6 +1706,137 @@
               },
               "rankingVersion": {
                 "const": "score-desc-dense-rank-v1"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "contractVersion": {
+                "const": "dish-session-v4/roadmap-v2/GM-07.B-supplement"
+              }
+            },
+            "required": [
+              "contractVersion"
+            ]
+          },
+          "then": {
+            "required": [
+              "round1BallotCount"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "DECIDED"
+              }
+            },
+            "required": [
+              "status",
+              "round1BallotCount"
+            ]
+          },
+          "then": {
+            "properties": {
+              "round1BallotCount": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 20
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "DECIDED"
+              },
+              "round": {
+                "const": 1
+              }
+            },
+            "required": [
+              "status",
+              "round"
+            ]
+          },
+          "then": {
+            "properties": {
+              "reasonCode": {
+                "const": "UNANIMOUS_WANT"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "DECIDED"
+              },
+              "round": {
+                "const": 2
+              }
+            },
+            "required": [
+              "status",
+              "round"
+            ]
+          },
+          "then": {
+            "properties": {
+              "reasonCode": {
+                "const": "ACCEPTABLE_FINAL"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "NO_CONSENSUS"
+              },
+              "round": {
+                "const": 1
+              }
+            },
+            "required": [
+              "status",
+              "round"
+            ]
+          },
+          "then": {
+            "properties": {
+              "reasonCode": {
+                "const": "EMPTY_INTERSECTION"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "NO_CONSENSUS"
+              },
+              "round": {
+                "const": 2
+              }
+            },
+            "required": [
+              "status",
+              "round"
+            ]
+          },
+          "then": {
+            "properties": {
+              "reasonCode": {
+                "const": "ALL_REMOVED"
               }
             }
           }
@@ -2537,53 +2680,106 @@
               "expiresAt": {
                 "$ref": "#/$defs/timestamp"
               },
-              "result": {
-                "type": "object",
-                "required": [
-                  "status"
-                ],
-                "properties": {
-                  "status": {
-                    "enum": [
-                      "DECIDED",
-                      "NO_CONSENSUS"
-                    ]
+              "desiredAt": {
+                "oneOf": [
+                  {
+                    "type": "null"
                   },
-                  "winner": {
-                    "oneOf": [
-                      {
-                        "type": "null"
-                      },
-                      {
-                        "$ref": "#/$defs/poolDish"
-                      }
-                    ]
-                  },
-                  "topDishes": {
-                    "type": "array",
-                    "maxItems": 3,
-                    "items": {
-                      "$ref": "#/$defs/topDish"
+                  {
+                    "$ref": "#/$defs/timestamp"
+                  }
+                ]
+              },
+              "finalizedAt": {
+                "$ref": "#/$defs/timestamp"
+              },
+              "memberCount": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 20
+              },
+              "round1BallotCount": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 20
+              },
+              "participants": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "displayName",
+                    "role"
+                  ],
+                  "properties": {
+                    "displayName": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 24
+                    },
+                    "role": {
+                      "enum": [
+                        "HOST",
+                        "MEMBER"
+                      ]
                     }
                   },
-                  "scoreVersion": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                  "additionalProperties": false
+                }
+              },
+              "result": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/terminalResult"
                   },
-                  "rankingVersion": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                  {
+                    "$ref": "#/$defs/legacyHistoryResult"
                   }
-                },
-                "additionalProperties": true
+                ]
               }
             },
             "additionalProperties": false
           }
+        }
+      },
+      "additionalProperties": false
+    },
+    "legacyHistoryResult": {
+      "type": "object",
+      "required": [
+        "capability",
+        "status",
+        "winner",
+        "finalizedAt"
+      ],
+      "properties": {
+        "capability": {
+          "const": "legacy-unscored-v1"
+        },
+        "status": {
+          "enum": [
+            "DECIDED",
+            "NO_CONSENSUS"
+          ]
+        },
+        "winner": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/poolDish"
+            }
+          ]
+        },
+        "reasonCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "finalizedAt": {
+          "$ref": "#/$defs/timestamp"
         }
       },
       "additionalProperties": false
