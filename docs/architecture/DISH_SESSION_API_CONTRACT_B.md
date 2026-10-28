@@ -1,11 +1,15 @@
 # Dish session API contract — GM-07.B
 
-Status as of 2026-10-28: this contract has a v4 runtime implementation in main migrations 0027–0031 on main at `850e162df1c46d75fe371b7a7b8210a5c87b7b84`; schema/examples/semantic-checker closure and consumer handoff remain under GM-07. Deployment of any running DB must be verified separately. Accepted product rules are recorded in [ADR-020](decisions/ADR-020-public-top-three-result.md). Pinned v2/v3 sessions and legacy clients keep their behavior. See [current audit](../project/MAIN_FIGMA_READINESS_2026-10-28.md). The independent 0032/GM06.3 storage does not automatically replace `dish_v4_private` or prove API integration. Preference ranking is explicitly `UNSUPPORTED` in v4.B (members share equal weights; soft preferences guide pool creation only). Contract simulation and schema validation are verified Pass via `gm07b_schema_smoke.py` and `tests/test_gm07b_contract.py`; this contract delivery does not claim that the known failing PostgreSQL runtime bugs in GM-19 (such as non-host `update_settings` guard and reroll pool idempotency) are resolved.
+Status as of 2026-10-28: this specification documents the v4.B dish session API contract family:
+- **Deployed baseline runtime**: Contract ID `dish-session-v4/roadmap-v2/GM-07.B`, implemented in migrations 0027–0031 on main at `850e162df1c46d75fe371b7a7b8210a5c87b7b84` (schema version 0.9.2). Its wire schema is pinned in [dish-session-v4b.schema.json](schemas/dish-session-v4b.schema.json) and achieves 100% HTTP/schema parity in CI.
+- **Supplement candidate contract**: Contract ID `dish-session-v4/roadmap-v2/GM-07.B-supplement`, defined in standalone schema [dish-session-v4b-supplement.schema.json](schemas/dish-session-v4b-supplement.schema.json). This contract adds mandatory Round 1 scoring cohort metadata (`round1BallotCount`), strict terminal status/round/reasonCode pairings, and typed history projections for downstream consumers (GM-25/26/27/28). Producer delivery of `round1BallotCount` in SQL `result_value` belongs to GM-20 (PostgreSQL migration & RPC update) / GM-15 (decision engine supplement).
+- Independent storage 0032/GM06.3 does not automatically replace `dish_v4_private` or prove API integration. Preference ranking is explicitly `UNSUPPORTED` in v4.B (members share equal weights; soft preferences guide pool creation only). Known failing PostgreSQL runtime bugs in GM-19 (non-host `update_settings` guard and reroll pool idempotency) are tracked separately under GM-19 supplement and require migration/RPC fixes; contract simulation and schema validation are verified Pass via `gm07b_schema_smoke.py` and `tests/test_gm07b_contract.py`.
 
-- Contract ID: `dish-session-v4/roadmap-v2/GM-07.B`.
+- Baseline Contract ID: `dish-session-v4/roadmap-v2/GM-07.B`.
+- Supplement Contract ID: `dish-session-v4/roadmap-v2/GM-07.B-supplement`.
 - Lifecycle policy: `dish-decision-v4/ADR-019-30PCT-MIN1`.
 - Score/rank: `want2-ok1-round1-v1` / `score-desc-dense-rank-v1`.
-- JSON Schema: [dish-session-v4b.schema.json](schemas/dish-session-v4b.schema.json).
+- JSON Schemas: [dish-session-v4b.schema.json](schemas/dish-session-v4b.schema.json) (baseline) and [dish-session-v4b-supplement.schema.json](schemas/dish-session-v4b-supplement.schema.json) (supplement).
 - Parent proposal: [GM-07.A](DISH_SESSION_API_CONTRACT.md).
 
 ## Compatibility and transport
@@ -22,10 +26,10 @@ To prevent race conditions while avoiding false concurrency conflicts during vot
 | :--- | :--- | :--- | :--- | :--- |
 | **Lifecycle & Host mutations** | `updateSettings`, `updatePreferences`, `start`, `finalize`, `cancel`, `leave` | **Exact match**: `expectedVersion == room.version` | N/A (must match current lifecycle state) | Prevents conflicting host configurations or stale state transitions. Re-submitting identical settings or updating only `desiredAt` increments room version with no-op on candidate pool (`poolVersion` unchanged). Changing dish count or meal criteria increments room version and pool version (`poolVersion + 1`). |
 | **Ballot submissions & waiting** | `submit`, `waiting` | **Range**: `1 <= expectedVersion <= room.version` | **Exact match**: `round == room.round` AND `poolVersion == room.pool_version` | Prevents false `VERSION_CONFLICT` during concurrent voting. If Member A and Member B both read version 3 at the start of Round 1, and Member A submits first (incrementing room version to 4), Member B's submit with `expectedVersion=3` is accepted because $1 \le 3 \le 4$, and the round and poolVersion match. Submission updates voter status without mutating the locked candidate pool or room round. |
-| **Read-only / Query** | `previewJoin`, `getSnapshot`, `getResult`, `getHistory` | N/A (reads latest authorized snapshot) | N/A | Query methods do not mutate version. |
+| **Read-only / Query** | `previewJoin`, `snapshot`, `result`, `history`, `getDefaultPreferences` | N/A (reads latest authorized projection) | N/A | Query commands do not mutate version. |
 
 **Concurrent Ballot Submission Scenario:**
-When multiple participants submit complete ballots in the same active round, their requests arrive concurrently with an `expectedVersion` read from their current snapshot. If an exact version match were enforced, the first submission would increment `room.version`, causing all subsequent concurrent submissions to fail with `VERSION_CONFLICT` despite voting on the exact same round and pool. Under the GM-07.B range guard, ballot submissions accept any `1 <= expectedVersion <= room.version` as long as `round == room.round` and `poolVersion == room.pool_version`. An invalid or outdated round or pool returns `ROUND_MISMATCH` or `POOL_VERSION_MISMATCH`. Stale mutations with `expectedVersion > room.version` or `expectedVersion < 1` are rejected with `VERSION_CONFLICT`.
+When multiple participants submit complete ballots in the same active round, their requests arrive concurrently with an `expectedVersion` read from their current snapshot. If an exact version match were enforced, the first submission would increment `room.version`, causing all subsequent concurrent submissions to fail with `VERSION_CONFLICT` despite voting on the exact same round and pool. Under the GM-07.B range guard, ballot submissions accept any `1 <= expectedVersion <= room.version` as long as `round == room.round` and `poolVersion == room.pool_version`. Submitting with a mismatched round or poolVersion returns `VERSION_CONFLICT` (status 409). Submitting when the room is not in an active voting or waiting state returns `INVALID_ROOM_STATE` (status 409). Stale mutations with `expectedVersion > room.version` or `expectedVersion < 1` are rejected with `VERSION_CONFLICT`.
 
 ## Room settings, preferences and pool
 
@@ -76,7 +80,7 @@ When round one is finalized, evaluate and persist a round-one winner before chec
 
 ## Top 3 terminal result
 
-Every terminal result DTO contains `resultId`, `sessionId`, `roomId`, `terminalRound` (1 or 2), `round1BallotCount` (integer 0..20), and authoritative outcome fields.
+Every terminal result projection contains `resultId`, `contractVersion`, `policyVersion`, `status`, `round` (integer 1 or 2), `winner`, `reasonCode`, `finalizedAt`, `scoreVersion`, `rankingVersion`, and `topDishes`. In the GM-07.B supplement, it additionally contains integer `round1BallotCount` (0..20, >= 1 for `DECIDED`). Terminal result DTOs do not contain `sessionId` or `roomId`; the round field is named `round` (not `terminalRound`).
 
 ### Round 1 ballot count and score bounds
 The field `round1BallotCount` records the exact number of complete, server-ACKed round-one ballots used to evaluate scores. For `DECIDED` results, `round1BallotCount >= 1`.
@@ -105,16 +109,17 @@ Persist result, winner, podium rows, score/rank versions, terminal room state an
 
 The two history permissions are account settings (`personal` and `group`) managed by `update_history_consent`; a missing setting means opted out. For v4, host creation, direct join and invitation admission inherit the caller's currently enabled scope choices. Start synchronizes current account choices for the locked roster and freezes each scope independently in the session snapshot in the same transaction. A grant made after start applies only to later rooms. A revocation before result persistence suppresses and removes the affected scope without changing the winner, score or podium. Personal history is written for each member whose personal scope was locked and remains active; group history is written only when every locked roster member's group scope was locked and remains active. History reads return the stored result projection, including the same `resultId` and Top 3, subject to existing ACL, deletion and retention. No ballot details are included.
 
-### History Page and item DTO
-The history query returns a paginated structure:
-- **Pagination properties**: `page` (integer $\ge 1$), `pageSize` (integer $1..50$), `totalCount` (integer $\ge 0$), and `items` (array).
-- **Mandatory item fields**: `sessionId`, `roomId`, `resultId`, `status` (`DECIDED` or `NO_CONSENSUS`), `terminalRound` (1 or 2), `finalizedAt` (ISO 8601 string), `memberCount` (integer $1..20$), `round1BallotCount` (integer $0..20$), `participants` (array of `{displayName: string, role: "HOST"|"MEMBER"}`), and `result`.
-- **Nullable item fields**: `desiredAt` (ISO 8601 string or `null` if no meal time was requested).
+### History Query and item DTO
+The history query is invoked via command `"history"` with payload `{"contractVersion": "..."}`. The server response data envelope contains:
+- `items`: array of history item objects. There are no query pagination arguments or `page`/`pageSize`/`totalCount` fields in the wire transport.
+- **Mandatory item fields**: `historyId` (UUID), `roomId` (UUID), `resultId` (UUID), `scope` (`"personal"` or `"group"`), `createdAt` (timestamp), `expiresAt` (timestamp), and `result`.
+- Top-level history item fields do not include `sessionId`, `status`, or `terminalRound`; `status` and `round` are encapsulated inside the child `result` object.
+- **Optional context projections** (when supported by producer): `desiredAt` (timestamp or null), `finalizedAt` (timestamp), `memberCount` (integer 1..20), `round1BallotCount` (integer 0..20 for v4 sessions), and `participants` (array of `{displayName, role}`).
 
 ### History result variants: Terminal result vs. Legacy unscored
 Each history item's `result` field strictly conforms to one of two schemas:
-1. **Full v4 terminal result** (`#/$defs/terminalResult`): Used for v4 sessions. Contains `status`, `winner`, `reasonCode`, `terminalRound`, `round1BallotCount`, `topDishes` (Top 3 podium entries with scores and dense ranks), `scoreVersion`, and `rankingVersion`. The child `resultId` and `round1BallotCount` must strictly match the parent item's values.
-2. **Legacy unscored result** (`#/$defs/legacyHistoryResult`): Used for migrated legacy v1/v2/v3 sessions. Scores and podiums cannot be fabricated retroactively. A legacy item must explicitly set `capability: "legacy-unscored-v1"`, and contains only `status`, `winner` (legacy dish projection or null), `reasonCode`, and `finalizedAt`. It explicitly disallows `topDishes`, `scoreVersion`, `rankingVersion`, and arbitrary fields (`additionalProperties: false`).
+1. **Full v4 terminal result** (`#/$defs/terminalResult`): Used for v4 sessions. Contains `status`, `winner`, `reasonCode`, `round`, `topDishes` (Top 3 podium entries with scores and dense ranks), `scoreVersion`, `rankingVersion`, and in the supplement `round1BallotCount`. If `round1BallotCount` is present on both the item and result, the values must match.
+2. **Legacy unscored result** (`#/$defs/legacyHistoryResult`): Used for migrated legacy v1/v2/v3 sessions. Scores and podiums cannot be fabricated retroactively. A legacy item must explicitly set `capability: "legacy-unscored-v1"`, and contains only `status`, `winner` (legacy dish projection or null), `reasonCode`, and `finalizedAt`. It does not contain `round1BallotCount` (unknown cohort metadata is omitted, never fabricated as 0). It explicitly disallows `topDishes`, `scoreVersion`, `rankingVersion`, and arbitrary fields (`additionalProperties: false`).
 
 ### Strict privacy guarantee: Prohibition of raw ballots
 Under no circumstances may history items or results include `rawBallots`, individual member preference contributions, or voting secrets. Both `#/$defs/historyItem` and `#/$defs/terminalResult` enforce `additionalProperties: false`. Exposing `rawBallots` anywhere in history violates privacy requirements and fails contract validation.

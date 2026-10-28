@@ -783,7 +783,10 @@
       ],
       "properties": {
         "contractVersion": {
-          "const": "dish-session-v4/roadmap-v2/GM-07.B"
+          "enum": [
+            "dish-session-v4/roadmap-v2/GM-07.B",
+            "dish-session-v4/roadmap-v2/GM-07.B-supplement"
+          ]
         },
         "policyVersion": {
           "const": "dish-decision-v4/ADR-019-30PCT-MIN1"
@@ -1464,15 +1467,17 @@
         "finalizedAt",
         "scoreVersion",
         "rankingVersion",
-        "topDishes",
-        "round1BallotCount"
+        "topDishes"
       ],
       "properties": {
         "resultId": {
           "$ref": "#/$defs/uuid"
         },
         "contractVersion": {
-          "const": "dish-session-v4/roadmap-v2/GM-07.B"
+          "enum": [
+            "dish-session-v4/roadmap-v2/GM-07.B",
+            "dish-session-v4/roadmap-v2/GM-07.B-supplement"
+          ]
         },
         "policyVersion": {
           "const": "dish-decision-v4/ADR-019-30PCT-MIN1"
@@ -1708,12 +1713,30 @@
         {
           "if": {
             "properties": {
+              "contractVersion": {
+                "const": "dish-session-v4/roadmap-v2/GM-07.B-supplement"
+              }
+            },
+            "required": [
+              "contractVersion"
+            ]
+          },
+          "then": {
+            "required": [
+              "round1BallotCount"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
               "status": {
                 "const": "DECIDED"
               }
             },
             "required": [
-              "status"
+              "status",
+              "round1BallotCount"
             ]
           },
           "then": {
@@ -2633,7 +2656,6 @@
               "scope",
               "createdAt",
               "expiresAt",
-              "round1BallotCount",
               "result"
             ],
             "properties": {
