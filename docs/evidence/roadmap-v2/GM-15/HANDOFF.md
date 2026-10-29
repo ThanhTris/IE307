@@ -1,3 +1,10 @@
+# Current supplement — GM15.3 / v4, 2026-10-29
+
+[V4 handoff](v4/HANDOFF.md) and [checks](v4/CHECKS.md) describe the new pure domain,
+independent fixtures and receiving SQL contract. V2/v3 behavior remains pinned.
+The section below is historical evidence for the accepted v2 baseline, not current
+Project status or the v4 implementation. No approval/Done is written by the agent.
+
 # GM-15 — bàn giao sau review ngày 2026-10-11
 
 Owner Vinh; Trí review cuối theo issue76/PR101. Review Pending, không tự Done/merge. Branch codex/gm-06-decision-engine (legacy name), PR101 base main. Nhận main **3076c3deb2937223a007b82211a61a2d61b63c84** chứa PR62/102/103/104; rebase6 engine commits không conflict. GM-06 hiện hành là DB schema, không sửa task đó.
