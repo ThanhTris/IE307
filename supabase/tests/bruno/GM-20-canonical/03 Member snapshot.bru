@@ -1,0 +1,26 @@
+meta {
+  name: 03 Member snapshot
+  type: http
+  seq: 3
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/dish_session
+  body: json
+  auth: none
+}
+headers {
+  apikey: {{anonKey}}
+  Authorization: Bearer {{memberToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"command":"snapshot","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B-supplement","roomId":"{{roomId}}"}}
+}
+script:post-response {
+  const b=res.getBody();
+  if(res.getStatus() === 200 && b.ok === true) { bru.setVar('memberSubmitExpected',b.data.version); }
+  else bru.runner.stopExecution();
+}
+tests {
+  test('03 Member snapshot',()=>{const b=res.getBody();expect(res.getStatus()).to.equal(200);expect(b.ok).to.equal(true);});
+}

@@ -134,3 +134,15 @@ New accepted requests increment room version; ACK replay does not. GM-07.B wire,
 legacy routes and scoring/timer/consent paths remain pinned. Reproduce using
 scripts/dish_v4_ci.py run on its owned QA project; tests include settings/start
 races. Do not apply/reset the application DB or infer approval from this pointer.
+
+
+## GM20.4 canonical writer candidate
+
+[Handoff](docs/evidence/roadmap-v2/GM-20/canonical-writer/HANDOFF.md) and
+[mapping](docs/evidence/roadmap-v2/GM-20/canonical-writer/MAPPING.md) document0035/
+schema0.12.0, Proposed ADR021, the existing B-supplement wire and canonical-only
+result authority for new pinned sessions. New creation flag defaults off; B/v2/v3
+stay pinned. Run scripts/gm20_canonical_check.py on its owned QA namespace; --bruno
+keeps a private environment, --cleanup removes only owned resources. Gate remains
+blocked until GM19 Done and Trí review (GM15 has merged/Done); Vinh requested this stacked QA candidate.
+No app DB activation, new push sender, UI acceptance or automatic status/approval.

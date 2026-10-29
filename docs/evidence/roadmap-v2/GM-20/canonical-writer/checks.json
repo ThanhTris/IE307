@@ -1,0 +1,100 @@
+{
+  "task": "GM-20",
+  "supplement": "GM20.4",
+  "state": "candidate; Trí review pending",
+  "testedHeadBeforePatchCommit": "204c25f50cd5ddc108c54d577808bf090a6491b0",
+  "mainRevision": "5c339cf351ca4e37d95d4d0e8211be0ccb8a8af3",
+  "runtime": {
+    "node": "24.22.1",
+    "python": "3.12.14",
+    "platform": "macOS-26.1-arm64-arm-64bit"
+  },
+  "applicationDatabaseChanged": false,
+  "productionActivation": false,
+  "approved": false,
+  "projectMutation": false,
+  "results": {
+    "sqlParity": {
+      "result": "Pass",
+      "vectors": 102
+    },
+    "freshSupplementHttp": {
+      "result": "Pass",
+      "assertions": 114,
+      "schemaEnvelopes": 681
+    },
+    "populatedSupplementHttp": {
+      "result": "Pass",
+      "assertions": 114,
+      "schemaEnvelopes": 683
+    },
+    "baselineBHttp": {
+      "result": "Pass",
+      "assertions": 151,
+      "schemaEnvelopes": 575
+    },
+    "nodeDomain": {
+      "result": "Pass",
+      "tests": 288
+    },
+    "backendTooling": {
+      "result": "Pass",
+      "tests": 19
+    },
+    "jest": {
+      "result": "Pass",
+      "suites": 27,
+      "tests": 704
+    },
+    "typecheck": {
+      "result": "Pass"
+    },
+    "lint": {
+      "result": "Pass",
+      "existingWarnings": 4
+    },
+    "architecture": {
+      "result": "Pass"
+    },
+    "python": {
+      "result": "Pass",
+      "tests": 646,
+      "skipped": 6
+    },
+    "repository": {
+      "result": "Pass"
+    },
+    "taskIndexes": {
+      "result": "Pass"
+    },
+    "diff": {
+      "result": "Pass"
+    },
+    "mergeGate": {
+      "result": "BLOCKED",
+      "dependencies": [
+        "GM-19 Needs Update"
+      ]
+    },
+    "bruno": {
+      "result": "Prepared",
+      "requests": 11,
+      "environmentMode": "0600",
+      "desktopExecution": "Not run"
+    },
+    "androidProductionOutboxConsumer": {
+      "result": "Not run"
+    }
+  },
+  "logsSha256": {
+    "gm20-final-all-python.log": "f7a31381cb6c09bc661611de9dfbc9da6e38020ed367685c30ddbad5f08eaefb",
+    "gm20-jest.log": "90ed78fd893b8ecf67bd6d6c7dc33823ba1d69ec449b98234d43ddc248e40b16",
+    "gm20-lint.log": "9dfc59d1bda878344a49119513275165415dc017f8edc381bc3e5073776104b6",
+    "gm20-typecheck.log": "405e7870566f0a9d35b6229643a46a7a7e23f909bfec7c65ee6080398af515d1",
+    "gm20-architecture.log": "6a88d64de17199a9836243305f72168b65e52c5d69062cee69dd47c17a87b4e2",
+    "gm20-domain.log": "8f9073b31d0abb06605e78729c610ec54dc1b5cff8f451edc386f293439b8f40",
+    "gm20-backend-node.log": "7774d824e05c76416e6c845823d2ab8db4626cbbdb401c7fe6e676cd9f5588dd",
+    "gm20-repository-final.log": "bafde887d56a88dbd066df4e7f6ddd50cdc3b6ff4526f7f4a192620fb81637aa",
+    "gm20-index-final.log": "234e22deda2572ad8d8420bfa25a7cea614925c4fa044041d60412051aec8327"
+  }
+}

@@ -1,0 +1,26 @@
+meta {
+  name: 09 Member reconnect
+  type: http
+  seq: 9
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/dish_session
+  body: json
+  auth: none
+}
+headers {
+  apikey: {{anonKey}}
+  Authorization: Bearer {{memberToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"command":"snapshot","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B-supplement","roomId":"{{roomId}}"}}
+}
+script:post-response {
+  const b=res.getBody();
+  if(res.getStatus() === 200 && b.ok === true) {  }
+  else bru.runner.stopExecution();
+}
+tests {
+  test('09 Member reconnect',()=>{const b=res.getBody();expect(res.getStatus()).to.equal(200);expect(b.ok).to.equal(true); expect(b.data.result.resultId).to.equal(bru.getVar('resultId'));});
+}
