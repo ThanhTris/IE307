@@ -1,5 +1,14 @@
 # GM-40 — Patch/test plan hiện hành
 
+## Bản hiện hành GM40.2 — nhận producer GM18.2
+
+Đọc [handoff mới](rich-projection/HANDOFF.md), [plan](rich-projection/PLAN.md) và
+[checks](rich-projection/CHECKS.md). Source bundle/schema1.0.0/dataset1.1.0 giữ nguyên;
+adapter rich, schema/template stage, coverage và QA nhận0033/GM18.2 đã merge.
+Các số liệu/runtime0026 và trạng thái review bên dưới là evidence lịch sử, không
+thay kết quả supplement mới. Không SQL/API mới hoặc tự Approved/Done.
+
+
 Owner Vinh; reviewer Trí. Scope tiếp nhận từ comment PR #129 ngày2026-10-23;
 start gate đọc Project thật READY_TO_START, base main0d571b7. Không tự Done/Approved.
 Contract file dish-catalogue-v1/GM-40.1 schema1.0.0, dataset1.1.0;

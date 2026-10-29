@@ -146,3 +146,13 @@ stay pinned. Run scripts/gm20_canonical_check.py on its owned QA namespace; --br
 keeps a private environment, --cleanup removes only owned resources. Gate remains
 blocked until GM19 Done and Trí review (GM15 has merged/Done); Vinh requested this stacked QA candidate.
 No app DB activation, new push sender, UI acceptance or automatic status/approval.
+
+## GM40.2 — received rich projection
+
+Read [handoff](docs/evidence/roadmap-v2/GM-40/rich-projection/HANDOFF.md). Data adapter
+`data-preparation/scripts/catalogue_projection.py` delegates to received GM18.2,
+keeps source39/bundle1.1.0/hash and baseline importer immutable, and stages the
+separate :gm18.2 release. Check generated artifacts with `build --check`; inspect
+the offline `prepare_catalogue_projection.ipynb`. `scripts/gm40_rich_projection_check.py`
+extends owned legacy QA with rich import/SQL/HTTP/restore assertions. No SQL/API,
+production admission, decision policy or automatic Project approval change.

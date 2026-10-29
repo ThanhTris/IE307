@@ -24,3 +24,28 @@ begin
   raise exception 'Private ballots exposed';
  end if;
 end $gm40$;
+
+-- GM40.2: opt-in rich release assertions, leaving baseline catalogues untouched.
+do $gm40_rich$
+begin
+ if exists(select 1 from dish_v3_private.catalogues where id like '%:gm18.2') then
+  if not exists(select 1 from public.schema_versions where schema_version='0.11.0') then
+   raise exception 'GM18.2 producer ledger missing';
+  end if;
+  if exists(select 1 from dish_v3_private.catalogues c cross join lateral jsonb_array_elements(c.cards) d
+    where c.id like '%:gm18.2' and (d->>'projectionVersion'<>'GM18.2'
+      or jsonb_typeof(d->'cuisineTerms') is distinct from 'array'
+      or jsonb_typeof(d->'categoryTerms') is distinct from 'array'
+      or jsonb_typeof(d->'cuisineLabels') is distinct from 'array'
+      or jsonb_typeof(d->'categoryLabels') is distinct from 'array'
+      or not(d ?& array['temperature','flavor','artwork','priceReference','priceObservation','taxonomyVersion'])
+      or d ?| array['venueId','offeringId','enteredBy','reviewedBy','preferences'])) then
+   raise exception 'Rich card metadata/privacy contract mismatch';
+  end if;
+  if exists(select 1 from dish_v3_private.catalogues c cross join lateral jsonb_array_elements(c.cards) d
+    where c.id like '%:gm18.2' and d->'priceReference'<>'null'::jsonb
+      and (d->'priceObservation'='null'::jsonb or d->'priceObservation'->'amount'='null'::jsonb)) then
+   raise exception 'A hidden/unknown latest price cannot fall back to a display price';
+  end if;
+ end if;
+end $gm40_rich$;
