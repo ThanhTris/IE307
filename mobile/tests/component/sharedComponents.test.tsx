@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, userEvent } from '@testing-library/react-native';
 import { act } from 'react';
-import { getThemeColors } from '../../src/shared/theme/tokens';
-import { AppBottomNavigation, AppButton, AppHeader, AvatarRow, BrandBanner, Chip, ContextSummary, DishCard, FormField, RoomCode, StatusNotice } from '../../src/shared/ui';
+import { getThemeColors, typography } from '../../src/shared/theme/tokens';
+import { AppBottomNavigation, AppButton, AppHeader, AvatarRow, BrandBanner, Chip, CollectionState, ContextSummary, DishCard, DishCount, FormField, InsufficientDishes, PreferenceChoice, ProcessState, RequestBanner, ResultPodium, RoomCode, SearchSkeletonRow, StatusNotice, TutorialGesture, WaitingSummary } from '../../src/shared/ui';
 
 const colors = getThemeColors('light');
 
@@ -156,4 +156,112 @@ test('room/context/status/social components show fallback and state text', async
   expect(screen.getByText('Hồ Con Rùa')).toBeOnTheScreen();
   expect(screen.getByText('Còn 1 người chưa sẵn sàng.')).toBeOnTheScreen();
   expect(screen.getByText('Minh')).toBeOnTheScreen();
+});
+
+test('Figma typography tokens use the Inter families supplied by GM-02', () => {
+  expect(typography.titleLarge.fontFamily).toBe('InterBold');
+  expect(typography.body.fontFamily).toBe('InterRegular');
+  expect(typography.caption.fontFamily).toBe('InterMedium');
+});
+
+test('AppHeader exposes Back and Room variants with explicit callbacks', async () => {
+  const onBack = jest.fn();
+  const onMenu = jest.fn();
+  await render(<>
+    <AppHeader variant="back" title="Thiết lập" onPressBack={onBack} colors={colors} />
+    <AppHeader variant="room" title="Bữa trưa" roomCode="GCD234" onPressBack={onBack} onMenu={onMenu} colors={colors} />
+  </>);
+  expect(screen.getByText('GCD234')).toBeOnTheScreen();
+  await userEvent.setup().press(screen.getAllByRole('button', { name: 'Quay lại' })[0]!);
+  await userEvent.setup().press(screen.getByRole('button', { name: 'Tùy chọn phòng' }));
+  expect(onBack).toHaveBeenCalledTimes(1);
+  expect(onMenu).toHaveBeenCalledTimes(1);
+});
+
+test('DishCard labels missing price as unknown and AvatarRow hides unverified presence by default', async () => {
+  await render(<>
+    <DishCard dish={{ id: 'dish_unknown', name: 'Tên món dài cần giữ nguyên khi xuống dòng' }} colors={colors} />
+    <AvatarRow items={[{ id: 'member-1', label: 'Linh', status: 'online' }]} colors={colors} />
+  </>);
+  expect(screen.getByText('Giá chưa rõ')).toBeOnTheScreen();
+  expect(screen.queryByLabelText('Đang hoạt động')).toBeNull();
+});
+
+test('DishCount holds the 10–20 bounds and disables controls at both ends', async () => {
+  const onChange = jest.fn();
+  const view = await render(<DishCount value={10} onChange={onChange} colors={colors} />);
+  expect(screen.getByLabelText('Giảm số món')).toBeDisabled();
+  await userEvent.setup().press(screen.getByRole('button', { name: 'Tăng số món' }));
+  expect(onChange).toHaveBeenCalledWith(11);
+  await view.rerender(<DishCount value={20} onChange={onChange} colors={colors} />);
+  expect(screen.getByLabelText('Tăng số món')).toBeDisabled();
+});
+
+test('PreferenceChoice exposes selected and unknown options without choosing unknown', async () => {
+  const onSelect = jest.fn();
+  await render(<PreferenceChoice options={[{ id: 'anything', label: 'Không kén món' }, { id: 'unknown', label: 'Chưa rõ', unknown: true }]} selectedId="anything" onSelect={onSelect} colors={colors} />);
+  expect(screen.getByRole('radio', { name: 'Không kén món' }).props.accessibilityState.checked).toBe(true);
+  expect(screen.getByRole('radio', { name: 'Chưa rõ' })).toBeDisabled();
+  await userEvent.setup().press(screen.getByRole('radio', { name: 'Không kén món' }));
+  expect(onSelect).toHaveBeenCalledWith('anything');
+});
+
+test('WaitingSummary displays supplied server counts/deadline and progress', async () => {
+  await render(<WaitingSummary acknowledged={2} total={4} deadlineLabel="12:30:00" colors={colors} />);
+  expect(screen.getByText('2/4 thành viên đã gửi')).toBeOnTheScreen();
+  expect(screen.getByText('Hạn gửi: 12:30:00')).toBeOnTheScreen();
+  expect(screen.getByLabelText('Tiến độ thành viên đã gửi').props.accessibilityValue.now).toBe(50);
+});
+
+test('ResultPodium keeps tied ranks equal height and marks only the server winner', async () => {
+  await render(<ResultPodium dishes={[
+    { id: 'dish-1', name: 'Phở bò', rank: 1, winner: true, scoreLabel: '8 điểm' },
+    { id: 'dish-2', name: 'Bún bò', rank: 1, scoreLabel: '8 điểm' },
+    { id: 'dish-3-tie', name: 'Bún riêu', rank: 1, scoreLabel: '8 điểm' },
+    { id: 'dish-4', name: 'Cơm tấm', rank: 3, scoreLabel: '6 điểm' },
+  ]} colors={colors} />);
+  expect(screen.getAllByText('1')).toHaveLength(3);
+  expect(screen.getByText('Chiến thắng')).toBeOnTheScreen();
+  expect(screen.getAllByText('8 điểm')).toHaveLength(3);
+  expect(screen.getByText('Bún riêu')).toBeOnTheScreen();
+});
+
+test('Process and collection states include pending, retry and empty paths', async () => {
+  const onRetry = jest.fn();
+  await render(<>
+    <ProcessState state="unknown" title="Chưa rõ yêu cầu đã tới máy chủ chưa" message="Tải lại trước khi thử lại." retryLabel="Tải lại" onRetry={onRetry} colors={colors} />
+    <CollectionState state="empty" title="Chưa có kết quả" message="Hãy thử lại sau." colors={colors} />
+    <SearchSkeletonRow colors={colors} />
+  </>);
+  expect(screen.getByText('Chưa rõ yêu cầu đã tới máy chủ chưa')).toBeOnTheScreen();
+  await userEvent.setup().press(screen.getByRole('button', { name: 'Tải lại' }));
+  expect(onRetry).toHaveBeenCalledTimes(1);
+  expect(screen.getByText('Chưa có kết quả')).toBeOnTheScreen();
+  expect(screen.getByLabelText('Đang tải danh sách')).toBeOnTheScreen();
+});
+
+test('RequestBanner labels stale data and below-minimum dialog cannot lower the count', async () => {
+  const onReduce = jest.fn();
+  const onEdit = jest.fn();
+  const onBack = jest.fn();
+  await render(<>
+    <RequestBanner state="stale" title="Đang ngoại tuyến" fetchedAtLabel="12:00" colors={colors} />
+    <InsufficientDishes mode="below-minimum" count={7} onReduce={onReduce} onEdit={onEdit} onBack={onBack} colors={colors} />
+  </>);
+  expect(screen.getByText(/Bản lưu lúc 12:00/)).toBeOnTheScreen();
+  expect(screen.queryByRole('button', { name: 'Giảm số món' })).toBeNull();
+  expect(screen.getByText(/Cần ít nhất 10 món/)).toBeOnTheScreen();
+  await userEvent.setup().press(screen.getByRole('button', { name: 'Sửa thiết lập' }));
+  expect(onEdit).toHaveBeenCalledTimes(1);
+});
+
+test('TutorialGesture always offers a button alternative', async () => {
+  const onPress = jest.fn();
+  await render(<TutorialGesture title="Chọn món" instruction="Bạn có thể chọn bằng nút." onPress={onPress} colors={colors} />);
+  expect(screen.getAllByText('Chạm')).toHaveLength(2);
+  expect(screen.getAllByText('Vuốt trái')).toHaveLength(2);
+  expect(screen.getAllByText('Vuốt phải')).toHaveLength(2);
+  expect(screen.getAllByText('Nhấn đúp')).toHaveLength(2);
+  await userEvent.setup().press(screen.getByRole('button', { name: 'Thử bằng nút' }));
+  expect(onPress).toHaveBeenCalledTimes(1);
 });

@@ -17,12 +17,12 @@ export const radii = {
 } as const;
 
 export const typography = {
-  titleLarge: { fontSize: 28, lineHeight: 34, fontWeight: '800' as const },
-  titleMedium: { fontSize: 20, lineHeight: 26, fontWeight: '700' as const },
-  body: { fontSize: 15, lineHeight: 21, fontWeight: '500' as const },
-  bodyBold: { fontSize: 15, lineHeight: 21, fontWeight: '700' as const },
-  caption: { fontSize: 12, lineHeight: 17, fontWeight: '600' as const },
-  roomCode: { fontSize: 28, lineHeight: 34, fontWeight: '800' as const, letterSpacing: 5 },
+  titleLarge: { fontFamily: 'InterBold', fontSize: 28, lineHeight: 34, fontWeight: 'normal' as const },
+  titleMedium: { fontFamily: 'InterBold', fontSize: 20, lineHeight: 26, fontWeight: 'normal' as const },
+  body: { fontFamily: 'InterRegular', fontSize: 15, lineHeight: 21, fontWeight: 'normal' as const },
+  bodyBold: { fontFamily: 'InterSemiBold', fontSize: 15, lineHeight: 21, fontWeight: 'normal' as const },
+  caption: { fontFamily: 'InterMedium', fontSize: 12, lineHeight: 17, fontWeight: 'normal' as const },
+  roomCode: { fontFamily: 'InterBold', fontSize: 28, lineHeight: 34, fontWeight: 'normal' as const, letterSpacing: 5 },
 } as const;
 
 export const lightColors = {
