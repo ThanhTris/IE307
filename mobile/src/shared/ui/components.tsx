@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Image,
   Modal,
   Pressable,
@@ -21,8 +22,12 @@ import { radii, spacing, typography, type ThemeColors } from '../theme/tokens';
 export type ComponentThemeProps = { colors?: ThemeColors };
 
 export type AppHeaderProps = ComponentThemeProps & {
+  variant?: 'home' | 'back' | 'room';
   title?: string;
+  roomCode?: string;
   onPressBrand?: () => void;
+  onPressBack?: () => void;
+  onMenu?: () => void;
   onFriends?: () => void;
   onInbox?: () => void;
   onProfile?: () => void;
@@ -34,23 +39,27 @@ export type AppHeaderProps = ComponentThemeProps & {
   brandTextStyle?: TextStyle;
 };
 
-export function AppHeader({ title = 'Gì Cũng Được', onPressBrand, onFriends, onInbox, onProfile, friendBadge, inboxBadge, showFriends = true, showInbox = true, showProfile = true, brandTextStyle, colors }: AppHeaderProps) {
+export function AppHeader({ variant = 'home', title = 'Gì Cũng Được', roomCode, onPressBrand, onPressBack, onMenu, onFriends, onInbox, onProfile, friendBadge, inboxBadge, showFriends = true, showInbox = true, showProfile = true, brandTextStyle, colors }: AppHeaderProps) {
+  const showBrand = variant === 'home';
   return (
     <View style={[styles.header, { backgroundColor: colors?.surface, borderBottomColor: colors?.line }]}>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Về trang chủ"
-        onPress={onPressBrand}
-        disabled={!onPressBrand}
-        style={styles.brand}
-      >
+      {showBrand ? <Pressable accessibilityRole="button" accessibilityLabel="Về trang chủ" onPress={onPressBrand} disabled={!onPressBrand} style={styles.brand}>
         <Image source={require('../../../assets/brand/gcd-logo-master.png')} accessible={false} resizeMode="contain" style={styles.mark} />
         <Text numberOfLines={1} style={[styles.brandText, { color: colors?.text }, brandTextStyle]}>{title}</Text>
-      </Pressable>
+      </Pressable> : <View style={styles.headerVariant}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Quay lại" onPress={onPressBack} disabled={!onPressBack} style={({ pressed }) => [styles.headerAction, { backgroundColor: pressed ? colors?.soft : 'transparent', opacity: onPressBack ? 1 : 0.45 }]}>
+          <Text style={[styles.backGlyph, { color: colors?.text }]}>‹</Text>
+        </Pressable>
+        <View style={styles.headerVariantTitle}>
+          <Text numberOfLines={1} accessibilityRole="header" style={[styles.brandText, { color: colors?.text }, brandTextStyle]}>{title}</Text>
+          {variant === 'room' && roomCode ? <Text numberOfLines={1} style={[styles.headerRoomCode, { color: colors?.muted }]}>{roomCode}</Text> : null}
+        </View>
+        {variant === 'room' ? <Pressable accessibilityRole="button" accessibilityLabel="Tùy chọn phòng" accessibilityState={{ disabled: !onMenu }} onPress={onMenu} disabled={!onMenu} style={({ pressed }) => [styles.headerAction, styles.headerMenu, { backgroundColor: pressed ? colors?.soft : 'transparent', opacity: onMenu ? 1 : 0.45 }]}><Text style={[styles.headerMenuGlyph, { color: colors?.text }]}>⋯</Text></Pressable> : null}
+      </View>}
       <View style={styles.headerActions}>
-        {showFriends ? <HeaderAction label="Bạn ăn cùng" iconSource={require('../../../assets/brand/icons/friends.png')} badge={friendBadge} onPress={onFriends} colors={colors} /> : null}
-        {showInbox ? <HeaderAction label="Thông báo" iconSource={require('../../../assets/brand/icons/bell.png')} badge={inboxBadge} onPress={onInbox} colors={colors} /> : null}
-        {showProfile ? <HeaderAction label="Hồ sơ" iconSource={require('../../../assets/brand/icons/profile.png')} onPress={onProfile} colors={colors} /> : null}
+        {variant === 'home' && showFriends ? <HeaderAction label="Bạn ăn cùng" iconSource={require('../../../assets/brand/icons/friends.png')} badge={friendBadge} onPress={onFriends} colors={colors} /> : null}
+        {variant === 'home' && showInbox ? <HeaderAction label="Thông báo" iconSource={require('../../../assets/brand/icons/bell.png')} badge={inboxBadge} onPress={onInbox} colors={colors} /> : null}
+        {variant === 'home' && showProfile ? <HeaderAction label="Hồ sơ" iconSource={require('../../../assets/brand/icons/profile.png')} onPress={onProfile} colors={colors} /> : null}
       </View>
     </View>
   );
@@ -174,6 +183,7 @@ export function FormField({ label, value, onChangeText, placeholder, helperText,
       <TextInput
         {...inputProps}
         accessibilityLabel={label}
+        accessibilityHint={error || helperText}
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
@@ -227,7 +237,7 @@ export function DishCard({ dish, selectedVote, onVote, onPress, colors, disabled
           <Text style={[styles.dishName, { color: colors?.text }]}>{dish.name}</Text>
           {dish.description ? <Text style={[styles.dishDescription, { color: colors?.muted }]}>{dish.description}</Text> : null}
           {dish.tags?.length ? <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tagRow}>{dish.tags.map(tag => <Chip key={tag} label={tag} colors={colors} />)}</ScrollView> : null}
-          {dish.priceLabel || dish.venueLabel ? <Text style={[styles.dishMeta, { color: colors?.muted }]}>{[dish.priceLabel, dish.venueLabel].filter(Boolean).join(' · ')}</Text> : null}
+          <Text style={[styles.dishMeta, { color: colors?.muted }]}>{[dish.priceLabel ?? 'Giá chưa rõ', dish.venueLabel].filter(Boolean).join(' · ')}</Text>
         </View>
       </Pressable>
       {onVote ? <View style={styles.voteRow}>
@@ -264,9 +274,9 @@ function VoteButton({ label, vote, selectedVote, onPress, colors, disabled }: { 
 }
 
 export type AvatarItem = { id: string; label: string; initial?: string; imageSource?: ImageSourcePropType; status?: 'online' | 'idle' | 'offline' };
-export function AvatarRow({ items, onAdd, labelTextStyle, colors }: ComponentThemeProps & { items: AvatarItem[]; onAdd?: () => void; labelTextStyle?: TextStyle }) {
+export function AvatarRow({ items, onAdd, showStatus = false, labelTextStyle, colors }: ComponentThemeProps & { items: AvatarItem[]; onAdd?: () => void; showStatus?: boolean; labelTextStyle?: TextStyle }) {
   return <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.avatarRow} accessibilityLabel="Danh sách bạn ăn cùng">
-    {items.map(item => <View key={item.id} style={styles.avatarItem}><View style={[styles.avatar, { backgroundColor: colors?.surface, borderColor: colors?.line }]}>{item.imageSource ? <Image source={item.imageSource} style={styles.avatarImage as ImageStyle} /> : <Text style={[styles.avatarInitial, { color: colors?.text }]}>{item.initial ?? item.label.slice(0, 1).toUpperCase()}</Text>}{item.status && item.status !== 'offline' ? <View style={[styles.statusDot, { backgroundColor: item.status === 'online' ? colors?.green : colors?.warning }]} /> : null}</View><Text numberOfLines={1} style={[styles.avatarLabel, { color: colors?.text }, labelTextStyle]}>{item.label}</Text></View>)}
+    {items.map(item => <View key={item.id} style={styles.avatarItem}><View style={[styles.avatar, { backgroundColor: colors?.surface, borderColor: colors?.line }]}>{item.imageSource ? <Image source={item.imageSource} style={styles.avatarImage as ImageStyle} /> : <Text style={[styles.avatarInitial, { color: colors?.text }]}>{item.initial ?? item.label.slice(0, 1).toUpperCase()}</Text>}{showStatus && item.status && item.status !== 'offline' ? <View accessibilityLabel={item.status === 'online' ? 'Đang hoạt động' : 'Không hoạt động'} style={[styles.statusDot, { backgroundColor: item.status === 'online' ? colors?.green : colors?.warning }]} /> : null}</View><Text numberOfLines={1} style={[styles.avatarLabel, { color: colors?.text }, labelTextStyle]}>{item.label}</Text></View>)}
     {onAdd ? <Pressable accessibilityRole="button" accessibilityLabel="Thêm bạn" onPress={onAdd} style={({ pressed }) => [styles.avatarItem, { opacity: pressed ? 0.6 : 1 }]}><View style={[styles.addAvatar, { borderColor: colors?.line }]}><Image source={require('../../../assets/brand/icons/plus.png')} accessible={false} resizeMode="contain" style={[styles.addAvatarIcon, { tintColor: colors?.text }]} /></View><Text style={[styles.avatarLabel, { color: colors?.text }, labelTextStyle]}>Thêm</Text></Pressable> : null}
   </ScrollView>;
 }
@@ -293,9 +303,143 @@ export function SheetDialog({ visible, title, children, onClose, colors }: Compo
   return <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}><View style={styles.modalBackdrop}><View style={[styles.sheet, { backgroundColor: colors?.surface }]}><View style={styles.sheetHandle} /><Text accessibilityRole="header" style={[styles.contextTitle, { color: colors?.text }]}>{title}</Text>{children}<AppButton label="Đóng" variant="quiet" onPress={onClose} colors={colors} /></View></View></Modal>;
 }
 
+export type DishCountProps = ComponentThemeProps & { value: number; onChange: (next: number) => void; min?: number; max?: number; disabled?: boolean };
+export function DishCount({ value, onChange, min = 10, max = 20, disabled = false, colors }: DishCountProps) {
+  const count = Math.min(max, Math.max(min, value));
+  return <View accessibilityRole="summary" style={[styles.dishCount, { backgroundColor: colors?.surface, borderColor: colors?.line }]}>
+    <Text style={[styles.dishCountLabel, { color: colors?.muted }]}>SỐ MÓN</Text>
+    <View style={styles.dishCountControls}>
+      <Pressable accessibilityRole="button" accessibilityLabel="Giảm số món" accessibilityState={{ disabled: disabled || count <= min }} disabled={disabled || count <= min} onPress={() => onChange(Math.max(min, count - 1))} style={({ pressed }) => [styles.countButton, { borderColor: colors?.line, backgroundColor: pressed ? colors?.soft : colors?.surface, opacity: disabled || count <= min ? 0.45 : 1 }]}><Text style={[styles.countButtonText, { color: colors?.text }]}>−</Text></Pressable>
+      <Text accessibilityLabel={`${count} món`} accessibilityRole="text" style={[styles.dishCountValue, { color: colors?.text }]}>{count}</Text>
+      <Pressable accessibilityRole="button" accessibilityLabel="Tăng số món" accessibilityState={{ disabled: disabled || count >= max }} disabled={disabled || count >= max} onPress={() => onChange(Math.min(max, count + 1))} style={({ pressed }) => [styles.countButton, { borderColor: colors?.line, backgroundColor: pressed ? colors?.soft : colors?.surface, opacity: disabled || count >= max ? 0.45 : 1 }]}><Text style={[styles.countButtonText, { color: colors?.text }]}>+</Text></Pressable>
+    </View>
+    <Text style={[styles.helper, { color: colors?.muted }]}>Chọn từ {min} đến {max} món</Text>
+  </View>;
+}
+
+export type PreferenceChoiceOption = { id: string; label: string; unknown?: boolean };
+export function PreferenceChoice({ options, selectedId, onSelect, disabled = false, colors }: ComponentThemeProps & { options: PreferenceChoiceOption[]; selectedId?: string; onSelect: (id: string) => void; disabled?: boolean }) {
+  return <View accessibilityRole="radiogroup" style={styles.preferenceChoice}>
+    {options.map(option => {
+      const selected = option.id === selectedId;
+      const unavailable = disabled || option.unknown === true;
+      return <Pressable key={option.id} accessibilityRole="radio" accessibilityLabel={option.label} accessibilityState={{ checked: selected, disabled: unavailable }} disabled={unavailable} onPress={() => onSelect(option.id)} style={({ pressed }) => [styles.preferenceOption, { backgroundColor: selected ? colors?.warm : colors?.surface, borderColor: selected ? colors?.primary : colors?.line, opacity: unavailable && !option.unknown ? 0.5 : pressed ? 0.72 : 1 }]}>
+        <Text style={[styles.preferenceOptionText, { color: option.unknown ? colors?.muted : selected ? colors?.primary : colors?.text }]}>{option.label}</Text>
+        {selected ? <Text accessibilityLabel="Đã chọn" style={[styles.preferenceCheck, { color: colors?.primary }]}>✓</Text> : null}
+        {option.unknown ? <Text style={[styles.helper, { color: colors?.muted }]}>Chưa rõ</Text> : null}
+      </Pressable>;
+    })}
+  </View>;
+}
+
+export function WaitingSummary({ acknowledged, total, deadlineLabel, statusLabel, colors }: ComponentThemeProps & { acknowledged: number; total: number; deadlineLabel: string; statusLabel?: string }) {
+  const safeTotal = Math.max(total, 0);
+  const safeAcknowledged = Math.min(safeTotal, Math.max(0, acknowledged));
+  const progress = safeTotal ? Math.round((safeAcknowledged / safeTotal) * 100) : 0;
+  return <View accessibilityRole="summary" style={[styles.waitingSummary, { backgroundColor: colors?.surface, borderColor: colors?.line }]}>
+    <Text accessibilityRole="header" style={[styles.contextTitle, { color: colors?.text }]}>Đang chờ nhóm</Text>
+    <Text style={[styles.body, { color: colors?.text }]}>{statusLabel ?? `${safeAcknowledged}/${safeTotal} thành viên đã gửi`}</Text>
+    <View accessibilityRole="progressbar" accessibilityLabel="Tiến độ thành viên đã gửi" accessibilityValue={{ min: 0, max: 100, now: progress }} style={[styles.progressTrack, { backgroundColor: colors?.soft }]}><View style={[styles.progressFill, { width: `${progress}%`, backgroundColor: colors?.primary }]} /></View>
+    <Text style={[styles.helper, { color: colors?.muted }]}>Hạn gửi: {deadlineLabel}</Text>
+  </View>;
+}
+
+export type PodiumDish = { id: string; name: string; rank: 1 | 2 | 3; scoreLabel?: string; winner?: boolean };
+export function ResultPodium({ dishes, colors }: ComponentThemeProps & { dishes: PodiumDish[] }) {
+  const podium = dishes.filter(dish => dish.rank >= 1 && dish.rank <= 3);
+  return <ScrollView horizontal accessibilityRole="summary" accessibilityLabel="Bảng xếp hạng món ăn" showsHorizontalScrollIndicator={false} contentContainerStyle={styles.podium}>
+    {podium.map(dish => <View key={dish.id} style={[styles.podiumColumn, styles[`podiumRank${dish.rank}`], { backgroundColor: colors?.surface, borderColor: dish.winner ? colors?.primary : colors?.line }]}>
+      <Text style={[styles.podiumRank, { color: colors?.primary }]}>{dish.rank}</Text>
+      <Text numberOfLines={3} style={[styles.podiumName, { color: colors?.text }]}>{dish.name}</Text>
+      {dish.scoreLabel ? <Text style={[styles.helper, { color: colors?.muted }]}>{dish.scoreLabel}</Text> : null}
+      {dish.winner ? <Text style={[styles.winnerBadge, { color: colors?.primary }]}>Chiến thắng</Text> : null}
+    </View>)}
+  </ScrollView>;
+}
+
+export type ProcessStateKind = 'loading' | 'submitting' | 'unknown' | 'finalizing' | 'error' | 'success' | 'closed';
+export function ProcessState({ state, title, message, retryLabel, onRetry, colors }: ComponentThemeProps & { state: ProcessStateKind; title: string; message?: string; retryLabel?: string; onRetry?: () => void }) {
+  const busy = state === 'loading' || state === 'submitting' || state === 'unknown' || state === 'finalizing';
+  const tone = state === 'error' ? 'error' : state === 'closed' ? 'warning' : state === 'success' ? 'success' : 'info';
+  return <View accessibilityLiveRegion="polite" style={styles.processState}>
+    {busy ? <ActivityIndicator accessibilityLabel={title} color={colors?.primary} /> : null}
+    <StatusNotice title={title} message={message} tone={tone} actionLabel={retryLabel} onAction={onRetry} colors={colors} />
+  </View>;
+}
+
+export type CollectionStateKind = 'loading' | 'empty' | 'error' | 'unavailable';
+export function CollectionState({ state, title, message, iconSource, actionLabel, onAction, colors }: ComponentThemeProps & { state: CollectionStateKind; title: string; message?: string; iconSource?: ImageSourcePropType; actionLabel?: string; onAction?: () => void }) {
+  return <View accessibilityRole="summary" accessibilityLiveRegion={state === 'loading' ? 'polite' : 'none'} style={[styles.collectionState, { backgroundColor: colors?.surface, borderColor: colors?.line }]}>
+    {state === 'loading' ? <ActivityIndicator accessibilityLabel={title} color={colors?.primary} /> : iconSource ? <Image source={iconSource} accessible={false} resizeMode="contain" style={styles.collectionIcon} /> : null}
+    <Text accessibilityRole="header" style={[styles.noticeTitle, { color: colors?.text }]}>{title}</Text>
+    {message ? <Text style={[styles.body, { color: colors?.muted }]}>{message}</Text> : null}
+    {actionLabel ? <AppButton label={actionLabel} variant="secondary" onPress={onAction} colors={colors} /> : null}
+  </View>;
+}
+
+export function SearchSkeletonRow({ label = 'Đang tải danh sách', colors }: ComponentThemeProps & { label?: string }) {
+  return <View accessibilityRole="progressbar" accessibilityLabel={label} style={[styles.skeletonRow, { backgroundColor: colors?.surface, borderColor: colors?.line }]}>
+    <View style={[styles.skeletonAvatar, { backgroundColor: colors?.soft }]} />
+    <View style={styles.skeletonCopy}><View style={[styles.skeletonLine, styles.skeletonLineWide, { backgroundColor: colors?.soft }]} /><View style={[styles.skeletonLine, styles.skeletonLineShort, { backgroundColor: colors?.soft }]} /></View>
+    <View style={[styles.skeletonAction, { backgroundColor: colors?.soft }]} />
+  </View>;
+}
+
+export type RequestBannerState = 'offline' | 'stale' | 'error' | 'info';
+export function RequestBanner({ state, title, message, fetchedAtLabel, actionLabel, onAction, colors }: ComponentThemeProps & { state: RequestBannerState; title: string; message?: string; fetchedAtLabel?: string; actionLabel?: string; onAction?: () => void }) {
+  const tone = state === 'error' ? 'error' : state === 'offline' ? 'warning' : 'info';
+  return <View style={styles.requestBanner}>
+    <StatusNotice title={title} message={message} tone={tone} actionLabel={actionLabel} onAction={onAction} colors={colors} />
+    {state === 'stale' && fetchedAtLabel ? <Text style={[styles.helper, { color: colors?.muted }]}>Bản lưu lúc {fetchedAtLabel} · có thể đã cũ</Text> : null}
+  </View>;
+}
+
+export function InsufficientDishes({ mode, count, minimum = 10, onReduce, onEdit, onBack, disabled = false, colors }: ComponentThemeProps & { mode: 'can-reduce' | 'below-minimum'; count: number; minimum?: number; onReduce?: () => void; onEdit: () => void; onBack: () => void; disabled?: boolean }) {
+  const belowMinimum = mode === 'below-minimum';
+  return <View accessibilityRole="summary" style={[styles.shortage, { backgroundColor: colors?.surface, borderColor: colors?.line }]}>
+    <Text accessibilityRole="header" style={[styles.contextTitle, { color: colors?.text }]}>{belowMinimum ? 'Chưa đủ món' : 'Có thể giảm số món'}</Text>
+    <Text style={[styles.body, { color: colors?.muted }]}>{belowMinimum ? `Hiện có ${count} món. Cần ít nhất ${minimum} món để tạo phòng.` : `Hiện có ${count} món. Bạn có thể giảm, nhưng không thấp hơn ${minimum} món.`}</Text>
+    {!belowMinimum && onReduce ? <AppButton label="Giảm số món" variant="secondary" onPress={onReduce} disabled={disabled || count <= minimum} colors={colors} /> : null}
+    <AppButton label="Sửa thiết lập" onPress={onEdit} disabled={disabled} colors={colors} />
+    <AppButton label="Quay lại" variant="quiet" onPress={onBack} disabled={disabled} colors={colors} />
+  </View>;
+}
+
+const tutorialGestures = [
+  { id: 'tap', label: 'Chạm', icon: '☝' },
+  { id: 'swipe-left', label: 'Vuốt trái', icon: '☝  ←' },
+  { id: 'swipe-right', label: 'Vuốt phải', icon: '☝  →' },
+  { id: 'double-tap', label: 'Nhấn đúp', icon: '☝  ×2' },
+] as const;
+
+export function TutorialGesture({ title, instruction, buttonLabel = 'Thử bằng nút', onPress, colors }: ComponentThemeProps & { title: string; instruction: string; buttonLabel?: string; onPress: () => void }) {
+  return <View accessibilityRole="summary" style={[styles.tutorialCard, { backgroundColor: colors?.surface, borderColor: colors?.line }]}>
+    <Text accessibilityRole="header" style={[styles.noticeTitle, { color: colors?.text }]}>{title}</Text>
+    <Text style={[styles.body, { color: colors?.muted }]}>{instruction}</Text>
+    {(['dark', 'light'] as const).map(tone => <ScrollView key={tone} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.gestureRow} accessibilityLabel={tone === 'dark' ? 'Thao tác nền đậm' : 'Thao tác nền sáng'}>
+      {tutorialGestures.map(gesture => {
+        const darkTone = tone === 'dark';
+        const tileBackground = darkTone ? colors?.text : colors?.warm;
+        const foreground = darkTone ? colors?.surface : colors?.text;
+        return <View key={`${tone}-${gesture.id}`} accessibilityLabel={`${gesture.label}, ${tone === 'dark' ? 'nền đậm' : 'nền sáng'}`} style={[styles.gestureTile, { backgroundColor: tileBackground }]}>
+          <Text accessible={false} style={[styles.gestureIcon, { color: foreground }]}>{gesture.icon}</Text>
+          <Text style={[styles.gestureLabel, { color: foreground }]}>{gesture.label}</Text>
+        </View>;
+      })}
+    </ScrollView>)}
+    <AppButton label={buttonLabel} variant="secondary" onPress={onPress} colors={colors} />
+  </View>;
+}
+
 const styles = StyleSheet.create({
   header: { minHeight: 72, paddingHorizontal: spacing.lg, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: StyleSheet.hairlineWidth },
   brand: { minHeight: 48, flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flexShrink: 1 },
+  headerVariant: { flex: 1, minWidth: 0, minHeight: 48, flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
+  headerVariantTitle: { flex: 1, minWidth: 0, gap: spacing.xs },
+  backGlyph: { fontSize: 32, lineHeight: 36, textAlign: 'center' },
+  headerRoomCode: { ...typography.caption },
+  headerMenu: { alignItems: 'center', justifyContent: 'center' },
+  headerMenuGlyph: { fontSize: 28, lineHeight: 30, fontWeight: '800' },
   mark: { width: 44, height: 44 },
   brandText: { ...typography.titleMedium, lineHeight: 28, flexShrink: 1 },
   headerActions: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
@@ -303,9 +447,9 @@ const styles = StyleSheet.create({
   headerIcon: { width: 24, height: 24 },
   badge: { position: 'absolute', right: 1, top: 3, minWidth: 18, height: 18, paddingHorizontal: 3, borderRadius: 9, justifyContent: 'center', alignItems: 'center' },
   badgeText: { color: '#FFFFFF', fontSize: 10, fontWeight: '800' },
-  button: { minHeight: 48, borderRadius: radii.md, justifyContent: 'center', alignItems: 'stretch', borderWidth: 1 },
+  button: { minHeight: 52, borderRadius: radii.md, justifyContent: 'center', alignItems: 'stretch', borderWidth: 1 },
   buttonSecondary: { borderWidth: 1 },
-  buttonText: { ...typography.bodyBold, minHeight: 46, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, textAlign: 'center', textAlignVertical: 'center' },
+  buttonText: { ...typography.bodyBold, minHeight: 52, paddingHorizontal: spacing.lg, textAlign: 'center', textAlignVertical: 'center' },
   buttonIcon: { width: 24, height: 24 },
   iconButtonStacked: { alignItems: 'center', gap: spacing.md },
   iconButtonText: { minHeight: 0, paddingHorizontal: 0, paddingVertical: 0 },
@@ -330,4 +474,11 @@ const styles = StyleSheet.create({
   contextCard: { padding: spacing.lg, borderRadius: radii.xl, borderWidth: 1, gap: spacing.sm }, contextTitle: { ...typography.titleMedium }, contextGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.lg }, contextValue: { minWidth: 84, gap: spacing.xs }, contextValueText: { ...typography.bodyBold },
   notice: { padding: spacing.lg, borderRadius: radii.lg, borderLeftWidth: 4, gap: spacing.sm }, noticeTitle: { ...typography.bodyBold }, body: { ...typography.body },
   modalBackdrop: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.45)' }, sheet: { padding: spacing.xl, borderTopLeftRadius: radii.xl, borderTopRightRadius: radii.xl, gap: spacing.lg }, sheetHandle: { width: 40, height: 4, borderRadius: 2, backgroundColor: '#94A3B8', alignSelf: 'center' },
+  dishCount: { borderWidth: 1, borderRadius: radii.lg, padding: spacing.lg, gap: spacing.sm, alignItems: 'center' }, dishCountLabel: { ...typography.caption }, dishCountControls: { flexDirection: 'row', alignItems: 'center', gap: spacing.xl }, countButton: { width: 48, height: 48, borderRadius: radii.pill, borderWidth: 1, alignItems: 'center', justifyContent: 'center' }, countButtonText: { fontSize: 24, lineHeight: 28, fontWeight: '700' }, dishCountValue: { ...typography.titleLarge, minWidth: 56, textAlign: 'center' },
+  preferenceChoice: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }, preferenceOption: { minHeight: 48, minWidth: 72, borderWidth: 1, borderRadius: radii.pill, paddingHorizontal: spacing.md, paddingVertical: spacing.xs, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.xs }, preferenceOptionText: { ...typography.bodyBold }, preferenceCheck: { fontSize: 16, fontWeight: '800' },
+  waitingSummary: { borderWidth: 1, borderRadius: radii.xl, padding: spacing.lg, gap: spacing.md }, progressTrack: { height: 8, borderRadius: radii.pill, overflow: 'hidden' }, progressFill: { height: 8, borderRadius: radii.pill },
+  podium: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'center', gap: spacing.sm, paddingHorizontal: spacing.xs }, podiumColumn: { width: 144, flexShrink: 0, padding: spacing.sm, borderWidth: 1, borderTopLeftRadius: radii.lg, borderTopRightRadius: radii.lg, alignItems: 'center', justifyContent: 'flex-end', gap: spacing.xs }, podiumRank1: { minHeight: 192 }, podiumRank2: { minHeight: 160 }, podiumRank3: { minHeight: 128 }, podiumRank: { ...typography.titleLarge }, podiumName: { ...typography.bodyBold, textAlign: 'center', flexShrink: 1 }, winnerBadge: { ...typography.caption, textAlign: 'center' },
+  processState: { gap: spacing.sm }, collectionState: { borderWidth: 1, borderRadius: radii.xl, padding: spacing.xl, alignItems: 'center', justifyContent: 'center', gap: spacing.md }, collectionIcon: { width: 40, height: 40 },
+  skeletonRow: { minHeight: 72, borderWidth: 1, borderRadius: radii.lg, padding: spacing.md, flexDirection: 'row', alignItems: 'center', gap: spacing.md }, skeletonAvatar: { width: 44, height: 44, borderRadius: radii.pill }, skeletonCopy: { flex: 1, gap: spacing.sm }, skeletonLine: { height: 10, borderRadius: radii.pill }, skeletonLineWide: { width: '76%' }, skeletonLineShort: { width: '48%' }, skeletonAction: { width: 56, height: 36, borderRadius: radii.md },
+  requestBanner: { gap: spacing.xs }, shortage: { borderWidth: 1, borderRadius: radii.xl, padding: spacing.lg, gap: spacing.md }, tutorialCard: { borderWidth: 1, borderRadius: radii.lg, padding: spacing.lg, gap: spacing.md }, gestureRow: { gap: spacing.sm }, gestureTile: { width: 112, minHeight: 88, borderRadius: radii.md, padding: spacing.sm, alignItems: 'center', justifyContent: 'center', gap: spacing.xs }, gestureIcon: { fontSize: 24, lineHeight: 30, fontWeight: '700' }, gestureLabel: { ...typography.caption, textAlign: 'center' },
 });

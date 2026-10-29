@@ -7,12 +7,22 @@ import {
   AppHeader,
   AvatarRow,
   Chip,
+  CollectionState,
   ContextSummary,
   DishCard,
+  DishCount,
   FormField,
+  InsufficientDishes,
+  PreferenceChoice,
+  ProcessState,
+  RequestBanner,
+  ResultPodium,
   RoomCode,
+  SearchSkeletonRow,
   SheetDialog,
   StatusNotice,
+  TutorialGesture,
+  WaitingSummary,
   type VoteValue,
 } from '../../../shared/ui';
 
@@ -33,6 +43,8 @@ export function ComponentPreviewScreen({ onBack }: Props) {
   const [selectedChip, setSelectedChip] = useState('Món nước');
   const [vote, setVote] = useState<VoteValue>();
   const [sheetVisible, setSheetVisible] = useState(false);
+  const [dishCount, setDishCount] = useState(12);
+  const [preference, setPreference] = useState('anything');
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
@@ -59,11 +71,27 @@ export function ComponentPreviewScreen({ onBack }: Props) {
         </View>
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>Thẻ món và lựa chọn</Text>
+          <DishCount value={dishCount} onChange={setDishCount} colors={colors} />
+          <PreferenceChoice options={[{ id: 'anything', label: 'Không kén món' }, { id: 'no-spicy', label: 'Không cay' }, { id: 'unknown', label: 'Chưa rõ', unknown: true }]} selectedId={preference} onSelect={setPreference} colors={colors} />
           <DishCard dish={previewDish} selectedVote={vote} onVote={setVote} colors={colors} />
+        </View>
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Đang chờ và kết quả</Text>
+          <WaitingSummary acknowledged={2} total={3} deadlineLabel="12:30 hôm nay" colors={colors} />
+          <ResultPodium dishes={[{ id: 'pho', name: 'Phở bò', rank: 1, winner: true, scoreLabel: '8 điểm' }, { id: 'bun', name: 'Bún bò', rank: 1, scoreLabel: '8 điểm' }, { id: 'com', name: 'Cơm tấm', rank: 3, scoreLabel: '6 điểm' }]} colors={colors} />
+          <TutorialGesture title="Chọn món" instruction="Bạn có thể dùng nút thay cho thao tác vuốt." onPress={() => setVote('WANT')} colors={colors} />
+        </View>
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Trạng thái và lỗi</Text>
+          <ProcessState state="unknown" title="Chưa rõ yêu cầu đã tới máy chủ chưa" message="Tải lại trạng thái trước khi gửi lại." retryLabel="Tải lại" onRetry={() => undefined} colors={colors} />
+          <RequestBanner state="stale" title="Dữ liệu có thể đã cũ" fetchedAtLabel="12:00" colors={colors} />
+          <CollectionState state="empty" title="Chưa có dữ liệu" message="Kết quả sẽ xuất hiện ở đây." colors={colors} />
+          <SearchSkeletonRow colors={colors} />
+          <InsufficientDishes mode="below-minimum" count={7} onEdit={() => undefined} onBack={onBack} colors={colors} />
         </View>
         <AppButton label="Mở sheet/dialog mẫu" variant="secondary" onPress={() => setSheetVisible(true)} colors={colors} />
         <AppButton label="Quay lại shell" variant="quiet" onPress={onBack} colors={colors} />
-        <Text style={[styles.caption, { color: colors.muted }]}>Mock fixture · GM-05.1 · code phòng theo contract 6 ký tự</Text>
+        <Text style={[styles.caption, { color: colors.muted }]}>Mock fixture · GM-05.2 · code phòng theo contract 6 ký tự</Text>
       </ScrollView>
       <SheetDialog visible={sheetVisible} title="Chia sẻ phòng" onClose={() => setSheetVisible(false)} colors={colors}>
         <FormField label="Mã phòng" value={roomCode} onChangeText={value => setRoomCode(value.toUpperCase().slice(0, 6))} helperText="Mã server có 6 ký tự; input chỉ là mock preview." colors={colors} />
