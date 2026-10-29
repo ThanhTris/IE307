@@ -123,3 +123,14 @@ using `node mobile/scripts/check-dish-v4.mjs --report /tmp/dish-v4.json`. The ev
 receives only complete ACKed ballots after GM20 authorizes evaluation. Its private
 candidate sets/seed/cohort are not a public snapshot; SQL/transaction/quorum/clock/
 secure entropy/persisted retry remain GM20 scope. No automatic Done or API rollout.
+
+
+## GM-19.2 settings correction candidate
+
+[Handoff](docs/evidence/roadmap-v2/GM-19/settings-stability/HANDOFF.md) documents
+forward migration0034/schema0.11.1 on the stacked GM-15 branch. updateSettings is
+host-only; no-op/time-only edits retain the complete pool and poolVersion.
+New accepted requests increment room version; ACK replay does not. GM-07.B wire,
+legacy routes and scoring/timer/consent paths remain pinned. Reproduce using
+scripts/dish_v4_ci.py run on its owned QA project; tests include settings/start
+races. Do not apply/reset the application DB or infer approval from this pointer.

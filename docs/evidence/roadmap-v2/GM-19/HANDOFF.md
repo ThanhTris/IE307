@@ -1,3 +1,10 @@
+## Current settings correction candidate —2026-10-29
+
+[GM19.2 handoff](settings-stability/HANDOFF.md) covers the new forward migration
+0034, host-only updateSettings, stable pools and response-driven regression.
+This is stacked on GM-15 PR140, not human approval or a Project status change.
+The following sections retain evidence of their original revisions.
+
 # GM-19 — handoff
 
 Owner/reviewer: Trí / ThanhTris. Contract GM-19.1, schema0.3.0; approval pending.
