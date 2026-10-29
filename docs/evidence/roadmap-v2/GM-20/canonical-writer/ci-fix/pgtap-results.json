@@ -1,0 +1,29 @@
+[
+  {
+    "path": "supabase/tests/database/00_local_smoke.test.sql",
+    "sha256": "18b24c67571e49ce372594f1587aac70520dd79b955b93f5891c85e3bee420c2",
+    "tap": "1..3\nok 1 - connected to local postgres database\nok 2 - PostgreSQL 17 or later\nok 3 - database executes a real query\n",
+    "passed": 3,
+    "plan": [
+      "3"
+    ]
+  },
+  {
+    "path": "supabase/tests/database/GM-19_room_lifecycle.test.sql",
+    "sha256": "19b8fd97b6ec7c9323e3e4df8a19b6b676c6aa754aa7cb5730f5930893ee3339",
+    "tap": "1..15\nok 1 - GM-19 contract is registered\nok 2 - create_room is SECURITY DEFINER\nok 3 - start_round fixes search_path\nok 4 - authenticated can call create_room\nok 5 - anon cannot call create_room\nok 6 - private ACK is not directly readable\nok 7 - client cannot insert rooms directly\nok 8 - client cannot update members directly\nok 9 - anonymous create is rejected at SQL privilege boundary\nok 10 - authenticated fixture identity is created inside the rollback\nfe806333-1777-4c77-a426-7a9e6ca01d72\nok 11 - malformed request returns INVALID_INPUT\nok 12 - malformed join returns INVALID_INPUT\nok 13 - malformed snapshot returns INVALID_INPUT\n\nok 14 - authenticated without a caller claim is rejected\nfe806333-1777-4c77-a426-7a9e6ca01d72\nok 15 - create_room rate window returns one 429-domain response at request 11\n",
+    "passed": 15,
+    "plan": [
+      "15"
+    ]
+  },
+  {
+    "path": "supabase/tests/database/GM-22_social.test.sql",
+    "sha256": "909c101cbb7bb08e599c2fcc8bf74019715531d18226e98f847144ab404e70cc",
+    "tap": "1..29\nok 1 - GM-22 contract is registered\nok 2 - social schema is 0.4.0\nok 3 - authenticated can read own identity\nok 4 - authenticated can reject room invites\nok 5 - anon cannot invite partners\nok 6 - social helper schema is private\nok 7 - client cannot insert profiles\nok 8 - friend code shape is validated\nok 9 - friend codes are unique\nok 10 - friend event room is nullable\nok 11 - friend event reference exists\nok 12 - friend event with its invitation is accepted\nok 13 - room invitation event is accepted\nok 14 - legacy result event is accepted\nok 15 - v4 result event is accepted\nok 16 - friend event without an invitation is rejected\nok 17 - friend event with a room is rejected\nok 18 - result event without a result is rejected\nok 19 - result event cannot reference legacy and v4 results together\nok 20 - invitation event with a result is rejected\nok 21 - room invitation event without an invitation is rejected\nok 22 - unknown event kind is rejected\nok 23 - pending canonical pair is unique\nok 24 - pending room invitation is unique\nok 25 - synthetic identities receive stable codes\n{\"sub\": \"fd335b2f-d8e3-4f32-ba4b-f4e9229179c4\", \"role\": \"authenticated\"}\nok 26 - self identity exposes unambiguous ten character code\nok 27 - friend invite is pending\nok 28 - duplicate pending invite replays the existing invitation\n{}\nok 29 - missing claims are rejected at the SQL boundary\n",
+    "passed": 29,
+    "plan": [
+      "29"
+    ]
+  }
+]

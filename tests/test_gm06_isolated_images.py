@@ -39,6 +39,24 @@ class IsolatedImageTests(unittest.TestCase):
                 self.assertEqual(runner.local_image(image), ghcr)
                 self.assertEqual([call.args[0][-1] for call in run.call_args_list], [image, ghcr])
 
+    def test_ci_docker_hub_cache_uses_same_pinned_version(self):
+        for image in (runner.PG_IMAGE, runner.REST_IMAGE):
+            ghcr = image.replace('public.ecr.aws/', 'ghcr.io/')
+            hub = image.removeprefix('public.ecr.aws/')
+            with self.subTest(image=image), patch.object(runner.subprocess, 'run', side_effect=self.inspect_cache({hub})) as run:
+                self.assertEqual(runner.local_image(image), hub)
+                self.assertEqual([call.args[0][-1] for call in run.call_args_list], [image, ghcr, hub])
+
+    def test_wrong_version_cached_in_docker_hub_is_rejected(self):
+        for image in (runner.PG_IMAGE, runner.REST_IMAGE):
+            hub = image.removeprefix('public.ecr.aws/')
+            other = hub.rsplit(':', 1)[0]+':0.0.0'
+            with self.subTest(image=image), patch.object(runner.subprocess, 'run', side_effect=self.inspect_cache({other})) as run:
+                with self.assertRaisesRegex(RuntimeError, 'OWNED_QA_IMAGE_NOT_CACHED'):
+                    runner.local_image(image)
+                self.assertNotIn(other, [call.args[0][-1] for call in run.call_args_list])
+                self.assertEqual(run.call_count, 3)
+
     def test_missing_images_fail_before_resource_allocation_with_report(self):
         with tempfile.TemporaryDirectory() as folder:
             report = Path(folder)/'report.json'

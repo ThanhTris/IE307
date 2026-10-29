@@ -1,3 +1,7 @@
+Current versioned canonical writer results are in
+[GM20.4 CHECKS](canonical-writer/CHECKS.md). Historical results below do not claim
+this new supplement or consumer/native integration passed.
+
 # GM-20 — kết quả kiểm patch
 
 Owner Vinh, reviewer Trí. Contract `food-v1/roadmap-v2/GM-20.3`, schema `0.5.0`,

@@ -24,7 +24,7 @@ from gm06_v4_compat import V4Compatibility,CONTRACT
 ROOT=Path(__file__).resolve().parents[1]
 PG_IMAGE='public.ecr.aws/supabase/postgres:17.11.0.004'
 REST_IMAGE='public.ecr.aws/supabase/postgrest:v16.4'
-IMAGE_MIRRORS={image:(image,image.replace('public.ecr.aws/','ghcr.io/'))
+IMAGE_MIRRORS={image:(image,image.replace('public.ecr.aws/','ghcr.io/'),image.removeprefix('public.ecr.aws/'))
                for image in (PG_IMAGE,REST_IMAGE)}
 
 
@@ -37,7 +37,7 @@ def local_image(image):
             return candidate
         if result.returncode and not re.search(r'no such (?:image|object)',result.stderr,re.I):
             raise RuntimeError('OWNED_QA_IMAGE_INSPECTION_FAILED '+candidate)
-    raise RuntimeError('OWNED_QA_IMAGE_NOT_CACHED '+image+'; docker pull '+IMAGE_MIRRORS[image][-1])
+    raise RuntimeError('OWNED_QA_IMAGE_NOT_CACHED '+image+'; docker pull '+IMAGE_MIRRORS[image][1])
 
 
 def command(args, *, sql=None, env=None, timeout=120):
@@ -98,7 +98,7 @@ def run(report_path, *, exercise=None, scope=None, extra_sources=()):
         if labels.get('com.gm06.namespace')!=namespace: raise RuntimeError('QA_OWNERSHIP_MISMATCH')
         return info
     try:
-        # Supabase CLI caches GHCR tags on CI and ECR tags on some local installs.
+        # Supabase CLI caches pinned ECR, GHCR or Docker Hub image spellings.
         # Resolve only those pinned mirrors before allocating any QA resources.
         pg_image=local_image(PG_IMAGE);rest_image=local_image(REST_IMAGE)
         report['images']=[pg_image,rest_image]

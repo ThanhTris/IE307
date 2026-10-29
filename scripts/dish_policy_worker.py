@@ -178,6 +178,7 @@ def verify(db):
     has_v4=db.psql("select count(*) from public.schema_versions where schema_version='0.9.0' and contract_id='dish-session-v4/roadmap-v2/GM-07.B';").strip()=="1"
     has_v4_consent=db.psql("select count(*) from public.schema_versions where schema_version='0.9.1' and contract_id='dish-session-v4/roadmap-v2/GM-07.B';").strip()=="1"
     has_consent_policy_isolation=db.psql("select count(*) from public.schema_versions where schema_version='0.9.2' and contract_id='dish-session-v4/roadmap-v2/GM-07.B';").strip()=="1"
+    has_canonical=db.psql("select count(*) from public.schema_versions where schema_version='0.12.0' and contract_id='dish-session-v4/roadmap-v2/GM-20.4';").strip()=="1"
     legacy_entrypoint="public.dish_session_unversioned_legacy" if has_v4 else "public.dish_session"
     legacy_names=[(legacy_entrypoint,"public.dish_session"),("dish_v3_private.tick","dish_v3_private.tick"),
       ("dish_v3_private.finish","dish_v3_private.finish"),("dish_v3_private.reconcile","dish_v3_private.reconcile"),
@@ -186,7 +187,17 @@ def verify(db):
     if has_v4:
         if db.psql("select to_regprocedure('dish_v4_private.tick()') is not null;").strip()!="t":
             raise RuntimeError("Schema 0.9.0 exists without the v4 policy worker entrypoint")
-        expected_sources[ROOT/"supabase/migrations/0027_dish_session_v4.sql"]=[("dish_v4_private.tick","dish_v4_private.tick")]
+        expected_sources[ROOT/"supabase/migrations/0027_dish_session_v4.sql"]=[
+          ("dish_v4_private.tick_baseline_0111" if has_canonical else "dish_v4_private.tick","dish_v4_private.tick")]
+        if has_canonical:
+            expected_sources[ROOT/"supabase/migrations/0027_dish_session_v4.sql"].append(
+              ("dish_v4_private.finish_baseline_0111","dish_v4_private.finish"))
+            expected_sources[ROOT/"supabase/migrations/0035_gm20_canonical_writer.sql"]=[
+              ("dish_v4_private.tick","dish_v4_private.tick"),("dish_v4_private.finish","dish_v4_private.finish"),
+              ("gm20_canonical_private.finish","gm20_canonical_private.finish"),
+              ("gm20_canonical_private.dispatch","gm20_canonical_private.dispatch"),
+              ("gm20_canonical_private.result_projection","gm20_canonical_private.result_projection"),
+              ("public.dish_session","public.dish_session")]
         if not has_v4_consent:
             raise RuntimeError("Schema 0.9.0 is missing the 0.9.1 account-consent snapshot migration")
         expected_sources[ROOT/"supabase/migrations/0029_dish_v4_history_consent.sql"]=[

@@ -1,0 +1,10 @@
+{
+  "fixtureOnly": true,
+  "result": "Pass",
+  "caseCount": 102,
+  "fixtureSha256": "7ce419376c4aa84e8c95d16841b734424d6d85ff7b0dce50c73986e01847da55",
+  "migrationSha256": "cd13f7ba89f0c04e9dfb8f89c6ffc015fe9e41a3e19ddc9bd04b77d33637d33c",
+  "fullRuntimeReportSha256": "f5f5b8695c499350d1fd5d286fd2f4786adc1073b6fb8667f66d20a5dfc3335a",
+  "casesReference": "../sql-parity-results.json#/cases",
+  "all102RerunRowsExactlyMatchReferencedRows": true
+}

@@ -147,10 +147,16 @@ def run(report_path, previous_ref=None):
         db.psql('create table public.gm06_canonical_qa_owner(namespace uuid primary key);insert into public.gm06_canonical_qa_owner values('+literal(str(namespace))+');revoke all on public.gm06_canonical_qa_owner from public,anon,authenticated,service_role;')
         db.psql('create schema auth;'+ddl+'\n'+auth_uid+';grant usage on schema auth to anon,authenticated;')
         migrations = sorted((ROOT/'supabase/migrations').glob('*.sql'))
-        report['migrationHashes'] = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in migrations}
-        for path in migrations:
-            if path==MIGRATION:
-                continue
+        target_version = int(MIGRATION.name.split('_',1)[0])
+        baseline_migrations = [p for p in migrations if int(p.name.split('_',1)[0]) < target_version]
+        downstream_migrations = [p for p in migrations if int(p.name.split('_',1)[0]) > target_version]
+        # Test0032's own empty/down and populated upgrade against its real prior
+        # baseline. Applying later adapters first requires the withheld schema.
+        # All latest migrations remain covered by gm06_isolated_http_check.
+        report['migrationHashes'] = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in [*baseline_migrations,MIGRATION]}
+        report['deferredMigrationHashes'] = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in downstream_migrations}
+        report['migrationWindow'] = 'pre0032 baseline, then independent0032 upgrade/down/reapply; latest chain tested separately'
+        for path in baseline_migrations:
             db.psql(path.read_text(encoding='utf-8'))
             if path.name=='0001_core_schema.sql':
                 # Shift only synthetic fixture instants together so retention tests

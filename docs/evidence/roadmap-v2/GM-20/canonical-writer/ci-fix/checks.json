@@ -1,0 +1,18 @@
+{
+  "testedHeadBeforeFixCommit": "d224653b8f4cf498becce1233b79211ce515ae8a",
+  "workingTreeFixIncluded": true,
+  "checks": {
+    "before": "Fail as expected: SQLSTATE3F000, zero assertions, namespace cleanup complete",
+    "canonicalUpgrade": "Pass194",
+    "latestMigrationHTTP": "Pass27",
+    "fullBackendTAP": "Pass47 across3 unchanged files on owned isolated PostgreSQL",
+    "baselineSchema": "Pass67 SQL assertions",
+    "python": "646 tests OK,6 skipped",
+    "repository": "Pass",
+    "taskIndexes": "Pass",
+    "diffCheck": "Pass"
+  },
+  "applicationDatabaseChanged": false,
+  "migrationSQLChanged": false,
+  "approvalChanged": false
+}
