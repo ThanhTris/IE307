@@ -74,7 +74,7 @@ git diff --check
 ### Known limits and blockers
 
 - The local Figma PDF was opened in Chrome and visually inspected on pages 27–33. It clarified the component overview and concrete tutorial, waiting, collection, connection, and shortage states. A same-viewport Expo/device comparison and exported live design-context payload were not obtained; see [`FIGMA_PARITY.md`](FIGMA_PARITY.md).
-- No Android device check: `adb` is not installed/available, so font scale 200%, TalkBack, 320/360/412dp layout, dark theme, and touch-size behavior on device remain **Not run**. Android export is only a bundle check.
+- Trung reports a manual Android check in chat on 2026-10-29. Device/build/revision, route/scenarios, expected/actual, assertions, and screenshots/logs are not attached; this environment has no Android SDK/device/adb to reproduce it. Keep device AC marked **Not run** until that evidence is added. Android export is only a bundle check.
 - Live Project gates were rerun with the GitHub CLI credential after the Python checker initially read a different Windows credential. GM-02 and GM-04 are Done; GM-05 is Needs Update and assigned to Trung. Start gate reports `READY_TO_CLAIM`; merge gate reports `READY_FOR_MERGE_REVIEW` against fetched `origin/main` `5c339cf351ca4e37d95d4d0e8211be0ccb8a8af3`. These are task-readiness results, not a task approval or Done state.
 - Repository Python suite final rerun: 642 tests, 6 skipped, OK. `tzdata` and the pinned `jsonschema` from `scripts/ci-requirements.txt` were installed in the user Python site for the check; no Python dependency file changed.
 - No production behavior, native UI acceptance, or Figma pixel parity is claimed.
