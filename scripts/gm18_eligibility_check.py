@@ -32,6 +32,7 @@ def main():
         ROOT/'.github/workflows/gm18-eligibility.yml',ROOT/'supabase/seed/import_food_data.py',
         ROOT/'scripts/gm08_real_bundle_check.py',ROOT/'tests/fixtures/food-data-v1/cases.json',
         ROOT/'supabase/rollback/0005_gm18_discovery_rpc.down.sql',
+        ROOT/'supabase/rollback/0033_gm18_dish_catalogue.down.sql',
         ROOT/'tests/fixtures/food-data-v1/datasets.json',*sorted((ROOT/'supabase/migrations').glob('*.sql'))]
     protected_paths=[*source_paths,ROOT/'supabase/seed/draft/gm08-survey-v0.4.1/bundle.json',
         ROOT/'supabase/seed/verified/manifest.json']
@@ -163,6 +164,11 @@ def main():
         db.transaction(real.remove_loaded_sql(bundle))
         check('actual draft test cleanup returns empty baseline', real.readback(db), baseline)
         check('actual input bytes are unchanged', food.digest(path.read_bytes()), bundle_hash)
+        # 0033 adds helpers to the 0005-owned schema. Unwind the supplement
+        # before dropping that schema; preserve the legacy no-CASCADE guard.
+        db.psql((ROOT/'supabase/rollback/0033_gm18_dish_catalogue.down.sql').read_text(encoding='utf-8'))
+        check('supplement rollback removes new RPCs but preserves legacy API', query(db,
+            "to_regprocedure('public.get_dish_catalogue(jsonb)') is null and to_regprocedure('public.preview_dish_pool(jsonb)') is null and public.get_discovery_context()->>'messageKey'='AUTH_REQUIRED'"))
         db.psql((ROOT/'supabase/rollback/0005_gm18_discovery_rpc.down.sql').read_text(encoding='utf-8'))
         check('API rollback removes public RPCs and private API schema', query(db,
             "to_regnamespace('gm18_api_private') is null and not exists(select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='public' and p.proname in ('get_discovery_context','preview_food_pool','get_result_offerings'))"))

@@ -1,5 +1,10 @@
 # GM18.2 dish catalogue/preview handoff
 
+Current follow-up for [PR139](https://github.com/ThanhTris/IE307/pull/139):
+[CI correction and rerun evidence](ci-fix-2026-10-29/CHECKS.md). Exact-version ECR/GHCR
+cache resolution and0033-before0005 rollback are corrected; API/schema/source data
+are unchanged. The initial pre-publication handoff below is retained as a snapshot.
+
 Owner Tâm, reviewer Trí Pending. Requested2026-10-29. Worktree gm18-dish-catalogue,
 branch codex/gm-18-dish-catalogue, base/fetched main40feb9bf66f4bad67074601d8d49ffe587bfef93.
 GM21 work in the original checkout is preserved. No new commit/push/PR, Project
@@ -68,7 +73,9 @@ preferences and room copies are existing v4 storage; ranking remains explicitly
 UNSUPPORTED/advanced, not silently implemented with an unreviewed formula.
 
 QA down0033 drops only new functions/ledger; it does not remove catalogue or existing
-results/history. Deployment into a retained DB requires reviewed ledger/definitions,
+results/history. When also rolling back legacy0005 in a disposable DB, apply0033
+down before0005 down; reapply0005 before0033. The legacy no-CASCADE guard remains.
+Deployment into a retained DB requires reviewed ledger/definitions,
 backup/restore and release activation. The runner does not migrate/reset/reconcile
 an app DB. Trí reviews schema/API/storage delta; gate Pass is not approval/Done.
 

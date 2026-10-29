@@ -31,3 +31,11 @@ existing GM18 parity regression; new RPC grants/down; full Python/repo/index/dif
 Fixtures separate from real draft and neither is verified/production. Capture
 actual expected/actual/versions/hashes and cleanup. Final Trí review/Done Pending;
 no automatic commit/push or external comment.
+
+PR139 follow-up29/10: fix the two observed CI failures without relaxing checks.
+Preflight pinned local ECR/GHCR image mirrors before QA allocation; unwind0033
+before0005 in the legacy SQL runner. Add cache/error regression and real reverse-
+order rollback/reapply tests, rerun the original legacy entrypoint on owned QA,
+full Python/repo/index/diff and inspect hosted CI on the corrected revision.
+No runtime migration/API/contract/data changes, no external review comment or
+Project status/approval write. Evidence: ci-fix-2026-10-29/CHECKS.md.

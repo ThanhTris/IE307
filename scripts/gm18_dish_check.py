@@ -162,6 +162,22 @@ def exercise(db,rpc,check,users):
     check('down keeps actual v4 result',api('result',roomId=room['roomId'])==stored)
     db.psql((ROOT/'supabase/migrations/0033_gm18_dish_catalogue.sql').read_text())
     query('forward reapply succeeds',"select exists(select 1 from public.schema_versions where schema_version='0.11.0');")
+    # A parent-schema rollback must still reject a live supplement. CI must
+    # unwind 0033 first rather than weaken the parent with CASCADE.
+    sql_reject('legacy rollback blocks while supplement helpers remain',
+               (ROOT/'supabase/rollback/0005_gm18_discovery_rpc.down.sql').read_text(encoding='utf-8'),'2BP01')
+    query('rejected parent rollback leaves both APIs intact',
+          "select to_regprocedure('public.get_dish_catalogue(jsonb)') is not null and public.get_discovery_context()->>'messageKey'='AUTH_REQUIRED';")
+    db.psql((ROOT/'supabase/rollback/0033_gm18_dish_catalogue.down.sql').read_text(encoding='utf-8'))
+    query('supplement down preserves callable legacy API',"select public.get_discovery_context()->>'messageKey'='AUTH_REQUIRED';")
+    db.psql((ROOT/'supabase/rollback/0005_gm18_discovery_rpc.down.sql').read_text(encoding='utf-8'))
+    query('ordered down removes shared API schema and both public surfaces',
+          "select to_regnamespace('gm18_api_private') is null and to_regprocedure('public.get_dish_catalogue(jsonb)') is null and to_regprocedure('public.get_discovery_context(text,text)') is null;")
+    check('ordered down preserves stored v4 result',api('result',roomId=room['roomId'])==stored)
+    db.psql((ROOT/'supabase/migrations/0005_gm18_discovery_rpc.sql').read_text(encoding='utf-8'))
+    db.psql((ROOT/'supabase/migrations/0033_gm18_dish_catalogue.sql').read_text(encoding='utf-8'))
+    query('ordered reapply restores both authenticated public surfaces',
+          "select count(*)=5 and bool_and(has_function_privilege('authenticated',p.oid,'execute') and not has_function_privilege('anon',p.oid,'execute')) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='public' and p.proname in('get_discovery_context','preview_food_pool','get_result_offerings','get_dish_catalogue','preview_dish_pool');")
 
 
 def main():
@@ -169,7 +185,7 @@ def main():
     destination=args.report.resolve()
     if destination.is_relative_to(ROOT) and not any(destination.is_relative_to(ROOT/p) for p in ('docs/evidence/roadmap-v2/GM-18','.work')):
         raise ValueError('Report must not overwrite repository source/data/fixtures')
-    paths=[Path(__file__),ROOT/'supabase/seed/import_gm18_catalogue.py',ROOT/'supabase/seed/import_dish_catalogue.py',ROOT/'supabase/rollback/0033_gm18_dish_catalogue.down.sql',ROOT/projection.upstream.contract.BUNDLE_PATH,ROOT/projection.upstream.contract.MANIFEST_PATH,ROOT/'scripts/gm18_domain_check.mjs',ROOT/'mobile/src/domain/eligibility/index.ts',ROOT/'mobile/tests/helpers/eligibilityFixtures.mjs',ROOT/'supabase/tests/food_eligibility.sql',ROOT/'scripts/build_gm18_contract.py',ROOT/'docs/architecture/schemas/gm18-dish-catalogue.schema.json',ROOT/'docs/architecture/schemas/dish-session-v4b.schema.json']
+    paths=[Path(__file__),ROOT/'supabase/seed/import_gm18_catalogue.py',ROOT/'supabase/seed/import_dish_catalogue.py',ROOT/'supabase/rollback/0033_gm18_dish_catalogue.down.sql',ROOT/'supabase/rollback/0005_gm18_discovery_rpc.down.sql',ROOT/projection.upstream.contract.BUNDLE_PATH,ROOT/projection.upstream.contract.MANIFEST_PATH,ROOT/'scripts/gm18_domain_check.mjs',ROOT/'mobile/src/domain/eligibility/index.ts',ROOT/'mobile/tests/helpers/eligibilityFixtures.mjs',ROOT/'supabase/tests/food_eligibility.sql',ROOT/'scripts/build_gm18_contract.py',ROOT/'docs/architecture/schemas/gm18-dish-catalogue.schema.json',ROOT/'docs/architecture/schemas/dish-session-v4b.schema.json']
     qa.run(args.report,exercise=exercise,scope='GM18.2 real draft and synthetic SQL/HTTP catalogue/preview; existing v2/v4 compatibility; no production or Android',extra_sources=paths)
     print('GM18.2 SQL/HTTP checks Pass; all owned resources cleaned.')
 

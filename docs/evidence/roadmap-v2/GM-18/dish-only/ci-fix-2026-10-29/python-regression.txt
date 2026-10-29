@@ -1,0 +1,19 @@
+............................................................................................................................................................................................................................................................................................................................................................................................................................................................../Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/dateutil/tz/tz.py:37: DeprecationWarning: datetime.datetime.utcfromtimestamp() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.fromtimestamp(timestamp, datetime.UTC).
+  EPOCH = datetime.datetime.utcfromtimestamp(0)
+.............sssss.Pass: GM-07.A schema structure and wire fixtures (27 assertions)
+Pass: Draft 2020-12 schema, dense rank ties, winner invariants, deep projection match, cohort score bounds, status/round/reasonCode pairs, NOT_HOST wire error envelope, no-op poolVersion, concurrent submit range rules, legacy unscored DTO without fabricated counts, and immutable history projection validation.
+Cell 1: ERROR
+Report: /private/var/folders/rl/_ggjv4bx7rx0w9xb28dptymh0000gn/T/tmpx8vll6vo/new-capture/reports/sample.executed.ipynb
+.Cell 1: OK
+Report: /private/var/folders/rl/_ggjv4bx7rx0w9xb28dptymh0000gn/T/tmp6yx5vl1m/new/reports/sample.executed.ipynb
+................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 642 tests in 48.625s
+
+OK (skipped=5)
+{
+  "offline": true,
+  "refresh": false,
+  "allow_api": false,
+  "output_dir": "/private/var/folders/rl/_ggjv4bx7rx0w9xb28dptymh0000gn/T/tmp6yx5vl1m/new"
+}
