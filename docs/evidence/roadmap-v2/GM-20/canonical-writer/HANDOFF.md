@@ -1,5 +1,22 @@
 ## Publication preparation —2026-10-29
 
+## Current PR143 review follow-up — decimal create (2026-10-29)
+
+Trí's [review comment](https://github.com/ThanhTris/IE307/pull/143#issuecomment-6500474678)
+identified integer-valued10.0/20.0 being rejected by create. The still-unmerged0035
+now converts through numeric after the unchanged type/integrality/range guards.
+Contract and schema versions are unchanged. Raw HTTP regressions inspect actual
+snapshot settings/pool counts; fractional/out-of-range/type-invalid values and
+shortage remain rejected. Raw JSON is also retained through Python Schema2020-12
+validation, rather than JSON.stringify normalizing away the decimal literal.
+
+Current source/checks/replay evidence is in [decimal-create](decimal-create/README.md)
+and the updated MANIFEST. Earlier numbers/ref/status sections below describe the
+original candidate runs; their historical reports remain intact. GM19#141 is now
+merged into mainfdee7fa; live start/merge gates pass, while Trí's PR/ADR review is
+still required. No app database or Project approval/status was changed.
+
+
 Vinh now requested commit/push and a review PR. GM15 is Done/merged; GM19 remains
 Needs Update. Parent PR141 has been rebased to204c25f and retargeted to main5c339cf;
 this feature PR stacks on that branch, with only GM20 changes in its review diff.

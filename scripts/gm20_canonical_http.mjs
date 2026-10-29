@@ -36,7 +36,7 @@ const results=[];const users=[];const contractSamples=[];
 function sqlRaw(q){return execFileSync('docker',['exec','-i',container,'psql','-X','-q','-U','postgres','-d','postgres','-v','ON_ERROR_STOP=1','-At','-c',q],{encoding:'utf8'}).trim();}
 function sql(q){const inspected=JSON.parse(execFileSync('docker',['inspect',container],{encoding:'utf8'}))[0];const labels=inspected.Config.Labels||{};assert.equal(inspected.Name,'/'+container);assert.equal(labels['com.supabase.cli.project'],project);assert.equal(String(labels['com.supabase.cli.workdir']||'').replaceAll('\\','/').toLowerCase(),String(expectedWorkdir).replaceAll('\\','/').toLowerCase());assert.equal(inspected.State.Running,true);const owner=qaMode==='gm03'?sqlRaw("select owner_uuid::text from gm03_qa_private.owner_manifest where run_id='"+manifest.runId.replaceAll("'","''")+"';"):sqlRaw('select namespace::text from public.gm40_qa_owner');assert.equal(owner,qaMode==='gm03'?manifest.ownerUuid:process.env.GM_V4_OWNER_NAMESPACE,'QA owner marker must match this run');return sqlRaw(q);}
 async function guest(name){const r=await fetch(base+'/auth/v1/signup',{method:'POST',headers:{apikey:key,'content-type':'application/json'},body:JSON.stringify({data:{display_name:name,gm07_v4_qa:project}})});const b=await r.json();assert.equal(r.status,200,'guest signup failed '+r.status);assert.ok(b.access_token);const u={id:b.user.id,token:b.access_token,refresh:b.refresh_token};users.push(u);return u;}
-async function api(u,command,args={},options={}){const payload={contractVersion,...args},request={command,payload};const r=await fetch(base+'/rest/v1/rpc/dish_session',{method:'POST',headers:{apikey:key,...(u?{authorization:'Bearer '+u.token}:{}),'content-type':'application/json'},body:options.serialize?options.serialize(request):JSON.stringify(request)});let body;try{body=await r.json();}catch{body={};}contractSamples.push({request,response:body,...(options.requestValid===false?{requestValid:false}:{})});return {status:r.status,body};}
+async function api(u,command,args={},options={}){const payload={contractVersion,...args},request={command,payload},wire=options.serialize?options.serialize(request):JSON.stringify(request);const r=await fetch(base+'/rest/v1/rpc/dish_session',{method:'POST',headers:{apikey:key,...(u?{authorization:'Bearer '+u.token}:{}),'content-type':'application/json'},body:wire});let body;try{body=await r.json();}catch{body={};}contractSamples.push('{"request":'+wire+',"response":'+JSON.stringify(body)+(options.requestValid===false?',"requestValid":false':'')+'}');return {status:r.status,body};}
 async function legacyRpc(u,name,args={}){const r=await fetch(base+'/rest/v1/rpc/'+name,{method:'POST',headers:{apikey:key,...(u?{authorization:'Bearer '+u.token}:{}),'content-type':'application/json'},body:JSON.stringify(args)});let body;try{body=await r.json();}catch{body={};}return {status:r.status,body};}
 function pass(name,expected,actual){assert.deepEqual(actual,expected,name);results.push({case:name,result:'Pass',expected,actual});console.log('PASS',name);}
 function expectOk(response,name){assert.equal(response.status,200,name+' http '+response.status+' '+(response.body.error?.messageKey??response.body.message??''));assert.equal(response.body.ok,true,name+' rpc rejected '+(response.body.error?.messageKey??''));return response.body.data;}
@@ -59,6 +59,40 @@ expectFail(await api(h,'create',{requestId:requestId('disabled'),displayName:'QA
 setEnabled(true);
 const real=process.env.GM_V4_REAL_RELEASE_ID,synthetic=process.env.GM_V4_SYNTHETIC_RELEASE_ID;
 await setActive(synthetic);
+// Preserve numeric lexemes on the HTTP wire and in Python JSON Schema input.
+// JS JSON.stringify({dishCount:10.0}) alone would send10 and miss the regression.
+async function countLiteral(literal,expectedCount){
+ const value=JSON.parse(literal);let rawRequest;
+ const response=await api(h,'create',{requestId:requestId('count-literal'),displayName:'QA count host',settings:{dishCount:value,mealSlot:'dinner',desiredAt:null},preferences:pref},{
+  requestValid:expectedCount!==null,
+  serialize:request=>{
+   const text=JSON.stringify(request),property='"dishCount":'+JSON.stringify(value);
+   assert.equal(text.split(property).length,2,'one controlled dishCount field');
+   rawRequest=text.replace(property,'"dishCount":'+literal);
+   assert.deepEqual(JSON.parse(rawRequest),request,'raw numeric literal preserves request meaning');
+   return rawRequest;
+  }
+ });
+ return {response,rawRequest};
+}
+for(const [literal,count] of [['10',10],['10.0',10],['20',20],['20.0',20],['10.5',null],['9',null],['21',null],['"10"',null],['null',null],['true',null]]){
+ const {response,rawRequest}=await countLiteral(literal,count);
+ if(count===null)expectFail(response,'INVALID_INPUT',400,'raw create rejects dishCount '+literal);
+ else{
+  const made=expectOk(response,'raw create dishCount '+literal),s=await snapshot(h,made.roomId);
+  pass('raw create accepts dishCount '+literal,{status:200,dishCount:count,poolCount:count},{status:response.status,dishCount:s.settings.dishCount,poolCount:s.pool.length});
+ }
+ results.at(-1).input={rawRequest};
+}
+// A decimal integer must still honour the existing shortage guard, not fill down.
+const shortId='gm20-count-shortage-'+project;
+sql("insert into dish_v3_private.catalogues(id,source_sha,cards,test_only,active) select '"+shortId+"',encode(extensions.digest(subset.cards::text,'sha256'),'hex'),subset.cards,true,false from (select jsonb_agg(card order by ord) as cards from dish_v3_private.catalogues c cross join lateral jsonb_array_elements(c.cards) with ordinality t(card,ord) where c.id='"+synthetic+"' and ord<=9) subset on conflict(id) do nothing;");
+await setActive(shortId);
+const shortage=await countLiteral('20.0',20);
+const shortageError=expectFail(shortage.response,'INSUFFICIENT_DISHES',409,'decimal create preserves shortage');
+assert.deepEqual(shortageError.details,{available:9,requested:20});results.at(-1).input={rawRequest:shortage.rawRequest};
+await setActive(synthetic);
+
 const oldB=JSON.parse(sql("select coalesce(jsonb_object_agg(id::text,projection),'{}'::jsonb) from dish_v4_private.results"));
 async function room(people=[h,m],count=10){
  const made=await create(people[0],count);for(const u of people.slice(1))await join(u,made.code,'Canonical member');
@@ -265,7 +299,7 @@ pass('canonical card mapping retained without operational room','t',sql("select 
 const afterB=JSON.parse(sql("select coalesce(jsonb_object_agg(id::text,projection),'{}'::jsonb) from dish_v4_private.results"));
 pass('pre-existing B result projections retain exact IDs/bytes',true,Object.entries(oldB).every(([id,projection])=>JSON.stringify(projection)===JSON.stringify(afterB[id])));
 
-const schema=spawnSync(process.env.GM_V4_PYTHON||'python',['scripts/validate_dish_v4_schema.py','--schema','docs/architecture/schemas/dish-session-v4b-supplement.schema.json','--stdin'],{cwd:root,encoding:'utf8',input:JSON.stringify(contractSamples),maxBuffer:2*1024*1024});
+const schema=spawnSync(process.env.GM_V4_PYTHON||'python',['scripts/validate_dish_v4_schema.py','--schema','docs/architecture/schemas/dish-session-v4b-supplement.schema.json','--stdin'],{cwd:root,encoding:'utf8',input:'['+contractSamples.join(',')+']',maxBuffer:2*1024*1024});
 assert.equal(schema.status,0,'B-supplement schema validation: '+schema.stderr.slice(0,1500));const validated=JSON.parse(schema.stdout);
 if(process.env.GM20_CANONICAL_BRUNO==='1'){
  const bh=await guest('Bruno canonical host'),bm=await guest('Bruno canonical member'),bx=await guest('Bruno canonical outsider');

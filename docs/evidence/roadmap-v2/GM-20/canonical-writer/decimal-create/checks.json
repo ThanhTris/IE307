@@ -1,0 +1,30 @@
+{
+  "result": "Pass",
+  "testedHeadBeforePatchCommit": "588781c6bb56c5cca2c7c4cdf300d2b154c25c8c",
+  "workingTreePatchIncluded": true,
+  "mainRevision": "fdee7fa6655d571eea0643752ebc77ab45c3a329",
+  "reviewComment": "https://github.com/ThanhTris/IE307/pull/143#issuecomment-6500474678",
+  "freshHTTP": {
+    "assertions": 125,
+    "envelopes": 705
+  },
+  "populatedHTTP": {
+    "assertions": 125,
+    "envelopes": 703
+  },
+  "rawLiteralCases": 11,
+  "sqlParity": 102,
+  "gm06CanonicalUpgrade": 194,
+  "gm06LatestHTTP": 27,
+  "python": {
+    "tests": 646,
+    "skipped": 6,
+    "result": "Pass"
+  },
+  "repository": "Pass",
+  "taskIndexes": "Pass",
+  "diff": "Pass",
+  "applicationDatabaseChanged": false,
+  "productionPublished": false,
+  "approvalChanged": false
+}

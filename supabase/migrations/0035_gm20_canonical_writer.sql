@@ -306,7 +306,7 @@ begin
     or jsonb_typeof(payload->'preferences') is distinct from 'object'
     or not dish_v4_private.valid_preferences(payload->'preferences') then return dish_v4_private.fail('INVALID_INPUT'); end if;
   if jsonb_typeof(payload->'settings'->'dishCount') is distinct from 'number' or (payload->'settings'->>'dishCount')::numeric<>trunc((payload->'settings'->>'dishCount')::numeric) or (payload->'settings'->>'dishCount')::numeric not between 10 and 20 then return dish_v4_private.fail('INVALID_INPUT'); end if;
-  count_value:=(payload->'settings'->>'dishCount')::integer; meal:=payload->'settings'->>'mealSlot'; name_value:=btrim(payload->>'displayName'); pref:=payload->'preferences';
+  count_value:=(payload->'settings'->>'dishCount')::numeric::integer; meal:=payload->'settings'->>'mealSlot'; name_value:=btrim(payload->>'displayName'); pref:=payload->'preferences';
   if exists(select 1 from jsonb_object_keys(payload->'settings') k where k not in('dishCount','mealSlot','desiredAt'))
     or meal is null or meal not in('breakfast','lunch','dinner','snack') or name_value is null or length(name_value) not between 1 and 24 or name_value~'[[:cntrl:]]' then return dish_v4_private.fail('INVALID_INPUT'); end if;
   desired:=null;
