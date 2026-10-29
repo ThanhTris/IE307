@@ -39,3 +39,10 @@ order rollback/reapply tests, rerun the original legacy entrypoint on owned QA,
 full Python/repo/index/diff and inspect hosted CI on the corrected revision.
 No runtime migration/API/contract/data changes, no external review comment or
 Project status/approval write. Evidence: ci-fix-2026-10-29/CHECKS.md.
+
+Review comment6491172874 arrived while the first CI correction ran: a schema-valid
+JSON integer such as10.0/20.0 fails the text-to-integer cast. Reproduce through real
+HTTP with request/response schema assertions, then cast the already-validated
+numeric value to integer in unmerged0033. Keep the fractional/range/type checks,
+test10..20 plus10.0/20.0 and invalid10.5/9/21/bool/null/string, rerun the SQL/HTTP,
+legacy, Python and hosted CI checks. No main migration rewrite or contract change.

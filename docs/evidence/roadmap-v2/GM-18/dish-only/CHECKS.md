@@ -1,6 +1,7 @@
 # GM18.2 dish-only API checks — 2026-10-29
 
-Latest PR139 CI correction: [checks and actual rerun evidence](ci-fix-2026-10-29/CHECKS.md).
+Latest PR139 review correction: [numeric count, schemas and rerun evidence](review-fix-2026-10-29/CHECKS.md).
+Prior CI correction: [image cache and rollback evidence](ci-fix-2026-10-29/CHECKS.md).
 The initial pre-publication results below remain a historical snapshot.
 
 Owner Tâm, reviewer Trí Pending. Branch codex/gm-18-dish-catalogue, base main40feb9b

@@ -1,7 +1,13 @@
 # GM18.2 dish catalogue/preview handoff
 
 Current follow-up for [PR139](https://github.com/ThanhTris/IE307/pull/139):
-[CI correction and rerun evidence](ci-fix-2026-10-29/CHECKS.md). Exact-version ECR/GHCR
+[latest numeric-count review correction](review-fix-2026-10-29/CHECKS.md). The
+unmerged0033 now accepts schema-valid10.0/20.0 after numeric integrality/range
+validation; fractional/out-of-range/type errors still return the declared envelope.
+286 SQL/HTTP assertions and642 Python tests (5 skips) pass at the recorded source
+hashes;148 legacy SQL checks pass on the corrected migration. Final review Pending.
+
+[Prior CI correction and rerun evidence](ci-fix-2026-10-29/CHECKS.md): exact-version ECR/GHCR
 cache resolution and0033-before0005 rollback are corrected; API/schema/source data
 are unchanged. The initial pre-publication handoff below is retained as a snapshot.
 

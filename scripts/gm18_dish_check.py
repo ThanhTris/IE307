@@ -24,9 +24,14 @@ def exercise(db,rpc,check,users):
     schema=json.loads((ROOT/'docs/architecture/schemas/gm18-dish-catalogue.schema.json').read_text())
     Draft202012Validator.check_schema(schema)
     validator=Draft202012Validator(schema,format_checker=FormatChecker())
+    requests={name:Draft202012Validator({**schema,'oneOf':[{'$ref':'#/$defs/'+definition}]},format_checker=FormatChecker())
+              for name,definition in [('get_dish_catalogue','catalogueRequest'),('preview_dish_pool','previewRequest')]}
     def query(name,sql,expected='t'):check(name,db.psql(sql).strip(),expected)
-    def read(name='preview_dish_pool',user=3,**payload):
-        status,body=rpc(name,{'payload':{'contractVersion':projection.CONTRACT,**payload}},user)
+    def read(name='preview_dish_pool',user=3,request_valid=None,**payload):
+        request={'payload':{'contractVersion':projection.CONTRACT,**payload}}
+        if request_valid is not None:
+            check('request schema '+name+' dishCount='+repr(payload.get('dishCount')),requests[name].is_valid(request),request_valid)
+        status,body=rpc(name,request,user)
         if not validator.is_valid(body):raise AssertionError('GM18 HTTP schema mismatch: '+name)
         return status,body
     def api(command,user=3,**payload):
@@ -90,13 +95,13 @@ def exercise(db,rpc,check,users):
         db.psql('begin;update dish_v3_private.catalogues set active=false where active;insert into dish_v3_private.catalogues(id,source_sha,cards,test_only,active) values('+L(identifier)+','+L(hashlib.sha256(json.dumps(rows).encode()).hexdigest())+','+L(json.dumps(rows))+'::jsonb,true,true);commit;')
     activate('gm18-synthetic',synthetic)
     before=db.psql('select count(*) from public.rooms;').strip()
-    for count in range(10,21):
-        status,response=read(mealSlot='dinner',dishCount=count)
+    for count in [*range(10,21),10.0,20.0]:
+        status,response=read(mealSlot='dinner',dishCount=count,request_valid=True)
         cards=response['data']['dishes']
         check('requested count exact and unique '+str(count),status==200 and len(cards)==count and len({x['dishId'] for x in cards})==count and response['data']['available']==20 and response['data']['requested']==count)
     for count in [9,21,10.5,True,None,'10',{},1e100]:
-        status,response=read(mealSlot='dinner',dishCount=count)
-        check('invalid count rejected '+repr(count),status==400 and response['error']['messageKey']=='INVALID_INPUT')
+        status,response=read(mealSlot='dinner',dishCount=count,request_valid=False)
+        check('invalid count rejected '+repr(count),status==400 and response['ok'] is False and response['error']['messageKey']=='INVALID_INPUT')
     for meal in [None,True,[], 'late_night']:
         status,response=read(mealSlot=meal,dishCount=10)
         check('invalid meal rejected '+repr(meal),status==400 and response['error']['messageKey']=='INVALID_INPUT')

@@ -68,7 +68,8 @@ class ProjectionTests(unittest.TestCase):
         Draft202012Validator.check_schema(schema)
         validator=Draft202012Validator({**schema,'oneOf':[{'$ref':'#/$defs/previewRequest'}]})
         request={'payload':{'contractVersion':p.CONTRACT,'mealSlot':'lunch','dishCount':20}}
-        self.assertTrue(validator.is_valid(request))
+        for valid in [10,10.0,20,20.0]:
+            self.assertTrue(validator.is_valid({'payload':{**request['payload'],'dishCount':valid}}))
         for invalid in [9,21,10.5,True,None,'10']:
             self.assertFalse(validator.is_valid({'payload':{**request['payload'],'dishCount':invalid}}))
         self.assertFalse(validator.is_valid({'payload':{**request['payload'],'contractVersion':'dish-session-v4/roadmap-v2/GM-07.B'}}))

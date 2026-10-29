@@ -39,7 +39,7 @@ begin
  if preview then
   if jsonb_typeof(payload->'dishCount') is distinct from 'number' then return dish_v4_private.fail('INVALID_INPUT'); end if;
   if (payload->>'dishCount')::numeric not between 10 and 20 or trunc((payload->>'dishCount')::numeric)<>(payload->>'dishCount')::numeric then return dish_v4_private.fail('INVALID_INPUT'); end if;
-  requested:=(payload->>'dishCount')::integer;
+  requested:=((payload->>'dishCount')::numeric)::integer;
   if payload ? 'preferences' then
    pref:=payload->'preferences';
    if dish_v4_private.valid_preferences(pref) is not true then return dish_v4_private.fail('INVALID_INPUT'); end if;
