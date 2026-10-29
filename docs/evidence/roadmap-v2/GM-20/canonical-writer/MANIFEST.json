@@ -31,17 +31,20 @@
     "docs/evidence/roadmap-v2/GM-20/canonical-writer/ci-fix/pgtap-isolation.json": "d6202aa99aced3e878c08d84c218c329ae12a40c20109cfd02907eb2744178ec",
     "docs/evidence/roadmap-v2/GM-20/canonical-writer/ci-fix/pgtap-results.json": "d1f468dcf4e346139d8f952cbc6e816b40c835cba180153ce5bb4ce28c335215",
     "docs/evidence/roadmap-v2/GM-20/canonical-writer/cleanup-results.json": "7c992583ab9f9880cc8c5ef31b0710c19f0aa4920f866a04b8e5b3fb1071d728",
+    "docs/evidence/roadmap-v2/GM-20/canonical-writer/decimal-create/IMAGE_CACHE_FOLLOWUP.md": "6aca064d27330b672e7c33a2b25513915f4cf0110a6efd8e65e027da15a35271",
     "docs/evidence/roadmap-v2/GM-20/canonical-writer/decimal-create/PLAN.md": "2639e2cd6fa49730f74009f800ccf6c178d6a2f78067c0b9ab33ce961d71f46e",
-    "docs/evidence/roadmap-v2/GM-20/canonical-writer/decimal-create/README.md": "503a50e829a1ec2954ed8ce61c766c9026f4932e2269fa3ec2cc361bd5fcca6e",
-    "docs/evidence/roadmap-v2/GM-20/canonical-writer/decimal-create/checks.json": "5449a293af3bd50f946ac155fe0a227886a7047145e17f8c1529fd884594140e",
+    "docs/evidence/roadmap-v2/GM-20/canonical-writer/decimal-create/README.md": "46a03b56324bad447ed6c762c5a5b81cfd9b6f58bd4cc29956f4c75ecf8ed115",
+    "docs/evidence/roadmap-v2/GM-20/canonical-writer/decimal-create/checks.json": "7d65036e78dac016f69fca3e4dd0e4244ef90a2edfa90d0ae44f010df22b4f6d",
+    "docs/evidence/roadmap-v2/GM-20/canonical-writer/decimal-create/ci-image-cache-failure.json": "08ff751c2942be681532c3e9726cfa527d5054f77badfc56b451cca166784d47",
     "docs/evidence/roadmap-v2/GM-20/canonical-writer/decimal-create/cleanup.json": "e1cf6b65b9a4bcd0f946928e7394c5e10522a67755d7462e9b5348493093b592",
     "docs/evidence/roadmap-v2/GM-20/canonical-writer/decimal-create/fresh-baseline-http.json": "2780f06f55da1b2869cbda67a3b746b05eb5792d41338662744219f886a847c4",
     "docs/evidence/roadmap-v2/GM-20/canonical-writer/decimal-create/fresh-http.json": "377e3d583fa9dc18750ba32b329fb8fa4a7ca71049796ad04181357b637e6d0e",
     "docs/evidence/roadmap-v2/GM-20/canonical-writer/decimal-create/fresh-run.txt": "0f2678135319f2dbdb3abfdbfd39e400fff91c19dab6e1d39ed2c9dce1c7c78a",
     "docs/evidence/roadmap-v2/GM-20/canonical-writer/decimal-create/fresh-runtime.json": "f071a6d1060b365d26e4d869667e64bb9120b5db044bb24cfaf01c1a1956926a",
     "docs/evidence/roadmap-v2/GM-20/canonical-writer/decimal-create/fresh-sql.json": "4beeb1a1942d1ec6404573b229e4d266e2bd9ab65f0533426f48e9b902ba5ea8",
-    "docs/evidence/roadmap-v2/GM-20/canonical-writer/decimal-create/gm06-latest-http.json": "9c16c9b51018ee28adcfd4c51a7023f0008f428a34e04b12e2d5d9c0db9cf1b4",
+    "docs/evidence/roadmap-v2/GM-20/canonical-writer/decimal-create/gm06-latest-http.json": "26627a896343a5356e5ab67b812c0c555f4112b5e2b4c3d6c8c924cbeaec609a",
     "docs/evidence/roadmap-v2/GM-20/canonical-writer/decimal-create/gm06-upgrade-summary.json": "adb0a7c010657760b7f1b16729af306cff0eed3aa15e19d9bc0004bf64824eb8",
+    "docs/evidence/roadmap-v2/GM-20/canonical-writer/decimal-create/image-cache-unit-tests.txt": "2e77d9b9d6509a1e91abce2283455113366b5ff6a6cc0fcb7818606f4a77750c",
     "docs/evidence/roadmap-v2/GM-20/canonical-writer/decimal-create/populated-http.json": "413779d8c3aa31ada99babddb2c0701ecd8c7ea1ebd7da31e65abf28d9fda187",
     "docs/evidence/roadmap-v2/GM-20/canonical-writer/decimal-create/populated-run.txt": "b55ea81cd59b953ffcd8ca576f4bb5a2d7d9d0eda1c33d5e10d64c0fa45fbeea",
     "docs/evidence/roadmap-v2/GM-20/canonical-writer/decimal-create/populated-runtime.json": "f071a6d1060b365d26e4d869667e64bb9120b5db044bb24cfaf01c1a1956926a",
@@ -57,6 +60,7 @@
     "docs/evidence/roadmap-v2/GM-20/canonical-writer/sql-parity-results.json": "3a392c552039c3f56c18950726bc3e5baacc84065d3a0b13ff5e9f821a8da10a",
     "scripts/dish_policy_worker.py": "d1d65f488937ec6bb42b54efb61a1fa013a33503cd84118d32c4db32210d19a3",
     "scripts/gm06_canonical_check.py": "0fb00fbf129d90c212eb4a23820504a0bb93ef36d18b8c099b96cbe5dbb637b6",
+    "scripts/gm06_isolated_http_check.py": "2e9b11c4b6cc837cd898c2d1baedcb5ac06f8b8e5236e143f1c3e9388f49edc6",
     "scripts/gm20_canonical_check.py": "1f7f44a3490201ba8e55940e8ab64638797e9cb720f2d1254b77ed671cff14df",
     "scripts/gm20_canonical_http.mjs": "0af79d6e2462b399f77336957ab42db2bc20048ba520b708af2baa31a615fe9c",
     "supabase/migrations/0035_gm20_canonical_writer.sql": "cd13f7ba89f0c04e9dfb8f89c6ffc015fe9e41a3e19ddc9bd04b77d33637d33c",
@@ -76,6 +80,7 @@
     "supabase/tests/bruno/GM-20-canonical/environments/Local.bru": "9f0a38e5c453b71e3df0fd0d09bc3feccde4aaf6fb71ccafb526fbac90763a5f",
     "supabase/tests/http/GM-20-canonical.http": "6358a8f3cdcff47bd4df351882eafc42cfd220fc1dddc13e7da05e5e8ef1872b",
     "tasks/backlog/GM-20.md": "28393702d3393d5da95abf4fe09c7e960e0521dfdb39393196d192da5e289116",
+    "tests/test_gm06_isolated_images.py": "9df9000d9a1cd35b475d30bded7e4c0c2e89a44f74fe2b26af409dc212e2782c",
     "tests/test_gm20_canonical_runner.py": "a3694c2bcf3228c33e1d30f6222439e0989844284925a7be7b2d626219b3a079"
   },
   "protectedSha256": {
@@ -120,5 +125,6 @@
   "gm19MergedIntoMain": "3325538c9ee5bfb842b424bca43a403fb16601b0",
   "currentValidation": "docs/evidence/roadmap-v2/GM-20/canonical-writer/decimal-create/",
   "reviewCorrection": "PR143 comment6500474678: create accepts integer-valued decimal JSON without changing guards",
-  "historicalValidation": "Earlier reports remain historical; previous-manifest.json pins metadata from588781c."
+  "historicalValidation": "Earlier reports remain historical; previous-manifest.json pins metadata from588781c.",
+  "imageCacheFollowup": "CI40903388804 preflight: also accept official Docker Hub spelling for unchanged pinned versions"
 }

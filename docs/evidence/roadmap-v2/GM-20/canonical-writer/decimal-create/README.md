@@ -40,7 +40,7 @@ the synthetic20-card release before the remaining cases; real39-card data is int
 - Maintained baseline B also passes; fresh-baseline-http.json is a compact rerun
   summary with its full runtime report checksum, not a rewritten historical report.
 - GM06 latest-chain isolated HTTP27 and canonical upgrade/down194 Pass.
-- Python646 tests OK,6 skipped; repository, task indexes and diff checks Pass.
+- Python648 tests OK,6 skipped; repository, task indexes and diff checks Pass.
 
 Node24.22.1, Python3.12.14/macOS arm64; pinned PostgreSQL17.11/PostgREST16.4/CLI2.120.0.
 Only existing dependencies used. Poll/race-dependent envelope totals can vary.
@@ -68,3 +68,14 @@ historical metadata for source588781c, not a current-tree checksum assertion.
 The parent MANIFEST pins the corrected source, docs and these review reports.
 Live Project start/merge gates pass; Trí's PR/ADR review is pending. No automatic
 Project status/approval change, merge or production deployment is claimed.
+
+## CI cache-name correction
+
+The decimal API suite passed CI on d8f1487. That run's GM06 isolated preflight
+found neither ECR nor GHCR, although baseline SQL identified the cached exact
+Docker Hub tag supabase/postgres:17.11.0.004. See IMAGE_CACHE_FOLLOWUP.md and the
+zero-assertion failure artifact. The runner now also accepts the official Docker
+Hub spelling at the same pinned version, without network pulls or reading service
+configuration. Cache selection/wrong-version/pre-allocation safety:6 tests Pass.
+Updated full Python648 (6 skipped) and fresh isolated HTTP27 Pass. The125-case
+Auth/REST reports retain unchanged SQL/HTTP/worker source hashes and remain valid.

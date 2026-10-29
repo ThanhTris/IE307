@@ -1,6 +1,6 @@
 {
   "result": "Pass",
-  "checkedAt": "2026-10-29T15:26:13.178340+00:00",
+  "checkedAt": "2026-10-29T15:43:02.960923+00:00",
   "scope": "fresh migration and real v4 HTTP compatibility; synthetic auth schema/users, not GoTrue",
   "existingCredentialsRead": false,
   "applicationDatabaseChanged": false,
@@ -8,7 +8,7 @@
   "httpBinding": "none; HTTP client inside owned network",
   "credentialMode": "new random PostgreSQL password and JWT secret, process/container memory only",
   "publishedReviewedHead": "a7f54d8e404a2d988d390fbd724938fea623e98b",
-  "testedHeadBeforePatchCommit": "588781c6bb56c5cca2c7c4cdf300d2b154c25c8c",
+  "testedHeadBeforePatchCommit": "d8f1487212531456382d34d059e8a80c11d2a034",
   "workingTreePatchIncluded": true,
   "mergeTarget": "fdee7fa6655d571eea0643752ebc77ab45c3a329",
   "cases": [
@@ -180,7 +180,7 @@
     "public.ecr.aws/supabase/postgrest:v16.4"
   ],
   "sourceHashes": {
-    "scripts/gm06_isolated_http_check.py": "a6aee111748b608a5a7c7eba0c866282473bcbe6e107e1c202ab8ab669bf7594",
+    "scripts/gm06_isolated_http_check.py": "2e9b11c4b6cc837cd898c2d1baedcb5ac06f8b8e5236e143f1c3e9388f49edc6",
     "scripts/gm06_v4_compat.py": "4c6048aad92d55c14d2175e2fb79d30a324263a818962694156bc1c08385f68e",
     "supabase/migrations/0001_core_schema.sql": "6733e28f282f600e627e675dccede3afef1efd37cf4a7cfe8d94af4cd02d30f5",
     "supabase/migrations/0002_food_import_receipts.sql": "eb80acba1f69bfb68b014a1ab5807e42d65db940a36d201f28db88172157f55e",

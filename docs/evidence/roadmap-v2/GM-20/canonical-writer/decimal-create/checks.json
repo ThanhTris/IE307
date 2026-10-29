@@ -17,7 +17,7 @@
   "gm06CanonicalUpgrade": 194,
   "gm06LatestHTTP": 27,
   "python": {
-    "tests": 646,
+    "tests": 648,
     "skipped": 6,
     "result": "Pass"
   },
@@ -26,5 +26,8 @@
   "diff": "Pass",
   "applicationDatabaseChanged": false,
   "productionPublished": false,
-  "approvalChanged": false
+  "approvalChanged": false,
+  "imageCacheUnitTests": 6,
+  "imageCacheFollowup": "exact Docker Hub pinned cache supported; failed prior CI preflight retained separately",
+  "latestChecksAfterCommit": "d8f1487212531456382d34d059e8a80c11d2a034"
 }
