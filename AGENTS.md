@@ -112,3 +112,14 @@ cứu; profile mới không yêu cầu entity nơi bán. Legacy FOOD_DATA_SPEC/G
 [ADR-018](docs/architecture/decisions/ADR-018-dish-catalogue-profile.md) **Proposed**;
 issue yêu cầu Trí duyệt trước sửa schema/API. Supplement ngày2026-10-23 dùng storage0026/schema0.8.0 và dish_session đã merge, không đổi schema/API hoặc tạo runtime thứ hai.
 Dataset1.1.0 giữ39 UUID, supplement meal có nguồn riêng; chạy `python3 scripts/gm40_catalogue_check.py` để validate/stage/import/readback và SQL/JWT HTTP trên owned QA DB/REST, worker verify rồi cleanup. CLI `supabase/seed/import_dish_catalogue.py` từ chối app DB, pin hash/version, atomic activation/restore; không migrate/reset app DB. Bundle vẫn draft/test_demo, không seed production/approval. ADR SQL ban đầu chưa duyệt; Android/FE/Places chưa kiểm.
+
+
+## GM15.3 — v4 pure domain
+
+Read [current v4 handoff](docs/evidence/roadmap-v2/GM-15/v4/HANDOFF.md) before receiving
+new decision vectors. `dishPolicyV4.ts` is opt-in; v2/v3 unchanged. Test with
+`node --test mobile/tests/dishPolicyV4.test.mjs` and export synthetic input/expected/actual
+using `node mobile/scripts/check-dish-v4.mjs --report /tmp/dish-v4.json`. The evaluator
+receives only complete ACKed ballots after GM20 authorizes evaluation. Its private
+candidate sets/seed/cohort are not a public snapshot; SQL/transaction/quorum/clock/
+secure entropy/persisted retry remain GM20 scope. No automatic Done or API rollout.

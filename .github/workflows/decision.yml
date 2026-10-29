@@ -12,13 +12,16 @@ jobs:
         with:
           node-version: '24'
       # Separate node:test suite: GM-02 Jest only discovers .test.ts/.test.tsx.
-      - run: node --test mobile/tests/decision.test.mjs mobile/tests/decisionSeeded.test.mjs
+      - run: node --test mobile/tests/decision.test.mjs mobile/tests/decisionSeeded.test.mjs mobile/tests/dishPolicy.test.mjs mobile/tests/dishPolicyV4.test.mjs
       - run: node mobile/scripts/check-decision.mjs --report /tmp/decision-actual.json
+      - run: node mobile/scripts/check-dish-v4.mjs --report /tmp/dish-v4-actual.json
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: decision-domain-actual
-          path: /tmp/decision-actual.json
+          path: |
+            /tmp/decision-actual.json
+            /tmp/dish-v4-actual.json
           if-no-files-found: error
           retention-days: 14
       - name: Report final job state
