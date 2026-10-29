@@ -51,7 +51,7 @@ class Database:
         return command(['docker','exec','-i',self.container,'psql','-X','-q','-h','/tmp','-U','postgres','-d','postgres','-v','ON_ERROR_STOP=1','-v','VERBOSITY=sqlstate','-At'],sql=sql)
 
 
-def run(report_path):
+def run(report_path, *, exercise=None, scope=None, extra_sources=()):
     namespace=str(uuid.uuid4()); tag=namespace.replace('-','')[:12]
     network='gm06-isolated-'+tag; pg='gm06-pg-'+tag; rest='gm06-rest-'+tag
     resources=[]; cases=[]
@@ -66,6 +66,9 @@ def run(report_path):
             'cases':cases,'images':[PG_IMAGE,REST_IMAGE]}
     parity_files=[ROOT/'tests/fixtures/decision-v2'/name for name in ('cases.json','roster-cases.json','seeded-cases.json')]
     report['sourceHashes']={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [Path(__file__),ROOT/'scripts/gm06_v4_compat.py',*sorted((ROOT/'supabase/migrations').glob('*.sql')),*parity_files]}
+    if scope is not None:
+        report['scope']=scope
+    report['sourceHashes'].update({str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in extra_sources})
     password=secrets.token_urlsafe(32); jwt_secret=secrets.token_urlsafe(48)
     def check(name, actual, expected=True):
         if actual!=expected: raise AssertionError(name)
@@ -188,6 +191,11 @@ def run(report_path):
         check('HTTP revoked group history disappears after cleanup',not any(x['scope']=='group' and x['roomId']==first['room'] for x in after))
         check('HTTP separate personal consent survives group revoke',any(x['scope']=='personal' and x['roomId']==first['room'] for x in after))
         check('v4 API never writes independent canonical table',db.psql('select count(*) from gm06_canonical.results;').strip(),'0')
+        if exercise is not None:
+            baseline_count=len(cases)
+            exercise(db,rpc,check,users)
+            report['baselineCompatibilityAssertions']=baseline_count
+            report['extensionAssertions']=len(cases)-baseline_count
         report['result']='Pass'
     except Exception as exc:
         report['failure']=str(exc)[:250]

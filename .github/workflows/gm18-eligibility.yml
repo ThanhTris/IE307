@@ -19,6 +19,7 @@ jobs:
           python-version: '3.12'
       - run: npm ci
       - run: npm ci --prefix mobile --no-audit --no-fund
+      - run: python -m pip install -r scripts/ci-requirements.txt
       - name: Pure domain fixtures and edge cases
         run: node --test mobile/tests/eligibility.test.mjs
       - name: Start local Supabase
@@ -33,6 +34,8 @@ jobs:
         env:
           GM18_PYTHON: python
         run: node scripts/gm18_http_check.mjs
+      - name: Dish-only catalogue, rich draft projection and real isolated HTTP
+        run: python scripts/gm18_dish_check.py --report "${{ runner.temp }}/gm18-dish-results.json"
       - name: Upload assertions and tested source hashes
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -40,6 +43,7 @@ jobs:
           name: gm18-eligibility-api
           path: |
             ${{ runner.temp }}/gm18-sql-results.json
+            ${{ runner.temp }}/gm18-dish-results.json
             docs/evidence/roadmap-v2/GM-18/integration/http-results.json
           if-no-files-found: warn
           retention-days: 14

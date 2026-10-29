@@ -1,5 +1,7 @@
 # GM-18 — Checks tích hợp GM-17
 
+> Supplement hiện hành2026-10-29: [GM18.2 dish-only API](dish-only/HANDOFF.md), [checks mới](dish-only/CHECKS.md). Phần bên dưới giữ evidence offering/coverage legacy; không là nghiệm thu API mới.
+
 2026-10-13. Owner Tâm, reviewer Trí, review Pending. Branch
 `codex/gm-18-catalogue-eligibility`, tested HEAD `19aacc4186c78471893b4c052f67872f67ffb678`
 + working-tree patch; target `origin/main` `4a38588f515c6121a38c605bf50e209d570b90bd`
