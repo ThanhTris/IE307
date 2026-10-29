@@ -32,7 +32,7 @@ Known lint baseline: 4 warnings in existing `contracts.ts`/`index.ts`; no lint e
 
 ## Supplement 2026-10-29 — GM-05.2 implementation branch
 
-Base/revision: branch `codex/gm05-figma-components`, based on `origin/main` SHA `5c339cf351ca4e37d95d4d0e8211be0ccb8a8af3`; changes remain uncommitted. Contract reference: `ui-figma-final/2026-10-25/GM-05.2`.
+Base/revision: implementation commit `4210278` on `codex/gm05-figma-components`, based on `origin/main` SHA `5c339cf351ca4e37d95d4d0e8211be0ccb8a8af3`. Contract reference: `ui-figma-final/2026-10-25/GM-05.2`.
 
 | Check | Input / expected | Actual | Result |
 | --- | --- | --- | --- |
@@ -69,4 +69,3 @@ This run supersedes the earlier Python environment-blocked result above. Git Pro
 | Repository checks | Validator, generated doc indexes, whitespace | `python scripts/validate_repository.py`: OK; `python scripts/task_readiness.py --check-docs`: match; `git diff --check`: clean | Pass |
 | Figma PDF source | Local design PDF and components/state frames | Opened in Chrome; 33 pages. Inspected components board p. 27 and tutorial/room/collection/request/shortage states p. 29–33 | Pass (reference inspection) |
 | Final app/device visual criteria | Expo Go Android same viewport, 320/360/412dp, 200% font, TalkBack, light/dark | No Android SDK/device or adb in environment; no app screenshots captured | Not run; blocks GM-05 Done |
-| Pull request | Owner review of code and recorded limits | Will be opened from the committed implementation branch; does not set task Done | Pending |

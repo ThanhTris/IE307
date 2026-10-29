@@ -22,7 +22,7 @@ Owner Trung / reviewer Trí theo phân công hiện hành. Contract `food-v1/roa
 ## Chạy và kiểm
 
 ```powershell
-Set-Location 'C:\Users\ADMIN\.codex\worktrees\b952\Project'
+Set-Location (git rev-parse --show-toplevel)
 Push-Location mobile
 npm ci --no-audit --no-fund
 npm run check
@@ -38,13 +38,13 @@ Xác nhận thủ công: Trí đã mở Expo Go và xác nhận các component h
 
 GM-09 có thể dùng component map và preview làm seam để dựng Home/create/join mock ngay sau khi GM-05 được review/merge; không chờ GM-25/30/39 hoặc dataset thật. GM-25/30 sau đó thay repository/native behavior tại composition/integration layer, không đưa API/GPS/QR/Maps vào shared component. Room code từ GM-07 mock/client hiện là 6 ký tự theo ROOM_SPEC (`GCD234` fixture); server production vẫn chịu uniqueness/authorization.
 
-## Blocker
+## Historical gate note
 
-Start gate live từng `BLOCKED_ON_BASE` vì artifact GM-02 trên `origin/main` khác hồ sơ bàn giao ở `mobile/README.md` và `mobile/tests/README.md`; merge gate đã có bản ghi `READY_FOR_MERGE_REVIEW` nhưng chưa refresh được do thiếu credential `read:project`. Owner GM-02/reviewer cần đối chiếu trước merge; code component độc lập đã được kiểm local nhưng chưa thể ghi task Done thay cho Project gate.
+Earlier GM-02 artifact/gate mismatch and Project credential failures were resolved for this revision. Current live results are recorded below and in [`CHECKS.md`](CHECKS.md). GM-05 still requires owner visual/device review before it can be marked Done.
 
 ## Supplement 2026-10-29 — GM-05.2 implementation branch
 
-Branch: `codex/gm05-figma-components`, based on `origin/main` / `5c339cf351ca4e37d95d4d0e8211be0ccb8a8af3`. Contract referenced by the current UI handoff: `ui-figma-final/2026-10-25/GM-05.2`. Working tree revision is uncommitted. This supplement records implementation and local checks only; it does not mark the task Done/Approved.
+Branch: `codex/gm05-figma-components`; implementation commit `4210278` (`feat(gm-05): align shared components with Figma PDF`), based on `origin/main` / `5c339cf351ca4e37d95d4d0e8211be0ccb8a8af3`. Contract referenced by the current UI handoff: `ui-figma-final/2026-10-25/GM-05.2`. This supplement records implementation and local checks only; it does not mark the task Done/Approved.
 
 ### Implementation and entry point
 
