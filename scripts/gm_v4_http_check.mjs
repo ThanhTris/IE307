@@ -34,7 +34,7 @@ const results=[];const users=[];const contractSamples=[];
 function sqlRaw(q){return execFileSync('docker',['exec','-i',container,'psql','-X','-q','-U','postgres','-d','postgres','-v','ON_ERROR_STOP=1','-At','-c',q],{encoding:'utf8'}).trim();}
 function sql(q){const inspected=JSON.parse(execFileSync('docker',['inspect',container],{encoding:'utf8'}))[0];const labels=inspected.Config.Labels||{};assert.equal(inspected.Name,'/'+container);assert.equal(labels['com.supabase.cli.project'],project);assert.equal(String(labels['com.supabase.cli.workdir']||'').replaceAll('\\','/').toLowerCase(),String(expectedWorkdir).replaceAll('\\','/').toLowerCase());assert.equal(inspected.State.Running,true);const owner=qaMode==='gm03'?sqlRaw("select owner_uuid::text from gm03_qa_private.owner_manifest where run_id='"+manifest.runId.replaceAll("'","''")+"';"):sqlRaw('select namespace::text from public.gm40_qa_owner');assert.equal(owner,qaMode==='gm03'?manifest.ownerUuid:process.env.GM_V4_OWNER_NAMESPACE,'QA owner marker must match this run');return sqlRaw(q);}
 async function guest(name){const r=await fetch(base+'/auth/v1/signup',{method:'POST',headers:{apikey:key,'content-type':'application/json'},body:JSON.stringify({data:{display_name:name,gm07_v4_qa:project}})});const b=await r.json();assert.equal(r.status,200,'guest signup failed '+r.status);assert.ok(b.access_token);const u={id:b.user.id,token:b.access_token,refresh:b.refresh_token};users.push(u);return u;}
-async function api(u,command,args={},options={}){const payload={contractVersion,...args},request={command,payload};const r=await fetch(base+'/rest/v1/rpc/dish_session',{method:'POST',headers:{apikey:key,...(u?{authorization:'Bearer '+u.token}:{}),'content-type':'application/json'},body:JSON.stringify(request)});let body;try{body=await r.json();}catch{body={};}contractSamples.push({request,response:body,...(options.requestValid===false?{requestValid:false}:{})});return {status:r.status,body};}
+async function api(u,command,args={},options={}){const payload={contractVersion,...args},request={command,payload};const r=await fetch(base+'/rest/v1/rpc/dish_session',{method:'POST',headers:{apikey:key,...(u?{authorization:'Bearer '+u.token}:{}),'content-type':'application/json'},body:options.serialize?options.serialize(request):JSON.stringify(request)});let body;try{body=await r.json();}catch{body={};}contractSamples.push({request,response:body,...(options.requestValid===false?{requestValid:false}:{})});return {status:r.status,body};}
 async function legacyRpc(u,name,args={}){const r=await fetch(base+'/rest/v1/rpc/'+name,{method:'POST',headers:{apikey:key,...(u?{authorization:'Bearer '+u.token}:{}),'content-type':'application/json'},body:JSON.stringify(args)});let body;try{body=await r.json();}catch{body={};}return {status:r.status,body};}
 function pass(name,expected,actual){assert.deepEqual(actual,expected,name);results.push({case:name,result:'Pass',expected,actual});console.log('PASS',name);}
 function expectOk(response,name){assert.equal(response.status,200,name+' http '+response.status+' '+(response.body.error?.messageKey??response.body.message??''));assert.equal(response.body.ok,true,name+' rpc rejected '+(response.body.error?.messageKey??''));return response.body.data;}
@@ -50,6 +50,11 @@ async function submit(u,room,s,votes,id){return api(u,'submit',{...versionArgs(r
 async function setActive(id){sql("update dish_v3_private.catalogues set active=false where active; update dish_v3_private.catalogues set active=true where id='"+id.replaceAll("'","''")+"';");}
 
 await waitWorker();
+const settingsMigration='supabase/migrations/0034_gm19_settings_stability.sql';
+const settingsMigrationText=readFileSync(settingsMigration,'utf8');
+const expectedDispatchBody=settingsMigrationText.split('as $$')[1].split('$$;')[0];
+pass('GM19 deployed dispatcher body matches migration',createHash('sha256').update(expectedDispatchBody).digest('hex'),
+ sql("select encode(extensions.digest(convert_to(prosrc,'UTF8'),'sha256'),'hex') from pg_proc where oid='dish_v4_private.dispatch(text,jsonb)'::regprocedure"));
 assert.equal(sql("select count(*) from public.schema_versions where schema_version='0.9.1' and contract_id='dish-session-v4/roadmap-v2/GM-07.B';"),'1','v4 account-consent migration must be present in the owned QA database');
 const host=await guest('v4-host'), member=await guest('v4-member'), outsider=await guest('v4-outsider');
 // Real GM-40 catalogue shortage checks before switching to isolated synthetic coverage.
@@ -85,6 +90,127 @@ const s1=await snapshot(host,roomId);
 pass('join snapshots member default preference','warm',s1.members.find(m=>m.userId===member.id) ? (await snapshot(member,roomId)).ownPreferences.temperature : null);
 pass('room reports ranking unsupported','UNSUPPORTED',s1.preferenceRanking);
 pass('snapshot contains no ready field',false,s1.members.some(m=>Object.hasOwn(m,'ready')));
+
+// GM19.2 regression: host-only settings and stable, versioned pool content.
+// Separate synthetic identities keep these attempts independent of baseline quotas.
+{
+ const owner=await guest('gm19-settings-host'), player=await guest('gm19-settings-member');
+ const madeSettings=await create(owner), rid=madeSettings.roomId;
+ await join(player,madeSettings.code,'GM19 member');
+ const mark=()=>sql("select encode(extensions.digest(convert_to(to_jsonb(r)::text||to_jsonb(s)::text,'UTF8'),'sha256'),'hex') from public.rooms r join dish_v4_private.sessions s on s.room_id=r.id where r.id='"+rid+"'");
+ const beforeReject=mark();let current=await snapshot(owner,rid);
+ expectFail(await api(player,'updateSettings',{requestId:requestId('member-settings'),roomId:rid,expectedVersion:current.version,settings:{dishCount:11,mealSlot:'lunch',desiredAt:null}}),'NOT_HOST',403,'GM19 member cannot edit host settings');
+ expectFail(await api(outsider,'updateSettings',{requestId:requestId('outsider-settings'),roomId:rid,expectedVersion:current.version,settings:current.settings}),'NOT_MEMBER',403,'GM19 outsider cannot edit settings');
+ pass('GM19 denied edits preserve entire room/session',beforeReject,mark());
+ const noOpRequest={requestId:requestId('settings-noop'),roomId:rid,expectedVersion:current.version,settings:current.settings};
+ const noOpResponse=await api(owner,'updateSettings',noOpRequest), noOp=expectOk(noOpResponse,'GM19 fresh settings no-op');
+ let after=await snapshot(owner,rid);
+ pass('GM19 no-op increments room version once',current.version+1,after.version);
+ pass('GM19 no-op preserves poolVersion',current.poolVersion,after.poolVersion);
+ pass('GM19 no-op ACK reports retained poolVersion',current.poolVersion,noOp.poolVersion);
+ pass('GM19 no-op preserves complete cards, order and row IDs',current.pool,after.pool);
+ current=after;const acceptedMark=mark();
+ pass('GM19 exact retry returns saved ACK',noOpResponse,await api(owner,'updateSettings',noOpRequest));
+ pass('GM19 replay changes no room/session data',acceptedMark,mark());
+ expectFail(await api(owner,'updateSettings',{...noOpRequest,settings:{...noOpRequest.settings,desiredAt:'2030-01-01T12:00:00Z'}}),'REQUEST_ID_REUSED',409,'GM19 requestId cannot change payload');
+ pass('GM19 reused requestId preserves state',acceptedMark,mark());
+ for(const desiredAt of ['2030-01-01T12:00:00Z','2030-01-01T19:00:00+07:00',null]){
+  const ack=expectOk(await api(owner,'updateSettings',{requestId:requestId('time-only'),roomId:rid,expectedVersion:current.version,settings:{...current.settings,desiredAt}}),'GM19 time-only edit');
+  after=await snapshot(owner,rid);
+  pass('GM19 time-only accepts desiredAt '+String(desiredAt),desiredAt,ack.settings.desiredAt);
+  pass('GM19 time-only room version '+String(desiredAt),current.version+1,after.version);
+  pass('GM19 time-only keeps poolVersion '+String(desiredAt),current.poolVersion,after.poolVersion);
+  pass('GM19 time-only keeps cards/IDs '+String(desiredAt),current.pool,after.pool);current=after;
+ }
+ const staleMark=mark();
+ expectFail(await api(owner,'updateSettings',{requestId:requestId('stale-settings'),roomId:rid,expectedVersion:current.version-1,settings:{...current.settings,dishCount:11}}),'VERSION_CONFLICT',409,'GM19 stale version rejected');
+ expectFail(await api(owner,'updateSettings',{requestId:requestId('fraction-settings'),roomId:rid,expectedVersion:current.version,settings:{...current.settings,dishCount:10.5}},{requestValid:false}),'INVALID_INPUT',400,'GM19 fractional count rejected');
+ expectFail(await api(owner,'updateSettings',{requestId:requestId('ranking-settings'),roomId:rid,expectedVersion:current.version,settings:{...current.settings,ranking:true}},{requestValid:false}),'INVALID_INPUT',400,'GM19 unsupported ranking cannot reroll');
+ pass('GM19 invalid/stale attempts preserve room/session',staleMark,mark());
+ // Send an actual 11.0 JSON numeric lexeme; JSON Schema integer accepts it.
+ const counted=expectOk(await api(owner,'updateSettings',{requestId:requestId('count-settings'),roomId:rid,expectedVersion:current.version,settings:{...current.settings,dishCount:11}},
+  {serialize:r=>JSON.stringify(r).replace('"dishCount":11','"dishCount":11.0')}),'GM19 valid integer-valued JSON number');
+ after=await snapshot(owner,rid);
+ pass('GM19 count edit uses exact requested size',11,after.pool.length);
+ pass('GM19 count edit increments poolVersion once',current.poolVersion+1,after.poolVersion);
+ pass('GM19 count ACK matches snapshot',after.poolVersion,counted.poolVersion);current=after;
+ expectOk(await api(owner,'updateSettings',{requestId:requestId('meal-settings'),roomId:rid,expectedVersion:current.version,settings:{...current.settings,mealSlot:'dinner'}}),'GM19 host meal edit');
+ after=await snapshot(owner,rid);
+ const content=p=>p.map(({roundDishId,...card})=>card).sort((a,b)=>a.dishId.localeCompare(b.dishId));
+ const changed=JSON.stringify(content(current.pool))!==JSON.stringify(content(after.pool));
+ pass('GM19 meal edit poolVersion follows actual card change',current.poolVersion+(changed?1:0),after.poolVersion);
+ pass('GM19 meal edit retains exact count',11,after.pool.length);current=after;
+ expectOk(await api(owner,'updateSettings',{requestId:requestId('full-settings'),roomId:rid,expectedVersion:current.version,settings:{dishCount:20,mealSlot:'lunch',desiredAt:null}}),'GM19 full synthetic pool');
+ current=await snapshot(owner,rid);
+ expectOk(await api(owner,'updateSettings',{requestId:requestId('same-cards-meal'),roomId:rid,expectedVersion:current.version,settings:{...current.settings,mealSlot:'dinner'}}),'GM19 all-20 meal edit');
+ after=await snapshot(owner,rid);
+ pass('GM19 same 20 cards across meals retain poolVersion',current.poolVersion,after.poolVersion);
+ pass('GM19 same 20 cards across meals retain exact rows/order',current.pool,after.pool);current=after;
+ // The room's catalogue is pinned: changing the active release is not a reroll.
+ await setActive(realRelease);
+ expectOk(await api(owner,'updateSettings',{requestId:requestId('pinned-settings'),roomId:rid,expectedVersion:current.version,settings:current.settings}),'GM19 no-op with other active release');
+ after=await snapshot(owner,rid);
+ pass('GM19 no-op uses pinned catalogue/pool',current.pool,after.pool);current=after;
+ await setActive(syntheticRelease);
+ const duplicate={requestId:requestId('duplicate-settings'),roomId:rid,expectedVersion:current.version,settings:current.settings};
+ const copies=await Promise.all(Array.from({length:6},()=>api(owner,'updateSettings',duplicate)));
+ copies.forEach(r=>expectOk(r,'GM19 concurrent duplicate'));
+ pass('GM19 six concurrent duplicate settings share one ACK',true,copies.every(r=>JSON.stringify(r)===JSON.stringify(copies[0])));
+ after=await snapshot(owner,rid);
+ pass('GM19 duplicate race commits exactly one room mutation',current.version+1,after.version);
+ pass('GM19 duplicate race preserves pool',current.pool,after.pool);
+ pass('GM19 duplicate race stores one ACK','1',sql("select count(*) from dish_v4_private.request_acks where user_id='"+owner.id+"' and request_id='"+duplicate.requestId+"'"));current=after;
+ const competing=await Promise.all([11,12].map(dishCount=>api(owner,'updateSettings',{requestId:requestId('competing-settings'),roomId:rid,expectedVersion:current.version,settings:{dishCount,mealSlot:'lunch',desiredAt:null}})));
+ pass('GM19 same-version settings race accepts one',1,competing.filter(r=>r.body.ok).length);
+ expectFail(competing.find(r=>!r.body.ok),'VERSION_CONFLICT',409,'GM19 same-version settings loser');
+ after=await snapshot(owner,rid);
+ pass('GM19 competing edit increments version once',current.version+1,after.version);
+ pass('GM19 competing edit increments poolVersion once',current.poolVersion+1,after.poolVersion);
+ pass('GM19 competing edit retains winning exact count',competing.find(r=>r.body.ok).body.data.settings.dishCount,after.pool.length);current=after;
+ expectOk(await api(owner,'start',{requestId:requestId('settings-start'),roomId:rid,expectedVersion:current.version}),'GM19 start locks edited pool');
+ current=await snapshot(owner,rid);const lockedMark=mark();
+ expectFail(await api(owner,'updateSettings',{requestId:requestId('locked-settings'),roomId:rid,expectedVersion:current.version,settings:current.settings}),'ROOM_LOCKED',409,'GM19 post-start settings blocked');
+ pass('GM19 rejected locked edit preserves room/session',lockedMark,mark());
+ pass('GM19 old ACK replays after later edits and start',noOpResponse,await api(owner,'updateSettings',noOpRequest));
+ pass('GM19 old ACK replay does not resurrect lobby',lockedMark,mark());
+ for(let attempt=0;attempt<2;attempt++){
+  const racedRoom=await create(owner);await join(player,racedRoom.code,'GM19 racer');
+  const initial=await snapshot(owner,racedRoom.roomId);
+  const [editRace,startRace]=await Promise.all([
+   api(owner,'updateSettings',{requestId:requestId('race-edit'),roomId:racedRoom.roomId,expectedVersion:initial.version,settings:{dishCount:11,mealSlot:'dinner',desiredAt:null}}),
+   api(owner,'start',{requestId:requestId('race-start'),roomId:racedRoom.roomId,expectedVersion:initial.version})]);
+  pass('GM19 start/settings race accepts one '+attempt,1,[editRace,startRace].filter(r=>r.body.ok).length);
+  expectFail([editRace,startRace].find(r=>!r.body.ok),'VERSION_CONFLICT',409,'GM19 start/settings race loser '+attempt);
+  const committed=await snapshot(owner,racedRoom.roomId);
+  pass('GM19 start/settings version increments once '+attempt,initial.version+1,committed.version);
+  pass('GM19 start/settings state follows winner '+attempt,editRace.body.ok?'LOBBY':'ROUND_1',committed.state);
+  pass('GM19 start/settings exact pool follows winner '+attempt,editRace.body.ok?11:10,committed.pool.length);
+  pass('GM19 start/settings poolVersion follows winner '+attempt,initial.poolVersion+(editRace.body.ok?1:0),committed.poolVersion);
+  if(!editRace.body.ok)pass('GM19 winning start pins original cards '+attempt,initial.pool,committed.pool);
+ }
+ // Equal pinned inputs must select the same cards regardless of intervening
+ // time-only room-version increments. Seed equality is synthetic fixture setup.
+ const timed=await create(owner), direct=await create(owner);
+ sql("update dish_v4_private.sessions set pool_seed=(select pool_seed from dish_v4_private.sessions where room_id='"+timed.roomId+"') where room_id='"+direct.roomId+"'");
+ const timedBefore=await snapshot(owner,timed.roomId);
+ expectOk(await api(owner,'updateSettings',{requestId:requestId('time-before-count'),roomId:timed.roomId,expectedVersion:timedBefore.version,settings:{...timedBefore.settings,desiredAt:'2030-01-01T12:00:00Z'}}),'GM19 time before meaningful edit');
+ for(const room of [timed,direct]){
+  const before=await snapshot(owner,room.roomId);
+  expectOk(await api(owner,'updateSettings',{requestId:requestId('pinned-seed-count'),roomId:room.roomId,expectedVersion:before.version,settings:{...before.settings,dishCount:11}}),'GM19 count after room-version difference');
+ }
+ pass('GM19 time-only versions do not influence subsequent pool content',content((await snapshot(owner,direct.roomId)).pool),content((await snapshot(owner,timed.roomId)).pool));
+ // Dedicated synthetic release: lunch20/snack3, so a meal edit must fail atomically.
+ const shortId='gm19-shortage-'+randomUUID();
+ sql("update dish_v3_private.catalogues set active=false where active; insert into dish_v3_private.catalogues(id,source_sha,cards,test_only,active) select '"+shortId+"',encode(extensions.digest('gm19 synthetic shortage','sha256'),'hex'),jsonb_agg(jsonb_set(value,'{mealSlots}',case when ord<=3 then '[\"lunch\",\"snack\"]'::jsonb else '[\"lunch\"]'::jsonb end)),true,true from dish_v3_private.catalogues c cross join lateral jsonb_array_elements(c.cards) with ordinality a(value,ord) where c.id='"+syntheticRelease.replaceAll("'","''")+"';");
+ const shortRoom=await create(owner,20,'lunch'), shortBefore=await snapshot(owner,shortRoom.roomId);
+ await setActive(syntheticRelease);
+ expectFail(await api(owner,'updateSettings',{requestId:requestId('shortage-settings'),roomId:shortRoom.roomId,expectedVersion:shortBefore.version,settings:{dishCount:10,mealSlot:'snack',desiredAt:null}}),'INSUFFICIENT_DISHES',409,'GM19 pinned catalogue shortage blocks edit');
+ const shortAfter=await snapshot(owner,shortRoom.roomId);
+ pass('GM19 shortage preserves version/pool/settings',[shortBefore.version,shortBefore.poolVersion,shortBefore.settings,shortBefore.pool],[shortAfter.version,shortAfter.poolVersion,shortAfter.settings,shortAfter.pool]);
+ pass('GM19 shortage reports actual availability',{available:3,requested:10},(await api(owner,'updateSettings',{requestId:requestId('shortage-details'),roomId:shortRoom.roomId,expectedVersion:shortAfter.version,settings:{dishCount:10,mealSlot:'snack',desiredAt:null}})).body.error.details);
+ pass('GM19 dispatcher remains inaccessible directly',false,sql("select has_function_privilege('authenticated','dish_v4_private.dispatch(text,jsonb)','EXECUTE') or has_function_privilege('anon','dish_v4_private.dispatch(text,jsonb)','EXECUTE') or has_function_privilege('service_role','dish_v4_private.dispatch(text,jsonb)','EXECUTE')")!=='f');
+ pass('GM19 supplement ledger deployed','1',sql("select count(*) from public.schema_versions where schema_version='0.11.1' and contract_id='dish-session-v4/roadmap-v2/GM-19.2'"));
+}
 
 // Host-owned lobby edits keep exact requested count and rotate pool version; no silent reduction.
 let edit=expectOk(await api(host,'updateSettings',{requestId:requestId('settings'),roomId,expectedVersion:s1.version,settings:{dishCount:20,mealSlot:'dinner',desiredAt:null}}),'update settings 20');
@@ -303,6 +429,7 @@ const schemaVersion=sql("select schema_version from public.schema_versions where
 assert.equal(schemaVersion,'0.9.2','QA must include the consent policy isolation migration');
 if(qaMode==='gm03')assert.equal(manifest.schemaVersion,schemaVersion,'Manifest must match the deployed schema patch');
 const report={result:'Pass',runId:qaMode==='gm03'?manifest.runId:project,target:'dedicated Supabase QA project '+project,branch:qaMode==='gm03'?manifest.branch:(process.env.GITHUB_REF_NAME||'local'),sha:revision,contractVersion,policyVersion,schemaVersion,schemaSha256:sourceHashes['docs/architecture/schemas/dish-session-v4b.schema.json'],sourceHashes,dataset:{realRelease,realSourceSha256,realCount,realMealCounts:{breakfast:mealCount('breakfast'),lunch:mealCount('lunch'),dinner:mealCount('dinner'),snack:mealCount('snack')},syntheticRelease,syntheticSha256,syntheticCount,syntheticFixtureOnly},schemaValidation:schemaSummary,caseCount:results.length,cases:results,credentialsWritten:false,applicationDatabaseChanged:false};
+report.settingsSupplement={contract:'dish-session-v4/roadmap-v2/GM-19.2',schemaVersion:'0.11.1',migration:settingsMigration,migrationSha256:sourceHashes[settingsMigration],requestResponseSamples:contractSamples.filter(x=>x.request.command==='updateSettings')};
 const reportPath=qaMode==='ci'&&process.env.GM_V4_REPORT_PATH?process.env.GM_V4_REPORT_PATH:resolve(qa,'api-check-results.json');
 await writeFile(reportPath,JSON.stringify(report,null,2)+'\n','utf8');
 console.log(JSON.stringify({result:'PASS',caseCount:results.length,contractEnvelopesValidated:schemaSummary.envelopesValidated,report:reportPath,applicationDatabaseChanged:false}));

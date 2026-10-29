@@ -1,0 +1,27 @@
+{
+  "applicationDatabaseChanged": false,
+  "removedOwnedBackupVolumes": [
+    {
+      "name": "supabase_db_ie307-dish-v4-qa-20261029-190851183000-1",
+      "projectLabelVerified": true,
+      "unusedVerified": true
+    },
+    {
+      "name": "supabase_db_ie307-dish-v4-qa-20261029-298738424000-1",
+      "projectLabelVerified": true,
+      "unusedVerified": true
+    },
+    {
+      "name": "supabase_db_ie307-dish-v4-qa-20261029-495922788000-1",
+      "projectLabelVerified": true,
+      "unusedVerified": true
+    },
+    {
+      "name": "supabase_db_ie307-dish-v4-qa-20261029-684484404000-1",
+      "projectLabelVerified": true,
+      "unusedVerified": true
+    }
+  ],
+  "applicationContainerPreserved": true,
+  "ownedContainersRemain": false
+}
