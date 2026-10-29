@@ -610,6 +610,7 @@
         "supabase/tests/food_eligibility.sql",
         "mobile/src/domain/eligibility/index.ts",
         "docs/evidence/roadmap-v2/GM-18/CHECKS.md",
+        "docs/evidence/roadmap-v2/GM-18/HANDOFF.md",
         "supabase/tests/http/GM-18.http"
       ],
       "inputs": [
@@ -1783,17 +1784,7 @@
         },
         {
           "task": "GM-18",
-          "artifact": "supabase/migrations/0018_food_eligibility.sql",
-          "gate": "start"
-        },
-        {
-          "task": "GM-19",
-          "artifact": "supabase/migrations/0019_room_lifecycle.sql",
-          "gate": "start"
-        },
-        {
-          "task": "GM-20",
-          "artifact": "supabase/migrations/0023_finalize.sql",
+          "artifact": "docs/evidence/roadmap-v2/GM-18/HANDOFF.md",
           "gate": "start"
         }
       ],

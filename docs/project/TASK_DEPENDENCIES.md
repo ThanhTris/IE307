@@ -65,7 +65,7 @@ READY_TO_CLAIM: đủ start deps, chưa nhận việc (bao gồm task Needs Upda
 | [GM-37](../../tasks/backlog/GM-37.md) | BLOCKED | [GM-04](../../tasks/backlog/GM-04.md), [GM-07](../../tasks/backlog/GM-07.md), [GM-34](../../tasks/backlog/GM-34.md) | BLOCKED | [GM-04](../../tasks/backlog/GM-04.md), [GM-07](../../tasks/backlog/GM-07.md), [GM-34](../../tasks/backlog/GM-34.md) |
 | [GM-38](../../tasks/backlog/GM-38.md) | BLOCKED | [GM-04](../../tasks/backlog/GM-04.md), [GM-07](../../tasks/backlog/GM-07.md), [GM-18](../../tasks/backlog/GM-18.md), [GM-21](../../tasks/backlog/GM-21.md), [GM-34](../../tasks/backlog/GM-34.md) | BLOCKED | [GM-04](../../tasks/backlog/GM-04.md), [GM-07](../../tasks/backlog/GM-07.md), [GM-18](../../tasks/backlog/GM-18.md), [GM-21](../../tasks/backlog/GM-21.md), [GM-34](../../tasks/backlog/GM-34.md) |
 | [GM-39](../../tasks/backlog/GM-39.md) | BLOCKED | [GM-05](../../tasks/backlog/GM-05.md), [GM-09](../../tasks/backlog/GM-09.md), [GM-10](../../tasks/backlog/GM-10.md), [GM-11](../../tasks/backlog/GM-11.md), [GM-12](../../tasks/backlog/GM-12.md), [GM-13](../../tasks/backlog/GM-13.md), [GM-14](../../tasks/backlog/GM-14.md) | BLOCKED | [GM-05](../../tasks/backlog/GM-05.md), [GM-09](../../tasks/backlog/GM-09.md), [GM-10](../../tasks/backlog/GM-10.md), [GM-11](../../tasks/backlog/GM-11.md), [GM-12](../../tasks/backlog/GM-12.md), [GM-13](../../tasks/backlog/GM-13.md), [GM-14](../../tasks/backlog/GM-14.md) |
-| [GM-40](../../tasks/backlog/GM-40.md) | BLOCKED | [GM-04](../../tasks/backlog/GM-04.md), [GM-06](../../tasks/backlog/GM-06.md), [GM-07](../../tasks/backlog/GM-07.md), [GM-08](../../tasks/in-progress/GM-08.md), [GM-18](../../tasks/backlog/GM-18.md), [GM-19](../../tasks/backlog/GM-19.md), [GM-20](../../tasks/backlog/GM-20.md) | BLOCKED | [GM-04](../../tasks/backlog/GM-04.md), [GM-06](../../tasks/backlog/GM-06.md), [GM-07](../../tasks/backlog/GM-07.md), [GM-08](../../tasks/in-progress/GM-08.md), [GM-18](../../tasks/backlog/GM-18.md), [GM-19](../../tasks/backlog/GM-19.md), [GM-20](../../tasks/backlog/GM-20.md) |
+| [GM-40](../../tasks/backlog/GM-40.md) | BLOCKED | [GM-04](../../tasks/backlog/GM-04.md), [GM-06](../../tasks/backlog/GM-06.md), [GM-07](../../tasks/backlog/GM-07.md), [GM-08](../../tasks/in-progress/GM-08.md), [GM-18](../../tasks/backlog/GM-18.md) | BLOCKED | [GM-04](../../tasks/backlog/GM-04.md), [GM-06](../../tasks/backlog/GM-06.md), [GM-07](../../tasks/backlog/GM-07.md), [GM-08](../../tasks/in-progress/GM-08.md), [GM-18](../../tasks/backlog/GM-18.md) |
 
 ## Lớp mở khóa bắt đầu
 
@@ -81,9 +81,9 @@ Lớp topo không là barrier cả nhóm hay deadline. Chỉ chờ dependency c�
 | 5 | [GM-09](../../tasks/backlog/GM-09.md), [GM-10](../../tasks/backlog/GM-10.md), [GM-11](../../tasks/backlog/GM-11.md), [GM-12](../../tasks/backlog/GM-12.md), [GM-13](../../tasks/backlog/GM-13.md), [GM-14](../../tasks/backlog/GM-14.md), [GM-15](../../tasks/backlog/GM-15.md), [GM-16](../../tasks/in-progress/GM-16.md) | GM-09: Tuấn; GM-10: Tuấn; GM-11: Trung; GM-12: Trang; GM-13: Tuấn; GM-14: Trung; GM-15: Vinh; GM-16: Trí |
 | 6 | [GM-17](../../tasks/backlog/GM-17.md), [GM-39](../../tasks/backlog/GM-39.md) | GM-17: Trí; GM-39: Trang |
 | 7 | [GM-18](../../tasks/backlog/GM-18.md) | GM-18: Tâm |
-| 8 | [GM-19](../../tasks/backlog/GM-19.md), [GM-24](../../tasks/backlog/GM-24.md) | GM-19: Trí; GM-24: Trang |
+| 8 | [GM-19](../../tasks/backlog/GM-19.md), [GM-24](../../tasks/backlog/GM-24.md), [GM-40](../../tasks/backlog/GM-40.md) | GM-19: Trí; GM-24: Trang; GM-40: Vinh |
 | 9 | [GM-20](../../tasks/backlog/GM-20.md), [GM-22](../../tasks/backlog/GM-22.md) | GM-20: Vinh; GM-22: Trí |
-| 10 | [GM-21](../../tasks/backlog/GM-21.md), [GM-23](../../tasks/backlog/GM-23.md), [GM-40](../../tasks/backlog/GM-40.md) | GM-21: Tâm; GM-23: Trí; GM-40: Vinh |
+| 10 | [GM-21](../../tasks/backlog/GM-21.md), [GM-23](../../tasks/backlog/GM-23.md) | GM-21: Tâm; GM-23: Trí |
 | 11 | [GM-25](../../tasks/backlog/GM-25.md) | GM-25: Trang |
 | 12 | [GM-26](../../tasks/backlog/GM-26.md), [GM-28](../../tasks/backlog/GM-28.md) | GM-26: Trang; GM-28: Trung |
 | 13 | [GM-27](../../tasks/backlog/GM-27.md), [GM-29](../../tasks/backlog/GM-29.md), [GM-31](../../tasks/backlog/GM-31.md) | GM-27: Trang; GM-29: Trung; GM-31: Trung |
@@ -106,9 +106,9 @@ Lớp topo không là barrier cả nhóm hay deadline. Chỉ chờ dependency c�
 | 5 | [GM-09](../../tasks/backlog/GM-09.md), [GM-10](../../tasks/backlog/GM-10.md), [GM-11](../../tasks/backlog/GM-11.md), [GM-12](../../tasks/backlog/GM-12.md), [GM-13](../../tasks/backlog/GM-13.md), [GM-14](../../tasks/backlog/GM-14.md), [GM-15](../../tasks/backlog/GM-15.md), [GM-16](../../tasks/in-progress/GM-16.md) | GM-09: Tuấn; GM-10: Tuấn; GM-11: Trung; GM-12: Trang; GM-13: Tuấn; GM-14: Trung; GM-15: Vinh; GM-16: Trí |
 | 6 | [GM-17](../../tasks/backlog/GM-17.md), [GM-39](../../tasks/backlog/GM-39.md) | GM-17: Trí; GM-39: Trang |
 | 7 | [GM-18](../../tasks/backlog/GM-18.md) | GM-18: Tâm |
-| 8 | [GM-19](../../tasks/backlog/GM-19.md), [GM-24](../../tasks/backlog/GM-24.md) | GM-19: Trí; GM-24: Trang |
+| 8 | [GM-19](../../tasks/backlog/GM-19.md), [GM-24](../../tasks/backlog/GM-24.md), [GM-40](../../tasks/backlog/GM-40.md) | GM-19: Trí; GM-24: Trang; GM-40: Vinh |
 | 9 | [GM-20](../../tasks/backlog/GM-20.md), [GM-22](../../tasks/backlog/GM-22.md) | GM-20: Vinh; GM-22: Trí |
-| 10 | [GM-21](../../tasks/backlog/GM-21.md), [GM-23](../../tasks/backlog/GM-23.md), [GM-40](../../tasks/backlog/GM-40.md) | GM-21: Tâm; GM-23: Trí; GM-40: Vinh |
+| 10 | [GM-21](../../tasks/backlog/GM-21.md), [GM-23](../../tasks/backlog/GM-23.md) | GM-21: Tâm; GM-23: Trí |
 | 11 | [GM-25](../../tasks/backlog/GM-25.md) | GM-25: Trang |
 | 12 | [GM-26](../../tasks/backlog/GM-26.md), [GM-28](../../tasks/backlog/GM-28.md) | GM-26: Trang; GM-28: Trung |
 | 13 | [GM-27](../../tasks/backlog/GM-27.md), [GM-29](../../tasks/backlog/GM-29.md), [GM-31](../../tasks/backlog/GM-31.md) | GM-27: Trang; GM-29: Trung; GM-31: Trung |
