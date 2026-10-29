@@ -1,0 +1,761 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gi-cung-duoc.local/schemas/gm18-dish-catalogue.schema.json",
+  "title": "GM18.2 additive dish catalogue/preview contract, review Pending",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/success"
+    },
+    {
+      "$ref": "#/$defs/error"
+    }
+  ],
+  "$defs": {
+    "softPreferences": {
+      "type": "object",
+      "required": [
+        "cuisineIds",
+        "categoryIds",
+        "temperature",
+        "flavor",
+        "budget",
+        "avoidRecent"
+      ],
+      "properties": {
+        "cuisineIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/uuid"
+          }
+        },
+        "categoryIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/uuid"
+          }
+        },
+        "temperature": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "hot",
+            "warm",
+            "cold",
+            "ambient",
+            "unknown",
+            null
+          ]
+        },
+        "flavor": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/flavorProjection"
+            }
+          ]
+        },
+        "budget": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "required": [
+                "maximum",
+                "currency",
+                "unit"
+              ],
+              "properties": {
+                "maximum": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "currency": {
+                  "type": "string",
+                  "pattern": "^[A-Z]{3}$"
+                },
+                "unit": {
+                  "enum": [
+                    "portion",
+                    "item",
+                    "person",
+                    "group",
+                    "kg",
+                    "menu_item_unspecified"
+                  ]
+                }
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        "avoidRecent": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "flavorProjection": {
+      "type": "object",
+      "required": [
+        "spicy",
+        "salty",
+        "sweet",
+        "sour"
+      ],
+      "properties": {
+        "spicy": {
+          "type": "object",
+          "required": [
+            "present",
+            "intensity"
+          ],
+          "properties": {
+            "present": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "intensity": {
+              "enum": [
+                "none",
+                "low",
+                "medium",
+                "high",
+                "unknown"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "salty": {
+          "type": "object",
+          "required": [
+            "present",
+            "intensity"
+          ],
+          "properties": {
+            "present": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "intensity": {
+              "enum": [
+                "none",
+                "low",
+                "medium",
+                "high",
+                "unknown"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "sweet": {
+          "type": "object",
+          "required": [
+            "present",
+            "intensity"
+          ],
+          "properties": {
+            "present": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "intensity": {
+              "enum": [
+                "none",
+                "low",
+                "medium",
+                "high",
+                "unknown"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "sour": {
+          "type": "object",
+          "required": [
+            "present",
+            "intensity"
+          ],
+          "properties": {
+            "present": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "intensity": {
+              "enum": [
+                "none",
+                "low",
+                "medium",
+                "high",
+                "unknown"
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "uuid": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "priceReference": {
+      "type": "object",
+      "required": [
+        "amount",
+        "currency",
+        "unit",
+        "servingSize",
+        "sourceRef",
+        "checkedAt"
+      ],
+      "properties": {
+        "amount": {
+          "type": "number",
+          "minimum": 0
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "unit": {
+          "enum": [
+            "portion",
+            "item",
+            "person",
+            "group",
+            "kg",
+            "menu_item_unspecified"
+          ]
+        },
+        "servingSize": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 160
+        },
+        "sourceRef": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "checkedAt": {
+          "$ref": "#/$defs/timestamp"
+        }
+      },
+      "additionalProperties": false
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "artworkProjection": {
+      "type": "object",
+      "required": [
+        "uri",
+        "altText",
+        "attribution"
+      ],
+      "properties": {
+        "uri": {
+          "type": "string",
+          "format": "uri",
+          "minLength": 1
+        },
+        "altText": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "attribution": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 500
+        }
+      },
+      "additionalProperties": false
+    },
+    "mealSlot": {
+      "enum": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack"
+      ]
+    },
+    "card": {
+      "type": "object",
+      "required": [
+        "dishId",
+        "name",
+        "description",
+        "mealSlots",
+        "cuisineIds",
+        "cuisineLabels",
+        "categoryIds",
+        "categoryLabels",
+        "temperature",
+        "flavor",
+        "artwork",
+        "priceReference",
+        "priceObservation",
+        "cuisineTerms",
+        "categoryTerms",
+        "taxonomyVersion"
+      ],
+      "properties": {
+        "dishId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 2000
+        },
+        "mealSlots": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/mealSlot"
+          }
+        },
+        "cuisineIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/uuid"
+          }
+        },
+        "categoryIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/uuid"
+          }
+        },
+        "cuisineLabels": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          }
+        },
+        "categoryLabels": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          }
+        },
+        "temperature": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "hot",
+            "warm",
+            "cold",
+            "ambient",
+            "unknown",
+            null
+          ]
+        },
+        "flavor": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/flavorProjection"
+            }
+          ]
+        },
+        "artwork": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/artworkProjection"
+            }
+          ]
+        },
+        "priceReference": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/priceReference"
+            }
+          ]
+        },
+        "priceObservation": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "required": [
+                "amount",
+                "currency",
+                "unit",
+                "sourceRef",
+                "servingSize",
+                "observedAt"
+              ],
+              "properties": {
+                "amount": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0
+                },
+                "currency": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "pattern": "^[A-Z]{3}$"
+                },
+                "unit": {
+                  "enum": [
+                    "portion",
+                    "item",
+                    "person",
+                    "group",
+                    "kg",
+                    "menu_item_unspecified",
+                    null
+                  ]
+                },
+                "sourceRef": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "maxLength": 500
+                },
+                "servingSize": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "maxLength": 160
+                },
+                "observedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        "cuisineTerms": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "type",
+              "code",
+              "label",
+              "version"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "enum": [
+                  "cuisine",
+                  "category"
+                ]
+              },
+              "code": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "version": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "categoryTerms": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "type",
+              "code",
+              "label",
+              "version"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "enum": [
+                  "cuisine",
+                  "category"
+                ]
+              },
+              "code": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "version": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "taxonomyVersion": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "catalogueRequest": {
+      "type": "object",
+      "required": [
+        "payload"
+      ],
+      "properties": {
+        "payload": {
+          "type": "object",
+          "required": [
+            "contractVersion"
+          ],
+          "properties": {
+            "contractVersion": {
+              "const": "dish-catalogue/roadmap-v2/GM-18.2"
+            },
+            "mealSlot": {
+              "enum": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "previewRequest": {
+      "type": "object",
+      "required": [
+        "payload"
+      ],
+      "properties": {
+        "payload": {
+          "type": "object",
+          "required": [
+            "contractVersion",
+            "mealSlot",
+            "dishCount"
+          ],
+          "properties": {
+            "contractVersion": {
+              "const": "dish-catalogue/roadmap-v2/GM-18.2"
+            },
+            "mealSlot": {
+              "enum": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ]
+            },
+            "dishCount": {
+              "type": "integer",
+              "minimum": 10,
+              "maximum": 20
+            },
+            "preferences": {
+              "$ref": "#/$defs/softPreferences"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "success": {
+      "type": "object",
+      "required": [
+        "ok",
+        "data"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "data": {
+          "type": "object",
+          "required": [
+            "contractVersion",
+            "projectionVersion",
+            "catalogueVersion",
+            "catalogueSha",
+            "testOnly",
+            "mealSlot",
+            "available",
+            "requested",
+            "previewOnly",
+            "preferenceRanking",
+            "dishes"
+          ],
+          "properties": {
+            "contractVersion": {
+              "const": "dish-catalogue/roadmap-v2/GM-18.2"
+            },
+            "projectionVersion": {
+              "const": "GM18.2"
+            },
+            "catalogueVersion": {
+              "type": "string"
+            },
+            "catalogueSha": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "testOnly": {
+              "type": "boolean"
+            },
+            "mealSlot": {
+              "enum": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack",
+                null
+              ]
+            },
+            "available": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000
+            },
+            "requested": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 10,
+              "maximum": 20
+            },
+            "previewOnly": {
+              "type": "boolean"
+            },
+            "preferenceRanking": {
+              "const": "UNSUPPORTED"
+            },
+            "dishes": {
+              "type": "array",
+              "maxItems": 1000,
+              "items": {
+                "$ref": "#/$defs/card"
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "error": {
+      "type": "object",
+      "required": [
+        "ok",
+        "error"
+      ],
+      "properties": {
+        "ok": {
+          "const": false
+        },
+        "error": {
+          "type": "object",
+          "required": [
+            "messageKey",
+            "details"
+          ],
+          "properties": {
+            "messageKey": {
+              "enum": [
+                "AUTH_REQUIRED",
+                "RATE_LIMITED",
+                "INVALID_INPUT",
+                "UNSUPPORTED_CONTRACT_VERSION",
+                "UNSUPPORTED_FIELD",
+                "CATALOGUE_NOT_READY",
+                "INSUFFICIENT_DISHES"
+              ]
+            },
+            "details": {
+              "type": "object"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

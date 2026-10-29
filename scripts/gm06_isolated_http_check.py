@@ -24,6 +24,20 @@ from gm06_v4_compat import V4Compatibility,CONTRACT
 ROOT=Path(__file__).resolve().parents[1]
 PG_IMAGE='public.ecr.aws/supabase/postgres:17.11.0.004'
 REST_IMAGE='public.ecr.aws/supabase/postgrest:v16.4'
+IMAGE_MIRRORS={image:(image,image.replace('public.ecr.aws/','ghcr.io/'))
+               for image in (PG_IMAGE,REST_IMAGE)}
+
+
+def local_image(image):
+    """Use an exact-version local mirror; never pull or inspect service config."""
+    for candidate in IMAGE_MIRRORS[image]:
+        result=subprocess.run(['docker','image','inspect','--format','{{.Id}}',candidate],
+                              text=True,encoding='utf-8',capture_output=True,timeout=15)
+        if result.returncode==0 and result.stdout.strip():
+            return candidate
+        if result.returncode and not re.search(r'no such (?:image|object)',result.stderr,re.I):
+            raise RuntimeError('OWNED_QA_IMAGE_INSPECTION_FAILED '+candidate)
+    raise RuntimeError('OWNED_QA_IMAGE_NOT_CACHED '+image+'; docker pull '+IMAGE_MIRRORS[image][-1])
 
 
 def command(args, *, sql=None, env=None, timeout=120):
@@ -51,7 +65,7 @@ class Database:
         return command(['docker','exec','-i',self.container,'psql','-X','-q','-h','/tmp','-U','postgres','-d','postgres','-v','ON_ERROR_STOP=1','-v','VERBOSITY=sqlstate','-At'],sql=sql)
 
 
-def run(report_path):
+def run(report_path, *, exercise=None, scope=None, extra_sources=()):
     namespace=str(uuid.uuid4()); tag=namespace.replace('-','')[:12]
     network='gm06-isolated-'+tag; pg='gm06-pg-'+tag; rest='gm06-rest-'+tag
     resources=[]; cases=[]
@@ -66,6 +80,9 @@ def run(report_path):
             'cases':cases,'images':[PG_IMAGE,REST_IMAGE]}
     parity_files=[ROOT/'tests/fixtures/decision-v2'/name for name in ('cases.json','roster-cases.json','seeded-cases.json')]
     report['sourceHashes']={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [Path(__file__),ROOT/'scripts/gm06_v4_compat.py',*sorted((ROOT/'supabase/migrations').glob('*.sql')),*parity_files]}
+    if scope is not None:
+        report['scope']=scope
+    report['sourceHashes'].update({str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in extra_sources})
     password=secrets.token_urlsafe(32); jwt_secret=secrets.token_urlsafe(48)
     def check(name, actual, expected=True):
         if actual!=expected: raise AssertionError(name)
@@ -81,13 +98,17 @@ def run(report_path):
         if labels.get('com.gm06.namespace')!=namespace: raise RuntimeError('QA_OWNERSHIP_MISMATCH')
         return info
     try:
+        # Supabase CLI caches GHCR tags on CI and ECR tags on some local installs.
+        # Resolve only those pinned mirrors before allocating any QA resources.
+        pg_image=local_image(PG_IMAGE);rest_image=local_image(REST_IMAGE)
+        report['images']=[pg_image,rest_image]
         command(['docker','network','create','--internal','--label','com.gm06.namespace='+namespace,network])
         resources.append(('network',network))
         # Override image entrypoint; init a completely fresh PGDATA in disposable tmpfs.
         bootstrap="install -d -o postgres -g postgres /tmp/gm06-data; printf '%s' \"$GM06_DB_PASSWORD\" > /tmp/gm06-password; chown postgres /tmp/gm06-password; exec gosu postgres /bin/sh -c 'initdb -D /tmp/gm06-data --auth-local=trust --auth-host=scram-sha-256 --pwfile=/tmp/gm06-password >/tmp/gm06-init.log && printf \"\\nhost all postgres samenet scram-sha-256\\n\" >> /tmp/gm06-data/pg_hba.conf && exec postgres -D /tmp/gm06-data -c listen_addresses=0.0.0.0 -c unix_socket_directories=/tmp'"
         command(['docker','run','--rm','--pull','never','-d','--name',pg,'--network',network,
                  '--label','com.gm06.namespace='+namespace,'--tmpfs','/tmp:rw','-e','GM06_DB_PASSWORD',
-                 '--entrypoint','/bin/sh',PG_IMAGE,'-c',bootstrap],env={**os.environ,'GM06_DB_PASSWORD':password})
+                 '--entrypoint','/bin/sh',pg_image,'-c',bootstrap],env={**os.environ,'GM06_DB_PASSWORD':password})
         resources.append(('container',pg))
         db=Database(pg)
         for n in range(120):
@@ -107,7 +128,7 @@ def run(report_path):
         for path in migrations:
             db.psql(path.read_text(encoding='utf-8'))
             db.psql('insert into supabase_migrations.schema_migrations values('+literal(path.name.split('_',1)[0])+','+literal(path.stem)+','+literal(hashlib.sha256(path.read_bytes()).hexdigest())+');')
-        check('fresh all migrations through0032 applied',db.psql('select count(*) from supabase_migrations.schema_migrations;').strip(),str(len(migrations)))
+        check('fresh all repository migrations applied',db.psql('select count(*) from supabase_migrations.schema_migrations;').strip(),str(len(migrations)))
         check('runtime0.9.0/0.9.1/0.9.2 and independent0.10.0 ledger coexist',db.psql("select count(*)=4 from public.schema_versions where schema_version in('0.9.0','0.9.1','0.9.2','0.10.0');").strip(),'t')
         report['v2ParityVectors']={}
         for path in parity_files:
@@ -128,7 +149,7 @@ def run(report_path):
         uri='postgresql://postgres:'+password+'@'+pg+':5432/postgres'
         command(['docker','run','--rm','--pull','never','-d','--name',rest,'--network',network,
                  '--label','com.gm06.namespace='+namespace,'-e','PGRST_DB_URI','-e','PGRST_JWT_SECRET',
-                 '-e','PGRST_DB_ANON_ROLE=anon','-e','PGRST_DB_SCHEMAS=public',REST_IMAGE],
+                 '-e','PGRST_DB_ANON_ROLE=anon','-e','PGRST_DB_SCHEMAS=public',rest_image],
                 env={**os.environ,'PGRST_DB_URI':uri,'PGRST_JWT_SECRET':jwt_secret})
         resources.append(('container',rest))
         check('owned REST has no published host port',not owned('container',rest)['HostConfig']['PortBindings'])
@@ -188,6 +209,11 @@ def run(report_path):
         check('HTTP revoked group history disappears after cleanup',not any(x['scope']=='group' and x['roomId']==first['room'] for x in after))
         check('HTTP separate personal consent survives group revoke',any(x['scope']=='personal' and x['roomId']==first['room'] for x in after))
         check('v4 API never writes independent canonical table',db.psql('select count(*) from gm06_canonical.results;').strip(),'0')
+        if exercise is not None:
+            baseline_count=len(cases)
+            exercise(db,rpc,check,users)
+            report['baselineCompatibilityAssertions']=baseline_count
+            report['extensionAssertions']=len(cases)-baseline_count
         report['result']='Pass'
     except Exception as exc:
         report['failure']=str(exc)[:250]

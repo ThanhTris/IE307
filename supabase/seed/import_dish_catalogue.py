@@ -101,11 +101,11 @@ def do_block(body):
     return 'do ' + tag + '\n' + body + '\n' + tag + ';'
 
 
-def import_sql(bundle, digest, activate=False, fail_after_insert=False):
+def import_sql(bundle, digest, activate=False, fail_after_insert=False, *, projected_cards=None, release_identifier=None):
     # Trusted literals only; all checks and activation in a single transaction.
-    identifier = food.literal(release_id(bundle))
+    identifier = food.literal(release_identifier if release_identifier is not None else release_id(bundle))
     sha = food.literal(digest)
-    payload = food.literal(json.dumps(cards(bundle), ensure_ascii=False))
+    payload = food.literal(json.dumps(cards(bundle) if projected_cards is None else projected_cards, ensure_ascii=False))
     failure = "raise exception using errcode='P0001',message='GM40_TEST_FAILURE';" if fail_after_insert else ''
     activation = f"update dish_v3_private.catalogues set active=false where active and id<>{identifier};update dish_v3_private.catalogues set active=true where id={identifier};" if activate else ''
     body = f"""declare existing dish_v3_private.catalogues%rowtype;
