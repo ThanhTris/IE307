@@ -1,0 +1,14 @@
+{
+  "kind": "GM20 CI repair working-tree source/evidence",
+  "sha256": {
+    "scripts/gm06_canonical_check.py": "0fb00fbf129d90c212eb4a23820504a0bb93ef36d18b8c099b96cbe5dbb637b6",
+    "docs/evidence/roadmap-v2/GM-20/canonical-writer/ci-fix/PLAN.md": "f8fa8b2023118d07062a5e3e10940176bac3eef53507cb694f3eeb66ffc5b813",
+    "docs/evidence/roadmap-v2/GM-20/canonical-writer/ci-fix/README.md": "5796d6a5a7bd4339740782f3d0cc5365504198a6107f1d7a8737eec125f965d9",
+    "docs/evidence/roadmap-v2/GM-20/canonical-writer/ci-fix/before.json": "eaaf415a7dc253b7b6b0b29ac1590ebf35fb07509ac4c2c56acb3e265f1d9038",
+    "docs/evidence/roadmap-v2/GM-20/canonical-writer/ci-fix/canonical-upgrade.json": "f7d8bc0b2aa0f83f5794eee3541d0a6dd311c28d2d19b66ae169df1c05b9384c",
+    "docs/evidence/roadmap-v2/GM-20/canonical-writer/ci-fix/checks.json": "2129c546a86009d32f546078b26bd31c9cd652033410e88f14f534ef42aeb3ef",
+    "docs/evidence/roadmap-v2/GM-20/canonical-writer/ci-fix/latest-http.json": "28f6554e680a0289212d4a3f0979af631dac945e3bcc40fe2bc226f0f45e2e3f",
+    "docs/evidence/roadmap-v2/GM-20/canonical-writer/ci-fix/pgtap-isolation.json": "d6202aa99aced3e878c08d84c218c329ae12a40c20109cfd02907eb2744178ec",
+    "docs/evidence/roadmap-v2/GM-20/canonical-writer/ci-fix/pgtap-results.json": "d1f468dcf4e346139d8f952cbc6e816b40c835cba180153ce5bb4ce28c335215"
+  }
+}
