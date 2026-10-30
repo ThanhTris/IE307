@@ -3,11 +3,13 @@
 ## Current admission supplement — GM-22.2 (2026-10-30)
 
 The original GM-22.1/0.4.0 evidence below is historical and remains intact.
-The current forward migration is `0036_gm22_invitation_admission.sql`, schema
-`0.13.0`, based on GM-19/20 artifacts through migrations `0034–0035` on main
-`e3f7058525da14c3b147fc909511cef7c803ee7c`. See the isolated, version-pinned
+The current forward migration is `0037_gm22_invitation_admission.sql`, schema
+`0.14.0`, based on GM-19/20 migrations `0034–0035` and GM-21 migration `0036`
+from main `621acccf777c8a2538012641ce525cba0e6ae3ce`. See the isolated, version-pinned
 [GM-22.2 handoff](admission-v4/HANDOFF.md), [checks](admission-v4/CHECKS.md),
-and [manifest](admission-v4/MANIFEST.json). The supplement keeps the GM-22.1
+and [manifest](admission-v4/MANIFEST.json). The current QA run passed SQL
+35/35, HTTP 75/75, Bruno 12/12 and GM-21 history 80/80. The Python regression
+has one Windows symlink privilege error, recorded as Fail. The supplement keeps the GM-22.1
 RPC/DTO contract, routes v4 invitations through GM-19 admission, retains v3
 capacity 20 and decision-v2 capacity 8. Current server/Bruno result and cleanup
 status are only those recorded in the supplement files. Android consumer remains

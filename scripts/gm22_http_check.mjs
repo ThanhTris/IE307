@@ -2,15 +2,17 @@
 import assert from 'node:assert/strict';
 import {execFileSync,spawn,spawnSync} from 'node:child_process';
 import {createHash,randomUUID} from 'node:crypto';
-import {mkdir,readFile,writeFile,chmod} from 'node:fs/promises';
+import {mkdir,readFile,writeFile,chmod,unlink} from 'node:fs/promises';
 import {readFileSync} from 'node:fs';
-import {resolve} from 'node:path';
+import {resolve,sep} from 'node:path';
 
 const root=process.cwd();
 const project=process.env.GM_V4_QA_PROJECT_ID;
 const workdir=process.env.GM_V4_QA_WORKDIR;
 const container=process.env.GM_V4_QA_CONTAINER;
 const namespace=process.env.GM_V4_OWNER_NAMESPACE;
+const qaWorkdir=resolve(workdir||'.');
+const workerPausePath=resolve(qaWorkdir,'.gm22-pause-policy-worker');
 const brunoSetup=process.argv.includes('--prepare-bruno');
 const contractB='dish-session-v4/roadmap-v2/GM-07.B';
 const contractBsup='dish-session-v4/roadmap-v2/GM-07.B-supplement';
@@ -22,6 +24,8 @@ const users=[];
 assert.match(project||'',/^ie307-dish-v4-qa-\d{8}(?:-\d+-\d+)?$/,'GM-22 requires an owned GM_V4 QA project');
 assert.equal(container,'supabase_db_'+project,'GM-22 QA database container must match the owned project');
 assert.ok(workdir&&namespace,'GM-22 QA workdir and namespace are required');
+assert.ok(qaWorkdir.toLowerCase().startsWith((resolve(root,'.work/ci')+sep).toLowerCase()),'GM-22 worker control must stay inside its QA workdir');
+assert.equal(qaWorkdir.split(/[\\/]/).at(-1),project.replace(/^ie307-/,''),'GM-22 QA workdir must match its project');
 const statusResult=spawnSync(process.execPath,[resolve(root,'node_modules/supabase/dist/supabase.js'),'status','--output','json','--workdir',workdir],{encoding:'utf8',maxBuffer:1024*1024});
 assert.equal(statusResult.status,0,'owned QA Supabase status must be available');
 const status=JSON.parse(statusResult.stdout);
@@ -60,6 +64,35 @@ function pass(name,expected,actual){assert.deepEqual(actual,expected,name);resul
 function responseCode(body){return body?.messageKey??body?.error?.messageKey??body?.error?.code??null;}
 function expectOk(response,name){assert.equal(response.status,200,name+' HTTP '+response.status+' '+JSON.stringify(response.body));assert.equal(response.body?.ok,true,name+' RPC rejected '+responseCode(response.body));return response.body.data;}
 function expectFail(response,status,code,name){assert.equal(response.status,status,name+' HTTP '+response.status+' '+JSON.stringify(response.body));assert.equal(responseCode(response.body),code,name+' error messageKey');results.push({case:name,result:'Pass',expected:{status,code},actual:{status:response.status,code:responseCode(response.body)}});console.log('PASS',name);return response.body;}
+const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+async function waitForOwnedSql(query,name,timeoutMs=5000){
+ const stopAt=Date.now()+timeoutMs;
+ while(Date.now()<stopAt){if(ownedSql(query)==='t')return;await pause(100);}
+ throw new Error('GM22_TTL_LOCK_COORDINATION_FAILED: '+name);
+}
+function workerLastTick(){return ownedSql('select last_tick::text from dish_v4_private.runtime where singleton');}
+async function pauseQaPolicyWorker(){
+ const before=workerLastTick();
+ await writeFile(workerPausePath,project+'\n',{encoding:'utf8',flag:'wx'});
+ let candidate=before;
+ for(let attempt=0;attempt<8;attempt++){
+  await pause(1200);
+  const current=workerLastTick();
+  if(current===candidate)return current;
+  candidate=current;
+ }
+ await unlink(workerPausePath);
+ throw new Error('GM22_TTL_WORKER_PAUSE_FAILED');
+}
+async function resumeQaPolicyWorker(pausedTick){
+ await unlink(workerPausePath);
+ for(let attempt=0;attempt<20;attempt++){
+  await pause(250);
+  const current=workerLastTick();
+  if(current!==pausedTick)return current;
+ }
+ throw new Error('GM22_TTL_WORKER_RESUME_FAILED');
+}
 async function request(path,token,body,headers={}){
  const response=await fetch(base+path,{method:'POST',headers:{apikey:anonKey,'content-type':'application/json',...(token?{authorization:'Bearer '+token}:{}),...headers},body:JSON.stringify(body)});
  let data;try{data=await response.json();}catch{data={};}
@@ -130,6 +163,51 @@ async function inviteAndAccept(host,target,room,version,acceptRequestId=randomUU
  const response=await acceptRoom(target,sent.id,'GM22 invited',acceptRequestId);
  return {invitation:sent,response,requestId:acceptRequestId};
 }
+async function verifyAcceptRejectedAfterLockExpiry(policy,target){
+ const room=await createRoom(host,policy);
+ linkPair(host.id,target.id);
+ const invite=expectOk(await inviteRoom(host,room.id,target),'create '+policy+' TTL-lock invitation');
+ const pausedTick=await pauseQaPolicyWorker();
+ let lockDone=Promise.resolve(),lockError=null,pendingRequest=null,resumedTick;
+ try{
+  // Start both deadlines only after pausing the owned worker, so the test
+  // measures admission behavior rather than its independent EXPIRED transition.
+  ownedSql(`begin;select set_config('dish_v3.writer','on',true);select set_config('dish_v4.writer','on',true);update public.rooms set expires_at=clock_timestamp()+interval '6 seconds',version=version+1,updated_at=clock_timestamp() where id='${room.id}';update public.room_invitations set expires_at=(select expires_at from public.rooms where id='${room.id}'),version=version+1 where id='${invite.id}';commit;`);
+  const fixture=JSON.parse(ownedSql(`select json_build_object('deadlineMs',floor(extract(epoch from expires_at)*1000)::bigint,'room',json_build_object('version',version,'poolVersion',pool_version,'state',state::text),'memberCount',(select count(*) from public.members where room_id='${room.id}' and user_id='${target.id}' and left_at is null)) from public.rooms where id='${room.id}'`));
+  const deadline=Number(fixture.deadlineMs),before=fixture.room,acceptedBefore=Number(fixture.memberCount);
+  assert.equal(acceptedBefore,0,'TTL fixture recipient must not already be a room member');
+  const requestIdValue=randomUUID();
+  const appName='gm22-ttl-lock-'+policy+'-'+randomUUID().slice(0,8);
+  const lock=sqlAsync(`select set_config('application_name','${appName}',false);begin;update gm06_private.reference_epoch set epoch=epoch+1 where singleton;select pg_sleep(7);commit;`);
+  lockDone=lock.catch(error=>{lockError=error;});
+  await waitForOwnedSql(`select exists(select 1 from pg_stat_activity where application_name='${appName}' and state='active' and query ilike '%pg_sleep%')`,'reference lock acquired for '+policy);
+  assert.ok(Date.now()<deadline-500,policy+' accept request must start before expiry');
+  pendingRequest=acceptRoom(target,invite.id,'GM22 TTL boundary',requestIdValue);
+  await waitForOwnedSql(`select exists(select 1 from pg_stat_activity blocker join pg_stat_activity waiter on waiter.pid<>blocker.pid where blocker.application_name='${appName}' and blocker.state='active' and waiter.wait_event_type='Lock' and blocker.pid=any(pg_blocking_pids(waiter.pid)))`,'accept request blocked on the owned reference lock for '+policy,1500);
+  assert.ok(Date.now()<deadline,policy+' API request must be waiting before both expiry cutoffs');
+  while(Date.now()<deadline+150)await pause(50);
+  await lockDone;
+  if(lockError)throw lockError;
+  const response=await pendingRequest;
+  expectFail(response,410,'ROOM_EXPIRED',policy+' accept waiting across both expiries is rejected');
+  const after=JSON.parse(ownedSql(`select json_build_object('version',version,'poolVersion',pool_version,'state',state::text) from public.rooms where id='${room.id}'`));
+  assert.deepEqual(after,before,policy+' expired admission must not mutate room or pool versions');
+  const invitationState=JSON.parse(ownedSql(`select json_build_object('state',state,'respondedAt',responded_at) from public.room_invitations where id='${invite.id}'`));
+  assert.deepEqual(invitationState,{state:'pending',respondedAt:null},policy+' expired invitation remains unaccepted');
+  const memberCount=Number(ownedSql(`select count(*) from public.members where room_id='${room.id}' and user_id='${target.id}' and left_at is null`));
+  assert.equal(memberCount,0,policy+' expired admission must not create membership');
+  const acknowledgements=Number(ownedSql(`select (select count(*) from gm19_private.acks where user_id='${target.id}' and operation='accept_room_invite' and request_id='${requestIdValue}')+(select count(*) from public.idempotency where user_id='${target.id}' and operation='accept_room_invite' and request_id='${requestIdValue}')`));
+  assert.equal(acknowledgements,0,policy+' expired admission must not save a success ACK');
+  pass(policy+' waiting-expiry rejection has no admission side effects',{status:410,code:'ROOM_EXPIRED',members:0,invitation:'pending',room:before,acks:0},
+   {status:response.status,code:responseCode(response.body),members:memberCount,invitation:invitationState.state,room:after,acks:acknowledgements});
+ }finally{
+  await lockDone;
+  if(pendingRequest)await pendingRequest.catch(()=>{});
+  resumedTick=await resumeQaPolicyWorker(pausedTick);
+  if(lockError)throw lockError;
+ }
+ pass(policy+' QA expiry worker resumes after TTL lock test',{paused:true,resumed:true},{paused:true,resumed:resumedTick!==pausedTick});
+}
 async function prepareBruno(){
  const host=await guest('GM22 Bruno host'),member=await guest('GM22 Bruno member'),outsider=await guest('GM22 Bruno outsider');
  const dir=resolve(root,'supabase/tests/bruno/GM-22/environments');await mkdir(dir,{recursive:true});
@@ -145,7 +223,7 @@ async function prepareBruno(){
 if(brunoSetup){await prepareBruno();process.exit(0);}
 
 assert.equal(ownedSql('select namespace::text from public.gm40_qa_owner'),namespace);
-assert.equal(ownedSql("select count(*) from public.schema_versions where schema_version='0.13.0' and contract_id='food-v1/roadmap-v2/GM-22.2'"),'1');
+assert.equal(ownedSql("select count(*) from public.schema_versions where schema_version='0.14.0' and contract_id='food-v1/roadmap-v2/GM-22.2'"),'1');
 assert.equal(ownedSql("select exists(select 1 from dish_v4_private.runtime where last_tick>clock_timestamp()-interval '15 seconds')"),'t','QA worker heartbeat required');
 const all=await Promise.all(Array.from({length:24},(_,index)=>guest('GM22 QA guest '+index)));
 const [host,member,outsider,reverseSender,expiredRecipient]=all;
@@ -269,6 +347,13 @@ for(const version of ['v2','v3','b','bsup']){
  const snap=await roomSnapshot(host,cancelledRoom.id,'b');
  expectOk(await dish(host.token,'cancel',{requestId:randomUUID(),roomId:cancelledRoom.id,expectedVersion:snap.version},'b'),'host cancels invite room');
  expectFail(await acceptRoom(member,cancelledInvite.id),409,'ROOM_LOCKED','terminal room cannot admit a member');
+}
+
+// A request that starts before expiry but waits for the shared ACK/reference
+// lock must re-check both TTLs after the lock is released. Cover every policy
+// branch supported by accept_room_invite, including the pinned decision-v2.
+for(const [index,policy] of ['v2','v3','b','bsup'].entries()){
+ await verifyAcceptRejectedAfterLockExpiry(policy,all[19+index]);
 }
 
 // Race two requests through the actual REST boundary and assert final database state.
@@ -434,7 +519,7 @@ for(const version of ['v2','v3','b','bsup']){
 
 const report={fixtureOnly:true,result:'Pass',task:'GM-22',supplement:'GM-22.2',contractVersion:'food-v1/roadmap-v2/GM-22.1',
  wireVersions:['decision-v2','dish-decision-v3','dish-session-v4/roadmap-v2/GM-07.B','dish-session-v4/roadmap-v2/GM-07.B-supplement'],
- schemaVersion:'0.13.0',qaProject:project,endpoint:'127.0.0.1:54361',applicationDatabaseChanged:false,
+ schemaVersion:'0.14.0',qaProject:project,endpoint:'127.0.0.1:54361',applicationDatabaseChanged:false,
  remotePush:'Not run',android:'Not run',caseCount:results.length,cases:results,checkedAt:new Date().toISOString()};
 await mkdir(resolve(root,'.work/gm22-admission'),{recursive:true});
 await writeFile(resolve(root,'.work/gm22-admission/http-results.json'),JSON.stringify(report,null,2)+'\n','utf8');

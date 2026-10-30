@@ -1,38 +1,41 @@
 # GM-22.2 admission checks
 
-Date: 2026-10-30
+Date: 2026-10-31
 
-Base revision: `e3f7058525da14c3b147fc909511cef7c803ee7c` (`origin/main`)
+Base revision: `621acccf777c8a2538012641ce525cba0e6ae3ce` (`origin/main`)
+
+Working revision: `6876fcdd2d290b09831c925d531fb59725a385b3` plus the uncommitted
+PR #145 patch recorded by the source hashes in [MANIFEST.json](MANIFEST.json).
 
 Contract: `food-v1/roadmap-v2/GM-22.1`
 
-Supplement/schema: `food-v1/roadmap-v2/GM-22.2` / `0.13.0`
+Supplement/schema: `food-v1/roadmap-v2/GM-22.2` / `0.14.0`
 
 ## Results
 
 | Check | Result | Input and expected | Actual |
 |---|---|---|---|
-| Fresh disposable migrations + GM-22 SQL TAP | **Pass — 35/35** | Apply all migrations to an isolated QA database; verify grants, auth boundary, admission helper ACL, event constraints, friend invite behavior | TAP plan `1..35`; all 35 assertions passed, 0 failed; [sql-run.txt](sql-run.txt) |
-| Auth + REST HTTP suite | **Pass — 63/63** | Real guest JWTs against isolated GoTrue/PostgREST; exercise social flow, exact capacity and capacity+1 for decision-v2/v3/B/B-supplement, ACK/replay, expiry/state/permission, privacy, quotas and serialized races | All 63 named cases passed; missing/forged JWT returned 401; full/capacity/state outcomes matched exact status/message key; live accepted ACK replayed unchanged while retention cleanup ran. [http-results.json](http-results.json). Runtime project `ie307-dish-v4-qa-20261030-086609693500-1`, `127.0.0.1:54361`; this run cleaned itself on completion. |
-| Bruno desktop Runner | **Pass — 12/12** | Execute the GM-22 collection sequentially against a fresh owned QA runtime; request IDs and room/invitation IDs flow from prior responses | 12 passed, 0 failed, 0 skipped in Bruno 4.3.0. Exact expected statuses were `200, 200, 200, 200, 200, 200, 200, 200, 200, 401, 403, 200`; the wrong-recipient case returned `NOT_RECIPIENT`. The accepted invite response returned HTTP 200 and a membership UUID; replay preserved the ACK and the final snapshot contained the recipient. See [bruno-run.txt](bruno-run.txt). |
-| Repository Python regression | **Pass — 648 tests, 6 skipped** | `PYTHONUTF8=1 python -m unittest discover -s tests -p "test_*.py"` | Exit 0; 648 tests ran, 0 failures, 6 skipped. Includes GM-07.B contract/schema fixtures and backend QA runner tests. [Log](python-regression.txt). A transient Python `ResourceWarning` noted a rate-limited HTTP response while the suite continued; it did not fail a test. |
-| GM-19/20 runner regressions | **Pass — 12/12** | `node --test tests/gm19-runtime-files.test.mjs tests/gm20-cli.test.mjs` | Ownership-safe cleanup/preflight and GM-20 CLI entrypoint assertions passed. API cases are not exercised by the CLI test; live admission and ACK behavior is covered by the 63-case HTTP suite. |
-| Repository/docs/readiness checks | **Pass** | Repository validator, task docs checker, merge readiness (`--base-ref origin/main`), Node syntax checks, Python compile and `git diff --check` | Validator/docs passed; merge gate returned `READY_FOR_MERGE_REVIEW` for GM-22 on `origin/main=e3f7058525da14c3b147fc909511cef7c803ee7c`. This is not reviewer approval. `git diff --check` had no whitespace errors (Git printed only LF→CRLF notices for two JS files). |
-| Cleanup | **Pass** | Stop retained Bruno QA project and fresh HTTP QA project only by their owner metadata | Both owned projects stopped; private runtime and generated Bruno environment removed; application database unchanged. See manifest cleanup record. |
-| Android UI | Not run | Consumer integration is GM-28 | No Android result claimed. |
-| Remote push | Not run | Sender/device notification flow is GM-23/29 | No push result claimed. |
+| Fresh disposable migrations + GM-22 SQL TAP | **Pass — 35/35** | Apply the full migration chain including GM-21 `0036` and GM-22 `0037`; check ACL, identity, pair constraints and admission | TAP plan `1..35`; 35 passed, 0 failed on owned QA project `ie307-dish-v4-qa-20261030-135000060500-1`. [sql-run.txt](sql-run.txt) |
+| Auth + REST admission suite | **Pass — 75/75** | Real guest JWTs; exact capacity, expiry/state, ACK/replay, privacy, quota and race outputs for decision-v2/v3/B/B-supplement | 75 named cases passed on fresh QA project `ie307-dish-v4-qa-20261030-676092440100-1`. All four lock-over-expiry cases returned `410 / ROOM_EXPIRED`; each left invitation pending, membership absent, ACK absent, and room/pool versions unchanged. [http-results.json](http-results.json) |
+| Bruno desktop Runner | **Pass — 12/12** | Run the sequential collection on the retained QA runtime; all IDs and versions come from earlier responses | Bruno 4.3.0 showed 12 passed, 0 failed, 0 skipped. Expected statuses `200, 200, 200, 200, 200, 200, 200, 200, 200, 401, 403, 200`; invalid recipient returned `NOT_RECIPIENT`. [bruno-run.txt](bruno-run.txt) |
+| GM-21 canonical history/consent HTTP regression | **Pass — 80/80** | Run producer-driven history suite against the same isolated database with both `0036` and `0037` installed | Personal/group consent, owner isolation, revoke/delete, no-consensus/ALL_REMOVED, 20-member audience, room cleanup, retention boundaries and real lock races passed. QA project `ie307-dish-v4-qa-20261030-135000060500-1`; detailed ignored runner output is under `.work/gm21-canonical/http-results.json`. |
+| GM-21 deployed-function fingerprint | **Pass — 6/6** | Compare actual `pg_proc.prosrc` and security metadata to migration `0036` | All six functions matched after normalizing PostgreSQL-preserved CRLF to LF. The GM-21 checker now performs this platform-neutral normalization; migration `0036` is unchanged. |
+| GM-19/20 runner regressions | **Pass — 12/12** | `node --test tests/gm19-runtime-files.test.mjs tests/gm20-cli.test.mjs` | 12 passed, 0 failed. This checks runner/cleanup wiring; server API outcomes are in the live HTTP suites. |
+| Python regression | **Fail — 1 environment error** | `PYTHONUTF8=1 python -m unittest discover -s tests -p "test_*.py"` | 657 tests ran; 6 skipped, 1 error. `test_stage_refuses_symlink_output` stopped at `Path.symlink_to` with Windows `WinError 1314` (symlink privilege unavailable); the other 650 tests passed. No system security setting was changed. |
+| Validator, docs, syntax and diff | **Pass** | Repository validator, task docs checker, Node/Python syntax and `git diff --check` | All passed. `git diff --check` printed only Git's LF/CRLF working-copy notices. |
+| Merge readiness | **READY_FOR_MERGE_REVIEW** | `python scripts/task_readiness.py --task GM-22 --gate merge --base-ref origin/main` | Gate read Project #2 at `2026-10-30T21:30:45.951236+00:00` and resolved `origin/main` to `621acccf777c8a2538012641ce525cba0e6ae3ce`; reviewer approval is still required. |
+| Cleanup | **Pass** | Stop only the retained owned Bruno QA project using its ownership metadata | Project `ie307-dish-v4-qa-20261030-135000060500-1` stopped; private state/environment removed; application database unchanged. |
+| Android UI / remote push | Not run | Android consumer is GM-28; remote push is GM-23/29 | No mobile or remote delivery result claimed. |
 
 ## Coverage notes
 
-- Capacity boundary: decision-v2 admits 8 and rejects 9; v3, B, and B-supplement admit 20 and reject 21. Rejection leaves active roster unchanged. V3/B/B-supplement preserve the pinned pool version.
-- Race suite covers accept/accept, accept/reject, accept/direct-join at the last seat, accept/start, accept/cancel, unfriend/invite/accept, and cleanup/live-ACK replay. It verifies final database state and uniqueness rather than accepting either status indiscriminately.
-- Replay tests prove immutable accepted ACK after room expiry and unfriend; changed payload returns `409 REQUEST_ID_REUSED`; an already-active member is not rewritten or used to increment room version.
-- Privacy checks cover preview projection, outsider snapshot denial, direct membership-write denial, own inbox projection, and foreign/unknown cursor rejection.
-- The desktop Bruno chain is a separate fresh QA runtime from the 63-case HTTP run. Bruno output shows status/body assertions for the chained friend and room-invite flow; no access/refresh token is written to evidence.
-- Dedicated GM-16 and GM-17 full standalone suites were not pointed at the application Supabase instance. Their relevant auth boundary, own/outsider projection and direct-write checks were exercised in the isolated GM-22 HTTP/SQL runs; GM-16 adapter refresh and GM-17 full history/retention semantics remain owned by their respective task evidence.
-- Full server API admission/retry/race regressions for the GM-19 and GM-20 contracts were exercised through the current GM-22 HTTP suite on fresh migrations; the separate GM-19/20 runner tests above only cover runner behavior.
-- QA data is synthetic only. `applicationDatabaseChanged=false`; no application DB reset or production catalogue publish occurred.
-- Docker Desktop required the QA runner's explicit `GM_V4_ALLOW_LOCAL_DOCKER_WILDCARD=1` opt-in for its published QA ports. PostgREST/Auth endpoint remained `127.0.0.1:54361`; the first run without opt-in stopped during port-binding preflight before the final fresh QA run.
-- The initial Bruno run exposed an assertion bug that compared membership-row `memberId` to auth `userId`. The assertion now checks the returned membership UUID and verifies the member's `userId` through room snapshot. The complete fresh-run rerun passed 12/12.
+- The lock race starts a real REST accept request before expiry, blocks it on the owned reference lock across both cutoffs, then checks the returned status and persisted state. Coverage includes the pinned decision-v2, v3, B and B-supplement branches. The QA worker is paused only for these fixtures through a marker inside its verified owned QA workdir and resumes after each case.
+- The separate HTTP suite also covers capacity boundaries 8/9 and 20/21, acceptance/acceptance and accept/join/start/cancel/unfriend races, active-member replay, outsider/recipient checks, inbox projection and direct-write denial.
+- Bruno ran against the retained QA project while GM-21 migration `0036` and GM-22 migration `0037` were both installed. The later GM-21 suite used that same project before cleanup.
+- GM-21 consent and retention suite produced 80 passing HTTP assertions. Its migration fingerprint initially reported a false mismatch because Windows/PostgreSQL CRLF bytes differed from Python's normalized migration text; the checker was corrected to normalize line endings and then matched all six functions. No GM-21 migration or policy was changed.
+- The full Python command completed with one Windows symlink privilege error. This is reported as Fail, not Pass; no test was removed or rewritten.
+- QA contained synthetic identities and fixture data only. `applicationDatabaseChanged=false`; no application database was reset and no production data was published.
 
-Source hashes and per-runtime ownership are recorded in [MANIFEST.json](MANIFEST.json). This evidence does not change the task's Project status or provide Trí's approval.
+Source hashes, migration hashes, each QA project and cleanup are recorded in
+[MANIFEST.json](MANIFEST.json). This evidence does not change Project status or
+provide Trí's approval.

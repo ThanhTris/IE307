@@ -6,14 +6,15 @@ Owner/reviewer: Trí / ThanhTris. Public task contract remains
 
 ## Baseline and scope
 
-- Received `origin/main` revision `e3f7058525da14c3b147fc909511cef7c803ee7c`.
+- Received `origin/main` revision `621acccf777c8a2538012641ce525cba0e6ae3ce` by merge; GM-21 migration `0036` is retained unchanged.
 - Dedicated branch: `codex/gm-22-admission-v4`; the pre-existing GM-07 worktree
   is kept separate.
 - Starting gate: `READY_TO_CLAIM` for GM-22 on that revision.
-- Upstream artifacts: GM-19/20 migrations through `0035`, schema `0.12.0`,
+- Upstream artifacts: GM-19/20 migrations through `0035`, GM-21 migration
+  `0036` and schema `0.13.0`,
   GM-07.B and B-supplement dispatch, GM-19 shared v4 admission helper, and the
   version-pinned v2/v3 admission paths.
-- Forward migration: `0036_gm22_invitation_admission.sql`, schema `0.13.0`.
+- Forward migration: `0037_gm22_invitation_admission.sql`, schema `0.14.0`.
 - No package, mobile consumer, event sender, or terminal decision engine changes.
 
 ## Implementation and acceptance
@@ -53,8 +54,10 @@ with GM-28; sender/event delivery remains with GM-23.
 
 ## Evidence status
 
-The exact input, expected result, observed result, revision, source hashes and
-cleanup outcome are recorded in [CHECKS](CHECKS.md), [HANDOFF](HANDOFF.md) and
-[MANIFEST](MANIFEST.json). Desktop Bruno and regression results remain `Not run`
-until actually executed. These artifacts are a review candidate; they do not
-change Project status or constitute Trí's approval.
+The lock-over-expiry HTTP cases passed for decision-v2, v3, B and B-supplement.
+SQL TAP, Bruno desktop, GM-21 canonical history/consent, cleanup and local
+regressions are recorded with expected/actual values in [CHECKS](CHECKS.md),
+[HANDOFF](HANDOFF.md) and [MANIFEST](MANIFEST.json). The Python regression has
+one Windows symlink-privilege error; it is not reported as Pass. These artifacts
+are a review candidate and do not change Project status or constitute Trí's
+approval.

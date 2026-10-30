@@ -79,6 +79,7 @@ declare
   member_exists boolean;
   pair_exists boolean;
   room_exists boolean;
+  admission_at timestamptz;
   previous_v3_writer text:=current_setting('dish_v3.writer',true);
 begin
   begin request_key:=gm19_private.request_uuid("requestId"); iid:=invitation_id::uuid;
@@ -116,10 +117,19 @@ begin
   end if;
   if inv.state<>'pending' then return gm19_private.error('INVITE_CANCELLED',409,room_key,request_key); end if;
   if not pair_exists then return gm19_private.error('NOT_PARTNER',403,room_key,request_key); end if;
-  if not room_exists or r.expires_at<=statement_timestamp() then
+  if not room_exists then
     return gm19_private.error('ROOM_EXPIRED',410,room_key,request_key);
   end if;
-  if inv.expires_at<=statement_timestamp() then return gm19_private.error('INVITE_EXPIRED',410,room_key,request_key); end if;
+  -- Use the server clock after all admission locks and the authoritative
+  -- invitation/room reread. statement_timestamp() remains fixed at request
+  -- start, so it can incorrectly admit a request that waited past either TTL.
+  admission_at:=clock_timestamp();
+  if r.expires_at<=admission_at then
+    return gm19_private.error('ROOM_EXPIRED',410,room_key,request_key);
+  end if;
+  if inv.expires_at<=admission_at then
+    return gm19_private.error('INVITE_EXPIRED',410,room_key,request_key);
+  end if;
   if r.state<>'LOBBY' then return gm19_private.error('ROOM_LOCKED',409,room_key,request_key); end if;
   if not exists(select 1 from public.members active_inviter
       where active_inviter.room_id=room_key and active_inviter.user_id=inv.sender_user_id
@@ -152,13 +162,13 @@ begin
       perform set_config('dish_v3.writer','on',true);
       if not member_exists then
         insert into public.members(id,room_id,user_id,nickname,ready,history_consent,joined_at,left_at,version)
-          values(gen_random_uuid(),r.id,caller,btrim(display_name),false,false,statement_timestamp(),null,1);
+          values(gen_random_uuid(),r.id,caller,btrim(display_name),false,false,admission_at,null,1);
       else
         update public.members member_row
-          set left_at=null,nickname=btrim(display_name),joined_at=statement_timestamp(),version=member_row.version+1
+          set left_at=null,nickname=btrim(display_name),joined_at=admission_at,version=member_row.version+1
           where member_row.id=m.id;
       end if;
-      update public.rooms room_row set version=room_row.version+1,updated_at=statement_timestamp()
+      update public.rooms room_row set version=room_row.version+1,updated_at=admission_at
         where room_row.id=r.id returning room_row.version into new_version;
       perform set_config('dish_v3.writer',coalesce(previous_v3_writer,'off'),true);
     else
@@ -176,18 +186,18 @@ begin
       end if;
       if not member_exists then
         insert into public.members(id,room_id,user_id,nickname,ready,history_consent,joined_at,left_at,version)
-          values(gen_random_uuid(),r.id,caller,btrim(display_name),false,false,statement_timestamp(),null,1);
+          values(gen_random_uuid(),r.id,caller,btrim(display_name),false,false,admission_at,null,1);
       else
         update public.members member_row
           set nickname=btrim(display_name),left_at=null,ready=false,version=member_row.version+1
           where member_row.id=m.id;
       end if;
       insert into public.preferences(id,room_id,user_id,cuisine_ids,category_ids,temperature,flavor,updated_at,version)
-        values(gen_random_uuid(),r.id,caller,'{}','{}',null,null,statement_timestamp(),1)
+        values(gen_random_uuid(),r.id,caller,'{}','{}',null,null,admission_at,1)
         on conflict(room_id,user_id) do nothing;
       update public.rooms room_row
         set roster_user_ids=array_append(array_remove(room_row.roster_user_ids,caller),caller),
-          version=room_row.version+1,updated_at=statement_timestamp()
+          version=room_row.version+1,updated_at=admission_at
         where room_row.id=r.id returning room_row.version into new_version;
       perform gm19_private.refresh_lobby_pool(r.id);
       select room_row.version into new_version from public.rooms room_row where room_row.id=r.id;
@@ -197,7 +207,7 @@ begin
   end if;
 
   update public.room_invitations invitation_row
-    set state='accepted',responded_at=statement_timestamp(),version=invitation_row.version+1
+    set state='accepted',responded_at=admission_at,version=invitation_row.version+1
     where invitation_row.id=iid;
   select * into r from public.rooms room_row where room_row.id=room_key;
   wire:=jsonb_build_object('roomId',r.id::text,'code',r.code,'version',new_version,
@@ -228,6 +238,6 @@ exception when sqlstate 'PT401' then return gm22_private.social_error('AUTH_REQU
 grant execute on function public.list_friends() to anon;
 
 insert into public.schema_versions(schema_version,contract_id,food_contract_version,core_contract_version,upstream_revision)
-values('0.13.0','food-v1/roadmap-v2/GM-22.2','1.1.0','1.1.0','GM19.2/0034; GM20.4/0035; invitation-admission-v4');
+values('0.14.0','food-v1/roadmap-v2/GM-22.2','1.1.0','1.1.0','GM19.2/0034; GM20.4/0035; invitation-admission-v4');
 
 commit;

@@ -10,13 +10,13 @@
     "dish-session-v4/roadmap-v2/GM-07.B",
     "dish-session-v4/roadmap-v2/GM-07.B-supplement"
   ],
-  "schemaVersion": "0.13.0",
-  "qaProject": "ie307-dish-v4-qa-20261030-086609693500-1",
+  "schemaVersion": "0.14.0",
+  "qaProject": "ie307-dish-v4-qa-20261030-676092440100-1",
   "endpoint": "127.0.0.1:54361",
   "applicationDatabaseChanged": false,
   "remotePush": "Not run",
   "android": "Not run",
-  "caseCount": 63,
+  "caseCount": 75,
   "cases": [
     {
       "case": "friend invite replay is byte-equivalent",
@@ -24,8 +24,8 @@
       "expected": {
         "id": "<uuid>",
         "status": "pending",
-        "createdAt": "2026-10-30T02:42:54.164244+00:00",
-        "expiresAt": "2026-11-06T02:42:54.164244+00:00",
+        "createdAt": "2026-10-30T21:12:43.436812+00:00",
+        "expiresAt": "2026-11-06T21:12:43.436812+00:00",
         "inviterName": "GM22 QA guest 0",
         "inviteeUserId": "<uuid>",
         "inviterUserId": "<uuid>"
@@ -33,8 +33,8 @@
       "actual": {
         "id": "<uuid>",
         "status": "pending",
-        "createdAt": "2026-10-30T02:42:54.164244+00:00",
-        "expiresAt": "2026-11-06T02:42:54.164244+00:00",
+        "createdAt": "2026-10-30T21:12:43.436812+00:00",
+        "expiresAt": "2026-11-06T21:12:43.436812+00:00",
         "inviterName": "GM22 QA guest 0",
         "inviteeUserId": "<uuid>",
         "inviterUserId": "<uuid>"
@@ -118,7 +118,7 @@
       "expected": {
         "ok": true,
         "data": {
-          "code": "NQR6UB",
+          "code": "DSFZZE",
           "roomId": "<uuid>",
           "version": 15,
           "memberId": "<uuid>"
@@ -131,7 +131,7 @@
       "actual": {
         "ok": true,
         "data": {
-          "code": "NQR6UB",
+          "code": "DSFZZE",
           "roomId": "<uuid>",
           "version": 15,
           "memberId": "<uuid>"
@@ -190,7 +190,7 @@
       "expected": {
         "ok": true,
         "data": {
-          "code": "JRD5XB",
+          "code": "T8RZPM",
           "roomId": "<uuid>",
           "version": 20,
           "memberId": "<uuid>"
@@ -203,7 +203,7 @@
       "actual": {
         "ok": true,
         "data": {
-          "code": "JRD5XB",
+          "code": "T8RZPM",
           "roomId": "<uuid>",
           "version": 20,
           "memberId": "<uuid>"
@@ -262,7 +262,7 @@
       "expected": {
         "ok": true,
         "data": {
-          "code": "MJ36XA",
+          "code": "RL4TRF",
           "roomId": "<uuid>",
           "version": 20,
           "memberId": "<uuid>"
@@ -275,7 +275,7 @@
       "actual": {
         "ok": true,
         "data": {
-          "code": "MJ36XA",
+          "code": "RL4TRF",
           "roomId": "<uuid>",
           "version": 20,
           "memberId": "<uuid>"
@@ -334,7 +334,7 @@
       "expected": {
         "ok": true,
         "data": {
-          "code": "8YA4MX",
+          "code": "ATZZCV",
           "roomId": "<uuid>",
           "version": 20,
           "memberId": "<uuid>"
@@ -347,7 +347,7 @@
       "actual": {
         "ok": true,
         "data": {
-          "code": "8YA4MX",
+          "code": "ATZZCV",
           "roomId": "<uuid>",
           "version": 20,
           "memberId": "<uuid>"
@@ -491,6 +491,214 @@
       }
     },
     {
+      "case": "v2 accept waiting across both expiries is rejected",
+      "result": "Pass",
+      "expected": {
+        "status": 410,
+        "code": "ROOM_EXPIRED"
+      },
+      "actual": {
+        "status": 410,
+        "code": "ROOM_EXPIRED"
+      }
+    },
+    {
+      "case": "v2 waiting-expiry rejection has no admission side effects",
+      "result": "Pass",
+      "expected": {
+        "status": 410,
+        "code": "ROOM_EXPIRED",
+        "members": 0,
+        "invitation": "pending",
+        "room": {
+          "version": 2,
+          "poolVersion": 1,
+          "state": "LOBBY"
+        },
+        "acks": 0
+      },
+      "actual": {
+        "status": 410,
+        "code": "ROOM_EXPIRED",
+        "members": 0,
+        "invitation": "pending",
+        "room": {
+          "version": 2,
+          "poolVersion": 1,
+          "state": "LOBBY"
+        },
+        "acks": 0
+      }
+    },
+    {
+      "case": "v2 QA expiry worker resumes after TTL lock test",
+      "result": "Pass",
+      "expected": {
+        "paused": true,
+        "resumed": true
+      },
+      "actual": {
+        "paused": true,
+        "resumed": true
+      }
+    },
+    {
+      "case": "v3 accept waiting across both expiries is rejected",
+      "result": "Pass",
+      "expected": {
+        "status": 410,
+        "code": "ROOM_EXPIRED"
+      },
+      "actual": {
+        "status": 410,
+        "code": "ROOM_EXPIRED"
+      }
+    },
+    {
+      "case": "v3 waiting-expiry rejection has no admission side effects",
+      "result": "Pass",
+      "expected": {
+        "status": 410,
+        "code": "ROOM_EXPIRED",
+        "members": 0,
+        "invitation": "pending",
+        "room": {
+          "version": 2,
+          "poolVersion": 1,
+          "state": "LOBBY"
+        },
+        "acks": 0
+      },
+      "actual": {
+        "status": 410,
+        "code": "ROOM_EXPIRED",
+        "members": 0,
+        "invitation": "pending",
+        "room": {
+          "version": 2,
+          "poolVersion": 1,
+          "state": "LOBBY"
+        },
+        "acks": 0
+      }
+    },
+    {
+      "case": "v3 QA expiry worker resumes after TTL lock test",
+      "result": "Pass",
+      "expected": {
+        "paused": true,
+        "resumed": true
+      },
+      "actual": {
+        "paused": true,
+        "resumed": true
+      }
+    },
+    {
+      "case": "b accept waiting across both expiries is rejected",
+      "result": "Pass",
+      "expected": {
+        "status": 410,
+        "code": "ROOM_EXPIRED"
+      },
+      "actual": {
+        "status": 410,
+        "code": "ROOM_EXPIRED"
+      }
+    },
+    {
+      "case": "b waiting-expiry rejection has no admission side effects",
+      "result": "Pass",
+      "expected": {
+        "status": 410,
+        "code": "ROOM_EXPIRED",
+        "members": 0,
+        "invitation": "pending",
+        "room": {
+          "version": 2,
+          "poolVersion": 1,
+          "state": "LOBBY"
+        },
+        "acks": 0
+      },
+      "actual": {
+        "status": 410,
+        "code": "ROOM_EXPIRED",
+        "members": 0,
+        "invitation": "pending",
+        "room": {
+          "version": 2,
+          "poolVersion": 1,
+          "state": "LOBBY"
+        },
+        "acks": 0
+      }
+    },
+    {
+      "case": "b QA expiry worker resumes after TTL lock test",
+      "result": "Pass",
+      "expected": {
+        "paused": true,
+        "resumed": true
+      },
+      "actual": {
+        "paused": true,
+        "resumed": true
+      }
+    },
+    {
+      "case": "bsup accept waiting across both expiries is rejected",
+      "result": "Pass",
+      "expected": {
+        "status": 410,
+        "code": "ROOM_EXPIRED"
+      },
+      "actual": {
+        "status": 410,
+        "code": "ROOM_EXPIRED"
+      }
+    },
+    {
+      "case": "bsup waiting-expiry rejection has no admission side effects",
+      "result": "Pass",
+      "expected": {
+        "status": 410,
+        "code": "ROOM_EXPIRED",
+        "members": 0,
+        "invitation": "pending",
+        "room": {
+          "version": 2,
+          "poolVersion": 1,
+          "state": "LOBBY"
+        },
+        "acks": 0
+      },
+      "actual": {
+        "status": 410,
+        "code": "ROOM_EXPIRED",
+        "members": 0,
+        "invitation": "pending",
+        "room": {
+          "version": 2,
+          "poolVersion": 1,
+          "state": "LOBBY"
+        },
+        "acks": 0
+      }
+    },
+    {
+      "case": "bsup QA expiry worker resumes after TTL lock test",
+      "result": "Pass",
+      "expected": {
+        "paused": true,
+        "resumed": true
+      },
+      "actual": {
+        "paused": true,
+        "resumed": true
+      }
+    },
+    {
       "case": "accept/accept race creates one member and one accepted invitation",
       "result": "Pass",
       "expected": {
@@ -529,8 +737,8 @@
     {
       "case": "accept/start race has one exact serialized outcome",
       "result": "Pass",
-      "expected": "acceptThenStaleStart",
-      "actual": "acceptThenStaleStart"
+      "expected": "startThenLockedAccept",
+      "actual": "startThenLockedAccept"
     },
     {
       "case": "accept/cancel race has one exact serialized outcome",
@@ -634,7 +842,7 @@
       "expected": {
         "ok": true,
         "data": {
-          "code": "4A6EWC",
+          "code": "9TQZPV",
           "roomId": "<uuid>",
           "version": 2,
           "memberId": "<uuid>"
@@ -647,7 +855,7 @@
       "actual": {
         "ok": true,
         "data": {
-          "code": "4A6EWC",
+          "code": "9TQZPV",
           "roomId": "<uuid>",
           "version": 2,
           "memberId": "<uuid>"
@@ -737,5 +945,5 @@
       }
     }
   ],
-  "checkedAt": "2026-10-30T02:44:25.852Z"
+  "checkedAt": "2026-10-30T21:15:31.219Z"
 }
