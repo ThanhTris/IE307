@@ -6,8 +6,11 @@ import {readFileSync,readdirSync} from 'node:fs';
 import {writeFile,chmod,mkdir} from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
-import {resolve} from 'node:path';
+import {resolve,relative,isAbsolute} from 'node:path';
 const root=process.cwd();
+const reportDirectory=resolve(process.env.GM_CANONICAL_REPORT_DIRECTORY||resolve(root,'.work/gm20-canonical'));
+const reportRelative=relative(resolve(root,'.work'),reportDirectory);
+assert.ok(reportRelative&&!reportRelative.startsWith('..')&&!isAbsolute(reportRelative),'Canonical reports must stay in the ignored workspace');
 const gm03Signals=['GM03_QA_WORKDIR','GM03_QA_MANIFEST'].some(name=>Boolean(process.env[name]));
 const ciSignals=['GM_V4_QA_WORKDIR','GM_V4_QA_PROJECT_ID','GM_V4_QA_CONTAINER'].some(name=>Boolean(process.env[name]));
 assert.notEqual(gm03Signals,ciSignals,'Set exactly one QA interface: GM-03 manifest or GM_V4_QA_* CI environment');
@@ -315,5 +318,6 @@ const paths=['supabase/migrations/0035_gm20_canonical_writer.sql','scripts/gm20_
 const report={fixtureOnly:true,result:'Pass',scope:'owned synthetic Auth/REST QA; no real votes or production',caseCount:results.length,cases:results,schema:validated,
  contractVersion,policyVersion,schemaVersion:'0.12.0',applicationDatabaseChanged:false,privateBrunoEnvironmentWritten:process.env.GM20_CANONICAL_BRUNO==='1',credentialsInEvidence:false,
  sourceHashes:Object.fromEntries(paths.map(p=>[p,createHash('sha256').update(readFileSync(p)).digest('hex')]))};
-await writeFile(resolve(root,'.work/gm20-canonical/http-results.json'),JSON.stringify(report,null,2)+'\n');
+await mkdir(reportDirectory,{recursive:true});
+await writeFile(resolve(reportDirectory,'http-results.json'),JSON.stringify(report,null,2)+'\n');
 console.log(JSON.stringify({result:'Pass',cases:results.length,envelopes:validated.envelopesValidated}));

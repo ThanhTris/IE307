@@ -1,0 +1,67 @@
+{
+  "task": "GM-21",
+  "owner": "HoaiTam",
+  "reviewer": "ThanhTris",
+  "checkedAt": "2026-10-27T10:13:41.662652+00:00",
+  "targetRef": "origin/main",
+  "targetSha": "1bf28d8a9b2e0030c5137fa64c2d0d76fd130a16",
+  "branch": "codex/gm-21-canonical-history",
+  "request": "https://github.com/ThanhTris/IE307/issues/82#issuecomment-6438979028",
+  "delivery": "docs-only input/authority mapping and test plan, no implementation",
+  "gate": "BLOCKED",
+  "blockedDependencies": [
+    "GM-07",
+    "GM-18",
+    "GM-20"
+  ],
+  "missing": [
+    "GM20 approved canonical writer authority/ID/reference/consent mapping and commit",
+    "GM07 shared summary/detail/participants/paging/capability contract version",
+    "GM17 reviewed ACL/retention integration mapping"
+  ],
+  "sourceHashes": {
+    "supabase/migrations/0032_canonical_result_storage.sql": "8f1184820fdcf90909af2db7b9845706fdee11e2ccebd3f595b8e3ebc4214330",
+    "supabase/migrations/0027_dish_session_v4.sql": "504936d84652d92dc322e63160f5d435dffe5c466d38807220040480e621114c",
+    "supabase/migrations/0029_dish_v4_history_consent.sql": "9a6545904cbaa80e7461c3077a2c3f4c1bf6bc1362e364b566c0ce4012fe5533",
+    "supabase/migrations/0030_history_consent_search_path.sql": "c50737fa0dad65a3eebf2ed8423b3313f508b4d754fe4626d3ff300af510996e",
+    "supabase/migrations/0031_history_consent_policy_isolation.sql": "75eefa6f4975fa88a4fede0cc934aaed216144b1ca51efe3e31ea86a06f789e8",
+    "docs/data/GM06_CANONICAL_STORAGE.md": "8a5dde07b5685e0877d906be5886ee0fc0788af8957cd26fcb8b5f5a736bf954",
+    "docs/architecture/DISH_SESSION_API_CONTRACT_B.md": "d4b6cf9822785fde23667ce9ed5ef9ee258c9fae40a93118eaace4fcb3ddbed9",
+    "docs/architecture/schemas/dish-session-v4b.schema.json": "81cc383c9e66c3ab6f65f03bad1d67b44c3bad3c4939390aeaf53f407be4b8b0",
+    "docs/evidence/roadmap-v2/GM-20/CONTRACT_STORAGE.md": "ba6d97a57c73376958cac180f9a92a737001c05de358579074eb97fdc040fe15",
+    "docs/evidence/roadmap-v2/GM-20/HANDOFF.md": "40873c42a1d58ee5cfc4c4ccd8b9943a2ad963a7e335191f34c8015e593b6bc7",
+    "docs/project/PROJECT_READINESS.md": "e07f45865948b8cd214b2f4281003b542dba53c674915428c265ca6f9430841c",
+    "scripts/task_readiness.py": "b6efad8dca533d0d24c08822ea14956dc9e5c1cc7f0663c1bf9134d037e0544f"
+  },
+  "actualApiAuthority": "dish_v4_private",
+  "independentStorage": "GM06.3 / schema0.10.0 / gm06_canonical, no API writer",
+  "newIntegration": "Not run",
+  "detachedConsentDiagnostic": "Fail reproduced; not fixed; owned QA DB removed",
+  "applicationDatabaseChanged": false,
+  "projectStatusChanged": false,
+  "approved": false,
+  "verification": {
+    "repository": "Pass",
+    "taskIndexes": "Pass",
+    "diff": "Pass",
+    "python": {
+      "run": 611,
+      "skipped": 5,
+      "result": "Pass"
+    },
+    "newRuntimeIntegration": "Not run",
+    "startGate": "BLOCKED"
+  },
+  "environment": {
+    "platform": "Darwin",
+    "python": "3.13.3",
+    "localSupabase": "Stopped with backup; owned diagnostic DB removed"
+  },
+  "preparedArtifactHashes": {
+    "PLAN.md": "a44346411abf7d648f095c029fb47d161b1004284be6a192de9cf7ecb97184d0",
+    "MAPPING.md": "cc87efb6b47a56b4392051073c9cec86ee2343375ac09bd085030a0abaf863a8",
+    "TEST_MATRIX.md": "6651fd6858ae08f9225c8be496aad78147890de7493229f69e4ee8241599b611",
+    "CHECKS.md": "a11f7c8d554a039c59aafc69d424c98510f1b8d1408935188c07f95c3962e5ea",
+    "HANDOFF.md": "66e356be74560df9e4eb1d1a8235b53d97c6d4289596aa7afde8f6d48c2b4d89"
+  }
+}

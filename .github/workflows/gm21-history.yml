@@ -53,3 +53,41 @@ jobs:
         uses: ./.github/actions/ci-report
         with:
           name: gm21-history
+
+  canonical:
+    name: GM-21 canonical history consent and retention
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - run: npm ci
+      - run: python -m pip install --requirement scripts/ci-requirements.txt
+      - name: Actual producer to history, consent, deletion, races and owned cleanup
+        run: python scripts/gm21_canonical_check.py
+      - name: Owned cleanup retry
+        if: always()
+        run: python scripts/gm21_canonical_check.py --cleanup
+      - name: Upload sanitized canonical evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: gm21-canonical-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .work/gm21-canonical/dish-v4-ci-report.json
+            .work/gm21-canonical/dish-v4-api-results.json
+            .work/gm21-canonical/sql-parity.json
+            .work/gm21-canonical/http-results.json
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Report final job state
+        if: always()
+        uses: ./.github/actions/ci-report
+        with:
+          name: gm21-canonical

@@ -1,5 +1,7 @@
 # GM-21 — History/consent integration handoff
 
+> GM21.3 ngày2026-10-30: [checks SQL/Auth/REST thật](canonical-integration/CHECKS.md), [handoff](canonical-integration/HANDOFF.md) và [mapping đã nhận từ GM20](canonical-integration/MAPPING.md). Main/PR143 e3f7058, start READY_TO_START, merge READY_FOR_MERGE_REVIEW; Trí review Pending. Forward0036/schema0.13.0 nối revoke/delete/retention với writer canonical đã bàn giao. Evidence baseline bên dưới giữ nguyên theo revision cũ.
+
 2026-10-15. Owner Tâm (@HoaiTam), reviewer Trí (@ThanhTris), review Pending.
 Branch `codex/gm-21-history-consent` → main / PR113. Rebased onto target
 `991de6620715d1219da900499f4aa2d683b01bb4` (GM20 PR115 + Expo fix PR116).
