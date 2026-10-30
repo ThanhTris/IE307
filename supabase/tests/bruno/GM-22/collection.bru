@@ -5,7 +5,7 @@ meta {
 
 script:pre-request {
   const url = bru.interpolate(req.getUrl());
-  if (!/^http:\/\/(127\.0\.0\.1|localhost):54332\/rest\/v1\/rpc\//.test(url)) throw new Error('Start the owned GM-22 disposable fixture on port 54332');
+  if (!/^http:\/\/(127\.0\.0\.1|localhost):54361\/rest\/v1\/rpc\//.test(url)) throw new Error('Start the owned isolated GM-22 Auth+REST QA runtime on port 54361');
   req.setHeader('apikey', bru.getEnvVar('anonKey'));
   req.setTimeout(10000);
 }

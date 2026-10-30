@@ -1,92 +1,441 @@
-/** GM-22 owned disposable HTTP suite. Positive rows and JWTs never touch app data. */
+/** GM-22.2 HTTP checks against one owned Supabase Auth+REST QA project. */
 import assert from 'node:assert/strict';
-import { randomUUID } from 'node:crypto';
-import { spawn } from 'node:child_process';
-import { createServer } from 'node:http';
-import { readFileSync } from 'node:fs';
-import { access, mkdir, writeFile, rm } from 'node:fs/promises';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { runCommand, validateConfig, validateApiUrl } from './backend.mjs';
-const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
-const python=process.platform==='win32'?'python':'python3'; const ns=randomUUID(), guests=[], cases=[];
-const container='gm22-http-'+ns.replaceAll('-','').slice(0,16), port=54332, control=randomUUID();
-const keep=process.argv.includes('--bruno');
-const envDir=resolve(root,'supabase/tests/bruno/GM-22/environments');
-const runtimeFile=resolve(envDir,'runtime.private.json');
-const runtimeBru=resolve(envDir,'Local.runtime.private.bru');
-let base,key,status,dbInfo,ids,gateway,started=false,stopResolve,stopRequested=false,stopAckResolve;
-let cleanupFailure;
-let stopAckPromise=new Promise(resolve=>{stopAckResolve=resolve;});
-async function docker(args,env={}) { return new Promise((ok,bad)=>{const c=spawn('docker',args,{shell:false,env:{...process.env,...env},stdio:['ignore','pipe','pipe']});let o='';c.stdout.on('data',x=>o+=x);c.on('error',bad);c.on('close',n=>n===0?ok(o):bad(Error('docker failed')));}); }
-async function fixture(mode,sql='') { return new Promise((ok,bad)=>{const c=spawn(python,[resolve(root,'scripts/gm19_http_fixture.py'),mode,ns,...guests.map(g=>g.user.id)],{env:{...process.env,PYTHONUTF8:'1'},stdio:['pipe','pipe','pipe']});let o='',e='';c.stdout.on('data',x=>o+=x);c.stderr.on('data',x=>e+=x);c.on('error',bad);c.on('close',n=>n===0?ok(mode==='sql'?o:JSON.parse(o)):bad(Error(e||o||'fixture failed')));c.stdin.end(sql);}); }
-async function req(name,token,body) { const r=await fetch(base+'/rest/v1/rpc/'+name,{method:'POST',headers:{apikey:key,'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},body:JSON.stringify(body)});return {status:r.status,body:await r.json()}; }
-function ok(r){assert.equal(r.status,200,JSON.stringify(r.body));assert.equal(r.body.ok,true,JSON.stringify(r.body));return r.body;}
-function fail(r,status,code){assert.equal(r.status,status,JSON.stringify(r.body));assert.equal(r.body.messageKey??r.body.error?.messageKey,code);}
-async function check(name,fn){try{const out=await fn();cases.push({case:name,result:'Pass',...out});console.log('Pass:',name);}catch(e){cases.push({case:name,result:'Fail',diagnostic:String(e.message).slice(0,400)});throw e;}}
-try {
-  try { await access(runtimeFile); throw Error('RUNTIME_CONFLICT: existing GM-22 retained runtime must be stopped or cleaned first'); }
-  catch(error) { if(error.message.startsWith('RUNTIME_CONFLICT')) throw error; if(error.code!=='ENOENT') throw error; }
-  validateConfig(readFileSync(resolve(root,'supabase/config.toml'),'utf8'));
-  status=JSON.parse(await runCommand(process.execPath,[resolve(root,'node_modules/supabase/dist/supabase.js'),'status','--output','json','--workdir',root],{quiet:true}));
-  const auth=validateApiUrl(status.API_URL); key=status.ANON_KEY;
-  for(let i=0;i<3;i++){let r;for(let attempt=0;attempt<5;attempt++){r=await fetch(auth+'/auth/v1/signup',{method:'POST',headers:{apikey:key,'Content-Type':'application/json'},body:JSON.stringify({data:{display_name:'GM22 guest '+i,gm18_test_namespace:ns,gm19_test_namespace:ns,gm22_test_namespace:ns}})});if(r.status!==429)break;await new Promise(resolveWait=>setTimeout(resolveWait,1500));}assert.equal(r.status,200);guests.push(await r.json());}
-  dbInfo=await fixture('create');ids=await fixture('positive');
-  const sql=await fixture('sql',readFileSync(resolve(root,'supabase/tests/database/GM-22_social.test.sql'),'utf8'));
-  assert.ok(!/^not ok /m.test(sql),sql);assert.equal((sql.match(/^ok \d+ /gm)??[]).length,19);
-  await mkdir(resolve(root,'docs/evidence/roadmap-v2/GM-22'),{recursive:true});await writeFile(resolve(root,'docs/evidence/roadmap-v2/GM-22/sql-run.txt'),sql.replace(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi,'<uuid>'),'utf8');
-  const rest=JSON.parse(await docker(['inspect','supabase_rest_gi-cung-duoc-local']))[0];const dbUrl=new URL(status.DB_URL);dbUrl.hostname='supabase_db_gi-cung-duoc-local';dbUrl.port='5432';dbUrl.pathname='/'+dbInfo.database;
-  await docker(['run','--rm','--pull','never','-d','--name',container,'--network',Object.keys(rest.NetworkSettings.Networks)[0],'-p',`127.0.0.1::3000`,'-e','PGRST_DB_URI','-e','PGRST_JWT_SECRET','-e','PGRST_DB_ANON_ROLE=anon','-e','PGRST_DB_SCHEMAS=public',rest.Config.Image],{PGRST_DB_URI:dbUrl.toString(),PGRST_JWT_SECRET:rest.Config.Env.find(v=>v.startsWith('PGRST_JWT_SECRET=')).slice(17)});started=true;
-  const binding=JSON.parse(await docker(['inspect',container]))[0].NetworkSettings.Ports['3000/tcp'][0];const upstream='http://127.0.0.1:'+binding.HostPort;for(let i=0;i<40;i++){try{if((await fetch(upstream+'/')).ok)break;}catch{}await new Promise(r=>setTimeout(r,250));}
-  gateway=createServer(async(q,s)=>{try{if(q.method==='POST'&&q.url==='/__stop'&&q.headers['x-gm22-control']===control){stopRequested=true;stopResolve?.();const ack=await stopAckPromise;s.writeHead(ack.ok?200:500,{'Content-Type':'application/json'});s.end(JSON.stringify(ack));return;}if(q.method!=='POST'||!q.url.startsWith('/rest/v1/rpc/')){s.writeHead(404);s.end('{}');return;}const chunks=[];for await(const c of q)chunks.push(c);const u=await fetch(upstream+q.url.replace('/rest/v1',''),{method:'POST',headers:{'Content-Type':'application/json',...(q.headers.authorization?{Authorization:q.headers.authorization}:{})},body:Buffer.concat(chunks)});s.writeHead(u.status,{'Content-Type':'application/json'});s.end(await u.text());}catch(e){s.writeHead(502);s.end('{}');}});
-  await new Promise((ok,bad)=>{gateway.once('error',bad);gateway.listen(port,'127.0.0.1',ok)});base=`http://127.0.0.1:${port}`;
-  const host=guests[0].access_token, member=guests[1].access_token, outsider=guests[2].access_token;const hostUserId=guests[0].user.id, memberId=guests[1].user.id, outsiderId=guests[2].user.id;
-  const hostIdentityResponse=await req('get_my_social_identity',host,{});assert.equal(hostIdentityResponse.status,200);const hostIdentity=hostIdentityResponse.body;
-  const memberIdentityResponse=await req('get_my_social_identity',member,{});assert.equal(memberIdentityResponse.status,200);const memberIdentity=memberIdentityResponse.body;
-  await check('self identity has stable ten-character code',async()=>{assert.match(hostIdentity.friendCode,/^[A-HJ-NP-Z2-9]{10}$/);return {status:200};});
-  const invite=ok(await req('invite_partner',host,{requestId:randomUUID(),friend_code:memberIdentity.friendCode,partner_id:null}));
-  await check('recipient accepts partner invite and pair lists',async()=>{assert.equal(invite.data.status,'pending');ok(await req('accept_partner',member,{requestId:randomUUID(),invitation_id:invite.data.id}));const f=await req('list_friends',host,{});assert.equal(f.status,200);assert.equal(f.body.length,1);return {status:200,friends:1};});
-  const room=ok(await req('create_room',host,{requestId:randomUUID(),display_name:'GM22 host',anchor_id:ids.anchorId,radius_m:1500,desired_at:new Date(Date.now()+1800000).toISOString(),service_mode:'dine_in',meal_slot:'dinner',time_hint:null,budget:null,avoid_recent:false}));
-  const roomInvite=ok(await req('invite_to_room',host,{requestId:randomUUID(),room_id:room.roomId,partner_id:memberId,expected_version:room.version}));
-  await check('room invite does not join before recipient accepts',async()=>{assert.equal(roomInvite.data.status,'pending');const before=ok(await req('get_room_snapshot',host,{room_id:room.roomId}));assert.equal(before.data.members.length,1);return {status:200,members:1};});
-  await check('recipient accepts room invitation with ready false',async()=>{const joined=ok(await req('accept_room_invite',member,{requestId:randomUUID(),invitation_id:roomInvite.data.id,display_name:'GM22 member'}));assert.equal(joined.data.memberId.length,36);const snap=ok(await req('get_room_snapshot',member,{room_id:room.roomId}));assert.equal(snap.data.members.length,2);assert.ok(snap.data.members.every(m=>m.ready===false));return {status:200,members:2,ready:false};});
-  await check('inbox is caller scoped and missing auth is rejected',async()=>{const inbox=await req('list_partner_inbox',member,{cursor:null});assert.equal(inbox.status,200);assert.ok(Array.isArray(inbox.body));const unauth=await req('list_friends',null,{});assert.equal(unauth.status,401);return {status:200,unauthStatus:401};});
-  const outsiderIdentityResponse=await req('get_my_social_identity',outsider,{});assert.equal(outsiderIdentityResponse.status,200);
-  const inv2=ok(await req('invite_partner',host,{requestId:randomUUID(),friend_code:outsiderIdentityResponse.body.friendCode,partner_id:null}));
-  await check('wrong recipient and rejected invite are distinguished',async()=>{fail(await req('accept_partner',host,{requestId:randomUUID(),invitation_id:inv2.data.id}),403,'NOT_RECIPIENT');ok(await req('reject_partner',outsider,{requestId:randomUUID(),invitation_id:inv2.data.id}));return {status:200};});
-  await check('rejected friend invite can be sent again with a new event',async()=>{const again=ok(await req('invite_partner',host,{requestId:randomUUID(),friend_code:outsiderIdentityResponse.body.friendCode,partner_id:null}));assert.notEqual(again.data.id,inv2.data.id);assert.equal(again.data.status,'pending');return {status:200,newInvitation:true};});
-  const expiredFriend=ok(await req('invite_partner',host,{requestId:randomUUID(),friend_code:outsiderIdentityResponse.body.friendCode,partner_id:null}));
-  await fixture('sql',`update public.friend_invitations set created_at=statement_timestamp()-interval '3 seconds',expires_at=statement_timestamp()-interval '1 second',responded_at=statement_timestamp()-interval '2 seconds',version=version+1 where id='${expiredFriend.data.id}';`);
-  await check('expired friend invite is retired before a new request',async()=>{const fresh=ok(await req('invite_partner',host,{requestId:randomUUID(),friend_code:outsiderIdentityResponse.body.friendCode,partner_id:null}));assert.notEqual(fresh.data.id,expiredFriend.data.id);assert.equal(fresh.data.status,'pending');ok(await req('accept_partner',outsider,{requestId:randomUUID(),invitation_id:fresh.data.id}));return {status:200,newInvitation:true};});
-  const room2=ok(await req('create_room',host,{requestId:randomUUID(),display_name:'GM22 second room',anchor_id:ids.anchorId,radius_m:1500,desired_at:new Date(Date.now()+1800000).toISOString(),service_mode:'dine_in',meal_slot:'dinner',time_hint:null,budget:null,avoid_recent:false}));
-  let roomInvite2;
-  await check('concurrent new room invites serialize to one invitation',async()=>{const responses=await Promise.all([1,2].map(()=>req('invite_to_room',host,{requestId:randomUUID(),room_id:room2.roomId,partner_id:outsiderId,expected_version:room2.version})));responses.forEach(response=>assert.equal(response.status,200));const invitationIds=responses.map(response=>response.body.data.id);assert.equal(new Set(invitationIds).size,1);roomInvite2=responses[0].body.data;const counts=(await fixture('sql',`select (select count(*)::text from public.room_invitations where room_id='${room2.roomId}' and recipient_user_id='${outsiderId}' and state='pending')||(select count(*)::text from public.events where room_id='${room2.roomId}' and kind='ROOM_INVITED' and recipient_user_ids @> array['${outsiderId}'::uuid])||(select count(*)::text from public.inbox where owner_user_id='${outsiderId}' and event_id in (select event_id from public.room_invitations where room_id='${room2.roomId}' and recipient_user_id='${outsiderId}'));`)).trim();assert.equal(counts,'111');return {status:200,singleInvitation:true,oneEvent:true,oneInbox:true};});
-  await fixture('sql',`update public.room_invitations set created_at=statement_timestamp()-interval '3 seconds',expires_at=statement_timestamp()-interval '1 second',responded_at=statement_timestamp()-interval '2 seconds',version=version+1 where id='${roomInvite2.id}';`);
-  const roomInvite2Fresh=ok(await req('invite_to_room',host,{requestId:randomUUID(),room_id:room2.roomId,partner_id:outsiderId,expected_version:room2.version}));
-  await check('expired room invite is replaced and rejected invite can be resent',async()=>{assert.notEqual(roomInvite2Fresh.data.id,roomInvite2.id);ok(await req('reject_room_invite',outsider,{requestId:randomUUID(),invitation_id:roomInvite2Fresh.data.id}));const resent=ok(await req('invite_to_room',host,{requestId:randomUUID(),room_id:room2.roomId,partner_id:outsiderId,expected_version:room2.version}));assert.notEqual(resent.data.id,roomInvite2Fresh.data.id);return {status:200,newInvitation:true};});
-  const fullUserIds=Array.from({length:7},()=>randomUUID());
-  await fixture('sql',`begin;insert into auth.users(id,is_anonymous) values ${fullUserIds.map(id=>`('${id}',true)`).join(',')};insert into public.members(id,room_id,user_id,nickname,ready,history_consent,joined_at,left_at,version) values ${fullUserIds.map((id,i)=>`(gen_random_uuid(),'${room2.roomId}','${id}','GM22 full ${i}',false,false,statement_timestamp(),null,1)`).join(',')};commit;`);
-  await check('accept room invite rejects an eight-member room',async()=>{fail(await req('accept_room_invite',outsider,{requestId:randomUUID(),invitation_id:(await req('invite_to_room',host,{requestId:randomUUID(),room_id:room2.roomId,partner_id:outsiderId,expected_version:room2.version})).body.data.id,display_name:'GM22 full target'}),409,'ROOM_FULL');return {status:409};});
-  const lockedRoster=[hostUserId,...fullUserIds];
-  const lockedConsent=JSON.stringify(lockedRoster.map(id=>({userId:id,historyConsent:false}))).replace(/'/g,"''");
-  await fixture('sql',`update public.rooms set state='ROUND_1',roster_user_ids=array['${lockedRoster.join("'::uuid,'")}'::uuid],consent_snapshot='${lockedConsent}'::jsonb,evaluated_at=statement_timestamp(),locked_at=statement_timestamp(),version=version+1 where id='${room2.roomId}';`);
-  await check('locked room rejects a new invitation',async()=>{const version=Number((await fixture('sql',`select version from public.rooms where id='${room2.roomId}';`)).trim());fail(await req('invite_to_room',host,{requestId:randomUUID(),room_id:room2.roomId,partner_id:outsiderId,expected_version:version}),409,'ROOM_LOCKED');return {status:409};});
-  await fixture('sql',`do $fixture$ declare rid uuid:='${room2.roomId}'::uuid; result_id uuid; event_id uuid:=gen_random_uuid(); begin result_id:=gen_random_uuid(); insert into public.results(id,room_id,winner_round_dish_id,reason_code,match_tier,policy_version,tied_choice_ids,finalized_at,version) values(result_id,rid,null,'EMPTY_INTERSECTION','NO_CONSENSUS','decision-v2','{}',statement_timestamp(),1) on conflict (room_id) do nothing; select id into result_id from public.results where room_id=rid; insert into public.events(id,kind,room_id,invitation_id,friend_invitation_id,result_id,recipient_user_ids,dedupe_key,created_at,expires_at,version) values(event_id,'ROOM_RESULT_READY',rid,null,null,result_id,array['${hostUserId}'::uuid],'gm22-review-result-'||event_id::text,statement_timestamp(),statement_timestamp()+interval '1 day',1); insert into public.inbox(id,owner_user_id,event_id,created_at,expires_at,version) values(gen_random_uuid(),'${guests[0].user.id}',event_id,statement_timestamp(),statement_timestamp()+interval '1 day',1); end $fixture$;`);
-  await check('inbox keeps room result separate from invitations',async()=>{const inboxResponse=await req('list_partner_inbox',host,{cursor:null});assert.equal(inboxResponse.status,200);const inbox=inboxResponse.body;assert.ok(Array.isArray(inbox));const resultItem=inbox.find(item=>item.type==='room_result');assert.ok(resultItem);assert.equal(resultItem.metadata.invitationId,undefined);assert.ok(resultItem.metadata.roomId);assert.ok(resultItem.metadata.resultId);return {status:200,roomResult:true};});
-  // Keep the retained Bruno fixture at the pre-cleanup state so its request
-  // chain can exercise the accepted pair and pending room invitation. The
-  // regular disposable HTTP suite still verifies unfriend cleanup.
-  if(!keep) await check('unfriend removes pair, cancels pending invite and keeps room membership',async()=>{const raceRoom=ok(await req('create_room',host,{requestId:randomUUID(),display_name:'GM22 unfriend race',anchor_id:ids.anchorId,radius_m:1500,desired_at:new Date(Date.now()+1800000).toISOString(),service_mode:'dine_in',meal_slot:'dinner',time_hint:null,budget:null,avoid_recent:false}));const raceInvite=ok(await req('invite_to_room',host,{requestId:randomUUID(),room_id:raceRoom.roomId,partner_id:memberId,expected_version:raceRoom.version}));const [unfriendResponse,acceptResponse]=await Promise.all([req('unfriend',host,{requestId:randomUUID(),partner_id:memberId}),req('accept_room_invite',member,{requestId:randomUUID(),invitation_id:raceInvite.data.id,display_name:'GM22 race member'})]);assert.equal(unfriendResponse.status,200);assert.ok(acceptResponse.status===200||acceptResponse.status===409);if(acceptResponse.status===409) assert.ok(['INVITE_CANCELLED','INVITE_EXPIRED'].includes(acceptResponse.body.messageKey??acceptResponse.body.error?.messageKey));const f=await req('list_friends',host,{});assert.equal(f.status,200);assert.ok(f.body.every(friend=>friend.friendUserId!==memberId));assert.equal((await fixture('sql',`select count(*) from public.friends where low_user_id=least('${hostUserId}'::uuid,'${memberId}'::uuid) and high_user_id=greatest('${hostUserId}'::uuid,'${memberId}'::uuid);`)).trim(),'0');assert.equal((await fixture('sql',`select state from public.room_invitations where id='${raceInvite.data.id}';`)).trim(),acceptResponse.status===200?'accepted':'cancelled');const s=ok(await req('get_room_snapshot',member,{room_id:room.roomId}));assert.equal(s.data.members.length,2);return {status:200,membershipPreserved:true,acceptStatus:acceptResponse.status};});
-  const summary={result:'Pass',task:'GM-22',contract:'food-v1/roadmap-v2/GM-22.1',schemaVersion:'0.4.0',revision:(await runCommand('git',['rev-parse','HEAD'],{quiet:true})).trim(),checkedAt:new Date().toISOString(),cases,endpoint:base,synthetic:true};
-  await writeFile(resolve(root,'docs/evidence/roadmap-v2/GM-22/http-results.json'),JSON.stringify(summary,null,2)+'\n','utf8');
-  if(keep){
-    await mkdir(envDir,{recursive:true});
-    await writeFile(runtimeBru,`vars {\n  baseUrl: ${base}\n  anonKey: ${key}\n  hostToken: ${host}\n  memberToken: ${member}\n  outsiderToken: ${outsider}\n  memberFriendCode: ${memberIdentity.friendCode}\n  roomId: ${room.roomId}\n  roomVersion: ${room.version}\n  memberId: ${memberId}\n  friendInvitationId: ${invite.data.id}\n  roomInvitationId: ${roomInvite.data.id}\n  requestId: gm22-bruno-${Date.now()}\n}\n`,'utf8');
-    await writeFile(runtimeFile,JSON.stringify({endpoint:base,control,namespace:ns,guestIds:guests.map(g=>g.user.id),stopped:false}),'utf8');
-    console.log('BRUNO_READY endpoint='+base+' namespace='+ns+' (stop with scripts/gm22_http_stop.mjs)');
-    await new Promise(resolveWait=>{stopResolve=resolveWait;process.once('SIGINT',resolveWait);process.once('SIGTERM',resolveWait);});
-    if(started){try{await docker(['stop',container]);await writeFile(runtimeFile,JSON.stringify({endpoint:base,control,namespace:ns,guestIds:guests.map(g=>g.user.id),stopped:true}),'utf8');stopAckResolve?.({ok:true,stopped:true,cleaned:false});}catch(error){stopAckResolve?.({ok:false,stopped:false,error:'CONTAINER_STOP_FAILED'});throw error;}}
-    await new Promise(resolveClose=>gateway?.close(resolveClose));
-  } else console.log(JSON.stringify(summary));
-}catch(e){console.error('GM22 failed:',e.message);process.exitCode=1;}
-finally {if(!keep||!stopRequested){if(gateway)await new Promise(r=>gateway.close(r));if(started)await docker(['stop',container]).catch(error=>{cleanupFailure=error;});if(guests.length)await fixture('cleanup').catch(error=>{cleanupFailure=error;});if(cleanupFailure){console.error('GM22 cleanup failed:',cleanupFailure.message);process.exitCode=1;}} }
+import {execFileSync,spawn,spawnSync} from 'node:child_process';
+import {createHash,randomUUID} from 'node:crypto';
+import {mkdir,readFile,writeFile,chmod} from 'node:fs/promises';
+import {readFileSync} from 'node:fs';
+import {resolve} from 'node:path';
+
+const root=process.cwd();
+const project=process.env.GM_V4_QA_PROJECT_ID;
+const workdir=process.env.GM_V4_QA_WORKDIR;
+const container=process.env.GM_V4_QA_CONTAINER;
+const namespace=process.env.GM_V4_OWNER_NAMESPACE;
+const brunoSetup=process.argv.includes('--prepare-bruno');
+const contractB='dish-session-v4/roadmap-v2/GM-07.B';
+const contractBsup='dish-session-v4/roadmap-v2/GM-07.B-supplement';
+const policyV4='dish-decision-v4/ADR-019-30PCT-MIN1';
+const pref={cuisineIds:[],categoryIds:[],temperature:null,flavor:null,budget:null,avoidRecent:false};
+const results=[];
+const users=[];
+
+assert.match(project||'',/^ie307-dish-v4-qa-\d{8}(?:-\d+-\d+)?$/,'GM-22 requires an owned GM_V4 QA project');
+assert.equal(container,'supabase_db_'+project,'GM-22 QA database container must match the owned project');
+assert.ok(workdir&&namespace,'GM-22 QA workdir and namespace are required');
+const statusResult=spawnSync(process.execPath,[resolve(root,'node_modules/supabase/dist/supabase.js'),'status','--output','json','--workdir',workdir],{encoding:'utf8',maxBuffer:1024*1024});
+assert.equal(statusResult.status,0,'owned QA Supabase status must be available');
+const status=JSON.parse(statusResult.stdout);
+const base=(status.API_URL||status.api?.url||'').replace(/\/$/,'');
+const anonKey=status.ANON_KEY||status.PUBLISHABLE_KEY;
+assert.equal(new URL(base).hostname,'127.0.0.1','QA Auth and REST must bind to loopback');
+assert.equal(new URL(base).port,'54361','GM-22 must use its explicit QA API port');
+assert.ok(anonKey,'QA publishable key is missing');
+
+function docker(args){return execFileSync('docker',args,{encoding:'utf8',maxBuffer:2*1024*1024});}
+function sqlRaw(query){return docker(['exec','-i',container,'psql','-X','-q','-U','postgres','-d','postgres','-v','ON_ERROR_STOP=1','-At','-c',query]).trim();}
+function sqlAsync(query){return new Promise((resolve,reject)=>{
+ const child=spawn('docker',['exec','-i',container,'psql','-X','-q','-U','postgres','-d','postgres','-v','ON_ERROR_STOP=1','-At','-c',query],{shell:false,stdio:['ignore','pipe','pipe']});
+ let output='';child.stdout.on('data',chunk=>output+=chunk);child.stderr.on('data',()=>{});
+ child.once('error',()=>reject(Error('Owned QA SQL operation unavailable')));
+ child.once('close',code=>code===0?resolve(output.trim()):reject(Error('Owned QA SQL operation failed')));
+});}
+function ownedSql(query){
+ const inspected=JSON.parse(docker(['inspect',container]))[0];
+ const labels=inspected.Config?.Labels||{};
+ assert.equal(inspected.Name,'/'+container);
+ assert.equal(labels['com.supabase.cli.project'],project);
+ assert.equal(String(labels['com.supabase.cli.workdir']||'').replaceAll('\\','/').toLowerCase(),String(workdir).replaceAll('\\','/').toLowerCase());
+ assert.equal(inspected.State?.Running,true);
+ assert.equal(sqlRaw('select namespace::text from public.gm40_qa_owner'),namespace,'QA owner marker mismatch');
+ return sqlRaw(query);
+}
+function uuid(value){assert.match(value,/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);return value;}
+function clean(value){return JSON.parse(JSON.stringify(value,(key,item)=>{
+ if(typeof item==='string'&&/^eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(item))return '[REDACTED JWT]';
+ if(/token|secret|password|key/i.test(key))return '[REDACTED]';
+ if(typeof item==='string'&&/^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(item))return '<uuid>';
+ return item;
+}));}
+function pass(name,expected,actual){assert.deepEqual(actual,expected,name);results.push({case:name,result:'Pass',expected:clean(expected),actual:clean(actual)});console.log('PASS',name);}
+function responseCode(body){return body?.messageKey??body?.error?.messageKey??body?.error?.code??null;}
+function expectOk(response,name){assert.equal(response.status,200,name+' HTTP '+response.status+' '+JSON.stringify(response.body));assert.equal(response.body?.ok,true,name+' RPC rejected '+responseCode(response.body));return response.body.data;}
+function expectFail(response,status,code,name){assert.equal(response.status,status,name+' HTTP '+response.status+' '+JSON.stringify(response.body));assert.equal(responseCode(response.body),code,name+' error messageKey');results.push({case:name,result:'Pass',expected:{status,code},actual:{status:response.status,code:responseCode(response.body)}});console.log('PASS',name);return response.body;}
+async function request(path,token,body,headers={}){
+ const response=await fetch(base+path,{method:'POST',headers:{apikey:anonKey,'content-type':'application/json',...(token?{authorization:'Bearer '+token}:{}),...headers},body:JSON.stringify(body)});
+ let data;try{data=await response.json();}catch{data={};}
+ return {status:response.status,body:data};
+}
+async function rpc(name,token,body){return request('/rest/v1/rpc/'+name,token,body);}
+async function dish(token,command,payload,wireVersion){
+ if(wireVersion==='v3')return rpc('dish_session',token,{command,payload});
+ const contractVersion=wireVersion==='bsup'?contractBsup:contractB;
+ return rpc('dish_session',token,{command,payload:{contractVersion,...payload}});
+}
+async function guest(name){
+ const response=await fetch(base+'/auth/v1/signup',{method:'POST',headers:{apikey:anonKey,'content-type':'application/json'},body:JSON.stringify({data:{display_name:name,gm22_qa_project:project}})});
+ let data={};try{data=await response.json();}catch{}
+ assert.ok([200,201].includes(response.status),'isolated GoTrue guest signup failed: '+response.status+' '+JSON.stringify(data));
+ assert.ok(data.access_token&&data.user?.id,'GoTrue response did not contain a guest JWT/identity');
+ const user={id:uuid(data.user.id),token:data.access_token,friendCode:null};users.push(user);
+ const identity=await rpc('get_my_social_identity',user.token,{});
+ assert.equal(identity.status,200);user.friendCode=identity.body.friendCode;
+ return user;
+}
+function roomId(data){return uuid(data.roomId||data.id);}
+function statusOfRoom(room){return ownedSql(`select state from public.rooms where id='${uuid(room)}'`);}
+function versionOfRoom(room){return Number(ownedSql(`select version from public.rooms where id='${uuid(room)}'`));}
+function activeCount(room){return Number(ownedSql(`select count(*) from public.members where room_id='${uuid(room)}' and left_at is null`));}
+function memberRow(room,user){return JSON.parse(ownedSql(`select json_build_object('id',id,'nickname',nickname,'ready',ready,'leftAt',left_at,'version',version) from public.members where room_id='${uuid(room)}' and user_id='${uuid(user)}'`));}
+function linkPair(left,right){
+ const a=uuid(left),b=uuid(right),[low,high]=[a,b].sort();
+ ownedSql(`insert into public.friends(id,low_user_id,high_user_id,accepted_at,version) values(gen_random_uuid(),'${low}','${high}',clock_timestamp(),1) on conflict(low_user_id,high_user_id) do nothing`);
+}
+function seedMembers(room,memberIds,policy){
+ if(!memberIds.length)return;
+ const r=uuid(room),ids=memberIds.map(uuid);
+ const values=ids.map((id,index)=>`(gen_random_uuid(),'${r}','${id}','GM22 fixture ${index}',false,false,clock_timestamp(),null,1)`).join(',');
+ const roster=ids.map(id=>`'${id}'::uuid`).join(',');
+ const flags=policy==='v3'?'select set_config(\'dish_v3.writer\',\'on\',true);':policy==='v4'?'select set_config(\'dish_v4.writer\',\'on\',true);':'select set_config(\'dish_v3.writer\',\'on\',true);select set_config(\'dish_v4.writer\',\'on\',true);';
+ ownedSql(`begin;${flags} insert into public.members(id,room_id,user_id,nickname,ready,history_consent,joined_at,left_at,version) values ${values}; update public.rooms set roster_user_ids=roster_user_ids||array[${roster}],version=version+${ids.length},updated_at=clock_timestamp() where id='${r}'; commit;`);
+}
+function grantHostPairs(host,targets){for(const target of targets)linkPair(host.id,target.id);}
+async function inviteRoom(host,room,target,expectedVersion=versionOfRoom(room)){
+ return rpc('invite_to_room',host.token,{requestId:randomUUID(),room_id:room,partner_id:target.id,expected_version:expectedVersion});
+}
+async function acceptRoom(user,invitation,displayName='GM22 recipient',requestIdValue=randomUUID()){
+ return rpc('accept_room_invite',user.token,{requestId:requestIdValue,invitation_id:invitation,display_name:displayName});
+}
+async function createV2(host){
+ const desired=new Date(Date.now()+30*60*1000).toISOString();
+ const result=expectOk(await rpc('create_room',host.token,{requestId:randomUUID(),display_name:'GM22 v2 host',anchor_id:process.env.GM22_QA_ANCHOR_ID,radius_m:1500,desired_at:desired,service_mode:'dine_in',meal_slot:'lunch',time_hint:null,budget:null,avoid_recent:false}),'create decision-v2 room');
+ return {id:roomId(result),code:result.code,policy:'v2'};
+}
+async function createDishRoom(host,version='v3'){
+ const payload=version==='v3'
+  ?{requestId:randomUUID(),displayName:'GM22 v3 host',dishCount:10,mealSlot:'lunch',cuisineIds:[],categoryIds:[]}
+  :{requestId:randomUUID(),displayName:version==='b'?'GM22 B host':'GM22 B supplement host',
+    settings:{dishCount:10,mealSlot:'lunch',desiredAt:null},preferences:pref};
+ const wireVersion=version==='v3'?'v3':version==='bsup'?'bsup':'b';
+ const result=expectOk(await dish(host.token,'create',payload,wireVersion),'create '+version+' room');
+ return {id:roomId(result),code:result.code,policy:wireVersion};
+}
+async function createRoom(host,version){return version==='v2'?createV2(host):createDishRoom(host,version);}
+async function roomSnapshot(user,room,version){
+ if(version==='v2')return expectOk(await rpc('get_room_snapshot',user.token,{room_id:room}),'read decision-v2 room snapshot');
+ const wireVersion=version==='v3'?'v3':version==='bsup'?'bsup':'b';
+ return expectOk(await dish(user.token,'snapshot',{roomId:room},wireVersion),'read '+version+' room snapshot');
+}
+async function inviteAndAccept(host,target,room,version,acceptRequestId=randomUUID()){
+ const sent=expectOk(await inviteRoom(host,room.id,target),'invite room member');
+ const response=await acceptRoom(target,sent.id,'GM22 invited',acceptRequestId);
+ return {invitation:sent,response,requestId:acceptRequestId};
+}
+async function prepareBruno(){
+ const host=await guest('GM22 Bruno host'),member=await guest('GM22 Bruno member'),outsider=await guest('GM22 Bruno outsider');
+ const dir=resolve(root,'supabase/tests/bruno/GM-22/environments');await mkdir(dir,{recursive:true});
+ const environment={runId:project,baseUrl:base,anonKey,hostToken:host.token,memberToken:member.token,outsiderToken:outsider.token,
+  hostId:host.id,memberId:member.id,outsiderId:outsider.id,memberFriendCode:member.friendCode,outsiderFriendCode:outsider.friendCode,
+  requestId:'gm22-'+randomUUID().replaceAll('-','')};
+ const text='vars {\n'+Object.entries(environment).map(([key,value])=>'  '+key+': '+value).join('\n')+'\n}\n';
+ const path=resolve(dir,'Local.runtime.private.bru');await writeFile(path,text,{mode:0o600});await chmod(path,0o600);
+ pass('Bruno fixture prepared from fresh isolated Auth identities; room will be created by Bruno',true,true);
+ console.log(JSON.stringify({brunoReady:true,baseUrl:base,requestCount:12,credentialsWrittenToIgnoredPrivateEnvironment:true}));
+}
+
+if(brunoSetup){await prepareBruno();process.exit(0);}
+
+assert.equal(ownedSql('select namespace::text from public.gm40_qa_owner'),namespace);
+assert.equal(ownedSql("select count(*) from public.schema_versions where schema_version='0.13.0' and contract_id='food-v1/roadmap-v2/GM-22.2'"),'1');
+assert.equal(ownedSql("select exists(select 1 from dish_v4_private.runtime where last_tick>clock_timestamp()-interval '15 seconds')"),'t','QA worker heartbeat required');
+const all=await Promise.all(Array.from({length:24},(_,index)=>guest('GM22 QA guest '+index)));
+const [host,member,outsider,reverseSender,expiredRecipient]=all;
+
+// Friend RPCs are exercised over the real isolated Auth+REST boundary.
+{
+ const reqId=randomUUID();
+ const first=expectOk(await rpc('invite_partner',host.token,{requestId:reqId,friend_code:member.friendCode,partner_id:null}),'friend invite creates pending request');
+ const replay=expectOk(await rpc('invite_partner',host.token,{requestId:reqId,friend_code:member.friendCode,partner_id:null}),'friend invite exact ACK replay');
+ pass('friend invite replay is byte-equivalent',first,replay);
+ expectFail(await rpc('invite_partner',host.token,{requestId:reqId,friend_code:outsider.friendCode,partner_id:null}),409,'REQUEST_ID_REUSED','same request ID rejects different body');
+ expectFail(await rpc('accept_partner',host.token,{requestId:randomUUID(),invitation_id:first.id}),403,'NOT_RECIPIENT','friend invitation is private to its recipient');
+ expectOk(await rpc('accept_partner',member.token,{requestId:randomUUID(),invitation_id:first.id}),'recipient accepts friend invitation');
+ const listed=await rpc('list_friends',host.token,{});assert.equal(listed.status,200);assert.ok(listed.body.some(row=>row.friendUserId===member.id));
+ pass('accepted pair appears in own friends projection',true,listed.body.some(row=>row.friendUserId===member.id));
+}
+{
+ const rejected=expectOk(await rpc('invite_partner',host.token,{requestId:randomUUID(),friend_code:outsider.friendCode,partner_id:null}),'create rejectable friend invite');
+ expectOk(await rpc('reject_partner',outsider.token,{requestId:randomUUID(),invitation_id:rejected.id}),'recipient rejects friend invitation');
+ const resent=expectOk(await rpc('invite_partner',host.token,{requestId:randomUUID(),friend_code:outsider.friendCode,partner_id:null}),'friend invite can be recreated after rejection');
+ assert.notEqual(resent.id,rejected.id);
+ expectOk(await rpc('accept_partner',outsider.token,{requestId:randomUUID(),invitation_id:resent.id}),'recipient accepts replacement friend invite');
+ pass('reject then re-invite creates a single fresh pair',true,ownedSql(`select exists(select 1 from public.friends where low_user_id=least('${host.id}'::uuid,'${outsider.id}'::uuid) and high_user_id=greatest('${host.id}'::uuid,'${outsider.id}'::uuid))`)==='t');
+}
+{
+ const replies=await Promise.all([
+  rpc('invite_partner',host.token,{requestId:randomUUID(),friend_code:reverseSender.friendCode,partner_id:null}),
+  rpc('invite_partner',reverseSender.token,{requestId:randomUUID(),friend_code:host.friendCode,partner_id:null})
+ ]);
+ for(const reply of replies)expectOk(reply,'opposite concurrent friend invitations share one pending invite');
+ pass('concurrent opposite invites produce one invitation/event/inbox',true,ownedSql(`select (select count(*)=1 from public.friend_invitations where state='pending' and least(sender_user_id,recipient_user_id)=least('${host.id}'::uuid,'${reverseSender.id}'::uuid) and greatest(sender_user_id,recipient_user_id)=greatest('${host.id}'::uuid,'${reverseSender.id}'::uuid)) and (select count(*)=1 from public.events e join public.friend_invitations i on i.id=e.friend_invitation_id where e.kind='FRIEND_INVITED' and i.state='pending' and least(i.sender_user_id,i.recipient_user_id)=least('${host.id}'::uuid,'${reverseSender.id}'::uuid) and greatest(i.sender_user_id,i.recipient_user_id)=greatest('${host.id}'::uuid,'${reverseSender.id}'::uuid))`)==='t');
+ const pending=ownedSql(`select id::text||':'||recipient_user_id::text from public.friend_invitations where state='pending' and least(sender_user_id,recipient_user_id)=least('${host.id}'::uuid,'${reverseSender.id}'::uuid) and greatest(sender_user_id,recipient_user_id)=greatest('${host.id}'::uuid,'${reverseSender.id}'::uuid)`);
+ const [inviteId,recipientId]=pending.split(':');
+ const recipient=[host,reverseSender].find(user=>user.id===recipientId);
+ assert.ok(recipient,'one of the opposite-invite callers must be the pending recipient');
+ await expectOk(await rpc('accept_partner',recipient.token,{requestId:randomUUID(),invitation_id:inviteId}),'recipient accepts concurrent pending invitation');
+}
+{
+ const expired=expectOk(await rpc('invite_partner',host.token,{requestId:randomUUID(),friend_code:expiredRecipient.friendCode,partner_id:null}),'create expiring friend invite');
+ ownedSql(`update public.friend_invitations set created_at=clock_timestamp()-interval '8 days',expires_at=clock_timestamp()-interval '1 day',version=version+1 where id='${expired.id}'`);
+ const replacement=expectOk(await rpc('invite_partner',host.token,{requestId:randomUUID(),friend_code:expiredRecipient.friendCode,partner_id:null}),'expired friend invite is replaced');
+ assert.notEqual(replacement.id,expired.id);
+ pass('expired friend invite receives new invitation ID',true,replacement.id!==expired.id);
+ await expectOk(await rpc('accept_partner',expiredRecipient.token,{requestId:randomUUID(),invitation_id:replacement.id}),'accept fresh invite after expiry');
+}
+
+// Owned synthetic accepted-pair fixture for policy-boundary and concurrency cases.
+grantHostPairs(host,all.slice(5));
+const versionRooms={};
+for(const version of ['v2','v3','b','bsup']){
+ const room=await createRoom(host,version);versionRooms[version]=room;
+ const existingMembers=version==='v2'?all.slice(5,11):all.slice(5,23);
+ seedMembers(room.id,existingMembers.map(user=>user.id),version==='v2'?'v2':version==='v3'?'v3':'v4');
+ const admitted=version==='v2'?all[11]:all[23];
+ const overflow=version==='v2'?all[12]:all[4];
+ const expected=version==='v2'?8:20;
+ const beforePool=ownedSql(`select pool_version from public.rooms where id='${room.id}'`);
+ const accepted=await inviteAndAccept(host,admitted,room,version);
+ expectOk(accepted.response,version+' invitation admits the final available member');
+ assert.equal(activeCount(room.id),expected);
+ pass(version+' admission reaches exact policy capacity',expected,activeCount(room.id));
+ const afterAcceptVersion=versionOfRoom(room.id);
+ const overflowInvite=expectOk(await inviteRoom(host,room.id,overflow),'create invitation beyond '+version+' capacity');
+ const full=await acceptRoom(overflow,overflowInvite.id,'Overflow');
+ expectFail(full,409,'ROOM_FULL',version+' rejects capacity plus one');
+ assert.equal(activeCount(room.id),expected);
+ pass(version+' capacity plus one does not change active roster',expected,activeCount(room.id));
+ if(version!=='v2'){
+  const poolAfter=ownedSql(`select pool_version from public.rooms where id='${room.id}'`);
+  pass(version+' admission preserves pinned pool version',beforePool,poolAfter);
+ }
+ const duplicateReplay=await acceptRoom(admitted,accepted.invitation.id,'GM22 invited',accepted.requestId);
+ pass(version+' exact accepted ACK replays unchanged',accepted.response.body,duplicateReplay.body);
+ expectFail(await acceptRoom(admitted,accepted.invitation.id,'Changed display name',accepted.requestId),409,'REQUEST_ID_REUSED',version+' ACK rejects a changed body');
+ assert.equal(versionOfRoom(room.id),afterAcceptVersion);
+}
+
+// Active-member acceptance is a no-op for the roster, preferences, and version.
+{
+ const room=await createRoom(host,'b');
+ const joined=expectOk(await dish(member.token,'join',{requestId:randomUUID(),code:room.code,displayName:'Active member'},'b'),'join B room directly before invitation');
+ const beforeVersion=versionOfRoom(room.id),beforeRow=memberRow(room.id,member.id);
+ const beforePreference=ownedSql(`select coalesce(revision,0)::text from dish_v4_private.room_preferences where room_id='${room.id}' and user_id='${member.id}'`);
+ const invite=expectOk(await inviteRoom(host,room.id,member),'invite already-active B member');
+ const accepted=expectOk(await acceptRoom(member,invite.id,'Changed by invitation'),'accept while already active');
+ pass('active-member acceptance keeps room version',beforeVersion,versionOfRoom(room.id));
+ pass('active-member acceptance preserves nickname and member revision',beforeRow,memberRow(room.id,member.id));
+ pass('active-member acceptance does not rewrite room preferences',beforePreference,ownedSql(`select coalesce(revision,0)::text from dish_v4_private.room_preferences where room_id='${room.id}' and user_id='${member.id}'`));
+ assert.equal(accepted.memberId,joined.memberId);
+}
+
+// Identity, invitation, pair, state and expiry checks are repeated under locks.
+{
+ const room=await createRoom(host,'b');
+ const inv=expectOk(await inviteRoom(host,room.id,member),'create invite for boundary errors');
+ expectFail(await acceptRoom(outsider,inv.id),403,'NOT_RECIPIENT','wrong room-invitation recipient is forbidden');
+ const stale=await inviteRoom(host,room.id,outsider,versionOfRoom(room.id)-1);
+ expectFail(stale,409,'VERSION_CONFLICT','room invite rejects stale version');
+ const inbox=await rpc('list_partner_inbox',member.token,{cursor:null});assert.equal(inbox.status,200);
+ assert.ok(inbox.body.some(row=>row.type==='room_invite'&&row.metadata.invitationId===inv.id));
+ pass('recipient inbox labels room invitations with the correct reference',true,inbox.body.some(row=>row.type==='room_invite'&&row.metadata.invitationId===inv.id));
+ const before=activeCount(room.id);
+ ownedSql(`begin;select set_config('dish_v4.writer','on',true);update public.members set left_at=clock_timestamp(),version=version+1 where room_id='${room.id}' and user_id='${host.id}';commit;`);
+ expectFail(await acceptRoom(member,inv.id),403,'NOT_MEMBER','accept rejects an inviter who has left the room');
+ assert.equal(activeCount(room.id),before-1);
+}
+{
+ const room=await createRoom(host,'b');
+ const rejected=expectOk(await inviteRoom(host,room.id,member),'create room invite that will be rejected');
+ expectOk(await rpc('reject_room_invite',member.token,{requestId:randomUUID(),invitation_id:rejected.id}),'recipient rejects room invite');
+ expectFail(await acceptRoom(member,rejected.id),409,'INVITE_CANCELLED','rejected room invite cannot be accepted');
+ const expired=expectOk(await inviteRoom(host,room.id,outsider),'create room invite that will expire');
+ ownedSql(`update public.room_invitations set created_at=clock_timestamp()-interval '8 days',expires_at=clock_timestamp()-interval '1 day',version=version+1 where id='${expired.id}'`);
+ expectFail(await acceptRoom(outsider,expired.id),410,'INVITE_EXPIRED','expired room invite cannot be accepted');
+ const expiringRoom=await createRoom(host,'b');
+ const roomExpiredInvite=expectOk(await inviteRoom(host,expiringRoom.id,member),'create invitation to expiring room');
+ ownedSql(`select set_config('dish_v4.writer','on',true);update public.rooms set expires_at=clock_timestamp()-interval '1 second',version=version+1 where id='${expiringRoom.id}'`);
+ expectFail(await acceptRoom(member,roomExpiredInvite.id),410,'ROOM_EXPIRED','expired room cannot admit member');
+ const cancelledRoom=await createRoom(host,'b');
+ const cancelledInvite=expectOk(await inviteRoom(host,cancelledRoom.id,member),'create invitation to cancelled room');
+ const snap=await roomSnapshot(host,cancelledRoom.id,'b');
+ expectOk(await dish(host.token,'cancel',{requestId:randomUUID(),roomId:cancelledRoom.id,expectedVersion:snap.version},'b'),'host cancels invite room');
+ expectFail(await acceptRoom(member,cancelledInvite.id),409,'ROOM_LOCKED','terminal room cannot admit a member');
+}
+
+// Race two requests through the actual REST boundary and assert final database state.
+{
+ const room=await createRoom(host,'b');const invite=expectOk(await inviteRoom(host,room.id,reverseSender),'create accept/accept race invite');
+ const replies=await Promise.all([acceptRoom(reverseSender,invite.id,'Race A'),acceptRoom(reverseSender,invite.id,'Race B')]);
+ const success=replies.filter(row=>row.status===200),failure=replies.filter(row=>row.status===409);
+ assert.equal(success.length,1);assert.equal(failure.length,1);assert.equal(responseCode(failure[0].body),'INVITE_CANCELLED');
+ assert.equal(activeCount(room.id),2);
+ pass('accept/accept race creates one member and one accepted invitation',{success:1,failure:1,members:2,acceptedInvitations:1},{success:success.length,failure:failure.length,members:activeCount(room.id),acceptedInvitations:Number(ownedSql(`select count(*) from public.room_invitations where id='${invite.id}' and state='accepted'`))});
+}
+{
+ const room=await createRoom(host,'b');const invite=expectOk(await inviteRoom(host,room.id,expiredRecipient),'create accept/reject race invite');
+ const replies=await Promise.all([acceptRoom(expiredRecipient,invite.id),rpc('reject_room_invite',expiredRecipient.token,{requestId:randomUUID(),invitation_id:invite.id})]);
+ const accepted=replies.filter(row=>row.status===200&&row.body?.data?.memberId),rejected=replies.filter(row=>row.status===200&&row.body?.data===null);
+ const conflicts=replies.filter(row=>row.status===409);
+ assert.equal(accepted.length+rejected.length,1);assert.equal(conflicts.length,1);
+ const finalState=ownedSql(`select state from public.room_invitations where id='${invite.id}'`);
+ assert.ok(['accepted','rejected'].includes(finalState));
+ pass('accept/reject race commits exactly one recipient decision',true,accepted.length+rejected.length===1&&conflicts.length===1&&((finalState==='accepted')===(accepted.length===1)));
+}
+{
+ const room=await createRoom(host,'b');seedMembers(room.id,all.slice(5,23).map(user=>user.id),'v4');
+ const target=all[23],direct=all[4];const invite=expectOk(await inviteRoom(host,room.id,target),'create final-seat race invitation');
+ const request={contractVersion:contractB,requestId:randomUUID(),code:room.code,displayName:'Direct join race'};
+ const replies=await Promise.all([acceptRoom(target,invite.id),dish(direct.token,'join',request,'b')]);
+ const successes=replies.filter(row=>row.status===200&&row.body?.ok===true),fulls=replies.filter(row=>row.status===409&&responseCode(row.body)==='ROOM_FULL');
+ assert.equal(successes.length,1);assert.equal(fulls.length,1);assert.equal(activeCount(room.id),20);
+ pass('accept/direct-join last-seat race respects capacity 20',{oneSuccess:true,oneRoomFull:true,memberCount:20},{oneSuccess:successes.length===1,oneRoomFull:fulls.length===1,memberCount:activeCount(room.id)});
+}
+{
+ const room=await createRoom(host,'b');
+ expectOk(await dish(member.token,'join',{requestId:randomUUID(),code:room.code,displayName:'Existing B member'},'b'),'seed active member through B join for start race');
+ const invite=expectOk(await inviteRoom(host,room.id,outsider),'create accept/start race invite');
+ const snapshot=await roomSnapshot(host,room.id,'b');
+ const replies=await Promise.all([acceptRoom(outsider,invite.id),dish(host.token,'start',{requestId:randomUUID(),roomId:room.id,expectedVersion:snapshot.version},'b')]);
+ const [acceptResponse,startResponse]=replies;
+ const acceptFirst=acceptResponse.status===200&&startResponse.status===409&&responseCode(startResponse.body)==='VERSION_CONFLICT'&&statusOfRoom(room.id)==='LOBBY';
+ const startFirst=startResponse.status===200&&acceptResponse.status===409&&responseCode(acceptResponse.body)==='ROOM_LOCKED'&&statusOfRoom(room.id)==='ROUND_1';
+ assert.ok(acceptFirst||startFirst,'race must serialize to accept then stale-start or start then locked-accept');
+ const admitted=Number(ownedSql(`select count(*) from public.members where room_id='${room.id}' and user_id='${outsider.id}' and left_at is null`));
+ assert.equal(admitted,acceptFirst?1:0);
+ const outcome=acceptFirst?'acceptThenStaleStart':'startThenLockedAccept';
+ pass('accept/start race has one exact serialized outcome',outcome,outcome);
+}
+{
+ const room=await createRoom(host,'b');
+ const invite=expectOk(await inviteRoom(host,room.id,outsider),'create accept/cancel race invite');
+ const snapshot=await roomSnapshot(host,room.id,'b');
+ const [acceptResponse,cancelResponse]=await Promise.all([
+  acceptRoom(outsider,invite.id),
+  dish(host.token,'cancel',{requestId:randomUUID(),roomId:room.id,expectedVersion:snapshot.version},'b'),
+ ]);
+ const acceptFirst=acceptResponse.status===200&&cancelResponse.status===409&&responseCode(cancelResponse.body)==='VERSION_CONFLICT'
+  &&statusOfRoom(room.id)==='LOBBY'&&activeCount(room.id)===2;
+ const cancelFirst=cancelResponse.status===200&&acceptResponse.status===409&&responseCode(acceptResponse.body)==='ROOM_LOCKED'
+  &&statusOfRoom(room.id)==='CANCELLED'&&activeCount(room.id)===1;
+ assert.ok(acceptFirst||cancelFirst,'accept/cancel race must serialize to accept then stale cancel or cancel then locked accept');
+ const outcome=acceptFirst?'acceptThenStaleCancel':'cancelThenLockedAccept';
+ pass('accept/cancel race has one exact serialized outcome',outcome,outcome);
+}
+{
+ const room=await createRoom(host,'b');const invite=expectOk(await inviteRoom(host,room.id,member),'create accept/unfriend race invite');
+ const replies=await Promise.all([
+  acceptRoom(member,invite.id),
+  rpc('unfriend',host.token,{requestId:randomUUID(),partner_id:member.id}),
+  inviteRoom(host,room.id,member),
+ ]);
+ const [acceptResponse,unfriendResponse,concurrentInvite]=replies;
+ expectOk(unfriendResponse,'unfriend concurrent with invite and acceptance');
+ if(concurrentInvite.status===200)expectOk(concurrentInvite,'room invite serialized before unfriend');
+ else expectFail(concurrentInvite,403,'NOT_PARTNER','room invite serialized after unfriend');
+ const state=ownedSql(`select state from public.room_invitations where id='${invite.id}'`);
+ const pairCount=Number(ownedSql(`select count(*) from public.friends where low_user_id=least('${host.id}'::uuid,'${member.id}'::uuid) and high_user_id=greatest('${host.id}'::uuid,'${member.id}'::uuid)`));
+ const finalMembership=state==='accepted'?2:1;
+ const pendingCount=Number(ownedSql(`select count(*) from public.room_invitations where room_id='${room.id}' and recipient_user_id='${member.id}' and state='pending'`));
+ assert.ok((state==='accepted'&&acceptResponse.status===200)||(state==='cancelled'&&acceptResponse.status===409&&responseCode(acceptResponse.body)==='INVITE_CANCELLED'));
+ assert.equal(pairCount,0);assert.equal(activeCount(room.id),finalMembership);assert.equal(pendingCount,0);
+ pass('unfriend/invite/accept race leaves no pending pair invite',{pairCount:0,memberCount:finalMembership,pendingInvites:0},{pairCount,memberCount:activeCount(room.id),pendingInvites:pendingCount});
+ // Recreate pair for the remaining test scenarios using an owned synthetic row.
+ linkPair(host.id,member.id);
+}
+
+// Preview and direct-write boundaries remain narrow; the private helper is not exposed by REST.
+{
+ const room=await createRoom(host,'b');
+ const preview=expectOk(await dish(outsider.token,'previewJoin',{requestId:randomUUID(),code:room.code},'b'),'preview B join');
+ const privateFields=['members','roster','pool','preferences','ownPreferences','votes','submissions'];
+ pass('preview contains only admission summary',false,privateFields.some(field=>Object.hasOwn(preview,field)));
+ const read=await rpc('get_room_snapshot',outsider.token,{room_id:room.id});
+ expectFail(read,403,'NOT_MEMBER','outsider cannot read room snapshot');
+ const direct=await fetch(base+'/rest/v1/members',{method:'POST',headers:{apikey:anonKey,authorization:'Bearer '+outsider.token,'content-type':'application/json','prefer':'return=representation'},body:JSON.stringify({room_id:room.id,user_id:outsider.id,nickname:'forged'})});
+ assert.ok([401,403].includes(direct.status),'direct membership write must be denied, got '+direct.status);
+ pass('client direct membership write is denied',true,[401,403].includes(direct.status));
+}
+
+// Unfriend revokes the pair and pending invitations but does not remove room membership.
+{
+ const room=await createRoom(host,'b');
+ const invite=expectOk(await inviteRoom(host,room.id,member),'create invitation before unfriend');
+ expectOk(await rpc('unfriend',host.token,{requestId:randomUUID(),partner_id:member.id}),'unfriend accepted pair');
+ expectFail(await acceptRoom(member,invite.id),409,'INVITE_CANCELLED','unfriend cancels pending room invite before pair error');
+ assert.equal(activeCount(room.id),1);
+ assert.equal(ownedSql(`select count(*) from public.room_invitations where id='${invite.id}' and state='cancelled'`),'1');
+ pass('unfriend cancels invite without changing current room roster',{members:1,inviteState:'cancelled'},{members:activeCount(room.id),inviteState:ownedSql(`select state from public.room_invitations where id='${invite.id}'`)});
+ linkPair(host.id,member.id);
+}
+
+// Exact acceptance ACK survives later pair removal and room expiry; changed payload is rejected.
+{
+ const room=await createRoom(host,'b');const sent=expectOk(await inviteRoom(host,room.id,reverseSender),'create ACK replay invite');
+ const requestIdValue=randomUUID();const accepted=await acceptRoom(reverseSender,sent.id,'Ack recipient',requestIdValue);
+ const body=expectOk(accepted,'accept invite before cleanup/expiry');
+ const pairBefore=ownedSql(`select count(*) from public.friends where id=(select friend_id from public.room_invitations where id='${sent.id}')`);
+ const [cleanupText,replayedDuringCleanup]=await Promise.all([
+  sqlAsync('select gm17_private.cleanup();'),
+  acceptRoom(reverseSender,sent.id,'Ack recipient',requestIdValue),
+ ]);
+ let cleanupResult=JSON.parse(cleanupText);
+ if(cleanupResult.skipped)cleanupResult=JSON.parse(sqlRaw('select gm17_private.cleanup();'));
+ assert.equal(cleanupResult.skipped,false,'retention cleanup should complete after any concurrent cleanup lock');
+ const ackRaceResponse=expectOk(replayedDuringCleanup,'ACK replay races retention cleanup');
+ assert.deepEqual(ackRaceResponse,body,'retention cleanup must preserve the live ACK response');
+ const liveAckCount=ownedSql(`select count(*) from gm19_private.acks where user_id='${reverseSender.id}' and operation='accept_room_invite' and request_id='${requestIdValue}' and expires_at>statement_timestamp()`);
+ assert.equal(liveAckCount,'1','cleanup must preserve a live ACK row');
+ pass('live ACK replays while retention cleanup runs',{sameAck:true,cleanupCompleted:true,liveAckRows:1,activeMembers:2},
+  {sameAck:true,cleanupCompleted:!cleanupResult.skipped,liveAckRows:Number(liveAckCount),activeMembers:activeCount(room.id)});
+ ownedSql(`begin;select set_config('dish_v4.writer','on',true);update public.rooms set expires_at=clock_timestamp()-interval '1 second',version=version+1 where id='${room.id}';commit;`);
+ await rpc('unfriend',host.token,{requestId:randomUUID(),partner_id:reverseSender.id});
+ const replay=await acceptRoom(reverseSender,sent.id,'Ack recipient',requestIdValue);
+ pass('accept ACK replays after room expiry and unfriend',accepted.body,replay.body);
+ expectFail(await acceptRoom(reverseSender,sent.id,'Changed after expiry',requestIdValue),409,'REQUEST_ID_REUSED','ACK payload remains immutable after room expiry');
+ pass('accepted membership survives unfriend and room expiry',2,activeCount(room.id));
+ assert.equal(pairBefore,'1');
+ linkPair(host.id,reverseSender.id);
+}
+
+// Create/check authenticated quota boundary only inside this named disposable project.
+{
+ ownedSql(`delete from gm19_private.rate_windows where user_id='${host.id}' and operation='invite_partner'`);
+ const calls=[];
+ for(let index=0;index<11;index++)calls.push(await rpc('invite_partner',host.token,{requestId:randomUUID(),friend_code:member.friendCode,partner_id:null}));
+ const limited=calls.at(-1);
+ expectFail(limited,429,'RATE_LIMITED','friend invitation quota returns exact HTTP 429');
+ assert.equal(limited.body.retryAfterSeconds,60);
+ pass('friend invitation quota reports retry window',60,limited.body.retryAfterSeconds);
+}
+
+// Real GoTrue token boundary, exact inbox projections, TAP and source reports.
+{
+ expectFail(await rpc('list_friends',null,{}),401,'AUTH_REQUIRED','missing JWT is rejected');
+ const forgedJwt=await request('/rest/v1/rpc/list_friends','forged.jwt.signature',{});
+ assert.equal(forgedJwt.status,401,'forged JWT is rejected at the REST authentication boundary');
+ assert.equal(forgedJwt.body.code,'PGRST301','forged JWT returns the gateway invalid-token code');
+ assert.equal(forgedJwt.body.messageKey,undefined,'gateway token errors remain distinct from application errors');
+ results.push({case:'forged JWT is rejected at the REST authentication boundary',result:'Pass',expected:{status:401,code:'PGRST301'},actual:{status:forgedJwt.status,code:forgedJwt.body.code}});
+ console.log('PASS forged JWT is rejected at the REST authentication boundary');
+ const inbox=await rpc('list_partner_inbox',member.token,{cursor:null});assert.equal(inbox.status,200);assert.ok(Array.isArray(inbox.body));
+ pass('own inbox returns only its list DTO',true,Array.isArray(inbox.body));
+ const denied=await rpc('list_partner_inbox',member.token,{cursor:'00000000-0000-0000-0000-000000000000'});
+ expectFail(denied,403,'NOT_MEMBER','foreign or unknown inbox cursor is rejected');
+}
+
+const report={fixtureOnly:true,result:'Pass',task:'GM-22',supplement:'GM-22.2',contractVersion:'food-v1/roadmap-v2/GM-22.1',
+ wireVersions:['decision-v2','dish-decision-v3','dish-session-v4/roadmap-v2/GM-07.B','dish-session-v4/roadmap-v2/GM-07.B-supplement'],
+ schemaVersion:'0.13.0',qaProject:project,endpoint:'127.0.0.1:54361',applicationDatabaseChanged:false,
+ remotePush:'Not run',android:'Not run',caseCount:results.length,cases:results,checkedAt:new Date().toISOString()};
+await mkdir(resolve(root,'.work/gm22-admission'),{recursive:true});
+await writeFile(resolve(root,'.work/gm22-admission/http-results.json'),JSON.stringify(report,null,2)+'\n','utf8');
+console.log(JSON.stringify({result:'Pass',caseCount:results.length,fixtureOnly:true,qaProject:project,credentialsInEvidence:false}));

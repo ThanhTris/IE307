@@ -1,0 +1,27 @@
+GM-22 Bruno desktop execution
+Date: 2026-10-30
+Bruno: 4.3.0
+Environment: Local.runtime.private (generated for the owned QA run; removed after cleanup)
+QA project: ie307-dish-v4-qa-20261030-031970586800-1
+Origin: http://127.0.0.1:54361
+
+Runner: All 12 | Passed 12 | Failed 0 | Skipped 0
+
+Request order and observed HTTP result:
+00 Create B room                         200
+01 Own identity                          200
+02 List friends                          200
+03 Invite partner                        200
+04 Accept partner                        200
+05 Invite room                           200
+06 Accept room invite                    200
+07 Replay accepted room invite           200
+08 Inbox                                 200
+09 Missing auth                          401
+10 Invalid recipient                     403 NOT_RECIPIENT
+12 Room snapshot after invite            200
+
+The accepted room response returned an opaque membership-row UUID in
+`memberId`; snapshot showed the invited auth identity in the roster. Replay
+returned the same stored membership ACK. Tokens, keys and raw auth credentials
+are intentionally omitted.

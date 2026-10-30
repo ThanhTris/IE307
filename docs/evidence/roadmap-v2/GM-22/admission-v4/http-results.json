@@ -1,0 +1,741 @@
+{
+  "fixtureOnly": true,
+  "result": "Pass",
+  "task": "GM-22",
+  "supplement": "GM-22.2",
+  "contractVersion": "food-v1/roadmap-v2/GM-22.1",
+  "wireVersions": [
+    "decision-v2",
+    "dish-decision-v3",
+    "dish-session-v4/roadmap-v2/GM-07.B",
+    "dish-session-v4/roadmap-v2/GM-07.B-supplement"
+  ],
+  "schemaVersion": "0.13.0",
+  "qaProject": "ie307-dish-v4-qa-20261030-086609693500-1",
+  "endpoint": "127.0.0.1:54361",
+  "applicationDatabaseChanged": false,
+  "remotePush": "Not run",
+  "android": "Not run",
+  "caseCount": 63,
+  "cases": [
+    {
+      "case": "friend invite replay is byte-equivalent",
+      "result": "Pass",
+      "expected": {
+        "id": "<uuid>",
+        "status": "pending",
+        "createdAt": "2026-10-30T02:42:54.164244+00:00",
+        "expiresAt": "2026-11-06T02:42:54.164244+00:00",
+        "inviterName": "GM22 QA guest 0",
+        "inviteeUserId": "<uuid>",
+        "inviterUserId": "<uuid>"
+      },
+      "actual": {
+        "id": "<uuid>",
+        "status": "pending",
+        "createdAt": "2026-10-30T02:42:54.164244+00:00",
+        "expiresAt": "2026-11-06T02:42:54.164244+00:00",
+        "inviterName": "GM22 QA guest 0",
+        "inviteeUserId": "<uuid>",
+        "inviterUserId": "<uuid>"
+      }
+    },
+    {
+      "case": "same request ID rejects different body",
+      "result": "Pass",
+      "expected": {
+        "status": 409,
+        "code": "REQUEST_ID_REUSED"
+      },
+      "actual": {
+        "status": 409,
+        "code": "REQUEST_ID_REUSED"
+      }
+    },
+    {
+      "case": "friend invitation is private to its recipient",
+      "result": "Pass",
+      "expected": {
+        "status": 403,
+        "code": "NOT_RECIPIENT"
+      },
+      "actual": {
+        "status": 403,
+        "code": "NOT_RECIPIENT"
+      }
+    },
+    {
+      "case": "accepted pair appears in own friends projection",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "reject then re-invite creates a single fresh pair",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "concurrent opposite invites produce one invitation/event/inbox",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "expired friend invite receives new invitation ID",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "v2 admission reaches exact policy capacity",
+      "result": "Pass",
+      "expected": 8,
+      "actual": 8
+    },
+    {
+      "case": "v2 rejects capacity plus one",
+      "result": "Pass",
+      "expected": {
+        "status": 409,
+        "code": "ROOM_FULL"
+      },
+      "actual": {
+        "status": 409,
+        "code": "ROOM_FULL"
+      }
+    },
+    {
+      "case": "v2 capacity plus one does not change active roster",
+      "result": "Pass",
+      "expected": 8,
+      "actual": 8
+    },
+    {
+      "case": "v2 exact accepted ACK replays unchanged",
+      "result": "Pass",
+      "expected": {
+        "ok": true,
+        "data": {
+          "code": "NQR6UB",
+          "roomId": "<uuid>",
+          "version": 15,
+          "memberId": "<uuid>"
+        },
+        "state": "LOBBY",
+        "roomId": "<uuid>",
+        "version": 15,
+        "requestId": "<uuid>"
+      },
+      "actual": {
+        "ok": true,
+        "data": {
+          "code": "NQR6UB",
+          "roomId": "<uuid>",
+          "version": 15,
+          "memberId": "<uuid>"
+        },
+        "state": "LOBBY",
+        "roomId": "<uuid>",
+        "version": 15,
+        "requestId": "<uuid>"
+      }
+    },
+    {
+      "case": "v2 ACK rejects a changed body",
+      "result": "Pass",
+      "expected": {
+        "status": 409,
+        "code": "REQUEST_ID_REUSED"
+      },
+      "actual": {
+        "status": 409,
+        "code": "REQUEST_ID_REUSED"
+      }
+    },
+    {
+      "case": "v3 admission reaches exact policy capacity",
+      "result": "Pass",
+      "expected": 20,
+      "actual": 20
+    },
+    {
+      "case": "v3 rejects capacity plus one",
+      "result": "Pass",
+      "expected": {
+        "status": 409,
+        "code": "ROOM_FULL"
+      },
+      "actual": {
+        "status": 409,
+        "code": "ROOM_FULL"
+      }
+    },
+    {
+      "case": "v3 capacity plus one does not change active roster",
+      "result": "Pass",
+      "expected": 20,
+      "actual": 20
+    },
+    {
+      "case": "v3 admission preserves pinned pool version",
+      "result": "Pass",
+      "expected": "1",
+      "actual": "1"
+    },
+    {
+      "case": "v3 exact accepted ACK replays unchanged",
+      "result": "Pass",
+      "expected": {
+        "ok": true,
+        "data": {
+          "code": "JRD5XB",
+          "roomId": "<uuid>",
+          "version": 20,
+          "memberId": "<uuid>"
+        },
+        "state": "LOBBY",
+        "roomId": "<uuid>",
+        "version": 20,
+        "requestId": "<uuid>"
+      },
+      "actual": {
+        "ok": true,
+        "data": {
+          "code": "JRD5XB",
+          "roomId": "<uuid>",
+          "version": 20,
+          "memberId": "<uuid>"
+        },
+        "state": "LOBBY",
+        "roomId": "<uuid>",
+        "version": 20,
+        "requestId": "<uuid>"
+      }
+    },
+    {
+      "case": "v3 ACK rejects a changed body",
+      "result": "Pass",
+      "expected": {
+        "status": 409,
+        "code": "REQUEST_ID_REUSED"
+      },
+      "actual": {
+        "status": 409,
+        "code": "REQUEST_ID_REUSED"
+      }
+    },
+    {
+      "case": "b admission reaches exact policy capacity",
+      "result": "Pass",
+      "expected": 20,
+      "actual": 20
+    },
+    {
+      "case": "b rejects capacity plus one",
+      "result": "Pass",
+      "expected": {
+        "status": 409,
+        "code": "ROOM_FULL"
+      },
+      "actual": {
+        "status": 409,
+        "code": "ROOM_FULL"
+      }
+    },
+    {
+      "case": "b capacity plus one does not change active roster",
+      "result": "Pass",
+      "expected": 20,
+      "actual": 20
+    },
+    {
+      "case": "b admission preserves pinned pool version",
+      "result": "Pass",
+      "expected": "1",
+      "actual": "1"
+    },
+    {
+      "case": "b exact accepted ACK replays unchanged",
+      "result": "Pass",
+      "expected": {
+        "ok": true,
+        "data": {
+          "code": "MJ36XA",
+          "roomId": "<uuid>",
+          "version": 20,
+          "memberId": "<uuid>"
+        },
+        "state": "LOBBY",
+        "roomId": "<uuid>",
+        "version": 20,
+        "requestId": "<uuid>"
+      },
+      "actual": {
+        "ok": true,
+        "data": {
+          "code": "MJ36XA",
+          "roomId": "<uuid>",
+          "version": 20,
+          "memberId": "<uuid>"
+        },
+        "state": "LOBBY",
+        "roomId": "<uuid>",
+        "version": 20,
+        "requestId": "<uuid>"
+      }
+    },
+    {
+      "case": "b ACK rejects a changed body",
+      "result": "Pass",
+      "expected": {
+        "status": 409,
+        "code": "REQUEST_ID_REUSED"
+      },
+      "actual": {
+        "status": 409,
+        "code": "REQUEST_ID_REUSED"
+      }
+    },
+    {
+      "case": "bsup admission reaches exact policy capacity",
+      "result": "Pass",
+      "expected": 20,
+      "actual": 20
+    },
+    {
+      "case": "bsup rejects capacity plus one",
+      "result": "Pass",
+      "expected": {
+        "status": 409,
+        "code": "ROOM_FULL"
+      },
+      "actual": {
+        "status": 409,
+        "code": "ROOM_FULL"
+      }
+    },
+    {
+      "case": "bsup capacity plus one does not change active roster",
+      "result": "Pass",
+      "expected": 20,
+      "actual": 20
+    },
+    {
+      "case": "bsup admission preserves pinned pool version",
+      "result": "Pass",
+      "expected": "1",
+      "actual": "1"
+    },
+    {
+      "case": "bsup exact accepted ACK replays unchanged",
+      "result": "Pass",
+      "expected": {
+        "ok": true,
+        "data": {
+          "code": "8YA4MX",
+          "roomId": "<uuid>",
+          "version": 20,
+          "memberId": "<uuid>"
+        },
+        "state": "LOBBY",
+        "roomId": "<uuid>",
+        "version": 20,
+        "requestId": "<uuid>"
+      },
+      "actual": {
+        "ok": true,
+        "data": {
+          "code": "8YA4MX",
+          "roomId": "<uuid>",
+          "version": 20,
+          "memberId": "<uuid>"
+        },
+        "state": "LOBBY",
+        "roomId": "<uuid>",
+        "version": 20,
+        "requestId": "<uuid>"
+      }
+    },
+    {
+      "case": "bsup ACK rejects a changed body",
+      "result": "Pass",
+      "expected": {
+        "status": 409,
+        "code": "REQUEST_ID_REUSED"
+      },
+      "actual": {
+        "status": 409,
+        "code": "REQUEST_ID_REUSED"
+      }
+    },
+    {
+      "case": "active-member acceptance keeps room version",
+      "result": "Pass",
+      "expected": 2,
+      "actual": 2
+    },
+    {
+      "case": "active-member acceptance preserves nickname and member revision",
+      "result": "Pass",
+      "expected": {
+        "id": "<uuid>",
+        "nickname": "Active member",
+        "ready": false,
+        "leftAt": null,
+        "version": 1
+      },
+      "actual": {
+        "id": "<uuid>",
+        "nickname": "Active member",
+        "ready": false,
+        "leftAt": null,
+        "version": 1
+      }
+    },
+    {
+      "case": "active-member acceptance does not rewrite room preferences",
+      "result": "Pass",
+      "expected": "1",
+      "actual": "1"
+    },
+    {
+      "case": "wrong room-invitation recipient is forbidden",
+      "result": "Pass",
+      "expected": {
+        "status": 403,
+        "code": "NOT_RECIPIENT"
+      },
+      "actual": {
+        "status": 403,
+        "code": "NOT_RECIPIENT"
+      }
+    },
+    {
+      "case": "room invite rejects stale version",
+      "result": "Pass",
+      "expected": {
+        "status": 409,
+        "code": "VERSION_CONFLICT"
+      },
+      "actual": {
+        "status": 409,
+        "code": "VERSION_CONFLICT"
+      }
+    },
+    {
+      "case": "recipient inbox labels room invitations with the correct reference",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "accept rejects an inviter who has left the room",
+      "result": "Pass",
+      "expected": {
+        "status": 403,
+        "code": "NOT_MEMBER"
+      },
+      "actual": {
+        "status": 403,
+        "code": "NOT_MEMBER"
+      }
+    },
+    {
+      "case": "rejected room invite cannot be accepted",
+      "result": "Pass",
+      "expected": {
+        "status": 409,
+        "code": "INVITE_CANCELLED"
+      },
+      "actual": {
+        "status": 409,
+        "code": "INVITE_CANCELLED"
+      }
+    },
+    {
+      "case": "expired room invite cannot be accepted",
+      "result": "Pass",
+      "expected": {
+        "status": 410,
+        "code": "INVITE_EXPIRED"
+      },
+      "actual": {
+        "status": 410,
+        "code": "INVITE_EXPIRED"
+      }
+    },
+    {
+      "case": "expired room cannot admit member",
+      "result": "Pass",
+      "expected": {
+        "status": 410,
+        "code": "ROOM_EXPIRED"
+      },
+      "actual": {
+        "status": 410,
+        "code": "ROOM_EXPIRED"
+      }
+    },
+    {
+      "case": "terminal room cannot admit a member",
+      "result": "Pass",
+      "expected": {
+        "status": 409,
+        "code": "ROOM_LOCKED"
+      },
+      "actual": {
+        "status": 409,
+        "code": "ROOM_LOCKED"
+      }
+    },
+    {
+      "case": "accept/accept race creates one member and one accepted invitation",
+      "result": "Pass",
+      "expected": {
+        "success": 1,
+        "failure": 1,
+        "members": 2,
+        "acceptedInvitations": 1
+      },
+      "actual": {
+        "success": 1,
+        "failure": 1,
+        "members": 2,
+        "acceptedInvitations": 1
+      }
+    },
+    {
+      "case": "accept/reject race commits exactly one recipient decision",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "accept/direct-join last-seat race respects capacity 20",
+      "result": "Pass",
+      "expected": {
+        "oneSuccess": true,
+        "oneRoomFull": true,
+        "memberCount": 20
+      },
+      "actual": {
+        "oneSuccess": true,
+        "oneRoomFull": true,
+        "memberCount": 20
+      }
+    },
+    {
+      "case": "accept/start race has one exact serialized outcome",
+      "result": "Pass",
+      "expected": "acceptThenStaleStart",
+      "actual": "acceptThenStaleStart"
+    },
+    {
+      "case": "accept/cancel race has one exact serialized outcome",
+      "result": "Pass",
+      "expected": "acceptThenStaleCancel",
+      "actual": "acceptThenStaleCancel"
+    },
+    {
+      "case": "room invite serialized after unfriend",
+      "result": "Pass",
+      "expected": {
+        "status": 403,
+        "code": "NOT_PARTNER"
+      },
+      "actual": {
+        "status": 403,
+        "code": "NOT_PARTNER"
+      }
+    },
+    {
+      "case": "unfriend/invite/accept race leaves no pending pair invite",
+      "result": "Pass",
+      "expected": {
+        "pairCount": 0,
+        "memberCount": 2,
+        "pendingInvites": 0
+      },
+      "actual": {
+        "pairCount": 0,
+        "memberCount": 2,
+        "pendingInvites": 0
+      }
+    },
+    {
+      "case": "preview contains only admission summary",
+      "result": "Pass",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "case": "outsider cannot read room snapshot",
+      "result": "Pass",
+      "expected": {
+        "status": 403,
+        "code": "NOT_MEMBER"
+      },
+      "actual": {
+        "status": 403,
+        "code": "NOT_MEMBER"
+      }
+    },
+    {
+      "case": "client direct membership write is denied",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "unfriend cancels pending room invite before pair error",
+      "result": "Pass",
+      "expected": {
+        "status": 409,
+        "code": "INVITE_CANCELLED"
+      },
+      "actual": {
+        "status": 409,
+        "code": "INVITE_CANCELLED"
+      }
+    },
+    {
+      "case": "unfriend cancels invite without changing current room roster",
+      "result": "Pass",
+      "expected": {
+        "members": 1,
+        "inviteState": "cancelled"
+      },
+      "actual": {
+        "members": 1,
+        "inviteState": "cancelled"
+      }
+    },
+    {
+      "case": "live ACK replays while retention cleanup runs",
+      "result": "Pass",
+      "expected": {
+        "sameAck": true,
+        "cleanupCompleted": true,
+        "liveAckRows": 1,
+        "activeMembers": 2
+      },
+      "actual": {
+        "sameAck": true,
+        "cleanupCompleted": true,
+        "liveAckRows": 1,
+        "activeMembers": 2
+      }
+    },
+    {
+      "case": "accept ACK replays after room expiry and unfriend",
+      "result": "Pass",
+      "expected": {
+        "ok": true,
+        "data": {
+          "code": "4A6EWC",
+          "roomId": "<uuid>",
+          "version": 2,
+          "memberId": "<uuid>"
+        },
+        "state": "LOBBY",
+        "roomId": "<uuid>",
+        "version": 2,
+        "requestId": "<uuid>"
+      },
+      "actual": {
+        "ok": true,
+        "data": {
+          "code": "4A6EWC",
+          "roomId": "<uuid>",
+          "version": 2,
+          "memberId": "<uuid>"
+        },
+        "state": "LOBBY",
+        "roomId": "<uuid>",
+        "version": 2,
+        "requestId": "<uuid>"
+      }
+    },
+    {
+      "case": "ACK payload remains immutable after room expiry",
+      "result": "Pass",
+      "expected": {
+        "status": 409,
+        "code": "REQUEST_ID_REUSED"
+      },
+      "actual": {
+        "status": 409,
+        "code": "REQUEST_ID_REUSED"
+      }
+    },
+    {
+      "case": "accepted membership survives unfriend and room expiry",
+      "result": "Pass",
+      "expected": 2,
+      "actual": 2
+    },
+    {
+      "case": "friend invitation quota returns exact HTTP 429",
+      "result": "Pass",
+      "expected": {
+        "status": 429,
+        "code": "RATE_LIMITED"
+      },
+      "actual": {
+        "status": 429,
+        "code": "RATE_LIMITED"
+      }
+    },
+    {
+      "case": "friend invitation quota reports retry window",
+      "result": "Pass",
+      "expected": 60,
+      "actual": 60
+    },
+    {
+      "case": "missing JWT is rejected",
+      "result": "Pass",
+      "expected": {
+        "status": 401,
+        "code": "AUTH_REQUIRED"
+      },
+      "actual": {
+        "status": 401,
+        "code": "AUTH_REQUIRED"
+      }
+    },
+    {
+      "case": "forged JWT is rejected at the REST authentication boundary",
+      "result": "Pass",
+      "expected": {
+        "status": 401,
+        "code": "PGRST301"
+      },
+      "actual": {
+        "status": 401,
+        "code": "PGRST301"
+      }
+    },
+    {
+      "case": "own inbox returns only its list DTO",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "foreign or unknown inbox cursor is rejected",
+      "result": "Pass",
+      "expected": {
+        "status": 403,
+        "code": "NOT_MEMBER"
+      },
+      "actual": {
+        "status": 403,
+        "code": "NOT_MEMBER"
+      }
+    }
+  ],
+  "checkedAt": "2026-10-30T02:44:25.852Z"
+}

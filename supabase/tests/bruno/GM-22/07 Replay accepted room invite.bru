@@ -1,0 +1,20 @@
+meta {
+  name: 07 Replay accepted room invite
+  type: http
+  seq: 8
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/accept_room_invite
+  body: json
+}
+headers {
+  Authorization: Bearer {{memberToken}}
+  apikey: {{anonKey}}
+  Content-Type: application/json
+}
+body:json {
+  {"requestId":"{{requestId}}-room-accept","invitation_id":"{{roomInvitationId}}","display_name":"GM22 member"}
+}
+tests {
+  test('exact accepted request replays the original ACK',()=>{ expect(res.getStatus()).to.equal(200); expect(res.body.ok).to.equal(true); expect(res.body.data.version).to.equal(bru.getEnvVar('acceptedRoomVersion')); expect(res.body.data.memberId).to.equal(bru.getEnvVar('acceptedMemberId')); });
+}
