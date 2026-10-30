@@ -1,0 +1,20 @@
+-- Disposable QA rollback only. Never restore deleted/revoked history payloads.
+begin;
+drop trigger gm21_canonical_consent_changed on public.consents;
+drop trigger gm21_canonical_scope_revoke on gm21_private.settings;
+drop trigger gm21_canonical_attached_audience on gm06_canonical.history_audience;
+drop trigger gm21_canonical_settings_epoch on gm21_private.settings;
+drop trigger gm21_canonical_audience_epoch on gm06_canonical.history_audience;
+drop trigger gm21_canonical_history_epoch on gm06_canonical.histories;
+drop function public.update_history_consent(text,text,jsonb);
+drop function public.delete_history(text,text);
+alter function public.update_history_consent_before_gm21_canonical(text,text,jsonb) rename to update_history_consent;
+alter function public.delete_history_before_gm21_canonical(text,text) rename to delete_history;
+grant execute on function public.update_history_consent(text,text,jsonb),public.delete_history(text,text) to authenticated;
+drop function gm21_canonical_private.consent_changed();
+drop function gm21_canonical_private.revoke_scope();
+drop function gm21_canonical_private.attached_audience();
+drop function gm21_canonical_private.serialize_write();
+drop schema gm21_canonical_private;
+delete from public.schema_versions where schema_version='0.13.0' and contract_id='dish-session-v4/roadmap-v2/GM-21.3';
+commit;
