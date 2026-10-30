@@ -20,6 +20,7 @@ OUTPUT = ROOT / '.work/gm20-canonical'
 import dish_v4_ci as runtime
 from dish_policy_worker import verify as verify_worker
 PRIVATE = OUTPUT / 'runtime.private.json'
+BRUNO = ROOT/'supabase/tests/bruno/GM-20-canonical/environments/Local.runtime.private.bru'
 
 
 def configure():
@@ -94,7 +95,7 @@ def cleanup():
             attached = runtime.run(['docker','ps','-a','--filter','volume='+name,'--format','{{.ID}}'], timeout=20).strip()
             if attached: raise RuntimeError('GM20_QA_VOLUME_IN_USE')
             runtime.run(['docker','volume','rm',name], timeout=30)
-    bruno=ROOT/'supabase/tests/bruno/GM-20-canonical/environments/Local.runtime.private.bru'
+    bruno=BRUNO
     if bruno.exists():
         if bruno.is_symlink() or not re.search(r'(?m)^\s*runId:\s*'+re.escape(str(project))+r'\s*$',bruno.read_text(encoding='utf8')):
             raise RuntimeError('GM20_BRUNO_OWNER_MISMATCH')
@@ -103,7 +104,7 @@ def cleanup():
     runtime.record('gm20-cleanup','Pass',ownedBackupsRemoved=True,applicationDatabaseChanged=False)
 
 
-def main():
+def main(*, http_script='scripts/gm20_canonical_http.mjs', stage='gm20-canonical-http', before_http=None):
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--keep',action='store_true');p.add_argument('--against',action='store_true');p.add_argument('--cleanup',action='store_true');p.add_argument('--bruno',action='store_true')
     args=p.parse_args();configure();args.keep=args.keep or args.bruno
@@ -130,11 +131,13 @@ def main():
             db=restore()
         parity(db)
         runtime.run_api()
-        result=subprocess.run(['node','scripts/gm20_canonical_http.mjs'],cwd=ROOT,env=os.environ.copy(),capture_output=True,text=True,encoding='utf8',timeout=2400)
+        if before_http is not None:
+            before_http(db)
+        result=subprocess.run(['node',http_script],cwd=ROOT,env={**os.environ,'GM_CANONICAL_REPORT_DIRECTORY':str(OUTPUT)},capture_output=True,text=True,encoding='utf8',timeout=2400)
         if result.stdout:print(runtime.redact(result.stdout)[-12000:],flush=True)
         if result.stderr:print(runtime.redact(result.stderr)[-4000:],file=sys.stderr,flush=True)
         if result.returncode:raise RuntimeError('GM20_CANONICAL_HTTP_FAILED')
-        runtime.record('gm20-canonical-http','Pass',report=str(OUTPUT/'http-results.json'),applicationDatabaseChanged=False)
+        runtime.record(stage,'Pass',report=str(OUTPUT/'http-results.json'),applicationDatabaseChanged=False)
         success=True
     except Exception as error:
         runtime.record('gm20-canonical-run','Fail',failure=runtime.redact(str(error)))
