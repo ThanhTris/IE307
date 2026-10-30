@@ -21,7 +21,8 @@
 ## Evidence and limits
 
 GM-22 SQL TAP passed 35/35; authenticated HTTP passed 75/75; Bruno desktop
-Runner passed 12/12. The GM-21 canonical history/consent suite passed 80/80 on
+Runner passed 12/12. GitHub PR #145 checks passed 18/18 on commit `2a6902d`.
+The GM-21 canonical history/consent suite passed 80/80 on
 the same isolated database with migrations `0036` and `0037` installed, and all
 six deployed function fingerprints matched after Windows line-ending
 normalization. GM-19/20 runner regressions passed 12/12. Repository validator,

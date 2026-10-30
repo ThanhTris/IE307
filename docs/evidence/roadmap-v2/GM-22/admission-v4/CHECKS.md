@@ -4,8 +4,7 @@ Date: 2026-10-31
 
 Base revision: `621acccf777c8a2538012641ce525cba0e6ae3ce` (`origin/main`)
 
-Working revision: `6876fcdd2d290b09831c925d531fb59725a385b3` plus the uncommitted
-PR #145 patch recorded by the source hashes in [MANIFEST.json](MANIFEST.json).
+Working revision: `2a6902db41f20462dc44c849f6dd4806160a18fc` on PR #145.
 
 Contract: `food-v1/roadmap-v2/GM-22.1`
 
@@ -21,6 +20,7 @@ Supplement/schema: `food-v1/roadmap-v2/GM-22.2` / `0.14.0`
 | GM-21 canonical history/consent HTTP regression | **Pass — 80/80** | Run producer-driven history suite against the same isolated database with both `0036` and `0037` installed | Personal/group consent, owner isolation, revoke/delete, no-consensus/ALL_REMOVED, 20-member audience, room cleanup, retention boundaries and real lock races passed. QA project `ie307-dish-v4-qa-20261030-135000060500-1`; detailed ignored runner output is under `.work/gm21-canonical/http-results.json`. |
 | GM-21 deployed-function fingerprint | **Pass — 6/6** | Compare actual `pg_proc.prosrc` and security metadata to migration `0036` | All six functions matched after normalizing PostgreSQL-preserved CRLF to LF. The GM-21 checker now performs this platform-neutral normalization; migration `0036` is unchanged. |
 | GM-19/20 runner regressions | **Pass — 12/12** | `node --test tests/gm19-runtime-files.test.mjs tests/gm20-cli.test.mjs` | 12 passed, 0 failed. This checks runner/cleanup wiring; server API outcomes are in the live HTTP suites. |
+| GitHub PR checks | **Pass — 18/18** | PR #145 workflow run [41132033283](https://github.com/ThanhTris/IE307/actions/runs/41132033283) on commit `2a6902d` | Required CI, schema, backend, GM-07/18/20/21/40, GM-08, mobile, decision and repository validation all passed. |
 | Python regression | **Fail — 1 environment error** | `PYTHONUTF8=1 python -m unittest discover -s tests -p "test_*.py"` | 657 tests ran; 6 skipped, 1 error. `test_stage_refuses_symlink_output` stopped at `Path.symlink_to` with Windows `WinError 1314` (symlink privilege unavailable); the other 650 tests passed. No system security setting was changed. |
 | Validator, docs, syntax and diff | **Pass** | Repository validator, task docs checker, Node/Python syntax and `git diff --check` | All passed. `git diff --check` printed only Git's LF/CRLF working-copy notices. |
 | Merge readiness | **READY_FOR_MERGE_REVIEW** | `python scripts/task_readiness.py --task GM-22 --gate merge --base-ref origin/main` | Gate read Project #2 at `2026-10-30T21:30:45.951236+00:00` and resolved `origin/main` to `621acccf777c8a2538012641ce525cba0e6ae3ce`; reviewer approval is still required. |

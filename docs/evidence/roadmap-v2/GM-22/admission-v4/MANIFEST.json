@@ -2,8 +2,8 @@
   "task": "GM-22",
   "supplement": "GM-22.2",
   "fixtureOnly": true,
-  "result": "Not complete: server/Bruno/history checks pass; one Python regression is blocked by Windows symlink privilege and remote CI awaits PR update.",
-  "revision": "6876fcdd2d290b09831c925d531fb59725a385b3",
+  "result": "Not complete: targeted QA and 18/18 PR checks pass; local Windows Python regression has one symlink privilege error.",
+  "revision": "2a6902db41f20462dc44c849f6dd4806160a18fc",
   "contractVersion": "food-v1/roadmap-v2/GM-22.1",
   "supplementVersion": "food-v1/roadmap-v2/GM-22.2",
   "schemaVersion": "0.14.0",
@@ -172,14 +172,19 @@
       "owner": "GM-23/29"
     },
     "remoteCi": {
-      "result": "Not run",
-      "reason": "PR branch has not been pushed in this task."
+      "result": "Pass",
+      "passed": 18,
+      "failed": 0,
+      "pending": 0,
+      "workflowRun": "41132033283",
+      "url": "https://github.com/ThanhTris/IE307/actions/runs/41132033283",
+      "testedCommit": "2a6902db41f20462dc44c849f6dd4806160a18fc"
     }
   },
   "applicationDatabaseChanged": false,
   "credentialsInEvidence": false,
   "baseRevision": "621acccf777c8a2538012641ce525cba0e6ae3ce",
-  "worktreeState": "uncommitted implementation patch; tested source identified by hashes",
+  "worktreeState": "evidence update after execution; code source hashes match the tested commit",
   "qaRuns": {
     "gm22Http": {
       "result": "Pass",
@@ -219,5 +224,6 @@
     "ownedProjectStopped": "ie307-dish-v4-qa-20261030-135000060500-1",
     "privateRuntimeAndBrunoEnvironmentRemoved": true,
     "applicationDatabaseChanged": false
-  }
+  },
+  "testedCodeRevision": "2a6902db41f20462dc44c849f6dd4806160a18fc"
 }
