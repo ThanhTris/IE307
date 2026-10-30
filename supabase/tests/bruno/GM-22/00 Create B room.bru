@@ -1,0 +1,24 @@
+meta {
+  name: 00 Create B room
+  type: http
+  seq: 1
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/dish_session
+  body: json
+}
+headers {
+  Authorization: Bearer {{hostToken}}
+  apikey: {{anonKey}}
+  Content-Type: application/json
+}
+body:json {
+  {"command":"create","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B","requestId":"{{requestId}}-create","displayName":"GM22 Bruno host","settings":{"dishCount":10,"mealSlot":"lunch","desiredAt":null},"preferences":{"cuisineIds":[],"categoryIds":[],"temperature":null,"flavor":null,"budget":null,"avoidRecent":false}}}
+}
+tests {
+  test('host creates a B room through Auth and REST',()=>{ expect(res.getStatus()).to.equal(200); expect(res.body.ok).to.equal(true); expect(res.body.data.roomId).to.match(/^[0-9a-f-]{36}$/i); expect(res.body.data.version).to.equal(1); });
+}
+script:post-response {
+  bru.setEnvVar('roomId', res.body.data.roomId);
+  bru.setEnvVar('roomVersion', String(res.body.data.version));
+}

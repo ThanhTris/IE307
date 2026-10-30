@@ -17,6 +17,9 @@
     "qa:worker-start": "node scripts/backend-qa.mjs worker-start",
     "qa:worker-stop": "node scripts/backend-qa.mjs worker-stop",
     "qa:stop": "node scripts/backend-qa.mjs stop",
+    "gm22:qa": "python scripts/gm22_admission_check.py",
+    "gm22:bruno": "python scripts/gm22_admission_check.py --bruno",
+    "gm22:stop": "python scripts/gm22_admission_check.py --cleanup",
     "test": "node --test tests/backend-runner.test.mjs tests/backend-qa.test.mjs"
   },
   "devDependencies": { "supabase": "2.120.0" }

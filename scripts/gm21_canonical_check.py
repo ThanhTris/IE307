@@ -17,7 +17,10 @@ def verify_consumer(db):
         raise RuntimeError('GM21_FUNCTION_INVENTORY_MISMATCH')
     for name,body in functions:
         schema,function=name.split('.')
-        actual=db.psql("select encode(extensions.digest(convert_to(p.prosrc,'UTF8'),'sha256'),'hex') from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='"+schema+"' and p.proname='"+function+"' and p.prosecdef and p.proconfig=array['search_path=pg_catalog'];").strip()
+        # PostgreSQL preserves the migration file's platform line endings in
+        # prosrc. Normalize CRLF/CR to LF before comparing with Python's
+        # universal-newline text read, otherwise Windows reports false drift.
+        actual=db.psql("select encode(extensions.digest(convert_to(replace(replace(p.prosrc,chr(13)||chr(10),chr(10)),chr(13),chr(10)),'UTF8'),'sha256'),'hex') from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='"+schema+"' and p.proname='"+function+"' and p.prosecdef and p.proconfig=array['search_path=pg_catalog'];").strip()
         if actual!=hashlib.sha256(body.encode('utf8')).hexdigest():
             raise RuntimeError('GM21_DEPLOYED_DEFINITION_OR_ACL_DRIFT '+name)
     qa.runtime.record('gm21-consumer-definitions','Pass',functionCount=len(functions),schemaVersion='0.13.0')

@@ -1,5 +1,21 @@
 # GM-22 — handoff
 
+## Current admission supplement — GM-22.2 (2026-10-30)
+
+The original GM-22.1/0.4.0 evidence below is historical and remains intact.
+The current forward migration is `0037_gm22_invitation_admission.sql`, schema
+`0.14.0`, based on GM-19/20 migrations `0034–0035` and GM-21 migration `0036`
+from main `621acccf777c8a2538012641ce525cba0e6ae3ce`. PR #145 checks passed
+18/18 on `2a6902d`. See the isolated, version-pinned
+[GM-22.2 handoff](admission-v4/HANDOFF.md), [checks](admission-v4/CHECKS.md),
+and [manifest](admission-v4/MANIFEST.json). The current QA run passed SQL
+35/35, HTTP 75/75, Bruno 12/12 and GM-21 history 80/80. The Python regression
+has one Windows symlink privilege error, recorded as Fail. The supplement keeps the GM-22.1
+RPC/DTO contract, routes v4 invitations through GM-19 admission, retains v3
+capacity 20 and decision-v2 capacity 8. Current server/Bruno result and cleanup
+status are only those recorded in the supplement files. Android consumer remains
+with GM-28; terminal sender/event bridge remains with GM-23.
+
 Owner/reviewer: Trí / ThanhTris. Contract `food-v1/roadmap-v2/GM-22.1`, schema
 `0.4.0`. Do not mark Done until Trí reviews the final revision.
 

@@ -1,7 +1,7 @@
 meta {
   name: 03 Invite partner
   type: http
-  seq: 3
+  seq: 4
 }
 post {
   url: {{baseUrl}}/rest/v1/rpc/invite_partner
@@ -16,5 +16,8 @@ body:json {
   {"requestId":"{{requestId}}","friend_code":"{{memberFriendCode}}","partner_id":null}
 }
 tests {
-  test('03 Invite partner',()=>{ expect([200,409]).to.include(res.getStatus()); });
+  test('friend invite is pending',()=>{ expect(res.getStatus()).to.equal(200); expect(res.body.ok).to.equal(true); expect(res.body.data.status).to.equal('pending'); });
+}
+script:post-response {
+  bru.setEnvVar('friendInvitationId', res.body.data.id);
 }
