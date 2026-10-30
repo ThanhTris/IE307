@@ -1,5 +1,14 @@
 # GM-40 — Checks Data/BE và lịch sử offline
 
+## Bản hiện hành GM40.2 — nhận producer GM18.2
+
+Đọc [handoff mới](rich-projection/HANDOFF.md), [plan](rich-projection/PLAN.md) và
+[checks](rich-projection/CHECKS.md). Source bundle/schema1.0.0/dataset1.1.0 giữ nguyên;
+adapter rich, schema/template stage, coverage và QA nhận0033/GM18.2 đã merge.
+Các số liệu/runtime0026 và trạng thái review bên dưới là evidence lịch sử, không
+thay kết quả supplement mới. Không SQL/API mới hoặc tự Approved/Done.
+
+
 
 ## Lượt hiện hành — review follow-up 2026-10-23
 

@@ -60,3 +60,29 @@ Content-Type: application/json
 # switch/restore, old locked pool, imported cards through round2/finalize/reconnect,
 # legacy fixture IDs/FKs/result and private ACL. Full runner supplies complete pool
 # votes privately; this file deliberately contains no actual ballots/tokens.
+
+### GM40.2 received rich catalogue (0033/schema0.11.0; independent read contract)
+# Import/activate only through an owned QA adapter; source bundle remains1.1.0.
+# get_dish_catalogue returns39 stable dishIds, release suffix :gm18.2, pinned SHA,
+# taxonomy labels/terms and nullable price metadata. Actual automated assertions:
+# python scripts/gm40_rich_projection_check.py --report /tmp/gm40-rich.json
+POST {{baseUrl}}/rpc/get_dish_catalogue
+Content-Type: application/json
+Authorization: Bearer {{guestJwt}}
+
+{"payload":{"contractVersion":"dish-catalogue/roadmap-v2/GM-18.2"}}
+
+### Lunch: exactly20 distinct cards; available23. No venue/location fields.
+POST {{baseUrl}}/rpc/preview_dish_pool
+Content-Type: application/json
+Authorization: Bearer {{guestJwt}}
+
+{"payload":{"contractVersion":"dish-catalogue/roadmap-v2/GM-18.2","mealSlot":"lunch","dishCount":20}}
+
+### Dinner shortage: HTTP409, INSUFFICIENT_DISHES, available7/requested20.
+# Different from the historical v3 HTTP200 error envelope examples above.
+POST {{baseUrl}}/rpc/preview_dish_pool
+Content-Type: application/json
+Authorization: Bearer {{guestJwt}}
+
+{"payload":{"contractVersion":"dish-catalogue/roadmap-v2/GM-18.2","mealSlot":"dinner","dishCount":20}}

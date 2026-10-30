@@ -28,7 +28,7 @@ imp = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(imp)
 
 
-def run(report_path):
+def run(report_path, *, extension=None, extra_sources=()):
     admin = imp.food.LocalDB()
     namespace = uuid.uuid4()
     name = 'gm08_check_' + namespace.hex[:16]
@@ -52,6 +52,7 @@ def run(report_path):
     report['sourceSha256ByPath'] = {p: hashlib.sha256((ROOT / p).read_bytes()).hexdigest() for p in [
         'scripts/gm40_catalogue_check.py', 'supabase/seed/import_dish_catalogue.py',
         'supabase/tests/dish_catalogue.sql', 'data-preparation/config/meal_slot_evidence_v1.json']}
+    report['sourceSha256ByPath'].update({str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in extra_sources})
 
     def check(label, actual, expected_value=True):
         if actual != expected_value:
@@ -256,6 +257,11 @@ def run(report_path):
             check('SQL ACL/consistency assertions', True)
             check('QA worker healthy', not worker_errors)
             report['mealCounts'] = {slot: sum(slot in c['mealSlots'] for c in expected) for slot in ['breakfast', 'lunch', 'dinner', 'snack']}
+            if extension is not None:
+                count=len(checks)
+                details=extension(db,namespace,http,check)
+                report['richProjection']={'contractVersion':'dish-catalogue/roadmap-v2/GM-18.2','schemaVersion':'0.11.0','assertions':len(checks)-count}
+                if details:report['richProjection'].update(details)
             report['result'] = 'Pass'
     finally:
         stop.set()

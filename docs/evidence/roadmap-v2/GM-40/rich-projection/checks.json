@@ -1,0 +1,39 @@
+{
+  "result": "Pass",
+  "testedHeadBeforePatchCommit": "e3f7058525da14c3b147fc909511cef7c803ee7c",
+  "workingTreePatchIncluded": true,
+  "branch": "codex/gm-40-rich-projection",
+  "sourceDishes": 39,
+  "legacyGm08SharedIds": 18,
+  "sourceBundleSha256": "776b1e4998d0b170b51a7c39a4ead74461bdfd721f167dafddf7f072bf117a2f",
+  "sqlHttpAssertions": 125,
+  "legacyAssertions": 47,
+  "richAssertions": 78,
+  "upstreamGm18Assertions": 286,
+  "python": {
+    "tests": 657,
+    "skipped": 6,
+    "result": "Pass"
+  },
+  "mobile": {
+    "jestSuites": 27,
+    "jestTests": 714,
+    "typecheck": "Pass",
+    "lintErrors": 0,
+    "lintExistingWarnings": 4,
+    "architecture": "Pass"
+  },
+  "notebook": {
+    "pythonRunnerCodeCells": 7,
+    "directJupyter": "Not run"
+  },
+  "repository": "Pass",
+  "taskIndexes": "Pass",
+  "diff": "Pass",
+  "hostedCI": "Not run for working tree",
+  "productionPublished": false,
+  "applicationDatabaseChanged": false,
+  "approvalChanged": false,
+  "committedAtTest": false,
+  "pushedAtTest": false
+}

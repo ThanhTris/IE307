@@ -5,9 +5,40 @@ dataset **1.1.0** trong namespace catalogue riêng. Trạng thái: draft, test/d
 chưa review schema/API; [ADR-018](../architecture/decisions/ADR-018-dish-catalogue-profile.md).
 Schema JSON này là hợp đồng dữ liệu offline, không phải migration database.
 
-## Phần projection cần bàn giao tiếp — 2026-10-25
+## Projection đã nhận và adapter Data GM40.2 — 2026-10-29
 
-Baseline catalogue1.1.0 giữ nguyên39 UUID/draft/test_demo. [Phần bổ sung GM-40](../../tasks/backlog/GM-40.md) nhận taxonomy ID/code/label/version và card nullable ảnh/giá; importer hiện mới chiếu một phần field offline. Không coi bundle có nhiều price observations là API đã trả đúng giá/người: unit hiện menu_item_unspecified, cần quy tắc chọn nguồn/observation, không đổi đơn vị tùy ý. Báo coverage thực theo bữa/bộ lọc, không bịa tag hoặc coi mealSlots=[] hợp mọi bữa. Locked result/history giữ card/version cũ sau catalogue đổi; Data không tính score/rank. [Audit chi tiết](../project/UI_BE_DATA_SYNC_AUDIT_2026-10-25.md).
+Nhận GM18.2/PR139, migration0033/schema0.11.0 và contract
+`dish-catalogue/roadmap-v2/GM-18.2`. Tái dùng `import_gm18_catalogue.py`;
+Data adapter `data-preparation/scripts/catalogue_projection.py` build/stage/readback
+cùng projection, không tạo SQL/RPC hoặc runtime authority khác. Bundle gốc/schema
+1.0.0/dataset1.1.0 và hash giữ nguyên; release mới có suffix `:gm18.2` đã được
+upstream định nghĩa. Legacy importer/default release không đổi.
+
+| Nguồn | Storage rich / API nhận | Quy tắc |
+| --- | --- | --- |
+| dish.id, name, description | dishId, name, description | UUID không đổi; không suy mô tả |
+| cuisineIds/categoryIds + taxonomy | IDs, labels, Terms{id,type,code,label,version} | Label theo đúng registry; release/hash pin vocabulary |
+| bundle.contractVersion | taxonomyVersion | Version schema nguồn; không là approval |
+| mealSlots | mealSlots | [] là chưa có bằng chứng, không khớp mọi bữa |
+| temperature/flavor | nullable cùng tên | Không suy từ tên; origin không là vị trí quán |
+| artwork | nullable artwork | Chỉ nguồn/quyền hợp lệ;39 món hiện null |
+| priceReferences.checkedAt | priceObservation.observedAt | Chọn UTC hợp lệ mới nhất, trùng mốc mới nhất → null |
+| priceReferences.value/currency/unit/sourceRef | amount/currency/unit/sourceRef | Giữ đơn vị/nullable, không đổi thành giá/người |
+| observation biểu diễn được theo B | priceReference.checkedAt | Latest amount null hoặc thiếu metadata B bắt buộc → null; không lấy giá cũ |
+| aliases/origin/timeHints/preparation/fieldEvidence | Giữ nguyên trong bundle được stage | Chưa có trong card GM18; không thêm field trái API đã nhận |
+
+Source1.0.0 vẫn đòi FK source và checkedAt hợp lệ cho từng observation, cùng đơn vị/
+tiền tệ khi ghi amount đã biết. Đây là quy tắc provenance của input; không áp sự
+bắt buộc đó lên nullable DTO GM18, hoặc tự điền metadata thiếu để vượt guard B.
+Trường hợp nguồn mới cần nới intake là delta contract riêng có version/review,
+không âm thầm sửa source hiện hữu. Schema stage mới dựa nguyên card schema GM18,
+chỉ thêm storage projectionVersion; template stage không phải dữ liệu thật.
+
+Artifact `supabase/seed/catalogue/gm18.2/`: projection.json, manifest.json, coverage.json.
+Schema/template stage ở `supabase/seed/templates/dish-catalogue-gm18-stage.*.json`.
+Build offline không import/activate; CLI thao tác DB vẫn bắt namespace QA và verify
+runtime upstream. Coverage term×bữa là bảng mô tả, không tạo hard filter mới:
+RPC hiện chỉ lọc mealSlot; ranking preferences vẫn UNSUPPORTED.
 
 ## Cách chạy và giới hạn
 
