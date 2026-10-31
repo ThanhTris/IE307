@@ -128,7 +128,7 @@ This is a forward-only v4 behavior. Existing v2/v3 rooms and already-started v4 
 
 ## Figma consumer contract
 
-The screen-to-contract mapping and Figma node references are in [FIGMA_BE_UI_DATA_ALIGNMENT_2026-10-24.md](../project/FIGMA_BE_UI_DATA_ALIGNMENT_2026-10-24.md). Result, history and notification consumers must read the same terminal projection. The API returns semantic ranks; the UI renders tied ranks at equal height and gives the selected winner a separate “Món được chọn” label. No mock restaurant/distance is returned as real data. The result screen uses Places-backed nearby restaurant/map content for the winning dish; opening Google Maps is a supplementary action, not a substitute for the in-app Places/map experience.
+The screen-to-contract mapping and Figma node references are in [FIGMA_BE_UI_DATA_ALIGNMENT_2026-10-24.md](../project/audits/FIGMA_BE_UI_DATA_ALIGNMENT_2026-10-24.md). Result, history and notification consumers must read the same terminal projection. The API returns semantic ranks; the UI renders tied ranks at equal height and gives the selected winner a separate “Món được chọn” label. No mock restaurant/distance is returned as real data. The result screen uses Places-backed nearby restaurant/map content for the winning dish; opening Google Maps is a supplementary action, not a substitute for the in-app Places/map experience.
 
 ## Errors and acceptance examples
 
@@ -148,7 +148,7 @@ The v4.B schema constrains envelopes and DTO shapes; semantic checks still requi
 
 ## Required closure before implementation handoff — 2026-10-25
 
-[The source audit](../project/UI_BE_DATA_SYNC_AUDIT_2026-10-25.md) found gaps in this proposed artifact. GM-07 must close these in the schema, DTOs, examples and a B-specific checker together; the current A checker is not B acceptance:
+[The source audit](../project/audits/UI_BE_DATA_SYNC_AUDIT_2026-10-25.md) found gaps in this proposed artifact. GM-07 must close these in the schema, DTOs, examples and a B-specific checker together; the current A checker is not B acceptance:
 
 - Select an explicit B opt-in transport/version discriminator and concurrency guards per command. Do not apply an undifferentiated latest room-version rule that makes concurrent complete-ballot submissions conflict unnecessarily; pool/round and idempotency semantics must be specified.
 - Remove the LOBBY poolVersion=1 invariant when lobby edits can recompute the pool. Define expiry as an authorized terminal/error route, and distinguish shared room state from caller waiting so other members remain able to submit.
@@ -161,4 +161,4 @@ These are task requirements, not a declaration that the schema or runtime has al
 
 ## Implementation boundary
 
-This file and its schema are contract and specification artifacts for GM-07. They do not implement GM-06/15/17/18/19/20/21/22/23, mobile client/mock screens, UI, migrations, data release, Android QA, or production publication. Those remain with task owners in [the alignment matrix](../project/FIGMA_BE_UI_DATA_ALIGNMENT_2026-10-24.md). In particular, known runtime bugs in GM-19 on PostgreSQL (such as non-host `update_settings` guard and reroll pool idempotency on desiredAt changes) are tracked separately under GM-19's supplement; this PR verifies contract schema and semantic simulation, not the GM-19 runtime fix. Keep current main runtime v3 and legacy consumers unchanged until a reviewed forward migration, producer and versioned consumer are merged.
+This file and its schema are contract and specification artifacts for GM-07. They do not implement GM-06/15/17/18/19/20/21/22/23, mobile client/mock screens, UI, migrations, data release, Android QA, or production publication. Those remain with task owners in [the alignment matrix](../project/audits/FIGMA_BE_UI_DATA_ALIGNMENT_2026-10-24.md). In particular, known runtime bugs in GM-19 on PostgreSQL (such as non-host `update_settings` guard and reroll pool idempotency on desiredAt changes) are tracked separately under GM-19's supplement; this PR verifies contract schema and semantic simulation, not the GM-19 runtime fix. Keep current main runtime v3 and legacy consumers unchanged until a reviewed forward migration, producer and versioned consumer are merged.

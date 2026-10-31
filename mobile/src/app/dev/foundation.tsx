@@ -1,0 +1,15 @@
+import { useRouter } from 'expo-router';
+import { FoundationScreen } from '../../features/home/screens/FoundationScreen';
+
+export default function FoundationRoute() {
+  const router = useRouter();
+  return (
+    <FoundationScreen
+      onBack={() => (router.canGoBack() ? router.back() : router.replace('/'))}
+      onOpenComponents={() => router.push('/dev/components')}
+      onOpenFeaturePreview={() => router.push('/dev/features')}
+      onOpenRoomFlowSandbox={() => router.push('/dev/room-flow-sandbox')}
+      onOpenResultPreview={() => router.push('/room/result')}
+    />
+  );
+}

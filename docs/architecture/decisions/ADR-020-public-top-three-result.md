@@ -3,7 +3,7 @@
 - Status: **Accepted by project owner Trí (`ThanhTris`) on 2026-10-24**.
 - Scope: new dish-session v4.B sessions only. Existing v2/v3 sessions and stored results retain their pinned behavior.
 - Runtime status: **not implemented or deployed**. This ADR records product rules; it is not API/Android evidence.
-- Related: [ADR-019 dish-first room policy](ADR-019-dish-first-room-policy.md), [GM-07.B contract](../DISH_SESSION_API_CONTRACT_B.md), [Figma–BE–Data alignment](../../project/FIGMA_BE_UI_DATA_ALIGNMENT_2026-10-24.md).
+- Related: [ADR-019 dish-first room policy](ADR-019-dish-first-room-policy.md), [GM-07.B contract](../DISH_SESSION_API_CONTRACT_B.md), [Figma–BE–Data alignment](../../project/audits/FIGMA_BE_UI_DATA_ALIGNMENT_2026-10-24.md).
 
 ## Context
 

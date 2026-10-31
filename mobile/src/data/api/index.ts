@@ -3,13 +3,13 @@
  * Spec: docs/architecture/API_CONTRACT.md
  */
 
-export * from './contracts';
-export * from './client';
-export * from './mock';
-
 import { ApiClient } from './contracts';
 import { ApiClientImpl, ClientConfig } from './client';
 import { MockApiClient, MockConfig } from './mock';
+
+export * from './contracts';
+export * from './client';
+export * from './mock';
 
 export type ApiMode = 'real' | 'mock';
 

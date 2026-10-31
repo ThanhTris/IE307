@@ -295,9 +295,9 @@
       "track": "UI",
       "stage": "screens",
       "outputs": [
-        "mobile/src/features/home/screens/Gm25HomeScreen.tsx",
-        "mobile/src/features/rooms/screens/Gm25CreateRoomScreen.tsx",
-        "mobile/src/features/rooms/screens/Gm25JoinRoomScreen.tsx",
+        "mobile/src/features/home/screens/HomeScreen.tsx",
+        "mobile/src/features/rooms/screens/CreateRoomScreen.tsx",
+        "mobile/src/features/rooms/screens/JoinRoomScreen.tsx",
         "docs/evidence/roadmap-v2/GM-09/CHECKS.md"
       ],
       "inputs": [
@@ -929,7 +929,7 @@
       "inputs": [
         {
           "task": "GM-09",
-          "artifact": "mobile/src/features/home/screens/Gm25HomeScreen.tsx",
+          "artifact": "mobile/src/features/home/screens/HomeScreen.tsx",
           "gate": "start"
         },
         {
@@ -1213,7 +1213,7 @@
         },
         {
           "task": "GM-09",
-          "artifact": "mobile/src/features/home/screens/Gm25HomeScreen.tsx",
+          "artifact": "mobile/src/features/home/screens/HomeScreen.tsx",
           "gate": "start"
         },
         {
@@ -1667,17 +1667,17 @@
         },
         {
           "task": "GM-09",
-          "artifact": "mobile/src/features/home/screens/Gm25HomeScreen.tsx",
+          "artifact": "mobile/src/features/home/screens/HomeScreen.tsx",
           "gate": "start"
         },
         {
           "task": "GM-09",
-          "artifact": "mobile/src/features/rooms/screens/Gm25CreateRoomScreen.tsx",
+          "artifact": "mobile/src/features/rooms/screens/CreateRoomScreen.tsx",
           "gate": "start"
         },
         {
           "task": "GM-09",
-          "artifact": "mobile/src/features/rooms/screens/Gm25JoinRoomScreen.tsx",
+          "artifact": "mobile/src/features/rooms/screens/JoinRoomScreen.tsx",
           "gate": "start"
         },
         {

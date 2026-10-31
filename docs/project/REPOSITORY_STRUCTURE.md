@@ -10,18 +10,20 @@ scripts/backend.mjs             GM-03: runner portable/local-only
 mobile/                         GM-02: config/lockfile/runner
   package.json / package-lock.json
   app.config.ts / tsconfig.json / eslint.config.js / .env.example / README.md
-  src/app/                      routes/layouts mỏng, file riêng mỗi màn
-    _layout.tsx / index.tsx / +not-found.tsx
+  src/app/                      routes/layouts mỏng theo tính năng sản phẩm + dev/
+    _layout.tsx / index.tsx / friends.tsx / history.tsx / inbox.tsx / +not-found.tsx
+    room/                       create, join, preview, context, preferences, lobby, status, vote, final-round, result, no-consensus
+    dev/                        shell, foundation, components, features, discovery-context, auth-sandbox, room-flow-sandbox
   src/bootstrap/AppProviders.tsx nền providers/composition
   src/features/
     home/screens/AppShellScreen.tsx GM-02: shell sản phẩm
     home/ rooms/ context/ preferences/ voting/ result/
-    friends/ inbox/ history/ account/
+    friends/ inbox/ history/ account/ auth/
   src/shared/theme/             GM-05 tokens
-  src/shared/ui/                GM-05 components theo mẫu
+  src/shared/ui/                GM-05 components chia file theo nhóm (layout, buttons, forms, cards, room, result, feedback, dialogs, tutorial) + index.ts
   src/domain/decision/          GM-15 luật thuần
   src/domain/eligibility/       GM-18 lọc/rank thuần và parity
-  src/data/api/                 GM-07 contracts/client/mock; adapters thật về sau
+  src/data/api/                 GM-07 contracts/, client/, mock/ chia module + barrel; adapters thật về sau
   src/data/auth/                GM-16 secure session
   src/data/local/               GM-31 SQLite/cache/outbox
   tests/README.md                lệnh chạy và scope
@@ -40,6 +42,7 @@ supabase/                       GM-03 config/local runner
     http/GM-XX.http              mỗi task API sở hữu request suite riêng
     functions/                  khi có Edge Function trong scope
 docs/data/                      dictionary/database mapping/dataset handoff
+docs/project/audits/            các báo cáo rà soát, đồng bộ UI-BE-Data theo mốc thời gian
 tests/fixtures/                 mẫu tổng hợp, không publish verified
 docs/evidence/roadmap-v2/        output/test/handoff/review theo task mới
 tasks/archive/roadmap-v1/        snapshot JSON giữ task/mapping cũ
