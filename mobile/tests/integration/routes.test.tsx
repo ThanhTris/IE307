@@ -1,9 +1,10 @@
 import { renderRouter } from 'expo-router/testing-library';
 import { router } from 'expo-router';
 import { act } from 'react';
-import { fireEvent, screen, userEvent, waitFor } from '@testing-library/react-native';
+import { fireEvent, renderHook, screen, userEvent, waitFor } from '@testing-library/react-native';
 import Layout from '../../src/app/_layout';
 import Index from '../../src/app/index';
+import Welcome from '../../src/app/welcome';
 import Foundation from '../../src/app/foundation';
 import NotFound from '../../src/app/+not-found';
 import Components from '../../src/app/components';
@@ -19,7 +20,7 @@ import JoinRoom from '../../src/app/join-room';
 import RoomPreview from '../../src/app/room-preview';
 import Gm12Vote from '../../src/app/gm12/vote';
 import Gm12Final from '../../src/app/gm12/final';
-import { rememberPreviewRoom, setPreviewScenario } from '../../src/bootstrap/roomPreview';
+import { rememberPreviewGuest, rememberPreviewRoom, resetPreviewEntry, setPreviewScenario, useRoomPreview } from '../../src/bootstrap/roomPreview';
 import Gm10Layout from '../../src/app/gm10/_layout';
 import Gm10Context from '../../src/app/gm10/context';
 import Gm10Preferences from '../../src/app/gm10/preferences';
@@ -28,6 +29,7 @@ import Gm24Context from '../../src/app/gm24/context';
 const routes = {
   _layout: Layout,
   index: Index,
+  welcome: Welcome,
   foundation: Foundation,
   components: Components,
   features: Features,
@@ -48,8 +50,31 @@ const routes = {
   'gm10/preferences': Gm10Preferences,
   'gm24/context': Gm24Context,
 };
-beforeEach(() => setPreviewScenario('default'));
+beforeEach(() => { setPreviewScenario('default'); rememberPreviewGuest('Tuấn'); });
 afterEach(() => jest.useRealTimers());
+
+test('fresh mock entry reaches Home with a name without creating a real session or room', async () => {
+  resetPreviewEntry();
+  const preview = await renderHook(useRoomPreview);
+  const createGuest = jest.spyOn(preview.result.current.client, 'createGuestSession');
+  const createRoom = jest.spyOn(preview.result.current.client, 'createRoom');
+  const joinRoom = jest.spyOn(preview.result.current.client, 'joinRoom');
+  await renderRouter(routes, { initialUrl: '/' });
+  expect(await screen.findByRole('button', { name: 'Tham gia với tư cách khách' })).toBeOnTheScreen();
+  expect(screen).toHavePathname('/welcome');
+  const user = userEvent.setup();
+  await user.press(screen.getByRole('button', { name: 'Tham gia với tư cách khách' }));
+  await user.type(screen.getByLabelText('Tên khách'), 'Minh');
+  await user.press(screen.getByRole('button', { name: 'Tiếp tục' }));
+  await waitFor(() => expect(screen).toHavePathname('/'));
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Tạo phòng' })).toBeEnabled());
+  await user.press(screen.getByRole('button', { name: 'Tạo phòng' }));
+  expect(await screen.findByLabelText('Tên của bạn (chủ phòng)')).toHaveDisplayValue('Minh');
+  expect(createGuest).not.toHaveBeenCalled();
+  expect(createRoom).not.toHaveBeenCalled();
+  expect(joinRoom).not.toHaveBeenCalled();
+  createGuest.mockRestore(); createRoom.mockRestore(); joinRoom.mockRestore();
+});
 
 test('GM-10 routes preserve the same saved room from home tools through context and preferences', async () => {
   await renderRouter(routes, { initialUrl: '/' });
@@ -206,6 +231,7 @@ test('join deep link pre-fills code but waits for user confirmation', async () =
   expect(screen.getByLabelText('Mã phòng (6 ký tự)').props.value).toBe('GCD234');
   expect(screen.queryByText('Đã nhận yêu cầu mô phỏng')).toBeNull();
   const user = userEvent.setup();
+  await user.clear(screen.getByLabelText('Tên của bạn'));
   await user.type(screen.getByLabelText('Tên của bạn'), 'Tuấn');
   await user.press(screen.getByRole('button', { name: 'Vào phòng →' }));
   await user.press(screen.getByRole('button', { name: 'Xác nhận vào phòng mô phỏng' }));
@@ -223,6 +249,7 @@ test('Home create flow reaches the adapter receipt and preserves the room on ret
   await waitFor(() => expect(screen.getByRole('button', { name: 'Tạo phòng' })).toBeEnabled());
   await user.press(screen.getByRole('button', { name: 'Tạo phòng' }));
   await screen.findByRole('button', { name: 'Hồ Con Rùa' });
+  await user.clear(screen.getByLabelText('Tên của bạn (chủ phòng)'));
   await user.type(screen.getByLabelText('Tên của bạn (chủ phòng)'), 'Tuấn');
   await user.press(screen.getByRole('button', { name: 'Hồ Con Rùa' }));
   expect(screen.getByText('BỐI CẢNH PHÒNG')).toBeOnTheScreen();
@@ -240,6 +267,7 @@ test('Home create flow reaches the adapter receipt and preserves the room on ret
 test('a warm route parameter updates the code without joining or keeping the previous confirmation', async () => {
   await renderRouter(routes, { initialUrl: '/join-room?code=GCD234' });
   const user = userEvent.setup();
+  await user.clear(screen.getByLabelText('Tên của bạn'));
   await user.type(screen.getByLabelText('Tên của bạn'), 'Tuấn');
   await user.press(screen.getByRole('button', { name: 'Vào phòng →' }));
   expect(screen.getByRole('button', { name: 'Xác nhận vào phòng mô phỏng' })).toBeOnTheScreen();

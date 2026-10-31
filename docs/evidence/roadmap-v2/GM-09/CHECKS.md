@@ -1,5 +1,9 @@
 # GM-09 — checks
 
+## GM-09.2 step 1 — 2026-10-31
+
+Current welcome/guest-entry candidate on `codex/gm-09-figma-update`, base `621accc` + working tree: [checks and reproduction](figma-update/STEP1.md), [Figma parity/Not run device checks](FIGMA_PARITY.md). The supplement retains one pre-existing GM-25 test timeout and does not claim complete mobile/visual acceptance. Prior test counts and device confirmations below do not apply automatically to the new revision.
+
 ## Supplement 2026-10-27 — Home aligned to approved Figma frame
 
 After the owner reported that Home still looked old, the current working tree updates it to the approved [Home frame 330:3067](figma/330-3067-home.png): G mark/title and inbox action, headline/subtitle, friends-dining banner, square create/join actions, quick-friends card and four-item bottom navigation. It uses GM-05 shared `AppHeader`, `AppButton`, `AvatarRow`, `BrandBanner`, and `AppBottomNavigation`; brand artwork/icons are bundled from Figma with hashes in `mobile/assets/brand/SOURCE.md`. Create/join/session/repository callbacks and explicit mock label remain. Empty friend results are represented honestly; no sample identities are added.

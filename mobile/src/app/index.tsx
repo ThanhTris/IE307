@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { Redirect, useRouter } from 'expo-router';
 import { Gm25HomeScreen } from '../features/home/screens/Gm25HomeScreen';
 import { PreviewControls, previewSessionToken, useRoomPreview } from '../bootstrap/roomPreview';
 import { useRoomRepository } from '../bootstrap/RoomRepositoryProvider';
@@ -11,6 +11,11 @@ export default function IndexRoute() {
 
   const repository = isReal ? live.repository : preview.client;
   const sessionToken = isReal ? undefined : previewSessionToken;
+
+  const needsGuestEntry = isReal
+    ? !live.isInitializing && live.status === 'empty' && live.issue === 'no-session' && !live.user
+    : !preview.guestName && !preview.active;
+  if (needsGuestEntry) return <Redirect href="/welcome" />;
 
   return (
     <Gm25HomeScreen

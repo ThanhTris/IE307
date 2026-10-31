@@ -1,0 +1,78 @@
+{
+  "baseCommit": "621acccf777c8a2538012641ce525cba0e6ae3ce",
+  "branch": "codex/gm-09-figma-update",
+  "requirement": "ui-figma-final/2026-10-25/GM-09.2",
+  "state": "uncommitted step 1 candidate",
+  "files": [
+    {
+      "path": "mobile/src/app/index.tsx",
+      "sha256": "09c1a3392c3b0dae38f664d2e7050b74e9eac69e07efb9815dd5901776fbddec",
+      "bytes": 1776
+    },
+    {
+      "path": "mobile/src/app/welcome.tsx",
+      "sha256": "e79b072f263f2f91c999d3fdddd02183e2dd29f3e05983096e7c3d8fe8db3931",
+      "bytes": 989
+    },
+    {
+      "path": "mobile/src/app/create-room.tsx",
+      "sha256": "0452eecced9adf6cf8e72d89ada71ef45c5fe23e4652dc33cf1418eb35eb9d9c",
+      "bytes": 2039
+    },
+    {
+      "path": "mobile/src/app/join-room.tsx",
+      "sha256": "240152e34507761810a18d73f113324a28ce4aab3ddfd39ee04ed64b21a6d425",
+      "bytes": 2310
+    },
+    {
+      "path": "mobile/src/bootstrap/roomPreview.tsx",
+      "sha256": "fd521f2f1dfc78e263197cf8bd9842424094310558dc007af855b54a9ba7f958",
+      "bytes": 4477
+    },
+    {
+      "path": "mobile/src/shared/ui/components.tsx",
+      "sha256": "8125a213f8a952b5a3638a5c3af2b93f6dcf43c4d8ea67ecbdc8fed5b5935b1d",
+      "bytes": 40917
+    },
+    {
+      "path": "mobile/src/features/home/screens/WelcomeScreen.tsx",
+      "sha256": "fb3ae4fd5b1111b0e266198ba7082e2e2d04f75d9b7d966ec7e45caecf8291c8",
+      "bytes": 5311
+    },
+    {
+      "path": "mobile/src/features/home/screens/GuestEntryScreen.tsx",
+      "sha256": "c49725efc85fdd7a10bed0e6b4c241cb7f6fa28e0d080be5777fc4326333b2a5",
+      "bytes": 9671
+    },
+    {
+      "path": "mobile/tests/component/guestEntryScreen.test.tsx",
+      "sha256": "321a9674ab3d3b247f2ea1db9f43ebbd4189c2b7ca1befdad060e561547b6ce2",
+      "bytes": 8892
+    },
+    {
+      "path": "mobile/tests/integration/guestEntryRoute.test.tsx",
+      "sha256": "ac415b8b623a0332a7ca0b10c420a98b270c1877b8f3df457216d9c5834888b2",
+      "bytes": 3324
+    },
+    {
+      "path": "mobile/tests/integration/routes.test.tsx",
+      "sha256": "333da344c465398e763ca6a97e456fd968cb5feb663770c1773b15edf8f9e5bd",
+      "bytes": 20060
+    },
+    {
+      "path": "mobile/assets/brand/entry/welcome-ring-large.png",
+      "sha256": "17a3a78925bab13d4ba1a65a6315270f8250f54a426bae0d866b52a69f3a71a1",
+      "bytes": 3887
+    },
+    {
+      "path": "mobile/assets/brand/entry/welcome-ring-small.png",
+      "sha256": "3d1019d62afc60b2d4069fcfbc6197ab1dcfe2d1a4ab41151666391b17e5e90f",
+      "bytes": 2460
+    },
+    {
+      "path": "mobile/assets/brand/gcd-logo-master.png",
+      "sha256": "a72e07d837c48e8306c196d0d175dc3b0e3f8f134ceacf8e39026b91ab9a148c",
+      "bytes": 1516
+    }
+  ]
+}

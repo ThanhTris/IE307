@@ -1,5 +1,11 @@
 # GM-09 — phạm vi triển khai
 
+## GM-09.2 step 1 — 2026-10-31
+
+User requests only welcome/guest entry from the received Figma copy. Current branch `codex/gm-09-figma-update`, base `621accc` + working tree; owner Tuấn/reviewer Trí unchanged. Live start gate `READY_TO_CLAIM`; receive existing GM-05 and GM-07 artifacts. Patch plan: native welcome → explicit name confirmation → existing Home; preserve GM-25 auth/recovery guards, use separate in-memory mock entry state, reuse local logo/shared buttons/forms and export individual Figma decorations. No new dependency, auth engine, persistent cache, setup/lobby/QR/tutorial implementation or wire/migration change.
+
+Tests target validation, Unicode, duplicate/pending/ACK, late responses, Back, recovery/reset, zero mock auth/room mutations and existing routes/shared consumers. [Step 1 changes, results and reproduction](figma-update/STEP1.md); [visual reference/gaps](FIGMA_PARITY.md). Earlier plans/results below remain historical; their HTML/GM-39 instructions do not define this supplement. No commit/push or approval is performed.
+
 ## Chuẩn bị bàn giao review theo yêu cầu hiện tại — 2026-10-15
 
 Người dùng xác nhận GM-09 kiểm thành công và hoạt động, yêu cầu cập nhật Markdown rồi hướng dẫn tự commit/push để Trí review/merge. Chỉ dẫn hiện tại không yêu cầu ảnh/video UI; ghi [biên bản văn bản](MANUAL_DEVICE_CHECK.md), giữ thông số/ca chi tiết chưa báo ở trạng thái chưa xác nhận, không tạo dữ liệu đo hoặc approval.

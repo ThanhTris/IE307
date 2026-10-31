@@ -1,5 +1,9 @@
 # GM-09 — bàn giao màn Home / create / join
 
+## GM-09.2 step 1 candidate — 2026-10-31
+
+New welcome/name entry is composed at `/welcome`; fresh `/` enters it after the session/mode guards. [Step 1 handoff/checks](figma-update/STEP1.md) identifies files, producer versions, route/fixture controls, pending/duplicate/recovery behavior and remaining checks. [FIGMA_PARITY](FIGMA_PARITY.md) retains the received Figma screenshots and contrast differences. GM-25 still supplies the real `ensureSession` seam; mock entry only stores a local UI name. Optional shared FormField presentation props preserve prior defaults. Owner Tuấn/reviewer Trí unchanged; branch `codex/gm-09-figma-update`, base `621accc` + working tree. No stage/commit/push, Project status or approval changes; the remaining steps in the user's local plan are not implemented by this supplement.
+
 ## Bàn giao hiện tại để Trí review — 2026-10-15
 
 Người dùng đã xác nhận kiểm GM-09 thành công và hoạt động trên Expo Go sau bản sửa cuối. [Biên bản kiểm thủ công](MANUAL_DEVICE_CHECK.md) là evidence văn bản theo chỉ dẫn hiện tại, không yêu cầu ảnh/video cho lần bàn giao này. Chưa có model/Android/Expo Go và kết quả riêng light/dark/font200/TalkBack/keyboard/Back/từng fixture; biên bản giữ rõ giới hạn, Trí đối chiếu trước nghiệm thu.

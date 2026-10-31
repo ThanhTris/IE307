@@ -174,12 +174,14 @@ export type FormFieldProps = ComponentThemeProps & Pick<TextInputProps, 'autoCap
   helperText?: string;
   error?: string;
   keyboardType?: KeyboardTypeOptions;
+  hideLabel?: boolean;
+  inputStyle?: StyleProp<TextStyle>;
 };
 
-export function FormField({ label, value, onChangeText, placeholder, helperText, error, colors, ...inputProps }: FormFieldProps) {
+export function FormField({ label, value, onChangeText, placeholder, helperText, error, colors, hideLabel = false, inputStyle, ...inputProps }: FormFieldProps) {
   return (
     <View style={styles.field}>
-      <Text style={[styles.fieldLabel, { color: colors?.text }]}>{label}</Text>
+      {!hideLabel ? <Text style={[styles.fieldLabel, { color: colors?.text }]}>{label}</Text> : null}
       <TextInput
         {...inputProps}
         accessibilityLabel={label}
@@ -188,7 +190,7 @@ export function FormField({ label, value, onChangeText, placeholder, helperText,
         onChangeText={onChangeText}
         placeholder={placeholder}
         placeholderTextColor={colors?.muted}
-        style={[styles.input, { backgroundColor: colors?.soft, borderColor: error ? colors?.danger : colors?.line, color: colors?.text }]}
+        style={[styles.input, { backgroundColor: colors?.soft, borderColor: error ? colors?.danger : colors?.line, color: colors?.text }, inputStyle]}
       />
       {error ? <Text accessibilityRole="alert" style={[styles.helper, { color: colors?.danger }]}>{error}</Text> : helperText ? <Text style={[styles.helper, { color: colors?.muted }]}>{helperText}</Text> : null}
     </View>
