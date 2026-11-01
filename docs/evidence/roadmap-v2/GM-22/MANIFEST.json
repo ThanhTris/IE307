@@ -37,5 +37,8 @@
     "mobile/src/data/api/mock.ts": "07726b05078717c798f57f851b627a1aa277275e48d71ee6e970e82ce2354a27",
     "mobile/src/data/api/responseGuards.ts": "900cfc0d141f62ad6d41e8fbb4b87a91a6cd54e1318176a223cf307b4d4161ca",
     "docs/architecture/decisions/ADR-016-social-identity-and-invitation-references.md": "f5175cedd5a1ff146380fc0d49238cba5fb3b48a307a93c340bc3ccf128d3e2c"
-  }
+  },
+  "historicalBaseline": true,
+  "currentSupplement": "food-v1/roadmap-v2/GM-22.2",
+  "currentEvidence": "docs/evidence/roadmap-v2/GM-22/admission-v4/MANIFEST.json"
 }

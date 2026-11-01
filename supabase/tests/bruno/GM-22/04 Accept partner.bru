@@ -1,7 +1,7 @@
 meta {
   name: 04 Accept partner
   type: http
-  seq: 4
+  seq: 5
 }
 post {
   url: {{baseUrl}}/rest/v1/rpc/accept_partner
@@ -16,5 +16,5 @@ body:json {
   {"requestId":"{{requestId}}-accept","invitation_id":"{{friendInvitationId}}"}
 }
 tests {
-  test('04 Accept partner',()=>{ expect([200,409]).to.include(res.getStatus()); });
+  test('recipient accepts friend invite',()=>{ expect(res.getStatus()).to.equal(200); expect(res.body.ok).to.equal(true); expect(res.body.data).to.equal(null); });
 }

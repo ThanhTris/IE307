@@ -1,7 +1,7 @@
 meta {
   name: 05 Invite room
   type: http
-  seq: 5
+  seq: 6
 }
 post {
   url: {{baseUrl}}/rest/v1/rpc/invite_to_room
@@ -16,5 +16,8 @@ body:json {
   {"requestId":"{{requestId}}-room","room_id":"{{roomId}}","partner_id":"{{memberId}}","expected_version":{{roomVersion}}}
 }
 tests {
-  test('05 Invite room',()=>{ expect([200,409]).to.include(res.getStatus()); });
+  test('room invite is pending and does not join recipient',()=>{ expect(res.getStatus()).to.equal(200); expect(res.body.ok).to.equal(true); expect(res.body.data.status).to.equal('pending'); });
+}
+script:post-response {
+  bru.setEnvVar('roomInvitationId', res.body.data.id);
 }

@@ -250,9 +250,17 @@ def main():
     has_v4=verify(db)
     if args.qa_manifest and not has_v4:
         raise RuntimeError("GM03 QA manifest requires the v4 policy runtime")
+    # GM-22's real-HTTP TTL race uses an owned QA-only marker to freeze the
+    # background expiry tick while it measures admission side effects. The
+    # marker is resolved inside the already-verified QA workdir; local/app
+    # worker mode does not honor it.
+    pause_marker = (Path(args.qa_workdir) / ".gm22-pause-policy-worker") if args.qa_db_container and args.qa_workdir else None
     print("Dish policy worker: verified local Supabase, heartbeat and timeout reconcile every second")
     try:
         while True:
+            if pause_marker and pause_marker.is_file():
+                time.sleep(0.1)
+                continue
             db.psql("select dish_v3_private.tick();")
             if has_v4:
                 db.psql("select dish_v4_private.tick();")

@@ -1,0 +1,20 @@
+...............................................................................................................................................C:\Python314\Lib\tempfile.py:484: ResourceWarning: Implicitly cleaning up <HTTPError 429: 'Rate limit'>
+  _warnings.warn(self.warn_message, ResourceWarning)
+Pass: GM-07.A schema structure and wire fixtures (27 assertions)
+Pass: Draft 2020-12 schema, dense rank ties, winner invariants, deep projection match, cohort score bounds, status/round/reasonCode pairs, NOT_HOST wire error envelope, no-op poolVersion, concurrent submit range rules, legacy unscored DTO without fabricated counts, and immutable history projection validation.
+Owned QA retained; --against reruns, --cleanup stops only this project
+Cell 1: ERROR
+Report: C:\Users\ADMIN\AppData\Local\Temp\tmpofnsug2c\new-capture\reports\sample.executed.ipynb
+Cell 1: OK
+Report: C:\Users\ADMIN\AppData\Local\Temp\tmpd53_91yd\new\reports\sample.executed.ipynb
+.....................................................................................................................................................................................................................................................................................................................s............sssss..................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 648 tests in 156.928s
+
+{
+  "offline": true,
+  "refresh": false,
+  "allow_api": false,
+  "output_dir": "C:\\Users\\ADMIN\\AppData\\Local\\Temp\\tmpd53_91yd\\new"
+}
+OK (skipped=6)
