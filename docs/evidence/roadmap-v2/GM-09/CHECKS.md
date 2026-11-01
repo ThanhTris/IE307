@@ -1,5 +1,38 @@
 # GM-09 — checks
 
+## Steps 3–7 local candidates — 2026-11-01
+
+Current source is step 6 `a4dbdec`; prior local step commits: create entry
+`fea0696`, join preview `fde3757`, tutorial `1b86133`. See
+[final handoff/matrix](figma-update/FINAL_HANDOFF.md),
+[reported requirements/design gaps](figma-update/REMAINING_GAPS.md) and
+[source manifest](figma-update/FINAL_MANIFEST.json). Earlier manifests/counts
+below identify historical tested revisions, not the current source.
+
+| Check | Actual | Result |
+| --- | --- | --- |
+| Full mobile Jest on host | **36 suites/795 tests**, 114.496s, unchanged runner/5s limits | Pass |
+| Typecheck / source lint / architecture | `npm run typecheck`; `npx eslint src tests scripts` (zero warnings/errors); architecture guard | Pass |
+| Full mobile lint | Four stale imports in ignored local `.work/gm10Audit.test.tsx`, not committed or altered | Fail (local QA file); do not claim full npm check green |
+| Expo locked compatibility | SDK58 installed versions match lockfile; tool warns offline validation limitation | Pass with limitation |
+| Android export | Hermes `entry-f5fadfbd9e28e8da6c9622a08bbbd971.hbc`, 3.5MB | Pass, export only |
+| Full Python | CPython3.14.7, UTF-8/test deps command-scoped; **657 tests:650 passed/6 skipped/1 error**,113.019s | Fail: existing WinError1314 fixture symlink privilege |
+| Repository/indexes/diff/manifests | Offline validators, whitespace, source hash and stage review | Pass |
+| Merge gate | Fetched main90e871a, live Project16:28:55Z: READY_FOR_MERGE_REVIEW | Dependency/artifact check only; no approval |
+| Native Android/visual/physical swipe/320-360-412dp/font200/TalkBack/Dark/keyboard/Back | No ADB in PATH or configured/standard host SDK location | Not run |
+
+Step-specific tests and earlier sandbox cold-render timeouts are recorded in
+STEP3–STEP6; the host full run is the final source regression. No assertions,
+timeouts or runner settings were weakened. Python error remains
+`test_catalogue_projection.ProjectionAdoptionTests.test_stage_refuses_symlink_output`.
+No Windows security setting/test skip was added to hide it. Logs are local
+ignored `.work/gm09-remaining-python.log` and mobile `.work/gm09-step6-*`.
+
+The user explicitly authorized a local commit after each step and no push.
+No Project/Issue/approval, database, API version or Figma change was made.
+Dish-only GM-10 setup/public live join-preview integrations and native acceptance
+remain open; independent UI candidates are not full GM-09 Done.
+
 ## GM-09.2 step 2 — 2026-11-01
 
 Base `8172241` + working tree on `codex/gm-09-figma-update`, pinned by

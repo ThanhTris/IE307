@@ -1,0 +1,211 @@
+{
+  "sourceCommit": "a4dbdecc30ef22ed42d563198d5045e26ad2fc34",
+  "mobile": {
+    "command": "npm test -- --json --outputFile=.work/gm09-step6-full-jest.json",
+    "passed": 795,
+    "failed": 0,
+    "suites": 36,
+    "startedAt": "2026-11-01T16:24:35.204000+00:00",
+    "suiteResults": [
+      {
+        "file": "roomSetupScreens.test.tsx",
+        "status": "passed",
+        "tests": 32
+      },
+      {
+        "file": "apiContract.test.ts",
+        "status": "passed",
+        "tests": 24
+      },
+      {
+        "file": "liveRoomLifecycle.test.tsx",
+        "status": "passed",
+        "tests": 17
+      },
+      {
+        "file": "votingScreens.test.tsx",
+        "status": "passed",
+        "tests": 19
+      },
+      {
+        "file": "contextScreen.test.tsx",
+        "status": "passed",
+        "tests": 21
+      },
+      {
+        "file": "roomRepository.test.ts",
+        "status": "passed",
+        "tests": 18
+      },
+      {
+        "file": "locationService.test.ts",
+        "status": "passed",
+        "tests": 29
+      },
+      {
+        "file": "authSession.test.ts",
+        "status": "passed",
+        "tests": 34
+      },
+      {
+        "file": "sharedComponents.test.tsx",
+        "status": "passed",
+        "tests": 21
+      },
+      {
+        "file": "resultScreens.test.tsx",
+        "status": "passed",
+        "tests": 32
+      },
+      {
+        "file": "apiResponseValidation.test.ts",
+        "status": "passed",
+        "tests": 119
+      },
+      {
+        "file": "homeScreen.test.tsx",
+        "status": "passed",
+        "tests": 26
+      },
+      {
+        "file": "socialAndHistoryScreens.test.tsx",
+        "status": "passed",
+        "tests": 7
+      },
+      {
+        "file": "lobbyAndStatusScreens.test.tsx",
+        "status": "passed",
+        "tests": 7
+      },
+      {
+        "file": "guestEntryScreen.test.tsx",
+        "status": "passed",
+        "tests": 16
+      },
+      {
+        "file": "joinRoomEntry.test.tsx",
+        "status": "passed",
+        "tests": 22
+      },
+      {
+        "file": "apiReadValidation.test.ts",
+        "status": "passed",
+        "tests": 121
+      },
+      {
+        "file": "apiMockIsolation.test.ts",
+        "status": "passed",
+        "tests": 4
+      },
+      {
+        "file": "decisionContract.test.ts",
+        "status": "passed",
+        "tests": 16
+      },
+      {
+        "file": "resultRoutes.test.tsx",
+        "status": "passed",
+        "tests": 9
+      },
+      {
+        "file": "authTransport.test.ts",
+        "status": "passed",
+        "tests": 35
+      },
+      {
+        "file": "resultModel.test.ts",
+        "status": "passed",
+        "tests": 12
+      },
+      {
+        "file": "roomSetup.test.ts",
+        "status": "passed",
+        "tests": 49
+      },
+      {
+        "file": "guestEntryRoute.test.tsx",
+        "status": "passed",
+        "tests": 7
+      },
+      {
+        "file": "discovery.test.ts",
+        "status": "passed",
+        "tests": 16
+      },
+      {
+        "file": "MealDateTimeFields.test.tsx",
+        "status": "passed",
+        "tests": 5
+      },
+      {
+        "file": "AppFontProvider.test.tsx",
+        "status": "passed",
+        "tests": 3
+      },
+      {
+        "file": "createRoomEntry.test.tsx",
+        "status": "passed",
+        "tests": 2
+      },
+      {
+        "file": "AppShellScreen.test.tsx",
+        "status": "passed",
+        "tests": 4
+      },
+      {
+        "file": "joinEntryRoute.test.tsx",
+        "status": "passed",
+        "tests": 1
+      },
+      {
+        "file": "createEntryRoute.test.tsx",
+        "status": "passed",
+        "tests": 1
+      },
+      {
+        "file": "routes.test.tsx",
+        "status": "passed",
+        "tests": 20
+      },
+      {
+        "file": "tutorialScreen.test.tsx",
+        "status": "passed",
+        "tests": 3
+      },
+      {
+        "file": "roomEntryScreens.test.tsx",
+        "status": "passed",
+        "tests": 32
+      },
+      {
+        "file": "tutorialRoute.test.tsx",
+        "status": "passed",
+        "tests": 1
+      },
+      {
+        "file": "roomEntry.test.ts",
+        "status": "passed",
+        "tests": 10
+      }
+    ]
+  },
+  "typecheck": "Pass",
+  "scopedLint": "Pass, zero errors/warnings",
+  "architecture": "Pass",
+  "fullLint": "Fail: 4 stale imports in ignored local .work/gm10Audit.test.tsx",
+  "androidExport": {
+    "status": "Pass, export only",
+    "bundle": "entry-f5fadfbd9e28e8da6c9622a08bbbd971.hbc"
+  },
+  "python": {
+    "tests": 657,
+    "passed": 650,
+    "skipped": 6,
+    "errors": 1,
+    "limitation": "Windows WinError1314, test_stage_refuses_symlink_output"
+  },
+  "nativeDevice": "Not run",
+  "projectMergeGate": "READY_FOR_MERGE_REVIEW, not approval",
+  "gitHubPush": false,
+  "figmaWrite": false
+}

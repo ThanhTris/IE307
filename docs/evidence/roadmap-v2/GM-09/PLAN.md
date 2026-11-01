@@ -1,5 +1,16 @@
 # GM-09 — phạm vi triển khai
 
+## Remaining steps received and committed locally — 2026-11-01
+
+The user's current instruction makes Figma a visual reference and authorizes
+small required UI additions plus a local commit per step, no push/Figma writes.
+Steps3–6 source: `fea0696`, `fde3757`, `1b86133`, `a4dbdec`; step7 records handoff.
+See [final scope and acceptance matrix](figma-update/FINAL_HANDOFF.md) and
+[gap report](figma-update/REMAINING_GAPS.md). UI-only work remains separate from
+GM-10 setup/GM-07 preview/GM-25 integration and GM-31 persistence. No unsupported
+producer was rebuilt or silently substituted; real legacy routes remain pinned.
+Required native checks/unreceived integrations remain open, not GM-09 approval.
+
 ## GM-09.2 step 2 — 2026-11-01
 
 Base `8172241`, branch `codex/gm-09-figma-update`; owner Tuấn/reviewer Trí.

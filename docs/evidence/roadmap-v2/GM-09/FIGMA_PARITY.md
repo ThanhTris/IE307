@@ -1,5 +1,28 @@
 # GM-09.2 — Figma parity
 
+## Current reference-alignment policy and remaining steps — 2026-11-01
+
+The user's latest instruction treats Figma as visual guidance, not a reason to
+omit GM-09 requirements. Small required controls/states may be added in the
+existing visual language and must be reported. No Figma edits are authorized.
+This supersedes earlier local exact-parity assumptions for this supplement;
+it does not waive privacy, accessibility, producer ownership or honest evidence.
+
+| Scope | Reference/input | Candidate / gap | Verification |
+| --- | --- | --- | --- |
+| Create entry | Existing received GM-05/Home patterns;43:106 read hit Starter quota | New `/room/create-entry` shell; readonly setup seam, no GPS. New dish-only GM-10 form still missing | UI/route tests Pass; new frame/native visual unverified |
+| Join/preview/confirm |268:1952/268:2081 read hit quota; GM-09 AC and contract B public-preview rule | Count-only UI projection port, explicit confirm, errors/retry/cancel/QR manual alternative; no private snapshot before ACK | Privacy/replay/routes Pass; real preview adapter/native visual missing |
+| Tutorial | Full T01 368:16838 received: [reference](figma-update/figma-tutorial-first.png); later card frame read hit quota | Six isolated lessons, coach-style scrolling sections, NO/OK/WANT buttons+gestures, undo, Back/skip/replay. No screen-coordinate spotlight/pointer | Choice/double-tap/undo/isolation/replay tests Pass; physical swipe/native visual unverified |
+| Common flow | Received Home/continue/expiry patterns | Wrapping title/tab labels, disabled Back during writes, cancellable read-only preview, readable alert text | Full mobile795 tests Pass; font200/TalkBack/native geometry Not run |
+
+Additions: explicit preview cancellation, unavailable/unknown/retry states,
+Back/skip/replay/undo controls and the profile replay entry. They reuse shared
+buttons/cards/tokens and are reported in [gaps](figma-update/REMAINING_GAPS.md)
+and [final handoff](figma-update/FINAL_HANDOFF.md). No new dataset imagery/price,
+presence, room name or wire field was invented. Runtime uses local assets from
+prior received sources; new whole-screen screenshot is reference evidence only.
+No Trí approval or native acceptance is claimed.
+
 ## Step 2 candidate — 2026-11-01
 
 Base `8172241` + working tree; [handoff and limitations](figma-update/step2/STEP2.md).

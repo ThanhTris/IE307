@@ -1,5 +1,28 @@
 # GM-09 — bàn giao màn Home / create / join
 
+## Current local handoff — steps 3–7, 2026-11-01
+
+User clarification: Figma is a visual reference; required small missing
+controls/states may be added and reported without writing Figma. The user
+authorizes local commits after each step, no push. Source commits:
+`fea0696` create entry, `fde3757` public join preview, `1b86133` isolated tutorial,
+`a4dbdec` flow/accessibility/legacy compatibility. Step 7 documents that source.
+
+[Final handoff and acceptance matrix](figma-update/FINAL_HANDOFF.md),
+[source manifest](figma-update/FINAL_MANIFEST.json),
+[design/upstream gaps](figma-update/REMAINING_GAPS.md), [current checks](CHECKS.md).
+Mock product routes are `/room/create-entry`, `/room/join-entry`, `/tutorial`;
+Home replay is under Cá nhân. New public preview does not read member snapshot
+before join ACK. Real Home remains on received legacy create/join routes until
+new producer adapters exist. Existing API/migrations/domain/legacy tests stay.
+
+Full mobile795 tests, typecheck/scoped lint/architecture/Expo installed check and
+Android export pass. Full lint remains blocked by an ignored local QA file;
+Python retains one Windows symlink error. Native device/visual/a11y checks remain
+Not run. GM-10 dish-only setup is not delivered on this branch, and GM-07.1 has
+no live previewJoin adapter; new UI presents those capability boundaries honestly.
+No Task Done/approval, production activation, GitHub push or Figma write.
+
 ## GM-09.2 step 2 candidate — 2026-11-01
 
 Base `8172241` + working tree on `codex/gm-09-figma-update`. Received full context

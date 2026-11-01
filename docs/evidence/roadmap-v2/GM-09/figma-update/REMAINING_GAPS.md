@@ -20,3 +20,12 @@ Live start gate: READY_TO_CLAIM at 2026-11-01T15:51:53Z. Base: step 2 `e5f92d2`.
 Device/visual checks and upstream producer limitations remain open acceptance
 items. Completing independent UI candidates does not mark those integrations or
 GM-09 Done. No new API/schema/storage/native dependency is introduced.
+
+Final status: source candidate `a4dbdec`, full mobile795 tests Pass; see
+[handoff/matrix](FINAL_HANDOFF.md). Create setup callback remains unavailable
+until the updated GM-10 artifact exists. Mock join has its explicit public UI
+fixture; real Home retains GM-07.1 integration, not an invented B preview.
+Read-only preview cancellation, write/ref guards, Back/skip/replay/undo and
+wrapping labels are implemented. Rate-limited frames remain unverified: these
+are requirement-backed controls, not a verified claim that every such control
+is absent from the unseen Figma frames. No design or upstream approval was made.
