@@ -109,3 +109,11 @@ test('unmounted preview ignores a late private response', async () => {
   await act(async () => pending.resolve({ ok: true, data: { code: 'GCD234', memberCount: 2, capacity: 20 } }));
   expect(p.onEntered).not.toHaveBeenCalled();
 });
+
+test('Back can cancel a pending read without abandoning a join intent', async () => {
+  const p = props(), pending = deferred<ReadResult<JoinRoomPublicPreview>>(); p.preview = () => pending.promise;
+  const join = jest.spyOn(p.repository, 'joinRoom');
+  await render(<JoinRoomEntryScreen {...p} />); await press('Xem trước phòng');
+  expect(screen.getByRole('button', { name: 'Quay lại' })).toBeEnabled();
+  await press('Quay lại'); expect(p.onBack).toHaveBeenCalledTimes(1); expect(join).not.toHaveBeenCalled();
+});

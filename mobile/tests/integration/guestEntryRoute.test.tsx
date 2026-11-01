@@ -1,4 +1,5 @@
 import { Stack } from 'expo-router';
+import { Text } from 'react-native';
 import { renderRouter } from 'expo-router/testing-library';
 import { fireEvent, screen, waitFor } from '@testing-library/react-native';
 import { createApiClient } from '../../src/data/api';
@@ -67,5 +68,16 @@ test('an already active identity goes straight from welcome to Home without repl
   await renderRouter(routes, { initialUrl: '/welcome' });
   expect(await screen.findByRole('button', { name: 'Tạo phòng' })).toBeOnTheScreen();
   expect(screen).toHavePathname('/');
+  expect(mockSession.ensureSession).not.toHaveBeenCalled();
+});
+
+test.each([
+  ['Tạo phòng', '/room/create'], ['Tham gia phòng', '/room/join'],
+])('real %s retains the received GM-07.1 integration route until new producers arrive', async (label, path) => {
+  mockSession = { ...mockSession, status: 'active', issue: 'none', user };
+  await renderRouter({ ...routes, 'room/create': () => <Text>Legacy real create seam</Text>, 'room/join': () => <Text>Legacy real join seam</Text> }, { initialUrl: '/' });
+  await waitFor(() => expect(screen.getByRole('button', { name: label })).toBeEnabled());
+  await fireEvent.press(screen.getByRole('button', { name: label }));
+  await waitFor(() => expect(screen).toHavePathname(path));
   expect(mockSession.ensureSession).not.toHaveBeenCalled();
 });

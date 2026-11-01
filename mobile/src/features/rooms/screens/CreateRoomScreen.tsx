@@ -51,7 +51,7 @@ export function CreateRoomScreen({ repository, onBack, onEntered, previewControl
     const request = { displayName: name.trim(), context };
     void submitted.run(JSON.stringify(request), requestId => repository.createRoom({ ...request, requestId }));
   }, [name, anchor, discovery, confirmed, budgetInput, frozenContext, selectedTime, selectedMeal, suggestion, anchorId, radiusM, submitted, repository, isLive]);
-  return <RoomEntryFrame title="Hẹn nhau bữa nào?" subtitle="Chọn một điểm hẹn, cả nhóm cùng chọn món." onBack={onBack} busy={submitted.busy} previewControls={isLive ? undefined : busy => <>
+  return <RoomEntryFrame title="Hẹn nhau bữa nào?" subtitle="Chọn một điểm hẹn, cả nhóm cùng chọn món." onBack={onBack} busy={submitted.busy || submitted.uncertain || submitted.accepted} isMock={!isLive} previewControls={isLive ? undefined : busy => <>
     {previewControls?.(busy)}
     <AppButton label="Thử gợi ý vị trí (mô phỏng từ chối)" variant="quiet" disabled={disabled || busy} onPress={() => setGpsDenied(true)} colors={colors} />
     <AppButton label="Cập nhật giờ và điểm ăn mẫu" variant="quiet" disabled={disabled || busy} onPress={() => { changeContext(); discovery.retry(); }} colors={colors} />

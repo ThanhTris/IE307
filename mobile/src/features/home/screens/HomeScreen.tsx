@@ -147,7 +147,7 @@ export function HomeScreen({ repository, sessionToken, liveSession, activeRoom, 
   }
 
   return <SafeAreaView edges={['top', 'left', 'right']} style={[homeStyles.root, { backgroundColor: colors.background }]}>
-    <AppHeader colors={colors} onInbox={openInbox} showFriends={false} showInbox showProfile={false} brandTextStyle={textStyle(700)} />
+    <AppHeader colors={colors} onInbox={openInbox} showFriends={false} showInbox showProfile={false} allowTitleWrap brandTextStyle={textStyle(700)} />
     <ScrollView contentContainerStyle={homeStyles.content}>
       {isMock ? <Text style={[homeStyles.modeLabel, { color: colors.muted, backgroundColor: colors.soft }, textStyle(500)]}>Mô phỏng · GM-09 · dữ liệu mẫu</Text> : null}
       {sessionNotice}
@@ -217,7 +217,7 @@ export function HomeScreen({ repository, sessionToken, liveSession, activeRoom, 
         {onOpenDiscoveryContext ? <AppButton label="Mở vị trí và bối cảnh GM-24" variant="quiet" onPress={onOpenDiscoveryContext} colors={colors} /> : null}
       </PreviewTools> : null}
     </ScrollView>
-    <AppBottomNavigation items={bottomTabs} activeId="home" bottomInset={insets.bottom} labelTextStyle={textStyle(500)} colors={colors} />
+    <AppBottomNavigation items={bottomTabs} activeId="home" bottomInset={insets.bottom} allowLabelWrap labelTextStyle={textStyle(500)} colors={colors} />
     {liveSession ? <SheetDialog visible={!!guestDestination} title={guestDestination === 'join' ? 'Bắt đầu phiên để vào phòng' : 'Bắt đầu phiên khách'} onClose={closeGuestSheet} colors={colors}>
       <Text style={[homeStyles.dialogBody, { color: colors.text }, textStyle(500)]}>Nhập tên hiển thị. Phiên sẽ được lưu trước khi tải điểm ăn hoặc mở yêu cầu phòng.</Text>
       <FormField label="Tên khách" value={guestName} onChangeText={value => { setGuestName(value); setGuestError(''); }} editable={!guestBusy} placeholder="Mọi người gọi bạn là…" helperText="Tên hiển thị · 1–24 ký tự" colors={colors} />

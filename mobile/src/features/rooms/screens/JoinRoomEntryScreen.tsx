@@ -47,7 +47,7 @@ export function JoinRoomEntryScreen({ repository, preview, initialCode = '', ini
     finally { readLock.current = false; if (mounted.current) setReadBusy(false); }
   };
   const join = async () => {
-    if (joinLock.current || submitted.accepted || submitted.busy || (!submitted.uncertain && (!summary || summary.code !== normalizeRoomCode(code) || !validDisplayName(name)))) return;
+    if (readLock.current || joinLock.current || submitted.accepted || submitted.busy || (!submitted.uncertain && (!summary || summary.code !== normalizeRoomCode(code) || !validDisplayName(name)))) return;
     joinLock.current = true;
     if (!submitted.uncertain) {
       frozen.current = { code: normalizeRoomCode(code), displayName: name.trim() };
@@ -68,13 +68,13 @@ export function JoinRoomEntryScreen({ repository, preview, initialCode = '', ini
     } catch { if (mounted.current) setCameraMessage('Chưa đọc được mã. Hãy nhập mã bằng tay.'); }
     finally { readLock.current = false; if (mounted.current) setReadBusy(false); }
   };
-  return <HomeFlowFrame title="Tham gia phòng" onHome={() => { if (!disabled && !readLock.current) onBack(); }} isMock={isMock}>
+  return <HomeFlowFrame title="Tham gia phòng" busy={submitted.busy || submitted.uncertain || submitted.accepted} onHome={() => { if (!submitted.busy && !submitted.uncertain && !submitted.accepted && !joinLock.current) onBack(); }} isMock={isMock}>
     <Text accessibilityRole="header" style={[styles.title, { color: colors.text }, textStyle(700)]}>Vào phòng cùng bạn bè</Text>
     <View style={styles.tabs}><Chip label="Nhập mã" selected={tab === 'manual'} disabled={disabled} onPress={() => setTab('manual')} colors={colors} /><Chip label="Quét mã QR" selected={tab === 'camera'} disabled={disabled} onPress={() => setTab('camera')} colors={colors} /></View>
-    <FormField label="Tên của bạn" value={name} onChangeText={value => { setName(value); clearPreview(); }} editable={!disabled} autoCorrect={false} colors={colors} />
+    <FormField label="Tên của bạn" value={name} onChangeText={value => { if (!disabled) { setName(value); clearPreview(); } }} editable={!disabled} autoCorrect={false} colors={colors} />
     {tab === 'manual' ? <>
-      <FormField label="Mã phòng (6 ký tự)" value={code} onChangeText={value => { setCode(normalizeRoomCode(value)); clearPreview(); }} editable={!disabled} keyboardType="default" autoCorrect={false} autoCapitalize="characters" placeholder="Ví dụ: GCD234" colors={colors} />
-      {validation ? <Text accessibilityRole="alert" style={[styles.body, { color: colors.danger }, textStyle(400)]}>{validation}</Text> : null}
+      <FormField label="Mã phòng (6 ký tự)" value={code} onChangeText={value => { if (!disabled) { setCode(normalizeRoomCode(value)); clearPreview(); } }} editable={!disabled} keyboardType="default" autoCorrect={false} autoCapitalize="characters" placeholder="Ví dụ: GCD234" colors={colors} />
+      {validation ? <Text accessibilityRole="alert" style={[styles.body, { color: colors.text }, textStyle(400)]}>{validation}</Text> : null}
       {!preview ? <StatusNotice title="Xem trước phòng chưa sẵn sàng" message="Vui lòng quay lại sau. Chưa có yêu cầu vào phòng nào được gửi." colors={colors} /> : null}
       {readError ? <StatusNotice title="Chưa xem trước được phòng" message={errorCopy[readError]} tone="warning" colors={colors} /> : null}
       {!summary && !submitted.uncertain && !submitted.accepted ? <AppButton label={readError ? 'Thử xem trước lại' : 'Xem trước phòng'} loading={readBusy} disabled={!preview} onPress={() => { void read(); }} colors={colors} /> : null}

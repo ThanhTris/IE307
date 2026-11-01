@@ -27,6 +27,7 @@ export type AppHeaderProps = ComponentThemeProps & {
   showProfile?: boolean;
   brandTextStyle?: TextStyle;
   backIconSource?: ImageSourcePropType;
+  allowTitleWrap?: boolean;
 };
 
 export function AppHeader({
@@ -46,6 +47,7 @@ export function AppHeader({
   showProfile = true,
   brandTextStyle,
   backIconSource,
+  allowTitleWrap = false,
   colors,
 }: AppHeaderProps) {
   const showBrand = variant === 'home';
@@ -65,7 +67,7 @@ export function AppHeader({
             resizeMode="contain"
             style={styles.mark}
           />
-          <Text numberOfLines={1} style={[styles.brandText, { color: colors?.text }, brandTextStyle]}>
+          <Text numberOfLines={allowTitleWrap ? undefined : 1} style={[styles.brandText, { color: colors?.text }, brandTextStyle]}>
             {title}
           </Text>
         </Pressable>
@@ -85,7 +87,7 @@ export function AppHeader({
           </Pressable>
           <View style={styles.headerVariantTitle}>
             <Text
-              numberOfLines={1}
+              numberOfLines={allowTitleWrap ? undefined : 1}
               accessibilityRole="header"
               style={[styles.brandText, { color: colors?.text }, brandTextStyle]}
             >
