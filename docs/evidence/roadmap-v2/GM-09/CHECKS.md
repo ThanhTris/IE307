@@ -1,5 +1,32 @@
 # GM-09 — checks
 
+## Main refactor received — 2026-11-01
+
+Working-tree resolution of the user's merge: GM-09 `07fd340` with main
+`90e871a`, including mobile refactor `67f332d`. See [resolution and manual merge
+completion](figma-update/MAIN_MERGE_2026-11-01.md). Earlier source manifests and
+test counts below describe their original revisions.
+
+- TypeScript, ESLint on the five changed source/test files, architecture guard,
+  repository validator and task indexes: Pass.
+- Six relevant Jest suites: **121/121 tests Pass** (137.43s). Covers guest screen,
+  real-mode route seam, main route map, room entry/setup and live room lifecycle.
+  Command from `mobile`: `npm test -- --runTestsByPath tests/component/guestEntryScreen.test.tsx tests/integration/guestEntryRoute.test.tsx tests/integration/routes.test.tsx tests/component/roomEntryScreens.test.tsx tests/component/roomSetupScreens.test.tsx tests/component/liveRoomLifecycle.test.tsx`.
+  Local ignored report: `mobile/.work/gm09-main-merge-jest.json`.
+- Full Python regression on CPython 3.14.7 with command-scoped `PYTHONUTF8=1`
+  and the existing ignored test dependency directory: **657 tests, 650 passed,
+  6 skipped, 1 error** (81.099s). The error is
+  `test_catalogue_projection.ProjectionAdoptionTests.test_stage_refuses_symlink_output`:
+  Windows `WinError 1314` cannot create the fixture symlink. No application test
+  or OS privilege setting was changed to bypass it. Local ignored log:
+  `.work/gm09-main-merge-python-unsandboxed.log`. The earlier sandbox attempt
+  encountered temporary-file errors and was interrupted; it is not a pass.
+  Repository-wide regression is therefore not fully green.
+- No conflict markers remain in mobile source/tests; `git diff --check`: Pass.
+  Git's index remains unmerged until the user stages the resolutions.
+- Device/rendered Android checks: Not run. No new Figma parity acceptance,
+  database activation, approval, stage/commit/push or Project status change.
+
 ## GM-09.2 step 1 — 2026-10-31
 
 Current welcome/guest-entry candidate on `codex/gm-09-figma-update`, base `621accc` + working tree: [checks and reproduction](figma-update/STEP1.md), [Figma parity/Not run device checks](FIGMA_PARITY.md). The supplement retains one pre-existing GM-25 test timeout and does not claim complete mobile/visual acceptance. Prior test counts and device confirmations below do not apply automatically to the new revision.

@@ -1,5 +1,22 @@
 # GM-09 — bàn giao màn Home / create / join
 
+## Main refactor adaptation — 2026-11-01
+
+The user is merging main `90e871a` into `codex/gm-09-figma-update` after committing
+step 1 as `07fd340`. The working-tree resolution follows main's `HomeScreen`,
+`/room/*` and `/dev/*` structure, transfers GM-09 FormField props to the extracted
+form component, and keeps welcome/name behavior and its tests. Both stale
+`HomeLiveSession` imports now use `HomeScreen`.
+
+Six relevant suites pass 121/121 tests; typecheck, scoped lint, architecture and
+repository/index checks pass. Full Python regression runs 657 tests with one
+Windows symlink privilege error and six skipped tests; it is not fully green.
+See [current checks](CHECKS.md) and [resolution,
+historical manifest limits and user-run staging/commit commands](figma-update/MAIN_MERGE_2026-11-01.md).
+The agent has not staged the resolutions or committed/pushed. Index entries will
+remain unmerged until the user stages them; `prompt.md` remains ignored and
+untracked. Device checks and Trí review remain required; no Done/approval claim.
+
 ## GM-09.2 step 1 candidate — 2026-10-31
 
 New welcome/name entry is composed at `/welcome`; fresh `/` enters it after the session/mode guards. [Step 1 handoff/checks](figma-update/STEP1.md) identifies files, producer versions, route/fixture controls, pending/duplicate/recovery behavior and remaining checks. [FIGMA_PARITY](FIGMA_PARITY.md) retains the received Figma screenshots and contrast differences. GM-25 still supplies the real `ensureSession` seam; mock entry only stores a local UI name. Optional shared FormField presentation props preserve prior defaults. Owner Tuấn/reviewer Trí unchanged; branch `codex/gm-09-figma-update`, base `621accc` + working tree. No stage/commit/push, Project status or approval changes; the remaining steps in the user's local plan are not implemented by this supplement.

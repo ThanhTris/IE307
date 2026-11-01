@@ -1,5 +1,9 @@
 # Tự kiểm và commit bước 1 GM-09
 
+> Cập nhật 2026-11-01: bước 1 đã được người dùng commit tại `07fd340`.
+> Khi đang merge main, dùng [hướng dẫn hoàn tất merge](MAIN_MERGE_2026-11-01.md).
+> Các lệnh bên dưới giữ làm lịch sử trước refactor; một số đường dẫn đã đổi.
+
 Agent chưa stage/commit/push. Đây là candidate của bước welcome/guest; kiểm Expo Go và sai khác trong [FIGMA_PARITY](../FIGMA_PARITY.md) trước khi nghiệm thu. Một commit để giữ mốc code không đồng nghĩa task đã Done hoặc được phép merge.
 
 ## 1. Kiểm đúng nhánh và app

@@ -5,14 +5,14 @@ import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 
 type Props = {
   onOpenFoundation: () => void;
-  onOpenGm16?: () => void;
+  onOpenAuthSandbox?: () => void;
   onOpenVoting?: () => void;
   onOpenRoomSetup?: () => void;
-  onOpenGm24?: () => void;
-  onOpenGm25?: () => void;
+  onOpenDiscoveryContext?: () => void;
+  onOpenRoomFlowSandbox?: () => void;
 };
 
-export function AppShellScreen({ onOpenFoundation, onOpenGm16, onOpenVoting, onOpenRoomSetup, onOpenGm24, onOpenGm25 }: Props) {
+export function AppShellScreen({ onOpenFoundation, onOpenAuthSandbox, onOpenVoting, onOpenRoomSetup, onOpenDiscoveryContext, onOpenRoomFlowSandbox }: Props) {
   const { colors } = useShellTheme();
   const { textStyle } = useAppFonts();
   return (
@@ -32,16 +32,16 @@ export function AppShellScreen({ onOpenFoundation, onOpenGm16, onOpenVoting, onO
         {onOpenRoomSetup && <Pressable accessibilityRole="button" accessibilityLabel="Chọn điểm ăn và khẩu vị" onPress={onOpenRoomSetup} style={({ pressed }) => [styles.button, { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, opacity: pressed ? 0.8 : 1 }]}>
           <Text style={[styles.buttonLabel, { color: colors.text }, textStyle(600)]}>Chọn điểm ăn và khẩu vị · mô phỏng</Text>
         </Pressable>}
-        {onOpenGm24 && <Pressable accessibilityRole="button" accessibilityLabel="Mở vị trí và bối cảnh GM-24" onPress={onOpenGm24} style={({ pressed }) => [styles.button, { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, opacity: pressed ? 0.8 : 1 }]}>
+        {onOpenDiscoveryContext && <Pressable accessibilityRole="button" accessibilityLabel="Mở vị trí và bối cảnh GM-24" onPress={onOpenDiscoveryContext} style={({ pressed }) => [styles.button, { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, opacity: pressed ? 0.8 : 1 }]}>
           <Text style={[styles.buttonLabel, { color: colors.text }, textStyle(600)]}>Mở vị trí & bối cảnh GM-24</Text>
         </Pressable>}
         {onOpenVoting && <Pressable accessibilityRole="button" accessibilityLabel="Mở bình chọn GM-12" onPress={onOpenVoting} style={({ pressed }) => [styles.button, { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, opacity: pressed ? 0.8 : 1 }]}>
           <Text style={[styles.buttonLabel, { color: colors.text }, textStyle(600)]}>Mở bình chọn GM-12 (Vòng 1 & 2)</Text>
         </Pressable>}
-        {onOpenGm25 && <Pressable accessibilityRole="button" accessibilityLabel="Kiểm tra luồng GM-25" onPress={onOpenGm25} style={({ pressed }) => [styles.button, { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, opacity: pressed ? 0.8 : 1 }]}>
+        {onOpenRoomFlowSandbox && <Pressable accessibilityRole="button" accessibilityLabel="Kiểm tra luồng GM-25" onPress={onOpenRoomFlowSandbox} style={({ pressed }) => [styles.button, { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, opacity: pressed ? 0.8 : 1 }]}>
           <Text style={[styles.buttonLabel, { color: colors.text }, textStyle(600)]}>Kiểm tra luồng UI–BE (GM-25)</Text>
         </Pressable>}
-        {onOpenGm16 && <Pressable accessibilityRole="button" accessibilityLabel="Mở kiểm thử GM-16" onPress={onOpenGm16} style={({ pressed }) => [styles.button, { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, opacity: pressed ? 0.8 : 1 }]}>
+        {onOpenAuthSandbox && <Pressable accessibilityRole="button" accessibilityLabel="Mở kiểm thử GM-16" onPress={onOpenAuthSandbox} style={({ pressed }) => [styles.button, { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, opacity: pressed ? 0.8 : 1 }]}>
           <Text style={[styles.buttonLabel, { color: colors.text }, textStyle(600)]}>Mở kiểm thử GM-16</Text>
         </Pressable>}
         <Text style={[styles.caption, { color: colors.muted }, textStyle(400)]}>Expo Go · Android-first · GM-02</Text>

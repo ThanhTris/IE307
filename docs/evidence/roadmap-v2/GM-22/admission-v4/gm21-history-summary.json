@@ -1,0 +1,26 @@
+{
+  "task": "GM-21 canonical history/consent regression",
+  "date": "2026-10-31",
+  "result": "Pass",
+  "assertionsPassed": 80,
+  "assertionsFailed": 0,
+  "qaProject": "ie307-dish-v4-qa-20261030-135000060500-1",
+  "databaseSchemaVersion": "0.14.0",
+  "migrationOrder": [
+    "0036_gm21_canonical_history.sql",
+    "0037_gm22_invitation_admission.sql"
+  ],
+  "coverage": [
+    "personal and group consent",
+    "owner and outsider isolation",
+    "consent revoke and delete",
+    "NO_CONSENSUS and ALL_REMOVED history",
+    "20-member group audience",
+    "cleanup detaches room-bound grants",
+    "retention cutoff boundaries",
+    "cleanup and consent lock races",
+    "replay receipts and forward reapply"
+  ],
+  "credentialsInEvidence": false,
+  "detailedOutput": "Local ignored report: .work/gm21-canonical/http-results.json"
+}

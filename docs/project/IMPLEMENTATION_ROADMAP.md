@@ -3,7 +3,7 @@
 **UI final handoff 2026-10-25:** Trí đã giao lại task UI theo Figma. [Bảng task/node/AC/gap và thứ tự](../design/UI_FIGMA_IMPLEMENTATION_2026-10-25.md) thay các phần UI theo HTML/ready/location bắt buộc bên dưới. GM-24 là preview setup dish-only; GM-39 handoff Figma, không ép sửa HTML. Producer BE/Data vẫn theo task hiện hành và contract/version thật; supplement chưa được nghiệm thu chỉ vì đã có thiết kế.
 
 
-Baseline 2026-10-10, bổ sung GM40 và cập nhật 2026-10-25: 40 task sau GM-00, gồm 35 P0 (kể cả GM01 và GM40), 2 P1 và 3 P2. Bản yêu cầu hiện hành đồng bộ BE/Data/UI với Figma tại [alignment matrix](FIGMA_BE_UI_DATA_ALIGNMENT_2026-10-24.md), [GM-07.B](../architecture/DISH_SESSION_API_CONTRACT_B.md), [ADR-019](../architecture/decisions/ADR-019-dish-first-room-policy.md) và [ADR-020](../architecture/decisions/ADR-020-public-top-three-result.md). Giữ baseline approval riêng với follow-up; không đổi assignee/deadline hoặc tạo dependency ngược. [Tổng hợp task/owner](TASK_SUMMARY.md) · [dependency](TASK_DEPENDENCIES.md) · [mapping](TASK_RENUMBERING.md).
+Baseline 2026-10-10, bổ sung GM40 và cập nhật 2026-10-25: 40 task sau GM-00, gồm 35 P0 (kể cả GM01 và GM40), 2 P1 và 3 P2. Bản yêu cầu hiện hành đồng bộ BE/Data/UI với Figma tại [alignment matrix](audits/FIGMA_BE_UI_DATA_ALIGNMENT_2026-10-24.md), [GM-07.B](../architecture/DISH_SESSION_API_CONTRACT_B.md), [ADR-019](../architecture/decisions/ADR-019-dish-first-room-policy.md) và [ADR-020](../architecture/decisions/ADR-020-public-top-three-result.md). Giữ baseline approval riêng với follow-up; không đổi assignee/deadline hoặc tạo dependency ngược. [Tổng hợp task/owner](TASK_SUMMARY.md) · [dependency](TASK_DEPENDENCIES.md) · [mapping](TASK_RENUMBERING.md).
 
 ## Ba luồng và đầu ra nhận được
 
@@ -77,7 +77,7 @@ Merge theo số tăng dần 01 → 39 luôn hợp lệ vì mọi prerequisite c�
 
 ## Contract bàn giao trước khi làm tiếp
 
-Chủ dự án xác nhận cấu trúc UI/BE 2026-10-10, xem [plan GM-02/03](FOUNDATION_IMPLEMENTATION_PLAN.md) và [cấu trúc](REPOSITORY_STRUCTURE.md). [Chuẩn đầu ra](TASK_OUTPUT_REQUIREMENTS.md)/[checklist 40 task](TASK_OUTPUT_CHECKLIST.md) bắt buộc UI mở Expo thấy các mục scope, API chạy request/output/assertions, Data đủ fields/schema/templates/fixtures/version cho BE làm song song. Mỗi task bàn giao CHECKS.md + HANDOFF; API có request suite riêng. Source đã có các phần theo [audit hiện hành](BE_DATA_AUDIT_2026-10-24.md); không tự chuyển Approved/Done hoặc cài package trước gate/review.
+Chủ dự án xác nhận cấu trúc UI/BE 2026-10-10, xem [plan GM-02/03](FOUNDATION_IMPLEMENTATION_PLAN.md) và [cấu trúc](REPOSITORY_STRUCTURE.md). [Chuẩn đầu ra](TASK_OUTPUT_REQUIREMENTS.md)/[checklist 40 task](TASK_OUTPUT_CHECKLIST.md) bắt buộc UI mở Expo thấy các mục scope, API chạy request/output/assertions, Data đủ fields/schema/templates/fixtures/version cho BE làm song song. Mỗi task bàn giao CHECKS.md + HANDOFF; API có request suite riêng. Source đã có các phần theo [audit hiện hành](audits/BE_DATA_AUDIT_2026-10-24.md); không tự chuyển Approved/Done hoặc cài package trước gate/review.
 
 Mỗi task có bảng “Đầu vào bắt buộc và đầu ra bàn giao”: upstream, path, trước start hay trước merge; source machine-readable là [task map](../../tasks/task-id-map.json). Path là đích dự kiến, không phải chứng nhận file đã tồn tại. Task hoàn thành cần [HANDOFF](../../tasks/templates/HANDOFF_TEMPLATE.md) gồm:
 

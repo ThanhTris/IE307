@@ -1,6 +1,6 @@
 # UI theo Figma đã chốt — giao việc ngày 2026-10-25
 
-> **Hiện trạng sau merge — 28/10:** [Rà main/task/source](../project/MAIN_FIGMA_READINESS_2026-10-28.md) tại `1bf28d8`: runtime v4 đã có trong0027–0031;0032 là storage độc lập. Nhận định runtime/status của ngày25/10 bên dưới giữ làm lịch sử. Mobile chưa hoàn tất Figma; task ownership/AC vẫn dùng, còn status đọc Project live. Dependency chỉ Done mới mở; Needs Update không đủ.
+> **Hiện trạng sau merge — 28/10:** [Rà main/task/source](../project/audits/MAIN_FIGMA_READINESS_2026-10-28.md) tại `1bf28d8`: runtime v4 đã có trong0027–0031;0032 là storage độc lập. Nhận định runtime/status của ngày25/10 bên dưới giữ làm lịch sử. Mobile chưa hoàn tất Figma; task ownership/AC vẫn dùng, còn status đọc Project live. Dependency chỉ Done mới mở; Needs Update không đủ.
 
 
 > Phạm vi bổ sung thiết kế hiện hành theo [xác nhận của Trí sau hai đợt](UI_SCOPE_CONFIRMED_2026-10-25.md); không tự mở thêm gap từ các đề xuất cuối đã được loại khỏi phạm vi.
@@ -90,7 +90,7 @@ Các mục dưới đây làm rõ hành vi thoát/retry và quyền owner, khôn
 
 ### Ma trận tác động BE/Data đã chốt theo UI
 
-UI là nguồn chốt trải nghiệm. G01–G05 có frame thật và bộ thiết kế đã được Trí xác nhận hoàn tất; không còn điều kiện chờ review frame trước khi rà BE/Data. Bảng dưới là mapping yêu cầu UI sang field/command và producer task, dựa trên Figma hiện hành cùng audit runtime đã ghi ngày 25/10. Đây không khẳng định runtime đã triển khai. Contract B/schema B vẫn là đề xuất cho đến khi có version, implementation, HANDOFF và xác minh runtime thật. Câu hỏi chưa đủ dữ kiện được ghi rõ trong [handoff UI–BE–Data](../project/UI_BE_DATA_SYNC_HANDOFF_2026-10-25.md); task BE/Data giữ owner/status live, phiên v2/v3 đã pin không đổi nghĩa.
+UI là nguồn chốt trải nghiệm. G01–G05 có frame thật và bộ thiết kế đã được Trí xác nhận hoàn tất; không còn điều kiện chờ review frame trước khi rà BE/Data. Bảng dưới là mapping yêu cầu UI sang field/command và producer task, dựa trên Figma hiện hành cùng audit runtime đã ghi ngày 25/10. Đây không khẳng định runtime đã triển khai. Contract B/schema B vẫn là đề xuất cho đến khi có version, implementation, HANDOFF và xác minh runtime thật. Câu hỏi chưa đủ dữ kiện được ghi rõ trong [handoff UI–BE–Data](../project/audits/UI_BE_DATA_SYNC_HANDOFF_2026-10-25.md); task BE/Data giữ owner/status live, phiên v2/v3 đã pin không đổi nghĩa.
 
 | Yêu cầu UI | Field/command cần tiêu thụ | Producer hiện có / khoảng trống đã xác minh | Task nhận phần bổ sung |
 |---|---|---|---|
@@ -103,7 +103,7 @@ UI là nguồn chốt trải nghiệm. G01–G05 có frame thật và bộ thi�
 | Profile/password/recovery | provider response/error category, session identity/conflict, retryability | G04/G05 đã có frame pending/lỗi; auth baseline thuộc GM-16, semantics provider/conflict phải theo contract, không tự mở rộng lưu danh tính | GM-16/07 theo artifact; GM-35 consumer P1 |
 | Regression và QA | schema/version manifest, Auth+REST, worker verification, scenario assertions | Checker hiện chỉ schema A; worker pin baseline migration; HTTP/DB v4 chưa chạy trong audit | GM-03 (Trí), GM-06 (Tâm), GM-32 (Vinh); visual/API consumer QA GM-33 |
 
-Ma trận và owner handoff hiện hành ở [UI–BE–Data handoff](../project/UI_BE_DATA_SYNC_HANDOFF_2026-10-25.md); B01–B16 và source evidence lịch sử ở [audit runtime](../project/UI_BE_DATA_SYNC_AUDIT_2026-10-25.md). Trước tích hợp, producer cần output/version/HANDOFF tương ứng; nội dung trên không tự chuyển status hoặc chứng minh Pass.
+Ma trận và owner handoff hiện hành ở [UI–BE–Data handoff](../project/audits/UI_BE_DATA_SYNC_HANDOFF_2026-10-25.md); B01–B16 và source evidence lịch sử ở [audit runtime](../project/audits/UI_BE_DATA_SYNC_AUDIT_2026-10-25.md). Trước tích hợp, producer cần output/version/HANDOFF tương ứng; nội dung trên không tự chuyển status hoặc chứng minh Pass.
 
 ## Quy trình để AI lấy đúng thiết kế
 

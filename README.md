@@ -2,7 +2,7 @@
 
 Ứng dụng Android React Native giúp nhóm tối đa 20 người chọn món trong tối đa hai vòng. Host chọn 10–20 món từ catalogue độc lập quán/vị trí, nhóm bỏ phiếu, server chốt kết quả ổn định rồi hỗ trợ tìm quán cho món thắng. Đây là hướng đích ADR-019/020; runtime v3 và phiên legacy vẫn giữ policy đã pin.
 
-Roadmap-v2 • ngữ cảnh cập nhật 2026-10-25. Source có nền Expo/UI baseline, schema/import, client/mock, engine, auth/RLS, eligibility, room/ballot/history/social/notifications và dish-session v3 (0026/schema0.8.0). Contract B/v4, luật R2 mới, Top3 và history tương ứng còn phần triển khai; source và DB đang chạy phải được kiểm riêng. [Phạm vi hiện hành chỉ BE/Data](docs/project/BE_DATA_ONLY_SCOPE_2026-10-25.md) và [audit source/UI](docs/project/UI_BE_DATA_SYNC_AUDIT_2026-10-25.md) chỉ rõ đầu ra cần bổ sung; FE chờ Trí chốt Figma. Status/assignee/Deadline hiện hành xem [Project #2](https://github.com/users/ThanhTris/projects/2), không suy từ thư mục task hoặc evidence lịch sử. Hai gate: đủ start deps thì viết phần độc lập; đủ merge deps và tích hợp thật mới merge.
+Roadmap-v2 • ngữ cảnh cập nhật 2026-10-31; hiện trạng ưu tiên xem [rà main 28/10](docs/project/audits/MAIN_FIGMA_READINESS_2026-10-28.md). Source có nền Expo/UI baseline, schema/import, client/mock, engine, auth/RLS, eligibility, room/ballot/history/social/notifications và dish-session v3 (0026/schema0.8.0). Contract B/v4, luật R2 mới, Top3 và history tương ứng còn phần triển khai; source và DB đang chạy phải được kiểm riêng. [Phạm vi hiện hành chỉ BE/Data](docs/project/audits/BE_DATA_ONLY_SCOPE_2026-10-25.md) và [audit source/UI](docs/project/audits/UI_BE_DATA_SYNC_AUDIT_2026-10-25.md) chỉ rõ đầu ra cần bổ sung. UI Figma đã được Trí chốt ngày 25/10 ([scope](docs/design/UI_SCOPE_CONFIRMED_2026-10-25.md), [task map](docs/design/UI_FIGMA_TASK_MAP.json)); task UI làm theo node Figma đã gắn. Status/assignee/Deadline hiện hành xem [Project #2](https://github.com/users/ThanhTris/projects/2), không suy từ thư mục task hoặc evidence lịch sử. Hai gate: đủ start deps thì viết phần độc lập; đủ merge deps và tích hợp thật mới merge.
 
 ## Đọc để hiểu dự án
 
@@ -17,9 +17,9 @@ Task đã đánh số theo lộ trình GM-01 → GM-40; dependency chỉ trỏ s
 Phạm vi core dự kiến gồm guest/QR/link, friends/push, realtime/outbox/history, taxonomy/catalogue món độc lập; quán–món–lịch bán/coverage chỉ còn ở baseline legacy, Places là bước sau kết quả; không phải mọi mục đã triển khai. Account P1; OCR/AI/weather–mood P2. Phân công theo Project; Trí (`ThanhTris`) review mọi task, kể cả task Trí làm, theo ADR-013. [GitHub mapping](docs/project/GITHUB_TASKS.md) và [workflow](docs/project/TEAM_WORKFLOW.md).
 
 ```text
-mobile/       shell/components, client/mock/auth, decision/eligibility domains
+mobile/       routes (room/*, dev/*), features, shared/ui, data/api, domains
 supabase/     schema/import, RLS, room/ballot/history/social RPC, dish-session v3
-docs/         mô tả/PRD/spec/ADR/plan/test/evidence
+docs/         mô tả/PRD/spec/ADR/plan/test/evidence; audit theo ngày ở docs/project/audits/
 tasks/        scope/AC/dependencies; Done live trên Project, không từ folder
 design/       design system/prototype HTML mô phỏng cũ
 tests/        fixtures/E2E và validator regression
@@ -34,6 +34,6 @@ Chạy UI: theo [mobile README](mobile/README.md), `cd mobile`, `npm ci`, `npm s
 
 [Prototype HTML](design/prototypes/gi-cung-duoc.html) không là bằng chứng đáp ứng food-v1. Mở bằng browser hoặc local HTTP; nó không chứng minh QR/push/SQL/realtime. [Bắt đầu](docs/project/START_HERE.md).
 
-Trước nhận việc: `python scripts/task_readiness.py --task GM-XX`. Checker đọc Done hoặc Needs Update trên GitHub Project làm xác nhận nghiệm thu baseline dependency; Needs Update không nghiệm thu supplement; cần quyền đọc `read:project`, không dùng Issue Closed hoặc cache thay Done/Needs Update. Xem [Project readiness](docs/project/PROJECT_READINESS.md). Trước merge thêm `--gate merge --base-ref origin/main` sau cập nhật ref; đối chiếu artifact/version trên target, PR/commit và integration thật theo [workflow](docs/project/TEAM_WORKFLOW.md). [Dependency map](docs/project/TASK_DEPENDENCIES.md) có hai thứ tự và cặp song song. Sau đổi task: `--write-docs`, rồi `--check-docs` (offline, không mở task); regression: `python -m unittest discover -s tests -p "test_*.py"`. [PR template](.github/pull_request_template.md) và [review template](tasks/templates/REVIEW_TEMPLATE.md).
+Trước nhận việc: `python scripts/task_readiness.py --task GM-XX`. Checker chỉ chấp nhận dependency ở **Done** trên GitHub Project; **Needs Update không mở task phụ thuộc** (Trí xác nhận 28/10, ADR-011). Cần quyền đọc `read:project`, không dùng Issue Closed hoặc cache thay Done. Xem [Project readiness](docs/project/PROJECT_READINESS.md). Trước merge thêm `--gate merge --base-ref origin/main` sau cập nhật ref; đối chiếu artifact/version trên target, PR/commit và integration thật theo [workflow](docs/project/TEAM_WORKFLOW.md). [Dependency map](docs/project/TASK_DEPENDENCIES.md) có hai thứ tự và cặp song song. Sau đổi task: `--write-docs`, rồi `--check-docs` (offline, không mở task); regression: `python -m unittest discover -s tests -p "test_*.py"`. [PR template](.github/pull_request_template.md) và [review template](tasks/templates/REVIEW_TEMPLATE.md).
 
 [GM-04 food/core field contract](docs/data/FOOD_DATA_DICTIONARY.md): schema/template, field coverage và 166 ca mô phỏng offline cho GM-06/07. [GM-08 handoff](docs/data/DATASET_HANDOFF.md) bàn giao bundle thật trên DB test; dữ liệu lọc chưa biết giữ null/unknown/empty, không gọi fixture là dataset production đã publish. SQL/eligibility/lifecycle có bộ kiểm riêng theo HANDOFF từng task.

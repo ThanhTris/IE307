@@ -7,7 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 MATRIX = 'docs/testing/MOBILE_API_TEST_MATRIX.md'
-HANDOFF = 'docs/project/UI_BE_DATA_SYNC_HANDOFF_2026-10-25.md'
+HANDOFF = 'docs/project/audits/UI_BE_DATA_SYNC_HANDOFF_2026-10-25.md'
 FIGMA_MAP = 'docs/design/UI_FIGMA_TASK_MAP.json'
 API_PRODUCERS = tuple(range(16, 24))
 

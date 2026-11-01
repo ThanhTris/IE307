@@ -2,7 +2,7 @@ import { act } from 'react';
 import { BackHandler } from 'react-native';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { GuestEntryScreen } from '../../src/features/home/screens/GuestEntryScreen';
-import type { HomeLiveSession } from '../../src/features/home/screens/Gm25HomeScreen';
+import type { HomeLiveSession } from '../../src/features/home/screens/HomeScreen';
 
 const guestLabel = 'Tham gia với tư cách khách';
 const idleSession = (): HomeLiveSession => ({

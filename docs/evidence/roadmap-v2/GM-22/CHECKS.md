@@ -1,5 +1,18 @@
 # GM-22 — checks
 
+## Current GM-22.2 admission supplement
+
+The checks below preserve the previously reviewed GM-22.1/schema `0.4.0`
+baseline. They are historical and do not establish the current admission
+requirements. For the current GM-22.2 migration `0037`, schema `0.14.0`,
+capacity/race regressions, Bruno desktop evidence, source hashes and cleanup, use
+[admission-v4/CHECKS.md](admission-v4/CHECKS.md) and
+[admission-v4/MANIFEST.json](admission-v4/MANIFEST.json). The current supplement
+has 35/35 SQL assertions, 75/75 HTTP cases, 12/12 Bruno requests, 80/80
+GM-21 history regressions and 18/18 GitHub PR checks. The Windows Python run
+has one symlink privilege error; see the linked checks for exact output. Trí review is still required;
+this note does not change Project status.
+
 Owner/reviewer: Trí / ThanhTris. Contract `food-v1/roadmap-v2/GM-22.1`, schema
 `0.4.0`. Clean-run revision: `9454ff1c21b1d989b8b8b17d314b2f34bf9ac6d2`.
 

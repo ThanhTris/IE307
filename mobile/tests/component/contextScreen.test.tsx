@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, userEvent, waitFor } from '@testing-library/react-native';
 import type { ApiClient } from '../../src/data/api/contracts';
-import { Gm24ContextScreen as ContextScreen } from '../../src/features/context/screens/Gm24ContextScreen';
+import { DiscoveryContextScreen as ContextScreen } from '../../src/features/context/screens/DiscoveryContextScreen';
 
 const waitForContextReady = async () => {
   await waitFor(() => expect(screen.getByRole('button', { name: '🕒 Đặt giờ trước' })).toBeEnabled());

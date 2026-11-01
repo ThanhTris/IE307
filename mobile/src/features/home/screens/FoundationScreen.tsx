@@ -13,12 +13,12 @@ const layers = [
 ] as const;
 
 export function FoundationScreen({
-  onBack, onOpenComponents, onOpenFeaturePreview, onOpenGm25, onOpenResultPreview,
+  onBack, onOpenComponents, onOpenFeaturePreview, onOpenRoomFlowSandbox, onOpenResultPreview,
 }: {
   onBack: () => void;
   onOpenComponents?: () => void;
   onOpenFeaturePreview?: () => void;
-  onOpenGm25?: () => void;
+  onOpenRoomFlowSandbox?: () => void;
   onOpenResultPreview?: () => void;
 }) {
   const { colors } = useShellTheme();
@@ -48,7 +48,7 @@ export function FoundationScreen({
         {onOpenFeaturePreview ? <Pressable accessibilityRole="button" accessibilityLabel="Mở các màn mock GM-11 và GM-14" onPress={onOpenFeaturePreview} style={[styles.button, { backgroundColor: colors.surface, borderColor: colors.primary, borderWidth: 1 }]}>
           <Text style={[styles.buttonLabel, { color: colors.primary }, textStyle(600)]}>Mở màn mock GM-11/14</Text>
         </Pressable> : null}
-        {onOpenGm25 ? <Pressable accessibilityRole="button" accessibilityLabel="Kiểm tra luồng GM-25" onPress={onOpenGm25} style={[styles.button, { backgroundColor: colors.surface, borderColor: colors.primary, borderWidth: 1 }]}>
+        {onOpenRoomFlowSandbox ? <Pressable accessibilityRole="button" accessibilityLabel="Kiểm tra luồng GM-25" onPress={onOpenRoomFlowSandbox} style={[styles.button, { backgroundColor: colors.surface, borderColor: colors.primary, borderWidth: 1 }]}>
           <Text style={[styles.buttonLabel, { color: colors.primary }, textStyle(600)]}>Kiểm tra luồng GM-25 (Flow Check)</Text>
         </Pressable> : null}
         {onOpenResultPreview ? <Pressable accessibilityRole="button" accessibilityLabel="Mở kết quả GM-13" onPress={onOpenResultPreview} style={[styles.button, { backgroundColor: colors.surface, borderColor: colors.primary, borderWidth: 1 }]}>

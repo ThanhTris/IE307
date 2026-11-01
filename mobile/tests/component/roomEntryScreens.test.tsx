@@ -2,8 +2,8 @@ import { act } from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
 import { createApiClient, MOCK_DEFAULT_ROOM_CODE } from '../../src/data/api';
 import type { CreateRoomRequest, CreateRoomResponse, JoinRoomRequest, JoinRoomResponse, WriteResult } from '../../src/data/api/contracts';
-import { Gm25CreateRoomScreen as CreateRoomScreen } from '../../src/features/rooms/screens/Gm25CreateRoomScreen';
-import { Gm25JoinRoomScreen as JoinRoomScreen } from '../../src/features/rooms/screens/Gm25JoinRoomScreen';
+import { CreateRoomScreen } from '../../src/features/rooms/screens/CreateRoomScreen';
+import { JoinRoomScreen } from '../../src/features/rooms/screens/JoinRoomScreen';
 import { RoomEntryReceiptScreen } from '../../src/features/rooms/screens/RoomEntryReceiptScreen';
 import { errorCopy, type RequestIdFactory, type RoomEntryRepository } from '../../src/features/rooms/services/roomEntry';
 

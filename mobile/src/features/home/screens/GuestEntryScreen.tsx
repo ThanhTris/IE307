@@ -6,7 +6,7 @@ import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppButton, FormField, SheetDialog, StatusNotice } from '../../../shared/ui';
 import { spacing, typography } from '../../../shared/theme/tokens';
 import { validDisplayName } from '../../rooms/services/roomEntry';
-import type { HomeLiveSession } from './Gm25HomeScreen';
+import type { HomeLiveSession } from './HomeScreen';
 import { WelcomeScreen } from './WelcomeScreen';
 
 type Props = {

@@ -65,4 +65,4 @@ Rà soát không thấy frame riêng cho các trạng thái sau ở các khu v�
 3. Đối chiếu lại owner, reviewer Trí, status, dependency và phạm vi triển khai trực tiếp trên Project #2 trước khi bắt đầu code. Báo cáo này không tự giao FE, đổi task metadata hay phê duyệt implementation.
 4. Giữ evidence Figma, contract/version và HANDOFF/CHECKS theo task. Chỉ đánh giá tích hợp sau khi có artifact và kiểm thử ở đúng tầng; Figma đủ màn không đồng nghĩa app/Android/API đã nghiệm thu.
 
-Liên quan: [Báo cáo đối chiếu UI với main ngày 24/10](UI_MAIN_RECONCILIATION_REPORT_2026-10-24.md), [audit đồng bộ UI–BE–Data ngày 25/10](../project/UI_BE_DATA_SYNC_AUDIT_2026-10-25.md), [phạm vi BE/Data ngày 25/10](../project/BE_DATA_ONLY_SCOPE_2026-10-25.md).
+Liên quan: [Báo cáo đối chiếu UI với main ngày 24/10](UI_MAIN_RECONCILIATION_REPORT_2026-10-24.md), [audit đồng bộ UI–BE–Data ngày 25/10](../project/audits/UI_BE_DATA_SYNC_AUDIT_2026-10-25.md), [phạm vi BE/Data ngày 25/10](../project/audits/BE_DATA_ONLY_SCOPE_2026-10-25.md).

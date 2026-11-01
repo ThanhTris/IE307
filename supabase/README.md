@@ -1,6 +1,6 @@
 # BE — Supabase local, schema và RPC
 
-Stack đã được chủ dự án xác nhận tại ADR-001. GM-03 là tooling/config/health nền. Source hiện có schema/import GM-06/08, auth/ACL/retention, eligibility/room/ballot/history/social/notifications GM-16..23 và dish-session v3 (0026/schema0.8.0). Contract B/v4 và phần Top3/history/policy mới còn cần owner triển khai theo [phạm vi BE/Data](../docs/project/BE_DATA_ONLY_SCOPE_2026-10-25.md) và [audit](../docs/project/UI_BE_DATA_SYNC_AUDIT_2026-10-25.md); không coi source đầy đủ là database đang chạy đã được migrate hoặc dataset đã publish.
+Stack đã được chủ dự án xác nhận tại ADR-001. GM-03 là tooling/config/health nền. Source hiện có schema/import GM-06/08, auth/ACL/retention, eligibility/room/ballot/history/social/notifications GM-16..23 và dish-session v3 (0026/schema0.8.0). Contract B/v4 và phần Top3/history/policy mới còn cần owner triển khai theo [phạm vi BE/Data](../docs/project/audits/BE_DATA_ONLY_SCOPE_2026-10-25.md) và [audit](../docs/project/audits/UI_BE_DATA_SYNC_AUDIT_2026-10-25.md); không coi source đầy đủ là database đang chạy đã được migrate hoặc dataset đã publish.
 
 ## Chạy từ clone sạch
 

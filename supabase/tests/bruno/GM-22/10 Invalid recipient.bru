@@ -1,7 +1,7 @@
 meta {
   name: 10 Invalid recipient
   type: http
-  seq: 10
+  seq: 11
 }
 post {
   url: {{baseUrl}}/rest/v1/rpc/accept_partner
@@ -16,5 +16,5 @@ body:json {
   {"requestId":"{{requestId}}-bad-recipient","invitation_id":"{{friendInvitationId}}"}
 }
 tests {
-  test('non-recipient is forbidden',()=>{ expect(res.getStatus()).to.equal(403); });
+  test('non-recipient receives exact forbidden code',()=>{ expect(res.getStatus()).to.equal(403); expect(res.body.messageKey).to.equal('NOT_RECIPIENT'); });
 }

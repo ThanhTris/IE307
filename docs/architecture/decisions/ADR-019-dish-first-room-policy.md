@@ -16,7 +16,7 @@ Trí xác nhận cap vòng2 theo **30% số món còn sau NO vòng1**, với m�
 
 Quyết định này thay mục cap ngày22/10 cho **policy mới sắp triển khai**. Mục cũ bên dưới là lịch sử và vẫn mô tả runtime dish-decision-v3 ở main033693c. Cần policy version/migration tiến và SQL/domain parity; không sửa0026 hoặc đổi nghĩa phiên v2/v3 đang chạy. Mốc60s vẫn từ command waiting hợp lệ sau ACK và vào phòng chờ, không từ submit hoặc ACK đơn thuần.
 
-Theo xác nhận trực tiếp tiếp theo của Trí ngày 2026-10-24, Top 3/điểm tổng hợp được chấp nhận theo [ADR-020](ADR-020-public-top-three-result.md); Figma–BE–Data–UI handoff hiện hành nằm tại [alignment matrix](../../project/FIGMA_BE_UI_DATA_ALIGNMENT_2026-10-24.md) và [GM-07.B](../DISH_SESSION_API_CONTRACT_B.md). Đây là yêu cầu/contract cho task owner triển khai, không phải runtime đã chạy. UI code vẫn theo task và mốc bàn giao, không được suy pass từ Figma/HTML.
+Theo xác nhận trực tiếp tiếp theo của Trí ngày 2026-10-24, Top 3/điểm tổng hợp được chấp nhận theo [ADR-020](ADR-020-public-top-three-result.md); Figma–BE–Data–UI handoff hiện hành nằm tại [alignment matrix](../../project/audits/FIGMA_BE_UI_DATA_ALIGNMENT_2026-10-24.md) và [GM-07.B](../DISH_SESSION_API_CONTRACT_B.md). Đây là yêu cầu/contract cho task owner triển khai, không phải runtime đã chạy. UI code vẫn theo task và mốc bàn giao, không được suy pass từ Figma/HTML.
 
 Các nhận xét bên dưới về PR129 còn lỗi/chưa import là **trạng thái tại ngày22/10**, đã được PR129 và kiểm QA sau đó cập nhật; giữ để truy vết, không dùng làm blocker hiện hành.
 
