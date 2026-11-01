@@ -44,11 +44,11 @@ function clientFor(scenario: PreviewScenario) {
 
 const listeners = new Set<() => void>();
 let revision = 0;
-let snapshot = { scenario: 'default' as PreviewScenario, client: clientFor('default'), active: null as RoomEntryReceipt | null, guestName: null as string | null, revision };
+let snapshot = { scenario: 'default' as PreviewScenario, client: clientFor('default'), active: null as RoomEntryReceipt | null, guestName: null as string | null, tutorialSeen: false, revision };
 const subscribe = (callback: () => void) => { listeners.add(callback); return () => { listeners.delete(callback); }; };
 const notify = () => { for (const callback of listeners) callback(); };
 export function setPreviewScenario(scenario: PreviewScenario) {
-  snapshot = { scenario, client: clientFor(scenario), active: null, guestName: snapshot.guestName, revision: ++revision };
+  snapshot = { scenario, client: clientFor(scenario), active: null, guestName: snapshot.guestName, tutorialSeen: snapshot.tutorialSeen, revision: ++revision };
   notify();
 }
 export function rememberPreviewRoom(active: RoomEntryReceipt) {
@@ -62,9 +62,11 @@ export function rememberPreviewGuest(name: string) {
   notify();
 }
 export function resetPreviewEntry() {
-  snapshot = { ...snapshot, guestName: null, active: null };
+  snapshot = { ...snapshot, guestName: null, active: null, tutorialSeen: false };
   notify();
 }
+/** UI-only, in-memory onboarding flag. Does not mutate auth, active room or ballots. */
+export function markTutorialSeen() { snapshot = { ...snapshot, tutorialSeen: true }; notify(); }
 export function useRoomPreview() { return useSyncExternalStore(subscribe, () => snapshot, () => snapshot); }
 export const previewRoomCode = MOCK_DEFAULT_ROOM_CODE;
 export const previewSessionToken = 'gm09-synthetic-session'; // fixture marker, never a real credential

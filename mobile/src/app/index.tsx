@@ -19,6 +19,7 @@ export default function IndexRoute() {
     ? !live.isInitializing && live.status === 'empty' && live.issue === 'no-session' && !live.user
     : !preview.guestName && !preview.active;
   if (needsGuestEntry) return <Redirect href="/welcome" />;
+  if (!isReal && preview.guestName && !preview.active && !preview.tutorialSeen) return <Redirect href="/tutorial" />;
 
   return (
     <HomeScreen
@@ -34,6 +35,7 @@ export default function IndexRoute() {
       onFriends={() => router.push('/friends')}
       onHistory={() => router.push('/history')}
       onInbox={() => router.push('/inbox')}
+      onTutorial={() => router.push('/tutorial')}
     />
   );
 }

@@ -40,10 +40,11 @@ export type HomeScreenProps = PreviewControlsProps & {
   onHistory?: () => void;
   onInbox?: () => void;
   onProfile?: () => void;
+  onTutorial?: () => void;
 };
 
 
-export function HomeScreen({ repository, sessionToken, liveSession, activeRoom, roomRevision, isMock = !liveSession, onCreate, onJoin, onResume, onOpenFoundation, onOpenRoomSetup, onOpenDiscoveryContext, onFriends, onHistory, onInbox, onProfile, previewControls }: HomeScreenProps) {
+export function HomeScreen({ repository, sessionToken, liveSession, activeRoom, roomRevision, isMock = !liveSession, onCreate, onJoin, onResume, onOpenFoundation, onOpenRoomSetup, onOpenDiscoveryContext, onFriends, onHistory, onInbox, onProfile, onTutorial, previewControls }: HomeScreenProps) {
   const { colors } = useShellTheme();
   const { textStyle } = useAppFonts();
   const insets = useSafeAreaInsets();
@@ -228,6 +229,7 @@ export function HomeScreen({ repository, sessionToken, liveSession, activeRoom, 
     </SheetDialog> : null}
     <SheetDialog visible={!!panel} title={panel ?? 'Thông tin'} onClose={() => setPanel(undefined)} colors={colors}>
       <Text style={[homeStyles.dialogBody, { color: colors.text }, textStyle(500)]}>Tính năng này đang được hoàn thiện. Bản mô phỏng chưa gửi lời mời, thông báo hoặc thay đổi hồ sơ.</Text>
+      {panel === 'Cá nhân' && onTutorial ? <AppButton label="Xem lại hướng dẫn" onPress={() => { setPanel(undefined); onTutorial(); }} colors={colors} /> : null}
     </SheetDialog>
   </SafeAreaView>;
 }

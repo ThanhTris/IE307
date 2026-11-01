@@ -5,6 +5,7 @@ import { fireEvent, renderHook, screen, userEvent, waitFor } from '@testing-libr
 import Layout from '../../src/app/_layout';
 import Index from '../../src/app/index';
 import Welcome from '../../src/app/welcome';
+import Tutorial from '../../src/app/tutorial';
 import ContinueSession from '../../src/app/continue-session';
 import HomePreview from '../../src/app/dev/home';
 import Foundation from '../../src/app/dev/foundation';
@@ -24,7 +25,7 @@ import JoinEntry from '../../src/app/room/join-entry';
 import RoomPreview from '../../src/app/room/preview';
 import Vote from '../../src/app/room/vote';
 import FinalRound from '../../src/app/room/final-round';
-import { rememberPreviewGuest, rememberPreviewRoom, resetPreviewEntry, setPreviewScenario, useRoomPreview } from '../../src/bootstrap/roomPreview';
+import { markTutorialSeen, rememberPreviewGuest, rememberPreviewRoom, resetPreviewEntry, setPreviewScenario, useRoomPreview } from '../../src/bootstrap/roomPreview';
 import RoomLayout from '../../src/app/room/_layout';
 import RoomContext from '../../src/app/room/context';
 import RoomPreferences from '../../src/app/room/preferences';
@@ -34,6 +35,7 @@ const routes = {
   _layout: Layout,
   index: Index,
   welcome: Welcome,
+  tutorial: Tutorial,
   'continue-session': ContinueSession,
   'dev/home': HomePreview,
   friends: Friends,
@@ -58,7 +60,7 @@ const routes = {
   'dev/features': Features,
   'dev/discovery-context': DiscoveryContext,
 };
-beforeEach(() => { setPreviewScenario('default'); rememberPreviewGuest('Tuấn'); });
+beforeEach(() => { setPreviewScenario('default'); rememberPreviewGuest('Tuấn'); markTutorialSeen(); });
 afterEach(() => jest.useRealTimers());
 
 test('fresh mock entry reaches Home with a name without creating a real session or room', async () => {
@@ -74,6 +76,8 @@ test('fresh mock entry reaches Home with a name without creating a real session 
   await user.press(screen.getByRole('button', { name: 'Tham gia với tư cách khách' }));
   await user.type(screen.getByLabelText('Tên khách'), 'Minh');
   await user.press(screen.getByRole('button', { name: 'Tiếp tục' }));
+  await waitFor(() => expect(screen).toHavePathname('/tutorial'));
+  await user.press(screen.getByRole('button', { name: 'Bỏ qua hướng dẫn' }));
   await waitFor(() => expect(screen).toHavePathname('/'));
   await waitFor(() => expect(screen.getByRole('button', { name: 'Tạo phòng' })).toBeEnabled());
   await user.press(screen.getByRole('button', { name: 'Tạo phòng' }));

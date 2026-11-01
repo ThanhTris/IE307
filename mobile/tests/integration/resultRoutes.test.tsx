@@ -9,7 +9,7 @@ import CreateRoom from '../../src/app/room/create';
 import Result from '../../src/app/room/result';
 import NoConsensus from '../../src/app/room/no-consensus';
 import RoomFlowSandbox from '../../src/app/dev/room-flow-sandbox';
-import { rememberPreviewGuest, rememberPreviewRoom, resetPreviewEntry, setPreviewScenario } from '../../src/bootstrap/roomPreview';
+import { markTutorialSeen, rememberPreviewGuest, rememberPreviewRoom, resetPreviewEntry, setPreviewScenario } from '../../src/bootstrap/roomPreview';
 
 const routes = {
   _layout: Layout,
@@ -23,7 +23,7 @@ const routes = {
   'dev/room-flow-sandbox': RoomFlowSandbox,
 };
 const press = async (name: string) => { await fireEvent.press(screen.getByRole('button', { name })); };
-beforeEach(() => { setPreviewScenario('default'); resetPreviewEntry(); });
+beforeEach(() => { setPreviewScenario('default'); resetPreviewEntry(); markTutorialSeen(); });
 
 test('merged Foundation opens Room Flow Sandbox and terminal result screens', async () => {
   await renderRouter(routes, { initialUrl: '/dev/foundation' });
