@@ -1,9 +1,10 @@
-import { Stack } from 'expo-router';
+import { Stack, usePathname } from 'expo-router';
 import { SetupPreviewProvider } from '../../bootstrap/roomSetupPreview';
 
 export default function RoomLayout() {
+  const path = usePathname();
   return (
-    <SetupPreviewProvider>
+    <SetupPreviewProvider enabled={path === '/room/context' || path === '/room/preferences'}>
       <Stack screenOptions={{ headerShown: false }} />
     </SetupPreviewProvider>
   );

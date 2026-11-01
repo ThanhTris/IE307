@@ -73,14 +73,15 @@ export async function createSetupPreview(scenario: SetupScenario = 'default'): P
 
 type PreviewState = { scenario: SetupScenario; setScenario: (v: SetupScenario) => void; fixture?: SetupPreviewFixture; error: boolean };
 const PreviewContext = createContext<PreviewState | null>(null);
-export function SetupPreviewProvider({ children }: PropsWithChildren) {
+export function SetupPreviewProvider({ children, enabled = true }: PropsWithChildren<{ enabled?: boolean }>) {
   const [scenario, setScenario] = useState<SetupScenario>('default');
   const [result, setResult] = useState<{ scenario: SetupScenario; fixture?: SetupPreviewFixture; error: boolean }>();
   useEffect(() => {
+    if (!enabled || result?.scenario === scenario) return;
     let current = true;
     void createSetupPreview(scenario).then(v => { if (current) setResult({ scenario, fixture: v, error: false }); }).catch(() => { if (current) setResult({ scenario, error: true }); });
     return () => { current = false; };
-  }, [scenario]);
+  }, [scenario, enabled, result?.scenario]);
   const value = useMemo(() => ({ scenario, setScenario, fixture: result?.scenario === scenario ? result.fixture : undefined, error: result?.scenario === scenario ? result.error : false }), [scenario, result]);
   return <PreviewContext.Provider value={value}>{children}</PreviewContext.Provider>;
 }

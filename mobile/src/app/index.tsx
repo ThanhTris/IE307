@@ -28,7 +28,7 @@ export default function IndexRoute() {
       liveSession={isReal ? live : undefined}
       activeRoom={isReal ? undefined : preview.active}
       roomRevision={roomRevision}
-      onCreate={() => router.push('/room/create')}
+      onCreate={() => router.push('/room/create-entry')}
       onJoin={() => router.push('/room/join')}
       onResume={() => router.push('/continue-session')}
       onFriends={() => router.push('/friends')}
