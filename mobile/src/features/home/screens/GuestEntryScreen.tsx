@@ -117,7 +117,7 @@ export function GuestEntryScreen({ onContinue, onComplete, session, isMock, onSi
           <View style={styles.logoSlot}><Image source={require('../../../../assets/brand/gcd-logo-master.png')} accessible={false} style={styles.logo} /></View>
           <Text style={[styles.brandTitle, { color: colors.text }, textStyle(700)]}>Gì Cũng Được</Text>
           <Text accessibilityRole="header" style={[styles.question, { color: colors.text }, textStyle(700)]}>Bạn tên gì?</Text>
-          <Text style={[styles.description, { color: colors.text }, textStyle(400)]}>Tên của bạn sẽ hiện trong phòng ăn.</Text>
+          <Text style={[styles.description, { color: colors.muted }, textStyle(400)]}>Tên của bạn sẽ hiện trong phòng ăn.</Text>
           <FormField label="Tên khách" hideLabel value={name} onChangeText={value => { setName(value); setError(''); }} editable={!disabled} placeholder="Nhập tên của bạn" error={error || undefined} autoCorrect={false} inputStyle={[styles.input, { backgroundColor: dark ? colors.surface : colors.onPrimary }, textStyle(500)]} colors={colors} />
           {notice}
         </View>
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
   backLabel: { fontSize: 15, lineHeight: 22 },
   mockLabel: { fontSize: 12, lineHeight: 18 },
   body: { flexGrow: 1 },
-  logoSlot: { width: 72, height: 72, alignSelf: 'center', marginTop: 78 },
+  logoSlot: { width: 44, height: 72, alignSelf: 'center', marginTop: 78, alignItems: 'center' },
   logo: { width: 44, height: 44 },
   brandTitle: { marginTop: 19, fontSize: 29, lineHeight: 35, textAlign: 'center' },
   question: { marginTop: 67, fontSize: 26, lineHeight: 32 },

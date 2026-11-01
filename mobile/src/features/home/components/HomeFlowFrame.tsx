@@ -5,7 +5,7 @@ import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppHeader } from '../../../shared/ui';
 
-export function HomeFlowFrame({ title, onHome, isMock, busy = false, children }: { title: string; onHome: () => void; isMock?: boolean; busy?: boolean; children: ReactNode }) {
+export function HomeFlowFrame({ title, onHome, isMock, busy = false, children, centeredTitle = false, compact = false }: { title: string; onHome: () => void; isMock?: boolean; busy?: boolean; children: ReactNode; centeredTitle?: boolean; compact?: boolean }) {
   const { colors } = useShellTheme();
   const { textStyle } = useAppFonts();
   useEffect(() => {
@@ -13,9 +13,9 @@ export function HomeFlowFrame({ title, onHome, isMock, busy = false, children }:
     return () => subscription.remove();
   }, [onHome, busy]);
   return <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-    <AppHeader variant="back" title={title} onPressBack={busy ? undefined : onHome} allowTitleWrap backIconSource={require('../../../../assets/brand/home/back.png')} brandTextStyle={textStyle(700)} colors={colors} />
+    <AppHeader variant="back" title={title} onPressBack={busy ? undefined : onHome} allowTitleWrap hideDivider centeredTitle={centeredTitle} backIconSource={require('../../../../assets/brand/home/back.png')} brandTextStyle={textStyle(700)} colors={colors} />
     <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-    <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+    <ScrollView contentContainerStyle={[styles.content, compact && { paddingTop: 24 }]} keyboardShouldPersistTaps="handled">
       {isMock ? <Text style={[styles.mock, { color: colors.muted }, textStyle(500)]}>Mô phỏng · GM-09 · dữ liệu mẫu</Text> : null}
       {children}
     </ScrollView>

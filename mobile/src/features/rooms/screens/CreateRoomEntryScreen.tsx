@@ -23,7 +23,7 @@ export function CreateRoomEntryScreen({ displayName, summary, onOpenSetup, onBac
     lock.current = false;
     if (mounted.current) { setBusy(false); setError(!ready); }
   };
-  return <HomeFlowFrame title="Tạo phòng" onHome={() => { if (!lock.current) onBack(); }} busy={busy} isMock={isMock}>
+  return <HomeFlowFrame title="Tạo phòng" centeredTitle compact onHome={() => { if (!lock.current) onBack(); }} busy={busy} isMock={isMock}>
     <Text accessibilityRole="header" style={[styles.title, { color: colors.text }, textStyle(700)]}>Cùng chọn món cho cả nhóm</Text>
     <Text style={[styles.body, { color: colors.muted }, textStyle(400)]}>Chọn 10–20 món để bắt đầu. Mỗi người tự chọn khẩu vị; không cần chia sẻ vị trí.</Text>
     {displayName ? <Text style={[styles.body, { color: colors.text }, textStyle(500)]}>{`Chủ phòng: ${displayName}`}</Text> : null}

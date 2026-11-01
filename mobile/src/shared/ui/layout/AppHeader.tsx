@@ -28,6 +28,8 @@ export type AppHeaderProps = ComponentThemeProps & {
   brandTextStyle?: TextStyle;
   backIconSource?: ImageSourcePropType;
   allowTitleWrap?: boolean;
+  centeredTitle?: boolean;
+  hideDivider?: boolean;
 };
 
 export function AppHeader({
@@ -48,11 +50,13 @@ export function AppHeader({
   brandTextStyle,
   backIconSource,
   allowTitleWrap = false,
+  centeredTitle = false,
+  hideDivider = false,
   colors,
 }: AppHeaderProps) {
   const showBrand = variant === 'home';
   return (
-    <View style={[styles.header, { backgroundColor: colors?.surface, borderBottomColor: colors?.line }]}>
+    <View style={[styles.header, { backgroundColor: colors?.surface, borderBottomColor: colors?.line }, hideDivider && { borderBottomWidth: 0 }]}>
       {showBrand ? (
         <Pressable
           accessibilityRole="button"
@@ -89,7 +93,7 @@ export function AppHeader({
             <Text
               numberOfLines={allowTitleWrap ? undefined : 1}
               accessibilityRole="header"
-              style={[styles.brandText, { color: colors?.text }, brandTextStyle]}
+              style={[styles.brandText, { color: colors?.text }, centeredTitle && { textAlign: 'center' }, brandTextStyle]}
             >
               {title}
             </Text>
@@ -99,6 +103,7 @@ export function AppHeader({
               </Text>
             ) : null}
           </View>
+          {centeredTitle && variant === 'back' ? <View style={styles.headerAction} /> : null}
           {variant === 'room' ? (
             <Pressable
               accessibilityRole="button"

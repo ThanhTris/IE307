@@ -18,12 +18,13 @@ type Props = {
 /** Figma 298:2309. System bars belong to Android, not to the screen artwork. */
 export function WelcomeScreen({ onGuest, onSignIn, onSignUp, disabled, notice, isMock }: Props) {
   const { colors, dark } = useShellTheme();
+  const heroColor = dark ? colors.primary : colors.green;
   const { textStyle } = useAppFonts();
   const insets = useSafeAreaInsets();
 
-  return <SafeAreaView edges={['top', 'left', 'right']} style={[styles.root, { backgroundColor: colors.primary }]}>
+  return <SafeAreaView edges={['top', 'left', 'right']} style={[styles.root, { backgroundColor: heroColor }]}>
     <ScrollView contentContainerStyle={styles.content}>
-      <View style={[styles.hero, { backgroundColor: colors.primary }]}>
+      <View style={[styles.hero, { backgroundColor: heroColor }]}>
         <View pointerEvents="none" accessible={false} accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={StyleSheet.absoluteFill}>
           <Image source={require('../../../../assets/brand/entry/welcome-ring-large.png')} style={styles.largeRing} />
           <Image source={require('../../../../assets/brand/entry/welcome-ring-small.png')} style={styles.smallRing} />
@@ -33,10 +34,10 @@ export function WelcomeScreen({ onGuest, onSignIn, onSignUp, disabled, notice, i
         </View>
         <View style={styles.brand}>
           <View style={[styles.logoTile, { backgroundColor: colors.surface }]}><Image source={require('../../../../assets/brand/gcd-logo-master.png')} accessible={false} style={styles.logo} /></View>
-          <Text style={[styles.brandName, { color: colors.onPrimary }, textStyle(700)]}>Gì Cũng Được</Text>
+          <Text style={[styles.brandName, { color: colors.text }, textStyle(700)]}>Gì Cũng Được</Text>
         </View>
-        <Text accessibilityRole="header" style={[styles.headline, { color: colors.onPrimary }, textStyle(700)]}>{'Cả nhóm\năn gì?'}</Text>
-        <Text style={[styles.subtitle, { color: colors.onPrimary }, textStyle(400)]}>Tạo phòng, cùng chọn, rồi chốt món.</Text>
+        <Text accessibilityRole="header" style={[styles.headline, { color: colors.text }, textStyle(700)]}>{'Cả nhóm\năn gì?'}</Text>
+        <Text style={[styles.subtitle, { color: colors.text }, textStyle(400)]}>Tạo phòng, cùng chọn, rồi chốt món.</Text>
       </View>
       <View style={[styles.panel, { backgroundColor: colors.background, paddingBottom: Math.max(insets.bottom, spacing.xxl) }]}>
         {isMock ? <Text style={[styles.mockLabel, { color: colors.text }, textStyle(500)]}>Mô phỏng · GM-09 · dữ liệu mẫu</Text> : null}

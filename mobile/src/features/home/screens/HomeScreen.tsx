@@ -147,7 +147,7 @@ export function HomeScreen({ repository, sessionToken, liveSession, activeRoom, 
   }
 
   return <SafeAreaView edges={['top', 'left', 'right']} style={[homeStyles.root, { backgroundColor: colors.background }]}>
-    <AppHeader colors={colors} onInbox={openInbox} showFriends={false} showInbox showProfile={false} allowTitleWrap brandTextStyle={textStyle(700)} />
+    <AppHeader colors={colors} onInbox={openInbox} showFriends={false} showInbox showProfile={false} allowTitleWrap hideDivider brandTextStyle={textStyle(700)} />
     <ScrollView contentContainerStyle={homeStyles.content}>
       {isMock ? <Text style={[homeStyles.modeLabel, { color: colors.muted, backgroundColor: colors.soft }, textStyle(500)]}>Mô phỏng · GM-09 · dữ liệu mẫu</Text> : null}
       {sessionNotice}
@@ -173,7 +173,7 @@ export function HomeScreen({ repository, sessionToken, liveSession, activeRoom, 
           iconSize={32}
           iconTintColor={colors.onPrimary}
           iconLayout="stacked"
-          textStyle={{ fontSize: 18, lineHeight: 25, minHeight: 50, ...textStyle(700) }}
+          textStyle={{ fontSize: 18, lineHeight: 25, minHeight: 25, ...textStyle(700) }}
           style={[homeStyles.actionTile, fontScale > 1.3 && homeStyles.scaledTile, { borderColor: colors.green }]}
           colors={colors}
         />
@@ -186,7 +186,7 @@ export function HomeScreen({ repository, sessionToken, liveSession, activeRoom, 
           iconSize={32}
           iconTintColor={colors.text}
           iconLayout="stacked"
-          textStyle={{ fontSize: 18, lineHeight: 25, minHeight: 50, ...textStyle(700) }}
+          textStyle={{ fontSize: 18, lineHeight: 25, minHeight: 25, ...textStyle(700) }}
           style={[homeStyles.actionTile, fontScale > 1.3 && homeStyles.scaledTile, { borderColor: colors.line }]}
           colors={colors}
         />
@@ -198,7 +198,7 @@ export function HomeScreen({ repository, sessionToken, liveSession, activeRoom, 
         <View style={homeStyles.quickHeading}>
           <Image source={require('../../../../assets/brand/icons/lightning.png')} accessible={false} resizeMode="contain" style={[homeStyles.lightning, { tintColor: colors.text }]} />
           <Text style={[homeStyles.quickTitle, { color: colors.text }, textStyle(700)]}>KÈO NHANH VỚI BẠN THÂN</Text>
-          <Pressable accessibilityRole="button" accessibilityLabel="Tất cả bạn bè" onPress={openFriends} style={homeStyles.allFriends}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Tất cả bạn bè" onPress={openFriends} hitSlop={15} style={homeStyles.allFriends}>
             <Text style={[homeStyles.allFriendsText, { color: colors.text }, textStyle(500)]}>{friends.data ? `Tất cả (${quickFriends.length}) ›` : 'Tất cả ›'}</Text>
           </Pressable>
         </View>
@@ -251,7 +251,7 @@ const homeStyles = StyleSheet.create({
   quickHeading: { minHeight: 18, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: spacing.xs },
   lightning: { width: 16, height: 16 },
   quickTitle: { flex: 1, fontSize: 12, lineHeight: 18, fontWeight: '700' },
-  allFriends: { minHeight: 48, justifyContent: 'center', paddingHorizontal: spacing.xs },
+  allFriends: { minHeight: 18, justifyContent: 'center', paddingHorizontal: spacing.xs },
   allFriendsText: { fontSize: 12, lineHeight: 18 },
   emptyFriends: { ...typography.body },
   dialogBody: { ...typography.body },
