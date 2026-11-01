@@ -2,20 +2,20 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ErrorCode, ReadResult, WriteResult } from '../../../data/api/contracts';
 import { newPreviewRequestId, type RequestIdFactory } from '../services/roomEntry';
 
-export function useRead<T>(load: () => Promise<ReadResult<T>>, enabled = true) {
+export function useRead<T>(load: () => Promise<ReadResult<T>>, enabled = true, refreshKey?: unknown) {
   const [attempt, setAttempt] = useState(0);
   type State = { loading: boolean; data?: T; error?: ErrorCode; receivedAt?: number };
-  const [resultState, setState] = useState<State & { source: typeof load; attempt: number }>();
+  const [resultState, setState] = useState<State & { source: typeof load; attempt: number; refreshKey: unknown }>();
   // Hide the previous response immediately when the input/attempt changes.
-  const state: State = !enabled ? { loading: false } : resultState?.source === load && resultState.attempt === attempt ? resultState : { loading: true };
+  const state: State = !enabled ? { loading: false } : resultState?.source === load && resultState.attempt === attempt && resultState.refreshKey === refreshKey ? resultState : { loading: true };
   useEffect(() => {
     if (!enabled) return;
     let current = true;
     void load().then(result => {
-      if (current) setState(result.ok ? { source: load, attempt, loading: false, data: result.data, receivedAt: Date.now() } : { source: load, attempt, loading: false, error: result.error.messageKey });
-    }).catch(() => { if (current) setState({ source: load, attempt, loading: false, error: 'NETWORK_ERROR' }); });
+      if (current) setState(result.ok ? { source: load, attempt, refreshKey, loading: false, data: result.data, receivedAt: Date.now() } : { source: load, attempt, refreshKey, loading: false, error: result.error.messageKey });
+    }).catch(() => { if (current) setState({ source: load, attempt, refreshKey, loading: false, error: 'NETWORK_ERROR' }); });
     return () => { current = false; };
-  }, [load, attempt, enabled]);
+  }, [load, attempt, enabled, refreshKey]);
   return { ...state, retry: () => setAttempt(value => value + 1) };
 }
 

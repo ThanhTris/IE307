@@ -1,5 +1,27 @@
 # GM-09 — phạm vi triển khai
 
+## GM-09.2 step 2 — 2026-11-01
+
+Base `8172241`, branch `codex/gm-09-figma-update`; owner Tuấn/reviewer Trí.
+Start gate checked live at 2026-11-01T15:10:54Z: READY_TO_CLAIM. After account
+reconnection, received full Figma context/screenshots from the authorized Draft
+for Home `33:3`, continue `277:2140` and guest expiry `277:2190`, using the existing
+GM-09 Figma session. Use existing GM-05 UI/Inter and GM-07.1 repository contracts.
+
+Patch: align Home asset slots, spacing and CTA geometry; separate friends states
+from session availability; verify a saved room receipt using the existing member
+snapshot read before offering continuation; add native continue/expiry screens;
+move Home QA controls into a development route with explicit fixed fixtures.
+Real active-room discovery/durable cache remain GM-25/31 producer seams, not a new
+storage or API implementation. Preserve guards/callbacks, source data/privacy and
+legacy regression. No setup/join/tutorial rewrite, dependency or migration change.
+
+Tests: loading/error/empty friends independently of create/join, session guards,
+room verification/retry/terminal/non-member/wrong-room/stale-response behavior,
+read-only continue/expiry actions and full-button press/navigation. Run focused
+Jest, typecheck/lint/architecture, Expo compatibility/export and repository checks.
+Record Android visual/a11y/device checks as Not run until actually exercised.
+
 ## GM-09.2 step 1 — 2026-10-31
 
 User requests only welcome/guest entry from the received Figma copy. Current branch `codex/gm-09-figma-update`, base `621accc` + working tree; owner Tuấn/reviewer Trí unchanged. Live start gate `READY_TO_CLAIM`; receive existing GM-05 and GM-07 artifacts. Patch plan: native welcome → explicit name confirmation → existing Home; preserve GM-25 auth/recovery guards, use separate in-memory mock entry state, reuse local logo/shared buttons/forms and export individual Figma decorations. No new dependency, auth engine, persistent cache, setup/lobby/QR/tutorial implementation or wire/migration change.

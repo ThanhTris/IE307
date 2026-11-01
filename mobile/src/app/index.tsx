@@ -1,6 +1,7 @@
-import { Redirect, useRouter } from 'expo-router';
+import { useCallback, useState } from 'react';
+import { Redirect, useFocusEffect, useRouter } from 'expo-router';
 import { HomeScreen } from '../features/home/screens/HomeScreen';
-import { PreviewControls, previewSessionToken, useRoomPreview } from '../bootstrap/roomPreview';
+import { previewSessionToken, useRoomPreview } from '../bootstrap/roomPreview';
 import { useRoomRepository } from '../bootstrap/RoomRepositoryProvider';
 
 export default function IndexRoute() {
@@ -8,6 +9,8 @@ export default function IndexRoute() {
   const preview = useRoomPreview();
   const live = useRoomRepository();
   const isReal = live.mode === 'real';
+  const [roomRevision, setRoomRevision] = useState(0);
+  useFocusEffect(useCallback(() => { setRoomRevision(value => value + 1); }, []));
 
   const repository = isReal ? live.repository : preview.client;
   const sessionToken = isReal ? undefined : previewSessionToken;
@@ -24,16 +27,13 @@ export default function IndexRoute() {
       sessionToken={sessionToken}
       liveSession={isReal ? live : undefined}
       activeRoom={isReal ? undefined : preview.active}
+      roomRevision={roomRevision}
       onCreate={() => router.push('/room/create')}
       onJoin={() => router.push('/room/join')}
-      onResume={() => router.push('/room/preview')}
+      onResume={() => router.push('/continue-session')}
       onFriends={() => router.push('/friends')}
       onHistory={() => router.push('/history')}
       onInbox={() => router.push('/inbox')}
-      onOpenFoundation={isReal ? undefined : () => router.push('/dev/foundation')}
-      onOpenRoomSetup={isReal ? undefined : () => router.push('/room/context')}
-      onOpenDiscoveryContext={isReal ? undefined : () => router.push('/dev/discovery-context')}
-      previewControls={isReal ? undefined : (busy => <PreviewControls disabled={busy} />)}
     />
   );
 }

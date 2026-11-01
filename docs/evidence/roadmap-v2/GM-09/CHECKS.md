@@ -1,5 +1,42 @@
 # GM-09 — checks
 
+## GM-09.2 step 2 — 2026-11-01
+
+Base `8172241` + working tree on `codex/gm-09-figma-update`, pinned by
+[26-file source/test/asset manifest](figma-update/step2/MANIFEST.json).
+[Reproduction/scope/limits](figma-update/step2/STEP2.md),
+[manual commit guide](figma-update/step2/COMMIT_STEP2.md).
+
+| Check | Actual | Result |
+| --- | --- | --- |
+| Live start gate | Project #2 at 2026-11-01T15:10:54Z, READY_TO_CLAIM; owner Tuấn/reviewer Trí | Pass at checked time; no Project writes |
+| TypeScript / source lint / architecture | `npm run typecheck`, `npx eslint src tests scripts`, `npm run check:architecture`; final source lint has no warnings/errors | Pass |
+| Mobile regression | `npm test -- --json --outputFile=.work/gm09-step2-full-jest.json`; **30 suites / 763 tests**, 247.529s | Pass |
+| Expo installed compatibility | `npm run check:expo`, locked SDK58; tool warns validation is offline | Pass with offline limitation |
+| Android export | Final `npm run bundle:android`; Hermes `entry-1ded42fe7c3f28acf37d285698a10a6a.hbc`, 3.5MB | Pass, export only |
+| Full Python regression | CPython3.14.7, UTF-8 and test deps command-scoped; **657 tests: 650 passed, 6 skipped, 1 error**, 234.844s | Fail: existing Windows symlink privilege limitation |
+| Repository/indexes/diff | Repository validator, `task_readiness.py --check-docs`, whitespace and source-manifest checks | Pass |
+| Native visual/interaction/a11y | Android/Expo Go, 412dp comparison, 320/360dp, font200, TalkBack, keyboard/Back/Dark and effective native asset geometry | Not run |
+
+Final full Jest supersedes the initial step 2 run's route-fixture failures and
+the intermittent GM-25 stored-session default5000ms timeout. Tests now wait for
+verified continuation, use the development QA route, and assert the new revoked
+guest presentation; no runner configuration or timeout was loosened. An earlier
+five-suite focused run passed75 tests; the final full run also includes the new
+development-fixture route case and shared-read consumers.
+
+Python error:
+`test_catalogue_projection.ProjectionAdoptionTests.test_stage_refuses_symlink_output`
+raises `WinError 1314` while creating its fixture symlink. The same limitation
+was recorded before step 2. No test/security setting was changed to bypass it;
+no repository-wide green claim. Local ignored logs:
+`mobile/.work/gm09-step2-full-jest.log`, `mobile/.work/gm09-step2-eslint-final.log`,
+`mobile/.work/gm09-step2-export-final.log`, `.work/gm09-step2-python.log`.
+
+No stage/commit/push, Done/approval, real API acceptance, persistent recovery or
+database activation is claimed. Remaining visual/integration limits are in
+FIGMA_PARITY and STEP2.md.
+
 ## Main refactor received — 2026-11-01
 
 Working-tree resolution of the user's merge: GM-09 `07fd340` with main

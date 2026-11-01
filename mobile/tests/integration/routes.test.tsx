@@ -5,6 +5,8 @@ import { fireEvent, renderHook, screen, userEvent, waitFor } from '@testing-libr
 import Layout from '../../src/app/_layout';
 import Index from '../../src/app/index';
 import Welcome from '../../src/app/welcome';
+import ContinueSession from '../../src/app/continue-session';
+import HomePreview from '../../src/app/dev/home';
 import Foundation from '../../src/app/dev/foundation';
 import NotFound from '../../src/app/+not-found';
 import Components from '../../src/app/dev/components';
@@ -30,6 +32,8 @@ const routes = {
   _layout: Layout,
   index: Index,
   welcome: Welcome,
+  'continue-session': ContinueSession,
+  'dev/home': HomePreview,
   friends: Friends,
   inbox: Inbox,
   history: History,
@@ -77,7 +81,7 @@ test('fresh mock entry reaches Home with a name without creating a real session 
 });
 
 test('Room setup routes preserve the same saved room from home tools through context and preferences', async () => {
-  await renderRouter(routes, { initialUrl: '/' });
+  await renderRouter(routes, { initialUrl: '/dev/home' });
   const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
   await user.press(screen.getByRole('button', { name: 'Công cụ kiểm thử' }));
   await user.press(screen.getByRole('button', { name: 'Chọn điểm ăn và khẩu vị' }));
@@ -208,6 +212,7 @@ test('Figma Home uses the shared banner/action/nav components and routes its tab
   const user = userEvent.setup();
   expect(await screen.findByText('Hôm nay\ncả nhóm ăn gì?')).toBeOnTheScreen();
   expect(screen.getByTestId('brand-banner-illustration')).toBeOnTheScreen();
+  expect(screen.queryByRole('button', { name: 'Công cụ kiểm thử' })).toBeNull();
   await waitFor(() => expect(screen.getByRole('button', { name: 'Tạo phòng' })).toBeEnabled());
   expect(screen.getByRole('button', { name: 'Tham gia phòng' })).toBeEnabled();
   expect(screen.getByRole('tab', { name: 'Trang chủ' }).props.accessibilityState.selected).toBe(true);
@@ -226,6 +231,22 @@ test('Figma Home uses the shared banner/action/nav components and routes its tab
   await waitFor(() => expect(screen).toHavePathname('/inbox'));
 });
 
+test('development Home fixtures expose friends failure and verified continuation without product QA controls', async () => {
+  await renderRouter(routes, { initialUrl: '/dev/home' });
+  await fireEvent.press(screen.getByRole('button', { name: 'Công cụ kiểm thử' }));
+  await fireEvent.press(screen.getByRole('button', { name: 'Lỗi bạn bè' }));
+  await screen.findByText('Chưa tải được bạn bè');
+  expect(screen.getByRole('button', { name: 'Tạo phòng' })).toBeEnabled();
+  await fireEvent.press(screen.getByRole('button', { name: 'Công cụ kiểm thử' }));
+  await fireEvent.press(screen.getByRole('button', { name: 'Có phòng để tiếp tục' }));
+  await fireEvent.press(await screen.findByRole('button', { name: 'Quay lại phòng mô phỏng' }));
+  await waitFor(() => expect(screen).toHavePathname('/continue-session'));
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Tiếp tục phiên' })).toBeEnabled());
+  await fireEvent.press(screen.getByRole('button', { name: 'Về trang chủ' }));
+  await waitFor(() => expect(screen).toHavePathname('/'));
+  expect(screen.queryByRole('button', { name: 'Công cụ kiểm thử' })).toBeNull();
+});
+
 test('join deep link pre-fills code but waits for user confirmation', async () => {
   await renderRouter(routes, { initialUrl: '/room/join?code=gcd234' });
   expect(screen.getByLabelText('Mã phòng (6 ký tự)').props.value).toBe('GCD234');
@@ -240,6 +261,9 @@ test('join deep link pre-fills code but waits for user confirmation', async () =
   await user.press(screen.getByRole('button', { name: '‹ Quay lại' }));
   await screen.findByText('Phòng mẫu #GCD234');
   await user.press(screen.getByRole('button', { name: 'Quay lại phòng mô phỏng' }));
+  await waitFor(() => expect(screen).toHavePathname('/continue-session'));
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Tiếp tục phiên' })).toBeEnabled());
+  await user.press(screen.getByRole('button', { name: 'Tiếp tục phiên' }));
   await waitFor(() => expect(screen).toHavePathname('/room/preview'));
 });
 
@@ -260,7 +284,7 @@ test('Home create flow reaches the adapter receipt and preserves the room on ret
   expect(screen.getByText('Đã nhận yêu cầu mô phỏng')).toBeOnTheScreen();
   await user.press(screen.getByRole('button', { name: '‹ Quay lại' }));
   await waitFor(() => expect(screen).toHavePathname('/'));
-  expect(screen.getByRole('button', { name: 'Quay lại phòng mô phỏng' })).toBeOnTheScreen();
+  expect(await screen.findByRole('button', { name: 'Quay lại phòng mô phỏng' })).toBeOnTheScreen();
   expect(screen.getByRole('button', { name: 'Tạo phòng' })).toBeDisabled();
 });
 

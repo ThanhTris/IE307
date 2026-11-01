@@ -1,5 +1,29 @@
 # GM-09 — bàn giao màn Home / create / join
 
+## GM-09.2 step 2 candidate — 2026-11-01
+
+Base `8172241` + working tree on `codex/gm-09-figma-update`. Received full context
+and screenshots for Home/continue/guest-expiry from the authorized Draft after
+reconnecting the UIT account. [Step 2 handoff/reproduction](figma-update/step2/STEP2.md),
+[source manifest](figma-update/step2/MANIFEST.json),
+[manual commit instructions](figma-update/step2/COMMIT_STEP2.md).
+
+Home uses corrected image/icon slots and spacing, independent friends states,
+strict session availability and snapshot verification before continuation.
+`/continue-session` renders the received native screen; the mock composition
+continues through the existing room receipt seam. A confirmed revoked guest
+gets the received expiry screen with explicit reset, retry and duplicate lock.
+Home QA tools move to guarded `/dev/home` with fixed UI fixtures; product Home
+retains only the mock label when appropriate. Existing callbacks/contracts and
+legacy auth/domain/migration behavior remain; no package/provider/API/schema change.
+
+Full mobile regression **763/763 tests, 30 suites**, typecheck/source lint/
+architecture/Expo installed check and Android export pass. Full Python remains
+650 passed/6 skipped/1 Windows symlink privilege error. Native device/visual/
+a11y and real saved-room discovery/step restoration remain unaccepted; see
+CHECKS/FIGMA_PARITY. GM-25/31 still own the real active-room/cache seam. The agent
+has not staged/committed/pushed, changed task status or recorded Trí approval.
+
 ## Main refactor adaptation — 2026-11-01
 
 The user is merging main `90e871a` into `codex/gm-09-figma-update` after committing

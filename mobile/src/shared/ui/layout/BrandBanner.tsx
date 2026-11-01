@@ -1,12 +1,13 @@
-import { Image, StyleSheet, Text, View, type TextStyle } from 'react-native';
+import { Image, StyleSheet, Text, View, type ImageSourcePropType, type TextStyle } from 'react-native';
 import { radii, spacing } from '../../theme/tokens';
 import type { ComponentThemeProps } from '../types';
 
 export function BrandBanner({
   title = 'Hợp gu cả nhóm,\nvui trọn bữa ăn.',
   titleTextStyle,
+  illustrationSource,
   colors,
-}: ComponentThemeProps & { title?: string; titleTextStyle?: TextStyle }) {
+}: ComponentThemeProps & { title?: string; titleTextStyle?: TextStyle; illustrationSource?: ImageSourcePropType }) {
   return (
     <View style={[styles.brandBanner, { backgroundColor: colors?.warm }]}>
       <Text accessibilityRole="summary" style={[styles.brandBannerTitle, { color: colors?.text }, titleTextStyle]}>
@@ -14,10 +15,10 @@ export function BrandBanner({
       </Text>
       <Image
         testID="brand-banner-illustration"
-        source={require('../../../../assets/brand/friends-dining.png')}
+        source={illustrationSource ?? require('../../../../assets/brand/friends-dining.png')}
         accessible={false}
         resizeMode="contain"
-        style={styles.brandBannerImage}
+        style={[styles.brandBannerImage, illustrationSource ? { width: 166 } : undefined]}
       />
     </View>
   );

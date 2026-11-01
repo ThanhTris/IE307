@@ -1,4 +1,30 @@
-# GM-09.2 — Figma parity, step 1 candidate
+# GM-09.2 — Figma parity
+
+## Step 2 candidate — 2026-11-01
+
+Base `8172241` + working tree; [handoff and limitations](figma-update/step2/STEP2.md).
+Received full design context/screenshots after the UIT account was reconnected.
+
+| Frame | Route / data | Reference | Current verification |
+| --- | --- | --- | --- |
+| Home 33:3 | `/`; `/dev/home` has fixed mock states | [412×915](figma-update/step2/figma-home.png) | Interaction/asset source checks only; native visual Not run |
+| Continue 277:2140 | `/continue-session`; verified member snapshot from receipt | [412×915](figma-update/step2/figma-continue.png) | Read/guard/retry/route tests; native visual Not run |
+| Guest expired 277:2190 | `/` with confirmed revoked session; dev expiry fixture | [412×915](figma-update/step2/figma-expired.png) | Explicit reset/duplicate/error tests; native visual Not run |
+
+The new source-cropped illustration is 166×116, CTA icons 32×32 and Back 24×24;
+their source slots, callsites, sizes and hashes are documented in
+`mobile/assets/brand/home/SOURCE.md`. Existing master/logo/navigation assets keep
+their sources. No screenshot of a whole screen is used in UI. Real names/counts
+come from received data; online/presence is not inferred. Saved receipts alone
+do not open a room. Real durable continuation remains a GM-25/31 integration seam.
+
+Review differences: mock labels, accessible 48dp quick-friends action, flexible
+large-font layout, four-weight font baseline (700 instead of the design's
+ExtraBold headline), higher-contrast stage/description tokens, honest errors
+and no fake Android system bars. No Trí acceptance is recorded. 412dp native
+comparison/320/360dp/font200/TalkBack/Dark/keyboard/Back checks remain Not run.
+
+## Historical step 1 candidate
 
 Date: 2026-10-31. Branch `codex/gm-09-figma-update`, base `621acccf777c8a2538012641ce525cba0e6ae3ce` + uncommitted working tree. Reviewer Trí; no approval or Done is recorded. Only welcome/guest entry is implemented by this supplement; Home redesign and later steps remain separate.
 

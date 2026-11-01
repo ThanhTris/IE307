@@ -41,13 +41,25 @@ test('confirmed no-session entry creates a guest through the existing seam only 
   expect(join).not.toHaveBeenCalled();
 });
 
-test.each(['restore-unavailable', 'session-revoked', 'signup-uncertain'] as const)('root preserves the existing recovery path for %s', async issue => {
+test.each(['restore-unavailable', 'signup-uncertain'] as const)('root preserves the existing recovery path for %s', async issue => {
   mockSession = { ...mockSession, status: issue === 'signup-uncertain' ? 'blocked' : 'lost', issue };
   await renderRouter(routes, { initialUrl: '/' });
   expect(await screen.findByRole('button', { name: 'Tạo phòng' })).toBeDisabled();
   expect(screen).toHavePathname('/');
   expect(screen.queryByRole('button', { name: 'Tham gia với tư cách khách' })).toBeNull();
   expect(mockSession.ensureSession).not.toHaveBeenCalled();
+});
+
+test('a revoked guest sees expiry and explicit reset without a replacement signup', async () => {
+  mockSession = { ...mockSession, status: 'lost', issue: 'session-revoked' };
+  await renderRouter(routes, { initialUrl: '/' });
+  expect(await screen.findByText('Phiên khách đã hết hạn')).toBeOnTheScreen();
+  expect(mockSession.ensureSession).not.toHaveBeenCalled();
+  await fireEvent.press(screen.getByRole('button', { name: 'Nhập tên' }));
+  expect(mockSession.logout).toHaveBeenCalledTimes(1);
+  expect(await screen.findByText('Chưa xóa được phiên cũ')).toBeOnTheScreen();
+  expect(mockSession.ensureSession).not.toHaveBeenCalled();
+  expect(screen).toHavePathname('/');
 });
 
 test('an already active identity goes straight from welcome to Home without replacement signup', async () => {
