@@ -29,7 +29,7 @@ export default function IndexRoute() {
       activeRoom={isReal ? undefined : preview.active}
       roomRevision={roomRevision}
       onCreate={() => router.push('/room/create-entry')}
-      onJoin={() => router.push('/room/join')}
+      onJoin={() => router.push('/room/join-entry')}
       onResume={() => router.push('/continue-session')}
       onFriends={() => router.push('/friends')}
       onHistory={() => router.push('/history')}

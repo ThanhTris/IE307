@@ -1,5 +1,5 @@
 import { useEffect, type ReactNode } from 'react';
-import { BackHandler, ScrollView, StyleSheet, Text } from 'react-native';
+import { BackHandler, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
@@ -14,10 +14,12 @@ export function HomeFlowFrame({ title, onHome, isMock, children }: { title: stri
   }, [onHome]);
   return <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
     <AppHeader variant="back" title={title} onPressBack={onHome} backIconSource={require('../../../../assets/brand/home/back.png')} brandTextStyle={textStyle(700)} colors={colors} />
+    <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
     <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
       {isMock ? <Text style={[styles.mock, { color: colors.muted }, textStyle(500)]}>Mô phỏng · GM-09 · dữ liệu mẫu</Text> : null}
       {children}
     </ScrollView>
+    </KeyboardAvoidingView>
   </SafeAreaView>;
 }
 

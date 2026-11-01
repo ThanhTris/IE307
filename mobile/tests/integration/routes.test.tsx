@@ -20,6 +20,7 @@ import Shell from '../../src/app/dev/shell';
 import CreateRoom from '../../src/app/room/create';
 import CreateEntry from '../../src/app/room/create-entry';
 import JoinRoom from '../../src/app/room/join';
+import JoinEntry from '../../src/app/room/join-entry';
 import RoomPreview from '../../src/app/room/preview';
 import Vote from '../../src/app/room/vote';
 import FinalRound from '../../src/app/room/final-round';
@@ -43,6 +44,7 @@ const routes = {
   'room/create': CreateRoom,
   'room/create-entry': CreateEntry,
   'room/join': JoinRoom,
+  'room/join-entry': JoinEntry,
   'room/preview': RoomPreview,
   'room/context': RoomContext,
   'room/preferences': RoomPreferences,
@@ -205,8 +207,8 @@ test('Home navigates create/join with back to Home and preserves foundation tool
   await user.press(screen.getByRole('button', { name: 'Quay lại' }));
   await waitFor(() => expect(screen.getByRole('button', { name: 'Tạo phòng' })).toBeEnabled());
   await user.press(screen.getByRole('button', { name: 'Tham gia phòng' }));
-  await waitFor(() => expect(screen).toHavePathname('/room/join'));
-  await user.press(screen.getByRole('button', { name: '‹ Quay lại' }));
+  await waitFor(() => expect(screen).toHavePathname('/room/join-entry'));
+  await user.press(screen.getByRole('button', { name: 'Quay lại' }));
   await waitFor(() => expect(screen).toHavePathname('/'));
 });
 
