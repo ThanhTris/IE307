@@ -14,7 +14,7 @@ test('product preview is public-only; private snapshot is first read after expli
   try {
     await renderRouter({ _layout: Layout, 'room/_layout': RoomLayout, 'room/join-entry': JoinEntry, 'room/preview': Receipt }, { initialUrl: '/room/join-entry?code=gcd234' });
     expect(join).not.toHaveBeenCalled(); expect(snapshot).not.toHaveBeenCalled();
-    await fireEvent.press(screen.getByRole('button', { name: 'Xem trước phòng' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Tiếp tục →' }));
     await screen.findByText('2/20 thành viên');
     expect(join).not.toHaveBeenCalled(); expect(snapshot).not.toHaveBeenCalled();
     await fireEvent.press(screen.getByRole('button', { name: 'Xác nhận vào phòng' }));
