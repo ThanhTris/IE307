@@ -6,6 +6,8 @@ import { JoinRoomEntryScreen, type JoinRoomEntryProps } from '../../src/features
 import { createJoinPreviewFixture, type JoinRoomPublicPreview } from '../../src/features/rooms/services/joinPreview';
 
 const press = async (label: string) => { await fireEvent.press(screen.getByRole('button', { name: label })); };
+const codeInputs = () => screen.getAllByLabelText(/Ký tự \d của mã phòng/);
+const displayedCode = () => codeInputs().map(input => input.props.value).join('');
 function deferred<T>() { let resolve!: (value: T) => void; const promise = new Promise<T>(done => { resolve = done; }); return { promise, resolve }; }
 function props(): JoinRoomEntryProps { return { repository: createApiClient('mock', { delayMs: 0 }), preview: createJoinPreviewFixture(), initialCode: 'gcd234', initialDisplayName: ' Minh ', onBack: jest.fn(), onEntered: jest.fn() }; }
 
@@ -37,7 +39,7 @@ test.each(['full', 'locked', 'expired', 'lost-session', 'network'] as const)('pr
   await render(<JoinRoomEntryScreen {...p} />); await press('Tiếp tục →');
   expect(await screen.findByText(scenario === 'full' ? 'Phòng đã đủ 20 người' : scenario === 'expired' ? 'Phòng đã hết hạn' : 'Không thể kiểm tra phòng')).toBeOnTheScreen();
   await press('Quay lại');
-  expect(screen.getByLabelText('Mã phòng (6 ký tự)')).toHaveDisplayValue('GCD234');
+  expect(displayedCode()).toBe('GCD234');
   expect(screen.queryByRole('button', { name: 'Xác nhận vào phòng' })).toBeNull(); expect(join).not.toHaveBeenCalled();
 });
 
@@ -80,7 +82,7 @@ test.each(['denied', 'unavailable', 'error', 'scanned'] as const)('QR %s always 
   p.preview = jest.fn();
   await render(<JoinRoomEntryScreen {...p} />); await press('Quét mã QR'); await press('Thử quét QR');
   if (status !== 'scanned') await press('Nhập mã bằng tay');
-  expect(screen.getByLabelText('Mã phòng (6 ký tự)')).toBeOnTheScreen();
+  expect(codeInputs()).toHaveLength(6);
   expect(p.preview).not.toHaveBeenCalled(); expect(join).not.toHaveBeenCalled();
 });
 
@@ -123,9 +125,9 @@ test('Back can cancel a pending read without abandoning a join intent', async ()
 test('Back from confirmation returns to the entered code without a join', async () => {
   const p = props(), join = jest.spyOn(p.repository, 'joinRoom');
   await render(<JoinRoomEntryScreen {...p} />); await press('Tiếp tục →');
-  expect(screen.queryByLabelText('Mã phòng (6 ký tự)')).toBeNull();
+  expect(screen.queryAllByLabelText(/Ký tự \d của mã phòng/)).toHaveLength(0);
   await press('Quay lại');
-  expect(screen.getByLabelText('Mã phòng (6 ký tự)')).toHaveDisplayValue('GCD234');
+  expect(displayedCode()).toBe('GCD234');
   expect(p.onBack).not.toHaveBeenCalled(); expect(join).not.toHaveBeenCalled();
 });
 
@@ -133,9 +135,9 @@ test('a guest without a received name can enter it; failed reads preserve the dr
   const p = props(); p.initialCode = ''; p.initialDisplayName = ''; p.preview = createJoinPreviewFixture('network');
   await render(<JoinRoomEntryScreen {...p} />);
   await fireEvent.changeText(screen.getByLabelText('Tên của bạn'), 'Tên khách');
-  await fireEvent.changeText(screen.getByLabelText('Mã phòng (6 ký tự)'), 'gcd234');
+  await fireEvent.changeText(screen.getByLabelText('Ký tự 1 của mã phòng'), 'gcd234');
   await press('Tiếp tục →'); await screen.findByText('Không thể kiểm tra phòng');
   await press('Sửa mã phòng');
   expect(screen.getByLabelText('Tên của bạn')).toHaveDisplayValue('Tên khách');
-  expect(screen.getByLabelText('Mã phòng (6 ký tự)')).toHaveDisplayValue('GCD234');
+  expect(displayedCode()).toBe('GCD234');
 });
