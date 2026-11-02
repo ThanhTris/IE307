@@ -1,0 +1,177 @@
+{
+  "revision": "ui-figma-final/2026-10-25/GM-10.2",
+  "change": "Expo UI and navigation correction",
+  "baseCommit": "343b42eadfb42053d49d3e7e8f737d7706fa9e4a",
+  "sourceState": "tested working tree; file hashes identify repair",
+  "files": [
+    {
+      "path": "mobile/src/app/room/setup.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "0837bf5e386358fe9b9c0889e1fa4a47f4dc19edbc56a9c78a2b1cc78606771d"
+    },
+    {
+      "path": "mobile/src/bootstrap/dishSetupPreview.ts",
+      "normalization": "UTF-8 LF",
+      "sha256": "85338a40bcfc884dc56a0a3a6e98ac9c716bd2bf93c11d9c114e6b7459f1757b"
+    },
+    {
+      "path": "mobile/src/features/context/components/ScheduleCalendar.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "c7079e8baddaf269480c40777e2fb6cddfd0e0ef7e06e3ee67843b6b686b0a7c"
+    },
+    {
+      "path": "mobile/src/features/context/components/ScheduleSheet.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "4a3ca8fe110b31f900b10d667bfb0582adf2e228c7208fb8577ab6834bd90abb"
+    },
+    {
+      "path": "mobile/src/features/context/components/ScheduleWheel.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "2c46bc1a28fab133e6f8c01112a4233d5209e0dc2abd16a0ed6d0be743349db0"
+    },
+    {
+      "path": "mobile/src/features/context/components/SetupCheckboxRow.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "b3e85d1e66cd6f2fa4ddb20375dc415c25c79d5f89fc919c2b2c6718989bd46f"
+    },
+    {
+      "path": "mobile/src/features/context/components/SetupChoice.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "0ea1bbb2fc5e8044e489001f4e8a4922179901ecc508421ed46b3a8f9f282ee5"
+    },
+    {
+      "path": "mobile/src/features/context/components/SetupConfirmDialog.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "997d843b4a08a94e8e843d0b64fcd26610e9919f542475e341c8884f5181aef9"
+    },
+    {
+      "path": "mobile/src/features/context/components/SetupFriendsSheet.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "5cc87750ee64ed942b4f373fe0ea9f659b1d255bc942f2200d5f573fe17625bd"
+    },
+    {
+      "path": "mobile/src/features/context/components/SetupInvitees.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "ff8f10d03963036c810b6c33d6043393751a34be2b0bc66797db5e6167ef6edc"
+    },
+    {
+      "path": "mobile/src/features/context/components/SetupTimeMode.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "9dd39ade8b0ddc7f2b96c6fb52c33f20d2147db2327361ee19f25fcdb452a4bc"
+    },
+    {
+      "path": "mobile/src/features/context/hooks/useDishSetupFlow.ts",
+      "normalization": "UTF-8 LF",
+      "sha256": "9ec7365d9af08a9a2710be4dfcdca241e87a00fba1988797cca21f47e674b9eb"
+    },
+    {
+      "path": "mobile/src/features/context/screens/DishSetupFlow.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "c3bec070bea32e683a895762fb7a5b30de4691d61fe5b0e99341af6da3b3d579"
+    },
+    {
+      "path": "mobile/src/features/context/screens/DishSetupScreen.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "8cb455828374d5bf4d9ec7b0127260921d84f7b17ddf9ff741a6b60ce013769f"
+    },
+    {
+      "path": "mobile/src/features/context/services/dishSetup.ts",
+      "normalization": "UTF-8 LF",
+      "sha256": "24bbf5fd63e389bfe3cd242ca26a840e1335f4ecb7a74490bcb5ed29ae910d07"
+    },
+    {
+      "path": "mobile/src/features/context/services/dishSetupGateway.ts",
+      "normalization": "UTF-8 LF",
+      "sha256": "04bf521704034e71e62de3217942a83a41212e00f88ad52325c5c45ef4dfd85c"
+    },
+    {
+      "path": "mobile/src/features/preferences/components/PreferenceTemperaturePanel.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "08a5f8e730f06c2f3bd1889a99d18ad326375767aa22a4b676f3e278ec5c3433"
+    },
+    {
+      "path": "mobile/src/features/preferences/screens/DishPreferencesScreen.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "5a3628877e3bc6e671e9d5a15b897ff3e33c9f5da97168239c1c2566d83d053f"
+    },
+    {
+      "path": "mobile/src/shared/ui/dialogs/SheetDialog.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "d212418c0c20bb7f7ce9b8abe03c5ee33ab19c47c19c09d74684f33300fd554d"
+    },
+    {
+      "path": "mobile/src/shared/ui/forms/DishCount.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "e72d9cfe340503d4d18cbfd2ea01409fdf33d79731a465bfc28d08d75777b555"
+    },
+    {
+      "path": "mobile/tests/component/dishSchedule.test.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "514e6f38bca39620a71b4bee388b2b9d23b0e503839cef3eaaf71400e8ea8880"
+    },
+    {
+      "path": "mobile/tests/component/dishSetupRepair.test.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "69a4156ade87b5c26fbba440b54d4998197da8404f81a5986c8ac06ce036f5b2"
+    }
+  ],
+  "references": [
+    {
+      "path": ".work/gm10-errror-screens/errors/chọn bạn.jpg",
+      "sha256": "b1204eb1d3e694cae36a45897036d2df2c0746144e2cac7a14ae08839e702b59"
+    },
+    {
+      "path": ".work/gm10-errror-screens/errors/hiện giây.jpg",
+      "sha256": "4fa8708504800b090f06ae8f9157bd821dd50022ddbc84444f0fec3a02b3d5c7"
+    },
+    {
+      "path": ".work/gm10-errror-screens/errors/hẹn giờ.jpg",
+      "sha256": "ed2d3b36dbad4a83dfebde5ba183fc933b06ed8a6ba800200dad01a165e7779f"
+    },
+    {
+      "path": ".work/gm10-errror-screens/errors/nâng cao.jpg",
+      "sha256": "8d69dc3740d92aa27344a6f129f201e67a242b0dd7096dc5cd6d0a5981dfa921"
+    },
+    {
+      "path": ".work/gm10-errror-screens/errors/rủ bạn.jpg",
+      "sha256": "a240a6dd5f6605261ea004fd6dff80042f24c484d398049d164c6d2dfcb27c98"
+    },
+    {
+      "path": ".work/gm10-errror-screens/errors/ưu tiên gần đây.jpg",
+      "sha256": "857820db8a96ab36450fddbdfbbfb547e13d54119f9516db95638c6425522c3b"
+    },
+    {
+      "path": ".work/gm10-errror-screens/expected/bỏ khẩu vị.png",
+      "sha256": "6caf7755853dfc7ef8f2dc3d0f80d9aacad7c5f186b1db56861cd6dfc6f8ccbd"
+    },
+    {
+      "path": ".work/gm10-errror-screens/expected/bỏ thiết lập.png",
+      "sha256": "f7adff01b8f6297c89f4f2e74547393ff40634966e92a4b9d37d359108f1f8cf"
+    },
+    {
+      "path": ".work/gm10-errror-screens/expected/chọn bạn.png",
+      "sha256": "0793192a8d33a620e0acf40a7a5a48014d7fe356f630cb0fdb22dbdd68c4f105"
+    },
+    {
+      "path": ".work/gm10-errror-screens/expected/chọn thời gian.png",
+      "sha256": "33d9840e801cb5edc03eb9794c71f3d5d6bc6474c2b600b89918ed0f6cff3800"
+    },
+    {
+      "path": ".work/gm10-errror-screens/expected/phòng đã bị hủy.png",
+      "sha256": "1dd0d2adcc8994f1b09473f9facfdc24e34ecad9400eacbfb5ff25dfa279ce72"
+    },
+    {
+      "path": ".work/gm10-errror-screens/expected/rủ bạn.png",
+      "sha256": "f35cc19f6821b1073ee84fb0f736acfea1d312dd8422e54027070ca6eab1ce10"
+    },
+    {
+      "path": ".work/gm10-errror-screens/expected/ưu tiên gần đây 2.png",
+      "sha256": "6e3e5c56a73b4adb2573e074817b47f7ca4700ea2048aefdb4f56fd38fd7752d"
+    },
+    {
+      "path": ".work/gm10-errror-screens/expected/ưu tiên gần đây.png",
+      "sha256": "f212048d61d4b5c3235301850b513a2979430138f509e7d7952955af4f2312eb"
+    }
+  ],
+  "nativeAfterRepair": "Not run"
+}

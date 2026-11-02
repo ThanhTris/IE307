@@ -1,4 +1,4 @@
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useSetupPreview, SetupPreviewControls, setupCatalogue } from '../../bootstrap/roomSetupPreview';
 import { PreferencesScreen } from '../../features/preferences/screens/PreferencesScreen';
 import { SetupFrame } from '../../features/context/components/SetupFrame';
@@ -10,12 +10,13 @@ import { RequireActiveSession } from '../../features/auth/components/RequireActi
 
 export default function PreferencesRoute() {
   const router = useRouter();
-  const { roomId } = useLocalSearchParams<{ roomId?: string }>();
+  const { roomId, legacy } = useLocalSearchParams<{ roomId?: string; legacy?: string }>();
   const preview = useSetupPreview();
   const live = useRoomRepository();
   const { colors } = useShellTheme();
   const back = () => (router.canGoBack() ? router.back() : router.replace('/'));
   const home = () => router.dismissTo('/');
+  if (live.mode !== 'real' && !roomId && legacy !== '1') return <Redirect href="/room/setup" />;
 
   if (live.mode === 'real') {
     if (!roomId) {

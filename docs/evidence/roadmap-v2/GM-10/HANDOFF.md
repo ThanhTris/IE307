@@ -1,5 +1,19 @@
 # GM-10 — bàn giao context và khẩu vị
 
+**Bàn giao hiện hành:** [FINAL_HANDOFF](figma-update/FINAL_HANDOFF.md) chốt source c514bc0, interface và trách nhiệm các task nhận. [Xác nhận chung của người dùng](figma-update/USER_ACCEPTANCE.md) được ghi riêng; không tự thay kết quả từng AC thiết bị hoặc approval của Trí.
+
+**Điều chỉnh mới nhất:** [tương tác sau lượt Expo tiếp theo](figma-update/BEHAVIOR_REFINEMENT.md) cập nhật giờ/buổi ăn, editor, QA, khẩu vị nâng cao và xác nhận hủy. Đọc checks/manifest của revision này; native sau sửa vẫn Not run.
+
+**Mới nhất — sửa theo Expo:** [bản sửa UI/điều hướng](figma-update/EXPO_REPAIR.md)
+có manifest, checks và checklist kiểm lại. Ảnh người dùng xác nhận lỗi trước
+sửa; native/visual sau sửa vẫn chờ kết quả thiết bị, chưa nghiệm thu.
+
+**Cập nhật GM-10.2 ngày2026-11-02:** UI dish-only theo PNG Figma user cấp
+đã thực hiện bước1–6 trên nhánh `codex/gm-10-figma-update`. Đọc
+[handoff mới](figma-update/HANDOFF.md), [checks mới](figma-update/CHECKS.md)
+và [ma trận thiết kế](FIGMA_PARITY.md). Phần bên dưới là baseline GM-10.1
+legacy; device Pass/SDK57/route cũ không là nghiệm thu supplement hiện tại.
+
 **Bản bàn giao sau cập nhật main (2026-10-16):** PR #122 đã nhận `origin/main` `1862c86` vào merge commit `58b2849`; conflict chỉ ở README, đã giữ hướng dẫn GM-10 và baseline Expo. Đã chạy lại trên bản merge: Expo baseline 5/5, route 17/17, mobile 19 suites/566 tests, Android export pass 1309 modules, Python 550 pass/6 skipped, validator/index/diff pass. Xem [MAIN_SYNC_2026-10-16](MAIN_SYNC_2026-10-16.md). Reviewer Trí vẫn cần kiểm revision mới và quyết định merge/Done; các kiểm thiết bị riêng và API/native ngoài scope chưa được tự ghi Pass.
 
 Owner Tuấn (`mtuan2491`), reviewer Trí (`ThanhTris`), contract `food-v1/roadmap-v2/GM-10.1`. Nhánh `codex/gm-10-context-and-preferences`, base `origin/main`30ecb56, HEAD giữ tại base + working tree chưa commit; [manifest source/test](PATCH_MANIFEST.json). Agent không tạo commit/merge commit/push hoặc đổi Project/Done/Approved.

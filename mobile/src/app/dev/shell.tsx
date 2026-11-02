@@ -7,7 +7,7 @@ export default function ShellRoute() {
     <AppShellScreen
       onOpenFoundation={() => router.push('/dev/foundation')}
       onOpenVoting={() => router.push('/room/vote')}
-      onOpenRoomSetup={() => router.push('/room/context')}
+      onOpenRoomSetup={() => router.push({ pathname: '/room/context', params: { legacy: '1' } })}
       onOpenDiscoveryContext={() => router.push('/dev/discovery-context')}
       onOpenRoomFlowSandbox={() => router.push('/dev/room-flow-sandbox')}
       onOpenAuthSandbox={

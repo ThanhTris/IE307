@@ -1,3 +1,17 @@
+# Kết quả bổ sung GM-10.2
+
+**Bàn giao hiện hành:** [FINAL_HANDOFF](figma-update/FINAL_HANDOFF.md) chốt source c514bc0, interface và trách nhiệm các task nhận. [Xác nhận chung của người dùng](figma-update/USER_ACCEPTANCE.md) được ghi riêng; không tự thay kết quả từng AC thiết bị hoặc approval của Trí.
+
+**Điều chỉnh mới nhất:** [tương tác sau lượt Expo tiếp theo](figma-update/BEHAVIOR_REFINEMENT.md) cập nhật giờ/buổi ăn, editor, QA, khẩu vị nâng cao và xác nhận hủy. Đọc checks/manifest của revision này; native sau sửa vẫn Not run.
+
+**Sau phản hồi Expo:** đọc [bản sửa và kiểm lại](figma-update/EXPO_REPAIR.md)
+và [kết quả máy đọc](figma-update/EXPO_REPAIR_CHECKS.json). Giữ các kết quả
+bước1–6 bên dưới làm baseline, không thay visual/native sau sửa bằng Pass.
+
+Xem [checks bước1–6 hiện hành](figma-update/CHECKS.md) và
+[handoff](figma-update/HANDOFF.md). Evidence bên dưới giữ lịch sử GM-10.1;
+không kế thừa device/visual Pass cho UI dish-only mới.
+
 # GM-10 — kiểm chứng
 
 **Cập nhật sau khi nhận main (2026-10-16):** PR #122 `ffa6a75` đã merge `origin/main` `1862c86` bằng merge commit `58b2849`; xử lý duy nhất conflict ở `mobile/README.md`, giữ đủ route tests và baseline Expo. Bản kiểm trên merge commit đạt Expo baseline 5/5, route 17/17, mobile 19 suites/566 tests, Android export 1309 modules/3.1 MB, Python 550 pass + 6 skipped, repository/index/diff checks pass. Chi tiết và giới hạn tại [MAIN_SYNC_2026-10-16](MAIN_SYNC_2026-10-16.md). Merge gate live trả `READY_FOR_MERGE_REVIEW`; chưa Approved/Done.

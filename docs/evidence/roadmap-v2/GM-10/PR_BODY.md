@@ -1,3 +1,5 @@
+**Mẫu PR hiện hành GM-10.2:** [figma-update/PR_BODY](figma-update/PR_BODY.md). Nội dung bên dưới là bản GM-10.1 lịch sử, không dùng để mở PR mới.
+
 ## Task và phạm vi
 
 GM-10 roadmap-v2 — UI chọn khu vực, giờ ăn và sở thích theo mẫu. Related issue: #71. Task: `tasks/backlog/GM-10.md`. Owner Tuấn (`mtuan2491`), reviewer Trí (`ThanhTris`). Assignment accepted theo issue/gate đã ghi trong CHECKS; metadata lịch sử không tự đổi thành Approved/Done.

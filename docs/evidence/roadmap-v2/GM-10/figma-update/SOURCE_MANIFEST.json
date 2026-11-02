@@ -1,0 +1,302 @@
+{
+  "revision": "ui-figma-final/2026-10-25/GM-10.2",
+  "baseCommit": "1939d3506a8ee88a95031033caa7a9137cd65e43",
+  "sourceState": "step6 working tree; file hashes identify implementation",
+  "generatedAt": "2026-11-02T10:59:19.573Z",
+  "files": [
+    {
+      "path": "mobile/assets/brand/preferences/SOURCE.md",
+      "bytes": 773,
+      "sha256": "6b767f8c4db94935473af9f818a4d10c4ec7bd73f7a2d098801d2ba5978a9112",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/assets/brand/preferences/bun.png",
+      "bytes": 905,
+      "sha256": "886c5319ae93695fe2a9393117997f5dcc3035118715ace8fa54f3adf115eeb4",
+      "normalization": "binary"
+    },
+    {
+      "path": "mobile/assets/brand/preferences/cake.png",
+      "bytes": 820,
+      "sha256": "0ca7bcf0eddeb748adc9588c45aad791ec35cc78c7140ef0f1ce0d249933a228",
+      "normalization": "binary"
+    },
+    {
+      "path": "mobile/assets/brand/preferences/china.png",
+      "bytes": 998,
+      "sha256": "625f6e59544cafc631366c7c94b96892d9ce2ac82ce22639a116f1b40e2fe1c5",
+      "normalization": "binary"
+    },
+    {
+      "path": "mobile/assets/brand/preferences/europe.png",
+      "bytes": 829,
+      "sha256": "21aa388d6667b062867f055adc52f80f9e1c6af48a3f1cfa0f18c551d3fbcc88",
+      "normalization": "binary"
+    },
+    {
+      "path": "mobile/assets/brand/preferences/hotpot.png",
+      "bytes": 807,
+      "sha256": "9c92f8a8b2c9b1678bb15f1f6a3fb06798d1bb9b886f51c792c11dee588982fe",
+      "normalization": "binary"
+    },
+    {
+      "path": "mobile/assets/brand/preferences/japan.png",
+      "bytes": 999,
+      "sha256": "fd5fa0a6c2a2a0c88a9cee378d9a0d3895c614997ef8edc5f34314cea0febdc4",
+      "normalization": "binary"
+    },
+    {
+      "path": "mobile/assets/brand/preferences/leaf.png",
+      "bytes": 935,
+      "sha256": "eb601bb8d4d5307b6279b2e7c3d0dacae224033d2883f1e79bd58ffce650405c",
+      "normalization": "binary"
+    },
+    {
+      "path": "mobile/assets/brand/preferences/noodles.png",
+      "bytes": 853,
+      "sha256": "9dd01424eb8d40bcbf0c8852d7c8f96632fa87c5af8fc06bdb46f80e925b68e7",
+      "normalization": "binary"
+    },
+    {
+      "path": "mobile/assets/brand/preferences/rich.png",
+      "bytes": 931,
+      "sha256": "0858fdc8e0a3944c44d8f6504869eb586089ebb1a107f22a58a0a312371334eb",
+      "normalization": "binary"
+    },
+    {
+      "path": "mobile/assets/brand/preferences/rolls.png",
+      "bytes": 1095,
+      "sha256": "ed1f11a7719da958bccc835ce48aa0c09f3dfc6d1907e6baec421b9a683b8bc1",
+      "normalization": "binary"
+    },
+    {
+      "path": "mobile/assets/brand/preferences/sour.png",
+      "bytes": 1122,
+      "sha256": "9c73b3dac9b2504e816d49eef3e5ce8b2326c0e49ffb5177f2c17fd75f373aad",
+      "normalization": "binary"
+    },
+    {
+      "path": "mobile/assets/brand/preferences/spicy.png",
+      "bytes": 866,
+      "sha256": "8fe4fc4adf52408df4ffa881b52cda6e94145002d1bf2d57aed73743185c9e81",
+      "normalization": "binary"
+    },
+    {
+      "path": "mobile/assets/brand/preferences/thailand.png",
+      "bytes": 779,
+      "sha256": "bfe2a10d3ffb7a502b1300705afcbebc1f0bde3b6d9465067f2a4ad34b09c881",
+      "normalization": "binary"
+    },
+    {
+      "path": "mobile/assets/brand/preferences/vietnam.png",
+      "bytes": 736,
+      "sha256": "08de14cd8c8ea810443aabb9d6c7a47b9f143b3ac33a4246ed97009de200a2cd",
+      "normalization": "binary"
+    },
+    {
+      "path": "mobile/scripts/extract-preference-assets.ps1",
+      "bytes": 1800,
+      "sha256": "846069addd32214024603ad56ed042a0908c7302f7bfcb9c8b495e16b597c547",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/app/dev/home.tsx",
+      "bytes": 781,
+      "sha256": "fc0c409b438dd4b76abe4cf876b68bbe7b1bfccca795df9de964e484ed741e6c",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/app/dev/shell.tsx",
+      "bytes": 824,
+      "sha256": "82b0705a9e489d86e8a2173685abc18dcc556d3ee1c024b93be35333861e04ab",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/app/room/_layout.tsx",
+      "bytes": 689,
+      "sha256": "3bf3c9fb1641aea246cc7029b24f4219937f900c945b515f4eef3bb98d699e74",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/app/room/context.tsx",
+      "bytes": 2701,
+      "sha256": "f18fd72b52875e25e90292edeed6af2134ba05c823172875d9156495eba011dd",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/app/room/create-entry.tsx",
+      "bytes": 995,
+      "sha256": "ec6f93bae6b851c4df252311809f3eb76e29704921173c982cf6409260d3899c",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/app/room/preferences.tsx",
+      "bytes": 2801,
+      "sha256": "55a57b7c7c7b3fa0cecf76a9cc65ffd75e86431418d5a757d711e5cc17d0f0f5",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/app/room/setup.tsx",
+      "bytes": 1089,
+      "sha256": "75895beeb08974705ed01abc1364071b8c230691c8c14a51c8e6c916f228ef1f",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/bootstrap/DishSetupPreviewFlow.tsx",
+      "bytes": 1473,
+      "sha256": "7b2b01715e3820fce0ba539c7a52cc1d93c8076d1f6e5e3c5c4e21a52d28ca32",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/bootstrap/dishSetupCases.ts",
+      "bytes": 4480,
+      "sha256": "08e956f5b6aefc772ad3fdb71de67b7cc87d205ddc1bd56a68aa114343a02aa9",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/bootstrap/dishSetupCatalogue.ts",
+      "bytes": 1364,
+      "sha256": "3b49ca612fca0dd737785e7c9c6e43aa6026ea2a1b530eeffe94325fd3dc63e7",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/bootstrap/dishSetupPreview.ts",
+      "bytes": 4130,
+      "sha256": "215b93461758fc43b7cdcc3e748f385301acf504d950c674adf3dc3ae0720ae9",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/context/components/DishSetupFrame.tsx",
+      "bytes": 2133,
+      "sha256": "998f88cd550d1376cde8cb539cb00790bd7f9dd094a0928278116d37574d7bcf",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/context/components/ScheduleSheet.tsx",
+      "bytes": 4274,
+      "sha256": "c25e6718d6b2f5de078231b82312a3dff1e701f33aa9f883fd015eda9b14209d",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/context/components/SetupChoice.tsx",
+      "bytes": 1949,
+      "sha256": "3411bbf81a2b3b8f0631c1811a03f05f8141c89c0f144d4d68dcfa05d4928d7c",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/context/components/SetupFriendsSheet.tsx",
+      "bytes": 1876,
+      "sha256": "ee7412c6ac8ea28bb88209145f9cc78716019703bb4cf1c25ec443b15afb588d",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/context/components/SetupShortageDialog.tsx",
+      "bytes": 820,
+      "sha256": "bc1b9d0b6763c1d88402af3f2999bd0f68b05758c32aaf2656f47ee59b1e8453",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/context/hooks/useDishSetupDraft.ts",
+      "bytes": 656,
+      "sha256": "5583daadf91b0584bdb63da23f618b96dc801b526684076920a58301de376834",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/context/hooks/useDishSetupFlow.ts",
+      "bytes": 7348,
+      "sha256": "bdfed143b7191bab6d9ed8a78b2cfcd86dbb539c9cdc5a486db97f29faec3595",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/context/screens/DishSetupFlow.tsx",
+      "bytes": 6528,
+      "sha256": "acc38badce3f1a18e21bad707933cfb669d464a2385f6c1b125ef5f76a447fd6",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/context/screens/DishSetupScreen.tsx",
+      "bytes": 4391,
+      "sha256": "e6b335ca532c0ef28ab76a9ff3683b0ee33b79f4ec7df5c65f129f4e52daefe2",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/context/services/dishSetup.ts",
+      "bytes": 3209,
+      "sha256": "f922c925b244e15eece9ee5fdc0d1adbf88ae315b9fbde464ccc14c02961d387",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/context/services/dishSetupGateway.ts",
+      "bytes": 985,
+      "sha256": "4f2a53bf6b0a56a7ec1c9d2c133989d4641dc834ffe724a93ea53c79675c4373",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/preferences/components/preferenceAssets.ts",
+      "bytes": 1325,
+      "sha256": "791694898b67d6d8d92b19e6d631dbc39d102a249fd341168d2b6318cef3840e",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/preferences/screens/DishPreferencesScreen.tsx",
+      "bytes": 4984,
+      "sha256": "8fd7b58c6110eee3722f4f636fae01feb99b9a97c64d6db1429654c47eeeb54e",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/preferences/services/dishPreferences.ts",
+      "bytes": 1972,
+      "sha256": "dd03d7bdbf92b7c6f7e04236eac38e6c11ffa1a83918b122a746cfbd84cc1c78",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/tests/brandAssetTransparency.test.mjs",
+      "bytes": 4132,
+      "sha256": "23c130ae99280b734563b314307d4aa0c78a3dbc5f28bf5b699b4a13df805edf",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/tests/component/dishPreferences.test.tsx",
+      "bytes": 2202,
+      "sha256": "e537b9a7ffc9c98d9aa1e7b64dca1a039f212e5dca7b102af49979bf2af4d428",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/tests/component/dishSchedule.test.tsx",
+      "bytes": 1702,
+      "sha256": "9929b0ec3c1e066809957f3acc7a61075c0486ee2cb6c02cf3289da1175b6e8d",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/tests/component/dishSetupFlow.test.tsx",
+      "bytes": 7624,
+      "sha256": "35dc0b7a6c49b3881d24a0358a94e59d8eb0041f5cf16e23c82ebeec43d7a8e1",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/tests/component/dishSetupForm.test.tsx",
+      "bytes": 1716,
+      "sha256": "7efd5c72f137f1af65225dc0bb2f92e4ea3ed9b42d6683b2be145733458bf2d6",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/tests/integration/dishSetupRoute.test.tsx",
+      "bytes": 1999,
+      "sha256": "0480ddea7dfc9f8c40ba17ef8d8c42eafe0e57564a0dbb3df62cdb6db0220c06",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/tests/integration/routes.test.tsx",
+      "bytes": 22421,
+      "sha256": "811da54581d64ada3042d9ca7b0f4d90f03d93e1e2b228473df0bad8084edc31",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/tests/unit/dishSetupCases.test.ts",
+      "bytes": 1272,
+      "sha256": "c99216f91db4add13c7ca13f5d5b5bcc4711648fbe74db32eb449b9647a070a8",
+      "normalization": "UTF-8 LF"
+    }
+  ]
+}
