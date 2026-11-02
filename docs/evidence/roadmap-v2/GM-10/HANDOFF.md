@@ -1,5 +1,9 @@
 # GM-10 — bàn giao context và khẩu vị
 
+**Mới nhất — sửa theo Expo:** [bản sửa UI/điều hướng](figma-update/EXPO_REPAIR.md)
+có manifest, checks và checklist kiểm lại. Ảnh người dùng xác nhận lỗi trước
+sửa; native/visual sau sửa vẫn chờ kết quả thiết bị, chưa nghiệm thu.
+
 **Cập nhật GM-10.2 ngày2026-11-02:** UI dish-only theo PNG Figma user cấp
 đã thực hiện bước1–6 trên nhánh `codex/gm-10-figma-update`. Đọc
 [handoff mới](figma-update/HANDOFF.md), [checks mới](figma-update/CHECKS.md)

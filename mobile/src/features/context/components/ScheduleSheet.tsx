@@ -1,42 +1,43 @@
 import { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppButton, SheetDialog, StatusNotice } from '../../../shared/ui';
 import { parseSchedule, scheduleParts } from '../services/dishSetup';
+import { ScheduleCalendar } from './ScheduleCalendar';
+import { ScheduleWheel } from './ScheduleWheel';
 
-/** Native controls and explicit buttons; no new native picker dependency. */
 export function ScheduleSheet({ initial, now, onConfirm, onClose, initialCalendar = false }: {
   initial: string; now: () => number; onConfirm: (iso: string) => void; onClose: () => void; initialCalendar?: boolean;
 }) {
-  const { colors } = useShellTheme();
+  const { colors, dark } = useShellTheme(), { textStyle } = useAppFonts(), { height, fontScale } = useWindowDimensions(), insets = useSafeAreaInsets();
   const initialParts = scheduleParts(initial);
-  const [date, setDate] = useState(initialParts.date), [hour, setHour] = useState(initialParts.hour), [minute, setMinute] = useState(initialParts.minute);
-  const [calendar, setCalendar] = useState(initialCalendar), [month, setMonth] = useState(initialParts.date.slice(0, 7)), [error, setError] = useState<string>();
-  const monthStart = new Date(`${month}-01T00:00:00Z`);
-  const days = new Date(Date.UTC(monthStart.getUTCFullYear(), monthStart.getUTCMonth() + 1, 0)).getUTCDate();
-  const shiftMonth = (offset: number) => { const next = new Date(monthStart); next.setUTCMonth(next.getUTCMonth() + offset); setMonth(next.toISOString().slice(0, 7)); };
+  const [date, setDate] = useState(initialParts.date), [hour, setHour] = useState(Number(initialParts.hour)), [minute, setMinute] = useState(Number(initialParts.minute));
+  const [calendar, setCalendar] = useState(initialCalendar), [error, setError] = useState<string>();
+  const rowHeight = Math.max(48, Math.ceil(30 * fontScale)), rows = height < 840 || fontScale > 1.3 ? 3 : 5;
   const confirm = () => {
-    const iso = parseSchedule(date, hour, minute);
+    const iso = parseSchedule(date, String(hour), String(minute));
     if (!iso || Date.parse(iso) <= now()) { setError('Ngày và giờ phải hợp lệ, ở tương lai (UTC+7).'); return; }
     onConfirm(iso);
   };
-  return <SheetDialog visible title="Hẹn giờ ăn" onClose={onClose} colors={colors}>
-    <ScrollView style={styles.content} keyboardShouldPersistTaps="handled">
-      <Text style={{ color: colors.muted }}>Ngày YYYY-MM-DD · giờ UTC+7</Text>
-      <TextInput accessibilityLabel="Ngày hẹn" value={date} onChangeText={setDate} autoCorrect={false} placeholder="YYYY-MM-DD" placeholderTextColor={colors.muted} style={[styles.input, { color: colors.text, borderColor: colors.line }]} />
-      <AppButton label={calendar ? 'Ẩn lịch' : 'Chọn ngày trên lịch'} variant="secondary" onPress={() => setCalendar(value => !value)} colors={colors} />
-      {calendar ? <View style={styles.calendar}>
-        <AppButton label="Tháng trước" variant="quiet" onPress={() => shiftMonth(-1)} colors={colors} />
-        <Text accessibilityRole="header" style={{ color: colors.text }}>{month}</Text>
-        <AppButton label="Tháng sau" variant="quiet" onPress={() => shiftMonth(1)} colors={colors} />
-        <View style={styles.days}>{Array.from({ length: days }, (_, i) => `${month}-${String(i + 1).padStart(2, '0')}`).map(day => <AppButton key={day} label={`Ngày ${Number(day.slice(-2))}`} variant={date === day ? 'primary' : 'secondary'} style={styles.day} onPress={() => { setDate(day); setCalendar(false); }} colors={colors} />)}</View>
-      </View> : null}
-      <View style={styles.row}><View style={styles.column}><Text style={{ color: colors.text }}>Giờ</Text><TextInput accessibilityLabel="Giờ hẹn" value={hour} onChangeText={setHour} keyboardType="number-pad" maxLength={2} selectTextOnFocus style={[styles.input, { color: colors.text, borderColor: colors.line }]} /></View>
-      <View style={styles.column}><Text style={{ color: colors.text }}>Phút</Text><TextInput accessibilityLabel="Phút hẹn" value={minute} onChangeText={setMinute} keyboardType="number-pad" maxLength={2} selectTextOnFocus style={[styles.input, { color: colors.text, borderColor: colors.line }]} /></View></View>
-      {error ? <StatusNotice title={error} colors={colors} /> : null}
-      <AppButton label="Xác nhận giờ hẹn" onPress={confirm} colors={colors} />
-      <AppButton label="Hủy hẹn giờ" variant="secondary" onPress={onClose} colors={colors} />
+  const weekday = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'][new Date(`${date}T00:00:00Z`).getUTCDay()];
+  const dateLabel = `${weekday} · ${date.slice(8, 10)}/${date.slice(5, 7)}/${date.slice(0, 4)}`;
+  return <SheetDialog visible title={calendar ? 'Chọn ngày hẹn' : 'Hẹn giờ ăn'} onClose={calendar ? () => setCalendar(false) : onClose} colors={colors} showHandle={false} showClose={false} backdropColor={dark ? undefined : 'rgba(70,195,79,0.22)'}>
+    <ScrollView style={{ maxHeight: (height - insets.top - insets.bottom) * 0.72 }} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+      {calendar ? <ScheduleCalendar initial={date} today={scheduleParts(new Date(now()).toISOString()).date} onConfirm={value => { setDate(value); setCalendar(false); setError(undefined); }} onBack={() => setCalendar(false)} /> : <>
+        <Text style={[styles.label, { color: colors.text }, textStyle(600)]}>Ngày hẹn</Text>
+        <AppButton label={dateLabel} variant="secondary" onPress={() => setCalendar(true)} colors={colors} />
+        <View style={styles.row}>
+          <ScheduleWheel label="Giờ" value={hour} count={24} onChange={value => { setHour(value); setError(undefined); }} rowHeight={rowHeight} rows={rows} />
+          <ScheduleWheel label="Phút" value={minute} count={60} onChange={value => { setMinute(value); setError(undefined); }} rowHeight={rowHeight} rows={rows} />
+        </View>
+        <Text accessibilityLiveRegion="polite" style={[styles.zone, { color: colors.muted }, textStyle(400)]}>Giờ Việt Nam · UTC+7</Text>
+        {error ? <StatusNotice title={error} colors={colors} /> : null}
+        <AppButton label={`Xác nhận · ${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`} accessibilityHint="Xác nhận giờ hẹn" onPress={confirm} colors={colors} />
+        <AppButton label="Hủy" accessibilityHint="Hủy hẹn giờ và giữ thiết lập trước đó" variant="secondary" onPress={onClose} colors={colors} />
+      </>}
     </ScrollView>
   </SheetDialog>;
 }
-const styles = StyleSheet.create({ content: { maxHeight: 420 }, input: { minHeight: 52, borderWidth: 1, borderRadius: 12, paddingHorizontal: 16, fontSize: 16, marginVertical: 8 }, row: { flexDirection: 'row', gap: 16 }, column: { flex: 1 }, calendar: { gap: 8 }, days: { flexDirection: 'row', flexWrap: 'wrap', gap: 4 }, day: { minWidth: 64, flexGrow: 1, flexBasis: '27%' } });
+const styles = StyleSheet.create({ content: { gap: 12 }, label: { fontSize: 14, lineHeight: 21 }, row: { flexDirection: 'row', gap: 16 }, zone: { fontSize: 12, lineHeight: 18, textAlign: 'center' } });

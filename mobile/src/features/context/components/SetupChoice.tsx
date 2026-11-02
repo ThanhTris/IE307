@@ -1,12 +1,14 @@
 import { Image, Pressable, StyleSheet, Text, type ImageSourcePropType } from 'react-native';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
+import { SetupCheckboxRow } from './SetupCheckboxRow';
 
 export function SetupChoice({ label, selected, onPress, disabled, icon, stacked = false, checkbox = false, columns = 2 }: {
   label: string; selected: boolean; onPress: () => void; disabled?: boolean;
   icon?: ImageSourcePropType; stacked?: boolean; checkbox?: boolean; columns?: 1 | 2 | 3;
 }) {
   const { colors } = useShellTheme(), { textStyle } = useAppFonts();
+  if (checkbox) return <SetupCheckboxRow label={label} checked={selected} onPress={onPress} disabled={disabled} icon={icon} highlight />;
   return <Pressable accessibilityRole={checkbox ? 'checkbox' : 'button'} accessibilityLabel={label}
     accessibilityState={{ selected, checked: checkbox ? selected : undefined, disabled }} disabled={disabled} onPress={onPress}
     style={({ pressed }) => [styles.choice, stacked && styles.stacked, { flexBasis: columns === 3 ? '28%' : columns === 1 ? '100%' : '44%', borderColor: selected ? colors.green : colors.line, backgroundColor: selected ? colors.warm : colors.surface, opacity: disabled ? 0.5 : pressed ? 0.7 : 1 }]}>

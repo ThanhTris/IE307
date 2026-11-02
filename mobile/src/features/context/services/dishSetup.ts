@@ -21,6 +21,10 @@ export function scheduleParts(iso: string) {
   const local = new Date(Date.parse(iso) + 7 * 3600000).toISOString();
   return { date: local.slice(0, 10), hour: local.slice(11, 13), minute: local.slice(14, 16) };
 }
+export function formatSchedule(iso: string) {
+  const { date, hour, minute } = scheduleParts(iso);
+  return `${date.slice(8, 10)}/${date.slice(5, 7)}/${date.slice(0, 4)} · ${hour}:${minute}`;
+}
 /** UTC+7 business date, independent from the phone timezone; reject normalized dates. */
 export function parseSchedule(date: string, hour: string, minute: string): string | null {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !/^\d{1,2}$/.test(hour) || !/^\d{1,2}$/.test(minute)) return null;

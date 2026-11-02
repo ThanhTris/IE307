@@ -1,0 +1,55 @@
+{
+  "revision": "ui-figma-final/2026-10-25/GM-10.2",
+  "sourceManifest": "EXPO_REPAIR_MANIFEST.json",
+  "sourceManifestSha256": "d203f114cbfda627c0635684cd85795a94f3564c9431e5863865d53e1f8c9079",
+  "typecheck": "Pass",
+  "eslintSourceTestsScripts": "Pass",
+  "architecture": "Pass",
+  "mobile": {
+    "status": "Pass",
+    "suites": 45,
+    "tests": 852,
+    "failed": 0,
+    "seconds": 104.384
+  },
+  "png": {
+    "status": "Pass",
+    "tests": 28
+  },
+  "android": {
+    "status": "Pass",
+    "bundle": "entry-6b9be66504c961d8a08537ec28e3db94.hbc",
+    "sha256": "8b7e928499fe7b12b9fef6c453d56f6e254b772d780268ce730809ea6133bb97",
+    "deviceAcceptance": false
+  },
+  "python": {
+    "status": "Fail",
+    "total": 657,
+    "passed": 650,
+    "skipped": 6,
+    "errors": 1,
+    "assertionFailures": 0,
+    "seconds": 91.638,
+    "error": "WinError1314: test_stage_refuses_symlink_output",
+    "firstRun": {
+      "total": 657,
+      "failures": 4,
+      "errors": 1,
+      "skipped": 6,
+      "seconds": 178.555
+    },
+    "correction": "Finished JSON evidence before rerun; all four temporary checker failures resolved"
+  },
+  "fullLint": {
+    "status": "Fail",
+    "scope": "existing ignored local QA file",
+    "importErrors": 4
+  },
+  "native": {
+    "beforeRepair": "Fail reported by user",
+    "afterRepair": "Not run"
+  },
+  "reviewerApproval": "Not granted",
+  "repositoryValidation": "Pass",
+  "taskIndexes": "Pass"
+}

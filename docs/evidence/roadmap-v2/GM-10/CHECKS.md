@@ -1,5 +1,9 @@
 # Kết quả bổ sung GM-10.2
 
+**Sau phản hồi Expo:** đọc [bản sửa và kiểm lại](figma-update/EXPO_REPAIR.md)
+và [kết quả máy đọc](figma-update/EXPO_REPAIR_CHECKS.json). Giữ các kết quả
+bước1–6 bên dưới làm baseline, không thay visual/native sau sửa bằng Pass.
+
 Xem [checks bước1–6 hiện hành](figma-update/CHECKS.md) và
 [handoff](figma-update/HANDOFF.md). Evidence bên dưới giữ lịch sử GM-10.1;
 không kế thừa device/visual Pass cho UI dish-only mới.

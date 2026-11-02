@@ -1,5 +1,11 @@
 # GM-10.2 — bàn giao sau bước1–6
 
+**Bản sửa sau lượt Expo đầu:** [EXPO_REPAIR](EXPO_REPAIR.md) sửa dialog,
+điểm quay về editor/receipt, xác nhận hủy phòng mẫu, lịch7 cột/wheel, chip
+bạn/checkbox và advanced panel. Có bổ sung cancel vào UI port; chỉ mock
+implement, không đổi BE. Đọc checks/manifest của bản sửa trước phần baseline
+bên dưới. Expo sau sửa chờ kiểm lại, không ghi visual/native Pass.
+
 Owner Tuấn; reviewer Trí. Ngày2026-11-02, branch
 `codex/gm-10-figma-update`, base1939d35 (đã nhận GM-09/PR147).
 Không tự nghiệm thu, đổi Project status, merge hoặc push.

@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import type { UserPreferences } from '../../../data/api/contracts';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
@@ -9,13 +9,13 @@ import { SetupChoice } from '../../context/components/SetupChoice';
 import { emptyPreferences, type SetupCatalogue } from '../../context/services/dishSetup';
 import { flavorChoices, flavorSelected, isAnything, optionIds, toggleFlavor, togglePreference } from '../services/dishPreferences';
 import { preferenceAssets } from '../components/preferenceAssets';
+import { PreferenceTemperaturePanel } from '../components/PreferenceTemperaturePanel';
 
 export function DishPreferencesScreen({ preferences, catalogue, onChange, onBack, onSave, busy, submitDisabled, notice, editing, extra }: {
   preferences: UserPreferences; catalogue: SetupCatalogue; onChange: (value: UserPreferences) => void;
   onBack: () => void; onSave: (skip: boolean) => void; busy?: boolean; submitDisabled?: boolean; notice?: string; editing?: boolean; extra?: ReactNode;
 }) {
   const { colors } = useShellTheme(), { textStyle } = useAppFonts(), { width, fontScale } = useWindowDimensions();
-  const [advanced, setAdvanced] = useState(false);
   const columns = fontScale > 1.7 ? 1 : width < 360 || fontScale > 1.2 ? 2 : 3;
   const heading = (label: string) => <Text accessibilityRole="header" style={[styles.heading, { color: colors.text }, textStyle(700)]}>{label}</Text>;
   return <DishSetupFrame title="Khẩu vị" onBack={onBack} busy={busy}
@@ -29,8 +29,7 @@ export function DishPreferencesScreen({ preferences, catalogue, onChange, onBack
     </View>)}
     {heading('Hương vị')}<View style={styles.grid}>{flavorChoices.map(choice => <SetupChoice key={choice.id} label={choice.label} columns={fontScale > 1.7 ? 1 : 2} icon={preferenceAssets[choice.id]} selected={flavorSelected(preferences, choice)} disabled={busy} onPress={() => onChange(toggleFlavor(preferences, choice))} />)}</View>
     <Text style={[styles.note, { color: colors.muted }, textStyle(400)]}>Ưu tiên mềm: ít mặn/đậm đà, chua và cay; không phải yêu cầu loại món.</Text>
-    <AppButton label={advanced ? 'Ẩn tùy chọn nâng cao' : 'Tùy chọn nâng cao'} variant="quiet" disabled={busy} onPress={() => setAdvanced(value => !value)} colors={colors} />
-    {advanced ? <View style={styles.grid}>{(['unknown', 'hot', 'warm', 'cold', 'ambient'] as const).map((id, i) => <SetupChoice key={id} label={['Không ưu tiên nhiệt độ', 'Nóng', 'Ấm', 'Lạnh', 'Nhiệt độ phòng'][i] ?? id} selected={(preferences.temperature ?? 'unknown') === id} disabled={busy} onPress={() => onChange({ ...preferences, temperature: id })} />)}</View> : null}
+    <PreferenceTemperaturePanel value={preferences.temperature} disabled={busy} onChange={temperature => onChange({ ...preferences, temperature })} />
     <SetupChoice label="Cho phép lưu lịch sử phiên này" checkbox columns={1} selected={preferences.historyConsent} disabled={busy} onPress={() => onChange({ ...preferences, historyConsent: !preferences.historyConsent })} />
     <Text style={[styles.note, { color: colors.muted }, textStyle(400)]}>Khẩu vị là riêng tư. Thay đổi áp dụng cho phòng này; không ghi đè mặc định tài khoản.</Text>{extra}
   </DishSetupFrame>;

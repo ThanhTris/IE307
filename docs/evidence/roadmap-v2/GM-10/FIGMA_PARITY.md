@@ -1,5 +1,10 @@
 # GM-10.2 — ma trận thiết kế và implementation
 
+**Sau lượt Expo đầu:** đã có ảnh lỗi và expected của người dùng. Các gap
+checkbox/chip bạn/picker/advanced/discard/editor Back đã sửa theo
+[EXPO_REPAIR](figma-update/EXPO_REPAIR.md). Các dòng Not run bên dưới là
+trạng thái kiểm lại trên bản sửa; không xóa lịch sử Fail trước sửa.
+
 Nguồn: PNG user cấp ngày2026-11-02, [audit ảnh](figma-update/FIGMA_REFERENCE_AUDIT.md).
 Figma chỉ tham khảo trình bày theo chỉ dẫn user, yêu cầu task vẫn phải đủ.
 Node trong task giữ truy vết, chưa xác minh live/revision/variables trong lượt này.

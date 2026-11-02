@@ -10,7 +10,7 @@ export function createDishSetupPreview(scenario: DishSetupScenario = 'default', 
   room?: SetupRoom; preferences?: UserPreferences; accountDefaults?: UserPreferences; settings?: Partial<SetupDraft>;
 }): DishSetupGateway {
   let room: SetupRoom | undefined = scenario === 'closed' || scenario === 'member' ? { id: 'ui-room', code: 'MCK234', version: 1, state: scenario === 'closed' ? 'CLOSED' : 'LOBBY' } : seed?.room;
-  let preferences: UserPreferences | undefined = seed?.preferences, lostReply = false, rejected = false, failRead = false, stale = false;
+  let preferences: UserPreferences | undefined = seed?.preferences, lostReply = false, rejected = false, failRead = false, stale = false, cancelled = false;
   let settings = { ...initialSetupDraft(), dishCount: scenario === 'shortage15' ? 20 : 15, ...seed?.settings };
   const cache = new Map<string, { body: string; reply: SetupReply }>();
   const delay = async () => { if (scenario === 'loading') await new Promise(resolve => setTimeout(resolve, 600)); };
@@ -20,7 +20,7 @@ export function createDishSetupPreview(scenario: DishSetupScenario = 'default', 
       if (scenario === 'load-error' || failRead) { failRead = false; throw new Error('Synthetic read failure'); }
       return { catalogue: scenario === 'taxonomy-empty' ? { categories: [], cuisines: [] } : dishSetupCatalogue,
         friends: [{ id: 'ui-friend-linh', label: 'Linh' }, { id: 'ui-friend-nam', label: 'Nam' }, { id: 'ui-friend-minh', label: 'Minh' }],
-        connected: scenario !== 'offline', canEditSettings: scenario !== 'member', settings: clone(settings), accountDefaults: clone(seed?.accountDefaults ?? emptyPreferences()), ownRoomPreferences: preferences ? clone(preferences) : undefined, room: room ? { ...room } : undefined };
+        connected: scenario !== 'offline', canEditSettings: scenario !== 'member', hasRecentHistory: false, closedReason: cancelled ? 'cancelled' : 'closed', settings: clone(settings), accountDefaults: clone(seed?.accountDefaults ?? emptyPreferences()), ownRoomPreferences: preferences ? clone(preferences) : undefined, room: room ? { ...room } : undefined };
     },
     write: async (intent: SetupIntent) => {
       await delay();
@@ -36,12 +36,15 @@ export function createDishSetupPreview(scenario: DishSetupScenario = 'default', 
         const available = scenario === 'shortage15' ? 15 : scenario === 'shortage7' ? 7 : 20;
         if (intent.draft.dishCount > available) return { ok: false, code: 'SHORTAGE', available, requested: intent.draft.dishCount };
         settings = clone(intent.draft);
-      } else {
+      } else if (intent.kind === 'preferences') {
         if (!room) return { ok: false, code: 'CLOSED' };
         if (scenario === 'save-error' && !rejected) { rejected = true; return { ok: false, code: 'REJECTED' }; }
         preferences = clone(intent.preferences);
+      } else {
+        if (!room || scenario === 'member') return { ok: false, code: 'REJECTED' };
+        cancelled = true;
       }
-      room = { id: 'ui-room', code: 'MCK234', version: (room?.version ?? 0) + 1, state: 'LOBBY' };
+      room = { id: 'ui-room', code: 'MCK234', version: (room?.version ?? 0) + 1, state: cancelled ? 'CLOSED' : 'LOBBY' };
       const reply: SetupReply = { ok: true, room: { ...room } };
       cache.set(intent.requestId, { body, reply: clone(reply) });
       if (scenario === 'ack-read-error' && !lostReply) { lostReply = true; failRead = true; }

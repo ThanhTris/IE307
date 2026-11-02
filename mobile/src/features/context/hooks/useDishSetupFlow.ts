@@ -13,6 +13,7 @@ export function useDishSetupFlow(gateway: DishSetupGateway, requestId = mockRequ
   const [data, setData] = useState<SetupRead>(), [readError, setReadError] = useState(false);
   const [preferences, setPreferences] = useState(emptyPreferences), [baselinePreferences, setBaselinePreferences] = useState(emptyPreferences);
   const [stage, setStage] = useState<'setup' | 'preferences' | 'complete'>(initialStage);
+  const [editorReturn, setEditorReturn] = useState<'setup' | 'complete'>('setup');
   const [phase, setPhase] = useState<'idle' | 'sending' | 'unknown' | 'ack-read'>('idle');
   const [notice, setNotice] = useState<string>(), [needsRefresh, setNeedsRefresh] = useState(false);
   const [shortage, setShortage] = useState<{ available: number; requested: number }>();
@@ -26,9 +27,10 @@ export function useDishSetupFlow(gateway: DishSetupGateway, requestId = mockRequ
       setData(value); if (value.settings) receiveDraft(clone(value.settings));
       const own = clone(value.ownRoomPreferences ?? value.accountDefaults);
       setPreferences(own); setBaselinePreferences(clone(own));
+      if (initialStage === 'preferences' && value.ownRoomPreferences) setEditorReturn('complete');
     }).catch(() => { if (current) setReadError(true); });
     return () => { current = false; alive.current = false; };
-  }, [gateway, receiveDraft]);
+  }, [gateway, receiveDraft, initialStage]);
   const blocked = phase !== 'idle' || needsRefresh || !data?.connected || data.room?.state === 'CLOSED';
   const refresh = async () => {
     if (lock.current) return;
@@ -49,9 +51,10 @@ export function useDishSetupFlow(gateway: DishSetupGateway, requestId = mockRequ
       const value = await gateway.read(); if (!alive.current) return;
       if (!value.room || value.room.id !== ack.room.id || value.room.code !== ack.room.code || value.room.version < ack.room.version) throw new Error('Unconfirmed snapshot');
       if (ack.kind === 'preferences' && !value.ownRoomPreferences) throw new Error('Own preference snapshot missing');
+      if (ack.kind === 'cancel' && value.room.state !== 'CLOSED') throw new Error('Cancellation not confirmed');
       setData(value); setReadError(false);
       if (value.room.state === 'CLOSED') setNotice('Phòng đã đóng. Thay đổi không thể tiếp tục.');
-      else if (ack.kind === 'settings') { draftState.markSaved(); setStage('preferences'); setNotice(undefined); }
+      else if (ack.kind === 'settings') { if (value.settings) receiveDraft(clone(value.settings)); else draftState.markSaved(); setStage(editorReturn === 'complete' && value.ownRoomPreferences ? 'complete' : 'preferences'); setNotice(undefined); }
       else { const own = clone(value.ownRoomPreferences!); setPreferences(own); setBaselinePreferences(clone(own)); setStage('complete'); setNotice(undefined); }
       acknowledged.current = null; intent.current = null; setPhase('idle');
     } catch { if (alive.current) { setNotice('Đã nhận xác nhận lưu; chưa tải được trạng thái mới. Chỉ thử đọc lại, không gửi lại.'); setPhase('ack-read'); } }
@@ -89,9 +92,17 @@ export function useDishSetupFlow(gateway: DishSetupGateway, requestId = mockRequ
     if (acknowledged.current) { lock.current = true; void readAcknowledged().finally(() => { lock.current = false; }); }
     else if (intent.current) void send(intent.current);
   };
-  return { ...draftState, data, readError, preferences, stage, phase, blocked, notice, shortage, needsRefresh,
+  const cancelRoom = () => {
+    if (blocked || lock.current || !data?.room || !data.canEditSettings) return;
+    void send({ kind: 'cancel', requestId: requestId(), room: clone(data.room) });
+  };
+  return { ...draftState, data, readError, preferences, stage, editorReturn, phase, blocked, notice, shortage, needsRefresh,
     preferencesDirty: JSON.stringify(preferences) !== JSON.stringify(baselinePreferences),
     changePreferences: setPreferences, changeStage: setStage, submitSettings, submitPreferences, retry, refresh,
+    cancelRoom,
+    editSettings: () => { setEditorReturn('complete'); setNotice(undefined); setStage('setup'); },
+    editPreferences: () => { setEditorReturn('complete'); setNotice(undefined); setStage('preferences'); },
+    returnFromEditor: () => { setNotice(undefined); setStage(editorReturn); },
     discardPreferences: () => setPreferences(clone(baselinePreferences)), dismissShortage: () => setShortage(undefined),
     confirmReduction: () => { if (shortage && shortage.available >= 10 && shortage.available <= 20) { draftState.change({ dishCount: shortage.available }); setShortage(undefined); } },
   };
