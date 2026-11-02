@@ -1,80 +1,87 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
-import { PanResponder, Pressable, StyleSheet, Text, View, type GestureResponderEvent } from 'react-native';
+import { useCallback, useEffect, useMemo, useRef, useState, type ComponentRef } from 'react';
+import { BackHandler, Image, PanResponder, Pressable, ScrollView, StyleSheet, Text, View, type GestureResponderEvent } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { AppButton, BrandBanner, DishCard, StatusNotice, type VoteValue } from '../../../shared/ui';
-import { MOCK_DISHES } from '../../../data/api/mock/discoveryFixtures';
-import { HomeFlowFrame } from '../components/HomeFlowFrame';
+import { AppButton, StatusNotice, type VoteValue } from '../../../shared/ui';
+import { TutorialHomeStage } from '../components/TutorialHomeStage';
+import { TutorialHomeFooter } from '../components/TutorialHomeFooter';
+import { TutorialSetupStage } from '../components/TutorialSetupStage';
+import { TutorialSampleCard } from '../components/TutorialSampleCard';
 
-const steps = ['Tạo phòng', 'Thiết lập phòng', 'Không ăn', 'Ăn được', 'Muốn ăn', 'Hoàn tác'] as const;
 const expected: Partial<Record<number, VoteValue>> = { 2: 'NO', 3: 'OK', 4: 'WANT' };
-const instruction = [
-  'Chạm Tạo phòng để bắt đầu. Đây chỉ là ví dụ hướng dẫn.',
-  'Chủ phòng chọn 10–20 món. Mọi người có thể tự chọn khẩu vị ở bước thiết lập.',
-  'Vuốt sang trái để chọn Không ăn. Bạn cũng có thể dùng nút Không ăn.',
-  'Vuốt sang phải để chọn Ăn được. Bạn cũng có thể dùng nút Ăn được.',
-  'Nhấn đúp trên thẻ để chọn Muốn ăn. Bạn cũng có thể dùng nút Muốn ăn.',
-  'Hoàn tác được trước khi gửi phiếu. Thử hoàn tác lựa chọn trên thẻ mẫu.',
-];
-const sample = { id: 'gm09-tutorial-only', name: MOCK_DISHES[0]?.name ?? 'Thẻ mẫu hướng dẫn', description: 'Thẻ mẫu hướng dẫn · không thuộc phòng đang chơi' };
+const labels = { NO: 'Không ăn', OK: 'Ăn được', WANT: 'Muốn ăn' };
 
-/** No repository props: all actions are confined to this component's sample state. */
+/** Every action is local practice: no repository, session or live room dependency. */
 export function TutorialScreen({ onExit, onComplete }: { onExit: () => void; onComplete?: () => void }) {
   const { colors } = useShellTheme(), { textStyle } = useAppFonts();
   const [step, setStep] = useState(0), [vote, setVote] = useState<VoteValue>(), [undone, setUndone] = useState(false), [complete, setComplete] = useState(false);
-  const lastTap = useRef<number | null>(null);
-  const completed = useRef(false);
+  const scroll = useRef<ComponentRef<typeof ScrollView>>(null), lastTap = useRef<number | null>(null), completed = useRef(false);
+  const practice = step >= 2 && step <= 4, dimmed = !complete && (step === 0 || practice);
   const applyVote = useCallback((value: VoteValue) => { if (step >= 2 && step <= 4) setVote(value); }, [step]);
   const pan = useMemo(() => PanResponder.create({
     onMoveShouldSetPanResponder: (_, gesture) => step >= 2 && step <= 4 && Math.abs(gesture.dx) > 12 && Math.abs(gesture.dx) > Math.abs(gesture.dy),
     onPanResponderRelease: (_, gesture) => { if (Math.abs(gesture.dx) >= 40 && Math.abs(gesture.dx) > Math.abs(gesture.dy)) applyVote(gesture.dx < 0 ? 'NO' : 'OK'); },
   }), [applyVote, step]);
-  const tap = (event?: GestureResponderEvent) => {
-    const now = event?.nativeEvent.timestamp ?? Date.now();
-    if (lastTap.current !== null && now - lastTap.current <= 350) { lastTap.current = null; applyVote('WANT'); }
+  const tap = (event: GestureResponderEvent) => {
+    const now = event.nativeEvent.timestamp ?? Date.now();
+    if (lastTap.current !== null && now >= lastTap.current && now - lastTap.current <= 350) { lastTap.current = null; applyVote('WANT'); }
     else lastTap.current = now;
   };
   const advance = () => {
-    if (step >= 2 && step <= 4 && vote !== expected[step]) return;
+    if (practice && vote !== expected[step]) return;
     if (step === 5) { if (undone && !completed.current) { completed.current = true; setComplete(true); onComplete?.(); } return; }
     if (step < 4) setVote(undefined);
     setStep(value => value + 1); lastTap.current = null;
   };
   const restart = () => { completed.current = false; setStep(0); setVote(undefined); setUndone(false); setComplete(false); lastTap.current = null; };
-  const back = () => { if (step === 0 || complete) { onExit(); return; } setStep(value => value - 1); setVote(undefined); setUndone(false); lastTap.current = null; };
-  return <HomeFlowFrame title="Hướng dẫn chọn món" onHome={back} isMock>
-    <View style={[styles.bar, { backgroundColor: colors.text }]}>
-      <Text style={[styles.barText, { color: colors.surface }, textStyle(500)]}>{complete ? 'ĐÃ HOÀN TẤT' : `HƯỚNG DẪN · ${step + 1}/${steps.length}`}</Text>
-      <Pressable accessibilityRole="button" accessibilityLabel="Bỏ qua hướng dẫn" onPress={onExit} style={styles.skip}><Text style={[styles.barText, { color: colors.surface }, textStyle(500)]}>Bỏ qua</Text></Pressable>
-    </View>
-    {complete ? <>
-      <StatusNotice title="Bạn đã sẵn sàng" message="Các thao tác vừa rồi chỉ áp dụng cho thẻ mẫu. Chưa có phòng hay phiếu nào được tạo." colors={colors} />
-      <AppButton label="Xem lại hướng dẫn" onPress={restart} colors={colors} />
-      <AppButton label="Về trang chủ" variant="secondary" onPress={onExit} colors={colors} />
-    </> : <>
-      <Text accessibilityRole="header" style={[styles.title, { color: colors.text }, textStyle(700)]}>{steps[step]}</Text>
-      {step === 0 ? <View style={styles.sample}>
-        <BrandBanner illustrationSource={require('../../../../assets/brand/home/friends-dining-slot.png')} titleTextStyle={textStyle(700)} colors={colors} />
-        <AppButton label="Tạo phòng mẫu" iconSource={require('../../../../assets/brand/home/create.png')} iconSize={32} onPress={advance} colors={colors} />
-      </View> : step === 1 ? <View style={[styles.coach, { backgroundColor: colors.warm }]}>
-        <Text style={[styles.body, { color: colors.text }, textStyle(500)]}>Thiết lập minh họa · 15 món · Bữa trưa</Text>
-        <AppButton label="Thử thiết lập mẫu" onPress={advance} colors={colors} />
-      </View> : <View testID="tutorial-swipe-card" {...pan.panHandlers}>
-        <DishCard dish={sample} selectedVote={vote} onVote={applyVote} onPress={tap} disabled={step === 5} delayPressIn={0} colors={colors} />
-      </View>}
-      <View style={[styles.coach, { backgroundColor: colors.surface, borderColor: colors.line }]}><Text accessibilityLiveRegion="polite" style={[styles.body, { color: colors.text }, textStyle(400)]}>{instruction[step]}</Text></View>
-      {step >= 2 && step <= 4 && vote && vote !== expected[step] ? <Text accessibilityLiveRegion="polite" style={[styles.body, { color: colors.text }, textStyle(500)]}>{`Ở bước này, hãy thử chọn ${steps[step]}.`}</Text> : null}
-      {step >= 2 && step <= 4 ? <AppButton label="Tiếp tục hướng dẫn" disabled={vote !== expected[step]} onPress={advance} colors={colors} /> : null}
-      {step === 5 ? <>
-        <AppButton label="Hoàn tác trên thẻ mẫu" disabled={undone} onPress={() => { setVote(undefined); setUndone(true); }} colors={colors} />
-        <AppButton label="Hoàn tất hướng dẫn" disabled={!undone} onPress={advance} colors={colors} />
-      </> : null}
-    </>}
-  </HomeFlowFrame>;
+  const back = useCallback(() => { if (step === 0 || complete) { onExit(); return; } setStep(value => value - 1); setVote(undefined); setUndone(false); lastTap.current = null; }, [complete, onExit, step]);
+  useEffect(() => { const subscription = BackHandler.addEventListener('hardwareBackPress', () => { back(); return true; }); return () => subscription.remove(); }, [back]);
+  useEffect(() => { scroll.current?.scrollTo({ y: 0, animated: false }); }, [step, complete]);
+  return <SafeAreaView style={[styles.root, { backgroundColor: dimmed ? '#426B57' : colors.background }]}>
+    <ScrollView ref={scroll} contentContainerStyle={styles.content}>
+      <View style={[styles.bar, { backgroundColor: dimmed ? '#043B22' : colors.surface }]}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Quay lại" onPress={back} style={styles.back}><Image source={require('../../../../assets/brand/home/back.png')} accessible={false} style={[styles.backIcon, { tintColor: dimmed ? '#FFFFFF' : colors.text }]} /></Pressable>
+        <Text accessibilityRole="header" style={[styles.barText, { color: dimmed ? '#FFFFFF' : colors.text }, textStyle(500)]}>{complete ? 'ĐÃ HOÀN TẤT' : step === 1 ? 'Tạo phòng' : step === 5 ? 'Vòng 1' : 'HƯỚNG DẪN'}</Text>
+        {!complete && step !== 5 ? <Text accessibilityLabel={`Bước ${step + 1} trên 6`} style={[styles.barText, { color: dimmed ? '#FFFFFF' : colors.text }, textStyle(500)]}>{step < 2 ? `${step + 1}/2` : `${step - 1}/3`}</Text> : null}
+        <Pressable accessibilityRole="button" accessibilityLabel="Bỏ qua hướng dẫn" onPress={onExit} style={styles.skip}><Text style={[styles.barText, { color: dimmed ? '#FFFFFF' : colors.text }, textStyle(500)]}>Bỏ qua</Text></Pressable>
+      </View>
+      {complete ? <>
+        <StatusNotice title="Bạn đã sẵn sàng" message="Các thao tác vừa rồi chỉ áp dụng cho thẻ mẫu. Chưa có phòng hay phiếu nào được tạo." colors={colors} />
+        <AppButton label="Xem lại hướng dẫn" onPress={restart} colors={colors} />
+        <AppButton label="Về trang chủ" variant="secondary" onPress={onExit} colors={colors} />
+      </> : step === 0 ? <>
+        <TutorialHomeStage onCreate={advance} />
+        <View style={[styles.coach, { backgroundColor: colors.surface }]}><View style={[styles.pointer, { backgroundColor: colors.surface }]} /><Text style={[styles.body, { color: colors.text }, textStyle(400)]}>Chạm Tạo phòng để bắt đầu.</Text></View>
+        <TutorialHomeFooter />
+        <Text style={[styles.mock, { color: '#FFFFFF' }, textStyle(400)]}>Hướng dẫn mẫu · không tạo phòng thật</Text>
+      </> : step === 1 ? <TutorialSetupStage onNext={advance} /> : <>
+        <View style={styles.sampleHeading}><Text style={[styles.body, { color: practice ? '#FFFFFF' : colors.text }, textStyle(400)]}>{step === 5 ? 'Chọn món' : 'Thẻ mẫu'}</Text><Text style={[styles.small, { color: practice ? '#FFFFFF' : colors.text }, textStyle(500)]}>{step === 5 ? '2 / 10' : 'Không tính lượt chọn'}</Text></View>
+        <View style={[styles.progressTrack, { backgroundColor: colors.warm }]}><View style={[styles.progress, { backgroundColor: colors.green, width: step === 5 ? '20%' : '10%' }]} /></View>
+        <View testID="tutorial-swipe-card" {...pan.panHandlers}><TutorialSampleCard step={step} vote={vote} onPress={tap} /></View>
+        <View style={[styles.coach, { backgroundColor: practice ? colors.surface : colors.warm, borderColor: colors.line }, !practice && styles.undoCoach]}>
+          <View style={[styles.pointer, { backgroundColor: practice ? colors.surface : colors.warm }]} />
+          <Text accessibilityLiveRegion="polite" style={[styles.body, { color: colors.text }, textStyle(600)]}>{step === 2 ? 'Vuốt sang trái' : step === 3 ? 'Vuốt sang phải' : step === 4 ? 'Nhấn đúp vào thẻ' : 'Chọn nhầm? Bạn có thể Hoàn tác.'}</Text>
+          {practice ? <><Text style={[styles.body, { color: colors.text }, textStyle(400)]}>{`để chọn ${labels[expected[step]!]}.`}</Text><Text style={[styles.small, { color: colors.muted }, textStyle(400)]}>Thử ngay trên thẻ mẫu</Text></> : null}
+        </View>
+        {practice ? <>
+          <View accessibilityLabel="Nút thay thế thao tác vuốt" style={styles.voteButtons}>{(['NO', 'OK', 'WANT'] as const).map(value => <AppButton key={value} label={labels[value]} variant={vote === value ? 'primary' : 'secondary'} onPress={() => applyVote(value)} colors={colors} style={styles.voteButton} textStyle={{ fontSize: 12, lineHeight: 18, paddingHorizontal: 4, ...textStyle(600) }} />)}</View>
+          {vote && vote !== expected[step] ? <Text accessibilityLiveRegion="polite" style={[styles.body, { color: '#FFFFFF' }, textStyle(500)]}>{`Ở bước này, hãy thử chọn ${labels[expected[step]!]}.`}</Text> : null}
+          <AppButton label="Tiếp tục hướng dẫn" disabled={vote !== expected[step]} onPress={advance} colors={colors} />
+        </> : <>
+          <View style={styles.spacer} />
+          <AppButton label="Hoàn tác trên thẻ mẫu" variant="secondary" disabled={undone} onPress={() => { setVote(undefined); setUndone(true); }} colors={colors} />
+          <AppButton label="Hoàn tất hướng dẫn" disabled={!undone} onPress={advance} colors={colors} />
+        </>}
+      </>}
+    </ScrollView>
+  </SafeAreaView>;
 }
 const styles = StyleSheet.create({
-  bar: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', borderRadius: 12, paddingHorizontal: 12, marginBottom: 24 },
-  barText: { fontSize: 12, lineHeight: 18 }, skip: { minHeight: 48, minWidth: 48, alignItems: 'center', justifyContent: 'center' },
-  title: { fontSize: 27, lineHeight: 34, marginBottom: 20 }, body: { fontSize: 16, lineHeight: 24 },
-  coach: { borderWidth: 1, borderRadius: 20, padding: 20, gap: 16, marginVertical: 20 }, sample: { gap: 24 },
+  root: { flex: 1 }, content: { flexGrow: 1, width: '100%', maxWidth: 480, alignSelf: 'center', paddingHorizontal: 24, paddingVertical: 16, gap: 8 },
+  bar: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', borderRadius: 12, minHeight: 48, paddingRight: 12, gap: 8 }, barText: { fontSize: 12, lineHeight: 18 }, back: { minHeight: 48, minWidth: 48, alignItems: 'center', justifyContent: 'center' }, backIcon: { width: 20, height: 20 }, skip: { minHeight: 48, minWidth: 48, marginLeft: 'auto', alignItems: 'center', justifyContent: 'center' },
+  body: { fontSize: 16, lineHeight: 24, textAlign: 'center' }, small: { fontSize: 12, lineHeight: 18 },
+  sampleHeading: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: 12, marginTop: 12 }, progressTrack: { height: 4, borderRadius: 2 }, progress: { height: 4, borderRadius: 2 },
+  coach: { borderRadius: 20, padding: 20, gap: 8, alignItems: 'center', marginTop: 24, marginBottom: 8 }, pointer: { position: 'absolute', top: -8, width: 18, height: 18, transform: [{ rotate: '45deg' }] }, undoCoach: { borderWidth: 1, borderRadius: 12 },
+  voteButtons: { flexDirection: 'row', gap: 8 }, voteButton: { flex: 1, minWidth: 0 }, spacer: { flexGrow: 1, minHeight: 24 }, mock: { fontSize: 12, lineHeight: 18, textAlign: 'center' },
 });

@@ -10,10 +10,10 @@ test('tutorial only advances after the requested NO/OK choice', async () => {
   expect(screen.getByRole('button', { name: 'Tiếp tục hướng dẫn' })).toBeDisabled();
   await press('Muốn ăn'); expect(screen.getByRole('button', { name: 'Tiếp tục hướng dẫn' })).toBeDisabled();
   await press('Không ăn'); await press('Tiếp tục hướng dẫn');
-  expect(screen.getByText('HƯỚNG DẪN · 4/6')).toBeOnTheScreen();
+  expect(screen.getByLabelText('Bước 4 trên 6')).toBeOnTheScreen();
   expect(screen.getByRole('button', { name: 'Tiếp tục hướng dẫn' })).toBeDisabled();
   await press('Ăn được'); await press('Tiếp tục hướng dẫn');
-  expect(screen.getByText('HƯỚNG DẪN · 5/6')).toBeOnTheScreen();
+  expect(screen.getByLabelText('Bước 5 trên 6')).toBeOnTheScreen();
 });
 
 test('double tap, undo, completion and replay stay isolated from room mutations', async () => {
@@ -33,7 +33,7 @@ test('double tap, undo, completion and replay stay isolated from room mutations'
     expect(screen.getByRole('button', { name: 'Hoàn tất hướng dẫn' })).toBeDisabled();
     await press('Hoàn tác trên thẻ mẫu'); await press('Hoàn tất hướng dẫn');
     expect(onComplete).toHaveBeenCalledTimes(1);
-    await press('Xem lại hướng dẫn'); expect(screen.getByText('HƯỚNG DẪN · 1/6')).toBeOnTheScreen();
+    await press('Xem lại hướng dẫn'); expect(screen.getByLabelText('Bước 1 trên 6')).toBeOnTheScreen();
     await press('Bỏ qua hướng dẫn'); expect(onExit).toHaveBeenCalledTimes(1);
     expect(create).not.toHaveBeenCalled(); expect(join).not.toHaveBeenCalled(); expect(start).not.toHaveBeenCalled(); expect(submit).not.toHaveBeenCalled();
   } finally { create.mockRestore(); join.mockRestore(); submit.mockRestore(); start.mockRestore(); }
@@ -43,7 +43,7 @@ test('Back moves within tutorial first, then exits without completion or a ballo
   const exit = jest.fn(), complete = jest.fn();
   await render(<TutorialScreen onExit={exit} onComplete={complete} />);
   await reachCard(); await press('Quay lại');
-  expect(screen.getByText('Thiết lập minh họa · 15 món · Bữa trưa')).toBeOnTheScreen();
+  expect(screen.getByText('Thiết lập mẫu · 12 món · không tạo phòng thật')).toBeOnTheScreen();
   await press('Quay lại'); await press('Quay lại');
   expect(exit).toHaveBeenCalledTimes(1); expect(complete).not.toHaveBeenCalled();
 });
