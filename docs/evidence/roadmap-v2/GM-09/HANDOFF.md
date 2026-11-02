@@ -32,7 +32,7 @@ coach pointers and received icon/hand/bowl art rather than generic sections.
 Home/guest alignment and green brand tokens are corrected. Current code still
 requires GM-10 setup and the real public-preview adapter; real legacy routes
 are retained. Native visual/device acceptance is **Not run**, no Done/approval.
-Local commits only; prompt, raw exports and build logs remain ignored.
+Source revisions and verification limits are recorded in the linked handoff.
 
 ## Current local handoff — steps 3–7, 2026-11-01
 
@@ -95,8 +95,8 @@ Windows symlink privilege error and six skipped tests; it is not fully green.
 See [current checks](CHECKS.md) and [resolution,
 historical manifest limits and user-run staging/commit commands](figma-update/MAIN_MERGE_2026-11-01.md).
 The agent has not staged the resolutions or committed/pushed. Index entries will
-remain unmerged until the user stages them; `prompt.md` remains ignored and
-untracked. Device checks and Trí review remain required; no Done/approval claim.
+remain unmerged until the user stages them. Device checks and Trí review remain
+required; no Done/approval claim.
 
 ## GM-09.2 step 1 candidate — 2026-10-31
 
@@ -214,7 +214,7 @@ Expo Go Android cùng LAN, SDK 57. Home `/` → **＋ Tạo kèo ăn** (`/create
 - Expo Go Android, ảnh/video, dark/font200/TalkBack/keyboard/hardware Back trên thiết bị: **Not run**, chưa có thiết bị/adb hoặc xác nhận mới từ người dùng. Owner Tuấn và reviewer Trí kiểm trước nghiệm thu.
 - Python 3.12.14 hiện hành: 544 tests, **Fail (1 failure, 5 errors)**; encoding probe và taxonomy locking Windows đã ghi ở GM-07. Không sửa data/runner trong GM-09; cần maintainer/Trí xử lý hoặc kiểm Linux/WSL. [Output](UI_REWORK_PYTHON_REGRESSION.txt).
 - Không đổi package/lockfile/shared UI/DTO/schema/luật phiếu; không thêm provider, GPS/camera/native module. Không có RPC thật, lobby/preferences/social thật, SecureStore/outbox hay dataset verified; các phần này thuộc task nhận sau.
-- `.agents/` tự tạo đã xóa hoàn toàn khỏi workspace theo yêu cầu ngày 2026-10-13; không tạo rules/skills thay thế. Chỉ dùng AGENTS/task/spec/workflow và artifact hiện hành trong project. `prompt.txt` không bị sửa. Không commit/push/Approved/Done; việc bàn giao này không thay review Trí.
+- `.agents/` tự tạo đã xóa hoàn toàn khỏi workspace theo yêu cầu ngày 2026-10-13; không tạo rules/skills thay thế. Chỉ dùng AGENTS/task/spec/workflow và artifact hiện hành trong project. Không commit/push/Approved/Done; việc bàn giao này không thay review Trí.
 # GM-09 Home Figma implementation supplement — 2026-10-27
 
 The current working tree updates the Home screen against [approved frame 330:3067](figma/330-3067-home.png), including the official G mark, headline, friends-dining banner, create/join tiles, quick-friends section and bottom navigation. It reuses GM-05 shared components (`AppHeader`, `AppButton`, `AvatarRow`, `BrandBanner`, `AppBottomNavigation`) and keeps existing session/repository/navigation callbacks. Figma asset provenance and hashes are in [`mobile/assets/brand/SOURCE.md`](../../../../mobile/assets/brand/SOURCE.md).

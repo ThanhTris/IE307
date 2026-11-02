@@ -75,7 +75,7 @@ Kiểm typecheck/lint/Jest/architecture bằng `npm run check`, repo validator/P
 
 Người dùng yêu cầu kiểm lại GM-09, downstream và các UI đã Done rồi hoàn thiện. [Audit và patch/test plan bổ sung](COMPLETION_REVIEW_2026-10-15.md) ghi trạng thái Project live, UI GM-02/05/12 và scope code trước khi sửa. Không thay owner/reviewer/contract hoặc nghiệm thu các task sau. Các plan bên dưới là lịch sử.
 
-Issue [#70](https://github.com/ThanhTris/IE307/issues/70); owner Tuấn (`mtuan2491`), reviewer Trí. Người dùng yêu cầu triển khai qua `prompt.txt`; issue có `assignment:accepted` ngày kiểm 2026-10-12. Không đổi task/Project hoặc tự nghiệm thu. Contract `food-v1/roadmap-v2/GM-09.1`.
+Issue [#70](https://github.com/ThanhTris/IE307/issues/70); owner Tuấn (`mtuan2491`), reviewer Trí. Người dùng yêu cầu triển khai GM-09; issue có `assignment:accepted` ngày kiểm 2026-10-12. Không đổi task/Project hoặc tự nghiệm thu. Contract `food-v1/roadmap-v2/GM-09.1`.
 
 Start gate đọc Project lúc `2026-10-12T16:42:58Z`: `READY_TO_CLAIM`; local còn proposed, GitHub đã accepted. GM-05/07 Done và output/HANDOFF có trên base `9e9f5ba67899ea162b79b5c6ac17cd5479c505da`. Nhận GM-05.1 qua PR #109 và GM-07.1 qua PR #104/#105; không dùng snapshot `.agents` làm nguồn hiện hành.
 

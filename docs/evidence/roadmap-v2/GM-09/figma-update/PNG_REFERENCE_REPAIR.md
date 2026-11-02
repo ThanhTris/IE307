@@ -94,4 +94,5 @@ tests and Hermes export do not prove visual acceptance. GM-09 is not marked Done
 
 No migration/API/engine changes, dataset admission, Project edits, GitHub push or
 Figma write. Local source commits follow the user's earlier per-step instruction.
-`prompt.md`, original PNGs, inspection crops/logs and build output remain ignored.
+Original reference exports and generated build artifacts are excluded from the
+source handoff.

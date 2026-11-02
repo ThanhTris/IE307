@@ -47,13 +47,12 @@ git add -- docs/evidence/roadmap-v2/GM-09/figma-update/MAIN_MERGE_2026-11-01.md 
 git diff --name-only --diff-filter=U
 git diff --cached --check
 git diff --cached --stat
-git diff --cached --name-only -- prompt.md
 ```
 
-The branch must be `codex/gm-09-figma-update`; the unresolved-files command and
-the staged `prompt.md` command must print nothing. Main's other merged changes
+The branch must be `codex/gm-09-figma-update`; the unresolved-files command must
+print nothing. Main's other merged changes
 were already staged by the user's merge and belong in the resulting merge commit.
-Review those changes too. Do not use `git add .` or force-add private prompts.
+Review those changes too. Stage only the intended source, tests and evidence.
 
 After review and checks:
 

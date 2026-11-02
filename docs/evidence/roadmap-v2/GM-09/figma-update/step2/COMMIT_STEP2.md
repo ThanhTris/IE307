@@ -1,4 +1,4 @@
-# Commit step 2 locally — do not include prompt.md
+# Commit step 2 locally
 
 Base before this step: `8172241` on `codex/gm-09-figma-update`.
 The agent has not staged/committed/pushed. Review the candidate and device limits
@@ -11,7 +11,6 @@ Set-Location E:\Workspace\project\IE307
 if ((git branch --show-current).Trim() -ne 'codex/gm-09-figma-update') { throw 'Sai nhánh' }
 git status --short --branch
 git diff --check
-git check-ignore -v prompt.md
 
 git add -- mobile/src/app/index.tsx mobile/src/app/continue-session.tsx mobile/src/app/dev/home.tsx
 git add -- mobile/src/features/home/screens/HomeScreen.tsx mobile/src/features/home/screens/ContinueSessionScreen.tsx mobile/src/features/home/screens/GuestSessionExpiredScreen.tsx mobile/src/features/home/screens/HomePreviewScreen.tsx
@@ -25,12 +24,11 @@ git add -- docs/evidence/roadmap-v2/GM-09/figma-update/step2/figma-home.png docs
 
 git diff --cached --check
 git diff --cached --name-only
-git diff --cached --name-only -- prompt.md
 git diff --cached --stat
 ```
 
-The staged prompt command must print nothing. No `.work`, credentials or bundle
-output belongs in the staged diff. Do not use `git add .` or `git add -f`.
+Review the staged file list against the task scope. Credentials and generated
+build output do not belong in the staged diff. Stage the listed paths explicitly.
 After reviewing the exact staged diff:
 
 ```powershell

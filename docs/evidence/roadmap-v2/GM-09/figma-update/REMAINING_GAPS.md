@@ -4,7 +4,7 @@
 GM-09 requirements and add small missing controls/states in the existing visual
 language without a major layout change. The user authorizes a local commit after
 each remaining step, no push or Figma writes; stop on a serious error. This
-supersedes the earlier local prompt's manual-commit/one-step-only preference.
+supersedes the earlier manual-commit/one-step-only preference.
 No Task/Project approval or scope transfer to another owner is implied.
 
 Live start gate: READY_TO_CLAIM at 2026-11-01T15:51:53Z. Base: step 2 `e5f92d2`.

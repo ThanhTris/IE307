@@ -15,7 +15,6 @@ if ((git branch --show-current).Trim() -ne 'codex/gm-09-figma-update') {
 }
 git status --short --branch
 git diff --check
-git check-ignore -v prompt.md
 ```
 
 Trong `mobile`, chạy `npm start`, mở Expo Go Android và full reload. Kiểm welcome → khách → nhập tên → Tiếp tục → Home; Back, tên lỗi/Unicode, keyboard, CTA toàn vùng và tên điền vào create/join. Account action phải báo chưa tích hợp, không giả đăng nhập. Kiểm thêm 320/360dp, chữ200%, TalkBack và Dark; ghi device/revision/ảnh/kết quả thật vào evidence. Đọc [STEP1](STEP1.md) để biết kiểm tự động và lỗi còn tồn tại.
@@ -38,7 +37,7 @@ git diff --cached --check
 git diff --cached --name-only
 ```
 
-Staged diff phải chỉ chứa phạm vi trên; không có `prompt.md`, `.work`, credential hoặc output bundle. `prompt.md` vẫn ignore cục bộ. Nếu bạn sửa source sau revision trong manifest thì chạy lại checks liên quan và cập nhật manifest/evidence trước review.
+Staged diff phải chỉ chứa source, test và evidence trong phạm vi task; không đưa credential hoặc output bundle vào commit. Nếu bạn sửa source sau revision trong manifest thì chạy lại checks liên quan và cập nhật manifest/evidence trước review.
 
 ## 3. Tạo commit rồi push đúng nhánh
 
