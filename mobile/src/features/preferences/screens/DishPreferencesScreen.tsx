@@ -9,7 +9,7 @@ import { SetupChoice } from '../../context/components/SetupChoice';
 import { emptyPreferences, type SetupCatalogue } from '../../context/services/dishSetup';
 import { flavorChoices, flavorSelected, isAnything, optionIds, toggleFlavor, togglePreference } from '../services/dishPreferences';
 import { preferenceAssets } from '../components/preferenceAssets';
-import { PreferenceTemperaturePanel } from '../components/PreferenceTemperaturePanel';
+import { PreferenceAdvancedPanel } from '../components/PreferenceAdvancedPanel';
 
 export function DishPreferencesScreen({ preferences, catalogue, onChange, onBack, onSave, busy, submitDisabled, notice, editing, extra }: {
   preferences: UserPreferences; catalogue: SetupCatalogue; onChange: (value: UserPreferences) => void;
@@ -29,7 +29,7 @@ export function DishPreferencesScreen({ preferences, catalogue, onChange, onBack
     </View>)}
     {heading('Hương vị')}<View style={styles.grid}>{flavorChoices.map(choice => <SetupChoice key={choice.id} label={choice.label} columns={fontScale > 1.7 ? 1 : 2} icon={preferenceAssets[choice.id]} selected={flavorSelected(preferences, choice)} disabled={busy} onPress={() => onChange(toggleFlavor(preferences, choice))} />)}</View>
     <Text style={[styles.note, { color: colors.muted }, textStyle(400)]}>Ưu tiên mềm: ít mặn/đậm đà, chua và cay; không phải yêu cầu loại món.</Text>
-    <PreferenceTemperaturePanel value={preferences.temperature} disabled={busy} onChange={temperature => onChange({ ...preferences, temperature })} />
+    <PreferenceAdvancedPanel value={preferences.temperature} flavor={preferences.flavor} disabled={busy} onChange={temperature => onChange({ ...preferences, temperature })} onFlavorChange={flavor => onChange({ ...preferences, flavor })} />
     <SetupChoice label="Cho phép lưu lịch sử phiên này" checkbox columns={1} selected={preferences.historyConsent} disabled={busy} onPress={() => onChange({ ...preferences, historyConsent: !preferences.historyConsent })} />
     <Text style={[styles.note, { color: colors.muted }, textStyle(400)]}>Khẩu vị là riêng tư. Thay đổi áp dụng cho phòng này; không ghi đè mặc định tài khoản.</Text>{extra}
   </DishSetupFrame>;

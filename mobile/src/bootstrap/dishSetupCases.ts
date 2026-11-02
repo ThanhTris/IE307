@@ -1,6 +1,5 @@
 import type { ComponentProps } from 'react';
-import type { SetupDraft } from '../features/context/services/dishSetup';
-import { emptyPreferences } from '../features/context/services/dishSetup';
+import { defaultScheduledTime, emptyPreferences, type SetupDraft, type SetupStage } from '../features/context/services/dishSetup';
 import { DishSetupFlow } from '../features/context/screens/DishSetupFlow';
 import { flavorChoices, toggleFlavor } from '../features/preferences/services/dishPreferences';
 import { dishSetupCatalogue } from './dishSetupCatalogue';
@@ -27,14 +26,19 @@ export const dishSetupCases: Case[] = [
   { id: 'stale', label: 'Phiên bản cũ', scenario: 'stale' }, { id: 'taxonomy-empty', label: 'Taxonomy rỗng', scenario: 'taxonomy-empty' },
   { id: 'member', label: 'Thành viên chỉ sửa khẩu vị', scenario: 'member' },
 ];
-export function createDishSetupCase(id: string, now = Date.now()): Omit<ComponentProps<typeof DishSetupFlow>, 'onExit' | 'controls'> {
+export function casesForSetupStage(stage: SetupStage) {
+  if (stage === 'complete' || stage === 'closed') return [];
+  const shared = new Set(['timeout', 'ack-read-error', 'stale']);
+  return dishSetupCases.filter(item => stage === 'preferences' ? item.id.startsWith('P') || item.id === 'taxonomy-empty' || shared.has(item.id) : !item.id.startsWith('P') && item.id !== 'taxonomy-empty');
+}
+export function createDishSetupCase(id: string, now = Date.now(), context: 'setup' | 'preferences' = 'setup'): Omit<ComponentProps<typeof DishSetupFlow>, 'onExit' | 'controls'> {
   const entry = dishSetupCases.find(item => item.id === id) ?? dishSetupCases[0]!;
-  const future = new Date(now + 900000).toISOString(), past = new Date(now - 60000).toISOString();
-  const isPreferences = entry.id.startsWith('P');
+  const future = defaultScheduledTime(now), past = new Date(now - 60000).toISOString();
+  const isPreferences = entry.id.startsWith('P') || (!entry.id.startsWith('R') && context === 'preferences');
   const chosen = { ...emptyPreferences(), categoryIds: dishSetupCatalogue.categories.slice(0, 2).flatMap(option => [option.id, ...(option.linkedIds ?? [])]), cuisineIds: dishSetupCatalogue.cuisines.slice(0, 1).map(option => option.id) };
   const preferences = entry.id === 'P02' ? toggleFlavor(emptyPreferences(), flavorChoices[3]) : entry.id === 'P01' || entry.id === 'P08' || entry.id === 'P09' ? emptyPreferences() : chosen;
   return { initialStage: isPreferences ? 'preferences' : 'setup', initialPanel: entry.panel, initialSchedule: future, initialSearch: entry.id === 'R10' ? 'Ngọc Anh' : undefined,
     gateway: createDishSetupPreview(entry.scenario, { settings: { ...entry.settings, ...(entry.settings?.timeMode === 'scheduled' ? { desiredAt: entry.id === 'R08' ? past : future } : {}) },
       room: isPreferences ? { id: 'ui-room', code: 'MCK234', version: 1, state: 'LOBBY' } : undefined,
-      accountDefaults: isPreferences ? preferences : emptyPreferences(), preferences: entry.id === 'P04' ? preferences : undefined }) };
+      accountDefaults: isPreferences ? preferences : emptyPreferences(), preferences: entry.id === 'P04' ? preferences : undefined }, now) };
 }

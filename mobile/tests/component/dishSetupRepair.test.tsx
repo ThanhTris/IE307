@@ -6,7 +6,7 @@ import { useDishSetupFlow } from '../../src/features/context/hooks/useDishSetupF
 import { SetupFriendsSheet } from '../../src/features/context/components/SetupFriendsSheet';
 import { SetupInvitees } from '../../src/features/context/components/SetupInvitees';
 import { SetupCheckboxRow } from '../../src/features/context/components/SetupCheckboxRow';
-import { PreferenceTemperaturePanel } from '../../src/features/preferences/components/PreferenceTemperaturePanel';
+import { PreferenceAdvancedPanel } from '../../src/features/preferences/components/PreferenceAdvancedPanel';
 
 const room: SetupRoom = { id: 'ui-room', code: 'MCK234', version: 1, state: 'LOBBY' };
 test('discarding preference and settings edits returns to receipt without a write or room change', async () => {
@@ -26,18 +26,18 @@ test('discarding preference and settings edits returns to receipt without a writ
   expect(result.current.dirty).toBe(true);
   await act(async () => { result.current.reset(); result.current.returnFromEditor(); });
   expect(result.current.stage).toBe('complete');
-  expect(result.current.draft.mealSlot).toBe('lunch');
+  expect(result.current.draft.mealSlot).toBe((await gateway.read()).settings?.mealSlot);
   expect(write).not.toHaveBeenCalled();
   expect((await gateway.read()).room).toEqual(room);
 });
-test('saving an existing setup returns to receipt and preserves own preferences on the same room', async () => {
+test('saving an existing setup advances to preferences and preserves own choices on the same room', async () => {
   const gateway = createDishSetupPreview('default', { room, preferences: emptyPreferences(true) });
   const { result } = await renderHook(() => useDishSetupFlow(gateway, undefined, undefined, 'preferences'));
   await waitFor(() => expect(result.current.data).toBeDefined());
   await act(async () => result.current.editSettings());
   await act(async () => result.current.change({ dishCount: 18 }));
   await act(async () => result.current.submitSettings());
-  expect(result.current.stage).toBe('complete');
+  expect(result.current.stage).toBe('preferences');
   expect(result.current.dirty).toBe(false);
   const saved = await gateway.read();
   expect(saved.room).toMatchObject({ id: room.id, version: 2 });
@@ -51,7 +51,7 @@ test('fresh setup Back always offers discard and continuing keeps the draft', as
   expect(screen.getByRole('header', { name: 'Bỏ thiết lập phòng?' })).toBeOnTheScreen();
   expect(exit).not.toHaveBeenCalled();
   await fireEvent.press(screen.getByText('Tiếp tục thiết lập'));
-  expect(screen.queryByText('Bỏ thiết lập phòng?')).toBeNull();
+  await waitFor(() => expect(screen.queryByText('Bỏ thiết lập phòng?')).toBeNull());
 });
 test('existing-room Back never silently exits or cancels; explicit confirmation shows cancellation result', async () => {
   const gateway = createDishSetupPreview('default', { room, preferences: emptyPreferences() }), write = jest.spyOn(gateway, 'write'), exit = jest.fn();
@@ -93,7 +93,7 @@ test('recent-history helper stays in the checkbox row and does not disable the p
 });
 test('advanced disclosure keeps the current temperature and uses explicit radio choices', async () => {
   const change = jest.fn();
-  await render(<PreferenceTemperaturePanel value="cold" onChange={change} />);
+  await render(<PreferenceAdvancedPanel value="cold" onChange={change} />);
   expect(screen.getByText('Nhiệt độ · Lạnh')).toBeOnTheScreen();
   await fireEvent.press(screen.getByRole('button', { name: 'Tùy chọn nâng cao' }));
   expect(screen.getByRole('radio', { name: 'Lạnh' })).toBeChecked();

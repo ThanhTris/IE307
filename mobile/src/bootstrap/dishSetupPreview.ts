@@ -8,10 +8,10 @@ export type DishSetupScenario = typeof dishSetupScenarios[number];
 const clone = <T,>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 export function createDishSetupPreview(scenario: DishSetupScenario = 'default', seed?: {
   room?: SetupRoom; preferences?: UserPreferences; accountDefaults?: UserPreferences; settings?: Partial<SetupDraft>;
-}): DishSetupGateway {
+}, at = Date.now()): DishSetupGateway {
   let room: SetupRoom | undefined = scenario === 'closed' || scenario === 'member' ? { id: 'ui-room', code: 'MCK234', version: 1, state: scenario === 'closed' ? 'CLOSED' : 'LOBBY' } : seed?.room;
   let preferences: UserPreferences | undefined = seed?.preferences, lostReply = false, rejected = false, failRead = false, stale = false, cancelled = false;
-  let settings = { ...initialSetupDraft(), dishCount: scenario === 'shortage15' ? 20 : 15, ...seed?.settings };
+  let settings = { ...initialSetupDraft(at), dishCount: scenario === 'shortage15' ? 20 : 15, ...seed?.settings };
   const cache = new Map<string, { body: string; reply: SetupReply }>();
   const delay = async () => { if (scenario === 'loading') await new Promise(resolve => setTimeout(resolve, 600)); };
   return {

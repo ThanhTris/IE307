@@ -1,5 +1,7 @@
 # GM-10.2 — bàn giao sau bước1–6
 
+**Điều chỉnh mới nhất:** [BEHAVIOR_REFINEMENT](BEHAVIOR_REFINEMENT.md) thay chỉ dẫn về save settings/footer và ghi bổ sung tương tác. Các kết quả bên dưới giữ nguyên cho source lịch sử; xem checks revision mới.
+
 **Bản sửa sau lượt Expo đầu:** [EXPO_REPAIR](EXPO_REPAIR.md) sửa dialog,
 điểm quay về editor/receipt, xác nhận hủy phòng mẫu, lịch7 cột/wheel, chip
 bạn/checkbox và advanced panel. Có bổ sung cancel vào UI port; chỉ mock

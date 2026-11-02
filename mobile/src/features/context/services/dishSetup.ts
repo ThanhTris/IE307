@@ -7,11 +7,35 @@ export type SetupDraft = {
   avoidRecent: boolean; inviteeIds: string[];
 };
 export type SetupRoom = { id: string; code: string; version: number; state: 'LOBBY' | 'CLOSED' };
+export type SetupStage = 'setup' | 'preferences' | 'complete' | 'closed';
 export type SetupOption = { id: string; label: string; unknown?: boolean; code?: string; linkedIds?: string[] };
 export type SetupCatalogue = { categories: SetupOption[]; cuisines: SetupOption[] };
 export type SetupFriend = { id: string; label: string };
 export const emptyPreferences = (consent = false): UserPreferences => ({ cuisineIds: [], categoryIds: [], historyConsent: consent });
-export const initialSetupDraft = (): SetupDraft => ({ mealSlot: 'lunch', dishCount: 15, timeMode: 'now', desiredAt: null, budget: null, avoidRecent: true, inviteeIds: [] });
+export const initialSetupDraft = (at?: number): SetupDraft => ({ mealSlot: at === undefined ? 'lunch' : mealAtTime(at), dishCount: 15, timeMode: 'now', desiredAt: null, budget: null, avoidRecent: true, inviteeIds: [] });
+/** User-requested hour windows in UTC+7, inclusive of the named ending hour. */
+export function mealAtTime(at: number): MealSlot {
+  const hour = new Date(at + 7 * 3600000).getUTCHours();
+  if (hour >= 7 && hour <= 8) return 'breakfast';
+  if (hour >= 11 && hour <= 13) return 'lunch';
+  if (hour >= 19 && hour <= 21) return 'dinner';
+  return 'snack';
+}
+/** Picker precision is minutes; reopen from Now always starts fifteen displayed minutes ahead. */
+export const defaultScheduledTime = (at: number) => new Date(Math.floor(at / 60000) * 60000 + 15 * 60000).toISOString();
+export function switchToNow(draft: SetupDraft, at: number): SetupDraft {
+  return { ...draft, timeMode: 'now', desiredAt: null, mealSlot: mealAtTime(at) };
+}
+export function changeSetupMeal(draft: SetupDraft, mealSlot: MealSlot, at: number): SetupDraft {
+  if (draft.timeMode !== 'scheduled' || !draft.desiredAt || !Number.isFinite(Date.parse(draft.desiredAt)) || mealSlot === 'snack') return { ...draft, mealSlot };
+  const hour = mealSlot === 'breakfast' ? '07' : mealSlot === 'lunch' ? '12' : '18';
+  let candidate = parseSchedule(scheduleParts(draft.desiredAt).date, hour, '00')!;
+  if (Date.parse(candidate) <= at) {
+    candidate = parseSchedule(scheduleParts(new Date(at).toISOString()).date, hour, '00')!;
+    if (Date.parse(candidate) <= at) candidate = new Date(Date.parse(candidate) + 86400000).toISOString();
+  }
+  return { ...draft, mealSlot, desiredAt: candidate };
+}
 export function setupValidation(draft: SetupDraft, now: number): string | null {
   if (!Number.isInteger(draft.dishCount) || draft.dishCount < 10 || draft.dishCount > 20) return 'Hãy chọn số nguyên từ 10 đến 20 món.';
   if (draft.timeMode === 'scheduled' && (!draft.desiredAt || !Number.isFinite(Date.parse(draft.desiredAt)) || Date.parse(draft.desiredAt) <= now)) return 'Chọn thời gian trong tương lai để tiếp tục.';

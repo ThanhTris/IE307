@@ -1,0 +1,48 @@
+{
+  "revision": "ui-figma-final/2026-10-25/GM-10.2-behavior",
+  "sourceManifest": "BEHAVIOR_REFINEMENT_MANIFEST.json",
+  "mobile": {
+    "failed": 0,
+    "status": "Pass",
+    "suites": 47,
+    "tests": 878,
+    "seconds": 121.017
+  },
+  "png": {
+    "tests": 28,
+    "status": "Pass"
+  },
+  "typecheck": "Pass",
+  "eslintSourceTestsScripts": "Pass",
+  "architecture": "Pass",
+  "android": {
+    "status": "Pass",
+    "sha256": "00a6bf96083b81fce4c43ab732ede219377a6de8771a5deb9f6559a6629a651f",
+    "bundle": "entry-5dacb31f85a383072941c4f604b76458.hbc",
+    "deviceAcceptance": false
+  },
+  "python": {
+    "status": "Fail",
+    "passed": 650,
+    "seconds": 119.503,
+    "cause": "Windows symlink privilege denied during test setup",
+    "errors": 1,
+    "assertionFailures": 0,
+    "total": 657,
+    "skipped": 6,
+    "error": "WinError1314: test_stage_refuses_symlink_output"
+  },
+  "native": {
+    "afterRefinement": "Not run",
+    "deviceAcceptance": false
+  },
+  "reviewerApproval": "Not granted",
+  "sourceManifestSha256": "e2bb321c54a8225c932f20b0b7ef6ce0977d0b5c8fd9609314a894ed35a15326",
+  "fullLint": {
+    "status": "Fail",
+    "importErrors": 4,
+    "scope": "existing ignored local QA file"
+  },
+  "repositoryValidation": "Pass",
+  "taskIndexes": "Pass"
+}

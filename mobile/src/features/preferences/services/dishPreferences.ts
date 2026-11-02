@@ -1,4 +1,4 @@
-import type { FlavorProfile, UserPreferences } from '../../../data/api/contracts';
+import type { FlavorItem, FlavorProfile, UserPreferences } from '../../../data/api/contracts';
 import type { SetupOption } from '../../context/services/dishSetup';
 
 export const optionIds = (option: SetupOption) => [option.id, ...(option.linkedIds ?? [])];
@@ -24,4 +24,23 @@ export function toggleFlavor(preferences: UserPreferences, choice: typeof flavor
   const flavor: FlavorProfile = { spicy: unknown(), salty: unknown(), sour: unknown(), sweet: unknown(), ...preferences.flavor };
   flavor[choice.key] = flavorSelected(preferences, choice) ? unknown() : { present: true, intensity: choice.intensity };
   return { ...preferences, flavor };
+}
+export const flavorDetailLevels = [
+  { id: 'any', label: 'Không ưu tiên', value: { present: null, intensity: 'unknown' } },
+  { id: 'none', label: 'Không có', value: { present: false, intensity: 'none' } },
+  { id: 'present', label: 'Có, chưa rõ mức', value: { present: true, intensity: 'unknown' } },
+  { id: 'low', label: 'Nhẹ', value: { present: true, intensity: 'low' } },
+  { id: 'medium', label: 'Vừa', value: { present: true, intensity: 'medium' } },
+  { id: 'high', label: 'Đậm', value: { present: true, intensity: 'high' } },
+] as const;
+export type FlavorDetailLevel = typeof flavorDetailLevels[number]['id'];
+export function flavorDetailSelection(item?: FlavorItem) {
+  return flavorDetailLevels.find(level => level.value.present === (item?.present ?? null) && level.value.intensity === (item?.intensity ?? 'unknown'))?.id;
+}
+export function setFlavorDetail(profile: FlavorProfile | undefined, key: keyof FlavorProfile, level: FlavorDetailLevel): FlavorProfile {
+  const unknown = () => ({ present: null, intensity: 'unknown' as const });
+  const next: FlavorProfile = { spicy: unknown(), salty: unknown(), sweet: unknown(), sour: unknown(), ...profile };
+  const selected = flavorDetailLevels.find(item => item.id === level)!;
+  next[key] = { ...selected.value };
+  return next;
 }

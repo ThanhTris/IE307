@@ -1,5 +1,7 @@
 # GM-10 — bàn giao context và khẩu vị
 
+**Điều chỉnh mới nhất:** [tương tác sau lượt Expo tiếp theo](figma-update/BEHAVIOR_REFINEMENT.md) cập nhật giờ/buổi ăn, editor, QA, khẩu vị nâng cao và xác nhận hủy. Đọc checks/manifest của revision này; native sau sửa vẫn Not run.
+
 **Mới nhất — sửa theo Expo:** [bản sửa UI/điều hướng](figma-update/EXPO_REPAIR.md)
 có manifest, checks và checklist kiểm lại. Ảnh người dùng xác nhận lỗi trước
 sửa; native/visual sau sửa vẫn chờ kết quả thiết bị, chưa nghiệm thu.

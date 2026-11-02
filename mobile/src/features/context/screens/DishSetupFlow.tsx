@@ -10,11 +10,11 @@ import { SetupShortageDialog } from '../components/SetupShortageDialog';
 import { SetupConfirmDialog } from '../components/SetupConfirmDialog';
 import { useDishSetupFlow } from '../hooks/useDishSetupFlow';
 import type { DishSetupGateway } from '../services/dishSetupGateway';
-import type { SetupRoom } from '../services/dishSetup';
+import { defaultScheduledTime, type SetupRoom, type SetupStage } from '../services/dishSetup';
 import { DishSetupScreen } from './DishSetupScreen';
 
 export function DishSetupFlow({ gateway, onExit, onLobby, controls, initialStage = 'setup', initialPanel, initialSchedule, initialSearch, requestId, now = Date.now }: {
-  gateway: DishSetupGateway; onExit: () => void; onLobby?: (room: SetupRoom) => void; controls?: (locked: boolean) => ReactNode;
+  gateway: DishSetupGateway; onExit: () => void; onLobby?: (room: SetupRoom) => void; controls?: (locked: boolean, stage: SetupStage) => ReactNode;
   initialStage?: 'setup' | 'preferences'; initialPanel?: 'schedule' | 'calendar' | 'friends' | 'discard'; initialSchedule?: string; initialSearch?: string;
   requestId?: () => string; now?: () => number;
 }) {
@@ -33,20 +33,20 @@ export function DishSetupFlow({ gateway, onExit, onLobby, controls, initialStage
   const extra = <View style={{ gap: 12 }}>
     {flow.phase === 'unknown' || flow.phase === 'ack-read' ? <AppButton label={flow.phase === 'ack-read' ? 'Đọc lại trạng thái đã lưu' : 'Thử lại cùng yêu cầu'} colors={colors} onPress={flow.retry} /> : null}
     {flow.needsRefresh || flow.data?.connected === false ? <AppButton label="Tải lại trạng thái" colors={colors} disabled={locked} onPress={() => { void flow.refresh(); }} /> : null}
-    {controls?.(locked)}
+    {controls?.(locked, flow.data?.room?.state === 'CLOSED' ? 'closed' : flow.stage)}
   </View>;
   if (!flow.data) return <DishSetupFrame title={initialStage === 'preferences' ? 'Khẩu vị' : 'Thiết lập phòng'} onBack={onExit} busy={locked} footer={extra}>
     <StatusNotice title={flow.readError ? 'Chưa tải được thiết lập' : 'Đang tải các lựa chọn…'} colors={colors} actionLabel={flow.readError ? 'Thử tải lại' : undefined} onAction={() => { void flow.refresh(); }} />
   </DishSetupFrame>;
   if (flow.data.room?.state === 'CLOSED') return <DishSetupFrame title="Khẩu vị" onBack={onExit} footer={<><AppButton label="Về trang chủ" colors={colors} onPress={onExit} />{extra}</>}><StatusNotice title={flow.data.closedReason === 'cancelled' ? 'Phòng đã bị hủy' : 'Phòng đã đóng'} message={flow.data.closedReason === 'cancelled' ? 'Phòng mẫu đã kết thúc. Bạn có thể về trang chủ để tạo phòng khác.' : 'Phòng đã đóng. Thay đổi chưa được lưu.'} colors={colors} /></DishSetupFrame>;
   const exitDialog = confirmExit ? <SetupConfirmDialog title="Hủy phòng mẫu?" message={`Phòng ${flow.data.room?.code} đã được tạo. Hủy phòng mẫu để về trang chủ, hoặc ở lại để tiếp tục.`} confirmLabel="Hủy phòng mẫu" continueLabel="Ở lại phòng" onConfirm={() => { setConfirmExit(false); flow.cancelRoom(); }} onContinue={() => setConfirmExit(false)} /> : null;
-  if (flow.stage === 'complete') return <><DishSetupFrame title="Đã lưu khẩu vị" onBack={back} busy={locked} footer={<><AppButton label="Sửa khẩu vị" colors={colors} disabled={locked} onPress={flow.editPreferences} />{flow.data.canEditSettings ? <AppButton label="Sửa thiết lập" colors={colors} disabled={locked} variant="secondary" onPress={flow.editSettings} /> : null}{onLobby && flow.data.room ? <AppButton label="Mở phòng chờ" colors={colors} disabled={locked} onPress={() => onLobby(flow.data!.room!)} /> : <StatusNotice title="Đã hoàn tất thiết lập mẫu" message="Đây là phòng mô phỏng. Chưa tạo phòng hoặc gửi lời mời thật." colors={colors} />}<AppButton label="Về trang chủ" colors={colors} disabled={locked} variant="secondary" onPress={leaveRoom} />{extra}</>}>
+  if (flow.stage === 'complete') return <><DishSetupFrame title="Đã lưu khẩu vị" onBack={back} busy={locked} footer={<><AppButton label="Sửa khẩu vị" colors={colors} disabled={locked} onPress={flow.editPreferences} />{flow.data.canEditSettings ? <AppButton label="Sửa thiết lập" colors={colors} disabled={locked} variant="secondary" onPress={flow.editSettings} /> : null}{onLobby && flow.data.room ? <AppButton label="Mở phòng chờ" colors={colors} disabled={locked} onPress={() => onLobby(flow.data!.room!)} /> : <StatusNotice title="Đã hoàn tất thiết lập mẫu" message="Đây là phòng mô phỏng. Chưa tạo phòng hoặc gửi lời mời thật." colors={colors} />}<AppButton label={flow.data.canEditSettings ? "Hủy phòng" : "Về trang chủ"} colors={colors} disabled={locked} variant="secondary" onPress={leaveRoom} />{extra}</>}>
     <StatusNotice title={`Phòng mẫu ${flow.data.room?.code}`} message={`Đã nhận xác nhận và trạng thái phiên bản ${flow.data.room?.version}.`} colors={colors} />
     {flow.notice ? <StatusNotice title={flow.notice} colors={colors} /> : null}
   </DishSetupFrame>{exitDialog}</>;
   const notice = flow.notice ?? (flow.data.connected ? undefined : 'Bạn đang ngoại tuyến. Nháp trên máy chưa đồng bộ.');
   return <>
-    {flow.stage === 'setup' ? <DishSetupScreen friends={flow.data.friends} hasRecentHistory={flow.data.hasRecentHistory} draft={flow.draft} onChange={patch => { if (!locked && flow.data?.canEditSettings) flow.change(patch); }} onBack={back} onContinue={flow.submitSettings} busy={locked} readOnly={!flow.data.canEditSettings} submitDisabled={flow.blocked} notice={notice} extra={extra} now={now} onSchedule={() => setSchedule(flow.draft.desiredAt && Number.isFinite(Date.parse(flow.draft.desiredAt)) ? flow.draft.desiredAt : new Date(now() + 900000).toISOString())} onFriends={() => setFriends(true)} />
+    {flow.stage === 'setup' ? <DishSetupScreen friends={flow.data.friends} hasRecentHistory={flow.data.hasRecentHistory} draft={flow.draft} onChange={patch => { if (!locked && flow.data?.canEditSettings) flow.change(patch); }} onBack={back} onContinue={flow.submitSettings} busy={locked} readOnly={!flow.data.canEditSettings} submitDisabled={flow.blocked} notice={notice} extra={extra} now={now} onSchedule={() => setSchedule(flow.draft.timeMode === 'scheduled' && flow.draft.desiredAt && Number.isFinite(Date.parse(flow.draft.desiredAt)) ? flow.draft.desiredAt : defaultScheduledTime(now()))} onFriends={() => setFriends(true)} />
       : <DishPreferencesScreen preferences={flow.preferences} catalogue={flow.data.catalogue} onChange={flow.changePreferences} onBack={back} onSave={flow.submitPreferences} busy={locked} submitDisabled={flow.blocked} notice={notice} editing={!!flow.data.ownRoomPreferences} extra={extra} />}
     {schedule ? <ScheduleSheet initial={schedule} initialCalendar={initialPanel === 'calendar'} now={now} onClose={() => setSchedule(undefined)} onConfirm={desiredAt => { flow.change({ desiredAt, timeMode: 'scheduled' }); setSchedule(undefined); }} /> : null}
     {friends ? <SetupFriendsSheet friends={flow.data.friends} initial={flow.draft.inviteeIds} initialQuery={initialSearch} onClose={() => setFriends(false)} onConfirm={inviteeIds => { flow.change({ inviteeIds }); setFriends(false); }} /> : null}

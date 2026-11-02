@@ -1,5 +1,7 @@
 # GM-10.2 — checks bước1–6
 
+**Điều chỉnh mới nhất:** [BEHAVIOR_REFINEMENT](BEHAVIOR_REFINEMENT.md) thay chỉ dẫn về save settings/footer và ghi bổ sung tương tác. Các kết quả bên dưới giữ nguyên cho source lịch sử; xem checks revision mới.
+
 Baseline1939d35, owner Tuấn/reviewer Trí, branch codex/gm-10-figma-update.
 Kết quả tại working tree bước6, không là nghiệm thu thiết bị hoặc quyền merge.
 

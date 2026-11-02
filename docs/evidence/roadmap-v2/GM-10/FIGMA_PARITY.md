@@ -1,5 +1,7 @@
 # GM-10.2 — ma trận thiết kế và implementation
 
+**Điều chỉnh mới nhất:** [tương tác sau lượt Expo tiếp theo](figma-update/BEHAVIOR_REFINEMENT.md) cập nhật giờ/buổi ăn, editor, QA, khẩu vị nâng cao và xác nhận hủy. Đọc checks/manifest của revision này; native sau sửa vẫn Not run.
+
 **Sau lượt Expo đầu:** đã có ảnh lỗi và expected của người dùng. Các gap
 checkbox/chip bạn/picker/advanced/discard/editor Back đã sửa theo
 [EXPO_REPAIR](figma-update/EXPO_REPAIR.md). Các dòng Not run bên dưới là

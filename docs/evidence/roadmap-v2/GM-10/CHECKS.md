@@ -1,5 +1,7 @@
 # Kết quả bổ sung GM-10.2
 
+**Điều chỉnh mới nhất:** [tương tác sau lượt Expo tiếp theo](figma-update/BEHAVIOR_REFINEMENT.md) cập nhật giờ/buổi ăn, editor, QA, khẩu vị nâng cao và xác nhận hủy. Đọc checks/manifest của revision này; native sau sửa vẫn Not run.
+
 **Sau phản hồi Expo:** đọc [bản sửa và kiểm lại](figma-update/EXPO_REPAIR.md)
 và [kết quả máy đọc](figma-update/EXPO_REPAIR_CHECKS.json). Giữ các kết quả
 bước1–6 bên dưới làm baseline, không thay visual/native sau sửa bằng Pass.

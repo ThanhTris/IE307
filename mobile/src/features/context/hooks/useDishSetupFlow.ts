@@ -54,7 +54,7 @@ export function useDishSetupFlow(gateway: DishSetupGateway, requestId = mockRequ
       if (ack.kind === 'cancel' && value.room.state !== 'CLOSED') throw new Error('Cancellation not confirmed');
       setData(value); setReadError(false);
       if (value.room.state === 'CLOSED') setNotice('Phòng đã đóng. Thay đổi không thể tiếp tục.');
-      else if (ack.kind === 'settings') { if (value.settings) receiveDraft(clone(value.settings)); else draftState.markSaved(); setStage(editorReturn === 'complete' && value.ownRoomPreferences ? 'complete' : 'preferences'); setNotice(undefined); }
+      else if (ack.kind === 'settings') { if (value.settings) receiveDraft(clone(value.settings)); else draftState.markSaved(); setStage('preferences'); setNotice(undefined); }
       else { const own = clone(value.ownRoomPreferences!); setPreferences(own); setBaselinePreferences(clone(own)); setStage('complete'); setNotice(undefined); }
       acknowledged.current = null; intent.current = null; setPhase('idle');
     } catch { if (alive.current) { setNotice('Đã nhận xác nhận lưu; chưa tải được trạng thái mới. Chỉ thử đọc lại, không gửi lại.'); setPhase('ack-read'); } }

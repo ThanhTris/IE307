@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import type { UserPreferences } from '../../../data/api/contracts';
+import type { FlavorProfile, UserPreferences } from '../../../data/api/contracts';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
+import { PreferenceFlavorLevels } from './PreferenceFlavorLevels';
 
 const options = [
   { id: 'unknown', label: 'Không ưu tiên', description: 'Không ưu tiên nhiệt độ' },
   { id: 'hot', label: 'Nóng', description: 'Nóng' }, { id: 'warm', label: 'Ấm', description: 'Ấm' },
   { id: 'cold', label: 'Lạnh', description: 'Lạnh' }, { id: 'ambient', label: 'Nhiệt độ phòng', description: 'Nhiệt độ phòng' },
 ] as const;
-export function PreferenceTemperaturePanel({ value = 'unknown', disabled, onChange }: { value?: UserPreferences['temperature']; disabled?: boolean; onChange: (value: NonNullable<UserPreferences['temperature']>) => void }) {
+export function PreferenceAdvancedPanel({ value = 'unknown', flavor, disabled, onChange, onFlavorChange }: { value?: UserPreferences['temperature']; flavor?: FlavorProfile; disabled?: boolean; onChange: (value: NonNullable<UserPreferences['temperature']>) => void; onFlavorChange?: (value: FlavorProfile) => void }) {
   const { colors } = useShellTheme(), { textStyle } = useAppFonts(), [open, setOpen] = useState(false);
   return <View style={[styles.card, { borderColor: colors.line, backgroundColor: colors.surface }]}>
     <Pressable accessibilityRole="button" accessibilityLabel="Tùy chọn nâng cao" accessibilityState={{ expanded: open, disabled }} disabled={disabled} onPress={() => setOpen(previous => !previous)} style={styles.header}>
@@ -23,6 +24,7 @@ export function PreferenceTemperaturePanel({ value = 'unknown', disabled, onChan
         <Text style={[styles.label, { color: colors.text }, textStyle(500)]}>{option.label}</Text>
       </Pressable>)}</View>
       <Text style={[styles.summary, { color: colors.muted }, textStyle(400)]}>Chỉ là ưu tiên mềm; không loại món khỏi lượt chọn.</Text>
+      {onFlavorChange ? <PreferenceFlavorLevels value={flavor} disabled={disabled} onChange={onFlavorChange} /> : null}
     </View> : null}
   </View>;
 }

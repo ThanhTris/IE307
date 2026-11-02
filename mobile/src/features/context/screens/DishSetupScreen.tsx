@@ -7,7 +7,8 @@ import { SetupChoice } from '../components/SetupChoice';
 import { SetupCheckboxRow } from '../components/SetupCheckboxRow';
 import { SetupInvitees } from '../components/SetupInvitees';
 import { SetupTimeMode } from '../components/SetupTimeMode';
-import { budgetOptions, formatSchedule, mealOptions, setupValidation, type SetupDraft, type SetupFriend } from '../services/dishSetup';
+import { SetupScheduleSummary } from '../components/SetupScheduleSummary';
+import { budgetOptions, changeSetupMeal, mealOptions, setupValidation, switchToNow, type SetupDraft, type SetupFriend } from '../services/dishSetup';
 
 export function DishSetupScreen({ draft, onChange, onBack, onContinue, onSchedule, onFriends, friends = [], hasRecentHistory, busy = false, readOnly = false, submitDisabled, notice, extra, now = Date.now }: {
   draft: SetupDraft; onChange: (patch: Partial<SetupDraft>) => void; onBack: () => void; onContinue: () => void;
@@ -22,9 +23,9 @@ export function DishSetupScreen({ draft, onChange, onBack, onContinue, onSchedul
     {notice ? <StatusNotice title={notice} colors={colors} /> : null}
     {readOnly ? <StatusNotice title="Chỉ chủ phòng được sửa thiết lập" message="Bạn vẫn có thể chọn khẩu vị riêng." colors={colors} /> : null}
     {invalid ? <StatusNotice title={invalid} colors={colors} /> : null}
-    {heading('Buổi ăn')}<View style={styles.grid}>{mealOptions.map(item => <SetupChoice key={item.id} label={item.label} icon={item.icon} stacked selected={draft.mealSlot === item.id} disabled={disabled} onPress={() => onChange({ mealSlot: item.id })} />)}</View>
-    {heading('Thời gian')}<SetupTimeMode scheduled={draft.timeMode === 'scheduled'} disabled={disabled} onNow={() => onChange({ timeMode: 'now' })} onSchedule={onSchedule} />
-    {draft.timeMode === 'scheduled' && draft.desiredAt && Number.isFinite(Date.parse(draft.desiredAt)) ? <AppButton label={`${formatSchedule(draft.desiredAt)} · Sửa`} variant="secondary" onPress={onSchedule} disabled={disabled} colors={colors} /> : null}
+    {heading('Buổi ăn')}<View style={styles.grid}>{mealOptions.map(item => <SetupChoice key={item.id} label={item.label} icon={item.icon} stacked selected={draft.mealSlot === item.id} disabled={disabled} onPress={() => onChange(changeSetupMeal(draft, item.id, now()))} />)}</View>
+    {heading('Thời gian')}<SetupTimeMode scheduled={draft.timeMode === 'scheduled'} disabled={disabled} onNow={() => onChange(switchToNow(draft, now()))} onSchedule={onSchedule} />
+    {draft.timeMode === 'scheduled' && draft.desiredAt && Number.isFinite(Date.parse(draft.desiredAt)) ? <SetupScheduleSummary value={draft.desiredAt} onEdit={onSchedule} disabled={disabled} /> : null}
     {heading('Số món để lựa chọn · 10–20')}<DishCount value={draft.dishCount} onChange={dishCount => onChange({ dishCount })} disabled={disabled} colors={colors} layout="inline" />
     {heading('Ngân sách mỗi người')}<Text style={[styles.note, { color: colors.muted }, textStyle(400)]}>Không bắt buộc · ưu tiên mềm</Text>
     <View style={styles.grid}>{budgetOptions.map(item => <SetupChoice key={item.id ?? 'none'} label={item.label} icon={item.icon} selected={draft.budget === item.id} disabled={disabled} onPress={() => onChange({ budget: item.id })} />)}</View>
