@@ -1,5 +1,17 @@
 # GM-09 — bàn giao màn Home / create / join
 
+## Latest candidate — PNG reference repair, 2026-11-02
+
+See [current repair/handoff](figma-update/PNG_REFERENCE_REPAIR.md). Thirty user
+exports replace the prior quota blocker for the supplied frames. Join is now
+input → confirmation or distinct error screen; QR/manual fallback and frozen
+retry/privacy remain. Tutorial now uses a Home backdrop, focused native card,
+coach pointers and received icon/hand/bowl art rather than generic sections.
+Home/guest alignment and green brand tokens are corrected. Current code still
+requires GM-10 setup and the real public-preview adapter; real legacy routes
+are retained. Native visual/device acceptance is **Not run**, no Done/approval.
+Local commits only; prompt, raw exports and build logs remain ignored.
+
 ## Current local handoff — steps 3–7, 2026-11-01
 
 User clarification: Figma is a visual reference; required small missing

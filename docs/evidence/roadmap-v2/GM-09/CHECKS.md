@@ -1,5 +1,38 @@
 # GM-09 — checks
 
+## Latest source — PNG repair, 2026-11-02
+
+Source `d5a10cf`; [comparison and limits](figma-update/PNG_REFERENCE_REPAIR.md),
+[source manifest](figma-update/PNG_REPAIR_SOURCE_MANIFEST.json),
+[sanitized mobile results](figma-update/PNG_REPAIR_MOBILE_CHECKS.json).
+
+| Check | Actual | Result |
+| --- | --- | --- |
+| Full mobile Jest, host run at76e7dbd |36 suites/797 tests;74.12s; unchanged runner/timeouts|Pass|
+| Final Home touch-target layout atd5a10cf |26 Home tests,3.643s; 48dp native target retained|Pass interaction; native geometry Not run|
+| TypeScript / scoped ESLint / architecture |Final source/tests/scripts, zero lint errors/warnings|Pass|
+| Expo compatibility |Installed SDK58 dependencies match lock; offline-check limitation retained|Pass with limitation|
+| Android Hermes export, final source |entry-8504d0203927af928119ab997b354298.hbc,3.6MB|Pass, export only|
+| Reference/source/asset audit |30 input hashes;34 changed source/test/asset files;40 local PNG callsites nonempty|Pass inspection; not rendered-geometry acceptance|
+| Full `npm run lint` |Four existing stale imports in ignored mobile/.work/gm10Audit.test.tsx|Fail; file/config left untouched|
+| Full Python, stable final documentation inputs on host |657 tests:650 passed/6 skipped/1 error;75.974s|Fail: existing WinError1314 symlink privilege|
+| Repository / task indexes / whitespace |Offline validators and diff checks|Pass|
+| Android visual/Expo Go/320-360-412dp/font200/TalkBack/keyboard/physical gestures|No device/ADB or RN web renderer in environment|Not run|
+
+Regression investigation: first sandbox run timed out a cold Home render;
+host execution retained all test limits. A later host run exposed an existing
+ambiguous `/anchorId/` query in GM-24's privacy test (35 suites/796 tests passed,
+1 failed). Selector now waits for the serialized JSON key rather than matching
+explanatory copy. Standalone21 tests and the final full797 tests pass; no GPS
+privacy assertion or implementation was removed. Hermes sandbox export failed
+writing its temporary output; the unchanged compiler exported successfully on host.
+Python sandbox regression also hit temporary-file permission errors; verification
+uses the host run, not those misleading sandbox failures.
+An intermediate Python run began before the new reference manifest was present
+and reported broken-link fixture failures. After input files were complete,
+rerunning all657 tests removed those failures; only the existing symlink error
+remains. No Python code, privileges or assertion was changed.
+
 ## Steps 3–7 local candidates — 2026-11-01
 
 Current source is step 6 `a4dbdec`; prior local step commits: create entry

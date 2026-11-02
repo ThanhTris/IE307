@@ -1,5 +1,15 @@
 # GM-09 — phạm vi triển khai
 
+## PNG reference repair — 2026-11-02
+
+User supplied local exports to correct the unverified visual implementation.
+Read foundations/components and every supplied group/scenario overview; split
+the screen strips for inspection, reuse local assets, correct brand/entry,
+separate join states, rebuild the tutorial scenes and rerun regression/export.
+See [executed patch plan, mapping and limits](figma-update/PNG_REFERENCE_REPAIR.md).
+No new task/API/domain/producer ownership is inferred from scenario screenshots.
+Native visual acceptance and the missing GM-10/live-preview artifacts remain open.
+
 ## Remaining steps received and committed locally — 2026-11-01
 
 The user's current instruction makes Figma a visual reference and authorizes

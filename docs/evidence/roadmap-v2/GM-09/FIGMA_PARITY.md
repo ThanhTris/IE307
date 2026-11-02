@@ -1,5 +1,16 @@
 # GM-09.2 — Figma parity
 
+## Latest candidate — received PNG repair, 2026-11-02
+
+The quota-based gaps below describe the previous revision. User supplied30 PNGs;
+relevant entry/Home/join/tutorial frames and flattened scenario pages can now
+be inspected locally. [Current comparison and open gaps](figma-update/PNG_REFERENCE_REPAIR.md)
+and [pinned input manifest](figma-update/PNG_REFERENCE_MANIFEST.json) supersede
+the former join/tutorial composition notes. Source now has six-cell code input,
+separate confirmation/error screens, highlighted tutorial scenes with received
+artwork, and green Dark brand tokens. Native screenshots/pixel comparison remain
+**Not run**; receiving references does not itself make app visual parity Pass.
+
 ## Current reference-alignment policy and remaining steps — 2026-11-01
 
 The user's latest instruction treats Figma as visual guidance, not a reason to
