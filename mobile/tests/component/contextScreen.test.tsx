@@ -141,7 +141,7 @@ describe('GM-24 ContextScreen Component & Scenarios', () => {
 
     await waitFor(() => {
       expect(screen.getByText(/Bảo đảm quyền riêng tư: Payload gửi máy chủ chỉ chứa anchorId, không chứa tọa độ GPS thô/)).toBeOnTheScreen();
-      expect(screen.getByText(/anchorId/)).toBeOnTheScreen();
+      expect(screen.getByText(/\{"anchorId":/)).toBeOnTheScreen();
       expect(screen.queryByText(/"latitude":/)).toBeNull();
       expect(screen.queryByText(/"longitude":/)).toBeNull();
     });
