@@ -7,7 +7,7 @@ export type SetupDraft = {
   avoidRecent: boolean; inviteeIds: string[];
 };
 export type SetupRoom = { id: string; code: string; version: number; state: 'LOBBY' | 'CLOSED' };
-export type SetupOption = { id: string; label: string; unknown?: boolean };
+export type SetupOption = { id: string; label: string; unknown?: boolean; code?: string; linkedIds?: string[] };
 export type SetupCatalogue = { categories: SetupOption[]; cuisines: SetupOption[] };
 export type SetupFriend = { id: string; label: string };
 export const emptyPreferences = (consent = false): UserPreferences => ({ cuisineIds: [], categoryIds: [], historyConsent: consent });
