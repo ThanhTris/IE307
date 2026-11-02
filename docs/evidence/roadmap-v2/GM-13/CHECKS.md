@@ -1,5 +1,7 @@
 # GM-13 — kiểm màn Result/NoConsensus
 
+**Chuẩn bị GM-13.2 ngày 2026-11-03:** đọc [kế hoạch mới](figma-update/PLAN.md) và [audit đầu vào/PNG](figma-update/INPUT_AUDIT.md) trên nhánh `codex/gm-13-figma-update`, base `7e24074`. Chưa triển khai UI mới; các kết quả GM-13.1/SDK57 bên dưới là lịch sử, không thay nghiệm thu supplement.
+
 ## Bản mới nhất — resolve Foundation với main
 
 Theo yêu cầu người dùng, đã sửa hai file Foundation trong merge working tree

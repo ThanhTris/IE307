@@ -1,5 +1,7 @@
 # GM-13 — bàn giao Result, nơi bán và No Consensus
 
+**Chuẩn bị GM-13.2 ngày 2026-11-03:** đọc [kế hoạch mới](figma-update/PLAN.md) và [audit đầu vào/PNG](figma-update/INPUT_AUDIT.md) trên nhánh `codex/gm-13-figma-update`, base `7e24074`. Chưa triển khai UI mới; các kết quả GM-13.1/SDK57 bên dưới là lịch sử, không thay nghiệm thu supplement.
+
 Bản mới nhất sau resolve main: HEAD `92962ed` + incoming main
 `8cf8084a021d56fae261da34503ed5a7a45681bd`, source/test theo
 [FOUNDATION_MERGE_MANIFEST](FOUNDATION_MERGE_MANIFEST.json). Hai file Foundation
