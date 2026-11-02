@@ -1,0 +1,105 @@
+import { act } from 'react';
+import { fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react-native';
+import { DishSetupFlow } from '../../src/features/context/screens/DishSetupFlow';
+import { createDishSetupPreview, type DishSetupScenario } from '../../src/bootstrap/dishSetupPreview';
+import type { DishSetupGateway } from '../../src/features/context/services/dishSetupGateway';
+import { useDishSetupFlow } from '../../src/features/context/hooks/useDishSetupFlow';
+
+async function open(scenario: DishSetupScenario, gateway?: DishSetupGateway) {
+  const port = gateway ?? createDishSetupPreview(scenario);
+  await render(<DishSetupFlow gateway={port} onExit={jest.fn()} />);
+  await screen.findByRole('button', { name: 'Chọn khẩu vị →' });
+  return port;
+}
+test('shortage requires explicit reduction and preserves requested count until confirmation', async () => {
+  await open('shortage15');
+  await fireEvent.press(screen.getByRole('button', { name: 'Chọn khẩu vị →' }));
+  expect(await screen.findByText('Bạn đang chọn 20 món.')).toBeOnTheScreen();
+  expect(screen.getByLabelText('20 món')).toBeOnTheScreen();
+  expect(screen.getByText('Giảm số món')).toBeOnTheScreen();
+});
+test('confirmed reduction changes only draft until host submits again', async () => {
+  const gateway = createDishSetupPreview('shortage15'), write = jest.spyOn(gateway, 'write');
+  const { result } = await renderHook(() => useDishSetupFlow(gateway));
+  await waitFor(() => expect(result.current.data).toBeDefined());
+  await act(async () => result.current.submitSettings());
+  expect(result.current.shortage).toEqual({ available: 15, requested: 20 });
+  expect(result.current.draft.dishCount).toBe(20);
+  await act(async () => result.current.confirmReduction());
+  expect(result.current.draft.dishCount).toBe(15);
+  expect(write).toHaveBeenCalledTimes(1);
+  await act(async () => result.current.submitSettings());
+  expect(result.current.stage).toBe('preferences');
+  expect((await gateway.read()).room?.version).toBe(1);
+});
+test('below ten never offers a reduction or creates a room', async () => {
+  const port = createDishSetupPreview('shortage7');
+  await open('shortage7', port);
+  await fireEvent.press(screen.getByRole('button', { name: 'Chọn khẩu vị →' }));
+  expect(await screen.findByText('Hiện có 7 món. Cần ít nhất 10 món để tạo phòng.')).toBeOnTheScreen();
+  expect((await port.read()).room).toBeUndefined();
+});
+test('unknown delivery freezes intent and replays the same request once, with no duplicate room', async () => {
+  const port = createDishSetupPreview('timeout'), write = jest.spyOn(port, 'write');
+  await open('timeout', port);
+  await fireEvent.press(screen.getByRole('button', { name: 'Chọn khẩu vị →' }));
+  await screen.findByRole('button', { name: 'Thử lại cùng yêu cầu' });
+  expect(screen.getByRole('button', { name: 'Ăn sáng' })).toBeDisabled();
+  await fireEvent.press(screen.getByRole('button', { name: 'Thử lại cùng yêu cầu' }));
+  await screen.findByRole('checkbox', { name: 'Ăn gì cũng được' });
+  expect(write).toHaveBeenCalledTimes(2);
+  expect(write.mock.calls[0]![0]).toEqual(write.mock.calls[1]![0]);
+  expect((await port.read()).room?.version).toBe(1);
+});
+test('read failure after ACK retries only read and skip preserves consent', async () => {
+  const port = createDishSetupPreview('ack-read-error'), write = jest.spyOn(port, 'write');
+  await open('ack-read-error', port);
+  await fireEvent.press(screen.getByRole('button', { name: 'Chọn khẩu vị →' }));
+  await fireEvent.press(await screen.findByRole('button', { name: 'Đọc lại trạng thái đã lưu' }));
+  await screen.findByRole('checkbox', { name: 'Ăn gì cũng được' });
+  expect(write).toHaveBeenCalledTimes(1);
+  await fireEvent.press(screen.getByRole('checkbox', { name: 'Cho phép lưu lịch sử phiên này' }));
+  await fireEvent.press(screen.getByRole('button', { name: 'Cơm' }));
+  await fireEvent.press(screen.getByRole('button', { name: 'Bỏ qua' }));
+  await screen.findByText('Đã hoàn tất thiết lập mẫu');
+  expect((await port.read()).ownRoomPreferences).toMatchObject({ categoryIds: [], historyConsent: true });
+});
+test('save rejection retains own choices for retry; account defaults stay unchanged', async () => {
+  const port = await open('save-error');
+  await fireEvent.press(screen.getByRole('button', { name: 'Chọn khẩu vị →' }));
+  await fireEvent.press(await screen.findByRole('button', { name: 'Cơm' }));
+  await fireEvent.press(screen.getByRole('button', { name: 'Vào phòng chờ →' }));
+  await screen.findByText('Chưa lưu được thay đổi. Đã giữ nháp; hãy thử lại.');
+  expect(screen.getByRole('button', { name: 'Cơm' }).props.accessibilityState.selected).toBe(true);
+  await fireEvent.press(screen.getByRole('button', { name: 'Vào phòng chờ →' }));
+  await screen.findByText('Đã hoàn tất thiết lập mẫu');
+  expect((await port.read()).accountDefaults.categoryIds).toEqual([]);
+});
+test('stale must refresh before retry', async () => {
+  const port = createDishSetupPreview('stale'); await open('stale', port);
+  await fireEvent.press(screen.getByRole('button', { name: 'Chọn khẩu vị →' }));
+  await fireEvent.press(await screen.findByRole('button', { name: 'Tải lại trạng thái' }));
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Chọn khẩu vị →' })).toBeEnabled());
+  await fireEvent.press(screen.getByRole('button', { name: 'Chọn khẩu vị →' }));
+  await screen.findByRole('checkbox', { name: 'Ăn gì cũng được' });
+});
+test.each(['offline', 'closed'] as const)('%s blocks writes while retaining the loaded snapshot', async scenario => {
+  const gateway = createDishSetupPreview(scenario), write = jest.spyOn(gateway, 'write');
+  const { result } = await renderHook(() => useDishSetupFlow(gateway));
+  await waitFor(() => expect(result.current.data).toBeDefined());
+  await act(async () => result.current.submitSettings());
+  expect(result.current.blocked).toBe(true);
+  expect(write).not.toHaveBeenCalled();
+});
+test('rapid duplicate submission is guarded before React renders the disabled control', async () => {
+  const gateway = createDishSetupPreview();
+  let resolve!: (value: { ok: false; code: 'REJECTED' }) => void;
+  const write = jest.spyOn(gateway, 'write').mockImplementation(() => new Promise(done => { resolve = done; }));
+  const { result } = await renderHook(() => useDishSetupFlow(gateway));
+  await waitFor(() => expect(result.current.data).toBeDefined());
+  await act(async () => { result.current.submitSettings(); result.current.submitSettings(); });
+  expect(write).toHaveBeenCalledTimes(1);
+  expect(result.current.blocked).toBe(true);
+  await act(async () => resolve({ ok: false, code: 'REJECTED' }));
+  expect(result.current.phase).toBe('idle');
+});

@@ -6,14 +6,14 @@ import { DishSetupFrame } from '../components/DishSetupFrame';
 import { SetupChoice } from '../components/SetupChoice';
 import { budgetOptions, mealOptions, setupValidation, type SetupDraft } from '../services/dishSetup';
 
-export function DishSetupScreen({ draft, onChange, onBack, onContinue, onSchedule, onFriends, busy = false, notice, extra, now = Date.now }: {
+export function DishSetupScreen({ draft, onChange, onBack, onContinue, onSchedule, onFriends, busy = false, submitDisabled, notice, extra, now = Date.now }: {
   draft: SetupDraft; onChange: (patch: Partial<SetupDraft>) => void; onBack: () => void; onContinue: () => void;
-  onSchedule?: () => void; onFriends?: () => void; busy?: boolean; notice?: string; extra?: React.ReactNode; now?: () => number;
+  onSchedule?: () => void; onFriends?: () => void; busy?: boolean; submitDisabled?: boolean; notice?: string; extra?: React.ReactNode; now?: () => number;
 }) {
   const { colors } = useShellTheme(), { textStyle } = useAppFonts();
   const invalid = setupValidation(draft, now());
   const heading = (label: string) => <Text accessibilityRole="header" style={[styles.heading, { color: colors.text }, textStyle(700)]}>{label}</Text>;
-  return <DishSetupFrame title="Tạo phòng" onBack={onBack} busy={busy} footer={<AppButton label="Chọn khẩu vị →" colors={colors} disabled={!!invalid || busy} loading={busy} onPress={onContinue} />}>
+  return <DishSetupFrame title="Tạo phòng" onBack={onBack} busy={busy} footer={<AppButton label="Chọn khẩu vị →" colors={colors} disabled={!!invalid || busy || submitDisabled} loading={busy} onPress={onContinue} />}>
     {notice ? <StatusNotice title={notice} colors={colors} /> : null}
     {invalid ? <StatusNotice title={invalid} colors={colors} /> : null}
     {heading('Buổi ăn')}<View style={styles.grid}>{mealOptions.map(item => <SetupChoice key={item.id} label={item.label} icon={item.icon} stacked selected={draft.mealSlot === item.id} disabled={busy} onPress={() => onChange({ mealSlot: item.id })} />)}</View>

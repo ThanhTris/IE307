@@ -10,17 +10,17 @@ import { emptyPreferences, type SetupCatalogue } from '../../context/services/di
 import { flavorChoices, flavorSelected, isAnything, optionIds, toggleFlavor, togglePreference } from '../services/dishPreferences';
 import { preferenceAssets } from '../components/preferenceAssets';
 
-export function DishPreferencesScreen({ preferences, catalogue, onChange, onBack, onSave, busy, notice, editing, extra }: {
+export function DishPreferencesScreen({ preferences, catalogue, onChange, onBack, onSave, busy, submitDisabled, notice, editing, extra }: {
   preferences: UserPreferences; catalogue: SetupCatalogue; onChange: (value: UserPreferences) => void;
-  onBack: () => void; onSave: (skip: boolean) => void; busy?: boolean; notice?: string; editing?: boolean; extra?: ReactNode;
+  onBack: () => void; onSave: (skip: boolean) => void; busy?: boolean; submitDisabled?: boolean; notice?: string; editing?: boolean; extra?: ReactNode;
 }) {
   const { colors } = useShellTheme(), { textStyle } = useAppFonts(), { width, fontScale } = useWindowDimensions();
   const [advanced, setAdvanced] = useState(false);
   const columns = fontScale > 1.7 ? 1 : width < 360 || fontScale > 1.2 ? 2 : 3;
   const heading = (label: string) => <Text accessibilityRole="header" style={[styles.heading, { color: colors.text }, textStyle(700)]}>{label}</Text>;
   return <DishSetupFrame title="Khẩu vị" onBack={onBack} busy={busy}
-    action={<AppButton label="Bỏ qua" variant="quiet" disabled={busy} onPress={() => onSave(true)} colors={colors} />}
-    footer={<AppButton label={editing ? 'Lưu thay đổi →' : 'Vào phòng chờ →'} loading={busy} disabled={busy} onPress={() => onSave(false)} colors={colors} />}>
+    action={<AppButton label="Bỏ qua" variant="quiet" disabled={busy || submitDisabled} onPress={() => onSave(true)} colors={colors} />}
+    footer={<AppButton label={editing ? 'Lưu thay đổi →' : 'Vào phòng chờ →'} loading={busy} disabled={busy || submitDisabled} onPress={() => onSave(false)} colors={colors} />}>
     {notice ? <StatusNotice title={notice} colors={colors} /> : null}
     <SetupChoice label="Ăn gì cũng được" checkbox columns={1} icon={require('../../../../assets/brand/entry-ui/rice.png')} selected={isAnything(preferences)} disabled={busy} onPress={() => onChange(emptyPreferences(preferences.historyConsent))} />
     {(['categories', 'cuisines'] as const).map(key => <View key={key} style={styles.section}>
