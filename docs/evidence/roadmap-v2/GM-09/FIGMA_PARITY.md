@@ -1,5 +1,17 @@
 # GM-09.2 — Figma parity
 
+## Native entry and tutorial feedback — 2026-11-02
+
+Two new user screenshots demonstrate missing code caret and Android composing
+text over the simulated character row. Six real native fields replace it;
+new source requests a visible OS cursor and active-cell colors without duplicate
+Text rendering. Responsive3 × 2 cells at narrow width/font scaling retain48dp
+targets. GM-09 tutorial sample additionally receives user-requested drag/tilt,
+spring and WANT feedback. See [scope and differences](figma-update/INPUT_MOTION_REPAIR.md).
+No exact Figma motion timeline is asserted, and actual GM-12/26 ballot UI remains
+outside this patch. Physical Android after-repair visual/motion acceptance remains
+**Not run**; unit/Animated/export Pass is not a substitute.
+
 ## Device-reported failures — asset alpha correction, 2026-11-02
 
 The user's actual phone screenshots show a Welcome matte rectangle and solid

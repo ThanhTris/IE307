@@ -1,5 +1,29 @@
 # GM-09 — checks
 
+## Latest correction — native room-code cells/tutorial motion, 2026-11-02
+
+[Scope, repair and phone checklist](figma-update/INPUT_MOTION_REPAIR.md),
+[source/input manifest](figma-update/INPUT_MOTION_MANIFEST.json),
+[sanitized results](figma-update/INPUT_MOTION_CHECKS.json).
+
+| Check | Actual | Result |
+| --- | --- | --- |
+| Targeted UI/hooks/routes |6 suites/39 tests: typing/paste/replace/delete/frozen code; drag/release/cancel/Reduce Motion/double tap; existing join/tutorial guards|Pass|
+| Full mobile Jest, run alone |38 suites/807 tests,75.217s; runner/timeouts unchanged|Pass|
+| TypeScript / source-tests-scripts lint / architecture |No package/native module or baseline config change|Pass|
+| Expo installed compatibility |Locked SDK58; offline-check limitation|Pass with limitation|
+| Android export |entry-91143e7847e4b41334bc875b16d69e43.hbc,3.6MB|Pass, packaging only|
+| Full Python regression, host |657 tests:650 passed/6 skipped/1 error,154.086s|Existing WinError1314 symlink privilege; no assertion failure|
+| Native Android recheck |User images prove pre-fix missing caret/IME overlay; no connected Android/ADB for new screenshots|Not run|
+
+Test fixtures explicitly select Android keyboard behavior and both Reduce Motion
+settings; no production behavior or assertion is disabled. Native cursor blink,
+Samsung IME and physical animation smoothness cannot be inferred from mocked
+events/Animated-value assertions. Legacy real/QA join, actual voting GM-12/26 and
+all API/privacy/ACK semantics are unchanged.
+Source commits: `3458755` native code cells; `f97a748` tutorial motion. No new
+Python failure, native-device Pass, Trí approval or GitHub push is claimed.
+
 ## Latest correction — opaque PNG assets, 2026-11-02
 
 User supplied actual Expo Go screenshots showing Welcome's cream rectangle and

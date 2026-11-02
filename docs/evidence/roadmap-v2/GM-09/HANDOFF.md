@@ -1,5 +1,16 @@
 # GM-09 — bàn giao màn Home / create / join
 
+## Latest correction — native input/tutorial feedback, 2026-11-02
+
+[Current scope/repair/recheck](figma-update/INPUT_MOTION_REPAIR.md): replace the
+transparent IME overlay with six native caret-bearing fields; focus, whole-code
+paste, replacement, Backspace and frozen join intent are preserved. Narrow/font
+scaled layouts wrap to3 × 2 for48dp targets. GM-09 owns the tutorial sample;
+it now follows horizontal drag/tilt, springs back and gives WANT glow/selection.
+Reduce Motion suppresses movement while choices/buttons remain functional.
+No actual ballot screen/API is changed.38 suites/807 tests, scoped tooling and
+Android export Pass; native after-fix caret/IME/frame smoothness Not run.
+
 ## Latest correction — Welcome/Home asset alpha, 2026-11-02
 
 Fixed13 existing PNGs responsible for the two actual-device reports:11 icon

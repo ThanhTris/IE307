@@ -1,0 +1,60 @@
+{
+  "date": "2026-11-02",
+  "baseCommit": "4776244",
+  "files": [
+    {
+      "path": "mobile/src/features/rooms/components/RoomCodeField.tsx",
+      "textNormalization": "UTF-8 LF",
+      "sha256": "7f7e47f7a956996c795718732a4332b242b58df9c4e4e7a1077dac573b446d5e"
+    },
+    {
+      "path": "mobile/src/features/home/components/TutorialSampleCard.tsx",
+      "textNormalization": "UTF-8 LF",
+      "sha256": "acf497039042aebf848d776693a8dd4d75ea06e11d5ee431bce2f6f44fb97f95"
+    },
+    {
+      "path": "mobile/src/features/home/screens/TutorialScreen.tsx",
+      "textNormalization": "UTF-8 LF",
+      "sha256": "d3833ea30ad8e2b3b9433062147beb3491d9d110c77738f00a12f59989308031"
+    },
+    {
+      "path": "mobile/src/features/home/hooks/useTutorialCardMotion.ts",
+      "textNormalization": "UTF-8 LF",
+      "sha256": "c44a6f1a22d57fb3f9aa93ce5baefa097b8203ac9953eced57ae681a6c435547"
+    },
+    {
+      "path": "mobile/tests/component/joinRoomEntry.test.tsx",
+      "textNormalization": "UTF-8 LF",
+      "sha256": "803b177621267e0d199a34753f7f4c215356c9a6f7f4eb3f1afcf1f068d515f5"
+    },
+    {
+      "path": "mobile/tests/component/tutorialScreen.test.tsx",
+      "textNormalization": "UTF-8 LF",
+      "sha256": "47f530912d0fbec5417b47a261c464ff4b618e32dff30c500b30a97b29b65e27"
+    },
+    {
+      "path": "mobile/tests/component/roomCodeField.test.tsx",
+      "textNormalization": "UTF-8 LF",
+      "sha256": "b6b1835dea6fdba3303ef1871faac15f509a00597984a4c39aa30b0e325bed6d"
+    },
+    {
+      "path": "mobile/tests/component/tutorialCardMotion.test.tsx",
+      "textNormalization": "UTF-8 LF",
+      "sha256": "b978b088954c98f24b8a0a3cbbe9cb67d9de56f53063337a9312b0e9e11a9fc0"
+    }
+  ],
+  "screenshots": [
+    {
+      "path": ".work/gm09-error-screens/1793602606651_122105501499986854_4858982272175836793_5add91fb8ddcc9af643b375736586793.jpg",
+      "sha256": "b68047501a0d8d18ac179ec3d3bf547ced5e62a2f6c701dd385df6d7851c1c2e",
+      "state": "Pre-fix native failure reported by user"
+    },
+    {
+      "path": ".work/gm09-error-screens/1793602606808_122105501499986854_4858982272175836793_02233dc54d65819fb6aeeeb8607fdfbb.jpg",
+      "sha256": "769024330245143f3b6d93041a35ef5122ef820a0dea9c6ce04e6b54ca255bd0",
+      "state": "Pre-fix native failure reported by user"
+    }
+  ],
+  "nativeAfterRepair": "Not run",
+  "sourceCommit": "f97a74800cf6ecdaede10c7f010e51b0249da804"
+}
