@@ -1,5 +1,7 @@
 # GM-10 — bàn giao context và khẩu vị
 
+**Bàn giao hiện hành:** [FINAL_HANDOFF](figma-update/FINAL_HANDOFF.md) chốt source c514bc0, interface và trách nhiệm các task nhận. [Xác nhận chung của người dùng](figma-update/USER_ACCEPTANCE.md) được ghi riêng; không tự thay kết quả từng AC thiết bị hoặc approval của Trí.
+
 **Điều chỉnh mới nhất:** [tương tác sau lượt Expo tiếp theo](figma-update/BEHAVIOR_REFINEMENT.md) cập nhật giờ/buổi ăn, editor, QA, khẩu vị nâng cao và xác nhận hủy. Đọc checks/manifest của revision này; native sau sửa vẫn Not run.
 
 **Mới nhất — sửa theo Expo:** [bản sửa UI/điều hướng](figma-update/EXPO_REPAIR.md)

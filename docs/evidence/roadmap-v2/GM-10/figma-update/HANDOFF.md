@@ -1,5 +1,7 @@
 # GM-10.2 — bàn giao sau bước1–6
 
+**Đọc trước khi nhận việc:** [FINAL_HANDOFF](FINAL_HANDOFF.md) là bàn giao hiện hành sau các lượt sửa Expo. Phần dưới giữ kết quả bước 1–6 để truy vết, không thay hướng dẫn mới về picker, save settings hoặc hủy phòng.
+
 **Điều chỉnh mới nhất:** [BEHAVIOR_REFINEMENT](BEHAVIOR_REFINEMENT.md) thay chỉ dẫn về save settings/footer và ghi bổ sung tương tác. Các kết quả bên dưới giữ nguyên cho source lịch sử; xem checks revision mới.
 
 **Bản sửa sau lượt Expo đầu:** [EXPO_REPAIR](EXPO_REPAIR.md) sửa dialog,
