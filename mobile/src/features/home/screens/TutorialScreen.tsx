@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ComponentRef } from 'react';
-import { BackHandler, Image, PanResponder, Pressable, ScrollView, StyleSheet, Text, View, type GestureResponderEvent } from 'react-native';
+import { useCallback, useEffect, useRef, useState, type ComponentRef } from 'react';
+import { BackHandler, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
@@ -16,26 +16,17 @@ const labels = { NO: 'Không ăn', OK: 'Ăn được', WANT: 'Muốn ăn' };
 export function TutorialScreen({ onExit, onComplete }: { onExit: () => void; onComplete?: () => void }) {
   const { colors } = useShellTheme(), { textStyle } = useAppFonts();
   const [step, setStep] = useState(0), [vote, setVote] = useState<VoteValue>(), [undone, setUndone] = useState(false), [complete, setComplete] = useState(false);
-  const scroll = useRef<ComponentRef<typeof ScrollView>>(null), lastTap = useRef<number | null>(null), completed = useRef(false);
+  const scroll = useRef<ComponentRef<typeof ScrollView>>(null), completed = useRef(false);
   const practice = step >= 2 && step <= 4, dimmed = !complete && (step === 0 || practice);
   const applyVote = useCallback((value: VoteValue) => { if (step >= 2 && step <= 4) setVote(value); }, [step]);
-  const pan = useMemo(() => PanResponder.create({
-    onMoveShouldSetPanResponder: (_, gesture) => step >= 2 && step <= 4 && Math.abs(gesture.dx) > 12 && Math.abs(gesture.dx) > Math.abs(gesture.dy),
-    onPanResponderRelease: (_, gesture) => { if (Math.abs(gesture.dx) >= 40 && Math.abs(gesture.dx) > Math.abs(gesture.dy)) applyVote(gesture.dx < 0 ? 'NO' : 'OK'); },
-  }), [applyVote, step]);
-  const tap = (event: GestureResponderEvent) => {
-    const now = event.nativeEvent.timestamp ?? Date.now();
-    if (lastTap.current !== null && now >= lastTap.current && now - lastTap.current <= 350) { lastTap.current = null; applyVote('WANT'); }
-    else lastTap.current = now;
-  };
   const advance = () => {
     if (practice && vote !== expected[step]) return;
     if (step === 5) { if (undone && !completed.current) { completed.current = true; setComplete(true); onComplete?.(); } return; }
     if (step < 4) setVote(undefined);
-    setStep(value => value + 1); lastTap.current = null;
+    setStep(value => value + 1);
   };
-  const restart = () => { completed.current = false; setStep(0); setVote(undefined); setUndone(false); setComplete(false); lastTap.current = null; };
-  const back = useCallback(() => { if (step === 0 || complete) { onExit(); return; } setStep(value => value - 1); setVote(undefined); setUndone(false); lastTap.current = null; }, [complete, onExit, step]);
+  const restart = () => { completed.current = false; setStep(0); setVote(undefined); setUndone(false); setComplete(false); };
+  const back = useCallback(() => { if (step === 0 || complete) { onExit(); return; } setStep(value => value - 1); setVote(undefined); setUndone(false); }, [complete, onExit, step]);
   useEffect(() => { const subscription = BackHandler.addEventListener('hardwareBackPress', () => { back(); return true; }); return () => subscription.remove(); }, [back]);
   useEffect(() => { scroll.current?.scrollTo({ y: 0, animated: false }); }, [step, complete]);
   return <SafeAreaView style={[styles.root, { backgroundColor: dimmed ? '#426B57' : colors.background }]}>
@@ -58,7 +49,7 @@ export function TutorialScreen({ onExit, onComplete }: { onExit: () => void; onC
       </> : step === 1 ? <TutorialSetupStage onNext={advance} /> : <>
         <View style={styles.sampleHeading}><Text style={[styles.body, { color: practice ? '#FFFFFF' : colors.text }, textStyle(400)]}>{step === 5 ? 'Chọn món' : 'Thẻ mẫu'}</Text><Text style={[styles.small, { color: practice ? '#FFFFFF' : colors.text }, textStyle(500)]}>{step === 5 ? '2 / 10' : 'Không tính lượt chọn'}</Text></View>
         <View style={[styles.progressTrack, { backgroundColor: colors.warm }]}><View style={[styles.progress, { backgroundColor: colors.green, width: step === 5 ? '20%' : '10%' }]} /></View>
-        <View testID="tutorial-swipe-card" {...pan.panHandlers}><TutorialSampleCard step={step} vote={vote} onPress={tap} /></View>
+        <TutorialSampleCard key={step} step={step} vote={vote} onVote={applyVote} />
         <View style={[styles.coach, { backgroundColor: practice ? colors.surface : colors.warm, borderColor: colors.line }, !practice && styles.undoCoach]}>
           <View style={[styles.pointer, { backgroundColor: practice ? colors.surface : colors.warm }]} />
           <Text accessibilityLiveRegion="polite" style={[styles.body, { color: colors.text }, textStyle(600)]}>{step === 2 ? 'Vuốt sang trái' : step === 3 ? 'Vuốt sang phải' : step === 4 ? 'Nhấn đúp vào thẻ' : 'Chọn nhầm? Bạn có thể Hoàn tác.'}</Text>

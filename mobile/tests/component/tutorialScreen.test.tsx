@@ -28,6 +28,7 @@ test('double tap, undo, completion and replay stay isolated from room mutations'
     const card = screen.getAllByRole('button').find(item => String(item.props.accessibilityLabel).startsWith('Mở món '));
     if (!card) throw new Error('Missing tutorial card');
     await fireEvent.press(card, { nativeEvent: { timestamp: 1000 } }); await fireEvent.press(card, { nativeEvent: { timestamp: 1100 } });
+    expect(screen.getByText('Đã chọn: Muốn ăn')).toBeOnTheScreen();
     expect(screen.getByRole('button', { name: 'Tiếp tục hướng dẫn' })).toBeEnabled();
     await press('Tiếp tục hướng dẫn');
     expect(screen.getByRole('button', { name: 'Hoàn tất hướng dẫn' })).toBeDisabled();
