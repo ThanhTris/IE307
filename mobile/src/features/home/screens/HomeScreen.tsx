@@ -198,7 +198,7 @@ export function HomeScreen({ repository, sessionToken, liveSession, activeRoom, 
         <View style={homeStyles.quickHeading}>
           <Image source={require('../../../../assets/brand/icons/lightning.png')} accessible={false} resizeMode="contain" style={[homeStyles.lightning, { tintColor: colors.text }]} />
           <Text style={[homeStyles.quickTitle, { color: colors.text }, textStyle(700)]}>KÈO NHANH VỚI BẠN THÂN</Text>
-          <Pressable accessibilityRole="button" accessibilityLabel="Tất cả bạn bè" onPress={openFriends} hitSlop={15} style={homeStyles.allFriends}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Tất cả bạn bè" onPress={openFriends} style={homeStyles.allFriends}>
             <Text style={[homeStyles.allFriendsText, { color: colors.text }, textStyle(500)]}>{friends.data ? `Tất cả (${quickFriends.length}) ›` : 'Tất cả ›'}</Text>
           </Pressable>
         </View>
@@ -248,10 +248,10 @@ const homeStyles = StyleSheet.create({
   scaledTile: { aspectRatio: undefined, minHeight: 174 },
   actionHint: { textAlign: 'center', fontSize: 12, lineHeight: 18 },
   quickCard: { borderWidth: 1.5, borderRadius: radii.xl, padding: spacing.lg, gap: spacing.lg },
-  quickHeading: { minHeight: 18, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: spacing.xs },
+  quickHeading: { minHeight: 48, marginVertical: -15, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: spacing.xs },
   lightning: { width: 16, height: 16 },
   quickTitle: { flex: 1, fontSize: 12, lineHeight: 18, fontWeight: '700' },
-  allFriends: { minHeight: 18, justifyContent: 'center', paddingHorizontal: spacing.xs },
+  allFriends: { minHeight: 48, justifyContent: 'center', paddingHorizontal: spacing.xs },
   allFriendsText: { fontSize: 12, lineHeight: 18 },
   emptyFriends: { ...typography.body },
   dialogBody: { ...typography.body },
