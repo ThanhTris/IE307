@@ -1,0 +1,43 @@
+{
+  "revision": "ui-figma-final/2026-10-25/GM-10.2",
+  "sourceManifest": "SOURCE_MANIFEST.json",
+  "sourceManifestSha256": "902d7ebf9e998d480d67d65aed381653b3ea1cf04ca9b1232ac11964cc4f776e",
+  "typecheck": "Pass",
+  "eslintSourceTestsScripts": "Pass",
+  "architecture": "Pass",
+  "fullLint": {
+    "status": "Fail",
+    "scope": "ignored local mobile/.work/gm10Audit.test.tsx",
+    "importErrors": 4
+  },
+  "mobile": {
+    "status": "Pass",
+    "suites": 44,
+    "tests": 840,
+    "failed": 0,
+    "seconds": 123.925
+  },
+  "pngPixel": {
+    "status": "Pass",
+    "tests": 28
+  },
+  "expoLockedOffline": "Pass",
+  "androidExport": {
+    "status": "Pass",
+    "bundle": "entry-5d339fe0f6185fa2c67947a081adfef9.hbc",
+    "sha256": "200d610deb66cc6755b387a82865c2ad8fba5b482bff05b5ca29875290c6e993",
+    "deviceAcceptance": false
+  },
+  "python": {
+    "status": "Fail",
+    "total": 657,
+    "passed": 650,
+    "skipped": 6,
+    "errors": 1,
+    "assertionFailures": 0,
+    "error": "WinError1314: test_stage_refuses_symlink_output",
+    "seconds": 121.642
+  },
+  "nativeVisual": "Not run",
+  "humanApproval": "Not granted by this artifact"
+}

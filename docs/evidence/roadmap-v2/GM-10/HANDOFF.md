@@ -1,5 +1,11 @@
 # GM-10 — bàn giao context và khẩu vị
 
+**Cập nhật GM-10.2 ngày2026-11-02:** UI dish-only theo PNG Figma user cấp
+đã thực hiện bước1–6 trên nhánh `codex/gm-10-figma-update`. Đọc
+[handoff mới](figma-update/HANDOFF.md), [checks mới](figma-update/CHECKS.md)
+và [ma trận thiết kế](FIGMA_PARITY.md). Phần bên dưới là baseline GM-10.1
+legacy; device Pass/SDK57/route cũ không là nghiệm thu supplement hiện tại.
+
 **Bản bàn giao sau cập nhật main (2026-10-16):** PR #122 đã nhận `origin/main` `1862c86` vào merge commit `58b2849`; conflict chỉ ở README, đã giữ hướng dẫn GM-10 và baseline Expo. Đã chạy lại trên bản merge: Expo baseline 5/5, route 17/17, mobile 19 suites/566 tests, Android export pass 1309 modules, Python 550 pass/6 skipped, validator/index/diff pass. Xem [MAIN_SYNC_2026-10-16](MAIN_SYNC_2026-10-16.md). Reviewer Trí vẫn cần kiểm revision mới và quyết định merge/Done; các kiểm thiết bị riêng và API/native ngoài scope chưa được tự ghi Pass.
 
 Owner Tuấn (`mtuan2491`), reviewer Trí (`ThanhTris`), contract `food-v1/roadmap-v2/GM-10.1`. Nhánh `codex/gm-10-context-and-preferences`, base `origin/main`30ecb56, HEAD giữ tại base + working tree chưa commit; [manifest source/test](PATCH_MANIFEST.json). Agent không tạo commit/merge commit/push hoặc đổi Project/Done/Approved.

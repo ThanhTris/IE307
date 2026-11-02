@@ -3,7 +3,7 @@ import type { SetupCatalogue, SetupDraft, SetupFriend, SetupRoom } from './dishS
 
 /** UI port; consumer maps verified GM-07.B wire, never casts to legacy RoomContext. */
 export type SetupRead = {
-  catalogue: SetupCatalogue; friends: SetupFriend[]; connected: boolean;
+  catalogue: SetupCatalogue; friends: SetupFriend[]; connected: boolean; canEditSettings: boolean;
   accountDefaults: UserPreferences; ownRoomPreferences?: UserPreferences; room?: SetupRoom; settings?: SetupDraft;
 };
 export type SetupIntent =

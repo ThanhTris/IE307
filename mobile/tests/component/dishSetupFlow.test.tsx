@@ -1,5 +1,5 @@
-import { act } from 'react';
-import { fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react-native';
+import { SetupShortageDialog } from '../../src/features/context/components/SetupShortageDialog';
+import { act, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react-native';
 import { DishSetupFlow } from '../../src/features/context/screens/DishSetupFlow';
 import { createDishSetupPreview, type DishSetupScenario } from '../../src/bootstrap/dishSetupPreview';
 import type { DishSetupGateway } from '../../src/features/context/services/dishSetupGateway';
@@ -8,15 +8,17 @@ import { useDishSetupFlow } from '../../src/features/context/hooks/useDishSetupF
 async function open(scenario: DishSetupScenario, gateway?: DishSetupGateway) {
   const port = gateway ?? createDishSetupPreview(scenario);
   await render(<DishSetupFlow gateway={port} onExit={jest.fn()} />);
-  await screen.findByRole('button', { name: 'Chọn khẩu vị →' });
+  await screen.findByText('Buổi ăn');
   return port;
 }
-test('shortage requires explicit reduction and preserves requested count until confirmation', async () => {
-  await open('shortage15');
-  await fireEvent.press(screen.getByRole('button', { name: 'Chọn khẩu vị →' }));
-  expect(await screen.findByText('Bạn đang chọn 20 món.')).toBeOnTheScreen();
-  expect(screen.getByLabelText('20 món')).toBeOnTheScreen();
-  expect(screen.getByText('Giảm số món')).toBeOnTheScreen();
+test('shortage dialog shows requested/available separately and requires an explicit confirmation', async () => {
+  const confirm = jest.fn();
+  await render(<SetupShortageDialog available={15} requested={20} onConfirmReduction={confirm} onEdit={jest.fn()} />);
+  expect(screen.getByText('Bạn đang chọn 20 món.')).toBeOnTheScreen();
+  expect(screen.getByText('Hiện có 15 món. Bạn có thể giảm, nhưng không thấp hơn 10 món.')).toBeOnTheScreen();
+  expect(confirm).not.toHaveBeenCalled();
+  await fireEvent.press(screen.getByText('Giảm số món'));
+  expect(confirm).toHaveBeenCalledTimes(1);
 });
 test('confirmed reduction changes only draft until host submits again', async () => {
   const gateway = createDishSetupPreview('shortage15'), write = jest.spyOn(gateway, 'write');
@@ -102,4 +104,12 @@ test('rapid duplicate submission is guarded before React renders the disabled co
   expect(result.current.blocked).toBe(true);
   await act(async () => resolve({ ok: false, code: 'REJECTED' }));
   expect(result.current.phase).toBe('idle');
+});
+test('member advances to own preferences without submitting host settings', async () => {
+  const gateway = createDishSetupPreview('member'), write = jest.spyOn(gateway, 'write');
+  const { result } = await renderHook(() => useDishSetupFlow(gateway));
+  await waitFor(() => expect(result.current.data).toBeDefined());
+  await act(async () => result.current.submitSettings());
+  expect(result.current.stage).toBe('preferences');
+  expect(write).not.toHaveBeenCalled();
 });

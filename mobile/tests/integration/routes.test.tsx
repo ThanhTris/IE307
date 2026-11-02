@@ -82,7 +82,7 @@ test('fresh mock entry reaches Home with a name without creating a real session 
   await waitFor(() => expect(screen.getByRole('button', { name: 'Tạo phòng' })).toBeEnabled());
   await user.press(screen.getByRole('button', { name: 'Tạo phòng' }));
   expect(await screen.findByText('Chủ phòng: Minh')).toBeOnTheScreen();
-  expect(screen.getByRole('button', { name: 'Tiếp tục thiết lập' })).toBeDisabled();
+  expect(screen.getByRole('button', { name: 'Tiếp tục thiết lập' })).toBeEnabled();
   expect(createGuest).not.toHaveBeenCalled();
   expect(createRoom).not.toHaveBeenCalled();
   expect(joinRoom).not.toHaveBeenCalled();
@@ -125,7 +125,7 @@ test('Room setup routes preserve the same saved room from home tools through con
 }, 15000);
 
 test.each(['form', 'receipt'] as const)('Home brand on preferences %s returns to Home instead of context', async state => {
-  await renderRouter(routes, { initialUrl: '/room/context' });
+  await renderRouter(routes, { initialUrl: '/room/context?legacy=1' });
   const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
   await screen.findByLabelText('Giờ ăn (UTC+7)');
   await user.press(screen.getByRole('checkbox', { name: 'Tôi xác nhận điểm công cộng, buổi và giờ ăn' }));
@@ -145,7 +145,7 @@ test.each(['form', 'receipt'] as const)('Home brand on preferences %s returns to
 });
 
 test('Context carries host anti-repeat into preferences and skip ends at an explicit receipt', async () => {
-  await renderRouter(routes, { initialUrl: '/room/context' });
+  await renderRouter(routes, { initialUrl: '/room/context?legacy=1' });
   const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
   await screen.findByLabelText('Giờ ăn (UTC+7)');
   await fireEvent(screen.getByRole('switch', { name: 'Tránh lặp món gần đây' }), 'valueChange', true);

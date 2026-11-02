@@ -7,7 +7,6 @@ import { CreateRoomEntryScreen } from '../../features/rooms/screens/CreateRoomEn
 export default function CreateRoomEntryRoute() {
   const router = useRouter(), live = useRoomRepository(), preview = useRoomPreview();
   const back = () => router.canGoBack() ? router.back() : router.replace('/');
-  // GM-10.1 is a location-based legacy form. Do not present it as dish-only setup.
-  const entry = <CreateRoomEntryScreen displayName={live.mode === 'real' ? live.user?.displayName : preview.guestName ?? undefined} onBack={back} isMock={live.mode !== 'real'} />;
+  const entry = <CreateRoomEntryScreen displayName={live.mode === 'real' ? live.user?.displayName : preview.guestName ?? undefined} onBack={back} isMock={live.mode !== 'real'} onOpenSetup={live.mode === 'real' ? undefined : async () => { router.push('/room/setup'); return true; }} />;
   return live.mode === 'real' ? <RequireActiveSession onHome={() => router.replace('/')}>{entry}</RequireActiveSession> : entry;
 }

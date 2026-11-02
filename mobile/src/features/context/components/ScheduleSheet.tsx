@@ -5,13 +5,13 @@ import { AppButton, SheetDialog, StatusNotice } from '../../../shared/ui';
 import { parseSchedule, scheduleParts } from '../services/dishSetup';
 
 /** Native controls and explicit buttons; no new native picker dependency. */
-export function ScheduleSheet({ initial, now, onConfirm, onClose }: {
-  initial: string; now: () => number; onConfirm: (iso: string) => void; onClose: () => void;
+export function ScheduleSheet({ initial, now, onConfirm, onClose, initialCalendar = false }: {
+  initial: string; now: () => number; onConfirm: (iso: string) => void; onClose: () => void; initialCalendar?: boolean;
 }) {
   const { colors } = useShellTheme();
   const initialParts = scheduleParts(initial);
   const [date, setDate] = useState(initialParts.date), [hour, setHour] = useState(initialParts.hour), [minute, setMinute] = useState(initialParts.minute);
-  const [calendar, setCalendar] = useState(false), [month, setMonth] = useState(initialParts.date.slice(0, 7)), [error, setError] = useState<string>();
+  const [calendar, setCalendar] = useState(initialCalendar), [month, setMonth] = useState(initialParts.date.slice(0, 7)), [error, setError] = useState<string>();
   const monthStart = new Date(`${month}-01T00:00:00Z`);
   const days = new Date(Date.UTC(monthStart.getUTCFullYear(), monthStart.getUTCMonth() + 1, 0)).getUTCDate();
   const shiftMonth = (offset: number) => { const next = new Date(monthStart); next.setUTCMonth(next.getUTCMonth() + offset); setMonth(next.toISOString().slice(0, 7)); };

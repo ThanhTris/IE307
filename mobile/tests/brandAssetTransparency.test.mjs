@@ -69,3 +69,15 @@ for (const [path, width, height] of [
 test('Home join artwork differs from the create plus glyph', () => {
   assert.notDeepEqual(rgbaPng('home/join.png').alpha, rgbaPng('home/create.png').alpha);
 });
+
+for (const glyph of ['bun', 'noodles', 'hotpot', 'rolls', 'cake', 'vietnam', 'japan', 'china', 'thailand', 'europe', 'leaf', 'rich', 'sour', 'spicy']) {
+  test(`preferences/${glyph}: non-empty glyph has real alpha and safe padding`, () => {
+    const image = rgbaPng(`preferences/${glyph}.png`);
+    assert.equal(image.width, image.height);
+    assert.ok(image.width >= 32 && image.width <= 72);
+    assert.equal(image.alpha[0], 0);
+    assert.ok(image.alpha.filter(value => value === 0).length > image.alpha.length * 0.3);
+    assert.ok(image.alpha.some(value => value > 0));
+    assert.ok(image.alpha.some(value => value > 0 && value < 255));
+  });
+}

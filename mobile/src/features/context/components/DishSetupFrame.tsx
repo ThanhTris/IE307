@@ -5,8 +5,8 @@ import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppHeader } from '../../../shared/ui';
 
-export function DishSetupFrame({ title, onBack, busy, children, footer, action }: {
-  title: string; onBack: () => void; busy?: boolean; children: ReactNode; footer: ReactNode; action?: ReactNode;
+export function DishSetupFrame({ title, onBack, busy, children, footer, action, isMock = true }: {
+  title: string; onBack: () => void; busy?: boolean; children: ReactNode; footer: ReactNode; action?: ReactNode; isMock?: boolean;
 }) {
   const { colors } = useShellTheme(), { textStyle } = useAppFonts();
   useEffect(() => { const listener = BackHandler.addEventListener('hardwareBackPress', () => { if (!busy) onBack(); return true; }); return () => listener.remove(); }, [busy, onBack]);
@@ -14,7 +14,7 @@ export function DishSetupFrame({ title, onBack, busy, children, footer, action }
     <View style={styles.header}><View style={styles.title}><AppHeader variant="back" title={title} centeredTitle hideDivider allowTitleWrap colors={colors} onPressBack={busy ? undefined : onBack} backIconSource={require('../../../../assets/brand/home/back.png')} brandTextStyle={textStyle(700)} /></View>{action}</View>
     <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Text style={[styles.mock, { color: colors.muted }, textStyle(500)]}>Mô phỏng · thiết lập phòng · dữ liệu mẫu</Text>
+        {isMock ? <Text style={[styles.mock, { color: colors.muted }, textStyle(500)]}>Mô phỏng · thiết lập phòng · dữ liệu mẫu</Text> : null}
         {children}<View style={styles.footer}>{footer}</View>
       </ScrollView>
     </KeyboardAvoidingView>

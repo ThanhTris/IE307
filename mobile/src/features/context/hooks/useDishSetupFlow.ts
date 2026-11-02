@@ -7,12 +7,12 @@ let sequence = 0;
 const mockRequestId = () => `ui-setup-${++sequence}`;
 const clone = <T,>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 
-export function useDishSetupFlow(gateway: DishSetupGateway, requestId = mockRequestId, now = Date.now) {
+export function useDishSetupFlow(gateway: DishSetupGateway, requestId = mockRequestId, now = Date.now, initialStage: 'setup' | 'preferences' = 'setup') {
   const draftState = useDishSetupDraft();
   const receiveDraft = draftState.receive;
   const [data, setData] = useState<SetupRead>(), [readError, setReadError] = useState(false);
   const [preferences, setPreferences] = useState(emptyPreferences), [baselinePreferences, setBaselinePreferences] = useState(emptyPreferences);
-  const [stage, setStage] = useState<'setup' | 'preferences' | 'complete'>('setup');
+  const [stage, setStage] = useState<'setup' | 'preferences' | 'complete'>(initialStage);
   const [phase, setPhase] = useState<'idle' | 'sending' | 'unknown' | 'ack-read'>('idle');
   const [notice, setNotice] = useState<string>(), [needsRefresh, setNeedsRefresh] = useState(false);
   const [shortage, setShortage] = useState<{ available: number; requested: number }>();
@@ -75,6 +75,7 @@ export function useDishSetupFlow(gateway: DishSetupGateway, requestId = mockRequ
   };
   const submitSettings = () => {
     if (blocked || lock.current) return;
+    if (data?.canEditSettings === false) { if (data.room) setStage('preferences'); return; }
     const invalid = setupValidation(draftState.draft, now());
     if (invalid) { setNotice(invalid); return; }
     void send({ kind: 'settings', requestId: requestId(), draft: clone(draftState.draft), room: data?.room ? clone(data.room) : undefined });

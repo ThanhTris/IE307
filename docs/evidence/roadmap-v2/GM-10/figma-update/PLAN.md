@@ -4,6 +4,11 @@ Ngày lập: 2026-11-02. Owner Tuấn; reviewer Trí (`ThanhTris`).
 Revision yêu cầu: `ui-figma-final/2026-10-25/GM-10.2`.
 Đây là kế hoạch, chưa phải kết quả thực thi hoặc nghiệm thu.
 
+**Tiến độ thực thi:** bước1–6 đã triển khai và kiểm source/UI mock theo
+[handoff](HANDOFF.md), [checks](CHECKS.md) và STEP1–STEP6. Bước7 (Expo Go,
+visual/thiết bị và reviewer acceptance) chưa thực hiện. Giữ các yêu cầu
+và giới hạn trong kế hoạch dưới đây; không suy task đã Done.
+
 **Cập nhật sau khi nhận bộ ảnh GM-10 ngày 2026-11-02:** đã phóng to và đọc
 đủ P01–P11/R01–R15, min10/max20 và cả hai shortage trong bộ PNG kết hợp
 GM-09/GM-10. Xem [báo cáo độ phủ ảnh](FIGMA_REFERENCE_AUDIT.md).

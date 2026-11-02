@@ -7,6 +7,6 @@ export default function HomePreviewRoute() {
   return <HomePreviewScreen onCreate={() => router.push('/room/create')} onJoin={() => router.push('/room/join')}
     onResume={() => router.push('/continue-session')} onFriends={() => router.push('/friends')}
     onHistory={() => router.push('/history')} onInbox={() => router.push('/inbox')}
-    onOpenFoundation={() => router.push('/dev/foundation')} onOpenRoomSetup={() => router.push('/room/context')}
+    onOpenFoundation={() => router.push('/dev/foundation')} onOpenRoomSetup={() => router.push({ pathname: '/room/context', params: { legacy: '1' } })}
     onOpenDiscoveryContext={() => router.push('/dev/discovery-context')} />;
 }
