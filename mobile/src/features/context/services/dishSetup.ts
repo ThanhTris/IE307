@@ -17,6 +17,19 @@ export function setupValidation(draft: SetupDraft, now: number): string | null {
   if (draft.timeMode === 'scheduled' && (!draft.desiredAt || !Number.isFinite(Date.parse(draft.desiredAt)) || Date.parse(draft.desiredAt) <= now)) return 'Chọn thời gian trong tương lai để tiếp tục.';
   return null;
 }
+export function scheduleParts(iso: string) {
+  const local = new Date(Date.parse(iso) + 7 * 3600000).toISOString();
+  return { date: local.slice(0, 10), hour: local.slice(11, 13), minute: local.slice(14, 16) };
+}
+/** UTC+7 business date, independent from the phone timezone; reject normalized dates. */
+export function parseSchedule(date: string, hour: string, minute: string): string | null {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !/^\d{1,2}$/.test(hour) || !/^\d{1,2}$/.test(minute)) return null;
+  if (+hour > 23 || +minute > 59) return null;
+  const value = `${date}T${hour.padStart(2, '0')}:${minute.padStart(2, '0')}:00+07:00`;
+  if (!Number.isFinite(Date.parse(value))) return null;
+  const iso = new Date(value).toISOString();
+  return scheduleParts(iso).date === date ? iso : null;
+}
 export const mealOptions = [
   { id: 'breakfast', label: 'Ăn sáng', icon: require('../../../../assets/brand/entry-ui/sun.png') },
   { id: 'lunch', label: 'Ăn trưa', icon: require('../../../../assets/brand/entry-ui/rice.png') },
