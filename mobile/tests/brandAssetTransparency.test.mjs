@@ -34,7 +34,23 @@ function rgbaPng(path) {
     }
   }
   const alpha = Array.from({ length: width * height }, (_, index) => pixels[index * 4 + 3]);
-  return { width, height, alpha };
+  return { width, height, alpha, pixels };
+}
+
+for (const [name, width, height] of [['pho',240,240],['rice',204,204],['bun',204,204],['laurel',50,90],['empty-bowl',440,440],['map-illustration',720,240]]) {
+  test(`result/${name}: nonempty isolated reference artwork with correct dimensions`, () => {
+    const value = rgbaPng(`result/${name}.png`);
+    assert.deepEqual([value.width,value.height],[width,height]);
+    assert.ok(value.alpha.some(a => a > 200));
+    const colors = new Set();
+    for(let i=0;i<value.pixels.length;i+=4) if(value.pixels[i+3]>128) colors.add(value.pixels.subarray(i,i+3).toString('hex'));
+    assert.ok(colors.size > (name === 'laurel' ? 0 : 50), 'Artwork must not be an opaque single-color rectangle');
+    if(['pho','rice','bun','laurel'].includes(name)) {
+      assert.equal(value.alpha[0],0);
+      const empty=value.alpha.filter(a=>a===0).length/value.alpha.length;
+      assert.ok(empty>0.15 && empty<0.90, 'Circular or glyph silhouette must retain transparent margins and visible ink');
+    }
+  });
 }
 
 for (const [path, size] of [

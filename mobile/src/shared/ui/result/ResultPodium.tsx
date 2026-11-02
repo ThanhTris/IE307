@@ -1,6 +1,7 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, type ImageSourcePropType } from 'react-native';
 import { radii, spacing, typography } from '../../theme/tokens';
 import type { ComponentThemeProps } from '../types';
+import { ResultPodiumGraphic } from './ResultPodiumGraphic';
 
 export type PodiumDish = {
   id: string;
@@ -8,10 +9,14 @@ export type PodiumDish = {
   rank: 1 | 2 | 3;
   scoreLabel?: string;
   winner?: boolean;
+  imageSource?: ImageSourcePropType;
+  imageUri?: string;
+  imageAttribution?: string | null;
 };
 
-export function ResultPodium({ dishes, colors }: ComponentThemeProps & { dishes: PodiumDish[] }) {
+export function ResultPodium({ dishes, colors, presentation = 'cards' }: ComponentThemeProps & { dishes: PodiumDish[]; presentation?: 'cards' | 'podium' }) {
   const podium = dishes.filter(dish => dish.rank >= 1 && dish.rank <= 3);
+  if (presentation === 'podium') return <ResultPodiumGraphic dishes={podium} colors={colors} />;
   return (
     <ScrollView
       horizontal
