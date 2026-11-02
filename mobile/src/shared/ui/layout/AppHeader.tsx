@@ -26,6 +26,10 @@ export type AppHeaderProps = ComponentThemeProps & {
   showInbox?: boolean;
   showProfile?: boolean;
   brandTextStyle?: TextStyle;
+  backIconSource?: ImageSourcePropType;
+  allowTitleWrap?: boolean;
+  centeredTitle?: boolean;
+  hideDivider?: boolean;
 };
 
 export function AppHeader({
@@ -44,11 +48,15 @@ export function AppHeader({
   showInbox = true,
   showProfile = true,
   brandTextStyle,
+  backIconSource,
+  allowTitleWrap = false,
+  centeredTitle = false,
+  hideDivider = false,
   colors,
 }: AppHeaderProps) {
   const showBrand = variant === 'home';
   return (
-    <View style={[styles.header, { backgroundColor: colors?.surface, borderBottomColor: colors?.line }]}>
+    <View style={[styles.header, { backgroundColor: colors?.surface, borderBottomColor: colors?.line }, hideDivider && { borderBottomWidth: 0 }]}>
       {showBrand ? (
         <Pressable
           accessibilityRole="button"
@@ -63,7 +71,7 @@ export function AppHeader({
             resizeMode="contain"
             style={styles.mark}
           />
-          <Text numberOfLines={1} style={[styles.brandText, { color: colors?.text }, brandTextStyle]}>
+          <Text numberOfLines={allowTitleWrap ? undefined : 1} style={[styles.brandText, { color: colors?.text }, brandTextStyle]}>
             {title}
           </Text>
         </Pressable>
@@ -79,13 +87,13 @@ export function AppHeader({
               { backgroundColor: pressed ? colors?.soft : 'transparent', opacity: onPressBack ? 1 : 0.45 },
             ]}
           >
-            <Text style={[styles.backGlyph, { color: colors?.text }]}>‹</Text>
+            {backIconSource ? <Image source={backIconSource} accessible={false} resizeMode="contain" style={[styles.headerIcon, { tintColor: colors?.text }]} /> : <Text style={[styles.backGlyph, { color: colors?.text }]}>‹</Text>}
           </Pressable>
           <View style={styles.headerVariantTitle}>
             <Text
-              numberOfLines={1}
+              numberOfLines={allowTitleWrap ? undefined : 1}
               accessibilityRole="header"
-              style={[styles.brandText, { color: colors?.text }, brandTextStyle]}
+              style={[styles.brandText, { color: colors?.text }, centeredTitle && { textAlign: 'center' }, brandTextStyle]}
             >
               {title}
             </Text>
@@ -95,6 +103,7 @@ export function AppHeader({
               </Text>
             ) : null}
           </View>
+          {centeredTitle && variant === 'back' ? <View style={styles.headerAction} /> : null}
           {variant === 'room' ? (
             <Pressable
               accessibilityRole="button"

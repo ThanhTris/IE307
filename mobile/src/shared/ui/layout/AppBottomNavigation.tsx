@@ -22,12 +22,14 @@ export function AppBottomNavigation({
   activeId,
   bottomInset = 0,
   labelTextStyle,
+  allowLabelWrap = false,
   colors,
 }: ComponentThemeProps & {
   items: HomeBottomNavigationItem[];
   activeId: string;
   bottomInset?: number;
   labelTextStyle?: TextStyle;
+  allowLabelWrap?: boolean;
 }) {
   return (
     <View
@@ -57,7 +59,7 @@ export function AppBottomNavigation({
               resizeMode="contain"
               style={[styles.bottomNavIcon, { tintColor: colors?.text }]}
             />
-            <Text numberOfLines={1} style={[styles.bottomNavLabel, { color: colors?.text }, labelTextStyle]}>
+            <Text numberOfLines={allowLabelWrap ? undefined : 1} style={[styles.bottomNavLabel, { color: colors?.text }, labelTextStyle]}>
               {item.label}
             </Text>
           </Pressable>

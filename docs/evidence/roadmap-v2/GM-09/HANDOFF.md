@@ -1,5 +1,107 @@
 # GM-09 — bàn giao màn Home / create / join
 
+## Latest correction — native input/tutorial feedback, 2026-11-02
+
+[Current scope/repair/recheck](figma-update/INPUT_MOTION_REPAIR.md): replace the
+transparent IME overlay with six native caret-bearing fields; focus, whole-code
+paste, replacement, Backspace and frozen join intent are preserved. Narrow/font
+scaled layouts wrap to3 × 2 for48dp targets. GM-09 owns the tutorial sample;
+it now follows horizontal drag/tilt, springs back and gives WANT glow/selection.
+Reduce Motion suppresses movement while choices/buttons remain functional.
+No actual ballot screen/API is changed.38 suites/807 tests, scoped tooling and
+Android export Pass; native after-fix caret/IME/frame smoothness Not run.
+
+## Latest correction — Welcome/Home asset alpha, 2026-11-02
+
+Fixed13 existing PNGs responsible for the two actual-device reports:11 icon
+masks and2 ring decorations. Home join's wrong plus is replaced with the
+received enter artwork. [Repair and phone recheck](figma-update/ASSET_ALPHA_REPAIR.md),
+[asset manifest](figma-update/ASSET_ALPHA_MANIFEST.json). No runtime/component
+logic or route change. Current source receipts now point to corrected alpha;
+older manifests describe the pre-repair snapshots. Fourteen real-pixel cases,
+797 Jest tests and Android export pass; native post-fix rendering is Not run.
+Restart Metro with `--clear`, reopen Expo Go and rescan to load the new assets.
+
+## Latest candidate — PNG reference repair, 2026-11-02
+
+See [current repair/handoff](figma-update/PNG_REFERENCE_REPAIR.md). Thirty user
+exports replace the prior quota blocker for the supplied frames. Join is now
+input → confirmation or distinct error screen; QR/manual fallback and frozen
+retry/privacy remain. Tutorial now uses a Home backdrop, focused native card,
+coach pointers and received icon/hand/bowl art rather than generic sections.
+Home/guest alignment and green brand tokens are corrected. Current code still
+requires GM-10 setup and the real public-preview adapter; real legacy routes
+are retained. Native visual/device acceptance is **Not run**, no Done/approval.
+Source revisions and verification limits are recorded in the linked handoff.
+
+## Current local handoff — steps 3–7, 2026-11-01
+
+User clarification: Figma is a visual reference; required small missing
+controls/states may be added and reported without writing Figma. The user
+authorizes local commits after each step, no push. Source commits:
+`fea0696` create entry, `fde3757` public join preview, `1b86133` isolated tutorial,
+`a4dbdec` flow/accessibility/legacy compatibility. Step 7 documents that source.
+
+[Final handoff and acceptance matrix](figma-update/FINAL_HANDOFF.md),
+[source manifest](figma-update/FINAL_MANIFEST.json),
+[design/upstream gaps](figma-update/REMAINING_GAPS.md), [current checks](CHECKS.md).
+Mock product routes are `/room/create-entry`, `/room/join-entry`, `/tutorial`;
+Home replay is under Cá nhân. New public preview does not read member snapshot
+before join ACK. Real Home remains on received legacy create/join routes until
+new producer adapters exist. Existing API/migrations/domain/legacy tests stay.
+
+Full mobile795 tests, typecheck/scoped lint/architecture/Expo installed check and
+Android export pass. Full lint remains blocked by an ignored local QA file;
+Python retains one Windows symlink error. Native device/visual/a11y checks remain
+Not run. GM-10 dish-only setup is not delivered on this branch, and GM-07.1 has
+no live previewJoin adapter; new UI presents those capability boundaries honestly.
+No Task Done/approval, production activation, GitHub push or Figma write.
+
+## GM-09.2 step 2 candidate — 2026-11-01
+
+Base `8172241` + working tree on `codex/gm-09-figma-update`. Received full context
+and screenshots for Home/continue/guest-expiry from the authorized Draft after
+reconnecting the UIT account. [Step 2 handoff/reproduction](figma-update/step2/STEP2.md),
+[source manifest](figma-update/step2/MANIFEST.json),
+[manual commit instructions](figma-update/step2/COMMIT_STEP2.md).
+
+Home uses corrected image/icon slots and spacing, independent friends states,
+strict session availability and snapshot verification before continuation.
+`/continue-session` renders the received native screen; the mock composition
+continues through the existing room receipt seam. A confirmed revoked guest
+gets the received expiry screen with explicit reset, retry and duplicate lock.
+Home QA tools move to guarded `/dev/home` with fixed UI fixtures; product Home
+retains only the mock label when appropriate. Existing callbacks/contracts and
+legacy auth/domain/migration behavior remain; no package/provider/API/schema change.
+
+Full mobile regression **763/763 tests, 30 suites**, typecheck/source lint/
+architecture/Expo installed check and Android export pass. Full Python remains
+650 passed/6 skipped/1 Windows symlink privilege error. Native device/visual/
+a11y and real saved-room discovery/step restoration remain unaccepted; see
+CHECKS/FIGMA_PARITY. GM-25/31 still own the real active-room/cache seam. The agent
+has not staged/committed/pushed, changed task status or recorded Trí approval.
+
+## Main refactor adaptation — 2026-11-01
+
+The user is merging main `90e871a` into `codex/gm-09-figma-update` after committing
+step 1 as `07fd340`. The working-tree resolution follows main's `HomeScreen`,
+`/room/*` and `/dev/*` structure, transfers GM-09 FormField props to the extracted
+form component, and keeps welcome/name behavior and its tests. Both stale
+`HomeLiveSession` imports now use `HomeScreen`.
+
+Six relevant suites pass 121/121 tests; typecheck, scoped lint, architecture and
+repository/index checks pass. Full Python regression runs 657 tests with one
+Windows symlink privilege error and six skipped tests; it is not fully green.
+See [current checks](CHECKS.md) and [resolution,
+historical manifest limits and user-run staging/commit commands](figma-update/MAIN_MERGE_2026-11-01.md).
+The agent has not staged the resolutions or committed/pushed. Index entries will
+remain unmerged until the user stages them. Device checks and Trí review remain
+required; no Done/approval claim.
+
+## GM-09.2 step 1 candidate — 2026-10-31
+
+New welcome/name entry is composed at `/welcome`; fresh `/` enters it after the session/mode guards. [Step 1 handoff/checks](figma-update/STEP1.md) identifies files, producer versions, route/fixture controls, pending/duplicate/recovery behavior and remaining checks. [FIGMA_PARITY](FIGMA_PARITY.md) retains the received Figma screenshots and contrast differences. GM-25 still supplies the real `ensureSession` seam; mock entry only stores a local UI name. Optional shared FormField presentation props preserve prior defaults. Owner Tuấn/reviewer Trí unchanged; branch `codex/gm-09-figma-update`, base `621accc` + working tree. No stage/commit/push, Project status or approval changes; the remaining steps in the user's local plan are not implemented by this supplement.
+
 ## Bàn giao hiện tại để Trí review — 2026-10-15
 
 Người dùng đã xác nhận kiểm GM-09 thành công và hoạt động trên Expo Go sau bản sửa cuối. [Biên bản kiểm thủ công](MANUAL_DEVICE_CHECK.md) là evidence văn bản theo chỉ dẫn hiện tại, không yêu cầu ảnh/video cho lần bàn giao này. Chưa có model/Android/Expo Go và kết quả riêng light/dark/font200/TalkBack/keyboard/Back/từng fixture; biên bản giữ rõ giới hạn, Trí đối chiếu trước nghiệm thu.
@@ -112,7 +214,7 @@ Expo Go Android cùng LAN, SDK 57. Home `/` → **＋ Tạo kèo ăn** (`/create
 - Expo Go Android, ảnh/video, dark/font200/TalkBack/keyboard/hardware Back trên thiết bị: **Not run**, chưa có thiết bị/adb hoặc xác nhận mới từ người dùng. Owner Tuấn và reviewer Trí kiểm trước nghiệm thu.
 - Python 3.12.14 hiện hành: 544 tests, **Fail (1 failure, 5 errors)**; encoding probe và taxonomy locking Windows đã ghi ở GM-07. Không sửa data/runner trong GM-09; cần maintainer/Trí xử lý hoặc kiểm Linux/WSL. [Output](UI_REWORK_PYTHON_REGRESSION.txt).
 - Không đổi package/lockfile/shared UI/DTO/schema/luật phiếu; không thêm provider, GPS/camera/native module. Không có RPC thật, lobby/preferences/social thật, SecureStore/outbox hay dataset verified; các phần này thuộc task nhận sau.
-- `.agents/` tự tạo đã xóa hoàn toàn khỏi workspace theo yêu cầu ngày 2026-10-13; không tạo rules/skills thay thế. Chỉ dùng AGENTS/task/spec/workflow và artifact hiện hành trong project. `prompt.txt` không bị sửa. Không commit/push/Approved/Done; việc bàn giao này không thay review Trí.
+- `.agents/` tự tạo đã xóa hoàn toàn khỏi workspace theo yêu cầu ngày 2026-10-13; không tạo rules/skills thay thế. Chỉ dùng AGENTS/task/spec/workflow và artifact hiện hành trong project. Không commit/push/Approved/Done; việc bàn giao này không thay review Trí.
 # GM-09 Home Figma implementation supplement — 2026-10-27
 
 The current working tree updates the Home screen against [approved frame 330:3067](figma/330-3067-home.png), including the official G mark, headline, friends-dining banner, create/join tiles, quick-friends section and bottom navigation. It reuses GM-05 shared components (`AppHeader`, `AppButton`, `AvatarRow`, `BrandBanner`, `AppBottomNavigation`) and keeps existing session/repository/navigation callbacks. Figma asset provenance and hashes are in [`mobile/assets/brand/SOURCE.md`](../../../../mobile/assets/brand/SOURCE.md).

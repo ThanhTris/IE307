@@ -63,7 +63,7 @@ export function JoinRoomScreen({ repository, onBack, onEntered, sampleCode, init
     } catch { if (mounted.current) setCameraMessage('Chưa thể đọc mã. Hãy nhập mã bằng tay.'); }
     finally { scanLock.current = false; if (mounted.current) setScanBusy(false); }
   };
-  return <RoomEntryFrame title="Vào kèo ăn" subtitle="Có mã từ bạn bè? Cùng vào một kèo ăn." onBack={onBack} busy={busy} previewControls={previewControls}>
+  return <RoomEntryFrame title="Vào kèo ăn" subtitle="Có mã từ bạn bè? Cùng vào một kèo ăn." onBack={onBack} busy={busy || submitted.uncertain || submitted.accepted} isMock={!isLive} previewControls={previewControls}>
     <View style={entryStyles.row}>
       <Chip label="Nhập mã" leadingIcon="⌨" selected={tab === 'manual'} disabled={disabled} onPress={() => setTab('manual')} colors={colors} />
       <Chip label="Quét mã QR" leadingIcon="▣" selected={tab === 'camera'} disabled={disabled} onPress={() => setTab('camera')} colors={colors} />

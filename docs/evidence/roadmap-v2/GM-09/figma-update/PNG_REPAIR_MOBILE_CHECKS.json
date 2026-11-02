@@ -1,0 +1,35 @@
+{
+  "sourceCommit": "d5a10cf5ead07cc38fc2660505e38f8fe6e40040",
+  "runner": "unchanged Jest --runInBand on host",
+  "fullSuiteSourceCommit": "76e7dbd8cb11ac672950665182d1b48f738347e5",
+  "success": true,
+  "suites": {
+    "passed": 36,
+    "failed": 0
+  },
+  "tests": {
+    "passed": 797,
+    "failed": 0,
+    "pending": 0
+  },
+  "durationSeconds": 74.12,
+  "latestHomeTouchTargetChange": {
+    "commit": "d5a10cf5ead07cc38fc2660505e38f8fe6e40040",
+    "suitesPassed": 1,
+    "testsPassed": 26,
+    "durationSeconds": 3.643
+  },
+  "androidExport": {
+    "bundle": "entry-8504d0203927af928119ab997b354298.hbc",
+    "result": "Pass, not device acceptance"
+  },
+  "python": {
+    "total": 657,
+    "passed": 650,
+    "skipped": 6,
+    "errors": 1,
+    "durationSeconds": 75.974,
+    "error": "Existing WinError1314 symlink privilege"
+  },
+  "deviceVisual": "Not run"
+}

@@ -4,7 +4,9 @@ import {
   TextInput,
   View,
   type KeyboardTypeOptions,
+  type StyleProp,
   type TextInputProps,
+  type TextStyle,
 } from 'react-native';
 import { radii, spacing, typography } from '../../theme/tokens';
 import type { ComponentThemeProps } from '../types';
@@ -18,6 +20,8 @@ export type FormFieldProps = ComponentThemeProps &
     helperText?: string;
     error?: string;
     keyboardType?: KeyboardTypeOptions;
+    hideLabel?: boolean;
+    inputStyle?: StyleProp<TextStyle>;
   };
 
 export function FormField({
@@ -28,11 +32,13 @@ export function FormField({
   helperText,
   error,
   colors,
+  hideLabel = false,
+  inputStyle,
   ...inputProps
 }: FormFieldProps) {
   return (
     <View style={styles.field}>
-      <Text style={[styles.fieldLabel, { color: colors?.text }]}>{label}</Text>
+      {!hideLabel ? <Text style={[styles.fieldLabel, { color: colors?.text }]}>{label}</Text> : null}
       <TextInput
         {...inputProps}
         accessibilityLabel={label}
@@ -48,6 +54,7 @@ export function FormField({
             borderColor: error ? colors?.danger : colors?.line,
             color: colors?.text,
           },
+          inputStyle,
         ]}
       />
       {error ? (

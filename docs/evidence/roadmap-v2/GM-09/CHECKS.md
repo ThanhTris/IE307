@@ -1,5 +1,190 @@
 # GM-09 — checks
 
+## Latest correction — native room-code cells/tutorial motion, 2026-11-02
+
+[Scope, repair and phone checklist](figma-update/INPUT_MOTION_REPAIR.md),
+[source/input manifest](figma-update/INPUT_MOTION_MANIFEST.json),
+[sanitized results](figma-update/INPUT_MOTION_CHECKS.json).
+
+| Check | Actual | Result |
+| --- | --- | --- |
+| Targeted UI/hooks/routes |6 suites/39 tests: typing/paste/replace/delete/frozen code; drag/release/cancel/Reduce Motion/double tap; existing join/tutorial guards|Pass|
+| Full mobile Jest, run alone |38 suites/807 tests,75.217s; runner/timeouts unchanged|Pass|
+| TypeScript / source-tests-scripts lint / architecture |No package/native module or baseline config change|Pass|
+| Expo installed compatibility |Locked SDK58; offline-check limitation|Pass with limitation|
+| Android export |entry-91143e7847e4b41334bc875b16d69e43.hbc,3.6MB|Pass, packaging only|
+| Full Python regression, host |657 tests:650 passed/6 skipped/1 error,154.086s|Existing WinError1314 symlink privilege; no assertion failure|
+| Native Android recheck |User images prove pre-fix missing caret/IME overlay; no connected Android/ADB for new screenshots|Not run|
+
+Test fixtures explicitly select Android keyboard behavior and both Reduce Motion
+settings; no production behavior or assertion is disabled. Native cursor blink,
+Samsung IME and physical animation smoothness cannot be inferred from mocked
+events/Animated-value assertions. Legacy real/QA join, actual voting GM-12/26 and
+all API/privacy/ACK semantics are unchanged.
+Source commits: `3458755` native code cells; `f97a748` tutorial motion. No new
+Python failure, native-device Pass, Trí approval or GitHub push is claimed.
+
+## Latest correction — opaque PNG assets, 2026-11-02
+
+User supplied actual Expo Go screenshots showing Welcome's cream rectangle and
+Home's solid icon tiles. [Diagnosis/correction](figma-update/ASSET_ALPHA_REPAIR.md)
+and [before/after hashes](figma-update/ASSET_ALPHA_MANIFEST.json) supersede asset
+hashes in older source manifests; historical receipts remain intact.
+
+| Check | Actual | Result |
+| --- | --- | --- |
+| Real PNG pixel regression |`node --test mobile/tests/brandAssetTransparency.test.mjs`:14 cases; original13 alpha assertions failed before correction|Pass after correction|
+| Full mobile Jest, final run alone |36 suites/797 tests,57.308s; no timeout or assertions changed|Pass|
+| TypeScript / source-tests-scripts lint |No package or ambient Node-type configuration change|Pass|
+| Architecture / installed Expo compatibility |SDK58 lock retained; offline-check limitation|Pass with limitation|
+| Full Python regression, host |657 tests:650 passed/6 skipped/1 error;139.488s|Existing WinError1314: Windows symlink privilege|
+| Final Android export |entry-6363d30c7094b01f5080317d8087367f.hbc,3.6MB|Pass, packaging only|
+| Asset compositor |[before/after proof](figma-update/asset-alpha-before-after.png): original filled tiles/rectangle versus transparent repaired glyphs/stroke|Pass inspection; not an app screenshot|
+| Expo Go after correction |No connected Android/ADB; user screenshots describe pre-fix failures|Not run; user phone recheck required|
+
+An initial broad Jest run overlapped tooling/export and hit one5s router timeout.
+The final run alone passed all797 unchanged application tests. The14 PNG checks
+use Node's existing built-ins separately, because RN Jest Image mocks cannot
+expose incorrect alpha and the app deliberately does not load Node ambient types.
+Full lint's ignored local QA imports and Windows symlink limitation remain as
+documented below; no unrelated QA file or OS permissions are changed.
+The final Python run has no new assertion failures; its only error is the same
+OS symlink privilege issue. [Sanitized current results](figma-update/ASSET_ALPHA_CHECKS.json).
+
+## Latest source — PNG repair, 2026-11-02
+
+Source `d5a10cf`; [comparison and limits](figma-update/PNG_REFERENCE_REPAIR.md),
+[source manifest](figma-update/PNG_REPAIR_SOURCE_MANIFEST.json),
+[sanitized mobile results](figma-update/PNG_REPAIR_MOBILE_CHECKS.json).
+
+| Check | Actual | Result |
+| --- | --- | --- |
+| Full mobile Jest, host run at76e7dbd |36 suites/797 tests;74.12s; unchanged runner/timeouts|Pass|
+| Final Home touch-target layout atd5a10cf |26 Home tests,3.643s; 48dp native target retained|Pass interaction; native geometry Not run|
+| TypeScript / scoped ESLint / architecture |Final source/tests/scripts, zero lint errors/warnings|Pass|
+| Expo compatibility |Installed SDK58 dependencies match lock; offline-check limitation retained|Pass with limitation|
+| Android Hermes export, final source |entry-8504d0203927af928119ab997b354298.hbc,3.6MB|Pass, export only|
+| Reference/source/asset audit |30 input hashes;34 changed source/test/asset files;40 local PNG callsites nonempty|Pass inspection; not rendered-geometry acceptance|
+| Full `npm run lint` |Four existing stale imports in ignored mobile/.work/gm10Audit.test.tsx|Fail; file/config left untouched|
+| Full Python, stable final documentation inputs on host |657 tests:650 passed/6 skipped/1 error;75.974s|Fail: existing WinError1314 symlink privilege|
+| Repository / task indexes / whitespace |Offline validators and diff checks|Pass|
+| Android visual/Expo Go/320-360-412dp/font200/TalkBack/keyboard/physical gestures|No device/ADB or RN web renderer in environment|Not run|
+
+Regression investigation: first sandbox run timed out a cold Home render;
+host execution retained all test limits. A later host run exposed an existing
+ambiguous `/anchorId/` query in GM-24's privacy test (35 suites/796 tests passed,
+1 failed). Selector now waits for the serialized JSON key rather than matching
+explanatory copy. Standalone21 tests and the final full797 tests pass; no GPS
+privacy assertion or implementation was removed. Hermes sandbox export failed
+writing its temporary output; the unchanged compiler exported successfully on host.
+Python sandbox regression also hit temporary-file permission errors; verification
+uses the host run, not those misleading sandbox failures.
+An intermediate Python run began before the new reference manifest was present
+and reported broken-link fixture failures. After input files were complete,
+rerunning all657 tests removed those failures; only the existing symlink error
+remains. No Python code, privileges or assertion was changed.
+
+## Steps 3–7 local candidates — 2026-11-01
+
+Current source is step 6 `a4dbdec`; prior local step commits: create entry
+`fea0696`, join preview `fde3757`, tutorial `1b86133`. See
+[final handoff/matrix](figma-update/FINAL_HANDOFF.md),
+[reported requirements/design gaps](figma-update/REMAINING_GAPS.md) and
+[source manifest](figma-update/FINAL_MANIFEST.json). Earlier manifests/counts
+below identify historical tested revisions, not the current source.
+
+| Check | Actual | Result |
+| --- | --- | --- |
+| Full mobile Jest on host | **36 suites/795 tests**, 114.496s, unchanged runner/5s limits | Pass |
+| Typecheck / source lint / architecture | `npm run typecheck`; `npx eslint src tests scripts` (zero warnings/errors); architecture guard | Pass |
+| Full mobile lint | Four stale imports in ignored local `.work/gm10Audit.test.tsx`, not committed or altered | Fail (local QA file); do not claim full npm check green |
+| Expo locked compatibility | SDK58 installed versions match lockfile; tool warns offline validation limitation | Pass with limitation |
+| Android export | Hermes `entry-f5fadfbd9e28e8da6c9622a08bbbd971.hbc`, 3.5MB | Pass, export only |
+| Full Python | CPython3.14.7, UTF-8/test deps command-scoped; **657 tests:650 passed/6 skipped/1 error**,113.019s | Fail: existing WinError1314 fixture symlink privilege |
+| Repository/indexes/diff/manifests | Offline validators, whitespace, source hash and stage review | Pass |
+| Merge gate | Fetched main90e871a, live Project16:28:55Z: READY_FOR_MERGE_REVIEW | Dependency/artifact check only; no approval |
+| Native Android/visual/physical swipe/320-360-412dp/font200/TalkBack/Dark/keyboard/Back | No ADB in PATH or configured/standard host SDK location | Not run |
+
+Step-specific tests and earlier sandbox cold-render timeouts are recorded in
+STEP3–STEP6; the host full run is the final source regression. No assertions,
+timeouts or runner settings were weakened. Python error remains
+`test_catalogue_projection.ProjectionAdoptionTests.test_stage_refuses_symlink_output`.
+No Windows security setting/test skip was added to hide it. Logs are local
+ignored `.work/gm09-remaining-python.log` and mobile `.work/gm09-step6-*`.
+
+The user explicitly authorized a local commit after each step and no push.
+No Project/Issue/approval, database, API version or Figma change was made.
+Dish-only GM-10 setup/public live join-preview integrations and native acceptance
+remain open; independent UI candidates are not full GM-09 Done.
+
+## GM-09.2 step 2 — 2026-11-01
+
+Base `8172241` + working tree on `codex/gm-09-figma-update`, pinned by
+[26-file source/test/asset manifest](figma-update/step2/MANIFEST.json).
+[Reproduction/scope/limits](figma-update/step2/STEP2.md),
+[manual commit guide](figma-update/step2/COMMIT_STEP2.md).
+
+| Check | Actual | Result |
+| --- | --- | --- |
+| Live start gate | Project #2 at 2026-11-01T15:10:54Z, READY_TO_CLAIM; owner Tuấn/reviewer Trí | Pass at checked time; no Project writes |
+| TypeScript / source lint / architecture | `npm run typecheck`, `npx eslint src tests scripts`, `npm run check:architecture`; final source lint has no warnings/errors | Pass |
+| Mobile regression | `npm test -- --json --outputFile=.work/gm09-step2-full-jest.json`; **30 suites / 763 tests**, 247.529s | Pass |
+| Expo installed compatibility | `npm run check:expo`, locked SDK58; tool warns validation is offline | Pass with offline limitation |
+| Android export | Final `npm run bundle:android`; Hermes `entry-1ded42fe7c3f28acf37d285698a10a6a.hbc`, 3.5MB | Pass, export only |
+| Full Python regression | CPython3.14.7, UTF-8 and test deps command-scoped; **657 tests: 650 passed, 6 skipped, 1 error**, 234.844s | Fail: existing Windows symlink privilege limitation |
+| Repository/indexes/diff | Repository validator, `task_readiness.py --check-docs`, whitespace and source-manifest checks | Pass |
+| Native visual/interaction/a11y | Android/Expo Go, 412dp comparison, 320/360dp, font200, TalkBack, keyboard/Back/Dark and effective native asset geometry | Not run |
+
+Final full Jest supersedes the initial step 2 run's route-fixture failures and
+the intermittent GM-25 stored-session default5000ms timeout. Tests now wait for
+verified continuation, use the development QA route, and assert the new revoked
+guest presentation; no runner configuration or timeout was loosened. An earlier
+five-suite focused run passed75 tests; the final full run also includes the new
+development-fixture route case and shared-read consumers.
+
+Python error:
+`test_catalogue_projection.ProjectionAdoptionTests.test_stage_refuses_symlink_output`
+raises `WinError 1314` while creating its fixture symlink. The same limitation
+was recorded before step 2. No test/security setting was changed to bypass it;
+no repository-wide green claim. Local ignored logs:
+`mobile/.work/gm09-step2-full-jest.log`, `mobile/.work/gm09-step2-eslint-final.log`,
+`mobile/.work/gm09-step2-export-final.log`, `.work/gm09-step2-python.log`.
+
+No stage/commit/push, Done/approval, real API acceptance, persistent recovery or
+database activation is claimed. Remaining visual/integration limits are in
+FIGMA_PARITY and STEP2.md.
+
+## Main refactor received — 2026-11-01
+
+Working-tree resolution of the user's merge: GM-09 `07fd340` with main
+`90e871a`, including mobile refactor `67f332d`. See [resolution and manual merge
+completion](figma-update/MAIN_MERGE_2026-11-01.md). Earlier source manifests and
+test counts below describe their original revisions.
+
+- TypeScript, ESLint on the five changed source/test files, architecture guard,
+  repository validator and task indexes: Pass.
+- Six relevant Jest suites: **121/121 tests Pass** (137.43s). Covers guest screen,
+  real-mode route seam, main route map, room entry/setup and live room lifecycle.
+  Command from `mobile`: `npm test -- --runTestsByPath tests/component/guestEntryScreen.test.tsx tests/integration/guestEntryRoute.test.tsx tests/integration/routes.test.tsx tests/component/roomEntryScreens.test.tsx tests/component/roomSetupScreens.test.tsx tests/component/liveRoomLifecycle.test.tsx`.
+  Local ignored report: `mobile/.work/gm09-main-merge-jest.json`.
+- Full Python regression on CPython 3.14.7 with command-scoped `PYTHONUTF8=1`
+  and the existing ignored test dependency directory: **657 tests, 650 passed,
+  6 skipped, 1 error** (81.099s). The error is
+  `test_catalogue_projection.ProjectionAdoptionTests.test_stage_refuses_symlink_output`:
+  Windows `WinError 1314` cannot create the fixture symlink. No application test
+  or OS privilege setting was changed to bypass it. Local ignored log:
+  `.work/gm09-main-merge-python-unsandboxed.log`. The earlier sandbox attempt
+  encountered temporary-file errors and was interrupted; it is not a pass.
+  Repository-wide regression is therefore not fully green.
+- No conflict markers remain in mobile source/tests; `git diff --check`: Pass.
+  Git's index remains unmerged until the user stages the resolutions.
+- Device/rendered Android checks: Not run. No new Figma parity acceptance,
+  database activation, approval, stage/commit/push or Project status change.
+
+## GM-09.2 step 1 — 2026-10-31
+
+Current welcome/guest-entry candidate on `codex/gm-09-figma-update`, base `621accc` + working tree: [checks and reproduction](figma-update/STEP1.md), [Figma parity/Not run device checks](FIGMA_PARITY.md). The supplement retains one pre-existing GM-25 test timeout and does not claim complete mobile/visual acceptance. Prior test counts and device confirmations below do not apply automatically to the new revision.
+
 ## Supplement 2026-10-27 — Home aligned to approved Figma frame
 
 After the owner reported that Home still looked old, the current working tree updates it to the approved [Home frame 330:3067](figma/330-3067-home.png): G mark/title and inbox action, headline/subtitle, friends-dining banner, square create/join actions, quick-friends card and four-item bottom navigation. It uses GM-05 shared `AppHeader`, `AppButton`, `AvatarRow`, `BrandBanner`, and `AppBottomNavigation`; brand artwork/icons are bundled from Figma with hashes in `mobile/assets/brand/SOURCE.md`. Create/join/session/repository callbacks and explicit mock label remain. Empty friend results are represented honestly; no sample identities are added.

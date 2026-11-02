@@ -22,6 +22,7 @@ export type AppButtonProps = ComponentThemeProps & {
   iconSource?: ImageSourcePropType;
   iconTintColor?: string;
   iconLayout?: 'inline' | 'stacked';
+  iconSize?: number;
   textStyle?: TextStyle;
 };
 
@@ -37,6 +38,7 @@ export function AppButton({
   iconSource,
   iconTintColor,
   iconLayout = 'inline',
+  iconSize = 24,
   textStyle,
 }: AppButtonProps) {
   const background =
@@ -79,7 +81,7 @@ export function AppButton({
           source={iconSource}
           accessible={false}
           resizeMode="contain"
-          style={[styles.buttonIcon, { tintColor: iconTintColor ?? foreground }]}
+          style={[styles.buttonIcon, { width: iconSize, height: iconSize, tintColor: iconTintColor ?? foreground }]}
         />
       ) : null}
       <Text

@@ -27,7 +27,7 @@ export default function CreateRoomRoute() {
       key={isReal ? `real-${live.user?.id ?? 'anonymous'}` : preview.revision}
       repository={repository}
       isLive={isReal}
-      initialDisplayName={isReal ? live.user?.displayName : undefined}
+      initialDisplayName={isReal ? live.user?.displayName : preview.guestName ?? undefined}
       onBack={() => (router.canGoBack() ? router.back() : router.replace('/'))}
       onEntered={room => {
         if (!isReal) rememberPreviewRoom(room);

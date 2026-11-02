@@ -2,16 +2,20 @@ import { renderRouter } from 'expo-router/testing-library';
 import { fireEvent, screen, waitFor } from '@testing-library/react-native';
 import Layout from '../../src/app/_layout';
 import Index from '../../src/app/index';
+import Welcome from '../../src/app/welcome';
+import HomePreview from '../../src/app/dev/home';
 import Foundation from '../../src/app/dev/foundation';
 import CreateRoom from '../../src/app/room/create';
 import Result from '../../src/app/room/result';
 import NoConsensus from '../../src/app/room/no-consensus';
 import RoomFlowSandbox from '../../src/app/dev/room-flow-sandbox';
-import { rememberPreviewRoom, setPreviewScenario } from '../../src/bootstrap/roomPreview';
+import { markTutorialSeen, rememberPreviewGuest, rememberPreviewRoom, resetPreviewEntry, setPreviewScenario } from '../../src/bootstrap/roomPreview';
 
 const routes = {
   _layout: Layout,
   index: Index,
+  welcome: Welcome,
+  'dev/home': HomePreview,
   'dev/foundation': Foundation,
   'room/create': CreateRoom,
   'room/result': Result,
@@ -19,7 +23,7 @@ const routes = {
   'dev/room-flow-sandbox': RoomFlowSandbox,
 };
 const press = async (name: string) => { await fireEvent.press(screen.getByRole('button', { name })); };
-beforeEach(() => setPreviewScenario('default'));
+beforeEach(() => { setPreviewScenario('default'); resetPreviewEntry(); markTutorialSeen(); });
 
 test('merged Foundation opens Room Flow Sandbox and terminal result screens', async () => {
   await renderRouter(routes, { initialUrl: '/dev/foundation' });
@@ -38,8 +42,9 @@ test('merged Foundation opens Room Flow Sandbox and terminal result screens', as
   expect(screen).toHavePathname('/room/no-consensus');
 });
 
-test('Home tools → foundation → Result → NoConsensus → Home uses real routes', async () => {
-  await renderRouter(routes, { initialUrl: '/' });
+test('development Home tools → foundation → Result → NoConsensus → Home uses real routes', async () => {
+  rememberPreviewGuest('Tuấn');
+  await renderRouter(routes, { initialUrl: '/dev/home' });
   await press('Công cụ kiểm thử');
   await press('Xem cấu trúc ứng dụng');
   await screen.findByRole('button', { name: 'Mở kết quả GM-13' });

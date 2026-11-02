@@ -1,0 +1,188 @@
+{
+  "receivedLocalDate": "2026-11-02",
+  "source": "User-provided PNG exports from authorized Figma draft",
+  "root": ".work/figma-reference/gm-09",
+  "originalScreenshotsTracked": false,
+  "files": [
+    {
+      "path": "01 - Màu sắc/Brand Colors/Gì Cũng Được.png",
+      "width": 2400,
+      "height": 2218,
+      "sha256": "13df5cae6958f23b0c48d227917da7144b1ec90c47df58554ebe9aa8cd97d2e8"
+    },
+    {
+      "path": "01 - Màu sắc/Logo PNG tham chiếu · xanh lá/xanh lạt.png",
+      "width": 2042,
+      "height": 2048,
+      "sha256": "7d58fb4163d711dc103dddc2334b093de4991b7554e154d6a59a78da2c8a4d5f"
+    },
+    {
+      "path": "01 - Màu sắc/Logo SVG gốc · xanh lá/xanh lạt.png",
+      "width": 1868,
+      "height": 1874,
+      "sha256": "be124d5474a50a94eec755b36df70286c583ad0a219909692ba4be1c1d8a3ddb"
+    },
+    {
+      "path": "02 - Components/01 · Logo/Banner/Minh họa.png",
+      "width": 3040,
+      "height": 568,
+      "sha256": "d824f62daad831ab6b6425b3bbb856b9927412e3db9ff0b3932cee4bbccf55b5"
+    },
+    {
+      "path": "02 - Components/02 · Icon.png",
+      "width": 7768,
+      "height": 432,
+      "sha256": "89c945aa4053bbe5ad98b6ea8bccc9287311fe5de9596ae1fc9e7fd8a437b785"
+    },
+    {
+      "path": "02 - Components/03 · Nút bấm.png",
+      "width": 3200,
+      "height": 872,
+      "sha256": "a290ce209597a65aa01103a3fab221668eec3a7b8749bbf25b80f873252c45d8"
+    },
+    {
+      "path": "02 - Components/04 · Header/Thanh điều hướng/Trang chủ.png",
+      "width": 4688,
+      "height": 1104,
+      "sha256": "f7e207748a61e44ea51c98f90fcd5e93f8c81208c57fed92baff45f74c95c923"
+    },
+    {
+      "path": "02 - Components/05 · Bạn bè/Thành viên.png",
+      "width": 4032,
+      "height": 768,
+      "sha256": "8cdedc4213e938b8cc525c6e404aaebdf1411221c8e2b590a263cb63585b3ef0"
+    },
+    {
+      "path": "02 - Components/06 · Form/Khẩu vị/Số món.png",
+      "width": 7180,
+      "height": 984,
+      "sha256": "1564da15880c0b6d25b5c7f3e84a5ca2e93976396149a99ac51cebf91d09f01d"
+    },
+    {
+      "path": "02 - Components/07 · Card món/Loại món.png",
+      "width": 4224,
+      "height": 1800,
+      "sha256": "2bde86e664e8dd04fbf72c10e0f0d186ab904bcf425884ca0b02fe9db1c19785"
+    },
+    {
+      "path": "02 - Components/08 · Chờ kết quả/Hộp thoại/Trạng thái.png",
+      "width": 8320,
+      "height": 1052,
+      "sha256": "0bf47ac12c560adf7e89dcb337cbe143bae0a5f3353defb4d8dd2321045bff42"
+    },
+    {
+      "path": "02 - Components/09 · Bục kết quả/Bản đồ.png",
+      "width": 9792,
+      "height": 1152,
+      "sha256": "6ab10526b736ed08747b338f11ca920f464f305083afb811805a903de42038db"
+    },
+    {
+      "path": "02 - Components/10 · Thông báo.png",
+      "width": 2760,
+      "height": 1392,
+      "sha256": "19006705bee452fc5cc24d94e578a91717572728270d3a87d244116085adf6cd"
+    },
+    {
+      "path": "02 - Components/11 · Hướng dẫn thao tác.png",
+      "width": 4152,
+      "height": 880,
+      "sha256": "70c44603d0e955f996ed715806ef500916f42fbf03a1aa6a7598c77e9538df43"
+    },
+    {
+      "path": "02 - Components/12 · Mẫu kiểm tra component.png",
+      "width": 4528,
+      "height": 7404,
+      "sha256": "ee00116ed71c402d821e65b52016ea1dd6e93742037cd25592337914be7b33b7"
+    },
+    {
+      "path": "02 - Components/13 · Trạng thái danh sách/Lưu/Offline.png",
+      "width": 2560,
+      "height": 2900,
+      "sha256": "44642a3a5fb56dbc6a61df37c96050419575179be5cd6b49ee6a4791169ade61"
+    },
+    {
+      "path": "02 - Components/GCD/Icon/Location.png",
+      "width": 56,
+      "height": 72,
+      "sha256": "edd963f8a2f2b4ab1ff265e5732e9ec956bb40cbd945bac7bc9293dbcfe81f1a"
+    },
+    {
+      "path": "02 - Components/GCD/Preference Anything Wide.png",
+      "width": 1568,
+      "height": 200,
+      "sha256": "a90fc8c2a8ae9eb3d646869c77536caf45e60a7f3bf153b535d40d9d0307e409"
+    },
+    {
+      "path": "02 - Components/GCD/Result Podium · Đồng hạng.png",
+      "width": 3152,
+      "height": 816,
+      "sha256": "dfc34294da273827c8cf3daa01f6ef6f4366cbed28219dd034a61d4610a1227a"
+    },
+    {
+      "path": "02 - Components/GCD/Winner Badge.png",
+      "width": 200,
+      "height": 44,
+      "sha256": "03a724bc319ab59f89e081296e8b229d63f1aa607324219157372cec16f68ca3"
+    },
+    {
+      "path": "02 - Components/QA · Vòng 2 · Ma trận cap 0–20 (tham chiếu, không phải màn app).png",
+      "width": 2000,
+      "height": 796,
+      "sha256": "e545b62d33c806a391b63014ebd419f370c8a0dcee4b55b37ae04e4acb5f0fe7"
+    },
+    {
+      "path": "03 - Màn hình/01 · Mở đầu/Đăng nhập/Đăng ký.png",
+      "width": 8856,
+      "height": 2278,
+      "sha256": "de0fae346ccab651e2e168a594a488bbcc3ace52f3ad7b46c936921c06403d5d"
+    },
+    {
+      "path": "03 - Màn hình/02 · Khách/Trang chủ/Tiếp tục phiên.png",
+      "width": 3936,
+      "height": 2278,
+      "sha256": "015b830e8fd851b803af87e4f32b1093567b9a0f0307d92439867432487411a6"
+    },
+    {
+      "path": "03 - Màn hình/03 · Tạo phòng/Hẹn giờ/Tình huống.png",
+      "width": 24608,
+      "height": 2278,
+      "sha256": "bae80d1abc7c44161d488062b082d39f4172021270875435543bbd50405e82f8"
+    },
+    {
+      "path": "03 - Màn hình/05 · Tham gia phòng/QR/Lỗi vào phòng.png",
+      "width": 8856,
+      "height": 2278,
+      "sha256": "3342dedb6d728f17f919ae43ef314a8598950adc0f817472928c4fab3cd0543c"
+    },
+    {
+      "path": "03 - Màn hình/18 · Hướng dẫn lần đầu · Bản chạy.png",
+      "width": 5904,
+      "height": 2278,
+      "sha256": "63042e0e123e65ab67dfbfa3e2cf413dd8fb638d57e98b90089e786f982434ab"
+    },
+    {
+      "path": "04 - tạo phòng tình huống.png",
+      "width": 4504,
+      "height": 9400,
+      "sha256": "714022a15312e3786c94cad3d5fd691e300276842d6d61364495ad36fbb96ff0"
+    },
+    {
+      "path": "05 - khẩu vị tình huống.png",
+      "width": 3616,
+      "height": 7138,
+      "sha256": "db17593dbc6918b4fba7044e16d22140813d5604d202b5aa1439c41873eefcd1"
+    },
+    {
+      "path": "06  - phòng chờ tình huống.png",
+      "width": 4504,
+      "height": 13924,
+      "sha256": "067d74307f247616e6c5cdbaec7c2b6c45562887ad6668c6620db429344c870b"
+    },
+    {
+      "path": "07 - UI task handoff · 2026-10-25.png",
+      "width": 3200,
+      "height": 2856,
+      "sha256": "ac9a01787e87385812a04b2515c761beccca2b67f03accb0e19abf467e75fe77"
+    }
+  ]
+}
