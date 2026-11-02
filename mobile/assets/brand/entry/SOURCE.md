@@ -1,5 +1,10 @@
 # GM-09 entry artwork
 
+**2026-11-02 correction:** the two received PNGs had a baked cream matte and
+displayed as an opaque rectangle on Android. Their runtime alpha is now repaired
+while retaining the faint white stroke, original dimensions and placements.
+Hashes below identify original receipt; see [current repair](../ALPHA_REPAIR_2026-11-02.md).
+
 Exported on 2026-10-31 from the owner-provided Figma copy `H2bFJnOVGfxFHHPK3Aqtrq`, using `download_assets` for individual decoration nodes. PNG exports preserve the source artwork and allow Android `Image` consumption without an SVG/native dependency. They are not screenshots of the screen.
 
 | Asset | Figma node | Natural size / rendered slot | Bytes | SHA-256 |

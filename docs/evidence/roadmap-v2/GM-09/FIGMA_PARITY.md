@@ -1,5 +1,16 @@
 # GM-09.2 — Figma parity
 
+## Device-reported failures — asset alpha correction, 2026-11-02
+
+The user's actual phone screenshots show a Welcome matte rectangle and solid
+tinted Home icons: these states **failed** visual verification. All legacy
+monochrome PNGs were fully opaque, despite source/unit/export checks passing.
+The13 offending assets now have recovered transparent alpha; join uses the
+correct enter glyph. See [repair evidence](figma-update/ASSET_ALPHA_REPAIR.md)
+and [asset compositing comparison](figma-update/asset-alpha-before-after.png).
+The pixel-level test verifies the cause is corrected, while same-phone screenshots
+after repair remain **Not run**. No full app/Figma acceptance is inferred.
+
 ## Latest candidate — received PNG repair, 2026-11-02
 
 The quota-based gaps below describe the previous revision. User supplied30 PNGs;

@@ -1,0 +1,33 @@
+{
+  "baseCommit": "8fb5fb5",
+  "assetCases": {
+    "runner": "node --test mobile/tests/brandAssetTransparency.test.mjs",
+    "passed": 14,
+    "failed": 0
+  },
+  "jest": {
+    "passedSuites": 36,
+    "failedSuites": 0,
+    "passedTests": 797,
+    "failedTests": 0,
+    "durationSeconds": 57.308
+  },
+  "typecheck": "Pass",
+  "scopedEslint": "Pass",
+  "architecture": "Pass",
+  "expoCompatibility": "Pass with offline limitation",
+  "androidExport": {
+    "bundle": "entry-6363d30c7094b01f5080317d8087367f.hbc",
+    "result": "Pass, not device acceptance"
+  },
+  "python": {
+    "total": 657,
+    "passed": 650,
+    "skipped": 6,
+    "errors": 1,
+    "failures": 0,
+    "durationSeconds": 139.488,
+    "error": "Existing WinError1314 symlink privilege"
+  },
+  "postRepairAndroidScreenshots": "Not run"
+}

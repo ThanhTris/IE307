@@ -1,5 +1,32 @@
 # GM-09 — checks
 
+## Latest correction — opaque PNG assets, 2026-11-02
+
+User supplied actual Expo Go screenshots showing Welcome's cream rectangle and
+Home's solid icon tiles. [Diagnosis/correction](figma-update/ASSET_ALPHA_REPAIR.md)
+and [before/after hashes](figma-update/ASSET_ALPHA_MANIFEST.json) supersede asset
+hashes in older source manifests; historical receipts remain intact.
+
+| Check | Actual | Result |
+| --- | --- | --- |
+| Real PNG pixel regression |`node --test mobile/tests/brandAssetTransparency.test.mjs`:14 cases; original13 alpha assertions failed before correction|Pass after correction|
+| Full mobile Jest, final run alone |36 suites/797 tests,57.308s; no timeout or assertions changed|Pass|
+| TypeScript / source-tests-scripts lint |No package or ambient Node-type configuration change|Pass|
+| Architecture / installed Expo compatibility |SDK58 lock retained; offline-check limitation|Pass with limitation|
+| Full Python regression, host |657 tests:650 passed/6 skipped/1 error;139.488s|Existing WinError1314: Windows symlink privilege|
+| Final Android export |entry-6363d30c7094b01f5080317d8087367f.hbc,3.6MB|Pass, packaging only|
+| Asset compositor |[before/after proof](figma-update/asset-alpha-before-after.png): original filled tiles/rectangle versus transparent repaired glyphs/stroke|Pass inspection; not an app screenshot|
+| Expo Go after correction |No connected Android/ADB; user screenshots describe pre-fix failures|Not run; user phone recheck required|
+
+An initial broad Jest run overlapped tooling/export and hit one5s router timeout.
+The final run alone passed all797 unchanged application tests. The14 PNG checks
+use Node's existing built-ins separately, because RN Jest Image mocks cannot
+expose incorrect alpha and the app deliberately does not load Node ambient types.
+Full lint's ignored local QA imports and Windows symlink limitation remain as
+documented below; no unrelated QA file or OS permissions are changed.
+The final Python run has no new assertion failures; its only error is the same
+OS symlink privilege issue. [Sanitized current results](figma-update/ASSET_ALPHA_CHECKS.json).
+
 ## Latest source — PNG repair, 2026-11-02
 
 Source `d5a10cf`; [comparison and limits](figma-update/PNG_REFERENCE_REPAIR.md),

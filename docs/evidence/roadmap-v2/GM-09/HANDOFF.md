@@ -1,5 +1,16 @@
 # GM-09 — bàn giao màn Home / create / join
 
+## Latest correction — Welcome/Home asset alpha, 2026-11-02
+
+Fixed13 existing PNGs responsible for the two actual-device reports:11 icon
+masks and2 ring decorations. Home join's wrong plus is replaced with the
+received enter artwork. [Repair and phone recheck](figma-update/ASSET_ALPHA_REPAIR.md),
+[asset manifest](figma-update/ASSET_ALPHA_MANIFEST.json). No runtime/component
+logic or route change. Current source receipts now point to corrected alpha;
+older manifests describe the pre-repair snapshots. Fourteen real-pixel cases,
+797 Jest tests and Android export pass; native post-fix rendering is Not run.
+Restart Metro with `--clear`, reopen Expo Go and rescan to load the new assets.
+
 ## Latest candidate — PNG reference repair, 2026-11-02
 
 See [current repair/handoff](figma-update/PNG_REFERENCE_REPAIR.md). Thirty user

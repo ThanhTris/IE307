@@ -1,0 +1,174 @@
+{
+  "date": "2026-11-02",
+  "baseCommit": "8fb5fb5",
+  "screens": [
+    {
+      "sha256": "601ef0be9da1460769a298a7a1e045ed98b71499a13c2c89b55af24effa986c5",
+      "path": ".work/gm09-error-screens/1793600651049_122105501499986854_4858982272175836793_d81900fa42d5d835236a40c595e28b80.jpg"
+    },
+    {
+      "sha256": "1c88c54fa766a96ea96108771fea8fb5b972516ed03618ef6d610eeb0b8e6964",
+      "path": ".work/gm09-error-screens/1793600651185_122105501499986854_4858982272175836793_c629ff7a80a4672e10288f076d275b6e.jpg"
+    }
+  ],
+  "assets": [
+    {
+      "path": "mobile/assets/brand/icons/bell.png",
+      "width": 24,
+      "height": 24,
+      "beforeSha256": "1f4b93f9672a922418d016cba2598c397fd823ee3462b24d680ef3ac5be7100a",
+      "sha256": "b8039c83a54411530d68f7e832bf67fa5bc9c78d19fe6205b67e027f62254176",
+      "alpha": {
+        "transparent": 430,
+        "partial": 113,
+        "opaque": 33
+      }
+    },
+    {
+      "path": "mobile/assets/brand/icons/home.png",
+      "width": 24,
+      "height": 24,
+      "beforeSha256": "5104d2f09a23d2ef9815aa47659e2c439ba9b6b4fe39be314e0ce6bd872de60e",
+      "sha256": "8adc994d2ff1979cb24befeef094c70adaff02508f23817a691689f8936d1119",
+      "alpha": {
+        "transparent": 402,
+        "partial": 150,
+        "opaque": 24
+      }
+    },
+    {
+      "path": "mobile/assets/brand/icons/friends.png",
+      "width": 24,
+      "height": 24,
+      "beforeSha256": "840a9052798393bed34d27b6202c36d521eab078685b9835a9ff986613e051f7",
+      "sha256": "e8c92ad5351a7f6e7557319ad17adc3f9bdb3145e66aa93fe9948c1b65d00b57",
+      "alpha": {
+        "transparent": 410,
+        "partial": 137,
+        "opaque": 29
+      }
+    },
+    {
+      "path": "mobile/assets/brand/icons/history.png",
+      "width": 24,
+      "height": 24,
+      "beforeSha256": "90e086cbf810a648cb2c9120822236108e8d97cb3fa055908e664f279deed836",
+      "sha256": "7718a67f4895648171869b409dc34b253674c3ab98155024147c5154666e9ac9",
+      "alpha": {
+        "transparent": 385,
+        "partial": 151,
+        "opaque": 40
+      }
+    },
+    {
+      "path": "mobile/assets/brand/icons/profile.png",
+      "width": 24,
+      "height": 24,
+      "beforeSha256": "f34e9272626fdbf0e21804e418adcbe4ded8515c080236284d9bc92c327b9c48",
+      "sha256": "f3fff4e4590f62def627513400f59553f6a4ca61fd7b6aa3d481f2e6a02d4549",
+      "alpha": {
+        "transparent": 446,
+        "partial": 96,
+        "opaque": 34
+      }
+    },
+    {
+      "path": "mobile/assets/brand/icons/plus.png",
+      "width": 24,
+      "height": 24,
+      "beforeSha256": "96ae02b9a357fc374aca0eaa7400e830cdeedeacadbbcafc77ff73421bf17686",
+      "sha256": "977f043da9cd5d0819a5386eb63ec783514e5099e13001c8fcc227387504923b",
+      "alpha": {
+        "transparent": 516,
+        "partial": 8,
+        "opaque": 52
+      }
+    },
+    {
+      "path": "mobile/assets/brand/icons/enter.png",
+      "width": 24,
+      "height": 24,
+      "beforeSha256": "6e3bb6af73079ebaa5506d4bf27ff36765f281df4ca399b7ed66bec1acb9dc1c",
+      "sha256": "4b00fb9b3ce3a2c6a3e81de3ded07b9e3f7b59d0e6642cb35cbf242de7f184b5",
+      "alpha": {
+        "transparent": 444,
+        "partial": 50,
+        "opaque": 82
+      }
+    },
+    {
+      "path": "mobile/assets/brand/icons/lightning.png",
+      "width": 16,
+      "height": 16,
+      "beforeSha256": "bb411cd71db338d29e94ce06ebd817c346ec6148968e4edcf1939cfe69bf645b",
+      "sha256": "d72190a445979f273fe242e5c58a616d6c20fe1204713cf88240879d6ce534c5",
+      "alpha": {
+        "transparent": 177,
+        "partial": 61,
+        "opaque": 18
+      }
+    },
+    {
+      "path": "mobile/assets/brand/home/back.png",
+      "width": 24,
+      "height": 24,
+      "beforeSha256": "7f4a88d3bb06b48e4362de5e617d93e9329e208b717b0de606067e813596387b",
+      "sha256": "6a79f2bd6abf27bbac0fd6906341ff56f3132f4cd89fb555e1dd46f9e192d2a3",
+      "alpha": {
+        "transparent": 514,
+        "partial": 50,
+        "opaque": 12
+      }
+    },
+    {
+      "path": "mobile/assets/brand/home/create.png",
+      "width": 32,
+      "height": 32,
+      "beforeSha256": "8c8cd597995afa82d2ffd618a64fd45340434eaea06c181bd89315e77a7d71f4",
+      "sha256": "f447dfcf5953fb389b7f5e6f16f80a49b0b93b1a20f2a56e5db3dce8c8ad567e",
+      "alpha": {
+        "transparent": 872,
+        "partial": 76,
+        "opaque": 76
+      }
+    },
+    {
+      "path": "mobile/assets/brand/home/join.png",
+      "width": 32,
+      "height": 32,
+      "beforeSha256": "429400002698b9a850ca8f0a07f2cf4ae76ef966eb86e28d9d5c5ec25dc6b8ab",
+      "sha256": "2ce65556583f68ed468b1979c563830c2fe0c2370e42202f375f5799e48aa102",
+      "alpha": {
+        "transparent": 750,
+        "partial": 178,
+        "opaque": 96
+      }
+    },
+    {
+      "path": "mobile/assets/brand/entry/welcome-ring-large.png",
+      "width": 334,
+      "height": 390,
+      "beforeSha256": "17a3a78925bab13d4ba1a65a6315270f8250f54a426bae0d866b52a69f3a71a1",
+      "sha256": "348bfae2c4e1b6bf0c7ea5add4986314565ac9e2fc106191df3ed5b446ec34cc",
+      "alpha": {
+        "transparent": 128646,
+        "partial": 1614,
+        "opaque": 0
+      }
+    },
+    {
+      "path": "mobile/assets/brand/entry/welcome-ring-small.png",
+      "width": 207,
+      "height": 240,
+      "beforeSha256": "3d1019d62afc60b2d4069fcfbc6197ab1dcfe2d1a4ab41151666391b17e5e90f",
+      "sha256": "de798ad45e2f7d2aedbfda42f041d2932f12f73b7a177132bab22db3634b7a79",
+      "alpha": {
+        "transparent": 48683,
+        "partial": 997,
+        "opaque": 0
+      }
+    }
+  ],
+  "runtimeCodeChanged": false,
+  "deviceAfterRepair": "Not run"
+}

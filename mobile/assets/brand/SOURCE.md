@@ -1,5 +1,9 @@
 # Brand asset sources
 
+**2026-11-02 correction:** monochrome icons below had a baked export matte.
+Runtime files now carry transparent alpha; the table preserves original receipt
+hashes. See [alpha repair and current manifest](ALPHA_REPAIR_2026-11-02.md).
+
 All assets were exported from the approved Gì Cũng Được Figma file `3Ysh0mOAEkAgA5DgZPSC1j` on 2026-10-27 and are bundled locally for React Native `Image`. Temporary Figma URLs are not runtime sources. No package/native module was added.
 
 | File | Figma node | Bytes | SHA-256 |

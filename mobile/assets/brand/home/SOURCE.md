@@ -1,5 +1,10 @@
 # Home/continue assets — GM-09 step 2
 
+**2026-11-02 correction:** back/create/join PNGs below were opaque. Their alpha
+has been repaired; join additionally receives the correct enter glyph from the
+user's component export. Natural sizes/render slots are unchanged. The original
+hashes below remain historical; see [current provenance](../ALPHA_REPAIR_2026-11-02.md).
+
 Received 2026-11-01 from the user's authorized Figma Draft
 `H2bFJnOVGfxFHHPK3Aqtrq`. Full design contexts: Home `33:3`, continue `277:2140`,
 guest expiry `277:2190`. Assets are individual Figma PNG exports, not screen
