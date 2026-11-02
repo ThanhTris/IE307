@@ -15,10 +15,11 @@ export type ResultCase = typeof resultCaseOptions[number]['id'];
 export function scoredResultFixture(id: ResultCase = 'top3'): ScoredResult {
   const scores = id === 'one' ? [4] : id === 'two' ? [5, 4] : id === 'tie-two' ? [4, 4] : id === 'tie-first' ? [5, 5, 4] : id === 'tie-last' ? [5, 4, 4] : id === 'tie-all' ? [5, 5, 5] : [6, 5, 4];
   const noConsensus = id === 'empty-r1' || id === 'removed-r2';
+  const round = noConsensus ? id === 'removed-r2' ? 2 : 1 : scores[0] === 6 ? 1 : 2;
   // Synthetic expected projections, not application vote evaluation.
   const ranks = scores.map((score, index) => new Set(scores.slice(0, index + 1)).size);
-  return { resultId: uuid(1), contractVersion: 'dish-session-v4/roadmap-v2/GM-07.B-supplement', policyVersion: 'dish-decision-v4/ADR-019-30PCT-MIN1', status: noConsensus ? 'NO_CONSENSUS' : 'DECIDED', round: id === 'removed-r2' ? 2 : 1,
-    winner: noConsensus ? null : dish(0), reasonCode: id === 'empty-r1' ? 'EMPTY_INTERSECTION' : id === 'removed-r2' ? 'ALL_REMOVED' : 'UNANIMOUS_WANT', finalizedAt: '2026-11-03T05:00:00Z', scoreVersion: noConsensus ? null : 'want2-ok1-round1-v1', rankingVersion: noConsensus ? null : 'score-desc-dense-rank-v1', round1BallotCount: 3,
+  return { resultId: uuid(100 + resultCaseOptions.findIndex(item => item.id === id)), contractVersion: 'dish-session-v4/roadmap-v2/GM-07.B-supplement', policyVersion: 'dish-decision-v4/ADR-019-30PCT-MIN1', status: noConsensus ? 'NO_CONSENSUS' : 'DECIDED', round,
+    winner: noConsensus ? null : dish(0), reasonCode: id === 'empty-r1' ? 'EMPTY_INTERSECTION' : id === 'removed-r2' ? 'ALL_REMOVED' : round === 1 ? 'UNANIMOUS_WANT' : 'ACCEPTABLE_FINAL', finalizedAt: '2026-11-03T05:00:00Z', scoreVersion: noConsensus ? null : 'want2-ok1-round1-v1', rankingVersion: noConsensus ? null : 'score-desc-dense-rank-v1', round1BallotCount: 3,
     topDishes: noConsensus ? [] : scores.map((score, index) => ({ dish: dish(index), score: id === 'invalid' ? 99 : score, rank: ranks[index]!, isWinner: index === 0 })) };
 }
 export function dishResultFixture(id: ResultCase): { input: ResultInput; readState: ResultReadState } {

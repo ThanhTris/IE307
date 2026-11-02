@@ -1,5 +1,7 @@
 # GM-13 — bàn giao Result, nơi bán và No Consensus
 
+**Implementation GM-13.2 hiện hành:** [handoff bước1–6](figma-update/HANDOFF.md), [checks](figma-update/CHECKS.md) và [FIGMA_PARITY](FIGMA_PARITY.md). Routes mặc định dùng UI mới; bước7 Expo/device vẫn Not run. Các report GM-13.1 bên dưới giữ làm lịch sử, không thay nghiệm thu supplement.
+
 **Chuẩn bị GM-13.2 ngày 2026-11-03:** đọc [kế hoạch mới](figma-update/PLAN.md) và [audit đầu vào/PNG](figma-update/INPUT_AUDIT.md) trên nhánh `codex/gm-13-figma-update`, base `7e24074`. Chưa triển khai UI mới; các kết quả GM-13.1/SDK57 bên dưới là lịch sử, không thay nghiệm thu supplement.
 
 Bản mới nhất sau resolve main: HEAD `92962ed` + incoming main

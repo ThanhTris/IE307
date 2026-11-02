@@ -1,14 +1,15 @@
-import { useRouter } from 'expo-router';
-import { ResultPreview } from '../../bootstrap/resultPreview';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { DishResultEntry } from '../../bootstrap/DishResultEntry';
 
 export default function NoConsensusRoute() {
-  const router = useRouter();
+  const router = useRouter(), params = useLocalSearchParams<{ legacy?: string }>(), legacy = params.legacy === '1';
   return (
-    <ResultPreview
+    <DishResultEntry legacy={legacy}
       noConsensus
-      onHome={() => router.replace('/')}
-      onNewSession={() => router.replace('/room/create')}
-      onOtherScreen={() => router.replace('/room/result')}
+      onHome={() => router.dismissTo('/')}
+      onNewSession={() => router.replace('/room/create-entry')}
+      onLegacyNewSession={() => router.replace('/room/create')}
+      onOtherScreen={() => router.replace(legacy ? '/room/result?legacy=1' : '/room/result')}
     />
   );
 }

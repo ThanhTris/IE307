@@ -5,12 +5,11 @@ import { ResultReadNotice } from '../components/ResultReadNotice';
 import { WinnerCelebration } from '../components/WinnerCelebration';
 import { useWinnerCelebration } from '../hooks/useWinnerCelebration';
 import { isWinnerResult, noConsensusReason } from '../model';
-import { validScoredResult, type ResultCompanion, type ResultInput, type ResultPresentationActions, type ResultReadState } from '../services/resultPresentation';
+import { validScoredResult, type NearbyState, type ResultCompanion, type ResultInput, type ResultPresentationActions, type ResultReadState } from '../services/resultPresentation';
 import { DishResultScreen } from './DishResultScreen';
 import { DishNoConsensusScreen } from './DishNoConsensusScreen';
 import { LegacyDishResultScreen } from './LegacyDishResultScreen';
 import { NearbyPlacesSection } from '../components/NearbyPlacesSection';
-import type { NearbyState } from '../services/resultPresentation';
 import type { ResultMapRenderer } from '../services/nearbyPresentation';
 
 export type DishResultFlowProps = ResultPresentationActions & { input: ResultInput | null; readState?: ResultReadState; members?: readonly ResultCompanion[]; artworkSources?: Readonly<Record<string, ImageSourcePropType>>; isMock?: boolean; controls?: ReactNode; celebrate?: boolean; children?: ReactNode; nearby?: NearbyState; renderMap?: ResultMapRenderer };

@@ -1,5 +1,5 @@
 import { Image, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
-import { typography } from '../../theme/tokens';
+import { lightColors, typography } from '../../theme/tokens';
 import type { ComponentThemeProps } from '../types';
 import type { PodiumDish } from './ResultPodium';
 import { ResultDishArtwork } from './ResultDishArtwork';
@@ -13,13 +13,13 @@ export function ResultPodiumGraphic({ dishes, colors }: ComponentThemeProps & { 
   return <View style={styles.group}>
     <View accessibilityLabel="Bảng xếp hạng món ăn" style={[styles.row, { borderBottomColor: colors?.line }]}>
       {ordered.map(item => <View key={item.id} testID={`podium-${item.id}`} style={styles.column}>
-        <ResultDishArtwork source={item.imageSource} uri={item.imageUri} label={item.name} size={item.rank === 1 ? picture : picture * 0.85} winner={item.winner} colors={colors} />
+        <ResultDishArtwork source={item.imageSource} uri={item.imageUri} label={item.name} size={item.rank === 1 ? picture : picture * 0.85} winner={item.rank === 1} colors={colors} />
         <Text style={[styles.name, { color: colors?.text }]}>{item.name}</Text>
         {item.scoreLabel ? <Text style={[styles.points, { color: colors?.text }]}>{item.scoreLabel}</Text> : null}
         {item.imageAttribution ? <Text style={[styles.attribution, { color: colors?.muted }]}>{item.imageAttribution}</Text> : null}
         <View accessibilityLabel={`Hạng ${item.rank}${item.winner ? ' · Món được chọn' : ''}`} testID={`podium-bar-${item.id}`} style={[styles.bar, { height: (item.rank === 1 ? 128 : item.rank === 2 ? 96 : 76) * scale, backgroundColor: item.rank === 1 ? colors?.green : colors?.line }]}>
           <Image source={require('../../../../assets/brand/result/laurel.png')} accessible={false} resizeMode="contain" style={[styles.laurel, { left: 4, tintColor: item.rank === 1 ? colors?.line : colors?.primary }]} />
-          <Text style={[styles.rank, { color: item.rank === 1 ? '#FFFFFF' : colors?.text }]}>{item.rank}</Text>
+          <Text style={[styles.rank, { color: item.rank === 1 ? lightColors.text : colors?.text }]}>{item.rank}</Text>
           <Image source={require('../../../../assets/brand/result/laurel.png')} accessible={false} resizeMode="contain" style={[styles.laurel, { right: 4, tintColor: item.rank === 1 ? colors?.line : colors?.primary, transform: [{ scaleX: -1 }] }]} />
         </View>
       </View>)}

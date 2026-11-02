@@ -1,5 +1,7 @@
 # GM-13.2 — kế hoạch cập nhật UI kết quả theo Figma
 
+**Tiến độ:** đã triển khai bước1–6; kết quả cuối và giới hạn ở [HANDOFF](HANDOFF.md)/[CHECKS](CHECKS.md). Bước7 kiểm thiết bị chờ thực hiện. Nội dung kế hoạch ban đầu bên dưới giữ mốc chuẩn bị để truy vết.
+
 Ngày lập: **2026-11-03**, múi giờ Asia/Bangkok. Owner Tuấn, reviewer Trí
 (`ThanhTris`). Task [GM-13](../../../../../tasks/backlog/GM-13.md), issue #74,
 revision `ui-figma-final/2026-10-25/GM-13.2`.
@@ -30,8 +32,8 @@ MCP file gốc chưa truy cập được, nên chưa xác minh revision/variable
   map trong app hoặc được ghi thành integration Pass.
 - Không thay package/lockfile, SQL/API/engine hoặc quyền riêng tư. Dùng
   callback/port nhận capability đúng version khi producer đã bàn giao.
-- Mỗi bước code là một commit có kiểm tra tương ứng. **Kế hoạch này chưa
-  thực hiện các bước code, chưa commit/push hoặc cập nhật Project.**
+- Mỗi bước code là một commit có kiểm tra tương ứng. **Tại thời điểm lập kế hoạch chưa
+  thực hiện các bước code; tiến độ hiện hành ở HANDOFF/STEP1–STEP6.**
 
 ## Bước 1 — Chuẩn hóa input UI và fixture
 

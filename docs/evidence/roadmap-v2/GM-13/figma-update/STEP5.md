@@ -15,6 +15,7 @@ response của scope cũ không cập nhật màn mới. Public place projection
 loại ID trùng/sai, giữ tọa độ/khoảng cách thiếu là null, không ép về0.
 Adapter/Google key/restrictions/native map/API thật vẫn thuộc GM-27/30.
 
-TypeScript/lint tập trung Pass. Unit/component17 tests Pass19.357s, gồm
+TypeScript Pass; lint exit0 có2 cảnh báo import trùng được gộp ở bước6.
+Unit/component17 tests Pass19.357s, gồm
 10 state, mismatched identity, NO_CONSENSUS gating, renderer, cached-error
 và pending double action. Không thêm native package/lockfile.
