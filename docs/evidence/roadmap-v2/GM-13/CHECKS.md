@@ -1,5 +1,9 @@
 # GM-13 — kiểm màn Result/NoConsensus
 
+**Kiểm GM-13.2 hiện hành:** [FINAL_CHECKS](figma-update/FINAL_CHECKS.md), [JSON kết quả](figma-update/FINAL_CHECKS.json), [Expo Android13](figma-update/DEVICE_CHECKS.md), [manifest cuối](figma-update/FINAL_SOURCE_MANIFEST.json) và [FINAL_HANDOFF](figma-update/FINAL_HANDOFF.md). Người dùng đã báo kiểm thử Expo xong; AC font200%/TalkBack/viewport/Reduce Motion và ảnh đối chiếu cuối chưa được xác nhận riêng. Các report cũ bên dưới là lịch sử, không thay kết quả revision cuối hoặc approval của Trí.
+
+**Mốc chuẩn bị lịch sử GM-13.2:** [kế hoạch](figma-update/PLAN.md) và [audit đầu vào/PNG](figma-update/INPUT_AUDIT.md) trên nhánh `codex/gm-13-figma-update`, base `7e24074`. Nội dung resolve Foundation/merge working tree và GM-13.1/SDK57 bên dưới chỉ áp dụng revision cũ.
+
 ## Bản mới nhất — resolve Foundation với main
 
 Theo yêu cầu người dùng, đã sửa hai file Foundation trong merge working tree

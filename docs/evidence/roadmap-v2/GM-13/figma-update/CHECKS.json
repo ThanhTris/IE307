@@ -1,0 +1,60 @@
+{
+  "revision": "ui-figma-final/2026-10-25/GM-13.2",
+  "scope": "UI mock steps1-6",
+  "branch": "codex/gm-13-figma-update",
+  "baseCommit": "7e24074ac473c54d31c5c336df09d5a3a0e682c5",
+  "sourceManifest": "SOURCE_MANIFEST.json",
+  "mobile": {
+    "tests": 936,
+    "failed": 0,
+    "status": "Pass",
+    "suites": 55,
+    "seconds": 241.738,
+    "skipped": 0
+  },
+  "typecheck": "Pass",
+  "eslintSourceTestsScripts": "Pass",
+  "architecture": "Pass",
+  "lockedExpoOffline": "Pass",
+  "png": {
+    "status": "Pass",
+    "tests": 34
+  },
+  "android": {
+    "bundle": "entry-a95133a3a64e4c8afd164689c5d8dc06.hbc",
+    "sha256": "8e6adccba1f31d6c3ee31dfa5b749134e37a4504b9d0b6106494616bac643974",
+    "status": "Pass",
+    "deviceAcceptance": false
+  },
+  "python": {
+    "total": 657,
+    "errors": 1,
+    "status": "Fail",
+    "assertionFailures": 0,
+    "skipped": 6,
+    "passed": 650,
+    "error": "WinError1314: test_stage_refuses_symlink_output during setup",
+    "seconds": 326.758
+  },
+  "repositoryValidation": "Pass",
+  "taskIndexes": "Pass",
+  "diff": "Pass",
+  "native": "Not run",
+  "apiIntegration": "Not run",
+  "reviewerApproval": "Not granted",
+  "pushed": false,
+  "sourceManifestSha256": "c3002c8e6204023222fa33375a254a36073e9ae163d7b0ea018e9e5f4818fd39",
+  "lockedReinstall": {
+    "packageLockChanged": false,
+    "status": "Pass",
+    "allowScriptsPolicyChanged": false,
+    "packages": 1287
+  },
+  "fullLint": {
+    "scope": "existing ignored mobile/.work/gm10Audit.test.tsx",
+    "warnings": 0,
+    "status": "Fail",
+    "importErrors": 4,
+    "sourceErrors": 0
+  }
+}

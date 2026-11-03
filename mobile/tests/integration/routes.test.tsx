@@ -221,7 +221,8 @@ test('Figma Home uses the shared banner/action/nav components and routes its tab
   const user = userEvent.setup();
   expect(await screen.findByText('Hôm nay\ncả nhóm ăn gì?')).toBeOnTheScreen();
   expect(screen.getByTestId('brand-banner-illustration')).toBeOnTheScreen();
-  expect(screen.queryByRole('button', { name: 'Công cụ kiểm thử' })).toBeNull();
+  expect(screen.getByRole('button', { name: 'Công cụ kiểm thử' }).props.accessibilityState.expanded).toBe(false);
+  expect(screen.queryByRole('button', { name: 'Xem cấu trúc ứng dụng' })).toBeNull();
   await waitFor(() => expect(screen.getByRole('button', { name: 'Tạo phòng' })).toBeEnabled());
   expect(screen.getByRole('button', { name: 'Tham gia phòng' })).toBeEnabled();
   expect(screen.getByRole('tab', { name: 'Trang chủ' }).props.accessibilityState.selected).toBe(true);
@@ -240,7 +241,7 @@ test('Figma Home uses the shared banner/action/nav components and routes its tab
   await waitFor(() => expect(screen).toHavePathname('/inbox'));
 });
 
-test('development Home fixtures expose friends failure and verified continuation without product QA controls', async () => {
+test('development Home fixtures expose friends failure and verified continuation with collapsed Home tools', async () => {
   await renderRouter(routes, { initialUrl: '/dev/home' });
   await fireEvent.press(screen.getByRole('button', { name: 'Công cụ kiểm thử' }));
   await fireEvent.press(screen.getByRole('button', { name: 'Lỗi bạn bè' }));
@@ -253,7 +254,19 @@ test('development Home fixtures expose friends failure and verified continuation
   await waitFor(() => expect(screen.getByRole('button', { name: 'Tiếp tục phiên' })).toBeEnabled());
   await fireEvent.press(screen.getByRole('button', { name: 'Về trang chủ' }));
   await waitFor(() => expect(screen).toHavePathname('/'));
-  expect(screen.queryByRole('button', { name: 'Công cụ kiểm thử' })).toBeNull();
+  expect(screen.getByRole('button', { name: 'Công cụ kiểm thử' }).props.accessibilityState.expanded).toBe(false);
+  expect(screen.queryByRole('button', { name: 'Lỗi bạn bè' })).toBeNull();
+});
+
+test('release Home hides development tools while keeping create and join available', async () => {
+  const devSetting = jest.replaceProperty(globalThis as typeof globalThis & { __DEV__: boolean }, '__DEV__', false);
+  try {
+    await renderRouter(routes, { initialUrl: '/' });
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Tạo phòng' })).toBeEnabled());
+    expect(screen.getByRole('button', { name: 'Tham gia phòng' })).toBeEnabled();
+    expect(screen.queryByRole('button', { name: 'Công cụ kiểm thử' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Xem cấu trúc ứng dụng' })).toBeNull();
+  } finally { devSetting.restore(); }
 });
 
 test('join deep link pre-fills code but waits for user confirmation', async () => {

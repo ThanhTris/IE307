@@ -1,0 +1,288 @@
+{
+  "revision": "ui-figma-final/2026-10-25/GM-13.2",
+  "productionSourceCommit": "9373b804003c1a576e6de65cdd76823eeda364dd",
+  "baseCommit": "7e24074ac473c54d31c5c336df09d5a3a0e682c5",
+  "sourceState": "Product source 9373b80 plus Home development/release regression test update in the handoff commit; exact files pinned below",
+  "files": [
+    {
+      "path": "mobile/assets/brand/result/bun.png",
+      "normalization": "binary",
+      "sha256": "262e022c01bcbfa8bb3de8ee95201238798128ee3d90a392b0e2e9a1a5dbc14c"
+    },
+    {
+      "path": "mobile/assets/brand/result/empty-bowl.png",
+      "normalization": "binary",
+      "sha256": "5a013168d15a16f7fae98928613c3bf2901c1037448053f299d7c301c18cac0c"
+    },
+    {
+      "path": "mobile/assets/brand/result/laurel.png",
+      "normalization": "binary",
+      "sha256": "26135f50fe3aed4ee7f5afdd4ce3bf66f2c4933e5da9c29d4553979de791c6fb"
+    },
+    {
+      "path": "mobile/assets/brand/result/map-illustration.png",
+      "normalization": "binary",
+      "sha256": "81c34d2680a3016a55afd7d65c755a2e45a0ef482b3611172f8ad654684fc476"
+    },
+    {
+      "path": "mobile/assets/brand/result/pho.png",
+      "normalization": "binary",
+      "sha256": "c11c5c441a714ecaf62290070249cb1132c31549828f227fb66ca3a0b772b50f"
+    },
+    {
+      "path": "mobile/assets/brand/result/rice.png",
+      "normalization": "binary",
+      "sha256": "35e66d7f725489a65867377553a3aca6221152683d767b1df13b64ff22d2db1b"
+    },
+    {
+      "path": "mobile/assets/brand/result/SOURCE.md",
+      "normalization": "UTF-8 LF",
+      "sha256": "781757a4e4b9a0ab86e8bffbabfbf0cda722fba2a6bcdd2655541dfdbfc0504a"
+    },
+    {
+      "path": "mobile/package-lock.json",
+      "normalization": "UTF-8 LF",
+      "sha256": "d3c5adf46fe46dd9ad14db68301aa8b3b64b518283ebd115855aae2896994c6c"
+    },
+    {
+      "path": "mobile/package.json",
+      "normalization": "UTF-8 LF",
+      "sha256": "15df3809e6f9a4b367b90f6c9c9999798df826fce5eaa3db584790c9e5476820"
+    },
+    {
+      "path": "mobile/scripts/extract-result-assets.ps1",
+      "normalization": "UTF-8 LF",
+      "sha256": "215459659b0a6eb6d27d7a9dbb54182bafa9e2778436f4856a2de42441e00b15"
+    },
+    {
+      "path": "mobile/src/app/index.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "caaa328d0747a59ad885edf692c203e3bf31447608bd56dbf35b6a41da837263"
+    },
+    {
+      "path": "mobile/src/app/room/no-consensus.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "0a4f3d36ffd1a20d3e42c4cd101baa5f8247b8b87cf1fbcf18f2533c36fdaa9a"
+    },
+    {
+      "path": "mobile/src/app/room/result.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "4ffa14367be49d66cc7b92b683614b21842a09fabf499222608578b08e8ea1a9"
+    },
+    {
+      "path": "mobile/src/bootstrap/DishResultEntry.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "17133d2c146ef16604bc10d6a3a1fba4214ab895a592aa7cddb3581f2488132a"
+    },
+    {
+      "path": "mobile/src/bootstrap/dishResultFixtures.ts",
+      "normalization": "UTF-8 LF",
+      "sha256": "b7c8af7839c8bd75e6c8824e92e767f48b11c7a8879d88b1c898d70f0ad273c6"
+    },
+    {
+      "path": "mobile/src/bootstrap/DishResultPreview.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "26fc0fd4b24537ff845bc23e7a9f4308280801e78477d84d8e9179efe9adb00b"
+    },
+    {
+      "path": "mobile/src/bootstrap/ResultCasePicker.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "a044014c711213ea4b2348b0ae1f0dcc56d7e7792a295be7dcd56e637f0ae5b7"
+    },
+    {
+      "path": "mobile/src/data/api/contracts/voting.ts",
+      "normalization": "UTF-8 LF",
+      "sha256": "467822f8bf004936b739c8dbdd1098cb0e9672b2835b841a8824e724f3fe9006"
+    },
+    {
+      "path": "mobile/src/features/context/hooks/useConfirmationMotion.ts",
+      "normalization": "UTF-8 LF",
+      "sha256": "ee9ae0e7e3a3403b9cadce4e9b6d0c4a90fe4e20be38aea064409c873b41a70e"
+    },
+    {
+      "path": "mobile/src/features/result/components/DishResultFrame.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "e4781ae7b98e37fdee3e8eb6dd11721ccb114c09b2a2dab24862237f8bb82eb9"
+    },
+    {
+      "path": "mobile/src/features/result/components/NearbyPlacesSection.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "e91fc61d20d90f4b8a85444aa92dc88546adc3cd96cba3e525ca60c2be3f3784"
+    },
+    {
+      "path": "mobile/src/features/result/components/ResultCompanions.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "6e53a1c90ab455b56adf9161f51f964ea60000bd6acd3e68471471539ef266d2"
+    },
+    {
+      "path": "mobile/src/features/result/components/ResultMapCard.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "46846503ef38443cd58f1932706860410f5da7516978270aacfc1ddf4eeaf531"
+    },
+    {
+      "path": "mobile/src/features/result/components/ResultReadNotice.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "e3d354430c56b11950a7f891816bd9b5471d994a920e7e70c219c9b931aad4e8"
+    },
+    {
+      "path": "mobile/src/features/result/components/WinnerCelebration.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "71c0e9e9ec1060935c0163d154d3add7499889f52400a242048abe87e5beb2f8"
+    },
+    {
+      "path": "mobile/src/features/result/hooks/useResultAction.ts",
+      "normalization": "UTF-8 LF",
+      "sha256": "092d0c816095a1b5f20fc1b9be49a4df3451b62346ef62a5c9f91af14ed8824c"
+    },
+    {
+      "path": "mobile/src/features/result/hooks/useWinnerCelebration.ts",
+      "normalization": "UTF-8 LF",
+      "sha256": "53a7127840f653091eefdbc86f4d0f6ce2f1ce5e29419725856379baea59638c"
+    },
+    {
+      "path": "mobile/src/features/result/index.ts",
+      "normalization": "UTF-8 LF",
+      "sha256": "28f6e2be7017748aa30631158b971a8476e3710ef44f474aef0f46e8e4b9156b"
+    },
+    {
+      "path": "mobile/src/features/result/model.ts",
+      "normalization": "UTF-8 LF",
+      "sha256": "b8173b81fd82299c0865d836d58da30f9bcf05e28f87c38401801b91bb9007d5"
+    },
+    {
+      "path": "mobile/src/features/result/screens/DishNoConsensusScreen.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "6248e7691198283bac986e35a3b9d474f4adf727b28b30b1ca9c9115ed93fd7a"
+    },
+    {
+      "path": "mobile/src/features/result/screens/DishResultFlow.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "4e060de715d172ab76f28871194ce725524d90eefd37362ff8f0881dc0ccdfd0"
+    },
+    {
+      "path": "mobile/src/features/result/screens/DishResultScreen.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "ba8472611a048ffa807f932b54c07ed0a721a45b93940485729f6ab2906ea10c"
+    },
+    {
+      "path": "mobile/src/features/result/screens/LegacyDishResultScreen.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "bbefbe1aba1ed27ef5a42536e8176b620671692353e13856f554d99a19247fd5"
+    },
+    {
+      "path": "mobile/src/features/result/screens/NoConsensusScreen.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "635f10c1a847631c3cb46f3aa24758aeeba38630123e903e43fd7423d7f40ccc"
+    },
+    {
+      "path": "mobile/src/features/result/screens/ResultScreen.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "40a8796d5048d967799a62ba5174398236fe00b07eb30af7306d4d7366367b73"
+    },
+    {
+      "path": "mobile/src/features/result/services/nearbyPresentation.ts",
+      "normalization": "UTF-8 LF",
+      "sha256": "239b8d928c973bd80d387ed388a8a3797a9a12eaea36adb51f14e46e333c6a61"
+    },
+    {
+      "path": "mobile/src/features/result/services/resultPresentation.ts",
+      "normalization": "UTF-8 LF",
+      "sha256": "b6964a5dbe14f0d425044d6ae6f588df5ef07747f14852eece6951e4895f5f03"
+    },
+    {
+      "path": "mobile/src/shared/lib/useDialogMotion.ts",
+      "normalization": "UTF-8 LF",
+      "sha256": "0200a17f7d1da180ee31aaa0f71df47131621e4c3c249283274d56cf8882ba8c"
+    },
+    {
+      "path": "mobile/src/shared/ui/dialogs/SheetDialog.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "406c37fcf70ad3ac049214f5045ba775b5c234fac000f0a417baed9c8d7ec6cd"
+    },
+    {
+      "path": "mobile/src/shared/ui/result/ResultDishArtwork.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "b3c6a36c2bd4e3df9e3f8dc11b5d376f0a47150d678678e1c8076383623d450b"
+    },
+    {
+      "path": "mobile/src/shared/ui/result/ResultPodium.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "527e11c4e5a0bd0a366133141e4d97b8657ce7e9ad7b753aec30fb64aa819bc5"
+    },
+    {
+      "path": "mobile/src/shared/ui/result/ResultPodiumGraphic.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "f0aa367a948dbb6141904b4cb35bd3bc1118197588c0e781ee647a6893fa087b"
+    },
+    {
+      "path": "mobile/tests/brandAssetTransparency.test.mjs",
+      "normalization": "UTF-8 LF",
+      "sha256": "d276c0a455db45d14abc12daa506d470e9ed725730335249466a5fe304c84a49"
+    },
+    {
+      "path": "mobile/tests/component/dishResultEntry.test.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "61fd37fc726c934ae20fd938e4a30640b3be6c77f48430689d43a054f146c707"
+    },
+    {
+      "path": "mobile/tests/component/dishResultPodium.test.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "0b94513b36d60f7174e963b02734b98db6e9283e0b5b1147f8e19717ac73f891"
+    },
+    {
+      "path": "mobile/tests/component/dishResultRecovery.test.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "a510cb24f4ea6c46b009563eb91cc0b2a41cac4929cb4718de203327ce0d6dea"
+    },
+    {
+      "path": "mobile/tests/component/dishResultStates.test.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "4e37621de179058ecdfcd1d8c58d0454ca1e563c2f00b012e8943bd04cf3510c"
+    },
+    {
+      "path": "mobile/tests/component/dishSetupRepair.test.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "0c3d7d49f90ca07b78ccf39247351e91ca24eeff339308e059c0249c1b0be8ea"
+    },
+    {
+      "path": "mobile/tests/component/nearbyResult.test.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "e1b652637d9fcb8d56b307af45df558095a18889bb0feb361d8118197d90db3b"
+    },
+    {
+      "path": "mobile/tests/component/resultCasePicker.test.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "3a0fc26a7b08b666b8975e9e0c46ac266fe07336b4921ce37fd044a8f4968430"
+    },
+    {
+      "path": "mobile/tests/component/winnerCelebration.test.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "2d5daed039936bce87a84f9e0bc52be741a4dadacc1a643fbb01bac17e88ca56"
+    },
+    {
+      "path": "mobile/tests/helpers/completeNativeAnimations.ts",
+      "normalization": "UTF-8 LF",
+      "sha256": "64ac699a5684e1467412fadb92cb6908381af2b1eb113ee469f37adaa0e542fe"
+    },
+    {
+      "path": "mobile/tests/integration/resultRoutes.test.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "efa26ac95d103572ae5fb91c5bfc8b6f84bb16394b70a115bf09438bd986eb6a"
+    },
+    {
+      "path": "mobile/tests/integration/routes.test.tsx",
+      "normalization": "UTF-8 LF",
+      "sha256": "f9f7716ffaf8e69920af8337f23de87779e6d68a8ddd2b259b6a5776d1f60bf5"
+    },
+    {
+      "path": "mobile/tests/unit/dishResultPresentation.test.ts",
+      "normalization": "UTF-8 LF",
+      "sha256": "ef62ddc91e8bf776f5e6d7eaacc4e8fcffef670ec3754ad21aadaffdf49716db"
+    },
+    {
+      "path": "mobile/tests/unit/nearbyPresentation.test.ts",
+      "normalization": "UTF-8 LF",
+      "sha256": "c9c3759850e8a7fb29b8de09a8d029a5c21f20cebb602824fb403e3d59e6bf0a"
+    }
+  ]
+}

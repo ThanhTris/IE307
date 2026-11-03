@@ -7,6 +7,10 @@ import { SetupFriendsSheet } from '../../src/features/context/components/SetupFr
 import { SetupInvitees } from '../../src/features/context/components/SetupInvitees';
 import { SetupCheckboxRow } from '../../src/features/context/components/SetupCheckboxRow';
 import { PreferenceAdvancedPanel } from '../../src/features/preferences/components/PreferenceAdvancedPanel';
+import { completeNativeAnimations } from '../helpers/completeNativeAnimations';
+
+beforeEach(completeNativeAnimations);
+afterEach(() => jest.restoreAllMocks());
 
 const room: SetupRoom = { id: 'ui-room', code: 'MCK234', version: 1, state: 'LOBBY' };
 test('discarding preference and settings edits returns to receipt without a write or room change', async () => {

@@ -19,6 +19,7 @@ export function SheetDialog({
   nativeAnimation = 'slide',
   backdropAnimation,
   panelAnimation,
+  showTitle = true,
 }: ComponentThemeProps & {
   visible: boolean;
   title: string;
@@ -32,6 +33,7 @@ export function SheetDialog({
   nativeAnimation?: 'none' | 'slide' | 'fade';
   backdropAnimation?: Animated.WithAnimatedValue<StyleProp<ViewStyle>>;
   panelAnimation?: Animated.WithAnimatedValue<StyleProp<ViewStyle>>;
+  showTitle?: boolean;
 }) {
   return (
     <Modal testID="sheet-dialog" visible={visible} transparent animationType={nativeAnimation} onRequestClose={onClose}>
@@ -41,9 +43,9 @@ export function SheetDialog({
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.keyboard}>
         <Animated.View testID="dialog-panel" accessibilityViewIsModal style={[styles.sheet, presentation === 'dialog' && styles.dialog, { backgroundColor: colors?.surface }, panelAnimation]}>
           {showHandle && presentation === 'sheet' ? <View style={styles.sheetHandle} /> : null}
-          <Text accessibilityRole="header" style={[styles.contextTitle, { color: colors?.text }]}>
+          {showTitle ? <Text accessibilityRole="header" style={[styles.contextTitle, { color: colors?.text }]}>
             {title}
-          </Text>
+          </Text> : null}
           {children}
           {showClose ? <AppButton label={closeLabel} variant="quiet" onPress={onClose} colors={colors} style={styles.close} /> : null}
         </Animated.View>

@@ -1,0 +1,184 @@
+{
+  "task": "GM-13",
+  "revision": "ui-figma-final/2026-10-25/GM-13.2",
+  "preparedOn": "2026-11-03",
+  "timezone": "Asia/Bangkok",
+  "branch": "codex/gm-13-figma-update",
+  "baseCommit": "7e24074ac473c54d31c5c336df09d5a3a0e682c5",
+  "scope": "planning and input audit only; no implementation",
+  "startGate": {
+    "reviewer": "Trí",
+    "source": "live GitHub Project #2",
+    "checkedAt": "2026-11-03T01:01:06.207596+07:00",
+    "owner": "Tuấn",
+    "status": "READY_TO_CLAIM"
+  },
+  "figma": {
+    "fileKey": "3Ysh0mOAEkAgA5DgZPSC1j",
+    "nodes": [
+      "330:3075",
+      "379:1401",
+      "617:1671",
+      "617:1428",
+      "379:1478",
+      "622:8962"
+    ],
+    "liveContext": "Unavailable: create_session returned no edit access; whoami checked",
+    "rawReferencesCommitted": false,
+    "localVisualAudit": "Four originals inspected; main result sheet enlarged in five regions"
+  },
+  "references": [
+    {
+      "height": 2278,
+      "width": 15700,
+      "sha256": "2f4833ca1ef24e7a8a3538e640fdde881a242a91a1a97b127242757f996b6ec9",
+      "bytes": 3469141,
+      "path": ".work/figma-reference/gm-10/03 - Màn hình/11 · Vinh danh/Kết quả/Bản đồ.png"
+    },
+    {
+      "height": 1152,
+      "width": 9792,
+      "sha256": "6ab10526b736ed08747b338f11ca920f464f305083afb811805a903de42038db",
+      "bytes": 1398796,
+      "path": ".work/figma-reference/gm-09/02 - Components/09 · Bục kết quả/Bản đồ.png"
+    },
+    {
+      "height": 816,
+      "width": 3152,
+      "sha256": "dfc34294da273827c8cf3daa01f6ef6f4366cbed28219dd034a61d4610a1227a",
+      "bytes": 292366,
+      "path": ".work/figma-reference/gm-09/02 - Components/GCD/Result Podium · Đồng hạng.png"
+    },
+    {
+      "height": 44,
+      "width": 200,
+      "sha256": "03a724bc319ab59f89e081296e8b229d63f1aa607324219157372cec16f68ca3",
+      "bytes": 3398,
+      "path": ".work/figma-reference/gm-09/02 - Components/GCD/Winner Badge.png"
+    }
+  ],
+  "upstreamFiles": [
+    {
+      "normalization": "UTF-8 LF",
+      "sha256": "221d642d6f4430f771ce6966810e6940ac9415320794a961956f5e810b9a24a2",
+      "path": "tasks/backlog/GM-13.md"
+    },
+    {
+      "normalization": "UTF-8 LF",
+      "sha256": "b3f9989e29a8695c42b75579d39c22094d9549fafea8530de450fe97a9f88ddc",
+      "path": "docs/design/UI_FIGMA_TASK_MAP.json"
+    },
+    {
+      "normalization": "UTF-8 LF",
+      "sha256": "ab6806045e30b1e917166965e879b8d00dff424ad2ef720e0d5033af6afccf61",
+      "path": "docs/specs/UI_SPEC.md"
+    },
+    {
+      "normalization": "UTF-8 LF",
+      "sha256": "e067c2887e11e0c4dbddd3d4ee029f71c50d32f200d38b9bbda65a3e9080adeb",
+      "path": "docs/architecture/DISH_SESSION_API_CONTRACT_B.md"
+    },
+    {
+      "normalization": "UTF-8 LF",
+      "sha256": "5f070852f0347046c658ef5d2d8a71bdebe6246b946c174bcab9c9ddd292e2af",
+      "path": "docs/architecture/decisions/ADR-020-public-top-three-result.md"
+    },
+    {
+      "normalization": "UTF-8 LF",
+      "sha256": "710a55d8fcd51e087fa0cab8260ff9b1a5469bf570f5280a9e904eb5096b484c",
+      "path": "docs/architecture/schemas/dish-session-v4b.schema.json"
+    },
+    {
+      "normalization": "UTF-8 LF",
+      "sha256": "8b9e85f0224217b891dc35ea6fa910fb3d7354a99aa309e9079ce92a11efb5d1",
+      "path": "docs/architecture/schemas/dish-session-v4b-supplement.schema.json"
+    },
+    {
+      "normalization": "UTF-8 LF",
+      "sha256": "e149f6b39b4cf4a174defbd0a475ca381a4ce8df15928419ccc150de336c4a34",
+      "path": "docs/evidence/roadmap-v2/GM-07/GM07B_HANDOFF_2026-10-28.md"
+    },
+    {
+      "normalization": "UTF-8 LF",
+      "sha256": "f43c3567d4127e7fca3a87d3ac37f9fbcfdef88fceb01c3f4f09389ad969cea5",
+      "path": "mobile/src/shared/theme/tokens.ts"
+    },
+    {
+      "normalization": "UTF-8 LF",
+      "sha256": "7141b2af48dd3d397554e9ee3c841316e939011a880c94f22faf28214876f7ed",
+      "path": "mobile/src/shared/ui/result/ResultPodium.tsx"
+    },
+    {
+      "normalization": "UTF-8 LF",
+      "sha256": "467822f8bf004936b739c8dbdd1098cb0e9672b2835b841a8824e724f3fe9006",
+      "path": "mobile/src/data/api/contracts/voting.ts"
+    },
+    {
+      "normalization": "UTF-8 LF",
+      "sha256": "40a8796d5048d967799a62ba5174398236fe00b07eb30af7306d4d7366367b73",
+      "path": "mobile/src/features/result/screens/ResultScreen.tsx"
+    },
+    {
+      "normalization": "UTF-8 LF",
+      "sha256": "635f10c1a847631c3cb46f3aa24758aeeba38630123e903e43fd7423d7f40ccc",
+      "path": "mobile/src/features/result/screens/NoConsensusScreen.tsx"
+    },
+    {
+      "normalization": "UTF-8 LF",
+      "sha256": "b8173b81fd82299c0865d836d58da30f9bcf05e28f87c38401801b91bb9007d5",
+      "path": "mobile/src/features/result/model.ts"
+    },
+    {
+      "normalization": "UTF-8 LF",
+      "sha256": "54835ac02ecf9a5b11a1734a47fbbfd704c11d6de840a22c1e945a434da70283",
+      "path": "mobile/src/bootstrap/resultPreview.tsx"
+    },
+    {
+      "normalization": "UTF-8 LF",
+      "sha256": "c90f2e67a34bfc9922bd5c52f420d23dc7deb8304a554ad47d61c2e98100b6d1",
+      "path": "mobile/src/bootstrap/resultFixtures.ts"
+    },
+    {
+      "normalization": "UTF-8 LF",
+      "sha256": "12723781f51a4780d7d011c7faf7da56c298d45ab2b4b3a930296373ffac90dd",
+      "path": "mobile/src/app/room/result.tsx"
+    },
+    {
+      "normalization": "UTF-8 LF",
+      "sha256": "dbe33cbe9d3017ae2d45c7b98d3c0b44835b96a5684c330e6e20ac73f4076de8",
+      "path": "mobile/src/app/room/no-consensus.tsx"
+    },
+    {
+      "normalization": "UTF-8 LF",
+      "sha256": "15df3809e6f9a4b367b90f6c9c9999798df826fce5eaa3db584790c9e5476820",
+      "path": "mobile/package.json"
+    },
+    {
+      "normalization": "UTF-8 LF",
+      "sha256": "d3c5adf46fe46dd9ad14db68301aa8b3b64b518283ebd115855aae2896994c6c",
+      "path": "mobile/package-lock.json"
+    }
+  ],
+  "checks": {
+    "newUi": "Not run",
+    "native": "Not run",
+    "apiIntegration": "Not run",
+    "taskIndexes": "Pass",
+    "repositoryValidation": "Pass",
+    "lockedExpoOffline": "Pass: Expo58.0.19, installed dependencies match lockfile",
+    "diff": "Pass",
+    "pythonRegression": {
+      "error": "WinError1314: test_stage_refuses_symlink_output during symlink setup",
+      "total": 657,
+      "assertionFailures": 0,
+      "skipped": 6,
+      "status": "Fail",
+      "passed": 650,
+      "seconds": 113.035,
+      "errors": 1
+    }
+  },
+  "projectStatusChanged": false,
+  "committed": false,
+  "pushed": false
+}
