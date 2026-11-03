@@ -1,5 +1,11 @@
 # GM-13.2 — bàn giao sau bước 1–6
 
+**Đọc trước:** [FINAL_HANDOFF](FINAL_HANDOFF.md) và
+[CONSUMER_GUIDE](CONSUMER_GUIDE.md) là bàn giao hiện hành sau kiểm Expo
+Android13 của người dùng. Phần dưới giữ snapshot bước1–6 và các ghi chú
+sửa UI; checklist “bước7” bên dưới là kế hoạch ban đầu, không phủ nhận
+xác nhận Expo trong [DEVICE_CHECKS](DEVICE_CHECKS.md).
+
 Ngày2026-11-03, owner Tuấn, reviewer Trí. Nhánh
 `codex/gm-13-figma-update`, base `7e24074` (GM-10/PR148 đã nhận).
 Source revision `ui-figma-final/2026-10-25/GM-13.2`; input wire tham chiếu

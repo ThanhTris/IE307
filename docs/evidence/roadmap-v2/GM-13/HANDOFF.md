@@ -1,8 +1,8 @@
 # GM-13 — bàn giao Result, nơi bán và No Consensus
 
-**Implementation GM-13.2 hiện hành:** [handoff bước1–6](figma-update/HANDOFF.md), [checks](figma-update/CHECKS.md) và [FIGMA_PARITY](FIGMA_PARITY.md). Routes mặc định dùng UI mới; bước7 Expo/device vẫn Not run. Các report GM-13.1 bên dưới giữ làm lịch sử, không thay nghiệm thu supplement.
+**Bàn giao GM-13.2 hiện hành:** [FINAL_HANDOFF](figma-update/FINAL_HANDOFF.md), [hướng dẫn consumer](figma-update/CONSUMER_GUIDE.md), [kiểm cuối](figma-update/FINAL_CHECKS.md), [ghi nhận Expo Android13](figma-update/DEVICE_CHECKS.md) và [FIGMA_PARITY](FIGMA_PARITY.md). Implementation `9373b80`; routes mặc định dùng DishResultFlow mới. Người dùng báo đã kiểm Expo xong; các AC thiết bị chưa có kết quả riêng được ghi rõ, không tự nghiệm thu hoặc đổi Project. Các report GM-13.1/bước1–6 bên dưới giữ làm lịch sử.
 
-**Chuẩn bị GM-13.2 ngày 2026-11-03:** đọc [kế hoạch mới](figma-update/PLAN.md) và [audit đầu vào/PNG](figma-update/INPUT_AUDIT.md) trên nhánh `codex/gm-13-figma-update`, base `7e24074`. Chưa triển khai UI mới; các kết quả GM-13.1/SDK57 bên dưới là lịch sử, không thay nghiệm thu supplement.
+**Mốc chuẩn bị lịch sử GM-13.2:** [kế hoạch](figma-update/PLAN.md) và [audit đầu vào/PNG](figma-update/INPUT_AUDIT.md) trên nhánh `codex/gm-13-figma-update`, base `7e24074`. Các đoạn trạng thái merge working tree/GM-13.1/SDK57 bên dưới chỉ mô tả revision cũ, không là trạng thái Git hoặc bàn giao hiện tại.
 
 Bản mới nhất sau resolve main: HEAD `92962ed` + incoming main
 `8cf8084a021d56fae261da34503ed5a7a45681bd`, source/test theo

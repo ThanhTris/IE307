@@ -1,5 +1,10 @@
 # GM-13.2 — checks bước1–6
 
+**Kết quả mới nhất:** [FINAL_CHECKS](FINAL_CHECKS.md),
+[FINAL_CHECKS.json](FINAL_CHECKS.json), [DEVICE_CHECKS](DEVICE_CHECKS.md).
+Mọi số936 tests/bundle/hashes và trạng thái Not run bên dưới là snapshot
+bước6; không thay kết quả revision cuối hoặc báo cáo Expo mới.
+
 Sau snapshot bước6 có sửa đường vào QA từ Home chính; xem
 [QA_ACCESS_FIX.md](QA_ACCESS_FIX.md), rồi sửa theo phản hồi Expo trong
 [UI_REFINEMENT.md](UI_REFINEMENT.md) và

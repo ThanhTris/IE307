@@ -1,8 +1,8 @@
 # GM-13 — kiểm màn Result/NoConsensus
 
-**Implementation GM-13.2 hiện hành:** [handoff bước1–6](figma-update/HANDOFF.md), [checks](figma-update/CHECKS.md) và [FIGMA_PARITY](FIGMA_PARITY.md). Routes mặc định dùng UI mới; bước7 Expo/device vẫn Not run. Các report GM-13.1 bên dưới giữ làm lịch sử, không thay nghiệm thu supplement.
+**Kiểm GM-13.2 hiện hành:** [FINAL_CHECKS](figma-update/FINAL_CHECKS.md), [JSON kết quả](figma-update/FINAL_CHECKS.json), [Expo Android13](figma-update/DEVICE_CHECKS.md), [manifest cuối](figma-update/FINAL_SOURCE_MANIFEST.json) và [FINAL_HANDOFF](figma-update/FINAL_HANDOFF.md). Người dùng đã báo kiểm thử Expo xong; AC font200%/TalkBack/viewport/Reduce Motion và ảnh đối chiếu cuối chưa được xác nhận riêng. Các report cũ bên dưới là lịch sử, không thay kết quả revision cuối hoặc approval của Trí.
 
-**Chuẩn bị GM-13.2 ngày 2026-11-03:** đọc [kế hoạch mới](figma-update/PLAN.md) và [audit đầu vào/PNG](figma-update/INPUT_AUDIT.md) trên nhánh `codex/gm-13-figma-update`, base `7e24074`. Chưa triển khai UI mới; các kết quả GM-13.1/SDK57 bên dưới là lịch sử, không thay nghiệm thu supplement.
+**Mốc chuẩn bị lịch sử GM-13.2:** [kế hoạch](figma-update/PLAN.md) và [audit đầu vào/PNG](figma-update/INPUT_AUDIT.md) trên nhánh `codex/gm-13-figma-update`, base `7e24074`. Nội dung resolve Foundation/merge working tree và GM-13.1/SDK57 bên dưới chỉ áp dụng revision cũ.
 
 ## Bản mới nhất — resolve Foundation với main
 

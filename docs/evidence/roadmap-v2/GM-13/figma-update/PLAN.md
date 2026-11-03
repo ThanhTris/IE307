@@ -1,6 +1,6 @@
 # GM-13.2 — kế hoạch cập nhật UI kết quả theo Figma
 
-**Tiến độ:** đã triển khai bước1–6; kết quả cuối và giới hạn ở [HANDOFF](HANDOFF.md)/[CHECKS](CHECKS.md). Bước7 kiểm thiết bị chờ thực hiện. Nội dung kế hoạch ban đầu bên dưới giữ mốc chuẩn bị để truy vết.
+**Tiến độ:** đã triển khai bước1–6 và sửa theo các lượt kiểm Expo; người dùng xác nhận kiểm xong trên Android13. Hồ sơ nhận việc ở [FINAL_HANDOFF](FINAL_HANDOFF.md)/[FINAL_CHECKS](FINAL_CHECKS.md); [DEVICE_CHECKS](DEVICE_CHECKS.md) ghi các AC thiết bị chưa có xác nhận riêng. Bước7 đã nhận smoke/feedback và chuẩn bị bàn giao, còn review Trí và evidence chi tiết theo AC. Nội dung kế hoạch ban đầu bên dưới giữ để truy vết, không tự ghi Done/Approved.
 
 Ngày lập: **2026-11-03**, múi giờ Asia/Bangkok. Owner Tuấn, reviewer Trí
 (`ThanhTris`). Task [GM-13](../../../../../tasks/backlog/GM-13.md), issue #74,
