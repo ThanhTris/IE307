@@ -1,4 +1,5 @@
 import {
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -20,6 +21,7 @@ import type { VoteScreenScenario } from '../fixtures';
 import { useRoundOneVoting } from '../hooks/useRoundOneVoting';
 import { VoteScenarioAndStatusBanner } from '../components/VoteScenarioAndStatusBanner';
 import { VoteDishCardItem } from '../components/VoteDishCardItem';
+import { FlashcardDeckView } from '../components/FlashcardDeckView';
 
 export type VoteScreenProps = {
   pool?: PoolDish[];
@@ -30,6 +32,8 @@ export type VoteScreenProps = {
   simulateError?: boolean;
   simulateDelayMs?: number;
   showScenarioPicker?: boolean;
+  initialViewMode?: 'flashcard' | 'list';
+  initialIsHost?: boolean;
   onGoToFinalRound?: (candidates: PoolDish[]) => void;
   onBack?: () => void;
 };
@@ -43,6 +47,8 @@ export function VoteScreen({
   simulateError = false,
   simulateDelayMs = 400,
   showScenarioPicker = true,
+  initialViewMode = 'list',
+  initialIsHost = true,
   onGoToFinalRound,
   onBack,
 }: VoteScreenProps) {
@@ -61,9 +67,25 @@ export function VoteScreen({
     lastTapRef,
     allVoted,
     isLocked,
+    activeCardIndex,
+    viewMode,
+    setViewMode,
+    canUndo,
+    waitingCountdown,
+    isHost,
+    setIsHost,
+    totalRosterCount,
+    rosterAcknowledgedCount,
+    setRosterAcknowledgedCount,
+    canHostEarlyFinish,
+    handleHostEarlyFinish,
     handleVote,
+    handleFlashcardVote,
     handleCardPress,
     handleClearVote,
+    handleUndoCard,
+    handleNextCard,
+    handlePrevCard,
     handleSubmit,
   } = useRoundOneVoting({
     pool,
@@ -73,7 +95,12 @@ export function VoteScreen({
     initialScenario,
     simulateError,
     simulateDelayMs,
+    initialIsHost,
+    initialViewMode,
   });
+
+  const currentDish = pool[activeCardIndex] || pool[0];
+  const votedCount = pool.filter(dish => Boolean(votes[dish.roundDishId])).length;
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
@@ -96,6 +123,14 @@ export function VoteScreen({
           needsRoundTwo={needsRoundTwo}
           roundTwoCandidates={roundTwoCandidates}
           errorMessage={errorMessage}
+          waitingCountdown={waitingCountdown}
+          isHost={isHost}
+          setIsHost={setIsHost}
+          rosterAcknowledgedCount={rosterAcknowledgedCount}
+          setRosterAcknowledgedCount={setRosterAcknowledgedCount}
+          totalRosterCount={totalRosterCount}
+          canHostEarlyFinish={canHostEarlyFinish}
+          onHostEarlyFinish={handleHostEarlyFinish}
           onGoToFinalRound={onGoToFinalRound}
           onRetryRoundTwo={() => {
             setScenario('round_two');
@@ -104,21 +139,90 @@ export function VoteScreen({
           colors={colors}
         />
 
-        <View style={styles.dishList}>
-          {pool.map((dish, index) => (
-            <VoteDishCardItem
-              key={dish.roundDishId}
-              dish={dish}
-              index={index}
-              currentVote={votes[dish.roundDishId]}
-              isLocked={isLocked}
-              onVote={handleVote}
-              onCardPress={handleCardPress}
-              onClearVote={handleClearVote}
-              colors={colors}
-            />
-          ))}
-        </View>
+        {/* View Mode Switcher */}
+        {submissionState === 'idle' ? (
+          <View style={styles.viewModeRow}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Chuyển sang chế độ Flashcard"
+              onPress={() => setViewMode('flashcard')}
+              style={[
+                styles.viewModeBtn,
+                {
+                  backgroundColor: viewMode === 'flashcard' ? colors.primary : colors.surface,
+                  borderColor: colors.primary,
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.viewModeBtnText,
+                  { color: viewMode === 'flashcard' ? colors.onPrimary : colors.primary },
+                ]}
+              >
+                🎴 Flashcard từng thẻ
+              </Text>
+            </Pressable>
+
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Chuyển sang chế độ Danh sách đầy đủ"
+              onPress={() => setViewMode('list')}
+              style={[
+                styles.viewModeBtn,
+                {
+                  backgroundColor: viewMode === 'list' ? colors.primary : colors.surface,
+                  borderColor: colors.primary,
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.viewModeBtnText,
+                  { color: viewMode === 'list' ? colors.onPrimary : colors.primary },
+                ]}
+              >
+                📋 Toàn bộ danh sách ({votedCount}/{pool.length})
+              </Text>
+            </Pressable>
+          </View>
+        ) : null}
+
+        {/* Flashcard or List view */}
+        {viewMode === 'flashcard' && currentDish ? (
+          <FlashcardDeckView
+            dish={currentDish}
+            cardIndex={activeCardIndex}
+            totalCards={pool.length}
+            votedCount={votedCount}
+            currentVote={votes[currentDish.roundDishId]}
+            isLocked={isLocked}
+            canUndo={canUndo}
+            onVote={vote => handleFlashcardVote(currentDish.roundDishId, vote)}
+            onCardPress={() => handleCardPress(currentDish.roundDishId)}
+            onUndo={handleUndoCard}
+            onNext={handleNextCard}
+            onPrev={handlePrevCard}
+            onClearVote={() => handleClearVote(currentDish.roundDishId)}
+            colors={colors}
+          />
+        ) : (
+          <View style={styles.dishList}>
+            {pool.map((dish, index) => (
+              <VoteDishCardItem
+                key={dish.roundDishId}
+                dish={dish}
+                index={index}
+                currentVote={votes[dish.roundDishId]}
+                isLocked={isLocked}
+                onVote={handleVote}
+                onCardPress={handleCardPress}
+                onClearVote={handleClearVote}
+                colors={colors}
+              />
+            ))}
+          </View>
+        )}
 
         <View style={styles.submitSection}>
           <Text style={[styles.submitHint, { color: colors.muted }]}>
@@ -126,7 +230,7 @@ export function VoteScreen({
               ? 'Phiếu đã được nộp và ghi nhận trên hệ thống.'
               : allVoted
               ? 'Tất cả các món đã được chọn. Nhấn Gửi phiếu để xác nhận.'
-              : 'Nút gửi chỉ bật khi đã chọn đủ phiếu cho tất cả các món. UNSET không phải là OK.'}
+              : `Nút gửi chỉ bật khi đã chọn đủ phiếu cho tất cả các món (${votedCount}/${pool.length}). UNSET không phải là OK.`}
           </Text>
           <AppButton
             label={
@@ -156,6 +260,9 @@ export function VoteScreen({
 const styles = StyleSheet.create({
   root: { flex: 1 },
   content: { padding: 16, gap: 16, maxWidth: 600, width: '100%', alignSelf: 'center' },
+  viewModeRow: { flexDirection: 'row', gap: 10, justifyContent: 'center' },
+  viewModeBtn: { flex: 1, minHeight: 44, borderRadius: 10, borderWidth: 1.5, justifyContent: 'center', alignItems: 'center' },
+  viewModeBtnText: { fontSize: 13, fontWeight: '700' },
   dishList: { gap: 20 },
   submitSection: { gap: 8, marginTop: 8 },
   submitHint: { fontSize: 12, lineHeight: 17, textAlign: 'center' },

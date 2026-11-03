@@ -8,6 +8,7 @@ export interface CandidateKeepRemoveCardProps {
   index: number;
   currentChoice: FinalChoice;
   isLocked: boolean;
+  canRemove?: boolean;
   onToggleChoice: (dishId: string, choice: FinalChoice) => void;
   colors: Palette;
 }
@@ -17,11 +18,13 @@ export function CandidateKeepRemoveCard({
   index,
   currentChoice,
   isLocked,
+  canRemove = true,
   onToggleChoice,
   colors,
 }: CandidateKeepRemoveCardProps) {
   const isKeep = currentChoice === 'KEEP';
   const source = dish.artwork?.url ? { uri: dish.artwork.url } : undefined;
+  const isRemoveDisabled = isLocked || (isKeep && !canRemove);
 
   return (
     <View
@@ -102,22 +105,22 @@ export function CandidateKeepRemoveCard({
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={`Loại món ${dish.name}`}
-          accessibilityState={{ selected: !isKeep, disabled: isLocked }}
-          disabled={isLocked}
+          accessibilityState={{ selected: !isKeep, disabled: isRemoveDisabled }}
+          disabled={isRemoveDisabled}
           onPress={() => onToggleChoice(dish.roundDishId, 'REMOVE')}
           style={[
             styles.toggleBtn,
             {
               backgroundColor: !isKeep ? colors.danger : colors.surface,
-              borderColor: colors.danger,
-              opacity: isLocked ? 0.6 : 1,
+              borderColor: isRemoveDisabled && isKeep ? colors.border : colors.danger,
+              opacity: isRemoveDisabled && isKeep ? 0.4 : 1,
             },
           ]}
         >
           <Text
             style={[
               styles.toggleBtnText,
-              { color: !isKeep ? colors.onPrimary : colors.danger },
+              { color: !isKeep ? colors.onPrimary : isRemoveDisabled && isKeep ? colors.muted : colors.danger },
             ]}
           >
             ✕ Đã loại
@@ -143,6 +146,6 @@ const styles = StyleSheet.create({
   candidateVenue: { fontSize: 13 },
   candidatePrice: { fontSize: 13, fontWeight: '600' },
   toggleRow: { flexDirection: 'row', gap: 10 },
-  toggleBtn: { flex: 1, minHeight: 44, borderRadius: 10, borderWidth: 1.5, justifyContent: 'center', alignItems: 'center' },
+  toggleBtn: { flex: 1, minHeight: 48, borderRadius: 10, borderWidth: 1.5, justifyContent: 'center', alignItems: 'center' },
   toggleBtnText: { fontSize: 14, fontWeight: '700' },
 });

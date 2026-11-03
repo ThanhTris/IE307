@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { RoomResult, SubmissionReceipt } from '../../../data/api';
-import { AppButton, StatusNotice, type Palette } from '../../../shared/ui';
+import { AppButton, StatusNotice, WaitingSummary, type Palette } from '../../../shared/ui';
 import type { FinalScreenScenario } from '../fixtures';
 
 export interface FinalRoundHeaderAndOutcomeProps {
@@ -13,6 +13,17 @@ export interface FinalRoundHeaderAndOutcomeProps {
   isWaitingForMembers: boolean;
   result: RoomResult | null;
   errorMessage: string;
+  eliminationCap?: number;
+  removedCount?: number;
+  capNotice?: string;
+  waitingCountdown?: number;
+  isHost?: boolean;
+  setIsHost?: (isHost: boolean) => void;
+  rosterAcknowledgedCount?: number;
+  setRosterAcknowledgedCount?: (count: number) => void;
+  totalRosterCount?: number;
+  canHostEarlyFinish?: boolean;
+  onHostEarlyFinish?: () => void;
   onFinish?: () => void;
   onRetryConsensus: () => void;
   colors: Palette;
@@ -28,6 +39,17 @@ export function FinalRoundHeaderAndOutcome({
   isWaitingForMembers,
   result,
   errorMessage,
+  eliminationCap = 1,
+  removedCount = 0,
+  capNotice = '',
+  waitingCountdown = 60,
+  isHost = true,
+  setIsHost,
+  rosterAcknowledgedCount = 2,
+  setRosterAcknowledgedCount,
+  totalRosterCount = 3,
+  canHostEarlyFinish = false,
+  onHostEarlyFinish,
   onFinish,
   onRetryConsensus,
   colors,
@@ -42,11 +64,21 @@ export function FinalRoundHeaderAndOutcome({
           Các món cả nhóm cùng ăn được. Chọn Giữ hoặc Loại để chốt.
         </Text>
         <Text style={[styles.bannerRule, { color: colors.muted }]}>
-          Giữ mặc định nhưng phải xác nhận nộp. Loại hết tất cả món vẫn hoàn toàn hợp lệ. Tối đa 2 vòng, không bao giờ mở vòng 3.
+          Quy tắc Cap 30%: Bạn được loại tối đa {eliminationCap} món (kể cả N=1). Không bắt buộc loại món nào. Tối đa 2 vòng, không bao giờ mở vòng 3.
         </Text>
+
+        <View style={[styles.capBadge, { backgroundColor: colors.surface, borderColor: colors.primary }]}>
+          <Text style={[styles.capBadgeText, { color: colors.primary }]}>
+            🎯 Đã chọn loại: {removedCount}/{eliminationCap} món (Tối đa {eliminationCap})
+          </Text>
+        </View>
       </View>
 
-      {showScenarioPicker && submissionState === 'idle' ? (
+      {capNotice ? (
+        <StatusNotice title="Giới hạn loại món (Cap 30%)" message={capNotice} tone="warning" colors={colors} />
+      ) : null}
+
+      {showScenarioPicker ? (
         <View style={[styles.scenarioCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           <Text style={[styles.scenarioTitle, { color: colors.text }]}>
             🧪 Kịch bản thử nghiệm (QA / Demo):
@@ -83,6 +115,50 @@ export function FinalRoundHeaderAndOutcome({
               </Pressable>
             ))}
           </View>
+
+          {isWaitingForMembers && setIsHost && setRosterAcknowledgedCount ? (
+            <View style={styles.waitingControlsRow}>
+              <Text style={[styles.controlLabel, { color: colors.muted }]}>Mô phỏng chờ:</Text>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`Chuyển vai trò sang ${isHost ? 'Thành viên' : 'Host'}`}
+                onPress={() => setIsHost(!isHost)}
+                style={[styles.smallChip, { borderColor: colors.border }]}
+              >
+                <Text style={[styles.smallChipText, { color: colors.primary }]}>
+                  Vai trò: {isHost ? 'Host 👑' : 'Thành viên 👤'}
+                </Text>
+              </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Chuyển tiến độ 1/3 ACK"
+                onPress={() => setRosterAcknowledgedCount(1)}
+                style={[
+                  styles.smallChip,
+                  {
+                    borderColor: rosterAcknowledgedCount === 1 ? colors.danger : colors.border,
+                    backgroundColor: rosterAcknowledgedCount === 1 ? colors.warm : colors.surface,
+                  },
+                ]}
+              >
+                <Text style={styles.smallChipText}>1/3 (Chưa đủ &gt;50%)</Text>
+              </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Chuyển tiến độ 2/3 ACK"
+                onPress={() => setRosterAcknowledgedCount(2)}
+                style={[
+                  styles.smallChip,
+                  {
+                    borderColor: rosterAcknowledgedCount === 2 ? colors.primary : colors.border,
+                    backgroundColor: rosterAcknowledgedCount === 2 ? colors.soft : colors.surface,
+                  },
+                ]}
+              >
+                <Text style={styles.smallChipText}>2/3 (Đủ &gt;50%)</Text>
+              </Pressable>
+            </View>
+          ) : null}
         </View>
       ) : null}
 
@@ -105,12 +181,46 @@ export function FinalRoundHeaderAndOutcome({
           />
 
           {isWaitingForMembers ? (
-            <StatusNotice
-              title="Đang đợi các thành viên khác nộp phiếu… (Chờ kết quả nhóm)"
-              message="Lựa chọn Vòng 2 của bạn đã được ghi nhận. Chưa có kết quả cuối cùng do các thành viên khác chưa nộp xong."
-              tone="info"
-              colors={colors}
-            />
+            <View style={styles.waitingContainer}>
+              <StatusNotice
+                title="Đang đợi các thành viên khác nộp phiếu… (Chờ kết quả nhóm)"
+                message="Lựa chọn Vòng 2 của bạn đã được ghi nhận. Chưa có kết quả cuối cùng do các thành viên khác chưa nộp xong."
+                tone="info"
+                colors={colors}
+              />
+              <WaitingSummary
+                acknowledged={rosterAcknowledgedCount}
+                total={totalRosterCount}
+                deadlineLabel={`${waitingCountdown}s (Hạn 60s)`}
+                statusLabel={`${rosterAcknowledgedCount}/${totalRosterCount} thành viên đã gửi phiếu`}
+                colors={colors}
+              />
+              <View style={[styles.waitingRuleCard, { backgroundColor: colors.soft, borderColor: colors.line }]}>
+                <Text style={[styles.waitingRuleText, { color: colors.text }]}>
+                  ⏱ Countdown 60s theo deadline server sau lần vào waiting hợp lệ đầu tiên.
+                </Text>
+                <Text style={[styles.waitingRuleSubtext, { color: colors.muted }]}>
+                  {isHost
+                    ? canHostEarlyFinish
+                      ? `👑 Bạn là Host. Đã có ${rosterAcknowledgedCount}/${totalRosterCount} thành viên nộp (quá nửa roster khóa A_r > M/2). Bạn có thể bấm Chốt ngay!`
+                      : `👑 Bạn là Host. Hiện có ${rosterAcknowledgedCount}/${totalRosterCount} thành viên nộp (chưa quá nửa roster khóa). Nút Chốt ngay bị khóa cho đến khi đủ đa số.`
+                    : '👤 Bạn là Thành viên. Vui lòng chờ Host chốt sớm hoặc chờ đồng hồ đếm ngược hết hạn.'}
+                </Text>
+              </View>
+
+              {isHost && onHostEarlyFinish ? (
+                <AppButton
+                  label={
+                    canHostEarlyFinish
+                      ? 'Chốt ngay · Kết thúc chờ sớm (Đã quá nửa)'
+                      : `Chốt ngay (${rosterAcknowledgedCount}/${totalRosterCount} chưa quá nửa)`
+                  }
+                  disabled={!canHostEarlyFinish}
+                  onPress={onHostEarlyFinish}
+                  colors={colors}
+                />
+              ) : null}
+            </View>
           ) : null}
 
           {result && !isWaitingForMembers ? (
@@ -176,16 +286,26 @@ export function FinalRoundHeaderAndOutcome({
 }
 
 const styles = StyleSheet.create({
-  banner: { padding: 16, borderRadius: 16, borderWidth: 1, gap: 6 },
+  banner: { padding: 16, borderRadius: 16, borderWidth: 1, gap: 8 },
   bannerTitle: { fontSize: 18, fontWeight: '800', letterSpacing: 0.5 },
   bannerSubtitle: { fontSize: 14, fontWeight: '600' },
   bannerRule: { fontSize: 12, lineHeight: 17 },
+  capBadge: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8, borderWidth: 1, alignSelf: 'flex-start', marginTop: 2 },
+  capBadgeText: { fontSize: 12, fontWeight: '800' },
   scenarioCard: { padding: 12, borderRadius: 12, borderWidth: 1, gap: 8 },
   scenarioTitle: { fontSize: 13, fontWeight: '700' },
   scenarioRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   scenarioChip: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8, borderWidth: 1 },
   scenarioChipText: { fontSize: 12, fontWeight: '700' },
+  waitingControlsRow: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 6, marginTop: 4 },
+  controlLabel: { fontSize: 11, fontWeight: '600' },
+  smallChip: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, borderWidth: 1 },
+  smallChipText: { fontSize: 11, fontWeight: '700' },
   resultBox: { gap: 14 },
+  waitingContainer: { gap: 10 },
+  waitingRuleCard: { padding: 12, borderRadius: 12, borderWidth: 1, gap: 4 },
+  waitingRuleText: { fontSize: 12, fontWeight: '700' },
+  waitingRuleSubtext: { fontSize: 11, lineHeight: 16 },
   winnerCard: { padding: 16, borderRadius: 16, borderWidth: 2, gap: 8 },
   winnerHeading: { fontSize: 16, fontWeight: '800' },
   winnerSubheading: { fontSize: 12 },
@@ -195,6 +315,8 @@ const styles = StyleSheet.create({
   winnerName: { fontSize: 18, fontWeight: '800' },
   winnerMeta: { fontSize: 13 },
   winnerPrice: { fontSize: 14, fontWeight: '700' },
+  podiumContainer: { marginTop: 8, gap: 4 },
+  podiumTitle: { fontSize: 12, fontWeight: '600' },
   allRemovedCard: { padding: 16, borderRadius: 16, borderWidth: 1, gap: 6 },
   allRemovedTitle: { fontSize: 15, fontWeight: '800' },
   allRemovedBody: { fontSize: 13, lineHeight: 18 },

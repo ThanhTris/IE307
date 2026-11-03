@@ -21,11 +21,9 @@ import {
   FIXTURE_ROUND_TWO_CANDIDATES,
   type FinalScreenScenario,
 } from '../fixtures';
-import { useRoundTwoVoting, type FinalChoice } from '../hooks/useRoundTwoVoting';
+import { useRoundTwoVoting } from '../hooks/useRoundTwoVoting';
 import { FinalRoundHeaderAndOutcome } from '../components/FinalRoundHeaderAndOutcome';
 import { CandidateKeepRemoveCard } from '../components/CandidateKeepRemoveCard';
-
-export type { FinalChoice };
 
 export type FinalRoundScreenProps = {
   candidates?: PoolDish[];
@@ -37,6 +35,8 @@ export type FinalRoundScreenProps = {
   simulateError?: boolean;
   simulateDelayMs?: number;
   showScenarioPicker?: boolean;
+  initialIsHost?: boolean;
+  enforceCap?: boolean;
   onFinish?: () => void;
   onBack?: () => void;
 };
@@ -51,6 +51,8 @@ export function FinalRoundScreen({
   simulateError = false,
   simulateDelayMs = 400,
   showScenarioPicker = true,
+  initialIsHost = true,
+  enforceCap = true,
   onFinish,
   onBack,
 }: FinalRoundScreenProps) {
@@ -63,16 +65,25 @@ export function FinalRoundScreen({
     confirmModalVisible,
     setConfirmModalVisible,
     errorMessage,
+    capNotice,
     receipt,
     result,
     isWaitingForMembers,
+    eliminationCap,
     keptCount,
     removedCount,
     allRemoved,
     isLocked,
+    waitingCountdown,
+    isHost,
+    setIsHost,
+    totalRosterCount,
+    rosterAcknowledgedCount,
+    setRosterAcknowledgedCount,
+    canHostEarlyFinish,
+    handleHostEarlyFinish,
     handleToggleChoice,
     handleSetAllKeep,
-    handleSetAllRemove,
     handleSubmit,
   } = useRoundTwoVoting({
     candidates,
@@ -83,6 +94,8 @@ export function FinalRoundScreen({
     initialResult,
     simulateError,
     simulateDelayMs,
+    initialIsHost,
+    enforceCap,
   });
 
   return (
@@ -99,6 +112,17 @@ export function FinalRoundScreen({
           isWaitingForMembers={isWaitingForMembers}
           result={result}
           errorMessage={errorMessage}
+          eliminationCap={eliminationCap}
+          removedCount={removedCount}
+          capNotice={capNotice}
+          waitingCountdown={waitingCountdown}
+          isHost={isHost}
+          setIsHost={setIsHost}
+          rosterAcknowledgedCount={rosterAcknowledgedCount}
+          setRosterAcknowledgedCount={setRosterAcknowledgedCount}
+          totalRosterCount={totalRosterCount}
+          canHostEarlyFinish={canHostEarlyFinish}
+          onHostEarlyFinish={handleHostEarlyFinish}
           onFinish={onFinish}
           onRetryConsensus={() => {
             setScenario('consensus');
@@ -111,6 +135,7 @@ export function FinalRoundScreen({
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Chọn giữ tất cả"
+            accessibilityState={{ disabled: isLocked }}
             onPress={handleSetAllKeep}
             disabled={isLocked}
             style={[
@@ -123,27 +148,15 @@ export function FinalRoundScreen({
             ]}
           >
             <Text style={[styles.batchButtonText, { color: colors.primary }]}>
-              ✓ Giữ tất cả ({candidates.length})
+              ✓ Giữ tất cả ({candidates.length} món)
             </Text>
           </Pressable>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Chọn loại tất cả"
-            onPress={handleSetAllRemove}
-            disabled={isLocked}
-            style={[
-              styles.batchButton,
-              {
-                borderColor: colors.danger,
-                backgroundColor: colors.warm,
-                opacity: isLocked ? 0.6 : 1,
-              },
-            ]}
-          >
-            <Text style={[styles.batchButtonText, { color: colors.danger }]}>
-              ✕ Loại tất cả ({candidates.length})
+
+          <View style={[styles.capIndicator, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+            <Text style={[styles.capIndicatorText, { color: colors.muted }]}>
+              Giới hạn loại: tối đa {eliminationCap} món (Cap 30%)
             </Text>
-          </Pressable>
+          </View>
         </View>
 
         <View style={styles.candidateList}>
@@ -154,6 +167,7 @@ export function FinalRoundScreen({
               index={index}
               currentChoice={choices[dish.roundDishId] || 'KEEP'}
               isLocked={isLocked}
+              canRemove={!enforceCap || removedCount < eliminationCap}
               onToggleChoice={handleToggleChoice}
               colors={colors}
             />
@@ -161,26 +175,25 @@ export function FinalRoundScreen({
         </View>
 
         <View style={styles.submitSection}>
-          <Text style={[styles.summaryText, { color: colors.text }]}>
-            Đang chọn giữ: <Text style={{ fontWeight: '700', color: colors.primary }}>{keptCount}</Text> món · Đã loại: <Text style={{ fontWeight: '700', color: colors.danger }}>{removedCount}</Text> món
+          <Text style={[styles.submitHint, { color: colors.muted }]}>
+            {submissionState === 'ack'
+              ? 'Lựa chọn Vòng 2 đã được nộp và ghi nhận trên hệ thống.'
+              : allRemoved
+              ? `Bạn đang chọn LOẠI TẤT CẢ các món (${removedCount}/${candidates.length}). Nhấn bên dưới để xác nhận.`
+              : `Bạn đang giữ ${keptCount} món và loại ${removedCount}/${eliminationCap} món. Nhấn bên dưới để xác nhận.`}
           </Text>
-          {allRemoved ? (
-            <Text style={[styles.allRemovedWarning, { color: colors.danger }]}>
-              ⚠ Bạn đang chọn LOẠI TẤT CẢ các món. Thao tác này hoàn toàn hợp lệ nếu bạn không thích món nào.
-            </Text>
-          ) : null}
 
           <AppButton
             label={
               submissionState === 'pending'
-                ? 'Đang nộp lựa chọn…'
+                ? 'Đang gửi lựa chọn Vòng 2…'
                 : submissionState === 'ack'
                 ? 'Đã nộp phiếu Vòng 2 (Đã xác nhận)'
                 : submissionState === 'error'
                 ? 'Thử lại nộp phiếu Vòng 2'
                 : 'Xác nhận nộp Vòng 2'
             }
-            disabled={submissionState === 'pending' || submissionState === 'ack'}
+            disabled={isLocked}
             loading={submissionState === 'pending'}
             onPress={() => {
               if (submissionState === 'error') {
@@ -194,27 +207,55 @@ export function FinalRoundScreen({
         </View>
 
         {onBack ? (
-          <AppButton label="Quay lại" variant="quiet" onPress={onBack} colors={colors} />
+          <AppButton label="Quay lại Vòng 1" variant="quiet" onPress={onBack} colors={colors} />
         ) : null}
-
-        <SheetDialog
-          visible={confirmModalVisible}
-          title="Xác nhận nộp phiếu Vòng 2"
-          onClose={() => setConfirmModalVisible(false)}
-          colors={colors}
-        >
-          <Text style={[styles.modalMessage, { color: colors.text }]}>
-            {allRemoved
-              ? 'Bạn đang chọn LOẠI TẤT CẢ các món trong danh sách. Sau khi gửi sẽ không thể hoàn tác. Bạn có chắc chắn muốn nộp?'
-              : `Bạn đã chọn GIỮ ${keptCount} món và LOẠI ${removedCount} món. Sau khi gửi sẽ không thể hoàn tác. Xác nhận chốt phiếu?`}
-          </Text>
-          <AppButton
-            label="Chốt phiếu ngay"
-            onPress={() => void handleSubmit()}
-            colors={colors}
-          />
-        </SheetDialog>
       </ScrollView>
+
+      {/* Confirmation SheetDialog */}
+      <SheetDialog
+        visible={confirmModalVisible}
+        title="Xác nhận nộp phiếu Vòng 2"
+        onClose={() => setConfirmModalVisible(false)}
+        colors={colors}
+      >
+        <View style={styles.modalBody}>
+          <Text style={[styles.modalText, { color: colors.text }]}>
+            Bạn đã chọn:
+          </Text>
+          <View style={styles.modalSummaryBox}>
+            <Text style={[styles.summaryItem, { color: colors.primary }]}>
+              ✓ Giữ lại: <Text style={{ fontWeight: '800' }}>{keptCount}</Text> món
+            </Text>
+            <Text style={[styles.summaryItem, { color: colors.danger }]}>
+              ✕ Đã loại: <Text style={{ fontWeight: '800' }}>{removedCount}</Text> / {eliminationCap} món tối đa
+            </Text>
+          </View>
+
+          {allRemoved ? (
+            <Text style={[styles.modalWarning, { color: colors.danger }]}>
+              ⚠ Chú ý: Bạn đang chọn LOẠI TẤT CẢ các món. Nếu cả nhóm cùng loại hết, phiên sẽ kết thúc không tìm thấy món đồng thuận (ALL_REMOVED).
+            </Text>
+          ) : (
+            <Text style={[styles.modalHint, { color: colors.muted }]}>
+              Món được giữ lại sẽ được hệ thống tính điểm đồng thuận để chọn ra quán quân. Sau khi gửi sẽ không thể hoàn tác.
+            </Text>
+          )}
+
+          <View style={styles.modalActions}>
+            <AppButton
+              label="Quay lại chỉnh sửa"
+              variant="quiet"
+              onPress={() => setConfirmModalVisible(false)}
+              colors={colors}
+            />
+            <AppButton
+              label="Chốt phiếu ngay"
+              onPress={() => void handleSubmit()}
+              colors={colors}
+            />
+          </View>
+        </View>
+      </SheetDialog>
     </SafeAreaView>
   );
 }
@@ -222,12 +263,19 @@ export function FinalRoundScreen({
 const styles = StyleSheet.create({
   root: { flex: 1 },
   content: { padding: 16, gap: 16, maxWidth: 600, width: '100%', alignSelf: 'center' },
-  batchActionsRow: { flexDirection: 'row', gap: 10 },
-  batchButton: { flex: 1, paddingVertical: 10, borderRadius: 10, borderWidth: 1, alignItems: 'center' },
+  batchActionsRow: { flexDirection: 'row', gap: 10, alignItems: 'center' },
+  batchButton: { flex: 1, paddingVertical: 10, paddingHorizontal: 12, borderRadius: 10, borderWidth: 1.5, alignItems: 'center' },
   batchButtonText: { fontSize: 13, fontWeight: '700' },
-  candidateList: { gap: 16 },
+  capIndicator: { paddingVertical: 10, paddingHorizontal: 12, borderRadius: 10, borderWidth: 1, alignItems: 'center' },
+  capIndicatorText: { fontSize: 12, fontWeight: '700' },
+  candidateList: { gap: 14 },
   submitSection: { gap: 8, marginTop: 8 },
-  summaryText: { fontSize: 13, textAlign: 'center' },
-  allRemovedWarning: { fontSize: 12, textAlign: 'center', fontWeight: '600', paddingHorizontal: 16 },
-  modalMessage: { fontSize: 14, lineHeight: 20 },
+  submitHint: { fontSize: 12, lineHeight: 17, textAlign: 'center' },
+  modalBody: { gap: 14, paddingVertical: 8 },
+  modalText: { fontSize: 15, fontWeight: '600' },
+  modalSummaryBox: { gap: 6, padding: 10, borderRadius: 8, backgroundColor: 'rgba(0,0,0,0.03)' },
+  summaryItem: { fontSize: 14, fontWeight: '600' },
+  modalWarning: { fontSize: 13, lineHeight: 18, fontWeight: '600' },
+  modalHint: { fontSize: 12, lineHeight: 17 },
+  modalActions: { gap: 8, marginTop: 6 },
 });
