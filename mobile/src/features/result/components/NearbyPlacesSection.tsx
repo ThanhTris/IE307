@@ -8,7 +8,7 @@ import { nearbyPlaces, type ResultMapRenderer } from '../services/nearbyPresenta
 import { nearbyMatches, type NearbyState, type NearbyStatus, type ResultPresentationActions, type ScoredResult } from '../services/resultPresentation';
 import { ResultMapCard } from './ResultMapCard';
 
-const copy: Record<NearbyStatus, string> = { ready: 'Chưa tìm thấy quán phù hợp', loading: 'Đang tìm quán gần món thắng', empty: 'Chưa tìm thấy quán phù hợp', error: 'Không tải được danh sách quán', permission: 'Bật vị trí để tìm quán gần món thắng', denied: 'Bạn chưa cho phép dùng vị trí', blocked: 'Quyền vị trí đang bị chặn', 'location-off': 'Dịch vụ vị trí đang tắt', offline: 'Bạn đang ngoại tuyến', unsupported: 'Chưa thể hiển thị bản đồ' };
+const copy: Record<NearbyStatus, string> = { ready: 'Chưa tìm thấy quán phù hợp', loading: 'Đang tìm quán', empty: 'Chưa tìm thấy quán phù hợp', error: 'Không tải được danh sách quán', permission: 'Bật vị trí để tìm quán', denied: 'Bạn chưa cho phép dùng vị trí', blocked: 'Quyền vị trí đang bị chặn', 'location-off': 'Dịch vụ vị trí đang tắt', offline: 'Bạn đang ngoại tuyến', unsupported: 'Chưa thể hiển thị bản đồ' };
 export function NearbyPlacesSection({ result, state, isMock = false, renderMap, actions }: { result: ScoredResult; state?: NearbyState; isMock?: boolean; renderMap?: ResultMapRenderer; actions: ResultPresentationActions }) {
   const { colors } = useShellTheme(), { textStyle } = useAppFonts(), action = useResultAction(result.resultId, isMock);
   const [selected, setSelected] = useState<string>();
@@ -32,10 +32,10 @@ export function NearbyPlacesSection({ result, state, isMock = false, renderMap, 
       <Text style={[styles.message, { color: colors.text }, textStyle(600)]}>{state && !matched ? 'Thông tin quán chưa khớp kết quả' : copy[status]}</Text>
       {needsPermission ? <AppButton label="Cho phép vị trí" colors={colors} disabled={!actions.onRequestLocation || pending} onPress={() => { void action.run('Cho phép vị trí', actions.onRequestLocation); }} /> : null}
       {needsSettings ? <AppButton label="Mở cài đặt vị trí" colors={colors} disabled={!actions.onOpenSettings || pending} onPress={() => { void action.run('Mở cài đặt vị trí', actions.onOpenSettings); }} /> : null}
-      {status === 'error' || status === 'offline' || (state && !matched) ? <AppButton label="Thử lại tìm quán" colors={colors} disabled={!actions.onRetryPlaces || pending} onPress={() => { void action.run('Tìm quán', actions.onRetryPlaces); }} /> : null}
+      {status === 'error' || status === 'offline' || (state && !matched) ? <AppButton label={status === 'error' ? 'Thử lại' : 'Thử lại tìm quán'} colors={colors} disabled={!actions.onRetryPlaces || pending} onPress={() => { void action.run('Tìm quán', actions.onRetryPlaces); }} /> : null}
       <AppButton label="Mở Google Maps" variant="secondary" colors={colors} disabled={!actions.onExternalAction || action.busy} onPress={() => external('maps')} />
     </View>}
-    {place && status !== 'ready' ? <AppButton label="Thử lại tìm quán" variant="secondary" colors={colors} disabled={!actions.onRetryPlaces || pending} onPress={() => { void action.run('Tìm quán', actions.onRetryPlaces); }} /> : null}
+    {place && status !== 'ready' ? <AppButton label={status === 'error' ? 'Thử lại' : 'Thử lại tìm quán'} variant="secondary" colors={colors} disabled={!actions.onRetryPlaces || pending} onPress={() => { void action.run('Tìm quán', actions.onRetryPlaces); }} /> : null}
     <View style={styles.social}><AppButton label="TikTok ↗" variant="secondary" colors={colors} disabled={!actions.onExternalAction || action.busy} onPress={() => external('tiktok')} style={styles.button} /><AppButton label="YouTube ↗" variant="secondary" colors={colors} disabled={!actions.onExternalAction || action.busy} onPress={() => external('youtube')} style={styles.button} /></View>
     {action.message ? <Text accessibilityLiveRegion="polite" style={[styles.caption, { color: colors.muted }, textStyle(400)]}>{action.message}</Text> : null}
   </View>;

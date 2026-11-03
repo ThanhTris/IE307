@@ -30,6 +30,10 @@ không gọi GPS/Places/Maps/TikTok/YouTube thật. QA có Xem lại vinh danh v
 Nhận kết quả mẫu; không có timer tự chốt phiên sản phẩm.
 
 Đổi kịch bản reset flow mẫu; đổi state quán/retry giữ result/winner.
+Sau đợt kiểm Expo, mock retry error/unknown/invalid nhận projection hợp
+lệ và mở vinh danh lần đầu. Invalid ban đầu vẫn bị từ chối; chỉ bộ mẫu
+trả dữ liệu hợp lệ mới khi bấm Thử lại, không nới validator của consumer.
+Xem [UI_REFINEMENT.md](UI_REFINEMENT.md) cho các sửa đồng hạng/copy.
 Tạo phòng mới chỉ bỏ receipt tổng hợp trong bộ nhớ, giữ tên khách và mở
 `/room/create-entry` → thiết lập GM-10; không tạo phòng hoặc mang phiếu cũ.
 Home/đóng/Back terminal dùng callback về Home, không quay sửa ballot.

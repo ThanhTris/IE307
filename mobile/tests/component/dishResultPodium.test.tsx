@@ -1,4 +1,5 @@
-import { render, screen } from '@testing-library/react-native';
+import { fireEvent, render, screen } from '@testing-library/react-native';
+import { StyleSheet } from 'react-native';
 import { scoredResultFixture } from '../../src/bootstrap/dishResultFixtures';
 import { DishResultScreen } from '../../src/features/result/screens/DishResultScreen';
 
@@ -16,4 +17,15 @@ test.each(['one', 'two', 'top3', 'tie-two', 'tie-first', 'tie-last', 'tie-all'] 
   expect(screen.getByText('Cùng ăn')).toBeOnTheScreen();
   expect(screen.getAllByText('Chưa có ảnh')).toHaveLength(result.topDishes.length);
   expect(JSON.stringify(result)).toBe(before);
+});
+
+test.each(['tie-first', 'tie-last', 'tie-all'] as const)('podium %s reserves equal label heights when one dish wraps', async id => {
+  const result = scoredResultFixture(id);
+  await render(<DishResultScreen result={result} onHome={jest.fn()} onNewSession={jest.fn()} />);
+  await fireEvent(screen.getByText(result.topDishes[0]!.dish.name), 'layout', { nativeEvent: { layout: { height: 42 } } });
+  await fireEvent(screen.getByText(result.topDishes[1]!.dish.name), 'layout', { nativeEvent: { layout: { height: 21 } } });
+  for (const entry of result.topDishes) {
+    expect(StyleSheet.flatten(screen.getByTestId(`podium-name-${entry.dish.roundDishId}`).props.style).minHeight).toBe(42);
+    expect(screen.getByText(entry.dish.name).props.numberOfLines).toBeUndefined();
+  }
 });
