@@ -7,7 +7,7 @@ import { ResultDishArtwork } from '../../../shared/ui/result/ResultDishArtwork';
 import type { RankedDish } from '../services/resultPresentation';
 import { lightColors } from '../../../shared/theme/tokens';
 
-export function WinnerCelebration({ winner, imageSource, onDismiss }: { winner: RankedDish; imageSource?: ImageSourcePropType; onDismiss: () => void }) {
+export function WinnerCelebration({ winner, imageSource, imageScale, onDismiss }: { winner: RankedDish; imageSource?: ImageSourcePropType; imageScale?: number; onDismiss: () => void }) {
   const { colors, dark } = useShellTheme(), { textStyle } = useAppFonts(), { height } = useWindowDimensions();
   const motion = useDialogMotion(height), close = () => motion.dismiss(onDismiss);
   return <SheetDialog visible title="Món chiến thắng" showTitle={false} presentation="dialog" colors={colors} showClose={false} showHandle={false} onClose={close} nativeAnimation="none" backdropColor={dark ? undefined : 'rgba(70,195,79,0.30)'} backdropAnimation={{ opacity: motion.opacity }} panelAnimation={{ transform: [{ translateY: motion.translation }] }}>
@@ -18,7 +18,7 @@ export function WinnerCelebration({ winner, imageSource, onDismiss }: { winner: 
         <Image source={require('../../../../assets/brand/result/laurel.png')} resizeMode="contain" style={[styles.leaf, { transform: [{ scaleX: -1 }] }]} />
       </View>
       <Text accessibilityRole="header" style={[styles.name, { color: colors.text }, textStyle(700)]}>Món chiến thắng</Text>
-      <ResultDishArtwork source={imageSource} uri={winner.dish.artwork?.uri} label={winner.dish.name} winner size={180} colors={colors} />
+      <ResultDishArtwork source={imageSource} imageScale={imageScale} uri={winner.dish.artwork?.uri} label={winner.dish.name} winner size={180} colors={colors} />
       <Text style={[styles.name, { color: colors.text }, textStyle(700)]}>{winner.dish.name}</Text>
       <Text style={[styles.points, { color: colors.text, backgroundColor: colors.warm }, textStyle(700)]}>{winner.score} điểm</Text>
       {winner.dish.artwork?.attribution ? <Text style={[styles.caption, { color: colors.muted }, textStyle(400)]}>{winner.dish.artwork.attribution}</Text> : null}

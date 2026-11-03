@@ -21,6 +21,7 @@ export function NearbyPlacesSection({ result, state, isMock = false, renderMap, 
   const needsSettings = status === 'blocked' || status === 'location-off';
   return <View style={styles.group}>
     <Text accessibilityRole="header" style={[styles.heading, { color: colors.text }, textStyle(700)]}>Quán có món này</Text>
+    <Text accessibilityLiveRegion="polite" style={[styles.dishName, { color: colors.text }, textStyle(600)]}>Tìm quán cho: {result.winner.name}</Text>
     {place ? <>
       {state?.cached ? <Text style={[styles.caption, { color: colors.muted }, textStyle(400)]}>Dữ liệu lần tải trước · chưa cập nhật thành công</Text> : null}
       <ResultMapCard place={place} places={places} resultId={result.resultId} winnerDishId={result.winner.dishId} onSelect={setSelected} isMock={isMock} renderMap={renderMap} onMaps={actions.onExternalAction ? () => external('maps', true) : undefined} busy={action.busy} />
@@ -40,4 +41,4 @@ export function NearbyPlacesSection({ result, state, isMock = false, renderMap, 
     {action.message ? <Text accessibilityLiveRegion="polite" style={[styles.caption, { color: colors.muted }, textStyle(400)]}>{action.message}</Text> : null}
   </View>;
 }
-const styles = StyleSheet.create({ group: { gap: 12 }, heading: { fontSize: 18, lineHeight: 26 }, notice: { minHeight: 156, borderWidth: 1, borderRadius: 16, padding: 16, justifyContent: 'center', gap: 12 }, message: { fontSize: 14, lineHeight: 22, textAlign: 'center' }, caption: { fontSize: 11, lineHeight: 17 }, social: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 }, button: { flexGrow: 1, flexBasis: 130 }, list: { gap: 8 }, place: { minHeight: 48, maxWidth: 240, borderWidth: 1, borderRadius: 12, padding: 12, justifyContent: 'center' } });
+const styles = StyleSheet.create({ group: { gap: 12 }, heading: { fontSize: 18, lineHeight: 26 }, notice: { minHeight: 156, borderWidth: 1, borderRadius: 16, padding: 16, justifyContent: 'center', gap: 12 }, dishName: { fontSize: 14, lineHeight: 22 }, message: { fontSize: 14, lineHeight: 22, textAlign: 'center' }, caption: { fontSize: 11, lineHeight: 17 }, social: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 }, button: { flexGrow: 1, flexBasis: 130 }, list: { gap: 8 }, place: { minHeight: 48, maxWidth: 240, borderWidth: 1, borderRadius: 12, padding: 12, justifyContent: 'center' } });

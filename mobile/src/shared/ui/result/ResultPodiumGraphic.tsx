@@ -24,7 +24,7 @@ export function ResultPodiumGraphic({ dishes, colors }: ComponentThemeProps & { 
   return <View style={styles.group}>
     <View accessibilityLabel="Bảng xếp hạng món ăn" style={[styles.row, { borderBottomColor: colors?.line }]}>
       {ordered.map(item => <View key={item.id} testID={`podium-${item.id}`} style={styles.column}>
-        <ResultDishArtwork source={item.imageSource} uri={item.imageUri} label={item.name} size={item.rank === 1 ? picture : picture * 0.85} winner={item.rank === 1} colors={colors} />
+        <ResultDishArtwork source={item.imageSource} uri={item.imageUri} imageScale={item.imageScale} label={item.name} size={item.rank === 1 ? picture : picture * 0.85} winner={item.winner} colors={colors} />
         <View testID={`podium-name-${item.id}`} style={[styles.textSlot, { minHeight: heights.name }]}>
           <Text onLayout={event => measure('name', event.nativeEvent.layout.height)} style={[styles.name, { color: colors?.text }]}>{item.name}</Text>
         </View>

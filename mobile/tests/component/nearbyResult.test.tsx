@@ -1,15 +1,17 @@
-import { Text } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import { act, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react-native';
 import { nearbyCaseOptions, nearbyFixture, scoredResultFixture } from '../../src/bootstrap/dishResultFixtures';
 import { DishResultFlow } from '../../src/features/result/screens/DishResultFlow';
 import type { ResultActionReply } from '../../src/features/result/services/resultPresentation';
 import { useResultAction } from '../../src/features/result/hooks/useResultAction';
+import { getThemeColors } from '../../src/shared/theme/tokens';
 
 const actions = () => ({ onHome: jest.fn(), onNewSession: jest.fn(), onRetryResult: jest.fn(), onRequestLocation: jest.fn(), onRetryPlaces: jest.fn(), onOpenSettings: jest.fn(), onExternalAction: jest.fn(() => ({ ok: true })) });
 test.each(nearbyCaseOptions.map(item => item.id))('Places state %s keeps result immutable and never requests location automatically', async status => {
   const result = scoredResultFixture(), original = JSON.stringify(result), callbacks = actions();
   await render(<DishResultFlow {...callbacks} input={{ capability: 'scored-v4', result }} nearby={nearbyFixture(result, status)} celebrate={false} isMock />);
   expect(screen.getByText('Quán có món này')).toBeOnTheScreen(); expect(screen.getByText('6 điểm')).toBeOnTheScreen();
+  expect(screen.getByText(`Tìm quán cho: ${result.winner!.name}`)).toBeOnTheScreen();
   expect(callbacks.onRequestLocation).not.toHaveBeenCalled(); expect(callbacks.onRetryPlaces).not.toHaveBeenCalled();
   if (status === 'permission' || status === 'denied') { await fireEvent.press(screen.getByText('Cho phép vị trí')); expect(callbacks.onRequestLocation).toHaveBeenCalledTimes(1); }
   if (status === 'blocked' || status === 'location-off') { await fireEvent.press(screen.getByText('Mở cài đặt vị trí')); expect(callbacks.onOpenSettings).toHaveBeenCalledTimes(1); }
@@ -17,6 +19,22 @@ test.each(nearbyCaseOptions.map(item => item.id))('Places state %s keeps result 
   if (status === 'permission') expect(screen.getByText('Bật vị trí để tìm quán')).toBeOnTheScreen();
   if (status === 'error') { await fireEvent.press(screen.getByRole('button', { name: 'Thử lại' })); expect(callbacks.onRetryPlaces).toHaveBeenCalledTimes(1); }
   expect(JSON.stringify(result)).toBe(original);
+});
+
+test('a different tied winner drives the sole highlighted artwork, dish caption and Maps target', async () => {
+  const base = scoredResultFixture('tie-first'), winner = base.topDishes[1]!.dish, callbacks = actions();
+  const result = { ...base, winner, topDishes: base.topDishes.map(entry => ({ ...entry, isWinner: entry.dish.dishId === winner.dishId })) };
+  const before = JSON.stringify(result), colors = getThemeColors('light');
+  await render(<DishResultFlow {...callbacks} input={{ capability: 'scored-v4', result }} nearby={nearbyFixture(result, 'empty')} celebrate={false} />);
+  expect(screen.getByText('Món được chọn · Cơm tấm')).toBeOnTheScreen();
+  expect(screen.getByText('Tìm quán cho: Cơm tấm')).toBeOnTheScreen();
+  for (const entry of result.topDishes) {
+    const border = StyleSheet.flatten(screen.getByLabelText(`${entry.dish.name} · Chưa có ảnh`).props.style);
+    expect(border.borderColor).toBe(entry.isWinner ? colors.primary : colors.line);
+  }
+  await fireEvent.press(screen.getByRole('button', { name: 'Mở Google Maps' }));
+  expect(callbacks.onExternalAction).toHaveBeenCalledWith('maps', { resultId: result.resultId, dishId: winner.dishId, dishName: winner.name });
+  expect(JSON.stringify(result)).toBe(before);
 });
 test('wrong result/winner place data is hidden and no fabricated venue goes into Maps target', async () => {
   const result = scoredResultFixture(), callbacks = actions();

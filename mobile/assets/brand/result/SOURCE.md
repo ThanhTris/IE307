@@ -24,5 +24,10 @@ Photo keys are supplied by mock composition only; real null artwork stays
 an explicit fallback, and API artwork/attribution belongs to its received
 licensed projection. Do not turn these reference photos into catalogue data.
 UI columns use responsive sizes; celebration image uses its own bounded slot.
+The three circular PNGs retain their source borders. Mock composition uses a
+1.08 image scale inside a circular clip to exclude those baked borders; the
+outer component draws a uniform 2px ring using the actual winner flag. This
+also applies to the mock celebration. Real artwork defaults to scale1 and
+is not zoomed automatically. Source PNG bytes and extraction remain unchanged.
 Pixel alpha/ink and rendered proportions must be checked independently from
 Jest's native Image mock. Native same-viewport acceptance remains step7.

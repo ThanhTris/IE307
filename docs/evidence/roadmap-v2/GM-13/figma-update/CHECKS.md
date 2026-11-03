@@ -2,7 +2,8 @@
 
 Sau snapshot bước6 có sửa đường vào QA từ Home chính; xem
 [QA_ACCESS_FIX.md](QA_ACCESS_FIX.md), rồi sửa theo phản hồi Expo trong
-[UI_REFINEMENT.md](UI_REFINEMENT.md). Full936 tests/Android export và
+[UI_REFINEMENT.md](UI_REFINEMENT.md) và
+[WINNER_INDICATOR.md](WINNER_INDICATOR.md). Full936 tests/Android export và
 SOURCE_MANIFEST.json bên dưới là evidence snapshot bước6 trước sửa này.
 
 Nhánh codex/gm-13-figma-update, base7e24074. Kết quả theo

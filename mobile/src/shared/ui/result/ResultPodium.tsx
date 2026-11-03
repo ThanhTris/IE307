@@ -10,6 +10,7 @@ export type PodiumDish = {
   scoreLabel?: string;
   winner?: boolean;
   imageSource?: ImageSourcePropType;
+  imageScale?: number;
   imageUri?: string;
   imageAttribution?: string | null;
 };

@@ -24,7 +24,7 @@ export function DishResultFlow({ input, readState = 'ready', members, artworkSou
       if (noConsensusReason(input.result)) return <DishNoConsensusScreen {...frame} reason={input.result.reasonCode as 'EMPTY_INTERSECTION' | 'ALL_REMOVED'} />;
     }
     if (result?.status === 'NO_CONSENSUS') return <DishNoConsensusScreen {...frame} reason={result.reasonCode as 'EMPTY_INTERSECTION' | 'ALL_REMOVED'} />;
-    if (result && winner) return <><DishResultScreen {...frame} result={result} artworkSources={artworkSources} members={members}><NearbyPlacesSection result={result} state={nearby} isMock={isMock} renderMap={renderMap} actions={actions} />{children}</DishResultScreen>{intro.visible ? <WinnerCelebration key={result.resultId} winner={winner} imageSource={artworkSources?.[winner.dish.dishId]} onDismiss={intro.dismiss} /> : null}</>;
+    if (result && winner) return <><DishResultScreen {...frame} result={result} artworkSources={artworkSources} members={members}><NearbyPlacesSection result={result} state={nearby} isMock={isMock} renderMap={renderMap} actions={actions} />{children}</DishResultScreen>{intro.visible ? <WinnerCelebration key={result.resultId} winner={winner} imageSource={artworkSources?.[winner.dish.dishId]} imageScale={isMock && artworkSources?.[winner.dish.dishId] ? 1.08 : 1} onDismiss={intro.dismiss} /> : null}</>;
   }
   return <DishResultFrame onHome={actions.onHome} isMock={isMock} tools={controls}><ResultReadNotice state={readState === 'ready' ? 'error' : readState} onRetry={actions.onRetryResult} /></DishResultFrame>;
 }

@@ -12,7 +12,7 @@ export function DishResultScreen({ result, members = [], artworkSources, childre
   const { colors } = useShellTheme(), { textStyle } = useAppFonts();
   const price = result.winner ? resultPrice(result.winner) : null;
   return <DishResultFrame {...frame}>
-    <ResultPodium presentation="podium" colors={colors} dishes={result.topDishes.map(entry => ({ id: entry.dish.roundDishId, name: entry.dish.name, rank: entry.rank as 1 | 2 | 3, winner: entry.isWinner, scoreLabel: `${entry.score} điểm`, imageSource: artworkSources?.[entry.dish.dishId], imageUri: entry.dish.artwork?.uri, imageAttribution: entry.dish.artwork?.attribution }))} />
+    <ResultPodium presentation="podium" colors={colors} dishes={result.topDishes.map(entry => ({ id: entry.dish.roundDishId, name: entry.dish.name, rank: entry.rank as 1 | 2 | 3, winner: entry.isWinner, scoreLabel: `${entry.score} điểm`, imageSource: artworkSources?.[entry.dish.dishId], imageScale: frame.isMock && artworkSources?.[entry.dish.dishId] ? 1.08 : 1, imageUri: entry.dish.artwork?.uri, imageAttribution: entry.dish.artwork?.attribution }))} />
     {price ? <Text style={[styles.price, { color: colors.muted }, textStyle(400)]}>{price}</Text> : null}
     <ResultCompanions members={members} />
     {children}

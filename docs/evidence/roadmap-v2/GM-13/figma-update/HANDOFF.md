@@ -34,6 +34,9 @@ Sau đợt kiểm Expo, mock retry error/unknown/invalid nhận projection hợp
 lệ và mở vinh danh lần đầu. Invalid ban đầu vẫn bị từ chối; chỉ bộ mẫu
 trả dữ liệu hợp lệ mới khi bấm Thử lại, không nới validator của consumer.
 Xem [UI_REFINEMENT.md](UI_REFINEMENT.md) cho các sửa đồng hạng/copy.
+Sau sửa [WINNER_INDICATOR.md](WINNER_INDICATOR.md), viền ảnh chỉ tô đậm
+cho `isWinner`, không cho mọi rank1. Phần quán ghi tên winner bằng
+“Tìm quán cho: …”; đây không phải điều khiển đổi winner khi chạm món.
 Tạo phòng mới chỉ bỏ receipt tổng hợp trong bộ nhớ, giữ tên khách và mở
 `/room/create-entry` → thiết lập GM-10; không tạo phòng hoặc mang phiếu cũ.
 Home/đóng/Back terminal dùng callback về Home, không quay sửa ballot.
