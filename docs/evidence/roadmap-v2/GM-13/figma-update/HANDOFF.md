@@ -11,6 +11,11 @@ Chỉ UI mock/composition, chưa nghiệm thu Android/API/native map.
 
 ## Mở và kiểm trên Expo Go
 
+Sửa nối route ngày2026-11-03: Home chính `/` đã truyền callback mở
+`/dev/foundation` trong development. Trước sửa, chỉ `/dev/home` có
+callback này nên Home chính không hiện công cụ kiểm thử. Nhãn
+“Mô phỏng · GM-09 · dữ liệu mẫu” thuộc Home mock, không chỉ revision GM-13.
+
 Từ repo root: `npm --prefix mobile start -- --clear`, Expo Go SDK58.
 Vào Home mock → Công cụ kiểm thử → Xem cấu trúc ứng dụng → Mở kết quả
 GM-13. Route `/room/result` mở vinh danh, Chạm để bỏ qua mở podium/map.

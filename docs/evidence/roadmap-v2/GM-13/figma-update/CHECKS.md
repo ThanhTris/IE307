@@ -1,5 +1,9 @@
 # GM-13.2 — checks bước1–6
 
+Sau snapshot bước6 có sửa đường vào QA từ Home chính; xem
+[QA_ACCESS_FIX.md](QA_ACCESS_FIX.md). Full936 tests/Android export và
+SOURCE_MANIFEST.json bên dưới là evidence snapshot bước6 trước sửa này.
+
 Nhánh codex/gm-13-figma-update, base7e24074. Kết quả theo
 [CHECKS.json](CHECKS.json), [manifest](SOURCE_MANIFEST.json).
 Các STEP1–STEP5 ghi lượt kiểm từng phần; source cuối bước6 dùng manifest.

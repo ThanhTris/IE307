@@ -49,9 +49,9 @@ test('merged Foundation opens Room Flow Sandbox and terminal result screens', as
   expect(screen).toHavePathname('/room/no-consensus');
 });
 
-test('development Home tools → foundation → Result → NoConsensus → Home uses real routes', async () => {
+test.each(['/', '/dev/home'])('Home tools from %s → foundation → Result → NoConsensus → Home uses real routes', async initialUrl => {
   rememberPreviewGuest('Tuấn');
-  await renderRouter(routes, { initialUrl: '/dev/home' });
+  await renderRouter(routes, { initialUrl });
   await press('Công cụ kiểm thử');
   await press('Xem cấu trúc ứng dụng');
   await screen.findByRole('button', { name: 'Mở kết quả GM-13' });

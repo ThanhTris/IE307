@@ -36,6 +36,7 @@ export default function IndexRoute() {
       onHistory={() => router.push('/history')}
       onInbox={() => router.push('/inbox')}
       onTutorial={() => router.push('/tutorial')}
+      onOpenFoundation={__DEV__ ? () => router.push('/dev/foundation') : undefined}
     />
   );
 }
