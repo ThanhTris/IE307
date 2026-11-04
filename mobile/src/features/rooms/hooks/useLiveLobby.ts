@@ -99,6 +99,13 @@ export function useLiveLobby({
       if (result.ok) {
         setSnapshot(result.data);
         setLoadError('');
+        if (!isReal) {
+          const host = result.data.members.find(member => member.userId === result.data.hostUserId);
+          if (host) {
+            mockApi.api.setCurrentUser({ id: host.userId, displayName: host.displayName, isGuest: true, createdAt: host.joinedAt });
+            setRole('host');
+          }
+        }
         void checkEligibility(result.data);
       } else {
         setSnapshot(null);
@@ -106,16 +113,18 @@ export function useLiveLobby({
       }
     });
     return () => { active = false; };
-  }, [api, activeRoomId, loadKey, checkEligibility]);
+  }, [api, activeRoomId, loadKey, checkEligibility, isReal, mockApi.api]);
 
-  const refreshSnapshot = async (targetId: string) => {
-    if (!targetId) return;
+  const refreshSnapshot = async (targetId: string): Promise<RoomSnapshot | null> => {
+    if (!targetId) return null;
     const result = await api.getRoomSnapshot(targetId);
     if (result.ok) {
       setSnapshot(result.data);
       void checkEligibility(result.data);
+      return result.data;
     } else {
       setNotice(`Không đọc lại được snapshot · ${result.error.messageKey}`);
+      return null;
     }
   };
 
@@ -168,9 +177,7 @@ export function useLiveLobby({
       setNotice('Trong fixture không còn thành viên phù hợp với vai trò này.');
       return;
     }
-    if ('setCurrentUser' in api && typeof (api as any).setCurrentUser === 'function') {
-      (api as any).setCurrentUser({ id: nextMember.userId, displayName: nextMember.displayName, isGuest: true, createdAt: nextMember.joinedAt });
-    }
+    mockApi.api.setCurrentUser({ id: nextMember.userId, displayName: nextMember.displayName, isGuest: true, createdAt: nextMember.joinedAt });
     setRole(nextRole);
     setNotice(`Đang dùng danh tính mock ${nextMember.displayName}; adapter và trạng thái phòng được giữ nguyên.`);
   };
@@ -239,7 +246,8 @@ export function useLiveLobby({
         setNotice(isReal ? 'Phòng đã hủy.' : 'Phòng mock đã hủy.');
         if (isReal) onHome();
       } else if (action === 'leave') {
-        await refreshSnapshot(snapshot.roomId);
+        const refreshed = await refreshSnapshot(snapshot.roomId);
+        if (!isReal && refreshed) setDemoMemberCount(demoCountForRoster(refreshed.members.length));
         setNotice(isReal ? 'Bạn đã rời phòng.' : 'Bạn đã rời fixture này.');
         if (isReal) onHome();
       } else {
@@ -298,4 +306,11 @@ function withDemoMemberCount(snapshot: RoomSnapshot, count: DemoMemberCount): Ro
     });
   }
   return { ...snapshot, members };
+}
+
+function demoCountForRoster(count: number): DemoMemberCount {
+  if (count >= 20) return 20;
+  if (count >= 3) return 3;
+  if (count >= 2) return 2;
+  return 1;
 }

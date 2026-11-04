@@ -37,3 +37,14 @@ This supplement records implementation and automated checks only. It does not cl
 | Repository validation / indexes | `python scripts/validate_repository.py`; `python scripts/task_readiness.py --check-docs` | Repository structure and generated task indexes passed | Pass |
 | Python regression suite | `python -m unittest discover -s tests -p "test_*.py"` | 657 tests; 6 skipped; one existing catalogue symlink test errored because Windows denied symlink creation (`WinError 1314`) | Environment-limited; rerun on a host with symlink privilege |
 | Live merge readiness | `python scripts/task_readiness.py --task GM-11 --gate merge --base-ref origin/main` with ephemeral `GH_TOKEN` | `READY_FOR_MERGE_REVIEW`; base ref is local `7c22db8` (freshness not verified) | Pass gate; owner review still required |
+
+## Owner review follow-up — 2026-11-04
+
+| Review item | Test / evidence | Result |
+| --- | --- | --- |
+| Host/member role follows the same mock client identity selected by `userId` and `hostUserId` | `cd mobile; npm test -- --runInBand tests/component/lobbyAndStatusScreens.test.tsx --silent` | Verifies initial mock session matches room host; member switch calls `setCurrentUser` with the selected member; switching back restores host; member leave removes only that member and the refetched snapshot/rendered roster keep the host. Pass (mock) |
+| Host-only start/context controls | same suite | Host sees the controls; member does not. Pass (mock UI) |
+| Previous Ready-specific reproduction | Current policy removes Ready/reset-ready actions entirely; no Ready mutation is exposed by GM-11. | Superseded by no-ready acceptance criteria; no legacy Ready action restored. |
+| Expo Go device coordination | Expo Go Android `/features` → GM-11 lobby/status | No Android device/ADB is attached in this environment. Kept Not run; Trí review/coordination is required before visual acceptance. |
+
+Latest full mobile check on the rebased branch: typecheck/lint, 56 suites / 948 tests, architecture guard passed. `npm run check:expo` reports Expo 58.0.19 matches lockfile; offline compatibility warning means it is not the online latest check.

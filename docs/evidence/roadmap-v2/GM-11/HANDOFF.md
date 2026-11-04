@@ -27,3 +27,9 @@ Mock-only. Room code/QR are labeled placeholders; invites do not add or ready an
 - Replaced stale tests that asserted the old `/8` and Ready policy with tests for the current no-ready/20-member behavior. Legacy API/request-ID coverage remains separate.
 - Automated verification: `cd mobile; npm run check` — typecheck, lint, 56 suites / 948 tests, and architecture guard passed.
 - `FIGMA_PARITY.md` records missing paired Figma/app screenshots and device checks. No lifecycle/API/backend/Android/TalkBack acceptance is claimed. This handoff does not imply Done/Approved.
+
+## Owner review follow-up — mock identity and host/member actions
+
+The mock role selector represents a real identity switch on the same `MockApiClient`. When a room snapshot loads, the preview selects the host by `hostUserId` and synchronizes that identity to the adapter. Switching roles selects by member `userId`; start/context/cancel are host-only, and member leave is applied by the selected adapter identity then checked against a refetched snapshot. The 1/3/20 roster size remains a clearly labeled presentation fixture.
+
+Current product policy has no Ready/reset-ready action, so the old Ready-specific reproduction is superseded; it is not reintroduced as a testable operation. `tests/component/lobbyAndStatusScreens.test.tsx` now verifies host identity, member identity, host-only controls, leave/refetch, no-ready start, and presentation roster sizes. Device/Expo Go visual evidence remains Not run; coordinate that check with Trí before acceptance.
