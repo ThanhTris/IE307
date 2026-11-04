@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { Redirect, useFocusEffect, useRouter } from 'expo-router';
 import { HomeScreen } from '../features/home/screens/HomeScreen';
-import { previewSessionToken, useRoomPreview } from '../bootstrap/roomPreview';
+import { previewSessionToken, PreviewControls, useRoomPreview } from '../bootstrap/roomPreview';
 import { useRoomRepository } from '../bootstrap/RoomRepositoryProvider';
 
 export default function IndexRoute() {
@@ -35,8 +35,12 @@ export default function IndexRoute() {
       onFriends={() => router.push('/friends')}
       onHistory={() => router.push('/history')}
       onInbox={() => router.push('/inbox')}
+      onProfile={isReal ? undefined : () => router.push('/profile')}
       onTutorial={() => router.push('/tutorial')}
       onOpenFoundation={__DEV__ ? () => router.push('/dev/foundation') : undefined}
+      onOpenRoomSetup={isReal ? undefined : () => router.push('/room/context')}
+      onOpenDiscoveryContext={isReal ? undefined : () => router.push('/dev/discovery-context')}
+      previewControls={isReal ? undefined : (busy => <PreviewControls disabled={busy} />)}
     />
   );
 }

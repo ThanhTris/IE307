@@ -100,7 +100,7 @@ export function InboxScreen({ onNavigate, onHome, mockClient }: Props) {
       })}
       {message ? <StatusNotice title="Kết quả mock" message={message} tone={message.includes('Chưa') ? 'error' : 'success'} colors={colors} /> : null}
       <SheetDialog visible={action !== null} title={action?.kind === 'accept' ? 'Chấp nhận lời mời?' : 'Từ chối lời mời?'} onClose={() => setAction(null)} colors={colors}>
-        <Text style={[styles.body, { color: colors.text }]}>{action?.item.type === 'room_invite' ? 'Chấp nhận lời mời mock; màn này không đặt ready thay bạn.' : 'Thao tác cần xác nhận và chỉ cập nhật adapter mock.'}</Text>
+        <Text style={[styles.body, { color: colors.text }]}>{action?.item.type === 'room_invite' ? 'Chấp nhận lời mời mock sẽ cập nhật adapter fixture; không gửi dữ liệu lên server.' : 'Thao tác cần xác nhận và chỉ cập nhật adapter mock.'}</Text>
         <AppButton label={action?.kind === 'accept' ? 'Xác nhận chấp nhận' : 'Xác nhận từ chối'} variant={action?.kind === 'accept' ? 'primary' : 'danger'} onPress={() => void processAction()} loading={busy} colors={colors} />
       </SheetDialog>
     </DemoFrame>

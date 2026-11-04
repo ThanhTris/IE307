@@ -21,6 +21,7 @@ export function FriendsScreen({ onNavigate, onHome, mockClient }: Props) {
   const [incoming, setIncoming] = useState(incomingFixture);
   const [loadedKey, setLoadedKey] = useState('');
   const [error, setError] = useState('');
+  const [search, setSearch] = useState('');
   const [friendCode, setFriendCode] = useState('');
   const [action, setAction] = useState<PendingAction>(null);
   const [message, setMessage] = useState('');
@@ -36,7 +37,7 @@ export function FriendsScreen({ onNavigate, onHome, mockClient }: Props) {
       if (!active) return;
       setLoadedKey(loadKey);
       if (result.ok) { setFriends(result.data); setError(''); }
-      else { setFriends([]); setError(result.error.messageKey); }
+      else { setError(result.error.messageKey); }
     });
     return () => { active = false; };
   }, [api, loadKey]);
@@ -60,7 +61,7 @@ export function FriendsScreen({ onNavigate, onHome, mockClient }: Props) {
     }
     if (pending.kind === 'accept') {
       setIncoming(items => items.filter(item => item.id !== pending.invite.id));
-      setFriends(items => [...items, { id: pending.invite.id, friendUserId: pending.invite.id, displayName: pending.invite.name, friendCode: pending.invite.friendCode, status: 'active', since: new Date().toISOString() }]);
+      setFriends(items => [...items, { id: pending.invite.id, friendUserId: pending.invite.id, displayName: pending.invite.name, friendCode: pending.invite.friendCode, status: 'active', since: '2026-10-25T12:00:00Z' }]);
       setMessage(`Đã chấp nhận lời mời mock của ${pending.invite.name}.`);
     } else if (pending.kind === 'reject') {
       setIncoming(items => items.filter(item => item.id !== pending.invite.id));
@@ -74,9 +75,17 @@ export function FriendsScreen({ onNavigate, onHome, mockClient }: Props) {
     }
   };
 
+  const visibleFriends = friends.filter(friend => {
+    const query = search.trim().toLocaleLowerCase('vi-VN');
+    return !query || friend.displayName.toLocaleLowerCase('vi-VN').includes(query) || friend.friendCode.toLocaleLowerCase('vi-VN').includes(query);
+  });
   const colorsForText = { color: colors.text };
   return (
     <DemoFrame title="Bạn bè" subtitle="GM-14 · lời mời, danh sách và xác nhận thao tác" active="friends" onNavigate={onNavigate} onHome={onHome} mode={mode} onModeChange={setMode}>
+      <View style={styles.section}>
+        <Text style={[styles.sectionTitle, colorsForText]}>Tìm trong danh sách bạn bè</Text>
+        <FormField label="Tên hoặc mã bạn" value={search} onChangeText={setSearch} autoCorrect={false} placeholder="Nhập để lọc bạn đã kết nối" helperText="Chỉ lọc danh sách hiện có; không tìm kiếm tài khoản bên ngoài." colors={colors} />
+      </View>
       {loading && <StatusNotice title="Đang tải danh sách bạn" message="Đọc qua ApiClient mock." tone="info" colors={colors} />}
       {!loading && currentError && <StatusNotice title="Không tải được bạn bè" message={`${currentError}. Mock không tự đổi sang dữ liệu thành công.`} tone="error" actionLabel="Thử lại" onAction={reload} colors={colors} />}
       {!loading && !currentError && <>
@@ -100,8 +109,8 @@ export function FriendsScreen({ onNavigate, onHome, mockClient }: Props) {
           ))}
         </View>
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, colorsForText]}>Bạn đã kết nối · {friends.length}</Text>
-          {friends.length === 0 ? <StatusNotice title="Chưa có bạn bè" message="Thử trạng thái Trống để xem empty state." tone="info" colors={colors} /> : friends.map(friend => (
+          <Text style={[styles.sectionTitle, colorsForText]}>Bạn đã kết nối · {visibleFriends.length}/{friends.length}</Text>
+          {friends.length === 0 ? <StatusNotice title="Chưa có bạn bè" message="Thêm bạn bằng mã sau khi có lời mời phù hợp." tone="info" colors={colors} /> : visibleFriends.length === 0 ? <StatusNotice title="Không tìm thấy bạn" message={`Không có bạn nào khớp “${search.trim()}”. Từ khóa vẫn được giữ để bạn chỉnh sửa.`} tone="info" colors={colors} /> : visibleFriends.map(friend => (
             <View key={friend.id} style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.line }]}>
               <View style={styles.friendLine}>
                 <View style={[styles.avatar, { backgroundColor: colors.warm }]}><Text style={[styles.avatarText, { color: colors.primary }]}>{friend.displayName.slice(0, 1)}</Text></View>
@@ -132,7 +141,7 @@ function confirmTitle(action: PendingAction) {
 function confirmMessage(action: PendingAction) {
   if (action?.kind === 'invite') return 'Chỉ gọi adapter mock theo API contract; không gửi thông báo ra ngoài.';
   if (action?.kind === 'unfriend') return 'Bạn cần xác nhận trước khi xóa quan hệ bạn bè trong fixture.';
-  if (action?.kind === 'accept') return 'Chấp nhận lời mời mock; không tự vào phòng hoặc đặt sẵn sàng.';
+  if (action?.kind === 'accept') return 'Chấp nhận lời mời kết bạn trong fixture; không gửi dữ liệu lên server.';
   if (action?.kind === 'reject') return 'Từ chối lời mời mock này?';
   return '';
 }

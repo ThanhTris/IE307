@@ -24,3 +24,6 @@ Owner follow-up: PR conflict at `mobile/tests/integration/routes.test.tsx` was r
 ## Limits
 
 Friend/inbox/history actions are local mock calls; no actual social, server consent, notification permission, push, API, persistence, or deletion was exercised. Expo Go Android display/font-scale/dark-mode/TalkBack smoke and screenshots are still Not run because no Android device/ADB is available; automated tests do not replace that required evidence. Task is not marked Done/Approved.
+| Repository validation / indexes | `python scripts/validate_repository.py`; `python scripts/task_readiness.py --check-docs` | Repository structure and generated task indexes passed | Pass |
+| Python regression suite | `python -m unittest discover -s tests -p "test_*.py"` | 657 tests; 6 skipped; one existing catalogue symlink test errored because Windows denied symlink creation (`WinError 1314`) | Environment-limited; rerun on a host with symlink privilege |
+| Live merge readiness | `python scripts/task_readiness.py --task GM-14 --gate merge --base-ref origin/main` with ephemeral `GH_TOKEN` | `READY_FOR_MERGE_REVIEW`; base ref is local `90e871a` (freshness not verified) | Pass gate; owner review still required |
