@@ -49,9 +49,22 @@ def parity(db):
             raise RuntimeError('Independent SQL parity mismatch: ' + case['id'])
         rows.append({'id': case['id'], 'input': case['input'], 'expected': case['expected'],
                      'actual': result['actual'], 'result': 'Pass'})
+    migrations = sorted((ROOT / 'supabase/migrations').glob('003[5-8]_*.sql'))
+    migration_hashes = {path.name: hashlib.sha256(path.read_bytes()).hexdigest() for path in migrations}
+    required_migrations = {
+        '0035_gm20_canonical_writer.sql', '0036_gm21_canonical_history.sql',
+        '0037_gm22_invitation_admission.sql', '0038_gm23_canonical_notifications.sql'}
+    if set(migration_hashes) != required_migrations:
+        raise RuntimeError('GM20_FULL_MIGRATION_SET_MISMATCH')
+    database_schema_version = db.psql('select schema_version from public.schema_versions order by installed_at desc limit 1;')
+    if database_schema_version != '0.15.0':
+        raise RuntimeError('GM20_DATABASE_SCHEMA_VERSION_MISMATCH')
     report = {'fixtureOnly': True, 'result': 'Pass', 'caseCount': len(rows), 'cases': rows,
               'fixtureSha256': hashlib.sha256((ROOT / 'tests/fixtures/decision-v4/cases.json').read_bytes()).hexdigest(),
-              'migrationSha256': hashlib.sha256((ROOT / 'supabase/migrations/0035_gm20_canonical_writer.sql').read_bytes()).hexdigest()}
+              'producer': {'task': 'GM-20', 'version': 'GM-20.4', 'migration': '0035_gm20_canonical_writer.sql', 'schemaVersion': '0.12.0'},
+              'databaseSchemaVersion': database_schema_version,
+              'migrationSha256': migration_hashes['0035_gm20_canonical_writer.sql'],
+              'migrationHashes': migration_hashes}
     (OUTPUT / 'sql-parity.json').write_text(json.dumps(report, ensure_ascii=False, indent=2)+'\n', encoding='utf8')
     print('PASS102 independent SQL/TypeScript expected vectors', flush=True)
 
