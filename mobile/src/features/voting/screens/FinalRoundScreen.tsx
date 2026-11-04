@@ -21,7 +21,7 @@ import {
   FIXTURE_ROUND_TWO_CANDIDATES,
   type FinalScreenScenario,
 } from '../fixtures';
-import { useRoundTwoVoting } from '../hooks/useRoundTwoVoting';
+import { useRoundTwoVoting, type FinalChoice } from '../hooks/useRoundTwoVoting';
 import { FinalRoundHeaderAndOutcome } from '../components/FinalRoundHeaderAndOutcome';
 import { CandidateKeepRemoveCard } from '../components/CandidateKeepRemoveCard';
 
