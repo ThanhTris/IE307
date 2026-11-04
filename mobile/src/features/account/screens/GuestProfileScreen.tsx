@@ -3,9 +3,9 @@ import { MOCK_CURRENT_USER } from '../../../data/api';
 import { AppButton, StatusNotice } from '../../../shared/ui';
 import { DemoFrame, useDemoColors, type DemoDestination } from '../../shared/components/MockDemo';
 
-type Props = { onNavigate: (destination: DemoDestination) => void; onHome: () => void };
+type Props = { onNavigate: (destination: DemoDestination) => void; onHome: () => void; onTutorial?: () => void };
 
-export function GuestProfileScreen({ onNavigate, onHome }: Props) {
+export function GuestProfileScreen({ onNavigate, onHome, onTutorial }: Props) {
   const colors = useDemoColors();
   return (
     <DemoFrame title="Cá nhân" subtitle="GM-14 · hồ sơ khách mẫu" active="profile" onNavigate={onNavigate} onHome={onHome} mode="default" onModeChange={() => undefined} showModePicker={false}>
@@ -19,6 +19,7 @@ export function GuestProfileScreen({ onNavigate, onHome }: Props) {
       </View>
       <StatusNotice title="Chưa liên kết tài khoản" message="Đăng ký, đăng nhập, khôi phục và quản lý tài khoản thật thuộc phạm vi P1." tone="info" colors={colors} />
       <AppButton label="Mở cài đặt" onPress={() => onNavigate('settings')} colors={colors} />
+      {onTutorial ? <AppButton label="Xem lại hướng dẫn" variant="secondary" onPress={onTutorial} colors={colors} /> : null}
     </DemoFrame>
   );
 }

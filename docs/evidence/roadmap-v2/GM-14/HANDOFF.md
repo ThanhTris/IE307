@@ -22,8 +22,8 @@ Screens use mock fixtures and mock API calls only. Friend/room inbox accept and 
 
 ## Supplement 2026-11-04 — mock profile/settings and history states
 
-- Branch: `codex/gm14-figma-update`, based on `origin/main` at `90e871a`.
+- Branch: `codex/gm14-figma-update`, based on `origin/main` at `7c22db8`.
 - Added local friend search, history offline/cache preview and detail sheet, and guest-only profile/accessibility settings routes. The current `HistoryItem` does not expose outcome reason or Top 3; the UI keeps these fields hidden instead of inferring them.
 - The history snapshot uses React state so offline UI updates predictably and complies with React render rules.
-- Automated verification: `cd mobile; npm run check` — typecheck, lint, 27 suites / 714 tests, and architecture guard passed.
+- Automated verification: `cd mobile; npm run check` — typecheck, lint, 56 suites / 950 tests, and architecture guard passed.
 - `FIGMA_PARITY.md` records missing paired Figma/app screenshots and device checks. No live social/API, push, account-linking, durable cache, Android, or TalkBack behavior is claimed. This handoff does not imply Done/Approved.
