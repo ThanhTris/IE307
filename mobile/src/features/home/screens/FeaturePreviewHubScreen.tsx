@@ -6,7 +6,7 @@ import { useShellTheme } from '../../../shared/lib/useShellTheme';
 type Props = { onBack: () => void; onOpen: (route: 'lobby' | 'room-status' | 'friends' | 'inbox' | 'history') => void };
 
 const destinations = [
-  ['lobby', 'GM-11 · Phòng chờ', 'Host/member, ready chủ động và reset khi đổi bối cảnh.'],
+  ['lobby', 'GM-11 · Phòng chờ', 'Host/member, roster tối đa 20 người và thao tác phòng theo vai trò.'],
   ['room-status', 'GM-11 · Trạng thái phòng', 'Loading, lỗi, offline, expired và xác nhận rời/hủy.'],
   ['friends', 'GM-14 · Bạn bè', 'Mời, chấp nhận, từ chối, xóa bạn và trạng thái hết hạn.'],
   ['inbox', 'GM-14 · Hộp thư', 'Lời mời/kết quả; inbox vẫn đọc được khi push bị từ chối.'],

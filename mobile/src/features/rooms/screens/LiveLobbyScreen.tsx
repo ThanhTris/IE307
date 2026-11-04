@@ -1,4 +1,5 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useEffect } from 'react';
+import { BackHandler, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MockApiClient, type ErrorCode, type RoomSnapshot } from '../../../data/api';
 import { AppButton, AppHeader, ContextSummary, RoomCode, SheetDialog, StatusNotice } from '../../../shared/ui';
@@ -47,6 +48,7 @@ export function LiveLobbyScreen({
     isReal,
     mockApi,
     snapshot,
+    displaySnapshot,
     loadError,
     loadState,
     confirm,
@@ -58,12 +60,27 @@ export function LiveLobbyScreen({
     viewer,
     isHost,
     members,
-    everyoneReady,
+    demoMemberCount,
     chooseRole,
+    setDemoRosterSize,
     reload,
     refreshSnapshot,
     runWrite,
   } = lobby;
+
+  useEffect(() => {
+    const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (busyRef.current) return true;
+      if (!snapshot || !viewer || snapshot.state !== 'LOBBY') return false;
+      if (confirm) {
+        setConfirm(null);
+        return true;
+      }
+      setConfirm(isHost ? 'cancel' : 'leave');
+      return true;
+    });
+    return () => subscription.remove();
+  }, [busyRef, confirm, isHost, setConfirm, snapshot, viewer]);
 
   const content = (
     <>
@@ -98,6 +115,35 @@ export function LiveLobbyScreen({
           {!isReal && <AppButton label={`Đang xem vai trò: ${isHost ? 'Host' : 'Member'} · đổi vai trò`} variant="secondary" onPress={chooseRole} disabled={busy} colors={colors} />}
           <RoomCode code={snapshot.code} colors={colors} />
           {!isReal && <Text style={[styles.helper, { color: colors.muted }]}>Mã hiển thị là fixture; QR chưa được tạo và không thể tham gia phòng thật.</Text>}
+          {!isReal && (
+            <View style={styles.demoRoster}>
+              <Text style={[styles.demoRosterLabel, { color: colors.text }]}>Số thành viên fixture</Text>
+              <View style={styles.demoRosterOptions}>
+                {([1, 2, 3, 20] as const).map(count => {
+                  const selected = demoMemberCount === count;
+                  return (
+                    <Pressable
+                      key={count}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected, disabled: busy || snapshot.state !== 'LOBBY' }}
+                      accessibilityLabel={`${count} ${count === 1 ? 'thành viên' : 'thành viên'}`}
+                      onPress={() => setDemoRosterSize(count)}
+                      disabled={busy || snapshot.state !== 'LOBBY'}
+                      style={({ pressed }) => [
+                        styles.demoRosterButton,
+                        { borderColor: selected ? colors.primary : colors.border, backgroundColor: selected ? colors.primary : colors.surface },
+                        pressed && !busy ? styles.demoRosterPressed : null,
+                        (busy || snapshot.state !== 'LOBBY') ? styles.disabled : null,
+                      ]}
+                    >
+                      <Text style={[styles.demoRosterButtonText, { color: selected ? colors.onPrimary : colors.text }]}>{count}</Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+              <Text style={[styles.helper, { color: colors.muted }]}>Chỉ đổi roster minh họa; dữ liệu phòng thật không bị tác động.</Text>
+            </View>
+          )}
           <ContextSummary
             anchorName={snapshot.context.anchorName ?? 'Điểm ăn chung'}
             mealLabel={mealLabels[snapshot.context.mealSlot] ?? 'Bữa trưa'}
@@ -106,22 +152,21 @@ export function LiveLobbyScreen({
             serviceModeLabel={snapshot.context.serviceMode === 'takeaway' ? 'Mang về' : 'Ăn tại quán'}
             colors={colors}
           />
-          <LobbyMemberList snapshot={snapshot} viewerUserId={viewer?.userId} members={members} colors={colors} />
+          <LobbyMemberList snapshot={displaySnapshot ?? snapshot} viewerUserId={viewer?.userId} members={members} colors={colors} />
           {notice ? <StatusNotice title={isReal ? 'Cập nhật' : 'Cập nhật fixture'} message={notice} tone="success" colors={colors} /> : null}
           {eligibilityError ? (
             <StatusNotice
               title="Chưa thể bắt đầu"
-              message={errorCopy[eligibilityError as ErrorCode] ?? 'Chưa có món phù hợp với bối cảnh. Hãy sửa điểm ăn hoặc giờ.'}
+              message={errorCopy[eligibilityError as ErrorCode] ?? 'Server chưa xác nhận được pool món để bắt đầu. Hãy kiểm tra thiết lập phòng rồi thử lại.'}
               tone="warning"
               colors={colors}
             />
           ) : null}
           <LobbyActionButtons
             isReal={isReal}
-            snapshot={snapshot}
+            snapshot={displaySnapshot ?? snapshot}
             viewer={viewer}
             isHost={isHost}
-            everyoneReady={everyoneReady}
             busy={busy}
             eligibilityError={eligibilityError}
             onRefresh={() => void refreshSnapshot(snapshot.roomId)}
@@ -146,7 +191,7 @@ export function LiveLobbyScreen({
         <ScrollView contentContainerStyle={styles.content}>
           <View style={styles.titleGroup}>
             <Text accessibilityRole="header" style={[styles.title, { color: colors.text }]}>Phòng chờ</Text>
-            <Text style={[styles.subtitle, { color: colors.muted }]}>Mọi người cùng sẵn sàng để bắt đầu chọn món</Text>
+            <Text style={[styles.subtitle, { color: colors.muted }]}>Chủ phòng có thể bắt đầu khi thiết lập đã hoàn tất</Text>
           </View>
           <View style={styles.screenContent}>{content}</View>
           <AppButton label="Về màn hình chính" variant="quiet" onPress={onHome} disabled={busy} colors={colors} />
@@ -158,7 +203,7 @@ export function LiveLobbyScreen({
   return (
     <DemoFrame
       title="Phòng chờ"
-      subtitle="GM-11 · host/member, context và ready"
+      subtitle="GM-11 · host/member, bối cảnh và thành viên"
       active="lobby"
       onNavigate={destination => { if (!busyRef.current) onNavigate?.(destination); }}
       onHome={() => { if (!busyRef.current) onHome(); }}
@@ -181,4 +226,11 @@ const styles = StyleSheet.create({
   screenContent: { gap: 16 },
   body: { fontSize: 14, lineHeight: 20 },
   helper: { fontSize: 12, lineHeight: 18 },
+  demoRoster: { gap: 8 },
+  demoRosterLabel: { fontSize: 14, lineHeight: 20, fontWeight: '700' },
+  demoRosterOptions: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  demoRosterButton: { minWidth: 48, minHeight: 48, paddingHorizontal: 14, borderWidth: 1, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  demoRosterButtonText: { fontSize: 15, fontWeight: '700' },
+  demoRosterPressed: { opacity: 0.75, transform: [{ scale: 0.98 }] },
+  disabled: { opacity: 0.45 },
 });

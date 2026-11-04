@@ -351,7 +351,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     );
 
     expect(await screen.findByText(currentUserId ? 'Bạn không thuộc phòng này' : 'Chưa xác định được danh tính phiên')).toBeOnTheScreen();
-    expect(screen.queryByText('Thành viên · 2/8')).toBeNull();
+    expect(screen.queryByText('Thành viên · 2/20')).toBeNull();
     expect(screen.queryByRole('button', { name: 'Tôi sẵn sàng' })).toBeNull();
     expect(screen.queryByRole('button', { name: 'Bắt đầu chọn món' })).toBeNull();
     expect(client.setReady).not.toHaveBeenCalled();
@@ -365,9 +365,10 @@ describe('GM-25 Review Feedback Regression Suite', () => {
 
     const getSnapshotMock = jest.fn()
       .mockResolvedValueOnce({ ok: true, data: snapV1 })
-      .mockResolvedValueOnce({ ok: true, data: snapV2 });
+      .mockResolvedValueOnce({ ok: true, data: snapV2 })
+      .mockResolvedValue({ ok: true, data: snapV2 });
 
-    const setReadyMock = jest.fn().mockResolvedValueOnce({
+    const startRoundMock = jest.fn().mockResolvedValueOnce({
       ok: false,
       error: { messageKey: 'VERSION_CONFLICT' },
     }).mockResolvedValueOnce({
@@ -377,7 +378,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
 
     const client = createMockApiClient({
       getRoomSnapshot: getSnapshotMock,
-      setReady: setReadyMock,
+      startRound: startRoundMock,
     });
 
     await render(
@@ -389,20 +390,20 @@ describe('GM-25 Review Feedback Regression Suite', () => {
       />
     );
 
-    await screen.findByText('Thành viên · 2/8');
+    await screen.findByText('Thành viên · 2/20');
     expect(getSnapshotMock).toHaveBeenCalledTimes(1);
 
-    // First ready press fails with VERSION_CONFLICT
-    await user.press(screen.getByRole('button', { name: 'Tôi sẵn sàng' }));
+    // Host start fails with VERSION_CONFLICT.
+    await user.press(screen.getByRole('button', { name: 'Bắt đầu chọn món' }));
     expect(await screen.findByText('Chưa thực hiện được · VERSION_CONFLICT')).toBeOnTheScreen();
 
     // Must have refetched snapshot!
     await waitFor(() => expect(getSnapshotMock).toHaveBeenCalledTimes(2));
 
-    // Second ready press now uses version 2
-    await user.press(screen.getByRole('button', { name: 'Tôi sẵn sàng' }));
+    // Retry now uses the refreshed version 2.
+    await user.press(screen.getByRole('button', { name: 'Bắt đầu chọn món' }));
     await waitFor(() => {
-      expect(setReadyMock).toHaveBeenLastCalledWith(
+      expect(startRoundMock).toHaveBeenLastCalledWith(
         expect.objectContaining({ expectedVersion: 2 })
       );
     });
@@ -414,13 +415,13 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     const user = userEvent.setup();
     const snap = createSampleSnapshot({ version: 1 });
 
-    const setReadyMock = jest.fn()
+    const startRoundMock = jest.fn()
       .mockResolvedValueOnce({ ok: false, error: { messageKey: 'TIMEOUT' } })
       .mockResolvedValueOnce({ ok: true, data: undefined });
 
     const client = createMockApiClient({
       getRoomSnapshot: jest.fn().mockResolvedValue({ ok: true, data: snap }),
-      setReady: setReadyMock,
+      startRound: startRoundMock,
     });
 
     await render(
@@ -432,25 +433,25 @@ describe('GM-25 Review Feedback Regression Suite', () => {
       />
     );
 
-    await screen.findByText('Thành viên · 2/8');
+    await screen.findByText('Thành viên · 2/20');
 
     // First press results in TIMEOUT (uncertain outcome)
-    await user.press(screen.getByRole('button', { name: 'Tôi sẵn sàng' }));
+    await user.press(screen.getByRole('button', { name: 'Bắt đầu chọn món' }));
     expect(await screen.findByText('Chưa thực hiện được · TIMEOUT')).toBeOnTheScreen();
-    const firstCallRequestId = setReadyMock.mock.calls[0][0].requestId;
+    const firstCallRequestId = startRoundMock.mock.calls[0][0].requestId;
     expect(firstCallRequestId).toBeTruthy();
 
     // Retry press MUST reuse the exact same request ID
-    await user.press(screen.getByRole('button', { name: 'Tôi sẵn sàng' }));
-    await waitFor(() => expect(setReadyMock).toHaveBeenCalledTimes(2));
-    const secondCallRequestId = setReadyMock.mock.calls[1][0].requestId;
+    await user.press(screen.getByRole('button', { name: 'Bắt đầu chọn món' }));
+    await waitFor(() => expect(startRoundMock).toHaveBeenCalledTimes(2));
+    const secondCallRequestId = startRoundMock.mock.calls[1][0].requestId;
     expect(secondCallRequestId).toBe(firstCallRequestId);
   });
 
   test('P4: Durable request ID generator generates unique non-colliding IDs across calls', () => {
     const ids = new Set<string>();
     for (let i = 0; i < 50; i++) {
-      const id = createDurableRequestId('lobby_ready');
+      const id = createDurableRequestId('lobby_start');
       expect(ids.has(id)).toBe(false);
       ids.add(id);
     }
@@ -505,7 +506,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
       />
     );
 
-    await screen.findByText('Thành viên · 2/8');
+    await screen.findByText('Thành viên · 2/20');
     expect(await screen.findByText('Chưa thể bắt đầu')).toBeOnTheScreen();
     expect(screen.getByText('Chưa có món phù hợp với bối cảnh. Hãy sửa điểm ăn hoặc giờ.')).toBeOnTheScreen();
 
