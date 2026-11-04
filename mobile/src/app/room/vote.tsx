@@ -6,6 +6,7 @@ export default function VoteRoute() {
 
   return (
     <VoteScreen
+      initialViewMode="flashcard"
       onGoToFinalRound={() => router.push('/room/final-round')}
       onBack={() => (router.canGoBack() ? router.back() : router.replace('/'))}
     />

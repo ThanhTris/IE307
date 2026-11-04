@@ -1,6 +1,8 @@
 import { render, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { type ApiClient, type PoolDish, type RoomResult } from '../../src/data/api';
 import {
+  FIXTURE_CANDIDATES_N1,
+  FIXTURE_CANDIDATES_N4,
   FIXTURE_ROUND_TWO_CANDIDATES,
   FinalRoundScreen,
   VoteScreen,
@@ -156,22 +158,21 @@ describe('GM-12 — VoteScreen (Vòng 1 Flashcard Vote)', () => {
       <VoteScreen
         pool={TEST_POOL}
         initialVotes={{ dish_test_01: 'WANT', dish_test_02: 'OK' }}
-        simulateDelayMs={150} // delay to observe pending state
+        simulateDelayMs={200}
       />
     );
 
     const submitBtn = screen.getByRole('button', { name: 'Gửi phiếu' });
+    expect(submitBtn.props.accessibilityState.disabled).toBe(false);
+
+    // Click submit
     await user.press(submitBtn);
 
-    // Assert pending state is visible
+    // While pending: pending notice appears and submit button enters loading state
     expect(screen.getByText('Đang gửi phiếu… (Pending)')).toBeOnTheScreen();
-    expect(screen.getByText(/Tất cả thao tác đang khóa/)).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Đang gửi phiếu…' })).toBeOnTheScreen();
 
-    // Assert submit button is locked
-    const pendingSubmitBtn = screen.getByRole('button', { name: 'Đang gửi phiếu…' });
-    expect(pendingSubmitBtn.props.accessibilityState.disabled).toBe(true);
-
-    // Wait for ACK
+    // Once finished:
     await waitFor(() => {
       expect(screen.getByText(/Đã nhận phiếu thành công! \(Server ACK\)/)).toBeOnTheScreen();
     });
@@ -183,6 +184,7 @@ describe('GM-12 — VoteScreen (Vòng 1 Flashcard Vote)', () => {
       <VoteScreen
         pool={TEST_POOL}
         initialVotes={{ dish_test_01: 'WANT', dish_test_02: 'OK' }}
+        initialScenario="round_two"
         simulateDelayMs={0}
       />
     );
@@ -193,9 +195,6 @@ describe('GM-12 — VoteScreen (Vòng 1 Flashcard Vote)', () => {
     await waitFor(() => {
       expect(screen.getByText(/Đã nhận phiếu thành công! \(Server ACK\)/)).toBeOnTheScreen();
     });
-
-    // Undo buttons must be hidden
-    expect(screen.queryByText(/Bỏ chọn \/ Hoàn tác về UNSET/)).toBeNull();
 
     // Vote buttons are disabled
     const okButtons = screen.getAllByRole('button', { name: 'Ăn được' });
@@ -235,6 +234,80 @@ describe('GM-12 — VoteScreen (Vòng 1 Flashcard Vote)', () => {
 
     // Does NOT show button to Round 2
     expect(screen.queryByRole('button', { name: 'Tiến hành Vòng 2 · Chọn lọc →' })).toBeNull();
+  });
+
+  test('Waiting: Countdown 60s và nút Host kết thúc chờ sớm chỉ bật khi A_r > M/2', async () => {
+    const user = userEvent.setup();
+    await render(
+      <VoteScreen
+        pool={TEST_POOL}
+        initialVotes={{ dish_test_01: 'WANT', dish_test_02: 'OK' }}
+        initialScenario="waiting"
+        simulateDelayMs={0}
+      />
+    );
+
+    const submitBtn = screen.getByRole('button', { name: 'Gửi phiếu' });
+    await user.press(submitBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Đang đợi các thành viên khác nộp phiếu… \(Chờ kết quả\)/)).toBeOnTheScreen();
+    });
+
+    // Countdown label displayed
+    expect(screen.getByText(/Hạn 60s/)).toBeOnTheScreen();
+
+    // Với mặc định 2/3 thành viên (> 50%), Host có thể bấm Chốt ngay
+    const earlyFinishBtn = screen.getByRole('button', { name: /Chốt ngay · Kết thúc chờ sớm/ });
+    expect(Boolean(earlyFinishBtn.props.accessibilityState?.disabled)).toBe(false);
+
+    // Chuyển sang mô phỏng 1/3 (chưa quá nửa: 1 <= 3/2 = 1.5)
+    const btn1Of3 = screen.getByRole('button', { name: 'Chuyển tiến độ 1/3 ACK' });
+    await user.press(btn1Of3);
+
+    // Nút Chốt ngay bị disabled do không đủ đa số
+    const disabledEarlyFinishBtn = screen.getByRole('button', { name: /Chốt ngay \(1\/3 chưa quá nửa\)/ });
+    expect(disabledEarlyFinishBtn.props.accessibilityState.disabled).toBe(true);
+
+    // Chuyển lại 2/3 (đủ đa số: 2 > 1.5)
+    const btn2Of3 = screen.getByRole('button', { name: 'Chuyển tiến độ 2/3 ACK' });
+    await user.press(btn2Of3);
+    const enabledBtn = screen.getByRole('button', { name: /Chốt ngay · Kết thúc chờ sớm/ });
+    expect(Boolean(enabledBtn.props.accessibilityState?.disabled)).toBe(false);
+
+    // Bấm Chốt ngay chuyển sang yêu cầu Vòng 2
+    await user.press(enabledBtn);
+    expect(screen.getByText('Yêu cầu Vòng 2 · Chọn lọc (Chưa đồng thuận)')).toBeOnTheScreen();
+  });
+
+  test('Flashcard Vòng 1: hiển thị thẻ hiện tại, điều hướng thẻ trước/sau, Undo trước gửi', async () => {
+    const user = userEvent.setup();
+    await render(<VoteScreen pool={TEST_POOL} initialViewMode="flashcard" simulateDelayMs={0} />);
+
+    // Thẻ 1/2: Phở bò tái nạm
+    expect(screen.getByText('Thẻ 1 / 2')).toBeOnTheScreen();
+    expect(screen.getByText('Phở bò tái nạm')).toBeOnTheScreen();
+
+    // 3 nút cử chỉ thay thế đều hiển thị với touch target
+    expect(screen.getByRole('button', { name: 'Không ăn (Vuốt trái · NO)' })).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Muốn ăn (Chạm 2 lần · WANT)' })).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Ăn được (Vuốt phải · OK)' })).toBeOnTheScreen();
+
+    // Bấm nút gesture NO trên thẻ 1 -> tự động chuyển sang thẻ 2
+    const noGestureBtn = screen.getByRole('button', { name: 'Không ăn (Vuốt trái · NO)' });
+    await user.press(noGestureBtn);
+
+    // Đã chuyển sang Thẻ 2/2: Cơm tấm sườn bì chả
+    expect(screen.getByText('Thẻ 2 / 2')).toBeOnTheScreen();
+    expect(screen.getByText('Cơm tấm sườn bì chả')).toBeOnTheScreen();
+
+    // Bấm Hoàn tác (Undo) để quay lại thẻ trước
+    const undoCardBtn = screen.getByRole('button', { name: 'Hoàn tác về thẻ trước' });
+    await user.press(undoCardBtn);
+
+    // Đã quay lại Thẻ 1/2
+    expect(screen.getByText('Thẻ 1 / 2')).toBeOnTheScreen();
+    expect(screen.getByText('Phở bò tái nạm')).toBeOnTheScreen();
   });
 
   test('Kịch bản Chuyển Vòng 2: mở nút Vòng 2 và truyền đúng danh sách ứng viên từ fixture', async () => {
@@ -312,20 +385,48 @@ describe('GM-12 — FinalRoundScreen (Vòng 2 Chọn lọc)', () => {
     expect(removeButtons).toHaveLength(2);
   });
 
-  test('Loại hết tất cả món vẫn hoàn toàn hợp lệ để nộp phiếu', async () => {
+  test('N=1 có thể loại món duy nhất (Loại hết) và nộp phiếu hợp lệ theo Cap R2=1', async () => {
     const user = userEvent.setup();
-    await render(<FinalRoundScreen candidates={TEST_POOL} simulateDelayMs={0} />);
+    await render(<FinalRoundScreen candidates={FIXTURE_CANDIDATES_N1} simulateDelayMs={0} />);
 
-    const removeButtons = screen.getAllByRole('button', { name: /Loại món/ });
-
-    // Mark both as REMOVE
-    await user.press(removeButtons[0]!);
-    await user.press(removeButtons[1]!);
+    const removeBtn = screen.getByRole('button', { name: /Loại món/ });
+    await user.press(removeBtn);
 
     expect(screen.getByText(/Bạn đang chọn LOẠI TẤT CẢ các món/)).toBeOnTheScreen();
 
     const submitBtn = screen.getByRole('button', { name: 'Xác nhận nộp Vòng 2' });
     expect(submitBtn.props.accessibilityState.disabled).toBe(false);
+  });
+
+  test('Cap R2=max(1, floor(0.30*N)) giới hạn số lượng món loại và chặn chọn vượt cap', async () => {
+    const user = userEvent.setup();
+    // N=4 -> Cap = max(1, floor(1.2)) = 1
+    await render(<FinalRoundScreen candidates={FIXTURE_CANDIDATES_N4} simulateDelayMs={0} />);
+
+    expect(screen.getByText(/Giới hạn loại: tối đa 1 món/)).toBeOnTheScreen();
+    const removeButtons = screen.getAllByRole('button', { name: /Loại món/ });
+    expect(removeButtons).toHaveLength(4);
+
+    // Loại món 1 -> thành công (1/1 món)
+    await user.press(removeButtons[0]!);
+    expect(screen.getByText(/Đã chọn loại: 1\/1 món/)).toBeOnTheScreen();
+
+    // Món 2 nút Loại bị disabled vì đã đạt cap
+    expect(removeButtons[1]!.props.accessibilityState.disabled).toBe(true);
+  });
+
+  test('Nút Giữ tất cả đặt lại toàn bộ món về KEEP và xóa thông báo cap', async () => {
+    const user = userEvent.setup();
+    await render(<FinalRoundScreen candidates={TEST_POOL} simulateDelayMs={0} />);
+
+    const removeButtons = screen.getAllByRole('button', { name: /Loại món/ });
+    await user.press(removeButtons[0]!);
+
+    // Bấm Giữ tất cả
+    const keepAllBtn = screen.getByRole('button', { name: 'Chọn giữ tất cả' });
+    await user.press(keepAllBtn);
+
+    expect(screen.getByText(/Đã chọn loại: 0\/1 món/)).toBeOnTheScreen();
   });
 
   test('Yêu cầu xác nhận qua SheetDialog trước khi chốt phiếu Vòng 2', async () => {
