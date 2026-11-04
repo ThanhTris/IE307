@@ -1,4 +1,5 @@
-import type { ApiClient, MealSlot, PoolDish, RoomContext } from '../../../data/api/contracts';
+import type { ApiClient, CurrencyCode, FlavorProfile, MealSlot, PoolDish, PriceUnit, RoomContext, ServiceMode, UserPreferences } from '../../../data/api/contracts';
+import type { ApiTransport } from '../../../data/api/client/transport';
 
 export type RoomSetupRepository = Pick<ApiClient, 'getDiscoveryContext' | 'getRoomSnapshot' | 'previewFoodPool' | 'updateContext' | 'updatePreferences'>;
 export type AnchorSuggestion = { status: 'suggested'; anchorId: string } | { status: 'denied' | 'unavailable' | 'outside' };
@@ -10,6 +11,272 @@ export type RequestIdFactory = () => string;
 export const mealLabels: Record<MealSlot, string> = { breakfast: 'Bữa sáng', lunch: 'Bữa trưa', dinner: 'Bữa tối', snack: 'Ăn nhẹ' };
 export const temperatureLabels = { hot: 'Nóng', warm: 'Ấm', cold: 'Lạnh', ambient: 'Nhiệt độ phòng', unknown: 'Chưa rõ nhiệt độ' } as const;
 export const originLabels = { north: 'Miền Bắc', central: 'Miền Trung', south: 'Miền Nam', unknown: 'Chưa rõ nguồn gốc', not_applicable: 'Không áp dụng vùng miền' } as const;
+
+export type GM24Scenario =
+  | 'exact_20_lunch'
+  | 'shortage_15_lunch'
+  | 'shortage_7_dinner'
+  | 'server_offline'
+  | 'slow_response'
+  | 'desired_time_passed';
+
+export interface DishCatalogueItem {
+  dishId: string;
+  name: string;
+  description?: string | null;
+  mealSlots: MealSlot[];
+  cuisineIds: string[];
+  cuisineLabels?: string[];
+  categoryIds: string[];
+  categoryLabels?: string[];
+  temperature?: 'hot' | 'warm' | 'cold' | 'ambient' | 'unknown' | null;
+  flavor?: FlavorProfile | null;
+  priceMin?: number | null;
+  priceMax?: number | null;
+  currency?: CurrencyCode | null;
+  unit?: PriceUnit | null;
+  servingSize?: string | null;
+  priceReference?: {
+    amount: number;
+    currency: string;
+    unit: PriceUnit;
+    servingSize?: string | null;
+    sourceRef?: string;
+    checkedAt?: string;
+  } | null;
+  priceObservation?: {
+    amount: number | null;
+    currency?: string | null;
+    unit?: string | null;
+    observedAt?: string | null;
+  } | null;
+}
+
+export type DishPoolPreviewResult =
+  | {
+      ok: true;
+      contractVersion: string;
+      available: number;
+      requested: number;
+      dishes: PoolDish[];
+      mealSlot: MealSlot;
+    }
+  | {
+      ok: false;
+      code: 'SHORTAGE';
+      available: number;
+      requested: number;
+      messageKey: 'INSUFFICIENT_DISHES';
+    }
+  | {
+      ok: false;
+      code: 'DESIRED_TIME_PASSED' | 'NETWORK_ERROR' | 'TIMEOUT' | 'AUTH_REQUIRED' | 'INVALID_INPUT' | 'ERROR';
+      messageKey: string;
+      message: string;
+    };
+
+export const MOCK_GM24_LUNCH_DISHES: PoolDish[] = [
+  { roundDishId: 'rd_01', choiceId: 'ch_01', dishId: 'dish_pho_bo', name: 'Phở bò tái nạm', description: 'Nước dùng ninh xương 12 tiếng thơm quế hồi, thịt bò tái mềm', cuisineIds: ['cui_vietnam'], categoryIds: ['cat_mon_nuoc'], origin: 'north', temperature: 'hot', priceMin: 55000, priceMax: 75000, currency: 'VND', unit: 'menu_item_unspecified', servingSize: '1 tô' },
+  { roundDishId: 'rd_02', choiceId: 'ch_02', dishId: 'dish_bun_bo_hue', name: 'Bún bò Huế đặc biệt', description: 'Nước dùng cay nồng hương sả ruốc, chả cua và nạm bò giòn sần sật', cuisineIds: ['cui_vietnam'], categoryIds: ['cat_mon_nuoc'], origin: 'central', temperature: 'hot', priceMin: 60000, priceMax: 80000, currency: 'VND', unit: 'menu_item_unspecified', servingSize: '1 tô' },
+  { roundDishId: 'rd_03', choiceId: 'ch_03', dishId: 'dish_com_tam', name: 'Cơm tấm sườn bì chả', description: 'Sườn nướng mật ong than hoa, chả trứng béo ngậy, hạt tấm dẻo', cuisineIds: ['cui_vietnam'], categoryIds: ['cat_com'], origin: 'south', temperature: 'hot', priceMin: 50000, priceMax: 70000, currency: 'VND', unit: 'person', servingSize: '1 dĩa' },
+  { roundDishId: 'rd_04', choiceId: 'ch_04', dishId: 'dish_banh_mi', name: 'Bánh mì pate thịt nguội', description: 'Vỏ giòn rụm, pate béo gan heo, thịt nguội xá xíu và đồ chua giòn', cuisineIds: ['cui_vietnam'], categoryIds: ['cat_banh_mi'], origin: 'south', temperature: 'ambient', priceMin: 25000, priceMax: 35000, currency: 'VND', unit: 'item', servingSize: '1 ổ' },
+  { roundDishId: 'rd_05', choiceId: 'ch_05', dishId: 'dish_goi_cuon', name: 'Gỏi cuốn tôm thịt', description: 'Tôm sông luộc ngọt, thịt ba chỉ chấm tương đen bùi mè đậu phộng', cuisineIds: ['cui_vietnam'], categoryIds: ['cat_khai_vi'], origin: 'south', temperature: 'cold', priceMin: 35000, priceMax: 50000, currency: 'VND', unit: 'portion', servingSize: '4 cuốn' },
+  { roundDishId: 'rd_06', choiceId: 'ch_06', dishId: 'dish_hu_tieu', name: 'Hủ tiếu Nam Vang khô', description: 'Sợi hủ tiếu dai trộn sốt đậm đà, tôm tươi, gan heo và tóp mỡ giòn', cuisineIds: ['cui_vietnam'], categoryIds: ['cat_mon_nuoc'], origin: 'south', temperature: 'hot', priceMin: 55000, priceMax: 75000, currency: 'VND', unit: 'person', servingSize: '1 tô' },
+  { roundDishId: 'rd_07', choiceId: 'ch_07', dishId: 'dish_mi_quang', name: 'Mì Quảng tôm thịt', description: 'Sợi mì vàng óng, nước nhưn sánh vàng nghệ, bánh tráng mè nướng giòn', cuisineIds: ['cui_vietnam'], categoryIds: ['cat_mon_nuoc'], origin: 'central', temperature: 'warm', priceMin: 50000, priceMax: 65000, currency: 'VND', unit: 'person', servingSize: '1 tô' },
+  { roundDishId: 'rd_08', choiceId: 'ch_08', dishId: 'dish_bun_cha', name: 'Bún chả Hà Nội nướng than', description: 'Chả viên nướng xém cạnh, nước mắm dấm ớt đu đủ chua giòn', cuisineIds: ['cui_vietnam'], categoryIds: ['cat_mon_nuoc'], origin: 'north', temperature: 'hot', priceMin: 55000, priceMax: 75000, currency: 'VND', unit: 'person', servingSize: '1 suất' },
+  { roundDishId: 'rd_09', choiceId: 'ch_09', dishId: 'dish_banh_xeo', name: 'Bánh xèo miền Tây giòn rụm', description: 'Vỏ bột gạo cốt dừa vàng giòn, nhân tôm tép thịt giá cuốn rau rừng', cuisineIds: ['cui_vietnam'], categoryIds: ['cat_banh'], origin: 'south', temperature: 'hot', priceMin: 60000, priceMax: 90000, currency: 'VND', unit: 'item', servingSize: '1 cái lớn' },
+  { roundDishId: 'rd_10', choiceId: 'ch_10', dishId: 'dish_cao_lau', name: 'Cao lầu Hội An truyền thống', description: 'Sợi cao lầu tro tràm dẻo bùi, thịt xá xíu thơm và da heo chiên giòn', cuisineIds: ['cui_vietnam'], categoryIds: ['cat_mon_nuoc'], origin: 'central', temperature: 'warm', priceMin: 50000, priceMax: 65000, currency: 'VND', unit: 'person', servingSize: '1 tô' },
+  { roundDishId: 'rd_11', choiceId: 'ch_11', dishId: 'dish_com_ga', name: 'Cơm gà Hội An xé phay', description: 'Cơm nấu nước luộc gà vàng ươm, gỏi gà bóp rau răm hành tây chua ngọt', cuisineIds: ['cui_vietnam'], categoryIds: ['cat_com'], origin: 'central', temperature: 'warm', priceMin: 60000, priceMax: 80000, currency: 'VND', unit: 'person', servingSize: '1 dĩa' },
+  { roundDishId: 'rd_12', choiceId: 'ch_12', dishId: 'dish_bun_rieu', name: 'Bún riêu cua đồng tóp mỡ', description: 'Riêu cua đồng thơm béo, đậu hũ chiên phồng và cà chua nước dùng thanh mát', cuisineIds: ['cui_vietnam'], categoryIds: ['cat_mon_nuoc'], origin: 'north', temperature: 'hot', priceMin: 45000, priceMax: 60000, currency: 'VND', unit: 'person', servingSize: '1 tô' },
+  { roundDishId: 'rd_13', choiceId: 'ch_13', dishId: 'dish_banh_cuon', name: 'Bánh cuốn nóng tráng tay', description: 'Bánh mỏng mịn nhân thịt mộc nhĩ, chả lụa thơm ngậy và hành phi giòn', cuisineIds: ['cui_vietnam'], categoryIds: ['cat_banh'], origin: 'north', temperature: 'hot', priceMin: 40000, priceMax: 55000, currency: 'VND', unit: 'portion', servingSize: '1 dĩa' },
+  { roundDishId: 'rd_14', choiceId: 'ch_14', dishId: 'dish_cha_ca', name: 'Chả cá Lã Vọng thơm nức', description: 'Cá lăng nướng vàng thơm thì là hành hoa, chấm mắm tôm chanh sủi bọt', cuisineIds: ['cui_vietnam'], categoryIds: ['cat_mon_xao'], origin: 'north', temperature: 'hot', priceMin: 120000, priceMax: 150000, currency: 'VND', unit: 'person', servingSize: '1 chảo nhỏ' },
+  { roundDishId: 'rd_15', choiceId: 'ch_15', dishId: 'dish_nem_nuong', name: 'Nem nướng Nha Trang cuốn bánh tráng', description: 'Nem nướng than hồng thơm ngọt, sốt tương nếp bùi và ram giòn rụm', cuisineIds: ['cui_vietnam'], categoryIds: ['cat_khai_vi'], origin: 'central', temperature: 'warm', priceMin: 65000, priceMax: 85000, currency: 'VND', unit: 'portion', servingSize: '1 mẹt' },
+  { roundDishId: 'rd_16', choiceId: 'ch_16', dishId: 'dish_com_nieu', name: 'Cơm niêu cá bống kho tộ', description: 'Cơm cháy đáy giòn tan, cá kho tiêu sánh nước màu dừa thơm đậm đà', cuisineIds: ['cui_vietnam'], categoryIds: ['cat_com'], origin: 'south', temperature: 'hot', priceMin: 80000, priceMax: 120000, currency: 'VND', unit: 'person', servingSize: '1 thố niêu' },
+  { roundDishId: 'rd_17', choiceId: 'ch_17', dishId: 'dish_canh_chua', name: 'Canh chua cá lóc bông điên điển', description: 'Nước canh me thanh dịu, cá lóc đồng tươi ngọt, bạc hà giá đậu bắp', cuisineIds: ['cui_vietnam'], categoryIds: ['cat_canh'], origin: 'south', temperature: 'hot', priceMin: 65000, priceMax: 90000, currency: 'VND', unit: 'group', servingSize: '1 tô canh' },
+  { roundDishId: 'rd_18', choiceId: 'ch_18', dishId: 'dish_thit_kho', name: 'Thịt kho tàu hột vịt nước dừa', description: 'Thịt ba chỉ mềm rục trong nước dừa tươi, trứng vịt thấm đẫm màu hổ phách', cuisineIds: ['cui_vietnam'], categoryIds: ['cat_mon_man'], origin: 'south', temperature: 'hot', priceMin: 60000, priceMax: 80000, currency: 'VND', unit: 'portion', servingSize: '1 dĩa' },
+  { roundDishId: 'rd_19', choiceId: 'ch_19', dishId: 'dish_bo_kho', name: 'Bò kho bánh mì sốt vang', description: 'Bắp bò hầm mềm đậm hương quế hồi cà rốt, chấm bánh mì giòn tan', cuisineIds: ['cui_vietnam'], categoryIds: ['cat_mon_ham'], origin: 'south', temperature: 'hot', priceMin: 55000, priceMax: 75000, currency: 'VND', unit: 'person', servingSize: '1 tô' },
+  { roundDishId: 'rd_20', choiceId: 'ch_20', dishId: 'dish_chao_long', name: 'Cháo lòng má heo truyền thống', description: 'Cháo hạt nở bung thơm gừng tiêu, dồi chiên giòn và lòng non tươi giòn', cuisineIds: ['cui_vietnam'], categoryIds: ['cat_chao'], origin: 'south', temperature: 'hot', priceMin: 40000, priceMax: 60000, currency: 'VND', unit: 'person', servingSize: '1 tô' },
+  { roundDishId: 'rd_21', choiceId: 'ch_21', dishId: 'dish_bun_dau', name: 'Bún đậu mắm tôm thập cẩm', description: 'Đậu mơ rán lướt ván giòn vỏ mềm ruột, chả cốm nóng và thịt bắp giò luộc', cuisineIds: ['cui_vietnam'], categoryIds: ['cat_mon_nuoc'], origin: 'north', temperature: 'ambient', priceMin: 65000, priceMax: 90000, currency: 'VND', unit: 'portion', servingSize: '1 mẹt' },
+  { roundDishId: 'rd_22', choiceId: 'ch_22', dishId: 'dish_com_rang', name: 'Cơm rang dưa bò giòn hạt', description: 'Cơm rang vàng giòn rụm, dưa chua xào thịt bò mềm ngọt vừa miệng', cuisineIds: ['cui_vietnam'], categoryIds: ['cat_com'], origin: 'north', temperature: 'hot', priceMin: 50000, priceMax: 70000, currency: 'VND', unit: 'person', servingSize: '1 dĩa' },
+  { roundDishId: 'rd_23', choiceId: 'ch_23', dishId: 'dish_mien_xao', name: 'Miến xào cua bể tươi ngọt', description: 'Sợi miến dai mềm không nát thấm thịt cua bể và nấm hương mộc nhĩ', cuisineIds: ['cui_vietnam'], categoryIds: ['cat_mon_xao'], origin: 'north', temperature: 'hot', priceMin: 85000, priceMax: 120000, currency: 'VND', unit: 'person', servingSize: '1 dĩa' },
+];
+
+export async function previewDishPoolLive(
+  transport: ApiTransport,
+  payload: {
+    mealSlot: MealSlot;
+    dishCount: number;
+    token?: string;
+    signal?: AbortSignal;
+    preferences?: UserPreferences;
+  }
+): Promise<DishPoolPreviewResult> {
+  try {
+    const raw = await transport.invoke<{
+      ok?: boolean;
+      data?: {
+        contractVersion?: string;
+        available?: number;
+        requested?: number;
+        dishes?: any[];
+      };
+      error?: {
+        messageKey?: string;
+        details?: { available?: number; requested?: number };
+      };
+    }>(
+      'preview_dish_pool',
+      {
+        payload: {
+          contractVersion: 'dish-catalogue/roadmap-v2/GM-18.2',
+          mealSlot: payload.mealSlot,
+          dishCount: payload.dishCount,
+          ...(payload.preferences ? { preferences: payload.preferences } : {}),
+        },
+      },
+      { token: payload.token, signal: payload.signal }
+    );
+
+    if (raw?.ok && raw.data) {
+      const dishes: PoolDish[] = Array.isArray(raw.data.dishes)
+        ? raw.data.dishes.map((d: any, index: number) => ({
+            roundDishId: d.roundDishId ?? `rd_live_${index + 1}`,
+            choiceId: d.choiceId ?? `ch_live_${index + 1}`,
+            dishId: d.dishId ?? `dish_${index + 1}`,
+            name: d.name ?? 'Món chưa đặt tên',
+            description: d.description,
+            cuisineIds: Array.isArray(d.cuisineIds) ? d.cuisineIds : [],
+            categoryIds: Array.isArray(d.categoryIds) ? d.categoryIds : [],
+            origin: d.origin,
+            temperature: d.temperature,
+            flavor: d.flavor,
+            artwork: d.artwork ? { url: d.artwork.uri ?? '', usageRights: 'granted', license: null, attribution: d.artwork.attribution ?? null } : null,
+            priceMin: d.priceReference?.amount ?? d.priceObservation?.amount ?? null,
+            priceMax: d.priceReference?.amount ?? d.priceObservation?.amount ?? null,
+            currency: d.priceReference?.currency ?? d.priceObservation?.currency ?? 'VND',
+            unit: d.priceReference?.unit ?? d.priceObservation?.unit ?? 'portion',
+            servingSize: d.priceReference?.servingSize ?? null,
+          }))
+        : [];
+      return {
+        ok: true,
+        contractVersion: raw.data.contractVersion ?? 'dish-catalogue/roadmap-v2/GM-18.2',
+        available: raw.data.available ?? dishes.length,
+        requested: raw.data.requested ?? payload.dishCount,
+        dishes,
+        mealSlot: payload.mealSlot,
+      };
+    }
+
+    if (raw?.error?.messageKey === 'INSUFFICIENT_DISHES' || (raw as any)?.status === 409) {
+      const details = raw?.error?.details ?? (raw as any)?.body?.error?.details;
+      return {
+        ok: false,
+        code: 'SHORTAGE',
+        available: details?.available ?? 0,
+        requested: details?.requested ?? payload.dishCount,
+        messageKey: 'INSUFFICIENT_DISHES',
+      };
+    }
+
+    const messageKey = raw?.error?.messageKey ?? 'ERROR';
+    return {
+      ok: false,
+      code: 'ERROR',
+      messageKey,
+      message: setupError(messageKey),
+    };
+  } catch (err: any) {
+    if (err?.name === 'AbortError' || err?.message === 'TIMEOUT') {
+      return { ok: false, code: 'TIMEOUT', messageKey: 'TIMEOUT', message: setupError('TIMEOUT') };
+    }
+    if (err?.status === 409 || err?.body?.error?.messageKey === 'INSUFFICIENT_DISHES') {
+      const details = err?.body?.error?.details;
+      return {
+        ok: false,
+        code: 'SHORTAGE',
+        available: details?.available ?? 0,
+        requested: details?.requested ?? payload.dishCount,
+        messageKey: 'INSUFFICIENT_DISHES',
+      };
+    }
+    if (err?.status === 401) {
+      return { ok: false, code: 'AUTH_REQUIRED', messageKey: 'AUTH_REQUIRED', message: setupError('AUTH_REQUIRED') };
+    }
+    return { ok: false, code: 'NETWORK_ERROR', messageKey: 'NETWORK_ERROR', message: setupError('NETWORK_ERROR') };
+  }
+}
+
+export async function previewDishPoolMock(
+  scenario: GM24Scenario,
+  params: {
+    mealSlot: MealSlot;
+    dishCount: number;
+    desiredAt?: string | null;
+    timeMode: 'now' | 'scheduled';
+    serverTimeMs: number;
+  }
+): Promise<DishPoolPreviewResult> {
+  if (
+    scenario === 'desired_time_passed' ||
+    (params.timeMode === 'scheduled' &&
+      params.desiredAt &&
+      Number.isFinite(Date.parse(params.desiredAt)) &&
+      Date.parse(params.desiredAt) <= params.serverTimeMs)
+  ) {
+    return {
+      ok: false,
+      code: 'DESIRED_TIME_PASSED',
+      messageKey: 'DESIRED_TIME_PASSED',
+      message: setupError('DESIRED_TIME_PASSED'),
+    };
+  }
+
+  if (scenario === 'server_offline') {
+    return {
+      ok: false,
+      code: 'NETWORK_ERROR',
+      messageKey: 'NETWORK_ERROR',
+      message: setupError('NETWORK_ERROR'),
+    };
+  }
+
+  if (scenario === 'slow_response') {
+    await new Promise(resolve => setTimeout(resolve, 800));
+  }
+
+  if (scenario === 'shortage_15_lunch') {
+    return {
+      ok: false,
+      code: 'SHORTAGE',
+      available: 15,
+      requested: params.dishCount,
+      messageKey: 'INSUFFICIENT_DISHES',
+    };
+  }
+
+  if (scenario === 'shortage_7_dinner' || params.mealSlot === 'dinner' || (params.mealSlot === 'snack' && params.dishCount > 7)) {
+    if (params.dishCount > 7) {
+      return {
+        ok: false,
+        code: 'SHORTAGE',
+        available: 7,
+        requested: params.dishCount,
+        messageKey: 'INSUFFICIENT_DISHES',
+      };
+    }
+  }
+
+  const pool = MOCK_GM24_LUNCH_DISHES.slice(0, Math.min(params.dishCount, MOCK_GM24_LUNCH_DISHES.length));
+  return {
+    ok: true,
+    contractVersion: 'dish-catalogue/roadmap-v2/GM-18.2',
+    available: 23,
+    requested: params.dishCount,
+    dishes: pool,
+    mealSlot: params.mealSlot,
+  };
+}
 
 // Read only from event handlers; renders use the last fetched server timestamp.
 export function currentServerTime(serverTime: string, loadedAt: number, now: number = Date.now()): number {
@@ -92,6 +359,7 @@ export function setupError(code: string): string {
   switch (code) {
     case 'OUT_OF_COVERAGE': return 'Khu vực này chưa có dữ liệu. Hãy chọn một điểm công cộng trong vùng hỗ trợ.';
     case 'NO_ELIGIBLE_FOOD': return 'Chưa có món phù hợp với buổi và giờ này. Hãy sửa bối cảnh; không tự mở rộng giờ hay khu vực.';
+    case 'INSUFFICIENT_DISHES': return 'Chưa đủ số món phù hợp với yêu cầu thiết lập. Hãy sửa buổi ăn hoặc giảm số món.';
     case 'AVAILABILITY_UNKNOWN': return 'Chưa đủ dữ liệu để xác nhận giờ bán. Hãy sửa bối cảnh hoặc thử lại sau.';
     case 'VERSION_CONFLICT': case 'CONTEXT_CHANGED': return 'Bối cảnh đã thay đổi. Tải lại và xác nhận trước khi lưu.';
     case 'DESIRED_TIME_PASSED': return 'Giờ ăn đã qua. Hãy chọn và xác nhận giờ mới.';

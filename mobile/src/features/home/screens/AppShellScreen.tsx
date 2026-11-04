@@ -32,8 +32,8 @@ export function AppShellScreen({ onOpenFoundation, onOpenAuthSandbox, onOpenVoti
         {onOpenRoomSetup && <Pressable accessibilityRole="button" accessibilityLabel="Chọn điểm ăn và khẩu vị" onPress={onOpenRoomSetup} style={({ pressed }) => [styles.button, { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, opacity: pressed ? 0.8 : 1 }]}>
           <Text style={[styles.buttonLabel, { color: colors.text }, textStyle(600)]}>Chọn điểm ăn và khẩu vị · mô phỏng</Text>
         </Pressable>}
-        {onOpenDiscoveryContext && <Pressable accessibilityRole="button" accessibilityLabel="Mở vị trí và bối cảnh GM-24" onPress={onOpenDiscoveryContext} style={({ pressed }) => [styles.button, { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, opacity: pressed ? 0.8 : 1 }]}>
-          <Text style={[styles.buttonLabel, { color: colors.text }, textStyle(600)]}>Mở vị trí & bối cảnh GM-24</Text>
+        {onOpenDiscoveryContext && <Pressable accessibilityRole="button" accessibilityLabel="Mở thiết lập và xem trước món GM-24" onPress={onOpenDiscoveryContext} style={({ pressed }) => [styles.button, { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, opacity: pressed ? 0.8 : 1 }]}>
+          <Text style={[styles.buttonLabel, { color: colors.text }, textStyle(600)]}>Mở thiết lập & xem trước món GM-24</Text>
         </Pressable>}
         {onOpenVoting && <Pressable accessibilityRole="button" accessibilityLabel="Mở bình chọn GM-12" onPress={onOpenVoting} style={({ pressed }) => [styles.button, { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, opacity: pressed ? 0.8 : 1 }]}>
           <Text style={[styles.buttonLabel, { color: colors.text }, textStyle(600)]}>Mở bình chọn GM-12 (Vòng 1 & 2)</Text>

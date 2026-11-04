@@ -1,438 +1,223 @@
 import React from 'react';
 import { render, screen, userEvent, waitFor } from '@testing-library/react-native';
-import type { ApiClient } from '../../src/data/api/contracts';
-import { DiscoveryContextScreen as ContextScreen } from '../../src/features/context/screens/DiscoveryContextScreen';
+import { DiscoveryContextScreen } from '../../src/features/context/screens/DiscoveryContextScreen';
 
-const waitForContextReady = async () => {
-  await waitFor(() => expect(screen.getByRole('button', { name: '🕒 Đặt giờ trước' })).toBeEnabled());
-};
+describe('GM-24 Dish-only Preview Pool & Room Setup (Figma Parity)', () => {
+  it('renders correctly with default scenario and displays all core dish setup sections', async () => {
+    await render(<DiscoveryContextScreen initialScenario="exact_20_lunch" />);
 
-describe('GM-24 ContextScreen Component & Scenarios', () => {
-  it('renders correctly with default scenario and displays all core sections', async () => {
-    await render(<ContextScreen initialScenario="gps_grant_rua" />);
-
-    expect(screen.getByText('Bối cảnh & Vị trí phòng')).toBeOnTheScreen();
-    expect(screen.getByText('🧪 Kịch bản thử nghiệm')).toBeOnTheScreen();
-    expect(screen.getByText('📍 Điểm hẹn công cộng')).toBeOnTheScreen();
-    expect(screen.getByText('📏 Bán kính tìm quán')).toBeOnTheScreen();
-    expect(screen.getByText('⏰ Thời gian ăn')).toBeOnTheScreen();
-    expect(screen.getByText('🍽️ Buổi ăn & Hình thức')).toBeOnTheScreen();
+    expect(screen.getByText('Thiết lập phòng & Xem trước món')).toBeOnTheScreen();
+    expect(screen.getByText('⚙️ Môi trường dữ liệu & API')).toBeOnTheScreen();
+    expect(screen.getByText('🍽️ Buổi ăn')).toBeOnTheScreen();
+    expect(screen.getByText('⏰ Thời gian')).toBeOnTheScreen();
+    expect(screen.getByText('🔢 Số món để lựa chọn · 10–20')).toBeOnTheScreen();
+    expect(screen.getByText('💰 Ngân sách mỗi người')).toBeOnTheScreen();
+    expect(screen.getByText('🔄 Lịch sử & Tránh lặp món')).toBeOnTheScreen();
+    expect(screen.getByText('👥 Rủ bạn ăn cùng')).toBeOnTheScreen();
     expect(screen.getByText('🛡️ BẢO MẬT & QUYỀN RIÊNG TƯ (AUDIT)')).toBeOnTheScreen();
   });
 
-  it('scenario gps_grant_rua suggests nearest anchor (Hồ Con Rùa) with distance badge', async () => {
-    await render(<ContextScreen initialScenario="gps_grant_rua" />);
-
-    await waitFor(() => {
-      expect(screen.getAllByText('Hồ Con Rùa').length).toBeGreaterThanOrEqual(1);
-      expect(screen.getByText(/Cách bạn ~0 m/)).toBeOnTheScreen();
-    });
-  });
-
-  it('scenario gps_grant_dibo suggests Phố Đi Bộ Nguyễn Huệ', async () => {
-    await render(<ContextScreen initialScenario="gps_grant_dibo" />);
-
-    await waitFor(() => {
-      expect(screen.getAllByText('Phố Đi Bộ Nguyễn Huệ').length).toBeGreaterThanOrEqual(1);
-    });
-  });
-
-  it('scenario gps_deny displays permission denied message and enables manual mode', async () => {
-    await render(<ContextScreen initialScenario="gps_deny" />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Quyền vị trí bị từ chối')).toBeOnTheScreen();
-      expect(screen.getByText(/Quyền vị trí bị từ chối\. Vui lòng chọn điểm hẹn công cộng thủ công\./)).toBeOnTheScreen();
-      expect(screen.getByText('✍️ Chọn thủ công')).toBeOnTheScreen();
-    });
-  });
-
-  it('scenario gps_off displays GPS unavailable message and falls back to manual', async () => {
-    await render(<ContextScreen initialScenario="gps_off" />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Thông báo định vị')).toBeOnTheScreen();
-      expect(screen.getByText(/GPS_POSITION_UNAVAILABLE/)).toBeOnTheScreen();
-    });
-  });
-
-  it('scenario gps_outside_hanoi flags outside coverage warning with manual override', async () => {
-    await render(<ContextScreen initialScenario="gps_outside_hanoi" />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Vị trí ngoài vùng hỗ trợ')).toBeOnTheScreen();
-      expect(screen.getByText('Ngoài vùng phủ sóng')).toBeOnTheScreen();
-    });
-  });
-
-  it('allows manual selection of any public anchor and updates the context', async () => {
+  it('stepper boundary: minus button is disabled at 10 dishes (Figma node 451:13066)', async () => {
     const user = userEvent.setup();
-    await render(<ContextScreen initialScenario="manual_only" />);
+    await render(<DiscoveryContextScreen initialScenario="exact_20_lunch" />);
+
+    // Default count is 15. Decrement until 10
+    const minusBtn = screen.getByRole('button', { name: 'Giảm số món' });
+    expect(minusBtn).toBeEnabled();
+
+    // Click down to 10
+    await user.press(minusBtn);
+    await user.press(minusBtn);
+    await user.press(minusBtn);
+    await user.press(minusBtn);
+    await user.press(minusBtn);
 
     await waitFor(() => {
-      expect(screen.getByText('Đại Học Bách Khoa (Cơ sở 1)')).toBeOnTheScreen();
-    });
-
-    await user.press(screen.getByText('Đại Học Bách Khoa (Cơ sở 1)'));
-
-    await waitFor(() => {
-      expect(screen.getByText('268 Lý Thường Kiệt, Phường 14, Quận 10')).toBeOnTheScreen();
-    });
-  });
-
-  it('time resolution: Eat Now mode adds 15 min buffer once from server time', async () => {
-    await render(<ContextScreen initialScenario="gps_grant_rua" />);
-
-    await waitFor(() => {
-      expect(screen.getByText(/⚡ Ăn ngay \(Buffer 15p\)/)).toBeOnTheScreen();
-      expect(screen.getByText(/Đã cộng 15 phút chuẩn bị một lần duy nhất từ giờ máy chủ\./)).toBeOnTheScreen();
+      expect(screen.getByText('10 món')).toBeOnTheScreen();
+      expect(minusBtn).toBeDisabled();
     });
   });
 
-  it('time resolution: Scheduled mode detects past time, blocks saving, and allows adjustment to valid future time', async () => {
+  it('stepper boundary: plus button is disabled at 20 dishes (Figma node 451:13189)', async () => {
+    const user = userEvent.setup();
+    await render(<DiscoveryContextScreen initialScenario="exact_20_lunch" />);
+
+    const plusBtn = screen.getByRole('button', { name: 'Tăng số món' });
+    expect(plusBtn).toBeEnabled();
+
+    // Increment up to 20
+    await user.press(plusBtn);
+    await user.press(plusBtn);
+    await user.press(plusBtn);
+    await user.press(plusBtn);
+    await user.press(plusBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText('20 món')).toBeOnTheScreen();
+      expect(plusBtn).toBeDisabled();
+    });
+  });
+
+  it('loads exact lunch dishes when preview button is pressed', async () => {
+    const user = userEvent.setup();
+    await render(<DiscoveryContextScreen initialScenario="exact_20_lunch" />);
+
+    const previewBtn = screen.getByRole('button', { name: '🔍 Xem trước danh sách món (Preview Pool)' });
+    await user.press(previewBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Đã tìm thấy 15 món phù hợp cho Bữa trưa/)).toBeOnTheScreen();
+      expect(screen.getByText('Phở bò tái nạm')).toBeOnTheScreen();
+      expect(screen.getByText('Bún bò Huế đặc biệt')).toBeOnTheScreen();
+      expect(screen.getByText('Cơm tấm sườn bì chả')).toBeOnTheScreen();
+    });
+  });
+
+  it('shortage >= 10: shows shortage dialog and allows confirming reduction to available count (Figma node 323:2664)', async () => {
+    const user = userEvent.setup();
+    await render(<DiscoveryContextScreen initialScenario="shortage_15_lunch" />);
+
+    const previewBtn = screen.getByRole('button', { name: '🔍 Xem trước danh sách món (Preview Pool)' });
+    await user.press(previewBtn);
+
+    // Shortage dialog appears
+    await waitFor(() => {
+      expect(screen.getByText('Số món phù hợp')).toBeOnTheScreen();
+      expect(screen.getByText(/Bạn đang chọn 20 món cho Bữa trưa\./)).toBeOnTheScreen();
+      expect(screen.getByText('Có thể giảm số món')).toBeOnTheScreen();
+      expect(screen.getByText(/Hiện có 15 món/)).toBeOnTheScreen();
+      const reduceBtns = screen.getAllByRole('button', { name: 'Giảm số món' });
+      expect(reduceBtns.length).toBe(2);
+    });
+
+    // Press reduce in dialog
+    const reduceBtns = screen.getAllByRole('button', { name: 'Giảm số món' });
+    await user.press(reduceBtns[1]!);
+
+    // Count is reduced and preview reloads
+    await waitFor(() => {
+      expect(screen.getByText(/Đã tìm thấy 15 món phù hợp cho Bữa trưa/)).toBeOnTheScreen();
+      expect(screen.getByText('15 món')).toBeOnTheScreen();
+    });
+  });
+
+  it('shortage < 10: blocks room creation and does not allow reduction below 10 (Figma node 1015:9957)', async () => {
+    const user = userEvent.setup();
+    await render(<DiscoveryContextScreen initialScenario="shortage_7_dinner" />);
+
+    const previewBtn = screen.getByRole('button', { name: '🔍 Xem trước danh sách món (Preview Pool)' });
+    await user.press(previewBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText('Số món phù hợp')).toBeOnTheScreen();
+      expect(screen.getByText('Chưa đủ món')).toBeOnTheScreen();
+      expect(screen.getByText(/Hiện có 7 món\. Cần ít nhất 10 món để tạo phòng\./)).toBeOnTheScreen();
+      // Only the stepper minus button exists; no reduction button inside the shortage dialog
+      const reduceBtns = screen.getAllByRole('button', { name: 'Giảm số món' });
+      expect(reduceBtns.length).toBe(1);
+      expect(screen.getByRole('button', { name: 'Sửa thiết lập' })).toBeEnabled();
+    });
+  });
+
+  it('scheduled mode: detects past time, blocks preview, and allows adjustment to valid future time', async () => {
+    const user = userEvent.setup();
+    await render(<DiscoveryContextScreen initialScenario="exact_20_lunch" />);
+
+    // Switch to scheduled mode
+    await user.press(screen.getByRole('button', { name: 'Hẹn giờ' }));
+
+    // Click Quá khứ (-1 giờ) button
+    await user.press(screen.getByRole('button', { name: 'Quá khứ (-1 giờ)' }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/DESIRED_TIME_PASSED: Giờ ăn đã qua/)).toBeOnTheScreen();
+      expect(screen.getByRole('button', { name: '🔍 Xem trước danh sách món (Preview Pool)' })).toBeDisabled();
+    });
+
+    // Click adjust to valid time
+    await user.press(
+      screen.getByRole('button', { name: 'Điều chỉnh thành giờ hợp lệ (+15 phút từ giờ máy chủ)' })
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByText(/DESIRED_TIME_PASSED/)).toBeNull();
+      expect(screen.getByRole('button', { name: '🔍 Xem trước danh sách món (Preview Pool)' })).toBeEnabled();
+    });
+  });
+
+  it('editing draft parameters invalidates stale preview', async () => {
+    const user = userEvent.setup();
+    await render(<DiscoveryContextScreen initialScenario="exact_20_lunch" />);
+
+    // Load preview first
+    await user.press(screen.getByRole('button', { name: '🔍 Xem trước danh sách món (Preview Pool)' }));
+    await waitFor(() => {
+      expect(screen.getByText('Phở bò tái nạm')).toBeOnTheScreen();
+    });
+
+    // Change meal to breakfast
+    await user.press(screen.getByRole('button', { name: 'Ăn sáng' }));
+
+    // Preview should immediately clear
+    await waitFor(() => {
+      expect(screen.queryByText('Phở bò tái nạm')).toBeNull();
+    });
+  });
+
+  it('offline / network error scenario shows error notice and preserves draft', async () => {
+    const user = userEvent.setup();
+    await render(<DiscoveryContextScreen initialScenario="server_offline" />);
+
+    await user.press(screen.getByRole('button', { name: '🔍 Xem trước danh sách món (Preview Pool)' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Lỗi xem trước')).toBeOnTheScreen();
+      expect(screen.getByText(/Chưa biết yêu cầu đã được nhận hay chưa/)).toBeOnTheScreen();
+    });
+  });
+
+  it('allows confirming preview and saving draft receipt', async () => {
     const user = userEvent.setup();
     const handleSave = jest.fn();
-
     await render(
-      <ContextScreen
-        initialScenario="manual_only"
+      <DiscoveryContextScreen
+        initialScenario="exact_20_lunch"
         onSaveContext={handleSave}
       />
     );
 
-    await waitForContextReady();
-
-    // Switch to Scheduled mode
-    await user.press(screen.getByText('🕒 Đặt giờ trước'));
-
-    // Select -1 hour offset (in the past relative to server time)
-    await user.press(screen.getByText('Quá khứ (-1 giờ)'));
+    await user.press(screen.getByRole('button', { name: '🔍 Xem trước danh sách món (Preview Pool)' }));
 
     await waitFor(() => {
-      expect(screen.getByText(/Giờ đã chọn nằm trong quá khứ so với giờ máy chủ!/)).toBeOnTheScreen();
-      expect(screen.getAllByText(/DESIRED_TIME_PASSED/).length).toBeGreaterThanOrEqual(1);
-      expect(screen.getByText('Điều chỉnh thành giờ hợp lệ (+15 phút từ giờ máy chủ)')).toBeOnTheScreen();
+      expect(screen.getByText('Tôi xác nhận danh sách món và thiết lập phòng')).toBeOnTheScreen();
     });
 
-    // Attempting to press save button must NOT trigger handleSave because time is in past
-    await user.press(screen.getByRole('button', { name: 'Xác nhận bối cảnh phòng' }));
-    expect(handleSave).not.toHaveBeenCalled();
+    // Check confirmation
+    await user.press(screen.getByRole('checkbox', { name: 'Tôi xác nhận danh sách món và thiết lập phòng' }));
 
-    // User clicks "Điều chỉnh thành giờ hợp lệ"
-    await user.press(screen.getByText('Điều chỉnh thành giờ hợp lệ (+15 phút từ giờ máy chủ)'));
+    // Save draft
+    const saveBtn = screen.getByRole('button', { name: 'Xác nhận bản nháp phòng' });
+    expect(saveBtn).toBeEnabled();
+    await user.press(saveBtn);
 
     await waitFor(() => {
-      expect(screen.queryByText(/Giờ đã chọn nằm trong quá khứ so với giờ máy chủ!/)).toBeNull();
-    });
-
-    // Now saving is permitted and sends a valid future desiredAt
-    await user.press(screen.getByText('Xem món mẫu theo bối cảnh'));
-    await waitFor(() => expect(screen.getByRole('checkbox', { name: 'Tôi xác nhận điểm công cộng, buổi và giờ ăn' })).toBeEnabled());
-    await user.press(screen.getByRole('checkbox', { name: 'Tôi xác nhận điểm công cộng, buổi và giờ ăn' }));
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Xác nhận bối cảnh phòng' })).toBeEnabled());
-    await user.press(screen.getByRole('button', { name: 'Xác nhận bối cảnh phòng' }));
-    expect(handleSave).toHaveBeenCalledTimes(1);
-    const saved = handleSave.mock.calls[0][0];
-    expect(Date.parse(saved.desiredAt)).toBeGreaterThan(Date.parse('2026-10-15T11:30:00.000Z'));
-  });
-
-  it('privacy audit panel explicitly confirms 0 raw GPS in server payload and client logs', async () => {
-    await render(<ContextScreen initialScenario="gps_grant_rua" />);
-
-    await waitFor(() => {
-      expect(screen.getByText(/Bảo đảm quyền riêng tư: Payload gửi máy chủ chỉ chứa anchorId, không chứa tọa độ GPS thô/)).toBeOnTheScreen();
-      expect(screen.getByText(/\{"anchorId":/)).toBeOnTheScreen();
-      expect(screen.queryByText(/"latitude":/)).toBeNull();
-      expect(screen.queryByText(/"longitude":/)).toBeNull();
-    });
-  });
-
-  it('displays error and retry action when server is offline, then clears error on scenario recovery', async () => {
-    const user = userEvent.setup();
-    await render(<ContextScreen initialScenario="server_offline" />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Lỗi tải dữ liệu khu vực')).toBeOnTheScreen();
-      expect(screen.getByText('Thử lại kết nối')).toBeOnTheScreen();
-    });
-
-    // Transition from server_offline error to "Thủ công"
-    await user.press(screen.getByText('Thủ công'));
-
-    // Stale server error must be completely cleared upon successful data load
-    await waitFor(() => {
-      expect(screen.queryByText('Lỗi tải dữ liệu khu vực')).toBeNull();
-      expect(screen.getAllByText('Hồ Con Rùa').length).toBeGreaterThanOrEqual(1);
-    });
-  });
-
-  it('preserves user selected scheduled time mode across data reloads and retries', async () => {
-    const user = userEvent.setup();
-    await render(<ContextScreen initialScenario="manual_only" />);
-
-    await waitForContextReady();
-
-    // Switch to Scheduled mode and select +3 hours
-    await user.press(screen.getByText('🕒 Đặt giờ trước'));
-    await user.press(screen.getByText('+3 giờ'));
-
-    // Switch to another scenario that reloads discovery
-    await user.press(screen.getAllByText('Hồ Con Rùa')[0]!);
-
-    await waitFor(() => {
-      // Must still be in Scheduled mode, NOT reset to Eat Now
-    expect(screen.queryByText(/Đã cộng 15 phút chuẩn bị một lần duy nhất từ giờ máy chủ\./)).toBeNull();
-    });
-  });
-
-  it('scenario switching in UI dynamically reconfigures location service', async () => {
-    const user = userEvent.setup();
-    await render(<ContextScreen initialScenario="gps_grant_rua" />);
-
-    await waitFor(() => {
-      expect(screen.getAllByText('Hồ Con Rùa').length).toBeGreaterThanOrEqual(1);
-    });
-
-    // Switch to Phố Đi Bộ scenario chip
-    await user.press(screen.getByText('Phố Đi Bộ'));
-
-    await waitFor(() => {
-      expect(screen.getAllByText('Phố Đi Bộ Nguyễn Huệ').length).toBeGreaterThanOrEqual(1);
-    });
-  });
-
-  it('supports toggling to real API mode with endpoint information', async () => {
-    const user = userEvent.setup();
-    await render(<ContextScreen initialScenario="gps_grant_rua" />);
-
-    await waitFor(() => {
-      expect(screen.getByText('🌐 Máy chủ thật (Live Supabase API)')).toBeOnTheScreen();
-    });
-
-    await user.press(screen.getByText('🌐 Máy chủ thật (Live Supabase API)'));
-
-    await waitFor(() => {
-      expect(screen.getByText(/Trạng thái kết nối:/)).toBeOnTheScreen();
-      expect(screen.getByText(/Endpoint:/)).toBeOnTheScreen();
-    });
-  });
-
-  it('clears a previously selected mock anchor when live discovery returns 401', async () => {
-    const user = userEvent.setup();
-    const handleSave = jest.fn();
-    const client = {
-      getDiscoveryContext: jest.fn()
-        .mockResolvedValueOnce({
-          ok: true,
-          data: {
-            serverTime: '2026-10-15T11:30:00.000Z',
-            anchors: [{
-              id: 'anc_ho_con_rua',
-              coverageId: 'cov_hcm',
-              name: 'Hồ Con Rùa',
-              address: 'Công trường Quốc Tế, Quận 3',
-              lat: 10.7828,
-              lng: 106.6958,
-            }],
-            coverageAreas: [],
-          },
+      expect(screen.getByText('Bản nháp đã xác nhận')).toBeOnTheScreen();
+      expect(screen.getByText(/Bản nháp đã xác nhận: Ăn trưa · 15 món · Ăn ngay\. Chưa lưu vào phòng\./)).toBeOnTheScreen();
+      expect(handleSave).toHaveBeenCalledWith(
+        expect.objectContaining({
+          mealSlot: 'lunch',
+          dishCount: 15,
         })
-        .mockResolvedValue({ ok: false, error: { messageKey: 'AUTH_REQUIRED' } }),
-    } as unknown as ApiClient;
-
-    await render(
-      <ContextScreen
-        apiClient={client}
-        initialScenario="manual_only"
-        onSaveContext={handleSave}
-      />
-    );
-
-    await waitFor(() => {
-      expect(screen.getAllByText('Hồ Con Rùa').length).toBeGreaterThanOrEqual(1);
+      );
     });
-
-    await user.press(screen.getByText('🌐 Máy chủ thật (Live Supabase API)'));
-
-    await waitFor(() => {
-      expect(screen.queryByText('Công trường Quốc Tế, Quận 3')).toBeNull();
-      expect(screen.getByText(/Lỗi tải dữ liệu khu vực/)).toBeOnTheScreen();
-    });
-
-    expect(handleSave).not.toHaveBeenCalled();
   });
 
-  it('rechecks the server clock when Eat Now is confirmed after its target expires', async () => {
-    const user = userEvent.setup();
-    const handleSave = jest.fn();
-    const baseTime = Date.parse('2026-10-15T01:00:00.000Z');
-    const clock = jest.spyOn(Date, 'now').mockReturnValue(baseTime);
-    const client = {
-      getDiscoveryContext: jest.fn().mockResolvedValue({
-        ok: true,
-        data: {
-          serverTime: '2026-10-15T01:00:00.000Z',
-          anchors: [{ id: 'anc_ho_con_rua', coverageId: 'cov_hcm', name: 'Hồ Con Rùa', address: 'Công trường Quốc Tế', lat: 10.7828, lng: 106.6958 }],
-          coverageAreas: [],
-        },
-      }),
-      previewFoodPool: jest.fn().mockResolvedValue({
-        ok: true,
-        data: { pool: [{ roundDishId: 'dish_1', name: 'Món mẫu' }], datasetVersion: '1.1.0', eligibilityVersion: '1.0.0', evaluatedAt: '2026-10-15T01:00:00.000Z', totalCandidateCount: 1 },
-      }),
-    } as unknown as ApiClient;
+  it('audit panel verifies 0 byte GPS and dish-only privacy boundary', async () => {
+    await render(<DiscoveryContextScreen initialScenario="exact_20_lunch" />);
 
-    try {
-      await render(<ContextScreen apiClient={client} initialScenario="manual_only" onSaveContext={handleSave} />);
-      await waitFor(() => expect(screen.getByRole('button', { name: 'Xác nhận bối cảnh phòng' })).toBeEnabled());
-      await user.press(screen.getByRole('button', { name: 'Xem món mẫu theo bối cảnh' }));
-      await waitFor(() => expect(screen.getByRole('checkbox', { name: 'Tôi xác nhận điểm công cộng, buổi và giờ ăn' })).toBeEnabled());
-      clock.mockReturnValue(baseTime + 20 * 60 * 1000);
-      await user.press(screen.getByRole('checkbox', { name: 'Tôi xác nhận điểm công cộng, buổi và giờ ăn' }));
-      await user.press(screen.getByRole('button', { name: 'Xác nhận bối cảnh phòng' }));
-      expect(handleSave).not.toHaveBeenCalled();
-      expect(screen.getByText(/thời gian ăn đang ở quá khứ/)).toBeOnTheScreen();
-    } finally {
-      clock.mockRestore();
-    }
-  });
-
-  it('onSaveContext passes pure sanitized RoomContext without coordinates', async () => {
-    const user = userEvent.setup();
-    const handleSave = jest.fn();
-
-    await render(
-      <ContextScreen
-        initialScenario="gps_grant_rua"
-        onSaveContext={handleSave}
-      />
-    );
-
-    await waitFor(() => {
-      expect(screen.getAllByText('Hồ Con Rùa').length).toBeGreaterThanOrEqual(1);
-      expect(screen.getByText('Xác nhận bối cảnh phòng')).toBeOnTheScreen();
-    });
-
-    await user.press(screen.getByText('Xem món mẫu theo bối cảnh'));
-    await waitFor(() => expect(screen.getByRole('checkbox', { name: 'Tôi xác nhận điểm công cộng, buổi và giờ ăn' })).toBeEnabled());
-    await user.press(screen.getByRole('checkbox', { name: 'Tôi xác nhận điểm công cộng, buổi và giờ ăn' }));
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Xác nhận bối cảnh phòng' })).toBeEnabled());
-    await user.press(screen.getByText('Xác nhận bối cảnh phòng'));
-
-    expect(handleSave).toHaveBeenCalledTimes(1);
-    const savedContext = handleSave.mock.calls[0][0];
-
-    expect(savedContext.anchorId).toBe('anc_ho_con_rua');
-    expect(savedContext.radiusM).toBe(1500);
-    expect(savedContext.mealSlot).toBe('lunch');
-    expect(savedContext.serviceMode).toBe('dine_in');
-    expect(savedContext.avoidRecent).toBe(false);
-    expect('latitude' in savedContext).toBe(false);
-    expect('longitude' in savedContext).toBe(false);
-    expect('coords' in savedContext).toBe(false);
-  });
-
-  it('requires a fresh preview after changing the scheduled time', async () => {
-    const user = userEvent.setup();
-    const onSaveContext = jest.fn();
-    await render(<ContextScreen initialScenario="gps_grant_rua" onSaveContext={onSaveContext} />);
-
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Xem món mẫu theo bối cảnh' })).toBeEnabled());
-    await user.press(screen.getByText('🕒 Đặt giờ trước'));
-    await user.press(screen.getByText('+1 giờ'));
-    await user.press(screen.getByRole('button', { name: 'Xem món mẫu theo bối cảnh' }));
-    await waitFor(() => expect(screen.getByRole('checkbox', { name: 'Tôi xác nhận điểm công cộng, buổi và giờ ăn' })).toBeEnabled());
-
-    await user.press(screen.getByText('+3 giờ'));
-    expect(screen.getByRole('checkbox', { name: 'Tôi xác nhận điểm công cộng, buổi và giờ ăn' })).not.toBeChecked();
-    expect(screen.getByRole('checkbox', { name: 'Tôi xác nhận điểm công cộng, buổi và giờ ăn' })).toBeDisabled();
-    expect(onSaveContext).not.toHaveBeenCalled();
-
-    await user.press(screen.getByRole('button', { name: 'Xem món mẫu theo bối cảnh' }));
-    await waitFor(() => expect(screen.getByRole('checkbox', { name: 'Tôi xác nhận điểm công cộng, buổi và giờ ăn' })).toBeEnabled());
-    await user.press(screen.getByRole('checkbox', { name: 'Tôi xác nhận điểm công cộng, buổi và giờ ăn' }));
-    await user.press(screen.getByRole('button', { name: 'Xác nhận bối cảnh phòng' }));
-    expect(onSaveContext).toHaveBeenCalledTimes(1);
-    expect(onSaveContext.mock.calls[0]![0].desiredAt).toBeTruthy();
-  });
-
-  it('ignores an older preview response and does not leave the new request busy', async () => {
-    const user = userEvent.setup();
-    let resolveFirst!: (value: unknown) => void;
-    const first = new Promise(resolve => { resolveFirst = resolve; });
-    const client = {
-      getDiscoveryContext: jest.fn().mockResolvedValue({
-        ok: true,
-        data: {
-          serverTime: '2026-10-15T11:30:00.000Z',
-          anchors: [{ id: 'anc_ho_con_rua', coverageId: 'cov_hcm', name: 'Hồ Con Rùa', address: 'Công trường Quốc Tế', lat: 10.7828, lng: 106.6958 }],
-          coverageAreas: [],
-        },
-      }),
-      previewFoodPool: jest.fn()
-        .mockImplementationOnce(() => first)
-        .mockResolvedValueOnce({ ok: true, data: { pool: [{ roundDishId: 'new', name: 'Món mới' }], datasetVersion: '1.1.0', eligibilityVersion: '1.0.0', evaluatedAt: '2026-10-15T11:30:00.000Z', totalCandidateCount: 1 } }),
-    } as unknown as ApiClient;
-
-    await render(<ContextScreen apiClient={client} initialScenario="manual_only" />);
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Xem món mẫu theo bối cảnh' })).toBeEnabled());
-    await user.press(screen.getByRole('button', { name: 'Xem món mẫu theo bối cảnh' }));
-    await waitFor(() => expect(client.previewFoodPool).toHaveBeenCalledTimes(1));
-
-    await user.press(screen.getByText('2 km'));
-    expect(screen.getByRole('button', { name: 'Xem món mẫu theo bối cảnh' }).props.accessibilityState.busy).toBe(false);
-    await user.press(screen.getByRole('button', { name: 'Xem món mẫu theo bối cảnh' }));
-    await waitFor(() => expect(client.previewFoodPool).toHaveBeenCalledTimes(2));
-    await waitFor(() => expect(screen.getByText('Món mới')).toBeOnTheScreen());
-
-    resolveFirst({ ok: true, data: { pool: [{ roundDishId: 'old', name: 'Món cũ' }], datasetVersion: '1.1.0', eligibilityVersion: '1.0.0', evaluatedAt: '2026-10-15T11:30:00.000Z', totalCandidateCount: 1 } });
-    await waitFor(() => expect(screen.getByText('Món mới')).toBeOnTheScreen());
-    expect(screen.queryByText('Món cũ')).toBeNull();
-  });
-
-  it('keeps raw budget and partial time text while the user is typing', async () => {
-    const user = userEvent.setup();
-    await render(<ContextScreen initialScenario="manual_only" />);
-    await waitFor(() => expect(screen.getByLabelText('Ngân sách tham khảo (VNĐ/người)')).toBeEnabled());
-
-    const budget = screen.getByLabelText('Ngân sách tham khảo (VNĐ/người)');
-    await user.clear(budget);
-    await user.type(budget, '60000');
-    expect(budget.props.value).toBe('60000');
-
-    const time = screen.getByLabelText('Giờ ăn (UTC+7)');
-    await user.clear(time);
-    await user.type(time, '20:');
-    expect(time.props.value).toBe('20:');
-    expect(screen.getByRole('button', { name: 'Xem món mẫu theo bối cảnh' })).toBeDisabled();
-  });
-
-  it('locks draft inputs until delayed discovery establishes the initial context', async () => {
-    const user = userEvent.setup();
-    let resolveDiscovery!: (value: unknown) => void;
-    const discovery = new Promise(resolve => { resolveDiscovery = resolve; });
-    const client = {
-      getDiscoveryContext: jest.fn().mockReturnValue(discovery),
-      previewFoodPool: jest.fn(),
-    } as unknown as ApiClient;
-
-    await render(<ContextScreen apiClient={client} initialScenario="manual_only" />);
-    const budget = screen.getByLabelText('Ngân sách tham khảo (VNĐ/người)');
-    expect(budget).toBeDisabled();
-    await user.clear(budget);
-    await user.type(budget, '60000');
-    expect(budget.props.value).toBe('');
-
-    resolveDiscovery({
-      ok: true,
-      data: {
-        serverTime: '2026-10-15T11:30:00.000Z',
-        anchors: [{ id: 'anc_ho_con_rua', coverageId: 'cov_hcm', name: 'Hồ Con Rùa', address: 'Công trường Quốc Tế', lat: 10.7828, lng: 106.6958 }],
-        coverageAreas: [],
-      },
-    });
-    await waitFor(() => expect(budget).toBeEnabled());
-    await user.type(budget, '60000');
-    expect(budget.props.value).toBe('60000');
+    expect(screen.getByText('🛡️ BẢO MẬT & QUYỀN RIÊNG TƯ (AUDIT)')).toBeOnTheScreen();
+    expect(screen.getByText(/0 byte GPS:/)).toBeOnTheScreen();
+    expect(screen.getByText(/Không thu thập, không lưu tọa độ GPS/)).toBeOnTheScreen();
+    expect(screen.getByText(/Tách biệt Places:/)).toBeOnTheScreen();
   });
 });

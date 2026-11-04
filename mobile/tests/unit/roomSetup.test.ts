@@ -1,5 +1,18 @@
 import { MOCK_DISHES } from '../../src/data/api';
-import { currentServerTime, dishDistance, dishPrice, localTime, mealDateLabel, nextMealTime, parseBudget, parseLocalTime, shiftLocalDate, suggestedMeal } from '../../src/features/context/services/roomSetup';
+import {
+  currentServerTime,
+  dishDistance,
+  dishPrice,
+  localTime,
+  mealDateLabel,
+  nextMealTime,
+  parseBudget,
+  parseLocalTime,
+  previewDishPoolLive,
+  previewDishPoolMock,
+  shiftLocalDate,
+  suggestedMeal,
+} from '../../src/features/context/services/roomSetup';
 
 test.each([
   ['2030-10-15 04:59', 'dinner', 'late_night'], ['2030-10-15 05:00', 'breakfast', undefined],
@@ -88,4 +101,134 @@ test.each([
 
 test.each([undefined, null, -1, NaN, Infinity])('missing/invalid distance %s never becomes a real zero', input => {
   expect(dishDistance(input)).toBe('Chưa có khoảng cách đường chim bay từ điểm ăn chung');
+});
+
+describe('GM-24 dish pool preview mock and live adapters', () => {
+  const serverNow = Date.parse('2026-10-15T11:30:00.000Z');
+
+  test('previewDishPoolMock returns exact dishes for exact_20_lunch', async () => {
+    const res = await previewDishPoolMock('exact_20_lunch', {
+      mealSlot: 'lunch',
+      dishCount: 20,
+      timeMode: 'now',
+      serverTimeMs: serverNow,
+    });
+    expect(res.ok).toBe(true);
+    if (res.ok) {
+      expect(res.requested).toBe(20);
+      expect(res.dishes.length).toBe(20);
+      expect(res.contractVersion).toBe('dish-catalogue/roadmap-v2/GM-18.2');
+    }
+  });
+
+  test('previewDishPoolMock handles shortage_15_lunch', async () => {
+    const res = await previewDishPoolMock('shortage_15_lunch', {
+      mealSlot: 'lunch',
+      dishCount: 20,
+      timeMode: 'now',
+      serverTimeMs: serverNow,
+    });
+    expect(res.ok).toBe(false);
+    if (!res.ok) {
+      expect(res.code).toBe('SHORTAGE');
+      expect((res as any).available).toBe(15);
+      expect((res as any).requested).toBe(20);
+    }
+  });
+
+  test('previewDishPoolMock handles shortage_7_dinner below minimum 10', async () => {
+    const res = await previewDishPoolMock('shortage_7_dinner', {
+      mealSlot: 'dinner',
+      dishCount: 10,
+      timeMode: 'now',
+      serverTimeMs: serverNow,
+    });
+    expect(res.ok).toBe(false);
+    if (!res.ok) {
+      expect(res.code).toBe('SHORTAGE');
+      expect((res as any).available).toBe(7);
+      expect((res as any).requested).toBe(10);
+    }
+  });
+
+  test('previewDishPoolMock blocks past scheduled time with DESIRED_TIME_PASSED', async () => {
+    const res = await previewDishPoolMock('desired_time_passed', {
+      mealSlot: 'lunch',
+      dishCount: 15,
+      timeMode: 'scheduled',
+      desiredAt: '2026-10-15T10:00:00.000Z',
+      serverTimeMs: serverNow,
+    });
+    expect(res.ok).toBe(false);
+    if (!res.ok) {
+      expect(res.code).toBe('DESIRED_TIME_PASSED');
+      expect(res.messageKey).toBe('DESIRED_TIME_PASSED');
+    }
+  });
+
+  test('previewDishPoolMock returns network error for server_offline', async () => {
+    const res = await previewDishPoolMock('server_offline', {
+      mealSlot: 'lunch',
+      dishCount: 15,
+      timeMode: 'now',
+      serverTimeMs: serverNow,
+    });
+    expect(res.ok).toBe(false);
+    if (!res.ok) {
+      expect(res.code).toBe('NETWORK_ERROR');
+    }
+  });
+
+  test('previewDishPoolLive handles 200 success from transport', async () => {
+    const mockTransport = {
+      invoke: jest.fn().mockResolvedValue({
+        ok: true,
+        data: {
+          contractVersion: 'dish-catalogue/roadmap-v2/GM-18.2',
+          available: 20,
+          requested: 20,
+          dishes: [
+            { dishId: 'd1', name: 'Phở bò', priceReference: { amount: 60000, currency: 'VND', unit: 'portion' } },
+          ],
+        },
+      }),
+    };
+
+    const res = await previewDishPoolLive(mockTransport as any, {
+      mealSlot: 'lunch',
+      dishCount: 20,
+    });
+    expect(res.ok).toBe(true);
+    if (res.ok) {
+      expect(res.dishes.length).toBe(1);
+      expect(res.dishes[0]?.name).toBe('Phở bò');
+      expect(res.dishes[0]?.priceMin).toBe(60000);
+    }
+  });
+
+  test('previewDishPoolLive handles 409 INSUFFICIENT_DISHES shortage from transport', async () => {
+    const mockTransport = {
+      invoke: jest.fn().mockRejectedValue({
+        status: 409,
+        body: {
+          ok: false,
+          error: {
+            messageKey: 'INSUFFICIENT_DISHES',
+            details: { available: 15, requested: 20 },
+          },
+        },
+      }),
+    };
+
+    const res = await previewDishPoolLive(mockTransport as any, {
+      mealSlot: 'lunch',
+      dishCount: 20,
+    });
+    expect(res.ok).toBe(false);
+    if (!res.ok) {
+      expect(res.code).toBe('SHORTAGE');
+      expect((res as any).available).toBe(15);
+      expect((res as any).requested).toBe(20);
+    }
+  });
 });
