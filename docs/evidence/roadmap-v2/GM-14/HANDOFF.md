@@ -27,3 +27,9 @@ Screens use mock fixtures and mock API calls only. Friend/room inbox accept and 
 - The history snapshot uses React state so offline UI updates predictably and complies with React render rules.
 - Automated verification: `cd mobile; npm run check` — typecheck, lint, 56 suites / 950 tests, and architecture guard passed.
 - `FIGMA_PARITY.md` records missing paired Figma/app screenshots and device checks. No live social/API, push, account-linking, durable cache, Android, or TalkBack behavior is claimed. This handoff does not imply Done/Approved.
+
+## Owner review follow-up — invitation references and friends actions
+
+The inbox regression suite `mobile/tests/component/socialAndHistoryScreens.test.tsx` uses fixtures with distinct inbox ID, `eventId`, and `metadata.invitationId`, and strict adapter doubles reject the event IDs. Accept/reject for both friend and room invites assert the invitation reference. The Friends screen suite separately asserts reject-by-invitation-ID and outgoing invite-by-code after confirmation. These are mock contract checks, not real API acceptance.
+
+Android Expo Go visual/accessibility smoke remains Not run because this environment has no ADB device. The PR is left in draft and requests Trí review/coordination for that device check; no screenshot or visual Pass is claimed.
