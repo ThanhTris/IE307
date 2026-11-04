@@ -1,5 +1,17 @@
 # GM-23.2 — handoff
 
+## Current PR #154 verification — 2026-11-05
+
+The branch now contains main `5564f307981e8c5a63e7aa6052e6d820db233c59` and
+test-source commit `9fcdc5da057b0b315c955f0bfd906aaca05dbd8c`. Full GM-23
+canonical/sender HTTP passed 151 cases /728 envelopes; GM-20's producer-consumer
+checker passed 178 assertions /711 envelopes; the migration 0037→0038 upgrade
+passed. Both QA projects were cleaned. Read the detailed [cross-task evidence](../../GM-20/canonical-writer/gm23-integration-followup-2026-11-05/HANDOFF.md)
+for exact reports, source hashes, schema/producer version distinction and
+reproduction. CI for the updated PR waits on push; Trí's review is still pending.
+
+The original handoff snapshot below is dated 2026-11-04 and retained as history.
+
 Target branch was fast-forwarded to main `4a35374`; server test snapshot was
 `7c22db8` plus the same uncommitted GM-23 patch. The intervening main commits
 touch only GM-11/14 UI and docs. Schema `0.15.0`, migration

@@ -1,5 +1,20 @@
 # GM-23.2 — checks
 
+## Current PR #154 integration follow-up — 2026-11-05
+
+PR branch includes main `5564f307981e8c5a63e7aa6052e6d820db233c59`; the
+tested checker source is commit `9fcdc5da057b0b315c955f0bfd906aaca05dbd8c`.
+Fresh disposable QA passed the GM-20 full-chain follow-up (178 canonical
+assertions /711 envelopes), GM-23 canonical/sender HTTP (151 /728 envelopes),
+and the 0037→0038 live/expired/idempotent upgrade. GM-23's received v4 baseline
+was 150 cases /575 envelopes; SQL TAP and cleanup also passed. The exact
+expected/actual, output files and migration/source hashes are in the [GM-20
+integration follow-up](../../GM-20/canonical-writer/gm23-integration-followup-2026-11-05/CHECKS.md).
+This new local result does not represent GitHub CI yet; the updated PR must be
+pushed for CI. Android/remote Expo delivery remain Not run.
+
+The dated section below records the earlier 2026-11-04 snapshot and its counts.
+
 Checked 2026-11-04 on `codex/gm-23-canonical-notifications`, fast-forwarded
 onto `origin/main` `4a35374b3cb3bbdb3bd8151fe471e779deb0430f`. The runtime tests
 ran on the same GM-23 source patch at base `7c22db8d8a216c96c9b1cd1a26fcd95ccd56cdd0`;
@@ -39,3 +54,15 @@ Detailed machine-readable results: [HTTP](http-results.json),
 [0037→0038 upgrade](upgrade-results.json), [cleanup](cleanup-results.json),
 and [manifest](manifest.json). Fake transport is not reported as remote Expo
 delivery; Android consumer work remains with GM-28/29/30.
+
+
+## Current rerun output — 2026-11-05
+
+The fresh run produced 151 canonical/history/sender HTTP cases and 728 schema
+envelopes. It included stale receipt A after token B rotation, exact ACK replay,
+event materialization/rollback, audience/TTL, delivery lease, sender retry and
+expiry checks. The SQL TAP outputs from this run are included in the linked
+GM-20 integration follow-up. The 0037→0038 upgrade returned one live mapping,
+one event and two inbox rows, skipped the expired outbox, and remained exactly
+once after reapplication. QA ownership status after cleanup was
+`owned=false`, `running=false`; application DB unchanged.

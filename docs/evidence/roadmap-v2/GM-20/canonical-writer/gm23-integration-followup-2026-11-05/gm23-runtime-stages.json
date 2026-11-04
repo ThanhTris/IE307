@@ -1,0 +1,130 @@
+{
+  "sha": "bb9322f6b47e1809c2abb40ac1b75d352c4d9e2e",
+  "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+  "schemaVersion": "0.9.2",
+  "migrationHashes": {
+    "0001_core_schema.sql": "ac3e0d529071173b4523f9d6553f431a6c1726430b7dcf8ef8cf161a194c5964",
+    "0002_food_import_receipts.sql": "c80253e9e3f407410848dd16cdc59997eb9af64d5a66fff58c8e3bcb62dbb352",
+    "0003_food_provenance_description.sql": "91655ba516abd76e54bfc9b5ccb06c73818cde64273e2861b02a96b09d84ca73",
+    "0004_access_policies.sql": "f4345b7047dbdb6fbf3975033e07bb1e7c1e3b4a8f2437facf93b9a5ce9dc53c",
+    "0005_gm18_discovery_rpc.sql": "4decac9c05ab97793044c0954b31b1ae7e5c0ff9155a68048c682f3484965158",
+    "0018_food_eligibility.sql": "366274fcb304e1fe2e0c1e05a9c51baf0e5958f7af58659c56c89427ce52af36",
+    "0019_room_lifecycle.sql": "950819846e84cfe29e51c093015da35695637a717baf2f6ce6a851732d27dfe9",
+    "0021_history.sql": "33478db0d9b72d7751f07792fb6e185882ff4ab407a98b9c37e7fcabea830154",
+    "0022_social.sql": "114659a795c5ebcedd6b22bdd58e6f88edee359fa0638c061cda2bcb871e2a0b",
+    "0023_finalize.sql": "ea50191b74f04e174e97c6a42f03c3de1431206bd51ff85fca1088f55d0ad234",
+    "0024_history_integration.sql": "d37b02d99575a83e544fd70bdfdb08ee089a997b233ebd1d198b68cf1d5e6514",
+    "0025_notifications.sql": "e6b67c6a8cd3d53af51e022e8f767be96031f66cda31fb7ad08941b15154125a",
+    "0026_dish_session_policy.sql": "d962acc9503a8bf266f0432d1dc0deaf4353e97eed4009c449114e4d83e45cf5",
+    "0027_dish_session_v4.sql": "c66f023623efc9c5f6e5d238c54932293a4e76a0c59019c374177b64f00cefc9",
+    "0028_dish_v4_top_three_cutoff.sql": "c1b1f65a5a4f3f81c3742a30e9af502b8934719146e910390be70e35c66f2e6b",
+    "0029_dish_v4_history_consent.sql": "d7515f21989dba5192e64792cb7d67fd8048affa89b9ef1ef14a9b80a485d0c8",
+    "0030_history_consent_search_path.sql": "40ebd95ddf75983e59562abb4e2ea0063527104f46e3ce3196fa4d8b751ac8ab",
+    "0031_history_consent_policy_isolation.sql": "e5dba57b7da5fe830ba86736b7f1a4e21b0a6d30e4c14862656b36d9ca0c5b2a",
+    "0032_canonical_result_storage.sql": "b566de2e923fd0a0e9cddea3ebe5f146b71686430d3f6ecb7ef3508863e425de",
+    "0033_gm18_dish_catalogue.sql": "1bb036e57c2b81f9cb5a5cbfe80b8008093c4e433e87c7e2baf530f80dd68209",
+    "0034_gm19_settings_stability.sql": "e6fa037326f16306261ff687a1d180cc16fc9f858ddd7fb528233bf263f2f2e3",
+    "0035_gm20_canonical_writer.sql": "08224b335ce6ff17105c4cd35fbf35822d5e16def8814c105a7a3bc1f7d092e3",
+    "0036_gm21_canonical_history.sql": "50fd4f28cfa05dbc93b341dd3530d69d6b590e4e0d5f3e49a2783e057f635108",
+    "0037_gm22_invitation_admission.sql": "bf2e0e55e89be3838a66eef7ed64c651609a977bf8a44981e1559460567e3576",
+    "0038_gm23_canonical_notifications.sql": "fe5eb00c0d157b24187d678105acc44e8db0fad3ef3467f35db95c142c19effc"
+  },
+  "stages": [
+    {
+      "stage": "ownership-and-isolated-config",
+      "result": "Pass",
+      "projectId": "ie307-dish-v4-qa-20261104-717337671400-1",
+      "ports": [
+        54361,
+        54362
+      ],
+      "workdirUnder": ".work/ci"
+    },
+    {
+      "stage": "qa-bindings",
+      "result": "Pass",
+      "apiPort": 54361,
+      "dbPort": 54362,
+      "bindingPolicy": "explicit-local-wildcard"
+    },
+    {
+      "stage": "migrations-and-catalogue-fixtures",
+      "result": "Pass",
+      "schemaVersion": "0.9.2",
+      "realRelease": "dish-catalogue-v1:1.1.0",
+      "realDishCount": 39,
+      "syntheticRelease": "dish-catalogue-v1:qa-synthetic-ci-v1",
+      "syntheticDishCount": 20,
+      "syntheticFixtureOnly": true,
+      "apiOrigin": "http://127.0.0.1:54361"
+    },
+    {
+      "stage": "worker-heartbeat",
+      "result": "Pass",
+      "ready": true
+    },
+    {
+      "stage": "setup",
+      "result": "Pass",
+      "apiOrigin": "http://127.0.0.1:54361",
+      "databaseLedger": [
+        "0.9.0/dish-session-v4/roadmap-v2/GM-07.B",
+        "0.9.1/dish-session-v4/roadmap-v2/GM-07.B",
+        "0.9.2/dish-session-v4/roadmap-v2/GM-07.B"
+      ]
+    },
+    {
+      "stage": "api-suite",
+      "result": "Pass",
+      "caseCount": 150,
+      "reportCreated": true,
+      "exitCode": 0,
+      "failure": null
+    },
+    {
+      "stage": "gm23-canonical-http",
+      "result": "Pass",
+      "report": "C:\\Users\\ADMIN\\.codex\\worktrees\\gm23\\Project\\.work\\gm23-canonical\\http-results.json",
+      "applicationDatabaseChanged": false
+    },
+    {
+      "stage": "cleanup",
+      "result": "Pass",
+      "worker": "stopped",
+      "projectId": "ie307-dish-v4-qa-20261104-717337671400-1",
+      "qaContainerStopped": true,
+      "ownedWorkdirRemoved": true
+    },
+    {
+      "stage": "gm20-cleanup",
+      "result": "Pass",
+      "ownedBackupsRemoved": true,
+      "applicationDatabaseChanged": false
+    }
+  ],
+  "result": "Pass",
+  "projectId": "ie307-dish-v4-qa-20261104-717337671400-1",
+  "workdir": "C:\\Users\\ADMIN\\.codex\\worktrees\\gm23\\Project\\.work\\ci\\review-results\\dish-v4-qa-20261104-717337671400-1",
+  "apiPort": 54361,
+  "dbPort": 54362,
+  "dockerServer": "29.9.2",
+  "schemaSha256": "710a55d8fcd51e087fa0cab8260ff9b1a5469bf570f5280a9e904eb5096b484c",
+  "catalogue": {
+    "realRelease": "dish-catalogue-v1:1.1.0",
+    "realSourceSha256": "776b1e4998d0b170b51a7c39a4ead74461bdfd721f167dafddf7f072bf117a2f",
+    "realDishCount": 39,
+    "mealCounts": {
+      "breakfast": 14,
+      "lunch": 23,
+      "dinner": 7,
+      "snack": 1
+    },
+    "syntheticRelease": "dish-catalogue-v1:qa-synthetic-ci-v1",
+    "syntheticSha256": "ad9de41f997b3cffe9314d61638c5f814e37554e78a8109443a284fe01a56c21",
+    "syntheticDishCount": 20,
+    "fixtureOnly": true
+  },
+  "workerPidFile": "C:\\Users\\ADMIN\\.codex\\worktrees\\gm23\\Project\\.work\\gm23-canonical\\dish-v4-worker.pid",
+  "workerStdout": "C:\\Users\\ADMIN\\.codex\\worktrees\\gm23\\Project\\.work\\gm23-canonical\\dish-v4-worker.stdout.log",
+  "workerStderr": "C:\\Users\\ADMIN\\.codex\\worktrees\\gm23\\Project\\.work\\gm23-canonical\\dish-v4-worker.stderr.log"
+}
