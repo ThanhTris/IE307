@@ -5,5 +5,7 @@ export function pathForDemoDestination(destination: DemoDestination) {
   if (destination === 'room-status') return '/room/status' as const;
   if (destination === 'friends') return '/friends' as const;
   if (destination === 'inbox') return '/inbox' as const;
-  return '/history' as const;
+  if (destination === 'history') return '/history' as const;
+  if (destination === 'profile') return '/profile' as const;
+  return '/settings' as const;
 }

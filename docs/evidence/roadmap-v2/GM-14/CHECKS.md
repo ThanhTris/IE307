@@ -7,11 +7,11 @@
 
 | Case / AC | Command or route | Input and expected | Actual / assertion | Result |
 | --- | --- | --- | --- | --- |
-| Friends accept confirmation, expiry, unfriend confirmation; empty/error | `cd mobile; npm test -- --runTestsByPath tests/component/gm14Screens.test.tsx` | Synthetic friend/invite fixtures; confirm action before changing local state; empty/error states selectable | Accept/expiry/unfriend, empty and error assertions passed | Pass (mock component scope) |
-| Inbox denied permission and invite accept | same component suite | Permission denied still exposes inbox; accept is confirmed | Inbox remains visible and mock accept assertion passed | Pass (mock component scope) |
-| Friend/room inbox accept and reject ID mapping | same component suite | Synthetic `eventId` differs from `metadata.invitationId`; assert exact client arguments for all four operations; strict test double rejects event IDs | Accept/reject for friend and room invites passed with invitation IDs; wrong event IDs rejected by test double; expired/missing reference actions disabled | Pass (mock component scope) |
-| Friends reject and outgoing invite confirmation | same component suite | Reject active invite; enter a code and confirm outgoing invite | `rejectPartner` received the friend invitation ID; `invitePartner` received code and requestId; confirmation/error UI assertions passed | Pass (mock component scope) |
-| History consent, fetchedAt, delete confirmation | same component suite | Toggle group summary consent, show fixture fetchedAt, confirm delete; no sensitive fields | Assertions passed; opted-out group summary hidden and deleted row removed | Pass (mock component scope) |
+| Friends accept confirmation, expiry, unfriend confirmation; empty/error | `cd mobile; npm test -- --runTestsByPath tests/component/socialAndHistoryScreens.test.tsx` | Synthetic friend/invite fixtures; confirm action before changing local state; empty/error states selectable | Accept/expiry/unfriend, empty and error assertions passed | Pass (mock component scope) |
+| Inbox denied permission and invite accept | same social/history suite | Permission denied still exposes inbox; accept is confirmed | Inbox remains visible and mock accept assertion passed | Pass (mock component scope) |
+| Friend/room inbox accept and reject ID mapping | same social/history suite | Synthetic `eventId` differs from `metadata.invitationId`; assert exact client arguments for all four operations; strict test double rejects event IDs | Accept/reject for friend and room invites passed with invitation IDs; wrong event IDs rejected by test double; expired/missing reference actions disabled | Pass (mock component scope) |
+| Friends reject and outgoing invite confirmation | same social/history suite | Reject active invite; enter a code and confirm outgoing invite | `rejectPartner` received the friend invitation ID; `invitePartner` received code and requestId; confirmation/error UI assertions passed | Pass (mock component scope) |
+| History consent, fetchedAt, delete confirmation | same social/history suite | Toggle group summary consent, show fixture fetchedAt, confirm delete; no sensitive fields | Assertions passed; opted-out group summary hidden and deleted row removed | Pass (mock component scope) |
 | Route integration/navigation | `npm test -- --runTestsByPath tests/integration/routes.test.tsx` | Keep GM-12 vote/final plus GM-11/14 paths when merging current main | Combined route suite passed | Pass (automated; no device) |
 | TypeScript, lint, all mobile tests, architecture | `cd mobile; npm run check` | Strict typecheck, lint, Jest, architecture guard, including latest main routes | 16 suites / 476 tests passed; typecheck and architecture guard passed; lint has 4 warnings | Pass with warnings |
 | Android JS bundle | `cd mobile; npm run bundle:android` | Export Expo Android bundle on integrated revision | Not rerun after merge | Not run |
@@ -24,3 +24,18 @@ Owner follow-up: PR conflict at `mobile/tests/integration/routes.test.tsx` was r
 ## Limits
 
 Friend/inbox/history actions are local mock calls; no actual social, server consent, notification permission, push, API, persistence, or deletion was exercised. Expo Go Android display/font-scale/dark-mode/TalkBack smoke and screenshots are still Not run because no Android device/ADB is available; automated tests do not replace that required evidence. Task is not marked Done/Approved.
+| Repository validation / indexes | `python scripts/validate_repository.py`; `python scripts/task_readiness.py --check-docs` | Repository structure and generated task indexes passed | Pass |
+| Python regression suite | `python -m unittest discover -s tests -p "test_*.py"` | 657 tests; 6 skipped; one existing catalogue symlink test errored because Windows denied symlink creation (`WinError 1314`) | Environment-limited; rerun on a host with symlink privilege |
+| Live merge readiness | `python scripts/task_readiness.py --task GM-14 --gate merge --base-ref origin/main` with ephemeral `GH_TOKEN` | `READY_FOR_MERGE_REVIEW`; base ref is local `7c22db8` (freshness not verified) | Pass gate; owner review still required |
+
+
+## Owner review follow-up — 2026-11-04
+
+| Review item | Test / evidence | Result |
+| --- | --- | --- |
+| Inbox accept/reject uses invitation ID distinct from event ID for room and friend invitations | `cd mobile; npm test -- --runInBand tests/component/socialAndHistoryScreens.test.tsx --silent` | Fixtures carry distinct `eventId` and `metadata.invitationId`; strict test doubles reject event IDs; all four accept/reject calls assert the correct invitation ID. Pass (mock) |
+| Missing/expired references | same social/history suite | Actions are disabled and unavailable reasons are shown; no ID is derived from `eventId`. Pass (mock) |
+| Friends reject and outgoing invite | same social/history suite | `rejectPartner` receives the invite ID; outgoing `invitePartner` receives friend code and request ID after confirmation. Pass (mock) |
+| Expo Go device coordination | Expo Go Android `/features` → GM-14 Friends/Inbox/History | No Android device/ADB is attached in this environment. Kept Not run; Trí review/coordination is required before visual acceptance. |
+
+Current rebased full mobile check: typecheck/lint, 56 suites / 950 tests, architecture guard passed. The route conflict was resolved on the updated main branch and the combined route suite passed.

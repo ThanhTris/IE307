@@ -3,7 +3,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppButton, StatusNotice } from '../../../shared/ui';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 
-type Props = { onBack: () => void; onOpen: (route: 'lobby' | 'room-status' | 'friends' | 'inbox' | 'history') => void };
+type Destination = 'lobby' | 'room-status' | 'friends' | 'inbox' | 'history' | 'profile' | 'settings';
+type Props = { onBack: () => void; onOpen: (route: Destination) => void };
 
 const destinations = [
   ['lobby', 'GM-11 · Phòng chờ', 'Host/member, roster tối đa 20 người và thao tác phòng theo vai trò.'],
@@ -11,6 +12,8 @@ const destinations = [
   ['friends', 'GM-14 · Bạn bè', 'Mời, chấp nhận, từ chối, xóa bạn và trạng thái hết hạn.'],
   ['inbox', 'GM-14 · Hộp thư', 'Lời mời/kết quả; inbox vẫn đọc được khi push bị từ chối.'],
   ['history', 'GM-14 · Lịch sử', 'Consent, xóa summary và thời điểm lấy fixture.'],
+  ['profile', 'GM-14 · Cá nhân', 'Hồ sơ khách mẫu và đường dẫn cài đặt.'],
+  ['settings', 'GM-14 · Cài đặt', 'Cỡ chữ, nút thay thao tác vuốt và xác nhận đăng xuất mock.'],
 ] as const;
 
 export function FeaturePreviewHubScreen({ onBack, onOpen }: Props) {
