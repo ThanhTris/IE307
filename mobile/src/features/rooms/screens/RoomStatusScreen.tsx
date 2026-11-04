@@ -14,6 +14,7 @@ export function RoomStatusScreen({ onNavigate, onHome }: Props) {
   const [loadedKey, setLoadedKey] = useState('');
   const [errorCode, setErrorCode] = useState('');
   const [overlay, setOverlay] = useState<OverlayState>('connected');
+  const [role, setRole] = useState<'host' | 'member'>('host');
   const [confirm, setConfirm] = useState<'leave' | 'cancel' | null>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
@@ -21,6 +22,10 @@ export function RoomStatusScreen({ onNavigate, onHome }: Props) {
   const loadKey = `${mode}:${revision}`;
   const loading = loadedKey !== loadKey;
   const currentErrorCode = loadedKey === loadKey ? errorCode : '';
+  const viewer = snapshot?.members.find(member => member.userId === (
+    role === 'host' ? snapshot.hostUserId : snapshot.members.find(candidate => candidate.userId !== snapshot.hostUserId)?.userId
+  ));
+  const isHost = Boolean(viewer && snapshot?.hostUserId === viewer.userId);
 
   useEffect(() => {
     let active = true;
@@ -39,8 +44,23 @@ export function RoomStatusScreen({ onNavigate, onHome }: Props) {
     return () => { active = false; };
   }, [api, loadKey]);
 
-  const run = async (action: 'leave' | 'cancel') => {
+  const chooseRole = () => {
     if (!snapshot || busy) return;
+    const nextRole = role === 'host' ? 'member' : 'host';
+    const nextMember = nextRole === 'host'
+      ? snapshot.members.find(member => member.userId === snapshot.hostUserId)
+      : snapshot.members.find(member => member.userId !== snapshot.hostUserId);
+    if (!nextMember) {
+      setMessage('Trong fixture không còn thành viên phù hợp với vai trò này.');
+      return;
+    }
+    api.setCurrentUser({ id: nextMember.userId, displayName: nextMember.displayName, isGuest: true, createdAt: nextMember.joinedAt });
+    setRole(nextRole);
+    setMessage(`Đang xem vai trò ${nextRole === 'host' ? 'chủ phòng' : 'thành viên'} trong fixture.`);
+  };
+
+  const run = async (action: 'leave' | 'cancel') => {
+    if (!snapshot || busy || !viewer || (action === 'cancel' && !isHost)) return;
     setBusy(true);
     const requestId = `gm11-status-${action}-${++requestSequence.current}`;
     const result = action === 'cancel'
@@ -55,7 +75,7 @@ export function RoomStatusScreen({ onNavigate, onHome }: Props) {
       ...current,
       state: action === 'cancel' ? 'CANCELLED' : current.state,
       version: result.version ?? current.version + 1,
-      members: action === 'leave' ? current.members.slice(1) : current.members,
+      members: action === 'leave' ? current.members.filter(member => member.userId !== viewer.userId) : current.members,
     } : current);
     setMessage(action === 'cancel' ? 'Phòng mock đã hủy.' : 'Đã rời phòng mock.');
   };
@@ -86,6 +106,13 @@ export function RoomStatusScreen({ onNavigate, onHome }: Props) {
       />}
       {!loading && !currentErrorCode && snapshot && overlay === 'reconnecting' && <StatusNotice title="Đang kết nối lại…" message="Đọc snapshot máy chủ trước khi cho thao tác tiếp." tone="info" colors={colors} />}
       {!loading && !currentErrorCode && snapshot && overlay === 'connected' && <>
+        <AppButton
+          label={`Đang xem vai trò: ${isHost ? 'Host' : 'Member'} · đổi vai trò`}
+          variant="secondary"
+          onPress={chooseRole}
+          disabled={busy}
+          colors={colors}
+        />
         <View style={[styles.stateCard, { backgroundColor: colors.surface, borderColor: colors.line }]}>
           <Text style={[styles.eyebrow, { color: colors.muted }]}>MÃ PHÒNG MOCK · {snapshot.code}</Text>
           <Text accessibilityRole="header" style={[styles.state, { color: snapshot.state === 'CANCELLED' ? colors.danger : colors.primary }]}>{stateLabel(snapshot.state)}</Text>
@@ -94,8 +121,9 @@ export function RoomStatusScreen({ onNavigate, onHome }: Props) {
         <ContextSummary anchorName={snapshot.context.anchorName ?? 'Điểm ăn chung'} mealLabel="Bữa trưa" desiredAtLabel={snapshot.context.desiredAt} radiusLabel={`${snapshot.context.radiusM} m`} serviceModeLabel="Ăn tại quán" colors={colors} />
         {message ? <StatusNotice title="Kết quả thao tác mock" message={message} tone="success" colors={colors} /> : null}
         <AppButton label="Mô phỏng mất kết nối" variant="secondary" onPress={() => setOverlay('offline')} colors={colors} />
-        <AppButton label="Xác nhận rời phòng" variant="danger" onPress={() => setConfirm('leave')} colors={colors} />
-        <AppButton label="Xác nhận hủy phòng (host)" variant="danger" onPress={() => setConfirm('cancel')} colors={colors} />
+        {isHost
+          ? <AppButton label="Xác nhận hủy phòng" variant="danger" onPress={() => setConfirm('cancel')} colors={colors} />
+          : <AppButton label="Xác nhận rời phòng" variant="danger" onPress={() => setConfirm('leave')} colors={colors} />}
       </>}
       <SheetDialog visible={confirm !== null} title={confirm === 'cancel' ? 'Hủy phòng mock?' : 'Rời phòng mock?'} onClose={() => setConfirm(null)} colors={colors}>
         <Text style={[styles.meta, { color: colors.text }]}>Cần xác nhận rõ. Thao tác chỉ thay đổi adapter trong bộ nhớ, không ảnh hưởng phòng thật.</Text>

@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { MockApiClient, type ApiClient, type RoomSnapshot } from '../../../data/api';
+import { MockApiClient, type ApiClient, type RoomMember, type RoomSnapshot } from '../../../data/api';
 import { useMockDemoApi } from '../../shared/components/MockDemo';
 import { createDurableRequestId } from '../services/roomRepository';
 
-export type LobbyRepository = Pick<ApiClient, 'getRoomSnapshot' | 'setReady' | 'startRound' | 'updateContext' | 'leaveRoom' | 'cancelRoom' | 'inviteToRoom'> & {
+export type LobbyRepository = Pick<ApiClient, 'getRoomSnapshot' | 'startRound' | 'updateContext' | 'leaveRoom' | 'cancelRoom' | 'inviteToRoom'> & {
   previewFoodPool?: ApiClient['previewFoodPool'];
 };
 
 export type ConfirmAction = 'leave' | 'cancel' | null;
+type DemoMemberCount = 1 | 2 | 3 | 20;
 
 export interface UseLiveLobbyParams {
   mockClient?: MockApiClient;
@@ -39,6 +40,7 @@ export function useLiveLobby({
   const [busy, setBusy] = useState(false);
   const [realRevision, setRealRevision] = useState(0);
   const [eligibilityError, setEligibilityError] = useState<string | null>(null);
+  const [demoMemberCount, setDemoMemberCount] = useState<DemoMemberCount>(2);
   const busyRef = useRef(false);
   const pendingIntentRef = useRef<{
     action: string;
@@ -149,13 +151,12 @@ export function useLiveLobby({
       ));
 
   const isHost = Boolean(viewer && snapshot?.hostUserId === viewer.userId);
-  const members = snapshot?.members.map(member => ({
+  const displaySnapshot = snapshot && !isReal ? withDemoMemberCount(snapshot, demoMemberCount) : snapshot;
+  const members = displaySnapshot?.members.map(member => ({
     id: member.userId,
-    label: member.userId === snapshot.hostUserId ? `${member.displayName} · Host` : member.displayName,
+    label: member.userId === displaySnapshot.hostUserId ? `${member.displayName} · Host` : member.displayName,
     initial: member.displayName.slice(0, 1),
-    status: member.ready ? 'online' as const : 'idle' as const,
   })) ?? [];
-  const everyoneReady = Boolean(snapshot?.members.length && snapshot.members.every(member => member.ready));
 
   const chooseRole = () => {
     if (!snapshot || busyRef.current || isReal) return;
@@ -174,12 +175,21 @@ export function useLiveLobby({
     setNotice(`Đang dùng danh tính mock ${nextMember.displayName}; adapter và trạng thái phòng được giữ nguyên.`);
   };
 
+  const setDemoRosterSize = (memberCount: DemoMemberCount) => {
+    if (isReal || busyRef.current || !snapshot || snapshot.state !== 'LOBBY') return;
+    const host = snapshot.members.find(member => member.userId === snapshot.hostUserId);
+    if (!host) return;
+    mockApi.api.setCurrentUser({ id: host.userId, displayName: host.displayName, isGuest: true, createdAt: host.joinedAt });
+    setRole('host');
+    setDemoMemberCount(memberCount);
+  };
+
   const reload = () => {
     if (isReal) setRealRevision(v => v + 1);
     else mockApi.reload();
   };
 
-  const runWrite = async (action: 'ready' | 'start' | 'context' | 'leave' | 'cancel' | 'invite') => {
+  const runWrite = async (action: 'start' | 'context' | 'leave' | 'cancel' | 'invite') => {
     if (!snapshot || busyRef.current) return;
     if (isReal && (!currentUserId || !viewer)) return;
     busyRef.current = true;
@@ -188,9 +198,7 @@ export function useLiveLobby({
     const requestId = getRequestId(action, snapshot.version);
     try {
       let result;
-      if (action === 'ready') {
-        result = await api.setReady({ roomId: snapshot.roomId, expectedVersion: snapshot.version, ready: !viewer?.ready, requestId });
-      } else if (action === 'start') {
+      if (action === 'start') {
         result = await api.startRound({ roomId: snapshot.roomId, expectedVersion: snapshot.version, requestId });
       } else if (action === 'context') {
         result = await api.updateContext({ roomId: snapshot.roomId, expectedVersion: snapshot.version, context: { ...snapshot.context, budget: snapshot.context.budget === 70000 ? 80000 : 70000 }, requestId });
@@ -219,14 +227,9 @@ export function useLiveLobby({
         return;
       }
       pendingIntentRef.current = null;
-      if (action === 'ready') {
+      if (action === 'context') {
         await refreshSnapshot(snapshot.roomId);
-        setNotice(viewer?.ready
-          ? (isReal ? 'Bạn đã tắt trạng thái sẵn sàng.' : 'Bạn đã tắt trạng thái sẵn sàng trong fixture.')
-          : (isReal ? 'Đã ghi nhận bạn sẵn sàng.' : 'Đã ghi nhận bạn sẵn sàng trong fixture.'));
-      } else if (action === 'context') {
-        await refreshSnapshot(snapshot.roomId);
-        setNotice('Bối cảnh đổi; trạng thái sẵn sàng của mọi người đã được đặt lại.');
+        setNotice(isReal ? 'Thiết lập phòng đã được cập nhật.' : 'Bối cảnh fixture đã được cập nhật.');
       } else if (action === 'start') {
         await refreshSnapshot(snapshot.roomId);
         setNotice(isReal ? 'Phòng chuyển sang vòng 1.' : 'Fixture chuyển sang vòng 1. Chưa có lượt gọi nghiệp vụ thật.');
@@ -240,7 +243,7 @@ export function useLiveLobby({
         setNotice(isReal ? 'Bạn đã rời phòng.' : 'Bạn đã rời fixture này.');
         if (isReal) onHome();
       } else {
-        setNotice(isReal ? 'Lời mời đã tạo.' : 'Lời mời mock đã tạo; người nhận chưa tham gia và chưa được đặt sẵn sàng.');
+        setNotice(isReal ? 'Lời mời đã tạo.' : 'Lời mời mock đã tạo; người nhận chưa tham gia phòng.');
       }
     } catch {
       if (pendingIntentRef.current) {
@@ -259,6 +262,7 @@ export function useLiveLobby({
     isReal,
     mockApi,
     snapshot,
+    displaySnapshot,
     loadError,
     loadState,
     confirm,
@@ -270,10 +274,28 @@ export function useLiveLobby({
     viewer,
     isHost,
     members,
-    everyoneReady,
+    demoMemberCount,
     chooseRole,
+    setDemoRosterSize,
     reload,
     refreshSnapshot,
     runWrite,
   };
+}
+
+function withDemoMemberCount(snapshot: RoomSnapshot, count: DemoMemberCount): RoomSnapshot {
+  const host = snapshot.members.find(member => member.userId === snapshot.hostUserId);
+  if (!host) return snapshot;
+  const members: RoomMember[] = [host];
+  for (let index = 1; index < count; index += 1) {
+    const knownMember = index === 1 ? snapshot.members.find(member => member.userId !== snapshot.hostUserId) : undefined;
+    members.push(knownMember ?? {
+      userId: `gm11-preview-member-${String(index + 1).padStart(2, '0')}`,
+      displayName: `Thành viên ${String(index + 1).padStart(2, '0')}`,
+      isHost: false,
+      ready: false,
+      joinedAt: `2026-10-11T11:${String(4 + index).padStart(2, '0')}:00Z`,
+    });
+  }
+  return { ...snapshot, members };
 }
