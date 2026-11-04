@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Pressable,
   ScrollView,
@@ -9,7 +9,6 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type {
   ApiClient,
-  MealSlot,
   RoomContext,
 } from '../../../data/api/contracts';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
@@ -78,7 +77,6 @@ export function DiscoveryContextScreen({
     previewLoading,
     previewError,
     loadPreview,
-    generation,
     shortage,
     confirmReduction,
     dismissShortage,
@@ -93,7 +91,6 @@ export function DiscoveryContextScreen({
     onSaveContext,
   });
 
-  const [friendsSheetOpen, setFriendsSheetOpen] = useState(false);
   const sampleFriends = [
     { id: 'fr_linh', name: 'Linh' },
     { id: 'fr_nam', name: 'Nam' },

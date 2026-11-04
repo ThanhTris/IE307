@@ -1,4 +1,4 @@
-import type { ApiClient, CurrencyCode, FlavorProfile, MealSlot, PoolDish, PriceUnit, RoomContext, ServiceMode, UserPreferences } from '../../../data/api/contracts';
+import type { ApiClient, CurrencyCode, FlavorProfile, MealSlot, PoolDish, PriceUnit, RoomContext, UserPreferences } from '../../../data/api/contracts';
 import type { ApiTransport } from '../../../data/api/client/transport';
 
 export type RoomSetupRepository = Pick<ApiClient, 'getDiscoveryContext' | 'getRoomSnapshot' | 'previewFoodPool' | 'updateContext' | 'updatePreferences'>;
@@ -138,29 +138,186 @@ export async function previewDishPoolLive(
     );
 
     if (raw?.ok && raw.data) {
-      const dishes: PoolDish[] = Array.isArray(raw.data.dishes)
-        ? raw.data.dishes.map((d: any, index: number) => ({
-            roundDishId: d.roundDishId ?? `rd_live_${index + 1}`,
-            choiceId: d.choiceId ?? `ch_live_${index + 1}`,
-            dishId: d.dishId ?? `dish_${index + 1}`,
-            name: d.name ?? 'Món chưa đặt tên',
-            description: d.description,
-            cuisineIds: Array.isArray(d.cuisineIds) ? d.cuisineIds : [],
-            categoryIds: Array.isArray(d.categoryIds) ? d.categoryIds : [],
-            origin: d.origin,
-            temperature: d.temperature,
-            flavor: d.flavor,
-            artwork: d.artwork ? { url: d.artwork.uri ?? '', usageRights: 'granted', license: null, attribution: d.artwork.attribution ?? null } : null,
-            priceMin: d.priceReference?.amount ?? d.priceObservation?.amount ?? null,
-            priceMax: d.priceReference?.amount ?? d.priceObservation?.amount ?? null,
-            currency: d.priceReference?.currency ?? d.priceObservation?.currency ?? 'VND',
-            unit: d.priceReference?.unit ?? d.priceObservation?.unit ?? 'portion',
-            servingSize: d.priceReference?.servingSize ?? null,
-          }))
-        : [];
+      if (raw.data.contractVersion !== 'dish-catalogue/roadmap-v2/GM-18.2') {
+        return {
+          ok: false,
+          code: 'INVALID_PAYLOAD',
+          messageKey: 'INVALID_PAYLOAD',
+          message: 'Phiên bản hợp đồng không hợp lệ từ máy chủ.',
+        };
+      }
+
+      if (!Array.isArray(raw.data.dishes) || raw.data.dishes.length !== payload.dishCount) {
+        return {
+          ok: false,
+          code: 'INVALID_PAYLOAD',
+          messageKey: 'INVALID_PAYLOAD',
+          message: `Số lượng món trả về (${raw.data.dishes?.length ?? 0}) không khớp với số món yêu cầu (${payload.dishCount}).`,
+        };
+      }
+
+      if (raw.data.requested != null && raw.data.requested !== payload.dishCount) {
+        return {
+          ok: false,
+          code: 'INVALID_PAYLOAD',
+          messageKey: 'INVALID_PAYLOAD',
+          message: `Số món yêu cầu được xác nhận (${raw.data.requested}) không khớp với yêu cầu (${payload.dishCount}).`,
+        };
+      }
+
+      if (raw.data.available != null && raw.data.available < payload.dishCount) {
+        return {
+          ok: false,
+          code: 'INVALID_PAYLOAD',
+          messageKey: 'INVALID_PAYLOAD',
+          message: `Số món khả dụng (${raw.data.available}) nhỏ hơn số món yêu cầu (${payload.dishCount}).`,
+        };
+      }
+
+      const seenDishIds = new Set<string>();
+      const dishes: PoolDish[] = [];
+
+      for (const d of raw.data.dishes) {
+        if (!d || typeof d !== 'object') {
+          return {
+            ok: false,
+            code: 'INVALID_PAYLOAD',
+            messageKey: 'INVALID_PAYLOAD',
+            message: 'Phần tử món ăn trong danh sách không hợp lệ.',
+          };
+        }
+
+        const dishId = typeof d.dishId === 'string' ? d.dishId.trim() : '';
+        const name = typeof d.name === 'string' ? d.name.trim() : '';
+
+        if (!dishId) {
+          return {
+            ok: false,
+            code: 'INVALID_PAYLOAD',
+            messageKey: 'INVALID_PAYLOAD',
+            message: 'Món ăn thiếu mã định danh (dishId) bắt buộc.',
+          };
+        }
+
+        if (!name) {
+          return {
+            ok: false,
+            code: 'INVALID_PAYLOAD',
+            messageKey: 'INVALID_PAYLOAD',
+            message: 'Món ăn thiếu tên (name) bắt buộc.',
+          };
+        }
+
+        if (seenDishIds.has(dishId)) {
+          return {
+            ok: false,
+            code: 'INVALID_PAYLOAD',
+            messageKey: 'INVALID_PAYLOAD',
+            message: `Phát hiện mã món ăn trùng lặp: ${dishId}.`,
+          };
+        }
+        seenDishIds.add(dishId);
+
+        const roundDishId =
+          typeof d.roundDishId === 'string' && d.roundDishId.trim()
+            ? d.roundDishId.trim()
+            : dishId;
+        const choiceId =
+          typeof d.choiceId === 'string' && d.choiceId.trim()
+            ? d.choiceId.trim()
+            : dishId;
+
+        // Artwork: keep null if missing, preserve usageRights faithfully
+        let artwork: PoolDish['artwork'] = null;
+        if (d.artwork && typeof d.artwork === 'object') {
+          const url =
+            typeof d.artwork.url === 'string'
+              ? d.artwork.url
+              : typeof d.artwork.uri === 'string'
+              ? d.artwork.uri
+              : '';
+          if (url) {
+            artwork = {
+              url,
+              usageRights:
+                typeof d.artwork.usageRights === 'string'
+                  ? d.artwork.usageRights
+                  : 'unknown',
+              license: typeof d.artwork.license === 'string' ? d.artwork.license : null,
+              attribution:
+                typeof d.artwork.attribution === 'string'
+                  ? d.artwork.attribution
+                  : null,
+            };
+          }
+        }
+
+        const priceMin =
+          typeof d.priceMin === 'number'
+            ? d.priceMin
+            : typeof d.priceReference?.amount === 'number'
+            ? d.priceReference.amount
+            : typeof d.priceObservation?.amount === 'number'
+            ? d.priceObservation.amount
+            : null;
+
+        const priceMax =
+          typeof d.priceMax === 'number'
+            ? d.priceMax
+            : typeof d.priceReference?.amount === 'number'
+            ? d.priceReference.amount
+            : typeof d.priceObservation?.amount === 'number'
+            ? d.priceObservation.amount
+            : null;
+
+        const currency =
+          typeof d.currency === 'string'
+            ? d.currency
+            : typeof d.priceReference?.currency === 'string'
+            ? d.priceReference.currency
+            : typeof d.priceObservation?.currency === 'string'
+            ? d.priceObservation.currency
+            : null;
+
+        const unit =
+          typeof d.unit === 'string'
+            ? d.unit
+            : typeof d.priceReference?.unit === 'string'
+            ? d.priceReference.unit
+            : typeof d.priceObservation?.unit === 'string'
+            ? d.priceObservation.unit
+            : null;
+
+        const servingSize =
+          typeof d.servingSize === 'string'
+            ? d.servingSize
+            : typeof d.priceReference?.servingSize === 'string'
+            ? d.priceReference.servingSize
+            : null;
+
+        dishes.push({
+          roundDishId,
+          choiceId,
+          dishId,
+          name,
+          description: typeof d.description === 'string' ? d.description : null,
+          cuisineIds: Array.isArray(d.cuisineIds) ? d.cuisineIds : [],
+          categoryIds: Array.isArray(d.categoryIds) ? d.categoryIds : [],
+          origin: d.origin ?? 'unknown',
+          temperature: d.temperature ?? null,
+          flavor: d.flavor ?? null,
+          artwork,
+          priceMin,
+          priceMax,
+          currency,
+          unit,
+          servingSize,
+        });
+      }
+
       return {
         ok: true,
-        contractVersion: raw.data.contractVersion ?? 'dish-catalogue/roadmap-v2/GM-18.2',
+        contractVersion: raw.data.contractVersion,
         available: raw.data.available ?? dishes.length,
         requested: raw.data.requested ?? payload.dishCount,
         dishes,
@@ -246,13 +403,15 @@ export async function previewDishPoolMock(
   }
 
   if (scenario === 'shortage_15_lunch') {
-    return {
-      ok: false,
-      code: 'SHORTAGE',
-      available: 15,
-      requested: params.dishCount,
-      messageKey: 'INSUFFICIENT_DISHES',
-    };
+    if (params.dishCount > 15) {
+      return {
+        ok: false,
+        code: 'SHORTAGE',
+        available: 15,
+        requested: params.dishCount,
+        messageKey: 'INSUFFICIENT_DISHES',
+      };
+    }
   }
 
   if (scenario === 'shortage_7_dinner' || params.mealSlot === 'dinner' || (params.mealSlot === 'snack' && params.dishCount > 7)) {
@@ -367,6 +526,7 @@ export function setupError(code: string): string {
     case 'NOT_MEMBER': case 'AUTH_REQUIRED': return 'Phiên tham gia không còn hợp lệ. Hãy quay lại và mở lại phòng.';
     case 'ROOM_EXPIRED': case 'ROOM_TERMINAL': case 'ROOM_LOCKED': case 'INVALID_ROOM_STATE': return 'Phòng không còn cho phép thay đổi. Hãy quay lại để kiểm tra trạng thái.';
     case 'TIMEOUT': case 'NETWORK_ERROR': return 'Chưa biết yêu cầu đã được nhận hay chưa. Thử lại cùng yêu cầu để kiểm tra.';
+    case 'INVALID_PAYLOAD': return 'Dữ liệu danh sách món từ máy chủ không hợp lệ. Hãy thử lại.';
     default: return 'Chưa tải hoặc lưu được dữ liệu. Hãy thử tải lại.';
   }
 }

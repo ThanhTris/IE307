@@ -1,17 +1,16 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import type {
   ApiClient,
   MealSlot,
   PoolDish,
   RoomContext,
-  ServiceMode,
 } from '../../../data/api/contracts';
-import { ApiClientImpl } from '../../../data/api/client';
+import type { ApiTransport } from '../../../data/api/client/transport';
+import type { SessionApi } from '../../../data/auth/types';
 import { FetchTransport } from '../../../data/api/client/transport';
 import {
   currentServerTime,
   localTime,
-  parseLocalTime,
   previewDishPoolLive,
   previewDishPoolMock,
   setupError,
@@ -23,46 +22,77 @@ export type EnvironmentMode = 'mock' | 'real_api';
 
 export interface UseDiscoveryContextParams {
   apiClient?: ApiClient;
+  transport?: ApiTransport;
+  sessionManager?: SessionApi;
   initialScenario?: ContextScenario;
   initialEnvironmentMode?: EnvironmentMode;
   onSaveContext?: (context: Partial<RoomContext> & { dishCount?: number }) => void;
   serverTimeIso?: string;
+  realTimeNow?: () => number;
 }
 
 export function useDiscoveryContext({
   apiClient,
+  transport,
+  sessionManager,
   initialScenario = 'exact_20_lunch',
   initialEnvironmentMode = 'mock',
   onSaveContext,
-  serverTimeIso = '2026-10-15T11:30:00.000Z',
+  serverTimeIso,
+  realTimeNow,
 }: UseDiscoveryContextParams = {}) {
   const [envMode, setEnvMode] = useState<EnvironmentMode>(initialEnvironmentMode);
   const [scenario, setScenario] = useState<ContextScenario>(initialScenario);
 
+  // Time handling:
+  // - Mock mode uses deterministic fixture time (serverTimeIso or 2026-10-15T11:30:00.000Z).
+  // - Real mode uses dynamic wall clock initialized via useState without calling impure Date.now() during render.
+  const [baseEpoch] = useState<number>(() => (realTimeNow ? realTimeNow() : Date.now()));
+
+  const mockServerTime = serverTimeIso ?? '2026-10-15T11:30:00.000Z';
+  const realServerTime = serverTimeIso ?? new Date(baseEpoch).toISOString();
+  const serverTime = envMode === 'mock' ? mockServerTime : realServerTime;
+
+  const currentNow =
+    envMode === 'mock'
+      ? currentServerTime(mockServerTime, baseEpoch, baseEpoch)
+      : baseEpoch;
+
   // Setup form parameters (dish-only)
-  const [mealSlot, setMealSlotState] = useState<MealSlot>('lunch');
-  const [dishCount, setDishCountState] = useState<number>(scenario === 'shortage_15_lunch' ? 20 : 15);
-  const [timeMode, setTimeModeState] = useState<'now' | 'scheduled'>('now');
-  const [desiredAt, setDesiredAtState] = useState<string | null>(null);
+  const [mealSlot, setMealSlotState] = useState<MealSlot>(() =>
+    initialScenario === 'shortage_7_dinner' ? 'dinner' : 'lunch'
+  );
+  const [dishCount, setDishCountState] = useState<number>(() =>
+    initialScenario === 'shortage_15_lunch' ? 20 : initialScenario === 'shortage_7_dinner' ? 10 : 15
+  );
+  const [timeMode, setTimeModeState] = useState<'now' | 'scheduled'>(() =>
+    initialScenario === 'desired_time_passed' ? 'scheduled' : 'now'
+  );
+  const [desiredAt, setDesiredAtState] = useState<string | null>(() =>
+    initialScenario === 'desired_time_passed'
+      ? new Date(currentNow - 60 * 60 * 1000).toISOString()
+      : null
+  );
   const [budget, setBudgetState] = useState<'under50' | '50to100' | '100to200' | null>(null);
   const [avoidRecent, setAvoidRecentState] = useState<boolean>(true);
   const [inviteeIds, setInviteeIdsState] = useState<string[]>([]);
 
-  // Server clock simulation (UTC+7)
-  const [serverLoadedAt] = useState<number>(() => Date.now());
-  const serverTime = serverTimeIso;
-  const currentNow = currentServerTime(serverTime, serverLoadedAt);
-
-  // Real API state
+  // Real API credentials from environment (do not log or hardcode)
   const realApiUrl =
     typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_SUPABASE_URL
       ? process.env.EXPO_PUBLIC_SUPABASE_URL
       : '';
+  const realApiKey =
+    typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_SUPABASE_ANON_KEY
+      ? process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY
+      : '';
+
   const [realClientStatus, setRealClientStatus] = useState<string>('Sẵn sàng');
   const [liveAuthToken, setLiveAuthToken] = useState<string | null>(null);
 
-  // Generation counter to detect and invalidate stale in-flight preview requests
+  // Generation counter to track request ownership and discard stale responses
   const generationRef = useRef(1);
+  const [generationState, setGenerationState] = useState(1);
 
   // Preview state
   const [preview, setPreview] = useState<PoolDish[] | null>(null);
@@ -72,16 +102,25 @@ export function useDiscoveryContext({
   const [confirmed, setConfirmed] = useState(false);
   const [receipt, setReceipt] = useState<string | null>(null);
 
-  // Clear preview and increment generation on user edits
-  const clearPreviewState = useCallback(() => {
+  // Bump generation helper
+  const bumpGeneration = useCallback(() => {
     generationRef.current += 1;
+    setGenerationState(generationRef.current);
+    return generationRef.current;
+  }, []);
+
+  // Clear preview and reset loading state when user edits form parameters
+  const clearPreviewState = useCallback(() => {
+    bumpGeneration();
     setPreview(null);
     setPreviewError(null);
     setShortage(null);
     setConfirmed(false);
     setReceipt(null);
-  }, []);
+    setPreviewLoading(false); // Stop pending loading so button isn't stuck disabled
+  }, [bumpGeneration]);
 
+  // Form field setters
   const setMealSlot = useCallback((value: MealSlot) => {
     setMealSlotState(value);
     clearPreviewState();
@@ -138,147 +177,180 @@ export function useDiscoveryContext({
     Number.isFinite(Date.parse(desiredAt)) &&
     Date.parse(desiredAt) <= currentNow;
 
-  // Handle switching scenario or environment mode
-  useEffect(() => {
-    generationRef.current += 1;
-    setPreview(null);
-    setPreviewError(null);
-    setShortage(null);
-    setConfirmed(false);
-    setReceipt(null);
+  // Setters for scenario and environment mode (pure callback without synchronous setState inside useEffect)
+  const changeScenario = useCallback(
+    (newScenario: ContextScenario) => {
+      setScenario(newScenario);
+      clearPreviewState();
 
-    if (scenario === 'desired_time_passed') {
-      setTimeModeState('scheduled');
-      setDesiredAtState(new Date(currentNow - 60 * 60 * 1000).toISOString());
-    } else if (scenario === 'shortage_15_lunch') {
-      setMealSlotState('lunch');
-      setDishCountState(20);
-    } else if (scenario === 'shortage_7_dinner') {
-      setMealSlotState('dinner');
-      setDishCountState(10);
-    }
-  }, [scenario, envMode]);
+      if (newScenario === 'desired_time_passed') {
+        setTimeModeState('scheduled');
+        setDesiredAtState(new Date(currentNow - 60 * 60 * 1000).toISOString());
+      } else if (newScenario === 'shortage_15_lunch') {
+        setMealSlotState('lunch');
+        setDishCountState(20);
+      } else if (newScenario === 'shortage_7_dinner') {
+        setMealSlotState('dinner');
+        setDishCountState(10);
+      }
+    },
+    [clearPreviewState, currentNow]
+  );
 
-  // Trigger preview fetch
-  const loadPreview = useCallback(async () => {
-    const activeGen = generationRef.current;
-    setPreviewLoading(true);
-    setPreviewError(null);
-    setShortage(null);
+  const changeEnvMode = useCallback(
+    (newEnv: EnvironmentMode) => {
+      setEnvMode(newEnv);
+      clearPreviewState();
+    },
+    [clearPreviewState]
+  );
 
-    // Validate scheduled time before sending
-    if (timeMode === 'scheduled' && desiredAt && Date.parse(desiredAt) <= currentNow) {
-      setPreviewLoading(false);
-      setPreviewError(setupError('DESIRED_TIME_PASSED'));
-      return;
-    }
+  // Unified preview loader: used by both loadPreview and confirmReduction
+  const executePreviewLoad = useCallback(
+    async (targetCount: number) => {
+      const activeGen = bumpGeneration();
+      setPreviewLoading(true);
+      setPreviewError(null);
+      setShortage(null);
 
-    try {
-      if (envMode === 'mock') {
-        const result = await previewDishPoolMock(scenario, {
-          mealSlot,
-          dishCount,
-          desiredAt,
-          timeMode,
-          serverTimeMs: currentNow,
-        });
-
-        // Drop response if a new generation started while waiting
-        if (generationRef.current !== activeGen) return;
-
-        if (result.ok) {
-          setPreview(result.dishes);
-        } else if (result.code === 'SHORTAGE') {
-          setShortage({ available: result.available, requested: result.requested });
-          setPreviewError(
-            result.available >= 10
-              ? `Chỉ có ${result.available} món phù hợp (đang chọn ${result.requested} món).`
-              : `Chỉ có ${result.available} món phù hợp. Cần tối thiểu 10 món để bắt đầu.`
-          );
-        } else {
-          setPreviewError(result.message);
-        }
-      } else {
-        // Real Supabase API call
-        if (!realApiUrl) {
-          setPreviewError('Thiếu URL máy chủ Supabase. Hãy kiểm tra biến môi trường.');
+      // Validate scheduled time before sending
+      if (timeMode === 'scheduled' && desiredAt && Date.parse(desiredAt) <= currentNow) {
+        if (generationRef.current === activeGen) {
           setPreviewLoading(false);
-          return;
+          setPreviewError(setupError('DESIRED_TIME_PASSED'));
         }
+        return;
+      }
 
-        const client =
-          apiClient ??
-          new ApiClientImpl({
-            baseUrl: realApiUrl,
-            transport: new FetchTransport(realApiUrl),
-            initialToken: liveAuthToken,
+      try {
+        if (envMode === 'mock') {
+          const result = await previewDishPoolMock(scenario, {
+            mealSlot,
+            dishCount: targetCount,
+            desiredAt,
+            timeMode,
+            serverTimeMs: currentNow,
           });
 
-        const transport = (client as any)?.transport;
-        if (!transport) {
-          setPreviewError('Không tìm thấy transport API của client.');
-          setPreviewLoading(false);
-          return;
-        }
+          // Drop response if a new generation started while waiting
+          if (generationRef.current !== activeGen) return;
 
-        const result = await previewDishPoolLive(transport, {
-          mealSlot,
-          dishCount,
-          token: liveAuthToken ?? undefined,
-        });
-
-        if (generationRef.current !== activeGen) return;
-
-        if (result.ok) {
-          setPreview(result.dishes);
-        } else if (result.code === 'SHORTAGE') {
-          setShortage({ available: result.available, requested: result.requested });
-          setPreviewError(
-            result.available >= 10
-              ? `Chỉ có ${result.available} món phù hợp (đang chọn ${result.requested} món).`
-              : `Chỉ có ${result.available} món phù hợp. Cần tối thiểu 10 món để tạo phòng.`
-          );
+          if (result.ok) {
+            setPreview(result.dishes);
+            setPreviewError(null);
+            setShortage(null);
+          } else if (result.code === 'SHORTAGE') {
+            setShortage({ available: result.available, requested: result.requested });
+            setPreview(null);
+            setPreviewError(
+              result.available >= 10
+                ? `Chỉ có ${result.available} món phù hợp (đang chọn ${result.requested} món).`
+                : `Chỉ có ${result.available} món phù hợp. Cần tối thiểu 10 món để bắt đầu.`
+            );
+          } else {
+            setPreview(null);
+            setPreviewError(result.message);
+          }
         } else {
-          setPreviewError(result.message);
+          // Real Supabase API call
+          if (!realApiUrl && !transport && !apiClient) {
+            if (generationRef.current === activeGen) {
+              setPreviewError('Thiếu URL máy chủ Supabase. Hãy kiểm tra biến môi trường.');
+              setPreviewLoading(false);
+            }
+            return;
+          }
+
+          const activeTransport: ApiTransport =
+            transport ??
+            (apiClient && typeof (apiClient as any).getTransport === 'function'
+              ? (apiClient as any).getTransport()
+              : (apiClient as any)?.transport ??
+                new FetchTransport(realApiUrl, undefined, realApiKey));
+
+          let token: string | undefined = liveAuthToken ?? undefined;
+          if (sessionManager) {
+            try {
+              const tokenRes = await sessionManager.getAccessToken();
+              if (tokenRes.ok && tokenRes.data) {
+                token = tokenRes.data;
+              }
+            } catch {
+              // Token lookup failed
+            }
+          } else if (apiClient && typeof (apiClient as any).getAuthToken === 'function') {
+            const clientToken = (apiClient as any).getAuthToken();
+            if (clientToken) token = clientToken;
+          }
+
+          const result = await previewDishPoolLive(activeTransport, {
+            mealSlot,
+            dishCount: targetCount,
+            token,
+          });
+
+          if (generationRef.current !== activeGen) return;
+
+          if (result.ok) {
+            setPreview(result.dishes);
+            setPreviewError(null);
+            setShortage(null);
+          } else if (result.code === 'SHORTAGE') {
+            setShortage({ available: result.available, requested: result.requested });
+            setPreview(null);
+            setPreviewError(
+              result.available >= 10
+                ? `Chỉ có ${result.available} món phù hợp (đang chọn ${result.requested} món).`
+                : `Chỉ có ${result.available} món phù hợp. Cần tối thiểu 10 món để tạo phòng.`
+            );
+          } else {
+            setPreview(null);
+            setPreviewError(result.message);
+          }
+        }
+      } catch {
+        if (generationRef.current === activeGen) {
+          setPreview(null);
+          setPreviewError('Lỗi kết nối khi tải danh sách món xem trước.');
+        }
+      } finally {
+        if (generationRef.current === activeGen) {
+          setPreviewLoading(false);
         }
       }
-    } catch {
-      if (generationRef.current === activeGen) {
-        setPreviewError('Lỗi kết nối khi tải danh sách món xem trước.');
-      }
-    } finally {
-      if (generationRef.current === activeGen) {
-        setPreviewLoading(false);
-      }
-    }
-  }, [envMode, scenario, mealSlot, dishCount, desiredAt, timeMode, currentNow, realApiUrl, apiClient, liveAuthToken]);
+    },
+    [
+      bumpGeneration,
+      timeMode,
+      desiredAt,
+      currentNow,
+      envMode,
+      scenario,
+      mealSlot,
+      realApiUrl,
+      transport,
+      apiClient,
+      realApiKey,
+      liveAuthToken,
+      sessionManager,
+    ]
+  );
+
+  const loadPreview = useCallback(async () => {
+    await executePreviewLoad(dishCount);
+  }, [executePreviewLoad, dishCount]);
 
   // Shortage action: confirm reduction to available count (when available >= 10)
+  // Re-fetches through the active environment without fabricating mock data
   const confirmReduction = useCallback(() => {
     if (shortage && shortage.available >= 10) {
       const newCount = shortage.available;
       setDishCountState(newCount);
       setShortage(null);
       setPreviewError(null);
-      generationRef.current += 1;
-
-      // Re-fetch preview immediately with reduced count
-      const activeGen = generationRef.current;
-      setPreviewLoading(true);
-      void previewDishPoolMock('exact_20_lunch', {
-        mealSlot,
-        dishCount: newCount,
-        desiredAt,
-        timeMode,
-        serverTimeMs: currentNow,
-      }).then(res => {
-        if (generationRef.current === activeGen && res.ok) {
-          setPreview(res.dishes);
-          setPreviewLoading(false);
-        }
-      });
+      void executePreviewLoad(newCount);
     }
-  }, [shortage, mealSlot, desiredAt, timeMode, currentNow]);
+  }, [shortage, executePreviewLoad]);
 
   const dismissShortage = useCallback(() => {
     setShortage(null);
@@ -301,9 +373,9 @@ export function useDiscoveryContext({
 
   return {
     envMode,
-    setEnvMode,
+    setEnvMode: changeEnvMode,
     scenario,
-    setScenario,
+    setScenario: changeScenario,
     realApiUrl,
     realClientStatus,
     setRealClientStatus,
@@ -337,7 +409,7 @@ export function useDiscoveryContext({
     previewLoading,
     previewError,
     loadPreview,
-    generation: generationRef.current,
+    generation: generationState,
     shortage,
     confirmReduction,
     dismissShortage,

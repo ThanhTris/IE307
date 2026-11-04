@@ -179,7 +179,7 @@ describe('GM-24 dish pool preview mock and live adapters', () => {
     }
   });
 
-  test('previewDishPoolLive handles 200 success from transport', async () => {
+  test('previewDishPoolLive rejects response where dish count (1) does not match requested count (20)', async () => {
     const mockTransport = {
       invoke: jest.fn().mockResolvedValue({
         ok: true,
@@ -198,11 +198,166 @@ describe('GM-24 dish pool preview mock and live adapters', () => {
       mealSlot: 'lunch',
       dishCount: 20,
     });
+    expect(res.ok).toBe(false);
+    if (!res.ok) {
+      expect(res.code).toBe('INVALID_PAYLOAD');
+      expect(res.message).toMatch(/không khớp với số món yêu cầu/);
+    }
+  });
+
+  test('previewDishPoolLive accepts valid response with exactly matching dish count', async () => {
+    const sampleDishes = Array.from({ length: 10 }, (_, i) => ({
+      dishId: `dish_valid_${i + 1}`,
+      name: `Món ngon ${i + 1}`,
+      priceReference: { amount: 50000 + i * 5000, currency: 'VND', unit: 'portion' },
+      artwork: { uri: `https://example.com/img_${i + 1}.jpg`, usageRights: 'licensed', attribution: 'Nhà hàng' },
+    }));
+
+    const mockTransport = {
+      invoke: jest.fn().mockResolvedValue({
+        ok: true,
+        data: {
+          contractVersion: 'dish-catalogue/roadmap-v2/GM-18.2',
+          available: 15,
+          requested: 10,
+          dishes: sampleDishes,
+        },
+      }),
+    };
+
+    const res = await previewDishPoolLive(mockTransport as any, {
+      mealSlot: 'lunch',
+      dishCount: 10,
+    });
     expect(res.ok).toBe(true);
     if (res.ok) {
-      expect(res.dishes.length).toBe(1);
-      expect(res.dishes[0]?.name).toBe('Phở bò');
-      expect(res.dishes[0]?.priceMin).toBe(60000);
+      expect(res.dishes.length).toBe(10);
+      expect(res.dishes[0]?.dishId).toBe('dish_valid_1');
+      expect(res.dishes[0]?.name).toBe('Món ngon 1');
+      expect(res.dishes[0]?.priceMin).toBe(50000);
+      expect(res.dishes[0]?.artwork?.usageRights).toBe('licensed');
+    }
+  });
+
+  test('previewDishPoolLive rejects response with invalid contractVersion', async () => {
+    const sampleDishes = Array.from({ length: 10 }, (_, i) => ({
+      dishId: `dish_cv_${i + 1}`,
+      name: `Món ${i + 1}`,
+    }));
+
+    const mockTransport = {
+      invoke: jest.fn().mockResolvedValue({
+        ok: true,
+        data: {
+          contractVersion: 'unsupported-version-v1',
+          available: 10,
+          requested: 10,
+          dishes: sampleDishes,
+        },
+      }),
+    };
+
+    const res = await previewDishPoolLive(mockTransport as any, {
+      mealSlot: 'lunch',
+      dishCount: 10,
+    });
+    expect(res.ok).toBe(false);
+    if (!res.ok) {
+      expect(res.code).toBe('INVALID_PAYLOAD');
+      expect(res.message).toMatch(/Phiên bản hợp đồng/);
+    }
+  });
+
+  test('previewDishPoolLive rejects response with duplicate dishId', async () => {
+    const duplicateDishes = Array.from({ length: 10 }, (_, i) => ({
+      dishId: i === 5 ? 'dish_dup_1' : `dish_dup_${i + 1}`, // i=0 and i=5 have dish_dup_1
+      name: `Món ${i + 1}`,
+    }));
+
+    const mockTransport = {
+      invoke: jest.fn().mockResolvedValue({
+        ok: true,
+        data: {
+          contractVersion: 'dish-catalogue/roadmap-v2/GM-18.2',
+          available: 10,
+          requested: 10,
+          dishes: duplicateDishes,
+        },
+      }),
+    };
+
+    const res = await previewDishPoolLive(mockTransport as any, {
+      mealSlot: 'lunch',
+      dishCount: 10,
+    });
+    expect(res.ok).toBe(false);
+    if (!res.ok) {
+      expect(res.code).toBe('INVALID_PAYLOAD');
+      expect(res.message).toMatch(/trùng lặp/);
+    }
+  });
+
+  test('previewDishPoolLive rejects response with missing dishId or name', async () => {
+    const missingNameDishes = Array.from({ length: 10 }, (_, i) => ({
+      dishId: `dish_m_${i + 1}`,
+      name: i === 2 ? '' : `Món ${i + 1}`,
+    }));
+
+    const mockTransport = {
+      invoke: jest.fn().mockResolvedValue({
+        ok: true,
+        data: {
+          contractVersion: 'dish-catalogue/roadmap-v2/GM-18.2',
+          available: 10,
+          requested: 10,
+          dishes: missingNameDishes,
+        },
+      }),
+    };
+
+    const res = await previewDishPoolLive(mockTransport as any, {
+      mealSlot: 'lunch',
+      dishCount: 10,
+    });
+    expect(res.ok).toBe(false);
+    if (!res.ok) {
+      expect(res.code).toBe('INVALID_PAYLOAD');
+      expect(res.message).toMatch(/thiếu tên/);
+    }
+  });
+
+  test('previewDishPoolLive preserves null artwork and prices without fabricating defaults', async () => {
+    const rawDishesWithoutPrices = Array.from({ length: 10 }, (_, i) => ({
+      dishId: `dish_null_${i + 1}`,
+      name: `Món giá null ${i + 1}`,
+      artwork: null,
+      priceReference: null,
+      priceObservation: null,
+    }));
+
+    const mockTransport = {
+      invoke: jest.fn().mockResolvedValue({
+        ok: true,
+        data: {
+          contractVersion: 'dish-catalogue/roadmap-v2/GM-18.2',
+          available: 10,
+          requested: 10,
+          dishes: rawDishesWithoutPrices,
+        },
+      }),
+    };
+
+    const res = await previewDishPoolLive(mockTransport as any, {
+      mealSlot: 'lunch',
+      dishCount: 10,
+    });
+    expect(res.ok).toBe(true);
+    if (res.ok) {
+      expect(res.dishes[0]?.artwork).toBeNull();
+      expect(res.dishes[0]?.priceMin).toBeNull();
+      expect(res.dishes[0]?.priceMax).toBeNull();
+      expect(res.dishes[0]?.currency).toBeNull();
+      expect(res.dishes[0]?.unit).toBeNull();
     }
   });
 

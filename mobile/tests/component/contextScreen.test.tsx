@@ -220,4 +220,133 @@ describe('GM-24 Dish-only Preview Pool & Room Setup (Figma Parity)', () => {
     expect(screen.getByText(/Không thu thập, không lưu tọa độ GPS/)).toBeOnTheScreen();
     expect(screen.getByText(/Tách biệt Places:/)).toBeOnTheScreen();
   });
+
+  it('real API shortage reduction: uses real transport for reduced count and fails cleanly on network error without using mock dishes', async () => {
+    const user = userEvent.setup();
+    const mockTransport = {
+      invoke: jest
+        .fn()
+        // First call: 20 dishes -> 409 Shortage 15
+        .mockRejectedValueOnce({
+          status: 409,
+          body: {
+            ok: false,
+            error: {
+              messageKey: 'INSUFFICIENT_DISHES',
+              details: { available: 15, requested: 20 },
+            },
+          },
+        })
+        // Second call on reduction to 15: fails with network error
+        .mockRejectedValueOnce(new Error('Network error on 15 dishes')),
+    };
+
+    const mockApiClient = {
+      getTransport: () => mockTransport,
+      getAuthToken: () => 'test-token',
+    } as any;
+
+    await render(
+      <DiscoveryContextScreen
+        apiClient={mockApiClient}
+        initialEnvironmentMode="real_api"
+        initialScenario="shortage_15_lunch"
+      />
+    );
+
+    // Initial count is 20, click preview
+    const previewBtn = screen.getByRole('button', { name: '🔍 Xem trước danh sách món (Preview Pool)' });
+    await user.press(previewBtn);
+
+    // Shortage warning appears
+    await waitFor(() => {
+      expect(screen.getByText('Số món phù hợp')).toBeOnTheScreen();
+      expect(screen.getByText(/Hiện có 15 món/)).toBeOnTheScreen();
+    });
+
+    // Press reduce to 15 button in shortage dialog
+    const reduceBtns = screen.getAllByRole('button', { name: 'Giảm số món' });
+    await user.press(reduceBtns[1]!);
+
+    // Check that second call was made to real transport with dishCount: 15
+    await waitFor(() => {
+      expect(mockTransport.invoke).toHaveBeenCalledTimes(2);
+      expect(mockTransport.invoke).toHaveBeenLastCalledWith(
+        'preview_dish_pool',
+        expect.objectContaining({
+          payload: expect.objectContaining({
+            dishCount: 15,
+          }),
+        }),
+        expect.anything()
+      );
+    });
+
+    // Second call failed: UI shows error notice, NO mock dishes rendered, NO confirmation checkbox
+    await waitFor(() => {
+      expect(screen.getByText('Lỗi xem trước')).toBeOnTheScreen();
+      expect(screen.queryByText('Phở bò tái nạm')).toBeNull();
+      expect(screen.queryByText('Tôi xác nhận danh sách món và thiết lập phòng')).toBeNull();
+    });
+  });
+
+  it('in-flight request cancellation: editing form parameter clears loading and ignores late response', async () => {
+    const user = userEvent.setup();
+    let resolveFirstRequest: (val: any) => void = () => {};
+    const firstRequestPromise = new Promise(resolve => {
+      resolveFirstRequest = resolve;
+    });
+
+    const mockTransport = {
+      invoke: jest.fn().mockImplementation(() => firstRequestPromise),
+    };
+
+    const mockApiClient = {
+      getTransport: () => mockTransport,
+      getAuthToken: () => 'token-123',
+    } as any;
+
+    await render(
+      <DiscoveryContextScreen
+        apiClient={mockApiClient}
+        initialEnvironmentMode="real_api"
+      />
+    );
+
+    const previewBtn = screen.getByRole('button', { name: '🔍 Xem trước danh sách món (Preview Pool)' });
+    await user.press(previewBtn);
+
+    // Button is now in loading state
+    await waitFor(() => {
+      expect(screen.getByText('Đang xử lý…')).toBeOnTheScreen();
+    });
+
+    // User edits form while request is in-flight: change to breakfast
+    await user.press(screen.getByRole('button', { name: 'Ăn sáng' }));
+
+    // Loading must be cleared immediately so buttons are not stuck disabled
+    await waitFor(() => {
+      expect(screen.queryByText('Đang kiểm tra...')).toBeNull();
+      expect(screen.getByRole('button', { name: '🔍 Xem trước danh sách món (Preview Pool)' })).toBeEnabled();
+    });
+
+    // Now first request resolves late
+    resolveFirstRequest({
+      ok: true,
+      data: {
+        contractVersion: 'dish-catalogue/roadmap-v2/GM-18.2',
+        available: 15,
+        requested: 15,
+        dishes: Array.from({ length: 15 }, (_, i) => ({
+          dishId: `late_dish_${i}`,
+          name: `Late Dish ${i}`,
+        })),
+      },
+    });
+
+    // The late response must NOT be rendered because generation changed
+    await waitFor(() => {
+      expect(screen.queryByText('Late Dish 0')).toBeNull();
+    });
+  });
 });
