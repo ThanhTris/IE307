@@ -1,0 +1,25 @@
+{
+  "result": "Pass",
+  "phase": "startup before worker launch",
+  "input": "Ctrl+C via PTY",
+  "shellExitCode": 1,
+  "cleanupStages": [
+    {
+      "stage": "cleanup",
+      "result": "Pass",
+      "worker": "not-started",
+      "projectId": "ie307-dish-v4-qa-20261104-529578253400-1",
+      "qaContainerStopped": true,
+      "ownedWorkdirRemoved": true
+    },
+    {
+      "stage": "gm20-cleanup",
+      "result": "Pass",
+      "ownedBackupsRemoved": true,
+      "applicationDatabaseChanged": false
+    }
+  ],
+  "ownedContainersAndVolumesRemaining": 0,
+  "privateJournalRemaining": false,
+  "applicationDatabaseChanged": false
+}

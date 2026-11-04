@@ -1,0 +1,7 @@
+{
+  "fixtureOnly": true,
+  "result": "Pass",
+  "caseCount": 102,
+  "fixtureSha256": "7ce419376c4aa84e8c95d16841b734424d6d85ff7b0dce50c73986e01847da55",
+  "migrationSha256": "08224b335ce6ff17105c4cd35fbf35822d5e16def8814c105a7a3bc1f7d092e3"
+}

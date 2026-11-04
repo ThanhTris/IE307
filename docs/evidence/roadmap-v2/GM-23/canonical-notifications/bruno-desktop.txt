@@ -1,0 +1,31 @@
+GM-23.2 Bruno desktop run
+Date: 2026-11-04
+Bruno: 4.3.0
+Collection: GM-23.2 Canonical notifications
+Environment: Local.runtime.private (owned disposable QA; loopback Auth + REST)
+Runner: 22/22 passed, 0 failed, 0 skipped; sequential; environment remained selected.
+
+01 Host snapshot: 200 OK — snapshot assertion passed
+02 Host submits: 200 OK — ballot ACK assertion passed
+03 Member snapshot: 200 OK — shared and private projection assertion passed
+04 Member submits: 200 OK — ballot ACK assertion passed
+05 Host snapshot before waiting: 200 OK — waiting precondition assertion passed
+06 Host enters waiting: 200 OK — waiting transition assertion passed
+07 Member enters waiting: 200 OK — waiting transition assertion passed
+08 Read canonical result: 200 OK — result read assertion passed
+09 Member reconnect: 200 OK — snapshot reconciliation assertion passed
+10 Outsider denied: 403 Forbidden — authorization assertion passed
+11 Exact old submit receipt: 200 OK — byte-equivalent ACK replay assertion passed
+12 Canonical inbox: 200 OK — room result is reference-only in caller inbox
+13 No consensus inbox: 200 OK — same reference-only contract for NO_CONSENSUS
+14 Friend invite inbox: 200 OK — invitation is available only in caller inbox
+15 Register push device: 200 OK — write ACK has data:null
+16 Replay register ACK: 200 OK — same request/payload returns equivalent ACK
+17 Reused request ID rejected: 409 Conflict — changed payload rejected
+18 Outsider cannot unregister device: 200 OK — unauthorized unregister is a no-op with data:null
+19 Own safe device projection: 200 OK — caller sees safe metadata only
+20 Unregister push device: 200 OK — write ACK has data:null
+21 Replay unregister ACK: 200 OK — same unregister ACK returned
+22 Verify unregistered device: 200 OK — token removed and device projection inactive
+
+The active Runner displayed all 22 results above. No JWT, push token, anon key, service credential, or raw secret is included here. This is a local fake-provider/QA run, not remote Expo delivery or Android verification.

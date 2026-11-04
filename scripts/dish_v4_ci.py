@@ -138,7 +138,15 @@ def approved_host_binding(binding, port, *, hosted_ci=False):
     return str(binding.get('HostPort')) == str(port) and binding.get('HostIp') in allowed_hosts
 
 
-def setup():
+def setup(*, migration_dir=None):
+    migration_path = Path(migration_dir) if migration_dir is not None else ROOT / 'supabase/migrations'
+    if migration_path.is_symlink():
+        raise RuntimeError('QA migration source is unsafe')
+    source_migrations = migration_path.resolve()
+    if migration_dir is not None and not source_migrations.is_relative_to((ROOT / '.work').resolve()):
+        raise RuntimeError('QA migration source must be an owned temporary snapshot under .work')
+    if not source_migrations.is_dir():
+        raise RuntimeError('QA migration source is missing or unsafe')
     assert_ports_free()
     docker = run(['docker', 'info', '--format', '{{.ServerVersion}}'], timeout=30).strip()
     run([sys.executable, '-c', 'import jsonschema; assert jsonschema.__version__ == "4.26.0"'], timeout=30)
@@ -178,7 +186,7 @@ def setup():
     if (project_count, api_count, db_count, shadow_count) != (1, 1, 1, 1):
         raise RuntimeError('Could not derive the QA config from the checked-in Supabase baseline')
     (supabase_dir / 'config.toml').write_text(config, encoding='utf-8')
-    shutil.copytree(ROOT / 'supabase/migrations', supabase_dir / 'migrations')
+    shutil.copytree(source_migrations, supabase_dir / 'migrations')
     output = os.environ.get('GITHUB_OUTPUT')
     if output:
         with open(output, 'a', encoding='utf-8') as stream:
@@ -188,7 +196,7 @@ def setup():
     report.update({'sha': git_sha(), 'projectId': project, 'workdir': str(workdir), 'apiPort': 54361,
                    'dbPort': 54362, 'dockerServer': docker, 'contractVersion': 'dish-session-v4/roadmap-v2/GM-07.B',
                    'migrationHashes': {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
-                                       for p in sorted((ROOT / 'supabase/migrations').glob('*.sql'))},
+                                       for p in sorted(source_migrations.glob('*.sql'))},
                    'schemaSha256': hashlib.sha256((ROOT / 'docs/architecture/schemas/dish-session-v4b.schema.json').read_bytes()).hexdigest()})
     save_report(report)
     record('ownership-and-isolated-config', 'Pass', projectId=project, ports=[54361, 54362], workdirUnder='.work/ci')
@@ -363,7 +371,7 @@ def cleanup():
         record('cleanup', 'Fail', worker=worker_result, failure='QA workdir is outside the generated .work/ci namespace')
         raise RuntimeError('Refusing cleanup outside the owned QA workspace')
     container = 'supabase_db_' + project
-    inspected = subprocess.run(['docker', 'inspect', container], capture_output=True, text=True, encoding='utf-8')
+    inspected = subprocess.run(['docker', 'container', 'inspect', container], capture_output=True, text=True, encoding='utf-8')
     if inspected.returncode == 0:
         info = json.loads(inspected.stdout)[0]
         labels = info.get('Config', {}).get('Labels') or {}

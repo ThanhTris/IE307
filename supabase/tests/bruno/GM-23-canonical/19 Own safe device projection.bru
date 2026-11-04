@@ -1,0 +1,17 @@
+meta {
+ name: 19 Own safe device projection
+ type: http
+ seq: 19
+}
+get {
+ url: {{baseUrl}}/rest/v1/devices?select=id,active,permission
+ body: none
+ auth: none
+}
+headers {
+ apikey: {{anonKey}}
+ Authorization: Bearer {{hostToken}}
+}
+tests {
+ test('caller sees only safe metadata for its registered device',()=>{expect(res.getStatus()).to.equal(200);expect(res.getBody()).to.be.an('array');expect(res.getBody().some(d=>d.active===true&&d.permission==='granted')).to.equal(true);for(const d of res.getBody())expect(d).not.to.have.property('push_token');});
+}

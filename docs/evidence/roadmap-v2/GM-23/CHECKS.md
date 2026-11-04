@@ -1,5 +1,9 @@
 # GM-23 — Checks
 
+Lượt supplement hiện hành: [canonical notifications GM-23.2](canonical-notifications/CHECKS.md)
+(2026-11-04, schema 0.15.0). Phần dưới là evidence baseline lịch sử, không thay
+kết quả của revision supplement.
+
 Checked on 2026-10-15, branch `codex/gm-23-notification-sender`, source base
 $rev.
 

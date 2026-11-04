@@ -1,0 +1,1 @@
+Pass: history.sql assertion blocks completed with ON_ERROR_STOP

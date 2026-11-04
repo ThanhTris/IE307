@@ -1,0 +1,31 @@
+
+> gi-cung-duoc-backend-tooling@0.1.0 test
+> node --test tests/backend-runner.test.mjs tests/backend-qa.test.mjs
+
+✔ run ids are safe path and resource-name segments (8.3158ms)
+✔ QA ports are isolated from app ports and allow the planned alternate pair (1.6869ms)
+✔ CLI requires explicit run id and rejects unknown flags (2.944ms)
+✔ resource ownership checks require exact project, name, and workdir labels (1.4982ms)
+✔ volumes need both Supabase and Compose project labels (0.7877ms)
+✔ published QA ports must be bound only to loopback interfaces (2.8669ms)
+✔ manifest canonicalization is independent of object key order (1.3266ms)
+✔ worker termination only accepts the run-scoped owned process nonce (1.7311ms)
+✔ failed cleanup step stays retryable and does not record false completion (1.9009ms)
+✔ config pins project and ports (18.9688ms)
+✔ local URL guard rejects remote, credentials, paths, redirects and wrong port (1.3739ms)
+✔ commands never target remote or delete backups (2.4857ms)
+✔ status deliberately drops all secrets (2.6525ms)
+✔ health asserts HTTP status and GoTrue body, no redirect following (72.9099ms)
+✔ redaction strips JWT, keys, password and named credential fields (0.7634ms)
+✔ only transient Docker image/network startup failures are retryable (0.7925ms)
+✔ failed subprocess diagnostics retain stdout and stderr while redacting secrets (220.0839ms)
+✔ invalid reset rejected before any process (1.552ms)
+✔ missing Docker fails actionable, not success (4.2354ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 598.1311

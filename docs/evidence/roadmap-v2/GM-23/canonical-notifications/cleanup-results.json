@@ -1,0 +1,15 @@
+{
+  "result": "Pass",
+  "foreignWorkdirRejected": true,
+  "injectedFailureAfterGatewayClosed": true,
+  "privateJournalRetainedOnFailure": true,
+  "retryWithoutGateway": true,
+  "secondStopIdempotent": true,
+  "ownedContainersAndVolumesRemaining": 0,
+  "statusAfterCleanup": {
+    "owned": false,
+    "running": false,
+    "schemaVersion": null
+  },
+  "applicationDatabaseChanged": false
+}

@@ -1,0 +1,21 @@
+meta {
+ name: 17 Reused request ID rejected
+ type: http
+ seq: 17
+}
+post {
+ url: {{baseUrl}}/rest/v1/rpc/register_push_device
+ body: json
+ auth: none
+}
+headers {
+ apikey: {{anonKey}}
+ Authorization: Bearer {{hostToken}}
+ Content-Type: application/json
+}
+body:json {
+ {"requestId":"{{registerRequestId}}","device_id":"{{deviceId}}","token":"ExponentPushToken[changed-payload-0123456789]","permission":"granted"}
+}
+tests {
+ test('reused request ID with a changed payload is rejected exactly',()=>{const b=res.getBody();expect(res.getStatus()).to.equal(409);expect(b.ok).to.equal(false);expect(b.messageKey||b.error?.messageKey).to.equal('REQUEST_ID_REUSED');});
+}
