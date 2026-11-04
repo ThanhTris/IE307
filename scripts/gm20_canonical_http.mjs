@@ -105,13 +105,78 @@ async function room(people=[h,m],count=10){
 }
 async function send(u,r,choice,id){const s=await snapshot(u,r.id);const request={...versionArgs(r.id,s),requestId:id||requestId('submit'),votes:votesFor(s.pool,choice)};const response=await api(u,'submit',request);expectOk(response,'complete ballot');return {request,response};}
 async function waiting(u,r,id){const s=await snapshot(u,r.id);const request={...versionArgs(r.id,s),requestId:id||requestId('waiting')};const response=await api(u,'waiting',request);expectOk(response,'enter waiting after ACK');return {request,response};}
-async function allWait(r){for(const u of r.people)await waiting(u,r);return snapshot(r.people[0],r.id);}
+async function allWait(r){r.waitingReceipts??=[];for(const u of r.people)r.waitingReceipts.push(await waiting(u,r));return snapshot(r.people[0],r.id);}
 async function result(u,r){return expectOk(await api(u,'result',{roomId:r.id}),'persisted canonical result');}
+const canonicalNotificationIdentities=new Map();
+function canonicalNotificationState(r,terminal){
+ const query=`select json_build_object(
+  'mappingCount',(select count(*)::int from gm23_private.canonical_notifications n where n.result_id='${terminal.resultId}'),
+  'roomResultEventCount',(select count(*)::int from public.events e where e.room_id='${r.id}' and e.kind='ROOM_RESULT_READY'),
+  'joinedCanonicalRows',(select count(*)::int from gm23_private.canonical_notifications n
+    join public.events e on e.id=n.event_id
+    join gm20_canonical_private.terminal_outbox o on o.result_id=n.result_id
+    join gm06_canonical.results cr on cr.result_id=n.result_id
+    join gm20_canonical_private.sessions s on s.room_id=o.room_ref_id and s.result_id=o.result_id
+    where n.result_id='${terminal.resultId}' and e.result_id=n.result_id and e.room_id=o.room_ref_id
+      and e.kind='ROOM_RESULT_READY' and e.invitation_id is null and e.friend_invitation_id is null
+      and e.dish_v4_result_id is null and n.status=o.status and o.status=cr.status
+      and n.contract_version=o.contract_version and o.contract_version=s.contract_version
+      and n.event_version=o.version and e.version=o.version
+      and e.dedupe_key='gm23-canonical-result:'||n.result_id::text
+      and e.created_at=o.created_at and e.expires_at=least(o.expires_at,o.created_at+interval '7 days')),
+  'eventId',(select n.event_id::text from gm23_private.canonical_notifications n where n.result_id='${terminal.resultId}'),
+  'canonicalStatus',(select cr.status from gm06_canonical.results cr where cr.result_id='${terminal.resultId}'),
+  'outboxStatus',(select o.status from gm20_canonical_private.terminal_outbox o where o.result_id='${terminal.resultId}'),
+  'mappingStatus',(select n.status from gm23_private.canonical_notifications n where n.result_id='${terminal.resultId}'),
+  'sessionContract',(select s.contract_version from gm20_canonical_private.sessions s where s.room_id='${r.id}' and s.result_id='${terminal.resultId}'),
+  'outboxContract',(select o.contract_version from gm20_canonical_private.terminal_outbox o where o.result_id='${terminal.resultId}'),
+  'mappingContract',(select n.contract_version from gm23_private.canonical_notifications n where n.result_id='${terminal.resultId}'),
+  'outboxVersion',(select o.version from gm20_canonical_private.terminal_outbox o where o.result_id='${terminal.resultId}'),
+  'mappingEventVersion',(select n.event_version from gm23_private.canonical_notifications n where n.result_id='${terminal.resultId}'),
+  'eventVersion',(select e.version from public.events e where e.id=(select n.event_id from gm23_private.canonical_notifications n where n.result_id='${terminal.resultId}')),
+  'eventKind',(select e.kind from public.events e where e.id=(select n.event_id from gm23_private.canonical_notifications n where n.result_id='${terminal.resultId}')),
+  'eventResultId',(select e.result_id::text from public.events e where e.id=(select n.event_id from gm23_private.canonical_notifications n where n.result_id='${terminal.resultId}')),
+  'eventRoomId',(select e.room_id::text from public.events e where e.id=(select n.event_id from gm23_private.canonical_notifications n where n.result_id='${terminal.resultId}')),
+  'eventInvitationId',(select e.invitation_id::text from public.events e where e.id=(select n.event_id from gm23_private.canonical_notifications n where n.result_id='${terminal.resultId}')),
+  'eventFriendInvitationId',(select e.friend_invitation_id::text from public.events e where e.id=(select n.event_id from gm23_private.canonical_notifications n where n.result_id='${terminal.resultId}')),
+  'eventDishV4ResultId',(select e.dish_v4_result_id::text from public.events e where e.id=(select n.event_id from gm23_private.canonical_notifications n where n.result_id='${terminal.resultId}')),
+  'eventRecipients',(select coalesce(json_agg(q.user_id::text order by q.user_id),'[]'::json) from (select unnest(e.recipient_user_ids) user_id from public.events e where e.id=(select n.event_id from gm23_private.canonical_notifications n where n.result_id='${terminal.resultId}')) q),
+  'outboxRecipients',(select coalesce(json_agg(a.user_id::text order by a.user_id),'[]'::json) from gm20_canonical_private.outbox_audience a where a.result_id='${terminal.resultId}'),
+  'lockedRoster',(select coalesce(json_agg(m.user_id::text order by m.user_id),'[]'::json) from gm06_canonical.result_members m where m.result_id='${terminal.resultId}'),
+  'inboxCount',(select count(*)::int from public.inbox i where i.event_id=(select n.event_id from gm23_private.canonical_notifications n where n.result_id='${terminal.resultId}')),
+  'inboxRecipients',(select coalesce(json_agg(i.owner_user_id::text order by i.owner_user_id),'[]'::json) from public.inbox i where i.event_id=(select n.event_id from gm23_private.canonical_notifications n where n.result_id='${terminal.resultId}')),
+  'inboxOutsiderCount',(select count(*)::int from public.inbox i where i.event_id=(select n.event_id from gm23_private.canonical_notifications n where n.result_id='${terminal.resultId}') and not exists(select 1 from gm20_canonical_private.outbox_audience a where a.result_id='${terminal.resultId}' and a.user_id=i.owner_user_id)),
+  'eventTtlExact',coalesce((select e.expires_at=least(o.expires_at,o.created_at+interval '7 days') from gm23_private.canonical_notifications n join public.events e on e.id=n.event_id join gm20_canonical_private.terminal_outbox o on o.result_id=n.result_id where n.result_id='${terminal.resultId}'),false),
+  'inboxMismatchCount',(select count(*)::int from public.inbox i join gm23_private.canonical_notifications n on n.event_id=i.event_id join public.events e on e.id=n.event_id join gm20_canonical_private.terminal_outbox o on o.result_id=n.result_id where n.result_id='${terminal.resultId}' and (i.created_at is distinct from o.created_at or i.expires_at is distinct from least(o.expires_at,o.created_at+interval '7 days') or i.version is distinct from e.version)),
+  'legacyEventResultReferenceCount',(select count(*)::int from public.events e where e.room_id='${r.id}' and e.kind='ROOM_RESULT_READY' and e.dish_v4_result_id is not null),
+  'legacyPublicResultCount',(select count(*)::int from public.results z where z.room_id='${r.id}'),
+  'legacyDishV4ResultCount',(select count(*)::int from dish_v4_private.results z where z.room_id='${r.id}')
+ )`;
+ return JSON.parse(sql(query));
+}
 function authority(r,terminal){
  const counts=JSON.parse(sql("select json_build_object('canonical',(select count(*) from gm06_canonical.results where room_ref_id='"+r.id+"'),'legacy',(select count(*) from dish_v4_private.results where room_id='"+r.id+"'),'registry',(select count(*) from gm17_private.result_refs where id='"+terminal.resultId+"'),'outbox',(select count(*) from gm20_canonical_private.terminal_outbox where result_id='"+terminal.resultId+"'),'audience',(select count(*) from gm20_canonical_private.outbox_audience where result_id='"+terminal.resultId+"'))"));
  pass('single canonical authority / registry / outbox '+r.id,{canonical:1,legacy:0,registry:1,outbox:1,audience:r.people.length},counts);
  pass('seed stays private with pinned selector '+r.id,'t',sql("select algorithm='u32-murmur3-rejection-v1' and seed~'^[0-9a-f]{8}$' from gm20_canonical_private.selection_secrets where result_id='"+terminal.resultId+"'"));
- pass('new result does not create legacy event reference '+r.id,'0',sql("select count(*) from public.events where room_id='"+r.id+"' and kind='ROOM_RESULT_READY'"));
+ pass('terminal result pins canonical contract '+r.id,contractVersion,terminal.contractVersion);
+ const actual=canonicalNotificationState(r,terminal),{eventId,...projection}=actual;
+ const recipientIds=r.people.map(person=>person.id).sort();
+ pass('one canonical result event matches result/outbox '+r.id,{
+  mappingCount:1,roomResultEventCount:1,joinedCanonicalRows:1,canonicalStatus:terminal.status,outboxStatus:terminal.status,mappingStatus:terminal.status,
+  sessionContract:contractVersion,outboxContract:contractVersion,mappingContract:contractVersion,outboxVersion:1,mappingEventVersion:1,eventVersion:1,
+  eventKind:'ROOM_RESULT_READY',eventResultId:terminal.resultId,eventRoomId:r.id,eventInvitationId:null,eventFriendInvitationId:null,eventDishV4ResultId:null,
+  eventRecipients:recipientIds,outboxRecipients:recipientIds,lockedRoster:recipientIds,inboxCount:recipientIds.length,inboxRecipients:recipientIds,
+  inboxOutsiderCount:0,eventTtlExact:true,inboxMismatchCount:0,legacyEventResultReferenceCount:0,legacyPublicResultCount:0,legacyDishV4ResultCount:0
+ },projection);
+ pass('canonical event has a stable mapped UUID '+r.id,true,typeof eventId==='string'&&/^[0-9a-f-]{36}$/.test(eventId));
+ const identity=JSON.parse(sql(`select json_build_object(
+  'mapping',(select json_build_object('resultId',n.result_id::text,'eventId',n.event_id::text,'status',n.status,'contractVersion',n.contract_version,'eventVersion',n.event_version) from gm23_private.canonical_notifications n where n.result_id='${terminal.resultId}'),
+  'event',(select json_build_object('id',e.id::text,'kind',e.kind,'roomId',e.room_id::text,'resultId',e.result_id::text,'recipients',e.recipient_user_ids,'dedupeKey',e.dedupe_key,'createdAt',e.created_at,'expiresAt',e.expires_at,'version',e.version) from public.events e where e.id=(select n.event_id from gm23_private.canonical_notifications n where n.result_id='${terminal.resultId}')),
+  'inbox',(select coalesce(json_agg(json_build_object('id',i.id::text,'ownerId',i.owner_user_id::text,'eventId',i.event_id::text,'createdAt',i.created_at,'expiresAt',i.expires_at,'version',i.version) order by i.owner_user_id),'[]'::json) from public.inbox i where i.event_id=(select n.event_id from gm23_private.canonical_notifications n where n.result_id='${terminal.resultId}'))
+ )`));
+ const previous=canonicalNotificationIdentities.get(terminal.resultId);
+ if(previous)pass('canonical event/mapping/inbox IDs stay stable '+r.id,previous,identity);
+ else canonicalNotificationIdentities.set(terminal.resultId,identity);
 }
 
 pass('all private candidate tables force RLS','t',sql("select count(*)=7 and bool_and(c.relrowsecurity and c.relforcerowsecurity) from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='gm20_canonical_private' and c.relkind='r'"));
@@ -127,9 +192,14 @@ pass('R1 top3 points/dense rank',true,terminal.topDishes.every(t=>t.score===4&&t
 pass('R1 final row identity retained',sFirst.pool.find(d=>d.dishId===terminal.winner.dishId).roundDishId,terminal.winner.roundDishId);
 authority(first,terminal);
 pass('result reads actual canonical bytes',terminal,await result(m,first));
+authority(first,terminal);
 pass('no consent means no canonical history','0',sql("select count(*) from gm06_canonical.histories where result_id='"+terminal.resultId+"'"));
 pass('terminal DTO never exposes private evaluator/seed',false,['seed','eligibleIds','candidateIds','round1','round2','member_fingerprint'].some(k=>Object.hasOwn(terminal,k)));
 pass('old submit receipt replays after terminal',accepted.response,await api(h,'submit',accepted.request));
+authority(first,terminal);
+const terminalWaitingAck=first.waitingReceipts.at(-1);
+pass('old waiting receipt replays after terminal',terminalWaitingAck.response,await api(first.people.at(-1),'waiting',terminalWaitingAck.request));
+authority(first,terminal);
 expectFail(await api(h,'submit',{...accepted.request,votes:accepted.request.votes.map(v=>({...v,choice:'OK'}))}),'REQUEST_ID_REUSED',409,'same ID cannot change ballot payload');
 expectFail(await api(x,'result',{roomId:first.id}),'NOT_MEMBER',403,'outsider cannot read canonical result');
 expectFail(await legacyRpc(h,'dish_session',{command:'snapshot',payload:{contractVersion:'dish-session-v4/roadmap-v2/GM-07.B',roomId:first.id}}),'CONTRACT_MISMATCH',409,'B route cannot read supplement room');
@@ -151,6 +221,7 @@ pass('controlled database failure reaches HTTP',false,failed.status===200);
 pass('registry rolled back',registryBefore,sql('select count(*) from gm17_private.result_refs'));
 pass('scoped history payload/receipt/audience rolled back',historyBefore,sql('select json_build_array((select count(*) from gm06_canonical.histories),(select count(*) from gm06_canonical.history_receipts),(select count(*) from gm06_canonical.history_audience))'));
 pass('canonical/result/outbox rolled back','0',sql("select (select count(*) from gm06_canonical.results where room_ref_id='"+faulted.id+"')+(select count(*) from gm20_canonical_private.terminal_outbox where room_ref_id='"+faulted.id+"')"));
+pass('canonical notification mapping/event/inbox rolled back',{mappings:0,events:0,inbox:0},JSON.parse(sql("select json_build_object('mappings',(select count(*) from gm23_private.canonical_notifications n join gm06_canonical.results cr using(result_id) where cr.room_ref_id='"+faulted.id+"'),'events',(select count(*) from public.events e where e.room_id='"+faulted.id+"' and e.kind='ROOM_RESULT_READY'),'inbox',(select count(*) from public.inbox i join public.events e on e.id=i.event_id where e.room_id='"+faulted.id+"' and e.kind='ROOM_RESULT_READY'))")));
 pass('failed request did not save ACK','0',sql("select count(*) from gm20_canonical_private.request_acks where user_id='"+m.id+"' and request_id='"+faultRequest.requestId+"'"));
 pass('failed last waiting did not change room version',preFault.version,(await snapshot(m,faulted.id)).version);
 sql('drop trigger gm20_qa_fault on gm20_canonical_private.terminal_outbox; drop function gm20_canonical_private.qa_fault();');
@@ -213,7 +284,8 @@ const u3=await guest('third'),u4=await guest('fourth');const q=await room([h,m,u
 await send(h,q,()=> 'OK');await waiting(h,q);await send(m,q,()=> 'OK');let qs=await snapshot(h,q.id);
 expectFail(await api(h,'finalize',{requestId:requestId('half'),roomId:q.id,expectedVersion:qs.version}),'NOT_READY',409,'exactly half cannot end waiting');
 await send(u3,q,()=> 'OK');qs=await snapshot(h,q.id);
-expectOk(await api(h,'finalize',{requestId:requestId('majority'),roomId:q.id,expectedVersion:qs.version}),'host current-round majority');
+const majorityRequest={requestId:requestId('majority'),roomId:q.id,expectedVersion:qs.version};
+const majorityAck=await api(h,'finalize',majorityRequest);expectOk(majorityAck,'host current-round majority');
 qs=await snapshot(h,q.id);pass('majority R1 advances with zero R2 ACK',[2,0,null],[qs.round,qs.submittedCount,qs.waitingStartedAt]);
 expectFail(await api(h,'finalize',{requestId:requestId('r2-no-ack'),roomId:q.id,expectedVersion:qs.version}),'NOT_READY',409,'R1 majority cannot finalize empty R2');
 await send(u4,q,()=> 'KEEP');await waiting(u4,q);qs=await snapshot(h,q.id);
@@ -223,6 +295,7 @@ for(let i=0;i<30;i++){qs=await snapshot(h,q.id);if(qs.result)break;await new Pro
 pass('real worker timeout accepts minority cohort','DECIDED',qs.result?.status);
 pass('R1 score cohort differs from R2 submittedCount',[3,1],[qs.result.round1BallotCount,qs.submittedCount]);
 pass('timeout R2 points use only R1',true,qs.result.topDishes.every(t=>t.score===3));authority(q,qs.result);
+pass('accepted finalize receipt replays after terminal',majorityAck,await api(h,'finalize',majorityRequest));authority(q,qs.result);
 
 // Boundary denominators beyond the four-person timeout case above.
 const quorumPeople=[h,m,u3,u4];while(quorumPeople.length<20)quorumPeople.push(await guest('quorum-'+quorumPeople.length));
@@ -257,6 +330,7 @@ const raceReplies=await Promise.all([
 pass('race replies are ACK or explicit conflict/closed',true,raceReplies.every(r=>r.body.ok||['VERSION_CONFLICT','INVALID_ROOM_STATE','ROUND_CLOSED','NOT_READY'].includes(r.body.error?.messageKey)));
 let raceFinal;for(let i=0;i<30;i++){raceFinal=await snapshot(h,raced.id);if(raceFinal.result)break;await new Promise(r=>setTimeout(r,1000));}
 pass('host-submit-timeout race reaches terminal','DECIDED',raceFinal.result?.status);authority(raced,raceFinal.result);
+pass('race result refetch keeps canonical projection',raceFinal.result,await result(m,raced));authority(raced,raceFinal.result);
 pass('race scores use committed R1 cohort',true,raceFinal.result.topDishes.every(t=>t.score===2*raceFinal.result.round1BallotCount));
 pass('race terminal cohort matches stored ACK count',Number(sql("select count(*) from dish_v4_private.ballots where room_id='"+raced.id+"' and round=1")),raceFinal.result.round1BallotCount);
 expectFail(await api(h,'finalize',{requestId:requestId('choose-winner'),roomId:raced.id,expectedVersion:raceFinal.version,winner:raceFinal.result.winner.dishId},{requestValid:false}),'UNSUPPORTED_FIELD',400,'host cannot supply winner');
@@ -314,9 +388,14 @@ if(process.env.GM20_CANONICAL_BRUNO==='1'){
  await writeFile(path,'vars {\n'+Object.entries(env).map(([k,v])=>'  '+k+': '+v).join('\n')+'\n}\n',{mode:0o600});await chmod(path,0o600);
  console.log('BRUNO_READY: select ignored Local.runtime.private; credentials not printed');
 }
-const paths=['supabase/migrations/0035_gm20_canonical_writer.sql','scripts/gm20_canonical_http.mjs','scripts/gm20_canonical_check.py','scripts/dish_policy_worker.py','tests/fixtures/decision-v4/cases.json'];
+const migrationPaths=readdirSync(resolve(root,'supabase/migrations')).filter(name=>/^003[5-8]_.*\.sql$/.test(name)).sort().map(name=>'supabase/migrations/'+name);
+assert.deepEqual(migrationPaths.map(path=>path.slice(path.lastIndexOf('/')+1)),['0035_gm20_canonical_writer.sql','0036_gm21_canonical_history.sql','0037_gm22_invitation_admission.sql','0038_gm23_canonical_notifications.sql'],'full producer/consumer migration chain');
+const paths=[...migrationPaths,'scripts/gm20_canonical_http.mjs','scripts/gm20_canonical_check.py','scripts/dish_policy_worker.py','tests/fixtures/decision-v4/cases.json'];
+const databaseSchemaVersion=sql('select schema_version from public.schema_versions order by installed_at desc limit 1');
+pass('latest installed database schema includes canonical notifications','0.15.0',databaseSchemaVersion);
 const report={fixtureOnly:true,result:'Pass',scope:'owned synthetic Auth/REST QA; no real votes or production',caseCount:results.length,cases:results,schema:validated,
- contractVersion,policyVersion,schemaVersion:'0.12.0',applicationDatabaseChanged:false,privateBrunoEnvironmentWritten:process.env.GM20_CANONICAL_BRUNO==='1',credentialsInEvidence:false,
+ contractVersion,policyVersion,producer:{task:'GM-20',version:'GM-20.4',migration:'0035_gm20_canonical_writer.sql',schemaVersion:'0.12.0'},schemaVersion:databaseSchemaVersion,databaseSchemaVersion,
+ applicationDatabaseChanged:false,privateBrunoEnvironmentWritten:process.env.GM20_CANONICAL_BRUNO==='1',credentialsInEvidence:false,
  sourceHashes:Object.fromEntries(paths.map(p=>[p,createHash('sha256').update(readFileSync(p)).digest('hex')]))};
 await mkdir(reportDirectory,{recursive:true});
 await writeFile(resolve(reportDirectory,'http-results.json'),JSON.stringify(report,null,2)+'\n');

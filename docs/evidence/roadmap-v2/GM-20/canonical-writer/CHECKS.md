@@ -75,3 +75,22 @@ rows. Baseline B and old stored projections remain unchanged by new result write
 Commit-time controlled fault now includes active personal/group consent; history,
 receipt and audience counts remain unchanged on rollback, then retry writes3 once.
 Actual output/evidence does not include private runtime or Bruno credentials.
+
+
+## GM-23 canonical notification integration —2026-11-05
+
+The earlier GM-20 assertion that no `ROOM_RESULT_READY` event existed was a
+pre-consumer expectation and is superseded for the full migration chain. After
+0038, the expected result is exactly one canonical mapping/event and one inbox
+row per locked recipient. The new full-chain run passed 102 independent SQL
+vectors, 150 baseline Auth/REST cases /575 envelopes, and 178 GM-20 canonical
+assertions /711 envelopes. It also checked event/result/outbox identity,
+contract/status/version, exact audience, expiry, rollback/retry, and stable
+event/mapping/inbox rows through submit, waiting and finalize replay, result
+reads and the host/worker race.
+
+See [the GM-23 integration follow-up](gm23-integration-followup-2026-11-05/CHECKS.md)
+for exact source revision, migration hashes, input/expected/actual reports,
+consumer regression and cleanup results. Producer schema0.12.0 is reported
+separately from the full database schema0.15.0. CI on the pushed PR revision is
+pending; this evidence does not imply task approval or Done.

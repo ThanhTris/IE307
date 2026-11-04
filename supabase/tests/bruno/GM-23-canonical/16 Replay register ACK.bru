@@ -1,0 +1,21 @@
+meta {
+ name: 16 Replay register ACK
+ type: http
+ seq: 16
+}
+post {
+ url: {{baseUrl}}/rest/v1/rpc/register_push_device
+ body: json
+ auth: none
+}
+headers {
+ apikey: {{anonKey}}
+ Authorization: Bearer {{hostToken}}
+ Content-Type: application/json
+}
+body:json {
+ {"requestId":"{{registerRequestId}}","device_id":"{{deviceId}}","token":"{{pushToken}}","permission":"granted"}
+}
+tests {
+ test('same request ID and payload returns the byte-equivalent ACK',()=>{expect(res.getStatus()).to.equal(200);expect(JSON.stringify(res.getBody())).to.equal(bru.getVar('registerAck'));});
+}

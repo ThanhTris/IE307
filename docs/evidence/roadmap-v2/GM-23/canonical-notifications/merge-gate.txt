@@ -1,0 +1,11 @@
+Approval source: https://github.com/users/ThanhTris/projects/2 | checked at 2026-11-04T10:08:08.691264+00:00 | no cached/local fallback
+Target snapshot: origin/main = 7c22db8d8a216c96c9b1cd1a26fcd95ccd56cdd0 (local ref; freshness not verified)
+Baseline approval mapping: GM-01 -> Project GM-00 / issue #37 (owner-pinned; artifacts remain separate)
+GM-23: READY_FOR_MERGE_REVIEW | owner=Trí reviewer=Trí | tasks/backlog/GM-23.md
+Gate checks approval source and delivered files, not execution. Merge still requires review of this PR, upstream PR/commit verification and real integration tests. No status/task edits performed.
+
+Final gate after fetch and fast-forward, 2026-11-04:
+Fetched origin/main = 4a35374b3cb3bbdb3bd8151fe471e779deb0430f.
+GM-23 start gate: READY_TO_CLAIM.
+GM-23 merge gate with --base-ref origin/main: READY_FOR_MERGE_REVIEW.
+The gate reads Project approval and delivered files; it does not verify execution, approve, merge, or change task status. Full revision-specific CI remains Not run because this patch is uncommitted.

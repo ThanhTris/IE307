@@ -27,3 +27,20 @@ bằng eventId/generation và UI refetch; không hứa exactly-once.
 SQL/HTTP và fake transport thuộc GM-23. Remote Expo trên Android, permission,
 logout và tap/deep-link nhận bởi GM-29/GM-30. Không đưa service key hoặc token
 vào mobile, log hay evidence.
+
+## GM-23.2 — canonical terminal bridge (2026-11-04)
+
+Migration `0038_gm23_canonical_notifications.sql` nhận transactional outbox của
+GM-20.4, không viết lại finalize. Constraint trigger deferred chỉ materialize
+sau khi audience đã đầy đủ; rollback terminal cũng rollback event/inbox/delivery.
+Mỗi canonical result có một event, mỗi recipient có một inbox, mỗi thiết bị có
+delivery riêng theo constraint hiện hành. Catchup dùng cùng helper, chỉ nhận
+outbox còn TTL. UUID result được đăng ký trong reference registry GM-17; mapping
+private khóa status/contractVersion/eventVersion, không cấp quyền đọc result.
+
+Inbox canonical bổ sung `status`, `contractVersion`, `eventVersion` cạnh
+`roomId/resultId`. Push `data` chỉ thêm type/eventId và các reference này;
+không chứa winner, podium, điểm, ballot, preference hay seed. Payload builder
+dùng chung cho Edge sender và worker local. FRIEND_INVITED vẫn inbox-only.
+Đây là supplement giữ nguyên RPC/DTO GM-23.1; Trí review revision cuối, tài liệu
+này không ghi approval hoặc nghiệm thu remote Android.

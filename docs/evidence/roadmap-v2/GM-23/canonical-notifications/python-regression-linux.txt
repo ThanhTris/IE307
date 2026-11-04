@@ -1,0 +1,5 @@
+Environment: isolated Linux container based on python:3.12-slim-bookworm
+Source: copy of current GM-23 worktree; excludes .git, .work, node_modules, .env, and private Bruno runtime environment
+Command: PYTHONUTF8=1 python -m unittest discover -s tests -p 'test_*.py'
+Result: Ran 658 tests in 170.391s; OK (skipped=6)
+The Linux run exercises symlink cases without weakening Windows security or changing their assertions.

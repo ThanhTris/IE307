@@ -129,6 +129,19 @@ production activation, consumer outbox delivery and project-owner acceptance rem
 outside these server checks. Publication is authorized by the user; no Approved/Done or production activation is inferred.
 
 
+## GM-23 consumer verification —2026-11-05
+
+GM-23 migration0038 now consumes the GM-20 transactional outbox and materializes
+the canonical result event/inbox. The prior sentence that GM-23 receives an
+outbox but does not yet materialize a public event describes the earlier
+handoff, not the current PR candidate. No GM-20 writer or public RPC change was
+needed. The full-chain checker and actual results are in
+[the integration follow-up](gm23-integration-followup-2026-11-05/HANDOFF.md).
+The follow-up checks result authority, one event/mapping, frozen recipients,
+TTL and rollback/replay invariants. Remote delivery and Android remain outside
+this server handoff.
+
+
 ## Main refresh during implementation
 
 GM15 PR140 merged into main5c339cf (also GM40 dependency docs2f91f92).
