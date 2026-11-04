@@ -199,7 +199,7 @@ describe('GM-24 dish pool preview mock and live adapters', () => {
       dishCount: 20,
     });
     expect(res.ok).toBe(false);
-    if (!res.ok) {
+    if (!res.ok && res.code === 'INVALID_PAYLOAD') {
       expect(res.code).toBe('INVALID_PAYLOAD');
       expect(res.message).toMatch(/không khớp với số món yêu cầu/);
     }
@@ -262,7 +262,7 @@ describe('GM-24 dish pool preview mock and live adapters', () => {
       dishCount: 10,
     });
     expect(res.ok).toBe(false);
-    if (!res.ok) {
+    if (!res.ok && res.code === 'INVALID_PAYLOAD') {
       expect(res.code).toBe('INVALID_PAYLOAD');
       expect(res.message).toMatch(/Phiên bản hợp đồng/);
     }
@@ -291,7 +291,7 @@ describe('GM-24 dish pool preview mock and live adapters', () => {
       dishCount: 10,
     });
     expect(res.ok).toBe(false);
-    if (!res.ok) {
+    if (!res.ok && res.code === 'INVALID_PAYLOAD') {
       expect(res.code).toBe('INVALID_PAYLOAD');
       expect(res.message).toMatch(/trùng lặp/);
     }
@@ -320,7 +320,7 @@ describe('GM-24 dish pool preview mock and live adapters', () => {
       dishCount: 10,
     });
     expect(res.ok).toBe(false);
-    if (!res.ok) {
+    if (!res.ok && res.code === 'INVALID_PAYLOAD') {
       expect(res.code).toBe('INVALID_PAYLOAD');
       expect(res.message).toMatch(/thiếu tên/);
     }

@@ -70,7 +70,7 @@ export type DishPoolPreviewResult =
     }
   | {
       ok: false;
-      code: 'DESIRED_TIME_PASSED' | 'NETWORK_ERROR' | 'TIMEOUT' | 'AUTH_REQUIRED' | 'INVALID_INPUT' | 'ERROR';
+      code: 'DESIRED_TIME_PASSED' | 'NETWORK_ERROR' | 'TIMEOUT' | 'AUTH_REQUIRED' | 'INVALID_INPUT' | 'ERROR' | 'INVALID_PAYLOAD';
       messageKey: string;
       message: string;
     };
