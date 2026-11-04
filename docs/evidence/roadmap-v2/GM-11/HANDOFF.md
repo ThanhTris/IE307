@@ -22,8 +22,8 @@ Mock-only. Room code/QR are labeled placeholders; invites do not add or ready an
 
 ## Supplement 2026-11-04 — no-ready lobby and 20-person roster
 
-- Branch: `codex/gm11-figma-update`, based on `origin/main` at `90e871a`.
+- Branch: `codex/gm11-figma-update`, based on `origin/main` at `7c22db8`.
 - Removed obsolete ready/reset-ready presentation and ready-derived presence; host controls remain host-only and members can leave. Added deterministic 1/2/3/20 mock roster preview, full-roster invite disable, and Android Back confirmation for host cancel/member leave.
 - Replaced stale tests that asserted the old `/8` and Ready policy with tests for the current no-ready/20-member behavior. Legacy API/request-ID coverage remains separate.
-- Automated verification: `cd mobile; npm run check` — typecheck, lint, 27 suites / 712 tests, and architecture guard passed.
+- Automated verification: `cd mobile; npm run check` — typecheck, lint, 56 suites / 948 tests, and architecture guard passed.
 - `FIGMA_PARITY.md` records missing paired Figma/app screenshots and device checks. No lifecycle/API/backend/Android/TalkBack acceptance is claimed. This handoff does not imply Done/Approved.

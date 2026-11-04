@@ -28,7 +28,7 @@ All room actions are isolated mock behavior. No RPC, real invitation, QR, persis
 | Case / AC | Command or route | Actual / assertion | Result |
 | --- | --- | --- | --- |
 | Lobby cap/roles/no-ready/host start | `cd mobile; npm run check` on `codex/gm11-figma-update` | GM-11 component tests assert 1/3/20-person presentation fixtures, no ready action, host-only start/context, member leave, and start independent of member-ready flags | Pass (automated mock UI) |
-| TypeScript, lint, all mobile tests, architecture | same | Typecheck/lint and 27 suites / 712 tests passed; architecture guard passed | Pass (automated) |
+| TypeScript, lint, all mobile tests, architecture | same | Typecheck/lint and 56 suites / 948 tests passed; architecture guard passed | Pass (automated) |
 | Figma visual parity / Android smoke | `docs/evidence/roadmap-v2/GM-11/FIGMA_PARITY.md` | Figma connector unavailable and no device screenshot captured | Not run; visual AC remains open |
 | Live start gate | `python scripts/task_readiness.py --task GM-11` with `GH_TOKEN` supplied ephemerally from `gh auth token` | Live Project #2 verified; GM-05 and GM-07 are Done; GM-11 is Needs Update | READY_TO_CLAIM |
 
@@ -36,4 +36,4 @@ This supplement records implementation and automated checks only. It does not cl
 | Expo SDK / lockfile check | `cd mobile; npm run check:expo` | SDK 58.0.19 dependencies match lockfile; offline-mode compatibility signal is unreliable | Pass (installed/locked dependency check; no online latest upgrade check) |
 | Repository validation / indexes | `python scripts/validate_repository.py`; `python scripts/task_readiness.py --check-docs` | Repository structure and generated task indexes passed | Pass |
 | Python regression suite | `python -m unittest discover -s tests -p "test_*.py"` | 657 tests; 6 skipped; one existing catalogue symlink test errored because Windows denied symlink creation (`WinError 1314`) | Environment-limited; rerun on a host with symlink privilege |
-| Live merge readiness | `python scripts/task_readiness.py --task GM-11 --gate merge --base-ref origin/main` with ephemeral `GH_TOKEN` | `READY_FOR_MERGE_REVIEW`; base ref is local `90e871a` (freshness not verified) | Pass gate; owner review still required |
+| Live merge readiness | `python scripts/task_readiness.py --task GM-11 --gate merge --base-ref origin/main` with ephemeral `GH_TOKEN` | `READY_FOR_MERGE_REVIEW`; base ref is local `7c22db8` (freshness not verified) | Pass gate; owner review still required |
