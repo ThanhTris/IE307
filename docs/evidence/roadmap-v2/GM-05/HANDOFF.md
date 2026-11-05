@@ -11,9 +11,10 @@ Bàn giao component logo thương hiệu cho các màn hình downstream (`GM-09`
    - Khi đứng cạnh chữ thương hiệu (mặc định không có `accessibilityLabel`), component tự đặt `accessible={false}` và `importantForAccessibility="no"` để hỗ trợ TalkBack không đọc lặp.
    - Khi đứng độc lập (có truyền `accessibilityLabel`), component mở `accessible={true}`, `accessibilityRole="image"`.
 4. **Kiểm tra trực quan & mẫu preview:**
-   - Xem preview trực tiếp tại màn `/components` (`ComponentPreviewScreen`), hiển thị 3 kích thước trên cả nền sáng và tối (`#043B22`).
+   - Xem preview trực tiếp tại màn `/dev/components` (`ComponentPreviewScreen`), hiển thị 3 kích thước trên cả nền sáng và tối (`#043B22`); nền shell ở `/dev/foundation`.
 5. **Tiêu chuẩn kiểm thử:**
-   - 23 tests trong `sharedComponents.test.tsx` và 214 tests toàn mobile passed.
+   - 23 tests component đã ghi trong [CHECKS](CHECKS.md). [CI commit `4903256`](https://github.com/ThanhTris/IE307/actions/runs/41957120783) đạt 56 suites / 954 tests toàn mobile; con số 214 tests toàn mobile ghi trước đó không khớp và đã được đính chính. Tập con local năm suite component/route đạt 93/93 tests của cùng revision được ghi riêng.
+   - Visual logo trên thiết bị, TalkBack và icon/splash native của supplement SVG vẫn **Not run**; bằng chứng props/export không thay kiểm thiết bị.
 
 ## Supplement 2026-10-27 — Home component consumption
 

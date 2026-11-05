@@ -8,6 +8,12 @@ On Windows, the worker's recurring Docker commands use `CREATE_NO_WINDOW`; the N
 
 ## Start and verify
 
+### Docker Desktop port binding on Windows
+
+If strict startup reports `QA_HOST_BINDING_NOT_LOOPBACK` despite the owned bridge's loopback option, check **Docker Desktop → Settings → Network → Port binding behavior**. On this Windows host (Desktop 4.96.3 / Engine 29.9.2), **Localhost by default** (`PortBindingBehavior=default-local-port-binding`) produced effective `127.0.0.1` / `::1` mappings for the QA API and DB after the owner restarted the engine on 2026-11-05. The preceding **Open (Default)** setting produced wildcard mappings with the same CLI and bridge configuration.
+
+This is a Docker Desktop setting for newly created containers, not a repository setting or an update to already-created containers. **Apply & Restart Engine** interrupts running projects; arrange that restart with their owner first. Recreate QA with a new run ID after applying it. Confirm effective mappings using Docker inspect and the runner guard; the setting alone is not acceptance evidence. Preserve the fail-closed guard and other projects' data. Do not reset their databases to change bindings.
+
 From the repository root, install root tooling with `npm ci` and make sure Docker Desktop is using its Linux engine. The default ports are API `54361`, DB `54362`. If either is busy, choose an explicitly unused pair; this checkout uses `54371/54372` because the first pair belongs to a separate QA project.
 
 ```powershell

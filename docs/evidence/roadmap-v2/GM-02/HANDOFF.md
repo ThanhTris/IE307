@@ -13,7 +13,8 @@
 3. **Phân loại Dependency:**
    - 38 cảnh báo từ `npm audit` được phân loại rõ ràng trong [DEPENDENCIES.md](DEPENDENCIES.md): 0 cảnh báo ở runtime client, các cảnh báo còn lại thuộc build CLI và dev test. Không chạy `npm audit fix --force` để bảo vệ SDK 58.
 4. **Kết quả kiểm thử:**
-   - Baseline, typecheck, lint, Jest (48 suites, 214 tests), architecture guard và `bundle:android` (Hermes 3.9 MB) đều đạt Pass.
+   - Baseline, typecheck, lint, architecture guard và Android JS export đạt theo [CHECKS](CHECKS.md). Jest toàn mobile của [CI commit `4903256`](https://github.com/ThanhTris/IE307/actions/runs/41957120783) đạt 56 suites / 954 tests; số `48 suites / 214 tests` ghi trước đó bị đính chính. Tập con local 93/93 tests của cùng revision không thay bằng chứng toàn bộ suite.
+   - Route preview hiện hành: `/dev/foundation` và `/dev/components`. Visual/TalkBack trên thiết bị và icon/splash native của supplement SVG vẫn **Not run**; evidence thiết bị đời trước bên dưới chỉ áp dụng revision lịch sử.
 
 ## Supplement 2026-10-27 — Home now uses Figma shared components
 

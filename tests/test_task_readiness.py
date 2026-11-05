@@ -213,7 +213,7 @@ class ReadinessTests(unittest.TestCase):
         cases = [
             ('GM-18', 'GM-08', []),
             ('GM-20', 'GM-19', []),
-            ('GM-32', 'GM-31', ['GM-08', 'GM-18', 'GM-19', 'GM-20', 'GM-21', 'GM-22', 'GM-23']),
+            ('GM-32', 'GM-23', ['GM-08', 'GM-18', 'GM-19', 'GM-20', 'GM-21', 'GM-22']),
         ]
         for tid, blocker, prereqs in cases:
             for p in prereqs:

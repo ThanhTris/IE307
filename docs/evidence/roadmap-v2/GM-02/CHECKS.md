@@ -6,7 +6,7 @@ Bổ sung kiểm tra theo chỉ đạo ngày 2026-11-05:
 - Hỗ trợ vector SVG qua `react-native-svg@15.16.0` (khóa trong `bundledNativeModules.json` của Expo SDK 58) và `react-native-svg-transformer@1.5.3` (Metro transformer).
 - Jest transformer mock: cấu hình `mobile/jest.config.cjs` map `\.(svg)$` sang `mobile/tests/mocks/svgMock.tsx`.
 - Phân tách rõ ràng: file PNG `mobile/assets/brand/gi-cung-duoc-icon.png` chỉ dùng làm launcher icon trong `app.config.ts`; toàn bộ hiển thị UI sử dụng vector SVG `gi-cung-duoc-logo.svg` (Figma node `22:394`).
-- Thêm thẻ kiểm tra hiển thị `BrandLogo` SVG ở 36dp, 44dp, 72dp trên `FoundationScreen` (`/foundation`).
+- Thêm thẻ kiểm tra hiển thị `BrandLogo` SVG ở 36dp, 44dp, 72dp trên `FoundationScreen` (`/dev/foundation`).
 - Phân loại 38 cảnh báo từ `npm audit`: 0 lỗi trong client runtime, các cảnh báo còn lại thuộc build/CLI (`@expo/cli`) và test tooling (`jest`); không nâng hàng loạt để tránh phá vỡ SDK 58.
 
 | Case | Lệnh / Đầu vào | Kỳ vọng | Thực tế | Kết quả |
@@ -16,10 +16,12 @@ Bổ sung kiểm tra theo chỉ đạo ngày 2026-11-05:
 | TypeScript | `npm run typecheck` | Strict compiler không lỗi type | Exit 0 | Pass |
 | Lint | `npm run lint` | Không có lỗi ESLint mới | Exit 0 (0 errors, 4 cảnh báo cũ trong contracts.ts/api/index.ts) | Pass |
 | Architecture Guard | `npm run check:architecture` | Tuân thủ ranh giới modules | Exit 0: `Architecture boundaries OK` | Pass |
-| Jest Test Suite | `npm test` | Tất cả unit & component tests Pass | 48 suites, 214 tests passed, 0 failures | Pass |
+| Jest Test Suite | `npm test` trong `mobile` | Tất cả unit & component tests Pass | CI commit `4903256`: 56 suites, 954 tests passed; xem nguồn bên dưới | Pass (CI) |
 | Android JS Export | `npm run bundle:android` | Xuất gói Hermes bundle và asset Android | 1682 modules, 77 assets, Hermes bundle `3.9 MB` (`dist/android`), exit 0 | Pass |
 | Phân loại Dependency | `npm audit` | Phân loại theo runtime/dev/build; không nâng hàng loạt | Xem phân tích tại [DEPENDENCIES.md](DEPENDENCIES.md); 0 lỗ hổng runtime | Pass |
-| Kiểm trực quan trên thiết bị | Mở `/foundation` trên Expo Go Android | Thấy logo 36/44/72dp không méo | Môi trường CI/agent không gắn thiết bị thật | Not run |
+| Kiểm trực quan trên thiết bị | Mở `/dev/foundation` trên Expo Go Android | Thấy logo 36/44/72dp không méo | Môi trường CI/agent không gắn thiết bị thật | Not run |
+
+Đính chính hồ sơ ngày 2026-11-05: [CI của commit `4903256`](https://github.com/ThanhTris/IE307/actions/runs/41957120783) ghi 56 suites / 954 tests. Số `48 suites / 214 tests` ghi trước đó không khớp lượt chạy toàn bộ này và không dùng làm bằng chứng full-suite. Tập con local của cùng revision đạt 93/93 tests trong năm suite component/route (sharedComponents, guestEntryScreen, guestEntryRoute, homeScreen, routes); đây là lượt kiểm riêng. Android visual, TalkBack và icon/splash native của supplement SVG vẫn **Not run**. Các supplement cũ bên dưới giữ bằng chứng của đúng revision lịch sử.
 
 ## Supplement 2026-10-27 — shared Figma Home composition
 

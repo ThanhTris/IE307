@@ -202,12 +202,30 @@ pass('snapshot contains no ready field',false,s1.members.some(m=>Object.hasOwn(m
  // Dedicated synthetic release: lunch20/snack3, so a meal edit must fail atomically.
  const shortId='gm19-shortage-'+randomUUID();
  sql("update dish_v3_private.catalogues set active=false where active; insert into dish_v3_private.catalogues(id,source_sha,cards,test_only,active) select '"+shortId+"',encode(extensions.digest('gm19 synthetic shortage','sha256'),'hex'),jsonb_agg(jsonb_set(value,'{mealSlots}',case when ord<=3 then '[\"lunch\",\"snack\"]'::jsonb else '[\"lunch\"]'::jsonb end)),true,true from dish_v3_private.catalogues c cross join lateral jsonb_array_elements(c.cards) with ordinality a(value,ord) where c.id='"+syntheticRelease.replaceAll("'","''")+"';");
+ try {
  const shortRoom=await create(owner,20,'lunch'), shortBefore=await snapshot(owner,shortRoom.roomId);
  await setActive(syntheticRelease);
  expectFail(await api(owner,'updateSettings',{requestId:requestId('shortage-settings'),roomId:shortRoom.roomId,expectedVersion:shortBefore.version,settings:{dishCount:10,mealSlot:'snack',desiredAt:null}}),'INSUFFICIENT_DISHES',409,'GM19 pinned catalogue shortage blocks edit');
  const shortAfter=await snapshot(owner,shortRoom.roomId);
  pass('GM19 shortage preserves version/pool/settings',[shortBefore.version,shortBefore.poolVersion,shortBefore.settings,shortBefore.pool],[shortAfter.version,shortAfter.poolVersion,shortAfter.settings,shortAfter.pool]);
  pass('GM19 shortage reports actual availability',{available:3,requested:10},(await api(owner,'updateSettings',{requestId:requestId('shortage-details'),roomId:shortRoom.roomId,expectedVersion:shortAfter.version,settings:{dishCount:10,mealSlot:'snack',desiredAt:null}})).body.error.details);
+ } finally {
+  // This release exists only for the shortage case. Remove its own lobby member
+  // and room (the session pins the release through an FK), then the release.
+  // sql() verifies the disposable project and DB owner marker before mutation.
+  // The postgres fixture cleanup uses the v4 writer context transaction-locally.
+  sql(`begin;
+   set local dish_v4.writer='on';
+   update dish_v3_private.catalogues set active=false where active;
+   update dish_v3_private.catalogues set active=true where id='${syntheticRelease.replaceAll("'","''")}';
+   delete from public.members m using dish_v4_private.sessions s, dish_v3_private.catalogues c
+    where m.room_id=s.room_id and s.catalogue_id=c.id and c.id='${shortId}' and c.test_only and not c.active;
+   delete from public.rooms r using dish_v4_private.sessions s, dish_v3_private.catalogues c
+    where r.id=s.room_id and s.catalogue_id=c.id and c.id='${shortId}' and c.test_only and not c.active;
+   delete from dish_v3_private.catalogues where id='${shortId}' and test_only and not active;
+   commit;`);
+ }
+ pass('GM19 temporary shortage catalogue and rooms are removed','0|0',sql("select (select count(*) from dish_v3_private.catalogues where id='"+shortId+"')||'|'||(select count(*) from dish_v4_private.sessions where catalogue_id='"+shortId+"')"));
  pass('GM19 dispatcher remains inaccessible directly',false,sql("select has_function_privilege('authenticated','dish_v4_private.dispatch(text,jsonb)','EXECUTE') or has_function_privilege('anon','dish_v4_private.dispatch(text,jsonb)','EXECUTE') or has_function_privilege('service_role','dish_v4_private.dispatch(text,jsonb)','EXECUTE')")!=='f');
  pass('GM19 supplement ledger deployed','1',sql("select count(*) from public.schema_versions where schema_version='0.11.1' and contract_id='dish-session-v4/roadmap-v2/GM-19.2'"));
 }
