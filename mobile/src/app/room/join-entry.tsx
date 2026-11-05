@@ -11,7 +11,7 @@ export default function JoinRoomEntryRoute() {
   const { code } = useLocalSearchParams<{ code?: string }>();
   const isReal = live.mode === 'real';
   const [hadActiveRoom] = useState(() => !!preview.active);
-  const readPreview = useMemo(() => isReal ? undefined : createJoinPreviewFixture(preview.scenario), [isReal, preview.scenario]);
+  const readPreview = useMemo(() => isReal ? ((c: string) => live.repository.previewJoin(c)) : createJoinPreviewFixture(preview.scenario), [isReal, live.repository, preview.scenario]);
   if (!isReal && hadActiveRoom) return <Redirect href="/continue-session" />;
   const entry = <JoinRoomEntryScreen repository={isReal ? live.repository : preview.client} preview={readPreview}
     initialDisplayName={isReal ? live.user?.displayName : preview.guestName ?? undefined} initialCode={typeof code === 'string' ? code : ''} isMock={!isReal}

@@ -43,6 +43,15 @@ function clientFor(response: unknown): ApiClient {
 }
 
 describe('GM-07 endpoint response validation', () => {
+  it('validates the authenticated account history-consent scopes', async () => {
+    expect(await clientFor({ ok: true, data: { personal: true, group: false } }).getHistoryConsent())
+      .toMatchObject({ ok: true, data: { personal: true, group: false } });
+    for (const data of [undefined, null, [], {}, { personal: true, group: 'false' }]) {
+      expect(await clientFor({ ok: true, data }).getHistoryConsent())
+        .toMatchObject({ ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } });
+    }
+  });
+
   describe.each(writes)('$name via public factory', ({ call, data, required, wrong }) => {
     it.each(['nested', 'flat'])('accepts a complete %s payload', async shape => {
       const response = shape === 'nested' ? { ok: true, data } : { ok: true, ...data };

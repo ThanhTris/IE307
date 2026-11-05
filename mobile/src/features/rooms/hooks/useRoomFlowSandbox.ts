@@ -129,7 +129,7 @@ export function useRoomFlowSandbox() {
   };
 
   const handleUpdateContext = async () => {
-    if (!activeRoomId || !roomSnapshot) {
+    if (!activeRoomId || !roomSnapshot || !roomSnapshot.context) {
       addLog('updateContext', false, 'Chưa có phòng để cập nhật');
       return;
     }

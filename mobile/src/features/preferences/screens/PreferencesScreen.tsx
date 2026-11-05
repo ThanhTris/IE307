@@ -72,7 +72,7 @@ function PreferencesForm({ repository, roomId, userId, catalogue, onBack, onHome
       <StatusNotice title="Đã hoàn tất chọn khẩu vị" message={onContinue
         ? 'Khẩu vị đã lưu. Bạn có thể tiếp tục đến phòng chờ và chủ động xác nhận sẵn sàng.'
         : 'Bạn đã hoàn tất bước này. Bản mô phỏng kết thúc tại đây; phòng chờ chưa được kết nối.'} colors={colors} />
-      <ContextSummary anchorName={saved.context.anchorName ?? 'Điểm ăn chung'} mealLabel={mealLabels[saved.context.mealSlot]} desiredAtLabel={`${localTime(saved.context.desiredAt)} · UTC+7`} radiusLabel={`${saved.context.radiusM / 1000} km`} colors={colors} />
+      <ContextSummary anchorName={saved.context?.anchorName ?? 'Điểm ăn chung'} mealLabel={mealLabels[saved.context?.mealSlot ?? 'lunch']} desiredAtLabel={`${localTime(saved.context?.desiredAt ?? '')} · UTC+7`} radiusLabel={`${(saved.context?.radiusM ?? 1000) / 1000} km`} colors={colors} />
       <SetupSection title="Khẩu vị đã lưu">
         <Text style={[styles.body, { color: colors.text }]}>{isWhatever(value) ? 'Gì cũng được · Không có ưu tiên mềm' : 'Đã lưu các sở thích mềm của bạn'}</Text>
         {value.categoryIds.length ? <Text style={[styles.body, { color: colors.text }]}>Thể loại: {catalogue.categories.filter(v => value.categoryIds.includes(v.id)).map(v => v.label).join(', ')}</Text> : null}
@@ -89,7 +89,7 @@ function PreferencesForm({ repository, roomId, userId, catalogue, onBack, onHome
     <Text style={[styles.body, { color: colors.muted }]}>Sở thích chỉ giúp ưu tiên món. Bỏ chọn hoặc bỏ qua không phải phiếu Không ăn.</Text>
     {room && !editable ? <StatusNotice title="Chưa thể sửa khẩu vị" message="Bạn không còn trong phòng hoặc phòng đã khóa/hết hạn. Hãy quay lại kiểm tra." colors={colors} /> : null}
     {room ? <>
-      <ContextSummary anchorName={room.context.anchorName ?? 'Điểm ăn chung'} mealLabel={mealLabels[room.context.mealSlot]} desiredAtLabel={`${localTime(room.context.desiredAt)} · UTC+7`} radiusLabel={`${room.context.radiusM / 1000} km`} colors={colors} />
+      <ContextSummary anchorName={room.context?.anchorName ?? 'Điểm ăn chung'} mealLabel={mealLabels[room.context?.mealSlot ?? 'lunch']} desiredAtLabel={`${localTime(room.context?.desiredAt ?? '')} · UTC+7`} radiusLabel={`${(room.context?.radiusM ?? 1000) / 1000} km`} colors={colors} />
       <Pressable accessibilityRole="button" accessibilityLabel="Gì cũng được" accessibilityState={{ selected: any, disabled }} disabled={disabled} onPress={() => { setPreferences(emptySoft(preferences.historyConsent)); writer.clear(); }} style={[styles.hero, { backgroundColor: colors.warm, borderColor: any ? colors.primary : colors.border }]}>
         <Text style={[styles.heading, { color: colors.text }]}>✨ Gì cũng được {any ? '✓ Đang chọn' : ''}</Text>
         <Text style={[styles.body, { color: colors.muted }]}>Ăn gì cũng vui · Cả nhóm cùng chọn</Text>
@@ -119,7 +119,7 @@ function PreferencesForm({ repository, roomId, userId, catalogue, onBack, onHome
       <SetupSection title="Lịch sử và chống lặp">
         <SetupToggle label="Đồng ý lưu lịch sử bữa ăn" disabled={disabled} value={preferences.historyConsent} onValueChange={v => change({ historyConsent: v })} />
         <Text style={[styles.caption, { color: colors.muted }]}>Tùy chọn. Không lưu phiếu thô. Lịch sử nhóm chỉ có khi mọi người cùng đồng ý; tắt lưu không thay kết quả đã chốt.</Text>
-        <Text style={[styles.body, { color: colors.text }]}>Chống lặp của phòng: {room.context.avoidRecent ? 'Đang bật' : 'Đang tắt'} · do chủ phòng chọn.</Text>
+        <Text style={[styles.body, { color: colors.text }]}>Chống lặp của phòng: {Boolean(room.context?.avoidRecent) ? 'Đang bật' : 'Đang tắt'} · do chủ phòng chọn.</Text>
         <Text style={[styles.caption, { color: colors.muted }]}>Chủ phòng đổi tại màn Bối cảnh → Lịch sử và chống lặp → Giảm ưu tiên món đã ăn gần đây.</Text>
         <Text style={[styles.caption, { color: colors.muted }]}>Chỉ giảm ưu tiên mềm khi có dữ liệu và đồng ý phù hợp; chưa đọc hoặc ghi lịch sử thật ở bản mô phỏng.</Text>
       </SetupSection>

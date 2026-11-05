@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
 import { CreateRoomScreen } from '../../features/rooms/screens/CreateRoomScreen';
+import { CreateRoomEntryScreen } from '../../features/rooms/screens/CreateRoomEntryScreen';
 import { RoomEntryReceiptScreen } from '../../features/rooms/screens/RoomEntryReceiptScreen';
 import { PreviewControls, rememberPreviewRoom, useRoomPreview } from '../../bootstrap/roomPreview';
 import { useRoomRepository } from '../../bootstrap/RoomRepositoryProvider';
@@ -13,7 +14,22 @@ export default function CreateRoomRoute() {
 
   const repository = isReal ? live.repository : preview.client;
 
-  const content = !isReal && preview.active ? (
+  if (isReal) {
+    const entry = (
+      <CreateRoomEntryScreen
+        displayName={live.user?.displayName}
+        onBack={() => (router.canGoBack() ? router.back() : router.replace('/'))}
+        isMock={false}
+        onOpenSetup={async () => {
+          router.push('/room/setup');
+          return true;
+        }}
+      />
+    );
+    return <RequireActiveSession onHome={() => router.replace('/')}>{entry}</RequireActiveSession>;
+  }
+
+  const content = preview.active ? (
     <RoomEntryReceiptScreen
       repository={preview.client}
       receipt={preview.active}
@@ -24,17 +40,17 @@ export default function CreateRoomRoute() {
     />
   ) : (
     <CreateRoomScreen
-      key={isReal ? `real-${live.user?.id ?? 'anonymous'}` : preview.revision}
+      key={preview.revision}
       repository={repository}
-      isLive={isReal}
-      initialDisplayName={isReal ? live.user?.displayName : preview.guestName ?? undefined}
+      isLive={false}
+      initialDisplayName={preview.guestName ?? undefined}
       onBack={() => (router.canGoBack() ? router.back() : router.replace('/'))}
       onEntered={room => {
-        if (!isReal) rememberPreviewRoom(room);
+        rememberPreviewRoom(room);
         router.replace({ pathname: '/room/preview', params: { roomId: room.roomId, code: room.code, role: room.role, version: String(room.version) } });
       }}
-      previewControls={isReal ? undefined : (busy => <PreviewControls disabled={busy} />)}
+      previewControls={busy => <PreviewControls disabled={busy} />}
     />
   );
-  return isReal ? <RequireActiveSession onHome={() => router.replace('/')}>{content}</RequireActiveSession> : content;
+  return content;
 }

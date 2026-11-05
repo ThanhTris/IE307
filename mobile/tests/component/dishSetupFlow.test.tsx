@@ -60,7 +60,7 @@ test('read failure after ACK retries only read and skip preserves consent', asyn
   await fireEvent.press(await screen.findByRole('button', { name: 'Đọc lại trạng thái đã lưu' }));
   await screen.findByRole('checkbox', { name: 'Ăn gì cũng được' });
   expect(write).toHaveBeenCalledTimes(1);
-  await fireEvent.press(screen.getByRole('checkbox', { name: 'Cho phép lưu lịch sử phiên này' }));
+  await fireEvent.press(screen.getByRole('checkbox', { name: 'Cho phép lưu lịch sử cá nhân cho tài khoản này' }));
   await fireEvent.press(screen.getByRole('button', { name: 'Cơm' }));
   await fireEvent.press(screen.getByRole('button', { name: 'Bỏ qua' }));
   await screen.findByText('Đã hoàn tất thiết lập mẫu');

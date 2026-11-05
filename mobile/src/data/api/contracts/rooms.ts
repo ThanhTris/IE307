@@ -120,7 +120,16 @@ export interface RoomSnapshot {
   state: RoomState;
   version: number;
   hostUserId: string;
-  context: RoomContext;
+  context?: RoomContext;
+  settings?: { dishCount?: number; mealSlot?: MealSlot; desiredAt?: string | null };
+  dishCount?: number;
+  submittedCount?: number;
+  memberCount?: number;
+  ownBallot?: unknown;
+  ownWaiting?: boolean;
+  waitingStartedAt?: string | null;
+  deadline?: string | null;
+  canEndWaiting?: boolean;
   members: RoomMember[];
   ownPreferences?: UserPreferences;
   round: 1 | 2;

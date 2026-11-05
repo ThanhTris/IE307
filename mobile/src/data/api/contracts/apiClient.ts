@@ -29,6 +29,7 @@ import type {
   Friend,
   FriendInvitation,
   HistoryItem,
+  HistoryConsent,
   InboxItem,
   InvitePartnerRequest,
   InviteToRoomRequest,
@@ -81,6 +82,10 @@ export interface ApiClient {
 
   // History
   getHistory(scope: 'personal' | 'group', cursor?: string): Promise<ReadResult<HistoryItem[]>>;
+  getHistoryConsent(): Promise<ReadResult<HistoryConsent>>;
   updateHistoryConsent(req: UpdateHistoryConsentRequest): Promise<WriteResult<void>>;
   deleteHistory(historyId: string, requestId?: string): Promise<WriteResult<void>>;
+
+  // Low-level RPC dispatch
+  callRpc?<T>(rpcName: string, params: Record<string, unknown>): Promise<T>;
 }
