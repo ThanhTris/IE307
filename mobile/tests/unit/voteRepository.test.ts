@@ -162,7 +162,10 @@ describe('GM-26 — Vote Repository Unit Suite (Issue #87)', () => {
           round: 1,
           poolVersion: 1,
           expectedVersion: 1,
-          votes,
+          votes: [
+            { roundDishId: 'dish_01', choice: 'WANT' },
+            { roundDishId: 'dish_02', choice: 'OK' },
+          ],
         },
       });
     });
@@ -272,6 +275,48 @@ describe('GM-26 — Vote Repository Unit Suite (Issue #87)', () => {
       if (res1.ok && res2.ok) {
         expect(res2.data.receipt).toEqual(res1.data.receipt);
       }
+    });
+
+    it('rejects reused requestId with mismatched payload (F6)', async () => {
+      const mockRpc = jest.fn().mockResolvedValue({
+        ok: true,
+        data: {
+          accepted: true,
+          round: 1,
+          poolVersion: 1,
+          submittedAt: '2026-11-05T12:00:00Z',
+        },
+        version: 2,
+        state: 'WAITING_1',
+      });
+
+      const repo = createLiveVoteRepository({ rpcCaller: mockRpc });
+      const votes1: BallotVoteItem[] = [{ roundDishId: 'dish_01', vote: 'WANT' }];
+      const votes2: BallotVoteItem[] = [{ roundDishId: 'dish_01', vote: 'NO' }];
+
+      const res1 = await repo.submitBallot({
+        roomId: 'room_mismatch_01',
+        round: 1,
+        poolVersion: 1,
+        expectedVersion: 1,
+        votes: votes1,
+        requestId: 'req_durable_mismatch_01',
+      });
+      expect(res1.ok).toBe(true);
+
+      const res2 = await repo.submitBallot({
+        roomId: 'room_mismatch_01',
+        round: 1,
+        poolVersion: 1,
+        expectedVersion: 1,
+        votes: votes2,
+        requestId: 'req_durable_mismatch_01',
+      });
+      expect(res2.ok).toBe(false);
+      if (!res2.ok) {
+        expect(res2.error.messageKey).toBe('REQUEST_ID_REUSED');
+      }
+      expect(mockRpc).toHaveBeenCalledTimes(1);
     });
 
     it('calls enterWaiting and computes 60s countdown deadline from server timestamp', async () => {
@@ -436,6 +481,14 @@ describe('GM-26 — Vote Repository Unit Suite (Issue #87)', () => {
         state: 'WAITING_1',
         version: 2,
         hostUserId: 'host_01',
+        context: {
+          anchorId: 'anchor_01',
+          radiusM: 2000,
+          desiredAt: '2026-11-05T12:00:00Z',
+          serviceMode: 'dine_in',
+          mealSlot: 'lunch',
+          avoidRecent: false,
+        },
         round: 1,
         poolVersion: 1,
         pool: dummyPool,
@@ -457,6 +510,56 @@ describe('GM-26 — Vote Repository Unit Suite (Issue #87)', () => {
       if (res.ok) {
         expect(res.data.code).toBe('GCD999');
         expect(res.data.state).toBe('WAITING_1');
+      }
+    });
+
+    it('rejects malformed submit envelope missing accepted or round (F7)', async () => {
+      const mockRpc = jest.fn().mockResolvedValue({
+        ok: true,
+        data: { invalidField: true },
+      });
+      const repo = createLiveVoteRepository({ rpcCaller: mockRpc });
+      const res = await repo.submitBallot({
+        roomId: 'room_bad_01',
+        round: 1,
+        poolVersion: 1,
+        expectedVersion: 1,
+        votes: [{ roundDishId: 'dish_01', vote: 'WANT' }],
+      });
+      expect(res.ok).toBe(false);
+      if (!res.ok) {
+        expect(res.error.messageKey).toBe('MALFORMED_RESPONSE');
+      }
+    });
+
+    it('rejects malformed waiting envelope (F7)', async () => {
+      const mockRpc = jest.fn().mockResolvedValue({
+        ok: true,
+        data: { accepted: 'not_boolean' },
+      });
+      const repo = createLiveVoteRepository({ rpcCaller: mockRpc });
+      const res = await repo.enterWaiting({
+        roomId: 'room_bad_wait_01',
+        round: 1,
+        poolVersion: 1,
+        expectedVersion: 1,
+      });
+      expect(res.ok).toBe(false);
+      if (!res.ok) {
+        expect(res.error.messageKey).toBe('MALFORMED_RESPONSE');
+      }
+    });
+
+    it('rejects malformed snapshot envelope (F7)', async () => {
+      const mockRpc = jest.fn().mockResolvedValue({
+        ok: true,
+        data: { roomId: 'room_01' }, // Missing code, state, members, etc.
+      });
+      const repo = createLiveVoteRepository({ rpcCaller: mockRpc });
+      const res = await repo.getSnapshot('room_bad_snap_01');
+      expect(res.ok).toBe(false);
+      if (!res.ok) {
+        expect(res.error.messageKey).toBe('MALFORMED_RESPONSE');
       }
     });
   });

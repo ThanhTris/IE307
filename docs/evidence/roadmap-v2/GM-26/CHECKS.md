@@ -1,11 +1,11 @@
 # Output checks — GM-26 / roadmap-v2
 
-Status: Automated regressions, 5 Figma nodes parity, vote repository RPCs, and full mobile test suites pass on branch issue87_figma_ui_gm26; physical Android device acceptance and remote backend staging verification remain pending.
+Status: Automated regressions, 5 Figma nodes parity, vote repository RPCs, PR #156 review fixes (F1–F7), and full mobile test suites pass on branch issue87_figma_ui_gm26; physical Android device acceptance and remote backend staging verification remain pending.
 Task: GM-26 — UI–API ballot, waiting và vòng hai
 Owner: Trang (`rosy179`), Reviewer: Trí (`ThanhTris`)
 PR / branch: Issue #87 / `issue87_figma_ui_gm26`
 Base: `origin/main` `c5b2b07` (post GM-25 PR #155)
-Tested source: local branch `issue87_figma_ui_gm26` based on `origin/main`; full UI parity across 5 Figma nodes (`330:3071`, `330:3072`, `330:3073`, `330:3074`, `638:9369`), LiveVoteRepository v4 dispatch (`dish-session-v4/roadmap-v2/GM-07.B-supplement`), Cap 30% elimination enforcement (`max(1, floor(0.30 * N))`), Quorum waiting early termination (`A_r > M/2`), stable idempotency with durable request ID, and N=1 candidate support with ALL_REMOVED outcome.
+Tested source: local branch `issue87_figma_ui_gm26` based on `origin/main`; full UI parity across 5 Figma nodes (`330:3071`, `330:3072`, `330:3073`, `330:3074`, `638:9369`), LiveVoteRepository v4 dispatch (`dish-session-v4/roadmap-v2/GM-07.B-supplement`), Cap 30% elimination enforcement (`max(1, floor(0.30 * N))`), Quorum waiting early termination (`A_r > M/2`), stable idempotency with durable request ID, N=1 candidate support with ALL_REMOVED outcome, and PR #156 review feedback addressing wire format, dynamic snapshot loading, synchronized countdown, error isolation, real outcome navigation, durable IDs with mismatch rejection, and strict envelope guards.
 Contract: `ui-figma-final/2026-10-25/GM-26.2` & `dish-session-v4/roadmap-v2/GM-07.B-supplement`; Expo SDK `57.0.30`; Node/npm from the Expo baseline.
 
 ## Reproduce
@@ -37,7 +37,7 @@ git diff --check
 | `npm ci --no-audit --no-fund` | **Pass** | Installed 1,391 locked packages from `mobile/package-lock.json`. No manifest or lockfile changes. |
 | `npm run check:expo` | **Pass with environment note** | Expo SDK `57.0.30`; installed dependencies match the lockfile. |
 | `npm run test:expo-baseline` | **Pass** | 5/5 baseline tests pass. |
-| Focused GM-26 regression & parity suites | **Pass** | 3 suites / 49 tests passing (`voteRepository.test.ts` [19 tests], `gm26FigmaParity.test.tsx` [7 tests], `votingScreens.test.tsx` [23 tests]). |
+| Focused GM-26 regression & parity suites | **Pass** | 3 suites / 53 tests passing (`voteRepository.test.ts` [23 tests], `gm26FigmaParity.test.tsx` [7 tests], `votingScreens.test.tsx` [23 tests]). Covers all 7 PR #156 review fixes (F1–F7: wire format, snapshot dynamic loading, synchronized countdown, error isolation, real outcome navigation, durable IDs with mismatch rejection, strict envelope guards). |
 | `npm run typecheck` | **Pass** | 0 TypeScript errors under strict mode (`tsc --noEmit`). |
 | `npm run check:architecture` | **Pass** | Clean architectural boundaries; no layer violations (`check-architecture.mjs`). |
 | `python scripts/validate_repository.py` | **Pass** | Documents, links, JSON, task manifest, dependencies and current FR traceability OK. |

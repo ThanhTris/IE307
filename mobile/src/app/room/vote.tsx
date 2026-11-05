@@ -18,15 +18,16 @@ export default function VoteRoute() {
     <VoteScreen
       roomId={typeof roomId === 'string' ? roomId : undefined}
       repository={repository}
+      showScenarioPicker={!isReal}
       initialViewMode="flashcard"
       onGoToFinalRound={() => {
         router.push(typeof roomId === 'string' ? { pathname: '/room/final-round', params: { roomId } } : '/room/final-round');
       }}
       onGoToResult={() => {
-        router.push(typeof roomId === 'string' ? { pathname: '/room/result', params: { roomId } } : '/room/result');
+        router.replace(typeof roomId === 'string' ? { pathname: '/room/result', params: { roomId } } : '/room/result');
       }}
       onGoToNoConsensus={() => {
-        router.push(typeof roomId === 'string' ? { pathname: '/room/no-consensus', params: { roomId } } : '/room/no-consensus');
+        router.replace(typeof roomId === 'string' ? { pathname: '/room/no-consensus', params: { roomId } } : '/room/no-consensus');
       }}
       onBack={() => (router.canGoBack() ? router.back() : router.replace('/'))}
     />

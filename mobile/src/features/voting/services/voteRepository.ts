@@ -47,6 +47,131 @@ export function createDurableRequestId(prefix = 'req_vote'): string {
   return `${prefix}_${ts}_${seq}_${rand}`;
 }
 
+/**
+ * Transforms raw canonical snapshot pool dishes into PoolDish objects.
+ */
+export function mapSnapshotPoolToPoolDishes(pool: unknown[]): PoolDish[] {
+  if (!Array.isArray(pool)) return [];
+  return pool.map((item: any, idx: number) => {
+    const roundDishId = item.roundDishId || `dish_${idx}`;
+    const dishId = item.dishId || roundDishId;
+    const choiceId = item.choiceId || roundDishId;
+    const name = item.name || `Món ăn #${idx + 1}`;
+    const description = item.description || '';
+    const price = item.priceReference?.amount;
+    const artworkUri = item.artwork?.uri || item.artwork?.url;
+    return {
+      roundDishId,
+      choiceId,
+      dishId,
+      name,
+      description,
+      venueName: item.priceReference?.sourceRef || item.venueName || 'Quán ăn',
+      priceMin: typeof price === 'number' ? price : item.priceMin ?? 50000,
+      priceMax: typeof price === 'number' ? price : item.priceMax ?? 70000,
+      artwork: artworkUri ? { url: artworkUri, usageRights: 'unknown', license: null, attribution: null } : undefined,
+      mealSlots: item.mealSlots || ['lunch', 'dinner'],
+      cuisineIds: item.cuisineIds || [],
+      categoryIds: item.categoryIds || [],
+      temperature: item.temperature,
+      flavor: item.flavor,
+      priceReference: item.priceReference,
+    } as PoolDish;
+  });
+}
+
+function isIsoTimestamp(val: unknown): val is string {
+  return typeof val === 'string' && val.length >= 10 && !isNaN(Date.parse(val));
+}
+
+function isCanonicalSubmitEnvelope(
+  raw: any,
+  args: SubmitBallotArgs
+): raw is {
+  ok: true;
+  requestId?: string;
+  roomId?: string;
+  version: number;
+  state?: string;
+  data: {
+    accepted: true;
+    round: number;
+    poolVersion: number;
+    submittedAt: string;
+  };
+} {
+  if (!raw || raw.ok !== true) return false;
+  if (typeof raw.version !== 'number' || raw.version < 1) return false;
+  if (!raw.data || typeof raw.data !== 'object') return false;
+  if (raw.data.accepted !== true) return false;
+  if (raw.data.round !== args.round) return false;
+  if (raw.data.poolVersion !== args.poolVersion) return false;
+  if (!isIsoTimestamp(raw.data.submittedAt)) return false;
+  return true;
+}
+
+function isCanonicalWaitingEnvelope(
+  raw: any,
+  args: EnterWaitingArgs
+): raw is {
+  ok: true;
+  requestId?: string;
+  roomId?: string;
+  version: number;
+  state?: string;
+  data: {
+    accepted: true;
+    round: number;
+    poolVersion: number;
+    waitingStartedAt: string;
+    deadline: string;
+  };
+} {
+  if (!raw || raw.ok !== true) return false;
+  if (typeof raw.version !== 'number' || raw.version < 1) return false;
+  if (!raw.data || typeof raw.data !== 'object') return false;
+  if (raw.data.accepted !== true) return false;
+  if (raw.data.round !== args.round) return false;
+  if (raw.data.poolVersion !== args.poolVersion) return false;
+  if (!isIsoTimestamp(raw.data.waitingStartedAt)) return false;
+  if (!isIsoTimestamp(raw.data.deadline)) return false;
+  return true;
+}
+
+function isCanonicalFinalizeEnvelope(
+  raw: any,
+  args: FinalizeArgs
+): raw is {
+  ok: true;
+  requestId?: string;
+  roomId?: string;
+  version?: number;
+  state?: string;
+  data: {
+    accepted: true;
+    outcome: FinalizeOutcome;
+    state: string;
+    round: number;
+    resultId?: string;
+    finalizedAt?: string;
+  };
+} {
+  if (!raw || raw.ok !== true) return false;
+  if (!raw.data || typeof raw.data !== 'object') return false;
+  if (raw.data.accepted !== true) return false;
+  if (raw.data.outcome !== 'ROUND_ADVANCED' && raw.data.outcome !== 'TERMINAL') return false;
+  if (!['ROUND_2', 'DECIDED', 'NO_CONSENSUS'].includes(raw.data.state)) return false;
+  if (raw.data.round !== 1 && raw.data.round !== 2) return false;
+  if (raw.data.outcome === 'ROUND_ADVANCED') {
+    if (raw.data.state !== 'ROUND_2' || raw.data.round !== 2) return false;
+  }
+  if (raw.data.outcome === 'TERMINAL') {
+    if (!raw.data.resultId || typeof raw.data.resultId !== 'string') return false;
+    if (!isIsoTimestamp(raw.data.finalizedAt)) return false;
+  }
+  return true;
+}
+
 export interface SubmitBallotArgs {
   roomId: string;
   round: 1 | 2;
@@ -79,7 +204,6 @@ export interface FinalizeArgs {
   roomId: string;
   expectedVersion: number;
   requestId?: string;
-  /** Optional override for client-side quorum assertion before sending RPC */
   rosterAcknowledgedCount?: number;
   totalRosterCount?: number;
   isHost?: boolean;
@@ -110,6 +234,11 @@ export interface LiveVoteRepositoryDeps {
   nextRequestId?: RequestIdGenerator;
 }
 
+interface CachedSubmitEntry {
+  payloadSerialized: string;
+  result: WriteResult<SubmitBallotResponse>;
+}
+
 export class LiveVoteRepository implements VoteRepository {
   private readonly roomRepo?: RoomRepository;
   private readonly client?: ApiClient;
@@ -117,7 +246,7 @@ export class LiveVoteRepository implements VoteRepository {
   private readonly nextRequestId: RequestIdGenerator;
 
   // Cache of submitted receipts for idempotency across retries
-  private readonly idempotencyCache = new Map<string, WriteResult<SubmitBallotResponse>>();
+  private readonly idempotencyCache = new Map<string, CachedSubmitEntry>();
 
   constructor(deps: LiveVoteRepositoryDeps = {}) {
     this.roomRepo = deps.roomRepository;
@@ -136,21 +265,15 @@ export class LiveVoteRepository implements VoteRepository {
 
   /**
    * Submits a ballot for Round 1 (WANT/OK/NO) or Round 2 (KEEP/REMOVE).
-   * Validates votes locally and enforces Round 2 elimination cap:
-   * cap = max(1, floor(0.30 * N)).
+   * Transforms input votes to canonical wire format: { roundDishId, choice } (F1).
+   * Enforces Round 2 elimination cap: max(1, floor(0.30 * N)).
    * If cap is exceeded in Round 2, rejects with REMOVE_LIMIT before calling server.
-   * If re-submitting with identical requestId and payload, returns cached receipt.
+   * Compares payload against cache: if re-submitting with identical requestId and payload, returns cached receipt.
+   * If re-submitting with same requestId but different payload, rejects with BAD_REQUEST (F6).
    */
   async submitBallot(args: SubmitBallotArgs): Promise<WriteResult<SubmitBallotResponse>> {
     const rid = args.requestId || this.nextRequestId('submit');
     const intent = args.intentId || `intent_${rid}`;
-
-    // Check client-side idempotency cache
-    const cacheKey = `${args.roomId}_${args.round}_${rid}`;
-    const cached = this.idempotencyCache.get(cacheKey);
-    if (cached) {
-      return cached;
-    }
 
     // Local validation
     if (!args.roomId) {
@@ -163,24 +286,30 @@ export class LiveVoteRepository implements VoteRepository {
       return { ok: false, requestId: rid, roomId: args.roomId, error: { messageKey: 'INCOMPLETE_BALLOT' } };
     }
 
+    // F1: Transform to strict wire format with ONLY roundDishId and choice
+    const wireVotes: Array<{ roundDishId: string; choice: string }> = [];
     if (args.round === 1) {
       for (const item of args.votes) {
-        if (!item.roundDishId || !['WANT', 'OK', 'NO'].includes(item.vote)) {
+        const choice = (item as any).choice ?? item.vote;
+        if (!item.roundDishId || !['WANT', 'OK', 'NO'].includes(choice)) {
           return { ok: false, requestId: rid, roomId: args.roomId, error: { messageKey: 'INVALID_INPUT' } };
         }
+        wireVotes.push({ roundDishId: item.roundDishId, choice });
       }
     } else {
       // Round 2 validation & cap enforcement
       let removeCount = 0;
       for (const item of args.votes) {
-        if (!item.roundDishId || !['KEEP', 'REMOVE'].includes(item.vote)) {
+        const choice = (item as any).choice ?? item.vote;
+        if (!item.roundDishId || !['KEEP', 'REMOVE'].includes(choice)) {
           return { ok: false, requestId: rid, roomId: args.roomId, error: { messageKey: 'INVALID_INPUT' } };
         }
-        if (item.vote === 'REMOVE') {
+        if (choice === 'REMOVE') {
           removeCount++;
         }
+        wireVotes.push({ roundDishId: item.roundDishId, choice });
       }
-      const cap = getRoundTwoEliminationCap(args.votes.length);
+      const cap = getRoundTwoEliminationCap(wireVotes.length);
       if (removeCount > cap) {
         return {
           ok: false,
@@ -188,10 +317,36 @@ export class LiveVoteRepository implements VoteRepository {
           roomId: args.roomId,
           error: {
             messageKey: 'REMOVE_LIMIT',
-            details: { removeCount, cap, candidatesCount: args.votes.length },
+            details: { removeCount, cap, candidatesCount: wireVotes.length },
           },
         };
       }
+    }
+
+    // F6: Serialize payload to verify payload stability on retries
+    const payloadSerialized = JSON.stringify({
+      roomId: args.roomId,
+      round: args.round,
+      poolVersion: args.poolVersion,
+      expectedVersion: args.expectedVersion,
+      votes: wireVotes,
+    });
+
+    const cacheKey = `${args.roomId}_${args.round}_${rid}`;
+    const cachedEntry = this.idempotencyCache.get(cacheKey);
+    if (cachedEntry) {
+      if (cachedEntry.payloadSerialized !== payloadSerialized) {
+        return {
+          ok: false,
+          requestId: rid,
+          roomId: args.roomId,
+          error: {
+            messageKey: 'REQUEST_ID_REUSED',
+            details: { reason: 'REQUEST_ID_REUSED_WITH_DIFFERENT_PAYLOAD' },
+          },
+        };
+      }
+      return cachedEntry.result;
     }
 
     const caller = this.getCaller();
@@ -206,79 +361,83 @@ export class LiveVoteRepository implements VoteRepository {
             round: args.round,
             poolVersion: args.poolVersion,
             expectedVersion: args.expectedVersion,
-            votes: args.votes,
+            votes: wireVotes,
           },
-        })) as {
-          ok?: boolean;
-          data?: {
-            accepted?: boolean;
-            round?: number;
-            poolVersion?: number;
-            submittedAt?: string;
-          };
-          version?: number;
-          state?: string;
-          error?: { messageKey?: string; code?: string; details?: Record<string, unknown> };
-        };
+        })) as any;
 
-        if (raw?.ok) {
-          const submittedAt = raw.data?.submittedAt || new Date().toISOString();
-          const receipt: SubmissionReceipt = {
-            round: args.round,
-            intentId: intent,
-            requestId: rid,
-            submittedAt,
-            voteCount: args.votes.length,
-            votesSummary: args.votes,
-          };
-          const isTerminalState = raw.state === 'DECIDED' || raw.state === 'NO_CONSENSUS';
-          const isAdvancedRound = raw.state === 'ROUND_2' && args.round === 1;
-          const allSubmitted = isTerminalState || isAdvancedRound;
-
-          const res: WriteResult<SubmitBallotResponse> = {
-            ok: true,
+        if (raw && !raw.ok) {
+          const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as ErrorCode;
+          return {
+            ok: false,
             requestId: rid,
             roomId: args.roomId,
-            version: raw.version ?? args.expectedVersion,
-            state: raw.state,
-            data: {
-              accepted: true,
-              round: args.round,
-              allMembersSubmitted: allSubmitted,
-              roomVersion: raw.version ?? args.expectedVersion,
-              receipt,
-            },
+            error: { messageKey: errCode, details: raw.error?.details },
           };
-          this.idempotencyCache.set(cacheKey, res);
-          return res;
         }
 
-        const errCode = (raw?.error?.messageKey || raw?.error?.code || 'UNKNOWN_ERROR') as ErrorCode;
+        // F7: Canonical envelope guard check
+        if (!isCanonicalSubmitEnvelope(raw, args)) {
+          return {
+            ok: false,
+            requestId: rid,
+            roomId: args.roomId,
+            error: { messageKey: 'MALFORMED_RESPONSE' },
+          };
+        }
+
+        const submittedAt = raw.data.submittedAt;
+        const receipt: SubmissionReceipt = {
+          round: args.round,
+          intentId: intent,
+          requestId: rid,
+          submittedAt,
+          voteCount: wireVotes.length,
+          votesSummary: args.votes,
+        };
+        const isTerminalState = raw.state === 'DECIDED' || raw.state === 'NO_CONSENSUS';
+        const isAdvancedRound = raw.state === 'ROUND_2' && args.round === 1;
+        const allSubmitted = isTerminalState || isAdvancedRound;
+
+        const res: WriteResult<SubmitBallotResponse> = {
+          ok: true,
+          requestId: rid,
+          roomId: args.roomId,
+          version: raw.version,
+          state: raw.state,
+          data: {
+            accepted: true,
+            round: args.round,
+            allMembersSubmitted: allSubmitted,
+            roomVersion: raw.version,
+            receipt,
+          },
+        };
+        this.idempotencyCache.set(cacheKey, { payloadSerialized, result: res });
+        return res;
+      } catch (err: unknown) {
         return {
           ok: false,
           requestId: rid,
           roomId: args.roomId,
-          error: { messageKey: errCode, details: raw?.error?.details },
+          error: mapErrorHelper(err),
         };
-      } catch (err: unknown) {
-        return { ok: false, requestId: rid, roomId: args.roomId, error: mapErrorHelper(err) };
       }
     }
 
-    // Fallback to client.submitBallot
+    // Fallback client submit
     if (this.client) {
-      const clientReq: SubmitBallotRequest = {
+      const submitReq: SubmitBallotRequest = {
         roomId: args.roomId,
         round: args.round,
         poolVersion: args.poolVersion,
-        intentId: intent,
         expectedVersion: args.expectedVersion,
-        votes: args.votes,
+        intentId: intent,
         requestId: rid,
+        votes: args.votes,
       };
-      const res = await this.client.submitBallot(clientReq);
+      const res = await this.client.submitBallot(submitReq);
       if (res.ok) {
-        this.idempotencyCache.set(cacheKey, res);
+        this.idempotencyCache.set(cacheKey, { payloadSerialized, result: res });
       }
       return res;
     }
@@ -292,8 +451,9 @@ export class LiveVoteRepository implements VoteRepository {
   }
 
   /**
-   * Enters the waiting room after a ballot has been accepted.
-   * Starts or joins the 60-second waiting countdown on the server.
+   * Enters the waiting room after ballot ACK.
+   * Uses canonical schema contract: dish-session-v4/roadmap-v2/GM-07.B-supplement.
+   * Requires server-provided waitingStartedAt and deadline (F7).
    */
   async enterWaiting(args: EnterWaitingArgs): Promise<WriteResult<EnterWaitingResponse>> {
     const rid = args.requestId || this.nextRequestId('waiting');
@@ -311,106 +471,93 @@ export class LiveVoteRepository implements VoteRepository {
             poolVersion: args.poolVersion,
             expectedVersion: args.expectedVersion,
           },
-        })) as {
-          ok?: boolean;
-          data?: {
-            accepted?: boolean;
-            round?: number;
-            poolVersion?: number;
-            waitingStartedAt?: string;
-            deadline?: string;
-          };
-          version?: number;
-          state?: string;
-          error?: { messageKey?: string; code?: string; details?: Record<string, unknown> };
-        };
+        })) as any;
 
-        if (raw?.ok) {
-          const nowIso = new Date().toISOString();
-          const waitingStartedAt = raw.data?.waitingStartedAt || nowIso;
-          const deadline = raw.data?.deadline || new Date(Date.now() + WAITING_DEADLINE_SECONDS * 1000).toISOString();
-
+        if (raw && !raw.ok) {
+          const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as ErrorCode;
           return {
-            ok: true,
+            ok: false,
             requestId: rid,
             roomId: args.roomId,
-            version: raw.version ?? args.expectedVersion,
-            state: raw.state,
-            data: {
-              accepted: true,
-              round: args.round,
-              poolVersion: args.poolVersion,
-              waitingStartedAt,
-              deadline,
-              roomVersion: raw.version ?? args.expectedVersion,
-              state: raw.state,
-            },
+            error: { messageKey: errCode, details: raw.error?.details },
           };
         }
 
-        const errCode = (raw?.error?.messageKey || raw?.error?.code || 'UNKNOWN_ERROR') as ErrorCode;
+        // F7: Canonical envelope validation — requires deadline from server (no synthetic fallback)
+        if (!isCanonicalWaitingEnvelope(raw, args)) {
+          return {
+            ok: false,
+            requestId: rid,
+            roomId: args.roomId,
+            error: { messageKey: 'MALFORMED_RESPONSE' },
+          };
+        }
+
+        return {
+          ok: true,
+          requestId: rid,
+          roomId: args.roomId,
+          version: raw.version,
+          state: raw.state,
+          data: {
+            accepted: true,
+            round: args.round,
+            poolVersion: args.poolVersion,
+            waitingStartedAt: raw.data.waitingStartedAt,
+            deadline: raw.data.deadline,
+            roomVersion: raw.version,
+            state: raw.state,
+          },
+        };
+      } catch (err: unknown) {
         return {
           ok: false,
           requestId: rid,
           roomId: args.roomId,
-          error: { messageKey: errCode, details: raw?.error?.details },
+          error: mapErrorHelper(err),
         };
-      } catch (err: unknown) {
-        return { ok: false, requestId: rid, roomId: args.roomId, error: mapErrorHelper(err) };
       }
     }
 
-    // Default synthetic waiting response if direct caller not connected
-    const nowIso = new Date().toISOString();
     return {
-      ok: true,
+      ok: false,
       requestId: rid,
       roomId: args.roomId,
-      version: args.expectedVersion,
-      data: {
-        accepted: true,
-        round: args.round,
-        poolVersion: args.poolVersion,
-        waitingStartedAt: nowIso,
-        deadline: new Date(Date.now() + WAITING_DEADLINE_SECONDS * 1000).toISOString(),
-      },
+      error: { messageKey: 'NETWORK_ERROR' },
     };
   }
 
   /**
-   * Finalizes the current round early ("Chốt ngay" / Host early finish).
-   * Host is only permitted to finish early when A_r > M/2 (strictly more than half of locked roster).
-   * Server rejects unauthorized calls with NOT_HOST (403) or NOT_READY (409).
+   * Finalizes the current round early (Host Chốt ngay).
+   * Enforces quorum condition: A_r > M/2 (strictly more than half locked roster).
    */
   async finalize(args: FinalizeArgs): Promise<WriteResult<FinalizeResponse>> {
     const rid = args.requestId || this.nextRequestId('finalize');
 
-    // Pre-flight client checks if parameters are explicitly provided
+    // Quorum check if counts are supplied
+    if (args.rosterAcknowledgedCount != null && args.totalRosterCount != null) {
+      if (!isHostEarlyFinishAllowed(args.rosterAcknowledgedCount, args.totalRosterCount)) {
+        return {
+          ok: false,
+          requestId: rid,
+          roomId: args.roomId,
+          error: {
+            messageKey: 'NOT_READY',
+            details: {
+              acknowledged: args.rosterAcknowledgedCount,
+              total: args.totalRosterCount,
+            },
+          },
+        };
+      }
+    }
+
     if (args.isHost === false) {
       return {
         ok: false,
         requestId: rid,
         roomId: args.roomId,
         error: { messageKey: 'NOT_HOST' },
-      };
-    }
-    if (
-      typeof args.rosterAcknowledgedCount === 'number' &&
-      typeof args.totalRosterCount === 'number' &&
-      !isHostEarlyFinishAllowed(args.rosterAcknowledgedCount, args.totalRosterCount)
-    ) {
-      return {
-        ok: false,
-        requestId: rid,
-        roomId: args.roomId,
-        error: {
-          messageKey: 'NOT_READY',
-          details: {
-            acknowledged: args.rosterAcknowledgedCount,
-            total: args.totalRosterCount,
-            required: Math.floor(args.totalRosterCount / 2) + 1,
-          },
-        },
       };
     }
 
@@ -425,52 +572,50 @@ export class LiveVoteRepository implements VoteRepository {
             roomId: args.roomId,
             expectedVersion: args.expectedVersion,
           },
-        })) as {
-          ok?: boolean;
-          data?: {
-            accepted?: boolean;
-            outcome?: FinalizeOutcome;
-            state?: string;
-            round?: number;
-            resultId?: string;
-            finalizedAt?: string;
-          };
-          version?: number;
-          state?: string;
-          error?: { messageKey?: string; code?: string; details?: Record<string, unknown> };
-        };
+        })) as any;
 
-        if (raw?.ok) {
-          const outcome = raw.data?.outcome || (raw.state === 'ROUND_2' ? 'ROUND_ADVANCED' : 'TERMINAL');
-          const state = raw.data?.state || raw.state || 'DECIDED';
-          const round = raw.data?.round || (outcome === 'ROUND_ADVANCED' ? 2 : 1);
-
+        if (raw && !raw.ok) {
+          const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as ErrorCode;
           return {
-            ok: true,
+            ok: false,
             requestId: rid,
             roomId: args.roomId,
-            version: raw.version ?? args.expectedVersion,
-            state: raw.state,
-            data: {
-              accepted: true,
-              outcome,
-              state,
-              round,
-              resultId: raw.data?.resultId,
-              finalizedAt: raw.data?.finalizedAt,
-            },
+            error: { messageKey: errCode, details: raw.error?.details },
           };
         }
 
-        const errCode = (raw?.error?.messageKey || raw?.error?.code || 'UNKNOWN_ERROR') as ErrorCode;
+        // F7: Canonical envelope validation
+        if (!isCanonicalFinalizeEnvelope(raw, args)) {
+          return {
+            ok: false,
+            requestId: rid,
+            roomId: args.roomId,
+            error: { messageKey: 'MALFORMED_RESPONSE' },
+          };
+        }
+
+        return {
+          ok: true,
+          requestId: rid,
+          roomId: args.roomId,
+          version: raw.version,
+          state: raw.data.state,
+          data: {
+            accepted: true,
+            outcome: raw.data.outcome,
+            state: raw.data.state,
+            round: raw.data.round,
+            resultId: raw.data.resultId,
+            finalizedAt: raw.data.finalizedAt,
+          },
+        };
+      } catch (err: unknown) {
         return {
           ok: false,
           requestId: rid,
           roomId: args.roomId,
-          error: { messageKey: errCode, details: raw?.error?.details },
+          error: mapErrorHelper(err),
         };
-      } catch (err: unknown) {
-        return { ok: false, requestId: rid, roomId: args.roomId, error: mapErrorHelper(err) };
       }
     }
 
@@ -483,7 +628,8 @@ export class LiveVoteRepository implements VoteRepository {
   }
 
   /**
-   * Retrieves current room snapshot.
+   * Fetches the current room snapshot.
+   * Requires strict validation against canonical schema guards (F7).
    */
   async getSnapshot(roomId: string): Promise<ReadResult<RoomSnapshot>> {
     const caller = this.getCaller();
@@ -495,23 +641,18 @@ export class LiveVoteRepository implements VoteRepository {
             contractVersion: CANONICAL_VOTE_CONTRACT_VERSION,
             roomId,
           },
-        })) as {
-          ok?: boolean;
-          data?: unknown;
-          error?: { messageKey?: string; code?: string };
-        };
+        })) as any;
 
         if (raw?.ok && raw.data) {
           if (isCanonicalRoomSnapshot(raw.data) || isRoomSnapshot(raw.data)) {
             return { ok: true, data: raw.data as RoomSnapshot };
           }
-          if (typeof raw.data === 'object' && (raw.data as any).roomId && (raw.data as any).code) {
-            return { ok: true, data: raw.data as RoomSnapshot };
-          }
+          // F7: Missing or invalid schema fields must strictly return MALFORMED_RESPONSE
+          return { ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } };
         }
         if (raw && !raw.ok) {
           const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as ErrorCode;
-          return { ok: false, error: { messageKey: errCode } };
+          return { ok: false, error: { messageKey: errCode, details: raw.error?.details } };
         }
         return { ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } };
       } catch (err: unknown) {
@@ -523,30 +664,30 @@ export class LiveVoteRepository implements VoteRepository {
       return this.client.getRoomSnapshot(roomId);
     }
 
-    return { ok: false, error: { messageKey: 'NETWORK_ERROR' } };
+    return {
+      ok: false,
+      error: { messageKey: 'NETWORK_ERROR' },
+    };
   }
 }
 
 export interface MockVoteRepositoryOptions {
-  initialSnapshot?: Partial<RoomSnapshot>;
-  failSubmit?: boolean;
-  failFinalize?: boolean;
-  failWaiting?: boolean;
-  errorCode?: ErrorCode;
   delayMs?: number;
+  failSubmit?: boolean;
+  failWaiting?: boolean;
+  failFinalize?: boolean;
+  errorCode?: ErrorCode;
   initialRound?: 1 | 2;
   initialTotalRoster?: number;
   initialAcknowledgedCount?: number;
   isHost?: boolean;
+  initialSnapshot?: Partial<RoomSnapshot>;
 }
 
-/**
- * In-memory MockVoteRepository for tests, previews and isolated verification.
- */
 export class MockVoteRepository implements VoteRepository {
-  private options: MockVoteRepositoryOptions;
-  private submissions: Map<string, SubmitBallotArgs> = new Map();
-  private receipts: Map<string, WriteResult<SubmitBallotResponse>> = new Map();
+  private readonly options: MockVoteRepositoryOptions;
+  private readonly submissions = new Map<string, SubmitBallotArgs>();
+  private readonly receipts = new Map<string, WriteResult<SubmitBallotResponse>>();
   private waitingStartedAt: string | null = null;
   private currentRound: 1 | 2;
   private rosterCount: number;
@@ -575,16 +716,16 @@ export class MockVoteRepository implements VoteRepository {
       };
     }
 
-    // Check cached idempotent response
-    const cacheKey = `${args.roomId}_${args.round}_${rid}`;
-    if (this.receipts.has(cacheKey)) {
-      return this.receipts.get(cacheKey)!;
-    }
+    // F1: Normalize to wire choices
+    const wireVotes = args.votes.map(v => ({
+      roundDishId: v.roundDishId,
+      choice: (v as any).choice ?? v.vote,
+    }));
 
     // Round 2 cap enforcement
     if (args.round === 2) {
-      const removeCount = args.votes.filter(v => v.vote === 'REMOVE').length;
-      const cap = getRoundTwoEliminationCap(args.votes.length);
+      const removeCount = wireVotes.filter(v => v.choice === 'REMOVE').length;
+      const cap = getRoundTwoEliminationCap(wireVotes.length);
       if (removeCount > cap) {
         return {
           ok: false,
@@ -596,6 +737,21 @@ export class MockVoteRepository implements VoteRepository {
           },
         };
       }
+    }
+
+    const payloadSerialized = JSON.stringify({
+      roomId: args.roomId,
+      round: args.round,
+      poolVersion: args.poolVersion,
+      expectedVersion: args.expectedVersion,
+      votes: wireVotes,
+    });
+
+    // Check cached idempotent response
+    const cacheKey = `${args.roomId}_${args.round}_${rid}`;
+    if (this.receipts.has(cacheKey)) {
+      const cached = this.receipts.get(cacheKey)!;
+      return cached;
     }
 
     this.submissions.set(cacheKey, args);

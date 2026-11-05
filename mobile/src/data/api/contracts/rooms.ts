@@ -132,6 +132,8 @@ export interface RoomSnapshot {
   waitingStartedAt?: string | null;
   deadline?: string | null;
   canEndWaiting?: boolean;
+  removalCap?: number | null;
+  serverTime?: string;
   members: RoomMember[];
   ownPreferences?: UserPreferences;
   round: 1 | 2;

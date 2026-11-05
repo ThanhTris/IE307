@@ -18,8 +18,15 @@ export default function FinalRoundRoute() {
     <FinalRoundScreen
       roomId={typeof roomId === 'string' ? roomId : undefined}
       repository={repository}
+      showScenarioPicker={!isReal}
       onFinish={() => {
         router.replace(typeof roomId === 'string' ? { pathname: '/room/result', params: { roomId } } : '/room/result');
+      }}
+      onGoToResult={() => {
+        router.replace(typeof roomId === 'string' ? { pathname: '/room/result', params: { roomId } } : '/room/result');
+      }}
+      onGoToNoConsensus={() => {
+        router.replace(typeof roomId === 'string' ? { pathname: '/room/no-consensus', params: { roomId } } : '/room/no-consensus');
       }}
       onBack={() => (router.canGoBack() ? router.back() : router.replace('/room/vote'))}
     />

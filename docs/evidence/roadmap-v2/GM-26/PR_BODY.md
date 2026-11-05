@@ -31,7 +31,16 @@ Reviewer: @ThanhTris
 
 4. **Contract & Type Updates**:
    - Added `'REMOVE_LIMIT'` to `ErrorCode` in `common.ts` and error localized copy in `roomEntry.ts`.
-   - Added `'WAITING_1' | 'WAITING_2'` to `RoomState` in `rooms.ts`.
+   - Added `'WAITING_1' | 'WAITING_2'` to `RoomState` in `rooms.ts` and updated `isRoomState` response guard in `responseGuards.ts`.
+
+5. **PR #156 Review Fixes (F1–F7)**:
+   - **F1 (Wire format)**: Strictly maps ballots to `{ roundDishId, choice }` on the wire without legacy `vote` property or extraneous fields.
+   - **F2 (Dynamic snapshot)**: Eliminates hardcoded fixtures in real mode; dynamically loads room snapshot, pool, versions, and caller host status via `getSnapshot` with loading/error state and hides QA scenario pickers.
+   - **F3 (Waiting synchronization)**: Synchronizes 60s countdown with server `deadline` and `serverTime`; polls snapshot every 2.5s during waiting to detect other member submissions.
+   - **F4 (Waiting error isolation)**: Isolates post-ACK `enterWaiting` errors without destroying ballot submission state, offering a dedicated `handleRetryWaiting` button.
+   - **F5 (Real outcome navigation)**: Navigates dynamically to real terminal outcomes (`DECIDED`, `NO_CONSENSUS` / `EMPTY_INTERSECTION` / `ALL_REMOVED`) without hardcoding consensus fixtures.
+   - **F6 (Durable IDs across retries)**: Reuses `activeRequestId` across retries; rejects reused request IDs that carry mismatched payloads with `REQUEST_ID_REUSED`.
+   - **F7 (Strict envelope guards)**: Added strict canonical response guards on all RPC envelopes (`submitAck`, `waitingAck`, `finalizeAck`, `snapshot`); rejects malformed envelopes with `MALFORMED_RESPONSE`.
 
 ---
 
@@ -39,8 +48,8 @@ Reviewer: @ThanhTris
 
 - `npm run typecheck`: **Pass** (0 TypeScript errors under strict mode).
 - `npm run check:architecture`: **Pass** (clean boundaries).
-- Focused GM-26 test suites: **Pass** (49/49 tests across 3 suites):
-  - `tests/unit/voteRepository.test.ts`: 19/19 pass.
+- Focused GM-26 test suites: **Pass** (53/53 tests across 3 suites):
+  - `tests/unit/voteRepository.test.ts`: 23/23 pass (including wire format, F6 mismatch rejection, F7 envelope guards).
   - `tests/component/gm26FigmaParity.test.tsx`: 7/7 pass.
   - `tests/component/votingScreens.test.tsx`: 23/23 pass.
 - Repository validation (`validate_repository.py` & `task_readiness.py --check-docs`): **Pass**.

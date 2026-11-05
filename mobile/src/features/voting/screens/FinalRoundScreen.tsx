@@ -1,22 +1,21 @@
+import React from 'react';
 import {
+  ActivityIndicator,
+  Image,
   Pressable,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import {
-  type ApiClient,
-  type PoolDish,
-  type RoomResult,
-} from '../../../data/api';
-import { useShellTheme } from '../../../shared/lib/useShellTheme';
+import type { ApiClient, PoolDish, RoomResult } from '../../../data/api';
 import {
   AppButton,
   AppHeader,
   SheetDialog,
 } from '../../../shared/ui';
+import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import {
   FIXTURE_ROUND_TWO_CANDIDATES,
   type FinalScreenScenario,
@@ -39,12 +38,14 @@ export type FinalRoundScreenProps = {
   showScenarioPicker?: boolean;
   initialIsHost?: boolean;
   enforceCap?: boolean;
-  onFinish?: () => void;
+  onFinish?: (result: RoomResult) => void;
+  onGoToResult?: (result: RoomResult) => void;
+  onGoToNoConsensus?: (result?: RoomResult) => void;
   onBack?: () => void;
 };
 
 export function FinalRoundScreen({
-  candidates = FIXTURE_ROUND_TWO_CANDIDATES,
+  candidates: candidatesProp,
   roomId = 'room_demo_gm12',
   initialChoices,
   api,
@@ -53,13 +54,17 @@ export function FinalRoundScreen({
   initialResult = null,
   simulateError = false,
   simulateDelayMs = 400,
-  showScenarioPicker = true,
+  showScenarioPicker,
   initialIsHost = true,
   enforceCap = true,
   onFinish,
+  onGoToResult,
+  onGoToNoConsensus,
   onBack,
 }: FinalRoundScreenProps) {
   const { colors } = useShellTheme();
+  const shouldShowScenarioPicker = showScenarioPicker ?? !repository;
+
   const {
     choices,
     scenario,
@@ -72,6 +77,8 @@ export function FinalRoundScreen({
     receipt,
     result,
     isWaitingForMembers,
+    waitingError,
+    isRetryingWaiting,
     eliminationCap,
     keptCount,
     removedCount,
@@ -84,12 +91,17 @@ export function FinalRoundScreen({
     rosterAcknowledgedCount,
     setRosterAcknowledgedCount,
     canHostEarlyFinish,
+    isLoadingSnapshot,
+    snapshotError,
+    candidates: effectiveCandidates,
+    fetchSnapshot,
     handleHostEarlyFinish,
+    handleRetryWaiting,
     handleToggleChoice,
     handleSetAllKeep,
     handleSubmit,
   } = useRoundTwoVoting({
-    candidates,
+    candidates: candidatesProp ?? (repository ? undefined : FIXTURE_ROUND_TWO_CANDIDATES),
     roomId,
     initialChoices,
     api,
@@ -100,14 +112,50 @@ export function FinalRoundScreen({
     simulateDelayMs,
     initialIsHost,
     enforceCap,
+    onFinish,
+    onGoToResult,
+    onGoToNoConsensus,
   });
+
+  const candidates = effectiveCandidates;
+
+  if (isLoadingSnapshot) {
+    return (
+      <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+        <AppHeader title="Bình chọn · Vòng 2" onPressBrand={onBack} colors={colors} />
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.primary} />
+          <Text style={[styles.loadingText, { color: colors.text }]}>
+            Đang tải danh sách món ăn Vòng 2 từ hệ thống…
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (snapshotError && candidates.length === 0) {
+    return (
+      <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+        <AppHeader title="Bình chọn · Vòng 2" onPressBrand={onBack} colors={colors} />
+        <View style={styles.loadingContainer}>
+          <Text style={[styles.errorTitle, { color: colors.danger }]}>
+            Không thể tải dữ liệu Vòng 2
+          </Text>
+          <Text style={[styles.errorSubtitle, { color: colors.muted }]}>
+            Lỗi: {snapshotError}. Vui lòng kiểm tra lại kết nối mạng.
+          </Text>
+          <AppButton label="Thử lại tải phòng" onPress={() => void fetchSnapshot()} colors={colors} />
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <AppHeader title="Bình chọn · Vòng 2" onPressBrand={onBack} colors={colors} />
       <ScrollView contentContainerStyle={styles.content}>
         <FinalRoundHeaderAndOutcome
-          showScenarioPicker={showScenarioPicker}
+          showScenarioPicker={shouldShowScenarioPicker}
           submissionState={submissionState}
           scenario={scenario}
           setScenario={setScenario}
@@ -127,13 +175,29 @@ export function FinalRoundScreen({
           totalRosterCount={totalRosterCount}
           canHostEarlyFinish={canHostEarlyFinish}
           onHostEarlyFinish={handleHostEarlyFinish}
-          onFinish={onFinish}
+          onFinish={() => result && onFinish?.(result)}
           onRetryConsensus={() => {
             setScenario('consensus');
             void handleSubmit('consensus');
           }}
           colors={colors}
         />
+
+        {/* Waiting error banner with retry (F4) */}
+        {waitingError ? (
+          <View style={[styles.errorBanner, { backgroundColor: colors.surface, borderColor: colors.danger }]}>
+            <Text style={[styles.errorBannerText, { color: colors.danger }]}>
+              ⚠ {waitingError}
+            </Text>
+            <AppButton
+              label={isRetryingWaiting ? 'Đang thử lại…' : 'Thử lại vào hàng chờ Vòng 2'}
+              disabled={isRetryingWaiting}
+              variant="quiet"
+              onPress={handleRetryWaiting}
+              colors={colors}
+            />
+          </View>
+        ) : null}
 
         <View style={styles.batchActionsRow}>
           <Pressable
@@ -267,19 +331,25 @@ export function FinalRoundScreen({
 const styles = StyleSheet.create({
   root: { flex: 1 },
   content: { padding: 16, gap: 16, maxWidth: 600, width: '100%', alignSelf: 'center' },
-  batchActionsRow: { flexDirection: 'row', gap: 10, alignItems: 'center' },
-  batchButton: { flex: 1, paddingVertical: 10, paddingHorizontal: 12, borderRadius: 10, borderWidth: 1.5, alignItems: 'center' },
+  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24, gap: 16 },
+  loadingText: { fontSize: 14, fontWeight: '600', textAlign: 'center' },
+  errorTitle: { fontSize: 16, fontWeight: '800', textAlign: 'center' },
+  errorSubtitle: { fontSize: 13, textAlign: 'center', marginBottom: 12 },
+  errorBanner: { padding: 12, borderRadius: 10, borderWidth: 1, gap: 8 },
+  errorBannerText: { fontSize: 13, fontWeight: '600' },
+  batchActionsRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 10 },
+  batchButton: { paddingVertical: 10, paddingHorizontal: 16, borderRadius: 10, borderWidth: 1.5 },
   batchButtonText: { fontSize: 13, fontWeight: '700' },
-  capIndicator: { paddingVertical: 10, paddingHorizontal: 12, borderRadius: 10, borderWidth: 1, alignItems: 'center' },
-  capIndicatorText: { fontSize: 12, fontWeight: '700' },
-  candidateList: { gap: 14 },
+  capIndicator: { paddingVertical: 6, paddingHorizontal: 12, borderRadius: 8, borderWidth: 1 },
+  capIndicatorText: { fontSize: 11, fontWeight: '600' },
+  candidateList: { gap: 16 },
   submitSection: { gap: 8, marginTop: 8 },
   submitHint: { fontSize: 12, lineHeight: 17, textAlign: 'center' },
   modalBody: { gap: 14, paddingVertical: 8 },
-  modalText: { fontSize: 15, fontWeight: '600' },
-  modalSummaryBox: { gap: 6, padding: 10, borderRadius: 8, backgroundColor: 'rgba(0,0,0,0.03)' },
+  modalText: { fontSize: 14 },
+  modalSummaryBox: { padding: 12, borderRadius: 8, backgroundColor: '#f5f5f5', gap: 6 },
   summaryItem: { fontSize: 14, fontWeight: '600' },
-  modalWarning: { fontSize: 13, lineHeight: 18, fontWeight: '600' },
+  modalWarning: { fontSize: 12, lineHeight: 17, fontWeight: '700' },
   modalHint: { fontSize: 12, lineHeight: 17 },
-  modalActions: { gap: 8, marginTop: 6 },
+  modalActions: { gap: 8, marginTop: 12 },
 });

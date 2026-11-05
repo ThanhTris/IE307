@@ -42,7 +42,7 @@ function isTimestamp(value: unknown): value is string {
 
 export function isRoomState(value: unknown): value is RoomState {
   return typeof value === 'string' && [
-    'LOBBY', 'ROUND_1', 'ROUND_2', 'DECIDED', 'NO_CONSENSUS', 'CANCELLED',
+    'LOBBY', 'ROUND_1', 'WAITING_1', 'ROUND_2', 'WAITING_2', 'DECIDED', 'NO_CONSENSUS', 'CANCELLED',
     'EXPIRED', 'FINALIZED', 'VOTING', 'COMPLETED',
   ].includes(value);
 }
