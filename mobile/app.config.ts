@@ -4,6 +4,7 @@ const config: ExpoConfig = {
   name: 'Gì Cũng Được',
   slug: 'gi-cung-duoc',
   version: '0.1.0',
+  icon: './assets/brand/gi-cung-duoc-icon.png',
   scheme: 'gi-cung-duoc',
   orientation: 'default',
   userInterfaceStyle: 'automatic',

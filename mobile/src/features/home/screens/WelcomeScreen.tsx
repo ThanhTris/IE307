@@ -3,7 +3,7 @@ import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-nati
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { AppButton } from '../../../shared/ui';
+import { AppButton, BrandLogo } from '../../../shared/ui';
 import { radii, spacing } from '../../../shared/theme/tokens';
 
 type Props = {
@@ -33,7 +33,7 @@ export function WelcomeScreen({ onGuest, onSignIn, onSignUp, disabled, notice, i
           <View style={[styles.verticalRibbon, { backgroundColor: colors.onPrimary }]} />
         </View>
         <View style={styles.brand}>
-          <View style={[styles.logoTile, { backgroundColor: colors.surface }]}><Image source={require('../../../../assets/brand/gcd-logo-master.png')} accessible={false} style={styles.logo} /></View>
+          <View style={[styles.logoTile, { backgroundColor: colors.surface }]}><BrandLogo size={44} /></View>
           <Text style={[styles.brandName, { color: colors.text }, textStyle(700)]}>Gì Cũng Được</Text>
         </View>
         <Text accessibilityRole="header" style={[styles.headline, { color: colors.text }, textStyle(700)]}>{'Cả nhóm\năn gì?'}</Text>

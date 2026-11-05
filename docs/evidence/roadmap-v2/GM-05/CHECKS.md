@@ -1,5 +1,28 @@
 # GM-05 checks — shared UI components
 
+## Supplement 2026-11-05 — BrandLogo SVG & Kiểm tra đa nền/kích thước
+
+Cập nhật component theo yêu cầu:
+- Triển khai component `BrandLogo` (`mobile/src/shared/ui/layout/BrandLogo.tsx`) sử dụng vector SVG `gi-cung-duoc-logo.svg` (Figma node `22:394`, SHA-256 `cd00727ff0ac169f8a7c364e5b04a751c6963edccc383d3a2ebc5fc062e011b7`).
+- Xuất `BrandLogo` và kiểu `BrandLogoProps` qua `mobile/src/shared/ui/index.ts`.
+- Tái sử dụng `BrandLogo` kích thước 44dp trong `AppHeader` (nằm trong nút "Về trang chủ", mặc định chế độ decorative để không trùng lặp nhãn TalkBack với tiêu đề bên cạnh).
+- Mở rộng màn hình `ComponentPreviewScreen` (`/dev/components`) hiển thị `BrandLogo` ở 3 kích thước: 36dp (nhỏ), 44dp (chuẩn), 72dp (lớn) trên cả nền sáng (`colors.surface`) và nền tối (`#043B22`).
+- Bổ sung unit test trong `sharedComponents.test.tsx` kiểm tra:
+  - Hiển thị đúng tỷ lệ vuông 1:1 ở kích thước 36dp, 44dp, 72dp.
+  - Chế độ decorative (khi không truyền `accessibilityLabel`): `accessible={false}`, `importantForAccessibility="no"`.
+  - Chế độ labeled (khi truyền `accessibilityLabel`): `accessible={true}`, `accessibilityRole="image"`, `accessibilityLabel="Gì Cũng Được logo"`.
+  - Nút thương hiệu `AppHeader` có vai trò button và nhãn "Về trang chủ".
+
+| Kiểm tra | Lệnh / Đầu vào | Kỳ vọng | Thực tế | Kết quả |
+|---|---|---|---|---|
+| Unit / Component Tests | `npm test -- sharedComponents.test.tsx` | 23 assertions cho các component dùng chung và BrandLogo | 23 passed, 0 failures (15.86s) | Pass |
+| Toàn bộ Mobile Jest | `npm --prefix mobile test` | Tất cả test suites toàn app | CI commit `4903256`: 56 suites, 954 tests passed; xem nguồn bên dưới | Pass (CI) |
+| TypeScript | `npm run typecheck` | Khớp kiểu BrandLogoProps & SvgProps | Exit 0 | Pass |
+| Lint | `npm run lint` | Không có lỗi lint mới | Exit 0 | Pass |
+| Architecture Guard | `npm run check:architecture` | Ranh giới shared/ui đúng | Exit 0 | Pass |
+
+Đính chính hồ sơ ngày 2026-11-05: [CI của commit `4903256`](https://github.com/ThanhTris/IE307/actions/runs/41957120783) xác nhận 56 suites / 954 tests toàn bộ mobile; thay số full-suite `48 suites / 214 tests` ghi nhầm trước đó. Lượt local năm suite component/route đạt 93/93 tests ở cùng revision chỉ là tập con, không thay bằng chứng full-suite. Route hiện hành là `/dev/components` và `/dev/foundation`; route không có tiền tố `dev` trong evidence cũ là tham chiếu lịch sử. Visual logo trên thiết bị, TalkBack và icon/splash native của supplement này vẫn **Not run**; kiểm props hoặc export không thay nghiệm thu thiết bị.
+
 ## Supplement 2026-10-27 — components used by the updated Home
 
 The Home Figma frame now consumes the shared `AppHeader`, `AppButton` with stacked icon support, and `AvatarRow`; GM-05 also exports reusable `BrandBanner` and `AppBottomNavigation` components for its dining illustration and four-tab navigation. Components accept theme/font styles and route callbacks rather than embedding API behavior. The targeted shared-component and Home route/review-feedback suites pass **46/46 tests**; strict typecheck and architecture guard pass. The Android export includes the Figma assets. Updated Home visual verification on emulator is **Not run**.

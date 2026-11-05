@@ -1,5 +1,33 @@
 # GM-03 — BE foundation handoff
 
+## Handoff hiện hành sau Docker restart — 2026-11-05
+
+Strict loopback/runtime gap đã có bằng chứng chạy thành công trên host này ở run `loopback-20261105d`: sau khi Trí đổi Docker Desktop **Localhost by default** và restart, API/DB 54361/54362 chỉ publish `127.0.0.1` / `::1`. Startup, inventory/ledger/definitions, Auth+REST **7/7**, v4 **151 ca / 575 schema envelopes**, post-suite verify, worker stop/start/verify và cleanup đều đạt. Có 25 migrations, 199 functions và 2 catalogue (39 món draft/test + fixture 20 món riêng). Chi tiết và giới hạn ở [CHECKS](CHECKS.md), cách cấu hình host ở [runbook](RUNBOOK_QA.md).
+
+Baseline `4903256` + diff local `scripts/gm_v4_http_check.mjs` sửa cleanup fixture shortage: dọn member/room và release tạm đúng thứ tự FK, trong writer context transaction-local trên owned QA. Lỗi post-suite catalogue drift trước sửa và hai lần cleanup bị guard/FK chặn đều được giữ trong log local `review-results/docker-binding-fix-20261105/`. Verifier không được nới, migration/API/policy không đổi. Run cuối đã stopped, credentials và owned resources đã dọn. Evidence thu trước commit; Trí yêu cầu commit/push bản sửa lên main ngày 2026-11-05. Việc xuất bản không thay approval/Project; Bruno UI, Android/native và các API ngoài suite giữ scope riêng.
+
+Phần dưới là evidence lịch sử trước cấu hình Docker mới; các ghi chú không có cách binding/chưa chạy lại không còn là kết luận hiện hành cho host này.
+
+## Handoff sau kiểm lại strict QA — 2026-11-05
+
+Main `4903256` đã chạy lại startup có guard hai lần trên owned QA `fix-main-20261105` và `fix-main-bind-20261105` (API/DB `54361/54362`, CLI 2.120.0, Docker Engine 29.9.2). Cả hai bị chặn với `QA_HOST_BINDING_NOT_LOOPBACK` và tự cleanup về `stopped`. Network đã có default loopback và `--ipv6=false`, nhưng Docker inspect DB vẫn cho effective bindings `0.0.0.0`/`::`. Chi tiết expected/actual và phạm vi inspection ở [CHECKS](CHECKS.md).
+
+Guard/cleanup hoạt động; **vòng đời QA loopback đầy đủ chưa đạt**. Auth+REST, inventory/manifest, seed và worker của lượt mới **Not run** vì chưa qua startup. Root unit tests đạt 19/19 không thay kết quả đó. Log/JSON local giữ trong `review-results/main-fixes-20261105/`; evidence cũ bên dưới giữ nguyên theo revision. Không dùng CI wildcard để đóng thiếu sót, không sửa DB app/migration hoặc tự thay Project status. Phương án cần đổi toolchain/proxy/cấu hình Docker toàn máy cần chủ dự án chốt trước.
+
+## Supplement 2026-11-05 — QA Runner Loopback Isolation & Resource Ownership
+
+Đợt cập nhật này bàn giao tiêu chuẩn QA Runner cho các task backend (`GM-15..23`, `GM-32`):
+1. **Kiểm soát Loopback Binding nghiêm ngặt:**
+   - Hàm `assertLoopbackPublishedPort` trong `scripts/backend-qa.mjs` kiểm tra và thực thi cơ chế fail-closed nếu cổng xuất bản không thuộc `127.0.0.1` hoặc `::1`.
+   - Cấu hình wildcard trong CI chỉ được sử dụng cho môi trường kiểm thử CI tự động, không được suy diễn là bằng chứng đạt chuẩn loopback-only trên môi trường máy trạm.
+2. **Quyền sở hữu tài nguyên & dọn dẹp an toàn:**
+   - Mạng bridge tạo mới với `--ipv6=false` và `com.docker.network.bridge.host_binding_ipv4=127.0.0.1`.
+   - Tất cả tài nguyên (mạng, container, volume) đều được gắn nhãn sở hữu `com.gm03.owner_uuid` và `com.gm03.run_id`.
+   - Tiến trình worker gắn nonce bảo vệ; chỉ tiến trình khớp nonce mới được dừng/khởi động lại.
+   - Thao tác `qa:stop` dọn dẹp sạch sẽ tài nguyên của phiên QA mà không bao giờ can thiệp vào cơ sở dữ liệu phát triển (`54321`/`54322`).
+3. **Bằng chứng kiểm thử:**
+   - Toàn bộ 19 test trong `tests/backend-runner.test.mjs` và `tests/backend-qa.test.mjs` đều đạt Pass.
+
 ## Supplement 2026-10-27 — QA, Bruno, and loopback limitation
 
 The PR #137 revision was exercised with an owned disposable Supabase project (`gm03-pr137-20261027`, contract B/schema `0.9.1`) and then cleaned up. Seven Auth/REST assertions and 83 v4 API cases passed; the Bruno desktop Runner showed the exact six expected responses `200,200,200,200,401,401` in [this screenshot](bruno-runner-gm03-20261027.jpg). Worker restart/verification passed. Detailed assertions and limitations are in [CHECKS](CHECKS.md); raw reports remain under ignored `.work/`.

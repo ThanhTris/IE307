@@ -1340,8 +1340,13 @@
         {
           "task": "GM-31",
           "artifact": "mobile/src/data/local/outbox.ts",
-          "gate": "start"
+      "gate": "merge"
         },
+    {
+      "task": "GM-03",
+      "artifact": "scripts/backend.mjs",
+      "gate": "merge"
+    },
         {
           "task": "GM-06",
           "artifact": "supabase/migrations/0001_core_schema.sql",
@@ -1392,32 +1397,32 @@
         {
           "task": "GM-27",
           "artifact": "mobile/src/features/result/services/resultRepository.ts",
-          "gate": "start"
+      "gate": "merge"
         },
         {
           "task": "GM-28",
           "artifact": "mobile/src/features/friends/services/socialRepository.ts",
-          "gate": "start"
+      "gate": "merge"
         },
         {
           "task": "GM-29",
           "artifact": "mobile/src/features/inbox/services/nativePush.ts",
-          "gate": "start"
+      "gate": "merge"
         },
         {
           "task": "GM-30",
           "artifact": "mobile/src/features/rooms/services/joinLinks.ts",
-          "gate": "start"
+      "gate": "merge"
         },
         {
           "task": "GM-31",
           "artifact": "mobile/src/data/local/outbox.ts",
-          "gate": "start"
+      "gate": "merge"
         },
         {
           "task": "GM-32",
           "artifact": "docs/evidence/roadmap-v2/GM-32/REGRESSION.md",
-          "gate": "start"
+      "gate": "merge"
         },
         {
           "task": "GM-07",

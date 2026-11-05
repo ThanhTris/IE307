@@ -40,9 +40,10 @@
    } = useDiscoveryContext();
    ```
 
-2. **Gọi tạo phòng RPC**:
-   - Truyền trực tiếp danh sách mã món ăn từ `preview.map(d => d.dishId)` hoặc các tham số `mealSlot`, `dishCount`, `desiredAt` vào payload `create_dish_session` / `create_room` của GM-25.
-   - Không truyền tọa độ GPS hay anchor vào payload tạo phòng.
+2. **Bàn giao cho GM-25 tạo phòng**:
+   - GM-24 chỉ preview và xác nhận thiết lập; không tạo phòng. GM-25 gọi RPC `dish_session` với `command: "create"` và payload theo schema GM-07.B-supplement (`contractVersion`, `requestId`, `displayName`, `settings`, `preferences`).
+   - Không truyền danh sách `preview.map(d => d.dishId)` vào request tạo phòng. Server là authority chọn và khóa pool theo setting; preview chỉ hiển thị đầu vào đã xem trước.
+   - Không dùng `create_dish_session` hoặc `create_room` như endpoint của contract mới; không truyền tọa độ GPS hay anchor vào payload tạo phòng.
 
 3. **Xử lý Shortage**:
    - Nếu RPC trả về lỗi `409 INSUFFICIENT_DISHES` với `details: { available, requested }`:

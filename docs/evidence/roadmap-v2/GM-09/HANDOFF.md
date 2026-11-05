@@ -1,5 +1,17 @@
 # GM-09 — bàn giao màn Home / create / join
 
+## Supplement 2026-11-05 — Logo Vector SVG trên Màn chào, Guest Entry và Header
+
+1. **Hiển thị thương hiệu:**
+   - Màn chào `WelcomeScreen` và màn nhập tên khách `GuestEntryScreen` sử dụng component vector `BrandLogo` (`size={44}`) thay thế ảnh raster tĩnh.
+   - Logo thương hiệu nằm trong `logoTile` (màn Welcome) và `logoSlot` (màn Guest), giữ tỷ lệ vuông và căn chỉnh đúng thiết kế Figma.
+   - Header trang chủ (`AppHeader`) hiển thị `BrandLogo` trong nút "Về trang chủ".
+2. **Phạm vi nghiệp vụ:**
+   - Vẫn giữ nguyên phạm vi **UI mock**: màn hình mô phỏng luồng đăng nhập/đăng ký/khách không gọi API thật hoặc tự động kích hoạt phiên backend.
+   - Điều hướng vào/ra hoạt động độc lập qua các mock callbacks.
+3. **Bằng chứng kiểm thử:**
+   - Toàn bộ suite `guestEntryScreen.test.tsx`, `homeScreen.test.tsx`, `guestEntryRoute.test.tsx`, và 56 suites / 954 tests của mobile đều đạt Pass.
+
 ## Latest correction — native input/tutorial feedback, 2026-11-02
 
 [Current scope/repair/recheck](figma-update/INPUT_MOTION_REPAIR.md): replace the

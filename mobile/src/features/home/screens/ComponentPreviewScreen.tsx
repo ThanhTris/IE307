@@ -6,6 +6,7 @@ import {
   AppButton,
   AppHeader,
   AvatarRow,
+  BrandLogo,
   Chip,
   CollectionState,
   ContextSummary,
@@ -56,6 +57,20 @@ export function ComponentPreviewScreen({ onBack }: Props) {
           tone="info"
           colors={colors}
         />
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Thương hiệu · BrandLogo SVG</Text>
+          <Text style={[styles.caption, { color: colors.muted, textAlign: 'left' }]}>Vector SVG chuẩn tỉ lệ 1:1, kiểm tra trên nền sáng và nền tối (#043B22).</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16, padding: 12, borderRadius: 12, backgroundColor: colors.surface }}>
+            <BrandLogo size={36} accessibilityLabel="Logo nhỏ 36dp nền sáng" />
+            <BrandLogo size={44} accessibilityLabel="Logo chuẩn 44dp nền sáng" />
+            <BrandLogo size={72} accessibilityLabel="Logo lớn 72dp nền sáng" />
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16, padding: 12, borderRadius: 12, backgroundColor: '#043B22' }}>
+            <BrandLogo size={36} accessibilityLabel="Logo nhỏ 36dp nền tối" />
+            <BrandLogo size={44} accessibilityLabel="Logo chuẩn 44dp nền tối" />
+            <BrandLogo size={72} accessibilityLabel="Logo lớn 72dp nền tối" />
+          </View>
+        </View>
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>Tạo bối cảnh</Text>
           <FormField label="Tên phòng" value="Bữa trưa vui vẻ" onChangeText={() => undefined} helperText="FormField hỗ trợ nhãn, hint, lỗi và font scaling." colors={colors} />
