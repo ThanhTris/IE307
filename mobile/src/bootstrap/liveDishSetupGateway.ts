@@ -22,46 +22,55 @@ export function createLiveDishSetupGateway(
           friends = friendsRes.data.map(f => ({ id: f.friendUserId || f.id, label: f.displayName }));
         }
       } catch {
-        // friends optional
+        // Friends optional in read
+      }
+
+      let accountDefaults = emptyPreferences(false);
+      try {
+        const defsRes = await repository.getDefaultPreferences?.();
+        if (defsRes?.ok && defsRes.data?.preferences) {
+          accountDefaults = defsRes.data.preferences;
+        }
+      } catch {
+        // Fallback to emptyPreferences
       }
 
       if (currentRoomId) {
-        try {
-          const snapRes = await repository.getRoomSnapshot(currentRoomId);
-          if (snapRes.ok) {
-            const snap = snapRes.data;
-            const isHost = currentUser?.id ? snap.hostUserId === currentUser.id : true;
-            cachedRoom = {
-              id: snap.roomId,
-              code: snap.code,
-              version: snap.version,
-              state: snap.state === 'CANCELLED' ? 'CLOSED' : 'LOBBY',
-            };
-            const settings: SetupDraft = {
-              mealSlot: snap.context.mealSlot ?? 'lunch',
-              dishCount: snap.pool?.length || 15,
-              timeMode: snap.context.timeHint ? 'scheduled' : 'now',
-              desiredAt: snap.context.desiredAt ?? null,
-              budget: null,
-              avoidRecent: snap.context.avoidRecent ?? true,
-              inviteeIds: [],
-            };
-            return {
-              catalogue: dishSetupCatalogue,
-              friends,
-              connected: isConnected,
-              canEditSettings: isHost,
-              accountDefaults: emptyPreferences(false),
-              ownRoomPreferences: snap.ownPreferences,
-              room: cachedRoom,
-              settings,
-              hasRecentHistory: false,
-              closedReason: snap.state === 'CANCELLED' ? 'cancelled' : undefined,
-            };
-          }
-        } catch {
-          // snapshot read failed
+        const snapRes = await repository.getRoomSnapshot(currentRoomId);
+        if (!snapRes.ok) {
+          throw new Error(`Failed to read room snapshot: ${snapRes.error.message || snapRes.error.messageKey}`);
         }
+        const snap = snapRes.data;
+        const isHost = currentUser?.id ? snap.hostUserId === currentUser.id : true;
+        const isClosed = snap.state !== 'LOBBY';
+        cachedRoom = {
+          id: snap.roomId,
+          code: snap.code,
+          version: snap.version,
+          state: isClosed ? 'CLOSED' : 'LOBBY',
+        };
+        const snapSettings = (snap as unknown as { settings?: { mealSlot?: SetupDraft['mealSlot']; dishCount?: number; desiredAt?: string | null } }).settings;
+        const settings: SetupDraft = {
+          mealSlot: snapSettings?.mealSlot ?? snap.context?.mealSlot ?? 'lunch',
+          dishCount: snapSettings?.dishCount ?? snap.pool?.length ?? 15,
+          timeMode: (snap.context?.timeHint || snapSettings?.desiredAt) ? 'scheduled' : 'now',
+          desiredAt: snapSettings?.desiredAt ?? snap.context?.desiredAt ?? null,
+          budget: null,
+          avoidRecent: snap.context?.avoidRecent ?? true,
+          inviteeIds: [],
+        };
+        return {
+          catalogue: dishSetupCatalogue,
+          friends,
+          connected: isConnected,
+          canEditSettings: isHost,
+          accountDefaults,
+          ownRoomPreferences: snap.ownPreferences,
+          room: cachedRoom,
+          settings,
+          hasRecentHistory: false,
+          closedReason: snap.state === 'CANCELLED' ? 'cancelled' : isClosed ? 'closed' : undefined,
+        };
       }
 
       return {
@@ -69,7 +78,7 @@ export function createLiveDishSetupGateway(
         friends,
         connected: isConnected,
         canEditSettings: true,
-        accountDefaults: emptyPreferences(false),
+        accountDefaults,
         room: cachedRoom,
         hasRecentHistory: false,
       };
@@ -77,48 +86,76 @@ export function createLiveDishSetupGateway(
 
     write: async (intent: SetupIntent): Promise<SetupReply> => {
       const currentUser = repository.getCurrentUser();
-      const displayName = currentUser?.displayName || 'Host';
+      const displayName = (currentUser?.displayName || 'Host').trim();
 
       if (intent.kind === 'settings') {
+        // Deterministic frozen desiredAt: null if now, string if scheduled
+        const desiredAt = intent.draft.timeMode === 'scheduled' ? (intent.draft.desiredAt || null) : null;
+        const settingsPayload = {
+          dishCount: intent.draft.dishCount,
+          mealSlot: intent.draft.mealSlot,
+          desiredAt,
+        };
+
         if (intent.room) {
-          const res = await repository.updateContext({
-            roomId: intent.room.id,
-            expectedVersion: intent.room.version,
-            context: {
-              anchorId: 'dish-only',
-              radiusM: 0,
-              desiredAt: intent.draft.desiredAt ?? new Date().toISOString(),
-              serviceMode: 'dine_in',
-              mealSlot: intent.draft.mealSlot,
-              budget: null,
-              avoidRecent: intent.draft.avoidRecent,
-            },
-            requestId: intent.requestId,
-          });
+          const res = await repository.dispatchDishSession<{ accepted: boolean; version?: number }>(
+            'updateSettings',
+            {
+              requestId: intent.requestId,
+              roomId: intent.room.id,
+              expectedVersion: intent.room.version,
+              settings: settingsPayload,
+            }
+          );
+
           if (res.ok) {
             cachedRoom = {
               id: intent.room.id,
               code: intent.room.code,
-              version: intent.room.version + 1,
+              version: res.data.version ?? (intent.room.version + 1),
               state: 'LOBBY',
             };
             return { ok: true, room: cachedRoom };
           }
+
+          const code = res.error.messageKey as string;
+          if (code === 'INSUFFICIENT_DISHES') {
+            const details = res.error.details as { available?: number; requested?: number } | undefined;
+            return {
+              ok: false,
+              code: 'SHORTAGE',
+              available: details?.available ?? 0,
+              requested: details?.requested ?? intent.draft.dishCount,
+            };
+          }
+          if (code === 'VERSION_CONFLICT') {
+            return { ok: false, code: 'STALE' };
+          }
+          if (code === 'NETWORK_ERROR' || code === 'TIMEOUT') {
+            return { ok: false, code: 'UNKNOWN' };
+          }
+          if (code === 'ROOM_EXPIRED' || code === 'ROOM_TERMINAL' || code === 'INVALID_ROOM_STATE') {
+            return { ok: false, code: 'CLOSED' };
+          }
           return { ok: false, code: 'REJECTED' };
         } else {
-          const res = await repository.createRoom({
-            displayName,
-            context: {
-              anchorId: 'dish-only',
-              radiusM: 0,
-              desiredAt: intent.draft.desiredAt ?? new Date().toISOString(),
-              serviceMode: 'dine_in',
-              mealSlot: intent.draft.mealSlot,
-              budget: null,
-              avoidRecent: intent.draft.avoidRecent,
-            },
-            requestId: intent.requestId,
-          });
+          const res = await repository.dispatchDishSession<{ roomId: string; code: string; version: number; expiresAt: string }>(
+            'create',
+            {
+              requestId: intent.requestId,
+              displayName,
+              settings: settingsPayload,
+              preferences: {
+                cuisineIds: [],
+                categoryIds: [],
+                temperature: null,
+                flavor: null,
+                budget: null,
+                avoidRecent: intent.draft.avoidRecent,
+              },
+            }
+          );
+
           if (res.ok) {
             currentRoomId = res.data.roomId;
             cachedRoom = {
@@ -129,17 +166,41 @@ export function createLiveDishSetupGateway(
             };
             return { ok: true, room: cachedRoom };
           }
+
+          const code = res.error.messageKey as string;
+          if (code === 'INSUFFICIENT_DISHES') {
+            const details = res.error.details as { available?: number; requested?: number } | undefined;
+            return {
+              ok: false,
+              code: 'SHORTAGE',
+              available: details?.available ?? 0,
+              requested: details?.requested ?? intent.draft.dishCount,
+            };
+          }
+          if (code === 'VERSION_CONFLICT') {
+            return { ok: false, code: 'STALE' };
+          }
+          if (code === 'NETWORK_ERROR' || code === 'TIMEOUT') {
+            return { ok: false, code: 'UNKNOWN' };
+          }
+          if (code === 'ROOM_EXPIRED' || code === 'ROOM_TERMINAL' || code === 'INVALID_ROOM_STATE') {
+            return { ok: false, code: 'CLOSED' };
+          }
           return { ok: false, code: 'REJECTED' };
         }
       }
 
       if (intent.kind === 'preferences') {
-        const res = await repository.updatePreferences({
-          roomId: intent.room.id,
-          expectedVersion: intent.room.version,
-          preferences: intent.preferences,
-          requestId: intent.requestId,
-        });
+        const res = await repository.dispatchDishSession<{ accepted: boolean }>(
+          'updatePreferences',
+          {
+            requestId: intent.requestId,
+            roomId: intent.room.id,
+            expectedVersion: intent.room.version,
+            preferences: intent.preferences,
+          }
+        );
+
         if (res.ok) {
           cachedRoom = {
             id: intent.room.id,
@@ -149,16 +210,30 @@ export function createLiveDishSetupGateway(
           };
           return { ok: true, room: cachedRoom };
         }
+
+        const code = res.error.messageKey;
+        if (code === 'VERSION_CONFLICT') {
+          return { ok: false, code: 'STALE' };
+        }
+        if (code === 'NETWORK_ERROR' || code === 'TIMEOUT') {
+          return { ok: false, code: 'UNKNOWN' };
+        }
+        if (code === 'ROOM_EXPIRED' || code === 'ROOM_TERMINAL' || code === 'INVALID_ROOM_STATE') {
+          return { ok: false, code: 'CLOSED' };
+        }
         return { ok: false, code: 'REJECTED' };
       }
 
       if (intent.kind === 'cancel') {
-        const res = await repository.cancelRoom({
-          roomId: intent.room.id,
-          expectedVersion: intent.room.version,
-          confirmCancel: true,
-          requestId: intent.requestId,
-        });
+        const res = await repository.dispatchDishSession<{ accepted: boolean }>(
+          'cancel',
+          {
+            requestId: intent.requestId,
+            roomId: intent.room.id,
+            expectedVersion: intent.room.version,
+          }
+        );
+
         if (res.ok) {
           cachedRoom = {
             id: intent.room.id,
@@ -167,6 +242,14 @@ export function createLiveDishSetupGateway(
             state: 'CLOSED',
           };
           return { ok: true, room: cachedRoom };
+        }
+
+        const code = res.error.messageKey;
+        if (code === 'VERSION_CONFLICT') {
+          return { ok: false, code: 'STALE' };
+        }
+        if (code === 'NETWORK_ERROR' || code === 'TIMEOUT') {
+          return { ok: false, code: 'UNKNOWN' };
         }
         return { ok: false, code: 'REJECTED' };
       }

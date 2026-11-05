@@ -449,15 +449,77 @@ describe('LiveRoomRepository (GM-25)', () => {
       }
     });
 
-    it('returns public member count and capacity 20 for valid code', async () => {
+    it('uses canonical contractVersion dish-session-v4/roadmap-v2/GM-07.B-supplement and returns valid projection', async () => {
       const client = createMockClient();
+      const callRpc = jest.fn().mockResolvedValue({
+        ok: true,
+        data: {
+          joinable: true,
+          memberCount: 3,
+          memberLimit: 20,
+          dishCount: 15,
+          mealSlot: 'lunch',
+          roomState: 'LOBBY',
+        },
+      });
+      client.callRpc = callRpc;
       const repo = createRoomRepository({ client });
+
       const res = await repo.previewJoin('GCD234');
       expect(res.ok).toBe(true);
       if (res.ok) {
         expect(res.data.code).toBe('GCD234');
+        expect(res.data.memberCount).toBe(3);
         expect(res.data.capacity).toBe(20);
-        expect(typeof res.data.memberCount).toBe('number');
+      }
+      expect(callRpc).toHaveBeenCalledWith('dish_session', {
+        command: 'previewJoin',
+        payload: expect.objectContaining({
+          contractVersion: 'dish-session-v4/roadmap-v2/GM-07.B-supplement',
+          code: 'GCD234',
+        }),
+      });
+    });
+
+    it('rejects malformed responses with MALFORMED_RESPONSE without substituting fake counts', async () => {
+      const client = createMockClient();
+      const callRpc = jest.fn();
+      client.callRpc = callRpc;
+      const repo = createRoomRepository({ client });
+
+      // Case 1: data is null
+      callRpc.mockResolvedValueOnce({ ok: true, data: null });
+      const res1 = await repo.previewJoin('GCD234');
+      expect(res1.ok).toBe(false);
+      if (!res1.ok) {
+        expect(res1.error.messageKey).toBe('MALFORMED_RESPONSE');
+      }
+
+      // Case 2: data is empty object
+      callRpc.mockResolvedValueOnce({ ok: true, data: {} });
+      const res2 = await repo.previewJoin('GCD234');
+      expect(res2.ok).toBe(false);
+      if (!res2.ok) {
+        expect(res2.error.messageKey).toBe('MALFORMED_RESPONSE');
+      }
+
+      // Case 3: memberCount is not an integer or negative
+      callRpc.mockResolvedValueOnce({
+        ok: true,
+        data: { joinable: true, memberCount: -1, memberLimit: 20, dishCount: 15, mealSlot: 'lunch', roomState: 'LOBBY' },
+      });
+      const res3 = await repo.previewJoin('GCD234');
+      expect(res3.ok).toBe(false);
+      if (!res3.ok) {
+        expect(res3.error.messageKey).toBe('MALFORMED_RESPONSE');
+      }
+
+      // Case 4: client lacks RPC dispatch capability
+      const repoNoRpc = createRoomRepository({ client: { ...client, callRpc: undefined } as unknown as ApiClient });
+      const res4 = await repoNoRpc.previewJoin('GCD234');
+      expect(res4.ok).toBe(false);
+      if (!res4.ok) {
+        expect(res4.error.messageKey).toBe('MALFORMED_RESPONSE');
       }
     });
 
@@ -465,9 +527,17 @@ describe('LiveRoomRepository (GM-25)', () => {
       const client = createMockClient();
       const callRpc = jest.fn().mockResolvedValue({
         ok: true,
-        data: { reasonCode: 'ROOM_FULL', memberCount: 20, memberLimit: 20 },
+        data: {
+          joinable: false,
+          memberCount: 20,
+          memberLimit: 20,
+          dishCount: 15,
+          mealSlot: 'lunch',
+          roomState: 'LOBBY',
+          reasonCode: 'ROOM_FULL',
+        },
       });
-      (client as unknown as { ctx: { callRpc: typeof callRpc } }).ctx = { callRpc };
+      client.callRpc = callRpc;
       const repo = createRoomRepository({ client });
 
       const res = await repo.previewJoin('GCD234');
@@ -475,10 +545,110 @@ describe('LiveRoomRepository (GM-25)', () => {
       if (!res.ok) {
         expect(res.error.messageKey).toBe('ROOM_FULL');
       }
-      expect(callRpc).toHaveBeenCalledWith('dish_session', expect.objectContaining({
-        command: 'previewJoin',
-        payload: expect.objectContaining({ code: 'GCD234' }),
-      }));
+    });
+
+    it('returns ROOM_LOCKED when joinable is false without reasonCode', async () => {
+      const client = createMockClient();
+      const callRpc = jest.fn().mockResolvedValue({
+        ok: true,
+        data: {
+          joinable: false,
+          memberCount: 5,
+          memberLimit: 20,
+          dishCount: 15,
+          mealSlot: 'lunch',
+          roomState: 'ROUND_1',
+        },
+      });
+      client.callRpc = callRpc;
+      const repo = createRoomRepository({ client });
+
+      const res = await repo.previewJoin('GCD234');
+      expect(res.ok).toBe(false);
+      if (!res.ok) {
+        expect(res.error.messageKey).toBe('ROOM_LOCKED');
+      }
+    });
+  });
+
+  describe('canonical dish_session v4 dispatch in LiveRoomRepository', () => {
+    it('dispatches join command via dish_session with supplement contract', async () => {
+      const client = createMockClient();
+      const callRpc = jest.fn().mockResolvedValue({
+        ok: true,
+        data: { roomId: 'room_canonical_1', code: 'GCD234', version: 2, memberId: 'mem_1' },
+      });
+      client.callRpc = callRpc;
+      const repo = createRoomRepository({ client });
+      await repo.restoreSession();
+
+      const res = await repo.joinRoom({ code: 'GCD234', displayName: 'Tuấn' });
+      expect(res.ok).toBe(true);
+      if (res.ok) {
+        expect(res.roomId).toBe('room_canonical_1');
+        expect(res.data.memberId).toBe('mem_1');
+      }
+      expect(callRpc).toHaveBeenCalledWith('dish_session', {
+        command: 'join',
+        payload: expect.objectContaining({
+          contractVersion: 'dish-session-v4/roadmap-v2/GM-07.B-supplement',
+          code: 'GCD234',
+          displayName: 'Tuấn',
+        }),
+      });
+    });
+
+    it('dispatches snapshot command via dish_session', async () => {
+      const client = createMockClient();
+      const callRpc = jest.fn().mockResolvedValue({
+        ok: true,
+        data: {
+          roomId: 'room_canonical_1',
+          code: 'GCD234',
+          state: 'LOBBY',
+          version: 1,
+          hostUserId: 'usr_test_001',
+          settings: { dishCount: 15, mealSlot: 'lunch', desiredAt: null },
+          members: [{ userId: 'usr_test_001', displayName: 'Host', role: 'HOST' }],
+          round: 1,
+          poolVersion: 1,
+          pool: [],
+          expiresAt: '2026-10-25T14:00:00Z',
+        },
+      });
+      client.callRpc = callRpc;
+      const repo = createRoomRepository({ client });
+
+      const res = await repo.getRoomSnapshot('room_canonical_1');
+      expect(res.ok).toBe(true);
+      if (res.ok) {
+        expect(res.data.roomId).toBe('room_canonical_1');
+        expect(res.data.hostUserId).toBe('usr_test_001');
+      }
+      expect(callRpc).toHaveBeenCalledWith('dish_session', {
+        command: 'snapshot',
+        payload: expect.objectContaining({
+          contractVersion: 'dish-session-v4/roadmap-v2/GM-07.B-supplement',
+          roomId: 'room_canonical_1',
+        }),
+      });
+    });
+
+    it('dispatches getDefaultPreferences command via dish_session', async () => {
+      const client = createMockClient();
+      const callRpc = jest.fn().mockResolvedValue({
+        ok: true,
+        data: { revision: 1, preferences: { cuisineIds: ['c1'], categoryIds: [], historyConsent: true } },
+      });
+      client.callRpc = callRpc;
+      const repo = createRoomRepository({ client });
+
+      const res = await repo.getDefaultPreferences();
+      expect(res.ok).toBe(true);
+      if (res.ok) {
+        expect(res.data.revision).toBe(1);
+        expect(res.data.preferences.cuisineIds).toEqual(['c1']);
+      }
     });
   });
 });

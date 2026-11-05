@@ -37,8 +37,8 @@ git diff --check
 | `npm ci --no-audit --no-fund` | **Pass** | Installed 1,346 packages from `mobile/package-lock.json`. No manifest or lockfile changes. |
 | `npm run check:expo` | **Pass with environment note** | Expo SDK `57.0.30`; installed dependencies match the lockfile. |
 | `npm run test:expo-baseline` | **Pass** | 5/5 baseline tests pass. |
-| Focused GM-25 regression & parity suites | **Pass** | 9 suites / 81 tests passing (`gm25FigmaParity.test.tsx`, `roomRepository.test.ts`, `joinRoomEntry.test.tsx`, `createRoomEntry.test.tsx`, `lobbyAndStatusScreens.test.tsx`, `liveRoomLifecycle.test.tsx`, `dishSetupRoute.test.tsx`, `createEntryRoute.test.tsx`, `joinEntryRoute.test.tsx`). |
-| Full mobile test suite (`npm test`) | **Pass** | 57/57 suites, 962/962 tests passed (0 failures). |
+| Focused GM-25 regression & parity suites | **Pass** | 9 suites / 92 tests passing (`gm25FigmaParity.test.tsx`, `roomRepository.test.ts`, `joinRoomEntry.test.tsx`, `createRoomEntry.test.tsx`, `lobbyAndStatusScreens.test.tsx`, `liveRoomLifecycle.test.tsx`, `dishSetupRoute.test.tsx`, `createEntryRoute.test.tsx`, `joinEntryRoute.test.tsx`). |
+| Full mobile test suite (`npm test`) | **Pass** | 57/57 suites, 973/973 tests passed (0 failures). |
 | `npm run typecheck` | **Pass** | 0 TypeScript errors under strict mode. |
 | `npm run check:architecture` | **Pass** | Clean architectural boundaries; no layer violations. |
 | `python scripts/validate_repository.py` | **Pass** | Documents, links, JSON, task manifest, dependencies and current FR traceability OK. |
@@ -51,12 +51,12 @@ git diff --check
 
 | Figma Node / Scope | Expected Behavior | Implementation & Route | Result |
 | --- | --- | --- | --- |
-| `298:2309` [Mở app · Chọn cách tham gia] | Mở app chưa có session: hiện sheet nhập tên khách, 2 nút "Tạo kèo ăn" (Host) và "Tôi có mã phòng" (Member), tạo guest session trước khi điều hướng. | `Gm25HomeScreen.tsx` + `SessionManager` trên `/` | **Pass** (`gm25FigmaParity.test.tsx`) |
-| `330:3067` [02 · Khách / Trang chủ / Tiếp tục phiên] | Hiển thị tên khách đã lưu, nút "Vào lại phòng đang dở" khi có session dở dang, nút tạo phòng / nhập mã, tùy chọn đổi/xóa phiên cục bộ. | `Gm25HomeScreen.tsx` trên `/` | **Pass** (`gm25FigmaParity.test.tsx`) |
+| `298:2309` [Mở app · Chọn cách tham gia] | Mở app chưa có session: hiện sheet nhập tên khách, 2 nút "Tạo kèo ăn" (Host) và "Tôi có mã phòng" (Member), tạo guest session trước khi điều hướng. | `GuestEntryScreen.tsx` trên `/welcome` + `SessionManager` | **Pass** (`gm25FigmaParity.test.tsx`) |
+| `330:3067` [02 · Khách / Trang chủ / Tiếp tục phiên] | Hiển thị tên khách đã lưu, nút "Vào lại phòng đang dở" khi có session dở dang, nút tạo phòng / nhập mã, tùy chọn đổi/xóa phiên cục bộ. | `HomeScreen.tsx` trên `/` | **Pass** (`gm25FigmaParity.test.tsx`) |
 | `330:3068` [03 · Tạo phòng / Hẹn giờ / Tình huống] | Form dish-only 10–20 món (ADR-019), chọn buổi ăn, preset hẹn giờ (+15p, +1h, Ăn ngay), kết nối API thật tạo phòng & cập nhật bối cảnh. | `CreateRoomEntryScreen.tsx` + `DishSetupFlow.tsx` qua `liveDishSetupGateway.ts` trên `/room/setup` | **Pass** (`gm25FigmaParity.test.tsx`, `dishSetupRoute.test.tsx`) |
 | `330:3069` [05 · Tham gia phòng / QR / Lỗi vào phòng] | Ô nhập mã 6 ký tự, quét QR, public preview trước khi vào (chỉ hiện `{ code, memberCount, capacity }`, bảo mật tuyệt đối danh sách/phiếu/khẩu vị), banner lỗi khi mã sai/hết phòng. | `JoinRoomEntryScreen.tsx` + `previewJoin` RPC trên `/room/join-entry` | **Pass** (`gm25FigmaParity.test.tsx`, `roomRepository.test.ts`) |
 | `388:7816` [04 · Khẩu vị / Lưu nháp / Lỗi] | Chọn khẩu vị cá nhân, lưu nháp thiết lập, xử lý lỗi kết nối/timeout máy chủ kèm nút thử lại, Privacy Audit Panel tuân thủ AIDD & ADR-019. | `DishSetupFlow.tsx` trên `/room/setup` | **Pass** (`gm25FigmaParity.test.tsx`) |
-| `330:3070` [06 · Phòng chờ / Chủ phòng / Thành viên] | Giao diện phòng chờ phân quyền Host / Member; loại bỏ hoàn toàn luồng Ready theo v4; Host có nút "Bắt đầu chọn món"; Member có trạng thái chờ và nút "Rời phòng"; tối đa 20 người. | `Gm25LiveLobbyScreen.tsx` + `LobbyScreen.tsx` trên `/gm11/lobby` | **Pass** (`gm25FigmaParity.test.tsx`, `lobbyAndStatusScreens.test.tsx`) |
+| `330:3070` [06 · Phòng chờ / Chủ phòng / Thành viên] | Giao diện phòng chờ phân quyền Host / Member; loại bỏ hoàn toàn luồng Ready theo v4; Host có nút "Bắt đầu chọn món"; Member có trạng thái chờ và nút "Rời phòng"; tối đa 20 người. | `LiveLobbyScreen.tsx` + `LobbyScreen.tsx` trên `/room/lobby` | **Pass** (`gm25FigmaParity.test.tsx`, `lobbyAndStatusScreens.test.tsx`) |
 
 ## Acceptance status
 

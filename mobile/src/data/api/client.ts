@@ -165,7 +165,7 @@ export class ApiClientImpl implements ApiClient {
     return this.normalizeWriteResponse<T>(raw, fallbackRequestId, guard, roomId);
   }
 
-  private async callRpc<T>(rpcName: string, params: Record<string, unknown>): Promise<T> {
+  async callRpc<T>(rpcName: string, params: Record<string, unknown>): Promise<T> {
     const generation = this.authSession?.getGeneration();
     let token = this.token ?? undefined;
     if (this.authSession) {

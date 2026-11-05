@@ -3,10 +3,12 @@
  * Connects Home, context, preferences, and lobby to the real API client and auth session.
  * Spec: docs/architecture/API_CONTRACT.md
  * Task: GM-25 (Issue #86)
+ * ADR-019 / v4 consumer compliance: ready flow removed from consumer.
  */
 
 import type {
   ApiClient,
+  ApiError,
   CreateGuestSessionRequest,
   ErrorCode,
   CreateRoomRequest,
@@ -29,14 +31,19 @@ import type {
   StartRoundRequest,
   UpdateContextRequest,
   UpdatePreferencesRequest,
+  UserPreferences,
   WriteResult,
 } from '../../../data/api/contracts';
+import { mapErrorHelper } from '../../../data/api/client/helpers';
 import type { SessionApi, SessionStorage } from '../../../data/auth/types';
 import type { RoomEntryRepository } from './roomEntry';
 import type { JoinRoomPublicPreview } from './joinPreview';
 import { normalizeRoomCode, validRoomCode } from './roomEntry';
 import type { PreferenceCatalogue, RoomSetupRepository } from '../../context/services/roomSetup';
 import type { SessionSnapshot, SessionStatus } from './sessionState';
+
+export const CANONICAL_CONTRACT_VERSION = 'dish-session-v4/roadmap-v2/GM-07.B-supplement';
+export const BASELINE_CONTRACT_VERSION = 'dish-session-v4/roadmap-v2/GM-07.B';
 
 export type RequestIdGenerator = (prefix?: string) => string;
 
@@ -50,6 +57,29 @@ export function createDurableRequestId(prefix = 'req'): string {
   const seq = (++requestSeq).toString(36);
   const rand = Math.random().toString(36).substring(2, 9);
   return `${prefix}_${ts}_${seq}_${rand}`;
+}
+
+export interface PreviewJoinAck {
+  joinable: boolean;
+  memberCount: number;
+  memberLimit: number;
+  dishCount: number;
+  mealSlot: string;
+  roomState: string;
+  reasonCode?: string | null;
+}
+
+export function isPreviewJoinAck(data: unknown): data is PreviewJoinAck {
+  if (typeof data !== 'object' || data === null || Array.isArray(data)) return false;
+  const d = data as Record<string, unknown>;
+  if (typeof d.joinable !== 'boolean') return false;
+  if (typeof d.memberCount !== 'number' || !Number.isInteger(d.memberCount) || d.memberCount < 0 || d.memberCount > 20) return false;
+  if (d.memberLimit !== 20) return false;
+  if (typeof d.dishCount !== 'number' || !Number.isInteger(d.dishCount) || d.dishCount < 10 || d.dishCount > 20) return false;
+  if (typeof d.mealSlot !== 'string' || !['breakfast', 'lunch', 'dinner', 'snack'].includes(d.mealSlot)) return false;
+  if (typeof d.roomState !== 'string') return false;
+  if (d.reasonCode !== undefined && d.reasonCode !== null && typeof d.reasonCode !== 'string') return false;
+  return true;
 }
 
 export const defaultPreferenceCatalogue: PreferenceCatalogue = {
@@ -83,12 +113,20 @@ export interface RoomRepository extends Omit<RoomEntryRepository, 'restoreSessio
    */
   previewJoin(code: string): Promise<ReadResult<JoinRoomPublicPreview>>;
 
+  // Modern dish session dispatch for canonical v4 rooms
+  dispatchDishSession<T = unknown>(
+    command: string,
+    payload: Record<string, unknown>,
+    version?: 'supplement' | 'baseline'
+  ): Promise<{ ok: true; data: T } | { ok: false; error: ApiError }>;
+
+  getDefaultPreferences(): Promise<ReadResult<{ revision: number; preferences: UserPreferences }>>;
+
   // Lobby RPC operations
   /** @deprecated GM-25 removes ready flow per ADR-019 / v4 consumer rules. Kept for backwards compatibility. */
   setReady(request: SetReadyRequest): Promise<WriteResult<void>>;
   startRound(request: StartRoundRequest): Promise<WriteResult<void>>;
   leaveRoom(request: LeaveRoomRequest): Promise<WriteResult<void>>;
-
   cancelRoom(request: CancelRoomRequest): Promise<WriteResult<void>>;
   inviteToRoom(request: InviteToRoomRequest): Promise<WriteResult<RoomInvitation>>;
 
@@ -122,12 +160,25 @@ export class LiveRoomRepository implements RoomRepository {
     this.nextRequestId = config.requestIdGenerator ?? createDurableRequestId;
   }
 
+  private getRpcCaller(): ((rpcName: string, params: Record<string, unknown>) => Promise<unknown>) | null {
+    const directCall = (this.client as unknown as { callRpc?: (rpc: string, p: Record<string, unknown>) => Promise<unknown> }).callRpc;
+    if (typeof directCall === 'function') {
+      return directCall.bind(this.client);
+    }
+    const ctxCall = (this.client as unknown as { ctx?: { callRpc?: (rpc: string, p: Record<string, unknown>) => Promise<unknown> } })?.ctx?.callRpc;
+    if (typeof ctxCall === 'function') {
+      return ctxCall.bind((this.client as unknown as { ctx: unknown }).ctx);
+    }
+    return null;
+  }
+
   // --- Session & Identity ---
 
   async restoreSession(sessionToken?: string): Promise<ReadResult<SessionUser>> {
     const revision = ++this.identityRevision;
     const recoveringRejectedSession = this.sessionSnapshot.issue === 'session-recovery-required';
     let storedSessionExists: boolean | undefined;
+
     if (this.session && this.sessionStorage) {
       try {
         storedSessionExists = Boolean(await this.sessionStorage.load());
@@ -248,7 +299,6 @@ export class LiveRoomRepository implements RoomRepository {
     return this.session;
   }
 
-
   // --- Room Entry (GM-09 / Home / Create / Join) ---
 
   async listFriends(): Promise<ReadResult<Friend[]>> {
@@ -277,39 +327,54 @@ export class LiveRoomRepository implements RoomRepository {
       if (typeof clientWithPreview.previewJoin === 'function') {
         return clientWithPreview.previewJoin(normalized);
       }
-      const ctx = (this.client as unknown as { ctx?: { callRpc?: (fn: string, params: unknown) => Promise<unknown>; mapError?: (e: unknown) => { messageKey: string } } }).ctx;
-      if (ctx && typeof ctx.callRpc === 'function') {
-        try {
-          const raw = await ctx.callRpc('dish_session', {
-            command: 'previewJoin',
-            payload: {
-              contractVersion: 'dish-session-v4/roadmap-v2/GM-07.B',
-              requestId: this.nextRequestId('prev_join'),
-              code: normalized,
-            },
-          }) as { ok?: boolean; data?: { memberCount?: number; memberLimit?: number; reasonCode?: string }; error?: { code?: string; messageKey?: string } };
-          if (raw?.ok && raw.data) {
-            if (raw.data.reasonCode) {
-              return { ok: false, error: { messageKey: raw.data.reasonCode as ErrorCode } };
-            }
-            return {
-              ok: true,
-              data: {
-                code: normalized,
-                memberCount: Number(raw.data.memberCount) || 1,
-                capacity: Number(raw.data.memberLimit) || 20,
-              },
-            };
-          }
-          if (raw && !raw.ok) {
-            return { ok: false, error: { messageKey: (raw.error?.code || raw.error?.messageKey || 'ROOM_NOT_FOUND') as ErrorCode } };
-          }
-        } catch (err: unknown) {
-          const mapped = ctx.mapError ? ctx.mapError(err) : { messageKey: 'ROOM_NOT_FOUND' };
-          return { ok: false, error: { messageKey: (mapped.messageKey || 'ROOM_NOT_FOUND') as ErrorCode } };
-        }
+
+      const call = this.getRpcCaller();
+      if (!call) {
+        return { ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } };
       }
-      return { ok: true, data: { code: normalized, memberCount: 2, capacity: 20 } };
+
+      try {
+        const raw = (await call('dish_session', {
+          command: 'previewJoin',
+          payload: {
+            contractVersion: CANONICAL_CONTRACT_VERSION,
+            requestId: this.nextRequestId('prev_join'),
+            code: normalized,
+          },
+        })) as {
+          ok?: boolean;
+          data?: unknown;
+          error?: { messageKey?: string; code?: string; details?: Record<string, unknown> };
+        };
+
+        if (raw && !raw.ok) {
+          const errCode = (raw.error?.messageKey || raw.error?.code || 'ROOM_NOT_FOUND') as ErrorCode;
+          return { ok: false, error: { messageKey: errCode } };
+        }
+
+        if (raw?.ok && isPreviewJoinAck(raw.data)) {
+          const ack = raw.data;
+          if (ack.reasonCode) {
+            return { ok: false, error: { messageKey: ack.reasonCode as ErrorCode } };
+          }
+          if (!ack.joinable) {
+            return { ok: false, error: { messageKey: 'ROOM_LOCKED' } };
+          }
+          return {
+            ok: true,
+            data: {
+              code: normalized,
+              memberCount: ack.memberCount,
+              capacity: ack.memberLimit,
+            },
+          };
+        }
+
+        return { ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } };
+      } catch (err: unknown) {
+        const mapped = mapErrorHelper(err);
+        return { ok: false, error: mapped };
+      }
     });
   }
 
@@ -318,11 +383,96 @@ export class LiveRoomRepository implements RoomRepository {
     if (this.getSessionStatus() !== 'active') {
       return { ok: false, requestId: rid, error: { messageKey: 'AUTH_REQUIRED' } };
     }
-    return this.request(() => this.client.joinRoom({ ...request, requestId: rid }));
+    return this.request(async () => {
+      const normalizedCode = normalizeRoomCode(request.code);
+      const call = this.getRpcCaller();
+
+      if (call) {
+        try {
+          const raw = (await call('dish_session', {
+            command: 'join',
+            payload: {
+              contractVersion: CANONICAL_CONTRACT_VERSION,
+              requestId: rid,
+              code: normalizedCode,
+              displayName: request.displayName,
+            },
+          })) as {
+            ok?: boolean;
+            data?: { roomId?: string; code?: string; version?: number; memberId?: string };
+            error?: { messageKey?: string; code?: string; details?: Record<string, unknown> };
+          };
+
+          if (raw?.ok && raw.data?.roomId && raw.data?.memberId) {
+            return {
+              ok: true,
+              requestId: rid,
+              roomId: raw.data.roomId,
+              data: {
+                roomId: raw.data.roomId,
+                code: raw.data.code || normalizedCode,
+                version: raw.data.version ?? 1,
+                memberId: raw.data.memberId,
+                role: 'member',
+              },
+            };
+          }
+
+          if (raw && !raw.ok) {
+            const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as string;
+            if (errCode !== 'CONTRACT_MISMATCH') {
+              return { ok: false, requestId: rid, error: { messageKey: errCode as ErrorCode } };
+            }
+          }
+        } catch (err: unknown) {
+          const mapped = mapErrorHelper(err);
+          if ((mapped.messageKey as string) !== 'CONTRACT_MISMATCH') {
+            return { ok: false, requestId: rid, error: mapped };
+          }
+        }
+      }
+
+      return this.client.joinRoom({ ...request, requestId: rid });
+    });
   }
 
   async getRoomSnapshot(roomId: string): Promise<ReadResult<RoomSnapshot>> {
-    return this.request(() => this.client.getRoomSnapshot(roomId));
+    return this.request(async () => {
+      const call = this.getRpcCaller();
+      if (call) {
+        try {
+          const raw = (await call('dish_session', {
+            command: 'snapshot',
+            payload: {
+              contractVersion: CANONICAL_CONTRACT_VERSION,
+              requestId: this.nextRequestId('snap'),
+              roomId,
+            },
+          })) as {
+            ok?: boolean;
+            data?: unknown;
+            error?: { messageKey?: string; code?: string };
+          };
+
+          if (raw?.ok && raw.data) {
+            return { ok: true, data: raw.data as RoomSnapshot };
+          }
+          if (raw && !raw.ok) {
+            const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as string;
+            if (errCode !== 'CONTRACT_MISMATCH') {
+              return { ok: false, error: { messageKey: errCode as ErrorCode } };
+            }
+          }
+        } catch (err: unknown) {
+          const mapped = mapErrorHelper(err);
+          if ((mapped.messageKey as string) !== 'CONTRACT_MISMATCH') {
+            return { ok: false, error: mapped };
+          }
+        }
+      }
+
+      return this.client.getRoomSnapshot(roomId);
+    });
   }
 
   // --- Room Setup (GM-10 / Context / Preferences) ---
@@ -338,7 +488,125 @@ export class LiveRoomRepository implements RoomRepository {
 
   async updatePreferences(request: UpdatePreferencesRequest): Promise<WriteResult<void>> {
     const rid = request.requestId || this.nextRequestId('pref_upd');
-    return this.request(() => this.client.updatePreferences({ ...request, requestId: rid }));
+    return this.request(async () => {
+      const call = this.getRpcCaller();
+      if (call) {
+        try {
+          const raw = (await call('dish_session', {
+            command: 'updatePreferences',
+            payload: {
+              contractVersion: CANONICAL_CONTRACT_VERSION,
+              requestId: rid,
+              roomId: request.roomId,
+              expectedVersion: request.expectedVersion,
+              preferences: request.preferences,
+            },
+          })) as {
+            ok?: boolean;
+            data?: unknown;
+            error?: { messageKey?: string; code?: string };
+          };
+
+          if (raw?.ok) {
+            return { ok: true, requestId: rid, roomId: request.roomId, data: undefined };
+          }
+          if (raw && !raw.ok) {
+            const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as string;
+            if (errCode !== 'CONTRACT_MISMATCH') {
+              return { ok: false, requestId: rid, roomId: request.roomId, error: { messageKey: errCode as ErrorCode } };
+            }
+          }
+        } catch (err: unknown) {
+          const mapped = mapErrorHelper(err);
+          if ((mapped.messageKey as string) !== 'CONTRACT_MISMATCH') {
+            return { ok: false, requestId: rid, roomId: request.roomId, error: mapped };
+          }
+        }
+      }
+
+      return this.client.updatePreferences({ ...request, requestId: rid });
+    });
+  }
+
+  // --- Modern dish_session v4 Operations ---
+
+  async dispatchDishSession<T = unknown>(
+    command: string,
+    payload: Record<string, unknown>,
+    version: 'supplement' | 'baseline' = 'supplement'
+  ): Promise<{ ok: true; data: T } | { ok: false; error: ApiError }> {
+    const call = this.getRpcCaller();
+    if (!call) {
+      return { ok: false, error: { messageKey: 'NETWORK_ERROR' } };
+    }
+    const contractVersion = version === 'baseline' ? BASELINE_CONTRACT_VERSION : CANONICAL_CONTRACT_VERSION;
+    try {
+      const raw = (await call('dish_session', {
+        command,
+        payload: {
+          contractVersion,
+          requestId: payload.requestId || this.nextRequestId(`ds_${command}`),
+          ...payload,
+        },
+      })) as {
+        ok?: boolean;
+        data?: T;
+        error?: { messageKey?: string; code?: string; details?: Record<string, unknown> };
+      };
+
+      if (raw?.ok) {
+        return { ok: true, data: raw.data as T };
+      }
+      const errCode = (raw?.error?.messageKey || raw?.error?.code || 'UNKNOWN_ERROR') as ErrorCode;
+      return { ok: false, error: { messageKey: errCode, details: raw?.error?.details } };
+    } catch (err: unknown) {
+      return { ok: false, error: mapErrorHelper(err) };
+    }
+  }
+
+  async getDefaultPreferences(): Promise<ReadResult<{ revision: number; preferences: UserPreferences }>> {
+    return this.request(async () => {
+      const call = this.getRpcCaller();
+      if (call) {
+        try {
+          const raw = (await call('dish_session', {
+            command: 'getDefaultPreferences',
+            payload: {
+              contractVersion: CANONICAL_CONTRACT_VERSION,
+              requestId: this.nextRequestId('def_pref'),
+            },
+          })) as {
+            ok?: boolean;
+            data?: { revision?: number; preferences?: UserPreferences };
+            error?: { messageKey?: string; code?: string };
+          };
+
+          if (raw?.ok && raw.data && raw.data.preferences) {
+            return {
+              ok: true,
+              data: {
+                revision: raw.data.revision ?? 1,
+                preferences: raw.data.preferences,
+              },
+            };
+          }
+        } catch {
+          // fall through to default
+        }
+      }
+
+      return {
+        ok: true,
+        data: {
+          revision: 1,
+          preferences: {
+            cuisineIds: [],
+            categoryIds: [],
+            historyConsent: false,
+          },
+        },
+      };
+    });
   }
 
   // --- Lobby Actions (GM-11 / Ready / Start / Leave / Cancel) ---
@@ -350,17 +618,125 @@ export class LiveRoomRepository implements RoomRepository {
 
   async startRound(request: StartRoundRequest): Promise<WriteResult<void>> {
     const rid = request.requestId || this.nextRequestId('start');
-    return this.request(() => this.client.startRound({ ...request, requestId: rid }));
+    return this.request(async () => {
+      const call = this.getRpcCaller();
+      if (call) {
+        try {
+          const raw = (await call('dish_session', {
+            command: 'start',
+            payload: {
+              contractVersion: CANONICAL_CONTRACT_VERSION,
+              requestId: rid,
+              roomId: request.roomId,
+              expectedVersion: request.expectedVersion,
+            },
+          })) as {
+            ok?: boolean;
+            data?: unknown;
+            error?: { messageKey?: string; code?: string };
+          };
+
+          if (raw?.ok) {
+            return { ok: true, requestId: rid, roomId: request.roomId, data: undefined };
+          }
+          if (raw && !raw.ok) {
+            const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as string;
+            if (errCode !== 'CONTRACT_MISMATCH') {
+              return { ok: false, requestId: rid, roomId: request.roomId, error: { messageKey: errCode as ErrorCode } };
+            }
+          }
+        } catch (err: unknown) {
+          const mapped = mapErrorHelper(err);
+          if ((mapped.messageKey as string) !== 'CONTRACT_MISMATCH') {
+            return { ok: false, requestId: rid, roomId: request.roomId, error: mapped };
+          }
+        }
+      }
+
+      return this.client.startRound({ ...request, requestId: rid });
+    });
   }
 
   async leaveRoom(request: LeaveRoomRequest): Promise<WriteResult<void>> {
     const rid = request.requestId || this.nextRequestId('leave');
-    return this.request(() => this.client.leaveRoom({ ...request, requestId: rid }));
+    return this.request(async () => {
+      const call = this.getRpcCaller();
+      if (call) {
+        try {
+          const raw = (await call('dish_session', {
+            command: 'leave',
+            payload: {
+              contractVersion: CANONICAL_CONTRACT_VERSION,
+              requestId: rid,
+              roomId: request.roomId,
+              expectedVersion: request.expectedVersion,
+            },
+          })) as {
+            ok?: boolean;
+            data?: unknown;
+            error?: { messageKey?: string; code?: string };
+          };
+
+          if (raw?.ok) {
+            return { ok: true, requestId: rid, roomId: request.roomId, data: undefined };
+          }
+          if (raw && !raw.ok) {
+            const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as string;
+            if (errCode !== 'CONTRACT_MISMATCH') {
+              return { ok: false, requestId: rid, roomId: request.roomId, error: { messageKey: errCode as ErrorCode } };
+            }
+          }
+        } catch (err: unknown) {
+          const mapped = mapErrorHelper(err);
+          if ((mapped.messageKey as string) !== 'CONTRACT_MISMATCH') {
+            return { ok: false, requestId: rid, roomId: request.roomId, error: mapped };
+          }
+        }
+      }
+
+      return this.client.leaveRoom({ ...request, requestId: rid });
+    });
   }
 
   async cancelRoom(request: CancelRoomRequest): Promise<WriteResult<void>> {
     const rid = request.requestId || this.nextRequestId('cancel');
-    return this.request(() => this.client.cancelRoom({ ...request, requestId: rid }));
+    return this.request(async () => {
+      const call = this.getRpcCaller();
+      if (call) {
+        try {
+          const raw = (await call('dish_session', {
+            command: 'cancel',
+            payload: {
+              contractVersion: CANONICAL_CONTRACT_VERSION,
+              requestId: rid,
+              roomId: request.roomId,
+              expectedVersion: request.expectedVersion,
+            },
+          })) as {
+            ok?: boolean;
+            data?: unknown;
+            error?: { messageKey?: string; code?: string };
+          };
+
+          if (raw?.ok) {
+            return { ok: true, requestId: rid, roomId: request.roomId, data: undefined };
+          }
+          if (raw && !raw.ok) {
+            const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as string;
+            if (errCode !== 'CONTRACT_MISMATCH') {
+              return { ok: false, requestId: rid, roomId: request.roomId, error: { messageKey: errCode as ErrorCode } };
+            }
+          }
+        } catch (err: unknown) {
+          const mapped = mapErrorHelper(err);
+          if ((mapped.messageKey as string) !== 'CONTRACT_MISMATCH') {
+            return { ok: false, requestId: rid, roomId: request.roomId, error: mapped };
+          }
+        }
+      }
+
+      return this.client.cancelRoom({ ...request, requestId: rid });
+    });
   }
 
   async inviteToRoom(request: InviteToRoomRequest): Promise<WriteResult<RoomInvitation>> {
@@ -390,7 +766,7 @@ function authRequiredResult<T>(previous?: unknown): T {
   const result = previous && typeof previous === 'object'
     ? { ...(previous as Record<string, unknown>) }
     : {};
-  delete result.data;
+  delete (result as Record<string, unknown>).data;
   return { ...result, ok: false, error: { messageKey: 'AUTH_REQUIRED' } } as T;
 }
 
