@@ -5,6 +5,7 @@ import {
   Friend,
   InboxItem,
   HistoryItem,
+  HistoryConsent,
   WriteResult,
 } from '../contracts';
 import { MOCK_DISHES } from './discoveryFixtures';
@@ -39,6 +40,7 @@ export interface MockStateContext {
   friends: Friend[];
   inbox: InboxItem[];
   history: HistoryItem[];
+  historyConsents: Map<string, HistoryConsent>;
   idempotencyMap: Map<string, { payloadSignature: string; response: WriteResult<any> }>;
   wait(): Promise<void>;
   checkFailure(): ErrorCode | null;

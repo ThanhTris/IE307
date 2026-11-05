@@ -68,6 +68,22 @@ describe('GM-07 mock caller projection isolation', () => {
     expect(separate.ownSubmission).toBeNull();
   });
 
+  it('keeps personal and group history consent independent per account and replays idempotently', async () => {
+    const mock = new MockApiClient({ delayMs: 0 });
+    expect(await mock.getHistoryConsent()).toMatchObject({ ok: true, data: { personal: false, group: false } });
+    const personal = await mock.updateHistoryConsent({ scope: 'personal', consent: true, requestId: 'consent-personal' });
+    expect(personal.ok).toBe(true);
+    expect(await mock.updateHistoryConsent({ scope: 'personal', consent: true, requestId: 'consent-personal' })).toEqual(personal);
+    expect(await mock.getHistoryConsent()).toMatchObject({ ok: true, data: { personal: true, group: false } });
+    expect((await mock.updateHistoryConsent({ scope: 'group', consent: true, requestId: 'consent-group' })).ok).toBe(true);
+    expect(await mock.getHistoryConsent()).toMatchObject({ ok: true, data: { personal: true, group: true } });
+    mock.setCurrentUser(otherUser);
+    expect(await mock.getHistoryConsent()).toMatchObject({ ok: true, data: { personal: false, group: false } });
+    expect((await mock.updateHistoryConsent({ scope: 'group', consent: true, requestId: 'other-group' })).ok).toBe(true);
+    mock.setCurrentUser(MOCK_CURRENT_USER);
+    expect(await mock.getHistoryConsent()).toMatchObject({ ok: true, data: { personal: true, group: true } });
+  });
+
   it('keeps two callers receipts independent, including the same requestId and two rounds', async () => {
     const mock = new MockApiClient({ delayMs: 0, scenario: 'round_two' });
     const first = await start(mock);

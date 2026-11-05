@@ -1,6 +1,5 @@
-import { act } from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
-import { LiveRoomRepository, createDurableRequestId, createRoomRepository } from '../../src/features/rooms/services/roomRepository';
+import { createRoomRepository } from '../../src/features/rooms/services/roomRepository';
 import { GuestEntryScreen } from '../../src/features/home/screens/GuestEntryScreen';
 import { HomeScreen, type HomeLiveSession } from '../../src/features/home/screens/HomeScreen';
 import { CreateRoomEntryScreen } from '../../src/features/rooms/screens/CreateRoomEntryScreen';
@@ -130,6 +129,7 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
         data: { roomId: 'room_live_001', code: 'GCD999', version: 2, memberId: 'mem_tuan' },
       }),
       getRoomSnapshot: jest.fn().mockResolvedValue({ ok: true, data: sampleSnapshot }),
+      getHistoryConsent: jest.fn().mockResolvedValue({ ok: true, data: { personal: false, group: false } }),
       previewFoodPool: jest.fn().mockResolvedValue({ ok: true, data: { totalCandidateCount: 15, pool: [{ dishId: 'dish_pho' }] } }),
       updateContext: jest.fn().mockResolvedValue({ ok: true, data: undefined }),
       updatePreferences: jest.fn().mockResolvedValue({ ok: true, data: undefined }),
@@ -274,6 +274,67 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
 
     it('liveDishSetupGateway creates room via canonical dish_session v4 dispatch', async () => {
       const client = createMockApiClient();
+      const roomId = '5d35a05a-8678-5380-beb1-fe2cdc587151';
+      const hostUserId = 'cff99380-b3c8-5dd8-9e91-5eeda3aee1d3';
+      const originalCallRpc = client.callRpc.getMockImplementation();
+      const canonicalCreatedSnapshot = {
+        contractVersion: 'dish-session-v4/roadmap-v2/GM-07.B-supplement',
+        policyVersion: 'dish-decision-v4/ADR-019-30PCT-MIN1',
+        catalogueVersion: 'review-synthetic-v1',
+        catalogueSha: 'a'.repeat(64),
+        roomId,
+        code: 'GCD999',
+        state: 'LOBBY',
+        version: 1,
+        round: 1,
+        poolVersion: 1,
+        dishCount: 15,
+        pool: Array.from({ length: 15 }, (_, index) => ({
+          roundDishId: `10000000-0000-4000-8000-${String(index + 1).padStart(12, '0')}`,
+          dishId: `20000000-0000-4000-8000-${String(index + 1).padStart(12, '0')}`,
+          name: `Synthetic dish ${index + 1}`,
+          description: null,
+          mealSlots: ['lunch'],
+          cuisineIds: [],
+          cuisineLabels: [],
+          categoryIds: [],
+          categoryLabels: [],
+          temperature: null,
+          flavor: null,
+          artwork: null,
+          priceReference: null,
+        })),
+        members: [{ userId: hostUserId, displayName: 'Trí Thanh', role: 'HOST', submissionStatus: 'NOT_SUBMITTED' }],
+        submittedCount: 0,
+        memberCount: 1,
+        ownBallot: null,
+        ownWaiting: false,
+        waitingStartedAt: null,
+        deadline: null,
+        serverTime: '2026-11-05T06:00:00Z',
+        result: null,
+        hostUserId,
+        settings: { dishCount: 15, mealSlot: 'lunch', desiredAt: null },
+        ownPreferences: { cuisineIds: [], categoryIds: [], temperature: null, flavor: null, budget: null, avoidRecent: true },
+        ownPreferenceRevision: 1,
+        preferenceRanking: 'UNSUPPORTED',
+        removalCap: null,
+        expiresAt: '2026-11-05T07:00:00Z',
+        canEndWaiting: false,
+      };
+      client.restoreSession.mockResolvedValue({
+        ok: true,
+        data: { ...sampleUser, id: hostUserId },
+      });
+      client.callRpc.mockImplementation((rpcName, params) => {
+        if (rpcName === 'dish_session' && params.command === 'create') {
+          return Promise.resolve({ ok: true, data: { roomId, code: 'GCD999', version: 1, expiresAt: '2026-11-05T07:00:00Z' } });
+        }
+        if (rpcName === 'dish_session' && params.command === 'snapshot') {
+          return Promise.resolve({ ok: true, data: canonicalCreatedSnapshot });
+        }
+        return originalCallRpc?.(rpcName, params) ?? Promise.resolve({ ok: true, data: {} });
+      });
       const repo = createRoomRepository({ client });
       await repo.restoreSession();
 
@@ -502,7 +563,7 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
       expect(screen.getByText('Ăn gì cũng được')).toBeOnTheScreen();
       expect(screen.getByText('Bỏ qua')).toBeOnTheScreen();
       expect(screen.getByText('Vào phòng chờ →')).toBeOnTheScreen();
-      expect(screen.getByText('Khẩu vị là riêng tư. Thay đổi áp dụng cho phòng này; không ghi đè mặc định tài khoản.')).toBeOnTheScreen();
+      expect(screen.getByText('Lựa chọn này áp dụng cho lịch sử cá nhân của tài khoản. Lưu lịch sử nhóm là quyền riêng, không bị thay đổi ở đây. Khẩu vị chỉ áp dụng cho phòng này.')).toBeOnTheScreen();
 
       // Ensure no legacy ready banner or text exists
       expect(screen.queryByText(/sẵn sàng/i)).toBeNull();

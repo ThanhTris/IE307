@@ -15,6 +15,7 @@ import type {
   CreateRoomResponse,
   DiscoveryContextResponse,
   Friend,
+  HistoryConsent,
   InviteToRoomRequest,
   JoinRoomRequest,
   JoinRoomResponse,
@@ -35,6 +36,7 @@ import type {
   WriteResult,
 } from '../../../data/api/contracts';
 import { mapErrorHelper } from '../../../data/api/client/helpers';
+import { isCanonicalRoomSnapshot, isRoomSnapshot } from '../../../data/api/responseGuards';
 import type { SessionApi, SessionStorage } from '../../../data/auth/types';
 import type { RoomEntryRepository } from './roomEntry';
 import type { JoinRoomPublicPreview } from './joinPreview';
@@ -121,6 +123,7 @@ export interface RoomRepository extends Omit<RoomEntryRepository, 'restoreSessio
   ): Promise<{ ok: true; data: T } | { ok: false; error: ApiError }>;
 
   getDefaultPreferences(): Promise<ReadResult<{ revision: number; preferences: UserPreferences }>>;
+  getHistoryConsent(): Promise<ReadResult<HistoryConsent>>;
   updateHistoryConsent(scope: 'personal' | 'group', consent: boolean, requestId?: string): Promise<WriteResult<void>>;
 
   // Lobby RPC operations
@@ -452,25 +455,8 @@ export class LiveRoomRepository implements RoomRepository {
           };
 
           if (raw?.ok && raw.data && typeof raw.data === 'object') {
-            const d = raw.data as Record<string, unknown>;
-            const hasIdentifiers =
-              typeof d.roomId === 'string' &&
-              typeof d.code === 'string' &&
-              typeof d.state === 'string' &&
-              typeof d.version === 'number';
-            if (!hasIdentifiers) {
-              return { ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } };
-            }
-            const isLegacy = Boolean(d.context && typeof d.context === 'object');
-            const isCanonical = Boolean(
-              d.settings &&
-              typeof d.settings === 'object' &&
-              Array.isArray(d.pool) &&
-              d.pool.length >= 10 &&
-              Array.isArray(d.members)
-            );
-            if (!isLegacy && !isCanonical) {
-              return { ok: false, error: { messageKey: 'MALFORMED_RESPONSE', message: 'Snapshot lacks context or valid canonical pool' } };
+            if (!isCanonicalRoomSnapshot(raw.data) && !isRoomSnapshot(raw.data)) {
+              return { ok: false, error: { messageKey: 'MALFORMED_RESPONSE', message: 'Snapshot does not match the canonical or legacy contract' } };
             }
             return { ok: true, data: raw.data as RoomSnapshot };
           }
@@ -622,6 +608,10 @@ export class LiveRoomRepository implements RoomRepository {
         error: { messageKey: 'NETWORK_ERROR', message: 'Client RPC caller unavailable' },
       };
     });
+  }
+
+  async getHistoryConsent(): Promise<ReadResult<HistoryConsent>> {
+    return this.request(() => this.client.getHistoryConsent());
   }
 
   // --- Lobby Actions (GM-11 / Ready / Start / Leave / Cancel) ---

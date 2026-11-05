@@ -58,11 +58,11 @@ describe('PR155 active wire and consumer probes', () => {
     expect((await h.repo.getDefaultPreferences()).ok).toBe(false);
   });
 
-  it('maps the actual Skip preferences model to the canonical six-field wire object', async () => {
-    const h = await harness(() => ({ ok: false, error: { messageKey: 'INVALID_INPUT' } }));
-    await h.gateway.write({ kind: 'preferences', requestId: 'review-preferences', room: { id: roomId, code: 'GCD234', version: 1, state: 'LOBBY' }, preferences: emptyPreferences(false) });
-    const p = ((h.calls[0]!.params as any).payload as any).preferences;
-    expect(p).toEqual({ cuisineIds: [], categoryIds: [], temperature: null, flavor: null, budget: null, avoidRecent: false });
+  it('requires a current room snapshot before applying preferences', async () => {
+    const h = await harness(() => ({ ok: false, error: { messageKey: 'NETWORK_ERROR' } }));
+    const reply = await h.gateway.write({ kind: 'preferences', requestId: 'review-preferences', room: { id: roomId, code: 'GCD234', version: 1, state: 'LOBBY' }, preferences: emptyPreferences(false), changedFields: ['cuisineIds'] });
+    expect(reply).toMatchObject({ ok: false, code: 'UNKNOWN' });
+    expect(h.calls.map(call => (call.params as any).command)).toEqual(['snapshot']);
   });
 
   it('preserves a selected setup budget rather than sending unlimited', async () => {

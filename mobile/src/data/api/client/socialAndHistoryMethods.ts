@@ -9,6 +9,7 @@ import {
   JoinRoomResponse,
   InboxItem,
   RegisterPushDeviceRequest,
+  HistoryConsent,
   HistoryItem,
   UpdateHistoryConsentRequest,
   ReadResult,
@@ -24,6 +25,7 @@ import {
   isJoinRoomResponse,
   isInboxItem,
   isHistoryItem,
+  isHistoryConsent,
 } from '../responseGuards';
 import type { RpcCallerContext } from './helpers';
 
@@ -257,6 +259,15 @@ export async function getHistoryMethod(
       cursor: cursor ?? null,
     });
     return ctx.normalizeReadResponse<HistoryItem[]>(raw, arrayOf(isHistoryItem));
+  } catch (err) {
+    return { ok: false, error: ctx.mapError(err) };
+  }
+}
+
+export async function getHistoryConsentMethod(ctx: RpcCallerContext): Promise<ReadResult<HistoryConsent>> {
+  try {
+    const raw = await ctx.callRpc<unknown>('get_history_consent', {});
+    return ctx.normalizeReadResponse<HistoryConsent>(raw, isHistoryConsent);
   } catch (err) {
     return { ok: false, error: ctx.mapError(err) };
   }

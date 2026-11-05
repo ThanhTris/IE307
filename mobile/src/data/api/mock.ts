@@ -40,6 +40,7 @@ import {
   InboxItem,
   RegisterPushDeviceRequest,
   HistoryItem,
+  HistoryConsent,
   UpdateHistoryConsentRequest,
 } from './contracts';
 import {
@@ -90,6 +91,7 @@ import {
   mockRegisterPushDevice,
   mockUnregisterPushDevice,
   mockGetHistory,
+  mockGetHistoryConsent,
   mockUpdateHistoryConsent,
   mockDeleteHistory,
 } from './mock/socialAndHistoryMock';
@@ -118,6 +120,7 @@ export class MockApiClient implements ApiClient {
   private friends: Friend[] = [...MOCK_FRIENDS];
   private inbox: InboxItem[] = [...MOCK_INBOX_ITEMS];
   private history: HistoryItem[] = [...MOCK_HISTORY_ITEMS];
+  private historyConsents: Map<string, HistoryConsent> = new Map();
   private idempotencyMap: Map<string, { payloadSignature: string; response: WriteResult<any> }> = new Map();
 
   constructor(config?: MockConfig) {
@@ -244,6 +247,7 @@ export class MockApiClient implements ApiClient {
       set inbox(val) { self.inbox = val; },
       get history() { return self.history; },
       set history(val) { self.history = val; },
+      historyConsents: this.historyConsents,
       idempotencyMap: this.idempotencyMap,
       wait: () => this.wait(),
       checkFailure: () => this.checkFailure(),
@@ -461,6 +465,10 @@ export class MockApiClient implements ApiClient {
 
   getHistory(scope: 'personal' | 'group', cursor?: string): Promise<ReadResult<HistoryItem[]>> {
     return mockGetHistory(this.ctx, scope, cursor);
+  }
+
+  getHistoryConsent(): Promise<ReadResult<HistoryConsent>> {
+    return mockGetHistoryConsent(this.ctx);
   }
 
   updateHistoryConsent(req: UpdateHistoryConsentRequest): Promise<WriteResult<void>> {

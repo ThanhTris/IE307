@@ -14,7 +14,7 @@ export function useDishSetupFlow(gateway: DishSetupGateway, requestId = mockRequ
   const [preferences, setPreferences] = useState(emptyPreferences), [baselinePreferences, setBaselinePreferences] = useState(emptyPreferences);
   const [stage, setStage] = useState<'setup' | 'preferences' | 'complete'>(initialStage);
   const [editorReturn, setEditorReturn] = useState<'setup' | 'complete'>('setup');
-  const [phase, setPhase] = useState<'idle' | 'sending' | 'unknown' | 'ack-read'>('idle');
+  const [phase, setPhase] = useState<'idle' | 'sending' | 'unknown' | 'ack-read' | 'partial'>('idle');
   const [notice, setNotice] = useState<string>(), [needsRefresh, setNeedsRefresh] = useState(false);
   const [shortage, setShortage] = useState<{ available: number; requested: number }>();
   const alive = useRef(false), lock = useRef(false), intent = useRef<SetupIntent | null>(null);
@@ -65,6 +65,15 @@ export function useDishSetupFlow(gateway: DishSetupGateway, requestId = mockRequ
     try {
       const reply = await gateway.write(clone(value)); if (!alive.current) return;
       if (reply.ok) { acknowledged.current = { kind: value.kind, room: reply.room }; await readAcknowledged(); return; }
+      if (reply.code === 'PARTIAL') {
+        setPhase('partial'); setData(previous => previous ? { ...previous, room: reply.room } : previous);
+        setNotice(reply.pendingStep === 'preferences'
+          ? 'Thiết lập phòng đã lưu; ngân sách hoặc chống lặp chưa lưu. Hãy thử lại phần còn thiếu.'
+          : reply.pendingStep === 'consent'
+            ? 'Khẩu vị đã lưu; lựa chọn lưu lịch sử cho tài khoản chưa được xác nhận. Hãy thử lại phần còn thiếu.'
+            : 'Yêu cầu đã được xác nhận một phần; chưa đọc lại được trạng thái mới nhất. Hãy thử tải trạng thái, không gửi lại phần đã xác nhận.');
+        return;
+      }
       if (reply.code === 'UNKNOWN') { setPhase('unknown'); setNotice('Chưa rõ kết quả lưu. Thử lại cùng yêu cầu; không sửa hoặc tạo phòng khác.'); return; }
       intent.current = null; setPhase('idle');
       if (reply.code === 'SHORTAGE' && value.kind === 'settings' && Number.isInteger(reply.available) && reply.available! >= 0 && reply.available! < value.draft.dishCount && reply.requested === value.draft.dishCount) {
@@ -85,7 +94,10 @@ export function useDishSetupFlow(gateway: DishSetupGateway, requestId = mockRequ
   };
   const submitPreferences = (skip: boolean) => {
     if (blocked || lock.current || !data?.room || stage !== 'preferences') return;
-    void send({ kind: 'preferences', requestId: requestId(), room: clone(data.room), preferences: clone(skip ? emptyPreferences(preferences.historyConsent) : preferences) });
+    const next = clone(skip ? { ...baselinePreferences, historyConsent: preferences.historyConsent } : preferences);
+    const changedFields = (['cuisineIds', 'categoryIds', 'temperature', 'flavor'] as const)
+      .filter(key => JSON.stringify(next[key]) !== JSON.stringify(baselinePreferences[key]));
+    void send({ kind: 'preferences', requestId: requestId(), room: clone(data.room), preferences: next, changedFields: [...changedFields] });
   };
   const retry = () => {
     if (lock.current) return;
@@ -96,10 +108,16 @@ export function useDishSetupFlow(gateway: DishSetupGateway, requestId = mockRequ
     if (blocked || lock.current || !data?.room || !data.canEditSettings) return;
     void send({ kind: 'cancel', requestId: requestId(), room: clone(data.room) });
   };
+  const discardPartial = () => {
+    if (phase !== 'partial') return;
+    intent.current = null; acknowledged.current = null; setPhase('idle'); setNeedsRefresh(true);
+    setNotice('Một phần đã lưu. Tải lại trạng thái trước khi sửa hoặc gửi yêu cầu mới.');
+  };
   return { ...draftState, data, readError, preferences, stage, editorReturn, phase, blocked, notice, shortage, needsRefresh,
     preferencesDirty: JSON.stringify(preferences) !== JSON.stringify(baselinePreferences),
     changePreferences: setPreferences, changeStage: setStage, submitSettings, submitPreferences, retry, refresh,
     cancelRoom,
+    discardPartial,
     editSettings: () => { setEditorReturn('complete'); setNotice(undefined); setStage('setup'); },
     editPreferences: () => { setEditorReturn('complete'); setNotice(undefined); setStage('preferences'); },
     returnFromEditor: () => { setNotice(undefined); setStage(editorReturn); },

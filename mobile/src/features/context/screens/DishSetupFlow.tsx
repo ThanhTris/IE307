@@ -31,8 +31,8 @@ export function DishSetupFlow({ gateway, onExit, onLobby, controls, initialStage
     setDiscard(true);
   };
   const extra = <View style={{ gap: 12 }}>
-    {flow.phase === 'unknown' || flow.phase === 'ack-read' ? <AppButton label={flow.phase === 'ack-read' ? 'Đọc lại trạng thái đã lưu' : 'Thử lại cùng yêu cầu'} colors={colors} onPress={flow.retry} /> : null}
-    {flow.needsRefresh || flow.data?.connected === false ? <AppButton label="Tải lại trạng thái" colors={colors} disabled={locked} onPress={() => { void flow.refresh(); }} /> : null}
+    {flow.phase === 'unknown' || flow.phase === 'ack-read' || flow.phase === 'partial' ? <AppButton label={flow.phase === 'ack-read' ? 'Đọc lại trạng thái đã lưu' : flow.phase === 'partial' ? 'Thử lại phần chưa lưu' : 'Thử lại cùng yêu cầu'} colors={colors} onPress={flow.retry} /> : null}
+    {flow.needsRefresh || flow.data?.connected === false || flow.phase === 'partial' ? <AppButton label={flow.phase === 'partial' ? 'Tải lại để sửa' : 'Tải lại trạng thái'} colors={colors} disabled={locked && flow.phase !== 'partial'} onPress={() => { if (flow.phase === 'partial') flow.discardPartial(); void flow.refresh(); }} /> : null}
     {controls?.(locked, flow.data?.room?.state === 'CLOSED' ? 'closed' : flow.stage)}
   </View>;
   if (!flow.data) return <DishSetupFrame title={initialStage === 'preferences' ? 'Khẩu vị' : 'Thiết lập phòng'} onBack={onExit} busy={locked} footer={extra}>

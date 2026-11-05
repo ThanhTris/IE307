@@ -10,6 +10,7 @@ import {
   InboxItem,
   RegisterPushDeviceRequest,
   HistoryItem,
+  HistoryConsent,
   UpdateHistoryConsentRequest,
   ReadResult,
   WriteResult,
@@ -271,6 +272,16 @@ export async function mockGetHistory(
   return { ok: true, data: ctx.history.filter((h) => h.scope === scope) };
 }
 
+export async function mockGetHistoryConsent(ctx: MockStateContext): Promise<ReadResult<HistoryConsent>> {
+  await ctx.wait();
+  const fail = ctx.checkFailure();
+  if (fail) return { ok: false, error: { messageKey: fail } };
+  return {
+    ok: true,
+    data: { ...(ctx.historyConsents.get(ctx.currentUser.id) ?? { personal: false, group: false }) },
+  };
+}
+
 export async function mockUpdateHistoryConsent(
   ctx: MockStateContext,
   req: UpdateHistoryConsentRequest
@@ -289,6 +300,8 @@ export async function mockUpdateHistoryConsent(
   if (conflictError) return conflictError;
 
   const response: WriteResult<void> = { ok: true, requestId, data: undefined };
+  const current = ctx.historyConsents.get(ctx.currentUser.id) ?? { personal: false, group: false };
+  ctx.historyConsents.set(ctx.currentUser.id, { ...current, [req.scope]: req.consent });
   ctx.recordIdempotency('updateHistoryConsent', requestId, signature, response);
   return response;
 }

@@ -143,3 +143,11 @@ EXPO_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
 
 > [!NOTE]
 > Theo quy định của dự án (AGENTS.md), AI coding agent không tự ý chuyển trạng thái issue sang Done hoặc tự duyệt review. Trí (`ThanhTris`) sẽ trực tiếp kiểm tra và cập nhật trạng thái trên GitHub Project #2.
+
+## PR #155 follow-up — 2026-11-05
+
+This supplement is based on review target `aca4b8cead3135f1cd60e642c9e0124753e6d2db`; publication of the patch does not record review approval or Project acceptance. The canonical snapshot guard validates phase and candidate count separately from initial `dishCount`: lobby/R1 require the locked initial 10–20 pool, R2 accepts 1–20 remaining candidates including N=1, and valid `NO_CONSENSUS` has an empty pool, null winner, and empty podium. R2 with zero candidates is not an active-round snapshot; the server must end it as `ALL_REMOVED`.
+
+Multi-step settings/preferences/consent writes retain each acknowledged step. Unknown outcomes replay the exact pending request ID and payload; version conflicts refetch the authoritative snapshot and create a new request only for the still-pending change. Readback is required before reporting completion, unrelated preference fields are preserved, and an identity change aborts the old account's write chain. Account history consent is read through GM-21's authenticated caller-only `get_history_consent`; the existing preference checkbox controls only `personal`, while `group` remains independent. Missing settings return false; read errors remain unknown and do not silently uncheck consent.
+
+Regression coverage is in `mobile/tests/unit/pr155ReviewCurrent.test.ts`, `mobile/tests/unit/pr155RemainingFlows.test.ts`, API response/mock tests, and GM-25 component tests. Final local mobile checks on this worktree passed: 59 Jest suites / 1,016 tests, typecheck, lint, architecture guard, and Expo SDK dependency compatibility. Expo emitted its offline-mode reliability notice. Device/Expo Go visual verification remains separate from Jest/API results and must not be inferred from this handoff.

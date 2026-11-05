@@ -91,3 +91,9 @@ export interface UpdateHistoryConsentRequest {
   consent: boolean;
   requestId?: string;
 }
+
+/** The authenticated caller's account-level history choices. */
+export interface HistoryConsent {
+  personal: boolean;
+  group: boolean;
+}

@@ -39,6 +39,7 @@ import {
   AcceptRoomInviteRequest,
   InboxItem,
   RegisterPushDeviceRequest,
+  HistoryConsent,
   HistoryItem,
   UpdateHistoryConsentRequest,
   RoomState,
@@ -92,6 +93,7 @@ import {
   registerPushDeviceMethod,
   unregisterPushDeviceMethod,
   getHistoryMethod,
+  getHistoryConsentMethod,
   updateHistoryConsentMethod,
   deleteHistoryMethod,
 } from './client/socialAndHistoryMethods';
@@ -316,6 +318,10 @@ export class ApiClientImpl implements ApiClient {
 
   getHistory(scope: 'personal' | 'group', cursor?: string): Promise<ReadResult<HistoryItem[]>> {
     return getHistoryMethod(this.ctx, scope, cursor);
+  }
+
+  getHistoryConsent(): Promise<ReadResult<HistoryConsent>> {
+    return getHistoryConsentMethod(this.ctx);
   }
 
   updateHistoryConsent(req: UpdateHistoryConsentRequest): Promise<WriteResult<void>> {
