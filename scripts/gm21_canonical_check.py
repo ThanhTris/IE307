@@ -23,7 +23,19 @@ def verify_consumer(db):
         actual=db.psql("select encode(extensions.digest(convert_to(replace(replace(p.prosrc,chr(13)||chr(10),chr(10)),chr(13),chr(10)),'UTF8'),'sha256'),'hex') from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='"+schema+"' and p.proname='"+function+"' and p.prosecdef and p.proconfig=array['search_path=pg_catalog'];").strip()
         if actual!=hashlib.sha256(body.encode('utf8')).hexdigest():
             raise RuntimeError('GM21_DEPLOYED_DEFINITION_OR_ACL_DRIFT '+name)
-    qa.runtime.record('gm21-consumer-definitions','Pass',functionCount=len(functions),schemaVersion='0.13.0')
+    consent_source=(qa.ROOT/'supabase/migrations/0039_history_consent_read.sql').read_text(encoding='utf8')
+    match=re.search(r'create function public\.get_history_consent\(\).*? as \$\$(.*?)\$\$;',consent_source,re.S|re.I)
+    if not match:
+        raise RuntimeError('GM21_HISTORY_CONSENT_READ_SOURCE_MISSING')
+    actual=db.psql("select encode(extensions.digest(convert_to(replace(replace(p.prosrc,chr(13)||chr(10),chr(10)),chr(13),chr(10)),'UTF8'),'sha256'),'hex')||'|'||"
+        "(p.prosecdef and p.proconfig=array['search_path=pg_catalog'] and has_function_privilege('authenticated',p.oid,'execute') "
+        "and not has_function_privilege('anon',p.oid,'execute') and not has_function_privilege('service_role',p.oid,'execute') "
+        "and not has_function_privilege('gm06_publisher',p.oid,'execute'))::text from pg_proc p join pg_namespace n on n.oid=p.pronamespace "
+        "where n.nspname='public' and p.proname='get_history_consent' and pg_get_function_identity_arguments(p.oid)=''").strip()
+    expected=hashlib.sha256(match.group(1).encode('utf8')).hexdigest()+'|true'
+    if actual!=expected:
+        raise RuntimeError('GM21_HISTORY_CONSENT_READ_DEFINITION_OR_ACL_DRIFT')
+    qa.runtime.record('gm21-consumer-definitions','Pass',functionCount=len(functions),historyConsentRead='0039/0.16.0',schemaVersion='0.16.0')
 
 
 if __name__=='__main__':

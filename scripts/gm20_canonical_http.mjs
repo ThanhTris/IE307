@@ -388,11 +388,11 @@ if(process.env.GM20_CANONICAL_BRUNO==='1'){
  await writeFile(path,'vars {\n'+Object.entries(env).map(([k,v])=>'  '+k+': '+v).join('\n')+'\n}\n',{mode:0o600});await chmod(path,0o600);
  console.log('BRUNO_READY: select ignored Local.runtime.private; credentials not printed');
 }
-const migrationPaths=readdirSync(resolve(root,'supabase/migrations')).filter(name=>/^003[5-8]_.*\.sql$/.test(name)).sort().map(name=>'supabase/migrations/'+name);
-assert.deepEqual(migrationPaths.map(path=>path.slice(path.lastIndexOf('/')+1)),['0035_gm20_canonical_writer.sql','0036_gm21_canonical_history.sql','0037_gm22_invitation_admission.sql','0038_gm23_canonical_notifications.sql'],'full producer/consumer migration chain');
+const migrationPaths=readdirSync(resolve(root,'supabase/migrations')).filter(name=>/^003[5-9]_.*\.sql$/.test(name)).sort().map(name=>'supabase/migrations/'+name);
+assert.deepEqual(migrationPaths.map(path=>path.slice(path.lastIndexOf('/')+1)),['0035_gm20_canonical_writer.sql','0036_gm21_canonical_history.sql','0037_gm22_invitation_admission.sql','0038_gm23_canonical_notifications.sql','0039_history_consent_read.sql'],'full producer/consumer migration chain');
 const paths=[...migrationPaths,'scripts/gm20_canonical_http.mjs','scripts/gm20_canonical_check.py','scripts/dish_policy_worker.py','tests/fixtures/decision-v4/cases.json'];
-const databaseSchemaVersion=sql('select schema_version from public.schema_versions order by installed_at desc limit 1');
-pass('latest installed database schema includes canonical notifications','0.15.0',databaseSchemaVersion);
+const databaseSchemaVersion=sql("select schema_version from public.schema_versions where schema_version='0.16.0' and contract_id='food-v1/roadmap-v2/GM-21.4' and upstream_revision='GM21.4/0039_history_consent_read' order by installed_at desc limit 1");
+pass('caller-consent read migration record is installed','0.16.0',databaseSchemaVersion);
 const report={fixtureOnly:true,result:'Pass',scope:'owned synthetic Auth/REST QA; no real votes or production',caseCount:results.length,cases:results,schema:validated,
  contractVersion,policyVersion,producer:{task:'GM-20',version:'GM-20.4',migration:'0035_gm20_canonical_writer.sql',schemaVersion:'0.12.0'},schemaVersion:databaseSchemaVersion,databaseSchemaVersion,
  applicationDatabaseChanged:false,privateBrunoEnvironmentWritten:process.env.GM20_CANONICAL_BRUNO==='1',credentialsInEvidence:false,

@@ -151,3 +151,9 @@ no parent PR was pushed/retargeted by this GM20 code-only work. Start-time a6e89
 68e2e07 references above remain historical inputs, not the final target revision.
 Live gate now waits only for GM19 Needs Update; GM15 is accepted Done. The branch
 keeps the new GM40 task/dependency/index metadata from main without reverting it.
+
+## Account-consent read and QA regression — 2026-11-05
+
+The GM-20/21 QA adapters apply and verify forward migration `0039` before consumer checks. They verify its exact schema/contract/revision record instead of treating the most recently installed row as the schema authority: the retention regression intentionally reapplies migration `0036` later.
+
+The latest disposable loopback QA rerun passed 102 SQL/domain vectors, 151 GM-20 canonical HTTP cases, and 89 GM-21 history/consent cases with 700 response envelopes validated. Ledger, migration hash, grants, authenticated caller isolation, and worker checks passed. The lock-order probe retains its assertions, checks QA ownership before polling, and avoids repeated Docker ownership-process launches during the observation window; both lock orders passed. The fixture uses the 39-item test/demo release plus a separate synthetic 20-item release. QA was retained with `--keep`; the application DB was unchanged. Reproduce with `python scripts/gm21_canonical_check.py` on a clean owned QA, or `--against --keep` for its retained namespace. These API results do not claim Android/Expo Go acceptance, production deployment, review approval, or Project Done.
