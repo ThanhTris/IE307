@@ -62,3 +62,23 @@
    - Mã món ăn trùng lặp: Từ chối với mã lỗi `INVALID_PAYLOAD`.
    - Thiếu `dishId` hoặc `name`: Từ chối với mã lỗi `INVALID_PAYLOAD`.
    - Khác phiên bản hợp đồng `dish-catalogue/roadmap-v2/GM-18.2`: Từ chối với mã lỗi `INVALID_PAYLOAD`.
+
+## Bổ sung cấu hình và handoff preview → create — 2026-11-05
+
+Phạm vi bổ sung: sửa tài liệu nhận state/API của GM-24 và public-key configuration của default FetchTransport. Baseline PR #151 ở trên được giữ để truy vết. Trí yêu cầu sửa trực tiếp main và merge GM-25 sau khi kiểm đạt; kiểm điện thoại USB được chủ dự án để lại cho đợt kiểm tích hợp sau. Các dòng Not run về thiết bị vẫn giữ nguyên.
+
+- HANDOFF dùng đúng field `confirmed` và các field thiết lập riêng của hook; bỏ ví dụ `draft/isConfirmed` và import hook từ barrel không có export đó. Nêu rõ instance hook độc lập không chia sẻ state.
+- Preview gọi `preview_dish_pool` theo GM-18.2; GM-25 tạo phòng bằng `dish_session`, command `create`, theo GM-07.B-supplement. Request tạo không mang danh sách món preview hoặc tọa độ; server chọn và khóa pool.
+- Hook đọc public env bằng member access trực tiếp để Expo inline cấu hình; ưu tiên `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, giữ `EXPO_PUBLIC_SUPABASE_ANON_KEY` làm fallback.
+- Regression tái hiện trước sửa: 2/3 ca cấu hình thất bại vì key hiện hành bị bỏ qua. Sau sửa, cả 3 ca qua; request giữ đúng URL, apikey, caller token và payload, thiếu món không tạo preview giả.
+
+| Kiểm bổ sung trên main trước push | Kết quả | Loại bằng chứng |
+| --- | --- | --- |
+| `npm test -- --runTestsByPath tests/unit/discoveryContextConfiguration.test.ts tests/unit/roomSetup.test.ts tests/component/contextScreen.test.tsx` trong mobile | 3 suites, 77/77 ca Pass | Unit/component, transport HTTP dùng fixture tổng hợp |
+| `npm run typecheck` trong mobile | Pass | TypeScript |
+| `npx eslint src/features/context/hooks/useDiscoveryContext.ts tests/unit/discoveryContextConfiguration.test.ts` trong mobile | Pass | Source/test lint |
+| JSON create example trong HANDOFF so với `requestEnvelope` của `dish-session-v4b-supplement.schema.json` | Pass | JSON Schema 2020-12 |
+| `python scripts/validate_repository.py` | Pass | Tài liệu, links, manifest và traceability |
+| `python scripts/task_readiness.py --check-docs` và `git diff --check` | Pass | Indexes hiện hành và diff |
+
+Ví dụ create đã được kiểm bằng `Draft202012Validator` với `$ref: #/$defs/requestEnvelope` và toàn bộ `$defs` từ schema được bàn giao. Envelope chứa đúng `command/create` và `payload`, gồm contractVersion, requestId, displayName, settings và preferences. Kết quả này không thay bằng chứng API/Android của luồng sản phẩm GM-25; các kiểm API và CI của PR #155 được đối chiếu riêng trước merge.
