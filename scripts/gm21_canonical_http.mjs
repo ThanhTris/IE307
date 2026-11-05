@@ -64,9 +64,22 @@ async function consent(u,scope,value,id=randomUUID()){
  const reply=await legacyRpc(u,'update_history_consent',{requestId:id,scope,consent:value});
  expectOk(reply,'account scope '+scope+'='+value);return reply;
 }
+async function readConsent(u){return expectOk(await legacyRpc(u,'get_history_consent',{}),'read caller history consent');}
 async function scopes(people,personal,group){
  for(const u of people){await consent(u,'personal',personal);await consent(u,'group',group);}
 }
+pass('missing personal/group consent defaults to false',{personal:false,group:false},await readConsent(h));
+pass('another account cannot read host consent',{personal:false,group:false},await readConsent(m));
+const anonymousConsent=await legacyRpc(null,'get_history_consent',{});
+pass('anonymous caller cannot read history consent',true,anonymousConsent.status>=400);
+await consent(h,'personal',true);
+pass('personal consent toggles without enabling group',{personal:true,group:false},await readConsent(h));
+pass('other account remains on its own consent',{personal:false,group:false},await readConsent(m));
+await consent(h,'group',true);
+pass('group consent remains an independent scope',{personal:true,group:true},await readConsent(h));
+await consent(h,'personal',false);
+await consent(h,'group',false);
+pass('test setup restores both host scopes to opt-out',{personal:false,group:false},await readConsent(h));
 async function room(people=[h,m]){
  const made=await create(people[0]);for(const u of people.slice(1))await join(u,made.code,'QA member');
  const s=await snapshot(people[0],made.roomId);
@@ -221,8 +234,11 @@ async function sqlSession(label,body){
  return new Promise((yes,no)=>{child.on('error',no);child.on('close',code=>yes({code,state:error.match(/ERROR:\s+([A-Z0-9]{5})/)?.[1]??null}));});
 }
 async function observed(label,event){
- for(let i=0;i<60;i++){
-  if(sql("select exists(select 1 from pg_stat_activity where application_name='"+label+"' and "+event+")")==='t')return true;
+ // The QA container and owner are validated immediately before the lock probe.
+ // Poll directly to avoid spawning Docker inspect + owner-check + psql for every
+ // 50 ms observation; on Windows those process launches can outlast the lock hold.
+ for(let i=0;i<120;i++){
+  if(sqlRaw("select exists(select 1 from pg_stat_activity where application_name='"+label+"' and "+event+")")==='t')return true;
   await new Promise(r=>setTimeout(r,50));
  }return false;
 }
@@ -230,8 +246,9 @@ for(const cleanupFirst of [true,false]){
  const pair=await retentionPair(),hid=randomUUID(),tag=randomUUID().replaceAll('-','').slice(0,10);
  const clean=cleanupSql(pair.retained),link=attemptLink(pair,hid);
  const firstLabel='gm21-first-'+tag,secondLabel='gm21-second-'+tag;
+ sql('select 1'); // Revalidate this exact QA container and ownership before raw polling.
  const prefix=cleanupFirst?'select pg_advisory_xact_lock(170017);':'';
- const first=sqlSession(firstLabel,"begin;"+prefix+"update gm06_private.reference_epoch set epoch=epoch+1 where singleton;select pg_sleep(4);"+(cleanupFirst?clean:link)+"commit;");
+ const first=sqlSession(firstLabel,"begin;"+prefix+"update gm06_private.reference_epoch set epoch=epoch+1 where singleton;select pg_sleep(12);"+(cleanupFirst?clean:link)+"commit;");
  assert.ok(await observed(firstLabel,"wait_event='PgSleep'"),'first SQL session must hold its actual lock');
  const second=sqlSession(secondLabel,"begin;"+(cleanupFirst?link:clean)+"commit;");
  pass('real cleanup/audience contender blocks order='+cleanupFirst,true,await observed(secondLabel,"wait_event_type='Lock'"));
@@ -281,6 +298,8 @@ for(const previous of ['off','on']){
  pass('authenticated consent wrapper restores guard '+previous,previous,restored);
 }
 pass('GM21 supplement ledger is installed','1',sql("select count(*) from public.schema_versions where schema_version='0.13.0' and contract_id='dish-session-v4/roadmap-v2/GM-21.3'"));
+pass('GM21.4 account-consent read migration is installed','1',sql("select count(*) from public.schema_versions where schema_version='0.16.0' and contract_id='food-v1/roadmap-v2/GM-21.4' and upstream_revision='GM21.4/0039_history_consent_read'"));
+pass('history-consent read RPC grants only authenticated execution','t',sql("select has_function_privilege('authenticated','public.get_history_consent()','execute') and not has_function_privilege('anon','public.get_history_consent()','execute') and not has_function_privilege('service_role','public.get_history_consent()','execute') and not has_function_privilege('gm06_publisher','public.get_history_consent()','execute')"));
 pass('private integration helpers cannot be called by any client role','t',sql("select not exists(select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace cross join (values('anon'),('authenticated'),('service_role'),('gm06_publisher')) r(role) where n.nspname='gm21_canonical_private' and has_function_privilege(role,p.oid,'execute'))"));
 for(const alias of ['delete_history_before_gm21_canonical','update_history_consent_before_gm21_canonical']){
  const args=alias.startsWith('delete')?{requestId:randomUUID(),history_id:randomUUID()}:{requestId:randomUUID(),scope:'personal',consent:false};
@@ -298,7 +317,7 @@ const validated=spawnSync(process.env.GM_V4_PYTHON||'python',['scripts/validate_
 assert.equal(validated.status,0,'received GM07 schema mismatch: '+validated.stderr.slice(0,1000));
 const paths=['scripts/gm21_canonical_http.mjs','scripts/gm21_canonical_check.py','scripts/gm20_canonical_check.py','scripts/dish_policy_worker.py','supabase/rollback/0036_gm21_canonical_history.down.sql','docs/architecture/schemas/dish-session-v4b-supplement.schema.json',...readdirSync(resolve(root,'supabase/migrations')).filter(n=>n.endsWith('.sql')).map(n=>'supabase/migrations/'+n)];
 const report={result:'Pass',scope:'GM21.3 owned synthetic Auth/REST and actual GM20 writer; no app DB/Android/production',caseCount:results.length,cases:results,
- schema:JSON.parse(validated.stdout),contractVersion,schemaVersion:'0.13.0',applicationDatabaseChanged:false,credentialsInEvidence:false,
+ schema:JSON.parse(validated.stdout),contractVersion,gm21SchemaVersion:'0.13.0',historyConsentSchemaVersion:'0.16.0',databaseSchemaVersion:'0.16.0',applicationDatabaseChanged:false,credentialsInEvidence:false,
  sourceHashes:Object.fromEntries(paths.map(p=>[p,createHash('sha256').update(readFileSync(p)).digest('hex')]))};
 await writeFile(resolve(output,'http-results.json'),JSON.stringify(report,null,2)+'\n');
 console.log(JSON.stringify({result:'Pass',cases:results.length,envelopes:report.schema.envelopesValidated}));
