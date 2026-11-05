@@ -77,15 +77,11 @@ export function useDiscoveryContext({
   const [avoidRecent, setAvoidRecentState] = useState<boolean>(true);
   const [inviteeIds, setInviteeIdsState] = useState<string[]>([]);
 
-  // Real API credentials from environment (do not log or hardcode)
-  const realApiUrl =
-    typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_SUPABASE_URL
-      ? process.env.EXPO_PUBLIC_SUPABASE_URL
-      : '';
-  const realApiKey =
-    typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_SUPABASE_ANON_KEY
-      ? process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY
-      : '';
+  // Keep direct property access so Expo can inline the public environment values.
+  const realApiUrl = process.env.EXPO_PUBLIC_SUPABASE_URL ?? '';
+  const realApiKey = process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+    || process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY
+    || '';
 
   const [realClientStatus, setRealClientStatus] = useState<string>('Sẵn sàng');
   const [liveAuthToken, setLiveAuthToken] = useState<string | null>(null);
