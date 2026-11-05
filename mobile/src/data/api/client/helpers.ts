@@ -35,6 +35,7 @@ const KNOWN_ERROR_CODES: ErrorCode[] = [
   'INVALID_ROOM_STATE', 'CONTEXT_CHANGED',
   'ALREADY_SUBMITTED', 'VERSION_CONFLICT', 'REQUEST_ID_REUSED',
   'OUT_OF_COVERAGE', 'NO_ELIGIBLE_FOOD', 'AVAILABILITY_UNKNOWN', 'DESIRED_TIME_PASSED',
+  'INSUFFICIENT_DISHES', 'CONTRACT_MISMATCH', 'UNSUPPORTED_FIELD',
   'INVITE_EXPIRED', 'INVITE_REJECTED', 'INVITE_CANCELLED', 'RATE_LIMITED', 'NETWORK_ERROR', 'TIMEOUT',
   'MALFORMED_RESPONSE', 'UNKNOWN_ERROR',
 ];
@@ -54,25 +55,49 @@ export function mapErrorHelper(err: unknown): ApiError {
 
   const errObj = err as Record<string, unknown>;
 
-  if (errObj.name === 'AbortError' || errObj.message === 'Timeout') {
+  if (errObj.name === 'AbortError' || errObj.message === 'Timeout' || errObj.message === 'TIMEOUT') {
     return { messageKey: 'TIMEOUT', message: 'Request timed out' };
   }
 
+  const candidatePayloads: unknown[] = [];
   if (errObj.body && typeof errObj.body === 'object') {
     const body = errObj.body as Record<string, unknown>;
-    if (body.messageKey && typeof body.messageKey === 'string' && isValidErrorCode(body.messageKey)) {
+    if (body.error && typeof body.error === 'object') {
+      candidatePayloads.push(body.error);
+    }
+    candidatePayloads.push(body);
+  }
+  if (errObj.error && typeof errObj.error === 'object') {
+    candidatePayloads.push(errObj.error);
+  }
+  candidatePayloads.push(errObj);
+
+  for (const candidate of candidatePayloads) {
+    if (!candidate || typeof candidate !== 'object') continue;
+    const c = candidate as Record<string, unknown>;
+    if (typeof c.messageKey === 'string' && isValidErrorCode(c.messageKey)) {
       return {
-        messageKey: body.messageKey as ErrorCode,
-        message: typeof body.message === 'string' ? body.message : undefined,
-        details: body.details as Record<string, unknown> | undefined,
+        messageKey: c.messageKey as ErrorCode,
+        message: typeof c.message === 'string' ? c.message : undefined,
+        details: c.details as Record<string, unknown> | undefined,
       };
     }
-    if (body.code && typeof body.code === 'string') {
-      if (body.code === 'P0001' && typeof body.message === 'string') {
-        const match = body.message.match(/^[A-Z_]+/);
+    if (typeof c.code === 'string') {
+      if (c.code === 'P0001' && typeof c.message === 'string') {
+        const match = c.message.match(/^[A-Z_]+/);
         if (match && isValidErrorCode(match[0])) {
-          return { messageKey: match[0] as ErrorCode, message: body.message };
+          return {
+            messageKey: match[0] as ErrorCode,
+            message: c.message,
+            details: c.details as Record<string, unknown> | undefined,
+          };
         }
+      } else if (isValidErrorCode(c.code)) {
+        return {
+          messageKey: c.code as ErrorCode,
+          message: typeof c.message === 'string' ? c.message : undefined,
+          details: c.details as Record<string, unknown> | undefined,
+        };
       }
     }
   }

@@ -619,7 +619,7 @@ describe('LiveRoomRepository (GM-25)', () => {
       client.callRpc = callRpc;
       const repo = createRoomRepository({ client });
 
-      const res = await repo.getRoomSnapshot('room_canonical_1');
+      const res = await repo.dispatchDishSession<any>('snapshot', { roomId: 'room_canonical_1' });
       expect(res.ok).toBe(true);
       if (res.ok) {
         expect(res.data.roomId).toBe('room_canonical_1');

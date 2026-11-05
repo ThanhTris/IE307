@@ -3,6 +3,35 @@ import type { DishSetupGateway, SetupIntent, SetupRead, SetupReply } from '../fe
 import { dishSetupCatalogue } from './dishSetupCatalogue';
 import { emptyPreferences, type SetupDraft, type SetupRoom } from '../features/context/services/dishSetup';
 
+function mapDraftBudget(budget: SetupDraft['budget']): { maximum: number; currency: 'VND'; unit: 'person' } | null {
+  if (!budget) return null;
+  if (budget === 'under50') return { maximum: 50000, currency: 'VND', unit: 'person' };
+  if (budget === '50to100') return { maximum: 100000, currency: 'VND', unit: 'person' };
+  if (budget === '100to200') return { maximum: 200000, currency: 'VND', unit: 'person' };
+  return null;
+}
+
+function mapCanonicalBudgetToDraft(budget: unknown): SetupDraft['budget'] {
+  if (!budget || typeof budget !== 'object') return null;
+  const b = budget as { maximum?: number };
+  if (typeof b.maximum !== 'number') return null;
+  if (b.maximum <= 50000) return 'under50';
+  if (b.maximum <= 100000) return '50to100';
+  if (b.maximum <= 200000) return '100to200';
+  return null;
+}
+
+function toWirePreferences(raw: any, fallbackAvoidRecent = false) {
+  return {
+    cuisineIds: Array.isArray(raw?.cuisineIds) ? raw.cuisineIds : [],
+    categoryIds: Array.isArray(raw?.categoryIds) ? raw.categoryIds : [],
+    temperature: typeof raw?.temperature === 'string' ? raw.temperature : null,
+    flavor: raw?.flavor && typeof raw.flavor === 'object' ? raw.flavor : null,
+    budget: raw?.budget && typeof raw.budget === 'object' ? raw.budget : null,
+    avoidRecent: typeof raw?.avoidRecent === 'boolean' ? raw.avoidRecent : fallbackAvoidRecent,
+  };
+}
+
 export function createLiveDishSetupGateway(
   repository: RoomRepository,
   initialRoomId?: string
@@ -36,7 +65,7 @@ export function createLiveDishSetupGateway(
       }
 
       if (currentRoomId) {
-        const snapRes = await repository.getRoomSnapshot(currentRoomId);
+        const snapRes = await repository.dispatchDishSession<any>('snapshot', { roomId: currentRoomId });
         if (!snapRes.ok) {
           throw new Error(`Failed to read room snapshot: ${snapRes.error.message || snapRes.error.messageKey}`);
         }
@@ -49,14 +78,15 @@ export function createLiveDishSetupGateway(
           version: snap.version,
           state: isClosed ? 'CLOSED' : 'LOBBY',
         };
-        const snapSettings = (snap as unknown as { settings?: { mealSlot?: SetupDraft['mealSlot']; dishCount?: number; desiredAt?: string | null } }).settings;
+        const snapSettings = snap.settings;
+        const ownPref = snap.ownPreferences;
         const settings: SetupDraft = {
-          mealSlot: snapSettings?.mealSlot ?? snap.context?.mealSlot ?? 'lunch',
+          mealSlot: snapSettings?.mealSlot ?? 'lunch',
           dishCount: snapSettings?.dishCount ?? snap.pool?.length ?? 15,
-          timeMode: (snap.context?.timeHint || snapSettings?.desiredAt) ? 'scheduled' : 'now',
-          desiredAt: snapSettings?.desiredAt ?? snap.context?.desiredAt ?? null,
-          budget: null,
-          avoidRecent: snap.context?.avoidRecent ?? true,
+          timeMode: snapSettings?.desiredAt ? 'scheduled' : 'now',
+          desiredAt: snapSettings?.desiredAt ?? null,
+          budget: mapCanonicalBudgetToDraft(ownPref?.budget),
+          avoidRecent: typeof ownPref?.avoidRecent === 'boolean' ? ownPref.avoidRecent : true,
           inviteeIds: [],
         };
         return {
@@ -65,7 +95,7 @@ export function createLiveDishSetupGateway(
           connected: isConnected,
           canEditSettings: isHost,
           accountDefaults,
-          ownRoomPreferences: snap.ownPreferences,
+          ownRoomPreferences: ownPref,
           room: cachedRoom,
           settings,
           hasRecentHistory: false,
@@ -139,6 +169,7 @@ export function createLiveDishSetupGateway(
           }
           return { ok: false, code: 'REJECTED' };
         } else {
+          const budgetObj = mapDraftBudget(intent.draft.budget);
           const res = await repository.dispatchDishSession<{ roomId: string; code: string; version: number; expiresAt: string }>(
             'create',
             {
@@ -150,18 +181,22 @@ export function createLiveDishSetupGateway(
                 categoryIds: [],
                 temperature: null,
                 flavor: null,
-                budget: null,
+                budget: budgetObj,
                 avoidRecent: intent.draft.avoidRecent,
               },
             }
           );
 
           if (res.ok) {
-            currentRoomId = res.data.roomId;
+            const d = res.data;
+            if (!d || typeof d !== 'object' || !d.roomId || !d.code || typeof d.version !== 'number') {
+              return { ok: false, code: 'REJECTED' };
+            }
+            currentRoomId = d.roomId;
             cachedRoom = {
-              id: res.data.roomId,
-              code: res.data.code,
-              version: res.data.version,
+              id: d.roomId,
+              code: d.code,
+              version: d.version,
               state: 'LOBBY',
             };
             return { ok: true, room: cachedRoom };
@@ -191,13 +226,14 @@ export function createLiveDishSetupGateway(
       }
 
       if (intent.kind === 'preferences') {
+        const preferencesPayload = toWirePreferences(intent.preferences, false);
         const res = await repository.dispatchDishSession<{ accepted: boolean }>(
           'updatePreferences',
           {
             requestId: intent.requestId,
             roomId: intent.room.id,
             expectedVersion: intent.room.version,
-            preferences: intent.preferences,
+            preferences: preferencesPayload,
           }
         );
 

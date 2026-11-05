@@ -46,6 +46,7 @@ export const errorCopy: Record<ErrorCode, string> = {
   RATE_LIMITED: 'Bạn thao tác quá nhanh. Vui lòng chờ rồi thử lại.',
   NETWORK_ERROR: 'Không kết nối được. Thử lại cùng yêu cầu khi có mạng.',
   TIMEOUT: 'Chưa rõ yêu cầu đã được nhận. Thử lại cùng yêu cầu.',
+  INSUFFICIENT_DISHES: 'Không đủ món theo yêu cầu.', CONTRACT_MISMATCH: 'Phiên bản hợp đồng không khớp.', UNSUPPORTED_FIELD: 'Trường dữ liệu không được hỗ trợ.',
   MALFORMED_RESPONSE: 'Phản hồi không hợp lệ. Vui lòng thử lại.', UNKNOWN_ERROR: 'Chưa thể thực hiện. Vui lòng thử lại.',
 };
 

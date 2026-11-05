@@ -419,16 +419,13 @@ export class LiveRoomRepository implements RoomRepository {
           }
 
           if (raw && !raw.ok) {
-            const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as string;
-            if (errCode !== 'CONTRACT_MISMATCH') {
-              return { ok: false, requestId: rid, error: { messageKey: errCode as ErrorCode } };
-            }
+            const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as ErrorCode;
+            return { ok: false, requestId: rid, error: { messageKey: errCode, details: raw.error?.details } };
           }
+          return { ok: false, requestId: rid, error: { messageKey: 'UNKNOWN_ERROR' } };
         } catch (err: unknown) {
           const mapped = mapErrorHelper(err);
-          if ((mapped.messageKey as string) !== 'CONTRACT_MISMATCH') {
-            return { ok: false, requestId: rid, error: mapped };
-          }
+          return { ok: false, requestId: rid, error: mapped };
         }
       }
 
@@ -445,29 +442,29 @@ export class LiveRoomRepository implements RoomRepository {
             command: 'snapshot',
             payload: {
               contractVersion: CANONICAL_CONTRACT_VERSION,
-              requestId: this.nextRequestId('snap'),
               roomId,
             },
           })) as {
             ok?: boolean;
             data?: unknown;
-            error?: { messageKey?: string; code?: string };
+            error?: { messageKey?: string; code?: string; details?: Record<string, unknown> };
           };
 
           if (raw?.ok && raw.data) {
+            const d = raw.data as Record<string, unknown>;
+            if (!d.context || typeof d.context !== 'object') {
+              return { ok: false, error: { messageKey: 'MALFORMED_RESPONSE', message: 'Legacy RoomSnapshot requires context' } };
+            }
             return { ok: true, data: raw.data as RoomSnapshot };
           }
           if (raw && !raw.ok) {
-            const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as string;
-            if (errCode !== 'CONTRACT_MISMATCH') {
-              return { ok: false, error: { messageKey: errCode as ErrorCode } };
-            }
+            const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as ErrorCode;
+            return { ok: false, error: { messageKey: errCode, details: raw.error?.details } };
           }
+          return { ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } };
         } catch (err: unknown) {
           const mapped = mapErrorHelper(err);
-          if ((mapped.messageKey as string) !== 'CONTRACT_MISMATCH') {
-            return { ok: false, error: mapped };
-          }
+          return { ok: false, error: mapped };
         }
       }
 
@@ -504,23 +501,20 @@ export class LiveRoomRepository implements RoomRepository {
           })) as {
             ok?: boolean;
             data?: unknown;
-            error?: { messageKey?: string; code?: string };
+            error?: { messageKey?: string; code?: string; details?: Record<string, unknown> };
           };
 
           if (raw?.ok) {
             return { ok: true, requestId: rid, roomId: request.roomId, data: undefined };
           }
           if (raw && !raw.ok) {
-            const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as string;
-            if (errCode !== 'CONTRACT_MISMATCH') {
-              return { ok: false, requestId: rid, roomId: request.roomId, error: { messageKey: errCode as ErrorCode } };
-            }
+            const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as ErrorCode;
+            return { ok: false, requestId: rid, roomId: request.roomId, error: { messageKey: errCode, details: raw.error?.details } };
           }
+          return { ok: false, requestId: rid, roomId: request.roomId, error: { messageKey: 'UNKNOWN_ERROR' } };
         } catch (err: unknown) {
           const mapped = mapErrorHelper(err);
-          if ((mapped.messageKey as string) !== 'CONTRACT_MISMATCH') {
-            return { ok: false, requestId: rid, roomId: request.roomId, error: mapped };
-          }
+          return { ok: false, requestId: rid, roomId: request.roomId, error: mapped };
         }
       }
 
@@ -540,14 +534,21 @@ export class LiveRoomRepository implements RoomRepository {
       return { ok: false, error: { messageKey: 'NETWORK_ERROR' } };
     }
     const contractVersion = version === 'baseline' ? BASELINE_CONTRACT_VERSION : CANONICAL_CONTRACT_VERSION;
+    const isReadCommand = command === 'snapshot' || command === 'getDefaultPreferences';
+    const finalPayload: Record<string, unknown> = {
+      contractVersion,
+      ...payload,
+    };
+    if (isReadCommand) {
+      delete finalPayload.requestId;
+    } else if (!finalPayload.requestId) {
+      finalPayload.requestId = this.nextRequestId(`ds_${command}`);
+    }
+
     try {
       const raw = (await call('dish_session', {
         command,
-        payload: {
-          contractVersion,
-          requestId: payload.requestId || this.nextRequestId(`ds_${command}`),
-          ...payload,
-        },
+        payload: finalPayload,
       })) as {
         ok?: boolean;
         data?: T;
@@ -573,12 +574,11 @@ export class LiveRoomRepository implements RoomRepository {
             command: 'getDefaultPreferences',
             payload: {
               contractVersion: CANONICAL_CONTRACT_VERSION,
-              requestId: this.nextRequestId('def_pref'),
             },
           })) as {
             ok?: boolean;
             data?: { revision?: number; preferences?: UserPreferences };
-            error?: { messageKey?: string; code?: string };
+            error?: { messageKey?: string; code?: string; details?: Record<string, unknown> };
           };
 
           if (raw?.ok && raw.data && raw.data.preferences) {
@@ -590,21 +590,19 @@ export class LiveRoomRepository implements RoomRepository {
               },
             };
           }
-        } catch {
-          // fall through to default
+          if (raw && !raw.ok) {
+            const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as ErrorCode;
+            return { ok: false, error: { messageKey: errCode, details: raw.error?.details } };
+          }
+          return { ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } };
+        } catch (err: unknown) {
+          return { ok: false, error: mapErrorHelper(err) };
         }
       }
 
       return {
-        ok: true,
-        data: {
-          revision: 1,
-          preferences: {
-            cuisineIds: [],
-            categoryIds: [],
-            historyConsent: false,
-          },
-        },
+        ok: false,
+        error: { messageKey: 'NETWORK_ERROR', message: 'Client RPC caller unavailable' },
       };
     });
   }
@@ -633,23 +631,20 @@ export class LiveRoomRepository implements RoomRepository {
           })) as {
             ok?: boolean;
             data?: unknown;
-            error?: { messageKey?: string; code?: string };
+            error?: { messageKey?: string; code?: string; details?: Record<string, unknown> };
           };
 
           if (raw?.ok) {
             return { ok: true, requestId: rid, roomId: request.roomId, data: undefined };
           }
           if (raw && !raw.ok) {
-            const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as string;
-            if (errCode !== 'CONTRACT_MISMATCH') {
-              return { ok: false, requestId: rid, roomId: request.roomId, error: { messageKey: errCode as ErrorCode } };
-            }
+            const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as ErrorCode;
+            return { ok: false, requestId: rid, roomId: request.roomId, error: { messageKey: errCode, details: raw.error?.details } };
           }
+          return { ok: false, requestId: rid, roomId: request.roomId, error: { messageKey: 'UNKNOWN_ERROR' } };
         } catch (err: unknown) {
           const mapped = mapErrorHelper(err);
-          if ((mapped.messageKey as string) !== 'CONTRACT_MISMATCH') {
-            return { ok: false, requestId: rid, roomId: request.roomId, error: mapped };
-          }
+          return { ok: false, requestId: rid, roomId: request.roomId, error: mapped };
         }
       }
 
@@ -674,23 +669,20 @@ export class LiveRoomRepository implements RoomRepository {
           })) as {
             ok?: boolean;
             data?: unknown;
-            error?: { messageKey?: string; code?: string };
+            error?: { messageKey?: string; code?: string; details?: Record<string, unknown> };
           };
 
           if (raw?.ok) {
             return { ok: true, requestId: rid, roomId: request.roomId, data: undefined };
           }
           if (raw && !raw.ok) {
-            const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as string;
-            if (errCode !== 'CONTRACT_MISMATCH') {
-              return { ok: false, requestId: rid, roomId: request.roomId, error: { messageKey: errCode as ErrorCode } };
-            }
+            const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as ErrorCode;
+            return { ok: false, requestId: rid, roomId: request.roomId, error: { messageKey: errCode, details: raw.error?.details } };
           }
+          return { ok: false, requestId: rid, roomId: request.roomId, error: { messageKey: 'UNKNOWN_ERROR' } };
         } catch (err: unknown) {
           const mapped = mapErrorHelper(err);
-          if ((mapped.messageKey as string) !== 'CONTRACT_MISMATCH') {
-            return { ok: false, requestId: rid, roomId: request.roomId, error: mapped };
-          }
+          return { ok: false, requestId: rid, roomId: request.roomId, error: mapped };
         }
       }
 
@@ -715,23 +707,20 @@ export class LiveRoomRepository implements RoomRepository {
           })) as {
             ok?: boolean;
             data?: unknown;
-            error?: { messageKey?: string; code?: string };
+            error?: { messageKey?: string; code?: string; details?: Record<string, unknown> };
           };
 
           if (raw?.ok) {
             return { ok: true, requestId: rid, roomId: request.roomId, data: undefined };
           }
           if (raw && !raw.ok) {
-            const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as string;
-            if (errCode !== 'CONTRACT_MISMATCH') {
-              return { ok: false, requestId: rid, roomId: request.roomId, error: { messageKey: errCode as ErrorCode } };
-            }
+            const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as ErrorCode;
+            return { ok: false, requestId: rid, roomId: request.roomId, error: { messageKey: errCode, details: raw.error?.details } };
           }
+          return { ok: false, requestId: rid, roomId: request.roomId, error: { messageKey: 'UNKNOWN_ERROR' } };
         } catch (err: unknown) {
           const mapped = mapErrorHelper(err);
-          if ((mapped.messageKey as string) !== 'CONTRACT_MISMATCH') {
-            return { ok: false, requestId: rid, roomId: request.roomId, error: mapped };
-          }
+          return { ok: false, requestId: rid, roomId: request.roomId, error: mapped };
         }
       }
 
