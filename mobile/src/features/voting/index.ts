@@ -5,4 +5,5 @@ export * from './components/VoteDishCardItem';
 export * from './components/CandidateKeepRemoveCard';
 export * from './hooks/useRoundOneVoting';
 export * from './hooks/useRoundTwoVoting';
+export * from './services/voteRepository';
 export * from './fixtures';

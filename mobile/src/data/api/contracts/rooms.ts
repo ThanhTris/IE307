@@ -10,7 +10,9 @@ import type { BallotVoteValue, RoomResult, SubmissionReceipt } from './voting';
 export type RoomState =
   | 'LOBBY'
   | 'ROUND_1'
+  | 'WAITING_1'
   | 'ROUND_2'
+  | 'WAITING_2'
   | 'DECIDED'
   | 'NO_CONSENSUS'
   | 'CANCELLED'

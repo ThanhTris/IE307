@@ -15,6 +15,7 @@ import {
   simulateDeferredRequest,
   type FinalScreenScenario,
 } from '../fixtures';
+import type { VoteRepository } from '../services/voteRepository';
 
 export type FinalChoice = 'KEEP' | 'REMOVE';
 
@@ -23,6 +24,7 @@ export interface UseRoundTwoVotingParams {
   roomId: string;
   initialChoices?: Record<string, FinalChoice>;
   api?: ApiClient;
+  repository?: VoteRepository;
   initialScenario: FinalScreenScenario;
   initialResult: RoomResult | null;
   simulateError: boolean;
@@ -36,6 +38,7 @@ export function useRoundTwoVoting({
   roomId,
   initialChoices,
   api,
+  repository,
   initialScenario,
   initialResult,
   simulateError,
@@ -98,52 +101,60 @@ export function useRoundTwoVoting({
     if (choice === 'REMOVE' && enforceCap) {
       const currentDishChoice = choices[dishId];
       if (currentDishChoice !== 'REMOVE' && removedCount >= eliminationCap) {
-        setCapNotice(`Đã đạt giới hạn loại tối đa ${eliminationCap} món (theo quy tắc Cap 30%). Hãy bỏ chọn món khác trước nếu muốn đổi.`);
+        setCapNotice(
+          `Bạn chỉ được loại tối đa ${eliminationCap} món ở Vòng 2 (Quy tắc Cap 30% theo ADR-019). Vui lòng đổi món đã loại thành "Giữ" trước khi loại thêm.`
+        );
         return;
       }
     }
 
     setCapNotice('');
-    setChoices(prev => ({ ...prev, [dishId]: choice }));
+    setChoices(prev => ({
+      ...prev,
+      [dishId]: choice,
+    }));
   };
 
   /**
-   * Safe batch action: KEEP all items (always permitted).
+   * Quick action: resets all items to KEEP and clears any cap notice.
    */
   const handleSetAllKeep = () => {
     if (isLocked) return;
-    setCapNotice('');
     const allKeep: Record<string, FinalChoice> = {};
     for (const dish of candidates) {
       allKeep[dish.roundDishId] = 'KEEP';
     }
     setChoices(allKeep);
-  };
-
-  /**
-   * Kept for internal/testing backward compatibility only;
-   * capped at eliminationCap items.
-   */
-  const handleSetAllRemove = () => {
-    if (isLocked) return;
-    const cappedRemove: Record<string, FinalChoice> = {};
-    let remCount = 0;
-    for (const dish of candidates) {
-      if (remCount < eliminationCap) {
-        cappedRemove[dish.roundDishId] = 'REMOVE';
-        remCount++;
-      } else {
-        cappedRemove[dish.roundDishId] = 'KEEP';
-      }
-    }
-    setChoices(cappedRemove);
-    setCapNotice(`Chỉ có thể loại tối đa ${eliminationCap} món theo quy tắc Cap 30%.`);
+    setCapNotice('');
   };
 
   const canHostEarlyFinish = isHost && isWaitingForMembers && isHostEarlyFinishAllowed(rosterAcknowledgedCount, totalRosterCount);
 
-  const handleHostEarlyFinish = () => {
+  const handleHostEarlyFinish = async () => {
     if (!canHostEarlyFinish) return;
+
+    if (repository) {
+      const res = await repository.finalize({
+        roomId,
+        expectedVersion: 2,
+        rosterAcknowledgedCount,
+        totalRosterCount,
+        isHost,
+      });
+      if (res.ok) {
+        setIsWaitingForMembers(false);
+        if (res.data.state === 'NO_CONSENSUS' || allRemoved) {
+          setResult(FIXTURE_ROUND_TWO_ALL_REMOVED_RESULT);
+        } else {
+          setResult(initialResult || FIXTURE_ROUND_TWO_CONSENSUS_RESULT);
+        }
+        return;
+      } else {
+        setErrorMessage(`Không thể kết thúc chờ: ${res.error.messageKey}`);
+        return;
+      }
+    }
+
     setIsWaitingForMembers(false);
     setResult(scenario === 'all_removed' ? FIXTURE_ROUND_TWO_ALL_REMOVED_RESULT : FIXTURE_ROUND_TWO_CONSENSUS_RESULT);
   };
@@ -175,7 +186,53 @@ export function useRoundTwoVoting({
     };
 
     try {
-      if (api) {
+      if (repository) {
+        const res = await repository.submitBallot({
+          roomId,
+          round: 2,
+          poolVersion: 2,
+          expectedVersion: 2,
+          votes,
+          intentId: req.intentId,
+          requestId: req.requestId,
+        });
+        setSubmitting(false);
+
+        if (res.ok) {
+          setSubmissionState('ack');
+          setReceipt(res.data.receipt ?? {
+            round: 2,
+            intentId: req.intentId,
+            requestId: res.requestId ?? req.requestId,
+            submittedAt: new Date().toISOString(),
+            voteCount: votes.length,
+          });
+
+          await repository.enterWaiting({
+            roomId,
+            round: 2,
+            poolVersion: 2,
+            expectedVersion: res.version ?? 2,
+          });
+
+          if (res.data.allMembersSubmitted === false) {
+            setIsWaitingForMembers(true);
+            setResult(null);
+          } else {
+            setIsWaitingForMembers(false);
+            if (initialResult) {
+              setResult(initialResult);
+            } else if (allRemoved || res.state === 'NO_CONSENSUS') {
+              setResult(FIXTURE_ROUND_TWO_ALL_REMOVED_RESULT);
+            } else {
+              setResult(FIXTURE_ROUND_TWO_CONSENSUS_RESULT);
+            }
+          }
+        } else {
+          setSubmissionState('error');
+          setErrorMessage(res.error.message || `Lỗi từ server: ${res.error.messageKey}`);
+        }
+      } else if (api) {
         const res = await api.submitBallot(req);
         setSubmitting(false);
 
@@ -245,10 +302,12 @@ export function useRoundTwoVoting({
           setResult(initialResult || mockResultData.result);
         }
       }
-    } catch (err) {
+    } catch (err: unknown) {
       setSubmitting(false);
       setSubmissionState('error');
-      setErrorMessage(err instanceof Error ? err.message : 'Lỗi không xác định khi gửi phiếu');
+      setErrorMessage(
+        err instanceof Error ? err.message : 'Có lỗi không xác định xảy ra khi gửi phiếu Vòng 2.'
+      );
     }
   };
 
@@ -256,6 +315,7 @@ export function useRoundTwoVoting({
     choices,
     scenario,
     setScenario,
+    submitting,
     submissionState,
     confirmModalVisible,
     setConfirmModalVisible,
@@ -265,7 +325,6 @@ export function useRoundTwoVoting({
     result,
     isWaitingForMembers,
     eliminationCap,
-    enforceCap,
     keptCount,
     removedCount,
     allRemoved,
@@ -274,14 +333,12 @@ export function useRoundTwoVoting({
     isHost,
     setIsHost,
     totalRosterCount,
-    setTotalRosterCount,
     rosterAcknowledgedCount,
     setRosterAcknowledgedCount,
     canHostEarlyFinish,
     handleHostEarlyFinish,
     handleToggleChoice,
     handleSetAllKeep,
-    handleSetAllRemove,
     handleSubmit,
   };
 }

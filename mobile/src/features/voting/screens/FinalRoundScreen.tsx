@@ -21,6 +21,7 @@ import {
   FIXTURE_ROUND_TWO_CANDIDATES,
   type FinalScreenScenario,
 } from '../fixtures';
+import type { VoteRepository } from '../services/voteRepository';
 import { useRoundTwoVoting, type FinalChoice } from '../hooks/useRoundTwoVoting';
 import { FinalRoundHeaderAndOutcome } from '../components/FinalRoundHeaderAndOutcome';
 import { CandidateKeepRemoveCard } from '../components/CandidateKeepRemoveCard';
@@ -30,6 +31,7 @@ export type FinalRoundScreenProps = {
   roomId?: string;
   initialChoices?: Record<string, FinalChoice>;
   api?: ApiClient;
+  repository?: VoteRepository;
   initialScenario?: FinalScreenScenario;
   initialResult?: RoomResult | null;
   simulateError?: boolean;
@@ -46,6 +48,7 @@ export function FinalRoundScreen({
   roomId = 'room_demo_gm12',
   initialChoices,
   api,
+  repository,
   initialScenario = 'consensus',
   initialResult = null,
   simulateError = false,
@@ -90,6 +93,7 @@ export function FinalRoundScreen({
     roomId,
     initialChoices,
     api,
+    repository,
     initialScenario,
     initialResult,
     simulateError,
@@ -186,7 +190,7 @@ export function FinalRoundScreen({
           <AppButton
             label={
               submissionState === 'pending'
-                ? 'Đang gửi lựa chọn Vòng 2…'
+                ? 'Đang gửi phiếu Vòng 2…'
                 : submissionState === 'ack'
                 ? 'Đã nộp phiếu Vòng 2 (Đã xác nhận)'
                 : submissionState === 'error'

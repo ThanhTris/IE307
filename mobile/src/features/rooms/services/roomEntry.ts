@@ -37,6 +37,7 @@ export const errorCopy: Record<ErrorCode, string> = {
   CONTEXT_CHANGED: 'Bối cảnh đã đổi. Hãy kiểm tra và xác nhận lại.',
   ALREADY_SUBMITTED: 'Lựa chọn đã được nhận.', VERSION_CONFLICT: 'Dữ liệu đã cũ. Hãy tải lại trước khi tiếp tục.',
   REQUEST_ID_REUSED: 'Yêu cầu không còn khớp. Hãy tải lại màn hình.',
+  REMOVE_LIMIT: 'Số lượng món loại vượt quá giới hạn Cap 30% cho phép.',
   OUT_OF_COVERAGE: 'Điểm ăn nằm ngoài vùng có dữ liệu. Hãy chọn một điểm công cộng khác.',
   NO_ELIGIBLE_FOOD: 'Chưa có món phù hợp với bối cảnh. Hãy sửa điểm ăn hoặc giờ.',
   AVAILABILITY_UNKNOWN: 'Chưa rõ lịch phục vụ. Hãy kiểm tra lại bối cảnh.',

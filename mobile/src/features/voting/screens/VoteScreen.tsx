@@ -10,6 +10,7 @@ import {
   MOCK_DISHES,
   type ApiClient,
   type PoolDish,
+  type RoomResult,
 } from '../../../data/api';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import {
@@ -18,6 +19,7 @@ import {
   type VoteValue,
 } from '../../../shared/ui';
 import type { VoteScreenScenario } from '../fixtures';
+import type { VoteRepository } from '../services/voteRepository';
 import { useRoundOneVoting } from '../hooks/useRoundOneVoting';
 import { VoteScenarioAndStatusBanner } from '../components/VoteScenarioAndStatusBanner';
 import { VoteDishCardItem } from '../components/VoteDishCardItem';
@@ -28,6 +30,7 @@ export type VoteScreenProps = {
   roomId?: string;
   initialVotes?: Record<string, VoteValue>;
   api?: ApiClient;
+  repository?: VoteRepository;
   initialScenario?: VoteScreenScenario;
   simulateError?: boolean;
   simulateDelayMs?: number;
@@ -35,6 +38,8 @@ export type VoteScreenProps = {
   initialViewMode?: 'flashcard' | 'list';
   initialIsHost?: boolean;
   onGoToFinalRound?: (candidates: PoolDish[]) => void;
+  onGoToResult?: (result: RoomResult) => void;
+  onGoToNoConsensus?: () => void;
   onBack?: () => void;
 };
 
@@ -43,6 +48,7 @@ export function VoteScreen({
   roomId = 'room_demo_gm12',
   initialVotes,
   api,
+  repository,
   initialScenario = 'round_two',
   simulateError = false,
   simulateDelayMs = 400,
@@ -92,6 +98,7 @@ export function VoteScreen({
     roomId,
     initialVotes,
     api,
+    repository,
     initialScenario,
     simulateError,
     simulateDelayMs,

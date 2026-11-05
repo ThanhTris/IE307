@@ -25,6 +25,7 @@ export type ErrorCode =
   | 'ALREADY_SUBMITTED'
   | 'VERSION_CONFLICT'
   | 'REQUEST_ID_REUSED'
+  | 'REMOVE_LIMIT'
   // Eligibility & Coverage
   | 'OUT_OF_COVERAGE'
   | 'NO_ELIGIBLE_FOOD'

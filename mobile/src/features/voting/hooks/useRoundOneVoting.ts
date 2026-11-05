@@ -13,12 +13,14 @@ import {
   simulateDeferredRequest,
   type VoteScreenScenario,
 } from '../fixtures';
+import type { VoteRepository } from '../services/voteRepository';
 
 export interface UseRoundOneVotingParams {
   pool: PoolDish[];
   roomId: string;
   initialVotes?: Record<string, VoteValue>;
   api?: ApiClient;
+  repository?: VoteRepository;
   initialScenario: VoteScreenScenario;
   simulateError: boolean;
   simulateDelayMs: number;
@@ -31,6 +33,7 @@ export function useRoundOneVoting({
   roomId,
   initialVotes,
   api,
+  repository,
   initialScenario,
   simulateError,
   simulateDelayMs,
@@ -156,8 +159,34 @@ export function useRoundOneVoting({
 
   const canHostEarlyFinish = isHost && isWaitingForMembers && isHostEarlyFinishAllowed(rosterAcknowledgedCount, totalRosterCount);
 
-  const handleHostEarlyFinish = () => {
+  const handleHostEarlyFinish = async () => {
     if (!canHostEarlyFinish) return;
+
+    if (repository) {
+      const res = await repository.finalize({
+        roomId,
+        expectedVersion: 1,
+        rosterAcknowledgedCount,
+        totalRosterCount,
+        isHost,
+      });
+      if (res.ok) {
+        setIsWaitingForMembers(false);
+        if (res.data.outcome === 'ROUND_ADVANCED' || res.data.state === 'ROUND_2') {
+          setNeedsRoundTwo(true);
+          setRoundTwoCandidates(FIXTURE_ROUND_TWO_CANDIDATES);
+          setLastActionNotice(`Host đã kết thúc chờ sớm (${rosterAcknowledgedCount}/${totalRosterCount} thành viên đã ACK). Server đã chuyển vòng!`);
+        } else {
+          setNeedsRoundTwo(false);
+          setLastActionNotice(`Host đã chốt kết quả sớm (${rosterAcknowledgedCount}/${totalRosterCount} thành viên đã ACK).`);
+        }
+        return;
+      } else {
+        setErrorMessage(`Không thể kết thúc chờ: ${res.error.messageKey}`);
+        return;
+      }
+    }
+
     setIsWaitingForMembers(false);
     setNeedsRoundTwo(true);
     setRoundTwoCandidates(FIXTURE_ROUND_TWO_CANDIDATES);
@@ -188,7 +217,51 @@ export function useRoundOneVoting({
     };
 
     try {
-      if (api) {
+      if (repository) {
+        const res = await repository.submitBallot({
+          roomId,
+          round: 1,
+          poolVersion: 1,
+          expectedVersion: 1,
+          votes: ballotVotes,
+          intentId: req.intentId,
+          requestId: req.requestId,
+        });
+
+        if (res.ok) {
+          setSubmissionState('ack');
+          setReceipt(res.data.receipt ?? {
+            round: 1,
+            intentId: req.intentId,
+            requestId: res.requestId ?? req.requestId,
+            submittedAt: new Date().toISOString(),
+            voteCount: ballotVotes.length,
+          });
+
+          await repository.enterWaiting({
+            roomId,
+            round: 1,
+            poolVersion: 1,
+            expectedVersion: res.version ?? 1,
+          });
+
+          if (res.data.allMembersSubmitted === false) {
+            setIsWaitingForMembers(true);
+            setNeedsRoundTwo(false);
+          } else {
+            setIsWaitingForMembers(false);
+            if (res.data.round === 2 || res.state === 'ROUND_2') {
+              setNeedsRoundTwo(true);
+              setRoundTwoCandidates(FIXTURE_ROUND_TWO_CANDIDATES);
+            } else {
+              setNeedsRoundTwo(false);
+            }
+          }
+        } else {
+          setSubmissionState('error');
+          setErrorMessage(res.error.message || `Lỗi từ server: ${res.error.messageKey}`);
+        }
+      } else if (api) {
         const res = await api.submitBallot(req);
         if (res.ok) {
           setSubmissionState('ack');
@@ -258,9 +331,11 @@ export function useRoundOneVoting({
           }
         }
       }
-    } catch (err) {
+    } catch (err: unknown) {
       setSubmissionState('error');
-      setErrorMessage(err instanceof Error ? err.message : 'Lỗi không xác định khi gửi phiếu');
+      setErrorMessage(
+        err instanceof Error ? err.message : 'Có lỗi không xác định xảy ra khi gửi phiếu.'
+      );
     }
   };
 
@@ -279,7 +354,6 @@ export function useRoundOneVoting({
     allVoted,
     isLocked,
     activeCardIndex,
-    setActiveCardIndex,
     viewMode,
     setViewMode,
     canUndo,
@@ -287,7 +361,6 @@ export function useRoundOneVoting({
     isHost,
     setIsHost,
     totalRosterCount,
-    setTotalRosterCount,
     rosterAcknowledgedCount,
     setRosterAcknowledgedCount,
     canHostEarlyFinish,
