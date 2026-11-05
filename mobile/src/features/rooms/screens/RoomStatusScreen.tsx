@@ -118,7 +118,7 @@ export function RoomStatusScreen({ onNavigate, onHome }: Props) {
           <Text accessibilityRole="header" style={[styles.state, { color: snapshot.state === 'CANCELLED' ? colors.danger : colors.primary }]}>{stateLabel(snapshot.state)}</Text>
           <Text style={[styles.meta, { color: colors.muted }]}>Phiên bản fixture {snapshot.version} · còn hiệu lực theo dữ liệu mẫu</Text>
         </View>
-        <ContextSummary anchorName={snapshot.context.anchorName ?? 'Điểm ăn chung'} mealLabel="Bữa trưa" desiredAtLabel={snapshot.context.desiredAt} radiusLabel={`${snapshot.context.radiusM} m`} serviceModeLabel="Ăn tại quán" colors={colors} />
+        {snapshot.context ? <ContextSummary anchorName={snapshot.context.anchorName ?? 'Điểm ăn chung'} mealLabel="Bữa trưa" desiredAtLabel={snapshot.context.desiredAt} radiusLabel={`${snapshot.context.radiusM} m`} serviceModeLabel="Ăn tại quán" colors={colors} /> : null}
         {message ? <StatusNotice title="Kết quả thao tác mock" message={message} tone="success" colors={colors} /> : null}
         <AppButton label="Mô phỏng mất kết nối" variant="secondary" onPress={() => setOverlay('offline')} colors={colors} />
         {isHost

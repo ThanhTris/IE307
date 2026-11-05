@@ -28,11 +28,12 @@ function ContextForm({ repository, roomId, userId, onBack, onHome, onContinue, o
   const { colors, dark } = useShellTheme();
   const data = { value: loaded, reload };
   const writer = useSetupIntent<UpdateContextRequest>(createRequestId);
-  const [draft, setDraft] = useState<RoomContext>({ ...loaded.room.context });
-  const [area, setArea] = useState(loaded.discovery.anchors.find(a => a.id === loaded.room.context.anchorId)?.coverageId ?? '');
-  const [date, setDate] = useState(localTime(loaded.room.context.desiredAt).slice(0, 10));
-  const [time, setTime] = useState(localTime(loaded.room.context.desiredAt).slice(11));
-  const [budget, setBudget] = useState(loaded.room.context.budget == null ? '' : String(loaded.room.context.budget));
+  const roomContext: RoomContext = loaded.room.context ?? { anchorId: '', radiusM: 1000, desiredAt: new Date().toISOString(), serviceMode: 'dine_in', mealSlot: 'lunch', avoidRecent: false };
+  const [draft, setDraft] = useState<RoomContext>({ ...roomContext });
+  const [area, setArea] = useState(loaded.discovery.anchors.find(a => a.id === roomContext.anchorId)?.coverageId ?? '');
+  const [date, setDate] = useState(localTime(roomContext.desiredAt).slice(0, 10));
+  const [time, setTime] = useState(localTime(roomContext.desiredAt).slice(11));
+  const [budget, setBudget] = useState(roomContext.budget == null ? '' : String(roomContext.budget));
   const [confirmed, setConfirmed] = useState(false);
   const [preview, setPreview] = useState<PreviewFoodPoolResponse>();
   const [previewBusy, setPreviewBusy] = useState(false);

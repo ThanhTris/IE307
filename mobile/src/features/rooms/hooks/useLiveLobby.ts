@@ -57,7 +57,7 @@ export function useLiveLobby({
   const api = repository ?? mockApi.api;
 
   const checkEligibility = useCallback(async (snap: RoomSnapshot) => {
-    if (!isReal || snap.state !== 'LOBBY') return;
+    if (!isReal || snap.state !== 'LOBBY' || !snap.context) return;
     if (typeof (api as any).previewFoodPool === 'function') {
       try {
         const preview = await (api as any).previewFoodPool({
@@ -208,7 +208,7 @@ export function useLiveLobby({
       if (action === 'start') {
         result = await api.startRound({ roomId: snapshot.roomId, expectedVersion: snapshot.version, requestId });
       } else if (action === 'context') {
-        result = await api.updateContext({ roomId: snapshot.roomId, expectedVersion: snapshot.version, context: { ...snapshot.context, budget: snapshot.context.budget === 70000 ? 80000 : 70000 }, requestId });
+        if (snapshot.context) { result = await api.updateContext({ roomId: snapshot.roomId, expectedVersion: snapshot.version, context: { ...snapshot.context, budget: snapshot.context.budget === 70000 ? 80000 : 70000 }, requestId }); } else { result = { ok: false, requestId, error: { messageKey: 'INVALID_ROOM_STATE' } }; }
       } else if (action === 'leave') {
         result = await api.leaveRoom({ roomId: snapshot.roomId, expectedVersion: snapshot.version, requestId });
       } else if (action === 'cancel') {

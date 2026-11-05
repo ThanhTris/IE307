@@ -144,14 +144,26 @@ export function LiveLobbyScreen({
               <Text style={[styles.helper, { color: colors.muted }]}>Chỉ đổi roster minh họa; dữ liệu phòng thật không bị tác động.</Text>
             </View>
           )}
-          <ContextSummary
-            anchorName={snapshot.context.anchorName ?? 'Điểm ăn chung'}
-            mealLabel={mealLabels[snapshot.context.mealSlot] ?? 'Bữa trưa'}
-            desiredAtLabel={snapshot.context.desiredAt}
-            radiusLabel={`${snapshot.context.radiusM} m`}
-            serviceModeLabel={snapshot.context.serviceMode === 'takeaway' ? 'Mang về' : 'Ăn tại quán'}
-            colors={colors}
-          />
+          {snapshot.context ? (
+            <ContextSummary
+              anchorName={snapshot.context.anchorName ?? 'Điểm ăn chung'}
+              mealLabel={mealLabels[snapshot.context.mealSlot] ?? 'Bữa trưa'}
+              desiredAtLabel={snapshot.context.desiredAt}
+              radiusLabel={`${snapshot.context.radiusM} m`}
+              serviceModeLabel={snapshot.context.serviceMode === 'takeaway' ? 'Mang về' : 'Ăn tại quán'}
+              colors={colors}
+            />
+          ) : snapshot.settings ? (
+            <View style={{ padding: 16, borderRadius: 16, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.surface, gap: 8 }}>
+              <Text style={{ fontSize: 12, fontWeight: '700', color: colors.muted }}>THIẾT LẬP PHÒNG</Text>
+              <Text style={{ fontSize: 18, fontWeight: '800', color: colors.text }}>
+                {snapshot.settings.mealSlot ? mealLabels[snapshot.settings.mealSlot] : 'Bữa ăn'} · {snapshot.dishCount ?? snapshot.settings.dishCount ?? snapshot.pool?.length ?? 15} món
+              </Text>
+              {snapshot.settings.desiredAt ? (
+                <Text style={[styles.helper, { color: colors.muted }]}>Thời gian: {snapshot.settings.desiredAt}</Text>
+              ) : null}
+            </View>
+          ) : null}
           <LobbyMemberList snapshot={displaySnapshot ?? snapshot} viewerUserId={viewer?.userId} members={members} colors={colors} />
           {notice ? <StatusNotice title={isReal ? 'Cập nhật' : 'Cập nhật fixture'} message={notice} tone="success" colors={colors} /> : null}
           {eligibilityError ? (

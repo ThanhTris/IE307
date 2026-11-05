@@ -121,6 +121,7 @@ export interface RoomRepository extends Omit<RoomEntryRepository, 'restoreSessio
   ): Promise<{ ok: true; data: T } | { ok: false; error: ApiError }>;
 
   getDefaultPreferences(): Promise<ReadResult<{ revision: number; preferences: UserPreferences }>>;
+  updateHistoryConsent(scope: 'personal' | 'group', consent: boolean, requestId?: string): Promise<WriteResult<void>>;
 
   // Lobby RPC operations
   /** @deprecated GM-25 removes ready flow per ADR-019 / v4 consumer rules. Kept for backwards compatibility. */
@@ -450,10 +451,26 @@ export class LiveRoomRepository implements RoomRepository {
             error?: { messageKey?: string; code?: string; details?: Record<string, unknown> };
           };
 
-          if (raw?.ok && raw.data) {
+          if (raw?.ok && raw.data && typeof raw.data === 'object') {
             const d = raw.data as Record<string, unknown>;
-            if (!d.context || typeof d.context !== 'object') {
-              return { ok: false, error: { messageKey: 'MALFORMED_RESPONSE', message: 'Legacy RoomSnapshot requires context' } };
+            const hasIdentifiers =
+              typeof d.roomId === 'string' &&
+              typeof d.code === 'string' &&
+              typeof d.state === 'string' &&
+              typeof d.version === 'number';
+            if (!hasIdentifiers) {
+              return { ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } };
+            }
+            const isLegacy = Boolean(d.context && typeof d.context === 'object');
+            const isCanonical = Boolean(
+              d.settings &&
+              typeof d.settings === 'object' &&
+              Array.isArray(d.pool) &&
+              d.pool.length >= 10 &&
+              Array.isArray(d.members)
+            );
+            if (!isLegacy && !isCanonical) {
+              return { ok: false, error: { messageKey: 'MALFORMED_RESPONSE', message: 'Snapshot lacks context or valid canonical pool' } };
             }
             return { ok: true, data: raw.data as RoomSnapshot };
           }
@@ -731,6 +748,30 @@ export class LiveRoomRepository implements RoomRepository {
   async inviteToRoom(request: InviteToRoomRequest): Promise<WriteResult<RoomInvitation>> {
     const rid = request.requestId || this.nextRequestId('invite');
     return this.request(() => this.client.inviteToRoom({ ...request, requestId: rid }));
+  }
+
+  async updateHistoryConsent(scope: 'personal' | 'group', consent: boolean, requestId?: string): Promise<WriteResult<void>> {
+    const rid = requestId || this.nextRequestId('consent');
+    return this.request(async () => {
+      const call = this.getRpcCaller();
+      if (call) {
+        try {
+          const raw = (await call('update_history_consent', {
+            requestId: rid,
+            scope,
+            consent,
+          })) as { ok?: boolean; error?: { messageKey?: string; code?: string; details?: Record<string, unknown> } };
+          if (raw?.ok) {
+            return { ok: true, requestId: rid, data: undefined };
+          }
+          const errCode = (raw?.error?.messageKey || raw?.error?.code || 'UNKNOWN_ERROR') as ErrorCode;
+          return { ok: false, requestId: rid, error: { messageKey: errCode, details: raw?.error?.details } };
+        } catch (err: unknown) {
+          return { ok: false, requestId: rid, error: mapErrorHelper(err) };
+        }
+      }
+      return this.client.updateHistoryConsent({ requestId: rid, scope, consent });
+    });
   }
 
   private async request<T>(operation: () => Promise<T>): Promise<T> {

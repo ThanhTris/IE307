@@ -13,8 +13,10 @@ function mapDraftBudget(budget: SetupDraft['budget']): { maximum: number; curren
 
 function mapCanonicalBudgetToDraft(budget: unknown): SetupDraft['budget'] {
   if (!budget || typeof budget !== 'object') return null;
-  const b = budget as { maximum?: number };
+  const b = budget as { maximum?: number; currency?: string; unit?: string };
   if (typeof b.maximum !== 'number') return null;
+  if (b.currency && b.currency !== 'VND') return null;
+  if (b.unit && b.unit !== 'person') return null;
   if (b.maximum <= 50000) return 'under50';
   if (b.maximum <= 100000) return '50to100';
   if (b.maximum <= 200000) return '100to200';
@@ -139,10 +141,32 @@ export function createLiveDishSetupGateway(
           );
 
           if (res.ok) {
+            let latestVersion = res.data.version ?? (intent.room.version + 1);
+            const budgetObj = mapDraftBudget(intent.draft.budget);
+            const prefRes = await repository.dispatchDishSession<{ accepted: boolean; version?: number }>(
+              'updatePreferences',
+              {
+                requestId: `${intent.requestId}_pref`,
+                roomId: intent.room.id,
+                expectedVersion: latestVersion,
+                preferences: {
+                  cuisineIds: [],
+                  categoryIds: [],
+                  temperature: null,
+                  flavor: null,
+                  budget: budgetObj,
+                  avoidRecent: intent.draft.avoidRecent,
+                },
+              }
+            );
+            if (prefRes.ok && prefRes.data?.version) {
+              latestVersion = prefRes.data.version;
+            }
+
             cachedRoom = {
               id: intent.room.id,
               code: intent.room.code,
-              version: res.data.version ?? (intent.room.version + 1),
+              version: latestVersion,
               state: 'LOBBY',
             };
             return { ok: true, room: cachedRoom };
@@ -238,6 +262,26 @@ export function createLiveDishSetupGateway(
         );
 
         if (res.ok) {
+          if (intent.preferences && typeof (intent.preferences as any).historyConsent === 'boolean') {
+            const consentVal = (intent.preferences as any).historyConsent;
+            try {
+              if (typeof (repository as any).updateHistoryConsent === 'function') {
+                await (repository as any).updateHistoryConsent('personal', consentVal, `${intent.requestId}_consent`);
+              } else {
+                const call = (repository as any).getRpcCaller?.();
+                if (call) {
+                  await call('update_history_consent', {
+                    requestId: `${intent.requestId}_consent`,
+                    scope: 'personal',
+                    consent: consentVal,
+                  });
+                }
+              }
+            } catch {
+              // Consent transmission
+            }
+          }
+
           cachedRoom = {
             id: intent.room.id,
             code: intent.room.code,

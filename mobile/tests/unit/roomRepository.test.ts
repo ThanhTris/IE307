@@ -318,7 +318,7 @@ describe('LiveRoomRepository (GM-25)', () => {
 
     const createReq: CreateRoomRequest = {
       displayName: 'Minh',
-      context: mockSnapshot.context,
+      context: mockSnapshot.context!,
     };
     const created = await repo.createRoom(createReq);
     expect(created.ok).toBe(true);
@@ -342,7 +342,7 @@ describe('LiveRoomRepository (GM-25)', () => {
     const client = createMockClient();
     const repo = createRoomRepository({ client });
 
-    const create = await repo.createRoom({ displayName: 'Minh', context: mockSnapshot.context, requestId: 'create-without-session' });
+    const create = await repo.createRoom({ displayName: 'Minh', context: mockSnapshot.context!, requestId: 'create-without-session' });
     const join = await repo.joinRoom({ code: 'GCD789', displayName: 'Hà', requestId: 'join-without-session' });
 
     expect(create).toMatchObject({ ok: false, requestId: 'create-without-session', error: { messageKey: 'AUTH_REQUIRED' } });
@@ -369,7 +369,7 @@ describe('LiveRoomRepository (GM-25)', () => {
     const updateCtxReq: UpdateContextRequest = {
       roomId: 'room_test_123',
       expectedVersion: 1,
-      context: mockSnapshot.context,
+      context: mockSnapshot.context!,
     };
     await repo.updateContext(updateCtxReq);
     expect(client.updateContext).toHaveBeenCalledWith(
@@ -425,7 +425,7 @@ describe('LiveRoomRepository (GM-25)', () => {
     const specifiedId = 'req_idempotent_fixed_123';
     await repo.createRoom({
       displayName: 'Minh',
-      context: mockSnapshot.context,
+      context: mockSnapshot.context!,
       requestId: specifiedId,
     });
     expect(client.createRoom).toHaveBeenCalledWith(

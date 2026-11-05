@@ -10,7 +10,7 @@ export function RoomSnapshotPreviewBox({ roomSnapshot, colors }: { roomSnapshot:
         Trạng thái: {roomSnapshot.state} · Version: {roomSnapshot.version}
       </Text>
       <Text style={[styles.helperText, { color: colors.muted }]}>
-        Bối cảnh: {roomSnapshot.context.anchorName} · Ngân sách: {roomSnapshot.context.budget?.toLocaleString('vi-VN')} đ
+        Bối cảnh: {roomSnapshot.context?.anchorName} · Ngân sách: {roomSnapshot.context?.budget?.toLocaleString('vi-VN')} đ
       </Text>
       <Text style={[styles.sectionHeading, { color: colors.text }]}>Thành viên ({roomSnapshot.members.length}/8):</Text>
       {roomSnapshot.members.map(m => (

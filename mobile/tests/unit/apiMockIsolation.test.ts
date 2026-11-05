@@ -59,7 +59,7 @@ describe('GM-07 mock caller projection isolation', () => {
     mock.setCurrentUser(MOCK_CURRENT_USER);
     expect((await snapshot(mock)).ownPreferences).toEqual(preferences);
 
-    const created = await mock.createRoom({ displayName: 'Owner', context: owner.context });
+    const created = await mock.createRoom({ displayName: 'Owner', context: owner.context! });
     expect(created.ok).toBe(true);
     if (!created.ok) throw new Error('Fixture room creation failed');
     const separate = await snapshot(mock, created.data.roomId);
