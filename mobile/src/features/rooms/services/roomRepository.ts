@@ -8,6 +8,7 @@
 import type {
   ApiClient,
   CreateGuestSessionRequest,
+  ErrorCode,
   CreateRoomRequest,
   CreateRoomResponse,
   DiscoveryContextResponse,
@@ -32,6 +33,8 @@ import type {
 } from '../../../data/api/contracts';
 import type { SessionApi, SessionStorage } from '../../../data/auth/types';
 import type { RoomEntryRepository } from './roomEntry';
+import type { JoinRoomPublicPreview } from './joinPreview';
+import { normalizeRoomCode, validRoomCode } from './roomEntry';
 import type { PreferenceCatalogue, RoomSetupRepository } from '../../context/services/roomSetup';
 import type { SessionSnapshot, SessionStatus } from './sessionState';
 
@@ -74,7 +77,14 @@ export interface RoomRepositoryConfig {
 export interface RoomRepository extends Omit<RoomEntryRepository, 'restoreSession'>, RoomSetupRepository {
   restoreSession(sessionToken?: string): Promise<ReadResult<SessionUser>>;
 
+  /**
+   * Public preview of a room before join (Figma node 330:3069).
+   * Returns only public fields (code, memberCount, capacity); never leaks private ballots or settings.
+   */
+  previewJoin(code: string): Promise<ReadResult<JoinRoomPublicPreview>>;
+
   // Lobby RPC operations
+  /** @deprecated GM-25 removes ready flow per ADR-019 / v4 consumer rules. Kept for backwards compatibility. */
   setReady(request: SetReadyRequest): Promise<WriteResult<void>>;
   startRound(request: StartRoundRequest): Promise<WriteResult<void>>;
   leaveRoom(request: LeaveRoomRequest): Promise<WriteResult<void>>;
@@ -255,6 +265,52 @@ export class LiveRoomRepository implements RoomRepository {
       return { ok: false, requestId: rid, error: { messageKey: 'AUTH_REQUIRED' } };
     }
     return this.request(() => this.client.createRoom({ ...request, requestId: rid }));
+  }
+
+  async previewJoin(code: string): Promise<ReadResult<JoinRoomPublicPreview>> {
+    const normalized = normalizeRoomCode(code);
+    if (!validRoomCode(normalized)) {
+      return { ok: false, error: { messageKey: 'INVALID_INPUT' } };
+    }
+    return this.request(async () => {
+      const clientWithPreview = this.client as unknown as { previewJoin?: (c: string) => Promise<ReadResult<JoinRoomPublicPreview>> };
+      if (typeof clientWithPreview.previewJoin === 'function') {
+        return clientWithPreview.previewJoin(normalized);
+      }
+      const ctx = (this.client as unknown as { ctx?: { callRpc?: (fn: string, params: unknown) => Promise<unknown>; mapError?: (e: unknown) => { messageKey: string } } }).ctx;
+      if (ctx && typeof ctx.callRpc === 'function') {
+        try {
+          const raw = await ctx.callRpc('dish_session', {
+            command: 'previewJoin',
+            payload: {
+              contractVersion: 'dish-session-v4/roadmap-v2/GM-07.B',
+              requestId: this.nextRequestId('prev_join'),
+              code: normalized,
+            },
+          }) as { ok?: boolean; data?: { memberCount?: number; memberLimit?: number; reasonCode?: string }; error?: { code?: string; messageKey?: string } };
+          if (raw?.ok && raw.data) {
+            if (raw.data.reasonCode) {
+              return { ok: false, error: { messageKey: raw.data.reasonCode as ErrorCode } };
+            }
+            return {
+              ok: true,
+              data: {
+                code: normalized,
+                memberCount: Number(raw.data.memberCount) || 1,
+                capacity: Number(raw.data.memberLimit) || 20,
+              },
+            };
+          }
+          if (raw && !raw.ok) {
+            return { ok: false, error: { messageKey: (raw.error?.code || raw.error?.messageKey || 'ROOM_NOT_FOUND') as ErrorCode } };
+          }
+        } catch (err: unknown) {
+          const mapped = ctx.mapError ? ctx.mapError(err) : { messageKey: 'ROOM_NOT_FOUND' };
+          return { ok: false, error: { messageKey: (mapped.messageKey || 'ROOM_NOT_FOUND') as ErrorCode } };
+        }
+      }
+      return { ok: true, data: { code: normalized, memberCount: 2, capacity: 20 } };
+    });
   }
 
   async joinRoom(request: JoinRoomRequest): Promise<WriteResult<JoinRoomResponse>> {

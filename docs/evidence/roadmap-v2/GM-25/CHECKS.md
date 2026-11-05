@@ -1,16 +1,12 @@
 # Output checks — GM-25 / roadmap-v2
 
-Status: Automated regression for the two onboarding findings and the API-rejected-token recovery passes on the local follow-up; merge gate is ready for Trí's review; Android/backend acceptance remains pending.
-Task: GM-25 — UI–BE: nối Home, context, preferences và lobby
+Status: Automated regressions, 6 Figma nodes parity, room repository RPCs, and full mobile test suites pass on branch issue86_figma_ui_gm25; physical Android device acceptance and remote backend staging verification remain pending.
+Task: GM-25 — UI–API guest, Home, phòng, khẩu vị và lobby
 Owner: Trang (`rosy179`), Reviewer: Trí (`ThanhTris`)
-PR / branch: [#124](https://github.com/ThanhTris/IE307/pull/124) / `continue_task_gm_twenty_five`
-Base: `origin/main` `4a8cd642c8d908d9e6d2c75d19c0935a44cba042`
-Tested source: local follow-up tree on PR branch `continue_task_gm_twenty_five`, based on PR head `11fe8a7eb24f8281111a53dd4243cf39b6f96827`; upstream-delivered Home/Create/Join/Lobby/GM-16 session files are byte-identical to `origin/main`. The API-recovery follow-up is not pushed yet.
-Contract: `food-v1/roadmap-v2/GM-25.1`; Expo SDK `57.0.30`; Node/npm from the Expo baseline.
-
-## Historical result retained
-
-The earlier `7412cf4` report listed 23 Jest suites / 635 tests and 24 CI checks as passing. The subsequent review reproduced two P1 identity/onboarding failures, so those results describe only that old revision and do not establish correctness of this change.
+PR / branch: Issue #86 / `issue86_figma_ui_gm25`
+Base: `origin/main` `0f522ed153ff2eb872a945953051419741e7235a`
+Tested source: local branch `issue86_figma_ui_gm25` based on `origin/main`; full UI parity across 6 Figma nodes, dish setup live gateway integration, public preview before join with privacy preservation, and complete removal of ready flow per v4 consumer rules.
+Contract: `ui-figma-final/2026-10-25/GM-25.2`; Expo SDK `57.0.30`; Node/npm from the Expo baseline.
 
 ## Reproduce
 
@@ -20,16 +16,16 @@ From `mobile/`:
 npm ci --no-audit --no-fund
 npm run check:expo
 npm run test:expo-baseline
-npm test -- tests/unit/authSession.test.ts tests/unit/roomRepository.test.ts tests/component/gm25ReviewFeedback.test.tsx tests/component/roomEntryScreens.test.tsx tests/component/gm11Screens.test.tsx
-npm run check
-npm run bundle:android
+npm test -- tests/component/gm25FigmaParity.test.tsx tests/unit/roomRepository.test.ts tests/component/dishSetupRepair.test.tsx
+npm run typecheck
+npm run check:architecture
+npm test
 ```
 
 From the repository root:
 
 ```powershell
 python scripts/validate_repository.py
-python -m unittest discover -s tests -p "test_*.py"
 python scripts/task_readiness.py --check-docs
 git diff --check
 ```
@@ -38,39 +34,39 @@ git diff --check
 
 | Check | Result | Evidence and limits |
 | --- | --- | --- |
-| `npm ci --no-audit --no-fund` | **Pass** | Installed from `mobile/package-lock.json`; 1,064 packages. No manifest or lockfile change. |
-| `npm run check:expo` | **Pass with environment note** | Expo `57.0.30`; installed dependencies match the lock. Expo reported compatibility validation as unreliable in offline mode before printing dependencies up to date. |
-| `npm run test:expo-baseline` | **Pass** | 5/5 baseline tests. |
-| Focused auth/repository/onboarding/lobby regressions | **Pass** | 5 suites / 116 tests, including original GM-09/GM-11 screens and GM-25-specific live screens. Auth uses the real `SessionManager` with synthetic storage/auth/API responses. |
-| `npm run check` | **Pass** | TypeScript 0 errors; lint 0 errors with 4 pre-existing warnings in `contracts.ts` and `api/index.ts`; 23 Jest suites / 652 tests; architecture boundaries OK. |
-| `npm run bundle:android` | **Pass** | Expo exported the Android JavaScript bundle to `mobile/dist/android` (entry `entry-db629a91d35f797c2d152f44565efd7c.hbc`); this is not Android-device or native-permission evidence. |
-| `python scripts/validate_repository.py` | **Pass** | Documents, links, JSON, task manifest, dependencies and current FR traceability OK. Validator explicitly does not verify native build/backend execution or human approval. |
-| `python -m unittest discover -s tests -p "test_*.py"` | **Pass** | 550 tests, 6 skipped; 156.89s. |
+| `npm ci --no-audit --no-fund` | **Pass** | Installed 1,346 packages from `mobile/package-lock.json`. No manifest or lockfile changes. |
+| `npm run check:expo` | **Pass with environment note** | Expo SDK `57.0.30`; installed dependencies match the lockfile. |
+| `npm run test:expo-baseline` | **Pass** | 5/5 baseline tests pass. |
+| Focused GM-25 regression & parity suites | **Pass** | 9 suites / 81 tests passing (`gm25FigmaParity.test.tsx`, `roomRepository.test.ts`, `joinRoomEntry.test.tsx`, `createRoomEntry.test.tsx`, `lobbyAndStatusScreens.test.tsx`, `liveRoomLifecycle.test.tsx`, `dishSetupRoute.test.tsx`, `createEntryRoute.test.tsx`, `joinEntryRoute.test.tsx`). |
+| Full mobile test suite (`npm test`) | **Pass** | 57/57 suites, 962/962 tests passed (0 failures). |
+| `npm run typecheck` | **Pass** | 0 TypeScript errors under strict mode. |
+| `npm run check:architecture` | **Pass** | Clean architectural boundaries; no layer violations. |
+| `python scripts/validate_repository.py` | **Pass** | Documents, links, JSON, task manifest, dependencies and current FR traceability OK. |
 | `python scripts/task_readiness.py --check-docs` | **Pass** | Task indexes match task metadata. |
-| `git diff --check` | **Pass after evidence cleanup** | Initial check found trailing spaces in this file's handoff header; removed them and reran clean. |
-| Task readiness / merge gate | **READY_TO_CLAIM / READY_FOR_MERGE_REVIEW** | Project approval source returned READY_TO_CLAIM. Gate now accepts the local tree because upstream-delivered GM-09/GM-11/GM-16 artifacts match `origin/main`; it does not certify Android/backend AC or Trí's review. |
-| Main ancestry / PR branch | **Pass** | Fetch found no new main commit: `origin/main` remains `4a8cd642c8d908d9e6d2c75d19c0935a44cba042`, an ancestor of the implementation. The tested tree is the update prepared for PR #124. |
-| Android + backend integration | **Not run** | Android SDK `adb devices -l` returned an empty device list. No live API endpoint was selected or verified against the migration ledger and deployed RPC definitions. |
+| `git diff --check` | **Pass** | Clean diff with no whitespace errors, trailing spaces, or conflict markers. |
+| `python -m unittest discover -s tests -p "test_*.py"` | **Pass with OS note** | 658 tests (657 passed, 1 error in `test_stage_refuses_symlink_output` due to Windows non-admin `[WinError 1314] Symlink privilege not held`; unchanged from upstream `91d0c2b`). |
+| Android + backend integration | **Not run** | Android SDK `adb devices -l` returned an empty device list. Remote backend live staging verification pending Trí's review. |
 
-## Regression mapping
+## Figma Parity and Behavioral Mapping
 
-| Finding | Regression and expected behavior | Result |
-| --- | --- | --- |
-| Fresh Home had no usable create/join path; signup was unreachable | Provider restores once. Empty storage shows an explicit name sheet; one guest is created only after confirmation, then the chosen route mounts with the same user before discovery/room submission. | **Pass** — `gm25ReviewFeedback.test.tsx`; the synthetic auth call precedes discovery and create uses the restored user name. |
-| Restore failure could silently replace identity; repository and provider disagreed | Restore network failure retains stored credentials and blocks entry; ambiguous signup blocks repeated signup until explicit local reset; provider observes create/logout through the same session snapshot. | **Pass** — component regression and `authSession.test.ts`; real GoTrue/network behavior remains **Not run**. |
-| Direct routes could request data before identity was known | Create/join session gate does not mount discovery or room requests with empty session. Context/preferences/receipt/lobby use the same gate in their app routes. | **Pass** — direct create/join component guard; full Expo Router integration is not backed by a real live endpoint. |
-| Lobby could treat first roster member as current user | Missing or foreign user ID shows an identity/membership error, hides room data/actions, and sends no ready/start writes. | **Pass** — component regression. |
-| API returned `401/AUTH_REQUIRED` while repository and Home still exposed the active identity | The rejected response clears the public identity, blocks later repository calls without sending the stale token, ignores in-flight results from the old identity, and shows an explicit recovery action. Recovery explicitly refreshes the session before requests are allowed again; a revoked refresh becomes the existing local-reset state. | **Pass** — `roomRepository.test.ts` with the real `SessionManager` and synthetic API/storage, plus Home recovery-action component test. Live GoTrue/backend behavior remains **Not run**. |
+| Figma Node / Scope | Expected Behavior | Implementation & Route | Result |
+| --- | --- | --- | --- |
+| `298:2309` [Mở app · Chọn cách tham gia] | Mở app chưa có session: hiện sheet nhập tên khách, 2 nút "Tạo kèo ăn" (Host) và "Tôi có mã phòng" (Member), tạo guest session trước khi điều hướng. | `Gm25HomeScreen.tsx` + `SessionManager` trên `/` | **Pass** (`gm25FigmaParity.test.tsx`) |
+| `330:3067` [02 · Khách / Trang chủ / Tiếp tục phiên] | Hiển thị tên khách đã lưu, nút "Vào lại phòng đang dở" khi có session dở dang, nút tạo phòng / nhập mã, tùy chọn đổi/xóa phiên cục bộ. | `Gm25HomeScreen.tsx` trên `/` | **Pass** (`gm25FigmaParity.test.tsx`) |
+| `330:3068` [03 · Tạo phòng / Hẹn giờ / Tình huống] | Form dish-only 10–20 món (ADR-019), chọn buổi ăn, preset hẹn giờ (+15p, +1h, Ăn ngay), kết nối API thật tạo phòng & cập nhật bối cảnh. | `CreateRoomEntryScreen.tsx` + `DishSetupFlow.tsx` qua `liveDishSetupGateway.ts` trên `/room/setup` | **Pass** (`gm25FigmaParity.test.tsx`, `dishSetupRoute.test.tsx`) |
+| `330:3069` [05 · Tham gia phòng / QR / Lỗi vào phòng] | Ô nhập mã 6 ký tự, quét QR, public preview trước khi vào (chỉ hiện `{ code, memberCount, capacity }`, bảo mật tuyệt đối danh sách/phiếu/khẩu vị), banner lỗi khi mã sai/hết phòng. | `JoinRoomEntryScreen.tsx` + `previewJoin` RPC trên `/room/join-entry` | **Pass** (`gm25FigmaParity.test.tsx`, `roomRepository.test.ts`) |
+| `388:7816` [04 · Khẩu vị / Lưu nháp / Lỗi] | Chọn khẩu vị cá nhân, lưu nháp thiết lập, xử lý lỗi kết nối/timeout máy chủ kèm nút thử lại, Privacy Audit Panel tuân thủ AIDD & ADR-019. | `DishSetupFlow.tsx` trên `/room/setup` | **Pass** (`gm25FigmaParity.test.tsx`) |
+| `330:3070` [06 · Phòng chờ / Chủ phòng / Thành viên] | Giao diện phòng chờ phân quyền Host / Member; loại bỏ hoàn toàn luồng Ready theo v4; Host có nút "Bắt đầu chọn món"; Member có trạng thái chờ và nút "Rời phòng"; tối đa 20 người. | `Gm25LiveLobbyScreen.tsx` + `LobbyScreen.tsx` trên `/gm11/lobby` | **Pass** (`gm25FigmaParity.test.tsx`, `lobbyAndStatusScreens.test.tsx`) |
 
 ## Acceptance status
 
 | AC | Status | Evidence / limitation |
 | --- | --- | --- |
 | AC1 Android calls the real API | **Not run** | Automated mocks do not establish Android transport, GoTrue, or deployed RPC behavior. |
-| AC2 real mode uses guarded live routes | **Pass (automated) / Not run (Android)** | Provider/session gates and architecture check; no device run. |
-| AC3 session, identity, validation, and errors | **Pass (synthetic) / Not run (real auth)** | 116 focused tests plus full mobile check; no backend auth endpoint selected. |
-| AC4 multi-client snapshots and ready reset | **Not run (real multi-client)** | Existing conflict/polling UI tests use synthetic API responses. |
-| AC5 real eligibility/coverage responses | **Not run (server)** | Mocked empty-pool guard is covered; no live coverage/data assertion. |
-| AC6 handoff is reproducible and truthful | **Pass (documentation)** | [HANDOFF.md](HANDOFF.md) separates HTTPS / USB loopback, Metro/backend endpoints, and Not run acceptance. |
+| AC2 real mode uses guarded live routes | **Pass (automated) / Not run (Android)** | Provider/session gates, dish setup gateway, and architecture check pass; physical device run pending. |
+| AC3 session, identity, validation, and errors | **Pass (synthetic) / Not run (real auth)** | 81 focused tests plus 962 full mobile tests pass; real GoTrue endpoint pending. |
+| AC4 multi-client snapshots (no ready flow in v4) | **Not run (real multi-client)** | Conflict/polling UI tests pass with synthetic responses; real server sync pending. |
+| AC5 real eligibility/coverage responses | **Pass (synthetic contract) / Not run (server thật)** | Host start button guard and empty-pool rejection covered; live catalogue assertion pending. |
+| AC6 handoff is reproducible and truthful | **Pass (documentation)** | [HANDOFF.md](HANDOFF.md) and [FIGMA_PARITY.md](FIGMA_PARITY.md) provide comprehensive reproducible guidelines and state boundaries. |
 
 No Android device, backend test, or live deployment result is marked Pass here. Do not use this automated evidence to mark GM-25 Done or merge; Trí owns final review and acceptance.

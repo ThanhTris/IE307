@@ -25,8 +25,9 @@ test('discarding preference and settings edits returns to receipt without a writ
   await act(async () => { result.current.discardPreferences(); result.current.returnFromEditor(); });
   expect(result.current.stage).toBe('complete');
   expect(result.current.preferences.temperature).toBeUndefined();
+  const nextMealSlot = result.current.draft.mealSlot === 'breakfast' ? 'dinner' : 'breakfast';
   await act(async () => result.current.editSettings());
-  await act(async () => result.current.change({ mealSlot: 'breakfast' }));
+  await act(async () => result.current.change({ mealSlot: nextMealSlot }));
   expect(result.current.dirty).toBe(true);
   await act(async () => { result.current.reset(); result.current.returnFromEditor(); });
   expect(result.current.stage).toBe('complete');

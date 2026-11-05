@@ -1,14 +1,24 @@
+import { useMemo } from 'react';
 import { useRouter } from 'expo-router';
 import { DishSetupPreviewFlow } from '../../bootstrap/DishSetupPreviewFlow';
 import { useRoomRepository } from '../../bootstrap/RoomRepositoryProvider';
-import { DishSetupFrame } from '../../features/context/components/DishSetupFrame';
-import { StatusNotice } from '../../shared/ui';
-import { useShellTheme } from '../../shared/lib/useShellTheme';
 import { RequireActiveSession } from '../../features/auth/components/RequireActiveSession';
+import { DishSetupFlow } from '../../features/context/screens/DishSetupFlow';
+import { createLiveDishSetupGateway } from '../../bootstrap/liveDishSetupGateway';
+import type { SetupRoom } from '../../features/context/services/dishSetup';
 
 export default function DishSetupRoute() {
-  const router = useRouter(), live = useRoomRepository(), { colors } = useShellTheme();
+  const router = useRouter(), live = useRoomRepository();
   const back = () => router.dismissTo('/');
-  if (live.mode === 'real') return <RequireActiveSession onHome={back}><DishSetupFrame title="Thiết lập phòng" onBack={back} footer={null} isMock={false}><StatusNotice title="Chưa nhận adapter thiết lập mới" message="Màn mẫu không ghi dữ liệu vào phòng thật." colors={colors} /></DishSetupFrame></RequireActiveSession>;
-  return <DishSetupPreviewFlow onExit={back} />;
+  const toLobby = (room: SetupRoom) => router.replace({ pathname: '/room/lobby', params: { roomId: room.id } });
+  const liveGateway = useMemo(() => (live.mode === 'real' ? createLiveDishSetupGateway(live.repository) : undefined), [live.mode, live.repository]);
+
+  if (live.mode === 'real' && liveGateway) {
+    return (
+      <RequireActiveSession onHome={back}>
+        <DishSetupFlow gateway={liveGateway} onExit={back} onLobby={toLobby} />
+      </RequireActiveSession>
+    );
+  }
+  return <DishSetupPreviewFlow onExit={back} onLobby={toLobby} />;
 }

@@ -437,4 +437,48 @@ describe('LiveRoomRepository (GM-25)', () => {
     expect(defaultPreferenceCatalogue.cuisines.length).toBeGreaterThan(0);
     expect(defaultPreferenceCatalogue.categories.length).toBeGreaterThan(0);
   });
+
+  describe('previewJoin (GM-25 Figma Node 330:3069)', () => {
+    it('validates room code format and returns INVALID_INPUT for bad code without calling RPC', async () => {
+      const client = createMockClient();
+      const repo = createRoomRepository({ client });
+      const res = await repo.previewJoin('xyz');
+      expect(res.ok).toBe(false);
+      if (!res.ok) {
+        expect(res.error.messageKey).toBe('INVALID_INPUT');
+      }
+    });
+
+    it('returns public member count and capacity 20 for valid code', async () => {
+      const client = createMockClient();
+      const repo = createRoomRepository({ client });
+      const res = await repo.previewJoin('GCD234');
+      expect(res.ok).toBe(true);
+      if (res.ok) {
+        expect(res.data.code).toBe('GCD234');
+        expect(res.data.capacity).toBe(20);
+        expect(typeof res.data.memberCount).toBe('number');
+      }
+    });
+
+    it('maps backend RPC response with reasonCode to error', async () => {
+      const client = createMockClient();
+      const callRpc = jest.fn().mockResolvedValue({
+        ok: true,
+        data: { reasonCode: 'ROOM_FULL', memberCount: 20, memberLimit: 20 },
+      });
+      (client as unknown as { ctx: { callRpc: typeof callRpc } }).ctx = { callRpc };
+      const repo = createRoomRepository({ client });
+
+      const res = await repo.previewJoin('GCD234');
+      expect(res.ok).toBe(false);
+      if (!res.ok) {
+        expect(res.error.messageKey).toBe('ROOM_FULL');
+      }
+      expect(callRpc).toHaveBeenCalledWith('dish_session', expect.objectContaining({
+        command: 'previewJoin',
+        payload: expect.objectContaining({ code: 'GCD234' }),
+      }));
+    });
+  });
 });

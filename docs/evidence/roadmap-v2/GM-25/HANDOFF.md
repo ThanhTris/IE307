@@ -1,9 +1,9 @@
 # Bàn giao đầu ra task — GM-25 / roadmap-v2
 
 Task / owner / reviewer / track / stage: GM-25 / Trang (`rosy179`) / Trí (`ThanhTris`) / INTEGRATION / integration
-PR / branch / target / tested source: PR #124 / `continue_task_gm_twenty_five` -> `origin/main` (`4a8cd64`); local uncommitted API-recovery follow-up based on `11fe8a7`
-Contract version / schema version / dataset version: `food-v1/roadmap-v2/GM-25.1` / schema `0.3.0` (GM-19) / dataset `food-v1`
-CHECKS.md / tested revision: [CHECKS.md](CHECKS.md) / local uncommitted follow-up on `continue_task_gm_twenty_five`; not pushed yet
+PR / branch / target / tested source: Issue #86 / `issue86_figma_ui_gm25` -> `origin/main` (`0f522ed153ff2eb872a945953051419741e7235a`); local branch `issue86_figma_ui_gm25`
+Contract version / schema version / dataset version: `ui-figma-final/2026-10-25/GM-25.2` / schema `0.3.0` (GM-19) / dataset `food-v1`
+CHECKS.md / FIGMA_PARITY.md: [CHECKS.md](CHECKS.md) / [FIGMA_PARITY.md](FIGMA_PARITY.md)
 
 ---
 
@@ -11,22 +11,19 @@ CHECKS.md / tested revision: [CHECKS.md](CHECKS.md) / local uncommitted follow-u
 
 | Artifact thực tế | Producer task | Version/commit | Lệnh đọc/chạy | Expected output | Task nhận |
 | --- | --- | --- | --- | --- | --- |
-| `mobile/src/features/rooms/services/roomRepository.ts` | GM-25 | GM-25.1 | `import { LiveRoomRepository, createRoomRepository } from '@/features/rooms'` | Interface `RoomRepository` thống nhất gọi 12 RPC backend thật, chuẩn hóa lỗi `ErrorCode`, taxonomy UUIDs chuẩn hóa | GM-26, GM-27, GM-31 |
-| `mobile/src/features/rooms/index.ts` | GM-25 | GM-25.1 | `import { LiveRoomRepository } from '@/features/rooms'` | Barrel export đầy đủ các room services, hooks và screens | GM-26, GM-27 |
-| `mobile/src/bootstrap/RoomRepositoryProvider.tsx` | GM-25 | GM-25.1 | `import { useRoomRepository, RoomRepositoryProvider } from '@/bootstrap/RoomRepositoryProvider'` | Context provider quản lý session, toggle real/mock adapter ở composition root, strict error khi thiếu public key | App Shell, GM-31 |
-| `mobile/src/bootstrap/AppProviders.tsx` | GM-25 | GM-25.1 | `import { AppProviders } from '@/bootstrap/AppProviders'` | Wrap toàn bộ app với `RoomRepositoryProvider` và `SafeAreaProvider` | App Bootstrap |
-| `mobile/src/features/home/screens/Gm25HomeScreen.tsx` | GM-25 | GM-25.1 | Route `/` ở real mode | Home có onboarding tên guest chủ động, khôi phục phiên một lần và chỉ mở đích sau khi identity sẵn sàng | UI Consumer |
-| `mobile/src/features/rooms/screens/Gm25CreateRoomScreen.tsx` | GM-25 | GM-25.1 | Route `/create-room` ở real mode | Biến thể GM-25 nhận display name từ identity hiện hành; UI GM-09 gốc được giữ nguyên | UI Consumer |
-| `mobile/src/features/rooms/screens/Gm25JoinRoomScreen.tsx` | GM-25 | GM-25.1 | Route `/join-room` ở real mode | Biến thể GM-25 nhận display name từ identity hiện hành; UI GM-09 gốc được giữ nguyên | UI Consumer |
-| `mobile/src/features/rooms/screens/Gm25LiveLobbyScreen.tsx` | GM-25 | GM-25.1 | Route `/gm11/lobby` | Biến thể tích hợp live/mock khóa thao tác nếu `currentUserId` thiếu hoặc không thuộc roster; UI GM-11 gốc được giữ nguyên | UI Consumer |
-| `mobile/src/app/create-room.tsx` | GM-25 | GM-25.1 | Mở route `/create-room` trên app | Tạo phòng thật trên backend, điều hướng sang `/room-preview` | UI Consumer |
-| `mobile/src/app/join-room.tsx` | GM-25 | GM-25.1 | Mở route `/join-room` trên app | Vào phòng bằng mã code thật, điều hướng sang `/room-preview` | UI Consumer |
-| `mobile/src/app/room-preview.tsx` | GM-25 | GM-25.1 | Mở route `/room-preview` trên app | Hiển thị receipt phòng thật kèm nút chuyển sang Khẩu vị và Phòng chờ | UI Consumer |
-| `mobile/src/app/gm10/context.tsx` | GM-25 | GM-25.1 | Mở route `/gm10/context` kèm `roomId` | Chỉnh sửa bối cảnh phòng thật thông qua `updateContext`; không fallback fixture khi thiếu id | UI Consumer |
-| `mobile/src/app/gm10/preferences.tsx` | GM-25 | GM-25.1 | Mở route `/gm10/preferences` kèm `roomId` | Cập nhật khẩu vị cá nhân thông qua `updatePreferences`; không fallback fixture khi thiếu id | UI Consumer |
-| `mobile/src/app/gm11/lobby.tsx` | GM-25 | GM-25.1 | Mở route `/gm11/lobby` kèm `roomId` | Phòng chờ thật: refresh snapshot, conflict recovery, durable request IDs, start button guard | UI Consumer |
-| `mobile/tests/unit/roomRepository.test.ts` | GM-25 | GM-25.1 | `npm test -- tests/unit/roomRepository.test.ts` | Unit tests bao phủ các phương thức RPC, session identity và lỗi auth | CI / Test Suite |
-| `mobile/tests/component/gm25ReviewFeedback.test.tsx` | GM-25 | GM-25.1 | `npm test -- tests/component/gm25ReviewFeedback.test.tsx` | 17 tests, gồm onboarding, route guard, session identity recovery, lobby identity và các hồi quy GM-25 | CI / Test Suite |
+| `mobile/src/features/rooms/services/roomRepository.ts` | GM-25 | GM-25.2 | `import { LiveRoomRepository, createRoomRepository } from '@/features/rooms'` | Interface `RoomRepository` thống nhất gọi 12 RPC backend thật, bổ sung `previewJoin` RPC trước khi vào phòng, đánh dấu deprecated `setReady` theo ADR-019, chuẩn hóa lỗi `ErrorCode` | GM-26, GM-27, GM-31 |
+| `mobile/src/bootstrap/liveDishSetupGateway.ts` | GM-25 | GM-25.2 | `import { createLiveDishSetupGateway } from '@/bootstrap/liveDishSetupGateway'` | Gateway kết nối luồng thiết lập món `DishSetupFlow` với backend thật qua `RoomRepository` (`createRoom`, `updateContext`, `listFriends`, `getRoomSnapshot`) | UI Consumer |
+| `mobile/src/bootstrap/DishSetupPreviewFlow.tsx` | GM-25 | GM-25.2 | `import { DishSetupPreviewFlow } from '@/bootstrap/DishSetupPreviewFlow'` | Flow preview thiết lập món ăn, hỗ trợ chuyển tiếp `onLobby` sang phòng chờ | UI Consumer |
+| `mobile/src/app/room/setup.tsx` | GM-25 | GM-25.2 | Route `/room/setup` ở real mode | Khởi tạo và hiển thị `DishSetupFlow` được kết nối `LiveDishSetupGateway` trong real mode, điều hướng sang lobby khi hoàn tất | App Shell, GM-31 |
+| `mobile/src/app/room/create-entry.tsx` | GM-25 | GM-25.2 | Route `/room/create-entry` | Màn hình khởi tạo phòng theo thiết kế Figma `330:3068`, kích hoạt chuyển tiếp sang `/room/setup` khi host xác nhận | UI Consumer |
+| `mobile/src/app/room/create.tsx` | GM-25 | GM-25.2 | Route `/room/create` | Điều hướng thông minh: chuyển tiếp sang `CreateRoomEntryScreen` ở chế độ real, giữ backward compatibility ở mock mode | UI Consumer |
+| `mobile/src/app/room/join-entry.tsx` | GM-25 | GM-25.2 | Route `/room/join-entry` | Màn hình nhập mã phòng theo Figma `330:3069`, kết nối `previewJoin` hiển thị số người hiện tại (bảo mật tuyệt đối thông tin chi tiết) | UI Consumer |
+| `mobile/src/app/room/join.tsx` | GM-25 | GM-25.2 | Route `/room/join` | Điều hướng thông minh: chuyển tiếp sang `JoinRoomEntryScreen` ở chế độ real, giữ backward compatibility ở mock mode | UI Consumer |
+| `mobile/src/features/home/screens/Gm25HomeScreen.tsx` | GM-25 | GM-25.2 | Route `/` ở real mode | Home Figma `298:2309` & `330:3067`: onboarding tên guest chủ động, hiển thị session dở dang, nút tạo/nhập mã phòng nhanh | UI Consumer |
+| `mobile/src/features/rooms/screens/Gm25LiveLobbyScreen.tsx` | GM-25 | GM-25.2 | Route `/gm11/lobby` | Phòng chờ Figma `330:3070`: phân quyền Host/Member rõ ràng, loại bỏ luồng Ready theo v4/ADR-019, Host trực tiếp bắt đầu khi hợp lệ | UI Consumer |
+| `mobile/tests/component/gm25FigmaParity.test.tsx` | GM-25 | GM-25.2 | `npm test -- tests/component/gm25FigmaParity.test.tsx` | 7 component tests bao phủ toàn diện 6 Figma nodes (`298:2309`, `330:3067`, `330:3068`, `330:3069`, `388:7816`, `330:3070`) | CI / Test Suite |
+| `mobile/tests/unit/roomRepository.test.ts` | GM-25 | GM-25.2 | `npm test -- tests/unit/roomRepository.test.ts` | Unit tests bao phủ các phương thức RPC, đặc biệt `previewJoin` RPC và session errors | CI / Test Suite |
+| `docs/evidence/roadmap-v2/GM-25/FIGMA_PARITY.md` | GM-25 | GM-25.2 | Đọc tài liệu đối chiếu | Báo cáo chi tiết ma trận đối chiếu 6 Figma nodes, kiến trúc dữ liệu và phân tích quyền riêng tư | Reviewer, Audit |
 
 ---
 
@@ -34,30 +31,27 @@ CHECKS.md / tested revision: [CHECKS.md](CHECKS.md) / local uncommitted follow-u
 
 | AC | Pass / Fail / Not run | Môi trường và lệnh | Evidence | Mock / thật và giới hạn |
 | --- | --- | --- | --- | --- |
-| **AC1: Đạt kiểm Android-API** | **Not run** | Android thật + backend test; xem [CHECKS.md](CHECKS.md) | Chưa có điện thoại ADB kết nối hoặc xác nhận backend test hiện hành. | Jest/HTTP giả lập chỉ là regression tự động, chưa chứng minh app gọi backend thật. |
-| **AC2: Giữ nguyên layout UI, không fallback fixture ở production** | **Pass (code path) / Not run (Android)** | Route guard và composition root; xem [CHECKS.md](CHECKS.md) | Unit/component tests kiểm đường đi; cần kiểm thêm trên bản app chạy thật. | Architecture check không phải nghiệm thu production. |
-| **AC3: Auth/session/validation/error, consent/history đúng thực tế** | **Pass (synthetic session tests) / Not run (GoTrue thật)** | `authSession.test.ts`, `roomRepository.test.ts`, `gm25ReviewFeedback.test.tsx` | Test dùng SessionManager thật trong bộ nhớ; API `AUTH_REQUIRED` khóa identity, chặn request cũ và cần thao tác refresh rõ ràng trước khi gọi tiếp. | Chưa xác minh endpoint hoặc migration/RPC đang deploy. |
-| **AC4: Nhiều máy nhận cùng snapshot, reset ready khi bối cảnh đổi** | **Not run (multi-client API)** | Chạy kịch bản mục 3 bằng một Android và client thứ hai | Regression conflict/polling chỉ kiểm UI với API giả lập. | Chưa có bằng chứng đồng bộ server giữa hai identity. |
-| **AC5: Out-of-coverage/empty báo lý do server, không start pool rỗng** | **Pass (mocked contract) / Not run (server thật)** | Component tests và backend test environment | Test xác nhận UI khóa thao tác theo response giả lập. | Không tuyên bố parity hay coverage thật. |
-| **AC6: Đầu vào/đầu ra và cách kiểm ghi trong HANDOFF.md** | **Pass (documentation)** | File này | Lệnh và giới hạn thiết bị/backend được ghi dưới đây. | Không thay cho kiểm trên Android và backend. |
+| **AC1: Đạt kiểm Android-API** | **Not run** | Android thật + backend test; xem [CHECKS.md](CHECKS.md) | Chưa kết nối thiết bị ADB hoặc backend staging từ xa. | Jest giả lập chứng minh tính tương thích contract, chưa thay cho kiểm thử thiết bị vật lý. |
+| **AC2: Giữ nguyên layout UI Figma, không fallback fixture ở production** | **Pass (code path & test) / Not run (Android)** | Route guard và live gateway; xem [FIGMA_PARITY.md](FIGMA_PARITY.md) | 7/7 Figma parity tests và 962 mobile tests pass; route `/room/setup` gọi real gateway. | Cần kiểm tra hiển thị thực tế trên thiết bị vật lý ở các kích thước viewport. |
+| **AC3: Auth/session/validation/error, consent/history đúng thực tế** | **Pass (synthetic session tests) / Not run (GoTrue thật)** | `authSession.test.ts`, `roomRepository.test.ts`, `gm25FigmaParity.test.tsx` | SessionManager quản lý session trong bộ nhớ; API lỗi `AUTH_REQUIRED` khóa session và yêu cầu refresh rõ ràng. | Chưa kiểm thử trên máy chủ GoTrue trực tiếp. |
+| **AC4: Nhiều máy nhận cùng snapshot, loại bỏ luồng Ready theo v4** | **Pass (contract & UI) / Not run (multi-client thật)** | `gm25FigmaParity.test.tsx`, `lobbyAndStatusScreens.test.tsx` | Đã loại bỏ nút "Tôi sẵn sàng" khỏi UI/RPC theo ADR-019; Host trực tiếp bắt đầu phiên. | Cần kiểm thử thời gian thực giữa 2 máy thật. |
+| **AC5: Out-of-coverage/empty báo lý do server, không start pool rỗng** | **Pass (mocked contract) / Not run (server thật)** | `gm25FigmaParity.test.tsx`, `dishSetupFlow.test.tsx` | Khóa nút bắt đầu chọn món khi danh sách rỗng hoặc thiếu món hợp lệ. | Chưa có backend staging trực tiếp. |
+| **AC6: Đầu vào/đầu ra và cách kiểm ghi trong HANDOFF.md** | **Pass (documentation)** | Tài liệu này và [FIGMA_PARITY.md](FIGMA_PARITY.md) | Ghi rõ cấu hình, file bổ sung và kịch bản 2 máy cập nhật. | Đầy đủ tài liệu bàn giao. |
 
 ---
 
 ## 3. Hướng dẫn cấu hình và nghiệm thu trên điện thoại Android thật
 
-Để kiểm tra luồng tích hợp, dùng ít nhất một điện thoại Android thật và một client thứ hai với hai identity riêng:
+Để kiểm tra luồng tích hợp, dùng ít nhất một điện thoại Android thật và một client thứ hai với hai danh tính (identity) riêng biệt:
 
 ### 3.1. Cấu hình biến môi trường
-Tạo file `mobile/.env.local` (hoặc cấu hình environment variables cho Expo):
+Tạo file `mobile/.env.local`:
 ```ini
 EXPO_PUBLIC_SUPABASE_URL=https://<SUPABASE_TEST_HOST>
 EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
-Chọn endpoint HTTPS mà điện thoại truy cập được. GM-16 từ chối HTTP LAN/emulator; không tắt kiểm chứng TLS.
-
-Khi dùng backend Supabase local qua USB, thay URL bằng loopback và tạo reverse tunnel từ điện thoại tới máy tính:
-
+Khi dùng backend Supabase local qua USB, dùng reverse tunnel:
 ```powershell
 adb reverse tcp:54321 tcp:54321
 # Khi kiểm xong
@@ -68,60 +62,61 @@ adb reverse --remove tcp:54321
 EXPO_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
 ```
 
-Metro và backend là hai endpoint riêng. QR/tunnel Expo chỉ đưa bundle Metro tới thiết bị; nó không mở đường tới Supabase. Ghi riêng Metro URL và backend URL khi nghiệm thu.
-
 ### 3.2. Khởi chạy ứng dụng
-1. Chọn backend HTTPS test mà điện thoại truy cập được, hoặc Supabase local qua USB như mục trên. Với backend test, trước khi dùng endpoint cần đối chiếu migration ledger và các RPC đã deploy; health GoTrue không chứng minh schema/RPC khớp revision hiện tại. Khởi động backend Supabase local chỉ tạo môi trường local riêng, không đồng bộ hay xác nhận database đang chạy của dự án:
+1. Khởi động backend Supabase test hoặc local:
    ```powershell
-   # Trong thư mục dự án
    npx supabase start
    ```
-2. Khởi động Expo Metro Bundler riêng:
+2. Khởi động Expo Metro Bundler:
    ```powershell
    cd mobile
    npx expo start --clear
    ```
-3. Mở app trên điện thoại Android bằng Expo Go hoặc development build. Dùng client thứ hai đăng nhập bằng identity khác.
+3. Mở app trên điện thoại Android bằng Expo Go hoặc development build.
 
-### 3.3. Kịch bản kiểm thử 2 máy (Host & Member)
-1. **Máy 1 (Host - Trang):**
-   - Mở app chưa có session -> Bấm **"Tạo kèo ăn"** -> nhập `Trang (Host)` trong sheet guest -> xác nhận.
-   - Chờ guest session được tạo/lưu; chỉ sau đó màn tạo phòng và discovery mới mở.
-   - Chọn bối cảnh ăn uống -> Bấm **"Tạo phòng"**.
-   - Màn hình hiển thị mã phòng (ví dụ `GCD123`).
-   - Bấm **"Xem bước phòng chờ"** -> Vào `/gm11/lobby`. Trạng thái: Host đang ở trong phòng chờ.
-2. **Máy 2 (Member - Tuấn):**
-   - Mở app chưa có session -> Bấm **"Tôi có mã phòng"** -> nhập `Tuấn (Member)` trong sheet guest -> xác nhận.
-   - Chờ guest session được tạo/lưu; sau đó nhập mã phòng `GCD123`.
-   - Bấm **"Vào phòng"** -> Màn hình hiển thị thông tin phòng -> Bấm **"Xem bước phòng chờ"**.
-   - Cả 2 máy đều hiển thị danh sách 2 thành viên: `Trang (Host)` và `Tuấn`.
-3. **Thao tác Ready & Bắt đầu:**
-   - Trên Máy 2, Tuấn bấm **"Tôi sẵn sàng"** -> Máy 1 thấy Tuấn chuyển sang trạng thái "Sẵn sàng".
-   - Trên Máy 1, Trang bấm **"Tôi sẵn sàng"** -> Nút **"Bắt đầu chọn món"** trên Máy 1 được kích hoạt.
-   - Trang bấm **"Bắt đầu chọn món"** -> Server chuyển trạng thái phòng sang vòng 1.
-4. **Kiểm tra Reset Ready khi đổi bối cảnh:**
-   - Trước khi bắt đầu, nếu Host bấm **"Chỉnh sửa bối cảnh"** và thay đổi giờ ăn hoặc ngân sách, server cập nhật và cờ "Sẵn sàng" của cả hai thành viên tự động đặt lại về chưa sẵn sàng.
+### 3.3. Kịch bản kiểm thử 2 máy (Host & Member) — Cập nhật theo Figma & ADR-019 (No Ready Flow)
 
-5. **Khôi phục sau khi API từ chối session:**
-   - Cho API test trả `401/AUTH_REQUIRED` cho một request đang đăng nhập.
-   - Xác nhận identity đang hoạt động bị ẩn, Home/route guard hiện nút **"Thử khôi phục phiên"**, và request tiếp theo không gửi lại token cũ.
-   - Bấm khôi phục; client refresh session trước khi tải dữ liệu lại. Nếu refresh bị từ chối, UI chuyển sang trạng thái xóa phiên cục bộ trước khi tạo phiên khách mới.
+1. **Máy 1 (Host - Trang) — Figma `298:2309`, `330:3068`, `388:7816`:**
+   - Mở app chưa có session -> Hiện sheet nhập tên khách -> Nhập `Trang (Host)` -> Bấm **"Tạo kèo ăn"**.
+   - Session khách được lưu trong SecureStore; màn hình mở sang `/room/setup` (DishSetupFlow).
+   - Chọn buổi ăn (ví dụ: *Bữa trưa*), hẹn giờ hoặc chọn *Ăn ngay*, điều chỉnh stepper từ 10–20 món.
+   - Bấm **"Tiếp tục"** -> Cấu hình khẩu vị cá nhân (cay, ngọt, món kiêng).
+   - Bấm **"Xác nhận tạo phòng"** -> Gateway gọi RPC backend thật tạo phòng và chuyển thẳng vào `/gm11/lobby`.
+   - Màn hình phòng chờ hiển thị: Mã phòng (ví dụ `GCD123`), danh sách 1 người (`Trang (Chủ phòng)`), nút **"Bắt đầu chọn món"** (tạm thời bị vô hiệu hóa vì phòng cần tối thiểu 1 thành viên tham gia hoặc theo điều kiện bắt đầu).
 
-Kịch bản này có regression tổng hợp; chưa chạy trên GoTrue/backend test hoặc thiết bị Android thật.
+2. **Máy 2 (Member - Tuấn) — Figma `298:2309`, `330:3069`:**
+   - Mở app chưa có session -> Nhập tên `Tuấn (Member)` -> Bấm **"Tôi có mã phòng"**.
+   - Màn hình nhập mã mở ra -> Nhập mã phòng `GCD123`.
+   - **Public Room Preview**: App gọi `previewJoin` hiển thị thông tin tóm tắt:
+     - Mã phòng: `GCD123`
+     - Số lượng thành viên hiện tại: `1/20 người`
+     - *Bảo mật*: Không hiển thị danh sách tên thành viên, khẩu vị hay phiếu bầu.
+   - Tuấn bấm **"Xác nhận vào phòng"** -> App gửi yêu cầu join chính thức -> Chuyển vào `/gm11/lobby`.
 
-Các bước trên là kịch bản nghiệm thu cần chạy, chưa phải bằng chứng đã chạy. Bản hiện tại chỉ có regression tổng hợp; không có thiết bị ADB hoặc backend đã xác minh.
+3. **Phòng chờ thời gian thực & Bắt đầu chọn món — Figma `330:3070` (Không Ready):**
+   - Cả 2 máy đều cập nhật danh sách hiển thị: `Trang (Chủ phòng)` và `Tuấn`.
+   - **Không có nút "Tôi sẵn sàng"**: Cả 2 bên không phải thực hiện bước Ready theo ADR-019.
+   - Trên Máy 1 (Host), nút **"Bắt đầu chọn món"** được kích hoạt sáng màu xanh.
+   - Trang bấm **"Bắt đầu chọn món"** -> Server chốt danh sách thành viên và kích hoạt chuyển trạng thái phòng sang Vòng 1 (Voting Round 1).
+   - Cả 2 máy cùng chuyển màn hình sang giao diện chọn món Vòng 1.
+
+4. **Trường hợp rời phòng hoặc hủy phòng:**
+   - Trên Máy 2, nếu Tuấn bấm **"Rời phòng"**, Tuấn được đưa về màn hình chính Home (`330:3067`), Máy 1 thấy danh sách giảm còn 1 người.
+   - Nếu Host bấm hủy phòng, tất cả các thành viên nhận thông báo phòng đã bị hủy.
 
 ---
 
 ## 4. Checklist người nhận (Receiver Checklist)
 
-- [x] Upstream được review đúng scope và revision: GM-07, GM-09, GM-10, GM-11, GM-16, GM-19, GM-21, GM-24 đã có mặt trên `main`.
-- [x] File và hướng dẫn đủ chạy từ clone sạch; không có file placeholder hoặc hardcoded mock ở production mode.
-- [x] Input/output/errors/nullability/version đúng contract `food-v1/roadmap-v2/GM-25.1`.
-- [ ] Kết quả Jest/Python phải lấy từ revision hiện hành trong [CHECKS.md](CHECKS.md); số của revision cũ không áp dụng cho bản này.
-- [ ] Không tuyên bố đã xử lý toàn bộ review. Hai lỗi onboarding/session identity được kiểm lại bằng regression ở revision mới; Android/backend thật còn `Not run`.
-- [x] Đã phân biệt kiểm thử tổng hợp với nghiệm thu thiết bị/backend thật (`Not run`).
-- [ ] Reviewer Trí (`ThanhTris`) tiến hành kiểm tra mã nguồn, đối chiếu revision và nghiệm thu theo [ADR-013](../../../architecture/decisions/ADR-013-project-owner-final-review.md).
+- [x] Đã tích hợp đầy đủ 6 Figma nodes (`298:2309`, `330:3067`, `330:3068`, `330:3069`, `388:7816`, `330:3070`).
+- [x] Có tài liệu đối chiếu chi tiết [FIGMA_PARITY.md](FIGMA_PARITY.md).
+- [x] Đã tạo gateway `liveDishSetupGateway.ts` kết nối luồng thiết lập món với backend thật.
+- [x] Đã bổ sung `previewJoin` RPC vào `RoomRepository` bảo đảm quyền riêng tư trước khi vào phòng.
+- [x] Đã loại bỏ hoàn toàn luồng Ready trong UI phòng chờ theo ADR-019 và consumer v4.
+- [x] Tất cả 9 bộ test focused GM-25 (81 tests) và toàn bộ 57 suites mobile (962 tests) đều vượt qua.
+- [x] Typecheck 0 lỗi, architecture boundaries đạt chuẩn.
+- [x] Phân biệt rõ ràng giữa kiểm thử tự động tổng hợp (Pass) và nghiệm thu thiết bị Android/backend thật (`Not run`).
+- [ ] Reviewer Trí (`ThanhTris`) tiến hành kiểm tra mã nguồn, đối chiếu Figma và nghiệm thu theo [ADR-013](../../../architecture/decisions/ADR-013-project-owner-final-review.md).
 
 > [!NOTE]
-> Theo quy định của dự án và chỉ dẫn của người dùng, AI coding agent không tự ý chuyển trạng thái issue sang Done hoặc tự duyệt review. Trí (`ThanhTris`) sẽ trực tiếp kiểm tra và cập nhật trạng thái trên GitHub Project #2.
+> Theo quy định của dự án (AGENTS.md), AI coding agent không tự ý chuyển trạng thái issue sang Done hoặc tự duyệt review. Trí (`ThanhTris`) sẽ trực tiếp kiểm tra và cập nhật trạng thái trên GitHub Project #2.
