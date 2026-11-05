@@ -4075,5 +4075,19 @@
     "taskInputNodesVerified": 66,
     "sourceRemoval": "not performed; replace and retire per task with regression and route checks",
     "statusPolicy": "Live Project is authoritative; beforeStatus/afterStatus above are historical 2026-10-25 planning snapshots, not current approval. Dependencies require Done."
+  },
+  "brandAsset": {
+    "updatedAt": "2026-11-05",
+    "sourcePath": "mobile/assets/brand/gi-cung-duoc-logo.svg",
+    "sourceSha256": "cd00727ff0ac169f8a7c364e5b04a751c6963edccc383d3a2ebc5fc062e011b7",
+    "iconPath": "mobile/assets/brand/gi-cung-duoc-icon.png",
+    "iconSha256": "0d42164aa1cc45d4d11f3e5c4901de029cecb1dd4f09bbecf1ff0b2248cd91cb",
+    "sourceNodeId": "22:394",
+    "colorPageVectorNodeId": "213:5713",
+    "nativeIconPreviewNodeId": "213:5725",
+    "linkedInstanceCount": 10,
+    "taskOwners": ["GM-02", "GM-05", "GM-09", "GM-39"],
+    "layoutChange": "none; preserve name, colors, and frame composition",
+    "archivedOldIdentityNodeId": "171:45"
   }
 }

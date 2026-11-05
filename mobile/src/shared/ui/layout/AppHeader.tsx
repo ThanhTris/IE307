@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { radii, spacing, typography, type ThemeColors } from '../../theme/tokens';
 import type { ComponentThemeProps } from '../types';
+import { BrandLogo } from './BrandLogo';
 
 export type AppHeaderProps = ComponentThemeProps & {
   variant?: 'home' | 'back' | 'room';
@@ -65,12 +66,7 @@ export function AppHeader({
           disabled={!onPressBrand}
           style={styles.brand}
         >
-          <Image
-            source={require('../../../../assets/brand/gcd-logo-master.png')}
-            accessible={false}
-            resizeMode="contain"
-            style={styles.mark}
-          />
+          <BrandLogo size={44} />
           <Text numberOfLines={allowTitleWrap ? undefined : 1} style={[styles.brandText, { color: colors?.text }, brandTextStyle]}>
             {title}
           </Text>

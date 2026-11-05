@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, userEvent } from '@testing-library/react-native';
 import { act } from 'react';
 import { getThemeColors, typography } from '../../src/shared/theme/tokens';
-import { AppBottomNavigation, AppButton, AppHeader, AvatarRow, BrandBanner, Chip, CollectionState, ContextSummary, DishCard, DishCount, FormField, InsufficientDishes, PreferenceChoice, ProcessState, RequestBanner, ResultPodium, RoomCode, SearchSkeletonRow, StatusNotice, TutorialGesture, WaitingSummary } from '../../src/shared/ui';
+import { AppBottomNavigation, AppButton, AppHeader, AvatarRow, BrandBanner, BrandLogo, Chip, CollectionState, ContextSummary, DishCard, DishCount, FormField, InsufficientDishes, PreferenceChoice, ProcessState, RequestBanner, ResultPodium, RoomCode, SearchSkeletonRow, StatusNotice, TutorialGesture, WaitingSummary } from '../../src/shared/ui';
 
 const colors = getThemeColors('light');
 
@@ -18,6 +18,29 @@ test('light theme uses the approved Figma brand and accessible action colors', (
     line: '#B9CB9B',
     green: '#46C34F',
   });
+});
+
+test('BrandLogo renders vector SVG at 36, 44, 72dp with decorative and labeled accessibility modes', async () => {
+  const { rerender } = await render(<BrandLogo size={36} testID="logo-36" />);
+  const logo36 = screen.getByTestId('logo-36');
+  expect(logo36).toHaveStyle({ width: 36, height: 36 });
+  expect(logo36.props.accessible).toBe(false);
+  expect(logo36.props.importantForAccessibility).toBe('no');
+
+  await rerender(<BrandLogo size={44} testID="logo-44" accessibilityLabel="Gì Cũng Được logo" />);
+  const logo44 = screen.getByTestId('logo-44');
+  expect(logo44).toHaveStyle({ width: 44, height: 44 });
+  expect(logo44.props.accessible).toBe(true);
+  expect(logo44.props.accessibilityRole).toBe('image');
+  expect(logo44.props.accessibilityLabel).toBe('Gì Cũng Được logo');
+
+  await rerender(<BrandLogo size={72} testID="logo-72" />);
+  expect(screen.getByTestId('logo-72')).toHaveStyle({ width: 72, height: 72 });
+});
+
+test('legacy brand logo size check', async () => {
+  await render(<BrandLogo size={44} testID="new-brand-logo" />);
+  expect(screen.getByTestId('new-brand-logo')).toHaveStyle({ width: 44, height: 44 });
 });
 
 test('shared controls expose labels, touch actions and selected state', async () => {
@@ -48,6 +71,7 @@ test('Figma Home building blocks render the dining banner, branded header and se
     />
   </>);
 
+  expect(screen.getByRole('button', { name: 'Về trang chủ' })).toBeOnTheScreen();
   expect(screen.getByText('Gì Cũng Được')).toBeOnTheScreen();
   expect(screen.getByRole('button', { name: 'Thông báo' })).toBeOnTheScreen();
   expect(screen.queryByRole('button', { name: 'Bạn ăn cùng' })).toBeNull();

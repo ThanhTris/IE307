@@ -1,5 +1,29 @@
 # GM-03 — output checks
 
+## Supplement 2026-11-05 — Cơ chế kiểm soát loopback binding & quyền sở hữu QA Runner
+
+Bổ sung kiểm tra theo yêu cầu cập nhật ngày 2026-11-05:
+1. **Kiểm soát tạo mạng QA (`scripts/backend-qa.mjs`):**
+   - Bổ sung cờ `--ipv6=false` khi tạo mạng Docker bridge sở hữu riêng (`state.networkName`), kết hợp cùng `-o com.docker.network.bridge.host_binding_ipv4=127.0.0.1`.
+   - Gắn nhãn sở hữu bắt buộc: `com.gm03.owner_uuid` và `com.gm03.run_id`.
+2. **Kiểm tra cổng và cách ly tài nguyên:**
+   - Cổng QA (`54361`/`54362` hoặc `54371`/`54372`) hoàn toàn tách biệt với cổng phát triển của app (`54321`/`54322`). Hàm `validatePorts` từ chối ngay lập tức nếu trùng cổng app (`QA_APP_PORT_FORBIDDEN`).
+   - Kiểm tra quyền sở hữu container/volume qua nhãn project và marker bảng PostgreSQL `gm03_qa_private.owner_manifest`.
+3. **Quy tắc Loopback Binding nghiêm ngặt:**
+   - Hàm `assertLoopbackPublishedPort` chỉ chấp nhận địa chỉ IP `127.0.0.1` hoặc `::1`. Mọi binding dạng wildcard (`0.0.0.0`, `::`, hoặc rỗng `""`) đều bị từ chối fail-closed với lỗi `QA_HOST_BINDING_NOT_LOOPBACK`.
+   - **Xác nhận nguyên nhân trên host Windows Docker Desktop:** Khi Supabase CLI tạo container Kong và PostgreSQL, API của Docker Engine trên Windows tự động gán port-proxy `0.0.0.0` và `::` cho cổng xuất bản trừ khi được gán IP tường minh. Cơ chế kiểm tra fail-closed của `backend-qa.mjs` đã phát hiện và chặn đúng hành vi này để ngăn rò rỉ cổng ra mạng LAN.
+   - **Quy tắc nghiệm thu:** Cấu hình wildcard trong CI không được dùng làm bằng chứng chứng minh loopback-only.
+4. **Kết quả kiểm thử:**
+   - Node test root (`npm test`): 19/19 tests Pass, bao gồm cả test loopback guard, kiểm tra nonce worker và dọn dẹp tài nguyên.
+
+| Kiểm tra | Lệnh / Đầu vào | Kỳ vọng | Thực tế | Kết quả |
+|---|---|---|---|---|
+| Root Backend QA Tests | `npm test` | 19 tests kiểm tra guard, ports, loopback, process nonce | 19 passed, 0 failures (364ms) | Pass |
+| Cấm cổng app | `validatePorts(54321, 54372)` | Ném lỗi QA_APP_PORT_FORBIDDEN | Ném đúng lỗi | Pass |
+| Kiểm tra loopback | `assertLoopbackPublishedPort` với 0.0.0.0 / :: | Ném lỗi QA_HOST_BINDING_NOT_LOOPBACK | Bị chặn, fail-closed đúng thiết kế | Pass |
+| Resource Ownership | `assertOwnedResource`, `assertOwnedVolume` | Kiểm tra nhãn runId, projectId, workdir | Khớp nhãn sở hữu mới Pass | Pass |
+| Cleanup an toàn | `runTrackedStep` | Thao tác cleanup thất bại không được ghi nhận hoàn thành | Giữ trạng thái retryable | Pass |
+
 ## Supplement 2026-10-27 — PR #137 QA and Bruno run
 
 Run `gm03-pr137-20261027`, based on revision `b6efb50229feae7a54df8923796ff9af056872da` with a dirty working tree, contract `dish-session-v4/roadmap-v2/GM-07.B`, schema `0.9.1`, API `54371`, DB `54372`. Runtime reports are under ignored `.work/qa/gm03-pr137-20261027/`; the report records no credentials, identity IDs, or changes to the application database.

@@ -20,7 +20,7 @@ Theo chỉ định Trí ngày 2026-10-13/[ADR-014](../architecture/decisions/ADR
 
 ## Đầu ra phải chạy và kiểm được
 
-Theo [chuẩn đầu ra](TASK_OUTPUT_REQUIREMENTS.md) và [checklist 39 task](TASK_OUTPUT_CHECKLIST.md): UI mở trên Expo và hiển thị/điều khiển được các mục trong scope; API có Postman/curl/runner request-response-assertions thật; Data đủ field/schema/template/fixture/version cho BE nhận làm song song. Task nền/contract/domain kiểm đúng scope, không chờ API/tính năng của task sau. Native ngoài Expo Go có guard và evidence development build riêng.
+Theo [chuẩn đầu ra](TASK_OUTPUT_REQUIREMENTS.md) và [checklist 40 mã task](TASK_OUTPUT_CHECKLIST.md): UI mở trên Expo và hiển thị/điều khiển được các mục trong scope; API có Postman/curl/runner request-response-assertions thật; Data đủ field/schema/template/fixture/version cho BE nhận làm song song. Task nền/contract/domain kiểm đúng scope, không chờ API/tính năng của task sau. Native ngoài Expo Go có guard và evidence development build riêng.
 
 Mỗi task bàn giao CHECKS.md theo [mẫu checks](../../tasks/templates/CHECKS_TEMPLATE.md) và HANDOFF, có đường mở/gọi/lệnh từ clone sạch, input/expected/actual/Pass-Fail-Not run và artifact thực tế đã che secret. Không ghi Done nếu AC bắt buộc còn Not run/Fail; file tồn tại hoặc docs validator xanh không thay phép kiểm thật. [Plan GM-02/03](FOUNDATION_IMPLEMENTATION_PLAN.md) ghi root BE tooling/mobile tooling và các phép smoke nền.
 

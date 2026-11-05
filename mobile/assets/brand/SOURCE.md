@@ -4,7 +4,14 @@
 Runtime files now carry transparent alpha; the table preserves original receipt
 hashes. See [alpha repair and current manifest](ALPHA_REPAIR_2026-11-02.md).
 
-All assets were exported from the approved Gì Cũng Được Figma file `3Ysh0mOAEkAgA5DgZPSC1j` on 2026-10-27 and are bundled locally for React Native `Image`. Temporary Figma URLs are not runtime sources. No package/native module was added.
+The current UI logo was supplied by the project owner on 2026-11-05. React Native renders the vector SVG; the accompanying square PNG is used for the native launcher icon, which Expo config requires as a raster image. The prior Figma logo export below is retained for historical evidence and is no longer used by the app.
+
+| Current logo asset | Source | Bytes | SHA-256 |
+| --- | --- | ---: | --- |
+| `gi-cung-duoc-logo.svg` | Project owner, 2026-11-05 | 59,021 | `cd00727ff0ac169f8a7c364e5b04a751c6963edccc383d3a2ebc5fc062e011b7` |
+| `gi-cung-duoc-icon.png` | Project owner companion image, 2026-11-05 | 79,027 | `0d42164aa1cc45d4d11f3e5c4901de029cecb1dd4f09bbecf1ff0b2248cd91cb` |
+
+The remaining image assets in the table below were exported from the approved Gì Cũng Được Figma file `3Ysh0mOAEkAgA5DgZPSC1j` on 2026-10-27 and are bundled locally. Temporary Figma URLs are not runtime sources.
 
 | File | Figma node | Bytes | SHA-256 |
 | --- | --- | ---: | --- |

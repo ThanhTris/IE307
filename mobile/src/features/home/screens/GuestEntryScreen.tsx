@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { BackHandler, Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { BackHandler, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { AppButton, FormField, SheetDialog, StatusNotice } from '../../../shared/ui';
+import { AppButton, BrandLogo, FormField, SheetDialog, StatusNotice } from '../../../shared/ui';
 import { spacing, typography } from '../../../shared/theme/tokens';
 import { validDisplayName } from '../../rooms/services/roomEntry';
 import type { HomeLiveSession } from './HomeScreen';
@@ -114,7 +114,7 @@ export function GuestEntryScreen({ onContinue, onComplete, session, isMock, onSi
           {isMock ? <Text style={[styles.mockLabel, { color: colors.text }, textStyle(500)]}>Mô phỏng · GM-09</Text> : null}
         </View>
         <View style={styles.body}>
-          <View style={styles.logoSlot}><Image source={require('../../../../assets/brand/gcd-logo-master.png')} accessible={false} style={styles.logo} /></View>
+          <View style={styles.logoSlot}><BrandLogo size={44} /></View>
           <Text style={[styles.brandTitle, { color: colors.text }, textStyle(700)]}>Gì Cũng Được</Text>
           <Text accessibilityRole="header" style={[styles.question, { color: colors.text }, textStyle(700)]}>Bạn tên gì?</Text>
           <Text style={[styles.description, { color: colors.muted }, textStyle(400)]}>Tên của bạn sẽ hiện trong phòng ăn.</Text>

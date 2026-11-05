@@ -1,5 +1,19 @@
 # GM-03 — BE foundation handoff
 
+## Supplement 2026-11-05 — QA Runner Loopback Isolation & Resource Ownership
+
+Đợt cập nhật này bàn giao tiêu chuẩn QA Runner cho các task backend (`GM-15..23`, `GM-32`):
+1. **Kiểm soát Loopback Binding nghiêm ngặt:**
+   - Hàm `assertLoopbackPublishedPort` trong `scripts/backend-qa.mjs` kiểm tra và thực thi cơ chế fail-closed nếu cổng xuất bản không thuộc `127.0.0.1` hoặc `::1`.
+   - Cấu hình wildcard trong CI chỉ được sử dụng cho môi trường kiểm thử CI tự động, không được suy diễn là bằng chứng đạt chuẩn loopback-only trên môi trường máy trạm.
+2. **Quyền sở hữu tài nguyên & dọn dẹp an toàn:**
+   - Mạng bridge tạo mới với `--ipv6=false` và `com.docker.network.bridge.host_binding_ipv4=127.0.0.1`.
+   - Tất cả tài nguyên (mạng, container, volume) đều được gắn nhãn sở hữu `com.gm03.owner_uuid` và `com.gm03.run_id`.
+   - Tiến trình worker gắn nonce bảo vệ; chỉ tiến trình khớp nonce mới được dừng/khởi động lại.
+   - Thao tác `qa:stop` dọn dẹp sạch sẽ tài nguyên của phiên QA mà không bao giờ can thiệp vào cơ sở dữ liệu phát triển (`54321`/`54322`).
+3. **Bằng chứng kiểm thử:**
+   - Toàn bộ 19 test trong `tests/backend-runner.test.mjs` và `tests/backend-qa.test.mjs` đều đạt Pass.
+
 ## Supplement 2026-10-27 — QA, Bruno, and loopback limitation
 
 The PR #137 revision was exercised with an owned disposable Supabase project (`gm03-pr137-20261027`, contract B/schema `0.9.1`) and then cleaned up. Seven Auth/REST assertions and 83 v4 API cases passed; the Bruno desktop Runner showed the exact six expected responses `200,200,200,200,401,401` in [this screenshot](bruno-runner-gm03-20261027.jpg). Worker restart/verification passed. Detailed assertions and limitations are in [CHECKS](CHECKS.md); raw reports remain under ignored `.work/`.

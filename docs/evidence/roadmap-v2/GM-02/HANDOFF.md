@@ -1,5 +1,20 @@
 # GM-02 — UI foundation handoff
 
+## Supplement 2026-11-05 — SVG Tooling & Phân loại cảnh báo Dependency
+
+Đợt cập nhật này bàn giao cho các task UI tiếp theo (`GM-05`, `GM-09`, `GM-24..31`):
+1. **Hỗ trợ vector SVG:**
+   - Cài đặt `react-native-svg@15.16.0` (khóa trong `bundledNativeModules.json` của Expo SDK 58) và `react-native-svg-transformer@1.5.3` (cấu hình trong `metro.config.js`).
+   - Mock transformer trong `jest.config.cjs` trỏ đến `mobile/tests/mocks/svgMock.tsx`.
+   - Khai báo kiểu TypeScript cho `*.svg` trong `mobile/src/types/svg.d.ts`.
+2. **Quy định tài sản thương hiệu:**
+   - PNG `mobile/assets/brand/gi-cung-duoc-icon.png` chỉ dùng làm icon app trong `mobile/app.config.ts`.
+   - Toàn bộ component UI hiển thị thương hiệu qua SVG vector `mobile/assets/brand/gi-cung-duoc-logo.svg` (Figma node `22:394`, SHA-256 `cd00727ff0ac169f8a7c364e5b04a751c6963edccc383d3a2ebc5fc062e011b7`).
+3. **Phân loại Dependency:**
+   - 38 cảnh báo từ `npm audit` được phân loại rõ ràng trong [DEPENDENCIES.md](DEPENDENCIES.md): 0 cảnh báo ở runtime client, các cảnh báo còn lại thuộc build CLI và dev test. Không chạy `npm audit fix --force` để bảo vệ SDK 58.
+4. **Kết quả kiểm thử:**
+   - Baseline, typecheck, lint, Jest (48 suites, 214 tests), architecture guard và `bundle:android` (Hermes 3.9 MB) đều đạt Pass.
+
 ## Supplement 2026-10-27 — Home now uses Figma shared components
 
 Following the stale-UI report, the current working tree updates the Home composition against [GM-09 frame 330:3067](../GM-09/figma/330-3067-home.png). `Gm25HomeScreen` uses the shared `AppHeader`, `AppButton`, and `AvatarRow`, plus reusable `BrandBanner` and `AppBottomNavigation`; the official G mark, dining banner, and Home icons are bundled from Figma exports. Existing navigation/session/repository handlers are retained. Targeted automated checks passed (46 tests, typecheck, architecture, Android export); lint has four existing warnings. The updated Home has not yet been visually checked on emulator, so this is implementation evidence, not visual acceptance or task completion. See [CHECKS](CHECKS.md), [FIGMA_PARITY](FIGMA_PARITY.md), and [GM-09 handoff](../GM-09/HANDOFF.md).

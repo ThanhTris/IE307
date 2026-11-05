@@ -1,5 +1,20 @@
 # GM-05 handoff — shared UI components
 
+## Supplement 2026-11-05 — BrandLogo Vector Component
+
+Bàn giao component logo thương hiệu cho các màn hình downstream (`GM-09`, `GM-10..14`, `GM-24..31`):
+1. **Component:** `BrandLogo` tại `mobile/src/shared/ui/layout/BrandLogo.tsx`, xuất từ `mobile/src/shared/ui/index.ts`.
+2. **Nguồn vector:** `mobile/assets/brand/gi-cung-duoc-logo.svg` (Figma node `22:394`, SHA-256 `cd00727ff0ac169f8a7c364e5b04a751c6963edccc383d3a2ebc5fc062e011b7`).
+3. **Thuộc tính & hành vi:**
+   - Hỗ trợ prop `size` (mặc định 44dp), `testID`, và `accessibilityLabel`.
+   - Giữ nguyên màu sắc và tỷ lệ vuông 1:1 (`preserveAspectRatio="xMidYMid meet"`).
+   - Khi đứng cạnh chữ thương hiệu (mặc định không có `accessibilityLabel`), component tự đặt `accessible={false}` và `importantForAccessibility="no"` để hỗ trợ TalkBack không đọc lặp.
+   - Khi đứng độc lập (có truyền `accessibilityLabel`), component mở `accessible={true}`, `accessibilityRole="image"`.
+4. **Kiểm tra trực quan & mẫu preview:**
+   - Xem preview trực tiếp tại màn `/components` (`ComponentPreviewScreen`), hiển thị 3 kích thước trên cả nền sáng và tối (`#043B22`).
+5. **Tiêu chuẩn kiểm thử:**
+   - 23 tests trong `sharedComponents.test.tsx` và 214 tests toàn mobile passed.
+
 ## Supplement 2026-10-27 — Home component consumption
 
 The current Home screen now reuses the tested shared `AppHeader`, `AppButton`, and `AvatarRow`; two reusable GM-05 components, `BrandBanner` and `AppBottomNavigation`, carry the approved dining illustration and Home tab bar. Figma assets are local and provenance/hash-logged in [`mobile/assets/brand/SOURCE.md`](../../../../mobile/assets/brand/SOURCE.md). The 46 targeted component/route tests, typecheck, architecture check, and Android export passed; lint has four existing warnings. The updated Home still needs an emulator visual check. API/session handlers stay in the feature/root composition; shared UI components only render props and trigger callbacks.

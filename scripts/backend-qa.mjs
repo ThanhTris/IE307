@@ -370,7 +370,7 @@ async function createOwnedNetwork(state) {
   const existing = await dockerNetworkInfo(state.networkName);
   if (existing) throw new Error('QA_NETWORK_NAME_ALREADY_EXISTS');
   await run('docker', [
-    'network', 'create', '--label', `com.gm03.owner_uuid=${state.ownerUuid}`,
+    'network', 'create', '--ipv6=false', '--label', `com.gm03.owner_uuid=${state.ownerUuid}`,
     '--label', `com.gm03.run_id=${state.runId}`,
     '-o', 'com.docker.network.bridge.host_binding_ipv4=127.0.0.1', state.networkName,
   ], { label: 'QA_NETWORK_CREATE_FAILED' });

@@ -2,6 +2,7 @@ import { Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
+import { BrandLogo } from '../../../shared/ui';
 import { styles } from './AppShellScreen';
 
 const layers = [
@@ -41,6 +42,15 @@ export function FoundationScreen({
           <Text style={[styles.body, { color: colors.text }, textStyle(500)]}>500 · Cả nhóm ăn gì? Phở, bún, cơm — tiếng Việt đầy đủ.</Text>
           <Text style={[styles.body, { color: colors.text }, textStyle(600)]}>600 · Cả nhóm ăn gì? Phở, bún, cơm — tiếng Việt đầy đủ.</Text>
           <Text style={[styles.body, { color: colors.text }, textStyle(700)]}>700 · Cả nhóm ăn gì? Phở, bún, cơm — tiếng Việt đầy đủ.</Text>
+        </View>
+        <View accessibilityLabel="Kiểm tra vector SVG BrandLogo" style={[styles.panel, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <Text accessibilityRole="header" style={[styles.heading, { color: colors.text }, textStyle(600)]}>Kiểm SVG BrandLogo · 36dp / 44dp / 72dp</Text>
+          <Text style={[styles.body, { color: colors.muted }, textStyle(400)]}>Vector SVG tích hợp qua Metro transformer và react-native-svg; PNG chỉ dùng làm icon app.</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16, marginTop: 8 }}>
+            <BrandLogo size={36} testID="foundation-logo-36" accessibilityLabel="Logo 36dp" />
+            <BrandLogo size={44} testID="foundation-logo-44" accessibilityLabel="Logo 44dp" />
+            <BrandLogo size={72} testID="foundation-logo-72" accessibilityLabel="Logo 72dp" />
+          </View>
         </View>
         {onOpenComponents ? <Pressable accessibilityRole="button" accessibilityLabel="Mở component mẫu GM-05" onPress={onOpenComponents} style={[styles.button, { backgroundColor: colors.surface, borderColor: colors.primary, borderWidth: 1 }]}>
           <Text style={[styles.buttonLabel, { color: colors.primary }, textStyle(600)]}>Mở component mẫu GM-05</Text>

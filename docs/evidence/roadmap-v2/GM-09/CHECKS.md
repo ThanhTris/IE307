@@ -1,5 +1,22 @@
 # GM-09 — checks
 
+## Supplement 2026-11-05 — BrandLogo SVG trên Welcome, Guest Entry và Header UI mock
+
+Bổ sung kiểm tra theo yêu cầu cập nhật:
+- Tích hợp component `BrandLogo` SVG (`mobile/assets/brand/gi-cung-duoc-logo.svg`, Figma node `22:394`, SHA-256 `cd00727ff0ac169f8a7c364e5b04a751c6963edccc383d3a2ebc5fc062e011b7`) vào màn chào `WelcomeScreen` (khối `logoTile`), màn nhập tên khách `GuestEntryScreen` (khối `logoSlot`) và header trang chủ qua `AppHeader`.
+- Giữ nguyên phạm vi UI mock: tương tác guest flow, dialog tài khoản và điều hướng vào/ra không gọi API thật hay thay đổi session server.
+- Kiểm tra điều hướng vào/ra:
+  - `WelcomeScreen`: chuyển sang `/guest` (`step='name'`) khi bấm nút khách; mở dialog tài khoản khi bấm Đăng nhập / Đăng ký.
+  - `GuestEntryScreen`: nút quay lại (`‹ Quay lại` hoặc hardware Back) đưa về màn welcome; validation tên 1–24 ký tự.
+- Toàn bộ suite `guestEntryScreen.test.tsx` (11 tests), `homeScreen.test.tsx` (26 tests), `guestEntryRoute.test.tsx`, `routes.test.tsx` đều đạt Pass.
+
+| Kiểm tra | Lệnh / Đầu vào | Kỳ vọng | Thực tế | Kết quả |
+|---|---|---|---|---|
+| UI Mock Guest Entry | `jest guestEntryScreen.test.tsx` | Validation tên, Back handler, mock lock | 11/11 passed | Pass |
+| Home & Welcome Screens | `jest homeScreen.test.tsx` | Render BrandLogo trong AppHeader và các thẻ action | 26/26 passed | Pass |
+| Integration Routes | `jest guestEntryRoute.test.tsx routes.test.tsx` | Điều hướng giữa welcome, guest, home | All passed | Pass |
+| Android JS Export | `npm run bundle:android` | Xuất gói Hermes chứa SVG và tài sản UI mock | 1682 modules, 3.9 MB bundle | Pass |
+
 ## Latest correction — native room-code cells/tutorial motion, 2026-11-02
 
 [Scope, repair and phone checklist](figma-update/INPUT_MOTION_REPAIR.md),

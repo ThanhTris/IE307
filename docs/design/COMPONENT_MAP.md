@@ -6,6 +6,7 @@ Revision yêu cầu `ui-figma-final/2026-10-25/GM-05.2`. Bảng là **đích GM-
 | --- | --- | --- | --- |
 | [GCD / Button](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=9-77) (`9:77`) | GCD / Button | AppButton hiện có; đồng bộ role/variants | loading/disabled/pressed và CTA contrast |
 | [GCD / Form Field](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=379-1510) (`379:1510`) | GCD / Form Field | FormField hiện có; bổ sung theo Figma | error giữ input và nhãn lỗi |
+| [GCD / Brand Logo](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=22-394) (`22:394`) | GCD / Logo | BrandLogo vector SVG dùng chung | size (36/44/72dp), accessibilityLabel, decorative vs labeled |
 | [GCD / Header](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=23-661) (`23:661`) | GCD / Header | AppHeader hiện có; sửa cấu trúc theo variant | Home/Back/Room, menu/rời có confirm |
 | [GCD / Bottom Navigation](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=23-604) (`23:604`) | GCD / Bottom Navigation | bổ sung component dùng chung | selected/tab label/48dp |
 | [GCD / Dish Card](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=10-164) (`10:164`) | GCD / Dish Card | DishCard hiện có; flashcard props | WANT/OK/NO, fallback ảnh/giá, gesture do feature |
