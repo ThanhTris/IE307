@@ -80,6 +80,67 @@ describe('GM-27 ResultRepository', () => {
       expect(mapped).toEqual(validWinner);
     });
 
+    test('rejects dish with missing roundDishId (does not fallback to dishId)', () => {
+      const missingRoundDishId = {
+        dishId: '00000000-0000-4000-8000-000000000010',
+        name: 'Phở bò tái nạm',
+      };
+      expect(mapRawToResultDish(missingRoundDishId)).toBeNull();
+    });
+
+    test('priceReference is null when sourceRef and source are missing (does not fabricate Menu)', () => {
+      const dishWithoutSource = {
+        dishId: '00000000-0000-4000-8000-000000000010',
+        roundDishId: '00000000-0000-4000-8000-000000000020',
+        name: 'Phở bò tái nạm',
+        priceReference: {
+          amount: 65000,
+          currency: 'VND',
+          unit: 'portion',
+          checkedAt: '2026-11-06T10:00:00Z',
+        },
+      };
+      const mapped = mapRawToResultDish(dishWithoutSource);
+      expect(mapped).not.toBeNull();
+      expect(mapped!.priceReference).toBeNull();
+    });
+
+    test('priceReference is null when amount is null or non-positive', () => {
+      const dishWithNullAmount = {
+        dishId: '00000000-0000-4000-8000-000000000010',
+        roundDishId: '00000000-0000-4000-8000-000000000020',
+        name: 'Phở bò tái nạm',
+        priceReference: {
+          amount: null,
+          currency: 'VND',
+          unit: 'portion',
+          sourceRef: 'Menu',
+          checkedAt: '2026-11-06T10:00:00Z',
+        },
+      };
+      const mapped = mapRawToResultDish(dishWithNullAmount);
+      expect(mapped).not.toBeNull();
+      expect(mapped!.priceReference).toBeNull();
+    });
+
+    test('priceReference is null when checkedAt timestamp is invalid', () => {
+      const dishWithBadDate = {
+        dishId: '00000000-0000-4000-8000-000000000010',
+        roundDishId: '00000000-0000-4000-8000-000000000020',
+        name: 'Phở bò tái nạm',
+        priceReference: {
+          amount: 65000,
+          currency: 'VND',
+          unit: 'portion',
+          sourceRef: 'Menu',
+          checkedAt: 'not-a-date',
+        },
+      };
+      const mapped = mapRawToResultDish(dishWithBadDate);
+      expect(mapped).not.toBeNull();
+      expect(mapped!.priceReference).toBeNull();
+    });
+
     test('rejects dish missing dishId, roundDishId, or name', () => {
       expect(mapRawToResultDish(null)).toBeNull();
       expect(mapRawToResultDish({})).toBeNull();
@@ -97,6 +158,7 @@ describe('GM-27 ResultRepository', () => {
           amount: 40000,
           currency: 'VND',
           unit: 'portion',
+          sourceRef: 'Menu quán',
           observedAt: '2026-11-06T10:00:00Z',
         },
       };
@@ -104,7 +166,7 @@ describe('GM-27 ResultRepository', () => {
       expect(mapped).not.toBeNull();
       expect(mapped?.artwork?.uri).toBe('https://example.com/art.png');
       expect(mapped?.priceReference?.checkedAt).toBe('2026-11-06T10:00:00Z');
-      expect(mapped?.priceReference?.sourceRef).toBe('Menu');
+      expect(mapped?.priceReference?.sourceRef).toBe('Menu quán');
     });
   });
 
@@ -225,6 +287,77 @@ describe('GM-27 ResultRepository', () => {
       };
       expect(mapRawToScoredResult(winnerMismatch)).toBeNull();
     });
+
+    // Reviewer audit cases (8 malformed contract rejection tests)
+    test('rejects payload missing contractVersion', () => {
+      const { contractVersion: _, ...rest } = canonicalDecidedPayload;
+      expect(mapRawToScoredResult(rest)).toBeNull();
+    });
+
+    test('rejects payload missing policyVersion', () => {
+      const { policyVersion: _, ...rest } = canonicalDecidedPayload;
+      expect(mapRawToScoredResult(rest)).toBeNull();
+    });
+
+    test('rejects payload missing scoreVersion', () => {
+      const { scoreVersion: _, ...rest } = canonicalDecidedPayload;
+      expect(mapRawToScoredResult(rest)).toBeNull();
+    });
+
+    test('rejects payload missing rankingVersion', () => {
+      const { rankingVersion: _, ...rest } = canonicalDecidedPayload;
+      expect(mapRawToScoredResult(rest)).toBeNull();
+    });
+
+    test('rejects payload with unsupported scoreVersion', () => {
+      const payload = { ...canonicalDecidedPayload, scoreVersion: 'unsupported-v99' };
+      expect(mapRawToScoredResult(payload)).toBeNull();
+    });
+
+    test('rejects payload with unsupported rankingVersion', () => {
+      const payload = { ...canonicalDecidedPayload, rankingVersion: 'unsupported-v99' };
+      expect(mapRawToScoredResult(payload)).toBeNull();
+    });
+
+    test('rejects DECIDED payload where winner or podium dish lacks roundDishId', () => {
+      const winnerWithoutRoundId = {
+        ...validWinner,
+        roundDishId: '',
+      };
+      const payload = {
+        ...canonicalDecidedPayload,
+        winner: winnerWithoutRoundId,
+        topDishes: [
+          { dish: winnerWithoutRoundId, score: 7, rank: 1, isWinner: true },
+        ],
+      };
+      expect(mapRawToScoredResult(payload)).toBeNull();
+    });
+
+    test('rejects NO_CONSENSUS payload when winner or topDishes is non-empty', () => {
+      const noConsensusWithWinner = {
+        resultId: '00000000-0000-4000-8000-000000000101',
+        contractVersion: CANONICAL_RESULT_CONTRACT_VERSION,
+        policyVersion: CANONICAL_RESULT_POLICY_VERSION,
+        status: 'NO_CONSENSUS',
+        round: 1,
+        reasonCode: 'EMPTY_INTERSECTION',
+        finalizedAt: '2026-11-06T10:05:00Z',
+        scoreVersion: null,
+        rankingVersion: null,
+        round1BallotCount: 3,
+        winner: validWinner, // Should be null!
+        topDishes: [],
+      };
+      expect(mapRawToScoredResult(noConsensusWithWinner)).toBeNull();
+
+      const noConsensusWithTopDishes = {
+        ...noConsensusWithWinner,
+        winner: null,
+        topDishes: [{ dish: validWinner, score: 0, rank: 1, isWinner: false }], // Should be empty!
+      };
+      expect(mapRawToScoredResult(noConsensusWithTopDishes)).toBeNull();
+    });
   });
 
   describe('mapSnapshotMembersToCompanions', () => {
@@ -297,6 +430,94 @@ describe('GM-27 ResultRepository', () => {
 
       // forceRefetch should bypass cache
       await repo.getResult('room_123', { forceRefetch: true });
+      expect(mockRpc).toHaveBeenCalledTimes(2);
+    });
+
+    test('invalidates cache when server returns authorization or session failure (NOT_MEMBER, AUTH_REQUIRED, ROOM_EXPIRED)', async () => {
+      let callCount = 0;
+      const mockRpc = jest.fn().mockImplementation(async () => {
+        callCount++;
+        if (callCount === 1) {
+          return { ok: true, data: canonicalDecidedPayload };
+        }
+        return { ok: false, error: { messageKey: 'NOT_MEMBER' } };
+      });
+
+      const repo = new LiveResultRepository({ rpcCaller: mockRpc });
+
+      // Step 1: Initial read succeeds and caches
+      const res1 = await repo.getResult('room_123');
+      expect(res1.ok).toBe(true);
+      expect(mockRpc).toHaveBeenCalledTimes(1);
+
+      // Step 2: Forced refetch receives NOT_MEMBER
+      const res2 = await repo.getResult('room_123', { forceRefetch: true });
+      expect(res2.ok).toBe(false);
+      if (!res2.ok) {
+        expect(res2.error.messageKey).toBe('NOT_MEMBER');
+      }
+      expect(mockRpc).toHaveBeenCalledTimes(2);
+
+      // Step 3: Subsequent getResult('room_123') must NOT return stale cached result
+      const res3 = await repo.getResult('room_123');
+      expect(res3.ok).toBe(false);
+      expect(mockRpc).toHaveBeenCalledTimes(3);
+    });
+
+    test('partitions cache by identity and supports clearCache and invalidateRoom', async () => {
+      let currentIdentity = 'user_1';
+      const mockRpc = jest.fn().mockResolvedValue({ ok: true, data: canonicalDecidedPayload });
+      const repo = new LiveResultRepository({
+        rpcCaller: mockRpc,
+        getCurrentIdentity: () => currentIdentity,
+      });
+
+      // Read as user_1
+      await repo.getResult('room_123');
+      expect(mockRpc).toHaveBeenCalledTimes(1);
+
+      // Read again as user_1 -> cache hit
+      await repo.getResult('room_123');
+      expect(mockRpc).toHaveBeenCalledTimes(1);
+
+      // Switch identity to user_2 -> cache miss, calls server
+      currentIdentity = 'user_2';
+      await repo.getResult('room_123');
+      expect(mockRpc).toHaveBeenCalledTimes(2);
+
+      // Invalidate room
+      repo.invalidateRoom('room_123');
+      await repo.getResult('room_123');
+      expect(mockRpc).toHaveBeenCalledTimes(3);
+
+      // Clear all cache
+      repo.clearCache();
+      await repo.getResult('room_123');
+      expect(mockRpc).toHaveBeenCalledTimes(4);
+    });
+
+    test('late response after room invalidation does not re-populate cache', async () => {
+      let resolveFirstCall: (val: any) => void;
+      const firstCallPromise = new Promise(resolve => {
+        resolveFirstCall = resolve;
+      });
+
+      const mockRpc = jest.fn().mockImplementationOnce(() => firstCallPromise);
+      const repo = new LiveResultRepository({ rpcCaller: mockRpc });
+
+      // Start in-flight request
+      const inFlight = repo.getResult('room_late');
+
+      // Invalidate room while request is in flight
+      repo.invalidateRoom('room_late');
+
+      // First call resolves late
+      resolveFirstCall!({ ok: true, data: canonicalDecidedPayload });
+      await inFlight;
+
+      // Subsequent read must call server again rather than hitting cache
+      mockRpc.mockResolvedValueOnce({ ok: true, data: canonicalDecidedPayload });
+      await repo.getResult('room_late');
       expect(mockRpc).toHaveBeenCalledTimes(2);
     });
 

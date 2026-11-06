@@ -37,6 +37,7 @@ export function DishResultEntry({
       return (
         <RequireActiveSession onHome={onHome}>
           <LiveDishResultScreen
+            key={roomId}
             roomId={roomId}
             repository={repository}
             onHome={onHome}

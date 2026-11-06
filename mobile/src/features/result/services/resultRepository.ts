@@ -36,6 +36,7 @@ export const LEGACY_DECISION_POLICY_VERSION = 'decision-v2';
 export interface GetResultOptions {
   contractVersion?: string;
   forceRefetch?: boolean;
+  identityId?: string;
 }
 
 export interface FetchNearbyPlacesParams {
@@ -63,6 +64,7 @@ export interface LiveResultRepositoryDeps {
   rpcCaller?: (name: string, params: Record<string, unknown>) => Promise<unknown>;
   contractVersion?: string;
   placesFetcher?: (params: FetchNearbyPlacesParams) => Promise<ReadResult<NearbyState>>;
+  getCurrentIdentity?: () => string | null;
 }
 
 /**
@@ -71,7 +73,7 @@ export interface LiveResultRepositoryDeps {
 export function mapRawToResultDish(raw: any): ResultDish | null {
   if (!raw || typeof raw !== 'object') return null;
   const dishId = typeof raw.dishId === 'string' && raw.dishId.trim() ? raw.dishId.trim() : null;
-  const roundDishId = typeof raw.roundDishId === 'string' && raw.roundDishId.trim() ? raw.roundDishId.trim() : dishId;
+  const roundDishId = typeof raw.roundDishId === 'string' && raw.roundDishId.trim() ? raw.roundDishId.trim() : null;
   const name = typeof raw.name === 'string' && raw.name.trim() ? raw.name.trim() : null;
 
   if (!dishId || !roundDishId || !name) return null;
@@ -109,10 +111,10 @@ export function mapRawToResultDish(raw: any): ResultDish | null {
       ? pr.sourceRef.trim()
       : typeof pr.source === 'string' && pr.source.trim()
         ? pr.source.trim()
-        : 'Menu';
+        : null;
     const servingSize = typeof pr.servingSize === 'string' && pr.servingSize.trim() ? pr.servingSize.trim() : null;
 
-    if (amount !== null && currency && unit && checkedAt) {
+    if (amount !== null && currency && unit && checkedAt && sourceRef) {
       priceReference = {
         amount,
         currency,
@@ -167,18 +169,47 @@ export function mapRawToScoredResult(raw: any): ScoredResult | null {
   const round = raw.round;
   const reasonCode = raw.reasonCode;
   const finalizedAt = typeof raw.finalizedAt === 'string' ? raw.finalizedAt : null;
+  const scoreVersion = raw.scoreVersion;
+  const rankingVersion = raw.rankingVersion;
   const round1BallotCount = typeof raw.round1BallotCount === 'number' ? raw.round1BallotCount : undefined;
 
   if (!resultId || !finalizedAt || (round !== 1 && round !== 2)) return null;
   if (status !== 'DECIDED' && status !== 'NO_CONSENSUS') return null;
 
+  // Validate canonical contractVersion and policyVersion
+  if (
+    contractVersion !== 'dish-session-v4/roadmap-v2/GM-07.B' &&
+    contractVersion !== 'dish-session-v4/roadmap-v2/GM-07.B-supplement'
+  ) {
+    return null;
+  }
+  if (policyVersion !== CANONICAL_RESULT_POLICY_VERSION) {
+    return null;
+  }
+
+  // round1BallotCount validation
+  if (contractVersion === 'dish-session-v4/roadmap-v2/GM-07.B-supplement') {
+    if (round1BallotCount === undefined || !Number.isInteger(round1BallotCount) || round1BallotCount < 1 || round1BallotCount > 20) {
+      return null;
+    }
+  }
+
   if (status === 'NO_CONSENSUS') {
+    // For NO_CONSENSUS, server response MUST NOT have winner or non-empty topDishes
+    if (raw.winner != null) return null;
+    if (raw.topDishes != null && (!Array.isArray(raw.topDishes) || raw.topDishes.length > 0)) return null;
+
+    // scoreVersion and rankingVersion must be null or undefined
+    if (scoreVersion !== null && scoreVersion !== undefined) return null;
+    if (rankingVersion !== null && rankingVersion !== undefined) return null;
+
     if (round === 1 && reasonCode !== 'EMPTY_INTERSECTION') return null;
     if (round === 2 && reasonCode !== 'ALL_REMOVED') return null;
+
     const scoredNoConsensus: ScoredResult = {
       resultId,
-      contractVersion: contractVersion ?? CANONICAL_RESULT_CONTRACT_VERSION,
-      policyVersion: policyVersion ?? CANONICAL_RESULT_POLICY_VERSION,
+      contractVersion,
+      policyVersion,
       status: 'NO_CONSENSUS',
       round,
       winner: null,
@@ -193,8 +224,11 @@ export function mapRawToScoredResult(raw: any): ScoredResult | null {
   }
 
   // DECIDED status
+  if (scoreVersion !== 'want2-ok1-round1-v1') return null;
+  if (rankingVersion !== 'score-desc-dense-rank-v1') return null;
   if (round === 1 && reasonCode !== 'UNANIMOUS_WANT') return null;
   if (round === 2 && reasonCode !== 'ACCEPTABLE_FINAL') return null;
+
   const winnerDish = mapRawToResultDish(raw.winner);
   if (!winnerDish) return null;
 
@@ -221,15 +255,15 @@ export function mapRawToScoredResult(raw: any): ScoredResult | null {
 
   const scored: ScoredResult = {
     resultId,
-    contractVersion: contractVersion ?? CANONICAL_RESULT_CONTRACT_VERSION,
-    policyVersion: policyVersion ?? CANONICAL_RESULT_POLICY_VERSION,
+    contractVersion,
+    policyVersion,
     status: 'DECIDED',
     round,
     winner: winnerDish,
     reasonCode,
     finalizedAt,
-    scoreVersion: 'want2-ok1-round1-v1',
-    rankingVersion: 'score-desc-dense-rank-v1',
+    scoreVersion,
+    rankingVersion,
     topDishes: mappedTopDishes,
     ...(round1BallotCount !== undefined ? { round1BallotCount } : {}),
   };
@@ -243,9 +277,12 @@ export class LiveResultRepository implements ResultRepository {
   private readonly rpcCaller?: (name: string, params: Record<string, unknown>) => Promise<unknown>;
   private readonly defaultContractVersion: string;
   private readonly placesFetcher?: (params: FetchNearbyPlacesParams) => Promise<ReadResult<NearbyState>>;
+  private readonly getCurrentIdentity?: () => string | null;
 
-  // In-memory cache of terminal results by roomId
+  // In-memory cache of terminal results partitioned by identity + roomId + contractVersion
   private readonly resultCache = new Map<string, ResultInput>();
+  // Generation counter per room to prevent late responses from restoring invalidated cache
+  private readonly roomGenerations = new Map<string, number>();
 
   constructor(deps: LiveResultRepositoryDeps = {}) {
     this.roomRepo = deps.roomRepository;
@@ -253,6 +290,7 @@ export class LiveResultRepository implements ResultRepository {
     this.rpcCaller = deps.rpcCaller;
     this.defaultContractVersion = deps.contractVersion ?? CANONICAL_RESULT_CONTRACT_VERSION;
     this.placesFetcher = deps.placesFetcher;
+    this.getCurrentIdentity = deps.getCurrentIdentity;
   }
 
   private getCaller(): ((name: string, params: Record<string, unknown>) => Promise<unknown>) | null {
@@ -261,6 +299,59 @@ export class LiveResultRepository implements ResultRepository {
       return (this.roomRepo as any).getRpcCaller();
     }
     return null;
+  }
+
+  private getCacheKey(roomId: string, identityId?: string, contractVersion?: string): string {
+    const ident = identityId ?? (this.getCurrentIdentity ? this.getCurrentIdentity() : null) ?? 'anonymous';
+    const cv = contractVersion ?? this.defaultContractVersion;
+    return `${ident}:${roomId}:${cv}`;
+  }
+
+  private getRoomGeneration(roomId: string): number {
+    return this.roomGenerations.get(roomId) ?? 0;
+  }
+
+  private bumpRoomGeneration(roomId: string): number {
+    const next = (this.roomGenerations.get(roomId) ?? 0) + 1;
+    this.roomGenerations.set(roomId, next);
+    return next;
+  }
+
+  /**
+   * Completely clears the cache. Call upon logout or account change.
+   */
+  clearCache(): void {
+    this.resultCache.clear();
+    this.roomGenerations.clear();
+  }
+
+  /**
+   * Invalidates any cached results for a specific room across all identities/contracts.
+   */
+  invalidateRoom(roomId: string): void {
+    const trimmed = roomId.trim();
+    this.bumpRoomGeneration(trimmed);
+    for (const key of Array.from(this.resultCache.keys())) {
+      if (key.includes(`:${trimmed}:`)) {
+        this.resultCache.delete(key);
+      }
+    }
+  }
+
+  private isPermissionOrTerminalRevocationError(errCode: string): boolean {
+    return [
+      'NOT_MEMBER',
+      'AUTH_REQUIRED',
+      'UNAUTHORIZED',
+      'ROOM_EXPIRED',
+      'FORBIDDEN',
+      'ROOM_NOT_FOUND',
+      'NOT_FOUND',
+      'ACCESS_DENIED',
+      'SESSION_NOT_FOUND',
+      'OUTSIDER',
+      'KICKED',
+    ].includes(errCode);
   }
 
   /**
@@ -273,11 +364,14 @@ export class LiveResultRepository implements ResultRepository {
     }
 
     const trimmedRoomId = roomId.trim();
-    if (!options?.forceRefetch && this.resultCache.has(trimmedRoomId)) {
-      return { ok: true, data: this.resultCache.get(trimmedRoomId)! };
+    const contractVersion = options?.contractVersion ?? this.defaultContractVersion;
+    const cacheKey = this.getCacheKey(trimmedRoomId, options?.identityId, contractVersion);
+
+    if (!options?.forceRefetch && this.resultCache.has(cacheKey)) {
+      return { ok: true, data: this.resultCache.get(cacheKey)! };
     }
 
-    const contractVersion = options?.contractVersion ?? this.defaultContractVersion;
+    const startGen = this.getRoomGeneration(trimmedRoomId);
     const caller = this.getCaller();
 
     if (caller) {
@@ -295,7 +389,9 @@ export class LiveResultRepository implements ResultRepository {
           const scored = mapRawToScoredResult(raw.data);
           if (scored) {
             const resultInput: ResultInput = { capability: 'scored-v4', result: scored };
-            this.resultCache.set(trimmedRoomId, resultInput);
+            if (this.getRoomGeneration(trimmedRoomId) === startGen) {
+              this.resultCache.set(cacheKey, resultInput);
+            }
             return { ok: true, data: resultInput };
           }
 
@@ -305,7 +401,9 @@ export class LiveResultRepository implements ResultRepository {
               capability: 'legacy-unscored-v1',
               result: raw.data as RoomResult,
             };
-            this.resultCache.set(trimmedRoomId, legacyInput);
+            if (this.getRoomGeneration(trimmedRoomId) === startGen) {
+              this.resultCache.set(cacheKey, legacyInput);
+            }
             return { ok: true, data: legacyInput };
           }
 
@@ -314,12 +412,15 @@ export class LiveResultRepository implements ResultRepository {
         }
 
         if (raw && !raw.ok) {
-          const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as ErrorCode;
+          const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as string;
+          if (this.isPermissionOrTerminalRevocationError(errCode)) {
+            this.invalidateRoom(trimmedRoomId);
+          }
           // Result not yet finalized
-          if (errCode === ('RESULT_NOT_READY' as ErrorCode) || errCode === 'NOT_READY') {
+          if (errCode === 'RESULT_NOT_READY' || errCode === 'NOT_READY') {
             return { ok: false, error: { messageKey: 'NOT_READY', details: raw.error?.details } };
           }
-          return { ok: false, error: { messageKey: errCode, details: raw.error?.details } };
+          return { ok: false, error: { messageKey: errCode as ErrorCode, details: raw.error?.details } };
         }
 
         return { ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } };
@@ -338,17 +439,25 @@ export class LiveResultRepository implements ResultRepository {
               capability: 'legacy-unscored-v1',
               result: snap.data.result,
             };
-            this.resultCache.set(trimmedRoomId, legacyInput);
+            if (this.getRoomGeneration(trimmedRoomId) === startGen) {
+              this.resultCache.set(cacheKey, legacyInput);
+            }
             return { ok: true, data: legacyInput };
           }
           const scored = mapRawToScoredResult(snap.data.result);
           if (scored) {
             const input: ResultInput = { capability: 'scored-v4', result: scored };
-            this.resultCache.set(trimmedRoomId, input);
+            if (this.getRoomGeneration(trimmedRoomId) === startGen) {
+              this.resultCache.set(cacheKey, input);
+            }
             return { ok: true, data: input };
           }
         }
         if (!snap.ok) {
+          const snapErr = (snap.error?.messageKey || '') as string;
+          if (this.isPermissionOrTerminalRevocationError(snapErr)) {
+            this.invalidateRoom(trimmedRoomId);
+          }
           return { ok: false, error: snap.error };
         }
       } catch (err: unknown) {
