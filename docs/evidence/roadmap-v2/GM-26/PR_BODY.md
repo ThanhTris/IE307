@@ -1,73 +1,27 @@
-## Summary & Context
+## Task and behavior
 
-This PR implements the Figma UI requirements and integration updates for **Task GM-26** ([Issue #87](https://github.com/ThanhTris/IE307/issues/87)), delivering the complete UI flow and service layer for voting ballot submission (Round 1 & Round 2), 60-second waiting state countdown, strict host quorum early finalization, Round 2 survivor candidate pool with Cap 30% elimination limit, and support for the $N=1$ single survivor candidate edge case.
+GM-26 ([issue #87](https://github.com/ThanhTris/IE307/issues/87)), owner Trang, reviewer Tri. Contract: `dish-session-v4/roadmap-v2/GM-07.B-supplement`.
 
-Reference: Figma file `3Ysh0mOAEkAgA5DgZPSC1j`, revision `ui-figma-final/2026-10-25/GM-26.2`.
-Contract: `dish-session-v4/roadmap-v2/GM-07.B-supplement`.
-Reviewer: @ThanhTris
+Connects the existing R1/R2 Figma screens to real room snapshots, ballot ACK, waiting and finalize. An ACKed ballot resumes the waiting step without resubmitting votes. Ambiguous retries retain the complete request; room/account changes invalidate old continuations, and stale snapshots cannot regress the round or result. Host identity and the server-provided `canEndWaiting` permission are distinct. Prices retain their currency/unit and missing metadata stays hidden.
 
----
+Keeps the R2 30% cap with minimum one, including REMOVE when N=1. The server owns deadlines, transitions, winner and Top 3. Includes the lobby-to-vote route correction and preserves `NOT_ENOUGH_MEMBERS`. SDK 58 patches and lockfile are aligned with the tested Expo Go baseline. No API or migration change.
 
-## Key Changes
+## Inputs and merge checks
 
-1. **5 Figma Nodes Parity**:
-   - `330:3071` [07 · Vòng 1 / Chọn món / Gửi phiếu]: Flashcard and list voting with WANT / OK / NO. Submit button disabled until 100% of pool dishes are rated. Creates durable intent and locks interaction upon server ACK.
-   - `330:3072` [08 · Chờ vòng 1 / Chốt ngay / Rời phòng]: Waiting state with 60s countdown timer starting upon the first acknowledged ballot. Host-only "Chốt ngay · Kết thúc chờ sớm" button strictly gated by quorum $A_r > M/2$ ($\iff A_r \ge \lfloor M/2 \rfloor + 1$). Safe leave room action.
-   - `330:3073` [09 · Vòng 2 / Pool còn lại / Giới hạn loại]: Survivor candidates ($N \ge 1$) excluding any dish marked NO by any member. Cap 30% elimination rule ($\text{cap} = \max(1, \lfloor 0.30 \times N \rfloor)$). Automatic disabling of Remove buttons when at cap; "Chọn giữ tất cả" reset; confirmation SheetDialog before final submission.
-   - `330:3074` [10 · Chờ vòng 2 / Xác nhận / Gửi lỗi / Kết nối lại]: Round 2 waiting room, retry handling with preserved choices on network failure, host finalize upon quorum, and clean progression to result screen.
-   - `638:9369` [Vòng 2 — Còn 1 món · Đã loại]: Support for $N=1$ single survivor with $\text{cap}=1$. Allows user to KEEP or REMOVE. Displays ALL_REMOVED warning dialog when all items are removed, and concludes session with `NO_CONSENSUS / ALL_REMOVED` if all members remove it.
+- Live Project prerequisites GM-07, GM-12, GM-20 and GM-25 are Done; their artifacts exist on target main `c5b2b07`.
+- Start gate: `READY_TO_CLAIM`. Target-baseline diagnostic: `READY_FOR_MERGE_REVIEW`.
+- Ordinary branch merge checker: `BLOCKED_ON_BASE` for `VoteScreen.tsx` and `FinalRoundScreen.tsx`. These delivered GM-12 screens are intentionally changed by the GM-26 integration. The target versions and integration diff were reviewed manually; checker logic and task statuses were not changed.
+- The owner requested push/merge in the current chat. No automated GitHub approval or Project Done is recorded by this PR.
 
-2. **Vote Repository Service (`mobile/src/features/voting/services/voteRepository.ts`)**:
-   - Implemented `LiveVoteRepository` calling canonical Supabase RPC `dish_session` v4 with contract `dish-session-v4/roadmap-v2/GM-07.B-supplement`.
-   - Durable request ID generator matching `^[A-Za-z0-9_-]{1,128}$`.
-   - Stable idempotency caching preventing duplicate submissions across retries.
-   - Client and server error mapping: `REMOVE_LIMIT` (409), `NOT_HOST` (403), `NOT_READY` (409), `VOTE_CLOSED` (409).
-   - Provided `MockVoteRepository` for isolated component unit testing.
+## Verification
 
-3. **Route Integration**:
-   - `mobile/src/app/room/vote.tsx`: Wired `VoteScreen` with `createLiveVoteRepository(api)` in real mode.
-   - `mobile/src/app/room/final-round.tsx`: Wired `FinalRoundScreen` with `createLiveVoteRepository(api)` in real mode.
-   - Updated hooks `useRoundOneVoting` and `useRoundTwoVoting` to accept optional `VoteRepository`.
+- Full mobile: **65 suites / 1,104 tests passed**; includes four regressions that failed before the final retry/role correction.
+- Typecheck, lint on touched files (zero warnings), architecture, repository validator, task indexes and whitespace checks: **Pass**.
+- Earlier QA: real Auth+REST on owned schema 0.16.0, R1 ACK/waiting/worker transition, R2 REMOVE and persisted `DECIDED`; backend runners and SQL/domain parity passed as documented.
+- Earlier Expo Go emulator: voting interaction/cap checked. The final waiting/identity correction adds consumer regression coverage; API/Android were **not rerun** for that correction.
 
-4. **Review Comment Fixes — Round 1 (F1–F7)**:
-   - **F1 (Wire format)**: Strictly maps ballots to `{ roundDishId, choice }` on the wire without legacy fields.
-   - **F2 (Dynamic snapshot)**: Eliminates hardcoded fixtures in real mode; dynamically loads snapshot, pool, versions, and caller host status via `getSnapshot`.
-   - **F3 (Waiting synchronization)**: Synchronizes 60s countdown with server `deadline` and `serverTime`; polls snapshot every 2.5s during waiting.
-   - **F4 (Waiting error isolation)**: Isolates post-ACK `enterWaiting` errors without destroying ballot submission state, offering `handleRetryWaiting`.
-   - **F5 (Real outcome navigation)**: Navigates dynamically to real terminal outcomes (`DECIDED`, `NO_CONSENSUS`).
-   - **F6 (Durable IDs across retries)**: Reuses `activeRequestId` across retries; rejects reused request IDs that carry mismatched payloads with `REQUEST_ID_REUSED`.
-   - **F7 (Strict envelope guards)**: Added strict canonical response guards on all RPC envelopes; rejects malformed envelopes with `MALFORMED_RESPONSE`.
+## Handoff and limits
 
-5. **Review Comment Fixes — Round 2 (R1–R8)**:
-   - **R1 (Fetch loop)**: Fixed inline callback recreation by storing callbacks in refs updated via `useEffect`. `VoteScreen` forwards `onGoToFinalRound` directly; exactly 1 snapshot fetch on mount, 0 extra on actions.
-   - **R2 (Unsubmitted member unlock)**: Fixed false-positive ACK from empty array `ownBallot = []`. Unsubmitted callers remain in `idle` and unlocked.
-   - **R3 (Truthful snapshot projection)**: Cleaned `mapSnapshotPoolToPoolDishes` to omit fake 50k–70k price ranges, eliminate fallback restaurant names from `sourceRef`, remove default meal slots, and preserve artwork attribution and license.
-   - **R4 (Terminal state priority)**: Strictly evaluates terminal states (`DECIDED`, `NO_CONSENSUS`) before active Round 2 states, navigating directly to results on reconnect.
-   - **R5 (Outcome navigation isolation)**: Enforces mutual exclusivity between outcome navigation routes; guarded with `navigatedOutcomeRef`. `final-round.tsx` safely checks `isNoConsensus` before fallback.
-   - **R6 (Clock skew calibration)**: Calibrated server clock offset from `snap.serverTime` so countdown calculates accurately regardless of client device time.
-   - **R7 (In-flight retry preservation)**: Preserves in-flight intent (`inFlightIntentRef`) including durable request ID, intent ID, versions, and votes across failures.
-   - **R8 (ESLint 0 errors / 0 warnings)**: Cleaned ESLint `react-hooks/set-state-in-effect` and `react-hooks/refs` without any `eslint-disable` comments.
+[CHECKS](https://github.com/ThanhTris/IE307/blob/issue87_figma_ui_gm26/docs/evidence/roadmap-v2/GM-26/CHECKS.md) · [HANDOFF](https://github.com/ThanhTris/IE307/blob/issue87_figma_ui_gm26/docs/evidence/roadmap-v2/GM-26/HANDOFF.md) · [Figma map](https://github.com/ThanhTris/IE307/blob/issue87_figma_ui_gm26/docs/design/UI_FIGMA_TASK_MAP.json).
 
----
-
-## Verification & Test Results
-
-- `npm run typecheck`: **Pass** (0 TypeScript errors under strict mode).
-- `npm run lint`: **Pass** (0 ESLint errors, 0 warnings across the entire repository).
-- `npm run check:architecture`: **Pass** (clean boundaries).
-- Focused GM-26 test suites: **Pass** (61/61 tests across 3 suites):
-  - `tests/unit/voteRepository.test.ts`: 25/25 pass (including wire format, F6 mismatch rejection, F7 envelope guards, R3 truthful mapping).
-  - `tests/component/gm26FigmaParity.test.tsx`: 7/7 pass.
-  - `tests/component/votingScreens.test.tsx`: 29/29 pass (including R1, R2, R4, R5, R6, R7 audit tests).
-- Full mobile test suite (`npm test`): **Pass** (62/62 suites, 1,059/1,059 tests passing).
-- Repository validation (`validate_repository.py` & `task_readiness.py --check-docs`): **Pass**.
-- `git diff --check`: **Pass** (clean whitespace, no conflict markers).
-
----
-
-## Evidence & Limits
-
-- Detailed audit checks: `docs/evidence/roadmap-v2/GM-26/CHECKS.md`
-- Handover specification: `docs/evidence/roadmap-v2/GM-26/HANDOFF.md`
-- Figma parity report: `docs/evidence/roadmap-v2/GM-26/FIGMA_PARITY.md`
-- Physical Android device acceptance and remote backend staging verification remain reported as **Not run** pending device connection and Trí's review.
+The result API consumer remains GM-27: reaching its placeholder does not establish result UI integration. Visual screenshot parity, physical Android and native-build evidence remain **Not run**. In-memory recovery does not replace the persistent outbox of GM-31. Existing legacy API and policy versions remain pinned.

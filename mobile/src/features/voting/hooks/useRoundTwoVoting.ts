@@ -23,11 +23,11 @@ import {
 import {
   clearBallotIntent,
   clearVoteDraft,
+  clearWaitingIntent,
   getBallotIntent,
   getSubmissionReceipt,
   getVoteDraft,
-  getWaitingRequestId,
-  resetWaitingRequestId,
+  getWaitingIntent,
   saveBallotIntent,
   saveSubmissionReceipt,
   saveVoteDraft,
@@ -226,9 +226,7 @@ export function useRoundTwoVoting({
       setServerCap(snap.removalCap);
     }
 
-    if (snap.canEndWaiting != null) {
-      setIsHost(snap.canEndWaiting || (snap.hostUserId ? isHost : false));
-    }
+    setIsHost(snap.hostUserId === identityId);
 
     // R6: Calibrate clock skew
     if (snap.serverTime) {
@@ -298,6 +296,10 @@ export function useRoundTwoVoting({
 
     if (callerSubmitted) {
       setSubmissionState('ack');
+      if (snap.ownWaiting) {
+        setWaitingError(null);
+        clearWaitingIntent(snapshotScope);
+      }
       if (storedReceipt) setReceipt(storedReceipt);
       setIsWaitingForMembers(snap.state === 'WAITING_2');
       setNeedsWaitingTransition((snap.state === 'ROUND_2' || snap.state === 'WAITING_2') && !snap.ownWaiting && hasCompleteBallot);
@@ -345,7 +347,7 @@ export function useRoundTwoVoting({
       }
       setIsWaitingForMembers(false);
     }
-  }, [computeRemainingFromDeadline, identityId, isHost, roomId]);
+  }, [computeRemainingFromDeadline, identityId, roomId]);
 
   // Snapshot fetching method (R1: only depends on repository and roomId)
   const fetchSnapshot = useCallback(async () => {
@@ -425,18 +427,18 @@ export function useRoundTwoVoting({
     setWaitingError(null);
 
     const send = async (expectedVersion: number, mayRetryConflict: boolean): Promise<void> => {
-      const requestId = getWaitingRequestId(scope, () => createDurableRequestId('wait_r2'));
+      const intent = getWaitingIntent(scope, expectedVersion, () => createDurableRequestId('wait_r2'));
       try {
         const waitRes = await repository.enterWaiting({
-          roomId,
+          roomId: intent.roomId,
           round: 2,
-          poolVersion: scope.poolVersion,
-          expectedVersion,
-          requestId,
+          poolVersion: intent.poolVersion,
+          expectedVersion: intent.expectedVersion,
+          requestId: intent.requestId,
         });
         if (!isCurrentContext(requestedContext)) return;
         if (waitRes.ok) {
-          resetWaitingRequestId(scope);
+          clearWaitingIntent(scope);
           setNeedsWaitingTransition(false);
           setIsWaitingForMembers(true);
           setResult(null);
@@ -459,7 +461,7 @@ export function useRoundTwoVoting({
             && fresh.ownBallot.length === fresh.pool.length
             && fresh.ownBallot.length > 0);
           if (fresh && hasAcceptedBallot) {
-            resetWaitingRequestId(scope);
+            clearWaitingIntent(scope);
             await send(fresh.version, false);
             return;
           }
@@ -482,7 +484,7 @@ export function useRoundTwoVoting({
     } finally {
       if (isCurrentContext(requestedContext)) setIsRetryingWaiting(false);
     }
-  }, [repository, activeScope, roomId, roomVersion, fetchSnapshot, computeRemainingFromDeadline, captureContext, isCurrentContext]);
+  }, [repository, activeScope, roomVersion, fetchSnapshot, computeRemainingFromDeadline, captureContext, isCurrentContext]);
 
   useEffect(() => {
     if (!repository || !needsWaitingTransition) return;

@@ -1,10 +1,10 @@
 import {
   clearVoteSession,
+  clearWaitingIntent,
   getBallotIntent,
   getSubmissionReceipt,
   getVoteDraft,
-  getWaitingRequestId,
-  resetWaitingRequestId,
+  getWaitingIntent,
   saveBallotIntent,
   saveSubmissionReceipt,
   saveVoteDraft,
@@ -56,11 +56,11 @@ it('partitions drafts and ACK receipts by scope and clears them on logout', () =
   expect(getSubmissionReceipt(scope)).toBeNull();
 });
 
-it('retains the waiting request id for ambiguous retries and replaces it after a confirmed conflict', () => {
-  const first = getWaitingRequestId(scope, () => 'wait-1');
-  expect(getWaitingRequestId(scope, () => 'wait-2')).toBe(first);
-  resetWaitingRequestId(scope);
-  expect(getWaitingRequestId(scope, () => 'wait-3')).toBe('wait-3');
+it('retains the entire waiting request for ambiguous retries and replaces it after a confirmed conflict', () => {
+  const first = getWaitingIntent(scope, 11, () => 'wait-1');
+  expect(getWaitingIntent(scope, 12, () => 'wait-2')).toEqual(first);
+  clearWaitingIntent(scope);
+  expect(getWaitingIntent(scope, 13, () => 'wait-3')).toEqual({ ...scope, expectedVersion: 13, requestId: 'wait-3' });
 });
 
 it('ignores an older snapshot response after a newer version has been applied', () => {

@@ -56,8 +56,8 @@ function terminal() {
 }
 
 beforeEach(() => clearVoteSession('anonymous'));
-afterEach(() => {
-  cleanup();
+afterEach(async () => {
+  await cleanup();
   clearVoteSession('anonymous');
   clearVoteSession('user-wait');
   clearVoteSession('user-resume');
@@ -206,7 +206,7 @@ it('restores an unresolved ballot from the same in-memory user/room/pool scope a
   await waitFor(() => expect(first.result.current.allVoted).toBe(true));
   await act(async () => first.result.current.handleSubmit());
   const originalRequest = repo.submitBallot.mock.calls[0][0];
-  first.unmount();
+  await first.unmount();
 
   const resumed = await renderHook(() => useRoundOneVoting({ repository: repo, roomId, identityId: 'user-resume' }));
   await waitFor(() => expect(resumed.result.current.allVoted).toBe(true));
@@ -223,4 +223,47 @@ it('does not display a canonical USD amount as Vietnamese dong', async () => {
   const candidates = mapSnapshotPoolToPoolDishes([card]);
   await render(<FinalRoundScreen candidates={candidates} showScenarioPicker={false} />);
   expect(screen.queryByText('10 đ')).toBeNull();
+});
+
+it.each([1, 2] as const)('preserves the entire ambiguous waiting request after a newer snapshot in round %s', async round => {
+  const s = waiting(round);
+  s.state = round === 1 ? 'ROUND_1' : 'ROUND_2';
+  s.deadline = null;
+  s.waitingStartedAt = null;
+  s.ownBallot = s.pool.map(d => ({ roundDishId: d.roundDishId, choice: round === 1 ? 'OK' : 'KEEP' }));
+  const repo = repository(s);
+  repo.enterWaiting.mockResolvedValue({ ok: false, error: { messageKey: 'NETWORK_ERROR' } });
+  const { result } = await renderHook(() => round === 1
+    ? useRoundOneVoting({ repository: repo, roomId, identityId: 'user-wait' })
+    : useRoundTwoVoting({ repository: repo, roomId, identityId: 'user-wait' }));
+
+  await waitFor(() => expect(result.current.waitingError).toBeTruthy());
+  const originalRequest = repo.enterWaiting.mock.calls[0][0];
+  repo.getSnapshot.mockResolvedValue({ ok: true, data: { ...s, version: s.version + 1 } });
+  await act(async () => result.current.fetchSnapshot());
+  await act(async () => result.current.handleRetryWaiting());
+
+  expect(repo.enterWaiting).toHaveBeenCalledTimes(2);
+  expect(repo.enterWaiting.mock.calls[1][0]).toEqual(originalRequest);
+});
+
+it.each([1, 2] as const)('uses the caller identity for host controls in round %s even before majority is reached', async round => {
+  const s = waiting(round);
+  s.ownWaiting = true;
+  s.ownBallot = s.pool.map(d => ({ roundDishId: d.roundDishId, choice: round === 1 ? 'OK' : 'KEEP' }));
+  const repo = repository(s);
+  const member = await renderHook(() => round === 1
+    ? useRoundOneVoting({ repository: repo, roomId, identityId: s.members[1]!.userId })
+    : useRoundTwoVoting({ repository: repo, roomId, identityId: s.members[1]!.userId }));
+  await waitFor(() => expect(member.result.current.submissionState).toBe('ack'));
+  expect(member.result.current.isHost).toBe(false);
+  expect(member.result.current.canHostEarlyFinish).toBe(false);
+  await member.unmount();
+
+  const host = await renderHook(() => round === 1
+    ? useRoundOneVoting({ repository: repo, roomId, identityId: s.hostUserId })
+    : useRoundTwoVoting({ repository: repo, roomId, identityId: s.hostUserId }));
+  await waitFor(() => expect(host.result.current.submissionState).toBe('ack'));
+  expect(host.result.current.isHost).toBe(true);
+  expect(host.result.current.canHostEarlyFinish).toBe(false);
 });

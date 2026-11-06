@@ -19,10 +19,15 @@ export interface StoredBallotIntent extends VoteScope {
   votes: BallotVoteItem[];
 }
 
+export interface StoredWaitingIntent extends VoteScope {
+  requestId: string;
+  expectedVersion: number;
+}
+
 const ballotIntents = new Map<string, StoredBallotIntent>();
 const voteDrafts = new Map<string, Record<string, string>>();
 const submissionReceipts = new Map<string, SubmissionReceipt>();
-const waitingRequestIds = new Map<string, string>();
+const waitingIntents = new Map<string, StoredWaitingIntent>();
 
 function scopeKey(scope: VoteScope): string {
   return JSON.stringify([scope.identityId, scope.roomId, scope.round, scope.poolVersion]);
@@ -70,17 +75,17 @@ export function saveSubmissionReceipt(scope: VoteScope, receipt: SubmissionRecei
   submissionReceipts.set(scopeKey(scope), { ...receipt });
 }
 
-export function getWaitingRequestId(scope: VoteScope, create: () => string): string {
+export function getWaitingIntent(scope: VoteScope, expectedVersion: number, create: () => string): StoredWaitingIntent {
   const key = scopeKey(scope);
-  const existing = waitingRequestIds.get(key);
-  if (existing) return existing;
-  const requestId = create();
-  waitingRequestIds.set(key, requestId);
-  return requestId;
+  const existing = waitingIntents.get(key);
+  if (existing) return { ...existing };
+  const intent = { ...scope, expectedVersion, requestId: create() };
+  waitingIntents.set(key, intent);
+  return { ...intent };
 }
 
-export function resetWaitingRequestId(scope: VoteScope): void {
-  waitingRequestIds.delete(scopeKey(scope));
+export function clearWaitingIntent(scope: VoteScope): void {
+  waitingIntents.delete(scopeKey(scope));
 }
 
 /** In-memory request state belongs to the authenticated identity and is discarded at logout. */
@@ -88,9 +93,8 @@ export function clearVoteSession(identityId: string): void {
   for (const [key, intent] of ballotIntents) {
     if (intent.identityId === identityId) ballotIntents.delete(key);
   }
-  for (const key of [...waitingRequestIds.keys()]) {
-    const [storedIdentity] = JSON.parse(key) as [string];
-    if (storedIdentity === identityId) waitingRequestIds.delete(key);
+  for (const [key, intent] of waitingIntents) {
+    if (intent.identityId === identityId) waitingIntents.delete(key);
   }
   for (const key of [...voteDrafts.keys()]) {
     const [storedIdentity] = JSON.parse(key) as [string];
