@@ -45,9 +45,13 @@ class MemoryDatabase implements SqlitePrivateDatabase {
 
 class MemorySecureStore implements SecurePrivateStore {
   values = new Map<string, string>();
+  failNextDelete = false;
   async getItemAsync(key: string) { return this.values.get(key) ?? null; }
   async setItemAsync(key: string, value: string) { this.values.set(key, value); }
-  async deleteItemAsync(key: string) { this.values.delete(key); }
+  async deleteItemAsync(key: string) {
+    if (this.failNextDelete) { this.failNextDelete = false; throw new Error('SECURE_DELETE_FAILED'); }
+    this.values.delete(key);
+  }
 }
 
 function setup() {
@@ -118,6 +122,34 @@ describe('GM-31 durable private outbox', () => {
     }));
     expect(stale).toEqual([]);
     expect(await outbox.list('user-A')).toEqual([]);
+  });
+
+  test('keeps same-scope pending intent when only the room version increased', async () => {
+    const { outbox } = setup();
+    await outbox.enqueue(intent('user-A', 'pending'));
+    await outbox.enqueue(intent('user-A', 'unknown'));
+    await outbox.markUnknown('user-A', 'unknown');
+    const candidates = await outbox.reconcileBeforeReplay('user-A', async () => ({
+      roomId: 'room-1', round: 1, poolVersion: 4,
+      contractVersion: intent('user-A', 'x').contractVersion,
+      version: 13, active: true, acknowledgedRequestIds: [],
+    }));
+    expect(candidates.map(item => item.requestId)).toEqual(['pending']);
+    expect((await outbox.list('user-A')).map(item => [item.requestId, item.state])).toEqual([
+      ['pending', 'pending'], ['unknown', 'unknown'],
+    ]);
+  });
+
+  test('retains cleanup metadata when SecureStore deletion fails, then retries successfully', async () => {
+    const { database, secureStore, outbox } = setup();
+    await outbox.enqueue(intent('user-A', 'cleanup'));
+    secureStore.failNextDelete = true;
+    await expect(outbox.clearIdentity('user-A')).rejects.toThrow('SECURE_DELETE_FAILED');
+    expect(database.rows.size).toBe(1);
+    expect(secureStore.values.size).toBe(1);
+    await outbox.clearIdentity('user-A');
+    expect(database.rows.size).toBe(0);
+    expect(secureStore.values.size).toBe(0);
   });
 
   test('TTL expiry removes the secure payload and identity-scoped rows', async () => {

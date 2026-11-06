@@ -1,5 +1,12 @@
 ﻿# GM-29 checks — local implementation
 
+### Trí review follow-up — 2026-11-07 (local, pending PR update)
+
+- Added server-ACKed token persistence and a regression showing failed registration remains retryable and only successful registration is acknowledged.
+- Push lifecycle retries an unacknowledged token when the app returns to foreground and guards registration against identity/session changes.
+- Full `mobile/npm run check`: Pass — typecheck, lint, 70 suites / 1138 tests, architecture check. This is mocked local coverage; native Android delivery/restart is still Not run.
+- PR #126 remains draft and unapproved; no Project status change.
+
 Status: Review required; mandatory Android/Figma evidence is Not run.
 Task / owner / reviewer / scope: GM-29 / Trung / Trí (ThanhTris) / permission UI and native push open.
 Branch / target / tested revision / time: PR #126 branch `codex/gm-28-social-inbox-history` / `main` / tested code commit `35f61ed` (published as `28bb31e`) / 2026-11-06.
@@ -16,8 +23,8 @@ Route: `/push-settings`; Inbox entry is the `Cài đặt thông báo` action on 
 | AC/case | Expected | Actual/evidence | Status | Limit |
 | --- | --- | --- | --- | --- |
 | Expo config and dependencies | SDK-compatible notifications, SQLite plugins and config | `npm run check:expo` and `npx expo config --type public` passed | Pass | EAS project ID is not configured; does not prove native build |
-| Typecheck/lint/unit/architecture | Code compiles and repository checks pass | Latest `npm run check`: 69 suites, 1129 tests passed; architecture boundaries OK | Pass | Local runner only |
-| Focused push/outbox/history regression | Driver, outbox, voting, history repositories | Focused Jest run: 5 suites, 50 tests passed; route/lifecycle/result regressions: 3 suites, 41 tests passed | Pass | Mocked unit coverage |
+| Typecheck/lint/unit/architecture | Code compiles and repository checks pass | Latest `npm run check`: 70 suites, 1138 tests passed; architecture boundaries OK | Pass | Local runner only |
+| Focused push/outbox/history/result regression | Driver, outbox, voting, history repositories, stale result response | Latest focused run: 5 suites, 57 tests passed | Pass | Mocked unit/component coverage |
 | Expo Go Android | App starts; remote-push controls explain native build requirement; inbox remains available | Not run on Expo Go/device | Not run | Android launch evidence required |
 | Permission grant/deny/settings | OS permission reflected; deny preserves Inbox | Not run on Android device | Not run | Need Android device/development build |
 | Remote delivery, cold/warm/duplicate tap, rotation, logout/revocation | Auth restore + canonical ACL refetch; safe current route; no payload trust | Unit mocks cover driver orchestration only; no real delivery run | Not run | Need EAS project ID, push backend credentials and Android development build/device |

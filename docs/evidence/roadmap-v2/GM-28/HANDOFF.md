@@ -7,6 +7,7 @@
 - Start inputs on that revision: GM-07 API contracts/client, GM-14 Friends screen, GM-25 room repository. GM-21/22/23 integration outputs must be rechecked on target before merge.
 - Owner feedback follow-up commit `28bb31e` is pushed to PR #126 (`codex/gm-28-social-inbox-history`). The PR remains draft; review/approval and live API/Android/Figma evidence are still outstanding.
 - Additional review revision `2ec9c2a` adds repository/auth epoch checks for pending history and durable-cache reads plus regressions using real SessionManager/ApiClientImpl/LiveRoomRepository compositions. It is pending push; latest mobile suite is 69 suites / 1129 tests Pass.
+- Follow-up for Trí's 2026-11-06 recheck is in this follow-up commit, based on reviewed PR head `97007037`: session-epoch ballot protection, version-tolerant outbox reconciliation, logout despite push network failure, shared history TTL/consent invalidation, stale result response guard, ACK-only push token tracking/retry, and retryable secure payload cleanup. Added focused regressions; full mobile check passes 70 suites / 1138 tests. Push to PR #126 is pending. HTTP/Android/native/Figma evidence and PR #157 result-reader coordination remain outstanding.
 
 ## Owner feedback follow-up — PR #126
 

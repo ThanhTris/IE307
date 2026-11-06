@@ -107,8 +107,8 @@ export function RoomRepositoryProvider({
     if (isReal) {
       const deviceId = await getPushDeviceId();
       if (deviceId) {
-        const unregistered = await repository.getApiClient().unregisterPushDevice(deviceId);
-        if (!unregistered.ok) return false;
+        // Remote unregister is best effort; an offline device must still be able to log out locally.
+        await repository.getApiClient().unregisterPushDevice(deviceId).catch(() => undefined);
       }
     }
     if (identityId) {

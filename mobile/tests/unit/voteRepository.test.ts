@@ -112,6 +112,75 @@ describe('GM-26 — Vote Repository Unit Suite (Issue #87)', () => {
   });
 
   describe('LiveVoteRepository with RPC Dispatch', () => {
+    it('does not dispatch a persisted ballot after identity changes while enqueue is pending', async () => {
+      let userId = 'user-A';
+      let resolveEnqueue: (() => void) | undefined;
+      const enqueuePending = new Promise<void>(resolve => { resolveEnqueue = resolve; });
+      const rpc = jest.fn();
+      const outbox = {
+        findEquivalent: jest.fn().mockResolvedValue(undefined),
+        enqueue: jest.fn(async () => { await enqueuePending; return {}; }),
+        markUnknown: jest.fn().mockResolvedValue(undefined),
+      };
+      const roomRepository = {
+        getCurrentUser: () => ({ id: userId }),
+        getIdentityRevision: () => userId === 'user-A' ? 1 : 2,
+        getSessionApi: () => ({ getGeneration: () => userId === 'user-A' ? 10 : 11 }),
+        getSessionStatus: () => 'active',
+        getRpcCaller: () => rpc,
+      } as unknown as import('../../src/features/rooms/services/roomRepository').RoomRepository;
+      const repo = createLiveVoteRepository({ roomRepository, outbox: outbox as any });
+      const submitted = repo.submitBallot({
+        roomId: 'room-identity-race', round: 1, poolVersion: 1, expectedVersion: 1,
+        requestId: 'identity-race-request', votes: [{ roundDishId: 'dish_01', vote: 'WANT' }],
+      });
+      await Promise.resolve();
+      userId = 'user-B';
+      resolveEnqueue?.();
+      expect(await submitted).toMatchObject({ ok: false, error: { messageKey: 'AUTH_REQUIRED' } });
+      expect(rpc).not.toHaveBeenCalled();
+      expect(outbox.markUnknown).toHaveBeenCalledWith('user-A', 'identity-race-request');
+    });
+
+    it('reuses the original request and expected version when a same-scope room version advanced', async () => {
+      const snapshot = {
+        roomId: 'room-version-range', code: 'ABC123', state: 'ROUND_1', version: 13, hostUserId: 'user-A',
+        context: { anchorId: 'anchor-1', radiusM: 1000, desiredAt: '2026-11-07T00:00:00Z', serviceMode: 'dine_in', mealSlot: 'lunch', avoidRecent: false },
+        members: [{ userId: 'user-A', displayName: 'A', isHost: true, ready: true, joinedAt: '2026-11-07T00:00:00Z' }],
+        round: 1, poolVersion: 1, pool: [], expiresAt: '2027-11-07T00:00:00Z',
+      };
+      const rpc = jest.fn(async (_name: string, { command }: any) => command === 'snapshot'
+        ? { ok: true, data: snapshot }
+        : { ok: false, error: { messageKey: 'NETWORK_ERROR' } });
+      const previous = {
+        requestId: 'stable-request', expectedVersion: 12,
+        payload: { intentId: 'stable-intent', votes: [{ roundDishId: 'dish_01', choice: 'WANT' }] },
+      };
+      const outbox = {
+        findEquivalent: jest.fn().mockResolvedValue(previous),
+        cacheSnapshot: jest.fn().mockResolvedValue(undefined),
+        reconcileBeforeReplay: jest.fn().mockResolvedValue([]),
+        enqueue: jest.fn().mockResolvedValue(undefined),
+        markUnknown: jest.fn().mockResolvedValue(undefined),
+        remove: jest.fn().mockResolvedValue(undefined),
+      };
+      const roomRepository = {
+        getCurrentUser: () => ({ id: 'user-A' }), getIdentityRevision: () => 1,
+        getSessionApi: () => ({ getGeneration: () => 1 }), getSessionStatus: () => 'active',
+        getRpcCaller: () => rpc,
+      } as unknown as import('../../src/features/rooms/services/roomRepository').RoomRepository;
+      const repo = createLiveVoteRepository({ roomRepository, outbox: outbox as any });
+      const result = await repo.submitBallot({
+        roomId: 'room-version-range', round: 1, poolVersion: 1, expectedVersion: 13,
+        requestId: 'new-call-request', votes: [{ roundDishId: 'dish_01', vote: 'WANT' }],
+      });
+      expect(result).toMatchObject({ ok: false, error: { messageKey: 'NETWORK_ERROR' } });
+      expect(outbox.enqueue).toHaveBeenCalledWith(expect.objectContaining({ requestId: 'stable-request', expectedVersion: 12 }));
+      expect(rpc).toHaveBeenLastCalledWith('dish_session', expect.objectContaining({
+        command: 'submit', payload: expect.objectContaining({ requestId: 'stable-request', expectedVersion: 12 }),
+      }));
+    });
+
     it('dispatches submitBallot via dish_session v4 with canonical contract version', async () => {
       const mockRpc = jest.fn().mockResolvedValue({
         ok: true,

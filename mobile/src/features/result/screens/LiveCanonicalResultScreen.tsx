@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { RoomResult } from '../../../data/api/contracts';
 import { isCanonicalRoomSnapshot, isCanonicalTerminalResult, isRoomSnapshot } from '../../../data/api/responseGuards';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
@@ -20,10 +20,13 @@ export function LiveCanonicalResultScreen({ repository, roomId, expectedResultId
   const [input, setInput] = useState<ResultInput | null>(null);
   const [state, setState] = useState<'loading' | 'error' | 'ready'>('loading');
   const [revision, setRevision] = useState(0);
-  const load = useCallback(async () => {
+  const requestGeneration = useRef(0);
+  const load = useCallback(async (isActive: () => boolean = () => true) => {
+    const generation = ++requestGeneration.current;
     setState('loading');
     setInput(null);
     const response = await repository.getRoomSnapshot(roomId);
+    if (generation !== requestGeneration.current || !isActive()) return;
     if (!response.ok) { setState('error'); return; }
     const snapshot = response.data as unknown;
     if (!isCanonicalRoomSnapshot(snapshot) && !isRoomSnapshot(snapshot)) { setState('error'); return; }
@@ -48,8 +51,9 @@ export function LiveCanonicalResultScreen({ repository, roomId, expectedResultId
   }, [expectedResultId, repository, roomId]);
 
   useEffect(() => {
-    const timer = setTimeout(() => { void load(); }, 0);
-    return () => clearTimeout(timer);
+    let active = true;
+    const timer = setTimeout(() => { void load(() => active); }, 0);
+    return () => { active = false; clearTimeout(timer); };
   }, [load, revision]);
 
   if (state === 'loading') return <StatusNotice title="Đang xác minh kết quả" message="Đang tải lại kết quả đã lưu từ máy chủ theo quyền phòng hiện tại." tone="info" colors={colors} />;

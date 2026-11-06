@@ -341,16 +341,9 @@ export class LiveVoteRepository implements VoteRepository {
       }
     }
 
-    // F6: Serialize payload to verify payload stability on retries
-    const payloadSerialized = JSON.stringify({
-      roomId: args.roomId,
-      round: args.round,
-      poolVersion: args.poolVersion,
-      expectedVersion: args.expectedVersion,
-      votes: wireVotes,
-    });
-
-    const identityId = this.roomRepo?.getCurrentUser()?.id;
+    let expectedVersion = args.expectedVersion;
+    const capturedIdentity = this.captureIdentity();
+    const identityId = capturedIdentity?.userId;
     const durableOutbox = identityId ? (this.outbox ?? getDurableOutbox()) : undefined;
     if (identityId && durableOutbox) {
       try {
@@ -360,14 +353,17 @@ export class LiveVoteRepository implements VoteRepository {
           round: args.round,
           poolVersion: args.poolVersion,
           contractVersion: CANONICAL_VOTE_CONTRACT_VERSION,
-          expectedVersion: args.expectedVersion,
+          expectedVersion,
           payload: { intentId: intent, votes: wireVotes },
         });
+        if (!this.identityMatches(capturedIdentity)) return { ok: false, requestId: rid, roomId: args.roomId, error: { messageKey: 'AUTH_REQUIRED' } };
         if (previous) {
           const latest = await this.getSnapshot(args.roomId);
+          if (!this.identityMatches(capturedIdentity)) return { ok: false, requestId: previous.requestId, roomId: args.roomId, error: { messageKey: 'AUTH_REQUIRED' } };
           if (!latest.ok) return { ok: false, requestId: previous.requestId, roomId: args.roomId, error: latest.error };
           if (latest.data.ownSubmission?.requestId === previous.requestId) {
             await durableOutbox.acknowledge(identityId, previous.requestId).catch(() => undefined);
+            if (!this.identityMatches(capturedIdentity)) return { ok: false, requestId: previous.requestId, roomId: args.roomId, error: { messageKey: 'AUTH_REQUIRED' } };
             const response: WriteResult<SubmitBallotResponse> = {
               ok: true,
               requestId: previous.requestId,
@@ -389,12 +385,12 @@ export class LiveVoteRepository implements VoteRepository {
           const activeStates = args.round === 1 ? ['ROUND_1', 'WAITING_1'] : ['ROUND_2', 'WAITING_2'];
           if (!activeStates.includes(latest.data.state)
             || latest.data.round !== args.round
-            || latest.data.poolVersion !== args.poolVersion
-            || latest.data.version !== previous.expectedVersion) {
+            || latest.data.poolVersion !== args.poolVersion) {
             await durableOutbox.remove(identityId, previous.requestId).catch(() => undefined);
             return { ok: false, requestId: previous.requestId, roomId: args.roomId, error: { messageKey: 'VERSION_CONFLICT' } };
           }
           rid = previous.requestId;
+          expectedVersion = previous.expectedVersion;
           const previousPayload = previous.payload as { intentId?: string } | undefined;
           intent = previousPayload?.intentId ?? `intent_${rid}`;
         }
@@ -403,7 +399,16 @@ export class LiveVoteRepository implements VoteRepository {
       }
     }
 
-    const cacheKey = `${args.roomId}_${args.round}_${rid}`;
+    // Reuse the original version together with its stable request ID and ballot payload.
+    const payloadSerialized = JSON.stringify({
+      roomId: args.roomId,
+      round: args.round,
+      poolVersion: args.poolVersion,
+      expectedVersion,
+      votes: wireVotes,
+    });
+
+    const cacheKey = `${identityId ?? 'anonymous'}_${args.roomId}_${args.round}_${rid}`;
     const cachedEntry = this.idempotencyCache.get(cacheKey);
     if (cachedEntry) {
       if (cachedEntry.payloadSerialized !== payloadSerialized) {
@@ -429,9 +434,13 @@ export class LiveVoteRepository implements VoteRepository {
           poolVersion: args.poolVersion,
           contractVersion: CANONICAL_VOTE_CONTRACT_VERSION,
           requestId: rid,
-          expectedVersion: args.expectedVersion,
+          expectedVersion,
           payload: { intentId: intent, votes: wireVotes },
         });
+        if (!this.identityMatches(capturedIdentity)) {
+          await durableOutbox.markUnknown(identityId, rid).catch(() => undefined);
+          return { ok: false, requestId: rid, roomId: args.roomId, error: { messageKey: 'AUTH_REQUIRED' } };
+        }
       } catch {
         return {
           ok: false,
@@ -459,6 +468,10 @@ export class LiveVoteRepository implements VoteRepository {
 
     const caller = this.getCaller();
     if (caller) {
+      if (!this.identityMatches(capturedIdentity)) {
+        if (identityId && durableOutbox) await durableOutbox.markUnknown(identityId, rid).catch(() => undefined);
+        return { ok: false, requestId: rid, roomId: args.roomId, error: { messageKey: 'AUTH_REQUIRED' } };
+      }
       try {
         const raw = (await caller('dish_session', {
           command: 'submit',
@@ -468,10 +481,15 @@ export class LiveVoteRepository implements VoteRepository {
             roomId: args.roomId,
             round: args.round,
             poolVersion: args.poolVersion,
-            expectedVersion: args.expectedVersion,
+            expectedVersion,
             votes: wireVotes,
           },
         })) as any;
+
+        if (!this.identityMatches(capturedIdentity)) {
+          if (identityId && durableOutbox) await durableOutbox.markUnknown(identityId, rid).catch(() => undefined);
+          return { ok: false, requestId: rid, roomId: args.roomId, error: { messageKey: 'AUTH_REQUIRED' } };
+        }
 
         if (raw && !raw.ok) {
           const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as ErrorCode;
@@ -523,6 +541,7 @@ export class LiveVoteRepository implements VoteRepository {
           },
         };
         await acknowledgePersistedIntent();
+        if (!this.identityMatches(capturedIdentity)) return { ok: false, requestId: rid, roomId: args.roomId, error: { messageKey: 'AUTH_REQUIRED' } };
         this.idempotencyCache.set(cacheKey, { payloadSerialized, result: res });
         return res;
       } catch (err: unknown) {
@@ -538,18 +557,27 @@ export class LiveVoteRepository implements VoteRepository {
 
     // Fallback client submit
     if (this.client) {
+      if (!this.identityMatches(capturedIdentity)) {
+        if (identityId && durableOutbox) await durableOutbox.markUnknown(identityId, rid).catch(() => undefined);
+        return { ok: false, requestId: rid, roomId: args.roomId, error: { messageKey: 'AUTH_REQUIRED' } };
+      }
       const submitReq: SubmitBallotRequest = {
         roomId: args.roomId,
         round: args.round,
         poolVersion: args.poolVersion,
-        expectedVersion: args.expectedVersion,
+        expectedVersion,
         intentId: intent,
         requestId: rid,
         votes: args.votes,
       };
       const res = await this.client.submitBallot(submitReq);
+      if (!this.identityMatches(capturedIdentity)) {
+        if (identityId && durableOutbox) await durableOutbox.markUnknown(identityId, rid).catch(() => undefined);
+        return { ok: false, requestId: rid, roomId: args.roomId, error: { messageKey: 'AUTH_REQUIRED' } };
+      }
       if (res.ok) {
         await acknowledgePersistedIntent();
+        if (!this.identityMatches(capturedIdentity)) return { ok: false, requestId: rid, roomId: args.roomId, error: { messageKey: 'AUTH_REQUIRED' } };
         this.idempotencyCache.set(cacheKey, { payloadSerialized, result: res });
       } else {
         await classifyFailedIntent(res.error.messageKey);
@@ -563,6 +591,25 @@ export class LiveVoteRepository implements VoteRepository {
       roomId: args.roomId,
       error: { messageKey: 'NETWORK_ERROR' },
     };
+  }
+
+  private captureIdentity(): { userId: string; repositoryRevision: number; authGeneration: number } | undefined {
+    const repository = this.roomRepo;
+    const userId = repository?.getCurrentUser()?.id;
+    if (!repository || !userId) return undefined;
+    return {
+      userId,
+      repositoryRevision: repository.getIdentityRevision?.() ?? 0,
+      authGeneration: repository.getSessionApi()?.getGeneration?.() ?? 0,
+    };
+  }
+
+  private identityMatches(captured: ReturnType<LiveVoteRepository['captureIdentity']>): boolean {
+    if (!captured) return true;
+    const current = this.captureIdentity();
+    return current?.userId === captured.userId
+      && current.repositoryRevision === captured.repositoryRevision
+      && current.authGeneration === captured.authGeneration;
   }
 
   /**

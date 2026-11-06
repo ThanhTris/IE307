@@ -6,6 +6,7 @@ import type { NativePushDriver } from './nativePush';
 
 const DEVICE_ID_KEY = 'gcd.push.device-id.v1';
 const TOKEN_KEY = 'gcd.push.expo-token.v1';
+const ACKED_TOKEN_KEY = 'gcd.push.expo-token-acked.v1';
 const ANDROID_CHANNEL_ID = 'gcd-room-updates';
 
 function projectId(): string | undefined {
@@ -73,11 +74,11 @@ export const expoPushDriver: NativePushDriver = {
   getDeviceId: stableDeviceId,
   async getPushToken() {
     if (!available()) return undefined;
-    const token = await expoToken();
-    await SecureStore.setItemAsync(TOKEN_KEY, token, {
-      keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
-    });
-    return token;
+    return expoToken();
+  },
+  async acknowledgeToken(token) {
+    await SecureStore.setItemAsync(ACKED_TOKEN_KEY, token, { keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY });
+    await SecureStore.setItemAsync(TOKEN_KEY, token, { keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY });
   },
   onTokenRefresh(listener) {
     let active = true;
@@ -86,11 +87,8 @@ export const expoPushDriver: NativePushDriver = {
       if (!active || checking || !available()) return;
       checking = true;
       try {
-        const [previous, latest] = await Promise.all([SecureStore.getItemAsync(TOKEN_KEY), expoToken()]);
-        if (!active || !previous || !latest || latest === previous) return;
-        await SecureStore.setItemAsync(TOKEN_KEY, latest, {
-          keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
-        });
+        const [acknowledged, latest] = await Promise.all([SecureStore.getItemAsync(ACKED_TOKEN_KEY), expoToken()]);
+        if (!active || !latest || latest === acknowledged) return;
         if (active) listener(latest);
       } catch {
         // A foreground token refresh can be retried next time the app resumes.
@@ -123,6 +121,7 @@ export async function clearPushRegistrationSecrets(): Promise<void> {
   await Promise.all([
     SecureStore.deleteItemAsync(DEVICE_ID_KEY),
     SecureStore.deleteItemAsync(TOKEN_KEY),
+    SecureStore.deleteItemAsync(ACKED_TOKEN_KEY),
   ]);
 }
 

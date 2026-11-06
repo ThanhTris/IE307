@@ -1,6 +1,7 @@
 import Constants, { AppOwnership } from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 import { expoPushDriver } from '../../src/features/inbox/services/expoPushDriver';
+import { createNativePushService } from '../../src/features/inbox/services/nativePush';
 
 const mockState: { appState?: (state: string) => void; tap?: (response: unknown) => void; lastResponse: unknown; permission: string; expoToken: string } = {
   lastResponse: null,
@@ -73,7 +74,45 @@ describe('GM-29 Expo native push driver', () => {
     expect(await expoPushDriver.getDeviceId()).toBe(deviceId);
     expect(await expoPushDriver.getPushToken()).toBe('ExponentPushToken[redacted]');
     expect(Notifications.getExpoPushTokenAsync).toHaveBeenCalledWith({ projectId: 'eas-project-1' });
+    expect(mockSecure.has('gcd.push.expo-token.v1')).toBe(false);
+    await expoPushDriver.acknowledgeToken?.('ExponentPushToken[redacted]');
     expect(mockSecure.get('gcd.push.expo-token.v1')).toBe('ExponentPushToken[redacted]');
+  });
+
+  test('does not mark a changed token registered before server acknowledgment', async () => {
+    const tokenListener = jest.fn();
+    const stop = expoPushDriver.onTokenRefresh(tokenListener);
+    mockState.appState?.('active');
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(tokenListener).toHaveBeenCalledWith('ExponentPushToken[redacted]');
+    expect(mockSecure.has('gcd.push.expo-token-acked.v1')).toBe(false);
+    await expoPushDriver.acknowledgeToken?.('ExponentPushToken[redacted]');
+    expect(mockSecure.get('gcd.push.expo-token-acked.v1')).toBe('ExponentPushToken[redacted]');
+    stop();
+  });
+
+  test('keeps registration pending after server failure and acknowledges only a successful retry', async () => {
+    const acknowledgeToken = jest.fn(async () => undefined);
+    const driver = {
+      availability: () => 'available' as const,
+      requestPermission: async () => 'granted' as const,
+      getDeviceId: async () => 'device-1',
+      getPushToken: async () => 'token-1',
+      acknowledgeToken,
+      onTokenRefresh: () => () => undefined,
+      onNotificationTap: () => () => undefined,
+    };
+    const registerPushDevice = jest.fn()
+      .mockResolvedValueOnce({ ok: false, error: { messageKey: 'NETWORK_ERROR' } })
+      .mockResolvedValueOnce({ ok: true, data: undefined });
+    const service = createNativePushService({
+      driver, client: { registerPushDevice, unregisterPushDevice: jest.fn() } as any, refreshInbox: async () => undefined,
+    });
+    expect(await service.register()).toMatchObject({ status: 'failed' });
+    expect(acknowledgeToken).not.toHaveBeenCalled();
+    expect(await service.register()).toMatchObject({ status: 'registered' });
+    expect(acknowledgeToken).toHaveBeenCalledWith('token-1');
+    expect(registerPushDevice).toHaveBeenCalledTimes(2);
   });
 
   test('notification tap refetch callback is invoked without consuming payload', async () => {

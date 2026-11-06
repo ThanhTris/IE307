@@ -286,6 +286,52 @@ describe('GM-28 live repository adapters', () => {
     expect(durable.entries.size).toBe(0);
   });
 
+  test('shared consent invalidation blocks a late response across history adapter instances', async () => {
+    let resolveRequest: ((value: { ok: true; data: { items: CanonicalHistoryItem[] } }) => void) | undefined;
+    const pending = new Promise<{ ok: true; data: { items: CanonicalHistoryItem[] } }>(resolve => { resolveRequest = resolve; });
+    const client = {
+      getCanonicalHistory: jest.fn(() => pending),
+      updateHistoryConsent: jest.fn().mockResolvedValue({ ok: true, data: undefined }),
+    } as unknown as ApiClient;
+    const roomRepository = {
+      getCurrentUser: () => user,
+      getApiClient: () => client,
+      getSessionApi: () => undefined,
+      getSessionStatus: () => 'active',
+    } as unknown as RoomRepository;
+    const cache = cacheMock();
+    const durable = durableHistoryMock();
+    const adapterA = createHistoryRepository(roomRepository, cache, durable);
+    const adapterB = createHistoryRepository(roomRepository, cache, durable);
+    const pendingRead = adapterA.fetch();
+    expect((await adapterB.updateConsent({ scope: 'personal', consent: false })).ok).toBe(true);
+    resolveRequest?.({ ok: true, data: { items: [historyItem('revoked-late', 'personal', new Date().toISOString())] } });
+    expect(await pendingRead).toEqual({ ok: false, error: { messageKey: 'AUTH_REQUIRED' } });
+    expect(cache.get(user.id)).toBeUndefined();
+    expect(durable.entries.size).toBe(0);
+  });
+
+  test('filters canonical rows after item expiry and rejects memory snapshots older than 24 hours', () => {
+    const roomRepository = {
+      getCurrentUser: () => user,
+      getApiClient: () => ({}),
+      getSessionApi: () => undefined,
+      getSessionStatus: () => 'active',
+    } as unknown as RoomRepository;
+    const cache = cacheMock();
+    cache.set(user.id, {
+      fetchedAt: new Date().toISOString(),
+      items: [historyItem('expired', 'personal', new Date().toISOString())],
+    });
+    const expired = historyItem('expired', 'personal', new Date().toISOString());
+    expired.expiresAt = new Date(Date.now() - 1).toISOString();
+    cache.set(user.id, { fetchedAt: new Date().toISOString(), items: [expired] });
+    const history = createHistoryRepository(roomRepository, cache, durableHistoryMock());
+    expect(history.cached()?.items).toEqual([]);
+    cache.set(user.id, { fetchedAt: new Date(Date.now() - 25 * 60 * 60 * 1000).toISOString(), items: [historyItem('old', 'personal', new Date().toISOString())] });
+    expect(history.cached()).toBeUndefined();
+  });
+
   test('feature API 401 invalidates the live session and requires recovery', async () => {
     const client = {
       getCanonicalHistory: jest.fn().mockResolvedValue({ ok: false, error: { messageKey: 'AUTH_REQUIRED' } }),

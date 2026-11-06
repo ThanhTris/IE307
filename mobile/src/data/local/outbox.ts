@@ -111,7 +111,8 @@ export class DurableOutbox {
   }
 
   private async deleteRow(row: EntryRow): Promise<void> {
-    await this.secureStore.deleteItemAsync(payloadKey(row.record_id)).catch(() => undefined);
+    // Keep the SQLite handle when SecureStore refuses deletion so a later cleanup can retry.
+    await this.secureStore.deleteItemAsync(payloadKey(row.record_id));
     await this.database.runAsync('DELETE FROM gm31_private_entries WHERE record_id = ?', row.record_id);
   }
 
@@ -218,10 +219,6 @@ export class DurableOutbox {
         && intent.poolVersion === snapshot.poolVersion
         && intent.contractVersion === snapshot.contractVersion;
       if (!scopeMatches) {
-        await this.remove(identityId, intent.requestId);
-        continue;
-      }
-      if (snapshot.version !== intent.expectedVersion) {
         await this.remove(identityId, intent.requestId);
         continue;
       }

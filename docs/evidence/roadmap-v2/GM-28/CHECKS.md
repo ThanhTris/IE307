@@ -2,6 +2,15 @@
 
 ## Run record
 
+### Trí review follow-up — 2026-11-07 (local, pending PR update)
+
+- Base: PR #126 reviewed head `97007037`; this follow-up commit is committed locally and pending push. No Project status or approval was changed.
+- Addressed the seven remaining reviewer groups: ballot identity/session epoch, version-only outbox reconciliation, best-effort remote push unregister on logout, history item/cache TTL and cross-adapter consent invalidation, stale canonical-result response guard, server-ACKed push token retry, and retryable SecureStore deletion.
+- Added managed regressions for identity change during enqueue, same-scope version increase preserving pending/unknown intents, cross-adapter consent ACK, history item/cache expiry, stale A→B result response, push registration retry after server error, and SecureStore deletion failure/retry.
+- `mobile/npm run check`: Pass — typecheck, lint, 70 suites / 1138 tests, architecture check.
+- Full local suite uses synthetic storage/transport. HTTP against Supabase, Android/native restart and push delivery, and Figma visual comparison remain Not run. PR #157 result-reader overlap still requires owner coordination before merging both PRs.
+- PR #126 draft remains unapproved; no Done or merge claim is made.
+
 ### Owner feedback follow-up — 2026-11-06
 
 - Revision: follow-up code commit `2ec9c2a`, based on PR #126 head `28a210c`; pending push in this run. PR remains draft for owner review.
