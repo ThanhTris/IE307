@@ -8,6 +8,13 @@ export async function callSessionApi<T>(
   repository: RoomRepository,
   operation: (client: ApiClient) => Promise<ApiResult<T>>,
 ): Promise<ApiResult<T>> {
+  if (repository.runAuthenticatedFeatureApi) {
+    try {
+      return await repository.runAuthenticatedFeatureApi(operation);
+    } catch {
+      return { ok: false, error: { messageKey: 'NETWORK_ERROR' } };
+    }
+  }
   const sessionRequired = Boolean(repository.getSessionApi());
   const initialUserId = repository.getCurrentUser()?.id;
   if (sessionRequired && (!initialUserId || repository.getSessionStatus() !== 'active')) return authRequired<T>();

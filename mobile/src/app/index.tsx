@@ -32,9 +32,9 @@ export default function IndexRoute() {
       onCreate={() => router.push(isReal ? '/room/create' : '/room/create-entry')}
       onJoin={() => router.push(isReal ? '/room/join' : '/room/join-entry')}
       onResume={() => router.push('/continue-session')}
-      onFriends={isReal ? () => router.push('/gm28/friends') : () => router.push('/friends')}
-      onHistory={isReal ? () => router.push('/gm28/history') : () => router.push('/history')}
-      onInbox={isReal ? () => router.push('/gm28/inbox') : () => router.push('/inbox')}
+      onFriends={() => router.push('/friends')}
+      onHistory={() => router.push('/history')}
+      onInbox={() => router.push('/inbox')}
       onProfile={isReal ? undefined : () => router.push('/profile')}
       onTutorial={() => router.push('/tutorial')}
       onOpenFoundation={__DEV__ ? () => router.push('/dev/foundation') : undefined}

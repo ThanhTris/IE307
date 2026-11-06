@@ -3,7 +3,7 @@ import type {
   CreateRoomResponse, JoinRoomResponse, SessionResponse, SubmissionReceipt,
   SubmitBallotResponse, FriendInvitation, RoomInvitation, RoomState,
   SessionUser, DiscoveryContextResponse, PreviewFoodPoolResponse, PoolDish,
-  RoomSnapshot, Friend, InboxItem, HistoryItem, HistoryConsent, SocialIdentity,
+  RoomSnapshot, Friend, InboxItem, HistoryItem, HistoryConsent, SocialIdentity, CanonicalHistoryPage,
 } from './contracts';
 
 export type ResponseGuard<T> = (value: unknown) => value is T;
@@ -282,7 +282,7 @@ function isCanonicalPreferences(value: unknown): boolean {
     && oneOf(value.budget.unit, ['portion', 'item', 'person', 'group', 'kg', 'menu_item_unspecified']);
 }
 
-function isCanonicalTerminalResult(value: unknown): value is Record<string, unknown> {
+export function isCanonicalTerminalResult(value: unknown): value is Record<string, unknown> {
   if (!isRecord(value)) return false;
   const result = value;
   if (!(onlyKeys(result, ['resultId', 'contractVersion', 'policyVersion', 'status', 'round', 'winner', 'reasonCode', 'finalizedAt', 'scoreVersion', 'rankingVersion', 'topDishes', 'round1BallotCount'])
@@ -314,6 +314,34 @@ function isCanonicalTerminalResult(value: unknown): value is Record<string, unkn
     && result.scoreVersion === null && result.rankingVersion === null
     && ((result.round === 1 && result.reasonCode === 'EMPTY_INTERSECTION')
       || (result.round === 2 && result.reasonCode === 'ALL_REMOVED'));
+}
+
+export function isCanonicalLegacyHistoryResult(value: unknown): boolean {
+  return isRecord(value) && onlyKeys(value, ['capability', 'status', 'winner', 'reasonCode', 'finalizedAt'])
+    && value.capability === 'legacy-unscored-v1' && oneOf(value.status, ['DECIDED', 'NO_CONSENSUS'])
+    && nullable(value.winner, isCanonicalPoolDish)
+    && optional(value.reasonCode, item => item === null || isString(item))
+    && isTimestamp(value.finalizedAt)
+    && !(value as Record<string, unknown>).hasOwnProperty('topDishes')
+    && !(value as Record<string, unknown>).hasOwnProperty('scoreVersion')
+    && !(value as Record<string, unknown>).hasOwnProperty('rankingVersion');
+}
+
+export function isCanonicalHistoryPage(value: unknown): value is CanonicalHistoryPage {
+  if (!isRecord(value) || !onlyKeys(value, ['items']) || !Array.isArray(value.items)) return false;
+  return value.items.every(item => {
+    if (!isRecord(item) || !onlyKeys(item, ['historyId', 'roomId', 'resultId', 'scope', 'createdAt', 'expiresAt', 'result', 'desiredAt', 'finalizedAt', 'memberCount', 'round1BallotCount', 'participants'])) return false;
+    if (!(isUuid(item.historyId) && isUuid(item.roomId) && isUuid(item.resultId)
+      && oneOf(item.scope, ['personal', 'group']) && isTimestamp(item.createdAt) && isTimestamp(item.expiresAt)
+      && optional(item.desiredAt, itemValue => itemValue === null || isTimestamp(itemValue)) && optional(item.finalizedAt, isTimestamp)
+      && optional(item.memberCount, count => isCount(count) && count >= 1 && count <= 20)
+      && optional(item.round1BallotCount, count => isCount(count) && count <= 20)
+      && optional(item.participants, list => Array.isArray(list) && list.every(participant => isRecord(participant)
+        && onlyKeys(participant, ['displayName', 'role']) && isNonEmptyString(participant.displayName) && isNonEmptyString(participant.role))))) return false;
+    const result = item.result;
+    if (isCanonicalTerminalResult(result)) return result.resultId === item.resultId;
+    return isCanonicalLegacyHistoryResult(result);
+  });
 }
 
 /** Strict runtime guard for GM-07.B canonical snapshots; pool count is phase dependent. */

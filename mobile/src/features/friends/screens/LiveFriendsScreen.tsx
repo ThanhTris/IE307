@@ -16,11 +16,16 @@ export function LiveFriendsScreen({ repository, onNavigate, onHome }: Props) {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
+  const [search, setSearch] = useState('');
   const [friendCode, setFriendCode] = useState('');
   const [action, setAction] = useState<PendingAction>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const lock = useRef(false);
+  const query = normalizeSearch(search);
+  const visibleFriends = query
+    ? friends.filter(friend => normalizeSearch(`${friend.displayName} ${friend.friendCode}`).includes(query))
+    : friends;
 
   const load = useCallback(async (refresh = false) => {
     if (refresh) setRefreshing(true);
@@ -99,7 +104,8 @@ export function LiveFriendsScreen({ repository, onNavigate, onHome }: Props) {
             <Text style={[styles.heading, { color: colors.text }]}>Bạn bè · {friends.length}</Text>
             <AppButton label="Tải lại" variant="quiet" onPress={() => { void load(true); }} disabled={refreshing || busy} loading={refreshing} colors={colors} />
           </View>
-          {friends.length === 0 ? <StatusNotice title="Chưa có bạn bè" message="Lời mời đến và lời mời vào phòng được xử lý trong Hộp thư." tone="info" colors={colors} /> : friends.map(friend => (
+          <FormField label="Tìm tên bạn bè" value={search} onChangeText={setSearch} autoCorrect={false} placeholder="Nhập tên hoặc mã bạn bè" colors={colors} />
+          {friends.length === 0 ? <StatusNotice title="Chưa có bạn bè" message="Lời mời đến và lời mời vào phòng được xử lý trong Hộp thư." tone="info" colors={colors} /> : visibleFriends.length === 0 ? <StatusNotice title="Không tìm thấy bạn" message="Kiểm tra tên hoặc mã bạn bè rồi thử lại." tone="info" colors={colors} /> : visibleFriends.map(friend => (
             <View key={friend.id} style={[styles.friend, { backgroundColor: colors.surface, borderColor: colors.line }]}>
               <View style={styles.friendInfo}>
                 <Text style={[styles.name, { color: colors.text }]}>{friend.displayName}</Text>
@@ -117,6 +123,10 @@ export function LiveFriendsScreen({ repository, onNavigate, onHome }: Props) {
       </SheetDialog>
     </ApiFeatureFrame>
   );
+}
+
+function normalizeSearch(value: string): string {
+  return value.trim().toLocaleLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
 
 export function errorMessage(key: string): string {

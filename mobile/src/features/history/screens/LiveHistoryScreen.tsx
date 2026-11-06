@@ -1,18 +1,19 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import type { HistoryItem } from '../../../data/api/contracts';
+import type { CanonicalHistoryItem, HistoryItem } from '../../../data/api/contracts';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppButton, SheetDialog, StatusNotice } from '../../../shared/ui';
 import { ApiFeatureFrame } from '../../shared/components/ApiFeatureFrame';
 import { errorMessage } from '../../friends/screens/LiveFriendsScreen';
-import type { HistoryRepository } from '../services/historyRepository';
+import { historyIdOf, historyTitle, type HistoryRepository } from '../services/historyRepository';
 
 type Props = { repository: HistoryRepository; onNavigate: (path: string) => void; onHome: () => void };
-type PendingAction = { kind: 'consent'; scope: 'personal' | 'group'; enabled: boolean } | { kind: 'delete'; item: HistoryItem } | null;
+type HistoryRow = CanonicalHistoryItem | HistoryItem;
+type PendingAction = { kind: 'consent'; scope: 'personal' | 'group'; enabled: boolean } | { kind: 'delete'; item: HistoryRow } | null;
 
 export function LiveHistoryScreen({ repository, onNavigate, onHome }: Props) {
   const { colors } = useShellTheme();
-  const [items, setItems] = useState<HistoryItem[]>([]);
+  const [items, setItems] = useState<HistoryRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
@@ -31,7 +32,7 @@ export function LiveHistoryScreen({ repository, onNavigate, onHome }: Props) {
       const result = await repository.fetch();
       if (!result.ok) {
         const cached = result.error.messageKey === 'NETWORK_ERROR' || result.error.messageKey === 'TIMEOUT'
-          ? repository.cached()
+          ? repository.cached() ?? await repository.cachedDurable().catch(() => undefined)
           : undefined;
         if (cached) {
           setItems(cached.items);
@@ -50,7 +51,7 @@ export function LiveHistoryScreen({ repository, onNavigate, onHome }: Props) {
         setStale(false);
       }
     } catch {
-      const cached = repository.cached();
+      const cached = repository.cached() ?? await repository.cachedDurable().catch(() => undefined);
       if (cached) {
         setItems(cached.items);
         setFetchedAt(cached.fetchedAt);
@@ -83,7 +84,7 @@ export function LiveHistoryScreen({ repository, onNavigate, onHome }: Props) {
     try {
       const result = pending.kind === 'consent'
         ? await repository.updateConsent({ scope: pending.scope, consent: pending.enabled })
-        : await repository.delete(pending.item.id);
+        : await repository.delete(historyIdOf(pending.item));
       if (!result.ok) {
         setMessage(errorMessage(result.error.messageKey));
         return;
@@ -119,14 +120,21 @@ export function LiveHistoryScreen({ repository, onNavigate, onHome }: Props) {
           <Text style={[styles.heading, { color: colors.text }]}>Bữa ăn đã lưu · {items.length}</Text>
           <AppButton label="Tải lại" variant="quiet" onPress={() => { void load(true); }} disabled={refreshing || busy} loading={refreshing} colors={colors} />
         </View>
-        {items.length === 0 ? <StatusNotice title="Chưa có lịch sử được chia sẻ" message="Máy chủ không trả về mục nào có thể xem theo consent và quyền hiện tại." tone="info" colors={colors} /> : items.map(item => (
-          <View key={item.id} style={[styles.historyCard, { backgroundColor: colors.surface, borderColor: colors.line }]}>
-            <Text style={[styles.name, { color: colors.text }]}>{item.winnerName ?? 'Bữa ăn đã chốt'}</Text>
-            <Text style={[styles.meta, { color: colors.muted }]}>{new Date(item.mealDate).toLocaleString()}</Text>
-            <Text style={[styles.meta, { color: colors.muted }]}>{item.scope === 'group' ? 'Tóm tắt nhóm' : 'Cá nhân'} · {item.memberCount} thành viên · mã {item.roomCode}</Text>
+        {items.length === 0 ? <StatusNotice title="Chưa có lịch sử được chia sẻ" message="Máy chủ không trả về mục nào có thể xem theo consent và quyền hiện tại." tone="info" colors={colors} /> : items.map(item => {
+          const canonical = 'historyId' in item;
+          const date = canonical ? item.createdAt : item.mealDate;
+          return <View key={historyIdOf(item)} style={[styles.historyCard, { backgroundColor: colors.surface, borderColor: colors.line }]}>
+            <Text style={[styles.name, { color: colors.text }]}>{historyTitle(item)}</Text>
+            <Text style={[styles.meta, { color: colors.muted }]}>{new Date(date).toLocaleString()}</Text>
+            <Text style={[styles.meta, { color: colors.muted }]}>{item.scope === 'group' ? 'Tóm tắt nhóm' : 'Cá nhân'}{canonical && item.memberCount ? ` · ${item.memberCount} thành viên` : !canonical && item.memberCount ? ` · ${item.memberCount} thành viên` : ''} · mã {canonical ? item.roomId.slice(0, 8) : item.roomCode}</Text>
+            {canonical && 'topDishes' in item.result && item.result.status === 'DECIDED' ? item.result.topDishes.map(entry => (
+              <Text key={entry.dish.roundDishId} style={[styles.meta, { color: colors.text }]}>{entry.rank}. {entry.dish.name} · {entry.score} điểm{entry.isWinner ? ' · Món được chọn' : ''}</Text>
+            )) : null}
+            {canonical && item.result.status === 'NO_CONSENSUS' ? <Text style={[styles.meta, { color: colors.muted }]}>{item.result.reasonCode === 'EMPTY_INTERSECTION' ? 'Không còn món sau Vòng 1.' : 'Tất cả món đã bị loại ở Vòng 2.'}</Text> : null}
+            {!canonical ? <Text style={[styles.meta, { color: colors.muted }]}>Kết quả lịch sử cũ · không có điểm/Top 3 lưu trữ.</Text> : null}
             <AppButton label="Xóa mục lịch sử" variant="danger" onPress={() => setAction({ kind: 'delete', item })} disabled={busy} colors={colors} />
           </View>
-        ))}
+        })}
       </View> : null}
       {message ? <StatusNotice title="Kết quả máy chủ" message={message} tone={message.startsWith('Chưa') ? 'warning' : 'success'} colors={colors} /> : null}
       <SheetDialog visible={action !== null} title={actionTitle(action)} onClose={() => { if (!busy) setAction(null); }} colors={colors}>
@@ -166,7 +174,7 @@ function actionLabel(action: PendingAction): string {
 }
 
 function actionMessage(action: PendingAction): string {
-  if (action?.kind === 'delete') return `Gửi yêu cầu xóa mục “${action.item.winnerName ?? 'Bữa ăn đã chốt'}”. Máy chủ sẽ áp dụng quyền sở hữu và quyền nhóm.`;
+  if (action?.kind === 'delete') return `Gửi yêu cầu xóa mục “${historyTitle(action.item)}”. Máy chủ sẽ áp dụng quyền sở hữu và quyền nhóm.`;
   if (action?.kind === 'consent') return `Gửi lựa chọn ${action.enabled ? 'cho phép' : 'rút'} consent ${action.scope} đến máy chủ. Máy chủ sẽ cập nhật quyền hiển thị.`;
   return '';
 }

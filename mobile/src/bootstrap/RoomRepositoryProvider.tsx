@@ -6,6 +6,8 @@ import type { SessionIssue, SessionSnapshot, SessionStatus } from '../features/r
 import type { SessionUser } from '../data/api/contracts';
 import { clearVoteSession } from '../features/voting/services/voteSessionState';
 import { clearPrivateHistoryCache } from '../features/history/services/historyRepository';
+import { clearPushRegistrationSecrets, getPushDeviceId } from '../features/inbox/services/expoPushDriver';
+import { getDurableOutbox } from '../data/local/outbox';
 import {
   LiveRoomRepository,
   createDurableRequestId,
@@ -102,10 +104,23 @@ export function RoomRepositoryProvider({
 
   const logout = useCallback(async (): Promise<boolean> => {
     const identityId = repository.getSessionSnapshot().user?.id;
+    if (isReal) {
+      const deviceId = await getPushDeviceId();
+      if (deviceId) {
+        const unregistered = await repository.getApiClient().unregisterPushDevice(deviceId);
+        if (!unregistered.ok) return false;
+      }
+    }
+    if (identityId) {
+      try { await getDurableOutbox().clearIdentity(identityId); } catch { return false; }
+    }
     const result = await repository.logout();
-    if (result.ok && identityId) clearVoteSession(identityId);
+    if (result.ok) {
+      if (identityId) clearVoteSession(identityId);
+      await clearPushRegistrationSecrets();
+    }
     return result.ok;
-  }, [repository]);
+  }, [repository, isReal]);
 
   useEffect(() => {
     let mounted = true;

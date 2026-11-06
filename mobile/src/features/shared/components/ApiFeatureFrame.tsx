@@ -7,9 +7,9 @@ import { useShellTheme } from '../../../shared/lib/useShellTheme';
 export type ApiFeature = 'friends' | 'inbox' | 'history';
 
 const features: { id: ApiFeature; label: string; path: string }[] = [
-  { id: 'friends', label: 'Bạn bè', path: '/gm28/friends' },
-  { id: 'inbox', label: 'Hộp thư', path: '/gm28/inbox' },
-  { id: 'history', label: 'Lịch sử', path: '/gm28/history' },
+  { id: 'friends', label: 'Bạn bè', path: '/friends' },
+  { id: 'inbox', label: 'Hộp thư', path: '/inbox' },
+  { id: 'history', label: 'Lịch sử', path: '/history' },
 ];
 
 export function ApiFeatureFrame({ active, title, onNavigate, onHome, children }: {

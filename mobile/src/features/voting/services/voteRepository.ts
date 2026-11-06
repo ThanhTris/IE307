@@ -22,6 +22,7 @@ import type {
 import { mapErrorHelper } from '../../../data/api/client/helpers';
 import { isCanonicalRoomSnapshot, isRoomSnapshot } from '../../../data/api/responseGuards';
 import type { RoomRepository } from '../../rooms/services/roomRepository';
+import { getDurableOutbox, type DurableOutbox } from '../../../data/local/outbox';
 import {
   WAITING_DEADLINE_SECONDS,
   getRoundTwoEliminationCap,
@@ -246,6 +247,7 @@ export interface LiveVoteRepositoryDeps {
   client?: ApiClient;
   rpcCaller?: (name: string, params: Record<string, unknown>) => Promise<unknown>;
   nextRequestId?: RequestIdGenerator;
+  outbox?: DurableOutbox;
 }
 
 interface CachedSubmitEntry {
@@ -258,6 +260,7 @@ export class LiveVoteRepository implements VoteRepository {
   private readonly client?: ApiClient;
   private readonly rpcCaller?: (name: string, params: Record<string, unknown>) => Promise<unknown>;
   private readonly nextRequestId: RequestIdGenerator;
+  private readonly outbox?: DurableOutbox;
 
   // Cache of submitted receipts for idempotency across retries
   private readonly idempotencyCache = new Map<string, CachedSubmitEntry>();
@@ -267,6 +270,7 @@ export class LiveVoteRepository implements VoteRepository {
     this.client = deps.client;
     this.rpcCaller = deps.rpcCaller;
     this.nextRequestId = deps.nextRequestId ?? createDurableRequestId;
+    this.outbox = deps.outbox;
   }
 
   private getCaller(): ((name: string, params: Record<string, unknown>) => Promise<unknown>) | null {
@@ -286,8 +290,8 @@ export class LiveVoteRepository implements VoteRepository {
    * If re-submitting with same requestId but different payload, rejects with BAD_REQUEST (F6).
    */
   async submitBallot(args: SubmitBallotArgs): Promise<WriteResult<SubmitBallotResponse>> {
-    const rid = args.requestId || this.nextRequestId('submit');
-    const intent = args.intentId || `intent_${rid}`;
+    let rid = args.requestId || this.nextRequestId('submit');
+    let intent = args.intentId || `intent_${rid}`;
 
     // Local validation
     if (!args.roomId) {
@@ -346,6 +350,59 @@ export class LiveVoteRepository implements VoteRepository {
       votes: wireVotes,
     });
 
+    const identityId = this.roomRepo?.getCurrentUser()?.id;
+    const durableOutbox = identityId ? (this.outbox ?? getDurableOutbox()) : undefined;
+    if (identityId && durableOutbox) {
+      try {
+        const previous = await durableOutbox.findEquivalent({
+          identityId,
+          roomId: args.roomId,
+          round: args.round,
+          poolVersion: args.poolVersion,
+          contractVersion: CANONICAL_VOTE_CONTRACT_VERSION,
+          expectedVersion: args.expectedVersion,
+          payload: { intentId: intent, votes: wireVotes },
+        });
+        if (previous) {
+          const latest = await this.getSnapshot(args.roomId);
+          if (!latest.ok) return { ok: false, requestId: previous.requestId, roomId: args.roomId, error: latest.error };
+          if (latest.data.ownSubmission?.requestId === previous.requestId) {
+            await durableOutbox.acknowledge(identityId, previous.requestId).catch(() => undefined);
+            const response: WriteResult<SubmitBallotResponse> = {
+              ok: true,
+              requestId: previous.requestId,
+              roomId: args.roomId,
+              version: latest.data.version,
+              state: latest.data.state,
+              data: {
+                accepted: true,
+                round: args.round,
+                allMembersSubmitted: args.round === 1
+                  ? latest.data.round > 1 || latest.data.state === 'DECIDED' || latest.data.state === 'NO_CONSENSUS'
+                  : latest.data.state === 'DECIDED' || latest.data.state === 'NO_CONSENSUS',
+                roomVersion: latest.data.version,
+                receipt: latest.data.ownSubmission,
+              },
+            };
+            return response;
+          }
+          const activeStates = args.round === 1 ? ['ROUND_1', 'WAITING_1'] : ['ROUND_2', 'WAITING_2'];
+          if (!activeStates.includes(latest.data.state)
+            || latest.data.round !== args.round
+            || latest.data.poolVersion !== args.poolVersion
+            || latest.data.version !== previous.expectedVersion) {
+            await durableOutbox.remove(identityId, previous.requestId).catch(() => undefined);
+            return { ok: false, requestId: previous.requestId, roomId: args.roomId, error: { messageKey: 'VERSION_CONFLICT' } };
+          }
+          rid = previous.requestId;
+          const previousPayload = previous.payload as { intentId?: string } | undefined;
+          intent = previousPayload?.intentId ?? `intent_${rid}`;
+        }
+      } catch {
+        return { ok: false, requestId: rid, roomId: args.roomId, error: { messageKey: 'UNKNOWN_ERROR', message: 'Chưa thể kiểm tra trạng thái lượt chọn đã lưu; chưa gửi lại.' } };
+      }
+    }
+
     const cacheKey = `${args.roomId}_${args.round}_${rid}`;
     const cachedEntry = this.idempotencyCache.get(cacheKey);
     if (cachedEntry) {
@@ -362,6 +419,43 @@ export class LiveVoteRepository implements VoteRepository {
       }
       return cachedEntry.result;
     }
+
+    if (identityId && durableOutbox) {
+      try {
+        await durableOutbox.enqueue({
+          identityId,
+          roomId: args.roomId,
+          round: args.round,
+          poolVersion: args.poolVersion,
+          contractVersion: CANONICAL_VOTE_CONTRACT_VERSION,
+          requestId: rid,
+          expectedVersion: args.expectedVersion,
+          payload: { intentId: intent, votes: wireVotes },
+        });
+      } catch {
+        return {
+          ok: false,
+          requestId: rid,
+          roomId: args.roomId,
+          error: { messageKey: 'UNKNOWN_ERROR', message: 'Chưa lưu an toàn được lượt chọn trên thiết bị; chưa gửi lên máy chủ.' },
+        };
+      }
+    }
+
+    const acknowledgePersistedIntent = async () => {
+      if (!identityId || !durableOutbox) return;
+      try { await durableOutbox.acknowledge(identityId, rid); } catch {
+        await durableOutbox.markUnknown(identityId, rid).catch(() => undefined);
+      }
+    };
+    const classifyFailedIntent = async (messageKey: string) => {
+      if (!identityId || !durableOutbox) return;
+      if (messageKey === 'NETWORK_ERROR' || messageKey === 'TIMEOUT' || messageKey === 'UNKNOWN_ERROR') {
+        await durableOutbox.markUnknown(identityId, rid).catch(() => undefined);
+      } else {
+        await durableOutbox.remove(identityId, rid).catch(() => undefined);
+      }
+    };
 
     const caller = this.getCaller();
     if (caller) {
@@ -381,6 +475,7 @@ export class LiveVoteRepository implements VoteRepository {
 
         if (raw && !raw.ok) {
           const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as ErrorCode;
+          await classifyFailedIntent(errCode);
           return {
             ok: false,
             requestId: rid,
@@ -391,6 +486,7 @@ export class LiveVoteRepository implements VoteRepository {
 
         // F7: Canonical envelope guard check
         if (!isCanonicalSubmitEnvelope(raw, args)) {
+          await classifyFailedIntent('UNKNOWN_ERROR');
           return {
             ok: false,
             requestId: rid,
@@ -426,9 +522,11 @@ export class LiveVoteRepository implements VoteRepository {
             receipt,
           },
         };
+        await acknowledgePersistedIntent();
         this.idempotencyCache.set(cacheKey, { payloadSerialized, result: res });
         return res;
       } catch (err: unknown) {
+        await classifyFailedIntent('NETWORK_ERROR');
         return {
           ok: false,
           requestId: rid,
@@ -451,7 +549,10 @@ export class LiveVoteRepository implements VoteRepository {
       };
       const res = await this.client.submitBallot(submitReq);
       if (res.ok) {
+        await acknowledgePersistedIntent();
         this.idempotencyCache.set(cacheKey, { payloadSerialized, result: res });
+      } else {
+        await classifyFailedIntent(res.error.messageKey);
       }
       return res;
     }
@@ -659,7 +760,9 @@ export class LiveVoteRepository implements VoteRepository {
 
         if (raw?.ok && raw.data) {
           if (isCanonicalRoomSnapshot(raw.data) || isRoomSnapshot(raw.data)) {
-            return { ok: true, data: raw.data as RoomSnapshot };
+            const snapshot = raw.data as RoomSnapshot;
+            await this.reconcileOutbox(snapshot);
+            return { ok: true, data: snapshot };
           }
           // F7: Missing or invalid schema fields must strictly return MALFORMED_RESPONSE
           return { ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } };
@@ -675,13 +778,36 @@ export class LiveVoteRepository implements VoteRepository {
     }
 
     if (this.client) {
-      return this.client.getRoomSnapshot(roomId);
+      const result = await this.client.getRoomSnapshot(roomId);
+      if (result.ok) await this.reconcileOutbox(result.data);
+      return result;
     }
 
     return {
       ok: false,
       error: { messageKey: 'NETWORK_ERROR' },
     };
+  }
+
+  private async reconcileOutbox(snapshot: RoomSnapshot): Promise<void> {
+    const identityId = this.roomRepo?.getCurrentUser()?.id;
+    if (!identityId) return;
+    const outbox = this.outbox ?? getDurableOutbox();
+    await outbox.cacheSnapshot({
+      identityId,
+      roomId: snapshot.roomId,
+      contractVersion: CANONICAL_VOTE_CONTRACT_VERSION,
+      value: snapshot,
+    }).catch(() => undefined);
+    await outbox.reconcileBeforeReplay(identityId, async () => ({
+      roomId: snapshot.roomId,
+      round: snapshot.round,
+      poolVersion: snapshot.poolVersion,
+      contractVersion: CANONICAL_VOTE_CONTRACT_VERSION,
+      version: snapshot.version,
+      active: ['ROUND_1', 'WAITING_1', 'ROUND_2', 'WAITING_2'].includes(snapshot.state),
+      acknowledgedRequestIds: snapshot.ownSubmission?.requestId ? [snapshot.ownSubmission.requestId] : [],
+    })).catch(() => []);
   }
 }
 

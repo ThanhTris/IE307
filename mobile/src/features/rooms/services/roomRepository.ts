@@ -143,6 +143,7 @@ export interface RoomRepository extends Omit<RoomEntryRepository, 'restoreSessio
   subscribeSession(listener: () => void): () => void;
   getApiClient(): ApiClient;
   getSessionApi(): SessionApi | undefined;
+  runAuthenticatedFeatureApi?<T>(operation: (client: ApiClient) => Promise<T>): Promise<T>;
 }
 
 export class LiveRoomRepository implements RoomRepository {
@@ -301,6 +302,10 @@ export class LiveRoomRepository implements RoomRepository {
 
   getSessionApi(): SessionApi | undefined {
     return this.session;
+  }
+
+  runAuthenticatedFeatureApi<T>(operation: (client: ApiClient) => Promise<T>): Promise<T> {
+    return this.request(() => operation(this.client));
   }
 
   // --- Room Entry (GM-09 / Home / Create / Join) ---

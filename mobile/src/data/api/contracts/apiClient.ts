@@ -31,6 +31,7 @@ import type {
   HistoryItem,
   HistoryConsent,
   InboxItem,
+  CanonicalHistoryPage,
   InvitePartnerRequest,
   InviteToRoomRequest,
   RegisterPushDeviceRequest,
@@ -82,6 +83,7 @@ export interface ApiClient {
 
   // History
   getHistory(scope: 'personal' | 'group', cursor?: string): Promise<ReadResult<HistoryItem[]>>;
+  getCanonicalHistory?(): Promise<ReadResult<CanonicalHistoryPage>>;
   getHistoryConsent(): Promise<ReadResult<HistoryConsent>>;
   updateHistoryConsent(req: UpdateHistoryConsentRequest): Promise<WriteResult<void>>;
   deleteHistory(historyId: string, requestId?: string): Promise<WriteResult<void>>;

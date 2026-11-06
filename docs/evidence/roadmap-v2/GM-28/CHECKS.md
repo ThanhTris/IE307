@@ -2,7 +2,22 @@
 
 ## Run record
 
-### Follow-up on current main baseline — 2026-11-06
+### Owner feedback follow-up — 2026-11-06
+
+- Revision: local branch `codex/gm29-31-local`, HEAD `27c3769` plus current uncommitted changes; no push/PR update performed.
+- Implemented PR #126 feedback covering session/API 401 recovery, identity-safe history cache operations, canonical history/results, inbox result references, accept-invite routing, live room friend invites, G01 friend name search, and consolidated live routes.
+- `mobile/npm run typecheck`: Pass.
+- `mobile/npm run lint`: Pass.
+- Focused GM-28/29/31 Jest: 5 suites / 46 tests passed.
+- Regression Jest for routes, lobby lifecycle and result entry: 3 suites / 41 tests passed after preserving existing error-code display behavior and avoiding SQLite access in mock preview.
+- Full `mobile/npm run check`: Pass — typecheck, lint, 69 suites / 1125 tests, and architecture check.
+- `mobile/npm run check:expo`: Pass — Expo 58.0.23 dependencies match the lockfile and bundled compatibility check.
+- `mobile/npx expo config --type public`: Pass — Android-only config resolves; no EAS project ID is configured.
+- `python scripts/validate_repository.py`: Pass; `python scripts/task_readiness.py --check-docs`: Pass; `git diff --check`: Pass.
+- `python -m unittest discover -s tests -p "test_*.py"`: 660 run, 6 skipped, 1 error (`WinError 1314`) in existing symlink-creation test `test_stage_refuses_symlink_output`; Windows does not grant symlink privilege in this environment. The failure is unrelated to the mobile patch.
+- Android, live API/multi-user ACL, EAS push delivery and Figma screenshot comparison: Not run; their environments/evidence are unavailable in this workspace.
+
+### Earlier follow-up before owner-feedback patch — 2026-11-06 (superseded below)
 
 - Revision: rebased GM-28 change on `origin/main` `bb2103a2c1c8abe806376870ffbd42ee0e09dcdc`; local follow-up patch is not yet committed.
 - Scope: connect Home actions to the live GM-28 routes while preserving current main route wiring; clear history cache on logout; show cached history with its original `fetchedAt` and a stale/offline notice after network/timeout failure. Auth and other server errors continue to suppress cached history.

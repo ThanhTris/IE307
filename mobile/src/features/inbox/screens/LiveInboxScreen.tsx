@@ -5,7 +5,7 @@ import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppButton, SheetDialog, StatusNotice } from '../../../shared/ui';
 import { ApiFeatureFrame } from '../../shared/components/ApiFeatureFrame';
 import { errorMessage } from '../../friends/screens/LiveFriendsScreen';
-import type { InboxRepository } from '../services/inboxRepository';
+import type { InboxRepository, ResolvedRoom } from '../services/inboxRepository';
 
 type Props = { repository: InboxRepository; displayName: string; onNavigate: (path: string) => void; onHome: () => void };
 type PendingAction = { item: InboxItem; kind: 'accept' | 'reject' } | null;
@@ -86,8 +86,14 @@ export function LiveInboxScreen({ repository, displayName, onNavigate, onHome }:
           return;
         }
         const room = result.data;
-        setMessage('Đã xác nhận lời mời. Đang mở phòng; bạn chưa được đặt sẵn sàng.');
-        onNavigate(`/room-preview?roomId=${encodeURIComponent(room.roomId)}&code=${encodeURIComponent(room.code)}&role=member&version=${room.version}`);
+        const resolved = await repository.resolveAcceptedRoom(room.roomId);
+        if (!resolved.ok) {
+          setMessage(`Lời mời đã được chấp nhận nhưng chưa tải được trạng thái phòng (${resolved.error.messageKey}). Tải lại hộp thư hoặc mở phòng sau; không gửi lại lời chấp nhận.`);
+          await load();
+          return;
+        }
+        setMessage('Đã xác nhận lời mời. Đang tải trạng thái phòng mới nhất; bạn chưa được đặt sẵn sàng.');
+        onNavigate(roomDestinationPath(resolved.data));
         return;
       }
       const result = pending.item.type === 'friend_invite'
@@ -111,11 +117,37 @@ export function LiveInboxScreen({ repository, displayName, onNavigate, onHome }:
     }
   };
 
+  const openRoomResult = async (item: InboxItem) => {
+    const reference = readRoomResultReference(item);
+    if (!reference) {
+      setMessage('Thông báo thiếu mã phòng hoặc kết quả từ máy chủ. Không thể mở kết quả bằng nội dung thông báo.');
+      return;
+    }
+    if (lock.current) return;
+    lock.current = true;
+    setBusy(true);
+    setMessage('');
+    try {
+      const result = await repository.resolveRoomResult(reference.roomId, reference.resultId);
+      if (!result.ok) {
+        setMessage(`Không thể mở kết quả đã lưu (${errorMessage(result.error.messageKey)}). Tải lại trạng thái phòng rồi thử lại.`);
+        return;
+      }
+      onNavigate(roomDestinationPath(result.data));
+    } catch {
+      setMessage('Không kết nối được để xác minh kết quả với máy chủ. Hãy thử lại khi có mạng.');
+    } finally {
+      lock.current = false;
+      setBusy(false);
+    }
+  };
+
   return (
     <ApiFeatureFrame active="inbox" title="Hộp thư" onNavigate={onNavigate} onHome={onHome}>
       <View style={[styles.permission, { backgroundColor: colors.surface, borderColor: colors.line }]}>
         <Text style={[styles.title, { color: colors.text }]}>Thông báo trên thiết bị</Text>
         <Text style={[styles.body, { color: colors.muted }]}>Quyền thông báo chỉ điều khiển push. Hộp thư này luôn đọc dữ liệu đã xác thực từ máy chủ.</Text>
+        <AppButton label="Cài đặt thông báo" variant="secondary" onPress={() => onNavigate('/push-settings')} colors={colors} />
       </View>
       {fetchedAt ? <Text style={[styles.meta, { color: colors.muted }]}>Đọc từ máy chủ lúc {new Date(fetchedAt).toLocaleString()}</Text> : null}
       {loading ? <StatusNotice title="Đang tải hộp thư…" message="Đang xác thực và tải thông báo mới." tone="info" colors={colors} /> : null}
@@ -137,7 +169,10 @@ export function LiveInboxScreen({ repository, displayName, onNavigate, onHome }:
               <AppButton label={`Chấp nhận ${item.title}`} onPress={() => setAction({ item, kind: 'accept' })} disabled={busy || !invitationId} colors={colors} style={styles.actionButton} />
               <AppButton label={`Từ chối ${item.title}`} variant="secondary" onPress={() => setAction({ item, kind: 'reject' })} disabled={busy || !invitationId} colors={colors} style={styles.actionButton} />
             </View>}
-            {item.type === 'room_result' ? <AppButton label="Mở lịch sử" variant="quiet" onPress={() => onNavigate('/gm28/history')} colors={colors} /> : null}
+            {item.type === 'room_result' ? <>
+              {!readRoomResultReference(item) ? <Text style={[styles.meta, { color: colors.warning }]}>Thiếu mã phòng/kết quả; không thể xác minh tham chiếu.</Text> : null}
+              <AppButton label="Mở kết quả đã lưu" variant="quiet" onPress={() => { void openRoomResult(item); }} disabled={busy || !readRoomResultReference(item)} colors={colors} />
+            </> : null}
           </View>
         );
       }) : null}
@@ -154,6 +189,23 @@ export function LiveInboxScreen({ repository, displayName, onNavigate, onHome }:
 function readInvitationId(item: InboxItem): string | undefined {
   const value = item.metadata?.invitationId;
   return typeof value === 'string' && value.trim() ? value.trim() : undefined;
+}
+
+function readRoomResultReference(item: InboxItem): { roomId: string; resultId: string } | undefined {
+  const roomId = item.metadata?.roomId;
+  const resultId = item.metadata?.resultId;
+  return typeof roomId === 'string' && roomId.trim() && typeof resultId === 'string' && resultId.trim()
+    ? { roomId: roomId.trim(), resultId: resultId.trim() }
+    : undefined;
+}
+
+function roomDestinationPath(room: ResolvedRoom): string {
+  const roomId = encodeURIComponent(room.roomId);
+  if (room.destination === 'lobby') return `/room/lobby?roomId=${roomId}`;
+  if (room.destination === 'vote') return `/room/vote?roomId=${roomId}`;
+  if (room.destination === 'final-round') return `/room/final-round?roomId=${roomId}`;
+  if (room.destination === 'no-consensus') return `/room/no-consensus?roomId=${roomId}&resultId=${encodeURIComponent(room.resultId ?? '')}`;
+  return `/room/result?roomId=${roomId}&resultId=${encodeURIComponent(room.resultId ?? '')}`;
 }
 
 const styles = StyleSheet.create({

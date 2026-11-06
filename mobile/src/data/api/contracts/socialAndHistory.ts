@@ -1,3 +1,5 @@
+import type { PoolDish } from './discovery';
+
 export interface Friend {
   id: string;
   friendUserId: string;
@@ -85,6 +87,46 @@ export interface HistoryItem {
   memberCount: number;
   scope: 'personal' | 'group';
 }
+
+export interface CanonicalHistoryScoredResult {
+  resultId: string;
+  contractVersion: 'dish-session-v4/roadmap-v2/GM-07.B' | 'dish-session-v4/roadmap-v2/GM-07.B-supplement';
+  policyVersion: 'dish-decision-v4/ADR-019-30PCT-MIN1';
+  status: 'DECIDED' | 'NO_CONSENSUS';
+  round: 1 | 2;
+  winner: PoolDish | null;
+  reasonCode: 'UNANIMOUS_WANT' | 'ACCEPTABLE_FINAL' | 'EMPTY_INTERSECTION' | 'ALL_REMOVED';
+  finalizedAt: string;
+  scoreVersion: 'want2-ok1-round1-v1' | null;
+  rankingVersion: 'score-desc-dense-rank-v1' | null;
+  topDishes: { dish: PoolDish; score: number; rank: number; isWinner: boolean }[];
+  round1BallotCount: number;
+}
+
+export interface CanonicalHistoryLegacyResult {
+  capability: 'legacy-unscored-v1';
+  status: 'DECIDED' | 'NO_CONSENSUS';
+  winner: PoolDish | null;
+  reasonCode?: string | null;
+  finalizedAt: string;
+}
+
+export interface CanonicalHistoryItem {
+  historyId: string;
+  roomId: string;
+  resultId: string;
+  scope: 'personal' | 'group';
+  createdAt: string;
+  expiresAt: string;
+  result: CanonicalHistoryScoredResult | CanonicalHistoryLegacyResult;
+  desiredAt?: string | null;
+  finalizedAt?: string;
+  memberCount?: number;
+  round1BallotCount?: number;
+  participants?: { displayName: string; role: string }[];
+}
+
+export interface CanonicalHistoryPage { items: CanonicalHistoryItem[] }
 
 export interface UpdateHistoryConsentRequest {
   scope: 'personal' | 'group';
