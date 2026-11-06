@@ -2,6 +2,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { RoomResult, SubmissionReceipt } from '../../../data/api';
 import { AppButton, StatusNotice, WaitingSummary, type Palette } from '../../../shared/ui';
 import type { FinalScreenScenario } from '../fixtures';
+import { formatDishPrice } from '../services/priceLabel';
 
 export interface FinalRoundHeaderAndOutcomeProps {
   showScenarioPicker: boolean;
@@ -54,6 +55,7 @@ export function FinalRoundHeaderAndOutcome({
   onRetryConsensus,
   colors,
 }: FinalRoundHeaderAndOutcomeProps) {
+  const winnerPriceLabel = result?.winnerDish ? formatDishPrice(result.winnerDish) : undefined;
   return (
     <>
       <View style={[styles.banner, { backgroundColor: colors.warm, borderColor: colors.primary }]}>
@@ -243,11 +245,9 @@ export function FinalRoundHeaderAndOutcome({
                         {result.winnerDish.venueName}
                       </Text>
                     ) : null}
-                    {result.winnerDish.priceMin != null ? (
+                    {winnerPriceLabel ? (
                       <Text style={[styles.winnerPrice, { color: colors.primary }]}>
-                        {result.winnerDish.priceMax != null && result.winnerDish.priceMax !== result.winnerDish.priceMin
-                          ? `${result.winnerDish.priceMin.toLocaleString()} - ${result.winnerDish.priceMax.toLocaleString()} đ`
-                          : `${result.winnerDish.priceMin.toLocaleString()} đ`}
+                        {winnerPriceLabel}
                       </Text>
                     ) : null}
                   </View>

@@ -9,6 +9,7 @@ export default function VoteRoute() {
   const { roomId } = useLocalSearchParams<{ roomId?: string }>();
   const live = useRoomRepository();
   const isReal = live.mode === 'real';
+  const identityId = live.user?.id ?? (isReal ? 'unresolved' : 'mock');
 
   const repository = useMemo(() => {
     return isReal ? createLiveVoteRepository({ roomRepository: live.repository }) : undefined;
@@ -16,6 +17,8 @@ export default function VoteRoute() {
 
   return (
     <VoteScreen
+      key={`${identityId}:${typeof roomId === 'string' ? roomId : 'missing-room'}`}
+      identityId={identityId}
       roomId={typeof roomId === 'string' ? roomId : undefined}
       repository={repository}
       showScenarioPicker={!isReal}

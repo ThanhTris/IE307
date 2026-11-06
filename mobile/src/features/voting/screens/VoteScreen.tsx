@@ -2,12 +2,12 @@ import React from 'react';
 import {
   ActivityIndicator,
   Pressable,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import type { ApiClient, PoolDish, RoomResult } from '../../../data/api';
 import { MOCK_DISHES } from '../../../data/api';
 import {
@@ -26,6 +26,7 @@ import { FlashcardDeckView } from '../components/FlashcardDeckView';
 export type VoteScreenProps = {
   pool?: PoolDish[];
   roomId?: string;
+  identityId?: string;
   initialVotes?: Record<string, VoteValue>;
   api?: ApiClient;
   repository?: VoteRepository;
@@ -44,6 +45,7 @@ export type VoteScreenProps = {
 export function VoteScreen({
   pool: poolProp,
   roomId = 'room_demo_gm12',
+  identityId = 'anonymous',
   initialVotes,
   api,
   repository,
@@ -71,6 +73,7 @@ export function VoteScreen({
     receipt,
     isWaitingForMembers,
     waitingError,
+    needsWaitingTransition,
     isRetryingWaiting,
     needsRoundTwo,
     roundTwoCandidates,
@@ -105,6 +108,7 @@ export function VoteScreen({
   } = useRoundOneVoting({
     pool: poolProp ?? (repository ? undefined : MOCK_DISHES),
     roomId,
+    identityId,
     initialVotes,
     api,
     repository,
@@ -186,10 +190,10 @@ export function VoteScreen({
         />
 
         {/* Waiting error banner with retry (F4) */}
-        {waitingError ? (
+        {waitingError || needsWaitingTransition ? (
           <View style={[styles.errorBanner, { backgroundColor: colors.surface, borderColor: colors.danger }]}>
             <Text style={[styles.errorBannerText, { color: colors.danger }]}>
-              ⚠ {waitingError}
+              {waitingError ? `⚠ ${waitingError}` : 'Phiếu đã được nhận; đang hoàn tất bước vào phòng chờ.'}
             </Text>
             <AppButton
               label={isRetryingWaiting ? 'Đang thử lại…' : 'Thử lại vào hàng chờ'}

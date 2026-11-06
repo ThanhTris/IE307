@@ -1,5 +1,34 @@
 # Output checks — GM-26 / roadmap-v2
 
+## Current local correction — 2026-11-06
+
+Tested source: `issue87_figma_ui_gm26`, parent `d86be408cb8b782dcf77b5dbeb1f91e673086c2f` plus the local PR #156 correction. Contract remains `dish-session-v4/roadmap-v2/GM-07.B-supplement`. The correction does not change API or migrations. This local test run separately aligns SDK 58 package patches and its lockfile: Expo 58.0.23, Router 58.0.30, React Native 0.88.1, Expo Go 58.0.5 (Android).
+
+- R1/R2 resume an ACKed ballot through the missing waiting step; ambiguous retries retain their request, and a confirmed waiting conflict requires a fresh accepted snapshot.
+- Drafts, ballot intents, receipts and waiting requests are scoped by identity/room/round/pool. Route context generations invalidate late continuations, including A → B → A. Logout clears the account's in-memory state; this is not persistent GM-31 outbox storage.
+- Initial reads, polls and mutation readback share the snapshot ordering guard. Lower versions, stale equal-version reads and backward round/terminal transitions are rejected.
+- Cards and the local round-two outcome share a currency/unit formatter. Missing required metadata stays hidden; unspecified menu units are not relabelled as portion/person.
+- QA exposed two adjacent lobby issues: successful Start did not route to R1, and `NOT_ENOUGH_MEMBERS` was not a known API error. The lobby route now opens `/room/vote` after a successful Start; the canonical error is preserved and shown with a specific explanation.
+
+| Check on the local correction | Result | Evidence / limit |
+| --- | --- | --- |
+| Reviewer regressions plus context/price edge cases | **Pass: 39/39** | `pr156RevisionAudit.test.tsx`, `pr156ConsumerEdgeCases.test.tsx`, `voteSessionState.test.ts`; synthetic repositories/fixtures, including the original 16 reviewer cases. |
+| Full mobile suite | **Pass: 65 suites / 1,100 tests** | `npm test -- --runInBand --verbose`; the final run printed two non-failing React `overlapping act()` warnings. |
+| Typecheck, lint, architecture | **Pass** | `npm run typecheck`, `npm run lint` (zero warnings), `npm run check:architecture`. |
+| Expo compatibility | **Pass** | `npx expo install --check` reports dependencies up to date; `npm run check:expo` confirms manifest/lock consistency (the checker notes offline validation limitations). |
+| Android JS export | **Pass** | PowerShell: `npx expo export --platform android --output-dir "$env:TEMP\ie307-pr156-expo-export"`; this is not Android runtime or native evidence. |
+| Repository / task indexes / whitespace | **Pass** | `validate_repository.py`, `task_readiness.py --check-docs`, `git diff --check`. |
+| Real Auth+REST integration | **Pass through R2 / result UI gap** | Owned schema 0.16.0 QA via Android emulator: guest Auth, room start, R1 ballot ACK, waiting timeout/worker transition, R2 ballot with one REMOVE. Server/DB reached `DECIDED` with one ballot per round. The app then displayed the result placeholder; GM-27 result API consumer is not implemented in this PR. This is real QA API traffic, not production data. |
+| Expo Go / Android runtime interaction | **Partial pass — UI-MOCK** | Recreated AVD `Medium_Phone_API_37.0` (API 37, 1080×2400) runs Expo Go 58.0.5 with Expo SDK 58. Metro runs `--offline`; `/`, `/--/room/vote` and `/--/room/final-round` load. On vote, WANT moves to card 2 and counter 1/4; on round two, a fixture with two candidates shows cap 1, first REMOVE reaches 1/1, and another REMOVE does not exceed the cap. After replacing deprecated core `SafeAreaView` imports, both screens reload without a React Native warning. Only fixture/mock repositories are active. |
+
+The initial full run exposed receipt/draft leakage through the fallback unauthenticated identity; the corrected storage excludes `anonymous`/`unresolved` for those values. The final full suite passes, with two non-failing `overlapping act()` warnings. Runtime exposed deprecated core React Native `SafeAreaView` imports in both GM-26 screens; they now use the existing safe-area-context package, and the post-reload runtime no longer emits that warning. Local logs and the machine-readable report remain ignored under `review-results/pr156-fix-2026-11-06/`. The real emulator/API flow above was run before the lobby auto-navigation correction; the new route has passed Expo Router integration tests but was not rerun against a fresh QA room on the emulator. Desktop visual capture failed, visual parity is Not run, and no physical-device evidence is claimed. Initial launch needed Metro `--offline` and the Expo Go route separator `/--/`. Owner review remains open.
+
+Docker follow-up: the live consumer cases recover ACK before waiting, inject response loss after the real waiting write, replay the identical request without moving the deadline, then finish R2 with N=1/ALL_REMOVED or N=10/stable Top 3. Both real round transitions and single-result navigation pass. QA API/DB were loopback-only on 54361/54362; the owner-verified worker, containers, volume and generated workdir were cleaned. Initial local report-path and Jest-resolution setup failures were corrected in the ignored harness; no additional application source change was needed.
+
+## Historical evidence received with PR head d86be40
+
+The statements below preserve the previous branch evidence. Their SDK versions, test counts and implementation details are historical; component "Figma parity" tests do not establish Android visual parity.
+
 Status: Automated regressions, 5 Figma nodes parity, vote repository RPCs, full mobile test suite (62 suites / 1,059 tests), and PR #156 review fixes (Round 1: F1–F7; Round 2: R1–R8) pass on branch `issue87_figma_ui_gm26`; physical Android device acceptance and remote backend staging verification remain pending.
 Task: GM-26 — UI–API ballot, waiting và vòng hai
 Owner: Trang (`rosy179`), Reviewer: Trí (`ThanhTris`)

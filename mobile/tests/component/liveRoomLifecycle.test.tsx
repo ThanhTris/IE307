@@ -409,6 +409,27 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     });
   });
 
+  test('P3: start explains the minimum roster requirement instead of showing a generic conflict', async () => {
+    const user = userEvent.setup();
+    const client = createMockApiClient({
+      getRoomSnapshot: jest.fn().mockResolvedValue({ ok: true, data: createSampleSnapshot() }),
+      startRound: jest.fn().mockResolvedValue({ ok: false, error: { messageKey: 'NOT_ENOUGH_MEMBERS' } }),
+    });
+
+    await render(
+      <LiveLobbyScreen
+        repository={client}
+        roomId="room_live_123"
+        currentUserId={sampleUser.id}
+        onHome={jest.fn()}
+      />
+    );
+
+    await screen.findByText('Thành viên · 2/20');
+    await user.press(screen.getByRole('button', { name: 'Bắt đầu chọn món' }));
+    expect(await screen.findByText('Chưa thực hiện được · Cần ít nhất 2 thành viên trong phòng trước khi bắt đầu.')).toBeOnTheScreen();
+  });
+
   // --- Point 4: Request ID stability & retry on uncertain errors ---
 
   test('P4: Lobby reuses request ID on TIMEOUT/NETWORK_ERROR and uses fresh ID on new intent', async () => {

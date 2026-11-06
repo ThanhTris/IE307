@@ -365,3 +365,12 @@ test('shell navigates to vote route and renders voting screen', async () => {
   await waitFor(() => expect(screen).toHavePathname('/room/vote'));
   expect(screen.getByText('GM-12 · UI Chọn món Vòng 1 (Flashcard Vote)')).toBeOnTheScreen();
 });
+
+test('successful lobby start continues directly to round-one voting', async () => {
+  await renderRouter(routes, { initialUrl: '/room/lobby' });
+  const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+  await screen.findByRole('button', { name: 'Bắt đầu chọn món' });
+  await user.press(screen.getByRole('button', { name: 'Bắt đầu chọn món' }));
+  await waitFor(() => expect(screen).toHavePathname('/room/vote'));
+  expect(await screen.findByRole('button', { name: 'Gửi phiếu' })).toBeOnTheScreen();
+});

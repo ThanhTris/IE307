@@ -2,12 +2,12 @@ import React from 'react';
 import {
   ActivityIndicator,
   Pressable,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import type { ApiClient, PoolDish, RoomResult } from '../../../data/api';
 import {
   AppButton,
@@ -27,6 +27,7 @@ import { CandidateKeepRemoveCard } from '../components/CandidateKeepRemoveCard';
 export type FinalRoundScreenProps = {
   candidates?: PoolDish[];
   roomId?: string;
+  identityId?: string;
   initialChoices?: Record<string, FinalChoice>;
   api?: ApiClient;
   repository?: VoteRepository;
@@ -46,6 +47,7 @@ export type FinalRoundScreenProps = {
 export function FinalRoundScreen({
   candidates: candidatesProp,
   roomId = 'room_demo_gm12',
+  identityId = 'anonymous',
   initialChoices,
   api,
   repository,
@@ -78,6 +80,7 @@ export function FinalRoundScreen({
     isWaitingForMembers,
     waitingError,
     isRetryingWaiting,
+    needsWaitingTransition,
     eliminationCap,
     keptCount,
     removedCount,
@@ -102,6 +105,7 @@ export function FinalRoundScreen({
   } = useRoundTwoVoting({
     candidates: candidatesProp ?? (repository ? undefined : FIXTURE_ROUND_TWO_CANDIDATES),
     roomId,
+    identityId,
     initialChoices,
     api,
     repository,
@@ -183,10 +187,10 @@ export function FinalRoundScreen({
         />
 
         {/* Waiting error banner with retry (F4) */}
-        {waitingError ? (
+        {waitingError || needsWaitingTransition ? (
           <View style={[styles.errorBanner, { backgroundColor: colors.surface, borderColor: colors.danger }]}>
             <Text style={[styles.errorBannerText, { color: colors.danger }]}>
-              ⚠ {waitingError}
+              {waitingError ? `⚠ ${waitingError}` : 'Phiếu đã được nhận; đang hoàn tất bước vào phòng chờ Vòng 2.'}
             </Text>
             <AppButton
               label={isRetryingWaiting ? 'Đang thử lại…' : 'Thử lại vào hàng chờ Vòng 2'}

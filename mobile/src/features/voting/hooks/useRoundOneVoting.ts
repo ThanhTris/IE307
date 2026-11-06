@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   type ApiClient,
   type BallotVoteItem,
@@ -19,10 +19,26 @@ import {
   mapSnapshotPoolToPoolDishes,
   type VoteRepository,
 } from '../services/voteRepository';
+import {
+  clearBallotIntent,
+  clearVoteDraft,
+  getBallotIntent,
+  getSubmissionReceipt,
+  getVoteDraft,
+  getWaitingRequestId,
+  resetWaitingRequestId,
+  saveBallotIntent,
+  saveSubmissionReceipt,
+  saveVoteDraft,
+  SnapshotReadOrder,
+  type VoteContextToken,
+  type VoteScope,
+} from '../services/voteSessionState';
 
 export interface UseRoundOneVotingParams {
   pool?: PoolDish[];
   roomId: string;
+  identityId?: string;
   initialVotes?: Record<string, VoteValue>;
   api?: ApiClient;
   repository?: VoteRepository;
@@ -37,6 +53,7 @@ export interface UseRoundOneVotingParams {
 }
 
 interface InFlightIntentR1 {
+  identityId: string;
   requestId: string;
   intentId: string;
   roomId: string;
@@ -49,6 +66,7 @@ interface InFlightIntentR1 {
 export function useRoundOneVoting({
   pool: initialPool,
   roomId,
+  identityId = 'anonymous',
   initialVotes,
   api,
   repository,
@@ -61,20 +79,27 @@ export function useRoundOneVoting({
   onGoToResult,
   onGoToNoConsensus,
 }: UseRoundOneVotingParams) {
+  const initialScope: VoteScope = { identityId, roomId, round: 1, poolVersion: 1 };
   const [localPool, setLocalPool] = useState<PoolDish[]>(initialPool || []);
   const [isLoadingSnapshot, setIsLoadingSnapshot] = useState<boolean>(() =>
     Boolean(repository && (!initialPool || initialPool.length === 0))
   );
   const [snapshotError, setSnapshotError] = useState<string | null>(null);
 
-  const [votes, setVotes] = useState<Record<string, VoteValue>>(initialVotes || {});
+  const [votes, setVotes] = useState<Record<string, VoteValue>>(() =>
+    initialVotes ?? (getVoteDraft(initialScope) as Record<string, VoteValue> | null) ?? {}
+  );
+  const votesRef = useRef(votes);
   const [scenario, setScenario] = useState<VoteScreenScenario>(initialScenario);
-  const [submissionState, setSubmissionState] = useState<'idle' | 'pending' | 'ack' | 'error'>('idle');
+  const [submissionState, setSubmissionState] = useState<'idle' | 'pending' | 'ack' | 'error'>(() =>
+    getSubmissionReceipt(initialScope) ? 'ack' : 'idle'
+  );
   const [errorMessage, setErrorMessage] = useState('');
-  const [receipt, setReceipt] = useState<SubmissionReceipt | null>(null);
+  const [receipt, setReceipt] = useState<SubmissionReceipt | null>(() => getSubmissionReceipt(initialScope));
   const [isWaitingForMembers, setIsWaitingForMembers] = useState(false);
   const [waitingError, setWaitingError] = useState<string | null>(null);
   const [isRetryingWaiting, setIsRetryingWaiting] = useState(false);
+  const [needsWaitingTransition, setNeedsWaitingTransition] = useState(false);
   const [needsRoundTwo, setNeedsRoundTwo] = useState(false);
   const [roundTwoCandidates, setRoundTwoCandidates] = useState<PoolDish[]>(FIXTURE_ROUND_TWO_CANDIDATES);
   const [lastActionNotice, setLastActionNotice] = useState<string>('');
@@ -119,10 +144,45 @@ export function useRoundOneVoting({
   const clockSkewRef = useRef<number>(0);
 
   // R7: Durable in-flight ballot intent preserved across retries
-  const inFlightIntentRef = useRef<InFlightIntentR1 | null>(null);
-  const activeRequestIdRef = useRef<string | null>(null);
-  const activeIntentIdRef = useRef<string | null>(null);
   const lastTapRef = useRef<Record<string, number>>({});
+  const lastAppliedScopeRef = useRef(JSON.stringify([identityId, roomId, 1, 1]));
+  const contextKey = JSON.stringify([identityId, roomId]);
+  const activeContextRef = useRef(contextKey);
+  const contextGenerationRef = useRef(0);
+  const mountedRef = useRef(true);
+  const snapshotOrderRef = useRef(new SnapshotReadOrder());
+  const autoWaitingAttemptsRef = useRef(new Set<string>());
+  const activeScope = useCallback((poolVersionForScope = poolVersion): VoteScope => ({
+    identityId,
+    roomId,
+    round: 1,
+    poolVersion: poolVersionForScope,
+  }), [identityId, roomId, poolVersion]);
+  const replaceVotes = useCallback((next: Record<string, VoteValue>) => {
+    votesRef.current = next;
+    setVotes(next);
+    saveVoteDraft(activeScope(), next);
+  }, [activeScope]);
+
+  const captureContext = useCallback((): VoteContextToken => ({
+    key: contextKey,
+    generation: contextGenerationRef.current,
+  }), [contextKey]);
+  const isCurrentContext = useCallback((token: VoteContextToken) => mountedRef.current
+    && activeContextRef.current === token.key
+    && contextGenerationRef.current === token.generation, []);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => { mountedRef.current = false; };
+  }, []);
+  useLayoutEffect(() => {
+    if (activeContextRef.current !== contextKey) {
+      activeContextRef.current = contextKey;
+      contextGenerationRef.current += 1;
+    }
+    snapshotOrderRef.current.activate(contextKey);
+  }, [contextKey]);
 
   const pool = localPool.length > 0 ? localPool : (initialPool || []);
   const votedCount = pool.filter(dish => Boolean(votes[dish.roundDishId])).length;
@@ -141,6 +201,11 @@ export function useRoundOneVoting({
 
   // Central snapshot applicator (R1, R2, R4, R6)
   const applySnapshot = useCallback((snap: any) => {
+    const snapshotScope: VoteScope = { identityId, roomId, round: 1, poolVersion: snap.poolVersion };
+    const scopeKey = JSON.stringify([identityId, roomId, 1, snap.poolVersion]);
+    const scopeChanged = lastAppliedScopeRef.current !== null && lastAppliedScopeRef.current !== scopeKey;
+    lastAppliedScopeRef.current = scopeKey;
+    const storedReceipt = getSubmissionReceipt(snapshotScope);
     setRoomVersion(snap.version);
     setPoolVersion(snap.poolVersion);
     if (typeof snap.submittedCount === 'number') {
@@ -168,17 +233,22 @@ export function useRoundOneVoting({
     }
 
     // R6: Synchronize waiting deadline
+    setActiveDeadline(snap.deadline ?? null);
     if (snap.deadline) {
-      setActiveDeadline(snap.deadline);
       const remaining = computeRemainingFromDeadline(snap.deadline);
       if (remaining !== null) {
         setWaitingCountdown(remaining);
       }
+    } else if (!String(snap.state).startsWith('WAITING_')) {
+      setWaitingCountdown(null);
     }
 
     // R4: 1. Terminal states ALWAYS take precedence over round numbers
     if (snap.state === 'DECIDED' && snap.result) {
       setIsWaitingForMembers(false);
+      setNeedsWaitingTransition(false);
+      clearBallotIntent({ identityId, roomId, round: 1, poolVersion: snap.poolVersion });
+      clearVoteDraft(snapshotScope);
       setNeedsRoundTwo(false);
       const finalRes = snap.result as unknown as RoomResult;
       if (navigatedOutcomeRef.current !== finalRes.resultId) {
@@ -189,6 +259,9 @@ export function useRoundOneVoting({
     }
     if (snap.state === 'NO_CONSENSUS' && snap.result) {
       setIsWaitingForMembers(false);
+      setNeedsWaitingTransition(false);
+      clearBallotIntent({ identityId, roomId, round: 1, poolVersion: snap.poolVersion });
+      clearVoteDraft(snapshotScope);
       setNeedsRoundTwo(false);
       const finalRes = snap.result as unknown as RoomResult;
       if (navigatedOutcomeRef.current !== finalRes.resultId) {
@@ -201,6 +274,9 @@ export function useRoundOneVoting({
     // R4: 2. Active Round 2 states
     if (snap.state === 'ROUND_2' || snap.state === 'WAITING_2') {
       setIsWaitingForMembers(snap.state === 'WAITING_2');
+      setNeedsWaitingTransition(false);
+      clearBallotIntent({ identityId, roomId, round: 1, poolVersion: snap.poolVersion });
+      clearVoteDraft(snapshotScope);
       setNeedsRoundTwo(true);
       const survivors = mapSnapshotPoolToPoolDishes(snap.pool);
       setRoundTwoCandidates(survivors);
@@ -221,8 +297,13 @@ export function useRoundOneVoting({
 
     if (callerSubmitted) {
       setSubmissionState('ack');
-      inFlightIntentRef.current = null;
+      if (storedReceipt) setReceipt(storedReceipt);
       setIsWaitingForMembers(snap.state === 'WAITING_1');
+      setNeedsWaitingTransition((snap.state === 'ROUND_1' || snap.state === 'WAITING_1') && !snap.ownWaiting && hasCompleteBallot);
+      if (hasCompleteBallot) {
+        clearBallotIntent({ identityId, roomId, round: 1, poolVersion: snap.poolVersion });
+        clearVoteDraft(snapshotScope);
+      }
       if (Array.isArray(snap.ownBallot) && snap.ownBallot.length > 0) {
         const restoredVotes: Record<string, VoteValue> = {};
         for (const b of snap.ownBallot as any[]) {
@@ -230,54 +311,70 @@ export function useRoundOneVoting({
             restoredVotes[b.roundDishId] = b.choice as VoteValue;
           }
         }
-        setVotes(prev => ({ ...prev, ...restoredVotes }));
+        votesRef.current = restoredVotes;
+        setVotes(restoredVotes);
       }
     } else {
       // Caller has NOT submitted! Keep idle & unlocked so they can vote before deadline
-      if (!inFlightIntentRef.current) {
-        setSubmissionState(prev => (prev === 'ack' ? 'idle' : prev));
+      const pendingIntent = getBallotIntent(snapshotScope) as InFlightIntentR1 | null;
+      if (pendingIntent) {
+        setNeedsWaitingTransition(false);
+        const restoredVotes = Object.fromEntries(pendingIntent.votes.map(item => [item.roundDishId, item.vote])) as Record<string, VoteValue>;
+        votesRef.current = restoredVotes;
+        setVotes(restoredVotes);
+        setSubmissionState('error');
+        setErrorMessage('Chưa xác nhận được lần gửi trước. Có thể thử gửi lại đúng yêu cầu đã tạo.');
+      } else if (scopeChanged) {
+        const scopedDraft = getVoteDraft(snapshotScope);
+        const nextVotes = (scopedDraft as Record<string, VoteValue> | null) ?? {};
+        votesRef.current = nextVotes;
+        setVotes(nextVotes);
+        setSubmissionState(storedReceipt ? 'ack' : 'idle');
+        setReceipt(storedReceipt);
+        setErrorMessage('');
+        setNeedsWaitingTransition(Boolean(storedReceipt) && (snap.state === 'ROUND_1' || snap.state === 'WAITING_1') && !snap.ownWaiting);
+      } else {
+        if (storedReceipt) {
+          setReceipt(storedReceipt);
+          setSubmissionState('ack');
+          setNeedsWaitingTransition((snap.state === 'ROUND_1' || snap.state === 'WAITING_1') && !snap.ownWaiting);
+        } else {
+          setNeedsWaitingTransition(false);
+        }
       }
       setIsWaitingForMembers(false);
     }
-  }, [computeRemainingFromDeadline, isHost]);
+  }, [computeRemainingFromDeadline, identityId, isHost, roomId]);
 
   // Snapshot fetching method (R1: only depends on repository and roomId)
   const fetchSnapshot = useCallback(async () => {
-    if (!repository) return;
+    if (!repository) return null;
+    const requestedContext = captureContext();
+    const ticket = snapshotOrderRef.current.begin(requestedContext.key);
     const res = await repository.getSnapshot(roomId);
+    if (!isCurrentContext(requestedContext)) return null;
     if (res.ok) {
+      if (!snapshotOrderRef.current.accepts(ticket, res.data)) return null;
       applySnapshot(res.data);
       setIsLoadingSnapshot(false);
       setSnapshotError(null);
+      return res.data;
     } else {
-      setIsLoadingSnapshot(false);
-      setSnapshotError(res.error.messageKey);
+      if (snapshotOrderRef.current.isLatest(ticket)) {
+        setIsLoadingSnapshot(false);
+        setSnapshotError(res.error.messageKey);
+      }
+      return null;
     }
-  }, [repository, roomId, applySnapshot]);
+  }, [repository, roomId, applySnapshot, captureContext, isCurrentContext]);
 
   // R1 & R8: Initial mount load (stable, runs once, cleanup guard)
   useEffect(() => {
     if (!repository || (initialPool && initialPool.length > 0)) {
       return;
     }
-    let cancelled = false;
-    const init = async () => {
-      const res = await repository.getSnapshot(roomId);
-      if (cancelled) return;
-      if (res.ok) {
-        applySnapshot(res.data);
-        setIsLoadingSnapshot(false);
-        setSnapshotError(null);
-      } else {
-        setSnapshotError(res.error.messageKey);
-        setIsLoadingSnapshot(false);
-      }
-    };
-    void init();
-    return () => {
-      cancelled = true;
-    };
-  }, [repository, roomId, initialPool, applySnapshot]);
+    void fetchSnapshot();
+  }, [repository, roomId, initialPool, fetchSnapshot]);
 
   // R3 & R6: Countdown timer & polling in waiting state
   useEffect(() => {
@@ -314,23 +411,94 @@ export function useRoundOneVoting({
     };
   }, [activeDeadline, isWaitingForMembers, repository, fetchSnapshot, computeRemainingFromDeadline]);
 
+  const attemptEnterWaiting = useCallback(async (allowConflictRetry = true) => {
+    if (!repository) return;
+    const requestedContext = captureContext();
+    const scope = activeScope();
+    setIsRetryingWaiting(true);
+    setWaitingError(null);
+
+    const send = async (expectedVersion: number, mayRetryConflict: boolean): Promise<void> => {
+      const requestId = getWaitingRequestId(scope, () => createDurableRequestId('wait_r1'));
+      try {
+        const waitRes = await repository.enterWaiting({
+          roomId,
+          round: 1,
+          poolVersion: scope.poolVersion,
+          expectedVersion,
+          requestId,
+        });
+        if (!isCurrentContext(requestedContext)) return;
+        if (waitRes.ok) {
+          resetWaitingRequestId(scope);
+          setNeedsWaitingTransition(false);
+          setIsWaitingForMembers(true);
+          if (waitRes.data.deadline) {
+            setActiveDeadline(waitRes.data.deadline);
+            const remaining = computeRemainingFromDeadline(waitRes.data.deadline);
+            if (remaining !== null) setWaitingCountdown(remaining);
+          }
+          void fetchSnapshot();
+          return;
+        }
+        if (waitRes.error.messageKey === 'VERSION_CONFLICT' && mayRetryConflict) {
+          const fresh = await fetchSnapshot();
+          if (!isCurrentContext(requestedContext)) return;
+          const hasAcceptedBallot = Boolean(fresh
+            && (fresh.state === 'ROUND_1' || fresh.state === 'WAITING_1')
+            && fresh.poolVersion === scope.poolVersion
+            && !fresh.ownWaiting
+            && Array.isArray(fresh.ownBallot)
+            && fresh.ownBallot.length === fresh.pool.length
+            && fresh.ownBallot.length > 0);
+          if (fresh && hasAcceptedBallot) {
+            resetWaitingRequestId(scope);
+            await send(fresh.version, false);
+            return;
+          }
+          if (!fresh) setWaitingError('Không thể xác nhận trạng thái phòng. Tải lại rồi thử vào hàng chờ.');
+          else if ((fresh.state === 'ROUND_1' || fresh.state === 'WAITING_1') && fresh.poolVersion === scope.poolVersion && !fresh.ownWaiting) {
+            setWaitingError('Snapshot chưa xác nhận đủ phiếu đã ACK. Hãy tải lại trạng thái rồi thử tiếp; không cần gửi lại phiếu.');
+          }
+          return;
+        }
+        setWaitingError(`Không thể vào hàng chờ: ${waitRes.error.messageKey}`);
+      } catch {
+        if (isCurrentContext(requestedContext)) {
+          setWaitingError('Lỗi kết nối khi vào hàng chờ. Vui lòng thử lại.');
+        }
+      }
+    };
+
+    try {
+      await send(roomVersion, allowConflictRetry);
+    } finally {
+      if (isCurrentContext(requestedContext)) setIsRetryingWaiting(false);
+    }
+  }, [repository, activeScope, roomId, roomVersion, fetchSnapshot, computeRemainingFromDeadline, captureContext, isCurrentContext]);
+
+  useEffect(() => {
+    if (!repository || !needsWaitingTransition) return;
+    const attemptKey = `${contextKey}:${poolVersion}:R1`;
+    if (autoWaitingAttemptsRef.current.has(attemptKey)) return;
+    autoWaitingAttemptsRef.current.add(attemptKey);
+    void attemptEnterWaiting();
+  }, [repository, needsWaitingTransition, contextKey, poolVersion, attemptEnterWaiting]);
+
   const handleSetWant = (dishId: string) => {
     if (isLocked) return;
-    setVotes(prev => ({ ...prev, [dishId]: 'WANT' }));
+    const next = { ...votesRef.current, [dishId]: 'WANT' as const };
+    replaceVotes(next);
     const dish = pool.find(d => d.roundDishId === dishId);
     setLastActionNotice(`Double-tap: Đã đặt WANT (Muốn ăn) cho ${dish?.name || dishId} (chưa gửi)`);
   };
 
   const handleVote = (dishId: string, vote: VoteValue) => {
     if (isLocked) return;
-    setVotes(prev => {
-      if (prev[dishId] === vote) {
-        const next = { ...prev };
-        delete next[dishId];
-        return next;
-      }
-      return { ...prev, [dishId]: vote };
-    });
+    const next = { ...votesRef.current };
+    if (next[dishId] === vote) delete next[dishId];
+    else next[dishId] = vote;
+    replaceVotes(next);
     const dish = pool.find(d => d.roundDishId === dishId);
     setLastActionNotice(`Đã chọn ${vote} cho ${dish?.name || dishId} (chưa gửi)`);
   };
@@ -346,7 +514,7 @@ export function useRoundOneVoting({
         next[dish.roundDishId] = rand > 0.6 ? 'WANT' : rand > 0.25 ? 'OK' : 'NO';
       }
     }
-    setVotes(next);
+    replaceVotes(next);
     setLastActionNotice(`Đã điền nhanh: ${preset === 'all_ok' ? 'Tất cả OK' : preset === 'all_want' ? 'Tất cả WANT' : 'Ngẫu nhiên'}`);
   };
 
@@ -395,11 +563,9 @@ export function useRoundOneVoting({
 
   const handleClearVote = (dishId: string) => {
     if (isLocked) return;
-    setVotes(prev => {
-      const next = { ...prev };
-      delete next[dishId];
-      return next;
-    });
+    const next = { ...votesRef.current };
+    delete next[dishId];
+    replaceVotes(next);
     const dish = pool.find(d => d.roundDishId === dishId);
     setLastActionNotice(`Đã hoàn tác phiếu của ${dish?.name || dishId} về UNSET`);
   };
@@ -428,6 +594,7 @@ export function useRoundOneVoting({
 
   const handleHostEarlyFinish = async () => {
     if (!canHostEarlyFinish) return;
+    const requestedContext = captureContext();
 
     if (repository) {
       const res = await repository.finalize({
@@ -437,6 +604,7 @@ export function useRoundOneVoting({
         totalRosterCount,
         isHost,
       });
+      if (!isCurrentContext(requestedContext)) return;
 
       if (res.ok) {
         setIsWaitingForMembers(false);
@@ -462,42 +630,14 @@ export function useRoundOneVoting({
 
   // Retry waiting if enterWaiting failed after ballot ACK (F4, R6)
   const handleRetryWaiting = async () => {
-    if (!repository || submissionState !== 'ack') return;
-    setIsRetryingWaiting(true);
-    setWaitingError(null);
-    try {
-      const waitRes = await repository.enterWaiting({
-        roomId,
-        round: 1,
-        poolVersion,
-        expectedVersion: roomVersion,
-        requestId: createDurableRequestId('wait_retry_r1'),
-      });
-      setIsRetryingWaiting(false);
-      if (waitRes.ok) {
-        setIsWaitingForMembers(true);
-        if (waitRes.data.deadline) {
-          setActiveDeadline(waitRes.data.deadline);
-          const remaining = computeRemainingFromDeadline(waitRes.data.deadline);
-          if (remaining !== null) {
-            setWaitingCountdown(remaining);
-          }
-        }
-      } else {
-        if (waitRes.error.messageKey === 'VERSION_CONFLICT') {
-          void fetchSnapshot();
-        } else {
-          setWaitingError(`Không thể vào hàng chờ: ${waitRes.error.messageKey}`);
-        }
-      }
-    } catch {
-      setIsRetryingWaiting(false);
-      setWaitingError('Lỗi kết nối khi vào hàng chờ. Vui lòng thử lại.');
-    }
+    if (submissionState !== 'ack') return;
+    await attemptEnterWaiting();
   };
 
   const handleSubmit = async (overrideScenario?: VoteScreenScenario) => {
     if (!allVoted || (isLocked && typeof overrideScenario !== 'string')) return;
+    const requestedContext = captureContext();
+    const scope = activeScope();
 
     const activeScenario = typeof overrideScenario === 'string' ? overrideScenario : scenario;
     setSubmissionState('pending');
@@ -505,12 +645,10 @@ export function useRoundOneVoting({
     setWaitingError(null);
 
     // R7: Capture or reuse in-flight intent across retries
-    let intent = inFlightIntentRef.current;
+    let intent = getBallotIntent(scope) as InFlightIntentR1 | null;
     if (!intent) {
-      const reqId = activeRequestIdRef.current || createDurableRequestId('vote_r1');
-      const intentId = activeIntentIdRef.current || `intent_${reqId}`;
-      activeRequestIdRef.current = reqId;
-      activeIntentIdRef.current = intentId;
+      const reqId = createDurableRequestId('vote_r1');
+      const intentId = `intent_${reqId}`;
 
       const ballotVotes: BallotVoteItem[] = pool.map(dish => ({
         roundDishId: dish.roundDishId,
@@ -518,6 +656,7 @@ export function useRoundOneVoting({
       }));
 
       intent = {
+        identityId,
         requestId: reqId,
         intentId,
         roomId,
@@ -526,7 +665,7 @@ export function useRoundOneVoting({
         expectedVersion: roomVersion,
         votes: ballotVotes,
       };
-      inFlightIntentRef.current = intent;
+      saveBallotIntent(intent);
     }
 
     try {
@@ -541,50 +680,29 @@ export function useRoundOneVoting({
           requestId: intent.requestId,
         });
 
+        if (!isCurrentContext(requestedContext)) return;
+
         if (res.ok) {
+          clearBallotIntent(scope);
+          clearVoteDraft(scope);
           setSubmissionState('ack');
-          inFlightIntentRef.current = null;
-          setReceipt(res.data.receipt ?? {
+          const acknowledgedReceipt = res.data.receipt ?? {
             round: 1,
             intentId: intent.intentId,
             requestId: res.requestId ?? intent.requestId,
             submittedAt: new Date().toISOString(),
             voteCount: intent.votes.length,
-          });
+          };
+          saveSubmissionReceipt(scope, acknowledgedReceipt);
+          setReceipt(acknowledgedReceipt);
 
           // If room already advanced on submit (last member) (F4)
           if (res.data.allMembersSubmitted || res.state === 'ROUND_2' || res.state === 'DECIDED' || res.state === 'NO_CONSENSUS') {
             void fetchSnapshot();
             return;
           }
-
-          // Enter waiting room (F4, R6)
-          const waitRes = await repository.enterWaiting({
-            roomId,
-            round: 1,
-            poolVersion,
-            expectedVersion: res.version ?? roomVersion,
-            requestId: createDurableRequestId('wait_r1'),
-          });
-
-          if (waitRes.ok) {
-            setIsWaitingForMembers(true);
-            setNeedsRoundTwo(false);
-            if (waitRes.data.deadline) {
-              setActiveDeadline(waitRes.data.deadline);
-              const remaining = computeRemainingFromDeadline(waitRes.data.deadline);
-              if (remaining !== null) {
-                setWaitingCountdown(remaining);
-              }
-            }
-          } else {
-            // F4: Do NOT mark waiting as successful if it failed; keep ballot ACK and show waiting retry
-            if (waitRes.error.messageKey === 'VERSION_CONFLICT') {
-              void fetchSnapshot();
-            } else {
-              setWaitingError(`Không thể vào hàng chờ: ${waitRes.error.messageKey}`);
-            }
-          }
+          // A successful ballot and entering the result wait are separate acknowledged steps.
+          setNeedsWaitingTransition(true);
         } else {
           setSubmissionState('error');
           setErrorMessage(res.error.message || `Lỗi từ server: ${res.error.messageKey}`);
@@ -600,16 +718,20 @@ export function useRoundOneVoting({
           requestId: intent.requestId,
         };
         const res = await api.submitBallot(req);
+        if (!isCurrentContext(requestedContext)) return;
         if (res.ok) {
+          clearBallotIntent(scope);
+          clearVoteDraft(scope);
           setSubmissionState('ack');
-          inFlightIntentRef.current = null;
-          setReceipt(res.data.receipt ?? {
+          const acknowledgedReceipt = res.data.receipt ?? {
             round: 1,
             intentId: intent.intentId,
             requestId: res.requestId ?? intent.requestId,
             submittedAt: new Date().toISOString(),
             voteCount: intent.votes.length,
-          });
+          };
+          saveSubmissionReceipt(scope, acknowledgedReceipt);
+          setReceipt(acknowledgedReceipt);
 
           if (res.data.allMembersSubmitted === false) {
             setIsWaitingForMembers(true);
@@ -631,20 +753,24 @@ export function useRoundOneVoting({
       } else {
         // Pure mock fallback
         await simulateDeferredRequest(null, { delayMs: simulateDelayMs });
+        if (!isCurrentContext(requestedContext)) return;
         if (simulateError || activeScenario === 'error') {
           setSubmissionState('error');
           setErrorMessage('Không thể gửi phiếu: Lỗi kết nối mạng (Giả lập)');
         } else {
           setSubmissionState('ack');
-          inFlightIntentRef.current = null;
-          setReceipt({
+          clearBallotIntent(scope);
+          clearVoteDraft(scope);
+          const acknowledgedReceipt: SubmissionReceipt = {
             round: 1,
             intentId: intent.intentId,
             requestId: intent.requestId,
             submittedAt: new Date().toISOString(),
             voteCount: intent.votes.length,
             votesSummary: intent.votes,
-          });
+          };
+          saveSubmissionReceipt(scope, acknowledgedReceipt);
+          setReceipt(acknowledgedReceipt);
 
           if (activeScenario === 'waiting') {
             setIsWaitingForMembers(true);
@@ -660,6 +786,7 @@ export function useRoundOneVoting({
         }
       }
     } catch {
+      if (!isCurrentContext(requestedContext)) return;
       setSubmissionState('error');
       setErrorMessage('Đã xảy ra lỗi không xác định khi gửi phiếu.');
     }
@@ -675,6 +802,7 @@ export function useRoundOneVoting({
     isWaitingForMembers,
     waitingError,
     isRetryingWaiting,
+    needsWaitingTransition,
     needsRoundTwo,
     roundTwoCandidates,
     activeCardIndex,

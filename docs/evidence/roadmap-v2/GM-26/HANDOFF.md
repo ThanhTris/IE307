@@ -1,5 +1,22 @@
 # Bàn giao đầu ra task — GM-26 / roadmap-v2
 
+## Current local handoff — 2026-11-06
+
+Source: PR #156 branch `issue87_figma_ui_gm26`, parent `d86be408cb8b782dcf77b5dbeb1f91e673086c2f` plus the current local correction. Owner Trang / reviewer Trí are unchanged. Receive the complete patch rather than only one round's hook.
+
+- The route/provider supplies identity; R1/R2 scope draft, intent, receipt and waiting-request state by identity + room + round + poolVersion. Room version remains part of the captured command payload, not the storage key. Ambiguous retries retain that payload.
+- ACK and waiting are separate steps. Snapshot-confirmed ACK resumes waiting once automatically; an error keeps ACK and exposes waiting retry. State/round changes are received through accepted snapshots. The server supplies the deadline and remains the authority for transitions and results.
+- Context generations block late callbacks after room/account changes; the shared read-order guard prevents older snapshots from replacing newer state. Logout clears private in-memory state. Process-restart recovery uses server snapshots; disk outbox work remains GM-31.
+- `priceLabel.ts` preserves currency and unit for all GM-26 card/outcome price labels; `menu_item_unspecified` is shown as unknown unit, never inferred as portion/person. Required missing metadata hides the price.
+- Successful lobby Start now routes to R1. `NOT_ENOUGH_MEMBERS` is preserved by the API error mapper and has a user-facing explanation.
+- Receive `voteSessionState.ts` with both hooks and route identity wiring. GM-27 receives server result navigation; GM-31 may replace the memory storage later while retaining scope and request replay semantics.
+
+Validation: 39 focused regressions and the full 65-suite / 1,100-test mobile run pass; typecheck and lint on touched files pass. The full suite printed two non-failing React `overlapping act()` warnings. Docker runners cover 152 baseline HTTP cases, 178 canonical HTTP cases, 102 SQL/domain vectors and 2 consumer-hook cases on owned schema 0.16.0 QA. Android emulator with Expo Go used real QA Auth+REST for guest login, room start, R1 ballot ACK, timeout/worker transition and R2 ballot/REMOVE; DB finalized the room as `DECIDED`. The app then reached the existing result placeholder, so the result consumer remains a GM-27 gap. The automatic lobby-to-R1 fix passed the Expo Router integration test but was not rerun against a fresh QA room on Android. R2 N=1/ALL_REMOVED and N=10/stable Top 3 also pass canonical QA runner ACK recovery and waiting replay/deadline checks. See [current checks](CHECKS.md). This QA run did not modify the application database. Visual screenshot review and physical-device evidence remain Not run. Both voting screens use `react-native-safe-area-context` and no longer emit the React Native core SafeAreaView deprecation warning.
+
+## Historical handoff received with PR head d86be40
+
+The baseline below is retained for traceability. Its schema/dataset/SDK versions, test counts and device instructions are historical; use the current producer manifest for a real QA run.
+
 Task / owner / reviewer / track / stage: GM-26 / Trang (`rosy179`) / Trí (`ThanhTris`) / INTEGRATION / integration
 PR / branch / target / tested source: Issue #87 / `issue87_figma_ui_gm26` -> `origin/main` (`c5b2b07`); local branch `issue87_figma_ui_gm26`
 Contract version / schema version / dataset version: `ui-figma-final/2026-10-25/GM-26.2` & `dish-session-v4/roadmap-v2/GM-07.B-supplement` / schema `0.3.0` (GM-19) / dataset `food-v1`

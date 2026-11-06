@@ -251,6 +251,14 @@ describe('GM-07 API Contract & Client Suite', () => {
         expect(res3.error.messageKey).toBe('VERSION_CONFLICT');
       }
 
+      // A structured canonical business error must not be collapsed to the generic HTTP 409 conflict.
+      transport.shouldThrow = {
+        status: 409,
+        body: { error: { messageKey: 'NOT_ENOUGH_MEMBERS', message: 'At least two members are required' } },
+      };
+      const resMembers = await client.startRound({ roomId: 'room_1', expectedVersion: 1 });
+      expect(resMembers).toMatchObject({ ok: false, error: { messageKey: 'NOT_ENOUGH_MEMBERS' } });
+
       // Timeout mapping
       transport.shouldThrow = { name: 'AbortError', message: 'Timeout' };
       const res4 = await client.listFriends();
