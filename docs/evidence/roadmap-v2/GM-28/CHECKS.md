@@ -9,6 +9,7 @@
 - Added managed regressions for identity change during enqueue, same-scope version increase preserving pending/unknown intents, cross-adapter consent ACK, history item/cache expiry, stale A→B result response, push registration retry after server error, and SecureStore deletion failure/retry.
 - `mobile/npm run check`: Pass — typecheck, lint, 70 suites / 1138 tests, architecture check.
 - Full local suite uses synthetic storage/transport. HTTP against Supabase, Android/native restart and push delivery, and Figma visual comparison remain Not run. PR #157 result-reader overlap still requires owner coordination before merging both PRs.
+- CI rerun `42268134968` on head `0827990` passed all jobs. Fresh-runner Supabase startup, GM-18 SQL/JWT HTTP and GM-21 history/consent integration passed; the previous host-port-54322 collision did not recur. This does not cover the GM-28 social two-identity invite/ACL matrix or Android/native/Figma evidence listed above.
 - PR #126 draft remains unapproved; no Done or merge claim is made.
 
 ### Owner feedback follow-up — 2026-11-06
