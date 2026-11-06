@@ -14,12 +14,10 @@ export function PushLifecycle() {
     const repository = session.repository;
     const userId = repository.getCurrentUser()?.id;
     const identityRevision = repository.getIdentityRevision?.() ?? 0;
-    const authGeneration = repository.getSessionApi()?.getGeneration?.() ?? 0;
     if (!userId || repository.getSessionStatus() !== 'active') return;
     const isIdentityCurrent = () => repository.getSessionStatus() === 'active'
       && repository.getCurrentUser()?.id === userId
-      && (repository.getIdentityRevision?.() ?? 0) === identityRevision
-      && (repository.getSessionApi()?.getGeneration?.() ?? 0) === authGeneration;
+      && (repository.getIdentityRevision?.() ?? 0) === identityRevision;
     const service = createNativePushService({
       driver: expoPushDriver,
       client: repository.getApiClient(),
