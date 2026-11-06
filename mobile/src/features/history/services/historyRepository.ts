@@ -8,6 +8,7 @@ const HISTORY_CACHE_ROOM = 'private-history';
 const HISTORY_CACHE_CONTRACT = 'gm28-history-v1';
 
 type HistoryRow = CanonicalHistoryItem | HistoryItem;
+interface IdentityEpoch { userId: string; repositoryRevision: number; authGeneration: number }
 export interface HistorySnapshot { items: HistoryRow[]; fetchedAt: string }
 export interface HistoryCache {
   get(userId: string): HistorySnapshot | undefined;
@@ -58,12 +59,25 @@ export function createHistoryRepository(
   let generation = 0;
   let cacheQueue: Promise<void> = Promise.resolve();
 
-  const currentIdentity = (): string | undefined => {
-    if (roomRepository.getSessionApi() && roomRepository.getSessionStatus() !== 'active') return undefined;
-    return roomRepository.getCurrentUser()?.id || undefined;
+  const currentIdentity = (): IdentityEpoch | undefined => {
+    const session = roomRepository.getSessionApi();
+    if (session && roomRepository.getSessionStatus() !== 'active') return undefined;
+    const userId = roomRepository.getCurrentUser()?.id;
+    if (!userId) return undefined;
+    return {
+      userId,
+      repositoryRevision: roomRepository.getIdentityRevision?.() ?? 0,
+      authGeneration: session?.getGeneration?.() ?? 0,
+    };
   };
-  const isCurrent = (identityId: string, requestGeneration: number) =>
-    currentIdentity() === identityId && generation === requestGeneration;
+  const sameIdentityEpoch = (identity: IdentityEpoch) => {
+    const current = currentIdentity();
+    return current?.userId === identity.userId
+      && current.repositoryRevision === identity.repositoryRevision
+      && current.authGeneration === identity.authGeneration;
+  };
+  const isCurrent = (identity: IdentityEpoch, requestGeneration: number) =>
+    sameIdentityEpoch(identity) && generation === requestGeneration;
   const enqueueCacheMutation = (operation: () => Promise<void>): Promise<void> => {
     const next = cacheQueue.then(operation, operation);
     cacheQueue = next.catch(() => undefined);
@@ -73,24 +87,24 @@ export function createHistoryRepository(
 
   return {
     cached: () => {
-      const identityId = currentIdentity();
-      return identityId ? cache.get(identityId) : undefined;
+      const identity = currentIdentity();
+      return identity ? cache.get(identity.userId) : undefined;
     },
     async cachedDurable() {
-      const identityId = currentIdentity();
-      if (!identityId) return undefined;
+      const identity = currentIdentity();
+      if (!identity) return undefined;
       const requestGeneration = generation;
-      const entry = await durableCache.readSnapshotCache<HistorySnapshot>(identityId, HISTORY_CACHE_ROOM, HISTORY_CACHE_CONTRACT);
-      return isCurrent(identityId, requestGeneration) ? entry?.value : undefined;
+      const entry = await durableCache.readSnapshotCache<HistorySnapshot>(identity.userId, HISTORY_CACHE_ROOM, HISTORY_CACHE_CONTRACT);
+      return isCurrent(identity, requestGeneration) ? entry?.value : undefined;
     },
     async fetch() {
-      const identityId = currentIdentity();
-      if (!identityId) return authError<HistorySnapshot>();
+      const identity = currentIdentity();
+      if (!identity) return authError<HistorySnapshot>();
       const requestGeneration = generation;
       const result = await callSessionApi(roomRepository, client => client.getCanonicalHistory
         ? client.getCanonicalHistory()
         : Promise.resolve({ ok: false as const, error: { messageKey: 'MALFORMED_RESPONSE' as const } }));
-      if (!isCurrent(identityId, requestGeneration)) return authError<HistorySnapshot>();
+      if (!isCurrent(identity, requestGeneration)) return authError<HistorySnapshot>();
       if (!result.ok) return result;
 
       const snapshot: HistorySnapshot = {
@@ -98,48 +112,48 @@ export function createHistoryRepository(
         fetchedAt: new Date().toISOString(),
       };
       await enqueueCacheMutation(async () => {
-        if (!isCurrent(identityId, requestGeneration)) return;
-        cache.set(identityId, snapshot);
+        if (!isCurrent(identity, requestGeneration)) return;
+        cache.set(identity.userId, snapshot);
         await durableCache.cacheSnapshot({
-          identityId,
+          identityId: identity.userId,
           roomId: HISTORY_CACHE_ROOM,
           contractVersion: HISTORY_CACHE_CONTRACT,
           value: snapshot,
         }).catch(() => undefined);
       });
-      if (!isCurrent(identityId, requestGeneration)) return authError<HistorySnapshot>();
+      if (!isCurrent(identity, requestGeneration)) return authError<HistorySnapshot>();
       return { ok: true, data: snapshot };
     },
     async updateConsent(request) {
-      const identityId = currentIdentity();
-      if (!identityId) return { ok: false, error: { messageKey: 'AUTH_REQUIRED' } };
+      const identity = currentIdentity();
+      if (!identity) return { ok: false, error: { messageKey: 'AUTH_REQUIRED' } };
       const result = await callSessionApi(roomRepository, client => client.updateHistoryConsent({
         ...request,
         requestId: createDurableRequestId('history_consent'),
       }));
-      if (result.ok && currentIdentity() === identityId) {
+      if (result.ok && sameIdentityEpoch(identity)) {
         generation++;
-        cache.delete(identityId);
-        await enqueueCacheMutation(() => durableCache.clearSnapshotCache(identityId, HISTORY_CACHE_ROOM, HISTORY_CACHE_CONTRACT));
+        cache.delete(identity.userId);
+        await enqueueCacheMutation(() => durableCache.clearSnapshotCache(identity.userId, HISTORY_CACHE_ROOM, HISTORY_CACHE_CONTRACT));
       }
       return result;
     },
     async delete(historyId) {
-      const identityId = currentIdentity();
-      if (!identityId) return { ok: false, error: { messageKey: 'AUTH_REQUIRED' } };
+      const identity = currentIdentity();
+      if (!identity) return { ok: false, error: { messageKey: 'AUTH_REQUIRED' } };
       const result = await callSessionApi(roomRepository, client => client.deleteHistory(historyId, createDurableRequestId('history_delete')));
-      if (result.ok && currentIdentity() === identityId) {
+      if (result.ok && sameIdentityEpoch(identity)) {
         generation++;
-        const current = cache.get(identityId);
+        const current = cache.get(identity.userId);
         if (current) {
           const next = { ...current, items: current.items.filter(item => historyIdOf(item) !== historyId) };
-          cache.set(identityId, next);
+          cache.set(identity.userId, next);
         }
         await enqueueCacheMutation(async () => {
-          const durable = await durableCache.readSnapshotCache<HistorySnapshot>(identityId, HISTORY_CACHE_ROOM, HISTORY_CACHE_CONTRACT).catch(() => undefined);
+          const durable = await durableCache.readSnapshotCache<HistorySnapshot>(identity.userId, HISTORY_CACHE_ROOM, HISTORY_CACHE_CONTRACT).catch(() => undefined);
           if (!durable) return;
           await durableCache.cacheSnapshot({
-            identityId,
+            identityId: identity.userId,
             roomId: HISTORY_CACHE_ROOM,
             contractVersion: HISTORY_CACHE_CONTRACT,
             value: { ...durable.value, items: durable.value.items.filter(item => historyIdOf(item) !== historyId) },
@@ -150,10 +164,10 @@ export function createHistoryRepository(
     },
     invalidate() {
       generation++;
-      const identityId = currentIdentity();
-      if (!identityId) return;
-      cache.delete(identityId);
-      void enqueueCacheMutation(() => durableCache.clearSnapshotCache(identityId, HISTORY_CACHE_ROOM, HISTORY_CACHE_CONTRACT));
+      const identity = currentIdentity();
+      if (!identity) return;
+      cache.delete(identity.userId);
+      void enqueueCacheMutation(() => durableCache.clearSnapshotCache(identity.userId, HISTORY_CACHE_ROOM, HISTORY_CACHE_CONTRACT));
     },
   };
 }

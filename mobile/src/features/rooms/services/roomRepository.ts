@@ -143,6 +143,7 @@ export interface RoomRepository extends Omit<RoomEntryRepository, 'restoreSessio
   subscribeSession(listener: () => void): () => void;
   getApiClient(): ApiClient;
   getSessionApi(): SessionApi | undefined;
+  getIdentityRevision?(): number;
   runAuthenticatedFeatureApi?<T>(operation: (client: ApiClient) => Promise<T>): Promise<T>;
 }
 
@@ -302,6 +303,10 @@ export class LiveRoomRepository implements RoomRepository {
 
   getSessionApi(): SessionApi | undefined {
     return this.session;
+  }
+
+  getIdentityRevision(): number {
+    return this.identityRevision;
   }
 
   runAuthenticatedFeatureApi<T>(operation: (client: ApiClient) => Promise<T>): Promise<T> {

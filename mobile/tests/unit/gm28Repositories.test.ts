@@ -5,12 +5,47 @@ import type {
   InboxItem,
   SessionUser,
 } from '../../src/data/api/contracts';
-import { createRoomRepository, type RoomRepository } from '../../src/features/rooms/services/roomRepository';
+import { ApiClientImpl, type ApiTransport } from '../../src/data/api/client';
+import { SessionManager } from '../../src/data/auth/session';
+import type { AuthPort, SessionStorage, StoredSession } from '../../src/data/auth/types';
+import { createRoomRepository, LiveRoomRepository, type RoomRepository } from '../../src/features/rooms/services/roomRepository';
 import { createSocialRepository } from '../../src/features/friends/services/socialRepository';
 import { createInboxRepository } from '../../src/features/inbox/services/inboxRepository';
 import { createHistoryRepository, clearPrivateHistoryCache, historyIdOf, type DurableHistoryStore, type HistoryCache, type HistorySnapshot } from '../../src/features/history/services/historyRepository';
 
 const user: SessionUser = { id: 'user-1', displayName: 'Minh', isGuest: true, createdAt: '2026-10-18T00:00:00Z' };
+
+function liveSessionHarness(options: {
+  savedSession?: StoredSession | null;
+  invoke: ApiTransport['invoke'];
+  userForGuest?: () => SessionUser;
+}) {
+  const now = Date.parse('2026-11-06T00:00:00Z');
+  let stored = options.savedSession ? structuredClone(options.savedSession) : null;
+  const accessToken = 'synthetic-access';
+  const makeStored = (currentUser = options.userForGuest?.() ?? user, token = accessToken): StoredSession => ({
+    accessToken: token,
+    refreshToken: `${token}-refresh`,
+    expiresAt: new Date(now + 60 * 60 * 1000).toISOString(),
+    user: currentUser,
+  });
+  const storage: SessionStorage = {
+    load: jest.fn(async () => stored ? structuredClone(stored) : null),
+    save: jest.fn(async next => { stored = structuredClone(next); }),
+    clear: jest.fn(async () => { stored = null; }),
+  };
+  const auth: AuthPort = {
+    createGuest: jest.fn(async () => makeStored()),
+    verify: jest.fn(async () => ({ ...(stored?.user ?? user) })),
+    refresh: jest.fn(async () => makeStored(stored?.user, 'synthetic-refreshed')),
+    logout: jest.fn(async () => undefined),
+  };
+  const session = new SessionManager({ auth, storage, clearPrivateData: async () => undefined, now: () => now, sleep: async () => undefined });
+  const transport: ApiTransport = { invoke: options.invoke };
+  const client = new ApiClientImpl({ authSession: session, transport });
+  const repository = new LiveRoomRepository({ client, session, sessionStorage: storage });
+  return { auth, client, repository, session, storage, makeStored };
+}
 
 function inboxItem(id: string, eventId: string): InboxItem {
   return {
@@ -266,5 +301,78 @@ describe('GM-28 live repository adapters', () => {
 
     expect(await history.fetch()).toEqual({ ok: false, error: { messageKey: 'AUTH_REQUIRED' } });
     expect(roomRepository.getSessionSnapshot()).toEqual({ status: 'lost', user: null, issue: 'session-recovery-required' });
+  });
+
+  test('history adapter created before a real saved-session restore fetches for the restored identity', async () => {
+    const stored: StoredSession = {
+      accessToken: 'saved-access', refreshToken: 'saved-refresh',
+      expiresAt: '2026-11-06T02:00:00Z', user,
+    };
+    const harness = liveSessionHarness({ savedSession: stored, invoke: async <T>() => ({ items: [] } as T) });
+    const history = createHistoryRepository(harness.repository, cacheMock(), durableHistoryMock());
+
+    expect(harness.repository.getCurrentUser()).toBeNull();
+    expect((await harness.repository.restoreSession()).ok).toBe(true);
+    const result = await history.fetch();
+
+    expect(result).toMatchObject({ ok: true, data: { items: [] } });
+    expect(harness.repository.getCurrentUser()?.id).toBe(user.id);
+  });
+
+  test('feature API 401 on ApiClientImpl enters recovery and refreshes the same identity', async () => {
+    const invoke = jest.fn()
+      .mockRejectedValueOnce({ status: 401, body: { messageKey: 'AUTH_REQUIRED' } })
+      .mockResolvedValue({ items: [] });
+    const harness = liveSessionHarness({ invoke });
+    await harness.repository.createGuestSession('Minh');
+    const history = createHistoryRepository(harness.repository, cacheMock(), durableHistoryMock());
+
+    expect(await history.fetch()).toMatchObject({ ok: false, error: { messageKey: 'AUTH_REQUIRED' } });
+    expect(harness.repository.getSessionSnapshot()).toEqual({ status: 'lost', user: null, issue: 'session-recovery-required' });
+
+    expect((await harness.repository.restoreSession()).ok).toBe(true);
+    expect(harness.repository.getSessionSnapshot()).toMatchObject({ status: 'active', user: { id: user.id }, issue: 'none' });
+    expect((await history.fetch()).ok).toBe(true);
+    expect(invoke).toHaveBeenCalledTimes(2);
+    expect(harness.auth.refresh).toHaveBeenCalledTimes(1);
+  });
+
+  test('drops a pending history response across logout and restore of the same identity', async () => {
+    let resolveTransport: ((value: { items: CanonicalHistoryItem[] }) => void) | undefined;
+    const pending = new Promise<{ items: CanonicalHistoryItem[] }>(resolve => { resolveTransport = resolve; });
+    const harness = liveSessionHarness({ invoke: async <T>() => await pending as T });
+    await harness.repository.createGuestSession('Minh');
+    const cache = cacheMock();
+    const durable = durableHistoryMock();
+    const history = createHistoryRepository(harness.repository, cache, durable);
+    const staleRead = history.fetch();
+
+    await harness.repository.logout();
+    await harness.repository.createGuestSession('Minh');
+    resolveTransport?.({ items: [historyItem('old-session-row', 'personal', '2026-11-06T00:00:00Z')] });
+
+    expect(await staleRead).toEqual({ ok: false, error: { messageKey: 'AUTH_REQUIRED' } });
+    expect(cache.get(user.id)).toBeUndefined();
+    expect(durable.entries.size).toBe(0);
+  });
+
+  test('drops a durable cache read from the previous auth epoch even when user ID is unchanged', async () => {
+    let resolveCache: ((value: { value: HistorySnapshot }) => void) | undefined;
+    const pendingCache = new Promise<{ value: HistorySnapshot }>(resolve => { resolveCache = resolve; });
+    const durable: DurableHistoryStore = {
+      cacheSnapshot: async () => undefined,
+      readSnapshotCache: async <T>() => await pendingCache as { value: T },
+      clearSnapshotCache: async () => undefined,
+    };
+    const harness = liveSessionHarness({ invoke: async <T>() => ({ items: [] } as T) });
+    await harness.repository.createGuestSession('Minh');
+    const history = createHistoryRepository(harness.repository, cacheMock(), durable);
+    const read = history.cachedDurable();
+
+    await harness.repository.logout();
+    await harness.repository.createGuestSession('Minh');
+    resolveCache?.({ value: { items: [historyItem('previous-auth-epoch', 'personal', '2026-11-06T00:00:00Z')], fetchedAt: '2026-11-06T00:00:00Z' } });
+
+    expect(await read).toBeUndefined();
   });
 });
