@@ -1,0 +1,28 @@
+{
+  "items": [
+    {
+      "name": "  Phở bò  ",
+      "nameConfidence": 0.98,
+      "priceText": "35.000–45.000 đ",
+      "priceConfidence": 0.96,
+      "currency": "VND",
+      "unit": "portion"
+    },
+    {
+      "name": "Bún chưa rõ",
+      "nameConfidence": 0.4,
+      "priceText": "30k",
+      "priceConfidence": 0.5,
+      "currency": "VND",
+      "unit": "person"
+    },
+    {
+      "name": "Trà đá",
+      "nameConfidence": 0.95,
+      "priceText": "5k",
+      "priceConfidence": 0.99,
+      "currency": "VND",
+      "unit": null
+    }
+  ]
+}

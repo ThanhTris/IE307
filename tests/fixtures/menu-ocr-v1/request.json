@@ -1,0 +1,13 @@
+{
+  "requestId": "req_gm36_synthetic",
+  "image": {
+    "mimeType": "image/png",
+    "dataBase64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/tZkAAAAASUVORK5CYII="
+  },
+  "source": {
+    "sourceRef": "00000000-0036-4000-8000-000000000036",
+    "usageRights": "granted",
+    "license": "Synthetic test image; not a real menu or rights approval"
+  },
+  "processingConsent": true
+}

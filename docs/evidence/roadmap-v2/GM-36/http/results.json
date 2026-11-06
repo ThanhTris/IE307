@@ -1,0 +1,169 @@
+{
+  "result": "Pass",
+  "checkedAt": "2026-10-16T07:08:08.626Z",
+  "contract": "GM-36.1",
+  "environment": "Node Web handler over loopback HTTP; actual local GoTrue user verification",
+  "providerMode": "test-double",
+  "edgeRuntime": "Not run; edge_runtime remains disabled",
+  "realProvider": "Not run; no approved recognizer/provider",
+  "publicationPerformed": false,
+  "artifactHashes": {
+    "scripts/gm36_http_check.mjs": "3e91fb94fa82105a12353a73d94faa1f9696be446182f2ef9f22469eb2379c08",
+    "scripts/gm36_auth_cleanup.py": "cec28a31e13495519bffbf1bf79ee265bdc0e866b04f5e634335d68aefddcc76",
+    "supabase/functions/menu-ocr/auth.ts": "24cb4f5578c91c69911801a108ee61f946976a146e709f532e3fdaa3009cd750",
+    "supabase/functions/menu-ocr/contract.ts": "167f53b1dba8d2650ffc0d48b57c2c380619d6f5bd2464a6ccfebdcc3dfaa8c2",
+    "supabase/functions/menu-ocr/draft.schema.json": "074d2610c0dec84eece13fb0bee5bfe43c1e548d76d82c8b0ccd2a1d7ffbc974",
+    "supabase/functions/menu-ocr/index.ts": "435b3945bf558aff8944aa09d84b63948a47d677f1e33cd655ee5a3e375a6d30",
+    "supabase/functions/menu-ocr/normalize.ts": "719733f2b8c198ac36fbcf11e2a093f9314a6c3a8aef9a5e3bef11c6343b7128",
+    "supabase/functions/menu-ocr/quota.ts": "d035f45bfaa729a7bcd40cf3f301c670c1a6346f6a74871cc0a198d099d7727f",
+    "supabase/functions/menu-ocr/read-json.ts": "69f70c9bae54a9f7b1b31549fd67665e6b3e8143f8dd7314c4954d64b3ec3230",
+    "tests/fixtures/menu-ocr-v1/expected-draft.json": "f280cf1ba46baf62df7f9a6d5706d0eda20394d1ef905c1fc0961659a6d6e07a",
+    "tests/fixtures/menu-ocr-v1/provider-output.json": "50597364e0a7721350e2bc386770a73b1c4ddbdc2d826594ad20e17d071ffb28",
+    "tests/fixtures/menu-ocr-v1/request.json": "7c3f4c870f7bf769bc9872c363023471e279b0d5a3aee70b433cb5859dcf55b6"
+  },
+  "cases": [
+    {
+      "case": "missing JWT rejected before image/provider work",
+      "result": "Pass",
+      "status": 401,
+      "messageKey": "AUTH_REQUIRED"
+    },
+    {
+      "case": "forged JWT rejected by actual GoTrue user endpoint",
+      "result": "Pass",
+      "status": 401,
+      "messageKey": "AUTH_REQUIRED"
+    },
+    {
+      "case": "valid outsider cannot grant OCR rights through user_metadata or headers",
+      "result": "Pass",
+      "status": 403,
+      "messageKey": "OCR_FORBIDDEN"
+    },
+    {
+      "case": "disabled production-equivalent handler makes no recognizer call",
+      "result": "Pass",
+      "status": 503,
+      "messageKey": "OCR_DISABLED"
+    },
+    {
+      "case": "real authorized HTTP returns exact three-row draft, never verified",
+      "result": "Pass",
+      "status": 200,
+      "rows": 3,
+      "publishable": false,
+      "sourceRightsVerified": false
+    },
+    {
+      "case": "review regression: abbreviated ranges remain unknown even at confidence0.99",
+      "result": "Pass",
+      "status": 200,
+      "actual": [
+        {
+          "input": "35-45k",
+          "priceMin": null,
+          "priceMax": null,
+          "priceSource": null,
+          "issues": [
+            "HUMAN_REVIEW_REQUIRED",
+            "PRICE_UNKNOWN_OR_AMBIGUOUS"
+          ]
+        },
+        {
+          "input": "35-45.000 đ",
+          "priceMin": null,
+          "priceMax": null,
+          "priceSource": null,
+          "issues": [
+            "HUMAN_REVIEW_REQUIRED",
+            "PRICE_UNKNOWN_OR_AMBIGUOUS"
+          ]
+        },
+        {
+          "input": "35-45000 đ",
+          "priceMin": null,
+          "priceMax": null,
+          "priceSource": null,
+          "issues": [
+            "HUMAN_REVIEW_REQUIRED",
+            "PRICE_UNKNOWN_OR_AMBIGUOUS"
+          ]
+        },
+        {
+          "input": "35-45 000 đ",
+          "priceMin": null,
+          "priceMax": null,
+          "priceSource": null,
+          "issues": [
+            "HUMAN_REVIEW_REQUIRED",
+            "PRICE_UNKNOWN_OR_AMBIGUOUS"
+          ]
+        }
+      ]
+    },
+    {
+      "case": "review regression: explicit ranges retain amounts and price source",
+      "result": "Pass",
+      "status": 200,
+      "priceMin": 35000,
+      "priceMax": 45000
+    },
+    {
+      "case": "processing consent and source-rights declaration are mandatory",
+      "result": "Pass",
+      "statuses": [
+        400,
+        400
+      ]
+    },
+    {
+      "case": "invalid image and arbitrary user/location/publish fields rejected",
+      "result": "Pass",
+      "statuses": [
+        400,
+        400
+      ]
+    },
+    {
+      "case": "malformed and over-limit streamed request bodies rejected",
+      "result": "Pass",
+      "status": 413,
+      "messageKey": "PAYLOAD_TOO_LARGE"
+    },
+    {
+      "case": "empty, malformed and failed provider have safe distinct errors",
+      "result": "Pass",
+      "statuses": [
+        422,
+        502,
+        503
+      ]
+    },
+    {
+      "case": "real HTTP provider timeout returns504 with no draft",
+      "result": "Pass",
+      "status": 504,
+      "messageKey": "OCR_TIMEOUT"
+    },
+    {
+      "case": "simultaneous attempts invoke recognizer only once",
+      "result": "Pass",
+      "statuses": [
+        200,
+        429
+      ],
+      "providerCalls": 1
+    },
+    {
+      "case": "local quota rejects fourth operation without another recognizer call",
+      "result": "Pass",
+      "accepted": 3,
+      "limited": 1,
+      "quotaScope": "single test process only"
+    }
+  ],
+  "cleanup": "owned synthetic identities removed",
+  "publishedRevision": "858ef00d506435d59c5a5dfa87f5a8a2a103d6da",
+  "testedHead": "858ef00d506435d59c5a5dfa87f5a8a2a103d6da",
+  "workingTreePriceFixIncluded": true
+}

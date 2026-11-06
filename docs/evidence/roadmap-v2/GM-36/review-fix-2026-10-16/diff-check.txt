@@ -1,0 +1,1 @@
+Pass: git diff --check on review price fix.
