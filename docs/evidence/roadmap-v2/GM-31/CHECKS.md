@@ -14,7 +14,7 @@ SQLite holds opaque record IDs, kind/state and TTL only. Scope and private value
 
 | Case | Expected | Actual/evidence | Status | Limit |
 | --- | --- | --- | --- | --- |
-| SQLite metadata privacy | No identity, room, ballot or snapshot data in SQLite rows | Latest `npm run check`: 69 suites / 1125 tests pass; dedicated opaque metadata assertion passes | Pass | Unit test only |
+| SQLite metadata privacy | No identity, room, ballot or snapshot data in SQLite rows | Latest `npm run check`: 69 suites / 1129 tests pass; dedicated opaque metadata assertion passes | Pass | Unit test only |
 | Idempotency and ACK cleanup | Duplicate request ID/same payload is stable; conflicting reuse rejected; ACK payload scrubbed | Dedicated `gm31Outbox.test.ts` assertions pass | Pass | No server/network proof |
 | Scope and auth isolation | Identity and room/round/pool/contract isolation; logout removes that identity | Dedicated outbox identity isolation/clearIdentity assertions pass | Pass | Process/device restart not run |
 | Canonical reconciliation | Refetch before replay candidate; stale intents removed; unknown never automatically sent | Dedicated reconciliation and repository retry tests pass | Pass | No live API runtime |

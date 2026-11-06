@@ -4,13 +4,14 @@
 
 ### Owner feedback follow-up — 2026-11-06
 
-- Revision: commit `28bb31e` pushed to PR #126 branch `codex/gm-28-social-inbox-history`; PR remains draft for owner review.
+- Revision: follow-up code commit `2ec9c2a`, based on PR #126 head `28a210c`; pending push in this run. PR remains draft for owner review.
 - Implemented PR #126 feedback covering session/API 401 recovery, identity-safe history cache operations, canonical history/results, inbox result references, accept-invite routing, live room friend invites, G01 friend name search, and consolidated live routes.
 - `mobile/npm run typecheck`: Pass.
 - `mobile/npm run lint`: Pass.
-- Focused GM-28/29/31 Jest: 5 suites / 46 tests passed.
+- GM-28 repository/canonical-history Jest: 2 suites / 16 tests passed. New reviewer regressions use real `SessionManager`, `ApiClientImpl`, and `LiveRoomRepository` with synthetic storage/transport for cold restore, feature 401→refresh, delayed response across same-user logout/restore, and durable-cache reads across auth epochs.
+- Focused GM-28/29/31 Jest: 5 suites / 50 tests passed.
 - Regression Jest for routes, lobby lifecycle and result entry: 3 suites / 41 tests passed after preserving existing error-code display behavior and avoiding SQLite access in mock preview.
-- Full `mobile/npm run check`: Pass — typecheck, lint, 69 suites / 1125 tests, and architecture check.
+- Full `mobile/npm run check`: Pass — typecheck, lint, 69 suites / 1129 tests, and architecture check.
 - `mobile/npm run check:expo`: Pass — Expo 58.0.23 dependencies match the lockfile and bundled compatibility check.
 - `mobile/npx expo config --type public`: Pass — Android-only config resolves; no EAS project ID is configured.
 - `python scripts/validate_repository.py`: Pass; `python scripts/task_readiness.py --check-docs`: Pass; `git diff --check`: Pass.

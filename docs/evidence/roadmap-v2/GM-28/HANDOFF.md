@@ -6,6 +6,7 @@
 - Initial base artifact revision: `origin/main` at `8cf8084a021d56fae261da34503ed5a7a45681bd` (2026-10-18); follow-up rebased onto `origin/main` `bb2103a2c1c8abe806376870ffbd42ee0e09dcdc` (2026-11-06).
 - Start inputs on that revision: GM-07 API contracts/client, GM-14 Friends screen, GM-25 room repository. GM-21/22/23 integration outputs must be rechecked on target before merge.
 - Owner feedback follow-up commit `28bb31e` is pushed to PR #126 (`codex/gm-28-social-inbox-history`). The PR remains draft; review/approval and live API/Android/Figma evidence are still outstanding.
+- Additional review revision `2ec9c2a` adds repository/auth epoch checks for pending history and durable-cache reads plus regressions using real SessionManager/ApiClientImpl/LiveRoomRepository compositions. It is pending push; latest mobile suite is 69 suites / 1129 tests Pass.
 
 ## Owner feedback follow-up — PR #126
 

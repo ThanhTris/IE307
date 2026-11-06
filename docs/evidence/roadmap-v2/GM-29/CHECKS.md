@@ -16,8 +16,8 @@ Route: `/push-settings`; Inbox entry is the `Cài đặt thông báo` action on 
 | AC/case | Expected | Actual/evidence | Status | Limit |
 | --- | --- | --- | --- | --- |
 | Expo config and dependencies | SDK-compatible notifications, SQLite plugins and config | `npm run check:expo` and `npx expo config --type public` passed | Pass | EAS project ID is not configured; does not prove native build |
-| Typecheck/lint/unit/architecture | Code compiles and repository checks pass | Latest `npm run check`: 69 suites, 1125 tests passed; architecture boundaries OK | Pass | Local runner only |
-| Focused push/outbox/history regression | Driver, outbox, voting, history repositories | Focused Jest run: 5 suites, 46 tests passed; route/lifecycle/result regressions: 3 suites, 41 tests passed | Pass | Mocked unit coverage |
+| Typecheck/lint/unit/architecture | Code compiles and repository checks pass | Latest `npm run check`: 69 suites, 1129 tests passed; architecture boundaries OK | Pass | Local runner only |
+| Focused push/outbox/history regression | Driver, outbox, voting, history repositories | Focused Jest run: 5 suites, 50 tests passed; route/lifecycle/result regressions: 3 suites, 41 tests passed | Pass | Mocked unit coverage |
 | Expo Go Android | App starts; remote-push controls explain native build requirement; inbox remains available | Not run on Expo Go/device | Not run | Android launch evidence required |
 | Permission grant/deny/settings | OS permission reflected; deny preserves Inbox | Not run on Android device | Not run | Need Android device/development build |
 | Remote delivery, cold/warm/duplicate tap, rotation, logout/revocation | Auth restore + canonical ACL refetch; safe current route; no payload trust | Unit mocks cover driver orchestration only; no real delivery run | Not run | Need EAS project ID, push backend credentials and Android development build/device |
