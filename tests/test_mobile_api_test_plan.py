@@ -130,6 +130,19 @@ class MobileApiPlanTests(unittest.TestCase):
         self.assertTrue((ROOT / HANDOFF).is_file())
         self.assertTrue((ROOT / FIGMA_MAP).is_file())
 
+    def test_stage_3a_and_3b_ui_tasks_declare_figma_parity_output_and_gm33_waits_for_all_consumers(self):
+        for number in (27, 28, 29, 30, 31, 33, 34, 35):
+            tid = f'GM-{number:02d}'
+            with self.subTest(task=tid):
+                outputs = self.entries[tid]['outputs']
+                self.assertIn(f'docs/evidence/roadmap-v2/{tid}/FIGMA_PARITY.md', outputs)
+                self.assertIn(f'`docs/evidence/roadmap-v2/{tid}/FIGMA_PARITY.md`', self.task_text(number))
+        gm27_inputs = {(item['task'], item['gate']) for item in self.entries['GM-27']['inputs']}
+        self.assertIn(('GM-20', 'start'), gm27_inputs)
+        self.assertIn(('GM-21', 'start'), gm27_inputs)
+        gm33_start_tasks = {item['task'] for item in self.entries['GM-33']['inputs'] if item['gate'] == 'start'}
+        self.assertTrue({'GM-07', 'GM-08', 'GM-14', 'GM-27', 'GM-28', 'GM-29', 'GM-30', 'GM-31', 'GM-32'} <= gm33_start_tasks)
+
 
 if __name__ == '__main__':
     unittest.main()

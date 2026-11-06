@@ -24,7 +24,7 @@ UI: ảnh/video từ app thật, screen/state/action/device/build. API: method/p
 
 ### API trên Android (nếu task có scope device/app)
 
-Đối chiếu [ma trận Android–API](../../docs/testing/MOBILE_API_TEST_MATRIX.md). Tách kết quả server HTTP/SQL, unit/mock và điện thoại Android thật. Ghi API environment/endpoint không secret, app/API commit, model/Android/runtime/build, cách nối máy tính–điện thoại, thao tác → request/status/error → UI/state server/assertion và artifact đã che dữ liệu. Thiếu case device bắt buộc ghi Not run + owner; N/A chỉ ngoài scope, không suy Pass từ curl hoặc bundle.
+Đối chiếu [ma trận Android–API](../../docs/testing/MOBILE_API_TEST_MATRIX.md). Tách kết quả server HTTP/SQL, unit/mock, **Máy ảo Android (AVD) nối Backend local thật (bắt buộc ở Chặng 3A cho `GM-27..31, 35, 38`)** và **điện thoại Android thật qua USB (bắt buộc ở Chặng 3B cho `GM-33, 34`)**. Ghi API environment/endpoint không secret, app/API commit, model/AVD hoặc điện thoại USB/Android/runtime/build, cách nối máy tính–AVD/điện thoại (`10.0.2.2` / `adb reverse`), thao tác → request/status/error → UI/state server/assertion và artifact đã che dữ liệu. Kiểm đủ 7 chuẩn kỹ thuật chặn lỗi review (default composition wiring, raw wire schema validation, dual error path HTTP throw & `{ok:false}`, monotonic identity/room epoch guard, effect/polling stability, 1-Task-1-PR ownership, đủ `FIGMA_PARITY.md`). Thiếu case bắt buộc của đúng chặng ghi Not run + owner; N/A chỉ ngoài scope, không suy Pass từ curl hoặc bundle.
 
 | Producer API / consumer / case | Device/runtime/build/revision | Thao tác/endpoint | Expected HTTP/UI/state server | Actual/assertion/artifact | Pass/Fail/Not run + owner |
 | --- | --- | --- | --- | --- | --- |

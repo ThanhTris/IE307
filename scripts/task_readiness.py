@@ -39,7 +39,29 @@ def artifact_fingerprint(src, path):
     # Git blobs compare binary artifacts and canonical LF content without checkout/write.
     if hasattr(src, 'digest'):
         return src.digest(path)
-    return src.read(path)  # in-memory test sources
+    return src.contents.get(path, path) if hasattr(src, 'contents') else src.read(path)
+
+
+def ownership_verification_errors(src, base, records, tid, project=None):
+    """Enforce 1-Task-1-PR: block if this branch adds/modifies outputs owned by another unfinished task."""
+    if base is None or tid not in records or records[tid]['meta'].get('numbering') != 'roadmap-v2':
+        return []
+    own_paths = set(delivered_paths(src, tid)) | {f'docs/evidence/roadmap-v2/{tid}/FIGMA_PARITY.md'}
+    errors = []
+    for entry in repository.roadmap(src)['entries']:
+        other_tid = entry['new_id']
+        if other_tid == tid or other_tid not in records:
+            continue
+        if not dependency_approval_errors(src, records[other_tid], project):
+            continue
+        other_paths = set(delivered_paths(src, other_tid))
+        other_paths.update(p for p in src.files if p.startswith(f'docs/evidence/roadmap-v2/{other_tid}/'))
+        for path in sorted(other_paths - own_paths):
+            if path not in src.files:
+                continue
+            if path not in base.files or artifact_fingerprint(src, path) != artifact_fingerprint(base, path):
+                errors.append(f'1-Task-1-PR ownership conflict: {path} belongs to unfinished task {other_tid}')
+    return errors
 
 
 def project_revision_errors(src, base, local, target):
@@ -58,7 +80,7 @@ def project_revision_errors(src, base, local, target):
     return errors
 
 
-def readiness(src, records, tid, gate='start', base=None, project=None):
+def readiness(src, records, tid, gate='start', base=None, project=None, verify_outputs=False):
     record = records[tid]
     status = record['meta']['status']
     if status == 'done' and gate == 'start' and project is None:
@@ -95,6 +117,11 @@ def readiness(src, records, tid, gate='start', base=None, project=None):
                 blocked.append(dep)
         if blocked:
             return 'BLOCKED_ON_BASE', blocked
+    if verify_outputs:
+        output_errors = repository.output_verification_errors(src, records, tid, project)
+        output_errors.extend(ownership_verification_errors(src, base, records, tid, project))
+        if output_errors:
+            return 'BLOCKED_TASK_OUTPUTS', output_errors
     if gate == 'merge':
         return 'READY_FOR_MERGE_REVIEW', []
     if (project is not None and tid != 'GM-00'
@@ -210,7 +237,7 @@ def render_documents(src):
     outputs[check_path] = checks
     text = '# Bảng nhận đầu vào và bàn giao — roadmap-v2\n\n' + notice
     text += ('Path dưới đây là đầu ra dự kiến, không chứng minh file đã có. Người nhận đối chiếu HANDOFF/PR/commit/version và chạy smoke sau khi cập nhật nhánh. '
-             'Trước start dùng readiness; thêm --base-ref origin/main để kiểm target. Merge bắt buộc --gate merge --base-ref origin/main. '
+             'Trước start dùng readiness; thêm --base-ref origin/main để kiểm target. Merge bắt buộc --gate merge --base-ref origin/main --verify-outputs. '
              'Checker kiểm sự hiện diện file, không chứng minh nội dung chạy đúng.\n\n'
              '| Task / owner | Nhận trước start | Nhận trước merge (ngoài start) | Bàn giao cho task sau |\n'
              '| --- | --- | --- | --- |\n')
@@ -233,7 +260,7 @@ def render_documents(src):
         '```text\n'
         'python scripts/task_readiness.py --task GM-20\n'
         'python scripts/task_readiness.py --task GM-20 --base-ref origin/main\n'
-        'python scripts/task_readiness.py --task GM-20 --gate merge --base-ref origin/main\n'
+        'python scripts/task_readiness.py --task GM-20 --gate merge --base-ref origin/main --verify-outputs\n'
         'python scripts/task_readiness.py --all\n'
         '```\n\n'
         'Trước kiểm merge, cập nhật ref nhánh đích bằng fetch phù hợp remote đã xác nhận. Checker không tự fetch/merge. '
@@ -308,6 +335,8 @@ def main():
     parser.add_argument('--approval-source', choices=('project', 'local'), default='project',
                         help='Live Project is authoritative; local is offline historical diagnostics only')
     parser.add_argument('--base-ref', help='Compare upstream task/evidence/artifacts with this local target ref; required for merge, optional for start')
+    parser.add_argument('--verify-outputs', action='store_true',
+                        help='Verify current task declared outputs, non-template CHECKS/HANDOFF/FIGMA_PARITY and Stage 3B data gate before merge')
     choice = parser.add_mutually_exclusive_group(required=True)
     choice.add_argument('--task')
     choice.add_argument('--all', action='store_true')
@@ -371,7 +400,7 @@ def main():
         for task_id, card_id in sorted(project.config.get('approval_aliases', {}).items()):
             print(f'Baseline approval mapping: {task_id} -> Project {card_id} / issue #{project.config["issues"][task_id]} (owner-pinned; artifacts remain separate)')
     for tid in ([args.task] if args.task else sorted(records)):
-        state, blocked = readiness(src, records, tid, args.gate, base, project)
+        state, blocked = readiness(src, records, tid, args.gate, base, project, args.verify_outputs)
         m = records[tid]['meta']
         print(f"{tid}: {state} | owner={m['owner']} reviewer={m['reviewer']} | {records[tid]['path']}")
         for dep in blocked:
