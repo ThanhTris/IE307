@@ -4,7 +4,7 @@
 
 ### Owner feedback follow-up — 2026-11-06
 
-- Revision: local branch `codex/gm29-31-local`, HEAD `27c3769` plus current uncommitted changes; no push/PR update performed.
+- Revision: commit `28bb31e` pushed to PR #126 branch `codex/gm-28-social-inbox-history`; PR remains draft for owner review.
 - Implemented PR #126 feedback covering session/API 401 recovery, identity-safe history cache operations, canonical history/results, inbox result references, accept-invite routing, live room friend invites, G01 friend name search, and consolidated live routes.
 - `mobile/npm run typecheck`: Pass.
 - `mobile/npm run lint`: Pass.

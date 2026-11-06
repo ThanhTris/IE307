@@ -2,7 +2,7 @@
 
 Status: Review required; mandatory Android persistence/restart and Figma visual evidence are Not run.
 Task / owner / reviewer / scope: GM-31 / Trung / Trí (ThanhTris) / identity-isolated cache and ballot outbox.
-Branch / target / tested revision: `codex/gm29-31-local` / local integration branch / HEAD `27c3769` plus uncommitted working-tree changes. Contract: `ui-figma-final/2026-10-25/GM-31.2`; local store schema version 1 (`gcd-private-v1.db`).
+Branch / target / tested revision: PR #126 branch `codex/gm-28-social-inbox-history` / `main` / tested code commit `35f61ed` (published as `28bb31e`). Contract: `ui-figma-final/2026-10-25/GM-31.2`; local store schema version 1 (`gcd-private-v1.db`).
 
 ## Setup and repeat
 

@@ -2,7 +2,7 @@
 
 Status: Review required; mandatory Android/Figma evidence is Not run.
 Task / owner / reviewer / scope: GM-29 / Trung / Trí (ThanhTris) / permission UI and native push open.
-Branch / target / tested revision / time: `codex/gm29-31-local` / local integration branch / HEAD `27c3769` plus uncommitted working-tree changes / 2026-11-06.
+Branch / target / tested revision / time: PR #126 branch `codex/gm-28-social-inbox-history` / `main` / tested code commit `35f61ed` (published as `28bb31e`) / 2026-11-06.
 Contract version: `ui-figma-final/2026-10-25/GM-29.2`; API contract is the checked-in `ApiClient` push-device contract. Expo SDK: 58.
 Mode: expo-native (native delivery not run).
 
