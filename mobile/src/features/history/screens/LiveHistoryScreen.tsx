@@ -16,6 +16,7 @@ export function LiveHistoryScreen({ repository, onNavigate, onHome }: Props) {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
+  const [stale, setStale] = useState(false);
   const [fetchedAt, setFetchedAt] = useState(repository.cached()?.fetchedAt ?? '');
   const [action, setAction] = useState<PendingAction>(null);
   const [busy, setBusy] = useState(false);
@@ -29,15 +30,38 @@ export function LiveHistoryScreen({ repository, onNavigate, onHome }: Props) {
     try {
       const result = await repository.fetch();
       if (!result.ok) {
-        setItems([]);
-        setError(result.error.messageKey);
+        const cached = result.error.messageKey === 'NETWORK_ERROR' || result.error.messageKey === 'TIMEOUT'
+          ? repository.cached()
+          : undefined;
+        if (cached) {
+          setItems(cached.items);
+          setFetchedAt(cached.fetchedAt);
+          setStale(true);
+          setError(result.error.messageKey);
+        } else {
+          setItems([]);
+          setFetchedAt('');
+          setStale(false);
+          setError(result.error.messageKey);
+        }
       } else {
         setItems(result.data.items);
         setFetchedAt(result.data.fetchedAt);
+        setStale(false);
       }
     } catch {
-      setItems([]);
-      setError('NETWORK_ERROR');
+      const cached = repository.cached();
+      if (cached) {
+        setItems(cached.items);
+        setFetchedAt(cached.fetchedAt);
+        setStale(true);
+        setError('NETWORK_ERROR');
+      } else {
+        setItems([]);
+        setFetchedAt('');
+        setStale(false);
+        setError('NETWORK_ERROR');
+      }
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -87,10 +111,10 @@ export function LiveHistoryScreen({ repository, onNavigate, onHome }: Props) {
         <ConsentChoice title="Lịch sử cá nhân" scope="personal" disabled={busy} onChoose={setAction} colors={colors} />
         <ConsentChoice title="Tóm tắt nhóm" scope="group" disabled={busy} onChoose={setAction} colors={colors} />
       </View>
-      {fetchedAt ? <Text style={[styles.meta, { color: colors.muted }]}>Lần tải thành công gần nhất: {new Date(fetchedAt).toLocaleString()} · thời gian thiết bị.</Text> : null}
+      {fetchedAt ? <Text style={[styles.meta, { color: colors.muted }]}>{stale ? 'Bản lưu ngoại tuyến · có thể đã cũ' : 'Lần tải thành công gần nhất'}: {new Date(fetchedAt).toLocaleString()} · thời gian thiết bị.</Text> : null}
       {loading ? <StatusNotice title="Đang tải lịch sử…" message="Đang tải riêng lịch sử cá nhân và nhóm từ máy chủ." tone="info" colors={colors} /> : null}
-      {!loading && error ? <StatusNotice title="Không tải được lịch sử" message={errorMessage(error)} tone="error" actionLabel="Tải lại" onAction={() => { void load(true); }} colors={colors} /> : null}
-      {!loading && !error ? <View style={styles.section}>
+      {!loading && error ? <StatusNotice title={stale ? 'Đang ngoại tuyến' : 'Không tải được lịch sử'} message={stale ? `${errorMessage(error)} Đang hiển thị bản lưu gần nhất; hãy tải lại khi có mạng.` : errorMessage(error)} tone="error" actionLabel="Tải lại" onAction={() => { void load(true); }} colors={colors} /> : null}
+      {!loading && (!error || stale) ? <View style={styles.section}>
         <View style={styles.sectionTop}>
           <Text style={[styles.heading, { color: colors.text }]}>Bữa ăn đã lưu · {items.length}</Text>
           <AppButton label="Tải lại" variant="quiet" onPress={() => { void load(true); }} disabled={refreshing || busy} loading={refreshing} colors={colors} />

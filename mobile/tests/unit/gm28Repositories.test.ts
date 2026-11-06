@@ -118,6 +118,11 @@ describe('GM-28 live repository adapters', () => {
     if (!fetched.ok) return;
     expect(fetched.data.items.map(item => item.id)).toEqual(['personal-1', 'group-1']);
     expect(history.cached()?.fetchedAt).toBe(fetched.data.fetchedAt);
+    (client.getHistory as jest.Mock).mockResolvedValue({ ok: false, error: { messageKey: 'NETWORK_ERROR' } });
+    const offline = await history.fetch();
+    expect(offline).toEqual({ ok: false, error: { messageKey: 'NETWORK_ERROR' } });
+    expect(history.cached()).toEqual(fetched.data);
+    (client.getHistory as jest.Mock).mockImplementation(async (scope: 'personal' | 'group') => ({ ok: true, data: scope === 'personal' ? [personal] : [group] }));
     await history.updateConsent({ scope: 'group', consent: false });
     expect(history.cached()).toBeUndefined();
 

@@ -2,8 +2,8 @@
 
 ## Revision and contract
 
-- Task contract: `food-v1/roadmap-v2/GM-28.1`.
-- Base artifact revision: `origin/main` at `8cf8084a021d56fae261da34503ed5a7a45681bd` (2026-10-18).
+- Task contract: `ui-figma-final/2026-10-25/GM-28.2` (consumer revision; API producer versions still require target verification).
+- Initial base artifact revision: `origin/main` at `8cf8084a021d56fae261da34503ed5a7a45681bd` (2026-10-18); follow-up rebased onto `origin/main` `bb2103a2c1c8abe806376870ffbd42ee0e09dcdc` (2026-11-06).
 - Start inputs on that revision: GM-07 API contracts/client, GM-14 Friends screen, GM-25 room repository. GM-21/22/23 integration outputs must be rechecked on target before merge.
 - This working revision is not committed or reviewed yet.
 
@@ -15,6 +15,8 @@
 - `mobile/src/features/shared/services/sessionApi.ts` — feature API calls through the authenticated client; rejects results returned after logout or identity change.
 - `mobile/src/features/friends/screens/LiveFriendsScreen.tsx`, `mobile/src/features/inbox/screens/LiveInboxScreen.tsx`, `mobile/src/features/history/screens/LiveHistoryScreen.tsx` — live screens; they do not fall back to mock fixtures.
 - `mobile/src/app/gm28/` — Expo routes. Home shows Friends/Inbox links only in real mode; direct routes in mock mode show an integration-unavailable message.
+- Real Home actions route Friends, Inbox and History into these live screens; mock mode continues to use the existing preview routes.
+- History uses the identity-scoped last successful snapshot after a network/timeout failure and labels it with its original device `fetchedAt` and stale state. Auth and other server errors do not reveal cached history.
 - The GM-25 `mobile/src/features/rooms/services/roomRepository.ts` foundation is consumed unchanged; social/inbox/history API calls are owned by feature adapters.
 
 ## Run
@@ -38,6 +40,8 @@ Set `EXPO_PUBLIC_SUPABASE_URL` to a reachable test Supabase endpoint and `EXPO_P
 - History cache is in memory, keyed by authenticated user, and cleared by logout cleanup. Durable cache/outbox is GM-31.
 - `fetchedAt` is device time when the API response is received, not a server timestamp.
 - API and Android multi-user cases remain pending real test credentials, endpoint and Android device/build. No production behavior or task completion is claimed by this handoff.
+- The 2026-11-06 follow-up mobile check is blocked because `npm ci` exited with `ENOTEMPTY` while cleaning `node_modules`; prior pre-rebase unit results are historical only. See `CHECKS.md`.
+- Figma/app screenshot comparison is not evidenced in this follow-up; see `FIGMA_PARITY.md`.
 
 ## Receiving tasks
 

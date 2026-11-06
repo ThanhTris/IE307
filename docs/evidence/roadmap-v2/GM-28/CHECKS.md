@@ -2,6 +2,24 @@
 
 ## Run record
 
+### Follow-up on current main baseline — 2026-11-06
+
+- Revision: rebased GM-28 change on `origin/main` `bb2103a2c1c8abe806376870ffbd42ee0e09dcdc`; local follow-up patch is not yet committed.
+- Scope: connect Home actions to the live GM-28 routes while preserving current main route wiring; clear history cache on logout; show cached history with its original `fetchedAt` and a stale/offline notice after network/timeout failure. Auth and other server errors continue to suppress cached history.
+- `git diff --check`: Pass.
+- `npm ci --no-audit --no-fund`: Not run to completion; npm exited 1 with `ENOTEMPTY` while removing `mobile/node_modules/react-native/React/DevSupport`.
+- `npm run check:expo`: Blocked by the incomplete install (`@expo/ui/package.json` missing).
+- `npm run check`: Blocked by the incomplete install (`tsc` unavailable). The prior 656-test result below is historical from the pre-rebase revision, not a result for this follow-up patch.
+- Android/API multi-user, Figma screenshot comparison, and producer deployment checks: Not run; no device/backend test environment or captured Figma/app screenshots were available in this run.
+
+#### Follow-up assertions
+
+| Check | Result | Input/command | Expected | Actual |
+|---|---|---|---|---|
+| History cache retained on network error | Added, not executed | `mobile/tests/unit/gm28Repositories.test.ts` | Failed network fetch leaves last successful identity-scoped snapshot available | Assertion added; Jest unavailable because dependency installation failed |
+| Offline history rendering | Implemented, not device-verified | `LiveHistoryScreen.tsx` | Network/timeout uses cached snapshot with original timestamp and stale label; auth/other errors hide cache | Code path added; runtime/visual behavior Not run |
+| Current route wiring | Implemented, not device-verified | `mobile/src/app/index.tsx` | Real mode opens GM-28 Friends/Inbox/History; mock mode keeps legacy preview routes | Source wired; navigation Not run |
+
 - Date: 2026-10-18 (Asia/Bangkok).
 - Base commit: `8cf8084a021d56fae261da34503ed5a7a45681bd`.
 - Task contract: `food-v1/roadmap-v2/GM-28.1`.
