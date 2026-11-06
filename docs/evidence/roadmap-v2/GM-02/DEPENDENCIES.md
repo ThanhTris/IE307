@@ -1,8 +1,8 @@
 # GM-02 — bộ dependency nền
 
-## Trạng thái hiện hành — Expo SDK 58 & Hỗ trợ SVG (Cập nhật 2026-11-05)
+## Trạng thái hiện hành — Expo SDK 58 & Hỗ trợ SVG (Cập nhật 2026-11-06)
 
-Dự án hiện sử dụng **Expo SDK 58** (`~58.0.19`) với React Native `0.88.0` và React `19.3.0`.
+Dự án hiện sử dụng **Expo SDK 58** (`~58.0.23`) với React Native `0.88.1` và React `19.3.0`. Nhánh `issue87_figma_ui_gm26` được đồng bộ các package patch theo kết quả Expo compatibility ngày 2026-11-06; đây là thay đổi local, chưa push lên main.
 Hỗ trợ vector SVG được bổ sung phục vụ hiển thị tài sản thương hiệu (`BrandLogo`, Figma node `22:394`):
 - `react-native-svg@15.16.0` (trong `dependencies`): khớp chính xác với `bundledNativeModules.json` của Expo SDK 58, đảm bảo tương thích hoàn toàn với Expo Go và Android build.
 - `react-native-svg-transformer@1.5.3` (trong `devDependencies`): cấu hình qua `metro.config.js` để biên dịch file `.svg` thành React Native component trong quá trình build của Metro bundler.
@@ -11,15 +11,15 @@ Hỗ trợ vector SVG được bổ sung phục vụ hiển thị tài sản th�
 
 | Nhóm | Gói & Phiên bản đã khóa | Vai trò |
 | --- | --- | --- |
-| Expo Core / Router | `expo@~58.0.19`, `expo-router@~58.0.26` | Nền tảng framework & định tuyến file-based |
-| React & React Native | `react@19.3.0`, `react-native@0.88.0` | Runtime UI |
+| Expo Core / Router | `expo@~58.0.23`, `expo-router@~58.0.30` | Nền tảng framework & định tuyến file-based |
+| React & React Native | `react@19.3.0`, `react-native@0.88.1` | Runtime UI |
 | Vector SVG | `react-native-svg@15.16.0` | Native SVG rendering (SDK 58 bundled module) |
-| UI Utilities | `react-native-safe-area-context@~5.10.1`, `react-native-screens@~4.30.0` | Safe area & screens navigation |
-| Expo Modules | `expo-constants@~58.0.13`, `expo-font@~58.0.10`, `expo-linking@~58.0.14`, `expo-location@~58.0.19`, `expo-secure-store@~58.0.2`, `expo-status-bar@~58.0.4`, `expo-system-ui@~58.0.6` | Các module nền Expo đã kiểm qua `check:expo` |
+| UI Utilities | `@expo/ui@~58.0.27`, `react-native-safe-area-context@~5.11.1`, `react-native-screens@~4.30.1` | Expo UI, safe area & screens navigation |
+| Expo Modules | `expo-constants@~58.0.13` → 58.0.15, `expo-font@~58.0.10` → 58.0.11, `expo-linking@~58.0.16`, `expo-location@~58.0.20`, `expo-secure-store@~58.0.2`, `expo-status-bar@~58.0.4`, `expo-system-ui@~58.0.7` | Các module nền Expo đã kiểm qua `check:expo` |
 | Build Tooling | `react-native-svg-transformer@1.5.3`, `typescript@6.0.3`, `@expo/metro-config@58.0.17` (transitive) | Metro bundler transformer & type checking |
-| Test & QA | `jest@30.5.2`, `@react-native/jest-preset@0.88.0`, `@testing-library/react-native@14.1.0` | Unit & component test runners |
+| Test & QA | `jest@30.5.2`, `jest-expo@~58.0.14`, `@react-native/jest-preset@0.88.1`, `@testing-library/react-native@14.1.0` | Unit & component test runners |
 
-Phiên bản TypeScript/Jest ở bảng này đối chiếu từ `mobile/package-lock.json` của main `4903256`; package.json yêu cầu lần lượt `6.0.3` và `~30.5.2`. Số `5.9.2` / `30.0.0` từng ghi ở supplement này không phải toolchain hiện hành. Các phiên bản trong evidence baseline cũ chỉ áp dụng revision đã ghi.
+Phiên bản trong bảng là package range và kết quả resolve trong `mobile/package-lock.json` trên nhánh đang kiểm; TypeScript là `6.0.3`, Metro config là `58.0.17`. Các phiên bản trong evidence baseline cũ chỉ áp dụng revision đã ghi.
 
 ---
 
@@ -44,7 +44,7 @@ Kết quả kiểm tra bảo mật `npm audit` ghi nhận 38 khuyến cáo (3 lo
 
 > [!WARNING]
 > **Lý do không chạy `npm audit fix --force`:**
-> `npm audit fix --force` đề xuất hạ cấp `expo` từ `58.0.19` xuống `52.0.49` và hạ cấp `react-native-svg-transformer` xuống `0.14.3`. Đây là hành động phá vỡ kiến trúc (breaking change), làm mất tính tương thích với React 19 / RN 0.88 và vi phạm `check:expo`.
+> `npm audit fix --force` từng đề xuất hạ cấp `expo` từ `58.0.19` xuống `52.0.49` và hạ cấp `react-native-svg-transformer` xuống `0.14.3`. Đây là đề xuất ghi nhận ở lần audit trước, không phải kết quả audit mới của lượt này; áp dụng vẫn sẽ phá vỡ kiến trúc và tương thích với React 19 / RN 0.88.
 
 ---
 

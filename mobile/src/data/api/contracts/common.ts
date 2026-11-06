@@ -19,12 +19,14 @@ export type ErrorCode =
   | 'ROOM_LOCKED'
   | 'ROOM_EXPIRED'
   | 'ROOM_TERMINAL'
+  | 'NOT_ENOUGH_MEMBERS'
   | 'INVALID_ROOM_STATE'
   | 'CONTEXT_CHANGED'
   // Voting & Submission
   | 'ALREADY_SUBMITTED'
   | 'VERSION_CONFLICT'
   | 'REQUEST_ID_REUSED'
+  | 'REMOVE_LIMIT'
   // Eligibility & Coverage
   | 'OUT_OF_COVERAGE'
   | 'NO_ELIGIBLE_FOOD'

@@ -20,6 +20,7 @@ export default function LobbyRoute() {
       roomId={typeof roomId === 'string' ? roomId : undefined}
       currentUserId={live.user?.id}
       createRequestId={action => createDurableRequestId(`lobby_${action}`)}
+      onStartRound={snapshot => router.replace({ pathname: '/room/vote', params: { roomId: snapshot.roomId } })}
       onEditContext={snapshot => router.push({ pathname: '/room/context', params: { roomId: snapshot.roomId } })}
     />
   );

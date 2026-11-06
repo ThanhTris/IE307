@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { MockApiClient, type ApiClient, type RoomMember, type RoomSnapshot } from '../../../data/api';
 import { useMockDemoApi } from '../../shared/components/MockDemo';
 import { createDurableRequestId } from '../services/roomRepository';
+import { errorCopy } from '../services/roomEntry';
 
 export type LobbyRepository = Pick<ApiClient, 'getRoomSnapshot' | 'startRound' | 'updateContext' | 'leaveRoom' | 'cancelRoom' | 'inviteToRoom'> & {
   previewFoodPool?: ApiClient['previewFoodPool'];
@@ -217,7 +218,10 @@ export function useLiveLobby({
         result = await api.inviteToRoom({ roomId: snapshot.roomId, partnerId: 'usr_tuan_002', expectedVersion: snapshot.version, requestId });
       }
       if (!result.ok) {
-        setNotice(`Chưa thực hiện được · ${result.error.messageKey}`);
+        const failure = result.error.messageKey === 'NOT_ENOUGH_MEMBERS'
+          ? errorCopy.NOT_ENOUGH_MEMBERS
+          : result.error.messageKey;
+        setNotice(`Chưa thực hiện được · ${failure}`);
         if (result.error.messageKey === 'TIMEOUT' || result.error.messageKey === 'NETWORK_ERROR') {
           if (pendingIntentRef.current) {
             pendingIntentRef.current.uncertain = true;

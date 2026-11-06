@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { PoolDish } from '../../../data/api';
 import { DishCard, type DishCardData, type Palette, type VoteValue } from '../../../shared/ui';
+import { formatDishPrice } from '../services/priceLabel';
 
 export interface FlashcardDeckViewProps {
   dish: PoolDish;
@@ -35,16 +36,15 @@ export function FlashcardDeckView({
   onClearVote,
   colors,
 }: FlashcardDeckViewProps) {
+  const priceLabel = formatDishPrice(dish);
+
   const cardData: DishCardData = {
     id: dish.roundDishId,
     name: dish.name,
     description: dish.description ?? undefined,
     imageUrl: dish.artwork?.url ?? undefined,
     tags: [dish.origin, dish.temperature, ...(dish.cuisineIds || []), ...(dish.categoryIds || [])].filter(Boolean) as string[],
-    priceLabel:
-      dish.priceMin != null && dish.priceMax != null
-        ? `${dish.priceMin.toLocaleString()} - ${dish.priceMax.toLocaleString()} đ`
-        : undefined,
+    priceLabel,
     venueLabel: dish.venueName,
   };
 

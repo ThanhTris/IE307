@@ -10,7 +10,9 @@ import type { BallotVoteValue, RoomResult, SubmissionReceipt } from './voting';
 export type RoomState =
   | 'LOBBY'
   | 'ROUND_1'
+  | 'WAITING_1'
   | 'ROUND_2'
+  | 'WAITING_2'
   | 'DECIDED'
   | 'NO_CONSENSUS'
   | 'CANCELLED'
@@ -130,6 +132,8 @@ export interface RoomSnapshot {
   waitingStartedAt?: string | null;
   deadline?: string | null;
   canEndWaiting?: boolean;
+  removalCap?: number | null;
+  serverTime?: string;
   members: RoomMember[];
   ownPreferences?: UserPreferences;
   round: 1 | 2;

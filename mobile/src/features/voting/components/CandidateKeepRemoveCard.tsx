@@ -2,6 +2,7 @@ import { Image, Pressable, StyleSheet, Text, View, type ImageStyle } from 'react
 import type { PoolDish } from '../../../data/api';
 import type { Palette } from '../../../shared/ui';
 import type { FinalChoice } from '../hooks/useRoundTwoVoting';
+import { formatDishPrice } from '../services/priceLabel';
 
 export interface CandidateKeepRemoveCardProps {
   dish: PoolDish;
@@ -25,6 +26,7 @@ export function CandidateKeepRemoveCard({
   const isKeep = currentChoice === 'KEEP';
   const source = dish.artwork?.url ? { uri: dish.artwork.url } : undefined;
   const isRemoveDisabled = isLocked || (isKeep && !canRemove);
+  const priceLabel = formatDishPrice(dish);
 
   return (
     <View
@@ -65,12 +67,14 @@ export function CandidateKeepRemoveCard({
           <Text style={[styles.candidateName, { color: colors.text }]}>
             {dish.name}
           </Text>
-          <Text style={[styles.candidateVenue, { color: colors.muted }]}>
-            {dish.venueName || 'Quán ăn'}
-          </Text>
-          {dish.priceMin != null && dish.priceMax != null ? (
+          {dish.venueName ? (
+            <Text style={[styles.candidateVenue, { color: colors.muted }]}>
+              {dish.venueName}
+            </Text>
+          ) : null}
+          {priceLabel ? (
             <Text style={[styles.candidatePrice, { color: colors.primary }]}>
-              {dish.priceMin.toLocaleString()} - {dish.priceMax.toLocaleString()} đ
+              {priceLabel}
             </Text>
           ) : null}
         </View>
