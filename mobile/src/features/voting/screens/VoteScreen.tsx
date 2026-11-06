@@ -113,7 +113,7 @@ export function VoteScreen({
     simulateDelayMs,
     initialIsHost,
     initialViewMode,
-    onRoundTwo: onGoToFinalRound ? (candidates?: PoolDish[]) => { if (candidates) onGoToFinalRound(candidates); } : undefined,
+    onRoundTwo: onGoToFinalRound,
     onGoToResult,
     onGoToNoConsensus,
   });

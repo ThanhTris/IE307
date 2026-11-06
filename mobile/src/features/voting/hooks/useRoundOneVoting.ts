@@ -4,7 +4,6 @@ import {
   type BallotVoteItem,
   type PoolDish,
   type RoomResult,
-  type RoomSnapshot,
   type SubmissionReceipt,
 } from '../../../data/api';
 import type { VoteValue } from '../../../shared/ui';
@@ -32,9 +31,19 @@ export interface UseRoundOneVotingParams {
   simulateDelayMs?: number;
   initialIsHost?: boolean;
   initialViewMode?: 'flashcard' | 'list';
-  onRoundTwo?: (survivorCandidates?: PoolDish[]) => void;
+  onRoundTwo?: (survivorCandidates: PoolDish[]) => void;
   onGoToResult?: (result: RoomResult) => void;
   onGoToNoConsensus?: (result: RoomResult) => void;
+}
+
+interface InFlightIntentR1 {
+  requestId: string;
+  intentId: string;
+  roomId: string;
+  round: 1;
+  poolVersion: number;
+  expectedVersion: number;
+  votes: BallotVoteItem[];
 }
 
 export function useRoundOneVoting({
@@ -53,7 +62,7 @@ export function useRoundOneVoting({
   onGoToNoConsensus,
 }: UseRoundOneVotingParams) {
   const [localPool, setLocalPool] = useState<PoolDish[]>(initialPool || []);
-  const [isLoadingSnapshot, setIsLoadingSnapshot] = useState(
+  const [isLoadingSnapshot, setIsLoadingSnapshot] = useState<boolean>(() =>
     Boolean(repository && (!initialPool || initialPool.length === 0))
   );
   const [snapshotError, setSnapshotError] = useState<string | null>(null);
@@ -75,17 +84,42 @@ export function useRoundOneVoting({
   const [viewMode, setViewMode] = useState<'flashcard' | 'list'>(initialViewMode);
 
   // Waiting countdown & Host control state
-  const [waitingCountdown, setWaitingCountdown] = useState(WAITING_DEADLINE_SECONDS);
+  const [waitingCountdown, setWaitingCountdown] = useState<number | null>(WAITING_DEADLINE_SECONDS);
+  const [activeDeadline, setActiveDeadline] = useState<string | null>(null);
   const [isHost, setIsHost] = useState(initialIsHost);
   const [totalRosterCount, setTotalRosterCount] = useState(3);
   const [rosterAcknowledgedCount, setRosterAcknowledgedCount] = useState(2);
-  const [canHostEarlyFinish, setCanHostEarlyFinish] = useState(false);
+  const [serverCanHostEarlyFinish, setServerCanHostEarlyFinish] = useState(false);
+
+  // Derived early finish permission (R8: no setState inside useEffect)
+  const canHostEarlyFinish = repository
+    ? serverCanHostEarlyFinish
+    : (isHost && isWaitingForMembers && isHostEarlyFinishAllowed(rosterAcknowledgedCount, totalRosterCount));
 
   // Room & Pool version from server snapshot (F2)
   const [roomVersion, setRoomVersion] = useState(1);
   const [poolVersion, setPoolVersion] = useState(1);
 
-  // Durable request & intent ID references across retries (F6)
+  // R1: Stable callback references
+  const onRoundTwoRef = useRef(onRoundTwo);
+  const onGoToResultRef = useRef(onGoToResult);
+  const onGoToNoConsensusRef = useRef(onGoToNoConsensus);
+
+  useEffect(() => {
+    onRoundTwoRef.current = onRoundTwo;
+    onGoToResultRef.current = onGoToResult;
+    onGoToNoConsensusRef.current = onGoToNoConsensus;
+  }, [onRoundTwo, onGoToResult, onGoToNoConsensus]);
+
+  // Navigation guards (prevent repeated navigation on every 2.5s poll)
+  const hasNavigatedRoundTwoRef = useRef(false);
+  const navigatedOutcomeRef = useRef<string | null>(null);
+
+  // R6: Clock skew offset: serverTime - Date.now()
+  const clockSkewRef = useRef<number>(0);
+
+  // R7: Durable in-flight ballot intent preserved across retries
+  const inFlightIntentRef = useRef<InFlightIntentR1 | null>(null);
   const activeRequestIdRef = useRef<string | null>(null);
   const activeIntentIdRef = useRef<string | null>(null);
   const lastTapRef = useRef<Record<string, number>>({});
@@ -96,113 +130,189 @@ export function useRoundOneVoting({
   const isLocked = submissionState === 'pending' || submissionState === 'ack';
   const canUndo = activeCardIndex > 0 && !isLocked;
 
-  // Snapshot fetching & synchronization (F2, F3, F5)
+  // Helper to compute remaining seconds adjusted for server clock skew (R6)
+  const computeRemainingFromDeadline = useCallback((deadlineStr: string | null | undefined): number | null => {
+    if (!deadlineStr) return null;
+    const deadlineMs = new Date(deadlineStr).getTime();
+    if (isNaN(deadlineMs)) return null;
+    const estimatedServerNow = Date.now() + clockSkewRef.current;
+    return Math.max(0, Math.ceil((deadlineMs - estimatedServerNow) / 1000));
+  }, []);
+
+  // Central snapshot applicator (R1, R2, R4, R6)
+  const applySnapshot = useCallback((snap: any) => {
+    setRoomVersion(snap.version);
+    setPoolVersion(snap.poolVersion);
+    if (typeof snap.submittedCount === 'number') {
+      setRosterAcknowledgedCount(snap.submittedCount);
+    }
+    if (typeof snap.memberCount === 'number') {
+      setTotalRosterCount(snap.memberCount);
+    }
+    setServerCanHostEarlyFinish(Boolean(snap.canEndWaiting));
+
+    if (Array.isArray(snap.pool) && snap.pool.length > 0) {
+      setLocalPool(mapSnapshotPoolToPoolDishes(snap.pool));
+    }
+
+    if (snap.canEndWaiting != null) {
+      setIsHost(snap.canEndWaiting || (snap.hostUserId ? isHost : false));
+    }
+
+    // R6: Calibrate server clock skew
+    if (snap.serverTime) {
+      const sTime = new Date(snap.serverTime).getTime();
+      if (!isNaN(sTime)) {
+        clockSkewRef.current = sTime - Date.now();
+      }
+    }
+
+    // R6: Synchronize waiting deadline
+    if (snap.deadline) {
+      setActiveDeadline(snap.deadline);
+      const remaining = computeRemainingFromDeadline(snap.deadline);
+      if (remaining !== null) {
+        setWaitingCountdown(remaining);
+      }
+    }
+
+    // R4: 1. Terminal states ALWAYS take precedence over round numbers
+    if (snap.state === 'DECIDED' && snap.result) {
+      setIsWaitingForMembers(false);
+      setNeedsRoundTwo(false);
+      const finalRes = snap.result as unknown as RoomResult;
+      if (navigatedOutcomeRef.current !== finalRes.resultId) {
+        navigatedOutcomeRef.current = finalRes.resultId;
+        onGoToResultRef.current?.(finalRes);
+      }
+      return;
+    }
+    if (snap.state === 'NO_CONSENSUS' && snap.result) {
+      setIsWaitingForMembers(false);
+      setNeedsRoundTwo(false);
+      const finalRes = snap.result as unknown as RoomResult;
+      if (navigatedOutcomeRef.current !== finalRes.resultId) {
+        navigatedOutcomeRef.current = finalRes.resultId;
+        onGoToNoConsensusRef.current?.(finalRes);
+      }
+      return;
+    }
+
+    // R4: 2. Active Round 2 states
+    if (snap.state === 'ROUND_2' || snap.state === 'WAITING_2') {
+      setIsWaitingForMembers(snap.state === 'WAITING_2');
+      setNeedsRoundTwo(true);
+      const survivors = mapSnapshotPoolToPoolDishes(snap.pool);
+      setRoundTwoCandidates(survivors);
+      if (!hasNavigatedRoundTwoRef.current) {
+        hasNavigatedRoundTwoRef.current = true;
+        onRoundTwoRef.current?.(survivors);
+      }
+      return;
+    }
+
+    // R2: 3. Caller ACK separation
+    const hasCompleteBallot = Array.isArray(snap.ownBallot)
+      && snap.ownBallot.length > 0
+      && Array.isArray(snap.pool)
+      && snap.ownBallot.length === snap.pool.length
+      && snap.ownBallot.every((b: any) => typeof b?.roundDishId === 'string' && typeof b?.choice === 'string');
+    const callerSubmitted = Boolean(snap.ownWaiting || hasCompleteBallot);
+
+    if (callerSubmitted) {
+      setSubmissionState('ack');
+      inFlightIntentRef.current = null;
+      setIsWaitingForMembers(snap.state === 'WAITING_1');
+      if (Array.isArray(snap.ownBallot) && snap.ownBallot.length > 0) {
+        const restoredVotes: Record<string, VoteValue> = {};
+        for (const b of snap.ownBallot as any[]) {
+          if (b.roundDishId && b.choice) {
+            restoredVotes[b.roundDishId] = b.choice as VoteValue;
+          }
+        }
+        setVotes(prev => ({ ...prev, ...restoredVotes }));
+      }
+    } else {
+      // Caller has NOT submitted! Keep idle & unlocked so they can vote before deadline
+      if (!inFlightIntentRef.current) {
+        setSubmissionState(prev => (prev === 'ack' ? 'idle' : prev));
+      }
+      setIsWaitingForMembers(false);
+    }
+  }, [computeRemainingFromDeadline, isHost]);
+
+  // Snapshot fetching method (R1: only depends on repository and roomId)
   const fetchSnapshot = useCallback(async () => {
     if (!repository) return;
     const res = await repository.getSnapshot(roomId);
     if (res.ok) {
-      const snap = res.data;
-      setRoomVersion(snap.version);
-      setPoolVersion(snap.poolVersion);
-      if (typeof snap.submittedCount === 'number') {
-        setRosterAcknowledgedCount(snap.submittedCount);
-      }
-      if (typeof snap.memberCount === 'number') {
-        setTotalRosterCount(snap.memberCount);
-      }
-      setCanHostEarlyFinish(Boolean(snap.canEndWaiting));
-
-      if (snap.pool && snap.pool.length > 0) {
-        setLocalPool(mapSnapshotPoolToPoolDishes(snap.pool));
-      }
-
-      if (snap.canEndWaiting != null) {
-        setIsHost(snap.canEndWaiting || (snap.hostUserId ? isHost : false));
-      }
-
-      // Synchronize waiting deadline (F3)
-      if (snap.deadline) {
-        const remaining = Math.max(0, Math.ceil((new Date(snap.deadline).getTime() - Date.now()) / 1000));
-        setWaitingCountdown(remaining);
-      }
-
-      // Synchronize transitions (F3, F5)
-      if (snap.state === 'ROUND_2' || snap.round === 2) {
-        setIsWaitingForMembers(false);
-        setNeedsRoundTwo(true);
-        const survivors = mapSnapshotPoolToPoolDishes(snap.pool);
-        setRoundTwoCandidates(survivors);
-        onRoundTwo?.(survivors);
-      } else if (snap.state === 'DECIDED') {
-        setIsWaitingForMembers(false);
-        if (snap.result) {
-          onGoToResult?.(snap.result as unknown as RoomResult);
-        }
-      } else if (snap.state === 'NO_CONSENSUS') {
-        setIsWaitingForMembers(false);
-        if (snap.result) {
-          onGoToNoConsensus?.(snap.result as unknown as RoomResult);
-        }
-      } else if (snap.state === 'WAITING_1') {
-        if (snap.ownWaiting || snap.ownBallot) {
-          setSubmissionState('ack');
-          setIsWaitingForMembers(true);
-        }
-      }
+      applySnapshot(res.data);
       setIsLoadingSnapshot(false);
       setSnapshotError(null);
     } else {
       setIsLoadingSnapshot(false);
       setSnapshotError(res.error.messageKey);
     }
-  }, [repository, roomId, isHost, onRoundTwo, onGoToResult, onGoToNoConsensus]);
+  }, [repository, roomId, applySnapshot]);
 
-  // Initial load
+  // R1 & R8: Initial mount load (stable, runs once, cleanup guard)
   useEffect(() => {
-    if (repository && (!initialPool || initialPool.length === 0)) {
-      void fetchSnapshot();
-    } else {
-      setIsLoadingSnapshot(false);
+    if (!repository || (initialPool && initialPool.length > 0)) {
+      return;
     }
-  }, [repository, initialPool, fetchSnapshot]);
+    let cancelled = false;
+    const init = async () => {
+      const res = await repository.getSnapshot(roomId);
+      if (cancelled) return;
+      if (res.ok) {
+        applySnapshot(res.data);
+        setIsLoadingSnapshot(false);
+        setSnapshotError(null);
+      } else {
+        setSnapshotError(res.error.messageKey);
+        setIsLoadingSnapshot(false);
+      }
+    };
+    void init();
+    return () => {
+      cancelled = true;
+    };
+  }, [repository, roomId, initialPool, applySnapshot]);
 
-  // Update early finish capability if offline/mock
-  useEffect(() => {
-    if (!repository) {
-      setCanHostEarlyFinish(isHost && isWaitingForMembers && isHostEarlyFinishAllowed(rosterAcknowledgedCount, totalRosterCount));
-    }
-  }, [isHost, isWaitingForMembers, rosterAcknowledgedCount, totalRosterCount, repository]);
-
-  // Countdown timer & polling in waiting state (F3)
+  // R3 & R6: Countdown timer & polling in waiting state
   useEffect(() => {
     let timer: ReturnType<typeof setInterval> | null = null;
     let pollTimer: ReturnType<typeof setInterval> | null = null;
 
-    if (submissionState === 'ack' && isWaitingForMembers) {
-      timer = setInterval(() => {
-        setWaitingCountdown(prev => {
-          if (prev <= 1) {
-            // Deadline reached: poll snapshot immediately
+    if (activeDeadline) {
+      const tick = () => {
+        const rem = computeRemainingFromDeadline(activeDeadline);
+        if (rem !== null) {
+          setWaitingCountdown(rem);
+          if (rem <= 0) {
             void fetchSnapshot();
-            return 0;
           }
-          return prev - 1;
-        });
+        }
+      };
+      tick();
+      timer = setInterval(tick, 1000);
+    } else if (isWaitingForMembers && !repository) {
+      timer = setInterval(() => {
+        setWaitingCountdown(prev => (prev != null && prev <= 1 ? 0 : (prev ?? WAITING_DEADLINE_SECONDS) - 1));
       }, 1000);
+    }
 
-      // Periodically poll snapshot to receive updates from other clients or transitions
-      if (repository) {
-        pollTimer = setInterval(() => {
-          void fetchSnapshot();
-        }, 2500);
-      }
+    if (repository && (isWaitingForMembers || activeDeadline)) {
+      pollTimer = setInterval(() => {
+        void fetchSnapshot();
+      }, 2500);
     }
 
     return () => {
       if (timer) clearInterval(timer);
       if (pollTimer) clearInterval(pollTimer);
     };
-  }, [submissionState, isWaitingForMembers, repository, fetchSnapshot]);
+  }, [activeDeadline, isWaitingForMembers, repository, fetchSnapshot, computeRemainingFromDeadline]);
 
   const handleSetWant = (dishId: string) => {
     if (isLocked) return;
@@ -263,9 +373,6 @@ export function useRoundOneVoting({
     }
   };
 
-  /**
-   * Flashcard vote handler: sets the vote and automatically advances to the next card if not at end.
-   */
   const handleFlashcardVote = (dishId: string, vote: VoteValue) => {
     if (isLocked) return;
     handleVote(dishId, vote);
@@ -353,7 +460,7 @@ export function useRoundOneVoting({
     setLastActionNotice(`Host đã kết thúc chờ sớm (${rosterAcknowledgedCount}/${totalRosterCount} thành viên đã ACK). Server đã chuyển vòng!`);
   };
 
-  // Retry waiting if enterWaiting failed after ballot ACK (F4)
+  // Retry waiting if enterWaiting failed after ballot ACK (F4, R6)
   const handleRetryWaiting = async () => {
     if (!repository || submissionState !== 'ack') return;
     setIsRetryingWaiting(true);
@@ -370,8 +477,11 @@ export function useRoundOneVoting({
       if (waitRes.ok) {
         setIsWaitingForMembers(true);
         if (waitRes.data.deadline) {
-          const remaining = Math.max(0, Math.ceil((new Date(waitRes.data.deadline).getTime() - Date.now()) / 1000));
-          setWaitingCountdown(remaining);
+          setActiveDeadline(waitRes.data.deadline);
+          const remaining = computeRemainingFromDeadline(waitRes.data.deadline);
+          if (remaining !== null) {
+            setWaitingCountdown(remaining);
+          }
         }
       } else {
         if (waitRes.error.messageKey === 'VERSION_CONFLICT') {
@@ -394,41 +504,52 @@ export function useRoundOneVoting({
     setErrorMessage('');
     setWaitingError(null);
 
-    // Reuse activeRequestId and activeIntentId across retries unless votes changed (F6)
-    let reqId = activeRequestIdRef.current;
-    let intentId = activeIntentIdRef.current;
-    if (!reqId || !intentId) {
-      reqId = createDurableRequestId('vote_r1');
-      intentId = `intent_${reqId}`;
+    // R7: Capture or reuse in-flight intent across retries
+    let intent = inFlightIntentRef.current;
+    if (!intent) {
+      const reqId = activeRequestIdRef.current || createDurableRequestId('vote_r1');
+      const intentId = activeIntentIdRef.current || `intent_${reqId}`;
       activeRequestIdRef.current = reqId;
       activeIntentIdRef.current = intentId;
-    }
 
-    const ballotVotes: BallotVoteItem[] = pool.map(dish => ({
-      roundDishId: dish.roundDishId,
-      vote: votes[dish.roundDishId]!,
-    }));
+      const ballotVotes: BallotVoteItem[] = pool.map(dish => ({
+        roundDishId: dish.roundDishId,
+        vote: votes[dish.roundDishId]!,
+      }));
+
+      intent = {
+        requestId: reqId,
+        intentId,
+        roomId,
+        round: 1,
+        poolVersion,
+        expectedVersion: roomVersion,
+        votes: ballotVotes,
+      };
+      inFlightIntentRef.current = intent;
+    }
 
     try {
       if (repository) {
         const res = await repository.submitBallot({
-          roomId,
-          round: 1,
-          poolVersion,
-          expectedVersion: roomVersion,
-          votes: ballotVotes,
-          intentId,
-          requestId: reqId,
+          roomId: intent.roomId,
+          round: intent.round,
+          poolVersion: intent.poolVersion,
+          expectedVersion: intent.expectedVersion,
+          votes: intent.votes,
+          intentId: intent.intentId,
+          requestId: intent.requestId,
         });
 
         if (res.ok) {
           setSubmissionState('ack');
+          inFlightIntentRef.current = null;
           setReceipt(res.data.receipt ?? {
             round: 1,
-            intentId,
-            requestId: res.requestId ?? reqId,
+            intentId: intent.intentId,
+            requestId: res.requestId ?? intent.requestId,
             submittedAt: new Date().toISOString(),
-            voteCount: ballotVotes.length,
+            voteCount: intent.votes.length,
           });
 
           // If room already advanced on submit (last member) (F4)
@@ -437,7 +558,7 @@ export function useRoundOneVoting({
             return;
           }
 
-          // Enter waiting room (F4)
+          // Enter waiting room (F4, R6)
           const waitRes = await repository.enterWaiting({
             roomId,
             round: 1,
@@ -450,8 +571,11 @@ export function useRoundOneVoting({
             setIsWaitingForMembers(true);
             setNeedsRoundTwo(false);
             if (waitRes.data.deadline) {
-              const remaining = Math.max(0, Math.ceil((new Date(waitRes.data.deadline).getTime() - Date.now()) / 1000));
-              setWaitingCountdown(remaining);
+              setActiveDeadline(waitRes.data.deadline);
+              const remaining = computeRemainingFromDeadline(waitRes.data.deadline);
+              if (remaining !== null) {
+                setWaitingCountdown(remaining);
+              }
             }
           } else {
             // F4: Do NOT mark waiting as successful if it failed; keep ballot ACK and show waiting retry
@@ -467,23 +591,24 @@ export function useRoundOneVoting({
         }
       } else if (api) {
         const req = {
-          roomId,
+          roomId: intent.roomId,
           round: 1 as const,
-          poolVersion,
-          intentId,
-          expectedVersion: roomVersion,
-          votes: ballotVotes,
-          requestId: reqId,
+          poolVersion: intent.poolVersion,
+          intentId: intent.intentId,
+          expectedVersion: intent.expectedVersion,
+          votes: intent.votes,
+          requestId: intent.requestId,
         };
         const res = await api.submitBallot(req);
         if (res.ok) {
           setSubmissionState('ack');
+          inFlightIntentRef.current = null;
           setReceipt(res.data.receipt ?? {
             round: 1,
-            intentId,
-            requestId: res.requestId ?? reqId,
+            intentId: intent.intentId,
+            requestId: res.requestId ?? intent.requestId,
             submittedAt: new Date().toISOString(),
-            voteCount: ballotVotes.length,
+            voteCount: intent.votes.length,
           });
 
           if (res.data.allMembersSubmitted === false) {
@@ -494,7 +619,7 @@ export function useRoundOneVoting({
             if (res.data.round === 2 || res.state === 'ROUND_2') {
               setNeedsRoundTwo(true);
               setRoundTwoCandidates(FIXTURE_ROUND_TWO_CANDIDATES);
-              onRoundTwo?.(FIXTURE_ROUND_TWO_CANDIDATES);
+              onRoundTwoRef.current?.(FIXTURE_ROUND_TWO_CANDIDATES);
             } else {
               setNeedsRoundTwo(false);
             }
@@ -511,13 +636,14 @@ export function useRoundOneVoting({
           setErrorMessage('Không thể gửi phiếu: Lỗi kết nối mạng (Giả lập)');
         } else {
           setSubmissionState('ack');
+          inFlightIntentRef.current = null;
           setReceipt({
             round: 1,
-            intentId,
-            requestId: reqId,
+            intentId: intent.intentId,
+            requestId: intent.requestId,
             submittedAt: new Date().toISOString(),
-            voteCount: ballotVotes.length,
-            votesSummary: ballotVotes,
+            voteCount: intent.votes.length,
+            votesSummary: intent.votes,
           });
 
           if (activeScenario === 'waiting') {
@@ -551,10 +677,7 @@ export function useRoundOneVoting({
     isRetryingWaiting,
     needsRoundTwo,
     roundTwoCandidates,
-    lastActionNotice,
-    lastTapRef,
     activeCardIndex,
-    setActiveCardIndex,
     viewMode,
     setViewMode,
     waitingCountdown,
@@ -565,17 +688,17 @@ export function useRoundOneVoting({
     rosterAcknowledgedCount,
     setRosterAcknowledgedCount,
     canHostEarlyFinish,
-    votedCount,
-    allVoted,
-    isLocked,
-    canUndo,
+    lastActionNotice,
     isLoadingSnapshot,
     snapshotError,
     pool,
+    allVoted,
+    isLocked,
+    canUndo,
     fetchSnapshot,
-    handleSetWant,
+    handleHostEarlyFinish,
+    handleRetryWaiting,
     handleVote,
-    handleQuickFill,
     handleCardVote,
     handleCardDoubleTap,
     handleFlashcardVote,
@@ -584,8 +707,7 @@ export function useRoundOneVoting({
     handleUndoCard,
     handleNextCard,
     handlePrevCard,
-    handleHostEarlyFinish,
-    handleRetryWaiting,
+    handleQuickFill,
     handleSubmit,
   };
 }

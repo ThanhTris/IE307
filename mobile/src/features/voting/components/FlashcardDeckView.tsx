@@ -35,16 +35,19 @@ export function FlashcardDeckView({
   onClearVote,
   colors,
 }: FlashcardDeckViewProps) {
+  const priceLabel = dish.priceMin != null
+    ? dish.priceMax != null && dish.priceMax !== dish.priceMin
+      ? `${dish.priceMin.toLocaleString()} - ${dish.priceMax.toLocaleString()} đ`
+      : `${dish.priceMin.toLocaleString()} đ`
+    : undefined;
+
   const cardData: DishCardData = {
     id: dish.roundDishId,
     name: dish.name,
     description: dish.description ?? undefined,
     imageUrl: dish.artwork?.url ?? undefined,
     tags: [dish.origin, dish.temperature, ...(dish.cuisineIds || []), ...(dish.categoryIds || [])].filter(Boolean) as string[],
-    priceLabel:
-      dish.priceMin != null && dish.priceMax != null
-        ? `${dish.priceMin.toLocaleString()} - ${dish.priceMax.toLocaleString()} đ`
-        : undefined,
+    priceLabel,
     venueLabel: dish.venueName,
   };
 

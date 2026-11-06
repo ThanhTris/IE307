@@ -19,8 +19,17 @@ export default function FinalRoundRoute() {
       roomId={typeof roomId === 'string' ? roomId : undefined}
       repository={repository}
       showScenarioPicker={!isReal}
-      onFinish={() => {
-        router.replace(typeof roomId === 'string' ? { pathname: '/room/result', params: { roomId } } : '/room/result');
+      onFinish={result => {
+        const isNoConsensus = (result as { status?: string })?.status === 'NO_CONSENSUS'
+          || result?.matchTier === 'NO_CONSENSUS'
+          || result?.reasonCode === 'ALL_REMOVED'
+          || result?.reasonCode === 'EMPTY_INTERSECTION';
+
+        if (isNoConsensus) {
+          router.replace(typeof roomId === 'string' ? { pathname: '/room/no-consensus', params: { roomId } } : '/room/no-consensus');
+        } else {
+          router.replace(typeof roomId === 'string' ? { pathname: '/room/result', params: { roomId } } : '/room/result');
+        }
       }}
       onGoToResult={() => {
         router.replace(typeof roomId === 'string' ? { pathname: '/room/result', params: { roomId } } : '/room/result');

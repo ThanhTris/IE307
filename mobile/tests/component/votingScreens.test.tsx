@@ -6,6 +6,7 @@ import {
   FIXTURE_ROUND_TWO_CANDIDATES,
   FinalRoundScreen,
   VoteScreen,
+  createMockVoteRepository,
 } from '../../src/features/voting';
 
 const TEST_POOL: PoolDish[] = [
@@ -658,5 +659,264 @@ describe('GM-12 — FinalRoundScreen (Vòng 2 Chọn lọc)', () => {
     expect(calledPayload.votes[0].vote).toBe('KEEP');
     expect(calledPayload.votes[1].vote).toBe('REMOVE');
     expect(calledPayload.votes.some((v: { vote: string }) => v.vote === 'WANT' || v.vote === 'NO')).toBe(false);
+  });
+});
+
+describe('GM-26 Reviewer Audit Fixes (Trí 2026-11-06)', () => {
+  test('R1: VoteScreen snapshot fetch does not loop on render; exactly 1 fetch on mount, 0 on card actions', async () => {
+    const user = userEvent.setup();
+    const mockRepo = createMockVoteRepository({
+      initialSnapshot: {
+        roomId: 'room_r1_test',
+        code: 'R1TEST',
+        state: 'ROUND_1',
+        round: 1,
+        version: 1,
+        poolVersion: 1,
+        pool: [
+          { roundDishId: 'd1', choiceId: 'c1', dishId: 'dish_1', name: 'Món 1', priceReference: null },
+          { roundDishId: 'd2', choiceId: 'c2', dishId: 'dish_2', name: 'Món 2', priceReference: null },
+        ] as any,
+        memberCount: 3,
+        submittedCount: 0,
+        canEndWaiting: false,
+        ownWaiting: false,
+        ownBallot: [],
+      },
+    });
+    const getSnapshotSpy = jest.spyOn(mockRepo, 'getSnapshot');
+
+    await render(
+      <VoteScreen
+        roomId="room_r1_test"
+        repository={mockRepo}
+        onGoToFinalRound={() => {}}
+      />
+    );
+
+    await waitFor(() => {
+      expect(getSnapshotSpy).toHaveBeenCalledTimes(1);
+    });
+
+    const wantButtons = screen.getAllByRole('button', { name: 'Muốn ăn' });
+    expect(wantButtons.length).toBeGreaterThan(0);
+    await user.press(wantButtons[0]!);
+
+    expect(getSnapshotSpy).toHaveBeenCalledTimes(1);
+  });
+
+  test('R2: Member who has not submitted remains in idle state and unlocked when room is in WAITING_1 with empty ownBallot', async () => {
+    const mockRepo = createMockVoteRepository({
+      initialSnapshot: {
+        roomId: 'room_r2_test',
+        code: 'R2TEST',
+        state: 'WAITING_1',
+        round: 1,
+        version: 2,
+        poolVersion: 1,
+        pool: [
+          { roundDishId: 'd1', choiceId: 'c1', dishId: 'dish_1', name: 'Món 1', priceReference: null },
+          { roundDishId: 'd2', choiceId: 'c2', dishId: 'dish_2', name: 'Món 2', priceReference: null },
+        ] as any,
+        memberCount: 3,
+        submittedCount: 1,
+        canEndWaiting: false,
+        ownWaiting: false,
+        ownBallot: [],
+      },
+    });
+
+    await render(
+      <VoteScreen
+        roomId="room_r2_test"
+        repository={mockRepo}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Món 1')).toBeOnTheScreen();
+    });
+
+    const wantButtons = screen.getAllByRole('button', { name: 'Muốn ăn' });
+    expect(wantButtons[0]).not.toBeDisabled();
+    expect(screen.queryByText('Đã nhận phiếu thành công! (Server ACK)')).toBeNull();
+  });
+
+  test('R4: Terminal state DECIDED transitions directly to onGoToResult without calling onRoundTwo', async () => {
+    const onRoundTwoSpy = jest.fn();
+    const onGoToResultSpy = jest.fn();
+
+    const mockRepo = createMockVoteRepository({
+      initialSnapshot: {
+        roomId: 'room_r4_test',
+        code: 'R4TEST',
+        state: 'DECIDED',
+        round: 2,
+        version: 5,
+        poolVersion: 2,
+        result: {
+          resultId: 'res_terminal_01',
+          winnerDish: { roundDishId: 'd1', name: 'Phở Thắng Cuộc' },
+          matchTier: 'PERFECT',
+          reasonCode: 'DIRECT_CONSENSUS',
+        } as any,
+      },
+    });
+
+    await render(
+      <VoteScreen
+        roomId="room_r4_test"
+        repository={mockRepo}
+        onGoToFinalRound={onRoundTwoSpy}
+        onGoToResult={onGoToResultSpy}
+      />
+    );
+
+    await waitFor(() => {
+      expect(onGoToResultSpy).toHaveBeenCalledTimes(1);
+    });
+    expect(onRoundTwoSpy).not.toHaveBeenCalled();
+  });
+
+  test('R5: Round 2 NO_CONSENSUS navigates to onGoToNoConsensus without duplicate onFinish routing to result', async () => {
+    const onGoToResultSpy = jest.fn();
+    const onGoToNoConsensusSpy = jest.fn();
+
+    const mockRepo = createMockVoteRepository({
+      initialSnapshot: {
+        roomId: 'room_r5_test',
+        code: 'R5TEST',
+        state: 'NO_CONSENSUS',
+        round: 2,
+        version: 5,
+        poolVersion: 2,
+        result: {
+          resultId: 'res_no_consensus_01',
+          winnerDish: null,
+          matchTier: 'NO_CONSENSUS',
+          reasonCode: 'ALL_REMOVED',
+        } as any,
+      },
+    });
+
+    await render(
+      <FinalRoundScreen
+        roomId="room_r5_test"
+        repository={mockRepo}
+        onGoToResult={onGoToResultSpy}
+        onGoToNoConsensus={onGoToNoConsensusSpy}
+      />
+    );
+
+    await waitFor(() => {
+      expect(onGoToNoConsensusSpy).toHaveBeenCalledTimes(1);
+    });
+    expect(onGoToResultSpy).not.toHaveBeenCalled();
+  });
+
+  test('R6: Server clock skew calibration computes accurate countdown regardless of client time', async () => {
+    const fakeServerNow = new Date('2026-11-06T10:00:00.000Z');
+    const fakeDeadline = new Date('2026-11-06T10:00:45.000Z');
+
+    const mockRepo = createMockVoteRepository({
+      initialSnapshot: {
+        roomId: 'room_r6_test',
+        code: 'R6TEST',
+        state: 'WAITING_1',
+        round: 1,
+        version: 2,
+        poolVersion: 1,
+        serverTime: fakeServerNow.toISOString(),
+        deadline: fakeDeadline.toISOString(),
+        ownWaiting: true,
+        ownBallot: [{ roundDishId: 'd1', choice: 'WANT' }],
+        pool: [{ roundDishId: 'd1', choiceId: 'c1', dishId: 'dish_1', name: 'Món 1', priceReference: null }] as any,
+      },
+    });
+
+    await render(
+      <VoteScreen
+        roomId="room_r6_test"
+        repository={mockRepo}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/45s/)).toBeOnTheScreen();
+    });
+  });
+
+  test('R7: Retry preserves in-flight intent, requestId, and expectedVersion across failures', async () => {
+    const user = userEvent.setup();
+    let callCount = 0;
+    const capturedArgs: any[] = [];
+
+    const mockRepo = {
+      getSnapshot: jest.fn().mockResolvedValue({
+        ok: true,
+        data: {
+          roomId: 'room_r7_test',
+          code: 'R7TEST',
+          state: 'ROUND_1',
+          round: 1,
+          version: 3,
+          poolVersion: 1,
+          pool: [{ roundDishId: 'd1', choiceId: 'c1', dishId: 'dish_1', name: 'Món 1', priceReference: null }],
+          ownWaiting: false,
+          ownBallot: [],
+        },
+      }),
+      submitBallot: jest.fn().mockImplementation((args: any) => {
+        callCount++;
+        capturedArgs.push(args);
+        if (callCount === 1) {
+          return Promise.resolve({
+            ok: false,
+            error: { code: 'NETWORK_ERROR', messageKey: 'NETWORK_ERROR', message: 'Mạng chập chờn' },
+          });
+        }
+        return Promise.resolve({
+          ok: true,
+          data: { accepted: true, round: 1, allMembersSubmitted: false },
+        });
+      }),
+      enterWaiting: jest.fn().mockResolvedValue({
+        ok: true,
+        data: { accepted: true, deadline: new Date(Date.now() + 60000).toISOString() },
+      }),
+      finalize: jest.fn(),
+    } as any;
+
+    await render(
+      <VoteScreen
+        roomId="room_r7_test"
+        repository={mockRepo}
+        initialVotes={{ d1: 'WANT' }}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Món 1')).toBeOnTheScreen();
+    });
+
+    const submitBtn = screen.getByRole('button', { name: 'Gửi phiếu' });
+    await user.press(submitBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText('Mạng chập chờn')).toBeOnTheScreen();
+    });
+
+    const retryBtn = screen.getByRole('button', { name: 'Thử lại' });
+    await user.press(retryBtn);
+
+    await waitFor(() => {
+      expect(mockRepo.submitBallot).toHaveBeenCalledTimes(2);
+    });
+
+    expect(capturedArgs[0].requestId).toBe(capturedArgs[1].requestId);
+    expect(capturedArgs[0].intentId).toBe(capturedArgs[1].intentId);
+    expect(capturedArgs[0].expectedVersion).toBe(capturedArgs[1].expectedVersion);
+    expect(capturedArgs[0].poolVersion).toBe(capturedArgs[1].poolVersion);
+    expect(capturedArgs[0].votes).toEqual(capturedArgs[1].votes);
   });
 });

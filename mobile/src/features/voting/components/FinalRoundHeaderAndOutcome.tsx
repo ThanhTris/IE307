@@ -16,7 +16,7 @@ export interface FinalRoundHeaderAndOutcomeProps {
   eliminationCap?: number;
   removedCount?: number;
   capNotice?: string;
-  waitingCountdown?: number;
+  waitingCountdown?: number | null;
   isHost?: boolean;
   setIsHost?: (isHost: boolean) => void;
   rosterAcknowledgedCount?: number;
@@ -42,7 +42,7 @@ export function FinalRoundHeaderAndOutcome({
   eliminationCap = 1,
   removedCount = 0,
   capNotice = '',
-  waitingCountdown = 60,
+  waitingCountdown,
   isHost = true,
   setIsHost,
   rosterAcknowledgedCount = 2,
@@ -191,7 +191,7 @@ export function FinalRoundHeaderAndOutcome({
               <WaitingSummary
                 acknowledged={rosterAcknowledgedCount}
                 total={totalRosterCount}
-                deadlineLabel={`${waitingCountdown}s (Hạn 60s)`}
+                deadlineLabel={waitingCountdown != null ? `${waitingCountdown}s (Hạn 60s)` : 'Đang tính...'}
                 statusLabel={`${rosterAcknowledgedCount}/${totalRosterCount} thành viên đã gửi phiếu`}
                 colors={colors}
               />
@@ -238,12 +238,16 @@ export function FinalRoundHeaderAndOutcome({
                     <Text style={[styles.winnerName, { color: colors.text }]}>
                       {result.winnerDish.name}
                     </Text>
-                    <Text style={[styles.winnerMeta, { color: colors.muted }]}>
-                      {result.winnerDish.venueName || 'Quán ăn được chọn'}
-                    </Text>
-                    {result.winnerDish.priceMin != null && result.winnerDish.priceMax != null ? (
+                    {result.winnerDish.venueName ? (
+                      <Text style={[styles.winnerMeta, { color: colors.muted }]}>
+                        {result.winnerDish.venueName}
+                      </Text>
+                    ) : null}
+                    {result.winnerDish.priceMin != null ? (
                       <Text style={[styles.winnerPrice, { color: colors.primary }]}>
-                        {result.winnerDish.priceMin.toLocaleString()} - {result.winnerDish.priceMax.toLocaleString()} đ
+                        {result.winnerDish.priceMax != null && result.winnerDish.priceMax !== result.winnerDish.priceMin
+                          ? `${result.winnerDish.priceMin.toLocaleString()} - ${result.winnerDish.priceMax.toLocaleString()} đ`
+                          : `${result.winnerDish.priceMin.toLocaleString()} đ`}
                       </Text>
                     ) : null}
                   </View>

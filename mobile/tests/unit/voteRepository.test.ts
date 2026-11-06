@@ -1,18 +1,13 @@
 import {
   CANONICAL_VOTE_CONTRACT_VERSION,
-  LiveVoteRepository,
-  MockVoteRepository,
   createDurableRequestId,
   createLiveVoteRepository,
   createMockVoteRepository,
+  mapSnapshotPoolToPoolDishes,
 } from '../../src/features/voting/services/voteRepository';
 import {
   getRoundTwoEliminationCap,
   isHostEarlyFinishAllowed,
-  FIXTURE_CANDIDATES_N1,
-  FIXTURE_CANDIDATES_N3,
-  FIXTURE_CANDIDATES_N4,
-  FIXTURE_CANDIDATES_N10,
 } from '../../src/features/voting/fixtures';
 import type { BallotVoteItem, PoolDish, RoomSnapshot } from '../../src/data/api';
 
@@ -643,6 +638,57 @@ describe('GM-26 — Vote Repository Unit Suite (Issue #87)', () => {
         expect(r2Fin.data.outcome).toBe('TERMINAL');
         expect(r2Fin.data.state).toBe('DECIDED');
       }
+    });
+  });
+
+  describe('mapSnapshotPoolToPoolDishes adapter (R3 truthfulness)', () => {
+    it('truthfully maps null/unknown priceReference without fabricating 50k-70k fallback', () => {
+      const snapshotItem = {
+        roundDishId: 'r_01',
+        choiceId: 'c_01',
+        dishId: 'd_01',
+        name: 'Món không giá',
+        priceReference: null,
+        sourceRef: 'menu_source_123',
+        artwork: null,
+      };
+
+      const mapped = mapSnapshotPoolToPoolDishes([snapshotItem]);
+      expect(mapped).toHaveLength(1);
+      expect(mapped[0]!.priceMin).toBeUndefined();
+      expect(mapped[0]!.priceMax).toBeUndefined();
+      expect(mapped[0]!.venueName).toBeUndefined(); // sourceRef is NOT used as restaurant name!
+      expect(mapped[0]!.artwork).toBeUndefined();
+    });
+
+    it('truthfully maps price observation and preserves artwork attribution', () => {
+      const snapshotItem = {
+        roundDishId: 'r_02',
+        choiceId: 'c_02',
+        dishId: 'd_02',
+        name: 'Bún bò Huế',
+        priceReference: {
+          amount: 45000,
+          currency: 'VND',
+          unit: 'bowl',
+        },
+        artwork: {
+          url: 'https://example.com/bunbo.jpg',
+          usageRights: 'granted',
+          license: 'CC-BY-4.0',
+          attribution: 'Food Photographer',
+        },
+      };
+
+      const mapped = mapSnapshotPoolToPoolDishes([snapshotItem]);
+      expect(mapped).toHaveLength(1);
+      expect(mapped[0]!.priceMin).toBe(45000);
+      expect(mapped[0]!.priceMax).toBe(45000);
+      expect(mapped[0]!.currency).toBe('VND');
+      expect(mapped[0]!.unit).toBe('bowl');
+      expect(mapped[0]!.artwork?.url).toBe('https://example.com/bunbo.jpg');
+      expect(mapped[0]!.artwork?.attribution).toBe('Food Photographer');
+      expect(mapped[0]!.artwork?.license).toBe('CC-BY-4.0');
     });
   });
 });

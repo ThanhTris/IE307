@@ -9,13 +9,10 @@
 
 import type {
   ApiClient,
-  ApiError,
   BallotVoteItem,
-  BallotVoteValue,
   ErrorCode,
   PoolDish,
   ReadResult,
-  RoomResult,
   RoomSnapshot,
   SubmissionReceipt,
   SubmitBallotRequest,
@@ -49,6 +46,7 @@ export function createDurableRequestId(prefix = 'req_vote'): string {
 
 /**
  * Transforms raw canonical snapshot pool dishes into PoolDish objects.
+ * Truthful projection without inventing fake prices, fake venue names, or default meal slots.
  */
 export function mapSnapshotPoolToPoolDishes(pool: unknown[]): PoolDish[] {
   if (!Array.isArray(pool)) return [];
@@ -57,8 +55,11 @@ export function mapSnapshotPoolToPoolDishes(pool: unknown[]): PoolDish[] {
     const dishId = item.dishId || roundDishId;
     const choiceId = item.choiceId || roundDishId;
     const name = item.name || `Món ăn #${idx + 1}`;
-    const description = item.description || '';
-    const price = item.priceReference?.amount;
+    const description = item.description ?? undefined;
+    const priceRef = item.priceReference;
+    const priceAmount = typeof priceRef?.amount === 'number'
+      ? priceRef.amount
+      : (typeof item.priceMin === 'number' ? item.priceMin : undefined);
     const artworkUri = item.artwork?.uri || item.artwork?.url;
     return {
       roundDishId,
@@ -66,16 +67,29 @@ export function mapSnapshotPoolToPoolDishes(pool: unknown[]): PoolDish[] {
       dishId,
       name,
       description,
-      venueName: item.priceReference?.sourceRef || item.venueName || 'Quán ăn',
-      priceMin: typeof price === 'number' ? price : item.priceMin ?? 50000,
-      priceMax: typeof price === 'number' ? price : item.priceMax ?? 70000,
-      artwork: artworkUri ? { url: artworkUri, usageRights: 'unknown', license: null, attribution: null } : undefined,
-      mealSlots: item.mealSlots || ['lunch', 'dinner'],
-      cuisineIds: item.cuisineIds || [],
-      categoryIds: item.categoryIds || [],
-      temperature: item.temperature,
-      flavor: item.flavor,
-      priceReference: item.priceReference,
+      venueName: item.venueName || undefined,
+      priceMin: priceAmount,
+      priceMax: typeof item.priceMax === 'number' ? item.priceMax : priceAmount,
+      currency: priceRef?.currency || item.currency || undefined,
+      unit: priceRef?.unit || item.unit || undefined,
+      artwork: artworkUri
+        ? {
+            url: artworkUri,
+            uri: artworkUri,
+            altText: item.artwork?.altText || undefined,
+            attribution: item.artwork?.attribution || undefined,
+            usageRights: item.artwork?.usageRights || (item.artwork?.attribution ? 'attributed' : 'unknown'),
+            license: item.artwork?.license ?? null,
+          }
+        : undefined,
+      mealSlots: Array.isArray(item.mealSlots) ? item.mealSlots : [],
+      cuisineIds: Array.isArray(item.cuisineIds) ? item.cuisineIds : [],
+      categoryIds: Array.isArray(item.categoryIds) ? item.categoryIds : [],
+      cuisineLabels: Array.isArray(item.cuisineLabels) ? item.cuisineLabels : undefined,
+      categoryLabels: Array.isArray(item.categoryLabels) ? item.categoryLabels : undefined,
+      temperature: item.temperature ?? undefined,
+      flavor: item.flavor ?? undefined,
+      priceReference: priceRef ?? undefined,
     } as PoolDish;
   });
 }
@@ -287,7 +301,7 @@ export class LiveVoteRepository implements VoteRepository {
     }
 
     // F1: Transform to strict wire format with ONLY roundDishId and choice
-    const wireVotes: Array<{ roundDishId: string; choice: string }> = [];
+    const wireVotes: { roundDishId: string; choice: string }[] = [];
     if (args.round === 1) {
       for (const item of args.votes) {
         const choice = (item as any).choice ?? item.vote;
@@ -738,14 +752,6 @@ export class MockVoteRepository implements VoteRepository {
         };
       }
     }
-
-    const payloadSerialized = JSON.stringify({
-      roomId: args.roomId,
-      round: args.round,
-      poolVersion: args.poolVersion,
-      expectedVersion: args.expectedVersion,
-      votes: wireVotes,
-    });
 
     // Check cached idempotent response
     const cacheKey = `${args.roomId}_${args.round}_${rid}`;

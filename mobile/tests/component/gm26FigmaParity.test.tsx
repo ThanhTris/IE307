@@ -2,9 +2,7 @@ import { render, screen, userEvent, waitFor } from '@testing-library/react-nativ
 import {
   FIXTURE_CANDIDATES_N1,
   FIXTURE_CANDIDATES_N4,
-  FIXTURE_ROUND_TWO_ALL_REMOVED_RESULT,
   FIXTURE_ROUND_TWO_CANDIDATES,
-  FIXTURE_ROUND_TWO_CONSENSUS_RESULT,
   FinalRoundScreen,
   VoteScreen,
   createMockVoteRepository,

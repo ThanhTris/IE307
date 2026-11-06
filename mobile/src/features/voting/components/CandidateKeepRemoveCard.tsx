@@ -65,12 +65,16 @@ export function CandidateKeepRemoveCard({
           <Text style={[styles.candidateName, { color: colors.text }]}>
             {dish.name}
           </Text>
-          <Text style={[styles.candidateVenue, { color: colors.muted }]}>
-            {dish.venueName || 'Quán ăn'}
-          </Text>
-          {dish.priceMin != null && dish.priceMax != null ? (
+          {dish.venueName ? (
+            <Text style={[styles.candidateVenue, { color: colors.muted }]}>
+              {dish.venueName}
+            </Text>
+          ) : null}
+          {dish.priceMin != null ? (
             <Text style={[styles.candidatePrice, { color: colors.primary }]}>
-              {dish.priceMin.toLocaleString()} - {dish.priceMax.toLocaleString()} đ
+              {dish.priceMax != null && dish.priceMax !== dish.priceMin
+                ? `${dish.priceMin.toLocaleString()} - ${dish.priceMax.toLocaleString()} đ`
+                : `${dish.priceMin.toLocaleString()} đ`}
             </Text>
           ) : null}
         </View>

@@ -15,7 +15,7 @@ export interface VoteScenarioAndStatusBannerProps {
   needsRoundTwo: boolean;
   roundTwoCandidates: PoolDish[];
   errorMessage: string;
-  waitingCountdown?: number;
+  waitingCountdown?: number | null;
   isHost?: boolean;
   setIsHost?: (isHost: boolean) => void;
   rosterAcknowledgedCount?: number;
@@ -40,7 +40,7 @@ export function VoteScenarioAndStatusBanner({
   needsRoundTwo,
   roundTwoCandidates,
   errorMessage,
-  waitingCountdown = 60,
+  waitingCountdown,
   isHost = true,
   setIsHost,
   rosterAcknowledgedCount = 2,
@@ -64,7 +64,7 @@ export function VoteScenarioAndStatusBanner({
       {showScenarioPicker ? (
         <View style={[styles.scenarioCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           <Text style={[styles.scenarioTitle, { color: colors.text }]}>
-            🧪 Kịch bản thử nghiệm (QA / Demo):
+            🧪 Kịch bản thử nghiệm (QA / Fixture Scenario):
           </Text>
           <View style={styles.scenarioRow}>
             {(['round_two', 'waiting', 'success', 'error'] as const).map(item => (
@@ -88,17 +88,18 @@ export function VoteScenarioAndStatusBanner({
                   ]}
                 >
                   {item === 'round_two'
-                    ? '⚡ Cần Vòng 2'
+                    ? '⚡ Vòng 2 (#1)'
                     : item === 'waiting'
                     ? '⏳ Chờ nhóm'
                     : item === 'success'
-                    ? '✓ Thành công'
+                    ? '🎉 Đồng thuận'
                     : '⚠ Lỗi/Retry'}
                 </Text>
               </Pressable>
             ))}
           </View>
 
+          {/* Simulated waiting controls */}
           {isWaitingForMembers && setIsHost && setRosterAcknowledgedCount ? (
             <View style={styles.waitingControlsRow}>
               <Text style={[styles.controlLabel, { color: colors.muted }]}>Mô phỏng chờ:</Text>
@@ -178,7 +179,7 @@ export function VoteScenarioAndStatusBanner({
               <WaitingSummary
                 acknowledged={rosterAcknowledgedCount}
                 total={totalRosterCount}
-                deadlineLabel={`${waitingCountdown}s (Hạn 60s)`}
+                deadlineLabel={waitingCountdown != null ? `${waitingCountdown}s (Hạn 60s)` : 'Đang tính...'}
                 statusLabel={`${rosterAcknowledgedCount}/${totalRosterCount} thành viên đã gửi phiếu`}
                 colors={colors}
               />

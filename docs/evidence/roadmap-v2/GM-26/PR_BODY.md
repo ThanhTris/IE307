@@ -29,29 +29,37 @@ Reviewer: @ThanhTris
    - `mobile/src/app/room/final-round.tsx`: Wired `FinalRoundScreen` with `createLiveVoteRepository(api)` in real mode.
    - Updated hooks `useRoundOneVoting` and `useRoundTwoVoting` to accept optional `VoteRepository`.
 
-4. **Contract & Type Updates**:
-   - Added `'REMOVE_LIMIT'` to `ErrorCode` in `common.ts` and error localized copy in `roomEntry.ts`.
-   - Added `'WAITING_1' | 'WAITING_2'` to `RoomState` in `rooms.ts` and updated `isRoomState` response guard in `responseGuards.ts`.
-
-5. **PR #156 Review Fixes (F1–F7)**:
-   - **F1 (Wire format)**: Strictly maps ballots to `{ roundDishId, choice }` on the wire without legacy `vote` property or extraneous fields.
-   - **F2 (Dynamic snapshot)**: Eliminates hardcoded fixtures in real mode; dynamically loads room snapshot, pool, versions, and caller host status via `getSnapshot` with loading/error state and hides QA scenario pickers.
-   - **F3 (Waiting synchronization)**: Synchronizes 60s countdown with server `deadline` and `serverTime`; polls snapshot every 2.5s during waiting to detect other member submissions.
-   - **F4 (Waiting error isolation)**: Isolates post-ACK `enterWaiting` errors without destroying ballot submission state, offering a dedicated `handleRetryWaiting` button.
-   - **F5 (Real outcome navigation)**: Navigates dynamically to real terminal outcomes (`DECIDED`, `NO_CONSENSUS` / `EMPTY_INTERSECTION` / `ALL_REMOVED`) without hardcoding consensus fixtures.
+4. **Review Comment Fixes — Round 1 (F1–F7)**:
+   - **F1 (Wire format)**: Strictly maps ballots to `{ roundDishId, choice }` on the wire without legacy fields.
+   - **F2 (Dynamic snapshot)**: Eliminates hardcoded fixtures in real mode; dynamically loads snapshot, pool, versions, and caller host status via `getSnapshot`.
+   - **F3 (Waiting synchronization)**: Synchronizes 60s countdown with server `deadline` and `serverTime`; polls snapshot every 2.5s during waiting.
+   - **F4 (Waiting error isolation)**: Isolates post-ACK `enterWaiting` errors without destroying ballot submission state, offering `handleRetryWaiting`.
+   - **F5 (Real outcome navigation)**: Navigates dynamically to real terminal outcomes (`DECIDED`, `NO_CONSENSUS`).
    - **F6 (Durable IDs across retries)**: Reuses `activeRequestId` across retries; rejects reused request IDs that carry mismatched payloads with `REQUEST_ID_REUSED`.
-   - **F7 (Strict envelope guards)**: Added strict canonical response guards on all RPC envelopes (`submitAck`, `waitingAck`, `finalizeAck`, `snapshot`); rejects malformed envelopes with `MALFORMED_RESPONSE`.
+   - **F7 (Strict envelope guards)**: Added strict canonical response guards on all RPC envelopes; rejects malformed envelopes with `MALFORMED_RESPONSE`.
+
+5. **Review Comment Fixes — Round 2 (R1–R8)**:
+   - **R1 (Fetch loop)**: Fixed inline callback recreation by storing callbacks in refs updated via `useEffect`. `VoteScreen` forwards `onGoToFinalRound` directly; exactly 1 snapshot fetch on mount, 0 extra on actions.
+   - **R2 (Unsubmitted member unlock)**: Fixed false-positive ACK from empty array `ownBallot = []`. Unsubmitted callers remain in `idle` and unlocked.
+   - **R3 (Truthful snapshot projection)**: Cleaned `mapSnapshotPoolToPoolDishes` to omit fake 50k–70k price ranges, eliminate fallback restaurant names from `sourceRef`, remove default meal slots, and preserve artwork attribution and license.
+   - **R4 (Terminal state priority)**: Strictly evaluates terminal states (`DECIDED`, `NO_CONSENSUS`) before active Round 2 states, navigating directly to results on reconnect.
+   - **R5 (Outcome navigation isolation)**: Enforces mutual exclusivity between outcome navigation routes; guarded with `navigatedOutcomeRef`. `final-round.tsx` safely checks `isNoConsensus` before fallback.
+   - **R6 (Clock skew calibration)**: Calibrated server clock offset from `snap.serverTime` so countdown calculates accurately regardless of client device time.
+   - **R7 (In-flight retry preservation)**: Preserves in-flight intent (`inFlightIntentRef`) including durable request ID, intent ID, versions, and votes across failures.
+   - **R8 (ESLint 0 errors / 0 warnings)**: Cleaned ESLint `react-hooks/set-state-in-effect` and `react-hooks/refs` without any `eslint-disable` comments.
 
 ---
 
 ## Verification & Test Results
 
 - `npm run typecheck`: **Pass** (0 TypeScript errors under strict mode).
+- `npm run lint`: **Pass** (0 ESLint errors, 0 warnings across the entire repository).
 - `npm run check:architecture`: **Pass** (clean boundaries).
-- Focused GM-26 test suites: **Pass** (53/53 tests across 3 suites):
-  - `tests/unit/voteRepository.test.ts`: 23/23 pass (including wire format, F6 mismatch rejection, F7 envelope guards).
+- Focused GM-26 test suites: **Pass** (61/61 tests across 3 suites):
+  - `tests/unit/voteRepository.test.ts`: 25/25 pass (including wire format, F6 mismatch rejection, F7 envelope guards, R3 truthful mapping).
   - `tests/component/gm26FigmaParity.test.tsx`: 7/7 pass.
-  - `tests/component/votingScreens.test.tsx`: 23/23 pass.
+  - `tests/component/votingScreens.test.tsx`: 29/29 pass (including R1, R2, R4, R5, R6, R7 audit tests).
+- Full mobile test suite (`npm test`): **Pass** (62/62 suites, 1,059/1,059 tests passing).
 - Repository validation (`validate_repository.py` & `task_readiness.py --check-docs`): **Pass**.
 - `git diff --check`: **Pass** (clean whitespace, no conflict markers).
 
@@ -59,8 +67,7 @@ Reviewer: @ThanhTris
 
 ## Evidence & Limits
 
-- Detailed parity report: [FIGMA_PARITY.md](FIGMA_PARITY.md)
-- Output checks: [CHECKS.md](CHECKS.md)
-- Handoff & 2-device acceptance scenario: [HANDOFF.md](HANDOFF.md)
-
-*Note per AIDD guidelines*: Physical Android device execution and remote live backend staging verification remain **Not run** pending Trí's (`ThanhTris`) review.
+- Detailed audit checks: `docs/evidence/roadmap-v2/GM-26/CHECKS.md`
+- Handover specification: `docs/evidence/roadmap-v2/GM-26/HANDOFF.md`
+- Figma parity report: `docs/evidence/roadmap-v2/GM-26/FIGMA_PARITY.md`
+- Physical Android device acceptance and remote backend staging verification remain reported as **Not run** pending device connection and Trí's review.
