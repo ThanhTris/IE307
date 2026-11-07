@@ -1,6 +1,6 @@
 ﻿# GM-29 checks — local follow-up, 2026-11-07
 
-Branch: `codex/gm-29-native-push` (PR #127), local changes based on `ecbb2cd`. Keep PR Draft. No Project status or approval was changed.
+Branch: `codex/gm-29-native-push` (PR #127), tested head `5ebd456`. Keep PR Draft. No Project status or approval was changed.
 
 ## Local checks
 
@@ -9,6 +9,7 @@ Branch: `codex/gm-29-native-push` (PR #127), local changes based on `ecbb2cd`. K
 | Clean install | Pass | `npm ci --no-audit --no-fund` completed with SDK 58 lockfile. |
 | Expo compatibility | Pass | `npm run check:expo`; Expo `58.0.23`, `expo-notifications@~58.1.8`. |
 | Typecheck | Pass | `npm run typecheck`. |
+| Lint | Pass with existing warnings | No errors; 4 warnings remain in untouched `data/api/contracts.ts` and `data/api/index.ts`. |
 | Lint | Pass with existing warnings | No errors; 4 warnings remain in untouched `data/api/contracts.ts` and `data/api/index.ts`. |
 | Focused push and route tests | Pass | `nativePush.test.ts`, `expoPushDriver.test.ts`, `routes.test.tsx`: 3 suites / 30 tests. |
 | Diff whitespace | Pass | `git diff --check`. |
