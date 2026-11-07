@@ -4,7 +4,7 @@
   "pr": 157,
   "prBaseRevision": "1a95bb7",
   "mainObservedRevision": "50c44476902432fdd3c94cb29d6998f70bb1cd68",
-  "integrationStatus": "local-uncommitted-only",
+  "integrationStatus": "pushed-to-PR-157-at-bee54ec",
   "migration": {
     "path": "supabase/migrations/0040_v4_preference_validation.sql",
     "schemaVersion": "0.16.1",
