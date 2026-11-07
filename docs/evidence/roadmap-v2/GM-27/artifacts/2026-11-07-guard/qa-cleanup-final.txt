@@ -1,0 +1,7 @@
+QA cleanup — gm27-avd-20261107
+Command: node scripts/backend-qa.mjs stop --run-id gm27-avd-20261107
+Result: stopped=true
+Cleaned: worker, Supabase runtime, owned network
+Status verification: phase=stopped, databaseRunning=false, workerRunning=false, networkOwned=false
+ADB reverse mappings removed: tcp:8084, tcp:55000
+Application database: untouched

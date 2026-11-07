@@ -1,0 +1,9 @@
+
+> gi-cung-duoc-mobile@0.1.0 test
+> jest --runInBand --runTestsByPath tests/unit/resultWireSchema.test.ts tests/unit/resultRepository.test.ts tests/component/liveDishResultScreen.test.tsx tests/component/gm27ReviewRegression.test.tsx tests/component/gm27MergePolicyRegression.test.tsx --testTimeout=20000 --silent
+
+
+Test Suites: 5 passed, 5 total
+Tests:       201 passed, 201 total
+Snapshots:   0 total
+Time:        41.734 s

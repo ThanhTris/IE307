@@ -1,0 +1,329 @@
+[
+  {
+    "round": 2,
+    "status": "DECIDED",
+    "winner": {
+      "name": "QA dish 06",
+      "dishId": "83bb0b27-8117-5887-9543-5b53c5b9a87f",
+      "flavor": null,
+      "artwork": null,
+      "mealSlots": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack"
+      ],
+      "cuisineIds": [],
+      "categoryIds": [],
+      "description": null,
+      "roundDishId": "9c1e9f10-c899-43c6-ac03-b8ea7ee680dc",
+      "temperature": null,
+      "cuisineLabels": [],
+      "categoryLabels": [],
+      "priceReference": null
+    },
+    "resultId": "15d7b15c-a44a-4e86-aed8-884f522639ad",
+    "topDishes": [
+      {
+        "dish": {
+          "name": "QA dish 13",
+          "dishId": "1eaf9849-ec59-5833-a0d0-eedfba6afbf6",
+          "flavor": null,
+          "artwork": null,
+          "mealSlots": [
+            "breakfast",
+            "lunch",
+            "dinner",
+            "snack"
+          ],
+          "cuisineIds": [],
+          "categoryIds": [],
+          "description": null,
+          "roundDishId": "f512a9f1-1ef6-4705-83e6-b1716f8e03fb",
+          "temperature": null,
+          "cuisineLabels": [],
+          "categoryLabels": [],
+          "priceReference": null
+        },
+        "rank": 1,
+        "score": 1,
+        "isWinner": false
+      },
+      {
+        "dish": {
+          "name": "QA dish 17",
+          "dishId": "3118abaf-223a-59db-af74-58829d5bb47a",
+          "flavor": null,
+          "artwork": null,
+          "mealSlots": [
+            "breakfast",
+            "lunch",
+            "dinner",
+            "snack"
+          ],
+          "cuisineIds": [],
+          "categoryIds": [],
+          "description": null,
+          "roundDishId": "ee584cba-525f-4398-8d0f-7d8c2dda2e59",
+          "temperature": null,
+          "cuisineLabels": [],
+          "categoryLabels": [],
+          "priceReference": null
+        },
+        "rank": 1,
+        "score": 1,
+        "isWinner": false
+      },
+      {
+        "dish": {
+          "name": "QA dish 06",
+          "dishId": "83bb0b27-8117-5887-9543-5b53c5b9a87f",
+          "flavor": null,
+          "artwork": null,
+          "mealSlots": [
+            "breakfast",
+            "lunch",
+            "dinner",
+            "snack"
+          ],
+          "cuisineIds": [],
+          "categoryIds": [],
+          "description": null,
+          "roundDishId": "9c1e9f10-c899-43c6-ac03-b8ea7ee680dc",
+          "temperature": null,
+          "cuisineLabels": [],
+          "categoryLabels": [],
+          "priceReference": null
+        },
+        "rank": 1,
+        "score": 1,
+        "isWinner": true
+      }
+    ],
+    "reasonCode": "ACCEPTABLE_FINAL",
+    "finalizedAt": "2026-11-06T08:38:29.095635+00:00",
+    "scoreVersion": "want2-ok1-round1-v1",
+    "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
+    "rankingVersion": "score-desc-dense-rank-v1",
+    "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B-supplement",
+    "round1BallotCount": 1
+  },
+  {
+    "round": 1,
+    "status": "DECIDED",
+    "winner": {
+      "name": "QA dish 05",
+      "dishId": "37211e9d-e122-5e07-883f-4b5f2e86a2db",
+      "flavor": null,
+      "artwork": null,
+      "mealSlots": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack"
+      ],
+      "cuisineIds": [],
+      "categoryIds": [],
+      "description": null,
+      "roundDishId": "725f2946-8f8c-4704-b56c-baae0b2c215a",
+      "temperature": null,
+      "cuisineLabels": [],
+      "categoryLabels": [],
+      "priceReference": null
+    },
+    "resultId": "eafd2749-cd8c-4ad8-a6ac-ac5a4e6c9949",
+    "topDishes": [
+      {
+        "dish": {
+          "name": "QA dish 16",
+          "dishId": "0705f210-02ee-5e69-a1fd-7c6718574f6c",
+          "flavor": null,
+          "artwork": null,
+          "mealSlots": [
+            "breakfast",
+            "lunch",
+            "dinner",
+            "snack"
+          ],
+          "cuisineIds": [],
+          "categoryIds": [],
+          "description": null,
+          "roundDishId": "4119f275-b051-4547-8b0a-d05b316560fd",
+          "temperature": null,
+          "cuisineLabels": [],
+          "categoryLabels": [],
+          "priceReference": null
+        },
+        "rank": 1,
+        "score": 4,
+        "isWinner": false
+      },
+      {
+        "dish": {
+          "name": "QA dish 13",
+          "dishId": "1eaf9849-ec59-5833-a0d0-eedfba6afbf6",
+          "flavor": null,
+          "artwork": null,
+          "mealSlots": [
+            "breakfast",
+            "lunch",
+            "dinner",
+            "snack"
+          ],
+          "cuisineIds": [],
+          "categoryIds": [],
+          "description": null,
+          "roundDishId": "43e7c30a-2945-48c4-9cb3-fc34daef8bb9",
+          "temperature": null,
+          "cuisineLabels": [],
+          "categoryLabels": [],
+          "priceReference": null
+        },
+        "rank": 1,
+        "score": 4,
+        "isWinner": false
+      },
+      {
+        "dish": {
+          "name": "QA dish 05",
+          "dishId": "37211e9d-e122-5e07-883f-4b5f2e86a2db",
+          "flavor": null,
+          "artwork": null,
+          "mealSlots": [
+            "breakfast",
+            "lunch",
+            "dinner",
+            "snack"
+          ],
+          "cuisineIds": [],
+          "categoryIds": [],
+          "description": null,
+          "roundDishId": "725f2946-8f8c-4704-b56c-baae0b2c215a",
+          "temperature": null,
+          "cuisineLabels": [],
+          "categoryLabels": [],
+          "priceReference": null
+        },
+        "rank": 1,
+        "score": 4,
+        "isWinner": true
+      }
+    ],
+    "reasonCode": "UNANIMOUS_WANT",
+    "finalizedAt": "2026-11-06T07:32:12.094591+00:00",
+    "scoreVersion": "want2-ok1-round1-v1",
+    "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
+    "rankingVersion": "score-desc-dense-rank-v1",
+    "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B-supplement",
+    "round1BallotCount": 2
+  },
+  {
+    "round": 1,
+    "status": "DECIDED",
+    "winner": {
+      "name": "QA dish 16",
+      "dishId": "0705f210-02ee-5e69-a1fd-7c6718574f6c",
+      "flavor": null,
+      "artwork": null,
+      "mealSlots": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack"
+      ],
+      "cuisineIds": [],
+      "categoryIds": [],
+      "description": null,
+      "roundDishId": "f3fe6234-5fba-4610-94c4-54e5d48122b3",
+      "temperature": null,
+      "cuisineLabels": [],
+      "categoryLabels": [],
+      "priceReference": null
+    },
+    "resultId": "a282b17a-5b07-4890-aeed-aa76dc64f943",
+    "topDishes": [
+      {
+        "dish": {
+          "name": "QA dish 16",
+          "dishId": "0705f210-02ee-5e69-a1fd-7c6718574f6c",
+          "flavor": null,
+          "artwork": null,
+          "mealSlots": [
+            "breakfast",
+            "lunch",
+            "dinner",
+            "snack"
+          ],
+          "cuisineIds": [],
+          "categoryIds": [],
+          "description": null,
+          "roundDishId": "f3fe6234-5fba-4610-94c4-54e5d48122b3",
+          "temperature": null,
+          "cuisineLabels": [],
+          "categoryLabels": [],
+          "priceReference": null
+        },
+        "rank": 1,
+        "score": 40,
+        "isWinner": true
+      },
+      {
+        "dish": {
+          "name": "QA dish 14",
+          "dishId": "0766960f-62a2-5bbf-b08d-2312f051597b",
+          "flavor": null,
+          "artwork": null,
+          "mealSlots": [
+            "breakfast",
+            "lunch",
+            "dinner",
+            "snack"
+          ],
+          "cuisineIds": [],
+          "categoryIds": [],
+          "description": null,
+          "roundDishId": "012224b2-e9b4-4a26-a141-eddd529ac843",
+          "temperature": null,
+          "cuisineLabels": [],
+          "categoryLabels": [],
+          "priceReference": null
+        },
+        "rank": 1,
+        "score": 40,
+        "isWinner": false
+      },
+      {
+        "dish": {
+          "name": "QA dish 13",
+          "dishId": "1eaf9849-ec59-5833-a0d0-eedfba6afbf6",
+          "flavor": null,
+          "artwork": null,
+          "mealSlots": [
+            "breakfast",
+            "lunch",
+            "dinner",
+            "snack"
+          ],
+          "cuisineIds": [],
+          "categoryIds": [],
+          "description": null,
+          "roundDishId": "b09f260f-ab51-47b9-896f-b34bfff961c5",
+          "temperature": null,
+          "cuisineLabels": [],
+          "categoryLabels": [],
+          "priceReference": null
+        },
+        "rank": 1,
+        "score": 40,
+        "isWinner": false
+      }
+    ],
+    "reasonCode": "UNANIMOUS_WANT",
+    "finalizedAt": "2026-11-06T07:32:09.662292+00:00",
+    "scoreVersion": "want2-ok1-round1-v1",
+    "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
+    "rankingVersion": "score-desc-dense-rank-v1",
+    "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B-supplement",
+    "round1BallotCount": 20
+  }
+]
