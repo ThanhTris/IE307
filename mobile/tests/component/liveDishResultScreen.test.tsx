@@ -1,8 +1,9 @@
-import { fireEvent, render, screen } from '@testing-library/react-native';
+import { act, fireEvent, render, screen } from '@testing-library/react-native';
 import { LiveDishResultScreen } from '../../src/features/result/screens/LiveDishResultScreen';
 import { DishResultEntry } from '../../src/bootstrap/DishResultEntry';
 import { useRoomRepository } from '../../src/bootstrap/RoomRepositoryProvider';
 import {
+  LiveResultRepository,
   createMockResultRepository,
 } from '../../src/features/result/services/resultRepository';
 import type { ScoredResult } from '../../src/features/result/services/resultPresentation';
@@ -36,6 +37,7 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
       roundDishId: '00000000-0000-4000-8000-000000000020',
       name: 'Phở bò tái nạm',
       description: 'Phở bò truyền thống',
+      mealSlots: ['lunch', 'dinner'],
       artwork: null,
       priceReference: {
         amount: 65000,
@@ -45,7 +47,7 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
         sourceRef: 'Menu',
         checkedAt: '2026-11-06T10:00:00Z',
       },
-    },
+    } as any,
     topDishes: [
       {
         dish: {
@@ -53,6 +55,7 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
           roundDishId: '00000000-0000-4000-8000-000000000020',
           name: 'Phở bò tái nạm',
           description: 'Phở bò truyền thống',
+          mealSlots: ['lunch', 'dinner'],
           artwork: null,
           priceReference: {
             amount: 65000,
@@ -62,7 +65,7 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
             sourceRef: 'Menu',
             checkedAt: '2026-11-06T10:00:00Z',
           },
-        },
+        } as any,
         score: 6,
         rank: 1,
         isWinner: true,
@@ -73,9 +76,10 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
           roundDishId: '00000000-0000-4000-8000-000000000021',
           name: 'Cơm tấm sườn bì',
           description: null,
+          mealSlots: ['lunch'],
           artwork: null,
           priceReference: null,
-        },
+        } as any,
         score: 5,
         rank: 2,
         isWinner: false,
@@ -654,6 +658,109 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
           onOtherScreen={jest.fn()}
         />
       );
+
+      const dismiss = await screen.findByText('Chạm để bỏ qua');
+      fireEvent.press(dismiss);
+      expect(screen.getAllByText('Phở bò tái nạm').length).toBeGreaterThan(0);
+    });
+
+    test('cleans up default repository session listener on unmount', async () => {
+      const mockUnsubscribe = jest.fn();
+      const mockSubscribe = jest.fn().mockReturnValue(mockUnsubscribe);
+      const mockRoomRepo = {
+        getCurrentUser: jest.fn().mockReturnValue({ id: 'user_1' }),
+        subscribeSession: mockSubscribe,
+        getRpcCaller: jest.fn().mockReturnValue(jest.fn().mockResolvedValue({ ok: true, data: decidedResult })),
+      };
+
+      jest.mocked(useRoomRepository).mockReturnValue({
+        mode: 'real',
+        user: { id: 'user_1', displayName: 'Tuấn' },
+        repository: mockRoomRepo as any,
+      } as any);
+
+      const view = await render(
+        <LiveDishResultScreen
+          roomId="room_listener_test"
+          onHome={jest.fn()}
+          onNewSession={jest.fn()}
+          onOtherScreen={jest.fn()}
+        />
+      );
+
+      expect(mockSubscribe).toHaveBeenCalled();
+      expect(mockUnsubscribe).not.toHaveBeenCalled();
+
+      await act(async () => {
+        view.unmount();
+      });
+
+      expect(mockUnsubscribe).toHaveBeenCalledTimes(1);
+    });
+
+    test('does NOT dispose externally injected customRepository on unmount', async () => {
+      const mockDispose = jest.fn();
+      const customRepo = createMockResultRepository({ initialResult: decidedResult });
+      customRepo.dispose = mockDispose;
+
+      const view = await render(
+        <LiveDishResultScreen
+          roomId="room_custom_test"
+          repository={customRepo}
+          onHome={jest.fn()}
+          onNewSession={jest.fn()}
+          onOtherScreen={jest.fn()}
+        />
+      );
+
+      await act(async () => {
+        view.unmount();
+      });
+
+      expect(mockDispose).not.toHaveBeenCalled();
+    });
+
+    test('FetchTransport HTTP 409 RESULT_NOT_READY throw continues polling backoff', async () => {
+      let callCount = 0;
+      const mockRpc = jest.fn().mockImplementation(() => {
+        callCount++;
+        if (callCount === 1) {
+          return Promise.reject({
+            status: 409,
+            body: {
+              ok: false,
+              error: {
+                messageKey: 'RESULT_NOT_READY',
+              },
+            },
+          });
+        }
+        return Promise.resolve({
+          ok: true,
+          data: decidedResult,
+        });
+      });
+
+      const repo = new LiveResultRepository({ rpcCaller: mockRpc });
+
+      await render(
+        <LiveDishResultScreen
+          roomId="room_polling_409"
+          repository={repo}
+          pollIntervalMs={40}
+          onHome={jest.fn()}
+          onNewSession={jest.fn()}
+          onOtherScreen={jest.fn()}
+        />
+      );
+
+      // Advance timers / wait for next poll if not already completed
+      await act(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      });
+
+      // Verifies that polling retry succeeded (called twice) rather than stopping at 409 error
+      expect(callCount).toBe(2);
 
       const dismiss = await screen.findByText('Chạm để bỏ qua');
       fireEvent.press(dismiss);

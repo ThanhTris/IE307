@@ -84,6 +84,16 @@ export function LiveDishResultScreen({
     };
   }, []);
 
+  // Lifecycle cleanup: dispose internally-created repository on unmount or when repository changes.
+  // Never dispose an externally-injected customRepository owned by another caller.
+  useEffect(() => {
+    return () => {
+      if (!customRepository && repository && typeof repository.dispose === 'function') {
+        repository.dispose();
+      }
+    };
+  }, [customRepository, repository]);
+
   const toNearbyError = useCallback((resultId: string, winnerDishId: string, error?: { messageKey?: string }): NearbyState => {
     const isNet = error?.messageKey === 'NETWORK_ERROR' || error?.messageKey === 'OFFLINE';
     const isPerm = error?.messageKey === 'PERMISSION_DENIED';

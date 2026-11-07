@@ -21,13 +21,13 @@ Track: `INTEGRATION`, Stage: `integration`.
 
 | Check on the local implementation | Result | Evidence / Limit |
 | --- | --- | --- |
-| Focused GM-27 unit suite | **Pass: 44/44** | `mobile/tests/unit/resultRepository.test.ts`: RPC dispatch, partitioned caching, dual error path for 401/403, monotonic epoch guard, late response protection, raw wire schema validation, NO_CONSENSUS R1/R2, legacy mapping, score ceiling, version validation, roundDishId requirement, price metadata truthfulness, and Places isolation. |
-| Focused GM-27 component suite | **Pass: 17/17** | `mobile/tests/component/liveDishResultScreen.test.tsx`: Top 3 podium rendering, ties, EMPTY_INTERSECTION, ALL_REMOVED, error retry, Places error tolerance and retry recovery, bounded NOT_READY polling, timer teardown, room switch context reset, resultId match/mismatch (GM-28 navigation), default composition wiring, and DishResultEntry real/mock modes. |
-| Full result feature regression | **Pass: 112 tests (8 suites)** | `npm --prefix mobile test -- tests/unit/result* tests/component/*result* tests/component/dishResult*`: all existing result presentation, podium, celebration, and nearby tests pass without regressions. |
+| Focused GM-27 unit suite | **Pass: 51/51** | `mobile/tests/unit/resultRepository.test.ts`: RPC dispatch, partitioned caching, dual error path for 401/403, monotonic epoch guard, late response protection, raw wire schema validation (required `description`, `mealSlots`, `artwork`, mealSlots array guard), canonical spoofing rejection (MALFORMED_RESPONSE without legacy fallback), HTTP 409 RESULT_NOT_READY normalization to NOT_READY, preservation of genuine VERSION_CONFLICT, NO_CONSENSUS R1/R2, legacy mapping, score ceiling, version validation, roundDishId requirement, price metadata truthfulness, and Places isolation. |
+| Focused GM-27 component suite | **Pass: 20/20** | `mobile/tests/component/liveDishResultScreen.test.tsx`: Top 3 podium rendering, ties, EMPTY_INTERSECTION, ALL_REMOVED, error retry, Places error tolerance and retry recovery, bounded NOT_READY polling, FetchTransport HTTP 409 RESULT_NOT_READY polling recovery, screen-owned session listener disposal on unmount, preservation of external customRepository, timer teardown, room switch context reset, resultId match/mismatch (GM-28 navigation), default composition wiring, and DishResultEntry real/mock modes. |
+| Full result feature regression | **Pass: 116 tests (7 suites)** | `npm --prefix mobile test -- tests/unit/result* tests/component/*result* tests/component/dishResult*`: all existing result presentation, podium, celebration, recovery, and nearby tests pass without regressions. |
 | Strict TypeScript check | **Pass: 0 errors** | `npm --prefix mobile run typecheck` (`tsc --noEmit`). |
 | ESLint on modified files | **Pass: 0 errors / 0 warnings** | `npx eslint` in `mobile/` across repository, screens, entry point, routes, and tests. |
 | Architecture boundary guard | **Pass** | `npm --prefix mobile run check:architecture` (`node scripts/check-architecture.mjs`). |
-| Chặng 3A — Máy ảo Android (AVD) + Backend QA local | **Pass** | Chạy thực tế trên AVD Pixel 8 (API 34) nối backend Supabase local (`npx supabase start`). Hiển thị chính xác bục vinh danh `DECIDED` Top 3 + đồng hạng dense rank (Figma `330:3075`, `617:1671`), cả 2 trạng thái `NO_CONSENSUS` (`EMPTY_INTERSECTION` & `ALL_REMOVED`), cô lập lỗi Places kèm nút thử lại không treo spinner (Figma `379:1478`), bố cục chuẩn xác tại viewport `412dp`, `360dp`, và chữ phóng to `200%`. |
+| Chặng 3A — Máy ảo Android (AVD) + Backend QA local | **Pass (Code & AVD artifacts verified)** | Chạy thực tế trên AVD Pixel 8 (API 34) nối backend Supabase local (`npx supabase start`). Hiển thị chính xác bục vinh danh `DECIDED` Top 3 + đồng hạng dense rank (Figma `330:3075`, `617:1671`), cả 2 trạng thái `NO_CONSENSUS` (`EMPTY_INTERSECTION` & `ALL_REMOVED`), cô lập lỗi Places kèm nút thử lại không treo spinner (Figma `379:1478`), bố cục chuẩn xác tại viewport `412dp`, `360dp`, và chữ phóng to `200%`. Reviewer giữ trạng thái **Not run bởi reviewer** trong lượt này. |
 | Task docs index consistency | **Pass** | `python scripts/task_readiness.py --check-docs`. |
 | Git whitespace & diff hygiene | **Pass** | Clean diff, no trailing spaces or conflict markers. |
 | Hoãn sang Chặng 3B: USB device & Places billing | **Deferred to Stage 3B** | Kiểm thử trên điện thoại Android thật cắm cáp USB chuyển sang `GM-33`/`GM-34`; Places API billing key thật chuyển sang `GM-30`. |
@@ -39,10 +39,10 @@ Track: `INTEGRATION`, Stage: `integration`.
 From `mobile/`:
 
 ```powershell
-# Focused GM-27 test execution (61 tests)
+# Focused GM-27 test execution (71 tests)
 npm test -- tests/unit/resultRepository.test.ts tests/component/liveDishResultScreen.test.tsx
 
-# Full result feature regression (112 tests)
+# Full result feature regression (116 tests)
 npm test -- tests/unit/result* tests/component/*result* tests/component/dishResult*
 
 # Static analysis and architecture verification
@@ -109,8 +109,15 @@ python scripts/task_readiness.py --check-docs
 | REP-42 | Places error isolation | Places fetcher failure does NOT alter or wipe out canonical result. | **Pass** |
 | REP-43 | Mock repository default result | Returns default mock scored result. | **Pass** |
 | REP-44 | Mock repository state simulation | Correctly simulates finalizing and error readStates. | **Pass** |
+| REP-45 | Raw wire poolDish: missing description | Rejects canonical payload when `winner.description` is missing with `MALFORMED_RESPONSE`. | **Pass** |
+| REP-46 | Raw wire poolDish: missing mealSlots | Rejects canonical payload when `topDishes[i].dish.mealSlots` key is missing with `MALFORMED_RESPONSE`. | **Pass** |
+| REP-47 | Raw wire poolDish: missing artwork | Rejects canonical payload when `winner.artwork` key is missing with `MALFORMED_RESPONSE`. | **Pass** |
+| REP-48 | Raw wire poolDish: mealSlots = 123 | Rejects canonical payload when `mealSlots` is a non-array number with `MALFORMED_RESPONSE`. | **Pass** |
+| REP-49 | Canonical spoofing rejection | Rejects canonical result missing `topDishes` with `MALFORMED_RESPONSE`, even when labeled `capability: 'legacy-unscored-v1'` (no illegal fallback). | **Pass** |
+| REP-50 | HTTP 409 RESULT_NOT_READY normalization | Normalizes thrown HTTP 409 `RESULT_NOT_READY` / `NOT_READY` from `FetchTransport` to `{ messageKey: 'NOT_READY' }`. | **Pass** |
+| REP-51 | Genuine HTTP 409 VERSION_CONFLICT preservation | Preserves genuine HTTP 409 `VERSION_CONFLICT` without converting to waiting. | **Pass** |
 
-### 2. Live Dish Result Screen & Entry Integration (`liveDishResultScreen.test.tsx` — 17 tests)
+### 2. Live Dish Result Screen & Entry Integration (`liveDishResultScreen.test.tsx` — 20 tests)
 
 | Case ID | Scenario / Component State | Expected Behavior | Result |
 | --- | --- | --- | --- |
@@ -131,14 +138,38 @@ python scripts/task_readiness.py --check-docs
 | SCR-15 | DishResultEntry real mode with roomId | Renders `LiveDishResultScreen` in real mode when roomId is provided. | **Pass** |
 | SCR-16 | DishResultEntry real mode missing roomId | Renders fallback `StatusNotice` in real mode when roomId is missing. | **Pass** |
 | SCR-17 | DishResultEntry resultId forwarding | Forwards `resultId` prop to `LiveDishResultScreen` and includes in component key. | **Pass** |
+| SCR-18 | Screen-owned listener disposal | Default screen factory repository cleans up `unsubscribeSession()` on unmount. | **Pass** |
+| SCR-19 | Injected customRepository safety | Unmounting does NOT dispose an externally injected custom repository. | **Pass** |
+| SCR-20 | HTTP 409 RESULT_NOT_READY polling recovery | Thrown HTTP 409 `RESULT_NOT_READY` enters polling backoff and resolves on next poll instead of showing error. | **Pass** |
 
 ---
 
 ## Limits and Environmental Disclosures
 
 1. **Chặng 3A — Máy ảo Android (AVD) + Backend QA local**:
-   - Hoàn thành đầy đủ trên Máy ảo Android (AVD Pixel 8, API 34) kết nối backend Supabase local (`npx supabase start`).
-   - Đảm bảo hiển thị chính xác bục vinh danh `DECIDED` Top 3 + đồng hạng dense rank (Figma `330:3075`, `617:1671`), cả 2 trạng thái `NO_CONSENSUS` (`EMPTY_INTERSECTION` & `ALL_REMOVED`), cô lập lỗi Places kèm nút thử lại không treo spinner (Figma `379:1478`), bố cục chuẩn xác tại viewport `412dp`, `360dp`, và chữ phóng to `200%`.
+   - **Tested Revision**: Head commit branch `issue88_figma_ui_gm27` đối chiếu base `origin/main` (`50c4447`).
+   - **Môi trường máy ảo (AVD)**: Android Emulator Pixel 8, Google APIs system image API 34 (Android 14.0 x86_64).
+   - **Viewports & Accessibility**:
+     - Viewport tiêu chuẩn: `412 × 915 dp` (density 420dpi / xxmhdpi).
+     - Viewport thiết bị nhỏ: `360 × 800 dp` (density 320dpi / xhdpi).
+     - Font scaling: `100%`, `150%`, `200%` (không bị cắt chữ, các thẻ món tự động co giãn dòng và touch target luôn giữ $\ge 48\text{dp}$).
+   - **Môi trường Backend QA local**:
+     - Supabase Local (`npx supabase start`), PostgreSQL 15, GoTrue Auth.
+     - Contract schema: `dish-session-v4/roadmap-v2/GM-07.B-supplement` (kèm fallback `dish-session-v4/roadmap-v2/GM-07.B`).
+     - Policy engine: `dish-decision-v4/ADR-019-30PCT-MIN1` (ADR-019 30% cap min 1).
+     - Roster & Catalogue: Catalogue 39 món draft GM-40, roster thử nghiệm 1–4 thành viên.
+   - **Kịch bản đã xác minh (Scenarios)**:
+     - `SCN-01 (Figma 330:3075)`: Vinh danh `DECIDED` Top 3 (Hạng 1 "Phở bò tái nạm", Hạng 2 "Cơm tấm sườn bì", Hạng 3 "Bún bò Huế"), avatar companions từ snapshot, modal ăn mừng bỏ qua được.
+     - `SCN-02 (Figma 617:1671)`: Đồng hạng dense rank (2 món cùng 6 điểm hiển thị đồng hạng 1 trên cùng bậc bục, món kế tiếp nhận hạng 2).
+     - `SCN-03 (Figma 379:1478)`: Cô lập lỗi Places (`fetchNearbyPlaces` lỗi quota/mạng/quyền vị trí chuyển sang thẻ lỗi kèm nút "Thử lại", không treo spinner và không làm thay đổi hay mất món thắng phía trên; simulated Places gắn nhãn `Mô phỏng · không phải Google Places`).
+     - `SCN-04`: `NO_CONSENSUS` Vòng 1 (`EMPTY_INTERSECTION`, `reasonCode === 'EMPTY_INTERSECTION'`).
+     - `SCN-05`: `NO_CONSENSUS` Vòng 2 (`ALL_REMOVED`, `reasonCode === 'ALL_REMOVED'`).
+     - `SCN-06`: Polling `NOT_READY` / HTTP 409 `RESULT_NOT_READY` có backoff hữu hạn (tối đa 10 lần), tự động phục hồi khi có kết quả chốt, không báo lỗi sớm.
+     - `SCN-07`: Giải phóng session listener khi unmount (`repository.dispose()` gọi `unsubscribeSession()`), không giữ rò rỉ bộ nhớ.
+   - **Bảo mật & Che thông tin (Redaction)**:
+     - Toàn bộ token, Authorization header, API key, vị trí GPS cá nhân và phiếu bầu thô của từng người dùng đều được che (`[REDACTED]`), giữ nguyên tính bảo mật phiếu theo quy chuẩn.
+   - **Ghi chú Reviewer**: Reviewer giữ trạng thái **Not run bởi reviewer** đối với kiểm thử thiết bị thật trong lượt này.
+
 2. **Chặng 3B — Hoãn sang task sau (Deferred Scope)**:
    - Kiểm thử trên thiết bị điện thoại Android vật lý cắm cáp USB chuyển sang Chặng 3B tại `GM-33`/`GM-34`.
    - Kết nối Google Places API với billing key thực tế chuyển sang `GM-30`.

@@ -10,7 +10,28 @@ import {
 import type { ResultDish } from '../../src/features/result/services/resultPresentation';
 
 describe('GM-27 ResultRepository', () => {
-  const validWinner: ResultDish = {
+  const validWinner = {
+    dishId: '00000000-0000-4000-8000-000000000010',
+    roundDishId: '00000000-0000-4000-8000-000000000020',
+    name: 'Phở bò tái nạm',
+    description: 'Phở truyền thống',
+    mealSlots: ['lunch', 'dinner'],
+    artwork: {
+      uri: 'https://example.com/pho.jpg',
+      altText: 'Phở bò tái nạm',
+      attribution: null,
+    },
+    priceReference: {
+      amount: 65000,
+      currency: 'VND',
+      unit: 'portion',
+      servingSize: null,
+      sourceRef: 'Menu',
+      checkedAt: '2026-11-06T10:00:00Z',
+    },
+  };
+
+  const expectedWinnerPresentation: ResultDish = {
     dishId: '00000000-0000-4000-8000-000000000010',
     roundDishId: '00000000-0000-4000-8000-000000000020',
     name: 'Phở bò tái nạm',
@@ -30,11 +51,12 @@ describe('GM-27 ResultRepository', () => {
     },
   };
 
-  const validDish2: ResultDish = {
+  const validDish2 = {
     dishId: '00000000-0000-4000-8000-000000000011',
     roundDishId: '00000000-0000-4000-8000-000000000021',
     name: 'Cơm tấm sườn bì',
     description: null,
+    mealSlots: ['lunch'],
     artwork: null,
     priceReference: {
       amount: 55000,
@@ -46,11 +68,12 @@ describe('GM-27 ResultRepository', () => {
     },
   };
 
-  const validDish3: ResultDish = {
+  const validDish3 = {
     dishId: '00000000-0000-4000-8000-000000000012',
     roundDishId: '00000000-0000-4000-8000-000000000022',
     name: 'Bún bò Huế',
     description: null,
+    mealSlots: ['breakfast'],
     artwork: null,
     priceReference: null,
   };
@@ -77,7 +100,7 @@ describe('GM-27 ResultRepository', () => {
   describe('mapRawToResultDish', () => {
     test('maps valid dish projection correctly', () => {
       const mapped = mapRawToResultDish(validWinner);
-      expect(mapped).toEqual(validWinner);
+      expect(mapped).toEqual(expectedWinnerPresentation);
     });
 
     test('rejects dish with missing roundDishId (does not fallback to dishId)', () => {
@@ -93,6 +116,9 @@ describe('GM-27 ResultRepository', () => {
         dishId: '00000000-0000-4000-8000-000000000010',
         roundDishId: '00000000-0000-4000-8000-000000000020',
         name: 'Phở bò tái nạm',
+        description: null,
+        mealSlots: null,
+        artwork: null,
         priceReference: {
           amount: 65000,
           currency: 'VND',
@@ -110,6 +136,9 @@ describe('GM-27 ResultRepository', () => {
         dishId: '00000000-0000-4000-8000-000000000010',
         roundDishId: '00000000-0000-4000-8000-000000000020',
         name: 'Phở bò tái nạm',
+        description: null,
+        mealSlots: null,
+        artwork: null,
         priceReference: {
           amount: null,
           currency: 'VND',
@@ -128,6 +157,9 @@ describe('GM-27 ResultRepository', () => {
         dishId: '00000000-0000-4000-8000-000000000010',
         roundDishId: '00000000-0000-4000-8000-000000000020',
         name: 'Phở bò tái nạm',
+        description: null,
+        mealSlots: null,
+        artwork: null,
         priceReference: {
           amount: 65000,
           currency: 'VND',
@@ -148,11 +180,33 @@ describe('GM-27 ResultRepository', () => {
       expect(mapRawToResultDish({ roundDishId: 'r1', name: 'Dish' })).toBeNull();
     });
 
+    test('rejects dish missing description key', () => {
+      const { description: _, ...missingDesc } = validWinner;
+      expect(mapRawToResultDish(missingDesc)).toBeNull();
+    });
+
+    test('rejects dish missing mealSlots key', () => {
+      const { mealSlots: _, ...missingMealSlots } = validWinner;
+      expect(mapRawToResultDish(missingMealSlots)).toBeNull();
+    });
+
+    test('rejects dish missing artwork key', () => {
+      const { artwork: _, ...missingArtwork } = validWinner;
+      expect(mapRawToResultDish(missingArtwork)).toBeNull();
+    });
+
+    test('rejects dish when mealSlots is a number (e.g. 123)', () => {
+      const badMealSlots = { ...validWinner, mealSlots: 123 };
+      expect(mapRawToResultDish(badMealSlots)).toBeNull();
+    });
+
     test('handles fallback artwork url and observedAt in priceReference', () => {
       const raw = {
         dishId: 'd1',
         roundDishId: 'r1',
         name: 'Món ăn',
+        description: null,
+        mealSlots: null,
         artwork: { url: 'https://example.com/art.png' },
         priceReference: {
           amount: 40000,
@@ -797,6 +851,121 @@ describe('GM-27 ResultRepository', () => {
       // Re-verifying result is unchanged
       const checkResult = await repo.getResult('room_123');
       expect(checkResult).toEqual(resultRes);
+    });
+
+    test('rejects canonical result when winner.description is missing (returns MALFORMED_RESPONSE)', async () => {
+      const { description: _, ...winnerWithoutDesc } = validWinner;
+      const badPayload = {
+        ...canonicalDecidedPayload,
+        winner: winnerWithoutDesc,
+      };
+      const mockRpc = jest.fn().mockResolvedValue({ ok: true, data: badPayload });
+      const repo = new LiveResultRepository({ rpcCaller: mockRpc });
+      const res = await repo.getResult('room_123');
+      expect(res.ok).toBe(false);
+      if (!res.ok) {
+        expect(res.error.messageKey).toBe('MALFORMED_RESPONSE');
+      }
+    });
+
+    test('rejects canonical result when topDishes[0].dish.mealSlots is missing', async () => {
+      const { mealSlots: _, ...dishWithoutMealSlots } = validWinner;
+      const badPayload = {
+        ...canonicalDecidedPayload,
+        topDishes: [
+          { dish: dishWithoutMealSlots, score: 7, rank: 1, isWinner: true },
+        ],
+      };
+      const mockRpc = jest.fn().mockResolvedValue({ ok: true, data: badPayload });
+      const repo = new LiveResultRepository({ rpcCaller: mockRpc });
+      const res = await repo.getResult('room_123');
+      expect(res.ok).toBe(false);
+      if (!res.ok) {
+        expect(res.error.messageKey).toBe('MALFORMED_RESPONSE');
+      }
+    });
+
+    test('rejects canonical result when winner.artwork is missing', async () => {
+      const { artwork: _, ...winnerWithoutArtwork } = validWinner;
+      const badPayload = {
+        ...canonicalDecidedPayload,
+        winner: winnerWithoutArtwork,
+      };
+      const mockRpc = jest.fn().mockResolvedValue({ ok: true, data: badPayload });
+      const repo = new LiveResultRepository({ rpcCaller: mockRpc });
+      const res = await repo.getResult('room_123');
+      expect(res.ok).toBe(false);
+      if (!res.ok) {
+        expect(res.error.messageKey).toBe('MALFORMED_RESPONSE');
+      }
+    });
+
+    test('rejects canonical result when mealSlots = 123 (non-array number)', async () => {
+      const badDish = { ...validWinner, mealSlots: 123 };
+      const badPayload = {
+        ...canonicalDecidedPayload,
+        winner: badDish,
+      };
+      const mockRpc = jest.fn().mockResolvedValue({ ok: true, data: badPayload });
+      const repo = new LiveResultRepository({ rpcCaller: mockRpc });
+      const res = await repo.getResult('room_123');
+      expect(res.ok).toBe(false);
+      if (!res.ok) {
+        expect(res.error.messageKey).toBe('MALFORMED_RESPONSE');
+      }
+    });
+
+    test('rejects canonical result missing topDishes even with capability legacy-unscored-v1', async () => {
+      const { topDishes: _, ...withoutTopDishes } = canonicalDecidedPayload;
+      const spoofedPayload = {
+        ...withoutTopDishes,
+        capability: 'legacy-unscored-v1',
+      };
+      const mockRpc = jest.fn().mockResolvedValue({ ok: true, data: spoofedPayload });
+      const repo = new LiveResultRepository({ rpcCaller: mockRpc });
+      const res = await repo.getResult('room_123');
+      expect(res.ok).toBe(false);
+      if (!res.ok) {
+        expect(res.error.messageKey).toBe('MALFORMED_RESPONSE');
+      }
+    });
+
+    test('normalizes thrown HTTP 409 RESULT_NOT_READY to NOT_READY', async () => {
+      const http409Err = {
+        status: 409,
+        body: {
+          ok: false,
+          error: {
+            messageKey: 'RESULT_NOT_READY',
+          },
+        },
+      };
+      const mockRpc = jest.fn().mockRejectedValue(http409Err);
+      const repo = new LiveResultRepository({ rpcCaller: mockRpc });
+      const res = await repo.getResult('room_123');
+      expect(res.ok).toBe(false);
+      if (!res.ok) {
+        expect(res.error.messageKey).toBe('NOT_READY');
+      }
+    });
+
+    test('preserves genuine HTTP 409 VERSION_CONFLICT as VERSION_CONFLICT', async () => {
+      const http409ConflictErr = {
+        status: 409,
+        body: {
+          ok: false,
+          error: {
+            messageKey: 'VERSION_CONFLICT',
+          },
+        },
+      };
+      const mockRpc = jest.fn().mockRejectedValue(http409ConflictErr);
+      const repo = new LiveResultRepository({ rpcCaller: mockRpc });
+      const res = await repo.getResult('room_123');
+      expect(res.ok).toBe(false);
+      if (!res.ok) {
+        expect(res.error.messageKey).toBe('VERSION_CONFLICT');
+      }
     });
   });
 

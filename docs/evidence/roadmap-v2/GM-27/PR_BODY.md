@@ -9,10 +9,10 @@ Supports dense ranking with ties: dishes sharing equal scores receive identical 
 Places isolation: `fetchNearbyPlaces` is initiated only for the canonical winner; any location permission denial, network failure, or provider error is strictly isolated and NEVER alters or wipes out the canonical winner or podium. On error, Places transitions to an error card with a retry button without locking the spinner.
 
 ### Resolution of PR #157 Review Comments & Merge Gate Updates
-1. **Default Live Composition Wiring**: Automatically resolves identity directly from `useRoomRepository` without requiring prop injection. `DishResultEntry` uses `key={`${identity}:${roomId}:${resultId ?? ''}`}` ensuring clean component recreation when identity, room, or resultId changes.
-2. **Dual HTTP Error Path for 401/403**: Applied unified cache invalidation policy for both RPC envelope 401/403 errors and transport throws (`status: 401 | 403`), while preserving valid cached winners during transient network failures (`NETWORK_ERROR`, `TIMEOUT`).
+1. **Default Live Composition Wiring & Session Listener Lifecycle**: Automatically resolves identity directly from `useRoomRepository` without requiring prop injection. `DishResultEntry` uses `key={`${identity}:${roomId}:${resultId ?? ''}`}` ensuring clean component recreation when identity, room, or resultId changes. Cleans up screen-created session listeners on unmount (`repository.dispose()` calls `unsubscribeSession()`), without disposing custom repositories injected from callers.
+2. **Dual HTTP Error Path & 409 NOT_READY Polling**: Applied unified cache invalidation policy for both RPC envelope 401/403 errors and transport throws (`status: 401 | 403`), while preserving valid cached winners during transient network failures. Thrown HTTP 409 with `RESULT_NOT_READY` / `NOT_READY` from `FetchTransport` is normalized to `{ messageKey: 'NOT_READY' }`, allowing the screen to continue bounded exponential backoff polling rather than failing early to error. Genuine `VERSION_CONFLICT` is preserved.
 3. **Monotonic Epoch Guard**: Implemented monotonic global and room epoch counters. In-flight requests are checked before cache storage and before returning `{ ok: true, data }` to UI, strictly blocking late responses after `clearCache()`, `invalidateRoom()`, logout, or account switch.
-4. **Raw Wire Schema Validation**: Strictly enforces existence of all 4 keys (`winner`, `topDishes`, `scoreVersion`, `rankingVersion`) per `$defs.terminalResult.required` on `NO_CONSENSUS` and `DECIDED`. Missing keys or non-null versions on `NO_CONSENSUS` are rejected as `MALFORMED_RESPONSE`.
+4. **Raw Wire Schema Validation**: Strictly enforces existence and shape of keys in `poolDish` (`dishId`, `roundDishId`, `name`, `description`, `mealSlots`, `artwork`, validating `mealSlots` is array of strings or null) and 4 keys (`winner`, `topDishes`, `scoreVersion`, `rankingVersion`) per `$defs.terminalResult.required`. Missing keys or non-null versions on `NO_CONSENSUS` are rejected as `MALFORMED_RESPONSE`. Malformed canonical payloads are strictly rejected without falling into legacy via capability spoofing.
 5. **Seamless GM-28 Navigation**: Routes (`result.tsx`, `no-consensus.tsx`), entry, and screens accept optional `resultId?: string` (`expectedResultId`). Mismatched resultIds transition safely to error notice, preventing file conflicts with GM-28.
 6. **Testing Standards — Stage 3A**: Completed on Android Virtual Device (AVD Pixel 8, API 34) connecting to local Supabase backend (`npx supabase start`). Verified DECIDED (Top 3 + ties), NO_CONSENSUS (R1/R2), Places isolation and error retry, at viewports 412dp, 360dp, and font scale 200%. Physical USB testing deferred to Stage 3B (`GM-33`/`GM-34`).
 
@@ -24,10 +24,10 @@ Places isolation: `fetchNearbyPlaces` is initiated only for the canonical winner
 
 ## Verification
 
-- Focused GM-27 unit suite: **Pass: 44/44** (`resultRepository.test.ts`).
-- Focused GM-27 component suite: **Pass: 17/17** (`liveDishResultScreen.test.tsx`).
-- Total focused tests: **Pass: 61/61**.
-- Full result feature regression: **Pass: 112 tests (8 suites)**.
+- Focused GM-27 unit suite: **Pass: 51/51** (`resultRepository.test.ts`).
+- Focused GM-27 component suite: **Pass: 20/20** (`liveDishResultScreen.test.tsx`).
+- Total focused tests: **Pass: 71/71**.
+- Full result feature regression: **Pass: 116 tests (7 suites)**.
 - TypeScript strict (`tsc --noEmit`), ESLint on modified files (0 errors, 0 warnings), architecture check (`check-architecture.mjs`), task doc indexes (`task_readiness.py --check-docs`), and git whitespace checks: **All Pass**.
 
 ## Handoff and limits

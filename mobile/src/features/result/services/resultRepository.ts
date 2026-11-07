@@ -73,14 +73,44 @@ export interface LiveResultRepositoryDeps {
  * Maps raw dish projection into a sanitized ResultDish complying with ResultDish shape.
  */
 export function mapRawToResultDish(raw: any): ResultDish | null {
-  if (!raw || typeof raw !== 'object') return null;
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+
+  // Raw wire schema validation: check required keys in poolDish ($defs.poolDish.required)
+  // Schema B-supplement requires: roundDishId, dishId, name, description, mealSlots, artwork
+  if (
+    !('dishId' in raw) ||
+    !('roundDishId' in raw) ||
+    !('name' in raw) ||
+    !('description' in raw) ||
+    !('mealSlots' in raw) ||
+    !('artwork' in raw)
+  ) {
+    return null;
+  }
+
   const dishId = typeof raw.dishId === 'string' && raw.dishId.trim() ? raw.dishId.trim() : null;
   const roundDishId = typeof raw.roundDishId === 'string' && raw.roundDishId.trim() ? raw.roundDishId.trim() : null;
   const name = typeof raw.name === 'string' && raw.name.trim() ? raw.name.trim() : null;
 
   if (!dishId || !roundDishId || !name) return null;
 
+  if (raw.description !== null && typeof raw.description !== 'string') {
+    return null;
+  }
   const description = typeof raw.description === 'string' && raw.description.trim() ? raw.description : null;
+
+  // mealSlots must be null or an array of strings
+  if (
+    raw.mealSlots !== null &&
+    (!Array.isArray(raw.mealSlots) || !raw.mealSlots.every((s: unknown) => typeof s === 'string'))
+  ) {
+    return null;
+  }
+
+  // artwork must be null or an object
+  if (raw.artwork !== null && (typeof raw.artwork !== 'object' || Array.isArray(raw.artwork))) {
+    return null;
+  }
 
   let artwork: ResultDish['artwork'] = null;
   if (raw.artwork && typeof raw.artwork === 'object') {
@@ -243,7 +273,8 @@ export function mapRawToScoredResult(raw: any): ScoredResult | null {
 
   const mappedTopDishes: RankedDish[] = [];
   for (const item of raw.topDishes) {
-    if (!item || typeof item !== 'object') return null;
+    if (!item || typeof item !== 'object' || Array.isArray(item)) return null;
+    if (!('dish' in item) || !('score' in item) || !('rank' in item) || !('isWinner' in item)) return null;
     const dish = mapRawToResultDish(item.dish);
     if (!dish) return null;
     if (typeof item.score !== 'number' || !Number.isInteger(item.score) || item.score < 0) return null;
@@ -283,7 +314,7 @@ export class LiveResultRepository implements ResultRepository {
   private readonly defaultContractVersion: string;
   private readonly placesFetcher?: (params: FetchNearbyPlacesParams) => Promise<ReadResult<NearbyState>>;
   private readonly getCurrentIdentity?: () => string | null;
-  private readonly unsubscribeSession?: () => void;
+  private unsubscribeSession?: () => void;
 
   // In-memory cache of terminal results partitioned by identity + roomId + contractVersion
   private readonly resultCache = new Map<string, ResultInput>();
@@ -319,6 +350,7 @@ export class LiveResultRepository implements ResultRepository {
   dispose(): void {
     if (this.unsubscribeSession) {
       this.unsubscribeSession();
+      this.unsubscribeSession = undefined;
     }
   }
 
@@ -452,20 +484,33 @@ export class LiveResultRepository implements ResultRepository {
         }
 
         if (raw?.ok && raw.data) {
-          // Check for canonical scored-v4
-          const scored = mapRawToScoredResult(raw.data);
-          if (scored) {
-            const resultInput: ResultInput = { capability: 'scored-v4', result: scored };
-            if (isEpochValid()) {
-              this.resultCache.set(cacheKey, resultInput);
+          const isCanonical =
+            raw.data.contractVersion === CANONICAL_RESULT_CONTRACT_VERSION ||
+            raw.data.contractVersion === BASELINE_RESULT_CONTRACT_VERSION ||
+            raw.data.policyVersion === CANONICAL_RESULT_POLICY_VERSION;
+
+          if (isCanonical) {
+            const scored = mapRawToScoredResult(raw.data);
+            if (scored) {
+              const resultInput: ResultInput = { capability: 'scored-v4', result: scored };
+              if (isEpochValid()) {
+                this.resultCache.set(cacheKey, resultInput);
+              }
+              return isEpochValid()
+                ? { ok: true, data: resultInput }
+                : { ok: false, error: { messageKey: 'CONTEXT_CHANGED', message: 'Room context or auth changed in flight' } };
             }
-            return isEpochValid()
-              ? { ok: true, data: resultInput }
-              : { ok: false, error: { messageKey: 'CONTEXT_CHANGED', message: 'Room context or auth changed in flight' } };
+            // Canonical projection failed validation - reject as MALFORMED_RESPONSE without legacy fallback
+            return { ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } };
           }
 
-          // Check for legacy unscored-v1
-          if (raw.data.policyVersion === LEGACY_DECISION_POLICY_VERSION || raw.data.capability === 'legacy-unscored-v1') {
+          // Check for genuine legacy unscored-v1
+          const isLegacy =
+            raw.data.policyVersion === LEGACY_DECISION_POLICY_VERSION &&
+            raw.data.contractVersion !== CANONICAL_RESULT_CONTRACT_VERSION &&
+            raw.data.contractVersion !== BASELINE_RESULT_CONTRACT_VERSION;
+
+          if (isLegacy) {
             const legacyInput: ResultInput = {
               capability: 'legacy-unscored-v1',
               result: raw.data as RoomResult,
@@ -496,6 +541,28 @@ export class LiveResultRepository implements ResultRepository {
 
         return { ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } };
       } catch (err: unknown) {
+        // Inspect for explicit RESULT_NOT_READY / NOT_READY inside thrown error (e.g. FetchTransport HTTP 409)
+        const errObj = err && typeof err === 'object' ? (err as Record<string, unknown>) : null;
+        const body = errObj?.body && typeof errObj.body === 'object' ? (errObj.body as Record<string, unknown>) : null;
+        const bodyError = body?.error && typeof body.error === 'object' ? (body.error as Record<string, unknown>) : null;
+        const errError = errObj?.error && typeof errObj.error === 'object' ? (errObj.error as Record<string, unknown>) : null;
+
+        const candidateKeys: unknown[] = [
+          bodyError?.messageKey,
+          bodyError?.code,
+          body?.messageKey,
+          body?.code,
+          errError?.messageKey,
+          errError?.code,
+          errObj?.messageKey,
+          errObj?.code,
+        ];
+
+        const isResultNotReady = candidateKeys.some(k => k === 'RESULT_NOT_READY' || k === 'NOT_READY');
+        if (isResultNotReady) {
+          return { ok: false, error: { messageKey: 'NOT_READY' } };
+        }
+
         const mapped = mapErrorHelper(err);
         const rawStatus = typeof (err as any)?.status === 'number'
           ? (err as any).status
@@ -525,10 +592,35 @@ export class LiveResultRepository implements ResultRepository {
         }
 
         if (snap.ok && snap.data.result) {
-          if (snap.data.result.policyVersion === 'decision-v2') {
+          const rawResult = snap.data.result as any;
+          const isCanonical =
+            rawResult.contractVersion === CANONICAL_RESULT_CONTRACT_VERSION ||
+            rawResult.contractVersion === BASELINE_RESULT_CONTRACT_VERSION ||
+            rawResult.policyVersion === CANONICAL_RESULT_POLICY_VERSION;
+
+          if (isCanonical) {
+            const scored = mapRawToScoredResult(rawResult);
+            if (scored) {
+              const input: ResultInput = { capability: 'scored-v4', result: scored };
+              if (isEpochValid()) {
+                this.resultCache.set(cacheKey, input);
+              }
+              return isEpochValid()
+                ? { ok: true, data: input }
+                : { ok: false, error: { messageKey: 'CONTEXT_CHANGED', message: 'Room context or auth changed in flight' } };
+            }
+            return { ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } };
+          }
+
+          const isLegacy =
+            rawResult.policyVersion === LEGACY_DECISION_POLICY_VERSION &&
+            rawResult.contractVersion !== CANONICAL_RESULT_CONTRACT_VERSION &&
+            rawResult.contractVersion !== BASELINE_RESULT_CONTRACT_VERSION;
+
+          if (isLegacy) {
             const legacyInput: ResultInput = {
               capability: 'legacy-unscored-v1',
-              result: snap.data.result,
+              result: rawResult,
             };
             if (isEpochValid()) {
               this.resultCache.set(cacheKey, legacyInput);
@@ -537,25 +629,41 @@ export class LiveResultRepository implements ResultRepository {
               ? { ok: true, data: legacyInput }
               : { ok: false, error: { messageKey: 'CONTEXT_CHANGED', message: 'Room context or auth changed in flight' } };
           }
-          const scored = mapRawToScoredResult(snap.data.result);
-          if (scored) {
-            const input: ResultInput = { capability: 'scored-v4', result: scored };
-            if (isEpochValid()) {
-              this.resultCache.set(cacheKey, input);
-            }
-            return isEpochValid()
-              ? { ok: true, data: input }
-              : { ok: false, error: { messageKey: 'CONTEXT_CHANGED', message: 'Room context or auth changed in flight' } };
-          }
+
+          return { ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } };
         }
         if (!snap.ok) {
-          const snapErr = (snap.error?.messageKey || '') as string;
+          const snapErr = (snap.error?.messageKey || (snap.error as any)?.code || '') as string;
+          if (snapErr === 'RESULT_NOT_READY' || snapErr === 'NOT_READY') {
+            return { ok: false, error: { messageKey: 'NOT_READY', details: snap.error?.details } };
+          }
           if (this.isPermissionOrTerminalRevocationError(snapErr)) {
             this.invalidateRoom(trimmedRoomId);
           }
           return { ok: false, error: snap.error };
         }
       } catch (err: unknown) {
+        const errObj = err && typeof err === 'object' ? (err as Record<string, unknown>) : null;
+        const body = errObj?.body && typeof errObj.body === 'object' ? (errObj.body as Record<string, unknown>) : null;
+        const bodyError = body?.error && typeof body.error === 'object' ? (body.error as Record<string, unknown>) : null;
+        const errError = errObj?.error && typeof errObj.error === 'object' ? (errObj.error as Record<string, unknown>) : null;
+
+        const candidateKeys: unknown[] = [
+          bodyError?.messageKey,
+          bodyError?.code,
+          body?.messageKey,
+          body?.code,
+          errError?.messageKey,
+          errError?.code,
+          errObj?.messageKey,
+          errObj?.code,
+        ];
+
+        const isResultNotReady = candidateKeys.some(k => k === 'RESULT_NOT_READY' || k === 'NOT_READY');
+        if (isResultNotReady) {
+          return { ok: false, error: { messageKey: 'NOT_READY' } };
+        }
+
         const mapped = mapErrorHelper(err);
         const rawStatus = typeof (err as any)?.status === 'number'
           ? (err as any).status
