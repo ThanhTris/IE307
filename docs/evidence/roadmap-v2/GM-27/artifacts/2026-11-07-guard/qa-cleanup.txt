@@ -1,0 +1,10 @@
+{"project_id_filter":"gm03qa-gm27-20261107","backup":false,"message":"Stopped supabase local development setup."}
+{
+  "stopped": true,
+  "runId": "gm27-20261107",
+  "cleaned": [
+    "worker",
+    "supabase",
+    "network"
+  ]
+}

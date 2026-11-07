@@ -1,0 +1,50 @@
+{
+  "task": "GM-27",
+  "date": "2026-11-07",
+  "pr": 157,
+  "prBaseRevision": "1a95bb7",
+  "mainObservedRevision": "50c44476902432fdd3c94cb29d6998f70bb1cd68",
+  "integrationStatus": "local-uncommitted-only",
+  "migration": {
+    "path": "supabase/migrations/0040_v4_preference_validation.sql",
+    "schemaVersion": "0.16.1",
+    "sha256": "C9CA00A8D47180FDB9D84C9A447E75D15E1664851AD89A253FAD04AABDBC157F"
+  },
+  "sourceSha256": {
+    "mobile/src/features/result/services/resultWireGuard.ts": "6DD6B529E8ED4A0F36C51549CEC816005B69236D3BBB906A04AC6C2524F07677",
+    "mobile/src/features/result/services/resultWireSchemas.json": "30A6691272DB1A2E69EF71E185FFE9FCAE628AADAFFAC67366AB5894DE40A01B",
+    "mobile/tests/unit/resultWireSchema.test.ts": "88B0BA882B390D79F7CB19CFCD7D13F8D1BB49BA81A9050F108B4E1B5F4C4884",
+    "tests/test_gm27_wire_schema.py": "E75F06F79A1640345B608B4D4E6AFBC0E10E95E917683965B7F5475C373C9B8E",
+    "scripts/gm_v4_http_check.mjs": "09E3035133CCDD8ED5316628B3BA6BF36E4F45B7F2C5390B5F4808FACE7EA70E",
+    "scripts/gm20_canonical_http.mjs": "92798C60462F6DD197810EBB8F466BA0E302199A05AC65318C5C5F6816BE0622",
+    "scripts/gm20_canonical_check.py": "69C00E9CDE898B8B0C99514F672349F7D343B4200DE4130BEE612C6963A74CEE"
+  },
+  "qa": {
+    "runId": "gm27-avd-0040-20261107",
+    "ports": {
+      "api": 55000,
+      "db": 55001
+    },
+    "schema": "0.16.1",
+    "statusAfterCleanup": "stopped",
+    "applicationDatabaseTouched": false
+  },
+  "tests": {
+    "gm03AuthRestAssertions": 7,
+    "gm07bCases": 170,
+    "gm07bSchemaEnvelopeValidations": 601,
+    "gm20SupplementCases": 188,
+    "gm20SupplementSchemaEnvelopeValidations": 731,
+    "focusedMobile": "201/201",
+    "fullMobile": "70/70 suites; 1305/1305 tests",
+    "pythonRegression": "664; 2 skipped; 0 failed"
+  },
+  "avd": {
+    "device": "Medium_Phone_API_37.0",
+    "androidApi": 37,
+    "expoGo": "58.0.5",
+    "resultScreenReached": false,
+    "durableScreenshotsCaptured": false
+  },
+  "mergeStatus": "not-ready: required AVD result scenarios and durable result artifacts are incomplete"
+}

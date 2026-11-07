@@ -1,0 +1,22 @@
+GM-27 integrated backend preference-hotfix API verification
+Date: 2026-11-07
+Owned disposable QA run: gm27-avd-0040-20261107
+Project: gm03qa-gm27-avd-0040-20261107
+Loopback API/DB: 55000 / 55001
+Integrated source: PR #157 base 1a95bb7 + local GM-27 patch + uncommitted migration 0040
+Contract: dish-session-v4/roadmap-v2/GM-07.B and GM-07.B-supplement
+Schema: 0.16.1
+Migration: 0040_v4_preference_validation.sql
+Migration SHA-256: C9CA00A8D47180FDB9D84C9A447E75D15E1664851AD89A253FAD04AABDBC157F
+
+Results:
+- GM-03 Auth/REST: 7 assertions passed.
+- GM-07.B HTTP: 170 cases and 601 schema-envelope validations passed.
+- Migration upgrade 0039 -> 0040 preserved stored preferences/version and helper signature/permissions/search_path.
+- GM-20 canonical/B-supplement HTTP: 188 cases and 731 schema-envelope validations passed.
+- With new-session feature flag off, B-supplement returned 400 / UNSUPPORTED_CONTRACT_VERSION. The flag was enabled only in this owned QA project for positive B-supplement checks.
+- Valid Cay/spicy account and room preferences were accepted and read back; malformed inputs returned INVALID_INPUT without changing preference/version. ACK replay and canonical history/result regressions passed in their suites.
+
+Cleanup:
+- QA status after stop: stopped; worker, Supabase and owned network cleanup reported complete; no matching owned QA containers remained.
+- Application database was not used or changed. Secrets, JWTs and publishable keys are intentionally omitted.

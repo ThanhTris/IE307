@@ -1,3 +1,5 @@
+> Latest follow-up: [integrated preference hotfix and AVD run](FOLLOWUP_2026-11-07.md#integrated-preference-hotfix-follow-up--2026-11-07). Local QA validated migration 0040, but the AVD did not reach Lobby/result and no durable result-screen artifacts were produced; Chặng 3A remains incomplete. Older Pixel 8/API34 claims are historical and unverified by this run.
+
 # Bàn giao đầu ra task — GM-27 / roadmap-v2
 
 ## Current local handoff — 2026-11-07
@@ -129,3 +131,11 @@ Artifacts bàn giao chính:
    - Payload kết quả `result_projection` chỉ chứa điểm tổng hợp của món, TUYỆT ĐỐI không chứa phiếu bầu thô (raw ballots) hoặc danh tính người đã chọn món.
 5. **Tính trung thực của dữ liệu giá (Price Truthfulness)**:
    - Khi trường `sourceRef` và `source` từ server vắng mặt hoặc rỗng, client giữ nguyên `priceReference = null`, không tự ý thêm nhãn giả định như "Menu".
+
+## Latest verification note — 2026-11-07
+
+The latest full mobile rerun passed 70/70 suites and 1305/1305 tests. AVD testing reached live Auth, room creation, and snapshot reads, but the preference write failed with HTTP 400 because `dish_v4_private.valid_preferences` has an ambiguous `value` reference. Do not treat the older AVD scenario list in this handoff as newly verified; result-screen/Top 3 on AVD remains Not run. See [latest follow-up](FOLLOWUP_2026-11-07.md).
+
+## Latest integrated QA handoff — 2026-11-07
+
+Migration 0040 preference validation was verified on an owned disposable QA stack, not on `main` or a deployed system. GM-27's AVD consumer path created a room and persisted the host's Cay preference, but did not complete the transition to Lobby/result. Handoff to GM-25: the setup UI labels this live QA flow as “Mô phỏng” and progression remains unclear. Result authorization/refetch, Top 3, terminal states, Places, and device accessibility remain unverified on AVD. See [latest follow-up](FOLLOWUP_2026-11-07.md#integrated-preference-hotfix-follow-up--2026-11-07).

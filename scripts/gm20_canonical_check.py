@@ -50,20 +50,25 @@ def parity(db):
         rows.append({'id': case['id'], 'input': case['input'], 'expected': case['expected'],
                      'actual': result['actual'], 'result': 'Pass'})
     migrations = sorted((ROOT / 'supabase/migrations').glob('003[5-9]_*.sql'))
+    migrations += sorted((ROOT / 'supabase/migrations').glob('0040_*.sql'))
     migration_hashes = {path.name: hashlib.sha256(path.read_bytes()).hexdigest() for path in migrations}
     required_migrations = {
         '0035_gm20_canonical_writer.sql', '0036_gm21_canonical_history.sql',
         '0037_gm22_invitation_admission.sql', '0038_gm23_canonical_notifications.sql',
-        '0039_history_consent_read.sql'}
+        '0039_history_consent_read.sql', '0040_v4_preference_validation.sql'}
     if set(migration_hashes) != required_migrations:
         raise RuntimeError('GM20_FULL_MIGRATION_SET_MISMATCH')
     database_schema_version = db.psql("select schema_version from public.schema_versions where schema_version='0.16.0' and contract_id='food-v1/roadmap-v2/GM-21.4' and upstream_revision='GM21.4/0039_history_consent_read' order by installed_at desc limit 1;")
     if database_schema_version != '0.16.0':
         raise RuntimeError('GM20_DATABASE_SCHEMA_VERSION_MISMATCH')
+    latest_database_schema_version = db.psql("select schema_version from public.schema_versions where schema_version='0.16.1' and contract_id='dish-session-v4/roadmap-v2/GM-07.B' and upstream_revision='GM07.B/0040_v4_preference_validation' order by installed_at desc limit 1;")
+    if latest_database_schema_version != '0.16.1':
+        raise RuntimeError('GM07B_PREFERENCE_VALIDATION_SCHEMA_VERSION_MISMATCH')
     report = {'fixtureOnly': True, 'result': 'Pass', 'caseCount': len(rows), 'cases': rows,
               'fixtureSha256': hashlib.sha256((ROOT / 'tests/fixtures/decision-v4/cases.json').read_bytes()).hexdigest(),
               'producer': {'task': 'GM-20', 'version': 'GM-20.4', 'migration': '0035_gm20_canonical_writer.sql', 'schemaVersion': '0.12.0'},
               'databaseSchemaVersion': database_schema_version,
+              'latestDatabaseSchemaVersion': latest_database_schema_version,
               'migrationSha256': migration_hashes['0035_gm20_canonical_writer.sql'],
               'migrationHashes': migration_hashes}
     (OUTPUT / 'sql-parity.json').write_text(json.dumps(report, ensure_ascii=False, indent=2)+'\n', encoding='utf8')

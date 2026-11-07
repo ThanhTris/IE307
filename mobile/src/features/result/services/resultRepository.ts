@@ -1,3 +1,4 @@
+import { validRawDish, validRawTerminal } from './resultWireGuard';
 /**
  * GM-27 — UI–API kết quả Top 3 và Places độc lập.
  * Connects the canonical dish_session v4 result projection (GM-20/21)
@@ -73,98 +74,10 @@ export interface LiveResultRepositoryDeps {
  * Maps raw dish projection into a sanitized ResultDish complying with ResultDish shape.
  */
 export function mapRawToResultDish(raw: any): ResultDish | null {
-  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
-
-  // Raw wire schema validation: check required keys in poolDish ($defs.poolDish.required)
-  // Schema B-supplement requires: roundDishId, dishId, name, description, mealSlots, artwork
-  if (
-    !('dishId' in raw) ||
-    !('roundDishId' in raw) ||
-    !('name' in raw) ||
-    !('description' in raw) ||
-    !('mealSlots' in raw) ||
-    !('artwork' in raw)
-  ) {
-    return null;
-  }
-
-  const dishId = typeof raw.dishId === 'string' && raw.dishId.trim() ? raw.dishId.trim() : null;
-  const roundDishId = typeof raw.roundDishId === 'string' && raw.roundDishId.trim() ? raw.roundDishId.trim() : null;
-  const name = typeof raw.name === 'string' && raw.name.trim() ? raw.name.trim() : null;
-
-  if (!dishId || !roundDishId || !name) return null;
-
-  if (raw.description !== null && typeof raw.description !== 'string') {
-    return null;
-  }
-  const description = typeof raw.description === 'string' && raw.description.trim() ? raw.description : null;
-
-  // mealSlots must be null or an array of strings
-  if (
-    raw.mealSlots !== null &&
-    (!Array.isArray(raw.mealSlots) || !raw.mealSlots.every((s: unknown) => typeof s === 'string'))
-  ) {
-    return null;
-  }
-
-  // artwork must be null or an object
-  if (raw.artwork !== null && (typeof raw.artwork !== 'object' || Array.isArray(raw.artwork))) {
-    return null;
-  }
-
-  let artwork: ResultDish['artwork'] = null;
-  if (raw.artwork && typeof raw.artwork === 'object') {
-    const uri = typeof raw.artwork.uri === 'string' && raw.artwork.uri.trim()
-      ? raw.artwork.uri.trim()
-      : typeof raw.artwork.url === 'string' && raw.artwork.url.trim()
-        ? raw.artwork.url.trim()
-        : null;
-    if (uri) {
-      artwork = {
-        uri,
-        altText: typeof raw.artwork.altText === 'string' && raw.artwork.altText.trim() ? raw.artwork.altText : name,
-        attribution: typeof raw.artwork.attribution === 'string' && raw.artwork.attribution.trim() ? raw.artwork.attribution : null,
-      };
-    }
-  }
-
-  let priceReference: ResultDish['priceReference'] = null;
-  if (raw.priceReference && typeof raw.priceReference === 'object') {
-    const pr = raw.priceReference;
-    const amount = typeof pr.amount === 'number' && Number.isFinite(pr.amount) && pr.amount >= 0 ? pr.amount : null;
-    const currency = typeof pr.currency === 'string' && pr.currency.trim() ? pr.currency.trim() : null;
-    const unit = typeof pr.unit === 'string' && pr.unit.trim() ? pr.unit.trim() : null;
-    const checkedAt = typeof pr.checkedAt === 'string' && Number.isFinite(Date.parse(pr.checkedAt))
-      ? pr.checkedAt
-      : typeof pr.observedAt === 'string' && Number.isFinite(Date.parse(pr.observedAt))
-        ? pr.observedAt
-        : null;
-    const sourceRef = typeof pr.sourceRef === 'string' && pr.sourceRef.trim()
-      ? pr.sourceRef.trim()
-      : typeof pr.source === 'string' && pr.source.trim()
-        ? pr.source.trim()
-        : null;
-    const servingSize = typeof pr.servingSize === 'string' && pr.servingSize.trim() ? pr.servingSize.trim() : null;
-
-    if (amount !== null && currency && unit && checkedAt && sourceRef) {
-      priceReference = {
-        amount,
-        currency,
-        unit,
-        servingSize,
-        sourceRef,
-        checkedAt,
-      };
-    }
-  }
-
+  if (!validRawDish(raw)) return null;
   return {
-    dishId,
-    roundDishId,
-    name,
-    description,
-    artwork,
-    priceReference,
+    dishId: raw.dishId, roundDishId: raw.roundDishId, name: raw.name,
+    description: raw.description, artwork: raw.artwork, priceReference: raw.priceReference,
   };
 }
 
@@ -192,6 +105,7 @@ export function mapSnapshotMembersToCompanions(members: unknown): ResultCompanio
  * Preserves server-persisted order, scores, and ranks; never recalculates on client.
  */
 export function mapRawToScoredResult(raw: any): ScoredResult | null {
+  if (!validRawTerminal(raw) || !validScoredResult(raw as ScoredResult)) return null;
   if (!raw || typeof raw !== 'object') return null;
 
   // Raw wire schema validation: check actual existence of the 4 required keys in $defs.terminalResult.required
@@ -226,7 +140,7 @@ export function mapRawToScoredResult(raw: any): ScoredResult | null {
 
   // round1BallotCount validation
   if (contractVersion === 'dish-session-v4/roadmap-v2/GM-07.B-supplement') {
-    if (round1BallotCount === undefined || !Number.isInteger(round1BallotCount) || round1BallotCount < 1 || round1BallotCount > 20) {
+    if (round1BallotCount === undefined || !Number.isInteger(round1BallotCount) || round1BallotCount < 0 || round1BallotCount > 20) {
       return null;
     }
   }

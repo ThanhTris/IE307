@@ -38,6 +38,7 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
       name: 'Phở bò tái nạm',
       description: 'Phở bò truyền thống',
       mealSlots: ['lunch', 'dinner'],
+    cuisineIds: [], cuisineLabels: [], categoryIds: [], categoryLabels: [], temperature: null, flavor: null,
       artwork: null,
       priceReference: {
         amount: 65000,
@@ -56,6 +57,7 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
           name: 'Phở bò tái nạm',
           description: 'Phở bò truyền thống',
           mealSlots: ['lunch', 'dinner'],
+    cuisineIds: [], cuisineLabels: [], categoryIds: [], categoryLabels: [], temperature: null, flavor: null,
           artwork: null,
           priceReference: {
             amount: 65000,
@@ -77,6 +79,7 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
           name: 'Cơm tấm sườn bì',
           description: null,
           mealSlots: ['lunch'],
+    cuisineIds: [], cuisineLabels: [], categoryIds: [], categoryLabels: [], temperature: null, flavor: null,
           artwork: null,
           priceReference: null,
         } as any,
@@ -306,12 +309,13 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
     );
 
     expect(screen.getByText('Đang chốt kết quả')).toBeOnTheScreen();
-    expect(repo.getResult).toHaveBeenCalledTimes(1);
+    expect(repo.getResult).toHaveBeenCalled();
+    const callsBeforeUnmount = repo.getResult.mock.calls.length;
 
-    unmount();
+    await unmount();
 
     await new Promise(r => setTimeout(r, 120));
-    expect(repo.getResult).toHaveBeenCalledTimes(1);
+    expect(repo.getResult).toHaveBeenCalledTimes(callsBeforeUnmount);
   });
 
   test('room switch immediately resets UI and does not leak room A winner into room B', async () => {

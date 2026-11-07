@@ -16,6 +16,7 @@ describe('GM-27 ResultRepository', () => {
     name: 'Phở bò tái nạm',
     description: 'Phở truyền thống',
     mealSlots: ['lunch', 'dinner'],
+    cuisineIds: [], cuisineLabels: [], categoryIds: [], categoryLabels: [], temperature: null, flavor: null,
     artwork: {
       uri: 'https://example.com/pho.jpg',
       altText: 'Phở bò tái nạm',
@@ -57,6 +58,7 @@ describe('GM-27 ResultRepository', () => {
     name: 'Cơm tấm sườn bì',
     description: null,
     mealSlots: ['lunch'],
+    cuisineIds: [], cuisineLabels: [], categoryIds: [], categoryLabels: [], temperature: null, flavor: null,
     artwork: null,
     priceReference: {
       amount: 55000,
@@ -74,6 +76,7 @@ describe('GM-27 ResultRepository', () => {
     name: 'Bún bò Huế',
     description: null,
     mealSlots: ['breakfast'],
+    cuisineIds: [], cuisineLabels: [], categoryIds: [], categoryLabels: [], temperature: null, flavor: null,
     artwork: null,
     priceReference: null,
   };
@@ -111,13 +114,14 @@ describe('GM-27 ResultRepository', () => {
       expect(mapRawToResultDish(missingRoundDishId)).toBeNull();
     });
 
-    test('priceReference is null when sourceRef and source are missing (does not fabricate Menu)', () => {
+    test('rejects malformed raw price missing source (does not fabricate Menu)', () => {
       const dishWithoutSource = {
         dishId: '00000000-0000-4000-8000-000000000010',
         roundDishId: '00000000-0000-4000-8000-000000000020',
         name: 'Phở bò tái nạm',
         description: null,
         mealSlots: null,
+    cuisineIds: [], cuisineLabels: [], categoryIds: [], categoryLabels: [], temperature: null, flavor: null,
         artwork: null,
         priceReference: {
           amount: 65000,
@@ -127,17 +131,17 @@ describe('GM-27 ResultRepository', () => {
         },
       };
       const mapped = mapRawToResultDish(dishWithoutSource);
-      expect(mapped).not.toBeNull();
-      expect(mapped!.priceReference).toBeNull();
+      expect(mapped).toBeNull();
     });
 
-    test('priceReference is null when amount is null or non-positive', () => {
+    test('rejects malformed raw price with null amount', () => {
       const dishWithNullAmount = {
         dishId: '00000000-0000-4000-8000-000000000010',
         roundDishId: '00000000-0000-4000-8000-000000000020',
         name: 'Phở bò tái nạm',
         description: null,
         mealSlots: null,
+    cuisineIds: [], cuisineLabels: [], categoryIds: [], categoryLabels: [], temperature: null, flavor: null,
         artwork: null,
         priceReference: {
           amount: null,
@@ -148,17 +152,17 @@ describe('GM-27 ResultRepository', () => {
         },
       };
       const mapped = mapRawToResultDish(dishWithNullAmount);
-      expect(mapped).not.toBeNull();
-      expect(mapped!.priceReference).toBeNull();
+      expect(mapped).toBeNull();
     });
 
-    test('priceReference is null when checkedAt timestamp is invalid', () => {
+    test('rejects malformed raw price timestamp', () => {
       const dishWithBadDate = {
         dishId: '00000000-0000-4000-8000-000000000010',
         roundDishId: '00000000-0000-4000-8000-000000000020',
         name: 'Phở bò tái nạm',
         description: null,
         mealSlots: null,
+    cuisineIds: [], cuisineLabels: [], categoryIds: [], categoryLabels: [], temperature: null, flavor: null,
         artwork: null,
         priceReference: {
           amount: 65000,
@@ -169,8 +173,7 @@ describe('GM-27 ResultRepository', () => {
         },
       };
       const mapped = mapRawToResultDish(dishWithBadDate);
-      expect(mapped).not.toBeNull();
-      expect(mapped!.priceReference).toBeNull();
+      expect(mapped).toBeNull();
     });
 
     test('rejects dish missing dishId, roundDishId, or name', () => {
@@ -200,13 +203,14 @@ describe('GM-27 ResultRepository', () => {
       expect(mapRawToResultDish(badMealSlots)).toBeNull();
     });
 
-    test('handles fallback artwork url and observedAt in priceReference', () => {
+    test('rejects noncanonical artwork url and observedAt aliases', () => {
       const raw = {
         dishId: 'd1',
         roundDishId: 'r1',
         name: 'Món ăn',
         description: null,
         mealSlots: null,
+    cuisineIds: [], cuisineLabels: [], categoryIds: [], categoryLabels: [], temperature: null, flavor: null,
         artwork: { url: 'https://example.com/art.png' },
         priceReference: {
           amount: 40000,
@@ -217,10 +221,7 @@ describe('GM-27 ResultRepository', () => {
         },
       };
       const mapped = mapRawToResultDish(raw);
-      expect(mapped).not.toBeNull();
-      expect(mapped?.artwork?.uri).toBe('https://example.com/art.png');
-      expect(mapped?.priceReference?.checkedAt).toBe('2026-11-06T10:00:00Z');
-      expect(mapped?.priceReference?.sourceRef).toBe('Menu quán');
+      expect(mapped).toBeNull();
     });
   });
 

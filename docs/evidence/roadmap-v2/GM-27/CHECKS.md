@@ -1,3 +1,5 @@
+> Latest follow-up: [integrated preference hotfix and AVD run](FOLLOWUP_2026-11-07.md#integrated-preference-hotfix-follow-up--2026-11-07). Local QA validated migration 0040, but the AVD did not reach Lobby/result and no durable result-screen artifacts were produced; Chặng 3A remains incomplete. Older Pixel 8/API34 claims are historical and unverified by this run.
+
 # Output checks — GM-27 / roadmap-v2
 
 ## Current local verification — 2026-11-07
@@ -173,3 +175,11 @@ python scripts/task_readiness.py --check-docs
 2. **Chặng 3B — Hoãn sang task sau (Deferred Scope)**:
    - Kiểm thử trên thiết bị điện thoại Android vật lý cắm cáp USB chuyển sang Chặng 3B tại `GM-33`/`GM-34`.
    - Kết nối Google Places API với billing key thực tế chuyển sang `GM-30`.
+
+## Previous AVD/API run before migration 0040 — 2026-11-07 (historical)
+
+This section supersedes older full-mobile and AVD status statements above. Full mobile rerun passed **70/70 suites and 1305/1305 tests**. AVD/Auth/room-create/snapshot were exercised through the live owned QA runtime; saving a non-null flavor failed with HTTP 400 due an ambiguous `value` column in `dish_v4_private.valid_preferences`. AVD result/Top 3 scenarios remain Not run. Details and artifacts: [follow-up report](FOLLOWUP_2026-11-07.md), [full mobile output](artifacts/2026-11-07-guard/full-mobile-final.txt), [AVD/API output](artifacts/2026-11-07-guard/avd-api-followup.txt).
+
+## Latest integrated hotfix status — 2026-11-07
+
+See [integrated preference hotfix follow-up](FOLLOWUP_2026-11-07.md#integrated-preference-hotfix-follow-up--2026-11-07). The owned QA API suites passed against a local integration through migration 0040; the full mobile rerun passed 70/70 suites and 1,305/1,305 tests ([output summary](artifacts/2026-11-07-guard/integrated-mobile-final.txt)). The AVD confirmed room creation plus a persisted Cay preference but did not reach Lobby/result; result-screen scenarios and durable screenshots are Not run. This does not meet the GM-27 Chặng 3A merge gate. Older AVD claims in this file are historical and were not reproduced.

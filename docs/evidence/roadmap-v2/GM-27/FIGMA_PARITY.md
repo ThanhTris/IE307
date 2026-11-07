@@ -1,3 +1,5 @@
+> Latest follow-up: [integrated preference hotfix and AVD run](FOLLOWUP_2026-11-07.md#integrated-preference-hotfix-follow-up--2026-11-07). The AVD reached live room setup and preference persistence only; it did not reach a result screen. Result-layout parity is not verified by this run. Older Pixel 8/API34 claims are historical and unverified.
+
 # Báo cáo đối chiếu Figma — GM-27 / roadmap-v2: UI–API kết quả Top 3 và Places độc lập
 
 - **Task**: GM-27 (Issue #88)
@@ -107,3 +109,7 @@ flowchart TD
 - **Chặng 3B — Hoãn sang task sau (Deferred Scope)**:
   - Kiểm thử trên thiết bị điện thoại Android vật lý cắm cáp USB chuyển sang Chặng 3B tại `GM-33`/`GM-34`.
   - Kết nối Google Places API với billing key thực tế chuyển sang `GM-30`.
+
+## Latest AVD evidence status — 2026-11-07
+
+The latest AVD run observed the live setup/preferences screen only. It did not reach Figma result nodes `330:3075`, `617:1671`, or `379:1478`; Top 3, ties, Places and all viewport/font/TalkBack comparisons are Not run in this follow-up. Status values in the earlier rows describe historical implementation/component evidence and must not be interpreted as newly verified AVD parity. See [latest follow-up](FOLLOWUP_2026-11-07.md#integrated-preference-hotfix-follow-up--2026-11-07).
