@@ -1,19 +1,28 @@
-# GM-29 — Checks (work in progress)
+﻿# GM-29 checks — local follow-up, 2026-11-07
 
-- Date: 2026-10-18 (Asia/Bangkok).
-- Base commit: `8cf8084a021d56fae261da34503ed5a7a45681bd`.
-- Contract: `food-v1/roadmap-v2/GM-29.1`.
-- Runtime/device: no Android device (`adb` unavailable); no test backend or remote push credentials supplied.
+Branch: `codex/gm-29-native-push` (PR #127), local changes based on `ecbb2cd`. Keep PR Draft. No Project status or approval was changed.
 
-| Check | Result | Input / expected / actual |
-|---|---|---|
-| Injected-driver unit assertions | Pass | `cd mobile; npm test -- --runInBand tests/unit/nativePush.test.ts`; 1 suite / 3 tests pass: unsupported guard, denied permission, granted registration, token rotation, unregister call and tap-triggered inbox refetch. This is unit evidence only. |
-| Typecheck and lint | Pass with existing warnings | `npm run typecheck`; `npm run lint -- --no-warn-ignored`; typecheck passes, lint has 0 errors and 4 existing warnings in API contracts/index. |
-| Locked Expo SDK compatibility | Pass with offline limitation | `npm ci --no-audit --no-fund`; `npm run check:expo`; installed packages match lockfile and SDK57 bundled compatibility reports up to date. Tool reports compatibility validation is unreliable in offline mode. |
-| Repository validator, task docs, diff | Pass | `python scripts/validate_repository.py`; `python scripts/task_readiness.py --check-docs`; `git diff --check`; all passed. |
-| Expo Go startup | Not run | Requires opening app in Expo Go. No concrete native driver has been linked. |
-| Android permission/token registration and logout unregister | Not run | Requires approved native dependency, test endpoint, and supported Android build. |
-| Real remote delivery cold/warm, duplicate/expired and token rotation | Not run | Requires GM-23 sender, GM-28 inbox, remote credentials and Android development build. Local notification is not a substitute. |
-| Package compatibility / Android native build | Not run | No dependency added pending reviewer approval; no native driver or development build exists. |
+## Local checks
 
-No token, vote, GPS, or personal data was used or written to evidence. This evidence records preparation only and is not acceptance evidence for GM-29.
+| Check | Result | Evidence / limit |
+| --- | --- | --- |
+| Clean install | Pass | `npm ci --no-audit --no-fund` completed with SDK 58 lockfile. |
+| Expo compatibility | Pass | `npm run check:expo`; Expo `58.0.23`, `expo-notifications@~58.1.8`. |
+| Typecheck | Pass | `npm run typecheck`. |
+| Lint | Pass with existing warnings | No errors; 4 warnings remain in untouched `data/api/contracts.ts` and `data/api/index.ts`. |
+| Focused push and route tests | Pass | `nativePush.test.ts`, `expoPushDriver.test.ts`, `routes.test.tsx`: 3 suites / 30 tests. |
+| Diff whitespace | Pass | `git diff --check`. |
+| Expo Go, permission settings, simulated tap on AVD + local Backend QA | Not run | Android SDK/`adb`/emulator and Docker are unavailable in this workspace. Route tests confirm the Expo notifications module is not imported at app startup. |
+| Remote FCM | Not run | 3B/device follow-up; no EAS project ID or remote sender credentials here. |
+| Figma parity | Not run | No app screenshots or Figma capture in this workspace. |
+
+## Scope decisions
+
+- `expo-notifications@~58.1.8` is required by the Android permission/token/tap code and matches the current SDK 58 baseline. `expo-application` is not used by this implementation and is not added. `expo-sqlite` belongs to GM-31.
+- The Expo notifications runtime module is required lazily so unsupported Expo Go startup does not load remote-push code.
+- Token refresh checks the current OS permission, identity and device registration generation before registering. Unsubscribe/unregister invalidates pending callbacks. Logout unregister is best-effort and cannot block local session cleanup.
+- Dev simulated taps refetch the authenticated inbox; payload data is ignored. The UI trigger is only exposed in development builds.
+
+## Merge gate
+
+The GM-29 readiness command remains blocked until its upstream dependency and required AVD 3A evidence are accepted. This PR is Draft; no completion or native-delivery claim is made.

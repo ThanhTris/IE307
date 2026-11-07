@@ -1,25 +1,22 @@
-# GM-29 — Handoff (work in progress)
+﻿# GM-29 handoff
 
-## Revision and contract
+Task: GM-29 — Android notification permission and push lifecycle. Owner: Trung. Reviewer: Trí / ThanhTris. Branch: `codex/gm-29-native-push` (PR #127). Status: implementation prepared; AVD/backend and Figma acceptance remain outstanding.
 
-- Task contract: `food-v1/roadmap-v2/GM-29.1`.
-- Base revision: `origin/main` at `8cf8084a021d56fae261da34503ed5a7a45681bd` (2026-10-18).
-- GM-02/07/14 start artifacts exist on the base revision. GM-23 and GM-28 remain merge inputs and must be verified on target.
-- This branch contains the native push orchestration seam and injected-driver tests only. It is not an implementation of an Expo native driver and is not ready for review/merge.
+## Artifacts
 
-## Artifact
+- `mobile/src/features/inbox/services/expoPushDriver.ts` — Android permission, channel, EAS token, device ID, foreground token refresh, cold/warm tap handling; notification payload is not read.
+- `mobile/src/features/inbox/services/nativePush.ts` — authenticated register/unregister, current-OS-permission checks, identity/generation guards, serialized device operations.
+- `mobile/src/features/inbox/screens/PushSettingsScreen.tsx`, `mobile/src/app/push-settings.tsx` — settings route, deny/settings states and development-only simulated tap.
+- `mobile/src/features/inbox/components/PushLifecycle.tsx` — refetches canonical Inbox data before routing.
+- `mobile/src/bootstrap/RoomRepositoryProvider.tsx` — best-effort server unregister before local logout; network failure does not block local logout.
+- `mobile/tests/unit/nativePush.test.ts`, `mobile/tests/unit/expoPushDriver.test.ts` — callback/permission and driver regression coverage.
 
-- `mobile/src/features/inbox/services/nativePush.ts` — injects a native driver, registers granted device tokens through the authenticated API client, unregisters by device ID, refreshes the inbox after a notification tap without using payload data, and reports unsupported capability without a crash.
-- `mobile/tests/unit/nativePush.test.ts` — capability guard, denied permission, registration, and server refetch assertions.
+## Configuration and run
 
-## Required integration before this task is complete
+Expo baseline: SDK 58 from `origin/main`; dependency `expo-notifications@~58.1.8` is added in this task PR. `expo-application` is not needed by the current implementation. From `mobile/`: `npm ci`, `npm run check:expo`, `npm run typecheck`, `npm run lint`, then the focused push tests.
 
-1. Trí/reviewer approves the Expo native dependency/provider and package/lockfile change under the GM-02 baseline. `expo-notifications` is not present in the current lockfile, so this work deliberately does not import or install it.
-2. Implement and inject the approved Android native driver; connect token unregister to logout and token refresh lifecycle; connect notification tap to GM-28 inbox refetch/route handling.
-3. Build the supported Android development client, verify Expo Go startup remains guarded, and run remote delivery cold/warm, denied/granted, token rotation, logout/unregister, duplicate and expired cases against a test backend.
+Route: `/push-settings`, linked from `/inbox`. In a real session, enabling/disabling uses authenticated register/unregister endpoints. A notification tap restores/refetches Inbox and routes to `/inbox`; payload fields are ignored.
 
-Run the app with `npm start -- --clear` after dependency approval and rebuild the development client after any native dependency/config change. Never put a service-role key in the app. A denied push permission must leave server inbox available. The tap handler only requests an inbox refetch; it does not trust notification payloads for identity, room membership, or navigation authorization.
+## Limits
 
-## Known limits
-
-No native driver, UI entry point, Expo permission prompt, remote push delivery, or Android development-build evidence is present in this revision. Do not mark GM-29 Done based on the injected-driver tests.
+The 3A AVD + local Backend QA run, OS grant/deny/settings interaction, permission retry/logout/network cases, simulated cold/warm/duplicate/expired taps and Figma screenshot comparison were not run because Android SDK/emulator and Docker are unavailable here. Remote FCM remains a 3B check. Keep PR Draft until the required 3A evidence and merge gate pass; do not alter Project status or approval.

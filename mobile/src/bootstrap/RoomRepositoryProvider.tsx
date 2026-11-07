@@ -4,6 +4,8 @@ import { createAuthenticatedApiClient, createSecureSessionStorage } from '../dat
 import { createApiClient } from '../data/api';
 import type { SessionIssue, SessionSnapshot, SessionStatus } from '../features/rooms/services/sessionState';
 import type { SessionUser } from '../data/api/contracts';
+import { createNativePushService } from '../features/inbox/services/nativePush';
+import { clearPushRegistrationSecrets, expoPushDriver, getPushDeviceId } from '../features/inbox/services/expoPushDriver';
 import {
   LiveRoomRepository,
   createDurableRequestId,
@@ -98,9 +100,26 @@ export function RoomRepositoryProvider({
   }, [repository]);
 
   const logout = useCallback(async (): Promise<boolean> => {
+    if (isReal) {
+      try {
+        const deviceId = await getPushDeviceId();
+        if (deviceId) {
+          const push = createNativePushService({
+            driver: expoPushDriver,
+            client: repository.getApiClient(),
+            refreshInbox: async () => undefined,
+          });
+          // Queue unregister behind token refresh when possible; network failure must not block local logout.
+          await push.unregister(deviceId).catch(() => undefined);
+        }
+      } catch {
+        // Local session cleanup must work when secure storage or the network is unavailable.
+      }
+    }
     const result = await repository.logout();
+    if (result.ok && isReal) await clearPushRegistrationSecrets().catch(() => undefined);
     return result.ok;
-  }, [repository]);
+  }, [repository, isReal]);
 
   useEffect(() => {
     let mounted = true;
