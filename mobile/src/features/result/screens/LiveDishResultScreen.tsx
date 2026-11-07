@@ -20,6 +20,7 @@ import type { ResultMapRenderer } from '../services/nearbyPresentation';
 
 export interface LiveDishResultScreenProps {
   roomId: string;
+  resultId?: string;
   repository?: ResultRepository;
   onHome: () => void;
   onNewSession: () => void;
@@ -31,9 +32,11 @@ export interface LiveDishResultScreenProps {
 
 export function LiveDishResultScreen({
   roomId,
+  resultId,
   repository: customRepository,
   onHome,
   onNewSession,
+  onOtherScreen,
   artworkSources,
   renderMap,
   pollIntervalMs,
@@ -43,24 +46,31 @@ export function LiveDishResultScreen({
 
   const repository = useMemo<ResultRepository>(() => {
     if (customRepository) return customRepository;
+    const getCurrentIdentity = () => live.user?.id ?? (live.repository && typeof live.repository.getCurrentUser === 'function' ? live.repository.getCurrentUser()?.id : null) ?? null;
     if (isReal) {
-      return createLiveResultRepository({ roomRepository: live.repository });
+      return createLiveResultRepository({
+        roomRepository: live.repository,
+        getCurrentIdentity,
+      });
     }
-    return createLiveResultRepository();
-  }, [customRepository, isReal, live.repository]);
+    return createLiveResultRepository({
+      getCurrentIdentity,
+    });
+  }, [customRepository, isReal, live.repository, live.user?.id]);
 
   const [currentRoomId, setCurrentRoomId] = useState(roomId);
+  const [currentResultId, setCurrentResultId] = useState(resultId);
   const [input, setInput] = useState<ResultInput | null>(null);
   const [readState, setReadState] = useState<ResultReadState>(roomId ? 'loading' : 'error');
   const [members, setMembers] = useState<readonly ResultCompanion[]>([]);
   const [nearby, setNearby] = useState<NearbyState | undefined>();
   const [refreshIndex, setRefreshIndex] = useState(0);
 
-  const isRoomChanged = roomId !== currentRoomId;
-  const effectiveInput = isRoomChanged ? null : input;
-  const effectiveReadState = isRoomChanged ? (roomId ? 'loading' : 'error') : readState;
-  const effectiveMembers = isRoomChanged ? [] : members;
-  const effectiveNearby = isRoomChanged ? undefined : nearby;
+  const isContextChanged = roomId !== currentRoomId || (resultId !== undefined && resultId !== currentResultId);
+  const effectiveInput = isContextChanged ? null : input;
+  const effectiveReadState = isContextChanged ? (roomId ? 'loading' : 'error') : readState;
+  const effectiveMembers = isContextChanged ? [] : members;
+  const effectiveNearby = isContextChanged ? undefined : nearby;
 
   const mountedRef = useRef(true);
   const activeRoomIdRef = useRef(roomId);
@@ -112,19 +122,30 @@ export function LiveDishResultScreen({
         if (cancelled || activeRoomIdRef.current !== roomId || currentSeq !== fetchSeqRef.current) return;
 
         if (res.ok) {
+          // If expected resultId was requested (e.g. from GM-28 inbox/history),
+          // verify that the returned result matches expected resultId
+          if (resultId && res.data.result.resultId !== resultId) {
+            setCurrentRoomId(roomId);
+            setCurrentResultId(resultId);
+            setInput(null);
+            setReadState('error');
+            return;
+          }
+
           setCurrentRoomId(roomId);
+          setCurrentResultId(resultId);
           setInput(res.data);
           setReadState('ready');
 
           // If decided winner exists, initiate non-blocking nearby places load
           if (res.data.capability === 'scored-v4' && res.data.result.status === 'DECIDED' && res.data.result.winner) {
             const winner = res.data.result.winner;
-            const resultId = res.data.result.resultId;
+            const targetResultId = res.data.result.resultId;
             const currentPlacesSeq = ++placesSeqRef.current;
 
             if (repository.fetchNearbyPlaces) {
               void repository.fetchNearbyPlaces({
-                resultId,
+                resultId: targetResultId,
                 winnerDishId: winner.dishId,
                 dishName: winner.name,
               }).then(placesRes => {
@@ -132,17 +153,18 @@ export function LiveDishResultScreen({
                 if (placesRes.ok) {
                   setNearby(placesRes.data);
                 } else {
-                  setNearby(toNearbyError(resultId, winner.dishId, placesRes.error));
+                  setNearby(toNearbyError(targetResultId, winner.dishId, placesRes.error));
                 }
               }).catch(() => {
                 if (!cancelled && activeRoomIdRef.current === roomId && currentPlacesSeq === placesSeqRef.current) {
-                  setNearby(toNearbyError(resultId, winner.dishId, { messageKey: 'NETWORK_ERROR' }));
+                  setNearby(toNearbyError(targetResultId, winner.dishId, { messageKey: 'NETWORK_ERROR' }));
                 }
               });
             }
           }
         } else {
           setCurrentRoomId(roomId);
+          setCurrentResultId(resultId);
           if (res.error?.messageKey === 'NOT_READY') {
             setReadState('finalizing');
             if (pollAttempts < maxPollAttempts) {
@@ -176,7 +198,7 @@ export function LiveDishResultScreen({
         clearTimeout(pollTimer);
       }
     };
-  }, [roomId, repository, refreshIndex, toNearbyError, pollIntervalMs]);
+  }, [roomId, resultId, repository, refreshIndex, toNearbyError, pollIntervalMs]);
 
   const handleRetryResult = useCallback(() => {
     setReadState('loading');

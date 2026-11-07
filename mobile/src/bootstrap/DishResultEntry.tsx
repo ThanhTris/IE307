@@ -10,6 +10,7 @@ import type { ResultRepository } from '../features/result/services/resultReposit
 
 export interface DishResultEntryProps {
   roomId?: string;
+  resultId?: string;
   noConsensus?: boolean;
   legacy?: boolean;
   repository?: ResultRepository;
@@ -21,6 +22,7 @@ export interface DishResultEntryProps {
 
 export function DishResultEntry({
   roomId,
+  resultId,
   noConsensus,
   legacy,
   repository,
@@ -29,16 +31,18 @@ export function DishResultEntry({
   onLegacyNewSession,
   onOtherScreen,
 }: DishResultEntryProps) {
-  const { mode } = useRoomRepository();
+  const { mode, user } = useRoomRepository();
   const { colors } = useShellTheme();
+  const identity = user?.id ?? 'anonymous';
 
   if (mode === 'real') {
     if (roomId) {
       return (
         <RequireActiveSession onHome={onHome}>
           <LiveDishResultScreen
-            key={roomId}
+            key={`${identity}:${roomId}:${resultId ?? ''}`}
             roomId={roomId}
+            resultId={resultId}
             repository={repository}
             onHome={onHome}
             onNewSession={onNewSession}

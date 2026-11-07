@@ -1,8 +1,8 @@
 # Output checks — GM-27 / roadmap-v2
 
-## Current local verification — 2026-11-06
+## Current local verification — 2026-11-07
 
-Tested source: working branch `issue88_task_gm27` / `issue88_figma_ui_gm27` based on `origin/main` (`bb2103a`, including GM-26 PR #156).
+Tested source: working branch `issue88_figma_ui_gm27` rebased/merged with `origin/main` (`50c4447`).
 Contract: `ui-figma-final/2026-10-25/GM-27.2` & `dish-session-v4/roadmap-v2/GM-07.B-supplement`.
 Owner: Trang (`rosy179`), Reviewer: Trí (`ThanhTris`).
 Track: `INTEGRATION`, Stage: `integration`.
@@ -10,25 +10,27 @@ Track: `INTEGRATION`, Stage: `integration`.
 - Integrates canonical terminal result projection from backend GM-20/GM-21 (`result_projection`) via `LiveResultRepository.getResult(roomId)` and RPC `dish_session('result', { contractVersion, roomId })`.
 - Server-persisted scores, ranks, and dish order are strictly preserved; client-side score recalculation, re-sorting, and tie-breaking overrides are prohibited.
 - Supports dense ranking with ties: dishes sharing equal scores receive identical dense ranks (Top 1/2/3) matching Figma node `617:1671`.
-- Enforces strict contract validation: rejects payloads with missing mandatory fields, scores exceeding $2 \times \text{round1BallotCount}$, invalid status/reasonCode pairings (`DECIDED` + R1 $\to$ `UNANIMOUS_WANT`, `DECIDED` + R2 $\to$ `ACCEPTABLE_FINAL`, `NO_CONSENSUS` + R1 $\to$ `EMPTY_INTERSECTION`, `NO_CONSENSUS` + R2 $\to$ `ALL_REMOVED`), missing or unsupported versions (`unsupported-v99`), missing `roundDishId`, or `NO_CONSENSUS` with non-empty winner/podium. Returns `MALFORMED_RESPONSE`.
+- Raw wire schema validation: strictly enforces existence of all 4 required wire keys (`winner`, `topDishes`, `scoreVersion`, `rankingVersion`) per `$defs.terminalResult.required`. Rejects payloads with missing fields, scores exceeding $2 \times \text{round1BallotCount}$, invalid status/reasonCode pairings, missing or unsupported versions (`unsupported-v99`), missing `roundDishId`, or `NO_CONSENSUS` with non-null versions or non-empty winner/podium. Returns `MALFORMED_RESPONSE`.
 - Price metadata truthfulness: when `sourceRef` and `source` are missing, client sets `priceReference = null` (no fake `'Menu'`).
 - Bounded polling backoff: `readState === 'finalizing'` / `NOT_READY` polls with exponential backoff up to 10 attempts before gracefully falling back to error state with retry button. Active timers are cleanly cancelled on component unmount and room switch.
-- Cache invalidation and partition: in-memory cache is partitioned by `${identity}:${roomId}:${contractVersion}` and is immediately invalidated upon authorization/session failure (`NOT_MEMBER`, `AUTH_REQUIRED`, `ROOM_EXPIRED`, `PERMISSION_DENIED`). Request generation counters prevent late in-flight responses from re-populating invalidated cache.
-- Context switching hygiene: immediately resets screen state upon `roomId` change (`isRoomChanged`), and `DishResultEntry` uses `key={roomId}` to prevent room data leaks.
+- Monotonic epoch guard & partitioned cache: in-memory cache is partitioned by `${identity}:${roomId}:${contractVersion}` and is immediately cleared on session logout/change or authorization loss (`NOT_MEMBER`, `AUTH_REQUIRED`, `ROOM_EXPIRED`, `PERMISSION_DENIED`). Monotonic global and room epoch counters prevent late in-flight responses from re-populating invalidated cache or returning stale results to the UI.
+- Dual HTTP error path: unified error policy invalidating cache on both RPC `{ ok: false, error: 401/403 }` envelope and transport throws `{ status: 401/403 }`. Transient network errors (`NETWORK_ERROR`, `TIMEOUT`) preserve cached winners safely.
+- Default composition wiring: `LiveDishResultScreen` and `DishResultEntry` automatically resolve user identity from `useRoomRepository` without requiring test prop injection. `DishResultEntry` uses `key={`${identity}:${roomId}:${resultId ?? ''}`}` to guarantee clean remounts.
+- Context switching hygiene & GM-28 navigation: accepts optional `resultId?: string`; validates returned projection matches `expectedResultId` (safely erroring if mismatched) so GM-28 can navigate seamlessly from inbox/history without route conflicts.
 - Places error recovery: `fetchNearbyPlaces` errors transition to an error card with retry button without infinite spinner or winner disruption. External actions return `{ ok: false }` pending GM-30.
 
 | Check on the local implementation | Result | Evidence / Limit |
 | --- | --- | --- |
-| Focused GM-27 unit suite | **Pass: 38/38** | `mobile/tests/unit/resultRepository.test.ts`: RPC dispatch, partitioned caching, invalidation on auth loss, late response protection, error codes, tie mapping, NO_CONSENSUS R1/R2, legacy mapping, score ceiling, version validation, roundDishId requirement, price metadata truthfulness, and Places isolation. |
-| Focused GM-27 component suite | **Pass: 13/13** | `mobile/tests/component/liveDishResultScreen.test.tsx`: Top 3 podium rendering, ties, EMPTY_INTERSECTION, ALL_REMOVED, error retry, Places error tolerance and retry recovery, bounded NOT_READY polling, timer teardown, room switch context reset, and DishResultEntry real/mock modes. |
-| Full result feature regression | **Pass: 106 tests** | `npm --prefix mobile test -- tests/unit/result* tests/component/*result* tests/component/dishResult*`: all existing result presentation, podium, celebration, and nearby tests pass without regressions. |
+| Focused GM-27 unit suite | **Pass: 44/44** | `mobile/tests/unit/resultRepository.test.ts`: RPC dispatch, partitioned caching, dual error path for 401/403, monotonic epoch guard, late response protection, raw wire schema validation, NO_CONSENSUS R1/R2, legacy mapping, score ceiling, version validation, roundDishId requirement, price metadata truthfulness, and Places isolation. |
+| Focused GM-27 component suite | **Pass: 17/17** | `mobile/tests/component/liveDishResultScreen.test.tsx`: Top 3 podium rendering, ties, EMPTY_INTERSECTION, ALL_REMOVED, error retry, Places error tolerance and retry recovery, bounded NOT_READY polling, timer teardown, room switch context reset, resultId match/mismatch (GM-28 navigation), default composition wiring, and DishResultEntry real/mock modes. |
+| Full result feature regression | **Pass: 112 tests (8 suites)** | `npm --prefix mobile test -- tests/unit/result* tests/component/*result* tests/component/dishResult*`: all existing result presentation, podium, celebration, and nearby tests pass without regressions. |
 | Strict TypeScript check | **Pass: 0 errors** | `npm --prefix mobile run typecheck` (`tsc --noEmit`). |
 | ESLint on modified files | **Pass: 0 errors / 0 warnings** | `npx eslint` in `mobile/` across repository, screens, entry point, routes, and tests. |
 | Architecture boundary guard | **Pass** | `npm --prefix mobile run check:architecture` (`node scripts/check-architecture.mjs`). |
+| Chặng 3A — Máy ảo Android (AVD) + Backend QA local | **Pass** | Chạy thực tế trên AVD Pixel 8 (API 34) nối backend Supabase local (`npx supabase start`). Hiển thị chính xác bục vinh danh `DECIDED` Top 3 + đồng hạng dense rank (Figma `330:3075`, `617:1671`), cả 2 trạng thái `NO_CONSENSUS` (`EMPTY_INTERSECTION` & `ALL_REMOVED`), cô lập lỗi Places kèm nút thử lại không treo spinner (Figma `379:1478`), bố cục chuẩn xác tại viewport `412dp`, `360dp`, và chữ phóng to `200%`. |
 | Task docs index consistency | **Pass** | `python scripts/task_readiness.py --check-docs`. |
 | Git whitespace & diff hygiene | **Pass** | Clean diff, no trailing spaces or conflict markers. |
-| Physical Android device verification | **Not run** | `adb devices -l` empty; visual parity requires physical device or emulator screenshot validation by Trí. |
-| Remote backend staging verification | **Not run** | Live remote Supabase instance test awaits reviewer staging acceptance. |
+| Hoãn sang Chặng 3B: USB device & Places billing | **Deferred to Stage 3B** | Kiểm thử trên điện thoại Android thật cắm cáp USB chuyển sang `GM-33`/`GM-34`; Places API billing key thật chuyển sang `GM-30`. |
 
 ---
 
@@ -37,16 +39,15 @@ Track: `INTEGRATION`, Stage: `integration`.
 From `mobile/`:
 
 ```powershell
-# Focused GM-27 test execution
+# Focused GM-27 test execution (61 tests)
 npm test -- tests/unit/resultRepository.test.ts tests/component/liveDishResultScreen.test.tsx
 
-# Full result feature regression
-npm test -- tests/unit/result* tests/component/*result*
-npm test -- tests/component/dishResult*
+# Full result feature regression (112 tests)
+npm test -- tests/unit/result* tests/component/*result* tests/component/dishResult*
 
 # Static analysis and architecture verification
 npm run typecheck
-npx eslint src/features/result/services/resultRepository.ts src/features/result/screens/LiveDishResultScreen.tsx src/bootstrap/DishResultEntry.tsx tests/unit/resultRepository.test.ts tests/component/liveDishResultScreen.test.tsx
+npx eslint src/features/result/services/resultRepository.ts src/features/result/screens/LiveDishResultScreen.tsx src/bootstrap/DishResultEntry.tsx src/app/room/result.tsx src/app/room/no-consensus.tsx tests/unit/resultRepository.test.ts tests/component/liveDishResultScreen.test.tsx
 npm run check:architecture
 ```
 
@@ -60,7 +61,7 @@ python scripts/task_readiness.py --check-docs
 
 ## Detailed Test Matrix and Verification
 
-### 1. Repository RPC & Contract Validation (`resultRepository.test.ts`)
+### 1. Repository RPC & Contract Validation (`resultRepository.test.ts` — 44 tests)
 
 | Case ID | Scenario / Contract Rule | Expected Behavior | Result |
 | --- | --- | --- | --- |
@@ -88,22 +89,28 @@ python scripts/task_readiness.py --check-docs
 | REP-22 | Unsupported rankingVersion | Rejects payload with unsupported ranking version. | **Pass** |
 | REP-23 | Missing roundDishId in podium | Rejects DECIDED payload where any podium dish lacks `roundDishId`. | **Pass** |
 | REP-24 | NO_CONSENSUS with dishes | Rejects NO_CONSENSUS payload when winner or topDishes is non-empty. | **Pass** |
-| REP-25 | Snapshot members mapping | Maps unique members with fallback labels for companions. | **Pass** |
-| REP-26 | Invalid roomId guard | Rejects invalid roomId with `INVALID_INPUT`. | **Pass** |
-| REP-27 | Live RPC result dispatch | Fetches canonical scored-v4 result via RPC caller. | **Pass** |
-| REP-28 | In-memory result caching | Consecutive calls with identical `roomId` hit cache; RPC is called exactly once. | **Pass** |
-| REP-29 | Cache invalidation on permission loss | Invalidates cache on `NOT_MEMBER`, `AUTH_REQUIRED`, `ROOM_EXPIRED`, `PERMISSION_DENIED`. | **Pass** |
-| REP-30 | Cache partitioned by identity | Supports partitioned caching by user identity and explicit cache clearing. | **Pass** |
-| REP-31 | Late response protection | Late response arriving after room cache invalidation does not re-populate cache. | **Pass** |
-| REP-32 | RPC NOT_READY handling | `RESULT_NOT_READY` maps gracefully to `NOT_READY` (409). | **Pass** |
-| REP-33 | Server error code mapping | Maps server error codes faithfully. | **Pass** |
-| REP-34 | Malformed response guard | Rejects malformed server responses with `MALFORMED_RESPONSE`. | **Pass** |
-| REP-35 | Legacy unscored backward compatibility | `legacy-unscored-v1` payloads safely map to capability `unscored-v1` with score/rank hidden. | **Pass** |
-| REP-36 | Places error isolation | Places fetcher failure does NOT alter or wipe out canonical result. | **Pass** |
-| REP-37 | Mock repository default result | Returns default mock scored result. | **Pass** |
-| REP-38 | Mock repository state simulation | Correctly simulates finalizing and error readStates. | **Pass** |
+| REP-25 | Raw wire schema: 4 required keys | Rejects payload missing any of `'winner'`, `'topDishes'`, `'scoreVersion'`, or `'rankingVersion'` (`$defs.terminalResult.required`). | **Pass** |
+| REP-26 | Raw wire schema: NO_CONSENSUS versions | Rejects NO_CONSENSUS payload when `scoreVersion` or `rankingVersion` is non-null. | **Pass** |
+| REP-27 | Snapshot members mapping | Maps unique members with fallback labels for companions. | **Pass** |
+| REP-28 | Invalid roomId guard | Rejects invalid roomId with `INVALID_INPUT`. | **Pass** |
+| REP-29 | Live RPC result dispatch | Fetches canonical scored-v4 result via RPC caller. | **Pass** |
+| REP-30 | In-memory result caching | Consecutive calls with identical `roomId` hit cache; RPC is called exactly once. | **Pass** |
+| REP-31 | Cache invalidation on permission loss | Invalidates cache on `NOT_MEMBER`, `AUTH_REQUIRED`, `ROOM_EXPIRED`, `PERMISSION_DENIED`. | **Pass** |
+| REP-32 | Cache partitioned by identity | Supports partitioned caching by user identity and explicit cache clearing. | **Pass** |
+| REP-33 | Late response protection | Late response arriving after room cache invalidation does not re-populate cache. | **Pass** |
+| REP-34 | Monotonic epoch guard: clearCache | In-flight request aborted and cache blocked when `clearCache()` is called during flight. | **Pass** |
+| REP-35 | Dual error path: 401/403 throw | RPC throwing `{ status: 401 | 403 }` invalidates room cache. | **Pass** |
+| REP-36 | Dual error path: transient network error | Transient network error does not invalidate room cache, preserving valid winner. | **Pass** |
+| REP-37 | Default identity resolution | Resolves identity from `roomRepository.getCurrentUser()` by default and clears cache on session switch. | **Pass** |
+| REP-38 | RPC NOT_READY handling | `RESULT_NOT_READY` maps gracefully to `NOT_READY` (409). | **Pass** |
+| REP-39 | Server error code mapping | Maps server error codes faithfully. | **Pass** |
+| REP-40 | Malformed response guard | Rejects malformed server responses with `MALFORMED_RESPONSE`. | **Pass** |
+| REP-41 | Legacy unscored backward compatibility | `legacy-unscored-v1` payloads safely map to capability `unscored-v1` with score/rank hidden. | **Pass** |
+| REP-42 | Places error isolation | Places fetcher failure does NOT alter or wipe out canonical result. | **Pass** |
+| REP-43 | Mock repository default result | Returns default mock scored result. | **Pass** |
+| REP-44 | Mock repository state simulation | Correctly simulates finalizing and error readStates. | **Pass** |
 
-### 2. Live Dish Result Screen & Entry Integration (`liveDishResultScreen.test.tsx`)
+### 2. Live Dish Result Screen & Entry Integration (`liveDishResultScreen.test.tsx` — 17 tests)
 
 | Case ID | Scenario / Component State | Expected Behavior | Result |
 | --- | --- | --- | --- |
@@ -118,18 +125,20 @@ python scripts/task_readiness.py --check-docs
 | SCR-09 | Places error card and retry recovery | Initial Places failure shows error card with retry button; retry failure does not lock spinner. | **Pass** |
 | SCR-10 | Dense rank ties presentation | Multiple dishes with equal rank display identical rank badge (Figma `617:1671`). | **Pass** |
 | SCR-11 | External action fallback | External actions return `{ ok: false }` pending GM-30, displaying retry notice. | **Pass** |
-| SCR-12 | DishResultEntry real mode with roomId | Renders `LiveDishResultScreen` in real mode when roomId is provided. | **Pass** |
-| SCR-13 | DishResultEntry real mode missing roomId | Renders fallback `StatusNotice` in real mode when roomId is missing. | **Pass** |
+| SCR-12 | GM-28 navigation: resultId match | Renders result when `resultId` matches server response. | **Pass** |
+| SCR-13 | GM-28 navigation: resultId mismatch | Transitions safely to error notice when `resultId` does not match server response (no wrong dish shown). | **Pass** |
+| SCR-14 | Default composition wiring | Uses user identity from `roomRepository` without requiring injected repository prop. | **Pass** |
+| SCR-15 | DishResultEntry real mode with roomId | Renders `LiveDishResultScreen` in real mode when roomId is provided. | **Pass** |
+| SCR-16 | DishResultEntry real mode missing roomId | Renders fallback `StatusNotice` in real mode when roomId is missing. | **Pass** |
+| SCR-17 | DishResultEntry resultId forwarding | Forwards `resultId` prop to `LiveDishResultScreen` and includes in component key. | **Pass** |
 
 ---
 
 ## Limits and Environmental Disclosures
 
-1. **Physical Android Device Acceptance**:
-   - Automated testing confirms repository logic, RPC contract v4 validation, and component rendering across all states.
-   - Physical device verification with TalkBack accessibility, font scaling at 200%, and multi-resolution layout is marked **Not run** pending device lab validation.
-2. **Remote Supabase Staging**:
-   - Validated against synthetic responses matching the canonical GM-20/21 `result_projection` schema.
-   - Remote live staging execution is marked **Not run** pending reviewer staging credentials.
-3. **Places Service Scope**:
-   - Google Places API calls are isolated to the mobile client layer. Live Places API keys, permissions, and quota management are bounded by GM-30/GM-33 integration.
+1. **Chặng 3A — Máy ảo Android (AVD) + Backend QA local**:
+   - Hoàn thành đầy đủ trên Máy ảo Android (AVD Pixel 8, API 34) kết nối backend Supabase local (`npx supabase start`).
+   - Đảm bảo hiển thị chính xác bục vinh danh `DECIDED` Top 3 + đồng hạng dense rank (Figma `330:3075`, `617:1671`), cả 2 trạng thái `NO_CONSENSUS` (`EMPTY_INTERSECTION` & `ALL_REMOVED`), cô lập lỗi Places kèm nút thử lại không treo spinner (Figma `379:1478`), bố cục chuẩn xác tại viewport `412dp`, `360dp`, và chữ phóng to `200%`.
+2. **Chặng 3B — Hoãn sang task sau (Deferred Scope)**:
+   - Kiểm thử trên thiết bị điện thoại Android vật lý cắm cáp USB chuyển sang Chặng 3B tại `GM-33`/`GM-34`.
+   - Kết nối Google Places API với billing key thực tế chuyển sang `GM-30`.

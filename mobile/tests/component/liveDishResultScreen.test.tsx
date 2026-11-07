@@ -532,6 +532,78 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
     expect(await screen.findByText('Chưa thực hiện được thao tác. Hãy thử lại.')).toBeOnTheScreen();
   });
 
+  test('renders result when resultId matches server response (GM-28 navigation)', async () => {
+    const repo = createMockResultRepository({ initialResult: decidedResult });
+    await render(
+      <LiveDishResultScreen
+        roomId="room_res_match"
+        resultId={decidedResult.resultId}
+        repository={repo}
+        onHome={jest.fn()}
+        onNewSession={jest.fn()}
+      />
+    );
+    const dismiss = await screen.findByText('Chạm để bỏ qua');
+    fireEvent.press(dismiss);
+    expect(screen.getAllByText('Phở bò tái nạm').length).toBeGreaterThan(0);
+  });
+
+  test('transitions to error notice when resultId does not match server response', async () => {
+    const repo = createMockResultRepository({ initialResult: decidedResult });
+    await render(
+      <LiveDishResultScreen
+        roomId="room_res_mismatch"
+        resultId="00000000-0000-4000-8000-999999999999"
+        repository={repo}
+        onHome={jest.fn()}
+        onNewSession={jest.fn()}
+      />
+    );
+    expect(await screen.findByText('Thử lại')).toBeOnTheScreen();
+    expect(screen.queryByText('Phở bò tái nạm')).toBeNull();
+  });
+
+  test('default composition wiring uses user identity from roomRepository', async () => {
+    const mockRpc = jest.fn().mockResolvedValue({
+      ok: true,
+      data: {
+        resultId: '00000000-0000-4000-8000-000000000100',
+        contractVersion: 'dish-session-v4/roadmap-v2/GM-07.B-supplement',
+        policyVersion: 'dish-decision-v4/ADR-019-30PCT-MIN1',
+        status: 'DECIDED',
+        round: 2,
+        reasonCode: 'ACCEPTABLE_FINAL',
+        finalizedAt: '2026-11-06T10:05:00Z',
+        scoreVersion: 'want2-ok1-round1-v1',
+        rankingVersion: 'score-desc-dense-rank-v1',
+        round1BallotCount: 3,
+        winner: decidedResult.winner,
+        topDishes: decidedResult.topDishes,
+      },
+    });
+
+    jest.mocked(useRoomRepository).mockReturnValue({
+      mode: 'real',
+      user: { id: 'user_live_real' },
+      repository: {
+        getCurrentUser: () => ({ id: 'user_live_real' }),
+        getRpcCaller: () => mockRpc,
+      },
+    } as any);
+
+    await render(
+      <LiveDishResultScreen
+        roomId="room_default_composition"
+        onHome={jest.fn()}
+        onNewSession={jest.fn()}
+      />
+    );
+
+    const dismiss = await screen.findByText('Chạm để bỏ qua');
+    fireEvent.press(dismiss);
+    expect(screen.getAllByText('Phở bò tái nạm').length).toBeGreaterThan(0);
+  });
+
   describe('DishResultEntry integration', () => {
     test('renders LiveDishResultScreen in real mode when roomId is provided', async () => {
       const repo = createMockResultRepository({
@@ -567,6 +639,25 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
 
       expect(screen.getByText('Chưa thể mở kết quả')).toBeOnTheScreen();
       expect(screen.getByText('Hãy quay lại trang chủ để kiểm tra trạng thái phòng của bạn.')).toBeOnTheScreen();
+    });
+
+    test('DishResultEntry forwards resultId prop in real mode', async () => {
+      const repo = createMockResultRepository({ initialResult: decidedResult });
+      await render(
+        <DishResultEntry
+          roomId="room_entry_res_id"
+          resultId={decidedResult.resultId}
+          repository={repo}
+          onHome={jest.fn()}
+          onNewSession={jest.fn()}
+          onLegacyNewSession={jest.fn()}
+          onOtherScreen={jest.fn()}
+        />
+      );
+
+      const dismiss = await screen.findByText('Chạm để bỏ qua');
+      fireEvent.press(dismiss);
+      expect(screen.getAllByText('Phở bò tái nạm').length).toBeGreaterThan(0);
     });
   });
 });

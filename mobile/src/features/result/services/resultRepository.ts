@@ -56,6 +56,8 @@ export interface ResultRepository {
   getSnapshot?(roomId: string): Promise<ReadResult<RoomSnapshot>>;
   /** Optional helper to fetch nearby places for the winning dish without altering the winner. */
   fetchNearbyPlaces?(params: FetchNearbyPlacesParams): Promise<ReadResult<NearbyState>>;
+  /** Optional cleanup / unsubscribe */
+  dispose?(): void;
 }
 
 export interface LiveResultRepositoryDeps {
@@ -162,6 +164,11 @@ export function mapSnapshotMembersToCompanions(members: unknown): ResultCompanio
 export function mapRawToScoredResult(raw: any): ScoredResult | null {
   if (!raw || typeof raw !== 'object') return null;
 
+  // Raw wire schema validation: check actual existence of the 4 required keys in $defs.terminalResult.required
+  if (!('winner' in raw) || !('topDishes' in raw) || !('scoreVersion' in raw) || !('rankingVersion' in raw)) {
+    return null;
+  }
+
   const resultId = typeof raw.resultId === 'string' ? raw.resultId.trim() : null;
   const contractVersion = raw.contractVersion;
   const policyVersion = raw.policyVersion;
@@ -195,13 +202,11 @@ export function mapRawToScoredResult(raw: any): ScoredResult | null {
   }
 
   if (status === 'NO_CONSENSUS') {
-    // For NO_CONSENSUS, server response MUST NOT have winner or non-empty topDishes
-    if (raw.winner != null) return null;
-    if (raw.topDishes != null && (!Array.isArray(raw.topDishes) || raw.topDishes.length > 0)) return null;
-
-    // scoreVersion and rankingVersion must be null or undefined
-    if (scoreVersion !== null && scoreVersion !== undefined) return null;
-    if (rankingVersion !== null && rankingVersion !== undefined) return null;
+    // For NO_CONSENSUS, wire object must explicitly have winner: null, topDishes: [], scoreVersion: null, rankingVersion: null
+    if (raw.winner !== null) return null;
+    if (!Array.isArray(raw.topDishes) || raw.topDishes.length !== 0) return null;
+    if (raw.scoreVersion !== null) return null;
+    if (raw.rankingVersion !== null) return null;
 
     if (round === 1 && reasonCode !== 'EMPTY_INTERSECTION') return null;
     if (round === 2 && reasonCode !== 'ALL_REMOVED') return null;
@@ -278,11 +283,13 @@ export class LiveResultRepository implements ResultRepository {
   private readonly defaultContractVersion: string;
   private readonly placesFetcher?: (params: FetchNearbyPlacesParams) => Promise<ReadResult<NearbyState>>;
   private readonly getCurrentIdentity?: () => string | null;
+  private readonly unsubscribeSession?: () => void;
 
   // In-memory cache of terminal results partitioned by identity + roomId + contractVersion
   private readonly resultCache = new Map<string, ResultInput>();
-  // Generation counter per room to prevent late responses from restoring invalidated cache
-  private readonly roomGenerations = new Map<string, number>();
+  // Monotonic epoch counters to prevent late responses from restoring invalidated cache
+  private globalEpoch = 1;
+  private readonly roomEpochs = new Map<string, number>();
 
   constructor(deps: LiveResultRepositoryDeps = {}) {
     this.roomRepo = deps.roomRepository;
@@ -290,7 +297,47 @@ export class LiveResultRepository implements ResultRepository {
     this.rpcCaller = deps.rpcCaller;
     this.defaultContractVersion = deps.contractVersion ?? CANONICAL_RESULT_CONTRACT_VERSION;
     this.placesFetcher = deps.placesFetcher;
-    this.getCurrentIdentity = deps.getCurrentIdentity;
+    this.getCurrentIdentity = deps.getCurrentIdentity ?? (() => {
+      if (this.roomRepo && typeof this.roomRepo.getCurrentUser === 'function') {
+        return this.roomRepo.getCurrentUser()?.id ?? null;
+      }
+      return null;
+    });
+
+    let lastIdent = this.resolveCurrentIdentity();
+    if (this.roomRepo && typeof this.roomRepo.subscribeSession === 'function') {
+      this.unsubscribeSession = this.roomRepo.subscribeSession(() => {
+        const currentIdent = this.resolveCurrentIdentity();
+        if (currentIdent !== lastIdent) {
+          lastIdent = currentIdent;
+          this.clearCache();
+        }
+      });
+    }
+  }
+
+  dispose(): void {
+    if (this.unsubscribeSession) {
+      this.unsubscribeSession();
+    }
+  }
+
+  resolveCurrentIdentity(): string | null {
+    if (this.getCurrentIdentity) {
+      try {
+        return this.getCurrentIdentity() ?? null;
+      } catch {
+        return null;
+      }
+    }
+    if (this.roomRepo && typeof this.roomRepo.getCurrentUser === 'function') {
+      try {
+        return this.roomRepo.getCurrentUser()?.id ?? null;
+      } catch {
+        return null;
+      }
+    }
+    return null;
   }
 
   private getCaller(): ((name: string, params: Record<string, unknown>) => Promise<unknown>) | null {
@@ -302,27 +349,28 @@ export class LiveResultRepository implements ResultRepository {
   }
 
   private getCacheKey(roomId: string, identityId?: string, contractVersion?: string): string {
-    const ident = identityId ?? (this.getCurrentIdentity ? this.getCurrentIdentity() : null) ?? 'anonymous';
+    const ident = identityId ?? this.resolveCurrentIdentity() ?? 'anonymous';
     const cv = contractVersion ?? this.defaultContractVersion;
     return `${ident}:${roomId}:${cv}`;
   }
 
-  private getRoomGeneration(roomId: string): number {
-    return this.roomGenerations.get(roomId) ?? 0;
+  private getRoomEpoch(roomId: string): number {
+    return this.roomEpochs.get(roomId) ?? 1;
   }
 
-  private bumpRoomGeneration(roomId: string): number {
-    const next = (this.roomGenerations.get(roomId) ?? 0) + 1;
-    this.roomGenerations.set(roomId, next);
+  private bumpRoomEpoch(roomId: string): number {
+    const next = (this.roomEpochs.get(roomId) ?? 1) + 1;
+    this.roomEpochs.set(roomId, next);
     return next;
   }
 
   /**
-   * Completely clears the cache. Call upon logout or account change.
+   * Completely clears the cache and bumps the global epoch.
+   * Call upon logout or account change.
    */
   clearCache(): void {
+    this.globalEpoch += 1;
     this.resultCache.clear();
-    this.roomGenerations.clear();
   }
 
   /**
@@ -330,7 +378,7 @@ export class LiveResultRepository implements ResultRepository {
    */
   invalidateRoom(roomId: string): void {
     const trimmed = roomId.trim();
-    this.bumpRoomGeneration(trimmed);
+    this.bumpRoomEpoch(trimmed);
     for (const key of Array.from(this.resultCache.keys())) {
       if (key.includes(`:${trimmed}:`)) {
         this.resultCache.delete(key);
@@ -338,19 +386,23 @@ export class LiveResultRepository implements ResultRepository {
     }
   }
 
-  private isPermissionOrTerminalRevocationError(errCode: string): boolean {
+  private isPermissionOrTerminalRevocationError(errCode?: string): boolean {
+    if (!errCode) return false;
     return [
       'NOT_MEMBER',
       'AUTH_REQUIRED',
       'UNAUTHORIZED',
       'ROOM_EXPIRED',
       'FORBIDDEN',
+      'PERMISSION_DENIED',
       'ROOM_NOT_FOUND',
       'NOT_FOUND',
       'ACCESS_DENIED',
       'SESSION_NOT_FOUND',
       'OUTSIDER',
       'KICKED',
+      '401',
+      '403',
     ].includes(errCode);
   }
 
@@ -365,13 +417,24 @@ export class LiveResultRepository implements ResultRepository {
 
     const trimmedRoomId = roomId.trim();
     const contractVersion = options?.contractVersion ?? this.defaultContractVersion;
-    const cacheKey = this.getCacheKey(trimmedRoomId, options?.identityId, contractVersion);
+    const startGlobalEpoch = this.globalEpoch;
+    const startRoomEpoch = this.getRoomEpoch(trimmedRoomId);
+    const startIdentity = options?.identityId ?? this.resolveCurrentIdentity();
+    const cacheKey = this.getCacheKey(trimmedRoomId, startIdentity ?? undefined, contractVersion);
+
+    const isEpochValid = () => {
+      const currentIdent = options?.identityId ?? this.resolveCurrentIdentity();
+      return (
+        this.globalEpoch === startGlobalEpoch &&
+        this.getRoomEpoch(trimmedRoomId) === startRoomEpoch &&
+        currentIdent === startIdentity
+      );
+    };
 
     if (!options?.forceRefetch && this.resultCache.has(cacheKey)) {
       return { ok: true, data: this.resultCache.get(cacheKey)! };
     }
 
-    const startGen = this.getRoomGeneration(trimmedRoomId);
     const caller = this.getCaller();
 
     if (caller) {
@@ -384,15 +447,21 @@ export class LiveResultRepository implements ResultRepository {
           },
         })) as any;
 
+        if (!isEpochValid()) {
+          return { ok: false, error: { messageKey: 'CONTEXT_CHANGED', message: 'Room context or auth changed in flight' } };
+        }
+
         if (raw?.ok && raw.data) {
           // Check for canonical scored-v4
           const scored = mapRawToScoredResult(raw.data);
           if (scored) {
             const resultInput: ResultInput = { capability: 'scored-v4', result: scored };
-            if (this.getRoomGeneration(trimmedRoomId) === startGen) {
+            if (isEpochValid()) {
               this.resultCache.set(cacheKey, resultInput);
             }
-            return { ok: true, data: resultInput };
+            return isEpochValid()
+              ? { ok: true, data: resultInput }
+              : { ok: false, error: { messageKey: 'CONTEXT_CHANGED', message: 'Room context or auth changed in flight' } };
           }
 
           // Check for legacy unscored-v1
@@ -401,10 +470,12 @@ export class LiveResultRepository implements ResultRepository {
               capability: 'legacy-unscored-v1',
               result: raw.data as RoomResult,
             };
-            if (this.getRoomGeneration(trimmedRoomId) === startGen) {
+            if (isEpochValid()) {
               this.resultCache.set(cacheKey, legacyInput);
             }
-            return { ok: true, data: legacyInput };
+            return isEpochValid()
+              ? { ok: true, data: legacyInput }
+              : { ok: false, error: { messageKey: 'CONTEXT_CHANGED', message: 'Room context or auth changed in flight' } };
           }
 
           // Payload does not conform to required contracts
@@ -425,7 +496,23 @@ export class LiveResultRepository implements ResultRepository {
 
         return { ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } };
       } catch (err: unknown) {
-        return { ok: false, error: mapErrorHelper(err) };
+        const mapped = mapErrorHelper(err);
+        const rawStatus = typeof (err as any)?.status === 'number'
+          ? (err as any).status
+          : typeof (err as any)?.statusCode === 'number'
+            ? (err as any).statusCode
+            : null;
+
+        const isAuthOrPermissionLoss =
+          rawStatus === 401 ||
+          rawStatus === 403 ||
+          this.isPermissionOrTerminalRevocationError(mapped.messageKey);
+
+        if (isAuthOrPermissionLoss) {
+          this.invalidateRoom(trimmedRoomId);
+        }
+
+        return { ok: false, error: mapped };
       }
     }
 
@@ -433,24 +520,32 @@ export class LiveResultRepository implements ResultRepository {
     if (this.client) {
       try {
         const snap = await this.client.getRoomSnapshot(trimmedRoomId);
+        if (!isEpochValid()) {
+          return { ok: false, error: { messageKey: 'CONTEXT_CHANGED', message: 'Room context or auth changed in flight' } };
+        }
+
         if (snap.ok && snap.data.result) {
           if (snap.data.result.policyVersion === 'decision-v2') {
             const legacyInput: ResultInput = {
               capability: 'legacy-unscored-v1',
               result: snap.data.result,
             };
-            if (this.getRoomGeneration(trimmedRoomId) === startGen) {
+            if (isEpochValid()) {
               this.resultCache.set(cacheKey, legacyInput);
             }
-            return { ok: true, data: legacyInput };
+            return isEpochValid()
+              ? { ok: true, data: legacyInput }
+              : { ok: false, error: { messageKey: 'CONTEXT_CHANGED', message: 'Room context or auth changed in flight' } };
           }
           const scored = mapRawToScoredResult(snap.data.result);
           if (scored) {
             const input: ResultInput = { capability: 'scored-v4', result: scored };
-            if (this.getRoomGeneration(trimmedRoomId) === startGen) {
+            if (isEpochValid()) {
               this.resultCache.set(cacheKey, input);
             }
-            return { ok: true, data: input };
+            return isEpochValid()
+              ? { ok: true, data: input }
+              : { ok: false, error: { messageKey: 'CONTEXT_CHANGED', message: 'Room context or auth changed in flight' } };
           }
         }
         if (!snap.ok) {
@@ -461,7 +556,23 @@ export class LiveResultRepository implements ResultRepository {
           return { ok: false, error: snap.error };
         }
       } catch (err: unknown) {
-        return { ok: false, error: mapErrorHelper(err) };
+        const mapped = mapErrorHelper(err);
+        const rawStatus = typeof (err as any)?.status === 'number'
+          ? (err as any).status
+          : typeof (err as any)?.statusCode === 'number'
+            ? (err as any).statusCode
+            : null;
+
+        const isAuthOrPermissionLoss =
+          rawStatus === 401 ||
+          rawStatus === 403 ||
+          this.isPermissionOrTerminalRevocationError(mapped.messageKey);
+
+        if (isAuthOrPermissionLoss) {
+          this.invalidateRoom(trimmedRoomId);
+        }
+
+        return { ok: false, error: mapped };
       }
     }
 

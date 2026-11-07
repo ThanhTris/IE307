@@ -358,6 +358,57 @@ describe('GM-27 ResultRepository', () => {
       };
       expect(mapRawToScoredResult(noConsensusWithTopDishes)).toBeNull();
     });
+
+    test('rejects payload missing any of the 4 required wire keys ($defs.terminalResult.required)', () => {
+      const base = {
+        resultId: '00000000-0000-4000-8000-000000000101',
+        contractVersion: CANONICAL_RESULT_CONTRACT_VERSION,
+        policyVersion: CANONICAL_RESULT_POLICY_VERSION,
+        status: 'NO_CONSENSUS',
+        round: 1,
+        reasonCode: 'EMPTY_INTERSECTION',
+        finalizedAt: '2026-11-06T10:05:00Z',
+        scoreVersion: null,
+        rankingVersion: null,
+        round1BallotCount: 3,
+        winner: null,
+        topDishes: [],
+      };
+
+      const missingWinner = { ...base };
+      delete (missingWinner as any).winner;
+      expect(mapRawToScoredResult(missingWinner)).toBeNull();
+
+      const missingTopDishes = { ...base };
+      delete (missingTopDishes as any).topDishes;
+      expect(mapRawToScoredResult(missingTopDishes)).toBeNull();
+
+      const missingScoreVersion = { ...base };
+      delete (missingScoreVersion as any).scoreVersion;
+      expect(mapRawToScoredResult(missingScoreVersion)).toBeNull();
+
+      const missingRankingVersion = { ...base };
+      delete (missingRankingVersion as any).rankingVersion;
+      expect(mapRawToScoredResult(missingRankingVersion)).toBeNull();
+    });
+
+    test('rejects NO_CONSENSUS payload when scoreVersion or rankingVersion is not null', () => {
+      const base = {
+        resultId: '00000000-0000-4000-8000-000000000101',
+        contractVersion: CANONICAL_RESULT_CONTRACT_VERSION,
+        policyVersion: CANONICAL_RESULT_POLICY_VERSION,
+        status: 'NO_CONSENSUS',
+        round: 1,
+        reasonCode: 'EMPTY_INTERSECTION',
+        finalizedAt: '2026-11-06T10:05:00Z',
+        round1BallotCount: 3,
+        winner: null,
+        topDishes: [],
+      };
+
+      expect(mapRawToScoredResult({ ...base, scoreVersion: 'want2-ok1-round1-v1', rankingVersion: null })).toBeNull();
+      expect(mapRawToScoredResult({ ...base, scoreVersion: null, rankingVersion: 'score-desc-dense-rank-v1' })).toBeNull();
+    });
   });
 
   describe('mapSnapshotMembersToCompanions', () => {
@@ -513,12 +564,136 @@ describe('GM-27 ResultRepository', () => {
 
       // First call resolves late
       resolveFirstCall!({ ok: true, data: canonicalDecidedPayload });
-      await inFlight;
+      const inFlightRes = await inFlight;
+
+      // Monotonic epoch guard rejects late in-flight resolution
+      expect(inFlightRes.ok).toBe(false);
+      if (!inFlightRes.ok) {
+        expect(inFlightRes.error.messageKey).toBe('CONTEXT_CHANGED');
+      }
 
       // Subsequent read must call server again rather than hitting cache
       mockRpc.mockResolvedValueOnce({ ok: true, data: canonicalDecidedPayload });
       await repo.getResult('room_late');
       expect(mockRpc).toHaveBeenCalledTimes(2);
+    });
+
+    test('monotonic epoch guard: in-flight request aborted and cache blocked when clearCache is called', async () => {
+      let resolveFirstCall: (val: any) => void;
+      const firstCallPromise = new Promise(resolve => {
+        resolveFirstCall = resolve;
+      });
+
+      const mockRpc = jest.fn().mockImplementationOnce(() => firstCallPromise);
+      const repo = new LiveResultRepository({ rpcCaller: mockRpc });
+
+      // Start in-flight request
+      const inFlight = repo.getResult('room_flight');
+
+      // Clear all cache while request is in flight
+      repo.clearCache();
+
+      // Resolve late
+      resolveFirstCall!({ ok: true, data: canonicalDecidedPayload });
+      const res = await inFlight;
+
+      expect(res.ok).toBe(false);
+      if (!res.ok) {
+        expect(res.error.messageKey).toBe('CONTEXT_CHANGED');
+      }
+
+      // Cache was NOT populated
+      mockRpc.mockResolvedValueOnce({ ok: true, data: canonicalDecidedPayload });
+      await repo.getResult('room_flight');
+      expect(mockRpc).toHaveBeenCalledTimes(2);
+    });
+
+    test('dual error path: RPC throwing 401 or 403 invalidates room cache', async () => {
+      const mockRpc = jest.fn()
+        .mockResolvedValueOnce({ ok: true, data: canonicalDecidedPayload })
+        .mockRejectedValueOnce({ status: 401, body: { message: 'Unauthorized' } });
+
+      const repo = new LiveResultRepository({ rpcCaller: mockRpc });
+
+      // First call succeeds and caches
+      const firstRes = await repo.getResult('room_auth_loss');
+      expect(firstRes.ok).toBe(true);
+
+      // Second call with forceRefetch throws 401
+      const secondRes = await repo.getResult('room_auth_loss', { forceRefetch: true });
+      expect(secondRes.ok).toBe(false);
+      if (!secondRes.ok) {
+        expect(secondRes.error.messageKey).toBe('AUTH_REQUIRED');
+      }
+
+      // Third call should not hit cache because room was invalidated
+      mockRpc.mockResolvedValueOnce({ ok: true, data: canonicalDecidedPayload });
+      await repo.getResult('room_auth_loss');
+      expect(mockRpc).toHaveBeenCalledTimes(3);
+    });
+
+    test('dual error path: transient network error does not invalidate room cache', async () => {
+      const mockRpc = jest.fn()
+        .mockResolvedValueOnce({ ok: true, data: canonicalDecidedPayload })
+        .mockRejectedValueOnce(new Error('Network request failed'));
+
+      const repo = new LiveResultRepository({ rpcCaller: mockRpc });
+
+      // First call succeeds and caches
+      const firstRes = await repo.getResult('room_net_transient');
+      expect(firstRes.ok).toBe(true);
+
+      // Force refetch fails with network error
+      const secondRes = await repo.getResult('room_net_transient', { forceRefetch: true });
+      expect(secondRes.ok).toBe(false);
+
+      // Normal read (not forced) should still find the cached winner
+      const thirdRes = await repo.getResult('room_net_transient');
+      expect(thirdRes.ok).toBe(true);
+      expect(mockRpc).toHaveBeenCalledTimes(2);
+    });
+
+    test('resolves current identity from roomRepository.getCurrentUser() by default and responds to session switch', async () => {
+      let currentUser: { id: string } | null = { id: 'user_live_01' };
+      const listeners: (() => void)[] = [];
+
+      const mockRoomRepo = {
+        getCurrentUser: jest.fn(() => currentUser),
+        subscribeSession: jest.fn((listener: () => void) => {
+          listeners.push(listener);
+          return () => {
+            const idx = listeners.indexOf(listener);
+            if (idx >= 0) listeners.splice(idx, 1);
+          };
+        }),
+      } as any;
+
+      const mockRpc = jest.fn().mockResolvedValue({ ok: true, data: canonicalDecidedPayload });
+      const repo = new LiveResultRepository({
+        roomRepository: mockRoomRepo,
+        rpcCaller: mockRpc,
+      });
+
+      // Reads identity as user_live_01
+      expect(repo.resolveCurrentIdentity()).toBe('user_live_01');
+
+      // First fetch caches under user_live_01:room_id
+      await repo.getResult('room_session_test');
+      expect(mockRpc).toHaveBeenCalledTimes(1);
+
+      // Fetch again -> cache hit
+      await repo.getResult('room_session_test');
+      expect(mockRpc).toHaveBeenCalledTimes(1);
+
+      // Switch user on room repo and trigger session listener
+      currentUser = { id: 'user_live_02' };
+      listeners.forEach(fn => fn());
+
+      // Fetch again -> cache miss because cache was cleared and identity changed
+      await repo.getResult('room_session_test');
+      expect(mockRpc).toHaveBeenCalledTimes(2);
+
+      repo.dispose();
     });
 
     test('handles RESULT_NOT_READY gracefully as NOT_READY', async () => {
