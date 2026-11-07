@@ -20,6 +20,7 @@ const config: ExpoConfig = {
   plugins: [
     'expo-router',
     'expo-system-ui',
+    'expo-sqlite',
     ['expo-secure-store', { configureAndroidBackup: true }],
     ['expo-location', { locationWhenInUsePermission: 'Cho phép Gì Cũng Được dùng vị trí khi bạn đang dùng ứng dụng.' }],
   ],
