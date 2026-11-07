@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from '@testing-library/react-native';
+import { act, fireEvent, render, screen, within } from '@testing-library/react-native';
 import { LiveDishResultScreen } from '../../src/features/result/screens/LiveDishResultScreen';
 import { DishResultEntry } from '../../src/bootstrap/DishResultEntry';
 import { useRoomRepository } from '../../src/bootstrap/RoomRepositoryProvider';
@@ -154,7 +154,7 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
       fireEvent.press(dismiss);
     }
 
-    expect(screen.getByText(/Món được chọn/)).toBeOnTheScreen();
+    expect(within(screen.getByTestId('podium-group-1')).getByLabelText(/Phở bò tái nạm.* · Món chiến thắng$/)).toBeOnTheScreen();
     expect(screen.getByText('Cơm tấm sườn bì')).toBeOnTheScreen();
     expect(screen.getAllByText('6 điểm').length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText('5 điểm')).toBeOnTheScreen();
@@ -228,7 +228,7 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
     const dismiss = await screen.findByText('Chạm để bỏ qua');
     fireEvent.press(dismiss);
 
-    expect(screen.getByText(/Món được chọn/)).toBeOnTheScreen();
+    expect(within(screen.getByTestId('podium-group-1')).getByLabelText(/Phở bò tái nạm.* · Món chiến thắng$/)).toBeOnTheScreen();
   });
 
   test('places error does not alter winner display', async () => {
@@ -253,7 +253,7 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
     }
 
     // Winner and podium are intact despite places error
-    expect(screen.getByText(/Món được chọn/)).toBeOnTheScreen();
+    expect(within(screen.getByTestId('podium-group-1')).getByLabelText(/Phở bò tái nạm.* · Món chiến thắng$/)).toBeOnTheScreen();
     expect(screen.getByText('Cơm tấm sườn bì')).toBeOnTheScreen();
     expect(screen.getByText('Không tải được danh sách quán')).toBeOnTheScreen();
   });
@@ -290,7 +290,7 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
 
     const dismiss = await screen.findByText('Chạm để bỏ qua');
     fireEvent.press(dismiss);
-    expect(screen.getByText(/Món được chọn/)).toBeOnTheScreen();
+    expect(within(screen.getByTestId('podium-group-1')).getByLabelText(/Phở bò tái nạm.* · Món chiến thắng$/)).toBeOnTheScreen();
   });
 
   test('cancels NOT_READY poll timer upon unmount', async () => {
@@ -459,7 +459,7 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
     expect(await screen.findByText('Quán Phở Thìn 13 Lò Đúc')).toBeOnTheScreen();
   });
 
-  test('renders dense ranking ties with equal rank badges for equal scores (Figma 617:1671)', async () => {
+  test('renders one shared score in each pedestal when dishes tie', async () => {
     const tieResult: ScoredResult = {
       ...decidedResult,
       round1BallotCount: 4, // max score = 2 * 4 = 8
@@ -513,9 +513,10 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
     const dismiss = await screen.findByText('Chạm để bỏ qua');
     fireEvent.press(dismiss);
 
-    // Winner banner and two podium cards with score 8
-    expect(screen.getAllByText('8 điểm').length).toBe(3);
-    expect(screen.getByText('6 điểm')).toBeOnTheScreen();
+    const first = within(screen.getByTestId('podium-group-1'));
+    expect(first.getAllByText('8 điểm')).toHaveLength(1);
+    expect(within(first.getByTestId('podium-bar-1')).getByText('8 điểm')).toBeOnTheScreen();
+    expect(within(screen.getByTestId('podium-bar-2')).getByText('6 điểm')).toBeOnTheScreen();
   });
 
   test('external actions return ok: false pending GM-30', async () => {
@@ -632,7 +633,7 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
       const dismiss = await screen.findByText('Chạm để bỏ qua');
       fireEvent.press(dismiss);
 
-      expect(screen.getByText(/Món được chọn/)).toBeOnTheScreen();
+      expect(within(screen.getByTestId('podium-group-1')).getByLabelText(/Phở bò tái nạm.* · Món chiến thắng$/)).toBeOnTheScreen();
     });
 
     test('renders StatusNotice in real mode when roomId is missing', async () => {
