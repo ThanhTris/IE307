@@ -1,5 +1,14 @@
 # GM-28 — Checks
 
+### Review response — 2026-11-07 (local, pending PR update)
+
+- Split PR ownership per Trí's latest review: this PR now keeps GM-28; GM-29 push files/evidence and GM-31 outbox/migrations/voting integration/evidence are removed for their task PRs. Task-number `/gm28/*` route aliases are removed.
+- `historyRepository.ts` retains its injectable `DurableHistoryStore` interface and identity-safe in-memory cache. It no longer imports or initializes SQLite/SecureStore; durable wiring is owned by GM-31.
+- Tightened raw wire guards for friend identity, friend rows and inbox rows (including rejection of unknown root fields). Added malformed canonical history and thrown HTTP 401/403/409 regressions.
+- `npm run check:expo`: Pass on Expo 58.0.23. `npm run typecheck`: Pass. Focused API/repository/history regression: 3 suites / 157 tests Pass. `git diff --check`: Pass.
+- Full `npm run check`: Pass — typecheck, lint, 68 suites / 1141 tests, architecture check. A subsequent standalone lint run after removing the new test warning also passed cleanly.
+- AVD + local Backend QA, two-account live flows, and Figma screenshot parity remain Not run. PR #157 result-route overlap remains until that PR merges; do not mark this PR Ready or the task Done yet.
+
 ## Run record
 
 ### Trí review follow-up — 2026-11-07 (local, pending PR update)

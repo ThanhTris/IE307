@@ -4,10 +4,7 @@ import { createAuthenticatedApiClient, createSecureSessionStorage } from '../dat
 import { createApiClient } from '../data/api';
 import type { SessionIssue, SessionSnapshot, SessionStatus } from '../features/rooms/services/sessionState';
 import type { SessionUser } from '../data/api/contracts';
-import { clearVoteSession } from '../features/voting/services/voteSessionState';
 import { clearPrivateHistoryCache } from '../features/history/services/historyRepository';
-import { clearPushRegistrationSecrets, getPushDeviceId } from '../features/inbox/services/expoPushDriver';
-import { getDurableOutbox } from '../data/local/outbox';
 import {
   LiveRoomRepository,
   createDurableRequestId,
@@ -103,24 +100,9 @@ export function RoomRepositoryProvider({
   }, [repository]);
 
   const logout = useCallback(async (): Promise<boolean> => {
-    const identityId = repository.getSessionSnapshot().user?.id;
-    if (isReal) {
-      const deviceId = await getPushDeviceId();
-      if (deviceId) {
-        // Remote unregister is best effort; an offline device must still be able to log out locally.
-        await repository.getApiClient().unregisterPushDevice(deviceId).catch(() => undefined);
-      }
-    }
-    if (identityId) {
-      try { await getDurableOutbox().clearIdentity(identityId); } catch { return false; }
-    }
     const result = await repository.logout();
-    if (result.ok) {
-      if (identityId) clearVoteSession(identityId);
-      await clearPushRegistrationSecrets();
-    }
     return result.ok;
-  }, [repository, isReal]);
+  }, [repository]);
 
   useEffect(() => {
     let mounted = true;

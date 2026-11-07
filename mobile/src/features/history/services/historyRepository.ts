@@ -2,7 +2,6 @@ import type { CanonicalHistoryItem, HistoryItem, ReadResult, UpdateHistoryConsen
 import type { RoomRepository } from '../../rooms/services/roomRepository';
 import { createDurableRequestId } from '../../rooms/services/roomRepository';
 import { callSessionApi } from '../../shared/services/sessionApi';
-import { getDurableOutbox } from '../../../data/local/outbox';
 
 const HISTORY_CACHE_ROOM = 'private-history';
 const HISTORY_CACHE_CONTRACT = 'gm28-history-v1';
@@ -62,7 +61,7 @@ function cacheGenerationIsCurrent(cache: HistoryCache, identityId: string): bool
   return generation === undefined || generation === (sharedInvalidation.get(identityId) ?? 0);
 }
 
-const mockDurableHistoryStore: DurableHistoryStore = {
+const noDurableHistoryStore: DurableHistoryStore = {
   async cacheSnapshot() {},
   async readSnapshotCache() { return undefined; },
   async clearSnapshotCache() {},
@@ -76,8 +75,7 @@ export function createHistoryRepository(
   cache: HistoryCache = privateHistoryCache,
   durableCacheOverride?: DurableHistoryStore,
 ): HistoryRepository {
-  const durableCache = durableCacheOverride
-    ?? (roomRepository.getSessionApi() ? getDurableOutbox() : mockDurableHistoryStore);
+  const durableCache = durableCacheOverride ?? noDurableHistoryStore;
   let generation = 0;
   const cacheQueueByIdentity = (identityId: string, operation: () => Promise<void>) =>
     queueSharedCacheMutation(identityId, operation);

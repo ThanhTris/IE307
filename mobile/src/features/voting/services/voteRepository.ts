@@ -22,7 +22,6 @@ import type {
 import { mapErrorHelper } from '../../../data/api/client/helpers';
 import { isCanonicalRoomSnapshot, isRoomSnapshot } from '../../../data/api/responseGuards';
 import type { RoomRepository } from '../../rooms/services/roomRepository';
-import { getDurableOutbox, type DurableOutbox } from '../../../data/local/outbox';
 import {
   WAITING_DEADLINE_SECONDS,
   getRoundTwoEliminationCap,
@@ -247,7 +246,6 @@ export interface LiveVoteRepositoryDeps {
   client?: ApiClient;
   rpcCaller?: (name: string, params: Record<string, unknown>) => Promise<unknown>;
   nextRequestId?: RequestIdGenerator;
-  outbox?: DurableOutbox;
 }
 
 interface CachedSubmitEntry {
@@ -260,7 +258,6 @@ export class LiveVoteRepository implements VoteRepository {
   private readonly client?: ApiClient;
   private readonly rpcCaller?: (name: string, params: Record<string, unknown>) => Promise<unknown>;
   private readonly nextRequestId: RequestIdGenerator;
-  private readonly outbox?: DurableOutbox;
 
   // Cache of submitted receipts for idempotency across retries
   private readonly idempotencyCache = new Map<string, CachedSubmitEntry>();
@@ -270,7 +267,6 @@ export class LiveVoteRepository implements VoteRepository {
     this.client = deps.client;
     this.rpcCaller = deps.rpcCaller;
     this.nextRequestId = deps.nextRequestId ?? createDurableRequestId;
-    this.outbox = deps.outbox;
   }
 
   private getCaller(): ((name: string, params: Record<string, unknown>) => Promise<unknown>) | null {
@@ -290,8 +286,8 @@ export class LiveVoteRepository implements VoteRepository {
    * If re-submitting with same requestId but different payload, rejects with BAD_REQUEST (F6).
    */
   async submitBallot(args: SubmitBallotArgs): Promise<WriteResult<SubmitBallotResponse>> {
-    let rid = args.requestId || this.nextRequestId('submit');
-    let intent = args.intentId || `intent_${rid}`;
+    const rid = args.requestId || this.nextRequestId('submit');
+    const intent = args.intentId || `intent_${rid}`;
 
     // Local validation
     if (!args.roomId) {
@@ -341,74 +337,16 @@ export class LiveVoteRepository implements VoteRepository {
       }
     }
 
-    let expectedVersion = args.expectedVersion;
-    const capturedIdentity = this.captureIdentity();
-    const identityId = capturedIdentity?.userId;
-    const durableOutbox = identityId ? (this.outbox ?? getDurableOutbox()) : undefined;
-    if (identityId && durableOutbox) {
-      try {
-        const previous = await durableOutbox.findEquivalent({
-          identityId,
-          roomId: args.roomId,
-          round: args.round,
-          poolVersion: args.poolVersion,
-          contractVersion: CANONICAL_VOTE_CONTRACT_VERSION,
-          expectedVersion,
-          payload: { intentId: intent, votes: wireVotes },
-        });
-        if (!this.identityMatches(capturedIdentity)) return { ok: false, requestId: rid, roomId: args.roomId, error: { messageKey: 'AUTH_REQUIRED' } };
-        if (previous) {
-          const latest = await this.getSnapshot(args.roomId);
-          if (!this.identityMatches(capturedIdentity)) return { ok: false, requestId: previous.requestId, roomId: args.roomId, error: { messageKey: 'AUTH_REQUIRED' } };
-          if (!latest.ok) return { ok: false, requestId: previous.requestId, roomId: args.roomId, error: latest.error };
-          if (latest.data.ownSubmission?.requestId === previous.requestId) {
-            await durableOutbox.acknowledge(identityId, previous.requestId).catch(() => undefined);
-            if (!this.identityMatches(capturedIdentity)) return { ok: false, requestId: previous.requestId, roomId: args.roomId, error: { messageKey: 'AUTH_REQUIRED' } };
-            const response: WriteResult<SubmitBallotResponse> = {
-              ok: true,
-              requestId: previous.requestId,
-              roomId: args.roomId,
-              version: latest.data.version,
-              state: latest.data.state,
-              data: {
-                accepted: true,
-                round: args.round,
-                allMembersSubmitted: args.round === 1
-                  ? latest.data.round > 1 || latest.data.state === 'DECIDED' || latest.data.state === 'NO_CONSENSUS'
-                  : latest.data.state === 'DECIDED' || latest.data.state === 'NO_CONSENSUS',
-                roomVersion: latest.data.version,
-                receipt: latest.data.ownSubmission,
-              },
-            };
-            return response;
-          }
-          const activeStates = args.round === 1 ? ['ROUND_1', 'WAITING_1'] : ['ROUND_2', 'WAITING_2'];
-          if (!activeStates.includes(latest.data.state)
-            || latest.data.round !== args.round
-            || latest.data.poolVersion !== args.poolVersion) {
-            await durableOutbox.remove(identityId, previous.requestId).catch(() => undefined);
-            return { ok: false, requestId: previous.requestId, roomId: args.roomId, error: { messageKey: 'VERSION_CONFLICT' } };
-          }
-          rid = previous.requestId;
-          expectedVersion = previous.expectedVersion;
-          const previousPayload = previous.payload as { intentId?: string } | undefined;
-          intent = previousPayload?.intentId ?? `intent_${rid}`;
-        }
-      } catch {
-        return { ok: false, requestId: rid, roomId: args.roomId, error: { messageKey: 'UNKNOWN_ERROR', message: 'Chưa thể kiểm tra trạng thái lượt chọn đã lưu; chưa gửi lại.' } };
-      }
-    }
-
-    // Reuse the original version together with its stable request ID and ballot payload.
+    // F6: Serialize payload to verify payload stability on retries
     const payloadSerialized = JSON.stringify({
       roomId: args.roomId,
       round: args.round,
       poolVersion: args.poolVersion,
-      expectedVersion,
+      expectedVersion: args.expectedVersion,
       votes: wireVotes,
     });
 
-    const cacheKey = `${identityId ?? 'anonymous'}_${args.roomId}_${args.round}_${rid}`;
+    const cacheKey = `${args.roomId}_${args.round}_${rid}`;
     const cachedEntry = this.idempotencyCache.get(cacheKey);
     if (cachedEntry) {
       if (cachedEntry.payloadSerialized !== payloadSerialized) {
@@ -425,53 +363,8 @@ export class LiveVoteRepository implements VoteRepository {
       return cachedEntry.result;
     }
 
-    if (identityId && durableOutbox) {
-      try {
-        await durableOutbox.enqueue({
-          identityId,
-          roomId: args.roomId,
-          round: args.round,
-          poolVersion: args.poolVersion,
-          contractVersion: CANONICAL_VOTE_CONTRACT_VERSION,
-          requestId: rid,
-          expectedVersion,
-          payload: { intentId: intent, votes: wireVotes },
-        });
-        if (!this.identityMatches(capturedIdentity)) {
-          await durableOutbox.markUnknown(identityId, rid).catch(() => undefined);
-          return { ok: false, requestId: rid, roomId: args.roomId, error: { messageKey: 'AUTH_REQUIRED' } };
-        }
-      } catch {
-        return {
-          ok: false,
-          requestId: rid,
-          roomId: args.roomId,
-          error: { messageKey: 'UNKNOWN_ERROR', message: 'Chưa lưu an toàn được lượt chọn trên thiết bị; chưa gửi lên máy chủ.' },
-        };
-      }
-    }
-
-    const acknowledgePersistedIntent = async () => {
-      if (!identityId || !durableOutbox) return;
-      try { await durableOutbox.acknowledge(identityId, rid); } catch {
-        await durableOutbox.markUnknown(identityId, rid).catch(() => undefined);
-      }
-    };
-    const classifyFailedIntent = async (messageKey: string) => {
-      if (!identityId || !durableOutbox) return;
-      if (messageKey === 'NETWORK_ERROR' || messageKey === 'TIMEOUT' || messageKey === 'UNKNOWN_ERROR') {
-        await durableOutbox.markUnknown(identityId, rid).catch(() => undefined);
-      } else {
-        await durableOutbox.remove(identityId, rid).catch(() => undefined);
-      }
-    };
-
     const caller = this.getCaller();
     if (caller) {
-      if (!this.identityMatches(capturedIdentity)) {
-        if (identityId && durableOutbox) await durableOutbox.markUnknown(identityId, rid).catch(() => undefined);
-        return { ok: false, requestId: rid, roomId: args.roomId, error: { messageKey: 'AUTH_REQUIRED' } };
-      }
       try {
         const raw = (await caller('dish_session', {
           command: 'submit',
@@ -481,19 +374,13 @@ export class LiveVoteRepository implements VoteRepository {
             roomId: args.roomId,
             round: args.round,
             poolVersion: args.poolVersion,
-            expectedVersion,
+            expectedVersion: args.expectedVersion,
             votes: wireVotes,
           },
         })) as any;
 
-        if (!this.identityMatches(capturedIdentity)) {
-          if (identityId && durableOutbox) await durableOutbox.markUnknown(identityId, rid).catch(() => undefined);
-          return { ok: false, requestId: rid, roomId: args.roomId, error: { messageKey: 'AUTH_REQUIRED' } };
-        }
-
         if (raw && !raw.ok) {
           const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as ErrorCode;
-          await classifyFailedIntent(errCode);
           return {
             ok: false,
             requestId: rid,
@@ -504,7 +391,6 @@ export class LiveVoteRepository implements VoteRepository {
 
         // F7: Canonical envelope guard check
         if (!isCanonicalSubmitEnvelope(raw, args)) {
-          await classifyFailedIntent('UNKNOWN_ERROR');
           return {
             ok: false,
             requestId: rid,
@@ -540,12 +426,9 @@ export class LiveVoteRepository implements VoteRepository {
             receipt,
           },
         };
-        await acknowledgePersistedIntent();
-        if (!this.identityMatches(capturedIdentity)) return { ok: false, requestId: rid, roomId: args.roomId, error: { messageKey: 'AUTH_REQUIRED' } };
         this.idempotencyCache.set(cacheKey, { payloadSerialized, result: res });
         return res;
       } catch (err: unknown) {
-        await classifyFailedIntent('NETWORK_ERROR');
         return {
           ok: false,
           requestId: rid,
@@ -557,30 +440,18 @@ export class LiveVoteRepository implements VoteRepository {
 
     // Fallback client submit
     if (this.client) {
-      if (!this.identityMatches(capturedIdentity)) {
-        if (identityId && durableOutbox) await durableOutbox.markUnknown(identityId, rid).catch(() => undefined);
-        return { ok: false, requestId: rid, roomId: args.roomId, error: { messageKey: 'AUTH_REQUIRED' } };
-      }
       const submitReq: SubmitBallotRequest = {
         roomId: args.roomId,
         round: args.round,
         poolVersion: args.poolVersion,
-        expectedVersion,
+        expectedVersion: args.expectedVersion,
         intentId: intent,
         requestId: rid,
         votes: args.votes,
       };
       const res = await this.client.submitBallot(submitReq);
-      if (!this.identityMatches(capturedIdentity)) {
-        if (identityId && durableOutbox) await durableOutbox.markUnknown(identityId, rid).catch(() => undefined);
-        return { ok: false, requestId: rid, roomId: args.roomId, error: { messageKey: 'AUTH_REQUIRED' } };
-      }
       if (res.ok) {
-        await acknowledgePersistedIntent();
-        if (!this.identityMatches(capturedIdentity)) return { ok: false, requestId: rid, roomId: args.roomId, error: { messageKey: 'AUTH_REQUIRED' } };
         this.idempotencyCache.set(cacheKey, { payloadSerialized, result: res });
-      } else {
-        await classifyFailedIntent(res.error.messageKey);
       }
       return res;
     }
@@ -591,25 +462,6 @@ export class LiveVoteRepository implements VoteRepository {
       roomId: args.roomId,
       error: { messageKey: 'NETWORK_ERROR' },
     };
-  }
-
-  private captureIdentity(): { userId: string; repositoryRevision: number; authGeneration: number } | undefined {
-    const repository = this.roomRepo;
-    const userId = repository?.getCurrentUser()?.id;
-    if (!repository || !userId) return undefined;
-    return {
-      userId,
-      repositoryRevision: repository.getIdentityRevision?.() ?? 0,
-      authGeneration: repository.getSessionApi()?.getGeneration?.() ?? 0,
-    };
-  }
-
-  private identityMatches(captured: ReturnType<LiveVoteRepository['captureIdentity']>): boolean {
-    if (!captured) return true;
-    const current = this.captureIdentity();
-    return current?.userId === captured.userId
-      && current.repositoryRevision === captured.repositoryRevision
-      && current.authGeneration === captured.authGeneration;
   }
 
   /**
@@ -807,9 +659,7 @@ export class LiveVoteRepository implements VoteRepository {
 
         if (raw?.ok && raw.data) {
           if (isCanonicalRoomSnapshot(raw.data) || isRoomSnapshot(raw.data)) {
-            const snapshot = raw.data as RoomSnapshot;
-            await this.reconcileOutbox(snapshot);
-            return { ok: true, data: snapshot };
+            return { ok: true, data: raw.data as RoomSnapshot };
           }
           // F7: Missing or invalid schema fields must strictly return MALFORMED_RESPONSE
           return { ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } };
@@ -825,36 +675,13 @@ export class LiveVoteRepository implements VoteRepository {
     }
 
     if (this.client) {
-      const result = await this.client.getRoomSnapshot(roomId);
-      if (result.ok) await this.reconcileOutbox(result.data);
-      return result;
+      return this.client.getRoomSnapshot(roomId);
     }
 
     return {
       ok: false,
       error: { messageKey: 'NETWORK_ERROR' },
     };
-  }
-
-  private async reconcileOutbox(snapshot: RoomSnapshot): Promise<void> {
-    const identityId = this.roomRepo?.getCurrentUser()?.id;
-    if (!identityId) return;
-    const outbox = this.outbox ?? getDurableOutbox();
-    await outbox.cacheSnapshot({
-      identityId,
-      roomId: snapshot.roomId,
-      contractVersion: CANONICAL_VOTE_CONTRACT_VERSION,
-      value: snapshot,
-    }).catch(() => undefined);
-    await outbox.reconcileBeforeReplay(identityId, async () => ({
-      roomId: snapshot.roomId,
-      round: snapshot.round,
-      poolVersion: snapshot.poolVersion,
-      contractVersion: CANONICAL_VOTE_CONTRACT_VERSION,
-      version: snapshot.version,
-      active: ['ROUND_1', 'WAITING_1', 'ROUND_2', 'WAITING_2'].includes(snapshot.state),
-      acknowledgedRequestIds: snapshot.ownSubmission?.requestId ? [snapshot.ownSubmission.requestId] : [],
-    })).catch(() => []);
   }
 }
 

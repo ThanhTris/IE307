@@ -411,18 +411,21 @@ export function isCanonicalRoomSnapshot(value: unknown): value is RoomSnapshot {
 }
 
 export function isFriend(value: unknown): value is Friend {
-  return isRecord(value) && isNonEmptyString(value.id) && isNonEmptyString(value.friendUserId)
+  return isRecord(value) && onlyKeys(value, ['id', 'friendUserId', 'displayName', 'friendCode', 'status', 'since'])
+    && isNonEmptyString(value.id) && isNonEmptyString(value.friendUserId)
     && isNonEmptyString(value.displayName) && isNonEmptyString(value.friendCode)
     && value.status === 'active' && isTimestamp(value.since);
 }
 
 export function isSocialIdentity(value: unknown): value is SocialIdentity {
-  return isRecord(value) && isNonEmptyString(value.id) && isNonEmptyString(value.displayName)
+  return isRecord(value) && onlyKeys(value, ['id', 'displayName', 'friendCode', 'avatarSeed'])
+    && isNonEmptyString(value.id) && isNonEmptyString(value.displayName)
     && isNonEmptyString(value.friendCode) && isNonEmptyString(value.avatarSeed);
 }
 
 export function isInboxItem(value: unknown): value is InboxItem {
-  return isRecord(value) && isNonEmptyString(value.id) && isNonEmptyString(value.eventId)
+  return isRecord(value) && onlyKeys(value, ['id', 'eventId', 'type', 'title', 'body', 'read', 'metadata', 'createdAt'])
+    && isNonEmptyString(value.id) && isNonEmptyString(value.eventId)
     && oneOf(value.type, ['friend_invite', 'room_invite', 'room_result'])
     && isString(value.title) && isString(value.body) && isBoolean(value.read)
     && optional(value.metadata, isRecord) && isTimestamp(value.createdAt);

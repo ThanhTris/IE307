@@ -18,10 +18,10 @@ Local changes address ThanhTris's PR #126 comments on identity-lifetime/history 
 
 - `mobile/src/features/friends/services/socialRepository.ts` — session-aware friend identity/list/invite/accept/reject/remove adapter.
 - `mobile/src/features/inbox/services/inboxRepository.ts` — server inbox adapter, event deduplication and inbox-row cursor; accepted invitation routes from a refetched canonical room snapshot, and result notifications resolve only through an authorized room/result reference.
-- `mobile/src/features/history/services/historyRepository.ts` — server canonical history projection, identity/generation-safe serialized cache, consent/delete invalidation, and durable authorized snapshot.
+- `mobile/src/features/history/services/historyRepository.ts` — server canonical history projection, identity/generation-safe serialized in-memory cache, consent/delete invalidation, and injectable `DurableHistoryStore` interface. SQLite/SecureStore wiring belongs to GM-31.
 - `mobile/src/features/shared/services/sessionApi.ts` and `mobile/src/features/rooms/services/roomRepository.ts` — feature API calls go through authenticated session lifecycle; 401 transitions to session recovery and stale identity results are rejected.
 - `mobile/src/features/friends/screens/LiveFriendsScreen.tsx`, `mobile/src/features/inbox/screens/LiveInboxScreen.tsx`, `mobile/src/features/history/screens/LiveHistoryScreen.tsx` — live screens; friend search uses the live friend list; no mock fixture fallback.
-- `/friends`, `/inbox`, `/history` are the consolidated routes for the live screens. Legacy `/gm28/*` URLs redirect to them; mock preview screens remain reachable from mock-mode routes.
+- `/friends`, `/inbox`, `/history` are the consolidated live routes. Mock preview screens remain reachable from mock-mode routes. Task-number route aliases have been removed.
 - `mobile/src/features/rooms/screens/LiveLobbyScreen.tsx` — host can select and invite an actual friend in the current lobby, subject to existing-member and 20-person roster checks.
 - `mobile/src/features/result/screens/LiveCanonicalResultScreen.tsx` — result route refetches the current authorized room snapshot and checks canonical terminal result/result ID before rendering.
 - Real Home actions route Friends, Inbox and History into these live screens; mock mode continues to use the existing preview routes.
@@ -39,14 +39,14 @@ npm run check
 npm start -- --clear
 ```
 
-Set `EXPO_PUBLIC_SUPABASE_URL` to a reachable test Supabase endpoint and `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` to its publishable key before starting to enter real mode. Use the app's authenticated session flow, then open `/gm28/friends`, `/gm28/inbox`, or `/gm28/history`. Never use a service-role key in the app. A phone must use a network-reachable HTTPS endpoint, not the computer's loopback URL.
+Set `EXPO_PUBLIC_SUPABASE_URL` to a reachable test Supabase endpoint and `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` to its publishable key before starting to enter real mode. Use the app's authenticated session flow, then open `/friends`, `/inbox`, or `/history`. Never use a service-role key in the app. A phone must use a network-reachable HTTPS endpoint, not the computer's loopback URL.
 
 ## Behavior and limits
 
 - Friend and room invitation identifiers come only from API DTOs; inbox `eventId` is never substituted for `metadata.invitationId`.
 - Accepting a room invitation refetches the canonical room snapshot and routes by its current state; it does not cast a vote or set ready.
 - History consent is explicit because the API has no consent-status read endpoint. Group visibility and deletion remain server-enforced. Legacy history is rendered without fabricated ranking/score values.
-- History memory and durable cache writes are identity/generation checked, serialized, and cleared/invalidated after logout, consent change or deletion.
+- History memory-cache writes are identity/generation checked, serialized, and cleared/invalidated after logout, consent change or deletion. Durable persistence is intentionally not initialized from this task's repository.
 - `fetchedAt` is device time when the API response is received, not a server timestamp.
 - API and Android multi-user cases remain pending real test credentials, endpoint and Android device/build. No production behavior or task completion is claimed by this handoff.
 - Android/API multi-user and visual Figma checks still require their device/backend/design evidence. See `CHECKS.md` and `FIGMA_PARITY.md` for current local checks and explicit limits.
