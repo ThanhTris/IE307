@@ -14,49 +14,75 @@ import {
 import {
   createLiveResultRepository,
   mapSnapshotMembersToCompanions,
+  type FetchNearbyPlacesParams,
   type ResultRepository,
 } from '../services/resultRepository';
 import type { ResultMapRenderer } from '../services/nearbyPresentation';
+import {
+  createPlacesRepository,
+  type PlacesRepository,
+} from '../services/placesRepository';
+import { openExternalAction } from '../services/externalLinks';
 
 export interface LiveDishResultScreenProps {
   roomId: string;
   resultId?: string;
   repository?: ResultRepository;
+  placesRepository?: PlacesRepository;
   onHome: () => void;
   onNewSession: () => void;
   onOtherScreen?: () => void;
   artworkSources?: Readonly<Record<string, ImageSourcePropType>>;
   renderMap?: ResultMapRenderer;
   pollIntervalMs?: number;
+  isReal?: boolean;
 }
 
 export function LiveDishResultScreen({
   roomId,
   resultId,
   repository: customRepository,
+  placesRepository: customPlacesRepository,
   onHome,
   onNewSession,
   onOtherScreen,
   artworkSources,
   renderMap,
   pollIntervalMs,
+  isReal: isRealProp,
 }: LiveDishResultScreenProps) {
   const live = useRoomRepository();
-  const isReal = live.mode === 'real';
+  const isReal = isRealProp ?? (live ? live.mode === 'real' : false);
+
+  const placesRepository = useMemo<PlacesRepository>(() => {
+    if (customPlacesRepository) return customPlacesRepository;
+    return createPlacesRepository({ isDevSimulated: !isReal });
+  }, [customPlacesRepository, isReal]);
 
   const repository = useMemo<ResultRepository>(() => {
     if (customRepository) return customRepository;
-    const getCurrentIdentity = () => live.user?.id ?? (live.repository && typeof live.repository.getCurrentUser === 'function' ? live.repository.getCurrentUser()?.id : null) ?? null;
+    const getCurrentIdentity = () =>
+      live.user?.id ??
+      (live.repository && typeof live.repository.getCurrentUser === 'function'
+        ? live.repository.getCurrentUser()?.id
+        : null) ??
+      null;
+
+    const placesFetcher = (params: FetchNearbyPlacesParams) =>
+      placesRepository.fetchNearbyPlaces(params);
+
     if (isReal) {
       return createLiveResultRepository({
         roomRepository: live.repository,
         getCurrentIdentity,
+        placesFetcher,
       });
     }
     return createLiveResultRepository({
       getCurrentIdentity,
+      placesFetcher,
     });
-  }, [customRepository, isReal, live.repository, live.user?.id]);
+  }, [customRepository, isReal, live.repository, live.user?.id, placesRepository]);
 
   const [currentRoomId, setCurrentRoomId] = useState(roomId);
   const [currentResultId, setCurrentResultId] = useState(resultId);
@@ -84,21 +110,23 @@ export function LiveDishResultScreen({
     };
   }, []);
 
-  // Lifecycle cleanup: dispose internally-created repository on unmount or when repository changes.
-  // Never dispose an externally-injected customRepository owned by another caller.
+  // Lifecycle cleanup: dispose internally-created repository or placesRepository on unmount.
   useEffect(() => {
     return () => {
       if (!customRepository && repository && typeof repository.dispose === 'function') {
         repository.dispose();
       }
+      if (!customPlacesRepository && placesRepository && typeof placesRepository.dispose === 'function') {
+        placesRepository.dispose();
+      }
     };
-  }, [customRepository, repository]);
+  }, [customRepository, repository, customPlacesRepository, placesRepository]);
 
-  const toNearbyError = useCallback((resultId: string, winnerDishId: string, error?: { messageKey?: string }): NearbyState => {
+  const toNearbyError = useCallback((targetResultId: string, winnerDishId: string, error?: { messageKey?: string }): NearbyState => {
     const isNet = error?.messageKey === 'NETWORK_ERROR' || error?.messageKey === 'OFFLINE';
     const isPerm = error?.messageKey === 'PERMISSION_DENIED';
     return {
-      resultId,
+      resultId: targetResultId,
       winnerDishId,
       status: isPerm ? 'denied' : isNet ? 'offline' : 'error',
       places: [],
@@ -132,12 +160,10 @@ export function LiveDishResultScreen({
         if (cancelled || activeRoomIdRef.current !== roomId || currentSeq !== fetchSeqRef.current) return;
 
         if (res.ok) {
-          // If expected resultId was requested (e.g. from GM-28 inbox/history),
-          // verify that the returned result matches expected resultId
-          if (resultId && res.data.result.resultId !== resultId) {
+          // If expected resultId was requested, ensure it matches
+          if (resultId && res.data.capability === 'scored-v4' && res.data.result.resultId !== resultId) {
             setCurrentRoomId(roomId);
             setCurrentResultId(resultId);
-            setInput(null);
             setReadState('error');
             return;
           }
@@ -152,9 +178,14 @@ export function LiveDishResultScreen({
             const winner = res.data.result.winner;
             const targetResultId = res.data.result.resultId;
             const currentPlacesSeq = ++placesSeqRef.current;
+            const placesFetcher = placesRepository.fetchNearbyPlaces
+              ? placesRepository.fetchNearbyPlaces.bind(placesRepository)
+              : repository.fetchNearbyPlaces
+              ? repository.fetchNearbyPlaces.bind(repository)
+              : undefined;
 
-            if (repository.fetchNearbyPlaces) {
-              void repository.fetchNearbyPlaces({
+            if (placesFetcher) {
+              void placesFetcher({
                 resultId: targetResultId,
                 winnerDishId: winner.dishId,
                 dishName: winner.name,
@@ -208,7 +239,7 @@ export function LiveDishResultScreen({
         clearTimeout(pollTimer);
       }
     };
-  }, [roomId, resultId, repository, refreshIndex, toNearbyError, pollIntervalMs]);
+  }, [roomId, resultId, repository, placesRepository, refreshIndex, toNearbyError, pollIntervalMs]);
 
   const handleRetryResult = useCallback(() => {
     setReadState('loading');
@@ -218,16 +249,22 @@ export function LiveDishResultScreen({
   const handleRetryPlaces = useCallback(async () => {
     if (!input || input.capability !== 'scored-v4' || input.result.status !== 'DECIDED' || !input.result.winner) return;
     const winner = input.result.winner;
-    const resultId = input.result.resultId;
+    const targetResultId = input.result.resultId;
     const targetRoomId = roomId;
 
-    if (repository.fetchNearbyPlaces) {
+    const placesFetcher = placesRepository.fetchNearbyPlaces
+      ? placesRepository.fetchNearbyPlaces.bind(placesRepository)
+      : repository.fetchNearbyPlaces
+      ? repository.fetchNearbyPlaces.bind(repository)
+      : undefined;
+
+    if (placesFetcher) {
       setNearby(prev => prev ? { ...prev, status: 'loading' } : undefined);
       const currentPlacesSeq = ++placesSeqRef.current;
 
       try {
-        const res = await repository.fetchNearbyPlaces({
-          resultId,
+        const res = await placesFetcher({
+          resultId: targetResultId,
           winnerDishId: winner.dishId,
           dishName: winner.name,
         });
@@ -236,28 +273,27 @@ export function LiveDishResultScreen({
         if (res.ok) {
           setNearby(res.data);
         } else {
-          setNearby(toNearbyError(resultId, winner.dishId, res.error));
+          setNearby(toNearbyError(targetResultId, winner.dishId, res.error));
         }
       } catch {
         if (mountedRef.current && activeRoomIdRef.current === targetRoomId && currentPlacesSeq === placesSeqRef.current) {
-          setNearby(toNearbyError(resultId, winner.dishId, { messageKey: 'NETWORK_ERROR' }));
+          setNearby(toNearbyError(targetResultId, winner.dishId, { messageKey: 'NETWORK_ERROR' }));
         }
       }
     }
-  }, [input, repository, roomId, toNearbyError]);
+  }, [input, repository, placesRepository, roomId, toNearbyError]);
 
   const handleRequestLocation = useCallback(async () => {
+    await placesRepository.requestLocationPermission();
     await handleRetryPlaces();
-  }, [handleRetryPlaces]);
+  }, [placesRepository, handleRetryPlaces]);
 
   const handleOpenSettings = useCallback(async () => {
-    await handleRetryPlaces();
-  }, [handleRetryPlaces]);
+    await placesRepository.openLocationSettings();
+  }, [placesRepository]);
 
-  const handleExternalAction = useCallback((_action: ResultExternalAction, _target: ResultActionTarget): ResultActionReply => {
-    // Supplementary external action (e.g. open Maps or search) requires GM-30.
-    // Return ok: false to notify caller that capability is not yet available.
-    return { ok: false };
+  const handleExternalAction = useCallback(async (action: ResultExternalAction, target: ResultActionTarget): Promise<ResultActionReply> => {
+    return openExternalAction(action, target);
   }, []);
 
   return (

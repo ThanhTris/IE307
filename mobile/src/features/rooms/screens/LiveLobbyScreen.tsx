@@ -8,6 +8,7 @@ import { errorCopy, mealLabels } from '../services/roomEntry';
 import { useLiveLobby, type LobbyRepository } from '../hooks/useLiveLobby';
 import { LobbyMemberList } from '../components/LobbyMemberList';
 import { LobbyActionButtons } from '../components/LobbyActionButtons';
+import { RoomQrModal } from '../components/RoomQrModal';
 
 export type LiveLobbyScreenProps = {
   onNavigate?: (destination: DemoDestination) => void;
@@ -34,6 +35,7 @@ export function LiveLobbyScreen({
   onEditContext,
 }: LiveLobbyScreenProps) {
   const colors = useDemoColors();
+  const [showQrModal, setShowQrModal] = useState(false);
   const lobby = useLiveLobby({
     mockClient,
     repository,
@@ -114,7 +116,19 @@ export function LiveLobbyScreen({
         <>
           {!isReal && <AppButton label={`Đang xem vai trò: ${isHost ? 'Host' : 'Member'} · đổi vai trò`} variant="secondary" onPress={chooseRole} disabled={busy} colors={colors} />}
           <RoomCode code={snapshot.code} colors={colors} />
-          {!isReal && <Text style={[styles.helper, { color: colors.muted }]}>Mã hiển thị là fixture; QR chưa được tạo và không thể tham gia phòng thật.</Text>}
+          <AppButton
+            label="Mở mã QR phòng"
+            variant="secondary"
+            onPress={() => setShowQrModal(true)}
+            disabled={busy}
+            colors={colors}
+          />
+          <RoomQrModal
+            visible={showQrModal}
+            code={snapshot.code}
+            onClose={() => setShowQrModal(false)}
+          />
+          {!isReal && <Text style={[styles.helper, { color: colors.muted }]}>Mã hiển thị là fixture; QR mô phỏng cho AVD testing.</Text>}
           {!isReal && (
             <View style={styles.demoRoster}>
               <Text style={[styles.demoRosterLabel, { color: colors.text }]}>Số thành viên fixture</Text>

@@ -5,16 +5,17 @@ import { normalizeRoomCode, validDisplayName, validRoomCode } from '../services/
 import { validPublicPreview, type JoinRoomPublicPreview } from '../services/joinPreview';
 import { useRoomSubmission } from './useRoomEntry';
 
-export function useJoinRoomEntry({ repository, preview, initialCode = '', initialDisplayName = '', onScan, onEntered, onBack, createRequestId }: JoinRoomEntryProps) {
+export function useJoinRoomEntry({ repository, preview, initialCode = '', initialDisplayName = '', onScan, qrScannerAdapter, onEntered, onBack, createRequestId }: JoinRoomEntryProps) {
   const [code, setCode] = useState(normalizeRoomCode(initialCode));
   const [incoming, setIncoming] = useState(normalizeRoomCode(initialCode));
   const [name, setName] = useState(initialDisplayName);
   const [camera, setCamera] = useState(false);
+  const [cameraStatus, setCameraStatus] = useState<'idle' | 'scanning' | 'denied' | 'unavailable'>('idle');
   const [summary, setSummary] = useState<JoinRoomPublicPreview>();
   const [validation, setValidation] = useState<string>();
   const [readError, setReadError] = useState<ErrorCode>();
   const [readBusy, setReadBusy] = useState(false);
-  const [cameraMessage, setCameraMessage] = useState('Camera chưa sẵn sàng. Bạn có thể nhập mã phòng.');
+  const [cameraMessage, setCameraMessage] = useState('Hướng camera về phía mã QR để quét.');
   const mounted = useRef(false), readLock = useRef(false), joinLock = useRef(false);
   const readGeneration = useRef(0);
   const frozen = useRef<{ code: string; displayName: string } | undefined>(undefined);
@@ -61,25 +62,90 @@ export function useJoinRoomEntry({ repository, preview, initialCode = '', initia
     const generation = ++readGeneration.current;
     readLock.current = true; setReadBusy(true); clearPreview();
     try {
-      const result = onScan ? await onScan() : { status: 'unavailable' as const };
+      let result: { status: 'scanned'; code: string } | { status: 'denied' } | { status: 'unavailable' };
+      if (onScan) {
+        result = await onScan();
+      } else if (qrScannerAdapter) {
+        const perm = await qrScannerAdapter.getPermissionStatus();
+        if (perm === 'denied' || perm === 'blocked') {
+          result = { status: 'denied' };
+        } else if (qrScannerAdapter.simulateScan) {
+          const scanRes = await qrScannerAdapter.simulateScan();
+          result = scanRes.ok ? { status: 'scanned', code: scanRes.code } : { status: 'unavailable' };
+        } else {
+          result = { status: 'unavailable' };
+        }
+      } else {
+        result = { status: 'unavailable' };
+      }
       if (!mounted.current || generation !== readGeneration.current) return;
-      if (result.status === 'scanned') { setCode(normalizeRoomCode(result.code)); setCamera(false); }
-      else setCameraMessage(result.status === 'denied' ? 'Chưa có quyền dùng camera. Cho phép camera trong cài đặt hoặc nhập mã phòng.' : 'Camera chưa sẵn sàng. Hãy nhập mã phòng.');
-    } catch { if (mounted.current && generation === readGeneration.current) setCameraMessage('Chưa đọc được mã. Hãy nhập mã phòng.'); }
+      if (result.status === 'scanned') {
+        const scannedCode = normalizeRoomCode(result.code);
+        setCode(scannedCode);
+        setCameraStatus('idle');
+        setCamera(false);
+        // Automatically fetch preview for scanned code
+        if (validRoomCode(scannedCode) && validDisplayName(name)) {
+          void readScannedCode(scannedCode, generation);
+        }
+      } else if (result.status === 'denied') {
+        setCameraStatus('denied');
+        setCameraMessage('Bạn chưa cấp quyền truy cập camera để quét mã QR.');
+      } else {
+        setCameraStatus('unavailable');
+        setCameraMessage('Camera chưa sẵn sàng. Bạn có thể nhập mã phòng bằng tay.');
+      }
+    } catch {
+      if (mounted.current && generation === readGeneration.current) {
+        setCameraStatus('unavailable');
+        setCameraMessage('Chưa đọc được mã. Hãy nhập mã phòng.');
+      }
+    }
     finally { if (generation === readGeneration.current) { readLock.current = false; if (mounted.current) setReadBusy(false); } }
+  };
+  const readScannedCode = async (scannedCode: string, generation: number) => {
+    if (!preview) return;
+    try {
+      const result = await preview(scannedCode);
+      if (!mounted.current || generation !== readGeneration.current) return;
+      if (!result.ok) {
+        setReadError(result.error.messageKey);
+      } else if (!validPublicPreview(result.data, scannedCode)) {
+        setReadError('MALFORMED_RESPONSE');
+      } else {
+        setSummary({ code: result.data.code, memberCount: result.data.memberCount, capacity: result.data.capacity });
+      }
+    } catch {
+      if (mounted.current && generation === readGeneration.current) setReadError('NETWORK_ERROR');
+    }
   };
   const cancelRead = () => { readGeneration.current++; readLock.current = false; setReadBusy(false); };
   const back = () => {
     if (mutationLocked || joinLock.current) return;
     cancelRead();
-    if (camera) setCamera(false);
+    if (camera) { setCamera(false); setCameraStatus('idle'); }
     else if (summary || readError) clearPreview();
     else onBack();
   };
-  return { code, name, camera, summary, validation, readError, readBusy, cameraMessage, submitted, disabled, mutationLocked,
+  return {
+    code, name, camera, cameraStatus, summary, validation, readError, readBusy, cameraMessage, submitted, disabled, mutationLocked,
     editCode, editName, read, join, scan, back,
-    edit: () => { if (!disabled) { clearPreview(); setCamera(false); } },
-    openCamera: () => { if (!disabled) { clearPreview(); setCamera(true); } },
-    closeCamera: () => { if (!mutationLocked) { cancelRead(); setCamera(false); } },
+    edit: () => { if (!disabled) { clearPreview(); setCamera(false); setCameraStatus('idle'); } },
+    openCamera: async () => {
+      if (disabled) return;
+      clearPreview();
+      if (qrScannerAdapter) {
+        const perm = await qrScannerAdapter.getPermissionStatus();
+        if (perm === 'denied' || perm === 'blocked') {
+          setCameraStatus('denied');
+          setCameraMessage('Bạn chưa cấp quyền truy cập camera để quét mã QR.');
+          setCamera(true);
+          return;
+        }
+      }
+      setCamera(true);
+      setCameraStatus('idle');
+    },
+    closeCamera: () => { if (!mutationLocked) { cancelRead(); setCamera(false); setCameraStatus('idle'); } },
   };
 }

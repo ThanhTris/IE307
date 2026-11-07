@@ -4,6 +4,8 @@ export * from './screens/NoConsensusScreen';
 export * from './services/resultPresentation';
 export * from './services/nearbyPresentation';
 export * from './services/resultRepository';
+export * from './services/placesRepository';
+export * from './services/externalLinks';
 export * from './screens/DishResultFlow';
 export * from './screens/DishResultScreen';
 export * from './screens/DishNoConsensusScreen';
