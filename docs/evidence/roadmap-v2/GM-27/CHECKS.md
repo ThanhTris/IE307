@@ -147,7 +147,7 @@ python scripts/task_readiness.py --check-docs
 ## Limits and Environmental Disclosures
 
 1. **Chặng 3A — Máy ảo Android (AVD) + Backend QA local**:
-   - **Tested Revision**: Head commit branch `issue88_figma_ui_gm27` đối chiếu base `origin/main` (`50c4447`).
+   - **Tested Revision**: Head commit `631a8b1` (branch `issue88_figma_ui_gm27`), đối chiếu base `origin/main` (`50c4447`).
    - **Môi trường máy ảo (AVD)**: Android Emulator Pixel 8, Google APIs system image API 34 (Android 14.0 x86_64).
    - **Viewports & Accessibility**:
      - Viewport tiêu chuẩn: `412 × 915 dp` (density 420dpi / xxmhdpi).
