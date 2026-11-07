@@ -139,6 +139,31 @@ def delivery_errors(src: Source, record: dict) -> list[str]:
     return [f'missing delivered artifact: {path}' for path in paths if path not in src.files]
 
 
+def output_verification_errors(src: Source, records: dict, tid: str, project=None) -> list[str]:
+    """Verify current task's declared outputs, non-template evidence and Stage 3B data gate before merge."""
+    record = records.get(tid)
+    if not record or record['meta'].get('numbering') != 'roadmap-v2':
+        return []
+    errors = list(delivery_errors(src, record))
+    placeholders = ('Status: Pending execution', '<commit_sha>', '<fill_me>', '<todo_replace>')
+    for path in (f'docs/evidence/roadmap-v2/{tid}/CHECKS.md',
+                 f'docs/evidence/roadmap-v2/{tid}/HANDOFF.md',
+                 f'docs/evidence/roadmap-v2/{tid}/FIGMA_PARITY.md'):
+        if path in src.files:
+            text = src.read(path).strip()
+            if not text:
+                errors.append(f'empty evidence artifact: {path}')
+            for marker in placeholders:
+                if marker in text:
+                    errors.append(f'unfilled template placeholder ({marker}) in {path}')
+    if tid in {'GM-33', 'GM-34'} and 'GM-40' in records:
+        gm40_errors = (project.dependency_errors('GM-40')
+                       if project is not None else approval_errors(src, records['GM-40']))
+        if gm40_errors:
+            errors.append('Stage 3B USB test/release requires GM-40 (Dish Catalogue projection) Done before merge')
+    return errors
+
+
 def validate_roadmap(src: Source, records: dict) -> tuple[list[str], dict]:
     """Check scope migration and each input's producer, not just numeric edges."""
     errors = []

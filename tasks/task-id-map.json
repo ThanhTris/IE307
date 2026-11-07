@@ -1029,7 +1029,8 @@
       "stage": "integration",
       "outputs": [
         "mobile/src/features/result/services/resultRepository.ts",
-        "docs/evidence/roadmap-v2/GM-27/CHECKS.md"
+        "docs/evidence/roadmap-v2/GM-27/CHECKS.md",
+        "docs/evidence/roadmap-v2/GM-27/FIGMA_PARITY.md"
       ],
       "inputs": [
         {
@@ -1040,6 +1041,16 @@
         {
           "task": "GM-18",
           "artifact": "supabase/migrations/0018_food_eligibility.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-20",
+          "artifact": "supabase/migrations/0023_finalize.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-21",
+          "artifact": "supabase/migrations/0021_history.sql",
           "gate": "start"
         },
         {
@@ -1075,7 +1086,8 @@
         "mobile/src/features/friends/services/socialRepository.ts",
         "mobile/src/features/inbox/services/inboxRepository.ts",
         "mobile/src/features/history/services/historyRepository.ts",
-        "docs/evidence/roadmap-v2/GM-28/CHECKS.md"
+        "docs/evidence/roadmap-v2/GM-28/CHECKS.md",
+        "docs/evidence/roadmap-v2/GM-28/FIGMA_PARITY.md"
       ],
       "inputs": [
         {
@@ -1128,7 +1140,8 @@
       "stage": "native",
       "outputs": [
         "mobile/src/features/inbox/services/nativePush.ts",
-        "docs/evidence/roadmap-v2/GM-29/CHECKS.md"
+        "docs/evidence/roadmap-v2/GM-29/CHECKS.md",
+        "docs/evidence/roadmap-v2/GM-29/FIGMA_PARITY.md"
       ],
       "inputs": [
         {
@@ -1164,10 +1177,10 @@
       ],
       "verification": {
         "mode": "expo-native",
-        "tool": "Expo Go startup + development build thiết bị Android + API runner",
+        "tool": "Expo Go startup + Máy ảo Android (AVD) dev/simulated push adapter + API runner",
         "entrypoint": "Figma task map → node thiết kế → route/scenario bàn giao của GM-29",
         "expected": "Quyền thông báo theo Figma với grant/deny/settings; từ chối vẫn dùng inbox.",
-        "cases": "Expo Go không crash; phần remote push cần môi trường native hỗ trợ và ghi rõ Not run nếu chưa kiểm. Có remote delivery thật trên thiết bị và kiểm cold/warm/duplicate/denied/token rotation/logout; local notification không thay remote."
+        "cases": "Expo Go không crash; Chặng 3A kiểm trên Máy ảo Android (AVD) nối Backend QA local thật qua dev/simulated push adapter có nhãn (grant/deny/cold/warm/duplicate/token rotation/logout); phần Remote Push FCM trên điện thoại USB ghi rõ Not run để kiểm tập trung tại Chặng 3B (GM-33/34)."
       }
     },
     {
@@ -1183,6 +1196,7 @@
         "mobile/src/features/rooms/services/joinLinks.ts",
         "mobile/src/features/result/services/externalLinks.ts",
         "docs/evidence/roadmap-v2/GM-30/CHECKS.md",
+        "docs/evidence/roadmap-v2/GM-30/FIGMA_PARITY.md",
         "mobile/src/features/result/services/placesRepository.ts"
       ],
       "inputs": [
@@ -1247,7 +1261,8 @@
       "outputs": [
         "mobile/src/data/local/outbox.ts",
         "mobile/src/data/local/migrations.ts",
-        "docs/evidence/roadmap-v2/GM-31/CHECKS.md"
+        "docs/evidence/roadmap-v2/GM-31/CHECKS.md",
+        "docs/evidence/roadmap-v2/GM-31/FIGMA_PARITY.md"
       ],
       "inputs": [
         {
@@ -1376,7 +1391,8 @@
       "stage": "qa",
       "outputs": [
         "docs/evidence/roadmap-v2/GM-33/ANDROID_PILOT.md",
-        "docs/evidence/roadmap-v2/GM-33/CHECKS.md"
+        "docs/evidence/roadmap-v2/GM-33/CHECKS.md",
+        "docs/evidence/roadmap-v2/GM-33/FIGMA_PARITY.md"
       ],
       "inputs": [
         {
@@ -1397,32 +1413,32 @@
         {
           "task": "GM-27",
           "artifact": "mobile/src/features/result/services/resultRepository.ts",
-      "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-28",
           "artifact": "mobile/src/features/friends/services/socialRepository.ts",
-      "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-29",
           "artifact": "mobile/src/features/inbox/services/nativePush.ts",
-      "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-30",
           "artifact": "mobile/src/features/rooms/services/joinLinks.ts",
-      "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-31",
           "artifact": "mobile/src/data/local/outbox.ts",
-      "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-32",
           "artifact": "docs/evidence/roadmap-v2/GM-32/REGRESSION.md",
-      "gate": "merge"
+          "gate": "start"
         },
         {
           "task": "GM-07",
@@ -1453,7 +1469,8 @@
       "stage": "release",
       "outputs": [
         "docs/evidence/roadmap-v2/GM-34/RELEASE.md",
-        "docs/evidence/roadmap-v2/GM-34/CHECKS.md"
+        "docs/evidence/roadmap-v2/GM-34/CHECKS.md",
+        "docs/evidence/roadmap-v2/GM-34/FIGMA_PARITY.md"
       ],
       "inputs": [
         {
@@ -1480,7 +1497,8 @@
       "stage": "extension",
       "outputs": [
         "mobile/src/features/account/index.ts",
-        "docs/evidence/roadmap-v2/GM-35/CHECKS.md"
+        "docs/evidence/roadmap-v2/GM-35/CHECKS.md",
+        "docs/evidence/roadmap-v2/GM-35/FIGMA_PARITY.md"
       ],
       "inputs": [
         {
@@ -1644,7 +1662,7 @@
         "tool": "Expo Android mood UI + Postman/curl weather API + rank tests",
         "entrypoint": "Màn Context mood optional và weather-context theo public anchor/desiredAt",
         "expected": "UI mood opt-in/opt-out và weather source/timezone/observedAt/expiresAt/version hiện đúng; soft rank chỉ tập eligible.",
-        "cases": "timeout/stale/forecast-vs-observation; consent/TTL/opt-out; không override NO/REMOVE hoặc pool đã khóa; dish-only không bắt anchor/coverage/reset-ready, legacy kiểm riêng; Android thật gọi API: endpoint/auth/network/lifecycle và đối chiếu state server theo ma trận"
+        "cases": "timeout/stale/forecast-vs-observation; consent/TTL/opt-out; không override NO/REMOVE hoặc pool đã khóa; dish-only không bắt anchor/coverage/reset-ready, legacy kiểm riêng; Máy ảo Android (AVD) gọi API local thật: endpoint/auth/network/lifecycle và đối chiếu state server theo ma trận"
       }
     },
     {

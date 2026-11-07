@@ -47,10 +47,10 @@ Bảo trì GM-02: kiểm online → cập nhật package và sinh lockfile bằn
 | GM-02 | Sở hữu package/config/lockfile/runner; nghiệm thu cấu trúc/tooling, không tự đòi thiết bị để mở lại task nền |
 | GM-05, GM-09..14 | Components/màn mock trên Expo Go hỗ trợ SDK58; giữ state/interaction và nhãn mock; chưa cần API task sau |
 | GM-16 | Auth/session/SecureStore harness theo runtime task; HTTP máy tính không thay device |
-| GM-24..28 | Location/room/vote/result/social nối API thật trên Android; location native dùng provider/build phù hợp |
-| GM-29..31 | Push, QR/links, SQLite/outbox: shell Expo Go có capability guard; native kiểm development/native build hỗ trợ |
-| GM-33, GM-34 | QA Android và APK/release trên đúng SDK/build/API revision; đổi native package phải rebuild trước kiểm |
-| GM-35, GM-38 | P1/P2 có UI/API Android theo scope, nhận cùng baseline khi triển khai |
+| GM-24..28 | Location/room/vote/result/social nối API thật: **Chặng 3A kiểm bắt buộc trên Máy ảo Android (AVD) nối Backend local thật**, kèm `FIGMA_PARITY.md` và 7 chuẩn kỹ thuật chặn lỗi review; kiểm điện thoại thật qua USB tại GM-33/34 |
+| GM-29..31 | Push, QR/links, SQLite/outbox: shell Expo Go có capability guard; **Chặng 3A kiểm trên Máy ảo Android (AVD) nối Backend local thật** (dùng dev/simulated adapter có gắn nhãn cho FCM/Camera vật lý/Places billing key); kiểm điện thoại thật qua USB tại GM-33/34 |
+| GM-33, GM-34 | **Chặng 3B:** QA toàn diện trên **điện thoại Android thật qua cáp USB** (sau khi xong hết `GM-27..32` và dữ liệu `GM-08` + `GM-40`) và cài/smoke APK release trên đúng SDK/build/API revision; đổi native package phải rebuild trước kiểm |
+| GM-35, GM-38 | P1/P2 có UI/API Android theo scope (Chặng 3A kiểm trên Máy ảo Android AVD nối API thật), nhận cùng baseline khi triển khai |
 | GM-07, GM-15..23, GM-32 khi runner dùng mobile client/domain | Cài mobile dependencies theo lockfile nếu runner cần; không biến output API/domain thành yêu cầu mở Expo Go |
 | GM-00/01/03/04/06/08/36/37/39 | Không thêm nghiệm thu Expo: baseline/BE/Data/API draft/HTML theo AC hiện hành. GM-39 kiểm handoff Figma theo scope UI ngày 2026-10-25, không cần Expo |
 

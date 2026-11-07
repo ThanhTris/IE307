@@ -47,10 +47,10 @@ Task màn thêm route và feature file của mình, dùng components/repository 
 
 ## Trước merge
 
-1. Cập nhật ref nhánh đích; chạy `python scripts/task_readiness.py --task GM-XX --gate merge --base-ref origin/main`.
+1. Cập nhật ref nhánh đích; chạy `python scripts/task_readiness.py --task GM-XX --gate merge --base-ref origin/main --verify-outputs`. Theo nguyên tắc **Đầu ra Task == Điều kiện Merge (`Output == Merge Gate`)** và **`1 Task = 1 PR`** ngày 2026-11-07, task chưa đạt đủ đầu ra/test bắt buộc hoặc chạm sang file ownership của task chưa Done khác thì không đủ điều kiện merge.
 2. Kiểm cả start/merge dependencies đều Done trên Project, đúng scope/contract/manifest và nội dung output/HANDOFF trên target khớp local. Needs Update không đủ. Với supplement, reviewer vẫn kiểm artifact/AC mới trước khi chuyển task Done. Không bắt task Markdown/evidence Approved đồng bộ chỉ để nhận đầu vào. Checker không tự fetch, không chứng minh file chạy đúng hoặc thay việc kiểm PR/commit upstream thật.
 3. Điền PR/merge hoặc squash commit và artifact path trong [mẫu PR](../../.github/pull_request_template.md). Kiểm ancestry khi phù hợp; branch đã nhận đúng code, không chỉ bản ghi Done.
-4. Rebase/update/retarget stacked branch khi cần, diff chỉ scope mình; chạy tests tương ứng sau tích hợp. Task màn kiểm mock/visual; API/native/data kiểm đúng môi trường của chúng.
+4. Rebase/update/retarget stacked branch khi cần, diff chỉ scope mình (`1 Task = 1 PR`, không gộp nhiều task gây xung đột); chạy tests tương ứng sau tích hợp. Task màn mock kiểm trên Expo Go; task UI–API đơn lẻ (`GM-27..31`, `GM-35`, `GM-38`) ở **Chặng 3A** kiểm bắt buộc trên **Máy ảo Android (AVD) nối Backend local thật** kèm 7 chuẩn kỹ thuật chặn lỗi review và `FIGMA_PARITY.md`; kiểm thử trên **điện thoại Android thật qua cáp USB** thực hiện ở **Chặng 3B (`GM-33`, `GM-34`)** sau khi hoàn tất toàn bộ UI, API và Data (`GM-08` + `GM-40`).
 5. Trí kiểm AC, kể cả task Trí trực tiếp làm, và [DoD](DEFINITION_OF_DONE.md) cho revision hiện tại; Trí nghiệm thu/chuyển Done trên Project. AI không tự chuyển Done. Hồ sơ review là bằng chứng nên lưu; khi cập nhật Markdown thành done vẫn cần approval fields/evidence thật và sinh indexes. Không bắt bước đồng bộ Markdown này để mở downstream. Done không đồng nghĩa code đã vào target.
 6. Bàn giao [HANDOFF](../../tasks/templates/HANDOFF_TEMPLATE.md) và tag task nhận tiếp trong báo cáo/PR; thiếu đầu ra thì downstream vẫn bị chặn.
 

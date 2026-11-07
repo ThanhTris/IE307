@@ -287,6 +287,44 @@ class ReadinessTests(unittest.TestCase):
             self.assertEqual(gates.main(), 0)
         self.assertIn('BLOCKED', output.getvalue())
 
+    def test_verify_outputs_blocks_merge_when_current_task_outputs_missing_or_template(self):
+        self.approve_in_memory('GM-01')
+        self.source.files.remove('docs/evidence/roadmap-v2/GM-02/HANDOFF.md')
+        records = self.records()
+        # Without --verify-outputs, GM-02 merge gate only checks upstream GM-01 on base
+        self.assertEqual(
+            gates.readiness(self.source, records, 'GM-02', 'merge', self.source, verify_outputs=False),
+            ('READY_FOR_MERGE_REVIEW', []),
+        )
+        # With --verify-outputs, missing GM-02 outputs/HANDOFF blocks merge
+        state, reasons = gates.readiness(self.source, records, 'GM-02', 'merge', self.source, verify_outputs=True)
+        self.assertEqual(state, 'BLOCKED_TASK_OUTPUTS')
+        self.assertTrue(any('missing delivered artifact' in r for r in reasons))
+        # Deliver GM-02 files in memory, then inject a template placeholder into CHECKS.md
+        deliver_in_memory(self.source, 'GM-02')
+        checks_path = 'docs/evidence/roadmap-v2/GM-02/CHECKS.md'
+        self.source.contents[checks_path] = 'Status: Pending execution\n<commit_sha>\n'
+        state, reasons = gates.readiness(self.source, self.records(), 'GM-02', 'merge', self.source, verify_outputs=True)
+        self.assertEqual(state, 'BLOCKED_TASK_OUTPUTS')
+        self.assertTrue(any('unfilled template placeholder' in r for r in reasons))
+        # Replace with real content -> READY_FOR_MERGE_REVIEW
+        self.source.contents[checks_path] = '# CHECKS — GM-02\nAll structural checks passed.\n'
+        self.assertEqual(
+            gates.readiness(self.source, self.records(), 'GM-02', 'merge', self.source, verify_outputs=True),
+            ('READY_FOR_MERGE_REVIEW', []),
+        )
+        # 1-Task-1-PR ownership guard: if GM-02 PR modifies/adds an output of unfinished GM-29, block merge
+        base = MemorySource(controlled_statuses=True)
+        base.contents.update(self.source.contents)
+        base.files.update(self.source.files)
+        self.source.files.add('mobile/src/features/inbox/services/nativePush.ts')
+        self.source.contents['mobile/src/features/inbox/services/nativePush.ts'] = '// bundled GM-29 file'
+        base.files.discard('mobile/src/features/inbox/services/nativePush.ts')
+        base.contents.pop('mobile/src/features/inbox/services/nativePush.ts', None)
+        state, reasons = gates.readiness(self.source, self.records(), 'GM-02', 'merge', base, verify_outputs=True)
+        self.assertEqual(state, 'BLOCKED_TASK_OUTPUTS')
+        self.assertTrue(any('1-Task-1-PR ownership conflict' in r and 'GM-29' in r for r in reasons))
+
 
 if __name__ == '__main__':
     unittest.main()
