@@ -4,7 +4,7 @@ import { createAuthenticatedApiClient, createSecureSessionStorage } from '../dat
 import { createApiClient } from '../data/api';
 import type { SessionIssue, SessionSnapshot, SessionStatus } from '../features/rooms/services/sessionState';
 import type { SessionUser } from '../data/api/contracts';
-import { clearVoteSession } from '../features/voting/services/voteSessionState';
+import { clearPrivateHistoryCache } from '../features/history/services/historyRepository';
 import {
   LiveRoomRepository,
   createDurableRequestId,
@@ -58,6 +58,7 @@ export function RoomRepositoryProvider({
         publicKey,
         storage,
         clearPrivateData: async () => {
+          clearPrivateHistoryCache();
           try {
             await SecureStore.deleteItemAsync(PRIVATE_CACHE_KEY);
           } catch {
@@ -99,9 +100,7 @@ export function RoomRepositoryProvider({
   }, [repository]);
 
   const logout = useCallback(async (): Promise<boolean> => {
-    const identityId = repository.getSessionSnapshot().user?.id;
     const result = await repository.logout();
-    if (result.ok && identityId) clearVoteSession(identityId);
     return result.ok;
   }, [repository]);
 
