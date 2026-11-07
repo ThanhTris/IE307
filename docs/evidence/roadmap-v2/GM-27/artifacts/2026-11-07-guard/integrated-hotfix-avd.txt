@@ -1,0 +1,17 @@
+GM-27 integrated preference-hotfix AVD follow-up
+Date: 2026-11-07
+Device: Medium_Phone_API_37.0, Android API 37
+Runtime: Expo Go 58.0.5
+Backend: owned QA gm27-avd-0040-20261107, API 55000 / DB 55001
+
+Observed flow:
+1. Expo Go loaded the app from local Metro.
+2. A fresh synthetic guest session was created.
+3. The app created a live QA room and read snapshots.
+4. Selecting Cay reached the real update_preferences RPC. QA database readback showed room_preferences.flavor.spicy.present=true.
+5. Reloading the screen left Cay selected, but the app did not show a clear completed-save transition or progress to Lobby/result.
+6. Setup still displayed “Mô phỏng · thiết lập phòng · dữ liệu mẫu” during live QA use; track as a GM-25 consumer label/progression finding.
+
+Not run on this AVD: result screen, Top 1/2/3, ties, either NO_CONSENSUS terminal, RESULT_NOT_READY recovery, retry/reconnect across terminal state, room/account switch, Places states, 320/360/412dp Figma parity, 200% font scaling, TalkBack.
+
+No durable screenshot/log artifact for this run was captured into repository evidence. Screenshots were visible during interactive inspection only; therefore they are not reviewable artifacts for merge. Chặng 3A remains incomplete.

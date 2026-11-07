@@ -31,3 +31,9 @@ also applies to the mock celebration. Real artwork defaults to scale1 and
 is not zoomed automatically. Source PNG bytes and extraction remain unchanged.
 Pixel alpha/ink and rendered proportions must be checked independently from
 Jest's native Image mock. Native same-viewport acceptance remains step7.
+
+The six `rank-{1,2,3}-{base,laurel}.svg` files are the original static podium
+layers exported from Figma node `118:5216`. The tied variant `617:1671` reuses
+those layers. The app scales their enclosing view to fit the columns, keeps all
+three rank pedestals visible, and highlights the server-selected winner on its
+dish artwork. Dishes remain grouped under their server-provided dense rank.
