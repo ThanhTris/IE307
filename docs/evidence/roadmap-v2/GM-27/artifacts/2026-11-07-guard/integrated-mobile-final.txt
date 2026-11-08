@@ -1,0 +1,12 @@
+GM-27 full mobile verification after local hotfix integration
+Date: 2026-11-07
+Worktree: gm27-integrated-20261107, based on PR #157 1a95bb7
+Command: npm test -- --testTimeout=20000 (mobile/)
+Result: 70/70 suites, 1305/1305 tests passed; 429.078 seconds.
+Additional focused tests: 5 suites, 201/201 passed.
+Python GM-27 wire-schema oracle: 2/2 passed.
+Full repository Python regression: 664 tests, 2 skipped, 0 failed.
+Repository validator: passed.
+Task documentation checker: passed.
+git diff --check: passed.
+Earlier default-timeout run: one votingScreens.test.tsx timeout; isolated rerun of that file passed 29/29. The full rerun above passed.

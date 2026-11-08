@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react-native';
+import { fireEvent, render, screen, within } from '@testing-library/react-native';
 import { DishResultPreview } from '../../src/bootstrap/DishResultPreview';
 import { completeNativeAnimations } from '../helpers/completeNativeAnimations';
 
@@ -22,7 +22,7 @@ test.each(['Lỗi tải kết quả', 'Chưa xác nhận kết quả', 'Kết qu
   expect(screen.getByLabelText('Bảng xếp hạng món ăn')).toBeOnTheScreen();
   await press('Chạm để bỏ qua');
   expect(screen.queryByRole('button', { name: 'Chạm để bỏ qua' })).toBeNull();
-  expect(screen.getByText('Món được chọn · Phở bò tái nạm')).toBeOnTheScreen();
+  expect(within(screen.getByTestId('podium-group-1')).getByLabelText(/Phở bò tái nạm.* · Món chiến thắng$/)).toBeOnTheScreen();
   await press('Tình huống kiểm thử kết quả');
   await fireEvent.changeText(screen.getByLabelText('Tìm tình huống kết quả'), 'Lỗi tải quán');
   await press('Quán · Lỗi tải quán');

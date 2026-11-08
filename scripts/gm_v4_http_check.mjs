@@ -30,8 +30,13 @@ const apiPort=qaMode==='gm03'?manifest.endpoint.apiPort:54361;
 assert.equal(new URL(base).port,String(apiPort),'QA API must use its explicitly owned port');
 if(qaMode==='gm03')assert.equal(base,manifest.endpoint.baseUrl,'QA API origin must match the sealed manifest');
 const policyVersion='dish-decision-v4/ADR-019-30PCT-MIN1', pref={cuisineIds:[],categoryIds:[],temperature:null,flavor:null,budget:null,avoidRecent:false};
+const spicyPref={...pref,flavor:{
+ spicy:{present:true,intensity:'high'},salty:{present:null,intensity:'unknown'},
+ sweet:{present:false,intensity:'none'},sour:{present:false,intensity:'none'},
+}};
 const results=[];const users=[];const contractSamples=[];
 function sqlRaw(q){return execFileSync('docker',['exec','-i',container,'psql','-X','-q','-U','postgres','-d','postgres','-v','ON_ERROR_STOP=1','-At','-c',q],{encoding:'utf8'}).trim();}
+function sqlScript(source){return execFileSync('docker',['exec','-i',container,'psql','-X','-q','-U','postgres','-d','postgres','-v','ON_ERROR_STOP=1'],{encoding:'utf8',input:source}).trim();}
 function sql(q){const inspected=JSON.parse(execFileSync('docker',['inspect',container],{encoding:'utf8'}))[0];const labels=inspected.Config.Labels||{};assert.equal(inspected.Name,'/'+container);assert.equal(labels['com.supabase.cli.project'],project);assert.equal(String(labels['com.supabase.cli.workdir']||'').replaceAll('\\','/').toLowerCase(),String(expectedWorkdir).replaceAll('\\','/').toLowerCase());assert.equal(inspected.State.Running,true);const owner=qaMode==='gm03'?sqlRaw("select owner_uuid::text from gm03_qa_private.owner_manifest where run_id='"+manifest.runId.replaceAll("'","''")+"';"):sqlRaw('select namespace::text from public.gm40_qa_owner');assert.equal(owner,qaMode==='gm03'?manifest.ownerUuid:process.env.GM_V4_OWNER_NAMESPACE,'QA owner marker must match this run');return sqlRaw(q);}
 async function guest(name){const r=await fetch(base+'/auth/v1/signup',{method:'POST',headers:{apikey:key,'content-type':'application/json'},body:JSON.stringify({data:{display_name:name,gm07_v4_qa:project}})});const b=await r.json();assert.equal(r.status,200,'guest signup failed '+r.status);assert.ok(b.access_token);const u={id:b.user.id,token:b.access_token,refresh:b.refresh_token};users.push(u);return u;}
 async function api(u,command,args={},options={}){const payload={contractVersion,...args},request={command,payload};const r=await fetch(base+'/rest/v1/rpc/dish_session',{method:'POST',headers:{apikey:key,...(u?{authorization:'Bearer '+u.token}:{}),'content-type':'application/json'},body:options.serialize?options.serialize(request):JSON.stringify(request)});let body;try{body=await r.json();}catch{body={};}contractSamples.push({request,response:body,...(options.requestValid===false?{requestValid:false}:{})});return {status:r.status,body};}
@@ -41,7 +46,7 @@ function expectOk(response,name){assert.equal(response.status,200,name+' http '+
 function expectFail(response,code,status,name){assert.equal(response.status,status,name+' http '+response.status);assert.equal(response.body.ok,false,name+' unexpected success');assert.equal(response.body.error?.messageKey,code,name+' error code');results.push({case:name,result:'Pass',expected:{status,code},actual:{status:response.status,code:response.body.error.messageKey,details:response.body.error.details??{}}});console.log('PASS',name);return response.body.error;}
 function requestId(prefix){return prefix+'-'+Date.now()+'-'+randomUUID().slice(0,8);}
 async function waitWorker(){for(let i=0;i<30;i++){if(sql("select exists(select 1 from dish_v4_private.runtime where last_tick>clock_timestamp()-interval '15 seconds')")==='t'){results.push({case:'v4 worker heartbeat verified',result:'Pass',expected:true,actual:true});return;}await new Promise(r=>setTimeout(r,1000));}throw new Error('QA v4 worker did not become ready');}
-async function create(u,count=10,meal='lunch'){return expectOk(await api(u,'create',{requestId:requestId('create'),displayName:'QA host',settings:{dishCount:count,mealSlot:meal,desiredAt:null},preferences:pref}),'create');}
+async function create(u,count=10,meal='lunch',preferences=pref){return expectOk(await api(u,'create',{requestId:requestId('create'),displayName:'QA host',settings:{dishCount:count,mealSlot:meal,desiredAt:null},preferences}),'create');}
 async function snapshot(u,roomId){return expectOk(await api(u,'snapshot',{roomId}),'snapshot');}
 async function join(u,code,name){return expectOk(await api(u,'join',{requestId:requestId('join'),code,displayName:name}),'join');}
 function votesFor(pool,fn){return pool.map((d,i)=>({roundDishId:d.roundDishId,choice:fn(d,i)}));}
@@ -78,16 +83,22 @@ await setActive(syntheticRelease);
 // Default preference is account-scoped; room copy is member-only and ranking is explicitly unsupported.
 const before=expectOk(await api(member,'getDefaultPreferences'),'default preferences initial');
 pass('default preference initial revision',0,before.revision);
-const chosen={...pref,temperature:'warm'};
+const chosen={...spicyPref,temperature:'warm'};
 const prefAck=expectOk(await api(member,'updateDefaultPreferences',{requestId:requestId('default-pref'),expectedRevision:0,preferences:chosen}),'update default preferences');
 pass('default preference increments caller revision',1,prefAck.revision);
-const made=await create(host,10,'lunch');const roomId=made.roomId,code=made.code;
+const defaultSpicy=expectOk(await api(member,'getDefaultPreferences'),'default preference spicy readback');
+pass('account preference stores explicit spicy selection',spicyPref.flavor,defaultSpicy.preferences.flavor);
+expectFail(await api(member,'updateDefaultPreferences',{requestId:requestId('default-pref-invalid'),expectedRevision:defaultSpicy.revision,preferences:{...spicyPref,flavor:{spicy:spicyPref.flavor.spicy,salty:spicyPref.flavor.salty,sweet:spicyPref.flavor.sweet}}},{requestValid:false}),'INVALID_INPUT',400,'account preference rejects missing flavor axis');
+pass('invalid account preference does not change revision',defaultSpicy.revision,expectOk(await api(member,'getDefaultPreferences'),'account preference after invalid payload').revision);
+const made=await create(host,10,'lunch',spicyPref);const roomId=made.roomId,code=made.code;
 const preview=expectOk(await api(member,'previewJoin',{requestId:requestId('preview'),code}),'preview join');
 pass('preview contains admission summary, not roster',false,Object.hasOwn(preview,'members'));
 pass('preview joinable',true,preview.joinable);
 const joined=await join(member,code,'QA member');
 const s1=await snapshot(host,roomId);
+pass('room creation stores explicit spicy preference',spicyPref.flavor,s1.ownPreferences.flavor);
 pass('join snapshots member default preference','warm',s1.members.find(m=>m.userId===member.id) ? (await snapshot(member,roomId)).ownPreferences.temperature : null);
+pass('join snapshots member default flavor preference',spicyPref.flavor,(await snapshot(member,roomId)).ownPreferences.flavor);
 pass('room reports ranking unsupported','UNSUPPORTED',s1.preferenceRanking);
 pass('snapshot contains no ready field',false,s1.members.some(m=>Object.hasOwn(m,'ready')));
 
@@ -239,9 +250,18 @@ let s3=await snapshot(host,roomId);pass('pool contains exact requested 10',10,s3
 expectFail(await api(host,'updateSettings',{requestId:requestId('settings'),roomId,expectedVersion:s3.version,settings:{dishCount:21,mealSlot:'lunch',desiredAt:null}},{requestValid:false}),'INVALID_INPUT',400,'dish count 21 rejected');
 const prefAckRoom=expectOk(await api(host,'updatePreferences',{requestId:requestId('room-pref'),roomId,expectedVersion:s3.version,preferences:{...pref,temperature:'cold'}}),'update room preferences');
 const s4=await snapshot(host,roomId);pass('room preference change increments room version',s3.version+1,s4.version);pass('own preference is room-scoped','cold',s4.ownPreferences.temperature);
+const spicyRoomRequest={requestId:requestId('room-pref-spicy'),roomId,expectedVersion:s4.version,preferences:spicyPref};
+const spicyRoomAck=expectOk(await api(host,'updatePreferences',spicyRoomRequest),'update room preferences with spicy selection');
+const s4Spicy=await snapshot(host,roomId);
+pass('room preference stores explicit spicy selection',spicyPref.flavor,s4Spicy.ownPreferences.flavor);
+pass('room preference mutation increments version once',s4.version+1,s4Spicy.version);
+pass('room preference exact retry replays identical ACK',spicyRoomAck,expectOk(await api(host,'updatePreferences',spicyRoomRequest),'room preference exact retry'));
+expectFail(await api(host,'updatePreferences',{requestId:requestId('room-pref-invalid'),roomId,expectedVersion:s4Spicy.version,preferences:{...spicyPref,flavor:{spicy:spicyPref.flavor.spicy}}},{requestValid:false}),'INVALID_INPUT',400,'room preference rejects malformed flavor object');
+const afterInvalidRoomPreference=await snapshot(host,roomId);
+pass('invalid room preference preserves version and saved flavor',{version:s4Spicy.version,flavor:spicyPref.flavor},{version:afterInvalidRoomPreference.version,flavor:afterInvalidRoomPreference.ownPreferences.flavor});
 
 // Start requires joined members only: there is no ready action in the v4 protocol.
-const started=expectOk(await api(host,'start',{requestId:requestId('start'),roomId,expectedVersion:s4.version}),'host starts');
+const started=expectOk(await api(host,'start',{requestId:requestId('start'),roomId,expectedVersion:s4Spicy.version}),'host starts');
 pass('host starts without ready state','ROUND_1',started.state);pass('start roster size',2,started.memberCount);
 let current=await snapshot(host,roomId);const pool=current.pool;
 const hostVotes=votesFor(pool,(d,i)=>i===0?'WANT':i===1?'OK':'OK');
@@ -433,6 +453,39 @@ expectFail(overflow2,'ROOM_FULL',409,'21st member rejected');
 const inbox=await fetch(base+'/rest/v1/rpc/list_partner_inbox',{method:'POST',headers:{apikey:key,authorization:'Bearer '+member.token,'content-type':'application/json'},body:JSON.stringify({cursor:null})});
 const inboxBody=await inbox.json();pass('inbox API callable for authenticated member',200,inbox.status);
 
+// Exercise a real 0039 -> 0040 upgrade with account and room preferences
+// already stored. The old helper is restored only inside this owned QA DB;
+// the forward migration is then applied from its checked-in source.
+const migration0040='supabase/migrations/0040_v4_preference_validation.sql';
+const migration0040Text=readFileSync(migration0040,'utf8');
+const fixedPreferenceFunctionBody=migration0040Text.match(/create or replace function dish_v4_private\.valid_preferences\(value jsonb\)[\s\S]*?as \$\$([\s\S]*?)\$\$;/i)?.[1];
+assert.ok(fixedPreferenceFunctionBody,'Migration 0040 must define the updated preference validator');
+const expectedPreferenceBodyHash=createHash('sha256').update(fixedPreferenceFunctionBody.replaceAll('\r\n','\n').trim()).digest('hex');
+const oldPreferenceFunction=readFileSync('supabase/migrations/0027_dish_session_v4.sql','utf8')
+ .match(/create function dish_v4_private\.valid_preferences\(value jsonb\)[\s\S]*?\$\$;/i)?.[0];
+assert.ok(oldPreferenceFunction,'The original GM-07.B preference validator must be available for the upgrade fixture');
+assert.match(oldPreferenceFunction,/select key,value from jsonb_each\(value->'flavor'\)/,'Upgrade fixture must stage the actual pre-fix function body');
+const installedAtBefore=sql("select installed_at::text from public.schema_versions where schema_version='0.16.1' and contract_id='dish-session-v4/roadmap-v2/GM-07.B'");
+assert.match(installedAtBefore,/^\d{4}-\d{2}-\d{2} /,'The installed timestamp must be captured before staging the upgrade');
+const accountBeforeUpgrade=expectOk(await api(member,'getDefaultPreferences'),'account preference before migration upgrade');
+const roomBeforeUpgrade=await snapshot(host,roomId);
+const roomStateBeforeUpgrade={version:roomBeforeUpgrade.version,flavor:roomBeforeUpgrade.ownPreferences.flavor};
+const helperMetadataBefore=sql("select p.oid::text||'|'||p.proargnames::text||'|'||p.provolatile::text||'|'||p.prosecdef::text||'|'||coalesce(array_to_string(p.proconfig,','),'')||'|'||coalesce(p.proacl::text,'')||'|'||pg_get_userbyid(p.proowner) from pg_proc p where p.oid='dish_v4_private.valid_preferences(jsonb)'::regprocedure");
+const stagedOldFunction=oldPreferenceFunction.replace(/^create function/i,'create or replace function');
+sqlScript(`begin; delete from public.schema_versions where schema_version='0.16.1' and contract_id='dish-session-v4/roadmap-v2/GM-07.B'; ${stagedOldFunction} commit;`);
+pass('upgrade fixture stages database at schema 0039','0',sql("select count(*) from public.schema_versions where schema_version='0.16.1'"));
+sqlScript(migration0040Text);
+sql("update public.schema_versions set installed_at='"+installedAtBefore.replaceAll("'","''")+"'::timestamptz where schema_version='0.16.1' and contract_id='dish-session-v4/roadmap-v2/GM-07.B'");
+pass('forward upgrade installs schema 0.16.1 exactly once','1',sql("select count(*) from public.schema_versions where schema_version='0.16.1' and contract_id='dish-session-v4/roadmap-v2/GM-07.B' and upstream_revision='GM07.B/0040_v4_preference_validation'"));
+pass('forward upgrade restores original schema install timestamp',installedAtBefore,sql("select installed_at::text from public.schema_versions where schema_version='0.16.1' and contract_id='dish-session-v4/roadmap-v2/GM-07.B'"));
+const accountAfterUpgrade=expectOk(await api(member,'getDefaultPreferences'),'account preference after migration upgrade');
+const roomAfterUpgrade=await snapshot(host,roomId);
+pass('forward upgrade preserves stored account preference',accountBeforeUpgrade,accountAfterUpgrade);
+pass('forward upgrade preserves stored room preference and version',roomStateBeforeUpgrade,{version:roomAfterUpgrade.version,flavor:roomAfterUpgrade.ownPreferences.flavor});
+pass('forward upgrade retains validator signature, owner, volatility, search_path and grants',helperMetadataBefore,sql("select p.oid::text||'|'||p.proargnames::text||'|'||p.provolatile::text||'|'||p.prosecdef::text||'|'||coalesce(array_to_string(p.proconfig,','),'')||'|'||coalesce(p.proacl::text,'')||'|'||pg_get_userbyid(p.proowner) from pg_proc p where p.oid='dish_v4_private.valid_preferences(jsonb)'::regprocedure"));
+pass('forward migration keeps helper private to server roles','false',sql("select bool_or(has_function_privilege(r.role_name,'dish_v4_private.valid_preferences(jsonb)','execute'))::text from (values('anon'),('authenticated'),('service_role'),('gm06_publisher')) r(role_name)"));
+pass('forward migration installs exact validator body from migration source',expectedPreferenceBodyHash,sql("select encode(extensions.digest(convert_to(btrim(p.prosrc,chr(10)||chr(13)||chr(9)||' '),'UTF8'),'sha256'),'hex') from pg_proc p where p.oid='dish_v4_private.valid_preferences(jsonb)'::regprocedure"));
+
 const schemaCheck=spawnSync(process.env.GM_V4_PYTHON||'python',['scripts/validate_dish_v4_schema.py','--schema','docs/architecture/schemas/dish-session-v4b.schema.json','--stdin'],{cwd:root,encoding:'utf8',input:JSON.stringify(contractSamples),maxBuffer:2*1024*1024});
 assert.equal(schemaCheck.status,0,'Actual GM-07.B HTTP request/response samples failed JSON Schema 2020-12 validation: '+(schemaCheck.stderr||'').slice(0,1200));
 const schemaSummary=JSON.parse(schemaCheck.stdout);assert.equal(schemaSummary.result,'Pass');
@@ -446,7 +499,8 @@ const sourceHashes=Object.fromEntries(hashedPaths.map(path=>[path,createHash('sh
 const schemaVersion=sql("select schema_version from public.schema_versions where schema_version='0.9.2' and contract_id='dish-session-v4/roadmap-v2/GM-07.B'");
 assert.equal(schemaVersion,'0.9.2','QA must include the consent policy isolation migration');
 if(qaMode==='gm03')assert.equal(manifest.schemaVersion,schemaVersion,'Manifest must match the deployed schema patch');
-const report={result:'Pass',runId:qaMode==='gm03'?manifest.runId:project,target:'dedicated Supabase QA project '+project,branch:qaMode==='gm03'?manifest.branch:(process.env.GITHUB_REF_NAME||'local'),sha:revision,contractVersion,policyVersion,schemaVersion,schemaSha256:sourceHashes['docs/architecture/schemas/dish-session-v4b.schema.json'],sourceHashes,dataset:{realRelease,realSourceSha256,realCount,realMealCounts:{breakfast:mealCount('breakfast'),lunch:mealCount('lunch'),dinner:mealCount('dinner'),snack:mealCount('snack')},syntheticRelease,syntheticSha256,syntheticCount,syntheticFixtureOnly},schemaValidation:schemaSummary,caseCount:results.length,cases:results,credentialsWritten:false,applicationDatabaseChanged:false};
+const databaseSchemaVersion=sql("select schema_version from public.schema_versions where schema_version='0.16.1' and contract_id='dish-session-v4/roadmap-v2/GM-07.B' and upstream_revision='GM07.B/0040_v4_preference_validation'");
+const report={result:'Pass',runId:qaMode==='gm03'?manifest.runId:project,target:'dedicated Supabase QA project '+project,branch:qaMode==='gm03'?manifest.branch:(process.env.GITHUB_REF_NAME||'local'),sha:revision,contractVersion,policyVersion,schemaVersion,databaseSchemaVersion,schemaSha256:sourceHashes['docs/architecture/schemas/dish-session-v4b.schema.json'],sourceHashes,dataset:{realRelease,realSourceSha256,realCount,realMealCounts:{breakfast:mealCount('breakfast'),lunch:mealCount('lunch'),dinner:mealCount('dinner'),snack:mealCount('snack')},syntheticRelease,syntheticSha256,syntheticCount,syntheticFixtureOnly},schemaValidation:schemaSummary,caseCount:results.length,cases:results,credentialsWritten:false,applicationDatabaseChanged:false};
 report.settingsSupplement={contract:'dish-session-v4/roadmap-v2/GM-19.2',schemaVersion:'0.11.1',migration:settingsMigration,migrationSha256:sourceHashes[settingsMigration],requestResponseSamples:contractSamples.filter(x=>x.request.command==='updateSettings')};
 const reportPath=qaMode==='ci'&&process.env.GM_V4_REPORT_PATH?process.env.GM_V4_REPORT_PATH:resolve(qa,'api-check-results.json');
 await writeFile(reportPath,JSON.stringify(report,null,2)+'\n','utf8');

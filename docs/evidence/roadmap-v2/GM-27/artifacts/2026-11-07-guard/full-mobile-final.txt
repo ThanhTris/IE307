@@ -1,0 +1,11 @@
+GM-27 full mobile rerun
+Date: 2026-11-07
+Worktree HEAD: 1a95bb7 (working tree included the existing GM-27 patch)
+Command: npm.cmd test -- --testTimeout=20000
+Working directory: mobile/
+Result: PASS
+Test suites: 70 passed / 70 total
+Tests: 1305 passed / 1305 total
+Elapsed: 435.614 seconds
+
+This supersedes the earlier historical 1268/1269 run documented in full-mobile.txt.
