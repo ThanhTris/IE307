@@ -7,8 +7,13 @@ import type * as ExpoNotifications from 'expo-notifications';
 const DEVICE_ID_KEY = 'gcd.push.device-id.v1';
 const TOKEN_KEY = 'gcd.push.expo-token.v1';
 const ACKED_TOKEN_KEY = 'gcd.push.expo-token-acked.v1';
+const REGISTRATION_ENABLED_PREFIX = 'gcd.push.registration-enabled.v1.';
+const CONSUMED_RESPONSES_KEY = 'gcd.push.consumed-responses.v1';
 const ANDROID_CHANNEL_ID = 'gcd-room-updates';
 const simulatedTapListeners = new Set<(eventKey: string) => void>();
+const consumedResponseKeys = new Set<string>();
+let consumedResponseQueue: Promise<void> = Promise.resolve();
+let simulatedResponseSequence = 0;
 let notificationsModule: typeof ExpoNotifications | undefined;
 
 function loadNotifications(): typeof ExpoNotifications {
@@ -91,6 +96,16 @@ export const expoPushDriver: NativePushDriver = {
       : current.status === 'denied' ? 'denied' : 'unknown';
   },
   getDeviceId: stableDeviceId,
+  async getRegistrationEnabled(identityId, deviceId) {
+    if (!identityId || !deviceId) return false;
+    return await SecureStore.getItemAsync(`${REGISTRATION_ENABLED_PREFIX}${identityId}.${deviceId}`) === 'true';
+  },
+  async setRegistrationEnabled(identityId, deviceId, enabled) {
+    if (!identityId || !deviceId) return;
+    const key = `${REGISTRATION_ENABLED_PREFIX}${identityId}.${deviceId}`;
+    if (enabled) await SecureStore.setItemAsync(key, 'true', { keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY });
+    else await SecureStore.deleteItemAsync(key);
+  },
   async getPushToken() {
     if (!available()) return undefined;
     return expoToken();
@@ -101,7 +116,8 @@ export const expoPushDriver: NativePushDriver = {
   },
   simulateNotificationTap() {
     if (!__DEV__) return false;
-    for (const listener of simulatedTapListeners) listener('dev-simulated-notice:default');
+    const key = `dev-simulated-notice:${Date.now()}:${++simulatedResponseSequence}`;
+    for (const listener of simulatedTapListeners) listener(key);
     return simulatedTapListeners.size > 0;
   },
   onTokenRefresh(listener) {
@@ -127,12 +143,22 @@ export const expoPushDriver: NativePushDriver = {
   },
   onNotificationTap(listener) {
     let active = true;
-    let lastResponseKey: string | undefined;
     let subscription: { remove(): void } | undefined;
     const handleKey = (key: string) => {
-      if (!active || key === lastResponseKey) return;
-      lastResponseKey = key;
-      listener();
+      if (!active || consumedResponseKeys.has(key)) return;
+      consumedResponseQueue = consumedResponseQueue.then(async () => {
+        if (!active || consumedResponseKeys.has(key)) return;
+        const stored = await SecureStore.getItemAsync(CONSUMED_RESPONSES_KEY).catch(() => null);
+        let keys: string[] = [];
+        try { const parsed = stored ? JSON.parse(stored) : []; if (Array.isArray(parsed)) keys = parsed.filter((value): value is string => typeof value === 'string'); } catch { /* ignore malformed cache */ }
+        if (keys.includes(key)) { consumedResponseKeys.add(key); return; }
+        consumedResponseKeys.add(key);
+        keys.push(key);
+        await SecureStore.setItemAsync(CONSUMED_RESPONSES_KEY, JSON.stringify(keys.slice(-100)), {
+          keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
+        }).catch(() => undefined);
+        if (active) listener();
+      }).catch(() => undefined);
     };
     const handle = (response: ExpoNotifications.NotificationResponse | null) => {
       if (!active || !response) return;
@@ -153,6 +179,8 @@ export const expoPushDriver: NativePushDriver = {
 };
 
 export async function clearPushRegistrationSecrets(): Promise<void> {
+  // Device and token values are preserved on failed unregister; callers invoke
+  // this only after server ACK. Identity markers are disabled by the service.
   await Promise.all([
     SecureStore.deleteItemAsync(DEVICE_ID_KEY),
     SecureStore.deleteItemAsync(TOKEN_KEY),

@@ -123,18 +123,39 @@ describe('GM-29 Expo native push driver', () => {
     const stop = expoPushDriver.onNotificationTap(listener);
     await Promise.resolve();
     mockState.tap?.(response);
+    await new Promise(resolve => setTimeout(resolve, 0));
     expect(listener).toHaveBeenCalledTimes(1);
     stop();
   });
 
-  test('dev simulated tap is duplicate-safe and disabled after subscription cleanup', () => {
+  test('each intentional dev simulated tap fires once and listener cleanup stops future taps', async () => {
     const listener = jest.fn();
     const stop = expoPushDriver.onNotificationTap(listener);
     expect(expoPushDriver.simulateNotificationTap?.()).toBe(true);
     expect(expoPushDriver.simulateNotificationTap?.()).toBe(true);
-    expect(listener).toHaveBeenCalledTimes(1);
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(listener).toHaveBeenCalledTimes(2);
     stop();
     expect(expoPushDriver.simulateNotificationTap?.()).toBe(false);
-    expect(listener).toHaveBeenCalledTimes(1);
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(listener).toHaveBeenCalledTimes(2);
+  });
+
+  test('does not reprocess the same saved OS response after switching subscriptions', async () => {
+    const listenerA = jest.fn();
+    const response = { notification: { request: { identifier: 'account-switch-notice', content: { data: {} } } }, actionIdentifier: 'default' };
+    mockState.lastResponse = response;
+    const stopA = expoPushDriver.onNotificationTap(listenerA);
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(listenerA).toHaveBeenCalledTimes(1);
+    stopA();
+
+    const listenerB = jest.fn();
+    const stopB = expoPushDriver.onNotificationTap(listenerB);
+    await new Promise(resolve => setTimeout(resolve, 0));
+    mockState.tap?.(response);
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(listenerB).not.toHaveBeenCalled();
+    stopB();
   });
 });

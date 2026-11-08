@@ -110,6 +110,7 @@ export function RoomRepositoryProvider({
           const push = createNativePushService({
             driver: expoPushDriver,
             client: repository.getApiClient(),
+            identityId: repository.getCurrentUser()?.id,
             refreshInbox: async () => undefined,
           });
           // Queue unregister behind token refresh when possible; network failure must not block local logout.

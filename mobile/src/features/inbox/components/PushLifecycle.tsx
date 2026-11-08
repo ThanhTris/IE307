@@ -23,6 +23,7 @@ export function PushLifecycle() {
     const service = createNativePushService({
       driver: expoPushDriver,
       client: repository.getApiClient(),
+      identityId: userId,
       isIdentityCurrent,
       refreshInbox: async () => {
         const restored = await repository.restoreSession();

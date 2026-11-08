@@ -47,6 +47,7 @@ export function PushSettingsScreen({ repository, onHome, onInbox }: {
     const service = createNativePushService({
       driver: expoPushDriver,
       client: repository.getApiClient(),
+      identityId: userId,
       isIdentityCurrent,
       refreshInbox: async () => undefined,
     });
@@ -80,6 +81,7 @@ export function PushSettingsScreen({ repository, onHome, onInbox }: {
         const service = createNativePushService({
           driver: expoPushDriver,
           client: repository.getApiClient(),
+          identityId: userId,
           isIdentityCurrent,
           refreshInbox: async () => undefined,
         });

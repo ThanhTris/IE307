@@ -155,4 +155,96 @@ describe('GM-29 push orchestration', () => {
     await new Promise(resolve => setTimeout(resolve, 0));
     expect(registerPushDevice).toHaveBeenCalledTimes(1);
   });
+
+  test('does not register when identity changes while permission is being checked', async () => {
+    let resolvePermission: ((permission: 'granted') => void) | undefined;
+    let active = true;
+    const registerPushDevice = jest.fn();
+    const service = createNativePushService({
+      driver: driver({ requestPermission: () => new Promise(resolve => { resolvePermission = resolve; }) }),
+      client: { registerPushDevice } as unknown as ApiClient,
+      refreshInbox: jest.fn(),
+      isIdentityCurrent: () => active,
+    });
+    const pending = service.register();
+    active = false;
+    resolvePermission?.('granted');
+    expect(await pending).toEqual({ status: 'failed', error: 'IDENTITY_CHANGED' });
+    expect(registerPushDevice).not.toHaveBeenCalled();
+  });
+
+  test('foreground token refresh retries a server registration failure', async () => {
+    const registerPushDevice = jest.fn()
+      .mockResolvedValueOnce({ ok: false, error: { messageKey: 'NETWORK_ERROR' } })
+      .mockResolvedValueOnce({ ok: true, data: undefined });
+    let refreshToken: ((token: string) => void) | undefined;
+    const service = createNativePushService({
+      driver: driver({ onTokenRefresh: listener => { refreshToken = listener; return () => { refreshToken = undefined; }; } }),
+      client: { registerPushDevice, unregisterPushDevice: jest.fn() } as unknown as ApiClient,
+      refreshInbox: jest.fn(),
+    });
+    expect(await service.register()).toEqual({ status: 'failed', error: 'NETWORK_ERROR' });
+    service.subscribe();
+    refreshToken?.('foreground-token');
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(registerPushDevice).toHaveBeenCalledTimes(2);
+    expect(registerPushDevice).toHaveBeenLastCalledWith({ deviceId: 'device-1', token: 'foreground-token', permission: 'granted' });
+  });
+
+  test('ignores a pending notification tap after switching from identity A to B', () => {
+    let tap: (() => void) | undefined;
+    let active = true;
+    const refreshInbox = jest.fn();
+    const service = createNativePushService({
+      driver: driver({ onNotificationTap: listener => { tap = listener; return () => { tap = undefined; }; } }),
+      client: { registerPushDevice: jest.fn(), unregisterPushDevice: jest.fn() } as unknown as ApiClient,
+      refreshInbox,
+      isIdentityCurrent: () => active,
+    });
+    service.subscribe();
+    active = false;
+    tap?.();
+    expect(refreshInbox).not.toHaveBeenCalled();
+  });
+
+  test('restores explicit enabled state after app restart and leaves disabled identities off', async () => {
+    const registrationMarkers = new Map<string, boolean>();
+    let refresh: ((token: string) => void) | undefined;
+    const registerPushDevice = jest.fn().mockResolvedValue({ ok: true, data: undefined });
+    const unregisterPushDevice = jest.fn().mockResolvedValue({ ok: true, data: undefined });
+    const persistentDriver = driver({
+      getRegistrationEnabled: async identityId => registrationMarkers.get(identityId) ?? false,
+      setRegistrationEnabled: async (identityId, _deviceId, enabled) => { registrationMarkers.set(identityId, enabled); },
+      onTokenRefresh: listener => { refresh = listener; return () => { refresh = undefined; }; },
+    });
+    const firstSession = createNativePushService({
+      driver: persistentDriver,
+      client: { registerPushDevice, unregisterPushDevice } as unknown as ApiClient,
+      refreshInbox: jest.fn(),
+      identityId: 'user-A',
+    });
+    await firstSession.register();
+    expect(registrationMarkers.get('user-A')).toBe(true);
+
+    // Model a fresh service instance whose in-memory state starts disabled while
+    // the persisted opt-in for A remains true.
+    await firstSession.unregister('device-1');
+    registrationMarkers.set('user-A', true);
+    const restartedService = createNativePushService({
+      driver: persistentDriver,
+      client: { registerPushDevice, unregisterPushDevice } as unknown as ApiClient,
+      refreshInbox: jest.fn(),
+      identityId: 'user-A',
+    });
+    restartedService.subscribe();
+    refresh?.('token-after-restart');
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(registerPushDevice).toHaveBeenCalledTimes(2);
+
+    await restartedService.unregister('device-1');
+    expect(registrationMarkers.get('user-A')).toBe(false);
+    refresh?.('token-after-opt-out');
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(registerPushDevice).toHaveBeenCalledTimes(2);
+  });
 });
