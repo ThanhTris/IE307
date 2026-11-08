@@ -1,0 +1,38 @@
+1..35
+ok 1 - GM-22 contract is registered
+ok 2 - social schema is 0.4.0
+ok 3 - GM-22.2 admission supplement is registered
+ok 4 - GM-22.2 schema version is unique
+ok 5 - authenticated can read own identity
+ok 6 - authenticated can reject room invites
+ok 7 - room acceptance remains security definer
+ok 8 - room acceptance pins its search path
+ok 9 - client cannot call shared admission helper directly
+ok 10 - anon cannot invite partners
+ok 11 - anon can reach only the guarded auth-error boundary
+ok 12 - social helper schema is private
+ok 13 - client cannot insert profiles
+ok 14 - friend code shape is validated
+ok 15 - friend codes are unique
+ok 16 - friend event room is nullable
+ok 17 - friend event reference exists
+ok 18 - friend event with its invitation is accepted
+ok 19 - room invitation event is accepted
+ok 20 - legacy result event is accepted
+ok 21 - v4 result event is accepted
+ok 22 - friend event without an invitation is rejected
+ok 23 - friend event with a room is rejected
+ok 24 - result event without a result is rejected
+ok 25 - result event cannot reference legacy and v4 results together
+ok 26 - invitation event with a result is rejected
+ok 27 - room invitation event without an invitation is rejected
+ok 28 - unknown event kind is rejected
+ok 29 - pending canonical pair is unique
+ok 30 - pending room invitation is unique
+ok 31 - synthetic identities receive stable codes
+{"sub": "<uuid>", "role": "authenticated"}
+ok 32 - self identity exposes unambiguous ten character code
+ok 33 - friend invite is pending
+ok 34 - duplicate pending invite replays the existing invitation
+{}
+ok 35 - missing claims return the stable auth error

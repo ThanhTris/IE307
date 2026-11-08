@@ -1,0 +1,216 @@
+{
+  "fixtureOnly": true,
+  "description": "Synthetic controls/negative cases, with one frozen real-bundle control; no DB/API/review claim",
+  "cases": [
+    {
+      "id": "control-real-bundle",
+      "input": {
+        "path": "supabase/seed/catalogue/dishes.json",
+        "sha256": "4b34020265576a93fae4057f598adba9fb27a6a99a42eec0f8ed864f7f60b2f8"
+      },
+      "expected": {
+        "valid": true,
+        "requiredErrorCodes": []
+      },
+      "actual": {
+        "valid": true,
+        "errorCodes": [],
+        "errors": []
+      },
+      "status": "Pass"
+    },
+    {
+      "id": "unknown-taxonomy-with-valid-uuid-fks",
+      "input": {
+        "baseline": "supabase/seed/catalogue/dishes.json",
+        "set": {
+          "entities.taxonomy[0].code": "unregistered-gm40-code"
+        }
+      },
+      "expected": {
+        "valid": false,
+        "requiredErrorCodes": [
+          "TAXONOMY_CODE"
+        ]
+      },
+      "actual": {
+        "valid": false,
+        "errorCodes": [
+          "TAXONOMY_CODE"
+        ],
+        "errors": [
+          {
+            "path": "$.entities.taxonomy[0].code",
+            "code": "TAXONOMY_CODE",
+            "message": "Code is outside the declared type/namespace vocabulary"
+          }
+        ]
+      },
+      "status": "Pass"
+    },
+    {
+      "id": "control-synthetic-golden-price",
+      "input": {
+        "baseline": "tests/fixtures/dish-catalogue-v1/minimal.json",
+        "priceReferences": [
+          {
+            "id": "89b00a79-e933-50c6-be76-2ef35b626836",
+            "dishId": "20000000-0000-5000-8000-000000000001",
+            "sourceMenuItemId": "fixture-menu-a",
+            "menuName": "Món mô phỏng A",
+            "priceRaw": "50.000 đ (mô phỏng)",
+            "value": 50000,
+            "currency": "VND",
+            "unit": "menu_item_unspecified",
+            "servingSize": null,
+            "sourceRef": "10000000-0000-5000-8000-000000000001",
+            "checkedAt": "2026-01-01T00:00:00Z",
+            "validUntil": null,
+            "snapshotSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "status": "snapshot_observation"
+          }
+        ]
+      },
+      "expected": {
+        "valid": true,
+        "requiredErrorCodes": []
+      },
+      "actual": {
+        "valid": true,
+        "errorCodes": [],
+        "errors": []
+      },
+      "status": "Pass"
+    },
+    {
+      "id": "same-tuple-other-uuid-amount-50000",
+      "input": {
+        "baseline": "control-synthetic-golden-price",
+        "appendPriceReference": {
+          "id": "40000000-0000-5000-8000-000000000001",
+          "dishId": "20000000-0000-5000-8000-000000000001",
+          "sourceMenuItemId": "fixture-menu-a",
+          "menuName": "Món mô phỏng A",
+          "priceRaw": "50.000 đ (mô phỏng)",
+          "value": 50000,
+          "currency": "VND",
+          "unit": "menu_item_unspecified",
+          "servingSize": null,
+          "sourceRef": "10000000-0000-5000-8000-000000000001",
+          "checkedAt": "2026-01-01T00:00:00Z",
+          "validUntil": null,
+          "snapshotSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "status": "snapshot_observation"
+        }
+      },
+      "expected": {
+        "valid": false,
+        "requiredErrorCodes": [
+          "DUPLICATE",
+          "IDENTITY"
+        ]
+      },
+      "actual": {
+        "valid": false,
+        "errorCodes": [
+          "DUPLICATE",
+          "IDENTITY"
+        ],
+        "errors": [
+          {
+            "path": "$.entities.priceReferences[1]",
+            "code": "DUPLICATE",
+            "message": "Duplicate price observation dish/menu/snapshot"
+          },
+          {
+            "path": "$.entities.priceReferences[1].id",
+            "code": "IDENTITY",
+            "message": "Price ID must be the UUIDv5 of dish/menu/snapshot"
+          }
+        ]
+      },
+      "status": "Pass"
+    },
+    {
+      "id": "same-tuple-other-uuid-amount-70000",
+      "input": {
+        "baseline": "control-synthetic-golden-price",
+        "appendPriceReference": {
+          "id": "40000000-0000-5000-8000-000000000001",
+          "dishId": "20000000-0000-5000-8000-000000000001",
+          "sourceMenuItemId": "fixture-menu-a",
+          "menuName": "Món mô phỏng A",
+          "priceRaw": "50.000 đ (mô phỏng)",
+          "value": 70000,
+          "currency": "VND",
+          "unit": "menu_item_unspecified",
+          "servingSize": null,
+          "sourceRef": "10000000-0000-5000-8000-000000000001",
+          "checkedAt": "2026-01-01T00:00:00Z",
+          "validUntil": null,
+          "snapshotSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "status": "snapshot_observation"
+        }
+      },
+      "expected": {
+        "valid": false,
+        "requiredErrorCodes": [
+          "DUPLICATE",
+          "IDENTITY"
+        ]
+      },
+      "actual": {
+        "valid": false,
+        "errorCodes": [
+          "DUPLICATE",
+          "IDENTITY"
+        ],
+        "errors": [
+          {
+            "path": "$.entities.priceReferences[1]",
+            "code": "DUPLICATE",
+            "message": "Duplicate price observation dish/menu/snapshot"
+          },
+          {
+            "path": "$.entities.priceReferences[1].id",
+            "code": "IDENTITY",
+            "message": "Price ID must be the UUIDv5 of dish/menu/snapshot"
+          }
+        ]
+      },
+      "status": "Pass"
+    },
+    {
+      "id": "same-menu-different-snapshot",
+      "input": {
+        "baseline": "control-synthetic-golden-price",
+        "appendPriceReference": {
+          "id": "6160de71-4c5e-5c93-a518-7133cbd61092",
+          "dishId": "20000000-0000-5000-8000-000000000001",
+          "sourceMenuItemId": "fixture-menu-a",
+          "menuName": "Món mô phỏng A",
+          "priceRaw": "50.000 đ (mô phỏng)",
+          "value": 60000,
+          "currency": "VND",
+          "unit": "menu_item_unspecified",
+          "servingSize": null,
+          "sourceRef": "10000000-0000-5000-8000-000000000001",
+          "checkedAt": "2026-01-01T00:00:00Z",
+          "validUntil": null,
+          "snapshotSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "status": "snapshot_observation"
+        }
+      },
+      "expected": {
+        "valid": true,
+        "requiredErrorCodes": []
+      },
+      "actual": {
+        "valid": true,
+        "errorCodes": [],
+        "errors": []
+      },
+      "status": "Pass"
+    }
+  ]
+}

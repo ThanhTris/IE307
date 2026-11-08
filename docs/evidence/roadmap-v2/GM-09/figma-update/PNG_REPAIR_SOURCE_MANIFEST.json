@@ -1,0 +1,189 @@
+{
+  "sourceCommit": "d5a10cf5ead07cc38fc2660505e38f8fe6e40040",
+  "base": "2b56b4a",
+  "files": [
+    {
+      "path": "mobile/assets/brand/entry-ui/SOURCE.md",
+      "sha256": "0dee327778fef655b0d9ef1fedfca0febbcfeb4c71dca662ab927aa60f2d26a2",
+      "textNormalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/assets/brand/entry-ui/box.png",
+      "sha256": "01e4c3eed41cd9461ea2c56bb85d3d3be1f0b4d288c8830c740a50187b979ac3",
+      "width": 52,
+      "height": 52
+    },
+    {
+      "path": "mobile/assets/brand/entry-ui/coins.png",
+      "sha256": "3d9dacb5786b8a3f01b3011e60155b5e6e487cca084fdde4cb2fbdc8c72a55bc",
+      "width": 52,
+      "height": 52
+    },
+    {
+      "path": "mobile/assets/brand/entry-ui/hand.png",
+      "sha256": "ff09d3bc561c36e0d44448c469d42d782452065009d10ac562d771f73be1dc70",
+      "width": 130,
+      "height": 140
+    },
+    {
+      "path": "mobile/assets/brand/entry-ui/hourglass.png",
+      "sha256": "ee553792a0d499c28fc8fc4b0280d21c31e4eaf1d0e0c33ac93f0c46618179ce",
+      "width": 96,
+      "height": 96
+    },
+    {
+      "path": "mobile/assets/brand/entry-ui/infinity.png",
+      "sha256": "f01353a88e058e15f0b263bc862138a5b88b7bcea8a10d786a90c069596db5a6",
+      "width": 52,
+      "height": 52
+    },
+    {
+      "path": "mobile/assets/brand/entry-ui/leaf.png",
+      "sha256": "7f5f57412bf9840d5cc4a2736c58681f08fc84095da7a5508c8ef8e8116a5bbf",
+      "width": 50,
+      "height": 50
+    },
+    {
+      "path": "mobile/assets/brand/entry-ui/moon.png",
+      "sha256": "0e1380050d7e7b036e6e71ea1913f18432afbf836c37483d3d1e7a907b3126d4",
+      "width": 48,
+      "height": 48
+    },
+    {
+      "path": "mobile/assets/brand/entry-ui/qr.png",
+      "sha256": "f71403be37a3601ea5e41fead2bd6b567ba3cd934e1de59c97821cbb0b031568",
+      "width": 52,
+      "height": 52
+    },
+    {
+      "path": "mobile/assets/brand/entry-ui/rice.png",
+      "sha256": "0f25f7292db11d7a2a596cd7fce3ccd4a525365fc337d46cf273eb50e6d6a1f5",
+      "width": 48,
+      "height": 48
+    },
+    {
+      "path": "mobile/assets/brand/entry-ui/snack.png",
+      "sha256": "2ee539441b4e26c51ec0e2e964699096726c90790f912d340e9468cdea6e9bf8",
+      "width": 52,
+      "height": 52
+    },
+    {
+      "path": "mobile/assets/brand/entry-ui/sun.png",
+      "sha256": "bc732ac8603752de255919bf91addfd4e838212e471c2f9aaea6fe7841b2d2ca",
+      "width": 54,
+      "height": 54
+    },
+    {
+      "path": "mobile/assets/brand/entry-ui/tutorial-bowl.png",
+      "sha256": "72c6bc3f4ecca58af56c9addf249a9b7867a984e646aa4c7046196abfe2777fc",
+      "width": 200,
+      "height": 196
+    },
+    {
+      "path": "mobile/assets/brand/entry-ui/wallet.png",
+      "sha256": "436927982e84f9ba35eebfad928c4ddffc8fc03fe74879ff479bb21ebf9610ba",
+      "width": 50,
+      "height": 50
+    },
+    {
+      "path": "mobile/src/features/home/components/HomeFlowFrame.tsx",
+      "sha256": "92be278194faf11acfa58a52a023105a8dea8caf10f279c8dfda60a84a13554d",
+      "textNormalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/home/components/TutorialHomeFooter.tsx",
+      "sha256": "5ec5e89ea8376fac3b6cd1bcce9b391895488b363934e2b57e365747da234a55",
+      "textNormalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/home/components/TutorialHomeStage.tsx",
+      "sha256": "aa4fb8f01f275efcd51fabfd343c685a623b00a4bb9a0e9d77aa1d797174a65e",
+      "textNormalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/home/components/TutorialSampleCard.tsx",
+      "sha256": "fb5f7a68a1f8fa085e0e6c780ea852b485602161546bec0a0abfe74e12fda6e5",
+      "textNormalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/home/components/TutorialSetupStage.tsx",
+      "sha256": "d1b9c150b0c1ed24373d62670dde828af2c473208efb008b6cf4997cdc4ff898",
+      "textNormalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/home/screens/GuestEntryScreen.tsx",
+      "sha256": "648d3b632a240f6e27c4b4255335db9260aa11360fc1badff781e33d9392d48c",
+      "textNormalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/home/screens/HomeScreen.tsx",
+      "sha256": "a483df8f9d4c1e6c59d006267855ad27bc963a69870b9f0b0f4fdc5cd50d4f21",
+      "textNormalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/home/screens/TutorialScreen.tsx",
+      "sha256": "87641db5f01d063e1a0efee70dec08001beee67942951e1f3f827fc98dbaac25",
+      "textNormalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/home/screens/WelcomeScreen.tsx",
+      "sha256": "7f6efa3518123347e7e27dcfdff56013bfdf46faab48f7ed3b6a968510025bcb",
+      "textNormalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/rooms/components/JoinEntryProblem.tsx",
+      "sha256": "608d3aa3124eab0f3a8dddb0566b9899e3637f284b9889f2eab2675e4ec9d7be",
+      "textNormalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/rooms/components/RoomCodeField.tsx",
+      "sha256": "bee933d369b8ca40a8dd9b6e79fd377a7ee26b015fd949acf4eec2c898847db3",
+      "textNormalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/rooms/hooks/useJoinRoomEntry.ts",
+      "sha256": "95c1b326886adc14858c8d12bfd54ff42356834ea10aa8d06a3e4f06d89a9671",
+      "textNormalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/rooms/screens/CreateRoomEntryScreen.tsx",
+      "sha256": "f4f5b20c4f7ce401325a2d0161a00319126aebfd81f73eb8633987124acec6b4",
+      "textNormalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/rooms/screens/JoinRoomEntryScreen.tsx",
+      "sha256": "3edacbf22f505aa57aa985618b085c1799c822f6c3ce44df938ae5100e4d72af",
+      "textNormalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/shared/theme/tokens.ts",
+      "sha256": "f43c3567d4127e7fca3a87d3ac37f9fbcfdef88fceb01c3f4f09389ad969cea5",
+      "textNormalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/shared/ui/layout/AppHeader.tsx",
+      "sha256": "8172150013185950338c91dcd1c0399c9a9433a118b9179252157991a94bd5e4",
+      "textNormalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/tests/component/contextScreen.test.tsx",
+      "sha256": "b89059126ea5f4bef6d25562a79d914d86d62f49469181128448d1f5e280b5f5",
+      "textNormalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/tests/component/joinRoomEntry.test.tsx",
+      "sha256": "bd91c7de261a290bdb480e18f4812eb1d72e112b4e0d8436b36ed56ba9a18adc",
+      "textNormalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/tests/component/tutorialScreen.test.tsx",
+      "sha256": "1f18b3c1a677e248f86625805f965963f660fc7f4119bfd54be15c4f71164f05",
+      "textNormalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/tests/integration/joinEntryRoute.test.tsx",
+      "sha256": "e8e66a9fe97bf7e95c89ce95f276249c308a86364b077d3a0c6cc2e434970d6a",
+      "textNormalization": "UTF-8 LF"
+    }
+  ]
+}

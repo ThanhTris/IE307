@@ -1,0 +1,26 @@
+meta {
+  name: 08 Read canonical result
+  type: http
+  seq: 8
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/dish_session
+  body: json
+  auth: none
+}
+headers {
+  apikey: {{anonKey}}
+  Authorization: Bearer {{hostToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"command":"result","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B-supplement","roomId":"{{roomId}}"}}
+}
+script:post-response {
+  const b=res.getBody();
+  if(res.getStatus() === 200 && b.ok === true) { bru.setVar('resultId',b.data.resultId); }
+  else bru.runner.stopExecution();
+}
+tests {
+  test('08 Read canonical result',()=>{const b=res.getBody();expect(res.getStatus()).to.equal(200);expect(b.ok).to.equal(true); expect(b.data.round1BallotCount).to.equal(2); expect(b.data.topDishes.length).to.be.at.most(3); expect(b.data.topDishes.some(d=>d.isWinner)).to.equal(true);});
+}

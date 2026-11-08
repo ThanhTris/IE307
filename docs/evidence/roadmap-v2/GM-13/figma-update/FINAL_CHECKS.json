@@ -1,0 +1,492 @@
+{
+  "revision": "ui-figma-final/2026-10-25/GM-13.2",
+  "date": "2026-11-03",
+  "branch": "codex/gm-13-figma-update",
+  "productionSourceCommit": "9373b804003c1a576e6de65cdd76823eeda364dd",
+  "baseCommit": "7e24074ac473c54d31c5c336df09d5a3a0e682c5",
+  "sourceManifest": "FINAL_SOURCE_MANIFEST.json",
+  "sourceFilesVerified": 56,
+  "sourceManifestSha256": "3da4496e0599496c45fd055768792d676037ad887a63d4ea0f0eaede46af220a",
+  "environment": {
+    "node": "24.20.0",
+    "npm": "11.19.0",
+    "expo": "58.0.19",
+    "python": "3.15 on Windows",
+    "packageLockChanged": false
+  },
+  "mobile": {
+    "status": "Pass",
+    "suites": 56,
+    "passedSuites": 56,
+    "failedSuites": 0,
+    "tests": 946,
+    "passed": 946,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 380.129,
+    "initialAttempt": {
+      "passed": 943,
+      "failed": 2,
+      "resolution": "Updated outdated Home QA expectations and added a release guard test; product source unchanged"
+    },
+    "suiteReport": [
+      {
+        "file": "mobile/tests/component/roomSetupScreens.test.tsx",
+        "status": "passed",
+        "passed": 32,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/unit/apiContract.test.ts",
+        "status": "passed",
+        "passed": 24,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/liveRoomLifecycle.test.tsx",
+        "status": "passed",
+        "passed": 17,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/integration/routes.test.tsx",
+        "status": "passed",
+        "passed": 21,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/votingScreens.test.tsx",
+        "status": "passed",
+        "passed": 19,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/contextScreen.test.tsx",
+        "status": "passed",
+        "passed": 21,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/roomEntryScreens.test.tsx",
+        "status": "passed",
+        "passed": 32,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/unit/roomRepository.test.ts",
+        "status": "passed",
+        "passed": 18,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/unit/locationService.test.ts",
+        "status": "passed",
+        "passed": 29,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/unit/authSession.test.ts",
+        "status": "passed",
+        "passed": 34,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/sharedComponents.test.tsx",
+        "status": "passed",
+        "passed": 21,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/resultScreens.test.tsx",
+        "status": "passed",
+        "passed": 32,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/unit/apiResponseValidation.test.ts",
+        "status": "passed",
+        "passed": 119,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/homeScreen.test.tsx",
+        "status": "passed",
+        "passed": 26,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/socialAndHistoryScreens.test.tsx",
+        "status": "passed",
+        "passed": 7,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/lobbyAndStatusScreens.test.tsx",
+        "status": "passed",
+        "passed": 7,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/joinRoomEntry.test.tsx",
+        "status": "passed",
+        "passed": 24,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/dishSetupRepair.test.tsx",
+        "status": "passed",
+        "passed": 10,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/guestEntryScreen.test.tsx",
+        "status": "passed",
+        "passed": 16,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/unit/apiReadValidation.test.ts",
+        "status": "passed",
+        "passed": 121,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/nearbyResult.test.tsx",
+        "status": "passed",
+        "passed": 17,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/dishSetupFlow.test.tsx",
+        "status": "passed",
+        "passed": 11,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/dishSetupRefinement.test.tsx",
+        "status": "passed",
+        "passed": 7,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/integration/resultRoutes.test.tsx",
+        "status": "passed",
+        "passed": 12,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/unit/apiMockIsolation.test.ts",
+        "status": "passed",
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/unit/decisionContract.test.ts",
+        "status": "passed",
+        "passed": 16,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/unit/authTransport.test.ts",
+        "status": "passed",
+        "passed": 35,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/unit/resultModel.test.ts",
+        "status": "passed",
+        "passed": 12,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/unit/roomSetup.test.ts",
+        "status": "passed",
+        "passed": 49,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/integration/guestEntryRoute.test.tsx",
+        "status": "passed",
+        "passed": 7,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/unit/discovery.test.ts",
+        "status": "passed",
+        "passed": 16,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/tutorialCardMotion.test.tsx",
+        "status": "passed",
+        "passed": 5,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/MealDateTimeFields.test.tsx",
+        "status": "passed",
+        "passed": 5,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/tutorialScreen.test.tsx",
+        "status": "passed",
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/dishSchedule.test.tsx",
+        "status": "passed",
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/roomCodeField.test.tsx",
+        "status": "passed",
+        "passed": 5,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/AppFontProvider.test.tsx",
+        "status": "passed",
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/unit/dishResultPresentation.test.ts",
+        "status": "passed",
+        "passed": 18,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/unit/dishSetupTimePolicy.test.ts",
+        "status": "passed",
+        "passed": 18,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/dishResultPodium.test.tsx",
+        "status": "passed",
+        "passed": 10,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/dishResultRecovery.test.tsx",
+        "status": "passed",
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/dishResultStates.test.tsx",
+        "status": "passed",
+        "passed": 8,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/winnerCelebration.test.tsx",
+        "status": "passed",
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/dishPreferences.test.tsx",
+        "status": "passed",
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/unit/dishSetupCases.test.ts",
+        "status": "passed",
+        "passed": 11,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/createRoomEntry.test.tsx",
+        "status": "passed",
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/integration/dishSetupRoute.test.tsx",
+        "status": "passed",
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/unit/roomEntry.test.ts",
+        "status": "passed",
+        "passed": 10,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/AppShellScreen.test.tsx",
+        "status": "passed",
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/dishSetupForm.test.tsx",
+        "status": "passed",
+        "passed": 5,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/integration/joinEntryRoute.test.tsx",
+        "status": "passed",
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/integration/createEntryRoute.test.tsx",
+        "status": "passed",
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/integration/tutorialRoute.test.tsx",
+        "status": "passed",
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/resultCasePicker.test.tsx",
+        "status": "passed",
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/unit/nearbyPresentation.test.ts",
+        "status": "passed",
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "mobile/tests/component/dishResultEntry.test.tsx",
+        "status": "passed",
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0
+      }
+    ]
+  },
+  "typecheck": "Pass",
+  "eslintSourceTestsScripts": {
+    "status": "Pass",
+    "warnings": 0
+  },
+  "architecture": "Pass",
+  "lockedExpoOffline": "Pass",
+  "png": {
+    "status": "Pass",
+    "passed": 34,
+    "failed": 0,
+    "seconds": 1.6332321
+  },
+  "android": {
+    "status": "Pass",
+    "type": "Hermes export, not APK",
+    "bundle": "entry-389e6cf38073a3672f9a2d41c37ad4b7.hbc",
+    "bytes": 3713317,
+    "sha256": "89a980c59be2e2e1b4428c93e6fb07af0b587a1a60b530f36bcc12f28dbea53a",
+    "deviceAcceptance": false,
+    "initialAttempt": "Sandbox temp permission denied; same export passed with full environment access"
+  },
+  "fullLint": {
+    "status": "Fail",
+    "importErrors": 4,
+    "warnings": 0,
+    "sourceErrors": 0,
+    "scope": "existing ignored mobile/.work/gm10Audit.test.tsx"
+  },
+  "python": {
+    "status": "Fail",
+    "tests": 657,
+    "passed": 650,
+    "skipped": 6,
+    "errors": 1,
+    "assertionFailures": 0,
+    "seconds": 179.186,
+    "error": "WinError1314 in test_stage_refuses_symlink_output setup; Windows symlink privilege unavailable"
+  },
+  "gate": {
+    "source": "https://github.com/users/ThanhTris/projects/2",
+    "checkedAt": "2026-11-03T21:56:07.658069+07:00",
+    "status": "READY_FOR_MERGE_REVIEW",
+    "baseRef": "origin/main",
+    "fetchPerformed": true,
+    "projectStatusChanged": false
+  },
+  "device": {
+    "report": "DEVICE_CHECKS.md",
+    "os": "Android 13",
+    "smoke": "Pass, user reported",
+    "model": null,
+    "runtimeCommitConfirmed": false,
+    "talkBack": "Not confirmed",
+    "font200": "Not confirmed",
+    "dark": "Available per user; per-screen results not confirmed",
+    "reduceMotion": "Not confirmed",
+    "sameViewportVisual": "No final comparison screenshots supplied"
+  },
+  "apiIntegration": "Not run, GM-27/30 scope",
+  "repositoryValidation": "Pass",
+  "taskIndexes": "Pass",
+  "diff": "Pass",
+  "reviewerApproval": "Not granted",
+  "pullRequestCreated": false
+}

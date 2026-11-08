@@ -10,13 +10,15 @@ Kết quả/lệnh thực tế và giới hạn của lượt bảo trì: [CHECK
 
 | Thành phần nền | Phiên bản của lượt cập nhật này |
 | --- | --- |
-| Expo SDK / Router | SDK57: Expo57.0.30 / Router57.0.28 |
-| React / React Native | 19.2.3 / 0.86.3 |
-| constants / linking | 57.0.22 / 57.0.13 |
-| SecureStore / status-bar / system-ui | 57.0.4 / 57.0.1 / 57.0.4 |
-| safe-area / screens | 5.7.0 / 4.26.2 |
+| Expo SDK / Router | SDK58: Expo58.0.23 / Router58.0.30 |
+| React / React Native | 19.3.0 / 0.88.1 |
+| Expo UI | @expo/ui 58.0.27 |
+| Expo modules | constants 58.0.15 / font 58.0.11 / linking 58.0.16 / location 58.0.20 |
+| SecureStore / status-bar / system-ui | 58.0.2 / 58.0.4 / 58.0.7 |
+| safe-area / screens / SVG | 5.11.1 / 4.30.1 / 15.16.0 |
+| Test preset | jest-expo 58.0.14 / `@react-native/jest-preset` 0.88.1 |
 
-Nâng patch trong SDK57; không tự nâng SDK lớn, React hoặc thêm native capability. Giữ [override peer nền GM-02](../evidence/roadmap-v2/GM-02/DEPENDENCIES.md). Lockfile/revision/CHECKS là nguồn cho từng lượt bảo trì sau.
+SDK 58 được chủ dự án yêu cầu ngày 2026-10-26. Các patch hiện hành ở trên được đồng bộ với Expo compatibility ngày 2026-11-06 trên nhánh `issue87_figma_ui_gm26`; đây chưa phải thay đổi đã push lên main. Giữ [override peer nền GM-02](../evidence/roadmap-v2/GM-02/DEPENDENCIES.md) khi chúng còn cần thiết. Lockfile/revision/CHECKS là nguồn cho từng lượt bảo trì sau.
 
 ## Kiểm tái lập và kiểm cập nhật mới
 
@@ -43,19 +45,19 @@ Bảo trì GM-02: kiểm online → cập nhật package và sinh lockfile bằn
 | Task | Đầu ra/runtime giữ đúng scope |
 | --- | --- |
 | GM-02 | Sở hữu package/config/lockfile/runner; nghiệm thu cấu trúc/tooling, không tự đòi thiết bị để mở lại task nền |
-| GM-05, GM-09..14 | Components/màn mock trên Expo Go hỗ trợ SDK57; giữ state/interaction và nhãn mock; chưa cần API task sau |
+| GM-05, GM-09..14 | Components/màn mock trên Expo Go hỗ trợ SDK58; giữ state/interaction và nhãn mock; chưa cần API task sau |
 | GM-16 | Auth/session/SecureStore harness theo runtime task; HTTP máy tính không thay device |
-| GM-24..28 | Location/room/vote/result/social nối API thật trên Android; location native dùng provider/build phù hợp |
-| GM-29..31 | Push, QR/links, SQLite/outbox: shell Expo Go có capability guard; native kiểm development/native build hỗ trợ |
-| GM-33, GM-34 | QA Android và APK/release trên đúng SDK/build/API revision; đổi native package phải rebuild trước kiểm |
-| GM-35, GM-38 | P1/P2 có UI/API Android theo scope, nhận cùng baseline khi triển khai |
+| GM-24..28 | Location/room/vote/result/social nối API thật: **Chặng 3A kiểm bắt buộc trên Máy ảo Android (AVD) nối Backend local thật**, kèm `FIGMA_PARITY.md` và 7 chuẩn kỹ thuật chặn lỗi review; kiểm điện thoại thật qua USB tại GM-33/34 |
+| GM-29..31 | Push, QR/links, SQLite/outbox: shell Expo Go có capability guard; **Chặng 3A kiểm trên Máy ảo Android (AVD) nối Backend local thật** (dùng dev/simulated adapter có gắn nhãn cho FCM/Camera vật lý/Places billing key); kiểm điện thoại thật qua USB tại GM-33/34 |
+| GM-33, GM-34 | **Chặng 3B:** QA toàn diện trên **điện thoại Android thật qua cáp USB** (sau khi xong hết `GM-27..32` và dữ liệu `GM-08` + `GM-40`) và cài/smoke APK release trên đúng SDK/build/API revision; đổi native package phải rebuild trước kiểm |
+| GM-35, GM-38 | P1/P2 có UI/API Android theo scope (Chặng 3A kiểm trên Máy ảo Android AVD nối API thật), nhận cùng baseline khi triển khai |
 | GM-07, GM-15..23, GM-32 khi runner dùng mobile client/domain | Cài mobile dependencies theo lockfile nếu runner cần; không biến output API/domain thành yêu cầu mở Expo Go |
-| GM-00/01/03/04/06/08/36/37/39 | Không thêm nghiệm thu Expo: baseline/BE/Data/API draft/HTML theo AC hiện hành. GM-39 vẫn chỉ sửa prototype HTML |
+| GM-00/01/03/04/06/08/36/37/39 | Không thêm nghiệm thu Expo: baseline/BE/Data/API draft/HTML theo AC hiện hành. GM-39 kiểm handoff Figma theo scope UI ngày 2026-10-25, không cần Expo |
 
 21 task đã có link về bộ này trong Test plan: GM-02/05/09/10/11/12/13/14/16/24/25/26/27/28/29/30/31/33/34/35/38. [Checklist output](TASK_OUTPUT_CHECKLIST.md) và [ma trận Android–API](../testing/MOBILE_API_TEST_MATRIX.md) giữ đúng loại kiểm, không tự miễn Not run thiết bị.
 
 ## Expo Go và nhánh đang mở
 
-Expo Go trên điện thoại và dependency repo là hai thứ riêng. Dùng Expo Go hỗ trợ SDK57; cập nhật Expo Go không tự sửa package-lock dự án. Sau đổi dependency, chạy npm ci và Metro --clear. Nếu native dependency/config đổi, rebuild development client/APK thay vì chỉ reload Metro. [Tương thích Expo Go](https://docs.expo.dev/troubleshooting/expo-go-version-mismatch/).
+Expo Go trên điện thoại và dependency repo là hai thứ riêng. Baseline hiện hành là SDK58; cập nhật Expo Go không tự sửa package-lock dự án. Sau đổi dependency, chạy npm ci và Metro --clear. Nếu native dependency/config đổi, rebuild development client/APK thay vì chỉ reload Metro. [Tương thích Expo Go](https://docs.expo.dev/troubleshooting/expo-go-version-mismatch/).
 
 Nhánh PR cũ phải nhận package/lockfile/runner mới từ nhánh đích sau khi phần bảo trì được đưa lên GitHub, giữ thay đổi tính năng rồi chạy npm ci/checks lại. Sửa local chưa thay CI remote. Không sửa evidence cũ thành Pass cho bộ mới; ghi evidence mới theo revision.

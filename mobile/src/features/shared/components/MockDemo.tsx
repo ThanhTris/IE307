@@ -5,7 +5,7 @@ import { MockApiClient, type MockMode } from '../../../data/api';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppHeader, AppButton, StatusNotice } from '../../../shared/ui';
 
-export type DemoDestination = 'lobby' | 'room-status' | 'friends' | 'inbox' | 'history';
+export type DemoDestination = 'lobby' | 'room-status' | 'friends' | 'inbox' | 'history' | 'profile' | 'settings';
 
 const destinations: { id: DemoDestination; label: string }[] = [
   { id: 'lobby', label: 'Phòng chờ' },
@@ -13,6 +13,8 @@ const destinations: { id: DemoDestination; label: string }[] = [
   { id: 'friends', label: 'Bạn bè' },
   { id: 'inbox', label: 'Hộp thư' },
   { id: 'history', label: 'Lịch sử' },
+  { id: 'profile', label: 'Cá nhân' },
+  { id: 'settings', label: 'Cài đặt' },
 ];
 
 const modes: { id: MockMode; label: string }[] = [
@@ -67,6 +69,7 @@ export function DemoFrame({
   onHome,
   mode,
   onModeChange,
+  showModePicker = true,
   controlsDisabled = false,
   children,
 }: {
@@ -77,6 +80,7 @@ export function DemoFrame({
   onHome: () => void;
   mode: MockMode;
   onModeChange: (mode: MockMode) => void;
+  showModePicker?: boolean;
   controlsDisabled?: boolean;
   children: ReactNode;
 }) {
@@ -95,7 +99,7 @@ export function DemoFrame({
           tone="info"
           colors={colors}
         />
-        <DemoModePicker mode={mode} onChange={onModeChange} disabled={controlsDisabled} />
+        {showModePicker ? <DemoModePicker mode={mode} onChange={onModeChange} disabled={controlsDisabled} /> : null}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.navRow}>
           {destinations.map(destination => (
             <Pressable

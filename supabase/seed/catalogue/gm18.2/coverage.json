@@ -1,0 +1,318 @@
+{
+  "sourceBundleSha256": "776b1e4998d0b170b51a7c39a4ead74461bdfd721f167dafddf7f072bf117a2f",
+  "releaseId": "dish-catalogue-v1:1.1.0:gm18.2",
+  "testOnly": true,
+  "dishCount": 39,
+  "meals": {
+    "breakfast": {
+      "available": 14,
+      "shortfall10": 0,
+      "shortfall20": 6
+    },
+    "lunch": {
+      "available": 23,
+      "shortfall10": 0,
+      "shortfall20": 0
+    },
+    "dinner": {
+      "available": 7,
+      "shortfall10": 3,
+      "shortfall20": 13
+    },
+    "snack": {
+      "available": 1,
+      "shortfall10": 9,
+      "shortfall20": 19
+    }
+  },
+  "unlabelledMeals": 9,
+  "unknown": {
+    "temperature": 37,
+    "flavor": 39,
+    "artwork": 39
+  },
+  "price": {
+    "observations": 247,
+    "selected": 17,
+    "displayable": 17,
+    "latestTimestampTieDishIds": [
+      "0da7d12b-4e83-517b-9c26-b192e6d63fe9",
+      "16ad89fb-0bc1-5d43-b8d0-4285916a69dc",
+      "1fdae49f-b6da-5574-82b6-4b7fc1cf09cd",
+      "26448eef-8a0a-5934-bc0a-8936b205b389",
+      "37e032fb-1a78-5b5c-833d-c5362ba14445",
+      "39da0965-df4e-5ca1-8741-bdb9aeb85f57",
+      "4f4e0327-d10e-5c8f-b69a-eb4f2df520ea",
+      "620d6a2f-02a2-532f-b254-c37f3713ba04",
+      "69073532-dba4-59ab-917e-42971d5e81c3",
+      "807a5dfe-64b0-5137-ac00-6f95882830d6",
+      "8131e3cd-bce2-5843-8800-9426c91382ba",
+      "990393dc-1b1d-5a1a-9ccd-2b0c4ac60572",
+      "a7619de7-cecd-558c-9e8a-dcdedd82465a",
+      "a785a621-2cbc-5f16-9274-a47141a8e3c8",
+      "b151781d-c641-593f-9aba-a1ac5d16e309",
+      "c5bbbe58-91c4-5819-8813-a531825073b6",
+      "d320d9fe-0b53-539f-98ce-87ac91cf2dbb",
+      "d9756559-2697-565c-86e0-36cf39c4da49",
+      "e6558eda-db0f-5583-bbf5-be4f7da8f2f9",
+      "f518af1a-6744-545a-83b4-4fa14d590a43",
+      "fc959eeb-033c-54b6-b8a2-9d7c6982803e",
+      "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c"
+    ]
+  },
+  "terms": [
+    {
+      "id": "0a0fc007-2e29-5077-a43a-3f3fa54da0b5",
+      "type": "category",
+      "code": "family:burger",
+      "label": "burger",
+      "version": 1,
+      "dishCount": 1,
+      "mealCounts": {
+        "breakfast": 1,
+        "lunch": 1,
+        "dinner": 1,
+        "snack": 0
+      }
+    },
+    {
+      "id": "14bc9d6f-c43e-5c1d-9c13-eddc5cc80dcc",
+      "type": "category",
+      "code": "family:bun",
+      "label": "bún",
+      "version": 1,
+      "dishCount": 10,
+      "mealCounts": {
+        "breakfast": 3,
+        "lunch": 4,
+        "dinner": 0,
+        "snack": 0
+      }
+    },
+    {
+      "id": "1af6a10b-2820-5c18-909f-40acfa83ec84",
+      "type": "category",
+      "code": "family:hu_tieu",
+      "label": "hủ tiếu",
+      "version": 1,
+      "dishCount": 1,
+      "mealCounts": {
+        "breakfast": 1,
+        "lunch": 1,
+        "dinner": 0,
+        "snack": 0
+      }
+    },
+    {
+      "id": "1f89baf1-52f8-5f1e-98d8-7a36cae7a596",
+      "type": "category",
+      "code": "family:pho",
+      "label": "phở",
+      "version": 1,
+      "dishCount": 2,
+      "mealCounts": {
+        "breakfast": 1,
+        "lunch": 2,
+        "dinner": 0,
+        "snack": 0
+      }
+    },
+    {
+      "id": "542c7681-b911-5a11-ae24-7010ae19a0a1",
+      "type": "category",
+      "code": "family:banh_bao",
+      "label": "bánh bao",
+      "version": 1,
+      "dishCount": 1,
+      "mealCounts": {
+        "breakfast": 1,
+        "lunch": 0,
+        "dinner": 0,
+        "snack": 1
+      }
+    },
+    {
+      "id": "5cc8224c-f7da-5c2e-9dcc-274504b977c4",
+      "type": "category",
+      "code": "family:nui",
+      "label": "nui",
+      "version": 1,
+      "dishCount": 1,
+      "mealCounts": {
+        "breakfast": 1,
+        "lunch": 0,
+        "dinner": 0,
+        "snack": 0
+      }
+    },
+    {
+      "id": "5dcf86dc-9369-59ca-a0cd-59836909b177",
+      "type": "category",
+      "code": "family:banh_cuon",
+      "label": "bánh cuốn",
+      "version": 1,
+      "dishCount": 1,
+      "mealCounts": {
+        "breakfast": 1,
+        "lunch": 0,
+        "dinner": 0,
+        "snack": 0
+      }
+    },
+    {
+      "id": "6bcd10c4-acc9-53cd-be72-43a4e7061b9a",
+      "type": "category",
+      "code": "family:banh_uot",
+      "label": "bánh ướt",
+      "version": 1,
+      "dishCount": 1,
+      "mealCounts": {
+        "breakfast": 0,
+        "lunch": 0,
+        "dinner": 0,
+        "snack": 0
+      }
+    },
+    {
+      "id": "76754d62-96e1-5d54-bf87-048a0df60e3f",
+      "type": "cuisine",
+      "code": "zh",
+      "label": "Hoa",
+      "version": 1,
+      "dishCount": 1,
+      "mealCounts": {
+        "breakfast": 1,
+        "lunch": 0,
+        "dinner": 0,
+        "snack": 1
+      }
+    },
+    {
+      "id": "811f6aa0-6b7f-5645-aeb9-c2f96cf50630",
+      "type": "category",
+      "code": "family:banh_mi",
+      "label": "bánh mì",
+      "version": 1,
+      "dishCount": 1,
+      "mealCounts": {
+        "breakfast": 1,
+        "lunch": 0,
+        "dinner": 0,
+        "snack": 0
+      }
+    },
+    {
+      "id": "87e3727e-5022-50a2-9a60-0b3dea21ca5d",
+      "type": "category",
+      "code": "family:sticky_rice",
+      "label": "xôi",
+      "version": 1,
+      "dishCount": 1,
+      "mealCounts": {
+        "breakfast": 1,
+        "lunch": 0,
+        "dinner": 0,
+        "snack": 0
+      }
+    },
+    {
+      "id": "a7033166-916f-5748-b9c3-6670424dbfcf",
+      "type": "category",
+      "code": "family:mien",
+      "label": "miến",
+      "version": 1,
+      "dishCount": 1,
+      "mealCounts": {
+        "breakfast": 1,
+        "lunch": 1,
+        "dinner": 1,
+        "snack": 0
+      }
+    },
+    {
+      "id": "ac9e12a4-0416-53fc-af30-5b8b11ee0b49",
+      "type": "category",
+      "code": "family:noodles",
+      "label": "mì",
+      "version": 1,
+      "dishCount": 3,
+      "mealCounts": {
+        "breakfast": 1,
+        "lunch": 2,
+        "dinner": 1,
+        "snack": 0
+      }
+    },
+    {
+      "id": "bab170d6-9d47-57c9-8ca5-767954cbd111",
+      "type": "category",
+      "code": "family:salad",
+      "label": "salad",
+      "version": 1,
+      "dishCount": 1,
+      "mealCounts": {
+        "breakfast": 0,
+        "lunch": 1,
+        "dinner": 0,
+        "snack": 0
+      }
+    },
+    {
+      "id": "cf7fd677-325f-5fa6-a70b-a884f0684240",
+      "type": "category",
+      "code": "preparation:steamed",
+      "label": "hấp",
+      "version": 1,
+      "dishCount": 2,
+      "mealCounts": {
+        "breakfast": 2,
+        "lunch": 0,
+        "dinner": 0,
+        "snack": 1
+      }
+    },
+    {
+      "id": "d7bf6ad7-596c-5ee0-bf45-ccedfcf6460b",
+      "type": "cuisine",
+      "code": "vi",
+      "label": "Việt",
+      "version": 1,
+      "dishCount": 5,
+      "mealCounts": {
+        "breakfast": 3,
+        "lunch": 2,
+        "dinner": 0,
+        "snack": 1
+      }
+    },
+    {
+      "id": "e69b5f45-580d-5ee3-9e43-360650b4c650",
+      "type": "category",
+      "code": "family:rice",
+      "label": "cơm",
+      "version": 1,
+      "dishCount": 13,
+      "mealCounts": {
+        "breakfast": 1,
+        "lunch": 11,
+        "dinner": 4,
+        "snack": 0
+      }
+    },
+    {
+      "id": "e78e10c2-a90f-57b6-bc28-421fd7bd6b0a",
+      "type": "category",
+      "code": "family:banh_cuon_wrap",
+      "label": "bánh cuộn",
+      "version": 1,
+      "dishCount": 1,
+      "mealCounts": {
+        "breakfast": 0,
+        "lunch": 0,
+        "dinner": 0,
+        "snack": 0
+      }
+    }
+  ],
+  "filterSemantics": "mealSlot is the received hard filter; term cross-tabs are descriptive, preference ranking remains UNSUPPORTED"
+}

@@ -1,5 +1,9 @@
 # RPC contract — food-v1
 
+> Cập nhật hướng đích 2026-10-25: [ADR-019](decisions/ADR-019-dish-first-room-policy.md) và [GM-07.B](DISH_SESSION_API_CONTRACT_B.md) là hướng contract mới: pool đầu đúng 10–20 món, host start, tối đa20 người, không ready, timer 60 giây theo transition vào chờ; chọn món độc lập quán/GPS. Ưu tiên winner vòng1; nếu chưa có thì survivors = pool ban đầu trừ hợp NO từ ballot vòng1 hoàn chỉnh đã ACK. N=0 kết thúc `EMPTY_INTERSECTION` ở R1; N>=1 luôn mở R2 thật. Cap REMOVE là max(1,floor(0.30*N)) với N=1..20; N=1 vẫn là lượt quyết định thật, không auto-finalize. Không bù món; loại hết chốt `NO_CONSENSUS/ALL_REMOVED`. Nội dung legacy bên dưới tiếp tục mô tả contract/mock cũ, không đổi nghĩa phiên cũ hoặc tự ghi test Pass.
+
+> **GM-07.A historical / GM-07.B current proposal:** A remains at [DISH_SESSION_API_CONTRACT.md](DISH_SESSION_API_CONTRACT.md) and [dish-session-v4.schema.json](schemas/dish-session-v4.schema.json). New sessions target the forward-only [GM-07.B contract](DISH_SESSION_API_CONTRACT_B.md) and [schema](schemas/dish-session-v4b.schema.json), including the owner-approved Top 3 aggregate projection in [ADR-020](decisions/ADR-020-public-top-three-result.md). Neither A nor B is deployed; runtime v3 and legacy behavior remain unchanged until a reviewed forward migration and consumer land.
+
 2026-10-07 • draft for independent review GM-01. Auth token xác định caller; mọi write có requestId, room mutation có expectedVersion. Các RPC discovery/join/accept_room_invite trước membership và register device không có room version; vẫn idempotency/auth/rate limit. Input schema validate, lỗi không expose SQL/token.
 
 | RPC / mức | Input chính | Gate/output |
@@ -144,7 +148,9 @@ Mock lưu `ownPreferences`, `ownVotes`, `ownSubmission` theo roomId chuẩn + ca
 | `RoomSnapshot.evaluatedAt` | `string` (ISO8601) | Snapshot calculation time | Thời điểm đánh giá pool |
 | `PushPermissionStatus` | `'granted' \| 'denied' \| 'provisional'` | `devices.permission` | Client dùng 3 trạng thái; lưu DB qua `toStoragePermission`: `'provisional' -> 'unknown'` |
 
-### 4. Quy tắc đồng thuận & Kịch bản Mock
+### 4. Quy tắc đồng thuận & Kịch bản Mock — decision-v2 legacy
+
+Các quy tắc và scenario trong mục này mô tả baseline decision-v2/food-v1 và mock lịch sử. Không dùng chúng làm tiêu chí cho session v4; xem [DISH_SESSION_API_CONTRACT.md](DISH_SESSION_API_CONTRACT.md) cho policy mới.
 - **NO không thể thành winner:** Bất kỳ món nào nhận dù chỉ 1 phiếu `NO` hoặc `REMOVE` lập tức bị loại khỏi tập ứng viên thắng cuộc.
 - Policy kết quả là `decision-v2` (khác food interchange `1.1.0`). Result dùng reason `UNANIMOUS_WANT`, `ACCEPTABLE_FINAL`, `EMPTY_INTERSECTION`, `ALL_REMOVED` và tier `PERFECT`, `CONSENSUS`, `COMPROMISE`, `NO_CONSENSUS` theo DECISION_SPEC/schema GM-06. DTO và runtime guard kiểm vocabulary/quan hệ winner; không nhận `food-v1`, `TIER_1/2/NONE` hoặc `HIGHEST_SCORE` như decision-v2.
 - Tập không NO rỗng ở vòng 1: winner null, `EMPTY_INTERSECTION/NO_CONSENSUS`; tất cả REMOVE vòng 2: winner null, `ALL_REMOVED/NO_CONSENSUS`.

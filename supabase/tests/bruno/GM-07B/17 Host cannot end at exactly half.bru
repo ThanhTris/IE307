@@ -1,0 +1,28 @@
+meta {
+  name: 17 Host cannot end at exactly half
+  type: http
+  seq: 17
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/dish_session
+  body: json
+  auth: none
+}
+headers {
+  Authorization: Bearer {{hostToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"command":"finalize","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B","requestId":"half_{{timestamp}}","roomId":"{{roomId}}","expectedVersion":{{roomVersion}}}}
+}
+script:pre-request {
+  bru.setVar('timestamp', String(Date.now()));
+}
+tests {
+  test('Host cannot end waiting while only one of two members submitted', () => {
+    const b = res.getBody();
+    expect(res.getStatus()).to.equal(409);
+    expect(b.ok).to.equal(false);
+    expect(b.error.messageKey).to.equal('NOT_READY');
+  });
+}

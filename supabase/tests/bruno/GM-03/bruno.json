@@ -1,0 +1,6 @@
+{
+  "version": "1",
+  "name": "GM-03 Isolated QA Auth and REST",
+  "type": "collection",
+  "ignore": ["environments/*.private.bru"]
+}

@@ -1,0 +1,29 @@
+GM-27 AVD/API follow-up
+Date: 2026-11-07
+Worktree HEAD: 1a95bb7 (working tree included the existing GM-27 patch)
+Device: Android Emulator Medium_Phone_API_37.0, API 37, emulator-5554
+Runtime: Expo Go 58.0.5
+Owned QA run: gm27-avd-20261107; API 55000, DB 55001; 26 migrations
+Application database changed: no
+
+PASS
+- Guest signup from the AVD created one synthetic Auth identity.
+- After enabling allow_new_sessions only in the owned disposable QA DB, the app created one room through the live RPC. Kong recorded HTTP 200; DB readback was LOBBY/version 1/poolVersion 1 with the app identity as host.
+- Live snapshot reads from the app returned HTTP 200.
+- Skipping preference changes let the app complete setup and open the lobby using live snapshot reads.
+
+FAIL
+- Before the QA-only session flag was enabled, create returned HTTP 400 / UNSUPPORTED_CONTRACT_VERSION. The flag was false by default in the isolated runtime.
+- Saving a non-null spicy preference returned HTTP 400 from the live updatePreferences RPC. A rollback-only DB reproduction returned PostgreSQL error `column reference "value" is ambiguous` in `dish_v4_private.valid_preferences`, at `select key,value from jsonb_each(value->'flavor')`.
+- No preference update persisted; revision remained 1 and flavor remained null.
+- The UI showed “Mô phỏng · thiết lập phòng · dữ liệu mẫu” despite using the live QA gateway.
+
+NOT RUN
+- AVD result screen / canonical result RPC, Top 3, dense ties, NO_CONSENSUS and Places interaction. The terminal flow was not reached.
+- Physical Android device and production Places billing.
+
+Cleanup
+- Owned QA worker, Supabase containers and network stopped successfully.
+- ADB reverse rules removed.
+- Temporary ignored mobile/.env.local remains because automatic approval review blocked deletion of that exact file; it contains only the disposable QA endpoint and publishable key. Remove it before another Expo launch.
+- Two raw local screenshots containing the disposable room code were not included in this evidence report.

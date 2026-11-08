@@ -1,5 +1,7 @@
 # GM-18 — API catalogue/coverage/eligibility handoff
 
+> Supplement hiện hành2026-10-29: [GM18.2 dish-only API](dish-only/HANDOFF.md), [checks mới](dish-only/CHECKS.md). Phần bên dưới giữ evidence offering/coverage legacy; không là nghiệm thu API mới.
+
 2026-10-13. Owner Tâm (@HoaiTam), reviewer Trí (@ThanhTris), Pending.
 Branch `codex/gm-18-catalogue-eligibility` → main; no parent PR; existing PR #108.
 Rebased HEAD `19aacc4186c78471893b4c052f67872f67ffb678` + working-tree patch,

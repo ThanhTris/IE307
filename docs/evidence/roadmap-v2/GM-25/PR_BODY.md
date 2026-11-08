@@ -1,35 +1,52 @@
-## Problem and change
+## Summary & Context
 
-In real mode, Home previously had no usable path for a user without a session, while `LiveRoomRepository` could create a guest session without updating the provider's identity. This made onboarding and subsequent authenticated discovery inconsistent.
+This PR implements the Figma UI requirements and integration updates for **Task GM-25** ([Issue #86](https://github.com/ThanhTris/IE307/issues/86)), completing the UI flow for guest onboarding, Home session continuation, dish-only room setup, privacy-preserving public room preview, dietary preferences, and the live lobby.
 
-This revision gives onboarding one explicit path: the GM-25 Home route restores once through the provider; when storage is empty, Create/Join opens a guest-name sheet; a guest is created only after confirmation; and the destination route mounts after the provider observes the saved identity. Restore failures, revoked sessions, storage errors, and uncertain signup outcomes are distinct states with deliberate recovery actions. Room create/join no longer silently create a guest. Protected routes wait for an active session, and the GM-25 live lobby only treats `currentUserId` as the viewer. GM-25-specific screen variants preserve the upstream GM-09/GM-11 screen artifacts byte-for-byte.
+Reference: Figma file `3Ysh0mOAEkAgA5DgZPSC1j`, revision `ui-figma-final/2026-10-25/GM-25.2`.
+Reviewer: @ThanhTris
 
-A follow-up closes another auth gap: when a protected API returns `401/AUTH_REQUIRED`, the repository clears the public identity and blocks further requests instead of continuing to send the rejected token. Home and protected routes offer explicit session recovery; that action refreshes credentials before allowing API calls again. Revoked refresh credentials lead to the existing local-reset state, and responses from requests started under the old identity are discarded.
+---
 
-The changes retain GM-25's existing APIs, DTOs, mock/demo behavior, room lifecycle, and scope. No package, backend RPC, migration, or GM-31 voting changes are included.
+## Key Changes
 
-## Regression coverage
+1. **6 Figma Nodes Parity**:
+   - `298:2309` [Mở app · Chọn cách tham gia]: Guest onboarding flow on first open (`GuestEntryScreen.tsx` on `/welcome`), distinct guest registration before entry.
+   - `330:3067` [02 · Khách / Trang chủ / Tiếp tục phiên]: Restored guest identity display in `HomeScreen.tsx` on `/`, "Vào lại phòng đang dở" card for active sessions, quick action buttons.
+   - `330:3068` [03 · Tạo phòng / Hẹn giờ / Tình huống]: Dish-only room creation (`CreateRoomEntryScreen.tsx` / `DishSetupFlow.tsx` on `/room/setup`), ADR-019 10–20 dishes, 0 raw GPS sharing, meal slot selection, quick timer presets (+15m, +1h, Ăn ngay).
+   - `330:3069` [05 · Tham gia phòng / QR / Lỗi vào phòng]: 6-character room code input (`JoinRoomEntryScreen.tsx` on `/room/join-entry`), QR mode toggle, error feedback banner, and privacy-preserving public room preview.
+   - `388:7816` [04 · Khẩu vị / Lưu nháp / Lỗi]: Dietary & taste preferences (`DishPreferencesScreen.tsx` in `DishSetupFlow.tsx`), draft saving with feedback banner, network failure retry action, and AIDD privacy audit panel.
+   - `330:3070` [06 · Phòng chờ / Chủ phòng / Thành viên]: Clear host vs member role separation in `LobbyScreen.tsx` on `/room/lobby`, 20-member capacity, host-only "Bắt đầu chọn món" button.
+2. **Ready Flow Removal (Consumer v4 / ADR-019)**:
+   - Completely removed member ready buttons ("Tôi sẵn sàng") and waiting states from active lobby flow.
+   - Host starts voting directly when the room meets starting criteria and the food pool is eligible.
+   - Marked `setReady` as deprecated on `RoomRepository`.
+3. **Canonical Dish Session V4 Dispatch & Public Room Preview**:
+   - Implemented `previewJoin(code)` RPC on `RoomRepository` using `dish-session-v4/roadmap-v2/GM-07.B-supplement` with strict schema validation (`isPreviewJoinAck`), returning only `{ code, memberCount, capacity }` and returning `MALFORMED_RESPONSE` on invalid payload shapes (no fake 2/20 fixture).
+   - Wired `joinRoom`, `getRoomSnapshot`, `startRound`, `leaveRoom`, `cancelRoom` to dispatch canonical `dish_session` v4 with fallback.
+4. **Live Dish Setup Gateway & Idempotency**:
+   - Wired `DishSetupFlow` via `LiveDishSetupGateway` to dispatch `create` and `updateSettings` with schema-compliant payload (`settings: { dishCount, mealSlot, desiredAt: null | string }`) preserving host's dishCount (10..20) without loss.
+   - Preserved payload determinism across retries (frozen `desiredAt: null` for now).
+   - Mapped errors cleanly: `INSUFFICIENT_DISHES` -> `SHORTAGE` (with `available` and `requested`), `VERSION_CONFLICT` -> `STALE`, `NETWORK_ERROR`/`TIMEOUT` -> `UNKNOWN`.
+   - Propagated snapshot read errors without swallowing them to prevent unconfirmed state progression.
+   - Injected durable `requestId` generator in `DishSetupRoute` (`/room/setup`).
 
-- Home onboarding with empty storage: explicit name confirmation, one signup, then navigation with the same authenticated identity before discovery/create/join.
-- Stored session restore, restore network failure, ambiguous signup, explicit local reset, logout, and provider updates through the token-free session snapshot observer.
-- Direct route guards and lobby behavior when the current user is missing or absent from the roster.
-- API `AUTH_REQUIRED` hides the current identity, blocks subsequent requests and stale in-flight results, and exposes explicit refresh recovery. A real `SessionManager` regression verifies the rotated token is saved before requests resume.
-- Existing GM-25 repository, conflict, polling, taxonomy, eligibility, and retry regressions.
+---
 
-Tests use `SessionManager` with synthetic storage/auth/API responses. They do not establish real GoTrue, deployed RPC, or multi-client behavior.
+## Verification & Test Results
 
-## Verification on the local revision
+- `npm run typecheck`: **Pass** (0 errors).
+- `npm run check:architecture`: **Pass** (clean boundaries).
+- Focused GM-25 Jest suites: **Pass** (including `gm25FigmaParity.test.tsx` and `roomRepository.test.ts`).
+- Full mobile Jest suite (`npm test`): **Pass**.
+- Repository validation (`validate_repository.py` & `task_readiness.py --check-docs`): **Pass**.
+- `git diff --check`: **Pass** (clean whitespace, no conflict markers).
 
-- Expo baseline: 5/5 tests; Expo compatibility check reports SDK 57.0.30 and lockfile dependencies up to date, with its offline validation limitation noted in `CHECKS.md`.
-- Focused auth/repository/onboarding tests: 5 suites / 116 tests passed, including the unchanged GM-09 and GM-11 screens.
-- `npm run check`: 23 suites / 652 tests passed; TypeScript and architecture checks passed; lint has zero errors and four existing warnings.
-- Android JavaScript bundle export passed.
-- Repository validator passed; Python regression: 550 tests passed, 6 skipped (156.89 seconds); task indexes and diff check passed.
+---
 
-The implementation is based on PR head `11fe8a7eb24f8281111a53dd4243cf39b6f96827` plus the local API-recovery follow-up. Fetch found no new main commits; `origin/main` remains `4a8cd642c8d908d9e6d2c75d19c0935a44cba042` and is an ancestor. This description summarizes the implementation to be delivered on PR #124.
+## Evidence & Limits
 
-## Acceptance limits
+- Detailed parity report: [FIGMA_PARITY.md](FIGMA_PARITY.md)
+- Output checks: [CHECKS.md](CHECKS.md)
+- Handoff & 2-device acceptance scenario: [HANDOFF.md](HANDOFF.md)
 
-Android device, real backend/auth, deployed migration/RPC verification, and two-client acceptance remain **Not run**. No Android device is available in this environment. The merge readiness gate reports `READY_FOR_MERGE_REVIEW` on this local tree after keeping upstream-delivered artifacts identical to main. Trí (`ThanhTris`) owns final review and acceptance.
-
-See [CHECKS.md](CHECKS.md) for exact commands/results and [HANDOFF.md](HANDOFF.md) for HTTPS or USB `adb reverse` endpoint setup and the device acceptance scenario.
+*Note per AIDD guidelines*: Physical Android device execution and remote live backend staging verification remain **Not run** pending Trí's (`ThanhTris`) review.

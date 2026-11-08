@@ -163,3 +163,13 @@ không thay version input của154weekly rows.
 Migration0003 sửa closed provenance vocabulary cho khớp fieldSources.description
 trong GM-04, không bỏ additionalProperties/UUID/FK checks hoặc mở quyền client.
 [Evidence](../../docs/evidence/roadmap-v2/GM-08/real-db/README.md).
+
+
+## GM-40 dataset1.1.0 / owned QA
+
+39 món giữ ID; supplement `data-preparation/config/meal_slot_evidence_v1.json` bổ sung
+meal evidence có version/URL/checksum, không sửa snapshots. Builder mặc định offline.
+Importer `supabase/seed/import_dish_catalogue.py` validate/stage/import/readback dùng
+storage0026 đã có, chỉ DB QA có ownership marker; không production publish hoặc đổi API.
+Chạy `python3 scripts/gm40_catalogue_check.py` từ root để tạo/kiểm/dọn QA DB+REST riêng.
+Xem [GM-40 HANDOFF](../../docs/evidence/roadmap-v2/GM-40/HANDOFF.md) cho contract, nguồn, thiếu nhãn, lệnh và restore.

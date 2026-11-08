@@ -1,0 +1,48 @@
+#!/usr/bin/env python3
+"""GM21.3 producer-driven Auth/REST QA; owned namespaces, no application DB writes."""
+import sys
+import hashlib
+import re
+import gm20_canonical_check as qa
+
+qa.OUTPUT=qa.ROOT/'.work/gm21-canonical'
+qa.PRIVATE=qa.OUTPUT/'runtime.private.json'
+qa.BRUNO=qa.ROOT/'supabase/tests/bruno/GM-21-canonical/environments/Local.runtime.private.bru'
+
+
+def verify_consumer(db):
+    source=(qa.ROOT/'supabase/migrations/0036_gm21_canonical_history.sql').read_text(encoding='utf8')
+    functions=re.findall(r'create function ([a-z0-9_.]+)\(.*? as \$\$(.*?)\$\$;',source,re.S)
+    if len(functions)!=6:
+        raise RuntimeError('GM21_FUNCTION_INVENTORY_MISMATCH')
+    for name,body in functions:
+        schema,function=name.split('.')
+        # PostgreSQL preserves the migration file's platform line endings in
+        # prosrc. Normalize CRLF/CR to LF before comparing with Python's
+        # universal-newline text read, otherwise Windows reports false drift.
+        actual=db.psql("select encode(extensions.digest(convert_to(replace(replace(p.prosrc,chr(13)||chr(10),chr(10)),chr(13),chr(10)),'UTF8'),'sha256'),'hex') from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='"+schema+"' and p.proname='"+function+"' and p.prosecdef and p.proconfig=array['search_path=pg_catalog'];").strip()
+        if actual!=hashlib.sha256(body.encode('utf8')).hexdigest():
+            raise RuntimeError('GM21_DEPLOYED_DEFINITION_OR_ACL_DRIFT '+name)
+    consent_source=(qa.ROOT/'supabase/migrations/0039_history_consent_read.sql').read_text(encoding='utf8')
+    match=re.search(r'create function public\.get_history_consent\(\).*? as \$\$(.*?)\$\$;',consent_source,re.S|re.I)
+    if not match:
+        raise RuntimeError('GM21_HISTORY_CONSENT_READ_SOURCE_MISSING')
+    actual=db.psql("select encode(extensions.digest(convert_to(replace(replace(p.prosrc,chr(13)||chr(10),chr(10)),chr(13),chr(10)),'UTF8'),'sha256'),'hex')||'|'||"
+        "(p.prosecdef and p.proconfig=array['search_path=pg_catalog'] and has_function_privilege('authenticated',p.oid,'execute') "
+        "and not has_function_privilege('anon',p.oid,'execute') and not has_function_privilege('service_role',p.oid,'execute') "
+        "and not has_function_privilege('gm06_publisher',p.oid,'execute'))::text from pg_proc p join pg_namespace n on n.oid=p.pronamespace "
+        "where n.nspname='public' and p.proname='get_history_consent' and pg_get_function_identity_arguments(p.oid)=''").strip()
+    expected=hashlib.sha256(match.group(1).encode('utf8')).hexdigest()+'|true'
+    if actual!=expected:
+        raise RuntimeError('GM21_HISTORY_CONSENT_READ_DEFINITION_OR_ACL_DRIFT')
+    qa.runtime.record('gm21-consumer-definitions','Pass',functionCount=len(functions),historyConsentRead='0039/0.16.0',schemaVersion='0.16.0')
+
+
+if __name__=='__main__':
+    if '--bruno' in sys.argv:
+        raise SystemExit('GM21 runner supports --keep, --against and --cleanup; use the HTTP request suite for manual review.')
+    try:
+        qa.main(http_script='scripts/gm21_canonical_http.mjs',stage='gm21-canonical-http',before_http=verify_consumer)
+    except Exception as error:
+        print(qa.runtime.redact(str(error)),file=sys.stderr)
+        raise SystemExit(1)

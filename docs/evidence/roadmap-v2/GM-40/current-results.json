@@ -1,0 +1,118 @@
+{
+  "checkedAt": "2026-10-23T03:35:44.949760Z",
+  "testedHeadBeforePatchCommit": "9e7a45bcb31530a9f37a4b6aaf569bdfd3c0d2b1",
+  "targetMainRevision": "0d571b7316c0443bc766dca564407fd0abf521ac",
+  "state": "review follow-up; not Approved/Done",
+  "runtime": {
+    "python": "3.12.14",
+    "postgres": "17.11",
+    "node": "v24.22.1"
+  },
+  "results": {
+    "qaRealBundleSqlJwtHttp": {
+      "result": "Pass",
+      "cases": 47,
+      "report": "qa-results.json"
+    },
+    "upstreamRuntimeRegression": {
+      "result": "Pass",
+      "cases": 108,
+      "report": "runtime-regression.json",
+      "dataMode": "synthetic"
+    },
+    "pythonRegression": {
+      "result": "Pass",
+      "tests": 591
+    },
+    "offlineBuild": {
+      "result": "Pass",
+      "artifacts": 5,
+      "stale": [],
+      "twoBuilds": "covered by catalogue unit test"
+    },
+    "repositoryValidator": {
+      "result": "Pass"
+    },
+    "taskIndexes": {
+      "result": "Pass"
+    },
+    "mergeGate": {
+      "result": "READY_FOR_MERGE_REVIEW",
+      "report": "readiness-qa.txt",
+      "approval": false
+    },
+    "gitDiffCheck": {
+      "result": "Pass"
+    },
+    "domain": {
+      "result": "Pass",
+      "tests": 169
+    },
+    "architecture": {
+      "result": "Pass"
+    },
+    "mobileTypecheck": {
+      "result": "Fail_environment",
+      "reason": "Existing local node_modules cache missing expo-location; no mobile source/dependency changes in PR"
+    },
+    "mobileLint": {
+      "result": "Fail_environment",
+      "errors": 1,
+      "warnings": 4,
+      "reason": "import/no-unresolved expo-location; remaining warnings upstream"
+    },
+    "mobileJest": {
+      "result": "Fail_environment",
+      "passedSuites": 23,
+      "failedSuites": 3,
+      "passedTests": 638,
+      "reason": "Cannot resolve expo-location in existing dependency cache"
+    },
+    "androidExpoPlacesIntegration": {
+      "result": "Not run"
+    },
+    "productionPublish": {
+      "result": "Not run"
+    },
+    "sourceCaptures": {
+      "result": "Pass",
+      "snapshots": 5,
+      "rawContentTracked": false,
+      "checksums": "match meal_slot_evidence_v1.json"
+    },
+    "catalogueImporterUnit": {
+      "result": "Pass",
+      "tests": 39
+    }
+  },
+  "dependencyEnvironment": {
+    "installedNewPackages": false,
+    "reusedOriginalCheckoutNodeModulesTemporarily": true,
+    "cacheLockfileMatchesBranch": false,
+    "npmLsMissing": "expo-location@~57.0.21",
+    "cleanInstallCi": "not claimed by local cache results"
+  },
+  "data": {
+    "datasetVersion": "1.1.0",
+    "bundleSha256": "776b1e4998d0b170b51a7c39a4ead74461bdfd721f167dafddf7f072bf117a2f",
+    "mealCounts": {
+      "breakfast": 14,
+      "lunch": 23,
+      "dinner": 7,
+      "snack": 1
+    },
+    "unknownMealDishes": 9,
+    "dishes": 39,
+    "mapping": {
+      "mapped": 216,
+      "needs_review": 2,
+      "excluded": 1
+    }
+  },
+  "scope": {
+    "schemaApiChanged": false,
+    "migrationEdited": false,
+    "applicationDatabaseChanged": false,
+    "projectStatusChanged": false
+  }
+}

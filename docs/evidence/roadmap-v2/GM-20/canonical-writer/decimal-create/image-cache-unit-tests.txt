@@ -1,0 +1,11 @@
+test_ci_docker_hub_cache_uses_same_pinned_version (test_gm06_isolated_images.IsolatedImageTests.test_ci_docker_hub_cache_uses_same_pinned_version) ... ok
+test_ci_ghcr_cache_uses_same_pinned_version (test_gm06_isolated_images.IsolatedImageTests.test_ci_ghcr_cache_uses_same_pinned_version) ... ok
+test_daemon_error_is_not_treated_as_cache_miss (test_gm06_isolated_images.IsolatedImageTests.test_daemon_error_is_not_treated_as_cache_miss) ... ok
+test_ecr_cached_without_fallback (test_gm06_isolated_images.IsolatedImageTests.test_ecr_cached_without_fallback) ... ok
+test_missing_images_fail_before_resource_allocation_with_report (test_gm06_isolated_images.IsolatedImageTests.test_missing_images_fail_before_resource_allocation_with_report) ... ok
+test_wrong_version_cached_in_docker_hub_is_rejected (test_gm06_isolated_images.IsolatedImageTests.test_wrong_version_cached_in_docker_hub_is_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.011s
+
+OK

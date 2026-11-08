@@ -1,0 +1,33 @@
+{
+  "baseCommit": "4776244",
+  "targeted": {
+    "suitesPassed": 6,
+    "testsPassed": 39
+  },
+  "jest": {
+    "suitesPassed": 38,
+    "suitesFailed": 0,
+    "testsPassed": 807,
+    "testsFailed": 0,
+    "durationSeconds": 75.217
+  },
+  "typecheck": "Pass",
+  "scopedEslint": "Pass",
+  "architecture": "Pass",
+  "expoCompatibility": "Pass, offline validation limitation",
+  "androidExport": {
+    "bundle": "entry-91143e7847e4b41334bc875b16d69e43.hbc",
+    "result": "Pass, not device acceptance"
+  },
+  "device": "Not run",
+  "sourceCommit": "f97a74800cf6ecdaede10c7f010e51b0249da804",
+  "python": {
+    "total": 657,
+    "passed": 650,
+    "skipped": 6,
+    "errors": 1,
+    "failures": 0,
+    "durationSeconds": 154.086,
+    "error": "Existing WinError1314 symlink privilege"
+  }
+}

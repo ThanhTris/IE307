@@ -1,0 +1,44 @@
+{
+  "task": "GM-15",
+  "supplement": "GM15.3",
+  "baseRevision": "a6e89fcc00fad2ad2c3cef9c0599cdabf7c035f7",
+  "testedHeadBeforePatchCommit": "a6e89fcc00fad2ad2c3cef9c0599cdabf7c035f7",
+  "state": "ready for review; not Approved/Done",
+  "upstream": {
+    "GM04": "Done, field contract1.1.0 baseline retained",
+    "GM07": "Done, PR138/40feb9b baseline B + explicit B-supplement received"
+  },
+  "policy": "dish-decision-v4/ADR-019-30PCT-MIN1",
+  "evaluator": "1.0.0",
+  "vectors": 102,
+  "sha256": {
+    ".github/workflows/decision.yml": "1f2f063e4806c152848b190a23570cbcfae598dc61594b058d6243dcaf48eb87",
+    "AGENTS.md": "1b16b63949c15dc6b5ca89fa4e609df6bc47aa991dac74a791a6946136240655",
+    "docs/evidence/roadmap-v2/GM-15/HANDOFF.md": "bca1ae3b20aeb29d1f6866f91a06649865f75164fc1a7500d7a4028c624afe8e",
+    "docs/evidence/roadmap-v2/GM-15/v4/CHECKS.md": "c8bfe1dc118a97805bfabd19d0a6361090b8a87e653c3dd2eb9589b7a0b3d7d3",
+    "docs/evidence/roadmap-v2/GM-15/v4/HANDOFF.md": "c8141a974ad9ec452ba0102cd91a345a20aba7ee4ed22075ece6df656005645b",
+    "docs/evidence/roadmap-v2/GM-15/v4/PLAN.md": "31ab66acae684e5f47804dcc8ed83f10ff91eae06c1f590502343dab81582d50",
+    "docs/evidence/roadmap-v2/GM-15/v4/checks.json": "44c398b36f325891236099f6f485dedce31a13943b57785ce685a8ff6cbb1233",
+    "docs/evidence/roadmap-v2/GM-15/v4/readiness-merge.txt": "6bfbaa7bf3c2fb6134faa93c0c786b8e1753be5460202e3ab621771395713001",
+    "docs/evidence/roadmap-v2/GM-15/v4/readiness-start.txt": "41203332c27478408ef9eda49fa79d62352fbd041f2881104faa3d599e03030c",
+    "docs/evidence/roadmap-v2/GM-15/v4/vector-results.json": "f1bdb5a66e5c41417da0cf9f7385c89d7f36e047d2c86962ef999dcb22053fe6",
+    "mobile/scripts/check-dish-v4.mjs": "e5fd03ceb90c15a4ed21c4294e3231fa9b8a665d7abb4aeb32118c36150ba2d0",
+    "mobile/src/domain/decision/README.md": "239862a74ac1470c72580503be398401c0a5f1da1618d5c31697b56890fa506e",
+    "mobile/src/domain/decision/dishPolicyV4.ts": "488ec1ae67e6c2616ccf18818d1c6330ba2b739a493f0a526ed42301dd15cf9e",
+    "mobile/tests/dishPolicyV4.test.mjs": "7f39278d97cbce9a6da00db14c6ce444bbcb36139386553c0de4785adbf2d5e6",
+    "mobile/tests/helpers/dishV4.mjs": "4cefc04bfd63ce795924c44478b8510cc6d196a083892053ffc188ab12b61fd2",
+    "scripts/evaluate_dish_policy_v4.mjs": "c48348709aa2fcc151e109d1355d830a3d274a2f705b0e8f6ca90bd1057fba64",
+    "tasks/backlog/GM-15.md": "132f3462f1f21a5a9a367ed6e999711020acb8a24c71663d43f708961389b4aa",
+    "tests/fixtures/decision-v4/README.md": "e3d6441935a06c8cc78dc132ed32c5f1b545b725b0566cce82f4266086f9038f",
+    "tests/fixtures/decision-v4/cases.json": "7ce419376c4aa84e8c95d16841b734424d6d85ff7b0dce50c73986e01847da55"
+  },
+  "protectedSha256": {
+    "mobile/src/domain/decision/index.ts": "aa1f2276d7ec2583e5f25d64a993021c3b36af1bc4d7a772b5f9a8ff99935a81",
+    "mobile/src/domain/decision/dishPolicy.ts": "14cc340f2065a3ac221c9f452955e5e56ec08784d5af326ed01087a9ea0e0a61",
+    "tests/fixtures/decision-v2/cases.json": "6d2fa8cc89d18c32ccda5bb6c6a5805bd6d89d303d224d1a89019f8208b3dd30",
+    "tests/fixtures/decision-v2/roster-cases.json": "431e103588074d9033322c6056ea726615ab59fdc08883904fa0b33b417412f5",
+    "tests/fixtures/decision-v2/seeded-cases.json": "e964aea7b4ce0b1fcf3773ab9e0e48f6ba685422eb83c1df5aaa0e4cd5c47caa",
+    "mobile/package.json": "15df3809e6f9a4b367b90f6c9c9999798df826fce5eaa3db584790c9e5476820",
+    "mobile/package-lock.json": "d3c5adf46fe46dd9ad14db68301aa8b3b64b518283ebd115855aae2896994c6c"
+  }
+}

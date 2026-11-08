@@ -1,0 +1,30 @@
+GM-22 Bruno desktop Runner evidence
+Date: 2026-10-31
+Bruno: 4.3.0, Windows desktop
+Environment: Local.runtime.private (generated for this owned QA run, then removed)
+QA project: ie307-dish-v4-qa-20261030-135000060500-1
+API origin: http://127.0.0.1:54361
+Schema: 0.14.0; migrations 0036 GM-21 and 0037 GM-22 applied
+
+Runner: All 12 | Passed 12 | Failed 0 | Skipped 0
+
+Request order and observed status/assertion:
+00 Create B room                         200 — room created through Auth + REST
+01 Own identity                          200 — minimal caller identity
+02 List friends                          200 — caller's own empty projection
+03 Invite partner                        200 — pending friend invitation
+04 Accept partner                        200 — recipient accepted
+05 Invite room                           200 — pending invite; recipient not joined yet
+06 Accept room invite                    200 — recipient joined; JoinRoomResponse checked
+07 Replay accepted room invite           200 — exact stored ACK replayed
+08 Inbox                                 200 — invitation kind/reference checked
+09 Missing auth                          401 — stable auth error
+10 Invalid recipient                     403 — NOT_RECIPIENT
+12 Room snapshot after invite            200 — both identities in the room roster
+
+The collection ran sequentially. Request IDs, room IDs, invitation IDs,
+membership and versions flowed from preceding responses. The accepted room
+response returned an opaque membership-row UUID in `memberId`; the subsequent
+snapshot verified the invited auth identity in the roster. Tokens, keys and raw
+auth credentials are intentionally omitted. Bruno's Runner result remains open
+in the desktop app for inspection.

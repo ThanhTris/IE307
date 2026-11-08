@@ -1,0 +1,280 @@
+{
+  "branch": "codex/gm-09-figma-update",
+  "baseCommit": "e5f92d2de9dd727f8b3cad51decde2c02207d165",
+  "sourceCommit": "a4dbdecc30ef22ed42d563198d5045e26ad2fc34",
+  "state": "committed independent UI candidates; producer/native acceptance pending",
+  "requirement": "ui-figma-final/2026-10-25/GM-09.2",
+  "userClarification": "Figma is reference; report/add small required controls; local step commits only",
+  "files": [
+    {
+      "path": "docs/evidence/roadmap-v2/GM-09/figma-update/figma-tutorial-first.png",
+      "sha256": "dd03107e9c7405764bc5015faed7a11986e23c85296aebb9851896d373555b87",
+      "bytes": 60438,
+      "encoding": "raw"
+    },
+    {
+      "path": "mobile/assets/brand/entry/welcome-ring-large.png",
+      "sha256": "17a3a78925bab13d4ba1a65a6315270f8250f54a426bae0d866b52a69f3a71a1",
+      "bytes": 3887,
+      "encoding": "raw"
+    },
+    {
+      "path": "mobile/assets/brand/entry/welcome-ring-small.png",
+      "sha256": "3d1019d62afc60b2d4069fcfbc6197ab1dcfe2d1a4ab41151666391b17e5e90f",
+      "bytes": 2460,
+      "encoding": "raw"
+    },
+    {
+      "path": "mobile/assets/brand/friends-dining.png",
+      "sha256": "16bd1bb058acc7ab3906ef24be903011e65f0ac74eccb5fe93f7d5e9a7b432ab",
+      "bytes": 862711,
+      "encoding": "raw"
+    },
+    {
+      "path": "mobile/assets/brand/gcd-logo-master.png",
+      "sha256": "a72e07d837c48e8306c196d0d175dc3b0e3f8f134ceacf8e39026b91ab9a148c",
+      "bytes": 1516,
+      "encoding": "raw"
+    },
+    {
+      "path": "mobile/assets/brand/home/back.png",
+      "sha256": "7f4a88d3bb06b48e4362de5e617d93e9329e208b717b0de606067e813596387b",
+      "bytes": 308,
+      "encoding": "raw"
+    },
+    {
+      "path": "mobile/assets/brand/home/create.png",
+      "sha256": "8c8cd597995afa82d2ffd618a64fd45340434eaea06c181bd89315e77a7d71f4",
+      "bytes": 376,
+      "encoding": "raw"
+    },
+    {
+      "path": "mobile/assets/brand/home/friends-dining-slot.png",
+      "sha256": "65f3a0361f556dd3d68bd661c6a578089a7bba484875e8d5458087474b53546c",
+      "bytes": 27218,
+      "encoding": "raw"
+    },
+    {
+      "path": "mobile/assets/brand/home/join.png",
+      "sha256": "429400002698b9a850ca8f0a07f2cf4ae76ef966eb86e28d9d5c5ec25dc6b8ab",
+      "bytes": 370,
+      "encoding": "raw"
+    },
+    {
+      "path": "mobile/assets/brand/icons/bell.png",
+      "sha256": "1f4b93f9672a922418d016cba2598c397fd823ee3462b24d680ef3ac5be7100a",
+      "bytes": 663,
+      "encoding": "raw"
+    },
+    {
+      "path": "mobile/assets/brand/icons/enter.png",
+      "sha256": "6e3bb6af73079ebaa5506d4bf27ff36765f281df4ca399b7ed66bec1acb9dc1c",
+      "bytes": 378,
+      "encoding": "raw"
+    },
+    {
+      "path": "mobile/assets/brand/icons/friends.png",
+      "sha256": "840a9052798393bed34d27b6202c36d521eab078685b9835a9ff986613e051f7",
+      "bytes": 713,
+      "encoding": "raw"
+    },
+    {
+      "path": "mobile/assets/brand/icons/history.png",
+      "sha256": "90e086cbf810a648cb2c9120822236108e8d97cb3fa055908e664f279deed836",
+      "bytes": 828,
+      "encoding": "raw"
+    },
+    {
+      "path": "mobile/assets/brand/icons/home.png",
+      "sha256": "5104d2f09a23d2ef9815aa47659e2c439ba9b6b4fe39be314e0ce6bd872de60e",
+      "bytes": 627,
+      "encoding": "raw"
+    },
+    {
+      "path": "mobile/assets/brand/icons/lightning.png",
+      "sha256": "bb411cd71db338d29e94ce06ebd817c346ec6148968e4edcf1939cfe69bf645b",
+      "bytes": 489,
+      "encoding": "raw"
+    },
+    {
+      "path": "mobile/assets/brand/icons/plus.png",
+      "sha256": "96ae02b9a357fc374aca0eaa7400e830cdeedeacadbbcafc77ff73421bf17686",
+      "bytes": 258,
+      "encoding": "raw"
+    },
+    {
+      "path": "mobile/assets/brand/icons/profile.png",
+      "sha256": "f34e9272626fdbf0e21804e418adcbe4ded8515c080236284d9bc92c327b9c48",
+      "bytes": 663,
+      "encoding": "raw"
+    },
+    {
+      "path": "mobile/src/app/index.tsx",
+      "sha256": "006a5e960663bb4975f7583deb4b89f75b3711073f807a46d18e1d5098793df1",
+      "bytes": 1837,
+      "encoding": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/app/room/_layout.tsx",
+      "sha256": "2cabfbc2e86f9357f28be940c804f6c6ebe744d5926af696e373deeda3a1cdc0",
+      "bytes": 526,
+      "encoding": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/app/room/create-entry.tsx",
+      "sha256": "e597596be9d3c64cb100e7e968ff936bf559151d5aceb1c967ee65b4a400b7dd",
+      "bytes": 973,
+      "encoding": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/app/room/join-entry.tsx",
+      "sha256": "83af7110ab2f8495f58185b50a43d6a90b1d761a77915bdb681bcd4224339bdc",
+      "bytes": 1738,
+      "encoding": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/app/tutorial.tsx",
+      "sha256": "cf1c504c6687a6a1ee3ae886ce3ec88ff111d7e4e703c57f316f49e15b25da30",
+      "bytes": 370,
+      "encoding": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/bootstrap/roomPreview.tsx",
+      "sha256": "f41e220a58e3ca7cfe322c0af05ffe8668c4b78dc6607d8f60857c24c4559dc4",
+      "bytes": 4663,
+      "encoding": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/bootstrap/roomSetupPreview.tsx",
+      "sha256": "344725300023dbcb6808dcccb0436f170001c7591b5a7857dfd4409e5406177e",
+      "bytes": 7000,
+      "encoding": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/home/components/HomeFlowFrame.tsx",
+      "sha256": "28bf45fcd94c28640dacb487a4a0b13bc807f21ffbfa89eb7658cd91dfd07917",
+      "bytes": 1841,
+      "encoding": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/home/screens/GuestSessionExpiredScreen.tsx",
+      "sha256": "6e5b07372ac2160f49ce4ebc15307cfec561c3d8c1ba6e0b4e9a6d54c6f5fe8b",
+      "bytes": 2797,
+      "encoding": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/home/screens/HomeScreen.tsx",
+      "sha256": "eaebb8b2f5774f6b3f67cdf815ef97e49578a7aea96da4b007f18561b4cf032e",
+      "bytes": 18427,
+      "encoding": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/home/screens/TutorialScreen.tsx",
+      "sha256": "fefdff4f457cbff0ee4b3c75c3694211cc43711a48d7666f6ae582b9c500918e",
+      "bytes": 6981,
+      "encoding": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/rooms/components/RoomEntryFrame.tsx",
+      "sha256": "2fe3d66d1944007960aeb2e47637ab868f6014377aa98075e45ccbef7b2f7ec4",
+      "bytes": 6194,
+      "encoding": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/rooms/screens/CreateRoomEntryScreen.tsx",
+      "sha256": "1695605aa976479ee5881cb9f5ab4d57ce5bee5bdc5ff1693300d8993f229403",
+      "bytes": 3669,
+      "encoding": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/rooms/screens/CreateRoomScreen.tsx",
+      "sha256": "69450d16c1c49266c07bc55c8c6766cff9d9dd9e872207ca87c15fa44acea077",
+      "bytes": 11153,
+      "encoding": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/rooms/screens/JoinRoomEntryScreen.tsx",
+      "sha256": "c751fd4d3671a4c2ac8363492f50d2ba1d4e68965fcb82e64374d6fd06b05246",
+      "bytes": 9441,
+      "encoding": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/rooms/screens/JoinRoomScreen.tsx",
+      "sha256": "9fcfc4f0c804409b9a322501fcf71333e3a17da122c6a950c714f814dad44b73",
+      "bytes": 8237,
+      "encoding": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/rooms/services/joinPreview.ts",
+      "sha256": "e5e1fb28ebbddad7dfdbd672a826748f71ea861a9ea4c3258917f5c330caef5d",
+      "bytes": 1402,
+      "encoding": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/shared/ui/layout/AppBottomNavigation.tsx",
+      "sha256": "50a16a7f3b27fa783e30cdb2a789aacf16317031e5911f70d1420b0dbe1f81f9",
+      "bytes": 2307,
+      "encoding": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/shared/ui/layout/AppHeader.tsx",
+      "sha256": "13b9d07cd2c247e9b42d97ced6dac26bbc1512ca441590848f1be69855819034",
+      "bytes": 7152,
+      "encoding": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/tests/component/createRoomEntry.test.tsx",
+      "sha256": "fae145e1007d8ea44ded40134a96cf8fe2c905d836a4109b1c9280dd1f22ca04",
+      "bytes": 2083,
+      "encoding": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/tests/component/joinRoomEntry.test.tsx",
+      "sha256": "1410cfc67ce41981368a6b12304c38afd0272c97042c195150a49c1c3a37821e",
+      "bytes": 8506,
+      "encoding": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/tests/component/tutorialScreen.test.tsx",
+      "sha256": "eaaae724f968e40e90cac2c6d33a18ddcaccb30c049c082ab2ca7c2b25c1b1b9",
+      "bytes": 3585,
+      "encoding": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/tests/integration/createEntryRoute.test.tsx",
+      "sha256": "2de702d18ebf99a767e11e2bc1a9cae57ff685dad310c42c1af4d47fda0a1055",
+      "bytes": 1437,
+      "encoding": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/tests/integration/guestEntryRoute.test.tsx",
+      "sha256": "b4fc416dcabc33add7727f7959991e52fffa369acb2638bbcd0895c8995a2463",
+      "bytes": 4767,
+      "encoding": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/tests/integration/joinEntryRoute.test.tsx",
+      "sha256": "20abc922d0aac4bbf28ff4b5a194a9a5e059c74bf55ca4fc8f3b2354ba7e7e16",
+      "bytes": 1678,
+      "encoding": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/tests/integration/resultRoutes.test.tsx",
+      "sha256": "7149f0a8569df808a871c2de75322c2f89034e215b564eef33d9b3d6470b9632",
+      "bytes": 6252,
+      "encoding": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/tests/integration/routes.test.tsx",
+      "sha256": "1eadefa71441c3c18efa49118e301ca45d8bfc64b66a99e3a3c02b749daa03dd",
+      "bytes": 22050,
+      "encoding": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/tests/integration/tutorialRoute.test.tsx",
+      "sha256": "f04d3b27c02f79622ed6a313af2e4d304ed1c0314c3768be0259813cc4f0d619",
+      "bytes": 1378,
+      "encoding": "UTF-8 LF"
+    }
+  ]
+}

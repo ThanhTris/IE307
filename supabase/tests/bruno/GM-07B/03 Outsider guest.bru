@@ -1,0 +1,28 @@
+meta {
+  name: 03 Outsider guest
+  type: http
+  seq: 3
+}
+post {
+  url: {{baseUrl}}/auth/v1/signup
+  body: json
+  auth: none
+}
+headers {
+  Content-Type: application/json
+}
+body:json {
+  {"data":{"display_name":"V4 Bruno Outsider","gm07_v4_qa":"dish-v4-qa-20261026"}}
+}
+script:post-response {
+  const b = res.getBody();
+  if (res.getStatus() === 200 && b.access_token) bru.setVar('outsiderToken', b.access_token);
+  else bru.runner.stopExecution();
+}
+tests {
+  test('Creates an outsider identity for privacy checks', () => {
+    const b = res.getBody();
+    expect(res.getStatus()).to.equal(200);
+    expect(b.user.is_anonymous).to.equal(true);
+  });
+}

@@ -1,7 +1,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
-import { cliArgs, validateApiUrl, validateConfig, parseStatus, checkHealth, redact, main } from '../scripts/backend.mjs';
+import { mkdtemp, readFile, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { cliArgs, validateApiUrl, validateConfig, parseStatus, checkHealth, redact, main, runCommand, isTransientDockerStartupFailure } from '../scripts/backend.mjs';
 
 test('config pins project and ports', async () => {
   const text = await readFile(new URL('../supabase/config.toml', import.meta.url), 'utf8');
@@ -43,6 +45,35 @@ test('redaction strips JWT, keys, password and named credential fields', () => {
   assert.ok(!cleaned.includes('other-secret'));
   assert.ok(!cleaned.includes('eyJabc'));
   assert.ok(!cleaned.includes('sb_secret_abc'));
+});
+test('only transient Docker image/network startup failures are retryable', () => {
+  assert.equal(isTransientDockerStartupFailure('failed to pull image: net/http: TLS handshake timeout'), true);
+  assert.equal(isTransientDockerStartupFailure('Error response from daemon: connection reset by peer'), true);
+  assert.equal(isTransientDockerStartupFailure('Data limit exceeded'), false);
+  assert.equal(isTransientDockerStartupFailure('pgTAP: not ok 18 - history wrapper path'), false);
+});
+test('failed subprocess diagnostics retain stdout and stderr while redacting secrets', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'ie307-backend-runner-'));
+  const capturePath = join(directory, 'pg-tap.log');
+  try {
+    await assert.rejects(runCommand(process.execPath, ['-e', [
+      "process.stdout.write('pgTAP stdout\\nSERVICE_ROLE_KEY=stdout-secret\\n')",
+      "process.stderr.write('pgTAP stderr\\nANON_KEY: stderr-secret\\n')",
+      'process.exit(7)',
+    ].join(';')], { quiet: true, capturePath }), error => {
+      assert.match(error.message, /stdout:\npgTAP stdout/);
+      assert.match(error.message, /stderr:\npgTAP stderr/);
+      assert.doesNotMatch(error.message, /stdout-secret|stderr-secret/);
+      assert.match(error.message, /code 7/);
+      return true;
+    });
+    const artifact = await readFile(capturePath, 'utf8');
+    assert.match(artifact, /pgTAP stdout/);
+    assert.match(artifact, /pgTAP stderr/);
+    assert.doesNotMatch(artifact, /stdout-secret|stderr-secret/);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
 });
 test('invalid reset rejected before any process', async () => {
   let calls = 0;

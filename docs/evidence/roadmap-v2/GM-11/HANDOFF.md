@@ -19,3 +19,17 @@
 ## Status and known limits
 
 Mock-only. Room code/QR are labeled placeholders; invites do not add or ready another person. Host/member selector changes the mock client identity without recreating the client; actions update the repository and the UI reloads its snapshot. During a write and its refetch, role, mock-mode, navigation, and home controls are locked; release is in `finally` so errors cannot leave the screen busy. Context reset/start/cancel controls are host-only by `hostUserId`. Expo Go Android visual/accessibility smoke and fresh merge readiness remain unverified; GitHub Project query was rejected during the latest gate attempt. This handoff does not imply Done/Approved.
+
+## Supplement 2026-11-04 — no-ready lobby and 20-person roster
+
+- Branch: `codex/gm11-figma-update`, based on `origin/main` at `7c22db8`.
+- Removed obsolete ready/reset-ready presentation and ready-derived presence; host controls remain host-only and members can leave. Added deterministic 1/2/3/20 mock roster preview, full-roster invite disable, and Android Back confirmation for host cancel/member leave.
+- Replaced stale tests that asserted the old `/8` and Ready policy with tests for the current no-ready/20-member behavior. Legacy API/request-ID coverage remains separate.
+- Automated verification: `cd mobile; npm run check` — typecheck, lint, 56 suites / 948 tests, and architecture guard passed.
+- `FIGMA_PARITY.md` records missing paired Figma/app screenshots and device checks. No lifecycle/API/backend/Android/TalkBack acceptance is claimed. This handoff does not imply Done/Approved.
+
+## Owner review follow-up — mock identity and host/member actions
+
+The mock role selector represents a real identity switch on the same `MockApiClient`. When a room snapshot loads, the preview selects the host by `hostUserId` and synchronizes that identity to the adapter. Switching roles selects by member `userId`; start/context/cancel are host-only, and member leave is applied by the selected adapter identity then checked against a refetched snapshot. The 1/3/20 roster size remains a clearly labeled presentation fixture.
+
+Current product policy has no Ready/reset-ready action, so the old Ready-specific reproduction is superseded; it is not reintroduced as a testable operation. `tests/component/lobbyAndStatusScreens.test.tsx` now verifies host identity, member identity, host-only controls, leave/refetch, no-ready start, and presentation roster sizes. Device/Expo Go visual evidence remains Not run; coordinate that check with Trí before acceptance.

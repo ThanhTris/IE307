@@ -9,6 +9,10 @@ Root: npm ci → Docker Linux engine → backend:start → backend:smoke → bac
 
 API sau thêm HTTP suite/SQL/race/role tests riêng và CHECKS có actual output đã che secret. Không thêm business schema để kiểm GM-03 trước GM-04.
 
+## GM-03 — isolated disposable Auth + REST QA
+
+Use the run-scoped commands from the repository root: `npm run qa:start -- --run-id <safe-id> --api-port 54371 --db-port 54372`, then `qa:status`, `qa:verify`, `qa:test`, and `qa:stop` with the same ID. The default pair is `54361/54362`; do not reuse a port pair that belongs to another live project. The runner checks project/volume/network ownership, creates a clean DB from all pinned migrations, validates and stages GM-40 plus an explicitly synthetic 20-card fixture, seals the live runtime inventory, then tests real GoTrue signup/refresh and authenticated REST. Cleanup failure is nonzero and retryable; keep the `.work/qa/<id>` ownership metadata until cleanup reports success. Full instructions are in [GM-03 QA runbook](../../docs/evidence/roadmap-v2/GM-03/RUNBOOK_QA.md). The Bruno collection is `tests/bruno/GM-03`; use only its generated ignored `Local.<id>.private.bru` environment, never an app DB.
+
 ## GM-18 — eligibility and API after GM-17
 
 `python3 scripts/gm18_eligibility_check.py --report /tmp/gm18-sql-results.json`

@@ -1,3 +1,7 @@
+Current settings correction results are in
+[GM19.2 CHECKS](settings-stability/CHECKS.md); historical results below are pinned
+to their own revisions and do not claim these new regressions passed.
+
 # GM-19 — checks, 2026-10-14
 
 Contract `food-v1/roadmap-v2/GM-19.1`, schema `0.3.0`. Owner/reviewer:

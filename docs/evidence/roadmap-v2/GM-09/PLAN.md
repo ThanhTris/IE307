@@ -1,5 +1,54 @@
 # GM-09 — phạm vi triển khai
 
+## PNG reference repair — 2026-11-02
+
+User supplied local exports to correct the unverified visual implementation.
+Read foundations/components and every supplied group/scenario overview; split
+the screen strips for inspection, reuse local assets, correct brand/entry,
+separate join states, rebuild the tutorial scenes and rerun regression/export.
+See [executed patch plan, mapping and limits](figma-update/PNG_REFERENCE_REPAIR.md).
+No new task/API/domain/producer ownership is inferred from scenario screenshots.
+Native visual acceptance and the missing GM-10/live-preview artifacts remain open.
+
+## Remaining steps received and committed locally — 2026-11-01
+
+The user's current instruction makes Figma a visual reference and authorizes
+small required UI additions plus a local commit per step, no push/Figma writes.
+Steps3–6 source: `fea0696`, `fde3757`, `1b86133`, `a4dbdec`; step7 records handoff.
+See [final scope and acceptance matrix](figma-update/FINAL_HANDOFF.md) and
+[gap report](figma-update/REMAINING_GAPS.md). UI-only work remains separate from
+GM-10 setup/GM-07 preview/GM-25 integration and GM-31 persistence. No unsupported
+producer was rebuilt or silently substituted; real legacy routes remain pinned.
+Required native checks/unreceived integrations remain open, not GM-09 approval.
+
+## GM-09.2 step 2 — 2026-11-01
+
+Base `8172241`, branch `codex/gm-09-figma-update`; owner Tuấn/reviewer Trí.
+Start gate checked live at 2026-11-01T15:10:54Z: READY_TO_CLAIM. After account
+reconnection, received full Figma context/screenshots from the authorized Draft
+for Home `33:3`, continue `277:2140` and guest expiry `277:2190`, using the existing
+GM-09 Figma session. Use existing GM-05 UI/Inter and GM-07.1 repository contracts.
+
+Patch: align Home asset slots, spacing and CTA geometry; separate friends states
+from session availability; verify a saved room receipt using the existing member
+snapshot read before offering continuation; add native continue/expiry screens;
+move Home QA controls into a development route with explicit fixed fixtures.
+Real active-room discovery/durable cache remain GM-25/31 producer seams, not a new
+storage or API implementation. Preserve guards/callbacks, source data/privacy and
+legacy regression. No setup/join/tutorial rewrite, dependency or migration change.
+
+Tests: loading/error/empty friends independently of create/join, session guards,
+room verification/retry/terminal/non-member/wrong-room/stale-response behavior,
+read-only continue/expiry actions and full-button press/navigation. Run focused
+Jest, typecheck/lint/architecture, Expo compatibility/export and repository checks.
+Record Android visual/a11y/device checks as Not run until actually exercised.
+
+## GM-09.2 step 1 — 2026-10-31
+
+User requests only welcome/guest entry from the received Figma copy. Current branch `codex/gm-09-figma-update`, base `621accc` + working tree; owner Tuấn/reviewer Trí unchanged. Live start gate `READY_TO_CLAIM`; receive existing GM-05 and GM-07 artifacts. Patch plan: native welcome → explicit name confirmation → existing Home; preserve GM-25 auth/recovery guards, use separate in-memory mock entry state, reuse local logo/shared buttons/forms and export individual Figma decorations. No new dependency, auth engine, persistent cache, setup/lobby/QR/tutorial implementation or wire/migration change.
+
+Tests target validation, Unicode, duplicate/pending/ACK, late responses, Back, recovery/reset, zero mock auth/room mutations and existing routes/shared consumers. [Step 1 changes, results and reproduction](figma-update/STEP1.md); [visual reference/gaps](FIGMA_PARITY.md). Earlier plans/results below remain historical; their HTML/GM-39 instructions do not define this supplement. No commit/push or approval is performed.
+
 ## Chuẩn bị bàn giao review theo yêu cầu hiện tại — 2026-10-15
 
 Người dùng xác nhận GM-09 kiểm thành công và hoạt động, yêu cầu cập nhật Markdown rồi hướng dẫn tự commit/push để Trí review/merge. Chỉ dẫn hiện tại không yêu cầu ảnh/video UI; ghi [biên bản văn bản](MANUAL_DEVICE_CHECK.md), giữ thông số/ca chi tiết chưa báo ở trạng thái chưa xác nhận, không tạo dữ liệu đo hoặc approval.
@@ -26,7 +75,7 @@ Kiểm typecheck/lint/Jest/architecture bằng `npm run check`, repo validator/P
 
 Người dùng yêu cầu kiểm lại GM-09, downstream và các UI đã Done rồi hoàn thiện. [Audit và patch/test plan bổ sung](COMPLETION_REVIEW_2026-10-15.md) ghi trạng thái Project live, UI GM-02/05/12 và scope code trước khi sửa. Không thay owner/reviewer/contract hoặc nghiệm thu các task sau. Các plan bên dưới là lịch sử.
 
-Issue [#70](https://github.com/ThanhTris/IE307/issues/70); owner Tuấn (`mtuan2491`), reviewer Trí. Người dùng yêu cầu triển khai qua `prompt.txt`; issue có `assignment:accepted` ngày kiểm 2026-10-12. Không đổi task/Project hoặc tự nghiệm thu. Contract `food-v1/roadmap-v2/GM-09.1`.
+Issue [#70](https://github.com/ThanhTris/IE307/issues/70); owner Tuấn (`mtuan2491`), reviewer Trí. Người dùng yêu cầu triển khai GM-09; issue có `assignment:accepted` ngày kiểm 2026-10-12. Không đổi task/Project hoặc tự nghiệm thu. Contract `food-v1/roadmap-v2/GM-09.1`.
 
 Start gate đọc Project lúc `2026-10-12T16:42:58Z`: `READY_TO_CLAIM`; local còn proposed, GitHub đã accepted. GM-05/07 Done và output/HANDOFF có trên base `9e9f5ba67899ea162b79b5c6ac17cd5479c505da`. Nhận GM-05.1 qua PR #109 và GM-07.1 qua PR #104/#105; không dùng snapshot `.agents` làm nguồn hiện hành.
 

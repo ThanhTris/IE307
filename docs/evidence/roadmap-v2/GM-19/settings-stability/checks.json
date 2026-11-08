@@ -1,0 +1,67 @@
+{
+  "task": "GM-19",
+  "supplement": "GM19.2",
+  "testedHeadBeforePatchCommit": "237e5f7775c3f64d19b1083af638fd7620f0b2c9",
+  "mainRevision": "a6e89fcc00fad2ad2c3cef9c0599cdabf7c035f7",
+  "runtime": {
+    "node": "24.22.1",
+    "python": "3.12.14",
+    "platform": "macOS-26.1-arm64-arm-64bit"
+  },
+  "results": {
+    "v4Http": {
+      "result": "Pass",
+      "assertions": 151,
+      "schemaEnvelopes": 575,
+      "newSettingsAssertions": 68
+    },
+    "nodeDomain": {
+      "result": "Pass",
+      "tests": 288
+    },
+    "backendTooling": {
+      "result": "Pass",
+      "tests": 19
+    },
+    "pythonRegression": {
+      "result": "Pass",
+      "tests": 642,
+      "skipped": 6
+    },
+    "repository": {
+      "result": "Pass"
+    },
+    "taskIndexes": {
+      "result": "Pass"
+    },
+    "diffCheck": {
+      "result": "Pass"
+    },
+    "startGate": {
+      "result": "READY_TO_CLAIM"
+    },
+    "mergeGate": {
+      "result": "READY_FOR_MERGE_REVIEW"
+    },
+    "androidProduction": {
+      "result": "Not run"
+    },
+    "newCanonicalWriter": {
+      "result": "Not run",
+      "consumer": "GM-20"
+    }
+  },
+  "applicationDatabaseChanged": false,
+  "newAppPackages": false,
+  "approved": false,
+  "projectMutation": false,
+  "logsSha256": {
+    "gm19-domain.log": "9f4595011aa26fe35756c9bdf7316a06f69ee44b5f5afad91ef5002ee88b0931",
+    "gm19-backend-node.log": "b9e3eeff0977452891ee5d72bca8f726f73ca3bc361544367cf1f5d313a9fad2",
+    "gm19-python.log": "0bac08e176e5f575578df1efa60308f3eacfe9053ea7129c93e372b8ffb9d361",
+    "gm19-v4-runtime-complete.log": "d27e0b517b9d68113583fcc3251e18edf0da7799cf7e4212365a4adfa88dc0d4",
+    "gm19-repo-final.log": "bafde887d56a88dbd066df4e7f6ddd50cdc3b6ff4526f7f4a192620fb81637aa",
+    "gm19-index-final.log": "234e22deda2572ad8d8420bfa25a7cea614925c4fa044041d60412051aec8327",
+    "gm19-python-final.log": "1eea7dc2d021d573c6599797bcdcf158568b6d253320dcfcf87a0fa49f73a20e"
+  }
+}

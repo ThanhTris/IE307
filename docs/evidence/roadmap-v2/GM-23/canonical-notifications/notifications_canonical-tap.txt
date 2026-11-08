@@ -1,0 +1,11 @@
+1..10
+ok 1 - canonical metadata is private
+ok 2 - client cannot materialize events
+ok 3 - sender cannot create terminal events
+ok 4 - old inbox alias is not a second public entrypoint
+ok 5 - canonical metadata forces RLS
+ok 6 - outbox materialization waits for complete transaction audience
+ok 7 - materializer uses fixed qualified search path
+ok 8 - inbox wrapper uses fixed qualified search path
+ok 9 - schema supplement registered once
+ok 10 - inbox remains authenticated only

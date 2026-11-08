@@ -1,0 +1,7 @@
+script:pre-request {
+  const url = bru.interpolate(req.getUrl());
+  if (!/^http:\/\/127\.0\.0\.1:54361\//.test(url)) throw new Error('Use the owned dish-v4 QA API on loopback :54361');
+  req.setHeader('apikey', bru.getEnvVar('publicKey'));
+  req.setTimeout(15000);
+  req.setMaxRedirects(0);
+}

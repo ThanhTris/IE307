@@ -22,7 +22,7 @@ export function RoomEntryReceiptScreen({ repository, receipt, onBack, onPreferen
     <Text style={[entryStyles.caption, { color: colors.muted }]}>Mã phòng từ phản hồi tạo/vào phòng mẫu</Text>
     {room.loading ? <StatusNotice title="Đang tải bối cảnh mẫu…" colors={colors} /> : null}
     {room.error ? <EntryError code={room.error} onRetry={room.retry} /> : null}
-    {room.data ? <ContextSummary anchorName={room.data.context.anchorName ?? 'Điểm công cộng đã chọn'} mealLabel={mealLabels[room.data.context.mealSlot]} desiredAtLabel={`${localTimeInput(room.data.context.desiredAt)} (UTC+7) · mẫu`} radiusLabel={`${room.data.context.radiusM / 1000} km`} colors={colors} /> : null}
+    {room.data?.context ? <ContextSummary anchorName={room.data.context.anchorName ?? 'Điểm công cộng đã chọn'} mealLabel={mealLabels[room.data.context.mealSlot]} desiredAtLabel={`${localTimeInput(room.data.context.desiredAt)} (UTC+7) · mẫu`} radiusLabel={`${room.data.context.radiusM / 1000} km`} colors={colors} /> : null}
     <AppButton label="Chọn khẩu vị →" disabled={!room.data} onPress={() => onPreferences ? onPreferences(receipt) : setStep('Chọn khẩu vị')} colors={colors} />
     <AppButton label="Xem bước phòng chờ" variant="secondary" disabled={!room.data} onPress={() => onLobby ? onLobby(receipt) : setStep('Phòng chờ')} colors={colors} />
     <SheetDialog visible={!!step} title={step ?? 'Bước tiếp theo'} onClose={() => setStep(undefined)} colors={colors}>

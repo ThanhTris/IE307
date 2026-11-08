@@ -1,0 +1,6 @@
+> gi-cung-duoc-mobile@0.1.0 check:expo
+> node scripts/check-expo.mjs
+
+Expo 57.0.30: installed dependencies match the lockfile. Checking SDK bundled compatibility.
+Dependency validation is unreliable in offline-mode
+Dependencies are up to date

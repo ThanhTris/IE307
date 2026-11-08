@@ -1,0 +1,67 @@
+{
+  "profile": "dish-catalogue-v1",
+  "contractVersion": "1.0.0",
+  "datasetVersion": "0.0.1",
+  "usageScope": "test_demo",
+  "fixtureOnly": true,
+  "entities": {
+    "dishes": [
+      {
+        "version": 1,
+        "reviewStatus": "draft",
+        "sourceRef": "10000000-0000-5000-8000-000000000001",
+        "fieldSources": {},
+        "checkedAt": "2026-01-01T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-simulation",
+        "reviewedBy": null,
+        "status": "draft",
+        "id": "20000000-0000-5000-8000-000000000001",
+        "name": "Món mô phỏng A",
+        "description": null,
+        "aliases": [],
+        "cuisineIds": [],
+        "categoryIds": [],
+        "mealSlots": [],
+        "timeHints": [],
+        "classificationStatus": "needs_review",
+        "origin": "unknown",
+        "ingredientTags": null,
+        "temperature": "unknown",
+        "flavor": null,
+        "artwork": null,
+        "sourceDishIds": [],
+        "preparationMethods": null
+      }
+    ],
+    "taxonomy": [],
+    "dataSources": [
+      {
+        "version": 1,
+        "reviewStatus": "draft",
+        "sourceRef": "10000000-0000-5000-8000-000000000001",
+        "fieldSources": {},
+        "checkedAt": "2026-01-01T00:00:00Z",
+        "validUntil": null,
+        "enteredBy": "fixture-simulation",
+        "reviewedBy": null,
+        "status": "draft",
+        "locator": "https://example.invalid/gm40/simulated-source",
+        "usageRights": "unknown",
+        "license": null,
+        "attribution": null
+      }
+    ],
+    "priceReferences": [],
+    "fieldEvidence": [
+      {
+        "dishId": "20000000-0000-5000-8000-000000000001",
+        "field": "name",
+        "sourceRef": "10000000-0000-5000-8000-000000000001",
+        "basis": "fixture_simulation",
+        "note": "Mô phỏng, không phải nguồn món thật hoặc review.",
+        "sourceMenuItemIds": []
+      }
+    ]
+  }
+}

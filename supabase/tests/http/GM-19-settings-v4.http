@@ -1,0 +1,77 @@
+# GM19.2 / baseline GM-07.B. Synthetic QA only, no application DB reset.
+# Automated setup/request/assertions/cleanup:
+#   python scripts/dish_v4_ci.py run
+# Local Docker wildcard publication requires the explicit existing opt-in
+# GM_V4_ALLOW_LOCAL_DOCKER_WILDCARD=1. Read settings-stability/HANDOFF.md.
+# The automatic runner cleans its project. For manual requests, use a separately
+# owned live QA fixture and copy its values below; never commit credentials.
+@baseUrl = http://127.0.0.1:54361
+@anonKey = <QA_PUBLISHABLE_OR_ANON_KEY>
+@hostJWT = <GUEST_HOST_ACCESS_TOKEN>
+@memberJWT = <GUEST_MEMBER_ACCESS_TOKEN>
+@outsiderJWT = <GUEST_NONMEMBER_ACCESS_TOKEN>
+@roomId = <LOBBY_ROOM_UUID>
+@version = <LAST_SNAPSHOT_VERSION>
+
+### Snapshot —200, caller-only preferences, poolVersion and original pool IDs
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{anonKey}}
+Authorization: Bearer {{hostJWT}}
+Content-Type: application/json
+
+{"command":"snapshot","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B","roomId":"{{roomId}}"}}
+
+### Member settings —403 NOT_HOST, room/session/version/pool unchanged
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{anonKey}}
+Authorization: Bearer {{memberJWT}}
+Content-Type: application/json
+
+{"command":"updateSettings","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B","requestId":"gm19-member-denied","roomId":"{{roomId}}","expectedVersion":{{version}},"settings":{"dishCount":11,"mealSlot":"lunch","desiredAt":null}}}
+
+### Outsider —403 NOT_MEMBER, no room mutation
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{anonKey}}
+Authorization: Bearer {{outsiderJWT}}
+Content-Type: application/json
+
+{"command":"updateSettings","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B","requestId":"gm19-outsider-denied","roomId":"{{roomId}}","expectedVersion":{{version}},"settings":{"dishCount":11,"mealSlot":"lunch","desiredAt":null}}}
+
+### Host no-op —copy EXACT settings from snapshot; sample assumes10/lunch/null
+# 200 accepted; version+1, same poolVersion, complete pool/cards/order/row IDs.
+# Repeat byte-equivalent payload with same requestId/expectedVersion: saved ACK,
+# no new mutation. Change payload under that ID:409 REQUEST_ID_REUSED.
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{anonKey}}
+Authorization: Bearer {{hostJWT}}
+Content-Type: application/json
+
+{"command":"updateSettings","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B","requestId":"gm19-host-noop","roomId":"{{roomId}}","expectedVersion":{{version}},"settings":{"dishCount":10,"mealSlot":"lunch","desiredAt":null}}}
+
+### Host time-only —use returned version; keep dishCount/mealSlot unchanged
+# 200 accepted; version+1; same complete pool and poolVersion. Equivalent timezone
+# offset or clearing desiredAt to null follows the same preservation rule.
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{anonKey}}
+Authorization: Bearer {{hostJWT}}
+Content-Type: application/json
+
+{"command":"updateSettings","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B","requestId":"gm19-host-time","roomId":"{{roomId}}","expectedVersion":{{version}},"settings":{"dishCount":10,"mealSlot":"lunch","desiredAt":"2030-01-01T12:00:00Z"}}}
+
+### Host count change —take fresh snapshot/version
+# 200 if pinned catalogue has11 eligible dishes; exact11, poolVersion+1.
+# Insufficient catalogue:409 INSUFFICIENT_DISHES with available/requested,
+# no room/session/version change. Fraction10.5:400 INVALID_INPUT.
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{anonKey}}
+Authorization: Bearer {{hostJWT}}
+Content-Type: application/json
+
+{"command":"updateSettings","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B","requestId":"gm19-host-count","roomId":"{{roomId}}","expectedVersion":{{version}},"settings":{"dishCount":11,"mealSlot":"lunch","desiredAt":null}}}
+
+# Race/retry/state assertions are automated in scripts/gm_v4_http_check.mjs:
+# -6 exact simultaneous attempts=>1 mutation/ACK, identical response.
+# -2 different edits or start/edit at same version=>1 accepted,1 VERSION_CONFLICT.
+# -fresh post-start edit=>ROOM_LOCKED; old accepted ACK still replays unchanged.
+# -different meal with identical cards=>keep full pool/row IDs/order/poolVersion.
+# -time-only version increments cannot influence subsequent pinned-seed selection.

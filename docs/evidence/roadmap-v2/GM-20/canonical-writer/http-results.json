@@ -1,0 +1,2194 @@
+{
+  "fixtureOnly": true,
+  "result": "Pass",
+  "scope": "owned synthetic Auth/REST QA; no real votes or production",
+  "caseCount": 114,
+  "cases": [
+    {
+      "case": "v4 worker heartbeat verified",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "server flag blocks new supplement creation",
+      "result": "Pass",
+      "expected": {
+        "status": 400,
+        "code": "UNSUPPORTED_CONTRACT_VERSION"
+      },
+      "actual": {
+        "status": 400,
+        "code": "UNSUPPORTED_CONTRACT_VERSION",
+        "details": {}
+      }
+    },
+    {
+      "case": "all private candidate tables force RLS",
+      "result": "Pass",
+      "expected": "t",
+      "actual": "t"
+    },
+    {
+      "case": "private baseline alias cannot bypass routing",
+      "result": "Pass",
+      "expected": 403,
+      "actual": 403
+    },
+    {
+      "case": "R1 unanimous terminal pairing",
+      "result": "Pass",
+      "expected": [
+        "DECIDED",
+        1,
+        "UNANIMOUS_WANT",
+        2
+      ],
+      "actual": [
+        "DECIDED",
+        1,
+        "UNANIMOUS_WANT",
+        2
+      ]
+    },
+    {
+      "case": "Top3 bounded and contains winner",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "R1 top3 points/dense rank",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "R1 final row identity retained",
+      "result": "Pass",
+      "expected": "299a9e60-10d8-466f-9392-082d0cbb2793",
+      "actual": "299a9e60-10d8-466f-9392-082d0cbb2793"
+    },
+    {
+      "case": "single canonical authority / registry / outbox f087bc6d-5195-4f87-bcee-a9b9519896d0",
+      "result": "Pass",
+      "expected": {
+        "canonical": 1,
+        "legacy": 0,
+        "registry": 1,
+        "outbox": 1,
+        "audience": 2
+      },
+      "actual": {
+        "canonical": 1,
+        "legacy": 0,
+        "registry": 1,
+        "outbox": 1,
+        "audience": 2
+      }
+    },
+    {
+      "case": "seed stays private with pinned selector f087bc6d-5195-4f87-bcee-a9b9519896d0",
+      "result": "Pass",
+      "expected": "t",
+      "actual": "t"
+    },
+    {
+      "case": "new result does not create legacy event reference f087bc6d-5195-4f87-bcee-a9b9519896d0",
+      "result": "Pass",
+      "expected": "0",
+      "actual": "0"
+    },
+    {
+      "case": "result reads actual canonical bytes",
+      "result": "Pass",
+      "expected": {
+        "round": 1,
+        "status": "DECIDED",
+        "winner": {
+          "name": "QA dish 07",
+          "dishId": "b6a827c6-8bad-59fe-a773-93e07c2dee0d",
+          "flavor": null,
+          "artwork": null,
+          "mealSlots": [
+            "breakfast",
+            "lunch",
+            "dinner",
+            "snack"
+          ],
+          "cuisineIds": [],
+          "categoryIds": [],
+          "description": null,
+          "roundDishId": "299a9e60-10d8-466f-9392-082d0cbb2793",
+          "temperature": null,
+          "cuisineLabels": [],
+          "categoryLabels": [],
+          "priceReference": null
+        },
+        "resultId": "a7921f21-0386-400f-83ae-14cd11ff83a7",
+        "topDishes": [
+          {
+            "dish": {
+              "name": "QA dish 17",
+              "dishId": "3118abaf-223a-59db-af74-58829d5bb47a",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "e9047a59-4c50-4f67-80fc-f180bcfc092e",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": false
+          },
+          {
+            "dish": {
+              "name": "QA dish 05",
+              "dishId": "37211e9d-e122-5e07-883f-4b5f2e86a2db",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "b273ab72-2259-45e3-b786-8de990045739",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": false
+          },
+          {
+            "dish": {
+              "name": "QA dish 07",
+              "dishId": "b6a827c6-8bad-59fe-a773-93e07c2dee0d",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "299a9e60-10d8-466f-9392-082d0cbb2793",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": true
+          }
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "finalizedAt": "2026-10-29T13:32:39.308547+00:00",
+        "scoreVersion": "want2-ok1-round1-v1",
+        "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
+        "rankingVersion": "score-desc-dense-rank-v1",
+        "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B-supplement",
+        "round1BallotCount": 2
+      },
+      "actual": {
+        "round": 1,
+        "status": "DECIDED",
+        "winner": {
+          "name": "QA dish 07",
+          "dishId": "b6a827c6-8bad-59fe-a773-93e07c2dee0d",
+          "flavor": null,
+          "artwork": null,
+          "mealSlots": [
+            "breakfast",
+            "lunch",
+            "dinner",
+            "snack"
+          ],
+          "cuisineIds": [],
+          "categoryIds": [],
+          "description": null,
+          "roundDishId": "299a9e60-10d8-466f-9392-082d0cbb2793",
+          "temperature": null,
+          "cuisineLabels": [],
+          "categoryLabels": [],
+          "priceReference": null
+        },
+        "resultId": "a7921f21-0386-400f-83ae-14cd11ff83a7",
+        "topDishes": [
+          {
+            "dish": {
+              "name": "QA dish 17",
+              "dishId": "3118abaf-223a-59db-af74-58829d5bb47a",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "e9047a59-4c50-4f67-80fc-f180bcfc092e",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": false
+          },
+          {
+            "dish": {
+              "name": "QA dish 05",
+              "dishId": "37211e9d-e122-5e07-883f-4b5f2e86a2db",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "b273ab72-2259-45e3-b786-8de990045739",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": false
+          },
+          {
+            "dish": {
+              "name": "QA dish 07",
+              "dishId": "b6a827c6-8bad-59fe-a773-93e07c2dee0d",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "299a9e60-10d8-466f-9392-082d0cbb2793",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": true
+          }
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "finalizedAt": "2026-10-29T13:32:39.308547+00:00",
+        "scoreVersion": "want2-ok1-round1-v1",
+        "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
+        "rankingVersion": "score-desc-dense-rank-v1",
+        "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B-supplement",
+        "round1BallotCount": 2
+      }
+    },
+    {
+      "case": "no consent means no canonical history",
+      "result": "Pass",
+      "expected": "0",
+      "actual": "0"
+    },
+    {
+      "case": "terminal DTO never exposes private evaluator/seed",
+      "result": "Pass",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "case": "old submit receipt replays after terminal",
+      "result": "Pass",
+      "expected": {
+        "status": 200,
+        "body": {
+          "ok": true,
+          "data": {
+            "round": 1,
+            "accepted": true,
+            "poolVersion": 1,
+            "submittedAt": "2026-10-29T13:32:39.263933+00:00"
+          },
+          "state": "ROUND_1",
+          "roomId": "f087bc6d-5195-4f87-bcee-a9b9519896d0",
+          "version": 4,
+          "requestId": "submit-1793280759263-bd96f045"
+        }
+      },
+      "actual": {
+        "status": 200,
+        "body": {
+          "ok": true,
+          "data": {
+            "round": 1,
+            "accepted": true,
+            "poolVersion": 1,
+            "submittedAt": "2026-10-29T13:32:39.263933+00:00"
+          },
+          "state": "ROUND_1",
+          "roomId": "f087bc6d-5195-4f87-bcee-a9b9519896d0",
+          "version": 4,
+          "requestId": "submit-1793280759263-bd96f045"
+        }
+      }
+    },
+    {
+      "case": "same ID cannot change ballot payload",
+      "result": "Pass",
+      "expected": {
+        "status": 409,
+        "code": "REQUEST_ID_REUSED"
+      },
+      "actual": {
+        "status": 409,
+        "code": "REQUEST_ID_REUSED",
+        "details": {}
+      }
+    },
+    {
+      "case": "outsider cannot read canonical result",
+      "result": "Pass",
+      "expected": {
+        "status": 403,
+        "code": "NOT_MEMBER"
+      },
+      "actual": {
+        "status": 403,
+        "code": "NOT_MEMBER",
+        "details": {}
+      }
+    },
+    {
+      "case": "B route cannot read supplement room",
+      "result": "Pass",
+      "expected": {
+        "status": 409,
+        "code": "CONTRACT_MISMATCH"
+      },
+      "actual": {
+        "status": 409,
+        "code": "CONTRACT_MISMATCH",
+        "details": {}
+      }
+    },
+    {
+      "case": "supplement cannot reinterpret B room",
+      "result": "Pass",
+      "expected": {
+        "status": 409,
+        "code": "CONTRACT_MISMATCH"
+      },
+      "actual": {
+        "status": 409,
+        "code": "CONTRACT_MISMATCH",
+        "details": {}
+      }
+    },
+    {
+      "case": "disable creation retains pinned reader",
+      "result": "Pass",
+      "expected": {
+        "round": 1,
+        "status": "DECIDED",
+        "winner": {
+          "name": "QA dish 07",
+          "dishId": "b6a827c6-8bad-59fe-a773-93e07c2dee0d",
+          "flavor": null,
+          "artwork": null,
+          "mealSlots": [
+            "breakfast",
+            "lunch",
+            "dinner",
+            "snack"
+          ],
+          "cuisineIds": [],
+          "categoryIds": [],
+          "description": null,
+          "roundDishId": "299a9e60-10d8-466f-9392-082d0cbb2793",
+          "temperature": null,
+          "cuisineLabels": [],
+          "categoryLabels": [],
+          "priceReference": null
+        },
+        "resultId": "a7921f21-0386-400f-83ae-14cd11ff83a7",
+        "topDishes": [
+          {
+            "dish": {
+              "name": "QA dish 17",
+              "dishId": "3118abaf-223a-59db-af74-58829d5bb47a",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "e9047a59-4c50-4f67-80fc-f180bcfc092e",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": false
+          },
+          {
+            "dish": {
+              "name": "QA dish 05",
+              "dishId": "37211e9d-e122-5e07-883f-4b5f2e86a2db",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "b273ab72-2259-45e3-b786-8de990045739",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": false
+          },
+          {
+            "dish": {
+              "name": "QA dish 07",
+              "dishId": "b6a827c6-8bad-59fe-a773-93e07c2dee0d",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "299a9e60-10d8-466f-9392-082d0cbb2793",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": true
+          }
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "finalizedAt": "2026-10-29T13:32:39.308547+00:00",
+        "scoreVersion": "want2-ok1-round1-v1",
+        "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
+        "rankingVersion": "score-desc-dense-rank-v1",
+        "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B-supplement",
+        "round1BallotCount": 2
+      },
+      "actual": {
+        "round": 1,
+        "status": "DECIDED",
+        "winner": {
+          "name": "QA dish 07",
+          "dishId": "b6a827c6-8bad-59fe-a773-93e07c2dee0d",
+          "flavor": null,
+          "artwork": null,
+          "mealSlots": [
+            "breakfast",
+            "lunch",
+            "dinner",
+            "snack"
+          ],
+          "cuisineIds": [],
+          "categoryIds": [],
+          "description": null,
+          "roundDishId": "299a9e60-10d8-466f-9392-082d0cbb2793",
+          "temperature": null,
+          "cuisineLabels": [],
+          "categoryLabels": [],
+          "priceReference": null
+        },
+        "resultId": "a7921f21-0386-400f-83ae-14cd11ff83a7",
+        "topDishes": [
+          {
+            "dish": {
+              "name": "QA dish 17",
+              "dishId": "3118abaf-223a-59db-af74-58829d5bb47a",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "e9047a59-4c50-4f67-80fc-f180bcfc092e",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": false
+          },
+          {
+            "dish": {
+              "name": "QA dish 05",
+              "dishId": "37211e9d-e122-5e07-883f-4b5f2e86a2db",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "b273ab72-2259-45e3-b786-8de990045739",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": false
+          },
+          {
+            "dish": {
+              "name": "QA dish 07",
+              "dishId": "b6a827c6-8bad-59fe-a773-93e07c2dee0d",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "299a9e60-10d8-466f-9392-082d0cbb2793",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": true
+          }
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "finalizedAt": "2026-10-29T13:32:39.308547+00:00",
+        "scoreVersion": "want2-ok1-round1-v1",
+        "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
+        "rankingVersion": "score-desc-dense-rank-v1",
+        "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B-supplement",
+        "round1BallotCount": 2
+      }
+    },
+    {
+      "case": "catalogue switch cannot alter saved result",
+      "result": "Pass",
+      "expected": {
+        "round": 1,
+        "status": "DECIDED",
+        "winner": {
+          "name": "QA dish 07",
+          "dishId": "b6a827c6-8bad-59fe-a773-93e07c2dee0d",
+          "flavor": null,
+          "artwork": null,
+          "mealSlots": [
+            "breakfast",
+            "lunch",
+            "dinner",
+            "snack"
+          ],
+          "cuisineIds": [],
+          "categoryIds": [],
+          "description": null,
+          "roundDishId": "299a9e60-10d8-466f-9392-082d0cbb2793",
+          "temperature": null,
+          "cuisineLabels": [],
+          "categoryLabels": [],
+          "priceReference": null
+        },
+        "resultId": "a7921f21-0386-400f-83ae-14cd11ff83a7",
+        "topDishes": [
+          {
+            "dish": {
+              "name": "QA dish 17",
+              "dishId": "3118abaf-223a-59db-af74-58829d5bb47a",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "e9047a59-4c50-4f67-80fc-f180bcfc092e",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": false
+          },
+          {
+            "dish": {
+              "name": "QA dish 05",
+              "dishId": "37211e9d-e122-5e07-883f-4b5f2e86a2db",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "b273ab72-2259-45e3-b786-8de990045739",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": false
+          },
+          {
+            "dish": {
+              "name": "QA dish 07",
+              "dishId": "b6a827c6-8bad-59fe-a773-93e07c2dee0d",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "299a9e60-10d8-466f-9392-082d0cbb2793",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": true
+          }
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "finalizedAt": "2026-10-29T13:32:39.308547+00:00",
+        "scoreVersion": "want2-ok1-round1-v1",
+        "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
+        "rankingVersion": "score-desc-dense-rank-v1",
+        "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B-supplement",
+        "round1BallotCount": 2
+      },
+      "actual": {
+        "round": 1,
+        "status": "DECIDED",
+        "winner": {
+          "name": "QA dish 07",
+          "dishId": "b6a827c6-8bad-59fe-a773-93e07c2dee0d",
+          "flavor": null,
+          "artwork": null,
+          "mealSlots": [
+            "breakfast",
+            "lunch",
+            "dinner",
+            "snack"
+          ],
+          "cuisineIds": [],
+          "categoryIds": [],
+          "description": null,
+          "roundDishId": "299a9e60-10d8-466f-9392-082d0cbb2793",
+          "temperature": null,
+          "cuisineLabels": [],
+          "categoryLabels": [],
+          "priceReference": null
+        },
+        "resultId": "a7921f21-0386-400f-83ae-14cd11ff83a7",
+        "topDishes": [
+          {
+            "dish": {
+              "name": "QA dish 17",
+              "dishId": "3118abaf-223a-59db-af74-58829d5bb47a",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "e9047a59-4c50-4f67-80fc-f180bcfc092e",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": false
+          },
+          {
+            "dish": {
+              "name": "QA dish 05",
+              "dishId": "37211e9d-e122-5e07-883f-4b5f2e86a2db",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "b273ab72-2259-45e3-b786-8de990045739",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": false
+          },
+          {
+            "dish": {
+              "name": "QA dish 07",
+              "dishId": "b6a827c6-8bad-59fe-a773-93e07c2dee0d",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "299a9e60-10d8-466f-9392-082d0cbb2793",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": true
+          }
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "finalizedAt": "2026-10-29T13:32:39.308547+00:00",
+        "scoreVersion": "want2-ok1-round1-v1",
+        "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
+        "rankingVersion": "score-desc-dense-rank-v1",
+        "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B-supplement",
+        "round1BallotCount": 2
+      }
+    },
+    {
+      "case": "private evaluator/seed/model inaccessible",
+      "result": "Pass",
+      "expected": "t",
+      "actual": "t"
+    },
+    {
+      "case": "controlled database failure reaches HTTP",
+      "result": "Pass",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "case": "registry rolled back",
+      "result": "Pass",
+      "expected": "13",
+      "actual": "13"
+    },
+    {
+      "case": "scoped history payload/receipt/audience rolled back",
+      "result": "Pass",
+      "expected": "[24, 36, 24]",
+      "actual": "[24, 36, 24]"
+    },
+    {
+      "case": "canonical/result/outbox rolled back",
+      "result": "Pass",
+      "expected": "0",
+      "actual": "0"
+    },
+    {
+      "case": "failed request did not save ACK",
+      "result": "Pass",
+      "expected": "0",
+      "actual": "0"
+    },
+    {
+      "case": "failed last waiting did not change room version",
+      "result": "Pass",
+      "expected": 6,
+      "actual": 6
+    },
+    {
+      "case": "single canonical authority / registry / outbox 1ad1da66-03fd-48ae-a9a3-3b4c180f0152",
+      "result": "Pass",
+      "expected": {
+        "canonical": 1,
+        "legacy": 0,
+        "registry": 1,
+        "outbox": 1,
+        "audience": 2
+      },
+      "actual": {
+        "canonical": 1,
+        "legacy": 0,
+        "registry": 1,
+        "outbox": 1,
+        "audience": 2
+      }
+    },
+    {
+      "case": "seed stays private with pinned selector 1ad1da66-03fd-48ae-a9a3-3b4c180f0152",
+      "result": "Pass",
+      "expected": "t",
+      "actual": "t"
+    },
+    {
+      "case": "new result does not create legacy event reference 1ad1da66-03fd-48ae-a9a3-3b4c180f0152",
+      "result": "Pass",
+      "expected": "0",
+      "actual": "0"
+    },
+    {
+      "case": "retry writes scoped history exactly once",
+      "result": "Pass",
+      "expected": "3",
+      "actual": "3"
+    },
+    {
+      "case": "actual response-loss transport failed locally",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "lost response retry keeps one ballot",
+      "result": "Pass",
+      "expected": "1",
+      "actual": "1"
+    },
+    {
+      "case": "lost response retry keeps one ACK",
+      "result": "Pass",
+      "expected": "1",
+      "actual": "1"
+    },
+    {
+      "case": "five submit retries same ACK",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "one accepted ballot row",
+      "result": "Pass",
+      "expected": "1",
+      "actual": "1"
+    },
+    {
+      "case": "accepted intent cannot change votes",
+      "result": "Pass",
+      "expected": {
+        "status": 409,
+        "code": "ALREADY_SUBMITTED"
+      },
+      "actual": {
+        "status": 409,
+        "code": "ALREADY_SUBMITTED",
+        "details": {}
+      }
+    },
+    {
+      "case": "all OK opens real R2",
+      "result": "Pass",
+      "expected": [
+        2,
+        10,
+        3,
+        null
+      ],
+      "actual": [
+        2,
+        10,
+        3,
+        null
+      ]
+    },
+    {
+      "case": "actual R2 cap plus one rejected",
+      "result": "Pass",
+      "expected": {
+        "status": 409,
+        "code": "REMOVE_LIMIT"
+      },
+      "actual": {
+        "status": 409,
+        "code": "REMOVE_LIMIT",
+        "details": {}
+      }
+    },
+    {
+      "case": "invalid cap adds no R2 ACK/ballot",
+      "result": "Pass",
+      "expected": "0",
+      "actual": "0"
+    },
+    {
+      "case": "R2 KEEP does not add points",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "R2 scoring cohort persisted",
+      "result": "Pass",
+      "expected": 2,
+      "actual": 2
+    },
+    {
+      "case": "single canonical authority / registry / outbox 5fc1382d-ba9a-4f40-ab39-03fc0544623c",
+      "result": "Pass",
+      "expected": {
+        "canonical": 1,
+        "legacy": 0,
+        "registry": 1,
+        "outbox": 1,
+        "audience": 2
+      },
+      "actual": {
+        "canonical": 1,
+        "legacy": 0,
+        "registry": 1,
+        "outbox": 1,
+        "audience": 2
+      }
+    },
+    {
+      "case": "seed stays private with pinned selector 5fc1382d-ba9a-4f40-ab39-03fc0544623c",
+      "result": "Pass",
+      "expected": "t",
+      "actual": "t"
+    },
+    {
+      "case": "new result does not create legacy event reference 5fc1382d-ba9a-4f40-ab39-03fc0544623c",
+      "result": "Pass",
+      "expected": "0",
+      "actual": "0"
+    },
+    {
+      "case": "singleton opens real R2 true",
+      "result": "Pass",
+      "expected": [
+        2,
+        1,
+        1,
+        null
+      ],
+      "actual": [
+        2,
+        1,
+        1,
+        null
+      ]
+    },
+    {
+      "case": "singleton R2 gets new row ID true",
+      "result": "Pass",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "case": "no implicit R2 ballots true",
+      "result": "Pass",
+      "expected": "0",
+      "actual": "0"
+    },
+    {
+      "case": "singleton terminal pairing true",
+      "result": "Pass",
+      "expected": [
+        "NO_CONSENSUS",
+        "ALL_REMOVED",
+        0
+      ],
+      "actual": [
+        "NO_CONSENSUS",
+        "ALL_REMOVED",
+        0
+      ]
+    },
+    {
+      "case": "all removed has no fabricated winner",
+      "result": "Pass",
+      "expected": null,
+      "actual": null
+    },
+    {
+      "case": "single canonical authority / registry / outbox fdf370b1-fe94-459f-9e3b-51e754285479",
+      "result": "Pass",
+      "expected": {
+        "canonical": 1,
+        "legacy": 0,
+        "registry": 1,
+        "outbox": 1,
+        "audience": 2
+      },
+      "actual": {
+        "canonical": 1,
+        "legacy": 0,
+        "registry": 1,
+        "outbox": 1,
+        "audience": 2
+      }
+    },
+    {
+      "case": "seed stays private with pinned selector fdf370b1-fe94-459f-9e3b-51e754285479",
+      "result": "Pass",
+      "expected": "t",
+      "actual": "t"
+    },
+    {
+      "case": "new result does not create legacy event reference fdf370b1-fe94-459f-9e3b-51e754285479",
+      "result": "Pass",
+      "expected": "0",
+      "actual": "0"
+    },
+    {
+      "case": "singleton opens real R2 false",
+      "result": "Pass",
+      "expected": [
+        2,
+        1,
+        1,
+        null
+      ],
+      "actual": [
+        2,
+        1,
+        1,
+        null
+      ]
+    },
+    {
+      "case": "singleton R2 gets new row ID false",
+      "result": "Pass",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "case": "no implicit R2 ballots false",
+      "result": "Pass",
+      "expected": "0",
+      "actual": "0"
+    },
+    {
+      "case": "singleton terminal pairing false",
+      "result": "Pass",
+      "expected": [
+        "DECIDED",
+        "ACCEPTABLE_FINAL",
+        1
+      ],
+      "actual": [
+        "DECIDED",
+        "ACCEPTABLE_FINAL",
+        1
+      ]
+    },
+    {
+      "case": "singleton winner uses final-round row",
+      "result": "Pass",
+      "expected": "b58df531-36cb-4d8a-a2fe-15cf1f7b10b8",
+      "actual": "b58df531-36cb-4d8a-a2fe-15cf1f7b10b8"
+    },
+    {
+      "case": "single canonical authority / registry / outbox bbd20e43-c1de-4074-b3e9-a7e111cadb41",
+      "result": "Pass",
+      "expected": {
+        "canonical": 1,
+        "legacy": 0,
+        "registry": 1,
+        "outbox": 1,
+        "audience": 2
+      },
+      "actual": {
+        "canonical": 1,
+        "legacy": 0,
+        "registry": 1,
+        "outbox": 1,
+        "audience": 2
+      }
+    },
+    {
+      "case": "seed stays private with pinned selector bbd20e43-c1de-4074-b3e9-a7e111cadb41",
+      "result": "Pass",
+      "expected": "t",
+      "actual": "t"
+    },
+    {
+      "case": "new result does not create legacy event reference bbd20e43-c1de-4074-b3e9-a7e111cadb41",
+      "result": "Pass",
+      "expected": "0",
+      "actual": "0"
+    },
+    {
+      "case": "empty R1 persists no-consensus",
+      "result": "Pass",
+      "expected": [
+        1,
+        "EMPTY_INTERSECTION",
+        null,
+        [],
+        null,
+        null
+      ],
+      "actual": [
+        1,
+        "EMPTY_INTERSECTION",
+        null,
+        [],
+        null,
+        null
+      ]
+    },
+    {
+      "case": "single canonical authority / registry / outbox 3396badf-490b-4595-90f8-c241fc9b6bf8",
+      "result": "Pass",
+      "expected": {
+        "canonical": 1,
+        "legacy": 0,
+        "registry": 1,
+        "outbox": 1,
+        "audience": 2
+      },
+      "actual": {
+        "canonical": 1,
+        "legacy": 0,
+        "registry": 1,
+        "outbox": 1,
+        "audience": 2
+      }
+    },
+    {
+      "case": "seed stays private with pinned selector 3396badf-490b-4595-90f8-c241fc9b6bf8",
+      "result": "Pass",
+      "expected": "t",
+      "actual": "t"
+    },
+    {
+      "case": "new result does not create legacy event reference 3396badf-490b-4595-90f8-c241fc9b6bf8",
+      "result": "Pass",
+      "expected": "0",
+      "actual": "0"
+    },
+    {
+      "case": "exactly half cannot end waiting",
+      "result": "Pass",
+      "expected": {
+        "status": 409,
+        "code": "NOT_READY"
+      },
+      "actual": {
+        "status": 409,
+        "code": "NOT_READY",
+        "details": {}
+      }
+    },
+    {
+      "case": "majority R1 advances with zero R2 ACK",
+      "result": "Pass",
+      "expected": [
+        2,
+        0,
+        null
+      ],
+      "actual": [
+        2,
+        0,
+        null
+      ]
+    },
+    {
+      "case": "R1 majority cannot finalize empty R2",
+      "result": "Pass",
+      "expected": {
+        "status": 409,
+        "code": "NOT_READY"
+      },
+      "actual": {
+        "status": 409,
+        "code": "NOT_READY",
+        "details": {}
+      }
+    },
+    {
+      "case": "one R2 ballot not host majority",
+      "result": "Pass",
+      "expected": {
+        "status": 409,
+        "code": "NOT_READY"
+      },
+      "actual": {
+        "status": 409,
+        "code": "NOT_READY",
+        "details": {}
+      }
+    },
+    {
+      "case": "real worker timeout accepts minority cohort",
+      "result": "Pass",
+      "expected": "DECIDED",
+      "actual": "DECIDED"
+    },
+    {
+      "case": "R1 score cohort differs from R2 submittedCount",
+      "result": "Pass",
+      "expected": [
+        3,
+        1
+      ],
+      "actual": [
+        3,
+        1
+      ]
+    },
+    {
+      "case": "timeout R2 points use only R1",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "single canonical authority / registry / outbox e5290887-32d8-4c4e-9668-6bf30ca42dc8",
+      "result": "Pass",
+      "expected": {
+        "canonical": 1,
+        "legacy": 0,
+        "registry": 1,
+        "outbox": 1,
+        "audience": 4
+      },
+      "actual": {
+        "canonical": 1,
+        "legacy": 0,
+        "registry": 1,
+        "outbox": 1,
+        "audience": 4
+      }
+    },
+    {
+      "case": "seed stays private with pinned selector e5290887-32d8-4c4e-9668-6bf30ca42dc8",
+      "result": "Pass",
+      "expected": "t",
+      "actual": "t"
+    },
+    {
+      "case": "new result does not create legacy event reference e5290887-32d8-4c4e-9668-6bf30ca42dc8",
+      "result": "Pass",
+      "expected": "0",
+      "actual": "0"
+    },
+    {
+      "case": "host half rejected M=2",
+      "result": "Pass",
+      "expected": {
+        "status": 409,
+        "code": "NOT_READY"
+      },
+      "actual": {
+        "status": 409,
+        "code": "NOT_READY",
+        "details": {}
+      }
+    },
+    {
+      "case": "host majority locks denominator M=2",
+      "result": "Pass",
+      "expected": [
+        2,
+        2,
+        0
+      ],
+      "actual": [
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "case": "host half rejected M=3",
+      "result": "Pass",
+      "expected": {
+        "status": 409,
+        "code": "NOT_READY"
+      },
+      "actual": {
+        "status": 409,
+        "code": "NOT_READY",
+        "details": {}
+      }
+    },
+    {
+      "case": "host majority locks denominator M=3",
+      "result": "Pass",
+      "expected": [
+        3,
+        2,
+        0
+      ],
+      "actual": [
+        3,
+        2,
+        0
+      ]
+    },
+    {
+      "case": "host half rejected M=5",
+      "result": "Pass",
+      "expected": {
+        "status": 409,
+        "code": "NOT_READY"
+      },
+      "actual": {
+        "status": 409,
+        "code": "NOT_READY",
+        "details": {}
+      }
+    },
+    {
+      "case": "host majority locks denominator M=5",
+      "result": "Pass",
+      "expected": [
+        5,
+        2,
+        0
+      ],
+      "actual": [
+        5,
+        2,
+        0
+      ]
+    },
+    {
+      "case": "host half rejected M=20",
+      "result": "Pass",
+      "expected": {
+        "status": 409,
+        "code": "NOT_READY"
+      },
+      "actual": {
+        "status": 409,
+        "code": "NOT_READY",
+        "details": {}
+      }
+    },
+    {
+      "case": "host majority locks denominator M=20",
+      "result": "Pass",
+      "expected": [
+        20,
+        2,
+        0
+      ],
+      "actual": [
+        20,
+        2,
+        0
+      ]
+    },
+    {
+      "case": "20-member actual terminal keeps R1 cohort",
+      "result": "Pass",
+      "expected": [
+        20,
+        11,
+        1
+      ],
+      "actual": [
+        20,
+        11,
+        1
+      ]
+    },
+    {
+      "case": "single canonical authority / registry / outbox cc9a30d9-11f4-40ff-9c10-53d0f182d773",
+      "result": "Pass",
+      "expected": {
+        "canonical": 1,
+        "legacy": 0,
+        "registry": 1,
+        "outbox": 1,
+        "audience": 20
+      },
+      "actual": {
+        "canonical": 1,
+        "legacy": 0,
+        "registry": 1,
+        "outbox": 1,
+        "audience": 20
+      }
+    },
+    {
+      "case": "seed stays private with pinned selector cc9a30d9-11f4-40ff-9c10-53d0f182d773",
+      "result": "Pass",
+      "expected": "t",
+      "actual": "t"
+    },
+    {
+      "case": "new result does not create legacy event reference cc9a30d9-11f4-40ff-9c10-53d0f182d773",
+      "result": "Pass",
+      "expected": "0",
+      "actual": "0"
+    },
+    {
+      "case": "20-member group consent audience persists atomically",
+      "result": "Pass",
+      "expected": "20",
+      "actual": "20"
+    },
+    {
+      "case": "race replies are ACK or explicit conflict/closed",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "host-submit-timeout race reaches terminal",
+      "result": "Pass",
+      "expected": "DECIDED",
+      "actual": "DECIDED"
+    },
+    {
+      "case": "single canonical authority / registry / outbox d4abe6da-b4fc-4f41-aff7-8887de9dbf3e",
+      "result": "Pass",
+      "expected": {
+        "canonical": 1,
+        "legacy": 0,
+        "registry": 1,
+        "outbox": 1,
+        "audience": 3
+      },
+      "actual": {
+        "canonical": 1,
+        "legacy": 0,
+        "registry": 1,
+        "outbox": 1,
+        "audience": 3
+      }
+    },
+    {
+      "case": "seed stays private with pinned selector d4abe6da-b4fc-4f41-aff7-8887de9dbf3e",
+      "result": "Pass",
+      "expected": "t",
+      "actual": "t"
+    },
+    {
+      "case": "new result does not create legacy event reference d4abe6da-b4fc-4f41-aff7-8887de9dbf3e",
+      "result": "Pass",
+      "expected": "0",
+      "actual": "0"
+    },
+    {
+      "case": "race scores use committed R1 cohort",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "race terminal cohort matches stored ACK count",
+      "result": "Pass",
+      "expected": 3,
+      "actual": 3
+    },
+    {
+      "case": "host cannot supply winner",
+      "result": "Pass",
+      "expected": {
+        "status": 400,
+        "code": "UNSUPPORTED_FIELD"
+      },
+      "actual": {
+        "status": 400,
+        "code": "UNSUPPORTED_FIELD",
+        "details": {}
+      }
+    },
+    {
+      "case": "expired WAITING rejects new ballot",
+      "result": "Pass",
+      "expected": {
+        "status": 410,
+        "code": "ROOM_EXPIRED"
+      },
+      "actual": {
+        "status": 410,
+        "code": "ROOM_EXPIRED",
+        "details": {}
+      }
+    },
+    {
+      "case": "expired WAITING adds no ballot",
+      "result": "Pass",
+      "expected": "1",
+      "actual": "1"
+    },
+    {
+      "case": "old receipt after expiry replays without resurrection",
+      "result": "Pass",
+      "expected": {
+        "status": 200,
+        "body": {
+          "ok": true,
+          "data": {
+            "round": 1,
+            "accepted": true,
+            "poolVersion": 1,
+            "submittedAt": "2026-10-29T13:32:53.816258+00:00"
+          },
+          "state": "ROUND_1",
+          "roomId": "3ebfa677-e9aa-497e-bdd4-186084cbcc1f",
+          "version": 4,
+          "requestId": "submit-1793280773815-67b28b11"
+        }
+      },
+      "actual": {
+        "status": 200,
+        "body": {
+          "ok": true,
+          "data": {
+            "round": 1,
+            "accepted": true,
+            "poolVersion": 1,
+            "submittedAt": "2026-10-29T13:32:53.816258+00:00"
+          },
+          "state": "ROUND_1",
+          "roomId": "3ebfa677-e9aa-497e-bdd4-186084cbcc1f",
+          "version": 4,
+          "requestId": "submit-1793280773815-67b28b11"
+        }
+      }
+    },
+    {
+      "case": "expired state remains terminal",
+      "result": "Pass",
+      "expected": "EXPIRED",
+      "actual": "EXPIRED"
+    },
+    {
+      "case": "no-consensus history retains null winner and empty podium",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "no-consensus scoped histories really persisted",
+      "result": "Pass",
+      "expected": "3",
+      "actual": "3"
+    },
+    {
+      "case": "revoked before finalize prevents personal write",
+      "result": "Pass",
+      "expected": "0",
+      "actual": "0"
+    },
+    {
+      "case": "personal revoke does not suppress valid group consent",
+      "result": "Pass",
+      "expected": "1",
+      "actual": "1"
+    },
+    {
+      "case": "personal and group writer share canonical result",
+      "result": "Pass",
+      "expected": 2,
+      "actual": 2
+    },
+    {
+      "case": "history reads writer projection exactly",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "deleted payload receipt survives",
+      "result": "Pass",
+      "expected": "1",
+      "actual": "1"
+    },
+    {
+      "case": "reconnect does not recreate history",
+      "result": "Pass",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "case": "deleted history does not affect terminal",
+      "result": "Pass",
+      "expected": {
+        "round": 1,
+        "status": "DECIDED",
+        "winner": {
+          "name": "QA dish 20",
+          "dishId": "ffdbafd4-f398-5783-8d45-819870f460d3",
+          "flavor": null,
+          "artwork": null,
+          "mealSlots": [
+            "breakfast",
+            "lunch",
+            "dinner",
+            "snack"
+          ],
+          "cuisineIds": [],
+          "categoryIds": [],
+          "description": null,
+          "roundDishId": "6e598cd9-8c38-49ab-998a-1012c3042279",
+          "temperature": null,
+          "cuisineLabels": [],
+          "categoryLabels": [],
+          "priceReference": null
+        },
+        "resultId": "9ccfe289-4be2-448e-bb42-d70352f6d0e1",
+        "topDishes": [
+          {
+            "dish": {
+              "name": "QA dish 13",
+              "dishId": "1eaf9849-ec59-5833-a0d0-eedfba6afbf6",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "1ae38934-f09a-4623-b4bf-bd7f12e9b084",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": false
+          },
+          {
+            "dish": {
+              "name": "QA dish 02",
+              "dishId": "43fb9c2b-428a-58ee-a7c7-ffff45f4e8b8",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "b4e27bab-a945-440f-b60a-c9c511b910a5",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": false
+          },
+          {
+            "dish": {
+              "name": "QA dish 20",
+              "dishId": "ffdbafd4-f398-5783-8d45-819870f460d3",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "6e598cd9-8c38-49ab-998a-1012c3042279",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": true
+          }
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "finalizedAt": "2026-10-29T13:32:54.863832+00:00",
+        "scoreVersion": "want2-ok1-round1-v1",
+        "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
+        "rankingVersion": "score-desc-dense-rank-v1",
+        "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B-supplement",
+        "round1BallotCount": 2
+      },
+      "actual": {
+        "round": 1,
+        "status": "DECIDED",
+        "winner": {
+          "name": "QA dish 20",
+          "dishId": "ffdbafd4-f398-5783-8d45-819870f460d3",
+          "flavor": null,
+          "artwork": null,
+          "mealSlots": [
+            "breakfast",
+            "lunch",
+            "dinner",
+            "snack"
+          ],
+          "cuisineIds": [],
+          "categoryIds": [],
+          "description": null,
+          "roundDishId": "6e598cd9-8c38-49ab-998a-1012c3042279",
+          "temperature": null,
+          "cuisineLabels": [],
+          "categoryLabels": [],
+          "priceReference": null
+        },
+        "resultId": "9ccfe289-4be2-448e-bb42-d70352f6d0e1",
+        "topDishes": [
+          {
+            "dish": {
+              "name": "QA dish 13",
+              "dishId": "1eaf9849-ec59-5833-a0d0-eedfba6afbf6",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "1ae38934-f09a-4623-b4bf-bd7f12e9b084",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": false
+          },
+          {
+            "dish": {
+              "name": "QA dish 02",
+              "dishId": "43fb9c2b-428a-58ee-a7c7-ffff45f4e8b8",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "b4e27bab-a945-440f-b60a-c9c511b910a5",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": false
+          },
+          {
+            "dish": {
+              "name": "QA dish 20",
+              "dishId": "ffdbafd4-f398-5783-8d45-819870f460d3",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "6e598cd9-8c38-49ab-998a-1012c3042279",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": true
+          }
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "finalizedAt": "2026-10-29T13:32:54.863832+00:00",
+        "scoreVersion": "want2-ok1-round1-v1",
+        "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
+        "rankingVersion": "score-desc-dense-rank-v1",
+        "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B-supplement",
+        "round1BallotCount": 2
+      }
+    },
+    {
+      "case": "group revoke hides history live",
+      "result": "Pass",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "case": "history after room cleanup keeps exact projection",
+      "result": "Pass",
+      "expected": {
+        "round": 1,
+        "status": "DECIDED",
+        "winner": {
+          "name": "QA dish 20",
+          "dishId": "ffdbafd4-f398-5783-8d45-819870f460d3",
+          "flavor": null,
+          "artwork": null,
+          "mealSlots": [
+            "breakfast",
+            "lunch",
+            "dinner",
+            "snack"
+          ],
+          "cuisineIds": [],
+          "categoryIds": [],
+          "description": null,
+          "roundDishId": "6e598cd9-8c38-49ab-998a-1012c3042279",
+          "temperature": null,
+          "cuisineLabels": [],
+          "categoryLabels": [],
+          "priceReference": null
+        },
+        "resultId": "9ccfe289-4be2-448e-bb42-d70352f6d0e1",
+        "topDishes": [
+          {
+            "dish": {
+              "name": "QA dish 13",
+              "dishId": "1eaf9849-ec59-5833-a0d0-eedfba6afbf6",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "1ae38934-f09a-4623-b4bf-bd7f12e9b084",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": false
+          },
+          {
+            "dish": {
+              "name": "QA dish 02",
+              "dishId": "43fb9c2b-428a-58ee-a7c7-ffff45f4e8b8",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "b4e27bab-a945-440f-b60a-c9c511b910a5",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": false
+          },
+          {
+            "dish": {
+              "name": "QA dish 20",
+              "dishId": "ffdbafd4-f398-5783-8d45-819870f460d3",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "6e598cd9-8c38-49ab-998a-1012c3042279",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": true
+          }
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "finalizedAt": "2026-10-29T13:32:54.863832+00:00",
+        "scoreVersion": "want2-ok1-round1-v1",
+        "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
+        "rankingVersion": "score-desc-dense-rank-v1",
+        "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B-supplement",
+        "round1BallotCount": 2
+      },
+      "actual": {
+        "round": 1,
+        "status": "DECIDED",
+        "winner": {
+          "name": "QA dish 20",
+          "dishId": "ffdbafd4-f398-5783-8d45-819870f460d3",
+          "flavor": null,
+          "artwork": null,
+          "mealSlots": [
+            "breakfast",
+            "lunch",
+            "dinner",
+            "snack"
+          ],
+          "cuisineIds": [],
+          "categoryIds": [],
+          "description": null,
+          "roundDishId": "6e598cd9-8c38-49ab-998a-1012c3042279",
+          "temperature": null,
+          "cuisineLabels": [],
+          "categoryLabels": [],
+          "priceReference": null
+        },
+        "resultId": "9ccfe289-4be2-448e-bb42-d70352f6d0e1",
+        "topDishes": [
+          {
+            "dish": {
+              "name": "QA dish 13",
+              "dishId": "1eaf9849-ec59-5833-a0d0-eedfba6afbf6",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "1ae38934-f09a-4623-b4bf-bd7f12e9b084",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": false
+          },
+          {
+            "dish": {
+              "name": "QA dish 02",
+              "dishId": "43fb9c2b-428a-58ee-a7c7-ffff45f4e8b8",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "b4e27bab-a945-440f-b60a-c9c511b910a5",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": false
+          },
+          {
+            "dish": {
+              "name": "QA dish 20",
+              "dishId": "ffdbafd4-f398-5783-8d45-819870f460d3",
+              "flavor": null,
+              "artwork": null,
+              "mealSlots": [
+                "breakfast",
+                "lunch",
+                "dinner",
+                "snack"
+              ],
+              "cuisineIds": [],
+              "categoryIds": [],
+              "description": null,
+              "roundDishId": "6e598cd9-8c38-49ab-998a-1012c3042279",
+              "temperature": null,
+              "cuisineLabels": [],
+              "categoryLabels": [],
+              "priceReference": null
+            },
+            "rank": 1,
+            "score": 4,
+            "isWinner": true
+          }
+        ],
+        "reasonCode": "UNANIMOUS_WANT",
+        "finalizedAt": "2026-10-29T13:32:54.863832+00:00",
+        "scoreVersion": "want2-ok1-round1-v1",
+        "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
+        "rankingVersion": "score-desc-dense-rank-v1",
+        "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B-supplement",
+        "round1BallotCount": 2
+      }
+    },
+    {
+      "case": "canonical card mapping retained without operational room",
+      "result": "Pass",
+      "expected": "t",
+      "actual": "t"
+    },
+    {
+      "case": "pre-existing B result projections retain exact IDs/bytes",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    }
+  ],
+  "schema": {
+    "result": "Pass",
+    "schema": "JSON Schema 2020-12",
+    "envelopesValidated": 683
+  },
+  "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B-supplement",
+  "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
+  "schemaVersion": "0.12.0",
+  "applicationDatabaseChanged": false,
+  "privateBrunoEnvironmentWritten": true,
+  "credentialsInEvidence": false,
+  "sourceHashes": {
+    "supabase/migrations/0035_gm20_canonical_writer.sql": "5cf98487b65d3e1bddfebde9fbc5f17d3fca0189cd231a84f15b0d29e4c858c1",
+    "scripts/gm20_canonical_http.mjs": "dc31dd27d2c2f092c41a452d89df050bfbb523d454e3086985efdde0555ae584",
+    "scripts/gm20_canonical_check.py": "1f7f44a3490201ba8e55940e8ab64638797e9cb720f2d1254b77ed671cff14df",
+    "scripts/dish_policy_worker.py": "d1d65f488937ec6bb42b54efb61a1fa013a33503cd84118d32c4db32210d19a3",
+    "tests/fixtures/decision-v4/cases.json": "7ce419376c4aa84e8c95d16841b734424d6d85ff7b0dce50c73986e01847da55"
+  }
+}

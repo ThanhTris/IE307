@@ -1,0 +1,36 @@
+{
+  "task": "GM-21",
+  "owner": "HoaiTam",
+  "reviewer": "ThanhTris",
+  "targetRef": "origin/main",
+  "targetSha": "e3f7058525da14c3b147fc909511cef7c803ee7c",
+  "branch": "codex/gm-21-canonical-history",
+  "gateSource": "https://github.com/users/ThanhTris/projects/2",
+  "startGate": "READY_TO_START",
+  "mergeGate": "READY_FOR_MERGE_REVIEW",
+  "dependencies": {
+    "GM-06": "Done",
+    "GM-07": "Done",
+    "GM-18": "Done",
+    "GM-20": "Done"
+  },
+  "receivedProducer": "GM20.4/0035/schema0.12.0/PR143",
+  "wire": "dish-session-v4/roadmap-v2/GM-07.B-supplement",
+  "supplement": "GM21.3/0036/schema0.13.0",
+  "authority": {
+    "baselineB": "dish_v4_private",
+    "newPinnedSupplement": "gm06_canonical via gm20_canonical_private.sessions"
+  },
+  "applicationDatabaseChanged": false,
+  "projectStatusChanged": false,
+  "approved": false,
+  "sourceHashes": {
+    "supabase/migrations/0032_canonical_result_storage.sql": "8f1184820fdcf90909af2db7b9845706fdee11e2ccebd3f595b8e3ebc4214330",
+    "supabase/migrations/0035_gm20_canonical_writer.sql": "cd13f7ba89f0c04e9dfb8f89c6ffc015fe9e41a3e19ddc9bd04b77d33637d33c",
+    "docs/evidence/roadmap-v2/GM-20/canonical-writer/MAPPING.md": "914ce459eb4815110935e69dd86dbed13c0d23c1230a26d4cf10ce37ccae4856",
+    "docs/evidence/roadmap-v2/GM-20/canonical-writer/HANDOFF.md": "12b0532b53717a483779e7abef254aaa4cae944f2f787149bfe3f4027e146edd",
+    "docs/architecture/schemas/dish-session-v4b-supplement.schema.json": "8b9e85f0224217b891dc35ea6fa910fb3d7354a99aa309e9079ce92a11efb5d1",
+    "docs/architecture/DISH_SESSION_API_CONTRACT_B.md": "91dd46401b783f5838a609ac4bfde02612852488522f72e2281abc44f7ec6709",
+    "docs/evidence/roadmap-v2/GM-18/dish-only/HANDOFF.md": "ee371cdf403b4b90213db1504031408e0b1e4e06446be360154f113a452d7af5"
+  }
+}

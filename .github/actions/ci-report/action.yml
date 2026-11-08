@@ -1,0 +1,27 @@
+name: Upload secret-free CI job record
+description: Record checkout, toolchain, schema hashes and the final job result.
+inputs:
+  name:
+    description: Unique short name for this validation job.
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Write job record
+      if: always()
+      env:
+        CI_JOB_RESULT: ${{ job.status }}
+      shell: bash
+      working-directory: ${{ github.workspace }}
+      run: >-
+        python scripts/ci_job_report.py
+        --name "${{ inputs.name }}"
+        --output "${{ runner.temp }}/ci-${{ inputs.name }}.json"
+    - name: Upload job record
+      if: always()
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+      with:
+        name: ci-${{ inputs.name }}-${{ github.run_id }}-${{ github.run_attempt }}
+        path: ${{ runner.temp }}/ci-${{ inputs.name }}.json
+        if-no-files-found: warn
+        retention-days: 14

@@ -1,3 +1,4 @@
+# Current v4 settings supplement: GM-19-settings-v4.http; legacy examples below stay pinned.
 # GM-19.1 room lifecycle. Use the isolated synthetic fixture for positive rows.
 # The examples use PostgREST's JSON object body and the real GM-07 transport shape.
 @baseUrl = http://127.0.0.1:54331

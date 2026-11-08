@@ -1,3 +1,10 @@
+## Current GM20.4 canonical writer candidate —2026-10-29
+
+[Canonical handoff](canonical-writer/HANDOFF.md), [mapping](canonical-writer/MAPPING.md)
+and [checks](canonical-writer/CHECKS.md) describe the stacked versioned writer.
+Existing GM20.3/B evidence below remains pinned to its own revision. New creation
+is disabled by default; this is not human approval or Project Done.
+
 # GM-20 — bàn giao submit và finalize
 
 Owner Vinh, reviewer Trí. Owner yêu cầu commit/push và mở PR ngày2026-10-15,

@@ -1,0 +1,42 @@
+{
+  "baseRevision": "afb1dca13b91bef30062aca018e5457908d244bc",
+  "scope": "read-only upstream inventory; no database inspected or migrated",
+  "artifacts": {
+    "docs/data/FOOD_DATA_DICTIONARY.md": {
+      "sha256": "6c4af19d6a5756da23e59784c2218361ee81b10df3885beb8107b25151c0346a",
+      "lastCommit": "8f90af5555daad7506d16f59957d6e653c22b603"
+    },
+    "supabase/migrations/0001_core_schema.sql": {
+      "sha256": "6733e28f282f600e627e675dccede3afef1efd37cf4a7cfe8d94af4cd02d30f5",
+      "lastCommit": "68d62f9988e32caa52ca283436edf2a12ee9f3c5"
+    },
+    "mobile/src/data/api/contracts.ts": {
+      "sha256": "ffeeb220efa695eda96e9fe74d62b82b0b5d2430a0556ee26d1a48c65e8c4c8f",
+      "lastCommit": "5b304c589b119f30d80f772781617d231c1b861f"
+    },
+    "docs/data/DATASET_HANDOFF.md": {
+      "sha256": "0ac2071d18b6c7447f70b1c308046937d7082373db476eab0c6143ba11c3b849",
+      "lastCommit": "4bb928e55c31dbc4dea185362a66063b65a1f4fd"
+    },
+    "supabase/migrations/0018_food_eligibility.sql": {
+      "sha256": "e242876842e0c8decf645130b56a69143146ff942a78641f504c2883f3c86334",
+      "lastCommit": "19aacc4186c78471893b4c052f67872f67ffb678"
+    },
+    "supabase/migrations/0019_room_lifecycle.sql": {
+      "sha256": "ed76f679baa10bbfd4234e2be88f408ef292162f92efceac16217aa554f50926",
+      "lastCommit": "8131da60687c0a5d47fd53ed8aedc30cd38321b7"
+    },
+    "supabase/migrations/0023_finalize.sql": {
+      "sha256": "aff45864e57d634ced4bce6e3ce1997f439f90b2c974cc7f601d71f70bb3fea8",
+      "lastCommit": "7622fadba7ae6c98a16e95128e8cde7c9a03a7b5"
+    },
+    "supabase/migrations/0024_history_integration.sql": {
+      "sha256": "48d8662cd1e4c70a7ef6147efb517bcb351365fc6e1f90ac49e4defa3c868ad9",
+      "lastCommit": "83c06f8ba2a3549cd86c8b6df3ef6d30ef981aa3"
+    },
+    "supabase/migrations/0025_notifications.sql": {
+      "sha256": "a1f8bab1b7853c52fb82e97afef470634b4776b75ae8a000bba2e24796f81ba1",
+      "lastCommit": "ee99bd70032373507d6ea8032dfdae749bf7d360"
+    }
+  }
+}

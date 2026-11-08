@@ -1,3 +1,4 @@
+import { notification } from './payload.mjs';
 /**
  * GM-23 trusted Expo Push sender.
  *
@@ -14,6 +15,9 @@ type Delivery = {
   roomId?: string | null;
   invitationId?: string | null;
   resultId?: string | null;
+  status?: 'DECIDED' | 'NO_CONSENSUS';
+  contractVersion?: string;
+  eventVersion?: number;
   token: string;
   expiresAt: string;
   leaseUntil?: string;
@@ -56,22 +60,6 @@ async function rpc<T>(name: string, body: Record<string, unknown>): Promise<T> {
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(`RPC_${name}_${response.status}`);
   return payload as T;
-}
-
-function notification(delivery: Delivery): Record<string, unknown> {
-  const type = delivery.kind === 'ROOM_INVITED' ? 'room_invite' : 'room_result';
-  return {
-    to: delivery.token,
-    title: type === 'room_invite' ? 'Lời mời vào phòng' : 'Kết quả phòng đã sẵn sàng',
-    body: type === 'room_invite' ? 'Bạn có lời mời vào phòng mới' : 'Phòng của bạn đã có kết quả',
-    data: {
-      type,
-      eventId: delivery.eventId,
-      ...(delivery.roomId ? { roomId: delivery.roomId } : {}),
-      ...(delivery.invitationId ? { invitationId: delivery.invitationId } : {}),
-      ...(delivery.resultId ? { resultId: delivery.resultId } : {}),
-    },
-  };
 }
 
 async function providerSend(messages: Record<string, unknown>[], fetcher = fetch): Promise<Response> {

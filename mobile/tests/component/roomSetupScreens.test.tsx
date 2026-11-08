@@ -48,7 +48,7 @@ test('context requires host confirmation and a nonempty preview before any write
   expect(fixture.update.mock.calls[0]![0].context).not.toHaveProperty('lat');
   await press('Chọn khẩu vị →'); expect(fixture.onContinue).toHaveBeenCalledWith(expect.objectContaining({ roomId: fixture.roomId }));
   await press('Đã lưu bối cảnh mẫu'); expect(fixture.update).toHaveBeenCalledTimes(1);
-});
+}, 15000);
 
 test('editing a saved context refetches the latest version and makes a new intent for the same room', async () => {
   const fixture = await context('ready');

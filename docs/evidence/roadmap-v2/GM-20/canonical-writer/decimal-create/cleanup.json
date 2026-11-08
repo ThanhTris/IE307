@@ -1,0 +1,20 @@
+{
+  "result": "Pass",
+  "applicationDatabaseChanged": false,
+  "stages": [
+    {
+      "stage": "cleanup",
+      "result": "Pass",
+      "worker": "stopped",
+      "projectId": "ie307-dish-v4-qa-20261029-754029781000-1",
+      "qaContainerStopped": true,
+      "ownedWorkdirRemoved": true
+    },
+    {
+      "stage": "gm20-cleanup",
+      "result": "Pass",
+      "ownedBackupsRemoved": true,
+      "applicationDatabaseChanged": false
+    }
+  ]
+}

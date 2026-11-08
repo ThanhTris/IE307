@@ -1,0 +1,25 @@
+{
+  "adapterVersion": "GM40.2",
+  "releaseId": "dish-catalogue-v1:1.1.0:gm18.2",
+  "sourceBundleSha256": "776b1e4998d0b170b51a7c39a4ead74461bdfd721f167dafddf7f072bf117a2f",
+  "projectionSha256": "91a513c5c3e3cbcb3b92a1061cd4be3a1129d79e5436198366e01324575fe75a",
+  "cardsSha256": "fac83d6ab23a3a0d325d57a43509622fbd3779ba316294cefbb909e9c840c728",
+  "schemaSha256": "cff78a0e8867d05ffc753c0c103f53a7ff1cc194d765d3c1419bc9c28f0d2d72",
+  "upstreamSchemaSha256": "10c8d49e21032d719d31c8d4d41a6b30433648c645e20f923c9a0a25f199c147",
+  "sourceManifestSha256": "592062fbae266373dda828b1f39785a4dece08c4508b9266adf5c5e5c9089138",
+  "dishCount": 39,
+  "sourceCounts": {
+    "dishes": 39,
+    "taxonomy": 18,
+    "dataSources": 33,
+    "priceReferences": 247,
+    "fieldEvidence": 151
+  },
+  "contractVersion": "dish-catalogue/roadmap-v2/GM-18.2",
+  "projectionVersion": "GM18.2",
+  "datasetVersion": "1.1.0",
+  "status": "draft",
+  "testOnly": true,
+  "activation": "offline build never activates a database",
+  "reviewedBy": null
+}

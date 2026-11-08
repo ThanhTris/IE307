@@ -1,5 +1,7 @@
 # GM-21 — History/consent integration handoff
 
+> GM21.3 ngày2026-10-30: [checks SQL/Auth/REST thật](canonical-integration/CHECKS.md), [handoff](canonical-integration/HANDOFF.md) và [mapping đã nhận từ GM20](canonical-integration/MAPPING.md). Main/PR143 e3f7058, start READY_TO_START, merge READY_FOR_MERGE_REVIEW; Trí review Pending. Forward0036/schema0.13.0 nối revoke/delete/retention với writer canonical đã bàn giao. Evidence baseline bên dưới giữ nguyên theo revision cũ.
+
 2026-10-15. Owner Tâm (@HoaiTam), reviewer Trí (@ThanhTris), review Pending.
 Branch `codex/gm-21-history-consent` → main / PR113. Rebased onto target
 `991de6620715d1219da900499f4aa2d683b01bb4` (GM20 PR115 + Expo fix PR116).
@@ -112,3 +114,21 @@ Trí must review this PR revision, storage delta, both gates and execution evide
 Remote CI for the updated unpublished patch and app deployment remain unverified.
 Historical `integration/` outputs describe the old independent phase; current
 results are under `gm20-integration/`. This is review readiness, not permission to merge.
+
+## v4 account-consent supplement — 2026-10-26 (local QA candidate)
+
+The historical “explicit scoped consent only in LOBBY” flow above is the earlier GM-21 baseline. For v4, users set independent `personal` and `group` choices at account scope; v4 admission/start inherits enabled settings, while a missing setting remains opt-out. Start atomically locks each enabled scope for each member. Post-start opt-in applies only to future rooms; revocation before finalize deletes/suppresses the affected scope. Personal rows belong to each opted-in member; group requires all locked members. History must return the persisted result projection with the same `resultId` and podium, and continue honoring ACL/delete/TTL. Do not rewrite v2/v3 or already-started v4 snapshots, and do not backfill completed rooms. Migration 0029/schema 0.9.1 and the expanded 82-case run are local QA evidence only, not PR approval or deployed runtime.
+
+### Security follow-up — 2026-10-27
+
+Apply forward migration `0030_history_consent_search_path.sql` through the normal migration ledger. It removes the unnecessary `public` search path from the v4 consent SECURITY DEFINER wrapper without replacing its body, changing grants, adding endpoints or changing the GM-07.B DTO/schema identity. Do not edit migration 0027 or weaken the existing GM-21 fixed-path assertion. The same 45 history SQL assertions passed on owned QA after reproducing the earlier failure; see CHECKS. Existing application databases were not migrated in this local verification.
+
+### Legacy policy isolation — 2026-10-27
+
+CI on `4677f6b` passed the earlier SQL failures but reached a subsequent legacy GM-20 history regression (`valid` history count 0/3). Migration `0031_history_consent_policy_isolation.sql` / schema 0.9.2 restores policy isolation: only v4 inherits account defaults; legacy `prepare_consents` preserves explicit room flags and still requires actual scoped consent. It neither retroactively grants consent nor rewrites locked sessions/results. New regression assertions cover both missing account defaults and account opt-in with a legacy room opt-out. Worker verification resolves `prepare_consents` against migration 0031 when schema 0.9.2 is deployed, while earlier version pins keep their original source. CI/API manifests report the new schema patch without changing GM-07.B DTOs.
+
+## Account-consent read follow-up — 2026-11-05
+
+Forward migration `0039_history_consent_read.sql` adds `get_history_consent()` at database schema `0.16.0` without changing the pinned GM-07.B contract or the existing write RPC. It returns only the authenticated caller's `personal` and `group` account scopes; absent rows are false, unauthenticated execution is denied, and the function uses a fixed `pg_catalog` search path with fully qualified objects. It accepts no arbitrary user ID. GM-25 receives this RPC through its client/guard/mock and consent-readback supplement in PR #155.
+
+On the owned loopback QA project (`54361/54362`), migration ledger/definitions/ACL checks passed; GM-20 canonical HTTP passed 151 cases and GM-21 history/consent HTTP passed 89 cases with 700 response envelopes schema-validated. Coverage includes default false, independent scopes, caller isolation, anonymous denial, history persistence/revoke/delete, and both actual cleanup/audience lock orders. Polling validates the QA owner before the probe and uses a longer held-lock window to accommodate Docker process startup on Windows; no assertion is removed. The latest run retained QA with `--keep`; the application DB was unchanged. These are API regression results, not application-database rollout, device acceptance, or Project approval.

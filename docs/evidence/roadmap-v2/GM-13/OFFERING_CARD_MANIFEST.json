@@ -1,0 +1,28 @@
+{
+  "generatedAt": "2026-10-18T16:38:52.768562+00:00",
+  "task": "GM-13",
+  "scope": "User-requested local presentation refinement of the offering card; not approval",
+  "baseHead": "4a8cd642c8d908d9e6d2c75d19c0935a44cba042",
+  "contractVersion": "food-v1/roadmap-v2/GM-13.1",
+  "policyVersion": "decision-v2",
+  "gateResult": "BLOCKED_PROJECT_UNVERIFIED",
+  "remoteVerifiedThisRun": false,
+  "sourceFiles": {
+    "mobile/src/app/foundation.tsx": "1fbb0cd529e7402b34645b8f171c91fdbfef011aebc725a8bcbd340c8318d778",
+    "mobile/src/app/gm13/no-consensus.tsx": "3a160ec3292ec65f809c9f6e17b88c442d8158da22c25f9413c3a7dc7df956ae",
+    "mobile/src/app/gm13/result.tsx": "30315320ece68573196d3b1a6d9d182d40065291d3fb22b4bc1b7fd35f021e9e",
+    "mobile/src/bootstrap/resultFixtures.ts": "e8aa98e04b76fa7ea05eca3ec549c94ec105337320ad2c03a5ffb72107a6ed9e",
+    "mobile/src/bootstrap/resultPreview.tsx": "388d17e83987d086ad85eef78f5f88ce659d6210ed36eb4f531567e051fb02cb",
+    "mobile/src/features/home/screens/FoundationScreen.tsx": "617166493176a6f4552a1342bbe8f8736f2186576ad873f316c3ee60be9e38bc",
+    "mobile/src/features/result/components/ResultFrame.tsx": "a9d54e2a7fd58357c9a4217b775f42f3ebf3b758cd2b9403fc9a1f256d6ac4f7",
+    "mobile/src/features/result/index.ts": "af8b042b54728f0e0c1a4e2294f0c2854f5fa738734a21bee5608d9392eb134a",
+    "mobile/src/features/result/model.ts": "b8173b81fd82299c0865d836d58da30f9bcf05e28f87c38401801b91bb9007d5",
+    "mobile/src/features/result/screens/NoConsensusScreen.tsx": "635f10c1a847631c3cb46f3aa24758aeeba38630123e903e43fd7423d7f40ccc",
+    "mobile/src/features/result/screens/ResultScreen.tsx": "d893f8cefd9d70d53cd6dafca23f4a83f5a934afbb83549d951cb0a6e2e1919a",
+    "mobile/tests/component/resultScreens.test.tsx": "097f4b2c1291b8ca931cc800a01a4a40ebc790b02dc4407f06ec7b3923ee1707",
+    "mobile/tests/integration/resultRoutes.test.tsx": "955385df1a51f5279248decaf2a71cdd790f68f7b2ecf583f9ba7d37dc731cfd",
+    "mobile/tests/unit/resultModel.test.ts": "117ddaa24a2638ad77280ce5e91a49fa9e169d65eee48b9269dec289ddea1ae2",
+    "mobile/src/features/result/components/ResultOfferingCard.tsx": "a2864f2ec92d0980b833b0f48e3fee1bc71ebbdb49ca22a194e6e2720eb22714"
+  },
+  "previousSourceManifest": "PATCH_MANIFEST_2026-10-18.json"
+}

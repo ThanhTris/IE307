@@ -1,5 +1,42 @@
 # Output checks — GM-07 / roadmap-v2
 
+## Round-2 pool clarification — 2026-10-24 local supplement
+
+This local follow-up is based on PR #133 head `36d7f6f40b6fc2c2fdd152b2443263a8c29b7b71`; it is not yet committed, reviewed or deployed. It updates the proposed v4 contract only. The new assertions cover exact initial pool bounds, a nonempty round-2 survivor pool that may be under 10, no empty round-2 state, `EMPTY_INTERSECTION` for round-1 zero survivors, `ALL_REMOVED` for round-2 elimination, empty candidate pool on terminal no-consensus and a required winner on `DECIDED`.
+
+| Check | Expected | Actual | Result |
+| --- | --- | --- | --- |
+| `python scripts/gm07a_contract_check.py` | Schema structure and wire fixtures enforce state-specific pool and terminal rules | 27 assertions passed | Pass |
+| `python scripts/validate_repository.py` | Repository documents, links, JSON, task manifest and FR traceability valid | Passed | Pass |
+| `python scripts/task_readiness.py --check-docs` | Task indexes match task metadata | Passed | Pass |
+| `python -m unittest discover -s tests -p "test_*.py"` | Full Python regression | 594 tests; 6 skipped; 0 failures/errors | Pass |
+| `python docs/evidence/roadmap-v2/GM-07/gm07a_schema_smoke.py` (`jsonschema==4.26.0`, ephemeral temp target) | Accept valid initial/R2/terminal snapshots; reject undersized initial pool, empty R2, nonempty no-consensus pool, mismatched no-consensus reason, and DECIDED without winner | 6 valid snapshots accepted; 7 invalid snapshots rejected | Pass |
+| `git diff --check` | No whitespace errors | Passed | Pass |
+| Actual HTTP/schema parity | New v4 runtime and forward migration | Main does not deploy v4 | Not run |
+
+The Python suite emitted an external-source HTTP 429 warning, but finished successfully with six skipped tests. The JSON-Schema package and smoke script were kept under the OS temp directory; no repository dependency or lockfile changed.
+
+## GM-07.A proposed contract supplement — 2026-10-24
+
+Baseline: `fdb03ea097ddea49a601fce2ac045d161bfc76a2`; draft artifact only. It
+does not replace the PR #104 baseline evidence below.
+
+| Case | Input / command | Expected | Actual | Result |
+| --- | --- | --- | --- | --- |
+| Contract identity and wire envelope | Read `DISH_SESSION_API_CONTRACT.md` and the schema | Request is `{command,payload}`; response is success or stable error envelope; v2/v3 unchanged | Schema root has request/success/error envelopes; `waiting` and `finalize` are explicit commands | Pass |
+| Snapshot DTO and lobby semantics | Compare contract example and JSON Schema required/conditional fields | Independent poolVersion, exact lobby sentinels, catalogue identity, own-only state, server deadline and terminal | `LOBBY` enforces round 1, poolVersion 1, no waiting timer/result; pool length equals dishCount in fixture check | Pass |
+| Create and vote semantics | Compare contract and 2026-10-24 owner confirmation | Exact 10-20; no location; 30% round-2 cap with N=0/1 cases and KEEP-all valid | Contract records these rules; unsupported filters are rejected rather than ignored | Pass (document consistency only) |
+| ACK/waiting/finalize | Compare retry and waiting rules to follow-up package | ACK is historical; waiting starts only after valid complete-ballot transition; finalize has typed ACK; 60 seconds | `WaitingAck`, `FinalizeAck`, and error DTOs are explicit in schema and examples | Pass |
+| Round-specific choices | Submit/schema fixture with round 1 and round 2 values | Round 1 only WANT/OK/NO; round 2 only KEEP/REMOVE | Separate schema branches reject cross-round values; script checks both directions | Pass |
+| Top3/privacy | Check proposed response fields | No unreviewed score/rank/aggregate exposed | Top3/score omitted pending owner privacy/tie/group-size decision | Pending by design |
+| Schema and wire fixture check | `python scripts/gm07a_contract_check.py` | Envelope, command DTOs, lobby sentinels and round-specific choices reject malformed fixtures | 11 assertions Pass; standard JSON-Schema package is not added to this documentation-only task | Pass (fixture/schema regression) |
+| Draft 2020-12 validation | Temporary `jsonschema==4.26.0` target plus valid/invalid representative envelopes | The published schema accepts create, waiting, finalize, round-1 submit, round-2 submit, business-error and lobby snapshot envelopes, while rejecting cross-round choices and invalid lobby sentinels | 7/7 valid envelopes accepted; 3/3 invalid fixtures rejected; package was installed outside the repository and no lockfile changed | Pass (schema engine smoke) |
+| Actual HTTP/schema roundtrip | New v4 runtime + real HTTP response drives next request | Pass only against implemented forward migration | Main implements v3; no v4 runtime/migration is present | Not run; downstream GM-18/19/20 |
+| Client/mock/screens | GM-07.A explicitly leaves consumers for later | No consumer changes in this contract-only supplement | No mobile files changed | N/A |
+
+The schema is a proposed artifact and does not establish runtime parity, endpoint
+deployment, privacy approval, or task acceptance.
+
 ## Follow-up patch on Trung's branch
 
 Tested code commit **`77941b56146969ec562063f7b7c9351f69d0b675`**, based on local `main` `3076c3deb2937223a007b82211a61a2d61b63c84`; branch `codex/gm-07-trung-verification`. The patch makes `createApiClient` require an explicit `real`/`mock` mode at both TypeScript and JavaScript runtime, rejects missing/undefined/null/invalid strings instead of choosing mock, and tests preservation of the loading mock's explicit 600 ms delay. It adds runtime coverage and updates the HANDOFF. This does not alter backend RPC behavior or production dependencies.

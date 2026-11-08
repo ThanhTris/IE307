@@ -1,0 +1,16 @@
+meta {
+  name: 00 Auth health
+  type: http
+  seq: 1
+}
+get {
+  url: {{baseUrl}}/auth/v1/health
+  body: none
+  auth: none
+}
+tests {
+  test('GoTrue is running on the isolated QA origin', () => {
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getBody().name).to.equal('GoTrue');
+  });
+}

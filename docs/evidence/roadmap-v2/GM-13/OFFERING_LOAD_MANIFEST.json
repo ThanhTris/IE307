@@ -1,0 +1,28 @@
+{
+  "generatedAt": "2026-10-18T17:08:25.7922501Z",
+  "task": "GM-13",
+  "scope": "Local initial/refresh offering fixtures and action icons requested by user; not approval",
+  "baseHead": "4d2cce7c161b4f11ccad5448f46d54a1ab4a67e8",
+  "contractVersion": "food-v1/roadmap-v2/GM-13.1",
+  "policyVersion": "decision-v2",
+  "gateResult": "BLOCKED_PROJECT_UNVERIFIED",
+  "remoteVerifiedThisRun": false,
+  "sourceFiles": {
+    "mobile/src/app/foundation.tsx": "1fbb0cd529e7402b34645b8f171c91fdbfef011aebc725a8bcbd340c8318d778",
+    "mobile/src/app/gm13/no-consensus.tsx": "3a160ec3292ec65f809c9f6e17b88c442d8158da22c25f9413c3a7dc7df956ae",
+    "mobile/src/app/gm13/result.tsx": "30315320ece68573196d3b1a6d9d182d40065291d3fb22b4bc1b7fd35f021e9e",
+    "mobile/src/bootstrap/resultFixtures.ts": "c90f2e67a34bfc9922bd5c52f420d23dc7deb8304a554ad47d61c2e98100b6d1",
+    "mobile/src/bootstrap/resultPreview.tsx": "54835ac02ecf9a5b11a1734a47fbbfd704c11d6de840a22c1e945a434da70283",
+    "mobile/src/features/home/screens/FoundationScreen.tsx": "617166493176a6f4552a1342bbe8f8736f2186576ad873f316c3ee60be9e38bc",
+    "mobile/src/features/result/components/ResultFrame.tsx": "a9d54e2a7fd58357c9a4217b775f42f3ebf3b758cd2b9403fc9a1f256d6ac4f7",
+    "mobile/src/features/result/index.ts": "af8b042b54728f0e0c1a4e2294f0c2854f5fa738734a21bee5608d9392eb134a",
+    "mobile/src/features/result/model.ts": "b8173b81fd82299c0865d836d58da30f9bcf05e28f87c38401801b91bb9007d5",
+    "mobile/src/features/result/screens/NoConsensusScreen.tsx": "635f10c1a847631c3cb46f3aa24758aeeba38630123e903e43fd7423d7f40ccc",
+    "mobile/src/features/result/screens/ResultScreen.tsx": "40a8796d5048d967799a62ba5174398236fe00b07eb30af7306d4d7366367b73",
+    "mobile/tests/component/resultScreens.test.tsx": "bb519433fbf1bbdce0271ea1fe23d669ce204868ecdc365b572a6f14449c4d2a",
+    "mobile/tests/integration/resultRoutes.test.tsx": "bd8d55d2085d1714a5c71783e5fe2d1b60959bec2610df355fb8411588d63f51",
+    "mobile/tests/unit/resultModel.test.ts": "117ddaa24a2638ad77280ce5e91a49fa9e169d65eee48b9269dec289ddea1ae2",
+    "mobile/src/features/result/components/ResultOfferingCard.tsx": "7ddcb798e30990835ef6c5727510afe315f02ee489b7235a8aa35e76426188e6"
+  },
+  "previousSourceManifest": "OFFERING_CARD_MANIFEST.json"
+}

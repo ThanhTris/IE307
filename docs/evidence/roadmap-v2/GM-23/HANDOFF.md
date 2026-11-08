@@ -1,5 +1,9 @@
 # GM-23 — Handoff
 
+Supplement hiện hành GM-23.2/schema 0.15.0:
+[canonical notifications HANDOFF](canonical-notifications/HANDOFF.md).
+Nội dung baseline bên dưới giữ làm lịch sử.
+
 ## Artifacts
 
 - `supabase/migrations/0025_notifications.sql` — schema `0.7.0`, RPCs,

@@ -1,0 +1,34 @@
+meta {
+  name: 10 Create v4 room
+  type: http
+  seq: 10
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/dish_session
+  body: json
+  auth: none
+}
+headers {
+  Authorization: Bearer {{hostToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"command":"create","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B","requestId":"create_{{timestamp}}","displayName":"V4 Bruno Host","settings":{"dishCount":10,"mealSlot":"lunch","desiredAt":null},"preferences":{"cuisineIds":[],"categoryIds":[],"temperature":null,"flavor":null,"budget":null,"avoidRecent":false}}}
+}
+script:pre-request {
+  bru.setVar('timestamp', String(Date.now()));
+}
+script:post-response {
+  const b = res.getBody();
+  if (res.getStatus() === 200 && b.ok) { bru.setVar('roomId', b.data.roomId); bru.setVar('roomCode', b.data.code); }
+  else bru.runner.stopExecution();
+}
+tests {
+  test('Create pins v4 contract and returns room invite code', () => {
+    const b = res.getBody();
+    expect(res.getStatus()).to.equal(200);
+    expect(b.ok).to.equal(true);
+    expect(b.data.roomId).to.be.a('string').and.not.empty;
+    expect(b.data.code).to.be.a('string').and.not.empty;
+  });
+}

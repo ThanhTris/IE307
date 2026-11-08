@@ -1,0 +1,12 @@
+1..11
+ok 1 - GM20 RPC registered
+ok 2 - definer RPC
+ok 3 - fixed search path
+ok 4 - guest authenticated submit
+ok 5 - anon denied
+ok 6 - no manual finalize
+ok 7 - private schema denied
+ok 8 - seed private
+ok 9 - rejection vector
+ok 10 - registered contract
+ok 11 - upstream GM22 registry preserved

@@ -46,3 +46,40 @@ apikey: {{publicKey}}
 Content-Type: application/json
 
 {"room_id":"{{roomId}}","result_id":"{{resultId}}"}
+
+### GM18.2 dish-only catalogue (separate from legacy offering APIs)
+# Requires forward0033 and an explicitly activated QA catalogue.
+# Expected200, data.contractVersion exact, testOnly=true for draft;39 real dish IDs.
+POST {{baseUrl}}/rest/v1/rpc/get_dish_catalogue
+apikey: {{publicKey}}
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{"payload":{"contractVersion":"dish-catalogue/roadmap-v2/GM-18.2"}}
+
+### Exact20 lunch preview, no venue/GPS/coverage input
+# Expected200, requested=20, available=23 for current real draft,20 unique dishes.
+POST {{baseUrl}}/rest/v1/rpc/preview_dish_pool
+apikey: {{publicKey}}
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{"payload":{"contractVersion":"dish-catalogue/roadmap-v2/GM-18.2","mealSlot":"lunch","dishCount":20}}
+
+### Honest dinner shortage from current real draft
+# Expected409 INSUFFICIENT_DISHES with details.available=7, requested=10.
+POST {{baseUrl}}/rest/v1/rpc/preview_dish_pool
+apikey: {{publicKey}}
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{"payload":{"contractVersion":"dish-catalogue/roadmap-v2/GM-18.2","mealSlot":"dinner","dishCount":10}}
+
+### Fractional count is invalid, never rounded
+# Expected400 INVALID_INPUT; no room/pool/ballot mutation.
+POST {{baseUrl}}/rest/v1/rpc/preview_dish_pool
+apikey: {{publicKey}}
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{"payload":{"contractVersion":"dish-catalogue/roadmap-v2/GM-18.2","mealSlot":"lunch","dishCount":10.5}}

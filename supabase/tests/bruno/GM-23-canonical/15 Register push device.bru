@@ -1,0 +1,24 @@
+meta {
+ name: 15 Register push device
+ type: http
+ seq: 15
+}
+post {
+ url: {{baseUrl}}/rest/v1/rpc/register_push_device
+ body: json
+ auth: none
+}
+headers {
+ apikey: {{anonKey}}
+ Authorization: Bearer {{hostToken}}
+ Content-Type: application/json
+}
+body:json {
+ {"requestId":"{{registerRequestId}}","device_id":"{{deviceId}}","token":"{{pushToken}}","permission":"granted"}
+}
+script:post-response {
+ bru.setVar('registerAck',JSON.stringify(res.getBody()));
+}
+tests {
+ test('register writes only an ACK with null data',()=>{expect(res.getStatus()).to.equal(200);expect(res.getBody()).to.deep.equal({ok:true,requestId:bru.getEnvVar('registerRequestId'),data:null});});
+}

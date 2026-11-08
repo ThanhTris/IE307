@@ -8,7 +8,7 @@ import type { ErrorCode } from '../../../data/api/contracts';
 import { errorCopy } from '../services/roomEntry';
 
 export type PreviewControlsProps = { previewControls?: (busy: boolean) => ReactNode };
-export function RoomEntryFrame({ title, subtitle, onBack, busy = false, children, previewControls }: PreviewControlsProps & { title: string; subtitle?: string; onBack: () => void; busy?: boolean; children: ReactNode }) {
+export function RoomEntryFrame({ title, subtitle, onBack, busy = false, isMock = true, children, previewControls }: PreviewControlsProps & { title: string; subtitle?: string; onBack: () => void; busy?: boolean; isMock?: boolean; children: ReactNode }) {
   const { colors } = useShellTheme();
   useEffect(() => {
     const handler = BackHandler.addEventListener('hardwareBackPress', () => { if (busy) return true; onBack(); return true; });
@@ -20,7 +20,7 @@ export function RoomEntryFrame({ title, subtitle, onBack, busy = false, children
       <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={entryStyles.content}>
         <AppButton label="‹ Quay lại" variant="quiet" onPress={onBack} disabled={busy} style={entryStyles.back} colors={colors} />
         <View style={entryStyles.section}>
-          <MockLabel />
+          {isMock ? <MockLabel /> : null}
           <Text accessibilityRole="header" style={[entryStyles.title, { color: colors.text }]}>{title}</Text>
           {subtitle ? <Text style={[entryStyles.body, { color: colors.muted }]}>{subtitle}</Text> : null}
         </View>

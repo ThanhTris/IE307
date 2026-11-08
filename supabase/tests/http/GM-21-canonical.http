@@ -1,0 +1,48 @@
+### GM21.3/schema0.13.0. Use a newly owned QA from gm21_canonical_check.py --keep.
+### Real guest tokens/base URL are private local placeholders, never commit them.
+@baseUrl = http://127.0.0.1:54361
+@anonKey = <owned-QA-public-key>
+@hostToken = <owned-QA-host-guest-JWT>
+@historyId = <history-ID-returned-by-this-caller-and-capability>
+@requestId = <new-opaque-request-ID>
+
+### Read canonical history with the received GM07.B-supplement wire.
+### Expected200: ok=true, data.items; result is the SAME persisted writer result.
+### DECIDED has stored winner/Top3; NO_CONSENSUS has null winner/empty Top3.
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{anonKey}}
+Authorization: Bearer {{hostToken}}
+Content-Type: application/json
+
+{"command":"history","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B-supplement"}}
+
+### Capability-specific delete; retry the exact request returns the same ACK.
+### Expected200 accepted=true; payload disappears, receipt/result remain unchanged.
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{anonKey}}
+Authorization: Bearer {{hostToken}}
+Content-Type: application/json
+
+{"command":"deleteHistory","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B-supplement","requestId":"{{requestId}}","historyId":"{{historyId}}"}}
+
+### Common existing delete port also removes this caller's canonical payload.
+### Expected200 ok=true/data=null; missing/other owner's ID is the same no-op.
+POST {{baseUrl}}/rest/v1/rpc/delete_history
+apikey: {{anonKey}}
+Authorization: Bearer {{hostToken}}
+Content-Type: application/json
+
+{"requestId":"{{requestId}}","history_id":"{{historyId}}"}
+
+### Revoke one account scope. Expected200; canonical payloads for this scope are
+### physically purged immediately; the other scope/result/receipt are preserved.
+POST {{baseUrl}}/rest/v1/rpc/update_history_consent
+apikey: {{anonKey}}
+Authorization: Bearer {{hostToken}}
+Content-Type: application/json
+
+{"requestId":"{{requestId}}","scope":"group","consent":false}
+
+### A subsequent opt-in applies only to future room starts, never recreates history.
+### Canonical history has no paging/cursor parameters in this wire; unsupported
+### fields return400 UNSUPPORTED_FIELD. Legacy get_history keeps its existing API.

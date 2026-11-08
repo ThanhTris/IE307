@@ -1,0 +1,90 @@
+{
+  "task": "GM-21",
+  "baseCommit": "e3f7058525da14c3b147fc909511cef7c803ee7c",
+  "testedHeadBeforePatchCommit": "e3f7058525da14c3b147fc909511cef7c803ee7c",
+  "workingTreePatchIncluded": true,
+  "approved": false,
+  "newChangesCommitted": false,
+  "pushPerformed": false,
+  "applicationDatabaseChanged": false,
+  "schemaVersion": "0.13.0",
+  "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B-supplement",
+  "integrationVersion": "GM21.3",
+  "environment": {
+    "platform": "Darwin",
+    "python": "3.13.3",
+    "node": "v26.0.0",
+    "qaValidatorPin": "jsonschema4.26.0"
+  },
+  "results": {
+    "consumerHTTP": 80,
+    "consumerSchemaEnvelopes": 700,
+    "baselineBHTTP": 151,
+    "producerHTTP": 125,
+    "independentSQLVectors": 102,
+    "legacySQL": 47,
+    "pythonTests": 648,
+    "pythonSkipped": 5,
+    "cleanup": "Pass",
+    "hostedCI": "Not run before publication",
+    "android": "Not run; consumer scope"
+  },
+  "sourceHashes": {
+    "scripts/gm21_canonical_http.mjs": "7238f02a1de38b6ca056493e0be48d3a256d9e1a426e07b4d5216a7c8a3b2235",
+    "scripts/gm21_canonical_check.py": "9658205b8d74bc4a941ff0b4fc1940e730358e70cd5e476c958c20246718f102",
+    "scripts/gm20_canonical_check.py": "dcdbe71d376fe66484c420df7a1073a3fa1461d47cab07be815eafcfe320c40d",
+    "scripts/dish_policy_worker.py": "d1d65f488937ec6bb42b54efb61a1fa013a33503cd84118d32c4db32210d19a3",
+    "supabase/rollback/0036_gm21_canonical_history.down.sql": "f1e1f039ef4a99d51f2381a61ab0536b0182245ab97881e553c73c9959de704a",
+    "docs/architecture/schemas/dish-session-v4b-supplement.schema.json": "8b9e85f0224217b891dc35ea6fa910fb3d7354a99aa309e9079ce92a11efb5d1",
+    "supabase/migrations/0001_core_schema.sql": "6733e28f282f600e627e675dccede3afef1efd37cf4a7cfe8d94af4cd02d30f5",
+    "supabase/migrations/0002_food_import_receipts.sql": "eb80acba1f69bfb68b014a1ab5807e42d65db940a36d201f28db88172157f55e",
+    "supabase/migrations/0003_food_provenance_description.sql": "8972c1dfa5e07a2350e644a7e79ea36cc7f9208e0a89371cbe1bdfdb52d6cb16",
+    "supabase/migrations/0004_access_policies.sql": "508e9572ce50464d07a8ea1e19dc41ff7ba26cb2d0485aa59df9ac1422440dfb",
+    "supabase/migrations/0005_gm18_discovery_rpc.sql": "b81e072da7ef75846615738905650ae5a337e32f5d678f843c9404e7f54e3307",
+    "supabase/migrations/0018_food_eligibility.sql": "e242876842e0c8decf645130b56a69143146ff942a78641f504c2883f3c86334",
+    "supabase/migrations/0019_room_lifecycle.sql": "ed76f679baa10bbfd4234e2be88f408ef292162f92efceac16217aa554f50926",
+    "supabase/migrations/0021_history.sql": "9be964cc6c8b405f578e7f2528268f628266e7b121b96ce958244e20a116217e",
+    "supabase/migrations/0022_social.sql": "bede55e7a0c12a3dfce3d03f3e61121bd4611b73c8b8656ec0785a3c55097f54",
+    "supabase/migrations/0023_finalize.sql": "aff45864e57d634ced4bce6e3ce1997f439f90b2c974cc7f601d71f70bb3fea8",
+    "supabase/migrations/0024_history_integration.sql": "48d8662cd1e4c70a7ef6147efb517bcb351365fc6e1f90ac49e4defa3c868ad9",
+    "supabase/migrations/0025_notifications.sql": "a1f8bab1b7853c52fb82e97afef470634b4776b75ae8a000bba2e24796f81ba1",
+    "supabase/migrations/0026_dish_session_policy.sql": "24fba6d428e283bef7edd46d040b7e89c7ce2953c9cb7a4e04cb86a7dd682804",
+    "supabase/migrations/0027_dish_session_v4.sql": "504936d84652d92dc322e63160f5d435dffe5c466d38807220040480e621114c",
+    "supabase/migrations/0028_dish_v4_top_three_cutoff.sql": "373c7d28d2ffae3de5510a4d5ebba0d5bd756feb05db5b1e03883ae85feccb55",
+    "supabase/migrations/0029_dish_v4_history_consent.sql": "9a6545904cbaa80e7461c3077a2c3f4c1bf6bc1362e364b566c0ce4012fe5533",
+    "supabase/migrations/0030_history_consent_search_path.sql": "c50737fa0dad65a3eebf2ed8423b3313f508b4d754fe4626d3ff300af510996e",
+    "supabase/migrations/0031_history_consent_policy_isolation.sql": "75eefa6f4975fa88a4fede0cc934aaed216144b1ca51efe3e31ea86a06f789e8",
+    "supabase/migrations/0032_canonical_result_storage.sql": "8f1184820fdcf90909af2db7b9845706fdee11e2ccebd3f595b8e3ebc4214330",
+    "supabase/migrations/0033_gm18_dish_catalogue.sql": "d0e761ff652f8cecf861050c6b68107d6e4afc88e81d00932c47a248e0754669",
+    "supabase/migrations/0034_gm19_settings_stability.sql": "87eb94f89f1669d6f94cf01946bffbdeaa2cd9c35812aa2be81a0282ac8db3d3",
+    "supabase/migrations/0035_gm20_canonical_writer.sql": "cd13f7ba89f0c04e9dfb8f89c6ffc015fe9e41a3e19ddc9bd04b77d33637d33c",
+    "supabase/migrations/0036_gm21_canonical_history.sql": "793e7361b91f5d9e95b613a565fd1591a82b5e415996acabe3e83dab9430c882",
+    "docs/architecture/schemas/dish-session-v4b.schema.json": "710a55d8fcd51e087fa0cab8260ff9b1a5469bf570f5280a9e904eb5096b484c",
+    "tests/fixtures/dish-catalogue-v1/qa-v4-synthetic.json": "ad9de41f997b3cffe9314d61638c5f814e37554e78a8109443a284fe01a56c21",
+    "scripts/gm20_canonical_http.mjs": "db701534b26d753dfdf881e85f660dd8051ad4563ab3a1542d59c5a1fd335fa3",
+    "tests/fixtures/decision-v4/cases.json": "7ce419376c4aa84e8c95d16841b734424d6d85ff7b0dce50c73986e01847da55",
+    ".github/workflows/gm21-history.yml": "9581f8c961d7b364b33ffd16b0e8cf313f65780034948ae3ffb902c24a983644",
+    "supabase/tests/http/GM-21-canonical.http": "fd8ac13e8f5b1618f4a75a10520c91e852e65600fc02769dcb2e01e2858dcd4f"
+  },
+  "reportHashes": {
+    "http-results.json": "03c2fa182d3d7f4ac9e2b79a39fb9b7fe8586b6f0c99135e063744b19a0eeb70",
+    "baseline-http-results.json": "6c29799b137a58966553119a9b3d3d1857feb4ee85288a937d65fd883b90eae4",
+    "producer-http-results.json": "2b028e26009e62ccb83da764f0d8ae11ed06f502b4ae2fd5b0532bffec58b83d",
+    "legacy-sql-results.json": "8045cb4e6b3ef9e7cc29348bc6b73d708b5ad1e236fed65d9683f53595e4644d",
+    "writer-parity.json": "f5f5b8695c499350d1fd5d286fd2f4786adc1073b6fb8667f66d20a5dfc3335a",
+    "runtime-results.json": "5f14517714190d22ff32fe2f67c90a288dae4f840784acde32628f26751acbfb",
+    "cleanup-results.json": "580ad9b6a04ddfd5cd271ef4c3bcce021c7add55c4b7dfde3abeaed571b16c9b"
+  },
+  "testedSourceHashes": {
+    "scripts/gm21_canonical_http.mjs": "1f74e0bbe7de329d4ef4284d880abb25a84fb334ab1149158326d222634521fb"
+  },
+  "publicationNormalizations": [
+    {
+      "path": "scripts/gm21_canonical_http.mjs",
+      "testedSha256": "1f74e0bbe7de329d4ef4284d880abb25a84fb334ab1149158326d222634521fb",
+      "publishedSha256": "7238f02a1de38b6ca056493e0be48d3a256d9e1a426e07b4d5216a7c8a3b2235",
+      "edit": "Remove one empty line at EOF; no executable tokens changed",
+      "verification": "Published bytes plus one LF reproduce the exact tested bytes; node --check"
+    }
+  ]
+}

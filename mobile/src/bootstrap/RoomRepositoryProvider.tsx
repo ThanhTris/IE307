@@ -4,6 +4,7 @@ import { createAuthenticatedApiClient, createSecureSessionStorage } from '../dat
 import { createApiClient } from '../data/api';
 import type { SessionIssue, SessionSnapshot, SessionStatus } from '../features/rooms/services/sessionState';
 import type { SessionUser } from '../data/api/contracts';
+import { clearVoteSession } from '../features/voting/services/voteSessionState';
 import { createNativePushService } from '../features/inbox/services/nativePush';
 import { clearPushRegistrationSecrets, expoPushDriver, getPushDeviceId } from '../features/inbox/services/expoPushDriver';
 import {
@@ -100,6 +101,7 @@ export function RoomRepositoryProvider({
   }, [repository]);
 
   const logout = useCallback(async (): Promise<boolean> => {
+    const identityId = repository.getSessionSnapshot().user?.id;
     let pushCleanupComplete = !isReal;
     if (isReal) {
       try {
@@ -119,6 +121,7 @@ export function RoomRepositoryProvider({
       }
     }
     const result = await repository.logout();
+    if (result.ok && identityId) clearVoteSession(identityId);
     // Keep the device handle/token when remote unregister did not ACK, so a
     // later login/logout can retry cleanup for this same installation.
     if (result.ok && isReal && pushCleanupComplete) await clearPushRegistrationSecrets().catch(() => undefined);

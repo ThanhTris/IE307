@@ -19,3 +19,17 @@
 ## Status and known limits
 
 Screens use mock fixtures and mock API calls only. Friend/room inbox accept and reject pass the explicit `metadata.invitationId` (not `eventId`); the default GM-07 room fixture is associated through a separate GM-14 mapping keyed by inbox item ID. Missing/expired reference is blocked; a strict test double rejects event IDs. Direct friends reject and outgoing-invite tests are included. Denied notification permission is represented in the fixture; no OS permission prompt or remote push is invoked. History consent/deletion is ephemeral local state and fetchedAt is not durable cache. No real account linking is present; P1 is labeled unimplemented. Expo Go Android visual/accessibility smoke and fresh merge readiness remain unverified; GitHub Project query was rejected during the latest gate attempt. No Done/Approved status is implied.
+
+## Supplement 2026-11-04 — mock profile/settings and history states
+
+- Branch: `codex/gm14-figma-update`, based on `origin/main` at `7c22db8`.
+- Added local friend search, history offline/cache preview and detail sheet, and guest-only profile/accessibility settings routes. The current `HistoryItem` does not expose outcome reason or Top 3; the UI keeps these fields hidden instead of inferring them.
+- The history snapshot uses React state so offline UI updates predictably and complies with React render rules.
+- Automated verification: `cd mobile; npm run check` — typecheck, lint, 56 suites / 950 tests, and architecture guard passed.
+- `FIGMA_PARITY.md` records missing paired Figma/app screenshots and device checks. No live social/API, push, account-linking, durable cache, Android, or TalkBack behavior is claimed. This handoff does not imply Done/Approved.
+
+## Owner review follow-up — invitation references and friends actions
+
+The inbox regression suite `mobile/tests/component/socialAndHistoryScreens.test.tsx` uses fixtures with distinct inbox ID, `eventId`, and `metadata.invitationId`, and strict adapter doubles reject the event IDs. Accept/reject for both friend and room invites assert the invitation reference. The Friends screen suite separately asserts reject-by-invitation-ID and outgoing invite-by-code after confirmation. These are mock contract checks, not real API acceptance.
+
+Android Expo Go visual/accessibility smoke remains Not run because this environment has no ADB device. The PR is left in draft and requests Trí review/coordination for that device check; no screenshot or visual Pass is claimed.

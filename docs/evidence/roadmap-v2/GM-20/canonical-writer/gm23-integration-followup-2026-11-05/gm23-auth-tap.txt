@@ -1,0 +1,10 @@
+1..7
+{"sub":"16000000-0000-4000-8000-000000000001","role":"authenticated","user_metadata":{"userId":"16000000-0000-4000-8000-000000000002"}}
+ok 1 - caller comes from JWT sub, not user_metadata.userId
+{}
+ok 2 - no authenticated claims means no caller
+ok 3 - anon cannot list auth users
+ok 4 - client cannot mutate auth identity
+ok 5 - profile writes remain default deny until explicit RPC
+ok 6 - guest session does not open raw votes
+ok 7 - guest session does not expose device tokens

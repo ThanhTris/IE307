@@ -1,0 +1,39 @@
+{
+  "baselineRevision": "8293bb3dfd87f9e5a1be60c5a62a2f52a548e7c8",
+  "method": "git archive origin/main relevant tasks/test/docs into temporary directory; run unchanged test_mobile_api_test_plan.py",
+  "baselineExitCode": 1,
+  "baselineTestsRun": 6,
+  "baselineFailedSubcases": 21,
+  "failureIdsMatchCurrentFullSuite": true,
+  "failures": [
+    "test_all_api_and_consumers_link_specific_mobile_handoff (test_mobile_api_test_plan.MobileApiPlanTests.test_all_api_and_consumers_link_specific_mobile_handoff) (task=24)",
+    "test_all_api_and_consumers_link_specific_mobile_handoff (test_mobile_api_test_plan.MobileApiPlanTests.test_all_api_and_consumers_link_specific_mobile_handoff) (task=25)",
+    "test_all_api_and_consumers_link_specific_mobile_handoff (test_mobile_api_test_plan.MobileApiPlanTests.test_all_api_and_consumers_link_specific_mobile_handoff) (task=26)",
+    "test_all_api_and_consumers_link_specific_mobile_handoff (test_mobile_api_test_plan.MobileApiPlanTests.test_all_api_and_consumers_link_specific_mobile_handoff) (task=27)",
+    "test_all_api_and_consumers_link_specific_mobile_handoff (test_mobile_api_test_plan.MobileApiPlanTests.test_all_api_and_consumers_link_specific_mobile_handoff) (task=28)",
+    "test_all_api_and_consumers_link_specific_mobile_handoff (test_mobile_api_test_plan.MobileApiPlanTests.test_all_api_and_consumers_link_specific_mobile_handoff) (task=29)",
+    "test_all_api_and_consumers_link_specific_mobile_handoff (test_mobile_api_test_plan.MobileApiPlanTests.test_all_api_and_consumers_link_specific_mobile_handoff) (task=30)",
+    "test_all_api_and_consumers_link_specific_mobile_handoff (test_mobile_api_test_plan.MobileApiPlanTests.test_all_api_and_consumers_link_specific_mobile_handoff) (task=31)",
+    "test_all_api_and_consumers_link_specific_mobile_handoff (test_mobile_api_test_plan.MobileApiPlanTests.test_all_api_and_consumers_link_specific_mobile_handoff) (task=33)",
+    "test_all_api_and_consumers_link_specific_mobile_handoff (test_mobile_api_test_plan.MobileApiPlanTests.test_all_api_and_consumers_link_specific_mobile_handoff) (task=34)",
+    "test_all_api_and_consumers_link_specific_mobile_handoff (test_mobile_api_test_plan.MobileApiPlanTests.test_all_api_and_consumers_link_specific_mobile_handoff) (task=35)",
+    "test_device_cases_are_in_manifest_and_task_body (test_mobile_api_test_plan.MobileApiPlanTests.test_device_cases_are_in_manifest_and_task_body) (task=24)",
+    "test_device_cases_are_in_manifest_and_task_body (test_mobile_api_test_plan.MobileApiPlanTests.test_device_cases_are_in_manifest_and_task_body) (task=25)",
+    "test_device_cases_are_in_manifest_and_task_body (test_mobile_api_test_plan.MobileApiPlanTests.test_device_cases_are_in_manifest_and_task_body) (task=26)",
+    "test_device_cases_are_in_manifest_and_task_body (test_mobile_api_test_plan.MobileApiPlanTests.test_device_cases_are_in_manifest_and_task_body) (task=27)",
+    "test_device_cases_are_in_manifest_and_task_body (test_mobile_api_test_plan.MobileApiPlanTests.test_device_cases_are_in_manifest_and_task_body) (task=28)",
+    "test_device_cases_are_in_manifest_and_task_body (test_mobile_api_test_plan.MobileApiPlanTests.test_device_cases_are_in_manifest_and_task_body) (task=29)",
+    "test_device_cases_are_in_manifest_and_task_body (test_mobile_api_test_plan.MobileApiPlanTests.test_device_cases_are_in_manifest_and_task_body) (task=30)",
+    "test_device_cases_are_in_manifest_and_task_body (test_mobile_api_test_plan.MobileApiPlanTests.test_device_cases_are_in_manifest_and_task_body) (task=31)",
+    "test_device_cases_are_in_manifest_and_task_body (test_mobile_api_test_plan.MobileApiPlanTests.test_device_cases_are_in_manifest_and_task_body) (task=33)",
+    "test_device_cases_are_in_manifest_and_task_body (test_mobile_api_test_plan.MobileApiPlanTests.test_device_cases_are_in_manifest_and_task_body) (task=35)"
+  ],
+  "scope": "pre-existing mobile task documentation mismatches; no GM06 schema/runtime failure",
+  "inputHashes": {
+    "tests/test_mobile_api_test_plan.py": "8d42260572068a5a39120734adec9861a795194ba4890a1f25d43adcb296a00a",
+    "docs/testing/MOBILE_API_TEST_MATRIX.md": "79766bb0b9c09c64e2f349a8e092f3435ad61dd2a296f5aab4cf9e2d20c71f27",
+    ".github/pull_request_template.md": "8edd095a992fe167c7b2bc92e138358829544ac7538ef391b673c0614926ba7e",
+    "docs/project/DEFINITION_OF_DONE.md": "69b9ea4c08d33d8ba0eb151d18e824b7e4b398a560e3c7f3647c604f6933d324",
+    "docs/project/TASK_OUTPUT_REQUIREMENTS.md": "0327ca75451b0ba0a2d0416e49a062001466820acf4d016f2fad3410dc4763ff"
+  }
+}

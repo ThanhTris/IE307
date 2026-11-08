@@ -139,6 +139,31 @@ def delivery_errors(src: Source, record: dict) -> list[str]:
     return [f'missing delivered artifact: {path}' for path in paths if path not in src.files]
 
 
+def output_verification_errors(src: Source, records: dict, tid: str, project=None) -> list[str]:
+    """Verify current task's declared outputs, non-template evidence and Stage 3B data gate before merge."""
+    record = records.get(tid)
+    if not record or record['meta'].get('numbering') != 'roadmap-v2':
+        return []
+    errors = list(delivery_errors(src, record))
+    placeholders = ('Status: Pending execution', '<commit_sha>', '<fill_me>', '<todo_replace>')
+    for path in (f'docs/evidence/roadmap-v2/{tid}/CHECKS.md',
+                 f'docs/evidence/roadmap-v2/{tid}/HANDOFF.md',
+                 f'docs/evidence/roadmap-v2/{tid}/FIGMA_PARITY.md'):
+        if path in src.files:
+            text = src.read(path).strip()
+            if not text:
+                errors.append(f'empty evidence artifact: {path}')
+            for marker in placeholders:
+                if marker in text:
+                    errors.append(f'unfilled template placeholder ({marker}) in {path}')
+    if tid in {'GM-33', 'GM-34'} and 'GM-40' in records:
+        gm40_errors = (project.dependency_errors('GM-40')
+                       if project is not None else approval_errors(src, records['GM-40']))
+        if gm40_errors:
+            errors.append('Stage 3B USB test/release requires GM-40 (Dish Catalogue projection) Done before merge')
+    return errors
+
+
 def validate_roadmap(src: Source, records: dict) -> tuple[list[str], dict]:
     """Check scope migration and each input's producer, not just numeric edges."""
     errors = []
@@ -218,7 +243,7 @@ def validate_roadmap(src: Source, records: dict) -> tuple[list[str], dict]:
                 ('UI', 'structure'): {'code-structure'},
                 ('UI', 'components'): {'expo-go'},
                 ('UI', 'screens'): {'expo-go'},
-                ('UI', 'prototype'): {'html-prototype'},
+                ('UI', 'prototype'): {'html-prototype', 'figma-handoff'},
                 ('DATA', 'fields'): {'data-contract'},
                 ('DATA', 'database'): {'data-schema'},
                 ('DATA', 'import'): {'data-import'},
@@ -235,10 +260,18 @@ def validate_roadmap(src: Source, records: dict) -> tuple[list[str], dict]:
             mode = verification.get('mode')
             if mode not in allowed_modes.get((entry['track'], entry['stage']), set()):
                 errors.append(f'{tid}: verification mode does not match track/stage')
-            if (entry['track'], entry['stage']) == ('UI', 'prototype'):
+            if (entry['track'], entry['stage']) == ('UI', 'prototype') and mode == 'html-prototype':
                 if (not any(path.endswith('.html') for path in outputs)
                         or any(path.startswith(('mobile/', 'supabase/')) for path in outputs)):
                     errors.append(f'{tid}: HTML prototype must output HTML, not app/backend code')
+            if mode == 'figma-handoff':
+                design_outputs = {
+                    'docs/design/UI_FINAL_HANDOFF_2026-10-25.md',
+                    'docs/design/UI_FIGMA_TASK_MAP.json',
+                }
+                if (not design_outputs <= set(outputs)
+                        or any(path.startswith(('mobile/', 'supabase/')) for path in outputs)):
+                    errors.append(f'{tid}: Figma handoff must declare design/map outputs, not app/backend code')
             if '## Đầu ra chạy được và nghiệm thu' not in text:
                 errors.append(f'{tid}: missing runnable output acceptance section')
             if any(value not in text for value in verification.values()):
@@ -503,6 +536,11 @@ def validate(src: Source, *, check_dependency_approvals=True) -> list[str]:
     if release_task in tasks:
         required_core = {tid for tid, meta in tasks.items()
                          if meta.get('priority') == 'P0' and tid != release_task}
+        # Owner decision in GM-40/#125: the new dish-only profile is a P0
+        # supplement after the food-v1 release baseline, never a reverse edge
+        # GM-34 -> GM-40. This exception cannot exempt any other P0 task.
+        if release_task == 'GM-34' and tasks.get('GM-40', {}).get('github_issue') == '125':
+            required_core.discard('GM-40')
         missing_core = required_core - ancestors(release_task)
         if missing_core:
             errors.append('release bypasses P0 tasks: ' + ', '.join(sorted(missing_core)))

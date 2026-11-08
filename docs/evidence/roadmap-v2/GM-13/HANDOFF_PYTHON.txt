@@ -1,0 +1,17 @@
+................................................................................................C:\Users\saveb\AppData\Roaming\uv\python\cpython-3.14.7-windows-x86_64-none\Lib\tempfile.py:484: ResourceWarning: Implicitly cleaning up <HTTPError 429: 'Rate limit'>
+  _warnings.warn(self.warn_message, ResourceWarning)
+Cell 1: ERROR
+Report: C:\Users\saveb\AppData\Local\Temp\tmpuxv_z1xy\new-capture\reports\sample.executed.ipynb
+Cell 1: OK
+Report: C:\Users\saveb\AppData\Local\Temp\tmpme2c0ywb\new\reports\sample.executed.ipynb
+......................................................................................................................................................................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 550 tests in 66.491s
+
+OK
+{
+  "offline": true,
+  "refresh": false,
+  "allow_api": false,
+  "output_dir": "C:\\Users\\saveb\\AppData\\Local\\Temp\\tmpme2c0ywb\\new"
+}

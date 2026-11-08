@@ -278,6 +278,12 @@ class ManifestValidationTests(unittest.TestCase):
         self.source.contents[path] = re.sub(r'^(start|merge)_dependencies:.*$', r'\1_dependencies: GM-01', self.source.read(path), flags=re.M)
         self.assertIn('release bypasses P0 tasks', self.errors())
 
+    def test_gm40_owner_exception_does_not_exempt_other_core_tasks(self):
+        self.assertEqual(self.errors(), '')
+        path = self.source.task_path('GM-40')
+        self.source.contents[path] = self.source.read(path).replace('github_issue: 125', 'github_issue: 999')
+        self.assertIn('release bypasses P0 tasks: GM-40', self.errors())
+
     def set_status_in_memory(self, tid, status, approve=False):
         record = validator.task_records(self.source)[tid]
         old = record['path']
@@ -297,14 +303,14 @@ class ManifestValidationTests(unittest.TestCase):
         self.source.contents.update(task_readiness.task_link_updates(self.source))
         self.source.contents.update(task_readiness.render_documents(self.source))
 
-    def test_in_progress_with_unfinished_merge_dependencies_is_valid(self):
-        for tid in ('GM-01', 'GM-02', 'GM-03', 'GM-04'):
+    def test_in_progress_with_all_dependencies_done_is_valid(self):
+        for tid in ('GM-01', 'GM-02', 'GM-03', 'GM-04', 'GM-06'):
             self.set_status_in_memory(tid, 'done', approve=True)
         self.set_status_in_memory('GM-07', 'in-progress')
         self.assertEqual(self.errors(), '')
 
-    def test_draft_review_with_merge_blockers_is_valid(self):
-        for tid in ('GM-01', 'GM-02', 'GM-03', 'GM-04'):
+    def test_review_with_all_dependencies_done_is_valid(self):
+        for tid in ('GM-01', 'GM-02', 'GM-03', 'GM-04', 'GM-06'):
             self.set_status_in_memory(tid, 'done', approve=True)
         self.set_status_in_memory('GM-07', 'review')
         self.assertEqual(self.errors(), '')
@@ -318,7 +324,7 @@ class ManifestValidationTests(unittest.TestCase):
         self.set_status_in_memory('GM-20', 'done', approve=True)
         self.assertIn('active task with unreviewed dependency: GM-20 -> GM-19', self.errors())
 
-    def test_parallel_merge_ancestor_is_allowed(self):
+    def test_parallel_with_any_dependency_is_rejected(self):
         records = validator.task_records(self.source)
         for tid, peer in (('GM-07', 'GM-06'), ('GM-06', 'GM-07')):
             path = records[tid]['path']
@@ -327,7 +333,8 @@ class ManifestValidationTests(unittest.TestCase):
                     [value.strip() for value in m[1].split(',') if value.strip()] + [peer]))),
                 self.source.read(path), flags=re.M)
         self.assertIn('GM-06', records['GM-07']['meta']['merge_dependencies'])
-        self.assertEqual(self.errors(), '')
+        # Every dependency is now a start gate, so a dependency pair can never be parallel.
+        self.assertIn('parallel tasks have dependency', self.errors())
 
     def test_missing_start_metadata_is_rejected(self):
         path = 'tasks/backlog/GM-20.md'
@@ -464,6 +471,7 @@ class ManifestValidationTests(unittest.TestCase):
     def test_html_prototype_cannot_output_app_code(self):
         mapping = validator.roadmap(self.source)
         entry = next(item for item in mapping['entries'] if item['new_id'] == 'GM-39')
+        entry['verification']['mode'] = 'html-prototype'
         entry['outputs'].append('mobile/src/shared/theme/tokens.ts')
         self.source.contents['tasks/task-id-map.json'] = json.dumps(mapping)
         self.assertIn('HTML prototype must output HTML, not app/backend code', self.errors())
@@ -471,6 +479,7 @@ class ManifestValidationTests(unittest.TestCase):
     def test_html_prototype_cannot_skip_html_output(self):
         mapping = validator.roadmap(self.source)
         entry = next(item for item in mapping['entries'] if item['new_id'] == 'GM-39')
+        entry['verification']['mode'] = 'html-prototype'
         entry['outputs'] = [path for path in entry['outputs'] if not path.endswith('.html')]
         self.source.contents['tasks/task-id-map.json'] = json.dumps(mapping)
         self.assertIn('HTML prototype must output HTML, not app/backend code', self.errors())

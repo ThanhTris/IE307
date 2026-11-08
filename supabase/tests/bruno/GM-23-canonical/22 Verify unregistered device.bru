@@ -1,0 +1,17 @@
+meta {
+ name: 22 Verify unregistered device
+ type: http
+ seq: 22
+}
+get {
+ url: {{baseUrl}}/rest/v1/devices?select=id,active,permission
+ body: none
+ auth: none
+}
+headers {
+ apikey: {{anonKey}}
+ Authorization: Bearer {{hostToken}}
+}
+tests {
+ test('unregister hides the token and makes safe device projection inactive',()=>{expect(res.getStatus()).to.equal(200);expect(res.getBody().some(d=>d.active===false&&d.permission==='unknown')).to.equal(true);for(const d of res.getBody())expect(d).not.to.have.property('push_token');});
+}

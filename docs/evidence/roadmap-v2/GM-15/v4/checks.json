@@ -1,0 +1,105 @@
+{
+  "fixtureOnly": true,
+  "stage": "pure domain",
+  "testedHeadBeforePatchCommit": "a6e89fcc00fad2ad2c3cef9c0599cdabf7c035f7",
+  "targetMainRevision": "a6e89fcc00fad2ad2c3cef9c0599cdabf7c035f7",
+  "runtime": {
+    "node": "24.22.1",
+    "python": "3.12.14",
+    "platform": "macOS-26.1-arm64-arm-64bit"
+  },
+  "results": {
+    "newIndependentVectors": {
+      "result": "Pass",
+      "cases": 102
+    },
+    "nodeDomain": {
+      "result": "Pass",
+      "tests": 288,
+      "v4Tests": 109,
+      "legacyV2V3": 179
+    },
+    "legacyReporter": {
+      "result": "Pass",
+      "checks": 153
+    },
+    "typecheck": {
+      "result": "Pass"
+    },
+    "lint": {
+      "result": "Pass",
+      "errors": 0,
+      "existingWarnings": 4
+    },
+    "jest": {
+      "result": "Pass",
+      "suites": 27,
+      "tests": 704
+    },
+    "architecture": {
+      "result": "Pass"
+    },
+    "expoLockedCheck": {
+      "result": "Pass",
+      "mode": "offline SDK/cache check; not online latest or device validation"
+    },
+    "pythonRegression": {
+      "result": "Pass",
+      "tests": 642,
+      "skipped": 6
+    },
+    "repositoryValidator": {
+      "result": "Pass"
+    },
+    "taskIndexes": {
+      "result": "Pass"
+    },
+    "diffCheck": {
+      "result": "Pass"
+    },
+    "startGate": {
+      "result": "READY_TO_CLAIM"
+    },
+    "mergeGate": {
+      "result": "READY_FOR_MERGE_REVIEW",
+      "source": "live Project; no approval/status mutation"
+    },
+    "sqlParityNewPolicy": {
+      "result": "Not run",
+      "consumer": "GM20 receives fixed vectors"
+    },
+    "transactionApiAuthHistoryEvent": {
+      "result": "Not run",
+      "consumer": "GM20/17/21/23"
+    },
+    "androidNativeProduction": {
+      "result": "Not run"
+    }
+  },
+  "protectedSha256": {
+    "mobile/src/domain/decision/index.ts": "aa1f2276d7ec2583e5f25d64a993021c3b36af1bc4d7a772b5f9a8ff99935a81",
+    "mobile/src/domain/decision/dishPolicy.ts": "14cc340f2065a3ac221c9f452955e5e56ec08784d5af326ed01087a9ea0e0a61",
+    "tests/fixtures/decision-v2/cases.json": "6d2fa8cc89d18c32ccda5bb6c6a5805bd6d89d303d224d1a89019f8208b3dd30",
+    "tests/fixtures/decision-v2/roster-cases.json": "431e103588074d9033322c6056ea726615ab59fdc08883904fa0b33b417412f5",
+    "tests/fixtures/decision-v2/seeded-cases.json": "e964aea7b4ce0b1fcf3773ab9e0e48f6ba685422eb83c1df5aaa0e4cd5c47caa",
+    "mobile/package.json": "15df3809e6f9a4b367b90f6c9c9999798df826fce5eaa3db584790c9e5476820",
+    "mobile/package-lock.json": "d3c5adf46fe46dd9ad14db68301aa8b3b64b518283ebd115855aae2896994c6c"
+  },
+  "dependencies": {
+    "installed": "npm ci from unchanged mobile lock; existing jsonschema CI pin in temporary venv",
+    "newAppPackageOrLockChange": false
+  },
+  "projectMutation": false,
+  "approved": false,
+  "logsSha256": {
+    "gm15-domain-all.log": "f38f222716b3c44dc7635c7b043754bcd6579f333e48579a42b6effc8b7f4c83",
+    "gm15-typecheck.log": "405e7870566f0a9d35b6229643a46a7a7e23f909bfec7c65ee6080398af515d1",
+    "gm15-lint.log": "9dfc59d1bda878344a49119513275165415dc017f8edc381bc3e5073776104b6",
+    "gm15-jest.log": "b33f1c657cd0b2338bbce37c610e8aeab5d150b662e1e49ce512516a948ec78b",
+    "gm15-python-tests.log": "4f19074ccbda279eb0a7a6e025a37908d83f81b972071df96cb86303ba90ab98",
+    "gm15-repo.log": "bafde887d56a88dbd066df4e7f6ddd50cdc3b6ff4526f7f4a192620fb81637aa",
+    "gm15-index.log": "234e22deda2572ad8d8420bfa25a7cea614925c4fa044041d60412051aec8327",
+    "gm15-architecture.log": "6a88d64de17199a9836243305f72168b65e52c5d69062cee69dd47c17a87b4e2",
+    "gm15-expo.log": "4e9657743c669c8e30eb771928551cc81c4e8e8aeb4b9cb6cc2c10b038a40de3"
+  }
+}

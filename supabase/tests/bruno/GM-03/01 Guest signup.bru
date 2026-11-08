@@ -1,0 +1,32 @@
+meta {
+  name: 01 Guest signup
+  type: http
+  seq: 2
+}
+post {
+  url: {{baseUrl}}/auth/v1/signup
+  body: json
+  auth: none
+}
+headers {
+  Content-Type: application/json
+}
+body:json {
+  {"data":{"display_name":"GM03 Bruno QA","gm03_qa_run":"{{runId}}"}}
+}
+script:post-response {
+  const b = res.getBody();
+  if (res.getStatus() === 200 && b.access_token && b.refresh_token && b.user?.id) {
+    bru.setVar('gm03UserId', b.user.id);
+    bru.setVar('gm03RefreshToken', b.refresh_token);
+    bru.setVar('gm03AccessToken', b.access_token);
+  } else bru.runner.stopExecution();
+}
+tests {
+  test('Creates an anonymous identity for this QA run', () => {
+    const b = res.getBody();
+    expect(res.getStatus()).to.equal(200);
+    expect(b.user.is_anonymous).to.equal(true);
+    expect(b.access_token).to.be.a('string').and.not.empty;
+  });
+}

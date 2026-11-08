@@ -1,0 +1,7 @@
+Gi Cung Duoc: documents, links, JSON, task manifest, dependencies and current FR traceability OK.
+Scope: documentation validation only; no native build/backend execution or human approval verified.
+Dependency approval uses live GitHub Project; run task_readiness --task before code/merge. This offline validator does not unlock tasks.
+Task indexes match task metadata.
+warning: in the working copy of 'mobile/tests/integration/resultRoutes.test.tsx', LF will be replaced by CRLF the next time Git touches it
+Foundation source has no conflict markers; source/test/upstream hashes match the tested manifest.
+Git index remains unmerged until the user stages the resolved Foundation files; no stage/commit/push performed.

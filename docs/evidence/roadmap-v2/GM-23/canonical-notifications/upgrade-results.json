@@ -1,0 +1,46 @@
+{
+  "result": "Pass",
+  "sourceMigration": "0037",
+  "targetMigration": "0038",
+  "schemaVersion": "0.15.0",
+  "applicationDatabaseChanged": false,
+  "expected": {
+    "liveTerminalRowsBackfilledOnce": true,
+    "expiredTerminalRowsBackfilled": false,
+    "rerunDoesNotDuplicateEventOrInbox": true
+  },
+  "actual": {
+    "live": {
+      "liveMapping": 1,
+      "liveEvents": 1,
+      "liveInbox": 2,
+      "expiredMapping": 0,
+      "expiredEvents": 0
+    },
+    "afterRepeatedMigrationAndMaterializer": {
+      "liveMapping": 1,
+      "liveEvents": 1,
+      "liveInbox": 2,
+      "expiredMapping": 0,
+      "expiredEvents": 0
+    }
+  },
+  "qaProject": "ie307-dish-v4-qa-20261104-672253699100-1",
+  "databaseLedger": {
+    "migration0038": "1",
+    "schema0150": "1"
+  },
+  "sourceHashes": {
+    "0037_gm22_invitation_admission.sql": "bf2e0e55e89be3838a66eef7ed64c651609a977bf8a44981e1559460567e3576",
+    "0038_gm23_canonical_notifications.sql": "fe5eb00c0d157b24187d678105acc44e8db0fad3ef3467f35db95c142c19effc",
+    "dish_v4_ci.py": "97403ac22b7f7fcec6f7e50ff7f7c74c0e8bc1bf94a7c9800cd90eaa59b5dfc7",
+    "gm23_upgrade_http.mjs": "4f8d2cd2a6a83ac141a0a794af5c3b72be2f118d266fe4245064da3496c61126"
+  },
+  "fixtureResults": {
+    "live": "aebef313-c122-4d26-af42-3124df30b0b7",
+    "expired": "1364b0f7-d312-4f81-972b-77d1b3a72ebe"
+  },
+  "expiredFixture": "synthetic expiry adjustment after stopping the owned GM-20 worker; immutable trigger restored in the same transaction",
+  "workerStoppedBeforeExpiryMutation": "stopped",
+  "credentialsInEvidence": false
+}

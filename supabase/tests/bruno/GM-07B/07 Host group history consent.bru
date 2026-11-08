@@ -1,0 +1,26 @@
+meta {
+  name: 07 Host group history consent
+  type: http
+  seq: 7
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/update_history_consent
+  body: json
+  auth: none
+}
+headers {
+  Authorization: Bearer {{hostToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"requestId":"host_group_{{timestamp}}","scope":"group","consent":true}
+}
+script:pre-request {
+  bru.setVar('timestamp', String(Date.now()));
+}
+tests {
+  test('Host explicitly opts in to group history', () => {
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getBody().ok).to.equal(true);
+  });
+}

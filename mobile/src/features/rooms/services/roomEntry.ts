@@ -34,9 +34,11 @@ export const errorCopy: Record<ErrorCode, string> = {
   ROOM_LOCKED: 'Phòng đã bắt đầu, không nhận thêm thành viên.',
   ROOM_EXPIRED: 'Phòng đã hết hạn. Hãy nhờ chủ phòng tạo phòng mới.',
   ROOM_TERMINAL: 'Phòng đã kết thúc.', INVALID_ROOM_STATE: 'Trạng thái phòng đã thay đổi.',
+  NOT_ENOUGH_MEMBERS: 'Cần ít nhất 2 thành viên trong phòng trước khi bắt đầu.',
   CONTEXT_CHANGED: 'Bối cảnh đã đổi. Hãy kiểm tra và xác nhận lại.',
   ALREADY_SUBMITTED: 'Lựa chọn đã được nhận.', VERSION_CONFLICT: 'Dữ liệu đã cũ. Hãy tải lại trước khi tiếp tục.',
   REQUEST_ID_REUSED: 'Yêu cầu không còn khớp. Hãy tải lại màn hình.',
+  REMOVE_LIMIT: 'Số lượng món loại vượt quá giới hạn Cap 30% cho phép.',
   OUT_OF_COVERAGE: 'Điểm ăn nằm ngoài vùng có dữ liệu. Hãy chọn một điểm công cộng khác.',
   NO_ELIGIBLE_FOOD: 'Chưa có món phù hợp với bối cảnh. Hãy sửa điểm ăn hoặc giờ.',
   AVAILABILITY_UNKNOWN: 'Chưa rõ lịch phục vụ. Hãy kiểm tra lại bối cảnh.',
@@ -46,6 +48,7 @@ export const errorCopy: Record<ErrorCode, string> = {
   RATE_LIMITED: 'Bạn thao tác quá nhanh. Vui lòng chờ rồi thử lại.',
   NETWORK_ERROR: 'Không kết nối được. Thử lại cùng yêu cầu khi có mạng.',
   TIMEOUT: 'Chưa rõ yêu cầu đã được nhận. Thử lại cùng yêu cầu.',
+  INSUFFICIENT_DISHES: 'Không đủ món theo yêu cầu.', CONTRACT_MISMATCH: 'Phiên bản hợp đồng không khớp.', UNSUPPORTED_FIELD: 'Trường dữ liệu không được hỗ trợ.',
   MALFORMED_RESPONSE: 'Phản hồi không hợp lệ. Vui lòng thử lại.', UNKNOWN_ERROR: 'Chưa thể thực hiện. Vui lòng thử lại.',
 };
 

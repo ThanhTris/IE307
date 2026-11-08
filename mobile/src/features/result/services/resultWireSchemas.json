@@ -1,0 +1,1488 @@
+{
+  "baseline": {
+    "artworkProjection": {
+      "type": "object",
+      "required": [
+        "uri",
+        "altText",
+        "attribution"
+      ],
+      "properties": {
+        "uri": {
+          "type": "string",
+          "format": "uri",
+          "minLength": 1
+        },
+        "altText": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "attribution": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 500
+        }
+      },
+      "additionalProperties": false
+    },
+    "flavorProjection": {
+      "type": "object",
+      "required": [
+        "spicy",
+        "salty",
+        "sweet",
+        "sour"
+      ],
+      "properties": {
+        "spicy": {
+          "type": "object",
+          "required": [
+            "present",
+            "intensity"
+          ],
+          "properties": {
+            "present": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "intensity": {
+              "enum": [
+                "none",
+                "low",
+                "medium",
+                "high",
+                "unknown"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "salty": {
+          "type": "object",
+          "required": [
+            "present",
+            "intensity"
+          ],
+          "properties": {
+            "present": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "intensity": {
+              "enum": [
+                "none",
+                "low",
+                "medium",
+                "high",
+                "unknown"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "sweet": {
+          "type": "object",
+          "required": [
+            "present",
+            "intensity"
+          ],
+          "properties": {
+            "present": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "intensity": {
+              "enum": [
+                "none",
+                "low",
+                "medium",
+                "high",
+                "unknown"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "sour": {
+          "type": "object",
+          "required": [
+            "present",
+            "intensity"
+          ],
+          "properties": {
+            "present": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "intensity": {
+              "enum": [
+                "none",
+                "low",
+                "medium",
+                "high",
+                "unknown"
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "mealSlot": {
+      "enum": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack"
+      ]
+    },
+    "poolDish": {
+      "type": "object",
+      "required": [
+        "roundDishId",
+        "dishId",
+        "name",
+        "description",
+        "mealSlots",
+        "cuisineIds",
+        "cuisineLabels",
+        "categoryIds",
+        "categoryLabels",
+        "temperature",
+        "flavor",
+        "artwork",
+        "priceReference"
+      ],
+      "properties": {
+        "roundDishId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "dishId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 2000
+        },
+        "mealSlots": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/mealSlot"
+          }
+        },
+        "cuisineIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/uuid"
+          }
+        },
+        "categoryIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/uuid"
+          }
+        },
+        "cuisineLabels": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          }
+        },
+        "categoryLabels": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          }
+        },
+        "temperature": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "hot",
+            "warm",
+            "cold",
+            "ambient",
+            "unknown",
+            null
+          ]
+        },
+        "flavor": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/flavorProjection"
+            }
+          ]
+        },
+        "artwork": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/artworkProjection"
+            }
+          ]
+        },
+        "priceReference": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/priceReference"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "priceReference": {
+      "type": "object",
+      "required": [
+        "amount",
+        "currency",
+        "unit",
+        "servingSize",
+        "sourceRef",
+        "checkedAt"
+      ],
+      "properties": {
+        "amount": {
+          "type": "number",
+          "minimum": 0
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "unit": {
+          "enum": [
+            "portion",
+            "item",
+            "person",
+            "group",
+            "kg",
+            "menu_item_unspecified"
+          ]
+        },
+        "servingSize": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 160
+        },
+        "sourceRef": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "checkedAt": {
+          "$ref": "#/$defs/timestamp"
+        }
+      },
+      "additionalProperties": false
+    },
+    "terminalResult": {
+      "type": "object",
+      "required": [
+        "resultId",
+        "contractVersion",
+        "policyVersion",
+        "status",
+        "round",
+        "winner",
+        "reasonCode",
+        "finalizedAt",
+        "scoreVersion",
+        "rankingVersion",
+        "topDishes"
+      ],
+      "properties": {
+        "resultId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "contractVersion": {
+          "enum": [
+            "dish-session-v4/roadmap-v2/GM-07.B",
+            "dish-session-v4/roadmap-v2/GM-07.B-supplement"
+          ]
+        },
+        "policyVersion": {
+          "const": "dish-decision-v4/ADR-019-30PCT-MIN1"
+        },
+        "status": {
+          "enum": [
+            "DECIDED",
+            "NO_CONSENSUS"
+          ]
+        },
+        "round": {
+          "type": "integer",
+          "enum": [
+            1,
+            2
+          ]
+        },
+        "winner": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/poolDish"
+            }
+          ]
+        },
+        "reasonCode": {
+          "enum": [
+            "UNANIMOUS_WANT",
+            "ACCEPTABLE_FINAL",
+            "EMPTY_INTERSECTION",
+            "ALL_REMOVED"
+          ]
+        },
+        "finalizedAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "scoreVersion": {
+          "oneOf": [
+            {
+              "const": "want2-ok1-round1-v1"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rankingVersion": {
+          "oneOf": [
+            {
+              "const": "score-desc-dense-rank-v1"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "topDishes": {
+          "type": "array",
+          "maxItems": 3,
+          "items": {
+            "$ref": "#/$defs/topDish"
+          }
+        },
+        "round1BallotCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 20,
+          "description": "Total complete server-ACKed round-one ballots in the scoring cohort; upper bound for any dish score is 2 * round1BallotCount."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "DECIDED"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "winner": {
+                "$ref": "#/$defs/poolDish"
+              },
+              "reasonCode": {
+                "enum": [
+                  "UNANIMOUS_WANT",
+                  "ACCEPTABLE_FINAL"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "NO_CONSENSUS"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "winner": {
+                "type": "null"
+              },
+              "reasonCode": {
+                "enum": [
+                  "EMPTY_INTERSECTION",
+                  "ALL_REMOVED"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "DECIDED"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "topDishes": {
+                "minItems": 1,
+                "contains": {
+                  "properties": {
+                    "isWinner": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "isWinner"
+                  ]
+                }
+              }
+            },
+            "not": {
+              "properties": {
+                "topDishes": {
+                  "contains": {
+                    "properties": {
+                      "isWinner": {
+                        "const": true
+                      }
+                    },
+                    "required": [
+                      "isWinner"
+                    ]
+                  },
+                  "minContains": 2
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "NO_CONSENSUS"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "topDishes": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "NO_CONSENSUS"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "scoreVersion": {
+                "type": "null"
+              },
+              "rankingVersion": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "DECIDED"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "scoreVersion": {
+                "const": "want2-ok1-round1-v1"
+              },
+              "rankingVersion": {
+                "const": "score-desc-dense-rank-v1"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "contractVersion": {
+                "const": "dish-session-v4/roadmap-v2/GM-07.B-supplement"
+              }
+            },
+            "required": [
+              "contractVersion"
+            ]
+          },
+          "then": {
+            "required": [
+              "round1BallotCount"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "DECIDED"
+              }
+            },
+            "required": [
+              "status",
+              "round1BallotCount"
+            ]
+          },
+          "then": {
+            "properties": {
+              "round1BallotCount": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 20
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "DECIDED"
+              },
+              "round": {
+                "const": 1
+              }
+            },
+            "required": [
+              "status",
+              "round"
+            ]
+          },
+          "then": {
+            "properties": {
+              "reasonCode": {
+                "const": "UNANIMOUS_WANT"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "DECIDED"
+              },
+              "round": {
+                "const": 2
+              }
+            },
+            "required": [
+              "status",
+              "round"
+            ]
+          },
+          "then": {
+            "properties": {
+              "reasonCode": {
+                "const": "ACCEPTABLE_FINAL"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "NO_CONSENSUS"
+              },
+              "round": {
+                "const": 1
+              }
+            },
+            "required": [
+              "status",
+              "round"
+            ]
+          },
+          "then": {
+            "properties": {
+              "reasonCode": {
+                "const": "EMPTY_INTERSECTION"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "NO_CONSENSUS"
+              },
+              "round": {
+                "const": 2
+              }
+            },
+            "required": [
+              "status",
+              "round"
+            ]
+          },
+          "then": {
+            "properties": {
+              "reasonCode": {
+                "const": "ALL_REMOVED"
+              }
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "topDish": {
+      "type": "object",
+      "required": [
+        "dish",
+        "score",
+        "rank",
+        "isWinner"
+      ],
+      "properties": {
+        "dish": {
+          "$ref": "#/$defs/poolDish"
+        },
+        "score": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rank": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "isWinner": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "uuid": {
+      "type": "string",
+      "format": "uuid"
+    }
+  },
+  "supplement": {
+    "artworkProjection": {
+      "type": "object",
+      "required": [
+        "uri",
+        "altText",
+        "attribution"
+      ],
+      "properties": {
+        "uri": {
+          "type": "string",
+          "format": "uri",
+          "minLength": 1
+        },
+        "altText": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "attribution": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 500
+        }
+      },
+      "additionalProperties": false
+    },
+    "flavorProjection": {
+      "type": "object",
+      "required": [
+        "spicy",
+        "salty",
+        "sweet",
+        "sour"
+      ],
+      "properties": {
+        "spicy": {
+          "type": "object",
+          "required": [
+            "present",
+            "intensity"
+          ],
+          "properties": {
+            "present": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "intensity": {
+              "enum": [
+                "none",
+                "low",
+                "medium",
+                "high",
+                "unknown"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "salty": {
+          "type": "object",
+          "required": [
+            "present",
+            "intensity"
+          ],
+          "properties": {
+            "present": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "intensity": {
+              "enum": [
+                "none",
+                "low",
+                "medium",
+                "high",
+                "unknown"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "sweet": {
+          "type": "object",
+          "required": [
+            "present",
+            "intensity"
+          ],
+          "properties": {
+            "present": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "intensity": {
+              "enum": [
+                "none",
+                "low",
+                "medium",
+                "high",
+                "unknown"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "sour": {
+          "type": "object",
+          "required": [
+            "present",
+            "intensity"
+          ],
+          "properties": {
+            "present": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "intensity": {
+              "enum": [
+                "none",
+                "low",
+                "medium",
+                "high",
+                "unknown"
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "mealSlot": {
+      "enum": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack"
+      ]
+    },
+    "poolDish": {
+      "type": "object",
+      "required": [
+        "roundDishId",
+        "dishId",
+        "name",
+        "description",
+        "mealSlots",
+        "cuisineIds",
+        "cuisineLabels",
+        "categoryIds",
+        "categoryLabels",
+        "temperature",
+        "flavor",
+        "artwork",
+        "priceReference"
+      ],
+      "properties": {
+        "roundDishId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "dishId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 2000
+        },
+        "mealSlots": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/mealSlot"
+          }
+        },
+        "cuisineIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/uuid"
+          }
+        },
+        "categoryIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/uuid"
+          }
+        },
+        "cuisineLabels": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          }
+        },
+        "categoryLabels": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          }
+        },
+        "temperature": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "hot",
+            "warm",
+            "cold",
+            "ambient",
+            "unknown",
+            null
+          ]
+        },
+        "flavor": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/flavorProjection"
+            }
+          ]
+        },
+        "artwork": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/artworkProjection"
+            }
+          ]
+        },
+        "priceReference": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/priceReference"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "priceReference": {
+      "type": "object",
+      "required": [
+        "amount",
+        "currency",
+        "unit",
+        "servingSize",
+        "sourceRef",
+        "checkedAt"
+      ],
+      "properties": {
+        "amount": {
+          "type": "number",
+          "minimum": 0
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "unit": {
+          "enum": [
+            "portion",
+            "item",
+            "person",
+            "group",
+            "kg",
+            "menu_item_unspecified"
+          ]
+        },
+        "servingSize": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 160
+        },
+        "sourceRef": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "checkedAt": {
+          "$ref": "#/$defs/timestamp"
+        }
+      },
+      "additionalProperties": false
+    },
+    "terminalResult": {
+      "type": "object",
+      "required": [
+        "resultId",
+        "contractVersion",
+        "policyVersion",
+        "status",
+        "round",
+        "winner",
+        "reasonCode",
+        "finalizedAt",
+        "scoreVersion",
+        "rankingVersion",
+        "topDishes",
+        "round1BallotCount"
+      ],
+      "properties": {
+        "resultId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "contractVersion": {
+          "enum": [
+            "dish-session-v4/roadmap-v2/GM-07.B",
+            "dish-session-v4/roadmap-v2/GM-07.B-supplement"
+          ]
+        },
+        "policyVersion": {
+          "const": "dish-decision-v4/ADR-019-30PCT-MIN1"
+        },
+        "status": {
+          "enum": [
+            "DECIDED",
+            "NO_CONSENSUS"
+          ]
+        },
+        "round": {
+          "type": "integer",
+          "enum": [
+            1,
+            2
+          ]
+        },
+        "winner": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/poolDish"
+            }
+          ]
+        },
+        "reasonCode": {
+          "enum": [
+            "UNANIMOUS_WANT",
+            "ACCEPTABLE_FINAL",
+            "EMPTY_INTERSECTION",
+            "ALL_REMOVED"
+          ]
+        },
+        "finalizedAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "scoreVersion": {
+          "oneOf": [
+            {
+              "const": "want2-ok1-round1-v1"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rankingVersion": {
+          "oneOf": [
+            {
+              "const": "score-desc-dense-rank-v1"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "topDishes": {
+          "type": "array",
+          "maxItems": 3,
+          "items": {
+            "$ref": "#/$defs/topDish"
+          }
+        },
+        "round1BallotCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 20,
+          "description": "Total complete server-ACKed round-one ballots in the scoring cohort; upper bound for any dish score is 2 * round1BallotCount."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "DECIDED"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "winner": {
+                "$ref": "#/$defs/poolDish"
+              },
+              "reasonCode": {
+                "enum": [
+                  "UNANIMOUS_WANT",
+                  "ACCEPTABLE_FINAL"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "NO_CONSENSUS"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "winner": {
+                "type": "null"
+              },
+              "reasonCode": {
+                "enum": [
+                  "EMPTY_INTERSECTION",
+                  "ALL_REMOVED"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "DECIDED"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "topDishes": {
+                "minItems": 1,
+                "contains": {
+                  "properties": {
+                    "isWinner": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "isWinner"
+                  ]
+                }
+              }
+            },
+            "not": {
+              "properties": {
+                "topDishes": {
+                  "contains": {
+                    "properties": {
+                      "isWinner": {
+                        "const": true
+                      }
+                    },
+                    "required": [
+                      "isWinner"
+                    ]
+                  },
+                  "minContains": 2
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "NO_CONSENSUS"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "topDishes": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "NO_CONSENSUS"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "scoreVersion": {
+                "type": "null"
+              },
+              "rankingVersion": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "DECIDED"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "scoreVersion": {
+                "const": "want2-ok1-round1-v1"
+              },
+              "rankingVersion": {
+                "const": "score-desc-dense-rank-v1"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "contractVersion": {
+                "const": "dish-session-v4/roadmap-v2/GM-07.B-supplement"
+              }
+            },
+            "required": [
+              "contractVersion"
+            ]
+          },
+          "then": {
+            "required": [
+              "round1BallotCount"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "DECIDED"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "round1BallotCount": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 20
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "DECIDED"
+              },
+              "round": {
+                "const": 1
+              }
+            },
+            "required": [
+              "status",
+              "round"
+            ]
+          },
+          "then": {
+            "properties": {
+              "reasonCode": {
+                "const": "UNANIMOUS_WANT"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "DECIDED"
+              },
+              "round": {
+                "const": 2
+              }
+            },
+            "required": [
+              "status",
+              "round"
+            ]
+          },
+          "then": {
+            "properties": {
+              "reasonCode": {
+                "const": "ACCEPTABLE_FINAL"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "NO_CONSENSUS"
+              },
+              "round": {
+                "const": 1
+              }
+            },
+            "required": [
+              "status",
+              "round"
+            ]
+          },
+          "then": {
+            "properties": {
+              "reasonCode": {
+                "const": "EMPTY_INTERSECTION"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "NO_CONSENSUS"
+              },
+              "round": {
+                "const": 2
+              }
+            },
+            "required": [
+              "status",
+              "round"
+            ]
+          },
+          "then": {
+            "properties": {
+              "reasonCode": {
+                "const": "ALL_REMOVED"
+              }
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "topDish": {
+      "type": "object",
+      "required": [
+        "dish",
+        "score",
+        "rank",
+        "isWinner"
+      ],
+      "properties": {
+        "dish": {
+          "$ref": "#/$defs/poolDish"
+        },
+        "score": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rank": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "isWinner": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "uuid": {
+      "type": "string",
+      "format": "uuid"
+    }
+  }
+}

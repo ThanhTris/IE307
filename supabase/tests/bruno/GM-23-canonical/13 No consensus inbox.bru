@@ -1,0 +1,21 @@
+meta {
+ name: 13 No consensus inbox
+ type: http
+ seq: 13
+}
+post {
+ url: {{baseUrl}}/rest/v1/rpc/list_partner_inbox
+ body: json
+ auth: none
+}
+headers {
+ apikey: {{anonKey}}
+ Authorization: Bearer {{memberToken}}
+ Content-Type: application/json
+}
+body:json {
+ {"cursor":null}
+}
+tests {
+ test('no consensus uses the same reference-only notification contract',()=>{expect(res.getStatus()).to.equal(200);const row=res.getBody().find(i=>i.metadata?.resultId===bru.getEnvVar('noConsensusResultId'));expect(row,'no consensus notification').to.exist;expect(row.type).to.equal('room_result');expect(row.metadata.roomId).to.equal(bru.getEnvVar('noConsensusRoomId'));expect(row.metadata.status).to.equal('NO_CONSENSUS');expect(row.metadata.contractVersion).to.equal('dish-session-v4/roadmap-v2/GM-07.B-supplement');expect(row.metadata.eventVersion).to.equal(1);expect(Object.keys(row.metadata).sort()).to.deep.equal(['contractVersion','eventVersion','resultId','roomId','status']);});
+}

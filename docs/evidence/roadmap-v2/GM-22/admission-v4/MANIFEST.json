@@ -1,0 +1,229 @@
+{
+  "task": "GM-22",
+  "supplement": "GM-22.2",
+  "fixtureOnly": true,
+  "result": "Not complete: targeted QA and 18/18 PR checks pass; local Windows Python regression has one symlink privilege error.",
+  "revision": "2a6902db41f20462dc44c849f6dd4806160a18fc",
+  "contractVersion": "food-v1/roadmap-v2/GM-22.1",
+  "supplementVersion": "food-v1/roadmap-v2/GM-22.2",
+  "schemaVersion": "0.14.0",
+  "schemaContract": "food-v1/roadmap-v2/GM-22.2",
+  "qaProject": "ie307-dish-v4-qa-20261030-135000060500-1",
+  "qaApiOrigin": "http://127.0.0.1:54361",
+  "qaDbPort": 54362,
+  "qaOwnerNamespace": "beeecc85-22b3-4b82-8f17-24cd2aac46b9",
+  "canonicalSessionCreationEnabledOnlyInOwnedQA": true,
+  "migrationHashes": {
+    "0001_core_schema.sql": "ac3e0d529071173b4523f9d6553f431a6c1726430b7dcf8ef8cf161a194c5964",
+    "0002_food_import_receipts.sql": "c80253e9e3f407410848dd16cdc59997eb9af64d5a66fff58c8e3bcb62dbb352",
+    "0003_food_provenance_description.sql": "91655ba516abd76e54bfc9b5ccb06c73818cde64273e2861b02a96b09d84ca73",
+    "0004_access_policies.sql": "f4345b7047dbdb6fbf3975033e07bb1e7c1e3b4a8f2437facf93b9a5ce9dc53c",
+    "0005_gm18_discovery_rpc.sql": "4decac9c05ab97793044c0954b31b1ae7e5c0ff9155a68048c682f3484965158",
+    "0018_food_eligibility.sql": "366274fcb304e1fe2e0c1e05a9c51baf0e5958f7af58659c56c89427ce52af36",
+    "0019_room_lifecycle.sql": "950819846e84cfe29e51c093015da35695637a717baf2f6ce6a851732d27dfe9",
+    "0021_history.sql": "33478db0d9b72d7751f07792fb6e185882ff4ab407a98b9c37e7fcabea830154",
+    "0022_social.sql": "114659a795c5ebcedd6b22bdd58e6f88edee359fa0638c061cda2bcb871e2a0b",
+    "0023_finalize.sql": "ea50191b74f04e174e97c6a42f03c3de1431206bd51ff85fca1088f55d0ad234",
+    "0024_history_integration.sql": "d37b02d99575a83e544fd70bdfdb08ee089a997b233ebd1d198b68cf1d5e6514",
+    "0025_notifications.sql": "e6b67c6a8cd3d53af51e022e8f767be96031f66cda31fb7ad08941b15154125a",
+    "0026_dish_session_policy.sql": "d962acc9503a8bf266f0432d1dc0deaf4353e97eed4009c449114e4d83e45cf5",
+    "0027_dish_session_v4.sql": "c66f023623efc9c5f6e5d238c54932293a4e76a0c59019c374177b64f00cefc9",
+    "0028_dish_v4_top_three_cutoff.sql": "c1b1f65a5a4f3f81c3742a30e9af502b8934719146e910390be70e35c66f2e6b",
+    "0029_dish_v4_history_consent.sql": "d7515f21989dba5192e64792cb7d67fd8048affa89b9ef1ef14a9b80a485d0c8",
+    "0030_history_consent_search_path.sql": "40ebd95ddf75983e59562abb4e2ea0063527104f46e3ce3196fa4d8b751ac8ab",
+    "0031_history_consent_policy_isolation.sql": "e5dba57b7da5fe830ba86736b7f1a4e21b0a6d30e4c14862656b36d9ca0c5b2a",
+    "0032_canonical_result_storage.sql": "b566de2e923fd0a0e9cddea3ebe5f146b71686430d3f6ecb7ef3508863e425de",
+    "0033_gm18_dish_catalogue.sql": "1bb036e57c2b81f9cb5a5cbfe80b8008093c4e433e87c7e2baf530f80dd68209",
+    "0034_gm19_settings_stability.sql": "e6fa037326f16306261ff687a1d180cc16fc9f858ddd7fb528233bf263f2f2e3",
+    "0035_gm20_canonical_writer.sql": "08224b335ce6ff17105c4cd35fbf35822d5e16def8814c105a7a3bc1f7d092e3",
+    "0036_gm21_canonical_history.sql": "50fd4f28cfa05dbc93b341dd3530d69d6b590e4e0d5f3e49a2783e057f635108",
+    "0037_gm22_invitation_admission.sql": "39176937e61375c5d74a45986c34651628ab81901938fd4c9bc0c6b96dd78088"
+  },
+  "sourceHashes": {
+    "package.json": "14730ae6d077ac1ca54a4d58e14c53020c661508d717836ff387ae205b99cde8",
+    "tasks/backlog/GM-22.md": "693bcb1dce204dcff5c9c3e62f4737fc58c99289ea4412081553a5a87c731d05",
+    "supabase/migrations/0019_room_lifecycle.sql": "950819846e84cfe29e51c093015da35695637a717baf2f6ce6a851732d27dfe9",
+    "supabase/migrations/0022_social.sql": "114659a795c5ebcedd6b22bdd58e6f88edee359fa0638c061cda2bcb871e2a0b",
+    "supabase/migrations/0026_dish_session_policy.sql": "d962acc9503a8bf266f0432d1dc0deaf4353e97eed4009c449114e4d83e45cf5",
+    "supabase/migrations/0027_dish_session_v4.sql": "c66f023623efc9c5f6e5d238c54932293a4e76a0c59019c374177b64f00cefc9",
+    "supabase/migrations/0033_gm18_dish_catalogue.sql": "1bb036e57c2b81f9cb5a5cbfe80b8008093c4e433e87c7e2baf530f80dd68209",
+    "supabase/migrations/0034_gm19_settings_stability.sql": "e6fa037326f16306261ff687a1d180cc16fc9f858ddd7fb528233bf263f2f2e3",
+    "supabase/migrations/0035_gm20_canonical_writer.sql": "08224b335ce6ff17105c4cd35fbf35822d5e16def8814c105a7a3bc1f7d092e3",
+    "supabase/migrations/0036_gm21_canonical_history.sql": "50fd4f28cfa05dbc93b341dd3530d69d6b590e4e0d5f3e49a2783e057f635108",
+    "supabase/migrations/0037_gm22_invitation_admission.sql": "39176937e61375c5d74a45986c34651628ab81901938fd4c9bc0c6b96dd78088",
+    "scripts/gm21_canonical_check.py": "29b0126454c50a523763cf8acd945746335613186de523cf005870737210cc5e",
+    "scripts/gm21_canonical_http.mjs": "115d0c3ff987b213983209694bba4e4e6ef6d924d0c18cb52048bf1a633ba038",
+    "supabase/tests/http/GM-21-canonical.http": "faedd8e562c7a797527db6525224d74f18fd7e3e77754a7f9afd8aedcecfe1b0",
+    "supabase/tests/database/GM-22_social.test.sql": "02f1ce5dccc6df73d2e5281dc56462f76f57ca25dd4eab9de8932d1ddb151c07",
+    "scripts/gm22_http_check.mjs": "ba32d108fc3672f32a4d0c83e102ad118facf8b9530e7a6bf0515120a205f2ad",
+    "scripts/gm22_http_stop.mjs": "7377852b9ceca316f9eefb37ce9cc7442150cd42075d2e4690ca3b9aaacdea16",
+    "scripts/gm22_admission_check.py": "d16ecc60d2d412eb58f0bf01dc59ec2452c292d8696d5c8d6c9b141de73fda18",
+    "scripts/dish_v4_ci.py": "1771f0395eb512a52cea83291d85d1b0b84fce9c1ca7f29a413c08f76fd95a18",
+    "scripts/dish_policy_worker.py": "aee5e6a55900ccf8db62144e4a96158b2f33954e7c746ffe0c2bef785c5a598e",
+    "scripts/gm18_http_fixture.py": "453ab2f4611363803addb1b717cdc5cacb9ac400d358adac000c34d2c0ae3fb2",
+    "scripts/gm08_real_bundle_check.py": "44e76dca3704652729fdb8cd90443b25a2a35abcd0792f29a795e4ca852c5865",
+    "tests/fixtures/dish-catalogue-v1/qa-v4-synthetic.json": "ad9de41f997b3cffe9314d61638c5f814e37554e78a8109443a284fe01a56c21",
+    "supabase/tests/bruno/GM-22/README.md": "9c7a061dfbef4021c8b5bebd3bde1b2f4b58e881c089b905a56a43e437f08caa",
+    "supabase/tests/bruno/GM-22/environments/Local.runtime.bru": "19bc6347004d49c4e086e90a1f7b039fd2fe475500a6699c0354d981ee13da96",
+    "supabase/tests/bruno/GM-22/00 Create B room.bru": "22fa14e2bb3a51634399c4e86b9ed3c03d86786c159d36935f742fe3607c1f83",
+    "supabase/tests/bruno/GM-22/01 Own identity.bru": "4647d89c7a62e00ba66b7214c514db69d2616ea4a5dfe7d97313b5ebc7f2abe5",
+    "supabase/tests/bruno/GM-22/02 List friends.bru": "c100cd264db351443b4b251b4b55ccf8e9bbb1a16c14ed580798aab9bf56b729",
+    "supabase/tests/bruno/GM-22/03 Invite partner.bru": "76270c7c0251c041d697f4c90ce286fe32c8e994c7b8c0f1f4ab78716e0c984e",
+    "supabase/tests/bruno/GM-22/04 Accept partner.bru": "3ba65b25f72eab0e4c34e2a3a0fd6d70b10f09378f044f8b14d47d6a0f1032b3",
+    "supabase/tests/bruno/GM-22/05 Invite room.bru": "d0aa5e3762d7ffa9a5d32172d7e076b414fb27e087769fb88584613ae365461e",
+    "supabase/tests/bruno/GM-22/06 Accept room invite.bru": "046e07ecee0ceba3fd4bfddb38d7ec64d3a2a9d640f36e38080415c859bdf999",
+    "supabase/tests/bruno/GM-22/07 Replay accepted room invite.bru": "c724742338c417641b68bfa947364e222cb2643f1c7fe80283d0e59e550933d2",
+    "supabase/tests/bruno/GM-22/08 Inbox.bru": "b75566f5061d98ab85fb53223d1f32d0f1da321316a5ed3ce6a57669f1291f4c",
+    "supabase/tests/bruno/GM-22/09 Missing auth.bru": "d8c60b24039f86329ea312ac7752a8a80b4895883016a101e717daba25b2cce3",
+    "supabase/tests/bruno/GM-22/10 Invalid recipient.bru": "31918217c606399a7ac50438fa09acb12a89e635fe03174bdf038bc3d4ca37b3",
+    "supabase/tests/bruno/GM-22/12 Room snapshot after invite.bru": "5cb527035d932026bb334056af1fb97c4d71cf0c84e8e6305fda532e09160cad",
+    "supabase/tests/bruno/GM-22/collection.bru": "4e6fab989f2d980defdc3be5deb7d55d39fe0f5224ce3368028475601b58672a"
+  },
+  "syntheticLegacyDataset": {
+    "datasetVersion": "0.18.3203320965",
+    "anchorId": "<synthetic-anchor>",
+    "bundleSha256": "718db997b81cd02975be6aa5a9c1ca8e49209782d70bf5fb2f5963846abab52b",
+    "syntheticPublishedRowsOnly": true,
+    "rowCounts": {
+      "taxonomy": 2,
+      "dishes": 1,
+      "venues": 2,
+      "venueDishes": 2,
+      "weeklySchedules": 28,
+      "dateExceptions": 0,
+      "availabilityOverrides": 0,
+      "coverageAreas": 1,
+      "publicAnchors": 1,
+      "dataSources": 1,
+      "datasetVersions": 1
+    }
+  },
+  "checks": {
+    "sql": {
+      "result": "Pass",
+      "plan": 35,
+      "assertionsPassed": 35,
+      "assertionsFailed": 0,
+      "qaProject": "ie307-dish-v4-qa-20261030-135000060500-1"
+    },
+    "http": {
+      "result": "Pass",
+      "caseCount": 75,
+      "qaProject": "ie307-dish-v4-qa-20261030-676092440100-1"
+    },
+    "brunoDesktop": {
+      "result": "Pass",
+      "brunoVersion": "4.3.0",
+      "requests": 12,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0,
+      "output": "bruno-run.txt"
+    },
+    "gm21CanonicalHistory": {
+      "result": "Pass",
+      "assertionsPassed": 80,
+      "assertionsFailed": 0,
+      "output": "gm21-history-summary.json"
+    },
+    "gm21FunctionFingerprint": {
+      "result": "Pass",
+      "matched": 6,
+      "total": 6,
+      "lineEndingsNormalized": true
+    },
+    "gm19Gm20RunnerRegression": {
+      "result": "Pass",
+      "passed": 12,
+      "failed": 0
+    },
+    "repositoryValidator": {
+      "result": "Pass"
+    },
+    "docsChecker": {
+      "result": "Pass"
+    },
+    "nodeAndPythonSyntax": {
+      "result": "Pass"
+    },
+    "diffCheck": {
+      "result": "Pass",
+      "notes": "Git printed only LF/CRLF working-copy notices"
+    },
+    "mergeReadiness": {
+      "result": "READY_FOR_MERGE_REVIEW",
+      "baseRevision": "621acccf777c8a2538012641ce525cba0e6ae3ce",
+      "approval": "Not granted"
+    },
+    "pythonRegression": {
+      "result": "Fail",
+      "testsRun": 657,
+      "skipped": 6,
+      "errors": 1,
+      "passed": 650,
+      "failure": "test_stage_refuses_symlink_output: Windows WinError 1314; symlink privilege unavailable"
+    },
+    "android": {
+      "result": "Not run",
+      "owner": "GM-28"
+    },
+    "remotePush": {
+      "result": "Not run",
+      "owner": "GM-23/29"
+    },
+    "remoteCi": {
+      "result": "Pass",
+      "passed": 18,
+      "failed": 0,
+      "pending": 0,
+      "workflowRun": "41132033283",
+      "url": "https://github.com/ThanhTris/IE307/actions/runs/41132033283",
+      "testedCommit": "2a6902db41f20462dc44c849f6dd4806160a18fc"
+    }
+  },
+  "applicationDatabaseChanged": false,
+  "credentialsInEvidence": false,
+  "baseRevision": "621acccf777c8a2538012641ce525cba0e6ae3ce",
+  "worktreeState": "evidence update after execution; code source hashes match the tested commit",
+  "qaRuns": {
+    "gm22Http": {
+      "result": "Pass",
+      "caseCount": 75,
+      "qaProject": "ie307-dish-v4-qa-20261030-676092440100-1",
+      "apiOrigin": "http://127.0.0.1:54361",
+      "applicationDatabaseChanged": false
+    },
+    "gm22SqlAndBruno": {
+      "result": "Pass",
+      "sqlAssertions": 35,
+      "brunoRequests": 12,
+      "brunoPassed": 12,
+      "brunoFailed": 0,
+      "brunoSkipped": 0,
+      "qaProject": "ie307-dish-v4-qa-20261030-135000060500-1",
+      "apiOrigin": "http://127.0.0.1:54361"
+    },
+    "gm21CanonicalHistory": {
+      "result": "Pass",
+      "assertions": 80,
+      "qaProject": "ie307-dish-v4-qa-20261030-135000060500-1",
+      "migrations": [
+        "0036_gm21_canonical_history.sql",
+        "0037_gm22_invitation_admission.sql"
+      ]
+    }
+  },
+  "evidenceHashes": {
+    "http-results.json": "7ac05de733b068384d4f216cf4cb335ec6d0e159a989888f9e6e495a67aa21ec",
+    "bruno-run.txt": "2d3470855f328a4d02b4c7543131a6329ef1c0ac69394ad8946a76f8d36f2a17",
+    "gm21-history-summary.json": "b2d58a753c55ddb78867c6eccd260c53eea0696c67a7d6e86c7bf7b84661e0ef",
+    "sql-run.txt": "c6e476f25d780cdf84ae2ad5096fbe1f2fbb1cef8e65f2cb9e8a0ca3cbeb5d83"
+  },
+  "cleanup": {
+    "result": "Pass",
+    "ownedProjectStopped": "ie307-dish-v4-qa-20261030-135000060500-1",
+    "privateRuntimeAndBrunoEnvironmentRemoved": true,
+    "applicationDatabaseChanged": false
+  },
+  "testedCodeRevision": "2a6902db41f20462dc44c849f6dd4806160a18fc"
+}

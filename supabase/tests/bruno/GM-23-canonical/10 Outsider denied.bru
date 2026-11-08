@@ -1,0 +1,26 @@
+meta {
+  name: 10 Outsider denied
+  type: http
+  seq: 10
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/dish_session
+  body: json
+  auth: none
+}
+headers {
+  apikey: {{anonKey}}
+  Authorization: Bearer {{outsiderToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"command":"result","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B-supplement","roomId":"{{roomId}}"}}
+}
+script:post-response {
+  const b=res.getBody();
+  if(res.getStatus() === 403 && b.ok === false) {  }
+  else bru.runner.stopExecution();
+}
+tests {
+  test('10 Outsider denied',()=>{const b=res.getBody();expect(res.getStatus()).to.equal(403);expect(b.ok).to.equal(false); expect(b.error.messageKey).to.equal('NOT_MEMBER');});
+}

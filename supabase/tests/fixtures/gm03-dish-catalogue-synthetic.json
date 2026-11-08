@@ -1,0 +1,28 @@
+{
+  "contract": "dish-catalogue-v1/GM-03 QA synthetic fixture",
+  "datasetVersion": "qa-gm03-synthetic20-v1",
+  "fixtureOnly": true,
+  "usageScope": "owned-disposable-qa-only",
+  "cards": [
+    {"dishId":"00000000-0000-4000-8000-000000000001","name":"GM-03 món kiểm thử 01","description":null,"artwork":null,"mealSlots":["breakfast","lunch","dinner","snack"],"cuisineIds":[],"categoryIds":[]},
+    {"dishId":"00000000-0000-4000-8000-000000000002","name":"GM-03 món kiểm thử 02","description":null,"artwork":null,"mealSlots":["breakfast","lunch","dinner","snack"],"cuisineIds":[],"categoryIds":[]},
+    {"dishId":"00000000-0000-4000-8000-000000000003","name":"GM-03 món kiểm thử 03","description":null,"artwork":null,"mealSlots":["breakfast","lunch","dinner","snack"],"cuisineIds":[],"categoryIds":[]},
+    {"dishId":"00000000-0000-4000-8000-000000000004","name":"GM-03 món kiểm thử 04","description":null,"artwork":null,"mealSlots":["breakfast","lunch","dinner","snack"],"cuisineIds":[],"categoryIds":[]},
+    {"dishId":"00000000-0000-4000-8000-000000000005","name":"GM-03 món kiểm thử 05","description":null,"artwork":null,"mealSlots":["breakfast","lunch","dinner","snack"],"cuisineIds":[],"categoryIds":[]},
+    {"dishId":"00000000-0000-4000-8000-000000000006","name":"GM-03 món kiểm thử 06","description":null,"artwork":null,"mealSlots":["breakfast","lunch","dinner","snack"],"cuisineIds":[],"categoryIds":[]},
+    {"dishId":"00000000-0000-4000-8000-000000000007","name":"GM-03 món kiểm thử 07","description":null,"artwork":null,"mealSlots":["breakfast","lunch","dinner","snack"],"cuisineIds":[],"categoryIds":[]},
+    {"dishId":"00000000-0000-4000-8000-000000000008","name":"GM-03 món kiểm thử 08","description":null,"artwork":null,"mealSlots":["breakfast","lunch","dinner","snack"],"cuisineIds":[],"categoryIds":[]},
+    {"dishId":"00000000-0000-4000-8000-000000000009","name":"GM-03 món kiểm thử 09","description":null,"artwork":null,"mealSlots":["breakfast","lunch","dinner","snack"],"cuisineIds":[],"categoryIds":[]},
+    {"dishId":"00000000-0000-4000-8000-000000000010","name":"GM-03 món kiểm thử 10","description":null,"artwork":null,"mealSlots":["breakfast","lunch","dinner","snack"],"cuisineIds":[],"categoryIds":[]},
+    {"dishId":"00000000-0000-4000-8000-000000000011","name":"GM-03 món kiểm thử 11","description":null,"artwork":null,"mealSlots":["breakfast","lunch","dinner","snack"],"cuisineIds":[],"categoryIds":[]},
+    {"dishId":"00000000-0000-4000-8000-000000000012","name":"GM-03 món kiểm thử 12","description":null,"artwork":null,"mealSlots":["breakfast","lunch","dinner","snack"],"cuisineIds":[],"categoryIds":[]},
+    {"dishId":"00000000-0000-4000-8000-000000000013","name":"GM-03 món kiểm thử 13","description":null,"artwork":null,"mealSlots":["breakfast","lunch","dinner","snack"],"cuisineIds":[],"categoryIds":[]},
+    {"dishId":"00000000-0000-4000-8000-000000000014","name":"GM-03 món kiểm thử 14","description":null,"artwork":null,"mealSlots":["breakfast","lunch","dinner","snack"],"cuisineIds":[],"categoryIds":[]},
+    {"dishId":"00000000-0000-4000-8000-000000000015","name":"GM-03 món kiểm thử 15","description":null,"artwork":null,"mealSlots":["breakfast","lunch","dinner","snack"],"cuisineIds":[],"categoryIds":[]},
+    {"dishId":"00000000-0000-4000-8000-000000000016","name":"GM-03 món kiểm thử 16","description":null,"artwork":null,"mealSlots":["breakfast","lunch","dinner","snack"],"cuisineIds":[],"categoryIds":[]},
+    {"dishId":"00000000-0000-4000-8000-000000000017","name":"GM-03 món kiểm thử 17","description":null,"artwork":null,"mealSlots":["breakfast","lunch","dinner","snack"],"cuisineIds":[],"categoryIds":[]},
+    {"dishId":"00000000-0000-4000-8000-000000000018","name":"GM-03 món kiểm thử 18","description":null,"artwork":null,"mealSlots":["breakfast","lunch","dinner","snack"],"cuisineIds":[],"categoryIds":[]},
+    {"dishId":"00000000-0000-4000-8000-000000000019","name":"GM-03 món kiểm thử 19","description":null,"artwork":null,"mealSlots":["breakfast","lunch","dinner","snack"],"cuisineIds":[],"categoryIds":[]},
+    {"dishId":"00000000-0000-4000-8000-000000000020","name":"GM-03 món kiểm thử 20","description":null,"artwork":null,"mealSlots":["breakfast","lunch","dinner","snack"],"cuisineIds":[],"categoryIds":[]}
+  ]
+}

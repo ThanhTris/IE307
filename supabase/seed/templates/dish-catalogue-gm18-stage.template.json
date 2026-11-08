@@ -1,0 +1,10 @@
+{
+  "contractVersion": "dish-catalogue/roadmap-v2/GM-18.2",
+  "projectionVersion": "GM18.2",
+  "releaseId": "dish-catalogue-v1:1.1.0:gm18.2",
+  "sourceBundleSha256": "776b1e4998d0b170b51a7c39a4ead74461bdfd721f167dafddf7f072bf117a2f",
+  "sourceContractVersion": "1.0.0",
+  "datasetVersion": "1.1.0",
+  "testOnly": true,
+  "cards": []
+}

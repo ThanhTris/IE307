@@ -1,0 +1,226 @@
+{
+  "format": "gm03-public-evidence-v1",
+  "runId": "gm03-20261026m",
+  "sourceRevision": "fe5b5f363d94787f4dac6fcfb1933698fb534830",
+  "branch": "codex/gm-02-03-foundations",
+  "dirtyAtStart": true,
+  "cliVersion": "2.120.0",
+  "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+  "schemaVersion": "0.9.1",
+  "endpoint": {
+    "baseUrl": "http://127.0.0.1:54371",
+    "apiPort": 54371,
+    "dbPort": 54372
+  },
+  "projectId": "gm03qa-gm03-20261026m",
+  "configSha256": "fc09f81c1d91eb7a80e1c05a6b95187a69d1fc9f8b8210b22b312525616dff15",
+  "runtimeManifestSealSha256": "29182f6cabb4465e1ca6e5ac1a935dd2b3c696c82dc53d68b5b958dc669f449a",
+  "migrations": [
+    {
+      "file": "0001_core_schema.sql",
+      "version": "0001",
+      "sha256": "ac3e0d529071173b4523f9d6553f431a6c1726430b7dcf8ef8cf161a194c5964"
+    },
+    {
+      "file": "0002_food_import_receipts.sql",
+      "version": "0002",
+      "sha256": "c80253e9e3f407410848dd16cdc59997eb9af64d5a66fff58c8e3bcb62dbb352"
+    },
+    {
+      "file": "0003_food_provenance_description.sql",
+      "version": "0003",
+      "sha256": "91655ba516abd76e54bfc9b5ccb06c73818cde64273e2861b02a96b09d84ca73"
+    },
+    {
+      "file": "0004_access_policies.sql",
+      "version": "0004",
+      "sha256": "508e9572ce50464d07a8ea1e19dc41ff7ba26cb2d0485aa59df9ac1422440dfb"
+    },
+    {
+      "file": "0005_gm18_discovery_rpc.sql",
+      "version": "0005",
+      "sha256": "4decac9c05ab97793044c0954b31b1ae7e5c0ff9155a68048c682f3484965158"
+    },
+    {
+      "file": "0018_food_eligibility.sql",
+      "version": "0018",
+      "sha256": "366274fcb304e1fe2e0c1e05a9c51baf0e5958f7af58659c56c89427ce52af36"
+    },
+    {
+      "file": "0019_room_lifecycle.sql",
+      "version": "0019",
+      "sha256": "ed76f679baa10bbfd4234e2be88f408ef292162f92efceac16217aa554f50926"
+    },
+    {
+      "file": "0021_history.sql",
+      "version": "0021",
+      "sha256": "33478db0d9b72d7751f07792fb6e185882ff4ab407a98b9c37e7fcabea830154"
+    },
+    {
+      "file": "0022_social.sql",
+      "version": "0022",
+      "sha256": "bede55e7a0c12a3dfce3d03f3e61121bd4611b73c8b8656ec0785a3c55097f54"
+    },
+    {
+      "file": "0023_finalize.sql",
+      "version": "0023",
+      "sha256": "ea50191b74f04e174e97c6a42f03c3de1431206bd51ff85fca1088f55d0ad234"
+    },
+    {
+      "file": "0024_history_integration.sql",
+      "version": "0024",
+      "sha256": "d37b02d99575a83e544fd70bdfdb08ee089a997b233ebd1d198b68cf1d5e6514"
+    },
+    {
+      "file": "0025_notifications.sql",
+      "version": "0025",
+      "sha256": "a1f8bab1b7853c52fb82e97afef470634b4776b75ae8a000bba2e24796f81ba1"
+    },
+    {
+      "file": "0026_dish_session_policy.sql",
+      "version": "0026",
+      "sha256": "d962acc9503a8bf266f0432d1dc0deaf4353e97eed4009c449114e4d83e45cf5"
+    },
+    {
+      "file": "0027_dish_session_v4.sql",
+      "version": "0027",
+      "sha256": "c66f023623efc9c5f6e5d238c54932293a4e76a0c59019c374177b64f00cefc9"
+    },
+    {
+      "file": "0028_dish_v4_top_three_cutoff.sql",
+      "version": "0028",
+      "sha256": "c1b1f65a5a4f3f81c3742a30e9af502b8934719146e910390be70e35c66f2e6b"
+    },
+    {
+      "file": "0029_dish_v4_history_consent.sql",
+      "version": "0029",
+      "sha256": "d7515f21989dba5192e64792cb7d67fd8048affa89b9ef1ef14a9b80a485d0c8"
+    }
+  ],
+  "migrationLedger": [
+    {
+      "version": "0001",
+      "name": "core_schema"
+    },
+    {
+      "version": "0002",
+      "name": "food_import_receipts"
+    },
+    {
+      "version": "0003",
+      "name": "food_provenance_description"
+    },
+    {
+      "version": "0004",
+      "name": "access_policies"
+    },
+    {
+      "version": "0005",
+      "name": "gm18_discovery_rpc"
+    },
+    {
+      "version": "0018",
+      "name": "food_eligibility"
+    },
+    {
+      "version": "0019",
+      "name": "room_lifecycle"
+    },
+    {
+      "version": "0021",
+      "name": "history"
+    },
+    {
+      "version": "0022",
+      "name": "social"
+    },
+    {
+      "version": "0023",
+      "name": "finalize"
+    },
+    {
+      "version": "0024",
+      "name": "history_integration"
+    },
+    {
+      "version": "0025",
+      "name": "notifications"
+    },
+    {
+      "version": "0026",
+      "name": "dish_session_policy"
+    },
+    {
+      "version": "0027",
+      "name": "dish_session_v4"
+    },
+    {
+      "version": "0028",
+      "name": "dish_v4_top_three_cutoff"
+    },
+    {
+      "version": "0029",
+      "name": "dish_v4_history_consent"
+    }
+  ],
+  "sourceFiles": {
+    "scripts/backend-qa.mjs": "f324cc53a29b1f3af07d9eb95f3c20bd83493aa36da3201fcaa65a7a5f015e51",
+    "scripts/dish_policy_worker.py": "4d9aca04320ed1bf0b3ed9f7989031e5b73bc7a911c9eb51d353470262a19185",
+    "scripts/gm03_function_inventory.sql": "b8fb12e233361b001a384f8b9f774d13a948cde55a1d904623d3e8bbdfc83503",
+    "scripts/gm03_qa_http_check.mjs": "4fe2ac2de8e80b134495bd2a663f4f017093a6c7b1be73b39b590eff88296d69",
+    "scripts/gm40_catalogue_check.py": "131a5a28498026af60ea6edfe0a803a7d44243d8d9c2261a72846e7a282c7a30",
+    "scripts/gm_v4_http_check.mjs": "16fb2bd94932f66cf3c10923d30ef37eede26e1d87517b0de19cae4838cfb1e1",
+    "supabase/config.toml": "accd3fed420e92e37f1211bbd9ef1a217fb5b05761aad1624db1167c13ad80eb",
+    "supabase/migrations/0001_core_schema.sql": "ac3e0d529071173b4523f9d6553f431a6c1726430b7dcf8ef8cf161a194c5964",
+    "supabase/migrations/0002_food_import_receipts.sql": "c80253e9e3f407410848dd16cdc59997eb9af64d5a66fff58c8e3bcb62dbb352",
+    "supabase/migrations/0003_food_provenance_description.sql": "91655ba516abd76e54bfc9b5ccb06c73818cde64273e2861b02a96b09d84ca73",
+    "supabase/migrations/0004_access_policies.sql": "508e9572ce50464d07a8ea1e19dc41ff7ba26cb2d0485aa59df9ac1422440dfb",
+    "supabase/migrations/0005_gm18_discovery_rpc.sql": "4decac9c05ab97793044c0954b31b1ae7e5c0ff9155a68048c682f3484965158",
+    "supabase/migrations/0018_food_eligibility.sql": "366274fcb304e1fe2e0c1e05a9c51baf0e5958f7af58659c56c89427ce52af36",
+    "supabase/migrations/0019_room_lifecycle.sql": "ed76f679baa10bbfd4234e2be88f408ef292162f92efceac16217aa554f50926",
+    "supabase/migrations/0021_history.sql": "33478db0d9b72d7751f07792fb6e185882ff4ab407a98b9c37e7fcabea830154",
+    "supabase/migrations/0022_social.sql": "bede55e7a0c12a3dfce3d03f3e61121bd4611b73c8b8656ec0785a3c55097f54",
+    "supabase/migrations/0023_finalize.sql": "ea50191b74f04e174e97c6a42f03c3de1431206bd51ff85fca1088f55d0ad234",
+    "supabase/migrations/0024_history_integration.sql": "d37b02d99575a83e544fd70bdfdb08ee089a997b233ebd1d198b68cf1d5e6514",
+    "supabase/migrations/0025_notifications.sql": "a1f8bab1b7853c52fb82e97afef470634b4776b75ae8a000bba2e24796f81ba1",
+    "supabase/migrations/0026_dish_session_policy.sql": "d962acc9503a8bf266f0432d1dc0deaf4353e97eed4009c449114e4d83e45cf5",
+    "supabase/migrations/0027_dish_session_v4.sql": "c66f023623efc9c5f6e5d238c54932293a4e76a0c59019c374177b64f00cefc9",
+    "supabase/migrations/0028_dish_v4_top_three_cutoff.sql": "c1b1f65a5a4f3f81c3742a30e9af502b8934719146e910390be70e35c66f2e6b",
+    "supabase/migrations/0029_dish_v4_history_consent.sql": "d7515f21989dba5192e64792cb7d67fd8048affa89b9ef1ef14a9b80a485d0c8",
+    "supabase/seed/catalogue/dishes.json": "776b1e4998d0b170b51a7c39a4ead74461bdfd721f167dafddf7f072bf117a2f",
+    "supabase/seed/catalogue/manifest.json": "592062fbae266373dda828b1f39785a4dece08c4508b9266adf5c5e5c9089138",
+    "supabase/seed/import_dish_catalogue.py": "d07d1984eb325f81b0015be8d9a0fbde0d230a1764c2efd0fab19f1f8fbba0b6",
+    "supabase/tests/fixtures/gm03-dish-catalogue-synthetic.json": "ecf56b267f0ae25f6480467d184efe4c14ea7bb4a7bb593d97fe5a58957af71b"
+  },
+  "additionalSourceFiles": {
+    "supabase/seed/import_food_data.py": "ac3d14eb633b03bcfb4ba04456cb19676bd3f9c69ca547ad278608872a747980",
+    "tests/test_worker_process.py": "cdccafc029b79e5c4d9675aa1ae3a2a13ac7cd546ece3ef506e6268cf853a9f7",
+    "tests/test_food_import.py": "635b3305a14d40157267872b83184d0eda28618597b36b8146d1d559c98b5dce"
+  },
+  "functions": {
+    "count": 172,
+    "inventorySha256": "051c6cf5190ed97209e230148e65238d8c1d4573cdcfe14b574f5fc498b45862"
+  },
+  "catalogues": [
+    {
+      "id": "dish-catalogue-v1:1.1.0",
+      "sourceSha256": "776b1e4998d0b170b51a7c39a4ead74461bdfd721f167dafddf7f072bf117a2f",
+      "cardCount": 39,
+      "testOnly": true,
+      "active": true
+    },
+    {
+      "id": "dish-catalogue-v1:qa-gm03-synthetic20-v1",
+      "sourceSha256": "ecf56b267f0ae25f6480467d184efe4c14ea7bb4a7bb593d97fe5a58957af71b",
+      "cardCount": 20,
+      "testOnly": true,
+      "active": false
+    }
+  ],
+  "realtimeEnabled": false,
+  "credentialsWrittenToEvidence": false,
+  "windowsWorker": {
+    "launchFlag": "CREATE_NO_WINDOW",
+    "localAdapterIncluded": true
+  }
+}

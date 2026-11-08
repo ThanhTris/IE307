@@ -10,12 +10,12 @@ import { normalizeRoomCode, validDisplayName, validRoomCode, type CameraAction, 
 export type JoinRoomScreenProps = PreviewControlsProps & {
   repository: RoomEntryRepository; onBack: () => void; onEntered: (room: RoomEntryReceipt) => void;
   sampleCode?: string; initialCode?: string; onScan?: CameraAction;
-  createRequestId?: RequestIdFactory;
+  createRequestId?: RequestIdFactory; initialDisplayName?: string; isLive?: boolean;
 };
 
-export function JoinRoomScreen({ repository, onBack, onEntered, sampleCode, initialCode = '', onScan, previewControls, createRequestId }: JoinRoomScreenProps) {
+export function JoinRoomScreen({ repository, onBack, onEntered, sampleCode, initialCode = '', onScan, previewControls, createRequestId, initialDisplayName = '', isLive = false }: JoinRoomScreenProps) {
   const { colors } = useShellTheme();
-  const [name, setName] = useState('');
+  const [name, setName] = useState(initialDisplayName);
   const [code, setCode] = useState(normalizeRoomCode(initialCode));
   const [incomingCode, setIncomingCode] = useState(normalizeRoomCode(initialCode));
   const [tab, setTab] = useState<'manual' | 'camera'>('manual');
@@ -63,7 +63,7 @@ export function JoinRoomScreen({ repository, onBack, onEntered, sampleCode, init
     } catch { if (mounted.current) setCameraMessage('Chưa thể đọc mã. Hãy nhập mã bằng tay.'); }
     finally { scanLock.current = false; if (mounted.current) setScanBusy(false); }
   };
-  return <RoomEntryFrame title="Vào kèo ăn" subtitle="Có mã từ bạn bè? Cùng vào một kèo ăn." onBack={onBack} busy={busy} previewControls={previewControls}>
+  return <RoomEntryFrame title="Vào kèo ăn" subtitle="Có mã từ bạn bè? Cùng vào một kèo ăn." onBack={onBack} busy={busy || submitted.uncertain || submitted.accepted} isMock={!isLive} previewControls={previewControls}>
     <View style={entryStyles.row}>
       <Chip label="Nhập mã" leadingIcon="⌨" selected={tab === 'manual'} disabled={disabled} onPress={() => setTab('manual')} colors={colors} />
       <Chip label="Quét mã QR" leadingIcon="▣" selected={tab === 'camera'} disabled={disabled} onPress={() => setTab('camera')} colors={colors} />
@@ -79,7 +79,7 @@ export function JoinRoomScreen({ repository, onBack, onEntered, sampleCode, init
       {sampleCode ? <AppButton label={`Điền mã mẫu ${sampleCode}`} variant="quiet" disabled={disabled} onPress={() => { setCode(sampleCode); setValidation(undefined); submitted.clearError(); }} colors={colors} /> : null}
       {validation ? <Text accessibilityRole="alert" style={[entryStyles.body, { color: colors.danger }]}>{validation}</Text> : null}
       {submitted.error ? <EntryError code={submitted.error} /> : null}
-      <AppButton label={submitted.accepted ? 'Đã vào phòng mô phỏng' : submitted.uncertain ? 'Thử lại cùng yêu cầu vào phòng' : 'Vào phòng →'} loading={submitted.busy} disabled={submitted.accepted} onPress={submitted.uncertain ? join : requestJoin} colors={colors} />
+      <AppButton label={submitted.accepted ? (isLive ? 'Đã vào phòng' : 'Đã vào phòng mô phỏng') : submitted.uncertain ? 'Thử lại cùng yêu cầu vào phòng' : 'Vào phòng →'} loading={submitted.busy} disabled={submitted.accepted} onPress={submitted.uncertain ? join : requestJoin} colors={colors} />
       <Text style={[entryStyles.caption, { color: colors.muted }]}>Bạn sẽ xác nhận tên và mã trước khi vào phòng.</Text>
     </EntrySection> : <EntrySection title="Quét mã từ chủ phòng">
       <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={[entryStyles.scanner, { backgroundColor: colors.soft, borderColor: colors.border }]}>
@@ -91,8 +91,9 @@ export function JoinRoomScreen({ repository, onBack, onEntered, sampleCode, init
       <AppButton label="Nhập mã bằng tay" variant="secondary" onPress={() => setTab('manual')} disabled={busy} colors={colors} />
     </EntrySection>}
     <SheetDialog visible={confirm} title="Xác nhận vào phòng" onClose={() => setConfirm(false)} colors={colors}>
-      <Text style={[entryStyles.body, { color: colors.text }]}>Vào phòng #{normalizeRoomCode(code)} với tên {name.trim()}? Đây là thao tác mô phỏng.</Text>
-      <AppButton label="Xác nhận vào phòng mô phỏng" onPress={join} colors={colors} />
+      <Text style={[entryStyles.body, { color: colors.text }]}>{isLive ? `Vào phòng #${normalizeRoomCode(code)} với tên ${name.trim()}?` : `Vào phòng #${normalizeRoomCode(code)} với tên ${name.trim()}? Đây là thao tác mô phỏng.`}</Text>
+      <AppButton label={isLive ? 'Xác nhận vào phòng' : 'Xác nhận vào phòng mô phỏng'} onPress={join} colors={colors} />
     </SheetDialog>
   </RoomEntryFrame>;
 }
+

@@ -1,5 +1,5 @@
 import { spawn } from 'node:child_process';
-import { readFile } from 'node:fs/promises';
+import { appendFile, readFile, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
@@ -14,6 +14,20 @@ export function redact(text) {
     .replace(/\bsb_(?:secret|publishable)_[A-Za-z0-9_-]+\b/g, '[REDACTED KEY]')
     .replace(/(postgres(?:ql)?:\/\/[^:\s]+:)[^@\s]+@/gi, '$1[REDACTED]@')
     .replace(/((?:anon[ _-]?key|service[ _-]?role[ _-]?key|secret[ _-]?key|publishable[ _-]?key|password|access[ _-]?token)["']?\s*[:=]\s*)[^\r\n]+/gi, '$1[REDACTED]');
+}
+
+export function isTransientDockerStartupFailure(message) {
+  const value = String(message);
+  if (/data limit exceeded|no space left|disk quota|insufficient storage|manifest unknown|permission denied|not ok\b|syntax error/i.test(value)) return false;
+  return /(?:failed to pull|error pulling|pulling image|docker.*(?:network|timeout|temporary failure)|TLS handshake timeout|unexpected EOF|connection reset by peer|i\/o timeout|dial tcp.*(?:timeout|temporary failure|connection refused))/i.test(value);
+}
+
+function commandDiagnostics(stdout, stderr, code, timedOut) {
+  const sections = [];
+  if (stdout.trim()) sections.push(`stdout:\n${stdout.trim()}`);
+  if (stderr.trim()) sections.push(`stderr:\n${stderr.trim()}`);
+  const reason = timedOut ? 'Command timed out.' : `Command exited with code ${code}.`;
+  return redact([reason, ...sections].join('\n\n'));
 }
 
 export function validateConfig(text) {
@@ -47,17 +61,26 @@ export function cliArgs(action, extra = []) {
   return [cliScript, ...args, '--workdir', root];
 }
 
-export async function runCommand(command, args, { quiet = false, timeoutMs = 120000 } = {}) {
+export async function runCommand(command, args, { quiet = false, timeoutMs = 120000, capturePath } = {}) {
   return await new Promise((accept, reject) => {
     const child = spawn(command, args, { cwd: root, shell: false, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
     let output = '', errors = '';
-    const timer = setTimeout(() => child.kill(), timeoutMs);
+    let timedOut = false;
+    const timer = setTimeout(() => { timedOut = true; child.kill(); }, timeoutMs);
     child.stdout.on('data', chunk => { output += chunk; });
     child.stderr.on('data', chunk => { errors += chunk; });
     child.once('error', () => { clearTimeout(timer); reject(new Error(`Cannot run ${command === process.execPath ? 'Supabase CLI' : command}. Install tooling/runtime first.`)); });
-    child.once('close', code => {
+    child.once('close', async code => {
       clearTimeout(timer);
-      if (code !== 0) { reject(new Error(redact(errors || output || 'Command failed or timed out.'))); return; }
+      const fullDiagnostics = commandDiagnostics(output, errors, code, timedOut);
+      if (capturePath) {
+        try { await appendFile(capturePath, `${fullDiagnostics}\n`, { encoding: 'utf8', mode: 0o600 }); }
+        catch (error) { console.error(`Could not save sanitized command diagnostics: ${redact(error.message)}`); }
+      }
+      const diagnostics = fullDiagnostics.length > 20000
+        ? `${fullDiagnostics.slice(0, 20000)}\n[diagnostics truncated in console; complete sanitized log saved separately]`
+        : fullDiagnostics;
+      if (code !== 0 || timedOut) { reject(new Error(diagnostics)); return; }
       if (!quiet && output.trim()) console.log(redact(output.trim()));
       // Successful CLI stderr may carry progress but also keys. Never dump status data.
       accept(output);
@@ -85,6 +108,18 @@ export async function checkHealth(apiUrl, fetcher = fetch) {
   return { method: 'GET', path: '/auth/v1/health', status: response.status, body: { name: body.name, version: body.version, description: body.description }, assertions: 'status/name/version/description PASS' };
 }
 
+async function runTestDbWithTransientRetry(run, command, args, options) {
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      return await run(command, args, options);
+    } catch (error) {
+      if (attempt === 3 || !isTransientDockerStartupFailure(error.message)) throw error;
+      console.warn(`Transient Docker image/network startup failure; retry ${attempt + 1}/3.`);
+      await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+    }
+  }
+}
+
 export async function main(action, extra = [], dependencies = {}) {
   // Validate action/flags before any subprocess or destructive operation.
   const targetAction = action === 'smoke' ? 'status' : action;
@@ -110,7 +145,15 @@ export async function main(action, extra = [], dependencies = {}) {
     const tests = await load(resolve(root, 'supabase/tests/database/00_local_smoke.test.sql'), 'utf8');
     if (!/select plan\([1-9]\d*\)/i.test(tests)) throw new Error('Refusing zero-assertion database smoke.');
   }
-  await run(process.execPath, args, { quiet: action === 'start', timeoutMs: action === 'start' ? 900000 : 120000 });
+  const commandOptions = {
+    quiet: action === 'start', timeoutMs: action === 'start' ? 900000 : action === 'test' ? 600000 : 120000,
+    ...(action === 'test' && process.env.GM06_TAP_LOG_PATH ? { capturePath: process.env.GM06_TAP_LOG_PATH } : {}),
+  };
+  if (action === 'test' && commandOptions.capturePath) {
+    await writeFile(commandOptions.capturePath, '', { encoding: 'utf8', mode: 0o600 });
+  }
+  if (action === 'test') await runTestDbWithTransientRetry(run, process.execPath, args, commandOptions);
+  else await run(process.execPath, args, commandOptions);
   if (action === 'start') {
     parseStatus(await run(process.execPath, cliArgs('status'), { quiet: true }));
     console.log('Local foundation started. Run backend:smoke and backend:test. Business schema/auth policies are not implemented.');

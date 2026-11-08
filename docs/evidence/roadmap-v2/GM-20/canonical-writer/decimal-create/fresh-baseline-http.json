@@ -1,0 +1,1204 @@
+{
+  "result": "Pass",
+  "runId": "ie307-dish-v4-qa-20261029-754029781000-1",
+  "target": "dedicated Supabase QA project ie307-dish-v4-qa-20261029-754029781000-1",
+  "branch": "local",
+  "sha": "588781c6bb56c5cca2c7c4cdf300d2b154c25c8c",
+  "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+  "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
+  "schemaVersion": "0.9.2",
+  "schemaSha256": "710a55d8fcd51e087fa0cab8260ff9b1a5469bf570f5280a9e904eb5096b484c",
+  "sourceHashes": {
+    "docs/architecture/schemas/dish-session-v4b.schema.json": "710a55d8fcd51e087fa0cab8260ff9b1a5469bf570f5280a9e904eb5096b484c",
+    "tests/fixtures/dish-catalogue-v1/qa-v4-synthetic.json": "ad9de41f997b3cffe9314d61638c5f814e37554e78a8109443a284fe01a56c21",
+    "scripts/dish_policy_worker.py": "d1d65f488937ec6bb42b54efb61a1fa013a33503cd84118d32c4db32210d19a3",
+    "supabase/migrations/0001_core_schema.sql": "6733e28f282f600e627e675dccede3afef1efd37cf4a7cfe8d94af4cd02d30f5",
+    "supabase/migrations/0002_food_import_receipts.sql": "eb80acba1f69bfb68b014a1ab5807e42d65db940a36d201f28db88172157f55e",
+    "supabase/migrations/0003_food_provenance_description.sql": "8972c1dfa5e07a2350e644a7e79ea36cc7f9208e0a89371cbe1bdfdb52d6cb16",
+    "supabase/migrations/0004_access_policies.sql": "508e9572ce50464d07a8ea1e19dc41ff7ba26cb2d0485aa59df9ac1422440dfb",
+    "supabase/migrations/0005_gm18_discovery_rpc.sql": "b81e072da7ef75846615738905650ae5a337e32f5d678f843c9404e7f54e3307",
+    "supabase/migrations/0018_food_eligibility.sql": "e242876842e0c8decf645130b56a69143146ff942a78641f504c2883f3c86334",
+    "supabase/migrations/0019_room_lifecycle.sql": "ed76f679baa10bbfd4234e2be88f408ef292162f92efceac16217aa554f50926",
+    "supabase/migrations/0021_history.sql": "9be964cc6c8b405f578e7f2528268f628266e7b121b96ce958244e20a116217e",
+    "supabase/migrations/0022_social.sql": "bede55e7a0c12a3dfce3d03f3e61121bd4611b73c8b8656ec0785a3c55097f54",
+    "supabase/migrations/0023_finalize.sql": "aff45864e57d634ced4bce6e3ce1997f439f90b2c974cc7f601d71f70bb3fea8",
+    "supabase/migrations/0024_history_integration.sql": "48d8662cd1e4c70a7ef6147efb517bcb351365fc6e1f90ac49e4defa3c868ad9",
+    "supabase/migrations/0025_notifications.sql": "a1f8bab1b7853c52fb82e97afef470634b4776b75ae8a000bba2e24796f81ba1",
+    "supabase/migrations/0026_dish_session_policy.sql": "24fba6d428e283bef7edd46d040b7e89c7ce2953c9cb7a4e04cb86a7dd682804",
+    "supabase/migrations/0027_dish_session_v4.sql": "504936d84652d92dc322e63160f5d435dffe5c466d38807220040480e621114c",
+    "supabase/migrations/0028_dish_v4_top_three_cutoff.sql": "373c7d28d2ffae3de5510a4d5ebba0d5bd756feb05db5b1e03883ae85feccb55",
+    "supabase/migrations/0029_dish_v4_history_consent.sql": "9a6545904cbaa80e7461c3077a2c3f4c1bf6bc1362e364b566c0ce4012fe5533",
+    "supabase/migrations/0030_history_consent_search_path.sql": "c50737fa0dad65a3eebf2ed8423b3313f508b4d754fe4626d3ff300af510996e",
+    "supabase/migrations/0031_history_consent_policy_isolation.sql": "75eefa6f4975fa88a4fede0cc934aaed216144b1ca51efe3e31ea86a06f789e8",
+    "supabase/migrations/0032_canonical_result_storage.sql": "8f1184820fdcf90909af2db7b9845706fdee11e2ccebd3f595b8e3ebc4214330",
+    "supabase/migrations/0033_gm18_dish_catalogue.sql": "d0e761ff652f8cecf861050c6b68107d6e4afc88e81d00932c47a248e0754669",
+    "supabase/migrations/0034_gm19_settings_stability.sql": "87eb94f89f1669d6f94cf01946bffbdeaa2cd9c35812aa2be81a0282ac8db3d3",
+    "supabase/migrations/0035_gm20_canonical_writer.sql": "cd13f7ba89f0c04e9dfb8f89c6ffc015fe9e41a3e19ddc9bd04b77d33637d33c"
+  },
+  "dataset": {
+    "realRelease": "dish-catalogue-v1:1.1.0",
+    "realSourceSha256": "776b1e4998d0b170b51a7c39a4ead74461bdfd721f167dafddf7f072bf117a2f",
+    "realCount": 39,
+    "realMealCounts": {
+      "breakfast": 14,
+      "lunch": 23,
+      "dinner": 7,
+      "snack": 1
+    },
+    "syntheticRelease": "dish-catalogue-v1:qa-synthetic-ci-v1",
+    "syntheticSha256": "ad9de41f997b3cffe9314d61638c5f814e37554e78a8109443a284fe01a56c21",
+    "syntheticCount": 20,
+    "syntheticFixtureOnly": true
+  },
+  "schemaValidation": {
+    "result": "Pass",
+    "schema": "JSON Schema 2020-12",
+    "envelopesValidated": 575
+  },
+  "caseCount": 150,
+  "credentialsWritten": false,
+  "applicationDatabaseChanged": false,
+  "settingsSupplement": {
+    "contract": "dish-session-v4/roadmap-v2/GM-19.2",
+    "schemaVersion": "0.11.1",
+    "migration": "supabase/migrations/0034_gm19_settings_stability.sql",
+    "migrationSha256": "87eb94f89f1669d6f94cf01946bffbdeaa2cd9c35812aa2be81a0282ac8db3d3",
+    "requestResponseSamples": [
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "member-settings-1793287793185-8489c658",
+            "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+            "expectedVersion": 2,
+            "settings": {
+              "dishCount": 11,
+              "mealSlot": "lunch",
+              "desiredAt": null
+            }
+          }
+        },
+        "response": {
+          "ok": false,
+          "error": {
+            "details": {},
+            "messageKey": "NOT_HOST"
+          },
+          "requestId": "member-settings-1793287793185-8489c658"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "outsider-settings-1793287793187-4cd0fa83",
+            "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+            "expectedVersion": 2,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": null,
+              "dishCount": 10
+            }
+          }
+        },
+        "response": {
+          "ok": false,
+          "error": {
+            "details": {},
+            "messageKey": "NOT_MEMBER"
+          },
+          "requestId": "outsider-settings-1793287793187-4cd0fa83"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "settings-noop-1793287793329-0aa38b56",
+            "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+            "expectedVersion": 2,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": null,
+              "dishCount": 10
+            }
+          }
+        },
+        "response": {
+          "ok": true,
+          "data": {
+            "version": 3,
+            "accepted": true,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": null,
+              "dishCount": 10
+            },
+            "poolVersion": 1
+          },
+          "state": "LOBBY",
+          "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+          "version": 3,
+          "requestId": "settings-noop-1793287793329-0aa38b56"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "settings-noop-1793287793329-0aa38b56",
+            "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+            "expectedVersion": 2,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": null,
+              "dishCount": 10
+            }
+          }
+        },
+        "response": {
+          "ok": true,
+          "data": {
+            "version": 3,
+            "accepted": true,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": null,
+              "dishCount": 10
+            },
+            "poolVersion": 1
+          },
+          "state": "LOBBY",
+          "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+          "version": 3,
+          "requestId": "settings-noop-1793287793329-0aa38b56"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "settings-noop-1793287793329-0aa38b56",
+            "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+            "expectedVersion": 2,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": "2030-01-01T12:00:00Z",
+              "dishCount": 10
+            }
+          }
+        },
+        "response": {
+          "ok": false,
+          "error": {
+            "details": {},
+            "messageKey": "REQUEST_ID_REUSED"
+          },
+          "requestId": "settings-noop-1793287793329-0aa38b56"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "time-only-1793287793707-094f6116",
+            "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+            "expectedVersion": 3,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": "2030-01-01T12:00:00Z",
+              "dishCount": 10
+            }
+          }
+        },
+        "response": {
+          "ok": true,
+          "data": {
+            "version": 4,
+            "accepted": true,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": "2030-01-01T12:00:00Z",
+              "dishCount": 10
+            },
+            "poolVersion": 1
+          },
+          "state": "LOBBY",
+          "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+          "version": 4,
+          "requestId": "time-only-1793287793707-094f6116"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "time-only-1793287793719-3d89928f",
+            "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+            "expectedVersion": 4,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": "2030-01-01T19:00:00+07:00",
+              "dishCount": 10
+            }
+          }
+        },
+        "response": {
+          "ok": true,
+          "data": {
+            "version": 5,
+            "accepted": true,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": "2030-01-01T19:00:00+07:00",
+              "dishCount": 10
+            },
+            "poolVersion": 1
+          },
+          "state": "LOBBY",
+          "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+          "version": 5,
+          "requestId": "time-only-1793287793719-3d89928f"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "time-only-1793287793730-3c4b2309",
+            "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+            "expectedVersion": 5,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": null,
+              "dishCount": 10
+            }
+          }
+        },
+        "response": {
+          "ok": true,
+          "data": {
+            "version": 6,
+            "accepted": true,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": null,
+              "dishCount": 10
+            },
+            "poolVersion": 1
+          },
+          "state": "LOBBY",
+          "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+          "version": 6,
+          "requestId": "time-only-1793287793730-3c4b2309"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "stale-settings-1793287793865-9ad3c96c",
+            "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+            "expectedVersion": 5,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": null,
+              "dishCount": 11
+            }
+          }
+        },
+        "response": {
+          "ok": false,
+          "error": {
+            "details": {},
+            "messageKey": "VERSION_CONFLICT"
+          },
+          "requestId": "stale-settings-1793287793865-9ad3c96c"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "fraction-settings-1793287793868-3bf4e652",
+            "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+            "expectedVersion": 6,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": null,
+              "dishCount": 10.5
+            }
+          }
+        },
+        "response": {
+          "ok": false,
+          "error": {
+            "details": {},
+            "messageKey": "INVALID_INPUT"
+          },
+          "requestId": "fraction-settings-1793287793868-3bf4e652"
+        },
+        "requestValid": false
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "ranking-settings-1793287793869-fd9a8e48",
+            "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+            "expectedVersion": 6,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": null,
+              "dishCount": 10,
+              "ranking": true
+            }
+          }
+        },
+        "response": {
+          "ok": false,
+          "error": {
+            "details": {},
+            "messageKey": "INVALID_INPUT"
+          },
+          "requestId": "ranking-settings-1793287793869-fd9a8e48"
+        },
+        "requestValid": false
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "count-settings-1793287793984-9965bbc7",
+            "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+            "expectedVersion": 6,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": null,
+              "dishCount": 11
+            }
+          }
+        },
+        "response": {
+          "ok": true,
+          "data": {
+            "version": 7,
+            "accepted": true,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": null,
+              "dishCount": 11
+            },
+            "poolVersion": 2
+          },
+          "state": "LOBBY",
+          "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+          "version": 7,
+          "requestId": "count-settings-1793287793984-9965bbc7"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "meal-settings-1793287793996-9d417dff",
+            "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+            "expectedVersion": 7,
+            "settings": {
+              "mealSlot": "dinner",
+              "desiredAt": null,
+              "dishCount": 11
+            }
+          }
+        },
+        "response": {
+          "ok": true,
+          "data": {
+            "version": 8,
+            "accepted": true,
+            "settings": {
+              "mealSlot": "dinner",
+              "desiredAt": null,
+              "dishCount": 11
+            },
+            "poolVersion": 2
+          },
+          "state": "LOBBY",
+          "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+          "version": 8,
+          "requestId": "meal-settings-1793287793996-9d417dff"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "full-settings-1793287794019-f60dec1e",
+            "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+            "expectedVersion": 8,
+            "settings": {
+              "dishCount": 20,
+              "mealSlot": "lunch",
+              "desiredAt": null
+            }
+          }
+        },
+        "response": {
+          "ok": true,
+          "data": {
+            "version": 9,
+            "accepted": true,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": null,
+              "dishCount": 20
+            },
+            "poolVersion": 3
+          },
+          "state": "LOBBY",
+          "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+          "version": 9,
+          "requestId": "full-settings-1793287794019-f60dec1e"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "same-cards-meal-1793287794031-a49e9771",
+            "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+            "expectedVersion": 9,
+            "settings": {
+              "mealSlot": "dinner",
+              "desiredAt": null,
+              "dishCount": 20
+            }
+          }
+        },
+        "response": {
+          "ok": true,
+          "data": {
+            "version": 10,
+            "accepted": true,
+            "settings": {
+              "mealSlot": "dinner",
+              "desiredAt": null,
+              "dishCount": 20
+            },
+            "poolVersion": 3
+          },
+          "state": "LOBBY",
+          "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+          "version": 10,
+          "requestId": "same-cards-meal-1793287794031-a49e9771"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "pinned-settings-1793287794169-fee6df45",
+            "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+            "expectedVersion": 10,
+            "settings": {
+              "mealSlot": "dinner",
+              "desiredAt": null,
+              "dishCount": 20
+            }
+          }
+        },
+        "response": {
+          "ok": true,
+          "data": {
+            "version": 11,
+            "accepted": true,
+            "settings": {
+              "mealSlot": "dinner",
+              "desiredAt": null,
+              "dishCount": 20
+            },
+            "poolVersion": 3
+          },
+          "state": "LOBBY",
+          "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+          "version": 11,
+          "requestId": "pinned-settings-1793287794169-fee6df45"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "duplicate-settings-1793287794295-3cdc354a",
+            "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+            "expectedVersion": 11,
+            "settings": {
+              "mealSlot": "dinner",
+              "desiredAt": null,
+              "dishCount": 20
+            }
+          }
+        },
+        "response": {
+          "ok": true,
+          "data": {
+            "version": 12,
+            "accepted": true,
+            "settings": {
+              "mealSlot": "dinner",
+              "desiredAt": null,
+              "dishCount": 20
+            },
+            "poolVersion": 3
+          },
+          "state": "LOBBY",
+          "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+          "version": 12,
+          "requestId": "duplicate-settings-1793287794295-3cdc354a"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "duplicate-settings-1793287794295-3cdc354a",
+            "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+            "expectedVersion": 11,
+            "settings": {
+              "mealSlot": "dinner",
+              "desiredAt": null,
+              "dishCount": 20
+            }
+          }
+        },
+        "response": {
+          "ok": true,
+          "data": {
+            "version": 12,
+            "accepted": true,
+            "settings": {
+              "mealSlot": "dinner",
+              "desiredAt": null,
+              "dishCount": 20
+            },
+            "poolVersion": 3
+          },
+          "state": "LOBBY",
+          "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+          "version": 12,
+          "requestId": "duplicate-settings-1793287794295-3cdc354a"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "duplicate-settings-1793287794295-3cdc354a",
+            "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+            "expectedVersion": 11,
+            "settings": {
+              "mealSlot": "dinner",
+              "desiredAt": null,
+              "dishCount": 20
+            }
+          }
+        },
+        "response": {
+          "ok": true,
+          "data": {
+            "version": 12,
+            "accepted": true,
+            "settings": {
+              "mealSlot": "dinner",
+              "desiredAt": null,
+              "dishCount": 20
+            },
+            "poolVersion": 3
+          },
+          "state": "LOBBY",
+          "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+          "version": 12,
+          "requestId": "duplicate-settings-1793287794295-3cdc354a"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "duplicate-settings-1793287794295-3cdc354a",
+            "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+            "expectedVersion": 11,
+            "settings": {
+              "mealSlot": "dinner",
+              "desiredAt": null,
+              "dishCount": 20
+            }
+          }
+        },
+        "response": {
+          "ok": true,
+          "data": {
+            "version": 12,
+            "accepted": true,
+            "settings": {
+              "mealSlot": "dinner",
+              "desiredAt": null,
+              "dishCount": 20
+            },
+            "poolVersion": 3
+          },
+          "state": "LOBBY",
+          "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+          "version": 12,
+          "requestId": "duplicate-settings-1793287794295-3cdc354a"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "duplicate-settings-1793287794295-3cdc354a",
+            "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+            "expectedVersion": 11,
+            "settings": {
+              "mealSlot": "dinner",
+              "desiredAt": null,
+              "dishCount": 20
+            }
+          }
+        },
+        "response": {
+          "ok": true,
+          "data": {
+            "version": 12,
+            "accepted": true,
+            "settings": {
+              "mealSlot": "dinner",
+              "desiredAt": null,
+              "dishCount": 20
+            },
+            "poolVersion": 3
+          },
+          "state": "LOBBY",
+          "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+          "version": 12,
+          "requestId": "duplicate-settings-1793287794295-3cdc354a"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "duplicate-settings-1793287794295-3cdc354a",
+            "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+            "expectedVersion": 11,
+            "settings": {
+              "mealSlot": "dinner",
+              "desiredAt": null,
+              "dishCount": 20
+            }
+          }
+        },
+        "response": {
+          "ok": true,
+          "data": {
+            "version": 12,
+            "accepted": true,
+            "settings": {
+              "mealSlot": "dinner",
+              "desiredAt": null,
+              "dishCount": 20
+            },
+            "poolVersion": 3
+          },
+          "state": "LOBBY",
+          "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+          "version": 12,
+          "requestId": "duplicate-settings-1793287794295-3cdc354a"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "competing-settings-1793287794445-f464ae73",
+            "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+            "expectedVersion": 12,
+            "settings": {
+              "dishCount": 11,
+              "mealSlot": "lunch",
+              "desiredAt": null
+            }
+          }
+        },
+        "response": {
+          "ok": true,
+          "data": {
+            "version": 13,
+            "accepted": true,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": null,
+              "dishCount": 11
+            },
+            "poolVersion": 4
+          },
+          "state": "LOBBY",
+          "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+          "version": 13,
+          "requestId": "competing-settings-1793287794445-f464ae73"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "competing-settings-1793287794445-4319511b",
+            "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+            "expectedVersion": 12,
+            "settings": {
+              "dishCount": 12,
+              "mealSlot": "lunch",
+              "desiredAt": null
+            }
+          }
+        },
+        "response": {
+          "ok": false,
+          "error": {
+            "details": {},
+            "messageKey": "VERSION_CONFLICT"
+          },
+          "requestId": "competing-settings-1793287794445-4319511b"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "locked-settings-1793287794601-9d73f1de",
+            "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+            "expectedVersion": 14,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": null,
+              "dishCount": 11
+            }
+          }
+        },
+        "response": {
+          "ok": false,
+          "error": {
+            "details": {},
+            "messageKey": "ROOM_LOCKED"
+          },
+          "requestId": "locked-settings-1793287794601-9d73f1de"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "settings-noop-1793287793329-0aa38b56",
+            "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+            "expectedVersion": 2,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": null,
+              "dishCount": 10
+            }
+          }
+        },
+        "response": {
+          "ok": true,
+          "data": {
+            "version": 3,
+            "accepted": true,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": null,
+              "dishCount": 10
+            },
+            "poolVersion": 1
+          },
+          "state": "LOBBY",
+          "roomId": "d74150a3-da32-44d4-8682-be564590867d",
+          "version": 3,
+          "requestId": "settings-noop-1793287793329-0aa38b56"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "race-edit-1793287794879-72a84b01",
+            "roomId": "c81987b2-9722-4531-9a17-c33f55af2434",
+            "expectedVersion": 2,
+            "settings": {
+              "dishCount": 11,
+              "mealSlot": "dinner",
+              "desiredAt": null
+            }
+          }
+        },
+        "response": {
+          "ok": true,
+          "data": {
+            "version": 3,
+            "accepted": true,
+            "settings": {
+              "mealSlot": "dinner",
+              "desiredAt": null,
+              "dishCount": 11
+            },
+            "poolVersion": 2
+          },
+          "state": "LOBBY",
+          "roomId": "c81987b2-9722-4531-9a17-c33f55af2434",
+          "version": 3,
+          "requestId": "race-edit-1793287794879-72a84b01"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "race-edit-1793287794914-01d94a2b",
+            "roomId": "2737aa24-9942-4a1b-886b-6ff61ba6fbfa",
+            "expectedVersion": 2,
+            "settings": {
+              "dishCount": 11,
+              "mealSlot": "dinner",
+              "desiredAt": null
+            }
+          }
+        },
+        "response": {
+          "ok": true,
+          "data": {
+            "version": 3,
+            "accepted": true,
+            "settings": {
+              "mealSlot": "dinner",
+              "desiredAt": null,
+              "dishCount": 11
+            },
+            "poolVersion": 2
+          },
+          "state": "LOBBY",
+          "roomId": "2737aa24-9942-4a1b-886b-6ff61ba6fbfa",
+          "version": 3,
+          "requestId": "race-edit-1793287794914-01d94a2b"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "time-before-count-1793287795077-e0e61124",
+            "roomId": "7d67bee5-4387-488f-bb23-1d0efefafd67",
+            "expectedVersion": 1,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": "2030-01-01T12:00:00Z",
+              "dishCount": 10
+            }
+          }
+        },
+        "response": {
+          "ok": true,
+          "data": {
+            "version": 2,
+            "accepted": true,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": "2030-01-01T12:00:00Z",
+              "dishCount": 10
+            },
+            "poolVersion": 1
+          },
+          "state": "LOBBY",
+          "roomId": "7d67bee5-4387-488f-bb23-1d0efefafd67",
+          "version": 2,
+          "requestId": "time-before-count-1793287795077-e0e61124"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "pinned-seed-count-1793287795090-edf7ee9e",
+            "roomId": "7d67bee5-4387-488f-bb23-1d0efefafd67",
+            "expectedVersion": 2,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": "2030-01-01T12:00:00+00:00",
+              "dishCount": 11
+            }
+          }
+        },
+        "response": {
+          "ok": true,
+          "data": {
+            "version": 3,
+            "accepted": true,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": "2030-01-01T12:00:00+00:00",
+              "dishCount": 11
+            },
+            "poolVersion": 2
+          },
+          "state": "LOBBY",
+          "roomId": "7d67bee5-4387-488f-bb23-1d0efefafd67",
+          "version": 3,
+          "requestId": "pinned-seed-count-1793287795090-edf7ee9e"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "pinned-seed-count-1793287795102-509d0d04",
+            "roomId": "66a0bb2c-27d3-44f6-99bd-f4c8d53396da",
+            "expectedVersion": 1,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": null,
+              "dishCount": 11
+            }
+          }
+        },
+        "response": {
+          "ok": true,
+          "data": {
+            "version": 2,
+            "accepted": true,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": null,
+              "dishCount": 11
+            },
+            "poolVersion": 2
+          },
+          "state": "LOBBY",
+          "roomId": "66a0bb2c-27d3-44f6-99bd-f4c8d53396da",
+          "version": 2,
+          "requestId": "pinned-seed-count-1793287795102-509d0d04"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "shortage-settings-1793287795383-016ce33a",
+            "roomId": "7c81278c-6144-4723-b00b-608402e91afd",
+            "expectedVersion": 1,
+            "settings": {
+              "dishCount": 10,
+              "mealSlot": "snack",
+              "desiredAt": null
+            }
+          }
+        },
+        "response": {
+          "ok": false,
+          "error": {
+            "details": {
+              "available": 3,
+              "requested": 10
+            },
+            "messageKey": "INSUFFICIENT_DISHES"
+          },
+          "requestId": "shortage-settings-1793287795383-016ce33a"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "shortage-details-1793287795392-e52631b2",
+            "roomId": "7c81278c-6144-4723-b00b-608402e91afd",
+            "expectedVersion": 1,
+            "settings": {
+              "dishCount": 10,
+              "mealSlot": "snack",
+              "desiredAt": null
+            }
+          }
+        },
+        "response": {
+          "ok": false,
+          "error": {
+            "details": {
+              "available": 3,
+              "requested": 10
+            },
+            "messageKey": "INSUFFICIENT_DISHES"
+          },
+          "requestId": "shortage-details-1793287795392-e52631b2"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "settings-1793287795632-7289796b",
+            "roomId": "49b31114-5e17-45cc-920e-50c61eb34b51",
+            "expectedVersion": 2,
+            "settings": {
+              "dishCount": 20,
+              "mealSlot": "dinner",
+              "desiredAt": null
+            }
+          }
+        },
+        "response": {
+          "ok": true,
+          "data": {
+            "version": 3,
+            "accepted": true,
+            "settings": {
+              "mealSlot": "dinner",
+              "desiredAt": null,
+              "dishCount": 20
+            },
+            "poolVersion": 2
+          },
+          "state": "LOBBY",
+          "roomId": "49b31114-5e17-45cc-920e-50c61eb34b51",
+          "version": 3,
+          "requestId": "settings-1793287795632-7289796b"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "settings-1793287795648-b6202d79",
+            "roomId": "49b31114-5e17-45cc-920e-50c61eb34b51",
+            "expectedVersion": 3,
+            "settings": {
+              "dishCount": 10,
+              "mealSlot": "lunch",
+              "desiredAt": null
+            }
+          }
+        },
+        "response": {
+          "ok": true,
+          "data": {
+            "version": 4,
+            "accepted": true,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": null,
+              "dishCount": 10
+            },
+            "poolVersion": 3
+          },
+          "state": "LOBBY",
+          "roomId": "49b31114-5e17-45cc-920e-50c61eb34b51",
+          "version": 4,
+          "requestId": "settings-1793287795648-b6202d79"
+        }
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "settings-1793287795662-65373d44",
+            "roomId": "49b31114-5e17-45cc-920e-50c61eb34b51",
+            "expectedVersion": 4,
+            "settings": {
+              "dishCount": 21,
+              "mealSlot": "lunch",
+              "desiredAt": null
+            }
+          }
+        },
+        "response": {
+          "ok": false,
+          "error": {
+            "details": {},
+            "messageKey": "INVALID_INPUT"
+          },
+          "requestId": "settings-1793287795662-65373d44"
+        },
+        "requestValid": false
+      },
+      {
+        "request": {
+          "command": "updateSettings",
+          "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+            "requestId": "invite-settings-1793287797326-98950704",
+            "roomId": "86f9f19b-b1f7-48dd-b36c-c184903d3e92",
+            "expectedVersion": 1,
+            "settings": {
+              "dishCount": 11,
+              "mealSlot": "lunch",
+              "desiredAt": null
+            }
+          }
+        },
+        "response": {
+          "ok": true,
+          "data": {
+            "version": 2,
+            "accepted": true,
+            "settings": {
+              "mealSlot": "lunch",
+              "desiredAt": null,
+              "dishCount": 11
+            },
+            "poolVersion": 2
+          },
+          "state": "LOBBY",
+          "roomId": "86f9f19b-b1f7-48dd-b36c-c184903d3e92",
+          "version": 2,
+          "requestId": "invite-settings-1793287797326-98950704"
+        }
+      }
+    ]
+  },
+  "fullRuntimeReportSha256": "97a6dc4b2f22883317a00c8bd2b1a4e629b689ff4f2b639ec6ccb6fabe43c4f5",
+  "allCaseResultsPass": true,
+  "scopeNote": "Compact baseline rerun summary; full maintained baseline B suite is unchanged and emitted in ignored runtime/CI artifact."
+}

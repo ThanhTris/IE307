@@ -1,0 +1,369 @@
+{
+  "items": [
+    {
+      "assignees": [
+        "Vinh5905"
+      ],
+      "deadline": null,
+      "status": "Review",
+      "title": "GM-40 — [P0 · LÀM TRƯỚC] Chuẩn hóa món ăn và bỏ phụ thuộc dữ liệu quán",
+      "url": "https://github.com/ThanhTris/IE307/issues/125"
+    },
+    {
+      "assignees": [
+        "mtuan2491"
+      ],
+      "deadline": "2026-10-26",
+      "status": "Done",
+      "title": "GM-13 — UI kết quả và không đồng thuận",
+      "url": "https://github.com/ThanhTris/IE307/issues/74"
+    },
+    {
+      "assignees": [
+        "TrungNQ2645"
+      ],
+      "deadline": "2026-10-30",
+      "status": "Review",
+      "title": "GM-28 — UI friends, inbox và history integration",
+      "url": "https://github.com/ThanhTris/IE307/issues/89"
+    },
+    {
+      "assignees": [
+        "TrungNQ2645"
+      ],
+      "deadline": "2026-11-03",
+      "status": "Review",
+      "title": "GM-29 — Push native và cold/warm open",
+      "url": "https://github.com/ThanhTris/IE307/issues/90"
+    },
+    {
+      "assignees": [
+        "rosy179"
+      ],
+      "deadline": "2026-10-29",
+      "status": "Done",
+      "title": "GM-25 — UI room, context và preferences integration",
+      "url": "https://github.com/ThanhTris/IE307/issues/86"
+    },
+    {
+      "assignees": [
+        "HoaiTam"
+      ],
+      "deadline": "2026-11-08",
+      "status": "Review",
+      "title": "GM-36 — P2 OCR menu",
+      "url": "https://github.com/ThanhTris/IE307/issues/97"
+    },
+    {
+      "assignees": [
+        "rosy179"
+      ],
+      "deadline": "2026-10-23",
+      "status": "Done",
+      "title": "GM-24 — Location và coverage native integration",
+      "url": "https://github.com/ThanhTris/IE307/issues/85"
+    },
+    {
+      "assignees": [
+        "TrungNQ2645"
+      ],
+      "deadline": "2026-10-22",
+      "status": "Done",
+      "title": "GM-14 — UI bạn bè, inbox và lịch sử",
+      "url": "https://github.com/ThanhTris/IE307/issues/75"
+    },
+    {
+      "assignees": [
+        "TrungNQ2645"
+      ],
+      "deadline": "2026-10-20",
+      "status": "Done",
+      "title": "GM-11 — UI lobby và trạng thái phòng",
+      "url": "https://github.com/ThanhTris/IE307/issues/72"
+    },
+    {
+      "assignees": [
+        "mtuan2491"
+      ],
+      "deadline": "2026-10-22",
+      "status": "Done",
+      "title": "GM-10 — UI context, khu vực, giờ và sở thích",
+      "url": "https://github.com/ThanhTris/IE307/issues/71"
+    },
+    {
+      "assignees": [
+        "ThanhTris"
+      ],
+      "deadline": "2026-10-29",
+      "status": "Done",
+      "title": "GM-23 — Inbox, device và push sender",
+      "url": "https://github.com/ThanhTris/IE307/issues/84"
+    },
+    {
+      "assignees": [
+        "mtuan2491"
+      ],
+      "deadline": "2026-10-20",
+      "status": "Done",
+      "title": "GM-09 — UI Home, tạo và tham gia phòng",
+      "url": "https://github.com/ThanhTris/IE307/issues/70"
+    },
+    {
+      "assignees": [
+        "ThanhTris"
+      ],
+      "deadline": "2026-10-27",
+      "status": "Done",
+      "title": "GM-22 — Friends và room invites API",
+      "url": "https://github.com/ThanhTris/IE307/issues/83"
+    },
+    {
+      "assignees": [
+        "ThanhTris"
+      ],
+      "deadline": "2026-10-23",
+      "status": "Done",
+      "title": "GM-19 — Room, context, ready và start API",
+      "url": "https://github.com/ThanhTris/IE307/issues/80"
+    },
+    {
+      "assignees": [
+        "Vinh5905"
+      ],
+      "deadline": "2026-10-26",
+      "status": "Done",
+      "title": "GM-20 — Submit, finalize và round two API",
+      "url": "https://github.com/ThanhTris/IE307/issues/81"
+    },
+    {
+      "assignees": [
+        "HoaiTam"
+      ],
+      "deadline": "2026-10-21",
+      "status": "Done",
+      "title": "GM-18 — Catalogue, coverage và eligibility API",
+      "url": "https://github.com/ThanhTris/IE307/issues/79"
+    },
+    {
+      "assignees": [
+        "HoaiTam"
+      ],
+      "deadline": "2026-10-28",
+      "status": "Done",
+      "title": "GM-21 — History, consent và recent API",
+      "url": "https://github.com/ThanhTris/IE307/issues/82"
+    },
+    {
+      "assignees": [
+        "ThanhTris"
+      ],
+      "deadline": "2026-10-20",
+      "status": "Done",
+      "title": "GM-17 — RLS, ACL và retention",
+      "url": "https://github.com/ThanhTris/IE307/issues/78"
+    },
+    {
+      "assignees": [
+        "ThanhTris"
+      ],
+      "deadline": "2026-10-19",
+      "status": "Done",
+      "title": "GM-16 — Guest auth và session API",
+      "url": "https://github.com/ThanhTris/IE307/issues/77"
+    },
+    {
+      "assignees": [
+        "TrungNQ2645"
+      ],
+      "deadline": "2026-10-16",
+      "status": "Done",
+      "title": "GM-05 — UI components theo mẫu",
+      "url": "https://github.com/ThanhTris/IE307/issues/66"
+    },
+    {
+      "assignees": [
+        "HoaiTam"
+      ],
+      "deadline": "2026-10-19",
+      "status": "Done",
+      "title": "GM-08 — Import và verified dataset",
+      "url": "https://github.com/ThanhTris/IE307/issues/69"
+    },
+    {
+      "assignees": [
+        "rosy179"
+      ],
+      "deadline": "2026-10-16",
+      "status": "Done",
+      "title": "GM-07 — API contract, client và mock",
+      "url": "https://github.com/ThanhTris/IE307/issues/68"
+    },
+    {
+      "assignees": [
+        "HoaiTam"
+      ],
+      "deadline": "2026-10-15",
+      "status": "Done",
+      "title": "GM-06 — Database schema và migrations",
+      "url": "https://github.com/ThanhTris/IE307/issues/67"
+    },
+    {
+      "assignees": [
+        "Vinh5905"
+      ],
+      "deadline": "2026-10-13",
+      "status": "Done",
+      "title": "GM-04 — Data fields, taxonomy và template",
+      "url": "https://github.com/ThanhTris/IE307/issues/65"
+    },
+    {
+      "assignees": [
+        "Vinh5905"
+      ],
+      "deadline": "2026-10-20",
+      "status": "Done",
+      "title": "GM-15 — Decision engine thuần",
+      "url": "https://github.com/ThanhTris/IE307/issues/76"
+    },
+    {
+      "assignees": [
+        "ThanhTris"
+      ],
+      "deadline": null,
+      "status": "Done",
+      "title": "GM-00 — Chuyển đề tài và soạn bộ nền AIDD",
+      "url": "https://github.com/ThanhTris/IE307/issues/37"
+    },
+    {
+      "assignees": [
+        "ThanhTris"
+      ],
+      "deadline": null,
+      "status": "Done",
+      "title": "GM-02 — UI structure và Expo shell",
+      "url": "https://github.com/ThanhTris/IE307/issues/63"
+    },
+    {
+      "assignees": [
+        "ThanhTris"
+      ],
+      "deadline": null,
+      "status": "Done",
+      "title": "GM-03 — BE structure và local runner",
+      "url": "https://github.com/ThanhTris/IE307/issues/64"
+    },
+    {
+      "assignees": [
+        "rosy179"
+      ],
+      "deadline": "2026-10-20",
+      "status": "Done",
+      "title": "GM-12 — UI bình chọn và vòng hai",
+      "url": "https://github.com/ThanhTris/IE307/issues/73"
+    },
+    {
+      "assignees": [
+        "rosy179"
+      ],
+      "deadline": "2026-10-30",
+      "status": "Todo",
+      "title": "GM-26 — UI vote và round-two integration",
+      "url": "https://github.com/ThanhTris/IE307/issues/87"
+    },
+    {
+      "assignees": [
+        "rosy179"
+      ],
+      "deadline": "2026-11-02",
+      "status": "Todo",
+      "title": "GM-27 — UI result và offering integration",
+      "url": "https://github.com/ThanhTris/IE307/issues/88"
+    },
+    {
+      "assignees": [
+        "rosy179"
+      ],
+      "deadline": "2026-11-04",
+      "status": "Todo",
+      "title": "GM-30 — QR, links và Maps integration",
+      "url": "https://github.com/ThanhTris/IE307/issues/91"
+    },
+    {
+      "assignees": [
+        "TrungNQ2645"
+      ],
+      "deadline": "2026-11-02",
+      "status": "Todo",
+      "title": "GM-31 — SQLite, outbox, cache và reconnect",
+      "url": "https://github.com/ThanhTris/IE307/issues/92"
+    },
+    {
+      "assignees": [
+        "Vinh5905"
+      ],
+      "deadline": "2026-11-03",
+      "status": "Todo",
+      "title": "GM-32 — Regression API, data, security và race",
+      "url": "https://github.com/ThanhTris/IE307/issues/93"
+    },
+    {
+      "assignees": [
+        "Vinh5905"
+      ],
+      "deadline": "2026-11-05",
+      "status": "Todo",
+      "title": "GM-33 — Android UI và pilot QA",
+      "url": "https://github.com/ThanhTris/IE307/issues/94"
+    },
+    {
+      "assignees": [
+        "ThanhTris"
+      ],
+      "deadline": "2026-11-06",
+      "status": "Todo",
+      "title": "GM-34 — Core release và APK",
+      "url": "https://github.com/ThanhTris/IE307/issues/95"
+    },
+    {
+      "assignees": [
+        "mtuan2491"
+      ],
+      "deadline": "2026-11-08",
+      "status": "Todo",
+      "title": "GM-35 — P1 account link và recovery",
+      "url": "https://github.com/ThanhTris/IE307/issues/96"
+    },
+    {
+      "assignees": [
+        "mtuan2491"
+      ],
+      "deadline": "2026-11-08",
+      "status": "Todo",
+      "title": "GM-37 — P2 AI preferences",
+      "url": "https://github.com/ThanhTris/IE307/issues/98"
+    },
+    {
+      "assignees": [
+        "HoaiTam"
+      ],
+      "deadline": "2026-11-08",
+      "status": "Todo",
+      "title": "GM-38 — P2 weather và mood ranking",
+      "url": "https://github.com/ThanhTris/IE307/issues/99"
+    },
+    {
+      "assignees": [
+        "rosy179"
+      ],
+      "deadline": null,
+      "status": "In Progress",
+      "title": "GM-39 — Cải thiện prototype HTML trước khi sửa app",
+      "url": "https://github.com/ThanhTris/IE307/issues/107"
+    }
+  ],
+  "totalCount": 40,
+  "checkedAt": "2026-10-22T12:45:32+07:00",
+  "source": "https://github.com/users/ThanhTris/projects/2",
+  "mainRevision": "afb1dca13b91bef30062aca018e5457908d244bc",
+  "note": "Read-only snapshot; not approval. 35 cards have deadline; null means no deadline, not overdue. Owner decisions are recorded separately in ADR-019. Runtime for new policy not tested."
+}

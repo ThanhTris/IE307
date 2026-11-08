@@ -1,0 +1,28 @@
+{
+  "stage": "offline_data_milestone_A",
+  "reviewStatus": "pending",
+  "baseRevision": "afb1dca13b91bef30062aca018e5457908d244bc",
+  "python": "3.12.14",
+  "os": "macOS 26.1 (25B78)",
+  "regression": {
+    "command": "python3 -m unittest discover -s tests -p 'test_*.py'",
+    "tests": 573,
+    "durationSeconds": 43.622,
+    "status": "Pass"
+  },
+  "catalogueContractTests": 21,
+  "bundleValidation": {
+    "valid": true,
+    "errors": []
+  },
+  "generatedArtifacts": 5,
+  "staleArtifacts": [],
+  "repositoryValidator": "Pass",
+  "taskIndexes": "Pass",
+  "diffCheck": "Pass",
+  "sqlImport": "Not run — ADR-018 approval required",
+  "httpApi": "Not run — ADR-018 approval required",
+  "roomSnapshotRegression": "Not run — ADR-018 approval required",
+  "productionActivation": false,
+  "apiCalls": 0
+}

@@ -509,7 +509,8 @@ class LocalDB:
 
     @staticmethod
     def run(args, sql=None):
-        result = subprocess.run(args,input=sql,text=True,encoding='utf-8',capture_output=True,timeout=180)
+        result = subprocess.run(args,input=sql,text=True,encoding='utf-8',capture_output=True,timeout=180,
+                                creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
         if result.returncode:
             # Do not print SQL context/payload containing dataset/provider data.
             code = re.search(r'ERROR:\s+([0-9A-Z]{5})(?:[:\s]|$)', result.stderr)

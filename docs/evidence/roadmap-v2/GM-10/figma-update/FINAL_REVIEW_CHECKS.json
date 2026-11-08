@@ -1,0 +1,38 @@
+{
+  "scope": "GM-10.2 final documentation handoff",
+  "sourceCommit": "c514bc0ae619957a8e982e72595c42ba8c493819",
+  "targetRef": "origin/main",
+  "targetCommit": "1939d3506a8ee88a95031033caa7a9137cd65e43",
+  "mergeGate": {
+    "source": "GitHub Project #2 live; no cached/local fallback",
+    "checkedAt": "2026-11-02T23:39:40.226755+07:00",
+    "status": "READY_FOR_MERGE_REVIEW",
+    "reviewerApproval": false
+  },
+  "sourceChecks": "BEHAVIOR_REFINEMENT_CHECKS.json",
+  "sourceManifest": "BEHAVIOR_REFINEMENT_MANIFEST.json",
+  "mobileRerun": "Not run: documentation-only handoff; source unchanged",
+  "userConfirmation": "General completion confirmation; see USER_ACCEPTANCE.md",
+  "repositoryValidation": "Pass",
+  "taskIndexes": "Pass",
+  "diff": "Pass",
+  "python": {
+    "cause": "Windows symlink privilege denied during test setup",
+    "total": 657,
+    "errors": 1,
+    "skipped": 6,
+    "passed": 650,
+    "error": "WinError1314: test_stage_refuses_symlink_output",
+    "assertionFailures": 0,
+    "status": "Fail",
+    "seconds": 120.421
+  },
+  "pullRequestCreated": false,
+  "projectStatusChanged": false,
+  "sourceManifestVerified": true,
+  "upstreamBaselineCommitsIncludedInTarget": [
+    "9e9f5ba",
+    "0711782",
+    "9f71bba"
+  ]
+}

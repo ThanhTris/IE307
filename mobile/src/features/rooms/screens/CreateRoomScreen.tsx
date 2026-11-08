@@ -7,13 +7,13 @@ import { EntryError, EntrySection, entryStyles, RoomEntryFrame, type PreviewCont
 import { useRead, useRoomSubmission } from '../hooks/useRoomEntry';
 import { localTimeInput, mealLabels, parseLocalTime, suggestMeal, validDisplayName, type RequestIdFactory, type RoomEntryReceipt, type RoomEntryRepository } from '../services/roomEntry';
 
-export type CreateRoomScreenProps = PreviewControlsProps & { repository: RoomEntryRepository; onBack: () => void; onEntered: (room: RoomEntryReceipt) => void; createRequestId?: RequestIdFactory };
+export type CreateRoomScreenProps = PreviewControlsProps & { repository: RoomEntryRepository; onBack: () => void; onEntered: (room: RoomEntryReceipt) => void; createRequestId?: RequestIdFactory; initialDisplayName?: string; isLive?: boolean };
 
-export function CreateRoomScreen({ repository, onBack, onEntered, previewControls, createRequestId }: CreateRoomScreenProps) {
+export function CreateRoomScreen({ repository, onBack, onEntered, previewControls, createRequestId, initialDisplayName = '', isLive = false }: CreateRoomScreenProps) {
   const { colors } = useShellTheme();
   const load = useCallback(() => repository.getDiscoveryContext(), [repository]);
   const discovery = useRead(load);
-  const [name, setName] = useState('');
+  const [name, setName] = useState(initialDisplayName);
   const [anchorId, setAnchorId] = useState('');
   const [radiusM, setRadiusM] = useState(2000);
   const [mealSlot, setMealSlot] = useState<MealSlot>();
@@ -40,26 +40,26 @@ export function CreateRoomScreen({ repository, onBack, onEntered, previewControl
     if (!confirmed) { setValidation('Hãy xác nhận điểm ăn, buổi và giờ trước khi tạo.'); return; }
     const budget = budgetInput.trim() === '' ? null : Number(budgetInput);
     if (budget !== null && (!/^\d+$/.test(budgetInput.trim()) || !Number.isSafeInteger(budget) || budget <= 0)) { setValidation('Ngân sách là số nguyên VNĐ/người lớn hơn 0, hoặc để trống.'); return; }
-    // Mock server time + buffer is sampled once; retry reuses the exact context.
+    // Server time + buffer is sampled once; retry reuses the exact context.
     const serverNow = Date.parse(discovery.data.serverTime) + Math.max(0, Date.now() - (discovery.receivedAt ?? Date.now()));
     const desiredAt = frozenContext?.desiredAt ?? selectedTime;
     if (!desiredAt) { setValidation('Giờ hẹn cần dạng YYYY-MM-DD HH:mm, múi giờ Việt Nam (UTC+7).'); return; }
-    if (!submitted.uncertain && Date.parse(desiredAt) <= serverNow) { setValidation('Giờ ăn đã qua. Hãy tải lại thời gian mẫu hoặc chọn giờ mới.'); return; }
+    if (!submitted.uncertain && Date.parse(desiredAt) <= serverNow) { setValidation(isLive ? 'Giờ ăn đã qua. Hãy tải lại thời gian máy chủ hoặc chọn giờ mới.' : 'Giờ ăn đã qua. Hãy tải lại thời gian mẫu hoặc chọn giờ mới.'); return; }
     const context: RoomContext = frozenContext ?? { anchorId, radiusM, mealSlot: selectedMeal, desiredAt, serviceMode: 'dine_in', budget, avoidRecent: false, ...(selectedMeal === 'dinner' && suggestion?.timeHint ? { timeHint: suggestion.timeHint } : {}) };
     setFrozenContext(context);
     setValidation(undefined);
     const request = { displayName: name.trim(), context };
     void submitted.run(JSON.stringify(request), requestId => repository.createRoom({ ...request, requestId }));
-  }, [name, anchor, discovery, confirmed, budgetInput, frozenContext, selectedTime, selectedMeal, suggestion, anchorId, radiusM, submitted, repository]);
-  return <RoomEntryFrame title="Hẹn nhau bữa nào?" subtitle="Chọn một điểm hẹn, cả nhóm cùng chọn món." onBack={onBack} busy={submitted.busy} previewControls={busy => <>
+  }, [name, anchor, discovery, confirmed, budgetInput, frozenContext, selectedTime, selectedMeal, suggestion, anchorId, radiusM, submitted, repository, isLive]);
+  return <RoomEntryFrame title="Hẹn nhau bữa nào?" subtitle="Chọn một điểm hẹn, cả nhóm cùng chọn món." onBack={onBack} busy={submitted.busy || submitted.uncertain || submitted.accepted} isMock={!isLive} previewControls={isLive ? undefined : busy => <>
     {previewControls?.(busy)}
     <AppButton label="Thử gợi ý vị trí (mô phỏng từ chối)" variant="quiet" disabled={disabled || busy} onPress={() => setGpsDenied(true)} colors={colors} />
     <AppButton label="Cập nhật giờ và điểm ăn mẫu" variant="quiet" disabled={disabled || busy} onPress={() => { changeContext(); discovery.retry(); }} colors={colors} />
   </>}>
     <FormField label="Tên của bạn (chủ phòng)" value={name} onChangeText={value => { setName(value); setValidation(undefined); }} editable={!disabled} placeholder="Mọi người gọi bạn là…" helperText="Tên hiển thị trong phòng · 1–24 ký tự" colors={colors} />
-    {discovery.loading ? <StatusNotice title="Đang tải điểm ăn mẫu…" colors={colors} /> : null}
+    {discovery.loading ? <StatusNotice title={isLive ? 'Đang tải điểm ăn…' : 'Đang tải điểm ăn mẫu…'} colors={colors} /> : null}
     {discovery.error ? <EntryError code={discovery.error} onRetry={discovery.retry} /> : null}
-    {discovery.data?.anchors.length === 0 ? <StatusNotice title="Chưa có điểm ăn trong vùng" message="Hãy đổi fixture hoặc tải lại. Không tự dùng GPS của chủ phòng." actionLabel="Tải lại điểm ăn" onAction={discovery.retry} colors={colors} /> : null}
+    {discovery.data?.anchors.length === 0 ? <StatusNotice title="Chưa có điểm ăn trong vùng" message={isLive ? 'Server hiện không trả điểm ăn công cộng phù hợp. Hãy thử tải lại hoặc dùng vị trí gợi ý khi có hỗ trợ.' : 'Hãy đổi fixture hoặc tải lại. Không tự dùng GPS của chủ phòng.'} actionLabel="Tải lại điểm ăn" onAction={discovery.retry} colors={colors} /> : null}
     <EntrySection title="Buổi và giờ ăn">
       <View style={entryStyles.row}>{(Object.keys(mealLabels) as MealSlot[]).map(value => <Chip key={value} label={mealLabels[value]} selected={selectedMeal === value} disabled={disabled} onPress={() => { setMealSlot(value); changeContext(); }} colors={colors} />)}</View>
       <View style={entryStyles.row}>
@@ -71,7 +71,7 @@ export function CreateRoomScreen({ repository, onBack, onEntered, previewControl
     </EntrySection>
     <EntrySection title="Điểm ăn chung" description="Chọn điểm công cộng bằng tay. Vị trí cá nhân của bạn không được chia sẻ.">
       <View style={entryStyles.row}>{discovery.data?.anchors.map(item => <Chip key={item.id} label={item.name} selected={item.id === anchorId} disabled={disabled} onPress={() => { setAnchorId(item.id); changeContext(); }} colors={colors} />)}</View>
-      {anchor ? <Text style={[entryStyles.body, { color: colors.muted }]}>{anchor.address} · dữ liệu mẫu</Text> : null}
+      {anchor ? <Text style={[entryStyles.body, { color: colors.muted }]}>{anchor.address}{isLive ? '' : ' · dữ liệu mẫu'}</Text> : null}
       {gpsDenied ? <StatusNotice title="Chưa có quyền vị trí · mô phỏng" message="Bạn vẫn có thể chọn điểm công cộng bằng tay." colors={colors} /> : null}
       <Text style={[entryStyles.body, { color: colors.text }]}>Tìm nơi ăn trong bán kính</Text>
       <View style={entryStyles.row}>{[1000, 2000, 5000].map(value => <Chip key={value} label={`${value / 1000} km`} selected={radiusM === value} disabled={disabled} onPress={() => { setRadiusM(value); changeContext(); }} colors={colors} />)}</View>
@@ -84,8 +84,9 @@ export function CreateRoomScreen({ repository, onBack, onEntered, previewControl
       <Chip label="Tôi xác nhận điểm ăn, buổi và giờ" selected={confirmed} disabled={disabled || !anchor} onPress={() => { setConfirmed(value => !value); setValidation(undefined); }} colors={colors} />
       {validation ? <Text accessibilityRole="alert" style={[entryStyles.body, { color: colors.danger }]}>{validation}</Text> : null}
       {submitted.error ? <EntryError code={submitted.error} /> : null}
-      <AppButton label={submitted.accepted ? 'Đã tạo phòng mô phỏng' : submitted.uncertain ? 'Thử lại cùng yêu cầu tạo phòng' : 'Tạo phòng mô phỏng'} loading={submitted.busy} disabled={submitted.accepted || discovery.loading || !!discovery.error || !discovery.data?.anchors.length} onPress={create} accessibilityHint="Tạo phòng mô phỏng sau khi bạn xác nhận điểm hẹn, buổi và giờ ăn." colors={colors} />
+      <AppButton label={submitted.accepted ? (isLive ? 'Đã tạo phòng' : 'Đã tạo phòng mô phỏng') : submitted.uncertain ? 'Thử lại cùng yêu cầu tạo phòng' : (isLive ? 'Tạo phòng' : 'Tạo phòng mô phỏng')} loading={submitted.busy} disabled={submitted.accepted || discovery.loading || !!discovery.error || !discovery.data?.anchors.length} onPress={create} accessibilityHint={isLive ? 'Tạo phòng thật sau khi bạn xác nhận điểm hẹn, buổi và giờ ăn.' : 'Tạo phòng mô phỏng sau khi bạn xác nhận điểm hẹn, buổi và giờ ăn.'} colors={colors} />
       <Text style={[entryStyles.caption, { color: colors.muted }]}>Tạo phòng xong, bạn có thể tiếp tục chọn khẩu vị.</Text>
     </View>
   </RoomEntryFrame>;
 }
+

@@ -1,0 +1,25 @@
+meta {
+  name: 26 Outsider cannot read result
+  type: http
+  seq: 26
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/dish_session
+  body: json
+  auth: none
+}
+headers {
+  Authorization: Bearer {{outsiderToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"command":"result","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B","roomId":"{{roomId}}"}}
+}
+tests {
+  test('Outsider is denied room result projection', () => {
+    const b = res.getBody();
+    expect(res.getStatus()).to.equal(403);
+    expect(b.ok).to.equal(false);
+    expect(b.error.messageKey).to.equal('NOT_MEMBER');
+  });
+}

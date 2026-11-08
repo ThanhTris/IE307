@@ -1,0 +1,726 @@
+{
+  "runId": "gm03-20261026m",
+  "sourceRevision": "fe5b5f363d94787f4dac6fcfb1933698fb534830",
+  "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+  "schemaVersion": "0.9.1",
+  "projectId": "gm03qa-gm03-20261026m",
+  "endpoint": {
+    "baseUrl": "http://127.0.0.1:54371",
+    "apiPort": 54371,
+    "dbPort": 54372
+  },
+  "applicationDatabaseChanged": false,
+  "credentialsWrittenToReport": false,
+  "gm03": {
+    "result": "Pass",
+    "runId": "gm03-20261026m",
+    "sourceRevision": "fe5b5f363d94787f4dac6fcfb1933698fb534830",
+    "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+    "schemaVersion": "0.9.1",
+    "apiOrigin": "http://127.0.0.1:54371",
+    "identityIdsRecorded": false,
+    "credentialsRecorded": false,
+    "applicationDatabaseChanged": false,
+    "assertionCount": 7,
+    "cases": [
+      {
+        "name": "GoTrue health uses the QA API origin",
+        "expected": {
+          "status": 200,
+          "name": "GoTrue"
+        },
+        "actual": {
+          "status": 200,
+          "name": "GoTrue"
+        },
+        "result": "Pass"
+      },
+      {
+        "name": "guest signup returns an anonymous identity and session",
+        "expected": true,
+        "actual": true,
+        "result": "Pass"
+      },
+      {
+        "name": "refresh retains the same guest identity",
+        "expected": true,
+        "actual": true,
+        "result": "Pass"
+      },
+      {
+        "name": "GoTrue user endpoint accepts the refreshed JWT",
+        "expected": {
+          "status": 200,
+          "sameIdentity": true
+        },
+        "actual": {
+          "status": 200,
+          "sameIdentity": true
+        },
+        "result": "Pass"
+      },
+      {
+        "name": "authenticated REST RPC returns caller identity projection",
+        "expected": {
+          "status": 200,
+          "hasCallerProjection": true
+        },
+        "actual": {
+          "status": 200,
+          "hasCallerProjection": true
+        },
+        "result": "Pass"
+      },
+      {
+        "name": "missing JWT is denied at REST boundary",
+        "expected": {
+          "status": 401
+        },
+        "actual": {
+          "status": 401
+        },
+        "result": "Pass"
+      },
+      {
+        "name": "forged JWT is denied at REST boundary",
+        "expected": {
+          "status": 401
+        },
+        "actual": {
+          "status": 401
+        },
+        "result": "Pass"
+      }
+    ],
+    "completedAt": "2026-10-26T12:47:02.824Z"
+  },
+  "v4": {
+    "runId": "gm03-20261026m",
+    "target": "owned Supabase QA project gm03qa-gm03-20261026m",
+    "branch": "codex/gm-02-03-foundations",
+    "baseline": "fe5b5f363d94787f4dac6fcfb1933698fb534830",
+    "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+    "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
+    "dataset": {
+      "realRelease": "dish-catalogue-v1:1.1.0",
+      "realCount": 39,
+      "realFixtureOnly": false,
+      "syntheticRelease": "dish-catalogue-v1:qa-gm03-synthetic20-v1",
+      "syntheticCount": 20,
+      "syntheticFixtureOnly": true
+    },
+    "caseCount": 82,
+    "cases": [
+      {
+        "case": "v4 worker heartbeat verified",
+        "result": "Pass",
+        "expected": true,
+        "actual": true
+      },
+      {
+        "case": "real catalogue shortage dinner",
+        "result": "Pass",
+        "expected": {
+          "status": 409,
+          "code": "INSUFFICIENT_DISHES"
+        },
+        "actual": {
+          "status": 409,
+          "code": "INSUFFICIENT_DISHES",
+          "details": {
+            "available": 7,
+            "requested": 10
+          }
+        }
+      },
+      {
+        "case": "real catalogue reports exact availability dinner",
+        "result": "Pass",
+        "expected": {
+          "available": 7,
+          "requested": 10
+        },
+        "actual": {
+          "available": 7,
+          "requested": 10
+        }
+      },
+      {
+        "case": "real catalogue shortage snack",
+        "result": "Pass",
+        "expected": {
+          "status": 409,
+          "code": "INSUFFICIENT_DISHES"
+        },
+        "actual": {
+          "status": 409,
+          "code": "INSUFFICIENT_DISHES",
+          "details": {
+            "available": 1,
+            "requested": 10
+          }
+        }
+      },
+      {
+        "case": "real catalogue reports exact availability snack",
+        "result": "Pass",
+        "expected": {
+          "available": 1,
+          "requested": 10
+        },
+        "actual": {
+          "available": 1,
+          "requested": 10
+        }
+      },
+      {
+        "case": "default preference initial revision",
+        "result": "Pass",
+        "expected": 0,
+        "actual": 0
+      },
+      {
+        "case": "default preference increments caller revision",
+        "result": "Pass",
+        "expected": 1,
+        "actual": 1
+      },
+      {
+        "case": "preview contains admission summary, not roster",
+        "result": "Pass",
+        "expected": false,
+        "actual": false
+      },
+      {
+        "case": "preview joinable",
+        "result": "Pass",
+        "expected": true,
+        "actual": true
+      },
+      {
+        "case": "join snapshots member default preference",
+        "result": "Pass",
+        "expected": "warm",
+        "actual": "warm"
+      },
+      {
+        "case": "room reports ranking unsupported",
+        "result": "Pass",
+        "expected": "UNSUPPORTED",
+        "actual": "UNSUPPORTED"
+      },
+      {
+        "case": "snapshot contains no ready field",
+        "result": "Pass",
+        "expected": false,
+        "actual": false
+      },
+      {
+        "case": "host can request exactly 20 dishes",
+        "result": "Pass",
+        "expected": 20,
+        "actual": 20
+      },
+      {
+        "case": "pool contains exactly 20 after settings change",
+        "result": "Pass",
+        "expected": 20,
+        "actual": 20
+      },
+      {
+        "case": "pool contains exact requested 10",
+        "result": "Pass",
+        "expected": 10,
+        "actual": 10
+      },
+      {
+        "case": "dish count 21 rejected",
+        "result": "Pass",
+        "expected": {
+          "status": 400,
+          "code": "INVALID_INPUT"
+        },
+        "actual": {
+          "status": 400,
+          "code": "INVALID_INPUT",
+          "details": {}
+        }
+      },
+      {
+        "case": "room preference change increments room version",
+        "result": "Pass",
+        "expected": 5,
+        "actual": 5
+      },
+      {
+        "case": "own preference is room-scoped",
+        "result": "Pass",
+        "expected": "cold",
+        "actual": "cold"
+      },
+      {
+        "case": "host starts without ready state",
+        "result": "Pass",
+        "expected": "ROUND_1",
+        "actual": "ROUND_1"
+      },
+      {
+        "case": "start roster size",
+        "result": "Pass",
+        "expected": 2,
+        "actual": 2
+      },
+      {
+        "case": "submit ACK does not start waiting clock",
+        "result": "Pass",
+        "expected": null,
+        "actual": null
+      },
+      {
+        "case": "same request replay stays accepted",
+        "result": "Pass",
+        "expected": true,
+        "actual": true
+      },
+      {
+        "case": "mutated request id rejected",
+        "result": "Pass",
+        "expected": {
+          "status": 409,
+          "code": "REQUEST_ID_REUSED"
+        },
+        "actual": {
+          "status": 409,
+          "code": "REQUEST_ID_REUSED",
+          "details": {}
+        }
+      },
+      {
+        "case": "second ballot rejected",
+        "result": "Pass",
+        "expected": {
+          "status": 409,
+          "code": "ALREADY_SUBMITTED"
+        },
+        "actual": {
+          "status": 409,
+          "code": "ALREADY_SUBMITTED",
+          "details": {}
+        }
+      },
+      {
+        "case": "R1 without winner advances to a real round 2",
+        "result": "Pass",
+        "expected": 2,
+        "actual": 2
+      },
+      {
+        "case": "R1 open survivor pool is nonempty",
+        "result": "Pass",
+        "expected": true,
+        "actual": true
+      },
+      {
+        "case": "R2 removal cap for 10 candidates",
+        "result": "Pass",
+        "expected": 3,
+        "actual": 3
+      },
+      {
+        "case": "R2 cap plus one rejected",
+        "result": "Pass",
+        "expected": {
+          "status": 409,
+          "code": "REMOVE_LIMIT"
+        },
+        "actual": {
+          "status": 409,
+          "code": "REMOVE_LIMIT",
+          "details": {}
+        }
+      },
+      {
+        "case": "ACK alone does not start R2 waiting clock",
+        "result": "Pass",
+        "expected": null,
+        "actual": null
+      },
+      {
+        "case": "waiting deadline is 60 seconds",
+        "result": "Pass",
+        "expected": 60000,
+        "actual": 60000
+      },
+      {
+        "case": "exact half roster cannot end early",
+        "result": "Pass",
+        "expected": false,
+        "actual": false
+      },
+      {
+        "case": "host early end below strict majority",
+        "result": "Pass",
+        "expected": {
+          "status": 409,
+          "code": "NOT_READY"
+        },
+        "actual": {
+          "status": 409,
+          "code": "NOT_READY",
+          "details": {}
+        }
+      },
+      {
+        "case": "all complete round-two ballots finalize server-side",
+        "result": "Pass",
+        "expected": "DECIDED",
+        "actual": "DECIDED"
+      },
+      {
+        "case": "Top 3 scores sort/tie with dense ranks",
+        "result": "Pass",
+        "expected": [
+          1,
+          1,
+          2
+        ],
+        "actual": [
+          1,
+          1,
+          2
+        ]
+      },
+      {
+        "case": "Top 3 score basis",
+        "result": "Pass",
+        "expected": [
+          3,
+          3,
+          2
+        ],
+        "actual": [
+          3,
+          3,
+          2
+        ]
+      },
+      {
+        "case": "Top 3 tie cutoff stays capped and contains winner",
+        "result": "Pass",
+        "expected": true,
+        "actual": true
+      },
+      {
+        "case": "winner is on podium",
+        "result": "Pass",
+        "expected": true,
+        "actual": true
+      },
+      {
+        "case": "R2 removed dish absent from podium",
+        "result": "Pass",
+        "expected": false,
+        "actual": false
+      },
+      {
+        "case": "private vote and seed are absent from result",
+        "result": "Pass",
+        "expected": false,
+        "actual": false
+      },
+      {
+        "case": "result API returns persisted result id",
+        "result": "Pass",
+        "expected": "955d6bc6-812b-44ba-bcb2-53d4ed53b4be",
+        "actual": "955d6bc6-812b-44ba-bcb2-53d4ed53b4be"
+      },
+      {
+        "case": "outsider cannot read result",
+        "result": "Pass",
+        "expected": {
+          "status": 403,
+          "code": "NOT_MEMBER"
+        },
+        "actual": {
+          "status": 403,
+          "code": "NOT_MEMBER",
+          "details": {}
+        }
+      },
+      {
+        "case": "N=1 after R1 opens R2",
+        "result": "Pass",
+        "expected": 2,
+        "actual": 2
+      },
+      {
+        "case": "R2 carries one candidate",
+        "result": "Pass",
+        "expected": 1,
+        "actual": 1
+      },
+      {
+        "case": "N=1 removal cap remains one",
+        "result": "Pass",
+        "expected": 1,
+        "actual": 1
+      },
+      {
+        "case": "removing all candidates ends without winner",
+        "result": "Pass",
+        "expected": "NO_CONSENSUS",
+        "actual": "NO_CONSENSUS"
+      },
+      {
+        "case": "all removed reason",
+        "result": "Pass",
+        "expected": "ALL_REMOVED",
+        "actual": "ALL_REMOVED"
+      },
+      {
+        "case": "all removed podium empty",
+        "result": "Pass",
+        "expected": 0,
+        "actual": 0
+      },
+      {
+        "case": "empty intersection ends in R1",
+        "result": "Pass",
+        "expected": "NO_CONSENSUS",
+        "actual": "NO_CONSENSUS"
+      },
+      {
+        "case": "empty intersection reason",
+        "result": "Pass",
+        "expected": "EMPTY_INTERSECTION",
+        "actual": "EMPTY_INTERSECTION"
+      },
+      {
+        "case": "empty R1 does not create R2",
+        "result": "Pass",
+        "expected": 1,
+        "actual": 1
+      },
+      {
+        "case": "one of three cannot end wait",
+        "result": "Pass",
+        "expected": false,
+        "actual": false
+      },
+      {
+        "case": "three-person strict majority below threshold",
+        "result": "Pass",
+        "expected": {
+          "status": 409,
+          "code": "NOT_READY"
+        },
+        "actual": {
+          "status": 409,
+          "code": "NOT_READY",
+          "details": {}
+        }
+      },
+      {
+        "case": "two of three can end wait",
+        "result": "Pass",
+        "expected": true,
+        "actual": true
+      },
+      {
+        "case": "host finalize acknowledges transition",
+        "result": "Pass",
+        "expected": "ROUND_ADVANCED",
+        "actual": "ROUND_ADVANCED"
+      },
+      {
+        "case": "finalize state is round two",
+        "result": "Pass",
+        "expected": "ROUND_2",
+        "actual": "ROUND_2"
+      },
+      {
+        "case": "worker timeout advances state without client finalize",
+        "result": "Pass",
+        "expected": "ROUND_2",
+        "actual": "ROUND_2"
+      },
+      {
+        "case": "social identity endpoint available for authenticated caller",
+        "result": "Pass",
+        "expected": 200,
+        "actual": 200
+      },
+      {
+        "case": "stale invitation version rejected before retry",
+        "result": "Pass",
+        "expected": {
+          "status": 409,
+          "code": "VERSION_CONFLICT"
+        },
+        "actual": {
+          "status": 409,
+          "code": "VERSION_CONFLICT"
+        }
+      },
+      {
+        "case": "invitation admission uses v4 capacity",
+        "result": "Pass",
+        "expected": 2,
+        "actual": 2
+      },
+      {
+        "case": "invited member is immediately in lobby",
+        "result": "Pass",
+        "expected": true,
+        "actual": true
+      },
+      {
+        "case": "v4 invitation snapshot has no ready state",
+        "result": "Pass",
+        "expected": false,
+        "actual": false
+      },
+      {
+        "case": "inbox invitation references admitted room",
+        "result": "Pass",
+        "expected": true,
+        "actual": true
+      },
+      {
+        "case": "history R1 no unanimous WANT advances to R2",
+        "result": "Pass",
+        "expected": 2,
+        "actual": 2
+      },
+      {
+        "case": "explicit consent persists personal history",
+        "result": "Pass",
+        "expected": true,
+        "actual": true
+      },
+      {
+        "case": "all-member consent persists one group projection",
+        "result": "Pass",
+        "expected": true,
+        "actual": true
+      },
+      {
+        "case": "history projection reuses persisted Top 3",
+        "result": "Pass",
+        "expected": true,
+        "actual": true
+      },
+      {
+        "case": "history Top 3 tie cutoff stays capped and contains winner",
+        "result": "Pass",
+        "expected": true,
+        "actual": true
+      },
+      {
+        "case": "owner can delete own history",
+        "result": "Pass",
+        "expected": true,
+        "actual": true
+      },
+      {
+        "case": "deleted personal history is absent",
+        "result": "Pass",
+        "expected": false,
+        "actual": false
+      },
+      {
+        "case": "group revoke purges projection for all participants",
+        "result": "Pass",
+        "expected": false,
+        "actual": false
+      },
+      {
+        "case": "expired history is hidden by API",
+        "result": "Pass",
+        "expected": false,
+        "actual": false
+      },
+      {
+        "case": "personal-only consent writes each personal projection",
+        "result": "Pass",
+        "expected": true,
+        "actual": true
+      },
+      {
+        "case": "personal-only consent does not write group projection",
+        "result": "Pass",
+        "expected": false,
+        "actual": false
+      },
+      {
+        "case": "group-only consent writes shared projection",
+        "result": "Pass",
+        "expected": true,
+        "actual": true
+      },
+      {
+        "case": "group-only consent does not write personal projection",
+        "result": "Pass",
+        "expected": false,
+        "actual": false
+      },
+      {
+        "case": "group projection requires every roster member consent",
+        "result": "Pass",
+        "expected": false,
+        "actual": false
+      },
+      {
+        "case": "consent enabled during lobby is included at start",
+        "result": "Pass",
+        "expected": true,
+        "actual": true
+      },
+      {
+        "case": "post-start opt-in does not grant consent retroactively",
+        "result": "Pass",
+        "expected": false,
+        "actual": false
+      },
+      {
+        "case": "revoke before finalize suppresses only revoked personal scope",
+        "result": "Pass",
+        "expected": true,
+        "actual": true
+      },
+      {
+        "case": "room accepts exactly 20 members",
+        "result": "Pass",
+        "expected": 20,
+        "actual": 20
+      },
+      {
+        "case": "21st member rejected",
+        "result": "Pass",
+        "expected": {
+          "status": 409,
+          "code": "ROOM_FULL"
+        },
+        "actual": {
+          "status": 409,
+          "code": "ROOM_FULL",
+          "details": {}
+        }
+      },
+      {
+        "case": "inbox API callable for authenticated member",
+        "result": "Pass",
+        "expected": 200,
+        "actual": 200
+      }
+    ],
+    "credentialsWritten": false,
+    "applicationDatabaseChanged": false
+  },
+  "verificationAfterSuite": {
+    "migrationCount": 16,
+    "functionCount": 172,
+    "catalogueCount": 2
+  },
+  "completedAt": "2026-10-26T12:47:37.253Z"
+}

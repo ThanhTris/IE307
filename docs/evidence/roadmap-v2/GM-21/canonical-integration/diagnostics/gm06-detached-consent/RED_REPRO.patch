@@ -1,0 +1,12 @@
+diff --git a/scripts/gm06_canonical_check.py b/scripts/gm06_canonical_check.py
+index 026a0f3..6cfda37 100644
+--- a/scripts/gm06_canonical_check.py
++++ b/scripts/gm06_canonical_check.py
+@@ -331,6 +331,7 @@ def run(report_path, previous_ref=None):
+         query('history still readable after actual cleanup', 'select '+visible+';')
+         query('room-bound consent detached without losing live authorization', 'select room_id is null and retention_detached from public.consents where id='+literal(consents[('group',users[0])])+';')
+         query('canonical result/ref/consent survive cleanup', 'select exists(select 1 from gm17_private.result_refs where id='+literal(result_id)+') and exists(select 1 from gm17_private.room_refs where id='+literal(room_id)+') and (select count(*)=20 from gm06_canonical.history_audience where history_id='+literal(hid)+');')
++        rejects('detached room consent cannot authorize another new history',history('detached-consent-reuse','group',uid('none-2'),consent_map=consents))
+         query('room preference cleans up, account default retained', 'select not exists(select 1 from gm06_canonical.room_preferences where room_id='+literal(room_id)+') and exists(select 1 from gm06_canonical.account_preferences where user_id='+literal(users[0])+');')
+         db.psql('delete from gm06_canonical.histories where history_id='+literal(uid('personal-history'))+';')
+         rejects('deleted personal history cannot be recreated by retry',history('retry-personal','personal',people=members[:1]),'23505')

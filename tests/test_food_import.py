@@ -246,6 +246,15 @@ class FoodImportTests(unittest.TestCase):
         with patch.object(importer.LocalDB,'run',return_value='unix:///local.sock'),patch.dict(os.environ,{'DOCKER_HOST':'https://remote'}):
             with self.assertRaisesRegex(ValueError,'Local Docker'):importer.LocalDB()
 
+    def test_local_worker_commands_hide_windows_console_and_preserve_sql_input(self):
+        completed=subprocess.CompletedProcess([],0,'safe-output','')
+        with patch.object(importer.os,'name','nt'), \
+                patch.object(importer.subprocess,'CREATE_NO_WINDOW',0x08000000,create=True), \
+                patch.object(importer.subprocess,'run',return_value=completed) as run:
+            self.assertEqual(importer.LocalDB.run(['docker','exec','owned-container'],'select 1;'),'safe-output')
+        self.assertEqual(run.call_args.kwargs['creationflags'],0x08000000)
+        self.assertEqual(run.call_args.kwargs['input'],'select 1;')
+
     def test_cli_writes_reject_report_without_db_access(self):
         with tempfile.TemporaryDirectory() as tmp:
             report=Path(tmp)/'reject.json'

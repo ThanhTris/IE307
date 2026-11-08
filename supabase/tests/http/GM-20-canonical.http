@@ -1,0 +1,69 @@
+# GM20.4 / B-supplement. Owned test DB only; server creation flag defaults OFF.
+# Setup+automatic assertions+cleanup: python scripts/gm20_canonical_check.py
+# Keep+private Bruno env: python scripts/gm20_canonical_check.py --bruno
+# Cleanup: python scripts/gm20_canonical_check.py --cleanup
+# Docker Desktop: existing GM_V4_ALLOW_LOCAL_DOCKER_WILDCARD=1 opt-in.
+@baseUrl = http://127.0.0.1:54361
+@anonKey = <QA_ANON_KEY>
+@hostJWT = <GUEST_HOST_JWT>
+@memberJWT = <GUEST_MEMBER_JWT>
+@roomId = <PINNED_SUPPLEMENT_ROOM_UUID>
+@version = <LAST_RESPONSE_VERSION>
+@poolVersion = <LOCKED_POOL_VERSION>
+@round = <CURRENT_ROUND>
+@votes = <COMPLETE_JSON_ARRAY_FROM_CURRENT_SNAPSHOT_POOL>
+
+### Snapshot —new contract pin, current round/poolVersion, only ownBallot
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{anonKey}}
+Authorization: Bearer {{hostJWT}}
+Content-Type: application/json
+
+{"command":"snapshot","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B-supplement","roomId":"{{roomId}}"}}
+
+### Submit complete ballot —200 ACK, missing votes not implicit OK/KEEP
+# R1 WANT/OK/NO; R2 KEEP/REMOVE with actual cap=max(1,floor(.30*N)).
+# Same request/payload=>saved ACK, altered payload same ID=>REQUEST_ID_REUSED;
+# new ID/same accepted content=>same submission, changed content=>ALREADY_SUBMITTED.
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{anonKey}}
+Authorization: Bearer {{memberJWT}}
+Content-Type: application/json
+
+{"command":"submit","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B-supplement","requestId":"canonical-submit-stable","roomId":"{{roomId}}","expectedVersion":{{version}},"round":{{round}},"poolVersion":{{poolVersion}},"votes":{{votes}}}}
+
+### Waiting —after ACK, starts60s only for first actual waiting of this round
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{anonKey}}
+Authorization: Bearer {{memberJWT}}
+Content-Type: application/json
+
+{"command":"waiting","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B-supplement","requestId":"canonical-wait-stable","roomId":"{{roomId}}","expectedVersion":{{version}},"round":{{round}},"poolVersion":{{poolVersion}}}}
+
+### Host ends waiting —requires current-round ACK count > locked roster/2
+# Exactly half / no active waiting=>NOT_READY. Host cannot send winner/seed.
+# R1 advance ACK=>ROUND_ADVANCED, round2, no terminal resultId/finalizedAt.
+# Terminal ACK=>same persisted canonical resultId; retry cannot reroll or rewrite.
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{anonKey}}
+Authorization: Bearer {{hostJWT}}
+Content-Type: application/json
+
+{"command":"finalize","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B-supplement","requestId":"canonical-finalize-stable","roomId":"{{roomId}}","expectedVersion":{{version}}}}
+
+### Canonical result —cohort R1, fixed Top3/rank/order, correct final row IDs
+# NO_CONSENSUS has null winner/versions and []; no raw ballots/tie-set/seed.
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{anonKey}}
+Authorization: Bearer {{memberJWT}}
+Content-Type: application/json
+
+{"command":"result","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B-supplement","roomId":"{{roomId}}"}}
+
+### History —live scoped consent; retains writer projection after room cleanup
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{anonKey}}
+Authorization: Bearer {{memberJWT}}
+Content-Type: application/json
+
+{"command":"history","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B-supplement"}}

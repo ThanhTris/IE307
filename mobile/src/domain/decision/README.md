@@ -55,3 +55,16 @@ node mobile/scripts/check-decision.mjs --report /tmp/decision-actual.json
 Mobile đã có locked dependencies: `npm run typecheck`, `npm run lint`, `npm test -- --watchman=false`, `npm run check:architecture`. Node type stripping không thay tsc. CI domain chạy cả hai suites/report riêng vì Jest chỉ nhận .test.ts/tsx.
 
 [CHECKS](../../../../docs/evidence/roadmap-v2/GM-15/CHECKS.md), [HANDOFF](../../../../docs/evidence/roadmap-v2/GM-15/HANDOFF.md), [mapping](../../../../docs/evidence/roadmap-v2/GM-15/CONTRACT_MAPPING.md), [fixtures](../../../../tests/fixtures/decision-v2/README.md) ghi revision/actual/giới hạn. Historical [v1 handoff](../../../../docs/evidence/roadmap-v1/GM-06/HANDOFF.md) và domain-case-results.json giữ nguyên, không dùng làm output của seed patch. Không SQL parity/transaction/auth/race/persisted retry/native claims hoặc tự Approved/Done.
+
+
+## GM15.3 — opt-in v4 domain
+
+`dishPolicyV4.ts` exports decideDishSessionV4 and removalCapV4 under policy
+`dish-decision-v4/ADR-019-30PCT-MIN1`. It receives locked roster2–20/initial pool10–20,
+complete ACKed ballot maps and server seed; returns private typed decisions/Top3 and
+round1BallotCount. R1 remaining1 opens R2; R2 cap30% min1; scores solely R1; deterministic
+cutoff includes winner. No preference weighting, public RPC or host/timer permission.
+See [v4 handoff](../../../../docs/evidence/roadmap-v2/GM-15/v4/HANDOFF.md),
+[fixtures](../../../../tests/fixtures/decision-v4/README.md). Run
+`node --test mobile/tests/dishPolicyV4.test.mjs` from root; Node24 is required.
+Use the new entry point explicitly; existing v2/v3 exports and consumers do not change.

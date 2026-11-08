@@ -1,0 +1,7 @@
+Approval source: https://github.com/users/ThanhTris/projects/2 | checked at 2026-10-29T13:59:18.627646+00:00 | no cached/local fallback
+Target snapshot: origin/main = 5c339cf351ca4e37d95d4d0e8211be0ccb8a8af3 (local ref; freshness not verified)
+Baseline approval mapping: GM-01 -> Project GM-00 / issue #37 (owner-pinned; artifacts remain separate)
+GM-20: BLOCKED | owner=Vinh reviewer=Trí | tasks/backlog/GM-20.md
+  WAIT GM-19: Project=not approved | local_status=backlog | tasks/backlog/GM-19.md
+    Project Status is Needs Update, not Done
+Gate checks approval source and delivered files, not execution. Merge still requires review of this PR, upstream PR/commit verification and real integration tests. No status/task edits performed.

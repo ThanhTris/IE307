@@ -1,5 +1,8 @@
 # GM-23.1 inbox/device registration. Tokens are placeholders; use real guest
 # JWTs from a disposable fixture and never commit a token or provider secret.
+# GM-23.2/schema0.15.0 adds canonical reference metadata without changing RPCs.
+# Setup: python scripts/gm23_canonical_check.py --bruno (owned QA only).
+# Full producer-driven assertions and desktop collection: GM-23-canonical.
 
 ### Inbox (own caller, <=50 keyset page)
 POST {{baseUrl}}/rest/v1/rpc/list_partner_inbox

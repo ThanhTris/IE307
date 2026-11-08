@@ -1,0 +1,30 @@
+meta {
+  name: 11 Preview join
+  type: http
+  seq: 11
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/dish_session
+  body: json
+  auth: none
+}
+headers {
+  Authorization: Bearer {{memberToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"command":"previewJoin","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B","requestId":"preview_{{timestamp}}","code":"{{roomCode}}"}}
+}
+script:pre-request {
+  bru.setVar('timestamp', String(Date.now()));
+}
+tests {
+  test('Preview returns minimal admission details without roster', () => {
+    const b = res.getBody();
+    expect(res.getStatus()).to.equal(200);
+    expect(b.ok).to.equal(true);
+    expect(b.data.joinable).to.equal(true);
+    expect(b.data.memberCount).to.equal(1);
+    expect(b.data).not.to.have.property('members');
+  });
+}

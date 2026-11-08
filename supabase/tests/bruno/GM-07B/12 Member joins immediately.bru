@@ -1,0 +1,28 @@
+meta {
+  name: 12 Member joins immediately
+  type: http
+  seq: 12
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/dish_session
+  body: json
+  auth: none
+}
+headers {
+  Authorization: Bearer {{memberToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"command":"join","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B","requestId":"join_{{timestamp}}","code":"{{roomCode}}","displayName":"V4 Bruno Member"}}
+}
+script:pre-request {
+  bru.setVar('timestamp', String(Date.now()));
+}
+tests {
+  test('Join admits member without a ready step', () => {
+    const b = res.getBody();
+    expect(res.getStatus()).to.equal(200);
+    expect(b.ok).to.equal(true);
+    expect(b.data.roomId).to.equal(bru.getVar('roomId'));
+  });
+}

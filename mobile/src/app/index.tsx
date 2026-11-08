@@ -1,6 +1,7 @@
-import { useRouter } from 'expo-router';
-import { Gm25HomeScreen } from '../features/home/screens/Gm25HomeScreen';
-import { PreviewControls, previewSessionToken, useRoomPreview } from '../bootstrap/roomPreview';
+import { useCallback, useState } from 'react';
+import { Redirect, useFocusEffect, useRouter } from 'expo-router';
+import { HomeScreen } from '../features/home/screens/HomeScreen';
+import { previewSessionToken, PreviewControls, useRoomPreview } from '../bootstrap/roomPreview';
 import { useRoomRepository } from '../bootstrap/RoomRepositoryProvider';
 
 export default function IndexRoute() {
@@ -8,23 +9,37 @@ export default function IndexRoute() {
   const preview = useRoomPreview();
   const live = useRoomRepository();
   const isReal = live.mode === 'real';
+  const [roomRevision, setRoomRevision] = useState(0);
+  useFocusEffect(useCallback(() => { setRoomRevision(value => value + 1); }, []));
 
   const repository = isReal ? live.repository : preview.client;
   const sessionToken = isReal ? undefined : previewSessionToken;
 
+  const needsGuestEntry = isReal
+    ? !live.isInitializing && live.status === 'empty' && live.issue === 'no-session' && !live.user
+    : !preview.guestName && !preview.active;
+  if (needsGuestEntry) return <Redirect href="/welcome" />;
+  if (!isReal && preview.guestName && !preview.active && !preview.tutorialSeen) return <Redirect href="/tutorial" />;
+
   return (
-    <Gm25HomeScreen
+    <HomeScreen
       key={isReal ? 'live-home' : preview.revision}
       repository={repository}
       sessionToken={sessionToken}
       liveSession={isReal ? live : undefined}
       activeRoom={isReal ? undefined : preview.active}
-      onCreate={() => router.push('/create-room')}
-      onJoin={() => router.push('/join-room')}
-      onResume={() => router.push('/room-preview')}
-      onOpenFoundation={isReal ? undefined : () => router.push('/foundation')}
-      onOpenRoomSetup={isReal ? undefined : () => router.push('/gm10/context')}
-      onOpenGm24={isReal ? undefined : () => router.push('/gm24/context')}
+      roomRevision={roomRevision}
+      onCreate={() => router.push(isReal ? '/room/create' : '/room/create-entry')}
+      onJoin={() => router.push(isReal ? '/room/join' : '/room/join-entry')}
+      onResume={() => router.push('/continue-session')}
+      onFriends={() => router.push('/friends')}
+      onHistory={() => router.push('/history')}
+      onInbox={() => router.push('/inbox')}
+      onProfile={isReal ? undefined : () => router.push('/profile')}
+      onTutorial={() => router.push('/tutorial')}
+      onOpenFoundation={__DEV__ ? () => router.push('/dev/foundation') : undefined}
+      onOpenRoomSetup={isReal ? undefined : () => router.push('/room/context')}
+      onOpenDiscoveryContext={isReal ? undefined : () => router.push('/dev/discovery-context')}
       previewControls={isReal ? undefined : (busy => <PreviewControls disabled={busy} />)}
     />
   );

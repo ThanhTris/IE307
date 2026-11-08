@@ -1,0 +1,90 @@
+{
+  "task": "GM-18",
+  "owner": "HoaiTam",
+  "reviewer": "ThanhTris",
+  "review": "Pending",
+  "checkedAt": "2026-10-29T03:21:52.408936+00:00",
+  "branch": "codex/gm-18-dish-catalogue",
+  "worktree": "/Users/hoaitam/Desktop/Learn/23521394/HK1-Nam-4/IE307/gm18-dish-catalogue",
+  "targetRef": "origin/main",
+  "targetSha": "40feb9bf66f4bad67074601d8d49ffe587bfef93",
+  "testedHeadBeforePatchCommit": "40feb9bf66f4bad67074601d8d49ffe587bfef93",
+  "workingTreePatchIncluded": true,
+  "contract": "dish-catalogue/roadmap-v2/GM-18.2",
+  "schemaVersion": "0.11.0",
+  "projectionVersion": "GM18.2",
+  "migration": "0033_gm18_dish_catalogue.sql",
+  "sourceHashes": {
+    ".github/workflows/gm18-eligibility.yml": "f8b57655f0950d09bf05f8f63c35677f93bb2e50cbbc228ab243789978505540",
+    "docs/architecture/GM18_DISH_CATALOGUE_API.md": "eab47ac49d074d6e9b5a6a996788c95ceba498f76e84327f0e131725096d5ac5",
+    "docs/architecture/schemas/gm18-dish-catalogue.schema.json": "10c8d49e21032d719d31c8d4d41a6b30433648c645e20f923c9a0a25f199c147",
+    "scripts/build_gm18_contract.py": "58047224107ce364eca26df5a74a3d8d36d9c887be168fa1dd836766aa2fa09c",
+    "scripts/gm06_isolated_http_check.py": "4c57fb3aea223c08e75b947789d7e8a69589dfab42d3bb568373babf116148dd",
+    "scripts/gm18_dish_check.py": "14e1da7af93f06f591bc7896040d2caefd996bea4b75fcda9ef000c6c0b6fe2d",
+    "supabase/seed/import_gm18_catalogue.py": "191f2ca5ee51de862cbd3c472e92c77016d1a415be2956d13af435053473af74",
+    "supabase/seed/import_dish_catalogue.py": "3c348f90a8b4237819f8bfbfa5a9923f0c1a86c76beb9e91cdfbb287d8f43fde",
+    "supabase/migrations/0033_gm18_dish_catalogue.sql": "8577413ca743e9b95a167e9dd43a332c4897ca33232019986528dde26d03fddc",
+    "supabase/rollback/0033_gm18_dish_catalogue.down.sql": "2feaec53f93e5253e154407a3e2985db59e35ccebe3018b926cc16869a8583d2",
+    "supabase/tests/http/GM-18.http": "2b31f80009f26d4bb6fb49b7472b98bc41c743d3e75a599cfece5eb89dca9de6",
+    "tests/test_gm18_catalogue_projection.py": "fb9a738657ef35d3fc05cc4c0c92703a7bbf41c8fba2ebe8e6b37b9baf5c1fca",
+    "tasks/backlog/GM-18.md": "baa088b3e48d77e2c415104a0fc1f0c2c2e5c959a96aad13c8d91d1a15c4676a"
+  },
+  "executedSourcesMatchReport": true,
+  "mainSqlMigrationsByteIdentical": true,
+  "actualCatalogueAuthority": "dish_v3_private.catalogues",
+  "actualV4Authority": "dish_v4_private",
+  "routingChanged": false,
+  "results": {
+    "sqlHttpAssertions": 257,
+    "sqlHttpResult": "Pass",
+    "v2V4BaselineAssertions": 27,
+    "pinnedV2Vectors": 140,
+    "legacyEligibilityVectors": 60,
+    "legacyParityAssertions": 120,
+    "gm18NewAssertions": 110,
+    "python": {
+      "run": 638,
+      "skipped": 5,
+      "result": "Pass"
+    },
+    "projectionTests": 9,
+    "domainTests": 237,
+    "repository": "Pass",
+    "taskIndexes": "Pass",
+    "diff": "Pass",
+    "startGate": "READY_TO_CLAIM",
+    "mergeGate": "READY_FOR_MERGE_REVIEW"
+  },
+  "data": {
+    "realDraftDishes": 39,
+    "releaseSuffix": ":gm18.2",
+    "originalBundleChanged": false,
+    "verifiedProduction": false,
+    "mealCoverage": {
+      "breakfast": 14,
+      "lunch": 23,
+      "dinner": 7,
+      "snack": 1
+    }
+  },
+  "environment": {
+    "platform": "macOS",
+    "python": "3.13.3",
+    "postgres": "17.11",
+    "http": "real PostgREST, synthetic auth/JWT, isolated internal network, no published host port",
+    "cleanup": "own containers/tmpfs and network removed"
+  },
+  "limits": [
+    "Preference/recent ranking is explicitly UNSUPPORTED and advanced; no unreviewed formula",
+    "New RPC version separate from B/B-supplement; no mobile client/UI changes",
+    "Real source remains draft/test_demo, not provider rights/freshness or production verified data",
+    "GoTrue signup, Android and production deployment Not run",
+    "Remote CI and final Trí review await publication/review"
+  ],
+  "applicationDatabaseChanged": false,
+  "productionPublished": false,
+  "newChangesCommitted": false,
+  "pushPerformed": false,
+  "projectStatusChanged": false,
+  "originalGm21CheckoutPreserved": true
+}

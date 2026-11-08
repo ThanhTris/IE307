@@ -1,0 +1,21 @@
+meta {
+ name: 18 Outsider cannot unregister device
+ type: http
+ seq: 18
+}
+post {
+ url: {{baseUrl}}/rest/v1/rpc/unregister_push_device
+ body: json
+ auth: none
+}
+headers {
+ apikey: {{anonKey}}
+ Authorization: Bearer {{outsiderToken}}
+ Content-Type: application/json
+}
+body:json {
+ {"requestId":"{{outsiderUnregisterRequestId}}","device_id":"{{deviceId}}"}
+}
+tests {
+ test('unregister for another identity is a successful no-op with a null DTO',()=>{expect(res.getStatus()).to.equal(200);expect(res.getBody()).to.deep.equal({ok:true,requestId:bru.getEnvVar('outsiderUnregisterRequestId'),data:null});});
+}

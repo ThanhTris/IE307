@@ -1,0 +1,126 @@
+{
+  "revision": "ui-figma-final/2026-10-25/GM-10.2-behavior",
+  "baseCommit": "9700bc8404d7632b5c442245a18d2cdb5f05c611",
+  "sourceState": "tested working tree; file hashes identify refinement",
+  "files": [
+    {
+      "path": "mobile/src/bootstrap/DishSetupCasePicker.tsx",
+      "sha256": "86428deec6505802fe94a0ea008b4a899010d8e2c3d78aa9d9f42561adf147a3",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/bootstrap/dishSetupCases.ts",
+      "sha256": "4f6225056d711b3931b05b77038d3f8c84dd929b38d2acab7ca0b3273ada230b",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/bootstrap/dishSetupPreview.ts",
+      "sha256": "f27ed3e6073ae2dcda7cb3deb0cc4474a77bb4061c3dcd2519c8189811bbf9c8",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/bootstrap/DishSetupPreviewFlow.tsx",
+      "sha256": "27bf5e9c652027bd9d8f690331a126d47a007dc3ceff683160df03c9952c87ce",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/data/api/contracts.ts",
+      "sha256": "f5feae397c774cc7514b35e47f315ae618cca6104a18816a69f0cf40f488ad80",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/context/components/SetupConfirmDialog.tsx",
+      "sha256": "a0c86833ccd92e8dcd3571920649ca3eb97aba031fa0446b30152e2b56982e7f",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/context/components/SetupFriendsSheet.tsx",
+      "sha256": "eac9e9e4780a9e5cbd457cc0afaf2f43007e886d5391618b9a809b6b3b207798",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/context/components/SetupScheduleSummary.tsx",
+      "sha256": "325c426b813e083a87a3362b17a9dd990d0b568bf2e0a4826d6c1fbd3e786df8",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/context/hooks/useConfirmationMotion.ts",
+      "sha256": "ded7f2b7b8a313e8941edfa4a77010313fdaad23a4d328c436ed4ccdf9d077d2",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/context/hooks/useDishSetupFlow.ts",
+      "sha256": "1911e2027034ce918dc9848af8e53be4e3a89d8b11c6ce6ba7ffbf9aa541ed1f",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/context/screens/DishSetupFlow.tsx",
+      "sha256": "7570650b741917a67ea8e73bb26960e865118fd893eea639fe2f2938c6a41a2e",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/context/screens/DishSetupScreen.tsx",
+      "sha256": "10d21920227b9e2c7a33b3efb506b3b40f608bc34e543e5f31bbb51eb6d9402b",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/context/services/dishSetup.ts",
+      "sha256": "2e478435b1a9713e472a73a57a70c6c0b4137c81e3be596e295a727debe7a3b9",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/context/services/dishSetupGateway.ts",
+      "sha256": "04bf521704034e71e62de3217942a83a41212e00f88ad52325c5c45ef4dfd85c",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/preferences/components/PreferenceAdvancedPanel.tsx",
+      "sha256": "cbe84fb03c9748deb9064a7fbb2949af29abfe28b80bc2645fe3dfceaca19cec",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/preferences/components/PreferenceFlavorLevels.tsx",
+      "sha256": "84964a198860c2877e25ef7e73fb008e5930f6c9803a1a873ee0c09fd2eda6c6",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/preferences/screens/DishPreferencesScreen.tsx",
+      "sha256": "9ec0c402dc6c42c10d6c5ff45559bd32413071dc19f170b60d2ee0708a7eda1e",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/features/preferences/services/dishPreferences.ts",
+      "sha256": "9f6feca72ad880380cd77d07898d8c9fee95d6d1458fc79aebcdf0c8fdb6e014",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/src/shared/ui/dialogs/SheetDialog.tsx",
+      "sha256": "8367b152ab0e763fa2e89bcabe750ea78e02cd9e5f1b2d7257dd43303f444063",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/tests/component/dishSetupRefinement.test.tsx",
+      "sha256": "c9550c3ee64bd52bcde704092f245409a7b767810c0c288e48f185c6d5e57d07",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/tests/component/dishSetupRepair.test.tsx",
+      "sha256": "3129f5db6dcc7f2119b191decd141fb5aaf7988c531d8eb0d0bd0cbd3d8bb1e2",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/tests/unit/dishSetupCases.test.ts",
+      "sha256": "f4d240ef82144e86d58253075fb47291431abaaf70ec383bc0e81d659aa86ad0",
+      "normalization": "UTF-8 LF"
+    },
+    {
+      "path": "mobile/tests/unit/dishSetupTimePolicy.test.ts",
+      "sha256": "5c42c9fd8ec2ebebd8c9dfc06614d592abd0100a6dd691fc5bb8f1f2b8a5c80e",
+      "normalization": "UTF-8 LF"
+    }
+  ],
+  "deletedPaths": [
+    "mobile/src/features/preferences/components/PreferenceTemperaturePanel.tsx"
+  ],
+  "privateInputs": "User written requirements; no new reference screenshots"
+}

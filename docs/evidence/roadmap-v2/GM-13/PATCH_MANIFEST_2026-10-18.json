@@ -1,0 +1,54 @@
+{
+  "generatedAt": "2026-10-18T14:54:02.227206+00:00",
+  "task": "GM-13",
+  "branch": "codex/gm-13-result-no-consensus",
+  "baseHead": "4a8cd642c8d908d9e6d2c75d19c0935a44cba042",
+  "revisionKind": "uncommitted working tree; not an approval",
+  "contractVersion": "food-v1/roadmap-v2/GM-13.1",
+  "policyVersion": "decision-v2",
+  "remoteVerifiedThisRun": false,
+  "gateResult": "BLOCKED_PROJECT_UNVERIFIED",
+  "localWorkAuthorization": "User explicitly allowed local fixes on 2026-10-18 while Project could not be verified; no commit/push/Done/approval authorized.",
+  "sourceFiles": {
+    "mobile/src/app/foundation.tsx": "1fbb0cd529e7402b34645b8f171c91fdbfef011aebc725a8bcbd340c8318d778",
+    "mobile/src/app/gm13/no-consensus.tsx": "3a160ec3292ec65f809c9f6e17b88c442d8158da22c25f9413c3a7dc7df956ae",
+    "mobile/src/app/gm13/result.tsx": "30315320ece68573196d3b1a6d9d182d40065291d3fb22b4bc1b7fd35f021e9e",
+    "mobile/src/bootstrap/resultFixtures.ts": "e8aa98e04b76fa7ea05eca3ec549c94ec105337320ad2c03a5ffb72107a6ed9e",
+    "mobile/src/bootstrap/resultPreview.tsx": "388d17e83987d086ad85eef78f5f88ce659d6210ed36eb4f531567e051fb02cb",
+    "mobile/src/features/home/screens/FoundationScreen.tsx": "617166493176a6f4552a1342bbe8f8736f2186576ad873f316c3ee60be9e38bc",
+    "mobile/src/features/result/components/ResultFrame.tsx": "a9d54e2a7fd58357c9a4217b775f42f3ebf3b758cd2b9403fc9a1f256d6ac4f7",
+    "mobile/src/features/result/index.ts": "af8b042b54728f0e0c1a4e2294f0c2854f5fa738734a21bee5608d9392eb134a",
+    "mobile/src/features/result/model.ts": "b8173b81fd82299c0865d836d58da30f9bcf05e28f87c38401801b91bb9007d5",
+    "mobile/src/features/result/screens/NoConsensusScreen.tsx": "635f10c1a847631c3cb46f3aa24758aeeba38630123e903e43fd7423d7f40ccc",
+    "mobile/src/features/result/screens/ResultScreen.tsx": "fac2cc311cadeeb09e1adbfc8c5b107188c0fd44bbfa8e2de67ae0ec9c3d34c8",
+    "mobile/tests/component/resultScreens.test.tsx": "097f4b2c1291b8ca931cc800a01a4a40ebc790b02dc4407f06ec7b3923ee1707",
+    "mobile/tests/integration/resultRoutes.test.tsx": "955385df1a51f5279248decaf2a71cdd790f68f7b2ecf583f9ba7d37dc731cfd",
+    "mobile/tests/unit/resultModel.test.ts": "117ddaa24a2638ad77280ce5e91a49fa9e169d65eee48b9269dec289ddea1ae2"
+  },
+  "upstreamInputs": {
+    "mobile/src/shared/theme/tokens.ts": {
+      "sha256": "680b8d323541d06a040aa4e4151177dd2c100b5f1710c6bbc19eb0d0478b1d40",
+      "lastCommit": "b66d9e331e4e3dd225fb55f73e48f6df7d4a9b9b"
+    },
+    "mobile/src/shared/ui/components.tsx": {
+      "sha256": "0224bd08cc8ffd122a66790f9766a1f14b9f49a2b16fe00099028d9eb798004c",
+      "lastCommit": "deabcf4a30470351b0653b764cc5030a98eb7cfe"
+    },
+    "mobile/src/data/api/contracts.ts": {
+      "sha256": "dd4c49040c04af177cf2cef4192e0cc95a056497fc97686e17fcc854e4a335c4",
+      "lastCommit": "5b304c589b119f30d80f772781617d231c1b861f"
+    },
+    "mobile/src/data/discovery/index.ts": {
+      "sha256": "c1ede71e5d47e3721533df1e902d07dfbc3957c38cd7dbe6d76b792ae5c68726",
+      "lastCommit": "79ab02756c8427e78092c1051f890e56eccaac88"
+    },
+    "docs/evidence/roadmap-v2/GM-05/HANDOFF.md": {
+      "sha256": "55d21fc905c1ea14bc2397284984ddad85b0ac3cbcce9132a457303f25dd7bb0",
+      "lastCommit": "fe38c32a8c841efeeda81b94b849b6c04914c880"
+    },
+    "docs/evidence/roadmap-v2/GM-07/HANDOFF.md": {
+      "sha256": "81a53fc32deaf545476ad0a391796f4f4cbc3e56379c1a45448217f2a5340493",
+      "lastCommit": "b66d9e331e4e3dd225fb55f73e48f6df7d4a9b9b"
+    }
+  }
+}

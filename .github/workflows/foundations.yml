@@ -1,5 +1,8 @@
 name: UI and BE foundations
-on: [push, pull_request]
+permissions:
+  contents: read
+on:
+  workflow_call:
 jobs:
   mobile:
     runs-on: ubuntu-latest
@@ -7,23 +10,54 @@ jobs:
       run:
         working-directory: mobile
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '24'
           cache: npm
           cache-dependency-path: mobile/package-lock.json
-      - run: npm ci
-      - run: npm run test:expo-baseline
-      - run: npm run check
+      - name: Install locked mobile dependencies
+        id: mobile_dependencies
+        run: npm ci
+      - name: Expo compatibility guard regression
+        if: always() && steps.mobile_dependencies.outcome == 'success'
+        run: npm run test:expo-baseline
+      - name: Mobile typecheck
+        if: always() && steps.mobile_dependencies.outcome == 'success'
+        run: npm run typecheck
+      - name: Mobile lint
+        if: always() && steps.mobile_dependencies.outcome == 'success'
+        run: npm run lint
+      - name: Mobile unit and component tests
+        if: always() && steps.mobile_dependencies.outcome == 'success'
+        run: npm test -- --json --outputFile="$RUNNER_TEMP/mobile-jest-results.json"
+      - name: Mobile architecture checks
+        if: always() && steps.mobile_dependencies.outcome == 'success'
+        run: npm run check:architecture
       - name: Expo locked SDK compatibility (remote updates checked separately)
+        if: always() && steps.mobile_dependencies.outcome == 'success'
         run: npm run check:expo
-      - run: npm run bundle:android
+      - name: Android JavaScript export (not a native/device test)
+        if: always() && steps.mobile_dependencies.outcome == 'success'
+        run: npm run bundle:android
+      - name: Upload structured mobile test results
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: mobile-jest-results-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/mobile-jest-results.json
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Report final job state
+        if: always()
+        uses: ./.github/actions/ci-report
+        with:
+          name: mobile-baseline
   backend-runner:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '24'
           cache: npm
@@ -32,3 +66,8 @@ jobs:
       - name: GM-19 runtime file ownership regression
         run: node --test tests/gm19-runtime-files.test.mjs
       # Unit mocks only; real HTTP/DB and Android smoke need separate evidence.
+      - name: Report final job state
+        if: always()
+        uses: ./.github/actions/ci-report
+        with:
+          name: backend-runner

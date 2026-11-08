@@ -1,0 +1,21 @@
+meta {
+ name: 14 Friend invite inbox
+ type: http
+ seq: 14
+}
+post {
+ url: {{baseUrl}}/rest/v1/rpc/list_partner_inbox
+ body: json
+ auth: none
+}
+headers {
+ apikey: {{anonKey}}
+ Authorization: Bearer {{hostToken}}
+ Content-Type: application/json
+}
+body:json {
+ {"cursor":null}
+}
+tests {
+ test('friend invitation remains available in the caller inbox',()=>{expect(res.getStatus()).to.equal(200);const row=res.getBody().find(i=>i.type==='friend_invite'&&i.metadata?.invitationId===bru.getEnvVar('friendInviteId'));expect(row,'friend invitation inbox item').to.exist;expect(row.metadata).to.deep.equal({invitationId:bru.getEnvVar('friendInviteId')});});
+}

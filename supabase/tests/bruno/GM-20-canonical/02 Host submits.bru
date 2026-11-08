@@ -1,0 +1,26 @@
+meta {
+  name: 02 Host submits
+  type: http
+  seq: 2
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/dish_session
+  body: json
+  auth: none
+}
+headers {
+  apikey: {{anonKey}}
+  Authorization: Bearer {{hostToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"command":"submit","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B-supplement","roomId":"{{roomId}}","requestId":"canonical-host-{{runId}}","expectedVersion":{{hostSubmitExpected}},"round":1,"poolVersion":{{poolVersion}},"votes":{{votesR1}}}}
+}
+script:post-response {
+  const b=res.getBody();
+  if(res.getStatus() === 200 && b.ok === true) {  }
+  else bru.runner.stopExecution();
+}
+tests {
+  test('02 Host submits',()=>{const b=res.getBody();expect(res.getStatus()).to.equal(200);expect(b.ok).to.equal(true);});
+}

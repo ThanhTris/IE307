@@ -1,0 +1,271 @@
+Synthetic owned QA; no application DB mutation or real ballot data.
+PASS102 independent SQL/TypeScript expected vectors
+PASS GM19 deployed dispatcher body matches migration
+PASS real catalogue shortage dinner
+PASS real catalogue reports exact availability dinner
+PASS real catalogue shortage snack
+PASS real catalogue reports exact availability snack
+PASS default preference initial revision
+PASS default preference increments caller revision
+PASS preview contains admission summary, not roster
+PASS preview joinable
+PASS join snapshots member default preference
+PASS room reports ranking unsupported
+PASS snapshot contains no ready field
+PASS GM19 member cannot edit host settings
+PASS GM19 outsider cannot edit settings
+PASS GM19 denied edits preserve entire room/session
+PASS GM19 no-op increments room version once
+PASS GM19 no-op preserves poolVersion
+PASS GM19 no-op ACK reports retained poolVersion
+PASS GM19 no-op preserves complete cards, order and row IDs
+PASS GM19 exact retry returns saved ACK
+PASS GM19 replay changes no room/session data
+PASS GM19 requestId cannot change payload
+PASS GM19 reused requestId preserves state
+PASS GM19 time-only accepts desiredAt 2030-01-01T12:00:00Z
+PASS GM19 time-only room version 2030-01-01T12:00:00Z
+PASS GM19 time-only keeps poolVersion 2030-01-01T12:00:00Z
+PASS GM19 time-only keeps cards/IDs 2030-01-01T12:00:00Z
+PASS GM19 time-only accepts desiredAt 2030-01-01T19:00:00+07:00
+PASS GM19 time-only room version 2030-01-01T19:00:00+07:00
+PASS GM19 time-only keeps poolVersion 2030-01-01T19:00:00+07:00
+PASS GM19 time-only keeps cards/IDs 2030-01-01T19:00:00+07:00
+PASS GM19 time-only accepts desiredAt null
+PASS GM19 time-only room version null
+PASS GM19 time-only keeps poolVersion null
+PASS GM19 time-only keeps cards/IDs null
+PASS GM19 stale version rejected
+PASS GM19 fractional count rejected
+PASS GM19 unsupported ranking cannot reroll
+PASS GM19 invalid/stale attempts preserve room/session
+PASS GM19 count edit uses exact requested size
+PASS GM19 count edit increments poolVersion once
+PASS GM19 count ACK matches snapshot
+PASS GM19 meal edit poolVersion follows actual card change
+PASS GM19 meal edit retains exact count
+PASS GM19 same 20 cards across meals retain poolVersion
+PASS GM19 same 20 cards across meals retain exact rows/order
+PASS GM19 no-op uses pinned catalogue/pool
+PASS GM19 six concurrent duplicate settings share one ACK
+PASS GM19 duplicate race commits exactly one room mutation
+PASS GM19 duplicate race preserves pool
+PASS GM19 duplicate race stores one ACK
+PASS GM19 same-version settings race accepts one
+PASS GM19 same-version settings loser
+PASS GM19 competing edit increments version once
+PASS GM19 competing edit increments poolVersion once
+PASS GM19 competing edit retains winning exact count
+PASS GM19 post-start settings blocked
+PASS GM19 rejected locked edit preserves room/session
+PASS GM19 old ACK replays after later edits and start
+PASS GM19 old ACK replay does not resurrect lobby
+PASS GM19 start/settings race accepts one 0
+PASS GM19 start/settings race loser 0
+PASS GM19 start/settings version increments once 0
+PASS GM19 start/settings state follows winner 0
+PASS GM19 start/settings exact pool follows winner 0
+PASS GM19 start/settings poolVersion follows winner 0
+PASS GM19 start/settings race accepts one 1
+PASS GM19 start/settings race loser 1
+PASS GM19 start/settings version increments once 1
+PASS GM19 start/settings state follows winner 1
+PASS GM19 start/settings exact pool follows winner 1
+PASS GM19 start/settings poolVersion follows winner 1
+PASS GM19 winning start pins original cards 1
+PASS GM19 time-only versions do not influence subsequent pool content
+PASS GM19 pinned catalogue shortage blocks edit
+PASS GM19 shortage preserves version/pool/settings
+PASS GM19 shortage reports actual availability
+PASS GM19 dispatcher remains inaccessible directly
+PASS GM19 supplement ledger deployed
+PASS host can request exactly 20 dishes
+PASS pool contains exactly 20 after settings change
+PASS pool contains exact requested 10
+PASS dish count 21 rejected
+PASS room preference change increments room version
+PASS own preference is room-scoped
+PASS host starts without ready state
+PASS start roster size
+PASS submit ACK does not start waiting clock
+PASS same request replay stays accepted
+PASS mutated request id rejected
+PASS second ballot rejected
+PASS R1 without winner advances to a real round 2
+PASS R1 open survivor pool is nonempty
+PASS R2 removal cap for 10 candidates
+PASS R2 cap plus one rejected
+PASS ACK alone does not start R2 waiting clock
+PASS waiting deadline is 60 seconds
+PASS exact half roster cannot end early
+PASS host early end below strict majority
+PASS all complete round-two ballots finalize server-side
+PASS Top 3 scores sort/tie with dense ranks
+PASS Top 3 score basis
+PASS Top 3 tie cutoff stays capped and contains winner
+PASS winner is on podium
+PASS R2 removed dish absent from podium
+PASS private vote and seed are absent from result
+PASS result API returns persisted result id
+PASS outsider cannot read result
+PASS N=1 after R1 opens R2
+PASS R2 carries one candidate
+PASS N=1 removal cap remains one
+PASS removing all candidates ends without winner
+PASS all removed reason
+PASS all removed podium empty
+PASS empty intersection ends in R1
+PASS empty intersection reason
+PASS empty R1 does not create R2
+PASS one of three cannot end wait
+PASS three-person strict majority below threshold
+PASS two of three can end wait
+PASS host finalize acknowledges transition
+PASS finalize state is round two
+PASS worker timeout advances state without client finalize
+PASS social identity endpoint available for authenticated caller
+PASS stale invitation version rejected before retry
+PASS invitation admission uses v4 capacity
+PASS invited member is immediately in lobby
+PASS v4 invitation snapshot has no ready state
+PASS inbox invitation references admitted room
+PASS history R1 no unanimous WANT advances to R2
+PASS explicit consent persists personal history
+PASS all-member consent persists one group projection
+PASS history projection reuses persisted Top 3
+PASS history Top 3 tie cutoff stays capped and contains winner
+PASS owner can delete own history
+PASS deleted personal history is absent
+PASS group revoke purges projection for all participants
+PASS expired history is hidden by API
+PASS personal-only consent writes each personal projection
+PASS personal-only consent does not write group projection
+PASS group-only consent writes shared projection
+PASS group-only consent does not write personal projection
+PASS group projection requires every roster member consent
+PASS consent enabled during lobby is included at start
+PASS post-start opt-in does not grant consent retroactively
+PASS revoke before finalize suppresses only revoked personal scope
+PASS room accepts exactly 20 members
+PASS 21st member rejected
+PASS inbox API callable for authenticated member
+{"result":"PASS","caseCount":151,"contractEnvelopesValidated":575,"report":"/Users/hoangvinh/.codex/worktrees/gm-40-dish-catalogue/anyfood/.work/gm20-canonical/dish-v4-api-results.json","applicationDatabaseChanged":false}
+
+PASS server flag blocks new supplement creation
+PASS all private candidate tables force RLS
+PASS private baseline alias cannot bypass routing
+PASS R1 unanimous terminal pairing
+PASS Top3 bounded and contains winner
+PASS R1 top3 points/dense rank
+PASS R1 final row identity retained
+PASS single canonical authority / registry / outbox f087bc6d-5195-4f87-bcee-a9b9519896d0
+PASS seed stays private with pinned selector f087bc6d-5195-4f87-bcee-a9b9519896d0
+PASS new result does not create legacy event reference f087bc6d-5195-4f87-bcee-a9b9519896d0
+PASS result reads actual canonical bytes
+PASS no consent means no canonical history
+PASS terminal DTO never exposes private evaluator/seed
+PASS old submit receipt replays after terminal
+PASS same ID cannot change ballot payload
+PASS outsider cannot read canonical result
+PASS B route cannot read supplement room
+PASS supplement cannot reinterpret B room
+PASS disable creation retains pinned reader
+PASS catalogue switch cannot alter saved result
+PASS private evaluator/seed/model inaccessible
+PASS controlled database failure reaches HTTP
+PASS registry rolled back
+PASS scoped history payload/receipt/audience rolled back
+PASS canonical/result/outbox rolled back
+PASS failed request did not save ACK
+PASS failed last waiting did not change room version
+PASS single canonical authority / registry / outbox 1ad1da66-03fd-48ae-a9a3-3b4c180f0152
+PASS seed stays private with pinned selector 1ad1da66-03fd-48ae-a9a3-3b4c180f0152
+PASS new result does not create legacy event reference 1ad1da66-03fd-48ae-a9a3-3b4c180f0152
+PASS retry writes scoped history exactly once
+PASS actual response-loss transport failed locally
+PASS lost response retry keeps one ballot
+PASS lost response retry keeps one ACK
+PASS five submit retries same ACK
+PASS one accepted ballot row
+PASS accepted intent cannot change votes
+PASS all OK opens real R2
+PASS actual R2 cap plus one rejected
+PASS invalid cap adds no R2 ACK/ballot
+PASS R2 KEEP does not add points
+PASS R2 scoring cohort persisted
+PASS single canonical authority / registry / outbox 5fc1382d-ba9a-4f40-ab39-03fc0544623c
+PASS seed stays private with pinned selector 5fc1382d-ba9a-4f40-ab39-03fc0544623c
+PASS new result does not create legacy event reference 5fc1382d-ba9a-4f40-ab39-03fc0544623c
+PASS singleton opens real R2 true
+PASS singleton R2 gets new row ID true
+PASS no implicit R2 ballots true
+PASS singleton terminal pairing true
+PASS all removed has no fabricated winner
+PASS single canonical authority / registry / outbox fdf370b1-fe94-459f-9e3b-51e754285479
+PASS seed stays private with pinned selector fdf370b1-fe94-459f-9e3b-51e754285479
+PASS new result does not create legacy event reference fdf370b1-fe94-459f-9e3b-51e754285479
+PASS singleton opens real R2 false
+PASS singleton R2 gets new row ID false
+PASS no implicit R2 ballots false
+PASS singleton terminal pairing false
+PASS singleton winner uses final-round row
+PASS single canonical authority / registry / outbox bbd20e43-c1de-4074-b3e9-a7e111cadb41
+PASS seed stays private with pinned selector bbd20e43-c1de-4074-b3e9-a7e111cadb41
+PASS new result does not create legacy event reference bbd20e43-c1de-4074-b3e9-a7e111cadb41
+PASS empty R1 persists no-consensus
+PASS single canonical authority / registry / outbox 3396badf-490b-4595-90f8-c241fc9b6bf8
+PASS seed stays private with pinned selector 3396badf-490b-4595-90f8-c241fc9b6bf8
+PASS new result does not create legacy event reference 3396badf-490b-4595-90f8-c241fc9b6bf8
+PASS exactly half cannot end waiting
+PASS majority R1 advances with zero R2 ACK
+PASS R1 majority cannot finalize empty R2
+PASS one R2 ballot not host majority
+PASS real worker timeout accepts minority cohort
+PASS R1 score cohort differs from R2 submittedCount
+PASS timeout R2 points use only R1
+PASS single canonical authority / registry / outbox e5290887-32d8-4c4e-9668-6bf30ca42dc8
+PASS seed stays private with pinned selector e5290887-32d8-4c4e-9668-6bf30ca42dc8
+PASS new result does not create legacy event reference e5290887-32d8-4c4e-9668-6bf30ca42dc8
+PASS host half rejected M=2
+PASS host majority locks denominator M=2
+PASS host half rejected M=3
+PASS host majority locks denominator M=3
+PASS host half rejected M=5
+PASS host majority locks denominator M=5
+PASS host half rejected M=20
+PASS host majority locks denominator M=20
+PASS 20-member actual terminal keeps R1 cohort
+PASS single canonical authority / registry / outbox cc9a30d9-11f4-40ff-9c10-53d0f182d773
+PASS seed stays private with pinned selector cc9a30d9-11f4-40ff-9c10-53d0f182d773
+PASS new result does not create legacy event reference cc9a30d9-11f4-40ff-9c10-53d0f182d773
+PASS 20-member group consent audience persists atomically
+PASS race replies are ACK or explicit conflict/closed
+PASS host-submit-timeout race reaches terminal
+PASS single canonical authority / registry / outbox d4abe6da-b4fc-4f41-aff7-8887de9dbf3e
+PASS seed stays private with pinned selector d4abe6da-b4fc-4f41-aff7-8887de9dbf3e
+PASS new result does not create legacy event reference d4abe6da-b4fc-4f41-aff7-8887de9dbf3e
+PASS race scores use committed R1 cohort
+PASS race terminal cohort matches stored ACK count
+PASS host cannot supply winner
+PASS expired WAITING rejects new ballot
+PASS expired WAITING adds no ballot
+PASS old receipt after expiry replays without resurrection
+PASS expired state remains terminal
+PASS no-consensus history retains null winner and empty podium
+PASS no-consensus scoped histories really persisted
+PASS revoked before finalize prevents personal write
+PASS personal revoke does not suppress valid group consent
+PASS personal and group writer share canonical result
+PASS history reads writer projection exactly
+PASS deleted payload receipt survives
+PASS reconnect does not recreate history
+PASS deleted history does not affect terminal
+PASS group revoke hides history live
+PASS history after room cleanup keeps exact projection
+PASS canonical card mapping retained without operational room
+PASS pre-existing B result projections retain exact IDs/bytes
+BRUNO_READY: select ignored Local.runtime.private; credentials not printed
+{"result":"Pass","cases":114,"envelopes":683}
+
+Owned QA retained; --against reruns, --cleanup stops only this project
+PASS GM20 canonical candidate; not integration/production approval

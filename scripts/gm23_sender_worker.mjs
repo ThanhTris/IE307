@@ -1,3 +1,4 @@
+import { notification as message } from '../supabase/functions/push-sender/payload.mjs';
 /** GM-23 local trusted sender loop. Use --once for a single owned cycle. */
 import { open, unlink } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
@@ -27,10 +28,6 @@ async function rpc(name, body) {
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(`GM23_RPC_${name}_${response.status}`);
   return payload;
-}
-function message(item) {
-  const type = item.kind === 'ROOM_INVITED' ? 'room_invite' : 'room_result';
-  return { to: item.token, title: type === 'room_invite' ? 'Lời mời vào phòng' : 'Kết quả phòng đã sẵn sàng', body: type === 'room_invite' ? 'Bạn có lời mời vào phòng mới' : 'Phòng của bạn đã có kết quả', data: { type, eventId: item.eventId, ...(item.roomId ? { roomId: item.roomId } : {}), ...(item.invitationId ? { invitationId: item.invitationId } : {}), ...(item.resultId ? { resultId: item.resultId } : {}) } };
 }
 async function cycle() {
   const claimed = await rpc('claim_push_deliveries', { batch_size: claimBatch });

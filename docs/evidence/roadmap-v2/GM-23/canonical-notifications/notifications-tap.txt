@@ -1,0 +1,21 @@
+1..20
+ok 1 - inbox RPC registered
+ok 2 - register RPC registered
+ok 3 - unregister RPC registered
+ok 4 - trusted claim registered
+ok 5 - trusted completion registered
+ok 6 - trusted failure registered
+ok 7 - trusted receipt registered
+ok 8 - trusted receipt claim registered
+ok 9 - register is definer
+ok 10 - claim is definer
+ok 11 - anon cannot register
+ok 12 - authenticated can register
+ok 13 - client cannot claim
+ok 14 - service role can claim
+ok 15 - private lease metadata denied
+ok 16 - delivery rows denied
+ok 17 - push token column denied
+ok 18 - claim locks rows
+ok 19 - claim lease is 120 seconds
+ok 20 - claim caps batch at 100

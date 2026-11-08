@@ -1,0 +1,72 @@
+{
+  "scope": "GM06.2 storage producer; not v4 business/API release",
+  "result": "SQL schema checks Pass; full Python regression has existing failures",
+  "checkedAt": "2026-10-25T15:18:37.425732+00:00",
+  "branch": "codex/gm-06-canonical-storage",
+  "originalBranchBase": "a31f403fbcdc4cfdb03e03fe77506ccdd9a4cbea",
+  "currentHead": "8293bb3dfd87f9e5a1be60c5a62a2f52a548e7c8",
+  "targetRef": "origin/main",
+  "targetSha": "8293bb3dfd87f9e5a1be60c5a62a2f52a548e7c8",
+  "sqlExecutedOnHeadBeforeCommit": "a31f403fbcdc4cfdb03e03fe77506ccdd9a4cbea",
+  "sqlSourceHashesStillMatch": true,
+  "mainFastForward": "8293bb3 documentation/quorum clarification; no scripts/supabase changes",
+  "workingTreePatchIncluded": true,
+  "storageVersion": "GM06.2",
+  "schemaVersion": "0.9.0",
+  "proposedWire": "GM07.B (not implemented by this task)",
+  "sourceHashes": {
+    ".github/workflows/gm06-schema.yml": "1e35fb9b24841322a2952b5d7e28c253dc42b67b3781fea4cb57ad84f298917e",
+    "docs/data/DATABASE_MAPPING.md": "99aaff14e8adfad35afc06ff778d500c36474215cc56e2a592d85de4ad84fde3",
+    "docs/data/GM06_CANONICAL_STORAGE.md": "b0c5509c879a8fc57e6c18b790c927d4a949e4dad3f7989a611d7c6a82e52146",
+    "scripts/gm06_canonical_check.py": "9fb66c6ee5f999cd12924921cf5dd6062a9c89891b75b2cd4d4757fafc8e5bbc",
+    "supabase/migrations/0027_canonical_result_storage.sql": "d5f03894d2f65bee4768bfffac4e929e38c2874be12257b6ee767839ba426a43",
+    "supabase/migrations/README.md": "634d919951bade5ee57819065cfa41c906f36b93b67f64a331c9a1a59e2ed659",
+    "supabase/rollback/0027_canonical_result_storage.down.sql": "133923a32bdaf9dc9187402db985bf2794646bddcdc1f05256c518ad801d2ad6",
+    "tasks/backlog/GM-06.md": "fc953b0a206ce133e350c87d31b4d31447311879301e7cb932583bdd1905a511"
+  },
+  "previousMigrationsUnchanged": true,
+  "results": {
+    "canonicalSqlAssertions": 80,
+    "canonicalSql": "Pass",
+    "v3SqlHttpScenarios": 108,
+    "v3SqlHttp": "Pass",
+    "legacySqlAssertions": 67,
+    "legacyScheduleRaces": 2,
+    "legacyReferenceRaces": 16,
+    "pythonFullSuite": {
+      "run": 594,
+      "skipped": 5,
+      "failedMobileDocumentationSubcases": 21,
+      "sameFailuresOnPristineMain": true
+    },
+    "repository": "Pass",
+    "taskIndexes": "Pass",
+    "diffCheck": "Pass",
+    "startGate": "READY_TO_CLAIM",
+    "mergeGate": "READY_FOR_MERGE_REVIEW"
+  },
+  "runnerEnvironment": {
+    "platform": "Darwin",
+    "python": "3.13.3",
+    "postgres": "17.11",
+    "encoding": "UTF-8"
+  },
+  "actualApiCoverage": "Existing v3 PostgREST/JWT baseline only; synthetic users/ballots; not GoTrue/Android/v4",
+  "pending": [
+    "Trí schema/retention review",
+    "GM07 wire closure",
+    "actual v4 producer integration",
+    "GM17/21 API/ACL/participant DTO",
+    "GM40 expanded importer projection",
+    "application backup/reconcile/deploy",
+    "CI for new commit"
+  ],
+  "applicationDatabaseChanged": false,
+  "productionPublished": false,
+  "newChangesCommitted": false,
+  "pushPerformed": false,
+  "mergePerformed": false,
+  "projectStatusChanged": false,
+  "review": "Pending ThanhTris",
+  "fullV4TaskComplete": false
+}

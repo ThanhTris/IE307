@@ -90,3 +90,7 @@ notifications carry ACL-protected minimal refetch hints; do not interpret this
 static audit as a live websocket/device Pass. Local worker2cycles does not certify
 a production scheduler; deployment/pilot must configure one and collect its own
 evidence. Trí reviews final revision/AC, then decides Project Done/merge.
+
+## v4 consent supplement — 2026-10-26 (local QA candidate)
+
+For v4 schema 0.9.1, personal/group history choices are account-level settings with default opt-out. GM-21 owns the consent API and scoped projections; GM-17 continues to own access control, revocation/deletion and retention guarantees. At room start the server pins each enabled scope for each locked member; personal history is per consenting owner, while a group projection requires every roster member's group scope. Revocation before persistence removes the affected scope; post-start opt-in is not retroactive. Existing v2/v3 sessions and already-started v4 snapshots are not reinterpreted, and completed sessions are not backfilled. These rules are candidate requirements, not evidence of an approved deployment. Migration 0029 and schema 0.9.1 were applied only to the owned local QA project; see the ignored `review-results/dish-v4-qa-20261026/` report.

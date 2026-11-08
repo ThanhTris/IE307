@@ -1,0 +1,33 @@
+meta {
+  name: 24 Read persisted result
+  type: http
+  seq: 24
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/dish_session
+  body: json
+  auth: none
+}
+headers {
+  Authorization: Bearer {{hostToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"command":"result","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B","roomId":"{{roomId}}"}}
+}
+script:post-response {
+  const b = res.getBody();
+  if (res.getStatus() === 200 && b.ok) bru.setVar('resultId', b.data.resultId);
+}
+tests {
+  test('Persists at most three tied dishes and always includes the selected winner', () => {
+    const b = res.getBody().data;
+    expect(res.getStatus()).to.equal(200);
+    expect(b.status).to.equal('DECIDED');
+    expect(b.topDishes).to.have.length(3);
+    expect(b.topDishes.every(d => d.score === 2)).to.equal(true);
+    expect(b.topDishes.every(d => d.rank === 1)).to.equal(true);
+    expect(b.topDishes.filter(d => d.isWinner)).to.have.length(1);
+    expect(['votes','ballots','seed','poolSeed'].some(k => Object.hasOwn(b,k))).to.equal(false);
+  });
+}
