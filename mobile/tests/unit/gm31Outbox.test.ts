@@ -9,6 +9,7 @@ type Row = { record_id: string; kind: 'outbox' | 'cache'; state: 'pending' | 'un
 
 class MemoryDatabase implements SqlitePrivateDatabase {
   rows = new Map<string, Row>();
+  pendingCleanup = new Set<string>();
   version = 0;
 
   async execAsync(sql: string) {
@@ -32,6 +33,14 @@ class MemoryDatabase implements SqlitePrivateDatabase {
       const changed = this.rows.delete(recordId);
       return { changes: Number(changed) };
     }
+    if (sql.startsWith('INSERT OR IGNORE INTO gm31_pending_identity_cleanup')) {
+      this.pendingCleanup.add(params[0] as string);
+      return { changes: 1 };
+    }
+    if (sql.startsWith('DELETE FROM gm31_pending_identity_cleanup')) {
+      const changed = this.pendingCleanup.delete(params[0] as string);
+      return { changes: Number(changed) };
+    }
     throw new Error(`Unexpected SQL: ${sql}`);
   }
   async getFirstAsync<T>(sql: string): Promise<T | null> {
@@ -39,6 +48,9 @@ class MemoryDatabase implements SqlitePrivateDatabase {
     return null;
   }
   async getAllAsync<T>(sql: string, ...params: (string | number | null)[]): Promise<T[]> {
+    if (sql.startsWith('SELECT identity_id FROM gm31_pending_identity_cleanup')) {
+      return [...this.pendingCleanup].map(identity_id => ({ identity_id })) as T[];
+    }
     const kind = sql.includes('WHERE kind = ?') ? params[0] : undefined;
     return [...this.rows.values()].filter(row => !kind || row.kind === kind) as T[];
   }

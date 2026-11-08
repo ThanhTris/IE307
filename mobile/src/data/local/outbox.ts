@@ -283,10 +283,28 @@ export class DurableOutbox {
   }
 
   async clearIdentity(identityId: string): Promise<void> {
+    await this.initialize();
+    await this.database.runAsync(
+      'INSERT OR IGNORE INTO gm31_pending_identity_cleanup(identity_id, created_at) VALUES(?, ?)',
+      identityId,
+      this.clock(),
+    );
     for (const row of [...await this.rows('outbox'), ...await this.rows('cache')]) {
       const raw = await this.secureStore.getItemAsync(payloadKey(row.record_id));
       const value = parsePrivate<{ identityId?: string }>(raw);
       if (value?.identityId === identityId) await this.deleteRow(row);
+    }
+    await this.database.runAsync('DELETE FROM gm31_pending_identity_cleanup WHERE identity_id = ?', identityId);
+  }
+
+  /** Retry identity-scoped SecureStore cleanup left pending by an earlier logout. */
+  async retryPendingIdentityCleanups(): Promise<void> {
+    await this.initialize();
+    const pending = await this.database.getAllAsync<{ identity_id: string }>(
+      'SELECT identity_id FROM gm31_pending_identity_cleanup ORDER BY created_at ASC',
+    );
+    for (const entry of pending) {
+      await this.clearIdentity(entry.identity_id).catch(() => undefined);
     }
   }
 
