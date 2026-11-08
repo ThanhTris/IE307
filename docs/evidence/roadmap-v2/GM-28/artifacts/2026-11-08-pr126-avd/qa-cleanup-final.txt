@@ -1,0 +1,11 @@
+Date: 2026-11-08 (Asia/Bangkok)
+Run: gm28-pr126-20261108
+
+Command: node scripts/backend-qa.mjs stop --run-id gm28-pr126-20261108
+Result: PASS; worker, Supabase project and owned Docker network were stopped/removed.
+
+Post-stop status: phase=stopped; networkOwned=false; databaseRunning=false; workerRunning=false; lastError=null.
+Docker verification: no container or network matched project gm03qa-gm28-pr126-20261108.
+ADB reverse cleanup: removed only tcp:55371 and tcp:8086. Preserved tcp:55000, tcp:8084 and tcp:8085.
+Expo Metro PID 14136 was verified as this worktree's Expo CLI process on port 8086, then stopped.
+Application database: not used, reset or modified.
