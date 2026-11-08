@@ -41,7 +41,7 @@ export function PushSettingsScreen({ repository, onHome, onInbox }: {
     setMessage('');
     const userId = repository.getCurrentUser()?.id;
     const identityRevision = (repository as RoomRepository & { getIdentityRevision?: () => number }).getIdentityRevision?.() ?? 0;
-    const isIdentityCurrent = () => repository.getSessionStatus() === 'active'
+    const isIdentityCurrent = () => Boolean(userId) && repository.getSessionStatus() === 'active'
       && repository.getCurrentUser()?.id === userId
       && ((repository as RoomRepository & { getIdentityRevision?: () => number }).getIdentityRevision?.() ?? 0) === identityRevision;
     const service = createNativePushService({
@@ -71,7 +71,7 @@ export function PushSettingsScreen({ repository, onHome, onInbox }: {
     setMessage('');
     const userId = repository.getCurrentUser()?.id;
     const identityRevision = (repository as RoomRepository & { getIdentityRevision?: () => number }).getIdentityRevision?.() ?? 0;
-    const isIdentityCurrent = () => repository.getSessionStatus() === 'active'
+    const isIdentityCurrent = () => Boolean(userId) && repository.getSessionStatus() === 'active'
       && repository.getCurrentUser()?.id === userId
       && ((repository as RoomRepository & { getIdentityRevision?: () => number }).getIdentityRevision?.() ?? 0) === identityRevision;
     try {
