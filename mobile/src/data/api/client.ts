@@ -90,7 +90,6 @@ import {
   acceptRoomInviteMethod,
   rejectRoomInviteMethod,
   listPartnerInboxMethod,
-  markAllPartnerInboxReadMethod,
   registerPushDeviceMethod,
   unregisterPushDeviceMethod,
   getHistoryMethod,
@@ -307,10 +306,6 @@ export class ApiClientImpl implements ApiClient {
 
   listPartnerInbox(cursor?: string): Promise<ReadResult<InboxItem[]>> {
     return listPartnerInboxMethod(this.ctx, cursor);
-  }
-
-  markAllPartnerInboxRead(requestId?: string): Promise<WriteResult<void>> {
-    return markAllPartnerInboxReadMethod(this.ctx, requestId);
   }
 
   registerPushDevice(req: RegisterPushDeviceRequest): Promise<WriteResult<void>> {

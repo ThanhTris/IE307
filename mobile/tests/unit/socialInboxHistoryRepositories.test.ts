@@ -174,17 +174,30 @@ describe('Social, inbox, and history live adapters', () => {
     });
     expect((await harness.repository.restoreSession()).ok).toBe(true);
 
-    const result = await harness.client.markAllPartnerInboxRead('same-request-after-timeout');
+    const inbox = createInboxRepository(harness.repository);
+    const result = await inbox.markAllRead('same-request-after-timeout');
 
     expect(result).toEqual({ ok: true, requestId: 'same-request-after-timeout', data: undefined });
     expect(calls).toEqual([{
       rpc: 'mark_all_partner_inbox_read',
       params: { requestId: 'same-request-after-timeout' },
     }]);
-    const inbox = createInboxRepository(harness.repository);
     const forwarded = await inbox.markAllRead('same-request-after-timeout');
     expect(forwarded.ok).toBe(true);
     expect(calls[1]).toEqual(calls[0]);
+  });
+
+  test.each([
+    { ok: true },
+    { ok: true, requestId: 'older-mark-all-request', data: null },
+    { ok: true, requestId: 'mark-all-request', data: {} },
+  ])('mark-all rejects a malformed or unrelated success ACK: %j', async raw => {
+    const client = new ApiClientImpl({ transport: { invoke: async <T>() => raw as T } });
+    const inbox = createInboxRepository(createRoomRepository({ client }));
+
+    expect(await inbox.markAllRead('mark-all-request')).toEqual({
+      ok: false, requestId: 'mark-all-request', error: { messageKey: 'MALFORMED_RESPONSE' },
+    });
   });
 
   test('does not show an invitation again after its action succeeded in the current app session', async () => {
@@ -200,6 +213,27 @@ describe('Social, inbox, and history live adapters', () => {
 
     expect(after).toMatchObject({ ok: true, data: { items: [] } });
     expect(client.listPartnerInbox).toHaveBeenCalledTimes(2);
+  });
+
+  test('keeps both existing and canonical result events alongside new invitations', async () => {
+    const legacy: InboxItem = {
+      ...inboxItem('legacy-inbox', 'legacy-event'),
+      type: 'room_result',
+      metadata: { roomId: uuidFrom('legacy-room'), resultId: uuidFrom('legacy-result') },
+    };
+    const canonical: InboxItem = {
+      ...inboxItem('canonical-inbox', 'canonical-event'),
+      type: 'room_result',
+      metadata: {
+        roomId: uuidFrom('canonical-room'), resultId: uuidFrom('canonical-result'),
+        status: 'DECIDED', contractVersion: 'dish-session-v4/roadmap-v2/GM-07.B-supplement', eventVersion: 1,
+      },
+    };
+    const rows = [legacy, inboxItem('new-inbox', 'new-friend-invitation'), canonical];
+    const client = new ApiClientImpl({ transport: { invoke: async <T>() => rows as T } });
+    const inbox = createInboxRepository(createRoomRepository({ client }));
+
+    expect(await inbox.list()).toMatchObject({ ok: true, data: { items: rows } });
   });
 
   test.each([

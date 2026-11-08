@@ -1,4 +1,6 @@
+import { ApiClientImpl } from '../../../data/api/client';
 import type { InboxItem, JoinRoomResponse, ReadResult, WriteResult } from '../../../data/api/contracts';
+import { isVoidPayload } from '../../../data/api/responseGuards';
 import type { RoomRepository } from '../../rooms/services/roomRepository';
 import { createDurableRequestId } from '../../rooms/services/roomRepository';
 import { callSessionApi } from '../../shared/services/sessionApi';
@@ -45,9 +47,11 @@ function isInboxProjection(value: unknown): value is InboxItem {
   if (value.type === 'room_invite') return exactKeys(metadata, ['invitationId', 'roomId'])
     && typeof metadata.invitationId === 'string' && UUID.test(metadata.invitationId)
     && typeof metadata.roomId === 'string' && UUID.test(metadata.roomId);
-  return value.type === 'room_result' && exactKeys(metadata, ['roomId', 'resultId', 'status', 'contractVersion', 'eventVersion'])
-    && typeof metadata.roomId === 'string' && UUID.test(metadata.roomId)
-    && typeof metadata.resultId === 'string' && UUID.test(metadata.resultId)
+  if (value.type !== 'room_result'
+    || typeof metadata.roomId !== 'string' || !UUID.test(metadata.roomId)
+    || typeof metadata.resultId !== 'string' || !UUID.test(metadata.resultId)) return false;
+  if (exactKeys(metadata, ['roomId', 'resultId'])) return true;
+  return exactKeys(metadata, ['roomId', 'resultId', 'status', 'contractVersion', 'eventVersion'])
     && (metadata.status === 'DECIDED' || metadata.status === 'NO_CONSENSUS')
     && typeof metadata.contractVersion === 'string' && CONTRACTS.has(metadata.contractVersion)
     && Number.isInteger(metadata.eventVersion) && Number(metadata.eventVersion) >= 1;
@@ -116,7 +120,17 @@ export function createInboxRepository(roomRepository: RoomRepository): InboxRepo
       const last = result.data[result.data.length - 1];
       return { ok: true, data: { items, nextCursor: result.data.length === PAGE_SIZE ? last?.id : undefined, fetchedAt: new Date().toISOString() } };
     },
-    markAllRead: requestId => callSessionApi(roomRepository, client => client.markAllPartnerInboxRead(requestId)),
+    markAllRead: requestId => callSessionApi(roomRepository, async client => {
+      if (!(client instanceof ApiClientImpl)) {
+        return { ok: false, requestId, error: { messageKey: 'NOT_READY' } };
+      }
+      const raw = await client.callRpc<unknown>('mark_all_partner_inbox_read', { requestId });
+      if (isRecord(raw) && raw.ok === true
+        && (!exactKeys(raw, ['ok', 'requestId', 'data']) || raw.requestId !== requestId || raw.data !== null)) {
+        return { ok: false, requestId, error: { messageKey: 'MALFORMED_RESPONSE' } };
+      }
+      return client.normalizeWriteResponse(raw, requestId, isVoidPayload);
+    }),
     markHandled(eventId) {
       if (UUID.test(eventId)) handledEventIds().add(eventId);
     },

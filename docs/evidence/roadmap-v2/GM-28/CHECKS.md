@@ -121,7 +121,7 @@ This follow-up supersedes the prior “saved canonical result unavailable” sta
 - `push-settings` is absent from the app route tree and Inbox UI. Result ID malformed/cross-room mismatch is rejected by the repository guard; `DECIDED` + `round=1` + `ACCEPTABLE_FINAL` is rejected by the shared raw terminal validator and regression tests.
 - Remaining limits: visual parity is still Partial/Fail as recorded in `FIGMA_PARITY.md`; 320/360dp and 200% font-scale final-source reload, full spoken TalkBack order/activation, physical Android, native build, remote push, NO_CONSENSUS result open, full group-consent/TTL matrix and two-member vote completion are **Not run**. Do not mark GM-28/GM-27 complete from this follow-up alone.
 
-### GM-23.3 Inbox read-all consumer follow-up — 2026-11-08
+### Historical Inbox read-all AVD prototype — 2026-11-08
 
 - Source: PR #126 worktree `codex/gm-28-social-inbox-history`, `HEAD=e5f6e281c7f2b1c5b3e26d4decbde0b80a5be0e6`; main merge target staged from `8b26c3f96d46dff57c1b0857a13e8f1144e0a1cb`. Source remains uncommitted; no commit, push, PR update, merge or Project status change was performed.
 - Consumer contract: `food-v1/roadmap-v2/GM-23.3`, migration `0041_gm23_inbox_read_all.sql`, schema `0.17.0`. The API implementation is in the separate GM-23 worktree; it is not yet part of this PR's target branch.
@@ -137,4 +137,24 @@ This follow-up supersedes the prior “saved canonical result unavailable” sta
 - Automated checks on this source: `npm run check` passed (typecheck, lint, 72 suites / 1,357 Jest tests, architecture); `npm run check:expo` passed at Expo 58.0.23; `npm run bundle:android` exported the Android bundle (1,718 entry modules); Python regression passed 664 tests with 2 skipped; repository validator, task-doc index and staged/unstaged diff checks passed. Output summary: [checks-summary.json](artifacts/2026-11-08-inbox-read-all/checks-summary.json).
 - The supplement verifies the UI/API transition at 412dp. It does not change the prior overall visual finding: Figma parity remains Partial/Fail. Final-source 320/360dp, 200% font scale and full TalkBack order/activation were not rerun; remote push remains outside this consumer check.
 - QA run `gm23-inbox-read-20261108-2` was disposable. After capture, worker, Supabase project, volume and network were stopped/removed; the exact QA container/volume/network were absent and only the API ADB reverse mapping was removed. The unrelated Metro mapping `tcp:8084` was left in place. Application DB was not used.
-- Current live GM-23.3 backend/Bruno verification belongs to `docs/evidence/roadmap-v2/GM-23/inbox-read-all/`; until that artifact is reviewed and present on the merge target, GM-28's new API dependency is not merge-ready.
+- This QA evidence used the prototype migration. The shipped contract is GM-28.1 in PR #126, verified below.
+
+### GM-28.1 SQL and REST verification — 2026-11-08
+
+- Baseline PR head `efa9e0f` plus the GM-28.1 changes in this PR. Owned QA run
+  `gm28-pr126-readall-20261108` used loopback Auth, REST and worker, applied 28 migrations
+  through `0041_gm28_inbox_read_all.sql`, and verified ownership and function definitions.
+- PostgreSQL TAP **18/18**. Checks include execute privileges, caller isolation, all pages beyond 50,
+  expired and already-read rows, ACK shape, and replay leaving later rows unread.
+- Authenticated HTTP **12/12** with synthetic guests. Missing JWT returned 401, invalid request returned
+  400, and simultaneous retries returned the same ACK. The other account's inbox stayed unread until
+  that account called the RPC. Owner and recipient state were verified through real Inbox reads.
+- Focused mobile Jest **184/184**, with malformed ACKs and mixed legacy/canonical notifications covered.
+  Full `npm run check` passed typecheck, lint, architecture and **72 suites / 1,361 tests**.
+- Full QA regression passed **7 Auth/REST and 169 v4 assertions**, with 599 schema envelopes checked.
+  The first Windows run exposed a CRLF/LF mismatch in the migration 0040 body hash. The rerun used the exact
+  LF bytes in Git and passed the existing hash assertion. Both owned QA runs were stopped and cleaned up.
+- Repository validation and task indexes passed. The live Project checker returned
+  `READY_FOR_MERGE_REVIEW` against main `8b26c3f` after restoring the shared GM-07 API files to the target revision.
+- AVD with the final GM-28.1 migration, full Figma parity and complete TalkBack remain **Not run** for this
+  revision. The historical prototype run above is retained as prior evidence.

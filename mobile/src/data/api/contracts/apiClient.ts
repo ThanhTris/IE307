@@ -77,7 +77,6 @@ export interface ApiClient {
 
   // Inbox & Devices
   listPartnerInbox(cursor?: string): Promise<ReadResult<InboxItem[]>>;
-  markAllPartnerInboxRead(requestId?: string): Promise<WriteResult<void>>;
   registerPushDevice(req: RegisterPushDeviceRequest): Promise<WriteResult<void>>;
   unregisterPushDevice(deviceId: string, requestId?: string): Promise<WriteResult<void>>;
 

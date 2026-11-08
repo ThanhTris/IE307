@@ -70,11 +70,22 @@ Set `EXPO_PUBLIC_SUPABASE_URL` to a reachable test Supabase endpoint and `EXPO_P
 
 GM-29 consumes the inbox/repository foundations and owns native permission/token handling. Recheck GM-21/22/23/25 handoffs and merged revisions before merge; GM-31 remains responsible for durable outbox/cache behavior.
 
-### GM-23.3 “Đọc tất cả” integration follow-up — 2026-11-08
+## GM-28.1 Inbox read-all
 
-- `LiveInboxScreen` exposes the approved “Đọc tất cả” action and calls the `markAllPartnerInboxRead(requestId)` repository method. The UI uses a stable request ID and waits for the API ACK before reporting success; the backend operation affects caller-owned unread, unexpired rows beyond the 50-row inbox page.
-- API/consumer contract: `food-v1/roadmap-v2/GM-23.3`, RPC `mark_all_partner_inbox_read(text)`, migration `0041_gm23_inbox_read_all.sql`, schema `0.17.0`. Backend code and disposable QA artifacts live in the separate GM-23 worktree; verify that migration/HANDOFF has landed on the target before merging this consumer.
-- The AVD run used a real guest JWT through the local Auth/REST runtime. Tapping the button yielded a server ACK and DB readback changed from one unread item to zero; it did not rely on a local-only optimistic update. See `CHECKS.md` and `artifacts/2026-11-08-inbox-read-all/manifest.json`.
-- Mark-all-read is now server-persisted. Accepting or rejecting an individual invitation is still a separate mutation; do not assume that action alone marks the inbox row read. Existing in-process suppression after accept/reject remains a UI behavior until the producer contract adds a per-item handled state.
-- Full check passed on Expo 58.0.23: 72 Jest suites / 1,357 tests, typecheck, lint, architecture, Android JS export, validator and Python regression (664 passed, 2 skipped). These do not establish full Figma parity or native/physical-device behavior.
-- Limits remain: overall Inbox/History Figma parity is Partial/Fail; 320/360dp, 200% font scale, full TalkBack order and physical/native build were not retested in this follow-up. No remote push was tested.
+- [Migration 0041](../../../../supabase/migrations/0041_gm28_inbox_read_all.sql) is delivered with PR #126.
+  Schema `0.17.0`, contract `food-v1/roadmap-v2/GM-28.1`.
+- `POST /rest/v1/rpc/mark_all_partner_inbox_read` requires an authenticated guest or account.
+  Send `{"requestId":"<opaque ID>"}`. Success is `{"ok":true,"requestId":"<same ID>","data":null}`.
+- The RPC changes only caller-owned unread, unexpired rows at the server cutoff, including later inbox pages.
+  It uses the existing 24-hour ACK store. A repeat of the same request returns the stored ACK.
+  New rows after the cutoff are processed by a new request. The caller limit is 30 fresh requests per minute.
+- The feature repository uses the authenticated API client's existing RPC transport. It checks the success
+  envelope before marking rows as read. The inbox also accepts both the existing two-ID result metadata
+  and the complete canonical metadata. Accepting/rejecting an invitation is a separate action.
+- Start and verify a disposable instance using `npm run qa:start` and `npm run qa:verify` with the same
+  unique `--run-id` and free loopback ports. Run the [HTTP cases](../../../../supabase/tests/http/GM-28.http)
+  using private guest credentials and the [SQL tests](../../../../supabase/tests/database/GM-28_inbox_read_all.test.sql)
+  on that instance. The SQL file rolls back its fixtures. Stop the instance using `npm run qa:stop`
+  with the same run ID.
+- The existing AVD screenshots are from the earlier local prototype of read-all. See [CHECKS](CHECKS.md)
+  for the evidence on the migration in this PR and the remaining Chặng 3A checks.

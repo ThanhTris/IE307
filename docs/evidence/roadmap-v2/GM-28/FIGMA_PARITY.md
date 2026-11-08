@@ -58,9 +58,9 @@
 
 - The AVD now has a real QA result and saved personal-history projection. [Inbox result row](artifacts/2026-11-08-pr126-avd/inbox-live-result-row.png), [opened canonical result](artifacts/2026-11-08-pr126-avd/result-live-final.png), and [history result card](artifacts/2026-11-08-pr126-avd/history-live-result-card.png) replace the earlier “no saved canonical result” limitation for this state only.
 - The API projection contained three dishes tied at dense rank 1 with 2 points; the winner was `Phở gà`. Inbox tap opened the matching result, and history rendered the same persisted ranks/scores. This demonstrates functional refetch/data parity, not pixel-perfect parity with a populated Figma history frame.
-- The Inbox read-all action now has a GM-23.3 server operation and AVD functional evidence. Full page visual parity plus final-source 320/360dp, 200% font and TalkBack evidence remain **Partial/Fail/Not run** as recorded above. The result screen is owned by GM-27 and is shown here only as the target reached from the GM-28 Inbox.
+- The earlier Inbox read-all prototype had AVD functional evidence. PR #126 now delivers the GM-28.1 server operation. Full page visual parity plus final-source 320/360dp, 200% font and TalkBack evidence remain **Partial/Fail/Not run** as recorded above. The result screen is owned by GM-27 and is shown here only as the target reached from the GM-28 Inbox.
 
-## Inbox read-all live interaction — 2026-11-08
+## Historical Inbox read-all prototype interaction — 2026-11-08
 
 - Frame: Inbox / Notifications `286:2245` (approved reference listed above). The AVD rendered the “Đọc tất cả” action, and its press was verified end-to-end against the disposable GM-23.3 API.
 - Expected behavior: mark every current unread, unexpired item for the authenticated caller as read, including items outside the 50-row display page, and show completion only after the server ACK.

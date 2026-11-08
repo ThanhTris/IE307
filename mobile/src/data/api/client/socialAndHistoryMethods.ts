@@ -209,19 +209,6 @@ export async function listPartnerInboxMethod(
   }
 }
 
-export async function markAllPartnerInboxReadMethod(
-  ctx: RpcCallerContext,
-  customRequestId?: string
-): Promise<WriteResult<void>> {
-  const requestId = customRequestId ?? ctx.generateRequestId();
-  try {
-    const raw = await ctx.callRpc<unknown>('mark_all_partner_inbox_read', { requestId });
-    return ctx.normalizeWriteResponse<void>(raw, requestId, isVoidPayload);
-  } catch (err) {
-    return { ok: false, requestId, error: ctx.mapError(err) };
-  }
-}
-
 export async function registerPushDeviceMethod(
   ctx: RpcCallerContext,
   req: RegisterPushDeviceRequest

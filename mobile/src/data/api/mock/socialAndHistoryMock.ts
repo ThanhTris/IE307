@@ -214,27 +214,6 @@ export async function mockListPartnerInbox(
   return { ok: true, data: [...ctx.inbox] };
 }
 
-export async function mockMarkAllPartnerInboxRead(
-  ctx: MockStateContext,
-  customRequestId?: string
-): Promise<WriteResult<void>> {
-  await ctx.wait();
-  const fail = ctx.checkFailure();
-  if (fail) return { ok: false, error: { messageKey: fail } };
-
-  const requestId = customRequestId ?? ('req_' + Math.random().toString(36).substring(2, 9));
-  const { cachedResponse, conflictError, signature } = ctx.checkIdempotency<void>(
-    'markAllPartnerInboxRead', requestId, {}
-  );
-  if (cachedResponse) return cachedResponse;
-  if (conflictError) return conflictError;
-
-  ctx.inbox = ctx.inbox.map(item => item.read ? item : { ...item, read: true });
-  const response: WriteResult<void> = { ok: true, requestId, data: undefined };
-  ctx.recordIdempotency('markAllPartnerInboxRead', requestId, signature, response);
-  return response;
-}
-
 export async function mockRegisterPushDevice(
   ctx: MockStateContext,
   req: RegisterPushDeviceRequest
