@@ -194,6 +194,7 @@ export function LiveInboxScreen({ repository, displayName, onNavigate, onHome }:
         <Text style={[styles.readAllCount, { color: colors.muted }]}>{newItems.length ? `${newItems.length} thông báo chưa đọc trên trang` : 'Không có thông báo chưa đọc trên trang'}</Text>
         <AppButton label="Đọc tất cả" variant="quiet" onPress={() => { void markAllRead(); }} disabled={busy || loadingMore} loading={busy} colors={colors} style={styles.readAllButton} />
       </View> : null}
+      <AppButton label="Cài đặt thông báo trên thiết bị" variant="secondary" onPress={() => onNavigate('/push-settings')} disabled={busy || loading} colors={colors} />
       {!loading && !error && newItems.length > 0 ? <View style={styles.section}>
         <View style={styles.sectionTop}><Text accessibilityRole="header" style={[styles.sectionTitle, { color: colors.text }]}>Mới</Text><Text style={[styles.readAll, { color: colors.primary }]}>{newItems.length}</Text></View>
         {newItems.map(item => renderInboxItem(item, false))}

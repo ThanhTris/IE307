@@ -145,6 +145,8 @@ test('legacy result notification routes to the read-only legacy result screen', 
 
   expect(repository.resolveRoomResult).toHaveBeenCalledWith(roomId, resultId, undefined);
   expect(nav).toHaveBeenCalledWith(`/inbox-result?roomId=${roomId}&resultId=${resultId}`);
+  await user.press(screen.getByRole('button', { name: 'Cài đặt thông báo trên thiết bị' }));
+  expect(nav).toHaveBeenLastCalledWith('/push-settings');
 });
 
 test('live inbox marks all pages read and keeps the request ID after an uncertain response', async () => {
