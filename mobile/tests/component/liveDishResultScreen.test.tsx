@@ -803,5 +803,79 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
       fireEvent.press(dismiss);
       expect(screen.getAllByText('Phở bò tái nạm').length).toBeGreaterThan(0);
     });
+
+    test('placesConfig passes through simulated Places in QA and preserves winner & Top 3 podium', async () => {
+      const repo = createMockResultRepository({
+        initialResult: decidedResult,
+      });
+
+      await render(
+        <LiveDishResultScreen
+          roomId="room_places_sim"
+          repository={repo}
+          placesConfig={{ isDevSimulated: true }}
+          onHome={jest.fn()}
+          onNewSession={jest.fn()}
+        />
+      );
+
+      const dismiss = await screen.findByText('Chạm để bỏ qua');
+      fireEvent.press(dismiss);
+
+      // Verifies winner and Top 3 are preserved
+      expect(screen.getAllByText('Phở bò tái nạm').length).toBeGreaterThan(0);
+      expect(screen.getByText('Cơm tấm sườn bì')).toBeTruthy();
+
+      // Verifies simulated places are displayed
+      expect(await screen.findByText(/Dữ liệu mô phỏng trên máy ảo AVD/)).toBeTruthy();
+    });
+
+    test('placesConfig passes through real Places mode (no key) and preserves winner & Top 3 podium', async () => {
+      const repo = createMockResultRepository({
+        initialResult: decidedResult,
+      });
+
+      await render(
+        <LiveDishResultScreen
+          roomId="room_places_real_nokey"
+          repository={repo}
+          placesConfig={{ isDevSimulated: false, apiKey: '' }}
+          onHome={jest.fn()}
+          onNewSession={jest.fn()}
+        />
+      );
+
+      const dismiss = await screen.findByText('Chạm để bỏ qua');
+      fireEvent.press(dismiss);
+
+      // Verifies winner and Top 3 are strictly preserved in real mode even with no key
+      expect(screen.getAllByText('Phở bò tái nạm').length).toBeGreaterThan(0);
+      expect(screen.getByText('Cơm tấm sườn bì')).toBeTruthy();
+      expect(await screen.findByText('Chưa thể hiển thị bản đồ')).toBeTruthy();
+    });
+
+    test('DishResultEntry forwards placesConfig to LiveDishResultScreen in real mode', async () => {
+      const repo = createMockResultRepository({
+        initialResult: decidedResult,
+      });
+
+      await render(
+        <DishResultEntry
+          roomId="room_entry_places"
+          repository={repo}
+          placesConfig={{ isDevSimulated: true }}
+          onHome={jest.fn()}
+          onNewSession={jest.fn()}
+          onLegacyNewSession={jest.fn()}
+          onOtherScreen={jest.fn()}
+        />
+      );
+
+      const dismiss = await screen.findByText('Chạm để bỏ qua');
+      fireEvent.press(dismiss);
+
+      expect(screen.getAllByText('Phở bò tái nạm').length).toBeGreaterThan(0);
+      expect(await screen.findByText(/Dữ liệu mô phỏng trên máy ảo AVD/)).toBeTruthy();
+    });
   });
 });

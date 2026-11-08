@@ -68,7 +68,7 @@ export class LivePlacesRepository implements PlacesRepository {
     this.config = options.config ?? {};
     this.locationAdapter =
       options.locationAdapter ??
-      (this.config.isDevSimulated ? new MockLocationAdapter() : new NativeLocationAdapter());
+      (this.config.isDevSimulated ? new MockLocationAdapter('granted') : new NativeLocationAdapter());
   }
 
   async getLocationPermission(): Promise<LocationPermissionStatus> {
@@ -419,16 +419,32 @@ export class MockPlacesRepository implements PlacesRepository {
   }
 }
 
+export function getPlacesApiKeyFromEnv(): string | undefined {
+  return process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY || process.env.EXPO_PUBLIC_PLACES_API_KEY;
+}
+
+export function isPlacesSimulatedFromEnv(): boolean {
+  const val = process.env.EXPO_PUBLIC_PLACES_SIMULATED;
+  return val === '1' || val === 'true';
+}
+
 export function createPlacesRepository(options: {
   isDevSimulated?: boolean;
   apiKey?: string;
   locationAdapter?: LocationAdapter;
 } = {}): PlacesRepository {
+  const envKey = getPlacesApiKeyFromEnv();
+  const effectiveKey = options.apiKey ?? envKey;
+  const envSimulated = isPlacesSimulatedFromEnv();
+  const effectiveSimulated = options.isDevSimulated !== undefined
+    ? options.isDevSimulated
+    : (envSimulated || !effectiveKey);
+
   return new LivePlacesRepository({
     locationAdapter: options.locationAdapter,
     config: {
-      apiKey: options.apiKey,
-      isDevSimulated: options.isDevSimulated ?? true,
+      apiKey: effectiveKey,
+      isDevSimulated: effectiveSimulated,
     },
   });
 }

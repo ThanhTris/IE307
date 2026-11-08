@@ -238,6 +238,9 @@ describe('GM-30 Figma Parity & Native Linking Component Tests', () => {
       // Open camera scanner
       await press('Quét mã QR');
 
+      // Enter test code into AVD simulated scanner input
+      await fireEvent.changeText(screen.getByLabelText('Mã hoặc URL test'), 'GCD234');
+
       // Press scan QR button
       await press('Thử quét QR');
 

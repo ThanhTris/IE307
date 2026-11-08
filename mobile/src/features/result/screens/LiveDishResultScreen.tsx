@@ -20,6 +20,9 @@ import {
 import type { ResultMapRenderer } from '../services/nearbyPresentation';
 import {
   createPlacesRepository,
+  getPlacesApiKeyFromEnv,
+  isPlacesSimulatedFromEnv,
+  type PlacesConfig,
   type PlacesRepository,
 } from '../services/placesRepository';
 import { openExternalAction } from '../services/externalLinks';
@@ -29,6 +32,7 @@ export interface LiveDishResultScreenProps {
   resultId?: string;
   repository?: ResultRepository;
   placesRepository?: PlacesRepository;
+  placesConfig?: PlacesConfig;
   onHome: () => void;
   onNewSession: () => void;
   onOtherScreen?: () => void;
@@ -43,6 +47,7 @@ export function LiveDishResultScreen({
   resultId,
   repository: customRepository,
   placesRepository: customPlacesRepository,
+  placesConfig,
   onHome,
   onNewSession,
   onOtherScreen,
@@ -56,18 +61,31 @@ export function LiveDishResultScreen({
 
   const placesRepository = useMemo<PlacesRepository>(() => {
     if (customPlacesRepository) return customPlacesRepository;
-    return createPlacesRepository({ isDevSimulated: !isReal });
-  }, [customPlacesRepository, isReal]);
+    const envApiKey = getPlacesApiKeyFromEnv();
+    const envSimulated = isPlacesSimulatedFromEnv();
+    const effectiveApiKey = placesConfig?.apiKey ?? envApiKey;
+    const effectiveSimulated = placesConfig?.isDevSimulated !== undefined
+      ? placesConfig.isDevSimulated
+      : (envSimulated || !isReal || !effectiveApiKey);
+
+    return createPlacesRepository({
+      apiKey: effectiveApiKey,
+      isDevSimulated: effectiveSimulated,
+    });
+  }, [customPlacesRepository, placesConfig, isReal]);
 
   const placesFetcher = useMemo(() => {
     if (customPlacesRepository?.fetchNearbyPlaces) {
       return customPlacesRepository.fetchNearbyPlaces.bind(customPlacesRepository);
     }
+    if (placesConfig) {
+      return placesRepository.fetchNearbyPlaces.bind(placesRepository);
+    }
     if (customRepository?.fetchNearbyPlaces) {
       return customRepository.fetchNearbyPlaces.bind(customRepository);
     }
     return placesRepository.fetchNearbyPlaces.bind(placesRepository);
-  }, [customPlacesRepository, customRepository, placesRepository]);
+  }, [customPlacesRepository, placesConfig, customRepository, placesRepository]);
 
   const repository = useMemo<ResultRepository>(() => {
     if (customRepository) return customRepository;

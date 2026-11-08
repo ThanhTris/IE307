@@ -4,6 +4,8 @@ import {
   createJoinRoomShareMessage,
   createJoinRoomWebLink,
   generateQrMatrix,
+  isSuspiciousSearchParams,
+  isSuspiciousWord,
   NativeQrScannerAdapter,
   parseJoinRoomUrl,
   SimulatedQrScannerAdapter,
@@ -163,6 +165,25 @@ describe('GM-30 joinLinks — Native QR, Links, Allowlist & Resolvers', () => {
         error: 'MALFORMED_URL',
         rawUrl: '   ',
       });
+    });
+
+    test('isSuspiciousWord and isSuspiciousSearchParams detect credentials and unexpected params', () => {
+      expect(isSuspiciousWord('token')).toBe(true);
+      expect(isSuspiciousWord('%74oken')).toBe(true);
+      expect(isSuspiciousWord('secret')).toBe(true);
+      expect(isSuspiciousWord('password')).toBe(true);
+      expect(isSuspiciousWord('code')).toBe(false);
+
+      // Safe params: only code or permitted dev flags
+      expect(isSuspiciousSearchParams({ code: 'GCD234' })).toBe(false);
+      expect(isSuspiciousSearchParams({ code: 'GCD234', simulatedScanner: '1' })).toBe(false);
+      expect(isSuspiciousSearchParams({ code: 'GCD234', simulatedPlaces: '1' })).toBe(false);
+
+      // Suspicious params: token, %74oken, extra unallowed query keys
+      expect(isSuspiciousSearchParams({ code: 'GCD234', token: 'synthetic' })).toBe(true);
+      expect(isSuspiciousSearchParams({ code: 'GCD234', '%74oken': 'synthetic' })).toBe(true);
+      expect(isSuspiciousSearchParams({ code: 'GCD234', secret: '123' })).toBe(true);
+      expect(isSuspiciousSearchParams({ code: 'GCD234', unknownParam: 'val' })).toBe(true);
     });
   });
 
@@ -337,9 +358,14 @@ describe('GM-30 joinLinks — Native QR, Links, Allowlist & Resolvers', () => {
   });
 
   describe('QR Scanner Adapters', () => {
-    test('SimulatedQrScannerAdapter allows simulating valid and invalid scans', async () => {
+    test('SimulatedQrScannerAdapter allows simulating valid and invalid scans without auto-filling default code', async () => {
       const adapter = new SimulatedQrScannerAdapter('granted');
+      expect(adapter.isSimulated).toBe(true);
       expect(await adapter.getPermissionStatus()).toBe('granted');
+
+      // Without input, simulateScan must return ok: false without auto-filling any fixture code
+      const emptyScan = await adapter.simulateScan!();
+      expect(emptyScan).toEqual({ ok: false, code: '' });
 
       const validScan = await adapter.simulateScan!('abc234');
       expect(validScan).toEqual({ ok: true, code: 'ABC234' });
@@ -347,12 +373,18 @@ describe('GM-30 joinLinks — Native QR, Links, Allowlist & Resolvers', () => {
       const invalidScan = await adapter.simulateScan!('invalid_0');
       expect(invalidScan).toEqual({ ok: false, code: 'INVALID_0' });
 
+      // Can configure test code via setScannedCodeOrUrl
+      adapter.setScannedCodeOrUrl('XYZ789');
+      const configuredScan = await adapter.simulateScan!();
+      expect(configuredScan).toEqual({ ok: true, code: 'XYZ789' });
+
       adapter.setPermissionStatus('denied');
       expect(await adapter.getPermissionStatus()).toBe('denied');
     });
 
     test('NativeQrScannerAdapter returns denied per blocked CAMERA config', async () => {
       const adapter = new NativeQrScannerAdapter();
+      expect(adapter.isSimulated).toBe(false);
       expect(await adapter.getPermissionStatus()).toBe('denied');
       expect(await adapter.requestPermission()).toBe('denied');
     });
@@ -392,6 +424,78 @@ describe('GM-30 joinLinks — Native QR, Links, Allowlist & Resolvers', () => {
 
       unsubscribe();
       expect(removeSpy).toHaveBeenCalled();
+
+      getInitialSpy.mockRestore();
+      addEventSpy.mockRestore();
+    });
+
+    test('late cold link resolving after warm link is ignored (monotonic sequence)', async () => {
+      let resolveCold: ((url: string) => void) | null = null;
+      const coldPromise = new Promise<string>(resolve => {
+        resolveCold = resolve;
+      });
+      const getInitialSpy = jest.spyOn(Linking, 'getInitialURL').mockReturnValue(coldPromise as any);
+
+      let listenerCallback: ((event: { url: string }) => void) | null = null;
+      const removeSpy = jest.fn();
+
+      const addEventSpy = jest.spyOn(Linking, 'addEventListener').mockImplementation((event, cb) => {
+        if (event === 'url') {
+          listenerCallback = cb as unknown as (event: { url: string }) => void;
+        }
+        return { remove: removeSpy } as any;
+      });
+
+      const onJoinCode = jest.fn();
+      const onError = jest.fn();
+
+      const unsubscribe = subscribeToJoinLinks({ onJoinCode, onError });
+
+      // While cold link is pending, warm link MNP567 arrives
+      expect(listenerCallback).not.toBeNull();
+      listenerCallback!({ url: 'gi-cung-duoc://room/join?code=MNP567' });
+      expect(onJoinCode).toHaveBeenCalledTimes(1);
+      expect(onJoinCode).toHaveBeenCalledWith('MNP567', 'gi-cung-duoc://room/join?code=MNP567');
+
+      // Now cold link GCD234 resolves late
+      resolveCold!('gi-cung-duoc://room/join?code=GCD234');
+      await new Promise<void>(resolve => { setImmediate(() => resolve()); });
+
+      // Cold link GCD234 must be dropped because a newer warm link arrived first!
+      expect(onJoinCode).toHaveBeenCalledTimes(1);
+      expect(onJoinCode).not.toHaveBeenCalledWith('GCD234', expect.anything());
+
+      unsubscribe();
+      getInitialSpy.mockRestore();
+      addEventSpy.mockRestore();
+    });
+
+    test('callbacks are discarded after unsubscribe', async () => {
+      let resolveCold: ((url: string) => void) | null = null;
+      const coldPromise = new Promise<string>(resolve => {
+        resolveCold = resolve;
+      });
+      const getInitialSpy = jest.spyOn(Linking, 'getInitialURL').mockReturnValue(coldPromise as any);
+
+      const removeSpy = jest.fn();
+      const addEventSpy = jest.spyOn(Linking, 'addEventListener').mockReturnValue({ remove: removeSpy } as any);
+
+      const onJoinCode = jest.fn();
+      const onError = jest.fn();
+
+      const unsubscribe = subscribeToJoinLinks({ onJoinCode, onError });
+
+      // Unsubscribe before cold link resolves
+      unsubscribe();
+      expect(removeSpy).toHaveBeenCalled();
+
+      // Cold link resolves after unsubscribe
+      resolveCold!('gi-cung-duoc://room/join?code=GCD234');
+      await new Promise<void>(resolve => { setImmediate(() => resolve()); });
+
+      // Callback must not be called after unsubscribe
+      expect(onJoinCode).not.toHaveBeenCalled();
+      expect(onError).not.toHaveBeenCalled();
 
       getInitialSpy.mockRestore();
       addEventSpy.mockRestore();

@@ -27,6 +27,37 @@ const ALLOWED_SCHEMES = new Set([
 ]);
 
 const SUSPICIOUS_PARAM_REGEX = /(?:access_token|refresh_token|token|secret|password|bearer|auth|session|apikey|api_key)=/i;
+const SUSPICIOUS_WORD_REGEX = /(?:access_token|refresh_token|token|secret|password|bearer|auth|session|apikey|api_key)/i;
+
+export function isSuspiciousWord(str: string): boolean {
+  if (!str || typeof str !== 'string') return false;
+  try {
+    const decoded = decodeURIComponent(str).toLowerCase().trim();
+    return SUSPICIOUS_WORD_REGEX.test(decoded);
+  } catch {
+    return true;
+  }
+}
+
+export function isSuspiciousSearchParams(params: Record<string, unknown>): boolean {
+  for (const [key, val] of Object.entries(params)) {
+    if (key === 'code') {
+      const strVal = typeof val === 'string' ? val : Array.isArray(val) ? String(val[0] ?? '') : String(val ?? '');
+      if (isSuspiciousWord(strVal)) return true;
+      continue;
+    }
+    // Allowed dev/test query parameters for AVD simulation
+    if (key === 'simulatedScanner' || key === 'simulatedPlaces') {
+      continue;
+    }
+    if (isSuspiciousWord(key)) return true;
+    const strVal = typeof val === 'string' ? val : Array.isArray(val) ? String(val[0] ?? '') : String(val ?? '');
+    if (isSuspiciousWord(strVal)) return true;
+    // Any unrecognized query param outside allowlist is treated as suspicious
+    return true;
+  }
+  return false;
+}
 
 export type ParseJoinUrlResult =
   | { ok: true; code: string; rawUrl: string }
@@ -187,6 +218,7 @@ export type CameraPermissionStatus =
   | 'blocked';
 
 export interface QrScannerAdapter {
+  readonly isSimulated?: boolean;
   getPermissionStatus(): Promise<CameraPermissionStatus>;
   requestPermission(): Promise<CameraPermissionStatus>;
   openSettings?(): Promise<void>;
@@ -194,10 +226,11 @@ export interface QrScannerAdapter {
 }
 
 export class SimulatedQrScannerAdapter implements QrScannerAdapter {
+  readonly isSimulated = true;
   private permission: CameraPermissionStatus;
   private defaultCodeOrUrl: string;
 
-  constructor(initialPermission: CameraPermissionStatus = 'granted', defaultCodeOrUrl: string = 'GCD234') {
+  constructor(initialPermission: CameraPermissionStatus = 'granted', defaultCodeOrUrl: string = '') {
     this.permission = initialPermission;
     this.defaultCodeOrUrl = defaultCodeOrUrl;
   }
@@ -219,8 +252,15 @@ export class SimulatedQrScannerAdapter implements QrScannerAdapter {
     this.permission = status;
   }
 
+  setScannedCodeOrUrl(codeOrUrl: string): void {
+    this.defaultCodeOrUrl = codeOrUrl;
+  }
+
   async simulateScan(codeOrUrl?: string): Promise<{ ok: boolean; code: string }> {
-    const raw = codeOrUrl || this.defaultCodeOrUrl;
+    const raw = (codeOrUrl ?? this.defaultCodeOrUrl).trim();
+    if (!raw) {
+      return { ok: false, code: '' };
+    }
     const parsed = parseJoinRoomUrl(raw);
     if (parsed.ok) {
       return { ok: true, code: parsed.code };
@@ -234,6 +274,8 @@ export class SimulatedQrScannerAdapter implements QrScannerAdapter {
 }
 
 export class NativeQrScannerAdapter implements QrScannerAdapter {
+  readonly isSimulated = false;
+
   async getPermissionStatus(): Promise<CameraPermissionStatus> {
     // In our Expo config, CAMERA is blocked in blockedPermissions.
     // Hence native returns 'denied' or 'unavailable', leading to manual fallback.
@@ -259,9 +301,15 @@ export interface JoinLinkListenerOptions {
 }
 
 export function subscribeToJoinLinks(options: JoinLinkListenerOptions): () => void {
-  const handleUrl = (event: { url: string }) => {
-    if (!event.url) return;
-    const parsed = parseJoinRoomUrl(event.url);
+  let active = true;
+  let latestSeq = 0;
+
+  const emit = (seq: number, rawUrl: string) => {
+    if (!active || seq < latestSeq) {
+      return;
+    }
+    latestSeq = seq;
+    const parsed = parseJoinRoomUrl(rawUrl);
     if (parsed.ok) {
       options.onJoinCode(parsed.code, parsed.rawUrl);
     } else {
@@ -269,19 +317,30 @@ export function subscribeToJoinLinks(options: JoinLinkListenerOptions): () => vo
     }
   };
 
-  // Check initial cold-start deep link
-  void Linking.getInitialURL().then(initialUrl => {
-    if (initialUrl) {
-      handleUrl({ url: initialUrl });
-    }
-  }).catch(() => {
-    // Ignore cold start read failure
+  // Warm start incoming URL events: increment sequence for every event
+  const subscription = Linking.addEventListener('url', (event: { url: string }) => {
+    if (!active || !event?.url) return;
+    latestSeq++;
+    emit(latestSeq, event.url);
   });
 
-  // Subscribe to warm-start incoming URL events
-  const subscription = Linking.addEventListener('url', handleUrl);
+  // Cold start deep link: sequence 0
+  const coldSeq = 0;
+  void Linking.getInitialURL()
+    .then(initialUrl => {
+      if (!active || !initialUrl) return;
+      // If a newer warm event already arrived, drop the stale cold link!
+      if (latestSeq > coldSeq) {
+        return;
+      }
+      emit(coldSeq, initialUrl);
+    })
+    .catch(() => {
+      // Ignore cold start read failure
+    });
 
   return () => {
+    active = false;
     subscription.remove();
   };
 }

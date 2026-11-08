@@ -431,9 +431,38 @@ describe('GM-30 placesRepository — Places Client Integration & Winner Isolatio
       }
     });
 
-    test('createPlacesRepository creates LivePlacesRepository with options', () => {
-      const repo = createPlacesRepository({ isDevSimulated: true });
-      expect(repo).toBeInstanceOf(LivePlacesRepository);
+    test('createPlacesRepository creates LivePlacesRepository with options and honors simulation flag', async () => {
+      const repoSimulated = createPlacesRepository({ isDevSimulated: true });
+      expect(repoSimulated).toBeInstanceOf(LivePlacesRepository);
+
+      const resSim = await repoSimulated.fetchNearbyPlaces({
+        resultId: 'res_sim',
+        winnerDishId: 'dish_sim',
+        dishName: 'Cơm Tấm',
+      });
+      expect(resSim.ok).toBe(true);
+      if (resSim.ok) {
+        expect(resSim.data.resultId).toBe('res_sim');
+        expect(resSim.data.winnerDishId).toBe('dish_sim');
+        expect(resSim.data.status).toBe('ready');
+        expect(resSim.data.places.length).toBeGreaterThan(0);
+        expect(resSim.data.places[0]!.attribution).toContain('Dữ liệu mô phỏng trên máy ảo AVD');
+      }
+
+      // When isDevSimulated is explicitly false and no API key is provided, returns status unsupported without throwing
+      const repoRealNoKey = createPlacesRepository({ isDevSimulated: false, apiKey: '' });
+      const resReal = await repoRealNoKey.fetchNearbyPlaces({
+        resultId: 'res_real',
+        winnerDishId: 'dish_real',
+        dishName: 'Cơm Tấm',
+      });
+      expect(resReal.ok).toBe(true);
+      if (resReal.ok) {
+        expect(resReal.data.resultId).toBe('res_real');
+        expect(resReal.data.winnerDishId).toBe('dish_real');
+        expect(resReal.data.status).toBe('unsupported');
+        expect(resReal.data.places).toEqual([]);
+      }
     });
   });
 });

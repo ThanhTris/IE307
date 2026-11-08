@@ -57,7 +57,7 @@ export function useJoinRoomEntry({ repository, preview, initialCode = '', initia
     try { if (request) await submitted.run(intent.current, requestId => repository.joinRoom({ ...request, requestId })); }
     finally { joinLock.current = false; }
   };
-  const scan = async () => {
+  const scan = async (testCodeOrUrl?: string) => {
     if (readLock.current || disabled) return;
     const generation = ++readGeneration.current;
     readLock.current = true; setReadBusy(true); clearPreview();
@@ -70,7 +70,7 @@ export function useJoinRoomEntry({ repository, preview, initialCode = '', initia
         if (perm === 'denied' || perm === 'blocked') {
           result = { status: 'denied' };
         } else if (qrScannerAdapter.simulateScan) {
-          const scanRes = await qrScannerAdapter.simulateScan();
+          const scanRes = await qrScannerAdapter.simulateScan(testCodeOrUrl);
           result = scanRes.ok ? { status: 'scanned', code: scanRes.code } : { status: 'unavailable' };
         } else {
           result = { status: 'unavailable' };
@@ -89,7 +89,7 @@ export function useJoinRoomEntry({ repository, preview, initialCode = '', initia
         setCameraMessage('Bạn chưa cấp quyền truy cập camera để quét mã QR.');
       } else {
         setCameraStatus('unavailable');
-        setCameraMessage('Camera chưa sẵn sàng. Bạn có thể nhập mã phòng bằng tay.');
+        setCameraMessage('Chưa có mã QR hợp lệ. Bạn có thể nhập mã test hoặc nhập mã bằng tay.');
       }
     } catch {
       if (mounted.current && generation === readGeneration.current) {

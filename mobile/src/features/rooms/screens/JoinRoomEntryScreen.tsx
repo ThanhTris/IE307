@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Image, Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
@@ -21,11 +22,13 @@ export type JoinRoomEntryProps = {
   onBack: () => void;
   isMock?: boolean;
   createRequestId?: RequestIdFactory;
+  linkError?: string;
 };
 
 export function JoinRoomEntryScreen(props: JoinRoomEntryProps) {
   const { colors, dark } = useShellTheme();
   const { textStyle } = useAppFonts();
+  const [simulatedInput, setSimulatedInput] = useState('');
   const flow = useJoinRoomEntry(props);
   const { summary, submitted } = flow;
   const problem = flow.readError && !['ROOM_NOT_FOUND', 'INVALID_INPUT'].includes(flow.readError) ? flow.readError : undefined;
@@ -76,6 +79,13 @@ export function JoinRoomEntryScreen(props: JoinRoomEntryProps) {
           // Figma node 268:2019 — Vào phòng · Quét QR
           <>
             <View style={[styles.camera, { backgroundColor: colors.warm, borderColor: colors.line }]}>
+              {props.qrScannerAdapter?.isSimulated ? (
+                <View style={[styles.simulatedBadge, { backgroundColor: dark ? colors.surface : '#FFFFFF', borderColor: colors.line }]}>
+                  <Text style={[styles.simulatedLabel, { color: colors.primary }, textStyle(600)]}>
+                    [Mô phỏng AVD] Camera quét QR mô phỏng cho AVD testing
+                  </Text>
+                </View>
+              ) : null}
               <View style={[styles.viewfinder, { borderColor: colors.primary }]}>
                 <Image source={require('../../../../assets/brand/entry-ui/qr.png')} accessible={false} resizeMode="contain" style={[styles.qrIcon, { tintColor: colors.text }]} />
               </View>
@@ -85,10 +95,28 @@ export function JoinRoomEntryScreen(props: JoinRoomEntryProps) {
               <Text accessibilityLiveRegion="polite" style={[styles.body, { color: colors.muted }, textStyle(400)]}>
                 {flow.cameraMessage}
               </Text>
+              {props.qrScannerAdapter?.isSimulated ? (
+                <View style={styles.simulatedInputContainer}>
+                  <FormField
+                    label="Mã hoặc URL test"
+                    value={simulatedInput}
+                    onChangeText={setSimulatedInput}
+                    placeholder="Ví dụ: GCD234 hoặc link mời"
+                    colors={colors}
+                  />
+                </View>
+              ) : null}
             </View>
             <View style={styles.spacer} />
             <View style={styles.actions}>
-              <AppButton label="Thử quét QR" loading={flow.readBusy} onPress={() => { void flow.scan(); }} colors={colors} />
+              <AppButton
+                label="Thử quét QR"
+                loading={flow.readBusy}
+                onPress={() => {
+                  void flow.scan(props.qrScannerAdapter?.isSimulated ? simulatedInput : undefined);
+                }}
+                colors={colors}
+              />
               <AppButton label="Nhập mã bằng tay" variant="secondary" onPress={flow.closeCamera} colors={colors} />
             </View>
           </>
@@ -129,6 +157,14 @@ export function JoinRoomEntryScreen(props: JoinRoomEntryProps) {
         <JoinEntryProblem code={flow.code} error={problem} busy={flow.readBusy} onRetry={() => { void flow.read(); }} onEdit={flow.edit} onHome={props.onBack} />
       ) : (
         <>
+          {props.linkError ? (
+            <StatusNotice
+              title="Liên kết bị chặn"
+              message="Liên kết chứa tham số không an toàn hoặc không hợp lệ. Bạn có thể nhập mã phòng bằng tay để tiếp tục."
+              tone="warning"
+              colors={colors}
+            />
+          ) : null}
           {!validDisplayName(props.initialDisplayName ?? '') ? (
             <FormField label="Tên của bạn" value={flow.name} onChangeText={flow.editName} editable={!flow.disabled} colors={colors} />
           ) : null}
@@ -180,6 +216,9 @@ const styles = StyleSheet.create({
   deniedBadge: { width: 80, height: 80, borderRadius: 40, borderWidth: 1, alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
   deniedIcon: { fontSize: 36 },
   deniedBody: { fontSize: 14, lineHeight: 22, textAlign: 'center', paddingHorizontal: 16 },
+  simulatedBadge: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12, borderWidth: 1, marginBottom: 8 },
+  simulatedLabel: { fontSize: 12, lineHeight: 16, textAlign: 'center' },
+  simulatedInputContainer: { width: '100%', marginTop: 8 },
   spacer: { flexGrow: 1, minHeight: 32 },
   actions: { gap: 16 },
 });
