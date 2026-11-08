@@ -64,6 +64,6 @@ Issue: resolves #91
 
 ## 4. Evidence Artifacts
 
-- [CHECKS.md](docs/evidence/roadmap-v2/GM-30/CHECKS.md)
-- [FIGMA_PARITY.md](docs/evidence/roadmap-v2/GM-30/FIGMA_PARITY.md)
-- [HANDOFF.md](docs/evidence/roadmap-v2/GM-30/HANDOFF.md)
+- [CHECKS.md](CHECKS.md)
+- [FIGMA_PARITY.md](FIGMA_PARITY.md)
+- [HANDOFF.md](HANDOFF.md)

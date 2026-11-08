@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Clipboard, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import Svg, { Rect } from 'react-native-svg';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
@@ -10,7 +10,7 @@ export interface RoomQrModalProps {
   visible: boolean;
   code: string;
   onClose: () => void;
-  onCopyLink?: (link: string) => void;
+  onCopyLink?: (link: string) => void | Promise<void>;
 }
 
 export function RoomQrModal({ visible, code, onClose, onCopyLink }: RoomQrModalProps) {
@@ -32,9 +32,17 @@ export function RoomQrModal({ visible, code, onClose, onCopyLink }: RoomQrModalP
   const matrixSize = matrix.length;
   const qrPixelSize = 200;
 
-  const handleCopy = () => {
-    setCopied(true);
-    onCopyLink?.(joinUrl);
+  const handleCopy = async () => {
+    try {
+      if (onCopyLink) {
+        await onCopyLink(joinUrl);
+      } else {
+        Clipboard.setString(joinUrl);
+      }
+      setCopied(true);
+    } catch {
+      // Do not set copied feedback on write failure
+    }
   };
 
   return (

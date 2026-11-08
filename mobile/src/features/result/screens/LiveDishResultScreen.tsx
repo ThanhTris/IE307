@@ -59,6 +59,16 @@ export function LiveDishResultScreen({
     return createPlacesRepository({ isDevSimulated: !isReal });
   }, [customPlacesRepository, isReal]);
 
+  const placesFetcher = useMemo(() => {
+    if (customPlacesRepository?.fetchNearbyPlaces) {
+      return customPlacesRepository.fetchNearbyPlaces.bind(customPlacesRepository);
+    }
+    if (customRepository?.fetchNearbyPlaces) {
+      return customRepository.fetchNearbyPlaces.bind(customRepository);
+    }
+    return placesRepository.fetchNearbyPlaces.bind(placesRepository);
+  }, [customPlacesRepository, customRepository, placesRepository]);
+
   const repository = useMemo<ResultRepository>(() => {
     if (customRepository) return customRepository;
     const getCurrentIdentity = () =>
@@ -68,21 +78,21 @@ export function LiveDishResultScreen({
         : null) ??
       null;
 
-    const placesFetcher = (params: FetchNearbyPlacesParams) =>
-      placesRepository.fetchNearbyPlaces(params);
+    const repositoryPlacesFetcher = (params: FetchNearbyPlacesParams) =>
+      placesFetcher(params);
 
     if (isReal) {
       return createLiveResultRepository({
         roomRepository: live.repository,
         getCurrentIdentity,
-        placesFetcher,
+        placesFetcher: repositoryPlacesFetcher,
       });
     }
     return createLiveResultRepository({
       getCurrentIdentity,
-      placesFetcher,
+      placesFetcher: repositoryPlacesFetcher,
     });
-  }, [customRepository, isReal, live.repository, live.user?.id, placesRepository]);
+  }, [customRepository, isReal, live.repository, live.user?.id, placesFetcher]);
 
   const [currentRoomId, setCurrentRoomId] = useState(roomId);
   const [currentResultId, setCurrentResultId] = useState(resultId);
@@ -160,8 +170,8 @@ export function LiveDishResultScreen({
         if (cancelled || activeRoomIdRef.current !== roomId || currentSeq !== fetchSeqRef.current) return;
 
         if (res.ok) {
-          // If expected resultId was requested, ensure it matches
-          if (resultId && res.data.capability === 'scored-v4' && res.data.result.resultId !== resultId) {
+          // If expected resultId was requested, ensure it matches (guard for both scored-v4 and legacy-unscored-v1)
+          if (resultId && res.data.result.resultId !== resultId) {
             setCurrentRoomId(roomId);
             setCurrentResultId(resultId);
             setReadState('error');
@@ -178,30 +188,23 @@ export function LiveDishResultScreen({
             const winner = res.data.result.winner;
             const targetResultId = res.data.result.resultId;
             const currentPlacesSeq = ++placesSeqRef.current;
-            const placesFetcher = placesRepository.fetchNearbyPlaces
-              ? placesRepository.fetchNearbyPlaces.bind(placesRepository)
-              : repository.fetchNearbyPlaces
-              ? repository.fetchNearbyPlaces.bind(repository)
-              : undefined;
 
-            if (placesFetcher) {
-              void placesFetcher({
-                resultId: targetResultId,
-                winnerDishId: winner.dishId,
-                dishName: winner.name,
-              }).then(placesRes => {
-                if (cancelled || activeRoomIdRef.current !== roomId || currentPlacesSeq !== placesSeqRef.current) return;
-                if (placesRes.ok) {
-                  setNearby(placesRes.data);
-                } else {
-                  setNearby(toNearbyError(targetResultId, winner.dishId, placesRes.error));
-                }
-              }).catch(() => {
-                if (!cancelled && activeRoomIdRef.current === roomId && currentPlacesSeq === placesSeqRef.current) {
-                  setNearby(toNearbyError(targetResultId, winner.dishId, { messageKey: 'NETWORK_ERROR' }));
-                }
-              });
-            }
+            void placesFetcher({
+              resultId: targetResultId,
+              winnerDishId: winner.dishId,
+              dishName: winner.name,
+            }).then(placesRes => {
+              if (cancelled || activeRoomIdRef.current !== roomId || currentPlacesSeq !== placesSeqRef.current) return;
+              if (placesRes.ok) {
+                setNearby(placesRes.data);
+              } else {
+                setNearby(toNearbyError(targetResultId, winner.dishId, placesRes.error));
+              }
+            }).catch(() => {
+              if (!cancelled && activeRoomIdRef.current === roomId && currentPlacesSeq === placesSeqRef.current) {
+                setNearby(toNearbyError(targetResultId, winner.dishId, { messageKey: 'NETWORK_ERROR' }));
+              }
+            });
           }
         } else {
           setCurrentRoomId(roomId);
@@ -239,7 +242,7 @@ export function LiveDishResultScreen({
         clearTimeout(pollTimer);
       }
     };
-  }, [roomId, resultId, repository, placesRepository, refreshIndex, toNearbyError, pollIntervalMs]);
+  }, [roomId, resultId, repository, placesFetcher, refreshIndex, toNearbyError, pollIntervalMs]);
 
   const handleRetryResult = useCallback(() => {
     setReadState('loading');
@@ -252,36 +255,28 @@ export function LiveDishResultScreen({
     const targetResultId = input.result.resultId;
     const targetRoomId = roomId;
 
-    const placesFetcher = placesRepository.fetchNearbyPlaces
-      ? placesRepository.fetchNearbyPlaces.bind(placesRepository)
-      : repository.fetchNearbyPlaces
-      ? repository.fetchNearbyPlaces.bind(repository)
-      : undefined;
+    setNearby(prev => prev ? { ...prev, status: 'loading' } : undefined);
+    const currentPlacesSeq = ++placesSeqRef.current;
 
-    if (placesFetcher) {
-      setNearby(prev => prev ? { ...prev, status: 'loading' } : undefined);
-      const currentPlacesSeq = ++placesSeqRef.current;
+    try {
+      const res = await placesFetcher({
+        resultId: targetResultId,
+        winnerDishId: winner.dishId,
+        dishName: winner.name,
+      });
+      if (!mountedRef.current || activeRoomIdRef.current !== targetRoomId || currentPlacesSeq !== placesSeqRef.current) return;
 
-      try {
-        const res = await placesFetcher({
-          resultId: targetResultId,
-          winnerDishId: winner.dishId,
-          dishName: winner.name,
-        });
-        if (!mountedRef.current || activeRoomIdRef.current !== targetRoomId || currentPlacesSeq !== placesSeqRef.current) return;
-
-        if (res.ok) {
-          setNearby(res.data);
-        } else {
-          setNearby(toNearbyError(targetResultId, winner.dishId, res.error));
-        }
-      } catch {
-        if (mountedRef.current && activeRoomIdRef.current === targetRoomId && currentPlacesSeq === placesSeqRef.current) {
-          setNearby(toNearbyError(targetResultId, winner.dishId, { messageKey: 'NETWORK_ERROR' }));
-        }
+      if (res.ok) {
+        setNearby(res.data);
+      } else {
+        setNearby(toNearbyError(targetResultId, winner.dishId, res.error));
+      }
+    } catch {
+      if (mountedRef.current && activeRoomIdRef.current === targetRoomId && currentPlacesSeq === placesSeqRef.current) {
+        setNearby(toNearbyError(targetResultId, winner.dishId, { messageKey: 'NETWORK_ERROR' }));
       }
     }
-  }, [input, repository, placesRepository, roomId, toNearbyError]);
+  }, [input, placesFetcher, roomId, toNearbyError]);
 
   const handleRequestLocation = useCallback(async () => {
     await placesRepository.requestLocationPermission();

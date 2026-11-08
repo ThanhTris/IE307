@@ -84,10 +84,6 @@ export function useJoinRoomEntry({ repository, preview, initialCode = '', initia
         setCode(scannedCode);
         setCameraStatus('idle');
         setCamera(false);
-        // Automatically fetch preview for scanned code
-        if (validRoomCode(scannedCode) && validDisplayName(name)) {
-          void readScannedCode(scannedCode, generation);
-        }
       } else if (result.status === 'denied') {
         setCameraStatus('denied');
         setCameraMessage('Bạn chưa cấp quyền truy cập camera để quét mã QR.');
@@ -102,22 +98,6 @@ export function useJoinRoomEntry({ repository, preview, initialCode = '', initia
       }
     }
     finally { if (generation === readGeneration.current) { readLock.current = false; if (mounted.current) setReadBusy(false); } }
-  };
-  const readScannedCode = async (scannedCode: string, generation: number) => {
-    if (!preview) return;
-    try {
-      const result = await preview(scannedCode);
-      if (!mounted.current || generation !== readGeneration.current) return;
-      if (!result.ok) {
-        setReadError(result.error.messageKey);
-      } else if (!validPublicPreview(result.data, scannedCode)) {
-        setReadError('MALFORMED_RESPONSE');
-      } else {
-        setSummary({ code: result.data.code, memberCount: result.data.memberCount, capacity: result.data.capacity });
-      }
-    } catch {
-      if (mounted.current && generation === readGeneration.current) setReadError('NETWORK_ERROR');
-    }
   };
   const cancelRead = () => { readGeneration.current++; readLock.current = false; setReadBusy(false); };
   const back = () => {

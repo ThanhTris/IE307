@@ -131,7 +131,7 @@ describe('GM-30 placesRepository — Places Client Integration & Winner Isolatio
   });
 
   describe('Dev Simulated AVD Mode', () => {
-    test('generates labeled simulated venues when isDevSimulated is true or apiKey is missing', async () => {
+    test('generates labeled simulated venues when isDevSimulated is true', async () => {
       const locAdapter = new MockLocationAdapter('granted', { latitude: 10.7769, longitude: 106.7009 });
 
       const repo = new LivePlacesRepository({
@@ -275,6 +275,47 @@ describe('GM-30 placesRepository — Places Client Integration & Winner Isolatio
       if (res.ok) {
         expect(res.data.status).toBe('error');
         expect(res.data.places).toEqual([]);
+      }
+    });
+
+    test('returns unsupported status when isDevSimulated: false and apiKey is empty', async () => {
+      const locAdapter = new MockLocationAdapter('granted', { latitude: 10.7769, longitude: 106.7009 });
+      const repo = new LivePlacesRepository({
+        locationAdapter: locAdapter,
+        config: { isDevSimulated: false, apiKey: '' },
+      });
+
+      const res = await repo.fetchNearbyPlaces({
+        resultId: 'r1',
+        winnerDishId: 'd1',
+        dishName: 'Bún Chả',
+      });
+
+      expect(res.ok).toBe(true);
+      if (res.ok) {
+        expect(res.data.status).toBe('unsupported');
+        expect(res.data.places).toEqual([]);
+      }
+    });
+
+    test('generates simulated places ONLY when isDevSimulated: true', async () => {
+      const locAdapter = new MockLocationAdapter('granted', { latitude: 10.7769, longitude: 106.7009 });
+      const repo = new LivePlacesRepository({
+        locationAdapter: locAdapter,
+        config: { isDevSimulated: true },
+      });
+
+      const res = await repo.fetchNearbyPlaces({
+        resultId: 'r1',
+        winnerDishId: 'd1',
+        dishName: 'Bún Chả',
+      });
+
+      expect(res.ok).toBe(true);
+      if (res.ok) {
+        expect(res.data.status).toBe('ready');
+        expect(res.data.places.length).toBeGreaterThan(0);
+        expect(res.data.places[0]!.attribution).toContain('máy ảo AVD');
       }
     });
   });

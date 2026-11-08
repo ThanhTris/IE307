@@ -8,13 +8,14 @@ Owner: Trí (`ThanhTris`), Reviewer: Trí (`ThanhTris`).
 Track: `INTEGRATION`, Stage: `integration`.
 
 ### Key Technical Deliverables
-- **Join Links & QR Matrix (`joinLinks.ts`)**:
-  - Deterministic 25×25 QR bit matrix generation for room join URLs without adding native/heavy external dependencies.
+- **Join Links & QR Matrix (`qrEncoder.ts` & `joinLinks.ts`)**:
+  - Chuẩn ISO/IEC 18004 QR Code Model 2 (Byte mode, Reed-Solomon GF(256) error correction, 8 penalty masks) được hiện thực thuần TypeScript không thêm native module ngoài.
+  - Kiểm thử độc lập bộ giải mã (roundtrip decoder test) khôi phục chính xác 100% URL và room code.
   - Deep link (`gi-cung-duoc://room/join?code=...`) & Web link (`https://gicungduoc.vn/join/...`) generator and parser with strict allowlist.
   - URL allowlist guard: schemes strictly constrained to `gi-cung-duoc:`, `exp:`, `https:`; domains strictly constrained to `gicungduoc.vn`, `*.gicungduoc.vn`.
-  - Rejection of tokens, credentials, and secret query parameters.
-  - Subscription adapter for both warm-start and cold-start join URLs via `Linking`.
-  - `SimulatedQrScannerAdapter` and `NativeQrScannerAdapter` adhering to Chặng 3A AVD testing standards (with CAMERA blocked in `app.config.ts` fallback).
+  - Từ chối toàn bộ param nhạy cảm, query param ngoài allowlist (`code`), và các biến thể mã hóa URL như `?%74oken=synthetic`.
+  - Lắng nghe sự kiện mở liên kết cả lúc cold-start lẫn warm-start qua `subscribeToJoinLinks`.
+  - `SimulatedQrScannerAdapter` và `NativeQrScannerAdapter` phục vụ Chặng 3A AVD testing.
 - **External Links & Allowlist (`externalLinks.ts`)**:
   - Scheme validation (`https:`, `geo:`).
   - Domain allowlist for Google Maps (`maps.google.com`, `www.google.com/maps`, `google.com/maps`), TikTok search (`tiktok.com`, `www.tiktok.com`), YouTube search (`youtube.com`, `www.youtube.com`, `m.youtube.com`).
@@ -38,9 +39,10 @@ Track: `INTEGRATION`, Stage: `integration`.
 
 | Check on the local implementation | Result | Evidence / Limit |
 | --- | --- | --- |
-| Focused GM-30 unit suite | **Pass: 50/50** | `mobile/tests/unit/joinLinks.test.ts` (18 tests), `mobile/tests/unit/externalLinks.test.ts` (18 tests), `mobile/tests/unit/placesRepository.test.ts` (14 tests). Covers URL allowlist, deep linking, query secret stripping, QR matrix determinism, Google Places client request formatting, field masking, distance calculation, labeled simulated venues, permission handling, and monotonic epoch cancellation. |
+| Focused GM-30 unit suite | **Pass: 55/55** | `mobile/tests/unit/joinLinks.test.ts` (22 tests), `mobile/tests/unit/externalLinks.test.ts` (17 tests), `mobile/tests/unit/placesRepository.test.ts` (16 tests). Covers standard ISO/IEC 18004 QR generation, independent roundtrip decode verification, URL allowlist, deep linking, rejection of obfuscated query params (`?%74oken=synthetic`), Google Places client request formatting, field masking, distance calculation, labeled simulated venues, permission handling, and monotonic epoch cancellation. |
 | Focused GM-30 component suite | **Pass: 8/8** | `mobile/tests/component/gm30FigmaParity.test.tsx`: covers all 7 Figma nodes (`268:2019`, `275:2088`, `268:2081`, `368:12182`, `622:8962`, `206:913`, `379:1478`). Modal rendering, camera scanning mode, camera denied handling, QR scan-to-confirm, location permission prompt, nearby places cards, external action buttons, and absolute winner isolation. |
-| Full GM-30 regression | **Pass: 58 tests (4 suites)** | `npm --prefix mobile test -- tests/unit/joinLinks.test.ts tests/unit/externalLinks.test.ts tests/unit/placesRepository.test.ts tests/component/gm30FigmaParity.test.tsx`. All pass with 0 errors. |
+| Full GM-30 regression | **Pass: 63 tests (4 suites)** | `npm --prefix mobile test -- tests/unit/joinLinks.test.ts tests/unit/externalLinks.test.ts tests/unit/placesRepository.test.ts tests/component/gm30FigmaParity.test.tsx`. All pass with 0 errors. |
+| Regression suites parity | **Pass: 77 tests (4 suites)** | `joinRoomEntry.test.tsx` (24 tests), `lobbyAndStatusScreens.test.tsx` (5 tests), `gm27ReviewRegression.test.tsx` (27 tests), `liveDishResultScreen.test.tsx` (21 tests). All pass with 0 errors. |
 | Strict TypeScript check | **Pass: 0 errors** | `npm --prefix mobile run typecheck` (`tsc --noEmit`). |
 | ESLint check | **Pass: 0 errors / 0 warnings** | `npm --prefix mobile run lint` (`eslint .`). |
 | Repository validation | **Pass** | `python scripts/validate_repository.py`. |

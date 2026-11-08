@@ -241,6 +241,9 @@ describe('GM-30 Figma Parity & Native Linking Component Tests', () => {
       // Press scan QR button
       await press('Thử quét QR');
 
+      // User confirms scanned code by pressing Tiếp tục →
+      await press('Tiếp tục →');
+
       // Confirmation screen (Figma 268:2081)
       expect(await screen.findByText('Phòng GCD234')).toBeOnTheScreen();
       expect(screen.getByText('3/20 thành viên')).toBeOnTheScreen();

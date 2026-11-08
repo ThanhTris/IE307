@@ -201,7 +201,7 @@ export class LivePlacesRepository implements PlacesRepository {
 
     // Fetch places: real Google Places API or Dev Simulated AVD Adapter
     const apiKey = this.config.apiKey?.trim();
-    if (!apiKey || this.config.isDevSimulated) {
+    if (this.config.isDevSimulated) {
       const simulated = this.generateSimulatedPlaces(dishName, coords);
       return {
         ok: true,
@@ -210,6 +210,19 @@ export class LivePlacesRepository implements PlacesRepository {
           winnerDishId,
           status: simulated.length > 0 ? 'ready' : 'empty',
           places: simulated,
+          fetchedAt: new Date().toISOString(),
+        },
+      };
+    }
+
+    if (!apiKey) {
+      return {
+        ok: true,
+        data: {
+          resultId,
+          winnerDishId,
+          status: 'unsupported',
+          places: [],
           fetchedAt: new Date().toISOString(),
         },
       };

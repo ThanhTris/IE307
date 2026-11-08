@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { JoinRoomScreen } from '../../features/rooms/screens/JoinRoomScreen';
 import { JoinRoomEntryScreen } from '../../features/rooms/screens/JoinRoomEntryScreen';
@@ -5,6 +6,7 @@ import { RoomEntryReceiptScreen } from '../../features/rooms/screens/RoomEntryRe
 import { PreviewControls, previewRoomCode, rememberPreviewRoom, useRoomPreview } from '../../bootstrap/roomPreview';
 import { useRoomRepository } from '../../bootstrap/RoomRepositoryProvider';
 import { RequireActiveSession } from '../../features/auth/components/RequireActiveSession';
+import { SimulatedQrScannerAdapter, subscribeToJoinLinks } from '../../features/rooms/services/joinLinks';
 
 export default function JoinRoomRoute() {
   const router = useRouter();
@@ -14,15 +16,29 @@ export default function JoinRoomRoute() {
   const isReal = live.mode === 'real';
 
   const repository = isReal ? live.repository : preview.client;
-  const initialCodeStr = typeof code === 'string' ? code : Array.isArray(code) ? code[0] ?? '' : '';
+  const initialParamCode = typeof code === 'string' ? code : Array.isArray(code) ? code[0] ?? '' : '';
+  const [incomingCode, setIncomingCode] = useState('');
+
+  useEffect(() => {
+    const unsubscribe = subscribeToJoinLinks({
+      onJoinCode: (codeFromLink) => {
+        setIncomingCode(codeFromLink);
+      },
+    });
+    return unsubscribe;
+  }, []);
+
+  const activeCode = incomingCode || initialParamCode;
+  const qrAdapter = useMemo(() => new SimulatedQrScannerAdapter('granted'), []);
 
   if (isReal) {
     const entry = (
       <JoinRoomEntryScreen
         repository={live.repository}
         preview={(c: string) => live.repository.previewJoin(c)}
+        qrScannerAdapter={qrAdapter}
         initialDisplayName={live.user?.displayName}
-        initialCode={initialCodeStr}
+        initialCode={activeCode}
         isMock={false}
         onBack={() => (router.canGoBack() ? router.back() : router.replace('/'))}
         onEntered={room => {
@@ -48,7 +64,7 @@ export default function JoinRoomRoute() {
       repository={repository}
       isLive={false}
       initialDisplayName={preview.guestName ?? undefined}
-      initialCode={initialCodeStr}
+      initialCode={activeCode}
       sampleCode={previewRoomCode}
       onScan={async () => ({ status: 'denied' })}
       onBack={() => (router.canGoBack() ? router.back() : router.replace('/'))}

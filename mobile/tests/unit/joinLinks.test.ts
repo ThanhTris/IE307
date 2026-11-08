@@ -109,6 +109,29 @@ describe('GM-30 joinLinks — Native QR, Links, Allowlist & Resolvers', () => {
       });
     });
 
+    test('rejects obfuscated/encoded tokens and unknown query params', () => {
+      const res1 = parseJoinRoomUrl('https://gicungduoc.vn/join/ABC234?%74oken=synthetic');
+      expect(res1).toEqual({
+        ok: false,
+        error: 'SUSPICIOUS_PAYLOAD',
+        rawUrl: 'https://gicungduoc.vn/join/ABC234?%74oken=synthetic',
+      });
+
+      const res2 = parseJoinRoomUrl('gi-cung-duoc://room/join?code=ABC234&%73ecret=123');
+      expect(res2).toEqual({
+        ok: false,
+        error: 'SUSPICIOUS_PAYLOAD',
+        rawUrl: 'gi-cung-duoc://room/join?code=ABC234&%73ecret=123',
+      });
+
+      const res3 = parseJoinRoomUrl('https://gicungduoc.vn/join/ABC234?extra=param');
+      expect(res3).toEqual({
+        ok: false,
+        error: 'SUSPICIOUS_PAYLOAD',
+        rawUrl: 'https://gicungduoc.vn/join/ABC234?extra=param',
+      });
+    });
+
     test('rejects invalid room codes (wrong length or excluded chars: 0, O, 1, I)', () => {
       expect(parseJoinRoomUrl('https://gicungduoc.vn/join/SHORT')).toEqual({
         ok: false,
@@ -162,23 +185,145 @@ describe('GM-30 joinLinks — Native QR, Links, Allowlist & Resolvers', () => {
     });
   });
 
-  describe('generateQrMatrix', () => {
-    test('generates valid 25x25 matrix with finder patterns at 3 corners', () => {
+  describe('generateQrMatrix & Independent ISO/IEC 18004 Decoder Test', () => {
+    function decodeQrMatrix(matrix: boolean[][]): string {
+      const size = matrix.length;
+      const version = (size - 17) / 4;
+
+      const formatCoords = [
+        [8, 0], [8, 1], [8, 2], [8, 3], [8, 4], [8, 5], [8, 7], [8, 8],
+        [7, 8], [5, 8], [4, 8], [3, 8], [2, 8], [1, 8], [0, 8],
+      ];
+      let rawFormat = 0;
+      for (let i = 0; i < 15; i++) {
+        const coord = formatCoords[i];
+        const r = coord ? (coord[0] ?? 0) : 0;
+        const c = coord ? (coord[1] ?? 0) : 0;
+        if (matrix[r]?.[c]) rawFormat |= 1 << (14 - i);
+      }
+      const format = rawFormat ^ 0x5412;
+      const maskPattern = (format >> 10) & 7;
+
+      const maskFns = [
+        (r: number, c: number) => (r + c) % 2 === 0,
+        (r: number, _c: number) => r % 2 === 0,
+        (_r: number, c: number) => c % 3 === 0,
+        (r: number, c: number) => (r + c) % 3 === 0,
+        (r: number, c: number) => (Math.floor(r / 2) + Math.floor(c / 3)) % 2 === 0,
+        (r: number, c: number) => ((r * c) % 2) + ((r * c) % 3) === 0,
+        (r: number, c: number) => (((r * c) % 2) + ((r * c) % 3)) % 2 === 0,
+        (r: number, c: number) => (((r + c) % 2) + ((r * c) % 3)) % 2 === 0,
+      ];
+      const maskFn = maskFns[maskPattern] ?? maskFns[0]!;
+
+      const isFunction = (r: number, c: number): boolean => {
+        if (r <= 8 && c <= 8) return true;
+        if (r <= 8 && c >= size - 8) return true;
+        if (r >= size - 8 && c <= 8) return true;
+        if (r === 6 || c === 6) return true;
+        if (version >= 2) {
+          const alignCenters = version === 2 ? [18] : [22];
+          for (const ar of alignCenters) {
+            for (const ac of alignCenters) {
+              if ((ar <= 8 && ac <= 8) || (ar <= 8 && ac >= size - 8) || (ar >= size - 8 && ac <= 8)) continue;
+              if (Math.abs(r - ar) <= 2 && Math.abs(c - ac) <= 2) return true;
+            }
+          }
+        }
+        if ((r === 8 && c <= 8) || (c === 8 && r <= 8)) return true;
+        if (r === 8 && c >= size - 8) return true;
+        if (c === 8 && r >= size - 8) return true;
+        if (r === size - 8 && c === 8) return true;
+        return false;
+      };
+
+      const bits: number[] = [];
+      let upward = true;
+      for (let c = size - 1; c > 0; c -= 2) {
+        if (c === 6) c--;
+        const rows = upward
+          ? Array.from({ length: size }, (_, i) => size - 1 - i)
+          : Array.from({ length: size }, (_, i) => i);
+
+        for (const r of rows) {
+          for (const col of [c, c - 1]) {
+            if (!isFunction(r, col)) {
+              const bit = (matrix[r]![col] ? 1 : 0) ^ (maskFn(r, col) ? 1 : 0);
+              bits.push(bit);
+            }
+          }
+        }
+        upward = !upward;
+      }
+
+      let bitIdx = 0;
+      const readBits = (n: number): number => {
+        let val = 0;
+        for (let i = 0; i < n; i++) {
+          val = (val << 1) | (bits[bitIdx++] ?? 0);
+        }
+        return val;
+      };
+
+      const mode = readBits(4);
+      if (mode !== 4) {
+        throw new Error(`Expected Byte mode (4), got ${mode}`);
+      }
+
+      const charCount = readBits(8);
+      const bytes: number[] = [];
+      for (let i = 0; i < charCount; i++) {
+        bytes.push(readBits(8));
+      }
+
+      return new TextDecoder().decode(new Uint8Array(bytes));
+    }
+
+    test('generates standard QR matrix with finder patterns and valid structure', () => {
       const matrix = generateQrMatrix('https://gicungduoc.vn/join/ABC234');
-      expect(matrix).toHaveLength(25);
-      expect(matrix[0]).toHaveLength(25);
+      const size = matrix.length;
+      expect(size).toBeGreaterThanOrEqual(21);
+      expect(matrix[0]).toHaveLength(size);
 
       // Top-left finder center (row 2-4, col 2-4 should be true)
       expect(matrix[3]![3]).toBe(true);
-      // Top-right finder center (row 3, col 25-4=21)
-      expect(matrix[3]![21]).toBe(true);
-      // Bottom-left finder center (row 21, col 3)
-      expect(matrix[21]![3]).toBe(true);
+      // Top-right finder center (row 3, col size-4)
+      expect(matrix[3]![size - 4]).toBe(true);
+      // Bottom-left finder center (row size-4, col 3)
+      expect(matrix[size - 4]![3]).toBe(true);
 
       // Timing pattern at row 6 should alternate
       expect(matrix[6]![8]).toBe(true);
       expect(matrix[6]![9]).toBe(false);
       expect(matrix[6]![10]).toBe(true);
+    });
+
+    test('roundtrip decodes QR matrix back to exact web URL and room code', () => {
+      const url = 'https://gicungduoc.vn/join/ABC234';
+      const matrix = generateQrMatrix(url);
+      const decoded = decodeQrMatrix(matrix);
+      expect(decoded).toBe(url);
+
+      const parsed = parseJoinRoomUrl(decoded);
+      expect(parsed).toEqual({
+        ok: true,
+        code: 'ABC234',
+        rawUrl: url,
+      });
+    });
+
+    test('roundtrip decodes custom scheme deep link back to exact URL and room code', () => {
+      const deepLink = 'gi-cung-duoc://room/join?code=XYZ789';
+      const matrix = generateQrMatrix(deepLink);
+      const decoded = decodeQrMatrix(matrix);
+      expect(decoded).toBe(deepLink);
+
+      const parsed = parseJoinRoomUrl(decoded);
+      expect(parsed).toEqual({
+        ok: true,
+        code: 'XYZ789',
+        rawUrl: deepLink,
+      });
     });
 
     test('is deterministic for identical inputs', () => {

@@ -1,5 +1,6 @@
 import { Linking } from 'react-native';
 import { normalizeRoomCode, validRoomCode } from './roomEntry';
+import { encodeQrCodeMatrix } from './qrEncoder';
 
 /**
  * GM-30 — Native QR, room join links, allowlist, and deep link resolver.
@@ -60,6 +61,16 @@ export function parseJoinRoomUrl(rawUrl: string): ParseJoinUrlResult {
     return { ok: false, error: 'SUSPICIOUS_PAYLOAD', rawUrl };
   }
 
+  // Also check decoded raw string for obfuscated suspicious words (e.g., %74oken=)
+  try {
+    const decodedRaw = decodeURIComponent(trimmed);
+    if (SUSPICIOUS_PARAM_REGEX.test(decodedRaw)) {
+      return { ok: false, error: 'SUSPICIOUS_PAYLOAD', rawUrl };
+    }
+  } catch {
+    return { ok: false, error: 'MALFORMED_URL', rawUrl };
+  }
+
   try {
     let protocol = '';
     let host = '';
@@ -101,9 +112,29 @@ export function parseJoinRoomUrl(rawUrl: string): ParseJoinUrlResult {
 
     if (search) {
       const params = new URLSearchParams(search);
+      for (const [key, value] of params.entries()) {
+        let decodedKey = key;
+        let decodedVal = value;
+        try {
+          decodedKey = decodeURIComponent(key).toLowerCase().trim();
+          decodedVal = decodeURIComponent(value).trim();
+        } catch {
+          return { ok: false, error: 'MALFORMED_URL', rawUrl };
+        }
+
+        if (SUSPICIOUS_PARAM_REGEX.test(decodedKey) || SUSPICIOUS_PARAM_REGEX.test(decodedVal)) {
+          return { ok: false, error: 'SUSPICIOUS_PAYLOAD', rawUrl };
+        }
+
+        // Only 'code' query param is allowed
+        if (decodedKey !== 'code') {
+          return { ok: false, error: 'SUSPICIOUS_PAYLOAD', rawUrl };
+        }
+      }
+
       const codeParam = params.get('code');
       if (codeParam) {
-        extractedCode = codeParam;
+        extractedCode = codeParam.trim();
       }
     }
 
@@ -164,9 +195,9 @@ export interface QrScannerAdapter {
 
 export class SimulatedQrScannerAdapter implements QrScannerAdapter {
   private permission: CameraPermissionStatus;
-  private defaultCodeOrUrl?: string;
+  private defaultCodeOrUrl: string;
 
-  constructor(initialPermission: CameraPermissionStatus = 'granted', defaultCodeOrUrl?: string) {
+  constructor(initialPermission: CameraPermissionStatus = 'granted', defaultCodeOrUrl: string = 'GCD234') {
     this.permission = initialPermission;
     this.defaultCodeOrUrl = defaultCodeOrUrl;
   }
@@ -189,7 +220,7 @@ export class SimulatedQrScannerAdapter implements QrScannerAdapter {
   }
 
   async simulateScan(codeOrUrl?: string): Promise<{ ok: boolean; code: string }> {
-    const raw = codeOrUrl || this.defaultCodeOrUrl || '';
+    const raw = codeOrUrl || this.defaultCodeOrUrl;
     const parsed = parseJoinRoomUrl(raw);
     if (parsed.ok) {
       return { ok: true, code: parsed.code };
@@ -256,56 +287,9 @@ export function subscribeToJoinLinks(options: JoinLinkListenerOptions): () => vo
 }
 
 /**
- * Lightweight deterministic QR Matrix Generator (Version 1-3, 21x21 to 29x29).
+ * Standard ISO/IEC 18004 QR Code Model 2 2D Matrix Generator.
  * Used for rendering room QR code without external native dependencies.
  */
 export function generateQrMatrix(input: string): boolean[][] {
-  const size = 25; // 25x25 grid
-  const matrix: boolean[][] = Array.from({ length: size }, () => Array(size).fill(false));
-
-  // Finder pattern helper at (row, col)
-  const addFinder = (startRow: number, startCol: number) => {
-    for (let r = 0; r < 7; r++) {
-      for (let c = 0; c < 7; c++) {
-        const isBorder = r === 0 || r === 6 || c === 0 || c === 6;
-        const isCenter = r >= 2 && r <= 4 && c >= 2 && c <= 4;
-        matrix[startRow + r]![startCol + c] = isBorder || isCenter;
-      }
-    }
-  };
-
-  // Top-left, Top-right, Bottom-left finder patterns
-  addFinder(0, 0);
-  addFinder(0, size - 7);
-  addFinder(size - 7, 0);
-
-  // Timing patterns
-  for (let i = 8; i < size - 8; i++) {
-    matrix[6]![i] = i % 2 === 0;
-    matrix[i]![6] = i % 2 === 0;
-  }
-
-  // Hash input deterministically into data modules
-  let hash = 0x811c9dc5;
-  for (let i = 0; i < input.length; i++) {
-    hash ^= input.charCodeAt(i);
-    hash = Math.imul(hash, 0x01000193);
-  }
-
-  for (let r = 0; r < size; r++) {
-    for (let c = 0; c < size; c++) {
-      // Skip finder zones
-      const inFinderTL = r < 8 && c < 8;
-      const inFinderTR = r < 8 && c >= size - 8;
-      const inFinderBL = r >= size - 8 && c < 8;
-      const inTiming = r === 6 || c === 6;
-
-      if (!inFinderTL && !inFinderTR && !inFinderBL && !inTiming) {
-        hash = (hash * 1103515245 + 12345) & 0x7fffffff;
-        matrix[r]![c] = (hash % 3 === 0);
-      }
-    }
-  }
-
-  return matrix;
+  return encodeQrCodeMatrix(input);
 }

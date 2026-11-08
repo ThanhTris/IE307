@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BackHandler, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { BackHandler, Clipboard, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MockApiClient, type ErrorCode, type Friend, type RoomSnapshot } from '../../../data/api';
 import { AppButton, AppHeader, ContextSummary, RoomCode, SheetDialog, StatusNotice } from '../../../shared/ui';
@@ -127,8 +127,11 @@ export function LiveLobbyScreen({
             visible={showQrModal}
             code={snapshot.code}
             onClose={() => setShowQrModal(false)}
+            onCopyLink={async (link) => {
+              Clipboard.setString(link);
+            }}
           />
-          {!isReal && <Text style={[styles.helper, { color: colors.muted }]}>Mã hiển thị là fixture; QR mô phỏng cho AVD testing.</Text>}
+          {!isReal && <Text style={[styles.helper, { color: colors.muted }]}>Mã hiển thị là fixture; QR chưa được tạo và không thể tham gia phòng thật.</Text>}
           {!isReal && (
             <View style={styles.demoRoster}>
               <Text style={[styles.demoRosterLabel, { color: colors.text }]}>Số thành viên fixture</Text>

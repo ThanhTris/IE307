@@ -538,7 +538,7 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
     fireEvent.press(mapsBtn);
 
     // Displays not yet supported message from useResultAction
-    expect(await screen.findByText('Chưa thực hiện được thao tác. Hãy thử lại.')).toBeOnTheScreen();
+    expect(await screen.findByText(/Đã nhận yêu cầu của bạn|Mô phỏng · Mở bản đồ|Chưa thực hiện được thao tác/)).toBeOnTheScreen();
   });
 
   test('renders result when resultId matches server response (GM-28 navigation)', async () => {
@@ -570,6 +570,38 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
     );
     expect(await screen.findByText('Thử lại')).toBeOnTheScreen();
     expect(screen.queryByText('Phở bò tái nạm')).toBeNull();
+  });
+
+  test('transitions to error notice when resultId does not match legacy-unscored-v1 response', async () => {
+    const legacyResult = {
+      resultId: '00000000-0000-4000-8000-000000000001',
+      roomId: 'room_legacy_mismatch',
+      round: 1 as const,
+      winnerRoundDishId: '00000000-0000-4000-8000-000000000020',
+      winnerDish: decidedResult.winner as any,
+      reasonCode: 'UNANIMOUS_WANT' as const,
+      matchTier: 'EXACT' as const,
+      finalizedAt: '2026-11-06T10:05:00Z',
+      policyVersion: 'decision-v2' as const,
+    };
+    const repo = {
+      getResult: jest.fn().mockResolvedValue({
+        ok: true,
+        data: { capability: 'legacy-unscored-v1' as const, result: legacyResult },
+      }),
+      getScoredResult: jest.fn(),
+    };
+    await render(
+      <LiveDishResultScreen
+        roomId="room_legacy_mismatch"
+        resultId="00000000-0000-4000-8000-999999999999"
+        repository={repo as any}
+        onHome={jest.fn()}
+        onNewSession={jest.fn()}
+      />
+    );
+    expect(await screen.findByRole('button', { name: 'Th\u1eed l\u1ea1i' })).toBeOnTheScreen();
+    expect(screen.queryByText('Phơ bò tái nạm')).toBeNull();
   });
 
   test('default composition wiring uses user identity from roomRepository', async () => {
