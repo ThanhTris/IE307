@@ -88,13 +88,16 @@ export function createNativePushService({ driver, client, refreshInbox, isIdenti
       }
     },
     async unregister(deviceId: string): Promise<WriteResult<void> | undefined> {
-      if (!deviceId.trim()) return undefined;
+      if (!deviceId.trim() || !identityIsCurrent()) return undefined;
       const state = stateFor(deviceId);
-      state.generation++;
+      const generation = ++state.generation;
       state.enabled = false;
       state.desiredEnabled = false;
       let result: WriteResult<void> | undefined;
-      const operation = state.queue.then(async () => { result = await client.unregisterPushDevice(deviceId); });
+      const operation = state.queue.then(async () => {
+        if (generation !== state.generation || !identityIsCurrent()) return;
+        result = await client.unregisterPushDevice(deviceId);
+      });
       state.queue = operation.catch(() => undefined);
       await operation;
       return result;
