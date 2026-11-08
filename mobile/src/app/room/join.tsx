@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
+import { View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { StatusNotice } from '../../shared/ui';
 import { JoinRoomScreen } from '../../features/rooms/screens/JoinRoomScreen';
 import { JoinRoomEntryScreen } from '../../features/rooms/screens/JoinRoomEntryScreen';
 import { RoomEntryReceiptScreen } from '../../features/rooms/screens/RoomEntryReceiptScreen';
@@ -24,38 +26,42 @@ export default function JoinRoomRoute() {
 
   // Validate incoming search params from Expo router: if suspicious payload is detected, reject and block
   const isSuspicious = isSuspiciousSearchParams(rawParams as Record<string, unknown>) || rawParams.error === 'SUSPICIOUS_PAYLOAD';
-  const initialParamCode = !isSuspicious
-    ? (typeof rawParams.code === 'string' ? rawParams.code : Array.isArray(rawParams.code) ? rawParams.code[0] ?? '' : '')
-    : '';
 
-  const [prevParamCode, setPrevParamCode] = useState(initialParamCode);
   const [linkCode, setLinkCode] = useState('');
-  const [linkError, setLinkError] = useState<string | null>(null);
-
-  if (prevParamCode !== initialParamCode) {
-    setPrevParamCode(initialParamCode);
-    setLinkCode('');
-    setLinkError(null);
-  }
+  const [linkError, setLinkError] = useState<string | null>(isSuspicious ? 'SUSPICIOUS_PAYLOAD' : null);
+  const [initialResolved, setInitialResolved] = useState(false);
 
   useEffect(() => {
     const unsubscribe = subscribeToJoinLinks({
-      skipInitialUrl: Boolean(initialParamCode),
       onJoinCode: (codeFromLink) => {
         setLinkCode(codeFromLink);
         setLinkError(null);
+        setInitialResolved(true);
       },
       onError: (err) => {
         setLinkCode('');
         setLinkError(err);
+        setInitialResolved(true);
+      },
+      onInitialUrlEmpty: () => {
+        setInitialResolved(true);
       },
     });
     return unsubscribe;
-  }, [initialParamCode]);
+  }, []);
 
   // When link is blocked or has error, activeCode MUST be empty string so code is not prefilled and previewJoin is never executed automatically
   const effectiveError = isSuspicious ? 'SUSPICIOUS_PAYLOAD' : linkError;
-  const activeCode = effectiveError ? '' : (linkCode || initialParamCode);
+
+  const rawParamCode = !effectiveError
+    ? (typeof rawParams.code === 'string'
+        ? rawParams.code.trim().toUpperCase()
+        : Array.isArray(rawParams.code)
+        ? (rawParams.code[0] ?? '').trim().toUpperCase()
+        : '')
+    : '';
+
+  const activeCode = effectiveError ? '' : (linkCode || (initialResolved ? rawParamCode : ''));
 
   // Scanner configuration:
   // In real QA backend on AVD (Chặng 3A), simulation must be explicitly requested via simulatedScanner=1 or simulated=1 AND ONLY in dev/QA (__DEV__).
@@ -97,21 +103,32 @@ export default function JoinRoomRoute() {
       previewControls={busy => <PreviewControls disabled={busy} />}
     />
   ) : (
-    <JoinRoomScreen
-      key={preview.revision}
-      repository={repository}
-      isLive={false}
-      initialDisplayName={preview.guestName ?? undefined}
-      initialCode={activeCode}
-      sampleCode={previewRoomCode}
-      onScan={async () => ({ status: 'denied' })}
-      onBack={() => (router.canGoBack() ? router.back() : router.replace('/'))}
-      onEntered={room => {
-        rememberPreviewRoom(room);
-        router.replace({ pathname: '/room/preview', params: { roomId: room.roomId, code: room.code, role: room.role, version: String(room.version) } });
-      }}
-      previewControls={busy => <PreviewControls disabled={busy} />}
-    />
+    <View style={{ flex: 1 }}>
+      {effectiveError ? (
+        <View style={{ paddingHorizontal: 16, paddingTop: 16 }}>
+          <StatusNotice
+            title="Liên kết bị chặn"
+            message="Liên kết chứa tham số không an toàn hoặc không hợp lệ. Bạn có thể nhập mã phòng bằng tay để tiếp tục."
+            tone="warning"
+          />
+        </View>
+      ) : null}
+      <JoinRoomScreen
+        key={preview.revision}
+        repository={repository}
+        isLive={false}
+        initialDisplayName={preview.guestName ?? undefined}
+        initialCode={activeCode}
+        sampleCode={previewRoomCode}
+        onScan={async () => ({ status: 'denied' })}
+        onBack={() => (router.canGoBack() ? router.back() : router.replace('/'))}
+        onEntered={room => {
+          rememberPreviewRoom(room);
+          router.replace({ pathname: '/room/preview', params: { roomId: room.roomId, code: room.code, role: room.role, version: String(room.version) } });
+        }}
+        previewControls={busy => <PreviewControls disabled={busy} />}
+      />
+    </View>
   );
   return content;
 }

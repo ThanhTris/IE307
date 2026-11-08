@@ -920,6 +920,7 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
           roomId="room_default_map"
           repository={repo}
           placesRepository={placesRepo as any}
+          placesConfig={{ isDevSimulated: true }}
           onHome={jest.fn()}
           onNewSession={jest.fn()}
         />
@@ -946,6 +947,110 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
       // Press marker 2 to select place 2
       fireEvent.press(marker2);
       expect((await screen.findAllByText('Quán Phở 2')).length).toBeGreaterThan(0);
+    });
+
+    test('live map renderer renders Google Static Maps image when apiKey and coordinates exist', async () => {
+      const placesRepo = {
+        fetchNearbyPlaces: jest.fn().mockResolvedValue({
+          ok: true,
+          data: {
+            resultId: decidedResult.resultId,
+            winnerDishId: decidedResult.winner!.dishId,
+            status: 'ready',
+            places: [
+              {
+                id: 'place_live_01',
+                name: 'Quán Phở Live',
+                address: '100 Lê Lợi',
+                distanceM: 200,
+                latitude: 10.776,
+                longitude: 106.700,
+                attribution: 'Google Places',
+              },
+            ],
+            fetchedAt: '2026-11-08T10:00:00Z',
+          },
+        }),
+      };
+
+      const repo = createMockResultRepository({
+        initialResult: decidedResult,
+      });
+
+      await render(
+        <LiveDishResultScreen
+          roomId="room_live_map_key"
+          repository={repo}
+          placesRepository={placesRepo as any}
+          placesConfig={{ isDevSimulated: false, apiKey: 'test_live_api_key' }}
+          onHome={jest.fn()}
+          onNewSession={jest.fn()}
+        />
+      );
+
+      const dismiss = await screen.findByText('Chạm để bỏ qua');
+      fireEvent.press(dismiss);
+
+      // Verify Google Static Map image is rendered with API key and coordinates
+      const mapImg = await screen.findByTestId('live-google-map-image');
+      expect(mapImg.props.source.uri).toContain('maps.googleapis.com/maps/api/staticmap');
+      expect(mapImg.props.source.uri).toContain('key=test_live_api_key');
+      expect(mapImg.props.source.uri).toContain('10.776,106.7');
+    });
+
+    test('live map renderer shows unavailable notice when apiKey is missing, preserving winner, Top 3, and external button', async () => {
+      const placesRepo = {
+        fetchNearbyPlaces: jest.fn().mockResolvedValue({
+          ok: true,
+          data: {
+            resultId: decidedResult.resultId,
+            winnerDishId: decidedResult.winner!.dishId,
+            status: 'ready',
+            places: [
+              {
+                id: 'place_live_02',
+                name: 'Quán Phở NoKey',
+                address: '100 Lê Lợi',
+                distanceM: 200,
+                latitude: 10.776,
+                longitude: 106.700,
+                attribution: 'Google Places',
+              },
+            ],
+            fetchedAt: '2026-11-08T10:00:00Z',
+          },
+        }),
+      };
+
+      const repo = createMockResultRepository({
+        initialResult: decidedResult,
+      });
+
+      await render(
+        <LiveDishResultScreen
+          roomId="room_live_map_nokey"
+          repository={repo}
+          placesRepository={placesRepo as any}
+          placesConfig={{ isDevSimulated: false, apiKey: '' }}
+          onHome={jest.fn()}
+          onNewSession={jest.fn()}
+        />
+      );
+
+      const dismiss = await screen.findByText('Chạm để bỏ qua');
+      fireEvent.press(dismiss);
+
+      // Verify unavailable notice is displayed per GM-30 requirement
+      expect(await screen.findByTestId('live-map-unavailable')).toBeTruthy();
+      expect(screen.getByText('Bản đồ trong ứng dụng chưa khả dụng')).toBeTruthy();
+      expect(screen.getByText(/Vui lòng bấm nút "Mở bản đồ" bên dưới để xem vị trí quán trên Google Maps/)).toBeTruthy();
+
+      // Verify external "Mở bản đồ" button is present and usable
+      expect(screen.getByLabelText('Mở bản đồ')).toBeTruthy();
+
+      // Verify winner dish and Top 3 are preserved
+      expect(screen.getAllByText('Phở bò tái nạm').length).toBeGreaterThan(0);
+      expect(screen.getByText('Cơm tấm sườn bì')).toBeTruthy();
     });
   });
 });

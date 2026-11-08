@@ -309,15 +309,36 @@ export class NativeQrScannerAdapter implements QrScannerAdapter {
   }
 }
 
-let hasConsumedInitialUrl = false;
+let appLaunchUrlConsumed = false;
+let appLaunchUrlPromise: Promise<string | null> | null = null;
+
+/**
+ * Consumes the initial cold-start launch URL exactly once per app session.
+ * Guaranteed to only query Linking.getInitialURL() once across the app lifecycle.
+ * Subsequent calls immediately resolve to null.
+ */
+export async function consumeInitialUrl(): Promise<string | null> {
+  if (appLaunchUrlConsumed) {
+    return null;
+  }
+  appLaunchUrlConsumed = true;
+
+  if (!appLaunchUrlPromise) {
+    appLaunchUrlPromise = Linking.getInitialURL().then(url => url ?? null).catch(() => null);
+  }
+
+  return appLaunchUrlPromise;
+}
 
 export function resetConsumedInitialUrlForTesting(): void {
-  hasConsumedInitialUrl = false;
+  appLaunchUrlConsumed = false;
+  appLaunchUrlPromise = null;
 }
 
 export interface JoinLinkListenerOptions {
   onJoinCode: (code: string, rawUrl: string) => void;
   onError?: (error: string, rawUrl: string) => void;
+  onInitialUrlEmpty?: () => void;
   skipInitialUrl?: boolean;
 }
 
@@ -346,23 +367,28 @@ export function subscribeToJoinLinks(options: JoinLinkListenerOptions): () => vo
   });
 
   // Cold start deep link: sequence 0
-  // Once the app has consumed the cold launch URL (or caller explicitly skips it),
-  // do NOT re-fetch or re-emit the initial URL!
-  if (!options.skipInitialUrl && !hasConsumedInitialUrl) {
+  // Consumed once per app session via consumeInitialUrl()
+  if (!appLaunchUrlConsumed) {
     const coldSeq = 0;
-    void Linking.getInitialURL()
+    void consumeInitialUrl()
       .then(initialUrl => {
-        if (!active || !initialUrl) return;
-        hasConsumedInitialUrl = true;
-        // If a newer warm event already arrived, drop the stale cold link!
+        if (!active) return;
+        if (!initialUrl) {
+          options.onInitialUrlEmpty?.();
+          return;
+        }
         if (latestSeq > coldSeq) {
           return;
         }
         emit(coldSeq, initialUrl);
       })
       .catch(() => {
-        // Ignore cold start read failure
+        if (active) {
+          options.onInitialUrlEmpty?.();
+        }
       });
+  } else {
+    options.onInitialUrlEmpty?.();
   }
 
   return () => {

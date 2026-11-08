@@ -27,6 +27,7 @@ import {
 } from '../services/placesRepository';
 import { openExternalAction } from '../services/externalLinks';
 import { defaultResultMapRenderer } from '../components/DefaultResultMapView';
+import { LiveResultMapView } from '../components/LiveResultMapView';
 
 export interface LiveDishResultScreenProps {
   roomId: string;
@@ -59,23 +60,36 @@ export function LiveDishResultScreen({
 }: LiveDishResultScreenProps) {
   const live = useRoomRepository();
   const isReal = isRealProp ?? (live ? live.mode === 'real' : false);
-  const renderMap = renderMapProp ?? defaultResultMapRenderer;
+  const isDev = typeof __DEV__ !== 'undefined' ? Boolean(__DEV__) : process.env.NODE_ENV !== 'production';
+  const envSimulated = isPlacesSimulatedFromEnv();
+  const effectiveSimulated = placesConfig?.isDevSimulated !== undefined
+    ? (isDev ? placesConfig.isDevSimulated : false)
+    : (isDev && envSimulated);
+
+  const defaultMapRenderer = useMemo<ResultMapRenderer>(() => {
+    if (effectiveSimulated) {
+      // In QA/Dev simulation mode on AVD (Chặng 3A): use labeled schematic view with interactive pin markers
+      return defaultResultMapRenderer;
+    }
+    // In live mode: use real map renderer (or unavailable notice if key/coords missing)
+    const liveMapRenderer: ResultMapRenderer = function LiveMapRenderer(props) {
+      return <LiveResultMapView {...props} apiKey={placesConfig?.apiKey} />;
+    };
+    return liveMapRenderer;
+  }, [effectiveSimulated, placesConfig?.apiKey]);
+
+  const renderMap = renderMapProp ?? defaultMapRenderer;
 
   const placesRepository = useMemo<PlacesRepository>(() => {
     if (customPlacesRepository) return customPlacesRepository;
     const envApiKey = getPlacesApiKeyFromEnv();
-    const envSimulated = isPlacesSimulatedFromEnv();
     const effectiveApiKey = placesConfig?.apiKey ?? envApiKey;
-    const isDev = typeof __DEV__ !== 'undefined' ? Boolean(__DEV__) : process.env.NODE_ENV !== 'production';
-    const effectiveSimulated = placesConfig?.isDevSimulated !== undefined
-      ? (isDev ? placesConfig.isDevSimulated : false)
-      : (isDev && envSimulated);
 
     return createPlacesRepository({
       apiKey: effectiveApiKey,
       isDevSimulated: effectiveSimulated,
     });
-  }, [customPlacesRepository, placesConfig]);
+  }, [customPlacesRepository, placesConfig, effectiveSimulated]);
 
   const placesFetcher = useMemo(() => {
     if (customPlacesRepository?.fetchNearbyPlaces) {

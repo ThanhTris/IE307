@@ -9,6 +9,7 @@ import JoinCodeRoute from '../../src/app/join/[code]';
 import JoinIndexRoute from '../../src/app/join/index';
 import Receipt from '../../src/app/room/preview';
 import { rememberPreviewGuest, setPreviewScenario, useRoomPreview } from '../../src/bootstrap/roomPreview';
+import { resetConsumedInitialUrlForTesting } from '../../src/features/rooms/services/joinLinks';
 
 test('product preview is public-only; private snapshot is first read after explicit join ACK', async () => {
   setPreviewScenario('default'); rememberPreviewGuest('Minh');
@@ -53,7 +54,7 @@ test('/room/join blocks URL with suspicious tokens, prevents code prefill and pr
     expect(join).not.toHaveBeenCalled();
 
     // Verify code input is empty and not prefilled with GCD234
-    const codeInput = screen.getByLabelText('Mã phòng (6 ký tự)');
+    const codeInput = await screen.findByLabelText('Mã phòng (6 ký tự)');
     expect(codeInput).toHaveDisplayValue('');
 
     // User can still enter code manually and proceed safely
@@ -142,4 +143,89 @@ test('Expo router redirects /join with query code to /room/join', async () => {
   await waitFor(() => expect(screen).toHavePathname('/room/join'));
   const codeInput = screen.getByLabelText('Mã phòng (6 ký tự)');
   expect(codeInput).toHaveDisplayValue('XYZ789');
+});
+
+test('/room/join blocks cold launch with userinfo credentials gi-cung-duoc://qa-user:qa-value@room/join?code=GCD234', async () => {
+  setPreviewScenario('default');
+  resetConsumedInitialUrlForTesting();
+  const getInitialSpy = jest.spyOn(Linking, 'getInitialURL').mockResolvedValue('gi-cung-duoc://qa-user:qa-value@room/join?code=GCD234');
+
+  try {
+    await renderRouter(
+      {
+        _layout: Layout,
+        'room/_layout': RoomLayout,
+        'room/join': JoinRoute,
+        'room/preview': Receipt,
+      },
+      {
+        initialUrl: '/room/join?code=GCD234',
+      }
+    );
+
+    // Verify rejection shows "Liên kết bị chặn" notice
+    await screen.findByText('Liên kết bị chặn');
+
+    // Verify code input is empty and not prefilled with GCD234
+    const codeInput = await screen.findByLabelText('Mã phòng (6 ký tự)');
+    expect(codeInput).toHaveDisplayValue('');
+
+    // User can still manually type a valid code
+    await fireEvent.changeText(codeInput, 'XYZ789');
+    expect(codeInput).toHaveDisplayValue('XYZ789');
+  } finally {
+    getInitialSpy.mockRestore();
+    resetConsumedInitialUrlForTesting();
+  }
+});
+
+test('/room/join re-entry from app with empty params does not re-prefill cold launch code', async () => {
+  setPreviewScenario('default');
+  resetConsumedInitialUrlForTesting();
+
+  // First mount: app opened with deep link GCD234
+  const getInitialSpy = jest.spyOn(Linking, 'getInitialURL').mockResolvedValue('gi-cung-duoc://room/join?code=GCD234');
+
+  try {
+    const view1 = await renderRouter(
+      {
+        _layout: Layout,
+        'room/_layout': RoomLayout,
+        'room/join': JoinRoute,
+        'room/preview': Receipt,
+      },
+      {
+        initialUrl: '/room/join?code=GCD234',
+      }
+    );
+
+    // Initial mount correctly consumes and prefills GCD234
+    const codeInput1 = await screen.findByLabelText('Mã phòng (6 ký tự)');
+    await waitFor(() => expect(codeInput1).toHaveDisplayValue('GCD234'));
+
+    // Second mount: user left and re-opens /room/join manually from within app with empty params
+    // Linking.getInitialURL() still holds the OS launch intent, but app session must not re-query it
+    view1.unmount();
+
+    const view2 = await renderRouter(
+      {
+        _layout: Layout,
+        'room/_layout': RoomLayout,
+        'room/join': JoinRoute,
+        'room/preview': Receipt,
+      },
+      {
+        initialUrl: '/room/join',
+      }
+    );
+
+    const codeInput2 = await screen.findByLabelText('Mã phòng (6 ký tự)');
+    // Input must remain empty for manual typing, NOT re-prefilled with GCD234!
+    expect(codeInput2).toHaveDisplayValue('');
+    expect(screen.queryByText('Liên kết bị chặn')).toBeNull();
+    view2.unmount();
+  } finally {
+    getInitialSpy.mockRestore();
+    resetConsumedInitialUrlForTesting();
+  }
 });

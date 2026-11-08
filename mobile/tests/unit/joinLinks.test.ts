@@ -1,5 +1,6 @@
 import { Linking } from 'react-native';
 import {
+  consumeInitialUrl,
   createJoinRoomDeepLink,
   createJoinRoomShareMessage,
   createJoinRoomWebLink,
@@ -540,6 +541,23 @@ describe('GM-30 joinLinks — Native QR, Links, Allowlist & Resolvers', () => {
       addEventSpy.mockRestore();
     });
 
+    test('consumeInitialUrl returns initial URL once and resolves null on subsequent calls', async () => {
+      resetConsumedInitialUrlForTesting();
+      const getInitialSpy = jest.spyOn(Linking, 'getInitialURL').mockResolvedValue('gi-cung-duoc://room/join?code=GCD234');
+
+      const first = await consumeInitialUrl();
+      expect(first).toBe('gi-cung-duoc://room/join?code=GCD234');
+      expect(getInitialSpy).toHaveBeenCalledTimes(1);
+
+      const second = await consumeInitialUrl();
+      expect(second).toBeNull();
+      // Still only called once across the app session!
+      expect(getInitialSpy).toHaveBeenCalledTimes(1);
+
+      getInitialSpy.mockRestore();
+      resetConsumedInitialUrlForTesting();
+    });
+
     test('hasConsumedInitialUrl ensures cold URL is only consumed once across sessions', async () => {
       resetConsumedInitialUrlForTesting();
       const getInitialSpy = jest.spyOn(Linking, 'getInitialURL').mockResolvedValue('gi-cung-duoc://room/join?code=GCD234');
@@ -554,11 +572,13 @@ describe('GM-30 joinLinks — Native QR, Links, Allowlist & Resolvers', () => {
 
       // Second subscription: initial URL has already been consumed!
       const onJoinCode2 = jest.fn();
-      const unsub2 = subscribeToJoinLinks({ onJoinCode: onJoinCode2 });
+      const onEmpty2 = jest.fn();
+      const unsub2 = subscribeToJoinLinks({ onJoinCode: onJoinCode2, onInitialUrlEmpty: onEmpty2 });
       await new Promise<void>(resolve => { setImmediate(() => resolve()); });
       // getInitialURL must NOT have been called again
       expect(getInitialSpy).toHaveBeenCalledTimes(1);
       expect(onJoinCode2).not.toHaveBeenCalled();
+      expect(onEmpty2).toHaveBeenCalledTimes(1);
       unsub2();
 
       getInitialSpy.mockRestore();
