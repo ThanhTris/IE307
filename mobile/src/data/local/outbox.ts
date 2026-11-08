@@ -71,6 +71,19 @@ function createRecordId(): string {
 
 function payloadKey(recordId: string): string { return `${PAYLOAD_PREFIX}${recordId}`; }
 
+// Store a stable, opaque identity fingerprint in SQLite cleanup metadata. The
+// user ID itself and all private payload values stay in SecureStore.
+function identityFingerprint(identityId: string): string {
+  let first = 0x811c9dc5;
+  let second = 0x9e3779b9;
+  for (const character of identityId) {
+    const code = character.codePointAt(0) ?? 0;
+    first = Math.imul(first ^ code, 0x01000193) >>> 0;
+    second = Math.imul(second ^ code, 0x85ebca6b) >>> 0;
+  }
+  return `${first.toString(16).padStart(8, '0')}${second.toString(16).padStart(8, '0')}`;
+}
+
 function parsePrivate<T>(raw: string | null): T | undefined {
   if (!raw) return undefined;
   try { return JSON.parse(raw) as T; } catch { return undefined; }
@@ -127,6 +140,7 @@ export class DurableOutbox {
       || (input.round !== 1 && input.round !== 2)) {
       throw new Error('OUTBOX_INVALID_INTENT');
     }
+    if (await this.isIdentityCleanupPending(input.identityId)) throw new Error('PRIVATE_IDENTITY_CLEANUP_PENDING');
     const serializedPayload = JSON.stringify(input.payload);
     if (serializedPayload === undefined || serializedPayload.length > 64_000) throw new Error('OUTBOX_INVALID_PAYLOAD');
     await this.pruneExpired(input.identityId);
@@ -165,6 +179,7 @@ export class DurableOutbox {
   }
 
   async list<T = unknown>(identityId: string): Promise<OutboxIntent<T>[]> {
+    if (await this.isIdentityCleanupPending(identityId)) return [];
     const rows = await this.rows('outbox');
     const intents: OutboxIntent<T>[] = [];
     for (const row of rows) {
@@ -238,6 +253,7 @@ export class DurableOutbox {
 
   async cacheSnapshot<T>(snapshot: Omit<PrivateSnapshot<T>, 'fetchedAt' | 'expiresAt'> & { fetchedAt?: number }): Promise<void> {
     if (!validScope(snapshot.identityId, snapshot.roomId, snapshot.contractVersion)) throw new Error('CACHE_INVALID_SCOPE');
+    if (await this.isIdentityCleanupPending(snapshot.identityId)) throw new Error('PRIVATE_IDENTITY_CLEANUP_PENDING');
     const createdAt = snapshot.fetchedAt ?? this.clock();
     const value: PrivateSnapshot<T> = { ...snapshot, fetchedAt: createdAt, expiresAt: createdAt + CACHE_TTL_MS };
     const rowId = createRecordId();
@@ -264,6 +280,7 @@ export class DurableOutbox {
 
   async readSnapshotCache<T>(identityId: string, roomId: string, contractVersion: string): Promise<PrivateSnapshot<T> | undefined> {
     if (!validScope(identityId, roomId, contractVersion)) return undefined;
+    if (await this.isIdentityCleanupPending(identityId)) return undefined;
     const rows = await this.rows('cache');
     let latest: PrivateSnapshot<T> | undefined;
     for (const row of rows) {
@@ -288,26 +305,28 @@ export class DurableOutbox {
 
   async clearIdentity(identityId: string): Promise<void> {
     await this.initialize();
+    await this.markIdentityCleanup(identityId);
     const identityRows: EntryRow[] = [];
+    let failed = false;
     for (const row of [...await this.rows('outbox'), ...await this.rows('cache')]) {
       try {
         const raw = await this.secureStore.getItemAsync(payloadKey(row.record_id));
         const value = parsePrivate<{ identityId?: string }>(raw);
         if (value?.identityId === identityId) identityRows.push(row);
       } catch {
-        // An unreadable row cannot safely be attributed to this identity.
+        // Keep the durable identity marker. Startup will retry ownership reads
+        // and delete only rows that resolve to this identity.
+        failed = true;
       }
     }
     // Mark every known row before attempting any SecureStore deletes. This
     // prevents a first delete error from leaving later A rows visible at logout.
     for (const row of identityRows) await this.markPendingDeletion(row.record_id);
-    let failed = false;
     for (const row of identityRows) {
       try { await this.deleteRow(row); } catch { failed = true; }
     }
     if (failed) throw new Error('PRIVATE_IDENTITY_CLEANUP_PENDING');
-    // Clean up markers written by the short-lived version-2 implementation.
-    await this.database.runAsync('DELETE FROM gm31_pending_identity_cleanup WHERE identity_id = ?', identityId).catch(() => undefined);
+    await this.clearIdentityCleanup(identityId);
   }
 
   /** Retry identity-scoped SecureStore cleanup left pending by an earlier logout. */
@@ -325,12 +344,39 @@ export class DurableOutbox {
         // Retain the opaque marker until the secure payload can be deleted.
       }
     }
+    const pendingIdentities = await this.database.getAllAsync<{ identity_hash: string }>(
+      'SELECT identity_hash FROM gm31_pending_identity_cleanup ORDER BY created_at ASC',
+    );
+    for (const marker of pendingIdentities) {
+      let unresolved = false;
+      for (const row of await this.rows()) {
+        if (await this.isPendingDeletion(row.record_id)) continue;
+        try {
+          const raw = await this.secureStore.getItemAsync(payloadKey(row.record_id));
+          const value = parsePrivate<{ identityId?: string }>(raw);
+          if (!value?.identityId) {
+            if (raw) await this.deleteRow(row);
+            continue;
+          }
+          if (identityFingerprint(value.identityId) === marker.identity_hash) await this.deleteRow(row);
+        } catch {
+          unresolved = true;
+        }
+      }
+      if (!unresolved) await this.database.runAsync(
+        'DELETE FROM gm31_pending_identity_cleanup WHERE identity_hash = ?', marker.identity_hash,
+      );
+    }
     // Upgrade cleanup marks from the short-lived version-2 schema. Those
     // identity-bearing values never get copied into the new opaque-ID table.
     const legacy = await this.database.getAllAsync<{ identity_id: string }>(
-      'SELECT identity_id FROM gm31_pending_identity_cleanup ORDER BY created_at ASC',
+      'SELECT identity_id FROM gm31_pending_identity_cleanup_legacy ORDER BY created_at ASC',
     ).catch(() => []);
-    for (const entry of legacy) await this.clearIdentity(entry.identity_id).catch(() => undefined);
+    for (const entry of legacy) {
+      await this.clearIdentity(entry.identity_id).then(async () => {
+        await this.database.runAsync('DELETE FROM gm31_pending_identity_cleanup_legacy WHERE identity_id = ?', entry.identity_id);
+      }).catch(() => undefined);
+    }
   }
 
   private async markPendingDeletion(recordId: string): Promise<void> {
@@ -339,6 +385,26 @@ export class DurableOutbox {
       recordId,
       this.clock(),
     );
+  }
+
+  private async markIdentityCleanup(identityId: string): Promise<void> {
+    await this.database.runAsync(
+      'INSERT OR IGNORE INTO gm31_pending_identity_cleanup(identity_hash, created_at) VALUES(?, ?)',
+      identityFingerprint(identityId), this.clock(),
+    );
+  }
+
+  private async clearIdentityCleanup(identityId: string): Promise<void> {
+    await this.database.runAsync(
+      'DELETE FROM gm31_pending_identity_cleanup WHERE identity_hash = ?', identityFingerprint(identityId),
+    );
+  }
+
+  private async isIdentityCleanupPending(identityId: string): Promise<boolean> {
+    const marker = await this.database.getFirstAsync<{ identity_hash: string }>(
+      'SELECT identity_hash FROM gm31_pending_identity_cleanup WHERE identity_hash = ?', identityFingerprint(identityId),
+    );
+    return marker !== null;
   }
 
   private async isPendingDeletion(recordId: string): Promise<boolean> {

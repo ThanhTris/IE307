@@ -9,14 +9,15 @@
 - Snapshot responses are bound to the identity captured before the request; offline/time-out reads may restore only a valid, unexpired private cache for that same identity and room.
 - Logout records opaque row IDs in SQLite before SecureStore deletion; pending cleanup is retried during provider startup. A SecureStore deletion error no longer blocks local logout. A migration also drains identity markers from the short-lived version-2 schema.
 - Expo 58 baseline with `expo-sqlite@~58.0.15`; `npm run check:expo` passed.
-- Focused `gm31Outbox.test.ts` + `voteRepository.test.ts`: 2 suites / 42 tests Pass. Coverage includes canonical ballot ACK gated on `ACCEPTED`, late snapshot rejection after identity switch/logout, other-room intent retention, future expected-version rejection, and cleanup retry across multiple private rows through a new outbox instance.
+- Focused `gm31Outbox.test.ts` + `voteRepository.test.ts`: 2 suites / 43 tests Pass. Coverage includes canonical ballot ACK gated on `ACCEPTED`, late snapshot rejection after identity switch/logout, other-room intent retention, future expected-version rejection, retry after SecureStore read failure across restart, and preservation of another identity's rows.
 - Unknown-intent replay requires a fresh live snapshot; stale cache fallback is marked for read paths and cannot authorize a mutation retry. Offline recovery leaves the intent intact without submitting.
 - Identity cleanup marks all matching rows before attempting independent secure deletes. Rows pending deletion are hidden from reads/replay and startup retry continues across failures.
-- `git diff --check`: Pass. AVD persistence/restart, live backend, typecheck on the final follow-up revision, and Figma parity remain Not run. Keep the PR draft and do not claim merge readiness.
+- Logout first persists an opaque identity fingerprint cleanup marker. If a SecureStore read fails, rows for that identity stay hidden and writes are blocked until startup can resolve ownership and delete them; other identities remain visible. SQLite never stores the raw identity ID.
+- `npm run typecheck` and `git diff --check`: Pass. AVD persistence/restart, live backend and Figma parity remain Not run. The readiness checker cannot verify Project #2 because the GitHub token lacks `read:project`; do not claim merge readiness.
 
 ## Scope and behavior
 
-SQLite stores opaque record identifiers, entry kind/state, TTL and pending deletion record IDs. Private identity scope and values remain in SecureStore. Reconciliation fetches canonical server state before producing candidates; unknown ACK state is never auto-replayed. Logout invalidates the local session even if SecureStore cleanup fails; a durable marker retries identity-scoped deletion on startup.
+SQLite stores opaque record identifiers, entry kind/state, TTL, pending deletion record IDs, and an opaque identity fingerprint only while cleanup is pending. Private identity scope and values remain in SecureStore. Reconciliation fetches canonical server state before producing candidates; unknown ACK state is never auto-replayed. Logout invalidates the local session even if SecureStore read/delete fails; cleanup markers retry identity-scoped deletion on startup.
 
 ## Required next evidence
 

@@ -10,6 +10,7 @@ type Row = { record_id: string; kind: 'outbox' | 'cache'; state: 'pending' | 'un
 class MemoryDatabase implements SqlitePrivateDatabase {
   rows = new Map<string, Row>();
   pendingCleanup = new Set<string>();
+  pendingIdentities = new Set<string>();
   version = 0;
 
   async execAsync(sql: string) {
@@ -37,11 +38,19 @@ class MemoryDatabase implements SqlitePrivateDatabase {
       this.pendingCleanup.add(params[0] as string);
       return { changes: 1 };
     }
+    if (sql.startsWith('INSERT OR IGNORE INTO gm31_pending_identity_cleanup')) {
+      this.pendingIdentities.add(params[0] as string);
+      return { changes: 1 };
+    }
+    if (sql.startsWith('DELETE FROM gm31_pending_identity_cleanup WHERE identity_hash')) {
+      const changed = this.pendingIdentities.delete(params[0] as string);
+      return { changes: Number(changed) };
+    }
+    if (sql.startsWith('DELETE FROM gm31_pending_identity_cleanup_legacy')) return { changes: 0 };
     if (sql.startsWith('DELETE FROM gm31_pending_private_deletion')) {
       const changed = this.pendingCleanup.delete(params[0] as string);
       return { changes: Number(changed) };
     }
-    if (sql.startsWith('DELETE FROM gm31_pending_identity_cleanup')) return { changes: 0 };
     throw new Error(`Unexpected SQL: ${sql}`);
   }
   async getFirstAsync<T>(sql: string, ...params: (string | number | null)[]): Promise<T | null> {
@@ -50,13 +59,21 @@ class MemoryDatabase implements SqlitePrivateDatabase {
       const recordId = params[0] as string;
       return this.pendingCleanup.has(recordId) ? { record_id: recordId } as T : null;
     }
+    if (sql.startsWith('SELECT identity_hash FROM gm31_pending_identity_cleanup')) {
+      const identityHash = params[0] as string;
+      return this.pendingIdentities.has(identityHash) ? { identity_hash: identityHash } as T : null;
+    }
     return null;
   }
   async getAllAsync<T>(sql: string, ...params: (string | number | null)[]): Promise<T[]> {
     if (sql.startsWith('SELECT record_id FROM gm31_pending_private_deletion')) {
       return [...this.pendingCleanup].map(record_id => ({ record_id })) as T[];
     }
-    if (sql.startsWith('SELECT identity_id FROM gm31_pending_identity_cleanup')) return [];
+    if (sql.startsWith('SELECT identity_hash FROM gm31_pending_identity_cleanup')) {
+      return [...this.pendingIdentities].map(identity_hash => ({ identity_hash })) as T[];
+    }
+    if (sql.startsWith('SELECT identity_id FROM gm31_pending_identity_cleanup_legacy')) return [];
+    if (sql.startsWith('PRAGMA table_info(gm31_pending_identity_cleanup)')) return [];
     const kind = sql.includes('WHERE kind = ?') ? params[0] : undefined;
     return [...this.rows.values()].filter(row => !kind || row.kind === kind) as T[];
   }
@@ -65,7 +82,11 @@ class MemoryDatabase implements SqlitePrivateDatabase {
 class MemorySecureStore implements SecurePrivateStore {
   values = new Map<string, string>();
   failNextDelete = false;
-  async getItemAsync(key: string) { return this.values.get(key) ?? null; }
+  failNextRead = false;
+  async getItemAsync(key: string) {
+    if (this.failNextRead) { this.failNextRead = false; throw new Error('SECURE_READ_FAILED'); }
+    return this.values.get(key) ?? null;
+  }
   async setItemAsync(key: string, value: string) { this.values.set(key, value); }
   async deleteItemAsync(key: string) {
     if (this.failNextDelete) { this.failNextDelete = false; throw new Error('SECURE_DELETE_FAILED'); }
@@ -254,6 +275,26 @@ describe('GM-31 durable private outbox', () => {
     expect(database.rows.size).toBe(0);
     expect(database.pendingCleanup.size).toBe(0);
     expect(secureStore.values.size).toBe(0);
+  });
+
+  test('SecureStore read failure keeps that identity hidden across restart while preserving another identity', async () => {
+    const { database, secureStore, outbox } = setup();
+    await outbox.enqueue(intent('user-A', 'private-A'));
+    await outbox.cacheSnapshot({ identityId: 'user-A', roomId: 'room-A', contractVersion: 'contract-1', value: { secret: 'A' } });
+    await outbox.enqueue(intent('user-B', 'private-B'));
+    secureStore.failNextRead = true;
+
+    await expect(outbox.clearIdentity('user-A')).rejects.toThrow('PRIVATE_IDENTITY_CLEANUP_PENDING');
+    expect(await outbox.list('user-A')).toEqual([]);
+    expect(await outbox.readSnapshotCache('user-A', 'room-A', 'contract-1')).toBeUndefined();
+    expect((await outbox.list('user-B')).map(entry => entry.requestId)).toEqual(['private-B']);
+
+    const restarted = new DurableOutbox(database, secureStore, () => 1_800_000_000_000, 3);
+    await restarted.retryPendingPrivateDeletions();
+    expect(await restarted.list('user-A')).toEqual([]);
+    expect(await restarted.readSnapshotCache('user-A', 'room-A', 'contract-1')).toBeUndefined();
+    expect((await restarted.list('user-B')).map(entry => entry.requestId)).toEqual(['private-B']);
+    expect(database.pendingIdentities.size).toBe(0);
   });
 
   test('TTL expiry removes the secure payload and identity-scoped rows', async () => {
