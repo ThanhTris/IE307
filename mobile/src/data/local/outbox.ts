@@ -113,11 +113,7 @@ export class DurableOutbox {
 
   private async deleteRow(row: EntryRow): Promise<void> {
     // Keep the SQLite handle when SecureStore refuses deletion so a later cleanup can retry.
-    await this.database.runAsync(
-      'INSERT OR IGNORE INTO gm31_pending_private_deletion(record_id, created_at) VALUES(?, ?)',
-      row.record_id,
-      this.clock(),
-    );
+    await this.markPendingDeletion(row.record_id);
     await this.secureStore.deleteItemAsync(payloadKey(row.record_id));
     await this.database.runAsync('DELETE FROM gm31_private_entries WHERE record_id = ?', row.record_id);
     await this.database.runAsync('DELETE FROM gm31_pending_private_deletion WHERE record_id = ?', row.record_id);
@@ -172,6 +168,7 @@ export class DurableOutbox {
     const rows = await this.rows('outbox');
     const intents: OutboxIntent<T>[] = [];
     for (const row of rows) {
+      if (await this.isPendingDeletion(row.record_id)) continue;
       if (row.expires_at <= this.clock()) { await this.deleteRow(row); continue; }
       const intent = parsePrivate<OutboxIntent<T>>(await this.secureStore.getItemAsync(payloadKey(row.record_id)));
       if (!intent) { await this.deleteRow(row); continue; }
@@ -270,6 +267,7 @@ export class DurableOutbox {
     const rows = await this.rows('cache');
     let latest: PrivateSnapshot<T> | undefined;
     for (const row of rows) {
+      if (await this.isPendingDeletion(row.record_id)) continue;
       if (row.expires_at <= this.clock()) { await this.deleteRow(row); continue; }
       const value = parsePrivate<PrivateSnapshot<T>>(await this.secureStore.getItemAsync(payloadKey(row.record_id)));
       if (!value) { await this.deleteRow(row); continue; }
@@ -290,11 +288,24 @@ export class DurableOutbox {
 
   async clearIdentity(identityId: string): Promise<void> {
     await this.initialize();
+    const identityRows: EntryRow[] = [];
     for (const row of [...await this.rows('outbox'), ...await this.rows('cache')]) {
-      const raw = await this.secureStore.getItemAsync(payloadKey(row.record_id));
-      const value = parsePrivate<{ identityId?: string }>(raw);
-      if (value?.identityId === identityId) await this.deleteRow(row);
+      try {
+        const raw = await this.secureStore.getItemAsync(payloadKey(row.record_id));
+        const value = parsePrivate<{ identityId?: string }>(raw);
+        if (value?.identityId === identityId) identityRows.push(row);
+      } catch {
+        // An unreadable row cannot safely be attributed to this identity.
+      }
     }
+    // Mark every known row before attempting any SecureStore deletes. This
+    // prevents a first delete error from leaving later A rows visible at logout.
+    for (const row of identityRows) await this.markPendingDeletion(row.record_id);
+    let failed = false;
+    for (const row of identityRows) {
+      try { await this.deleteRow(row); } catch { failed = true; }
+    }
+    if (failed) throw new Error('PRIVATE_IDENTITY_CLEANUP_PENDING');
     // Clean up markers written by the short-lived version-2 implementation.
     await this.database.runAsync('DELETE FROM gm31_pending_identity_cleanup WHERE identity_id = ?', identityId).catch(() => undefined);
   }
@@ -322,6 +333,22 @@ export class DurableOutbox {
     for (const entry of legacy) await this.clearIdentity(entry.identity_id).catch(() => undefined);
   }
 
+  private async markPendingDeletion(recordId: string): Promise<void> {
+    await this.database.runAsync(
+      'INSERT OR IGNORE INTO gm31_pending_private_deletion(record_id, created_at) VALUES(?, ?)',
+      recordId,
+      this.clock(),
+    );
+  }
+
+  private async isPendingDeletion(recordId: string): Promise<boolean> {
+    const marker = await this.database.getFirstAsync<{ record_id: string }>(
+      'SELECT record_id FROM gm31_pending_private_deletion WHERE record_id = ?',
+      recordId,
+    );
+    return marker !== null;
+  }
+
   async pruneExpired(identityId?: string): Promise<void> {
     for (const row of await this.rows()) {
       if (row.expires_at > this.clock()) continue;
@@ -346,6 +373,7 @@ export class DurableOutbox {
 
   private async findRow(identityId: string, requestId: string): Promise<{ row: EntryRow; intent: OutboxIntent } | undefined> {
     for (const row of await this.rows('outbox')) {
+      if (await this.isPendingDeletion(row.record_id)) continue;
       const intent = parsePrivate<OutboxIntent>(await this.secureStore.getItemAsync(payloadKey(row.record_id)));
       if (intent?.identityId === identityId && intent.requestId === requestId) return { row, intent: { ...intent, state: row.state as OutboxState } };
     }
@@ -355,6 +383,7 @@ export class DurableOutbox {
   private async readCacheRows(identityId: string): Promise<{ row: EntryRow; roomId: string; contractVersion: string }[]> {
     const rows: { row: EntryRow; roomId: string; contractVersion: string }[] = [];
     for (const row of await this.rows('cache')) {
+      if (await this.isPendingDeletion(row.record_id)) continue;
       const value = parsePrivate<{ identityId?: string; roomId?: string; contractVersion?: string }>(await this.secureStore.getItemAsync(payloadKey(row.record_id)));
       if (value?.identityId === identityId && value.roomId && value.contractVersion) rows.push({ row, roomId: value.roomId, contractVersion: value.contractVersion });
     }
@@ -364,6 +393,7 @@ export class DurableOutbox {
   private async identityRows(identityId: string): Promise<EntryRow[]> {
     const matches: EntryRow[] = [];
     for (const row of await this.rows()) {
+      if (await this.isPendingDeletion(row.record_id)) continue;
       const value = parsePrivate<{ identityId?: string }>(await this.secureStore.getItemAsync(payloadKey(row.record_id)));
       if (value?.identityId === identityId) matches.push(row);
     }

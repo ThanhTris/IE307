@@ -3,14 +3,16 @@
 ### Local review follow-up — 2026-11-08
 
 - Branch: `codex/gm-31-private-outbox` (PR #158); this task is split from PR #126 into its own draft PR.
-- Historical checks below were run at `bb662d9`. Follow-up fixes are at `031d99f` and have not been rerun locally.
+- Historical checks below were run at `bb662d9`. Follow-up fixes are at `031d99f`; focused follow-up tests were rerun locally on 2026-11-08.
 - Replay candidates must satisfy `1 <= expectedVersion <= snapshot.version`; retry now independently rejects a future version against the just-fetched snapshot.
 - ACK reconciliation accepts the canonical `ownBallot` array only when the current member is `ACCEPTED`, and keeps legacy `ownSubmission.requestId` support.
 - Snapshot responses are bound to the identity captured before the request; offline/time-out reads may restore only a valid, unexpired private cache for that same identity and room.
 - Logout records opaque row IDs in SQLite before SecureStore deletion; pending cleanup is retried during provider startup. A SecureStore deletion error no longer blocks local logout. A migration also drains identity markers from the short-lived version-2 schema.
 - Expo 58 baseline with `expo-sqlite@~58.0.15`; `npm run check:expo` passed.
-- `npm run typecheck`: Pass. Focused `gm31Outbox.test.ts` + `voteRepository.test.ts`: 2 suites / 34 tests Pass. `npm run check:expo`: Pass on Expo 58.0.23; `git diff --check`: Pass.
-- AVD persistence/restart, live backend, and Figma parity remain Not run. Keep the PR draft and do not claim merge readiness.
+- Focused `gm31Outbox.test.ts` + `voteRepository.test.ts`: 2 suites / 42 tests Pass. Coverage includes canonical ballot ACK gated on `ACCEPTED`, late snapshot rejection after identity switch/logout, other-room intent retention, future expected-version rejection, and cleanup retry across multiple private rows through a new outbox instance.
+- Unknown-intent replay requires a fresh live snapshot; stale cache fallback is marked for read paths and cannot authorize a mutation retry. Offline recovery leaves the intent intact without submitting.
+- Identity cleanup marks all matching rows before attempting independent secure deletes. Rows pending deletion are hidden from reads/replay and startup retry continues across failures.
+- `git diff --check`: Pass. AVD persistence/restart, live backend, typecheck on the final follow-up revision, and Figma parity remain Not run. Keep the PR draft and do not claim merge readiness.
 
 ## Scope and behavior
 
@@ -20,9 +22,10 @@ SQLite stores opaque record identifiers, entry kind/state, TTL and pending delet
 
 | Case | Current result | Remaining evidence |
 | --- | --- | --- |
-| Expected-version range and stale/future intent pruning | Unit regression added | Focused Jest result below |
-| Canonical and legacy ACK recognition | Unit regression added | Focused Jest result below |
-| SQLite metadata privacy, cap, TTL, identity isolation | Existing unit coverage | Full GM-31 suite on this PR revision |
+| Expected-version range and stale/future intent pruning | Pass | Focused Jest: future expected-version case rejected; `gm31Outbox.test.ts` |
+| Canonical and legacy ACK recognition | Pass | Focused Jest: canonical ballot requires `ACCEPTED`; legacy request ID stays supported |
+| SQLite metadata privacy, cap, TTL, identity isolation | Pass | Focused `gm31Outbox.test.ts` coverage; full mobile suite not run |
+| Room-scoped reconciliation and restart cleanup retry | Pass | Focused `gm31Outbox.test.ts`: other-room intent retained; new outbox retries opaque deletion marker |
 | Process restart/persistence | Not run | Android development build + AVD |
 | Server reconciliation/auth | Not run | Local Backend QA with canonical API |
 | Figma parity | Not run | Screenshots at 412dp, 360dp and 200% text |

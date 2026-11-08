@@ -44,8 +44,12 @@ class MemoryDatabase implements SqlitePrivateDatabase {
     if (sql.startsWith('DELETE FROM gm31_pending_identity_cleanup')) return { changes: 0 };
     throw new Error(`Unexpected SQL: ${sql}`);
   }
-  async getFirstAsync<T>(sql: string): Promise<T | null> {
+  async getFirstAsync<T>(sql: string, ...params: (string | number | null)[]): Promise<T | null> {
     if (sql === 'PRAGMA user_version') return { user_version: this.version } as T;
+    if (sql.startsWith('SELECT record_id FROM gm31_pending_private_deletion')) {
+      const recordId = params[0] as string;
+      return this.pendingCleanup.has(recordId) ? { record_id: recordId } as T : null;
+    }
     return null;
   }
   async getAllAsync<T>(sql: string, ...params: (string | number | null)[]): Promise<T[]> {
@@ -77,15 +81,15 @@ function setup() {
   return { database, secureStore, outbox, advance: (ms: number) => { now += ms; } };
 }
 
-function intent(identityId: string, requestId: string, votes = [{ roundDishId: 'dish-1', choice: 'WANT' }]) {
+function intent(identityId: string, requestId: string, votes = [{ roundDishId: 'dish-1', choice: 'WANT' }], roomId = 'room-1', expectedVersion = 12) {
   return {
     identityId,
-    roomId: 'room-1',
+    roomId,
     round: 1 as const,
     poolVersion: 4,
     contractVersion: 'dish-session-v4/roadmap-v2/GM-07.B-supplement',
     requestId,
-    expectedVersion: 12,
+    expectedVersion,
     payload: { intentId: `intent_${requestId}`, votes },
   };
 }
@@ -94,6 +98,8 @@ describe('GM-31 durable private outbox', () => {
   test('recognizes canonical ballot ACKs and legacy submission receipts', () => {
     expect(acknowledgedRequestIds({ ownBallot: { requestId: 'canonical-req' }, ownSubmission: null }))
       .toEqual(['canonical-req']);
+    expect(acknowledgedRequestIds({ ownBallot: [{ roundDishId: 'dish-1', choice: 'WANT' }], ownSubmission: null }))
+      .toEqual([]); // Canonical arrays are ACKed only with the member's ACCEPTED status.
     expect(acknowledgedRequestIds({ ownBallot: null, ownSubmission: {
       round: 1, intentId: 'intent-1', requestId: 'legacy-req', submittedAt: '2026-11-07T00:00:00Z', voteCount: 1,
     } })).toEqual(['legacy-req']);
@@ -163,15 +169,90 @@ describe('GM-31 durable private outbox', () => {
     ]);
   });
 
+  test('reconciling room B leaves room A intents intact', async () => {
+    const { outbox } = setup();
+    await outbox.enqueue(intent('user-A', 'room-a', undefined, 'room-A'));
+    await outbox.enqueue(intent('user-A', 'room-b', undefined, 'room-B'));
+    const candidates = await outbox.reconcileBeforeReplay('user-A', async () => ({
+      roomId: 'room-B', round: 1, poolVersion: 4,
+      contractVersion: intent('user-A', 'fixture').contractVersion,
+      version: 12, active: true, acknowledgedRequestIds: [],
+    }));
+    expect(candidates.map(item => item.requestId)).toEqual(['room-b']);
+    expect((await outbox.list('user-A')).map(item => item.requestId)).toEqual(['room-a', 'room-b']);
+  });
+
+  test('does not replay a future expectedVersion for an otherwise matching room snapshot', async () => {
+    const { outbox } = setup();
+    await outbox.enqueue(intent('user-A', 'future', undefined, 'room-1', 14));
+    const candidates = await outbox.reconcileBeforeReplay('user-A', async () => ({
+      roomId: 'room-1', round: 1, poolVersion: 4,
+      contractVersion: intent('user-A', 'fixture').contractVersion,
+      version: 13, active: true, acknowledgedRequestIds: [],
+    }));
+    expect(candidates).toEqual([]);
+    expect(await outbox.list('user-A')).toEqual([]);
+  });
+
+  test('canonical ballot reconciles only when the server marks the member ACCEPTED', async () => {
+    const { outbox } = setup();
+    await outbox.enqueue(intent('user-A', 'canonical-ack'));
+    const snapshot = {
+      roomId: 'room-1', round: 1 as const, poolVersion: 4,
+      contractVersion: intent('user-A', 'fixture').contractVersion,
+      version: 12, active: true, acknowledgedRequestIds: [],
+    };
+    const notAccepted = await outbox.reconcileBeforeReplay('user-A', async () => ({ ...snapshot, hasCanonicalBallot: false }));
+    expect(notAccepted.map(item => item.requestId)).toEqual(['canonical-ack']);
+    const accepted = await outbox.reconcileBeforeReplay('user-A', async () => ({ ...snapshot, hasCanonicalBallot: true }));
+    expect(accepted).toEqual([]);
+    const acked = (await outbox.list('user-A'))[0];
+    expect(acked).toMatchObject({ requestId: 'canonical-ack', state: 'acked' });
+    expect(acked).not.toHaveProperty('payload');
+  });
+
   test('retains cleanup metadata when SecureStore deletion fails, then retries successfully', async () => {
     const { database, secureStore, outbox } = setup();
     await outbox.enqueue(intent('user-A', 'cleanup'));
     secureStore.failNextDelete = true;
-    await expect(outbox.clearIdentity('user-A')).rejects.toThrow('SECURE_DELETE_FAILED');
+    await expect(outbox.clearIdentity('user-A')).rejects.toThrow('PRIVATE_IDENTITY_CLEANUP_PENDING');
     expect(database.rows.size).toBe(1);
     expect(secureStore.values.size).toBe(1);
     await outbox.clearIdentity('user-A');
     expect(database.rows.size).toBe(0);
+    expect(secureStore.values.size).toBe(0);
+  });
+
+  test('retries pending SecureStore deletion through a new outbox after restart', async () => {
+    const { database, secureStore, outbox } = setup();
+    await outbox.enqueue(intent('user-A', 'restart-cleanup'));
+    secureStore.failNextDelete = true;
+    await expect(outbox.clearIdentity('user-A')).rejects.toThrow('PRIVATE_IDENTITY_CLEANUP_PENDING');
+    expect(database.pendingCleanup.size).toBe(1);
+
+    const restartedOutbox = new DurableOutbox(database, secureStore, () => 1_800_000_000_000, 3);
+    await restartedOutbox.retryPendingPrivateDeletions();
+    expect(database.rows.size).toBe(0);
+    expect(database.pendingCleanup.size).toBe(0);
+    expect(secureStore.values.size).toBe(0);
+  });
+
+  test('marks all identity rows before deletion and hides failed rows until restart cleanup', async () => {
+    const { database, secureStore, outbox } = setup();
+    await outbox.enqueue(intent('user-A', 'first'));
+    await outbox.enqueue(intent('user-A', 'second'));
+    await outbox.cacheSnapshot({ identityId: 'user-A', roomId: 'room-1', contractVersion: 'contract-1', value: { private: true } });
+    secureStore.failNextDelete = true;
+
+    await expect(outbox.clearIdentity('user-A')).rejects.toThrow('PRIVATE_IDENTITY_CLEANUP_PENDING');
+    expect(database.pendingCleanup.size).toBe(1);
+    expect(await outbox.list('user-A')).toEqual([]);
+    expect(await outbox.readSnapshotCache('user-A', 'room-1', 'contract-1')).toBeUndefined();
+
+    const restarted = new DurableOutbox(database, secureStore, () => 1_800_000_000_000, 3);
+    await restarted.retryPendingPrivateDeletions();
+    expect(database.rows.size).toBe(0);
+    expect(database.pendingCleanup.size).toBe(0);
     expect(secureStore.values.size).toBe(0);
   });
 

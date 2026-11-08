@@ -247,7 +247,7 @@ export interface VoteRepository {
   submitBallot(args: SubmitBallotArgs): Promise<WriteResult<SubmitBallotResponse>>;
   enterWaiting(args: EnterWaitingArgs): Promise<WriteResult<EnterWaitingResponse>>;
   finalize(args: FinalizeArgs): Promise<WriteResult<FinalizeResponse>>;
-  getSnapshot(roomId: string): Promise<ReadResult<RoomSnapshot>>;
+  getSnapshot(roomId: string, options?: { allowStaleCache?: boolean }): Promise<ReadResult<RoomSnapshot>>;
 }
 
 export interface LiveVoteRepositoryDeps {
@@ -366,7 +366,9 @@ export class LiveVoteRepository implements VoteRepository {
         });
         if (!this.identityMatches(capturedIdentity)) return { ok: false, requestId: rid, roomId: args.roomId, error: { messageKey: 'AUTH_REQUIRED' } };
         if (previous) {
-          const latest = await this.getSnapshot(args.roomId);
+          // Mutation replay must be based on a fresh server snapshot. A stale
+          // offline cache can inform the UI, but cannot authorize a submit.
+          const latest = await this.getSnapshot(args.roomId, { allowStaleCache: false });
           if (!this.identityMatches(capturedIdentity)) return { ok: false, requestId: previous.requestId, roomId: args.roomId, error: { messageKey: 'AUTH_REQUIRED' } };
           if (!latest.ok) return { ok: false, requestId: previous.requestId, roomId: args.roomId, error: latest.error };
           if (acknowledgedRequestIds(latest.data).includes(previous.requestId)) {
@@ -803,7 +805,7 @@ export class LiveVoteRepository implements VoteRepository {
    * Fetches the current room snapshot.
    * Requires strict validation against canonical schema guards (F7).
    */
-  async getSnapshot(roomId: string): Promise<ReadResult<RoomSnapshot>> {
+  async getSnapshot(roomId: string, options: { allowStaleCache?: boolean } = {}): Promise<ReadResult<RoomSnapshot>> {
     const capturedIdentity = this.captureIdentity();
     const caller = this.getCaller();
     if (caller) {
@@ -829,7 +831,7 @@ export class LiveVoteRepository implements VoteRepository {
         }
         if (raw && !raw.ok) {
           const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as ErrorCode;
-          if (['NETWORK_ERROR', 'TIMEOUT'].includes(errCode)) {
+          if (options.allowStaleCache !== false && ['NETWORK_ERROR', 'TIMEOUT'].includes(errCode)) {
             const cached = await this.readCachedSnapshot(roomId, capturedIdentity);
             if (cached) return cached;
           }
@@ -838,7 +840,7 @@ export class LiveVoteRepository implements VoteRepository {
         return { ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } };
       } catch (err: unknown) {
         const error = mapErrorHelper(err);
-        if (['NETWORK_ERROR', 'TIMEOUT'].includes(error.messageKey)) {
+        if (options.allowStaleCache !== false && ['NETWORK_ERROR', 'TIMEOUT'].includes(error.messageKey)) {
           const cached = await this.readCachedSnapshot(roomId, capturedIdentity);
           if (cached) return cached;
         }
@@ -852,7 +854,7 @@ export class LiveVoteRepository implements VoteRepository {
         if (!this.identityMatches(capturedIdentity)) return { ok: false, error: { messageKey: 'AUTH_REQUIRED' } };
         await this.reconcileOutbox(result.data, capturedIdentity);
         if (!this.identityMatches(capturedIdentity)) return { ok: false, error: { messageKey: 'AUTH_REQUIRED' } };
-      } else if (['NETWORK_ERROR', 'TIMEOUT'].includes(result.error.messageKey)) {
+      } else if (options.allowStaleCache !== false && ['NETWORK_ERROR', 'TIMEOUT'].includes(result.error.messageKey)) {
         const cached = await this.readCachedSnapshot(roomId, capturedIdentity);
         if (cached) return cached;
       }
@@ -871,7 +873,7 @@ export class LiveVoteRepository implements VoteRepository {
     const cached = await outbox.readSnapshotCache<RoomSnapshot>(identity.userId, roomId, CANONICAL_VOTE_CONTRACT_VERSION).catch(() => undefined);
     if (!cached || !this.identityMatches(identity)
       || !(isCanonicalRoomSnapshot(cached.value) || isRoomSnapshot(cached.value))) return undefined;
-    return { ok: true, data: cached.value };
+    return { ok: true, data: cached.value, stale: true, fetchedAt: new Date(cached.fetchedAt).toISOString() };
   }
 
   private async reconcileOutbox(snapshot: RoomSnapshot, identity: ReturnType<LiveVoteRepository['captureIdentity']>): Promise<void> {
