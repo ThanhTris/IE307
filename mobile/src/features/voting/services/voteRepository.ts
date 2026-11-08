@@ -33,8 +33,10 @@ export const CANONICAL_VOTE_CONTRACT_VERSION = 'dish-session-v4/roadmap-v2/GM-07
 export const BASELINE_VOTE_CONTRACT_VERSION = 'dish-session-v4/roadmap-v2/GM-07.B';
 
 export function acknowledgedRequestIds(snapshot: Pick<RoomSnapshot, 'ownBallot' | 'ownSubmission'>): string[] {
-  const canonicalBallotId = (snapshot.ownBallot as { requestId?: unknown } | null | undefined)?.requestId;
-  return [snapshot.ownSubmission?.requestId, canonicalBallotId]
+  const ballotId = !Array.isArray(snapshot.ownBallot)
+    ? (snapshot.ownBallot as { requestId?: unknown } | null | undefined)?.requestId
+    : undefined;
+  return [snapshot.ownSubmission?.requestId, ballotId]
     .filter((requestId): requestId is string => typeof requestId === 'string' && requestId.length > 0);
 }
 
@@ -391,7 +393,9 @@ export class LiveVoteRepository implements VoteRepository {
           const activeStates = args.round === 1 ? ['ROUND_1', 'WAITING_1'] : ['ROUND_2', 'WAITING_2'];
           if (!activeStates.includes(latest.data.state)
             || latest.data.round !== args.round
-            || latest.data.poolVersion !== args.poolVersion) {
+            || latest.data.poolVersion !== args.poolVersion
+            || previous.expectedVersion < 1
+            || previous.expectedVersion > latest.data.version) {
             await durableOutbox.remove(identityId, previous.requestId).catch(() => undefined);
             return { ok: false, requestId: previous.requestId, roomId: args.roomId, error: { messageKey: 'VERSION_CONFLICT' } };
           }
@@ -800,6 +804,7 @@ export class LiveVoteRepository implements VoteRepository {
    * Requires strict validation against canonical schema guards (F7).
    */
   async getSnapshot(roomId: string): Promise<ReadResult<RoomSnapshot>> {
+    const capturedIdentity = this.captureIdentity();
     const caller = this.getCaller();
     if (caller) {
       try {
@@ -814,7 +819,9 @@ export class LiveVoteRepository implements VoteRepository {
         if (raw?.ok && raw.data) {
           if (isCanonicalRoomSnapshot(raw.data) || isRoomSnapshot(raw.data)) {
             const snapshot = raw.data as RoomSnapshot;
-            await this.reconcileOutbox(snapshot);
+            if (!this.identityMatches(capturedIdentity)) return { ok: false, error: { messageKey: 'AUTH_REQUIRED' } };
+            await this.reconcileOutbox(snapshot, capturedIdentity);
+            if (!this.identityMatches(capturedIdentity)) return { ok: false, error: { messageKey: 'AUTH_REQUIRED' } };
             return { ok: true, data: snapshot };
           }
           // F7: Missing or invalid schema fields must strictly return MALFORMED_RESPONSE
@@ -822,17 +829,33 @@ export class LiveVoteRepository implements VoteRepository {
         }
         if (raw && !raw.ok) {
           const errCode = (raw.error?.messageKey || raw.error?.code || 'UNKNOWN_ERROR') as ErrorCode;
+          if (['NETWORK_ERROR', 'TIMEOUT'].includes(errCode)) {
+            const cached = await this.readCachedSnapshot(roomId, capturedIdentity);
+            if (cached) return cached;
+          }
           return { ok: false, error: { messageKey: errCode, details: raw.error?.details } };
         }
         return { ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } };
       } catch (err: unknown) {
-        return { ok: false, error: mapErrorHelper(err) };
+        const error = mapErrorHelper(err);
+        if (['NETWORK_ERROR', 'TIMEOUT'].includes(error.messageKey)) {
+          const cached = await this.readCachedSnapshot(roomId, capturedIdentity);
+          if (cached) return cached;
+        }
+        return { ok: false, error };
       }
     }
 
     if (this.client) {
       const result = await this.client.getRoomSnapshot(roomId);
-      if (result.ok) await this.reconcileOutbox(result.data);
+      if (result.ok) {
+        if (!this.identityMatches(capturedIdentity)) return { ok: false, error: { messageKey: 'AUTH_REQUIRED' } };
+        await this.reconcileOutbox(result.data, capturedIdentity);
+        if (!this.identityMatches(capturedIdentity)) return { ok: false, error: { messageKey: 'AUTH_REQUIRED' } };
+      } else if (['NETWORK_ERROR', 'TIMEOUT'].includes(result.error.messageKey)) {
+        const cached = await this.readCachedSnapshot(roomId, capturedIdentity);
+        if (cached) return cached;
+      }
       return result;
     }
 
@@ -842,9 +865,18 @@ export class LiveVoteRepository implements VoteRepository {
     };
   }
 
-  private async reconcileOutbox(snapshot: RoomSnapshot): Promise<void> {
-    const identityId = this.roomRepo?.getCurrentUser()?.id;
-    if (!identityId) return;
+  private async readCachedSnapshot(roomId: string, identity: ReturnType<LiveVoteRepository['captureIdentity']>): Promise<ReadResult<RoomSnapshot> | undefined> {
+    if (!identity || !this.identityMatches(identity)) return undefined;
+    const outbox = this.outbox ?? getDurableOutbox();
+    const cached = await outbox.readSnapshotCache<RoomSnapshot>(identity.userId, roomId, CANONICAL_VOTE_CONTRACT_VERSION).catch(() => undefined);
+    if (!cached || !this.identityMatches(identity)
+      || !(isCanonicalRoomSnapshot(cached.value) || isRoomSnapshot(cached.value))) return undefined;
+    return { ok: true, data: cached.value };
+  }
+
+  private async reconcileOutbox(snapshot: RoomSnapshot, identity: ReturnType<LiveVoteRepository['captureIdentity']>): Promise<void> {
+    const identityId = identity?.userId;
+    if (!identityId || !this.identityMatches(identity)) return;
     const outbox = this.outbox ?? getDurableOutbox();
     await outbox.cacheSnapshot({
       identityId,
@@ -852,6 +884,9 @@ export class LiveVoteRepository implements VoteRepository {
       contractVersion: CANONICAL_VOTE_CONTRACT_VERSION,
       value: snapshot,
     }).catch(() => undefined);
+    if (!this.identityMatches(identity)) return;
+    const ownMember = snapshot.members?.find(member => member.userId === identityId) as
+      (RoomSnapshot['members'][number] & { submissionStatus?: string }) | undefined;
     await outbox.reconcileBeforeReplay(identityId, async () => ({
       roomId: snapshot.roomId,
       round: snapshot.round,
@@ -860,6 +895,8 @@ export class LiveVoteRepository implements VoteRepository {
       version: snapshot.version,
       active: ['ROUND_1', 'WAITING_1', 'ROUND_2', 'WAITING_2'].includes(snapshot.state),
       acknowledgedRequestIds: acknowledgedRequestIds(snapshot),
+      hasCanonicalBallot: Array.isArray(snapshot.ownBallot) && snapshot.ownBallot.length > 0
+        && ownMember?.submissionStatus === 'ACCEPTED',
     })).catch(() => []);
   }
 }

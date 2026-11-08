@@ -102,7 +102,10 @@ export function RoomRepositoryProvider({
   const logout = useCallback(async (): Promise<boolean> => {
     const identityId = repository.getSessionSnapshot().user?.id;
     if (identityId) {
-      try { await getDurableOutbox().clearIdentity(identityId); } catch { return false; }
+      // Local logout must invalidate the session even if secure storage is
+      // temporarily unavailable. Failed rows remain scoped to this identity
+      // and clearIdentity can retry cleanup on the next explicit logout.
+      try { await getDurableOutbox().clearIdentity(identityId); } catch { /* continue local logout */ }
     }
     const result = await repository.logout();
     if (result.ok) {

@@ -30,6 +30,7 @@ export interface OutboxSnapshot {
   version: number;
   active: boolean;
   acknowledgedRequestIds: readonly string[];
+  hasCanonicalBallot?: boolean;
 }
 export interface PrivateSnapshot<T = unknown> {
   identityId: string;
@@ -209,15 +210,17 @@ export class DurableOutbox {
     const intents = await this.list<T>(identityId);
     const replay: OutboxIntent<T>[] = [];
     for (const intent of intents) {
-      if (snapshot.acknowledgedRequestIds.includes(intent.requestId)) {
+      // A snapshot for another room says nothing about this intent. Preserve it
+      // until its own room is reconciled or its TTL expires.
+      if (snapshot.roomId !== intent.roomId) continue;
+      const sameVoteScope = intent.round === snapshot.round
+        && intent.poolVersion === snapshot.poolVersion
+        && intent.contractVersion === snapshot.contractVersion;
+      if (sameVoteScope && (snapshot.acknowledgedRequestIds.includes(intent.requestId) || snapshot.hasCanonicalBallot)) {
         await this.acknowledge(identityId, intent.requestId);
         continue;
       }
-      const scopeMatches = snapshot.active
-        && intent.roomId === snapshot.roomId
-        && intent.round === snapshot.round
-        && intent.poolVersion === snapshot.poolVersion
-        && intent.contractVersion === snapshot.contractVersion
+      const scopeMatches = snapshot.active && sameVoteScope
         && intent.expectedVersion >= 1
         && intent.expectedVersion <= snapshot.version;
       if (!scopeMatches) {
