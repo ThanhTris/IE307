@@ -4,7 +4,7 @@ import Svg, { Rect } from 'react-native-svg';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppButton } from '../../../shared/ui';
-import { createJoinRoomWebLink, generateQrMatrix } from '../services/joinLinks';
+import { createJoinRoomDeepLink, generateQrMatrix } from '../services/joinLinks';
 
 export interface RoomQrModalProps {
   visible: boolean;
@@ -27,7 +27,7 @@ export function RoomQrModal({ visible, code, onClose, onCopyLink }: RoomQrModalP
   }, [copied]);
 
   const cleanCode = (code || '').trim().toUpperCase();
-  const joinUrl = createJoinRoomWebLink(cleanCode);
+  const joinUrl = createJoinRoomDeepLink(cleanCode);
   const matrix = generateQrMatrix(joinUrl);
   const matrixSize = matrix.length;
   const qrPixelSize = 200;

@@ -877,5 +877,75 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
       expect(screen.getAllByText('Phở bò tái nạm').length).toBeGreaterThan(0);
       expect(await screen.findByText(/Dữ liệu mô phỏng trên máy ảo AVD/)).toBeTruthy();
     });
+
+    test('default map renderer renders map canvas, markers, and updates selected place on marker press', async () => {
+      const placesRepo = {
+        fetchNearbyPlaces: jest.fn().mockResolvedValue({
+          ok: true,
+          data: {
+            resultId: decidedResult.resultId,
+            winnerDishId: decidedResult.winner!.dishId,
+            status: 'ready',
+            places: [
+              {
+                id: 'place_01',
+                name: 'Quán Phở 1',
+                address: '100 Lê Lợi',
+                distanceM: 200,
+                latitude: 10.776,
+                longitude: 106.700,
+                attribution: 'Dữ liệu mô phỏng trên máy ảo AVD',
+              },
+              {
+                id: 'place_02',
+                name: 'Quán Phở 2',
+                address: '200 Nguyễn Huệ',
+                distanceM: 450,
+                latitude: 10.774,
+                longitude: 106.703,
+                attribution: 'Dữ liệu mô phỏng trên máy ảo AVD',
+              },
+            ],
+            fetchedAt: '2026-11-08T10:00:00Z',
+          },
+        }),
+      };
+
+      const repo = createMockResultRepository({
+        initialResult: decidedResult,
+      });
+
+      await render(
+        <LiveDishResultScreen
+          roomId="room_default_map"
+          repository={repo}
+          placesRepository={placesRepo as any}
+          onHome={jest.fn()}
+          onNewSession={jest.fn()}
+        />
+      );
+
+      const dismiss = await screen.findByText('Chạm để bỏ qua');
+      fireEvent.press(dismiss);
+
+      // Verify default map canvas is rendered
+      expect(await screen.findByTestId('result-map-canvas')).toBeTruthy();
+
+      // Verify AVD simulation badge is shown
+      expect(screen.getByTestId('avd-simulation-badge')).toBeTruthy();
+
+      // Verify markers for both places are rendered
+      const marker1 = screen.getByTestId('result-map-marker-place_01');
+      const marker2 = screen.getByTestId('result-map-marker-place_02');
+      expect(marker1).toBeTruthy();
+      expect(marker2).toBeTruthy();
+
+      // Initially place 1 is selected
+      expect(screen.getAllByText('Quán Phở 1').length).toBeGreaterThan(0);
+
+      // Press marker 2 to select place 2
+      fireEvent.press(marker2);
+      expect((await screen.findAllByText('Quán Phở 2')).length).toBeGreaterThan(0);
+    });
   });
 });

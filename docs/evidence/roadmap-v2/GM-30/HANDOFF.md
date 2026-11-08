@@ -9,12 +9,15 @@ Artifacts bàn giao chính:
 - `mobile/src/features/rooms/services/joinLinks.ts`
 - `mobile/src/features/result/services/externalLinks.ts`
 - `mobile/src/features/result/services/placesRepository.ts`
+- `mobile/src/features/result/components/DefaultResultMapView.tsx`
 - `mobile/src/features/rooms/components/RoomQrModal.tsx`
 - `mobile/src/features/rooms/screens/JoinRoomEntryScreen.tsx`
 - `mobile/src/features/rooms/hooks/useJoinRoomEntry.ts`
 - `mobile/src/features/rooms/screens/LiveLobbyScreen.tsx`
 - `mobile/src/features/result/screens/LiveDishResultScreen.tsx`
 - `mobile/src/bootstrap/DishResultEntry.tsx`
+- `mobile/src/app/join/[code].tsx`
+- `mobile/src/app/join/index.tsx`
 - `mobile/src/app/room/join.tsx`
 - `mobile/src/app/room/result.tsx`
 - `mobile/tests/unit/joinLinks.test.ts`
@@ -43,9 +46,12 @@ Artifacts bàn giao chính:
 | `mobile/src/bootstrap/DishResultEntry.tsx` | GM-30 | GM-30.1 | Cập nhật entry kết quả | Truyền cấu hình Places (`placesConfig`) xuống `LiveDishResultScreen`. | Router `/room/result` |
 | `mobile/src/app/room/join.tsx` | GM-30 | GM-30.1 | Cập nhật route tham gia phòng | Kiểm tra chặn payload độc hại từ URL, xóa mã không cho prefill/preview tự động, cấu hình máy quét native mặc định và chỉ bật mô phỏng khi có cờ `simulatedScanner=1`. | Router `/room/join` |
 | `mobile/src/app/room/result.tsx` | GM-30 | GM-30.1 | Cập nhật route kết quả | Tiếp nhận cờ `simulatedPlaces=1` để bật chế độ Places mô phỏng trong QA backend trên AVD. | Router `/room/result` |
-| `mobile/tests/unit/joinLinks.test.ts` | GM-30 | GM-30.1 | `npm test -- tests/unit/joinLinks.test.ts` | 25 unit tests kiểm tra thuật toán QR matrix, parsing allowlist, bóc tách mã phòng, deep link, web link, share message, loại trừ mã độc hại (`%74oken`), xử lý race condition và dọn dẹp unsubscribe. | CI / Regression |
+| `mobile/src/features/result/components/DefaultResultMapView.tsx` | GM-30 | GM-30.1 | `import { DefaultResultMapView, defaultResultMapRenderer } from '@/features/result'` | Renderer bản đồ mặc định cho thẻ quán kết quả theo Figma: vẽ canvas bản đồ, ghim marker cho các quán có tọa độ, highlight quán đang chọn, hỗ trợ bấm marker đổi quán, và hiển thị nhãn `[Mô phỏng AVD]` khi chạy ở chế độ mô phỏng. | Result Screen, Result Map Card |
+| `mobile/src/app/join/[code].tsx` | GM-30 | GM-30.1 | Web redirect route `/join/[code]` | Chuyển hướng các đường dẫn chia sẻ web hợp lệ sang `/room/join?code=...`, kiểm tra sanitize payload trước khi redirect. | Expo Router, App Shell |
+| `mobile/src/app/join/index.tsx` | GM-30 | GM-30.1 | Web redirect route `/join?code=...` | Chuyển hướng các đường dẫn web có query code sang `/room/join?code=...`. | Expo Router, App Shell |
+| `mobile/tests/unit/joinLinks.test.ts` | GM-30 | GM-30.1 | `npm test -- tests/unit/joinLinks.test.ts` | 29 unit tests kiểm tra thuật toán QR matrix, parsing allowlist, bóc tách mã phòng, deep link, web link, share message, loại trừ mã độc hại (`%74oken`), từ chối userinfo trong custom scheme, kiểm tra authority, xử lý race condition và dọn dẹp unsubscribe. | CI / Regression |
 | `mobile/tests/unit/externalLinks.test.ts` | GM-30 | GM-30.1 | `npm test -- tests/unit/externalLinks.test.ts` | 17 unit tests kiểm tra allowlist domain/scheme, URL formatters (Google Maps, TikTok, YouTube, Geo URI), chặn query nhạy cảm, và `openExternalAction`. | CI / Regression |
-| `mobile/tests/unit/placesRepository.test.ts` | GM-30 | GM-30.1 | `npm test -- tests/unit/placesRepository.test.ts` | 16 unit tests kiểm tra `LivePlacesRepository`, gọi Google Places API New, Dev Simulated AVD mode, Mock adapter, phân quyền vị trí, cấu hình môi trường và hủy request khi đổi context. | CI / Regression |
+| `mobile/tests/unit/placesRepository.test.ts` | GM-30 | GM-30.1 | `npm test -- tests/unit/placesRepository.test.ts` | 17 unit tests kiểm tra `LivePlacesRepository`, gọi Google Places API New, Dev Simulated AVD mode, Mock adapter, phân quyền vị trí, cấu hình môi trường (thiếu key trả unsupported không tự bật mô phỏng) và hủy request khi đổi context. | CI / Regression |
 | `mobile/tests/component/gm30FigmaParity.test.tsx` | GM-30 | GM-30.1 | `npm test -- tests/component/gm30FigmaParity.test.tsx` | 8 component tests kiểm tra toàn bộ 7 Figma nodes (`268:2019`, `275:2088`, `268:2081`, `368:12182`, `622:8962`, `206:913`, `379:1478`), tương tác modal, chuyển chế độ camera, xác nhận vào phòng, quyền vị trí, danh sách quán, nút hành động ngoài và cô lập món thắng. | CI / Regression |
 
 ---
@@ -54,7 +60,7 @@ Artifacts bàn giao chính:
 
 | AC | Trạng thái | Môi trường & Lệnh | Evidence | Giới hạn & Ghi chú |
 | --- | --- | --- | --- | --- |
-| **AC1: Tạo và quét mã QR phòng, deep link và web link theo allowlist an toàn** | **Pass (code & automated tests)** | `npm test -- tests/unit/joinLinks.test.ts tests/component/gm30FigmaParity.test.tsx tests/integration/joinEntryRoute.test.tsx` | 25 unit tests, component tests cho Figma `268:2019`, `275:2088`, `268:2081`, `368:12182`. Allowlist scheme `gi-cung-duoc:`, `exp:`, `https:`, domain `gicungduoc.vn`. Chặn tuyệt đối token/credential độc hại, không prefill hay preview khi URL bị từ chối. | Tuân thủ tuyệt đối quy định không thêm native module nặng ngoài expo baseline. |
+| **AC1: Tạo và quét mã QR phòng, deep link và web link theo allowlist an toàn** | **Pass (code & automated tests)** | `npm test -- tests/unit/joinLinks.test.ts tests/component/gm30FigmaParity.test.tsx tests/integration/joinEntryRoute.test.tsx` | 29 unit tests, 5 integration tests, component tests cho Figma `268:2019`, `275:2088`, `268:2081`, `368:12182`. Allowlist scheme `gi-cung-duoc:`, `exp:`, `https:`, domain `gicungduoc.vn`. Chặn tuyệt đối token/credential độc hại, không prefill hay preview khi URL bị từ chối; QR matrix và nút sao chép phát deep link hoạt động được, web redirect routes chuyển tiếp an toàn sang `/room/join`. | Tuân thủ tuyệt đối quy định không thêm native module nặng ngoài expo baseline. |
 | **AC2: Camera denied hiển thị thông báo rõ ràng, nút Mở Cài đặt và chuyển về nhập tay** | **Pass (code & automated tests) / Pass (Chặng 3A AVD Pixel 8)** | `JoinRoomEntryScreen.tsx`, `useJoinRoomEntry.ts` | Component test SCR-QR-02: Camera bị từ chối hiển thị biểu tượng, mô tả chi tiết, gọi `Linking.openSettings()` và nút "Nhập mã bằng tay" chuyển về form nhập mã 6 ký tự ngay lập tức. | Chặng 3A AVD kiểm thử qua `NativeQrScannerAdapter` (mặc định) và `SimulatedQrScannerAdapter` khi có cờ mô phỏng. |
 | **AC3: Quét QR thành công chuyển thẳng sang màn hình xác nhận phòng** | **Pass (code & automated tests)** | `JoinRoomEntryScreen.tsx`, component test SCR-QR-03 | Quét QR hoặc nhận deep link hợp lệ tự động đọc thông tin preview công khai và hiển thị màn hình xác nhận phòng (Figma `268:2081`) kèm số lượng thành viên và nút "Xác nhận vào phòng". | Idempotent token bảo vệ chống gửi đúp. Không tự động điền mã giả khi chưa quét. |
 | **AC4: Modal mã QR phòng trong Lobby hiển thị sắc nét, nút sao chép liên kết hoạt động** | **Pass (code & automated tests)** | `RoomQrModal.tsx`, `LiveLobbyScreen.tsx`, component test MODAL-01 | Modal hiển thị SVG QR matrix chuẩn xác, huy hiệu mã phòng, nút sao chép liên kết `https://gicungduoc.vn/join/XXXXXX` vào clipboard có thông báo phản hồi và timer cleanup. | Figma Node `368:12182`. |

@@ -464,5 +464,24 @@ describe('GM-30 placesRepository — Places Client Integration & Winner Isolatio
         expect(resReal.data.places).toEqual([]);
       }
     });
+
+    test('default createPlacesRepository with no key and env simulation OFF returns unsupported, NOT simulated places', async () => {
+      delete process.env.EXPO_PUBLIC_PLACES_SIMULATED;
+      delete process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY;
+      delete process.env.EXPO_PUBLIC_PLACES_API_KEY;
+
+      const repo = createPlacesRepository();
+      const res = await repo.fetchNearbyPlaces({
+        resultId: 'res_default',
+        winnerDishId: 'dish_default',
+        dishName: 'Phở Bò',
+      });
+
+      expect(res.ok).toBe(true);
+      if (res.ok) {
+        expect(res.data.status).toBe('unsupported');
+        expect(res.data.places).toEqual([]);
+      }
+    });
   });
 });

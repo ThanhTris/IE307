@@ -46,8 +46,8 @@ export function isSuspiciousSearchParams(params: Record<string, unknown>): boole
       if (isSuspiciousWord(strVal)) return true;
       continue;
     }
-    // Allowed dev/test query parameters for AVD simulation
-    if (key === 'simulatedScanner' || key === 'simulatedPlaces') {
+    // Allowed dev/test query parameters for AVD simulation: ONLY in dev/QA mode!
+    if (Boolean(__DEV__) && (key === 'simulatedScanner' || key === 'simulatedPlaces')) {
       continue;
     }
     if (isSuspiciousWord(key)) return true;
@@ -111,13 +111,27 @@ export function parseJoinRoomUrl(rawUrl: string): ParseJoinUrlResult {
     if (trimmed.startsWith('gi-cung-duoc://')) {
       protocol = 'gi-cung-duoc:';
       const remainder = trimmed.slice('gi-cung-duoc://'.length);
-      const questionIndex = remainder.indexOf('?');
-      if (questionIndex >= 0) {
-        pathname = remainder.slice(0, questionIndex);
-        search = remainder.slice(questionIndex);
-      } else {
-        pathname = remainder;
+      // Strictly reject any userinfo credentials (e.g. qa-user:qa-value@room/join)
+      if (remainder.includes('@')) {
+        return { ok: false, error: 'SUSPICIOUS_PAYLOAD', rawUrl };
       }
+
+      const questionIndex = remainder.indexOf('?');
+      let pathAndAuthority = remainder;
+      if (questionIndex >= 0) {
+        pathAndAuthority = remainder.slice(0, questionIndex);
+        search = remainder.slice(questionIndex);
+      }
+
+      // Validate authority of custom scheme before path
+      const slashIndex = pathAndAuthority.indexOf('/');
+      const authority = (slashIndex >= 0 ? pathAndAuthority.slice(0, slashIndex) : pathAndAuthority).toLowerCase().trim();
+      // Valid authorities for gi-cung-duoc:// are 'room', 'join', 'r', or empty
+      if (authority && !['room', 'join', 'r'].includes(authority)) {
+        return { ok: false, error: 'DISALLOWED_HOST', rawUrl };
+      }
+
+      pathname = slashIndex >= 0 ? pathAndAuthority.slice(slashIndex) : (authority ? `/${authority}` : '/');
     } else {
       const parsed = new URL(trimmed);
       protocol = parsed.protocol.toLowerCase();
@@ -295,9 +309,16 @@ export class NativeQrScannerAdapter implements QrScannerAdapter {
   }
 }
 
+let hasConsumedInitialUrl = false;
+
+export function resetConsumedInitialUrlForTesting(): void {
+  hasConsumedInitialUrl = false;
+}
+
 export interface JoinLinkListenerOptions {
   onJoinCode: (code: string, rawUrl: string) => void;
   onError?: (error: string, rawUrl: string) => void;
+  skipInitialUrl?: boolean;
 }
 
 export function subscribeToJoinLinks(options: JoinLinkListenerOptions): () => void {
@@ -325,19 +346,24 @@ export function subscribeToJoinLinks(options: JoinLinkListenerOptions): () => vo
   });
 
   // Cold start deep link: sequence 0
-  const coldSeq = 0;
-  void Linking.getInitialURL()
-    .then(initialUrl => {
-      if (!active || !initialUrl) return;
-      // If a newer warm event already arrived, drop the stale cold link!
-      if (latestSeq > coldSeq) {
-        return;
-      }
-      emit(coldSeq, initialUrl);
-    })
-    .catch(() => {
-      // Ignore cold start read failure
-    });
+  // Once the app has consumed the cold launch URL (or caller explicitly skips it),
+  // do NOT re-fetch or re-emit the initial URL!
+  if (!options.skipInitialUrl && !hasConsumedInitialUrl) {
+    const coldSeq = 0;
+    void Linking.getInitialURL()
+      .then(initialUrl => {
+        if (!active || !initialUrl) return;
+        hasConsumedInitialUrl = true;
+        // If a newer warm event already arrived, drop the stale cold link!
+        if (latestSeq > coldSeq) {
+          return;
+        }
+        emit(coldSeq, initialUrl);
+      })
+      .catch(() => {
+        // Ignore cold start read failure
+      });
+  }
 
   return () => {
     active = false;

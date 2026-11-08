@@ -23,35 +23,44 @@ export default function JoinRoomRoute() {
   const repository = isReal ? live.repository : preview.client;
 
   // Validate incoming search params from Expo router: if suspicious payload is detected, reject and block
-  const isSuspicious = isSuspiciousSearchParams(rawParams as Record<string, unknown>);
+  const isSuspicious = isSuspiciousSearchParams(rawParams as Record<string, unknown>) || rawParams.error === 'SUSPICIOUS_PAYLOAD';
   const initialParamCode = !isSuspicious
     ? (typeof rawParams.code === 'string' ? rawParams.code : Array.isArray(rawParams.code) ? rawParams.code[0] ?? '' : '')
     : '';
 
-  const [incomingCode, setIncomingCode] = useState('');
-  const [linkError, setLinkError] = useState<string | null>(isSuspicious ? 'SUSPICIOUS_PAYLOAD' : null);
+  const [prevParamCode, setPrevParamCode] = useState(initialParamCode);
+  const [linkCode, setLinkCode] = useState('');
+  const [linkError, setLinkError] = useState<string | null>(null);
+
+  if (prevParamCode !== initialParamCode) {
+    setPrevParamCode(initialParamCode);
+    setLinkCode('');
+    setLinkError(null);
+  }
 
   useEffect(() => {
     const unsubscribe = subscribeToJoinLinks({
+      skipInitialUrl: Boolean(initialParamCode),
       onJoinCode: (codeFromLink) => {
-        setIncomingCode(codeFromLink);
+        setLinkCode(codeFromLink);
         setLinkError(null);
       },
       onError: (err) => {
-        setIncomingCode('');
+        setLinkCode('');
         setLinkError(err);
       },
     });
     return unsubscribe;
-  }, []);
+  }, [initialParamCode]);
 
   // When link is blocked or has error, activeCode MUST be empty string so code is not prefilled and previewJoin is never executed automatically
-  const activeCode = linkError ? '' : (incomingCode || initialParamCode);
+  const effectiveError = isSuspicious ? 'SUSPICIOUS_PAYLOAD' : linkError;
+  const activeCode = effectiveError ? '' : (linkCode || initialParamCode);
 
   // Scanner configuration:
-  // In real QA backend on AVD (Chặng 3A), simulation must be explicitly requested via simulatedScanner=1 or simulated=1.
+  // In real QA backend on AVD (Chặng 3A), simulation must be explicitly requested via simulatedScanner=1 or simulated=1 AND ONLY in dev/QA (__DEV__).
   // Otherwise, default to NativeQrScannerAdapter (which directs to manual code entry on camera denial/unavailability).
-  const isSimulatedScanner = rawParams.simulatedScanner === '1' || rawParams.simulated === '1';
+  const isSimulatedScanner = Boolean(__DEV__) && (rawParams.simulatedScanner === '1' || rawParams.simulated === '1');
   const qrAdapter = useMemo(() => {
     if (isSimulatedScanner) {
       return new SimulatedQrScannerAdapter('granted');
@@ -67,7 +76,7 @@ export default function JoinRoomRoute() {
         qrScannerAdapter={qrAdapter}
         initialDisplayName={live.user?.displayName}
         initialCode={activeCode}
-        linkError={linkError ?? undefined}
+        linkError={effectiveError ?? undefined}
         isMock={false}
         onBack={() => (router.canGoBack() ? router.back() : router.replace('/'))}
         onEntered={room => {

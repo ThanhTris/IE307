@@ -26,6 +26,7 @@ import {
   type PlacesRepository,
 } from '../services/placesRepository';
 import { openExternalAction } from '../services/externalLinks';
+import { defaultResultMapRenderer } from '../components/DefaultResultMapView';
 
 export interface LiveDishResultScreenProps {
   roomId: string;
@@ -52,27 +53,29 @@ export function LiveDishResultScreen({
   onNewSession,
   onOtherScreen,
   artworkSources,
-  renderMap,
+  renderMap: renderMapProp,
   pollIntervalMs,
   isReal: isRealProp,
 }: LiveDishResultScreenProps) {
   const live = useRoomRepository();
   const isReal = isRealProp ?? (live ? live.mode === 'real' : false);
+  const renderMap = renderMapProp ?? defaultResultMapRenderer;
 
   const placesRepository = useMemo<PlacesRepository>(() => {
     if (customPlacesRepository) return customPlacesRepository;
     const envApiKey = getPlacesApiKeyFromEnv();
     const envSimulated = isPlacesSimulatedFromEnv();
     const effectiveApiKey = placesConfig?.apiKey ?? envApiKey;
+    const isDev = typeof __DEV__ !== 'undefined' ? Boolean(__DEV__) : process.env.NODE_ENV !== 'production';
     const effectiveSimulated = placesConfig?.isDevSimulated !== undefined
-      ? placesConfig.isDevSimulated
-      : (envSimulated || !isReal || !effectiveApiKey);
+      ? (isDev ? placesConfig.isDevSimulated : false)
+      : (isDev && envSimulated);
 
     return createPlacesRepository({
       apiKey: effectiveApiKey,
       isDevSimulated: effectiveSimulated,
     });
-  }, [customPlacesRepository, placesConfig, isReal]);
+  }, [customPlacesRepository, placesConfig]);
 
   const placesFetcher = useMemo(() => {
     if (customPlacesRepository?.fetchNearbyPlaces) {

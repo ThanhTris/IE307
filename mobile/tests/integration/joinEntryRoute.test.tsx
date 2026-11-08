@@ -1,9 +1,12 @@
 import { fireEvent, renderHook, screen, waitFor } from '@testing-library/react-native';
 import { renderRouter } from 'expo-router/testing-library';
+import { Linking } from 'react-native';
 import Layout from '../../src/app/_layout';
 import RoomLayout from '../../src/app/room/_layout';
 import JoinEntry from '../../src/app/room/join-entry';
 import JoinRoute from '../../src/app/room/join';
+import JoinCodeRoute from '../../src/app/join/[code]';
+import JoinIndexRoute from '../../src/app/join/index';
 import Receipt from '../../src/app/room/preview';
 import { rememberPreviewGuest, setPreviewScenario, useRoomPreview } from '../../src/bootstrap/roomPreview';
 
@@ -63,4 +66,80 @@ test('/room/join blocks URL with suspicious tokens, prevents code prefill and pr
   } finally {
     join.mockRestore();
   }
+});
+
+test('/room/join mounted from route param MNP567 does not get overwritten by late getInitialURL resolving GCD234', async () => {
+  setPreviewScenario('default');
+  let resolveCold: ((url: string) => void) | null = null;
+  const coldPromise = new Promise<string>(resolve => {
+    resolveCold = resolve;
+  });
+  const getInitialSpy = jest.spyOn(Linking, 'getInitialURL').mockReturnValue(coldPromise as any);
+
+  try {
+    await renderRouter(
+      {
+        _layout: Layout,
+        'room/_layout': RoomLayout,
+        'room/join': JoinRoute,
+        'room/preview': Receipt,
+      },
+      {
+        initialUrl: '/room/join?code=MNP567',
+      }
+    );
+
+    // Initial param code MNP567 should be filled
+    const codeInput = screen.getByLabelText('Mã phòng (6 ký tự)');
+    expect(codeInput).toHaveDisplayValue('MNP567');
+
+    // Late cold URL resolves with GCD234
+    resolveCold!('gi-cung-duoc://room/join?code=GCD234');
+    await waitFor(() => {
+      // Must still be MNP567, NOT overwritten by GCD234!
+      expect(codeInput).toHaveDisplayValue('MNP567');
+    });
+  } finally {
+    getInitialSpy.mockRestore();
+  }
+});
+
+test('Expo router redirects /join/[code] to /room/join with prefilled code', async () => {
+  setPreviewScenario('default');
+  await renderRouter(
+    {
+      _layout: Layout,
+      'join/[code]': JoinCodeRoute,
+      'room/_layout': RoomLayout,
+      'room/join': JoinRoute,
+      'room/preview': Receipt,
+    },
+    {
+      initialUrl: '/join/GCD234',
+    }
+  );
+
+  await waitFor(() => expect(screen).toHavePathname('/room/join'));
+  const codeInput = screen.getByLabelText('Mã phòng (6 ký tự)');
+  expect(codeInput).toHaveDisplayValue('GCD234');
+});
+
+test('Expo router redirects /join with query code to /room/join', async () => {
+  setPreviewScenario('default');
+  await renderRouter(
+    {
+      _layout: Layout,
+      'join/index': JoinIndexRoute,
+      'room/_layout': RoomLayout,
+      'room/join': JoinRoute,
+      'room/preview': Receipt,
+    },
+    {
+      initialUrl: '/join?code=XYZ789',
+    }
+  );
+
+  await waitFor(() => expect(screen).toHavePathname('/room/join'));
+  const codeInput = screen.getByLabelText('Mã phòng (6 ký tự)');
+  expect(codeInput).toHaveDisplayValue('XYZ789');
 });

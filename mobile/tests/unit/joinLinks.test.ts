@@ -8,6 +8,7 @@ import {
   isSuspiciousWord,
   NativeQrScannerAdapter,
   parseJoinRoomUrl,
+  resetConsumedInitialUrlForTesting,
   SimulatedQrScannerAdapter,
   subscribeToJoinLinks,
 } from '../../src/features/rooms/services/joinLinks';
@@ -74,6 +75,24 @@ describe('GM-30 joinLinks — Native QR, Links, Allowlist & Resolvers', () => {
         ok: false,
         error: 'DISALLOWED_HOST',
         rawUrl: 'https://evil-phishing.com/join/ABC234',
+      });
+    });
+
+    test('rejects custom scheme URLs with userinfo credentials (e.g. qa-user:qa-value@room/join)', () => {
+      const result = parseJoinRoomUrl('gi-cung-duoc://qa-user:qa-value@room/join?code=GCD234');
+      expect(result).toEqual({
+        ok: false,
+        error: 'SUSPICIOUS_PAYLOAD',
+        rawUrl: 'gi-cung-duoc://qa-user:qa-value@room/join?code=GCD234',
+      });
+    });
+
+    test('rejects custom scheme URLs with disallowed authority (e.g. gi-cung-duoc://evil.com/join)', () => {
+      const result = parseJoinRoomUrl('gi-cung-duoc://evil.com/join?code=GCD234');
+      expect(result).toEqual({
+        ok: false,
+        error: 'DISALLOWED_HOST',
+        rawUrl: 'gi-cung-duoc://evil.com/join?code=GCD234',
       });
     });
 
@@ -499,6 +518,52 @@ describe('GM-30 joinLinks — Native QR, Links, Allowlist & Resolvers', () => {
 
       getInitialSpy.mockRestore();
       addEventSpy.mockRestore();
+    });
+
+    test('skipInitialUrl skips calling getInitialURL', async () => {
+      const getInitialSpy = jest.spyOn(Linking, 'getInitialURL').mockResolvedValue('gi-cung-duoc://room/join?code=GCD234');
+      const addEventSpy = jest.spyOn(Linking, 'addEventListener').mockReturnValue({ remove: jest.fn() } as any);
+
+      const onJoinCode = jest.fn();
+      const unsubscribe = subscribeToJoinLinks({
+        onJoinCode,
+        skipInitialUrl: true,
+      });
+
+      await new Promise<void>(resolve => { setImmediate(() => resolve()); });
+
+      expect(getInitialSpy).not.toHaveBeenCalled();
+      expect(onJoinCode).not.toHaveBeenCalled();
+
+      unsubscribe();
+      getInitialSpy.mockRestore();
+      addEventSpy.mockRestore();
+    });
+
+    test('hasConsumedInitialUrl ensures cold URL is only consumed once across sessions', async () => {
+      resetConsumedInitialUrlForTesting();
+      const getInitialSpy = jest.spyOn(Linking, 'getInitialURL').mockResolvedValue('gi-cung-duoc://room/join?code=GCD234');
+      const addEventSpy = jest.spyOn(Linking, 'addEventListener').mockReturnValue({ remove: jest.fn() } as any);
+
+      const onJoinCode1 = jest.fn();
+      const unsub1 = subscribeToJoinLinks({ onJoinCode: onJoinCode1 });
+      await new Promise<void>(resolve => { setImmediate(() => resolve()); });
+      expect(getInitialSpy).toHaveBeenCalledTimes(1);
+      expect(onJoinCode1).toHaveBeenCalledWith('GCD234', 'gi-cung-duoc://room/join?code=GCD234');
+      unsub1();
+
+      // Second subscription: initial URL has already been consumed!
+      const onJoinCode2 = jest.fn();
+      const unsub2 = subscribeToJoinLinks({ onJoinCode: onJoinCode2 });
+      await new Promise<void>(resolve => { setImmediate(() => resolve()); });
+      // getInitialURL must NOT have been called again
+      expect(getInitialSpy).toHaveBeenCalledTimes(1);
+      expect(onJoinCode2).not.toHaveBeenCalled();
+      unsub2();
+
+      getInitialSpy.mockRestore();
+      addEventSpy.mockRestore();
+      resetConsumedInitialUrlForTesting();
     });
   });
 });

@@ -436,9 +436,10 @@ export function createPlacesRepository(options: {
   const envKey = getPlacesApiKeyFromEnv();
   const effectiveKey = options.apiKey ?? envKey;
   const envSimulated = isPlacesSimulatedFromEnv();
+  const isDev = typeof __DEV__ !== 'undefined' ? Boolean(__DEV__) : process.env.NODE_ENV !== 'production';
   const effectiveSimulated = options.isDevSimulated !== undefined
-    ? options.isDevSimulated
-    : (envSimulated || !effectiveKey);
+    ? (isDev ? options.isDevSimulated : false)
+    : (isDev && envSimulated);
 
   return new LivePlacesRepository({
     locationAdapter: options.locationAdapter,

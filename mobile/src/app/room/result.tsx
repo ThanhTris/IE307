@@ -16,7 +16,7 @@ export default function ResultRoute() {
   const resultId = typeof params.resultId === 'string' && params.resultId.trim() ? params.resultId.trim() : undefined;
 
   const placesConfig = useMemo<PlacesConfig | undefined>(() => {
-    if (params.simulatedPlaces === '1') {
+    if (Boolean(__DEV__) && params.simulatedPlaces === '1') {
       return { isDevSimulated: true };
     }
     if (params.simulatedPlaces === '0') {

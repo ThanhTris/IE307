@@ -10,3 +10,4 @@ export * from './screens/DishResultFlow';
 export * from './screens/DishResultScreen';
 export * from './screens/DishNoConsensusScreen';
 export * from './screens/LiveDishResultScreen';
+export * from './components/DefaultResultMapView';
