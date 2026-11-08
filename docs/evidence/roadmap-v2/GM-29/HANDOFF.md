@@ -8,7 +8,7 @@ Task: GM-29 — Android notification permission and push lifecycle. Owner: Trung
 - `mobile/src/features/inbox/services/nativePush.ts` — authenticated register/unregister, current-OS-permission checks, identity/generation guards, serialized device operations.
 - `mobile/src/features/inbox/screens/PushSettingsScreen.tsx`, `mobile/src/app/push-settings.tsx` — settings route, deny/settings states and development-only simulated tap.
 - `mobile/src/features/inbox/components/PushLifecycle.tsx` — refetches canonical Inbox data before routing.
-- `mobile/src/bootstrap/RoomRepositoryProvider.tsx` — best-effort server unregister before local logout; network failure does not block local logout.
+- `mobile/src/bootstrap/RoomRepositoryProvider.tsx` — best-effort server unregister before local logout; failed unregister preserves the device handle/token for a later cleanup retry.
 - `mobile/tests/unit/nativePush.test.ts`, `mobile/tests/unit/expoPushDriver.test.ts` — callback/permission and driver regression coverage.
 
 ## Configuration and run
