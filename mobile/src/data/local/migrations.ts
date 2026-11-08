@@ -1,7 +1,7 @@
 import type { SQLiteDatabase } from 'expo-sqlite';
 
 export const PRIVATE_DATABASE_NAME = 'gcd-private-v1.db';
-export const PRIVATE_DATABASE_SCHEMA_VERSION = 2;
+export const PRIVATE_DATABASE_SCHEMA_VERSION = 3;
 
 export async function migratePrivateDatabase(database: SQLiteDatabase): Promise<void> {
   const current = await database.getFirstAsync<{ user_version: number }>('PRAGMA user_version');
@@ -23,8 +23,8 @@ export async function migratePrivateDatabase(database: SQLiteDatabase): Promise<
       );
       CREATE INDEX IF NOT EXISTS gm31_private_entries_ttl
         ON gm31_private_entries (expires_at);
-      CREATE TABLE IF NOT EXISTS gm31_pending_identity_cleanup (
-        identity_id TEXT PRIMARY KEY NOT NULL,
+      CREATE TABLE IF NOT EXISTS gm31_pending_private_deletion (
+        record_id TEXT PRIMARY KEY NOT NULL,
         created_at INTEGER NOT NULL
       );
       PRAGMA user_version = ${PRIVATE_DATABASE_SCHEMA_VERSION};
@@ -33,11 +33,12 @@ export async function migratePrivateDatabase(database: SQLiteDatabase): Promise<
     return;
   }
 
-  // Version 1 already has the entries table; add durable logout cleanup marks.
+  // Versions 1 and 2 already have the entries table. Version 2 briefly used
+  // identity-bearing cleanup markers; the new table stores only opaque IDs.
   await database.execAsync(`
     BEGIN IMMEDIATE;
-    CREATE TABLE IF NOT EXISTS gm31_pending_identity_cleanup (
-      identity_id TEXT PRIMARY KEY NOT NULL,
+    CREATE TABLE IF NOT EXISTS gm31_pending_private_deletion (
+      record_id TEXT PRIMARY KEY NOT NULL,
       created_at INTEGER NOT NULL
     );
     PRAGMA user_version = ${PRIVATE_DATABASE_SCHEMA_VERSION};

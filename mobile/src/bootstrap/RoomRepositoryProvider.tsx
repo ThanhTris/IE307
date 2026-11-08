@@ -117,7 +117,7 @@ export function RoomRepositoryProvider({
   useEffect(() => {
     let mounted = true;
     if (!isReal) return;
-    void getDurableOutbox().retryPendingIdentityCleanups().catch(() => undefined);
+    void getDurableOutbox().retryPendingPrivateDeletions().catch(() => undefined);
     void repository.restoreSession().catch(() => undefined).finally(() => {
       if (mounted) setRestoredRepository(repository);
     });

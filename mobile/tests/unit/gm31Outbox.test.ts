@@ -33,14 +33,15 @@ class MemoryDatabase implements SqlitePrivateDatabase {
       const changed = this.rows.delete(recordId);
       return { changes: Number(changed) };
     }
-    if (sql.startsWith('INSERT OR IGNORE INTO gm31_pending_identity_cleanup')) {
+    if (sql.startsWith('INSERT OR IGNORE INTO gm31_pending_private_deletion')) {
       this.pendingCleanup.add(params[0] as string);
       return { changes: 1 };
     }
-    if (sql.startsWith('DELETE FROM gm31_pending_identity_cleanup')) {
+    if (sql.startsWith('DELETE FROM gm31_pending_private_deletion')) {
       const changed = this.pendingCleanup.delete(params[0] as string);
       return { changes: Number(changed) };
     }
+    if (sql.startsWith('DELETE FROM gm31_pending_identity_cleanup')) return { changes: 0 };
     throw new Error(`Unexpected SQL: ${sql}`);
   }
   async getFirstAsync<T>(sql: string): Promise<T | null> {
@@ -48,9 +49,10 @@ class MemoryDatabase implements SqlitePrivateDatabase {
     return null;
   }
   async getAllAsync<T>(sql: string, ...params: (string | number | null)[]): Promise<T[]> {
-    if (sql.startsWith('SELECT identity_id FROM gm31_pending_identity_cleanup')) {
-      return [...this.pendingCleanup].map(identity_id => ({ identity_id })) as T[];
+    if (sql.startsWith('SELECT record_id FROM gm31_pending_private_deletion')) {
+      return [...this.pendingCleanup].map(record_id => ({ record_id })) as T[];
     }
+    if (sql.startsWith('SELECT identity_id FROM gm31_pending_identity_cleanup')) return [];
     const kind = sql.includes('WHERE kind = ?') ? params[0] : undefined;
     return [...this.rows.values()].filter(row => !kind || row.kind === kind) as T[];
   }
