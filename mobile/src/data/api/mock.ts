@@ -88,6 +88,7 @@ import {
   mockAcceptRoomInvite,
   mockRejectRoomInvite,
   mockListPartnerInbox,
+  mockMarkAllPartnerInboxRead,
   mockRegisterPushDevice,
   mockUnregisterPushDevice,
   mockGetHistory,
@@ -453,6 +454,10 @@ export class MockApiClient implements ApiClient {
 
   listPartnerInbox(cursor?: string): Promise<ReadResult<InboxItem[]>> {
     return mockListPartnerInbox(this.ctx, cursor);
+  }
+
+  markAllPartnerInboxRead(customRequestId?: string): Promise<WriteResult<void>> {
+    return mockMarkAllPartnerInboxRead(this.ctx, customRequestId);
   }
 
   registerPushDevice(req: RegisterPushDeviceRequest): Promise<WriteResult<void>> {

@@ -59,7 +59,7 @@ export function AppBottomNavigation({
               resizeMode="contain"
               style={[styles.bottomNavIcon, { tintColor: colors?.text }]}
             />
-            <Text numberOfLines={allowLabelWrap ? undefined : 1} style={[styles.bottomNavLabel, { color: colors?.text }, labelTextStyle]}>
+            <Text numberOfLines={allowLabelWrap ? undefined : 1} style={[styles.bottomNavLabel, allowLabelWrap && styles.bottomNavLabelWrapped, { color: colors?.text }, labelTextStyle]}>
               {item.label}
             </Text>
           </Pressable>
@@ -80,5 +80,6 @@ const styles = StyleSheet.create({
   },
   bottomNavItem: { flex: 1, minWidth: 0, minHeight: 64, alignItems: 'center', justifyContent: 'center', gap: spacing.xs },
   bottomNavIcon: { width: 24, height: 24 },
-  bottomNavLabel: { ...typography.caption, fontSize: 12, lineHeight: 18, fontWeight: '500' },
+  bottomNavLabel: { ...typography.caption, fontSize: 12, lineHeight: 18, fontWeight: '500', textAlign: 'center' },
+  bottomNavLabelWrapped: { flexShrink: 1, flexWrap: 'wrap' },
 });

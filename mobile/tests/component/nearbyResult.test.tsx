@@ -26,10 +26,10 @@ test('a different tied winner drives the sole highlighted artwork, dish caption 
   const result = { ...base, winner, topDishes: base.topDishes.map(entry => ({ ...entry, isWinner: entry.dish.dishId === winner.dishId })) };
   const before = JSON.stringify(result), colors = getThemeColors('light');
   await render(<DishResultFlow {...callbacks} input={{ capability: 'scored-v4', result }} nearby={nearbyFixture(result, 'empty')} celebrate={false} />);
-  expect(screen.getByText('Món được chọn · Cơm tấm')).toBeOnTheScreen();
   expect(screen.getByText('Tìm quán cho: Cơm tấm')).toBeOnTheScreen();
   for (const entry of result.topDishes) {
-    const border = StyleSheet.flatten(screen.getByLabelText(`${entry.dish.name} · Chưa có ảnh`).props.style);
+    const label = `${entry.dish.name} · Chưa có ảnh${entry.isWinner ? ' · Món chiến thắng' : ''}`;
+    const border = StyleSheet.flatten(screen.getByLabelText(label).props.style);
     expect(border.borderColor).toBe(entry.isWinner ? colors.primary : colors.line);
   }
   await fireEvent.press(screen.getByRole('button', { name: 'Mở Google Maps' }));

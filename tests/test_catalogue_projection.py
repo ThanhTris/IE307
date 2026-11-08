@@ -36,12 +36,18 @@ class ProjectionAdoptionTests(unittest.TestCase):
             result=p.stage(ROOT/p.contract.BUNDLE_PATH,d,ROOT/p.contract.MANIFEST_PATH)
             self.assertEqual(result,self.projection)
             self.assertEqual((d/'bundle.json').read_bytes(),(ROOT/p.contract.BUNDLE_PATH).read_bytes())
-            self.assertEqual(json.loads((d/'stage.json').read_text()),self.projection)
+            self.assertEqual(json.loads((d/'stage.json').read_text(encoding='utf-8')),self.projection)
         with self.assertRaises(ValueError):p.stage(ROOT/p.contract.BUNDLE_PATH,ROOT/'supabase/seed/catalogue')
 
     def test_stage_refuses_symlink_output(self):
         with tempfile.TemporaryDirectory() as directory:
-            d=Path(directory);(d/'stage.json').symlink_to(ROOT/p.contract.BUNDLE_PATH)
+            d=Path(directory)
+            try:
+                (d/'stage.json').symlink_to(ROOT/p.contract.BUNDLE_PATH)
+            except OSError as exc:
+                if getattr(exc,'winerror',None)==1314:
+                    self.skipTest('Windows symlink privilege (WinError 1314) not enabled')
+                raise
             with self.assertRaisesRegex(ValueError,'symlink'):p.stage(ROOT/p.contract.BUNDLE_PATH,d)
 
     def test_schema_preserves_received_nullable_metadata_and_rejects_extra_fields(self):

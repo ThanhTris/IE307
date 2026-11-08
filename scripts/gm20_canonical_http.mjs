@@ -35,6 +35,7 @@ const apiPort=qaMode==='gm03'?manifest.endpoint.apiPort:54361;
 assert.equal(new URL(base).port,String(apiPort),'QA API must use its explicitly owned port');
 if(qaMode==='gm03')assert.equal(base,manifest.endpoint.baseUrl,'QA API origin must match the sealed manifest');
 const policyVersion='dish-decision-v4/ADR-019-30PCT-MIN1', pref={cuisineIds:[],categoryIds:[],temperature:null,flavor:null,budget:null,avoidRecent:false};
+const spicyPref={...pref,flavor:{spicy:{present:true,intensity:'high'},salty:{present:null,intensity:'unknown'},sweet:{present:false,intensity:'none'},sour:{present:false,intensity:'none'}}};
 const results=[];const users=[];const contractSamples=[];
 function sqlRaw(q){return execFileSync('docker',['exec','-i',container,'psql','-X','-q','-U','postgres','-d','postgres','-v','ON_ERROR_STOP=1','-At','-c',q],{encoding:'utf8'}).trim();}
 function sql(q){const inspected=JSON.parse(execFileSync('docker',['inspect',container],{encoding:'utf8'}))[0];const labels=inspected.Config.Labels||{};assert.equal(inspected.Name,'/'+container);assert.equal(labels['com.supabase.cli.project'],project);assert.equal(String(labels['com.supabase.cli.workdir']||'').replaceAll('\\','/').toLowerCase(),String(expectedWorkdir).replaceAll('\\','/').toLowerCase());assert.equal(inspected.State.Running,true);const owner=qaMode==='gm03'?sqlRaw("select owner_uuid::text from gm03_qa_private.owner_manifest where run_id='"+manifest.runId.replaceAll("'","''")+"';"):sqlRaw('select namespace::text from public.gm40_qa_owner');assert.equal(owner,qaMode==='gm03'?manifest.ownerUuid:process.env.GM_V4_OWNER_NAMESPACE,'QA owner marker must match this run');return sqlRaw(q);}
@@ -60,7 +61,25 @@ const setEnabled=value=>sql('update gm20_canonical_private.configuration set all
 setEnabled(false);
 expectFail(await api(h,'create',{requestId:requestId('disabled'),displayName:'QA',settings:{dishCount:10,mealSlot:'lunch',desiredAt:null},preferences:pref}),'UNSUPPORTED_CONTRACT_VERSION',400,'server flag blocks new supplement creation');
 setEnabled(true);
-const real=process.env.GM_V4_REAL_RELEASE_ID,synthetic=process.env.GM_V4_SYNTHETIC_RELEASE_ID;
+const preferenceBefore=expectOk(await api(h,'getDefaultPreferences'),'supplement preference initial read');
+const supplementPreferenceRequest={requestId:requestId('supplement-default-spicy'),expectedRevision:preferenceBefore.revision,preferences:spicyPref};
+const supplementPreferenceAck=expectOk(await api(h,'updateDefaultPreferences',supplementPreferenceRequest),'supplement account preference spicy update');
+pass('B-supplement saves explicit spicy account preference',spicyPref.flavor,expectOk(await api(h,'getDefaultPreferences'),'supplement account preference readback').preferences.flavor);
+pass('B-supplement account preference retry preserves exact ACK',supplementPreferenceAck,expectOk(await api(h,'updateDefaultPreferences',supplementPreferenceRequest),'supplement account preference replay'));
+const malformedSupplementPreference={...spicyPref,flavor:{spicy:spicyPref.flavor.spicy,salty:spicyPref.flavor.salty,sweet:spicyPref.flavor.sweet}};
+expectFail(await api(h,'updateDefaultPreferences',{requestId:requestId('supplement-default-invalid'),expectedRevision:supplementPreferenceAck.revision,preferences:malformedSupplementPreference},{requestValid:false}),'INVALID_INPUT',400,'B-supplement rejects missing flavor axis');
+pass('B-supplement invalid preference preserves revision',supplementPreferenceAck.revision,expectOk(await api(h,'getDefaultPreferences'),'supplement account preference after invalid payload').revision);
+const spicySupplementRoom=expectOk(await api(h,'create',{requestId:requestId('supplement-room-spicy'),displayName:'Preference host',settings:{dishCount:10,mealSlot:'lunch',desiredAt:null},preferences:spicyPref}),'B-supplement creates room with spicy preference');
+const spicySupplementSnapshot=await snapshot(h,spicySupplementRoom.roomId);
+pass('B-supplement create stores explicit spicy room preference',spicyPref.flavor,spicySupplementSnapshot.ownPreferences.flavor);
+const spicySupplementUpdate={requestId:requestId('supplement-room-update-spicy'),roomId:spicySupplementRoom.roomId,expectedVersion:spicySupplementSnapshot.version,preferences:spicyPref};
+const spicySupplementUpdateAck=expectOk(await api(h,'updatePreferences',spicySupplementUpdate),'B-supplement room preference spicy update');
+const spicySupplementAfterUpdate=await snapshot(h,spicySupplementRoom.roomId);
+pass('B-supplement room preference update persists spicy value',spicyPref.flavor,spicySupplementAfterUpdate.ownPreferences.flavor);
+pass('B-supplement room preference update replays ACK',spicySupplementUpdateAck,expectOk(await api(h,'updatePreferences',spicySupplementUpdate),'B-supplement room preference exact retry'));
+expectFail(await api(h,'updatePreferences',{requestId:requestId('supplement-room-invalid'),roomId:spicySupplementRoom.roomId,expectedVersion:spicySupplementAfterUpdate.version,preferences:malformedSupplementPreference},{requestValid:false}),'INVALID_INPUT',400,'B-supplement rejects malformed room preference');
+const real=qaMode==='gm03'?manifest.catalogues.real.releaseId:process.env.GM_V4_REAL_RELEASE_ID;
+const synthetic=qaMode==='gm03'?manifest.catalogues.synthetic.releaseId:process.env.GM_V4_SYNTHETIC_RELEASE_ID;
 await setActive(synthetic);
 // Preserve numeric lexemes on the HTTP wire and in Python JSON Schema input.
 // JS JSON.stringify({dishCount:10.0}) alone would send10 and miss the regression.
@@ -203,7 +222,9 @@ authority(first,terminal);
 expectFail(await api(h,'submit',{...accepted.request,votes:accepted.request.votes.map(v=>({...v,choice:'OK'}))}),'REQUEST_ID_REUSED',409,'same ID cannot change ballot payload');
 expectFail(await api(x,'result',{roomId:first.id}),'NOT_MEMBER',403,'outsider cannot read canonical result');
 expectFail(await legacyRpc(h,'dish_session',{command:'snapshot',payload:{contractVersion:'dish-session-v4/roadmap-v2/GM-07.B',roomId:first.id}}),'CONTRACT_MISMATCH',409,'B route cannot read supplement room');
-const legacyMade=expectOk(await legacyRpc(h,'dish_session',{command:'create',payload:{contractVersion:'dish-session-v4/roadmap-v2/GM-07.B',requestId:requestId('legacy'),displayName:'B host',settings:{dishCount:10,mealSlot:'lunch',desiredAt:null},preferences:pref}}),'existing B creation');
+const legacyMade=expectOk(await legacyRpc(h,'dish_session',{command:'create',payload:{contractVersion:'dish-session-v4/roadmap-v2/GM-07.B',requestId:requestId('legacy'),displayName:'B host',settings:{dishCount:10,mealSlot:'lunch',desiredAt:null},preferences:spicyPref}}),'existing B creation');
+const legacyBRoom=expectOk(await legacyRpc(h,'dish_session',{command:'snapshot',payload:{contractVersion:'dish-session-v4/roadmap-v2/GM-07.B',roomId:legacyMade.roomId}}),'existing B room snapshot');
+pass('GM-07.B create stores explicit spicy room preference',spicyPref.flavor,legacyBRoom.ownPreferences.flavor);
 expectFail(await api(h,'snapshot',{roomId:legacyMade.roomId}),'CONTRACT_MISMATCH',409,'supplement cannot reinterpret B room');
 setEnabled(false);pass('disable creation retains pinned reader',terminal,await result(h,first));setEnabled(true);
 await setActive(real);pass('catalogue switch cannot alter saved result',terminal,await result(m,first));await setActive(synthetic);
@@ -388,13 +409,15 @@ if(process.env.GM20_CANONICAL_BRUNO==='1'){
  await writeFile(path,'vars {\n'+Object.entries(env).map(([k,v])=>'  '+k+': '+v).join('\n')+'\n}\n',{mode:0o600});await chmod(path,0o600);
  console.log('BRUNO_READY: select ignored Local.runtime.private; credentials not printed');
 }
-const migrationPaths=readdirSync(resolve(root,'supabase/migrations')).filter(name=>/^003[5-9]_.*\.sql$/.test(name)).sort().map(name=>'supabase/migrations/'+name);
-assert.deepEqual(migrationPaths.map(path=>path.slice(path.lastIndexOf('/')+1)),['0035_gm20_canonical_writer.sql','0036_gm21_canonical_history.sql','0037_gm22_invitation_admission.sql','0038_gm23_canonical_notifications.sql','0039_history_consent_read.sql'],'full producer/consumer migration chain');
+const migrationPaths=readdirSync(resolve(root,'supabase/migrations')).filter(name=>/^(?:003[5-9]|0040)_.*\.sql$/.test(name)).sort().map(name=>'supabase/migrations/'+name);
+assert.deepEqual(migrationPaths.map(path=>path.slice(path.lastIndexOf('/')+1)),['0035_gm20_canonical_writer.sql','0036_gm21_canonical_history.sql','0037_gm22_invitation_admission.sql','0038_gm23_canonical_notifications.sql','0039_history_consent_read.sql','0040_v4_preference_validation.sql'],'full producer/consumer and preference hotfix migration chain');
 const paths=[...migrationPaths,'scripts/gm20_canonical_http.mjs','scripts/gm20_canonical_check.py','scripts/dish_policy_worker.py','tests/fixtures/decision-v4/cases.json'];
 const databaseSchemaVersion=sql("select schema_version from public.schema_versions where schema_version='0.16.0' and contract_id='food-v1/roadmap-v2/GM-21.4' and upstream_revision='GM21.4/0039_history_consent_read' order by installed_at desc limit 1");
 pass('caller-consent read migration record is installed','0.16.0',databaseSchemaVersion);
+const latestDatabaseSchemaVersion=sql("select schema_version from public.schema_versions where schema_version='0.16.1' and contract_id='dish-session-v4/roadmap-v2/GM-07.B' and upstream_revision='GM07.B/0040_v4_preference_validation'");
+pass('GM-07.B preference validation hotfix migration is installed','0.16.1',latestDatabaseSchemaVersion);
 const report={fixtureOnly:true,result:'Pass',scope:'owned synthetic Auth/REST QA; no real votes or production',caseCount:results.length,cases:results,schema:validated,
- contractVersion,policyVersion,producer:{task:'GM-20',version:'GM-20.4',migration:'0035_gm20_canonical_writer.sql',schemaVersion:'0.12.0'},schemaVersion:databaseSchemaVersion,databaseSchemaVersion,
+ contractVersion,policyVersion,producer:{task:'GM-20',version:'GM-20.4',migration:'0035_gm20_canonical_writer.sql',schemaVersion:'0.12.0'},schemaVersion:databaseSchemaVersion,databaseSchemaVersion,latestDatabaseSchemaVersion,
  applicationDatabaseChanged:false,privateBrunoEnvironmentWritten:process.env.GM20_CANONICAL_BRUNO==='1',credentialsInEvidence:false,
  sourceHashes:Object.fromEntries(paths.map(p=>[p,createHash('sha256').update(readFileSync(p)).digest('hex')]))};
 await mkdir(reportDirectory,{recursive:true});

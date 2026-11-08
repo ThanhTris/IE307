@@ -51,6 +51,30 @@ Set `EXPO_PUBLIC_SUPABASE_URL` to a reachable test Supabase endpoint and `EXPO_P
 - API and Android multi-user cases remain pending real test credentials, endpoint and Android device/build. No production behavior or task completion is claimed by this handoff.
 - Android/API multi-user and visual Figma checks still require their device/backend/design evidence. See `CHECKS.md` and `FIGMA_PARITY.md` for current local checks and explicit limits.
 
+### PR #126 canonical result/history close-out — 2026-11-08
+
+- A live Android Studio AVD + owned local Auth/REST/worker run now exercised the complete inbox result handoff: invite accepted, room started, full ballot submitted in the app, a canonical terminal result was stored, a matching room-result notification appeared in Inbox, tapping it opened the authorized result, and the saved personal history was deleted and reloaded empty. See `CHECKS.md` and `artifacts/2026-11-08-pr126-avd/live-closeout-manifest.json` for exact evidence and screenshots.
+- The result had one acknowledged ballot from a two-member room and three equal score-2/dense-rank-1 dishes. The UI and history matched the persisted winner/top-three projection; this is not evidence of two-member consensus. A third, non-member identity was denied with `403 / NOT_MEMBER`.
+- Cross-adapter consent invalidation remains unit-tested; the live run did not revoke consent after deleting its only history row. No durable offline cache was enabled by this task.
+- This handoff does not claim full Figma parity, small viewport/200% font, full TalkBack, native/physical device, remote push, NO_CONSENSUS open, group-consent or retention-matrix completion. GM-28 remains subject to Trí’s review and the task’s remaining AC.
+
+## 2026-11-08 PR #126 follow-up
+
+- The review follow-up adds strict raw validation for social/inbox/history projections, session-epoch and stale-response protection, cross-adapter history cache invalidation, authorized canonical room/result refetch, and retry-safe session/API behavior. A handled invite is filtered in memory after the server confirms accept/reject; the upstream inbox contract does not persist a handled/read transition, so the same old row may return after app restart.
+- QA used an owned disposable Supabase runtime from migrations through `0040_v4_preference_validation.sql`, with JWT-backed guest identities and synthetic social data. It did not alter the application DB. See the run-specific CHECKS/evidence and cleanup record.
+- AVD functional flows exercised friends, room invitations and personal history consent at approximately 412dp. The evidence is Android Studio emulator + Expo Go, not a native development build or a physical phone. Canonical result/history authorization cases requiring a saved terminal result remain untested.
+- **Do not treat this handoff as GM-28 acceptance yet.** The mobile/API run exposes a migration-0040 source-hash mismatch in the generic GM-V4 runner; Figma parity fails; narrow viewport/200% Expo Go reload fails; full TalkBack focus/activation and canonical saved-history cases are not run. These are recorded with expected/actual evidence in `CHECKS.md` and `FIGMA_PARITY.md`.
+- The QA API and DB ports, run ID, device details, and local source/base revision are in the dated evidence. No secret, JWT, friend code, or identity UUID is included in the sanitized artifacts. No commit, push, PR edit, merge, Project status, or approval was performed.
+
 ## Receiving tasks
 
 GM-29 consumes the inbox/repository foundations and owns native permission/token handling. Recheck GM-21/22/23/25 handoffs and merged revisions before merge; GM-31 remains responsible for durable outbox/cache behavior.
+
+### GM-23.3 “Đọc tất cả” integration follow-up — 2026-11-08
+
+- `LiveInboxScreen` exposes the approved “Đọc tất cả” action and calls the `markAllPartnerInboxRead(requestId)` repository method. The UI uses a stable request ID and waits for the API ACK before reporting success; the backend operation affects caller-owned unread, unexpired rows beyond the 50-row inbox page.
+- API/consumer contract: `food-v1/roadmap-v2/GM-23.3`, RPC `mark_all_partner_inbox_read(text)`, migration `0041_gm23_inbox_read_all.sql`, schema `0.17.0`. Backend code and disposable QA artifacts live in the separate GM-23 worktree; verify that migration/HANDOFF has landed on the target before merging this consumer.
+- The AVD run used a real guest JWT through the local Auth/REST runtime. Tapping the button yielded a server ACK and DB readback changed from one unread item to zero; it did not rely on a local-only optimistic update. See `CHECKS.md` and `artifacts/2026-11-08-inbox-read-all/manifest.json`.
+- Mark-all-read is now server-persisted. Accepting or rejecting an individual invitation is still a separate mutation; do not assume that action alone marks the inbox row read. Existing in-process suppression after accept/reject remains a UI behavior until the producer contract adds a per-item handled state.
+- Full check passed on Expo 58.0.23: 72 Jest suites / 1,357 tests, typecheck, lint, architecture, Android JS export, validator and Python regression (664 passed, 2 skipped). These do not establish full Figma parity or native/physical-device behavior.
+- Limits remain: overall Inbox/History Figma parity is Partial/Fail; 320/360dp, 200% font scale, full TalkBack order and physical/native build were not retested in this follow-up. No remote push was tested.

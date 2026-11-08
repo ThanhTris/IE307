@@ -21,7 +21,8 @@ Scope và phần ngoài scope:
 | GM-XX | | | | |
 
 - [ ] Ref target đã cập nhật; ghi tên ref/SHA/thời điểm kiểm bên dưới.
-- [ ] `python scripts/task_readiness.py --task GM-XX --gate merge --base-ref origin/main` đạt; đổi ref nếu target khác.
+- [ ] `python scripts/task_readiness.py --task GM-XX --gate merge --base-ref origin/main --verify-outputs` đạt; đổi ref nếu target khác.
+- [ ] Tuân thủ **1 Task = 1 PR** đúng file ownership; không gộp chung nhiều task hoặc sửa đè route/service thuộc task chưa Done khác.
 - [ ] Người merge kiểm code/merge commit upstream thật trên target; không chỉ nhìn bản ghi Done/evidence.
 - [ ] Cập nhật/rebase branch, retarget nếu stacked, diff chỉ còn scope task; integration tests thật chạy lại và đạt.
 - Target ref / SHA / output / giới hạn kiểm:

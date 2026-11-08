@@ -25,3 +25,44 @@
 - Live room invite picker and canonical result route are implemented; live backend authorization and visual states remain unverified.
 - 412dp, 360dp, 320dp, 200% font scale, TalkBack, touch-target and Android safe-area visual checks remain Not run.
 - Trí must review visual differences and remaining scope before acceptance. No status or approval is implied by this handoff.
+
+## Live AVD comparison — 2026-11-08 (pre-refresh; historical)
+
+- Figma frames were inspected at the approved 412×915 design size. App was opened on `Medium_Phone_API_37.0` (Android 17/API 37, Expo Go 58.0.5) at approximately 412dp. This is an emulator comparison, not evidence from a physical Android device.
+
+| Figma frame | Expected composition | Actual on AVD | Result/evidence |
+|---|---|---|---|
+| Friends `330:3076` | App logo/top notification affordance, page title and search, invitation section, friend-code/share card; bottom navigation for Home/Friends/History/Profile | App renders a branded top header with friends/bell/profile icons and segmented Friends/Inbox/History tabs; page content differs from the approved hierarchy | **Fail** — `artifacts/2026-11-08-pr126-avd/friends-412-redacted.png` |
+| Room invites `330:3077` and notifications `330:3079` | Notification page with “Mới/Trước đó” sections and invitation/result notification rows | App uses the segmented route tabs and an “Thông báo trên thiết bị” panel; rows can be acted on, but page structure does not match the approved frame | **Fail** — `inbox-before-reject-412.png`, `inbox-after-accept-412.png` |
+| History `330:3081`, delete `263:1880` | History list/details with approved navigation and consent/delete placement | Consent screen and controls function, but app header/navigation and content placement differ; no saved canonical result was available for visual detail/delete comparison | **Fail / partial functional evidence** — `history-consent-412.png`, `history-consent-result-412.png` |
+
+- Responsive and accessibility attempts: 360dp, 320dp and 200% font scaling encountered an Expo Go reload error (`EventEmitter` undefined), so these viewports are **Fail**, not parity passes. TalkBack service binding, labels and target dimensions were inspected, but complete focus order, spoken labels and activation remain **Not run**. See `CHECKS.md` and `talkback-observation.txt`.
+- Result: functional live social/history pieces are present, but the tested composition is not visually at parity with these approved Figma frames. Do not mark Figma parity Pass. The screenshots are app evidence only; no pixel-diff claim is made because a Figma screenshot export was not captured in this run.
+
+## UI composition refresh — 2026-11-08
+
+- Source base: `e5f6e281c7f2b1c5b3e26d4decbde0b80a5be0e6` merged with `origin/main` `8b26c3f96d46dff57c1b0857a13e8f1144e0a1cb`; the GM-28 source changes below are local and uncommitted.
+- Device: `Medium_Phone_API_37.0`, Android 17/API 37, Expo Go 58.0.5, 1080×2400 pixels at density 420 (about 412dp), font scale 1.0. The floating gear is Expo Go's development control, not an app component.
+- Reference PNGs were exported from the actual task nodes at 412×915/916 and stored beside the AVD captures. Comparison is visual; no pixel-diff threshold was used.
+
+| Figma node | Figma reference | AVD evidence | Comparison |
+|---|---|---|---|
+| Friends `232:2` / task `330:3076` | [Figma frame](artifacts/2026-11-08-pr126-avd/figma-friends-412.png) | [Header/search/invites](artifacts/2026-11-08-pr126-avd/friends-final-412.png), [friend row and share card](artifacts/2026-11-08-pr126-avd/friends-lower-412.png) | **Partial.** Header, title, search, invite section, friend row, share card and bottom navigation now follow the Figma hierarchy and tokens. Button orientation and friend overflow layout were corrected after live inspection. Fixture data differs from the Figma sample (three pending invitations and one friend); the share code is intentionally omitted from the saved screenshot. |
+| Inbox `286:2245` / task `330:3079` | [Figma frame](artifacts/2026-11-08-pr126-avd/figma-inbox-412.png) | [Live inbox](artifacts/2026-11-08-pr126-avd/inbox-final-412.png), [read-all interaction](artifacts/2026-11-08/inbox-read-all-live.png) | **Partial; functional read-all Pass.** Back header, “Mới” section, notification rows, timestamps and invitation actions follow the frame structure. “Đọc tất cả” now calls GM-23.3 and received a real server ACK/readback on the AVD. The neutral invitation title/body still differs from a personalized sender profile, and full layout parity remains incomplete. |
+| History `232:226` / task `330:3081` | [Figma frame](artifacts/2026-11-08-pr126-avd/figma-history-412.png) | [Live history page](artifacts/2026-11-08-pr126-avd/history-final-412.png), [populated result card](artifacts/2026-11-08-pr126-avd/history-live-result-card.png) | **Partial; populated data case Pass.** Header, title, filters, management entry and bottom navigation render. A persisted canonical history result was opened and matched the stored winner/score/ranks; this is functional parity evidence, not pixel-perfect parity with a populated Figma frame. |
+
+- AVD manual inspection also confirmed the friend overflow opens the existing unfriend confirmation sheet without sending the mutation. The actual row menu is a 48dp ellipsis with an accessibility label; screenshot: [friend list](artifacts/2026-11-08-pr126-avd/friends-lower-412.png).
+- Overall visual parity remains **Fail / not ready for acceptance** because the remaining composition differences and required small-width/200% font and complete TalkBack checks have not all passed on this final UI source. The older pre-refresh screenshots remain historical and are not used to judge the refreshed composition.
+
+## Canonical result/history data case — 2026-11-08
+
+- The AVD now has a real QA result and saved personal-history projection. [Inbox result row](artifacts/2026-11-08-pr126-avd/inbox-live-result-row.png), [opened canonical result](artifacts/2026-11-08-pr126-avd/result-live-final.png), and [history result card](artifacts/2026-11-08-pr126-avd/history-live-result-card.png) replace the earlier “no saved canonical result” limitation for this state only.
+- The API projection contained three dishes tied at dense rank 1 with 2 points; the winner was `Phở gà`. Inbox tap opened the matching result, and history rendered the same persisted ranks/scores. This demonstrates functional refetch/data parity, not pixel-perfect parity with a populated Figma history frame.
+- The Inbox read-all action now has a GM-23.3 server operation and AVD functional evidence. Full page visual parity plus final-source 320/360dp, 200% font and TalkBack evidence remain **Partial/Fail/Not run** as recorded above. The result screen is owned by GM-27 and is shown here only as the target reached from the GM-28 Inbox.
+
+## Inbox read-all live interaction — 2026-11-08
+
+- Frame: Inbox / Notifications `286:2245` (approved reference listed above). The AVD rendered the “Đọc tất cả” action, and its press was verified end-to-end against the disposable GM-23.3 API.
+- Expected behavior: mark every current unread, unexpired item for the authenticated caller as read, including items outside the 50-row display page, and show completion only after the server ACK.
+- Actual behavior: the app displayed one unread invite; after tapping, it showed the server confirmation and a server-side readback returned one read and zero unread. Evidence: [app screenshot](artifacts/2026-11-08/inbox-read-all-live.png), [manifest and hashes](artifacts/2026-11-08-inbox-read-all/manifest.json).
+- This is a functional interaction result. A new side-by-side Figma export comparison was not performed for this supplement; the earlier finding that overall layout parity is Partial/Fail remains. The user-visible floating gear in the screenshot is Expo Go's development menu, not part of the product UI.

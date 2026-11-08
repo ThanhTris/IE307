@@ -14,12 +14,12 @@ class CanonicalMigrationIdentityTests(unittest.TestCase):
 
     def test_canonical_schema_identity_is_not_used_by_runtime_migrations(self):
         canonical=ROOT/'supabase/migrations/0032_canonical_result_storage.sql'
-        insert=re.search(r"values\('([^']+)','(GM06[^']+)'",canonical.read_text())
+        insert=re.search(r"values\('([^']+)','(GM06[^']+)'",canonical.read_text(encoding='utf-8'))
         self.assertIsNotNone(insert)
         version,contract=insert.groups()
         for path in (ROOT/'supabase/migrations').glob('*.sql'):
             if path!=canonical:
-                self.assertNotRegex(path.read_text(),r"values\s*\(\s*'"+re.escape(version)+r"'",path.name)
+                self.assertNotRegex(path.read_text(encoding='utf-8'),r"values\s*\(\s*'"+re.escape(version)+r"'",path.name)
         self.assertEqual(contract,'GM06.3-canonical-storage')
 
 

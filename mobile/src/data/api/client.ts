@@ -41,12 +41,10 @@ import {
   RegisterPushDeviceRequest,
   HistoryConsent,
   HistoryItem,
-  CanonicalHistoryPage,
   UpdateHistoryConsentRequest,
   RoomState,
 } from './contracts';
 import type { ResponseGuard } from './responseGuards';
-import { isCanonicalHistoryPage } from './responseGuards';
 import type { SessionApi } from '../auth/types';
 import {
   TransportOptions,
@@ -92,6 +90,7 @@ import {
   acceptRoomInviteMethod,
   rejectRoomInviteMethod,
   listPartnerInboxMethod,
+  markAllPartnerInboxReadMethod,
   registerPushDeviceMethod,
   unregisterPushDeviceMethod,
   getHistoryMethod,
@@ -310,6 +309,10 @@ export class ApiClientImpl implements ApiClient {
     return listPartnerInboxMethod(this.ctx, cursor);
   }
 
+  markAllPartnerInboxRead(requestId?: string): Promise<WriteResult<void>> {
+    return markAllPartnerInboxReadMethod(this.ctx, requestId);
+  }
+
   registerPushDevice(req: RegisterPushDeviceRequest): Promise<WriteResult<void>> {
     return registerPushDeviceMethod(this.ctx, req);
   }
@@ -320,18 +323,6 @@ export class ApiClientImpl implements ApiClient {
 
   getHistory(scope: 'personal' | 'group', cursor?: string): Promise<ReadResult<HistoryItem[]>> {
     return getHistoryMethod(this.ctx, scope, cursor);
-  }
-
-  async getCanonicalHistory(): Promise<ReadResult<CanonicalHistoryPage>> {
-    try {
-      const raw = await this.callRpc<unknown>('dish_session', {
-        command: 'history',
-        payload: { contractVersion: 'dish-session-v4/roadmap-v2/GM-07.B-supplement' },
-      });
-      return this.normalizeReadResponse(raw, isCanonicalHistoryPage);
-    } catch (err) {
-      return { ok: false, error: this.mapError(err) };
-    }
   }
 
   getHistoryConsent(): Promise<ReadResult<HistoryConsent>> {
