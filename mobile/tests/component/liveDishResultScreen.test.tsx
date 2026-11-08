@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, within } from '@testing-library/react-native';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react-native';
 import { LiveDishResultScreen } from '../../src/features/result/screens/LiveDishResultScreen';
 import { DishResultEntry } from '../../src/bootstrap/DishResultEntry';
 import { useRoomRepository } from '../../src/bootstrap/RoomRepositoryProvider';
@@ -1051,6 +1051,79 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
       // Verify winner dish and Top 3 are preserved
       expect(screen.getAllByText('Phở bò tái nạm').length).toBeGreaterThan(0);
       expect(screen.getByText('Cơm tấm sườn bì')).toBeTruthy();
+    });
+    test('live map recovers and reloads when switching from Place A (image error) to Place B', async () => {
+      const placesRepo = {
+        fetchNearbyPlaces: jest.fn().mockResolvedValue({
+          ok: true,
+          data: {
+            resultId: decidedResult.resultId,
+            winnerDishId: decidedResult.winner!.dishId,
+            status: 'ready',
+            places: [
+              {
+                id: 'place_err_01',
+                name: 'Phở Gia Truyền Error',
+                address: '10 Hàng Đồng',
+                distanceM: 250,
+                latitude: 21.033,
+                longitude: 105.850,
+                attribution: 'Google Places',
+              },
+              {
+                id: 'place_ok_02',
+                name: 'Phở Hòa Pasteur',
+                address: '260C Pasteur',
+                distanceM: 400,
+                latitude: 10.787,
+                longitude: 106.691,
+                attribution: 'Google Places',
+              },
+            ],
+            fetchedAt: '2026-11-08T10:00:00Z',
+          },
+        }),
+      };
+
+      const repo = createMockResultRepository({
+        initialResult: decidedResult,
+      });
+
+      await render(
+        <LiveDishResultScreen
+          roomId="room_live_map_error_recovery"
+          repository={repo}
+          placesRepository={placesRepo as any}
+          placesConfig={{ isDevSimulated: false, apiKey: 'valid_maps_key' }}
+          onHome={jest.fn()}
+          onNewSession={jest.fn()}
+        />
+      );
+
+      const dismiss = await screen.findByText('Chạm để bỏ qua');
+      fireEvent.press(dismiss);
+
+      // Initially, Place A is selected and static map image is rendered
+      const mapImgA = await screen.findByTestId('live-google-map-image');
+      expect(mapImgA.props.source.uri).toContain('21.033,105.85');
+
+      // Trigger image load error on Place A static map
+      fireEvent(mapImgA, 'error', { nativeEvent: { error: 'Network error loading tile' } });
+
+      // Live map shows unavailable notice for Place A
+      expect(await screen.findByTestId('live-map-unavailable')).toBeTruthy();
+      expect(screen.queryByTestId('live-google-map-image')).toBeNull();
+
+      // Now switch to Place B
+      const placeBCard = await screen.findByLabelText('Chọn quán Phở Hòa Pasteur');
+      fireEvent.press(placeBCard);
+
+      // Map error resets: unavailable notice disappears and Place B static map loads!
+      await waitFor(() => {
+        expect(screen.queryByTestId('live-map-unavailable')).toBeNull();
+      });
+      const mapImgB = await screen.findByTestId('live-google-map-image');
+      expect(mapImgB.props.source.uri).toContain('10.787,106.691');
     });
   });
 });

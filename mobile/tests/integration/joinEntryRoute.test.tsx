@@ -1,4 +1,5 @@
-import { fireEvent, renderHook, screen, waitFor } from '@testing-library/react-native';
+import { act, fireEvent, renderHook, screen, waitFor } from '@testing-library/react-native';
+import { router } from 'expo-router';
 import { renderRouter } from 'expo-router/testing-library';
 import { Linking } from 'react-native';
 import Layout from '../../src/app/_layout';
@@ -8,8 +9,15 @@ import JoinRoute from '../../src/app/room/join';
 import JoinCodeRoute from '../../src/app/join/[code]';
 import JoinIndexRoute from '../../src/app/join/index';
 import Receipt from '../../src/app/room/preview';
-import { rememberPreviewGuest, setPreviewScenario, useRoomPreview } from '../../src/bootstrap/roomPreview';
-import { resetConsumedInitialUrlForTesting } from '../../src/features/rooms/services/joinLinks';
+import { redirectSystemPath } from '../../src/app/+native-intent';
+import { getPreviewClient, rememberPreviewGuest, setPreviewScenario, useRoomPreview } from '../../src/bootstrap/roomPreview';
+import {
+  emitWarmLinkEventForTesting,
+  resetConsumedInitialUrlForTesting,
+} from '../../src/features/rooms/services/joinLinks';
+
+// Enable React 19 act environment recognition in Jest
+(globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
 test('product preview is public-only; private snapshot is first read after explicit join ACK', async () => {
   setPreviewScenario('default'); rememberPreviewGuest('Minh');
@@ -32,8 +40,7 @@ test('product preview is public-only; private snapshot is first read after expli
 test('/room/join blocks URL with suspicious tokens, prevents code prefill and preview, and keeps manual entry', async () => {
   setPreviewScenario('default');
   rememberPreviewGuest('Tuấn');
-  const preview = await renderHook(useRoomPreview);
-  const client = preview.result.current.client;
+  const client = getPreviewClient();
   const join = jest.spyOn(client, 'joinRoom');
 
   try {
@@ -71,6 +78,10 @@ test('/room/join blocks URL with suspicious tokens, prevents code prefill and pr
 
 test('/room/join mounted from route param MNP567 does not get overwritten by late getInitialURL resolving GCD234', async () => {
   setPreviewScenario('default');
+  rememberPreviewGuest('Minh');
+  const client = getPreviewClient();
+  const join = jest.spyOn(client, 'joinRoom');
+
   let resolveCold: ((url: string) => void) | null = null;
   const coldPromise = new Promise<string>(resolve => {
     resolveCold = resolve;
@@ -100,8 +111,16 @@ test('/room/join mounted from route param MNP567 does not get overwritten by lat
       // Must still be MNP567, NOT overwritten by GCD234!
       expect(codeInput).toHaveDisplayValue('MNP567');
     });
+
+    // Press join button and verify it explicitly confirms with MNP567, not GCD234!
+    await fireEvent.press(screen.getByRole('button', { name: 'Vào phòng →' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Xác nhận vào phòng mô phỏng' }));
+
+    expect(join).toHaveBeenCalledWith(expect.objectContaining({ code: 'MNP567' }));
+    expect(join).not.toHaveBeenCalledWith(expect.objectContaining({ code: 'GCD234' }));
   } finally {
     getInitialSpy.mockRestore();
+    join.mockRestore();
   }
 });
 
@@ -187,7 +206,7 @@ test('/room/join re-entry from app with empty params does not re-prefill cold la
   const getInitialSpy = jest.spyOn(Linking, 'getInitialURL').mockResolvedValue('gi-cung-duoc://room/join?code=GCD234');
 
   try {
-    const view1 = await renderRouter(
+    await renderRouter(
       {
         _layout: Layout,
         'room/_layout': RoomLayout,
@@ -203,11 +222,74 @@ test('/room/join re-entry from app with empty params does not re-prefill cold la
     const codeInput1 = await screen.findByLabelText('Mã phòng (6 ký tự)');
     await waitFor(() => expect(codeInput1).toHaveDisplayValue('GCD234'));
 
-    // Second mount: user left and re-opens /room/join manually from within app with empty params
+    // Second re-entry: user navigates to /room/join with empty params from within app
     // Linking.getInitialURL() still holds the OS launch intent, but app session must not re-query it
-    view1.unmount();
+    await act(async () => {
+      router.replace('/room/join');
+    });
 
-    const view2 = await renderRouter(
+    const codeInput2 = await screen.findByLabelText('Mã phòng (6 ký tự)');
+    // Input must remain empty for manual typing, NOT re-prefilled with GCD234!
+    expect(codeInput2).toHaveDisplayValue('');
+    expect(screen.queryByText('Liên kết bị chặn')).toBeNull();
+  } finally {
+    getInitialSpy.mockRestore();
+    resetConsumedInitialUrlForTesting();
+  }
+});
+
+test('warm link with userinfo credentials opened from Home navigates safely with blocked notice and empty input', async () => {
+  setPreviewScenario('default');
+  rememberPreviewGuest('Tuấn');
+  const client = getPreviewClient();
+  const join = jest.spyOn(client, 'joinRoom');
+
+  // 1. User is on another screen (Home) when an external URI arrives:
+  // Native intent interceptor inspects the raw URL before Expo Router splits parameters
+  const rawIntentUrl = 'gi-cung-duoc://qa-user:qa-value@room/join?code=GCD234';
+  const guardedTarget = redirectSystemPath({ path: rawIntentUrl, initial: false });
+  expect(guardedTarget).toBe('/room/join?error=SUSPICIOUS_PAYLOAD');
+
+  // 2. Expo Router navigates to guarded path into /room/join with empty initial URL
+  try {
+    await renderRouter(
+      {
+        _layout: Layout,
+        'room/_layout': RoomLayout,
+        'room/join': JoinRoute,
+        'room/preview': Receipt,
+      },
+      {
+        initialUrl: guardedTarget,
+      }
+    );
+
+    await waitFor(() => expect(screen).toHavePathname('/room/join'));
+
+    // StatusNotice warning displayed
+    await screen.findByText('Liên kết bị chặn');
+
+    // Code input is empty and not prefilled with GCD234
+    const codeInput = await screen.findByLabelText('Mã phòng (6 ký tự)');
+    expect(codeInput).toHaveDisplayValue('');
+    expect(join).not.toHaveBeenCalled();
+
+    // User can still manually type a valid code
+    await fireEvent.changeText(codeInput, 'SAFE99');
+    expect(codeInput).toHaveDisplayValue('SAFE99');
+  } finally {
+    join.mockRestore();
+  }
+});
+
+test('warm link with userinfo credentials opened while on /room/join shows blocked notice and keeps input empty', async () => {
+  setPreviewScenario('default');
+  rememberPreviewGuest('Tuấn');
+  const client = getPreviewClient();
+  const join = jest.spyOn(client, 'joinRoom');
+
+  try {
+    await renderRouter(
       {
         _layout: Layout,
         'room/_layout': RoomLayout,
@@ -219,13 +301,20 @@ test('/room/join re-entry from app with empty params does not re-prefill cold la
       }
     );
 
-    const codeInput2 = await screen.findByLabelText('Mã phòng (6 ký tự)');
-    // Input must remain empty for manual typing, NOT re-prefilled with GCD234!
-    expect(codeInput2).toHaveDisplayValue('');
-    expect(screen.queryByText('Liên kết bị chặn')).toBeNull();
-    view2.unmount();
+    // Initially on /room/join with empty input
+    const codeInput = await screen.findByLabelText('Mã phòng (6 ký tự)');
+    expect(codeInput).toHaveDisplayValue('');
+
+    // Emit warm link containing userinfo credentials
+    await act(async () => {
+      await emitWarmLinkEventForTesting('gi-cung-duoc://qa-user:qa-value@room/join?code=GCD234');
+    });
+
+    // Shows "Liên kết bị chặn"
+    await screen.findByText('Liên kết bị chặn');
+    expect(codeInput).toHaveDisplayValue('');
+    expect(join).not.toHaveBeenCalled();
   } finally {
-    getInitialSpy.mockRestore();
-    resetConsumedInitialUrlForTesting();
+    join.mockRestore();
   }
 });

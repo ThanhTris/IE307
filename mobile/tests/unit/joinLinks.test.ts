@@ -1,10 +1,12 @@
 import { Linking } from 'react-native';
+import { redirectSystemPath } from '../../src/app/+native-intent';
 import {
   consumeInitialUrl,
   createJoinRoomDeepLink,
   createJoinRoomShareMessage,
   createJoinRoomWebLink,
   generateQrMatrix,
+  guardJoinRoomUrl,
   isSuspiciousSearchParams,
   isSuspiciousWord,
   NativeQrScannerAdapter,
@@ -431,16 +433,16 @@ describe('GM-30 joinLinks — Native QR, Links, Allowlist & Resolvers', () => {
       // Wait for cold start resolution
       await new Promise<void>(resolve => { setImmediate(() => resolve()); });
       expect(getInitialSpy).toHaveBeenCalled();
-      expect(onJoinCode).toHaveBeenCalledWith('GCD234', 'gi-cung-duoc://room/join?code=GCD234');
+      expect(onJoinCode).toHaveBeenCalledWith('GCD234', 'gi-cung-duoc://room/join?code=GCD234', 'cold');
 
       // Simulate warm-start incoming URL
       expect(listenerCallback).not.toBeNull();
       listenerCallback!({ url: 'https://gicungduoc.vn/join/KLM456' });
-      expect(onJoinCode).toHaveBeenCalledWith('KLM456', 'https://gicungduoc.vn/join/KLM456');
+      expect(onJoinCode).toHaveBeenCalledWith('KLM456', 'https://gicungduoc.vn/join/KLM456', 'warm');
 
       // Simulate invalid incoming URL
       listenerCallback!({ url: 'https://evil.com/join/EVIL56' });
-      expect(onError).toHaveBeenCalledWith('DISALLOWED_HOST', 'https://evil.com/join/EVIL56');
+      expect(onError).toHaveBeenCalledWith('DISALLOWED_HOST', 'https://evil.com/join/EVIL56', 'warm');
 
       unsubscribe();
       expect(removeSpy).toHaveBeenCalled();
@@ -475,7 +477,7 @@ describe('GM-30 joinLinks — Native QR, Links, Allowlist & Resolvers', () => {
       expect(listenerCallback).not.toBeNull();
       listenerCallback!({ url: 'gi-cung-duoc://room/join?code=MNP567' });
       expect(onJoinCode).toHaveBeenCalledTimes(1);
-      expect(onJoinCode).toHaveBeenCalledWith('MNP567', 'gi-cung-duoc://room/join?code=MNP567');
+      expect(onJoinCode).toHaveBeenCalledWith('MNP567', 'gi-cung-duoc://room/join?code=MNP567', 'warm');
 
       // Now cold link GCD234 resolves late
       resolveCold!('gi-cung-duoc://room/join?code=GCD234');
@@ -567,7 +569,7 @@ describe('GM-30 joinLinks — Native QR, Links, Allowlist & Resolvers', () => {
       const unsub1 = subscribeToJoinLinks({ onJoinCode: onJoinCode1 });
       await new Promise<void>(resolve => { setImmediate(() => resolve()); });
       expect(getInitialSpy).toHaveBeenCalledTimes(1);
-      expect(onJoinCode1).toHaveBeenCalledWith('GCD234', 'gi-cung-duoc://room/join?code=GCD234');
+      expect(onJoinCode1).toHaveBeenCalledWith('GCD234', 'gi-cung-duoc://room/join?code=GCD234', 'cold');
       unsub1();
 
       // Second subscription: initial URL has already been consumed!
@@ -586,4 +588,35 @@ describe('GM-30 joinLinks — Native QR, Links, Allowlist & Resolvers', () => {
       resetConsumedInitialUrlForTesting();
     });
   });
+
+  describe('guardJoinRoomUrl & redirectSystemPath (Global Link Interceptors)', () => {
+    test('guardJoinRoomUrl rewrites suspicious userinfo to safe error path', () => {
+      const suspicious = 'gi-cung-duoc://qa-user:qa-value@room/join?code=GCD234';
+      expect(guardJoinRoomUrl(suspicious)).toBe('gi-cung-duoc://room/join?error=SUSPICIOUS_PAYLOAD');
+    });
+
+    test('guardJoinRoomUrl rewrites obfuscated token parameters', () => {
+      const suspicious = 'https://gicungduoc.vn/join?code=GCD234&%74oken=secret';
+      expect(guardJoinRoomUrl(suspicious)).toBe('gi-cung-duoc://room/join?error=SUSPICIOUS_PAYLOAD');
+    });
+
+    test('guardJoinRoomUrl preserves valid deep links and web URLs', () => {
+      expect(guardJoinRoomUrl('gi-cung-duoc://room/join?code=GCD234')).toBe('gi-cung-duoc://room/join?code=GCD234');
+      expect(guardJoinRoomUrl('https://gicungduoc.vn/join/GCD234')).toBe('https://gicungduoc.vn/join/GCD234');
+      expect(guardJoinRoomUrl(null)).toBeNull();
+      expect(guardJoinRoomUrl('')).toBeNull();
+    });
+
+    test('redirectSystemPath intercepts and rewrites suspicious userinfo before Expo Router parses it', () => {
+      const suspicious = 'gi-cung-duoc://qa-user:qa-value@room/join?code=GCD234';
+      expect(redirectSystemPath({ path: suspicious, initial: false })).toBe('/room/join?error=SUSPICIOUS_PAYLOAD');
+      expect(redirectSystemPath({ path: 'room/join?qa-user:qa-value@code=GCD234', initial: false })).toBe('/room/join?error=SUSPICIOUS_PAYLOAD');
+    });
+
+    test('redirectSystemPath leaves safe URLs unchanged', () => {
+      expect(redirectSystemPath({ path: 'room/join?code=GCD234', initial: false })).toBe('room/join?code=GCD234');
+      expect(redirectSystemPath({ path: 'https://gicungduoc.vn/join/GCD234', initial: false })).toBe('https://gicungduoc.vn/join/GCD234');
+    });
+  });
+
 });

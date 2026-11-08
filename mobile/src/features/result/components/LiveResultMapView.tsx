@@ -22,7 +22,7 @@ export function LiveResultMapView({
 }: LiveResultMapViewProps) {
   const { colors, dark } = useShellTheme();
   const { textStyle } = useAppFonts();
-  const [hasImageError, setHasImageError] = useState(false);
+  const [failedUrl, setFailedUrl] = useState<string | null>(null);
 
   const selectedPlace = places.find(p => p.id === selectedPlaceId) ?? places[0];
   const effectiveKey = apiKey ?? getPlacesApiKeyFromEnv();
@@ -39,6 +39,26 @@ export function LiveResultMapView({
     selectedPlace &&
     Number.isFinite(selectedPlace.latitude) &&
     Number.isFinite(selectedPlace.longitude);
+
+  // Construct real Google Static Map URL
+  const centerLat = selectedPlace?.latitude ?? 0;
+  const centerLng = selectedPlace?.longitude ?? 0;
+  const markersParam = validPlaces
+    .slice(0, 5)
+    .map((p, idx) => {
+      const isSelected = p.id === selectedPlace?.id;
+      const color = isSelected ? '0xE11D48' : '0x475569';
+      return `markers=color:${color}%7Clabel:${idx + 1}%7C${p.latitude},${p.longitude}`;
+    })
+    .join('&');
+
+  const staticMapUrl = (effectiveKey && hasCoords && validPlaces.length > 0)
+    ? `https://maps.googleapis.com/maps/api/staticmap?center=${centerLat},${centerLng}&zoom=15&size=600x360&scale=2&maptype=roadmap&${markersParam}&key=${encodeURIComponent(effectiveKey)}`
+    : '';
+
+  // Track error specifically for the current image URL:
+  // When switching from Place A to Place B, staticMapUrl changes, so hasImageError is false and Place B's map is attempted
+  const hasImageError = Boolean(staticMapUrl && failedUrl === staticMapUrl);
 
   // If real Google API key is missing or coordinates are missing or image failed to load:
   // Render the clear unavailable notice per GM-30 requirement, while preserving winner, Top 3, and external Maps button!
@@ -64,20 +84,6 @@ export function LiveResultMapView({
     );
   }
 
-  // Construct real Google Static Map URL
-  const centerLat = selectedPlace.latitude!;
-  const centerLng = selectedPlace.longitude!;
-  const markersParam = validPlaces
-    .slice(0, 5)
-    .map((p, idx) => {
-      const isSelected = p.id === selectedPlace.id;
-      const color = isSelected ? '0xE11D48' : '0x475569';
-      return `markers=color:${color}%7Clabel:${idx + 1}%7C${p.latitude},${p.longitude}`;
-    })
-    .join('&');
-
-  const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${centerLat},${centerLng}&zoom=15&size=600x360&scale=2&maptype=roadmap&${markersParam}&key=${encodeURIComponent(effectiveKey)}`;
-
   return (
     <View testID="live-result-map" style={styles.mapContainer}>
       <Image
@@ -85,7 +91,7 @@ export function LiveResultMapView({
         source={{ uri: staticMapUrl }}
         style={styles.mapImage}
         resizeMode="cover"
-        onError={() => setHasImageError(true)}
+        onError={() => setFailedUrl(staticMapUrl)}
         accessibilityRole="image"
         accessibilityLabel={`Bản đồ Google Maps cho quán ${selectedPlace.name}`}
       />

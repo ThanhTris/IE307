@@ -1,4 +1,5 @@
 import { Linking } from 'react-native';
+import * as ExpoLinking from 'expo-linking';
 import { normalizeRoomCode, validRoomCode } from './roomEntry';
 import { encodeQrCodeMatrix } from './qrEncoder';
 
@@ -309,6 +310,136 @@ export class NativeQrScannerAdapter implements QrScannerAdapter {
   }
 }
 
+/**
+ * Global join link safety interceptor.
+ * Inspects raw incoming URLs before Expo Router splits or decodes query parameters,
+ * neutralizing any unauthorized credentials (userinfo) or suspicious payloads.
+ */
+export function guardJoinRoomUrl(rawUrl: string | null | undefined): string | null {
+  if (!rawUrl || typeof rawUrl !== 'string') return null;
+  const trimmed = rawUrl.trim();
+  if (!trimmed) return null;
+
+  // 1. Detect userinfo credentials (@) in custom scheme or path
+  if (trimmed.includes('@')) {
+    return 'gi-cung-duoc://room/join?error=SUSPICIOUS_PAYLOAD';
+  }
+
+  // 2. Detect credentials or suspicious words in raw or decoded URL
+  if (SUSPICIOUS_PARAM_REGEX.test(trimmed)) {
+    return 'gi-cung-duoc://room/join?error=SUSPICIOUS_PAYLOAD';
+  }
+
+  try {
+    const decoded = decodeURIComponent(trimmed);
+    if (SUSPICIOUS_PARAM_REGEX.test(decoded)) {
+      return 'gi-cung-duoc://room/join?error=SUSPICIOUS_PAYLOAD';
+    }
+  } catch {
+    return 'gi-cung-duoc://room/join?error=SUSPICIOUS_PAYLOAD';
+  }
+
+  // 3. For any room join URL, check parseJoinRoomUrl
+  const parsed = parseJoinRoomUrl(trimmed);
+  if (!parsed.ok && parsed.error === 'SUSPICIOUS_PAYLOAD') {
+    return 'gi-cung-duoc://room/join?error=SUSPICIOUS_PAYLOAD';
+  }
+
+  return trimmed;
+}
+
+let originalGetInitialURL: (typeof Linking.getInitialURL) | null = null;
+let originalAddEventListener: typeof Linking.addEventListener | null = null;
+let guardInstalled = false;
+type UrlEventListener = (event: { url: string }) => void;
+const activeUrlListeners = new Set<UrlEventListener>();
+
+export function installGlobalJoinLinkGuard(): void {
+  if (guardInstalled) return;
+  guardInstalled = true;
+
+  originalGetInitialURL = Linking.getInitialURL.bind(Linking);
+  originalAddEventListener = Linking.addEventListener.bind(Linking);
+
+  Linking.getInitialURL = async (): Promise<string | null> => {
+    const raw = await originalGetInitialURL!();
+    const guarded = guardJoinRoomUrl(raw);
+    return guarded;
+  };
+
+  Linking.addEventListener = ((type: string, listener: any) => {
+    if (type === 'url') {
+      const wrappedListener: UrlEventListener = (event: { url: string }) => {
+        const guardedUrl = guardJoinRoomUrl(event?.url ?? '') ?? '';
+        return listener({ ...event, url: guardedUrl });
+      };
+      activeUrlListeners.add(wrappedListener);
+      const sub = originalAddEventListener!(type as any, wrappedListener as any);
+      return {
+        remove: () => {
+          activeUrlListeners.delete(wrappedListener);
+          sub?.remove?.();
+        },
+      };
+    }
+    return originalAddEventListener!(type as any, listener);
+  }) as typeof Linking.addEventListener;
+
+  if (typeof (ExpoLinking as any).addEventListener === 'function') {
+    const origExpoAddListener = (ExpoLinking as any).addEventListener;
+    (ExpoLinking as any).addEventListener = (type: string, listener: any) => {
+      if (type === 'url') {
+        const wrappedListener: UrlEventListener = (event: { url: string }) => {
+          const guardedUrl = guardJoinRoomUrl(event?.url ?? '') ?? '';
+          return listener({ ...event, url: guardedUrl });
+        };
+        activeUrlListeners.add(wrappedListener);
+        const sub = origExpoAddListener(type, wrappedListener);
+        return {
+          remove: () => {
+            activeUrlListeners.delete(wrappedListener);
+            sub?.remove?.();
+          },
+        };
+      }
+      return origExpoAddListener(type, listener);
+    };
+  }
+}
+
+export function resetGlobalJoinLinkGuardForTesting(): void {
+  if (!guardInstalled) return;
+  if (originalGetInitialURL) {
+    Linking.getInitialURL = originalGetInitialURL;
+  }
+  if (originalAddEventListener) {
+    Linking.addEventListener = originalAddEventListener;
+  }
+  guardInstalled = false;
+  originalGetInitialURL = null;
+  originalAddEventListener = null;
+  activeUrlListeners.clear();
+}
+
+export async function emitWarmLinkEventForTesting(rawUrl: string): Promise<void> {
+  const guardedUrl = guardJoinRoomUrl(rawUrl) ?? '';
+  const promises: Promise<unknown>[] = [];
+  for (const listener of Array.from(activeUrlListeners)) {
+    try {
+      const res = (listener as any)({ url: guardedUrl });
+      if (res && typeof (res as any).then === 'function') {
+        promises.push(res);
+      }
+    } catch {
+      // Ignored
+    }
+  }
+  await Promise.all(promises);
+}
+
+// Auto-install global guard when joinLinks is loaded
+installGlobalJoinLinkGuard();
+
 let appLaunchUrlConsumed = false;
 let appLaunchUrlPromise: Promise<string | null> | null = null;
 
@@ -324,7 +455,9 @@ export async function consumeInitialUrl(): Promise<string | null> {
   appLaunchUrlConsumed = true;
 
   if (!appLaunchUrlPromise) {
-    appLaunchUrlPromise = Linking.getInitialURL().then(url => url ?? null).catch(() => null);
+    appLaunchUrlPromise = Linking.getInitialURL()
+      .then(url => (url ? guardJoinRoomUrl(url) : null))
+      .catch(() => null);
   }
 
   return appLaunchUrlPromise;
@@ -335,9 +468,11 @@ export function resetConsumedInitialUrlForTesting(): void {
   appLaunchUrlPromise = null;
 }
 
+export type JoinLinkSource = 'cold' | 'warm';
+
 export interface JoinLinkListenerOptions {
-  onJoinCode: (code: string, rawUrl: string) => void;
-  onError?: (error: string, rawUrl: string) => void;
+  onJoinCode: (code: string, rawUrl: string, source: JoinLinkSource) => void;
+  onError?: (error: string, rawUrl: string, source: JoinLinkSource) => void;
   onInitialUrlEmpty?: () => void;
   skipInitialUrl?: boolean;
 }
@@ -346,16 +481,17 @@ export function subscribeToJoinLinks(options: JoinLinkListenerOptions): () => vo
   let active = true;
   let latestSeq = 0;
 
-  const emit = (seq: number, rawUrl: string) => {
+  const emit = (seq: number, rawUrl: string, source: JoinLinkSource) => {
     if (!active || seq < latestSeq) {
       return;
     }
     latestSeq = seq;
-    const parsed = parseJoinRoomUrl(rawUrl);
+    const guardedUrl = guardJoinRoomUrl(rawUrl) ?? rawUrl;
+    const parsed = parseJoinRoomUrl(guardedUrl);
     if (parsed.ok) {
-      options.onJoinCode(parsed.code, parsed.rawUrl);
+      options.onJoinCode(parsed.code, parsed.rawUrl, source);
     } else {
-      options.onError?.(parsed.error, parsed.rawUrl);
+      options.onError?.(parsed.error, parsed.rawUrl, source);
     }
   };
 
@@ -363,7 +499,7 @@ export function subscribeToJoinLinks(options: JoinLinkListenerOptions): () => vo
   const subscription = Linking.addEventListener('url', (event: { url: string }) => {
     if (!active || !event?.url) return;
     latestSeq++;
-    emit(latestSeq, event.url);
+    emit(latestSeq, event.url, 'warm');
   });
 
   // Cold start deep link: sequence 0
@@ -380,7 +516,7 @@ export function subscribeToJoinLinks(options: JoinLinkListenerOptions): () => vo
         if (latestSeq > coldSeq) {
           return;
         }
-        emit(coldSeq, initialUrl);
+        emit(coldSeq, initialUrl, 'cold');
       })
       .catch(() => {
         if (active) {
