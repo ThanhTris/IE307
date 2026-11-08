@@ -92,8 +92,8 @@ export function InboxScreen({ onNavigate, onHome, mockClient }: Props) {
             {invitation && !reference ? <Text style={[styles.meta, { color: colors.warning }]}>Thiếu mã lời mời; không thể xử lý mục này.</Text> : null}
             {unavailableReason ? <Text style={[styles.meta, { color: colors.warning }]}>{unavailableReason}</Text> : null}
             {invitation && <View style={styles.actions}>
-              <AppButton label={`Chấp nhận ${item.title}`} onPress={() => setAction({ item, kind: 'accept' })} disabled={busy || !reference || Boolean(unavailableReason)} colors={colors} style={styles.actionButton} />
-              <AppButton label={`Từ chối ${item.title}`} variant="secondary" onPress={() => setAction({ item, kind: 'reject' })} disabled={busy || !reference || Boolean(unavailableReason)} colors={colors} style={styles.actionButton} />
+              <AppButton label="Chấp nhận" onPress={() => setAction({ item, kind: 'accept' })} disabled={busy || !reference || Boolean(unavailableReason)} colors={colors} style={styles.actionButton} />
+              <AppButton label="Từ chối" variant="secondary" onPress={() => setAction({ item, kind: 'reject' })} disabled={busy || !reference || Boolean(unavailableReason)} colors={colors} style={styles.actionButton} />
             </View>}
           </View>
         );

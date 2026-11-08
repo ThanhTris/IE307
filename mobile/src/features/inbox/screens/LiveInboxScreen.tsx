@@ -168,7 +168,7 @@ export function LiveInboxScreen({ repository, displayName, onNavigate, onHome }:
     setBusy(true);
     setMessage('');
     try {
-      const result = await repository.resolveRoomResult(reference.roomId, reference.resultId);
+      const result = await repository.resolveRoomResult(reference.roomId, reference.resultId, reference.contractVersion);
       if (!result.ok) {
         setMessage(`Không thể mở kết quả đã lưu (${errorMessage(result.error.messageKey)}). Tải lại trạng thái phòng rồi thử lại.`);
         return;
@@ -235,7 +235,7 @@ export function LiveInboxScreen({ repository, displayName, onNavigate, onHome }:
       {invitation && !invitationId ? <Text style={[styles.meta, { color: colors.warning }]}>Thiếu mã lời mời từ máy chủ; không thể xử lý mục này.</Text> : null}
       {invitation && <View style={[styles.actions, largeText && styles.actionsLarge]}>
         <AppButton label="Từ chối" variant="secondary" onPress={() => setAction({ item, kind: 'reject' })} disabled={busy || !invitationId} colors={colors} style={styles.actionButton} />
-        <AppButton label={item.type === 'room_invite' ? 'Vào phòng' : 'Đồng ý'} onPress={() => setAction({ item, kind: 'accept' })} disabled={busy || !invitationId} colors={colors} style={styles.actionButton} />
+        <AppButton label="Chấp nhận" onPress={() => setAction({ item, kind: 'accept' })} disabled={busy || !invitationId} colors={colors} style={styles.actionButton} />
       </View>}
       {item.type === 'room_result' && !resultReference ? <Text style={[styles.meta, { color: colors.warning }]}>Thiếu tham chiếu kết quả từ máy chủ.</Text> : null}
     </>;
@@ -252,12 +252,13 @@ function readInvitationId(item: InboxItem): string | undefined {
   return typeof value === 'string' && value.trim() ? value.trim() : undefined;
 }
 
-function readRoomResultReference(item: InboxItem): { roomId: string; resultId: string } | undefined {
+function readRoomResultReference(item: InboxItem): { roomId: string; resultId: string; contractVersion?: string } | undefined {
   const roomId = item.metadata?.roomId;
   const resultId = item.metadata?.resultId;
-  return typeof roomId === 'string' && UUID.test(roomId) && typeof resultId === 'string' && UUID.test(resultId)
-    ? { roomId, resultId }
-    : undefined;
+  if (typeof roomId !== 'string' || !UUID.test(roomId) || typeof resultId !== 'string' || !UUID.test(resultId)) return undefined;
+  // The exact legacy projection intentionally has no version discriminator. The
+  // inbox adapter has already rejected extra or unsupported metadata fields.
+  return { roomId, resultId, ...(typeof item.metadata?.contractVersion === 'string' ? { contractVersion: item.metadata.contractVersion } : {}) };
 }
 
 function roomDestinationPath(room: ResolvedRoom): string {
@@ -265,6 +266,7 @@ function roomDestinationPath(room: ResolvedRoom): string {
   if (room.destination === 'lobby') return `/room/lobby?roomId=${roomId}`;
   if (room.destination === 'vote') return `/room/vote?roomId=${roomId}`;
   if (room.destination === 'final-round') return `/room/final-round?roomId=${roomId}`;
+  if (room.resultContract === 'legacy') return `/inbox-result?roomId=${roomId}&resultId=${encodeURIComponent(room.resultId ?? '')}`;
   if (room.destination === 'no-consensus') return `/room/no-consensus?roomId=${roomId}&resultId=${encodeURIComponent(room.resultId ?? '')}`;
   return `/room/result?roomId=${roomId}&resultId=${encodeURIComponent(room.resultId ?? '')}`;
 }

@@ -272,15 +272,42 @@ describe('Social, inbox, and history live adapters', () => {
     const roomRepository = {
       getRoomSnapshot: jest.fn()
         .mockResolvedValueOnce({ ok: true, data: { roomId, state: 'ROUND_2', result: null } })
-        .mockResolvedValueOnce({ ok: true, data: { roomId, state: 'DECIDED', result: { resultId } } })
-        .mockResolvedValueOnce({ ok: true, data: { roomId, state: 'DECIDED', result: { resultId } } }),
+        .mockResolvedValueOnce({ ok: true, data: { roomId, state: 'DECIDED', result: { resultId, contractVersion: 'dish-session-v4/roadmap-v2/GM-07.B-supplement' } } })
+        .mockResolvedValueOnce({ ok: true, data: { roomId, state: 'DECIDED', result: { resultId, contractVersion: 'dish-session-v4/roadmap-v2/GM-07.B-supplement' } } }),
     } as unknown as RoomRepository;
     const inbox = createInboxRepository(roomRepository);
 
     expect(await inbox.resolveAcceptedRoom(roomId)).toEqual({ ok: true, data: { roomId, destination: 'final-round' } });
-    expect(await inbox.resolveRoomResult(roomId, resultId)).toEqual({ ok: true, data: { roomId, destination: 'result', resultId } });
-    expect(await inbox.resolveRoomResult(roomId, uuidFrom('stale-result'))).toEqual({ ok: false, error: { messageKey: 'VERSION_CONFLICT' } });
+    expect(await inbox.resolveRoomResult(roomId, resultId, 'dish-session-v4/roadmap-v2/GM-07.B-supplement')).toEqual({
+      ok: true, data: { roomId, destination: 'result', resultId, resultContract: 'canonical' },
+    });
+    expect(await inbox.resolveRoomResult(roomId, uuidFrom('stale-result'), 'dish-session-v4/roadmap-v2/GM-07.B-supplement')).toEqual({ ok: false, error: { messageKey: 'VERSION_CONFLICT' } });
     expect(roomRepository.getRoomSnapshot).toHaveBeenCalledTimes(3);
+  });
+
+  test('routes a legacy result inbox item through the authenticated legacy snapshot RPC', async () => {
+    const roomId = uuidFrom('legacy-inbox-room');
+    const resultId = uuidFrom('legacy-inbox-result');
+    const result = { roomId, resultId, policyVersion: 'decision-v2', matchTier: 'PERFECT', reasonCode: 'UNANIMOUS_WANT' };
+    const legacySnapshot = { roomId, state: 'COMPLETED', result };
+    const client = { getRoomSnapshot: jest.fn().mockResolvedValue({ ok: true, data: legacySnapshot }) } as unknown as ApiClient;
+    const canonicalRead = jest.fn();
+    const repository = {
+      getApiClient: () => client,
+      getSessionApi: () => undefined,
+      getCurrentUser: () => user,
+      getSessionStatus: () => 'active',
+      getSessionSnapshot: () => ({ status: 'active', user, issue: 'none' }),
+      getRoomSnapshot: canonicalRead,
+    } as unknown as RoomRepository;
+    const inbox = createInboxRepository(repository);
+
+    expect(await inbox.resolveRoomResult(roomId, resultId)).toEqual({
+      ok: true,
+      data: { roomId, destination: 'result', resultId, resultContract: 'legacy' },
+    });
+    expect(client.getRoomSnapshot).toHaveBeenCalledWith(roomId);
+    expect(canonicalRead).not.toHaveBeenCalled();
   });
 
   test('resolves a canonical inbox result through ApiClientImpl and the GM-07.B snapshot RPC', async () => {
@@ -362,9 +389,9 @@ describe('Social, inbox, and history live adapters', () => {
 
     expect((await h.repository.restoreSession()).ok).toBe(true);
     const inbox = createInboxRepository(h.repository);
-    expect(await inbox.resolveRoomResult(roomId, resultId)).toEqual({
+    expect(await inbox.resolveRoomResult(roomId, resultId, 'dish-session-v4/roadmap-v2/GM-07.B-supplement')).toEqual({
       ok: true,
-      data: { roomId, destination: 'result', resultId },
+      data: { roomId, destination: 'result', resultId, resultContract: 'canonical' },
     });
     expect(calls).toEqual([{
       rpc: 'dish_session',
@@ -386,8 +413,8 @@ describe('Social, inbox, and history live adapters', () => {
     } as unknown as RoomRepository;
     const inbox = createInboxRepository(repo);
 
-    expect(await inbox.resolveRoomResult(roomId, uuidFrom('result-a'))).toEqual({ ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } });
-    expect(await inbox.resolveRoomResult(roomId, uuidFrom('result-a'))).toEqual({ ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } });
+    expect(await inbox.resolveRoomResult(roomId, uuidFrom('result-a'), 'dish-session-v4/roadmap-v2/GM-07.B-supplement')).toEqual({ ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } });
+    expect(await inbox.resolveRoomResult(roomId, uuidFrom('result-a'), 'dish-session-v4/roadmap-v2/GM-07.B-supplement')).toEqual({ ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } });
   });
 
   test('history cache is scoped to the authenticated identity and cleared after consent or logout cleanup', async () => {

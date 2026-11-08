@@ -167,7 +167,7 @@ export function LiveHistoryScreen({ repository, onNavigate, onHome }: Props) {
                 <View style={[styles.dishIcon, { backgroundColor: colors.warm }]}>{decided ? <BowlIcon /> : <NoodlesIcon />}</View>
                 <View style={styles.cardCopy}>
                   <Text numberOfLines={2} style={[styles.cardTitle, { color: colors.text }]}>{decided ? winner ?? historyTitle(item) : 'Chưa chốt món'}</Text>
-                  <Text style={[styles.caption, { color: colors.muted }]}>{new Date(date).toLocaleDateString()}{canonical && item.memberCount ? ` · ${item.memberCount} thành viên` : !canonical ? ` · ${item.memberCount} thành viên` : ''}</Text>
+                  <Text style={[styles.caption, { color: colors.muted }]}>{historyCardMetadata(item, date)}</Text>
                 </View>
               </View>
               {scored && scored.topDishes.length > 1 ? <View style={styles.rankList}>
@@ -281,6 +281,26 @@ function SavedHistoryDetail({ item, largeText, colors, onBack, onCreateNew, onDe
 function formatHistoryDate(value: string): string {
   const timestamp = Date.parse(value);
   return Number.isFinite(timestamp) ? new Date(timestamp).toLocaleString() : 'Không rõ';
+}
+
+function historyCardMetadata(item: HistoryRow, date: string): string {
+  const timestamp = Date.parse(date);
+  const mealDate = Number.isFinite(timestamp) ? new Date(timestamp) : undefined;
+  const today = new Date();
+  let when = 'Không rõ';
+  if (mealDate) {
+    const dayStart = (value: Date) => new Date(value.getFullYear(), value.getMonth(), value.getDate()).getTime();
+    const ageDays = Math.floor((dayStart(today) - dayStart(mealDate)) / 86_400_000);
+    when = ageDays === 0 ? 'Hôm nay' : ageDays === 1 ? 'Hôm qua'
+      : mealDate.getFullYear() === today.getFullYear()
+        ? `${mealDate.getDate()}/${mealDate.getMonth() + 1}`
+        : mealDate.toLocaleDateString('vi-VN');
+  }
+  const names = 'historyId' in item
+    ? item.participants?.map(participant => participant.displayName.trim()).filter(Boolean).slice(0, 3) ?? []
+    : [];
+  const people = names.length ? names.join(', ') : item.memberCount ? `${item.memberCount} thành viên` : '';
+  return people ? `${when} · ${people}` : when;
 }
 
 function ConsentChoice({ title, scope, disabled, onChoose, largeText, colors }: {

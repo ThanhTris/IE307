@@ -66,3 +66,19 @@
 - Expected behavior: mark every current unread, unexpired item for the authenticated caller as read, including items outside the 50-row display page, and show completion only after the server ACK.
 - Actual behavior: the app displayed one unread invite; after tapping, it showed the server confirmation and a server-side readback returned one read and zero unread. Evidence: [app screenshot](artifacts/2026-11-08/inbox-read-all-live.png), [manifest and hashes](artifacts/2026-11-08-inbox-read-all/manifest.json).
 - This is a functional interaction result. A new side-by-side Figma export comparison was not performed for this supplement; the earlier finding that overall layout parity is Partial/Fail remains. The user-visible floating gear in the screenshot is Expo Go's development menu, not part of the product UI.
+
+## PR #126 four review findings follow-up — 2026-11-08
+
+- Deterministic sample data is now aligned with the approved Friends, Inbox and History examples so captures compare equivalent states. The development-only /dev/gm28-parity route injects fixed repositories into the actual live-screen components; it does not call Auth, REST, or mutate data.
+- Android Studio AVD: Medium_Phone_API_37.0, Android 17/API 37, Expo Go 58.0.5, 1080×2400 at density 420 (about 412dp), font scale 1.0 for reference-state captures.
+
+| Approved Figma frame | Aligned sample state | AVD capture | Finding |
+|---|---|---|---|
+| Friends 330:3076 | 2 friends (Linh, Nam), 1 incoming request (An Nguyễn) | [Friends 412dp](artifacts/2026-11-08-pr126-four-findings/gm28-friends-figma-fixture-412dp-100pct.png) | Sample data alignment is clear. Visual composition remains Partial. |
+| Inbox 330:3079 | 2 incoming invitations plus prior decided and no-consensus result notifications | [Inbox 412dp](artifacts/2026-11-08-pr126-four-findings/gm28-inbox-figma-fixture-412dp-100pct.png) | Sample data alignment is clear. Button labels follow the current product request (“Chấp nhận” / “Từ chối”); other layout/text differences remain. |
+| History 330:3081 | 2 decided entries with scores and participant projections, plus 1 no-consensus entry | [History 412dp](artifacts/2026-11-08-pr126-four-findings/gm28-history-figma-fixture-412dp-100pct.png) | Sample data alignment is clear. Visual composition remains Partial. |
+
+- Responsive captures: [Friends 360dp/200%](artifacts/2026-11-08-pr126-four-findings/gm28-friends-360dp-200pct.png), [Friends 320dp/200%](artifacts/2026-11-08-pr126-four-findings/gm28-friends-320dp-200pct.png), and [History 320dp/200%](artifacts/2026-11-08-pr126-four-findings/gm28-history-320dp-200pct.png). The four bottom tabs and wrapped labels remain visible; content scrolls above the fixed navigation.
+- Accessibility observation: [TalkBack at 320dp/200%](artifacts/2026-11-08-pr126-four-findings/gm28-talkback-add-friend-320dp-200pct.png) shows focus and activation of the Add Friend action. It does not include a full utterance transcript or exhaustive focus traversal.
+- Bottom navigation changes make all four tab labels fit. History metadata now shows a relative date and consent-projected participant names where present, with member count as fallback. This improves data/text parity but does not establish pixel parity.
+- Overall status remains **Partial**, not Pass: sample data is fixture-only; component details still differ from Figma; no pixel-diff was run; full TalkBack narration remains unverified. These screenshots do not establish API/runtime behavior. The emulator was restored to 1080×2400, font scale 1.0, density 420 and TalkBack off; it is displaying the Friends fixture for inspection.

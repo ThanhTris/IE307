@@ -74,7 +74,7 @@ test('inbox remains available with denied push permission and confirms invite ac
   await render(<InboxScreen onNavigate={nav} onHome={home} />);
   expect(await screen.findByText('Quyền bị từ chối · bạn vẫn đọc được inbox bên dưới.')).toBeOnTheScreen();
   expect(screen.getByText('Lời mời ăn trưa')).toBeOnTheScreen();
-  await user.press(screen.getByRole('button', { name: 'Chấp nhận Lời mời ăn trưa' }));
+  await user.press(screen.getAllByRole('button', { name: 'Chấp nhận' })[0]!);
   expect(screen.getByText('Chấp nhận lời mời?')).toBeOnTheScreen();
   await user.press(screen.getByRole('button', { name: 'Xác nhận chấp nhận' }));
   expect(await screen.findByText('Đã chấp nhận lời mời trong mock.')).toBeOnTheScreen();
@@ -112,13 +112,39 @@ test('live inbox hides a handled invitation after the server accepts it', async 
     rejectFriend: jest.fn().mockResolvedValue({ ok: true, data: undefined }),
   };
   await render(<LiveInboxScreen repository={repository as any} displayName="Trí" onNavigate={nav} onHome={home} />);
-  await user.press(await screen.findByRole('button', { name: 'Đồng ý' }));
+  await user.press(await screen.findByRole('button', { name: 'Chấp nhận' }));
   await user.press(screen.getByRole('button', { name: 'Xác nhận chấp nhận' }));
 
   expect(await screen.findByText('Chưa có thông báo')).toBeOnTheScreen();
   expect(repository.acceptFriend).toHaveBeenCalledWith('33333333-3333-4333-8333-333333333333');
   expect(repository.markHandled).toHaveBeenCalledWith(item.eventId);
-  expect(screen.queryByRole('button', { name: 'Chấp nhận Lời mời kết bạn' })).toBeNull();
+  expect(screen.queryByRole('button', { name: 'Chấp nhận' })).toBeNull();
+});
+
+test('legacy result notification routes to the read-only legacy result screen', async () => {
+  const user = userEvent.setup();
+  const roomId = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+  const resultId = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
+  const item: InboxItem = {
+    id: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
+    eventId: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+    type: 'room_result',
+    title: 'Phòng đã có kết quả',
+    body: 'Mở kết quả đã chốt',
+    read: true,
+    metadata: { roomId, resultId },
+    createdAt: '2026-11-08T00:00:00Z',
+  };
+  const repository = {
+    list: jest.fn().mockResolvedValue({ ok: true, data: { items: [item], fetchedAt: '2026-11-08T00:00:00Z' } }),
+    resolveRoomResult: jest.fn().mockResolvedValue({ ok: true, data: { roomId, destination: 'result', resultId, resultContract: 'legacy' } }),
+  };
+
+  await render(<LiveInboxScreen repository={repository as any} displayName="Trí" onNavigate={nav} onHome={home} />);
+  await user.press(await screen.findByRole('button', { name: 'Mở kết quả: Phòng đã có kết quả' }));
+
+  expect(repository.resolveRoomResult).toHaveBeenCalledWith(roomId, resultId, undefined);
+  expect(nav).toHaveBeenCalledWith(`/inbox-result?roomId=${roomId}&resultId=${resultId}`);
 });
 
 test('live inbox marks all pages read and keeps the request ID after an uncertain response', async () => {
@@ -175,6 +201,7 @@ test('live history opens the saved projection without re-reading the operational
     updateConsent: jest.fn(), delete: jest.fn(), invalidate: jest.fn(),
   };
   await render(<LiveHistoryScreen repository={repository as any} onNavigate={nav} onHome={home} />);
+  expect(await screen.findByText(/Linh, Tú/)).toBeOnTheScreen();
   await user.press(await screen.findByRole('button', { name: 'Xem chi tiết đã lưu' }));
   expect(screen.getByText('Chi tiết bữa ăn')).toBeOnTheScreen();
   expect(screen.getByText('Xếp hạng của nhóm')).toBeOnTheScreen();
@@ -226,22 +253,24 @@ test('inbox passes invitation IDs, distinct from event IDs, for all accept/rejec
   await render(<InboxScreen onNavigate={nav} onHome={home} mockClient={mockClient} />);
   await screen.findByText('Room accept');
 
-  await user.press(screen.getByRole('button', { name: 'Chấp nhận Room accept' }));
+  await user.press(screen.getAllByRole('button', { name: 'Chấp nhận' }).find(button => !button.props.accessibilityState.disabled)!);
   await user.press(screen.getByRole('button', { name: 'Xác nhận chấp nhận' }));
   expect(acceptRoomInvite).toHaveBeenCalledWith({ invitationId: 'room_invite_accept', displayName: 'Bạn mock', requestId: expect.any(String) });
   expect(await screen.findByText('Đã chấp nhận lời mời trong mock.')).toBeOnTheScreen();
 
-  await user.press(screen.getByRole('button', { name: 'Từ chối Room reject' }));
+  await user.press(screen.getAllByRole('button', { name: 'Từ chối' }).find(button => !button.props.accessibilityState.disabled)!);
   await user.press(screen.getByRole('button', { name: 'Xác nhận từ chối' }));
   expect(await screen.findByText('Đã từ chối lời mời trong mock.')).toBeOnTheScreen();
   expect(rejectRoomInvite).toHaveBeenCalledWith('room_invite_reject', expect.any(String));
 
-  await user.press(screen.getByRole('button', { name: 'Chấp nhận Friend accept' }));
+  const enabledAccept = screen.getAllByRole('button', { name: 'Chấp nhận' }).find(button => !button.props.accessibilityState.disabled);
+  expect(enabledAccept).toBeDefined();
+  await user.press(enabledAccept!);
   await user.press(screen.getByRole('button', { name: 'Xác nhận chấp nhận' }));
   expect(await screen.findByText('Đã chấp nhận lời mời trong mock.')).toBeOnTheScreen();
   expect(acceptPartner).toHaveBeenCalledWith('friend_invite_accept', expect.any(String));
 
-  await user.press(screen.getByRole('button', { name: 'Từ chối Friend reject' }));
+  await user.press(screen.getAllByRole('button', { name: 'Từ chối' }).find(button => !button.props.accessibilityState.disabled)!);
   await user.press(screen.getByRole('button', { name: 'Xác nhận từ chối' }));
   expect(await screen.findByText('Đã từ chối lời mời trong mock.')).toBeOnTheScreen();
   expect(rejectPartner).toHaveBeenCalledWith('friend_invite_reject', expect.any(String));
@@ -259,10 +288,12 @@ test('inbox disables expired invitations and entries without an invitation refer
   await render(<InboxScreen onNavigate={nav} onHome={home} mockClient={mockClient} />);
   await screen.findByText('Room accept');
   expect(screen.getByText('Lời mời đã hết hạn; thao tác bị khóa.')).toBeOnTheScreen();
-  expect(screen.getByRole('button', { name: 'Chấp nhận Expired invite' }).props.accessibilityState.disabled).toBe(true);
+  expect(screen.getAllByRole('button', { name: 'Chấp nhận' }).some(button => button.props.accessibilityState.disabled)).toBe(true);
   expect(screen.getByText('Thiếu mã lời mời; không thể xử lý mục này.')).toBeOnTheScreen();
-  expect(screen.getByRole('button', { name: 'Từ chối Missing reference' }).props.accessibilityState.disabled).toBe(true);
-  await user.press(screen.getByRole('button', { name: 'Chấp nhận Expired invite' }));
+  expect(screen.getAllByRole('button', { name: 'Từ chối' }).some(button => button.props.accessibilityState.disabled)).toBe(true);
+  const disabledAccept = screen.getAllByRole('button', { name: 'Chấp nhận' }).find(button => button.props.accessibilityState.disabled);
+  expect(disabledAccept).toBeDefined();
+  await user.press(disabledAccept!);
   expect(screen.queryByText('Chấp nhận lời mời?')).toBeNull();
 });
 

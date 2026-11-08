@@ -11,7 +11,7 @@ export interface InboxPage {
   fetchedAt: string;
 }
 export type RoomDestination = 'lobby' | 'vote' | 'final-round' | 'result' | 'no-consensus';
-export interface ResolvedRoom { roomId: string; destination: RoomDestination; resultId?: string }
+export interface ResolvedRoom { roomId: string; destination: RoomDestination; resultId?: string; resultContract?: 'canonical' | 'legacy' }
 export interface InboxRepository {
   list(cursor?: string, knownEventIds?: ReadonlySet<string>): Promise<ReadResult<InboxPage>>;
   markAllRead(requestId: string): Promise<WriteResult<void>>;
@@ -22,7 +22,7 @@ export interface InboxRepository {
   acceptRoom(invitationId: string, displayName: string): Promise<WriteResult<JoinRoomResponse>>;
   rejectRoom(invitationId: string): Promise<WriteResult<void>>;
   resolveAcceptedRoom(roomId: string): Promise<ReadResult<ResolvedRoom>>;
-  resolveRoomResult(roomId: string, resultId: string): Promise<ReadResult<ResolvedRoom>>;
+  resolveRoomResult(roomId: string, resultId: string, contractVersion?: string): Promise<ReadResult<ResolvedRoom>>;
 }
 
 const PAGE_SIZE = 50;
@@ -73,10 +73,14 @@ export function createInboxRepository(roomRepository: RoomRepository): InboxRepo
     }
     return handled;
   };
-  const resolveRoom = async (roomId: string, expectedResultId?: string): Promise<ReadResult<ResolvedRoom>> => {
+  const resolveRoom = async (roomId: string, expectedResultId?: string, resultContract?: 'canonical' | 'legacy'): Promise<ReadResult<ResolvedRoom>> => {
     if (!UUID.test(roomId) || (expectedResultId !== undefined && !UUID.test(expectedResultId))) return { ok: false, error: { messageKey: 'INVALID_INPUT' } };
-    // RoomRepository owns the canonical dish_session(snapshot) path and its session guard.
-    const response = await roomRepository.getRoomSnapshot(roomId);
+    // Legacy GM-07 notifications contain only roomId/resultId. Read them through the
+    // authenticated legacy snapshot RPC; sending them to dish_session v4 returns 409.
+    // Canonical notifications must stay on the canonical path and never fall back.
+    const response = resultContract === 'legacy'
+      ? await callSessionApi(roomRepository, client => client.getRoomSnapshot(roomId))
+      : await roomRepository.getRoomSnapshot(roomId);
     if (!response.ok) return response;
     const snapshot = response.data;
     const raw = snapshot as unknown as Record<string, unknown>;
@@ -91,16 +95,30 @@ export function createInboxRepository(roomRepository: RoomRepository): InboxRepo
     if (state === 'ROUND_2' || state === 'WAITING_2') return expectedResultId
       ? { ok: false, error: { messageKey: 'VERSION_CONFLICT' } }
       : { ok: true, data: { roomId: snapshot.roomId, destination: 'final-round' } };
-    if (state === 'DECIDED' || state === 'NO_CONSENSUS') {
+    const legacyTerminal = resultContract === 'legacy' && (state === 'FINALIZED' || state === 'COMPLETED');
+    if (state === 'DECIDED' || state === 'NO_CONSENSUS' || legacyTerminal) {
       const result = raw.result;
       const actualResultId = isRecord(result) && typeof result.resultId === 'string' && UUID.test(result.resultId)
         ? result.resultId
         : undefined;
       if (!actualResultId) return { ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } };
+      if (resultContract === 'legacy' && (!isRecord(result) || result.policyVersion !== 'decision-v2' || result.roomId !== roomId)) {
+        return { ok: false, error: { messageKey: 'CONTRACT_MISMATCH' } };
+      }
+      if (resultContract === 'canonical' && (!isRecord(result) || !CONTRACTS.has(String(result.contractVersion)))) {
+        return { ok: false, error: { messageKey: 'CONTRACT_MISMATCH' } };
+      }
       if (expectedResultId && actualResultId !== expectedResultId) {
         return { ok: false, error: { messageKey: 'VERSION_CONFLICT' } };
       }
-      return { ok: true, data: { roomId: snapshot.roomId, destination: state === 'DECIDED' ? 'result' : 'no-consensus', resultId: actualResultId } };
+      return { ok: true, data: {
+        roomId: snapshot.roomId,
+        destination: resultContract === 'legacy'
+          ? (isRecord(result) && result.matchTier === 'NO_CONSENSUS' ? 'no-consensus' : 'result')
+          : state === 'DECIDED' ? 'result' : 'no-consensus',
+        resultId: actualResultId,
+        ...(resultContract ? { resultContract } : {}),
+      } };
     }
     return { ok: false, error: { messageKey: state === 'EXPIRED' ? 'ROOM_EXPIRED' : 'ROOM_TERMINAL' } };
   };
@@ -139,6 +157,11 @@ export function createInboxRepository(roomRepository: RoomRepository): InboxRepo
     acceptRoom: (invitationId, displayName) => callSessionApi(roomRepository, client => client.acceptRoomInvite({ invitationId, displayName, requestId: createDurableRequestId('room_invite_accept') })),
     rejectRoom: invitationId => callSessionApi(roomRepository, client => client.rejectRoomInvite(invitationId, createDurableRequestId('room_invite_reject'))),
     resolveAcceptedRoom: roomId => resolveRoom(roomId),
-    resolveRoomResult: (roomId, resultId) => resolveRoom(roomId, resultId),
+    resolveRoomResult: (roomId, resultId, contractVersion) => {
+      if (contractVersion !== undefined && !CONTRACTS.has(contractVersion)) {
+        return Promise.resolve({ ok: false, error: { messageKey: 'CONTRACT_MISMATCH' } });
+      }
+      return resolveRoom(roomId, resultId, contractVersion === undefined ? 'legacy' : 'canonical');
+    },
   };
 }

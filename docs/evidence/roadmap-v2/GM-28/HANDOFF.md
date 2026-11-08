@@ -89,3 +89,11 @@ GM-29 consumes the inbox/repository foundations and owns native permission/token
   with the same run ID.
 - The existing AVD screenshots are from the earlier local prototype of read-all. See [CHECKS](CHECKS.md)
   for the evidence on the migration in this PR and the remaining Chặng 3A checks.
+
+## PR #126 four review findings follow-up — 2026-11-08
+
+- Legacy room_result inbox rows with exactly roomId and resultId now use the authenticated legacy get_room_snapshot adapter and open the read-only /inbox-result route. Versioned canonical rows continue through the GM-07.B snapshot path; unsupported versions fail closed, with no cross-contract fallback. Repository and component regressions pass. A live legacy API request on the AVD remains Not run.
+- The bottom navigation wraps labels inside each equal-width tab so all four tab labels remain visible at 320dp and 360dp with 200% font scale. Page content scrolls independently.
+- The development-only /dev/gm28-parity route renders fixed Figma sample fixtures through the same Friends, Inbox and History screens. It never calls the API and is not evidence of backend/API success.
+- AVD TalkBack observation reached brand → notifications → Add Friend by focus navigation; Enter opened the dialog without sending. A full spoken-label transcript and full screen traversal are not evidenced.
+- See [CHECKS](CHECKS.md), [FIGMA_PARITY](FIGMA_PARITY.md), [follow-up matrix](artifacts/2026-11-08-pr126-four-findings/FOLLOWUP.md), and [manifest](artifacts/2026-11-08-pr126-four-findings/manifest.json). Overall visual parity remains Partial. The AVD is Expo Go on an emulator, not a physical device or native build.

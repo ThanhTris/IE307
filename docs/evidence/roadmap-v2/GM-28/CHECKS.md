@@ -158,3 +158,23 @@ This follow-up supersedes the prior “saved canonical result unavailable” sta
   `READY_FOR_MERGE_REVIEW` against main `8b26c3f` after restoring the shared GM-07 API files to the target revision.
 - AVD with the final GM-28.1 migration, full Figma parity and complete TalkBack remain **Not run** for this
   revision. The historical prototype run above is retained as prior evidence.
+
+### PR #126 four review findings follow-up — 2026-11-08
+
+- Source: PR branch codex/gm-28-social-inbox-history, base 95eb87a052d9f92e14e4db23cce591a2f986ec3c; edits are local and uncommitted. No commit, push, PR update, merge, Project update, or status change was made.
+- Scenario matrix and file hashes: [four-findings follow-up](artifacts/2026-11-08-pr126-four-findings/FOLLOWUP.md) and [manifest](artifacts/2026-11-08-pr126-four-findings/manifest.json).
+
+| Finding | Verification | Result and limit |
+|---|---|---|
+| Legacy result notification called canonical snapshot | Unit test asserts legacy metadata calls authenticated get_room_snapshot and never calls the canonical repository snapshot. Component test asserts the read-only legacy result route. Canonical versioned metadata still calls dish_session(snapshot) and rejects unsupported versions. | **Code + unit/component Pass. Live backend/AVD request Not run.** The cause was routing both wire formats through the v4 snapshot path; a legacy decision-v2 room returns 409 CONTRACT_MISMATCH there. |
+| Bottom navigation labels clipped at narrow width/large text | Inspected Friends and History on Medium_Phone_API_37.0 at 360dp/200% and 320dp/200%. | **AVD visual Pass for nav labels** — all four tabs remain visible; page content scrolls independently. Screenshots are linked in the follow-up. |
+| TalkBack focus and activation unclear | TalkBack was enabled for the AVD check. Focus advanced through brand, notifications and Add Friend; Enter opened the Add Friend dialog without sending an invitation. | **Partial.** Focus/activation observed; complete spoken-utterance transcript and full screen-by-screen traversal were not captured, so full TalkBack acceptance remains Not run. TalkBack was disabled afterward. |
+| Figma captures used different data states | Added a development-only /dev/gm28-parity route with fixed sample repositories. Captured Friends (2 friends/1 pending invite), Inbox (2 current invitations and prior result states), and History (2 decided results and 1 no-consensus entry). | **Semantic sample alignment Pass; visual parity Partial.** The route uses local fixture data and does not call API. Remaining composition/details are recorded in FIGMA_PARITY.md; do not claim full Figma parity. |
+
+- Device: Android Studio AVD Medium_Phone_API_37.0, Android 17/API 37, Expo Go 58.0.5. Final screenshot is 1080×2400 at density 420 (about 412dp), font scale 1.0. Settings were restored after 320/360dp and 200% checks.
+- API boundary: an owned disposable QA runtime was verified and stopped/cleaned. No JWT-backed live social/history HTTP run or AVD-to-API result-open test was performed in this follow-up. No application database was used or reset.
+- npm run check: **72 suites / 1,363 Jest tests passed**, TypeScript passed, ESLint had no errors (4 existing warnings), architecture check passed.
+- npm run check:expo: passed with “dependencies up to date”; the tool noted dependency validation is unreliable in offline mode.
+- npm run bundle:android: passed; Android bundle exported with 1,722 entry modules.
+- Python repository regression: **664 passed, 2 skipped**.
+- Repository validator, task-doc index and git diff --check: passed. Diff check emitted only LF-to-CRLF working-copy notices.
