@@ -53,3 +53,10 @@ An owned disposable backend QA runtime passed qa:verify against schema 0.9.2 / G
 - Visual parity remains Partial: the Figma data states are aligned, but some component/layout details differ and no pixel-diff was run.
 - Evidence is from Expo Go on an Android emulator. It is not physical-device or native-development-build evidence.
 - No commit, push, PR update, merge, Project update, or task-status change was made.
+
+## Post-push readiness follow-up — 2026-11-08
+
+- The readiness gate first identified that the short mock invitation labels changed GM-14's InboxScreen artifact. That mock-only change was restored to the upstream content. The live Inbox continues to show the short “Chấp nhận” and “Từ chối” labels requested by the owner.
+- The relevant component suite then passed 13/13; TypeScript and ESLint passed.
+- Readiness returned READY_FOR_MERGE_REVIEW against origin/main 8b26c3f96d46dff57c1b0857a13e8f1144e0a1cb after the GM-14 artifact was restored.
+- GitHub CI on the first pushed revision b19ad9e passed all 19 checks after rerunning GM-18. Its first attempt had a Docker port 54322 bind collision; the rerun completed the SQL and authenticated HTTP steps successfully. This scope-correction commit triggers a separate CI run.

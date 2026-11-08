@@ -4,9 +4,9 @@
   "runId": "2026-11-08-pr126-four-findings",
   "capturedAtLocal": "2026-11-08 Asia/Bangkok",
   "branch": "codex/gm-28-social-inbox-history",
-  "baseRevision": "95eb87a052d9f92e14e4db23cce591a2f986ec3c",
-  "workingTreeDirty": true,
-  "commitCreated": false,
+  "artifactCaptureSourceHead": "95eb87a052d9f92e14e4db23cce591a2f986ec3c",
+  "manifestPreparedOnBranchHead": "b19ad9ef6c500f9981eba83a15d963029dcaa9a1",
+  "workingTreeDirtyWhenManifestPrepared": true,
   "device": {
     "kind": "Android Studio AVD",
     "name": "Medium_Phone_API_37.0",
@@ -28,45 +28,57 @@
     {
       "id": "legacy-result-open",
       "result": "Unit/component Pass; live HTTP Not run",
+      "expected": "Legacy roomId/resultId metadata uses authenticated get_room_snapshot; canonical metadata uses dish_session(snapshot), with no fallback.",
       "evidence": [
         "mobile/tests/unit/socialInboxHistoryRepositories.test.ts",
         "mobile/tests/component/socialAndHistoryScreens.test.tsx"
-      ],
-      "expected": "Legacy roomId/resultId metadata uses authenticated get_room_snapshot; canonical metadata uses dish_session(snapshot); no cross-contract fallback."
+      ]
     },
     {
       "id": "bottom-navigation-320-360dp-large-text",
       "result": "AVD visual Pass for labels",
+      "expected": "All four tab labels remain visible at 320dp/360dp and 200% font scale.",
       "evidence": [
         "gm28-friends-320dp-200pct.png",
         "gm28-friends-360dp-200pct.png",
         "gm28-history-320dp-200pct.png"
-      ],
-      "expected": "All four tab labels remain visible at 320dp/360dp and 200% font scale."
+      ]
     },
     {
       "id": "talkback-focus-activation",
       "result": "Partial",
+      "expected": "Focus/activation observed; full spoken transcript and exhaustive traversal not captured.",
       "evidence": [
         "gm28-talkback-add-friend-320dp-200pct.png"
-      ],
-      "expected": "Focus/activation observed; full spoken transcript and exhaustive traversal not captured."
+      ]
     },
     {
       "id": "figma-sample-state-alignment",
       "result": "Semantic data alignment Pass; visual parity Partial",
+      "expected": "Equivalent sample data for Friends, Inbox and History; fixture route is development-only, not live API.",
       "evidence": [
         "gm28-friends-figma-fixture-412dp-100pct.png",
         "gm28-inbox-figma-fixture-412dp-100pct.png",
         "gm28-history-figma-fixture-412dp-100pct.png"
-      ],
-      "expected": "Equivalent sample data for Friends, Inbox, History; development-only fixture route, not live API."
+      ]
     }
   ],
   "automatedChecks": [
     {
       "command": "cd mobile; npm run check",
-      "result": "Pass: TypeScript, ESLint (0 errors; 4 existing warnings), 72 suites / 1363 Jest tests, architecture."
+      "result": "Pass before GM-14 mock-file restoration: TypeScript, ESLint (0 errors; 4 existing warnings), 72 suites / 1363 Jest tests, architecture."
+    },
+    {
+      "command": "cd mobile; npm test -- --runInBand tests/component/socialAndHistoryScreens.test.tsx",
+      "result": "Pass after restoring GM-14 InboxScreen: 1 suite / 13 tests."
+    },
+    {
+      "command": "cd mobile; npm run typecheck",
+      "result": "Pass after GM-14 mock-file restoration."
+    },
+    {
+      "command": "cd mobile; npm run lint",
+      "result": "Pass after GM-14 mock-file restoration."
     },
     {
       "command": "cd mobile; npm run check:expo",
@@ -93,6 +105,12 @@
       "result": "Pass; LF-to-CRLF working-copy notices only."
     }
   ],
+  "github": {
+    "priorCommit": "b19ad9ef6c500f9981eba83a15d963029dcaa9a1",
+    "ci": "19/19 Pass after rerunning GM-18; initial run hit Docker host port 54322 bind conflict",
+    "scopeCorrection": "GM-14 InboxScreen restored; separate CI run required for the correction",
+    "mergeReadinessAfterCorrection": "READY_FOR_MERGE_REVIEW against origin/main 8b26c3f96d46dff57c1b0857a13e8f1144e0a1cb"
+  },
   "sourceFiles": [
     {
       "path": "mobile/src/features/history/screens/LiveHistoryScreen.tsx",
@@ -100,7 +118,7 @@
     },
     {
       "path": "mobile/src/features/inbox/screens/InboxScreen.tsx",
-      "sha256": "ffffce0e345bf6a0000e0b5dd058c418817cb727e8bea4981a85b2ebf8baf995"
+      "sha256": "79a01f15a840f08e0517265ec670385e2559c22db8ac87b4463710284b18b84a"
     },
     {
       "path": "mobile/src/features/inbox/screens/LiveInboxScreen.tsx",
@@ -132,7 +150,7 @@
     },
     {
       "path": "mobile/tests/component/socialAndHistoryScreens.test.tsx",
-      "sha256": "a0ff10fe6eecae4eed3e7d346d72f1dac3bda6f6d39fc6c4a9e744b0366cc8fb"
+      "sha256": "52632295324cac1c0caac4d822f178982c0e665947fd43d6dd2052febfc9f147"
     },
     {
       "path": "mobile/tests/unit/socialInboxHistoryRepositories.test.ts",
@@ -140,7 +158,7 @@
     },
     {
       "path": "docs/evidence/roadmap-v2/GM-28/CHECKS.md",
-      "sha256": "268a637c3e615f9dc39d7e96efea598c871a45beea43555c6cbc41e313791ac7"
+      "sha256": "860927fba496c4d0727549f4e732945f10a339d42b93bfda2ebe44476767b4b8"
     },
     {
       "path": "docs/evidence/roadmap-v2/GM-28/HANDOFF.md",
@@ -152,7 +170,7 @@
     },
     {
       "path": "docs/evidence/roadmap-v2/GM-28/artifacts/2026-11-08-pr126-four-findings/FOLLOWUP.md",
-      "sha256": "7f207785528e0891e67aa2bdf9eb041128bbaba09be60fc87909de430755c7a5"
+      "sha256": "6f3d3c65d476ea9509ee63caaad7347195642bf7ec9971deb15f5ca7a1309625"
     }
   ],
   "screenshots": [

@@ -74,7 +74,7 @@ test('inbox remains available with denied push permission and confirms invite ac
   await render(<InboxScreen onNavigate={nav} onHome={home} />);
   expect(await screen.findByText('Quyền bị từ chối · bạn vẫn đọc được inbox bên dưới.')).toBeOnTheScreen();
   expect(screen.getByText('Lời mời ăn trưa')).toBeOnTheScreen();
-  await user.press(screen.getAllByRole('button', { name: 'Chấp nhận' })[0]!);
+  await user.press(screen.getByRole('button', { name: 'Chấp nhận Lời mời ăn trưa' }));
   expect(screen.getByText('Chấp nhận lời mời?')).toBeOnTheScreen();
   await user.press(screen.getByRole('button', { name: 'Xác nhận chấp nhận' }));
   expect(await screen.findByText('Đã chấp nhận lời mời trong mock.')).toBeOnTheScreen();
@@ -253,24 +253,24 @@ test('inbox passes invitation IDs, distinct from event IDs, for all accept/rejec
   await render(<InboxScreen onNavigate={nav} onHome={home} mockClient={mockClient} />);
   await screen.findByText('Room accept');
 
-  await user.press(screen.getAllByRole('button', { name: 'Chấp nhận' }).find(button => !button.props.accessibilityState.disabled)!);
+  await user.press(screen.getAllByRole('button', { name: /^Chấp nhận / }).find(button => !button.props.accessibilityState.disabled)!);
   await user.press(screen.getByRole('button', { name: 'Xác nhận chấp nhận' }));
   expect(acceptRoomInvite).toHaveBeenCalledWith({ invitationId: 'room_invite_accept', displayName: 'Bạn mock', requestId: expect.any(String) });
   expect(await screen.findByText('Đã chấp nhận lời mời trong mock.')).toBeOnTheScreen();
 
-  await user.press(screen.getAllByRole('button', { name: 'Từ chối' }).find(button => !button.props.accessibilityState.disabled)!);
+  await user.press(screen.getAllByRole('button', { name: /^Từ chối / }).find(button => !button.props.accessibilityState.disabled)!);
   await user.press(screen.getByRole('button', { name: 'Xác nhận từ chối' }));
   expect(await screen.findByText('Đã từ chối lời mời trong mock.')).toBeOnTheScreen();
   expect(rejectRoomInvite).toHaveBeenCalledWith('room_invite_reject', expect.any(String));
 
-  const enabledAccept = screen.getAllByRole('button', { name: 'Chấp nhận' }).find(button => !button.props.accessibilityState.disabled);
+  const enabledAccept = screen.getAllByRole('button', { name: /^Chấp nhận / }).find(button => !button.props.accessibilityState.disabled);
   expect(enabledAccept).toBeDefined();
   await user.press(enabledAccept!);
   await user.press(screen.getByRole('button', { name: 'Xác nhận chấp nhận' }));
   expect(await screen.findByText('Đã chấp nhận lời mời trong mock.')).toBeOnTheScreen();
   expect(acceptPartner).toHaveBeenCalledWith('friend_invite_accept', expect.any(String));
 
-  await user.press(screen.getAllByRole('button', { name: 'Từ chối' }).find(button => !button.props.accessibilityState.disabled)!);
+  await user.press(screen.getAllByRole('button', { name: /^Từ chối / }).find(button => !button.props.accessibilityState.disabled)!);
   await user.press(screen.getByRole('button', { name: 'Xác nhận từ chối' }));
   expect(await screen.findByText('Đã từ chối lời mời trong mock.')).toBeOnTheScreen();
   expect(rejectPartner).toHaveBeenCalledWith('friend_invite_reject', expect.any(String));
@@ -288,10 +288,10 @@ test('inbox disables expired invitations and entries without an invitation refer
   await render(<InboxScreen onNavigate={nav} onHome={home} mockClient={mockClient} />);
   await screen.findByText('Room accept');
   expect(screen.getByText('Lời mời đã hết hạn; thao tác bị khóa.')).toBeOnTheScreen();
-  expect(screen.getAllByRole('button', { name: 'Chấp nhận' }).some(button => button.props.accessibilityState.disabled)).toBe(true);
+  expect(screen.getAllByRole('button', { name: /^Chấp nhận / }).some(button => button.props.accessibilityState.disabled)).toBe(true);
   expect(screen.getByText('Thiếu mã lời mời; không thể xử lý mục này.')).toBeOnTheScreen();
-  expect(screen.getAllByRole('button', { name: 'Từ chối' }).some(button => button.props.accessibilityState.disabled)).toBe(true);
-  const disabledAccept = screen.getAllByRole('button', { name: 'Chấp nhận' }).find(button => button.props.accessibilityState.disabled);
+  expect(screen.getAllByRole('button', { name: /^Từ chối / }).some(button => button.props.accessibilityState.disabled)).toBe(true);
+  const disabledAccept = screen.getAllByRole('button', { name: /^Chấp nhận / }).find(button => button.props.accessibilityState.disabled);
   expect(disabledAccept).toBeDefined();
   await user.press(disabledAccept!);
   expect(screen.queryByText('Chấp nhận lời mời?')).toBeNull();
