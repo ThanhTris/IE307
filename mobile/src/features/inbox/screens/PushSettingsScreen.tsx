@@ -39,9 +39,15 @@ export function PushSettingsScreen({ repository, onHome, onInbox }: {
     if (busy) return;
     setBusy(true);
     setMessage('');
+    const userId = repository.getCurrentUser()?.id;
+    const identityRevision = (repository as RoomRepository & { getIdentityRevision?: () => number }).getIdentityRevision?.() ?? 0;
+    const isIdentityCurrent = () => repository.getSessionStatus() === 'active'
+      && repository.getCurrentUser()?.id === userId
+      && ((repository as RoomRepository & { getIdentityRevision?: () => number }).getIdentityRevision?.() ?? 0) === identityRevision;
     const service = createNativePushService({
       driver: expoPushDriver,
       client: repository.getApiClient(),
+      isIdentityCurrent,
       refreshInbox: async () => undefined,
     });
     try {
@@ -63,12 +69,18 @@ export function PushSettingsScreen({ repository, onHome, onInbox }: {
     if (busy) return;
     setBusy(true);
     setMessage('');
+    const userId = repository.getCurrentUser()?.id;
+    const identityRevision = (repository as RoomRepository & { getIdentityRevision?: () => number }).getIdentityRevision?.() ?? 0;
+    const isIdentityCurrent = () => repository.getSessionStatus() === 'active'
+      && repository.getCurrentUser()?.id === userId
+      && ((repository as RoomRepository & { getIdentityRevision?: () => number }).getIdentityRevision?.() ?? 0) === identityRevision;
     try {
       const deviceId = await getPushDeviceId();
       if (deviceId) {
         const service = createNativePushService({
           driver: expoPushDriver,
           client: repository.getApiClient(),
+          isIdentityCurrent,
           refreshInbox: async () => undefined,
         });
         const result = await service.unregister(deviceId);

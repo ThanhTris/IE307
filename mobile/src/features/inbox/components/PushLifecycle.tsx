@@ -15,7 +15,9 @@ export function PushLifecycle() {
     const userId = repository.getCurrentUser()?.id;
     const identityRevision = (repository as typeof repository & { getIdentityRevision?: () => number }).getIdentityRevision?.() ?? 0;
     if (!userId || repository.getSessionStatus() !== 'active') return;
+    let active = true;
     const isIdentityCurrent = () => repository.getSessionStatus() === 'active'
+      && active
       && repository.getCurrentUser()?.id === userId
       && ((repository as typeof repository & { getIdentityRevision?: () => number }).getIdentityRevision?.() ?? 0) === identityRevision;
     const service = createNativePushService({
@@ -24,12 +26,13 @@ export function PushLifecycle() {
       isIdentityCurrent,
       refreshInbox: async () => {
         const restored = await repository.restoreSession();
-        if (!restored.ok || repository.getSessionStatus() !== 'active') return;
+        if (!restored.ok || !isIdentityCurrent()) return;
         const inbox = await repository.getApiClient().listPartnerInbox();
-        if (inbox.ok) router.replace('/inbox');
+        if (inbox.ok && isIdentityCurrent()) router.replace('/inbox');
       },
     });
-    return service.subscribe();
+    const unsubscribe = service.subscribe();
+    return () => { active = false; unsubscribe(); };
   }, [router, session.mode, session.repository, session.user?.id, session.status]);
 
   return null;

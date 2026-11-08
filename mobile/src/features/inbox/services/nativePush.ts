@@ -20,13 +20,13 @@ export type PushRegistrationResult =
   | { status: 'registered'; deviceId: string; permission: 'granted' }
   | { status: 'failed'; error: string };
 
-interface DeviceRegistrationState { generation: number; enabled: boolean; queue: Promise<void> }
+interface DeviceRegistrationState { generation: number; enabled: boolean; desiredEnabled: boolean; queue: Promise<void> }
 const deviceRegistrationStates = new Map<string, DeviceRegistrationState>();
 
 function stateFor(deviceId: string): DeviceRegistrationState {
   let state = deviceRegistrationStates.get(deviceId);
   if (!state) {
-    state = { generation: 0, enabled: false, queue: Promise.resolve() };
+    state = { generation: 0, enabled: false, desiredEnabled: false, queue: Promise.resolve() };
     deviceRegistrationStates.set(deviceId, state);
   }
   return state;
@@ -46,20 +46,30 @@ export function createNativePushService({ driver, client, refreshInbox, isIdenti
       if (!driver || driver.availability() !== 'available') return { status: 'unsupported' };
       try {
         const permission = await driver.requestPermission();
+        if (!identityIsCurrent()) return { status: 'failed', error: 'IDENTITY_CHANGED' };
         const deviceId = await driver.getDeviceId();
+        if (!identityIsCurrent()) return { status: 'failed', error: 'IDENTITY_CHANGED' };
         if (!deviceId.trim()) return { status: 'failed', error: 'PUSH_DEVICE_UNAVAILABLE' };
         const state = stateFor(deviceId);
         const generation = ++state.generation;
         state.enabled = false;
+        state.desiredEnabled = false;
         if (permission !== 'granted') return { status: permission, permission };
         const token = await driver.getPushToken();
+        if (!identityIsCurrent() || generation !== state.generation) return { status: 'failed', error: 'IDENTITY_CHANGED' };
         if (!token?.trim()) return { status: 'failed', error: 'PUSH_TOKEN_UNAVAILABLE' };
-        if (!identityIsCurrent()) return { status: 'failed', error: 'IDENTITY_CHANGED' };
+        if (await driver.getPermissionStatus() !== 'granted' || !identityIsCurrent() || generation !== state.generation) {
+          state.desiredEnabled = false;
+          return { status: 'failed', error: 'PUSH_PERMISSION_NOT_GRANTED' };
+        }
+        // Keep an explicit registration intent after a network error so a later
+        // foreground token refresh can retry without inferring OS permission.
+        state.desiredEnabled = true;
 
         let result: WriteResult<void> | undefined;
         const operation = state.queue.then(async () => {
           if (generation !== state.generation || !identityIsCurrent()) return;
-          if (await driver.getPermissionStatus() !== 'granted' || generation !== state.generation) return;
+          if (await driver.getPermissionStatus() !== 'granted' || generation !== state.generation || !identityIsCurrent()) return;
           result = await client.registerPushDevice({ deviceId, token, permission: 'granted' });
           if (result.ok && generation === state.generation && identityIsCurrent()) {
             state.enabled = true;
@@ -82,6 +92,7 @@ export function createNativePushService({ driver, client, refreshInbox, isIdenti
       const state = stateFor(deviceId);
       state.generation++;
       state.enabled = false;
+      state.desiredEnabled = false;
       let result: WriteResult<void> | undefined;
       const operation = state.queue.then(async () => { result = await client.unregisterPushDevice(deviceId); });
       state.queue = operation.catch(() => undefined);
@@ -97,14 +108,15 @@ export function createNativePushService({ driver, client, refreshInbox, isIdenti
           if (!deviceId.trim() || disposed || !identityIsCurrent()) return;
           const state = stateFor(deviceId);
           const generation = state.generation;
-          if (!state.enabled || await driver.getPermissionStatus() !== 'granted') return;
-          if (disposed || generation !== state.generation || !state.enabled || !identityIsCurrent()) return;
+          if (!state.desiredEnabled || await driver.getPermissionStatus() !== 'granted') return;
+          if (disposed || generation !== state.generation || !state.desiredEnabled || !identityIsCurrent()) return;
           const operation = state.queue.then(async () => {
-            if (disposed || generation !== state.generation || !state.enabled || !identityIsCurrent()) return;
+            if (disposed || generation !== state.generation || !state.desiredEnabled || !identityIsCurrent()) return;
             if (await driver.getPermissionStatus() !== 'granted'
-              || disposed || generation !== state.generation || !state.enabled || !identityIsCurrent()) return;
+              || disposed || generation !== state.generation || !state.desiredEnabled || !identityIsCurrent()) return;
             const result = await client.registerPushDevice({ deviceId, token, permission: 'granted' });
-            if (result.ok && !disposed && generation === state.generation && state.enabled && identityIsCurrent()) {
+            if (result.ok && !disposed && generation === state.generation && state.desiredEnabled && identityIsCurrent()) {
+              state.enabled = true;
               await driver.acknowledgeToken?.(token);
             }
           });

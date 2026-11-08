@@ -100,6 +100,7 @@ export function RoomRepositoryProvider({
   }, [repository]);
 
   const logout = useCallback(async (): Promise<boolean> => {
+    let pushCleanupComplete = !isReal;
     if (isReal) {
       try {
         const deviceId = await getPushDeviceId();
@@ -110,14 +111,17 @@ export function RoomRepositoryProvider({
             refreshInbox: async () => undefined,
           });
           // Queue unregister behind token refresh when possible; network failure must not block local logout.
-          await push.unregister(deviceId).catch(() => undefined);
-        }
+          const result = await push.unregister(deviceId).catch(() => undefined);
+          pushCleanupComplete = result?.ok === true;
+        } else pushCleanupComplete = true;
       } catch {
         // Local session cleanup must work when secure storage or the network is unavailable.
       }
     }
     const result = await repository.logout();
-    if (result.ok && isReal) await clearPushRegistrationSecrets().catch(() => undefined);
+    // Keep the device handle/token when remote unregister did not ACK, so a
+    // later login/logout can retry cleanup for this same installation.
+    if (result.ok && isReal && pushCleanupComplete) await clearPushRegistrationSecrets().catch(() => undefined);
     return result.ok;
   }, [repository, isReal]);
 
