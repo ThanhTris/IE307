@@ -16,6 +16,7 @@ import Lobby from '../../src/app/room/lobby';
 import RoomStatus from '../../src/app/room/status';
 import Friends from '../../src/app/friends';
 import Inbox from '../../src/app/inbox';
+import PushSettings from '../../src/app/push-settings';
 import History from '../../src/app/history';
 import Shell from '../../src/app/dev/shell';
 import CreateRoom from '../../src/app/room/create';
@@ -40,6 +41,7 @@ const routes = {
   'dev/home': HomePreview,
   friends: Friends,
   inbox: Inbox,
+  'push-settings': PushSettings,
   history: History,
   '+not-found': NotFound,
   'room/_layout': RoomLayout,
@@ -60,6 +62,14 @@ const routes = {
   'dev/features': Features,
   'dev/discovery-context': DiscoveryContext,
 };
+
+test('Inbox push settings action opens a registered safe settings route', async () => {
+  await renderRouter(routes, { initialUrl: '/inbox' });
+  const user = userEvent.setup();
+  await user.press(await screen.findByRole('button', { name: 'Cài đặt thông báo trên thiết bị' }));
+  await waitFor(() => expect(screen).toHavePathname('/push-settings'));
+  expect(await screen.findByText('Đăng nhập bằng kết nối thật để quản lý đăng ký push. Hộp thư mô phỏng vẫn hoạt động.')).toBeOnTheScreen();
+});
 beforeEach(() => { setPreviewScenario('default'); rememberPreviewGuest('Tuấn'); markTutorialSeen(); });
 afterEach(() => jest.useRealTimers());
 

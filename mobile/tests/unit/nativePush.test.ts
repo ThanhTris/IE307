@@ -247,4 +247,44 @@ describe('GM-29 push orchestration', () => {
     await new Promise(resolve => setTimeout(resolve, 0));
     expect(registerPushDevice).toHaveBeenCalledTimes(2);
   });
+
+  test('a late opt-in write cannot undo opt-out when unregister is offline', async () => {
+    const registrationMarkers = new Map<string, boolean>();
+    let writes = 0;
+    let releaseLateEnable: (() => void) | undefined;
+    let refreshToken: ((token: string) => void) | undefined;
+    const registerPushDevice = jest.fn().mockResolvedValue({ ok: true, data: undefined });
+    const unregisterPushDevice = jest.fn().mockResolvedValue({ ok: false, error: { messageKey: 'NETWORK_ERROR' } });
+    const service = createNativePushService({
+      driver: driver({
+        getRegistrationEnabled: async identityId => registrationMarkers.get(identityId) ?? false,
+        setRegistrationEnabled: async (identityId, _deviceId, enabled) => {
+          writes += 1;
+          if (enabled && writes === 2) await new Promise<void>(resolve => { releaseLateEnable = resolve; });
+          registrationMarkers.set(identityId, enabled);
+        },
+        onTokenRefresh: listener => { refreshToken = listener; return () => { refreshToken = undefined; }; },
+      }),
+      client: { registerPushDevice, unregisterPushDevice } as unknown as ApiClient,
+      refreshInbox: jest.fn(),
+      identityId: 'user-A',
+    });
+
+    await service.register();
+    const unsubscribe = service.subscribe();
+    refreshToken?.('rotated-token');
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(releaseLateEnable).toBeDefined();
+
+    const disabling = service.unregister('device-1');
+    releaseLateEnable?.();
+    await disabling;
+    expect(unregisterPushDevice).toHaveBeenCalledWith('device-1');
+    expect(registrationMarkers.get('user-A')).toBe(false);
+
+    refreshToken?.('retry-after-offline-opt-out');
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(registerPushDevice).toHaveBeenCalledTimes(1);
+    unsubscribe();
+  });
 });

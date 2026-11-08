@@ -78,6 +78,14 @@ test('inbox remains available with denied push permission and confirms invite ac
   expect(await screen.findByText('Đã chấp nhận lời mời trong mock.')).toBeOnTheScreen();
 });
 
+test('inbox exposes push settings when the route is provided', async () => {
+  const user = userEvent.setup();
+  const openSettings = jest.fn();
+  await render(<InboxScreen onNavigate={nav} onHome={home} onPushSettings={openSettings} />);
+  await user.press(screen.getByRole('button', { name: 'Cài đặt thông báo trên thiết bị' }));
+  expect(openSettings).toHaveBeenCalledTimes(1);
+});
+
 test('inbox passes invitation IDs, distinct from event IDs, for all accept/reject types', async () => {
   const user = userEvent.setup();
   const mockClient = new MockApiClient({ delayMs: 0 });

@@ -5,10 +5,10 @@ import { AppButton, SheetDialog, StatusNotice } from '../../../shared/ui';
 import { DemoFrame, useDemoColors, useMockDemoApi, type DemoDestination } from '../../shared/components/MockDemo';
 import { getInvitationReference } from '../fixtures';
 
-type Props = { onNavigate: (destination: DemoDestination) => void; onHome: () => void; mockClient?: MockApiClient };
+type Props = { onNavigate: (destination: DemoDestination) => void; onHome: () => void; onPushSettings?: () => void; mockClient?: MockApiClient };
 type InboxAction = { item: InboxItem; kind: 'accept' | 'reject' } | null;
 
-export function InboxScreen({ onNavigate, onHome, mockClient }: Props) {
+export function InboxScreen({ onNavigate, onHome, onPushSettings, mockClient }: Props) {
   const { api, mode, setMode, revision, reload } = useMockDemoApi(mockClient);
   const colors = useDemoColors();
   const [items, setItems] = useState<InboxItem[]>([]);
@@ -66,6 +66,7 @@ export function InboxScreen({ onNavigate, onHome, mockClient }: Props) {
   const visibleItems = items.filter(item => !handled.includes(item.id));
   return (
     <DemoFrame title="Hộp thư" subtitle="GM-14 · inbox hoạt động cả khi push bị từ chối" active="inbox" onNavigate={onNavigate} onHome={onHome} mode={mode} onModeChange={setMode}>
+      {onPushSettings ? <AppButton label="Cài đặt thông báo trên thiết bị" variant="secondary" onPress={onPushSettings} colors={colors} /> : null}
       <View style={[styles.permissionCard, { backgroundColor: colors.surface, borderColor: colors.line }]}>
         <View style={styles.permissionText}>
           <Text style={[styles.title, { color: colors.text }]}>Thông báo trên thiết bị</Text>

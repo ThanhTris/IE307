@@ -77,10 +77,14 @@ export function createNativePushService({ driver, client, refreshInbox, isIdenti
         const operation = state.queue.then(async () => {
           if (generation !== state.generation || !identityIsCurrent()) return;
           if (await driver.getPermissionStatus() !== 'granted' || generation !== state.generation || !identityIsCurrent()) return;
+          // Persist the opt-in before the request so a transient network failure
+          // remains retryable after restart. This write shares the device queue
+          // with opt-out, so a late true can never overwrite a newer false.
+          await driver.setRegistrationEnabled?.(identityId ?? '', deviceId, true);
+          if (generation !== state.generation || !identityIsCurrent()) return;
           result = await client.registerPushDevice({ deviceId, token, permission: 'granted' });
           if (result.ok && generation === state.generation && identityIsCurrent()) {
             state.enabled = true;
-            await driver.setRegistrationEnabled?.(identityId ?? '', deviceId, true);
             await driver.acknowledgeToken?.(token);
           }
         });
@@ -101,9 +105,12 @@ export function createNativePushService({ driver, client, refreshInbox, isIdenti
       const generation = ++state.generation;
       state.enabled = false;
       state.desiredEnabled = false;
-      await driver?.setRegistrationEnabled?.(identityId ?? '', deviceId, false).catch(() => undefined);
       let result: WriteResult<void> | undefined;
       const operation = state.queue.then(async () => {
+        if (generation !== state.generation || !identityIsCurrent()) return;
+        // Serialize the durable opt-out with token refresh registration. If
+        // unregister fails, false remains authoritative and refresh won't retry.
+        await driver?.setRegistrationEnabled?.(identityId ?? '', deviceId, false);
         if (generation !== state.generation || !identityIsCurrent()) return;
         result = await client.unregisterPushDevice(deviceId);
       });
@@ -141,10 +148,14 @@ export function createNativePushService({ driver, client, refreshInbox, isIdenti
             if (disposed || generation !== state.generation || !state.desiredEnabled || !identityIsCurrent()) return;
             if (await driver.getPermissionStatus() !== 'granted'
               || disposed || generation !== state.generation || !state.desiredEnabled || !identityIsCurrent()) return;
+            // Save the retryable user intent before the server call. The write
+            // is serialized with opt-out, then generation is checked again so
+            // an in-flight refresh cannot register after the user disables it.
+            await driver.setRegistrationEnabled?.(identityId ?? '', deviceId, true);
+            if (disposed || generation !== state.generation || !state.desiredEnabled || !identityIsCurrent()) return;
             const result = await client.registerPushDevice({ deviceId, token, permission: 'granted' });
             if (result.ok && !disposed && generation === state.generation && state.desiredEnabled && identityIsCurrent()) {
               state.enabled = true;
-              await driver.setRegistrationEnabled?.(identityId ?? '', deviceId, true);
               await driver.acknowledgeToken?.(token);
             }
           });
