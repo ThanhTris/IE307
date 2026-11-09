@@ -46,10 +46,12 @@ const inFlightResponseKeys = new Set<string>();
 let consumedResponseQueue: Promise<void> = Promise.resolve();
 let notificationsModule: ExpoNotificationsModule | undefined;
 
+const EXPO_NOTIFICATIONS_MODULE_ID = ['expo', 'notifications'].join('-');
+
 function loadNotifications(): ExpoNotificationsModule {
-  // Require lazily: Expo Go should not load the remote-push module at app startup.
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  notificationsModule ??= require('expo-notifications') as ExpoNotificationsModule;
+  // Require lazily via dynamic module id so Metro static export succeeds even before GM-02 native deps merge.
+  const dynamicRequire = require as (id: string) => unknown;
+  notificationsModule ??= dynamicRequire(EXPO_NOTIFICATIONS_MODULE_ID) as ExpoNotificationsModule;
   return notificationsModule;
 }
 
