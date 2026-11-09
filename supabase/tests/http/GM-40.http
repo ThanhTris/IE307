@@ -1,88 +1,34 @@
-# GM-40 real draft catalogue, dish-session-v3/ADR-019; QA only, schema0.8.0/0026.
-# Automated setup/content assertions/cleanup: python3 scripts/gm40_catalogue_check.py
-# The runner owns an ephemeral PostgREST/DB, signs synthetic QA-user JWTs in memory,
-# runs verified worker, then removes both. These placeholders are a manual contract
-# reference; they are not credentials or an endpoint left running after the check.
-# baseUrl = gateway origin + /rest/v1, OR isolated QA PostgREST origin (no /rest/v1).
-# NEVER point at production or assume local application DB has migration0026.
-@baseUrl = http://127.0.0.1:QA_REST_PORT
-@guestJwt = QA_HOST_JWT
-@outsiderJwt = QA_OUTSIDER_JWT
-@requestId = NEW_UUID_FOR_CREATE
-@roomId = UUID_FROM_CREATE
+# GM-40 test-demo catalogue via the owned GM-03 Auth + REST + worker stack.
+# Execute all requests with scripts/gm40_catalogue_check.py --qa-manifest PATH.
+# The runner resolves the gateway and gets a real guest JWT from GoTrue.
+# Manual clients can provide the three placeholders from an owned QA run only.
+@baseUrl = http://127.0.0.1:QA_API_PORT/rest/v1
+@anonKey = QA_ANON_KEY
+@guestJwt = QA_GUEST_JWT
 
-### Real lunch pool: expected ok=true, exactly20 distinct cards with lunch tag.
-# Every card's dishId/name/description/artwork/mealSlots/cuisineIds/categoryIds must
-# match imported bundle projection; catalogueVersion=dish-catalogue-v1:1.1.0,
-# catalogueSha=manifest.bundleSha256; testData=true. No venue/GPS fields required.
-POST {{baseUrl}}/rpc/dish_session
-Content-Type: application/json
-Authorization: Bearer {{guestJwt}}
-
-{"command":"create","payload":{"requestId":"{{requestId}}","displayName":"GM40 QA host","dishCount":20,"mealSlot":"lunch"}}
-
-### Retry identical create: same request/body must keep room/pool, no second room.
-POST {{baseUrl}}/rpc/dish_session
-Content-Type: application/json
-Authorization: Bearer {{guestJwt}}
-
-{"command":"create","payload":{"requestId":"{{requestId}}","displayName":"GM40 QA host","dishCount":20,"mealSlot":"lunch"}}
-
-### Member readback: pool/release/hash pinned, own ballot only.
-POST {{baseUrl}}/rpc/dish_session
-Content-Type: application/json
-Authorization: Bearer {{guestJwt}}
-
-{"command":"snapshot","payload":{"roomId":"{{roomId}}"}}
-
-### Known shortage: 7 dinner-tagged dishes cannot supply20.
-# Expected HTTP200, ok=false, error.messageKey=INSUFFICIENT_DISHES, not7/20 cards.
-POST {{baseUrl}}/rpc/dish_session
-Content-Type: application/json
-Authorization: Bearer {{guestJwt}}
-
-{"command":"create","payload":{"requestId":"NEW_UUID_FOR_SHORTAGE","displayName":"GM40 QA host","dishCount":20,"mealSlot":"dinner"}}
-
-### Outsider: HTTP200, ok=false, error.messageKey=NOT_MEMBER; no room/ballot data.
-POST {{baseUrl}}/rpc/dish_session
-Content-Type: application/json
-Authorization: Bearer {{outsiderJwt}}
-
-{"command":"snapshot","payload":{"roomId":"{{roomId}}"}}
-
-### Unauthenticated: HTTP401/403, no room data.
-POST {{baseUrl}}/rpc/dish_session
-Content-Type: application/json
-
-{"command":"snapshot","payload":{"roomId":"{{roomId}}"}}
-
-# Runner also asserts stage/import/readback, reimport/conflict, fault rollback,
-# switch/restore, old locked pool, imported cards through round2/finalize/reconnect,
-# legacy fixture IDs/FKs/result and private ACL. Full runner supplies complete pool
-# votes privately; this file deliberately contains no actual ballots/tokens.
-
-### GM40.2 received rich catalogue (0033/schema0.11.0; independent read contract)
-# Import/activate only through an owned QA adapter; source bundle remains1.1.0.
-# get_dish_catalogue returns39 stable dishIds, release suffix :gm18.2, pinned SHA,
-# taxonomy labels/terms and nullable price metadata. Actual automated assertions:
-# python scripts/gm40_rich_projection_check.py --report /tmp/gm40-rich.json
+### catalogue
+# HTTP 200. Exactly 39 stable dishes, rich release/source SHA and testOnly=true.
 POST {{baseUrl}}/rpc/get_dish_catalogue
 Content-Type: application/json
+apikey: {{anonKey}}
 Authorization: Bearer {{guestJwt}}
 
 {"payload":{"contractVersion":"dish-catalogue/roadmap-v2/GM-18.2"}}
 
-### Lunch: exactly20 distinct cards; available23. No venue/location fields.
+### lunch
+# HTTP 200. Exactly 20 distinct lunch dishes and 23 available.
 POST {{baseUrl}}/rpc/preview_dish_pool
 Content-Type: application/json
+apikey: {{anonKey}}
 Authorization: Bearer {{guestJwt}}
 
 {"payload":{"contractVersion":"dish-catalogue/roadmap-v2/GM-18.2","mealSlot":"lunch","dishCount":20}}
 
-### Dinner shortage: HTTP409, INSUFFICIENT_DISHES, available7/requested20.
-# Different from the historical v3 HTTP200 error envelope examples above.
+### dinner-shortage
+# HTTP 409. GM-18.2 wire key INSUFFICIENT_DISHES with available=7 and requested=20.
 POST {{baseUrl}}/rpc/preview_dish_pool
 Content-Type: application/json
+apikey: {{anonKey}}
 Authorization: Bearer {{guestJwt}}
 
 {"payload":{"contractVersion":"dish-catalogue/roadmap-v2/GM-18.2","mealSlot":"dinner","dishCount":20}}

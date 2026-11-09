@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'data-preparation/scripts'))
 sys.path.insert(0, str(ROOT / 'scripts'))
 import dish_catalogue as contract
-from dish_policy_worker import verify as verify_runtime
+from dish_policy_worker import ManifestQAContainerDB, verify as verify_runtime
 
 spec = importlib.util.spec_from_file_location('gm40_food_db', ROOT / 'supabase/seed/import_food_data.py')
 food = importlib.util.module_from_spec(spec)
@@ -75,6 +75,20 @@ def stage(path, directory, manifest_path=None):
 
 def owned(db, namespace):
     namespace = str(uuid.UUID(str(namespace)))
+    # Received GM03 adapter verifies the sealed manifest, Docker labels, source,
+    # ledger and definitions before construction. Do not accept a boolean flag
+    # or arbitrary postgres connection as a substitute for that capability.
+    if isinstance(db, ManifestQAContainerDB):
+        if (db.database != 'postgres' or db.owner_uuid != namespace
+                or db.qa_project_id != 'gm03qa-' + db.run_id
+                or db.container != 'supabase_db_' + db.qa_project_id):
+            raise ValueError('GM03 QA ownership mismatch')
+        marker = db.psql("select owner_uuid::text from gm03_qa_private.owner_manifest where run_id="
+                        + food.literal(db.run_id) + ';').strip()
+        if marker != namespace:
+            raise ValueError('GM03 QA ownership marker mismatch')
+        verify_runtime(db)
+        return
     isolated_v4_qa = (getattr(db, 'is_dish_v4_qa', False) is True
                       and getattr(db, 'database', None) == 'postgres'
                       and re.fullmatch(r'ie307-dish-v4-qa-[0-9]{8}(?:-[0-9]+-[0-9]+)?', getattr(db, 'qa_project_id', '')))

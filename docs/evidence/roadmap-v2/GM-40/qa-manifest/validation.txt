@@ -1,0 +1,15 @@
+GM40.3 validation on 2026-11-09
+Tested main: bc5a0629c0d1050ef3256ec9fa73bd669019fb84
+Branch: codex/gm-40-qa-manifest
+Live start gate: READY_TO_START
+Live merge gate with --verify-outputs: READY_FOR_MERGE_REVIEW
+Fresh checkout with candidate patch and pinned npm ci: Pass
+Owned GM03 Auth/REST/worker QA: 100 assertions passed per entrypoint
+GM-40.http: catalogue 200, lunch 200, dinner shortage 409
+Manifest seal: 061dda0bb6dc31fccee6c070c043a936ae9f9a1d8a12e403bbd928e56564484a
+Post-suite verify: 28 migrations, 201 functions, 2 original catalogues, worker heartbeat recent
+Cleanup: worker, Supabase and network stopped, no owned containers/volumes/networks
+Python regression: 678 tests, 6 skipped
+Node tests: 19 pass
+Catalogue build --check, repository validator, task indexes and diff check: Pass
+Hosted CI and reviewer approval are tracked on the pull request.

@@ -156,6 +156,12 @@ No app DB activation, new push sender, UI acceptance or automatic status/approva
 
 ## GM40.2 — received rich projection
 
+Current runner supplement: [GM40.3 handoff](docs/evidence/roadmap-v2/GM-40/qa-manifest/HANDOFF.md).
+Both GM40 QA entrypoints require `--qa-manifest .work/qa/<run-id>/manifest.json`
+from GM03 `qa:start`; no default/application stack fallback. Reuse producer
+`qa:verify` and `qa:stop`; keep loopback/ownership/worker/hash guards. Previous
+standalone JWT results are historical, not acceptance of this new manifest path.
+
 Read [handoff](docs/evidence/roadmap-v2/GM-40/rich-projection/HANDOFF.md). Data adapter
 `data-preparation/scripts/catalogue_projection.py` delegates to received GM18.2,
 keeps source39/bundle1.1.0/hash and baseline importer immutable, and stages the
