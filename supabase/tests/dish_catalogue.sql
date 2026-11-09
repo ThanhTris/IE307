@@ -1,7 +1,9 @@
--- Read/assert only; run against the owned QA DB after real import + legacy fixture.
+-- Read/assert only. The GM40 runner binds these settings from its verified GM03 manifest.
 do $gm40$
 begin
- if not exists(select 1 from public.gm40_qa_owner) then
+ if not exists(select 1 from gm03_qa_private.owner_manifest
+   where run_id = current_setting('gm40.qa_run_id', true)
+     and owner_uuid::text = current_setting('gm40.qa_owner', true)) then
   raise exception 'QA ownership marker required';
  end if;
  if (select count(*) from dish_v3_private.catalogues where active)<>1 then

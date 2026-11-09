@@ -1,5 +1,9 @@
 # GM40.2 — nhận projection GM18 và bàn giao Data
 
+Runner update: [GM40.3 manifest handoff](../qa-manifest/HANDOFF.md). Source/projection
+artifacts in this package remain unchanged. The standalone commands/results here
+describe the previous runner; current CLI requires `--qa-manifest` from GM03.
+
 Owner Vinh; reviewer Trí. Base main e3f7058 (GM20#143 đã merge), branch
 codex/gm-40-rich-projection. Đây là implementation candidate, không Approved/Done.
 GM40 dùng gate GM04/06/07/08/18; không thêm dependency lên GM19/20/21.

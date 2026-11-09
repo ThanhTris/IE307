@@ -1,5 +1,9 @@
 # GM-40 — Checks Data/BE và lịch sử offline
 
+Current runner candidate uses the sealed GM03 manifest. The
+[GM40.3 checks](qa-manifest/CHECKS.md) cover the 2026-11-09 Auth, SQL and
+HTTP run on main bc5a062.
+
 ## Bản hiện hành GM40.2 — nhận producer GM18.2
 
 Đọc [handoff mới](rich-projection/HANDOFF.md), [plan](rich-projection/PLAN.md) và
