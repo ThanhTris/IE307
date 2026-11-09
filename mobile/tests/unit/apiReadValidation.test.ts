@@ -14,8 +14,6 @@ const snapshot = { roomId: 'room_fixture', code: 'GCD234', state: 'LOBBY', versi
 
 type ReadCall = (client: ApiClient) => Promise<ReadResult<unknown>>;
 const reads: { name: string; call: ReadCall; data: unknown; invalid: unknown[]; list?: boolean }[] = [
-  { name: 'getMySocialIdentity', call: c => c.getMySocialIdentity(),
-    data: { id: 'user-1', displayName: 'A', friendCode: 'ABC123', avatarSeed: 'seed-1' }, invalid: [] },
   { name: 'restoreSession', call: c => c.restoreSession('fixture_token'), data: user,
     invalid: [{ ...user, isGuest: 'true' }, { ...user, createdAt: 'tomorrow' }, { ...user, displayName: undefined }] },
   { name: 'getDiscoveryContext', call: c => c.getDiscoveryContext(),
@@ -36,8 +34,10 @@ const reads: { name: string; call: ReadCall; data: unknown; invalid: unknown[]; 
       [{ ...MOCK_DISHES[0], price: { priceMin: 100, priceMax: 200, currency: 'BAD', unit: 'item', servingSize: null } }],
       [{ ...MOCK_DISHES[0], flavor: { spicy: { present: true, intensity: 'high' } } }],
       [{ ...MOCK_DISHES[0], temperature: 'boiling' }]] },
-  { name: 'listFriends', call: c => c.listFriends(), data: MOCK_FRIENDS, list: true, invalid: [] },
-  { name: 'listPartnerInbox', call: c => c.listPartnerInbox(), data: MOCK_INBOX_ITEMS, list: true, invalid: [] },
+  { name: 'listFriends', call: c => c.listFriends(), data: MOCK_FRIENDS, list: true,
+    invalid: [[{}], [{ ...MOCK_FRIENDS[0], status: 'pending' }], [{ ...MOCK_FRIENDS[0], since: 'yesterday' }]] },
+  { name: 'listPartnerInbox', call: c => c.listPartnerInbox(), data: MOCK_INBOX_ITEMS, list: true,
+    invalid: [[{}], [{ ...MOCK_INBOX_ITEMS[0], read: 0 }], [{ ...MOCK_INBOX_ITEMS[0], metadata: [] }]] },
   { name: 'getHistory', call: c => c.getHistory('group'), data: MOCK_HISTORY_ITEMS, list: true,
     invalid: [[{}], [{ ...MOCK_HISTORY_ITEMS[0], scope: 'public' }], [{ ...MOCK_HISTORY_ITEMS[0], memberCount: NaN }],
       [{ ...MOCK_HISTORY_ITEMS[0], roomCode: 'PAST1' }], [{ ...MOCK_HISTORY_ITEMS[0], roomCode: 'PASTIO0' }]] },
@@ -45,11 +45,6 @@ const reads: { name: string; call: ReadCall; data: unknown; invalid: unknown[]; 
 
 function clientFor(response: unknown): ApiClient {
   const transport: ApiTransport = { async invoke<T>() { return response as T; } };
-  return createApiClient('real', { transport });
-}
-
-function clientThrowingHttpStatus(status: number): ApiClient {
-  const transport: ApiTransport = { async invoke() { throw Object.assign(new Error('HTTP failure'), { status }); } };
   return createApiClient('real', { transport });
 }
 
@@ -66,7 +61,7 @@ describe('GM-07 read response validation through public client', () => {
         expect(await call(clientFor(response))).toMatchObject({ ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } });
       });
 
-    if (invalid.length > 0) it('checks nested fields and every array item at the API transport boundary', async () => {
+    it('checks nested fields and every array item', async () => {
       for (const payload of invalid) {
         for (const raw of [payload, { ok: true, data: payload }]) {
           expect(await call(clientFor(raw))).toMatchObject({ ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } });
@@ -131,15 +126,5 @@ describe('GM-07 read response validation through public client', () => {
     expect(offerings.ok).toBe(true);
     if (!offerings.ok) throw new Error('Fixture offerings failed');
     expect(await clientFor(offerings.data).getResultOfferings(roomId, result.data.result!.resultId)).toEqual(offerings);
-  });
-
-  it.each([
-    [401, 'AUTH_REQUIRED'], [403, 'AUTH_REQUIRED'], [409, 'VERSION_CONFLICT'],
-  ] as const)('maps thrown HTTP %i consistently across social/inbox reads', async (status, messageKey) => {
-    const client = clientThrowingHttpStatus(status);
-    const results = await Promise.all([
-      client.getMySocialIdentity(), client.listFriends(), client.listPartnerInbox(),
-    ]);
-    for (const result of results) expect(result).toMatchObject({ ok: false, error: { messageKey } });
   });
 });

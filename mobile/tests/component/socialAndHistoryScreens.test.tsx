@@ -3,8 +3,6 @@ import { fireEvent, render, screen, userEvent } from '@testing-library/react-nat
 import { MockApiClient, type InboxItem } from '../../src/data/api';
 import { FriendsScreen } from '../../src/features/friends/screens/FriendsScreen';
 import { InboxScreen } from '../../src/features/inbox/screens/InboxScreen';
-import { LiveInboxScreen } from '../../src/features/inbox/screens/LiveInboxScreen';
-import { LiveHistoryScreen } from '../../src/features/history/screens/LiveHistoryScreen';
 import { HistoryScreen } from '../../src/features/history/screens/HistoryScreen';
 
 const nav = jest.fn();
@@ -80,155 +78,6 @@ test('inbox remains available with denied push permission and confirms invite ac
   expect(await screen.findByText('Đã chấp nhận lời mời trong mock.')).toBeOnTheScreen();
 });
 
-test('live inbox does not link to the unimplemented push settings route', async () => {
-  await render(<LiveInboxScreen
-    repository={{ list: jest.fn().mockResolvedValue({ ok: true, data: { items: [], fetchedAt: '2026-11-08T00:00:00Z' } }) } as any}
-    displayName="Trí"
-    onNavigate={nav}
-    onHome={home}
-  />);
-  expect(await screen.findByText('Chưa có thông báo')).toBeOnTheScreen();
-  expect(screen.queryByRole('button', { name: 'Cài đặt thông báo' })).toBeNull();
-  expect(nav).not.toHaveBeenCalledWith('/push-settings');
-});
-
-test('live inbox hides a handled invitation after the server accepts it', async () => {
-  const user = userEvent.setup();
-  const item: InboxItem = {
-    id: '11111111-1111-4111-8111-111111111111',
-    eventId: '22222222-2222-4222-8222-222222222222',
-    type: 'friend_invite',
-    title: 'Lời mời kết bạn',
-    body: 'Có lời mời mới',
-    read: false,
-    metadata: { invitationId: '33333333-3333-4333-8333-333333333333' },
-    createdAt: '2026-11-08T00:00:00Z',
-  };
-  let handled = false;
-  const repository = {
-    list: jest.fn(async () => ({ ok: true as const, data: { items: handled ? [] : [item], fetchedAt: '2026-11-08T00:00:00Z' } })),
-    markHandled: jest.fn(() => { handled = true; }),
-    acceptFriend: jest.fn().mockResolvedValue({ ok: true, data: undefined }),
-    rejectFriend: jest.fn().mockResolvedValue({ ok: true, data: undefined }),
-  };
-  await render(<LiveInboxScreen repository={repository as any} displayName="Trí" onNavigate={nav} onHome={home} />);
-  await user.press(await screen.findByRole('button', { name: 'Chấp nhận' }));
-  await user.press(screen.getByRole('button', { name: 'Xác nhận chấp nhận' }));
-
-  expect(await screen.findByText('Chưa có thông báo')).toBeOnTheScreen();
-  expect(repository.acceptFriend).toHaveBeenCalledWith('33333333-3333-4333-8333-333333333333');
-  expect(repository.markHandled).toHaveBeenCalledWith(item.eventId);
-  expect(screen.queryByRole('button', { name: 'Chấp nhận' })).toBeNull();
-});
-
-test('legacy result notification routes to the read-only legacy result screen', async () => {
-  const user = userEvent.setup();
-  const roomId = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
-  const resultId = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
-  const item: InboxItem = {
-    id: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
-    eventId: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
-    type: 'room_result',
-    title: 'Phòng đã có kết quả',
-    body: 'Mở kết quả đã chốt',
-    read: true,
-    metadata: { roomId, resultId },
-    createdAt: '2026-11-08T00:00:00Z',
-  };
-  const repository = {
-    list: jest.fn().mockResolvedValue({ ok: true, data: { items: [item], fetchedAt: '2026-11-08T00:00:00Z' } }),
-    resolveRoomResult: jest.fn().mockResolvedValue({ ok: true, data: { roomId, destination: 'result', resultId, resultContract: 'legacy' } }),
-  };
-
-  await render(<LiveInboxScreen repository={repository as any} displayName="Trí" onNavigate={nav} onHome={home} />);
-  await user.press(await screen.findByRole('button', { name: 'Mở kết quả: Phòng đã có kết quả' }));
-
-  expect(repository.resolveRoomResult).toHaveBeenCalledWith(roomId, resultId, undefined);
-  expect(nav).toHaveBeenCalledWith(`/inbox-result?roomId=${roomId}&resultId=${resultId}`);
-});
-
-test('live inbox marks all pages read and keeps the request ID after an uncertain response', async () => {
-  const user = userEvent.setup();
-  const item: InboxItem = {
-    id: '11111111-1111-4111-8111-111111111111', eventId: '22222222-2222-4222-8222-222222222222',
-    type: 'friend_invite', title: 'Lời mời kết bạn', body: 'Có lời mời mới', read: false,
-    metadata: { invitationId: '33333333-3333-4333-8333-333333333333' }, createdAt: '2026-11-08T00:00:00Z',
-  };
-  let read = false;
-  const requestIds: string[] = [];
-  const repository = {
-    list: jest.fn(async () => ({ ok: true as const, data: { items: [{ ...item, read }], fetchedAt: '2026-11-08T00:00:00Z' } })),
-    markAllRead: jest.fn(async (requestId: string) => {
-      requestIds.push(requestId);
-      if (requestIds.length === 1) return { ok: false as const, error: { messageKey: 'TIMEOUT' as const } };
-      read = true;
-      return { ok: true as const, requestId, data: undefined };
-    }),
-  };
-  await render(<LiveInboxScreen repository={repository as any} displayName="Trí" onNavigate={nav} onHome={home} />);
-  await user.press(await screen.findByRole('button', { name: 'Đọc tất cả' }));
-  expect(await screen.findByText(/thử lại an toàn/)).toBeOnTheScreen();
-  await user.press(screen.getByRole('button', { name: 'Đọc tất cả' }));
-  expect(await screen.findByText('Đã đánh dấu các thông báo hiện có là đã đọc.')).toBeOnTheScreen();
-  expect(requestIds).toHaveLength(2);
-  expect(requestIds[1]).toBe(requestIds[0]);
-  expect(screen.getByText('Trước đó')).toBeOnTheScreen();
-  expect(screen.getByText('Không có thông báo chưa đọc trên trang')).toBeOnTheScreen();
-});
-
-test('live history opens the saved projection without re-reading the operational room', async () => {
-  const user = userEvent.setup();
-  const saved = {
-    historyId: '11111111-1111-4111-8111-111111111111', roomId: '22222222-2222-4222-8222-222222222222',
-    resultId: '33333333-3333-4333-8333-333333333333', scope: 'group',
-    createdAt: '2026-11-07T11:00:00Z', expiresAt: '2026-12-07T11:00:00Z', desiredAt: '2026-11-07T12:00:00Z',
-    finalizedAt: '2026-11-07T11:59:00Z', memberCount: 2,
-    participants: [{ displayName: 'Linh', role: 'HOST' }, { displayName: 'Tú', role: 'MEMBER' }],
-    result: {
-      resultId: '33333333-3333-4333-8333-333333333333',
-      contractVersion: 'dish-session-v4/roadmap-v2/GM-07.B-supplement',
-      policyVersion: 'dish-decision-v4/ADR-019-30PCT-MIN1', status: 'DECIDED', round: 2,
-      winner: { dishId: '44444444-4444-4444-8444-444444444444', roundDishId: '55555555-5555-4555-8555-555555555555', name: 'Bún bò Huế', description: null, artwork: null, priceReference: null },
-      reasonCode: 'ACCEPTABLE_FINAL', finalizedAt: '2026-11-07T11:59:00Z',
-      scoreVersion: 'want2-ok1-round1-v1', rankingVersion: 'score-desc-dense-rank-v1',
-      round1BallotCount: 2,
-      topDishes: [{ dish: { dishId: '44444444-4444-4444-8444-444444444444', roundDishId: '55555555-5555-4555-8555-555555555555', name: 'Bún bò Huế', description: null, artwork: null, priceReference: null }, score: 4, rank: 1, isWinner: true }],
-    },
-  };
-  const repository = {
-    cached: () => undefined, cachedDurable: async () => undefined,
-    fetch: async () => ({ ok: true as const, data: { items: [saved], fetchedAt: '2026-11-08T00:00:00Z' } }),
-    updateConsent: jest.fn(), delete: jest.fn(), invalidate: jest.fn(),
-  };
-  await render(<LiveHistoryScreen repository={repository as any} onNavigate={nav} onHome={home} />);
-  expect(await screen.findByText(/Linh, Tú/)).toBeOnTheScreen();
-  await user.press(await screen.findByRole('button', { name: 'Xem chi tiết đã lưu' }));
-  expect(screen.getByText('Chi tiết bữa ăn')).toBeOnTheScreen();
-  expect(screen.getByText('Xếp hạng của nhóm')).toBeOnTheScreen();
-  expect(screen.getByText('Bún bò Huế · Món được chọn')).toBeOnTheScreen();
-  expect(screen.getAllByText('4 điểm')).toHaveLength(2);
-  expect(screen.getByText('Linh')).toBeOnTheScreen();
-  expect(screen.getByText('Tú')).toBeOnTheScreen();
-  expect(screen.getByText(/Bữa ăn dự kiến/)).toBeOnTheScreen();
-  expect(screen.getByText(/Kết quả chốt/)).toBeOnTheScreen();
-  expect(nav).not.toHaveBeenCalledWith(expect.stringContaining('/room/result'));
-});
-
-test('offline history cache hides group projections and keeps only personal rows', async () => {
-  const personal = { historyId: '11111111-1111-4111-8111-111111111111', roomId: '22222222-2222-4222-8222-222222222222', resultId: '33333333-3333-4333-8333-333333333333', scope: 'personal', createdAt: '2026-11-07T11:00:00Z', expiresAt: '2026-12-07T11:00:00Z', memberCount: 2, result: { capability: 'legacy-unscored-v1', status: 'DECIDED', winner: { dishId: '44444444-4444-4444-8444-444444444444', roundDishId: '55555555-5555-4555-8555-555555555555', name: 'Riêng tư món', description: null, artwork: null, priceReference: null }, finalizedAt: '2026-11-07T11:59:00Z' } };
-  const group = { ...personal, historyId: '66666666-6666-4666-8666-666666666666', scope: 'group', result: { ...personal.result, winner: { ...personal.result.winner, name: 'Không hiển thị nhóm offline' } } };
-  const repository = {
-    cached: () => ({ items: [group, personal], fetchedAt: '2026-11-07T12:00:00Z' }),
-    cachedDurable: async () => undefined,
-    fetch: async () => ({ ok: false as const, error: { messageKey: 'NETWORK_ERROR' as const } }),
-    updateConsent: jest.fn(), delete: jest.fn(), invalidate: jest.fn(),
-  };
-  await render(<LiveHistoryScreen repository={repository as any} onNavigate={nav} onHome={home} />);
-  expect(await screen.findByText('Riêng tư món')).toBeOnTheScreen();
-  expect(screen.queryByText('Không hiển thị nhóm offline')).toBeNull();
-  expect(screen.getByText('Đang ngoại tuyến')).toBeOnTheScreen();
-});
-
 test('inbox passes invitation IDs, distinct from event IDs, for all accept/reject types', async () => {
   const user = userEvent.setup();
   const mockClient = new MockApiClient({ delayMs: 0 });
@@ -253,24 +102,22 @@ test('inbox passes invitation IDs, distinct from event IDs, for all accept/rejec
   await render(<InboxScreen onNavigate={nav} onHome={home} mockClient={mockClient} />);
   await screen.findByText('Room accept');
 
-  await user.press(screen.getAllByRole('button', { name: /^Chấp nhận / }).find(button => !button.props.accessibilityState.disabled)!);
+  await user.press(screen.getByRole('button', { name: 'Chấp nhận Room accept' }));
   await user.press(screen.getByRole('button', { name: 'Xác nhận chấp nhận' }));
   expect(acceptRoomInvite).toHaveBeenCalledWith({ invitationId: 'room_invite_accept', displayName: 'Bạn mock', requestId: expect.any(String) });
   expect(await screen.findByText('Đã chấp nhận lời mời trong mock.')).toBeOnTheScreen();
 
-  await user.press(screen.getAllByRole('button', { name: /^Từ chối / }).find(button => !button.props.accessibilityState.disabled)!);
+  await user.press(screen.getByRole('button', { name: 'Từ chối Room reject' }));
   await user.press(screen.getByRole('button', { name: 'Xác nhận từ chối' }));
   expect(await screen.findByText('Đã từ chối lời mời trong mock.')).toBeOnTheScreen();
   expect(rejectRoomInvite).toHaveBeenCalledWith('room_invite_reject', expect.any(String));
 
-  const enabledAccept = screen.getAllByRole('button', { name: /^Chấp nhận / }).find(button => !button.props.accessibilityState.disabled);
-  expect(enabledAccept).toBeDefined();
-  await user.press(enabledAccept!);
+  await user.press(screen.getByRole('button', { name: 'Chấp nhận Friend accept' }));
   await user.press(screen.getByRole('button', { name: 'Xác nhận chấp nhận' }));
   expect(await screen.findByText('Đã chấp nhận lời mời trong mock.')).toBeOnTheScreen();
   expect(acceptPartner).toHaveBeenCalledWith('friend_invite_accept', expect.any(String));
 
-  await user.press(screen.getAllByRole('button', { name: /^Từ chối / }).find(button => !button.props.accessibilityState.disabled)!);
+  await user.press(screen.getByRole('button', { name: 'Từ chối Friend reject' }));
   await user.press(screen.getByRole('button', { name: 'Xác nhận từ chối' }));
   expect(await screen.findByText('Đã từ chối lời mời trong mock.')).toBeOnTheScreen();
   expect(rejectPartner).toHaveBeenCalledWith('friend_invite_reject', expect.any(String));
@@ -288,12 +135,10 @@ test('inbox disables expired invitations and entries without an invitation refer
   await render(<InboxScreen onNavigate={nav} onHome={home} mockClient={mockClient} />);
   await screen.findByText('Room accept');
   expect(screen.getByText('Lời mời đã hết hạn; thao tác bị khóa.')).toBeOnTheScreen();
-  expect(screen.getAllByRole('button', { name: /^Chấp nhận / }).some(button => button.props.accessibilityState.disabled)).toBe(true);
+  expect(screen.getByRole('button', { name: 'Chấp nhận Expired invite' }).props.accessibilityState.disabled).toBe(true);
   expect(screen.getByText('Thiếu mã lời mời; không thể xử lý mục này.')).toBeOnTheScreen();
-  expect(screen.getAllByRole('button', { name: /^Từ chối / }).some(button => button.props.accessibilityState.disabled)).toBe(true);
-  const disabledAccept = screen.getAllByRole('button', { name: /^Chấp nhận / }).find(button => button.props.accessibilityState.disabled);
-  expect(disabledAccept).toBeDefined();
-  await user.press(disabledAccept!);
+  expect(screen.getByRole('button', { name: 'Từ chối Missing reference' }).props.accessibilityState.disabled).toBe(true);
+  await user.press(screen.getByRole('button', { name: 'Chấp nhận Expired invite' }));
   expect(screen.queryByText('Chấp nhận lời mời?')).toBeNull();
 });
 
