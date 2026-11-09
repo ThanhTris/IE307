@@ -10,6 +10,8 @@ Task: GM-31 — private offline cache and ballot outbox. Owner: Trung. Reviewer:
 - `mobile/src/bootstrap/RoomRepositoryProvider.tsx` — clear the signed-in identity's durable records during logout and retry failed SecureStore cleanup at startup; remote push/history UI wiring stays with GM-29/GM-28.
 - `mobile/tests/unit/gm31Outbox.test.ts` — isolated-store behavior and reconciliation regression cases.
 
+The 2026-11-09 PR #158 regression follow-up serializes same-identity outbox/cache writes with logout cleanup. Deferred SecureStore tests verify an in-flight A write is removed before logout completes; fresh-database tests verify the first outbox/cache operations wait for migration. Focused suite: 18/18; TypeScript typecheck passed. The fresh-schema test uses the deterministic memory adapter, not SQLite on Android.
+
 ## Configuration and run
 
 Expo baseline: SDK 58 from `origin/main`; `expo-sqlite@~58.0.15` is added for this task, with the `expo-sqlite` config plugin. From `mobile/` run `npm ci`, `npm run check:expo`, `npm run typecheck`, and `npm test -- --runInBand tests/unit/gm31Outbox.test.ts tests/unit/voteRepository.test.ts`.
