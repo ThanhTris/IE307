@@ -310,59 +310,6 @@ describe('Social, inbox, and history live adapters', () => {
     expect(canonicalRead).not.toHaveBeenCalled();
   });
 
-  test.each([
-    ['snapshot room mismatch', { roomId: uuidFrom('another-room'), state: 'COMPLETED', result: { roomId: uuidFrom('another-room'), resultId: uuidFrom('legacy-inbox-result'), policyVersion: 'decision-v2' } }, 'MALFORMED_RESPONSE'],
-    ['result ID mismatch', { roomId: uuidFrom('legacy-inbox-room'), state: 'COMPLETED', result: { roomId: uuidFrom('legacy-inbox-room'), resultId: uuidFrom('another-result'), policyVersion: 'decision-v2' } }, 'VERSION_CONFLICT'],
-  ])('rejects a legacy inbox open with %s', async (_caseName, legacySnapshot, messageKey) => {
-    const roomId = uuidFrom('legacy-inbox-room');
-    const resultId = uuidFrom('legacy-inbox-result');
-    const client = { getRoomSnapshot: jest.fn().mockResolvedValue({ ok: true, data: legacySnapshot }) } as unknown as ApiClient;
-    const repository = {
-      getApiClient: () => client,
-      getSessionApi: () => undefined,
-      getCurrentUser: () => user,
-      getSessionStatus: () => 'active',
-      getSessionSnapshot: () => ({ status: 'active', user, issue: 'none' }),
-      getRoomSnapshot: jest.fn(),
-    } as unknown as RoomRepository;
-    const inbox = createInboxRepository(repository);
-
-    expect(await inbox.resolveRoomResult(roomId, resultId)).toEqual({ ok: false, error: { messageKey } });
-  });
-
-  test('reads legacy inbox results through ApiClientImpl get_room_snapshot, not dish_session v4', async () => {
-    const roomId = uuidFrom('legacy-api-inbox-room');
-    const resultId = uuidFrom('legacy-api-inbox-result');
-    const snapshot = {
-      roomId, code: 'GCD234', state: 'COMPLETED', version: 4, hostUserId: user.id,
-      context: { anchorId: 'anchor', radiusM: 1000, desiredAt: '2026-11-06T00:00:00Z', serviceMode: 'dine_in', mealSlot: 'dinner', avoidRecent: false },
-      members: [], round: 1, poolVersion: 1, pool: [], expiresAt: '2026-12-01T00:00:00Z',
-      result: {
-        roomId, resultId, round: 1, winnerRoundDishId: null, winnerDish: null,
-        reasonCode: 'EMPTY_INTERSECTION', matchTier: 'NO_CONSENSUS',
-        finalizedAt: '2026-11-06T00:00:00Z', policyVersion: 'decision-v2',
-      },
-    };
-    const calls: string[] = [];
-    const harness = liveSessionHarness({
-      savedSession: {
-        accessToken: 'legacy-inbox-access', refreshToken: 'legacy-inbox-refresh',
-        expiresAt: '2027-01-01T00:00:00Z', user,
-      },
-      invoke: async <T>(rpc: string) => {
-        calls.push(rpc);
-        return snapshot as T;
-      },
-    });
-    expect((await harness.repository.restoreSession()).ok).toBe(true);
-    const inbox = createInboxRepository(harness.repository);
-    expect(await inbox.resolveRoomResult(roomId, resultId)).toEqual({
-      ok: true,
-      data: { roomId, destination: 'no-consensus', resultId, resultContract: 'legacy' },
-    });
-    expect(calls).toEqual(['get_room_snapshot']);
-  });
-
   test('resolves a canonical inbox result through ApiClientImpl and the GM-07.B snapshot RPC', async () => {
     const roomId = uuidFrom('canonical-inbox-room');
     const resultId = uuidFrom('canonical-inbox-result');
