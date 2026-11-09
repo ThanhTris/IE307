@@ -2,7 +2,36 @@ import { AppState, Platform } from 'react-native';
 import Constants, { AppOwnership, ExecutionEnvironment } from 'expo-constants';
 import * as SecureStore from 'expo-secure-store';
 import type { NativePushDriver } from './nativePush';
-import type * as ExpoNotifications from 'expo-notifications';
+
+export interface ExpoNotificationResponse {
+  notification: {
+    request: {
+      identifier?: string;
+      content: {
+        data?: unknown;
+      };
+    };
+  };
+  actionIdentifier?: string;
+}
+
+interface ExpoNotificationsModule {
+  setNotificationChannelAsync(
+    channelId: string,
+    channel: { name: string; importance: number; vibrationPattern?: number[] },
+  ): Promise<unknown>;
+  getPermissionsAsync(): Promise<{ granted?: boolean; status: string }>;
+  requestPermissionsAsync(): Promise<{ granted?: boolean; status: string }>;
+  getExpoPushTokenAsync(options: { projectId: string }): Promise<{ data: string }>;
+  scheduleNotificationAsync(request: {
+    content: { title: string; body: string; data?: Record<string, unknown> };
+    trigger: { channelId: string } | null;
+  }): Promise<string>;
+  addNotificationResponseReceivedListener(
+    listener: (response: ExpoNotificationResponse) => void,
+  ): { remove(): void };
+  getLastNotificationResponseAsync(): Promise<ExpoNotificationResponse | null>;
+}
 
 const DEVICE_ID_KEY = 'gcd.push.device-id.v1';
 const TOKEN_KEY = 'gcd.push.expo-token.v1';
@@ -15,12 +44,12 @@ const simulatedTapListeners = new Set<(eventId: string) => Promise<boolean>>();
 const consumedResponseKeys = new Set<string>();
 const inFlightResponseKeys = new Set<string>();
 let consumedResponseQueue: Promise<void> = Promise.resolve();
-let notificationsModule: typeof ExpoNotifications | undefined;
+let notificationsModule: ExpoNotificationsModule | undefined;
 
-function loadNotifications(): typeof ExpoNotifications {
+function loadNotifications(): ExpoNotificationsModule {
   // Require lazily: Expo Go should not load the remote-push module at app startup.
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  notificationsModule ??= require('expo-notifications') as typeof ExpoNotifications;
+  notificationsModule ??= require('expo-notifications') as ExpoNotificationsModule;
   return notificationsModule;
 }
 
@@ -76,7 +105,7 @@ function isEventId(value: unknown): value is string {
   return typeof value === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
 }
 
-function notificationEventId(response: ExpoNotifications.NotificationResponse): string | undefined {
+function notificationEventId(response: ExpoNotificationResponse): string | undefined {
   const data = response.notification.request.content.data;
   if (!data || typeof data !== 'object' || Array.isArray(data)) return undefined;
   const eventId = (data as Record<string, unknown>).eventId;
@@ -178,7 +207,7 @@ export const expoPushDriver: NativePushDriver = {
   },
   simulateNotificationTap(eventId) {
     if (!isGm29QaPushEnabled() || !isEventId(eventId)) return false;
-    for (const listener of simulatedTapListeners) listener(eventId);
+    for (const listener of simulatedTapListeners) void listener(eventId);
     return simulatedTapListeners.size > 0;
   },
   async scheduleSimulatedNotification(eventId) {
@@ -258,15 +287,15 @@ export const expoPushDriver: NativePushDriver = {
         inFlightResponseKeys.delete(key);
       }
     };
-    const handle = (response: ExpoNotifications.NotificationResponse | null) => {
+    const handle = (response: ExpoNotificationResponse | null) => {
       if (!active || !response) return;
       const eventId = notificationEventId(response);
-      if (eventId) handleEvent(eventId);
+      if (eventId) void handleEvent(eventId);
     };
     if (!available()) return () => { active = false; };
+    simulatedTapListeners.add(handleEvent);
     try {
       const notifications = loadNotifications();
-      simulatedTapListeners.add(handleEvent);
       subscription = notifications.addNotificationResponseReceivedListener(handle);
       void notifications.getLastNotificationResponseAsync().then(handle).catch(() => undefined);
     } catch {

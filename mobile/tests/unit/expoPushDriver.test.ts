@@ -1,5 +1,4 @@
 import Constants, { AppOwnership } from 'expo-constants';
-import * as Notifications from 'expo-notifications';
 import { expoPushDriver } from '../../src/features/inbox/services/expoPushDriver';
 import { createNativePushService } from '../../src/features/inbox/services/nativePush';
 
@@ -36,13 +35,18 @@ jest.mock('expo-notifications', () => ({
     return { remove: jest.fn() };
   }),
   getLastNotificationResponseAsync: jest.fn(async () => mockState.lastResponse),
-}));
+}), { virtual: true });
 jest.mock('expo-secure-store', () => ({
   WHEN_UNLOCKED_THIS_DEVICE_ONLY: 1,
   getItemAsync: jest.fn(async (key: string) => mockSecure.get(key) ?? null),
   setItemAsync: jest.fn(async (key: string, value: string) => { mockSecure.set(key, value); }),
   deleteItemAsync: jest.fn(async (key: string) => { mockSecure.delete(key); }),
 }));
+
+const Notifications = jest.requireMock('expo-notifications') as {
+  getExpoPushTokenAsync: jest.Mock;
+  scheduleNotificationAsync: jest.Mock;
+};
 
 describe('GM-29 Expo native push driver', () => {
   beforeEach(() => {
