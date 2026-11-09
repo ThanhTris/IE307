@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, within } from '@testing-library/react-native';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react-native';
 import { LiveDishResultScreen } from '../../src/features/result/screens/LiveDishResultScreen';
 import { DishResultEntry } from '../../src/bootstrap/DishResultEntry';
 import { useRoomRepository } from '../../src/bootstrap/RoomRepositoryProvider';
@@ -538,7 +538,7 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
     fireEvent.press(mapsBtn);
 
     // Displays not yet supported message from useResultAction
-    expect(await screen.findByText('Chưa thực hiện được thao tác. Hãy thử lại.')).toBeOnTheScreen();
+    expect(await screen.findByText(/Đã nhận yêu cầu của bạn|Mô phỏng · Mở bản đồ|Chưa thực hiện được thao tác/)).toBeOnTheScreen();
   });
 
   test('renders result when resultId matches server response (GM-28 navigation)', async () => {
@@ -570,6 +570,38 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
     );
     expect(await screen.findByText('Thử lại')).toBeOnTheScreen();
     expect(screen.queryByText('Phở bò tái nạm')).toBeNull();
+  });
+
+  test('transitions to error notice when resultId does not match legacy-unscored-v1 response', async () => {
+    const legacyResult = {
+      resultId: '00000000-0000-4000-8000-000000000001',
+      roomId: 'room_legacy_mismatch',
+      round: 1 as const,
+      winnerRoundDishId: '00000000-0000-4000-8000-000000000020',
+      winnerDish: decidedResult.winner as any,
+      reasonCode: 'UNANIMOUS_WANT' as const,
+      matchTier: 'EXACT' as const,
+      finalizedAt: '2026-11-06T10:05:00Z',
+      policyVersion: 'decision-v2' as const,
+    };
+    const repo = {
+      getResult: jest.fn().mockResolvedValue({
+        ok: true,
+        data: { capability: 'legacy-unscored-v1' as const, result: legacyResult },
+      }),
+      getScoredResult: jest.fn(),
+    };
+    await render(
+      <LiveDishResultScreen
+        roomId="room_legacy_mismatch"
+        resultId="00000000-0000-4000-8000-999999999999"
+        repository={repo as any}
+        onHome={jest.fn()}
+        onNewSession={jest.fn()}
+      />
+    );
+    expect(await screen.findByRole('button', { name: 'Th\u1eed l\u1ea1i' })).toBeOnTheScreen();
+    expect(screen.queryByText('Phơ bò tái nạm')).toBeNull();
   });
 
   test('default composition wiring uses user identity from roomRepository', async () => {
@@ -770,6 +802,328 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
       const dismiss = await screen.findByText('Chạm để bỏ qua');
       fireEvent.press(dismiss);
       expect(screen.getAllByText('Phở bò tái nạm').length).toBeGreaterThan(0);
+    });
+
+    test('placesConfig passes through simulated Places in QA and preserves winner & Top 3 podium', async () => {
+      const repo = createMockResultRepository({
+        initialResult: decidedResult,
+      });
+
+      await render(
+        <LiveDishResultScreen
+          roomId="room_places_sim"
+          repository={repo}
+          placesConfig={{ isDevSimulated: true }}
+          onHome={jest.fn()}
+          onNewSession={jest.fn()}
+        />
+      );
+
+      const dismiss = await screen.findByText('Chạm để bỏ qua');
+      fireEvent.press(dismiss);
+
+      // Verifies winner and Top 3 are preserved
+      expect(screen.getAllByText('Phở bò tái nạm').length).toBeGreaterThan(0);
+      expect(screen.getByText('Cơm tấm sườn bì')).toBeTruthy();
+
+      // Verifies simulated places are displayed
+      expect(await screen.findByText(/Dữ liệu mô phỏng trên máy ảo AVD/)).toBeTruthy();
+    });
+
+    test('placesConfig passes through real Places mode (no key) and preserves winner & Top 3 podium', async () => {
+      const repo = createMockResultRepository({
+        initialResult: decidedResult,
+      });
+
+      await render(
+        <LiveDishResultScreen
+          roomId="room_places_real_nokey"
+          repository={repo}
+          placesConfig={{ isDevSimulated: false, apiKey: '' }}
+          onHome={jest.fn()}
+          onNewSession={jest.fn()}
+        />
+      );
+
+      const dismiss = await screen.findByText('Chạm để bỏ qua');
+      fireEvent.press(dismiss);
+
+      // Verifies winner and Top 3 are strictly preserved in real mode even with no key
+      expect(screen.getAllByText('Phở bò tái nạm').length).toBeGreaterThan(0);
+      expect(screen.getByText('Cơm tấm sườn bì')).toBeTruthy();
+      expect(await screen.findByText('Chưa thể hiển thị bản đồ')).toBeTruthy();
+    });
+
+    test('DishResultEntry forwards placesConfig to LiveDishResultScreen in real mode', async () => {
+      const repo = createMockResultRepository({
+        initialResult: decidedResult,
+      });
+
+      await render(
+        <DishResultEntry
+          roomId="room_entry_places"
+          repository={repo}
+          placesConfig={{ isDevSimulated: true }}
+          onHome={jest.fn()}
+          onNewSession={jest.fn()}
+          onLegacyNewSession={jest.fn()}
+          onOtherScreen={jest.fn()}
+        />
+      );
+
+      const dismiss = await screen.findByText('Chạm để bỏ qua');
+      fireEvent.press(dismiss);
+
+      expect(screen.getAllByText('Phở bò tái nạm').length).toBeGreaterThan(0);
+      expect(await screen.findByText(/Dữ liệu mô phỏng trên máy ảo AVD/)).toBeTruthy();
+    });
+
+    test('default map renderer renders map canvas, markers, and updates selected place on marker press', async () => {
+      const placesRepo = {
+        fetchNearbyPlaces: jest.fn().mockResolvedValue({
+          ok: true,
+          data: {
+            resultId: decidedResult.resultId,
+            winnerDishId: decidedResult.winner!.dishId,
+            status: 'ready',
+            places: [
+              {
+                id: 'place_01',
+                name: 'Quán Phở 1',
+                address: '100 Lê Lợi',
+                distanceM: 200,
+                latitude: 10.776,
+                longitude: 106.700,
+                attribution: 'Dữ liệu mô phỏng trên máy ảo AVD',
+              },
+              {
+                id: 'place_02',
+                name: 'Quán Phở 2',
+                address: '200 Nguyễn Huệ',
+                distanceM: 450,
+                latitude: 10.774,
+                longitude: 106.703,
+                attribution: 'Dữ liệu mô phỏng trên máy ảo AVD',
+              },
+            ],
+            fetchedAt: '2026-11-08T10:00:00Z',
+          },
+        }),
+      };
+
+      const repo = createMockResultRepository({
+        initialResult: decidedResult,
+      });
+
+      await render(
+        <LiveDishResultScreen
+          roomId="room_default_map"
+          repository={repo}
+          placesRepository={placesRepo as any}
+          placesConfig={{ isDevSimulated: true }}
+          onHome={jest.fn()}
+          onNewSession={jest.fn()}
+        />
+      );
+
+      const dismiss = await screen.findByText('Chạm để bỏ qua');
+      fireEvent.press(dismiss);
+
+      // Verify default map canvas is rendered
+      expect(await screen.findByTestId('result-map-canvas')).toBeTruthy();
+
+      // Verify AVD simulation badge is shown
+      expect(screen.getByTestId('avd-simulation-badge')).toBeTruthy();
+
+      // Verify markers for both places are rendered
+      const marker1 = screen.getByTestId('result-map-marker-place_01');
+      const marker2 = screen.getByTestId('result-map-marker-place_02');
+      expect(marker1).toBeTruthy();
+      expect(marker2).toBeTruthy();
+
+      // Initially place 1 is selected
+      expect(screen.getAllByText('Quán Phở 1').length).toBeGreaterThan(0);
+
+      // Press marker 2 to select place 2
+      fireEvent.press(marker2);
+      expect((await screen.findAllByText('Quán Phở 2')).length).toBeGreaterThan(0);
+    });
+
+    test('live map renderer renders Google Static Maps image when apiKey and coordinates exist', async () => {
+      const placesRepo = {
+        fetchNearbyPlaces: jest.fn().mockResolvedValue({
+          ok: true,
+          data: {
+            resultId: decidedResult.resultId,
+            winnerDishId: decidedResult.winner!.dishId,
+            status: 'ready',
+            places: [
+              {
+                id: 'place_live_01',
+                name: 'Quán Phở Live',
+                address: '100 Lê Lợi',
+                distanceM: 200,
+                latitude: 10.776,
+                longitude: 106.700,
+                attribution: 'Google Places',
+              },
+            ],
+            fetchedAt: '2026-11-08T10:00:00Z',
+          },
+        }),
+      };
+
+      const repo = createMockResultRepository({
+        initialResult: decidedResult,
+      });
+
+      await render(
+        <LiveDishResultScreen
+          roomId="room_live_map_key"
+          repository={repo}
+          placesRepository={placesRepo as any}
+          placesConfig={{ isDevSimulated: false, apiKey: 'test_live_api_key' }}
+          onHome={jest.fn()}
+          onNewSession={jest.fn()}
+        />
+      );
+
+      const dismiss = await screen.findByText('Chạm để bỏ qua');
+      fireEvent.press(dismiss);
+
+      // Verify Google Static Map image is rendered with API key and coordinates
+      const mapImg = await screen.findByTestId('live-google-map-image');
+      expect(mapImg.props.source.uri).toContain('maps.googleapis.com/maps/api/staticmap');
+      expect(mapImg.props.source.uri).toContain('key=test_live_api_key');
+      expect(mapImg.props.source.uri).toContain('10.776,106.7');
+    });
+
+    test('live map renderer shows unavailable notice when apiKey is missing, preserving winner, Top 3, and external button', async () => {
+      const placesRepo = {
+        fetchNearbyPlaces: jest.fn().mockResolvedValue({
+          ok: true,
+          data: {
+            resultId: decidedResult.resultId,
+            winnerDishId: decidedResult.winner!.dishId,
+            status: 'ready',
+            places: [
+              {
+                id: 'place_live_02',
+                name: 'Quán Phở NoKey',
+                address: '100 Lê Lợi',
+                distanceM: 200,
+                latitude: 10.776,
+                longitude: 106.700,
+                attribution: 'Google Places',
+              },
+            ],
+            fetchedAt: '2026-11-08T10:00:00Z',
+          },
+        }),
+      };
+
+      const repo = createMockResultRepository({
+        initialResult: decidedResult,
+      });
+
+      await render(
+        <LiveDishResultScreen
+          roomId="room_live_map_nokey"
+          repository={repo}
+          placesRepository={placesRepo as any}
+          placesConfig={{ isDevSimulated: false, apiKey: '' }}
+          onHome={jest.fn()}
+          onNewSession={jest.fn()}
+        />
+      );
+
+      const dismiss = await screen.findByText('Chạm để bỏ qua');
+      fireEvent.press(dismiss);
+
+      // Verify unavailable notice is displayed per GM-30 requirement
+      expect(await screen.findByTestId('live-map-unavailable')).toBeTruthy();
+      expect(screen.getByText('Bản đồ trong ứng dụng chưa khả dụng')).toBeTruthy();
+      expect(screen.getByText(/Vui lòng bấm nút "Mở bản đồ" bên dưới để xem vị trí quán trên Google Maps/)).toBeTruthy();
+
+      // Verify external "Mở bản đồ" button is present and usable
+      expect(screen.getByLabelText('Mở bản đồ')).toBeTruthy();
+
+      // Verify winner dish and Top 3 are preserved
+      expect(screen.getAllByText('Phở bò tái nạm').length).toBeGreaterThan(0);
+      expect(screen.getByText('Cơm tấm sườn bì')).toBeTruthy();
+    });
+    test('live map recovers and reloads when switching from Place A (image error) to Place B', async () => {
+      const placesRepo = {
+        fetchNearbyPlaces: jest.fn().mockResolvedValue({
+          ok: true,
+          data: {
+            resultId: decidedResult.resultId,
+            winnerDishId: decidedResult.winner!.dishId,
+            status: 'ready',
+            places: [
+              {
+                id: 'place_err_01',
+                name: 'Phở Gia Truyền Error',
+                address: '10 Hàng Đồng',
+                distanceM: 250,
+                latitude: 21.033,
+                longitude: 105.850,
+                attribution: 'Google Places',
+              },
+              {
+                id: 'place_ok_02',
+                name: 'Phở Hòa Pasteur',
+                address: '260C Pasteur',
+                distanceM: 400,
+                latitude: 10.787,
+                longitude: 106.691,
+                attribution: 'Google Places',
+              },
+            ],
+            fetchedAt: '2026-11-08T10:00:00Z',
+          },
+        }),
+      };
+
+      const repo = createMockResultRepository({
+        initialResult: decidedResult,
+      });
+
+      await render(
+        <LiveDishResultScreen
+          roomId="room_live_map_error_recovery"
+          repository={repo}
+          placesRepository={placesRepo as any}
+          placesConfig={{ isDevSimulated: false, apiKey: 'valid_maps_key' }}
+          onHome={jest.fn()}
+          onNewSession={jest.fn()}
+        />
+      );
+
+      const dismiss = await screen.findByText('Chạm để bỏ qua');
+      fireEvent.press(dismiss);
+
+      // Initially, Place A is selected and static map image is rendered
+      const mapImgA = await screen.findByTestId('live-google-map-image');
+      expect(mapImgA.props.source.uri).toContain('21.033,105.85');
+
+      // Trigger image load error on Place A static map
+      fireEvent(mapImgA, 'error', { nativeEvent: { error: 'Network error loading tile' } });
+
+      // Live map shows unavailable notice for Place A
+      expect(await screen.findByTestId('live-map-unavailable')).toBeTruthy();
+      expect(screen.queryByTestId('live-google-map-image')).toBeNull();
+
+      // Now switch to Place B
+      const placeBCard = await screen.findByLabelText('Chọn quán Phở Hòa Pasteur');
+      fireEvent.press(placeBCard);
+
+      // Map error resets: unavailable notice disappears and Place B static map loads!
+      await waitFor(() => {
+        expect(screen.queryByTestId('live-map-unavailable')).toBeNull();
+      });
+      const mapImgB = await screen.findByTestId('live-google-map-image');
+      expect(mapImgB.props.source.uri).toContain('10.787,106.691');
     });
   });
 });

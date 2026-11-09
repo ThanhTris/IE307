@@ -4,6 +4,7 @@ import { createApiClient } from '../../src/data/api';
 import type { JoinRoomResponse, ReadResult, WriteResult } from '../../src/data/api/contracts';
 import { JoinRoomEntryScreen, type JoinRoomEntryProps } from '../../src/features/rooms/screens/JoinRoomEntryScreen';
 import { createJoinPreviewFixture, type JoinRoomPublicPreview } from '../../src/features/rooms/services/joinPreview';
+import { NativeQrScannerAdapter, SimulatedQrScannerAdapter } from '../../src/features/rooms/services/joinLinks';
 
 const press = async (label: string) => { await fireEvent.press(screen.getByRole('button', { name: label })); };
 const codeInputs = () => screen.getAllByLabelText(/Ký tự \d của mã phòng/);
@@ -140,4 +141,70 @@ test('a guest without a received name can enter it; failed reads preserve the dr
   await press('Sửa mã phòng');
   expect(screen.getByLabelText('Tên của bạn')).toHaveDisplayValue('Tên khách');
   expect(displayedCode()).toBe('GCD234');
+});
+
+test('link rejection displays blocked status notice and leaves code empty without previewing or joining', async () => {
+  const p = props();
+  p.initialCode = '';
+  p.linkError = 'SUSPICIOUS_PAYLOAD';
+  p.preview = jest.fn();
+  const join = jest.spyOn(p.repository, 'joinRoom');
+
+  await render(<JoinRoomEntryScreen {...p} />);
+
+  // Verifies blocked banner is displayed
+  expect(screen.getByText('Liên kết bị chặn')).toBeOnTheScreen();
+  expect(screen.getByText(/Liên kết chứa tham số không an toàn/)).toBeOnTheScreen();
+  expect(displayedCode()).toBe('');
+
+  // User manually enters code and proceeds
+  await fireEvent.changeText(screen.getByLabelText('Ký tự 1 của mã phòng'), 'XYZ789');
+  expect(displayedCode()).toBe('XYZ789');
+
+  await press('Tiếp tục →');
+  expect(p.preview).toHaveBeenCalledWith('XYZ789');
+  expect(join).not.toHaveBeenCalled();
+});
+
+test('simulated QR scanner shows AVD badge, prevents auto-filling without input, and allows typing test code', async () => {
+  const p = props();
+  p.initialCode = '';
+  const adapter = new SimulatedQrScannerAdapter('granted');
+  p.qrScannerAdapter = adapter;
+
+  await render(<JoinRoomEntryScreen {...p} />);
+  await press('Quét mã QR');
+
+  // Verify AVD simulation badge
+  expect(screen.getByText(/\[Mô phỏng AVD\]/)).toBeOnTheScreen();
+
+  // Pressing scan with no test input does NOT navigate or auto-fill
+  await press('Thử quét QR');
+  expect(screen.getByText(/Chưa có mã QR hợp lệ/)).toBeOnTheScreen();
+  expect(screen.queryAllByLabelText(/Ký tự \d của mã phòng/)).toHaveLength(0);
+
+  // Type test code into simulation input
+  const testInput = screen.getByLabelText('Mã hoặc URL test');
+  await fireEvent.changeText(testInput, 'XYZ789');
+  await press('Thử quét QR');
+
+  // Successfully parsed and placed in code fields
+  expect(codeInputs()).toHaveLength(6);
+  expect(displayedCode()).toBe('XYZ789');
+});
+
+test('native QR scanner defaults to denied on AVD and directs user to manual entry', async () => {
+  const p = props();
+  p.initialCode = '';
+  p.qrScannerAdapter = new NativeQrScannerAdapter();
+
+  await render(<JoinRoomEntryScreen {...p} />);
+  await press('Quét mã QR');
+
+  // Directs to denied view and manual entry
+  expect(screen.getAllByText('Camera bị từ chối').length).toBeGreaterThanOrEqual(1);
+  expect(screen.getByRole('button', { name: 'Nhập mã bằng tay' })).toBeOnTheScreen();
+
+  await press('Nhập mã bằng tay');
+  expect(codeInputs()).toHaveLength(6);
 });

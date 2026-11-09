@@ -7,6 +7,8 @@ import { StatusNotice } from '../shared/ui';
 import { useShellTheme } from '../shared/lib/useShellTheme';
 import { LiveDishResultScreen } from '../features/result/screens/LiveDishResultScreen';
 import type { ResultRepository } from '../features/result/services/resultRepository';
+import type { PlacesConfig } from '../features/result/services/placesRepository';
+import type { ResultMapRenderer } from '../features/result/services/nearbyPresentation';
 
 export interface DishResultEntryProps {
   roomId?: string;
@@ -14,6 +16,8 @@ export interface DishResultEntryProps {
   noConsensus?: boolean;
   legacy?: boolean;
   repository?: ResultRepository;
+  placesConfig?: PlacesConfig;
+  renderMap?: ResultMapRenderer;
   onHome: () => void;
   onNewSession: () => void;
   onLegacyNewSession: () => void;
@@ -26,6 +30,8 @@ export function DishResultEntry({
   noConsensus,
   legacy,
   repository,
+  placesConfig,
+  renderMap,
   onHome,
   onNewSession,
   onLegacyNewSession,
@@ -44,6 +50,8 @@ export function DishResultEntry({
             roomId={roomId}
             resultId={resultId}
             repository={repository}
+            placesConfig={placesConfig}
+            renderMap={renderMap}
             onHome={onHome}
             onNewSession={onNewSession}
             onOtherScreen={onOtherScreen}

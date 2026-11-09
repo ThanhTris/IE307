@@ -68,6 +68,7 @@ export function resetPreviewEntry() {
 /** UI-only, in-memory onboarding flag. Does not mutate auth, active room or ballots. */
 export function markTutorialSeen() { snapshot = { ...snapshot, tutorialSeen: true }; notify(); }
 export function useRoomPreview() { return useSyncExternalStore(subscribe, () => snapshot, () => snapshot); }
+export function getPreviewClient() { return snapshot.client; }
 export const previewRoomCode = MOCK_DEFAULT_ROOM_CODE;
 export const previewSessionToken = 'gm09-synthetic-session'; // fixture marker, never a real credential
 

@@ -14,49 +14,120 @@ import {
 import {
   createLiveResultRepository,
   mapSnapshotMembersToCompanions,
+  type FetchNearbyPlacesParams,
   type ResultRepository,
 } from '../services/resultRepository';
 import type { ResultMapRenderer } from '../services/nearbyPresentation';
+import {
+  createPlacesRepository,
+  getPlacesApiKeyFromEnv,
+  isPlacesSimulatedFromEnv,
+  type PlacesConfig,
+  type PlacesRepository,
+} from '../services/placesRepository';
+import { openExternalAction } from '../services/externalLinks';
+import { defaultResultMapRenderer } from '../components/DefaultResultMapView';
+import { LiveResultMapView } from '../components/LiveResultMapView';
 
 export interface LiveDishResultScreenProps {
   roomId: string;
   resultId?: string;
   repository?: ResultRepository;
+  placesRepository?: PlacesRepository;
+  placesConfig?: PlacesConfig;
   onHome: () => void;
   onNewSession: () => void;
   onOtherScreen?: () => void;
   artworkSources?: Readonly<Record<string, ImageSourcePropType>>;
   renderMap?: ResultMapRenderer;
   pollIntervalMs?: number;
+  isReal?: boolean;
 }
 
 export function LiveDishResultScreen({
   roomId,
   resultId,
   repository: customRepository,
+  placesRepository: customPlacesRepository,
+  placesConfig,
   onHome,
   onNewSession,
   onOtherScreen,
   artworkSources,
-  renderMap,
+  renderMap: renderMapProp,
   pollIntervalMs,
+  isReal: isRealProp,
 }: LiveDishResultScreenProps) {
   const live = useRoomRepository();
-  const isReal = live.mode === 'real';
+  const isReal = isRealProp ?? (live ? live.mode === 'real' : false);
+  const isDev = typeof __DEV__ !== 'undefined' ? Boolean(__DEV__) : process.env.NODE_ENV !== 'production';
+  const envSimulated = isPlacesSimulatedFromEnv();
+  const effectiveSimulated = placesConfig?.isDevSimulated !== undefined
+    ? (isDev ? placesConfig.isDevSimulated : false)
+    : (isDev && envSimulated);
+
+  const defaultMapRenderer = useMemo<ResultMapRenderer>(() => {
+    if (effectiveSimulated) {
+      // In QA/Dev simulation mode on AVD (Chặng 3A): use labeled schematic view with interactive pin markers
+      return defaultResultMapRenderer;
+    }
+    // In live mode: use real map renderer (or unavailable notice if key/coords missing)
+    const liveMapRenderer: ResultMapRenderer = function LiveMapRenderer(props) {
+      return <LiveResultMapView {...props} apiKey={placesConfig?.apiKey} />;
+    };
+    return liveMapRenderer;
+  }, [effectiveSimulated, placesConfig?.apiKey]);
+
+  const renderMap = renderMapProp ?? defaultMapRenderer;
+
+  const placesRepository = useMemo<PlacesRepository>(() => {
+    if (customPlacesRepository) return customPlacesRepository;
+    const envApiKey = getPlacesApiKeyFromEnv();
+    const effectiveApiKey = placesConfig?.apiKey ?? envApiKey;
+
+    return createPlacesRepository({
+      apiKey: effectiveApiKey,
+      isDevSimulated: effectiveSimulated,
+    });
+  }, [customPlacesRepository, placesConfig, effectiveSimulated]);
+
+  const placesFetcher = useMemo(() => {
+    if (customPlacesRepository?.fetchNearbyPlaces) {
+      return customPlacesRepository.fetchNearbyPlaces.bind(customPlacesRepository);
+    }
+    if (placesConfig) {
+      return placesRepository.fetchNearbyPlaces.bind(placesRepository);
+    }
+    if (customRepository?.fetchNearbyPlaces) {
+      return customRepository.fetchNearbyPlaces.bind(customRepository);
+    }
+    return placesRepository.fetchNearbyPlaces.bind(placesRepository);
+  }, [customPlacesRepository, placesConfig, customRepository, placesRepository]);
 
   const repository = useMemo<ResultRepository>(() => {
     if (customRepository) return customRepository;
-    const getCurrentIdentity = () => live.user?.id ?? (live.repository && typeof live.repository.getCurrentUser === 'function' ? live.repository.getCurrentUser()?.id : null) ?? null;
+    const getCurrentIdentity = () =>
+      live.user?.id ??
+      (live.repository && typeof live.repository.getCurrentUser === 'function'
+        ? live.repository.getCurrentUser()?.id
+        : null) ??
+      null;
+
+    const repositoryPlacesFetcher = (params: FetchNearbyPlacesParams) =>
+      placesFetcher(params);
+
     if (isReal) {
       return createLiveResultRepository({
         roomRepository: live.repository,
         getCurrentIdentity,
+        placesFetcher: repositoryPlacesFetcher,
       });
     }
     return createLiveResultRepository({
       getCurrentIdentity,
+      placesFetcher: repositoryPlacesFetcher,
     });
-  }, [customRepository, isReal, live.repository, live.user?.id]);
+  }, [customRepository, isReal, live.repository, live.user?.id, placesFetcher]);
 
   const [currentRoomId, setCurrentRoomId] = useState(roomId);
   const [currentResultId, setCurrentResultId] = useState(resultId);
@@ -84,21 +155,23 @@ export function LiveDishResultScreen({
     };
   }, []);
 
-  // Lifecycle cleanup: dispose internally-created repository on unmount or when repository changes.
-  // Never dispose an externally-injected customRepository owned by another caller.
+  // Lifecycle cleanup: dispose internally-created repository or placesRepository on unmount.
   useEffect(() => {
     return () => {
       if (!customRepository && repository && typeof repository.dispose === 'function') {
         repository.dispose();
       }
+      if (!customPlacesRepository && placesRepository && typeof placesRepository.dispose === 'function') {
+        placesRepository.dispose();
+      }
     };
-  }, [customRepository, repository]);
+  }, [customRepository, repository, customPlacesRepository, placesRepository]);
 
-  const toNearbyError = useCallback((resultId: string, winnerDishId: string, error?: { messageKey?: string }): NearbyState => {
+  const toNearbyError = useCallback((targetResultId: string, winnerDishId: string, error?: { messageKey?: string }): NearbyState => {
     const isNet = error?.messageKey === 'NETWORK_ERROR' || error?.messageKey === 'OFFLINE';
     const isPerm = error?.messageKey === 'PERMISSION_DENIED';
     return {
-      resultId,
+      resultId: targetResultId,
       winnerDishId,
       status: isPerm ? 'denied' : isNet ? 'offline' : 'error',
       places: [],
@@ -132,12 +205,10 @@ export function LiveDishResultScreen({
         if (cancelled || activeRoomIdRef.current !== roomId || currentSeq !== fetchSeqRef.current) return;
 
         if (res.ok) {
-          // If expected resultId was requested (e.g. from GM-28 inbox/history),
-          // verify that the returned result matches expected resultId
+          // If expected resultId was requested, ensure it matches (guard for both scored-v4 and legacy-unscored-v1)
           if (resultId && res.data.result.resultId !== resultId) {
             setCurrentRoomId(roomId);
             setCurrentResultId(resultId);
-            setInput(null);
             setReadState('error');
             return;
           }
@@ -153,24 +224,22 @@ export function LiveDishResultScreen({
             const targetResultId = res.data.result.resultId;
             const currentPlacesSeq = ++placesSeqRef.current;
 
-            if (repository.fetchNearbyPlaces) {
-              void repository.fetchNearbyPlaces({
-                resultId: targetResultId,
-                winnerDishId: winner.dishId,
-                dishName: winner.name,
-              }).then(placesRes => {
-                if (cancelled || activeRoomIdRef.current !== roomId || currentPlacesSeq !== placesSeqRef.current) return;
-                if (placesRes.ok) {
-                  setNearby(placesRes.data);
-                } else {
-                  setNearby(toNearbyError(targetResultId, winner.dishId, placesRes.error));
-                }
-              }).catch(() => {
-                if (!cancelled && activeRoomIdRef.current === roomId && currentPlacesSeq === placesSeqRef.current) {
-                  setNearby(toNearbyError(targetResultId, winner.dishId, { messageKey: 'NETWORK_ERROR' }));
-                }
-              });
-            }
+            void placesFetcher({
+              resultId: targetResultId,
+              winnerDishId: winner.dishId,
+              dishName: winner.name,
+            }).then(placesRes => {
+              if (cancelled || activeRoomIdRef.current !== roomId || currentPlacesSeq !== placesSeqRef.current) return;
+              if (placesRes.ok) {
+                setNearby(placesRes.data);
+              } else {
+                setNearby(toNearbyError(targetResultId, winner.dishId, placesRes.error));
+              }
+            }).catch(() => {
+              if (!cancelled && activeRoomIdRef.current === roomId && currentPlacesSeq === placesSeqRef.current) {
+                setNearby(toNearbyError(targetResultId, winner.dishId, { messageKey: 'NETWORK_ERROR' }));
+              }
+            });
           }
         } else {
           setCurrentRoomId(roomId);
@@ -208,7 +277,7 @@ export function LiveDishResultScreen({
         clearTimeout(pollTimer);
       }
     };
-  }, [roomId, resultId, repository, refreshIndex, toNearbyError, pollIntervalMs]);
+  }, [roomId, resultId, repository, placesFetcher, refreshIndex, toNearbyError, pollIntervalMs]);
 
   const handleRetryResult = useCallback(() => {
     setReadState('loading');
@@ -218,46 +287,43 @@ export function LiveDishResultScreen({
   const handleRetryPlaces = useCallback(async () => {
     if (!input || input.capability !== 'scored-v4' || input.result.status !== 'DECIDED' || !input.result.winner) return;
     const winner = input.result.winner;
-    const resultId = input.result.resultId;
+    const targetResultId = input.result.resultId;
     const targetRoomId = roomId;
 
-    if (repository.fetchNearbyPlaces) {
-      setNearby(prev => prev ? { ...prev, status: 'loading' } : undefined);
-      const currentPlacesSeq = ++placesSeqRef.current;
+    setNearby(prev => prev ? { ...prev, status: 'loading' } : undefined);
+    const currentPlacesSeq = ++placesSeqRef.current;
 
-      try {
-        const res = await repository.fetchNearbyPlaces({
-          resultId,
-          winnerDishId: winner.dishId,
-          dishName: winner.name,
-        });
-        if (!mountedRef.current || activeRoomIdRef.current !== targetRoomId || currentPlacesSeq !== placesSeqRef.current) return;
+    try {
+      const res = await placesFetcher({
+        resultId: targetResultId,
+        winnerDishId: winner.dishId,
+        dishName: winner.name,
+      });
+      if (!mountedRef.current || activeRoomIdRef.current !== targetRoomId || currentPlacesSeq !== placesSeqRef.current) return;
 
-        if (res.ok) {
-          setNearby(res.data);
-        } else {
-          setNearby(toNearbyError(resultId, winner.dishId, res.error));
-        }
-      } catch {
-        if (mountedRef.current && activeRoomIdRef.current === targetRoomId && currentPlacesSeq === placesSeqRef.current) {
-          setNearby(toNearbyError(resultId, winner.dishId, { messageKey: 'NETWORK_ERROR' }));
-        }
+      if (res.ok) {
+        setNearby(res.data);
+      } else {
+        setNearby(toNearbyError(targetResultId, winner.dishId, res.error));
+      }
+    } catch {
+      if (mountedRef.current && activeRoomIdRef.current === targetRoomId && currentPlacesSeq === placesSeqRef.current) {
+        setNearby(toNearbyError(targetResultId, winner.dishId, { messageKey: 'NETWORK_ERROR' }));
       }
     }
-  }, [input, repository, roomId, toNearbyError]);
+  }, [input, placesFetcher, roomId, toNearbyError]);
 
   const handleRequestLocation = useCallback(async () => {
+    await placesRepository.requestLocationPermission();
     await handleRetryPlaces();
-  }, [handleRetryPlaces]);
+  }, [placesRepository, handleRetryPlaces]);
 
   const handleOpenSettings = useCallback(async () => {
-    await handleRetryPlaces();
-  }, [handleRetryPlaces]);
+    await placesRepository.openLocationSettings();
+  }, [placesRepository]);
 
-  const handleExternalAction = useCallback((_action: ResultExternalAction, _target: ResultActionTarget): ResultActionReply => {
-    // Supplementary external action (e.g. open Maps or search) requires GM-30.
-    // Return ok: false to notify caller that capability is not yet available.
-    return { ok: false };
+  const handleExternalAction = useCallback(async (action: ResultExternalAction, target: ResultActionTarget): Promise<ResultActionReply> => {
+    return openExternalAction(action, target);
   }, []);
 
   return (

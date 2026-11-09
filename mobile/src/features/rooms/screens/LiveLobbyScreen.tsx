@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BackHandler, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { BackHandler, Clipboard, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MockApiClient, type ErrorCode, type Friend, type RoomSnapshot } from '../../../data/api';
 import { AppButton, AppHeader, ContextSummary, RoomCode, SheetDialog, StatusNotice } from '../../../shared/ui';
@@ -8,6 +8,7 @@ import { errorCopy, mealLabels } from '../services/roomEntry';
 import { useLiveLobby, type LobbyRepository } from '../hooks/useLiveLobby';
 import { LobbyMemberList } from '../components/LobbyMemberList';
 import { LobbyActionButtons } from '../components/LobbyActionButtons';
+import { RoomQrModal } from '../components/RoomQrModal';
 
 export type LiveLobbyScreenProps = {
   onNavigate?: (destination: DemoDestination) => void;
@@ -34,6 +35,7 @@ export function LiveLobbyScreen({
   onEditContext,
 }: LiveLobbyScreenProps) {
   const colors = useDemoColors();
+  const [showQrModal, setShowQrModal] = useState(false);
   const lobby = useLiveLobby({
     mockClient,
     repository,
@@ -114,6 +116,21 @@ export function LiveLobbyScreen({
         <>
           {!isReal && <AppButton label={`Đang xem vai trò: ${isHost ? 'Host' : 'Member'} · đổi vai trò`} variant="secondary" onPress={chooseRole} disabled={busy} colors={colors} />}
           <RoomCode code={snapshot.code} colors={colors} />
+          <AppButton
+            label="Mở mã QR phòng"
+            variant="secondary"
+            onPress={() => setShowQrModal(true)}
+            disabled={busy}
+            colors={colors}
+          />
+          <RoomQrModal
+            visible={showQrModal}
+            code={snapshot.code}
+            onClose={() => setShowQrModal(false)}
+            onCopyLink={async (link) => {
+              Clipboard.setString(link);
+            }}
+          />
           {!isReal && <Text style={[styles.helper, { color: colors.muted }]}>Mã hiển thị là fixture; QR chưa được tạo và không thể tham gia phòng thật.</Text>}
           {!isReal && (
             <View style={styles.demoRoster}>

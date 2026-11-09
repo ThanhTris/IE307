@@ -27,8 +27,14 @@ for (const file of await walk(root)) {
   if (path.startsWith('features/') && imports.some(value => value.includes('supabase'))) {
     console.error(`Feature must use repository contracts, not Supabase SDK: ${path}`); failures++;
   }
-  if (path.startsWith('app/') && !/export\s+default\b/.test(source)) {
-    console.error(`Route needs default export: ${path}`); failures++;
+  if (path.startsWith('app/')) {
+    if (path.endsWith('+native-intent.ts')) {
+      if (!/export\s+(?:function|const)\s+redirectSystemPath\b/.test(source)) {
+        console.error(`Native intent needs redirectSystemPath named export: ${path}`); failures++;
+      }
+    } else if (!/export\s+default\b/.test(source)) {
+      console.error(`Route needs default export: ${path}`); failures++;
+    }
   }
 }
 if (failures) process.exitCode = 1;
