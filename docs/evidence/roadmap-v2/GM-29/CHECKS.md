@@ -58,7 +58,6 @@ The API/backend results are independent of the blocked AVD UI section. Do not tr
 ### Review regression follow-up — 2026-11-09
 
 - Added the exact opt-out race raised in PR #127 review: start from a persisted `enabled` intent, hold the SecureStore write of `disabled`, emit a refreshed token while that write is pending, then release it. The test asserts the durable intent remains `disabled` and no new registration request occurs.
-- Added an Expo Router integration case with an active real session that opens `/push-settings` and asserts the actual settings actions render; this covers the route that was absent in the earlier GM-28-only branch.
-- `nativePush.test.ts`: **16/16 Pass**; companion unit/component suites (`expoPushDriver`, notification resolver, Inbox) passed **42/42**; `routes.test.tsx`: **24/24 Pass**. `npm run typecheck`: Pass.
+- `npm test -- --runTestsByPath tests/unit/nativePush.test.ts`: **16/16 Pass** after this regression was added. Companion focused run (`expoPushDriver`, notification resolver, and Inbox component) passed **42/42** before the added case. `npm run typecheck`: Pass.
 - The production path hydrates stored intent once, sets `desiredEnabled = false` synchronously when unregister starts, and serializes cleanup; token refresh does not restore intent from a potentially stale asynchronous storage read.
 - AVD app UI remains blocked at white screen after Metro bundle delivery; permission screens and notification interactions remain **Not run**. This local regression does not remove that acceptance gap or make the PR merge-ready.

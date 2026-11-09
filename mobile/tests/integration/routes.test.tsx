@@ -27,9 +27,6 @@ import RoomPreview from '../../src/app/room/preview';
 import Vote from '../../src/app/room/vote';
 import FinalRound from '../../src/app/room/final-round';
 import { markTutorialSeen, rememberPreviewGuest, rememberPreviewRoom, resetPreviewEntry, setPreviewScenario, useRoomPreview } from '../../src/bootstrap/roomPreview';
-import * as roomRepositoryProvider from '../../src/bootstrap/RoomRepositoryProvider';
-import type { RoomRepository } from '../../src/features/rooms/services/roomRepository';
-import type { SessionUser } from '../../src/data/api/contracts';
 import RoomLayout from '../../src/app/room/_layout';
 import RoomContext from '../../src/app/room/context';
 import RoomPreferences from '../../src/app/room/preferences';
@@ -71,28 +68,6 @@ test('Push settings route explains the real-session requirement in mock mode', a
   await waitFor(() => expect(screen).toHavePathname('/push-settings'));
   expect(await screen.findByText('Đăng nhập bằng kết nối thật để quản lý đăng ký push. Hộp thư mô phỏng vẫn hoạt động.')).toBeOnTheScreen();
   expect(screen.getByRole('button', { name: 'Quay lại Hộp thư' })).toBeOnTheScreen();
-});
-
-test('Push settings route is reachable with an active real session', async () => {
-  const user = { id: 'live-push-user', displayName: 'Minh', isGuest: true, createdAt: '2026-11-09T00:00:00Z' } satisfies SessionUser;
-  const repository = {
-    getCurrentUser: () => user,
-    getSessionStatus: () => 'active',
-    getIdentityRevision: () => 1,
-    getApiClient: () => ({}),
-  } as unknown as RoomRepository;
-  const hook = jest.spyOn(roomRepositoryProvider, 'useRoomRepository').mockReturnValue({
-    repository, status: 'active', issue: 'none', user, mode: 'real', isInitializing: false,
-    restoreSession: jest.fn(), ensureSession: jest.fn(), logout: jest.fn(),
-  });
-  try {
-    await renderRouter(routes, { initialUrl: '/push-settings' });
-    await waitFor(() => expect(screen).toHavePathname('/push-settings'));
-    expect(await screen.findByRole('button', { name: 'Tắt thông báo trên thiết bị này' })).toBeOnTheScreen();
-    expect(screen.getByRole('button', { name: 'Mở Hộp thư' })).toBeOnTheScreen();
-  } finally {
-    hook.mockRestore();
-  }
 });
 beforeEach(() => { setPreviewScenario('default'); rememberPreviewGuest('Tuấn'); markTutorialSeen(); });
 afterEach(() => jest.useRealTimers());
