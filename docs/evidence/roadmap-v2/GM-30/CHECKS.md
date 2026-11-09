@@ -4,7 +4,7 @@
 
 Tested source: working branch `issue91_figma_ui_gm30` rebased on `origin/main` (`8af20a9`).
 Contract: `ui-figma-final/2026-10-25/GM-30.1` & `dish-session-v4/roadmap-v2/GM-07.B-supplement`.
-Owner: Trí (`ThanhTris`), Reviewer: Trí (`ThanhTris`).
+Owner: Trang (`rosy179`), Reviewer: Trí (`ThanhTris`).
 Track: `INTEGRATION`, Stage: `integration`.
 
 ### Key Technical Deliverables & Review Fixes (2026-11-09)
@@ -37,7 +37,7 @@ Track: `INTEGRATION`, Stage: `integration`.
 | ESLint check | **Pass: 0 errors / 0 warnings** | `npm --prefix mobile run lint` (`eslint .`). |
 | Repository validation | **Pass** | `python scripts/validate_repository.py`. |
 | Task docs consistency | **Pass** | `python scripts/task_readiness.py --check-docs`. |
-| Chặng 3A — Máy ảo Android (AVD) + Backend QA local | **Pass (Code & AVD simulated adapter verified)** | Nghiệm thu trên AVD Pixel 8 (API 34) nối backend QA local qua `SimulatedQrScannerAdapter` (có nhãn và ô nhập test), Dev Simulated Places Adapter có gắn nhãn rõ ràng (`[Simulated AVD] ...`), và Default Map View (`DefaultResultMapView` với nhãn `[Mô phỏng AVD]` và marker ghim quán). Đảm bảo không phụ thuộc phần cứng camera vật lý hay Google billing key theo quy định Chặng 3A. Reviewer: **Not run bởi reviewer** trong lượt này. |
+| Chặng 3A — Máy ảo Android (AVD) + Backend QA local | **Pass** | Nghiệm thu trên AVD `Medium_Phone_API_37.0` (`emulator-5554`, API 37) nối backend QA local (`127.0.0.1:54381`): kiểm chứng trực tiếp màn hình `/room/join` ([`avd-join-room-entry.png`](artifacts/avd-join-room-entry.png)), trạng thái từ chối camera `275:2088` ([`avd-qr-camera-denied-275-2088.png`](artifacts/avd-qr-camera-denied-275-2088.png)), nút chuyển về nhập tay ([`avd-join-manual-fallback.png`](artifacts/avd-join-manual-fallback.png)), chặn deep link chứa userinfo độc hại `gi-cung-duoc://qa-user:qa-secret@room/join?code=GCD234` với banner `Liên kết bị chặn` ([`avd-join-blocked-link.png`](artifacts/avd-join-blocked-link.png)), cùng `SimulatedQrScannerAdapter`, Dev Simulated Places Adapter (`[Simulated AVD] ...`) và `DefaultResultMapView` (`[Mô phỏng AVD]`). |
 | Hoãn sang Chặng 3B: Camera vật lý & Google billing key | **Deferred to Stage 3B** | Camera QR vật lý trên điện thoại thật cắm cáp USB và Google Places production billing key được hoãn sang Chặng 3B (`GM-33`/`GM-34`) sau khi hoàn tất toàn bộ UI-API tasks. |
 
 ---

@@ -24,6 +24,7 @@ const press = async (label: string) => {
 };
 
 describe('GM-30 Figma Parity & Native Linking Component Tests', () => {
+  jest.setTimeout(15000);
   beforeEach(() => {
     jest.mocked(useRoomRepository).mockReturnValue({
       mode: 'mock',

@@ -3,7 +3,7 @@
 ## Current local handoff — 2026-11-09
 
 Source: PR issue #91 branch `issue91_figma_ui_gm30`, baseline `origin/main` (`8af20a9`).
-Task / owner / reviewer / track / stage: GM-30 / Trí (`ThanhTris`) / Trí (`ThanhTris`) / INTEGRATION / integration.
+Task / owner / reviewer / track / stage: GM-30 / Trang (`rosy179`) / Trí (`ThanhTris`) / INTEGRATION / integration.
 Contract version: `ui-figma-final/2026-10-25/GM-30.1` & `dish-session-v4/roadmap-v2/GM-07.B-supplement`.
 Artifacts bàn giao chính:
 - `mobile/src/features/rooms/services/joinLinks.ts`

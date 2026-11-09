@@ -1,4 +1,7 @@
-import { guardJoinRoomUrl } from '../features/rooms/services/joinLinks';
+import { guardJoinRoomUrl, installGlobalJoinLinkGuard } from '../features/rooms/services/joinLinks';
+
+// Enforce global join link safety guard before Expo Router evaluates incoming intents
+installGlobalJoinLinkGuard();
 
 /**
  * Expo Router Native Intent Interceptor.

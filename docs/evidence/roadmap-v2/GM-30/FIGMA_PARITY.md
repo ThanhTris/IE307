@@ -1,7 +1,7 @@
 # Báo cáo đối chiếu Figma — GM-30 / roadmap-v2: UI native QR, liên kết, vị trí và Places/map kết quả
 
 - **Task**: GM-30 (Issue #91)
-- **Assignee**: @ThanhTris (Trí)
+- **Assignee**: @rosy179 (Trang)
 - **Reviewer**: @ThanhTris (Trí)
 - **Figma file**: `3Ysh0mOAEkAgA5DgZPSC1j` (Gì Cũng Được App)
 - **Mã revision UI**: `ui-figma-final/2026-10-25/GM-30.1`
@@ -62,8 +62,9 @@ flowchart TD
 
 ## 3. Khả năng thích ứng hiển thị (Responsive & Accessibility)
 
-- **Viewports đã kiểm tra**:
-  - `412 × 915 dp` (Chuẩn Pixel 8)
+- **Viewports & AVD đã kiểm tra**:
+  - AVD `Medium_Phone_API_37.0` (`emulator-5554`, API 37) kết nối QA Backend (`127.0.0.1:54381`): [`avd-join-room-entry.png`](artifacts/avd-join-room-entry.png), [`avd-qr-camera-denied-275-2088.png`](artifacts/avd-qr-camera-denied-275-2088.png), [`avd-join-manual-fallback.png`](artifacts/avd-join-manual-fallback.png), [`avd-join-blocked-link.png`](artifacts/avd-join-blocked-link.png).
+  - `412 × 915 dp` (Chuẩn Pixel 8 / Medium Phone)
   - `360 × 800 dp` (Màn hình Android tiêu chuẩn)
   - `320 × 640 dp` (Màn hình nhỏ)
 - **Khả năng tiếp cận (Accessibility)**:
