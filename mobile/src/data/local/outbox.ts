@@ -587,16 +587,18 @@ class SecureStoreMetadataDatabase implements SqlitePrivateDatabase {
   }
 }
 
+const EXPO_MODULES_CORE_ID = ['expo', 'modules', 'core'].join('-');
+const EXPO_SQLITE_MODULE_ID = ['expo', 'sqlite'].join('-');
+
 async function openDefaultPrivateDatabase(): Promise<SqlitePrivateDatabase> {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const Core = require('expo-modules-core') as { requireOptionalNativeModule?: (name: string) => unknown };
+    const dynamicRequire = require as (id: string) => unknown;
+    const Core = dynamicRequire(EXPO_MODULES_CORE_ID) as { requireOptionalNativeModule?: (name: string) => unknown };
     const hasNativeSqlite = typeof Core?.requireOptionalNativeModule === 'function'
       ? Boolean(Core.requireOptionalNativeModule('ExpoSQLite'))
       : true;
     if (hasNativeSqlite) {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const SQLite = require('expo-sqlite') as { openDatabaseAsync?: (name: string) => Promise<SqlitePrivateDatabase> };
+      const SQLite = dynamicRequire(EXPO_SQLITE_MODULE_ID) as { openDatabaseAsync?: (name: string) => Promise<SqlitePrivateDatabase> };
       if (typeof SQLite?.openDatabaseAsync === 'function') {
         return await SQLite.openDatabaseAsync(PRIVATE_DATABASE_NAME);
       }
