@@ -19,7 +19,7 @@ describe('GM-29 push orchestration', () => {
     const registerPushDevice = jest.fn();
     const service = createNativePushService({
       driver: driver({ availability: () => 'unsupported' }),
-      client: { registerPushDevice } as unknown as ApiClient,
+      client: { registerPushDevice, unregisterPushDevice: jest.fn().mockResolvedValue({ ok: true, data: undefined }) } as unknown as ApiClient,
       refreshInbox: jest.fn(),
     });
 
@@ -31,7 +31,7 @@ describe('GM-29 push orchestration', () => {
     const registerPushDevice = jest.fn();
     const service = createNativePushService({
       driver: driver({ requestPermission: async () => 'denied' }),
-      client: { registerPushDevice } as unknown as ApiClient,
+      client: { registerPushDevice, unregisterPushDevice: jest.fn().mockResolvedValue({ ok: true, data: undefined }) } as unknown as ApiClient,
       refreshInbox: jest.fn(),
     });
 
@@ -43,7 +43,7 @@ describe('GM-29 push orchestration', () => {
     const registerPushDevice = jest.fn().mockResolvedValue({ ok: true, data: undefined });
     const unregisterPushDevice = jest.fn().mockResolvedValue({ ok: true, data: undefined });
     const refreshInbox = jest.fn().mockResolvedValue(undefined);
-    let tap: (() => void) | undefined;
+    let tap: ((eventId: string) => void) | undefined;
     let refreshToken: ((token: string) => void) | undefined;
     const service = createNativePushService({
       driver: driver({
@@ -57,7 +57,10 @@ describe('GM-29 push orchestration', () => {
     expect(await service.register()).toEqual({ status: 'registered', deviceId: 'device-1', permission: 'granted' });
     expect(registerPushDevice).toHaveBeenCalledWith({ deviceId: 'device-1', token: 'ExponentPushToken[test-redacted]', permission: 'granted' });
     service.subscribe();
-    tap?.();
+    expect(tap).toBeDefined();
+    const tappedEventId = '11111111-1111-4111-8111-111111111111';
+    tap?.(tappedEventId);
+    expect(refreshInbox).toHaveBeenCalledWith(tappedEventId);
     expect(refreshInbox).toHaveBeenCalledTimes(1);
     refreshToken?.('ExponentPushToken[rotated-redacted]');
     await new Promise(resolve => setTimeout(resolve, 0));
@@ -75,7 +78,7 @@ describe('GM-29 push orchestration', () => {
         getPermissionStatus: async () => 'denied',
         onTokenRefresh: listener => { refreshToken = listener; return () => { refreshToken = undefined; }; },
       }),
-      client: { registerPushDevice, unregisterPushDevice: jest.fn() } as unknown as ApiClient,
+      client: { registerPushDevice, unregisterPushDevice: jest.fn().mockResolvedValue({ ok: true, data: undefined }) } as unknown as ApiClient,
       refreshInbox: jest.fn(),
     });
     expect(await service.register()).toEqual({ status: 'denied', permission: 'denied' });
@@ -174,14 +177,20 @@ describe('GM-29 push orchestration', () => {
   });
 
   test('foreground token refresh retries a server registration failure', async () => {
+    let intent: 'enabled' | 'disabled' | 'revoke-pending' = 'disabled';
     const registerPushDevice = jest.fn()
       .mockResolvedValueOnce({ ok: false, error: { messageKey: 'NETWORK_ERROR' } })
       .mockResolvedValueOnce({ ok: true, data: undefined });
     let refreshToken: ((token: string) => void) | undefined;
     const service = createNativePushService({
-      driver: driver({ onTokenRefresh: listener => { refreshToken = listener; return () => { refreshToken = undefined; }; } }),
+      driver: driver({
+        getRegistrationIntent: async () => intent,
+        setRegistrationIntent: async (_identity, _device, next) => { intent = next; },
+        onTokenRefresh: listener => { refreshToken = listener; return () => { refreshToken = undefined; }; },
+      }),
       client: { registerPushDevice, unregisterPushDevice: jest.fn() } as unknown as ApiClient,
       refreshInbox: jest.fn(),
+      identityId: 'foreground-failed-registration-user',
     });
     expect(await service.register()).toEqual({ status: 'failed', error: 'NETWORK_ERROR' });
     service.subscribe();
@@ -192,7 +201,7 @@ describe('GM-29 push orchestration', () => {
   });
 
   test('ignores a pending notification tap after switching from identity A to B', () => {
-    let tap: (() => void) | undefined;
+    let tap: ((eventId: string) => void) | undefined;
     let active = true;
     const refreshInbox = jest.fn();
     const service = createNativePushService({
@@ -203,49 +212,64 @@ describe('GM-29 push orchestration', () => {
     });
     service.subscribe();
     active = false;
-    tap?.();
+    tap?.('22222222-2222-4222-8222-222222222222');
     expect(refreshInbox).not.toHaveBeenCalled();
   });
 
-  test('restores explicit enabled state after app restart and leaves disabled identities off', async () => {
-    const registrationMarkers = new Map<string, boolean>();
-    let refresh: ((token: string) => void) | undefined;
+  test('does not re-register an acknowledged token, rotates a changed token once, and leaves opt-out disabled', async () => {
+    const registrationMarkers = new Map<string, 'enabled' | 'disabled' | 'revoke-pending'>();
+    const acknowledgedTokens = new Map<string, string>();
+    const refreshListeners = new Set<(token: string) => void>();
+    const registrationKey = (identityId: string, deviceId: string) => `${identityId}:${deviceId}`;
+    let currentToken = 'token-before-restart';
     const registerPushDevice = jest.fn().mockResolvedValue({ ok: true, data: undefined });
     const unregisterPushDevice = jest.fn().mockResolvedValue({ ok: true, data: undefined });
     const persistentDriver = driver({
-      getRegistrationEnabled: async identityId => registrationMarkers.get(identityId) ?? false,
-      setRegistrationEnabled: async (identityId, _deviceId, enabled) => { registrationMarkers.set(identityId, enabled); },
-      onTokenRefresh: listener => { refresh = listener; return () => { refresh = undefined; }; },
+      getPushToken: async () => currentToken,
+      getRegistrationIntent: async (identityId, deviceId) => registrationMarkers.get(registrationKey(identityId, deviceId)) ?? 'disabled',
+      setRegistrationIntent: async (identityId, deviceId, intent) => { registrationMarkers.set(registrationKey(identityId, deviceId), intent); },
+      getAcknowledgedToken: async (identityId, deviceId) => acknowledgedTokens.get(registrationKey(identityId, deviceId)),
+      acknowledgeToken: async (token, identityId = 'user-A', deviceId = 'device-1') => { acknowledgedTokens.set(registrationKey(identityId, deviceId), token); },
+      clearAcknowledgedToken: async (identityId, deviceId) => { acknowledgedTokens.delete(registrationKey(identityId, deviceId)); },
+      onTokenRefresh: listener => { refreshListeners.add(listener); return () => { refreshListeners.delete(listener); }; },
     });
+    const emitRefresh = (token: string) => { for (const listener of refreshListeners) listener(token); };
+    const identityId = 'rotation-and-optout-user';
     const firstSession = createNativePushService({
       driver: persistentDriver,
       client: { registerPushDevice, unregisterPushDevice } as unknown as ApiClient,
       refreshInbox: jest.fn(),
-      identityId: 'user-A',
+      identityId,
     });
     await firstSession.register();
-    expect(registrationMarkers.get('user-A')).toBe(true);
+    expect(registrationMarkers.get(registrationKey(identityId, 'device-1'))).toBe('enabled');
+    expect(registerPushDevice).toHaveBeenCalledTimes(1);
 
-    // Model a fresh service instance whose in-memory state starts disabled while
-    // the persisted opt-in for A remains true.
-    await firstSession.unregister('device-1');
-    registrationMarkers.set('user-A', true);
+    const stopFirstSession = firstSession.subscribe();
+    stopFirstSession();
     const restartedService = createNativePushService({
       driver: persistentDriver,
       client: { registerPushDevice, unregisterPushDevice } as unknown as ApiClient,
       refreshInbox: jest.fn(),
-      identityId: 'user-A',
+      identityId,
     });
-    restartedService.subscribe();
-    refresh?.('token-after-restart');
+    const stopRestartedService = restartedService.subscribe();
+    emitRefresh(currentToken);
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(registerPushDevice).toHaveBeenCalledTimes(1);
+
+    currentToken = 'token-after-rotation';
+    emitRefresh(currentToken);
     await new Promise(resolve => setTimeout(resolve, 0));
     expect(registerPushDevice).toHaveBeenCalledTimes(2);
+    expect(acknowledgedTokens.get(registrationKey(identityId, 'device-1'))).toBe(currentToken);
 
     await restartedService.unregister('device-1');
-    expect(registrationMarkers.get('user-A')).toBe(false);
-    refresh?.('token-after-opt-out');
+    expect(registrationMarkers.get(registrationKey(identityId, 'device-1'))).toBe('disabled');
+    emitRefresh('token-after-opt-out');
     await new Promise(resolve => setTimeout(resolve, 0));
     expect(registerPushDevice).toHaveBeenCalledTimes(2);
+    stopRestartedService();
   });
 
   test('a late opt-in write cannot undo opt-out when unregister is offline', async () => {
@@ -286,5 +310,109 @@ describe('GM-29 push orchestration', () => {
     await new Promise(resolve => setTimeout(resolve, 0));
     expect(registerPushDevice).toHaveBeenCalledTimes(1);
     unsubscribe();
+  });
+
+  test('an in-flight token refresh cannot revive opt-in after a confirmed disable', async () => {
+    const intents = new Map<string, 'enabled' | 'disabled' | 'revoke-pending'>();
+    let enabledWrites = 0;
+    let releaseRefreshWrite: (() => void) | undefined;
+    let refreshToken: ((token: string) => void) | undefined;
+    const registerPushDevice = jest.fn().mockResolvedValue({ ok: true, data: undefined });
+    const unregisterPushDevice = jest.fn().mockResolvedValue({ ok: true, data: undefined });
+    const deviceId = 'optout-race-device';
+    const identityId = 'optout-race-user';
+    const service = createNativePushService({
+      driver: driver({
+        getDeviceId: async () => deviceId,
+        getRegistrationIntent: async owner => intents.get(owner) ?? 'disabled',
+        setRegistrationIntent: async (owner, _device, intent) => {
+          if (intent === 'enabled' && ++enabledWrites === 2) {
+            await new Promise<void>(resolve => { releaseRefreshWrite = resolve; });
+          }
+          intents.set(owner, intent);
+        },
+        onTokenRefresh: listener => { refreshToken = listener; return () => { refreshToken = undefined; }; },
+      }),
+      client: { registerPushDevice, unregisterPushDevice } as unknown as ApiClient,
+      refreshInbox: jest.fn(),
+      identityId,
+    });
+    await service.register();
+    const unsubscribe = service.subscribe();
+    refreshToken?.('token-refresh-in-flight');
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(releaseRefreshWrite).toBeDefined();
+
+    const disabling = service.unregister(deviceId);
+    releaseRefreshWrite?.();
+    expect(await disabling).toMatchObject({ ok: true });
+    expect(intents.get(identityId)).toBe('disabled');
+    expect(registerPushDevice).toHaveBeenCalledTimes(1);
+    expect(unregisterPushDevice).toHaveBeenCalledTimes(1);
+
+    refreshToken?.('token-after-disable');
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(registerPushDevice).toHaveBeenCalledTimes(1);
+    unsubscribe();
+  });
+
+  test('offline revoke stays journaled and app foreground retries it without registering', async () => {
+    const intents = new Map<string, 'enabled' | 'disabled' | 'revoke-pending'>();
+    let foreground: (() => void) | undefined;
+    let unregisterCount = 0;
+    const registerPushDevice = jest.fn().mockResolvedValue({ ok: true, data: undefined });
+    const unregisterPushDevice = jest.fn(async () => {
+      unregisterCount += 1;
+      return unregisterCount === 1
+        ? { ok: false, error: { messageKey: 'NETWORK_ERROR' } }
+        : { ok: true, data: undefined };
+    });
+    const deviceId = 'offline-revoke-device';
+    const identityId = 'offline-revoke-user';
+    const persistentDriver = driver({
+      getDeviceId: async () => deviceId,
+      getRegistrationIntent: async owner => intents.get(owner) ?? 'disabled',
+      setRegistrationIntent: async (owner, _device, intent) => { intents.set(owner, intent); },
+      onAppForeground: listener => { foreground = listener; return () => { foreground = undefined; }; },
+    });
+    const service = createNativePushService({
+      driver: persistentDriver,
+      client: { registerPushDevice, unregisterPushDevice } as unknown as ApiClient,
+      refreshInbox: jest.fn(),
+      identityId,
+    });
+    await service.register();
+    expect(await service.unregister(deviceId)).toMatchObject({ ok: false });
+    expect(intents.get(identityId)).toBe('revoke-pending');
+    service.subscribe();
+    foreground?.();
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(unregisterPushDevice).toHaveBeenCalledTimes(2);
+    expect(intents.get(identityId)).toBe('disabled');
+    expect(registerPushDevice).toHaveBeenCalledTimes(1);
+  });
+
+  test('foreground retries a failed upsert even when the Expo token did not change', async () => {
+    let intent: 'enabled' | 'disabled' | 'revoke-pending' = 'disabled';
+    let foreground: (() => void) | undefined;
+    const registerPushDevice = jest.fn()
+      .mockResolvedValueOnce({ ok: false, error: { messageKey: 'NETWORK_ERROR' } })
+      .mockResolvedValueOnce({ ok: true, data: undefined });
+    const service = createNativePushService({
+      driver: driver({
+        getRegistrationIntent: async () => intent,
+        setRegistrationIntent: async (_identity, _device, next) => { intent = next; },
+        onAppForeground: listener => { foreground = listener; return () => { foreground = undefined; }; },
+      }),
+      client: { registerPushDevice, unregisterPushDevice: jest.fn() } as unknown as ApiClient,
+      refreshInbox: jest.fn(),
+      identityId: 'foreground-retry-user',
+    });
+    await service.register();
+    service.subscribe();
+    foreground?.();
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(registerPushDevice).toHaveBeenCalledTimes(2);
+    expect(registerPushDevice).toHaveBeenLastCalledWith({ deviceId: 'device-1', token: 'ExponentPushToken[test-redacted]', permission: 'granted' });
   });
 });

@@ -1,0 +1,98 @@
+{
+  "result": "Pass",
+  "task": "GM-29",
+  "environment": "owned GM-03 loopback QA runtime",
+  "runId": "gm29-pr127-final-20261109",
+  "sourceRevision": "7d064ed6d954b268b48f34b9d1e36ab46a3b77bb",
+  "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+  "schemaVersion": "0.9.2",
+  "endpoint": "http://127.0.0.1:54381",
+  "syntheticUsers": 2,
+  "credentialsWritten": false,
+  "tokensOrIdentityIdsWritten": false,
+  "applicationDatabaseChanged": false,
+  "cases": [
+    {
+      "name": "JWT owner reads bounded Inbox",
+      "result": "Pass",
+      "expected": "HTTP 200 and <=50 rows",
+      "actual": {
+        "status": 200,
+        "rowCount": 0
+      }
+    },
+    {
+      "name": "registration, exact ACK replay, and request ID reuse guard",
+      "result": "Pass",
+      "expected": {
+        "status": 200,
+        "ack": true,
+        "data": null,
+        "replayExact": true,
+        "reusedStatus": 409,
+        "reusedKey": "REQUEST_ID_REUSED"
+      },
+      "actual": {
+        "status": 200,
+        "ack": true,
+        "data": null,
+        "replayExact": true,
+        "reusedStatus": 409,
+        "reusedKey": "REQUEST_ID_REUSED"
+      }
+    },
+    {
+      "name": "registered device state is private server state",
+      "result": "Pass",
+      "expected": "true|granted|false|false",
+      "actual": "true|granted|false|false"
+    },
+    {
+      "name": "another identity cannot unregister the owner device",
+      "result": "Pass",
+      "expected": "true|granted|false|false",
+      "actual": "true|granted|false|false"
+    },
+    {
+      "name": "same owner can rotate token without changing identity",
+      "result": "Pass",
+      "expected": "true|granted|false|false",
+      "actual": "true|granted|false|false"
+    },
+    {
+      "name": "denied permission deactivates device and clears token",
+      "result": "Pass",
+      "expected": "false|denied|true|false",
+      "actual": "false|denied|true|false"
+    },
+    {
+      "name": "unregister clears token/session and ACK replay is exact",
+      "result": "Pass",
+      "expected": {
+        "status": 200,
+        "data": null,
+        "state": "false|unknown|true|true",
+        "replayExact": true
+      },
+      "actual": {
+        "status": 200,
+        "data": null,
+        "state": "false|unknown|true|true",
+        "replayExact": true
+      }
+    },
+    {
+      "name": "client cannot read token column directly",
+      "result": "Pass",
+      "expected": "non-200",
+      "actual": {
+        "status": 403
+      }
+    }
+  ],
+  "sourceHashes": {
+    "scripts/gm29_device_http_check.mjs": "298a01a5bc8bc541fe265223a91f44daf7dde3ef84711763fea9097574c8a1c0",
+    "scripts/gm_v4_http_check.mjs": "3fad40a4a7b59281fcb7b44153e74435eba6f466b3cce90b5ba692f3d1cfdbdb"
+  },
+  "checkedAt": "2026-11-09T01:49:02.662Z"
+}

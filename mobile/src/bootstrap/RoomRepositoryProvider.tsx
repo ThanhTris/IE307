@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, useSyncExternalStore, type PropsWithChildren } from 'react';
+import { router, type Href } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import { createAuthenticatedApiClient, createSecureSessionStorage } from '../data/auth';
 import { createApiClient } from '../data/api';
@@ -7,7 +8,7 @@ import type { SessionUser } from '../data/api/contracts';
 import { clearPrivateHistoryCache } from '../features/history/services/historyRepository';
 import { clearVoteSession } from '../features/voting/services/voteSessionState';
 import { createNativePushService } from '../features/inbox/services/nativePush';
-import { clearPushRegistrationSecrets, expoPushDriver, getPushDeviceId } from '../features/inbox/services/expoPushDriver';
+import { clearPushRegistrationSecrets, getActivePushDriver, getPushDeviceId } from '../features/inbox/services/expoPushDriver';
 import {
   LiveRoomRepository,
   createDurableRequestId,
@@ -110,7 +111,7 @@ export function RoomRepositoryProvider({
         const deviceId = await getPushDeviceId();
         if (deviceId) {
           const push = createNativePushService({
-            driver: expoPushDriver,
+            driver: getActivePushDriver(),
             client: repository.getApiClient(),
             identityId: repository.getCurrentUser()?.id,
             refreshInbox: async () => undefined,
@@ -139,6 +140,48 @@ export function RoomRepositoryProvider({
     });
     return () => { mounted = false; };
   }, [repository, isReal]);
+
+  useEffect(() => {
+    if (!isReal || snapshot.status !== 'active' || !snapshot.user?.id) return;
+    let mounted = true;
+    const userId = snapshot.user.id;
+    const inFlight = new Set<string>();
+    const isSameUser = () => mounted && repository.getSessionStatus() === 'active'
+      && repository.getCurrentUser()?.id === userId;
+    const routeInbox = (eventId: string, notificationStatus?: 'retry' | 'unavailable') => {
+      const params = new URLSearchParams();
+      if (eventId) params.set('openEventId', eventId);
+      if (notificationStatus) params.set('notificationStatus', notificationStatus);
+      router.replace(`/inbox${params.size ? `?${params.toString()}` : ''}` as Href);
+    };
+    const service = createNativePushService({
+      driver: getActivePushDriver(),
+      client: repository.getApiClient(),
+      identityId: userId,
+      isIdentityCurrent: isSameUser,
+      refreshInbox: async eventId => {
+        if (!isSameUser() || inFlight.has(eventId)) return false;
+        inFlight.add(eventId);
+        try {
+          const sessionGeneration = repository.getSessionApi()?.getGeneration();
+          const isCurrent = () => isSameUser()
+            && (sessionGeneration === undefined || repository.getSessionApi()?.getGeneration() === sessionGeneration);
+          if (!isCurrent()) return false;
+          // Keep the event ID on the route; LiveInboxScreen resolves it from the
+          // server and can retry this exact lookup after a temporary failure.
+          routeInbox(eventId);
+          return true;
+        } catch {
+          if (isSameUser()) routeInbox(eventId, 'retry');
+          return false;
+        } finally {
+          inFlight.delete(eventId);
+        }
+      },
+    });
+    const unsubscribe = service.subscribe();
+    return () => { mounted = false; unsubscribe(); };
+  }, [isReal, repository, snapshot.status, snapshot.user?.id]);
 
   const value = useMemo<RoomRepositoryContextValue>(() => ({
     repository,

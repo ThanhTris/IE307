@@ -1,6 +1,6 @@
-﻿# GM-29 handoff
+# GM-29 handoff
 
-Task: GM-29 — Android notification permission and push lifecycle. Owner: Trung. Reviewer: Trí / ThanhTris. Branch: `codex/gm-29-native-push` (PR #127). Status: implementation prepared; AVD/backend and Figma acceptance remain outstanding.
+Task: GM-29 — Android notification permission and push lifecycle. Owner: Trung. Reviewer: Trí / ThanhTris. Branch: `codex/gm-29-native-push` (PR #127). Status: implementation and fresh owned QA Auth/REST checks prepared; debug build installed on AVD; app UI, notification permission flow, tap scenarios, and app-vs-Figma comparison remain outstanding.
 
 ## Artifacts
 
@@ -20,4 +20,4 @@ Route: `/push-settings`, linked from `/inbox` within this PR. In a real session,
 
 ## Limits
 
-The 3A AVD + local Backend QA run, OS grant/deny/settings interaction, permission retry/logout/network cases, simulated cold/warm/duplicate/expired taps and Figma screenshot comparison were not run because Android SDK/emulator and Docker are unavailable here. Remote FCM remains a 3B check. The local readiness checker also cannot verify Project #2 because the GitHub token lacks `read:project`. Keep PR Draft until the required 3A evidence and merge gate pass; do not alter Project status or approval.
+The preceding 2026-11-07 limitation is historical. On 2026-11-09, an owned QA runtime passed 7 Auth/REST baseline assertions, 169 V4 cases (599 contract envelopes), and 8 GM-29 device API assertions. Repository tooling tests passed 19/19; Python regression passed 664 with 2 skipped. The installed SDK 58 debug build was used without rebuilding in this follow-up. Trí permitted Android's `ACCESS_LOCAL_NETWORK` prompt; the app reached QA Metro at `127.0.0.1:8081`, downloaded the bundle, then remained on a white screen before React UI became visible. See [`avd-white-screen-after-bundle-20261109.png`](artifacts/avd-white-screen-after-bundle-20261109.png), [`CHECKS.md`](CHECKS.md), [`FIGMA_PARITY.md`](FIGMA_PARITY.md), [`qa-runtime-final.json`](artifacts/qa-runtime-final.json), and [`qa-device-http.json`](artifacts/qa-device-http.json). Native notification grant/deny, Inbox/settings navigation, cold/warm/duplicate taps, and app-vs-Figma parity remain Not run. Remote FCM remains a 3B check. Do not treat server tests or the prior build artifact as completion of AVD acceptance. No Project status or approval was changed.

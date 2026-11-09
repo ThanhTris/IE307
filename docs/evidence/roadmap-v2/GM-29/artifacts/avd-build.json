@@ -1,0 +1,32 @@
+{
+  "task": "GM-29",
+  "result": "PASS",
+  "buildType": "Android debug development build",
+  "expoSdk": "58",
+  "appId": "vn.gicungduoc.mobile",
+  "device": "Medium_Phone_API_37.0",
+  "androidApi": 37,
+  "abi": "x86_64",
+  "apkSha256": "deedeb6801907cf13b4e67ea60f0432e7139cf538b3c4aeff722342b00f51b31",
+  "apkBytes": 90675272,
+  "installedAndLaunched": true,
+  "observedAt": "2026-11-09",
+  "actualUi": "Stopped at ACCESS_LOCAL_NETWORK permission prompt before React rendered",
+  "screenshot": "avd-local-network-permission.png",
+  "appUiAcceptance": "Not run",
+  "sourceRevision": "7d064ed6d954b268b48f34b9d1e36ab46a3b77bb",
+  "mergedMain": "8af20a9",
+  "buildWorkspace": "C:\\a (temporary clean mobile copy; verified push sources match current worktree hashes)",
+  "ndkVersion": "27.2.12479018",
+  "backendEndpoint": "http://127.0.0.1:54381 via adb reverse",
+  "sourceHashes": {
+    "src/features/inbox/services/nativePush.ts": "a2e82aef80f33f8adb73aa7b716a747b5a8ea0d60e0b1500f02d3ddc4ef0ff99",
+    "src/features/inbox/services/expoPushDriver.ts": "c31e2db3e9e8013f08b2c880ab70f9394e5639a65edf784303986484bd57ed57",
+    "src/features/inbox/services/inboxRepository.ts": "edb04be3f189fab513438a6fb35a926bf92024cbc3c13e108c36d8453f085cbc",
+    "src/features/inbox/screens/PushSettingsScreen.tsx": "0cf05e6e2ff6d9803c8eb96cc646f4cb5065da6bd220eade51c74275e2fb267a",
+    "src/features/inbox/components/PushLifecycle.tsx": "e279c67abf4f11e9bfe9d7c729bb7949f5b18359342f16f0fd86b19a4a3c7a7a",
+    "src/bootstrap/RoomRepositoryProvider.tsx": "a0de856f8c2afe67fa3b99fc86d12f41fd36ebdedcab7b11649977627b43a811",
+    "package.json": "7632fb159303c59007f351534caaf614ffd6dfe8d3d19aea19545e7f46b1f463",
+    "app.config.ts": "cb79df53ac797fcfccadaa5412c123316974ae96953124a828ac707bf2291187"
+  }
+}

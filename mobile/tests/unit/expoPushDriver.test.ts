@@ -30,6 +30,7 @@ jest.mock('expo-notifications', () => ({
   getPermissionsAsync: jest.fn(async () => ({ granted: mockState.permission === 'granted', status: mockState.permission })),
   requestPermissionsAsync: jest.fn(async () => { mockCalls.push('permission'); return { granted: mockState.permission === 'granted', status: mockState.permission }; }),
   getExpoPushTokenAsync: jest.fn(async () => ({ data: mockState.expoToken })),
+  scheduleNotificationAsync: jest.fn(async () => 'qa-local-notification'),
   addNotificationResponseReceivedListener: jest.fn((listener: (response: unknown) => void) => {
     mockState.tap = listener;
     return { remove: jest.fn() };
@@ -52,6 +53,8 @@ describe('GM-29 Expo native push driver', () => {
     mockState.expoToken = 'ExponentPushToken[redacted]';
     mockSecure.clear();
     mockCalls.length = 0;
+    process.env.EXPO_PUBLIC_GM29_QA_PUSH = '1';
+    process.env.EXPO_PUBLIC_SUPABASE_URL = 'http://127.0.0.1:54381';
     (Constants as unknown as { executionEnvironment: string; appOwnership: string | null }).executionEnvironment = 'standalone';
     (Constants as unknown as { appOwnership: string | null }).appOwnership = null;
   });
@@ -69,25 +72,28 @@ describe('GM-29 Expo native push driver', () => {
   });
 
   test('requires EAS project attribution and persists no raw token in logs', async () => {
+    delete process.env.EXPO_PUBLIC_GM29_QA_PUSH;
     const deviceId = await expoPushDriver.getDeviceId();
     expect(deviceId).toMatch(/^gcd-/);
     expect(await expoPushDriver.getDeviceId()).toBe(deviceId);
     expect(await expoPushDriver.getPushToken()).toBe('ExponentPushToken[redacted]');
     expect(Notifications.getExpoPushTokenAsync).toHaveBeenCalledWith({ projectId: 'eas-project-1' });
     expect(mockSecure.has('gcd.push.expo-token.v1')).toBe(false);
-    await expoPushDriver.acknowledgeToken?.('ExponentPushToken[redacted]');
+    await expoPushDriver.acknowledgeToken?.('ExponentPushToken[redacted]', 'qa-user', deviceId);
     expect(mockSecure.get('gcd.push.expo-token.v1')).toBe('ExponentPushToken[redacted]');
+    expect(mockSecure.get(`gcd.push.expo-token-acked.v2.qa-user.${deviceId}`)).toBe('ExponentPushToken[redacted]');
   });
 
   test('does not mark a changed token registered before server acknowledgment', async () => {
     const tokenListener = jest.fn();
+    const deviceId = await expoPushDriver.getDeviceId();
     const stop = expoPushDriver.onTokenRefresh(tokenListener);
     mockState.appState?.('active');
     await new Promise(resolve => setTimeout(resolve, 0));
     expect(tokenListener).toHaveBeenCalledWith('ExponentPushToken[redacted]');
     expect(mockSecure.has('gcd.push.expo-token-acked.v1')).toBe(false);
-    await expoPushDriver.acknowledgeToken?.('ExponentPushToken[redacted]');
-    expect(mockSecure.get('gcd.push.expo-token-acked.v1')).toBe('ExponentPushToken[redacted]');
+    await expoPushDriver.acknowledgeToken?.('ExponentPushToken[redacted]', 'qa-user', deviceId);
+    expect(mockSecure.get(`gcd.push.expo-token-acked.v2.qa-user.${deviceId}`)).toBe('ExponentPushToken[redacted]');
     stop();
   });
 
@@ -112,38 +118,75 @@ describe('GM-29 Expo native push driver', () => {
     expect(await service.register()).toMatchObject({ status: 'failed' });
     expect(acknowledgeToken).not.toHaveBeenCalled();
     expect(await service.register()).toMatchObject({ status: 'registered' });
-    expect(acknowledgeToken).toHaveBeenCalledWith('token-1');
+    expect(acknowledgeToken).toHaveBeenCalledWith('token-1', undefined, 'device-1');
     expect(registerPushDevice).toHaveBeenCalledTimes(2);
   });
 
   test('notification tap refetch callback is invoked without consuming payload', async () => {
     const listener = jest.fn();
-    const response = { notification: { request: { identifier: 'notice-1', content: { data: { roomId: 'untrusted' } } } }, actionIdentifier: 'default' };
+    const eventId = '11111111-1111-4111-8111-111111111111';
+    const response = { notification: { request: { identifier: 'notice-1', content: { data: { eventId, roomId: 'untrusted' } } } }, actionIdentifier: 'default' };
     mockState.lastResponse = response;
     const stop = expoPushDriver.onNotificationTap(listener);
     await Promise.resolve();
     mockState.tap?.(response);
     await new Promise(resolve => setTimeout(resolve, 0));
+    expect(listener).toHaveBeenCalledWith(eventId);
     expect(listener).toHaveBeenCalledTimes(1);
     stop();
   });
 
-  test('each intentional dev simulated tap fires once and listener cleanup stops future taps', async () => {
+  test('QA local notification stores only an event reference and can be tapped on Android', async () => {
+    mockState.permission = 'granted';
+    const eventId = '22222222-2222-4222-8222-222222222222';
+    expect(await expoPushDriver.scheduleSimulatedNotification?.(eventId)).toBe(true);
+    expect(Notifications.scheduleNotificationAsync).toHaveBeenCalledWith(expect.objectContaining({
+      content: expect.objectContaining({ data: { eventId, qaSimulated: true } }),
+      trigger: { channelId: 'gcd-room-updates' },
+    }));
+    mockState.permission = 'denied';
+    expect(await expoPushDriver.scheduleSimulatedNotification?.(eventId)).toBe(false);
+  });
+
+  test('dev simulated taps deduplicate the same event and listener cleanup stops future taps', async () => {
     const listener = jest.fn();
     const stop = expoPushDriver.onNotificationTap(listener);
-    expect(expoPushDriver.simulateNotificationTap?.()).toBe(true);
-    expect(expoPushDriver.simulateNotificationTap?.()).toBe(true);
+    const eventA = '33333333-3333-4333-8333-333333333333';
+    const eventB = '44444444-4444-4444-8444-444444444444';
+    expect(expoPushDriver.simulateNotificationTap?.(eventA)).toBe(true);
+    expect(expoPushDriver.simulateNotificationTap?.(eventA)).toBe(true);
+    expect(expoPushDriver.simulateNotificationTap?.(eventB)).toBe(true);
     await new Promise(resolve => setTimeout(resolve, 0));
     expect(listener).toHaveBeenCalledTimes(2);
+    expect(listener).toHaveBeenNthCalledWith(1, eventA);
+    expect(listener).toHaveBeenNthCalledWith(2, eventB);
     stop();
-    expect(expoPushDriver.simulateNotificationTap?.()).toBe(false);
+    expect(expoPushDriver.simulateNotificationTap?.('55555555-5555-4555-8555-555555555555')).toBe(false);
     await new Promise(resolve => setTimeout(resolve, 0));
     expect(listener).toHaveBeenCalledTimes(2);
   });
 
+  test('does not persist a transient tap failure and allows retry of the same eventId', async () => {
+    let attempts = 0;
+    const listener = jest.fn(async () => ++attempts > 1);
+    const eventId = '77777777-7777-4777-8777-777777777777';
+    const stop = expoPushDriver.onNotificationTap(listener, 'qa-retry-user');
+
+    expect(expoPushDriver.simulateNotificationTap?.(eventId)).toBe(true);
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(listener).toHaveBeenCalledTimes(1);
+
+    expect(expoPushDriver.simulateNotificationTap?.(eventId)).toBe(true);
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(listener).toHaveBeenCalledTimes(2);
+    expect(mockSecure.get('gcd.push.consumed-responses.v2.qa-retry-user')).toContain(eventId);
+    stop();
+  });
+
   test('does not reprocess the same saved OS response after switching subscriptions', async () => {
     const listenerA = jest.fn();
-    const response = { notification: { request: { identifier: 'account-switch-notice', content: { data: {} } } }, actionIdentifier: 'default' };
+    const eventId = '66666666-6666-4666-8666-666666666666';
+    const response = { notification: { request: { identifier: 'account-switch-notice', content: { data: { eventId } } } }, actionIdentifier: 'default' };
     mockState.lastResponse = response;
     const stopA = expoPushDriver.onNotificationTap(listenerA);
     await new Promise(resolve => setTimeout(resolve, 0));

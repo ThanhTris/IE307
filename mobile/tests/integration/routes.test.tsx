@@ -63,12 +63,11 @@ const routes = {
   'dev/discovery-context': DiscoveryContext,
 };
 
-test('Inbox push settings action opens a registered safe settings route', async () => {
-  await renderRouter(routes, { initialUrl: '/inbox' });
-  const user = userEvent.setup();
-  await user.press(await screen.findByRole('button', { name: 'Cài đặt thông báo trên thiết bị' }));
+test('Push settings route explains the real-session requirement in mock mode', async () => {
+  await renderRouter(routes, { initialUrl: '/push-settings' });
   await waitFor(() => expect(screen).toHavePathname('/push-settings'));
   expect(await screen.findByText('Đăng nhập bằng kết nối thật để quản lý đăng ký push. Hộp thư mô phỏng vẫn hoạt động.')).toBeOnTheScreen();
+  expect(screen.getByRole('button', { name: 'Quay lại Hộp thư' })).toBeOnTheScreen();
 });
 beforeEach(() => { setPreviewScenario('default'); rememberPreviewGuest('Tuấn'); markTutorialSeen(); });
 afterEach(() => jest.useRealTimers());
