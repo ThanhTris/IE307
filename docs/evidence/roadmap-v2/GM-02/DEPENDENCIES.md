@@ -15,7 +15,7 @@ Hỗ trợ vector SVG được bổ sung phục vụ hiển thị tài sản th�
 | React & React Native | `react@19.3.0`, `react-native@0.88.1` | Runtime UI |
 | Vector SVG | `react-native-svg@15.16.0` | Native SVG rendering (SDK 58 bundled module) |
 | UI Utilities | `@expo/ui@~58.0.27`, `react-native-safe-area-context@~5.11.1`, `react-native-screens@~4.30.1` | Expo UI, safe area & screens navigation |
-| Expo Modules | `expo-constants@~58.0.13` → 58.0.15, `expo-font@~58.0.10` → 58.0.11, `expo-linking@~58.0.16`, `expo-location@~58.0.20`, `expo-secure-store@~58.0.2`, `expo-status-bar@~58.0.4`, `expo-system-ui@~58.0.7` | Các module nền Expo đã kiểm qua `check:expo` |
+| Expo Modules | `expo-constants@~58.0.13` → 58.0.15, `expo-font@~58.0.10` → 58.0.11, `expo-linking@~58.0.16`, `expo-location@~58.0.20`, `expo-notifications@~58.1.8`, `expo-secure-store@~58.0.2`, `expo-sqlite@~58.0.15`, `expo-status-bar@~58.0.4`, `expo-system-ui@~58.0.7` | Các module nền Expo đã kiểm qua `check:expo` (bổ sung `expo-notifications` cho GM-29 và `expo-sqlite` cho GM-31 ngày 2026-11-09) |
 | Build Tooling | `react-native-svg-transformer@1.5.3`, `typescript@6.0.3`, `@expo/metro-config@58.0.17` (transitive) | Metro bundler transformer & type checking |
 | Test & QA | `jest@30.5.2`, `jest-expo@~58.0.14`, `@react-native/jest-preset@0.88.1`, `@testing-library/react-native@14.1.0` | Unit & component test runners |
 

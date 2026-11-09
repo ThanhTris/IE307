@@ -1,5 +1,10 @@
 # GM-02 — UI foundation handoff
 
+## Supplement 2026-11-09 — Native dependencies cho GM-29 & GM-31 (`expo-notifications`, `expo-sqlite`)
+
+- Bàn giao `expo-notifications@~58.1.8` (kèm plugin và mở quyền `POST_NOTIFICATIONS` trên Android trong `mobile/app.config.ts`) cho `GM-29` và `expo-sqlite@~58.0.15` (kèm plugin trong `mobile/app.config.ts`) cho `GM-31`.
+- Nhờ cập nhật tại `GM-02`, các nhánh `GM-29` và `GM-31` giữ nguyên `mobile/package.json`, `mobile/package-lock.json`, `mobile/app.config.ts` từ `main` và không còn vi phạm `BLOCKED_ON_BASE`.
+
 ## Supplement 2026-11-05 — SVG Tooling & Phân loại cảnh báo Dependency
 
 Đợt cập nhật này bàn giao cho các task UI tiếp theo (`GM-05`, `GM-09`, `GM-24..31`):

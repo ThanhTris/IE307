@@ -1,5 +1,12 @@
 # GM-02 — output checks
 
+## Supplement 2026-11-09 — Bổ sung dependency native `expo-notifications` & `expo-sqlite` cho GM-29/GM-31
+
+Thực hiện bảo trì dependency nền theo quy định 1-Task-1-PR (`GM-02` sở hữu `mobile/package.json`, `mobile/package-lock.json`, `mobile/app.config.ts`):
+- Bổ sung `expo-notifications@~58.1.8` (khóa `58.1.8` khớp `bundledNativeModules.json` của Expo SDK 58), thêm plugin `'expo-notifications'` và gỡ `'android.permission.POST_NOTIFICATIONS'` khỏi `blockedPermissions` trong `mobile/app.config.ts` để bàn giao cho `GM-29`.
+- Bổ sung `expo-sqlite@~58.0.15` (khóa `58.0.15` khớp `bundledNativeModules.json` của Expo SDK 58) và plugin `'expo-sqlite'` trong `mobile/app.config.ts` để bàn giao cho `GM-31`.
+- Kiểm tra `npm run test:expo-baseline` (5/5 Pass), `npm run check:expo` (`Dependencies are up to date`), `npm run typecheck` (Exit 0), `npm run lint` (Exit 0), `npm run check:architecture` (Exit 0), `python scripts/validate_repository.py` (OK) và `python scripts/task_readiness.py --task GM-02 --gate merge --base-ref origin/main --verify-outputs` (`READY_FOR_MERGE_REVIEW`).
+
 ## Supplement 2026-11-05 — Hỗ trợ SVG, tương thích package SDK 58 và phân loại dependency
 
 Bổ sung kiểm tra theo chỉ đạo ngày 2026-11-05:

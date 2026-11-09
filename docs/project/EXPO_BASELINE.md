@@ -13,7 +13,7 @@ Kết quả/lệnh thực tế và giới hạn của lượt bảo trì: [CHECK
 | Expo SDK / Router | SDK58: Expo58.0.23 / Router58.0.30 |
 | React / React Native | 19.3.0 / 0.88.1 |
 | Expo UI | @expo/ui 58.0.27 |
-| Expo modules | constants 58.0.15 / font 58.0.11 / linking 58.0.16 / location 58.0.20 |
+| Expo modules | constants 58.0.15 / font 58.0.11 / linking 58.0.16 / location 58.0.20 / notifications 58.1.8 / sqlite 58.0.15 |
 | SecureStore / status-bar / system-ui | 58.0.2 / 58.0.4 / 58.0.7 |
 | safe-area / screens / SVG | 5.11.1 / 4.30.1 / 15.16.0 |
 | Test preset | jest-expo 58.0.14 / `@react-native/jest-preset` 0.88.1 |
