@@ -180,3 +180,9 @@ This follow-up supersedes the prior “saved canonical result unavailable” sta
 - Repository validator, task-doc index and git diff --check: passed. Diff check emitted only LF-to-CRLF working-copy notices.
 - The first pushed revision b19ad9e passed all 19 GitHub checks after rerun. Its first GM-18 attempt failed because Docker could not bind host port 54322; rerun started Supabase and the SQL/HTTP assertions passed. The GM-14 mock InboxScreen change was then removed to restore the upstream artifact; this follow-up source requires its own CI run.
 - After restoring that file, the merge readiness checker returned READY_FOR_MERGE_REVIEW against origin/main 8b26c3f96d46dff57c1b0857a13e8f1144e0a1cb. This gate does not replace Trí's review, the still-missing live AVD-to-API result-open case, full TalkBack evidence, or visual parity acceptance.
+
+### Legacy inbox result identity regression — 2026-11-09
+
+- Added cases for a legacy snapshot returning a different room ID and for a result ID that does not match the Inbox event. The existing path rejects these before navigation; canonical result reads remain on GM-07.B.
+- Focused `socialInboxHistoryRepositories` + Inbox component suites passed **45/45**; `npm run typecheck` passed.
+- These are synthetic transport/component checks. They do not substitute for a live outsider/member ACL request against QA or the outstanding Android result-open check documented above.
