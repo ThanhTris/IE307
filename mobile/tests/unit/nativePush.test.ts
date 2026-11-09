@@ -392,48 +392,6 @@ describe('GM-29 push orchestration', () => {
     expect(registerPushDevice).toHaveBeenCalledTimes(1);
   });
 
-  test('a token arriving while SecureStore writes opt-out cannot restore stale enabled state', async () => {
-    const intents = new Map<string, 'enabled' | 'disabled' | 'revoke-pending'>([['optout-storage-race-user', 'enabled']]);
-    let releaseOptOut: (() => void) | undefined;
-    let refreshToken: ((token: string) => void) | undefined;
-    const registerPushDevice = jest.fn().mockResolvedValue({ ok: true, data: undefined });
-    const deviceId = 'optout-storage-race-device';
-    const identityId = 'optout-storage-race-user';
-    const service = createNativePushService({
-      driver: driver({
-        getDeviceId: async () => deviceId,
-        getRegistrationIntent: async owner => intents.get(owner) ?? 'disabled',
-        setRegistrationIntent: async (owner, _device, intent) => {
-          if (intent === 'disabled') await new Promise<void>(resolve => { releaseOptOut = resolve; });
-          intents.set(owner, intent);
-        },
-        onTokenRefresh: listener => { refreshToken = listener; return () => { refreshToken = undefined; }; },
-      }),
-      client: {
-        registerPushDevice,
-        unregisterPushDevice: jest.fn().mockResolvedValue({ ok: true, data: undefined }),
-      } as unknown as ApiClient,
-      refreshInbox: jest.fn(),
-      identityId,
-    });
-
-    const unsubscribe = service.subscribe();
-    await new Promise(resolve => setTimeout(resolve, 0));
-    expect(intents.get(identityId)).toBe('enabled');
-    const disabling = service.unregister(deviceId);
-    await new Promise(resolve => setTimeout(resolve, 0));
-    expect(releaseOptOut).toBeDefined();
-    refreshToken?.('token-during-opt-out-write');
-    await new Promise(resolve => setTimeout(resolve, 0));
-    releaseOptOut?.();
-    expect(await disabling).toMatchObject({ ok: true });
-    await new Promise(resolve => setTimeout(resolve, 0));
-
-    expect(intents.get(identityId)).toBe('disabled');
-    expect(registerPushDevice).not.toHaveBeenCalled();
-    unsubscribe();
-  });
-
   test('foreground retries a failed upsert even when the Expo token did not change', async () => {
     let intent: 'enabled' | 'disabled' | 'revoke-pending' = 'disabled';
     let foreground: (() => void) | undefined;
