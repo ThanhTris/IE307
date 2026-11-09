@@ -1,0 +1,18 @@
+{
+  "runId": "gm28-pr126-20261108",
+  "expected": {
+    "httpStatus": 403,
+    "rpcOk": false,
+    "messageKey": "NOT_MEMBER",
+    "hasData": false
+  },
+  "actual": {
+    "httpStatus": 403,
+    "rpcOk": false,
+    "messageKey": "NOT_MEMBER",
+    "hasData": false
+  },
+  "status": "Pass",
+  "secretsLogged": false,
+  "identityIdsLogged": false
+}

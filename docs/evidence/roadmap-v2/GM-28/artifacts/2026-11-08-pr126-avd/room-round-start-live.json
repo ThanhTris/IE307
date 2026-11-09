@@ -1,0 +1,26 @@
+{
+  "runId": "gm28-pr126-20261108",
+  "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B-supplement",
+  "expected": {
+    "memberCount": 2,
+    "afterState": "ROUND_1",
+    "round": 1,
+    "poolCount": 10,
+    "versionAdvanced": true,
+    "roomMatches": true
+  },
+  "actual": {
+    "createState": "LOBBY",
+    "memberCount": 2,
+    "initialPoolCount": 10,
+    "startHttpStatus": 200,
+    "afterState": "ROUND_1",
+    "round": 1,
+    "poolCount": 10,
+    "versionAdvanced": true,
+    "roomMatches": true
+  },
+  "status": "Pass",
+  "secretsLogged": false,
+  "identityIdsLogged": false
+}

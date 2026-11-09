@@ -1,0 +1,229 @@
+{
+  "task": "GM-28",
+  "followUp": "PR #126 four review findings",
+  "runId": "2026-11-08-pr126-four-findings",
+  "capturedAtLocal": "2026-11-08 Asia/Bangkok",
+  "branch": "codex/gm-28-social-inbox-history",
+  "artifactCaptureSourceHead": "95eb87a052d9f92e14e4db23cce591a2f986ec3c",
+  "manifestPreparedOnBranchHead": "b19ad9ef6c500f9981eba83a15d963029dcaa9a1",
+  "workingTreeDirtyWhenManifestPrepared": true,
+  "device": {
+    "kind": "Android Studio AVD",
+    "name": "Medium_Phone_API_37.0",
+    "android": "17 / API 37",
+    "expoGo": "58.0.5",
+    "densityDpi": 420,
+    "restoredSizePx": "1080x2400",
+    "restoredFontScale": 1.0,
+    "talkBackRestored": "off"
+  },
+  "qa": {
+    "runId": "gm28-fourfixes-20261108",
+    "verify": "Pass; schema 0.9.2, contract GM-07.B, owned disposable runtime verified",
+    "apiRequestsFromAvd": "Not run",
+    "cleanup": "Pass; worker, Supabase resources and network stopped/cleaned",
+    "applicationDatabaseTouched": false
+  },
+  "scenarios": [
+    {
+      "id": "legacy-result-open",
+      "result": "Unit/component Pass; live HTTP Not run",
+      "expected": "Legacy roomId/resultId metadata uses authenticated get_room_snapshot; canonical metadata uses dish_session(snapshot), with no fallback.",
+      "evidence": [
+        "mobile/tests/unit/socialInboxHistoryRepositories.test.ts",
+        "mobile/tests/component/socialAndHistoryScreens.test.tsx"
+      ]
+    },
+    {
+      "id": "bottom-navigation-320-360dp-large-text",
+      "result": "AVD visual Pass for labels",
+      "expected": "All four tab labels remain visible at 320dp/360dp and 200% font scale.",
+      "evidence": [
+        "gm28-friends-320dp-200pct.png",
+        "gm28-friends-360dp-200pct.png",
+        "gm28-history-320dp-200pct.png"
+      ]
+    },
+    {
+      "id": "talkback-focus-activation",
+      "result": "Partial",
+      "expected": "Focus/activation observed; full spoken transcript and exhaustive traversal not captured.",
+      "evidence": [
+        "gm28-talkback-add-friend-320dp-200pct.png"
+      ]
+    },
+    {
+      "id": "figma-sample-state-alignment",
+      "result": "Semantic data alignment Pass; visual parity Partial",
+      "expected": "Equivalent sample data for Friends, Inbox and History; fixture route is development-only, not live API.",
+      "evidence": [
+        "gm28-friends-figma-fixture-412dp-100pct.png",
+        "gm28-inbox-figma-fixture-412dp-100pct.png",
+        "gm28-history-figma-fixture-412dp-100pct.png"
+      ]
+    }
+  ],
+  "automatedChecks": [
+    {
+      "command": "cd mobile; npm run check",
+      "result": "Pass before GM-14 mock-file restoration: TypeScript, ESLint (0 errors; 4 existing warnings), 72 suites / 1363 Jest tests, architecture."
+    },
+    {
+      "command": "cd mobile; npm test -- --runInBand tests/component/socialAndHistoryScreens.test.tsx",
+      "result": "Pass after restoring GM-14 InboxScreen: 1 suite / 13 tests."
+    },
+    {
+      "command": "cd mobile; npm run typecheck",
+      "result": "Pass after GM-14 mock-file restoration."
+    },
+    {
+      "command": "cd mobile; npm run lint",
+      "result": "Pass after GM-14 mock-file restoration."
+    },
+    {
+      "command": "cd mobile; npm run check:expo",
+      "result": "Pass: Expo 58.0.23 dependencies match lockfile; bundled dependencies up to date. Online validation unreliable offline."
+    },
+    {
+      "command": "cd mobile; npm run bundle:android",
+      "result": "Pass: Android export, 1722 entry modules."
+    },
+    {
+      "command": "python -m unittest discover -s tests -p \"test_*.py\"",
+      "result": "Pass: 664 tests; 2 skipped."
+    },
+    {
+      "command": "python scripts/validate_repository.py",
+      "result": "Pass."
+    },
+    {
+      "command": "python scripts/task_readiness.py --check-docs",
+      "result": "Pass."
+    },
+    {
+      "command": "git diff --check",
+      "result": "Pass; LF-to-CRLF working-copy notices only."
+    }
+  ],
+  "github": {
+    "priorCommit": "b19ad9ef6c500f9981eba83a15d963029dcaa9a1",
+    "ci": "19/19 Pass after rerunning GM-18; initial run hit Docker host port 54322 bind conflict",
+    "scopeCorrection": "GM-14 InboxScreen restored; separate CI run required for the correction",
+    "mergeReadinessAfterCorrection": "READY_FOR_MERGE_REVIEW against origin/main 8b26c3f96d46dff57c1b0857a13e8f1144e0a1cb"
+  },
+  "sourceFiles": [
+    {
+      "path": "mobile/src/features/history/screens/LiveHistoryScreen.tsx",
+      "sha256": "bc12163d68993dc6f58a54a3cd8ae4cf8b1f886e16f1c8bed134dd9465c64a99"
+    },
+    {
+      "path": "mobile/src/features/inbox/screens/InboxScreen.tsx",
+      "sha256": "79a01f15a840f08e0517265ec670385e2559c22db8ac87b4463710284b18b84a"
+    },
+    {
+      "path": "mobile/src/features/inbox/screens/LiveInboxScreen.tsx",
+      "sha256": "cee011a9330a289fc8555c3a55b7c82e9866b1d2c3de7fbb0f3afdb569b42fba"
+    },
+    {
+      "path": "mobile/src/features/inbox/services/inboxRepository.ts",
+      "sha256": "f372a47d9002c9997f1717e9cb13ad4ed7c88981631db0f24c91cbf35c4bc6b0"
+    },
+    {
+      "path": "mobile/src/shared/ui/layout/AppBottomNavigation.tsx",
+      "sha256": "b0c35e827348f942b44fd7cb177d3417ea037a61d78a357da0c2a0da7735a295"
+    },
+    {
+      "path": "mobile/src/app/dev/gm28-parity.tsx",
+      "sha256": "0a9c5635efa90068b5ad9e3a43e5a277c8fc9987fa066641d10bc31d6660beed"
+    },
+    {
+      "path": "mobile/src/app/inbox-result.tsx",
+      "sha256": "7924f70caf250c39a0cac039ea8ac1276ae5fa9446ccac2def34eefe8eb98407"
+    },
+    {
+      "path": "mobile/src/features/inbox/screens/LegacyInboxResultScreen.tsx",
+      "sha256": "beb43b7f992ca56eccd3d56cb7962502f0e8e0d45f4e591585d1b6426254cca7"
+    },
+    {
+      "path": "mobile/src/features/shared/fixtures/gm28FigmaParity.ts",
+      "sha256": "1479effffe6139d58ae731c215602bc401ea8468195b4f3687528daacf1c192a"
+    },
+    {
+      "path": "mobile/tests/component/socialAndHistoryScreens.test.tsx",
+      "sha256": "52632295324cac1c0caac4d822f178982c0e665947fd43d6dd2052febfc9f147"
+    },
+    {
+      "path": "mobile/tests/unit/socialInboxHistoryRepositories.test.ts",
+      "sha256": "6f352244bf348cacad81e460d9dcd6755cdf7271f3e7f2b2b9d7827397d6a966"
+    },
+    {
+      "path": "docs/evidence/roadmap-v2/GM-28/CHECKS.md",
+      "sha256": "860927fba496c4d0727549f4e732945f10a339d42b93bfda2ebe44476767b4b8"
+    },
+    {
+      "path": "docs/evidence/roadmap-v2/GM-28/HANDOFF.md",
+      "sha256": "3b06587ed0ef1a2bc13423640e91b143fa5d1e4081b7d2c502c603f93f4ffead"
+    },
+    {
+      "path": "docs/evidence/roadmap-v2/GM-28/FIGMA_PARITY.md",
+      "sha256": "382dda9c7d362f0ebfbb5d3e4a037caf8da5be7acdafacb717922839bbb892d4"
+    },
+    {
+      "path": "docs/evidence/roadmap-v2/GM-28/artifacts/2026-11-08-pr126-four-findings/FOLLOWUP.md",
+      "sha256": "6f3d3c65d476ea9509ee63caaad7347195642bf7ec9971deb15f5ca7a1309625"
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "docs/evidence/roadmap-v2/GM-28/artifacts/2026-11-08-pr126-four-findings/gm28-friends-320dp-200pct.png",
+      "sha256": "932a2fbb988044f4f2b59357e278749e8eb28928585b78fecb16514094066101"
+    },
+    {
+      "path": "docs/evidence/roadmap-v2/GM-28/artifacts/2026-11-08-pr126-four-findings/gm28-friends-360dp-200pct.png",
+      "sha256": "cc6e8e8ca9bcbe893fd199dd40e7c3a15654962efb4bb3822a544da4190b0025"
+    },
+    {
+      "path": "docs/evidence/roadmap-v2/GM-28/artifacts/2026-11-08-pr126-four-findings/gm28-friends-figma-fixture-412dp-100pct.png",
+      "sha256": "faf61eed3873faf4f268ef99d29fb23ee0e9120013349cff52d1e990b7683bcb"
+    },
+    {
+      "path": "docs/evidence/roadmap-v2/GM-28/artifacts/2026-11-08-pr126-four-findings/gm28-history-320dp-200pct.png",
+      "sha256": "d47bb56faca55404ef454be1092c0952c314c37295d0a4df96483b542b0aef07"
+    },
+    {
+      "path": "docs/evidence/roadmap-v2/GM-28/artifacts/2026-11-08-pr126-four-findings/gm28-history-figma-fixture-412dp-100pct.png",
+      "sha256": "e3dffa7e6f9bc9d8c96861fd40903ae8f436aa7d3a77d926c346cddecf3ad8cc"
+    },
+    {
+      "path": "docs/evidence/roadmap-v2/GM-28/artifacts/2026-11-08-pr126-four-findings/gm28-home-320dp-200pct-talkback.png",
+      "sha256": "c4301076f1b122b504a1e7e14e9af153b259efb8ff2afab80ed2241735beb81d"
+    },
+    {
+      "path": "docs/evidence/roadmap-v2/GM-28/artifacts/2026-11-08-pr126-four-findings/gm28-home-360dp-200pct.png",
+      "sha256": "26189298a00915b7f2cd14d3ab87930fad61cb5cb6cb9beb835d64629eaae6c2"
+    },
+    {
+      "path": "docs/evidence/roadmap-v2/GM-28/artifacts/2026-11-08-pr126-four-findings/gm28-inbox-figma-fixture-412dp-100pct.png",
+      "sha256": "e940026f7560c36d1e8834e41e0d87c5f4dc3d7dbae27df596f5e2b59c1ba11a"
+    },
+    {
+      "path": "docs/evidence/roadmap-v2/GM-28/artifacts/2026-11-08-pr126-four-findings/gm28-restored-412dp-100pct.png",
+      "sha256": "35c580814c613ffd2a3d50c4f86fb72064f80341ec1ab43fade08d8beb01edfe"
+    },
+    {
+      "path": "docs/evidence/roadmap-v2/GM-28/artifacts/2026-11-08-pr126-four-findings/gm28-talkback-add-friend-320dp-200pct.png",
+      "sha256": "4e0e5430796874ed5e0e6241aef87700466bd16b932bd09b45ae27936942f887"
+    }
+  ],
+  "limits": [
+    "No live AVD-to-API result-open run.",
+    "Full TalkBack transcript/traversal not run.",
+    "Figma visual parity remains Partial.",
+    "Expo Go emulator evidence only; no physical-device/native-build claim."
+  ],
+  "cleanup": {
+    "qa": "cleaned",
+    "emulator": "restored; Friends fixture left open",
+    "metro8086": "left running for inspection"
+  }
+}

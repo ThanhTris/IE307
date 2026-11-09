@@ -1086,6 +1086,9 @@
         "mobile/src/features/friends/services/socialRepository.ts",
         "mobile/src/features/inbox/services/inboxRepository.ts",
         "mobile/src/features/history/services/historyRepository.ts",
+        "supabase/migrations/0041_gm28_inbox_read_all.sql",
+        "supabase/tests/database/GM-28_inbox_read_all.test.sql",
+        "supabase/tests/http/GM-28.http",
         "docs/evidence/roadmap-v2/GM-28/CHECKS.md",
         "docs/evidence/roadmap-v2/GM-28/FIGMA_PARITY.md"
       ],
@@ -1126,7 +1129,7 @@
         "tool": "Expo Android + multi-user API runner",
         "entrypoint": "Figma task map → node thiết kế → route/scenario bàn giao của GM-28",
         "expected": "Nối GM-14 với history/social/inbox producer theo version bàn giao; tìm tên trong danh sách bạn, thêm bằng mã và admission 20 người không ready.",
-        "cases": "Android nhiều identity: invite/accept/reject/unfriend/full/expiry, inbox empty/error, history opt-out/delete/revoke. Result/history/inbox trỏ cùng kết quả đã lưu; xác minh node Figma bổ sung và không lộ phiếu/token."
+        "cases": "Android nhiều identity: invite/accept/reject/unfriend/full/expiry, inbox empty/error, history opt-out/delete/revoke. Result/history/inbox trỏ cùng kết quả đã lưu; xác minh node Figma bổ sung và không lộ phiếu/token. SQL/HTTP Đọc tất cả kiểm qua mốc 50 mục, phân quyền và retry theo request ID."
       }
     },
     {
