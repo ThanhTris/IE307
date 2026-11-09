@@ -53,7 +53,7 @@ export interface ApiError {
 }
 
 export type ReadResult<T> =
-  | { ok: true; data: T; stale?: boolean; fetchedAt?: string }
+  | { ok: true; data: T }
   | { ok: false; error: ApiError };
 
 export type WriteResult<T = void> =

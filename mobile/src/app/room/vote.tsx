@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { VoteScreen } from '../../features/voting';
 import { useRoomRepository } from '../../bootstrap/RoomRepositoryProvider';
-import { createLiveVoteRepository } from '../../features/voting/services/voteRepository';
+import { createDurableVoteRepository } from '../../features/voting/services/durableVoteRepository';
 
 export default function VoteRoute() {
   const router = useRouter();
@@ -12,7 +12,7 @@ export default function VoteRoute() {
   const identityId = live.user?.id ?? (isReal ? 'unresolved' : 'mock');
 
   const repository = useMemo(() => {
-    return isReal ? createLiveVoteRepository({ roomRepository: live.repository }) : undefined;
+    return isReal ? createDurableVoteRepository({ roomRepository: live.repository }) : undefined;
   }, [isReal, live.repository]);
 
   return (

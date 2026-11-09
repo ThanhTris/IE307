@@ -6,7 +6,6 @@ import type { SessionIssue, SessionSnapshot, SessionStatus } from '../features/r
 import type { SessionUser } from '../data/api/contracts';
 import { clearPrivateHistoryCache } from '../features/history/services/historyRepository';
 import { clearVoteSession } from '../features/voting/services/voteSessionState';
-import { getDurableOutbox } from '../data/local/outbox';
 import {
   LiveRoomRepository,
   createDurableRequestId,
@@ -103,23 +102,14 @@ export function RoomRepositoryProvider({
 
   const logout = useCallback(async (): Promise<boolean> => {
     const identityId = repository.getSessionSnapshot().user?.id;
-    if (identityId) {
-      // Local logout must invalidate the session even if secure storage is
-      // temporarily unavailable. Failed rows remain scoped to this identity
-      // and clearIdentity can retry cleanup on the next explicit logout.
-      try { await getDurableOutbox().clearIdentity(identityId); } catch { /* continue local logout */ }
-    }
     const result = await repository.logout();
-    if (result.ok) {
-      if (identityId) clearVoteSession(identityId);
-    }
+    if (result.ok && identityId) clearVoteSession(identityId);
     return result.ok;
   }, [repository]);
 
   useEffect(() => {
     let mounted = true;
     if (!isReal) return;
-    void getDurableOutbox().retryPendingPrivateDeletions().catch(() => undefined);
     void repository.restoreSession().catch(() => undefined).finally(() => {
       if (mounted) setRestoredRepository(repository);
     });

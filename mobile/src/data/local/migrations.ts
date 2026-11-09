@@ -1,9 +1,13 @@
-import type { SQLiteDatabase } from 'expo-sqlite';
+export interface SqliteMigrationDatabase {
+  execAsync(source: string): Promise<void>;
+  getFirstAsync<T>(source: string, ...params: (string | number | null)[]): Promise<T | null>;
+  getAllAsync<T>(source: string, ...params: (string | number | null)[]): Promise<T[]>;
+}
 
 export const PRIVATE_DATABASE_NAME = 'gcd-private-v1.db';
 export const PRIVATE_DATABASE_SCHEMA_VERSION = 4;
 
-export async function migratePrivateDatabase(database: SQLiteDatabase): Promise<void> {
+export async function migratePrivateDatabase(database: SqliteMigrationDatabase): Promise<void> {
   const current = await database.getFirstAsync<{ user_version: number }>('PRAGMA user_version');
   const version = current?.user_version ?? 0;
   if (version > PRIVATE_DATABASE_SCHEMA_VERSION) {

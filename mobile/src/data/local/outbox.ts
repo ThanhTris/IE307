@@ -1,6 +1,5 @@
 import * as SecureStore from 'expo-secure-store';
-import type { SQLiteDatabase } from 'expo-sqlite';
-import { migratePrivateDatabase, PRIVATE_DATABASE_NAME } from './migrations';
+import { migratePrivateDatabase, PRIVATE_DATABASE_NAME, PRIVATE_DATABASE_SCHEMA_VERSION } from './migrations';
 
 export const OUTBOX_TTL_MS = 24 * 60 * 60 * 1000;
 export const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
@@ -63,6 +62,7 @@ interface EntryRow {
 }
 
 const PAYLOAD_PREFIX = 'gcd.gm31.private.';
+const FALLBACK_DB_KEY = 'gcd.gm31.sqlite.fallback.v4';
 
 function createRecordId(): string {
   const part = () => Math.floor(Math.random() * 0x100000000).toString(16).padStart(8, '0');
@@ -113,7 +113,7 @@ export class DurableOutbox {
   ) {}
 
   private async initialize(): Promise<void> {
-    this.ready ??= migratePrivateDatabase(this.database as SQLiteDatabase);
+    this.ready ??= migratePrivateDatabase(this.database);
     await this.ready;
   }
 
@@ -467,18 +467,159 @@ export class DurableOutbox {
   }
 }
 
+interface FallbackSqliteState {
+  version: number;
+  rows: EntryRow[];
+  pendingCleanup: string[];
+  pendingIdentities: string[];
+}
+
+class SecureStoreMetadataDatabase implements SqlitePrivateDatabase {
+  private state?: FallbackSqliteState;
+
+  private async load(): Promise<FallbackSqliteState> {
+    if (this.state) return this.state;
+    const raw = await SecureStore.getItemAsync(FALLBACK_DB_KEY).catch(() => null);
+    const parsed = parsePrivate<FallbackSqliteState>(raw);
+    this.state = parsed ?? {
+      version: PRIVATE_DATABASE_SCHEMA_VERSION,
+      rows: [],
+      pendingCleanup: [],
+      pendingIdentities: [],
+    };
+    return this.state;
+  }
+
+  private async save(): Promise<void> {
+    if (!this.state) return;
+    await SecureStore.setItemAsync(FALLBACK_DB_KEY, JSON.stringify(this.state), {
+      keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
+    }).catch(() => undefined);
+  }
+
+  async execAsync(sql: string): Promise<void> {
+    const state = await this.load();
+    const match = /PRAGMA user_version\s*=\s*(\d+)/i.exec(sql);
+    if (match) {
+      state.version = Number(match[1]);
+      await this.save();
+    }
+  }
+
+  async runAsync(sql: string, ...params: (string | number | null)[]): Promise<{ changes: number }> {
+    const state = await this.load();
+    if (sql.startsWith('INSERT INTO gm31_private_entries')) {
+      const [recordId, kind, rowState, createdAt, expiresAt] = params as [string, EntryRow['kind'], EntryRow['state'], number, number];
+      state.rows = state.rows.filter(r => r.record_id !== recordId);
+      state.rows.push({ record_id: recordId, kind, state: rowState, created_at: createdAt, expires_at: expiresAt });
+      await this.save();
+      return { changes: 1 };
+    }
+    if (sql.startsWith('UPDATE gm31_private_entries')) {
+      const [rowState, recordId] = params as [EntryRow['state'], string];
+      const found = state.rows.find(r => r.record_id === recordId);
+      if (found) found.state = rowState;
+      await this.save();
+      return { changes: found ? 1 : 0 };
+    }
+    if (sql.startsWith('DELETE FROM gm31_private_entries')) {
+      const [recordId] = params as [string];
+      const before = state.rows.length;
+      state.rows = state.rows.filter(r => r.record_id !== recordId);
+      await this.save();
+      return { changes: before - state.rows.length };
+    }
+    if (sql.startsWith('INSERT OR IGNORE INTO gm31_pending_private_deletion')) {
+      const id = params[0] as string;
+      if (!state.pendingCleanup.includes(id)) state.pendingCleanup.push(id);
+      await this.save();
+      return { changes: 1 };
+    }
+    if (sql.startsWith('DELETE FROM gm31_pending_private_deletion')) {
+      const id = params[0] as string;
+      const before = state.pendingCleanup.length;
+      state.pendingCleanup = state.pendingCleanup.filter(item => item !== id);
+      await this.save();
+      return { changes: before - state.pendingCleanup.length };
+    }
+    if (sql.startsWith('INSERT OR IGNORE INTO gm31_pending_identity_cleanup')) {
+      const hash = params[0] as string;
+      if (!state.pendingIdentities.includes(hash)) state.pendingIdentities.push(hash);
+      await this.save();
+      return { changes: 1 };
+    }
+    if (sql.startsWith('DELETE FROM gm31_pending_identity_cleanup WHERE identity_hash')) {
+      const hash = params[0] as string;
+      const before = state.pendingIdentities.length;
+      state.pendingIdentities = state.pendingIdentities.filter(item => item !== hash);
+      await this.save();
+      return { changes: before - state.pendingIdentities.length };
+    }
+    return { changes: 0 };
+  }
+
+  async getFirstAsync<T>(sql: string, ...params: (string | number | null)[]): Promise<T | null> {
+    const state = await this.load();
+    if (sql === 'PRAGMA user_version') return { user_version: state.version } as T;
+    if (sql.startsWith('SELECT record_id FROM gm31_pending_private_deletion')) {
+      const id = params[0] as string;
+      return state.pendingCleanup.includes(id) ? ({ record_id: id } as T) : null;
+    }
+    if (sql.startsWith('SELECT identity_hash FROM gm31_pending_identity_cleanup')) {
+      const hash = params[0] as string;
+      return state.pendingIdentities.includes(hash) ? ({ identity_hash: hash } as T) : null;
+    }
+    return null;
+  }
+
+  async getAllAsync<T>(sql: string, ...params: (string | number | null)[]): Promise<T[]> {
+    const state = await this.load();
+    if (sql.startsWith('SELECT record_id FROM gm31_pending_private_deletion')) {
+      return state.pendingCleanup.map(record_id => ({ record_id })) as T[];
+    }
+    if (sql.startsWith('SELECT identity_hash FROM gm31_pending_identity_cleanup')) {
+      return state.pendingIdentities.map(identity_hash => ({ identity_hash })) as T[];
+    }
+    if (sql.startsWith('SELECT identity_id FROM gm31_pending_identity_cleanup_legacy')) return [];
+    if (sql.startsWith('PRAGMA table_info(gm31_pending_identity_cleanup)')) return [];
+    const kind = sql.includes('WHERE kind = ?') ? params[0] : undefined;
+    return state.rows.filter(r => !kind || r.kind === kind) as T[];
+  }
+}
+
+async function openDefaultPrivateDatabase(): Promise<SqlitePrivateDatabase> {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const Core = require('expo-modules-core') as { requireOptionalNativeModule?: (name: string) => unknown };
+    const hasNativeSqlite = typeof Core?.requireOptionalNativeModule === 'function'
+      ? Boolean(Core.requireOptionalNativeModule('ExpoSQLite'))
+      : true;
+    if (hasNativeSqlite) {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const SQLite = require('expo-sqlite') as { openDatabaseAsync?: (name: string) => Promise<SqlitePrivateDatabase> };
+      if (typeof SQLite?.openDatabaseAsync === 'function') {
+        return await SQLite.openDatabaseAsync(PRIVATE_DATABASE_NAME);
+      }
+    }
+  } catch {
+    // Fall back to SecureStore-backed metadata table when native expo-sqlite is not linked in the current binary.
+  }
+  return new SecureStoreMetadataDatabase();
+}
+
 let defaultOutbox: DurableOutbox | undefined;
 export function getDurableOutbox(): DurableOutbox {
   if (!defaultOutbox) {
-    const db = import('expo-sqlite').then(SQLite => SQLite.openDatabaseAsync(PRIVATE_DATABASE_NAME));
+    const db = openDefaultPrivateDatabase();
     const lazyDatabase = new LazySqliteDatabase(db);
     defaultOutbox = new DurableOutbox(lazyDatabase);
+    void defaultOutbox.retryPendingPrivateDeletions().catch(() => undefined);
   }
   return defaultOutbox;
 }
 
 class LazySqliteDatabase implements SqlitePrivateDatabase {
-  constructor(private readonly database: Promise<SQLiteDatabase>) {}
+  constructor(private readonly database: Promise<SqlitePrivateDatabase>) {}
   async execAsync(sql: string) { return (await this.database).execAsync(sql); }
   async runAsync(sql: string, ...params: (string | number | null)[]) { return (await this.database).runAsync(sql, ...params); }
   async getFirstAsync<T>(sql: string, ...params: (string | number | null)[]) { return (await this.database).getFirstAsync<T>(sql, ...params); }

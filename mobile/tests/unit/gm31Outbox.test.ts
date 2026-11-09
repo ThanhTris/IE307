@@ -1,9 +1,14 @@
+import type { RoomSnapshot } from '../../src/data/api';
 import {
   DurableOutbox,
   type SecurePrivateStore,
   type SqlitePrivateDatabase,
 } from '../../src/data/local/outbox';
-import { acknowledgedRequestIds } from '../../src/features/voting/services/voteRepository';
+import {
+  acknowledgedRequestIds,
+  createDurableVoteRepository,
+} from '../../src/features/voting/services/durableVoteRepository';
+import { CANONICAL_VOTE_CONTRACT_VERSION } from '../../src/features/voting/services/voteRepository';
 
 type Row = { record_id: string; kind: 'outbox' | 'cache'; state: 'pending' | 'unknown' | 'acked' | 'cached'; created_at: number; expires_at: number };
 
@@ -124,6 +129,81 @@ describe('GM-31 durable private outbox', () => {
     expect(acknowledgedRequestIds({ ownBallot: null, ownSubmission: {
       round: 1, intentId: 'intent-1', requestId: 'legacy-req', submittedAt: '2026-11-07T00:00:00Z', voteCount: 1,
     } })).toEqual(['legacy-req']);
+  });
+
+  test.each(['user-B', null])('drops a late room A snapshot after identity changes to %s', async nextIdentity => {
+    const snapshot: RoomSnapshot = {
+      roomId: 'room_A', code: 'GCD999', state: 'ROUND_1', version: 2, hostUserId: 'user-A',
+      context: { anchorId: 'anchor_1', radiusM: 2000, desiredAt: '2026-11-05T12:00:00Z', serviceMode: 'dine_in', mealSlot: 'lunch', avoidRecent: false },
+      members: [{ userId: 'user-A', displayName: 'A', isHost: true, ready: true, joinedAt: '2026-11-05T12:00:00Z' }],
+      round: 1, poolVersion: 1, pool: [], expiresAt: '2026-11-05T13:00:00Z',
+    };
+    let resolveSnapshot!: (value: unknown) => void;
+    let currentIdentity: string | null = 'user-A';
+    const cacheSnapshot = jest.fn();
+    const reconcileBeforeReplay = jest.fn();
+    const roomRepository = {
+      getCurrentUser: () => currentIdentity ? { id: currentIdentity } : null,
+      getIdentityRevision: () => 0,
+      getSessionApi: () => ({ getGeneration: () => 0 }),
+    };
+    const repo = createDurableVoteRepository({
+      roomRepository: roomRepository as any,
+      rpcCaller: () => new Promise(resolve => { resolveSnapshot = resolve; }),
+      outbox: { cacheSnapshot, reconcileBeforeReplay } as any,
+    });
+    const pending = repo.getSnapshot('room_A');
+    currentIdentity = nextIdentity;
+    resolveSnapshot({ ok: true, data: snapshot });
+    expect(await pending).toMatchObject({ ok: false, error: { messageKey: 'AUTH_REQUIRED' } });
+    expect(cacheSnapshot).not.toHaveBeenCalled();
+    expect(reconcileBeforeReplay).not.toHaveBeenCalled();
+  });
+
+  test('does not submit an unknown outbox ballot when live snapshot is unavailable but cache exists', async () => {
+    const previous = {
+      identityId: 'user-A', roomId: 'room_A', round: 1 as const, poolVersion: 1,
+      contractVersion: CANONICAL_VOTE_CONTRACT_VERSION, requestId: 'stable-request', expectedVersion: 2,
+      createdAt: 1, expiresAt: Number.MAX_SAFE_INTEGER, state: 'unknown' as const,
+      payload: { intentId: 'intent_stable-request', votes: [{ roundDishId: 'dish-1', choice: 'WANT' }] },
+    };
+    const cacheSnapshot = jest.fn();
+    const reconcileBeforeReplay = jest.fn();
+    const getRoomSnapshot = jest.fn().mockResolvedValue({
+      identityId: 'user-A', roomId: 'room_A', contractVersion: CANONICAL_VOTE_CONTRACT_VERSION,
+      fetchedAt: Date.now(), expiresAt: Date.now() + 60_000, value: { roomId: 'room_A', state: 'ROUND_1' },
+    });
+    const outbox = {
+      findEquivalent: jest.fn().mockResolvedValue(previous),
+      cacheSnapshot,
+      reconcileBeforeReplay,
+      readSnapshotCache: getRoomSnapshot,
+      markUnknown: jest.fn(),
+      acknowledge: jest.fn(),
+      remove: jest.fn(),
+    };
+    const calls: Record<string, unknown>[] = [];
+    const repo = createDurableVoteRepository({
+      roomRepository: {
+        getCurrentUser: () => ({ id: 'user-A' }),
+        getIdentityRevision: () => 0,
+        getSessionApi: () => ({ getGeneration: () => 0 }),
+      } as any,
+      outbox: outbox as any,
+      rpcCaller: async (_name, params) => {
+        calls.push(params as Record<string, unknown>);
+        return { ok: false, error: { messageKey: 'NETWORK_ERROR' } };
+      },
+    });
+
+    const result = await repo.submitBallot({
+      roomId: 'room_A', round: 1, poolVersion: 1, expectedVersion: 2,
+      requestId: 'new-request', votes: [{ roundDishId: 'dish-1', vote: 'WANT' }],
+    });
+    expect(result).toMatchObject({ ok: false, requestId: 'stable-request', error: { messageKey: 'NETWORK_ERROR' } });
+    expect(calls).toHaveLength(1);
+    expect(calls[0]).toMatchObject({ command: 'snapshot' });
+    expect(getRoomSnapshot).not.toHaveBeenCalled();
   });
 
   test('stores private scope and ballot only in SecureStore and rejects request ID reuse', async () => {
