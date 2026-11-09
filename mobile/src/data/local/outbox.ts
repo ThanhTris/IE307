@@ -104,6 +104,7 @@ function validScope(identityId: string, roomId: string, contractVersion: string)
 
 export class DurableOutbox {
   private ready?: Promise<void>;
+  private readonly identityQueues = new Map<string, Promise<void>>();
 
   constructor(
     private readonly database: SqlitePrivateDatabase,
@@ -115,6 +116,19 @@ export class DurableOutbox {
   private async initialize(): Promise<void> {
     this.ready ??= migratePrivateDatabase(this.database as SQLiteDatabase);
     await this.ready;
+  }
+
+  private async withIdentityLock<T>(identityId: string, operation: () => Promise<T>): Promise<T> {
+    const previous = this.identityQueues.get(identityId) ?? Promise.resolve();
+    let release!: () => void;
+    const current = new Promise<void>(resolve => { release = resolve; });
+    this.identityQueues.set(identityId, current);
+    await previous.catch(() => undefined);
+    try { return await operation(); }
+    finally {
+      release();
+      if (this.identityQueues.get(identityId) === current) this.identityQueues.delete(identityId);
+    }
   }
 
   private async rows(kind?: EntryRow['kind']): Promise<EntryRow[]> {
@@ -133,6 +147,10 @@ export class DurableOutbox {
   }
 
   async enqueue<T>(input: OutboxInput<T>): Promise<OutboxIntent<T>> {
+    return this.withIdentityLock(input.identityId, () => this.enqueueUnlocked(input));
+  }
+
+  private async enqueueUnlocked<T>(input: OutboxInput<T>): Promise<OutboxIntent<T>> {
     if (!validScope(input.identityId, input.roomId, input.contractVersion)
       || !input.requestId || input.requestId.length > 128
       || !Number.isInteger(input.poolVersion) || input.poolVersion < 1
@@ -252,6 +270,10 @@ export class DurableOutbox {
   }
 
   async cacheSnapshot<T>(snapshot: Omit<PrivateSnapshot<T>, 'fetchedAt' | 'expiresAt'> & { fetchedAt?: number }): Promise<void> {
+    return this.withIdentityLock(snapshot.identityId, () => this.cacheSnapshotUnlocked(snapshot));
+  }
+
+  private async cacheSnapshotUnlocked<T>(snapshot: Omit<PrivateSnapshot<T>, 'fetchedAt' | 'expiresAt'> & { fetchedAt?: number }): Promise<void> {
     if (!validScope(snapshot.identityId, snapshot.roomId, snapshot.contractVersion)) throw new Error('CACHE_INVALID_SCOPE');
     if (await this.isIdentityCleanupPending(snapshot.identityId)) throw new Error('PRIVATE_IDENTITY_CLEANUP_PENDING');
     const createdAt = snapshot.fetchedAt ?? this.clock();
@@ -304,6 +326,10 @@ export class DurableOutbox {
   }
 
   async clearIdentity(identityId: string): Promise<void> {
+    return this.withIdentityLock(identityId, () => this.clearIdentityUnlocked(identityId));
+  }
+
+  private async clearIdentityUnlocked(identityId: string): Promise<void> {
     await this.initialize();
     await this.markIdentityCleanup(identityId);
     const identityRows: EntryRow[] = [];
@@ -401,6 +427,7 @@ export class DurableOutbox {
   }
 
   private async isIdentityCleanupPending(identityId: string): Promise<boolean> {
+    await this.initialize();
     const marker = await this.database.getFirstAsync<{ identity_hash: string }>(
       'SELECT identity_hash FROM gm31_pending_identity_cleanup WHERE identity_hash = ?', identityFingerprint(identityId),
     );

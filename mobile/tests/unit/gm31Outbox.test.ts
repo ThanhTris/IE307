@@ -55,6 +55,9 @@ class MemoryDatabase implements SqlitePrivateDatabase {
   }
   async getFirstAsync<T>(sql: string, ...params: (string | number | null)[]): Promise<T | null> {
     if (sql === 'PRAGMA user_version') return { user_version: this.version } as T;
+    if (sql.startsWith('SELECT') && sql.includes('gm31_pending_') && this.version !== 4) {
+      throw new Error('no such table: gm31_pending_identity_cleanup');
+    }
     if (sql.startsWith('SELECT record_id FROM gm31_pending_private_deletion')) {
       const recordId = params[0] as string;
       return this.pendingCleanup.has(recordId) ? { record_id: recordId } as T : null;
@@ -66,6 +69,9 @@ class MemoryDatabase implements SqlitePrivateDatabase {
     return null;
   }
   async getAllAsync<T>(sql: string, ...params: (string | number | null)[]): Promise<T[]> {
+    if (sql.startsWith('SELECT') && sql.includes('gm31_pending_') && this.version !== 4) {
+      throw new Error('no such table: gm31_pending_identity_cleanup');
+    }
     if (sql.startsWith('SELECT record_id FROM gm31_pending_private_deletion')) {
       return [...this.pendingCleanup].map(record_id => ({ record_id })) as T[];
     }
@@ -87,7 +93,7 @@ class MemorySecureStore implements SecurePrivateStore {
     if (this.failNextRead) { this.failNextRead = false; throw new Error('SECURE_READ_FAILED'); }
     return this.values.get(key) ?? null;
   }
-  async setItemAsync(key: string, value: string) { this.values.set(key, value); }
+  async setItemAsync(key: string, value: string, _options?: { keychainAccessible?: number }) { this.values.set(key, value); }
   async deleteItemAsync(key: string) {
     if (this.failNextDelete) { this.failNextDelete = false; throw new Error('SECURE_DELETE_FAILED'); }
     this.values.delete(key);
@@ -116,6 +122,64 @@ function intent(identityId: string, requestId: string, votes = [{ roundDishId: '
 }
 
 describe('GM-31 durable private outbox', () => {
+  test('first cache and outbox operations wait for migration on a fresh database', async () => {
+    const { database, outbox } = setup();
+    await Promise.all([
+      outbox.enqueue(intent('user-A', 'first-operation')),
+      outbox.cacheSnapshot({ identityId: 'user-A', roomId: 'room-1', contractVersion: 'v4', value: { private: true } }),
+    ]);
+    expect(database.version).toBe(4);
+    expect(await outbox.list('user-A')).toHaveLength(1);
+    expect(await outbox.readSnapshotCache('user-A', 'room-1', 'v4')).toMatchObject({ value: { private: true } });
+  });
+
+  test('logout waits for an in-flight secure outbox write before deleting identity A', async () => {
+    const database = new MemoryDatabase();
+    const secureStore = new MemorySecureStore();
+    let releaseWrite: (() => void) | undefined;
+    const originalSet = secureStore.setItemAsync.bind(secureStore);
+    secureStore.setItemAsync = async (key, value, options) => {
+      await new Promise<void>(resolve => { releaseWrite = resolve; });
+      await originalSet(key, value, options);
+    };
+    const outbox = new DurableOutbox(database, secureStore);
+
+    const writing = outbox.enqueue(intent('user-A', 'late-write'));
+    await new Promise(resolve => setTimeout(resolve, 0));
+    const logout = outbox.clearIdentity('user-A');
+    releaseWrite?.();
+    await writing;
+    await logout;
+
+    const restarted = new DurableOutbox(database, secureStore);
+    expect(await restarted.list('user-A')).toEqual([]);
+    expect(database.rows.size).toBe(0);
+    expect(secureStore.values.size).toBe(0);
+  });
+
+  test('logout also waits for an in-flight private cache write', async () => {
+    const database = new MemoryDatabase();
+    const secureStore = new MemorySecureStore();
+    let releaseWrite: (() => void) | undefined;
+    const originalSet = secureStore.setItemAsync.bind(secureStore);
+    secureStore.setItemAsync = async (key, value, options) => {
+      await new Promise<void>(resolve => { releaseWrite = resolve; });
+      await originalSet(key, value, options);
+    };
+    const outbox = new DurableOutbox(database, secureStore);
+
+    const writing = outbox.cacheSnapshot({ identityId: 'user-A', roomId: 'room-1', contractVersion: 'v4', value: { private: true } });
+    await new Promise(resolve => setTimeout(resolve, 0));
+    const logout = outbox.clearIdentity('user-A');
+    releaseWrite?.();
+    await Promise.all([writing, logout]);
+
+    const restarted = new DurableOutbox(database, secureStore);
+    expect(await restarted.readSnapshotCache('user-A', 'room-1', 'v4')).toBeUndefined();
+    expect(database.rows.size).toBe(0);
+    expect(secureStore.values.size).toBe(0);
+  });
+
   test('recognizes canonical ballot ACKs and legacy submission receipts', () => {
     expect(acknowledgedRequestIds({ ownBallot: { requestId: 'canonical-req' }, ownSubmission: null }))
       .toEqual(['canonical-req']);
