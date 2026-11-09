@@ -1,4 +1,5 @@
 import type { BallotVoteItem, SubmissionReceipt } from '../../../data/api';
+import { getDurableOutbox } from '../../../data/local/outbox';
 
 export interface VoteScope {
   identityId: string;
@@ -88,7 +89,7 @@ export function clearWaitingIntent(scope: VoteScope): void {
   waitingIntents.delete(scopeKey(scope));
 }
 
-/** In-memory request state belongs to the authenticated identity and is discarded at logout. */
+/** In-memory request state and durable private outbox/cache belong to the authenticated identity and are discarded at logout. */
 export function clearVoteSession(identityId: string): void {
   for (const [key, intent] of ballotIntents) {
     if (intent.identityId === identityId) ballotIntents.delete(key);
@@ -103,6 +104,9 @@ export function clearVoteSession(identityId: string): void {
   for (const key of [...submissionReceipts.keys()]) {
     const [storedIdentity] = JSON.parse(key) as [string];
     if (storedIdentity === identityId) submissionReceipts.delete(key);
+  }
+  if (identityId && identityId !== 'anonymous' && identityId !== 'unresolved') {
+    void getDurableOutbox().clearIdentity(identityId).catch(() => undefined);
   }
 }
 
