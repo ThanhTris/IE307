@@ -1,0 +1,66 @@
+# GM-28.1 / schema 0.17.0. Apply 0041_gm28_inbox_read_all.sql on disposable QA.
+# Set baseUrl, anonKey, recipientToken and markAllRequestId in a private environment.
+# Seed an unread invitation owned by the recipient. Use a fresh ID for every new action.
+
+### Mark current unread notifications as read
+POST {{baseUrl}}/rest/v1/rpc/mark_all_partner_inbox_read
+Authorization: Bearer {{recipientToken}}
+apikey: {{anonKey}}
+Content-Type: application/json
+
+{"requestId":"{{markAllRequestId}}"}
+
+> {%
+  client.test('ACK confirms this request', function() {
+    client.assert(response.status === 200);
+    client.assert(response.body.ok === true);
+    client.assert(response.body.requestId === request.variables.get('markAllRequestId'));
+    client.assert(response.body.data === null);
+  });
+%}
+
+### Retry the same request ID
+POST {{baseUrl}}/rest/v1/rpc/mark_all_partner_inbox_read
+Authorization: Bearer {{recipientToken}}
+apikey: {{anonKey}}
+Content-Type: application/json
+
+{"requestId":"{{markAllRequestId}}"}
+
+> {%
+  client.test('replays the same ACK', function() {
+    client.assert(response.status === 200);
+    client.assert(response.body.ok === true);
+    client.assert(response.body.requestId === request.variables.get('markAllRequestId'));
+    client.assert(response.body.data === null);
+  });
+%}
+
+### Read back the recipient inbox
+POST {{baseUrl}}/rest/v1/rpc/list_partner_inbox
+Authorization: Bearer {{recipientToken}}
+apikey: {{anonKey}}
+Content-Type: application/json
+
+{"cursor":null}
+
+> {%
+  client.test('the fixture notification is read', function() {
+    client.assert(response.status === 200);
+    client.assert(response.body.length > 0);
+    client.assert(response.body.every(function(item) { return item.read === true; }));
+  });
+%}
+
+### A caller without a guest JWT cannot mark the inbox
+POST {{baseUrl}}/rest/v1/rpc/mark_all_partner_inbox_read
+apikey: {{anonKey}}
+Content-Type: application/json
+
+{"requestId":"gm28-no-jwt"}
+
+> {%
+  client.test('unauthenticated caller is denied', function() {
+    client.assert(response.status === 401);
+  });
+%}
