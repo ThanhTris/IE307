@@ -32,15 +32,3 @@ SQLite stores opaque record identifiers, entry kind/state, TTL, pending deletion
 | Figma parity | Not run | Screenshots at 412dp, 360dp and 200% text |
 
 Figma nodes from the task map: `277:2140`, `368:11605`, `368:12586`, `368:12644`, `323:3581`, `382:7201`, `559:8768`, `801:9695`, `801:9846`, `801:9775`.
-
-## PR #158 review regressions — 2026-11-09
-
-Addressed Trí's two latest findings with identity-scoped write serialization and awaited schema initialization before checking cleanup markers.
-
-| Regression | Result | Evidence / limit |
-| --- | --- | --- |
-| Logout races a SecureStore outbox write | Pass | `gm31Outbox.test.ts`: holds the private payload write, starts `clearIdentity(A)`, then releases the write; a new store instance reads no A intent and both SQLite metadata and SecureStore payloads are empty. |
-| Logout races a SecureStore snapshot-cache write | Pass | Same deferred-write setup for `cacheSnapshot`; after logout and reopening the store, the cache is absent and no private row/payload remains. |
-| First operation races schema migration on a fresh DB | Pass (memory adapter) | Concurrent first `enqueue` and `cacheSnapshot` fail if the test adapter sees cleanup-table queries before schema version 4; both succeed after initialization. This is a deterministic adapter regression, not a real SQLite/AVD run. |
-| Focused tests and typecheck | Pass | `npm test -- --runTestsByPath tests/unit/gm31Outbox.test.ts`: 18/18; `npm run typecheck`: exit 0. |
-| Android/QA API and merge readiness | Not run / blocked | No AVD, live QA reconciliation or Figma evidence was produced in this follow-up. Re-run `task_readiness.py --task GM-31 --gate merge --base-ref origin/main --verify-outputs` after syncing main and confirming GM-26 ownership. |
