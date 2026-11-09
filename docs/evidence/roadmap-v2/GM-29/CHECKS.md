@@ -54,3 +54,10 @@ This section supersedes the environment limitation recorded above. The earlier e
 | Remote FCM | Not run | 3B/device follow-up; no remote sender credential or physical device delivery was claimed. |
 
 The API/backend results are independent of the blocked AVD UI section. Do not treat the successful debug build as AVD acceptance or mark GM-29 ready for merge until the required 3A flows and app screenshots are completed and reviewed.
+
+### Review regression follow-up — 2026-11-09
+
+- Added the exact opt-out race raised in PR #127 review: start from a persisted `enabled` intent, hold the SecureStore write of `disabled`, emit a refreshed token while that write is pending, then release it. The test asserts the durable intent remains `disabled` and no new registration request occurs.
+- `npm test -- --runTestsByPath tests/unit/nativePush.test.ts`: **16/16 Pass** after this regression was added. Companion focused run (`expoPushDriver`, notification resolver, and Inbox component) passed **42/42** before the added case. `npm run typecheck`: Pass.
+- The production path hydrates stored intent once, sets `desiredEnabled = false` synchronously when unregister starts, and serializes cleanup; token refresh does not restore intent from a potentially stale asynchronous storage read.
+- AVD app UI remains blocked at white screen after Metro bundle delivery; permission screens and notification interactions remain **Not run**. This local regression does not remove that acceptance gap or make the PR merge-ready.
