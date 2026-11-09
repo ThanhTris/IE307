@@ -80,16 +80,90 @@ test('inbox remains available with denied push permission and confirms invite ac
   expect(await screen.findByText('Đã chấp nhận lời mời trong mock.')).toBeOnTheScreen();
 });
 
-test('live inbox does not link to the unimplemented push settings route', async () => {
+test('live inbox links to the device push settings route', async () => {
+  const user = userEvent.setup();
+  const openSettings = jest.fn();
   await render(<LiveInboxScreen
     repository={{ list: jest.fn().mockResolvedValue({ ok: true, data: { items: [], fetchedAt: '2026-11-08T00:00:00Z' } }) } as any}
     displayName="Trí"
     onNavigate={nav}
     onHome={home}
+    onPushSettings={openSettings}
   />);
   expect(await screen.findByText('Chưa có thông báo')).toBeOnTheScreen();
-  expect(screen.queryByRole('button', { name: 'Cài đặt thông báo' })).toBeNull();
-  expect(nav).not.toHaveBeenCalledWith('/push-settings');
+  await user.press(screen.getByRole('button', { name: 'Cài đặt thông báo trên thiết bị' }));
+  expect(openSettings).toHaveBeenCalledTimes(1);
+});
+
+test('notification navigation opens the server-owned invitation without accepting it', async () => {
+  const user = userEvent.setup();
+  const item: InboxItem = {
+    id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+    eventId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+    type: 'room_invite',
+    title: 'Lời mời phòng',
+    body: 'Bạn được mời vào phòng',
+    read: false,
+    metadata: { invitationId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc', roomId: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd' },
+    createdAt: '2026-11-08T00:00:00Z',
+  };
+  const repository = {
+    list: jest.fn().mockResolvedValue({ ok: true, data: { items: [item], fetchedAt: '2026-11-08T00:00:00Z' } }),
+    acceptRoom: jest.fn(),
+  };
+  await render(<LiveInboxScreen
+    repository={repository as any}
+    displayName="Trí"
+    onNavigate={nav}
+    onHome={home}
+    openEventId={item.eventId}
+  />);
+  expect(await screen.findByText('Đã mở lời mời từ máy chủ. Chấp nhận hoặc từ chối bên dưới để xác nhận.')).toBeOnTheScreen();
+  expect(screen.getByText('Thông báo từ máy chủ')).toBeOnTheScreen();
+  expect(screen.queryByText('Kết quả máy chủ')).not.toBeOnTheScreen();
+  expect(screen.getByText('Lời mời phòng')).toBeOnTheScreen();
+  expect(repository.acceptRoom).not.toHaveBeenCalled();
+  await user.press(screen.getByRole('button', { name: 'Chấp nhận' }));
+  expect(screen.getByText('Xác nhận chấp nhận')).toBeOnTheScreen();
+  expect(repository.acceptRoom).not.toHaveBeenCalled();
+});
+
+test('notification retry resolves the same event from authenticated inbox after a network error', async () => {
+  const user = userEvent.setup();
+  const item: InboxItem = {
+    id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+    eventId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+    type: 'room_invite',
+    title: 'Lời mời phòng',
+    body: 'Bạn được mời vào phòng',
+    read: false,
+    metadata: { invitationId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc' },
+    createdAt: '2026-11-08T00:00:00Z',
+  };
+  let online = false;
+  const repository = {
+    list: jest.fn(async () => online
+      ? { ok: true as const, data: { items: [item], fetchedAt: '2026-11-08T00:00:00Z' } }
+      : { ok: false as const, error: { messageKey: 'NETWORK_ERROR' as const } }),
+  };
+
+  await render(<LiveInboxScreen
+    repository={repository as any}
+    displayName="Trí"
+    onNavigate={nav}
+    onHome={home}
+    openEventId={item.eventId}
+    notificationStatus="retry"
+  />);
+  expect(await screen.findByRole('button', { name: 'Thử lại tải thông báo' })).toBeOnTheScreen();
+  expect(screen.getByText('Chưa tải được thông báo từ máy chủ. Hãy thử lại cùng thông báo.')).toBeOnTheScreen();
+
+  online = true;
+  await user.press(screen.getByRole('button', { name: 'Thử lại tải thông báo' }));
+
+  expect(await screen.findByText('Đã mở lời mời từ máy chủ. Chấp nhận hoặc từ chối bên dưới để xác nhận.')).toBeOnTheScreen();
+  expect(screen.getByText('Lời mời phòng')).toBeOnTheScreen();
+  expect(repository.list).toHaveBeenCalledTimes(2);
 });
 
 test('live inbox hides a handled invitation after the server accepts it', async () => {

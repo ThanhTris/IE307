@@ -6,16 +6,26 @@ import { AppButton, CollectionState, SheetDialog, StatusNotice } from '../../../
 import { ApiFeatureFrame } from '../../shared/components/ApiFeatureFrame';
 import { errorMessage } from '../../friends/screens/LiveFriendsScreen';
 import { createDurableRequestId } from '../../rooms/services/roomRepository';
-import type { InboxRepository, ResolvedRoom } from '../services/inboxRepository';
+import type { InboxRepository } from '../services/inboxRepository';
+import { findInboxEventById, roomDestinationPath } from '../services/notificationInboxResolver';
 import CheckIcon from '../../../../assets/brand/icons/notification-check.svg';
 import MinusIcon from '../../../../assets/brand/icons/notification-minus.svg';
 import UnreadIcon from '../../../../assets/brand/icons/notification-unread.svg';
 
-type Props = { repository: InboxRepository; displayName: string; onNavigate: (path: string) => void; onHome: () => void };
+type Props = {
+  repository: InboxRepository;
+  displayName: string;
+  onNavigate: (path: string) => void;
+  onHome: () => void;
+  onPushSettings?: () => void;
+  isSessionCurrent?: () => boolean;
+  openEventId?: string;
+  notificationStatus?: string;
+};
 type PendingAction = { item: InboxItem; kind: 'accept' | 'reject' } | null;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-export function LiveInboxScreen({ repository, displayName, onNavigate, onHome }: Props) {
+export function LiveInboxScreen({ repository, displayName, onNavigate, onHome, onPushSettings, isSessionCurrent, openEventId, notificationStatus }: Props) {
   const { colors } = useShellTheme();
   const { fontScale } = useWindowDimensions();
   const largeText = fontScale >= 1.5;
@@ -28,9 +38,13 @@ export function LiveInboxScreen({ repository, displayName, onNavigate, onHome }:
   const [action, setAction] = useState<PendingAction>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
+  const [notificationRetry, setNotificationRetry] = useState(false);
+  const [notificationLoading, setNotificationLoading] = useState(false);
+  const [notificationRetryRevision, setNotificationRetryRevision] = useState(0);
   const lock = useRef(false);
   const cursorRef = useRef(cursor);
   const itemsRef = useRef(items);
+  const targetedItemRef = useRef<InboxItem | null>(null);
   const loadingMoreRef = useRef(loadingMore);
   const markAllRequestId = useRef<string | null>(null);
   const newItems = items.filter(item => !item.read);
@@ -54,7 +68,13 @@ export function LiveInboxScreen({ repository, displayName, onNavigate, onHome }:
         setFetchedAt('');
         setError(result.error.messageKey);
       } else {
-        setItems(current => more ? [...current, ...result.data.items] : result.data.items);
+        setItems(current => {
+          if (more) return [...current, ...result.data.items];
+          const targeted = targetedItemRef.current;
+          return targeted && targeted.eventId === openEventId
+            ? [targeted, ...result.data.items.filter(item => item.id !== targeted.id)]
+            : result.data.items;
+        });
         setCursor(result.data.nextCursor);
         setFetchedAt(result.data.fetchedAt);
       }
@@ -67,7 +87,7 @@ export function LiveInboxScreen({ repository, displayName, onNavigate, onHome }:
       setLoading(false);
       setLoadingMore(false);
     }
-  }, [repository]);
+  }, [openEventId, repository]);
 
   const markAllRead = async () => {
     if (lock.current || itemsRef.current.length === 0) return;
@@ -98,9 +118,95 @@ export function LiveInboxScreen({ repository, displayName, onNavigate, onHome }:
   };
 
   useEffect(() => {
+    if (openEventId) return;
     const timer = setTimeout(() => { void load(); }, 0);
     return () => clearTimeout(timer);
-  }, [load]);
+  }, [load, openEventId]);
+
+  useEffect(() => {
+    if (!openEventId) return;
+    if (!UUID.test(openEventId)) {
+      const timer = setTimeout(() => {
+        setNotificationRetry(false);
+        setMessage('Liên kết thông báo không hợp lệ. Hãy mở Hộp thư để xem thông báo hiện có.');
+        setLoading(false);
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+    let active = true;
+    const isCurrent = () => active && (!isSessionCurrent || isSessionCurrent());
+    if (targetedItemRef.current?.eventId !== openEventId) targetedItemRef.current = null;
+    const timer = setTimeout(() => {
+      if (!isCurrent()) return;
+      setNotificationLoading(true);
+      setNotificationRetry(false);
+      setMessage('');
+      void (async () => {
+      try {
+        const found = await findInboxEventById(repository, openEventId);
+        if (!isCurrent()) return;
+        if (!found.ok) {
+          const retryable = ['NETWORK_ERROR', 'TIMEOUT', 'RATE_LIMITED', 'NOT_READY'].includes(found.error.messageKey);
+          setNotificationRetry(retryable);
+          setMessage(retryable
+            ? 'Chưa tải được thông báo từ máy chủ. Hãy thử lại cùng thông báo.'
+            : 'Thông báo này đã hết hạn, bị xóa hoặc không còn thuộc tài khoản hiện tại.');
+          return;
+        }
+        setError('');
+        if (!found.data) {
+          setMessage('Thông báo này đã hết hạn, bị xóa hoặc không còn thuộc tài khoản hiện tại.');
+          return;
+        }
+
+        const item = found.data;
+        if (item.type === 'friend_invite' || item.type === 'room_invite') {
+          targetedItemRef.current = item;
+          setItems([item]);
+          setMessage('Đã mở lời mời từ máy chủ. Chấp nhận hoặc từ chối bên dưới để xác nhận.');
+          return;
+        }
+
+        const reference = readRoomResultReference(item);
+        if (!reference) {
+          setMessage('Thông báo này không còn tham chiếu kết quả hợp lệ.');
+          return;
+        }
+        const resolved = await repository.resolveRoomResult(reference.roomId, reference.resultId, reference.contractVersion);
+        if (!isCurrent()) return;
+        if (!resolved.ok) {
+          const retryable = ['NETWORK_ERROR', 'TIMEOUT', 'RATE_LIMITED', 'NOT_READY'].includes(resolved.error.messageKey);
+          setNotificationRetry(retryable);
+          setMessage(retryable
+            ? 'Chưa tải được kết quả từ máy chủ. Hãy thử lại cùng thông báo.'
+            : 'Kết quả đã hết hạn hoặc không còn được phép xem bằng tài khoản hiện tại.');
+          return;
+        }
+        onNavigate(roomDestinationPath(resolved.data));
+      } catch {
+        if (isCurrent()) {
+          setNotificationRetry(true);
+          setMessage('Chưa kết nối được để tải thông báo. Hãy thử lại cùng thông báo.');
+        }
+      } finally {
+        if (active) {
+          setNotificationLoading(false);
+          setLoading(false);
+        }
+      }
+      })();
+    }, 0);
+    return () => { active = false; clearTimeout(timer); };
+  }, [openEventId, repository, isSessionCurrent, onNavigate, notificationRetryRevision]);
+
+  const notificationMessage = notificationStatus === 'unavailable'
+      ? 'Thông báo này đã hết hạn, bị xóa hoặc không còn thuộc tài khoản hiện tại.'
+      : !openEventId && notificationStatus === 'retry'
+        ? 'Chưa tải được thông báo từ máy chủ. Hãy thử tải lại Hộp thư.'
+      : openEventId && !UUID.test(openEventId)
+        ? 'Liên kết thông báo không hợp lệ. Hãy mở Hộp thư để xem thông báo hiện có.'
+        : '';
+  const displayedMessage = notificationMessage || message;
 
   const confirm = async () => {
     if (!action || lock.current) return;
@@ -124,6 +230,8 @@ export function LiveInboxScreen({ repository, displayName, onNavigate, onHome }:
           return;
         }
         repository.markHandled(pending.item.eventId);
+        if (targetedItemRef.current?.eventId === pending.item.eventId) targetedItemRef.current = null;
+        setItems(current => current.filter(item => item.eventId !== pending.item.eventId));
         const room = result.data;
         const resolved = await repository.resolveAcceptedRoom(room.roomId);
         if (!resolved.ok) {
@@ -146,6 +254,8 @@ export function LiveInboxScreen({ repository, displayName, onNavigate, onHome }:
         return;
       }
       repository.markHandled(pending.item.eventId);
+      if (targetedItemRef.current?.eventId === pending.item.eventId) targetedItemRef.current = null;
+      setItems(current => current.filter(item => item.eventId !== pending.item.eventId));
       setMessage(pending.kind === 'accept' ? 'Đã chấp nhận lời mời trên máy chủ.' : 'Đã từ chối lời mời trên máy chủ.');
       await load();
     } catch {
@@ -184,9 +294,10 @@ export function LiveInboxScreen({ repository, displayName, onNavigate, onHome }:
 
   return (
     <ApiFeatureFrame active="inbox" title="Thông báo" onNavigate={onNavigate} onHome={onHome}>
+      {onPushSettings ? <AppButton label="Cài đặt thông báo trên thiết bị" variant="secondary" onPress={onPushSettings} colors={colors} /> : null}
       {loading ? <CollectionState state="loading" title="Đang tải thông báo…" colors={colors} /> : null}
       {!loading && error ? <CollectionState state="error" title="Chưa tải được thông báo" message={errorMessage(error)} actionLabel="Thử lại" onAction={() => { void load(); }} colors={colors} /> : null}
-      {!loading && !error && items.length === 0 ? <View style={styles.emptyWrap}>
+      {!openEventId && !loading && !error && items.length === 0 ? <View style={styles.emptyWrap}>
         <View style={[styles.emptyIcon, { backgroundColor: colors.warm }]}><Image source={require('../../../../assets/brand/icons/bell.png')} accessible={false} resizeMode="contain" style={[styles.emptyGlyph, { tintColor: colors.text }]} /></View>
         <Text accessibilityRole="header" style={[styles.emptyTitle, { color: colors.text }]}>Chưa có thông báo</Text>
       </View> : null}
@@ -204,7 +315,8 @@ export function LiveInboxScreen({ repository, displayName, onNavigate, onHome }:
       </View> : null}
       {fetchedAt && items.length > 0 ? <Text style={[styles.meta, { color: colors.muted }]}>Cập nhật lúc {new Date(fetchedAt).toLocaleString()}</Text> : null}
       {!loading && !error && cursor ? <AppButton label="Tải thông báo cũ hơn" variant="secondary" onPress={() => { void load(true); }} disabled={loadingMore || busy} loading={loadingMore} colors={colors} /> : null}
-      {message ? <StatusNotice title="Kết quả máy chủ" message={message} tone={message.includes('Chưa') || message.includes('thiếu') || message.includes('Không thể') ? 'warning' : 'success'} colors={colors} /> : null}
+      {displayedMessage ? <StatusNotice title="Thông báo từ máy chủ" message={displayedMessage} tone={displayedMessage.includes('Chưa') || displayedMessage.includes('thiếu') || displayedMessage.includes('Không thể') || displayedMessage.includes('hết hạn') || displayedMessage.includes('không hợp lệ') ? 'warning' : 'success'} colors={colors} /> : null}
+      {openEventId && notificationRetry ? <AppButton label="Thử lại tải thông báo" variant="secondary" onPress={() => setNotificationRetryRevision(value => value + 1)} disabled={notificationLoading || busy} loading={notificationLoading} colors={colors} /> : null}
       <SheetDialog visible={action !== null} title={action?.kind === 'accept' ? 'Chấp nhận lời mời?' : 'Từ chối lời mời?'} onClose={() => { if (!busy) setAction(null); }} colors={colors}>
         <Text style={[styles.body, { color: colors.text }]}>{action?.item.type === 'room_invite' ? 'Máy chủ sẽ thêm bạn vào phòng nếu lời mời còn hiệu lực. Việc này không gửi phiếu và không đặt sẵn sàng.' : 'Thao tác sẽ được gửi lên máy chủ cho lời mời này.'}</Text>
         <AppButton label={action?.kind === 'accept' ? 'Xác nhận chấp nhận' : 'Xác nhận từ chối'} variant={action?.kind === 'accept' ? 'primary' : 'danger'} onPress={() => void confirm()} loading={busy} colors={colors} />
@@ -259,16 +371,6 @@ function readRoomResultReference(item: InboxItem): { roomId: string; resultId: s
   // The exact legacy projection intentionally has no version discriminator. The
   // inbox adapter has already rejected extra or unsupported metadata fields.
   return { roomId, resultId, ...(typeof item.metadata?.contractVersion === 'string' ? { contractVersion: item.metadata.contractVersion } : {}) };
-}
-
-function roomDestinationPath(room: ResolvedRoom): string {
-  const roomId = encodeURIComponent(room.roomId);
-  if (room.destination === 'lobby') return `/room/lobby?roomId=${roomId}`;
-  if (room.destination === 'vote') return `/room/vote?roomId=${roomId}`;
-  if (room.destination === 'final-round') return `/room/final-round?roomId=${roomId}`;
-  if (room.resultContract === 'legacy') return `/inbox-result?roomId=${roomId}&resultId=${encodeURIComponent(room.resultId ?? '')}`;
-  if (room.destination === 'no-consensus') return `/room/no-consensus?roomId=${roomId}&resultId=${encodeURIComponent(room.resultId ?? '')}`;
-  return `/room/result?roomId=${roomId}&resultId=${encodeURIComponent(room.resultId ?? '')}`;
 }
 
 function initialFrom(value: string): string {
