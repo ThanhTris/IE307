@@ -11,12 +11,15 @@ Task: GM-29 — Android notification permission and push lifecycle. Owner: Trung
 - `mobile/src/app/inbox.tsx` and `InboxScreen.tsx` — Inbox entry to `/push-settings`; mock mode opens a safe sign-in explanation rather than a missing route.
 - `mobile/src/bootstrap/RoomRepositoryProvider.tsx` — best-effort server unregister before local logout; failed unregister preserves the device handle/token for a later cleanup retry.
 - `mobile/tests/unit/nativePush.test.ts`, `mobile/tests/unit/expoPushDriver.test.ts` — callback/permission and driver regression coverage.
+- `mobile/tests/integration/routes.test.tsx` — Expo Router route check with an active real session; `/push-settings` renders the live settings actions.
 
 ## Configuration and run
 
 Expo baseline: SDK 58 from `origin/main`; dependency `expo-notifications@~58.1.8` is added in this task PR. `expo-application` is not needed by the current implementation. From `mobile/`: `npm ci`, `npm run check:expo`, `npm run typecheck`, `npm run lint`, then the focused push tests.
 
 Route: `/push-settings`, linked from `/inbox` within this PR. In a real session, enabling/disabling uses authenticated register/unregister endpoints. Opt-in and opt-out writes serialize per identity/device; a delayed refresh cannot overwrite a later opt-out, including when unregister fails offline. A notification tap restores/refetches Inbox and routes to `/inbox`; payload fields are ignored.
+
+PR #127 regression follow-up adds a pending opt-out/token-refresh case: stale persisted `enabled` state cannot reactivate registration while SecureStore is writing `disabled`. Focused mobile results on 2026-11-09: `nativePush.test.ts` 16/16, driver/resolver/Inbox tests 42/42, Router route tests 24/24, and TypeScript typecheck passed. See the dated section in `CHECKS.md` for scope and limitations.
 
 ## Limits
 
