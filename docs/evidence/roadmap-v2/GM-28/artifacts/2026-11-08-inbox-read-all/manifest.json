@@ -1,0 +1,95 @@
+{
+  "format": "gm28-inbox-read-all-live-v1",
+  "date": "2026-11-08",
+  "source": {
+    "branch": "codex/gm-28-social-inbox-history",
+    "head": "e5f6e281c7f2b1c5b3e26d4decbde0b80a5be0e6",
+    "mergeTarget": "8b26c3f96d46dff57c1b0857a13e8f1144e0a1cb",
+    "worktreeDirty": true,
+    "mergeCommitCreated": false,
+    "appSourceHashes": {
+      "mobile/src/data/api/contracts/apiClient.ts": "bbedd8bfc805926c4cf9bfc6cca87d171f85ed7d979cbed5f1e315b6ce414c8a",
+      "mobile/src/data/api/contracts/socialAndHistory.ts": "b32b32bc2acc74d58053b57ab43f71590d1aeffc2244909bbc217bffc957c85d",
+      "mobile/src/data/api/client.ts": "35938e84a8ab08af1679d9509e90da8e73c829794f284cfa1f47b35000a70b5d",
+      "mobile/src/data/api/mock.ts": "40d0f08afbbf051193c25d9803fcc4e7e37e5dd593551fd8eb3a92ed52611e60",
+      "mobile/src/features/inbox/screens/LiveInboxScreen.tsx": "80d08a97ccf717fbeb71546ede58d922e325b5a73593cf24ee480e63757f41d3",
+      "mobile/src/features/inbox/services/inboxRepository.ts": "bc36045e7967d70d325fa766c91bf5ddfc82d83c58da388144a202ee6804323a",
+      "mobile/tests/unit/socialInboxHistoryRepositories.test.ts": "9e3884641f686656496747a384248c26f9ce81ee076b22864623ec5d5a7baa85",
+      "mobile/tests/component/socialAndHistoryScreens.test.tsx": "1da9f4bc13919350dcd608aaeb38f3ab0d401e88b29da968d923b17df98e9064"
+    }
+  },
+  "contract": {
+    "consumer": "ui-figma-final/2026-10-25/GM-28.2",
+    "api": "food-v1/roadmap-v2/GM-23.3",
+    "baseApi": "food-v1/roadmap-v2/GM-23.2",
+    "migration": "0041_gm23_inbox_read_all.sql",
+    "schemaVersion": "0.17.0"
+  },
+  "device": {
+    "kind": "Android Studio AVD",
+    "avd": "Medium_Phone_API_37.0",
+    "android": "17 / API 37",
+    "emulator": "emulator-5554",
+    "expoGo": "58.0.5",
+    "pixels": "1080x2400",
+    "densityDpi": 420,
+    "approximateWidthDp": 412,
+    "fontScale": 1,
+    "physicalPhone": false,
+    "nativeDevelopmentBuild": false
+  },
+  "qa": {
+    "runId": "gm23-inbox-read-20261108-2",
+    "project": "gm03qa-gm23-inbox-read-20261108-2",
+    "api": "http://127.0.0.1:55371",
+    "databasePort": 55372,
+    "disposable": true,
+    "applicationDatabaseChanged": false,
+    "cleanup": "Pass; worker, Supabase project and network stopped; exact container/volume/network absent; API reverse removed"
+  },
+  "scenarios": [
+    {
+      "name": "Inbox mark all read via mobile",
+      "expected": "All currently unread and unexpired rows owned by the caller become read; response confirmed; server readback is 0 unread.",
+      "actual": "One unread friend-invitation row was visible. After tapping “Đọc tất cả”, app displayed the successful server acknowledgment; DB readback is 1 read, 0 unread.",
+      "result": "Pass",
+      "evidence": "../inbox-read-all-live.png"
+    },
+    {
+      "name": "History empty state",
+      "expected": "With no saved history, show the empty state without substituting mock history.",
+      "actual": "API-backed empty state displayed “Chưa có dữ liệu đã lưu”.",
+      "result": "Pass",
+      "evidence": "../history-empty-live.png"
+    },
+    {
+      "name": "Personal history consent revoke",
+      "expected": "Server accepts personal-scope revoke and history stays empty.",
+      "actual": "App displayed successful acknowledgment; QA DB showed personal=false and zero personal history rows.",
+      "result": "Pass",
+      "evidence": "../history-consent-revoke-live.png"
+    },
+    {
+      "name": "Populated history detail on this fresh QA identity",
+      "expected": "Open persisted result from history.",
+      "actual": "Not run in this specific QA session; there was no history row for this guest. Earlier same-source AVD evidence is retained in the GM-28 canonical close-out record.",
+      "result": "Not run"
+    }
+  ],
+  "artifacts": {
+    "inbox-read-all-live.png": "b6000ebd64a1410937ebb4d4cf2b2e4d17b351c2e0c9d778a5cfb86e846b8bef",
+    "history-empty-live.png": "fca449b491e11c3e15651a4b36d8af2d50f75eca62cb333391a59f2933390cb2",
+    "history-consent-revoke-live.png": "8d79da19a3529ea44541b992a7396e3e61ee62fbd86130d476cc21998d063943"
+  },
+  "privacy": {
+    "accessTokensOrKeys": false,
+    "identityUUIDs": false,
+    "roomCodes": false,
+    "rawBallots": false
+  },
+  "limitations": [
+    "This is emulator + Expo Go evidence, not physical-device/native-build evidence.",
+    "This interaction proves the mark-all-read consumer path, not overall Figma visual parity.",
+    "Small viewports, 200% font scale, full TalkBack focus/activation and remote push were not re-run in this close-out."
+  ]
+}

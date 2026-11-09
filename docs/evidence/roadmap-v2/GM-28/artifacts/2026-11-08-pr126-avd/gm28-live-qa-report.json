@@ -1,0 +1,33 @@
+{
+  "runId": "gm28-pr126-20261108",
+  "sourceRevision": "e5f6e281c7f2b1c5b3e26d4decbde0b80a5be0e6",
+  "mergeTarget": "8b26c3f96d46dff57c1b0857a13e8f1144e0a1cb",
+  "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+  "schemaVersion": "0.9.2",
+  "apiOrigin": "http://127.0.0.1:55371",
+  "databasePort": 55372,
+  "applicationDatabaseChanged": false,
+  "credentialsOrIdentityIdsLogged": false,
+  "device": {
+    "avd": "Medium_Phone_API_37.0",
+    "adbId": "emulator-5554",
+    "android": "17 / API 37",
+    "expoGo": "58.0.5",
+    "targetViewport": "approximately 412dp at 420 density"
+  },
+  "cases": [
+    { "name": "GoTrue signup, refresh, same guest identity, authenticated REST, missing and forged JWT", "expected": "7 assertions pass", "actual": "7/7 pass", "status": "Pass", "artifact": "gm03-auth-rest-report.json" },
+    { "name": "Identity A invites B; B accepts; accepted pair is listed exactly once", "expected": "HTTP 200 for invite/accept; one friend", "actual": "HTTP 200; count 1", "status": "Pass", "artifact": "social-flow-report.json" },
+    { "name": "A unfriends B; B invites A; A accepts in Expo UI", "expected": "server accepts and A sees the accepted pair", "actual": "HTTP 200; UI success shown; friend count 1", "status": "Pass", "artifact": "social-flow-report.json" },
+    { "name": "C invites A; A rejects in Expo UI", "expected": "HTTP 200; newly handled event is no longer actionable in current identity session", "actual": "HTTP 200; success notice; item filtered after refresh", "status": "Pass", "artifact": "inbox-before-reject-412.png; inbox-after-reject-412.png" },
+    { "name": "Personal history consent revoke and restore", "expected": "server acknowledges both choices; no unauthorized history rows", "actual": "both UI acknowledgements shown; saved history count 0", "status": "Pass", "artifact": "history-consent-result-412.png; history-consent-restored-412.png" },
+    { "name": "Canonical result inbox refetch and history delete/TTL with a saved result", "expected": "result reference resolves through authenticated room snapshot; delete/revoke/TTL obey ACL", "actual": "no canonical terminal result fixture was available; saved-history count 0", "status": "Not run", "artifact": null },
+    { "name": "AVD 360dp, 320dp and 200% font", "expected": "screens render and remain usable", "actual": "Expo Go reload failed with TypeError: Cannot read property 'EventEmitter' of undefined; 320dp error screen captured", "status": "Fail", "artifact": "expo-error-at-320.png" },
+    { "name": "TalkBack focus/order and spoken labels", "expected": "focus, order, labels, activation verified", "actual": "not exercised", "status": "Not run", "artifact": null },
+    { "name": "Figma parity for Friends/Inbox/History", "expected": "frames match approved layout at same viewport", "actual": "functional screen opens, but navigation/header and content layout differ; see FIGMA_PARITY.md", "status": "Fail", "artifact": "friends-412-redacted.png; inbox-after-accept-412.png; history-consent-412.png" }
+  ],
+  "knownLimits": [
+    "Backend inbox events remain until their server TTL and are still returned after a past action; this adapter now suppresses newly handled invitation event IDs only in memory for the current authenticated identity/app process. A durable server read/terminal-state contract is not present in GM-23/22 output.",
+    "Generic GM-V4 HTTP runner stopped before social/history API cases because its migration 0040 function-body hash assertion expects d64e2144169770669b7be794bd849abb1a36f7339cbb958bfe2a68fa386512bc but QA returned 4f960ee26fbe743c15f1216a068acc2ee8c3e9278484e9981b438dc10dad5554. No test was weakened."
+  ]
+}
