@@ -8,6 +8,7 @@ import JoinEntry from '../../src/app/room/join-entry';
 import JoinRoute from '../../src/app/room/join';
 import JoinCodeRoute from '../../src/app/join/[code]';
 import JoinIndexRoute from '../../src/app/join/index';
+import InboxRoute from '../../src/app/inbox';
 import Receipt from '../../src/app/room/preview';
 import { redirectSystemPath } from '../../src/app/+native-intent';
 import { getPreviewClient, rememberPreviewGuest, setPreviewScenario, useRoomPreview } from '../../src/bootstrap/roomPreview';
@@ -317,4 +318,29 @@ test('warm link with userinfo credentials opened while on /room/join shows block
   } finally {
     join.mockRestore();
   }
+});
+
+test('redirectSystemPath preserves Inbox deep links with returnTo query without routing to room join', async () => {
+  const expoInbox = 'exp://127.0.0.1:8081/--/inbox?returnTo=history';
+  const customInbox = 'gi-cung-duoc:///inbox?returnTo=history';
+
+  expect(redirectSystemPath({ path: expoInbox, initial: false })).toBe(expoInbox);
+  expect(redirectSystemPath({ path: customInbox, initial: false })).toBe(customInbox);
+
+  // Render router with inbox path and verify it navigates cleanly to /inbox
+  await renderRouter(
+    {
+      _layout: Layout,
+      inbox: InboxRoute,
+      'room/_layout': RoomLayout,
+      'room/join': JoinRoute,
+    },
+    {
+      initialUrl: '/inbox?returnTo=history',
+    }
+  );
+
+  await waitFor(() => expect(screen).toHavePathname('/inbox'));
+  expect(screen.queryByText('Liên kết bị chặn')).toBeNull();
+  expect(screen.queryByText('Vào kèo ăn')).toBeNull();
 });

@@ -311,16 +311,74 @@ export class NativeQrScannerAdapter implements QrScannerAdapter {
 }
 
 /**
+ * Determines whether a URL or route path targets the room join flow.
+ * Matches:
+ *  - custom scheme: gi-cung-duoc://room/join, gi-cung-duoc:///room/join, gi-cung-duoc://join, gi-cung-duoc://r
+ *  - expo prefix: exp://.../--/room/join, exp://.../--/join, exp://.../--/r
+ *  - web url: https://gicungduoc.vn/join, https://app.gicungduoc.vn/join, https://.../room/join
+ *  - route path: /room/join, room/join, /join, join, /r, r
+ */
+export function isRoomJoinUrlOrPath(raw: string): boolean {
+  if (!raw || typeof raw !== 'string') return false;
+  let target = raw.trim();
+  if (!target) return false;
+
+  if (target.startsWith('gi-cung-duoc://')) {
+    target = target.slice('gi-cung-duoc://'.length);
+  } else if (/^[a-z][a-z0-9+.-]*:\/\//i.test(target)) {
+    try {
+      const parsed = new URL(target);
+      target = parsed.pathname;
+    } catch {
+      const match = target.match(/^[a-z][a-z0-9+.-]*:\/\/[^/?#]+(.*)$/i);
+      target = (match && match[1]) ? match[1] : target;
+    }
+  }
+
+  if (target.includes('/--/')) {
+    target = target.slice(target.indexOf('/--/') + 4);
+  } else if (target.startsWith('--/')) {
+    target = target.slice(3);
+  }
+
+  const q = target.indexOf('?');
+  if (q >= 0) target = target.slice(0, q);
+  const h = target.indexOf('#');
+  if (h >= 0) target = target.slice(0, h);
+
+  const at = target.indexOf('@');
+  if (at >= 0) target = target.slice(at + 1);
+
+  const clean = target.replace(/^\/+/, '').toLowerCase();
+
+  return (
+    clean === 'room/join' ||
+    clean.startsWith('room/join/') ||
+    clean === 'join' ||
+    clean.startsWith('join/') ||
+    clean === 'r' ||
+    clean.startsWith('r/')
+  );
+}
+
+/**
  * Global join link safety interceptor.
  * Inspects raw incoming URLs before Expo Router splits or decodes query parameters,
  * neutralizing any unauthorized credentials (userinfo) or suspicious payloads.
+ *
+ * For non-join routes (e.g. Inbox with returnTo query), the original URL is preserved intact.
  */
 export function guardJoinRoomUrl(rawUrl: string | null | undefined): string | null {
   if (!rawUrl || typeof rawUrl !== 'string') return null;
   const trimmed = rawUrl.trim();
   if (!trimmed) return null;
 
-  // 1. Detect userinfo credentials (@) in custom scheme or path
+  // Only apply room join allowlist and query validation if the URL/path targets the join flow
+  if (!isRoomJoinUrlOrPath(trimmed)) {
+    return trimmed;
+  }
+
+  // 1. Detect userinfo credentials (@) in custom scheme, host, or path for join links
   if (trimmed.includes('@')) {
     return 'gi-cung-duoc://room/join?error=SUSPICIOUS_PAYLOAD';
   }
@@ -339,7 +397,7 @@ export function guardJoinRoomUrl(rawUrl: string | null | undefined): string | nu
     return 'gi-cung-duoc://room/join?error=SUSPICIOUS_PAYLOAD';
   }
 
-  // 3. For any room join URL, check parseJoinRoomUrl
+  // 3. For room join URLs, apply parseJoinRoomUrl query allowlist and structure check
   const parsed = parseJoinRoomUrl(trimmed);
   if (!parsed.ok && parsed.error === 'SUSPICIOUS_PAYLOAD') {
     return 'gi-cung-duoc://room/join?error=SUSPICIOUS_PAYLOAD';

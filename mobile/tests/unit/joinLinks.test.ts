@@ -7,6 +7,7 @@ import {
   createJoinRoomWebLink,
   generateQrMatrix,
   guardJoinRoomUrl,
+  isRoomJoinUrlOrPath,
   isSuspiciousSearchParams,
   isSuspiciousWord,
   NativeQrScannerAdapter,
@@ -617,6 +618,43 @@ describe('GM-30 joinLinks — Native QR, Links, Allowlist & Resolvers', () => {
       expect(redirectSystemPath({ path: 'room/join?code=GCD234', initial: false })).toBe('room/join?code=GCD234');
       expect(redirectSystemPath({ path: 'https://gicungduoc.vn/join/GCD234', initial: false })).toBe('https://gicungduoc.vn/join/GCD234');
     });
+    test('guardJoinRoomUrl and redirectSystemPath preserve Inbox link with returnTo parameter', () => {
+      const expoInbox = 'exp://127.0.0.1:8081/--/inbox?returnTo=history';
+      const customInbox = 'gi-cung-duoc:///inbox?returnTo=history';
+      const relativeInbox = '/inbox?returnTo=history';
+
+      expect(isRoomJoinUrlOrPath(expoInbox)).toBe(false);
+      expect(isRoomJoinUrlOrPath(customInbox)).toBe(false);
+      expect(isRoomJoinUrlOrPath(relativeInbox)).toBe(false);
+
+      expect(guardJoinRoomUrl(expoInbox)).toBe(expoInbox);
+      expect(guardJoinRoomUrl(customInbox)).toBe(customInbox);
+      expect(guardJoinRoomUrl(relativeInbox)).toBe(relativeInbox);
+
+      expect(redirectSystemPath({ path: expoInbox, initial: false })).toBe(expoInbox);
+      expect(redirectSystemPath({ path: customInbox, initial: false })).toBe(customInbox);
+      expect(redirectSystemPath({ path: relativeInbox, initial: false })).toBe(relativeInbox);
+    });
+
+    test('isRoomJoinUrlOrPath identifies room join routes across custom schemes, Expo URLs, and web links', () => {
+      expect(isRoomJoinUrlOrPath('gi-cung-duoc://room/join?code=GCD234')).toBe(true);
+      expect(isRoomJoinUrlOrPath('gi-cung-duoc:///room/join?code=GCD234')).toBe(true);
+      expect(isRoomJoinUrlOrPath('gi-cung-duoc://join/GCD234')).toBe(true);
+      expect(isRoomJoinUrlOrPath('gi-cung-duoc://r/GCD234')).toBe(true);
+      expect(isRoomJoinUrlOrPath('exp://127.0.0.1:8081/--/room/join?code=GCD234')).toBe(true);
+      expect(isRoomJoinUrlOrPath('exp://127.0.0.1:8081/--/join/GCD234')).toBe(true);
+      expect(isRoomJoinUrlOrPath('https://gicungduoc.vn/join/GCD234')).toBe(true);
+      expect(isRoomJoinUrlOrPath('https://app.gicungduoc.vn/join?code=GCD234')).toBe(true);
+      expect(isRoomJoinUrlOrPath('/room/join?code=GCD234')).toBe(true);
+      expect(isRoomJoinUrlOrPath('room/join?code=GCD234')).toBe(true);
+
+      // Non-join routes
+      expect(isRoomJoinUrlOrPath('gi-cung-duoc:///inbox')).toBe(false);
+      expect(isRoomJoinUrlOrPath('gi-cung-duoc:///friends')).toBe(false);
+      expect(isRoomJoinUrlOrPath('gi-cung-duoc:///history')).toBe(false);
+      expect(isRoomJoinUrlOrPath('https://gicungduoc.vn/inbox')).toBe(false);
+    });
+
   });
 
 });
