@@ -4,7 +4,7 @@ import { useMockDemoApi } from '../../shared/components/MockDemo';
 import { createDurableRequestId } from '../services/roomRepository';
 import { errorCopy } from '../services/roomEntry';
 
-export type LobbyRepository = Pick<ApiClient, 'getRoomSnapshot' | 'startRound' | 'updateContext' | 'leaveRoom' | 'cancelRoom' | 'inviteToRoom'> & {
+export type LobbyRepository = Pick<ApiClient, 'getRoomSnapshot' | 'listFriends' | 'startRound' | 'updateContext' | 'leaveRoom' | 'cancelRoom' | 'inviteToRoom'> & {
   previewFoodPool?: ApiClient['previewFoodPool'];
 };
 
@@ -47,6 +47,7 @@ export function useLiveLobby({
     action: string;
     requestId: string;
     version: number;
+    targetId?: string;
     uncertain: boolean;
   } | null>(null);
 
@@ -144,13 +145,13 @@ export function useLiveLobby({
     return () => clearInterval(interval);
   }, [isReal, activeRoomId, api, checkEligibility]);
 
-  const getRequestId = (action: string, version: number) => {
+  const getRequestId = (action: string, version: number, targetId?: string) => {
     const pending = pendingIntentRef.current;
-    if (pending && pending.action === action && pending.version === version && pending.uncertain) {
+    if (pending && pending.action === action && pending.version === version && pending.targetId === targetId && pending.uncertain) {
       return pending.requestId;
     }
     const nextId = createRequestId ? createRequestId(action) : createDurableRequestId(`lobby_${action}`);
-    pendingIntentRef.current = { action, requestId: nextId, version, uncertain: false };
+    pendingIntentRef.current = { action, requestId: nextId, version, targetId, uncertain: false };
     return nextId;
   };
 
@@ -197,13 +198,13 @@ export function useLiveLobby({
     else mockApi.reload();
   };
 
-  const runWrite = async (action: 'start' | 'context' | 'leave' | 'cancel' | 'invite') => {
+  const runWrite = async (action: 'start' | 'context' | 'leave' | 'cancel' | 'invite', partnerId?: string) => {
     if (!snapshot || busyRef.current) return;
     if (isReal && (!currentUserId || !viewer)) return;
     busyRef.current = true;
     setBusy(true);
     setNotice('');
-    const requestId = getRequestId(action, snapshot.version);
+    const requestId = getRequestId(action, snapshot.version, partnerId);
     try {
       let result;
       if (action === 'start') {
@@ -215,7 +216,8 @@ export function useLiveLobby({
       } else if (action === 'cancel') {
         result = await api.cancelRoom({ roomId: snapshot.roomId, expectedVersion: snapshot.version, confirmCancel: true, requestId });
       } else {
-        result = await api.inviteToRoom({ roomId: snapshot.roomId, partnerId: 'usr_tuan_002', expectedVersion: snapshot.version, requestId });
+        if (isReal && !partnerId) return;
+        result = await api.inviteToRoom({ roomId: snapshot.roomId, partnerId: partnerId ?? 'usr_tuan_002', expectedVersion: snapshot.version, requestId });
       }
       if (!result.ok) {
         const failure = result.error.messageKey === 'NOT_ENOUGH_MEMBERS'
@@ -255,6 +257,7 @@ export function useLiveLobby({
         setNotice(isReal ? 'Bạn đã rời phòng.' : 'Bạn đã rời fixture này.');
         if (isReal) onHome();
       } else {
+        if (isReal) await refreshSnapshot(snapshot.roomId);
         setNotice(isReal ? 'Lời mời đã tạo.' : 'Lời mời mock đã tạo; người nhận chưa tham gia phòng.');
       }
     } catch {
