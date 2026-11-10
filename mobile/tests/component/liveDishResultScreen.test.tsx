@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react-native';
 import { LiveDishResultScreen } from '../../src/features/result/screens/LiveDishResultScreen';
-import { DishResultEntry } from '../../src/bootstrap/DishResultEntry';
+import { DishResultEntry } from '../../src/features/result/screens/DishResultEntry';
 import { useRoomRepository } from '../../src/bootstrap/RoomRepositoryProvider';
 import {
   LiveResultRepository,
@@ -538,7 +538,7 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
     fireEvent.press(mapsBtn);
 
     // Displays not yet supported message from useResultAction
-    expect(await screen.findByText(/Đã nhận yêu cầu của bạn|Mô phỏng · Mở bản đồ|Chưa thực hiện được thao tác/)).toBeOnTheScreen();
+    expect(await screen.findByText(/Đã nhận yêu cầu của bạn|Chưa thực hiện được thao tác/)).toBeOnTheScreen();
   });
 
   test('renders result when resultId matches server response (GM-28 navigation)', async () => {

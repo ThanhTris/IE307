@@ -270,7 +270,6 @@ describe('GM-30 Figma Parity & Native Linking Component Tests', () => {
           roomId="room_123"
           repository={mockResultRepo}
           placesRepository={mockPlacesRepo}
-          isReal={false}
           onHome={jest.fn()}
           onNewSession={jest.fn()}
         />
@@ -310,7 +309,6 @@ describe('GM-30 Figma Parity & Native Linking Component Tests', () => {
           roomId="room_123"
           repository={mockResultRepo}
           placesRepository={mockPlacesRepo}
-          isReal={false}
           onHome={jest.fn()}
           onNewSession={jest.fn()}
         />
@@ -344,7 +342,6 @@ describe('GM-30 Figma Parity & Native Linking Component Tests', () => {
           roomId="room_123"
           repository={mockResultRepo}
           placesRepository={mockPlacesRepo}
-          isReal={false}
           onHome={jest.fn()}
           onNewSession={jest.fn()}
         />

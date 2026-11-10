@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { DishResultEntry } from '../../bootstrap/DishResultEntry';
+import { DishResultEntry } from '../../features/result/screens/DishResultEntry';
 
 export default function NoConsensusRoute() {
   const router = useRouter();

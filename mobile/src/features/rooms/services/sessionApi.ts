@@ -1,6 +1,6 @@
 import { mapErrorHelper } from '../../../data/api/client/helpers';
 import type { ApiClient, ReadResult, WriteResult } from '../../../data/api/contracts';
-import type { RoomRepository } from '../../rooms/services/roomRepository';
+import type { RoomRepository } from './roomRepository';
 
 type ApiResult<T> = ReadResult<T> | WriteResult<T>;
 

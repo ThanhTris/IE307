@@ -1,7 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { AppButton, StatusNotice } from '../../../shared/ui';
+import { AppButton, StatusNotice, ApiFeatureFrame } from '../../../shared/ui';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { ApiFeatureFrame } from '../../shared/components/ApiFeatureFrame';
 
 type Props = {
   displayName: string;

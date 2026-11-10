@@ -5,7 +5,7 @@ import type { ErrorCode, Friend, RoomSnapshot } from '../../../data/api';
 import { AppButton, AppHeader, ContextSummary, RoomCode, SheetDialog, StatusNotice } from '../../../shared/ui';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { errorCopy, mealLabels } from '../services/roomEntry';
-import { useLiveLobby, type LobbyRepository } from '../hooks/useLiveLobby';
+import { useLobby, type LobbyRepository } from '../hooks/useLobby';
 import { LobbyMemberList } from '../components/LobbyMemberList';
 import { LobbyActionButtons } from '../components/LobbyActionButtons';
 import { RoomQrModal } from '../components/RoomQrModal';
@@ -18,7 +18,8 @@ export type LiveLobbyScreenProps = {
   currentUserId?: string;
   createRequestId?: (action: string) => string;
   onStartRound?: (snapshot: RoomSnapshot) => void;
-  onEditContext?: (snapshot: RoomSnapshot) => void;
+  onEditSettings?: (snapshot: RoomSnapshot) => void;
+  onEditPreferences?: (snapshot: RoomSnapshot) => void;
 };
 
 
@@ -29,11 +30,12 @@ export function LobbyScreen({
   currentUserId,
   createRequestId,
   onStartRound,
-  onEditContext,
+  onEditSettings,
+  onEditPreferences,
 }: LiveLobbyScreenProps) {
   const { colors } = useShellTheme();
   const [showQrModal, setShowQrModal] = useState(false);
-  const lobby = useLiveLobby({
+  const lobby = useLobby({
     repository,
     roomId,
     currentUserId,
@@ -159,7 +161,8 @@ export function LobbyScreen({
             eligibilityError={eligibilityError}
             onRefresh={() => void refreshSnapshot(snapshot.roomId)}
             onRunWrite={action => void runWrite(action)}
-            onEditContext={onEditContext}
+            onEditSettings={onEditSettings}
+            onEditPreferences={onEditPreferences}
             onConfirm={setConfirm}
             colors={colors}
           />

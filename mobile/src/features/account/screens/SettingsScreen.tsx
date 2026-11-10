@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { AppButton, SheetDialog } from '../../../shared/ui';
+import { AppButton, SheetDialog, ApiFeatureFrame } from '../../../shared/ui';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { ApiFeatureFrame } from '../../shared/components/ApiFeatureFrame';
 
 type Props = {
   onNavigate: (path: string) => void;

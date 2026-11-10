@@ -12,11 +12,10 @@ type Props = {
   onSignUp: () => void;
   disabled?: boolean;
   notice?: ReactNode;
-  isMock?: boolean;
 };
 
 /** Figma 298:2309. System bars belong to Android, not to the screen artwork. */
-export function WelcomeScreen({ onGuest, onSignIn, onSignUp, disabled, notice, isMock }: Props) {
+export function WelcomeScreen({ onGuest, onSignIn, onSignUp, disabled, notice }: Props) {
   const { colors, dark } = useShellTheme();
   const heroColor = dark ? colors.primary : colors.green;
   const { textStyle } = useAppFonts();

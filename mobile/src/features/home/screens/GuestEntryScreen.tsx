@@ -13,13 +13,12 @@ type Props = {
   onContinue: (name: string) => Promise<boolean>;
   onComplete: () => void;
   session?: HomeLiveSession;
-  isMock?: boolean;
   onSignIn?: () => void;
   onSignUp?: () => void;
 };
 
 /** UI-only guest flow. The caller supplies mock entry or the existing GM-25 session seam. */
-export function GuestEntryScreen({ onContinue, onComplete, session, isMock, onSignIn, onSignUp }: Props) {
+export function GuestEntryScreen({ onContinue, onComplete, session, onSignIn, onSignUp }: Props) {
   const { colors, dark } = useShellTheme();
   const { textStyle } = useAppFonts();
   const insets = useSafeAreaInsets();
@@ -100,7 +99,7 @@ export function GuestEntryScreen({ onContinue, onComplete, session, isMock, onSi
   </SheetDialog>;
 
   if (step === 'welcome') return <>
-    <WelcomeScreen onGuest={() => setStep('name')} onSignIn={signIn} onSignUp={signUp} disabled={blocked || disabled} notice={<>{notice}{error ? <StatusNotice title="Chưa thể tiếp tục" message={error} tone="error" colors={colors} /> : null}</>} isMock={isMock} />
+    <WelcomeScreen onGuest={() => setStep('name')} onSignIn={signIn} onSignUp={signUp} disabled={blocked || disabled} notice={<>{notice}{error ? <StatusNotice title="Chưa thể tiếp tục" message={error} tone="error" colors={colors} /> : null}</>} />
     {accountDialog}
   </>;
 

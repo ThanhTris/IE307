@@ -5,7 +5,7 @@ import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppButton, StatusNotice } from '../../../shared/ui';
 import { HomeFlowFrame } from '../components/HomeFlowFrame';
 
-export function GuestSessionExpiredScreen({ onReset, onHome, isMock }: { onReset: () => Promise<boolean>; onHome: () => void; isMock?: boolean }) {
+export function GuestSessionExpiredScreen({ onReset, onHome }: { onReset: () => Promise<boolean>; onHome: () => void }) {
   const { colors } = useShellTheme();
   const { textStyle } = useAppFonts();
   const [busy, setBusy] = useState(false);
@@ -21,7 +21,7 @@ export function GuestSessionExpiredScreen({ onReset, onHome, isMock }: { onReset
     if (!mounted.current) return;
     if (!success) { locked.current = false; setBusy(false); setError(true); }
   };
-  return <HomeFlowFrame title="Phiên khách" onHome={() => { if (!locked.current) onHome(); }} busy={busy} isMock={isMock}>
+  return <HomeFlowFrame title="Phiên khách" onHome={() => { if (!locked.current) onHome(); }} busy={busy}>
     <View style={styles.message}>
       <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={[styles.symbol, { borderColor: colors.line, backgroundColor: colors.warm }]}><Text allowFontScaling={false} style={[styles.exclamation, { color: colors.text }, textStyle(700)]}>!</Text></View>
       <Text accessibilityRole="header" style={[styles.title, { color: colors.text }, textStyle(700)]}>Phiên khách đã hết hạn</Text>

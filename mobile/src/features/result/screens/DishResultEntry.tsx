@@ -1,12 +1,12 @@
-import { useRoomRepository } from './RoomRepositoryProvider';
-import { RequireActiveSession } from '../features/auth/components/RequireActiveSession';
-import { DishResultFrame } from '../features/result/components/DishResultFrame';
-import { StatusNotice } from '../shared/ui';
-import { useShellTheme } from '../shared/lib/useShellTheme';
-import { LiveDishResultScreen } from '../features/result/screens/LiveDishResultScreen';
-import type { ResultRepository } from '../features/result/services/resultRepository';
-import type { PlacesConfig } from '../features/result/services/placesRepository';
-import type { ResultMapRenderer } from '../features/result/services/nearbyPresentation';
+import { useRoomRepository } from '../../../bootstrap/RoomRepositoryProvider';
+import { RequireActiveSession } from '../../auth/components/RequireActiveSession';
+import { DishResultFrame } from '../components/DishResultFrame';
+import { StatusNotice } from '../../../shared/ui';
+import { useShellTheme } from '../../../shared/lib/useShellTheme';
+import { LiveDishResultScreen } from './LiveDishResultScreen';
+import type { ResultRepository } from '../services/resultRepository';
+import type { PlacesConfig } from '../services/placesRepository';
+import type { ResultMapRenderer } from '../services/nearbyPresentation';
 
 export interface DishResultEntryProps {
   roomId?: string;

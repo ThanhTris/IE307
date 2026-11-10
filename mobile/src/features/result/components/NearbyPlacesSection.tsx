@@ -9,8 +9,8 @@ import { nearbyMatches, type NearbyState, type NearbyStatus, type ResultPresenta
 import { ResultMapCard } from './ResultMapCard';
 
 const copy: Record<NearbyStatus, string> = { ready: 'Chưa tìm thấy quán phù hợp', loading: 'Đang tìm quán', empty: 'Chưa tìm thấy quán phù hợp', error: 'Không tải được danh sách quán', permission: 'Bật vị trí để tìm quán', denied: 'Bạn chưa cho phép dùng vị trí', blocked: 'Quyền vị trí đang bị chặn', 'location-off': 'Dịch vụ vị trí đang tắt', offline: 'Bạn đang ngoại tuyến', unsupported: 'Chưa thể hiển thị bản đồ' };
-export function NearbyPlacesSection({ result, state, isMock = false, renderMap, actions }: { result: ScoredResult; state?: NearbyState; isMock?: boolean; renderMap?: ResultMapRenderer; actions: ResultPresentationActions }) {
-  const { colors } = useShellTheme(), { textStyle } = useAppFonts(), action = useResultAction(result.resultId, isMock);
+export function NearbyPlacesSection({ result, state, renderMap, actions }: { result: ScoredResult; state?: NearbyState; renderMap?: ResultMapRenderer; actions: ResultPresentationActions }) {
+  const { colors } = useShellTheme(), { textStyle } = useAppFonts(), action = useResultAction(result.resultId);
   const [selected, setSelected] = useState<string>();
   if (result.status !== 'DECIDED' || !result.winner) return null;
   const matched = !!state && nearbyMatches(state, result), status = matched ? state.status : 'unsupported';
@@ -24,7 +24,7 @@ export function NearbyPlacesSection({ result, state, isMock = false, renderMap, 
     <Text accessibilityLiveRegion="polite" style={[styles.dishName, { color: colors.text }, textStyle(600)]}>Tìm quán cho: {result.winner.name}</Text>
     {place ? <>
       {state?.cached ? <Text style={[styles.caption, { color: colors.muted }, textStyle(400)]}>Dữ liệu lần tải trước · chưa cập nhật thành công</Text> : null}
-      <ResultMapCard place={place} places={places} resultId={result.resultId} winnerDishId={result.winner.dishId} onSelect={setSelected} isMock={isMock} renderMap={renderMap} onMaps={actions.onExternalAction ? () => external('maps', true) : undefined} busy={action.busy} />
+      <ResultMapCard place={place} places={places} resultId={result.resultId} winnerDishId={result.winner.dishId} onSelect={setSelected} renderMap={renderMap} onMaps={actions.onExternalAction ? () => external('maps', true) : undefined} busy={action.busy} />
       {places.length > 1 ? <FlatList horizontal data={places} keyExtractor={item => item.id} contentContainerStyle={styles.list} renderItem={({ item }) => <Pressable accessibilityRole="button" accessibilityLabel={`Chọn quán ${item.name}`} accessibilityState={{ selected: place.id === item.id }} onPress={() => setSelected(item.id)} style={[styles.place, { borderColor: place.id === item.id ? colors.primary : colors.line }]}><Text style={[styles.caption, { color: colors.text }, textStyle(500)]}>{item.name}</Text></Pressable>} /> : null}
       {status !== 'ready' ? <Text style={[styles.caption, { color: colors.muted }, textStyle(400)]}>{copy[status]}</Text> : null}
       {state?.fetchedAt && Number.isFinite(Date.parse(state.fetchedAt)) ? <Text style={[styles.caption, { color: colors.muted }, textStyle(400)]}>{state.cached ? 'Thông tin lần trước' : 'Cập nhật'}: {new Date(state.fetchedAt).toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh', hour12: false })}</Text> : null}

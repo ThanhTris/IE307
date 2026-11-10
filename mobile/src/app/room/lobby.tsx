@@ -18,7 +18,8 @@ export default function LobbyRoute() {
       currentUserId={live.user?.id}
       createRequestId={action => createDurableRequestId(`lobby_${action}`)}
       onStartRound={snapshot => router.replace({ pathname: '/room/vote', params: { roomId: snapshot.roomId } })}
-      onEditContext={snapshot => router.push({ pathname: '/room/context', params: { roomId: snapshot.roomId } })}
+      onEditSettings={snapshot => router.push({ pathname: '/room/setup', params: { roomId: snapshot.roomId, stage: 'setup' } })}
+      onEditPreferences={snapshot => router.push({ pathname: '/room/setup', params: { roomId: snapshot.roomId, stage: 'preferences' } })}
     />
   </RequireActiveSession>;
 }

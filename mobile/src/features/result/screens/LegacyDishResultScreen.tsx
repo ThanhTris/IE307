@@ -5,9 +5,9 @@ import { DishResultFrame } from '../components/DishResultFrame';
 import { ResultDishArtwork } from '../../../shared/ui/result/ResultDishArtwork';
 
 /** A received winner-only result is never upgraded to a fabricated scored podium. */
-export function LegacyDishResultScreen({ name, onHome, onNewSession, isMock, tools }: { name: string; onHome: () => void; onNewSession: () => void; isMock?: boolean; tools?: React.ReactNode }) {
+export function LegacyDishResultScreen({ name, onHome, onNewSession }: { name: string; onHome: () => void; onNewSession: () => void }) {
   const { colors } = useShellTheme(), { textStyle } = useAppFonts();
-  return <DishResultFrame onHome={onHome} onNewSession={onNewSession} isMock={isMock} tools={tools}><View style={styles.body}>
+  return <DishResultFrame onHome={onHome} onNewSession={onNewSession}><View style={styles.body}>
     <ResultDishArtwork label={name} size={160} colors={colors} winner />
     <Text style={[styles.caption, { color: colors.muted }, textStyle(500)]}>Món đã chọn của phiên trước</Text>
     <Text accessibilityRole="header" style={[styles.name, { color: colors.text }, textStyle(700)]}>{name}</Text>

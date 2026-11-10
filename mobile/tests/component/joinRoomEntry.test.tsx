@@ -91,7 +91,7 @@ test.each(['denied', 'unavailable', 'error', 'scanned'] as const)('QR %s always 
 test('a missing live preview port stays unavailable without falling back to mock', async () => {
   const p = props(); p.preview = undefined;
   const join = jest.spyOn(p.repository, 'joinRoom');
-  await render(<JoinRoomScreen {...p} isMock={false} />);
+  await render(<JoinRoomScreen {...p} />);
   expect(screen.getByRole('button', { name: 'Tiếp tục →' })).toBeDisabled();
   expect(screen.queryByText('Mô phỏng · GM-09 · dữ liệu mẫu')).toBeNull(); expect(join).not.toHaveBeenCalled();
 });

@@ -13,7 +13,7 @@ async function openName() { await fireEvent.press(screen.getByRole('button', { n
 
 test('opening welcome and account placeholders never creates a guest; guest entry stays available', async () => {
   const onContinue = jest.fn().mockResolvedValue(true);
-  await render(<GuestEntryScreen onContinue={onContinue} onComplete={jest.fn()} isMock />);
+  await render(<GuestEntryScreen onContinue={onContinue} onComplete={jest.fn()} />);
   expect(screen.queryByText(/Mô phỏng/)).toBeNull();
   await fireEvent.press(screen.getByRole('button', { name: 'Đăng ký' }));
   await fireEvent.press(screen.getByRole('button', { name: 'Tiếp tục với khách' }));

@@ -33,8 +33,9 @@ export function DishResultPreview({ noConsensus = false, onHome, onNewSession, o
     await new Promise(resolve => setTimeout(resolve, 250));
     if (mounted.current && sequence.current === version) { setNearbyStatus('ready'); setBusy(false); }
   };
-  const controls = __DEV__ ? <ResultCasePicker key={noConsensus ? 'no-consensus' : 'result'} noConsensus={noConsensus} showPlaces={showPlaces} locked={busy} onCase={changeCase} onNearby={setNearbyStatus} onOtherScreen={onOtherScreen} onCelebrate={showPlaces ? () => { setIntro(true); setFixture(previous => ({ ...previous, revision: previous.revision + 1 })); } : undefined} onReadReady={state !== 'ready' ? receiveResult : undefined} onActionFailure={() => setActionFails(value => !value)} /> : null;
-  return <DishResultFlow key={`${fixture.id}-${fixture.revision}`} input={input} readState={state} nearby={nearby} artworkSources={artworkSources} isMock celebrate={intro} members={[{ id: 'ui-own', label: 'Bạn' }, { id: 'ui-linh', label: 'Linh' }, { id: 'ui-nam', label: 'Nam' }]} controls={controls}
+  const controls = __DEV__ ? <ResultCasePicker key={`${noConsensus ? 'no-consensus' : 'result'}-${fixture.id}-${fixture.revision}-${state}`} noConsensus={noConsensus} showPlaces={showPlaces} locked={busy} onCase={changeCase} onNearby={setNearbyStatus} onOtherScreen={onOtherScreen} onCelebrate={showPlaces ? () => { setIntro(true); setFixture(previous => ({ ...previous, revision: previous.revision + 1 })); } : undefined} onReadReady={state !== 'ready' ? receiveResult : undefined} onActionFailure={() => setActionFails(value => !value)} /> : null;
+  // Case pickers sit beside the screen: the product result frame has no test-tools slot.
+  return <><DishResultFlow key={`${fixture.id}-${fixture.revision}`} input={input} readState={state} nearby={nearby} artworkSources={artworkSources} celebrate={intro} members={[{ id: 'ui-own', label: 'Bạn' }, { id: 'ui-linh', label: 'Linh' }, { id: 'ui-nam', label: 'Nam' }]}
     onHome={onHome} onNewSession={onNewSession} onRetryResult={receiveResult}
-    onRetryPlaces={loadPlaces} onRequestLocation={loadPlaces} onOpenSettings={loadPlaces} onExternalAction={() => ({ ok: !actionFails })} />;
+    onRetryPlaces={loadPlaces} onRequestLocation={loadPlaces} onOpenSettings={loadPlaces} onExternalAction={() => ({ ok: !actionFails })} />{controls}</>;
 }

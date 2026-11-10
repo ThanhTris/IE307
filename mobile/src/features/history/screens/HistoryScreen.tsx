@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { AppButton, SheetDialog, StatusNotice } from '../../../shared/ui';
-import { ApiFeatureFrame } from '../../shared/components/ApiFeatureFrame';
+import { AppButton, SheetDialog, StatusNotice, ApiFeatureFrame } from '../../../shared/ui';
 import { errorMessage } from '../../friends/screens/FriendsScreen';
 import type { CanonicalHistoryItem, HistoryRow } from '../services/historyTypes';
 import { historyIdOf, historyTitle, type HistoryRepository } from '../services/historyRepository';

@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from 'react';
 import { render, screen } from '@testing-library/react-native';
-import { DishResultEntry } from '../../src/bootstrap/DishResultEntry';
+import { DishResultEntry } from '../../src/features/result/screens/DishResultEntry';
 import { useRoomRepository } from '../../src/bootstrap/RoomRepositoryProvider';
 
 jest.mock('../../src/bootstrap/RoomRepositoryProvider', () => ({ useRoomRepository: jest.fn() }));

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { DishResultEntry } from '../../bootstrap/DishResultEntry';
+import { DishResultEntry } from '../../features/result/screens/DishResultEntry';
 import type { PlacesConfig } from '../../features/result/services/placesRepository';
 
 export default function ResultRoute() {

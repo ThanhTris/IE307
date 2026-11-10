@@ -97,7 +97,7 @@ test('host completion offers cancellation and Home is shown only after confirmed
   expect(screen.queryByRole('button', { name: 'Về trang chủ' })).toBeNull();
   await fireEvent.press(screen.getByRole('button', { name: 'Hủy phòng' }));
   expect(exit).not.toHaveBeenCalled();
-  await fireEvent.press(screen.getByText('Hủy phòng mẫu'));
+  await fireEvent.press(screen.getByText('Xác nhận hủy phòng'));
   await waitFor(() => expect(screen.getByText('Phòng đã bị hủy')).toBeOnTheScreen());
   await fireEvent.press(screen.getByRole('button', { name: 'Về trang chủ' }));
   expect(exit).toHaveBeenCalledTimes(1);

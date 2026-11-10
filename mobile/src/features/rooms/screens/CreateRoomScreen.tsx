@@ -7,8 +7,8 @@ import { HomeFlowFrame } from '../../home/components/HomeFlowFrame';
 
 /** Presentation received from the setup owner; no duplicate settings form here. */
 export type CreateEntrySummary = { meal: string; dishCount: number; time?: string; budget?: string };
-export function CreateRoomScreen({ displayName, summary, onOpenSetup, onBack, isMock = true }: {
-  displayName?: string; summary?: CreateEntrySummary; onOpenSetup?: () => Promise<boolean>; onBack: () => void; isMock?: boolean;
+export function CreateRoomScreen({ displayName, summary, onOpenSetup, onBack }: {
+  displayName?: string; summary?: CreateEntrySummary; onOpenSetup?: () => Promise<boolean>; onBack: () => void;
 }) {
   const { colors } = useShellTheme();
   const { textStyle } = useAppFonts();
@@ -23,7 +23,7 @@ export function CreateRoomScreen({ displayName, summary, onOpenSetup, onBack, is
     lock.current = false;
     if (mounted.current) { setBusy(false); setError(!ready); }
   };
-  return <HomeFlowFrame title="Tạo phòng" centeredTitle compact onHome={() => { if (!lock.current) onBack(); }} busy={busy} isMock={isMock}>
+  return <HomeFlowFrame title="Tạo phòng" centeredTitle compact onHome={() => { if (!lock.current) onBack(); }} busy={busy}>
     <Text accessibilityRole="header" style={[styles.title, { color: colors.text }, textStyle(700)]}>Cùng chọn món cho cả nhóm</Text>
     <Text style={[styles.body, { color: colors.muted }, textStyle(400)]}>Chọn 10–20 món để bắt đầu. Mỗi người tự chọn khẩu vị; không cần chia sẻ vị trí.</Text>
     {displayName ? <Text style={[styles.body, { color: colors.text }, textStyle(500)]}>{`Chủ phòng: ${displayName}`}</Text> : null}

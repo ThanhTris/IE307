@@ -63,9 +63,9 @@ test('existing-room Back never silently exits or cancels; explicit confirmation 
   await render(<DishSetupFlow gateway={gateway} onExit={exit} />);
   await screen.findByText('Buổi ăn');
   await fireEvent.press(screen.getByRole('button', { name: 'Quay lại' }));
-  expect(screen.getByText('Hủy phòng mẫu?')).toBeOnTheScreen();
+  expect(screen.getByText('Hủy phòng?')).toBeOnTheScreen();
   expect(write).not.toHaveBeenCalled(); expect(exit).not.toHaveBeenCalled();
-  await fireEvent.press(screen.getByText('Hủy phòng mẫu'));
+  await fireEvent.press(screen.getByText('Xác nhận hủy phòng'));
   expect(await screen.findByText('Phòng đã bị hủy')).toBeOnTheScreen();
   expect((await gateway.read()).room).toMatchObject({ id: room.id, state: 'CLOSED', version: 2 });
 });

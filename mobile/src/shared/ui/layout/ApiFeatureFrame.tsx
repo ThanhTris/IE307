@@ -1,8 +1,9 @@
 import type { ReactNode } from 'react';
 import { ScrollView, StyleSheet, useWindowDimensions } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { AppBottomNavigation, AppHeader } from '../../../shared/ui';
-import { useShellTheme } from '../../../shared/lib/useShellTheme';
+import { AppBottomNavigation } from './AppBottomNavigation';
+import { AppHeader } from './AppHeader';
+import { useShellTheme } from '../../lib/useShellTheme';
 
 export type ApiFeature = 'friends' | 'inbox' | 'history' | 'profile' | 'settings';
 

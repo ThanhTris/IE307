@@ -94,7 +94,8 @@ export default function JoinRoomRoute() {
       linkError={effectiveError ?? undefined}
       onBack={() => (router.canGoBack() ? router.back() : router.replace('/'))}
       onEntered={room => {
-        router.replace({ pathname: '/room/entered', params: { roomId: room.roomId, code: room.code, role: room.role, version: String(room.version) } });
+        // Members skip room settings and go straight to their own preferences.
+        router.replace({ pathname: '/room/setup', params: { roomId: room.roomId, stage: 'preferences' } });
       }}
     />
   </RequireActiveSession>;

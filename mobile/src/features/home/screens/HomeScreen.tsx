@@ -7,7 +7,6 @@ import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppBottomNavigation, AppButton, AppHeader, AvatarRow, BrandBanner, FormField, SheetDialog, StatusNotice } from '../../../shared/ui';
 import { radii, spacing, typography } from '../../../shared/theme/tokens';
 import { useRead } from '../../rooms/hooks/useRoomEntry';
-import { EntryError, PreviewTools, type PreviewControlsProps } from '../../rooms/components/RoomEntryFrame';
 import { errorCopy, validDisplayName, type RoomEntryReceipt, type RoomEntryRepository } from '../../rooms/services/roomEntry';
 import type { SessionIssue, SessionStatus } from '../../rooms/services/sessionState';
 import { useHomeRoom } from '../hooks/useHomeRoom';
@@ -23,19 +22,14 @@ export type HomeLiveSession = {
   logout: () => Promise<boolean>;
 };
 
-export type HomeScreenProps = PreviewControlsProps & {
+export type HomeScreenProps = {
   repository: RoomEntryRepository;
-  sessionToken?: string;
-  liveSession?: HomeLiveSession;
+  liveSession: HomeLiveSession;
   activeRoom?: RoomEntryReceipt | null;
   roomRevision?: number;
-  isMock?: boolean;
   onCreate: () => void;
   onJoin: () => void;
   onResume: () => void;
-  onOpenFoundation?: () => void;
-  onOpenRoomSetup?: () => void;
-  onOpenDiscoveryContext?: () => void;
   onFriends?: () => void;
   onHistory?: () => void;
   onInbox?: () => void;
@@ -44,7 +38,7 @@ export type HomeScreenProps = PreviewControlsProps & {
 };
 
 
-export function HomeScreen({ repository, sessionToken, liveSession, activeRoom, roomRevision, isMock = !liveSession, onCreate, onJoin, onResume, onOpenFoundation, onOpenRoomSetup, onOpenDiscoveryContext, onFriends, onHistory, onInbox, onProfile, onTutorial, previewControls }: HomeScreenProps) {
+export function HomeScreen({ repository, liveSession, activeRoom, roomRevision, onCreate, onJoin, onResume, onFriends, onHistory, onInbox, onProfile, onTutorial }: HomeScreenProps) {
   const { colors } = useShellTheme();
   const { textStyle } = useAppFonts();
   const insets = useSafeAreaInsets();
@@ -56,11 +50,9 @@ export function HomeScreen({ repository, sessionToken, liveSession, activeRoom, 
   const [guestError, setGuestError] = useState('');
   const [guestBusy, setGuestBusy] = useState(false);
   const guestLock = useRef(false);
-  const loadSession = useCallback(() => repository.restoreSession(sessionToken as string), [repository, sessionToken]);
-  const previewSession = useRead(loadSession, !liveSession);
-  const sessionUser = liveSession ? liveSession.user : previewSession.data;
-  const sessionLoading = liveSession ? liveSession.isInitializing : previewSession.loading;
-  const sessionReady = !!sessionUser && !sessionLoading && (!liveSession || (liveSession.status === 'active' && liveSession.issue === 'none'));
+  const sessionUser = liveSession.user;
+  const sessionLoading = liveSession.isInitializing;
+  const sessionReady = !!sessionUser && !sessionLoading && liveSession.status === 'active' && liveSession.issue === 'none';
   const room = useHomeRoom(repository, activeRoom, sessionUser?.id, sessionReady, roomRevision);
   const loadFriends = useCallback(async () => {
     if (!sessionUser) return { ok: false as const, error: { messageKey: 'AUTH_REQUIRED' as const } };
@@ -79,7 +71,7 @@ export function HomeScreen({ repository, sessionToken, liveSession, activeRoom, 
   };
   const openEntry = (destination: 'create' | 'join') => {
     if (entryDisabled) return;
-    if (!liveSession || sessionReady) {
+    if (sessionReady) {
       (destination === 'create' ? onCreate : onJoin)();
       return;
     }
@@ -89,7 +81,7 @@ export function HomeScreen({ repository, sessionToken, liveSession, activeRoom, 
     }
   };
   const startGuest = async () => {
-    if (!liveSession || guestLock.current) return;
+    if (guestLock.current) return;
     if (!validDisplayName(guestName)) {
       setGuestError('Tên cần từ 1 đến 24 ký tự.');
       return;
@@ -115,7 +107,7 @@ export function HomeScreen({ repository, sessionToken, liveSession, activeRoom, 
       setGuestBusy(false);
     }
   };
-  const sessionNotice = liveSession && !liveSession.isInitializing && !sessionReady
+  const sessionNotice = !liveSession.isInitializing && !sessionReady
     ? liveSession.issue === 'no-session'
       ? <StatusNotice title="Chưa có phiên" message="Chọn Tạo phòng hoặc Tham gia phòng để bắt đầu phiên khách bằng tên của bạn." colors={colors} />
       : liveSession.issue === 'session-recovery-required'
@@ -131,8 +123,7 @@ export function HomeScreen({ repository, sessionToken, liveSession, activeRoom, 
                 : null
     : null;
   const entryDisabled = sessionLoading
-    || (!!liveSession && !sessionReady && liveSession.issue !== 'no-session')
-    || (!liveSession && (!!previewSession.error || previewSession.loading))
+    || (!sessionReady && liveSession.issue !== 'no-session')
     || room.blocksEntry;
   const quickFriends = friends.data ?? [];
   const bottomTabs = [
@@ -142,8 +133,8 @@ export function HomeScreen({ repository, sessionToken, liveSession, activeRoom, 
     { id: 'profile', label: 'Cá nhân', iconSource: require('../../../../assets/brand/icons/profile.png'), onPress: openProfile },
   ];
 
-  if (liveSession?.issue === 'session-revoked' && !liveSession.isInitializing && dismissedExpiry !== liveSession) {
-    return <GuestSessionExpiredScreen onReset={liveSession.logout} onHome={() => setDismissedExpiry(liveSession)} isMock={isMock} />;
+  if (liveSession.issue === 'session-revoked' && !liveSession.isInitializing && dismissedExpiry !== liveSession) {
+    return <GuestSessionExpiredScreen onReset={liveSession.logout} onHome={() => setDismissedExpiry(liveSession)} />;
   }
 
   return <SafeAreaView edges={['top', 'left', 'right']} style={[homeStyles.root, { backgroundColor: colors.background }]}>
@@ -152,7 +143,7 @@ export function HomeScreen({ repository, sessionToken, liveSession, activeRoom, 
       
       {sessionNotice}
       {room.loading ? <StatusNotice title="Đang kiểm tra phòng đã lưu…" colors={colors} /> : null}
-      {room.active && room.data ? <StatusNotice title={`${liveSession ? 'Phòng' : 'Phòng mẫu'} #${room.data.code}`} message="Trạng thái phòng đã được kiểm tra. Bạn có thể tiếp tục phiên hiện tại." actionLabel={liveSession ? 'Tiếp tục phiên' : 'Quay lại phòng mô phỏng'} onAction={onResume} colors={colors} /> : null}
+      {room.active && room.data ? <StatusNotice title={`Phòng #${room.data.code}`} message="Trạng thái phòng đã được kiểm tra. Bạn có thể tiếp tục phiên hiện tại." actionLabel="Tiếp tục phiên" onAction={onResume} colors={colors} /> : null}
       {room.error ? <StatusNotice title={room.unavailable ? 'Không thể tiếp tục phòng đã lưu' : 'Chưa kiểm tra được phòng đã lưu'} message={errorCopy[room.error]} actionLabel={room.unavailable ? undefined : 'Kiểm tra lại phòng'} onAction={room.unavailable ? undefined : room.retry} tone="warning" colors={colors} /> : null}
       {room.data && !room.active ? <StatusNotice title={room.data.state === 'EXPIRED' ? 'Phòng đã hết hạn' : 'Phòng đã kết thúc'} message="Bạn có thể tạo hoặc tham gia một phòng khác." colors={colors} /> : null}
 
@@ -208,27 +199,20 @@ export function HomeScreen({ repository, sessionToken, liveSession, activeRoom, 
         {sessionReady && !friends.loading && !friends.error ? <AvatarRow items={quickFriends.slice(0, 4).map(friend => ({ id: friend.id, label: friend.displayName }))} onAdd={openFriends} labelTextStyle={textStyle(600)} colors={colors} /> : null}
       </View>
 
-      {sessionLoading ? <StatusNotice title={liveSession ? 'Đang khôi phục phiên…' : 'Đang khôi phục phiên mẫu…'} colors={colors} /> : null}
-      {!liveSession && previewSession.error ? <EntryError code={previewSession.error} onRetry={previewSession.retry} /> : null}
-      {__DEV__ && (previewControls || onOpenFoundation || onOpenRoomSetup || onOpenDiscoveryContext) ? <PreviewTools>
-        {previewControls?.(false)}
-        {onOpenFoundation ? <AppButton label="Xem cấu trúc ứng dụng" variant="quiet" onPress={onOpenFoundation} colors={colors} /> : null}
-        {onOpenRoomSetup ? <AppButton label="Chọn điểm ăn và khẩu vị" variant="quiet" onPress={onOpenRoomSetup} colors={colors} /> : null}
-        {onOpenDiscoveryContext ? <AppButton label="Mở vị trí và bối cảnh GM-24" variant="quiet" onPress={onOpenDiscoveryContext} colors={colors} /> : null}
-      </PreviewTools> : null}
+      {sessionLoading ? <StatusNotice title="Đang khôi phục phiên…" colors={colors} /> : null}
     </ScrollView>
     <AppBottomNavigation items={bottomTabs} activeId="home" bottomInset={insets.bottom} allowLabelWrap labelTextStyle={textStyle(500)} colors={colors} />
-    {liveSession ? <SheetDialog visible={!!guestDestination} title={guestDestination === 'join' ? 'Bắt đầu phiên để vào phòng' : 'Bắt đầu phiên khách'} onClose={closeGuestSheet} colors={colors}>
-      <Text style={[homeStyles.dialogBody, { color: colors.text }, textStyle(500)]}>Nhập tên hiển thị. Phiên sẽ được lưu trước khi tải điểm ăn hoặc mở yêu cầu phòng.</Text>
+    <SheetDialog visible={!!guestDestination} title={guestDestination === 'join' ? 'Bắt đầu phiên để vào phòng' : 'Bắt đầu phiên khách'} onClose={closeGuestSheet} colors={colors}>
+      <Text style={[homeStyles.dialogBody, { color: colors.text }, textStyle(500)]}>Nhập tên hiển thị để bắt đầu phiên khách trên thiết bị này.</Text>
       <FormField label="Tên khách" value={guestName} onChangeText={value => { setGuestName(value); setGuestError(''); }} editable={!guestBusy} placeholder="Mọi người gọi bạn là…" helperText="Tên hiển thị · 1–24 ký tự" colors={colors} />
       {guestError ? <Text accessibilityRole="alert" style={[homeStyles.dialogBody, { color: colors.danger }]}>{guestError}</Text> : null}
       <AppButton label={guestDestination === 'join' ? 'Tạo phiên rồi nhập mã' : 'Tạo phiên rồi chọn bối cảnh'} onPress={() => { void startGuest(); }} loading={guestBusy} colors={colors} />
       {(liveSession.issue === 'signup-uncertain' || liveSession.issue === 'storage-unavailable' || liveSession.issue === 'unknown-error' || liveSession.status === 'blocked')
         ? <AppButton label="Xóa phiên cục bộ rồi thử lại" variant="danger" disabled={guestBusy} onPress={() => { void liveSession.logout(); setGuestError(''); }} colors={colors} />
         : null}
-    </SheetDialog> : null}
+    </SheetDialog>
     <SheetDialog visible={!!panel} title={panel ?? 'Thông tin'} onClose={() => setPanel(undefined)} colors={colors}>
-      <Text style={[homeStyles.dialogBody, { color: colors.text }, textStyle(500)]}>Tính năng này đang được hoàn thiện. Bản mô phỏng chưa gửi lời mời, thông báo hoặc thay đổi hồ sơ.</Text>
+      <Text style={[homeStyles.dialogBody, { color: colors.text }, textStyle(500)]}>Tính năng này đang được hoàn thiện.</Text>
       {panel === 'Cá nhân' && onTutorial ? <AppButton label="Xem lại hướng dẫn" onPress={() => { setPanel(undefined); onTutorial(); }} colors={colors} /> : null}
     </SheetDialog>
   </SafeAreaView>;

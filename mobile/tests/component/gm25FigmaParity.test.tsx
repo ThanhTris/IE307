@@ -260,7 +260,6 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
           summary={{ meal: 'Bữa trưa', dishCount: 15 }}
           onOpenSetup={onOpenSetup}
           onBack={onBack}
-          isMock={false}
         />
       );
 
@@ -499,7 +498,6 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
           preview={previewFn}
           initialDisplayName="Tuấn"
           initialCode="GCD999"
-          isMock={false}
           onEntered={onEntered}
           onBack={onBack}
         />
@@ -530,7 +528,6 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
           preview={fullPreview}
           initialDisplayName="Tuấn"
           initialCode="GCD999"
-          isMock={false}
           onEntered={jest.fn()}
           onBack={jest.fn()}
         />

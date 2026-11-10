@@ -20,7 +20,6 @@ export type JoinRoomEntryProps = {
   qrScannerAdapter?: QrScannerAdapter;
   onEntered: (room: RoomEntryReceipt) => void;
   onBack: () => void;
-  isMock?: boolean;
   createRequestId?: RequestIdFactory;
   linkError?: string;
 };
@@ -51,7 +50,6 @@ export function JoinRoomScreen(props: JoinRoomEntryProps) {
       compact
       busy={flow.mutationLocked}
       onHome={flow.back}
-      isMock={props.isMock ?? true}
     >
       {flow.camera ? (
         flow.cameraStatus === 'denied' ? (

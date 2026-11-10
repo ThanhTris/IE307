@@ -9,7 +9,7 @@ export type LobbyRepository = Pick<ApiClient, 'getRoomSnapshot' | 'listFriends' 
 
 export type ConfirmAction = 'leave' | 'cancel' | null;
 
-export interface UseLiveLobbyParams {
+export interface UseLobbyParams {
   repository: LobbyRepository;
   roomId?: string;
   currentUserId?: string;
@@ -18,14 +18,14 @@ export interface UseLiveLobbyParams {
   onHome: () => void;
 }
 
-export function useLiveLobby({
+export function useLobby({
   repository,
   roomId,
   currentUserId,
   createRequestId,
   onStartRound,
   onHome,
-}: UseLiveLobbyParams) {
+}: UseLobbyParams) {
   const [snapshot, setSnapshot] = useState<RoomSnapshot | null>(null);
   const [loadedKey, setLoadedKey] = useState('');
   const [loadError, setLoadError] = useState('');
