@@ -1,8 +1,8 @@
 # GM-32 manifest regression checks
 
-Run on 2026-11-09 against GM-40 candidate `8d91f2ce169f4ff03d6594373d70f3479ee1947d`
-over main `bc5a0629c0d1050ef3256ec9fa73bd669019fb84`. The local GM-32
-working tree adds the runner and opt-in outbox test. Each run used a separate
+Run on 2026-11-10 on the existing PR #163 branch, over main `30aa524` (includes GM-40 PR #164).
+Runtime groups used commit `3c2a59b` and legacy decision parity used
+`5f81cde`. Each exact revision is in the run extract. Each run used a separate
 GM-03 QA project with GoTrue, PostgREST, a Postgres ledger of 28 migrations
 through 0041 and a healthy worker. Runtime was macOS, Docker 29.1.3, Node
 24.15.0 and Python 3.12.14. Ports were loopback-only. The local Docker
@@ -10,14 +10,15 @@ socket adapter scoped loopback publishing to each owned project.
 
 | Run | Evidence | Actual |
 | --- | --- | --- |
-| `gm32-legacy-1109` | GM-18.2 catalogue import/readback and pinned v3 result with the real 39-dish GM-40 bundle | Pass, 100 assertions |
-| `gm32-legacy-1109` | Guest Auth/REST and contract GM-07.B lifecycle, settings, admission, worker and HTTP schema | Pass, 7 Auth/REST and 170 wire assertions |
-| `gm32-legacy-1109` | Legacy v2 eligibility, GM-08 draft rollback probe, member/outsider ACL, two rounds, rollback/retry, last-submit/cancel and start revalidation | Pass, 142 assertions |
-| `gm32-canon-1109` | GM-15 decision vectors evaluated against live GM-20.4 SQL and TypeScript; canonical GM-07.B-supplement writer | Pass, 102 vectors in each implementation and 188 HTTP/SQL assertions |
-| `gm32-boundaries-full-1109` | Exact count 10–20, R2 survivor N=0–20, strict-majority M=2/3/4/5/20, clock boundary, preference ACL and invite/start race | Pass, 279 assertions |
-| `gm32-hist-1109` | Canonical GM-21 consent, history and retention | Pass, 89 assertions |
-| `gm32-notify-1109` | Canonical GM-23 inbox, sender and receipt reconciliation with a local fake push provider | Pass, 151 assertions including reused history cases |
-| `gm32-outbox-final-1109` | GM-31 unit and live canonical ACK/outbox reconciliation | Pass, 18 unit tests and one live test |
+| `gm32-163-base` | GM-18.2 catalogue import/readback and pinned v3 result with the real 39-dish GM-40 bundle | Pass, 100 assertions |
+| `gm32-163-base` | Guest Auth/REST and contract GM-07.B lifecycle, settings, admission, worker and HTTP schema | Pass, 7 Auth/REST and 171 wire assertions |
+| `gm32-163-base` | Legacy v2 eligibility, GM-08 draft rollback probe, member/outsider ACL, two rounds, rollback/retry, last-submit/cancel and start revalidation | Pass, 142 assertions |
+| `gm32-163-legacy-decision` | Legacy v2 evaluator and seeded selector | Pass, 140 vectors in deployed SQL and the TypeScript fixture suites |
+| `gm32-163-canon` | GM-15 decision vectors evaluated against live GM-20.4 SQL and TypeScript; canonical GM-07.B-supplement writer | Pass, 102 vectors in each implementation and 188 HTTP/SQL assertions |
+| `gm32-163-boundaries` | Exact count 10–20, R2 survivor N=0–20, strict-majority M=2/3/4/5/20, clock boundary, preference ACL and invite/start race | Pass, 279 assertions |
+| `gm32-163-history` | Canonical GM-21 consent, history and retention | Pass, 89 assertions |
+| `gm32-163-notify` | Canonical GM-23 inbox, sender and receipt reconciliation with a local fake push provider | Pass, 151 assertions including reused history cases |
+| `gm32-163-outbox` | GM-31 unit and live canonical ACK/outbox reconciliation | Pass, 18 unit tests and one live test |
 
 The [run manifest extract](RUNS.json) records the release identities, seals,
 runner hashes and migration checksums. The baseline producers use
@@ -52,10 +53,9 @@ applied ledger is recorded separately from these producer labels.
 
 Static and offline regression on the same candidate:
 
-- Python unittest discovery passed, 678 collected with 6 skipped.
-- The original mobile Jest run passed 80 suites and 1,510 tests. Three
-  focused G01–G03 tests passed after the acceptance audit. The live-only test
-  is opt-in. Mobile typecheck, lint and architecture check passed.
+- Python unittest discovery passed, 679 collected with 6 skipped.
+- Mobile Jest passed, 81 suites and 1,513 tests. The live-only test is opt-in
+  and ran separately. Mobile typecheck, lint and architecture check passed.
 - Root backend-runner and backend-QA Node tests passed, 19 tests.
 - The first live outbox harness attempts failed in the test setup. The final
   run uses Node HTTP and initializes the SQLite schema via GM-31 startup
@@ -69,7 +69,7 @@ Static and offline regression on the same candidate:
 | Scope | Evidence and limit |
 | --- | --- |
 | Server and dataset | Legacy v2 HTTP lifecycle plus 60 SQL/domain eligibility vectors, pinned v3 room/result continuity, distinct B and B-supplement runs, separate GM-08 draft and synthetic data. Scope is regression against deployed QA definitions. |
-| Decision and clock | All required counts and thresholds above, 102 independent decision vectors, persisted scores, consent/history, event and ACL. For 59/60/61 the test ages the individual session fixture and executes the deployed tick within a rollback transaction, while Auth/REST creates and reads the fixture. The separate canonical producer tests a real worker/host/submit race. |
+| Decision and clock | All required counts and thresholds above, 140 legacy and 102 canonical decision vectors, persisted scores, consent/history, event and ACL. For 59/60/61 the test ages the individual session fixture and executes the deployed tick within a rollback transaction, while Auth/REST creates and reads the fixture. The separate canonical producer tests a real worker/host/submit race. |
 | Price | Received GM-18.2 projection unit suite checks invalid observations, newest null, timestamp tie, nullable metadata and unit retention. GM-40 runtime round-trips the real projected cards and hash. |
 | G01–G03 | Received friends/inbox/history suites cover empty/error, unavailable references, scoped cache, expiry and invalidation. Three new GM-32 component cases distinguish errors from empty data and no search match, and check retry recovery on friends, inbox and no-cache history. Component assertions use injected typed responses. Authenticated history/inbox HTTP suites are recorded separately. |
 | G04/G05 | **Not run.** The live profile mutation and change-password screen are GM-35/P1 consumer scope. Current profile/settings routes render guest screens. Once received, verify G04 input retention and G05 field clearing on network/server failure. Record reviewer disposition for any acceptance criterion requiring those cases. |
@@ -77,9 +77,9 @@ Static and offline regression on the same candidate:
 
 ## Integration gate
 
-PR #164 was still open at verification. The stacked branch fails output
-ownership verification against main. After GM-40 lands, replay only the
-GM-32 commit(s), preserve PR #163's settings tests, rerun QA on the combined
-revision and verify the merge gate again. No Project status was changed.
+PR #164 landed at main `30aa524`. The original PR #163 GM-19 settings tests
+were retained and the candidate passed the live Project merge-readiness
+check against that target. Runtime and UI evidence have the boundaries
+listed above. No Project status was changed.
 
 See [plan](PLAN.md) and [handoff](../HANDOFF.md).

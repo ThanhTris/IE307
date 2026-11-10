@@ -1,5 +1,4 @@
 {
-  "sourceRevision": "8d91f2ce169f4ff03d6594373d70f3479ee1947d",
   "migrations": [
     {
       "file": "0001_core_schema.sql",
@@ -180,13 +179,16 @@
     }
   },
   "credentialsInEvidence": false,
+  "baseRevision": "30aa524258fec54c351e26d23741abba340db896",
   "outboxTestSha256": "57ecd0ad462b625e9d6626a123bbc34619eefcd696b83174b9ab6c6c68e96520",
+  "clientStatesTestSha256": "e44fa5d95f4cb3f71237efc2180f7ce59761b352cd9e621562b2a5e4185525ff",
   "runs": [
     {
-      "runId": "gm32-legacy-1109",
+      "runId": "gm32-163-base",
       "group": "baseline",
       "result": "Pass",
-      "manifestSealSha256": "9bcde9a00ddec9df0e9c9debc78f1f77d4d8d2245c077c4c7de86c18ed7ac7ea",
+      "sourceRevision": "3c2a59bbdfe8cd57935d35191d951fa318505b3f",
+      "manifestSealSha256": "058f8fab75aa1995e46ce53fbd3b0a7089883f4d8fafb2ff10bf89b036d04eb2",
       "runnerSha256": "e88610d87ce7ca777b19257a74655d7ee18c244c9ed3bcd3addee7bd6e4ea6db",
       "functionInventorySha256": "b9496db2671484c02e7d81dbfab910f32c93e017225e487cef44db01ec7e9550",
       "stages": [
@@ -195,7 +197,7 @@
           "owner": "GM-40",
           "result": "Pass",
           "assertionCount": 100,
-          "producerReportSha256": "5c1261ff4ecb314d7f2e62e98d0e9844ec5aae657bd003919b39867395d7749a"
+          "producerReportSha256": "1d0141181df685c0a5f7ad663cf9ffb2bced497ed53d63a6a73aa5c46f58d6b9"
         },
         {
           "stage": "GoTrue and baseline B wire/settings/admission",
@@ -203,11 +205,11 @@
           "result": "Pass",
           "auth": {
             "assertionCount": 7,
-            "producerReportSha256": "bd38e264478a326c4c233e193856cdb0a79ff135f71a1f6188bc462747c79a68"
+            "producerReportSha256": "6ea5d288ed724c7f0b3bd07ddfb5f4e2d0ca77ca0dcc91b42032f6b09ac1a1ef"
           },
           "wireB": {
-            "assertionCount": 170,
-            "producerReportSha256": "f3c514e113eee64fddcbfd22a5dec2385f02e8eddf9064e785a2a3130f2f9640"
+            "assertionCount": 171,
+            "producerReportSha256": "925998c3c460e4c3889b927958332c2d169616727a6f5a788287f621afed6518"
           }
         },
         {
@@ -231,11 +233,40 @@
       ]
     },
     {
-      "runId": "gm32-canon-1109",
+      "runId": "gm32-163-legacy-decision",
+      "group": "legacy-decision",
+      "result": "Pass",
+      "sourceRevision": "5f81cde7b322c42963f3dadac47bc2e5a4d5779d",
+      "manifestSealSha256": "5d500ed39734b79ff6be81ecb0a0688e099a92eb7a9721f7ab2e82590d6457a6",
+      "runnerSha256": "77f98eea0369a55d957241cda89ffd9447f1362ab07fa32b2b8f7f15e7cac697",
+      "functionInventorySha256": "b9496db2671484c02e7d81dbfab910f32c93e017225e487cef44db01ec7e9550",
+      "stages": [
+        {
+          "stage": "legacy evaluator and seeded selector vectors",
+          "owner": "GM-15/GM-20",
+          "result": "Pass",
+          "assertionCount": 140,
+          "fixtureSha256": {
+            "cases": "6d2fa8cc89d18c32ccda5bb6c6a5805bd6d89d303d224d1a89019f8208b3dd30",
+            "roster-cases": "431e103588074d9033322c6056ea726615ab59fdc08883904fa0b33b417412f5",
+            "seeded-cases": "e964aea7b4ce0b1fcf3773ab9e0e48f6ba685422eb83c1df5aaa0e4cd5c47caa"
+          },
+          "typescriptVectorSuite": "Pass"
+        }
+      ],
+      "cleaned": [
+        "worker",
+        "supabase",
+        "network"
+      ]
+    },
+    {
+      "runId": "gm32-163-canon",
       "group": "canonical",
       "result": "Pass",
-      "manifestSealSha256": "db7b21641e63dcba5afa337f49d335b1462619ac16c89898491acd3abdc0efdf",
-      "runnerSha256": "0ee70a9b6d0cf709aae757c12b0979fd8add84d9f3fea628c21f01890f11f124",
+      "sourceRevision": "3c2a59bbdfe8cd57935d35191d951fa318505b3f",
+      "manifestSealSha256": "40e11a0a67a1a8e873334ac3fb686a13af7b8ac1222789c87d3f08ff6cb0bcf0",
+      "runnerSha256": "e88610d87ce7ca777b19257a74655d7ee18c244c9ed3bcd3addee7bd6e4ea6db",
       "functionInventorySha256": "b9496db2671484c02e7d81dbfab910f32c93e017225e487cef44db01ec7e9550",
       "stages": [
         {
@@ -251,7 +282,7 @@
           "owner": "GM-20",
           "result": "Pass",
           "assertionCount": 188,
-          "producerReportSha256": "f308b20f24af33a848953a623b87a626041abb11717ed9efa51551a9337ecaa8",
+          "producerReportSha256": "9ade7b92bba52b58ec527a99f5135b30482198d58e668e3a255984ca1fef0b27",
           "sourceSha256": "ebdb52507f84e6a711767d4d0ae2d81d20d4f9b694c57f30b8922bcf11438668"
         }
       ],
@@ -262,10 +293,11 @@
       ]
     },
     {
-      "runId": "gm32-boundaries-full-1109",
+      "runId": "gm32-163-boundaries",
       "group": "boundaries",
       "result": "Pass",
-      "manifestSealSha256": "18bc8da33bfedeed5b454ff202b58e0c56a961ee8c6755337d0dd64c57574310",
+      "sourceRevision": "3c2a59bbdfe8cd57935d35191d951fa318505b3f",
+      "manifestSealSha256": "3165e32a2f4c0ccab868300ec88197e43f7cbcdfb8ed58b74ea78b795d8d2353",
       "runnerSha256": "e88610d87ce7ca777b19257a74655d7ee18c244c9ed3bcd3addee7bd6e4ea6db",
       "functionInventorySha256": "b9496db2671484c02e7d81dbfab910f32c93e017225e487cef44db01ec7e9550",
       "stages": [
@@ -284,11 +316,12 @@
       ]
     },
     {
-      "runId": "gm32-hist-1109",
+      "runId": "gm32-163-history",
       "group": "history",
       "result": "Pass",
-      "manifestSealSha256": "8cdf934640d763e932b11fe531daf9ceb7f5f4fbede026d26ad50f5b92b8b8da",
-      "runnerSha256": "b59dfe377b3185726a82b41f750eb674171b369e84fbc14d0a18d699476fead4",
+      "sourceRevision": "3c2a59bbdfe8cd57935d35191d951fa318505b3f",
+      "manifestSealSha256": "ba68bf8336aebd698c27e4176a3b624c7559967b53f45425f358f9366ae8138c",
+      "runnerSha256": "e88610d87ce7ca777b19257a74655d7ee18c244c9ed3bcd3addee7bd6e4ea6db",
       "functionInventorySha256": "b9496db2671484c02e7d81dbfab910f32c93e017225e487cef44db01ec7e9550",
       "stages": [
         {
@@ -296,7 +329,7 @@
           "owner": "GM-21",
           "result": "Pass",
           "assertionCount": 89,
-          "producerReportSha256": "f0c66bdb0add3d6789dda75d904662722ec212fcb714a89d444eab5ade489c56",
+          "producerReportSha256": "0ba89056fbb3ddb55316f153e7392c393e02eac4b4a5d3310f03b65fc088b00a",
           "sourceSha256": "3f81cc36ed60be9f88834e8040851317d4e45915cd267a58140502838895618e"
         }
       ],
@@ -307,11 +340,12 @@
       ]
     },
     {
-      "runId": "gm32-notify-1109",
+      "runId": "gm32-163-notify",
       "group": "notifications",
       "result": "Pass",
-      "manifestSealSha256": "7814e18cb845fa2a720fdaba5bcc27bd38aae7dbb7f4f6a4c03f927479a05ab3",
-      "runnerSha256": "b59dfe377b3185726a82b41f750eb674171b369e84fbc14d0a18d699476fead4",
+      "sourceRevision": "3c2a59bbdfe8cd57935d35191d951fa318505b3f",
+      "manifestSealSha256": "233d85d49af4f83ae2f6d7fc4f1712d16ede6322c4be685d745cc464a146c7af",
+      "runnerSha256": "e88610d87ce7ca777b19257a74655d7ee18c244c9ed3bcd3addee7bd6e4ea6db",
       "functionInventorySha256": "b9496db2671484c02e7d81dbfab910f32c93e017225e487cef44db01ec7e9550",
       "stages": [
         {
@@ -319,7 +353,7 @@
           "owner": "GM-23",
           "result": "Pass",
           "assertionCount": 151,
-          "producerReportSha256": "705fc80a1d8df6e43cdbbc8abdc8c182833b8ed9cf8b046d3841edc392fb6f51",
+          "producerReportSha256": "7dfe209cefbf1e93e43948120967849e0a50af3c7b6e4e72da3e0a87826f205b",
           "sourceSha256": "e558d260dc0807a0c48baa04e27a7dcd50f1bcb134705dd1b9b45fd422fe0302"
         }
       ],
@@ -330,11 +364,12 @@
       ]
     },
     {
-      "runId": "gm32-outbox-final-1109",
+      "runId": "gm32-163-outbox",
       "group": "outbox",
       "result": "Pass",
-      "manifestSealSha256": "a530222322ec964bd89906163ee85cf484be948ce066568958c3a1a97ad8ccda",
-      "runnerSha256": "ca3173f4efbbeb562b66eb1311cb965710faa84bcb0de8b689ce113566c9f6f8",
+      "sourceRevision": "3c2a59bbdfe8cd57935d35191d951fa318505b3f",
+      "manifestSealSha256": "f4946860276d2d06893cf1edf05f48d9bd31a3f950d7286d56447ce00144705c",
+      "runnerSha256": "e88610d87ce7ca777b19257a74655d7ee18c244c9ed3bcd3addee7bd6e4ea6db",
       "functionInventorySha256": "b9496db2671484c02e7d81dbfab910f32c93e017225e487cef44db01ec7e9550",
       "stages": [
         {
