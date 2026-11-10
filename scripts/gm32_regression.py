@@ -163,6 +163,33 @@ def decision_parity(db, node):
             'typescriptVectorSuite': 'Pass'}
 
 
+def legacy_decision_parity(db, node):
+    directory = ROOT / 'tests/fixtures/decision-v2'
+    vectors = []
+    fixture_hashes = {}
+    for name in ('cases', 'roster-cases', 'seeded-cases'):
+        path = directory / (name + '.json')
+        fixture_hashes[name] = sha256(path)
+        for case in read_json(path)['cases']:
+            seed_selection = name == 'seeded-cases'
+            value = case['input']
+            if seed_selection and isinstance(value, dict) and 'seed' in case:
+                value = value | {'seed': case['seed']}
+            vectors.append({'id': name + '/' + case['id'], 'input': value,
+                            'expected': case['expected'], 'seeded': seed_selection})
+    query = f"""
+        select jsonb_agg(case when (v->>'seeded')::boolean
+            then gm20_private.decide(v->'input') else gm20_private.evaluate(v->'input') end
+            order by ord) from jsonb_array_elements({jsonb(vectors)}) with ordinality t(v, ord);
+    """
+    rows, check = check_rows()
+    for vector, actual in zip(vectors, json.loads(db.psql(query)), strict=True):
+        check(vector['id'], actual == vector['expected'])
+    run_process([node, '--test', 'mobile/tests/decision.test.mjs', 'mobile/tests/decisionSeeded.test.mjs'])
+    return {'assertionCount': len(rows), 'cases': rows, 'fixtureSha256': fixture_hashes,
+            'typescriptVectorSuite': 'Pass'}
+
+
 def producer_env(manifest_path, manifest, output):
     excluded = ('GM03_QA_', 'GM_V4_', 'GM20_', 'GM21_', 'GM23_', 'GM_CANONICAL_')
     return {key: value for key, value in os.environ.items() if not key.startswith(excluded)} | {
@@ -228,6 +255,9 @@ def run_group(group, manifest_path):
         if group == 'outbox':
             stage(report, 'GM-31 replay and live canonical ACK reconciliation', 'GM-31', run_outbox)
             verify_manifest(manifest_path, manifest)
+        elif group == 'legacy-decision':
+            stage(report, 'legacy evaluator and seeded selector vectors', 'GM-15/GM-20',
+                  lambda: legacy_decision_parity(db, node))
         elif group == 'boundaries':
             from gm32_decision_boundaries import run as run_boundaries
 
@@ -270,7 +300,7 @@ def script_path(name):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('group', choices=('baseline', *PRODUCER_SUITES, 'boundaries', 'outbox'))
+    parser.add_argument('group', choices=('baseline', 'legacy-decision', *PRODUCER_SUITES, 'boundaries', 'outbox'))
     parser.add_argument('--qa-manifest', required=True, type=Path)
     args = parser.parse_args()
     run_group(args.group, args.qa_manifest)
