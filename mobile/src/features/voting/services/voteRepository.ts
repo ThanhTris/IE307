@@ -26,7 +26,7 @@ import {
   WAITING_DEADLINE_SECONDS,
   getRoundTwoEliminationCap,
   isHostEarlyFinishAllowed,
-} from '../fixtures';
+} from './votingRules';
 
 export const CANONICAL_VOTE_CONTRACT_VERSION = 'dish-session-v4/roadmap-v2/GM-07.B-supplement';
 export const BASELINE_VOTE_CONTRACT_VERSION = 'dish-session-v4/roadmap-v2/GM-07.B';

@@ -186,7 +186,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     await user.press(screen.getByRole('button', { name: 'Tạo phòng' }));
     expect(fixture.auth.createGuest).not.toHaveBeenCalled();
     await user.type(screen.getByLabelText('Tên khách'), 'Trang');
-    await user.press(screen.getByRole('button', { name: 'Tạo phiên rồi chọn bối cảnh' }));
+    await user.press(screen.getByRole('button', { name: 'Tạo phiên rồi tạo phòng' }));
 
     expect(await screen.findByRole('button', { name: 'Tiếp tục thiết lập' })).toBeOnTheScreen();
     expect(screen.getByText('Chủ phòng: Trang')).toBeOnTheScreen();
@@ -244,7 +244,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
 
     await user.press(screen.getByRole('button', { name: 'Tạo phòng' }));
     await user.type(screen.getByLabelText('Tên khách'), 'Trang');
-    await user.press(screen.getByRole('button', { name: 'Tạo phiên rồi chọn bối cảnh' }));
+    await user.press(screen.getByRole('button', { name: 'Tạo phiên rồi tạo phòng' }));
 
     expect(await screen.findByText('Chưa xác định được kết quả tạo phiên')).toBeOnTheScreen();
     expect(fixture.auth.createGuest).toHaveBeenCalledTimes(1);
@@ -253,7 +253,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
 
     await user.press(screen.getByRole('button', { name: 'Xóa phiên cục bộ rồi thử lại' }));
     await waitFor(() => expect(repository.getSessionSnapshot()).toMatchObject({ status: 'empty', issue: 'no-session' }));
-    await user.press(screen.getByRole('button', { name: 'Tạo phiên rồi chọn bối cảnh' }));
+    await user.press(screen.getByRole('button', { name: 'Tạo phiên rồi tạo phòng' }));
     expect(await screen.findByRole('button', { name: 'Tiếp tục thiết lập' })).toBeOnTheScreen();
     expect(fixture.auth.createGuest).toHaveBeenCalledTimes(2);
   });

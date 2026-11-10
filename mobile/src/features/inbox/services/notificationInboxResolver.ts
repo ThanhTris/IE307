@@ -29,6 +29,12 @@ export async function findInboxEventById(
 }
 
 /** Maps only a session-authorized server resolution to its existing screen. */
+/** After accepting a room invite, a member still in the lobby picks preferences first (same as joining by code). */
+export function acceptedRoomPath(room: ResolvedRoom): string {
+  if (room.destination === 'lobby') return `/room/setup?roomId=${encodeURIComponent(room.roomId)}&stage=preferences`;
+  return roomDestinationPath(room);
+}
+
 export function roomDestinationPath(room: ResolvedRoom): string {
   const roomId = encodeURIComponent(room.roomId);
   if (room.destination === 'lobby') return `/room/lobby?roomId=${roomId}`;

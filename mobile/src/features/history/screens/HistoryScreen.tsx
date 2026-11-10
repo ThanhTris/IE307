@@ -137,7 +137,7 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
         </View>
 
         {selectedHistory ? <SavedHistoryDetail item={selectedHistory} largeText={largeText} colors={colors}
-          onBack={() => setSelectedHistoryId(null)} onCreateNew={() => onNavigate('/room/create-entry')}
+          onBack={() => setSelectedHistoryId(null)} onCreateNew={() => onNavigate('/room/create')}
           onDelete={() => setAction({ kind: 'delete', item: selectedHistory })} busy={busy} /> : null}
 
         {!selectedHistory ? <View accessibilityRole="tablist" style={[styles.filters, largeText && styles.filtersLarge, { backgroundColor: colors.warm }]}>

@@ -1,4 +1,5 @@
 import type { ErrorCode, ReadResult, UpdateHistoryConsentRequest, WriteResult } from '../../../data/api/contracts';
+import { settleWithin } from '../../../data/local/bestEffort';
 import type { RoomRepository } from '../../rooms/services/roomRepository';
 import { createDurableRequestId } from '../../rooms/services/roomRepository';
 import { callSessionApi } from '../../rooms/services/sessionApi';
@@ -74,14 +75,7 @@ const noDurableHistoryStore: DurableHistoryStore = {
   async clearSnapshotCache() {},
 };
 
-const DURABLE_CACHE_TIMEOUT_MS = 3_000;
 
-function withinDurableTimeout<T>(task: Promise<T>, fallback: T): Promise<T> {
-  return new Promise(resolve => {
-    const timer = setTimeout(() => resolve(fallback), DURABLE_CACHE_TIMEOUT_MS);
-    task.then(value => { clearTimeout(timer); resolve(value); }, () => { clearTimeout(timer); resolve(fallback); });
-  });
-}
 
 /**
  * The device cache is best effort. If local storage stalls, history must still finish loading from the
@@ -90,13 +84,13 @@ function withinDurableTimeout<T>(task: Promise<T>, fallback: T): Promise<T> {
 function withDurableTimeouts(store: DurableHistoryStore): DurableHistoryStore {
   return {
     cacheSnapshot<T>(snapshot: { identityId: string; roomId: string; contractVersion: string; value: T }) {
-      return withinDurableTimeout(store.cacheSnapshot<T>(snapshot), undefined);
+      return settleWithin(store.cacheSnapshot<T>(snapshot), undefined);
     },
     readSnapshotCache<T>(identityId: string, roomId: string, contractVersion: string) {
-      return withinDurableTimeout<{ value: T } | undefined>(store.readSnapshotCache<T>(identityId, roomId, contractVersion), undefined);
+      return settleWithin<{ value: T } | undefined>(store.readSnapshotCache<T>(identityId, roomId, contractVersion), undefined);
     },
     clearSnapshotCache(identityId: string, roomId: string, contractVersion: string) {
-      return withinDurableTimeout(store.clearSnapshotCache(identityId, roomId, contractVersion), undefined);
+      return settleWithin(store.clearSnapshotCache(identityId, roomId, contractVersion), undefined);
     },
   };
 }

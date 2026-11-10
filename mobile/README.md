@@ -1,51 +1,49 @@
-# Mobile — Expo shell, components và adapters
+# Mobile — app Gì Cũng Được (Expo)
 
-> **Chuẩn bị UI Figma — 28/10:** nền Inter/SDK58 và một phần Home/token đã có; các route/screens legacy bên dưới chưa đồng bộ đầy đủ thiết kế mới. Dùng [task map](../docs/design/UI_FIGMA_TASK_MAP.json) và [bảng source → task thay thế](../docs/project/audits/MAIN_FIGMA_READINESS_2026-10-28.md). Không lấy nút ready, anchor/coverage setup hoặc offering fixture trong code cũ làm yêu cầu cho UI mới. Chủ task thay route/import/test và dọn phần UI cũ trong cùng PR sau kiểm màn thay thế; giữ regression/API phiên cũ. QA harness chỉ development.
+Expo SDK 58 + Expo Router + TypeScript strict, chạy trên Android qua Expo Go. App chỉ dùng backend thật (Supabase); không có chế độ mock hay màn preview trong app. Mock client, fixture và màn preview cho test nằm trong `tests/`.
 
+Cấu trúc thư mục, route và quy ước đặt tên: [src/README.md](src/README.md). Cấu trúc toàn repo: [REPOSITORY_STRUCTURE](../docs/project/REPOSITORY_STRUCTURE.md).
 
-Expo SDK 58 + Expo Router + TypeScript strict. Có Home `/`, tab `/friends`, `/history`, `/inbox`, luồng phòng `/room/*` (create, join, preview, context, preferences, lobby, status, vote, final-round, result, no-consensus) và `+not-found`; công cụ dev/QA tách riêng dưới `/dev/*` (shell, foundation, components, features, discovery-context, auth-sandbox, room-flow-sandbox). Preview component GM-05, client/mock GM-07, auth/session GM-16 và domain GM-15/18. Harness `/dev/auth-sandbox` chỉ development và cần cấu hình theo [auth README](src/data/auth/README.md); không là màn sản phẩm. Màn tạo/join/context/vote và tích hợp Android còn theo GM-09..14/24..31; camera/push/SQLite chưa được coi hoàn thành.
+## Luồng chính
 
-GM-02 bundles Inter 4.1 static weights 400/500/600/700 under `assets/fonts/` (SIL OFL 1.1; hashes in `assets/fonts/SOURCE.md`). `AppFontProvider` loads through Expo Font at runtime and always renders children with system weights while loading or after an error. It does not gate or remount Expo Router/session providers. GM-05 may use `useAppFonts()` for the family-to-weight map and readiness state; typography tokens/components remain GM-05's scope. `/dev/foundation` includes Vietnamese samples for all four weights and the load/fallback status. Figma screenshots, node notes and scope boundaries are recorded in [GM-02 Figma parity](../docs/evidence/roadmap-v2/GM-02/FIGMA_PARITY.md).
+Khách nhập tên → Trang chủ → Tạo phòng → `/room/setup`: chủ phòng thiết lập phòng (buổi ăn, số món, giờ) rồi chọn khẩu vị → phòng chờ (mã, QR, mời bạn) → bình chọn vòng 1 → (vòng chung kết) → kết quả hoặc không chốt được.
+Thành viên vào phòng bằng mã/QR/link mời hoặc chấp nhận lời mời trong Hộp thư → vào thẳng bước khẩu vị (`/room/setup?roomId=…&stage=preferences`) → phòng chờ.
+"Tiếp tục phiên" ở trang chủ mở đúng màn theo trạng thái phòng. Chạm thông báo đẩy → làm mới phiên và hộp thư → mở Hộp thư.
 
 ## Chạy từ clone sạch
 
-GM-10 mới tách **Ngày ăn** (bấm mở lựa chọn/ngày khác) và **Giờ ăn** `HH:mm`, có ngân sách riêng và ô xác nhận xanh. Đổi ngày/giờ/budget cần xác nhận/xem món lại; xem [đối chiếu bugs.md mới](../docs/evidence/roadmap-v2/GM-10/DATE_UI_REVIEW.md).
-
-Sau lưu bối cảnh GM-10, **Chỉnh lại bối cảnh** tải version mới của cùng phòng và yêu cầu xác nhận/xem món lại. Logo **Về trang chủ** khác nút **Quay lại**; cả hai khóa lúc đang lưu/chưa rõ kết quả. Phân loại và sửa A1..A5 tại [SCOPE_FIX](../docs/evidence/roadmap-v2/GM-10/SCOPE_FIX.md); API/production/shared contrast còn theo ranh giới đã ghi.
-
-GM-10: tại Home `/` mở **Công cụ kiểm thử** cuối màn → **Chọn điểm ăn và khẩu vị** để mở `/room/context` → xác nhận/preview/lưu → `/room/preferences`; `/dev/shell` cũng có entry. Public anchor/radius/giờ/buổi/budget/avoidRecent và khẩu vị/consent dùng mock GM-07, chưa GPS/API/history thật. Controls ở cuối màn có manual/denied/outside/empty/stale/ready/timeout. Xem [HANDOFF GM-10](../docs/evidence/roadmap-v2/GM-10/HANDOFF.md) và [CHECKS](../docs/evidence/roadmap-v2/GM-10/CHECKS.md). Đã nhận main có GM-09/GM-23 được Trí merge; hai phòng mẫu GM-09/GM-10 vẫn độc lập, tích hợp cùng session/room thuộc GM-25. Đã sửa theo phản hồi Expo Go tại [BUG_REVIEW](../docs/evidence/roadmap-v2/GM-10/BUG_REVIEW.md), chờ kiểm lại sau sửa. Lưu hoặc bỏ qua khẩu vị hiện biên nhận hoàn tất; bản mẫu chưa nối phòng chờ.
-
-Bộ package/lockfile và phạm vi Expo của từng task xem [baseline hiện hành](../docs/project/EXPO_BASELINE.md). `check:expo` kiểm phiên bản đã khóa + map SDK cài tại máy; `check:expo:latest` kiểm online khi bảo trì GM-02, không dùng patch trong evidence cũ làm yêu cầu cài hiện tại.
-
-Node >=22.13 (đã dùng 24.15.0), npm; Android có Expo Go 58.0.5 cho emulator/device checks. Không cần Android Studio/adb/APK để mở shell qua Expo Go. Từ root:
+Node >=22.13, npm, Expo Go 58 trên Android (máy thật hoặc emulator). Từ root:
 
 ```powershell
 cd mobile
 npm ci
+copy .env.example .env.local   # điền URL và publishable/anon key của Supabase
 npm start
 ```
 
-Expo Go quét QR terminal; điện thoại/máy cùng LAN. Cho Node/Metro qua firewall mạng tin cậy, không tự tắt firewall. Mặc định Expo Go + LAN, không development client; shell không cần `.env`/Supabase. Public URL/key dùng khi task sau tích hợp, không service_role trong client.
+Backend local cho dev/QA: từ root chạy `npm run qa:start -- --run-id <id>` (xem [scripts/README.md](../scripts/README.md)); lấy `apiUrl` và `anonKey` của run đó điền vào `.env.local`. **Không bao giờ** đặt service-role key vào app.
 
-LAN lỗi: `npm run start:tunnel`. Tunnel cần dịch vụ ngoài và `@expo/ngrok`; nếu CLI yêu cầu cài thêm thì reviewer chốt trước (không thuộc package hiện tại), hoặc dùng LAN khác. Expo Go phải đúng SDK; native/development build thuộc task capability sau.
+Thiếu cấu hình máy chủ thì app hiện "Chưa cấu hình máy chủ" thay vì dữ liệu giả. Expo Go quét QR trong terminal; điện thoại và máy cùng LAN. LAN lỗi: `npm run start:tunnel` (cần `@expo/ngrok`).
 
-## Kiểm output
+Thông báo đẩy từ xa không chạy trong Expo Go trên Android: cần EAS Project ID (`EXPO_PUBLIC_EAS_PROJECT_ID`), Firebase/FCM và development build. Hộp thư trong app vẫn dùng được khi chưa có các bước này.
+
+## Kiểm tra
 
 ```powershell
-npm run check
+npm run check            # typecheck → lint → jest → architecture guard
 npm run check:expo
 npm run test:expo-baseline
 npm run bundle:android
 ```
 
-`check`: TypeScript → ESLint → Jest → static architecture guard. Bundle `dist/android` ignored; bundle Pass không thay mở trên điện thoại.
+CI (`foundations.yml`) chạy đúng các lệnh trên. Bundle `dist/android` bị Git bỏ qua; bundle Pass không thay cho mở app trên điện thoại. Sau khi nhận thay đổi package từ main: `npm ci` rồi `npm start -- --clear`. Bộ package/lockfile và phạm vi Expo: [baseline](../docs/project/EXPO_BASELINE.md).
 
-Sau nhận thay đổi package từ main, chạy `npm ci` và `npm start -- --clear`. Native dependency/config thay đổi cần rebuild development client/APK; cập nhật Expo Go trên điện thoại không tự cập nhật package trong repo.
+Font Inter 4.1 (400/500/600/700) đóng gói trong `assets/fonts/` (SIL OFL 1.1, hash trong `assets/fonts/SOURCE.md`); `AppFontProvider` dùng font hệ thống khi đang tải hoặc lỗi.
 
-Smoke: tên/tagline/nhãn GM-02 và chưa kết nối API → **Xem cấu trúc ứng dụng** → `/dev/foundation` → Quay lại/Android Back. Mở `exp://<LAN-IP>:8081/--/khong-co-trang` để kiểm not-found → Về trang đầu. Kiểm light/dark, TalkBack, font200%, portrait/landscape; không request vị trí/camera/push. Ghi device/revision/screenshot/Pass-Fail-Not run tại [CHECKS](../docs/evidence/roadmap-v2/GM-02/CHECKS.md).
+## Domain thuần
 
-Routes mỏng `src/app` (sản phẩm ở root và `room/`, công cụ QA ở `dev/`; không đặt route/screen/test theo mã task); UI theo feature, màn lớn tách `screens/` + `hooks/` + `components/`; component dùng chung mỗi file một component trong `src/shared/ui/<nhóm>/`, import qua `src/shared/ui/index.ts`; `data/api` chia `contracts/`, `client/`, `mock/` kèm barrel cùng tên; composition `src/bootstrap`; domain không React/SDK/network; shared không import feature. GM-07 đã có `data/api`, GM-16 đã có auth/session; local persistence/outbox còn thuộc GM-31. Markers còn trống chỉ là quy hoạch, không là implementation. GM-02 sở hữu package/config/lockfile, override khóa peer Expo/React, không force/legacy-peer-deps. [Dependencies](../docs/evidence/roadmap-v2/GM-02/DEPENDENCIES.md) · [Tests](tests/README.md) · [Cấu trúc](../docs/project/REPOSITORY_STRUCTURE.md) · [Handoff](../docs/evidence/roadmap-v2/GM-02/HANDOFF.md).
+[Decision engine](src/domain/decision/README.md) và [eligibility](src/domain/eligibility/README.md) là TypeScript thuần dùng làm tham chiếu chính sách. Từ root: `node --test mobile/tests/decision.test.mjs mobile/tests/decisionSeeded.test.mjs` (Node 24); CI Decision chạy riêng.
 
-## Engine decision-v2 legacy GM-06 → GM-15
+## Tài liệu liên quan
 
-[Contract engine](src/domain/decision/README.md) có TypeScript thuần, seeded selection và fixtures kiểm phiếu hai vòng. Từ root chạy `node --test mobile/tests/decision.test.mjs mobile/tests/decisionSeeded.test.mjs` bằng Node 24. Typecheck/lint/Jest/architecture kiểm riêng; CI Decision domain chạy suite Node .mjs riêng. SQL parity/persist/retry backend thuộc GM-20, không được chứng minh chỉ bằng winner thuần. [Eligibility domain](src/domain/eligibility/README.md) và SQL/HTTP GM-18 có bộ kiểm riêng; app integration/native evidence vẫn theo task tương ứng.
+[Tests](tests/README.md) · [Auth/session](src/data/auth/README.md) · [Dependencies GM-02](../docs/evidence/roadmap-v2/GM-02/DEPENDENCIES.md) · [Figma parity GM-02](../docs/evidence/roadmap-v2/GM-02/FIGMA_PARITY.md) · [Figma task map](../docs/design/UI_FIGMA_TASK_MAP.json)

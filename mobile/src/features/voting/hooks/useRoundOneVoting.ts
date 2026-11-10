@@ -9,11 +9,10 @@ import {
 import type { VoteValue } from '../../../shared/ui';
 import {
   FIXTURE_ROUND_TWO_CANDIDATES,
-  WAITING_DEADLINE_SECONDS,
-  isHostEarlyFinishAllowed,
   simulateDeferredRequest,
   type VoteScreenScenario,
 } from '../fixtures';
+import { WAITING_DEADLINE_SECONDS, isHostEarlyFinishAllowed } from '../services/votingRules';
 import {
   createDurableRequestId,
   mapSnapshotPoolToPoolDishes,

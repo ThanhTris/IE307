@@ -6,7 +6,7 @@ import { AppButton, CollectionState, SheetDialog, StatusNotice, ApiFeatureFrame 
 import { errorMessage } from '../../friends/screens/FriendsScreen';
 import { createDurableRequestId } from '../../rooms/services/roomRepository';
 import type { InboxRepository } from '../services/inboxRepository';
-import { findInboxEventById, roomDestinationPath } from '../services/notificationInboxResolver';
+import { findInboxEventById, acceptedRoomPath, roomDestinationPath } from '../services/notificationInboxResolver';
 import CheckIcon from '../../../../assets/brand/icons/notification-check.svg';
 import MinusIcon from '../../../../assets/brand/icons/notification-minus.svg';
 import UnreadIcon from '../../../../assets/brand/icons/notification-unread.svg';
@@ -238,8 +238,8 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
           await load();
           return;
         }
-        setMessage('Đã xác nhận lời mời. Đang tải trạng thái phòng mới nhất; bạn chưa được đặt sẵn sàng.');
-        onNavigate(roomDestinationPath(resolved.data));
+        setMessage('Đã xác nhận lời mời. Đang mở phòng…');
+        onNavigate(acceptedRoomPath(resolved.data));
         return;
       }
       const result = pending.item.type === 'friend_invite'
