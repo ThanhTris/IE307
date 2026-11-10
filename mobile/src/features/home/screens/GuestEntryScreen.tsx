@@ -110,7 +110,6 @@ export function GuestEntryScreen({ onContinue, onComplete, session, onSignIn, on
           <Pressable accessibilityRole="button" accessibilityLabel="Quay lại" accessibilityState={{ disabled }} disabled={disabled} onPress={back} style={styles.back}>
             <Text style={[styles.backLabel, { color: colors.text }, textStyle(500)]}>‹ Quay lại</Text>
           </Pressable>
-          
         </View>
         <View style={styles.body}>
           <View style={styles.logoSlot}><BrandLogo size={44} /></View>

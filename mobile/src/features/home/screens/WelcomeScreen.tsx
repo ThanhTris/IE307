@@ -39,7 +39,6 @@ export function WelcomeScreen({ onGuest, onSignIn, onSignUp, disabled, notice }:
         <Text style={[styles.subtitle, { color: colors.text }, textStyle(400)]}>Tạo phòng, cùng chọn, rồi chốt món.</Text>
       </View>
       <View style={[styles.panel, { backgroundColor: colors.background, paddingBottom: Math.max(insets.bottom, spacing.xxl) }]}>
-        
         {notice}
         <AppButton label="Đăng nhập" onPress={onSignIn} style={styles.accountButton} textStyle={{ fontSize: 17, lineHeight: 24, ...textStyle(600) }} colors={colors} />
         <AppButton label="Đăng ký" variant="secondary" onPress={onSignUp} style={styles.accountButton} textStyle={{ fontSize: 17, lineHeight: 24, ...textStyle(600) }} colors={colors} />

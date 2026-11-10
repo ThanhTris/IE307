@@ -230,4 +230,3 @@ test('offline history cache hides group projections and keeps only personal rows
   expect(screen.queryByText('Không hiển thị nhóm offline')).toBeNull();
   expect(screen.getByText('Đang ngoại tuyến')).toBeOnTheScreen();
 });
-

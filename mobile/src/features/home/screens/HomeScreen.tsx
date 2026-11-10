@@ -140,7 +140,6 @@ export function HomeScreen({ repository, liveSession, activeRoom, roomRevision, 
   return <SafeAreaView edges={['top', 'left', 'right']} style={[homeStyles.root, { backgroundColor: colors.background }]}>
     <AppHeader colors={colors} onInbox={openInbox} showFriends={false} showInbox showProfile={false} allowTitleWrap hideDivider brandTextStyle={textStyle(700)} />
     <ScrollView contentContainerStyle={homeStyles.content}>
-      
       {sessionNotice}
       {room.loading ? <StatusNotice title="Đang kiểm tra phòng đã lưu…" colors={colors} /> : null}
       {room.active && room.data ? <StatusNotice title={`Phòng #${room.data.code}`} message="Trạng thái phòng đã được kiểm tra. Bạn có thể tiếp tục phiên hiện tại." actionLabel="Tiếp tục phiên" onAction={onResume} colors={colors} /> : null}
