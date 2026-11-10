@@ -1,7 +1,8 @@
 """GM40.2 Data adapter for the delivered GM18.2 projection; offline by default.
 
-Source catalogue and baseline importer are immutable inputs. DB operations delegate
-to the received owned-QA importer; no SQL/RPC implementation is duplicated here.
+Source catalogue is immutable. DB operations delegate to the received owned-QA
+importer (including the guarded GM03 manifest adapter); no SQL/RPC implementation
+is duplicated here.
 """
 from __future__ import annotations
 import argparse

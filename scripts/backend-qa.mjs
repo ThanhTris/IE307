@@ -20,6 +20,12 @@ function brunoPrivatePath(runId) {
 const allowedSourceFiles = [
   'scripts/backend-qa.mjs', 'scripts/gm03_qa_http_check.mjs', 'scripts/gm_v4_http_check.mjs',
   'scripts/dish_policy_worker.py', 'scripts/gm03_function_inventory.sql', 'scripts/gm40_catalogue_check.py', 'supabase/seed/import_dish_catalogue.py',
+  'scripts/gm40_manifest_check.py', 'scripts/gm40_rich_projection_check.py',
+  'supabase/tests/http/GM-40.http', 'supabase/tests/dish_catalogue.sql',
+  'data-preparation/scripts/catalogue_projection.py', 'supabase/seed/import_gm18_catalogue.py',
+  'docs/architecture/schemas/gm18-dish-catalogue.schema.json',
+  'supabase/seed/catalogue/gm18.2/projection.json', 'supabase/seed/catalogue/gm18.2/manifest.json',
+  'supabase/seed/catalogue/gm18.2/coverage.json',
   'scripts/validate_dish_v4_schema.py', 'tests/fixtures/dish-catalogue-v1/qa-v4-synthetic.json', 'scripts/ci-requirements.txt',
   'docs/architecture/DISH_SESSION_API_CONTRACT_B.md', 'docs/architecture/schemas/dish-session-v4b.schema.json',
   'supabase/config.toml', 'supabase/seed/catalogue/dishes.json', 'supabase/seed/catalogue/manifest.json',

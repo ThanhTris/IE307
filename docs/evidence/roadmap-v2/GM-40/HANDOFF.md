@@ -1,5 +1,9 @@
 # GM-40 — Catalogue draft và đường nạp QA
 
+Current QA runner: [GM40.3 manifest supplement](qa-manifest/HANDOFF.md) and
+[checks](qa-manifest/CHECKS.md). Both entrypoints require an explicit GM03 manifest;
+standalone commands and runtime results below are historical.
+
 ## Bản hiện hành GM40.2 — nhận producer GM18.2
 
 Đọc [handoff mới](rich-projection/HANDOFF.md), [plan](rich-projection/PLAN.md) và
