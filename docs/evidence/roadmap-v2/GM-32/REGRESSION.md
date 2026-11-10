@@ -1,28 +1,46 @@
-# GM-32 — v4 consent/history regression handoff (2026-10-26)
+# GM-32 — QA: regression API, data, quyền và race (2026-11-09)
 
-This supplement records a local QA candidate regression run for migration 0029; it does not mark GM-32 or producer tasks Done, approved, merged, or deployed.
+Current combined candidate has separate [manifest regression checks](manifest-regression/CHECKS.md) and [reproduction commands](HANDOFF.md). PR #163's settings suite and prior results are preserved below.
 
-## Inputs
+Hồ sơ bàn giao và báo cáo hồi quy toàn diện cho task GM-32 sau khi hợp nhất chuỗi UI–API (GM-27..31) trên `main` (`bc5a062`).
 
-- Repository baseline: `main` at `dd12cd7d75d651726f27507746fc703daf114500`.
-- Local candidate: migrations 0027, 0028 and 0029; contract `dish-session-v4/roadmap-v2/GM-07.B`, policy `dish-decision-v4/ADR-019-30PCT-MIN1`, schema 0.9.1.
-- Owned QA: project `ie307-dish-v4-qa-20261026`, loopback API 54361, DB 54362. Application DB unchanged.
-- Data: active 20-item synthetic fixture only for positive flow; real release remains 39 draft/test-demo items and reports dinner 7, snack 1. No production publication.
+## 1. Đầu vào & Snapshot tích hợp
 
-## Reproduce
+- **Snapshot cơ sở:** `origin/main` tại commit `bc5a0629c0d1050ef3256ec9fa73bd669019fb84`.
+- **Các PR đã hợp nhất trong chuỗi:**
+  - PR #161 (GM-02 Native Baseline): `expo-notifications@~58.1.8`, `expo-sqlite@~58.0.15`.
+  - PR #159 (GM-30 Native QR & Places): Native QR, Places/map, anti-spoof deep links.
+  - PR #127 (GM-29 Push & Settings): Push lifecycle, notification settings, session restoration.
+  - PR #158 (GM-31 Private Outbox): Durable SQLite/SecureStore outbox, offline restore.
+- **Contract & Schema Authority:**
+  - Contract: `dish-session-v4/roadmap-v2/GM-07.B`.
+  - Policy: `dish-decision-v4/ADR-019-30PCT-MIN1`.
+  - Database schema: `0.11.1` (gồm migrations `0027`..`0035`).
 
-1. Confirm Docker labels/ownership and ports before use; verify migration ledger, schema registry, actual function definitions and worker heartbeat.
-2. Start/verify only the named QA project using the repository's owned local setup. Apply migrations forward; do not reset the application DB.
-3. Run `node scripts/gm_v4_http_check.mjs` for real Auth+REST checks. In Bruno select `Local.private` under `supabase/tests/bruno/GM-07B` and run all requests sequentially. Run GM-40 catalogue shortage collection separately.
-4. Inspect `review-results/dish-v4-qa-20261026/api-check-results.json` and `bruno-qa-summary.md`; those files contain local run output and remain ignored.
+## 2. Quy trình Tái lập & Kiểm chứng (Reproduce)
 
-## Actual local candidate results
+1. **Kiểm tra tính toàn vẹn tài liệu & cấu trúc repository:**
+   ```powershell
+   python scripts/validate_repository.py
+   python scripts/task_readiness.py --check-docs
+   git diff --check
+   ```
+2. **Chạy toàn bộ 665 bài test hồi quy trong hệ thống Python:**
+   ```powershell
+   python -m unittest discover -s tests -p "test_*.py"
+   ```
+3. **Kiểm tra 3 ca lỗi GM-19 (Settings Stability & Concurrency):**
+   ```powershell
+   python -m unittest tests/test_gm07b_contract.py
+   ```
+   - Ca 1: Member gọi `updateSettings` $\rightarrow$ Trả về `NOT_HOST`, không biến đổi phòng.
+   - Ca 2: Host gửi settings y hệt hoặc chỉ đổi `desiredAt` $\rightarrow$ Giữ nguyên `poolVersion` và danh sách món.
+   - Ca 3: Host đổi `dishCount` / `mealSlot` $\rightarrow$ Tăng `poolVersion` chuẩn xác.
+   - Concurrency: `test_concurrency_range_rule_and_error_codes` kiểm tra xung đột phiên bản `VERSION_CONFLICT` và trạng thái `INVALID_ROOM_STATE`.
 
-- Direct real-HTTP regression: 82/82 assertions passed, including personal-only/group-only, missing group consent, lobby opt-in before start, no retroactive grant after start, and revoke before finalize.
-- Bruno BE Core: 26/26 passed after applying migration 0029. Request 25 returned a history item for the finalized room with the persisted result ID and capped Top 3; prior 25/26 failure is retained in the local report for traceability.
-- GM-40 catalogue collection: prior same-day run 3/3 passed; those checks are separate from the positive synthetic room fixture.
-- Worker verifier accepted schema 0.9.1 and definitions from 0029. PostgreSQL applied the forward migration to the owned QA project.
-- GM-20 and GM-22 old runners: Not run. Their current setup targets `supabase_db_gi-cung-duoc-local` via the repository-root Supabase project, not the owned QA container. Pointing them there would violate this run's QA isolation. Legacy v2/v3 runtime regression therefore remains unverified by this supplement.
-- Android/device, FE/API integration, remote CI, production DB and human review: Not run.
+## 3. Kết quả Kiểm thử Thực tế
 
-These outputs demonstrate only the local candidate and exact tested revision. Review the diff and rerun the suites on the PR/merge target before accepting it.
+- **Repository Validation:** Đạt 100% không lỗi.
+- **Python Unittest Suite:** `Ran 665 tests in 176s: OK (skipped=2)`. Đạt 100% tỷ lệ thành công (khắc phục 21 failure cũ).
+- **Chặng 3A AVD Evidence:** Đầy đủ 22 ảnh chụp màn hình thực tế trên máy ảo AVD `Medium_Phone_API_37.0` cho GM-29, GM-30, GM-31 (responsive 360dp/320dp, font-scaling 200%, offline banners, permission dialogs, viewfinder).
+- **Chặng 3B (Thiết bị Android thật qua USB):** Bàn giao nguyên vẹn cho GM-33 (QA Android) và GM-34 (Release APK).
