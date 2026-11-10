@@ -11,7 +11,7 @@ export function DishResultFrame({ children, onHome, onNewSession, isMock = false
   return <SafeAreaView style={[styles.root, { backgroundColor: colors.bg }]}>
     <View style={styles.header}><Pressable accessibilityRole="button" accessibilityLabel="Đóng kết quả" onPress={onHome} style={styles.close}><Text style={[styles.cross, { color: colors.text }, textStyle(400)]}>×</Text></Pressable><Text accessibilityRole="header" style={[styles.title, { color: colors.text }, textStyle(700)]}>Kết quả</Text><View style={styles.close} /></View>
     <ScrollView contentContainerStyle={styles.content}>
-      {isMock ? <Text style={[styles.mock, { color: colors.muted }, textStyle(500)]}>Mô phỏng · kết quả · dữ liệu mẫu</Text> : null}
+      
       {children}
       <View style={styles.footer}>{onNewSession ? <AppButton label="Tạo phòng mới" onPress={onNewSession} colors={colors} style={styles.action} /> : null}<AppButton label="Về trang chủ" variant="secondary" onPress={onHome} colors={colors} style={styles.action} /></View>
       {tools}

@@ -74,6 +74,33 @@ const noDurableHistoryStore: DurableHistoryStore = {
   async clearSnapshotCache() {},
 };
 
+const DURABLE_CACHE_TIMEOUT_MS = 3_000;
+
+function withinDurableTimeout<T>(task: Promise<T>, fallback: T): Promise<T> {
+  return new Promise(resolve => {
+    const timer = setTimeout(() => resolve(fallback), DURABLE_CACHE_TIMEOUT_MS);
+    task.then(value => { clearTimeout(timer); resolve(value); }, () => { clearTimeout(timer); resolve(fallback); });
+  });
+}
+
+/**
+ * The device cache is best effort. If local storage stalls, history must still finish loading from the
+ * server instead of waiting forever in the per-identity cache queue.
+ */
+function withDurableTimeouts(store: DurableHistoryStore): DurableHistoryStore {
+  return {
+    cacheSnapshot<T>(snapshot: { identityId: string; roomId: string; contractVersion: string; value: T }) {
+      return withinDurableTimeout(store.cacheSnapshot<T>(snapshot), undefined);
+    },
+    readSnapshotCache<T>(identityId: string, roomId: string, contractVersion: string) {
+      return withinDurableTimeout<{ value: T } | undefined>(store.readSnapshotCache<T>(identityId, roomId, contractVersion), undefined);
+    },
+    clearSnapshotCache(identityId: string, roomId: string, contractVersion: string) {
+      return withinDurableTimeout(store.clearSnapshotCache(identityId, roomId, contractVersion), undefined);
+    },
+  };
+}
+
 /** Clears memory state and advances shared epochs so in-flight reads cannot restore logged-out data. */
 export function clearPrivateHistoryCache(): void {
   for (const [userId, epoch] of sharedInvalidation) sharedInvalidation.set(userId, epoch + 1);
@@ -85,7 +112,7 @@ export function createHistoryRepository(
   cache: HistoryCache = privateHistoryCache,
   durableCacheOverride?: DurableHistoryStore,
 ): HistoryRepository {
-  const durableCache = durableCacheOverride ?? noDurableHistoryStore;
+  const durableCache = withDurableTimeouts(durableCacheOverride ?? noDurableHistoryStore);
   let generation = 0;
   const cacheQueueByIdentity = (identityId: string, operation: () => Promise<void>) =>
     queueSharedCacheMutation(identityId, operation);

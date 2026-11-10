@@ -1,5 +1,4 @@
-import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
-import { useSetupPreview, SetupPreviewControls } from '../../bootstrap/roomSetupPreview';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ContextScreen } from '../../features/context/screens/ContextScreen';
 import { SetupFrame } from '../../features/context/components/SetupFrame';
 import { StatusNotice } from '../../shared/ui';
@@ -9,15 +8,11 @@ import { RequireActiveSession } from '../../features/auth/components/RequireActi
 
 export default function ContextRoute() {
   const router = useRouter();
-  const { roomId, legacy } = useLocalSearchParams<{ roomId?: string; legacy?: string }>();
-  const preview = useSetupPreview();
+  const { roomId } = useLocalSearchParams<{ roomId?: string }>();
   const live = useRoomRepository();
   const { colors } = useShellTheme();
   const back = () => (router.canGoBack() ? router.back() : router.replace('/'));
   const home = () => router.dismissTo('/');
-  if (live.mode !== 'real' && !roomId && legacy !== '1') return <Redirect href="/room/setup" />;
-
-  if (live.mode === 'real') {
     if (!roomId) {
       return <RequireActiveSession onHome={home}>
         <SetupFrame title="Bối cảnh phòng" onBack={back} onHome={home}>
@@ -43,8 +38,4 @@ export default function ContextRoute() {
         onContinue={room => router.push({ pathname: '/room/preferences', params: { roomId: room.roomId } })}
       />
     </RequireActiveSession>;
-  }
-
-  if (!preview.fixture) return <SetupFrame title="Bối cảnh phòng mẫu" onBack={back} onHome={home} controls={<SetupPreviewControls />}><StatusNotice title={preview.error ? 'Chưa mở được phòng mẫu' : 'Đang mở phòng mẫu…'} colors={colors} /></SetupFrame>;
-  return <ContextScreen key={preview.scenario} {...preview.fixture} onBack={back} onHome={home} onContinue={() => router.push({ pathname: '/room/preferences', params: { legacy: '1' } })} previewControls={busy => <SetupPreviewControls disabled={busy} />} />;
 }

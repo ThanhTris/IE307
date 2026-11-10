@@ -2,13 +2,13 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react-nativ
 import { createRoomRepository } from '../../src/features/rooms/services/roomRepository';
 import { GuestEntryScreen } from '../../src/features/home/screens/GuestEntryScreen';
 import { HomeScreen, type HomeLiveSession } from '../../src/features/home/screens/HomeScreen';
-import { CreateRoomEntryScreen } from '../../src/features/rooms/screens/CreateRoomEntryScreen';
-import { JoinRoomEntryScreen } from '../../src/features/rooms/screens/JoinRoomEntryScreen';
-import { LiveLobbyScreen } from '../../src/features/rooms/screens/LiveLobbyScreen';
+import { CreateRoomScreen } from '../../src/features/rooms/screens/CreateRoomScreen';
+import { JoinRoomScreen } from '../../src/features/rooms/screens/JoinRoomScreen';
+import { LobbyScreen } from '../../src/features/rooms/screens/LobbyScreen';
 import { DishPreferencesScreen } from '../../src/features/preferences/screens/DishPreferencesScreen';
 import { emptyPreferences } from '../../src/features/context/services/dishSetup';
-import { dishSetupCatalogue } from '../../src/bootstrap/dishSetupCatalogue';
-import { createLiveDishSetupGateway } from '../../src/bootstrap/liveDishSetupGateway';
+import { dishSetupCatalogue } from '../../src/features/context/services/dishSetupCatalogue';
+import { createLiveDishSetupGateway } from '../../src/features/context/services/liveDishSetupGateway';
 import type { ApiClient, RoomSnapshot, SessionUser } from '../../src/data/api/contracts';
 
 describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
@@ -255,7 +255,7 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
       const onBack = jest.fn();
 
       await render(
-        <CreateRoomEntryScreen
+        <CreateRoomScreen
           displayName="Trí Thanh"
           summary={{ meal: 'Bữa trưa', dishCount: 15 }}
           onOpenSetup={onOpenSetup}
@@ -494,7 +494,7 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
       });
 
       await render(
-        <JoinRoomEntryScreen
+        <JoinRoomScreen
           repository={repo}
           preview={previewFn}
           initialDisplayName="Tuấn"
@@ -525,7 +525,7 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
       });
 
       await render(
-        <JoinRoomEntryScreen
+        <JoinRoomScreen
           repository={repo}
           preview={fullPreview}
           initialDisplayName="Tuấn"
@@ -587,7 +587,7 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
       const onStart = jest.fn();
 
       await render(
-        <LiveLobbyScreen
+        <LobbyScreen
           repository={repo}
           roomId="room_live_001"
           currentUserId="usr_tri_001"
@@ -626,7 +626,7 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
       const onHome = jest.fn();
 
       await render(
-        <LiveLobbyScreen
+        <LobbyScreen
           repository={repo}
           roomId="room_live_001"
           currentUserId="usr_tuan_002"

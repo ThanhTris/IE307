@@ -16,7 +16,6 @@ export function SetupFrame({ title, onBack, onHome, busy = false, controls, chil
     <KeyboardAvoidingView style={setupStyles.root} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={setupStyles.content}>
         <AppButton label="‹ Quay lại" variant="quiet" disabled={busy} onPress={onBack} colors={colors} />
-        <Text style={[setupStyles.caption, { color: colors.muted }]}>Mô phỏng · GM-10 · dữ liệu mẫu</Text>
         <Text accessibilityRole="header" style={[setupStyles.title, { color: colors.text }]}>{title}</Text>
         {children}
         {controls ? <SetupTools disabled={busy}>{controls}</SetupTools> : null}

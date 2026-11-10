@@ -647,6 +647,10 @@ async function doStart(runId, ports) {
     await setOwnerMarker(state);
     const catalogues = await stageAndSeedCatalogues(state);
     state.phase = 'catalogues-seeded'; await saveJson(state.stateFile, state);
+    // ADR-021: new GM-07.B-supplement sessions are gated by a private flag that defaults off.
+    // The app creates rooms through the supplement contract, so this owned QA database enables it.
+    await assertQaOwnership(state);
+    await psql(state, 'update gm20_canonical_private.configuration set allow_new_sessions=true where singleton;', 'QA_SUPPLEMENT_CREATION_ENABLE_FAILED');
     const manifest = await sealManifest(state, status, catalogues);
     state.phase = 'manifest-sealed'; await saveJson(state.stateFile, state);
     await spawnWorker(state);

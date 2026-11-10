@@ -1,6 +1,6 @@
+import { MOCK_DEFAULT_ROOM_CODE, createMockApiClient } from '../mocks/api/mockApiClient';
 import { act } from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
-import { createApiClient, MOCK_DEFAULT_ROOM_CODE } from '../../src/data/api';
 import type { ReadResult, RoomSnapshot, SessionUser } from '../../src/data/api/contracts';
 import { HomeScreen, type HomeLiveSession } from '../../src/features/home/screens/HomeScreen';
 import { ContinueSessionScreen } from '../../src/features/home/screens/ContinueSessionScreen';
@@ -8,7 +8,7 @@ import { GuestSessionExpiredScreen } from '../../src/features/home/screens/Guest
 
 const user: SessionUser = { id: 'gm09-home-test-user', displayName: 'Minh', isGuest: true, createdAt: '2026-11-01T00:00:00Z' };
 const receipt = { roomId: 'room_mock_001', code: MOCK_DEFAULT_ROOM_CODE, version: 1, role: 'host' as const };
-const client = () => createApiClient('mock', { currentUser: user, delayMs: 0 });
+const client = () => createMockApiClient({ currentUser: user, delayMs: 0 });
 const session = (): HomeLiveSession => ({ status: 'active', issue: 'none', user, isInitializing: false, ensureSession: jest.fn(), restoreSession: jest.fn(), logout: jest.fn() });
 const press = async (label: string) => { await fireEvent.press(screen.getByRole('button', { name: label })); };
 function deferred<T>() { let resolve!: (result: T) => void; const promise = new Promise<T>(done => { resolve = done; }); return { promise, resolve }; }

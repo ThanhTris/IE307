@@ -1,7 +1,7 @@
 import { SetupShortageDialog } from '../../src/features/context/components/SetupShortageDialog';
 import { act, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react-native';
 import { DishSetupFlow } from '../../src/features/context/screens/DishSetupFlow';
-import { createDishSetupPreview, type DishSetupScenario } from '../../src/bootstrap/dishSetupPreview';
+import { createDishSetupPreview, type DishSetupScenario } from '../fixtures/setup/dishSetupPreview';
 import type { DishSetupGateway } from '../../src/features/context/services/dishSetupGateway';
 import { useDishSetupFlow } from '../../src/features/context/hooks/useDishSetupFlow';
 

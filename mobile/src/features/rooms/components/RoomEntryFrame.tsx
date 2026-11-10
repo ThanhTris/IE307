@@ -35,7 +35,6 @@ export function MockLabel() {
   const { colors } = useShellTheme();
   return <View style={entryStyles.section}>
     <View style={[entryStyles.mockBadge, { backgroundColor: colors.soft }]}>
-      <Text style={[entryStyles.caption, { color: colors.text }]}>Mô phỏng · GM-09</Text>
     </View>
     <Text style={[entryStyles.caption, { color: colors.muted }]}>Dữ liệu mẫu · chưa kết nối phòng thật</Text>
   </View>;

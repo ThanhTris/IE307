@@ -1,5 +1,5 @@
 import type { ReadResult } from '../../../data/api/contracts';
-import { MOCK_DEFAULT_ROOM_CODE } from '../../../data/api';
+const MOCK_DEFAULT_ROOM_CODE = 'GCD234';
 
 /** UI projection port, not an extension of GM-07.1 ApiClient or a member snapshot. */
 export type JoinRoomPublicPreview = { code: string; memberCount: number; capacity: number };

@@ -1,4 +1,4 @@
-import { createDishSetupPreview } from '../../src/bootstrap/dishSetupPreview';
+import { createDishSetupPreview } from '../fixtures/setup/dishSetupPreview';
 import { changeSetupMeal, defaultScheduledTime, initialSetupDraft, mealAtTime, scheduleParts, switchToNow } from '../../src/features/context/services/dishSetup';
 
 const at = (time: string) => Date.parse(`2026-11-02T${time}+07:00`);

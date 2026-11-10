@@ -656,8 +656,7 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
           roomId="room_123"
           repository={repo}
           onHome={jest.fn()}
-          onNewSession={jest.fn()}
-          onLegacyNewSession={jest.fn()}
+          onNewSession={jest.fn()}
           onOtherScreen={jest.fn()}
         />
       );
@@ -672,8 +671,7 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
       await render(
         <DishResultEntry
           onHome={jest.fn()}
-          onNewSession={jest.fn()}
-          onLegacyNewSession={jest.fn()}
+          onNewSession={jest.fn()}
           onOtherScreen={jest.fn()}
         />
       );
@@ -690,8 +688,7 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
           resultId={decidedResult.resultId}
           repository={repo}
           onHome={jest.fn()}
-          onNewSession={jest.fn()}
-          onLegacyNewSession={jest.fn()}
+          onNewSession={jest.fn()}
           onOtherScreen={jest.fn()}
         />
       );
@@ -865,8 +862,7 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
           repository={repo}
           placesConfig={{ isDevSimulated: true }}
           onHome={jest.fn()}
-          onNewSession={jest.fn()}
-          onLegacyNewSession={jest.fn()}
+          onNewSession={jest.fn()}
           onOtherScreen={jest.fn()}
         />
       );

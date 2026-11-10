@@ -4,7 +4,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { AppBottomNavigation, AppHeader } from '../../../shared/ui';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 
-export type ApiFeature = 'friends' | 'inbox' | 'history';
+export type ApiFeature = 'friends' | 'inbox' | 'history' | 'profile' | 'settings';
 
 export function ApiFeatureFrame({ active, title, onNavigate, onHome, children }: {
   active: ApiFeature;
@@ -17,7 +17,7 @@ export function ApiFeatureFrame({ active, title, onNavigate, onHome, children }:
   const insets = useSafeAreaInsets();
   const { fontScale } = useWindowDimensions();
   const largeText = fontScale >= 1.5;
-  const isInbox = active === 'inbox';
+  const isInbox = active === 'inbox' || active === 'settings';
   const bottomTabs = [
     { id: 'home', label: 'Trang chủ', iconSource: require('../../../../assets/brand/icons/home.png'), onPress: onHome },
     { id: 'friends', label: 'Bạn bè', iconSource: require('../../../../assets/brand/icons/friends.png'), onPress: () => onNavigate('/friends') },

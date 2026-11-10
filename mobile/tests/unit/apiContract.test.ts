@@ -5,17 +5,8 @@
  * and mock state transitions across all modes and scenarios.
  */
 
-import {
-  ApiClientImpl,
-  MockApiClient,
-  createApiClient,
-  ApiTransport,
-  TransportOptions,
-  FetchTransport,
-  MOCK_ANCHORS,
-  MOCK_DISHES,
-  toStoragePermission,
-} from '../../src/data/api';
+import { MOCK_ANCHORS, MOCK_DISHES, MockApiClient, createMockApiClient } from '../mocks/api/mockApiClient';
+import { ApiClientImpl, createApiClient, ApiTransport, TransportOptions, FetchTransport, toStoragePermission } from '../../src/data/api';
 
 describe('GM-07 API Contract & Client Suite', () => {
   describe('ApiClientImpl with Transport Mocking', () => {
@@ -738,7 +729,7 @@ describe('GM-07 API Contract & Client Suite', () => {
       const realClient = createApiClient('real');
       expect(realClient).toBeInstanceOf(ApiClientImpl);
 
-      const mockClient = createApiClient('mock');
+      const mockClient = createMockApiClient();
       expect(mockClient).toBeInstanceOf(MockApiClient);
     });
 
@@ -747,8 +738,8 @@ describe('GM-07 API Contract & Client Suite', () => {
       ['undefined', () => (createApiClient as unknown as (mode?: unknown) => unknown)(undefined)],
       ['null', () => (createApiClient as unknown as (mode?: unknown) => unknown)(null)],
       ['invalid string', () => (createApiClient as unknown as (mode?: unknown) => unknown)('rea1')],
-    ])('rejects %s mode at runtime instead of selecting mock', (_label, invoke) => {
-      expect(invoke).toThrow('API mode must be explicitly real or mock');
+    ])('rejects %s mode at runtime because only the real client ships', (_label, invoke) => {
+      expect(invoke).toThrow('Only the real API client is available in the app');
     });
 
     it('keeps the loading fixture pending long enough for UI loading states', async () => {

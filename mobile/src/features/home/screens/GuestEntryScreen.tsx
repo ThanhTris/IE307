@@ -111,7 +111,7 @@ export function GuestEntryScreen({ onContinue, onComplete, session, isMock, onSi
           <Pressable accessibilityRole="button" accessibilityLabel="Quay lại" accessibilityState={{ disabled }} disabled={disabled} onPress={back} style={styles.back}>
             <Text style={[styles.backLabel, { color: colors.text }, textStyle(500)]}>‹ Quay lại</Text>
           </Pressable>
-          {isMock ? <Text style={[styles.mockLabel, { color: colors.text }, textStyle(500)]}>Mô phỏng · GM-09</Text> : null}
+          
         </View>
         <View style={styles.body}>
           <View style={styles.logoSlot}><BrandLogo size={44} /></View>

@@ -1,6 +1,4 @@
 import { useRoomRepository } from './RoomRepositoryProvider';
-import { DishResultPreview } from './DishResultPreview';
-import { ResultPreview } from './resultPreview';
 import { RequireActiveSession } from '../features/auth/components/RequireActiveSession';
 import { DishResultFrame } from '../features/result/components/DishResultFrame';
 import { StatusNotice } from '../shared/ui';
@@ -14,81 +12,54 @@ export interface DishResultEntryProps {
   roomId?: string;
   resultId?: string;
   noConsensus?: boolean;
-  legacy?: boolean;
   repository?: ResultRepository;
   placesConfig?: PlacesConfig;
   renderMap?: ResultMapRenderer;
   onHome: () => void;
   onNewSession: () => void;
-  onLegacyNewSession: () => void;
   onOtherScreen: () => void;
 }
 
 export function DishResultEntry({
   roomId,
   resultId,
-  noConsensus,
-  legacy,
   repository,
   placesConfig,
   renderMap,
   onHome,
   onNewSession,
-  onLegacyNewSession,
   onOtherScreen,
 }: DishResultEntryProps) {
-  const { mode, user } = useRoomRepository();
+  const { user } = useRoomRepository();
   const { colors } = useShellTheme();
   const identity = user?.id ?? 'anonymous';
 
-  if (mode === 'real') {
-    if (roomId) {
-      return (
-        <RequireActiveSession onHome={onHome}>
-          <LiveDishResultScreen
-            key={`${identity}:${roomId}:${resultId ?? ''}`}
-            roomId={roomId}
-            resultId={resultId}
-            repository={repository}
-            placesConfig={placesConfig}
-            renderMap={renderMap}
-            onHome={onHome}
-            onNewSession={onNewSession}
-            onOtherScreen={onOtherScreen}
-          />
-        </RequireActiveSession>
-      );
-    }
+  if (roomId) {
     return (
       <RequireActiveSession onHome={onHome}>
-        <DishResultFrame onHome={onHome}>
-          <StatusNotice
-            title="Chưa thể mở kết quả"
-            message="Hãy quay lại trang chủ để kiểm tra trạng thái phòng của bạn."
-            colors={colors}
-          />
-        </DishResultFrame>
+        <LiveDishResultScreen
+          key={`${identity}:${roomId}:${resultId ?? ''}`}
+          roomId={roomId}
+          resultId={resultId}
+          repository={repository}
+          placesConfig={placesConfig}
+          renderMap={renderMap}
+          onHome={onHome}
+          onNewSession={onNewSession}
+          onOtherScreen={onOtherScreen}
+        />
       </RequireActiveSession>
     );
   }
-
-  if (__DEV__ && legacy) {
-    return (
-      <ResultPreview
-        noConsensus={noConsensus}
-        onHome={onHome}
-        onNewSession={onLegacyNewSession}
-        onOtherScreen={onOtherScreen}
-      />
-    );
-  }
-
   return (
-    <DishResultPreview
-      noConsensus={noConsensus}
-      onHome={onHome}
-      onNewSession={onNewSession}
-      onOtherScreen={onOtherScreen}
-    />
+    <RequireActiveSession onHome={onHome}>
+      <DishResultFrame onHome={onHome}>
+        <StatusNotice
+          title="Chưa thể mở kết quả"
+          message="Hãy quay lại trang chủ để kiểm tra trạng thái phòng của bạn."
+          colors={colors}
+        />
+      </DishResultFrame>
+    </RequireActiveSession>
   );
 }

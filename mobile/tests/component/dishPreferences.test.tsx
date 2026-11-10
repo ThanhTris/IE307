@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import { DishPreferencesScreen } from '../../src/features/preferences/screens/DishPreferencesScreen';
-import { dishSetupCatalogue } from '../../src/bootstrap/dishSetupCatalogue';
+import { dishSetupCatalogue } from '../../src/features/context/services/dishSetupCatalogue';
 import { emptyPreferences } from '../../src/features/context/services/dishSetup';
 
 function Preferences() {

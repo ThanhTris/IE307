@@ -769,9 +769,15 @@ export class LiveRoomRepository implements RoomRepository {
     if (this.session && this.sessionSnapshot.status !== 'active') {
       return authRequiredResult() as T;
     }
+    const userAtStart = this.sessionSnapshot.user?.id;
     const result = await operation();
     const response = result as { ok?: boolean; error?: { messageKey?: string } };
-    if (this.session && revision !== this.identityRevision) {
+    // A token refresh or restore for the same user bumps identityRevision but does not change who the
+    // result belongs to. Only treat the result as stale when the identity actually changed or was lost.
+    const sameIdentity = Boolean(userAtStart)
+      && this.sessionSnapshot.status === 'active'
+      && this.sessionSnapshot.user?.id === userAtStart;
+    if (this.session && revision !== this.identityRevision && !sameIdentity) {
       return authRequiredResult(result) as T;
     }
     if (!response.ok && response.error?.messageKey === 'AUTH_REQUIRED' && this.session && this.sessionSnapshot.status === 'active') {

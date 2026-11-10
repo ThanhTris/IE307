@@ -1,6 +1,6 @@
 import { act } from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
-import { createSetupPreview, setupCatalogue, type SetupScenario } from '../../src/bootstrap/roomSetupPreview';
+import { createSetupPreview, setupCatalogue, type SetupScenario } from '../fixtures/setup/roomSetupPreview';
 import { ContextScreen } from '../../src/features/context/screens/ContextScreen';
 import { PreferencesScreen } from '../../src/features/preferences/screens/PreferencesScreen';
 import { localTime, nextMealTime } from '../../src/features/context/services/roomSetup';

@@ -3,7 +3,6 @@ import { AppButton, type Palette } from '../../../shared/ui';
 import type { ConfirmAction } from '../hooks/useLiveLobby';
 
 export interface LobbyActionButtonsProps {
-  isReal: boolean;
   snapshot: RoomSnapshot;
   viewer?: RoomMember;
   isHost: boolean;
@@ -17,7 +16,6 @@ export interface LobbyActionButtonsProps {
 }
 
 export function LobbyActionButtons({
-  isReal,
   snapshot,
   viewer,
   isHost,
@@ -50,26 +48,6 @@ export function LobbyActionButtons({
           colors={colors}
         />
       ) : null}
-      {isHost && !onEditContext && !isReal ? (
-        <AppButton
-          label="Mô phỏng đổi bối cảnh (Host)"
-          variant="secondary"
-          onPress={() => onRunWrite('context')}
-          disabled={snapshot.state !== 'LOBBY'}
-          loading={busy}
-          colors={colors}
-        />
-      ) : null}
-      {!isReal && isHost && (
-        <AppButton
-          label="Mời thêm bạn (mock)"
-          variant="secondary"
-          onPress={() => onRunWrite('invite')}
-          disabled={busy || snapshot.members.length >= 20}
-          loading={busy}
-          colors={colors}
-        />
-      )}
       {viewer && (isHost
         ? <AppButton label="Hủy phòng" variant="danger" onPress={() => onConfirm('cancel')} disabled={busy || snapshot.state !== 'LOBBY'} colors={colors} />
         : <AppButton label="Rời phòng" variant="danger" onPress={() => onConfirm('leave')} disabled={busy || snapshot.state !== 'LOBBY'} colors={colors} />)}

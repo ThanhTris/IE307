@@ -1,5 +1,5 @@
 import { belongsToWinner, distanceLabel, isWinnerResult, noConsensusReason, priceLabel, publicTarget, timeLabel } from '../../src/features/result/model';
-import { noConsensusFixture, offeringFixture, resultContext, winnerFixture } from '../../src/bootstrap/resultFixtures';
+import { noConsensusFixture, offeringFixture, resultContext, winnerFixture } from '../fixtures/result/resultFixtures';
 import { decideWithSeed, type RoundOneVote } from '../../src/domain/decision';
 import { selectedResultFields } from '../../src/domain/decision/choiceMapping';
 

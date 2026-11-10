@@ -1,6 +1,7 @@
+import { MockApiClient } from '../mocks/api/mockApiClient';
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import { TutorialScreen } from '../../src/features/home/screens/TutorialScreen';
-import { MockApiClient } from '../../src/data/api';
+
 
 const press = async (label: string) => { await fireEvent.press(screen.getByRole('button', { name: label })); };
 async function reachCard() { await press('Tạo phòng mẫu'); await press('Thử thiết lập mẫu'); }

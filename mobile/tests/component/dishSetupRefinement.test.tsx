@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Animated, StyleSheet } from 'react-native';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
-import { DishSetupCasePicker } from '../../src/bootstrap/DishSetupCasePicker';
-import { createDishSetupPreview } from '../../src/bootstrap/dishSetupPreview';
+import { DishSetupCasePicker } from '../fixtures/setup/DishSetupCasePicker';
+import { createDishSetupPreview } from '../fixtures/setup/dishSetupPreview';
 import { SetupConfirmDialog } from '../../src/features/context/components/SetupConfirmDialog';
 import { DishSetupFlow } from '../../src/features/context/screens/DishSetupFlow';
 import { emptyPreferences, initialSetupDraft } from '../../src/features/context/services/dishSetup';

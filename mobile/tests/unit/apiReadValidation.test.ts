@@ -1,7 +1,5 @@
-import {
-  ApiClient, ApiClientImpl, ApiTransport, ReadResult, createApiClient, MockApiClient,
-  MOCK_ANCHORS, MOCK_COVERAGE_AREAS, MOCK_DISHES, MOCK_FRIENDS, MOCK_INBOX_ITEMS, MOCK_HISTORY_ITEMS,
-} from '../../src/data/api';
+import { MOCK_ANCHORS, MOCK_COVERAGE_AREAS, MOCK_DISHES, MOCK_FRIENDS, MOCK_HISTORY_ITEMS, MOCK_INBOX_ITEMS, MockApiClient } from '../mocks/api/mockApiClient';
+import { ApiClient, ApiClientImpl, ApiTransport, ReadResult, createApiClient } from '../../src/data/api';
 
 const time = '2026-10-11T12:00:00Z';
 const user = { id: 'user_fixture', displayName: 'Review', isGuest: true, createdAt: time };

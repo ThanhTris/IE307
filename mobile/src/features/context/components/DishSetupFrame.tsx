@@ -1,5 +1,5 @@
 import { useEffect, type ReactNode } from 'react';
-import { BackHandler, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { BackHandler, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
@@ -14,7 +14,7 @@ export function DishSetupFrame({ title, onBack, busy, children, footer, action, 
     <View style={styles.header}><View style={styles.title}><AppHeader variant="back" title={title} centeredTitle hideDivider allowTitleWrap colors={colors} onPressBack={busy ? undefined : onBack} backIconSource={require('../../../../assets/brand/home/back.png')} brandTextStyle={textStyle(700)} /></View>{action}</View>
     <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        {isMock ? <Text style={[styles.mock, { color: colors.muted }, textStyle(500)]}>Mô phỏng · thiết lập phòng · dữ liệu mẫu</Text> : null}
+        
         {children}<View style={styles.footer}>{footer}</View>
       </ScrollView>
     </KeyboardAvoidingView>

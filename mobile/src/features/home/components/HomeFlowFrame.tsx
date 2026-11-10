@@ -1,5 +1,5 @@
 import { useEffect, type ReactNode } from 'react';
-import { BackHandler, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text } from 'react-native';
+import { BackHandler, KeyboardAvoidingView, Platform, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
@@ -16,7 +16,7 @@ export function HomeFlowFrame({ title, onHome, isMock, busy = false, children, c
     <AppHeader variant="back" title={title} onPressBack={busy ? undefined : onHome} allowTitleWrap hideDivider centeredTitle={centeredTitle} backIconSource={require('../../../../assets/brand/home/back.png')} brandTextStyle={textStyle(700)} colors={colors} />
     <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
     <ScrollView contentContainerStyle={[styles.content, compact && { paddingTop: 24 }]} keyboardShouldPersistTaps="handled">
-      {isMock ? <Text style={[styles.mock, { color: colors.muted }, textStyle(500)]}>Mô phỏng · GM-09 · dữ liệu mẫu</Text> : null}
+      
       {children}
     </ScrollView>
     </KeyboardAvoidingView>

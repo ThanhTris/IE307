@@ -8,12 +8,11 @@ export default function VoteRoute() {
   const router = useRouter();
   const { roomId } = useLocalSearchParams<{ roomId?: string }>();
   const live = useRoomRepository();
-  const isReal = live.mode === 'real';
-  const identityId = live.user?.id ?? (isReal ? 'unresolved' : 'mock');
+  const identityId = live.user?.id ?? 'unresolved';
 
   const repository = useMemo(() => {
-    return isReal ? createDurableVoteRepository({ roomRepository: live.repository }) : undefined;
-  }, [isReal, live.repository]);
+    return createDurableVoteRepository({ roomRepository: live.repository });
+  }, [live.repository]);
 
   return (
     <VoteScreen
@@ -21,7 +20,6 @@ export default function VoteRoute() {
       identityId={identityId}
       roomId={typeof roomId === 'string' ? roomId : undefined}
       repository={repository}
-      showScenarioPicker={!isReal}
       initialViewMode="flashcard"
       onGoToFinalRound={() => {
         router.push(typeof roomId === 'string' ? { pathname: '/room/final-round', params: { roomId } } : '/room/final-round');

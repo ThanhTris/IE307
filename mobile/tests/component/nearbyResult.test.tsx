@@ -1,6 +1,6 @@
 import { StyleSheet, Text } from 'react-native';
 import { act, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react-native';
-import { nearbyCaseOptions, nearbyFixture, scoredResultFixture } from '../../src/bootstrap/dishResultFixtures';
+import { nearbyCaseOptions, nearbyFixture, scoredResultFixture } from '../fixtures/result/dishResultFixtures';
 import { DishResultFlow } from '../../src/features/result/screens/DishResultFlow';
 import type { ResultActionReply } from '../../src/features/result/services/resultPresentation';
 import { useResultAction } from '../../src/features/result/hooks/useResultAction';

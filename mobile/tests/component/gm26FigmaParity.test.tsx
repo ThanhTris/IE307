@@ -175,7 +175,7 @@ describe('GM-26 Figma UI Parity Suite (Issue #87)', () => {
       });
 
       // Default 2/3 ACK (> 50%) -> Chốt ngay is enabled
-      const enabledBtn = screen.getByRole('button', { name: /Chốt ngay · Kết thúc chờ sớm/ });
+      const enabledBtn = screen.getByRole('button', { name: /^Chốt ngay$/ });
       expect(Boolean(enabledBtn.props.accessibilityState?.disabled)).toBe(false);
 
       // Switch simulation to 1/3 ACK (not > 50%)
@@ -184,7 +184,7 @@ describe('GM-26 Figma UI Parity Suite (Issue #87)', () => {
 
       // Button Chốt ngay is disabled with rule explanation
       await waitFor(() => {
-        const disabledEarlyFinishBtn = screen.getByRole('button', { name: /Chốt ngay \(1\/3 chưa quá nửa\)/ });
+        const disabledEarlyFinishBtn = screen.getByRole('button', { name: /^Chốt ngay \(1\/3\)$/ });
         expect(disabledEarlyFinishBtn.props.accessibilityState?.disabled).toBe(true);
       });
 
@@ -194,12 +194,12 @@ describe('GM-26 Figma UI Parity Suite (Issue #87)', () => {
 
       // Button Chốt ngay is now enabled again
       await waitFor(() => {
-        const earlyFinishBtn = screen.getByRole('button', { name: /Chốt ngay · Kết thúc chờ sớm/ });
+        const earlyFinishBtn = screen.getByRole('button', { name: /^Chốt ngay$/ });
         expect(Boolean(earlyFinishBtn.props.accessibilityState?.disabled)).toBe(false);
       });
 
       // Host presses Chốt ngay
-      const earlyFinishBtn = screen.getByRole('button', { name: /Chốt ngay · Kết thúc chờ sớm/ });
+      const earlyFinishBtn = screen.getByRole('button', { name: /^Chốt ngay$/ });
       await user.press(earlyFinishBtn);
 
       // Transitions to Round 2 with survivor candidates

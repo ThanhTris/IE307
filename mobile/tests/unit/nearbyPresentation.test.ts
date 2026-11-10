@@ -1,4 +1,4 @@
-import { nearbyFixture, scoredResultFixture } from '../../src/bootstrap/dishResultFixtures';
+import { nearbyFixture, scoredResultFixture } from '../fixtures/result/dishResultFixtures';
 import { nearbyDistance, nearbyPlaces } from '../../src/features/result/services/nearbyPresentation';
 
 test('nearby public projection drops invalid IDs, duplicates, invalid coordinates and private fields', () => {

@@ -1,99 +1,224 @@
-import { useEffect, useRef, useState } from 'react';
-import { Text, View } from 'react-native';
-import { AppButton, Chip, FormField, SheetDialog, StatusNotice } from '../../../shared/ui';
+import { useState } from 'react';
+import { Image, Linking, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import type { JoinRoomResponse } from '../../../data/api/contracts';
-import { EntryError, EntrySection, entryStyles, RoomEntryFrame, type PreviewControlsProps } from '../components/RoomEntryFrame';
-import { useRoomSubmission } from '../hooks/useRoomEntry';
-import { normalizeRoomCode, validDisplayName, validRoomCode, type CameraAction, type RequestIdFactory, type RoomEntryReceipt, type RoomEntryRepository } from '../services/roomEntry';
+import { AppButton, FormField, StatusNotice } from '../../../shared/ui';
+import { HomeFlowFrame } from '../../home/components/HomeFlowFrame';
+import { RoomCodeField } from '../components/RoomCodeField';
+import { JoinEntryProblem } from '../components/JoinEntryProblem';
+import { useJoinRoomEntry } from '../hooks/useJoinRoomEntry';
+import { errorCopy, validDisplayName, type CameraAction, type RequestIdFactory, type RoomEntryReceipt, type RoomEntryRepository } from '../services/roomEntry';
+import type { JoinRoomPreviewPort } from '../services/joinPreview';
+import type { QrScannerAdapter } from '../services/joinLinks';
 
-export type JoinRoomScreenProps = PreviewControlsProps & {
-  repository: RoomEntryRepository; onBack: () => void; onEntered: (room: RoomEntryReceipt) => void;
-  sampleCode?: string; initialCode?: string; onScan?: CameraAction;
-  createRequestId?: RequestIdFactory; initialDisplayName?: string; isLive?: boolean;
+export type JoinRoomEntryProps = {
+  repository: Pick<RoomEntryRepository, 'joinRoom'>;
+  preview?: JoinRoomPreviewPort;
+  initialCode?: string;
+  initialDisplayName?: string;
+  onScan?: CameraAction;
+  qrScannerAdapter?: QrScannerAdapter;
+  onEntered: (room: RoomEntryReceipt) => void;
+  onBack: () => void;
+  isMock?: boolean;
+  createRequestId?: RequestIdFactory;
+  linkError?: string;
 };
 
-export function JoinRoomScreen({ repository, onBack, onEntered, sampleCode, initialCode = '', onScan, previewControls, createRequestId, initialDisplayName = '', isLive = false }: JoinRoomScreenProps) {
-  const { colors } = useShellTheme();
-  const [name, setName] = useState(initialDisplayName);
-  const [code, setCode] = useState(normalizeRoomCode(initialCode));
-  const [incomingCode, setIncomingCode] = useState(normalizeRoomCode(initialCode));
-  const [tab, setTab] = useState<'manual' | 'camera'>('manual');
-  const [validation, setValidation] = useState<string>();
-  const [confirm, setConfirm] = useState(false);
-  const [cameraMessage, setCameraMessage] = useState('Camera chưa được triển khai ở GM-09. Bạn luôn có thể nhập mã bằng tay.');
-  const [scanBusy, setScanBusy] = useState(false);
-  const scanLock = useRef(false);
-  const mounted = useRef(false);
-  useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
-  const submitted = useRoomSubmission<JoinRoomResponse>(data => onEntered({ roomId: data.roomId, code: data.code, version: data.version, role: 'member' }), createRequestId);
-  const busy = submitted.busy || scanBusy;
-  const disabled = busy || submitted.uncertain || submitted.accepted;
-  const normalizedIncoming = normalizeRoomCode(initialCode);
-  // A warm incoming code invalidates the old confirmation. Never replace an
-  // intent while it is pending, possibly delivered, or already accepted.
-  if (incomingCode !== normalizedIncoming && !disabled) {
-    setIncomingCode(normalizedIncoming);
-    setCode(normalizedIncoming);
-    setTab('manual');
-    setConfirm(false);
-    setValidation(undefined);
-    submitted.clearError();
-  }
-  const requestJoin = () => {
-    if (!validDisplayName(name)) { setValidation('Tên của bạn cần từ 1 đến 24 ký tự.'); return; }
-    if (!validRoomCode(code)) { setValidation('Mã cần đúng 6 chữ/số, không dùng I, O, 0 hoặc 1.'); return; }
-    setValidation(undefined);
-    setConfirm(true);
-  };
-  const join = () => {
-    setConfirm(false);
-    const request = { code: normalizeRoomCode(code), displayName: name.trim() };
-    void submitted.run(JSON.stringify(request), requestId => repository.joinRoom({ ...request, requestId }));
-  };
-  const scan = async () => {
-    if (scanLock.current) return;
-    scanLock.current = true;
-    setScanBusy(true);
+export function JoinRoomScreen(props: JoinRoomEntryProps) {
+  const { colors, dark } = useShellTheme();
+  const { textStyle } = useAppFonts();
+  const [simulatedInput, setSimulatedInput] = useState('');
+  const flow = useJoinRoomEntry(props);
+  const { summary, submitted } = flow;
+  const problem = flow.readError && !['ROOM_NOT_FOUND', 'INVALID_INPUT'].includes(flow.readError) ? flow.readError : undefined;
+
+  const handleOpenSettings = async () => {
     try {
-      const result = onScan ? await onScan() : { status: 'unavailable' as const };
-      if (!mounted.current) return;
-      if (result.status === 'scanned') { setCode(normalizeRoomCode(result.code)); setTab('manual'); setCameraMessage('Đã đọc mã. Kiểm tra và xác nhận trước khi vào phòng.'); }
-      else setCameraMessage(result.status === 'denied' ? 'Camera bị từ chối · mô phỏng. Hãy nhập mã bằng tay.' : 'Camera chưa được triển khai ở GM-09. Hãy nhập mã bằng tay.');
-    } catch { if (mounted.current) setCameraMessage('Chưa thể đọc mã. Hãy nhập mã bằng tay.'); }
-    finally { scanLock.current = false; if (mounted.current) setScanBusy(false); }
+      if (props.qrScannerAdapter?.openSettings) {
+        await props.qrScannerAdapter.openSettings();
+      } else {
+        await Linking.openSettings();
+      }
+    } catch {
+      // Ignore settings open failure
+    }
   };
-  return <RoomEntryFrame title="Vào kèo ăn" subtitle="Có mã từ bạn bè? Cùng vào một kèo ăn." onBack={onBack} busy={busy || submitted.uncertain || submitted.accepted} isMock={!isLive} previewControls={previewControls}>
-    <View style={entryStyles.row}>
-      <Chip label="Nhập mã" leadingIcon="⌨" selected={tab === 'manual'} disabled={disabled} onPress={() => setTab('manual')} colors={colors} />
-      <Chip label="Quét mã QR" leadingIcon="▣" selected={tab === 'camera'} disabled={disabled} onPress={() => setTab('camera')} colors={colors} />
-    </View>
-    <FormField label="Tên của bạn" value={name} onChangeText={value => { setName(value); setValidation(undefined); }} editable={!disabled} placeholder="Mọi người gọi bạn là…" helperText="Tên hiển thị trong phòng · 1–24 ký tự" colors={colors} />
-    {tab === 'manual' ? <EntrySection title="Mã từ chủ phòng" description="Nhập mã bạn nhận được để cùng chọn món.">
-      <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={entryStyles.codeRow}>
-        {Array.from({ length: 6 }, (_, index) => <View key={index} style={[entryStyles.codeCell, { borderColor: code[index] ? colors.primary : colors.border, backgroundColor: code[index] ? colors.warm : colors.soft }]}>
-          <Text style={[entryStyles.codeLetter, { color: colors.text }]}>{code[index] ?? '·'}</Text>
-        </View>)}
-      </View>
-      <FormField label="Mã phòng (6 ký tự)" value={code} onChangeText={value => { setCode(normalizeRoomCode(value)); setValidation(undefined); submitted.clearError(); }} editable={!disabled} keyboardType="default" autoCapitalize="characters" autoCorrect={false} placeholder="Ví dụ: GCD234" helperText="6 chữ/số · không dùng I, O, 0 hoặc 1" colors={colors} />
-      {sampleCode ? <AppButton label={`Điền mã mẫu ${sampleCode}`} variant="quiet" disabled={disabled} onPress={() => { setCode(sampleCode); setValidation(undefined); submitted.clearError(); }} colors={colors} /> : null}
-      {validation ? <Text accessibilityRole="alert" style={[entryStyles.body, { color: colors.danger }]}>{validation}</Text> : null}
-      {submitted.error ? <EntryError code={submitted.error} /> : null}
-      <AppButton label={submitted.accepted ? (isLive ? 'Đã vào phòng' : 'Đã vào phòng mô phỏng') : submitted.uncertain ? 'Thử lại cùng yêu cầu vào phòng' : 'Vào phòng →'} loading={submitted.busy} disabled={submitted.accepted} onPress={submitted.uncertain ? join : requestJoin} colors={colors} />
-      <Text style={[entryStyles.caption, { color: colors.muted }]}>Bạn sẽ xác nhận tên và mã trước khi vào phòng.</Text>
-    </EntrySection> : <EntrySection title="Quét mã từ chủ phòng">
-      <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={[entryStyles.scanner, { backgroundColor: colors.soft, borderColor: colors.border }]}>
-        <Text allowFontScaling={false} style={entryStyles.foodEmoji}>📷</Text>
-        <Text style={[entryStyles.body, { color: colors.muted }]}>Khung quét minh họa</Text>
-      </View>
-      <StatusNotice title="Quét QR · chưa kết nối camera" message={cameraMessage} colors={colors} />
-      <AppButton label="Thử quét QR" loading={scanBusy} onPress={() => { void scan(); }} colors={colors} />
-      <AppButton label="Nhập mã bằng tay" variant="secondary" onPress={() => setTab('manual')} disabled={busy} colors={colors} />
-    </EntrySection>}
-    <SheetDialog visible={confirm} title="Xác nhận vào phòng" onClose={() => setConfirm(false)} colors={colors}>
-      <Text style={[entryStyles.body, { color: colors.text }]}>{isLive ? `Vào phòng #${normalizeRoomCode(code)} với tên ${name.trim()}?` : `Vào phòng #${normalizeRoomCode(code)} với tên ${name.trim()}? Đây là thao tác mô phỏng.`}</Text>
-      <AppButton label={isLive ? 'Xác nhận vào phòng' : 'Xác nhận vào phòng mô phỏng'} onPress={join} colors={colors} />
-    </SheetDialog>
-  </RoomEntryFrame>;
+
+  return (
+    <HomeFlowFrame
+      title={flow.camera ? (flow.cameraStatus === 'denied' ? 'Camera bị từ chối' : 'Quét mã QR') : summary ? 'Xác nhận phòng' : 'Tham gia phòng'}
+      compact
+      busy={flow.mutationLocked}
+      onHome={flow.back}
+      isMock={props.isMock ?? true}
+    >
+      {flow.camera ? (
+        flow.cameraStatus === 'denied' ? (
+          // Figma node 275:2088 — Vào phòng · Camera bị từ chối
+          <>
+            <View style={[styles.deniedContainer, { backgroundColor: colors.warm, borderColor: colors.line }]}>
+              <View style={[styles.deniedBadge, { backgroundColor: dark ? colors.surface : '#FFFFFF', borderColor: colors.line }]}>
+                <Text style={styles.deniedIcon}>📷⃠</Text>
+              </View>
+              <Text accessibilityRole="header" style={[styles.heading, { color: colors.text }, textStyle(700)]}>
+                Camera bị từ chối
+              </Text>
+              <Text accessibilityLiveRegion="polite" style={[styles.deniedBody, { color: colors.muted }, textStyle(400)]}>
+                Bạn chưa cấp quyền truy cập camera để quét mã QR. Bạn có thể mở Cài đặt để cấp quyền hoặc nhập mã phòng bằng tay.
+              </Text>
+            </View>
+            <View style={styles.spacer} />
+            <View style={styles.actions}>
+              <AppButton label="Nhập mã bằng tay" onPress={flow.closeCamera} colors={colors} />
+              <AppButton label="Mở Cài đặt" variant="secondary" onPress={handleOpenSettings} colors={colors} />
+              <AppButton label="Thử lại" variant="secondary" loading={flow.readBusy} onPress={() => { void flow.scan(); }} colors={colors} />
+            </View>
+          </>
+        ) : (
+          // Figma node 268:2019 — Vào phòng · Quét QR
+          <>
+            <View style={[styles.camera, { backgroundColor: colors.warm, borderColor: colors.line }]}>
+              {props.qrScannerAdapter?.isSimulated ? (
+                <View style={[styles.simulatedBadge, { backgroundColor: dark ? colors.surface : '#FFFFFF', borderColor: colors.line }]}>
+                  <Text style={[styles.simulatedLabel, { color: colors.primary }, textStyle(600)]}>
+                    [Mô phỏng AVD] Camera quét QR mô phỏng cho AVD testing
+                  </Text>
+                </View>
+              ) : null}
+              <View style={[styles.viewfinder, { borderColor: colors.primary }]}>
+                <Image source={require('../../../../assets/brand/entry-ui/qr.png')} accessible={false} resizeMode="contain" style={[styles.qrIcon, { tintColor: colors.text }]} />
+              </View>
+              <Text accessibilityRole="header" style={[styles.heading, { color: colors.text }, textStyle(700)]}>
+                Quét mã QR
+              </Text>
+              <Text accessibilityLiveRegion="polite" style={[styles.body, { color: colors.muted }, textStyle(400)]}>
+                {flow.cameraMessage}
+              </Text>
+              {props.qrScannerAdapter?.isSimulated ? (
+                <View style={styles.simulatedInputContainer}>
+                  <FormField
+                    label="Mã hoặc URL test"
+                    value={simulatedInput}
+                    onChangeText={setSimulatedInput}
+                    placeholder="Ví dụ: GCD234 hoặc link mời"
+                    colors={colors}
+                  />
+                </View>
+              ) : null}
+            </View>
+            <View style={styles.spacer} />
+            <View style={styles.actions}>
+              <AppButton
+                label="Thử quét QR"
+                loading={flow.readBusy}
+                onPress={() => {
+                  void flow.scan(props.qrScannerAdapter?.isSimulated ? simulatedInput : undefined);
+                }}
+                colors={colors}
+              />
+              <AppButton label="Nhập mã bằng tay" variant="secondary" onPress={flow.closeCamera} colors={colors} />
+            </View>
+          </>
+        )
+      ) : summary ? (
+        // Figma node 268:2081 — Vào phòng · Xác nhận
+        <>
+          <Text accessibilityRole="header" style={[styles.title, { color: colors.text }, textStyle(700)]}>
+            {`Phòng ${summary.code}`}
+          </Text>
+          <View style={[styles.summary, { backgroundColor: dark ? colors.surface : '#FFFFFF', borderColor: colors.line }]}>
+            <View style={[styles.row, { borderBottomColor: colors.warm, borderBottomWidth: 1 }]}>
+              <Text style={[styles.body, { color: colors.muted }, textStyle(400)]}>Mã phòng</Text>
+              <Text selectable style={[styles.value, { color: colors.text }, textStyle(600)]}>{summary.code}</Text>
+            </View>
+            <View style={styles.row}>
+              <Text style={[styles.body, { color: colors.muted }, textStyle(400)]}>Thành viên</Text>
+              <Text style={[styles.value, { color: colors.text }, textStyle(600)]}>{`${summary.memberCount}/${summary.capacity} thành viên`}</Text>
+            </View>
+          </View>
+          <Text style={[styles.hint, { color: colors.muted }, textStyle(400)]}>
+            Xác nhận để vào phòng. Xem trước không giữ chỗ.
+          </Text>
+          {submitted.error ? <StatusNotice title="Chưa vào được phòng" message={errorCopy[submitted.error]} tone="warning" colors={colors} /> : null}
+          <View style={styles.spacer} />
+          <View style={styles.actions}>
+            <AppButton label="Nhập mã khác" variant="secondary" disabled={flow.disabled} onPress={flow.edit} colors={colors} />
+            <AppButton
+              label={submitted.uncertain ? 'Thử lại cùng yêu cầu vào phòng' : submitted.accepted ? 'Đã vào phòng' : 'Xác nhận vào phòng'}
+              loading={submitted.busy}
+              disabled={submitted.accepted}
+              onPress={() => { void flow.join(); }}
+              colors={colors}
+            />
+          </View>
+        </>
+      ) : problem ? (
+        <JoinEntryProblem code={flow.code} error={problem} busy={flow.readBusy} onRetry={() => { void flow.read(); }} onEdit={flow.edit} onHome={props.onBack} />
+      ) : (
+        <>
+          {props.linkError ? (
+            <StatusNotice
+              title="Liên kết bị chặn"
+              message="Liên kết chứa tham số không an toàn hoặc không hợp lệ. Bạn có thể nhập mã phòng bằng tay để tiếp tục."
+              tone="warning"
+              colors={colors}
+            />
+          ) : null}
+          {!validDisplayName(props.initialDisplayName ?? '') ? (
+            <FormField label="Tên của bạn" value={flow.name} onChangeText={flow.editName} editable={!flow.disabled} colors={colors} />
+          ) : null}
+          <RoomCodeField value={flow.code} onChange={flow.editCode} disabled={flow.disabled} error={flow.validation ?? (flow.readError ? errorCopy[flow.readError] : undefined)} />
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Quét mã QR"
+            accessibilityState={{ disabled: flow.disabled }}
+            disabled={flow.disabled}
+            onPress={flow.openCamera}
+            style={[styles.scanCard, { borderColor: colors.line, backgroundColor: dark ? colors.surface : '#FFFFFF' }]}
+          >
+            <Image source={require('../../../../assets/brand/entry-ui/qr.png')} accessible={false} resizeMode="contain" style={[styles.qrIcon, { tintColor: colors.text, backgroundColor: colors.warm }]} />
+            <View style={styles.scanCopy}>
+              <Text style={[styles.heading, { color: colors.text }, textStyle(700)]}>Quét mã QR</Text>
+              <Text style={[styles.body, { color: colors.muted }, textStyle(400)]}>Dùng camera để vào phòng</Text>
+            </View>
+            <Text accessible={false} style={[styles.chevron, { color: colors.primary }]}>›</Text>
+          </Pressable>
+          <Text style={[styles.body, { color: colors.muted }, textStyle(400)]}>
+            Hoặc mở liên kết mời được bạn bè gửi.
+          </Text>
+          {!props.preview ? (
+            <StatusNotice title="Xem trước phòng chưa sẵn sàng" message="Bạn có thể quay lại trang chủ. Chưa có yêu cầu vào phòng nào được gửi." colors={colors} />
+          ) : null}
+          <View style={styles.spacer} />
+          <AppButton label={flow.readError ? 'Thử lại' : 'Tiếp tục →'} loading={flow.readBusy} disabled={!props.preview} onPress={() => { void flow.read(); }} colors={colors} />
+        </>
+      )}
+    </HomeFlowFrame>
+  );
 }
 
+const styles = StyleSheet.create({
+  title: { fontSize: 28, lineHeight: 36, marginBottom: 24 },
+  heading: { fontSize: 20, lineHeight: 28 },
+  body: { fontSize: 15, lineHeight: 22, textAlign: 'center' },
+  hint: { fontSize: 14, lineHeight: 21, marginTop: 24 },
+  value: { fontSize: 17, lineHeight: 24 },
+  scanCard: { flexDirection: 'row', alignItems: 'center', gap: 20, borderWidth: 1, borderRadius: 20, padding: 20, marginTop: 40, marginBottom: 20 },
+  qrIcon: { width: 64, height: 64, borderRadius: 16 },
+  scanCopy: { flex: 1, gap: 8 },
+  chevron: { fontSize: 32 },
+  summary: { borderRadius: 20, borderWidth: 1, paddingHorizontal: 20 },
+  row: { minHeight: 72, paddingVertical: 20, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
+  camera: { minHeight: 380, padding: 24, borderRadius: 20, borderWidth: 1, alignItems: 'center', justifyContent: 'center', gap: 20 },
+  viewfinder: { width: 140, height: 140, borderWidth: 2, borderRadius: 24, borderStyle: 'dashed', alignItems: 'center', justifyContent: 'center' },
+  deniedContainer: { minHeight: 380, padding: 24, borderRadius: 20, borderWidth: 1, alignItems: 'center', justifyContent: 'center', gap: 16 },
+  deniedBadge: { width: 80, height: 80, borderRadius: 40, borderWidth: 1, alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
+  deniedIcon: { fontSize: 36 },
+  deniedBody: { fontSize: 14, lineHeight: 22, textAlign: 'center', paddingHorizontal: 16 },
+  simulatedBadge: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12, borderWidth: 1, marginBottom: 8 },
+  simulatedLabel: { fontSize: 12, lineHeight: 16, textAlign: 'center' },
+  simulatedInputContainer: { width: '100%', marginTop: 8 },
+  spacer: { flexGrow: 1, minHeight: 32 },
+  actions: { gap: 16 },
+});

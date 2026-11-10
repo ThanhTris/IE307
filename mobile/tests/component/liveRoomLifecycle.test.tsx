@@ -1,7 +1,7 @@
 import { act, useState } from 'react';
 import { render, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { HomeScreen } from '../../src/features/home/screens/HomeScreen';
-import { LiveLobbyScreen } from '../../src/features/rooms/screens/LiveLobbyScreen';
+import { LobbyScreen } from '../../src/features/rooms/screens/LobbyScreen';
 import { RoomRepositoryProvider, useRoomRepository } from '../../src/bootstrap/RoomRepositoryProvider';
 import { RequireActiveSession } from '../../src/features/auth/components/RequireActiveSession';
 import { CreateRoomScreen } from '../../src/features/rooms/screens/CreateRoomScreen';
@@ -75,6 +75,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
       }),
       createRoom: jest.fn().mockResolvedValue({ ok: true, data: { roomId: 'r1', code: 'ABC234', version: 1 } }),
       joinRoom: jest.fn().mockResolvedValue({ ok: true, data: { roomId: 'r1', code: 'ABC234', version: 1 } }),
+      previewJoin: jest.fn().mockResolvedValue({ ok: true, data: { code: 'ABC234', memberCount: 1, capacity: 20 } }),
       getRoomSnapshot: jest.fn().mockResolvedValue({ ok: true, data: createSampleSnapshot() }),
       previewFoodPool: jest.fn().mockResolvedValue({
         ok: true,
@@ -131,18 +132,16 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     if (route === 'create') return <RequireActiveSession onHome={() => setRoute('home')}>
       <CreateRoomScreen
         key={live.user?.id ?? 'missing'}
-        repository={repository}
-        isLive
-        initialDisplayName={live.user?.displayName}
+        displayName={live.user?.displayName}
         onBack={() => setRoute('home')}
-        onEntered={jest.fn()}
+        onOpenSetup={async () => true}
       />
     </RequireActiveSession>;
     if (route === 'join') return <RequireActiveSession onHome={() => setRoute('home')}>
       <JoinRoomScreen
         key={live.user?.id ?? 'missing'}
         repository={repository}
-        isLive
+        preview={code => repository.previewJoin(code)}
         initialDisplayName={live.user?.displayName}
         initialCode="ABC234"
         onBack={() => setRoute('home')}
@@ -155,7 +154,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
   async function renderLiveEntry(repository: LiveRoomRepository, initialRoute: 'home' | 'create' | 'join' = 'home') {
     let result!: ReturnType<typeof render>;
     await act(async () => {
-      result = render(<RoomRepositoryProvider repository={repository} mode="real"><LiveEntryHarness repository={repository} initialRoute={initialRoute} /></RoomRepositoryProvider>);
+      result = render(<RoomRepositoryProvider repository={repository}><LiveEntryHarness repository={repository} initialRoute={initialRoute} /></RoomRepositoryProvider>);
       await new Promise(resolve => setTimeout(resolve, 0));
     });
     return result;
@@ -176,7 +175,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     expect(fixture.auth.createGuest).not.toHaveBeenCalled();
   });
 
-  test('P1: fresh Home creates one guest only after confirmation and mounts discovery with that identity', async () => {
+  test('P1: fresh Home creates one guest only after confirmation and opens room setup with that identity', async () => {
     const user = userEvent.setup();
     const fixture = createSyntheticSessionManager(null);
     const client = createMockApiClient();
@@ -189,18 +188,12 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     await user.type(screen.getByLabelText('Tên khách'), 'Trang');
     await user.press(screen.getByRole('button', { name: 'Tạo phiên rồi chọn bối cảnh' }));
 
-    expect(await screen.findByRole('button', { name: 'Chợ Bến Thành' })).toBeOnTheScreen();
+    expect(await screen.findByRole('button', { name: 'Tiếp tục thiết lập' })).toBeOnTheScreen();
+    expect(screen.getByText('Chủ phòng: Trang')).toBeOnTheScreen();
     expect(fixture.auth.createGuest).toHaveBeenCalledTimes(1);
     expect(repository.getSessionSnapshot()).toMatchObject({ status: 'active', user: { displayName: 'Trang' } });
-    expect(client.getDiscoveryContext).toHaveBeenCalledTimes(1);
-    expect(fixture.auth.createGuest.mock.invocationCallOrder[0]).toBeLessThan(client.getDiscoveryContext.mock.invocationCallOrder[0]!);
-    expect(screen.getByLabelText('Tên của bạn (chủ phòng)').props.value).toBe('Trang');
-
-    await user.press(screen.getByRole('button', { name: 'Chợ Bến Thành' }));
-    await user.press(screen.getByRole('button', { name: 'Tôi xác nhận điểm ăn, buổi và giờ' }));
-    await user.press(screen.getByRole('button', { name: 'Tạo phòng' }));
-    await waitFor(() => expect(client.createRoom).toHaveBeenCalledTimes(1));
-    expect(client.createRoom).toHaveBeenCalledWith(expect.objectContaining({ displayName: 'Trang' }));
+    // The room itself is created by the setup step, never by the entry screen.
+    expect(client.createRoom).not.toHaveBeenCalled();
     expect(repository.getSessionSnapshot().user?.id).toBe(sampleUser.id);
   });
 
@@ -229,13 +222,12 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     expect(fixture.auth.createGuest).not.toHaveBeenCalled();
     await user.press(screen.getByRole('button', { name: 'Tạo phiên rồi nhập mã' }));
 
-    expect(await screen.findByLabelText('Mã phòng (6 ký tự)')).toBeOnTheScreen();
-    expect(screen.getByLabelText('Tên của bạn').props.value).toBe('Hà');
+    expect(await screen.findByRole('button', { name: 'Tiếp tục →' })).toBeOnTheScreen();
     expect(fixture.auth.createGuest).toHaveBeenCalledTimes(1);
     expect(repository.getSessionSnapshot()).toMatchObject({ status: 'active', user: { displayName: 'Hà' } });
     expect(client.joinRoom).not.toHaveBeenCalled();
-    await user.press(screen.getByRole('button', { name: 'Vào phòng →' }));
-    expect(screen.getByRole('button', { name: 'Xác nhận vào phòng' })).toBeOnTheScreen();
+    await user.press(screen.getByRole('button', { name: 'Tiếp tục →' }));
+    expect(await screen.findByRole('button', { name: 'Xác nhận vào phòng' })).toBeOnTheScreen();
     await user.press(screen.getByRole('button', { name: 'Xác nhận vào phòng' }));
     await waitFor(() => expect(client.joinRoom).toHaveBeenCalledWith(expect.objectContaining({ displayName: 'Hà', code: 'ABC234' })));
   });
@@ -262,7 +254,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     await user.press(screen.getByRole('button', { name: 'Xóa phiên cục bộ rồi thử lại' }));
     await waitFor(() => expect(repository.getSessionSnapshot()).toMatchObject({ status: 'empty', issue: 'no-session' }));
     await user.press(screen.getByRole('button', { name: 'Tạo phiên rồi chọn bối cảnh' }));
-    expect(await screen.findByRole('button', { name: 'Chợ Bến Thành' })).toBeOnTheScreen();
+    expect(await screen.findByRole('button', { name: 'Tiếp tục thiết lập' })).toBeOnTheScreen();
     expect(fixture.auth.createGuest).toHaveBeenCalledTimes(2);
   });
 
@@ -342,7 +334,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
   test.each([undefined, 'foreign-user-id'])('P1: live lobby does not impersonate the first member when current user is %s', async currentUserId => {
     const client = createMockApiClient({ getRoomSnapshot: jest.fn().mockResolvedValue({ ok: true, data: createSampleSnapshot() }) });
     await render(
-      <LiveLobbyScreen
+      <LobbyScreen
         repository={client}
         roomId="room_live_123"
         currentUserId={currentUserId}
@@ -382,7 +374,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     });
 
     await render(
-      <LiveLobbyScreen
+      <LobbyScreen
         repository={client}
         roomId="room_live_123"
         currentUserId={sampleUser.id}
@@ -417,7 +409,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     });
 
     await render(
-      <LiveLobbyScreen
+      <LobbyScreen
         repository={client}
         roomId="room_live_123"
         currentUserId={sampleUser.id}
@@ -446,7 +438,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     });
 
     await render(
-      <LiveLobbyScreen
+      <LobbyScreen
         repository={client}
         roomId="room_live_123"
         currentUserId={sampleUser.id}
@@ -482,15 +474,12 @@ describe('GM-25 Review Feedback Regression Suite', () => {
 
   test('P5: RoomRepositoryProvider throws when forcedMode=real and publicKey is missing', async () => {
     // Silence React console.error during expected throw
-    const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    await expect(
-      render(
-        <RoomRepositoryProvider mode="real" publicKey="">
-          <></>
-        </RoomRepositoryProvider>
-      )
-    ).rejects.toThrow(/EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY is required in real mode/);
-    spy.mockRestore();
+    await render(
+      <RoomRepositoryProvider publicKey="">
+        <></>
+      </RoomRepositoryProvider>
+    );
+    expect(screen.getByText('Chưa cấu hình máy chủ')).toBeOnTheScreen();
   });
 
   // --- Point 6: Pool eligibility blocks Start button ---
@@ -519,7 +508,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     });
 
     await render(
-      <LiveLobbyScreen
+      <LobbyScreen
         repository={client}
         roomId="room_live_123"
         currentUserId={sampleUser.id}

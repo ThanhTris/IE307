@@ -1,7 +1,7 @@
 /** Reviewer-only probes of PR 155 3b53d20. Synthetic transport, no DB/device evidence. */
 import { ApiClientImpl, type ApiTransport } from '../../src/data/api/client';
 import { createRoomRepository } from '../../src/features/rooms/services/roomRepository';
-import { createLiveDishSetupGateway } from '../../src/bootstrap/liveDishSetupGateway';
+import { createLiveDishSetupGateway } from '../../src/features/context/services/liveDishSetupGateway';
 import { emptyPreferences, type SetupDraft } from '../../src/features/context/services/dishSetup';
 import { FetchTransport } from '../../src/data/api/client/transport';
 

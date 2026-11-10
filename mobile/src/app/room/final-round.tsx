@@ -8,12 +8,11 @@ export default function FinalRoundRoute() {
   const router = useRouter();
   const { roomId } = useLocalSearchParams<{ roomId?: string }>();
   const live = useRoomRepository();
-  const isReal = live.mode === 'real';
-  const identityId = live.user?.id ?? (isReal ? 'unresolved' : 'mock');
+  const identityId = live.user?.id ?? 'unresolved';
 
   const repository = useMemo(() => {
-    return isReal ? createDurableVoteRepository({ roomRepository: live.repository }) : undefined;
-  }, [isReal, live.repository]);
+    return createDurableVoteRepository({ roomRepository: live.repository });
+  }, [live.repository]);
 
   return (
     <FinalRoundScreen
@@ -21,7 +20,6 @@ export default function FinalRoundRoute() {
       identityId={identityId}
       roomId={typeof roomId === 'string' ? roomId : undefined}
       repository={repository}
-      showScenarioPicker={!isReal}
       onFinish={result => {
         const isNoConsensus = (result as { status?: string })?.status === 'NO_CONSENSUS'
           || result?.matchTier === 'NO_CONSENSUS'

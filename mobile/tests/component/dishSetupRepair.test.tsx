@@ -1,5 +1,5 @@
 import { act, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react-native';
-import { createDishSetupPreview } from '../../src/bootstrap/dishSetupPreview';
+import { createDishSetupPreview } from '../fixtures/setup/dishSetupPreview';
 import { emptyPreferences, type SetupRoom } from '../../src/features/context/services/dishSetup';
 import { DishSetupFlow } from '../../src/features/context/screens/DishSetupFlow';
 import { useDishSetupFlow } from '../../src/features/context/hooks/useDishSetupFlow';
