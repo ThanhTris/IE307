@@ -1,0 +1,356 @@
+{
+  "sourceRevision": "8d91f2ce169f4ff03d6594373d70f3479ee1947d",
+  "migrations": [
+    {
+      "file": "0001_core_schema.sql",
+      "version": "0001",
+      "sha256": "6733e28f282f600e627e675dccede3afef1efd37cf4a7cfe8d94af4cd02d30f5"
+    },
+    {
+      "file": "0002_food_import_receipts.sql",
+      "version": "0002",
+      "sha256": "eb80acba1f69bfb68b014a1ab5807e42d65db940a36d201f28db88172157f55e"
+    },
+    {
+      "file": "0003_food_provenance_description.sql",
+      "version": "0003",
+      "sha256": "8972c1dfa5e07a2350e644a7e79ea36cc7f9208e0a89371cbe1bdfdb52d6cb16"
+    },
+    {
+      "file": "0004_access_policies.sql",
+      "version": "0004",
+      "sha256": "508e9572ce50464d07a8ea1e19dc41ff7ba26cb2d0485aa59df9ac1422440dfb"
+    },
+    {
+      "file": "0005_gm18_discovery_rpc.sql",
+      "version": "0005",
+      "sha256": "b81e072da7ef75846615738905650ae5a337e32f5d678f843c9404e7f54e3307"
+    },
+    {
+      "file": "0018_food_eligibility.sql",
+      "version": "0018",
+      "sha256": "e242876842e0c8decf645130b56a69143146ff942a78641f504c2883f3c86334"
+    },
+    {
+      "file": "0019_room_lifecycle.sql",
+      "version": "0019",
+      "sha256": "ed76f679baa10bbfd4234e2be88f408ef292162f92efceac16217aa554f50926"
+    },
+    {
+      "file": "0021_history.sql",
+      "version": "0021",
+      "sha256": "9be964cc6c8b405f578e7f2528268f628266e7b121b96ce958244e20a116217e"
+    },
+    {
+      "file": "0022_social.sql",
+      "version": "0022",
+      "sha256": "bede55e7a0c12a3dfce3d03f3e61121bd4611b73c8b8656ec0785a3c55097f54"
+    },
+    {
+      "file": "0023_finalize.sql",
+      "version": "0023",
+      "sha256": "aff45864e57d634ced4bce6e3ce1997f439f90b2c974cc7f601d71f70bb3fea8"
+    },
+    {
+      "file": "0024_history_integration.sql",
+      "version": "0024",
+      "sha256": "48d8662cd1e4c70a7ef6147efb517bcb351365fc6e1f90ac49e4defa3c868ad9"
+    },
+    {
+      "file": "0025_notifications.sql",
+      "version": "0025",
+      "sha256": "a1f8bab1b7853c52fb82e97afef470634b4776b75ae8a000bba2e24796f81ba1"
+    },
+    {
+      "file": "0026_dish_session_policy.sql",
+      "version": "0026",
+      "sha256": "24fba6d428e283bef7edd46d040b7e89c7ce2953c9cb7a4e04cb86a7dd682804"
+    },
+    {
+      "file": "0027_dish_session_v4.sql",
+      "version": "0027",
+      "sha256": "504936d84652d92dc322e63160f5d435dffe5c466d38807220040480e621114c"
+    },
+    {
+      "file": "0028_dish_v4_top_three_cutoff.sql",
+      "version": "0028",
+      "sha256": "373c7d28d2ffae3de5510a4d5ebba0d5bd756feb05db5b1e03883ae85feccb55"
+    },
+    {
+      "file": "0029_dish_v4_history_consent.sql",
+      "version": "0029",
+      "sha256": "9a6545904cbaa80e7461c3077a2c3f4c1bf6bc1362e364b566c0ce4012fe5533"
+    },
+    {
+      "file": "0030_history_consent_search_path.sql",
+      "version": "0030",
+      "sha256": "c50737fa0dad65a3eebf2ed8423b3313f508b4d754fe4626d3ff300af510996e"
+    },
+    {
+      "file": "0031_history_consent_policy_isolation.sql",
+      "version": "0031",
+      "sha256": "75eefa6f4975fa88a4fede0cc934aaed216144b1ca51efe3e31ea86a06f789e8"
+    },
+    {
+      "file": "0032_canonical_result_storage.sql",
+      "version": "0032",
+      "sha256": "8f1184820fdcf90909af2db7b9845706fdee11e2ccebd3f595b8e3ebc4214330"
+    },
+    {
+      "file": "0033_gm18_dish_catalogue.sql",
+      "version": "0033",
+      "sha256": "d0e761ff652f8cecf861050c6b68107d6e4afc88e81d00932c47a248e0754669"
+    },
+    {
+      "file": "0034_gm19_settings_stability.sql",
+      "version": "0034",
+      "sha256": "87eb94f89f1669d6f94cf01946bffbdeaa2cd9c35812aa2be81a0282ac8db3d3"
+    },
+    {
+      "file": "0035_gm20_canonical_writer.sql",
+      "version": "0035",
+      "sha256": "cd13f7ba89f0c04e9dfb8f89c6ffc015fe9e41a3e19ddc9bd04b77d33637d33c"
+    },
+    {
+      "file": "0036_gm21_canonical_history.sql",
+      "version": "0036",
+      "sha256": "793e7361b91f5d9e95b613a565fd1591a82b5e415996acabe3e83dab9430c882"
+    },
+    {
+      "file": "0037_gm22_invitation_admission.sql",
+      "version": "0037",
+      "sha256": "39176937e61375c5d74a45986c34651628ab81901938fd4c9bc0c6b96dd78088"
+    },
+    {
+      "file": "0038_gm23_canonical_notifications.sql",
+      "version": "0038",
+      "sha256": "5e1bf5fa94e9756a42a4ac830d1287e8f2645bf2e6e03d8a1d14804a074f8b59"
+    },
+    {
+      "file": "0039_history_consent_read.sql",
+      "version": "0039",
+      "sha256": "f88daa80f2a5fea7bd7fb92f6d0ac6acdc5727e41602fb60d9204386e0a46d93"
+    },
+    {
+      "file": "0040_v4_preference_validation.sql",
+      "version": "0040",
+      "sha256": "c9ca00a8d47180fdb9d84c9a447e75d15e1664851ad89a253fad04aabdbc157f"
+    },
+    {
+      "file": "0041_gm28_inbox_read_all.sql",
+      "version": "0041",
+      "sha256": "435d3e4c7aa9a1153a2c3adb4500615780420f2273c30136584c3d755bb12657"
+    }
+  ],
+  "schemaVersions": [
+    "0.1.0",
+    "0.10.0",
+    "0.11.0",
+    "0.11.1",
+    "0.12.0",
+    "0.13.0",
+    "0.14.0",
+    "0.15.0",
+    "0.16.0",
+    "0.16.1",
+    "0.17.0",
+    "0.2.0",
+    "0.3.0",
+    "0.4.0",
+    "0.5.0",
+    "0.6.0",
+    "0.7.0",
+    "0.8.0",
+    "0.9.0",
+    "0.9.1",
+    "0.9.2"
+  ],
+  "catalogues": {
+    "real": {
+      "releaseId": "dish-catalogue-v1:1.1.0",
+      "sourceSha256": "776b1e4998d0b170b51a7c39a4ead74461bdfd721f167dafddf7f072bf117a2f",
+      "count": 39,
+      "fixtureOnly": false
+    },
+    "synthetic": {
+      "releaseId": "dish-catalogue-v1:qa-gm03-synthetic20-v1",
+      "sourceSha256": "ecf56b267f0ae25f6480467d184efe4c14ea7bb4a7bb593d97fe5a58957af71b",
+      "count": 20,
+      "fixtureOnly": true
+    }
+  },
+  "credentialsInEvidence": false,
+  "outboxTestSha256": "57ecd0ad462b625e9d6626a123bbc34619eefcd696b83174b9ab6c6c68e96520",
+  "runs": [
+    {
+      "runId": "gm32-legacy-1109",
+      "group": "baseline",
+      "result": "Pass",
+      "manifestSealSha256": "9bcde9a00ddec9df0e9c9debc78f1f77d4d8d2245c077c4c7de86c18ed7ac7ea",
+      "runnerSha256": "e88610d87ce7ca777b19257a74655d7ee18c244c9ed3bcd3addee7bd6e4ea6db",
+      "functionInventorySha256": "b9496db2671484c02e7d81dbfab910f32c93e017225e487cef44db01ec7e9550",
+      "stages": [
+        {
+          "stage": "real dish catalogue and v3 continuity",
+          "owner": "GM-40",
+          "result": "Pass",
+          "assertionCount": 100,
+          "producerReportSha256": "5c1261ff4ecb314d7f2e62e98d0e9844ec5aae657bd003919b39867395d7749a"
+        },
+        {
+          "stage": "GoTrue and baseline B wire/settings/admission",
+          "owner": "GM-03/GM-07/GM-19",
+          "result": "Pass",
+          "auth": {
+            "assertionCount": 7,
+            "producerReportSha256": "bd38e264478a326c4c233e193856cdb0a79ff135f71a1f6188bc462747c79a68"
+          },
+          "wireB": {
+            "assertionCount": 170,
+            "producerReportSha256": "f3c514e113eee64fddcbfd22a5dec2385f02e8eddf9064e785a2a3130f2f9640"
+          }
+        },
+        {
+          "stage": "legacy eligibility SQL/domain and v2 ACL",
+          "owner": "GM-17/GM-18",
+          "result": "Pass",
+          "assertionCount": 142,
+          "legacyDraftSha256": "0b45ecbd2c8b8fdd237aeaa8f2bc66beef11eceebbfad8a313f06779d282ed02",
+          "sourceSha256": "0379a4fbca2b8face92826ad5adcd5703684a96eb40551e6c126f230268768bf",
+          "dataModes": [
+            "synthetic eligibility vectors",
+            "real draft rollback probe",
+            "synthetic v2 room"
+          ]
+        }
+      ],
+      "cleaned": [
+        "worker",
+        "supabase",
+        "network"
+      ]
+    },
+    {
+      "runId": "gm32-canon-1109",
+      "group": "canonical",
+      "result": "Pass",
+      "manifestSealSha256": "db7b21641e63dcba5afa337f49d335b1462619ac16c89898491acd3abdc0efdf",
+      "runnerSha256": "0ee70a9b6d0cf709aae757c12b0979fd8add84d9f3fea628c21f01890f11f124",
+      "functionInventorySha256": "b9496db2671484c02e7d81dbfab910f32c93e017225e487cef44db01ec7e9550",
+      "stages": [
+        {
+          "stage": "independent SQL and TypeScript decision vectors",
+          "owner": "GM-15/GM-20",
+          "result": "Pass",
+          "assertionCount": 102,
+          "fixtureSha256": "7ce419376c4aa84e8c95d16841b734424d6d85ff7b0dce50c73986e01847da55",
+          "typescriptVectorSuite": "Pass"
+        },
+        {
+          "stage": "canonical writer and races",
+          "owner": "GM-20",
+          "result": "Pass",
+          "assertionCount": 188,
+          "producerReportSha256": "f308b20f24af33a848953a623b87a626041abb11717ed9efa51551a9337ecaa8",
+          "sourceSha256": "ebdb52507f84e6a711767d4d0ae2d81d20d4f9b694c57f30b8922bcf11438668"
+        }
+      ],
+      "cleaned": [
+        "worker",
+        "supabase",
+        "network"
+      ]
+    },
+    {
+      "runId": "gm32-boundaries-full-1109",
+      "group": "boundaries",
+      "result": "Pass",
+      "manifestSealSha256": "18bc8da33bfedeed5b454ff202b58e0c56a961ee8c6755337d0dd64c57574310",
+      "runnerSha256": "e88610d87ce7ca777b19257a74655d7ee18c244c9ed3bcd3addee7bd6e4ea6db",
+      "functionInventorySha256": "b9496db2671484c02e7d81dbfab910f32c93e017225e487cef44db01ec7e9550",
+      "stages": [
+        {
+          "stage": "R2 survivor, majority and timeout boundaries",
+          "owner": "GM-19/GM-20",
+          "result": "Pass",
+          "assertionCount": 279,
+          "sourceSha256": "5b8915be4f1b1db4ce8093009a237018bf4cb6b7208ad7b0856a0c5549d80a5a"
+        }
+      ],
+      "cleaned": [
+        "worker",
+        "supabase",
+        "network"
+      ]
+    },
+    {
+      "runId": "gm32-hist-1109",
+      "group": "history",
+      "result": "Pass",
+      "manifestSealSha256": "8cdf934640d763e932b11fe531daf9ceb7f5f4fbede026d26ad50f5b92b8b8da",
+      "runnerSha256": "b59dfe377b3185726a82b41f750eb674171b369e84fbc14d0a18d699476fead4",
+      "functionInventorySha256": "b9496db2671484c02e7d81dbfab910f32c93e017225e487cef44db01ec7e9550",
+      "stages": [
+        {
+          "stage": "consent, history and retention",
+          "owner": "GM-21",
+          "result": "Pass",
+          "assertionCount": 89,
+          "producerReportSha256": "f0c66bdb0add3d6789dda75d904662722ec212fcb714a89d444eab5ade489c56",
+          "sourceSha256": "3f81cc36ed60be9f88834e8040851317d4e45915cd267a58140502838895618e"
+        }
+      ],
+      "cleaned": [
+        "worker",
+        "supabase",
+        "network"
+      ]
+    },
+    {
+      "runId": "gm32-notify-1109",
+      "group": "notifications",
+      "result": "Pass",
+      "manifestSealSha256": "7814e18cb845fa2a720fdaba5bcc27bd38aae7dbb7f4f6a4c03f927479a05ab3",
+      "runnerSha256": "b59dfe377b3185726a82b41f750eb674171b369e84fbc14d0a18d699476fead4",
+      "functionInventorySha256": "b9496db2671484c02e7d81dbfab910f32c93e017225e487cef44db01ec7e9550",
+      "stages": [
+        {
+          "stage": "event, inbox and fake-provider sender",
+          "owner": "GM-23",
+          "result": "Pass",
+          "assertionCount": 151,
+          "producerReportSha256": "705fc80a1d8df6e43cdbbc8abdc8c182833b8ed9cf8b046d3841edc392fb6f51",
+          "sourceSha256": "e558d260dc0807a0c48baa04e27a7dcd50f1bcb134705dd1b9b45fd422fe0302"
+        }
+      ],
+      "cleaned": [
+        "worker",
+        "supabase",
+        "network"
+      ]
+    },
+    {
+      "runId": "gm32-outbox-final-1109",
+      "group": "outbox",
+      "result": "Pass",
+      "manifestSealSha256": "a530222322ec964bd89906163ee85cf484be948ce066568958c3a1a97ad8ccda",
+      "runnerSha256": "ca3173f4efbbeb562b66eb1311cb965710faa84bcb0de8b689ce113566c9f6f8",
+      "functionInventorySha256": "b9496db2671484c02e7d81dbfab910f32c93e017225e487cef44db01ec7e9550",
+      "stages": [
+        {
+          "stage": "GM-31 replay and live canonical ACK reconciliation",
+          "owner": "GM-31",
+          "result": "Pass",
+          "assertionCount": 19,
+          "nativeStore": "Node SQLite and in-memory secure store",
+          "liveHttp": true
+        }
+      ],
+      "cleaned": [
+        "worker",
+        "supabase",
+        "network"
+      ]
+    }
+  ]
+}

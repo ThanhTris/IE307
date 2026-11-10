@@ -1,5 +1,7 @@
 # GM-32 — QA: regression API, data, quyền và race (2026-11-09)
 
+Current combined candidate has separate [manifest regression checks](manifest-regression/CHECKS.md) and [reproduction commands](HANDOFF.md). PR #163's settings suite and prior results are preserved below.
+
 Date: 2026-11-09. Baseline: `origin/main` at `bc5a0629c0d1050ef3256ec9fa73bd669019fb84` (gồm PR #161, #159, #127, #158).
 
 | Nhóm kiểm thử | Kỳ vọng | Thực tế | Kết quả |

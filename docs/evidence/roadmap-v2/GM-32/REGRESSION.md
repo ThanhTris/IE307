@@ -1,5 +1,7 @@
 # GM-32 — QA: regression API, data, quyền và race (2026-11-09)
 
+Current combined candidate has separate [manifest regression checks](manifest-regression/CHECKS.md) and [reproduction commands](HANDOFF.md). PR #163's settings suite and prior results are preserved below.
+
 Hồ sơ bàn giao và báo cáo hồi quy toàn diện cho task GM-32 sau khi hợp nhất chuỗi UI–API (GM-27..31) trên `main` (`bc5a062`).
 
 ## 1. Đầu vào & Snapshot tích hợp
