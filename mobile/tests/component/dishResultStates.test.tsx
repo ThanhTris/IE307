@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react-native';
-import { dishResultFixture, scoredResultFixture } from '../../src/bootstrap/dishResultFixtures';
+import { dishResultFixture, scoredResultFixture } from '../fixtures/result/dishResultFixtures';
 import { DishResultFlow } from '../../src/features/result/screens/DishResultFlow';
 
 const actions = () => ({ onHome: jest.fn(), onNewSession: jest.fn(), onRetryResult: jest.fn() });

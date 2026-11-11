@@ -1,29 +1,18 @@
 /**
- * GM-07 — Public API module exports and factory helper.
+ * Public API module exports and the factory for the real client.
  * Spec: docs/architecture/API_CONTRACT.md
+ * Test doubles live in tests/mocks/api and are never shipped in the app bundle.
  */
 
 import { ApiClient } from './contracts';
 import { ApiClientImpl, ClientConfig } from './client';
-import { MockApiClient, MockConfig } from './mock';
 
 export * from './contracts';
 export * from './client';
-export * from './mock';
 
-export type ApiMode = 'real' | 'mock';
+export type ApiMode = 'real';
 
-/**
- * Factory helper to construct the appropriate ApiClient instance.
- * Callers must choose real or mock explicitly so a production client cannot
- * silently receive a mock adapter when configuration is omitted.
- */
-export function createApiClient(mode: ApiMode, options?: ClientConfig & MockConfig): ApiClient {
-  if (mode === 'real') {
-    return new ApiClientImpl(options);
-  }
-  if (mode === 'mock') {
-    return new MockApiClient(options);
-  }
-  throw new Error('API mode must be explicitly real or mock');
+export function createApiClient(mode: ApiMode, options?: ClientConfig): ApiClient {
+  if (mode !== 'real') throw new Error('Only the real API client is available in the app');
+  return new ApiClientImpl(options);
 }

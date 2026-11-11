@@ -53,7 +53,7 @@ describe('GM-12 — VoteScreen (Vòng 1 Flashcard Vote)', () => {
   test('Ba nút WANT, OK, NO luôn hiện và bắt đầu ở trạng thái UNSET', async () => {
     await render(<VoteScreen pool={TEST_POOL} simulateDelayMs={0} />);
 
-    expect(screen.getByText('GM-12 · UI Chọn món Vòng 1 (Flashcard Vote)')).toBeOnTheScreen();
+    expect(screen.queryByText(/GM-12/)).toBeNull();
     expect(screen.getByText('Phở bò tái nạm')).toBeOnTheScreen();
     expect(screen.getByText('Cơm tấm sườn bì chả')).toBeOnTheScreen();
 
@@ -256,10 +256,10 @@ describe('GM-12 — VoteScreen (Vòng 1 Flashcard Vote)', () => {
     });
 
     // Countdown label displayed
-    expect(screen.getByText(/Hạn 60s/)).toBeOnTheScreen();
+    expect(screen.getByText(/Nhóm có tối đa 60 giây/)).toBeOnTheScreen();
 
     // Với mặc định 2/3 thành viên (> 50%), Host có thể bấm Chốt ngay
-    const earlyFinishBtn = screen.getByRole('button', { name: /Chốt ngay · Kết thúc chờ sớm/ });
+    const earlyFinishBtn = screen.getByRole('button', { name: /^Chốt ngay$/ });
     expect(Boolean(earlyFinishBtn.props.accessibilityState?.disabled)).toBe(false);
 
     // Chuyển sang mô phỏng 1/3 (chưa quá nửa: 1 <= 3/2 = 1.5)
@@ -267,13 +267,13 @@ describe('GM-12 — VoteScreen (Vòng 1 Flashcard Vote)', () => {
     await user.press(btn1Of3);
 
     // Nút Chốt ngay bị disabled do không đủ đa số
-    const disabledEarlyFinishBtn = screen.getByRole('button', { name: /Chốt ngay \(1\/3 chưa quá nửa\)/ });
+    const disabledEarlyFinishBtn = screen.getByRole('button', { name: /^Chốt ngay \(1\/3\)$/ });
     expect(disabledEarlyFinishBtn.props.accessibilityState.disabled).toBe(true);
 
     // Chuyển lại 2/3 (đủ đa số: 2 > 1.5)
     const btn2Of3 = screen.getByRole('button', { name: 'Chuyển tiến độ 2/3 ACK' });
     await user.press(btn2Of3);
-    const enabledBtn = screen.getByRole('button', { name: /Chốt ngay · Kết thúc chờ sớm/ });
+    const enabledBtn = screen.getByRole('button', { name: /^Chốt ngay$/ });
     expect(Boolean(enabledBtn.props.accessibilityState?.disabled)).toBe(false);
 
     // Bấm Chốt ngay chuyển sang yêu cầu Vòng 2

@@ -10,7 +10,7 @@ export function RequireActiveSession({ children, onHome }: { children: ReactNode
   const { colors } = useShellTheme();
   const [busy, setBusy] = useState(false);
 
-  if (live.mode !== 'real' || (live.status === 'active' && live.user)) return children;
+  if (live.status === 'active' && live.user) return children;
 
   const retryRestore = async () => {
     setBusy(true);

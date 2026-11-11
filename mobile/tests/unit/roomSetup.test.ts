@@ -1,4 +1,5 @@
-import { MOCK_DISHES } from '../../src/data/api';
+
+import { MOCK_DISHES } from '../mocks/api/mockApiClient';
 import {
   currentServerTime,
   dishDistance,

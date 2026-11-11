@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, within } from '@testing-library/react-native';
-import { DishResultPreview } from '../../src/bootstrap/DishResultPreview';
+import { DishResultPreview } from '../fixtures/result/DishResultPreview';
 import { completeNativeAnimations } from '../helpers/completeNativeAnimations';
 
 beforeEach(completeNativeAnimations);

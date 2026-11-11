@@ -1,5 +1,5 @@
 /** Synthetic cross-contract assertions, not RPC/auth/finalize evidence. */
-import { MockApiClient } from '../../src/data/api/mock';
+import { MockApiClient } from '../mocks/api/mockApiClient';
 import type { BallotVoteItem, RoomResult } from '../../src/data/api/contracts';
 import { isRoomSnapshot } from '../../src/data/api/responseGuards';
 import { decideWithSeed } from '../../src/domain/decision';

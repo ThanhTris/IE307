@@ -1,7 +1,5 @@
-import {
-  ApiClient, ApiClientImpl, ApiTransport, WriteResult, createApiClient, MockApiClient,
-  CreateRoomRequest, SubmitBallotRequest,
-} from '../../src/data/api';
+import { MockApiClient } from '../mocks/api/mockApiClient';
+import { ApiClient, ApiClientImpl, ApiTransport, WriteResult, createApiClient, CreateRoomRequest, SubmitBallotRequest } from '../../src/data/api';
 
 const timestamp = '2026-10-11T12:00:00Z';
 const roomRequest: CreateRoomRequest = {

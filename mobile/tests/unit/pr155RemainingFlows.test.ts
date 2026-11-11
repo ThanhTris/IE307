@@ -1,6 +1,6 @@
 import { ApiClientImpl, type ApiTransport } from '../../src/data/api/client';
 import { createRoomRepository } from '../../src/features/rooms/services/roomRepository';
-import { createLiveDishSetupGateway } from '../../src/bootstrap/liveDishSetupGateway';
+import { createLiveDishSetupGateway } from '../../src/features/context/services/liveDishSetupGateway';
 import { emptyPreferences, type SetupDraft } from '../../src/features/context/services/dishSetup';
 
 // Canonical snapshot fixture matching dish-session-v4/roadmap-v2/GM-07.B-supplement

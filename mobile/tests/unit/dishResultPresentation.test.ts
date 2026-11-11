@@ -1,4 +1,4 @@
-import { dishResultFixture, resultCaseOptions, scoredResultFixture } from '../../src/bootstrap/dishResultFixtures';
+import { dishResultFixture, resultCaseOptions, scoredResultFixture } from '../fixtures/result/dishResultFixtures';
 import { resultPrice, validScoredResult } from '../../src/features/result/services/resultPresentation';
 
 test.each(resultCaseOptions.filter(item => item.id !== 'legacy' && item.id !== 'invalid').map(item => item.id))('fixture %s is a valid immutable result projection', id => {

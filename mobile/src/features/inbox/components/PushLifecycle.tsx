@@ -2,15 +2,17 @@ import { useEffect } from 'react';
 import { useRouter } from 'expo-router';
 import { useRoomRepository } from '../../../bootstrap/RoomRepositoryProvider';
 import { createNativePushService } from '../services/nativePush';
-import { expoPushDriver } from '../services/expoPushDriver';
+import { getActivePushDriver } from '../services/expoPushDriver';
 
-/** Refetches the authenticated inbox before routing; notification payloads are ignored. */
+/**
+ * Mounted once in the root layout. When the user taps a push notification, refresh the
+ * session and inbox, then open the in-app Inbox. Notification payloads are never trusted.
+ */
 export function PushLifecycle() {
   const router = useRouter();
   const session = useRoomRepository();
 
   useEffect(() => {
-    if (session.mode !== 'real') return;
     const repository = session.repository;
     const userId = repository.getCurrentUser()?.id;
     const identityRevision = (repository as typeof repository & { getIdentityRevision?: () => number }).getIdentityRevision?.() ?? 0;
@@ -21,7 +23,7 @@ export function PushLifecycle() {
       && repository.getCurrentUser()?.id === userId
       && ((repository as typeof repository & { getIdentityRevision?: () => number }).getIdentityRevision?.() ?? 0) === identityRevision;
     const service = createNativePushService({
-      driver: expoPushDriver,
+      driver: getActivePushDriver(),
       client: repository.getApiClient(),
       identityId: userId,
       isIdentityCurrent,
@@ -34,7 +36,7 @@ export function PushLifecycle() {
     });
     const unsubscribe = service.subscribe();
     return () => { active = false; unsubscribe(); };
-  }, [router, session.mode, session.repository, session.user?.id, session.status]);
+  }, [router, session.repository, session.user?.id, session.status]);
 
   return null;
 }

@@ -12,11 +12,10 @@ type Props = {
   onSignUp: () => void;
   disabled?: boolean;
   notice?: ReactNode;
-  isMock?: boolean;
 };
 
 /** Figma 298:2309. System bars belong to Android, not to the screen artwork. */
-export function WelcomeScreen({ onGuest, onSignIn, onSignUp, disabled, notice, isMock }: Props) {
+export function WelcomeScreen({ onGuest, onSignIn, onSignUp, disabled, notice }: Props) {
   const { colors, dark } = useShellTheme();
   const heroColor = dark ? colors.primary : colors.green;
   const { textStyle } = useAppFonts();
@@ -40,7 +39,6 @@ export function WelcomeScreen({ onGuest, onSignIn, onSignUp, disabled, notice, i
         <Text style={[styles.subtitle, { color: colors.text }, textStyle(400)]}>Tạo phòng, cùng chọn, rồi chốt món.</Text>
       </View>
       <View style={[styles.panel, { backgroundColor: colors.background, paddingBottom: Math.max(insets.bottom, spacing.xxl) }]}>
-        {isMock ? <Text style={[styles.mockLabel, { color: colors.text }, textStyle(500)]}>Mô phỏng · GM-09 · dữ liệu mẫu</Text> : null}
         {notice}
         <AppButton label="Đăng nhập" onPress={onSignIn} style={styles.accountButton} textStyle={{ fontSize: 17, lineHeight: 24, ...textStyle(600) }} colors={colors} />
         <AppButton label="Đăng ký" variant="secondary" onPress={onSignUp} style={styles.accountButton} textStyle={{ fontSize: 17, lineHeight: 24, ...textStyle(600) }} colors={colors} />

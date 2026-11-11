@@ -1,7 +1,7 @@
 import { SetupShortageDialog } from '../../src/features/context/components/SetupShortageDialog';
 import { act, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react-native';
 import { DishSetupFlow } from '../../src/features/context/screens/DishSetupFlow';
-import { createDishSetupPreview, type DishSetupScenario } from '../../src/bootstrap/dishSetupPreview';
+import { createDishSetupPreview, type DishSetupScenario } from '../fixtures/setup/dishSetupPreview';
 import type { DishSetupGateway } from '../../src/features/context/services/dishSetupGateway';
 import { useDishSetupFlow } from '../../src/features/context/hooks/useDishSetupFlow';
 
@@ -63,7 +63,7 @@ test('read failure after ACK retries only read and skip preserves consent', asyn
   await fireEvent.press(screen.getByRole('checkbox', { name: 'Cho phép lưu lịch sử cá nhân cho tài khoản này' }));
   await fireEvent.press(screen.getByRole('button', { name: 'Cơm' }));
   await fireEvent.press(screen.getByRole('button', { name: 'Bỏ qua' }));
-  await screen.findByText('Đã hoàn tất thiết lập mẫu');
+  await screen.findByText('Đã hoàn tất thiết lập');
   expect((await port.read()).ownRoomPreferences).toMatchObject({ categoryIds: [], historyConsent: true });
 });
 test('save rejection retains own choices for retry; account defaults stay unchanged', async () => {
@@ -74,7 +74,7 @@ test('save rejection retains own choices for retry; account defaults stay unchan
   await screen.findByText('Chưa lưu được thay đổi. Đã giữ nháp; hãy thử lại.');
   expect(screen.getByRole('button', { name: 'Cơm' }).props.accessibilityState.selected).toBe(true);
   await fireEvent.press(screen.getByRole('button', { name: 'Vào phòng chờ →' }));
-  await screen.findByText('Đã hoàn tất thiết lập mẫu');
+  await screen.findByText('Đã hoàn tất thiết lập');
   expect((await port.read()).accountDefaults.categoryIds).toEqual([]);
 });
 test('stale must refresh before retry', async () => {

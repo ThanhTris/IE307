@@ -1,17 +1,15 @@
 import { useMemo } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { DishResultEntry } from '../../bootstrap/DishResultEntry';
+import { DishResultEntry } from '../../features/result/screens/DishResultEntry';
 import type { PlacesConfig } from '../../features/result/services/placesRepository';
 
 export default function ResultRoute() {
   const router = useRouter();
   const params = useLocalSearchParams<{
-    legacy?: string;
     roomId?: string;
     resultId?: string;
     simulatedPlaces?: string;
   }>();
-  const legacy = params.legacy === '1';
   const roomId = typeof params.roomId === 'string' && params.roomId.trim() ? params.roomId.trim() : undefined;
   const resultId = typeof params.resultId === 'string' && params.resultId.trim() ? params.resultId.trim() : undefined;
 
@@ -27,7 +25,6 @@ export default function ResultRoute() {
 
   const buildNoConsensusUrl = () => {
     const q = new URLSearchParams();
-    if (legacy) q.set('legacy', '1');
     if (roomId) q.set('roomId', roomId);
     if (resultId) q.set('resultId', resultId);
     const qs = q.toString();
@@ -36,13 +33,11 @@ export default function ResultRoute() {
 
   return (
     <DishResultEntry
-      legacy={legacy}
       roomId={roomId}
       resultId={resultId}
       placesConfig={placesConfig}
       onHome={() => router.dismissTo('/')}
-      onNewSession={() => router.replace('/room/create-entry')}
-      onLegacyNewSession={() => router.replace('/room/create')}
+      onNewSession={() => router.replace('/room/create')}
       onOtherScreen={() => router.replace(buildNoConsensusUrl())}
     />
   );

@@ -12,7 +12,7 @@ export default function InboxResultRoute() {
       roomId={roomId}
       resultId={resultId}
       onHome={() => router.replace('/')}
-      onNewSession={() => router.replace('/room/create-entry')}
+      onNewSession={() => router.replace('/room/create')}
     />
   </RequireActiveSession>;
 }
