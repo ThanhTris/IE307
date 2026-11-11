@@ -1,9 +1,9 @@
 import { render, screen, userEvent } from '@testing-library/react-native';
-import { LiveFriendsScreen } from '../../src/features/friends/screens/LiveFriendsScreen';
+import { FriendsScreen } from '../../src/features/friends/screens/FriendsScreen';
 import type { SocialRepository } from '../../src/features/friends/services/socialRepository';
-import { LiveHistoryScreen } from '../../src/features/history/screens/LiveHistoryScreen';
+import { HistoryScreen } from '../../src/features/history/screens/HistoryScreen';
 import type { HistoryRepository } from '../../src/features/history/services/historyRepository';
-import { LiveInboxScreen } from '../../src/features/inbox/screens/LiveInboxScreen';
+import { InboxScreen } from '../../src/features/inbox/screens/InboxScreen';
 import type { InboxRepository } from '../../src/features/inbox/services/inboxRepository';
 
 // UI adapter fixtures. Live Auth/REST checks run separately on owned QA.
@@ -24,14 +24,14 @@ test('G01 friends distinguishes network failure, no friends and no search match'
     listFriends, invite: jest.fn(), accept: jest.fn(), reject: jest.fn(), removeFriend: jest.fn(),
   };
   const user = userEvent.setup();
-  const view = await render(<LiveFriendsScreen repository={repository} onHome={jest.fn()} onNavigate={jest.fn()} />);
+  const view = await render(<FriendsScreen repository={repository} onHome={jest.fn()} onNavigate={jest.fn()} />);
   expect(await screen.findByText('Chưa tải được bạn bè')).toBeOnTheScreen();
   expect(screen.queryByText('Chưa có bạn bè')).toBeNull();
   await user.press(screen.getByRole('button', { name: 'Thử lại' }));
   expect(await screen.findByText('Chưa có bạn bè')).toBeOnTheScreen();
   await view.unmount();
 
-  await render(<LiveFriendsScreen repository={repository} onHome={jest.fn()} onNavigate={jest.fn()} />);
+  await render(<FriendsScreen repository={repository} onHome={jest.fn()} onNavigate={jest.fn()} />);
   expect(await screen.findByText('Minh')).toBeOnTheScreen();
   await user.type(screen.getByPlaceholderText('Tìm trong danh sách bạn bè'), 'khong-match');
   expect(screen.getByText('Không tìm thấy bạn')).toBeOnTheScreen();
@@ -46,7 +46,7 @@ test('G02 inbox distinguishes a failed request from an empty authenticated page'
     acceptRoom: jest.fn(), rejectRoom: jest.fn(), resolveAcceptedRoom: jest.fn(), resolveRoomResult: jest.fn(),
   };
   const navigate = jest.fn();
-  await render(<LiveInboxScreen repository={repository} displayName="QA guest" onHome={jest.fn()} onNavigate={navigate} />);
+  await render(<InboxScreen repository={repository} displayName="QA guest" onHome={jest.fn()} onNavigate={navigate} />);
   expect(await screen.findByText('Chưa tải được thông báo')).toBeOnTheScreen();
   expect(screen.queryByText('Chưa có thông báo')).toBeNull();
   await userEvent.setup().press(screen.getByRole('button', { name: 'Thử lại' }));
@@ -63,7 +63,7 @@ test('G03 history without a cache reports offline failure and recovers to an emp
     fetch, cached: () => undefined, cachedDurable: async () => undefined,
     updateConsent: jest.fn(), delete: jest.fn(), invalidate: jest.fn(),
   };
-  await render(<LiveHistoryScreen repository={repository} onHome={jest.fn()} onNavigate={jest.fn()} />);
+  await render(<HistoryScreen repository={repository} onHome={jest.fn()} onNavigate={jest.fn()} />);
   expect(await screen.findByText('Chưa tải được lịch sử')).toBeOnTheScreen();
   expect(screen.queryByText('Chưa có dữ liệu đã lưu')).toBeNull();
   await userEvent.setup().press(screen.getByRole('button', { name: 'Thử lại' }));
