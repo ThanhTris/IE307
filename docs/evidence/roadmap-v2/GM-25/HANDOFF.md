@@ -1,19 +1,35 @@
 # Bàn giao đầu ra task — GM-25 / roadmap-v2
 
-## Local lobby correction from GM-33 — 2026-11-11
+## Rebased lobby correction from GM-33 — 2026-11-11
 
-The candidate `codex/gm-25-live-lobby-followup` is based on main
-`7913585`. It routes a verified member into voting after a refreshed
-snapshot shows the active round, with one navigation per room/caller.
-The live setup and receipt routes pass their mode into the shared
-frames and retain fixture labels for the preview composition.
+The candidate `codex/gm-25-live-lobby-followup` is rebased onto main
+`51aeecd`, after product-cleanup PR #166. The hook is
+`mobile/src/features/rooms/hooks/useLobby.ts` and the component is
+`LobbyScreen`. The live/mock-mode changes were removed from this
+follow-up. Receive the snapshot-driven navigation and polling guards
+through the renamed hook. The updated regressions use the current
+`gm25FigmaParity.test.tsx` component and fixtures.
 
-The [follow-up checks](CHECKS.md) record focused/full mobile regressions,
-two-AVD execution and the authorized USB phone retry. The physical
-phone passed 20-dish setup, below-minimum shortage, cold-link join,
-live receipt and automatic lobby-to-vote for two members. The local
-APK also included the separate GM-26 candidate. Review and integrate
-the GM-25 source separately before receiving it as target-main evidence.
+GM-25 is owned by Trang and reviewed by Trí. Vinh authored the correction
+found in GM-33. The [current checks](CHECKS.md) distinguish the rebased
+validation from the earlier combined APK. The merge gate currently
+reports four upstream artifacts removed by #166 but still declared
+in the delivery registry. Reconcile those producer mappings before
+integration; the current gate result is recorded without a status change.
+
+The rebased QA APK contains application source `401ce51` (main `51aeecd`
+plus the GM-25 correction, without GM-26 changes). On two API 37 AVDs,
+independent guests automatically entered Round 1 after host Start. A second
+room verified the real manual-reload path after a controlled snapshot
+transport failure; both readbacks retained two members and 15 dishes.
+[CHECKS.md](CHECKS.md#rebased-native-receipt-and-reproduction) records the
+APK, source and QA manifest hashes, steps, capture hashes and limitations.
+Focused regressions: 23 passed; full Jest: 1,359 passed, one skipped;
+Python: 680 run, six skipped. Static checks and offline repository/index
+checks passed. The upstream artifact registry blocker remains distinct
+from these successful runtime checks; Trí has not approved this revision.
+
+## Earlier GM-25 handoff
 
 Task / owner / reviewer / track / stage: GM-25 / Trang (`rosy179`) / Trí (`ThanhTris`) / INTEGRATION / integration
 PR / branch / target / tested source: Issue #86 / `issue86_figma_ui_gm25` -> `origin/main` (`0f522ed153ff2eb872a945953051419741e7235a`); local branch `issue86_figma_ui_gm25`

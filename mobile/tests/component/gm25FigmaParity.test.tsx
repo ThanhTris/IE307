@@ -1,10 +1,11 @@
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
+import { act, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react-native';
 import { createRoomRepository } from '../../src/features/rooms/services/roomRepository';
 import { GuestEntryScreen } from '../../src/features/home/screens/GuestEntryScreen';
 import { HomeScreen, type HomeLiveSession } from '../../src/features/home/screens/HomeScreen';
 import { CreateRoomScreen } from '../../src/features/rooms/screens/CreateRoomScreen';
 import { JoinRoomScreen } from '../../src/features/rooms/screens/JoinRoomScreen';
 import { LobbyScreen } from '../../src/features/rooms/screens/LobbyScreen';
+import { useLobby } from '../../src/features/rooms/hooks/useLobby';
 import { DishPreferencesScreen } from '../../src/features/preferences/screens/DishPreferencesScreen';
 import { emptyPreferences } from '../../src/features/context/services/dishSetup';
 import { dishSetupCatalogue } from '../../src/features/context/services/dishSetupCatalogue';
@@ -577,11 +578,16 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
 
   // Node 330:3070 — 06 · Phòng chờ / Chủ phòng / Thành viên
   describe('Node 330:3070 — Phòng chờ Live Lobby không có Ready flow', () => {
-    it.each(['poll', 'reload'] as const)('opens voting once for a member when %s reads the active round', async trigger => {
+    it.each([
+      ['poll', 'ROUND_1'], ['reload', 'ROUND_1'],
+      ['poll', 'WAITING_1'], ['reload', 'WAITING_1'],
+      ['poll', 'ROUND_2'], ['reload', 'ROUND_2'],
+      ['poll', 'WAITING_2'], ['reload', 'WAITING_2'],
+    ] as const)('opens voting once when %s reads %s for a member', async (trigger, state) => {
       jest.useFakeTimers();
       try {
         const repo = createRoomRepository({ client: createMockApiClient() });
-        const started = { ...sampleSnapshot, version: 2, state: 'ROUND_1' as const };
+        const started = { ...sampleSnapshot, version: 2, state };
         const snapshot = jest.spyOn(repo, 'getRoomSnapshot')
           .mockResolvedValueOnce({ ok: true, data: sampleSnapshot })
           .mockResolvedValue({ ok: true, data: started });
@@ -600,6 +606,59 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
         await act(async () => { await jest.advanceTimersByTimeAsync(4000); });
         expect(snapshot.mock.calls.length).toBeGreaterThanOrEqual(3);
         expect(onStartRound).toHaveBeenCalledTimes(1);
+      } finally {
+        jest.useRealTimers();
+      }
+    });
+
+    it('keeps the newer lobby snapshot when a poll returns an older round snapshot', async () => {
+      jest.useFakeTimers();
+      try {
+        const repo = createRoomRepository({ client: createMockApiClient() });
+        const current = { ...sampleSnapshot, version: 10 };
+        jest.spyOn(repo, 'getRoomSnapshot')
+          .mockResolvedValueOnce({ ok: true, data: current })
+          .mockResolvedValue({ ok: true, data: { ...sampleSnapshot, version: 9, state: 'ROUND_1' } });
+        const onStartRound = jest.fn();
+        const { result, unmount } = await renderHook(() => useLobby({
+          repository: repo, roomId: current.roomId, currentUserId: 'usr_tuan_002',
+          onHome: jest.fn(), onStartRound,
+        }));
+        await act(async () => { await jest.advanceTimersByTimeAsync(4000); });
+        expect(result.current.snapshot).toEqual(current);
+        expect(onStartRound).not.toHaveBeenCalled();
+        await unmount();
+      } finally {
+        jest.useRealTimers();
+      }
+    });
+
+    it('ignores an old room poll after switching to another room', async () => {
+      jest.useFakeTimers();
+      try {
+        const repo = createRoomRepository({ client: createMockApiClient() });
+        const other = { ...sampleSnapshot, roomId: 'room_other_002' };
+        let resolveOldRead!: (value: { ok: true; data: RoomSnapshot }) => void;
+        const read = jest.spyOn(repo, 'getRoomSnapshot')
+          .mockResolvedValueOnce({ ok: true, data: sampleSnapshot })
+          .mockImplementationOnce(() => new Promise(resolve => { resolveOldRead = resolve; }))
+          .mockResolvedValue({ ok: true, data: other });
+        const onStartRound = jest.fn();
+        const { result, rerender, unmount } = await renderHook(
+          ({ roomId }: { roomId: string }) => useLobby({
+            repository: repo, roomId, currentUserId: 'usr_tuan_002',
+            onHome: jest.fn(), onStartRound,
+          }), { initialProps: { roomId: sampleSnapshot.roomId } },
+        );
+        await act(async () => { await jest.advanceTimersByTimeAsync(4000); });
+        expect(read).toHaveBeenCalledTimes(2);
+        await rerender({ roomId: other.roomId });
+        await act(async () => {
+          resolveOldRead({ ok: true, data: { ...sampleSnapshot, version: 2, state: 'ROUND_1' } });
+        });
+        expect(result.current.snapshot?.roomId).toBe(other.roomId);
+        expect(onStartRound).not.toHaveBeenCalled();
+        await unmount();
       } finally {
         jest.useRealTimers();
       }
@@ -632,6 +691,7 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
       expect(startBtn.props.accessibilityState.disabled).not.toBe(true);
 
       await fireEvent.press(startBtn);
+      expect(onStart).not.toHaveBeenCalled();
       expect(client.callRpc).toHaveBeenCalledWith(
         'dish_session',
         expect.objectContaining({
