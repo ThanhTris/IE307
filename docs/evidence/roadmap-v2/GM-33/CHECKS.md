@@ -1,5 +1,105 @@
 # GM-33 preparation checks
 
+## Authorized USB phone retry on 2026-11-11
+
+The RMX3710 was authorized over USB. A local debug-signed APK with embedded
+JavaScript ran on the physical Android API 35 phone and an independent
+API 37 AVD. Main was `7913585`; the application includes the separate
+local GM-25 and GM-26 correction candidates described below.
+
+| Run input | Recorded value |
+| --- | --- |
+| Backend | Owned `gm33-usb-1111b`, API/DB 54581/54582, 28 migrations, verified runtime inventory and real test catalogue 1.1.0 |
+| Manifest seal | `7056a29e3e02dd31f71b0183ea27132b965ab8690fafce77b44158fde753a2a4` |
+| Installed APK SHA-256 | `a6046dfbf6b14f57736519f7ef66af6f7e8aea30de9284bf25d0b8db9b5c609c` |
+| App source patch SHA-256 | `aac12d35698d6ad131bffaeb72b52372c24fde1f0691e6affb8b30b118ee21b3`, applied to main `7913585` |
+| Phone viewport | 1080 × 2400, 408dpi, display width 423.53dp, original font scale 0.9 |
+| Capture provenance | `gm33_capture.py` verified installed APK and QA manifest for P04, P08 and P09. Private checkpoints and `build-provenance.json` are under `.work/gm33/captures/gm33-usb-1111b/` with assessment Unreviewed |
+
+| Case and input | Actual assertion | Result and limit |
+| --- | --- | --- |
+| P01 two clients | Distinct guest sessions on phone and AVD authenticated to owned QA | Pass for guest sign-in |
+| P02 phone requests 20 dinner dishes | UI showed seven available and a minimum of ten. No room existed after the rejected attempt | Pass for below-minimum shortage |
+| P02 phone requests 20 lunch dishes | Backend stored requested count and pool count 20/20 from release 1.1.0. Preferences showed live copy | Pass for 20-dish setup |
+| Setup cancellation | Phone canceled its 20-dish room through the confirmation UI before the main two-client scenario | Pass for this cancellation |
+| P03 cold native link | Phone restored its session and opened join preview. The primary room had one member before confirm and two afterward. Receipt showed “Đã vào phòng” with no observed blocked-link warning | Pass for cold-link join and live receipt |
+| P04 primary roster 2 and requested count 11 | AVD host started. Phone automatically displayed Round 1. Server locked roster two and retained the 11-card pool | Pass for the two-member transition |
+| P06/P08 only host submits R1 | Server accepted one host ballot. On waiting timeout, the phone automatically displayed Round 2 without sending a ballot, reloading or opening a QA vote route | Pass for this timeout transition |
+| P08/P09 only host submits R2 | On waiting timeout, both clients opened the same winner with one point. Server reached DECIDED with one persisted result and two ballots from the host only | Pass for unsent-member result delivery |
+| P01/P15 limited restart | Force-stop/reopen on the phone restored Home. Anonymous-account count and persisted-result digest matched before and after | Pass for valid-session and terminal persistence. Pending submit and offline replay untested |
+| P11 Inbox | Phone opened the native Inbox route after restart and read “Kết quả phòng đã sẵn sàng” | Pass for authorized result Inbox read. Remote push untested |
+
+The primary scenario used 11 dishes. The phone also exercised the
+20-dish and below-minimum setup cases. The native 10-dish lower-bound
+case, larger rosters, edit/start races, preference privacy, additional
+R2 boundaries and the other remaining matrix cases still need execution.
+Native QR, real FCM, live Places, Figma parity and the full accessibility
+matrix remain outstanding. The GM-25 and GM-26 source fixes await their
+own review and integration before this can establish target-main acceptance.
+The application corrections are published separately as
+[GM-25 PR #168](https://github.com/ThanhTris/IE307/pull/168), commit
+`232ae4c`, and [GM-26 PR #169](https://github.com/ThanhTris/IE307/pull/169),
+commit `3351c54`. The recorded source patch corresponds to their
+application changes. Receive both reviewed revisions before the next
+target-main pilot.
+The phone's original display-power setting was restored after testing.
+Owned API forwards, AVD, QA worker, Supabase stack and network were
+removed, and temporary room references were cleared. A final fetch
+still reported main `7913585`. Repository, task-index, nine GM-33
+tool tests and whitespace checks passed.
+
+## Native candidate refresh on 2026-11-11
+
+Main remained `7913585` after fetch. The USB transport was enumerated as
+`unauthorized`, so this run used two independently authenticated Android
+API 37 AVDs. The phone requires confirmation of the USB debugging prompt
+before standalone installation or physical-device checks can proceed.
+
+| Input or case | Actual result |
+| --- | --- |
+| Backend | Owned run `gm33-native-1111`, 28 migrations, catalogue 1.1.0, current GM-32 runtime inventory. Seal `c9d18a2ab78aed180e3b837a25d9780eed254d2fa324e1a7a4ed351cf35b4f53` |
+| App | Expo 58.0.23, embedded JS in a local debug-signed arm64 release-mode APK. Main mobile source plus isolated GM-25 and GM-26 candidate patches. APK SHA-256 `94f8312a5a5ed7b895fd1cd8e95cd2a7365fcb516d9760efb5268a379de4d1ee`; combined source patch SHA-256 `aac12d35698d6ad131bffaeb72b52372c24fde1f0691e6affb8b30b118ee21b3` |
+| P02–P04 | Host created ten lunch dishes. Cold app link led the member through confirm to a two-member lobby. Both clients entered Round 1 after host Start |
+| P06/P08 | Only host submitted R1. Backend accepted one ballot, expired the waiting period and opened R2. Both clients displayed Round 2, including the member who had not submitted. No manual refresh or vote-route override was used |
+| P08/P09 | Only host submitted R2. After timeout the server reached `DECIDED`. Both clients displayed the same winner and score. Backend contained one result and two ballots belonging to one caller; no ballot was synthesized for the member |
+| P01/P15 limited restore | After force-stop and reopening client C, Home loaded. Anonymous-account count and the persisted-result digest matched before and after. Pending-submit/offline replay was not exercised |
+| GM-26 regressions | 37 focused tests and full mobile suite passed. Full suite had 1,516 passing tests and one skipped. TypeScript, ESLint and architecture checks passed |
+| GM-33 tooling | Nine tests passed. The POSIX directory-mode assertion is conditional on `os.name != 'nt'`, addressing the review comment. Windows execution remains untested on this Mac |
+| Python regression | 688 tests ran, six skipped, no failures |
+
+The GM-25 and GM-26 application fixes are separate local branches.
+Their combined APK is QA integration evidence. Acceptance and merge of
+those task changes, physical-device cases, remote providers and Figma
+parity remain pending. PR #166 was still open when routes were checked;
+reconcile the route matrix once its product cleanup reaches main.
+The owned worker, Supabase stack and network were stopped. Both owned
+AVDs and their temporary forwards were closed, and temporary room
+references were removed. The phone remained unauthorized at the last check.
+
+## Standalone APK and GM-25 follow-up on 2026-11-10
+
+A local debug-signed, arm64 release-mode APK was built from main
+`79135856eb673bedc47ceae033c851d2791e36a5` with its JS bundle embedded.
+Its SHA-256 is `698b8974b415c47af2fcf53b5a897ebbffdf5c8910c82abbdd5b84a20cacb573`.
+A second APK used the same baseline plus the local
+`codex/gm-25-live-lobby-followup` source patch and an untracked,
+loopback-only Android network configuration for owned QA.
+
+| Input or case | Actual result |
+| --- | --- |
+| Provenance | Expo 58.0.23, two Android API 37 AVDs, run `gm33-native-1110`, 28 migrations and catalogue 1.1.0. QA seal `14e6a6a9c2c7c38773ab059e433eb1a7dc37587f475f41e8c91c637394e51cc2` |
+| APK and source patch | APK SHA-256 `63ae1430b900ac41fb361fe6e161830e6cdf6296ee7206b9b30594d21303874b`. App source patch SHA-256 `977bdd420d119d505df5d93500be43d972aeabc6083d30275b1bf928f7966ee6` |
+| P02 setup | Two independent guests authenticated. Host requested ten lunch dishes and backend stored ten distinct dishes from release 1.1.0. Setup and preferences showed live copy |
+| P03 cold link | Android delivered the app's join URI on cold start. Preview showed one member and left backend membership unchanged. Confirm moved membership to two and the receipt read “Đã vào phòng” |
+| P04 member transition | Host started from the lobby. Backend locked roster two and entered `ROUND_1`. Both AVDs showed voting without a member reload or explicit vote route |
+| P06/P07 one of two submits | Host sent a complete ballot and the UI reported early finish locked at one of two. The backend was still in `WAITING_1` at 61.1 seconds and was in `ROUND_2` at the next sample at 63.1 seconds |
+| P08 member who did not submit | Host displayed Round 2. The member who had not submitted remained on the Round 1 screen after the timeout and a later read. This is a separate GM-26 UI–API regression |
+| USB install | Play Protect required interaction during install. No USB standalone execution was established for this run |
+
+These checks are an AVD regression of the GM-25 candidate. The earlier
+USB Expo Go results remain separate. Private Android checkpoints stay
+under ignored `.work/gm33/`.
+
 ## USB phone and independent AVD rehearsal on 2026-11-10
 
 **Partial UI–API run. Stage 3B is incomplete.** Source and main were

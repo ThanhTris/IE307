@@ -6,12 +6,46 @@ The GM-33 worktree is based on main `7913585`, which includes the merged
 the [GM-32 handoff](../GM-32/HANDOFF.md) and
 [regression run inventory](../GM-32/manifest-regression/RUNS.json).
 
-The 15:37 ICT Project read on 2026-11-10 confirmed both GM-32 and GM-40
-were Done. A USB phone and an independent AVD exercised the live API in
-Expo Go. The Stage 3B review PR is pending the mandatory native, route
-and Figma checks. See [current checks](CHECKS.md).
+The authorized USB run on 2026-11-11 exercised a standalone APK on
+the API 35 phone with an independent API 37 AVD and owned QA backend.
+The latest [checks](CHECKS.md) record native setup, join, lobby, timeout,
+result, restart and Inbox assertions alongside remaining mandatory cases.
+
+Receive the application corrections through
+[GM-25 PR #168](https://github.com/ThanhTris/IE307/pull/168), commit
+`232ae4c`, and [GM-26 PR #169](https://github.com/ThanhTris/IE307/pull/169),
+commit `3351c54`. The tested APK combines their source changes over
+main `7913585`. Both PRs need their own review and integration.
+Real camera QR, FCM, Places, Figma/accessibility and the unexecuted
+boundary cases still block GM-33 acceptance.
 
 ## Prepare the test run
+
+### Build a local Android APK
+
+Use a disposable checkout of the target revision for generated Android
+files. Install the locked mobile dependencies and generate the Android
+project before assembling an embedded JavaScript bundle.
+
+```sh
+cd mobile
+npm ci
+CI=1 npx --no-install expo prebuild --platform android --no-install
+cd android
+./gradlew :app:assembleRelease -PreactNativeArchitectures=arm64-v8a
+```
+
+The local generated release variant uses the debug signing configuration.
+The APK is under `app/build/outputs/apk/release/`. An APK built with no QA
+public key opens the mock composition. For live QA, use a freshly verified
+owned API origin and publishable key at bundle time. If using ADB reverse
+with a plain HTTP origin, scope any generated Android cleartext exception
+to loopback in the disposable build. Record the APK checksum, app source
+revision and any local source patch. The QA URL and key are tied to that
+run. The [standalone build checks](CHECKS.md) distinguish this local
+artifact from the APK with all Stage 3B capabilities.
+
+### Run the pilot
 
 1. Fetch `main` and run `python scripts/task_readiness.py --task GM-33`.
    Verify GM-40 is Done on the Project and that both delivered revisions
@@ -80,6 +114,19 @@ and Figma checks. See [current checks](CHECKS.md).
 
 ## Received capabilities
 
+- After USB authorization, run `gm33-usb-1111b` exercised the local
+  GM-25/GM-26 candidates on the physical API 35 phone and an independent
+  AVD. Native cold join, lobby-to-vote, both unsent-member timeout
+  transitions, restart and result Inbox read passed for the recorded
+  scenarios. Phone setup also passed 20 lunch dishes and seven-dish
+  dinner shortage. See [USB checks](CHECKS.md#authorized-usb-phone-retry-on-2026-11-11).
+  Camera, remote providers, Figma, accessibility and the remaining
+  boundary cases continue to require their own evidence.
+- The 2026-11-11 run verified the GM-25 and GM-26 corrections together
+  in a standalone APK on two AVDs. The USB phone was `unauthorized`.
+  Confirm its USB debugging prompt before resuming the physical pilot.
+  The app candidates are published in PRs #168 and #169. Receive their reviewed revisions
+  before treating those fixes as integrated on main.
 - GM-27/30 own winner and Places integration. The current camera adapter
   always returns denied and the Expo config blocks CAMERA. Real QR capture
   requires a native camera implementation/configuration from GM-30 before

@@ -1,5 +1,6 @@
 import hashlib
 import json
+import os
 from pathlib import Path
 import struct
 import subprocess
@@ -74,7 +75,8 @@ class CaptureTests(unittest.TestCase):
         self.assertEqual(record['viewport']['fontScale'], 2)
         self.assertEqual(record['imageSha256'], hashlib.sha256((path / 'app.png').read_bytes()).hexdigest())
         self.assertNotIn(self.args.serial, json.dumps(record))
-        self.assertEqual(path.stat().st_mode & 0o777, 0o700)
+        if os.name != 'nt':
+            self.assertEqual(path.stat().st_mode & 0o777, 0o700)
         with self.assertRaisesRegex(ValueError, 'already exists'):
             self.capture()
 
