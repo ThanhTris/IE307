@@ -13,6 +13,7 @@ import {
   type FinalScreenScenario,
 } from '../fixtures';
 import { WAITING_DEADLINE_SECONDS, getRoundTwoEliminationCap, isHostEarlyFinishAllowed } from '../services/votingRules';
+import { startVotingSnapshotPolling } from '../services/snapshotPolling';
 import {
   createDurableRequestId,
   mapSnapshotPoolToPoolDishes,
@@ -348,12 +349,12 @@ export function useRoundTwoVoting({
   }, [computeRemainingFromDeadline, identityId, roomId]);
 
   // Snapshot fetching method (R1: only depends on repository and roomId)
-  const fetchSnapshot = useCallback(async () => {
+  const fetchSnapshot = useCallback(async (shouldApply?: () => boolean) => {
     if (!repository) return null;
     const requestedContext = captureContext();
     const ticket = snapshotOrderRef.current.begin(requestedContext.key);
     const res = await repository.getSnapshot(roomId);
-    if (!isCurrentContext(requestedContext)) return null;
+    if (!isCurrentContext(requestedContext) || shouldApply?.() === false) return null;
     if (res.ok) {
       if (!snapshotOrderRef.current.accepts(ticket, res.data)) return null;
       applySnapshot(res.data);
@@ -377,10 +378,9 @@ export function useRoundTwoVoting({
     void fetchSnapshot();
   }, [repository, roomId, initialCandidates, fetchSnapshot]);
 
-  // Countdown timer & polling in waiting state (F3, R6)
+  // Countdown timer in waiting state (F3, R6).
   useEffect(() => {
     let timer: ReturnType<typeof setInterval> | null = null;
-    let pollTimer: ReturnType<typeof setInterval> | null = null;
 
     if (submissionState === 'ack' && isWaitingForMembers) {
       timer = setInterval(() => {
@@ -389,7 +389,6 @@ export function useRoundTwoVoting({
             const recomputed = computeRemainingFromDeadline(activeDeadline);
             if (recomputed !== null) {
               if (recomputed <= 0) {
-                void fetchSnapshot();
                 return 0;
               }
               return recomputed;
@@ -397,25 +396,24 @@ export function useRoundTwoVoting({
           }
           if (prev === null) return null;
           if (prev <= 1) {
-            void fetchSnapshot();
             return 0;
           }
           return prev - 1;
         });
       }, 1000);
 
-      if (repository) {
-        pollTimer = setInterval(() => {
-          void fetchSnapshot();
-        }, 2500);
-      }
     }
 
     return () => {
       if (timer) clearInterval(timer);
-      if (pollTimer) clearInterval(pollTimer);
     };
-  }, [submissionState, isWaitingForMembers, repository, fetchSnapshot, activeDeadline, computeRemainingFromDeadline]);
+  }, [submissionState, isWaitingForMembers, repository, activeDeadline, computeRemainingFromDeadline]);
+
+  // Results can be finalized by the server before this caller submits.
+  useEffect(() => {
+    if (!repository || submissionState === 'pending') return;
+    return startVotingSnapshotPolling(fetchSnapshot, () => Boolean(navigatedOutcomeRef.current));
+  }, [repository, fetchSnapshot, submissionState]);
 
   const attemptEnterWaiting = useCallback(async (allowConflictRetry = true) => {
     if (!repository) return;
