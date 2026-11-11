@@ -8,7 +8,7 @@ import {
 import {
   getRoundTwoEliminationCap,
   isHostEarlyFinishAllowed,
-} from '../../src/features/voting/fixtures';
+} from '../../src/features/voting/services/votingRules';
 import type { BallotVoteItem, PoolDish, RoomSnapshot } from '../../src/data/api';
 
 describe('GM-26 — Vote Repository Unit Suite (Issue #87)', () => {

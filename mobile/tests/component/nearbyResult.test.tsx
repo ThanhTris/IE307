@@ -1,6 +1,6 @@
 import { StyleSheet, Text } from 'react-native';
 import { act, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react-native';
-import { nearbyCaseOptions, nearbyFixture, scoredResultFixture } from '../../src/bootstrap/dishResultFixtures';
+import { nearbyCaseOptions, nearbyFixture, scoredResultFixture } from '../fixtures/result/dishResultFixtures';
 import { DishResultFlow } from '../../src/features/result/screens/DishResultFlow';
 import type { ResultActionReply } from '../../src/features/result/services/resultPresentation';
 import { useResultAction } from '../../src/features/result/hooks/useResultAction';
@@ -9,7 +9,7 @@ import { getThemeColors } from '../../src/shared/theme/tokens';
 const actions = () => ({ onHome: jest.fn(), onNewSession: jest.fn(), onRetryResult: jest.fn(), onRequestLocation: jest.fn(), onRetryPlaces: jest.fn(), onOpenSettings: jest.fn(), onExternalAction: jest.fn(() => ({ ok: true })) });
 test.each(nearbyCaseOptions.map(item => item.id))('Places state %s keeps result immutable and never requests location automatically', async status => {
   const result = scoredResultFixture(), original = JSON.stringify(result), callbacks = actions();
-  await render(<DishResultFlow {...callbacks} input={{ capability: 'scored-v4', result }} nearby={nearbyFixture(result, status)} celebrate={false} isMock />);
+  await render(<DishResultFlow {...callbacks} input={{ capability: 'scored-v4', result }} nearby={nearbyFixture(result, status)} celebrate={false} />);
   expect(screen.getByText('Quán có món này')).toBeOnTheScreen(); expect(screen.getByText('6 điểm')).toBeOnTheScreen();
   expect(screen.getByText(`Tìm quán cho: ${result.winner!.name}`)).toBeOnTheScreen();
   expect(callbacks.onRequestLocation).not.toHaveBeenCalled(); expect(callbacks.onRetryPlaces).not.toHaveBeenCalled();
@@ -71,7 +71,7 @@ test('cached error data is labeled and remains separate from successful empty', 
 
 test('late action response from a previous result cannot update the new result feedback', async () => {
   let resolve!: (value: ResultActionReply) => void;
-  const { result, rerender } = await renderHook(({ id }: { id: string }) => useResultAction(id, true), { initialProps: { id: 'first' } });
+  const { result, rerender } = await renderHook(({ id }: { id: string }) => useResultAction(id), { initialProps: { id: 'first' } });
   await act(async () => { void result.current.run('Maps', () => new Promise<ResultActionReply>(done => { resolve = done; })); });
   expect(result.current.busy).toBe(true);
   await rerender({ id: 'second' });

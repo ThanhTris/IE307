@@ -1,4 +1,4 @@
-import { casesForSetupStage, createDishSetupCase, dishSetupCases } from '../../src/bootstrap/dishSetupCases';
+import { casesForSetupStage, createDishSetupCase, dishSetupCases } from '../fixtures/setup/dishSetupCases';
 import { optionIds } from '../../src/features/preferences/services/dishPreferences';
 
 test('all P01–P11 and R01–R15 can be selected through the QA fixture catalogue', () => {

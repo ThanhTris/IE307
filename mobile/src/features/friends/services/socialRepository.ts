@@ -8,7 +8,7 @@ import type {
 } from '../../../data/api/contracts';
 import type { RoomRepository } from '../../rooms/services/roomRepository';
 import { createDurableRequestId } from '../../rooms/services/roomRepository';
-import { callSessionApi } from '../../shared/services/sessionApi';
+import { callSessionApi } from '../../rooms/services/sessionApi';
 
 export interface SocialRepository {
   getIdentity(): Promise<ReadResult<SocialIdentity>>;

@@ -2,6 +2,7 @@ export * from './types';
 export * from './layout/AppHeader';
 export * from './layout/BrandLogo';
 export * from './layout/AppBottomNavigation';
+export * from './layout/ApiFeatureFrame';
 export * from './layout/BrandBanner';
 export * from './buttons/AppButton';
 export * from './buttons/Chip';

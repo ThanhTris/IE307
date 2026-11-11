@@ -9,12 +9,10 @@ import {
 import {
   FIXTURE_ROUND_TWO_ALL_REMOVED_RESULT,
   FIXTURE_ROUND_TWO_CONSENSUS_RESULT,
-  WAITING_DEADLINE_SECONDS,
-  getRoundTwoEliminationCap,
-  isHostEarlyFinishAllowed,
   simulateDeferredRequest,
   type FinalScreenScenario,
 } from '../fixtures';
+import { WAITING_DEADLINE_SECONDS, getRoundTwoEliminationCap, isHostEarlyFinishAllowed } from '../services/votingRules';
 import {
   createDurableRequestId,
   mapSnapshotPoolToPoolDishes,

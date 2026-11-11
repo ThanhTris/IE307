@@ -1,7 +1,8 @@
 import type { ErrorCode, ReadResult, UpdateHistoryConsentRequest, WriteResult } from '../../../data/api/contracts';
+import { settleWithin } from '../../../data/local/bestEffort';
 import type { RoomRepository } from '../../rooms/services/roomRepository';
 import { createDurableRequestId } from '../../rooms/services/roomRepository';
-import { callSessionApi } from '../../shared/services/sessionApi';
+import { callSessionApi } from '../../rooms/services/sessionApi';
 import { parseCanonicalHistoryPage } from './historyWireGuard';
 import type { CanonicalHistoryItem, HistoryRow } from './historyTypes';
 
@@ -74,6 +75,26 @@ const noDurableHistoryStore: DurableHistoryStore = {
   async clearSnapshotCache() {},
 };
 
+
+
+/**
+ * The device cache is best effort. If local storage stalls, history must still finish loading from the
+ * server instead of waiting forever in the per-identity cache queue.
+ */
+function withDurableTimeouts(store: DurableHistoryStore): DurableHistoryStore {
+  return {
+    cacheSnapshot<T>(snapshot: { identityId: string; roomId: string; contractVersion: string; value: T }) {
+      return settleWithin(store.cacheSnapshot<T>(snapshot), undefined);
+    },
+    readSnapshotCache<T>(identityId: string, roomId: string, contractVersion: string) {
+      return settleWithin<{ value: T } | undefined>(store.readSnapshotCache<T>(identityId, roomId, contractVersion), undefined);
+    },
+    clearSnapshotCache(identityId: string, roomId: string, contractVersion: string) {
+      return settleWithin(store.clearSnapshotCache(identityId, roomId, contractVersion), undefined);
+    },
+  };
+}
+
 /** Clears memory state and advances shared epochs so in-flight reads cannot restore logged-out data. */
 export function clearPrivateHistoryCache(): void {
   for (const [userId, epoch] of sharedInvalidation) sharedInvalidation.set(userId, epoch + 1);
@@ -85,7 +106,7 @@ export function createHistoryRepository(
   cache: HistoryCache = privateHistoryCache,
   durableCacheOverride?: DurableHistoryStore,
 ): HistoryRepository {
-  const durableCache = durableCacheOverride ?? noDurableHistoryStore;
+  const durableCache = withDurableTimeouts(durableCacheOverride ?? noDurableHistoryStore);
   let generation = 0;
   const cacheQueueByIdentity = (identityId: string, operation: () => Promise<void>) =>
     queueSharedCacheMutation(identityId, operation);

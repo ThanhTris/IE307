@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, within } from '@testing-library/react-native';
 import { StyleSheet } from 'react-native';
-import { scoredResultFixture } from '../../src/bootstrap/dishResultFixtures';
+import { scoredResultFixture } from '../fixtures/result/dishResultFixtures';
 import { DishResultScreen } from '../../src/features/result/screens/DishResultScreen';
 import { getThemeColors } from '../../src/shared/theme/tokens';
 

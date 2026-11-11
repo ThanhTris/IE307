@@ -20,8 +20,8 @@ Không mở lại ba mục A6/A7/A8 đã được người dùng loại khỏi p
 
 ## Source/test và bàn giao
 
-- [MealDateTimeFields.tsx](../../../../mobile/src/features/context/components/MealDateTimeFields.tsx): date selection + time field, controlled props riêng, chỉ sửa draft qua callbacks. Không đọc clock thiết bị trong render; getToday inject từ Context server-time handler.
-- [ContextScreen.tsx](../../../../mobile/src/features/context/screens/ContextScreen.tsx): giữ date/time state riêng, ghép parseLocalTime khi preview/save, presets cập nhật cả hai; budget card riêng; checkbox. Checkbox/touch styles trong SetupFrame, không sửa shared UI/tokens.
+- [MealDateTimeFields.tsx](https://github.com/ThanhTris/IE307/blob/30aa524/mobile/src/features/context/components/MealDateTimeFields.tsx): date selection + time field, controlled props riêng, chỉ sửa draft qua callbacks. Không đọc clock thiết bị trong render; getToday inject từ Context server-time handler.
+- [ContextScreen.tsx](https://github.com/ThanhTris/IE307/blob/30aa524/mobile/src/features/context/screens/ContextScreen.tsx): giữ date/time state riêng, ghép parseLocalTime khi preview/save, presets cập nhật cả hai; budget card riêng; checkbox. Checkbox/touch styles trong SetupFrame, không sửa shared UI/tokens.
 - roomSetup.ts thêm shiftLocalDate/mealDateLabel: ngày hợp lệ, qua tháng/năm/leap, không UTC drift; date input invalid không được normalize thành ngày hợp lệ.
 - Unit/component/routes suite được cập nhật theo role checkbox, input ngày/giờ tách riêng; giữ regression cũ requestId/version/reset-ready/no-widen/unknown-price/Home. Thêm tests picker next/previous page/clamp-to-today/đóng không chọn/partial input/disabled và confirmation invalidate.
 - [Manifest chính](PATCH_MANIFEST.json) dùng bytes mới; [PRE_DATE_UI_PATCH_MANIFEST](PRE_DATE_UI_PATCH_MANIFEST.json) giữ hashes của revision537 tests trước lượt này. Các log FINAL trước đây là lịch sử, không chứng minh UI ngày/giờ mới đã được mở trên thiết bị.

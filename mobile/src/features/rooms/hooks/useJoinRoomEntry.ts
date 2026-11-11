@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ErrorCode, JoinRoomResponse } from '../../../data/api/contracts';
-import type { JoinRoomEntryProps } from '../screens/JoinRoomEntryScreen';
+import type { JoinRoomEntryProps } from '../screens/JoinRoomScreen';
 import { normalizeRoomCode, validDisplayName, validRoomCode } from '../services/roomEntry';
 import { validPublicPreview, type JoinRoomPublicPreview } from '../services/joinPreview';
 import { useRoomSubmission } from './useRoomEntry';

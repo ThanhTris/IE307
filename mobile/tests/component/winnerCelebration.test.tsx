@@ -2,7 +2,7 @@ import { AccessibilityInfo, Animated } from 'react-native';
 import { act, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react-native';
 import { useWinnerCelebration } from '../../src/features/result/hooks/useWinnerCelebration';
 import { WinnerCelebration } from '../../src/features/result/components/WinnerCelebration';
-import { scoredResultFixture } from '../../src/bootstrap/dishResultFixtures';
+import { scoredResultFixture } from '../fixtures/result/dishResultFixtures';
 import { completeNativeAnimations } from '../helpers/completeNativeAnimations';
 
 beforeEach(completeNativeAnimations);

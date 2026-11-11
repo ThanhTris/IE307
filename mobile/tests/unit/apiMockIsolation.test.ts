@@ -1,4 +1,5 @@
-import { MockApiClient, MOCK_CURRENT_USER, SessionUser, RoomSnapshot, UserPreferences } from '../../src/data/api';
+import { MOCK_CURRENT_USER, MockApiClient } from '../mocks/api/mockApiClient';
+import { SessionUser, RoomSnapshot, UserPreferences } from '../../src/data/api';
 
 const roomId = 'room_mock_001';
 const otherUser: SessionUser = { id: 'usr_tuan_002', displayName: 'Tuấn', isGuest: true,

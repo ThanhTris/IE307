@@ -54,12 +54,6 @@ export function VoteScenarioAndStatusBanner({
 }: VoteScenarioAndStatusBannerProps) {
   return (
     <>
-      <StatusNotice
-        title="GM-12 · UI Chọn món Vòng 1 (Flashcard Vote)"
-        message="Flashcard từng thẻ: vuốt trái NO, vuốt phải OK, chạm hai lần WANT kèm 3 nút thay gesture. Hoàn tác Undo trước khi gửi. Đếm ngược 60s và nút Chốt ngay khi A_r > M/2."
-        tone="info"
-        colors={colors}
-      />
 
       {showScenarioPicker ? (
         <View style={[styles.scenarioCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
@@ -179,20 +173,20 @@ export function VoteScenarioAndStatusBanner({
               <WaitingSummary
                 acknowledged={rosterAcknowledgedCount}
                 total={totalRosterCount}
-                deadlineLabel={waitingCountdown != null ? `${waitingCountdown}s (Hạn 60s)` : 'Đang tính...'}
+                deadlineLabel={waitingCountdown != null ? `${waitingCountdown}s` : 'Đang tính...'}
                 statusLabel={`${rosterAcknowledgedCount}/${totalRosterCount} thành viên đã gửi phiếu`}
                 colors={colors}
               />
               <View style={[styles.waitingRuleCard, { backgroundColor: colors.soft, borderColor: colors.line }]}>
                 <Text style={[styles.waitingRuleText, { color: colors.text }]}>
-                  ⏱ Countdown 60s theo deadline server sau lần vào waiting hợp lệ đầu tiên.
+                  Nhóm có tối đa 60 giây để nộp phiếu. Hết giờ, kết quả sẽ được chốt tự động.
                 </Text>
                 <Text style={[styles.waitingRuleSubtext, { color: colors.muted }]}>
                   {isHost
                     ? canHostEarlyFinish
-                      ? `👑 Bạn là Host. Đã có ${rosterAcknowledgedCount}/${totalRosterCount} thành viên nộp (quá nửa roster khóa A_r > M/2). Bạn có thể bấm Chốt ngay!`
-                      : `👑 Bạn là Host. Hiện có ${rosterAcknowledgedCount}/${totalRosterCount} thành viên nộp (chưa quá nửa roster khóa). Nút Chốt ngay bị khóa cho đến khi đủ đa số.`
-                    : '👤 Bạn là Thành viên. Vui lòng chờ Host chốt sớm hoặc chờ đồng hồ đếm ngược hết hạn.'}
+                      ? `Đã có ${rosterAcknowledgedCount}/${totalRosterCount} người nộp phiếu, quá nửa nhóm. Bạn có thể chốt ngay.`
+                      : `Đã có ${rosterAcknowledgedCount}/${totalRosterCount} người nộp phiếu. Bạn chốt được khi quá nửa nhóm đã nộp.`
+                    : 'Chờ chủ phòng chốt hoặc chờ hết giờ.'}
                 </Text>
               </View>
 
@@ -200,8 +194,8 @@ export function VoteScenarioAndStatusBanner({
                 <AppButton
                   label={
                     canHostEarlyFinish
-                      ? 'Chốt ngay · Kết thúc chờ sớm (Đã quá nửa)'
-                      : `Chốt ngay (${rosterAcknowledgedCount}/${totalRosterCount} chưa quá nửa)`
+                      ? 'Chốt ngay'
+                      : `Chốt ngay (${rosterAcknowledgedCount}/${totalRosterCount})`
                   }
                   disabled={!canHostEarlyFinish}
                   onPress={onHostEarlyFinish}

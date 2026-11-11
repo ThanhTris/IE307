@@ -13,13 +13,12 @@ type Props = {
   onContinue: (name: string) => Promise<boolean>;
   onComplete: () => void;
   session?: HomeLiveSession;
-  isMock?: boolean;
   onSignIn?: () => void;
   onSignUp?: () => void;
 };
 
 /** UI-only guest flow. The caller supplies mock entry or the existing GM-25 session seam. */
-export function GuestEntryScreen({ onContinue, onComplete, session, isMock, onSignIn, onSignUp }: Props) {
+export function GuestEntryScreen({ onContinue, onComplete, session, onSignIn, onSignUp }: Props) {
   const { colors, dark } = useShellTheme();
   const { textStyle } = useAppFonts();
   const insets = useSafeAreaInsets();
@@ -100,7 +99,7 @@ export function GuestEntryScreen({ onContinue, onComplete, session, isMock, onSi
   </SheetDialog>;
 
   if (step === 'welcome') return <>
-    <WelcomeScreen onGuest={() => setStep('name')} onSignIn={signIn} onSignUp={signUp} disabled={blocked || disabled} notice={<>{notice}{error ? <StatusNotice title="Chưa thể tiếp tục" message={error} tone="error" colors={colors} /> : null}</>} isMock={isMock} />
+    <WelcomeScreen onGuest={() => setStep('name')} onSignIn={signIn} onSignUp={signUp} disabled={blocked || disabled} notice={<>{notice}{error ? <StatusNotice title="Chưa thể tiếp tục" message={error} tone="error" colors={colors} /> : null}</>} />
     {accountDialog}
   </>;
 
@@ -111,7 +110,6 @@ export function GuestEntryScreen({ onContinue, onComplete, session, isMock, onSi
           <Pressable accessibilityRole="button" accessibilityLabel="Quay lại" accessibilityState={{ disabled }} disabled={disabled} onPress={back} style={styles.back}>
             <Text style={[styles.backLabel, { color: colors.text }, textStyle(500)]}>‹ Quay lại</Text>
           </Pressable>
-          {isMock ? <Text style={[styles.mockLabel, { color: colors.text }, textStyle(500)]}>Mô phỏng · GM-09</Text> : null}
         </View>
         <View style={styles.body}>
           <View style={styles.logoSlot}><BrandLogo size={44} /></View>

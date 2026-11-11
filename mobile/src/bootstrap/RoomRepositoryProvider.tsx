@@ -1,8 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, useSyncExternalStore, type PropsWithChildren } from 'react';
 import { router, type Href } from 'expo-router';
+import { StyleSheet, Text, View } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import { createAuthenticatedApiClient, createSecureSessionStorage } from '../data/auth';
-import { createApiClient } from '../data/api';
 import type { SessionIssue, SessionSnapshot, SessionStatus } from '../features/rooms/services/sessionState';
 import type { SessionUser } from '../data/api/contracts';
 import { clearPrivateHistoryCache } from '../features/history/services/historyRepository';
@@ -20,7 +20,8 @@ export interface RoomRepositoryContextValue {
   status: SessionStatus;
   issue: SessionIssue;
   user: SessionUser | null;
-  mode: 'real' | 'mock';
+  /** Always 'real': the app has no mock mode. Kept so callers can assert the live path. */
+  mode: 'real';
   isInitializing: boolean;
   restoreSession: () => Promise<boolean>;
   /** Called only from an explicit user action; never creates after a restore/network failure. */
@@ -34,28 +35,43 @@ const PRIVATE_CACHE_KEY = 'gcd.room.private_cache.v1';
 
 export interface RoomRepositoryProviderProps extends PropsWithChildren {
   repository?: RoomRepository;
-  mode?: 'real' | 'mock';
   baseUrl?: string;
   publicKey?: string;
 }
 
-export function RoomRepositoryProvider({
+/** The app always talks to the backend. Without configuration it shows a setup error instead of fake data. */
+export function RoomRepositoryProvider(props: RoomRepositoryProviderProps) {
+  const publicKey = props.publicKey ?? process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? '';
+  if (!props.repository && !publicKey) return <MissingBackendConfig />;
+  return <ConfiguredRoomRepositoryProvider {...props} publicKey={publicKey} />;
+}
+
+function MissingBackendConfig() {
+  return (
+    <View style={missingStyles.root}>
+      <Text accessibilityRole="header" style={missingStyles.title}>Chưa cấu hình máy chủ</Text>
+      <Text style={missingStyles.body}>Thiếu EXPO_PUBLIC_SUPABASE_URL hoặc EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY trong mobile/.env.local. Xem mobile/README.md để dựng backend local.</Text>
+    </View>
+  );
+}
+
+const missingStyles = StyleSheet.create({
+  root: { flex: 1, justifyContent: 'center', padding: 24, gap: 12, backgroundColor: '#FFFDF5' },
+  title: { fontSize: 22, lineHeight: 28, fontWeight: '800', color: '#1F2A1F' },
+  body: { fontSize: 15, lineHeight: 22, color: '#1F2A1F' },
+});
+
+function ConfiguredRoomRepositoryProvider({
   children,
   repository: customRepository,
-  mode: forcedMode,
   baseUrl: customBaseUrl,
-  publicKey: customPublicKey,
+  publicKey = '',
 }: RoomRepositoryProviderProps) {
   const baseUrl = customBaseUrl ?? process.env.EXPO_PUBLIC_SUPABASE_URL ?? 'http://127.0.0.1:54321';
-  const publicKey = customPublicKey ?? process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? '';
-  const isReal = forcedMode === 'real' || (forcedMode !== 'mock' && Boolean(publicKey));
 
   const repository = useMemo<RoomRepository>(() => {
     if (customRepository) return customRepository;
-    if (isReal) {
-      if (!publicKey) {
-        throw new Error('RoomRepositoryProvider: EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY is required in real mode');
-      }
+    {
       const storage = createSecureSessionStorage();
       const { session, client } = createAuthenticatedApiClient({
         baseUrl,
@@ -72,15 +88,13 @@ export function RoomRepositoryProvider({
       });
       return new LiveRoomRepository({ client, session, sessionStorage: storage, requestIdGenerator: createDurableRequestId });
     }
-    const mockClient = createApiClient('mock', { mode: 'default' });
-    return new LiveRoomRepository({ client: mockClient, requestIdGenerator: createDurableRequestId });
-  }, [customRepository, isReal, baseUrl, publicKey]);
+  }, [customRepository, baseUrl, publicKey]);
 
   const subscribe = useCallback((listener: () => void) => repository.subscribeSession(listener), [repository]);
   const getSnapshot = useCallback((): SessionSnapshot => repository.getSessionSnapshot(), [repository]);
   const snapshot = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
   const [restoredRepository, setRestoredRepository] = useState<RoomRepository>();
-  const isInitializing = isReal && restoredRepository !== repository;
+  const isInitializing = restoredRepository !== repository;
 
   const restoreSession = useCallback(async (): Promise<boolean> => {
     const result = await repository.restoreSession();
@@ -105,44 +119,41 @@ export function RoomRepositoryProvider({
 
   const logout = useCallback(async (): Promise<boolean> => {
     const identityId = repository.getSessionSnapshot().user?.id;
-    let pushCleanupComplete = !isReal;
-    if (isReal) {
-      try {
-        const deviceId = await getPushDeviceId();
-        if (deviceId) {
-          const push = createNativePushService({
-            driver: getActivePushDriver(),
-            client: repository.getApiClient(),
-            identityId: repository.getCurrentUser()?.id,
-            refreshInbox: async () => undefined,
-          });
-          // Queue unregister behind token refresh when possible; network failure must not block local logout.
-          const result = await push.unregister(deviceId).catch(() => undefined);
-          pushCleanupComplete = result?.ok === true;
-        } else pushCleanupComplete = true;
-      } catch {
-        // Local session cleanup must work when secure storage or the network is unavailable.
-      }
+    let pushCleanupComplete = false;
+    try {
+      const deviceId = await getPushDeviceId();
+      if (deviceId) {
+        const push = createNativePushService({
+          driver: getActivePushDriver(),
+          client: repository.getApiClient(),
+          identityId: repository.getCurrentUser()?.id,
+          refreshInbox: async () => undefined,
+        });
+        // Queue unregister behind token refresh when possible; network failure must not block local logout.
+        const result = await push.unregister(deviceId).catch(() => undefined);
+        pushCleanupComplete = result?.ok === true;
+      } else pushCleanupComplete = true;
+    } catch {
+      // Local session cleanup must work when secure storage or the network is unavailable.
     }
     const result = await repository.logout();
     if (result.ok && identityId) clearVoteSession(identityId);
     // Keep the device handle/token when remote unregister did not ACK, so a
     // later login/logout can retry cleanup for this same installation.
-    if (result.ok && isReal && pushCleanupComplete) await clearPushRegistrationSecrets().catch(() => undefined);
+    if (result.ok && pushCleanupComplete) await clearPushRegistrationSecrets().catch(() => undefined);
     return result.ok;
-  }, [repository, isReal]);
+  }, [repository]);
 
   useEffect(() => {
     let mounted = true;
-    if (!isReal) return;
     void repository.restoreSession().catch(() => undefined).finally(() => {
       if (mounted) setRestoredRepository(repository);
     });
     return () => { mounted = false; };
-  }, [repository, isReal]);
+  }, [repository]);
 
   useEffect(() => {
-    if (!isReal || snapshot.status !== 'active' || !snapshot.user?.id) return;
+    if (snapshot.status !== 'active' || !snapshot.user?.id) return;
     let mounted = true;
     const userId = snapshot.user.id;
     const inFlight = new Set<string>();
@@ -167,7 +178,7 @@ export function RoomRepositoryProvider({
           const isCurrent = () => isSameUser()
             && (sessionGeneration === undefined || repository.getSessionApi()?.getGeneration() === sessionGeneration);
           if (!isCurrent()) return false;
-          // Keep the event ID on the route; LiveInboxScreen resolves it from the
+          // Keep the event ID on the route; InboxScreen resolves it from the
           // server and can retry this exact lookup after a temporary failure.
           routeInbox(eventId);
           return true;
@@ -181,19 +192,19 @@ export function RoomRepositoryProvider({
     });
     const unsubscribe = service.subscribe();
     return () => { mounted = false; unsubscribe(); };
-  }, [isReal, repository, snapshot.status, snapshot.user?.id]);
+  }, [repository, snapshot.status, snapshot.user?.id]);
 
   const value = useMemo<RoomRepositoryContextValue>(() => ({
     repository,
     status: snapshot.status,
     issue: snapshot.issue,
     user: snapshot.user,
-    mode: isReal ? 'real' : 'mock',
+    mode: 'real',
     isInitializing,
     restoreSession,
     ensureSession,
     logout,
-  }), [repository, snapshot, isReal, isInitializing, restoreSession, ensureSession, logout]);
+  }), [repository, snapshot, isInitializing, restoreSession, ensureSession, logout]);
 
   return <RoomRepositoryContext.Provider value={value}>{children}</RoomRepositoryContext.Provider>;
 }

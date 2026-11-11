@@ -1,9 +1,9 @@
+import { createMockApiClient } from '../mocks/api/mockApiClient';
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import { RoomQrModal } from '../../src/features/rooms/components/RoomQrModal';
-import { JoinRoomEntryScreen, type JoinRoomEntryProps } from '../../src/features/rooms/screens/JoinRoomEntryScreen';
+import { JoinRoomScreen, type JoinRoomEntryProps } from '../../src/features/rooms/screens/JoinRoomScreen';
 import { LiveDishResultScreen } from '../../src/features/result/screens/LiveDishResultScreen';
-import { createApiClient } from '../../src/data/api';
 import { createJoinPreviewFixture } from '../../src/features/rooms/services/joinPreview';
 import { SimulatedQrScannerAdapter } from '../../src/features/rooms/services/joinLinks';
 import { MockPlacesRepository } from '../../src/features/result/services/placesRepository';
@@ -165,10 +165,10 @@ describe('GM-30 Figma Parity & Native Linking Component Tests', () => {
     });
   });
 
-  describe('Figma Nodes 268:2019 & 275:2088 & 268:2081 — JoinRoomEntryScreen QR Modes', () => {
+  describe('Figma Nodes 268:2019 & 275:2088 & 268:2081 — JoinRoomScreen QR Modes', () => {
     function defaultProps(scanner?: any): JoinRoomEntryProps {
       return {
-        repository: createApiClient('mock', { delayMs: 0 }),
+        repository: createMockApiClient({ delayMs: 0 }),
         preview: createJoinPreviewFixture(),
         initialDisplayName: 'Minh',
         onBack: jest.fn(),
@@ -181,7 +181,7 @@ describe('GM-30 Figma Parity & Native Linking Component Tests', () => {
       const scanner = new SimulatedQrScannerAdapter('undetermined', 'gi-cung-duoc://room/join?code=GCD234');
       const props = defaultProps(scanner);
 
-      await render(<JoinRoomEntryScreen {...props} />);
+      await render(<JoinRoomScreen {...props} />);
 
       // Initially on manual entry mode with scan button
       expect(screen.getByRole('button', { name: 'Quét mã QR' })).toBeOnTheScreen();
@@ -204,7 +204,7 @@ describe('GM-30 Figma Parity & Native Linking Component Tests', () => {
       const openSettingsSpy = jest.spyOn(scanner, 'openSettings');
       const props = defaultProps(scanner);
 
-      await render(<JoinRoomEntryScreen {...props} />);
+      await render(<JoinRoomScreen {...props} />);
 
       // Switch to camera mode
       await press('Quét mã QR');
@@ -234,7 +234,7 @@ describe('GM-30 Figma Parity & Native Linking Component Tests', () => {
         },
       });
 
-      await render(<JoinRoomEntryScreen {...props} />);
+      await render(<JoinRoomScreen {...props} />);
 
       // Open camera scanner
       await press('Quét mã QR');
@@ -270,7 +270,6 @@ describe('GM-30 Figma Parity & Native Linking Component Tests', () => {
           roomId="room_123"
           repository={mockResultRepo}
           placesRepository={mockPlacesRepo}
-          isReal={false}
           onHome={jest.fn()}
           onNewSession={jest.fn()}
         />
@@ -310,7 +309,6 @@ describe('GM-30 Figma Parity & Native Linking Component Tests', () => {
           roomId="room_123"
           repository={mockResultRepo}
           placesRepository={mockPlacesRepo}
-          isReal={false}
           onHome={jest.fn()}
           onNewSession={jest.fn()}
         />
@@ -344,7 +342,6 @@ describe('GM-30 Figma Parity & Native Linking Component Tests', () => {
           roomId="room_123"
           repository={mockResultRepo}
           placesRepository={mockPlacesRepo}
-          isReal={false}
           onHome={jest.fn()}
           onNewSession={jest.fn()}
         />

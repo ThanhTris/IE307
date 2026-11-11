@@ -41,7 +41,6 @@ export interface LiveDishResultScreenProps {
   artworkSources?: Readonly<Record<string, ImageSourcePropType>>;
   renderMap?: ResultMapRenderer;
   pollIntervalMs?: number;
-  isReal?: boolean;
 }
 
 export function LiveDishResultScreen({
@@ -56,10 +55,8 @@ export function LiveDishResultScreen({
   artworkSources,
   renderMap: renderMapProp,
   pollIntervalMs,
-  isReal: isRealProp,
 }: LiveDishResultScreenProps) {
   const live = useRoomRepository();
-  const isReal = isRealProp ?? (live ? live.mode === 'real' : false);
   const isDev = typeof __DEV__ !== 'undefined' ? Boolean(__DEV__) : process.env.NODE_ENV !== 'production';
   const envSimulated = isPlacesSimulatedFromEnv();
   const effectiveSimulated = placesConfig?.isDevSimulated !== undefined
@@ -116,18 +113,12 @@ export function LiveDishResultScreen({
     const repositoryPlacesFetcher = (params: FetchNearbyPlacesParams) =>
       placesFetcher(params);
 
-    if (isReal) {
-      return createLiveResultRepository({
-        roomRepository: live.repository,
-        getCurrentIdentity,
-        placesFetcher: repositoryPlacesFetcher,
-      });
-    }
     return createLiveResultRepository({
+      roomRepository: live.repository,
       getCurrentIdentity,
       placesFetcher: repositoryPlacesFetcher,
     });
-  }, [customRepository, isReal, live.repository, live.user?.id, placesFetcher]);
+  }, [customRepository, live.repository, live.user?.id, placesFetcher]);
 
   const [currentRoomId, setCurrentRoomId] = useState(roomId);
   const [currentResultId, setCurrentResultId] = useState(resultId);
@@ -333,7 +324,6 @@ export function LiveDishResultScreen({
       members={effectiveMembers}
       nearby={effectiveNearby}
       artworkSources={artworkSources}
-      isMock={!isReal}
       renderMap={renderMap}
       onHome={onHome}
       onNewSession={onNewSession}

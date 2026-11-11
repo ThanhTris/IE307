@@ -1,10 +1,10 @@
 import { act } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react-native';
-import { CreateRoomEntryScreen } from '../../src/features/rooms/screens/CreateRoomEntryScreen';
+import { CreateRoomScreen } from '../../src/features/rooms/screens/CreateRoomScreen';
 
 test('entry is honest about a missing setup artifact and never asks for GPS or creates a room', async () => {
   const onBack = jest.fn();
-  await render(<CreateRoomEntryScreen displayName="Minh" onBack={onBack} />);
+  await render(<CreateRoomScreen displayName="Minh" onBack={onBack} />);
   expect(screen.getByText('Chủ phòng: Minh')).toBeOnTheScreen();
   expect(screen.getByText('Thiết lập phòng đang được cập nhật')).toBeOnTheScreen();
   expect(screen.getByRole('button', { name: 'Tiếp tục thiết lập' })).toBeDisabled();
@@ -18,7 +18,7 @@ test('received setup callback is locked while opening, fails visibly and retries
   let resolve!: (value: boolean) => void;
   const pending = new Promise<boolean>(done => { resolve = done; });
   const open = jest.fn().mockReturnValueOnce(pending).mockResolvedValue(true), back = jest.fn();
-  await render(<CreateRoomEntryScreen displayName="Minh" summary={{ meal: 'Bữa trưa', dishCount: 15 }} onOpenSetup={open} onBack={back} />);
+  await render(<CreateRoomScreen displayName="Minh" summary={{ meal: 'Bữa trưa', dishCount: 15 }} onOpenSetup={open} onBack={back} />);
   await fireEvent.press(screen.getByRole('button', { name: 'Tiếp tục thiết lập' }));
   await fireEvent.press(screen.getByRole('button', { name: 'Tiếp tục thiết lập' }));
   await fireEvent.press(screen.getByRole('button', { name: 'Quay lại' }));

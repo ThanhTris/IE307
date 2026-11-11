@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Animated, StyleSheet } from 'react-native';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
-import { DishSetupCasePicker } from '../../src/bootstrap/DishSetupCasePicker';
-import { createDishSetupPreview } from '../../src/bootstrap/dishSetupPreview';
+import { DishSetupCasePicker } from '../fixtures/setup/DishSetupCasePicker';
+import { createDishSetupPreview } from '../fixtures/setup/dishSetupPreview';
 import { SetupConfirmDialog } from '../../src/features/context/components/SetupConfirmDialog';
 import { DishSetupFlow } from '../../src/features/context/screens/DishSetupFlow';
 import { emptyPreferences, initialSetupDraft } from '../../src/features/context/services/dishSetup';
@@ -97,7 +97,7 @@ test('host completion offers cancellation and Home is shown only after confirmed
   expect(screen.queryByRole('button', { name: 'Về trang chủ' })).toBeNull();
   await fireEvent.press(screen.getByRole('button', { name: 'Hủy phòng' }));
   expect(exit).not.toHaveBeenCalled();
-  await fireEvent.press(screen.getByText('Hủy phòng mẫu'));
+  await fireEvent.press(screen.getByText('Xác nhận hủy phòng'));
   await waitFor(() => expect(screen.getByText('Phòng đã bị hủy')).toBeOnTheScreen());
   await fireEvent.press(screen.getByRole('button', { name: 'Về trang chủ' }));
   expect(exit).toHaveBeenCalledTimes(1);
