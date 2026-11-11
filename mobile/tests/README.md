@@ -1,15 +1,19 @@
-# Kiểm GM-02
+# Kiểm thử mobile
 
-Từ mobile: `npm ci`, `npm run check`, `npm run check:expo`, `npm run bundle:android`.
-Baseline hiện hành theo [hướng dẫn Expo](../../docs/project/EXPO_BASELINE.md) và package-lock của checkout. Chạy thêm `npm run test:expo-baseline` cho regression manifest/lock/install và SDK incompatibility; `npm run check:expo:latest` là kiểm online trong bảo trì GM-02, không thay kiểm đã khóa hoặc device.
-Component tests: shell không cần backend env, navigation/back/recover not-found; safe-area mock chỉ phục vụ layout. Integration tests kiểm Expo Router bằng route modules thật. Unit/integration không thay smoke Android/Expo Go.
-`AppFontProvider.test.tsx` kiểm load thành công/chậm/lỗi, font style 400/500/600/700 và child không bị remount; đây là unit test loader, không thay kiểm render thiết bị thật.
-Static architecture guard không thay review bảo mật. Các task sau thêm tests theo feature, không chuyển screenshot HTML thành native evidence.
+Từ `mobile/`: `npm ci`, `npm run check` (typecheck → lint → jest → architecture guard), `npm run check:expo`, `npm run bundle:android`. Baseline Expo theo [hướng dẫn](../../docs/project/EXPO_BASELINE.md); `npm run test:expo-baseline` kiểm manifest/lock/install.
 
-## GM-15 decision domain riêng
+## Bố cục
 
-Từ root: `node --test mobile/tests/decision.test.mjs` (Node24), sau đó
-`node mobile/scripts/check-decision.mjs --report /tmp/decision-actual.json`.
-Jest chỉ nhận .test.ts/.test.tsx nên suite .mjs được CI riêng Decision domain chạy
-và upload report. npm run check vẫn chạy strict typecheck/lint/Jest/architecture.
-Không coi type stripping là typecheck hoặc fixture là SQL parity/persisted retry.
+| Thư mục | Nội dung |
+|---|---|
+| `unit/` | Repository, mapping, validator, luật thuần, điều hướng (không render) |
+| `component/` | Render màn hình/luồng bằng Testing Library (Jest) |
+| `integration/` | Route module thật của Expo Router |
+| `mocks/api/` | `MockApiClient` và dữ liệu mock — chỉ dùng trong test, app không đóng gói |
+| `fixtures/` | Dữ liệu và màn preview cho test (`result/`, `setup/`, `gm27/`) |
+| `helpers/` | Tiện ích dùng chung cho test |
+| `*.test.mjs` | Suite Node riêng cho domain decision/eligibility/dish policy (CI Decision chạy) |
+
+Jest chỉ nhận `.test.ts`/`.test.tsx`. Suite `.mjs` chạy từ root: `node --test mobile/tests/decision.test.mjs`, rồi `node mobile/scripts/check-decision.mjs --report /tmp/decision-actual.json`.
+
+Test không thay cho kiểm trên thiết bị thật (Expo Go/Android), và static architecture guard không thay review bảo mật.

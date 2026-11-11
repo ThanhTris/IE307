@@ -6,6 +6,7 @@ import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import type { RoomRepository } from '../../rooms/services/roomRepository';
 import { createNativePushService } from '../services/nativePush';
 import { clearPushRegistrationSecrets, getActivePushDriver, getPushDeviceId, isGm29QaPushEnabled, pushSetupIssue } from '../services/expoPushDriver';
+import { ToastNotice } from '../../../shared/ui/feedback/Toast';
 
 export function PushSettingsScreen({ repository, onHome, onInbox }: {
   repository: RoomRepository;
@@ -200,7 +201,7 @@ export function PushSettingsScreen({ repository, onHome, onInbox }: {
           </View> : null}
           <AppButton label="Mở Hộp thư" variant="quiet" onPress={onInbox} colors={colors} />
         </View>
-        {message ? <StatusNotice title="Trạng thái thông báo" message={message} tone={message.startsWith('Chưa') ? 'warning' : 'success'} colors={colors} /> : null}
+        {message ? <ToastNotice title="Trạng thái thông báo" message={message} tone={message.startsWith('Chưa') ? 'error' : 'success'} /> : null}
       </ScrollView>
     </SafeAreaView>
   );

@@ -1,8 +1,8 @@
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import type { ErrorCode } from '../../../data/api/contracts';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { AppButton } from '../../../shared/ui';
+import { AppButton, AppIcon } from '../../../shared/ui';
 import { errorCopy } from '../services/roomEntry';
 
 export function JoinEntryProblem({ code, error, busy, onRetry, onEdit, onHome }: { code: string; error: ErrorCode; busy: boolean; onRetry: () => void; onEdit: () => void; onHome: () => void }) {
@@ -11,7 +11,7 @@ export function JoinEntryProblem({ code, error, busy, onRetry, onEdit, onHome }:
   return <>
     <View accessibilityLiveRegion="polite" style={styles.message}>
       <View style={[styles.symbol, { backgroundColor: colors.warm, borderColor: colors.line }]}>
-        {full || expired ? <Image accessible={false} source={full ? require('../../../../assets/brand/icons/friends.png') : require('../../../../assets/brand/entry-ui/hourglass.png')} resizeMode="contain" style={[styles.icon, { tintColor: colors.text }]} /> : <Text style={[styles.exclamation, { color: colors.text }, textStyle(700)]}>!</Text>}
+        {full || expired ? <AppIcon name={full ? 'friends' : 'hourglass'} size={40} color={colors.text} /> : <Text style={[styles.exclamation, { color: colors.text }, textStyle(700)]}>!</Text>}
       </View>
       <Text accessibilityRole="header" style={[styles.title, { color: colors.text }, textStyle(700)]}>{full ? 'Phòng đã đủ 20 người' : expired ? 'Phòng đã hết hạn' : 'Không thể kiểm tra phòng'}</Text>
       <Text style={[styles.body, { color: colors.muted }, textStyle(400)]}>{full ? 'Bạn chưa thể tham gia phòng này.' : expired ? 'Xin mã phòng mới từ người tạo phòng.' : errorCopy[error]}</Text>

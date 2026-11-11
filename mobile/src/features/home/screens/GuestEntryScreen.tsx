@@ -1,28 +1,28 @@
 import { useEffect, useRef, useState } from 'react';
-import { BackHandler, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { BackHandler, KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { AppButton, BrandLogo, FormField, SheetDialog, StatusNotice } from '../../../shared/ui';
+import { AppButton, FormField, SheetDialog, StatusNotice } from '../../../shared/ui';
 import { spacing, typography } from '../../../shared/theme/tokens';
 import { validDisplayName } from '../../rooms/services/roomEntry';
 import type { HomeLiveSession } from './HomeScreen';
-import { WelcomeScreen } from './WelcomeScreen';
+import { WelcomeArtwork, WelcomeScreen } from './WelcomeScreen';
+import { ToastNotice } from '../../../shared/ui/feedback/Toast';
 
 type Props = {
   onContinue: (name: string) => Promise<boolean>;
   onComplete: () => void;
   session?: HomeLiveSession;
-  isMock?: boolean;
   onSignIn?: () => void;
   onSignUp?: () => void;
 };
 
 /** UI-only guest flow. The caller supplies mock entry or the existing GM-25 session seam. */
-export function GuestEntryScreen({ onContinue, onComplete, session, isMock, onSignIn, onSignUp }: Props) {
+export function GuestEntryScreen({ onContinue, onComplete, session, onSignIn, onSignUp }: Props) {
   const { colors, dark } = useShellTheme();
   const { textStyle } = useAppFonts();
-  const insets = useSafeAreaInsets();
+  const heroColor = dark ? colors.primary : colors.green;
   const [step, setStep] = useState<'welcome' | 'name'>('welcome');
   const [name, setName] = useState('');
   const [error, setError] = useState('');
@@ -100,34 +100,28 @@ export function GuestEntryScreen({ onContinue, onComplete, session, isMock, onSi
   </SheetDialog>;
 
   if (step === 'welcome') return <>
-    <WelcomeScreen onGuest={() => setStep('name')} onSignIn={signIn} onSignUp={signUp} disabled={blocked || disabled} notice={<>{notice}{error ? <StatusNotice title="Chưa thể tiếp tục" message={error} tone="error" colors={colors} /> : null}</>} isMock={isMock} />
+    <WelcomeScreen onGuest={() => setStep('name')} onSignIn={signIn} onSignUp={signUp} disabled={blocked || disabled} notice={<>{notice}{error ? <ToastNotice title="Chưa thể tiếp tục" message={error} tone="error" /> : null}</>} />
     {accountDialog}
   </>;
 
-  return <SafeAreaView edges={['top', 'left', 'right']} style={[styles.root, { backgroundColor: colors.background }]}>
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.root}>
-      <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.content}>
-        <View style={styles.toolbar}>
-          <Pressable accessibilityRole="button" accessibilityLabel="Quay lại" accessibilityState={{ disabled }} disabled={disabled} onPress={back} style={styles.back}>
-            <Text style={[styles.backLabel, { color: colors.text }, textStyle(500)]}>‹ Quay lại</Text>
-          </Pressable>
-          {isMock ? <Text style={[styles.mockLabel, { color: colors.text }, textStyle(500)]}>Mô phỏng · GM-09</Text> : null}
-        </View>
-        <View style={styles.body}>
-          <View style={styles.logoSlot}><BrandLogo size={44} /></View>
-          <Text style={[styles.brandTitle, { color: colors.text }, textStyle(700)]}>Gì Cũng Được</Text>
-          <Text accessibilityRole="header" style={[styles.question, { color: colors.text }, textStyle(700)]}>Bạn tên gì?</Text>
-          <Text style={[styles.description, { color: colors.muted }, textStyle(400)]}>Tên của bạn sẽ hiện trong phòng ăn.</Text>
+  return <SafeAreaView edges={['top', 'left', 'right']} style={[styles.root, { backgroundColor: heroColor }]}>
+    <WelcomeArtwork bottomOffset={250} />
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.content}>
+      <Pressable accessibilityRole="button" accessibilityLabel="Quay lại" accessibilityState={{ disabled }} disabled={disabled} onPress={back} style={styles.back}>
+        <Text style={[styles.backLabel, { color: '#FFFFFF' }, textStyle(500)]}>‹ Quay lại</Text>
+      </Pressable>
+      <View style={styles.center}>
+        <Text accessibilityRole="header" style={[styles.question, { color: '#FFFFFF' }, textStyle(700)]}>Bạn tên gì?</Text>
+        <Text style={[styles.description, { color: '#FFFFFF' }, textStyle(400)]}>Tên của bạn sẽ hiện trong phòng ăn.</Text>
+        <View style={[styles.card, { backgroundColor: colors.background }]}>
           <FormField label="Tên khách" hideLabel value={name} onChangeText={value => { setName(value); setError(''); }} editable={!disabled} placeholder="Nhập tên của bạn" error={error || undefined} autoCorrect={false} inputStyle={[styles.input, { backgroundColor: dark ? colors.surface : colors.onPrimary }, textStyle(500)]} colors={colors} />
           {notice}
-        </View>
-        <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 40) }]}>
+          <AppButton label={accepted ? 'Đã tiếp tục' : 'Tiếp tục'} onPress={() => { void submit(); }} loading={busy} disabled={disabled || blocked} style={styles.continueButton} textStyle={{ fontSize: 17, lineHeight: 24, ...textStyle(600) }} colors={colors} />
           <Pressable accessibilityRole="button" accessibilityLabel="Đã có tài khoản? Đăng nhập" accessibilityState={{ disabled }} disabled={disabled} onPress={signIn} style={styles.signIn}>
-            <Text style={[styles.signInLabel, { color: colors.text }, textStyle(500)]}>Đã có tài khoản? Đăng nhập</Text>
+            <Text style={[styles.signInLabel, { color: dark ? colors.text : '#08765F' }, textStyle(700)]}>Đã có tài khoản? Đăng nhập</Text>
           </Pressable>
-          <AppButton label={accepted ? 'Đã tiếp tục' : 'Tiếp tục'} onPress={() => { void submit(); }} loading={busy} disabled={disabled || blocked} style={styles.continueButton} textStyle={{ fontSize: 14, lineHeight: 20, ...textStyle(600) }} colors={colors} />
         </View>
-      </ScrollView>
+      </View>
     </KeyboardAvoidingView>
     {accountDialog}
   </SafeAreaView>;
@@ -135,20 +129,15 @@ export function GuestEntryScreen({ onContinue, onComplete, session, isMock, onSi
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  content: { flexGrow: 1, width: '100%', maxWidth: 480, alignSelf: 'center', paddingHorizontal: spacing.xxl },
-  toolbar: { minHeight: 48, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' },
-  back: { minHeight: 48, minWidth: 48, justifyContent: 'center' },
+  content: { flex: 1, width: '100%', maxWidth: 480, alignSelf: 'center', paddingHorizontal: 30 },
+  back: { minHeight: 48, minWidth: 48, justifyContent: 'center', alignSelf: 'flex-start' },
   backLabel: { fontSize: 15, lineHeight: 22 },
-  mockLabel: { fontSize: 12, lineHeight: 18 },
-  body: { flexGrow: 1 },
-  logoSlot: { width: 44, height: 72, alignSelf: 'center', marginTop: 78, alignItems: 'center' },
-  logo: { width: 44, height: 44 },
-  brandTitle: { marginTop: 19, fontSize: 29, lineHeight: 35, textAlign: 'center' },
-  question: { marginTop: 67, fontSize: 26, lineHeight: 32 },
-  description: { marginTop: 7, marginBottom: 24, fontSize: 15, lineHeight: 21 },
+  center: { flex: 1, justifyContent: 'center', paddingBottom: 48 },
+  question: { fontSize: 40, lineHeight: 48 },
+  description: { marginTop: 8, marginBottom: 24, fontSize: 17, lineHeight: 24 },
+  card: { borderRadius: 28, padding: spacing.xl, gap: spacing.md },
   input: { minHeight: 64, borderRadius: 16, fontSize: 19, lineHeight: 26, paddingHorizontal: 17 },
-  footer: { paddingTop: spacing.xxl, gap: spacing.xxl },
+  continueButton: { minHeight: 60 },
   signIn: { minHeight: 48, alignItems: 'center', justifyContent: 'center' },
-  signInLabel: { fontSize: 15, lineHeight: 22, textAlign: 'center' },
-  continueButton: { minHeight: 52 },
+  signInLabel: { fontSize: 16, lineHeight: 24, textAlign: 'center' },
 });

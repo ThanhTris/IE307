@@ -7,28 +7,26 @@ Chủ dự án xác nhận cấu trúc/bộ package và review GM-01/ADR-001 tro
 ```text
 package.json / package-lock.json GM-03: BE tooling local; không phải Node server
 scripts/backend.mjs             GM-03: runner portable/local-only
-mobile/                         GM-02: config/lockfile/runner
+scripts/README.md               mục lục script theo nhóm; không di chuyển script (CI/evidence tham chiếu đường dẫn)
+mobile/                         GM-02: config/lockfile/runner; app chỉ dùng backend thật
   package.json / package-lock.json
   app.config.ts / tsconfig.json / eslint.config.js / .env.example / README.md
-  src/app/                      routes/layouts mỏng theo tính năng sản phẩm + dev/
-    _layout.tsx / index.tsx / friends.tsx / history.tsx / inbox.tsx / +not-found.tsx
-    room/                       create, join, preview, context, preferences, lobby, status, vote, final-round, result, no-consensus
-    dev/                        shell, foundation, components, features, discovery-context, auth-sandbox, room-flow-sandbox
-  src/bootstrap/AppProviders.tsx nền providers/composition
-  src/features/
-    home/screens/AppShellScreen.tsx GM-02: shell sản phẩm
-    home/ rooms/ context/ preferences/ voting/ result/
-    friends/ inbox/ history/ account/ auth/
+  src/README.md                 sơ đồ thư mục, route ↔ feature, quy ước (cập nhật 2026-11-10)
+  src/app/                      routes mỏng: index, welcome, tutorial, continue-session, friends, history, inbox, push-settings, profile, join/
+    room/                       create, join, setup (chủ phòng và thành viên), lobby, vote, final-round, result, no-consensus
+  src/bootstrap/                providers: font, theme, RoomRepositoryProvider (phiên khách + repository)
+  src/features/                 home, auth, rooms, context (DishSetupFlow), preferences, voting, result, friends, inbox, history, account
   src/shared/theme/             GM-05 tokens
   src/shared/ui/                GM-05 components chia file theo nhóm (layout, buttons, forms, cards, room, result, feedback, dialogs, tutorial) + index.ts
   src/domain/decision/          GM-15 luật thuần
   src/domain/eligibility/       GM-18 lọc/rank thuần và parity
-  src/data/api/                 GM-07 contracts/, client/, mock/ chia module + barrel; adapters thật về sau
+  src/data/api/                 GM-07 contracts/, client/ + barrel; app chỉ tạo client thật
   src/data/auth/                GM-16 secure session
-  src/data/local/               GM-31 SQLite/cache/outbox
-  tests/README.md                lệnh chạy và scope
-  tests/component/AppShellScreen.test.tsx GM-02: smoke shell
-  tests/unit/ / tests/integration/ task sau bổ sung theo scope
+  src/data/local/               GM-31 SQLite/cache/outbox; bestEffort.ts giới hạn thời gian chờ lưu cục bộ
+  tests/README.md               bố cục và lệnh chạy
+  tests/unit/ component/ integration/
+  tests/mocks/api/              MockApiClient + dữ liệu mock (chỉ dùng trong test)
+  tests/fixtures/               dữ liệu và màn preview cho test
 supabase/                       GM-03 config/local runner
   config.toml / .env.example / README.md
   migrations/                   GM-06 schema; migration riêng từng task BE
@@ -42,15 +40,15 @@ supabase/                       GM-03 config/local runner
     http/GM-XX.http              mỗi task API sở hữu request suite riêng
     functions/                  khi có Edge Function trong scope
 docs/data/                      dictionary/database mapping/dataset handoff
-docs/project/audits/            các báo cáo rà soát, đồng bộ UI-BE-Data theo mốc thời gian
+docs/project/audits/            các báo cáo rà soát, đồng bộ UI-BE-Data, báo cáo đóng giai đoạn theo mốc thời gian
 tests/fixtures/                 mẫu tổng hợp, không publish verified
 docs/evidence/roadmap-v2/        output/test/handoff/review theo task mới
 tasks/archive/roadmap-v1/        snapshot JSON giữ task/mapping cũ
 ```
 
-Feature dùng screens/components/hooks/services/types/index khi cần, không tạo lớp rỗng bắt buộc. Domain không React/SDK/network. UI nhận DTO/view props và repository interface; composition root chọn mock hay real, production không âm thầm fallback fixture.
+Feature dùng screens/components/hooks/services/types/index khi cần, không tạo lớp rỗng bắt buộc. Domain không React/SDK/network. UI nhận DTO/view props và repository interface; app luôn dùng client thật, thiếu cấu hình thì báo lỗi, không fallback fixture. Mock chỉ nằm trong mobile/tests.
 
-Route theo màn: index, room/create/join/[id]/preferences/lobby/vote/final-round/result, friends, inbox, history. GM-02 chỉ tạo shell và quy ước; task màn thêm route của mình. Permission/native modules đưa vào task chức năng GM-24/29/30/31, không chặn xem UI mẫu.
+Route theo màn: index, room/create/join/setup/lobby/vote/final-round/result/no-consensus, friends, inbox, history, profile. Thành viên dùng chung room/setup với stage=preferences. Task màn thêm route của mình. Permission/native modules đưa vào task chức năng GM-24/29/30/31, không chặn xem UI mẫu.
 
 Owner file: GM-02 mobile package/lockfile/config; GM-03 root package/lockfile (chỉ BE tooling)/runner/config; GM-04 dictionary/schema/template/field coverage; GM-05 UI components; GM-06 migrations/schema convention; GM-07 DTO/client/mock. Các task sau bàn giao migration/request/test/file riêng, không sửa migration đã merge hoặc tạo contract trùng. Hai lockfile không là monorepo framework; thư mục quy hoạch của task sau không cần file rỗng hàng loạt.
 

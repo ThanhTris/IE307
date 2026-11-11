@@ -1,5 +1,5 @@
 import { act, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react-native';
-import { createDishSetupPreview } from '../../src/bootstrap/dishSetupPreview';
+import { createDishSetupPreview } from '../fixtures/setup/dishSetupPreview';
 import { emptyPreferences, type SetupRoom } from '../../src/features/context/services/dishSetup';
 import { DishSetupFlow } from '../../src/features/context/screens/DishSetupFlow';
 import { useDishSetupFlow } from '../../src/features/context/hooks/useDishSetupFlow';
@@ -51,7 +51,7 @@ test('saving an existing setup advances to preferences and preserves own choices
 test('fresh setup Back always offers discard and continuing keeps the draft', async () => {
   const exit = jest.fn();
   await render(<DishSetupFlow gateway={createDishSetupPreview()} onExit={exit} />);
-  await screen.findByText('Buổi ăn');
+  await screen.findByRole('header', { name: 'Buổi ăn' });
   await fireEvent.press(screen.getByRole('button', { name: 'Quay lại' }));
   expect(screen.getByRole('header', { name: 'Bỏ thiết lập phòng?' })).toBeOnTheScreen();
   expect(exit).not.toHaveBeenCalled();
@@ -61,21 +61,22 @@ test('fresh setup Back always offers discard and continuing keeps the draft', as
 test('existing-room Back never silently exits or cancels; explicit confirmation shows cancellation result', async () => {
   const gateway = createDishSetupPreview('default', { room, preferences: emptyPreferences() }), write = jest.spyOn(gateway, 'write'), exit = jest.fn();
   await render(<DishSetupFlow gateway={gateway} onExit={exit} />);
-  await screen.findByText('Buổi ăn');
+  await screen.findByRole('header', { name: 'Buổi ăn' });
   await fireEvent.press(screen.getByRole('button', { name: 'Quay lại' }));
-  expect(screen.getByText('Hủy phòng mẫu?')).toBeOnTheScreen();
+  expect(screen.getByText('Hủy phòng?')).toBeOnTheScreen();
   expect(write).not.toHaveBeenCalled(); expect(exit).not.toHaveBeenCalled();
-  await fireEvent.press(screen.getByText('Hủy phòng mẫu'));
+  await fireEvent.press(screen.getByText('Xác nhận hủy phòng'));
   expect(await screen.findByText('Phòng đã bị hủy')).toBeOnTheScreen();
   expect((await gateway.read()).room).toMatchObject({ id: room.id, state: 'CLOSED', version: 2 });
 });
-test('friend picker stages choices, supplies avatar rows and can clear an empty search', async () => {
+test('friend picker stages choices, supplies avatar rows and shows a calm empty state', async () => {
   const confirm = jest.fn(), close = jest.fn();
   await render(<SetupFriendsSheet friends={[{ id: 'linh', label: 'Linh' }, { id: 'nam', label: 'Nam' }]} initial={['linh']} onConfirm={confirm} onClose={close} />);
   expect(screen.getByRole('checkbox', { name: 'Linh' })).toBeChecked();
   await fireEvent.changeText(screen.getByLabelText('Tìm theo tên bạn bè'), 'nobody');
   expect(screen.getByText('Chưa tìm thấy bạn')).toBeOnTheScreen();
-  await fireEvent.press(screen.getByText('Xóa từ khóa'));
+  expect(screen.queryByText('Xóa từ khóa')).toBeNull();
+  await fireEvent.changeText(screen.getByLabelText('Tìm theo tên bạn bè'), '');
   await fireEvent.press(screen.getByRole('checkbox', { name: 'Nam' }));
   expect(confirm).not.toHaveBeenCalled();
   await fireEvent.press(screen.getByText('Chọn 2 người bạn'));

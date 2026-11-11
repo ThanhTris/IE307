@@ -1,8 +1,8 @@
+import { createMockApiClient } from '../mocks/api/mockApiClient';
 import { Stack } from 'expo-router';
 import { Text } from 'react-native';
 import { renderRouter } from 'expo-router/testing-library';
 import { fireEvent, screen, waitFor } from '@testing-library/react-native';
-import { createApiClient } from '../../src/data/api';
 import type { RoomRepositoryContextValue } from '../../src/bootstrap/RoomRepositoryProvider';
 import Index from '../../src/app/index';
 import Welcome from '../../src/app/welcome';
@@ -15,7 +15,7 @@ const user = { id: 'gm09-synthetic-user', displayName: 'Minh', isGuest: true, cr
 
 beforeEach(() => {
   mockSession = {
-    repository: createApiClient('mock', { mode: 'default', delayMs: 0 }) as unknown as RoomRepositoryContextValue['repository'],
+    repository: createMockApiClient({ mode: 'default', delayMs: 0 }) as unknown as RoomRepositoryContextValue['repository'],
     status: 'empty', issue: 'no-session', user: null, mode: 'real', isInitializing: false,
     ensureSession: jest.fn().mockImplementation(async () => {
       mockSession = { ...mockSession, status: 'active', issue: 'none', user };

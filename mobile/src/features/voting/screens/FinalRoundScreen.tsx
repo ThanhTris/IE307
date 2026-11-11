@@ -156,7 +156,7 @@ export function FinalRoundScreen({
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <AppHeader title="Bình chọn · Vòng 2" onPressBrand={onBack} colors={colors} />
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <FinalRoundHeaderAndOutcome
           showScenarioPicker={shouldShowScenarioPicker}
           submissionState={submissionState}

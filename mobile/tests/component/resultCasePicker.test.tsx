@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react-native';
-import { ResultCasePicker } from '../../src/bootstrap/ResultCasePicker';
+import { ResultCasePicker } from '../fixtures/result/ResultCasePicker';
 
 test('QA starts collapsed, searches cases and keeps no-consensus cases separate from podium options', async () => {
   const onCase = jest.fn(), props = { noConsensus: false, showPlaces: true, locked: false, onCase, onNearby: jest.fn(), onOtherScreen: jest.fn(), onActionFailure: jest.fn() };

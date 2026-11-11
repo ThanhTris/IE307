@@ -3,9 +3,9 @@ import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { DishResultFrame } from '../components/DishResultFrame';
 
-export function DishNoConsensusScreen({ reason, onHome, onNewSession, isMock, tools }: { reason: 'EMPTY_INTERSECTION' | 'ALL_REMOVED'; onHome: () => void; onNewSession: () => void; isMock?: boolean; tools?: React.ReactNode }) {
+export function DishNoConsensusScreen({ reason, onHome, onNewSession }: { reason: 'EMPTY_INTERSECTION' | 'ALL_REMOVED'; onHome: () => void; onNewSession: () => void }) {
   const { colors } = useShellTheme(), { textStyle } = useAppFonts(), first = reason === 'EMPTY_INTERSECTION';
-  return <DishResultFrame onHome={onHome} onNewSession={onNewSession} isMock={isMock} tools={tools}>
+  return <DishResultFrame onHome={onHome} onNewSession={onNewSession}>
     <View style={styles.body}>
       <Image source={require('../../../../assets/brand/result/empty-bowl.png')} accessible={false} resizeMode="contain" style={styles.image} />
       <Text style={[styles.round, { color: colors.text }, textStyle(600)]}>{first ? 'VÒNG 2 KHÔNG MỞ' : 'KẾT THÚC VÒNG 2'}</Text>

@@ -1,14 +1,13 @@
 import {
-  Image,
   Pressable,
   StyleSheet,
   Text,
-  type ImageSourcePropType,
   type StyleProp,
   type TextStyle,
   type ViewStyle,
 } from 'react-native';
 import { radii, spacing, typography } from '../../theme/tokens';
+import { AppIcon, type AppIconName } from '../icons/AppIcon';
 import type { ComponentThemeProps } from '../types';
 
 export type AppButtonProps = ComponentThemeProps & {
@@ -19,7 +18,7 @@ export type AppButtonProps = ComponentThemeProps & {
   loading?: boolean;
   accessibilityHint?: string;
   style?: StyleProp<ViewStyle>;
-  iconSource?: ImageSourcePropType;
+  icon?: AppIconName;
   iconTintColor?: string;
   iconLayout?: 'inline' | 'stacked';
   iconSize?: number;
@@ -35,7 +34,7 @@ export function AppButton({
   accessibilityHint,
   style,
   colors,
-  iconSource,
+  icon,
   iconTintColor,
   iconLayout = 'inline',
   iconSize = 24,
@@ -71,23 +70,15 @@ export function AppButton({
           opacity: disabled || loading ? 0.55 : pressed && variant === 'danger' ? 0.65 : 1,
         },
         variant === 'secondary' && styles.buttonSecondary,
-        iconSource && iconLayout === 'stacked' ? styles.iconButtonStacked : undefined,
+        icon && iconLayout === 'stacked' ? styles.iconButtonStacked : undefined,
         style,
       ]}
     >
-      {iconSource && !loading ? (
-        <Image
-          testID="app-button-icon"
-          source={iconSource}
-          accessible={false}
-          resizeMode="contain"
-          style={[styles.buttonIcon, { width: iconSize, height: iconSize, tintColor: iconTintColor ?? foreground }]}
-        />
-      ) : null}
+      {icon && !loading ? <AppIcon testID="app-button-icon" name={icon} size={iconSize} color={iconTintColor ?? foreground} /> : null}
       <Text
         style={[
           styles.buttonText,
-          iconSource && iconLayout === 'stacked' ? styles.iconButtonText : undefined,
+          icon && iconLayout === 'stacked' ? styles.iconButtonText : undefined,
           { color: foreground },
           textStyle,
         ]}
@@ -108,7 +99,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textAlignVertical: 'center',
   },
-  buttonIcon: { width: 24, height: 24 },
   iconButtonStacked: { alignItems: 'center', gap: spacing.md },
   iconButtonText: { minHeight: 0, paddingHorizontal: 0, paddingVertical: 0 },
 });

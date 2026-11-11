@@ -54,7 +54,7 @@ export function useDishSetupFlow(gateway: DishSetupGateway, requestId = mockRequ
       if (ack.kind === 'cancel' && value.room.state !== 'CLOSED') throw new Error('Cancellation not confirmed');
       setData(value); setReadError(false);
       if (value.room.state === 'CLOSED') setNotice('Phòng đã đóng. Thay đổi không thể tiếp tục.');
-      else if (ack.kind === 'settings') { if (value.settings) receiveDraft(clone(value.settings)); else draftState.markSaved(); setStage('preferences'); setNotice(undefined); }
+      else if (ack.kind === 'settings') { if (value.settings) receiveDraft({ ...clone(value.settings), ...(intent.current?.kind === 'settings' ? { inviteeIds: clone(intent.current.draft.inviteeIds), budget: clone(intent.current.draft.budget), avoidRecent: intent.current.draft.avoidRecent } : {}) }); else draftState.markSaved(); setStage('preferences'); setNotice(undefined); }
       else { const own = clone(value.ownRoomPreferences!); setPreferences(own); setBaselinePreferences(clone(own)); setStage('complete'); setNotice(undefined); }
       acknowledged.current = null; intent.current = null; setPhase('idle');
     } catch { if (alive.current) { setNotice('Đã nhận xác nhận lưu; chưa tải được trạng thái mới. Chỉ thử đọc lại, không gửi lại.'); setPhase('ack-read'); } }
@@ -88,6 +88,9 @@ export function useDishSetupFlow(gateway: DishSetupGateway, requestId = mockRequ
   const submitSettings = () => {
     if (blocked || lock.current) return;
     if (data?.canEditSettings === false) { if (data.room) setStage('preferences'); return; }
+    if (acknowledged.current?.kind === 'settings') { retry(); return; }
+    const pending = intent.current;
+    if (pending?.kind === 'settings' && JSON.stringify(pending.draft) === JSON.stringify(draftState.draft)) { void send(pending); return; }
     const invalid = setupValidation(draftState.draft, now());
     if (invalid) { setNotice(invalid); return; }
     void send({ kind: 'settings', requestId: requestId(), draft: clone(draftState.draft), room: data?.room ? clone(data.room) : undefined });
@@ -97,6 +100,9 @@ export function useDishSetupFlow(gateway: DishSetupGateway, requestId = mockRequ
     const next = clone(skip ? { ...baselinePreferences, historyConsent: preferences.historyConsent } : preferences);
     const changedFields = (['cuisineIds', 'categoryIds', 'temperature', 'flavor'] as const)
       .filter(key => JSON.stringify(next[key]) !== JSON.stringify(baselinePreferences[key]));
+    if (acknowledged.current?.kind === 'preferences') { retry(); return; }
+    const pending = intent.current;
+    if (pending?.kind === 'preferences' && JSON.stringify(pending.preferences) === JSON.stringify(next)) { void send(pending); return; }
     void send({ kind: 'preferences', requestId: requestId(), room: clone(data.room), preferences: next, changedFields: [...changedFields] });
   };
   const retry = () => {
@@ -104,6 +110,28 @@ export function useDishSetupFlow(gateway: DishSetupGateway, requestId = mockRequ
     if (acknowledged.current) { lock.current = true; void readAcknowledged().finally(() => { lock.current = false; }); }
     else if (intent.current) void send(intent.current);
   };
+  // Recovery is automatic: re-read an acknowledged write / retry the same request / reload stale state.
+  const attempts = useRef(0);
+  const [retryTick, setRetryTick] = useState(0);
+  useEffect(() => {
+    if (phase === 'idle') { attempts.current = 0; return; }
+    if (phase === 'sending') return;
+    const timer = setTimeout(() => {
+      if (attempts.current >= 4) {
+        // Give up quietly: keep the saved intent so pressing the main button re-sends the SAME request.
+        setPhase('idle'); setNotice('Chưa lưu được. Bấm nút để thử lại.'); return;
+      }
+      attempts.current += 1; retry(); setRetryTick(tick => tick + 1);
+    }, 1500 + attempts.current * 1500);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, retryTick]);
+  useEffect(() => {
+    if (!needsRefresh || phase !== 'idle') return;
+    const timer = setTimeout(() => { void refresh(); }, 800);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [needsRefresh, phase]);
   const cancelRoom = () => {
     if (blocked || lock.current || !data?.room || !data.canEditSettings) return;
     void send({ kind: 'cancel', requestId: requestId(), room: clone(data.room) });

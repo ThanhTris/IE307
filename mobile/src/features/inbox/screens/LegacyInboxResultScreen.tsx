@@ -3,7 +3,7 @@ import type { RoomSnapshot } from '../../../data/api/contracts';
 import { useRoomRepository } from '../../../bootstrap/RoomRepositoryProvider';
 import { DishResultFlow } from '../../result/screens/DishResultFlow';
 import type { ResultInput, ResultReadState } from '../../result/services/resultPresentation';
-import { callSessionApi } from '../../shared/services/sessionApi';
+import { callSessionApi } from '../../rooms/services/sessionApi';
 
 type Props = { roomId?: string; resultId?: string; onHome: () => void; onNewSession: () => void };
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -58,7 +58,6 @@ export function LegacyInboxResultScreen({ roomId, resultId, onHome, onNewSession
   return <DishResultFlow
     input={input}
     readState={readState}
-    isMock={false}
     celebrate={false}
     onHome={onHome}
     onNewSession={onNewSession}

@@ -10,15 +10,15 @@ import { useHomeRoom } from '../hooks/useHomeRoom';
 
 const roomStage = (room: RoomSnapshot) => room.state === 'LOBBY' ? 'Đang ở phòng chờ' : room.state === 'ROUND_2' ? 'Vòng 2 · Đang chọn món' : 'Vòng 1 · Đang chọn món';
 
-export function ContinueSessionScreen({ repository, receipt, userId, enabled = true, isInitializing = false, isMock, onContinue, onHome }: {
+export function ContinueSessionScreen({ repository, receipt, userId, enabled = true, isInitializing = false, onContinue, onHome }: {
   repository: RoomEntryRepository; receipt?: RoomEntryReceipt | null; userId?: string;
-  enabled?: boolean; isInitializing?: boolean; isMock?: boolean; onContinue: (room: RoomSnapshot) => void; onHome: () => void;
+  enabled?: boolean; isInitializing?: boolean; onContinue: (room: RoomSnapshot) => void; onHome: () => void;
 }) {
   const { colors, dark } = useShellTheme();
   const { textStyle } = useAppFonts();
   const room = useHomeRoom(repository, receipt, userId, enabled);
   const host = room.data?.members.find(member => member.userId === room.data?.hostUserId);
-  return <HomeFlowFrame title="Tiếp tục phiên" onHome={onHome} isMock={isMock}>
+  return <HomeFlowFrame title="Tiếp tục phiên" onHome={onHome}>
     <Text accessibilityRole="header" style={[styles.title, { color: colors.text }, textStyle(700)]}>{room.active ? 'Bạn có phiên đang diễn ra' : 'Kiểm tra phiên của bạn'}</Text>
     {!receipt ? <StatusNotice title="Không có phòng để tiếp tục" message="Về trang chủ để tạo hoặc tham gia phòng." colors={colors} /> : null}
     {isInitializing ? <StatusNotice title="Đang khôi phục phiên…" colors={colors} /> : null}

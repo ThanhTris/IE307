@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { ApiClient, PoolDish, RoomResult } from '../../../data/api';
-import { MOCK_DISHES } from '../../../data/api';
+import { MOCK_DISHES } from '../fixtures';
 import {
   AppButton,
   AppHeader,
@@ -160,7 +160,7 @@ export function VoteScreen({
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <AppHeader title="Bình chọn · Vòng 1" onPressBrand={onBack} colors={colors} />
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <VoteScenarioAndStatusBanner
           showScenarioPicker={shouldShowScenarioPicker}
           submissionState={submissionState}

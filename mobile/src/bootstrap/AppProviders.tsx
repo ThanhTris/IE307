@@ -1,5 +1,6 @@
 import type { PropsWithChildren } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { ToastProvider } from '../shared/ui/feedback/Toast';
 import { AppFontProvider } from './AppFontProvider';
 import { RoomRepositoryProvider } from './RoomRepositoryProvider';
 
@@ -8,7 +9,9 @@ export function AppProviders({ children }: PropsWithChildren) {
   return (
     <SafeAreaProvider>
       <AppFontProvider>
-        <RoomRepositoryProvider>{children}</RoomRepositoryProvider>
+        <RoomRepositoryProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </RoomRepositoryProvider>
       </AppFontProvider>
     </SafeAreaProvider>
   );

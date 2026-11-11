@@ -14,7 +14,7 @@ import type {
 import { isCanonicalRoomSnapshot, isRoomSnapshot } from '../../../data/api/responseGuards';
 import { getDurableOutbox, type DurableOutbox } from '../../../data/local/outbox';
 import type { RoomRepository } from '../../rooms/services/roomRepository';
-import { getRoundTwoEliminationCap } from '../fixtures';
+import { getRoundTwoEliminationCap } from './votingRules';
 import {
   CANONICAL_VOTE_CONTRACT_VERSION,
   createDurableRequestId,
@@ -27,6 +27,9 @@ import {
   type SubmitBallotArgs,
   type VoteRepository,
 } from './voteRepository';
+import { settleWithin } from '../../../data/local/bestEffort';
+
+const SNAPSHOT_RECONCILE_WAIT_MS = 1_500;
 
 export type CachedReadResult<T> =
   | { ok: true; data: T; stale?: boolean; fetchedAt?: string }
@@ -293,7 +296,9 @@ export class DurableLiveVoteRepository implements DurableVoteRepository {
       if (!this.identityMatches(capturedIdentity)) {
         return { ok: false, error: { messageKey: 'AUTH_REQUIRED' } };
       }
-      await this.reconcileOutbox(result.data, capturedIdentity);
+      // B6: the server snapshot is authoritative. Local outbox bookkeeping may lag (SQLite busy),
+      // so it gets a short window and then continues in the background instead of delaying the UI.
+      await settleWithin(this.reconcileOutbox(result.data, capturedIdentity), undefined, SNAPSHOT_RECONCILE_WAIT_MS);
       if (!this.identityMatches(capturedIdentity)) {
         return { ok: false, error: { messageKey: 'AUTH_REQUIRED' } };
       }

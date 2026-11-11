@@ -59,14 +59,14 @@ export function parseSchedule(date: string, hour: string, minute: string): strin
   return scheduleParts(iso).date === date ? iso : null;
 }
 export const mealOptions = [
-  { id: 'breakfast', label: 'Ăn sáng', icon: require('../../../../assets/brand/entry-ui/sun.png') },
-  { id: 'lunch', label: 'Ăn trưa', icon: require('../../../../assets/brand/entry-ui/rice.png') },
-  { id: 'dinner', label: 'Ăn tối', icon: require('../../../../assets/brand/entry-ui/moon.png') },
-  { id: 'snack', label: 'Ăn vặt', icon: require('../../../../assets/brand/entry-ui/snack.png') },
+  { id: 'breakfast', label: 'Ăn sáng', icon: 'sunrise' },
+  { id: 'lunch', label: 'Ăn trưa', icon: 'meal' },
+  { id: 'dinner', label: 'Ăn tối', icon: 'moon' },
+  { id: 'snack', label: 'Ăn vặt', icon: 'snack' },
 ] as const;
 export const budgetOptions = [
-  { id: 'under50', label: 'Dưới 50K', icon: require('../../../../assets/brand/entry-ui/wallet.png') },
-  { id: '50to100', label: '50–100K', icon: require('../../../../assets/brand/entry-ui/coins.png') },
-  { id: '100to200', label: '100–200K', icon: require('../../../../assets/brand/entry-ui/box.png') },
-  { id: null, label: 'Không giới hạn', icon: require('../../../../assets/brand/entry-ui/infinity.png') },
+  { id: 'under50', label: 'Dưới 50K', icon: 'wallet' },
+  { id: '50to100', label: '50–100K', icon: 'coins' },
+  { id: '100to200', label: '100–200K', icon: 'box' },
+  { id: null, label: 'Không giới hạn', icon: 'infinity' },
 ] as const;

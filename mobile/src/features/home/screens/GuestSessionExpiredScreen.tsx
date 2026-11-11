@@ -2,10 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { AppButton, StatusNotice } from '../../../shared/ui';
+import { AppButton } from '../../../shared/ui';
 import { HomeFlowFrame } from '../components/HomeFlowFrame';
+import { ToastNotice } from '../../../shared/ui/feedback/Toast';
 
-export function GuestSessionExpiredScreen({ onReset, onHome, isMock }: { onReset: () => Promise<boolean>; onHome: () => void; isMock?: boolean }) {
+export function GuestSessionExpiredScreen({ onReset, onHome }: { onReset: () => Promise<boolean>; onHome: () => void }) {
   const { colors } = useShellTheme();
   const { textStyle } = useAppFonts();
   const [busy, setBusy] = useState(false);
@@ -21,13 +22,13 @@ export function GuestSessionExpiredScreen({ onReset, onHome, isMock }: { onReset
     if (!mounted.current) return;
     if (!success) { locked.current = false; setBusy(false); setError(true); }
   };
-  return <HomeFlowFrame title="Phiên khách" onHome={() => { if (!locked.current) onHome(); }} busy={busy} isMock={isMock}>
+  return <HomeFlowFrame title="Phiên khách" onHome={() => { if (!locked.current) onHome(); }} busy={busy}>
     <View style={styles.message}>
       <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={[styles.symbol, { borderColor: colors.line, backgroundColor: colors.warm }]}><Text allowFontScaling={false} style={[styles.exclamation, { color: colors.text }, textStyle(700)]}>!</Text></View>
       <Text accessibilityRole="header" style={[styles.title, { color: colors.text }, textStyle(700)]}>Phiên khách đã hết hạn</Text>
       <Text style={[styles.description, { color: colors.muted }, textStyle(400)]}>Nhập tên để tiếp tục dùng ứng dụng.</Text>
     </View>
-    {error ? <StatusNotice title="Chưa xóa được phiên cũ" message="Hãy thử lại trước khi nhập tên cho phiên mới." tone="error" colors={colors} /> : null}
+    {error ? <ToastNotice title="Chưa xóa được phiên cũ" message="Hãy thử lại trước khi nhập tên cho phiên mới." tone="error" /> : null}
     <View style={styles.spacer} />
     <AppButton label="Nhập tên" onPress={() => { void reset(); }} loading={busy} textStyle={textStyle(600)} colors={colors} />
   </HomeFlowFrame>;

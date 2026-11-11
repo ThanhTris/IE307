@@ -1,14 +1,13 @@
 import {
-  Image,
   Pressable,
   StyleSheet,
   Text,
   View,
-  type ImageSourcePropType,
   type TextStyle,
 } from 'react-native';
 import { radii, spacing, typography, type ThemeColors } from '../../theme/tokens';
 import type { ComponentThemeProps } from '../types';
+import { AppIcon, type AppIconName } from '../icons/AppIcon';
 import { BrandLogo } from './BrandLogo';
 
 export type AppHeaderProps = ComponentThemeProps & {
@@ -27,7 +26,6 @@ export type AppHeaderProps = ComponentThemeProps & {
   showInbox?: boolean;
   showProfile?: boolean;
   brandTextStyle?: TextStyle;
-  backIconSource?: ImageSourcePropType;
   allowTitleWrap?: boolean;
   centeredTitle?: boolean;
   hideDivider?: boolean;
@@ -49,7 +47,6 @@ export function AppHeader({
   showInbox = true,
   showProfile = true,
   brandTextStyle,
-  backIconSource,
   allowTitleWrap = false,
   centeredTitle = false,
   hideDivider = false,
@@ -83,7 +80,7 @@ export function AppHeader({
               { backgroundColor: pressed ? colors?.soft : 'transparent', opacity: onPressBack ? 1 : 0.45 },
             ]}
           >
-            {backIconSource ? <Image source={backIconSource} accessible={false} resizeMode="contain" style={[styles.headerIcon, { tintColor: colors?.text }]} /> : <Text style={[styles.backGlyph, { color: colors?.text }]}>‹</Text>}
+            <AppIcon name="back" size={28} color={colors?.text} />
           </Pressable>
           <View style={styles.headerVariantTitle}>
             <Text
@@ -122,7 +119,7 @@ export function AppHeader({
         {variant === 'home' && showFriends ? (
           <HeaderAction
             label="Bạn ăn cùng"
-            iconSource={require('../../../../assets/brand/icons/friends.png')}
+            icon="friends"
             badge={friendBadge}
             onPress={onFriends}
             colors={colors}
@@ -131,7 +128,7 @@ export function AppHeader({
         {variant === 'home' && showInbox ? (
           <HeaderAction
             label="Thông báo"
-            iconSource={require('../../../../assets/brand/icons/bell.png')}
+            icon="bell"
             badge={inboxBadge}
             onPress={onInbox}
             colors={colors}
@@ -140,7 +137,7 @@ export function AppHeader({
         {variant === 'home' && showProfile ? (
           <HeaderAction
             label="Hồ sơ"
-            iconSource={require('../../../../assets/brand/icons/profile.png')}
+            icon="profile"
             onPress={onProfile}
             colors={colors}
           />
@@ -152,13 +149,13 @@ export function AppHeader({
 
 function HeaderAction({
   label,
-  iconSource,
+  icon,
   badge,
   onPress,
   colors,
 }: {
   label: string;
-  iconSource: ImageSourcePropType;
+  icon: AppIconName;
   badge?: number;
   onPress?: () => void;
   colors?: ThemeColors;
@@ -175,7 +172,7 @@ function HeaderAction({
         { backgroundColor: pressed ? colors?.soft : 'transparent', opacity: onPress ? 1 : 0.65 },
       ]}
     >
-      <Image source={iconSource} accessible={false} resizeMode="contain" style={[styles.headerIcon, { tintColor: colors?.text }]} />
+      <AppIcon name={icon} size={24} color={colors?.text} />
       {badge !== undefined && badge > 0 ? (
         <View style={[styles.badge, { backgroundColor: colors?.danger }]}>
           <Text style={styles.badgeText}>{badge > 99 ? '99+' : badge}</Text>
@@ -197,7 +194,6 @@ const styles = StyleSheet.create({
   brand: { minHeight: 48, flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flexShrink: 1 },
   headerVariant: { flex: 1, minWidth: 0, minHeight: 48, flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
   headerVariantTitle: { flex: 1, minWidth: 0, gap: spacing.xs },
-  backGlyph: { fontSize: 32, lineHeight: 36, textAlign: 'center' },
   headerRoomCode: { ...typography.caption },
   headerMenu: { alignItems: 'center', justifyContent: 'center' },
   headerMenuGlyph: { fontSize: 28, lineHeight: 30, fontWeight: '800' },
@@ -205,7 +201,6 @@ const styles = StyleSheet.create({
   brandText: { ...typography.titleMedium, lineHeight: 28, flexShrink: 1 },
   headerActions: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
   headerAction: { width: 48, height: 48, borderRadius: radii.pill, justifyContent: 'center', alignItems: 'center' },
-  headerIcon: { width: 24, height: 24 },
   badge: {
     position: 'absolute',
     right: 1,

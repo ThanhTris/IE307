@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState, type ComponentRef } from 'react';
-import { BackHandler, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { BackHandler, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { AppButton, StatusNotice, type VoteValue } from '../../../shared/ui';
+import { AppButton, AppIcon, StatusNotice, type VoteValue } from '../../../shared/ui';
 import { TutorialHomeStage } from '../components/TutorialHomeStage';
 import { TutorialHomeFooter } from '../components/TutorialHomeFooter';
 import { TutorialSetupStage } from '../components/TutorialSetupStage';
@@ -32,7 +32,7 @@ export function TutorialScreen({ onExit, onComplete }: { onExit: () => void; onC
   return <SafeAreaView style={[styles.root, { backgroundColor: dimmed ? '#426B57' : colors.background }]}>
     <ScrollView ref={scroll} contentContainerStyle={styles.content}>
       <View style={[styles.bar, { backgroundColor: dimmed ? '#043B22' : colors.surface }]}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Quay lại" onPress={back} style={styles.back}><Image source={require('../../../../assets/brand/home/back.png')} accessible={false} style={[styles.backIcon, { tintColor: dimmed ? '#FFFFFF' : colors.text }]} /></Pressable>
+        <Pressable accessibilityRole="button" accessibilityLabel="Quay lại" onPress={back} style={styles.back}><AppIcon name="back" size={28} color={dimmed ? '#FFFFFF' : colors.text} /></Pressable>
         <Text accessibilityRole="header" style={[styles.barText, { color: dimmed ? '#FFFFFF' : colors.text }, textStyle(500)]}>{complete ? 'ĐÃ HOÀN TẤT' : step === 1 ? 'Tạo phòng' : step === 5 ? 'Vòng 1' : 'HƯỚNG DẪN'}</Text>
         {!complete && step !== 5 ? <Text accessibilityLabel={`Bước ${step + 1} trên 6`} style={[styles.barText, { color: dimmed ? '#FFFFFF' : colors.text }, textStyle(500)]}>{step < 2 ? `${step + 1}/2` : `${step - 1}/3`}</Text> : null}
         <Pressable accessibilityRole="button" accessibilityLabel="Bỏ qua hướng dẫn" onPress={onExit} style={styles.skip}><Text style={[styles.barText, { color: dimmed ? '#FFFFFF' : colors.text }, textStyle(500)]}>Bỏ qua</Text></Pressable>

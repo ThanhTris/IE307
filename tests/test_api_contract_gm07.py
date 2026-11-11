@@ -8,7 +8,9 @@ class ApiContractGM07Tests(unittest.TestCase):
     def setUp(self):
         self.contracts_path = ROOT / 'mobile/src/data/api/contracts.ts'
         self.client_path = ROOT / 'mobile/src/data/api/client.ts'
-        self.mock_path = ROOT / 'mobile/src/data/api/mock.ts'
+        # The mock client is test-only since the app ships the real client alone.
+        self.mock_path = ROOT / 'mobile/tests/mocks/api/mockApiClient.ts'
+        self.mock_dir = ROOT / 'mobile/tests/mocks/api/mock'
         self.index_path = ROOT / 'mobile/src/data/api/index.ts'
         self.test_unit_path = ROOT / 'mobile/tests/unit/apiContract.test.ts'
         self.api_contract_spec_path = ROOT / 'docs/architecture/API_CONTRACT.md'
@@ -21,6 +23,16 @@ class ApiContractGM07Tests(unittest.TestCase):
             for child in sorted(submodule_dir.rglob('*.ts')):
                 parts.append(child.read_text(encoding='utf-8'))
         return '\n'.join(parts)
+
+    def _read_mock_bundle(self) -> str:
+        parts = [self.mock_path.read_text(encoding='utf-8')]
+        for child in sorted(self.mock_dir.rglob('*.ts')):
+            parts.append(child.read_text(encoding='utf-8'))
+        return '\n'.join(parts)
+
+    def test_app_does_not_ship_mock_client(self):
+        self.assertFalse((ROOT / 'mobile/src/data/api/mock.ts').exists())
+        self.assertFalse((ROOT / 'mobile/src/data/api/mock').exists())
 
     def test_artifacts_exist(self):
         for path in [
@@ -117,7 +129,7 @@ class ApiContractGM07Tests(unittest.TestCase):
         self.assertIn('getAuthToken', content)
 
     def test_mock_implements_all_modes_and_state_mutations(self):
-        content = self._read_module_bundle(self.mock_path)
+        content = self._read_mock_bundle()
         self.assertIn('class MockApiClient implements ApiClient', content)
         self.assertIn("'default'", content)
         self.assertIn("'loading'", content)
@@ -131,7 +143,7 @@ class ApiContractGM07Tests(unittest.TestCase):
     def test_review_p1_error_normalization_and_request_id_retention(self):
         client_content = self._read_module_bundle(self.client_path)
         contracts_content = self._read_module_bundle(self.contracts_path)
-        mock_content = self._read_module_bundle(self.mock_path)
+        mock_content = self._read_mock_bundle()
 
         # Error normalization helper
         self.assertIn('normalizeRpcResponse', client_content)
@@ -175,7 +187,7 @@ class ApiContractGM07Tests(unittest.TestCase):
         self.assertIn("return 'unknown'", contracts_content)
 
     def test_review_p2_mock_consensus_scenarios_and_no_cannot_win(self):
-        mock_content = self._read_module_bundle(self.mock_path)
+        mock_content = self._read_mock_bundle()
         self.assertIn('MockConsensusScenario', mock_content)
         self.assertIn("'unanimous'", mock_content)
         self.assertIn("'no_consensus'", mock_content)

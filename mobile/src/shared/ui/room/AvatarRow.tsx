@@ -10,6 +10,7 @@ import {
   type TextStyle,
 } from 'react-native';
 import { radii, spacing, typography } from '../../theme/tokens';
+import { AppIcon } from '../icons/AppIcon';
 import type { ComponentThemeProps } from '../types';
 
 export type AvatarItem = {
@@ -69,12 +70,7 @@ export function AvatarRow({
           style={({ pressed }) => [styles.avatarItem, { opacity: pressed ? 0.6 : 1 }]}
         >
           <View style={[styles.addAvatar, { borderColor: colors?.line }]}>
-            <Image
-              source={require('../../../../assets/brand/icons/plus.png')}
-              accessible={false}
-              resizeMode="contain"
-              style={[styles.addAvatarIcon, { tintColor: colors?.text }]}
-            />
+            <AppIcon name="plus" size={22} color={colors?.text} />
           </View>
           <Text style={[styles.avatarLabel, { color: colors?.text }, labelTextStyle]}>Thêm</Text>
         </Pressable>

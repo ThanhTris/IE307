@@ -18,31 +18,31 @@ Gate live `2026-10-15T15:01:42.562186+00:00`: [READY_TO_CLAIM](AUDIT_GATE.txt). 
 
 ### A1 — không có đường chỉnh lại bối cảnh sau khi đã lưu
 
-[ContextScreen.tsx](../../../../mobile/src/features/context/screens/ContextScreen.tsx#L51) khóa mọi field bằng writer.locked; ACK làm intent accepted và không có nút chỉnh lại/refetch để tạo intent mới. Lưu bối cảnh → sang Khẩu vị → quay lại vẫn giữ ContextForm cũ đã khóa. Không thể đổi điểm/buổi/giờ/avoidRecent ở phòng mẫu đó mà không rời route group/đổi fixture. Spec room/context yêu cầu host có thể sửa bối cảnh trước start và reset ready; reset fixture không thay phép kiểm sửa cùng phòng.
+[ContextScreen.tsx](https://github.com/ThanhTris/IE307/blob/30aa524/mobile/src/features/context/screens/ContextScreen.tsx#L51) khóa mọi field bằng writer.locked; ACK làm intent accepted và không có nút chỉnh lại/refetch để tạo intent mới. Lưu bối cảnh → sang Khẩu vị → quay lại vẫn giữ ContextForm cũ đã khóa. Không thể đổi điểm/buổi/giờ/avoidRecent ở phòng mẫu đó mà không rời route group/đổi fixture. Spec room/context yêu cầu host có thể sửa bối cảnh trước start và reset ready; reset fixture không thay phép kiểm sửa cùng phòng.
 
 Repro: save context rồi kiểm field giờ hoặc nút chỉnh lại. Actual field editable=false, không có action chỉnh lại. **Cần sửa trong GM-10:** thêm hành động tường minh refetch snapshot/version mới rồi mở draft mới; giữ khóa của intent cũ để không double-write. Regression phải bao gồm quay lại từ preferences, sửa lần hai trên cùng room và reset ready.
 
 ### A2 — thao tác lưu làm mất đường tải lại sau stale preview
 
-[ContextScreen.tsx](../../../../mobile/src/features/context/screens/ContextScreen.tsx#L90) thay lỗi VERSION_CONFLICT bằng thông báo validation khi chưa có pool. Nút [Tải lại bối cảnh](../../../../mobile/src/features/context/screens/ContextScreen.tsx#L163) phụ thuộc chuỗi lỗi trước đó nên biến mất.
+[ContextScreen.tsx](https://github.com/ThanhTris/IE307/blob/30aa524/mobile/src/features/context/screens/ContextScreen.tsx#L90) thay lỗi VERSION_CONFLICT bằng thông báo validation khi chưa có pool. Nút [Tải lại bối cảnh](https://github.com/ThanhTris/IE307/blob/30aa524/mobile/src/features/context/screens/ContextScreen.tsx#L163) phụ thuộc chuỗi lỗi trước đó nên biến mất.
 
 Repro: fixture Dữ liệu cũ → xác nhận → xem món → thấy Tải lại bối cảnh → bấm Lưu bối cảnh mẫu. Actual nút tải lại mất. **Cần sửa trong GM-10:** lưu error code/read state riêng với validation text, hoặc khóa save khi cần reload; không để một nút validation xóa nguyên nhân/refetch action. Liên quan AC stale UI rõ và phục hồi được.
 
 ### A3 — biên nhận sai sau Bỏ qua → timeout → thử lại
 
-[PreferencesScreen.tsx](../../../../mobile/src/features/preferences/screens/PreferencesScreen.tsx#L66) chỉ xóa draft khi lần gọi hiện tại có skip=true. Sau timeout, nút retry gọi save(false), dù intent được gửi lại vẫn là skip đã khóa. Snapshot trả đúng categoryIds rỗng nhưng nhãn biên nhận dùng biến [any từ draft cũ](../../../../mobile/src/features/preferences/screens/PreferencesScreen.tsx#L76), nên báo đã lưu sở thích mềm.
+[PreferencesScreen.tsx](https://github.com/ThanhTris/IE307/blob/30aa524/mobile/src/features/preferences/screens/PreferencesScreen.tsx#L66) chỉ xóa draft khi lần gọi hiện tại có skip=true. Sau timeout, nút retry gọi save(false), dù intent được gửi lại vẫn là skip đã khóa. Snapshot trả đúng categoryIds rỗng nhưng nhãn biên nhận dùng biến [any từ draft cũ](https://github.com/ThanhTris/IE307/blob/30aa524/mobile/src/features/preferences/screens/PreferencesScreen.tsx#L76), nên báo đã lưu sở thích mềm.
 
 Repro: fixture Mất phản hồi sau lưu → chọn Cơm → Bỏ qua sở thích mềm → Thử lại cùng yêu cầu lưu khẩu vị. Actual API snapshot không có category, UI không hiện Gì cũng được. RequestId/payload/idempotency vẫn đúng; lỗi nằm ở biên nhận. **Cần sửa trong GM-10:** tính summary/any từ ownPreferences của snapshot đã đọc, hoặc đồng bộ draft từ snapshot; test skip retry riêng.
 
 ### A4 — thiếu khoảng cách trong preview UI-15
 
-[ContextScreen.tsx](../../../../mobile/src/features/context/screens/ContextScreen.tsx#L151) không đọc/render PoolDish.distanceM dù mock đã có 650m. [UI_SPEC UI-15](../../../specs/UI_SPEC.md#L21) yêu cầu khoảng cách đường chim bay tới anchor; FOOD_DATA_SPEC phân biệt anchor với vị trí GPS/đường đi.
+[ContextScreen.tsx](https://github.com/ThanhTris/IE307/blob/30aa524/mobile/src/features/context/screens/ContextScreen.tsx#L151) không đọc/render PoolDish.distanceM dù mock đã có 650m. [UI_SPEC UI-15](../../../specs/UI_SPEC.md#L21) yêu cầu khoảng cách đường chim bay tới anchor; FOOD_DATA_SPEC phân biệt anchor với vị trí GPS/đường đi.
 
 Actual preview có quán/địa chỉ nhưng không có khoảng cách. **Cần bổ sung UI trong GM-10:** hiển thị distanceM có đơn vị và ghi rõ đường chim bay từ điểm ăn chung; null/unknown không tự gán 0 hoặc tính từ GPS. Tính khoảng cách thật/độ đúng backend vẫn thuộc GM-18/24/25.
 
 ### A5 — nút nhãn Về trang chủ đang thực hiện Quay lại
 
-[SetupFrame.tsx](../../../../mobile/src/features/context/components/SetupFrame.tsx#L14) truyền onBack cho onPressBrand. AppHeader cố định accessibilityLabel=Về trang chủ. Từ Khẩu vị bấm brand thực tế trở về `/gm10/context`, không phải `/`. Repro qua route modules thật xác nhận Expected `/`, Received `/gm10/context`.
+[SetupFrame.tsx](https://github.com/ThanhTris/IE307/blob/30aa524/mobile/src/features/context/components/SetupFrame.tsx#L14) truyền onBack cho onPressBrand. AppHeader cố định accessibilityLabel=Về trang chủ. Từ Khẩu vị bấm brand thực tế trở về `/gm10/context`, không phải `/`. Repro qua route modules thật xác nhận Expected `/`, Received `/gm10/context`.
 
 [UI_DESIGN_SPECIFICATION phần Global App Bar](../../../specs/UI_DESIGN_SPECIFICATION.md#L57) yêu cầu brand về Home. **Cần sửa wiring GM-10:** tách callback Home và Back; vẫn chặn navigation khi pending/possible delivery và không gọi leave/cancel thật ngoài scope.
 
@@ -62,7 +62,7 @@ Actual preview có quán/địa chỉ nhưng không có khoảng cách. **Cần 
 
 ### A8 — copy/mock banner chưa được inject cho production
 
-[SetupFrame](../../../../mobile/src/features/context/components/SetupFrame.tsx#L19) luôn ghi Mô phỏng GM-10; hai screens hardcode Lưu...mẫu/Nơi bán mẫu và dùng request ID preview mặc định nếu caller không inject. Không có import/fallback mock trong screens, vì vậy **AC mock hiện tại vẫn đúng**. Tuy nhiên GM-25 muốn dùng lại màn với real repository thì vẫn cần điểm cấu hình copy/mode và ID factory; hiện chỉ thay adapter chưa loại được nhãn mô phỏng. Các props chưa có onHome riêng như A5.
+[SetupFrame](https://github.com/ThanhTris/IE307/blob/30aa524/mobile/src/features/context/components/SetupFrame.tsx#L19) luôn ghi Mô phỏng GM-10; hai screens hardcode Lưu...mẫu/Nơi bán mẫu và dùng request ID preview mặc định nếu caller không inject. Không có import/fallback mock trong screens, vì vậy **AC mock hiện tại vẫn đúng**. Tuy nhiên GM-25 muốn dùng lại màn với real repository thì vẫn cần điểm cấu hình copy/mode và ID factory; hiện chỉ thay adapter chưa loại được nhãn mô phỏng. Các props chưa có onHome riêng như A5.
 
 Đây là giới hạn bàn giao, không phải yêu cầu bật production/API trong GM-10. Trước tích hợp cần chốt presentation mode/copy từ composition root, inject durable request IDs và navigation, giữ production không fallback fixture. Không coi typed props nhận repository là bằng chứng Android–API đã nghiệm thu.
 

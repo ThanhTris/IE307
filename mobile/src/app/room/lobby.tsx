@@ -1,6 +1,5 @@
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { LiveLobbyScreen } from '../../features/rooms/screens/LiveLobbyScreen';
-import { pathForDemoDestination } from '../../features/shared/navigation';
+import { useLocalSearchParams, useRouter, type Href } from 'expo-router';
+import { LobbyScreen } from '../../features/rooms/screens/LobbyScreen';
 import { useRoomRepository } from '../../bootstrap/RoomRepositoryProvider';
 import { createDurableRequestId } from '../../features/rooms/services/roomRepository';
 import { RequireActiveSession } from '../../features/auth/components/RequireActiveSession';
@@ -9,20 +8,18 @@ export default function LobbyRoute() {
   const router = useRouter();
   const { roomId } = useLocalSearchParams<{ roomId?: string }>();
   const live = useRoomRepository();
-  const isReal = live.mode === 'real';
-
-  const lobby = (
-    <LiveLobbyScreen
-      key={isReal ? `live-${roomId ?? 'missing'}-${live.user?.id ?? 'unknown'}` : 'mock'}
-      onNavigate={destination => router.push(pathForDemoDestination(destination))}
+  return <RequireActiveSession onHome={() => router.replace('/')}>
+    <LobbyScreen
+      key={`${roomId ?? 'missing'}-${live.user?.id ?? 'unknown'}`}
+      onNavigate={path => router.push(path as Href)}
       onHome={() => router.replace('/')}
-      repository={isReal ? live.repository : undefined}
+      repository={live.repository}
       roomId={typeof roomId === 'string' ? roomId : undefined}
       currentUserId={live.user?.id}
       createRequestId={action => createDurableRequestId(`lobby_${action}`)}
       onStartRound={snapshot => router.replace({ pathname: '/room/vote', params: { roomId: snapshot.roomId } })}
-      onEditContext={snapshot => router.push({ pathname: '/room/context', params: { roomId: snapshot.roomId } })}
+      onEditSettings={snapshot => router.push({ pathname: '/room/setup', params: { roomId: snapshot.roomId, stage: 'setup' } })}
+      onEditPreferences={snapshot => router.push({ pathname: '/room/setup', params: { roomId: snapshot.roomId, stage: 'preferences' } })}
     />
-  );
-  return isReal ? <RequireActiveSession onHome={() => router.replace('/')}>{lobby}</RequireActiveSession> : lobby;
+  </RequireActiveSession>;
 }

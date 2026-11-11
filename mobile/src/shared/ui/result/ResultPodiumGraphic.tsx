@@ -55,7 +55,10 @@ export function ResultPodiumGraphic({ dishes, colors = lightColors }: ComponentT
         const dishRows = rankedDishes.length === 3 ? [rankedDishes.slice(0, 1), rankedDishes.slice(1)] : [rankedDishes];
         return (
           <View key={rank} testID={`podium-slot-${rank}`} style={{ width: columnWidth }}>
-            <View testID={`podium-group-${rank}`}>
+            <View
+              testID={`podium-group-${rank}`}
+              style={rankedDishes.length === 0 ? styles.emptySlot : undefined}
+            >
               {rankedDishes.length > 0 ? <View testID={`podium-dishes-${rank}`} style={styles.dishStack}>
                 {dishRows.map(row => row.length > 0 ? (
                   <View key={row[0]!.id} testID={`podium-dish-row-${rank}`} style={styles.dishRow}>
@@ -112,6 +115,8 @@ function RankPedestal({ rank, scoreLabel, heightScale }: {
 }
 
 const styles = StyleSheet.create({
+  // An empty rank keeps its width so rank 1 stays centered, but shows no pedestal (Figma result frames).
+  emptySlot: { opacity: 0 },
   group: { paddingTop: spacing.lg },
   row: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'center', borderBottomWidth: StyleSheet.hairlineWidth },
   dishStack: { marginBottom: spacing.sm, gap: spacing.sm },

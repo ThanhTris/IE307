@@ -15,6 +15,8 @@ const qaMode=gm03Signals?'gm03':'ci';
 const qa=qaMode==='gm03'?process.env.GM03_QA_WORKDIR:process.env.GM_V4_QA_WORKDIR;
 const manifestPath=qaMode==='gm03'?process.env.GM03_QA_MANIFEST:null;
 const manifest=manifestPath?JSON.parse(readFileSync(manifestPath,'utf8')):null;
+// Local gm03 QA runs read the synthetic catalogue from the run manifest (same as gm20); CI passes it by env.
+const syntheticReleaseId=qaMode==='gm03'?manifest.catalogues.synthetic.releaseId:process.env.GM_V4_SYNTHETIC_RELEASE_ID;
 if(qaMode==='gm03')assert.ok(qa&&manifestPath&&manifest?.format==='gm03-qa-manifest-v1','GM-03 QA requires its sealed run manifest and workdir');
 const project=qaMode==='gm03'?manifest.projectId:process.env.GM_V4_QA_PROJECT_ID;
 const container=qaMode==='gm03'?manifest.containerName:(process.env.GM_V4_QA_CONTAINER||'supabase_db_'+project);
@@ -57,7 +59,7 @@ assert.ok(outputRelative&&!outputRelative.startsWith('..')&&!isAbsolute(outputRe
 await mkdir(output,{recursive:true});
 await waitWorker();
 sql('update gm20_canonical_private.configuration set allow_new_sessions=true where singleton');
-await setActive(process.env.GM_V4_SYNTHETIC_RELEASE_ID);
+await setActive(syntheticReleaseId);
 const h=await guest('history-host'),m=await guest('history-member'),x=await guest('history-outsider');
 const baseline='dish-session-v4/roadmap-v2/GM-07.B';
 async function consent(u,scope,value,id=randomUUID()){
@@ -166,10 +168,10 @@ const bothRows=await items(h,both);
 pass('own personal and group reuse exactly one canonical projection',true,bothRows.length===2&&bothRows.every(i=>JSON.stringify(i.result)===JSON.stringify(terminal)));
 pass('history summary retains typed context and omits unapproved identities',true,bothRows.every(i=>i.memberCount===2&&i.round1BallotCount===2&&i.desiredAt===null&&i.createdAt===i.finalizedAt&&!('participants'in i)));
 const changed='gm21-changed-'+project+'-'+randomUUID();
-sql("insert into dish_v3_private.catalogues(id,source_sha,cards,test_only,active) select '"+changed+"',encode(extensions.digest(changed.cards::text,'sha256'),'hex'),changed.cards,true,false from (select jsonb_agg(v||jsonb_build_object('name','Changed synthetic QA card') order by ord) cards from dish_v3_private.catalogues c cross join lateral jsonb_array_elements(c.cards) with ordinality t(v,ord) where c.id='"+process.env.GM_V4_SYNTHETIC_RELEASE_ID+"') changed;");
+sql("insert into dish_v3_private.catalogues(id,source_sha,cards,test_only,active) select '"+changed+"',encode(extensions.digest(changed.cards::text,'sha256'),'hex'),changed.cards,true,false from (select jsonb_agg(v||jsonb_build_object('name','Changed synthetic QA card') order by ord) cards from dish_v3_private.catalogues c cross join lateral jsonb_array_elements(c.cards) with ordinality t(v,ord) where c.id='"+syntheticReleaseId+"') changed;");
 await setActive(changed);
 pass('catalogue activation cannot change saved history/card/price/order',bothRows,await items(h,both));
-await setActive(process.env.GM_V4_SYNTHETIC_RELEASE_ID);
+await setActive(syntheticReleaseId);
 const own=bothRows.find(i=>i.scope==='personal'),group=bothRows.find(i=>i.scope==='group');
 const deletion={requestId:randomUUID(),history_id:own.historyId};
 const deleted=await legacyRpc(h,'delete_history',deletion);expectOk(deleted,'common canonical delete');
