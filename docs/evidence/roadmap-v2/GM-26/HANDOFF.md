@@ -1,5 +1,23 @@
 # Bàn giao đầu ra task — GM-26 / roadmap-v2
 
+## Active-round refresh candidate — 2026-11-11
+
+Receive the local `codex/gm-26-active-round-refresh` candidate based on
+main `7913585`. Both voting hooks refresh server state while the caller
+has an unsent ballot. Reads pause during submission, in-flight background
+reads are invalidated at that transition, and navigation remains guarded
+by the existing context and snapshot ordering checks.
+
+The [new checks](CHECKS.md#active-round-refresh-correction--2026-11-11)
+record the focused tests, full mobile suite and standalone APK
+integration. Two independently authenticated AVD clients followed both
+timeouts automatically even though only the host submitted ballots.
+GM-25 is a separate application candidate. This integration receipt uses
+their combined local build. The subsequent authorized USB retry also
+verified both unsent-member timeout transitions on the API 35 phone,
+with only the host sending ballots. The remaining GM-33 native,
+visual and boundary cases still need their recorded evidence.
+
 ## Current local handoff — 2026-11-06
 
 Source: PR #156 branch `issue87_figma_ui_gm26`, baseline `a52e638fd483fe39098d982eed0a89b78afeae27` plus the final waiting/identity correction. Owner Trang / reviewer Trí are unchanged. Receive the complete patch rather than only one round's hook.

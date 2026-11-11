@@ -349,12 +349,12 @@ export function useRoundOneVoting({
   }, [computeRemainingFromDeadline, identityId, roomId]);
 
   // Snapshot fetching method (R1: only depends on repository and roomId)
-  const fetchSnapshot = useCallback(async () => {
+  const fetchSnapshot = useCallback(async (shouldApply?: () => boolean) => {
     if (!repository) return null;
     const requestedContext = captureContext();
     const ticket = snapshotOrderRef.current.begin(requestedContext.key);
     const res = await repository.getSnapshot(roomId);
-    if (!isCurrentContext(requestedContext)) return null;
+    if (!isCurrentContext(requestedContext) || shouldApply?.() === false) return null;
     if (res.ok) {
       if (!snapshotOrderRef.current.accepts(ticket, res.data)) return null;
       applySnapshot(res.data);
@@ -378,10 +378,9 @@ export function useRoundOneVoting({
     void fetchSnapshot();
   }, [repository, roomId, initialPool, fetchSnapshot]);
 
-  // R3 & R6: Countdown timer & polling in waiting state
+  // R3 & R6: Countdown follows the server deadline.
   useEffect(() => {
     let timer: ReturnType<typeof setInterval> | null = null;
-    let pollTimer: ReturnType<typeof setInterval> | null = null;
 
     if (activeDeadline) {
       const tick = () => {
@@ -401,17 +400,27 @@ export function useRoundOneVoting({
       }, 1000);
     }
 
-    if (repository && (isWaitingForMembers || activeDeadline)) {
-      pollTimer = setInterval(() => {
-        void fetchSnapshot();
-      }, 2500);
-    }
-
     return () => {
       if (timer) clearInterval(timer);
-      if (pollTimer) clearInterval(pollTimer);
     };
   }, [activeDeadline, isWaitingForMembers, repository, fetchSnapshot, computeRemainingFromDeadline]);
+
+  // A member who has not submitted must still observe another member's deadline.
+  useEffect(() => {
+    if (!repository || submissionState === 'pending') return;
+    let active = true;
+    let pending = false;
+    const interval = setInterval(() => {
+      if (hasNavigatedRoundTwoRef.current || navigatedOutcomeRef.current) {
+        clearInterval(interval);
+        return;
+      }
+      if (pending) return;
+      pending = true;
+      void fetchSnapshot(() => active).catch(() => null).finally(() => { pending = false; });
+    }, 2500);
+    return () => { active = false; clearInterval(interval); };
+  }, [repository, fetchSnapshot, submissionState]);
 
   const attemptEnterWaiting = useCallback(async (allowConflictRetry = true) => {
     if (!repository) return;

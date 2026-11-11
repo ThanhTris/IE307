@@ -1,5 +1,41 @@
 # Output checks — GM-26 / roadmap-v2
 
+## Active-round refresh correction — 2026-11-11
+
+The GM-33 standalone APK run on 2026-11-10 reproduced a member remaining
+on Round 1 after the server timed out into Round 2. That caller had not
+submitted a ballot or observed the peer's waiting deadline.
+
+The local branch `codex/gm-26-active-round-refresh` starts background
+snapshot reads before submission in both rounds. A member can observe
+the next round or terminal result while keeping an unsent draft. Reads
+pause during submission, and an older background response is discarded
+when a submission begins. Existing identity/context and snapshot-order
+guards handle late responses. The poll stops after outcome navigation.
+
+| Verification | Actual result |
+| --- | --- |
+| Reviewer and consumer regressions | 37 tests passed across `pr156RevisionAudit`, `pr156ConsumerEdgeCases` and `gm26FigmaParity`, including new unsent-member R1/R2 and pending-submit regressions |
+| Full mobile suite | 1,516 tests passed, one skipped, 81 suites passed and one skipped |
+| Static checks | TypeScript, ESLint, architecture boundaries, repository validator, task indexes and diff whitespace passed |
+| Standalone Android, two clients | Only host submitted in each round. Both clients automatically opened R2 after the first timeout and the same winner/score after the second timeout. Backend had one result and two ballots from the host only |
+
+This candidate is based on main `7913585`. Android verification uses a
+local APK with the GM-25 follow-up layered into the disposable build.
+The source branches retain their separate ownership.
+The run used two API 37 AVDs and owned QA `gm33-native-1111`, with
+28 migrations and real test catalogue 1.1.0. APK SHA-256
+`94f8312a5a5ed7b895fd1cd8e95cd2a7365fcb516d9760efb5268a379de4d1ee`.
+The USB phone was enumerated as unauthorized during this run.
+
+The later authorized USB retry `gm33-usb-1111b` used the physical
+API 35 phone as the member and an API 37 AVD as host. With roster two
+and eleven dishes, only host submitted in both rounds. The phone
+automatically opened Round 2 after the first timeout and the same
+winner/score after the second timeout. Server assertions confirmed one
+persisted result and two host ballots, with no member ballot. Installed
+APK SHA-256 `a6046dfbf6b14f57736519f7ef66af6f7e8aea30de9284bf25d0b8db9b5c609c`.
+
 ## Current local correction — 2026-11-06
 
 Tested source: `issue87_figma_ui_gm26`, baseline `a52e638fd483fe39098d982eed0a89b78afeae27` plus the final waiting/identity correction described below. Contract remains `dish-session-v4/roadmap-v2/GM-07.B-supplement`. The correction does not change API or migrations. The earlier local run aligned SDK 58 package patches and its lockfile: Expo 58.0.23, Router 58.0.30, React Native 0.88.1, Expo Go 58.0.5 (Android).
