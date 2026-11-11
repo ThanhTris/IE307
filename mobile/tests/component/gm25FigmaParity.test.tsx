@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { createRoomRepository } from '../../src/features/rooms/services/roomRepository';
 import { GuestEntryScreen } from '../../src/features/home/screens/GuestEntryScreen';
 import { HomeScreen, type HomeLiveSession } from '../../src/features/home/screens/HomeScreen';
@@ -577,6 +577,34 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
 
   // Node 330:3070 — 06 · Phòng chờ / Chủ phòng / Thành viên
   describe('Node 330:3070 — Phòng chờ Live Lobby không có Ready flow', () => {
+    it.each(['poll', 'reload'] as const)('opens voting once for a member when %s reads the active round', async trigger => {
+      jest.useFakeTimers();
+      try {
+        const repo = createRoomRepository({ client: createMockApiClient() });
+        const started = { ...sampleSnapshot, version: 2, state: 'ROUND_1' as const };
+        const snapshot = jest.spyOn(repo, 'getRoomSnapshot')
+          .mockResolvedValueOnce({ ok: true, data: sampleSnapshot })
+          .mockResolvedValue({ ok: true, data: started });
+        const onStartRound = jest.fn();
+        await render(<LobbyScreen repository={repo} roomId={sampleSnapshot.roomId}
+          currentUserId="usr_tuan_002" onHome={jest.fn()} onStartRound={onStartRound} />);
+
+        expect(await screen.findByText('GCD999')).toBeOnTheScreen();
+        expect(onStartRound).not.toHaveBeenCalled();
+        if (trigger === 'poll') {
+          await act(async () => { await jest.advanceTimersByTimeAsync(4000); });
+        } else {
+          await fireEvent.press(screen.getByRole('button', { name: 'Tải lại phòng' }));
+        }
+        expect(onStartRound).toHaveBeenCalledWith(started);
+        await act(async () => { await jest.advanceTimersByTimeAsync(4000); });
+        expect(snapshot.mock.calls.length).toBeGreaterThanOrEqual(3);
+        expect(onStartRound).toHaveBeenCalledTimes(1);
+      } finally {
+        jest.useRealTimers();
+      }
+    });
+
     it('renders real lobby with 20 member capacity, host start without ready requirement', async () => {
       const client = createMockApiClient();
       const repo = createRoomRepository({ client });

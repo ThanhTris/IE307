@@ -1,5 +1,20 @@
 # Bàn giao đầu ra task — GM-25 / roadmap-v2
 
+## Local lobby correction from GM-33 — 2026-11-11
+
+The candidate `codex/gm-25-live-lobby-followup` is based on main
+`7913585`. It routes a verified member into voting after a refreshed
+snapshot shows the active round, with one navigation per room/caller.
+The live setup and receipt routes pass their mode into the shared
+frames and retain fixture labels for the preview composition.
+
+The [follow-up checks](CHECKS.md) record focused/full mobile regressions,
+two-AVD execution and the authorized USB phone retry. The physical
+phone passed 20-dish setup, below-minimum shortage, cold-link join,
+live receipt and automatic lobby-to-vote for two members. The local
+APK also included the separate GM-26 candidate. Review and integrate
+the GM-25 source separately before receiving it as target-main evidence.
+
 Task / owner / reviewer / track / stage: GM-25 / Trang (`rosy179`) / Trí (`ThanhTris`) / INTEGRATION / integration
 PR / branch / target / tested source: Issue #86 / `issue86_figma_ui_gm25` -> `origin/main` (`0f522ed153ff2eb872a945953051419741e7235a`); local branch `issue86_figma_ui_gm25`
 Contract version / schema version / dataset version: `ui-figma-final/2026-10-25/GM-25.2` / schema `0.3.0` (GM-19) / dataset `food-v1`

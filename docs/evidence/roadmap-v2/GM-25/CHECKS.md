@@ -1,5 +1,44 @@
 # Output checks — GM-25 / roadmap-v2
 
+## 2026-11-10 follow-up from the GM-33 USB pilot
+
+The [GM-33 pilot PR](https://github.com/ThanhTris/IE307/pull/165) reproduced
+two live-room issues on main `7913585`. After a host started the round,
+a member stayed in the lobby through both polling and manual refresh.
+Setup, preferences and the join receipt also showed fixture copy.
+
+The local branch `codex/gm-25-live-lobby-followup` uses a snapshot of the
+active round to open voting for the verified room member. Both polling
+and reload share that transition, and repeat snapshots do not reopen
+the screen. The live setup and receipt routes pass their mode to the
+shared frames. Fixture routes retain their labels.
+
+| Check | Result |
+| --- | --- |
+| Focused GM-25, setup and receipt suites | 60 tests passed. A cold concurrent run timed out in the existing guest-entry test and the retry passed |
+| Full mobile suite | 81 suites passed, one skipped. 1,517 tests passed, one skipped |
+| Static checks | TypeScript, ESLint, architecture boundaries and diff whitespace passed |
+| Installed Android APK, two AVDs against owned QA | Independent guests created a lunch room with ten dishes and joined through a cold app link. Preview kept one member until confirm. Live setup, preferences and join receipt showed live copy. Both clients entered Round 1 after the host started, with no member reload or QA route |
+
+The local APK used Expo 58.0.23 on Android API 37 AVDs and GM-03 run
+`gm33-native-1110` with catalogue 1.1.0. The APK SHA-256 is
+`63ae1430b900ac41fb361fe6e161830e6cdf6296ee7206b9b30594d21303874b`.
+The USB phone's package installation awaited a Play Protect prompt.
+This checkpoint covers the AVDs and the local GM-25 patch.
+
+On the 2026-11-11 authorized USB retry, the physical API 35 phone
+created a 20-dish lunch room, received a seven-dish dinner shortage
+without creating a room, and canceled the setup room through its UI.
+It then joined an AVD host through a cold native link and automatically
+opened Round 1 when the host started. Live setup and receipt copy passed.
+The combined local GM-25/GM-26 APK SHA-256 was
+`a6046dfbf6b14f57736519f7ef66af6f7e8aea30de9284bf25d0b8db9b5c609c`;
+owned QA was `gm33-usb-1111b`. The primary room had two members and
+eleven dishes. The legacy edit-context route remains a separate gap
+to reconcile with the pending product-cleanup PR #166.
+
+## Earlier GM-25 baseline
+
 Status: Automated regressions, 6 Figma nodes parity, room repository RPCs, and full mobile test suites pass on branch issue86_figma_ui_gm25; physical Android device acceptance and remote backend staging verification remain pending.
 Task: GM-25 — UI–API guest, Home, phòng, khẩu vị và lobby
 Owner: Trang (`rosy179`), Reviewer: Trí (`ThanhTris`)

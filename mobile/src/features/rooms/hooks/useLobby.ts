@@ -35,6 +35,7 @@ export function useLobby({
   const [realRevision, setRealRevision] = useState(0);
   const [eligibilityError, setEligibilityError] = useState<string | null>(null);
   const busyRef = useRef(false);
+  const openedVotingRef = useRef<string | null>(null);
   const pendingIntentRef = useRef<{
     action: string;
     requestId: string;
@@ -117,18 +118,22 @@ export function useLobby({
 
   useEffect(() => {
     if (!activeRoomId) return;
+    let active = true;
+    let polling = false;
     const interval = setInterval(() => {
-      if (!busyRef.current) {
-        void api.getRoomSnapshot(activeRoomId).then(result => {
-          if (result.ok) {
-            setSnapshot(result.data);
-            void checkEligibility(result.data);
-          }
-        });
-      }
+      if (busyRef.current || polling) return;
+      polling = true;
+      void api.getRoomSnapshot(activeRoomId).then(result => {
+        if (!active || !result.ok) return;
+        const next = result.data;
+        setSnapshot(previous => previous?.roomId === next.roomId && previous.version > next.version ? previous : next);
+        void checkEligibility(next);
+      }).catch(() => {
+        // A later poll or manual reload can retry this background read.
+      }).finally(() => { polling = false; });
     }, 4000);
-    return () => clearInterval(interval);
-  }, [activeRoomId, api, checkEligibility]);
+    return () => { active = false; clearInterval(interval); };
+  }, [activeRoomId, currentUserId, api, checkEligibility]);
 
   const getRequestId = (action: string, version: number, targetId?: string) => {
     const pending = pendingIntentRef.current;
@@ -143,6 +148,16 @@ export function useLobby({
   const viewer = currentUserId ? snapshot?.members.find(member => member.userId === currentUserId) : undefined;
 
   const isHost = Boolean(viewer && snapshot?.hostUserId === viewer.userId);
+  useEffect(() => {
+    if (busy || loadState !== 'ready' || !onStartRound || !viewer || snapshot?.roomId !== activeRoomId) return;
+    if (snapshot.state !== 'ROUND_1' && snapshot.state !== 'WAITING_1' &&
+        snapshot.state !== 'ROUND_2' && snapshot.state !== 'WAITING_2') return;
+    const scope = JSON.stringify([activeRoomId, viewer.userId]);
+    if (openedVotingRef.current === scope) return;
+    openedVotingRef.current = scope;
+    onStartRound(snapshot);
+  }, [activeRoomId, busy, loadState, onStartRound, snapshot, viewer]);
+
   const displaySnapshot = snapshot;
   const members = displaySnapshot?.members.map(member => ({
     id: member.userId,
@@ -202,7 +217,6 @@ export function useLobby({
       } else if (action === 'start') {
         await refreshSnapshot(snapshot.roomId);
         setNotice('Phòng chuyển sang vòng 1.');
-        if (onStartRound && snapshot) onStartRound(snapshot);
       } else if (action === 'cancel') {
         await refreshSnapshot(snapshot.roomId);
         setNotice('Phòng đã hủy.');
