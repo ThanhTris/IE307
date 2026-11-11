@@ -13,6 +13,7 @@ import {
   type VoteScreenScenario,
 } from '../fixtures';
 import { WAITING_DEADLINE_SECONDS, isHostEarlyFinishAllowed } from '../services/votingRules';
+import { startVotingSnapshotPolling } from '../services/snapshotPolling';
 import {
   createDurableRequestId,
   mapSnapshotPoolToPoolDishes,
@@ -386,9 +387,6 @@ export function useRoundOneVoting({
         const rem = computeRemainingFromDeadline(activeDeadline);
         if (rem !== null) {
           setWaitingCountdown(rem);
-          if (rem <= 0) {
-            void fetchSnapshot();
-          }
         }
       };
       tick();
@@ -402,23 +400,13 @@ export function useRoundOneVoting({
     return () => {
       if (timer) clearInterval(timer);
     };
-  }, [activeDeadline, isWaitingForMembers, repository, fetchSnapshot, computeRemainingFromDeadline]);
+  }, [activeDeadline, isWaitingForMembers, repository, computeRemainingFromDeadline]);
 
   // A member who has not submitted must still observe another member's deadline.
   useEffect(() => {
     if (!repository || submissionState === 'pending') return;
-    let active = true;
-    let pending = false;
-    const interval = setInterval(() => {
-      if (hasNavigatedRoundTwoRef.current || navigatedOutcomeRef.current) {
-        clearInterval(interval);
-        return;
-      }
-      if (pending) return;
-      pending = true;
-      void fetchSnapshot(() => active).catch(() => null).finally(() => { pending = false; });
-    }, 2500);
-    return () => { active = false; clearInterval(interval); };
+    return startVotingSnapshotPolling(fetchSnapshot,
+      () => hasNavigatedRoundTwoRef.current || Boolean(navigatedOutcomeRef.current));
   }, [repository, fetchSnapshot, submissionState]);
 
   const attemptEnterWaiting = useCallback(async (allowConflictRetry = true) => {

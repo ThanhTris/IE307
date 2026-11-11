@@ -13,6 +13,7 @@ import {
   type FinalScreenScenario,
 } from '../fixtures';
 import { WAITING_DEADLINE_SECONDS, getRoundTwoEliminationCap, isHostEarlyFinishAllowed } from '../services/votingRules';
+import { startVotingSnapshotPolling } from '../services/snapshotPolling';
 import {
   createDurableRequestId,
   mapSnapshotPoolToPoolDishes,
@@ -388,7 +389,6 @@ export function useRoundTwoVoting({
             const recomputed = computeRemainingFromDeadline(activeDeadline);
             if (recomputed !== null) {
               if (recomputed <= 0) {
-                void fetchSnapshot();
                 return 0;
               }
               return recomputed;
@@ -396,7 +396,6 @@ export function useRoundTwoVoting({
           }
           if (prev === null) return null;
           if (prev <= 1) {
-            void fetchSnapshot();
             return 0;
           }
           return prev - 1;
@@ -408,23 +407,12 @@ export function useRoundTwoVoting({
     return () => {
       if (timer) clearInterval(timer);
     };
-  }, [submissionState, isWaitingForMembers, repository, fetchSnapshot, activeDeadline, computeRemainingFromDeadline]);
+  }, [submissionState, isWaitingForMembers, repository, activeDeadline, computeRemainingFromDeadline]);
 
   // Results can be finalized by the server before this caller submits.
   useEffect(() => {
     if (!repository || submissionState === 'pending') return;
-    let active = true;
-    let pending = false;
-    const interval = setInterval(() => {
-      if (navigatedOutcomeRef.current) {
-        clearInterval(interval);
-        return;
-      }
-      if (pending) return;
-      pending = true;
-      void fetchSnapshot(() => active).catch(() => null).finally(() => { pending = false; });
-    }, 2500);
-    return () => { active = false; clearInterval(interval); };
+    return startVotingSnapshotPolling(fetchSnapshot, () => Boolean(navigatedOutcomeRef.current));
   }, [repository, fetchSnapshot, submissionState]);
 
   const attemptEnterWaiting = useCallback(async (allowConflictRetry = true) => {
