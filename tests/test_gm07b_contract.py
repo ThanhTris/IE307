@@ -291,6 +291,59 @@ class Gm07bContractTests(unittest.TestCase):
         self.assertEqual(res["error"]["messageKey"], "NOT_HOST")
         self.assertNotIn("code", res["error"])
 
+    def test_update_settings_host_pool_version_preservation_and_advancement(self):
+        """Verifies GM-19 host settings stability rules:
+        - Exact same settings or only desiredAt modified leaves poolVersion unchanged.
+        - Changes to dishCount or mealSlot advance poolVersion.
+        """
+        # Exact same settings -> poolVersion unchanged
+        res_same = MODULE.simulate_update_settings(
+            caller_role="HOST",
+            old_settings={"dishCount": 10, "mealSlot": "dinner", "desiredAt": None},
+            new_settings={"dishCount": 10, "mealSlot": "dinner", "desiredAt": None},
+            current_version=2,
+            current_pool_version=1,
+        )
+        self.assertTrue(res_same["ok"])
+        self.assertEqual(res_same["data"]["version"], 3)
+        self.assertEqual(res_same["data"]["poolVersion"], 1)
+
+        # Only desiredAt changes -> poolVersion unchanged
+        res_time = MODULE.simulate_update_settings(
+            caller_role="HOST",
+            old_settings={"dishCount": 10, "mealSlot": "dinner", "desiredAt": None},
+            new_settings={"dishCount": 10, "mealSlot": "dinner", "desiredAt": "2026-11-10T12:00:00Z"},
+            current_version=2,
+            current_pool_version=1,
+        )
+        self.assertTrue(res_time["ok"])
+        self.assertEqual(res_time["data"]["version"], 3)
+        self.assertEqual(res_time["data"]["poolVersion"], 1)
+
+        # dishCount changes -> poolVersion increments
+        res_count = MODULE.simulate_update_settings(
+            caller_role="HOST",
+            old_settings={"dishCount": 10, "mealSlot": "dinner", "desiredAt": None},
+            new_settings={"dishCount": 15, "mealSlot": "dinner", "desiredAt": None},
+            current_version=2,
+            current_pool_version=1,
+        )
+        self.assertTrue(res_count["ok"])
+        self.assertEqual(res_count["data"]["version"], 3)
+        self.assertEqual(res_count["data"]["poolVersion"], 2)
+
+        # mealSlot changes -> poolVersion increments
+        res_slot = MODULE.simulate_update_settings(
+            caller_role="HOST",
+            old_settings={"dishCount": 10, "mealSlot": "dinner", "desiredAt": None},
+            new_settings={"dishCount": 10, "mealSlot": "lunch", "desiredAt": None},
+            current_version=2,
+            current_pool_version=1,
+        )
+        self.assertTrue(res_slot["ok"])
+        self.assertEqual(res_slot["data"]["version"], 3)
+        self.assertEqual(res_slot["data"]["poolVersion"], 2)
+
     def test_concurrency_range_rule_and_error_codes(self):
         """Verifies concurrent submit range rule and VERSION_CONFLICT / INVALID_ROOM_STATE codes."""
         results = MODULE.check_command_concurrency_rules(
