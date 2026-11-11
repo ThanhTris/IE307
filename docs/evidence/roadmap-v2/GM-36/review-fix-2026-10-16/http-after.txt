@@ -1,0 +1,19 @@
+(node:72342) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/hoaitam/Desktop/Learn/23521394/HK1-Nam-4/IE307/ThanhTris-IE307/supabase/functions/menu-ocr/index.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/hoaitam/Desktop/Learn/23521394/HK1-Nam-4/IE307/ThanhTris-IE307/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Pass: missing JWT rejected before image/provider work
+Pass: forged JWT rejected by actual GoTrue user endpoint
+Pass: valid outsider cannot grant OCR rights through user_metadata or headers
+Pass: disabled production-equivalent handler makes no recognizer call
+Pass: real authorized HTTP returns exact three-row draft, never verified
+Pass: review regression: abbreviated ranges remain unknown even at confidence0.99
+Pass: review regression: explicit ranges retain amounts and price source
+Pass: processing consent and source-rights declaration are mandatory
+Pass: invalid image and arbitrary user/location/publish fields rejected
+Pass: malformed and over-limit streamed request bodies rejected
+Pass: empty, malformed and failed provider have safe distinct errors
+Pass: real HTTP provider timeout returns504 with no draft
+Pass: simultaneous attempts invoke recognizer only once
+Pass: local quota rejects fourth operation without another recognizer call
+{"result":"Pass","cases":14,"cleanup":"owned synthetic identities removed"}
