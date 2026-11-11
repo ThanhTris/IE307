@@ -83,7 +83,7 @@ const paths = ['mobile/src/domain/decision/index.ts', 'mobile/tests/decision.tes
   '.github/workflows/decision.yml', 'mobile/src/domain/decision/choiceMapping.ts',
   'mobile/tests/decisionSeeded.test.mjs', 'mobile/tests/unit/decisionContract.test.ts',
   'tests/fixtures/decision-v2/seeded-cases.json', 'mobile/src/data/api/contracts.ts',
-  'mobile/src/data/api/mock.ts', 'mobile/src/data/api/responseGuards.ts',
+  'mobile/tests/mocks/api/mockApiClient.ts', 'mobile/src/data/api/responseGuards.ts',
   'mobile/tests/unit/apiContract.test.ts'];
 const tiers = read(mapping.tierHelpers.path);
 assert.deepEqual(tiers.cases.map(c => c.id), mapping.tierHelpers.caseIds);
