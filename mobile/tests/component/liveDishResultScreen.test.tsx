@@ -280,7 +280,7 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
       />
     );
 
-    expect(screen.getByText('Đang chốt kết quả')).toBeOnTheScreen();
+    expect(screen.getByLabelText('Đang chốt kết quả')).toBeOnTheScreen();
     expect(repo.getResult).toHaveBeenCalledTimes(1);
 
     // Wait for the short poll to tick
@@ -308,7 +308,7 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
       />
     );
 
-    expect(screen.getByText('Đang chốt kết quả')).toBeOnTheScreen();
+    expect(screen.getByLabelText('Đang chốt kết quả')).toBeOnTheScreen();
     expect(repo.getResult).toHaveBeenCalled();
     const callsBeforeUnmount = repo.getResult.mock.calls.length;
 
@@ -352,13 +352,13 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
     const { rerender } = await render(<TestHost roomId="room_A" />);
 
     // Initially loading room A
-    expect(screen.getByText('Đang tải kết quả')).toBeOnTheScreen();
+    expect(screen.getByLabelText('Đang tải kết quả')).toBeOnTheScreen();
 
     // Switch to room B before room A resolves
     await rerender(<TestHost roomId="room_B" />);
 
     // Room B is immediately in loading state
-    expect(screen.getByText('Đang tải kết quả')).toBeOnTheScreen();
+    expect(screen.getByLabelText('Đang tải kết quả')).toBeOnTheScreen();
 
     // Late response for room A arrives
     resolveA!({
@@ -368,7 +368,7 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
 
     // Room A response must be ignored; room A winner must NOT leak into room B
     expect(screen.queryByText('Phở bò tái nạm')).toBeNull();
-    expect(screen.getByText('Đang tải kết quả')).toBeOnTheScreen();
+    expect(screen.getByLabelText('Đang tải kết quả')).toBeOnTheScreen();
 
     // Now resolve room B
     resolveB!({

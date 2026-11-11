@@ -15,7 +15,7 @@ test.each(nearbyCaseOptions.map(item => item.id))('Places state %s keeps result 
   expect(callbacks.onRequestLocation).not.toHaveBeenCalled(); expect(callbacks.onRetryPlaces).not.toHaveBeenCalled();
   if (status === 'permission' || status === 'denied') { await fireEvent.press(screen.getByText('Cho phép vị trí')); expect(callbacks.onRequestLocation).toHaveBeenCalledTimes(1); }
   if (status === 'blocked' || status === 'location-off') { await fireEvent.press(screen.getByText('Mở cài đặt vị trí')); expect(callbacks.onOpenSettings).toHaveBeenCalledTimes(1); }
-  if (status === 'loading') { expect(screen.queryByText('Chưa tìm thấy quán phù hợp')).toBeNull(); expect(screen.getByText('Đang tìm quán')).toBeOnTheScreen(); }
+  if (status === 'loading') { expect(screen.queryByText('Chưa tìm thấy quán phù hợp')).toBeNull(); expect(screen.getByLabelText('Đang tìm quán')).toBeOnTheScreen(); }
   if (status === 'permission') expect(screen.getByText('Bật vị trí để tìm quán')).toBeOnTheScreen();
   if (status === 'error') { await fireEvent.press(screen.getByRole('button', { name: 'Thử lại' })); expect(callbacks.onRetryPlaces).toHaveBeenCalledTimes(1); }
   expect(JSON.stringify(result)).toBe(original);

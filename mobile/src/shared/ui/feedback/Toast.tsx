@@ -27,9 +27,14 @@ export function toneFromText(text: string): ToastTone {
 
 type ToastApi = { show: (input: ToastInput) => void };
 const ToastContext = createContext<ToastApi | null>(null);
+/** Visible toasts, kept apart from the stable `show` API so callers do not re-run when the list changes. */
+type ToastHosts = { items: ToastItem[]; dismiss: (id: number) => void; top: number; register: (id: number) => () => void };
+const ToastItemsContext = createContext<ToastHosts | null>(null);
 export const useToast = () => useContext(ToastContext);
 
 let nextId = 0;
+let nextHostId = 0;
+const ROOT_HOST = 0;
 
 export function ToastProvider({ children }: PropsWithChildren) {
   const [items, setItems] = useState<ToastItem[]>([]);
@@ -40,13 +45,38 @@ export function ToastProvider({ children }: PropsWithChildren) {
   }, []);
   const dismiss = useCallback((id: number) => setItems(current => current.filter(c => c.id !== id)), []);
   const api = useMemo(() => ({ show }), [show]);
-  const insets = useSafeAreaInsets();
-  return <ToastContext.Provider value={api}>
+  // Only the top-most host draws, so a toast is never shown twice (screen + open modal).
+  const [hosts, setHosts] = useState<number[]>([]);
+  const register = useCallback((id: number) => {
+    setHosts(current => [...current, id]);
+    return () => setHosts(current => current.filter(host => host !== id));
+  }, []);
+  const top = hosts.length ? hosts[hosts.length - 1]! : ROOT_HOST;
+  const visible = useMemo(() => ({ items, dismiss, top, register }), [items, dismiss, top, register]);
+  return <ToastContext.Provider value={api}><ToastItemsContext.Provider value={visible}>
     {children}
-    <View pointerEvents="box-none" style={[styles.host, { top: insets.top + spacing.sm }]}>
-      {items.map(item => <ToastCard key={item.id} item={item} onDone={dismiss} />)}
-    </View>
-  </ToastContext.Provider>;
+    <ToastLayer hostId={ROOT_HOST} />
+  </ToastItemsContext.Provider></ToastContext.Provider>;
+}
+
+/**
+ * Draws the visible toasts. The provider mounts one for the screen; a native Modal is a separate window drawn above it,
+ * so every modal (sheet, dialog, QR) mounts its own host to keep toasts visible while it is open.
+ */
+export function ToastHost() {
+  const visible = useContext(ToastItemsContext);
+  const [hostId] = useState(() => ++nextHostId);
+  const register = visible?.register;
+  useEffect(() => register?.(hostId), [register, hostId]);
+  return <ToastLayer hostId={hostId} />;
+}
+
+function ToastLayer({ hostId }: { hostId: number }) {
+  const visible = useContext(ToastItemsContext), insets = useSafeAreaInsets();
+  if (!visible || visible.top !== hostId) return null;
+  return <View pointerEvents="box-none" style={[styles.host, { top: insets.top + spacing.sm }]}>
+    {visible.items.map(item => <ToastCard key={item.id} item={item} onDone={visible.dismiss} />)}
+  </View>;
 }
 
 function ToastCard({ item, onDone }: { item: ToastItem; onDone: (id: number) => void }) {

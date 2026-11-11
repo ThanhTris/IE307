@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  ActivityIndicator,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -11,6 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import type { ApiClient, PoolDish, RoomResult } from '../../../data/api';
 import {
   AppButton,
+  StatusNotice,
   AppHeader,
   SheetDialog,
 } from '../../../shared/ui';
@@ -19,6 +19,8 @@ import {
   FIXTURE_ROUND_TWO_CANDIDATES,
   type FinalScreenScenario,
 } from '../fixtures';
+import { ToastNotice } from '../../../shared/ui/feedback/Toast';
+import { VoteSkeleton } from '../components/VoteSkeleton';
 import type { VoteRepository } from '../services/voteRepository';
 import { useRoundTwoVoting, type FinalChoice } from '../hooks/useRoundTwoVoting';
 import { FinalRoundHeaderAndOutcome } from '../components/FinalRoundHeaderAndOutcome';
@@ -126,12 +128,7 @@ export function FinalRoundScreen({
     return (
       <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
         <AppHeader title="Bình chọn · Vòng 2" onPressBrand={onBack} colors={colors} />
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, { color: colors.text }]}>
-            Đang tải danh sách món ăn Vòng 2 từ hệ thống…
-          </Text>
-        </View>
+        <VoteSkeleton label="Đang tải Vòng 2" colors={colors} />
       </SafeAreaView>
     );
   }
@@ -141,13 +138,7 @@ export function FinalRoundScreen({
       <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
         <AppHeader title="Bình chọn · Vòng 2" onPressBrand={onBack} colors={colors} />
         <View style={styles.loadingContainer}>
-          <Text style={[styles.errorTitle, { color: colors.danger }]}>
-            Không thể tải dữ liệu Vòng 2
-          </Text>
-          <Text style={[styles.errorSubtitle, { color: colors.muted }]}>
-            Lỗi: {snapshotError}. Vui lòng kiểm tra lại kết nối mạng.
-          </Text>
-          <AppButton label="Thử lại tải phòng" onPress={() => void fetchSnapshot()} colors={colors} />
+          <StatusNotice title="Không thể tải dữ liệu Vòng 2" message={`Lỗi: ${snapshotError}. Vui lòng kiểm tra lại kết nối mạng.`} tone="error" actionLabel="Thử lại tải phòng" onAction={() => void fetchSnapshot()} colors={colors} />
         </View>
       </SafeAreaView>
     );
@@ -188,10 +179,8 @@ export function FinalRoundScreen({
 
         {/* Waiting error banner with retry (F4) */}
         {waitingError || needsWaitingTransition ? (
-          <View style={[styles.errorBanner, { backgroundColor: colors.surface, borderColor: colors.danger }]}>
-            <Text style={[styles.errorBannerText, { color: colors.danger }]}>
-              {waitingError ? `⚠ ${waitingError}` : 'Phiếu đã được nhận; đang hoàn tất bước vào phòng chờ Vòng 2.'}
-            </Text>
+          <View>
+            <ToastNotice title={waitingError || 'Phiếu đã được nhận; đang hoàn tất bước vào phòng chờ Vòng 2.'} tone={waitingError ? 'error' : 'info'} />
             <AppButton
               label={isRetryingWaiting ? 'Đang thử lại…' : 'Thử lại vào hàng chờ Vòng 2'}
               disabled={isRetryingWaiting}
@@ -336,10 +325,6 @@ const styles = StyleSheet.create({
   content: { padding: 16, gap: 16, maxWidth: 600, width: '100%', alignSelf: 'center' },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24, gap: 16 },
   loadingText: { fontSize: 14, fontWeight: '600', textAlign: 'center' },
-  errorTitle: { fontSize: 16, fontWeight: '800', textAlign: 'center' },
-  errorSubtitle: { fontSize: 13, textAlign: 'center', marginBottom: 12 },
-  errorBanner: { padding: 12, borderRadius: 10, borderWidth: 1, gap: 8 },
-  errorBannerText: { fontSize: 13, fontWeight: '600' },
   batchActionsRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 10 },
   batchButton: { paddingVertical: 10, paddingHorizontal: 16, borderRadius: 10, borderWidth: 1.5 },
   batchButtonText: { fontSize: 13, fontWeight: '700' },

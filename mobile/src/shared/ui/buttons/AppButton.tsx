@@ -23,10 +23,13 @@ export type AppButtonProps = ComponentThemeProps & {
   iconLayout?: 'inline' | 'stacked';
   iconSize?: number;
   textStyle?: TextStyle;
+  /** Keep the label on one line (shrinks slightly) so the button height never changes with the text. */
+  singleLine?: boolean;
 };
 
 export function AppButton({
   label,
+  singleLine,
   onPress,
   variant = 'primary',
   disabled,
@@ -76,6 +79,7 @@ export function AppButton({
     >
       {icon && !loading ? <AppIcon testID="app-button-icon" name={icon} size={iconSize} color={iconTintColor ?? foreground} /> : null}
       <Text
+        {...(singleLine ? { numberOfLines: 1, adjustsFontSizeToFit: true, minimumFontScale: 0.8 } : null)}
         style={[
           styles.buttonText,
           icon && iconLayout === 'stacked' ? styles.iconButtonText : undefined,

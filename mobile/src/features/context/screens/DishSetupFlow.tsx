@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { View } from 'react-native';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppButton, StatusNotice } from '../../../shared/ui';
+import { SetupSkeleton } from '../components/SetupSkeleton';
 import { DishPreferencesScreen } from '../../preferences/screens/DishPreferencesScreen';
 import { DishSetupFrame } from '../components/DishSetupFrame';
 import { ScheduleSheet } from '../components/ScheduleSheet';
@@ -43,7 +44,9 @@ export function DishSetupFlow({ gateway, onExit, onLobby, controls, initialStage
   // Recovery (retry / reload) is automatic now; the only extra content left is the optional host-provided controls.
   const extra = controls ? <View style={{ gap: 12 }}>{controls(locked, flow.data?.room?.state === 'CLOSED' ? 'closed' : flow.stage)}</View> : null;
   if (!flow.data) return <DishSetupFrame title={initialStage === 'preferences' ? 'Khẩu vị' : 'Thiết lập phòng'} onBack={onExit} busy={locked} footer={extra}>
-    <StatusNotice title={flow.readError ? 'Chưa tải được thiết lập' : 'Đang tải các lựa chọn…'} colors={colors} actionLabel={flow.readError ? 'Thử tải lại' : undefined} onAction={() => { void flow.refresh(); }} />
+    {flow.readError
+      ? <StatusNotice title="Chưa tải được thiết lập" colors={colors} actionLabel="Thử tải lại" onAction={() => { void flow.refresh(); }} />
+      : <SetupSkeleton label="Đang tải các lựa chọn" colors={colors} />}
   </DishSetupFrame>;
   if (flow.data.room?.state === 'CLOSED') return <DishSetupFrame title="Khẩu vị" onBack={onExit} footer={<><AppButton label="Về trang chủ" colors={colors} onPress={onExit} />{extra}</>}><StatusNotice title={flow.data.closedReason === 'cancelled' ? 'Phòng đã bị hủy' : 'Phòng đã đóng'} message={flow.data.closedReason === 'cancelled' ? 'Phòng đã kết thúc. Bạn có thể về trang chủ để tạo phòng khác.' : 'Phòng đã đóng. Thay đổi chưa được lưu.'} colors={colors} /></DishSetupFrame>;
   const exitDialog = confirmExit ? <SetupConfirmDialog title="Hủy phòng?" message={`Phòng ${flow.data.room?.code} đã được tạo. Hủy phòng để về trang chủ, hoặc ở lại để tiếp tục.`} confirmLabel="Xác nhận hủy phòng" continueLabel="Ở lại phòng" onConfirm={() => { setConfirmExit(false); flow.cancelRoom(); }} onContinue={() => setConfirmExit(false)} /> : null;

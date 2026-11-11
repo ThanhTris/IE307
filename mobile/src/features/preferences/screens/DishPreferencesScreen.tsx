@@ -9,7 +9,7 @@ import { SetupChoice } from '../../context/components/SetupChoice';
 import { emptyPreferences, type SetupCatalogue } from '../../context/services/dishSetup';
 import { flavorChoices, flavorSelected, isAnything, optionIds, toggleFlavor, togglePreference } from '../services/dishPreferences';
 import { preferenceAssets } from '../components/preferenceAssets';
-import { PreferenceAdvancedPanel } from '../components/PreferenceAdvancedPanel';
+// import { PreferenceAdvancedPanel } from '../components/PreferenceAdvancedPanel';
 import { ToastNotice } from '../../../shared/ui/feedback/Toast';
 
 export function DishPreferencesScreen({ preferences, catalogue, onChange, onBack, onSave, busy, submitDisabled, notice, editing, extra }: {
@@ -23,16 +23,17 @@ export function DishPreferencesScreen({ preferences, catalogue, onChange, onBack
     action={<Pressable accessibilityRole="button" accessibilityLabel="Bỏ qua" disabled={busy || submitDisabled} hitSlop={12} onPress={() => onSave(true)}><Text style={[styles.skip, { color: colors.primary, opacity: busy || submitDisabled ? 0.5 : 1 }, textStyle(700)]}>Bỏ qua</Text></Pressable>}
     footer={<AppButton label={editing ? 'Lưu thay đổi →' : 'Vào phòng chờ →'} loading={busy} disabled={busy || submitDisabled} onPress={() => onSave(false)} colors={colors} />}>
     {notice ? <ToastNotice title={notice} /> : null}
-    <SetupChoice label="Ăn gì cũng được" checkbox columns={1} icon="meal" selected={isAnything(preferences)} disabled={busy} onPress={() => onChange(emptyPreferences(preferences.historyConsent))} />
+    <SetupChoice label="Ăn gì cũng được" checkbox columns={1} icon={{ food: 'silverware-fork-knife' }} selected={isAnything(preferences)} disabled={busy} onPress={() => onChange(emptyPreferences(preferences.historyConsent))} />
     {(['categories', 'cuisines'] as const).map(key => <View key={key} style={styles.section}>
       {heading(key === 'categories' ? 'Loại món' : 'Ẩm thực')}
       {!catalogue[key].length ? <StatusNotice title="Chưa có lựa chọn được bàn giao" message="Không tự thêm nhãn hoặc ID chưa có dữ liệu." colors={colors} /> : <View style={styles.grid}>{catalogue[key].map(option => <SetupChoice key={option.id} label={option.unknown ? `${option.label} · Chưa rõ` : option.label} columns={columns} stacked={key === 'categories'} icon={preferenceAssets[option.code ?? '']} selected={optionIds(option).every(id => preferences[key === 'categories' ? 'categoryIds' : 'cuisineIds'].includes(id))} disabled={busy || option.unknown} onPress={() => onChange(togglePreference(preferences, key === 'categories' ? 'categoryIds' : 'cuisineIds', option))} />)}</View>}
     </View>)}
     {heading('Hương vị')}<View style={styles.grid}>{flavorChoices.map(choice => <SetupChoice key={choice.id} label={choice.label} columns={fontScale > 1.7 ? 1 : 2} icon={preferenceAssets[choice.id]} selected={flavorSelected(preferences, choice)} disabled={busy} onPress={() => onChange(toggleFlavor(preferences, choice))} />)}</View>
-    <Text style={[styles.note, { color: colors.muted }, textStyle(400)]}>Ưu tiên mềm: ít mặn/đậm đà, chua và cay; không phải yêu cầu loại món.</Text>
-    <PreferenceAdvancedPanel value={preferences.temperature} flavor={preferences.flavor} disabled={busy} onChange={temperature => onChange({ ...preferences, temperature })} onFlavorChange={flavor => onChange({ ...preferences, flavor })} />
+    {/* Advanced options are not built yet. Re-enable together; history consent belongs above the advanced panel.
     <SetupChoice label="Cho phép lưu lịch sử cá nhân cho tài khoản này" checkbox columns={1} selected={preferences.historyConsent} disabled={busy} onPress={() => onChange({ ...preferences, historyConsent: !preferences.historyConsent })} />
-    <Text style={[styles.note, { color: colors.muted }, textStyle(400)]}>Lựa chọn này áp dụng cho lịch sử cá nhân của tài khoản. Lưu lịch sử nhóm là quyền riêng, không bị thay đổi ở đây. Khẩu vị chỉ áp dụng cho phòng này.</Text>{extra}
+    <PreferenceAdvancedPanel value={preferences.temperature} flavor={preferences.flavor} disabled={busy} onChange={temperature => onChange({ ...preferences, temperature })} onFlavorChange={flavor => onChange({ ...preferences, flavor })} />
+    */}
+    {extra}
   </DishSetupFrame>;
 }
 const styles = StyleSheet.create({ section: { gap: 12 }, grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 }, heading: { fontSize: 17, lineHeight: 24 }, note: { fontSize: 13, lineHeight: 20 }, skip: { fontSize: 15, lineHeight: 21 } });

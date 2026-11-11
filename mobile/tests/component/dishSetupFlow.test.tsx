@@ -53,18 +53,17 @@ test('unknown delivery freezes intent and replays the same request once, with no
   expect(write.mock.calls[0]![0]).toEqual(write.mock.calls[1]![0]);
   expect((await port.read()).room?.version).toBe(1);
 });
-test('read failure after ACK retries only read and skip preserves consent', async () => {
+test('read failure after ACK retries only read and skip keeps default consent', async () => {
   const port = createDishSetupPreview('ack-read-error'), write = jest.spyOn(port, 'write');
   await open('ack-read-error', port);
   await fireEvent.press(screen.getByRole('button', { name: 'Chọn khẩu vị →' }));
   // The acknowledged write is re-read automatically; it is never sent again.
   await screen.findByRole('checkbox', { name: 'Ăn gì cũng được' }, { timeout: 5000 });
   expect(write).toHaveBeenCalledTimes(1);
-  await fireEvent.press(screen.getByRole('checkbox', { name: 'Cho phép lưu lịch sử cá nhân cho tài khoản này' }));
   await fireEvent.press(screen.getByRole('button', { name: 'Cơm' }));
   await fireEvent.press(screen.getByRole('button', { name: 'Bỏ qua' }));
   await screen.findByText('Đã hoàn tất thiết lập');
-  expect((await port.read()).ownRoomPreferences).toMatchObject({ categoryIds: [], historyConsent: true });
+  expect((await port.read()).ownRoomPreferences).toMatchObject({ categoryIds: [], historyConsent: false });
 });
 test('save rejection retains own choices for retry; account defaults stay unchanged', async () => {
   const port = await open('save-error');

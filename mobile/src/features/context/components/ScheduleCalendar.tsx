@@ -41,8 +41,8 @@ export function ScheduleCalendar({ initial, today, onConfirm, onBack }: { initia
       </View>)}</View>
     </View>
     <View style={styles.actions}>
-      <AppButton label="Quay lại" accessibilityHint="Quay lại giờ hẹn" variant="secondary" onPress={onBack} style={styles.action} colors={colors} />
-      <AppButton label={`Chọn ngày ${selected.slice(8, 10)}/${selected.slice(5, 7)}`} disabled={selected < today} onPress={() => onConfirm(selected)} style={styles.action} colors={colors} />
+      <AppButton label="Quay lại" singleLine accessibilityHint="Quay lại giờ hẹn" variant="secondary" onPress={onBack} style={styles.action} colors={colors} />
+      <AppButton label={`Chọn ${selected.slice(8, 10)}/${selected.slice(5, 7)}`} singleLine disabled={selected < today} onPress={() => onConfirm(selected)} style={styles.action} colors={colors} />
     </View>
   </>;
 }

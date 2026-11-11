@@ -276,6 +276,27 @@ describe('PR155 complete consumer paths after fff8b88', () => {
     expect(h.consent).toEqual({ personal: true, group: false });
   });
 
+  it('accepts a saved flavor whose jsonb key order differs from the request', async () => {
+    const h = await harness();
+    const before = await h.gateway.read();
+    const flavor = { spicy: { present: true, intensity: 'unknown' }, salty: { present: true, intensity: 'low' }, sour: { present: null, intensity: 'unknown' }, sweet: { present: null, intensity: 'unknown' } };
+    const dispatch = h.repo.dispatchDishSession.bind(h.repo);
+    jest.spyOn(h.repo, 'dispatchDishSession').mockImplementation(async (command, payload, version) => {
+      const reply = await dispatch(command, payload, version);
+      // Postgres jsonb returns object keys in its own order (shorter keys first).
+      if (command === 'updatePreferences') {
+        h.snapshot.ownPreferences = { ...h.snapshot.ownPreferences, flavor: { sour: { present: null, intensity: 'unknown' }, salty: { present: true, intensity: 'low' }, spicy: { present: true, intensity: 'unknown' }, sweet: { present: null, intensity: 'unknown' } } };
+      }
+      return reply;
+    });
+    const reply = await h.gateway.write({
+      kind: 'preferences', requestId: 'review-flavor-order', room: before.room!,
+      preferences: { ...emptyPreferences(before.historyConsent?.personal ?? false), flavor: flavor as never },
+      changedFields: ['flavor'],
+    });
+    expect(reply).toEqual(expect.objectContaining({ ok: true }));
+  });
+
   it('restores account consent from the API when the setup gateway is reopened', async () => {
     const h = await harness();
     await h.repo.updateHistoryConsent('personal', true, 'review-account-personal-consent');

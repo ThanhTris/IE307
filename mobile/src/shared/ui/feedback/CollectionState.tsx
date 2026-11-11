@@ -1,10 +1,15 @@
-import { ActivityIndicator, Image, StyleSheet, Text, View, type ImageSourcePropType } from 'react-native';
+import { Image, StyleSheet, Text, View, type ImageSourcePropType } from 'react-native';
 import { radii, spacing, typography } from '../../theme/tokens';
 import { AppButton } from '../buttons/AppButton';
 import type { ComponentThemeProps } from '../types';
+import { LoadingState } from './LoadingState';
+import { StatusNotice } from './StatusNotice';
 
 export type CollectionStateKind = 'loading' | 'empty' | 'error' | 'unavailable';
 
+/**
+ * loading → skeleton; error/unavailable → toast (+ retry button); empty → empty-state content.
+ */
 export function CollectionState({
   state,
   title,
@@ -21,17 +26,13 @@ export function CollectionState({
   actionLabel?: string;
   onAction?: () => void;
 }) {
+  if (state === 'loading') return <LoadingState label={title} colors={colors} />;
+  if (state !== 'empty') {
+    return <StatusNotice title={title} message={message} tone={state === 'error' ? 'error' : 'warning'} actionLabel={actionLabel} onAction={onAction} colors={colors} />;
+  }
   return (
-    <View
-      accessibilityRole="summary"
-      accessibilityLiveRegion={state === 'loading' ? 'polite' : 'none'}
-      style={[styles.collectionState, { backgroundColor: colors?.surface, borderColor: colors?.line }]}
-    >
-      {state === 'loading' ? (
-        <ActivityIndicator accessibilityLabel={title} color={colors?.primary} />
-      ) : iconSource ? (
-        <Image source={iconSource} accessible={false} resizeMode="contain" style={styles.collectionIcon} />
-      ) : null}
+    <View accessibilityRole="summary" style={[styles.collectionState, { backgroundColor: colors?.surface, borderColor: colors?.line }]}>
+      {iconSource ? <Image source={iconSource} accessible={false} resizeMode="contain" style={styles.collectionIcon} /> : null}
       <Text accessibilityRole="header" style={[styles.noticeTitle, { color: colors?.text }]}>
         {title}
       </Text>

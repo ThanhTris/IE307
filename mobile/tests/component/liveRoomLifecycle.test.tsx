@@ -222,12 +222,11 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     expect(fixture.auth.createGuest).not.toHaveBeenCalled();
     await user.press(screen.getByRole('button', { name: 'Tạo phiên rồi nhập mã' }));
 
-    expect(await screen.findByRole('button', { name: 'Tiếp tục →' })).toBeOnTheScreen();
+    // The prefilled valid code is checked automatically, so the confirmation appears without a continue tap.
+    expect(await screen.findByRole('button', { name: 'Xác nhận vào phòng' })).toBeOnTheScreen();
     expect(fixture.auth.createGuest).toHaveBeenCalledTimes(1);
     expect(repository.getSessionSnapshot()).toMatchObject({ status: 'active', user: { displayName: 'Hà' } });
     expect(client.joinRoom).not.toHaveBeenCalled();
-    await user.press(screen.getByRole('button', { name: 'Tiếp tục →' }));
-    expect(await screen.findByRole('button', { name: 'Xác nhận vào phòng' })).toBeOnTheScreen();
     await user.press(screen.getByRole('button', { name: 'Xác nhận vào phòng' }));
     await waitFor(() => expect(client.joinRoom).toHaveBeenCalledWith(expect.objectContaining({ displayName: 'Hà', code: 'ABC234' })));
   });

@@ -82,7 +82,7 @@ describe('PR157 reviewer contract regression', () => {
       .mockResolvedValueOnce({ ok: false, error: { messageKey: 'NOT_READY' } })
       .mockResolvedValue({ ok: true, data: { capability: 'scored-v4', result } });
     await render(<LiveDishResultScreen {...props} repository={repo(read)} pollIntervalMs={200} />);
-    expect(screen.getByText('Đang chốt kết quả')).toBeOnTheScreen();
+    expect(screen.getByLabelText('Đang chốt kết quả')).toBeOnTheScreen();
     await waitFor(() => expect(read.mock.calls.length).toBeGreaterThan(1));
   });
   test('clears room A result while opening room B', async () => {
@@ -94,7 +94,7 @@ describe('PR157 reviewer contract regression', () => {
     expect(screen.getAllByText(dish.name).length).toBeGreaterThan(0);
     await view.rerender(<LiveDishResultScreen {...props} roomId="room-b" repository={repository} />);
     expect(screen.queryAllByText(dish.name)).toEqual([]);
-    expect(screen.getByText('Đang tải kết quả')).toBeOnTheScreen();
+    expect(screen.getByLabelText('Đang tải kết quả')).toBeOnTheScreen();
   });
   test('renders an error and retry when Places returns ok:false', async () => {
     const read = jest.fn().mockResolvedValue({ ok: true, data: { capability: 'scored-v4', result } });

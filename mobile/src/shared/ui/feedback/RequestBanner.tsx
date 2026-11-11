@@ -1,10 +1,9 @@
-import { StyleSheet, Text, View } from 'react-native';
-import { spacing, typography } from '../../theme/tokens';
 import type { ComponentThemeProps } from '../types';
 import { StatusNotice } from './StatusNotice';
 
 export type RequestBannerState = 'offline' | 'stale' | 'error' | 'info';
 
+/** Request problems are reported by toast; a stale copy adds its timestamp to the toast message. */
 export function RequestBanner({
   state,
   title,
@@ -22,26 +21,15 @@ export function RequestBanner({
   onAction?: () => void;
 }) {
   const tone = state === 'error' ? 'error' : state === 'offline' ? 'warning' : 'info';
+  const stale = state === 'stale' && fetchedAtLabel ? `Bản lưu lúc ${fetchedAtLabel} · có thể đã cũ` : undefined;
   return (
-    <View style={styles.requestBanner}>
-      <StatusNotice
-        title={title}
-        message={message}
-        tone={tone}
-        actionLabel={actionLabel}
-        onAction={onAction}
-        colors={colors}
-      />
-      {state === 'stale' && fetchedAtLabel ? (
-        <Text style={[styles.helper, { color: colors?.muted }]}>
-          Bản lưu lúc {fetchedAtLabel} · có thể đã cũ
-        </Text>
-      ) : null}
-    </View>
+    <StatusNotice
+      title={title}
+      message={[message, stale].filter(Boolean).join('\n') || undefined}
+      tone={tone}
+      actionLabel={actionLabel}
+      onAction={onAction}
+      colors={colors}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  requestBanner: { gap: spacing.xs },
-  helper: { ...typography.caption },
-});

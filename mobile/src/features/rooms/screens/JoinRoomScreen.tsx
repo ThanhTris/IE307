@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
@@ -7,7 +7,7 @@ import { HomeFlowFrame } from '../../home/components/HomeFlowFrame';
 import { RoomCodeField } from '../components/RoomCodeField';
 import { JoinEntryProblem } from '../components/JoinEntryProblem';
 import { useJoinRoomEntry } from '../hooks/useJoinRoomEntry';
-import { errorCopy, validDisplayName, type CameraAction, type RequestIdFactory, type RoomEntryReceipt, type RoomEntryRepository } from '../services/roomEntry';
+import { errorCopy, validDisplayName, validRoomCode, type CameraAction, type RequestIdFactory, type RoomEntryReceipt, type RoomEntryRepository } from '../services/roomEntry';
 import type { JoinRoomPreviewPort } from '../services/joinPreview';
 import type { QrScannerAdapter } from '../services/joinLinks';
 import { ToastNotice } from '../../../shared/ui/feedback/Toast';
@@ -23,6 +23,8 @@ export type JoinRoomEntryProps = {
   onBack: () => void;
   createRequestId?: RequestIdFactory;
   linkError?: string;
+  /** Live camera view; receives each scanned QR payload. Omitted in tests / when no camera is available. */
+  renderScanner?: (onScanned: (raw: string) => void) => ReactNode;
 };
 
 export function JoinRoomScreen(props: JoinRoomEntryProps) {
@@ -31,6 +33,16 @@ export function JoinRoomScreen(props: JoinRoomEntryProps) {
   const [simulatedInput, setSimulatedInput] = useState('');
   const flow = useJoinRoomEntry(props);
   const { summary, submitted } = flow;
+  // Check the room as soon as a full, valid code is in: no extra "continue" tap.
+  const checked = useRef('');
+  const { code: enteredCode, name: enteredName, read: readRoom } = flow;
+  const idle = !flow.camera && !flow.summary && !flow.readBusy && !flow.readError && !flow.mutationLocked;
+  useEffect(() => {
+    if (!props.preview || !idle || enteredCode.length !== 6 || checked.current === enteredCode) return;
+    if (validRoomCode(enteredCode) && !validDisplayName(enteredName)) return;
+    checked.current = enteredCode;
+    void readRoom();
+  }, [props.preview, idle, enteredCode, enteredName, readRoom]);
   const problem = flow.readError && !['ROOM_NOT_FOUND', 'INVALID_INPUT'].includes(flow.readError) ? flow.readError : undefined;
 
   const handleOpenSettings = async () => {
@@ -47,31 +59,29 @@ export function JoinRoomScreen(props: JoinRoomEntryProps) {
 
   return (
     <HomeFlowFrame
-      title={flow.camera ? (flow.cameraStatus === 'denied' ? 'Camera bị từ chối' : 'Quét mã QR') : summary ? 'Xác nhận phòng' : 'Tham gia phòng'}
+      title={flow.camera ? 'Quét mã QR' : summary ? 'Xác nhận phòng' : 'Tham gia phòng'}
       compact
       busy={flow.mutationLocked}
       onHome={flow.back}
     >
       {flow.camera ? (
         flow.cameraStatus === 'denied' ? (
-          // Figma node 275:2088 — Vào phòng · Camera bị từ chối
           <>
             <View style={[styles.deniedContainer, { backgroundColor: colors.warm, borderColor: colors.line }]}>
               <View style={[styles.deniedBadge, { backgroundColor: dark ? colors.surface : '#FFFFFF', borderColor: colors.line }]}>
-                <Text style={styles.deniedIcon}>📷⃠</Text>
+                <AppIcon name="cameraOff" size={36} color={colors.text} />
               </View>
               <Text accessibilityRole="header" style={[styles.heading, { color: colors.text }, textStyle(700)]}>
                 Camera bị từ chối
               </Text>
               <Text accessibilityLiveRegion="polite" style={[styles.deniedBody, { color: colors.muted }, textStyle(400)]}>
-                Bạn chưa cấp quyền truy cập camera để quét mã QR. Bạn có thể mở Cài đặt để cấp quyền hoặc nhập mã phòng bằng tay.
+                Cấp quyền camera trong Cài đặt để quét mã QR.
               </Text>
             </View>
             <View style={styles.spacer} />
             <View style={styles.actions}>
-              <AppButton label="Nhập mã bằng tay" onPress={flow.closeCamera} colors={colors} />
-              <AppButton label="Mở Cài đặt" variant="secondary" onPress={handleOpenSettings} colors={colors} />
-              <AppButton label="Thử lại" variant="secondary" loading={flow.readBusy} onPress={() => { void flow.scan(); }} colors={colors} />
+              <AppButton label="Mở Cài đặt" onPress={handleOpenSettings} colors={colors} />
+              <AppButton label="Nhập mã bằng tay" variant="secondary" onPress={flow.closeCamera} colors={colors} />
             </View>
           </>
         ) : (
@@ -85,9 +95,11 @@ export function JoinRoomScreen(props: JoinRoomEntryProps) {
                   </Text>
                 </View>
               ) : null}
-              <View style={[styles.viewfinder, { borderColor: colors.primary }]}>
-                <AppIcon name="qr" size={36} color={colors.text} />
-              </View>
+              {props.renderScanner && !props.qrScannerAdapter?.isSimulated ? props.renderScanner(flow.acceptScanned) : (
+                <View style={[styles.viewfinder, { borderColor: colors.primary }]}>
+                  <AppIcon name="qr" size={36} color={colors.text} />
+                </View>
+              )}
               <Text accessibilityRole="header" style={[styles.heading, { color: colors.text }, textStyle(700)]}>
                 Quét mã QR
               </Text>
@@ -108,15 +120,17 @@ export function JoinRoomScreen(props: JoinRoomEntryProps) {
             </View>
             <View style={styles.spacer} />
             <View style={styles.actions}>
-              <AppButton
-                label="Thử quét QR"
-                loading={flow.readBusy}
-                onPress={() => {
-                  void flow.scan(props.qrScannerAdapter?.isSimulated ? simulatedInput : undefined);
-                }}
-                colors={colors}
-              />
-              <AppButton label="Nhập mã bằng tay" variant="secondary" onPress={flow.closeCamera} colors={colors} />
+              {props.renderScanner && !props.qrScannerAdapter?.isSimulated ? null : (
+                <AppButton
+                  label="Thử quét QR"
+                  loading={flow.readBusy}
+                  onPress={() => {
+                    void flow.scan(props.qrScannerAdapter?.isSimulated ? simulatedInput : undefined);
+                  }}
+                  colors={colors}
+                />
+              )}
+              <AppButton label="Nhập mã bằng tay" variant={props.renderScanner && !props.qrScannerAdapter?.isSimulated ? 'primary' : 'secondary'} onPress={flow.closeCamera} colors={colors} />
             </View>
           </>
         )
@@ -183,14 +197,9 @@ export function JoinRoomScreen(props: JoinRoomEntryProps) {
             </View>
             <Text accessible={false} style={[styles.chevron, { color: colors.primary }]}>›</Text>
           </Pressable>
-          <Text style={[styles.body, { color: colors.muted }, textStyle(400)]}>
-            Hoặc mở liên kết mời được bạn bè gửi.
-          </Text>
           {!props.preview ? (
             <StatusNotice title="Xem trước phòng chưa sẵn sàng" message="Bạn có thể quay lại trang chủ. Chưa có yêu cầu vào phòng nào được gửi." colors={colors} />
           ) : null}
-          <View style={styles.spacer} />
-          <AppButton label={flow.readError ? 'Thử lại' : 'Tiếp tục →'} loading={flow.readBusy} disabled={!props.preview} onPress={() => { void flow.read(); }} colors={colors} />
         </>
       )}
     </HomeFlowFrame>

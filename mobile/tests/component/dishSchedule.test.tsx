@@ -32,7 +32,7 @@ test('calendar aligns Monday-first weeks and stages selection until explicit con
   await render(<ScheduleCalendar initial="2028-02-01" today="2028-02-01" onConfirm={confirm} onBack={jest.fn()} />);
   await fireEvent.press(screen.getByRole('button', { name: 'Ngày 2028-02-29' }));
   expect(confirm).not.toHaveBeenCalled();
-  await fireEvent.press(screen.getByText('Chọn ngày 29/02'));
+  await fireEvent.press(screen.getByText('Chọn 29/02'));
   expect(confirm).toHaveBeenCalledWith('2028-02-29');
 });
 test('native wheel supports scroll and accessible increment and loops endlessly (23 flows into 00)', async () => {

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Animated, KeyboardAvoidingView, Modal, Platform, Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
+import { ToastHost } from '../feedback/Toast';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { radii, spacing, typography } from '../../theme/tokens';
 import { AppButton } from '../buttons/AppButton';
@@ -56,6 +57,7 @@ export function SheetDialog({
         </KeyboardAvoidingView>
       </SafeAreaView>
       </View>
+      <ToastHost />
     </Modal>
   );
 }

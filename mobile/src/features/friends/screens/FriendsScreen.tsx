@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, Share, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import type { Friend, InboxItem, SocialIdentity } from '../../../data/api/contracts';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { AppButton, AppIcon, FormField, SheetDialog, StatusNotice, ApiFeatureFrame } from '../../../shared/ui';
+import { AppButton, AppIcon, FormField, LoadingState, SheetDialog, StatusNotice, ApiFeatureFrame } from '../../../shared/ui';
 import type { InboxRepository } from '../../inbox/services/inboxRepository';
 import type { SocialRepository } from '../services/socialRepository';
 import { ToastNotice } from '../../../shared/ui/feedback/Toast';
@@ -12,10 +12,12 @@ type Props = {
   inboxRepository?: InboxRepository;
   onNavigate: (path: string) => void;
   onHome: () => void;
+  /** Set when opened from the lobby so Back returns there. */
+  onBack?: () => void;
 };
 type PendingAction = { kind: 'invite' } | { kind: 'unfriend'; friend: Friend } | null;
 
-export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome }: Props) {
+export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome, onBack }: Props) {
   const { colors } = useShellTheme();
   const { fontScale } = useWindowDimensions();
   const largeText = fontScale >= 1.5;
@@ -139,7 +141,7 @@ export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome 
   };
 
   return (
-    <ApiFeatureFrame active="friends" title="Bạn bè" onNavigate={onNavigate} onHome={onHome}>
+    <ApiFeatureFrame active="friends" title="Bạn bè" onNavigate={onNavigate} onHome={onHome} onBack={onBack}>
       <View style={styles.content}>
         <View style={[styles.titleRow, largeText && styles.titleRowLarge]}>
           <View style={styles.titleCopy}>
@@ -157,7 +159,7 @@ export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome 
           <FormField hideLabel label="Tìm trong danh sách bạn bè" value={search} onChangeText={setSearch} autoCorrect={false} placeholder="Tìm trong danh sách bạn bè" colors={colors} inputStyle={styles.searchInput} />
         </View>
 
-        {loading ? <StatusNotice title="Đang tải bạn bè…" message="Đang đọc danh sách theo danh tính hiện tại." tone="info" colors={colors} /> : null}
+        {loading ? <LoadingState label="Đang tải bạn bè" colors={colors} /> : null}
         {!loading && error ? <StatusNotice title="Chưa tải được bạn bè" message={errorMessage(error)} tone="error" actionLabel="Thử lại" onAction={() => { void load(true); }} colors={colors} /> : null}
         {!loading && !error && incoming.length > 0 ? <View style={styles.section}>
           <View style={styles.sectionTop}>

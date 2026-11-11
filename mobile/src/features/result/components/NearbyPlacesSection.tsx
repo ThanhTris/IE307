@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { AppButton } from '../../../shared/ui';
+import { AppButton, SkeletonBlock } from '../../../shared/ui';
+import { ToastNotice } from '../../../shared/ui/feedback/Toast';
 import { useResultAction } from '../hooks/useResultAction';
 import { nearbyPlaces, type ResultMapRenderer } from '../services/nearbyPresentation';
 import { nearbyMatches, type NearbyState, type NearbyStatus, type ResultPresentationActions, type ScoredResult } from '../services/resultPresentation';
@@ -26,11 +27,11 @@ export function NearbyPlacesSection({ result, state, renderMap, actions }: { res
       {state?.cached ? <Text style={[styles.caption, { color: colors.muted }, textStyle(400)]}>Dữ liệu lần tải trước · chưa cập nhật thành công</Text> : null}
       <ResultMapCard place={place} places={places} resultId={result.resultId} winnerDishId={result.winner.dishId} onSelect={setSelected} renderMap={renderMap} onMaps={actions.onExternalAction ? () => external('maps', true) : undefined} busy={action.busy} />
       {places.length > 1 ? <FlatList horizontal data={places} keyExtractor={item => item.id} contentContainerStyle={styles.list} renderItem={({ item }) => <Pressable accessibilityRole="button" accessibilityLabel={`Chọn quán ${item.name}`} accessibilityState={{ selected: place.id === item.id }} onPress={() => setSelected(item.id)} style={[styles.place, { borderColor: place.id === item.id ? colors.primary : colors.line }]}><Text style={[styles.caption, { color: colors.text }, textStyle(500)]}>{item.name}</Text></Pressable>} /> : null}
-      {status !== 'ready' ? <Text style={[styles.caption, { color: colors.muted }, textStyle(400)]}>{copy[status]}</Text> : null}
+      {status !== 'ready' && status !== 'loading' ? <ToastNotice title={copy[status]} /> : null}
       {state?.fetchedAt && Number.isFinite(Date.parse(state.fetchedAt)) ? <Text style={[styles.caption, { color: colors.muted }, textStyle(400)]}>{state.cached ? 'Thông tin lần trước' : 'Cập nhật'}: {new Date(state.fetchedAt).toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh', hour12: false })}</Text> : null}
-    </> : <View accessibilityLiveRegion="polite" style={[styles.notice, { borderColor: colors.line }]}>
-      {status === 'loading' ? <ActivityIndicator color={colors.primary} accessibilityLabel="Đang tìm quán" /> : null}
-      <Text style={[styles.message, { color: colors.text }, textStyle(600)]}>{state && !matched ? 'Thông tin quán chưa khớp kết quả' : copy[status]}</Text>
+    </> : <View accessibilityLiveRegion="polite" style={styles.notice}>
+      {status === 'loading' ? <View accessibilityRole="progressbar" accessibilityLabel="Đang tìm quán" style={styles.group}><SkeletonBlock height={156} radius={16} colors={colors} /><SkeletonBlock width="60%" height={14} colors={colors} /></View> : null}
+      {status !== 'loading' || (state && !matched) ? <ToastNotice title={state && !matched ? 'Thông tin quán chưa khớp kết quả' : copy[status]} /> : null}
       {needsPermission ? <AppButton label="Cho phép vị trí" colors={colors} disabled={!actions.onRequestLocation || pending} onPress={() => { void action.run('Cho phép vị trí', actions.onRequestLocation); }} /> : null}
       {needsSettings ? <AppButton label="Mở cài đặt vị trí" colors={colors} disabled={!actions.onOpenSettings || pending} onPress={() => { void action.run('Mở cài đặt vị trí', actions.onOpenSettings); }} /> : null}
       {status === 'error' || status === 'offline' || (state && !matched) ? <AppButton label={status === 'error' ? 'Thử lại' : 'Thử lại tìm quán'} colors={colors} disabled={!actions.onRetryPlaces || pending} onPress={() => { void action.run('Tìm quán', actions.onRetryPlaces); }} /> : null}
@@ -41,4 +42,4 @@ export function NearbyPlacesSection({ result, state, renderMap, actions }: { res
     {action.message ? <Text accessibilityLiveRegion="polite" style={[styles.caption, { color: colors.muted }, textStyle(400)]}>{action.message}</Text> : null}
   </View>;
 }
-const styles = StyleSheet.create({ group: { gap: 12 }, heading: { fontSize: 18, lineHeight: 26 }, notice: { minHeight: 156, borderWidth: 1, borderRadius: 16, padding: 16, justifyContent: 'center', gap: 12 }, dishName: { fontSize: 14, lineHeight: 22 }, message: { fontSize: 14, lineHeight: 22, textAlign: 'center' }, caption: { fontSize: 11, lineHeight: 17 }, social: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 }, button: { flexGrow: 1, flexBasis: 130 }, list: { gap: 8 }, place: { minHeight: 48, maxWidth: 240, borderWidth: 1, borderRadius: 12, padding: 12, justifyContent: 'center' } });
+const styles = StyleSheet.create({ group: { gap: 12 }, heading: { fontSize: 18, lineHeight: 26 }, notice: { justifyContent: 'center', gap: 12 }, dishName: { fontSize: 14, lineHeight: 22 }, message: { fontSize: 14, lineHeight: 22, textAlign: 'center' }, caption: { fontSize: 11, lineHeight: 17 }, social: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 }, button: { flexGrow: 1, flexBasis: 130 }, list: { gap: 8 }, place: { minHeight: 48, maxWidth: 240, borderWidth: 1, borderRadius: 12, padding: 12, justifyContent: 'center' } });

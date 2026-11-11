@@ -17,7 +17,7 @@ test('Anything clears soft selections while consent stays independent; multi-sel
   expect(screen.getByRole('button', { name: 'Cơm' }).props.accessibilityState.selected).toBe(true);
   await fireEvent.press(screen.getByRole('checkbox', { name: 'Ăn gì cũng được' }));
   expect(screen.getByRole('checkbox', { name: 'Ăn gì cũng được' })).toBeChecked();
-  expect(screen.getByRole('checkbox', { name: 'Cho phép lưu lịch sử cá nhân cho tài khoản này' })).toBeChecked();
+  expect(screen.queryByRole('checkbox', { name: 'Cho phép lưu lịch sử cá nhân cho tài khoản này' })).toBeNull();
 });
 test('unknown taxonomy is disabled; skip is explicit and does not expose another member', async () => {
   const save = jest.fn();
@@ -25,5 +25,5 @@ test('unknown taxonomy is disabled; skip is explicit and does not expose another
   expect(screen.getByRole('button', { name: 'Chưa phân loại · Chưa rõ' })).toBeDisabled();
   await fireEvent.press(screen.getByRole('button', { name: 'Bỏ qua' }));
   expect(save).toHaveBeenCalledWith(true);
-  expect(screen.getByText('Lựa chọn này áp dụng cho lịch sử cá nhân của tài khoản. Lưu lịch sử nhóm là quyền riêng, không bị thay đổi ở đây. Khẩu vị chỉ áp dụng cho phòng này.')).toBeOnTheScreen();
+  expect(screen.queryByText(/Lựa chọn này áp dụng/)).toBeNull();
 });

@@ -8,19 +8,15 @@ const home = jest.fn();
 
 beforeEach(() => { nav.mockClear(); home.mockClear(); });
 
-test('live inbox links to the device push settings route', async () => {
-  const user = userEvent.setup();
-  const openSettings = jest.fn();
+test('live inbox shows an empty state without a device push settings button', async () => {
   await render(<InboxScreen
     repository={{ list: jest.fn().mockResolvedValue({ ok: true, data: { items: [], fetchedAt: '2026-11-08T00:00:00Z' } }) } as any}
     displayName="Trí"
     onNavigate={nav}
     onHome={home}
-    onPushSettings={openSettings}
   />);
   expect(await screen.findByText('Chưa có thông báo')).toBeOnTheScreen();
-  await user.press(screen.getByRole('button', { name: 'Cài đặt thông báo trên thiết bị' }));
-  expect(openSettings).toHaveBeenCalledTimes(1);
+  expect(screen.queryByRole('button', { name: 'Cài đặt thông báo trên thiết bị' })).toBeNull();
 });
 
 test('notification navigation opens the server-owned invitation without accepting it', async () => {

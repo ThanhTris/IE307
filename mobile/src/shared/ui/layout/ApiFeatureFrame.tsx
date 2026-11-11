@@ -7,11 +7,13 @@ import { useShellTheme } from '../../lib/useShellTheme';
 
 export type ApiFeature = 'friends' | 'inbox' | 'history' | 'profile';
 
-export function ApiFeatureFrame({ active, title, onNavigate, onHome, children }: {
+export function ApiFeatureFrame({ active, title, onNavigate, onHome, onBack, children }: {
   active: ApiFeature;
   title: string;
   onNavigate: (path: string) => void;
   onHome: () => void;
+  /** Opened from another flow (e.g. the lobby): back header with a centred title, no bottom navigation. */
+  onBack?: () => void;
   children: ReactNode;
 }) {
   const { colors } = useShellTheme();
@@ -19,6 +21,7 @@ export function ApiFeatureFrame({ active, title, onNavigate, onHome, children }:
   const { fontScale } = useWindowDimensions();
   const largeText = fontScale >= 1.5;
   const isInbox = active === 'inbox';
+  const standalone = isInbox || Boolean(onBack);
   const bottomTabs = [
     { id: 'home', label: 'Trang chủ', icon: 'home' as const, onPress: onHome },
     { id: 'friends', label: 'Bạn bè', icon: 'friends' as const, onPress: () => onNavigate('/friends') },
@@ -30,15 +33,15 @@ export function ApiFeatureFrame({ active, title, onNavigate, onHome, children }:
     : '/inbox';
   return (
     <SafeAreaView edges={['top']} style={[styles.root, { backgroundColor: colors.background }]}>
-      {isInbox ? (
-        <AppHeader variant="back" title={title} allowTitleWrap={largeText} onPressBack={onHome} showFriends={false} showInbox={false} showProfile={false} colors={colors} />
+      {standalone ? (
+        <AppHeader variant="back" title={title} centeredTitle allowTitleWrap={largeText} onPressBack={onBack ?? onHome} showFriends={false} showInbox={false} showProfile={false} colors={colors} />
       ) : (
         <AppHeader title="Gì Cũng Được" allowTitleWrap={largeText} brandTextStyle={{ fontSize: 18, lineHeight: 24 }} onPressBrand={onHome} onInbox={() => onNavigate(inboxPath)} showFriends={false} showInbox={active !== 'profile'} showProfile={false} colors={colors} />
       )}
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         {children}
       </ScrollView>
-      {!isInbox ? <AppBottomNavigation items={bottomTabs} activeId={active} bottomInset={insets.bottom} allowLabelWrap={largeText} colors={colors} /> : null}
+      {!standalone ? <AppBottomNavigation items={bottomTabs} activeId={active} bottomInset={insets.bottom} allowLabelWrap={largeText} colors={colors} /> : null}
     </SafeAreaView>
   );
 }

@@ -38,8 +38,18 @@ function canonicalOwnPreferences(value: unknown, consent: boolean): UserPreferen
   };
 }
 
+/** Postgres jsonb re-orders object keys, so compare with keys sorted at every level (array order is kept). */
+function canonicalJson(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(canonicalJson);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.keys(value as Record<string, unknown>).sort()
+      .map(key => [key, canonicalJson((value as Record<string, unknown>)[key])]));
+  }
+  return value ?? null;
+}
+
 function sameJson(left: unknown, right: unknown): boolean {
-  return JSON.stringify(left ?? null) === JSON.stringify(right ?? null);
+  return JSON.stringify(canonicalJson(left)) === JSON.stringify(canonicalJson(right));
 }
 
 function childRequestId(root: string, suffix: string): string {

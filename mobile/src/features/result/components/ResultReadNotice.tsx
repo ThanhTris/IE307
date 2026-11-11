@@ -1,17 +1,27 @@
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
-import { useAppFonts } from '../../../bootstrap/AppFontProvider';
+import { StyleSheet, View } from 'react-native';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { AppButton } from '../../../shared/ui';
+import { SkeletonBlock, StatusNotice } from '../../../shared/ui';
 import type { ResultReadState } from '../services/resultPresentation';
 
+/** Waiting for the result renders a skeleton of the result screen; problems go out as a toast with a retry button. */
 export function ResultReadNotice({ state, onRetry }: { state: ResultReadState; onRetry: () => void }) {
-  const { colors } = useShellTheme(), { textStyle } = useAppFonts();
+  const { colors } = useShellTheme();
   const pending = state === 'loading' || state === 'finalizing';
   const title = state === 'finalizing' ? 'Đang chốt kết quả' : state === 'loading' ? 'Đang tải kết quả' : state === 'unknown' ? 'Chưa xác nhận kết quả' : 'Chưa tải được kết quả';
-  return <View style={styles.center}><View accessibilityLiveRegion="polite" style={[styles.card, { borderColor: colors.line }]}>
-    {pending ? <ActivityIndicator size="large" color={colors.primary} accessibilityLabel={title} /> : null}
-    <Text accessibilityRole="header" style={[styles.title, { color: colors.text }, textStyle(700)]}>{title}</Text>
-    {!pending ? <><Text style={[styles.body, { color: colors.muted }, textStyle(400)]}>Kết quả của nhóm vẫn được giữ. Hãy thử tải lại để xem thông tin đã xác nhận.</Text><AppButton label="Thử lại" onPress={onRetry} colors={colors} /></> : null}
-  </View></View>;
+  if (pending) return <View accessibilityRole="progressbar" accessibilityLabel={title} accessibilityLiveRegion="polite" style={styles.skeleton}>
+    <SkeletonBlock width="60%" height={24} style={styles.center} colors={colors} />
+    <SkeletonBlock width={180} height={180} radius={90} style={styles.center} colors={colors} />
+    <SkeletonBlock width="70%" height={20} style={styles.center} colors={colors} />
+    <View style={styles.row}>{[0, 1].map(index => <SkeletonBlock key={index} width="48%" height={96} radius={16} colors={colors} />)}</View>
+    <SkeletonBlock height={160} radius={16} colors={colors} />
+  </View>;
+  return <View style={styles.retry}>
+    <StatusNotice title={title} message="Kết quả của nhóm vẫn được giữ. Hãy thử tải lại để xem thông tin đã xác nhận." tone="error" actionLabel="Thử lại" onAction={onRetry} colors={colors} />
+  </View>;
 }
-const styles = StyleSheet.create({ center: { flexGrow: 1, justifyContent: 'center', paddingVertical: 48 }, card: { borderWidth: 1, borderRadius: 20, padding: 24, gap: 20 }, title: { fontSize: 20, lineHeight: 28, textAlign: 'center' }, body: { fontSize: 15, lineHeight: 23, textAlign: 'center' } });
+const styles = StyleSheet.create({
+  skeleton: { gap: 20, paddingVertical: 24 },
+  center: { alignSelf: 'center' },
+  row: { flexDirection: 'row', justifyContent: 'space-between' },
+  retry: { flexGrow: 1, justifyContent: 'center', paddingVertical: 48, gap: 16 },
+});

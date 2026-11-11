@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { LoadingState } from '../../../shared/ui';
 import { isSuspiciousSearchParams } from '../services/joinLinks';
 import { normalizeRoomCode } from '../services/roomEntry';
 
@@ -24,11 +25,11 @@ export function JoinLinkRedirect({ testID }: { testID: string }) {
 
   return (
     <View testID={testID} style={styles.container}>
-      <ActivityIndicator size="small" />
+      <LoadingState label="Đang mở phòng" rows={2} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  container: { flex: 1, justifyContent: 'center', padding: 20 },
 });

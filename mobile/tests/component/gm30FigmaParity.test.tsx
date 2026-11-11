@@ -1,5 +1,5 @@
 import { createMockApiClient } from '../mocks/api/mockApiClient';
-import React from 'react';
+import React, { act } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import { RoomQrModal } from '../../src/features/rooms/components/RoomQrModal';
 import { JoinRoomScreen, type JoinRoomEntryProps } from '../../src/features/rooms/screens/JoinRoomScreen';
@@ -10,6 +10,8 @@ import { MockPlacesRepository } from '../../src/features/result/services/placesR
 import { createMockResultRepository } from '../../src/features/result/services/resultRepository';
 import { useRoomRepository } from '../../src/bootstrap/RoomRepositoryProvider';
 import type { ScoredResult } from '../../src/features/result/services/resultPresentation';
+
+const settled = async () => { await act(async () => { await new Promise(resolve => setTimeout(resolve, 0)); }); };
 
 jest.mock('../../src/bootstrap/RoomRepositoryProvider', () => ({
   useRoomRepository: jest.fn(),
@@ -138,7 +140,7 @@ describe('GM-30 Figma Parity & Native Linking Component Tests', () => {
       );
 
       expect(screen.getByText('Mã QR phòng')).toBeOnTheScreen();
-      expect(screen.getByText('Quét bằng ứng dụng Gì Cũng Được để vào phòng')).toBeOnTheScreen();
+      expect(screen.getByText('Quét bằng camera điện thoại để mở ứng dụng và vào phòng')).toBeOnTheScreen();
       expect(screen.getByText('MÃ PHÒNG')).toBeOnTheScreen();
       expect(screen.getByText('GCD234')).toBeOnTheScreen();
       expect(screen.getByTestId('qr-matrix-svg')).toBeOnTheScreen();
@@ -211,7 +213,7 @@ describe('GM-30 Figma Parity & Native Linking Component Tests', () => {
 
       // Camera denied UI (Figma 275:2088)
       expect(screen.getAllByText('Camera bị từ chối').length).toBeGreaterThanOrEqual(1);
-      expect(screen.getByText(/Bạn chưa cấp quyền truy cập camera/)).toBeOnTheScreen();
+      expect(screen.getByText(/Cấp quyền camera trong Cài đặt/)).toBeOnTheScreen();
 
       expect(screen.getByRole('button', { name: 'Mở Cài đặt' })).toBeOnTheScreen();
       await press('Mở Cài đặt');
@@ -246,7 +248,7 @@ describe('GM-30 Figma Parity & Native Linking Component Tests', () => {
       await press('Thử quét QR');
 
       // User confirms scanned code by pressing Tiếp tục →
-      await press('Tiếp tục →');
+      await settled();
 
       // Confirmation screen (Figma 268:2081)
       expect(await screen.findByText('Phòng GCD234')).toBeOnTheScreen();

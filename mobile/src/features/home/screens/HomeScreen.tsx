@@ -4,7 +4,8 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import type { SessionUser } from '../../../data/api/contracts';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { AppBottomNavigation, AppButton, AppHeader, AppIcon, AvatarRow, BrandBanner, FormField, SheetDialog, StatusNotice } from '../../../shared/ui';
+import { ToastNotice } from '../../../shared/ui/feedback/Toast';
+import { AppBottomNavigation, AppButton, AppHeader, AppIcon, AvatarRow, BrandBanner, FormField, LoadingState, SheetDialog, StatusNotice } from '../../../shared/ui';
 import { radii, spacing, typography } from '../../../shared/theme/tokens';
 import { useRead } from '../../rooms/hooks/useRoomEntry';
 import { errorCopy, validDisplayName, type RoomEntryReceipt, type RoomEntryRepository } from '../../rooms/services/roomEntry';
@@ -190,7 +191,7 @@ export function HomeScreen({ repository, liveSession, activeRoom, roomRevision, 
             <Text style={[homeStyles.allFriendsText, { color: colors.text }, textStyle(500)]}>{friends.data ? `Tất cả (${quickFriends.length}) ›` : 'Tất cả ›'}</Text>
           </Pressable>
         </View>
-        {friends.loading ? <StatusNotice title="Đang tải bạn bè…" colors={colors} /> : null}
+        {friends.loading ? <LoadingState label="Đang tải bạn bè" colors={colors} /> : null}
         {friends.error ? <StatusNotice title="Chưa tải được bạn bè" message={errorCopy[friends.error]} actionLabel="Tải lại bạn bè" onAction={friends.retry} tone="error" colors={colors} /> : null}
         {friends.data && sessionReady && quickFriends.length === 0 ? <Text style={[homeStyles.emptyFriends, { color: colors.muted }, textStyle(400)]}>Mời bạn để bắt đầu kèo nhanh.</Text> : null}
         {sessionReady && !friends.loading && !friends.error ? <AvatarRow items={quickFriends.slice(0, 4).map(friend => ({ id: friend.id, label: friend.displayName }))} onAdd={openFriends} labelTextStyle={textStyle(600)} colors={colors} /> : null}
@@ -202,7 +203,7 @@ export function HomeScreen({ repository, liveSession, activeRoom, roomRevision, 
     <SheetDialog visible={!!guestDestination} title={guestDestination === 'join' ? 'Bắt đầu phiên để vào phòng' : 'Bắt đầu phiên khách'} onClose={closeGuestSheet} colors={colors}>
       <Text style={[homeStyles.dialogBody, { color: colors.text }, textStyle(500)]}>Nhập tên hiển thị để bắt đầu phiên khách trên thiết bị này.</Text>
       <FormField label="Tên khách" value={guestName} onChangeText={value => { setGuestName(value); setGuestError(''); }} editable={!guestBusy} placeholder="Mọi người gọi bạn là…" helperText="Tên hiển thị · 1–24 ký tự" colors={colors} />
-      {guestError ? <Text accessibilityRole="alert" style={[homeStyles.dialogBody, { color: colors.danger }]}>{guestError}</Text> : null}
+      {guestError ? <ToastNotice title={guestError} tone="error" /> : null}
       <AppButton label={guestDestination === 'join' ? 'Tạo phiên rồi nhập mã' : 'Tạo phiên rồi tạo phòng'} onPress={() => { void startGuest(); }} loading={guestBusy} colors={colors} />
       {(liveSession.issue === 'signup-uncertain' || liveSession.issue === 'storage-unavailable' || liveSession.issue === 'unknown-error' || liveSession.status === 'blocked')
         ? <AppButton label="Xóa phiên cục bộ rồi thử lại" variant="danger" disabled={guestBusy} onPress={() => { void liveSession.logout(); setGuestError(''); }} colors={colors} />

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { AppButton, AppIcon, SheetDialog, StatusNotice, ApiFeatureFrame } from '../../../shared/ui';
+import { AppButton, AppIcon, LoadingState, SheetDialog, StatusNotice, ApiFeatureFrame } from '../../../shared/ui';
 import { errorMessage } from '../../friends/screens/FriendsScreen';
 import type { CanonicalHistoryItem, HistoryRow } from '../services/historyTypes';
 import { historyIdOf, historyTitle, type HistoryRepository } from '../services/historyRepository';
@@ -144,11 +144,11 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
           <FilterButton title="Chưa chốt" value="no-consensus" selected={filter} onSelect={setFilter} largeText={largeText} colors={colors} />
         </View> : null}
 
-        {stale && fetchedAt ? <View style={[styles.offlineBanner, largeText && styles.offlineBannerLarge, { backgroundColor: colors.warm }]}>
-          <View style={styles.offlineCopy}><Text style={[styles.cardTitle, { color: colors.text }]}>Đang ngoại tuyến</Text><Text style={[styles.caption, { color: colors.muted }]}>Dữ liệu lưu lúc {new Date(fetchedAt).toLocaleString()} · có thể đã cũ</Text></View>
+        {stale && fetchedAt ? <>
+          <ToastNotice title="Đang ngoại tuyến" message={`Dữ liệu lưu lúc ${new Date(fetchedAt).toLocaleString()} · có thể đã cũ`} tone="warning" />
           <AppButton label="Thử lại" variant="quiet" onPress={() => { void load(true); }} disabled={refreshing || busy} loading={refreshing} colors={colors} />
-        </View> : null}
-        {loading ? <StatusNotice title="Đang tải lịch sử…" message="Đang đọc lịch sử theo consent và quyền hiện tại." tone="info" colors={colors} /> : null}
+        </> : null}
+        {loading ? <LoadingState label="Đang tải lịch sử" colors={colors} /> : null}
         {!loading && error && !stale ? <StatusNotice title="Chưa tải được lịch sử" message={errorMessage(error)} tone="error" actionLabel="Thử lại" onAction={() => { void load(true); }} colors={colors} /> : null}
 
         {!selectedHistory && !loading && (!error || stale) ? <View style={styles.section}>

@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  ActivityIndicator,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -12,11 +11,14 @@ import type { ApiClient, PoolDish, RoomResult } from '../../../data/api';
 import { MOCK_DISHES } from '../fixtures';
 import {
   AppButton,
+  StatusNotice,
   AppHeader,
   type VoteValue,
 } from '../../../shared/ui';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import type { VoteScreenScenario } from '../fixtures';
+import { ToastNotice } from '../../../shared/ui/feedback/Toast';
+import { VoteSkeleton } from '../components/VoteSkeleton';
 import type { VoteRepository } from '../services/voteRepository';
 import { useRoundOneVoting } from '../hooks/useRoundOneVoting';
 import { VoteScenarioAndStatusBanner } from '../components/VoteScenarioAndStatusBanner';
@@ -130,12 +132,7 @@ export function VoteScreen({
     return (
       <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
         <AppHeader title="Bình chọn · Vòng 1" onPressBrand={onBack} colors={colors} />
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, { color: colors.text }]}>
-            Đang tải dữ liệu phòng bình chọn từ hệ thống…
-          </Text>
-        </View>
+        <VoteSkeleton label="Đang tải phòng bình chọn" colors={colors} />
       </SafeAreaView>
     );
   }
@@ -145,13 +142,7 @@ export function VoteScreen({
       <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
         <AppHeader title="Bình chọn · Vòng 1" onPressBrand={onBack} colors={colors} />
         <View style={styles.loadingContainer}>
-          <Text style={[styles.errorTitle, { color: colors.danger }]}>
-            Không thể tải dữ liệu phòng
-          </Text>
-          <Text style={[styles.errorSubtitle, { color: colors.muted }]}>
-            Lỗi: {snapshotError}. Vui lòng kiểm tra lại kết nối mạng.
-          </Text>
-          <AppButton label="Thử lại tải phòng" onPress={() => void fetchSnapshot()} colors={colors} />
+          <StatusNotice title="Không thể tải dữ liệu phòng" message={`Lỗi: ${snapshotError}. Vui lòng kiểm tra lại kết nối mạng.`} tone="error" actionLabel="Thử lại tải phòng" onAction={() => void fetchSnapshot()} colors={colors} />
         </View>
       </SafeAreaView>
     );
@@ -191,10 +182,8 @@ export function VoteScreen({
 
         {/* Waiting error banner with retry (F4) */}
         {waitingError || needsWaitingTransition ? (
-          <View style={[styles.errorBanner, { backgroundColor: colors.surface, borderColor: colors.danger }]}>
-            <Text style={[styles.errorBannerText, { color: colors.danger }]}>
-              {waitingError ? `⚠ ${waitingError}` : 'Phiếu đã được nhận; đang hoàn tất bước vào phòng chờ.'}
-            </Text>
+          <View>
+            <ToastNotice title={waitingError || 'Phiếu đã được nhận; đang hoàn tất bước vào phòng chờ.'} tone={waitingError ? 'error' : 'info'} />
             <AppButton
               label={isRetryingWaiting ? 'Đang thử lại…' : 'Thử lại vào hàng chờ'}
               disabled={isRetryingWaiting}
@@ -328,10 +317,6 @@ const styles = StyleSheet.create({
   content: { padding: 16, gap: 16, maxWidth: 600, width: '100%', alignSelf: 'center' },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24, gap: 16 },
   loadingText: { fontSize: 14, fontWeight: '600', textAlign: 'center' },
-  errorTitle: { fontSize: 16, fontWeight: '800', textAlign: 'center' },
-  errorSubtitle: { fontSize: 13, textAlign: 'center', marginBottom: 12 },
-  errorBanner: { padding: 12, borderRadius: 10, borderWidth: 1, gap: 8 },
-  errorBannerText: { fontSize: 13, fontWeight: '600' },
   viewModeRow: { flexDirection: 'row', gap: 10, justifyContent: 'center' },
   viewModeBtn: { flex: 1, minHeight: 44, borderRadius: 10, borderWidth: 1.5, justifyContent: 'center', alignItems: 'center' },
   viewModeBtnText: { fontSize: 13, fontWeight: '700' },

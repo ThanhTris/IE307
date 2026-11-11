@@ -2,12 +2,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import type { InboxItem } from '../../../data/api/contracts';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { AppButton, AppIcon, CollectionState, SheetDialog, ApiFeatureFrame } from '../../../shared/ui';
+import { AppButton, AppIcon, CollectionState, LoadingState, SheetDialog, ApiFeatureFrame } from '../../../shared/ui';
 import { errorMessage } from '../../friends/screens/FriendsScreen';
 import { createDurableRequestId } from '../../rooms/services/roomRepository';
 import type { InboxRepository } from '../services/inboxRepository';
 import { findInboxEventById, acceptedRoomPath, roomDestinationPath } from '../services/notificationInboxResolver';
-import UnreadIcon from '../../../../assets/brand/icons/notification-unread.svg';
 import { ToastNotice } from '../../../shared/ui/feedback/Toast';
 
 type Props = {
@@ -292,8 +291,7 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
 
   return (
     <ApiFeatureFrame active="inbox" title="Thông báo" onNavigate={onNavigate} onHome={onHome}>
-      {onPushSettings ? <AppButton label="Cài đặt thông báo trên thiết bị" variant="secondary" onPress={onPushSettings} colors={colors} /> : null}
-      {loading ? <CollectionState state="loading" title="Đang tải thông báo…" colors={colors} /> : null}
+      {loading ? <LoadingState label="Đang tải thông báo" colors={colors} /> : null}
       {!loading && error ? <CollectionState state="error" title="Chưa tải được thông báo" message={errorMessage(error)} actionLabel="Thử lại" onAction={() => { void load(); }} colors={colors} /> : null}
       {!openEventId && !loading && !error && items.length === 0 ? <View style={styles.emptyWrap}>
         <View style={[styles.emptyIcon, { backgroundColor: colors.warm }]}><AppIcon name="bell" size={32} color={colors.text} /></View>
@@ -332,7 +330,7 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
           {item.type === 'room_result'
             ? item.metadata?.status === 'DECIDED' ? <AppIcon name="check" size={20} color="#043B22" /> : <AppIcon name="minus" size={20} color="#043B22" />
             : <Text style={[styles.avatarInitial, { color: colors.text }]}>{initialFrom(item.title)}</Text>}
-          {!read ? <View style={styles.unreadMark}><UnreadIcon /></View> : null}
+          {!read ? <View style={[styles.unreadMark, { backgroundColor: colors.primary }]} /> : null}
         </View>
         <View style={styles.itemCopy}>
           <View style={[styles.itemTitleRow, largeText && styles.itemTitleRowLarge]}>
@@ -402,7 +400,7 @@ const styles = StyleSheet.create({
   itemTop: { flexDirection: 'row', alignItems: 'flex-start', gap: 8, minHeight: 36 },
   itemIcon: { position: 'relative', width: 32, height: 32, borderWidth: 1, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
   avatarInitial: { fontFamily: 'InterSemiBold', fontSize: 13, lineHeight: 18 },
-  unreadMark: { position: 'absolute', width: 8, height: 8, right: -1, bottom: -1 },
+  unreadMark: { position: 'absolute', width: 8, height: 8, borderRadius: 4, right: -1, bottom: -1 },
   itemCopy: { flex: 1, minWidth: 0, gap: 2 },
   itemTitleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: 4 },
   itemTitleRowLarge: { flexDirection: 'column' },

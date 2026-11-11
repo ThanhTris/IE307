@@ -4,7 +4,9 @@ import Svg, { Rect } from 'react-native-svg';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppButton } from '../../../shared/ui';
-import { createJoinRoomDeepLink, generateQrMatrix } from '../services/joinLinks';
+import { ToastHost, ToastNotice } from '../../../shared/ui/feedback/Toast';
+import { generateQrMatrix } from '../services/joinLinks';
+import { createJoinRoomOpenLink } from '../services/joinLinkUrl';
 
 export interface RoomQrModalProps {
   visible: boolean;
@@ -27,7 +29,7 @@ export function RoomQrModal({ visible, code, onClose, onCopyLink }: RoomQrModalP
   }, [copied]);
 
   const cleanCode = (code || '').trim().toUpperCase();
-  const joinUrl = createJoinRoomDeepLink(cleanCode);
+  const joinUrl = createJoinRoomOpenLink(cleanCode);
   const matrix = generateQrMatrix(joinUrl);
   const matrixSize = matrix.length;
   const qrPixelSize = 200;
@@ -56,14 +58,14 @@ export function RoomQrModal({ visible, code, onClose, onCopyLink }: RoomQrModalP
         <Pressable
           style={[styles.card, { backgroundColor: dark ? colors.surface : '#FFFFFF', borderColor: colors.line }]}
           onPress={e => e.stopPropagation()}
-          accessibilityRole="dialog"
+          accessibilityViewIsModal
           accessibilityLabel="Mã QR phòng"
         >
           <Text accessibilityRole="header" style={[styles.title, { color: colors.text }, textStyle(700)]}>
             Mã QR phòng
           </Text>
           <Text style={[styles.subtitle, { color: colors.muted }, textStyle(400)]}>
-            Quét bằng ứng dụng Gì Cũng Được để vào phòng
+            Quét bằng camera điện thoại để mở ứng dụng và vào phòng
           </Text>
 
           <View testID="qr-matrix-svg" style={[styles.qrContainer, { backgroundColor: '#FFFFFF', borderColor: colors.line }]}>
@@ -92,11 +94,7 @@ export function RoomQrModal({ visible, code, onClose, onCopyLink }: RoomQrModalP
             </Text>
           </View>
 
-          {copied ? (
-            <Text accessibilityLiveRegion="polite" style={[styles.copiedNotice, { color: colors.primary }, textStyle(600)]}>
-              ✓ Đã sao chép liên kết vào phòng!
-            </Text>
-          ) : null}
+          {copied ? <ToastNotice title="Đã sao chép liên kết vào phòng!" tone="success" /> : null}
 
           <View style={styles.actions}>
             <AppButton
@@ -113,6 +111,7 @@ export function RoomQrModal({ visible, code, onClose, onCopyLink }: RoomQrModalP
           </View>
         </Pressable>
       </Pressable>
+      <ToastHost />
     </Modal>
   );
 }
@@ -169,11 +168,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     lineHeight: 32,
     letterSpacing: 3,
-  },
-  copiedNotice: {
-    fontSize: 13,
-    lineHeight: 18,
-    textAlign: 'center',
   },
   actions: {
     width: '100%',
