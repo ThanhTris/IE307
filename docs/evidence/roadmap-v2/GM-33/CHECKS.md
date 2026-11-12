@@ -1,5 +1,114 @@
 # GM-33 preparation checks
 
+## Main refresh and physical USB rerun — 2026-11-12
+
+GM-25 #168 and GM-26 #169 are merged on main `c7bb6aa`. GM-33 was
+rebased onto that main before this run. The APK/app source is
+`7a13ba38b446c01a373c0dffa74f8b11823eb6e7`; its mobile tree matches main
+and producer-tested revision `91ba58a`. No separate application patch,
+dependency update or production deployment was included.
+
+| Provenance | Actual |
+| --- | --- |
+| APK SHA-256 | `6e389d7c136561bfbced1f29e7dea9617bf8e651c3a3624c445961d02bcbf18c` |
+| Embedded JS SHA-256 | `4cd8b88c246d19085e7ef0732f8fadc0c249d312058d58a97d19068e457eaf28` |
+| Owned QA | `gm33-usbmain-1112`, loopback API/DB 54641/54642, Auth + REST + policy worker, 28 migrations, catalogue 1.1.0 |
+| Manifest SHA-256 | `ac3abbc29094d5e90293e57e15c54256f9003ae959d6bfa717b5c57732f95e02` |
+| Runtime seal | `471afc134d3ed7c6f6dfc801a2988a5f770e94b9a8d7bde6a6afcf8190792ebb` |
+| Preflight | Ready for manual setup; GM-32 received runtime inventory matched, source/main verified, authorized USB found |
+| Clients | Physical RMX3710 API 35 and independent API 37 AVD; two distinct guests on the real QA API |
+| Phone viewport | 1080×2400, 408 dpi, 423.53dp display width, original font scale 0.9; not a 412dp Figma comparison |
+| Build mode | Expo 58.0.23, arm64 release variant, embedded JS, debug signing, minification disabled, loopback-only cleartext exception in the disposable native build |
+
+### Observed scenarios
+
+| Case/input | Actual and assertion | Scope |
+| --- | --- | --- |
+| P01 guest and P15 valid restart | Both clients authenticated as distinct guests. After phone force-stop/reopen, account count stayed two and the complete persisted-result digest was unchanged | Pass for valid-session restore; not TTL/revocation or pending-submit recovery |
+| P02 phone requests 20 dinner dishes | UI reported seven available and a minimum of ten; no additional room was created | Pass for this shortage input; preliminary frame remains private/Unreviewed |
+| P02 phone requests 20 lunch dishes | DB stored requested count 20, pool 20. Subsequent host cancellation through the normal lobby UI reached `CANCELLED` | Pass for this setup/cancel input |
+| P02/P04 AVD host requests 10 lunch dishes | Primary room retained ten dishes and two members; phone joined and displayed the same pool | Pass for the stated two-client case; larger rosters and settings/start race Not run |
+| P03 cold native invitation | Phone preview showed 1/20; confirmation joined once, then opened own preferences via `/room/setup`. Server membership became two | Pass for cold-confirm join; manual/warm/expired/full variants Not run |
+| P05 separate preferences | Host chose Cơm, phone chose Lẩu, saved/refetched. Two independent category values remained. Real RPC responses had caller-owned preferences only; member keys were exactly ID/name/role/submission status | Pass for this two-client category case; see redacted expected/actual JSON |
+| P04 natural start | Both clients opened Round 1 after host Start. No QA vote route or member reload was used | Pass for P04's two-member transition |
+| P06/P07/P08 first timeout | Only host submitted ten OK choices and entered waiting. Phone sent no ballot and automatically opened Round 2 after server timeout | Pass for this timeout path; after-ACK network loss, majority and replay boundaries Not run |
+| P08/P09 second timeout | Only host confirmed KEEP for all ten candidates. Both clients automatically opened Miến / 1 point. SQL confirmed one canonical result, two host ballots and zero member ballots; result had three ranked dishes | Pass for normal R2/persisted delivery; singleton, cap+1 and no-consensus Not run |
+| P09/P11 after restart | Phone opened the authorized result Inbox item and fetched the same Miến result | Pass for this Inbox/refetch case; remote push, friend/invite variants Not run |
+| P12 native settings entry | The phone opened `/push-settings`, showing denied permission and missing EAS Project ID | Pass for entry/config-missing state only; real FCM blocked |
+| P01 explicit guest logout | Phone confirmed logout in product settings and returned to Welcome | Pass for this QA guest logout; expiry/revocation variants remain Not run |
+
+R1 submit was accepted at `2026-11-12T06:44:11.123735Z`, waiting began at
+`06:44:11.159337Z`, expected deadline `06:45:11.159337Z`. R2 submit was
+accepted at `06:47:03.379927Z`, waiting began at `06:47:03.414096Z`, deadline
+`06:48:03.414096Z`. The result finalized 61.019 seconds after R2 waiting
+entry. No host early-finalize request was sent. These are QA UTC timestamps,
+not device-clock calculations. The before/after result-row continuity digest
+was `88159380b6f5c02496f741846d737c8d`.
+
+[Preference privacy expected/actual](PREFERENCE_PRIVACY_2026-11-12.json)
+contains only redacted audit metadata. Two loopback, forwarding-only audit
+proxies inspected snapshot field names/digests, without storing headers,
+tokens or raw payloads. Successful responses came from the real QA RPC.
+Private raw frames and logs remain under `.work/gm33/`. Selected checkpoint
+hashes and limitations are recorded in the [current run summary](CURRENT_RUN_2026-11-12.json). Captures
+remain Unreviewed until Trí assesses them; a screenshot alone does not prove
+an entire case or Figma parity.
+
+### Capture/build corrections
+
+An initial incremental APK retained the prior QA URL even though the build
+environment changed. It was rejected before any Pass was attributed to it.
+The final build explicitly reran `createBundleReleaseJsAndAssets` before
+assembly. Capture now checks the installed APK checksum and presence of the
+verified QA origin in its embedded JS, and records the bundle/tool hashes.
+Hermes can concatenate another numeric literal immediately after the origin;
+the guard handles that format. Literal presence is a stale-build check,
+not proof of effective networking: successful Auth/RPC and DB assertions
+above provide the runtime check.
+
+Capture also checks the focused window before and after the image, in
+addition to the resumed activity. A foreign focused overlay or missing
+focus evidence blocks capture. Vendor focus fields in the activity dump
+are supported. The final capture utility fingerprint is recorded per
+checkpoint; the later tooling/documentation commit does not alter mobile
+source or the tested APK.
+
+### Checks and remaining gates
+
+Host checks used Node 24.15.0 and Python 3.12.14 on macOS; the native build
+used Zulu JDK 17. Use the pinned repository lockfiles, not historical SDK
+versions in the earlier receipts.
+
+- Thirteen GM-33 tool tests pass. Full Python: 693 tests run, six skipped,
+  no failures. Mobile source is unchanged by GM-33: typecheck, lint,
+  architecture and full Jest passed (1,366 tests, one skipped).
+- Repository validator, task indexes and whitespace checks pass. The live
+  Project dependency/output gate against fetched main returns
+  `READY_FOR_MERGE_REVIEW`; this is not acceptance of Stage 3B execution.
+- P12 still needs real FCM configuration/delivery. The existing
+  `/push-settings` route opens on the phone and reports denied permission
+  and missing EAS Project ID; no real push was sent or claimed.
+- P13 is blocked by the denied-only native scanner and blocked CAMERA
+  permission on main; native scanner delivery belongs to GM-30.
+- P14 has no configured restricted Places QA key in the checked inputs;
+  real Places/Map success has not been exercised.
+- P16 matching Figma, 412/320/360dp, font 200%, TalkBack and the complete
+  keyboard/Back matrix remain Not run. Current captures retain the original
+  phone settings and are not visual parity evidence.
+- Larger rosters/races, majority finish, singleton/cap/no-consensus,
+  consent/history deletion/revocation, session expiry and pending/outbox
+  recovery remain required. GM-33 is not Done or merge-ready; no Project
+  state or reviewer approval was changed.
+
+After the run, the QA guest was logged out, original phone power settings
+were restored, only the owned reverse ports/AVD were stopped, and the
+producer stop command removed this run's worker/stack/network. No containers
+remain for `gm33-usbmain-1112`. Audit proxies and temporary room references
+were cleared. The application database was not reset or migrated.
+
+The earlier sections below are historical evidence on their own revisions;
+they are not relabelled as execution on this main refresh.
+
 ## Authorized USB phone retry on 2026-11-11
 
 The RMX3710 was authorized over USB. A local debug-signed APK with embedded

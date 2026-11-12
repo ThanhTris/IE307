@@ -14,6 +14,8 @@ ownership separate so the GM-32 PR can land first.
    actual child frames, capture the design revision and screenshots, and
    compare with the same state/data/role and content width in the native app.
    Capture only the selected USB pilot APK after verifying its installed hash.
+   Force the embedded JS bundle to rebuild when the QA endpoint changes;
+   verify the expected QA origin in the APK and retain its bundle hash.
 3. Run the two-identity scenarios and the 2/4/8-client cases. Record observed
    app, HTTP and server state together. Keep backend-only and emulator evidence
    separate from the physical Android run.

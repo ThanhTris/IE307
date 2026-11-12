@@ -38,3 +38,9 @@ and scrub session headers, invite codes, ballots, push tokens, location and PII.
 
 See [setup and cleanup](HANDOFF.md), [checks](CHECKS.md) and
 [visual matrix](FIGMA_PARITY.md).
+
+The 2026-11-12 main refresh receives merged GM-25 #168 and GM-26 #169.
+Read the current CHECKS and `CURRENT_RUN_2026-11-12.json` for the executed
+USB/AVD subset, explicit inputs and remaining cases. The same P01–P16
+case IDs remain required; a partial input/state Pass does not complete
+every variant in that row or make GM-33 merge-ready.

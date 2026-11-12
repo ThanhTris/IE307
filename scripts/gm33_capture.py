@@ -27,13 +27,24 @@ def read_adb(adb, serial, *args):
     return result.stdout
 
 
-def foreground_is_app(activities):
+def foreground_is_app(activities, windows=None):
     # Require the resumed activity, rather than any stale task in the stack.
     resumed = [line for line in activities.splitlines()
                if ('topResumedActivity=' in line or 'mResumedActivity:' in line)
                and 'ActivityRecord{' in line]
-    return bool(resumed) and all(re.search(r'\bu\d+\s+' + re.escape(PACKAGE) + r'/', line)
-                                 for line in resumed)
+    if not resumed or not all(re.search(r'\bu\d+\s+' + re.escape(PACKAGE) + r'/', line)
+                              for line in resumed):
+        return False
+    if windows is not None:
+        # Some Android vendors include current-window fields in the activity
+        # dump instead of `dumpsys window windows`. Require affirmative focus
+        # evidence from either source, and reject any competing window.
+        focused = [line for line in (activities + '\n' + windows).splitlines()
+                   if 'mCurrentFocus=' in line or 'mFocusedWindow=' in line]
+        return bool(focused) and all(re.search(
+            r'\bu\d+\s+' + re.escape(PACKAGE) + r'(?:/|\s|\})', line)
+            for line in focused)
+    return True
 
 
 def installed_apk_sha(read):
@@ -69,7 +80,10 @@ def verify_embedded_qa_origin(path, port):
     except (BadZipFile, KeyError):
         raise ValueError('Expected a standalone APK with embedded JavaScript') from None
     expected = f'http://127.0.0.1:{port}'.encode('ascii')
-    if not re.search(re.escape(expected) + rb'(?![0-9])', bundle):
+    # Hermes stores literals consecutively without separators. A numeric byte
+    # after the origin may belong to the next string, not the TCP port.
+    # Presence is a stale-build guard; real Auth/RPC checks remain necessary.
+    if expected not in bundle:
         raise ValueError('Embedded APK does not contain the verified QA origin; rebuild the JS bundle')
     return hashlib.sha256(bundle).hexdigest()
 
@@ -113,10 +127,11 @@ def capture(args):
     if scale == 'null':
         scale = '1.0'  # Android's default when the system setting is unset.
     activity = ('shell', 'dumpsys', 'activity', 'activities')
-    if not foreground_is_app(read(*activity).decode()):
+    window = ('shell', 'dumpsys', 'window', 'windows')
+    if not foreground_is_app(read(*activity).decode(), read(*window).decode()):
         raise ValueError('Bring the pilot app to the foreground before capture')
     png = read('exec-out', 'screencap', '-p')
-    if not foreground_is_app(read(*activity).decode()):
+    if not foreground_is_app(read(*activity).decode(), read(*window).decode()):
         raise ValueError('Pilot app left the foreground during capture')
 
     qa = check['qa']
@@ -125,6 +140,8 @@ def capture(args):
         'case': args.case, 'client': args.client, 'checkpoint': args.checkpoint, 'figmaNode': args.figma_node,
         'checkoutRevision': check['appSourceRevision'], 'apkSha256': expected_sha, 'androidApi': int(sdk),
         'embeddedQaOriginVerified': True, 'bundleSha256': bundle_sha,
+        'captureToolSha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        'focusedWindowVerified': True,
         'viewport': viewport(png, density, scale),
         'qaRunId': qa['runId'], 'qaManifestSealSha256': qa['sealSha256'], 'qaApiPort': qa['apiPort'],
         'qaFunctionInventorySha256': qa['functionInventorySha256'], 'catalogues': qa['catalogues'],

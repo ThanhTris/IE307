@@ -1,0 +1,39 @@
+{
+  "fixtureOnly": true,
+  "case": "P05",
+  "appSourceRevision": "7a13ba38b446c01a373c0dffa74f8b11823eb6e7",
+  "qaRunId": "gm33-usbmain-1112",
+  "input": {
+    "A": "Physical Android guest selects L\u1ea9u",
+    "B": "Independent AVD host selects C\u01a1m"
+  },
+  "expected": {
+    "ownCategoryCount": 1,
+    "distinctOwnPreferences": 2,
+    "memberKeys": [
+      "displayName",
+      "role",
+      "submissionStatus",
+      "userId"
+    ]
+  },
+  "actual": {
+    "snapshotCountByActor": {
+      "A": 86,
+      "B": 63
+    },
+    "ownCategoryCount": 1,
+    "distinctOwnPreferences": 2,
+    "memberKeys": [
+      "displayName",
+      "role",
+      "submissionStatus",
+      "userId"
+    ]
+  },
+  "result": "Pass for this two-client category save/refetch case",
+  "wireAuditSha256": "e786ecf71be1354d9f7b5d6eec2d75fff3461c896bc304dce73f9abd288a72c0",
+  "auditHarnessSha256": "b582daa58bd546f42e16ec2b9861fa9dcb662b5889a714cf15698dd8d07570ba",
+  "headersTokensAndPayloadsPublished": false,
+  "assessment": "Unreviewed"
+}

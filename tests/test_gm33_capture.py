@@ -54,6 +54,8 @@ class CaptureTests(unittest.TestCase):
             ('shell', 'settings', 'get', 'system', 'font_scale'): b'2.0\n',
             ('shell', 'dumpsys', 'activity', 'activities'):
                 b'topResumedActivity=ActivityRecord{123 u0 vn.gicungduoc.mobile/.MainActivity t1}',
+            ('shell', 'dumpsys', 'window', 'windows'):
+                b'mCurrentFocus=Window{123 u0 vn.gicungduoc.mobile/.MainActivity}',
             ('exec-out', 'screencap', '-p'): png_fixture(640, 1),
         }
         return fixtures[command]
@@ -73,6 +75,8 @@ class CaptureTests(unittest.TestCase):
         self.assertEqual(record['assessment'], 'Unreviewed')
         self.assertEqual(record['apkSha256'], self.digest)
         self.assertIs(record['embeddedQaOriginVerified'], True)
+        self.assertIs(record['focusedWindowVerified'], True)
+        self.assertEqual(record['captureToolSha256'], hashlib.sha256(Path(gm33.__file__).read_bytes()).hexdigest())
         self.assertEqual(record['bundleSha256'], hashlib.sha256(
             b'synthetic fixture http://127.0.0.1:54531\x00').hexdigest())
         self.assertEqual(record['gm32EvidenceSha256'], 'gm32-receipt')
@@ -121,13 +125,40 @@ class CaptureTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'Invalid QA API port'):
             gm33.verify_embedded_qa_origin(self.args.apk, '54531')
 
-    def test_missing_bundle_and_origin_prefix_are_rejected(self):
-        for name, content in [('assets/index.android.bundle', b'http://127.0.0.1:545310'),
+    def test_missing_bundle_and_different_origin_are_rejected(self):
+        for name, content in [('assets/index.android.bundle', b'http://127.0.0.1:54541'),
                               ('assets/other', b'http://127.0.0.1:54531')]:
             with ZipFile(self.args.apk, 'w') as archive:
                 archive.writestr(name, content)
             with self.assertRaises(ValueError):
                 gm33.verify_embedded_qa_origin(self.args.apk, 54531)
+
+    def test_hermes_adjacent_numeric_literal_does_not_reject_correct_origin(self):
+        bundle = b'http://127.0.0.1:54531100% next Hermes string'
+        with ZipFile(self.args.apk, 'w') as archive:
+            archive.writestr('assets/index.android.bundle', bundle)
+        self.assertEqual(gm33.verify_embedded_qa_origin(self.args.apk, 54531),
+                         hashlib.sha256(bundle).hexdigest())
+
+    def test_foreign_overlay_blocks_capture_even_with_our_activity_resumed(self):
+        original = self.fake_adb
+
+        def overlay(adb, serial, *command):
+            if command == ('shell', 'dumpsys', 'window', 'windows'):
+                self.commands.append(command)
+                return b'mCurrentFocus=Window{456 u0 example.other/Overlay}'
+            return original(adb, serial, *command)
+
+        with patch.object(self, 'fake_adb', side_effect=overlay):
+            with self.assertRaisesRegex(ValueError, 'foreground'):
+                self.capture()
+        self.assertNotIn(('exec-out', 'screencap', '-p'), self.commands)
+        resumed = 'topResumedActivity=ActivityRecord{123 u0 vn.gicungduoc.mobile/.MainActivity t1}'
+        self.assertFalse(gm33.foreground_is_app(resumed, 'mCurrentFocus=null'))
+        self.assertTrue(gm33.foreground_is_app(
+            resumed + '\nmCurrentFocus=Window{123 u0 vn.gicungduoc.mobile/.MainActivity}',
+            'Vendor window listing without a current-focus field'))
+        self.assertFalse(gm33.foreground_is_app(resumed, 'No focus evidence'))
 
 
 if __name__ == '__main__':
