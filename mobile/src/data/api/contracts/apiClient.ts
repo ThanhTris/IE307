@@ -18,6 +18,7 @@ import type {
   JoinRoomRequest,
   JoinRoomResponse,
   LeaveRoomRequest,
+  RemoveRoomMemberRequest,
   RoomSnapshot,
   SetReadyRequest,
   StartRoundRequest,
@@ -58,6 +59,7 @@ export interface ApiClient {
   setReady(req: SetReadyRequest): Promise<WriteResult<void>>;
   startRound(req: StartRoundRequest): Promise<WriteResult<void>>;
   leaveRoom(req: LeaveRoomRequest): Promise<WriteResult<void>>;
+  removeRoomMember(req: RemoveRoomMemberRequest): Promise<WriteResult<void>>;
   cancelRoom(req: CancelRoomRequest): Promise<WriteResult<void>>;
 
   // Voting

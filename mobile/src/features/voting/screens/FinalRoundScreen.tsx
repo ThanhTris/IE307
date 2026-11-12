@@ -180,7 +180,7 @@ export function FinalRoundScreen({
         {/* Waiting error banner with retry (F4) */}
         {waitingError || needsWaitingTransition ? (
           <View>
-            <ToastNotice title={waitingError || 'Phiếu đã được nhận; đang hoàn tất bước vào phòng chờ Vòng 2.'} tone={waitingError ? 'error' : 'info'} />
+            {waitingError ? <ToastNotice title={waitingError} tone="error" /> : null}
             <AppButton
               label={isRetryingWaiting ? 'Đang thử lại…' : 'Thử lại vào hàng chờ Vòng 2'}
               disabled={isRetryingWaiting}

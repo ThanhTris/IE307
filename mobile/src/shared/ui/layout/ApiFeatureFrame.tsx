@@ -3,20 +3,25 @@ import { ScrollView, StyleSheet, useWindowDimensions } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppBottomNavigation } from './AppBottomNavigation';
 import { AppHeader } from './AppHeader';
+import type { AppIconName } from '../icons/AppIcon';
+import { useInboxBadge } from '../../lib/inboxBadge';
 import { useShellTheme } from '../../lib/useShellTheme';
 
 export type ApiFeature = 'friends' | 'inbox' | 'history' | 'profile';
 
-export function ApiFeatureFrame({ active, title, onNavigate, onHome, onBack, children }: {
+export function ApiFeatureFrame({ active, title, onNavigate, onHome, onBack, headerAction, children }: {
   active: ApiFeature;
   title: string;
   onNavigate: (path: string) => void;
   onHome: () => void;
   /** Opened from another flow (e.g. the lobby): back header with a centred title, no bottom navigation. */
   onBack?: () => void;
+  /** Short text action on the right of the header (back-style headers only). */
+  headerAction?: { label: string; icon?: AppIconName; onPress: () => void; disabled?: boolean };
   children: ReactNode;
 }) {
   const { colors } = useShellTheme();
+  const { unread } = useInboxBadge();
   const insets = useSafeAreaInsets();
   const { fontScale } = useWindowDimensions();
   const largeText = fontScale >= 1.5;
@@ -34,9 +39,9 @@ export function ApiFeatureFrame({ active, title, onNavigate, onHome, onBack, chi
   return (
     <SafeAreaView edges={['top']} style={[styles.root, { backgroundColor: colors.background }]}>
       {standalone ? (
-        <AppHeader variant="back" title={title} centeredTitle allowTitleWrap={largeText} onPressBack={onBack ?? onHome} showFriends={false} showInbox={false} showProfile={false} colors={colors} />
+        <AppHeader variant="back" title={title} centeredTitle hideDivider rightAction={headerAction} allowTitleWrap={largeText} onPressBack={onBack ?? onHome} showFriends={false} showInbox={false} showProfile={false} colors={{ ...colors, surface: colors.background }} />
       ) : (
-        <AppHeader title="Gì Cũng Được" allowTitleWrap={largeText} brandTextStyle={{ fontSize: 18, lineHeight: 24 }} onPressBrand={onHome} onInbox={() => onNavigate(inboxPath)} showFriends={false} showInbox={active !== 'profile'} showProfile={false} colors={colors} />
+        <AppHeader title="Gì Cũng Được" allowTitleWrap={largeText} brandTextStyle={{ fontSize: 18, lineHeight: 24 }} onPressBrand={onHome} onInbox={() => onNavigate(inboxPath)} inboxBadge={unread} showFriends={false} showInbox={active !== 'profile'} showProfile={false} colors={colors} />
       )}
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         {children}

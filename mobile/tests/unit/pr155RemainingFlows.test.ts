@@ -297,6 +297,25 @@ describe('PR155 complete consumer paths after fff8b88', () => {
     expect(reply).toEqual(expect.objectContaining({ ok: true }));
   });
 
+  it('accepts a saved schedule that Postgres returns as +00:00 instead of .000Z', async () => {
+    const h = await harness();
+    const before = await h.gateway.read();
+    const desiredAt = new Date(Date.now() + 2 * 86400000).toISOString().replace(/T.*/, 'T05:00:00.000Z');
+    const dispatch = h.repo.dispatchDishSession.bind(h.repo);
+    jest.spyOn(h.repo, 'dispatchDishSession').mockImplementation(async (command, payload, version) => {
+      const reply = await dispatch(command, payload, version);
+      if (command === 'updateSettings' && reply.ok && h.snapshot.settings) {
+        h.snapshot.settings = { ...h.snapshot.settings, dishCount: before.settings!.dishCount, mealSlot: 'lunch', desiredAt: desiredAt.replace('.000Z', '+00:00') };
+      }
+      return reply;
+    });
+    const reply = await h.gateway.write({
+      kind: 'settings', requestId: 'review-schedule-format', room: before.room!,
+      draft: { ...before.settings!, mealSlot: 'lunch', timeMode: 'scheduled', desiredAt },
+    });
+    expect(reply).toEqual(expect.objectContaining({ ok: true }));
+  });
+
   it('restores account consent from the API when the setup gateway is reopened', async () => {
     const h = await harness();
     await h.repo.updateHistoryConsent('personal', true, 'review-account-personal-consent');

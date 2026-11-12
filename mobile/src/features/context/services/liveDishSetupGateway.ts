@@ -119,7 +119,14 @@ function acceptedAck(value: unknown): value is { accepted: true; version?: numbe
 
 function snapshotSettingsMatch(snapshot: RoomSnapshot, desired: { dishCount: number; mealSlot: string; desiredAt: string | null }): boolean {
   return snapshot.state === 'LOBBY' && snapshot.settings?.dishCount === desired.dishCount
-    && snapshot.settings.mealSlot === desired.mealSlot && (snapshot.settings.desiredAt ?? null) === desired.desiredAt;
+    && snapshot.settings.mealSlot === desired.mealSlot && sameInstant(snapshot.settings.desiredAt ?? null, desired.desiredAt);
+}
+
+/** Postgres returns timestamptz as `…+00:00` while the client sends `….000Z`: compare the instant, not the text. */
+function sameInstant(a: string | null, b: string | null): boolean {
+  if (a === null || b === null) return a === b;
+  const left = Date.parse(a), right = Date.parse(b);
+  return Number.isFinite(left) && Number.isFinite(right) ? left === right : a === b;
 }
 
 function snapshotPreferencesMatch(snapshot: RoomSnapshot, desired: Record<string, unknown>, fields: readonly string[]): boolean {

@@ -2,14 +2,16 @@ import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { AppButton, DishCount, LoadingState, SheetDialog } from '../../../shared/ui';
+import { AppButton, DishCount, SheetDialog } from '../../../shared/ui';
 import { useToast } from '../../../shared/ui/feedback/Toast';
 import { ScheduleSheet } from '../../context/components/ScheduleSheet';
 import { SetupChoice } from '../../context/components/SetupChoice';
 import { SetupTimeMode } from '../../context/components/SetupTimeMode';
+import { useMealTimeGuard } from '../../context/hooks/useMealTimeGuard';
+import { LobbyMealEditorSkeleton } from './LobbyMealEditorSkeleton';
 import type { DishSetupGateway, SetupIntent } from '../../context/services/dishSetupGateway';
 import {
-  budgetOptions, changeSetupMeal, defaultScheduledTime, mealOptions, setupValidation, switchToNow,
+  budgetOptions, defaultScheduledTime, mealOptions, setupValidation, switchToNow,
   type SetupDraft, type SetupRoom,
 } from '../../context/services/dishSetup';
 import { createDurableRequestId } from '../services/roomRepository';
@@ -57,7 +59,7 @@ export function LobbyMealEditor({ field, gateway, onClose, onSaved, now = Date.n
     try {
       const reply = await gateway.write(intent);
       if (reply.ok) { pending.current = null; toast?.show({ title: 'Đã cập nhật bữa ăn', tone: 'success' }); onSaved(); onClose(); return; }
-      if (reply.code === 'SHORTAGE') toast?.show({ title: `Chỉ có ${reply.available ?? 0} món phù hợp`, message: `Hãy chọn tối đa ${reply.available ?? 0} món hoặc đổi bữa ăn.`, tone: 'warning' });
+      if (reply.code === 'SHORTAGE') toast?.show({ title: 'Không đủ món', message: (reply.available ?? 0) >= 10 ? `Chỉ có ${reply.available} món phù hợp. Hãy chọn tối đa ${reply.available} món.` : `Chỉ có ${reply.available ?? 0} món phù hợp. Hãy đổi giờ hoặc buổi ăn.`, tone: 'error' });
       else if (reply.code === 'CLOSED') { toast?.show({ title: 'Phòng đã đóng', tone: 'error' }); onClose(); }
       else if (reply.code === 'STALE') { toast?.show({ title: 'Phòng vừa thay đổi', message: 'Đang tải lại, hãy chọn lại.', tone: 'warning' }); onSaved(); onClose(); }
       else toast?.show({ title: 'Chưa lưu được', message: 'Hãy thử lại.', tone: 'error' });
@@ -65,12 +67,13 @@ export function LobbyMealEditor({ field, gateway, onClose, onSaved, now = Date.n
     finally { lock.current = false; setBusy(false); }
   };
 
+  const { guard, dialog } = useMealTimeGuard(next => { void save(next); }, now);
   const draft = loaded?.draft;
   const visible = field !== null && !schedule;
   return <>
     <SheetDialog visible={visible} title={field ? titles[field] : ''} onClose={() => { if (!busy) onClose(); }} showClose={false} colors={colors}>
-      {!draft ? <LoadingState label="Đang tải thiết lập" rows={2} colors={colors} /> : null}
-      {draft && field === 'meal' ? <View style={styles.grid}>{mealOptions.map(item => <SetupChoice key={item.id} label={item.label} icon={item.icon} stacked selected={draft.mealSlot === item.id} disabled={busy} onPress={() => { void save(changeSetupMeal(draft, item.id, now())); }} />)}</View> : null}
+      {!draft && field ? <LobbyMealEditorSkeleton field={field} colors={colors} /> : null}
+      {draft && field === 'meal' ? <View style={styles.grid}>{mealOptions.map(item => <SetupChoice key={item.id} label={item.label} icon={item.icon} stacked selected={draft.mealSlot === item.id} disabled={busy} onPress={() => { guard({ ...draft, mealSlot: item.id }); }} />)}</View> : null}
       {draft && field === 'budget' ? <View style={styles.grid}>{budgetOptions.map(item => <SetupChoice key={item.id ?? 'none'} label={item.label} icon={item.icon} selected={draft.budget === item.id} disabled={busy} onPress={() => { void save({ ...draft, budget: item.id }); }} />)}</View> : null}
       {draft && field === 'time' ? <SetupTimeMode scheduled={draft.timeMode === 'scheduled'} disabled={busy} onNow={() => { void save(switchToNow(draft, now())); }}
         onSchedule={() => setSchedule(draft.timeMode === 'scheduled' && draft.desiredAt && Number.isFinite(Date.parse(draft.desiredAt)) ? draft.desiredAt : defaultScheduledTime(now()))} /> : null}
@@ -80,8 +83,9 @@ export function LobbyMealEditor({ field, gateway, onClose, onSaved, now = Date.n
       </> : null}
       {draft && field === 'time' ? <Text style={[styles.hint, { color: colors.muted }, textStyle(400)]}>Chọn Hẹn giờ để đặt ngày và giờ ăn.</Text> : null}
     </SheetDialog>
+    {dialog}
     {schedule && draft ? <ScheduleSheet initial={schedule} now={now} onClose={() => { setSchedule(undefined); onClose(); }}
-      onConfirm={desiredAt => { setSchedule(undefined); void save({ ...draft, timeMode: 'scheduled', desiredAt }); }} /> : null}
+      onConfirm={desiredAt => { setSchedule(undefined); guard({ ...draft, timeMode: 'scheduled', desiredAt }); }} /> : null}
   </>;
 }
 

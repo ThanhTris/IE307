@@ -29,6 +29,8 @@ export type AppHeaderProps = ComponentThemeProps & {
   allowTitleWrap?: boolean;
   centeredTitle?: boolean;
   hideDivider?: boolean;
+  /** Short text action on the right of a back header (e.g. "Đọc hết"). */
+  rightAction?: { label: string; icon?: AppIconName; onPress: () => void; disabled?: boolean };
 };
 
 export function AppHeader({
@@ -50,6 +52,7 @@ export function AppHeader({
   allowTitleWrap = false,
   centeredTitle = false,
   hideDivider = false,
+  rightAction,
   colors,
 }: AppHeaderProps) {
   const showBrand = variant === 'home';
@@ -96,7 +99,12 @@ export function AppHeader({
               </Text>
             ) : null}
           </View>
-          {centeredTitle && variant === 'back' ? <View style={styles.headerAction} /> : null}
+          {rightAction && variant === 'back' ? (
+            <Pressable accessibilityRole="button" accessibilityLabel={rightAction.label} accessibilityState={{ disabled: rightAction.disabled }} disabled={rightAction.disabled} hitSlop={6} onPress={rightAction.onPress}
+              style={({ pressed }) => [styles.rightAction, { backgroundColor: pressed ? colors?.soft : 'transparent', opacity: rightAction.disabled ? 0.4 : 1 }]}>
+              {rightAction.icon ? <AppIcon name={rightAction.icon} size={24} color={colors?.primary} /> : <Text numberOfLines={1} style={[styles.rightActionText, { color: colors?.primary }]}>{rightAction.label}</Text>}
+            </Pressable>
+          ) : centeredTitle && variant === 'back' ? <View style={styles.headerAction} /> : null}
           {variant === 'room' ? (
             <Pressable
               accessibilityRole="button"
@@ -195,6 +203,8 @@ const styles = StyleSheet.create({
   headerVariant: { flex: 1, minWidth: 0, minHeight: 48, flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
   headerVariantTitle: { flex: 1, minWidth: 0, gap: spacing.xs },
   headerRoomCode: { ...typography.caption },
+  rightAction: { minHeight: 44, minWidth: 44, paddingHorizontal: 10, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
+  rightActionText: { fontFamily: 'InterSemiBold', fontSize: 14, lineHeight: 20 },
   headerMenu: { alignItems: 'center', justifyContent: 'center' },
   headerMenuGlyph: { fontSize: 28, lineHeight: 30, fontWeight: '800' },
   mark: { width: 44, height: 44 },

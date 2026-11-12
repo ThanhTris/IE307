@@ -459,7 +459,7 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
     expect(await screen.findByText('Quán Phở Thìn 13 Lò Đúc')).toBeOnTheScreen();
   });
 
-  test('renders one shared score in each pedestal when dishes tie', async () => {
+  test('puts tied dishes on separate pedestals in server order', async () => {
     const tieResult: ScoredResult = {
       ...decidedResult,
       round1BallotCount: 4, // max score = 2 * 4 = 8
@@ -513,10 +513,13 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
     const dismiss = await screen.findByText('Chạm để bỏ qua');
     fireEvent.press(dismiss);
 
-    const first = within(screen.getByTestId('podium-group-1'));
-    expect(first.getAllByText('8 điểm')).toHaveLength(1);
-    expect(within(first.getByTestId('podium-bar-1')).getByText('8 điểm')).toBeOnTheScreen();
-    expect(within(screen.getByTestId('podium-bar-2')).getByText('6 điểm')).toBeOnTheScreen();
+    // Two dishes share 8 points: each still gets its own pedestal (positions 1 and 2), the third is 6 points.
+    expect(within(screen.getByTestId('podium-bar-1')).getByText('8 điểm')).toBeOnTheScreen();
+    expect(within(screen.getByTestId('podium-bar-2')).getByText('8 điểm')).toBeOnTheScreen();
+    expect(within(screen.getByTestId('podium-bar-3')).getByText('6 điểm')).toBeOnTheScreen();
+    expect(within(screen.getByTestId('podium-group-1')).getByText(tieResult.topDishes[0]!.dish.name)).toBeOnTheScreen();
+    expect(within(screen.getByTestId('podium-group-2')).getByText('Bún chả Hà Nội')).toBeOnTheScreen();
+    expect(screen.getByText(/Đồng điểm: xếp theo/)).toBeOnTheScreen();
   });
 
   test('external actions return ok: false pending GM-30', async () => {
@@ -537,8 +540,8 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
     const mapsBtn = await screen.findByText('Mở bản đồ');
     fireEvent.press(mapsBtn);
 
-    // Displays not yet supported message from useResultAction
-    expect(await screen.findByText(/Đã nhận yêu cầu của bạn|Chưa thực hiện được thao tác/)).toBeOnTheScreen();
+    // A successful action says nothing; only a failure is reported (as an error toast).
+    expect(screen.queryByText(/Đã nhận yêu cầu của bạn/)).toBeNull();
   });
 
   test('renders result when resultId matches server response (GM-28 navigation)', async () => {

@@ -2,7 +2,6 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { PoolDish, SubmissionReceipt } from '../../../data/api';
 import { AppButton, StatusNotice, WaitingSummary, type Palette } from '../../../shared/ui';
 import type { VoteScreenScenario } from '../fixtures';
-import { ToastNotice } from '../../../shared/ui/feedback/Toast';
 
 export interface VoteScenarioAndStatusBannerProps {
   showScenarioPicker: boolean;
@@ -141,9 +140,6 @@ export function VoteScenarioAndStatusBanner({
         </View>
       ) : null}
 
-      {lastActionNotice ? (
-        <ToastNotice title="Tương tác gần nhất" message={lastActionNotice} tone="success" />
-      ) : null}
 
       {submissionState === 'pending' && (
         <StatusNotice

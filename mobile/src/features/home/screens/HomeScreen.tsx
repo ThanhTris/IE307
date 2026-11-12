@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } fr
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import type { SessionUser } from '../../../data/api/contracts';
+import { useInboxBadge } from '../../../shared/lib/inboxBadge';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { ToastNotice } from '../../../shared/ui/feedback/Toast';
 import { AppBottomNavigation, AppButton, AppHeader, AppIcon, AvatarRow, BrandBanner, FormField, LoadingState, SheetDialog, StatusNotice } from '../../../shared/ui';
@@ -32,6 +33,10 @@ export type HomeScreenProps = {
   onJoin: () => void;
   onResume: () => void;
   onFriends?: () => void;
+  /** Quick room with one friend: setup opens with that friend invited. */
+  onQuickInvite?: (friendUserId: string) => void;
+  /** Development builds only: opens the result-screen preview. */
+  onDevResult?: () => void;
   onHistory?: () => void;
   onInbox?: () => void;
   onProfile?: () => void;
@@ -39,8 +44,9 @@ export type HomeScreenProps = {
 };
 
 
-export function HomeScreen({ repository, liveSession, activeRoom, roomRevision, onCreate, onJoin, onResume, onFriends, onHistory, onInbox, onProfile, onTutorial }: HomeScreenProps) {
+export function HomeScreen({ repository, liveSession, activeRoom, roomRevision, onCreate, onJoin, onResume, onFriends, onQuickInvite, onDevResult, onHistory, onInbox, onProfile, onTutorial }: HomeScreenProps) {
   const { colors } = useShellTheme();
+  const { unread: unreadInbox } = useInboxBadge();
   const { textStyle } = useAppFonts();
   const insets = useSafeAreaInsets();
   const { fontScale } = useWindowDimensions();
@@ -139,11 +145,11 @@ export function HomeScreen({ repository, liveSession, activeRoom, roomRevision, 
   }
 
   return <SafeAreaView edges={['top', 'left', 'right']} style={[homeStyles.root, { backgroundColor: colors.background }]}>
-    <AppHeader colors={colors} onInbox={openInbox} showFriends={false} showInbox showProfile={false} allowTitleWrap hideDivider brandTextStyle={textStyle(700)} />
+    <AppHeader colors={colors} onInbox={openInbox} inboxBadge={unreadInbox} showFriends={false} showInbox showProfile={false} allowTitleWrap hideDivider brandTextStyle={textStyle(700)} />
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={homeStyles.content}>
       {sessionNotice}
       {room.loading ? <StatusNotice title="Đang kiểm tra phòng đã lưu…" colors={colors} /> : null}
-      {room.active && room.data ? <StatusNotice title={`Phòng #${room.data.code}`} message="Trạng thái phòng đã được kiểm tra. Bạn có thể tiếp tục phiên hiện tại." actionLabel="Tiếp tục phiên" onAction={onResume} colors={colors} /> : null}
+      {room.active && room.data ? <StatusNotice title={`Phòng #${room.data.code}`} message="Bạn có thể tiếp tục phiên hiện tại." actionLabel="Tiếp tục phiên" onAction={onResume} colors={colors} /> : null}
       {room.error ? <StatusNotice title={room.unavailable ? 'Không thể tiếp tục phòng đã lưu' : 'Chưa kiểm tra được phòng đã lưu'} message={errorCopy[room.error]} actionLabel={room.unavailable ? undefined : 'Kiểm tra lại phòng'} onAction={room.unavailable ? undefined : room.retry} tone="warning" colors={colors} /> : null}
       {room.data && !room.active ? <StatusNotice title={room.data.state === 'EXPIRED' ? 'Phòng đã hết hạn' : 'Phòng đã kết thúc'} message="Bạn có thể tạo hoặc tham gia một phòng khác." colors={colors} /> : null}
 
@@ -194,8 +200,10 @@ export function HomeScreen({ repository, liveSession, activeRoom, roomRevision, 
         {friends.loading ? <LoadingState label="Đang tải bạn bè" colors={colors} /> : null}
         {friends.error ? <StatusNotice title="Chưa tải được bạn bè" message={errorCopy[friends.error]} actionLabel="Tải lại bạn bè" onAction={friends.retry} tone="error" colors={colors} /> : null}
         {friends.data && sessionReady && quickFriends.length === 0 ? <Text style={[homeStyles.emptyFriends, { color: colors.muted }, textStyle(400)]}>Mời bạn để bắt đầu kèo nhanh.</Text> : null}
-        {sessionReady && !friends.loading && !friends.error ? <AvatarRow items={quickFriends.slice(0, 4).map(friend => ({ id: friend.id, label: friend.displayName }))} onAdd={openFriends} labelTextStyle={textStyle(600)} colors={colors} /> : null}
+        {sessionReady && !friends.loading && !friends.error ? <AvatarRow items={quickFriends.slice(0, 4).map(friend => ({ id: friend.friendUserId, label: friend.displayName }))} onAdd={openFriends} onSelect={onQuickInvite} labelTextStyle={textStyle(600)} colors={colors} /> : null}
       </View>
+
+      {onDevResult ? <Pressable accessibilityRole="button" onPress={onDevResult} style={homeStyles.devLink}><Text style={[homeStyles.devLinkText, { color: colors.muted }, textStyle(500)]}>Xem thử giao diện kết quả (chỉ bản dev)</Text></Pressable> : null}
 
       {sessionLoading ? <StatusNotice title="Đang khôi phục phiên…" colors={colors} /> : null}
     </ScrollView>
@@ -218,6 +226,8 @@ export function HomeScreen({ repository, liveSession, activeRoom, roomRevision, 
 
 
 const homeStyles = StyleSheet.create({
+  devLink: { alignItems: 'center', paddingVertical: 12 },
+  devLinkText: { fontSize: 12, lineHeight: 18, textDecorationLine: 'underline' },
   root: { flex: 1 },
   content: { flexGrow: 1, padding: spacing.xxl, paddingTop: spacing.xs, paddingBottom: spacing.xxl, gap: spacing.xxl, width: '100%', maxWidth: 480, alignSelf: 'center' },
   modeLabel: { alignSelf: 'flex-start', overflow: 'hidden', paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderRadius: radii.pill, fontSize: 12, lineHeight: 18 },

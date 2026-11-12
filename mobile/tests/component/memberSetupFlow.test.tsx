@@ -23,7 +23,7 @@ test('member starts on preferences, saves once and reaches the lobby without tou
   expect(screen.queryByRole('button', { name: 'Sửa thiết lập' })).toBeNull();
   expect(screen.queryByRole('button', { name: 'Hủy phòng' })).toBeNull();
   await fireEvent.press(screen.getByRole('button', { name: 'Mở phòng chờ' }));
-  expect(onLobby).toHaveBeenCalledWith(expect.objectContaining({ id: 'ui-room', code: 'MCK234' }));
+  expect(onLobby).toHaveBeenCalledWith(expect.objectContaining({ id: 'ui-room', code: 'MCK234' }), expect.any(Array));
 });
 
 test('member leaving the first preferences pass exits instead of showing room settings', async () => {

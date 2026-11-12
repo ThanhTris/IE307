@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ComponentRef } from 'react';
-import { Clipboard, Platform, Pressable, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppIcon } from '../../../shared/ui/icons/AppIcon';
@@ -34,7 +35,7 @@ export function RoomCodeField({ value, onChange, disabled, error }: { value: str
   };
   const paste = async () => {
     if (disabled) return;
-    try { const text = await Clipboard.getString(); if (text) edit(0, text); } catch { /* clipboard unavailable */ }
+    try { const text = await Clipboard.getStringAsync(); if (text) edit(0, text); } catch { /* clipboard unavailable */ }
   };
   const backspace = (index: number) => {
     if (disabled || value[index] || index === 0) return;

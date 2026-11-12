@@ -14,10 +14,10 @@ async function open(scenario: DishSetupScenario, gateway?: DishSetupGateway) {
 test('shortage dialog shows requested/available separately and requires an explicit confirmation', async () => {
   const confirm = jest.fn();
   await render(<SetupShortageDialog available={15} requested={20} onConfirmReduction={confirm} onEdit={jest.fn()} />);
-  expect(screen.getByText('Bạn đang chọn 20 món.')).toBeOnTheScreen();
-  expect(screen.getByText('Hiện có 15 món. Bạn có thể giảm, nhưng không thấp hơn 10 món.')).toBeOnTheScreen();
+  expect(screen.getByText('Chỉ có 15 món phù hợp, bạn đang chọn 20 món.')).toBeOnTheScreen();
+  expect(screen.getAllByRole('button')).toHaveLength(2);
   expect(confirm).not.toHaveBeenCalled();
-  await fireEvent.press(screen.getByText('Giảm số món'));
+  await fireEvent.press(screen.getByText('Chọn 15 món'));
   expect(confirm).toHaveBeenCalledTimes(1);
 });
 test('confirmed reduction changes only draft until host submits again', async () => {
@@ -38,7 +38,10 @@ test('below ten never offers a reduction or creates a room', async () => {
   const port = createDishSetupPreview('shortage7');
   await open('shortage7', port);
   await fireEvent.press(screen.getByRole('button', { name: 'Chọn khẩu vị →' }));
-  expect(await screen.findByText('Hiện có 7 món. Cần ít nhất 10 món để tạo phòng.')).toBeOnTheScreen();
+  expect(await screen.findByText('Chỉ có 7 món phù hợp. Cần ít nhất 10 món để bình chọn, hãy đổi giờ hoặc buổi ăn.')).toBeOnTheScreen();
+  expect(screen.queryByText(/^Chọn \d+ món$/)).toBeNull();
+  expect(screen.getByRole('button', { name: 'Đổi giờ hẹn' })).toBeOnTheScreen();
+  expect(screen.getByRole('button', { name: 'Đổi buổi ăn' })).toBeOnTheScreen();
   expect((await port.read()).room).toBeUndefined();
 });
 test('unknown delivery freezes intent and replays the same request once, with no duplicate room', async () => {

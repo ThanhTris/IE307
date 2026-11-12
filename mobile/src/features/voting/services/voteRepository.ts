@@ -186,12 +186,22 @@ function isCanonicalFinalizeEnvelope(
   return true;
 }
 
+/** Keeps only finite, bounded times for dishes that are actually in the ballot. */
+export function cleanPace(pace: { roundDishId: string; ms: number }[], votes: { roundDishId: string }[]): { roundDishId: string; ms: number }[] {
+  const allowed = new Set(votes.map(vote => vote.roundDishId));
+  return pace
+    .filter(item => allowed.has(item.roundDishId) && Number.isFinite(item.ms))
+    .map(item => ({ roundDishId: item.roundDishId, ms: Math.min(60000, Math.max(0, Math.round(item.ms))) }));
+}
+
 export interface SubmitBallotArgs {
   roomId: string;
   round: 1 | 2;
   poolVersion: number;
   expectedVersion: number;
   votes: BallotVoteItem[];
+  /** Optional per-card decision time in ms (round 1). Only breaks ties on the result; never part of the idempotent payload. */
+  pace?: { roundDishId: string; ms: number }[];
   intentId?: string;
   requestId?: string;
 }
@@ -376,6 +386,7 @@ export class LiveVoteRepository implements VoteRepository {
             poolVersion: args.poolVersion,
             expectedVersion: args.expectedVersion,
             votes: wireVotes,
+            ...(args.round === 1 && args.pace?.length ? { pace: cleanPace(args.pace, wireVotes) } : {}),
           },
         })) as any;
 

@@ -6,6 +6,7 @@ import { errorMessage } from '../../friends/screens/FriendsScreen';
 import type { CanonicalHistoryItem, HistoryRow } from '../services/historyTypes';
 import { historyIdOf, historyTitle, type HistoryRepository } from '../services/historyRepository';
 import { ToastNotice } from '../../../shared/ui/feedback/Toast';
+import { podiumOrder } from '../../result/services/resultPresentation';
 
 const HISTORY_LOAD_TIMEOUT_MS = 15_000;
 
@@ -181,7 +182,7 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
                 </View>
               </View>
               {scored && scored.topDishes.length > 1 ? <View style={styles.rankList}>
-                {scored.topDishes.map(entry => <Text key={entry.dish.roundDishId} style={[styles.rankText, { color: colors.text }]}>{entry.rank}. {entry.dish.name} · {entry.score} điểm</Text>)}
+                {podiumOrder(scored.topDishes).map((entry, index) => <Text key={entry.dish.roundDishId} style={[styles.rankText, { color: colors.text }]}>{index + 1}. {entry.dish.name} · {entry.score} điểm</Text>)}
               </View> : null}
               <View style={[styles.cardFooter, largeText && styles.cardFooterLarge, { borderTopColor: colors.line }]}>
                 <Text style={[styles.score, { color: colors.text }]}>{score !== undefined ? `${score} điểm` : isLegacy ? 'Kết quả cũ' : !decided ? 'Cả nhóm chưa chọn được món' : 'Đã chốt'}</Text>
@@ -263,9 +264,9 @@ function SavedHistoryDetail({ item, largeText, colors, onBack, onCreateNew, onDe
 
     <Text accessibilityRole="header" style={[styles.detailSectionTitle, { color: colors.text }]}>Xếp hạng của nhóm</Text>
     {scored && scored.topDishes.length > 0 ? <View style={[styles.detailRanking, { backgroundColor: colors.surface, borderColor: colors.line }]}>
-      {scored.topDishes.map((entry, index) => <View key={entry.dish.roundDishId} style={[styles.detailRankRow, index < scored.topDishes.length - 1 && { borderBottomColor: colors.line, borderBottomWidth: StyleSheet.hairlineWidth }]}>
-        <View style={[styles.rankBadge, { backgroundColor: entry.rank === 1 ? colors.green : colors.warm }]}>
-          <Text style={[styles.rankBadgeText, { color: entry.rank === 1 ? colors.surface : colors.text }]}>{entry.rank}</Text>
+      {podiumOrder(scored.topDishes).map((entry, index) => <View key={entry.dish.roundDishId} style={[styles.detailRankRow, index < scored.topDishes.length - 1 && { borderBottomColor: colors.line, borderBottomWidth: StyleSheet.hairlineWidth }]}>
+        <View style={[styles.rankBadge, { backgroundColor: index === 0 ? colors.green : colors.warm }]}>
+          <Text style={[styles.rankBadgeText, { color: index === 0 ? colors.surface : colors.text }]}>{index + 1}</Text>
         </View>
         <Text style={[styles.detailRankDish, { color: colors.text }]}>{entry.dish.name}{entry.isWinner ? ' · Món được chọn' : ''}</Text>
         <Text style={[styles.detailRankScore, { color: colors.green }]}>{entry.score} điểm</Text>

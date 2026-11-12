@@ -8,12 +8,12 @@ import { useRoomRepository } from '../bootstrap/RoomRepositoryProvider';
 
 export default function FriendsRoute() {
   const router = useRouter();
-  const { from } = useLocalSearchParams<{ from?: string }>();
+  const { from, code } = useLocalSearchParams<{ from?: string; code?: string }>();
   const live = useRoomRepository();
   const repository = useMemo(() => createSocialRepository(live.repository), [live.repository]);
   const inboxRepository = useMemo(() => createInboxRepository(live.repository), [live.repository]);
   const home = () => router.replace('/');
   return <RequireActiveSession onHome={home}>
-    <FriendsScreen key={live.user?.id ?? 'unknown'} repository={repository} inboxRepository={inboxRepository} onNavigate={path => router.push(path as Href)} onHome={home} onBack={from === 'lobby' ? () => router.back() : undefined} />
+    <FriendsScreen key={`${live.user?.id ?? 'unknown'}:${code ?? ''}`} initialSearch={code} repository={repository} inboxRepository={inboxRepository} onNavigate={path => router.push(path as Href)} onHome={home} onBack={from === 'lobby' ? () => router.back() : undefined} />
   </RequireActiveSession>;
 }

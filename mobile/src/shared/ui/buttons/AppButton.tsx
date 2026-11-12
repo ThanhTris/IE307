@@ -96,12 +96,12 @@ export function AppButton({
 const styles = StyleSheet.create({
   button: { minHeight: 52, borderRadius: radii.md, justifyContent: 'center', alignItems: 'stretch', borderWidth: 1 },
   buttonSecondary: { borderWidth: 1 },
+  // The button itself keeps the minimum height and centres its label. A tall Text box with textAlignVertical only
+  // works on Android: on iOS the label sat at the top of the box, so it looked pushed up.
   buttonText: {
     ...typography.bodyBold,
-    minHeight: 52,
     paddingHorizontal: spacing.lg,
     textAlign: 'center',
-    textAlignVertical: 'center',
   },
   iconButtonStacked: { alignItems: 'center', gap: spacing.md },
   iconButtonText: { minHeight: 0, paddingHorizontal: 0, paddingVertical: 0 },

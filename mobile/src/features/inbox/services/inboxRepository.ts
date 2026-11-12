@@ -15,6 +15,8 @@ export interface ResolvedRoom { roomId: string; destination: RoomDestination; re
 export interface InboxRepository {
   list(cursor?: string, knownEventIds?: ReadonlySet<string>): Promise<ReadResult<InboxPage>>;
   markAllRead(requestId: string): Promise<WriteResult<void>>;
+  /** Marks one entry (by event id) as read. */
+  markRead(eventId: string, requestId?: string): Promise<WriteResult<void>>;
   /** Suppress a server event after its invitation action succeeded for this app session. */
   markHandled(eventId: string): void;
   acceptFriend(invitationId: string): Promise<WriteResult<void>>;
@@ -147,6 +149,11 @@ export function createInboxRepository(roomRepository: RoomRepository): InboxRepo
         && (!exactKeys(raw, ['ok', 'requestId', 'data']) || raw.requestId !== requestId || raw.data !== null)) {
         return { ok: false, requestId, error: { messageKey: 'MALFORMED_RESPONSE' } };
       }
+      return client.normalizeWriteResponse(raw, requestId, isVoidPayload);
+    }),
+    markRead: (eventId, requestId = createDurableRequestId('inbox_read_one')) => callSessionApi(roomRepository, async client => {
+      if (!(client instanceof ApiClientImpl)) return { ok: false, requestId, error: { messageKey: 'NOT_READY' } };
+      const raw = await client.callRpc<unknown>('mark_partner_inbox_item_read', { requestId, event_ref: eventId });
       return client.normalizeWriteResponse(raw, requestId, isVoidPayload);
     }),
     markHandled(eventId) {

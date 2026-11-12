@@ -7,7 +7,8 @@ test.each([['empty-r1', 'Không thể chốt được món ăn', 'VÒNG 2 KHÔNG
   const props = actions(); await render(<DishResultFlow {...props} {...dishResultFixture(id)} />);
   expect(screen.getByText(title)).toBeOnTheScreen(); expect(screen.getByText(round)).toBeOnTheScreen();
   expect(screen.queryByLabelText('Bảng xếp hạng món ăn')).toBeNull(); expect(screen.queryByText('Quán có món này')).toBeNull();
-  await fireEvent.press(screen.getByText('Tạo phòng mới')); expect(props.onNewSession).toHaveBeenCalledTimes(1);
+  expect(screen.queryByText('Tạo phòng mới')).toBeNull(); expect(screen.queryByText('Về trang chủ')).toBeNull();
+  await fireEvent.press(screen.getByRole('button', { name: 'Đóng kết quả' })); expect(props.onHome).toHaveBeenCalledTimes(1);
 });
 test.each(['loading','finalizing','error','unknown','invalid'] as const)('%s never masquerades as no consensus or calls a finalization action', async id => {
   const props = actions(); await render(<DishResultFlow {...props} {...dishResultFixture(id)} />);

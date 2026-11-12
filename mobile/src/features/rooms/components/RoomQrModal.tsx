@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Clipboard, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
 import Svg, { Rect } from 'react-native-svg';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
@@ -39,7 +40,7 @@ export function RoomQrModal({ visible, code, onClose, onCopyLink }: RoomQrModalP
       if (onCopyLink) {
         await onCopyLink(joinUrl);
       } else {
-        Clipboard.setString(joinUrl);
+        void Clipboard.setStringAsync(joinUrl).catch(() => undefined);
       }
       setCopied(true);
     } catch {

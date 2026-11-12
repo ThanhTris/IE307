@@ -42,7 +42,7 @@ test.each(['full', 'locked', 'expired', 'lost-session', 'network'] as const)('pr
   const p = props(); p.preview = createJoinPreviewFixture(scenario);
   const join = jest.spyOn(p.repository, 'joinRoom');
   await render(<JoinRoomScreen {...p} />); await settled();
-  expect(await screen.findByText(scenario === 'full' ? 'Phòng đã đủ 20 người' : scenario === 'expired' ? 'Phòng đã hết hạn' : 'Không thể kiểm tra phòng')).toBeOnTheScreen();
+  expect(await screen.findByText(scenario === 'full' ? 'Phòng đã đủ 20 người' : scenario === 'expired' ? 'Phòng đã hết hạn' : /^(Không vào được phòng|Chưa kết nối được)$/)).toBeOnTheScreen();
   await press('Quay lại');
   expect(displayedCode()).toBe('GCD234');
   expect(screen.queryByRole('button', { name: 'Xác nhận vào phòng' })).toBeNull(); expect(join).not.toHaveBeenCalled();
@@ -109,7 +109,7 @@ test.each([
 ])('malformed preview $code/$memberCount/$capacity never enables join', async data => {
   const p = props(); p.preview = jest.fn().mockResolvedValue({ ok: true, data });
   await render(<JoinRoomScreen {...p} />); await settled();
-  expect(await screen.findByText('Không thể kiểm tra phòng')).toBeOnTheScreen();
+  expect(await screen.findByText('Không vào được phòng')).toBeOnTheScreen();
   expect(screen.queryByRole('button', { name: 'Xác nhận vào phòng' })).toBeNull();
 });
 
@@ -144,10 +144,11 @@ test('a guest without a received name can enter it; failed reads preserve the dr
   await render(<JoinRoomScreen {...p} />);
   await fireEvent.changeText(screen.getByLabelText('Tên của bạn'), 'Tên khách');
   await fireEvent.changeText(screen.getByLabelText('Ký tự 1 của mã phòng'), 'gcd234');
-  await settled(); await screen.findByText('Không thể kiểm tra phòng');
-  await press('Sửa mã phòng');
+  await settled(); await screen.findByText(/^(Không vào được phòng|Chưa kết nối được)$/);
+  await press('Nhập mã khác');
+  // The name draft is kept; the failed code is cleared so a different one can be typed.
   expect(screen.getByLabelText('Tên của bạn')).toHaveDisplayValue('Tên khách');
-  expect(displayedCode()).toBe('GCD234');
+  expect(displayedCode()).toBe('');
 });
 
 test('link rejection displays blocked status notice and leaves code empty without previewing or joining', async () => {

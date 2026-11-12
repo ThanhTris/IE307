@@ -2,12 +2,13 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import type { InboxItem } from '../../../data/api/contracts';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { AppButton, AppIcon, CollectionState, LoadingState, SheetDialog, ApiFeatureFrame } from '../../../shared/ui';
+import { AppButton, AppIcon, CollectionState, LoadingState, ApiFeatureFrame } from '../../../shared/ui';
+import { useInboxBadge } from '../../../shared/lib/inboxBadge';
 import { errorMessage } from '../../friends/screens/FriendsScreen';
 import { createDurableRequestId } from '../../rooms/services/roomRepository';
 import type { InboxRepository } from '../services/inboxRepository';
 import { findInboxEventById, acceptedRoomPath, roomDestinationPath } from '../services/notificationInboxResolver';
-import { ToastNotice } from '../../../shared/ui/feedback/Toast';
+import { ToastNotice, toneFromText } from '../../../shared/ui/feedback/Toast';
 
 type Props = {
   repository: InboxRepository;
@@ -19,21 +20,21 @@ type Props = {
   openEventId?: string;
   notificationStatus?: string;
 };
-type PendingAction = { item: InboxItem; kind: 'accept' | 'reject' } | null;
+type AnswerKind = 'accept' | 'reject';
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export function InboxScreen({ repository, displayName, onNavigate, onHome, onPushSettings, isSessionCurrent, openEventId, notificationStatus }: Props) {
   const { colors } = useShellTheme();
   const { fontScale } = useWindowDimensions();
   const largeText = fontScale >= 1.5;
+  const { setUnread, syncFriends } = useInboxBadge();
   const [items, setItems] = useState<InboxItem[]>([]);
   const [cursor, setCursor] = useState<string>();
-  const [fetchedAt, setFetchedAt] = useState('');
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState('');
-  const [action, setAction] = useState<PendingAction>(null);
   const [busy, setBusy] = useState(false);
+  const [tab, setTab] = useState<'all' | 'unread'>('all');
   const [message, setMessage] = useState('');
   const [notificationRetry, setNotificationRetry] = useState(false);
   const [notificationLoading, setNotificationLoading] = useState(false);
@@ -45,7 +46,8 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
   const loadingMoreRef = useRef(loadingMore);
   const markAllRequestId = useRef<string | null>(null);
   const newItems = items.filter(item => !item.read);
-  const previousItems = items.filter(item => item.read);
+  // The bell follows this list as soon as something is read or answered.
+  useEffect(() => { if (!loading && !error) setUnread(items.filter(item => !item.read).length); }, [items, loading, error, setUnread]);
   useEffect(() => { cursorRef.current = cursor; }, [cursor]);
   useEffect(() => { itemsRef.current = items; }, [items]);
   useEffect(() => { loadingMoreRef.current = loadingMore; }, [loadingMore]);
@@ -62,7 +64,6 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
       if (!result.ok) {
         setItems([]);
         setCursor(undefined);
-        setFetchedAt('');
         setError(result.error.messageKey);
       } else {
         setItems(current => {
@@ -73,12 +74,10 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
             : result.data.items;
         });
         setCursor(result.data.nextCursor);
-        setFetchedAt(result.data.fetchedAt);
       }
     } catch {
       setItems([]);
       setCursor(undefined);
-      setFetchedAt('');
       setError('NETWORK_ERROR');
     } finally {
       setLoading(false);
@@ -102,7 +101,6 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
       }
       markAllRequestId.current = null;
       setItems(current => current.map(item => ({ ...item, read: true })));
-      setMessage('Đã đánh dấu các thông báo hiện có là đã đọc.');
       await load();
     } catch {
       // Keep the request ID: a retry must replay the server ACK if it committed.
@@ -160,7 +158,6 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
         if (item.type === 'friend_invite' || item.type === 'room_invite') {
           targetedItemRef.current = item;
           setItems([item]);
-          setMessage('Đã mở lời mời từ máy chủ. Chấp nhận hoặc từ chối bên dưới để xác nhận.');
           return;
         }
 
@@ -205,18 +202,16 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
         : '';
   const displayedMessage = notificationMessage || message;
 
-  const confirm = async () => {
-    if (!action || lock.current) return;
-    const pending = action;
+  const answer = async (item: InboxItem, kind: AnswerKind) => {
+    if (lock.current) return;
+    const pending = { item, kind };
     const invitationId = readInvitationId(pending.item);
     if (!invitationId) {
       setMessage('Mục này thiếu metadata.invitationId. Không gửi eventId thay thế.');
-      setAction(null);
       return;
     }
     lock.current = true;
     setBusy(true);
-    setAction(null);
     setMessage('');
     try {
       if (pending.item.type === 'room_invite' && pending.kind === 'accept') {
@@ -236,7 +231,6 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
           await load();
           return;
         }
-        setMessage('Đã xác nhận lời mời. Đang mở phòng…');
         onNavigate(acceptedRoomPath(resolved.data));
         return;
       }
@@ -253,7 +247,7 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
       repository.markHandled(pending.item.eventId);
       if (targetedItemRef.current?.eventId === pending.item.eventId) targetedItemRef.current = null;
       setItems(current => current.filter(item => item.eventId !== pending.item.eventId));
-      setMessage(pending.kind === 'accept' ? 'Đã chấp nhận lời mời trên máy chủ.' : 'Đã từ chối lời mời trên máy chủ.');
+      if (pending.item.type === 'friend_invite' && pending.kind === 'accept') syncFriends();
       await load();
     } catch {
       setMessage('Chưa rõ máy chủ đã nhận thao tác hay chưa. Hộp thư đã được tải lại để kiểm tra trạng thái.');
@@ -264,7 +258,15 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
     }
   };
 
+  /** Opening or tapping a notification marks it as read, here and on the server. */
+  const markOneRead = (item: InboxItem) => {
+    if (item.read) return;
+    setItems(current => current.map(entry => (entry.eventId === item.eventId ? { ...entry, read: true } : entry)));
+    void repository.markRead(item.eventId).catch(() => undefined);
+  };
+
   const openRoomResult = async (item: InboxItem) => {
+    markOneRead(item);
     const reference = readRoomResultReference(item);
     if (!reference) {
       setMessage('Thông báo thiếu mã phòng hoặc kết quả từ máy chủ. Không thể mở kết quả bằng nội dung thông báo.');
@@ -289,71 +291,102 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
     }
   };
 
+  const visible = tab === 'unread' ? newItems : items;
+  const groups = groupByDay(visible);
   return (
-    <ApiFeatureFrame active="inbox" title="Thông báo" onNavigate={onNavigate} onHome={onHome}>
+    <ApiFeatureFrame active="inbox" title="Thông báo" onNavigate={onNavigate} onHome={onHome}
+      headerAction={items.length > 0 && !loading && !error ? { label: 'Đánh dấu tất cả đã đọc', icon: 'readAll', onPress: () => { void markAllRead(); }, disabled: busy || loadingMore || newItems.length === 0 } : undefined}>
       {loading ? <LoadingState label="Đang tải thông báo" colors={colors} /> : null}
       {!loading && error ? <CollectionState state="error" title="Chưa tải được thông báo" message={errorMessage(error)} actionLabel="Thử lại" onAction={() => { void load(); }} colors={colors} /> : null}
       {!openEventId && !loading && !error && items.length === 0 ? <View style={styles.emptyWrap}>
         <View style={[styles.emptyIcon, { backgroundColor: colors.warm }]}><AppIcon name="bell" size={32} color={colors.text} /></View>
         <Text accessibilityRole="header" style={[styles.emptyTitle, { color: colors.text }]}>Chưa có thông báo</Text>
       </View> : null}
-      {!loading && !error && items.length > 0 ? <View style={[styles.readAllRow, largeText && styles.readAllRowLarge]}>
-        <Text style={[styles.readAllCount, { color: colors.muted }]}>{newItems.length ? `${newItems.length} thông báo chưa đọc trên trang` : 'Không có thông báo chưa đọc trên trang'}</Text>
-        <AppButton label="Đọc tất cả" variant="quiet" onPress={() => { void markAllRead(); }} disabled={busy || loadingMore} loading={busy} colors={colors} style={styles.readAllButton} />
+      {!loading && !error && items.length > 0 ? <View accessibilityRole="tablist" style={[styles.tabs, { backgroundColor: colors.soft }]}>
+        {([['all', 'Tất cả'], ['unread', newItems.length ? `Chưa đọc · ${newItems.length}` : 'Chưa đọc']] as const).map(([id, label]) => (
+          <Pressable key={id} accessibilityRole="tab" accessibilityState={{ selected: tab === id }} onPress={() => setTab(id)}
+            style={[styles.tab, tab === id && { backgroundColor: colors.surface }]}>
+            <Text style={[styles.tabText, { color: tab === id ? colors.text : colors.muted }]}>{label}</Text>
+          </Pressable>
+        ))}
       </View> : null}
-      {!loading && !error && newItems.length > 0 ? <View style={styles.section}>
-        <View style={styles.sectionTop}><Text accessibilityRole="header" style={[styles.sectionTitle, { color: colors.text }]}>Mới</Text><Text style={[styles.readAll, { color: colors.primary }]}>{newItems.length}</Text></View>
-        {newItems.map(item => renderInboxItem(item, false))}
-      </View> : null}
-      {!loading && !error && previousItems.length > 0 ? <View style={styles.section}>
-        <Text accessibilityRole="header" style={[styles.sectionTitle, { color: colors.text }]}>Trước đó</Text>
-        {previousItems.map(item => renderInboxItem(item, true))}
-      </View> : null}
-      {fetchedAt && items.length > 0 ? <Text style={[styles.meta, { color: colors.muted }]}>Cập nhật lúc {new Date(fetchedAt).toLocaleString()}</Text> : null}
+      {!loading && !error && items.length > 0 && visible.length === 0 ? <Text style={[styles.empty, { color: colors.muted }]}>Không có thông báo chưa đọc</Text> : null}
+      {!loading && !error ? groups.map(group => <View key={group.key} style={styles.section}>
+        <Text accessibilityRole="header" style={[styles.sectionTitle, { color: colors.muted }]}>{group.label}</Text>
+        {group.items.map((item, index) => renderInboxItem(item, index === group.items.length - 1))}
+      </View>) : null}
       {!loading && !error && cursor ? <AppButton label="Tải thông báo cũ hơn" variant="secondary" onPress={() => { void load(true); }} disabled={loadingMore || busy} loading={loadingMore} colors={colors} /> : null}
-      {displayedMessage ? <ToastNotice title="Thông báo từ máy chủ" message={displayedMessage} tone={displayedMessage.includes('Chưa') || displayedMessage.includes('thiếu') || displayedMessage.includes('Không thể') || displayedMessage.includes('hết hạn') || displayedMessage.includes('không hợp lệ') ? 'warning' : 'success'} /> : null}
+      {displayedMessage ? <ToastNotice title="Thông báo từ máy chủ" message={displayedMessage} tone={toneFromText(displayedMessage)} /> : null}
       {openEventId && notificationRetry ? <AppButton label="Thử lại tải thông báo" variant="secondary" onPress={() => setNotificationRetryRevision(value => value + 1)} disabled={notificationLoading || busy} loading={notificationLoading} colors={colors} /> : null}
-      <SheetDialog visible={action !== null} title={action?.kind === 'accept' ? 'Chấp nhận lời mời?' : 'Từ chối lời mời?'} onClose={() => { if (!busy) setAction(null); }} colors={colors}>
-        <Text style={[styles.body, { color: colors.text }]}>{action?.item.type === 'room_invite' ? 'Máy chủ sẽ thêm bạn vào phòng nếu lời mời còn hiệu lực. Việc này không gửi phiếu và không đặt sẵn sàng.' : 'Thao tác sẽ được gửi lên máy chủ cho lời mời này.'}</Text>
-        <AppButton label={action?.kind === 'accept' ? 'Xác nhận chấp nhận' : 'Xác nhận từ chối'} variant={action?.kind === 'accept' ? 'primary' : 'danger'} onPress={() => void confirm()} loading={busy} colors={colors} />
-      </SheetDialog>
     </ApiFeatureFrame>
   );
 
-  function renderInboxItem(item: InboxItem, read: boolean) {
+  function renderInboxItem(item: InboxItem, last: boolean) {
     const invitation = item.type === 'friend_invite' || item.type === 'room_invite';
     const invitationId = invitation ? readInvitationId(item) : undefined;
     const resultReference = item.type === 'room_result' ? readRoomResultReference(item) : undefined;
-    const content = <>
-      <View style={styles.itemTop}>
-        <View style={[styles.itemIcon, { borderColor: colors.line, backgroundColor: read ? colors.surface : colors.background }]}>
-          {item.type === 'room_result'
-            ? item.metadata?.status === 'DECIDED' ? <AppIcon name="check" size={20} color="#043B22" /> : <AppIcon name="minus" size={20} color="#043B22" />
-            : <Text style={[styles.avatarInitial, { color: colors.text }]}>{initialFrom(item.title)}</Text>}
-          {!read ? <View style={[styles.unreadMark, { backgroundColor: colors.primary }]} /> : null}
-        </View>
-        <View style={styles.itemCopy}>
-          <View style={[styles.itemTitleRow, largeText && styles.itemTitleRowLarge]}>
-            <Text numberOfLines={largeText ? undefined : 1} style={[styles.title, { color: colors.text }]}>{item.title}</Text>
-            <Text numberOfLines={1} style={[styles.meta, { color: colors.text }]}>{timeAgo(item.createdAt)}</Text>
-          </View>
-          <Text numberOfLines={largeText ? undefined : 2} style={[styles.body, { color: colors.text }]}>{item.body}</Text>
-        </View>
+    const sender = item.title;
+    const content = <View style={[styles.item, !last && { borderBottomColor: colors.line, borderBottomWidth: StyleSheet.hairlineWidth }]}>
+      <View style={[styles.itemIcon, { backgroundColor: item.type === 'room_result' ? colors.soft : colors.warm }]}>
+        {item.type === 'room_result'
+          ? <AppIcon name={item.metadata?.status === 'DECIDED' ? 'check' : 'minus'} size={20} color={colors.text} />
+          : <Text style={[styles.avatarInitial, { color: colors.text }]}>{initialFrom(sender)}</Text>}
       </View>
-      {invitation && !invitationId ? <Text style={[styles.meta, { color: colors.warning }]}>Thiếu mã lời mời từ máy chủ; không thể xử lý mục này.</Text> : null}
-      {invitation && <View style={[styles.actions, largeText && styles.actionsLarge]}>
-        <AppButton label="Từ chối" variant="secondary" onPress={() => setAction({ item, kind: 'reject' })} disabled={busy || !invitationId} colors={colors} style={styles.actionButton} />
+      <View style={styles.itemCopy}>
+        {invitation
+          ? <>
+            <Text numberOfLines={1} style={[styles.name, { color: colors.text }]}>{sender}</Text>
+            <Text numberOfLines={1} style={[styles.sub, { color: colors.muted }]}>{`${capitalize(item.body)} · ${timeAgo(item.createdAt)}`}</Text>
+          </>
+          : <>
+            <Text numberOfLines={largeText ? undefined : 2} style={[item.read ? styles.body : styles.bodyUnread, { color: colors.text }]}>{item.title}</Text>
+            <Text numberOfLines={largeText ? undefined : 2} style={[styles.sub, { color: colors.muted }]}>{`${item.body} · ${timeAgo(item.createdAt)}`}</Text>
+          </>}
+        {invitation && !invitationId ? <Text style={[styles.sub, { color: colors.warning }]}>Thiếu mã lời mời từ máy chủ; không thể xử lý mục này.</Text> : null}
+        {item.type === 'room_result' && !resultReference ? <Text style={[styles.sub, { color: colors.warning }]}>Thiếu tham chiếu kết quả từ máy chủ.</Text> : null}
+      </View>
+      {invitation ? <View style={styles.actions}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Từ chối" accessibilityState={{ disabled: busy || !invitationId }} disabled={busy || !invitationId} onPress={() => { void answer(item, 'reject'); }}
+          style={({ pressed }) => [styles.pill, { backgroundColor: pressed ? colors.soft : colors.surface, borderColor: colors.line, opacity: busy ? 0.5 : 1 }]}>
+          <Text style={[styles.pillText, { color: colors.text }]}>Từ chối</Text>
+        </Pressable>
         {/* Figma 286:2245: room invites say "Vào phòng", friend invites say "Đồng ý". */}
-        <AppButton label={item.type === 'room_invite' ? 'Vào phòng' : 'Đồng ý'} onPress={() => setAction({ item, kind: 'accept' })} disabled={busy || !invitationId} colors={colors} style={styles.actionButton} />
-      </View>}
-      {item.type === 'room_result' && !resultReference ? <Text style={[styles.meta, { color: colors.warning }]}>Thiếu tham chiếu kết quả từ máy chủ.</Text> : null}
-    </>;
-    const itemStyle = [styles.item, { backgroundColor: read ? colors.background : colors.warm, borderBottomColor: colors.line }];
+        <Pressable accessibilityRole="button" accessibilityLabel={item.type === 'room_invite' ? 'Vào phòng' : 'Đồng ý'} accessibilityState={{ disabled: busy || !invitationId }} disabled={busy || !invitationId} onPress={() => { void answer(item, 'accept'); }}
+          style={({ pressed }) => [styles.pill, { backgroundColor: colors.primary, borderColor: colors.primary, opacity: busy ? 0.5 : pressed ? 0.85 : 1 }]}>
+          <Text style={[styles.pillText, { color: colors.onPrimary }]}>{item.type === 'room_invite' ? 'Vào phòng' : 'Đồng ý'}</Text>
+        </Pressable>
+      </View> : null}
+      {!item.read && !invitation ? <View accessibilityLabel="Chưa đọc" style={[styles.unreadDot, { backgroundColor: colors.primary }]} /> : null}
+    </View>;
     if (item.type === 'room_result') {
-      return <Pressable key={item.eventId} accessibilityRole="button" accessibilityLabel={`Mở kết quả: ${item.title}`} onPress={() => { void openRoomResult(item); }} disabled={busy || !resultReference} style={itemStyle}>{content}</Pressable>;
+      return <Pressable key={item.eventId} accessibilityRole="button" accessibilityLabel={`Mở kết quả: ${item.title}`} onPress={() => { void openRoomResult(item); }} disabled={busy || !resultReference}>{content}</Pressable>;
     }
-    return <View key={item.eventId} style={itemStyle}>{content}</View>;
+    // Invitations: tapping the row only marks it read; the buttons answer it.
+    return <Pressable key={item.eventId} accessibilityRole="summary" onPress={() => markOneRead(item)}>{content}</Pressable>;
   }
+}
+
+const capitalize = (text: string) => text.charAt(0).toLocaleUpperCase('vi') + text.slice(1);
+
+function dayKey(value: string): string {
+  const date = new Date(value);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
+/** "Hôm nay", "Hôm qua", then the date, newest first. */
+function groupByDay(items: InboxItem[]): { key: string; label: string; items: InboxItem[] }[] {
+  const today = dayKey(new Date().toISOString()), yesterday = dayKey(new Date(Date.now() - 86_400_000).toISOString());
+  const map = new Map<string, InboxItem[]>();
+  for (const item of [...items].sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))) {
+    const key = dayKey(item.createdAt);
+    map.set(key, [...(map.get(key) ?? []), item]);
+  }
+  return [...map.entries()].map(([key, list]) => {
+    const date = new Date(list[0]!.createdAt);
+    const label = key === today ? 'Hôm nay' : key === yesterday ? 'Hôm qua'
+      : `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
+    return { key, label, items: list };
+  });
 }
 
 function readInvitationId(item: InboxItem): string | undefined {
@@ -377,10 +410,10 @@ function initialFrom(value: string): string {
 function timeAgo(value: string): string {
   const minutes = Math.max(0, Math.floor((Date.now() - Date.parse(value)) / 60_000));
   if (minutes < 1) return 'Vừa xong';
-  if (minutes < 60) return `${minutes} phút trước`;
+  if (minutes < 60) return `${minutes} phút`;
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours} giờ trước`;
-  return `${Math.floor(hours / 24)} ngày trước`;
+  if (hours < 24) return `${hours} giờ`;
+  return `${Math.floor(hours / 24)} ngày`;
 }
 
 const styles = StyleSheet.create({
@@ -388,26 +421,22 @@ const styles = StyleSheet.create({
   emptyIcon: { width: 72, height: 72, borderRadius: 36, alignItems: 'center', justifyContent: 'center' },
   emptyGlyph: { width: 28, height: 28 },
   emptyTitle: { fontFamily: 'InterBold', fontSize: 20, lineHeight: 28 },
-  section: { gap: 8 },
-  sectionTop: { minHeight: 32, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  sectionTitle: { fontFamily: 'InterSemiBold', fontSize: 18, lineHeight: 25 },
-  readAll: { fontFamily: 'InterSemiBold', fontSize: 12, lineHeight: 18 },
-  readAllRow: { minHeight: 48, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 10 },
-  readAllRowLarge: { alignItems: 'stretch', flexDirection: 'column' },
-  readAllCount: { flex: 1, fontFamily: 'InterRegular', fontSize: 12, lineHeight: 18 },
-  readAllButton: { minWidth: 112, minHeight: 44 },
-  item: { paddingHorizontal: 8, paddingVertical: 12, gap: 8, borderBottomWidth: StyleSheet.hairlineWidth },
-  itemTop: { flexDirection: 'row', alignItems: 'flex-start', gap: 8, minHeight: 36 },
-  itemIcon: { position: 'relative', width: 32, height: 32, borderWidth: 1, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
-  avatarInitial: { fontFamily: 'InterSemiBold', fontSize: 13, lineHeight: 18 },
-  unreadMark: { position: 'absolute', width: 8, height: 8, borderRadius: 4, right: -1, bottom: -1 },
+  tabs: { flexDirection: 'row', borderRadius: 999, padding: 4 },
+  tab: { flex: 1, minHeight: 36, borderRadius: 999, alignItems: 'center', justifyContent: 'center' },
+  tabText: { fontFamily: 'InterSemiBold', fontSize: 14, lineHeight: 20 },
+  empty: { fontFamily: 'InterRegular', fontSize: 14, textAlign: 'center', paddingVertical: 32 },
+  section: { gap: 0 },
+  sectionTitle: { fontFamily: 'InterSemiBold', fontSize: 13, lineHeight: 20, marginVertical: 8 },
+  item: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12 },
+  itemIcon: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
   itemCopy: { flex: 1, minWidth: 0, gap: 2 },
-  itemTitleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: 4 },
-  itemTitleRowLarge: { flexDirection: 'column' },
-  title: { flex: 1, minWidth: 0, fontFamily: 'InterSemiBold', fontSize: 13, lineHeight: 18 },
-  body: { fontFamily: 'InterRegular', fontSize: 12, lineHeight: 17 },
-  meta: { fontFamily: 'InterMedium', fontSize: 11, lineHeight: 16, flexShrink: 0 },
-  actions: { flexDirection: 'row', gap: 8, paddingLeft: 40 },
-  actionsLarge: { flexDirection: 'column', paddingLeft: 40 },
-  actionButton: { flex: 1, minHeight: 48 },
+  name: { fontFamily: 'InterSemiBold', fontSize: 15, lineHeight: 21 },
+  body: { fontFamily: 'InterRegular', fontSize: 15, lineHeight: 21 },
+  bodyUnread: { fontFamily: 'InterSemiBold', fontSize: 15, lineHeight: 21 },
+  sub: { fontFamily: 'InterRegular', fontSize: 12, lineHeight: 18 },
+  unreadDot: { width: 10, height: 10, borderRadius: 5 },
+  actions: { flexDirection: 'row', gap: 8, flexShrink: 0 },
+  pill: { minHeight: 34, minWidth: 64, paddingHorizontal: 12, borderRadius: 17, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  pillText: { fontFamily: 'InterSemiBold', fontSize: 13, lineHeight: 18 },
+  avatarInitial: { fontFamily: 'InterSemiBold', fontSize: 13, lineHeight: 18 },
 });

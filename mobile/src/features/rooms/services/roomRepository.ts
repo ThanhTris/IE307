@@ -20,6 +20,7 @@ import type {
   JoinRoomRequest,
   JoinRoomResponse,
   LeaveRoomRequest,
+  RemoveRoomMemberRequest,
   CancelRoomRequest,
   PreviewFoodPoolRequest,
   PreviewFoodPoolResponse,
@@ -131,6 +132,7 @@ export interface RoomRepository extends Omit<RoomEntryRepository, 'restoreSessio
   setReady(request: SetReadyRequest): Promise<WriteResult<void>>;
   startRound(request: StartRoundRequest): Promise<WriteResult<void>>;
   leaveRoom(request: LeaveRoomRequest): Promise<WriteResult<void>>;
+  removeRoomMember(request: RemoveRoomMemberRequest): Promise<WriteResult<void>>;
   cancelRoom(request: CancelRoomRequest): Promise<WriteResult<void>>;
   inviteToRoom(request: InviteToRoomRequest): Promise<WriteResult<RoomInvitation>>;
 
@@ -697,6 +699,11 @@ export class LiveRoomRepository implements RoomRepository {
 
       return this.client.leaveRoom({ ...request, requestId: rid });
     });
+  }
+
+  async removeRoomMember(request: RemoveRoomMemberRequest): Promise<WriteResult<void>> {
+    const rid = request.requestId || this.nextRequestId('remove_member');
+    return this.request(() => this.client.removeRoomMember({ ...request, requestId: rid }));
   }
 
   async cancelRoom(request: CancelRoomRequest): Promise<WriteResult<void>> {

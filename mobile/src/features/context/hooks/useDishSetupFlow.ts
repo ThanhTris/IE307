@@ -7,9 +7,9 @@ let sequence = 0;
 const mockRequestId = () => `ui-setup-${++sequence}`;
 const clone = <T,>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 
-export function useDishSetupFlow(gateway: DishSetupGateway, requestId = mockRequestId, now = Date.now, initialStage: 'setup' | 'preferences' = 'setup') {
+export function useDishSetupFlow(gateway: DishSetupGateway, requestId = mockRequestId, now = Date.now, initialStage: 'setup' | 'preferences' = 'setup', initialInvitees: string[] = []) {
   const draftState = useDishSetupDraft();
-  const receiveDraft = draftState.receive;
+  const receiveDraft = draftState.receive, seedDraft = draftState.seed;
   const [data, setData] = useState<SetupRead>(), [readError, setReadError] = useState(false);
   const [preferences, setPreferences] = useState(emptyPreferences), [baselinePreferences, setBaselinePreferences] = useState(emptyPreferences);
   const [stage, setStage] = useState<'setup' | 'preferences' | 'complete'>(initialStage);
@@ -25,11 +25,14 @@ export function useDishSetupFlow(gateway: DishSetupGateway, requestId = mockRequ
     void gateway.read().then(value => {
       if (!current) return;
       setData(value); if (value.settings) receiveDraft(clone(value.settings));
+      // A brand-new room (no settings read yet) still starts with the friend picked on the way in.
+      if (!value.room && initialInvitees.length) seedDraft({ inviteeIds: [...initialInvitees] });
       const own = clone(value.ownRoomPreferences ?? value.accountDefaults);
       setPreferences(own); setBaselinePreferences(clone(own));
       if (initialStage === 'preferences' && value.ownRoomPreferences) setEditorReturn('complete');
     }).catch(() => { if (current) setReadError(true); });
     return () => { current = false; alive.current = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gateway, receiveDraft, initialStage]);
   const blocked = phase !== 'idle' || needsRefresh || !data?.connected || data.room?.state === 'CLOSED';
   const refresh = async () => {
@@ -77,7 +80,8 @@ export function useDishSetupFlow(gateway: DishSetupGateway, requestId = mockRequ
       if (reply.code === 'UNKNOWN') { setPhase('unknown'); setNotice('Chưa rõ kết quả lưu. Thử lại cùng yêu cầu; không sửa hoặc tạo phòng khác.'); return; }
       intent.current = null; setPhase('idle');
       if (reply.code === 'SHORTAGE' && value.kind === 'settings' && Number.isInteger(reply.available) && reply.available! >= 0 && reply.available! < value.draft.dishCount && reply.requested === value.draft.dishCount) {
-        setShortage({ available: reply.available!, requested: reply.requested }); return;
+        setShortage({ available: reply.available!, requested: reply.requested });
+        setNotice(`Không đủ món: chỉ có ${reply.available} món phù hợp.`); return;
       }
       if (reply.code === 'CLOSED') { setData(previous => previous && ({ ...previous, room: previous.room ? { ...previous.room, state: 'CLOSED' } : { id: '', code: '', version: 0, state: 'CLOSED' } })); setNotice('Phòng đã đóng.'); }
       else if (reply.code === 'STALE') { setNeedsRefresh(true); setNotice('Trạng thái phòng đã đổi. Tải lại trước khi lưu tiếp; nháp được giữ.'); }

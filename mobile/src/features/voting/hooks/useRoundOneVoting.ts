@@ -60,6 +60,7 @@ interface InFlightIntentR1 {
   poolVersion: number;
   expectedVersion: number;
   votes: BallotVoteItem[];
+  pace?: { roundDishId: string; ms: number }[];
 }
 
 export function useRoundOneVoting({
@@ -106,6 +107,9 @@ export function useRoundOneVoting({
   // Flashcard specific state
   const [activeCardIndex, setActiveCardIndex] = useState(0);
   const [viewMode, setViewMode] = useState<'flashcard' | 'list'>(initialViewMode);
+  // How long the person looked at each card before choosing. It only breaks ties on the result.
+  const paceRef = useRef<Record<string, number>>({});
+  const shownRef = useRef<{ id: string | null; at: number }>({ id: null, at: 0 });
 
   // Waiting countdown & Host control state
   const [waitingCountdown, setWaitingCountdown] = useState<number | null>(WAITING_DEADLINE_SECONDS);
@@ -184,6 +188,9 @@ export function useRoundOneVoting({
   }, [contextKey]);
 
   const pool = localPool.length > 0 ? localPool : (initialPool || []);
+  const activeCardId = pool[activeCardIndex]?.roundDishId ?? null;
+  // The clock for a card starts when it is shown.
+  useEffect(() => { shownRef.current = { id: activeCardId, at: Date.now() }; }, [activeCardId]);
   const votedCount = pool.filter(dish => Boolean(votes[dish.roundDishId])).length;
   const allVoted = pool.length > 0 && votedCount === pool.length;
   const isLocked = submissionState === 'pending' || submissionState === 'ack';
@@ -562,10 +569,19 @@ export function useRoundOneVoting({
     }
   };
 
+  /** Flashcard swipe/double tap: sets this exact choice (never toggles it off) and moves to the next card. */
+  const handleSwipeVote = (dishId: string, vote: VoteValue) => {
+    if (isLocked) return;
+    if (shownRef.current.id === dishId) paceRef.current[dishId] = Math.max(0, Date.now() - shownRef.current.at);
+    replaceVotes({ ...votesRef.current, [dishId]: vote });
+    if (activeCardIndex < pool.length - 1) setActiveCardIndex(prev => prev + 1);
+  };
+
   const handleClearVote = (dishId: string) => {
     if (isLocked) return;
     const next = { ...votesRef.current };
     delete next[dishId];
+    delete paceRef.current[dishId];
     replaceVotes(next);
     const dish = pool.find(d => d.roundDishId === dishId);
     setLastActionNotice(`Đã hoàn tác phiếu của ${dish?.name || dishId} về UNSET`);
@@ -577,6 +593,7 @@ export function useRoundOneVoting({
     setActiveCardIndex(prevIndex);
     const prevDish = pool[prevIndex];
     if (prevDish) {
+      delete paceRef.current[prevDish.roundDishId];
       setLastActionNotice(`Đã quay lại thẻ trước: ${prevDish.name}`);
     }
   };
@@ -665,6 +682,8 @@ export function useRoundOneVoting({
         poolVersion,
         expectedVersion: roomVersion,
         votes: ballotVotes,
+        pace: pool.filter(dish => paceRef.current[dish.roundDishId] !== undefined)
+          .map(dish => ({ roundDishId: dish.roundDishId, ms: Math.round(paceRef.current[dish.roundDishId]!) })),
       };
       saveBallotIntent(intent);
     }
@@ -677,6 +696,7 @@ export function useRoundOneVoting({
           poolVersion: intent.poolVersion,
           expectedVersion: intent.expectedVersion,
           votes: intent.votes,
+          pace: intent.pace,
           intentId: intent.intentId,
           requestId: intent.requestId,
         });
@@ -704,6 +724,12 @@ export function useRoundOneVoting({
           }
           // A successful ballot and entering the result wait are separate acknowledged steps.
           setNeedsWaitingTransition(true);
+        } else if (['INVALID_ROOM_STATE', 'ROOM_TERMINAL', 'ROOM_EXPIRED'].includes(res.error.messageKey)) {
+          // The room moved on without this ballot (e.g. the 60 s window ended while the cards were still being
+          // answered). Retrying can never work, so drop the stale ballot and show where the room is now.
+          clearBallotIntent(scope);
+          setSubmissionState('idle');
+          void fetchSnapshot();
         } else {
           setSubmissionState('error');
           setErrorMessage(res.error.message || `Lỗi từ server: ${res.error.messageKey}`);
@@ -824,6 +850,7 @@ export function useRoundOneVoting({
     allVoted,
     isLocked,
     canUndo,
+    handleSwipeVote,
     fetchSnapshot,
     handleHostEarlyFinish,
     handleRetryWaiting,

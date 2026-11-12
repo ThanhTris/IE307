@@ -3,7 +3,7 @@ import type { ApiClient, RoomSnapshot } from '../../../data/api';
 import { createDurableRequestId } from '../services/roomRepository';
 import { errorCopy } from '../services/roomEntry';
 
-export type LobbyRepository = Pick<ApiClient, 'getRoomSnapshot' | 'listFriends' | 'startRound' | 'updateContext' | 'leaveRoom' | 'cancelRoom' | 'inviteToRoom'> & {
+export type LobbyRepository = Pick<ApiClient, 'getRoomSnapshot' | 'listFriends' | 'startRound' | 'updateContext' | 'leaveRoom' | 'cancelRoom' | 'inviteToRoom'> & Partial<Pick<ApiClient, 'removeRoomMember'>> & {
   previewFoodPool?: ApiClient['previewFoodPool'];
 };
 
@@ -150,11 +150,26 @@ export function useLobby({
     initial: member.displayName.slice(0, 1),
   })) ?? [];
 
+  // Members never press "start": when the host starts the round (or cancels), the lobby they are watching moves them on.
+  const movedOn = useRef(false);
+  const roomState = snapshot?.state;
+  useEffect(() => {
+    if (!snapshot || !viewer || movedOn.current) return;
+    if (['ROUND_1', 'WAITING_1', 'ROUND_2', 'WAITING_2'].includes(snapshot.state) && onStartRound) {
+      movedOn.current = true;
+      onStartRound(snapshot);
+    } else if (['CANCELLED', 'EXPIRED'].includes(snapshot.state) && !isHost) {
+      movedOn.current = true;
+      onHome();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [roomState, viewer?.userId]);
+
   const reload = () => {
     setRealRevision(v => v + 1);
   };
 
-  const runWrite = async (action: 'start' | 'context' | 'leave' | 'cancel' | 'invite', partnerId?: string) => {
+  const runWrite = async (action: 'start' | 'context' | 'leave' | 'cancel' | 'invite' | 'remove', partnerId?: string) => {
     if (!snapshot || busyRef.current) return;
     if ((!currentUserId || !viewer)) return;
     busyRef.current = true;
@@ -171,6 +186,9 @@ export function useLobby({
         result = await api.leaveRoom({ roomId: snapshot.roomId, expectedVersion: snapshot.version, requestId });
       } else if (action === 'cancel') {
         result = await api.cancelRoom({ roomId: snapshot.roomId, expectedVersion: snapshot.version, confirmCancel: true, requestId });
+      } else if (action === 'remove') {
+        if (!partnerId || !api.removeRoomMember) return;
+        result = await api.removeRoomMember({ roomId: snapshot.roomId, memberUserId: partnerId, expectedVersion: snapshot.version, requestId });
       } else {
         if (!partnerId) return;
         result = await api.inviteToRoom({ roomId: snapshot.roomId, partnerId: partnerId ?? 'usr_tuan_002', expectedVersion: snapshot.version, requestId });
@@ -202,6 +220,7 @@ export function useLobby({
       } else if (action === 'start') {
         await refreshSnapshot(snapshot.roomId);
         setNotice('Phòng chuyển sang vòng 1.');
+        movedOn.current = true;
         if (onStartRound && snapshot) onStartRound(snapshot);
       } else if (action === 'cancel') {
         await refreshSnapshot(snapshot.roomId);
@@ -211,6 +230,9 @@ export function useLobby({
         await refreshSnapshot(snapshot.roomId);
         setNotice('Bạn đã rời phòng.');
         onHome();
+      } else if (action === 'remove') {
+        await refreshSnapshot(snapshot.roomId);
+        setNotice('Đã xóa thành viên khỏi phòng.');
       } else {
         await refreshSnapshot(snapshot.roomId);
         setNotice('Lời mời đã tạo.');

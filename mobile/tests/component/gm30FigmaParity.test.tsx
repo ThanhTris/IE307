@@ -283,8 +283,9 @@ describe('GM-30 Figma Parity & Native Linking Component Tests', () => {
       expect(await screen.findByText('Phở bò tái nạm')).toBeOnTheScreen();
 
       // Notice for location permission (Figma 622:8962)
-      expect(screen.getByText('Bật vị trí để tìm quán')).toBeOnTheScreen();
-      expect(screen.getByRole('button', { name: 'Cho phép vị trí' })).toBeOnTheScreen();
+      expect(screen.getByText('Cần cấp quyền vị trí để tìm quán gần bạn')).toBeOnTheScreen();
+      expect(screen.queryByRole('button', { name: 'Cho phép vị trí' })).toBeNull();
+      expect(screen.getByRole('button', { name: 'Mở Google Maps' })).toBeOnTheScreen();
     });
 
     test('Figma 206:913 & 379:1478 — Places loaded and external actions trigger allowlisted URLs', async () => {
@@ -326,8 +327,8 @@ describe('GM-30 Figma Parity & Native Linking Component Tests', () => {
 
       // Verify external action buttons
       expect(screen.getByRole('button', { name: 'Mở bản đồ' })).toBeOnTheScreen();
-      expect(screen.getByRole('button', { name: 'TikTok ↗' })).toBeOnTheScreen();
-      expect(screen.getByRole('button', { name: 'YouTube ↗' })).toBeOnTheScreen();
+      expect(screen.getByRole('button', { name: 'TikTok' })).toBeOnTheScreen();
+      expect(screen.getByRole('button', { name: 'YouTube' })).toBeOnTheScreen();
     });
 
     test('Absolute Winner Isolation: places failure never corrupts or alters decided winner', async () => {

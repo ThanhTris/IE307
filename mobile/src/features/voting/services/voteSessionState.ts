@@ -18,6 +18,8 @@ export interface StoredBallotIntent extends VoteScope {
   intentId: string;
   expectedVersion: number;
   votes: BallotVoteItem[];
+  /** Milliseconds spent on each flashcard (round 1 only); the server uses it only to break ties. */
+  pace?: { roundDishId: string; ms: number }[];
 }
 
 export interface StoredWaitingIntent extends VoteScope {

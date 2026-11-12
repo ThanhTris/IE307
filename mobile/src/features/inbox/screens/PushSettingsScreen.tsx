@@ -216,5 +216,5 @@ const styles = StyleSheet.create({
   input: { minHeight: 48, borderWidth: 1, borderRadius: 12, paddingHorizontal: 12, fontSize: 14 },
   title: { fontSize: 20, lineHeight: 27, fontWeight: '800' },
   body: { fontSize: 14, lineHeight: 21 },
-  status: { minHeight: 48, fontSize: 14, lineHeight: 20, textAlignVertical: 'center' },
+  status: { paddingVertical: 14, fontSize: 14, lineHeight: 20 },
 });

@@ -1,4 +1,4 @@
-import { Bell, Cake, CameraOff, CalendarDays, Check, Citrus, CookingPot, Copy, Flame, Globe, Hand, Leaf, LogOut, Pencil, Trash2, UserPlus, Wheat, CircleCheck, CircleX, Info, TriangleAlert, ChevronDown, ChevronLeft, ChevronRight, Clock, Coins, Cookie, Hourglass, House, Infinity as InfinityIcon, LogIn, Minus, Moon, Package, Plus, QrCode, Search, Share2, Soup, Sunrise, User, Users, Utensils, UtensilsCrossed, Wallet, X, Zap, type LucideIcon } from 'lucide-react-native';
+import { Bell, CheckCheck, CircleHelp, Heart, Undo2, Cake, CameraOff, Ellipsis, CalendarDays, Check, Citrus, CookingPot, Copy, Flame, Globe, Hand, Leaf, LogOut, Pencil, Trash2, UserPlus, Wheat, CircleCheck, CircleX, Info, TriangleAlert, ChevronDown, ChevronLeft, ChevronRight, Clock, Coins, Cookie, Hourglass, House, Infinity as InfinityIcon, LogIn, Minus, Moon, Package, Plus, QrCode, Search, Share2, Soup, Sunrise, User, Users, Utensils, UtensilsCrossed, Wallet, X, Zap, type LucideIcon } from 'lucide-react-native';
 
 /** One vector icon set (Lucide, SVG) for the whole app: sharp at any size or zoom. */
 const icons = {
@@ -49,6 +49,11 @@ const icons = {
   trash: Trash2,
   copy: Copy,
   cameraOff: CameraOff,
+  more: Ellipsis,
+  undo: Undo2,
+  readAll: CheckCheck,
+  help: CircleHelp,
+  heart: Heart,
 } satisfies Record<string, LucideIcon>;
 
 export type AppIconName = keyof typeof icons;

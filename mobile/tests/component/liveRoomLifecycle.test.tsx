@@ -386,7 +386,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
 
     // Host start fails with VERSION_CONFLICT.
     await user.press(screen.getByRole('button', { name: 'Bắt đầu chọn món' }));
-    expect(await screen.findByText('Chưa thực hiện được · VERSION_CONFLICT')).toBeOnTheScreen();
+    expect(await screen.findByText('VERSION_CONFLICT')).toBeOnTheScreen();
 
     // Must have refetched snapshot!
     await waitFor(() => expect(getSnapshotMock).toHaveBeenCalledTimes(2));
@@ -398,6 +398,32 @@ describe('GM-25 Review Feedback Regression Suite', () => {
         expect.objectContaining({ expectedVersion: 2 })
       );
     });
+  });
+
+  test('host removes a member from the lobby by swiping the row, using the room version', async () => {
+    const user = userEvent.setup();
+    const removeRoomMember = jest.fn().mockResolvedValue({ ok: true, requestId: 'r1', roomId: 'room_live_123', data: undefined });
+    const getRoomSnapshot = jest.fn()
+      .mockResolvedValueOnce({ ok: true, data: createSampleSnapshot() })
+      .mockResolvedValue({ ok: true, data: createSampleSnapshot({ version: 2, members: createSampleSnapshot().members.slice(0, 1) }) });
+    const client = createMockApiClient({ getRoomSnapshot, removeRoomMember });
+    await render(<LobbyScreen repository={client} roomId="room_live_123" currentUserId={sampleUser.id} onHome={jest.fn()} />);
+
+    // Nobody can remove the host. Swiping reveals "Xóa", and removing someone is still confirmed in a dialog.
+    expect(screen.queryByRole('button', { name: 'Xóa Trí Thanh khỏi phòng' })).toBeNull();
+    await user.press(await screen.findByRole('button', { name: 'Xóa Thành viên 2 khỏi phòng' }));
+    expect(removeRoomMember).not.toHaveBeenCalled();
+    await user.press(screen.getByRole('button', { name: 'Xóa' }));
+
+    await waitFor(() => expect(removeRoomMember).toHaveBeenCalledWith(expect.objectContaining({ roomId: 'room_live_123', memberUserId: 'usr_member_2', expectedVersion: 1 })));
+    await waitFor(() => expect(screen.queryByText('Thành viên 2')).toBeNull());
+  });
+
+  test('a member never sees the remove button', async () => {
+    const client = createMockApiClient({ getRoomSnapshot: jest.fn().mockResolvedValue({ ok: true, data: createSampleSnapshot({ hostUserId: 'usr_member_2' }) }) });
+    await render(<LobbyScreen repository={client} roomId="room_live_123" currentUserId={sampleUser.id} onHome={jest.fn()} />);
+    await screen.findByText('Phòng chờ');
+    expect(screen.queryByRole('button', { name: /khỏi phòng$/ })).toBeNull();
   });
 
   test('P3: start explains the minimum roster requirement instead of showing a generic conflict', async () => {
@@ -418,7 +444,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
 
     await screen.findByText('Thành viên (2)');
     await user.press(screen.getByRole('button', { name: 'Bắt đầu chọn món' }));
-    expect(await screen.findByText('Chưa thực hiện được · Cần ít nhất 2 thành viên trong phòng trước khi bắt đầu.')).toBeOnTheScreen();
+    expect(await screen.findByText('Cần ít nhất 2 thành viên trong phòng trước khi bắt đầu.')).toBeOnTheScreen();
   });
 
   // --- Point 4: Request ID stability & retry on uncertain errors ---
@@ -449,7 +475,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
 
     // First press results in TIMEOUT (uncertain outcome)
     await user.press(screen.getByRole('button', { name: 'Bắt đầu chọn món' }));
-    expect(await screen.findByText('Chưa thực hiện được · TIMEOUT')).toBeOnTheScreen();
+    expect(await screen.findByText('TIMEOUT')).toBeOnTheScreen();
     const firstCallRequestId = startRoundMock.mock.calls[0][0].requestId;
     expect(firstCallRequestId).toBeTruthy();
 

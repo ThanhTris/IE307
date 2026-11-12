@@ -1,4 +1,4 @@
-import { render, screen, userEvent, waitFor } from '@testing-library/react-native';
+import { fireEvent, render, screen, userEvent, waitFor } from '@testing-library/react-native';
 import {
   FIXTURE_CANDIDATES_N1,
   FIXTURE_CANDIDATES_N4,
@@ -60,55 +60,15 @@ const MOCK_POOL_3: PoolDish[] = [
 describe('GM-26 Figma UI Parity Suite (Issue #87)', () => {
   // Node 330:3071 — 07 · Vòng 1 / Chọn món / Gửi phiếu
   describe('Node 330:3071 — Vòng 1 Flashcard & Gửi phiếu', () => {
-    it('renders flashcard view, handles WANT/OK/NO, and keeps Submit disabled until all dishes are voted', async () => {
-      const user = userEvent.setup();
-      await render(
-        <VoteScreen
-          pool={MOCK_POOL_3}
-          initialViewMode="flashcard"
-          simulateDelayMs={0}
-        />
-      );
-
-      // Verify flashcard deck
+    it('renders the flashcard deck and records WANT/OK/NO; the last answer sends the ballot', async () => {
+      await render(<VoteScreen pool={MOCK_POOL_3} initialViewMode="flashcard" showScenarioPicker={false} simulateDelayMs={0} />);
       expect(screen.getByText('Phở bò tái lăn')).toBeTruthy();
-      expect(screen.getByText('Thẻ 1 / 3')).toBeTruthy();
-
-      // Submit button is disabled because 0/3 voted
-      const submitBtn = screen.getByRole('button', { name: 'Gửi phiếu' });
-      expect(submitBtn.props.accessibilityState?.disabled).toBe(true);
-
-      // Vote WANT for dish 1
-      const wantBtn = screen.getByRole('button', { name: 'Muốn ăn (Chạm 2 lần · WANT)' });
-      await user.press(wantBtn);
-
-      // Advances to card 2: Bún chả
-      await waitFor(() => {
-        expect(screen.getByText('Bún chả Hà Nội')).toBeTruthy();
-        expect(screen.getByText('Thẻ 2 / 3')).toBeTruthy();
-      });
-
-      // Vote OK for dish 2
-      const okBtn = screen.getByRole('button', { name: 'Ăn được (Vuốt phải · OK)' });
-      await user.press(okBtn);
-
-      // Advances to card 3: Cơm tấm
-      await waitFor(() => {
-        expect(screen.getByText('Cơm tấm sườn nướng')).toBeTruthy();
-        expect(screen.getByText('Thẻ 3 / 3')).toBeTruthy();
-      });
-
-      // Submit button still disabled (2/3 voted)
-      expect(submitBtn.props.accessibilityState?.disabled).toBe(true);
-
-      // Vote NO for dish 3
-      const noBtn = screen.getByRole('button', { name: 'Không ăn (Vuốt trái · NO)' });
-      await user.press(noBtn);
-
-      // Now all 3/3 voted -> Submit button is enabled
-      await waitFor(() => {
-        expect(Boolean(submitBtn.props.accessibilityState?.disabled)).toBe(false);
-      });
+      const act = async (name: string, actionName: 'want' | 'ok' | 'no') => fireEvent(screen.getByRole('adjustable', { name }), 'accessibilityAction', { nativeEvent: { actionName } });
+      await act('Phở bò tái lăn', 'want');
+      await act('Bún chả Hà Nội', 'ok');
+      expect(screen.getByText('2/3 món')).toBeTruthy();
+      await act('Cơm tấm sườn nướng', 'no');
+      await waitFor(() => expect(screen.getByText(/^(Đã gửi phiếu|Sang vòng 2)$/)).toBeTruthy());
     });
 
     it('submits ballot via VoteRepository, enters pending state, and locks interaction on ACK', async () => {

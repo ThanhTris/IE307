@@ -28,7 +28,7 @@ export function switchToNow(draft: SetupDraft, at: number): SetupDraft {
 }
 export function changeSetupMeal(draft: SetupDraft, mealSlot: MealSlot, at: number): SetupDraft {
   if (draft.timeMode !== 'scheduled' || !draft.desiredAt || !Number.isFinite(Date.parse(draft.desiredAt)) || mealSlot === 'snack') return { ...draft, mealSlot };
-  const hour = mealSlot === 'breakfast' ? '07' : mealSlot === 'lunch' ? '12' : '18';
+  const hour = mealSlot === 'breakfast' ? '07' : mealSlot === 'lunch' ? '12' : '19';
   let candidate = parseSchedule(scheduleParts(draft.desiredAt).date, hour, '00')!;
   if (Date.parse(candidate) <= at) {
     candidate = parseSchedule(scheduleParts(new Date(at).toISOString()).date, hour, '00')!;
@@ -70,3 +70,20 @@ export const budgetOptions = [
   { id: '100to200', label: '100–200K', icon: 'box' },
   { id: null, label: 'Không giới hạn', icon: 'infinity' },
 ] as const;
+
+const mealLabelOf = (slot: MealSlot) => mealOptions.find(item => item.id === slot)?.label ?? slot;
+export type MealTimeConflict = { time: string; meal: MealSlot; mealLabel: string; fittingMeal: MealSlot; fittingLabel: string };
+/** A scheduled hour must belong to the chosen meal's window; "Ăn vặt" fits any hour. */
+export function mealTimeConflict(draft: SetupDraft): MealTimeConflict | null {
+  if (draft.timeMode !== 'scheduled' || !draft.desiredAt || !Number.isFinite(Date.parse(draft.desiredAt)) || draft.mealSlot === 'snack') return null;
+  const fitting = mealAtTime(Date.parse(draft.desiredAt));
+  if (fitting === draft.mealSlot) return null;
+  const { hour, minute } = scheduleParts(draft.desiredAt);
+  return { time: `${hour}:${minute}`, meal: draft.mealSlot, mealLabel: mealLabelOf(draft.mealSlot), fittingMeal: fitting, fittingLabel: mealLabelOf(fitting) };
+}
+/** Option 1: keep the chosen hour, switch the meal to the one that hour belongs to. */
+export const keepTimeChangeMeal = (draft: SetupDraft): SetupDraft => (
+  draft.desiredAt ? { ...draft, mealSlot: mealAtTime(Date.parse(draft.desiredAt)) } : draft
+);
+/** Option 2: keep the meal, move the hour into that meal's window (same date when still ahead). */
+export const keepMealChangeTime = (draft: SetupDraft, at: number): SetupDraft => changeSetupMeal(draft, draft.mealSlot, at);

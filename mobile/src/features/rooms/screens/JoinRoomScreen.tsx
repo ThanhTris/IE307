@@ -150,9 +150,6 @@ export function JoinRoomScreen(props: JoinRoomEntryProps) {
               <Text style={[styles.value, { color: colors.text }, textStyle(600)]}>{`${summary.memberCount}/${summary.capacity} thành viên`}</Text>
             </View>
           </View>
-          <Text style={[styles.hint, { color: colors.muted }, textStyle(400)]}>
-            Xác nhận để vào phòng. Xem trước không giữ chỗ.
-          </Text>
           {submitted.error ? <ToastNotice title="Chưa vào được phòng" message={errorCopy[submitted.error]} tone="error" /> : null}
           <View style={styles.spacer} />
           <View style={styles.actions}>
@@ -167,7 +164,7 @@ export function JoinRoomScreen(props: JoinRoomEntryProps) {
           </View>
         </>
       ) : problem ? (
-        <JoinEntryProblem code={flow.code} error={problem} busy={flow.readBusy} onRetry={() => { void flow.read(); }} onEdit={flow.edit} onHome={props.onBack} />
+        <JoinEntryProblem code={flow.code} error={problem} busy={flow.readBusy} onRetry={() => { void flow.read(); }} onEdit={() => { flow.edit(); flow.editCode(''); checked.current = ''; }} onHome={props.onBack} />
       ) : (
         <>
           {props.linkError ? (
@@ -192,8 +189,8 @@ export function JoinRoomScreen(props: JoinRoomEntryProps) {
           >
             <View style={[styles.qrIcon, { backgroundColor: colors.warm, alignItems: 'center', justifyContent: 'center' }]}><AppIcon name="qr" size={26} color={colors.text} /></View>
             <View style={styles.scanCopy}>
-              <Text style={[styles.heading, { color: colors.text }, textStyle(700)]}>Quét mã QR</Text>
-              <Text style={[styles.body, { color: colors.muted }, textStyle(400)]}>Dùng camera để vào phòng</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={[styles.heading, { color: colors.text }, textStyle(700)]}>Quét mã QR</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={[styles.scanHint, { color: colors.muted }, textStyle(400)]}>Dùng camera để vào phòng</Text>
             </View>
             <Text accessible={false} style={[styles.chevron, { color: colors.primary }]}>›</Text>
           </Pressable>
@@ -212,9 +209,10 @@ const styles = StyleSheet.create({
   body: { fontSize: 15, lineHeight: 22, textAlign: 'center' },
   hint: { fontSize: 14, lineHeight: 21, marginTop: 24 },
   value: { fontSize: 17, lineHeight: 24 },
-  scanCard: { flexDirection: 'row', alignItems: 'center', gap: 20, borderWidth: 1, borderRadius: 20, padding: 20, marginTop: 40, marginBottom: 20 },
-  qrIcon: { width: 64, height: 64, borderRadius: 16 },
-  scanCopy: { flex: 1, gap: 8 },
+  scanCard: { flexDirection: 'row', alignItems: 'center', gap: 14, borderWidth: 1, borderRadius: 20, padding: 16, marginTop: 40, marginBottom: 20 },
+  qrIcon: { width: 56, height: 56, borderRadius: 16 },
+  scanCopy: { flex: 1, minWidth: 0, gap: 4 },
+  scanHint: { fontSize: 15, lineHeight: 22 },
   chevron: { fontSize: 32 },
   summary: { borderRadius: 20, borderWidth: 1, paddingHorizontal: 20 },
   row: { minHeight: 72, paddingVertical: 20, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 12 },

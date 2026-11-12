@@ -165,6 +165,29 @@ describe('GM-26 — Vote Repository Unit Suite (Issue #87)', () => {
       });
     });
 
+    it('sends the per-card decision time with a round-1 ballot, clamped to dishes in the ballot', async () => {
+      const mockRpc = jest.fn().mockResolvedValue({ ok: true, data: { accepted: true, round: 1, poolVersion: 1, submittedAt: '2026-11-05T12:00:00Z' }, version: 2, state: 'WAITING_1' });
+      const repo = createLiveVoteRepository({ rpcCaller: mockRpc });
+      await repo.submitBallot({
+        roomId: 'room_live_01', round: 1, poolVersion: 1, expectedVersion: 1, requestId: 'req_pace',
+        votes: [{ roundDishId: 'dish_01', vote: 'WANT' }, { roundDishId: 'dish_02', vote: 'OK' }],
+        pace: [{ roundDishId: 'dish_01', ms: 1234.6 }, { roundDishId: 'dish_02', ms: 999999 }, { roundDishId: 'other', ms: 10 }, { roundDishId: 'dish_01', ms: Number.NaN }],
+      });
+      const payload = mockRpc.mock.calls[0]![1].payload;
+      expect(payload.pace).toEqual([{ roundDishId: 'dish_01', ms: 1235 }, { roundDishId: 'dish_02', ms: 60000 }]);
+      expect(Object.keys(payload).sort()).toEqual(['contractVersion', 'expectedVersion', 'pace', 'poolVersion', 'requestId', 'roomId', 'round', 'votes']);
+    });
+
+    it('does not send pace for round 2 or when none was measured', async () => {
+      const ok = { ok: true, data: { accepted: true, round: 1, poolVersion: 1, submittedAt: '2026-11-05T12:00:00Z' }, version: 2, state: 'WAITING_1' };
+      const mockRpc = jest.fn().mockResolvedValue(ok);
+      const repo = createLiveVoteRepository({ rpcCaller: mockRpc });
+      await repo.submitBallot({ roomId: 'room_a', round: 1, poolVersion: 1, expectedVersion: 1, requestId: 'req_none', votes: [{ roundDishId: 'd1', vote: 'WANT' }] });
+      expect(mockRpc.mock.calls[0]![1].payload).not.toHaveProperty('pace');
+      await repo.submitBallot({ roomId: 'room_b', round: 1, poolVersion: 1, expectedVersion: 1, requestId: 'req_empty', votes: [{ roundDishId: 'd1', vote: 'WANT' }], pace: [] });
+      expect(mockRpc.mock.calls[1]![1].payload).not.toHaveProperty('pace');
+    });
+
     it('rejects Round 2 submission before calling server when REMOVE count exceeds cap', async () => {
       const mockRpc = jest.fn();
       const repo = createLiveVoteRepository({ rpcCaller: mockRpc });
