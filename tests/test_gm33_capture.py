@@ -10,6 +10,7 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 import zlib
+from zipfile import ZipFile
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 import gm33_capture as gm33
@@ -29,7 +30,8 @@ class CaptureTests(unittest.TestCase):
         self.addCleanup(directory.cleanup)
         self.root = Path(directory.name).resolve()
         apk = self.root / 'pilot.apk'
-        apk.write_bytes(b'synthetic standalone apk fixture')
+        with ZipFile(apk, 'w') as archive:
+            archive.writestr('assets/index.android.bundle', b'synthetic fixture http://127.0.0.1:54531\x00')
         self.digest = hashlib.sha256(apk.read_bytes()).hexdigest()
         self.args = SimpleNamespace(adb='adb', serial='private-usb-id', qa_manifest=Path('manifest.json'),
                                     apk=apk, case='P06', client='A', checkpoint='after-ack', figma_node='638:9369')
@@ -70,6 +72,9 @@ class CaptureTests(unittest.TestCase):
         self.assertEqual(path.parent.name, 'qa-fixture')
         self.assertEqual(record['assessment'], 'Unreviewed')
         self.assertEqual(record['apkSha256'], self.digest)
+        self.assertIs(record['embeddedQaOriginVerified'], True)
+        self.assertEqual(record['bundleSha256'], hashlib.sha256(
+            b'synthetic fixture http://127.0.0.1:54531\x00').hexdigest())
         self.assertEqual(record['gm32EvidenceSha256'], 'gm32-receipt')
         self.assertEqual(record['viewport']['displayWidthDp'], 320)
         self.assertEqual(record['viewport']['fontScale'], 2)
@@ -102,6 +107,27 @@ class CaptureTests(unittest.TestCase):
             'topResumedActivity=ActivityRecord{456 u0 com.android.settings/.Settings t2}'))
         with self.assertRaisesRegex(ValueError, 'PNG'):
             gm33.viewport(png_fixture()[:-12], 'Physical density: 320', '1.0')
+
+    def test_stale_embedded_qa_origin_does_not_capture(self):
+        # The installed APK matches exactly, but its cached bundle targets a
+        # different run. A matching APK checksum alone must not validate it.
+        with self.assertRaisesRegex(ValueError, 'verified QA origin'):
+            gm33.verify_embedded_qa_origin(self.args.apk, 54541)
+        self.check['qa']['apiPort'] = 54541
+        with self.assertRaisesRegex(ValueError, 'rebuild the JS bundle'):
+            self.capture()
+        self.assertNotIn(('exec-out', 'screencap', '-p'), self.commands)
+        self.assertFalse((self.root / '.work').exists())
+        with self.assertRaisesRegex(ValueError, 'Invalid QA API port'):
+            gm33.verify_embedded_qa_origin(self.args.apk, '54531')
+
+    def test_missing_bundle_and_origin_prefix_are_rejected(self):
+        for name, content in [('assets/index.android.bundle', b'http://127.0.0.1:545310'),
+                              ('assets/other', b'http://127.0.0.1:54531')]:
+            with ZipFile(self.args.apk, 'w') as archive:
+                archive.writestr(name, content)
+            with self.assertRaises(ValueError):
+                gm33.verify_embedded_qa_origin(self.args.apk, 54531)
 
 
 if __name__ == '__main__':

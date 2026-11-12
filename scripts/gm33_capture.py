@@ -11,6 +11,7 @@ import struct
 import subprocess
 import sys
 import tempfile
+from zipfile import BadZipFile, ZipFile
 
 from gm33_preflight import ROOT, device_transports, preflight, run_command
 
@@ -55,6 +56,24 @@ def apk_sha(path):
     return digest.hexdigest()
 
 
+def verify_embedded_qa_origin(path, port):
+    """Reject stale embedded JS bundles left by incremental native builds."""
+    if type(port) is not int or not 1024 <= port <= 65535:
+        raise ValueError('Invalid QA API port')
+    try:
+        with ZipFile(path) as apk:
+            info = apk.getinfo('assets/index.android.bundle')
+            if info.file_size > 64 * 1024 * 1024:
+                raise ValueError('Embedded QA bundle exceeds the capture size limit')
+            bundle = apk.read(info)
+    except (BadZipFile, KeyError):
+        raise ValueError('Expected a standalone APK with embedded JavaScript') from None
+    expected = f'http://127.0.0.1:{port}'.encode('ascii')
+    if not re.search(re.escape(expected) + rb'(?![0-9])', bundle):
+        raise ValueError('Embedded APK does not contain the verified QA origin; rebuild the JS bundle')
+    return hashlib.sha256(bundle).hexdigest()
+
+
 def viewport(png, density, scale):
     if (len(png) < 45 or not png.startswith(PNG_HEADER + b'\x00\x00\x00\x0dIHDR')
             or not png.endswith(b'\x00\x00\x00\x00IEND\xaeB\x60\x82')):
@@ -85,6 +104,7 @@ def capture(args):
     expected_sha = apk_sha(args.apk)
     if expected_sha != installed_apk_sha(read):
         raise ValueError('The installed APK differs from the selected build artifact')
+    bundle_sha = verify_embedded_qa_origin(args.apk, check['qa']['apiPort'])
     sdk = read('shell', 'getprop', 'ro.build.version.sdk').decode().strip()
     if not re.fullmatch(r'\d+', sdk):
         raise ValueError('ADB did not return an Android API level')
@@ -104,6 +124,7 @@ def capture(args):
         'kind': 'stage-3b-usb-checkpoint', 'capturedAt': datetime.now(timezone.utc).isoformat(),
         'case': args.case, 'client': args.client, 'checkpoint': args.checkpoint, 'figmaNode': args.figma_node,
         'checkoutRevision': check['appSourceRevision'], 'apkSha256': expected_sha, 'androidApi': int(sdk),
+        'embeddedQaOriginVerified': True, 'bundleSha256': bundle_sha,
         'viewport': viewport(png, density, scale),
         'qaRunId': qa['runId'], 'qaManifestSealSha256': qa['sealSha256'], 'qaApiPort': qa['apiPort'],
         'qaFunctionInventorySha256': qa['functionInventorySha256'], 'catalogues': qa['catalogues'],
