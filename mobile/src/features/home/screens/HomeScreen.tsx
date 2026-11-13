@@ -37,6 +37,9 @@ export type HomeScreenProps = {
   onQuickInvite?: (friendUserId: string) => void;
   /** Development builds only: opens the result-screen preview. */
   onDevResult?: () => void;
+  onDevRoundTwo?: () => void;
+  onDevFlashcard?: () => void;
+  onDevIcons?: () => void;
   onHistory?: () => void;
   onInbox?: () => void;
   onProfile?: () => void;
@@ -44,7 +47,7 @@ export type HomeScreenProps = {
 };
 
 
-export function HomeScreen({ repository, liveSession, activeRoom, roomRevision, onCreate, onJoin, onResume, onFriends, onQuickInvite, onDevResult, onHistory, onInbox, onProfile, onTutorial }: HomeScreenProps) {
+export function HomeScreen({ repository, liveSession, activeRoom, roomRevision, onCreate, onJoin, onResume, onFriends, onQuickInvite, onDevResult, onDevRoundTwo, onDevFlashcard, onDevIcons, onHistory, onInbox, onProfile, onTutorial }: HomeScreenProps) {
   const { colors } = useShellTheme();
   const { unread: unreadInbox } = useInboxBadge();
   const { textStyle } = useAppFonts();
@@ -118,7 +121,7 @@ export function HomeScreen({ repository, liveSession, activeRoom, roomRevision, 
     ? liveSession.issue === 'no-session'
       ? <StatusNotice title="Chưa có phiên" message="Chọn Tạo phòng hoặc Tham gia phòng để bắt đầu phiên khách bằng tên của bạn." colors={colors} />
       : liveSession.issue === 'session-recovery-required'
-        ? <StatusNotice title="Phiên cần khôi phục" message="Máy chủ từ chối phiên hiện tại. Hãy làm mới phiên trước khi tiếp tục; nếu phiên đã bị thu hồi, bạn có thể xóa phiên cục bộ rồi bắt đầu phiên mới." actionLabel="Thử khôi phục phiên" onAction={() => { void liveSession.restoreSession(); }} tone="warning" colors={colors} />
+        ? <StatusNotice title="Phiên cần khôi phục" message="Máy chủ từ chối phiên hiện tại. Hãy làm mới phiên trước khi tiếp tục; nếu phiên đã bị thu hồi, bạn có thể xóa phiên cục bộ rồi bắt đầu phiên mới." actionLabel="Thử khôi phục phiên" onAction={() => { void liveSession.restoreSession(); }} tone="error" colors={colors} />
         : liveSession.issue === 'restore-unavailable'
           ? <StatusNotice title="Chưa khôi phục được phiên" message="Thông tin phiên đã lưu được giữ nguyên. Kiểm tra kết nối rồi thử lại." actionLabel="Thử khôi phục phiên" onAction={() => { void liveSession.restoreSession(); }} tone="warning" colors={colors} />
           : liveSession.issue === 'session-revoked' || liveSession.status === 'lost'
@@ -150,7 +153,7 @@ export function HomeScreen({ repository, liveSession, activeRoom, roomRevision, 
       {sessionNotice}
       {room.loading ? <StatusNotice title="Đang kiểm tra phòng đã lưu…" colors={colors} /> : null}
       {room.active && room.data ? <StatusNotice title={`Phòng #${room.data.code}`} message="Bạn có thể tiếp tục phiên hiện tại." actionLabel="Tiếp tục phiên" onAction={onResume} colors={colors} /> : null}
-      {room.error ? <StatusNotice title={room.unavailable ? 'Không thể tiếp tục phòng đã lưu' : 'Chưa kiểm tra được phòng đã lưu'} message={errorCopy[room.error]} actionLabel={room.unavailable ? undefined : 'Kiểm tra lại phòng'} onAction={room.unavailable ? undefined : room.retry} tone="warning" colors={colors} /> : null}
+      {room.error ? <StatusNotice title={room.unavailable ? 'Không thể tiếp tục phòng đã lưu' : 'Chưa kiểm tra được phòng đã lưu'} message={errorCopy[room.error]} actionLabel={room.unavailable ? undefined : 'Kiểm tra lại phòng'} onAction={room.unavailable ? undefined : room.retry} tone={room.unavailable ? undefined : 'error'} colors={colors} /> : null}
       {room.data && !room.active ? <StatusNotice title={room.data.state === 'EXPIRED' ? 'Phòng đã hết hạn' : 'Phòng đã kết thúc'} message="Bạn có thể tạo hoặc tham gia một phòng khác." colors={colors} /> : null}
 
       <View style={homeStyles.intro}>
@@ -204,6 +207,9 @@ export function HomeScreen({ repository, liveSession, activeRoom, roomRevision, 
       </View>
 
       {onDevResult ? <Pressable accessibilityRole="button" onPress={onDevResult} style={homeStyles.devLink}><Text style={[homeStyles.devLinkText, { color: colors.muted }, textStyle(500)]}>Xem thử giao diện kết quả (chỉ bản dev)</Text></Pressable> : null}
+      {onDevIcons ? <Pressable accessibilityRole="button" onPress={onDevIcons} style={homeStyles.devLink}><Text style={[homeStyles.devLinkText, { color: colors.muted }, textStyle(500)]}>Xem bộ icon (chỉ bản dev)</Text></Pressable> : null}
+      {onDevFlashcard ? <Pressable accessibilityRole="button" onPress={onDevFlashcard} style={homeStyles.devLink}><Text style={[homeStyles.devLinkText, { color: colors.muted }, textStyle(500)]}>Xem thử flashcard đầy đủ (chỉ bản dev)</Text></Pressable> : null}
+      {onDevRoundTwo ? <Pressable accessibilityRole="button" onPress={onDevRoundTwo} style={homeStyles.devLink}><Text style={[homeStyles.devLinkText, { color: colors.muted }, textStyle(500)]}>Xem thử giao diện vòng 2 (chỉ bản dev)</Text></Pressable> : null}
 
       {sessionLoading ? <StatusNotice title="Đang khôi phục phiên…" colors={colors} /> : null}
     </ScrollView>

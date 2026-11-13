@@ -162,7 +162,7 @@ describe('PR155 complete consumer paths after fff8b88', () => {
 
   it.each(Array.from({ length: 20 }, (_, index) => index + 1))('accepts canonical R2 snapshots with %i remaining dish(es)', async count => {
     const snapshot = JSON.parse(JSON.stringify(canonicalFixture));
-    snapshot.state = 'ROUND_2'; snapshot.round = 2; snapshot.removalCap = Math.max(1, Math.floor(count * 0.3));
+    snapshot.state = 'ROUND_2'; snapshot.round = 2; snapshot.removalCap = Math.max(1, Math.floor((3 * count + 9) / 10));
     snapshot.pool = snapshot.pool.slice(0, count);
     const h = await harness(snapshot);
     expect((await h.repo.getRoomSnapshot(snapshot.roomId)).ok).toBe(true);

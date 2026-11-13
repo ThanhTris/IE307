@@ -25,6 +25,8 @@ import type { VoteRepository } from '../services/voteRepository';
 import { useRoundTwoVoting, type FinalChoice } from '../hooks/useRoundTwoVoting';
 import { FinalRoundHeaderAndOutcome } from '../components/FinalRoundHeaderAndOutcome';
 import { CandidateKeepRemoveCard } from '../components/CandidateKeepRemoveCard';
+import { RoundTwoView } from '../components/RoundTwoView';
+import { RoundWaitingView } from '../components/RoundWaitingView';
 
 export type FinalRoundScreenProps = {
   candidates?: PoolDish[];
@@ -140,6 +142,53 @@ export function FinalRoundScreen({
         <View style={styles.loadingContainer}>
           <StatusNotice title="Không thể tải dữ liệu Vòng 2" message={`Lỗi: ${snapshotError}. Vui lòng kiểm tra lại kết nối mạng.`} tone="error" actionLabel="Thử lại tải phòng" onAction={() => void fetchSnapshot()} colors={colors} />
         </View>
+      </SafeAreaView>
+    );
+  }
+
+  // Real room (repository) or a plain preview: the redesigned screen. The scenario picker keeps the QA layout below.
+  if (!shouldShowScenarioPicker) {
+    const sent = submissionState === 'pending' || submissionState === 'ack';
+    const failed = submissionState === 'error';
+    return (
+      <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+        {failed && errorMessage ? <ToastNotice title="Chưa gửi được phiếu" message={errorMessage} tone="error" /> : null}
+        {waitingError ? <ToastNotice title={waitingError} tone="error" /> : null}
+        {sent ? (
+          <>
+            <RoundWaitingView
+              pending={submissionState === 'pending'}
+              waiting={isWaitingForMembers}
+              needsRoundTwo={false}
+              countdown={waitingCountdown}
+              acknowledged={rosterAcknowledgedCount}
+              total={totalRosterCount}
+              isHost={isHost}
+              canFinish={canHostEarlyFinish}
+              onFinish={handleHostEarlyFinish}
+              colors={colors}
+            />
+            {result && !isWaitingForMembers && onFinish ? <AppButton label="Xem kết quả" onPress={() => onFinish(result)} colors={colors} style={styles.sentButton} /> : null}
+            {waitingError || needsWaitingTransition ? (
+              <AppButton label={isRetryingWaiting ? 'Đang thử lại…' : 'Thử lại vào phòng chờ'} disabled={isRetryingWaiting} variant="quiet" onPress={handleRetryWaiting} colors={colors} style={styles.sentButton} />
+            ) : null}
+          </>
+        ) : (
+          <RoundTwoView
+            candidates={candidates}
+            choices={choices}
+            cap={enforceCap ? eliminationCap : candidates.length}
+            removed={removedCount}
+            locked={isLocked}
+            submitting={false}
+            failed={failed}
+            allRemoved={allRemoved}
+            onChoose={handleToggleChoice}
+            onKeepAll={handleSetAllKeep}
+            onSubmit={() => void handleSubmit(failed ? 'consensus' : undefined)}
+            colors={colors}
+          />
+        )}
       </SafeAreaView>
     );
   }
@@ -322,6 +371,7 @@ export function FinalRoundScreen({
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
+  sentButton: { marginHorizontal: 24, marginBottom: 24 },
   content: { padding: 16, gap: 16, maxWidth: 600, width: '100%', alignSelf: 'center' },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24, gap: 16 },
   loadingText: { fontSize: 14, fontWeight: '600', textAlign: 'center' },

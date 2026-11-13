@@ -4,7 +4,6 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { AppBottomNavigation } from './AppBottomNavigation';
 import { AppHeader } from './AppHeader';
 import type { AppIconName } from '../icons/AppIcon';
-import { useInboxBadge } from '../../lib/inboxBadge';
 import { useShellTheme } from '../../lib/useShellTheme';
 
 export type ApiFeature = 'friends' | 'inbox' | 'history' | 'profile';
@@ -21,7 +20,6 @@ export function ApiFeatureFrame({ active, title, onNavigate, onHome, onBack, hea
   children: ReactNode;
 }) {
   const { colors } = useShellTheme();
-  const { unread } = useInboxBadge();
   const insets = useSafeAreaInsets();
   const { fontScale } = useWindowDimensions();
   const largeText = fontScale >= 1.5;
@@ -33,16 +31,11 @@ export function ApiFeatureFrame({ active, title, onNavigate, onHome, onBack, hea
     { id: 'history', label: 'Lịch sử', icon: 'history' as const, onPress: () => onNavigate('/history') },
     { id: 'profile', label: 'Cá nhân', icon: 'profile' as const, onPress: () => onNavigate('/profile') },
   ];
-  const inboxPath = active === 'friends' || active === 'history'
-    ? `/inbox?returnTo=${active}`
-    : '/inbox';
   return (
     <SafeAreaView edges={['top']} style={[styles.root, { backgroundColor: colors.background }]}>
       {standalone ? (
         <AppHeader variant="back" title={title} centeredTitle hideDivider rightAction={headerAction} allowTitleWrap={largeText} onPressBack={onBack ?? onHome} showFriends={false} showInbox={false} showProfile={false} colors={{ ...colors, surface: colors.background }} />
-      ) : (
-        <AppHeader title="Gì Cũng Được" allowTitleWrap={largeText} brandTextStyle={{ fontSize: 18, lineHeight: 24 }} onPressBrand={onHome} onInbox={() => onNavigate(inboxPath)} inboxBadge={unread} showFriends={false} showInbox={active !== 'profile'} showProfile={false} colors={colors} />
-      )}
+      ) : null}
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         {children}
       </ScrollView>

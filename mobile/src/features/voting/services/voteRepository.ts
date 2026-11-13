@@ -89,6 +89,7 @@ export function mapSnapshotPoolToPoolDishes(pool: unknown[]): PoolDish[] {
       categoryLabels: Array.isArray(item.categoryLabels) ? item.categoryLabels : undefined,
       temperature: item.temperature ?? undefined,
       flavor: item.flavor ?? undefined,
+      origin: item.origin ?? undefined,
       priceReference: priceRef ?? undefined,
     } as PoolDish;
   });
@@ -290,7 +291,7 @@ export class LiveVoteRepository implements VoteRepository {
   /**
    * Submits a ballot for Round 1 (WANT/OK/NO) or Round 2 (KEEP/REMOVE).
    * Transforms input votes to canonical wire format: { roundDishId, choice } (F1).
-   * Enforces Round 2 elimination cap: max(1, floor(0.30 * N)).
+   * Enforces Round 2 elimination cap: ceil(0.30 * N), at least 1.
    * If cap is exceeded in Round 2, rejects with REMOVE_LIMIT before calling server.
    * Compares payload against cache: if re-submitting with identical requestId and payload, returns cached receipt.
    * If re-submitting with same requestId but different payload, rejects with BAD_REQUEST (F6).

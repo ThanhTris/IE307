@@ -37,6 +37,8 @@ export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome,
   const [action, setAction] = useState<PendingAction>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
+  // Result of the last action: green for a done add/delete, red for a server problem.
+  const [messageTone, setMessageTone] = useState<'success' | 'error'>('error');
   const lock = useRef(false);
   const toast = useToast();
   const { syncFriends } = useInboxBadge();
@@ -90,9 +92,9 @@ export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome,
     setBusy(true);
     setMessage('');
     try {
-      if (await job()) { setMessage(okMessage); await load(true); }
+      if (await job()) { setMessage(okMessage); setMessageTone('success'); await load(true); }
     } catch {
-      setMessage('Không kết nối được máy chủ. Hãy tải lại trước khi thử tiếp.');
+      setMessage('Không kết nối được máy chủ. Hãy tải lại trước khi thử tiếp.'); setMessageTone('error');
     } finally {
       lock.current = false;
       setBusy(false);
@@ -100,7 +102,7 @@ export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome,
   };
   const invite = (code: string, name: string) => run(async () => {
     const result = await repository.invite({ friendCode: code });
-    if (!result.ok) { setMessage(`Chưa hoàn tất · ${errorMessage(result.error.messageKey)}`); return false; }
+    if (!result.ok) { setMessage(`Chưa hoàn tất · ${errorMessage(result.error.messageKey)}`); setMessageTone('error'); return false; }
     setSearch('');
     // Said straight away (not through the shared message state) so it always shows.
     toast?.show({ title: 'Đã gửi lời mời kết bạn', message: `${name} cần đồng ý lời mời của bạn.`, tone: 'success' });
@@ -112,7 +114,7 @@ export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome,
     setAction(null);
     void run(async () => {
       const result = await repository.removeFriend(friend.friendUserId);
-      if (!result.ok) { setMessage(`Chưa hoàn tất · ${errorMessage(result.error.messageKey)}`); return false; }
+      if (!result.ok) { setMessage(`Chưa hoàn tất · ${errorMessage(result.error.messageKey)}`); setMessageTone('error'); return false; }
       return true;
     }, 'Đã xóa khỏi danh sách bạn bè.');
   };
@@ -120,7 +122,7 @@ export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome,
   const answerIncoming = async (item: InboxItem, kind: 'accept' | 'reject') => {
     if (!inboxRepository || lock.current) return;
     const invitationId = item.metadata?.invitationId;
-    if (typeof invitationId !== 'string') { setMessage('Lời mời thiếu mã từ máy chủ.'); return; }
+    if (typeof invitationId !== 'string') { setMessage('Lời mời thiếu mã từ máy chủ.'); setMessageTone('error'); return; }
     lock.current = true;
     setBusy(true);
     setMessage('');
@@ -128,12 +130,12 @@ export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome,
       const result = kind === 'accept'
         ? await inboxRepository.acceptFriend(invitationId)
         : await inboxRepository.rejectFriend(invitationId);
-      if (!result.ok) { setMessage(errorMessage(result.error.messageKey)); await load(true); return; }
+      if (!result.ok) { setMessage(errorMessage(result.error.messageKey)); setMessageTone('error'); await load(true); return; }
       if (kind === 'accept') syncFriends();
       inboxRepository.markHandled(item.eventId);
       await load(true);
     } catch {
-      setMessage('Chưa rõ máy chủ đã nhận thao tác chưa. Tải lại danh sách để kiểm tra.');
+      setMessage('Chưa rõ máy chủ đã nhận thao tác chưa. Tải lại danh sách để kiểm tra.'); setMessageTone('error');
       await load(true);
     } finally {
       lock.current = false;
@@ -154,7 +156,7 @@ export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome,
     try {
       await Share.share({ message: `Kết bạn với mình trên Gì Cũng Được! Mã bạn bè: ${identity.friendCode}${link ? `\n${link}` : ''}` });
     } catch {
-      setMessage('Chưa mở được chia sẻ. Bạn có thể sao chép mã ở thẻ bên dưới.');
+      setMessage('Chưa mở được chia sẻ. Bạn có thể sao chép mã ở thẻ bên dưới.'); setMessageTone('error');
     }
   };
   const codeQuery = search.trim().toUpperCase();
@@ -179,6 +181,7 @@ export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome,
   return (
     <ApiFeatureFrame active="friends" title="Bạn bè" onNavigate={onNavigate} onHome={onHome} onBack={onBack}>
       <View style={styles.content}>
+        {!onBack ? <Text accessibilityRole="header" style={[styles.pageTitle, { color: colors.text }]}>Bạn bè</Text> : null}
         <View style={[styles.search, { backgroundColor: colors.surface, borderColor: colors.line }]}>
           <AppIcon name="search" size={20} color={colors.muted} />
           <View style={styles.searchField}><FormField hideLabel label="Tìm bạn hoặc nhập mã bạn bè" value={search} onChangeText={setSearch} autoCorrect={false} autoCapitalize="none" placeholder="Tìm bạn hoặc nhập mã bạn bè" colors={colors} inputStyle={styles.searchInput} /></View>
@@ -212,7 +215,7 @@ export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome,
 
         {loading ? <LoadingState label="Đang tải bạn bè" colors={colors} /> : null}
         {!loading && error ? <StatusNotice title="Chưa tải được bạn bè" message={errorMessage(error)} tone="error" actionLabel="Thử lại" onAction={() => { void load(true); }} colors={colors} /> : null}
-        {inboxError && !loading && !error ? <StatusNotice title="Không tải được lời mời" message={errorMessage(inboxError)} tone="warning" actionLabel="Tải lại" onAction={() => { void load(true); }} colors={colors} /> : null}
+        {inboxError && !loading && !error ? <StatusNotice title="Không tải được lời mời" message={errorMessage(inboxError)} tone="error" actionLabel="Tải lại" onAction={() => { void load(true); }} colors={colors} /> : null}
 
         {!loading && !error && incoming.length > 0 ? <View style={styles.section}>
           <Text accessibilityRole="header" style={[styles.sectionTitle, { color: colors.muted }]}>{`Lời mời kết bạn · ${incoming.length}`}</Text>
@@ -245,7 +248,7 @@ export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome,
             </SwipeToDeleteRow>
           ))}
         </View> : null}
-        {message ? <ToastNotice title={message} /> : null}
+        {message ? <ToastNotice title={message} tone={messageTone} /> : null}
       </View>
 
       <SheetDialog visible={action !== null} title={`Xóa ${action?.friend.displayName ?? 'bạn'} khỏi bạn bè?`} presentation="dialog" showHandle={false} showClose={false} onClose={() => { if (!busy) setAction(null); }} colors={colors}>
@@ -307,6 +310,7 @@ export function errorMessage(key: string): string {
 
 const styles = StyleSheet.create({
   content: { gap: 20 },
+  pageTitle: { fontFamily: 'InterBold', fontSize: 30, lineHeight: 40 },
   search: { minHeight: 48, borderWidth: 1, borderRadius: 24, flexDirection: 'row', alignItems: 'center', gap: 8, paddingLeft: 16, paddingRight: 8 },
   searchField: { flex: 1 },
   searchInput: { backgroundColor: 'transparent', borderWidth: 0, paddingHorizontal: 0, minHeight: 44, fontSize: 15 },

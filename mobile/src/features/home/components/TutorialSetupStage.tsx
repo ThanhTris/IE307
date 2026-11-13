@@ -7,7 +7,7 @@ import { AppButton } from '../../../shared/ui';
 
 const meals = [
   { label: 'Ăn sáng', icon: 'sunrise' as const },
-  { label: 'Ăn trưa', icon: 'meal' as const },
+  { label: 'Ăn trưa', icon: 'sun' as const },
   { label: 'Ăn tối', icon: 'moon' as const },
   { label: 'Ăn vặt', icon: 'snack' as const },
 ];

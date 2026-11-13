@@ -28,7 +28,6 @@ export function ProfileScreen({ displayName, onNavigate, onHome }: Props) {
       </View>
       <AppButton label="Đăng nhập" onPress={() => setAccountPanel('Đăng nhập')} colors={colors} textStyle={textStyle(600)} />
       <AppButton label="Tạo tài khoản" variant="secondary" onPress={() => setAccountPanel('Tạo tài khoản')} colors={colors} textStyle={textStyle(600)} />
-      <Text style={[styles.note, { color: colors.muted }, textStyle(400)]}>Bạn vẫn có thể tạo hoặc tham gia phòng với tư cách khách.</Text>
       <SheetDialog visible={!!accountPanel} title={accountPanel ?? 'Tài khoản'} onClose={() => setAccountPanel(undefined)} colors={colors}>
         <Text style={[styles.cardBody, { color: colors.text }, textStyle(400)]}>Tài khoản sẽ có trong bản cập nhật tới. Bạn vẫn dùng đầy đủ tính năng với tư cách khách.</Text>
         <AppButton label="Đã hiểu" onPress={() => setAccountPanel(undefined)} colors={colors} textStyle={textStyle(600)} />
@@ -44,5 +43,4 @@ const styles = StyleSheet.create({
   avatarText: { fontSize: 30, lineHeight: 36 },
   cardTitle: { fontSize: 20, lineHeight: 28, textAlign: 'center' },
   cardBody: { fontSize: 14, lineHeight: 21, textAlign: 'center' },
-  note: { fontSize: 13, lineHeight: 20 },
 });

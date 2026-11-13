@@ -1,7 +1,7 @@
 import type { RoomSnapshot, UserPreferences } from '../../../data/api/contracts';
 import { budgetOptions, mealOptions } from '../../context/services/dishSetup';
 import { dishSetupCatalogue } from '../../context/services/dishSetupCatalogue';
-import { flavorChoices, flavorSelected, isAnything } from '../../preferences/services/dishPreferences';
+import { fattyChoice, flavorChoices, flavorSelected, isAnything } from '../../preferences/services/dishPreferences';
 
 /** View data for the lobby "Bữa ăn hôm nay" card (Figma 68:429). */
 export function lobbyMealSummary(snapshot: RoomSnapshot, now: Date = new Date()) {
@@ -46,9 +46,9 @@ export function lobbyPreferenceRows(preferences?: UserPreferences): PreferenceRo
   const pick = (ids: string[], items: readonly { id: string; label: string }[]) =>
     ids.map(id => items.find(item => item.id === id)?.label).filter((label): label is string => Boolean(label));
   const rows: PreferenceRow[] = [
-    { label: 'Loại món', values: pick(preferences.categoryIds, dishSetupCatalogue.categories) },
+    { label: 'Loại món', values: pick(preferences.categoryIds, [...dishSetupCatalogue.categories, ...(dishSetupCatalogue.snackCategories ?? [])]) },
     { label: 'Ẩm thực', values: pick(preferences.cuisineIds, dishSetupCatalogue.cuisines) },
-    { label: 'Hương vị', values: flavorChoices.filter(choice => flavorSelected(preferences, choice)).map(choice => choice.label) },
+    { label: 'Hương vị', values: [...flavorChoices.filter(choice => flavorSelected(preferences, choice)).map(choice => choice.label), ...(preferences.categoryIds.includes(fattyChoice.id) ? [fattyChoice.label] : [])] },
   ];
   return rows.filter(row => row.values.length > 0);
 }

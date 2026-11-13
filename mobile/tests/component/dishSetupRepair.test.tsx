@@ -9,6 +9,11 @@ import { SetupCheckboxRow } from '../../src/features/context/components/SetupChe
 import { PreferenceAdvancedPanel } from '../../src/features/preferences/components/PreferenceAdvancedPanel';
 import { completeNativeAnimations } from '../helpers/completeNativeAnimations';
 
+// These flows start from "now": pin it to a lunch hour (UTC+7) so the dish groups shown do not depend on the wall clock.
+const NOON_VN = Date.UTC(2026, 10, 12, 5, 0, 0);
+beforeEach(() => { jest.spyOn(Date, 'now').mockReturnValue(NOON_VN); });
+afterEach(() => { jest.restoreAllMocks(); });
+
 beforeEach(completeNativeAnimations);
 afterEach(() => jest.restoreAllMocks());
 
@@ -66,7 +71,7 @@ test('existing-room Back never silently exits or cancels; explicit confirmation 
   expect(screen.getByText('Hủy phòng?')).toBeOnTheScreen();
   expect(write).not.toHaveBeenCalled(); expect(exit).not.toHaveBeenCalled();
   await fireEvent.press(screen.getByText('Xác nhận hủy phòng'));
-  expect(await screen.findByText('Phòng đã bị hủy')).toBeOnTheScreen();
+  await waitFor(() => expect(exit).toHaveBeenCalledTimes(1));
   expect((await gateway.read()).room).toMatchObject({ id: room.id, state: 'CLOSED', version: 2 });
 });
 test('friend picker stages choices, supplies avatar rows and shows a calm empty state', async () => {

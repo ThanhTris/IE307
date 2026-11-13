@@ -29,6 +29,6 @@ test('preferences card groups chosen labels and is empty for "Ăn gì cũng đư
   expect(rows).toEqual([
     { label: 'Loại món', values: [rice.label] },
     { label: 'Ẩm thực', values: [vi.label] },
-    { label: 'Hương vị', values: ['Thanh nhẹ'] },
+    { label: 'Hương vị', values: ['Thanh đạm'] },
   ]);
 });

@@ -20,7 +20,7 @@ function withTimeout<T extends { ok: boolean }>(task: Promise<T>, ms: number): P
 
 type Props = { repository: HistoryRepository; onNavigate: (path: string) => void; onHome: () => void };
 type HistoryFilter = 'all' | 'decided' | 'no-consensus';
-type PendingAction = { kind: 'consent'; scope: 'personal' | 'group'; enabled: boolean } | { kind: 'delete'; item: HistoryRow } | null;
+type PendingAction = { kind: 'delete'; item: HistoryRow } | null;
 
 export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
   const { colors } = useShellTheme();
@@ -34,10 +34,9 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
   const [fetchedAt, setFetchedAt] = useState(repository.cached()?.fetchedAt ?? '');
   const [filter, setFilter] = useState<HistoryFilter>('all');
   const [selectedHistoryId, setSelectedHistoryId] = useState<string | null>(null);
-  const [manageHistory, setManageHistory] = useState(false);
   const [action, setAction] = useState<PendingAction>(null);
   const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState<{ text: string; tone: 'success' | 'error' } | null>(null);
   const lock = useRef(false);
   const selectedHistory = items.find((item): item is CanonicalHistoryItem => 'historyId' in item && item.historyId === selectedHistoryId);
   const visibleItems = items.filter(item => {
@@ -104,22 +103,17 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
     setBusy(true);
     const pending = action;
     setAction(null);
-    setMessage('');
+    setMessage(null);
     try {
-      const result = pending.kind === 'consent'
-        ? await repository.updateConsent({ scope: pending.scope, consent: pending.enabled })
-        : await repository.delete(historyIdOf(pending.item));
-      if (!result.ok) { setMessage(errorMessage(result.error.messageKey)); return; }
+      const result = await repository.delete(historyIdOf(pending.item));
+      if (!result.ok) { setMessage({ text: errorMessage(result.error.messageKey), tone: 'error' }); return; }
       repository.invalidate();
       setFetchedAt('');
-      setManageHistory(false);
-      if (pending.kind === 'delete') setSelectedHistoryId(null);
-      setMessage(pending.kind === 'consent'
-        ? `Máy chủ đã nhận lựa chọn ${pending.enabled ? 'cho phép' : 'rút'} lưu lịch sử ${pending.scope === 'personal' ? 'cá nhân' : 'nhóm'}.`
-        : 'Máy chủ đã nhận yêu cầu xóa. Đang tải lại lịch sử theo quyền hiện tại.');
+      setSelectedHistoryId(null);
+      setMessage({ text: 'Máy chủ đã nhận yêu cầu xóa. Đang tải lại lịch sử theo quyền hiện tại.', tone: 'success' });
       await load(true);
     } catch {
-      setMessage('Chưa rõ máy chủ đã nhận thao tác hay chưa. Tải lại lịch sử để kiểm tra trạng thái.');
+      setMessage({ text: 'Chưa rõ máy chủ đã nhận thao tác hay chưa. Tải lại lịch sử để kiểm tra trạng thái.', tone: 'error' });
       await load(true);
     } finally {
       lock.current = false;
@@ -130,9 +124,8 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
   return (
     <ApiFeatureFrame active="history" title="Lịch sử" onNavigate={onNavigate} onHome={onHome}>
       <View style={styles.content}>
-        <View style={styles.pageHeading}>
+        <View>
           <Text accessibilityRole="header" style={[styles.pageTitle, { color: colors.text }]}>{selectedHistory ? 'Chi tiết bữa ăn' : 'Lịch sử'}</Text>
-          <Text style={[styles.subtitle, { color: colors.muted }]}>{selectedHistory ? 'Kết quả đã lưu theo quyền hiện tại' : 'Các bữa ăn đã chốt của bạn'}</Text>
         </View>
 
         {selectedHistory ? <SavedHistoryDetail item={selectedHistory} largeText={largeText} colors={colors}
@@ -154,7 +147,6 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
 
         {!selectedHistory && !loading && (!error || stale) ? <View style={styles.section}>
           <View style={styles.sectionTop}>
-            <Text accessibilityRole="header" style={[styles.sectionTitle, { color: colors.text }]}>Gần đây</Text>
             {refreshing && !stale ? <Text style={[styles.caption, { color: colors.muted }]}>Đang cập nhật…</Text> : null}
           </View>
           {visibleItems.length === 0 ? <View style={styles.emptyState}>
@@ -165,7 +157,9 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
             {filter === 'all'
               ? <AppButton label="Tạo phòng" onPress={() => onNavigate('/room/create')} colors={colors} />
               : <AppButton label="Xem tất cả" variant="secondary" onPress={() => setFilter('all')} colors={colors} />}
-          </View> : visibleItems.map(item => {
+          </View> : groupHistory(visibleItems).map(group => <View key={group.key} style={styles.section}>
+            <Text accessibilityRole="header" style={[styles.sectionTitle, { color: colors.text }]}>{group.label}</Text>
+            {group.items.map(item => {
             const canonical = 'historyId' in item;
             const decided = canonical ? item.result.status === 'DECIDED' : Boolean(item.winnerName);
             const date = canonical ? item.createdAt : item.mealDate;
@@ -193,22 +187,15 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
                 <AppButton label="Xóa" variant="secondary" onPress={() => setAction({ kind: 'delete', item })} disabled={busy} colors={colors} style={styles.deleteButton} />
               </View>
             </View>;
-          })}
+          })}</View>)}
         </View> : null}
 
-        {!selectedHistory ? <Pressable accessibilityRole="button" onPress={() => setManageHistory(true)} style={[styles.manageButton, { backgroundColor: colors.surface, borderColor: colors.line }]}>
-          <Text style={[styles.manageText, { color: colors.text }]}>Quản lý lưu lịch sử</Text><Text style={[styles.chevron, { color: colors.text }]}>›</Text>
-        </Pressable> : null}
-        {message ? <ToastNotice title="Kết quả máy chủ" message={message} tone={message.startsWith('Chưa') ? 'error' : 'success'} /> : null}
+        {message ? <ToastNotice title={message.tone === 'success' ? 'Đã xóa' : 'Chưa xóa được'} message={message.text} tone={message.tone} /> : null}
       </View>
 
-      <SheetDialog visible={manageHistory || action !== null} title={actionTitle(action, manageHistory)} onClose={() => { if (!busy) { setAction(null); setManageHistory(false); } }} colors={colors}>
-        {action?.kind === 'delete' ? <Text style={[styles.caption, { color: colors.text }]}>{`Gửi yêu cầu xóa mục “${historyTitle(action.item)}”. Máy chủ sẽ áp dụng quyền sở hữu và quyền nhóm.`}</Text> : manageHistory ? <View style={styles.management}>
-          <Text style={[styles.caption, { color: colors.muted }]}>Lựa chọn được gửi lên máy chủ; dữ liệu chỉ hiện theo consent và quyền hiện tại.</Text>
-          <ConsentChoice title="Lịch sử cá nhân" scope="personal" disabled={busy} onChoose={setAction} largeText={largeText} colors={colors} />
-          <ConsentChoice title="Tóm tắt nhóm" scope="group" disabled={busy} onChoose={setAction} largeText={largeText} colors={colors} />
-        </View> : null}
-        {action ? <AppButton label={actionLabel(action)} variant={action?.kind === 'delete' || (action?.kind === 'consent' && !action.enabled) ? 'danger' : 'primary'} onPress={() => void confirm()} loading={busy} colors={colors} /> : null}
+      <SheetDialog visible={action !== null} title="Xóa mục lịch sử?" onClose={() => { if (!busy) setAction(null); }} colors={colors}>
+        {action ? <Text style={[styles.caption, { color: colors.text }]}>{`Gửi yêu cầu xóa mục “${historyTitle(action.item)}”. Máy chủ sẽ áp dụng quyền sở hữu và quyền nhóm.`}</Text> : null}
+        {action ? <AppButton label="Xác nhận xóa" variant="danger" onPress={() => void confirm()} loading={busy} colors={colors} /> : null}
       </SheetDialog>
     </ApiFeatureFrame>
   );
@@ -294,6 +281,30 @@ function formatHistoryDate(value: string): string {
   return Number.isFinite(timestamp) ? new Date(timestamp).toLocaleString() : 'Không rõ';
 }
 
+function rowDate(item: HistoryRow): string {
+  return 'historyId' in item ? item.createdAt : item.mealDate;
+}
+
+/** "Hôm nay", "Hôm qua", then the date, newest first. */
+function groupHistory(items: HistoryRow[]): { key: string; label: string; items: HistoryRow[] }[] {
+  const dayStart = (value: Date) => new Date(value.getFullYear(), value.getMonth(), value.getDate()).getTime();
+  const today = dayStart(new Date());
+  const time = (item: HistoryRow) => { const value = Date.parse(rowDate(item)); return Number.isFinite(value) ? value : 0; };
+  const groups = new Map<string, { key: string; label: string; items: HistoryRow[] }>();
+  for (const item of [...items].sort((a, b) => time(b) - time(a))) {
+    const stamp = time(item);
+    const date = new Date(stamp);
+    const key = stamp ? String(dayStart(date)) : 'unknown';
+    const age = stamp ? Math.round((today - dayStart(date)) / 86_400_000) : -1;
+    const label = !stamp ? 'Không rõ ngày' : age === 0 ? 'Hôm nay' : age === 1 ? 'Hôm qua'
+      : `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
+    const group = groups.get(key) ?? { key, label, items: [] };
+    group.items.push(item);
+    groups.set(key, group);
+  }
+  return [...groups.values()];
+}
+
 function historyCardMetadata(item: HistoryRow, date: string): string {
   const timestamp = Date.parse(date);
   const mealDate = Number.isFinite(timestamp) ? new Date(timestamp) : undefined;
@@ -314,37 +325,9 @@ function historyCardMetadata(item: HistoryRow, date: string): string {
   return people ? `${when} · ${people}` : when;
 }
 
-function ConsentChoice({ title, scope, disabled, onChoose, largeText, colors }: {
-  title: string; scope: 'personal' | 'group'; disabled: boolean;
-  largeText: boolean;
-  onChoose: (action: PendingAction) => void; colors: ReturnType<typeof useShellTheme>['colors'];
-}) {
-  return <View style={styles.consentRow}>
-    <Text style={[styles.consentTitle, { color: colors.text }]}>{title}</Text>
-    <View style={[styles.choiceButtons, largeText && styles.choiceButtonsLarge]}>
-      <AppButton label="Cho phép" onPress={() => onChoose({ kind: 'consent', scope, enabled: true })} disabled={disabled} colors={colors} style={styles.choiceButton} />
-      <AppButton label="Rút consent" variant="secondary" onPress={() => onChoose({ kind: 'consent', scope, enabled: false })} disabled={disabled} colors={colors} style={styles.choiceButton} />
-    </View>
-  </View>;
-}
-
-function actionTitle(action: PendingAction, managing: boolean): string {
-  if (action?.kind === 'delete') return 'Xóa mục lịch sử?';
-  if (action?.kind === 'consent') return `${action.enabled ? 'Cho phép' : 'Rút'} lưu lịch sử ${action.scope === 'personal' ? 'cá nhân' : 'nhóm'}?`;
-  return managing ? 'Quản lý lưu lịch sử' : 'Xác nhận';
-}
-
-function actionLabel(action: PendingAction): string {
-  if (action?.kind === 'delete') return 'Xác nhận xóa';
-  if (action?.kind === 'consent') return action.enabled ? 'Xác nhận cho phép' : 'Xác nhận rút consent';
-  return 'Xác nhận';
-}
-
 const styles = StyleSheet.create({
   content: { gap: 18 },
-  pageHeading: { gap: 2 },
   pageTitle: { fontFamily: 'InterBold', fontSize: 30, lineHeight: 40 },
-  subtitle: { fontFamily: 'InterRegular', fontSize: 14, lineHeight: 20 },
   detailContent: { gap: 14 },
   detailBack: { alignSelf: 'flex-start', minHeight: 44 },
   detailTitle: { fontFamily: 'InterBold', fontSize: 28, lineHeight: 36 },
@@ -401,13 +384,4 @@ const styles = StyleSheet.create({
   offlineBanner: { borderRadius: 12, padding: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
   offlineBannerLarge: { flexDirection: 'column', alignItems: 'stretch' },
   offlineCopy: { flex: 1, minWidth: 0, gap: 2 },
-  manageButton: { minHeight: 52, borderRadius: 14, borderWidth: 1, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  manageText: { flex: 1, fontFamily: 'InterSemiBold', fontSize: 14, lineHeight: 20 },
-  chevron: { fontFamily: 'InterRegular', fontSize: 30, lineHeight: 32 },
-  management: { gap: 12 },
-  consentRow: { gap: 8 },
-  consentTitle: { fontFamily: 'InterSemiBold', fontSize: 14, lineHeight: 20 },
-  choiceButtons: { flexDirection: 'row', gap: 8 },
-  choiceButtonsLarge: { flexDirection: 'column' },
-  choiceButton: { flex: 1, minHeight: 48 },
 });

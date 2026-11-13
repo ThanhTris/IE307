@@ -23,23 +23,21 @@ export function NearbyPlacesSection({ result, state, renderMap, actions }: { res
   const pending = status === 'loading' || action.busy;
   const needsSettings = status === 'blocked' || status === 'location-off';
   return <View style={styles.group}>
-    <Text accessibilityRole="header" style={[styles.heading, { color: colors.text }, textStyle(700)]}>Quán có món này</Text>
-    <Text accessibilityLiveRegion="polite" style={[styles.dishName, { color: colors.text }, textStyle(600)]}>Tìm quán cho: {result.winner.name}</Text>
+    <Text accessibilityRole="header" style={[styles.heading, { color: colors.text }, textStyle(700)]}>Quán ăn gần đây</Text>
     {place ? <>
       {state?.cached ? <Text style={[styles.caption, { color: colors.muted }, textStyle(400)]}>Dữ liệu lần tải trước · chưa cập nhật thành công</Text> : null}
       <ResultMapCard place={place} places={places} resultId={result.resultId} winnerDishId={result.winner.dishId} onSelect={setSelected} renderMap={renderMap} onMaps={actions.onExternalAction ? () => external('maps', true) : undefined} busy={action.busy} />
       {places.length > 1 ? <FlatList horizontal data={places} keyExtractor={item => item.id} contentContainerStyle={styles.list} renderItem={({ item }) => <Pressable accessibilityRole="button" accessibilityLabel={`Chọn quán ${item.name}`} accessibilityState={{ selected: place.id === item.id }} onPress={() => setSelected(item.id)} style={[styles.place, { borderColor: place.id === item.id ? colors.primary : colors.line }]}><Text style={[styles.caption, { color: colors.text }, textStyle(500)]}>{item.name}</Text></Pressable>} /> : null}
-      {status !== 'ready' && status !== 'loading' ? <ToastNotice title={copy[status]} /> : null}
+      {status !== 'ready' && status !== 'loading' ? <PlacesStatus status={status} /> : null}
       {state?.fetchedAt && Number.isFinite(Date.parse(state.fetchedAt)) ? <Text style={[styles.caption, { color: colors.muted }, textStyle(400)]}>{state.cached ? 'Thông tin lần trước' : 'Cập nhật'}: {new Date(state.fetchedAt).toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh', hour12: false })}</Text> : null}
     </> : <View accessibilityLiveRegion="polite" style={styles.notice}>
       {!mapFailed ? <EmbeddedDishMap dishName={result.winner.name} onFailed={() => setMapFailed(true)} /> : null}
       {status === 'loading' ? <View accessibilityRole="progressbar" accessibilityLabel="Đang tìm quán" style={styles.group}><SkeletonBlock height={156} radius={16} colors={colors} /><SkeletonBlock width="60%" height={14} colors={colors} /></View> : null}
-      {status !== 'loading' || (state && !matched) ? <ToastNotice title={state && !matched ? 'Thông tin quán chưa khớp kết quả' : copy[status]} /> : null}
+      {state && !matched ? <ToastNotice title="Thông tin quán chưa khớp kết quả" tone="error" /> : status !== 'loading' ? <PlacesStatus status={status} withMap={!mapFailed} /> : null}
       <LinkButton label="Mở Google Maps" icon={<MaterialCommunityIcons name="google-maps" size={20} color={colors.onPrimary} />} primary colors={colors} disabled={!actions.onExternalAction || action.busy} onPress={() => external('maps')} />
       {needsSettings ? <AppButton label="Mở cài đặt vị trí" colors={colors} disabled={!actions.onOpenSettings || pending} onPress={() => { void action.run('Mở cài đặt vị trí', actions.onOpenSettings); }} /> : null}
-      {status === 'error' || status === 'offline' || (state && !matched) ? <AppButton label={status === 'error' ? 'Thử lại' : 'Thử lại tìm quán'} colors={colors} disabled={!actions.onRetryPlaces || pending} onPress={() => { void action.run('Tìm quán', actions.onRetryPlaces); }} /> : null}
     </View>}
-    {place && status !== 'ready' ? <AppButton label={status === 'error' ? 'Thử lại' : 'Thử lại tìm quán'} variant="secondary" colors={colors} disabled={!actions.onRetryPlaces || pending} onPress={() => { void action.run('Tìm quán', actions.onRetryPlaces); }} /> : null}
+    {place && status === 'error' ? <AppButton label="Thử lại" variant="secondary" colors={colors} disabled={!actions.onRetryPlaces || pending} onPress={() => { void action.run('Tìm quán', actions.onRetryPlaces); }} /> : null}
     <Text accessibilityRole="header" style={[styles.subheading, { color: colors.text }, textStyle(600)]}>Xem review món</Text>
     <View style={styles.social}>
       <LinkButton label="TikTok" icon={<Ionicons name="logo-tiktok" size={20} color={colors.text} />} colors={colors} disabled={!actions.onExternalAction || action.busy} onPress={() => external('tiktok')} style={styles.button} />
@@ -47,6 +45,15 @@ export function NearbyPlacesSection({ result, state, renderMap, actions }: { res
     </View>
     {action.message ? <ToastNotice title={action.message} tone="error" /> : null}
   </View>;
+}
+/** Places status: a failed request is a red toast, offline an amber toast, the rest (permission, nothing found) a caption. */
+function PlacesStatus({ status, withMap = false }: { status: NearbyStatus; withMap?: boolean }) {
+  const { colors } = useShellTheme(), { textStyle } = useAppFonts();
+  if (status === 'error') return <ToastNotice title={copy.error} tone="error" />;
+  if (status === 'offline') return <ToastNotice title={copy.offline} tone="warning" />;
+  // The embedded map already answers "where to eat": no caption for an unsupported list or an empty one.
+  if (withMap && (status === 'unsupported' || status === 'ready' || status === 'empty')) return null;
+  return <Text style={[styles.message, { color: colors.muted }, textStyle(400)]}>{copy[status]}</Text>;
 }
 const styles = StyleSheet.create({ group: { gap: 12 }, heading: { fontSize: 18, lineHeight: 26 }, subheading: { fontSize: 15, lineHeight: 22, marginTop: 4 }, notice: { justifyContent: 'center', gap: 12 }, dishName: { fontSize: 14, lineHeight: 22 }, message: { fontSize: 14, lineHeight: 22, textAlign: 'center' }, caption: { fontSize: 11, lineHeight: 17 }, social: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 }, button: { flexGrow: 1, flexBasis: 130 }, list: { gap: 8 }, place: { minHeight: 48, maxWidth: 240, borderWidth: 1, borderRadius: 12, padding: 12, justifyContent: 'center' } });
 

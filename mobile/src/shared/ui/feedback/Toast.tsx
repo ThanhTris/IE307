@@ -4,9 +4,17 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { radii, spacing, typography } from '../../theme/tokens';
 import { AppIcon } from '../icons/AppIcon';
 
-export type ToastTone = 'success' | 'error' | 'warning' | 'info';
-export type ToastInput = { title: string; message?: string; tone?: ToastTone; duration?: number };
-type ToastItem = Required<Omit<ToastInput, 'message'>> & { id: number; message?: string };
+/**
+ * Feedback kinds (see docs/design/FEEDBACK_TOAST_NOTIFICATION.md):
+ * - error (red): the API / server refused or could not be reached;
+ * - success (green): something was created, added, edited or deleted;
+ * - warning (amber): offline, data may be stale, or the action was blocked and needs another step;
+ * - info (blue): kept for compatibility, avoid in new code;
+ * - notification (white + bell): an event from someone else arrived while the app is open (opens the inbox).
+ */
+export type ToastTone = 'success' | 'error' | 'warning' | 'info' | 'notification';
+export type ToastInput = { title: string; message?: string; tone?: ToastTone; duration?: number; onPress?: () => void };
+type ToastItem = Required<Omit<ToastInput, 'message' | 'onPress'>> & { id: number; message?: string; onPress?: () => void };
 
 /** Each tone has its own colour pair (accent + tinted background) so the state reads at a glance. */
 export const toastPalette: Record<ToastTone, { accent: string; background: string; text: string }> = {
@@ -14,6 +22,7 @@ export const toastPalette: Record<ToastTone, { accent: string; background: strin
   error: { accent: '#DC2626', background: '#FEF2F2', text: '#7F1D1D' },
   warning: { accent: '#D97706', background: '#FFFBEB', text: '#78350F' },
   info: { accent: '#2563EB', background: '#EFF6FF', text: '#1E3A8A' },
+  notification: { accent: '#15803D', background: '#FFFFFF', text: '#1F2937' },
 };
 
 /** Guess a tone from Vietnamese copy when the caller did not pass one. */
@@ -39,7 +48,7 @@ const ROOT_HOST = 0;
 export function ToastProvider({ children }: PropsWithChildren) {
   const [items, setItems] = useState<ToastItem[]>([]);
   const show = useCallback((input: ToastInput) => {
-    const item: ToastItem = { id: ++nextId, title: input.title, message: input.message, tone: input.tone ?? toneFromText(`${input.title} ${input.message ?? ''}`), duration: input.duration ?? 3000 };
+    const item: ToastItem = { id: ++nextId, title: input.title, message: input.message, tone: input.tone ?? toneFromText(`${input.title} ${input.message ?? ''}`), duration: input.duration ?? (input.tone === 'notification' ? 5000 : 3000), onPress: input.onPress };
     // Same text already visible: don't stack duplicates.
     setItems(current => current.some(c => c.title === item.title && c.message === item.message) ? current : [...current.slice(-2), item]);
   }, []);
@@ -92,8 +101,8 @@ function ToastCard({ item, onDone }: { item: ToastItem; onDone: (id: number) => 
   }, [progress, hide, item.duration]);
   const translateY = progress.interpolate({ inputRange: [0, 1], outputRange: [-80, 0] });
   return <Animated.View style={[styles.card, { backgroundColor: palette.background, borderColor: palette.accent, opacity: progress, transform: [{ translateY }] }]}>
-    <Pressable testID={`toast-${item.tone}`} accessibilityRole="alert" accessibilityLiveRegion="polite" onPress={hide} style={styles.row}>
-      <AppIcon name={item.tone} size={22} color={palette.accent} />
+    <Pressable testID={`toast-${item.tone}`} accessibilityRole="alert" accessibilityLiveRegion="polite" onPress={() => { item.onPress?.(); hide(); }} style={styles.row}>
+      <AppIcon name={item.tone === 'notification' ? 'bell' : item.tone} size={22} color={palette.accent} />
       <View style={styles.texts}>
         <Text style={[styles.title, { color: palette.text }]}>{item.title}</Text>
         {item.message ? <Text style={[styles.message, { color: palette.text }]}>{item.message}</Text> : null}

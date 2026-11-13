@@ -78,7 +78,7 @@ export function isPreviewJoinAck(data: unknown): data is PreviewJoinAck {
   if (typeof d.joinable !== 'boolean') return false;
   if (typeof d.memberCount !== 'number' || !Number.isInteger(d.memberCount) || d.memberCount < 0 || d.memberCount > 20) return false;
   if (d.memberLimit !== 20) return false;
-  if (typeof d.dishCount !== 'number' || !Number.isInteger(d.dishCount) || d.dishCount < 10 || d.dishCount > 20) return false;
+  if (typeof d.dishCount !== 'number' || !Number.isInteger(d.dishCount) || d.dishCount < 5 || d.dishCount > 20) return false;
   if (typeof d.mealSlot !== 'string' || !['breakfast', 'lunch', 'dinner', 'snack'].includes(d.mealSlot)) return false;
   if (typeof d.roomState !== 'string') return false;
   if (d.reasonCode !== undefined && d.reasonCode !== null && typeof d.reasonCode !== 'string') return false;

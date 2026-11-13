@@ -390,33 +390,8 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
     expect(screen.queryByText('Phở bò tái nạm')).toBeNull();
   });
 
-  test('initial Places failure shows error card with retry button, and retry failure does not lock spinner', async () => {
-    let failPlaces = true;
-    const mockFetchNearbyPlaces = jest.fn().mockImplementation(async () => {
-      if (failPlaces) {
-        return { ok: false, error: { messageKey: 'NETWORK_ERROR' } };
-      }
-      return {
-        ok: true,
-        data: {
-          resultId: decidedResult.resultId,
-          winnerDishId: decidedResult.winner!.dishId,
-          status: 'ready',
-          places: [
-            {
-              id: 'p1',
-              name: 'Quán Phở Thìn 13 Lò Đúc',
-              address: '13 Lò Đúc, Hà Nội',
-              distanceM: 500,
-              latitude: 21.018,
-              longitude: 105.856,
-              attribution: null,
-            },
-          ],
-          fetchedAt: '2026-11-06T10:10:00Z',
-        },
-      };
-    });
+  test('initial Places failure shows the offline notice and one Maps button, no spinner', async () => {
+    const mockFetchNearbyPlaces = jest.fn().mockResolvedValue({ ok: false, error: { messageKey: 'NETWORK_ERROR' } });
 
     const repo = {
       getResult: jest.fn().mockResolvedValue({ ok: true, data: { capability: 'scored-v4' as const, result: decidedResult } }),
@@ -437,26 +412,11 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
       fireEvent.press(dismiss);
     }
 
-    // Initial failure must display offline error notice and retry button (not unsupported card!)
+    // Initial failure shows the offline notice and a single Maps button (no retry button).
     expect(await screen.findByText('Bạn đang ngoại tuyến')).toBeOnTheScreen();
-    const retryBtn = await screen.findByRole('button', { name: 'Thử lại tìm quán' });
-    expect(retryBtn).toBeOnTheScreen();
-
-    // Press retry while still failing
-    fireEvent.press(retryBtn);
-
-    // Wait a tick for useResultAction to release lock
-    await new Promise(r => setTimeout(r, 50));
-
-    // Must still show retry button and not get stuck in infinite spinner
-    const retryBtnAfterFail = await screen.findByRole('button', { name: 'Thử lại tìm quán' });
-    expect(retryBtnAfterFail).toBeOnTheScreen();
-
-    // Now succeed on retry
-    failPlaces = false;
-    fireEvent.press(retryBtnAfterFail);
-
-    expect(await screen.findByText('Quán Phở Thìn 13 Lò Đúc')).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Mở Google Maps' })).toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: /^Thử lại/ })).toBeNull();
+    expect(screen.queryByLabelText('Đang tìm quán')).toBeNull();
   });
 
   test('puts tied dishes on separate pedestals in server order', async () => {
@@ -851,7 +811,9 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
       // Verifies winner and Top 3 are strictly preserved in real mode even with no key
       expect(screen.getAllByText('Phở bò tái nạm').length).toBeGreaterThan(0);
       expect(screen.getByText('Cơm tấm sườn bì')).toBeTruthy();
-      expect(await screen.findByText('Chưa thể hiển thị bản đồ')).toBeTruthy();
+      // No key: the embedded map shows instead, without a stray "no map" caption under it.
+      expect(await screen.findByTestId('embedded-dish-map')).toBeTruthy();
+      expect(screen.queryByText('Chưa thể hiển thị bản đồ')).toBeNull();
     });
 
     test('DishResultEntry forwards placesConfig to LiveDishResultScreen in real mode', async () => {

@@ -156,8 +156,8 @@ export function LobbyScreen({
 
           <PreferencesCard room={room} disabled={busy || !inLobby || !onEditPreferences} onEdit={() => onEditPreferences?.(room)} colors={colors} />
 
-          {notice ? <ToastNotice title={notice.split(' · ')[0]!} message={notice.split(' · ').slice(1).join(' · ') || undefined} /> : null}
-          {eligibilityError ? <ToastNotice title="Chưa thể bắt đầu" message={errorCopy[eligibilityError as ErrorCode] ?? 'Chưa đủ món để bắt đầu. Hãy kiểm tra thiết lập phòng rồi thử lại.'} tone="warning" /> : null}
+          {notice ? <ToastNotice title={notice.split(' · ')[0]!} message={notice.split(' · ').slice(1).join(' · ') || undefined} tone={lobby.noticeTone} /> : null}
+          {eligibilityError ? <ToastNotice title="Chưa thể bắt đầu" message={errorCopy[eligibilityError as ErrorCode] ?? 'Chưa đủ món để bắt đầu. Hãy kiểm tra thiết lập phòng rồi thử lại.'} tone="error" /> : null}
         </> : null}
       </ScrollView>
 

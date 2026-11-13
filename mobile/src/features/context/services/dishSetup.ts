@@ -9,7 +9,7 @@ export type SetupDraft = {
 export type SetupRoom = { id: string; code: string; version: number; state: 'LOBBY' | 'CLOSED' };
 export type SetupStage = 'setup' | 'preferences' | 'complete' | 'closed';
 export type SetupOption = { id: string; label: string; unknown?: boolean; code?: string; linkedIds?: string[] };
-export type SetupCatalogue = { categories: SetupOption[]; cuisines: SetupOption[] };
+export type SetupCatalogue = { categories: SetupOption[]; cuisines: SetupOption[]; /** Category groups for "Ăn vặt". */ snackCategories?: SetupOption[] };
 export type SetupFriend = { id: string; label: string };
 export const emptyPreferences = (consent = false): UserPreferences => ({ cuisineIds: [], categoryIds: [], historyConsent: consent });
 export const initialSetupDraft = (at?: number): SetupDraft => ({ mealSlot: at === undefined ? 'lunch' : mealAtTime(at), dishCount: 15, timeMode: 'now', desiredAt: null, budget: null, avoidRecent: true, inviteeIds: [] });
@@ -37,7 +37,8 @@ export function changeSetupMeal(draft: SetupDraft, mealSlot: MealSlot, at: numbe
   return { ...draft, mealSlot, desiredAt: candidate };
 }
 export function setupValidation(draft: SetupDraft, now: number): string | null {
-  if (!Number.isInteger(draft.dishCount) || draft.dishCount < 10 || draft.dishCount > 20) return 'Hãy chọn số nguyên từ 10 đến 20 món.';
+  // 5–9 only comes from accepting a shortage ("Dùng N món"); the stepper itself starts at 10.
+  if (!Number.isInteger(draft.dishCount) || draft.dishCount < 5 || draft.dishCount > 20) return 'Hãy chọn số nguyên từ 10 đến 20 món.';
   if (draft.timeMode === 'scheduled' && (!draft.desiredAt || !Number.isFinite(Date.parse(draft.desiredAt)) || Date.parse(draft.desiredAt) <= now)) return 'Chọn thời gian trong tương lai để tiếp tục.';
   return null;
 }
@@ -60,7 +61,7 @@ export function parseSchedule(date: string, hour: string, minute: string): strin
 }
 export const mealOptions = [
   { id: 'breakfast', label: 'Ăn sáng', icon: 'sunrise' },
-  { id: 'lunch', label: 'Ăn trưa', icon: 'meal' },
+  { id: 'lunch', label: 'Ăn trưa', icon: 'sun' },
   { id: 'dinner', label: 'Ăn tối', icon: 'moon' },
   { id: 'snack', label: 'Ăn vặt', icon: 'snack' },
 ] as const;
@@ -87,3 +88,18 @@ export const keepTimeChangeMeal = (draft: SetupDraft): SetupDraft => (
 );
 /** Option 2: keep the meal, move the hour into that meal's window (same date when still ahead). */
 export const keepMealChangeTime = (draft: SetupDraft, at: number): SetupDraft => changeSetupMeal(draft, draft.mealSlot, at);
+
+/**
+ * The dish stepper normally offers 10..20. After accepting a shortage (5..9 dishes) the count may stay as is or go
+ * back to the normal range: stepping up from the reduced count jumps straight to 10, never 6..9 by choice.
+ */
+export function withMealChange(current: SetupDraft, patch: Partial<SetupDraft>): Partial<SetupDraft> {
+  const changesContext = (patch.mealSlot !== undefined && patch.mealSlot !== current.mealSlot)
+    || (patch.desiredAt !== undefined && patch.desiredAt !== current.desiredAt)
+    || (patch.timeMode !== undefined && patch.timeMode !== current.timeMode);
+  // A shortage count was accepted for one meal and time; another one gets the normal minimum back.
+  return changesContext && current.dishCount < 10 && patch.dishCount === undefined ? { ...patch, dishCount: 10 } : patch;
+}
+export function shortageStep(current: number, next: number): number {
+  return current < 10 && next > current && next < 10 ? 10 : next;
+}

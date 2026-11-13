@@ -2,35 +2,28 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppButton, AppIcon, SheetDialog } from '../../../shared/ui';
-
-const MINIMUM = 10;
+import { MIN_REDUCED_DISHES } from '../hooks/useDishSetupFlow';
 
 /**
- * One dialog with exactly two ways out:
- * - enough dishes for a smaller vote (≥10): take that many, or change the settings;
- * - fewer than 10 (the server's minimum): change the time, or change the meal.
+ * Not enough dishes for the chosen count. Two ways out: change the time, or go on with the dishes there are
+ * (at least 5). Below 5 only changing the time is offered.
  */
 export function SetupShortageDialog({ available, requested, onConfirmReduction, onEdit, onSchedule }: {
   available: number; requested: number; onConfirmReduction: () => void; onEdit: () => void; onSchedule?: () => void;
 }) {
   const { colors } = useShellTheme(), { textStyle } = useAppFonts();
-  const canReduce = available >= MINIMUM;
+  const canReduce = available >= MIN_REDUCED_DISHES && available < requested;
   return <SheetDialog visible title="Không đủ món" presentation="dialog" showHandle={false} showClose={false} showTitle={false} onClose={onEdit} colors={colors}>
     <View style={styles.body}>
-      <View style={[styles.badge, { backgroundColor: colors.warm }]}><AppIcon name="error" size={28} color={colors.danger} /></View>
+      <View style={[styles.badge, { backgroundColor: colors.warm }]}><AppIcon name="warning" size={28} color={colors.warning} /></View>
       <Text accessibilityRole="header" style={[styles.title, { color: colors.text }, textStyle(700)]}>Không đủ món</Text>
       <Text style={[styles.text, { color: colors.muted }, textStyle(400)]}>
         {canReduce
-          ? `Chỉ có ${available} món phù hợp, bạn đang chọn ${requested} món.`
-          : `Chỉ có ${available} món phù hợp. Cần ít nhất ${MINIMUM} món để bình chọn, hãy đổi giờ hoặc buổi ăn.`}
+          ? `Chỉ có ${available}/${requested} món phù hợp.`
+          : `Chỉ có ${available} món phù hợp, cần ít nhất ${MIN_REDUCED_DISHES} món. Hãy đổi giờ hẹn.`}
       </Text>
-      {canReduce ? <>
-        <AppButton label={`Chọn ${available} món`} onPress={onConfirmReduction} colors={colors} singleLine style={styles.button} />
-        <AppButton label="Đổi thiết lập" variant="secondary" onPress={onEdit} colors={colors} singleLine style={styles.button} />
-      </> : <>
-        {onSchedule ? <AppButton label="Đổi giờ hẹn" onPress={onSchedule} colors={colors} singleLine style={styles.button} /> : null}
-        <AppButton label="Đổi buổi ăn" variant={onSchedule ? 'secondary' : 'primary'} onPress={onEdit} colors={colors} singleLine style={styles.button} />
-      </>}
+      <AppButton label="Đổi giờ hẹn" variant={canReduce ? 'secondary' : 'primary'} onPress={onSchedule ?? onEdit} colors={colors} singleLine style={styles.button} />
+      {canReduce ? <AppButton label={`Dùng ${available} món`} onPress={onConfirmReduction} colors={colors} singleLine style={styles.button} /> : null}
     </View>
   </SheetDialog>;
 }

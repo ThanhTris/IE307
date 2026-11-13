@@ -5,7 +5,7 @@ import Svg, { Rect } from 'react-native-svg';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppButton } from '../../../shared/ui';
-import { ToastHost, ToastNotice } from '../../../shared/ui/feedback/Toast';
+import { ToastHost } from '../../../shared/ui/feedback/Toast';
 import { generateQrMatrix } from '../services/joinLinks';
 import { createJoinRoomOpenLink } from '../services/joinLinkUrl';
 
@@ -95,7 +95,6 @@ export function RoomQrModal({ visible, code, onClose, onCopyLink }: RoomQrModalP
             </Text>
           </View>
 
-          {copied ? <ToastNotice title="Đã sao chép liên kết vào phòng!" tone="success" /> : null}
 
           <View style={styles.actions}>
             <AppButton

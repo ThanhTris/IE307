@@ -398,21 +398,22 @@ describe('GM-12 — FinalRoundScreen (Vòng 2 Chọn lọc)', () => {
     expect(submitBtn.props.accessibilityState.disabled).toBe(false);
   });
 
-  test('Cap R2=max(1, floor(0.30*N)) giới hạn số lượng món loại và chặn chọn vượt cap', async () => {
+  test('Cap R2=max(1, ceil(0.30*N)) giới hạn số lượng món loại và chặn chọn vượt cap', async () => {
     const user = userEvent.setup();
-    // N=4 -> Cap = max(1, floor(1.2)) = 1
+    // N=4 -> Cap = max(1, ceil(1.2)) = 2
     await render(<FinalRoundScreen candidates={FIXTURE_CANDIDATES_N4} simulateDelayMs={0} />);
 
-    expect(screen.getByText(/Giới hạn loại: tối đa 1 món/)).toBeOnTheScreen();
+    expect(screen.getByText(/Giới hạn loại: tối đa 2 món/)).toBeOnTheScreen();
     const removeButtons = screen.getAllByRole('button', { name: /Loại món/ });
     expect(removeButtons).toHaveLength(4);
 
-    // Loại món 1 -> thành công (1/1 món)
     await user.press(removeButtons[0]!);
-    expect(screen.getByText(/Đã chọn loại: 1\/1 món/)).toBeOnTheScreen();
+    expect(screen.getByText(/Đã chọn loại: 1\/2 món/)).toBeOnTheScreen();
+    await user.press(removeButtons[1]!);
+    expect(screen.getByText(/Đã chọn loại: 2\/2 món/)).toBeOnTheScreen();
 
-    // Món 2 nút Loại bị disabled vì đã đạt cap
-    expect(removeButtons[1]!.props.accessibilityState.disabled).toBe(true);
+    // Món 3 nút Loại bị disabled vì đã đạt cap
+    expect(removeButtons[2]!.props.accessibilityState.disabled).toBe(true);
   });
 
   test('Nút Giữ tất cả đặt lại toàn bộ món về KEEP và xóa thông báo cap', async () => {

@@ -23,8 +23,8 @@ export function DishCardFace({ dish, colors }: { dish: PoolDish; colors: Palette
       ? <Image source={{ uri: dish.artwork.url }} accessibilityIgnoresInvertColors resizeMode="cover" style={styles.image} />
       : <View testID="dish-image-fallback" style={[styles.image, styles.fallback, { backgroundColor: colors.warm }]}><ChoiceIconView icon={{ food: 'silverware-fork-knife' }} size={56} color={colors.primary} /></View>}
     <View style={styles.info}>
-      <Text numberOfLines={2} style={[styles.name, { color: colors.text }]}>{dish.name}</Text>
-      {dish.description ? <Text numberOfLines={2} style={[styles.meta, { color: colors.muted }]}>{dish.description}</Text> : null}
+      <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={[styles.name, { color: colors.text }]}>{dish.name}</Text>
+      {dish.description ? <Text numberOfLines={2} textBreakStrategy="balanced" style={[styles.meta, { color: colors.muted }]}>{dish.description}</Text> : null}
       {facts.length ? <View style={styles.facts}>
         {facts.map(fact => <View key={fact.key} style={[styles.fact, { backgroundColor: colors.warm }]}>
           {fact.icon ? <ChoiceIconView icon={fact.icon} size={14} color={colors.primary} /> : null}
@@ -134,13 +134,14 @@ export function SwipeDishCard({ dish, currentVote, disabled, onVote, enterFlip, 
 
 const styles = StyleSheet.create({
   card: { borderWidth: 1, borderRadius: 24, overflow: 'hidden' },
-  image: { width: '100%', aspectRatio: 4 / 3 },
+  image: { width: '100%', aspectRatio: 16 / 10 },
   fallback: { alignItems: 'center', justifyContent: 'center' },
-  // Every card is the same height, so the layout never jumps between short and long dishes.
-  info: { padding: 16, gap: 4, height: 188, overflow: 'hidden' },
+  // Every card is the same height, so the layout never jumps between short and long dishes. Worst case: name (1 line), description (2),
+  // up to three rows of chips and the price all fit, so nothing is cut off.
+  info: { padding: 16, gap: 4, height: 236, overflow: 'hidden' },
   name: { fontFamily: 'InterBold', fontSize: 20, lineHeight: 28 },
   meta: { fontFamily: 'InterRegular', fontSize: 13, lineHeight: 18 },
-  facts: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 6, maxHeight: 56, overflow: 'hidden' },
+  facts: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 6, maxHeight: 84, overflow: 'hidden' },
   fact: { flexDirection: 'row', alignItems: 'center', gap: 4, borderRadius: 999, paddingHorizontal: 10, paddingVertical: 4 },
   factText: { fontFamily: 'InterMedium', fontSize: 12, lineHeight: 16 },
   price: { fontFamily: 'InterSemiBold', fontSize: 15, lineHeight: 22, marginTop: 4 },

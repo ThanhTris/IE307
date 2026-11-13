@@ -24,7 +24,7 @@ export function ContinueSessionScreen({ repository, receipt, userId, enabled = t
     {isInitializing ? <StatusNotice title="Đang khôi phục phiên…" colors={colors} /> : null}
     {receipt && !isInitializing && (!enabled || !userId) ? <StatusNotice title="Cần khôi phục danh tính" message="Về trang chủ và khôi phục phiên trước khi kiểm tra phòng đã lưu." colors={colors} /> : null}
     {room.loading ? <StatusNotice title="Đang kiểm tra phòng…" colors={colors} /> : null}
-    {room.error ? <StatusNotice title={room.unavailable ? 'Không thể tiếp tục phòng này' : 'Chưa kiểm tra được phòng'} message={errorCopy[room.error]} actionLabel={room.unavailable ? undefined : 'Kiểm tra lại phòng'} onAction={room.unavailable ? undefined : room.retry} tone="warning" colors={colors} /> : null}
+    {room.error ? <StatusNotice title={room.unavailable ? 'Không thể tiếp tục phòng này' : 'Chưa kiểm tra được phòng'} message={errorCopy[room.error]} actionLabel={room.unavailable ? undefined : 'Kiểm tra lại phòng'} onAction={room.unavailable ? undefined : room.retry} tone={room.unavailable ? undefined : 'error'} colors={colors} /> : null}
     {room.data && !room.active ? <StatusNotice title={room.data.state === 'EXPIRED' ? 'Phòng đã hết hạn' : 'Phòng đã kết thúc'} message="Về trang chủ để bắt đầu một phòng khác." colors={colors} /> : null}
     {room.active && room.data ? <>
       <View style={[styles.card, { backgroundColor: dark ? colors.surface : colors.onPrimary, borderColor: colors.line }]}>

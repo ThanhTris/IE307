@@ -79,6 +79,7 @@ export function AppButton({
     >
       {icon && !loading ? <AppIcon testID="app-button-icon" name={icon} size={iconSize} color={iconTintColor ?? foreground} /> : null}
       <Text
+        textBreakStrategy="balanced"
         {...(singleLine ? { numberOfLines: 1, adjustsFontSizeToFit: true, minimumFontScale: 0.8 } : null)}
         style={[
           styles.buttonText,

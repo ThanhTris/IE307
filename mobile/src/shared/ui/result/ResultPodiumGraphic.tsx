@@ -52,7 +52,7 @@ export function ResultPodiumGraphic({ dishes, colors = lightColors }: ComponentT
                 <View testID={`podium-${item.id}`} style={[styles.column, { width: columnWidth }]}>
                   <ResultDishArtwork source={item.imageSource} uri={item.imageUri} imageScale={item.imageScale} label={item.name} size={imageSize} winner={item.winner} colors={colors} />
                   <View testID={`podium-name-${item.id}`} style={[styles.textSlot, { minHeight: heights.name }]}>
-                    <Text onLayout={event => measure('name', event.nativeEvent.layout.height)} style={[styles.name, { color: colors.text }]}>{item.name}</Text>
+                    <Text textBreakStrategy="balanced" onLayout={event => measure('name', event.nativeEvent.layout.height)} style={[styles.name, { color: colors.text }]}>{item.name}</Text>
                   </View>
                   {hasAttribution ? <View style={[styles.textSlot, { minHeight: heights.attribution }]}>
                     {item.imageAttribution ? <Text onLayout={event => measure('attribution', event.nativeEvent.layout.height)} style={[styles.attribution, { color: colors.muted }]}>{item.imageAttribution}</Text> : null}

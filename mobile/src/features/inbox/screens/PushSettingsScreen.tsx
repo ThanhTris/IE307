@@ -20,6 +20,8 @@ export function PushSettingsScreen({ repository, onHome, onInbox }: {
   const [permission, setPermission] = useState<'granted' | 'denied' | 'unknown'>('unknown');
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
+  // On/off saved: green; permission refused or needs a dev build: amber; failure: red.
+  const [messageTone, setMessageTone] = useState<'success' | 'warning' | 'error'>('error');
   const [qaEventId, setQaEventId] = useState('');
   const [qaBusy, setQaBusy] = useState(false);
   const [qaMessage, setQaMessage] = useState('');
@@ -60,6 +62,7 @@ export function PushSettingsScreen({ repository, onHome, onInbox }: {
     try {
       const result = await service.register();
       await refreshPermission();
+      setMessageTone(result.status === 'registered' ? 'success' : result.status === 'denied' || result.status === 'provisional' || result.status === 'unsupported' ? 'warning' : 'error');
       setMessage(result.status === 'registered'
         ? 'Thông báo đã được bật trên thiết bị này.'
         : result.status === 'denied' || result.status === 'provisional'
@@ -93,14 +96,14 @@ export function PushSettingsScreen({ repository, onHome, onInbox }: {
         });
         const result = await service.unregister(deviceId);
         if (!result?.ok) {
-          setMessage('Máy chủ chưa xác nhận tắt thông báo. Hãy thử lại khi có mạng.');
+          setMessage('Máy chủ chưa xác nhận tắt thông báo. Hãy thử lại khi có mạng.'); setMessageTone('error');
           return;
         }
       }
       await clearPushRegistrationSecrets();
-      setMessage('Đã hủy đăng ký push cho thiết bị này. Hộp thư vẫn hoạt động.');
+      setMessage('Đã hủy đăng ký push cho thiết bị này. Hộp thư vẫn hoạt động.'); setMessageTone('success');
     } catch {
-      setMessage('Chưa hủy đăng ký được. Hộp thư vẫn dùng được; hãy thử lại khi có mạng.');
+      setMessage('Chưa hủy đăng ký được. Hộp thư vẫn dùng được; hãy thử lại khi có mạng.'); setMessageTone('error');
     } finally {
       setBusy(false);
     }
@@ -201,7 +204,7 @@ export function PushSettingsScreen({ repository, onHome, onInbox }: {
           </View> : null}
           <AppButton label="Mở Hộp thư" variant="quiet" onPress={onInbox} colors={colors} />
         </View>
-        {message ? <ToastNotice title="Trạng thái thông báo" message={message} tone={message.startsWith('Chưa') ? 'error' : 'success'} /> : null}
+        {message ? <ToastNotice title={messageTone === 'success' ? 'Đã lưu cài đặt' : messageTone === 'warning' ? 'Chưa bật thông báo' : 'Chưa lưu được'} message={message} tone={messageTone} /> : null}
       </ScrollView>
     </SafeAreaView>
   );

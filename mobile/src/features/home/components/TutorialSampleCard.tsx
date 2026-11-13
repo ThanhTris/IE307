@@ -6,10 +6,10 @@ import { useTutorialCardMotion } from '../hooks/useTutorialCardMotion';
 
 // Explicit illustrations transcribed from T03–T06, never sent to a room/catalogue.
 const examples = [
-  { name: 'Phở bò tái nạm', description: 'Món nước · Việt Nam', price: '45.000–65.000đ / phần' },
-  { name: 'Cơm tấm sườn', description: 'Cơm · Việt Nam', price: '40.000–60.000đ / phần' },
-  { name: 'Bún bò Huế', description: 'Món nước · Việt Nam', price: '40.000–65.000đ / phần' },
-  { name: 'Cơm tấm sườn', description: 'Cơm · Việt Nam', price: '40.000–60.000đ / phần' },
+  { name: 'Phở bò tái nạm', description: 'Món nước · Việt Nam', price: '45–65K/phần' },
+  { name: 'Cơm tấm sườn', description: 'Cơm · Việt Nam', price: '40–60K/phần' },
+  { name: 'Bún bò Huế', description: 'Món nước · Việt Nam', price: '40–65K/phần' },
+  { name: 'Cơm tấm sườn', description: 'Cơm · Việt Nam', price: '40–60K/phần' },
 ];
 export function TutorialSampleCard({ step, vote, onVote }: { step: number; vote?: VoteValue; onVote: (value: VoteValue) => void }) {
   const { colors } = useShellTheme(), { textStyle } = useAppFonts();

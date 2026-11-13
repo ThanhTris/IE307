@@ -102,7 +102,8 @@ describe('PR157 reviewer contract regression', () => {
     await render(<LiveDishResultScreen {...props} repository={repo(read, { fetchNearbyPlaces: fetchPlaces })} />);
     await dismissCelebration();
     expect(screen.getByText(/Không tải được danh sách quán|Bạn đang ngoại tuyến/)).toBeOnTheScreen();
-    expect(screen.getByRole('button', { name: /^Thử lại( tìm quán)?$/ })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Mở Google Maps' })).toBeEnabled();
+    expect(screen.queryByRole('button', { name: /^Thử lại/ })).toBeNull();
     expect(screen.getAllByText(dish.name).length).toBeGreaterThan(0);
   });
   test('does not leave Places loading forever after failed retry', async () => {
@@ -112,9 +113,8 @@ describe('PR157 reviewer contract regression', () => {
       .mockResolvedValue({ ok: false, error: { messageKey: 'NETWORK_ERROR' } });
     await render(<LiveDishResultScreen {...props} repository={repo(read, { fetchNearbyPlaces: fetchPlaces })} />);
     await dismissCelebration();
-    await fireEvent.press(screen.getByRole('button', { name: 'Thử lại' }));
     expect(screen.queryByLabelText('Đang tìm quán')).toBeNull();
-    expect(screen.getByRole('button', { name: /^Thử lại( tìm quán)?$/ })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Mở Google Maps' })).toBeEnabled();
   });
   test('honors a forced access rejection rather than keeping an authorized result in cache', async () => {
     const rpc = jest.fn().mockResolvedValueOnce({ ok: true, data: clone() })

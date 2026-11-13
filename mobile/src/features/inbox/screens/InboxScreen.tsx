@@ -8,7 +8,7 @@ import { errorMessage } from '../../friends/screens/FriendsScreen';
 import { createDurableRequestId } from '../../rooms/services/roomRepository';
 import type { InboxRepository } from '../services/inboxRepository';
 import { findInboxEventById, acceptedRoomPath, roomDestinationPath } from '../services/notificationInboxResolver';
-import { ToastNotice, toneFromText } from '../../../shared/ui/feedback/Toast';
+import { ToastNotice } from '../../../shared/ui/feedback/Toast';
 
 type Props = {
   repository: InboxRepository;
@@ -316,7 +316,7 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
         {group.items.map((item, index) => renderInboxItem(item, index === group.items.length - 1))}
       </View>) : null}
       {!loading && !error && cursor ? <AppButton label="Tải thông báo cũ hơn" variant="secondary" onPress={() => { void load(true); }} disabled={loadingMore || busy} loading={loadingMore} colors={colors} /> : null}
-      {displayedMessage ? <ToastNotice title="Thông báo từ máy chủ" message={displayedMessage} tone={toneFromText(displayedMessage)} /> : null}
+      {displayedMessage ? <ToastNotice title="Chưa thực hiện được" message={displayedMessage} tone="error" /> : null}
       {openEventId && notificationRetry ? <AppButton label="Thử lại tải thông báo" variant="secondary" onPress={() => setNotificationRetryRevision(value => value + 1)} disabled={notificationLoading || busy} loading={notificationLoading} colors={colors} /> : null}
     </ApiFeatureFrame>
   );

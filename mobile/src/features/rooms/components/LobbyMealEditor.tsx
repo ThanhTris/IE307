@@ -5,13 +5,14 @@ import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppButton, DishCount, SheetDialog } from '../../../shared/ui';
 import { useToast } from '../../../shared/ui/feedback/Toast';
 import { ScheduleSheet } from '../../context/components/ScheduleSheet';
+import { SetupShortageDialog } from '../../context/components/SetupShortageDialog';
 import { SetupChoice } from '../../context/components/SetupChoice';
 import { SetupTimeMode } from '../../context/components/SetupTimeMode';
 import { useMealTimeGuard } from '../../context/hooks/useMealTimeGuard';
 import { LobbyMealEditorSkeleton } from './LobbyMealEditorSkeleton';
 import type { DishSetupGateway, SetupIntent } from '../../context/services/dishSetupGateway';
 import {
-  budgetOptions, defaultScheduledTime, mealOptions, setupValidation, switchToNow,
+  budgetOptions, defaultScheduledTime, mealOptions, setupValidation, shortageStep, switchToNow,
   type SetupDraft, type SetupRoom,
 } from '../../context/services/dishSetup';
 import { createDurableRequestId } from '../services/roomRepository';
@@ -19,7 +20,7 @@ import { createDurableRequestId } from '../services/roomRepository';
 export type MealField = 'meal' | 'time' | 'count' | 'budget';
 
 const titles: Record<MealField, string> = {
-  meal: 'Chọn buổi ăn', time: 'Thời gian ăn', count: 'Số món để chọn · 10–20', budget: 'Ngân sách mỗi người',
+  meal: 'Chọn buổi ăn', time: 'Thời gian ăn', count: 'Số món để chọn', budget: 'Ngân sách mỗi người',
 };
 
 /**
@@ -35,6 +36,8 @@ export function LobbyMealEditor({ field, gateway, onClose, onSaved, now = Date.n
   // Same request id for the same change so a lost reply is retried, not duplicated.
   const pending = useRef<{ key: string; requestId: string } | null>(null);
   const lock = useRef(false);
+  // Not enough dishes for this change: the same two choices as setup (change the time, or use the dishes there are).
+  const [shortage, setShortage] = useState<{ available: number; requested: number; next: SetupDraft }>();
 
   useEffect(() => {
     if (!field) return;
@@ -59,7 +62,7 @@ export function LobbyMealEditor({ field, gateway, onClose, onSaved, now = Date.n
     try {
       const reply = await gateway.write(intent);
       if (reply.ok) { pending.current = null; toast?.show({ title: 'Đã cập nhật bữa ăn', tone: 'success' }); onSaved(); onClose(); return; }
-      if (reply.code === 'SHORTAGE') toast?.show({ title: 'Không đủ món', message: (reply.available ?? 0) >= 10 ? `Chỉ có ${reply.available} món phù hợp. Hãy chọn tối đa ${reply.available} món.` : `Chỉ có ${reply.available ?? 0} món phù hợp. Hãy đổi giờ hoặc buổi ăn.`, tone: 'error' });
+      if (reply.code === 'SHORTAGE') setShortage({ available: reply.available ?? 0, requested: next.dishCount, next });
       else if (reply.code === 'CLOSED') { toast?.show({ title: 'Phòng đã đóng', tone: 'error' }); onClose(); }
       else if (reply.code === 'STALE') { toast?.show({ title: 'Phòng vừa thay đổi', message: 'Đang tải lại, hãy chọn lại.', tone: 'warning' }); onSaved(); onClose(); }
       else toast?.show({ title: 'Chưa lưu được', message: 'Hãy thử lại.', tone: 'error' });
@@ -78,12 +81,16 @@ export function LobbyMealEditor({ field, gateway, onClose, onSaved, now = Date.n
       {draft && field === 'time' ? <SetupTimeMode scheduled={draft.timeMode === 'scheduled'} disabled={busy} onNow={() => { void save(switchToNow(draft, now())); }}
         onSchedule={() => setSchedule(draft.timeMode === 'scheduled' && draft.desiredAt && Number.isFinite(Date.parse(draft.desiredAt)) ? draft.desiredAt : defaultScheduledTime(now()))} /> : null}
       {draft && field === 'count' ? <>
-        <DishCount value={count} onChange={setCount} disabled={busy} colors={colors} layout="inline" />
+        <DishCount value={count} min={Math.min(10, count)} onChange={next => setCount(current => shortageStep(current, next))} disabled={busy} colors={colors} layout="inline" />
         <AppButton label="Lưu" loading={busy} disabled={busy || count === draft.dishCount} onPress={() => { void save({ ...draft, dishCount: count }); }} colors={colors} textStyle={textStyle(600)} />
       </> : null}
       {draft && field === 'time' ? <Text style={[styles.hint, { color: colors.muted }, textStyle(400)]}>Chọn Hẹn giờ để đặt ngày và giờ ăn.</Text> : null}
     </SheetDialog>
     {dialog}
+    {shortage ? <SetupShortageDialog available={shortage.available} requested={shortage.requested}
+      onEdit={() => setShortage(undefined)}
+      onSchedule={() => { const base = shortage.next; setShortage(undefined); setSchedule(base.timeMode === 'scheduled' && base.desiredAt && Number.isFinite(Date.parse(base.desiredAt)) ? base.desiredAt : defaultScheduledTime(now())); }}
+      onConfirmReduction={() => { const base = shortage.next; setShortage(undefined); setCount(shortage.available); void save({ ...base, dishCount: shortage.available }); }} /> : null}
     {schedule && draft ? <ScheduleSheet initial={schedule} now={now} onClose={() => { setSchedule(undefined); onClose(); }}
       onConfirm={desiredAt => { setSchedule(undefined); guard({ ...draft, timeMode: 'scheduled', desiredAt }); }} /> : null}
   </>;

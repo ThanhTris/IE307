@@ -63,7 +63,7 @@ export interface PoolDish {
   description?: string | null;
   cuisineIds: string[];
   categoryIds: string[];
-  origin?: 'north' | 'central' | 'south' | 'unknown' | 'not_applicable';
+  origin?: 'north' | 'central' | 'south' | 'west' | 'unknown' | 'not_applicable' | null;
   temperature?: 'hot' | 'warm' | 'cold' | 'ambient' | 'unknown' | null;
   flavor?: FlavorProfile | null;
   artwork?: DishArtwork | null;

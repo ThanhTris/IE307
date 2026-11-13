@@ -355,9 +355,10 @@ describe('GM-30 Figma Parity & Native Linking Component Tests', () => {
       // Decided winner remains intact
       expect(await screen.findByText('Phở bò tái nạm')).toBeOnTheScreen();
 
-      // Error notice shown for places, with retry option
+      // Error notice shown for places, with a single Maps button
       expect(screen.getByText('Không tải được danh sách quán')).toBeOnTheScreen();
-      expect(screen.getByRole('button', { name: 'Thử lại' })).toBeOnTheScreen();
+      expect(screen.getByRole('button', { name: 'Mở Google Maps' })).toBeOnTheScreen();
+      expect(screen.queryByRole('button', { name: /^Thử lại/ })).toBeNull();
 
       // Winner still displayed prominently
       expect(screen.getByText('Phở bò tái nạm')).toBeOnTheScreen();

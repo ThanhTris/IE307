@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { AppState } from 'react-native';
 import { useCallback, useEffect, useMemo, useRef, useState, type PropsWithChildren } from 'react';
 import { InboxBadgeContext } from '../shared/lib/inboxBadge';
@@ -33,7 +34,7 @@ export function InboxBadgeProvider({ children }: PropsWithChildren) {
     if (!result.ok) return;
     if (friendsSeen.current && !quiet) {
       for (const friend of result.data) {
-        if (!friendsSeen.current.has(friend.friendUserId)) toastRef.current?.show({ title: 'Kết bạn thành công', message: `${friend.displayName} đã chấp nhận lời mời của bạn.`, tone: 'success' });
+        if (!friendsSeen.current.has(friend.friendUserId)) toastRef.current?.show({ title: 'Kết bạn thành công', message: `${friend.displayName} đã chấp nhận lời mời của bạn.`, tone: 'notification', onPress: () => router.push('/friends') });
       }
     }
     friendsSeen.current = new Map(result.data.map(friend => [friend.friendUserId, friend.displayName]));
@@ -51,7 +52,7 @@ export function InboxBadgeProvider({ children }: PropsWithChildren) {
         if (seen.current) {
           for (const item of fresh) {
             if (seen.current.has(item.eventId)) continue;
-            toastRef.current?.show({ title: item.title, message: item.body, tone: 'info' });
+            toastRef.current?.show({ title: item.title, message: item.body, tone: 'notification', onPress: () => router.push('/inbox') });
           }
         }
         seen.current = new Set(result.data.items.map(item => item.eventId));

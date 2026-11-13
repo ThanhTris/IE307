@@ -171,10 +171,10 @@ describe('GM-26 Figma UI Parity Suite (Issue #87)', () => {
 
   // Node 330:3073 — 09 · Vòng 2 / Pool còn lại / Giới hạn loại
   describe('Node 330:3073 — Vòng 2 Candidate Pool & Giới hạn loại (Cap 30%)', () => {
-    it('displays survivor candidates and enforces cap: max(1, floor(0.30 * N))', async () => {
+    it('displays survivor candidates and enforces cap: max(1, ceil(0.30 * N))', async () => {
       const user = userEvent.setup();
 
-      // N = 4 candidates -> cap = max(1, floor(1.2)) = 1
+      // N = 4 candidates -> cap = max(1, ceil(1.2)) = 2
       await render(
         <FinalRoundScreen
           candidates={FIXTURE_CANDIDATES_N4}
@@ -184,24 +184,24 @@ describe('GM-26 Figma UI Parity Suite (Issue #87)', () => {
       );
 
       expect(screen.getByText(/VÒNG 2 · CHỌN LỌC/i)).toBeTruthy();
-      expect(screen.getByText(/Bạn được loại tối đa 1 món/i)).toBeTruthy();
+      expect(screen.getByText(/Bạn được loại tối đa 2 món/i)).toBeTruthy();
 
       // All start at KEEP
       const removeButtons = screen.getAllByRole('button', { name: /Loại món/ });
       expect(removeButtons.length).toBe(4);
 
-      // Select REMOVE on candidate 1
+      // Select REMOVE on candidates 1 and 2
       await user.press(removeButtons[0]!);
+      await user.press(removeButtons[1]!);
 
-      // Candidate 1 status updates to ✕ ĐÃ LOẠI
+      // Both statuses update to ✕ ĐÃ LOẠI
       await waitFor(() => {
-        expect(screen.getByText('✕ ĐÃ LOẠI')).toBeTruthy();
+        expect(screen.getAllByText('✕ ĐÃ LOẠI')).toHaveLength(2);
       });
 
-      // Now at cap (1/1). Removing additional candidates is disabled
+      // Now at cap (2/2). Removing additional candidates is disabled
       await waitFor(() => {
-        expect(screen.getByText(/Đã chọn loại: 1\/1 món/i)).toBeTruthy();
-        expect(removeButtons[1]!.props.accessibilityState?.disabled).toBe(true);
+        expect(screen.getByText(/Đã chọn loại: 2\/2 món/i)).toBeTruthy();
         expect(removeButtons[2]!.props.accessibilityState?.disabled).toBe(true);
         expect(removeButtons[3]!.props.accessibilityState?.disabled).toBe(true);
       });

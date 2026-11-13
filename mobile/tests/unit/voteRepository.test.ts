@@ -51,29 +51,22 @@ describe('GM-26 — Vote Repository Unit Suite (Issue #87)', () => {
     });
   });
 
-  describe('Round 2 Elimination Cap: cap = max(1, floor(0.30 * N))', () => {
-    it('enforces cap = 1 for N = 1 (Node 638:9369 special case)', () => {
-      expect(getRoundTwoEliminationCap(1)).toBe(1);
+  describe('Round 2 Elimination Cap: cap = max(1, ceil(0.30 * N)) (ADR-023)', () => {
+    it('enforces cap = 1 for N = 1..3', () => {
+      for (const n of [1, 2, 3]) expect(getRoundTwoEliminationCap(n)).toBe(1);
     });
 
-    it('enforces cap = 1 for N = 2..6', () => {
-      expect(getRoundTwoEliminationCap(2)).toBe(1);
-      expect(getRoundTwoEliminationCap(3)).toBe(1);
-      expect(getRoundTwoEliminationCap(4)).toBe(1);
-      expect(getRoundTwoEliminationCap(5)).toBe(1);
-      expect(getRoundTwoEliminationCap(6)).toBe(1);
+    it('enforces cap = 2 for N = 4..6 (5 dishes already allow 2 removals)', () => {
+      for (const n of [4, 5, 6]) expect(getRoundTwoEliminationCap(n)).toBe(2);
     });
 
-    it('enforces cap = 2 for N = 7..9', () => {
-      expect(getRoundTwoEliminationCap(7)).toBe(2);
-      expect(getRoundTwoEliminationCap(8)).toBe(2);
-      expect(getRoundTwoEliminationCap(9)).toBe(2);
+    it('enforces cap = 3 for N = 7..10', () => {
+      for (const n of [7, 8, 9, 10]) expect(getRoundTwoEliminationCap(n)).toBe(3);
     });
 
-    it('enforces cap = 3 for N = 10..13', () => {
-      expect(getRoundTwoEliminationCap(10)).toBe(3);
-      expect(getRoundTwoEliminationCap(12)).toBe(3);
-      expect(getRoundTwoEliminationCap(13)).toBe(3);
+    it('grows with the pool up to 20 dishes without float rounding errors', () => {
+      expect([11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map(getRoundTwoEliminationCap)).toEqual([4, 4, 4, 5, 5, 5, 6, 6, 6, 6]);
+      for (let n = 1; n <= 20; n++) expect(getRoundTwoEliminationCap(n)).toBe(Math.max(1, Math.ceil(Math.round(0.3 * n * 1e6) / 1e6)));
     });
 
     it('returns 0 for non-positive candidate counts', () => {
