@@ -8,12 +8,15 @@ import Index from '../../src/app/index';
 import Welcome from '../../src/app/welcome';
 
 let mockSession: RoomRepositoryContextValue;
+let mockOnboarded = true;
+jest.mock('../../src/features/permissions/services/permissionsOnboarding', () => ({ isPermissionsOnboarded: async () => mockOnboarded, markPermissionsOnboarded: async () => undefined }));
 jest.mock('../../src/bootstrap/RoomRepositoryProvider', () => ({ useRoomRepository: () => mockSession }));
 
-const routes = { _layout: () => <Stack screenOptions={{ headerShown: false }} />, index: Index, welcome: Welcome };
+const routes = { _layout: () => <Stack screenOptions={{ headerShown: false }} />, index: Index, welcome: Welcome, 'welcome-permissions': () => <Text>Cho phép để dùng đầy đủ</Text> };
 const user = { id: 'gm09-synthetic-user', displayName: 'Minh', isGuest: true, createdAt: '2026-10-31T00:00:00Z' };
 
 beforeEach(() => {
+  mockOnboarded = true;
   mockSession = {
     repository: createMockApiClient({ mode: 'default', delayMs: 0 }) as unknown as RoomRepositoryContextValue['repository'],
     status: 'empty', issue: 'no-session', user: null, mode: 'real', isInitializing: false,
@@ -80,4 +83,12 @@ test.each([
   await fireEvent.press(screen.getByRole('button', { name: label }));
   await waitFor(() => expect(screen).toHavePathname(path));
   expect(mockSession.ensureSession).not.toHaveBeenCalled();
+});
+
+test('the first sign-in on a phone goes to the permissions screen once, before Home', async () => {
+  mockOnboarded = false;
+  mockSession = { ...mockSession, status: 'active', issue: 'none', user };
+  await renderRouter(routes, { initialUrl: '/' });
+  await waitFor(() => expect(screen).toHavePathname('/welcome-permissions'));
+  expect(await screen.findByText('Cho phép để dùng đầy đủ')).toBeOnTheScreen();
 });

@@ -8,7 +8,7 @@ import { DishSetupFrame } from '../../context/components/DishSetupFrame';
 import { ChoiceGrid } from '../../context/components/ChoiceGrid';
 import { SetupChoice } from '../../context/components/SetupChoice';
 import { emptyPreferences, type SetupCatalogue } from '../../context/services/dishSetup';
-import { fattyChoice, flavorChoices, flavorSelected, isAnything, optionSelected, toggleFlavor, togglePreference } from '../services/dishPreferences';
+import { flavorChoices, flavorSelected, isAnything, optionSelected, toggleFlavor, togglePreference } from '../services/dishPreferences';
 import { categoriesForMeal } from '../../context/services/dishSetupCatalogue';
 import { preferenceAssets } from '../components/preferenceAssets';
 // import { PreferenceAdvancedPanel } from '../components/PreferenceAdvancedPanel';
@@ -30,10 +30,7 @@ export function DishPreferencesScreen({ preferences, catalogue, mealSlot, onChan
       {heading(key === 'categories' ? 'Loại món' : 'Ẩm thực')}
       {!options.length ? <StatusNotice title="Chưa có lựa chọn được bàn giao" message="Không tự thêm nhãn hoặc ID chưa có dữ liệu." colors={colors} /> : <ChoiceGrid columns={key === 'categories' ? columns : regionColumns}>{tile => options.map(option => <SetupChoice key={option.id} width={tile} label={option.unknown ? `${option.label} · Chưa rõ` : option.label} columns={columns} stacked icon={preferenceAssets[option.code ?? '']} selected={optionSelected(preferences[key === 'categories' ? 'categoryIds' : 'cuisineIds'], option)} disabled={busy || option.unknown} onPress={() => onChange(togglePreference(preferences, key === 'categories' ? 'categoryIds' : 'cuisineIds', option))} />)}</ChoiceGrid>}
     </View>; })}
-    {heading('Hương vị')}<ChoiceGrid columns={columns}>{tile => <>
-      {flavorChoices.map(choice => <SetupChoice key={choice.id} width={tile} label={choice.label} columns={columns} stacked icon={preferenceAssets[choice.id]} selected={flavorSelected(preferences, choice)} disabled={busy} onPress={() => onChange(toggleFlavor(preferences, choice))} />)}
-      <SetupChoice width={tile} label={fattyChoice.label} columns={columns} stacked icon={preferenceAssets.fatty} selected={preferences.categoryIds.includes(fattyChoice.id)} disabled={busy} onPress={() => onChange(togglePreference(preferences, 'categoryIds', fattyChoice))} />
-    </>}</ChoiceGrid>
+    {heading('Hương vị')}<ChoiceGrid columns={columns}>{tile => flavorChoices.map(choice => <SetupChoice key={choice.id} width={tile} label={choice.label} columns={columns} stacked icon={preferenceAssets[choice.id]} selected={flavorSelected(preferences, choice)} disabled={busy} onPress={() => onChange(toggleFlavor(preferences, choice))} />)}</ChoiceGrid>
     {/* Advanced options are not built yet. Re-enable together; history consent belongs above the advanced panel.
     <SetupChoice label="Cho phép lưu lịch sử cá nhân cho tài khoản này" checkbox columns={1} selected={preferences.historyConsent} disabled={busy} onPress={() => onChange({ ...preferences, historyConsent: !preferences.historyConsent })} />
     <PreferenceAdvancedPanel value={preferences.temperature} flavor={preferences.flavor} disabled={busy} onChange={temperature => onChange({ ...preferences, temperature })} onFlavorChange={flavor => onChange({ ...preferences, flavor })} />

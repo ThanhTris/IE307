@@ -2,7 +2,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 set local search_path = pg_catalog, public, extensions;
-select extensions.plan(16);
+select extensions.plan(15);
 
 select extensions.ok(exists(
   select 1 from public.schema_versions where schema_version = '0.26.0' and upstream_revision = 'ADR-024/0050_preference_ranking'
@@ -24,7 +24,6 @@ select extensions.is(dish_v4_private.preference_match(
 select extensions.is(dish_v4_private.preference_match('{"flavor":{"salty":{"present":true,"intensity":"low"}}}', '{"flavor":{"salty":{"present":true,"intensity":"low"}}}'), 1, 'Thanh đạm matches low salt');
 select extensions.is(dish_v4_private.preference_match('{"flavor":{"salty":{"present":true,"intensity":"high"}}}', '{"flavor":{"salty":{"present":true,"intensity":"low"}}}'), 0, 'Thanh đạm does not match high salt');
 select extensions.is(dish_v4_private.preference_match('{"flavor":{"salty":{"present":true,"intensity":"medium"}}}', '{"flavor":{"salty":{"present":true,"intensity":"high"}}}'), 1, 'Mặn / Đậm đà matches medium or high salt');
-select extensions.is(dish_v4_private.preference_match('{"categoryIds":["86089932-3503-5934-a401-60374d76a61d"]}', '{"categoryIds":["86089932-3503-5934-a401-60374d76a61d"]}'), 1, 'Béo / Ngậy tag matches once, not as a group too');
 
 -- ranked_pool: preferred dishes are drawn, count and meal kept, seeded order kept in the output
 with catalogue(cards) as (select '[

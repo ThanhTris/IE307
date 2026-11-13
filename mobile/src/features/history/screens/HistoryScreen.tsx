@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { Pressable, StyleSheet, Switch, Text, useWindowDimensions, View } from 'react-native';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppButton, AppIcon, LoadingState, SheetDialog, StatusNotice, ApiFeatureFrame } from '../../../shared/ui';
 import { errorMessage } from '../../friends/screens/FriendsScreen';
 import type { CanonicalHistoryItem, HistoryRow } from '../services/historyTypes';
 import { historyIdOf, historyTitle, type HistoryRepository } from '../services/historyRepository';
-import { ToastNotice } from '../../../shared/ui/feedback/Toast';
+import { ToastNotice, useToast } from '../../../shared/ui/feedback/Toast';
 import { podiumOrder } from '../../result/services/resultPresentation';
 
 const HISTORY_LOAD_TIMEOUT_MS = 15_000;
@@ -38,6 +38,10 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<{ text: string; tone: 'success' | 'error' } | null>(null);
   const lock = useRef(false);
+  const toast = useToast();
+  // The account's "keep my meal history" choice; undefined until read (or when it cannot be read).
+  const [consent, setConsent] = useState<boolean | undefined>();
+  const [consentBusy, setConsentBusy] = useState(false);
   const selectedHistory = items.find((item): item is CanonicalHistoryItem => 'historyId' in item && item.historyId === selectedHistoryId);
   const visibleItems = items.filter(item => {
     if (filter === 'all') return true;
@@ -97,6 +101,27 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
     return () => clearTimeout(timer);
   }, [load]);
 
+  useEffect(() => {
+    let active = true;
+    void Promise.resolve(repository.readConsent()).then(result => { if (active && result?.ok) setConsent(result.data.personal); }).catch(() => undefined);
+    return () => { active = false; };
+  }, [repository]);
+
+  const toggleConsent = async (next: boolean) => {
+    if (consentBusy) return;
+    setConsentBusy(true);
+    try {
+      const result = await repository.updateConsent({ scope: 'personal', consent: next });
+      if (!result.ok) { toast?.show({ title: 'Chưa cập nhật được', message: errorMessage(result.error.messageKey), tone: 'error' }); return; }
+      setConsent(next);
+      toast?.show({ title: next ? 'Đã bật lưu lịch sử' : 'Đã tắt lưu lịch sử', message: next ? 'Các bữa chốt từ giờ sẽ được lưu 30 ngày.' : 'Các bữa chốt từ giờ sẽ không được lưu.', tone: 'success' });
+    } catch {
+      toast?.show({ title: 'Chưa cập nhật được', message: 'Không kết nối được máy chủ.', tone: 'error' });
+    } finally {
+      setConsentBusy(false);
+    }
+  };
+
   const confirm = async () => {
     if (!action || lock.current) return;
     lock.current = true;
@@ -138,6 +163,14 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
           <FilterButton title="Chưa chốt" value="no-consensus" selected={filter} onSelect={setFilter} largeText={largeText} colors={colors} />
         </View> : null}
 
+        {!selectedHistory && consent !== undefined ? <View style={[styles.consentCard, { backgroundColor: colors.surface, borderColor: colors.line }]}>
+          <View style={styles.consentCopy}>
+            <Text style={[styles.consentTitle, { color: colors.text }]}>Lưu lịch sử bữa ăn</Text>
+            <Text style={[styles.caption, { color: colors.muted }]}>{consent ? 'Bữa đã chốt được lưu 30 ngày. Chỉ bạn xem được.' : 'Đang tắt: các bữa mới sẽ không hiện ở đây.'}</Text>
+          </View>
+          <Switch accessibilityLabel="Lưu lịch sử bữa ăn" value={consent} disabled={consentBusy} onValueChange={value => { void toggleConsent(value); }} trackColor={{ false: colors.line, true: colors.primary }} />
+        </View> : null}
+
         {stale && fetchedAt ? <>
           <ToastNotice title="Đang ngoại tuyến" message={`Dữ liệu lưu lúc ${new Date(fetchedAt).toLocaleString()} · có thể đã cũ`} tone="warning" />
           <AppButton label="Thử lại" variant="quiet" onPress={() => { void load(true); }} disabled={refreshing || busy} loading={refreshing} colors={colors} />
@@ -153,7 +186,7 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
             {/* Figma 263:2012 "Lịch sử · Chưa có bữa đã lưu" */}
             <View style={[styles.emptyIcon, { backgroundColor: colors.warm }]}>{filter === 'all' ? <AppIcon name="bowl" size={36} color={colors.text} /> : <AppIcon name="minus" size={20} color={colors.text} />}</View>
             <Text accessibilityRole="header" style={[styles.emptyTitle, { color: colors.text }]}>{filter === 'all' ? 'Chưa có bữa ăn đã lưu' : 'Không có mục phù hợp'}</Text>
-            <Text style={[styles.emptyBody, { color: colors.muted }]}>{filter === 'all' ? 'Bữa đã chốt sẽ hiện ở đây khi bật lưu lịch sử.' : 'Thử chọn bộ lọc khác.'}</Text>
+            <Text style={[styles.emptyBody, { color: colors.muted }]}>{filter === 'all' ? (consent === false ? 'Bật Lưu lịch sử ở trên để lưu các bữa sau.' : 'Bữa đã chốt sẽ hiện ở đây khi bật lưu lịch sử.') : 'Thử chọn bộ lọc khác.'}</Text>
             {filter === 'all'
               ? <AppButton label="Tạo phòng" onPress={() => onNavigate('/room/create')} colors={colors} />
               : <AppButton label="Xem tất cả" variant="secondary" onPress={() => setFilter('all')} colors={colors} />}
@@ -326,6 +359,9 @@ function historyCardMetadata(item: HistoryRow, date: string): string {
 }
 
 const styles = StyleSheet.create({
+  consentCard: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 12, borderWidth: 1, borderRadius: 12 },
+  consentCopy: { flex: 1, minWidth: 0, gap: 2 },
+  consentTitle: { fontSize: 15, lineHeight: 22, fontWeight: '600' },
   content: { gap: 18 },
   pageTitle: { fontFamily: 'InterBold', fontSize: 30, lineHeight: 40 },
   detailContent: { gap: 14 },

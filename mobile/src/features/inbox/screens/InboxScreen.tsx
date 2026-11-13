@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import type { InboxItem } from '../../../data/api/contracts';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
@@ -19,15 +19,18 @@ type Props = {
   isSessionCurrent?: () => boolean;
   openEventId?: string;
   notificationStatus?: string;
+  /** Shown above the list (for example the reminder to allow notifications). */
+  topNotice?: ReactNode;
 };
 type AnswerKind = 'accept' | 'reject';
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-export function InboxScreen({ repository, displayName, onNavigate, onHome, onPushSettings, isSessionCurrent, openEventId, notificationStatus }: Props) {
+export function InboxScreen({ repository, displayName, onNavigate, onHome, onPushSettings, isSessionCurrent, openEventId, notificationStatus, topNotice }: Props) {
   const { colors } = useShellTheme();
   const { fontScale } = useWindowDimensions();
   const largeText = fontScale >= 1.5;
-  const { setUnread, syncFriends } = useInboxBadge();
+  const { setUnread, syncFriends, revision } = useInboxBadge();
+  const seenRevision = useRef(revision);
   const [items, setItems] = useState<InboxItem[]>([]);
   const [cursor, setCursor] = useState<string>();
   const [loading, setLoading] = useState(true);
@@ -52,19 +55,18 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
   useEffect(() => { itemsRef.current = items; }, [items]);
   useEffect(() => { loadingMoreRef.current = loadingMore; }, [loadingMore]);
 
-  const load = useCallback(async (more = false) => {
+  /** `silent` re-reads the list in place (a new notification arrived): no skeleton, and a failed read keeps what is shown. */
+  const load = useCallback(async (more = false, silent = false) => {
     const pageCursor = cursorRef.current;
     if (more && (!pageCursor || loadingMoreRef.current)) return;
     if (more) setLoadingMore(true);
-    else setLoading(true);
-    setError('');
+    else if (!silent) setLoading(true);
+    if (!silent) setError('');
     try {
       const known = more ? new Set(itemsRef.current.map(item => item.eventId)) : new Set<string>();
       const result = await repository.list(more ? pageCursor : undefined, known);
       if (!result.ok) {
-        setItems([]);
-        setCursor(undefined);
-        setError(result.error.messageKey);
+        if (!silent) { setItems([]); setCursor(undefined); setError(result.error.messageKey); }
       } else {
         setItems(current => {
           if (more) return [...current, ...result.data.items];
@@ -76,9 +78,7 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
         setCursor(result.data.nextCursor);
       }
     } catch {
-      setItems([]);
-      setCursor(undefined);
-      setError('NETWORK_ERROR');
+      if (!silent) { setItems([]); setCursor(undefined); setError('NETWORK_ERROR'); }
     } finally {
       setLoading(false);
       setLoadingMore(false);
@@ -111,6 +111,13 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
       setBusy(false);
     }
   };
+
+  // A new notification arrived while this list is open: refresh it quietly.
+  useEffect(() => {
+    if (revision === seenRevision.current) return;
+    seenRevision.current = revision;
+    if (!openEventId && !lock.current) void load(false, true);
+  }, [revision, load, openEventId]);
 
   useEffect(() => {
     if (openEventId) return;
@@ -296,6 +303,7 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
   return (
     <ApiFeatureFrame active="inbox" title="Thông báo" onNavigate={onNavigate} onHome={onHome}
       headerAction={items.length > 0 && !loading && !error ? { label: 'Đánh dấu tất cả đã đọc', icon: 'readAll', onPress: () => { void markAllRead(); }, disabled: busy || loadingMore || newItems.length === 0 } : undefined}>
+      {topNotice}
       {loading ? <LoadingState label="Đang tải thông báo" colors={colors} /> : null}
       {!loading && error ? <CollectionState state="error" title="Chưa tải được thông báo" message={errorMessage(error)} actionLabel="Thử lại" onAction={() => { void load(); }} colors={colors} /> : null}
       {!openEventId && !loading && !error && items.length === 0 ? <View style={styles.emptyWrap}>
@@ -327,9 +335,11 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
     const resultReference = item.type === 'room_result' ? readRoomResultReference(item) : undefined;
     const sender = item.title;
     const content = <View style={[styles.item, !last && { borderBottomColor: colors.line, borderBottomWidth: StyleSheet.hairlineWidth }]}>
-      <View style={[styles.itemIcon, { backgroundColor: item.type === 'room_result' ? colors.soft : colors.warm }]}>
-        {item.type === 'room_result'
-          ? <AppIcon name={item.metadata?.status === 'DECIDED' ? 'check' : 'minus'} size={20} color={colors.text} />
+      <View style={[styles.itemIcon, { backgroundColor: item.type === 'room_result' || item.type === 'friend_accepted' ? colors.soft : colors.warm }]}>
+        {item.type === 'friend_accepted'
+          ? <AppIcon name="friends" size={20} color={colors.text} />
+          : item.type === 'room_result'
+          ? <AppIcon name={item.metadata?.status === 'DECIDED' || item.title === 'Đã chốt món' ? 'check' : 'minus'} size={20} color={colors.text} />
           : <Text style={[styles.avatarInitial, { color: colors.text }]}>{initialFrom(sender)}</Text>}
       </View>
       <View style={styles.itemCopy}>
@@ -358,6 +368,9 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
       </View> : null}
       {!item.read && !invitation ? <View accessibilityLabel="Chưa đọc" style={[styles.unreadDot, { backgroundColor: colors.primary }]} /> : null}
     </View>;
+    if (item.type === 'friend_accepted') {
+      return <Pressable key={item.eventId} accessibilityRole="button" accessibilityLabel={`${item.title}. ${item.body}. Mở bạn bè`} onPress={() => { markOneRead(item); onNavigate('/friends'); }}>{content}</Pressable>;
+    }
     if (item.type === 'room_result') {
       return <Pressable key={item.eventId} accessibilityRole="button" accessibilityLabel={`Mở kết quả: ${item.title}`} onPress={() => { void openRoomResult(item); }} disabled={busy || !resultReference}>{content}</Pressable>;
     }

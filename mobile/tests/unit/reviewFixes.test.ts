@@ -1,5 +1,5 @@
 import { shortageStep, emptyPreferences } from '../../src/features/context/services/dishSetup';
-import { dishSetupCatalogue, PLACEHOLDER_IDS } from '../../src/features/context/services/dishSetupCatalogue';
+import { dishSetupCatalogue } from '../../src/features/context/services/dishSetupCatalogue';
 import { knownPreferences } from '../../src/features/preferences/services/dishPreferences';
 
 test('after a shortage the dish stepper keeps the reduced count or jumps back to 10', () => {
@@ -10,14 +10,15 @@ test('after a shortage the dish stepper keeps the reduced count or jumps back to
   expect(shortageStep(15, 14)).toBe(14);
 });
 
-test('saved ids with no tile any more are dropped; known groups, regions and Béo / Ngậy stay', () => {
+test('saved ids with no tile any more are dropped; groups and regions the screen shows stay', () => {
   const rice = dishSetupCatalogue.categories[0]!.id;
+  const north = dishSetupCatalogue.cuisines[0]!.id;
   const oldVietnamese = 'd7bf6ad7-596c-5ee0-bf45-ccedfcf6460b';
-  const oldHotpot = '7d4b93cd-665d-5ef3-bde6-9d2f1a721f40';
-  const prefs = { ...emptyPreferences(), categoryIds: [rice, oldHotpot, PLACEHOLDER_IDS.flavorFatty], cuisineIds: [oldVietnamese, PLACEHOLDER_IDS.regionNorth] };
+  const retiredGroup = '00000000-0000-4000-8000-0000000000ff';
+  const prefs = { ...emptyPreferences(), categoryIds: [rice, retiredGroup], cuisineIds: [oldVietnamese, north] };
   const clean = knownPreferences(prefs, dishSetupCatalogue);
-  expect(clean.categoryIds).toEqual([rice, PLACEHOLDER_IDS.flavorFatty]);
-  expect(clean.cuisineIds).toEqual([PLACEHOLDER_IDS.regionNorth]);
+  expect(clean.categoryIds).toEqual([rice]);
+  expect(clean.cuisineIds).toEqual([north]);
   // Nothing to clean: the same object comes back (no needless re-render or dirty draft).
   expect(knownPreferences(clean, dishSetupCatalogue)).toBe(clean);
 });
@@ -37,4 +38,12 @@ test('a group lights up when any of its ids is saved, and pressing it clears the
   const oldSave = { ...emptyPreferences(), categoryIds: [noodles.id] };
   expect(optionSelected(oldSave.categoryIds, noodles)).toBe(true);
   expect(togglePreference(oldSave, 'categoryIds', noodles).categoryIds).toEqual([]);
+});
+
+test('every dish group, region and flavour choice has an icon', () => {
+  const { preferenceAssets } = jest.requireActual('../../src/features/preferences/components/preferenceAssets') as typeof import('../../src/features/preferences/components/preferenceAssets');
+  const { flavorChoices } = jest.requireActual('../../src/features/preferences/services/dishPreferences') as typeof import('../../src/features/preferences/services/dishPreferences');
+  const options = [...dishSetupCatalogue.categories, ...(dishSetupCatalogue.snackCategories ?? []), ...dishSetupCatalogue.cuisines];
+  for (const option of options) expect(preferenceAssets[option.code ?? '']).toBeDefined();
+  for (const choice of flavorChoices) expect(preferenceAssets[choice.id]).toBeDefined();
 });

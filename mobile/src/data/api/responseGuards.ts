@@ -128,11 +128,11 @@ export function isDiscoveryContext(value: unknown): value is DiscoveryContextRes
 }
 
 function isFlavor(value: unknown): boolean {
-  return isRecord(value) && ['spicy', 'salty', 'sweet', 'sour'].every(key => {
-    const item = value[key];
-    return isRecord(item) && nullable(item.present, isBoolean)
-      && oneOf(item.intensity, ['none', 'low', 'medium', 'high', 'unknown']);
-  });
+  const item = (entry: unknown) => isRecord(entry) && nullable(entry.present, isBoolean)
+    && oneOf(entry.intensity, ['none', 'low', 'medium', 'high', 'unknown']);
+  // The four classic kinds are required; `fatty` (Béo / Ngậy) is optional.
+  return isRecord(value) && ['spicy', 'salty', 'sweet', 'sour'].every(key => item(value[key]))
+    && (value.fatty === undefined || item(value.fatty));
 }
 
 function isPrice(value: unknown): boolean {
@@ -224,12 +224,10 @@ const uniqueStringArray = (value: unknown, valid: (item: unknown) => boolean = i
   Array.isArray(value) && value.every(valid) && new Set(value).size === value.length;
 
 function isCanonicalFlavor(value: unknown): boolean {
-  if (!isRecord(value) || !onlyKeys(value, ['spicy', 'salty', 'sweet', 'sour'])) return false;
-  return (['spicy', 'salty', 'sweet', 'sour'] as const).every(key => {
-    const item = value[key];
-    return isRecord(item) && onlyKeys(item, ['present', 'intensity'])
-      && nullable(item.present, isBoolean) && oneOf(item.intensity, ['none', 'low', 'medium', 'high', 'unknown']);
-  });
+  if (!isRecord(value) || !onlyKeys(value, ['spicy', 'salty', 'sweet', 'sour', 'fatty'])) return false;
+  const item = (entry: unknown) => isRecord(entry) && onlyKeys(entry, ['present', 'intensity'])
+    && nullable(entry.present, isBoolean) && oneOf(entry.intensity, ['none', 'low', 'medium', 'high', 'unknown']);
+  return (['spicy', 'salty', 'sweet', 'sour'] as const).every(key => item(value[key])) && (value.fatty === undefined || item(value.fatty));
 }
 
 function isCanonicalArtwork(value: unknown): boolean {
@@ -398,7 +396,7 @@ export function isSocialIdentity(value: unknown): value is SocialIdentity {
 
 export function isInboxItem(value: unknown): value is InboxItem {
   return isRecord(value) && isNonEmptyString(value.id) && isNonEmptyString(value.eventId)
-    && oneOf(value.type, ['friend_invite', 'room_invite', 'room_result'])
+    && oneOf(value.type, ['friend_invite', 'friend_accepted', 'room_invite', 'room_result'])
     && isString(value.title) && isString(value.body) && isBoolean(value.read)
     && optional(value.metadata, isRecord) && isTimestamp(value.createdAt);
 }

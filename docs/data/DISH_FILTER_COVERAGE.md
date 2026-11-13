@@ -8,9 +8,9 @@ Sinh bởi `python scripts/dish_filter_coverage.py` từ `supabase/seed/catalogu
 |---|---|---|
 | Nhóm món (bữa chính) | 33/39 (85%) | Loại món |
 | Nhóm món (Ăn vặt) | 5/39 (13%) | Loại món khi chọn Ăn vặt |
-| `origin` (miền) | 1/39 (3%) | Ẩm thực |
+| Miền (`cuisineIds` miền hoặc `origin` cũ) | 1/39 (3%) | Ẩm thực |
 | `flavor` (ít nhất 1 vị đã biết) | 0/39 (0%) | Hương vị |
-| Béo / Ngậy | 0/39 (0%) | Hương vị |
+| Béo / Ngậy (`flavor.fatty`) | 0/39 (0%) | Hương vị |
 | `mealSlots` | 30/39 (77%) | Chọn pool theo bữa |
 | `temperature` | 2/39 (5%) | Thẻ món |
 | Giá quan sát | 39/39 (100%) | Thẻ món |
@@ -44,5 +44,8 @@ Số món theo bữa: sáng 14, trưa 23, tối 7, ăn vặt 1. Một bữa cầ
 | Hương vị · Chua / Chua cay | 0 | — |
 | Hương vị · Ngọt | 0 | — |
 | Hương vị · Mặn / Thanh đạm | 0 | — |
+| Hương vị · Béo / Ngậy | 0 | — |
+
+Món đa nhãn (≥ 2 giá trị): bữa 12/39, nhóm món 0/39, miền 0/39. Một món được thuộc nhiều bữa, nhiều nhóm, nhiều miền và nhiều vị; ghi đủ mọi giá trị có nguồn.
 
 Món chưa thuộc nhóm nào: Burger.

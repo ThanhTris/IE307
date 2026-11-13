@@ -19,6 +19,7 @@ export * from './room/WaitingSummary';
 export * from './room/InsufficientDishes';
 export * from './result/ResultPodium';
 export * from './feedback/StatusNotice';
+export * from './feedback/NotificationBanner';
 export * from './feedback/ProcessState';
 export * from './feedback/CollectionState';
 export * from './feedback/SearchSkeletonRow';

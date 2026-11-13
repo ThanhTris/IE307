@@ -5,7 +5,7 @@ import { useShellTheme } from '../../shared/lib/useShellTheme';
 import { ChoiceIconView, type ChoiceIcon } from '../../shared/ui/icons/ChoiceIcon';
 import { dishSetupCatalogue } from '../../features/context/services/dishSetupCatalogue';
 import { budgetOptions, mealOptions } from '../../features/context/services/dishSetup';
-import { fattyChoice, flavorChoices } from '../../features/preferences/services/dishPreferences';
+import { flavorChoices } from '../../features/preferences/services/dishPreferences';
 import { preferenceAssets } from '../../features/preferences/components/preferenceAssets';
 
 type Row = { label: string; icon?: ChoiceIcon };
@@ -20,7 +20,7 @@ export default function DevIconsRoute() {
     { title: 'Loại món (bữa chính)', rows: dishSetupCatalogue.categories.map(item => ({ label: item.label, icon: preferenceAssets[item.code ?? ''] })) },
     { title: 'Loại món (Ăn vặt)', rows: (dishSetupCatalogue.snackCategories ?? []).map(item => ({ label: item.label, icon: preferenceAssets[item.code ?? ''] })) },
     { title: 'Ẩm thực', rows: dishSetupCatalogue.cuisines.map(item => ({ label: item.label, icon: preferenceAssets[item.code ?? ''] })) },
-    { title: 'Hương vị', rows: [...flavorChoices.map(item => ({ label: item.label, icon: preferenceAssets[item.id] })), { label: fattyChoice.label, icon: preferenceAssets.fatty }] },
+    { title: 'Hương vị', rows: flavorChoices.map(item => ({ label: item.label, icon: preferenceAssets[item.id] })) },
   ];
   return <SafeAreaView edges={['top']} style={[styles.root, { backgroundColor: colors.background }]}>
     <ScrollView contentContainerStyle={styles.content}>

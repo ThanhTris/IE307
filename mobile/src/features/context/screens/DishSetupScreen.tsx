@@ -3,6 +3,7 @@ import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppButton, DishCount, StatusNotice } from '../../../shared/ui';
 import { DishSetupFrame } from '../components/DishSetupFrame';
+import { ChoiceGrid } from '../components/ChoiceGrid';
 import { SetupChoice } from '../components/SetupChoice';
 import { SetupCheckboxRow } from '../components/SetupCheckboxRow';
 import { SetupInvitees } from '../components/SetupInvitees';
@@ -11,9 +12,9 @@ import { SetupScheduleSummary } from '../components/SetupScheduleSummary';
 import { budgetOptions, changeSetupMeal, mealOptions, setupValidation, shortageStep, switchToNow, type SetupDraft, type SetupFriend } from '../services/dishSetup';
 import { ToastNotice } from '../../../shared/ui/feedback/Toast';
 
-export function DishSetupScreen({ draft, onChange, onBack, onContinue, onSchedule, onFriends, guard, friends = [], hasRecentHistory, busy = false, readOnly = false, submitDisabled, notice, noticeTone = 'error', extra, now = Date.now }: {
+export function DishSetupScreen({ draft, onChange, onBack, onContinue, onSchedule, scheduleOpen, onFriends, guard, friends = [], hasRecentHistory, busy = false, readOnly = false, submitDisabled, notice, noticeTone = 'error', extra, now = Date.now }: {
   draft: SetupDraft; onChange: (patch: Partial<SetupDraft>) => void; onBack: () => void; onContinue: () => void;
-  onSchedule?: () => void; guard?: (draft: SetupDraft) => void; onFriends?: () => void; busy?: boolean; readOnly?: boolean; submitDisabled?: boolean; notice?: string; /** Red (server problem) or amber (offline, stale, blocked form). */ noticeTone?: 'error' | 'warning'; extra?: React.ReactNode; now?: () => number;
+  onSchedule?: () => void; /** The schedule sheet is open: the time tab stays on "Hẹn giờ". */ scheduleOpen?: boolean; guard?: (draft: SetupDraft) => void; onFriends?: () => void; busy?: boolean; readOnly?: boolean; submitDisabled?: boolean; notice?: string; /** Red (server problem) or amber (offline, stale, blocked form). */ noticeTone?: 'error' | 'warning'; extra?: React.ReactNode; now?: () => number;
   friends?: SetupFriend[]; hasRecentHistory?: boolean;
 }) {
   const { colors } = useShellTheme(), { textStyle } = useAppFonts();
@@ -24,8 +25,8 @@ export function DishSetupScreen({ draft, onChange, onBack, onContinue, onSchedul
     {notice ? <ToastNotice title={notice} tone={noticeTone} /> : null}
     {readOnly ? <StatusNotice title="Chỉ chủ phòng được sửa thiết lập" message="Bạn vẫn có thể chọn khẩu vị riêng." colors={colors} /> : null}
     {invalid ? <StatusNotice title={invalid} colors={colors} /> : null}
-    {heading('Buổi ăn', true)}<View style={styles.grid}>{mealOptions.map(item => <SetupChoice key={item.id} label={item.label} icon={item.icon} stacked selected={draft.mealSlot === item.id} disabled={disabled} onPress={() => { if (guard) guard({ ...draft, mealSlot: item.id }); else onChange(changeSetupMeal(draft, item.id, now())); }} />)}</View>
-    {heading('Thời gian', true)}<SetupTimeMode scheduled={draft.timeMode === 'scheduled'} disabled={disabled} onNow={() => onChange(switchToNow(draft, now()))} onSchedule={onSchedule} />
+    {heading('Buổi ăn', true)}<ChoiceGrid columns={2}>{tile => mealOptions.map(item => <SetupChoice key={item.id} width={tile} label={item.label} icon={item.icon} stacked compact selected={draft.mealSlot === item.id} disabled={disabled} onPress={() => { if (guard) guard({ ...draft, mealSlot: item.id }); else onChange(changeSetupMeal(draft, item.id, now())); }} />)}</ChoiceGrid>
+    {heading('Thời gian', true)}<SetupTimeMode scheduled={draft.timeMode === 'scheduled'} scheduleOpen={scheduleOpen} disabled={disabled} onNow={() => onChange(switchToNow(draft, now()))} onSchedule={onSchedule} />
     {draft.timeMode === 'scheduled' && draft.desiredAt && Number.isFinite(Date.parse(draft.desiredAt)) ? <SetupScheduleSummary value={draft.desiredAt} onEdit={onSchedule} disabled={disabled} /> : null}
     {heading(draft.dishCount < 10 ? `Số món để lựa chọn · còn ${draft.dishCount} món phù hợp` : 'Số món để lựa chọn · 10–20', true)}<DishCount value={draft.dishCount} min={Math.min(10, draft.dishCount)} onChange={dishCount => onChange({ dishCount: shortageStep(draft.dishCount, dishCount) })} disabled={disabled} colors={colors} layout="inline" />
     {heading('Ngân sách mỗi người')}

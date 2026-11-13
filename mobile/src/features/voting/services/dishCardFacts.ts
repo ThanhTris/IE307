@@ -1,6 +1,6 @@
 import type { PoolDish } from '../../../data/api';
 import type { ChoiceIcon } from '../../../shared/ui/icons/ChoiceIcon';
-import { PLACEHOLDER_IDS, dishSetupCatalogue } from '../../context/services/dishSetupCatalogue';
+import { dishSetupCatalogue } from '../../context/services/dishSetupCatalogue';
 import { preferenceAssets } from '../../preferences/components/preferenceAssets';
 
 /** One line of information on a flashcard. Every fact comes from the server; missing data is simply left out. */
@@ -17,7 +17,7 @@ const TEMPERATURE: Record<string, { label: string; icon: ChoiceIcon }> = {
 /** Same region names as the "Ẩm thực" choices on the preferences screen. */
 const ORIGIN: Record<string, { label: string; icon: ChoiceIcon }> = {
   north: { label: 'Miền Bắc', icon: preferenceAssets['region:north']! }, central: { label: 'Miền Trung', icon: preferenceAssets['region:central']! },
-  south: { label: 'Miền Nam', icon: preferenceAssets['region:south']! }, west: { label: 'Miền Tây', icon: preferenceAssets['region:mekong']! },
+  south: { label: 'Miền Nam', icon: preferenceAssets['region:south']! }, west: { label: 'Miền Tây', icon: preferenceAssets['region:west']! },
 };
 
 /** Server labels first; otherwise the catalogue the setup screen uses (matching an id or one it links to). */
@@ -49,7 +49,7 @@ export function dishCardFacts(dish: PoolDish & { cuisineLabels?: string[]; categ
   if (dish.temperature && TEMPERATURE[dish.temperature]) facts.push({ key: 'temperature', ...TEMPERATURE[dish.temperature]! });
   // Flavours use the same six names as the preferences screen (no strength words).
   const flavor = dish.flavor;
-  const has = (name: 'spicy' | 'salty' | 'sweet' | 'sour') => flavor?.[name]?.present === true;
+  const has = (name: 'spicy' | 'salty' | 'sweet' | 'sour' | 'fatty') => flavor?.[name]?.present === true;
   if (has('spicy')) facts.push({ key: 'flavor:spicy', label: 'Cay', icon: preferenceAssets.spicy });
   if (has('sour')) facts.push({ key: 'flavor:sour', label: 'Chua / Chua cay', icon: preferenceAssets.sour });
   if (has('sweet')) facts.push({ key: 'flavor:sweet', label: 'Ngọt', icon: preferenceAssets.sweet });
@@ -57,6 +57,6 @@ export function dishCardFacts(dish: PoolDish & { cuisineLabels?: string[]; categ
     const light = flavor?.salty?.intensity === 'low';
     facts.push({ key: light ? 'flavor:light' : 'flavor:rich', label: light ? 'Thanh đạm' : 'Mặn / Đậm đà', icon: preferenceAssets[light ? 'light' : 'rich'] });
   }
-  if (dish.categoryIds.includes(PLACEHOLDER_IDS.flavorFatty)) facts.push({ key: 'flavor:fatty', label: 'Béo / Ngậy', icon: preferenceAssets.fatty });
+  if (has('fatty')) facts.push({ key: 'flavor:fatty', label: 'Béo / Ngậy', icon: preferenceAssets.fatty });
   return facts;
 }

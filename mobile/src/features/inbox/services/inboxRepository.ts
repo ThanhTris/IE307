@@ -45,7 +45,7 @@ function isInboxProjection(value: unknown): value is InboxItem {
     || typeof value.title !== 'string' || typeof value.body !== 'string' || typeof value.read !== 'boolean'
     || typeof value.createdAt !== 'string' || !Number.isFinite(Date.parse(value.createdAt)) || !isRecord(value.metadata)) return false;
   const metadata = value.metadata;
-  if (value.type === 'friend_invite') return exactKeys(metadata, ['invitationId']) && typeof metadata.invitationId === 'string' && UUID.test(metadata.invitationId);
+  if (value.type === 'friend_invite' || value.type === 'friend_accepted') return exactKeys(metadata, ['invitationId']) && typeof metadata.invitationId === 'string' && UUID.test(metadata.invitationId);
   if (value.type === 'room_invite') return exactKeys(metadata, ['invitationId', 'roomId'])
     && typeof metadata.invitationId === 'string' && UUID.test(metadata.invitationId)
     && typeof metadata.roomId === 'string' && UUID.test(metadata.roomId);

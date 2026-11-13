@@ -27,7 +27,7 @@ export const preferenceAssets: Record<string, ChoiceIcon> = {
   'region:north': { fa: 'landmark' },
   'region:central': { fa: 'vihara' },
   'region:south': { food: 'town-hall' },
-  'region:mekong': { mi: 'houseboat' },
+  'region:west': { mi: 'houseboat' },
   // Flavours
   spicy: { fa: 'pepper-hot' },
   sour: { fa: 'lemon' },

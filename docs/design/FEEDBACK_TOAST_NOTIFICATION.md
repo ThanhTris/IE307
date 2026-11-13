@@ -17,17 +17,30 @@ Chốt với chủ dự án ngày 2026-11-12. Áp dụng cho mọi màn của ap
 | `error` | Đỏ `#DC2626` | Máy chủ từ chối, lỗi mạng, không lưu/gửi được |
 | `success` | Xanh lá `#16A34A` | Tạo, thêm, sửa, xóa thành công |
 | `warning` | Vàng `#D97706` | Ngoại tuyến, dữ liệu có thể đã cũ, thao tác bị chặn cần bước khác (form chưa hợp lệ, phòng vừa thay đổi) |
-| `notification` | Trắng, viền xanh `#15803D`, icon chuông | Banner thông báo từ người khác khi app đang mở |
 | `info` | Xanh dương | Chỉ giữ để tương thích; không dùng cho code mới |
 
-Mọi chỗ gọi toast phải truyền `tone` tường minh. `toneFromText` chỉ còn là đường dự phòng.
+Mọi chỗ gọi toast phải truyền `tone` tường minh. `toneFromText` chỉ còn là đường dự phòng. Toast không còn tone `notification`: sự kiện do người khác gây ra dùng banner riêng (mục dưới).
+
+## Banner thông báo (ADR-026)
+
+`NotificationBanner` (`shared/ui/feedback/NotificationBanner.tsx`) là thẻ trắng có icon chuông, trượt từ trên xuống khi app đang mở. Chạm để mở nơi liên quan, vuốt lên hoặc 5 giây để ẩn; nhiều thông báo xếp hàng, cùng `key` không hiện hai lần. Không hiện khi người dùng đang ở màn Hộp thư (danh sách tự cập nhật) hoặc đang ở đúng phòng của kết quả.
+
+| Sự kiện | Người nhận | Banner |
+|---|---|---|
+| Có người gửi lời mời kết bạn | Người được mời | "Lời mời kết bạn · A muốn kết bạn với bạn" → Hộp thư |
+| Lời mời kết bạn được chấp nhận | Người đã gửi lời mời | "Kết bạn thành công · B đã chấp nhận lời mời kết bạn của bạn" → Bạn bè |
+| Được rủ ăn | Người được rủ | "Rủ đi ăn · A rủ bạn đi ăn" → Hộp thư |
+| Phòng đã chốt món | Mọi thành viên | "Đã chốt món · Nhóm chọn: <món>" → kết quả |
+| Phòng kết thúc mà chưa có món chung | Mọi thành viên | "Chưa chốt được món · Phòng kết thúc mà chưa có món chung" → kết quả |
+
+Hộp thư được đọc lại mỗi 10 giây khi app mở và ở nền trước; mở app thì thông báo chưa đọc gộp thành một banner "Bạn có N thông báo chưa đọc". Khi app tắt hoặc chạy nền chỉ push thật mới báo (cần bản dev build và FCM, không chạy trên Expo Go).
 
 ## Cách code
 
 - `ToastNotice` / `useToast().show(...)`: toast. Truyền `tone`.
 - `StatusNotice`: `tone="error"` thành toast đỏ (nút thử lại vẫn ở trên trang); mọi tone khác là chữ trên trang.
 - `RequestBanner`: `offline`/`stale` thành toast vàng, `error` thành toast đỏ, `info` là chữ trên trang.
-- `InboxBadgeProvider`: thông báo mới khi app đang mở hiện banner `notification`, chạm mở Hộp thư (hoặc Bạn bè với kết bạn).
+- `InboxBadgeProvider`: đọc hộp thư mỗi 10 giây, thông báo mới hiện `NotificationBanner` (qua `useNotifications().notify`), chạm mở Hộp thư, Bạn bè hoặc kết quả.
 
 ## Rà soát ngày 2026-11-12
 

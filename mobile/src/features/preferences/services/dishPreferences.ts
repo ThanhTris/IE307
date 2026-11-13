@@ -1,6 +1,5 @@
 import type { FlavorItem, FlavorProfile, UserPreferences } from '../../../data/api/contracts';
 import type { SetupCatalogue, SetupOption } from '../../context/services/dishSetup';
-import { PLACEHOLDER_IDS } from '../../context/services/dishSetupCatalogue';
 
 export const optionIds = (option: SetupOption) => [option.id, ...(option.linkedIds ?? [])];
 /** A group counts as chosen when any of its ids is (older saves may hold only one family of the group). */
@@ -13,8 +12,8 @@ export function isAnything(preferences: UserPreferences) {
   return !preferences.categoryIds.length && !preferences.cuisineIds.length && (!preferences.temperature || preferences.temperature === 'unknown') && !Object.values(preferences.flavor ?? {}).some(item => item.present !== null || item.intensity !== 'unknown');
 }
 /**
- * Flavour choices (several can be picked). "Mặn / Đậm đà" and "Thanh đạm" are the two ends of saltiness, so picking
- * one clears the other. "Béo / Ngậy" has no flavour field yet and is handled as `fattyChoice` below.
+ * Flavour choices (several can be picked, a dish can have several flavours). "Mặn / Đậm đà" and "Thanh đạm" are the
+ * two ends of saltiness, so picking one clears the other. "Béo / Ngậy" is the fifth flavour (`flavor.fatty`).
  */
 export const flavorChoices = [
   { id: 'spicy', label: 'Cay', key: 'spicy', intensity: 'unknown' },
@@ -22,15 +21,14 @@ export const flavorChoices = [
   { id: 'sweet', label: 'Ngọt', key: 'sweet', intensity: 'unknown' },
   { id: 'rich', label: 'Mặn / Đậm đà', key: 'salty', intensity: 'high' },
   { id: 'light', label: 'Thanh đạm', key: 'salty', intensity: 'low' },
+  { id: 'fatty', label: 'Béo / Ngậy', key: 'fatty', intensity: 'unknown' },
 ] as const;
-/** Béo / Ngậy: stored as a placeholder ID in categoryIds until the flavour contract gets a field for it. */
-export const fattyChoice: SetupOption = { id: PLACEHOLDER_IDS.flavorFatty, label: 'Béo / Ngậy', code: 'fatty' };
 /**
  * Keeps only the ids the preferences screen can show (groups, their linked families, regions, Béo / Ngậy). Older
  * saved choices (national cuisines, retired groups) would otherwise stay selected with no tile to clear them.
  */
 export function knownPreferences(preferences: UserPreferences, catalogue: SetupCatalogue): UserPreferences {
-  const categories = new Set([...catalogue.categories, ...(catalogue.snackCategories ?? []), fattyChoice].flatMap(optionIds));
+  const categories = new Set([...catalogue.categories, ...(catalogue.snackCategories ?? [])].flatMap(optionIds));
   const cuisines = new Set(catalogue.cuisines.flatMap(optionIds));
   const categoryIds = preferences.categoryIds.filter(id => categories.has(id));
   const cuisineIds = preferences.cuisineIds.filter(id => cuisines.has(id));

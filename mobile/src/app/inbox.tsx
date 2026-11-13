@@ -3,6 +3,8 @@ import { useLocalSearchParams, useRouter, type Href } from 'expo-router';
 import { useRoomRepository } from '../bootstrap/RoomRepositoryProvider';
 import { RequireActiveSession } from '../features/auth/components/RequireActiveSession';
 import { createInboxRepository } from '../features/inbox/services/inboxRepository';
+import { NotificationPermissionNudge } from '../features/permissions/components/NotificationPermissionNudge';
+import { createPermissionService } from '../features/permissions/services/appPermissions';
 import { InboxScreen } from '../features/inbox/screens/InboxScreen';
 
 export default function InboxRoute() {
@@ -13,6 +15,7 @@ export default function InboxRoute() {
     notificationStatus?: string;
   }>();
   const live = useRoomRepository();
+  const permissions = useMemo(() => createPermissionService(), []);
   const repository = useMemo(() => createInboxRepository(live.repository), [live.repository]);
   const identityId = live.user?.id;
   const sessionGeneration = live.repository.getSessionApi()?.getGeneration();
@@ -32,6 +35,7 @@ export default function InboxRoute() {
       displayName={live.user?.displayName ?? ''}
       onNavigate={navigate}
       onHome={back}
+      topNotice={<NotificationPermissionNudge service={permissions} />}
       isSessionCurrent={isSessionCurrent}
       openEventId={typeof openEventId === 'string' ? openEventId : undefined}
       notificationStatus={typeof notificationStatus === 'string' ? notificationStatus : undefined}

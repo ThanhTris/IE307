@@ -1,5 +1,6 @@
 import type { PropsWithChildren } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { NotificationProvider } from '../shared/ui/feedback/NotificationBanner';
 import { ToastProvider } from '../shared/ui/feedback/Toast';
 import { AppFontProvider } from './AppFontProvider';
 import { InboxBadgeProvider } from './InboxBadgeProvider';
@@ -11,7 +12,7 @@ export function AppProviders({ children }: PropsWithChildren) {
     <SafeAreaProvider>
       <AppFontProvider>
         <RoomRepositoryProvider>
-          <ToastProvider><InboxBadgeProvider>{children}</InboxBadgeProvider></ToastProvider>
+          <ToastProvider><NotificationProvider><InboxBadgeProvider>{children}</InboxBadgeProvider></NotificationProvider></ToastProvider>
         </RoomRepositoryProvider>
       </AppFontProvider>
     </SafeAreaProvider>

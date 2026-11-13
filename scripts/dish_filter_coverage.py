@@ -3,7 +3,8 @@
 Reads the catalogue bundle and writes:
 - docs/data/DISH_FILTER_COVERAGE.md: per-filter coverage of the 39 dishes;
 - data-preparation/templates/dish_filter_enrichment.csv: one row per dish with what the data has today and empty
-  columns for the data team to fill (never guessed here).
+  columns for the data team to fill (never guessed here). Validate a filled copy with
+  `python data-preparation/scripts/filter_taxonomy.py --validate <csv>`.
 
 Usage: python scripts/dish_filter_coverage.py [--check]
 --check fails (exit 1) when the generated files are out of date.
@@ -18,31 +19,19 @@ from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / 'data-preparation/scripts'))
+import filter_taxonomy as ft  # noqa: E402
 BUNDLE = ROOT / 'supabase/seed/catalogue/dishes.json'
 REPORT = ROOT / 'docs/data/DISH_FILTER_COVERAGE.md'
 TEMPLATE = ROOT / 'data-preparation/templates/dish_filter_enrichment.csv'
 
-# UI dish groups (mobile/src/features/context/services/dishSetupCatalogue.ts) and the catalogue families they cover.
-MAIN_GROUPS = {
-    'Cơm': ['family:rice'],
-    'Bún / Phở': ['family:bun', 'family:pho'],
-    'Mì / Miến / Hủ tiếu': ['family:noodles', 'family:mien', 'family:hu_tieu', 'family:nui'],
-    'Lẩu & Nướng': [],
-    'Bánh mì / Xôi': ['family:banh_mi', 'family:sticky_rice'],
-    'Cháo / Súp': [],
-}
-SNACK_GROUPS = {
-    'Đồ chiên & Xiên que': [],
-    'Các loại bánh mặn': ['family:banh_bao', 'family:banh_cuon', 'family:banh_uot', 'family:banh_cuon_wrap'],
-    'Món trộn & Cuốn': ['family:salad'],
-    'Ốc & Hải sản': [],
-    'Bánh ngọt': [],
-    'Chè & Kem': [],
-    'Trái cây & Đồ chua': [],
-    'Đồ ăn vặt khô': [],
-}
-REGIONS = {'north': 'Miền Bắc', 'central': 'Miền Trung', 'south': 'Miền Nam', 'west': 'Miền Tây'}
-FLAVOURS = ['spicy', 'sour', 'sweet', 'salty']
+# Dish groups and regions come from the single source of truth (data-preparation/scripts/filter_taxonomy.py).
+MAIN_GROUPS = {label: members for _, label, members in ft.MAIN_GROUPS}
+SNACK_GROUPS = {label: members for _, label, members in ft.SNACK_GROUPS}
+REGIONS = {code: label for code, (label, _) in ft.REGIONS.items()}
+REGION_BY_ID = {ft.region_id(code): code for code in REGIONS}
+LEGACY_ORIGIN = {origin: code for code, (_, origin) in ft.REGIONS.items()}
+FLAVOURS = ['spicy', 'sour', 'sweet', 'salty', 'fatty']
 
 
 def load():
@@ -54,7 +43,8 @@ def load():
 
 
 def groups_of(codes: set[str], groups: dict[str, list[str]]) -> list[str]:
-    return [name for name, families in groups.items() if codes & set(families)]
+    # A dish is in a group when it has ANY family of the group (one dish can be in several groups).
+    return [name for name, families in groups.items() if codes & {f'family:{f}' for f in families}]
 
 
 def build():
@@ -68,7 +58,8 @@ def build():
             'codes': codes,
             'main': groups_of(codes, MAIN_GROUPS),
             'snack': groups_of(codes, SNACK_GROUPS),
-            'origin': dish.get('origin') if dish.get('origin') in REGIONS else None,
+            'regions': sorted({REGION_BY_ID[c] for c in dish.get('cuisineIds', []) if c in REGION_BY_ID}
+                              | ({LEGACY_ORIGIN[dish['origin']]} if dish.get('origin') in LEGACY_ORIGIN else set())),
             'flavor': {k: (flavor.get(k) or {}).get('present') for k in FLAVOURS},
             'meals': dish.get('mealSlots') or [],
             'temperature': dish.get('temperature') if dish.get('temperature') not in (None, 'unknown') else None,
@@ -94,9 +85,9 @@ def report(data, rows) -> str:
         '|---|---|---|',
         f'| Nhóm món (bữa chính) | {pct(sum(1 for r in rows if r["main"]))} | Loại món |',
         f'| Nhóm món (Ăn vặt) | {pct(sum(1 for r in rows if r["snack"]))} | Loại món khi chọn Ăn vặt |',
-        f'| `origin` (miền) | {pct(sum(1 for r in rows if r["origin"]))} | Ẩm thực |',
+        f'| Miền (`cuisineIds` miền hoặc `origin` cũ) | {pct(sum(1 for r in rows if r["regions"]))} | Ẩm thực |',
         f'| `flavor` (ít nhất 1 vị đã biết) | {pct(sum(1 for r in rows if any(v is not None for v in r["flavor"].values())))} | Hương vị |',
-        f'| Béo / Ngậy | 0/{n} (0%) | Hương vị |',
+        f'| Béo / Ngậy (`flavor.fatty`) | {pct(sum(1 for r in rows if r["flavor"]["fatty"] is not None))} | Hương vị |',
         f'| `mealSlots` | {pct(sum(1 for r in rows if r["meals"]))} | Chọn pool theo bữa |',
         f'| `temperature` | {pct(sum(1 for r in rows if r["temperature"]))} | Thẻ món |',
         f'| Giá quan sát | {pct(sum(1 for r in rows if r["prices"]))} | Thẻ món |',
@@ -115,11 +106,14 @@ def report(data, rows) -> str:
             names = [r['dish']['name'] for r in rows if name in r[key]]
             lines.append(f'| {title} · {name} | {len(names)} | {", ".join(names) or "—"} |')
     for code, label in REGIONS.items():
-        names = [r['dish']['name'] for r in rows if r['origin'] == code]
+        names = [r['dish']['name'] for r in rows if code in r['regions']]
         lines.append(f'| Ẩm thực · {label} | {len(names)} | {", ".join(names) or "—"} |')
-    for key, label in (('spicy', 'Cay'), ('sour', 'Chua / Chua cay'), ('sweet', 'Ngọt'), ('salty', 'Mặn / Thanh đạm')):
+    for key, label in (('spicy', 'Cay'), ('sour', 'Chua / Chua cay'), ('sweet', 'Ngọt'), ('salty', 'Mặn / Thanh đạm'), ('fatty', 'Béo / Ngậy')):
         names = [r['dish']['name'] for r in rows if r['flavor'][key] is True]
         lines.append(f'| Hương vị · {label} | {len(names)} | {", ".join(names) or "—"} |')
+    multi = lambda key, minimum=2: sum(1 for r in rows if len(r[key]) >= minimum)
+    lines += ['', f'Món đa nhãn (≥ 2 giá trị): bữa {multi("meals")}/{n}, nhóm món {sum(1 for r in rows if len(r["main"]) + len(r["snack"]) >= 2)}/{n}, miền {multi("regions")}/{n}. '
+              'Một món được thuộc nhiều bữa, nhiều nhóm, nhiều miền và nhiều vị; ghi đủ mọi giá trị có nguồn.']
     unmatched = [r['dish']['name'] for r in rows if not r['main'] and not r['snack']]
     lines += ['', f'Món chưa thuộc nhóm nào: {", ".join(unmatched) or "không có"}.', '']
     return '\n'.join(lines)
@@ -128,13 +122,15 @@ def report(data, rows) -> str:
 def template(rows) -> str:
     out = io.StringIO()
     writer = csv.writer(out, lineterminator='\n')
-    writer.writerow(['dishId', 'name', 'currentFamilies', 'currentGroups', 'currentMealSlots', 'currentOrigin',
-                     'fillGroup', 'fillMealSlots', 'fillOrigin', 'fillSpicy', 'fillSour', 'fillSweet', 'fillSalty',
-                     'fillFatty', 'fillTemperature', 'sourceRef', 'note'])
+    # Several values go in one cell separated by spaces. Codes: families from taxonomy_v1 + filter_taxonomy_v2,
+    # regions vi_north vi_central vi_south vi_west, meals breakfast lunch dinner snack,
+    # flavours kind=level (spicy sour sweet salty fatty; level present none low medium high unknown).
+    writer.writerow(['dishId', 'name', 'currentFamilies', 'currentGroups', 'currentMealSlots', 'currentRegions',
+                     'fillFamilies', 'fillMealSlots', 'fillRegions', 'fillFlavors', 'fillTemperature', 'sourceRef', 'note'])
     for r in sorted(rows, key=lambda r: r['dish']['name']):
-        writer.writerow([r['dish']['id'], r['dish']['name'], ' '.join(sorted(r['codes'])),
-                         ' | '.join(r['main'] + r['snack']), ' '.join(r['meals']), r['origin'] or '',
-                         '', '', '', '', '', '', '', '', '', '', ''])
+        writer.writerow([r['dish']['id'], r['dish']['name'], ' '.join(sorted(c.replace('family:', '') for c in r['codes'] if c.startswith('family:'))),
+                         ' | '.join(r['main'] + r['snack']), ' '.join(r['meals']), ' '.join(r['regions']),
+                         '', '', '', '', '', '', ''])
     return out.getvalue()
 
 

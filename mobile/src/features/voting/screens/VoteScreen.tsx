@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -24,6 +24,7 @@ import { VoteScenarioAndStatusBanner } from '../components/VoteScenarioAndStatus
 import { VoteDishCardItem } from '../components/VoteDishCardItem';
 import { FlashcardRoundView } from '../components/FlashcardRoundView';
 import { RoundWaitingView } from '../components/RoundWaitingView';
+import { RoundTwoNotice } from '../components/RoundTwoNotice';
 
 export type VoteScreenProps = {
   pool?: PoolDish[];
@@ -63,6 +64,15 @@ export function VoteScreen({
   onBack,
 }: VoteScreenProps) {
   const { colors } = useShellTheme();
+  // Round 1 found no winner: tell the player before the screen moves on to round 2.
+  const [roundTwoNotice, setRoundTwoNotice] = useState<PoolDish[] | null>(null);
+  const announceRoundTwo = useCallback((candidates: PoolDish[]) => setRoundTwoNotice(candidates), []);
+  const continueToRoundTwo = useCallback(() => {
+    if (!roundTwoNotice) return;
+    setRoundTwoNotice(null);
+    onGoToFinalRound?.(roundTwoNotice);
+  }, [roundTwoNotice, onGoToFinalRound]);
+  const roundTwoDialog = roundTwoNotice ? <RoundTwoNotice remaining={roundTwoNotice.length} onContinue={continueToRoundTwo} /> : null;
   // Hide QA scenario picker in real mode when repository is provided (F2)
   const shouldShowScenarioPicker = showScenarioPicker ?? !repository;
 
@@ -116,7 +126,7 @@ export function VoteScreen({
     simulateDelayMs,
     initialIsHost,
     initialViewMode,
-    onRoundTwo: onGoToFinalRound,
+    onRoundTwo: onGoToFinalRound ? announceRoundTwo : undefined,
     onGoToResult,
     onGoToNoConsensus,
   });
@@ -157,6 +167,7 @@ export function VoteScreen({
       <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
         {submissionState === 'error' && errorMessage ? <ToastNotice title="Chưa gửi được phiếu" message={errorMessage} tone="error" /> : null}
         {waitingError ? <ToastNotice title={waitingError} tone="error" /> : null}
+        {roundTwoDialog}
         {sent ? (
           <>
             <RoundWaitingView
@@ -206,6 +217,7 @@ export function VoteScreen({
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <AppHeader title="Bình chọn · Vòng 1" onPressBrand={onBack} colors={colors} />
+      {roundTwoDialog}
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <VoteScenarioAndStatusBanner
           showScenarioPicker={shouldShowScenarioPicker}

@@ -30,7 +30,7 @@ test('opening schedule starts fifteen minutes ahead and displays a separate edit
   expect(await screen.findByText('Giờ và buổi ăn chưa khớp')).toBeOnTheScreen();
   await fireEvent.press(screen.getByRole('button', { name: 'Đổi thành Ăn vặt' }));
   expect(screen.getByText('02/11/2026 · 22:00')).toBeOnTheScreen();
-  expect(screen.getByRole('button', { name: 'Sửa thời gian' })).toBeOnTheScreen();
+  expect(screen.getByRole('button', { name: /Đổi giờ hẹn/ })).toBeOnTheScreen();
 });
 
 test('changing meal on the form moves an expired meal time to tomorrow', async () => {

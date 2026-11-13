@@ -8,11 +8,11 @@ const choices: { label: string; icon: AppIconName }[] = [{ label: 'Ăn ngay', ic
 const SLIDE_MS = 220, OPEN_DELAY_MS = 260, SETTLE_MS = 700;
 
 /** "Hẹn giờ" first slides the highlight across, then opens the schedule sheet. */
-export function SetupTimeMode({ scheduled, disabled, onNow, onSchedule }: { scheduled: boolean; disabled?: boolean; onNow: () => void; onSchedule?: () => void }) {
+export function SetupTimeMode({ scheduled, scheduleOpen = false, disabled, onNow, onSchedule }: { scheduled: boolean; /** The schedule sheet is open: the highlight stays on "Hẹn giờ" until it closes without a choice. */ scheduleOpen?: boolean; disabled?: boolean; onNow: () => void; onSchedule?: () => void }) {
   const { colors } = useShellTheme(), { textStyle } = useAppFonts();
   const [pending, setPending] = useState<number | null>(null), [width, setWidth] = useState(0);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
-  const effective = pending ?? (scheduled ? 1 : 0);
+  const effective = pending ?? (scheduled || scheduleOpen ? 1 : 0);
   const [slide] = useState(() => new Animated.Value(effective));
   useEffect(() => { Animated.timing(slide, { toValue: effective, duration: SLIDE_MS, easing: Easing.out(Easing.cubic), useNativeDriver: true }).start(); }, [effective, slide]);
   useEffect(() => () => timers.current.forEach(clearTimeout), []);
@@ -30,7 +30,7 @@ export function SetupTimeMode({ scheduled, disabled, onNow, onSchedule }: { sche
     {choices.map((item, index) => {
       const selected = effective === index, unavailable = disabled || (index === 1 && !onSchedule);
       const foreground = selected ? colors.onPrimary : colors.text;
-      return <Pressable key={item.label} accessibilityRole="button" accessibilityLabel={item.label} accessibilityState={{ selected: scheduled === (index === 1), disabled: unavailable }} disabled={unavailable} onPress={() => press(index)} style={[styles.option, { opacity: unavailable ? 0.5 : 1 }]}>
+      return <Pressable key={item.label} accessibilityRole="button" accessibilityLabel={item.label} accessibilityState={{ selected, disabled: unavailable }} disabled={unavailable} onPress={() => press(index)} style={[styles.option, { opacity: unavailable ? 0.5 : 1 }]}>
         <AppIcon name={item.icon} size={20} color={foreground} /><Text style={[styles.label, { color: foreground }, textStyle(600)]}>{item.label}</Text>
       </Pressable>;
     })}

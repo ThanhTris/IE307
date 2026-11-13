@@ -36,6 +36,8 @@ export interface FlavorProfile {
   salty: FlavorItem;
   sweet: FlavorItem;
   sour: FlavorItem;
+  /** Béo / Ngậy (ADR-025). Optional: older servers and data do not send it. */
+  fatty?: FlavorItem;
 }
 
 export type ServiceMode = 'dine_in' | 'takeaway' | 'delivery';

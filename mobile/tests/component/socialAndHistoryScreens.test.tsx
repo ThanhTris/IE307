@@ -196,7 +196,7 @@ test('live history opens the saved projection without re-reading the operational
   const repository = {
     cached: () => undefined, cachedDurable: async () => undefined,
     fetch: async () => ({ ok: true as const, data: { items: [saved], fetchedAt: '2026-11-08T00:00:00Z' } }),
-    updateConsent: jest.fn(), delete: jest.fn(), invalidate: jest.fn(),
+    readConsent: async () => ({ ok: false as const, error: { messageKey: 'NETWORK_ERROR' as const } }), updateConsent: jest.fn(), delete: jest.fn(), invalidate: jest.fn(),
   };
   await render(<HistoryScreen repository={repository as any} onNavigate={nav} onHome={home} />);
   expect(await screen.findByText(/Linh, Tú/)).toBeOnTheScreen();
@@ -219,7 +219,7 @@ test('offline history cache hides group projections and keeps only personal rows
     cached: () => ({ items: [group, personal], fetchedAt: '2026-11-07T12:00:00Z' }),
     cachedDurable: async () => undefined,
     fetch: async () => ({ ok: false as const, error: { messageKey: 'NETWORK_ERROR' as const } }),
-    updateConsent: jest.fn(), delete: jest.fn(), invalidate: jest.fn(),
+    readConsent: async () => ({ ok: false as const, error: { messageKey: 'NETWORK_ERROR' as const } }), updateConsent: jest.fn(), delete: jest.fn(), invalidate: jest.fn(),
   };
   await render(<HistoryScreen repository={repository as any} onNavigate={nav} onHome={home} />);
   expect(await screen.findByText('Riêng tư món')).toBeOnTheScreen();

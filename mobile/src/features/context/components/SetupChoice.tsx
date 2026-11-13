@@ -8,23 +8,27 @@ import { SetupCheckboxRow } from './SetupCheckboxRow';
 export const STACKED_TILE_HEIGHT = 100;
 /** Two label lines at the normal font size; grows with the system font scale. */
 const LABEL_LINES_HEIGHT = 40;
+const LABEL_LINE_HEIGHT = 20;
+/** Height of a compact stacked tile (icon + one label line). */
+export const COMPACT_TILE_HEIGHT = 78;
 
-export function SetupChoice({ label, selected, onPress, disabled, icon, stacked = false, checkbox = false, columns = 2, width }: {
+export function SetupChoice({ label, selected, onPress, disabled, icon, stacked = false, compact = false, checkbox = false, columns = 2, width }: {
   label: string; selected: boolean; onPress: () => void; disabled?: boolean;
-  icon?: ChoiceIcon; stacked?: boolean; checkbox?: boolean; columns?: 1 | 2 | 3;
+  icon?: ChoiceIcon; stacked?: boolean; /** A shorter stacked tile for short one-line labels (meal slots). */ compact?: boolean; checkbox?: boolean; columns?: 1 | 2 | 3;
   /** Exact tile width from a ChoiceGrid; without it the tile flexes by `columns`. */
   width?: number;
 }) {
   const { colors } = useShellTheme(), { textStyle } = useAppFonts(), { fontScale } = useWindowDimensions();
   if (checkbox) return <SetupCheckboxRow label={label} checked={selected} onPress={onPress} disabled={disabled} icon={icon} highlight />;
-  const sizing = width ? { width, flexGrow: 0, flexShrink: 0 } : { flexBasis: columns === 3 ? '28%' : columns === 1 ? '100%' : '44%' };
+  // `flexBasis` wins over `width` in Yoga, so an exact tile width must be the basis too or the tile stays 44% wide.
+  const sizing = width ? { width, flexBasis: width, flexGrow: 0, flexShrink: 0 } : { flexBasis: columns === 3 ? '28%' : columns === 1 ? '100%' : '44%' };
   return <Pressable accessibilityRole="button" accessibilityLabel={label}
     accessibilityState={{ selected, disabled }} disabled={disabled} onPress={onPress}
-    style={({ pressed }) => [styles.choice, stacked && styles.stacked, sizing, { borderColor: selected ? colors.green : colors.line, backgroundColor: selected ? colors.warm : colors.surface, opacity: disabled ? 0.5 : pressed ? 0.7 : 1 }]}>
+    style={({ pressed }) => [styles.choice, stacked && styles.stacked, stacked && compact && styles.compact, sizing, { borderColor: selected ? colors.green : colors.line, backgroundColor: selected ? colors.warm : colors.surface, opacity: disabled ? 0.5 : pressed ? 0.7 : 1 }]}>
     {icon ? <View style={stacked ? styles.iconSlot : undefined}><ChoiceIconView icon={icon} size={24} color={selected ? colors.primary : colors.text} /></View> : null}
     {stacked
       // Two lines of label space on every tile: icons and borders line up whatever the text length.
-      ? <View style={[styles.labelSlot, { minHeight: Math.ceil(LABEL_LINES_HEIGHT * Math.max(1, fontScale)) }]}><Text textBreakStrategy="balanced" numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.85} style={[styles.stackedLabel, { color: colors.text }, textStyle(600)]}>{breakLabel(label)}</Text></View>
+      ? <View style={[styles.labelSlot, { minHeight: Math.ceil((compact ? LABEL_LINE_HEIGHT : LABEL_LINES_HEIGHT) * Math.max(1, fontScale)) }]}><Text textBreakStrategy="balanced" numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.85} style={[styles.stackedLabel, { color: colors.text }, textStyle(600)]}>{breakLabel(label)}</Text></View>
       : <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={[styles.label, { color: colors.text }, textStyle(600)]}>{label}</Text>}
   </Pressable>;
 }
@@ -44,9 +48,10 @@ export function breakLabel(label: string): string {
 }
 const styles = StyleSheet.create({
   choice: { flexGrow: 1, flexShrink: 1, flexBasis: '44%', minHeight: 52, padding: 12, borderWidth: 1, borderRadius: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
-  stacked: { flexDirection: 'column', minHeight: STACKED_TILE_HEIGHT, paddingHorizontal: 4, paddingVertical: 10, gap: 4, justifyContent: 'flex-start' },
+  stacked: { flexDirection: 'column', minHeight: STACKED_TILE_HEIGHT, paddingHorizontal: 4, paddingVertical: 10, gap: 4, justifyContent: 'center' },
+  compact: { minHeight: COMPACT_TILE_HEIGHT, paddingVertical: 8 },
   iconSlot: { height: 30, alignItems: 'center', justifyContent: 'center' },
-  labelSlot: { alignSelf: 'stretch', alignItems: 'center', justifyContent: 'flex-start' },
+  labelSlot: { alignSelf: 'stretch', alignItems: 'center', justifyContent: 'center' },
   label: { fontSize: 14, lineHeight: 21, flexShrink: 1, textAlign: 'center' },
   stackedLabel: { fontSize: 15, lineHeight: 19, textAlign: 'center' },
 });

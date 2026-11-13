@@ -1,82 +1,101 @@
 # Yêu cầu dữ liệu cho bộ lọc khẩu vị
 
-Ngày 2026-11-13. Áp dụng cho catalogue món (GM-40) mà backend dùng để chọn pool (ADR-024). Độ phủ hiện tại xem
-[DISH_FILTER_COVERAGE.md](DISH_FILTER_COVERAGE.md); mẫu điền là
+Cập nhật 2026-11-13 (ADR-024, ADR-025). Áp dụng cho catalogue món (GM-40) mà backend dùng để chọn pool. Độ phủ hiện tại:
+[DISH_FILTER_COVERAGE.md](DISH_FILTER_COVERAGE.md) (sinh bởi `python scripts/dish_filter_coverage.py`). Mẫu điền:
 [`data-preparation/templates/dish_filter_enrichment.csv`](../../data-preparation/templates/dish_filter_enrichment.csv).
 
-## Backend dùng dữ liệu thế nào
+## Nguyên tắc: một món có NHIỀU giá trị
 
-1. **Chọn pool theo bữa:** chỉ những món có `mealSlots` chứa bữa của phòng mới được bốc. Món thiếu `mealSlots` không
-   bao giờ vào pool.
-2. **Ưu tiên mềm khi chủ phòng bắt đầu:** mỗi món được cộng điểm theo số khẩu vị của từng thành viên mà nó khớp (nhóm
-   món, miền, từng vị). Mọi thành viên ngang nhau, không ưu tiên chủ phòng. Món thiếu dữ liệu không bị trừ điểm,
-   chỉ không được cộng, nên dữ liệu càng đủ thì pool càng sát khẩu vị.
-3. **Thẻ món (flashcard):** hiện nhóm món, miền, bữa, nhiệt độ, các vị và giá; trường nào trống thì không hiện.
+Món được ăn linh hoạt, nên **mọi trường lọc đều đa nhãn**. Ghi đủ mọi giá trị thật của món, mỗi giá trị có nguồn;
+backend tính khớp nếu món có **bất kỳ** giá trị nào người chơi chọn.
 
-## Trường bắt buộc cho mỗi món
-
-| Trường | Kiểu / giá trị cho phép | Bộ lọc | Ghi chú |
-|---|---|---|---|
-| `dishId` | UUID ổn định | — | Không đổi giữa các bản dữ liệu |
-| `name` | 1–256 ký tự | — | Tên hiển thị |
-| `mealSlots` | mảng con của `breakfast`, `lunch`, `dinner`, `snack` | Bữa ăn | Bắt buộc có ít nhất 1 |
-| `categoryIds` | mảng UUID nhóm món (bảng dưới) | Loại món | Ít nhất 1 nhóm; được thuộc cả nhóm bữa chính và nhóm Ăn vặt |
-| `origin` | `north`, `central`, `south`, `west`, `unknown` | Ẩm thực | `west` = miền Tây Nam Bộ |
-| `flavor.spicy` / `sour` / `sweet` | `{ present: true/false/null, intensity: none/low/medium/high/unknown }` | Cay; Chua / Chua cay; Ngọt | `null` nghĩa là chưa biết |
-| `flavor.salty` | như trên | Mặn / Đậm đà (`medium`, `high`); Thanh đạm (`low`) | |
-| Béo / Ngậy | thêm UUID `86089932-3503-5934-a401-60374d76a61d` vào `categoryIds` | Béo / Ngậy | Hợp đồng `flavor` chưa có trường này |
-| `temperature` | `hot`, `warm`, `cold`, `ambient`, `unknown` | Thẻ món | |
-| Giá | quan sát giá có `amount`, `currency`, `unit`, `sourceRef`, `observedAt` | Thẻ món | Hiện giá mới nhất; thiếu thì ẩn |
-| `artwork` | URL + `usageRights` + `license` + `attribution` | Thẻ món | Chỉ ảnh có quyền dùng |
-| `sourceRef` cho từng trường phân loại | UUID nguồn | — | Không có nguồn thì để `unknown`/`null` |
-
-## Nhóm món và UUID
-
-Nhóm có sẵn family trong taxonomy thì gắn family; nhóm chưa có family dùng UUID cố định dưới đây (backend đã nhận).
-
-| Nhóm | UUID gắn vào `categoryIds` | Family hiện có |
+| Mục lọc | Trường | Ví dụ một món |
 |---|---|---|
-| Cơm | `e69b5f45-580d-5ee3-9e43-360650b4c650` | `family:rice` |
-| Bún / Phở | `14bc9d6f-…` (bún), `1f89baf1-…` (phở) | `family:bun`, `family:pho` |
-| Mì / Miến / Hủ tiếu | `ac9e12a4-…` (mì), `a7033166-…` (miến), `1af6a10b-…` (hủ tiếu), `5cc8224c-…` (nui) | có |
-| Lẩu & Nướng | `abd817da-4bee-58c2-936d-8f60aa7a5e80` | chưa có |
-| Bánh mì / Xôi | `811f6aa0-…` (bánh mì), `87e3727e-…` (xôi) | có |
-| Cháo / Súp | `28fdc48b-f3cb-5ea3-a33b-17a32a3277b7` | chưa có |
-| Đồ chiên & Xiên que | `0164ed89-738b-572f-b499-1b2da5320a64` | chưa có |
-| Các loại bánh mặn | `542c7681-…` (bánh bao), `5dcf86dc-…` (bánh cuốn), `6bcd10c4-…` (bánh ướt), `e78e10c2-…` (bánh cuộn) | có |
-| Món trộn & Cuốn | `bab170d6-…` (salad) | có một phần |
-| Ốc & Hải sản | `f77a6791-45e4-51cd-8792-452aa197ca2f` | chưa có |
-| Bánh ngọt | `d2316212-3436-5178-8f44-5990a4ffda8f` | chưa có |
-| Chè & Kem | `97c011b2-3d0b-5d4c-92fb-7d05eb6a6538` | chưa có |
-| Trái cây & Đồ chua | `841b5fe8-df62-5f93-bf75-34a79de55195` | chưa có |
-| Đồ ăn vặt khô | `b933e553-651e-5daa-bf13-489d7743a850` | chưa có |
+| Bữa ăn | `mealSlots` (mảng) | cơm: `breakfast lunch dinner` |
+| Loại món | `categoryIds` (mảng ID family) | bún chả: `bun` + `grill` |
+| Miền | `cuisineIds` (mảng ID miền, mã `vi_north` `vi_central` `vi_south` `vi_west`) | hủ tiếu: `vi_south` + `vi_west` |
+| Vị | `flavor` (mỗi vị một khóa: `spicy` `sour` `sweet` `salty` `fatty`) | cay **và** béo cùng lúc |
 
-UUID đầy đủ của family có trong `supabase/seed/catalogue/dishes.json`; UUID nhóm mới nằm trong
-`mobile/src/features/context/services/dishSetupCatalogue.ts` (`PLACEHOLDER_IDS`). Khi nhóm data đưa nhóm mới vào
-taxonomy, giữ đúng các UUID này để app và backend không phải đổi.
+- **Một món thiếu `mealSlots` không bao giờ vào pool** của bữa nào. Gắn thiếu bữa thì món bị bỏ sót ở bữa còn lại.
+- Món thiếu nhóm, miền hoặc vị không bị trừ điểm, chỉ không được cộng.
+- `origin` (một giá trị) chỉ còn để tương thích dữ liệu cũ; **không điền mới** mà dùng `cuisineIds` miền.
+
+## Mã và ID (một nguồn duy nhất)
+
+[`data-preparation/config/filter_taxonomy_v2.json`](../../data-preparation/config/filter_taxonomy_v2.json) là bảng đầy đủ,
+sinh bởi `python data-preparation/scripts/filter_taxonomy.py --write`. ID sinh bằng đúng `stable_id` của pipeline
+(`taxonomy` + `category:family:<mã>` hoặc `cuisine:<mã>`), nên khớp với bundle hiện có. File taxonomy gốc
+`taxonomy_v1.json` **giữ nguyên** vì manifest GM-40 ghim hash của nó.
+
+**Family mới** (cần thêm vào taxonomy của bộ dữ liệu mới): `grill` `soup` `skewer` `fried_snack` `savory_cake`
+`snail_seafood` `sweet_cake` `che` `ice_cream` `fruit_pickle` `dry_snack`. **Miền mới** (cuisine): `vi_north`
+`vi_central` `vi_south` `vi_west`.
+
+**Nhóm trên màn hình = tập family** (món thuộc nhóm nếu có bất kỳ family nào của nhóm):
+
+| Nhóm | Family |
+|---|---|
+| Cơm | rice |
+| Bún / Phở | bun, pho |
+| Mì / Miến / Hủ tiếu | noodles, mien, hu_tieu, nui, banh_canh |
+| Lẩu & Nướng | hotpot, grill |
+| Bánh mì / Xôi | banh_mi, sticky_rice |
+| Cháo / Súp | porridge, soup |
+| Đồ chiên & Xiên que | fried_snack, fried_chicken, skewer |
+| Các loại bánh mặn | banh_bao, banh_cuon, banh_uot, banh_cuon_wrap, savory_cake |
+| Món trộn & Cuốn | salad, rolls |
+| Ốc & Hải sản | snail_seafood |
+| Bánh ngọt | sweet_cake |
+| Chè & Kem | che, ice_cream |
+| Trái cây & Đồ chua | fruit_pickle |
+| Đồ ăn vặt khô | dry_snack |
+
+Một món được thuộc **nhiều nhóm** (ví dụ cơm cháo) và cả nhóm bữa chính lẫn nhóm Ăn vặt.
+
+## Trường cần cho mỗi món
+
+| Trường | Giá trị cho phép | Bộ lọc |
+|---|---|---|
+| `mealSlots` | mảng con của `breakfast`, `lunch`, `dinner`, `snack`, ít nhất 1 | chọn pool theo bữa |
+| `categoryIds` | ID family (bảng trên), ít nhất 1 | Loại món |
+| `cuisineIds` | ID miền, 0 hoặc nhiều | Ẩm thực |
+| `flavor.spicy/sour/sweet/salty/fatty` | `{ present: true/false/null, intensity: none/low/medium/high/unknown }`; `fatty` tùy chọn | Cay · Chua / Chua cay · Ngọt · Mặn / Đậm đà (`salty` mức `medium` hoặc `high`) · Thanh đạm (`salty` mức `low`) · Béo / Ngậy |
+| `temperature` | `hot` `warm` `cold` `ambient` `unknown` | thẻ món |
+| Giá | quan sát `amount`, `currency`, `unit`, `sourceRef`, `observedAt` | thẻ món |
+| `artwork` | URL + `usageRights` + `license` + `attribution`; không có quyền thì `null` | thẻ món |
+
+Mỗi giá trị phân loại cần nguồn (`sourceRef`: menu, bài viết, khảo sát). Không có nguồn thì để `unknown`/`null`; không
+suy ra an toàn dị ứng từ tên món.
 
 ## Số lượng tối thiểu
 
-- Mỗi bữa (sáng, trưa, tối, ăn vặt) cần **ít nhất 20 món** để host chọn được tối đa 20; dưới 10 thì phòng chỉ tạo được
-  qua nút "Dùng N món", dưới 5 thì không tạo được.
-- Mỗi nhóm món nên có **ít nhất 3 món** để ưu tiên theo nhóm có tác dụng.
-- Hiện tại: bữa tối 7 món, **ăn vặt 1 món** (không tạo được phòng Ăn vặt), 9 nhóm chưa có món nào; miền và vị gần như
-  trống. Chi tiết trong báo cáo độ phủ.
+- Mỗi bữa **≥ 20 món** (host chọn tối đa 20); dưới 10 chỉ tạo được qua "Dùng N món", dưới 5 thì không tạo được.
+- Mỗi nhóm món **≥ 3 món**; mỗi miền có món tiêu biểu.
+- Hiện: bữa tối 7 món, **ăn vặt 1 món (cần ≥ 24, xem mục Ăn vặt)**; 9 nhóm chưa có món nào (chi tiết trong báo cáo độ phủ). Dữ liệu 39 món hiện chỉ để test.
 
-## Quy tắc
+## Bộ món Ăn vặt (bữa `snack`)
 
-- Không bịa: mỗi giá trị phân loại cần nguồn (menu, bài viết, khảo sát); không có nguồn thì để `unknown`/`null`.
-- Không suy ra an toàn dị ứng từ tên món.
-- Ảnh chỉ dùng khi có quyền; còn lại để `null`.
+Ăn vặt là một bữa riêng trên màn tạo phòng, có 8 nhóm riêng (bảng nhóm ở trên: Đồ chiên & Xiên que, Các loại bánh mặn,
+Món trộn & Cuốn, Ốc & Hải sản, Bánh ngọt, Chè & Kem, Trái cây & Đồ chua, Đồ ăn vặt khô). Backend đã nhận `snack` ở mọi
+bước (tạo phòng, chọn pool, xếp hạng theo khẩu vị); thứ còn thiếu là **dữ liệu**.
 
-## Quy trình cập nhật
+- Catalogue QA đang hoạt động chỉ có **1 món** có `snack` (sáng 14, trưa 23, tối 7), nên chưa tạo được phòng Ăn vặt (cần ít nhất 5, host chọn tối đa 20).
+- Cần **ít nhất 24 món Ăn vặt**: mỗi nhóm trong 8 nhóm Ăn vặt **≥ 3 món**, và tổng ≥ 20 để host chọn được 20 món.
+- Món ăn vặt cũng là món bình thường: đủ `categoryIds`, `cuisineIds`, `flavor`, giá, nguồn (`sourceRef`) như bữa chính.
+- Một món ăn được cả bữa chính lẫn ăn vặt (bánh mì, xôi, cháo, bánh cuốn…) thì gắn **cả hai** `mealSlots` (ví dụ `breakfast snack`). Gắn thiếu thì món không vào pool của bữa còn lại.
+- Nhóm Ăn vặt là tập family như nhóm bữa chính; món có thể thuộc nhiều family (ví dụ `fried_snack` + `skewer`). Không tạo nhóm hay mã ngoài bảng ở trên.
+- Không bịa món, nhãn hay giá để cho đủ số lượng: món chưa có nguồn thì chưa đưa vào.
 
-1. Nhóm data điền `data-preparation/templates/dish_filter_enrichment.csv` (cột `fill…` + `sourceRef`), thêm món mới
-   nếu cần.
-2. Đưa vào pipeline GM-40 để ra bundle mới (ví dụ dataset 1.2.0), chạy
-   `python3 data-preparation/scripts/dish_catalogue.py --check`.
-3. Import lên DB QA bằng `scripts/gm40_catalogue_check.py` (không đụng DB ứng dụng), rồi chạy lại
+## Quy trình
+
+1. Điền mẫu CSV (cột `fill…`, nhiều giá trị cách nhau bằng dấu cách):
+   `fillFamilies` (`rice porridge`), `fillMealSlots` (`breakfast lunch dinner`), `fillRegions` (`vi_south vi_west`),
+   `fillFlavors` (`spicy=high fatty=medium sour=present`), kèm `sourceRef`.
+2. Kiểm: `python data-preparation/scripts/filter_taxonomy.py --validate <file.csv>` (mã sai, thiếu nguồn).
+3. Ra bundle mới (ví dụ dataset 1.2.0) qua pipeline GM-40. **Schema `dish-catalogue-v1` hiện chỉ có 4 vị và taxonomy
+   code của v1**: bộ dữ liệu mới cần mở rộng schema/codebook cho `flavor.fatty`, các family và miền mới (như
+   `filter_taxonomy_v2.json`). Bundle 1.1.0 không đổi.
+4. Dùng projection giàu (GM18.2) hoặc mở rộng importer để thẻ món có `cuisineIds`, `flavor`, `temperature`, giá;
+   importer cơ bản chỉ đưa `mealSlots`, `cuisineIds`, `categoryIds`, `name`, `description`, `artwork`.
+5. Import lên DB QA bằng `scripts/gm40_catalogue_check.py` (không đụng DB ứng dụng); chạy lại
    `python scripts/dish_filter_coverage.py` để cập nhật báo cáo.
-4. Projection hiện tại của importer cơ bản chỉ đưa `mealSlots`, `cuisineIds`, `categoryIds`, `name`, `description`,
-   `artwork` vào thẻ; cần bật projection giàu (GM18.2) hoặc mở rộng importer để `origin`, `flavor`, `temperature`,
-   giá vào thẻ thì backend mới dùng được cho ưu tiên.

@@ -24,11 +24,11 @@ Until now the server stored preferences but never used them: the pool was a seed
    start. Lobby screens do not show the pool, so nobody sees a pool change.
 2. **5–20 dishes.** `dishCount` accepts 5..20 (create, updateSettings, stored session, decision model, stored-result
    check). The client stepper still offers 10..20; 5..9 comes only from accepting a shortage.
-3. **Region field.** Cards carry `origin` (`north`, `central`, `south`, `west`, or null). Stored results drop it to keep
+3. **Region field.** Cards carry `origin` (`north`, `central`, `south`, `west`, or null; multi-valued regions arrive with ADR-025). Stored results drop it to keep
    the GM-06 card shape.
-4. **Placeholder taxonomy.** Groups and regions without catalogue entries use stable uuid5 IDs
-   (`gicungduoc:ui:<code>`); the data team keeps these IDs when it adds them to the taxonomy. Béo / Ngậy rides in
-   `categoryIds` until the flavour contract gets a field.
+4. **Placeholder taxonomy (superseded by ADR-025).** Groups and regions without catalogue entries first used ad-hoc
+   uuid5 IDs and Béo / Ngậy a tag in `categoryIds`; ADR-025 replaced them with pipeline IDs, multi-valued regions and
+   `flavor.fatty`.
 
 ## Consequences
 

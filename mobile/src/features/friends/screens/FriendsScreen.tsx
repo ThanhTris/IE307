@@ -41,7 +41,8 @@ export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome,
   const [messageTone, setMessageTone] = useState<'success' | 'error'>('error');
   const lock = useRef(false);
   const toast = useToast();
-  const { syncFriends } = useInboxBadge();
+  const { syncFriends, revision } = useInboxBadge();
+  const seenRevision = useRef(revision);
   // Who a typed friend code belongs to: undefined = looking it up, null = no such code.
   const [owner, setOwner] = useState<{ code: string; value: FriendCodeOwner | null | undefined }>();
   const query = normalizeSearch(search);
@@ -80,6 +81,13 @@ export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome,
       setRefreshing(false);
     }
   }, [inboxRepository, repository]);
+
+  // A friend request arrived or was accepted while this list is open: refresh it.
+  useEffect(() => {
+    if (revision === seenRevision.current) return;
+    seenRevision.current = revision;
+    if (!lock.current) void load(true);
+  }, [revision, load]);
 
   useEffect(() => {
     const timer = setTimeout(() => { void load(); }, 0);

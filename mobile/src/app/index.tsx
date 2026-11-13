@@ -1,13 +1,25 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Redirect, useFocusEffect, useRouter } from 'expo-router';
 import { HomeScreen } from '../features/home/screens/HomeScreen';
 import { useRoomRepository } from '../bootstrap/RoomRepositoryProvider';
+import { isPermissionsOnboarded } from '../features/permissions/services/permissionsOnboarding';
 
 export default function IndexRoute() {
   const router = useRouter();
   const live = useRoomRepository();
   const [roomRevision, setRoomRevision] = useState(0);
   useFocusEffect(useCallback(() => { setRoomRevision(value => value + 1); }, []));
+
+  // First run on this phone after sign-in: ask for permissions once (checked per phone, not per account).
+  const [onboarded, setOnboarded] = useState<boolean | undefined>();
+  const signedIn = live.status === 'active' && !!live.user;
+  useEffect(() => {
+    if (!signedIn) return;
+    let active = true;
+    void isPermissionsOnboarded().then(value => { if (active) setOnboarded(value); });
+    return () => { active = false; };
+  }, [signedIn]);
+  if (signedIn && onboarded === false) return <Redirect href="/welcome-permissions" />;
 
   if (!live.isInitializing && live.status === 'empty' && live.issue === 'no-session' && !live.user) return <Redirect href="/welcome" />;
 

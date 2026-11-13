@@ -61,7 +61,7 @@ test('G03 history without a cache reports offline failure and recovers to an emp
   fetch.mockResolvedValueOnce(noNetwork).mockResolvedValue(empty);
   const repository: HistoryRepository = {
     fetch, cached: () => undefined, cachedDurable: async () => undefined,
-    updateConsent: jest.fn(), delete: jest.fn(), invalidate: jest.fn(),
+    readConsent: async () => ({ ok: false as const, error: { messageKey: 'NETWORK_ERROR' as const } }), updateConsent: jest.fn(), delete: jest.fn(), invalidate: jest.fn(),
   };
   await render(<HistoryScreen repository={repository} onHome={jest.fn()} onNavigate={jest.fn()} />);
   expect(await screen.findByText('Chưa tải được lịch sử')).toBeOnTheScreen();
