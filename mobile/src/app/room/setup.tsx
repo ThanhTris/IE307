@@ -15,12 +15,14 @@ import type { SetupRoom } from '../../features/context/services/dishSetup';
  */
 export default function DishSetupRoute() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ roomId?: string; stage?: string }>();
+  const params = useLocalSearchParams<{ roomId?: string; stage?: string; invite?: string }>();
+  const invitees = useMemo(() => typeof params.invite === 'string' && params.invite ? params.invite.split(',') : [], [params.invite]);
   const roomId = typeof params.roomId === 'string' && params.roomId ? params.roomId : undefined;
   const initialStage = roomId && params.stage === 'preferences' ? 'preferences' : 'setup';
   const live = useRoomRepository();
   const back = () => router.dismissTo('/');
-  const toLobby = (room: SetupRoom) => router.replace({ pathname: '/room/lobby', params: { roomId: room.id } });
+  // Friends picked during setup are invited from the lobby once the room exists.
+  const toLobby = (room: SetupRoom, inviteeIds: string[]) => router.replace({ pathname: '/room/lobby', params: inviteeIds.length && !roomId ? { roomId: room.id, invite: inviteeIds.join(',') } : { roomId: room.id } });
   const gateway = useMemo(() => createLiveDishSetupGateway(live.repository, roomId), [live.repository, roomId]);
   const generateRequestId = useCallback(() => createDurableRequestId('setup'), []);
   return (
@@ -32,6 +34,7 @@ export default function DishSetupRoute() {
         requestId={generateRequestId}
         onExit={back}
         onLobby={toLobby}
+        initialInvitees={invitees}
       />
     </RequireActiveSession>
   );

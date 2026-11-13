@@ -18,7 +18,7 @@ test.each(['loading', 'error', 'empty'] as const)('friends %s does not block cre
   jest.spyOn(repository, 'listFriends').mockImplementation(() => state === 'loading' ? new Promise(() => {}) : Promise.resolve(state === 'error' ? { ok: false, error: { messageKey: 'NETWORK_ERROR' } } : { ok: true, data: [] }));
   const onCreate = jest.fn(), onJoin = jest.fn();
   await render(<HomeScreen repository={repository} liveSession={session()} onCreate={onCreate} onJoin={onJoin} onResume={jest.fn()} />);
-  await screen.findByText(state === 'loading' ? 'Đang tải bạn bè…' : state === 'error' ? 'Chưa tải được bạn bè' : 'Mời bạn để bắt đầu kèo nhanh.');
+  await (state === 'loading' ? screen.findByLabelText('Đang tải bạn bè') : screen.findByText(state === 'error' ? 'Chưa tải được bạn bè' : 'Mời bạn để bắt đầu kèo nhanh.'));
   expect(screen.getByRole('button', { name: 'Tạo phòng' })).toBeEnabled();
   expect(screen.getByRole('button', { name: 'Tham gia phòng' })).toBeEnabled();
   expect(screen.queryByLabelText('Đang hoạt động')).toBeNull();

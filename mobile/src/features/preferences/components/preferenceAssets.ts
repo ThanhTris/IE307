@@ -1,20 +1,38 @@
-import type { ImageSourcePropType } from 'react-native';
-export const preferenceAssets: Record<string, ImageSourcePropType> = {
-  'family:rice': require('../../../../assets/brand/entry-ui/rice.png'),
-  'family:bun': require('../../../../assets/brand/preferences/bun.png'),
-  'family:pho': require('../../../../assets/brand/preferences/bun.png'),
-  'family:noodles': require('../../../../assets/brand/preferences/noodles.png'),
-  'family:hotpot': require('../../../../assets/brand/preferences/hotpot.png'),
-  'family:rolls': require('../../../../assets/brand/preferences/rolls.png'),
-  'family:banh_cuon': require('../../../../assets/brand/preferences/cake.png'),
-  vi: require('../../../../assets/brand/preferences/vietnam.png'),
-  ko: require('../../../../assets/brand/entry-ui/rice.png'),
-  ja: require('../../../../assets/brand/preferences/japan.png'),
-  zh: require('../../../../assets/brand/preferences/china.png'),
-  th: require('../../../../assets/brand/preferences/thailand.png'),
-  it: require('../../../../assets/brand/preferences/europe.png'),
-  light: require('../../../../assets/brand/preferences/leaf.png'),
-  rich: require('../../../../assets/brand/preferences/rich.png'),
-  sour: require('../../../../assets/brand/preferences/sour.png'),
-  spicy: require('../../../../assets/brand/preferences/spicy.png'),
+import type { ChoiceIcon } from '../../../shared/ui/icons/ChoiceIcon';
+
+/**
+ * Icons for the preference choices, keyed by the option `code` (dish groups, regions) or flavour id.
+ * Food glyphs come from Material Community Icons; FontAwesome 6 fills the dishes it lacks (shrimp, bowls).
+ * Codes that are not listed render without an icon.
+ */
+export const preferenceAssets: Record<string, ChoiceIcon> = {
+  // Main meals
+  'family:rice': { fa: 'bowl-rice' },
+  'family:bun': { food: 'noodles' },
+  'family:pho': { food: 'noodles' },
+  'family:noodles': { symbol: 'soba' },
+  'family:hotpot': { food: 'grill' },
+  'family:banh_mi': { fa: 'bread-slice' },
+  'family:porridge': { food: 'pot-steam' },
+  // Ăn vặt
+  'snack:fried': { symbol: 'hanami_dango' },
+  'snack:savory_cake': { food: 'cookie' },
+  'snack:mixed': 'salad',
+  'snack:seafood': { fa: 'shrimp' },
+  'snack:sweet_cake': { food: 'cupcake' },
+  'snack:che': { food: 'ice-cream' },
+  'snack:fruit': { food: 'fruit-watermelon' },
+  'snack:dry': { food: 'french-fries' },
+  // Regions
+  'region:north': { fa: 'landmark' },
+  'region:central': { fa: 'vihara' },
+  'region:south': { food: 'town-hall' },
+  'region:mekong': { mi: 'houseboat' },
+  // Flavours
+  spicy: { fa: 'pepper-hot' },
+  sour: { fa: 'lemon' },
+  sweet: { food: 'candy' },
+  rich: { food: 'shaker-outline' },
+  light: { fa: 'seedling' },
+  fatty: { fa: 'cheese' },
 };

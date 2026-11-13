@@ -220,9 +220,9 @@ export function createJoinRoomWebLink(code: string): string {
   return `https://gicungduoc.vn/join/${normalized}`;
 }
 
-export function createJoinRoomShareMessage(code: string): string {
+export function createJoinRoomShareMessage(code: string, link: string = createJoinRoomWebLink(code)): string {
   const normalized = normalizeRoomCode(code);
-  return `Vào phòng chọn món trên Gì Cũng Được!\nMã phòng: ${normalized}\nLiên kết: https://gicungduoc.vn/join/${normalized}`;
+  return `Vào phòng chọn món trên Gì Cũng Được!\nMã phòng: ${normalized}\nLiên kết: ${link}`;
 }
 
 export type CameraPermissionStatus =
@@ -288,17 +288,33 @@ export class SimulatedQrScannerAdapter implements QrScannerAdapter {
   }
 }
 
+/** granted → granted; never asked or asked-but-can-ask-again → undetermined; permanently denied → blocked. */
+function mapCameraPermission(result: { granted: boolean; canAskAgain: boolean; status: string }): CameraPermissionStatus {
+  if (result.granted) return 'granted';
+  if (result.status === 'undetermined' || result.canAskAgain) return 'undetermined';
+  return 'blocked';
+}
+
 export class NativeQrScannerAdapter implements QrScannerAdapter {
   readonly isSimulated = false;
 
   async getPermissionStatus(): Promise<CameraPermissionStatus> {
-    // In our Expo config, CAMERA is blocked in blockedPermissions.
-    // Hence native returns 'denied' or 'unavailable', leading to manual fallback.
-    return 'denied';
+    try {
+      const { Camera } = await import('expo-camera');
+      return mapCameraPermission(await Camera.getCameraPermissionsAsync());
+    } catch {
+      // No camera module (or it failed): fall back to manual code entry.
+      return 'denied';
+    }
   }
 
   async requestPermission(): Promise<CameraPermissionStatus> {
-    return 'denied';
+    try {
+      const { Camera } = await import('expo-camera');
+      return mapCameraPermission(await Camera.requestCameraPermissionsAsync());
+    } catch {
+      return 'denied';
+    }
   }
 
   async openSettings(): Promise<void> {

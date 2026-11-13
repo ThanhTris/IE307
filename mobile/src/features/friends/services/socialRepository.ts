@@ -6,11 +6,17 @@ import type {
   SocialIdentity,
   WriteResult,
 } from '../../../data/api/contracts';
+import { ApiClientImpl } from '../../../data/api/client';
 import type { RoomRepository } from '../../rooms/services/roomRepository';
 import { createDurableRequestId } from '../../rooms/services/roomRepository';
 import { callSessionApi } from '../../rooms/services/sessionApi';
 
+/** Who a friend code belongs to, read before inviting. `null` data = no such code. */
+export type FriendCodeOwner = { displayName: string; friendCode: string; self: boolean; alreadyFriends: boolean };
+
 export interface SocialRepository {
+  /** Optional so older fakes keep working; the live repository always provides it. */
+  lookupFriendCode?(code: string): Promise<ReadResult<FriendCodeOwner | null>>;
   getIdentity(): Promise<ReadResult<SocialIdentity>>;
   listFriends(): Promise<ReadResult<Friend[]>>;
   invite(request: InvitePartnerRequest): Promise<WriteResult<FriendInvitation>>;
@@ -37,6 +43,12 @@ export function createSocialRepository(roomRepository: RoomRepository): SocialRe
     },
     accept: invitationId => callSessionApi(roomRepository, client => client.acceptPartner(invitationId, createDurableRequestId('partner_accept'))),
     reject: invitationId => callSessionApi(roomRepository, client => client.rejectPartner(invitationId, createDurableRequestId('partner_reject'))),
+    lookupFriendCode: code => callSessionApi(roomRepository, async client => {
+      if (!(client instanceof ApiClientImpl)) return { ok: false as const, error: { messageKey: 'NOT_READY' as const } };
+      const raw = await client.callRpc<unknown>('find_partner_by_code', { friend_code: code });
+      return client.normalizeReadResponse<FriendCodeOwner | null>(raw, (value): value is FriendCodeOwner | null => value === null
+        || (isRecord(value) && typeof value.displayName === 'string' && typeof value.friendCode === 'string' && typeof value.self === 'boolean' && typeof value.alreadyFriends === 'boolean'));
+    }),
     removeFriend: partnerId => callSessionApi(roomRepository, client => client.unfriend(partnerId, createDurableRequestId('unfriend'))),
   };
 }

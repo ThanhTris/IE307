@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { JoinRoomScreen } from '../../features/rooms/screens/JoinRoomScreen';
+import { QrCameraScanner } from '../../features/rooms/components/QrCameraScanner';
 import { useRoomRepository } from '../../bootstrap/RoomRepositoryProvider';
 import { RequireActiveSession } from '../../features/auth/components/RequireActiveSession';
 import {
@@ -89,6 +90,7 @@ export default function JoinRoomRoute() {
       repository={live.repository}
       preview={(c: string) => live.repository.previewJoin(c)}
       qrScannerAdapter={qrAdapter}
+      renderScanner={isSimulatedScanner ? undefined : onScanned => <QrCameraScanner onScanned={onScanned} />}
       initialDisplayName={live.user?.displayName}
       initialCode={activeCode}
       linkError={effectiveError ?? undefined}

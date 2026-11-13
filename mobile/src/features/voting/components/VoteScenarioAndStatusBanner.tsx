@@ -140,9 +140,6 @@ export function VoteScenarioAndStatusBanner({
         </View>
       ) : null}
 
-      {lastActionNotice ? (
-        <StatusNotice title="Tương tác gần nhất" message={lastActionNotice} tone="success" colors={colors} />
-      ) : null}
 
       {submissionState === 'pending' && (
         <StatusNotice

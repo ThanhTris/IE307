@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
-import { Animated, KeyboardAvoidingView, Modal, Platform, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
+import { Animated, KeyboardAvoidingView, Modal, Platform, Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
+import { ToastHost } from '../feedback/Toast';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { radii, spacing, typography } from '../../theme/tokens';
 import { AppButton } from '../buttons/AppButton';
@@ -20,6 +21,7 @@ export function SheetDialog({
   backdropAnimation,
   panelAnimation,
   showTitle = true,
+  dismissOnBackdrop = presentation === 'sheet',
 }: ComponentThemeProps & {
   visible: boolean;
   title: string;
@@ -34,13 +36,16 @@ export function SheetDialog({
   backdropAnimation?: Animated.WithAnimatedValue<StyleProp<ViewStyle>>;
   panelAnimation?: Animated.WithAnimatedValue<StyleProp<ViewStyle>>;
   showTitle?: boolean;
+  /** Tap outside the panel to close; on by default for sheets. */
+  dismissOnBackdrop?: boolean;
 }) {
   return (
     <Modal testID="sheet-dialog" visible={visible} transparent animationType={nativeAnimation} onRequestClose={onClose}>
       <View style={styles.root}>
       <Animated.View testID="dialog-backdrop" pointerEvents="none" style={[StyleSheet.absoluteFill, { backgroundColor: backdropColor ?? 'rgba(0,0,0,0.45)' }, backdropAnimation]} />
-      <SafeAreaView edges={['top', 'bottom']} style={[styles.modalBackdrop, presentation === 'dialog' && styles.centered]}>
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.keyboard}>
+      {dismissOnBackdrop ? <Pressable testID="dialog-dismiss" accessible={false} importantForAccessibility="no" onPress={onClose} style={StyleSheet.absoluteFill} /> : null}
+      <SafeAreaView pointerEvents="box-none" edges={['top', 'bottom']} style={[styles.modalBackdrop, presentation === 'dialog' && styles.centered]}>
+        <KeyboardAvoidingView pointerEvents="box-none" behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.keyboard}>
         <Animated.View testID="dialog-panel" accessibilityViewIsModal style={[styles.sheet, presentation === 'dialog' && styles.dialog, { backgroundColor: colors?.surface }, panelAnimation]}>
           {showHandle && presentation === 'sheet' ? <View style={styles.sheetHandle} /> : null}
           {showTitle ? <Text accessibilityRole="header" style={[styles.contextTitle, { color: colors?.text }]}>
@@ -52,6 +57,7 @@ export function SheetDialog({
         </KeyboardAvoidingView>
       </SafeAreaView>
       </View>
+      <ToastHost />
     </Modal>
   );
 }

@@ -13,9 +13,9 @@ export function HomeFlowFrame({ title, onHome, busy = false, children, centeredT
     return () => subscription.remove();
   }, [onHome, busy]);
   return <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-    <AppHeader variant="back" title={title} onPressBack={busy ? undefined : onHome} allowTitleWrap hideDivider centeredTitle={centeredTitle} backIconSource={require('../../../../assets/brand/home/back.png')} brandTextStyle={textStyle(700)} colors={colors} />
+    <AppHeader variant="back" title={title} onPressBack={busy ? undefined : onHome} allowTitleWrap hideDivider centeredTitle={centeredTitle} brandTextStyle={textStyle(700)} colors={colors} />
     <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-    <ScrollView contentContainerStyle={[styles.content, compact && { paddingTop: 24 }]} keyboardShouldPersistTaps="handled">
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={[styles.content, compact && { paddingTop: 24 }]} keyboardShouldPersistTaps="handled">
       {children}
     </ScrollView>
     </KeyboardAvoidingView>

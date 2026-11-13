@@ -25,7 +25,7 @@ Mỗi feature chỉ có các thư mục cần dùng: `screens/` (màn hình gắ
 | `preferences` | Màn chọn khẩu vị (`DishPreferencesScreen`) dùng trong luồng thiết lập | — |
 | `voting` | Bình chọn vòng 1 và vòng chung kết (UI flashcard sẽ làm lại) | `/room/vote`, `/room/final-round` |
 | `result` | Kết quả, bục xếp hạng, quán gần đây; `DishResultEntry` là điểm vào của route | `/room/result`, `/room/no-consensus` |
-| `friends`, `history`, `inbox`, `account` | Bạn bè, lịch sử, hộp thư + thông báo đẩy, hồ sơ/cài đặt | `/friends`, `/history`, `/inbox`, `/push-settings`, `/profile`, `/settings` |
+| `friends`, `history`, `inbox`, `account` | Bạn bè, lịch sử, hộp thư + thông báo đẩy, hồ sơ khách (Figma 232:349) | `/friends`, `/history`, `/inbox`, `/push-settings`, `/profile` |
 
 ## Quy ước
 

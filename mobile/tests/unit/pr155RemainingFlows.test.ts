@@ -162,7 +162,7 @@ describe('PR155 complete consumer paths after fff8b88', () => {
 
   it.each(Array.from({ length: 20 }, (_, index) => index + 1))('accepts canonical R2 snapshots with %i remaining dish(es)', async count => {
     const snapshot = JSON.parse(JSON.stringify(canonicalFixture));
-    snapshot.state = 'ROUND_2'; snapshot.round = 2; snapshot.removalCap = Math.max(1, Math.floor(count * 0.3));
+    snapshot.state = 'ROUND_2'; snapshot.round = 2; snapshot.removalCap = Math.max(1, Math.floor((3 * count + 9) / 10));
     snapshot.pool = snapshot.pool.slice(0, count);
     const h = await harness(snapshot);
     expect((await h.repo.getRoomSnapshot(snapshot.roomId)).ok).toBe(true);
@@ -274,6 +274,46 @@ describe('PR155 complete consumer paths after fff8b88', () => {
     expect(consentRequestIds[1]).toBe(consentRequestIds[0]);
     expect(h.calls.filter(call => call.params.command === 'updatePreferences')).toHaveLength(1);
     expect(h.consent).toEqual({ personal: true, group: false });
+  });
+
+  it('accepts a saved flavor whose jsonb key order differs from the request', async () => {
+    const h = await harness();
+    const before = await h.gateway.read();
+    const flavor = { spicy: { present: true, intensity: 'unknown' }, salty: { present: true, intensity: 'low' }, sour: { present: null, intensity: 'unknown' }, sweet: { present: null, intensity: 'unknown' } };
+    const dispatch = h.repo.dispatchDishSession.bind(h.repo);
+    jest.spyOn(h.repo, 'dispatchDishSession').mockImplementation(async (command, payload, version) => {
+      const reply = await dispatch(command, payload, version);
+      // Postgres jsonb returns object keys in its own order (shorter keys first).
+      if (command === 'updatePreferences') {
+        h.snapshot.ownPreferences = { ...h.snapshot.ownPreferences, flavor: { sour: { present: null, intensity: 'unknown' }, salty: { present: true, intensity: 'low' }, spicy: { present: true, intensity: 'unknown' }, sweet: { present: null, intensity: 'unknown' } } };
+      }
+      return reply;
+    });
+    const reply = await h.gateway.write({
+      kind: 'preferences', requestId: 'review-flavor-order', room: before.room!,
+      preferences: { ...emptyPreferences(before.historyConsent?.personal ?? false), flavor: flavor as never },
+      changedFields: ['flavor'],
+    });
+    expect(reply).toEqual(expect.objectContaining({ ok: true }));
+  });
+
+  it('accepts a saved schedule that Postgres returns as +00:00 instead of .000Z', async () => {
+    const h = await harness();
+    const before = await h.gateway.read();
+    const desiredAt = new Date(Date.now() + 2 * 86400000).toISOString().replace(/T.*/, 'T05:00:00.000Z');
+    const dispatch = h.repo.dispatchDishSession.bind(h.repo);
+    jest.spyOn(h.repo, 'dispatchDishSession').mockImplementation(async (command, payload, version) => {
+      const reply = await dispatch(command, payload, version);
+      if (command === 'updateSettings' && reply.ok && h.snapshot.settings) {
+        h.snapshot.settings = { ...h.snapshot.settings, dishCount: before.settings!.dishCount, mealSlot: 'lunch', desiredAt: desiredAt.replace('.000Z', '+00:00') };
+      }
+      return reply;
+    });
+    const reply = await h.gateway.write({
+      kind: 'settings', requestId: 'review-schedule-format', room: before.room!,
+      draft: { ...before.settings!, mealSlot: 'lunch', timeMode: 'scheduled', desiredAt },
+    });
+    expect(reply).toEqual(expect.objectContaining({ ok: true }));
   });
 
   it('restores account consent from the API when the setup gateway is reopened', async () => {

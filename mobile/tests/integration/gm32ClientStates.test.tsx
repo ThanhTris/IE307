@@ -33,7 +33,7 @@ test('G01 friends distinguishes network failure, no friends and no search match'
 
   await render(<FriendsScreen repository={repository} onHome={jest.fn()} onNavigate={jest.fn()} />);
   expect(await screen.findByText('Minh')).toBeOnTheScreen();
-  await user.type(screen.getByPlaceholderText('Tìm trong danh sách bạn bè'), 'khong-match');
+  await user.type(screen.getByPlaceholderText('Tìm bạn hoặc nhập mã bạn bè'), 'khong-match');
   expect(screen.getByText('Không tìm thấy bạn')).toBeOnTheScreen();
   expect(screen.queryByText('Chưa có bạn bè')).toBeNull();
 });
@@ -42,7 +42,7 @@ test('G02 inbox distinguishes a failed request from an empty authenticated page'
   const list: jest.MockedFunction<InboxRepository['list']> = jest.fn();
   list.mockResolvedValueOnce(noNetwork).mockResolvedValue(empty);
   const repository: InboxRepository = {
-    list, markAllRead: jest.fn(), markHandled: jest.fn(), acceptFriend: jest.fn(), rejectFriend: jest.fn(),
+    list, markAllRead: jest.fn(), markRead: jest.fn(), markHandled: jest.fn(), acceptFriend: jest.fn(), rejectFriend: jest.fn(),
     acceptRoom: jest.fn(), rejectRoom: jest.fn(), resolveAcceptedRoom: jest.fn(), resolveRoomResult: jest.fn(),
   };
   const navigate = jest.fn();
@@ -65,9 +65,29 @@ test('G03 history without a cache reports offline failure and recovers to an emp
   };
   await render(<HistoryScreen repository={repository} onHome={jest.fn()} onNavigate={jest.fn()} />);
   expect(await screen.findByText('Chưa tải được lịch sử')).toBeOnTheScreen();
-  expect(screen.queryByText('Chưa có dữ liệu đã lưu')).toBeNull();
+  expect(screen.queryByText('Chưa có bữa ăn đã lưu')).toBeNull();
   await userEvent.setup().press(screen.getByRole('button', { name: 'Thử lại' }));
-  expect(await screen.findByText('Chưa có dữ liệu đã lưu')).toBeOnTheScreen();
+  expect(await screen.findByText('Chưa có bữa ăn đã lưu')).toBeOnTheScreen();
   expect(screen.queryByText('Chưa tải được lịch sử')).toBeNull();
   expect(fetch).toHaveBeenCalledTimes(2);
+});
+
+test('a typed friend code shows the owner\'s name (not the bare code); an unknown code says so; the invite names who it went to', async () => {
+  const invite = jest.fn(async () => ({ ok: true as const, requestId: 'r', data: { id: 'x' } as never }));
+  const lookupFriendCode = jest.fn(async (code: string) => ({ ok: true as const, data: code === 'ZZZZZZZZZZ' ? null : { displayName: 'Bảo', friendCode: code, self: false, alreadyFriends: false } }));
+  const repository: SocialRepository = {
+    getIdentity: async () => ({ ok: true, data: { id: '10000000-0000-4000-8000-000000000003', displayName: 'QA guest', friendCode: 'ABCDEFGH24', avatarSeed: 'qa' } }),
+    listFriends: async () => ({ ok: true, data: [] }), invite: invite as never, accept: jest.fn(), reject: jest.fn(), removeFriend: jest.fn(), lookupFriendCode,
+  };
+  const user = userEvent.setup();
+  await render(<FriendsScreen repository={repository} onHome={jest.fn()} onNavigate={jest.fn()} />);
+  const input = await screen.findByPlaceholderText('Tìm bạn hoặc nhập mã bạn bè');
+  await user.type(input, 'T4ME7UPZBU');
+  expect(await screen.findByText('Bảo')).toBeOnTheScreen();
+  expect(screen.getByText(/Mã bạn bè · T4ME7UPZBU/)).toBeOnTheScreen();
+  await user.press(screen.getByRole('button', { name: 'Kết bạn' }));
+  expect(invite).toHaveBeenCalledWith(expect.objectContaining({ friendCode: 'T4ME7UPZBU' }));
+  await user.clear(input);
+  await user.type(input, 'ZZZZZZZZZZ');
+  expect(await screen.findByText('Không tìm thấy mã này')).toBeOnTheScreen();
 });

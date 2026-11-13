@@ -223,7 +223,7 @@ round-2 state or start its timer. If `N>0`, round 2 uses exactly those `N`
 dishes; do not add or draw replacement dishes, and `N` may be below 10. If
 `N=1`, skip elimination and finalize using the established decision rules. If
 `N>=2`, an individual may REMOVE at most
-`max(1, floor(0.30 * N))` dishes. This is a limit, not a required number of
+`max(1, ceil(0.30 * N))` (ADR-023) dishes. This is a limit, not a required number of
 removals; KEEP all is valid. All NO dishes remain excluded. If all candidates
 are removed in round 2, persist `NO_CONSENSUS` with `ALL_REMOVED`; the terminal
 snapshot has an empty active candidate pool. Never restore a NO/REMOVE dish as

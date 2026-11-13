@@ -8,9 +8,9 @@ import type { RankedDish } from '../services/resultPresentation';
 import { lightColors } from '../../../shared/theme/tokens';
 
 export function WinnerCelebration({ winner, imageSource, imageScale, onDismiss }: { winner: RankedDish; imageSource?: ImageSourcePropType; imageScale?: number; onDismiss: () => void }) {
-  const { colors, dark } = useShellTheme(), { textStyle } = useAppFonts(), { height } = useWindowDimensions();
+  const { colors } = useShellTheme(), { textStyle } = useAppFonts(), { height } = useWindowDimensions();
   const motion = useDialogMotion(height), close = () => motion.dismiss(onDismiss);
-  return <SheetDialog visible title="Món chiến thắng" showTitle={false} presentation="dialog" colors={colors} showClose={false} showHandle={false} onClose={close} nativeAnimation="none" backdropColor={dark ? undefined : 'rgba(70,195,79,0.30)'} backdropAnimation={{ opacity: motion.opacity }} panelAnimation={{ transform: [{ translateY: motion.translation }] }}>
+  return <SheetDialog visible title="Món chiến thắng" showTitle={false} presentation="dialog" colors={colors} showClose={false} showHandle={false} onClose={close} nativeAnimation="none" backdropColor="rgba(8,20,10,0.72)" backdropAnimation={{ opacity: motion.opacity }} panelAnimation={{ transform: [{ translateY: motion.translation }] }}>
     <ScrollView style={{ maxHeight: height * 0.7 }} contentContainerStyle={{ alignItems: 'center' }}><Pressable accessible={false} disabled={motion.closing} onPress={close} style={styles.content}>
       <View accessible={false} style={styles.medal}>
         <Image source={require('../../../../assets/brand/result/laurel.png')} resizeMode="contain" style={styles.leaf} />

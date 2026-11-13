@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { AppButton, StatusNotice } from '../../../shared/ui';
+import { AppButton } from '../../../shared/ui';
 import { HomeFlowFrame } from '../components/HomeFlowFrame';
+import { ToastNotice } from '../../../shared/ui/feedback/Toast';
 
 export function GuestSessionExpiredScreen({ onReset, onHome }: { onReset: () => Promise<boolean>; onHome: () => void }) {
   const { colors } = useShellTheme();
@@ -27,7 +28,7 @@ export function GuestSessionExpiredScreen({ onReset, onHome }: { onReset: () => 
       <Text accessibilityRole="header" style={[styles.title, { color: colors.text }, textStyle(700)]}>Phiên khách đã hết hạn</Text>
       <Text style={[styles.description, { color: colors.muted }, textStyle(400)]}>Nhập tên để tiếp tục dùng ứng dụng.</Text>
     </View>
-    {error ? <StatusNotice title="Chưa xóa được phiên cũ" message="Hãy thử lại trước khi nhập tên cho phiên mới." tone="error" colors={colors} /> : null}
+    {error ? <ToastNotice title="Chưa xóa được phiên cũ" message="Hãy thử lại trước khi nhập tên cho phiên mới." tone="error" /> : null}
     <View style={styles.spacer} />
     <AppButton label="Nhập tên" onPress={() => { void reset(); }} loading={busy} textStyle={textStyle(600)} colors={colors} />
   </HomeFlowFrame>;

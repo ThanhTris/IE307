@@ -1,19 +1,18 @@
 import {
-  Image,
   Pressable,
   StyleSheet,
   Text,
   View,
-  type ImageSourcePropType,
   type TextStyle,
 } from 'react-native';
 import { spacing, typography } from '../../theme/tokens';
+import { AppIcon, type AppIconName } from '../icons/AppIcon';
 import type { ComponentThemeProps } from '../types';
 
 export type HomeBottomNavigationItem = {
   id: string;
   label: string;
-  iconSource: ImageSourcePropType;
+  icon: AppIconName;
   onPress: () => void;
 };
 
@@ -53,12 +52,7 @@ export function AppBottomNavigation({
             onPress={item.onPress}
             style={({ pressed }) => [styles.bottomNavItem, { opacity: pressed ? 0.42 : selected ? 1 : 0.6 }]}
           >
-            <Image
-              source={item.iconSource}
-              accessible={false}
-              resizeMode="contain"
-              style={[styles.bottomNavIcon, { tintColor: colors?.text }]}
-            />
+            <AppIcon name={item.icon} size={24} color={colors?.text} strokeWidth={selected ? 2.4 : 2} />
             <Text numberOfLines={allowLabelWrap ? undefined : 1} style={[styles.bottomNavLabel, allowLabelWrap && styles.bottomNavLabelWrapped, { color: colors?.text }, labelTextStyle]}>
               {item.label}
             </Text>
@@ -79,7 +73,6 @@ const styles = StyleSheet.create({
     paddingTop: spacing.xs,
   },
   bottomNavItem: { flex: 1, minWidth: 0, minHeight: 64, alignItems: 'center', justifyContent: 'center', gap: spacing.xs, paddingVertical: spacing.xs },
-  bottomNavIcon: { width: 24, height: 24 },
   bottomNavLabel: { ...typography.caption, width: '100%', maxWidth: '100%', minWidth: 0, fontSize: 12, lineHeight: 18, fontWeight: '500', textAlign: 'center' },
   bottomNavLabelWrapped: { alignSelf: 'stretch', flexShrink: 1, flexWrap: 'wrap' },
 });

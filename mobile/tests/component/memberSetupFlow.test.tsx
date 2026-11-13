@@ -2,6 +2,11 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react-nativ
 import { DishSetupFlow } from '../../src/features/context/screens/DishSetupFlow';
 import { createDishSetupPreview } from '../fixtures/setup/dishSetupPreview';
 
+// These flows start from "now": pin it to a lunch hour (UTC+7) so the dish groups shown do not depend on the wall clock.
+const NOON_VN = Date.UTC(2026, 10, 12, 5, 0, 0);
+beforeEach(() => { jest.spyOn(Date, 'now').mockReturnValue(NOON_VN); });
+afterEach(() => { jest.restoreAllMocks(); });
+
 // Members join an existing room and skip room settings: /room/setup?roomId=…&stage=preferences.
 async function openAsMember() {
   const gateway = createDishSetupPreview('member');
@@ -23,7 +28,7 @@ test('member starts on preferences, saves once and reaches the lobby without tou
   expect(screen.queryByRole('button', { name: 'Sửa thiết lập' })).toBeNull();
   expect(screen.queryByRole('button', { name: 'Hủy phòng' })).toBeNull();
   await fireEvent.press(screen.getByRole('button', { name: 'Mở phòng chờ' }));
-  expect(onLobby).toHaveBeenCalledWith(expect.objectContaining({ id: 'ui-room', code: 'MCK234' }));
+  expect(onLobby).toHaveBeenCalledWith(expect.objectContaining({ id: 'ui-room', code: 'MCK234' }), expect.any(Array));
 });
 
 test('member leaving the first preferences pass exits instead of showing room settings', async () => {

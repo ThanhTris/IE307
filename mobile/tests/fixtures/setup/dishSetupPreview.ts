@@ -3,7 +3,7 @@ import { emptyPreferences, initialSetupDraft, type SetupDraft, type SetupRoom } 
 import type { DishSetupGateway, SetupIntent, SetupReply } from '../../../src/features/context/services/dishSetupGateway';
 import { dishSetupCatalogue } from '../../../src/features/context/services/dishSetupCatalogue';
 
-export const dishSetupScenarios = ['default', 'loading', 'load-error', 'shortage15', 'shortage7', 'offline', 'create-error', 'save-error', 'timeout', 'ack-read-error', 'stale', 'closed', 'taxonomy-empty', 'member'] as const;
+export const dishSetupScenarios = ['default', 'loading', 'load-error', 'shortage15', 'shortage7', 'shortage3', 'offline', 'create-error', 'save-error', 'timeout', 'ack-read-error', 'stale', 'closed', 'taxonomy-empty', 'member'] as const;
 export type DishSetupScenario = typeof dishSetupScenarios[number];
 const clone = <T,>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 export function createDishSetupPreview(scenario: DishSetupScenario = 'default', seed?: {
@@ -33,7 +33,7 @@ export function createDishSetupPreview(scenario: DishSetupScenario = 'default', 
       if (intent.kind === 'settings') {
         if (scenario === 'member') return { ok: false, code: 'REJECTED' };
         if (scenario === 'create-error' && !rejected) { rejected = true; return { ok: false, code: 'REJECTED' }; }
-        const available = scenario === 'shortage15' ? 15 : scenario === 'shortage7' ? 7 : 20;
+        const available = scenario === 'shortage15' ? 15 : scenario === 'shortage7' ? 7 : scenario === 'shortage3' ? 3 : 20;
         if (intent.draft.dishCount > available) return { ok: false, code: 'SHORTAGE', available, requested: intent.draft.dishCount };
         settings = clone(intent.draft);
       } else if (intent.kind === 'preferences') {

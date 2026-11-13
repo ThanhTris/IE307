@@ -20,7 +20,7 @@ test('schedule default advances fifteen displayed minutes and rolls the date at 
   expect(scheduleParts(defaultScheduledTime(at('21:45:42')))).toEqual({ date: '2026-11-02', hour: '22', minute: '00' });
   expect(scheduleParts(defaultScheduledTime(at('23:50:00')))).toEqual({ date: '2026-11-03', hour: '00', minute: '05' });
 });
-test.each([['breakfast', '07'], ['lunch', '12'], ['dinner', '18']] as const)('changing scheduled meal to %s preserves a future date and sets %s:00', (meal, hour) => {
+test.each([['breakfast', '07'], ['lunch', '12'], ['dinner', '19']] as const)('changing scheduled meal to %s preserves a future date and sets %s:00', (meal, hour) => {
   const draft = { ...initialSetupDraft(), timeMode: 'scheduled' as const, desiredAt: '2026-11-05T14:30:00+07:00' };
   expect(scheduleParts(changeSetupMeal(draft, meal, at('15:00:00')).desiredAt!)).toEqual({ date: '2026-11-05', hour, minute: '00' });
 });
@@ -28,5 +28,5 @@ test('past meal time rolls to the next future occurrence while snack retains the
   const draft = { ...initialSetupDraft(), timeMode: 'scheduled' as const, desiredAt: '2026-11-02T17:30:00+07:00' };
   expect(scheduleParts(changeSetupMeal(draft, 'lunch', at('15:00:00')).desiredAt!)).toEqual({ date: '2026-11-03', hour: '12', minute: '00' });
   expect(changeSetupMeal(draft, 'snack', at('15:00:00')).desiredAt).toBe(draft.desiredAt);
-  expect(scheduleParts(changeSetupMeal(draft, 'dinner', at('15:00:00')).desiredAt!)).toEqual({ date: '2026-11-02', hour: '18', minute: '00' });
+  expect(scheduleParts(changeSetupMeal(draft, 'dinner', at('15:00:00')).desiredAt!)).toEqual({ date: '2026-11-02', hour: '19', minute: '00' });
 });

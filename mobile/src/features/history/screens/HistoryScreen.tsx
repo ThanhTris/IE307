@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { AppButton, SheetDialog, StatusNotice, ApiFeatureFrame } from '../../../shared/ui';
+import { AppButton, AppIcon, LoadingState, SheetDialog, StatusNotice, ApiFeatureFrame } from '../../../shared/ui';
 import { errorMessage } from '../../friends/screens/FriendsScreen';
 import type { CanonicalHistoryItem, HistoryRow } from '../services/historyTypes';
 import { historyIdOf, historyTitle, type HistoryRepository } from '../services/historyRepository';
-import BowlIcon from '../../../../assets/brand/icons/dish-bowl.svg';
-import NoodlesIcon from '../../../../assets/brand/icons/dish-noodles.svg';
-import MinusIcon from '../../../../assets/brand/icons/notification-minus.svg';
+import { ToastNotice } from '../../../shared/ui/feedback/Toast';
+import { podiumOrder } from '../../result/services/resultPresentation';
 
 const HISTORY_LOAD_TIMEOUT_MS = 15_000;
 
@@ -21,7 +20,7 @@ function withTimeout<T extends { ok: boolean }>(task: Promise<T>, ms: number): P
 
 type Props = { repository: HistoryRepository; onNavigate: (path: string) => void; onHome: () => void };
 type HistoryFilter = 'all' | 'decided' | 'no-consensus';
-type PendingAction = { kind: 'consent'; scope: 'personal' | 'group'; enabled: boolean } | { kind: 'delete'; item: HistoryRow } | null;
+type PendingAction = { kind: 'delete'; item: HistoryRow } | null;
 
 export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
   const { colors } = useShellTheme();
@@ -35,10 +34,9 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
   const [fetchedAt, setFetchedAt] = useState(repository.cached()?.fetchedAt ?? '');
   const [filter, setFilter] = useState<HistoryFilter>('all');
   const [selectedHistoryId, setSelectedHistoryId] = useState<string | null>(null);
-  const [manageHistory, setManageHistory] = useState(false);
   const [action, setAction] = useState<PendingAction>(null);
   const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState<{ text: string; tone: 'success' | 'error' } | null>(null);
   const lock = useRef(false);
   const selectedHistory = items.find((item): item is CanonicalHistoryItem => 'historyId' in item && item.historyId === selectedHistoryId);
   const visibleItems = items.filter(item => {
@@ -105,22 +103,17 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
     setBusy(true);
     const pending = action;
     setAction(null);
-    setMessage('');
+    setMessage(null);
     try {
-      const result = pending.kind === 'consent'
-        ? await repository.updateConsent({ scope: pending.scope, consent: pending.enabled })
-        : await repository.delete(historyIdOf(pending.item));
-      if (!result.ok) { setMessage(errorMessage(result.error.messageKey)); return; }
+      const result = await repository.delete(historyIdOf(pending.item));
+      if (!result.ok) { setMessage({ text: errorMessage(result.error.messageKey), tone: 'error' }); return; }
       repository.invalidate();
       setFetchedAt('');
-      setManageHistory(false);
-      if (pending.kind === 'delete') setSelectedHistoryId(null);
-      setMessage(pending.kind === 'consent'
-        ? `Máy chủ đã nhận lựa chọn ${pending.enabled ? 'cho phép' : 'rút'} lưu lịch sử ${pending.scope === 'personal' ? 'cá nhân' : 'nhóm'}.`
-        : 'Máy chủ đã nhận yêu cầu xóa. Đang tải lại lịch sử theo quyền hiện tại.');
+      setSelectedHistoryId(null);
+      setMessage({ text: 'Máy chủ đã nhận yêu cầu xóa. Đang tải lại lịch sử theo quyền hiện tại.', tone: 'success' });
       await load(true);
     } catch {
-      setMessage('Chưa rõ máy chủ đã nhận thao tác hay chưa. Tải lại lịch sử để kiểm tra trạng thái.');
+      setMessage({ text: 'Chưa rõ máy chủ đã nhận thao tác hay chưa. Tải lại lịch sử để kiểm tra trạng thái.', tone: 'error' });
       await load(true);
     } finally {
       lock.current = false;
@@ -131,9 +124,8 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
   return (
     <ApiFeatureFrame active="history" title="Lịch sử" onNavigate={onNavigate} onHome={onHome}>
       <View style={styles.content}>
-        <View style={styles.pageHeading}>
+        <View>
           <Text accessibilityRole="header" style={[styles.pageTitle, { color: colors.text }]}>{selectedHistory ? 'Chi tiết bữa ăn' : 'Lịch sử'}</Text>
-          <Text style={[styles.subtitle, { color: colors.muted }]}>{selectedHistory ? 'Kết quả đã lưu theo quyền hiện tại' : 'Các bữa ăn đã chốt của bạn'}</Text>
         </View>
 
         {selectedHistory ? <SavedHistoryDetail item={selectedHistory} largeText={largeText} colors={colors}
@@ -146,24 +138,28 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
           <FilterButton title="Chưa chốt" value="no-consensus" selected={filter} onSelect={setFilter} largeText={largeText} colors={colors} />
         </View> : null}
 
-        {stale && fetchedAt ? <View style={[styles.offlineBanner, largeText && styles.offlineBannerLarge, { backgroundColor: colors.warm }]}>
-          <View style={styles.offlineCopy}><Text style={[styles.cardTitle, { color: colors.text }]}>Đang ngoại tuyến</Text><Text style={[styles.caption, { color: colors.muted }]}>Dữ liệu lưu lúc {new Date(fetchedAt).toLocaleString()} · có thể đã cũ</Text></View>
+        {stale && fetchedAt ? <>
+          <ToastNotice title="Đang ngoại tuyến" message={`Dữ liệu lưu lúc ${new Date(fetchedAt).toLocaleString()} · có thể đã cũ`} tone="warning" />
           <AppButton label="Thử lại" variant="quiet" onPress={() => { void load(true); }} disabled={refreshing || busy} loading={refreshing} colors={colors} />
-        </View> : null}
-        {loading ? <StatusNotice title="Đang tải lịch sử…" message="Đang đọc lịch sử theo consent và quyền hiện tại." tone="info" colors={colors} /> : null}
+        </> : null}
+        {loading ? <LoadingState label="Đang tải lịch sử" colors={colors} /> : null}
         {!loading && error && !stale ? <StatusNotice title="Chưa tải được lịch sử" message={errorMessage(error)} tone="error" actionLabel="Thử lại" onAction={() => { void load(true); }} colors={colors} /> : null}
 
         {!selectedHistory && !loading && (!error || stale) ? <View style={styles.section}>
           <View style={styles.sectionTop}>
-            <Text accessibilityRole="header" style={[styles.sectionTitle, { color: colors.text }]}>Gần đây</Text>
             {refreshing && !stale ? <Text style={[styles.caption, { color: colors.muted }]}>Đang cập nhật…</Text> : null}
           </View>
           {visibleItems.length === 0 ? <View style={styles.emptyState}>
-            <View style={[styles.emptyIcon, { backgroundColor: colors.warm }]}><MinusIcon /></View>
-            <Text accessibilityRole="header" style={[styles.emptyTitle, { color: colors.text }]}>{filter === 'all' ? 'Chưa có dữ liệu đã lưu' : 'Không có mục phù hợp'}</Text>
-            <Text style={[styles.emptyBody, { color: colors.text }]}>{filter === 'all' ? 'Bật lưu lịch sử trong phần Quản lý lưu lịch sử để các bữa đã chốt xuất hiện ở đây.' : 'Thử chọn bộ lọc khác.'}</Text>
-            {filter !== 'all' ? <AppButton label="Xem tất cả" variant="secondary" onPress={() => setFilter('all')} colors={colors} /> : null}
-          </View> : visibleItems.map(item => {
+            {/* Figma 263:2012 "Lịch sử · Chưa có bữa đã lưu" */}
+            <View style={[styles.emptyIcon, { backgroundColor: colors.warm }]}>{filter === 'all' ? <AppIcon name="bowl" size={36} color={colors.text} /> : <AppIcon name="minus" size={20} color={colors.text} />}</View>
+            <Text accessibilityRole="header" style={[styles.emptyTitle, { color: colors.text }]}>{filter === 'all' ? 'Chưa có bữa ăn đã lưu' : 'Không có mục phù hợp'}</Text>
+            <Text style={[styles.emptyBody, { color: colors.muted }]}>{filter === 'all' ? 'Bữa đã chốt sẽ hiện ở đây khi bật lưu lịch sử.' : 'Thử chọn bộ lọc khác.'}</Text>
+            {filter === 'all'
+              ? <AppButton label="Tạo phòng" onPress={() => onNavigate('/room/create')} colors={colors} />
+              : <AppButton label="Xem tất cả" variant="secondary" onPress={() => setFilter('all')} colors={colors} />}
+          </View> : groupHistory(visibleItems).map(group => <View key={group.key} style={styles.section}>
+            <Text accessibilityRole="header" style={[styles.sectionTitle, { color: colors.text }]}>{group.label}</Text>
+            {group.items.map(item => {
             const canonical = 'historyId' in item;
             const decided = canonical ? item.result.status === 'DECIDED' : Boolean(item.winnerName);
             const date = canonical ? item.createdAt : item.mealDate;
@@ -173,14 +169,14 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
             const isLegacy = canonical && item.result.status === 'DECIDED' && !scored;
             return <View key={historyIdOf(item)} style={[styles.historyCard, { backgroundColor: colors.surface, borderColor: colors.line }]}>
               <View style={styles.cardMain}>
-                <View style={[styles.dishIcon, { backgroundColor: colors.warm }]}>{decided ? <BowlIcon /> : <NoodlesIcon />}</View>
+                <View style={[styles.dishIcon, { backgroundColor: colors.warm }]}>{decided ? <AppIcon name="bowl" size={24} color={colors.text} /> : <AppIcon name="noodles" size={24} color={colors.text} />}</View>
                 <View style={styles.cardCopy}>
                   <Text numberOfLines={2} style={[styles.cardTitle, { color: colors.text }]}>{decided ? winner ?? historyTitle(item) : 'Chưa chốt món'}</Text>
                   <Text style={[styles.caption, { color: colors.muted }]}>{historyCardMetadata(item, date)}</Text>
                 </View>
               </View>
               {scored && scored.topDishes.length > 1 ? <View style={styles.rankList}>
-                {scored.topDishes.map(entry => <Text key={entry.dish.roundDishId} style={[styles.rankText, { color: colors.text }]}>{entry.rank}. {entry.dish.name} · {entry.score} điểm</Text>)}
+                {podiumOrder(scored.topDishes).map((entry, index) => <Text key={entry.dish.roundDishId} style={[styles.rankText, { color: colors.text }]}>{index + 1}. {entry.dish.name} · {entry.score} điểm</Text>)}
               </View> : null}
               <View style={[styles.cardFooter, largeText && styles.cardFooterLarge, { borderTopColor: colors.line }]}>
                 <Text style={[styles.score, { color: colors.text }]}>{score !== undefined ? `${score} điểm` : isLegacy ? 'Kết quả cũ' : !decided ? 'Cả nhóm chưa chọn được món' : 'Đã chốt'}</Text>
@@ -191,22 +187,15 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
                 <AppButton label="Xóa" variant="secondary" onPress={() => setAction({ kind: 'delete', item })} disabled={busy} colors={colors} style={styles.deleteButton} />
               </View>
             </View>;
-          })}
+          })}</View>)}
         </View> : null}
 
-        {!selectedHistory ? <Pressable accessibilityRole="button" onPress={() => setManageHistory(true)} style={[styles.manageButton, { backgroundColor: colors.surface, borderColor: colors.line }]}>
-          <Text style={[styles.manageText, { color: colors.text }]}>Quản lý lưu lịch sử</Text><Text style={[styles.chevron, { color: colors.text }]}>›</Text>
-        </Pressable> : null}
-        {message ? <StatusNotice title="Kết quả máy chủ" message={message} tone={message.startsWith('Chưa') ? 'warning' : 'success'} colors={colors} /> : null}
+        {message ? <ToastNotice title={message.tone === 'success' ? 'Đã xóa' : 'Chưa xóa được'} message={message.text} tone={message.tone} /> : null}
       </View>
 
-      <SheetDialog visible={manageHistory || action !== null} title={actionTitle(action, manageHistory)} onClose={() => { if (!busy) { setAction(null); setManageHistory(false); } }} colors={colors}>
-        {action?.kind === 'delete' ? <Text style={[styles.caption, { color: colors.text }]}>{`Gửi yêu cầu xóa mục “${historyTitle(action.item)}”. Máy chủ sẽ áp dụng quyền sở hữu và quyền nhóm.`}</Text> : manageHistory ? <View style={styles.management}>
-          <Text style={[styles.caption, { color: colors.muted }]}>Lựa chọn được gửi lên máy chủ; dữ liệu chỉ hiện theo consent và quyền hiện tại.</Text>
-          <ConsentChoice title="Lịch sử cá nhân" scope="personal" disabled={busy} onChoose={setAction} largeText={largeText} colors={colors} />
-          <ConsentChoice title="Tóm tắt nhóm" scope="group" disabled={busy} onChoose={setAction} largeText={largeText} colors={colors} />
-        </View> : null}
-        {action ? <AppButton label={actionLabel(action)} variant={action?.kind === 'delete' || (action?.kind === 'consent' && !action.enabled) ? 'danger' : 'primary'} onPress={() => void confirm()} loading={busy} colors={colors} /> : null}
+      <SheetDialog visible={action !== null} title="Xóa mục lịch sử?" onClose={() => { if (!busy) setAction(null); }} colors={colors}>
+        {action ? <Text style={[styles.caption, { color: colors.text }]}>{`Gửi yêu cầu xóa mục “${historyTitle(action.item)}”. Máy chủ sẽ áp dụng quyền sở hữu và quyền nhóm.`}</Text> : null}
+        {action ? <AppButton label="Xác nhận xóa" variant="danger" onPress={() => void confirm()} loading={busy} colors={colors} /> : null}
       </SheetDialog>
     </ApiFeatureFrame>
   );
@@ -255,16 +244,16 @@ function SavedHistoryDetail({ item, largeText, colors, onBack, onCreateNew, onDe
           <Text style={[styles.detailDish, largeText && styles.detailDishLarge, { color: colors.text }]}>{winner ?? (result.reasonCode === 'ALL_REMOVED' ? 'Nhóm đã loại hết các món' : 'Không có món đủ đồng thuận')}</Text>
           {winnerScore !== undefined ? <Text style={[styles.detailScore, { color: colors.text }]}>{winnerScore} điểm</Text> : null}
         </View>
-        <View style={[styles.detailIcon, { backgroundColor: colors.surface }]}><BowlIcon /></View>
+        <View style={[styles.detailIcon, { backgroundColor: colors.surface }]}><AppIcon name="bowl" size={24} color={colors.text} /></View>
       </View>
       {!scored && decided ? <Text style={[styles.caption, { color: colors.muted }]}>Phiên bản kết quả cũ không lưu điểm hoặc bảng xếp hạng.</Text> : null}
     </View>
 
     <Text accessibilityRole="header" style={[styles.detailSectionTitle, { color: colors.text }]}>Xếp hạng của nhóm</Text>
     {scored && scored.topDishes.length > 0 ? <View style={[styles.detailRanking, { backgroundColor: colors.surface, borderColor: colors.line }]}>
-      {scored.topDishes.map((entry, index) => <View key={entry.dish.roundDishId} style={[styles.detailRankRow, index < scored.topDishes.length - 1 && { borderBottomColor: colors.line, borderBottomWidth: StyleSheet.hairlineWidth }]}>
-        <View style={[styles.rankBadge, { backgroundColor: entry.rank === 1 ? colors.green : colors.warm }]}>
-          <Text style={[styles.rankBadgeText, { color: entry.rank === 1 ? colors.surface : colors.text }]}>{entry.rank}</Text>
+      {podiumOrder(scored.topDishes).map((entry, index) => <View key={entry.dish.roundDishId} style={[styles.detailRankRow, index < scored.topDishes.length - 1 && { borderBottomColor: colors.line, borderBottomWidth: StyleSheet.hairlineWidth }]}>
+        <View style={[styles.rankBadge, { backgroundColor: index === 0 ? colors.green : colors.warm }]}>
+          <Text style={[styles.rankBadgeText, { color: index === 0 ? colors.surface : colors.text }]}>{index + 1}</Text>
         </View>
         <Text style={[styles.detailRankDish, { color: colors.text }]}>{entry.dish.name}{entry.isWinner ? ' · Món được chọn' : ''}</Text>
         <Text style={[styles.detailRankScore, { color: colors.green }]}>{entry.score} điểm</Text>
@@ -292,6 +281,30 @@ function formatHistoryDate(value: string): string {
   return Number.isFinite(timestamp) ? new Date(timestamp).toLocaleString() : 'Không rõ';
 }
 
+function rowDate(item: HistoryRow): string {
+  return 'historyId' in item ? item.createdAt : item.mealDate;
+}
+
+/** "Hôm nay", "Hôm qua", then the date, newest first. */
+function groupHistory(items: HistoryRow[]): { key: string; label: string; items: HistoryRow[] }[] {
+  const dayStart = (value: Date) => new Date(value.getFullYear(), value.getMonth(), value.getDate()).getTime();
+  const today = dayStart(new Date());
+  const time = (item: HistoryRow) => { const value = Date.parse(rowDate(item)); return Number.isFinite(value) ? value : 0; };
+  const groups = new Map<string, { key: string; label: string; items: HistoryRow[] }>();
+  for (const item of [...items].sort((a, b) => time(b) - time(a))) {
+    const stamp = time(item);
+    const date = new Date(stamp);
+    const key = stamp ? String(dayStart(date)) : 'unknown';
+    const age = stamp ? Math.round((today - dayStart(date)) / 86_400_000) : -1;
+    const label = !stamp ? 'Không rõ ngày' : age === 0 ? 'Hôm nay' : age === 1 ? 'Hôm qua'
+      : `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
+    const group = groups.get(key) ?? { key, label, items: [] };
+    group.items.push(item);
+    groups.set(key, group);
+  }
+  return [...groups.values()];
+}
+
 function historyCardMetadata(item: HistoryRow, date: string): string {
   const timestamp = Date.parse(date);
   const mealDate = Number.isFinite(timestamp) ? new Date(timestamp) : undefined;
@@ -312,37 +325,9 @@ function historyCardMetadata(item: HistoryRow, date: string): string {
   return people ? `${when} · ${people}` : when;
 }
 
-function ConsentChoice({ title, scope, disabled, onChoose, largeText, colors }: {
-  title: string; scope: 'personal' | 'group'; disabled: boolean;
-  largeText: boolean;
-  onChoose: (action: PendingAction) => void; colors: ReturnType<typeof useShellTheme>['colors'];
-}) {
-  return <View style={styles.consentRow}>
-    <Text style={[styles.consentTitle, { color: colors.text }]}>{title}</Text>
-    <View style={[styles.choiceButtons, largeText && styles.choiceButtonsLarge]}>
-      <AppButton label="Cho phép" onPress={() => onChoose({ kind: 'consent', scope, enabled: true })} disabled={disabled} colors={colors} style={styles.choiceButton} />
-      <AppButton label="Rút consent" variant="secondary" onPress={() => onChoose({ kind: 'consent', scope, enabled: false })} disabled={disabled} colors={colors} style={styles.choiceButton} />
-    </View>
-  </View>;
-}
-
-function actionTitle(action: PendingAction, managing: boolean): string {
-  if (action?.kind === 'delete') return 'Xóa mục lịch sử?';
-  if (action?.kind === 'consent') return `${action.enabled ? 'Cho phép' : 'Rút'} lưu lịch sử ${action.scope === 'personal' ? 'cá nhân' : 'nhóm'}?`;
-  return managing ? 'Quản lý lưu lịch sử' : 'Xác nhận';
-}
-
-function actionLabel(action: PendingAction): string {
-  if (action?.kind === 'delete') return 'Xác nhận xóa';
-  if (action?.kind === 'consent') return action.enabled ? 'Xác nhận cho phép' : 'Xác nhận rút consent';
-  return 'Xác nhận';
-}
-
 const styles = StyleSheet.create({
   content: { gap: 18 },
-  pageHeading: { gap: 2 },
   pageTitle: { fontFamily: 'InterBold', fontSize: 30, lineHeight: 40 },
-  subtitle: { fontFamily: 'InterRegular', fontSize: 14, lineHeight: 20 },
   detailContent: { gap: 14 },
   detailBack: { alignSelf: 'flex-start', minHeight: 44 },
   detailTitle: { fontFamily: 'InterBold', fontSize: 28, lineHeight: 36 },
@@ -393,19 +378,10 @@ const styles = StyleSheet.create({
   rowButton: { flex: 1, minHeight: 48 },
   deleteButton: { minWidth: 80, minHeight: 48 },
   emptyState: { alignItems: 'center', justifyContent: 'center', paddingVertical: 40, gap: 12 },
-  emptyIcon: { width: 72, height: 72, borderRadius: 36, alignItems: 'center', justifyContent: 'center' },
+  emptyIcon: { width: 112, height: 112, borderRadius: 56, alignItems: 'center', justifyContent: 'center' },
   emptyTitle: { fontFamily: 'InterBold', fontSize: 20, lineHeight: 28, textAlign: 'center' },
   emptyBody: { fontFamily: 'InterRegular', fontSize: 14, lineHeight: 22, textAlign: 'center' },
   offlineBanner: { borderRadius: 12, padding: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
   offlineBannerLarge: { flexDirection: 'column', alignItems: 'stretch' },
   offlineCopy: { flex: 1, minWidth: 0, gap: 2 },
-  manageButton: { minHeight: 52, borderRadius: 14, borderWidth: 1, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  manageText: { flex: 1, fontFamily: 'InterSemiBold', fontSize: 14, lineHeight: 20 },
-  chevron: { fontFamily: 'InterRegular', fontSize: 30, lineHeight: 32 },
-  management: { gap: 12 },
-  consentRow: { gap: 8 },
-  consentTitle: { fontFamily: 'InterSemiBold', fontSize: 14, lineHeight: 20 },
-  choiceButtons: { flexDirection: 'row', gap: 8 },
-  choiceButtonsLarge: { flexDirection: 'column' },
-  choiceButton: { flex: 1, minHeight: 48 },
 });

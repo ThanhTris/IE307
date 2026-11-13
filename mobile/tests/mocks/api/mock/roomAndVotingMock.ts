@@ -9,6 +9,7 @@ import {
   SetReadyRequest,
   StartRoundRequest,
   LeaveRoomRequest,
+  RemoveRoomMemberRequest,
   CancelRoomRequest,
   SubmitBallotRequest,
   SubmitBallotResponse,
@@ -321,6 +322,37 @@ export async function mockLeaveRoom(
 
   const response: WriteResult<void> = { ok: true, requestId, roomId: req.roomId, data: undefined };
   ctx.recordIdempotency('leaveRoom', requestId, signature, response);
+  return response;
+}
+
+export async function mockRemoveRoomMember(
+  ctx: MockStateContext,
+  req: RemoveRoomMemberRequest
+): Promise<WriteResult<void>> {
+  await ctx.wait();
+  const fail = ctx.checkFailure();
+  if (fail) return { ok: false, error: { messageKey: fail } };
+
+  const requestId = req.requestId ?? ('req_' + Math.random().toString(36).substring(2, 9));
+  const { cachedResponse, conflictError, signature } = ctx.checkIdempotency<void>(
+    'removeRoomMember',
+    requestId,
+    { roomId: req.roomId, memberUserId: req.memberUserId, expectedVersion: req.expectedVersion }
+  );
+  if (cachedResponse) return cachedResponse;
+  if (conflictError) return conflictError;
+
+  const room = ctx.rooms.get(req.roomId);
+  if (!room || room.hostUserId !== ctx.currentUser.id) return { ok: false, requestId, roomId: req.roomId, error: { messageKey: 'NOT_HOST' } };
+  if (req.expectedVersion !== room.version) return { ok: false, requestId, roomId: req.roomId, error: { messageKey: 'VERSION_CONFLICT' } };
+  if (req.memberUserId === ctx.currentUser.id || !room.members.some(member => member.userId === req.memberUserId)) {
+    return { ok: false, requestId, roomId: req.roomId, error: { messageKey: 'NOT_MEMBER' } };
+  }
+  room.members = room.members.filter(member => member.userId !== req.memberUserId);
+  room.version += 1;
+
+  const response: WriteResult<void> = { ok: true, requestId, roomId: req.roomId, data: undefined };
+  ctx.recordIdempotency('removeRoomMember', requestId, signature, response);
   return response;
 }
 

@@ -32,10 +32,10 @@ test('calendar aligns Monday-first weeks and stages selection until explicit con
   await render(<ScheduleCalendar initial="2028-02-01" today="2028-02-01" onConfirm={confirm} onBack={jest.fn()} />);
   await fireEvent.press(screen.getByRole('button', { name: 'Ngày 2028-02-29' }));
   expect(confirm).not.toHaveBeenCalled();
-  await fireEvent.press(screen.getByText('Chọn ngày 29/02'));
+  await fireEvent.press(screen.getByText('Chọn 29/02'));
   expect(confirm).toHaveBeenCalledWith('2028-02-29');
 });
-test('native wheel supports scroll and accessible increment with bounded values', async () => {
+test('native wheel supports scroll and accessible increment and loops endlessly (23 flows into 00)', async () => {
   const change = jest.fn();
   await render(<ScheduleWheel label="Giờ" value={18} count={24} onChange={change} />);
   await fireEvent(screen.getByRole('adjustable', { name: 'Giờ' }), 'accessibilityAction', { nativeEvent: { actionName: 'increment' } });
@@ -43,5 +43,5 @@ test('native wheel supports scroll and accessible increment with bounded values'
   await fireEvent.scroll(screen.getByTestId('schedule-wheel-24'), { nativeEvent: { contentOffset: { x: 0, y: 10 * 48 } } });
   expect(change).toHaveBeenLastCalledWith(10);
   await fireEvent.scroll(screen.getByTestId('schedule-wheel-24'), { nativeEvent: { contentOffset: { x: 0, y: 99 * 48 } } });
-  expect(change).toHaveBeenLastCalledWith(23);
+  expect(change).toHaveBeenLastCalledWith(3);
 });

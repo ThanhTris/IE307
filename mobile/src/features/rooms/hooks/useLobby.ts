@@ -3,7 +3,7 @@ import type { ApiClient, RoomSnapshot } from '../../../data/api';
 import { createDurableRequestId } from '../services/roomRepository';
 import { errorCopy } from '../services/roomEntry';
 
-export type LobbyRepository = Pick<ApiClient, 'getRoomSnapshot' | 'listFriends' | 'startRound' | 'updateContext' | 'leaveRoom' | 'cancelRoom' | 'inviteToRoom'> & {
+export type LobbyRepository = Pick<ApiClient, 'getRoomSnapshot' | 'listFriends' | 'startRound' | 'updateContext' | 'leaveRoom' | 'cancelRoom' | 'inviteToRoom'> & Partial<Pick<ApiClient, 'removeRoomMember'>> & {
   previewFoodPool?: ApiClient['previewFoodPool'];
 };
 
@@ -31,6 +31,8 @@ export function useLobby({
   const [loadError, setLoadError] = useState('');
   const [confirm, setConfirm] = useState<ConfirmAction>(null);
   const [notice, setNotice] = useState('');
+  // Green for a done create/edit/delete, red for a server problem.
+  const [noticeTone, setNoticeTone] = useState<'success' | 'error'>('error');
   const [busy, setBusy] = useState(false);
   const [realRevision, setRealRevision] = useState(0);
   const [eligibilityError, setEligibilityError] = useState<string | null>(null);
@@ -110,7 +112,7 @@ export function useLobby({
       void checkEligibility(result.data);
       return result.data;
     } else {
-      setNotice(`Không đọc lại được snapshot · ${result.error.messageKey}`);
+      setNotice(`Không đọc lại được snapshot · ${result.error.messageKey}`); setNoticeTone('error');
       return null;
     }
   };
@@ -150,11 +152,26 @@ export function useLobby({
     initial: member.displayName.slice(0, 1),
   })) ?? [];
 
+  // Members never press "start": when the host starts the round (or cancels), the lobby they are watching moves them on.
+  const movedOn = useRef(false);
+  const roomState = snapshot?.state;
+  useEffect(() => {
+    if (!snapshot || !viewer || movedOn.current) return;
+    if (['ROUND_1', 'WAITING_1', 'ROUND_2', 'WAITING_2'].includes(snapshot.state) && onStartRound) {
+      movedOn.current = true;
+      onStartRound(snapshot);
+    } else if (['CANCELLED', 'EXPIRED'].includes(snapshot.state) && !isHost) {
+      movedOn.current = true;
+      onHome();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [roomState, viewer?.userId]);
+
   const reload = () => {
     setRealRevision(v => v + 1);
   };
 
-  const runWrite = async (action: 'start' | 'context' | 'leave' | 'cancel' | 'invite', partnerId?: string) => {
+  const runWrite = async (action: 'start' | 'context' | 'leave' | 'cancel' | 'invite' | 'remove', partnerId?: string) => {
     if (!snapshot || busyRef.current) return;
     if ((!currentUserId || !viewer)) return;
     busyRef.current = true;
@@ -171,6 +188,9 @@ export function useLobby({
         result = await api.leaveRoom({ roomId: snapshot.roomId, expectedVersion: snapshot.version, requestId });
       } else if (action === 'cancel') {
         result = await api.cancelRoom({ roomId: snapshot.roomId, expectedVersion: snapshot.version, confirmCancel: true, requestId });
+      } else if (action === 'remove') {
+        if (!partnerId || !api.removeRoomMember) return;
+        result = await api.removeRoomMember({ roomId: snapshot.roomId, memberUserId: partnerId, expectedVersion: snapshot.version, requestId });
       } else {
         if (!partnerId) return;
         result = await api.inviteToRoom({ roomId: snapshot.roomId, partnerId: partnerId ?? 'usr_tuan_002', expectedVersion: snapshot.version, requestId });
@@ -179,7 +199,7 @@ export function useLobby({
         const failure = result.error.messageKey === 'NOT_ENOUGH_MEMBERS'
           ? errorCopy.NOT_ENOUGH_MEMBERS
           : result.error.messageKey;
-        setNotice(`Chưa thực hiện được · ${failure}`);
+        setNotice(`Chưa thực hiện được · ${failure}`); setNoticeTone('error');
         if (result.error.messageKey === 'TIMEOUT' || result.error.messageKey === 'NETWORK_ERROR') {
           if (pendingIntentRef.current) {
             pendingIntentRef.current.uncertain = true;
@@ -198,28 +218,32 @@ export function useLobby({
       pendingIntentRef.current = null;
       if (action === 'context') {
         await refreshSnapshot(snapshot.roomId);
-        setNotice('Thiết lập phòng đã được cập nhật.');
+        setNotice('Thiết lập phòng đã được cập nhật.'); setNoticeTone('success');
       } else if (action === 'start') {
         await refreshSnapshot(snapshot.roomId);
-        setNotice('Phòng chuyển sang vòng 1.');
+        setNotice('');
+        movedOn.current = true;
         if (onStartRound && snapshot) onStartRound(snapshot);
       } else if (action === 'cancel') {
         await refreshSnapshot(snapshot.roomId);
-        setNotice('Phòng đã hủy.');
+        setNotice('Phòng đã hủy.'); setNoticeTone('success');
         onHome();
       } else if (action === 'leave') {
         await refreshSnapshot(snapshot.roomId);
-        setNotice('Bạn đã rời phòng.');
+        setNotice('Bạn đã rời phòng.'); setNoticeTone('success');
         onHome();
+      } else if (action === 'remove') {
+        await refreshSnapshot(snapshot.roomId);
+        setNotice('Đã xóa thành viên khỏi phòng.'); setNoticeTone('success');
       } else {
         await refreshSnapshot(snapshot.roomId);
-        setNotice('Lời mời đã tạo.');
+        setNotice('Lời mời đã tạo.'); setNoticeTone('success');
       }
     } catch {
       if (pendingIntentRef.current) {
         pendingIntentRef.current.uncertain = true;
       }
-      setNotice('Không hoàn tất được thao tác. Có thể thử lại khi đã tải được trạng thái mới.');
+      setNotice('Không hoàn tất được thao tác. Có thể thử lại khi đã tải được trạng thái mới.'); setNoticeTone('error');
     } finally {
       busyRef.current = false;
       setBusy(false);
@@ -234,6 +258,7 @@ export function useLobby({
     confirm,
     setConfirm,
     notice,
+    noticeTone,
     busy,
     busyRef,
     eligibilityError,

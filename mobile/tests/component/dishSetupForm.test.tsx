@@ -20,6 +20,6 @@ test('dish count boundaries are disabled and meal/budget selections preserve eac
   expect(screen.getByLabelText('20 món')).toBeOnTheScreen();
   expect(screen.queryByText('Điểm ăn chung')).toBeNull();
 });
-test.each([9, 21, 10.5, NaN])('invalid requested dish count %s is rejected, not silently clamped in intent', count => {
+test.each([4, 21, 10.5, NaN])('invalid requested dish count %s is rejected, not silently clamped in intent', count => {
   expect(setupValidation({ ...initialSetupDraft(), dishCount: count }, Date.now())).toBeTruthy();
 });

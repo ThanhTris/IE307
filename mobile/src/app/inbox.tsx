@@ -33,7 +33,6 @@ export default function InboxRoute() {
       onNavigate={navigate}
       onHome={back}
       isSessionCurrent={isSessionCurrent}
-      onPushSettings={() => router.push('/push-settings')}
       openEventId={typeof openEventId === 'string' ? openEventId : undefined}
       notificationStatus={typeof notificationStatus === 'string' ? notificationStatus : undefined}
     />

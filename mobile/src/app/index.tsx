@@ -20,6 +20,11 @@ export default function IndexRoute() {
       onJoin={() => router.push('/room/join')}
       onResume={() => router.push('/continue-session')}
       onFriends={() => router.push('/friends')}
+      onQuickInvite={friendUserId => router.push({ pathname: '/room/setup', params: { invite: friendUserId } })}
+      onDevResult={__DEV__ ? () => router.push('/dev/result' as never) : undefined}
+      onDevRoundTwo={__DEV__ ? () => router.push('/dev/round-two' as never) : undefined}
+      onDevFlashcard={__DEV__ ? () => router.push('/dev/flashcard' as never) : undefined}
+      onDevIcons={__DEV__ ? () => router.push('/dev/icons' as never) : undefined}
       onHistory={() => router.push('/history')}
       onInbox={() => router.push('/inbox')}
       onProfile={() => router.push('/profile')}

@@ -10,14 +10,12 @@ const actions = () => ({ onHome: jest.fn(), onNewSession: jest.fn(), onRetryResu
 test.each(nearbyCaseOptions.map(item => item.id))('Places state %s keeps result immutable and never requests location automatically', async status => {
   const result = scoredResultFixture(), original = JSON.stringify(result), callbacks = actions();
   await render(<DishResultFlow {...callbacks} input={{ capability: 'scored-v4', result }} nearby={nearbyFixture(result, status)} celebrate={false} />);
-  expect(screen.getByText('Quán có món này')).toBeOnTheScreen(); expect(screen.getByText('6 điểm')).toBeOnTheScreen();
-  expect(screen.getByText(`Tìm quán cho: ${result.winner!.name}`)).toBeOnTheScreen();
+  expect(screen.getByText('6 điểm')).toBeOnTheScreen();
   expect(callbacks.onRequestLocation).not.toHaveBeenCalled(); expect(callbacks.onRetryPlaces).not.toHaveBeenCalled();
-  if (status === 'permission' || status === 'denied') { await fireEvent.press(screen.getByText('Cho phép vị trí')); expect(callbacks.onRequestLocation).toHaveBeenCalledTimes(1); }
+  if (status === 'permission' || status === 'denied') { expect(screen.queryByText('Cho phép vị trí')).toBeNull(); expect(screen.getByText('Cần cấp quyền vị trí để tìm quán gần bạn')).toBeOnTheScreen(); }
   if (status === 'blocked' || status === 'location-off') { await fireEvent.press(screen.getByText('Mở cài đặt vị trí')); expect(callbacks.onOpenSettings).toHaveBeenCalledTimes(1); }
-  if (status === 'loading') { expect(screen.queryByText('Chưa tìm thấy quán phù hợp')).toBeNull(); expect(screen.getByText('Đang tìm quán')).toBeOnTheScreen(); }
-  if (status === 'permission') expect(screen.getByText('Bật vị trí để tìm quán')).toBeOnTheScreen();
-  if (status === 'error') { await fireEvent.press(screen.getByRole('button', { name: 'Thử lại' })); expect(callbacks.onRetryPlaces).toHaveBeenCalledTimes(1); }
+  if (status === 'loading') { expect(screen.queryByText('Chưa tìm thấy quán phù hợp')).toBeNull(); expect(screen.getByLabelText('Đang tìm quán')).toBeOnTheScreen(); }
+  if (status === 'error') expect(screen.queryByRole('button', { name: /^Thử lại/ })).toBeNull();
   expect(JSON.stringify(result)).toBe(original);
 });
 
@@ -26,7 +24,6 @@ test('a different tied winner drives the sole highlighted artwork, dish caption 
   const result = { ...base, winner, topDishes: base.topDishes.map(entry => ({ ...entry, isWinner: entry.dish.dishId === winner.dishId })) };
   const before = JSON.stringify(result), colors = getThemeColors('light');
   await render(<DishResultFlow {...callbacks} input={{ capability: 'scored-v4', result }} nearby={nearbyFixture(result, 'empty')} celebrate={false} />);
-  expect(screen.getByText('Tìm quán cho: Cơm tấm')).toBeOnTheScreen();
   for (const entry of result.topDishes) {
     const label = `${entry.dish.name} · Chưa có ảnh${entry.isWinner ? ' · Món chiến thắng' : ''}`;
     const border = StyleSheet.flatten(screen.getByLabelText(label).props.style);

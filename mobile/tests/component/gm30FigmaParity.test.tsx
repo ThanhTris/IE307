@@ -1,5 +1,5 @@
 import { createMockApiClient } from '../mocks/api/mockApiClient';
-import React from 'react';
+import React, { act } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import { RoomQrModal } from '../../src/features/rooms/components/RoomQrModal';
 import { JoinRoomScreen, type JoinRoomEntryProps } from '../../src/features/rooms/screens/JoinRoomScreen';
@@ -10,6 +10,8 @@ import { MockPlacesRepository } from '../../src/features/result/services/placesR
 import { createMockResultRepository } from '../../src/features/result/services/resultRepository';
 import { useRoomRepository } from '../../src/bootstrap/RoomRepositoryProvider';
 import type { ScoredResult } from '../../src/features/result/services/resultPresentation';
+
+const settled = async () => { await act(async () => { await new Promise(resolve => setTimeout(resolve, 0)); }); };
 
 jest.mock('../../src/bootstrap/RoomRepositoryProvider', () => ({
   useRoomRepository: jest.fn(),
@@ -138,7 +140,7 @@ describe('GM-30 Figma Parity & Native Linking Component Tests', () => {
       );
 
       expect(screen.getByText('Mã QR phòng')).toBeOnTheScreen();
-      expect(screen.getByText('Quét bằng ứng dụng Gì Cũng Được để vào phòng')).toBeOnTheScreen();
+      expect(screen.getByText('Quét bằng camera điện thoại để mở ứng dụng và vào phòng')).toBeOnTheScreen();
       expect(screen.getByText('MÃ PHÒNG')).toBeOnTheScreen();
       expect(screen.getByText('GCD234')).toBeOnTheScreen();
       expect(screen.getByTestId('qr-matrix-svg')).toBeOnTheScreen();
@@ -211,7 +213,7 @@ describe('GM-30 Figma Parity & Native Linking Component Tests', () => {
 
       // Camera denied UI (Figma 275:2088)
       expect(screen.getAllByText('Camera bị từ chối').length).toBeGreaterThanOrEqual(1);
-      expect(screen.getByText(/Bạn chưa cấp quyền truy cập camera/)).toBeOnTheScreen();
+      expect(screen.getByText(/Cấp quyền camera trong Cài đặt/)).toBeOnTheScreen();
 
       expect(screen.getByRole('button', { name: 'Mở Cài đặt' })).toBeOnTheScreen();
       await press('Mở Cài đặt');
@@ -246,7 +248,7 @@ describe('GM-30 Figma Parity & Native Linking Component Tests', () => {
       await press('Thử quét QR');
 
       // User confirms scanned code by pressing Tiếp tục →
-      await press('Tiếp tục →');
+      await settled();
 
       // Confirmation screen (Figma 268:2081)
       expect(await screen.findByText('Phòng GCD234')).toBeOnTheScreen();
@@ -281,8 +283,9 @@ describe('GM-30 Figma Parity & Native Linking Component Tests', () => {
       expect(await screen.findByText('Phở bò tái nạm')).toBeOnTheScreen();
 
       // Notice for location permission (Figma 622:8962)
-      expect(screen.getByText('Bật vị trí để tìm quán')).toBeOnTheScreen();
-      expect(screen.getByRole('button', { name: 'Cho phép vị trí' })).toBeOnTheScreen();
+      expect(screen.getByText('Cần cấp quyền vị trí để tìm quán gần bạn')).toBeOnTheScreen();
+      expect(screen.queryByRole('button', { name: 'Cho phép vị trí' })).toBeNull();
+      expect(screen.getByRole('button', { name: 'Mở Google Maps' })).toBeOnTheScreen();
     });
 
     test('Figma 206:913 & 379:1478 — Places loaded and external actions trigger allowlisted URLs', async () => {
@@ -324,8 +327,8 @@ describe('GM-30 Figma Parity & Native Linking Component Tests', () => {
 
       // Verify external action buttons
       expect(screen.getByRole('button', { name: 'Mở bản đồ' })).toBeOnTheScreen();
-      expect(screen.getByRole('button', { name: 'TikTok ↗' })).toBeOnTheScreen();
-      expect(screen.getByRole('button', { name: 'YouTube ↗' })).toBeOnTheScreen();
+      expect(screen.getByRole('button', { name: 'TikTok' })).toBeOnTheScreen();
+      expect(screen.getByRole('button', { name: 'YouTube' })).toBeOnTheScreen();
     });
 
     test('Absolute Winner Isolation: places failure never corrupts or alters decided winner', async () => {
@@ -352,9 +355,10 @@ describe('GM-30 Figma Parity & Native Linking Component Tests', () => {
       // Decided winner remains intact
       expect(await screen.findByText('Phở bò tái nạm')).toBeOnTheScreen();
 
-      // Error notice shown for places, with retry option
+      // Error notice shown for places, with a single Maps button
       expect(screen.getByText('Không tải được danh sách quán')).toBeOnTheScreen();
-      expect(screen.getByRole('button', { name: 'Thử lại' })).toBeOnTheScreen();
+      expect(screen.getByRole('button', { name: 'Mở Google Maps' })).toBeOnTheScreen();
+      expect(screen.queryByRole('button', { name: /^Thử lại/ })).toBeNull();
 
       // Winner still displayed prominently
       expect(screen.getByText('Phở bò tái nạm')).toBeOnTheScreen();

@@ -1,38 +1,49 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Pressable, Share, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { Pressable, Share, StyleSheet, Text, View } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
+import * as Linking from 'expo-linking';
 import type { Friend, InboxItem, SocialIdentity } from '../../../data/api/contracts';
+import { useInboxBadge } from '../../../shared/lib/inboxBadge';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { AppButton, FormField, SheetDialog, StatusNotice, ApiFeatureFrame } from '../../../shared/ui';
+import { AppButton, AppIcon, FormField, SkeletonBlock, type AppIconName, LoadingState, SheetDialog, StatusNotice, ApiFeatureFrame, SwipeToDeleteRow } from '../../../shared/ui';
 import type { InboxRepository } from '../../inbox/services/inboxRepository';
-import type { SocialRepository } from '../services/socialRepository';
-import SearchIcon from '../../../../assets/brand/icons/search.svg';
-import PlusIcon from '../../../../assets/brand/icons/plus.svg';
+import type { FriendCodeOwner, SocialRepository } from '../services/socialRepository';
+import { ToastNotice, useToast } from '../../../shared/ui/feedback/Toast';
 
 type Props = {
   repository: SocialRepository;
   inboxRepository?: InboxRepository;
   onNavigate: (path: string) => void;
   onHome: () => void;
+  /** Set when opened from the lobby so Back returns there. */
+  onBack?: () => void;
+  /** Pre-filled search, e.g. a friend code from a shared link. */
+  initialSearch?: string;
 };
-type PendingAction = { kind: 'invite' } | { kind: 'unfriend'; friend: Friend } | null;
+type PendingAction = { kind: 'unfriend'; friend: Friend } | null;
+const FRIEND_CODE = /^[A-HJ-NP-Z2-9]{10}$/;
 
-export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome }: Props) {
+export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome, onBack, initialSearch = '' }: Props) {
   const { colors } = useShellTheme();
-  const { fontScale } = useWindowDimensions();
-  const largeText = fontScale >= 1.5;
   const [identity, setIdentity] = useState<SocialIdentity | null>(null);
   const [friends, setFriends] = useState<Friend[]>([]);
   const [incoming, setIncoming] = useState<InboxItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
+  const [, setRefreshing] = useState(false);
   const [error, setError] = useState('');
   const [inboxError, setInboxError] = useState('');
-  const [search, setSearch] = useState('');
-  const [friendCode, setFriendCode] = useState('');
+  const [search, setSearch] = useState(initialSearch.trim().toUpperCase());
+  const [copied, setCopied] = useState(false);
   const [action, setAction] = useState<PendingAction>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
+  // Result of the last action: green for a done add/delete, red for a server problem.
+  const [messageTone, setMessageTone] = useState<'success' | 'error'>('error');
   const lock = useRef(false);
+  const toast = useToast();
+  const { syncFriends } = useInboxBadge();
+  // Who a typed friend code belongs to: undefined = looking it up, null = no such code.
+  const [owner, setOwner] = useState<{ code: string; value: FriendCodeOwner | null | undefined }>();
   const query = normalizeSearch(search);
   const visibleFriends = query
     ? friends.filter(friend => normalizeSearch(`${friend.displayName} ${friend.friendCode}`).includes(query))
@@ -75,41 +86,43 @@ export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome 
     return () => clearTimeout(timer);
   }, [load]);
 
-  const confirm = async () => {
-    if (!action || lock.current) return;
-    if (action.kind === 'invite' && !/^[A-HJ-NP-Z2-9]{10}$/.test(friendCode.trim().toUpperCase())) {
-      setMessage('Nhập mã bạn bè gồm 10 ký tự rồi thử lại.');
-      return;
-    }
+  const run = async (job: () => Promise<boolean>, okMessage: string) => {
+    if (lock.current) return;
     lock.current = true;
     setBusy(true);
-    const pending = action;
-    setAction(null);
     setMessage('');
     try {
-      if (pending.kind === 'invite') {
-        const result = await repository.invite({ friendCode: friendCode.trim().toUpperCase() });
-        if (!result.ok) { setMessage(`Chưa hoàn tất · ${errorMessage(result.error.messageKey)}`); return; }
-        setMessage('Đã gửi lời mời. Người nhận cần tự chấp nhận.');
-      } else {
-        const result = await repository.removeFriend(pending.friend.friendUserId);
-        if (!result.ok) { setMessage(`Chưa hoàn tất · ${errorMessage(result.error.messageKey)}`); return; }
-        setMessage('Đã xóa quan hệ bạn bè trên máy chủ.');
-      }
-      setFriendCode('');
-      await load(true);
+      if (await job()) { setMessage(okMessage); setMessageTone('success'); await load(true); }
     } catch {
-      setMessage('Không kết nối được máy chủ. Hãy tải lại trước khi thử tiếp.');
+      setMessage('Không kết nối được máy chủ. Hãy tải lại trước khi thử tiếp.'); setMessageTone('error');
     } finally {
       lock.current = false;
       setBusy(false);
     }
   };
+  const invite = (code: string, name: string) => run(async () => {
+    const result = await repository.invite({ friendCode: code });
+    if (!result.ok) { setMessage(`Chưa hoàn tất · ${errorMessage(result.error.messageKey)}`); setMessageTone('error'); return false; }
+    setSearch('');
+    // Said straight away (not through the shared message state) so it always shows.
+    toast?.show({ title: 'Đã gửi lời mời kết bạn', message: `${name} cần đồng ý lời mời của bạn.`, tone: 'success' });
+    return true;
+  }, '');
+  const confirm = () => {
+    if (action?.kind !== 'unfriend') return;
+    const friend = action.friend;
+    setAction(null);
+    void run(async () => {
+      const result = await repository.removeFriend(friend.friendUserId);
+      if (!result.ok) { setMessage(`Chưa hoàn tất · ${errorMessage(result.error.messageKey)}`); setMessageTone('error'); return false; }
+      return true;
+    }, 'Đã xóa khỏi danh sách bạn bè.');
+  };
 
   const answerIncoming = async (item: InboxItem, kind: 'accept' | 'reject') => {
     if (!inboxRepository || lock.current) return;
     const invitationId = item.metadata?.invitationId;
-    if (typeof invitationId !== 'string') { setMessage('Lời mời thiếu mã từ máy chủ.'); return; }
+    if (typeof invitationId !== 'string') { setMessage('Lời mời thiếu mã từ máy chủ.'); setMessageTone('error'); return; }
     lock.current = true;
     setBusy(true);
     setMessage('');
@@ -117,12 +130,12 @@ export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome 
       const result = kind === 'accept'
         ? await inboxRepository.acceptFriend(invitationId)
         : await inboxRepository.rejectFriend(invitationId);
-      if (!result.ok) { setMessage(errorMessage(result.error.messageKey)); await load(true); return; }
+      if (!result.ok) { setMessage(errorMessage(result.error.messageKey)); setMessageTone('error'); await load(true); return; }
+      if (kind === 'accept') syncFriends();
       inboxRepository.markHandled(item.eventId);
-      setMessage(kind === 'accept' ? 'Đã đồng ý lời mời trên máy chủ.' : 'Đã từ chối lời mời trên máy chủ.');
       await load(true);
     } catch {
-      setMessage('Chưa rõ máy chủ đã nhận thao tác chưa. Tải lại danh sách để kiểm tra.');
+      setMessage('Chưa rõ máy chủ đã nhận thao tác chưa. Tải lại danh sách để kiểm tra.'); setMessageTone('error');
       await load(true);
     } finally {
       lock.current = false;
@@ -130,94 +143,152 @@ export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome 
     }
   };
 
-  const shareCode = async () => {
+  const copyCode = () => {
     if (!identity?.friendCode) return;
+    void Clipboard.setStringAsync(identity.friendCode).catch(() => undefined);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+  const shareLink = async () => {
+    if (!identity?.friendCode) return;
+    let link = '';
+    try { link = Linking.createURL('/friends', { queryParams: { code: identity.friendCode } }); } catch { /* no link available */ }
     try {
-      await Share.share({ message: `Mã bạn bè Gì Cũng Được của mình: ${identity.friendCode}` });
+      await Share.share({ message: `Kết bạn với mình trên Gì Cũng Được! Mã bạn bè: ${identity.friendCode}${link ? `\n${link}` : ''}` });
     } catch {
-      setMessage('Không mở được chức năng chia sẻ. Bạn có thể xem mã ở thẻ bên dưới.');
+      setMessage('Chưa mở được chia sẻ. Bạn có thể sao chép mã ở thẻ bên dưới.'); setMessageTone('error');
     }
   };
+  const codeQuery = search.trim().toUpperCase();
+  const newFriendCode = FRIEND_CODE.test(codeQuery) && codeQuery !== identity?.friendCode && !friends.some(friend => friend.friendCode === codeQuery) ? codeQuery : '';
+  const lookup = repository.lookupFriendCode;
+  useEffect(() => {
+    if (!newFriendCode || !lookup) return;
+    let active = true;
+    const timer = setTimeout(() => {
+      setOwner({ code: newFriendCode, value: undefined });
+      void lookup(newFriendCode).then(result => { if (active) setOwner({ code: newFriendCode, value: result.ok ? result.data : undefined }); }).catch(() => { if (active) setOwner({ code: newFriendCode, value: undefined }); });
+    }, 250);
+    return () => { active = false; clearTimeout(timer); };
+  }, [newFriendCode, lookup]);
+  const found = newFriendCode && owner?.code === newFriendCode ? owner.value : undefined;
+  const lookingUp = Boolean(newFriendCode && lookup && (owner?.code !== newFriendCode || owner.value === undefined));
+
+  const avatarTint = (name: string) => avatarColors[(name.charCodeAt(0) || 0) % avatarColors.length]!;
+  const emptyTitle = friends.length === 0 && !query ? 'Chưa có bạn bè' : 'Không tìm thấy bạn';
+  const emptyHint = friends.length === 0 && !query ? 'Nhập mã bạn bè ở ô tìm kiếm để kết bạn.' : 'Thử tên khác, hoặc nhập đủ mã 10 ký tự để kết bạn.';
 
   return (
-    <ApiFeatureFrame active="friends" title="Bạn bè" onNavigate={onNavigate} onHome={onHome}>
+    <ApiFeatureFrame active="friends" title="Bạn bè" onNavigate={onNavigate} onHome={onHome} onBack={onBack}>
       <View style={styles.content}>
-        <View style={[styles.titleRow, largeText && styles.titleRowLarge]}>
-          <View style={styles.titleCopy}>
-            <Text accessibilityRole="header" style={[styles.pageTitle, { color: colors.text }]}>Bạn bè</Text>
-            <Text style={[styles.subtitle, { color: colors.muted }]}>{friends.length} người bạn</Text>
-          </View>
-          <Pressable accessibilityRole="button" accessibilityLabel="Thêm bạn" accessibilityState={{ disabled: busy }} onPress={() => setAction({ kind: 'invite' })} disabled={busy} style={({ pressed }) => [styles.addFriendButton, { backgroundColor: pressed ? colors.soft : colors.surface, borderColor: colors.line, opacity: busy ? 0.55 : 1 }]}>
-            <PlusIcon />
-            <Text style={[styles.addFriendLabel, { color: colors.text }]}>Thêm bạn</Text>
-          </Pressable>
-        </View>
-
+        {!onBack ? <Text accessibilityRole="header" style={[styles.pageTitle, { color: colors.text }]}>Bạn bè</Text> : null}
         <View style={[styles.search, { backgroundColor: colors.surface, borderColor: colors.line }]}>
-          <SearchIcon />
-          <FormField hideLabel label="Tìm trong danh sách bạn bè" value={search} onChangeText={setSearch} autoCorrect={false} placeholder="Tìm trong danh sách bạn bè" colors={colors} inputStyle={styles.searchInput} />
+          <AppIcon name="search" size={20} color={colors.muted} />
+          <View style={styles.searchField}><FormField hideLabel label="Tìm bạn hoặc nhập mã bạn bè" value={search} onChangeText={setSearch} autoCorrect={false} autoCapitalize="none" placeholder="Tìm bạn hoặc nhập mã bạn bè" colors={colors} inputStyle={styles.searchInput} /></View>
+          {search ? <Pressable accessibilityRole="button" accessibilityLabel="Xóa tìm kiếm" hitSlop={8} onPress={() => setSearch('')} style={[styles.clear, { backgroundColor: colors.soft }]}>
+            <AppIcon name="close" size={14} color={colors.text} />
+          </Pressable> : null}
         </View>
 
-        {loading ? <StatusNotice title="Đang tải bạn bè…" message="Đang đọc danh sách theo danh tính hiện tại." tone="info" colors={colors} /> : null}
-        {!loading && error ? <StatusNotice title="Chưa tải được bạn bè" message={errorMessage(error)} tone="error" actionLabel="Thử lại" onAction={() => { void load(true); }} colors={colors} /> : null}
-        {!loading && !error && incoming.length > 0 ? <View style={styles.section}>
-          <View style={styles.sectionTop}>
-            <Text accessibilityRole="header" style={[styles.sectionTitle, { color: colors.text }]}>Lời mời kết bạn</Text>
-            <Text style={[styles.count, { color: colors.primary }]}>{incoming.length}</Text>
+        {identity?.friendCode ? <View style={styles.myCode}>
+          <Text numberOfLines={1} style={[styles.myCodeText, { color: colors.muted }]}>
+            Mã của bạn: <Text selectable style={[styles.myCodeValue, { color: colors.text }]}>{identity.friendCode}</Text>
+          </Text>
+          <IconAction label={copied ? 'Đã sao chép mã' : 'Sao chép mã'} icon={copied ? 'check' : 'copy'} tint={copied ? colors.primary : colors.text} onPress={copyCode} colors={colors} />
+          <IconAction label="Chia sẻ link kết bạn" icon="share" tint={colors.text} onPress={() => { void shareLink(); }} colors={colors} />
+        </View> : null}
+
+        {newFriendCode ? found === null ? <View style={styles.empty}>
+          <View style={[styles.emptyIcon, { backgroundColor: colors.warm }]}><AppIcon name="search" size={26} color={colors.primary} /></View>
+          <Text style={[styles.emptyTitle, { color: colors.text }]}>Không tìm thấy mã này</Text>
+          <Text style={[styles.emptyHint, { color: colors.muted }]}>Kiểm tra lại mã bạn bè rồi thử lại.</Text>
+        </View> : <View style={styles.row}>
+          <View style={[styles.avatar, { backgroundColor: found ? avatarTint(found.displayName) : colors.warm }]}>
+            {found ? <Text style={[styles.avatarText, { color: colors.text }]}>{initialFrom(found.displayName)}</Text> : <AppIcon name="inviteUser" size={20} color={colors.primary} />}
           </View>
-          {incoming.map(item => <View key={item.eventId} style={[styles.invitationCard, { backgroundColor: colors.warm, borderColor: colors.line }]}>
-            <View style={styles.invitationIdentity}>
-              <View style={[styles.avatar, { backgroundColor: colors.surface, borderColor: colors.line }]}><Text style={[styles.avatarText, { color: colors.text }]}>{initialFrom(item.title)}</Text></View>
-              <View style={styles.friendCopy}>
-                <Text style={[styles.friendName, { color: colors.text }]}>{item.title}</Text>
-                <Text numberOfLines={2} style={[styles.caption, { color: colors.muted }]}>{item.body}</Text>
-              </View>
+          <View style={styles.rowCopy}>
+            {lookingUp ? <SkeletonBlock width="55%" height={16} colors={colors} /> : <Text numberOfLines={1} style={[styles.name, { color: colors.text }]}>{found?.displayName ?? newFriendCode}</Text>}
+            <Text numberOfLines={1} style={[styles.caption, { color: colors.muted }]}>{found?.self ? 'Đây là mã của bạn' : found?.alreadyFriends ? 'Đã là bạn bè' : `Mã bạn bè · ${newFriendCode}`}</Text>
+          </View>
+          {found?.self || found?.alreadyFriends ? null : <PillButton label="Kết bạn" onPress={() => { void invite(newFriendCode, found?.displayName ?? newFriendCode); }} disabled={busy || lookingUp} colors={colors} />}
+        </View> : null}
+
+        {loading ? <LoadingState label="Đang tải bạn bè" colors={colors} /> : null}
+        {!loading && error ? <StatusNotice title="Chưa tải được bạn bè" message={errorMessage(error)} tone="error" actionLabel="Thử lại" onAction={() => { void load(true); }} colors={colors} /> : null}
+        {inboxError && !loading && !error ? <StatusNotice title="Không tải được lời mời" message={errorMessage(inboxError)} tone="error" actionLabel="Tải lại" onAction={() => { void load(true); }} colors={colors} /> : null}
+
+        {!loading && !error && incoming.length > 0 ? <View style={styles.section}>
+          <Text accessibilityRole="header" style={[styles.sectionTitle, { color: colors.muted }]}>{`Lời mời kết bạn · ${incoming.length}`}</Text>
+          {incoming.map(item => <View key={item.eventId} style={styles.row}>
+            <View style={[styles.avatar, { backgroundColor: avatarTint(item.title) }]}><Text style={[styles.avatarText, { color: colors.text }]}>{initialFrom(item.title)}</Text></View>
+            <View style={styles.rowCopy}>
+              <Text numberOfLines={1} style={[styles.name, { color: colors.text }]}>{item.title}</Text>
+              <Text numberOfLines={1} style={[styles.caption, { color: colors.muted }]}>{`${item.body.charAt(0).toLocaleUpperCase('vi')}${item.body.slice(1)} · ${shortAgo(item.createdAt)}`}</Text>
             </View>
-            <View style={styles.invitationActions}>
-              <AppButton label="Đồng ý" onPress={() => { void answerIncoming(item, 'accept'); }} disabled={busy} colors={colors} style={styles.actionButton} />
-              <AppButton label="Từ chối" variant="secondary" onPress={() => { void answerIncoming(item, 'reject'); }} disabled={busy} colors={colors} style={styles.actionButton} />
+            <View style={styles.inviteActions}>
+              <PillButton label="Từ chối" variant="secondary" onPress={() => { void answerIncoming(item, 'reject'); }} disabled={busy} colors={colors} />
+              <PillButton label="Đồng ý" onPress={() => { void answerIncoming(item, 'accept'); }} disabled={busy} colors={colors} />
             </View>
           </View>)}
         </View> : null}
 
         {!loading && !error ? <View style={styles.section}>
-          <View style={styles.sectionTop}><Text accessibilityRole="header" style={[styles.sectionTitle, { color: colors.text }]}>Danh sách bạn bè</Text><Text style={[styles.count, { color: colors.muted }]}>{visibleFriends.length}</Text></View>
-          {inboxError ? <StatusNotice title="Không tải được lời mời" message={errorMessage(inboxError)} tone="warning" actionLabel="Tải lại" onAction={() => { void load(true); }} colors={colors} /> : null}
-          {friends.length === 0 ? <StatusNotice title="Chưa có bạn bè" message="Thêm bạn bằng mã để bắt đầu kết nối." tone="info" colors={colors} /> : visibleFriends.length === 0 ? <StatusNotice title="Không tìm thấy bạn" message="Thử tên khác trong danh sách bạn bè." tone="info" actionLabel="Xóa từ khóa" onAction={() => setSearch('')} colors={colors} /> : visibleFriends.map(friend => (
-            <View key={friend.id} style={[styles.friendRow, largeText && styles.friendRowLarge, { backgroundColor: colors.surface, borderColor: colors.line }]}>
-              <View style={styles.friendIdentity}>
-                <View style={[styles.avatar, { backgroundColor: colors.surface, borderColor: colors.line }]}><Text style={[styles.avatarText, { color: colors.text }]}>{initialFrom(friend.displayName)}</Text></View>
-                <View style={styles.friendCopy}><Text style={[styles.friendName, { color: colors.text }]}>{friend.displayName}</Text><Text style={[styles.caption, { color: colors.muted }]}>Bạn bè</Text></View>
+          <Text accessibilityRole="header" style={[styles.sectionTitle, { color: colors.muted }]}>{query ? `Kết quả · ${visibleFriends.length}` : `Bạn bè · ${friends.length}`}</Text>
+          {visibleFriends.length === 0 ? (newFriendCode ? null : <View style={styles.empty}>
+            <View style={[styles.emptyIcon, { backgroundColor: colors.warm }]}><AppIcon name={friends.length === 0 && !query ? 'friends' : 'search'} size={26} color={colors.primary} /></View>
+            <Text style={[styles.emptyTitle, { color: colors.text }]}>{emptyTitle}</Text>
+            <Text style={[styles.emptyHint, { color: colors.muted }]}>{emptyHint}</Text>
+          </View>) : visibleFriends.map(friend => (
+            <SwipeToDeleteRow key={friend.id} accessibilityLabel={`Xóa ${friend.displayName}`} disabled={busy} onDelete={() => setAction({ kind: 'unfriend', friend })} colors={colors}>
+              <View style={styles.row}>
+                <View style={[styles.avatar, { backgroundColor: avatarTint(friend.displayName) }]}><Text style={[styles.avatarText, { color: colors.text }]}>{initialFrom(friend.displayName)}</Text></View>
+                <View style={styles.rowCopy}><Text numberOfLines={1} style={[styles.name, { color: colors.text }]}>{friend.displayName}</Text></View>
+                <PillButton label="Rủ ăn" onPress={() => onNavigate(`/room/setup?invite=${encodeURIComponent(friend.friendUserId)}`)} disabled={busy} colors={colors} />
               </View>
-              <View style={[styles.friendActions, largeText && styles.friendActionsLarge]}>
-                <AppButton label="Rủ ăn" onPress={() => onNavigate('/room/create')} disabled={busy} colors={colors} style={[styles.inviteToMeal, largeText && styles.inviteToMealLarge]} />
-                <Pressable accessibilityRole="button" accessibilityLabel={`Tùy chọn ${friend.displayName}`} accessibilityState={{ disabled: busy }} onPress={() => setAction({ kind: 'unfriend', friend })} disabled={busy} style={({ pressed }) => [styles.moreButton, { backgroundColor: pressed ? colors.soft : 'transparent', opacity: busy ? 0.55 : 1 }]}>
-                  <Text style={[styles.moreGlyph, { color: colors.text }]}>⋯</Text>
-                </Pressable>
-              </View>
-            </View>
+            </SwipeToDeleteRow>
           ))}
-          {refreshing ? <Text style={[styles.caption, { color: colors.muted }]}>Đang cập nhật danh sách…</Text> : null}
         </View> : null}
-
-        {identity?.friendCode ? <Pressable accessibilityRole="button" accessibilityLabel="Chia sẻ mã kết bạn" onPress={() => { void shareCode(); }} style={[styles.shareCard, largeText && styles.shareCardLarge, { backgroundColor: colors.warm }]}>
-          <View style={[styles.plusCircle, { backgroundColor: colors.green }]}><PlusIcon /></View>
-          <View style={styles.friendCopy}><Text style={[styles.friendName, { color: colors.text }]}>Chia sẻ mã kết bạn</Text><Text selectable style={[styles.caption, { color: colors.muted }]}>{identity.friendCode}</Text></View>
-          <Text style={[styles.chevron, { color: colors.text }]}>›</Text>
-        </Pressable> : null}
-        {message ? <StatusNotice title="Kết quả máy chủ" message={message} tone={message.startsWith('Chưa') ? 'warning' : 'success'} colors={colors} /> : null}
+        {message ? <ToastNotice title={message} tone={messageTone} /> : null}
       </View>
 
-      <SheetDialog visible={action !== null} title={action?.kind === 'invite' ? 'Thêm bạn bằng mã' : `Xóa ${action?.friend.displayName ?? 'bạn'}?`} onClose={() => { if (!busy) setAction(null); }} colors={colors}>
-        {action?.kind === 'invite' ? <FormField label="Mã bạn bè" value={friendCode} onChangeText={value => setFriendCode(value.toUpperCase().slice(0, 10))} autoCapitalize="characters" autoCorrect={false} placeholder="Nhập mã 10 ký tự" colors={colors} /> : <Text style={[styles.caption, { color: colors.text }]}>Máy chủ sẽ xóa quan hệ bạn bè. Thao tác không thay đổi thành viên trong phòng đang hoạt động.</Text>}
-        <AppButton label={action?.kind === 'invite' ? 'Gửi lời mời' : 'Xác nhận xóa bạn'} variant={action?.kind === 'invite' ? 'primary' : 'danger'} onPress={() => void confirm()} loading={busy} colors={colors} />
+      <SheetDialog visible={action !== null} title={`Xóa ${action?.friend.displayName ?? 'bạn'} khỏi bạn bè?`} presentation="dialog" showHandle={false} showClose={false} onClose={() => { if (!busy) setAction(null); }} colors={colors}>
+        <Text style={[styles.dialogText, { color: colors.muted }]}>Hai bạn sẽ không còn trong danh sách bạn bè của nhau. Phòng đang chơi không bị ảnh hưởng.</Text>
+        <View style={styles.dialogActions}>
+          <AppButton label="Hủy" variant="secondary" disabled={busy} onPress={() => setAction(null)} colors={colors} style={styles.dialogButton} singleLine />
+          <AppButton label="Xác nhận xóa bạn" variant="danger" onPress={confirm} loading={busy} colors={colors} style={styles.dialogButton} singleLine />
+        </View>
       </SheetDialog>
     </ApiFeatureFrame>
   );
 }
 
+const avatarColors = ['#FDE7C8', '#D9F2DD', '#DCEBFF', '#F7DCEB', '#E9E1FB', '#FFF1B8'];
+
+function IconAction({ label, icon, tint, onPress, disabled, colors }: { label: string; icon: AppIconName; tint: string; onPress: () => void; disabled?: boolean; colors: ReturnType<typeof useShellTheme>['colors'] }) {
+  return <Pressable accessibilityRole="button" accessibilityLabel={label} accessibilityState={{ disabled }} disabled={disabled} hitSlop={4} onPress={onPress}
+    style={({ pressed }) => [styles.iconAction, { backgroundColor: pressed ? colors.soft : 'transparent', opacity: disabled ? 0.5 : 1 }]}>
+    <AppIcon name={icon} size={20} color={tint} />
+  </Pressable>;
+}
+
+function PillButton({ label, accessibilityLabel, onPress, disabled, variant = 'primary', colors }: { label: string; accessibilityLabel?: string; onPress: () => void; disabled?: boolean; variant?: 'primary' | 'secondary'; colors: ReturnType<typeof useShellTheme>['colors'] }) {
+  const primary = variant === 'primary';
+  return <Pressable accessibilityRole="button" accessibilityLabel={accessibilityLabel ?? label} accessibilityState={{ disabled }} disabled={disabled} onPress={onPress}
+    style={({ pressed }) => [styles.pill, { backgroundColor: primary ? colors.primary : colors.soft, opacity: disabled ? 0.5 : pressed ? 0.8 : 1 }]}>
+    <Text numberOfLines={1} style={[styles.pillText, { color: primary ? colors.onPrimary : colors.text }]}>{label}</Text>
+  </Pressable>;
+}
+
 function normalizeSearch(value: string): string {
   return value.trim().toLocaleLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+function shortAgo(value: string): string {
+  const minutes = Math.max(0, Math.floor((Date.now() - Date.parse(value)) / 60_000));
+  if (minutes < 1) return 'vừa xong';
+  if (minutes < 60) return `${minutes} phút`;
+  const hours = Math.floor(minutes / 60);
+  return hours < 24 ? `${hours} giờ` : `${Math.floor(hours / 24)} ngày`;
 }
 
 function initialFrom(value: string): string {
@@ -238,40 +309,35 @@ export function errorMessage(key: string): string {
 }
 
 const styles = StyleSheet.create({
-  content: { gap: 24 },
-  titleRow: { minHeight: 56, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
-  titleRowLarge: { flexDirection: 'column', alignItems: 'stretch' },
-  titleCopy: { flex: 1, minWidth: 0, gap: 2 },
-  addFriendButton: { minHeight: 48, minWidth: 118, borderWidth: 1, borderRadius: 12, paddingHorizontal: 14, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
-  addFriendLabel: { fontFamily: 'InterSemiBold', fontSize: 14, lineHeight: 20 },
+  content: { gap: 20 },
   pageTitle: { fontFamily: 'InterBold', fontSize: 30, lineHeight: 40 },
-  subtitle: { fontFamily: 'InterRegular', fontSize: 14, lineHeight: 20 },
-  search: { minHeight: 52, borderWidth: 1, borderRadius: 16, flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16 },
-  searchInput: { backgroundColor: 'transparent', borderWidth: 0, paddingHorizontal: 0, minHeight: 48 },
-  section: { gap: 12 },
-  sectionTop: { minHeight: 28, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  sectionTitle: { fontFamily: 'InterSemiBold', fontSize: 18, lineHeight: 26 },
-  count: { fontFamily: 'InterSemiBold', fontSize: 13, lineHeight: 20 },
-  invitationCard: { borderWidth: 1, borderRadius: 16, padding: 16, gap: 12 },
-  invitationIdentity: { flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 48 },
-  invitationActions: { flexDirection: 'row', gap: 12 },
-  actionButton: { flex: 1, minHeight: 48 },
-  friendRow: { minHeight: 76, borderWidth: 1, borderRadius: 14, padding: 12, flexDirection: 'row', alignItems: 'center', gap: 12 },
-  friendRowLarge: { flexDirection: 'column', alignItems: 'stretch' },
-  friendIdentity: { flex: 1, minWidth: 0, flexDirection: 'row', alignItems: 'center', gap: 12 },
-  friendActions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  friendActionsLarge: { alignSelf: 'stretch' },
-  avatar: { width: 48, height: 48, borderWidth: 1, borderRadius: 24, alignItems: 'center', justifyContent: 'center' },
+  search: { minHeight: 48, borderWidth: 1, borderRadius: 24, flexDirection: 'row', alignItems: 'center', gap: 8, paddingLeft: 16, paddingRight: 8 },
+  searchField: { flex: 1 },
+  searchInput: { backgroundColor: 'transparent', borderWidth: 0, paddingHorizontal: 0, minHeight: 44, fontSize: 15 },
+  clear: { width: 24, height: 24, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  myCode: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: -8 },
+  myCodeText: { flex: 1, fontFamily: 'InterRegular', fontSize: 14, lineHeight: 20 },
+  myCodeValue: { fontFamily: 'InterSemiBold', letterSpacing: 1 },
+  section: { gap: 4 },
+  sectionTitle: { fontFamily: 'InterSemiBold', fontSize: 13, lineHeight: 20, marginBottom: 4 },
+  row: { minHeight: 64, flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 8 },
+  rowCopy: { flex: 1, minWidth: 0, gap: 6 },
+  avatar: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
   avatarText: { fontFamily: 'InterSemiBold', fontSize: 17, lineHeight: 24 },
-  friendCopy: { flex: 1, minWidth: 0, gap: 2 },
-  friendName: { fontFamily: 'InterSemiBold', fontSize: 15, lineHeight: 21 },
+  name: { fontFamily: 'InterSemiBold', fontSize: 15, lineHeight: 21 },
   caption: { fontFamily: 'InterRegular', fontSize: 12, lineHeight: 18 },
-  inviteToMeal: { minWidth: 80, minHeight: 48 },
-  inviteToMealLarge: { flex: 1 },
-  moreButton: { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center' },
-  moreGlyph: { fontFamily: 'InterSemiBold', fontSize: 24, lineHeight: 28 },
-  shareCard: { minHeight: 84, borderRadius: 16, paddingHorizontal: 16, paddingVertical: 12, flexDirection: 'row', alignItems: 'center', gap: 14 },
-  shareCardLarge: { flexDirection: 'column', alignItems: 'stretch' },
-  plusCircle: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
-  chevron: { fontFamily: 'InterRegular', fontSize: 32, lineHeight: 36 },
+  inviteRow: { gap: 10, paddingVertical: 8 },
+  inviteTop: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  inviteText: { flex: 1, minWidth: 0, fontFamily: 'InterRegular', fontSize: 14, lineHeight: 20 },
+  inviteActions: { flexDirection: 'row', justifyContent: 'flex-end', gap: 8 },
+  pill: { minHeight: 36, minWidth: 72, paddingHorizontal: 14, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
+  pillText: { fontFamily: 'InterSemiBold', fontSize: 13, lineHeight: 18 },
+  iconAction: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
+  dialogText: { fontFamily: 'InterRegular', fontSize: 14, lineHeight: 20 },
+  dialogActions: { flexDirection: 'row', gap: 12 },
+  dialogButton: { flex: 1 },
+  empty: { alignItems: 'center', gap: 6, paddingVertical: 32 },
+  emptyIcon: { width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', marginBottom: 6 },
+  emptyTitle: { fontFamily: 'InterSemiBold', fontSize: 16, lineHeight: 22 },
+  emptyHint: { fontFamily: 'InterRegular', fontSize: 13, lineHeight: 19, textAlign: 'center', maxWidth: 280 },
 });

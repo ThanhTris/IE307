@@ -503,11 +503,10 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
         />
       );
 
-      await fireEvent.press(screen.getByRole('button', { name: 'Tiếp tục →' }));
-      expect(previewFn).toHaveBeenCalledWith('GCD999');
+      await waitFor(() => expect(previewFn).toHaveBeenCalledWith('GCD999'));
       expect(await screen.findByText('2/20 thành viên')).toBeOnTheScreen();
       expect(screen.getByText('Phòng GCD999')).toBeOnTheScreen();
-      expect(screen.getByText('Xác nhận để vào phòng. Xem trước không giữ chỗ.')).toBeOnTheScreen();
+      expect(screen.queryByText(/Xem trước không giữ chỗ/)).toBeNull();
 
       await fireEvent.press(screen.getByRole('button', { name: 'Xác nhận vào phòng' }));
       expect(onEntered).toHaveBeenCalledWith(expect.objectContaining({ role: 'member', code: 'GCD999' }));
@@ -533,7 +532,6 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
         />
       );
 
-      await fireEvent.press(screen.getByRole('button', { name: 'Tiếp tục →' }));
       expect(await screen.findByText('Phòng đã đủ 20 người')).toBeOnTheScreen();
       expect(screen.queryByRole('button', { name: 'Xác nhận vào phòng' })).toBeNull();
     });
@@ -560,7 +558,7 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
       expect(screen.getByText('Ăn gì cũng được')).toBeOnTheScreen();
       expect(screen.getByText('Bỏ qua')).toBeOnTheScreen();
       expect(screen.getByText('Vào phòng chờ →')).toBeOnTheScreen();
-      expect(screen.getByText('Lựa chọn này áp dụng cho lịch sử cá nhân của tài khoản. Lưu lịch sử nhóm là quyền riêng, không bị thay đổi ở đây. Khẩu vị chỉ áp dụng cho phòng này.')).toBeOnTheScreen();
+      expect(screen.queryByText(/Lựa chọn này áp dụng/)).toBeNull();
 
       // Ensure no legacy ready banner or text exists
       expect(screen.queryByText(/sẵn sàng/i)).toBeNull();
@@ -594,7 +592,7 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
       );
 
       expect(await screen.findByText('GCD999')).toBeOnTheScreen();
-      expect(screen.getByText('Thành viên · 2/20')).toBeOnTheScreen();
+      expect(screen.getByText('Thành viên (2)')).toBeOnTheScreen();
 
       // Ready controls are removed
       expect(screen.queryByRole('button', { name: /sẵn sàng/i })).toBeNull();
@@ -638,7 +636,7 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
       await fireEvent.press(leaveBtn);
 
       expect(screen.getByText('Xác nhận rời phòng?')).toBeOnTheScreen();
-      await fireEvent.press(screen.getByRole('button', { name: 'Xác nhận rời' }));
+      await fireEvent.press(screen.getAllByRole('button', { name: 'Rời phòng' }).at(-1)!);
 
       expect(client.callRpc).toHaveBeenCalledWith(
         'dish_session',

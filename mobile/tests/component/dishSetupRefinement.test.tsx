@@ -13,7 +13,7 @@ import type { FlavorProfile } from '../../src/data/api/contracts';
 const clock = () => Date.parse('2026-11-02T21:45:00+07:00');
 test('meal manual override survives rendering and Now recomputes it', async () => {
   await render(<DishSetupFlow gateway={createDishSetupPreview('default', { settings: initialSetupDraft(clock()) }, clock())} onExit={jest.fn()} now={clock} />);
-  await screen.findByText('Buổi ăn');
+  await screen.findByRole('header', { name: 'Buổi ăn' });
   await fireEvent.press(screen.getByRole('button', { name: 'Ăn sáng' }));
   expect(screen.getByRole('button', { name: 'Ăn sáng', selected: true })).toBeOnTheScreen();
   await fireEvent.press(screen.getByRole('button', { name: 'Ăn ngay' }));
@@ -22,18 +22,31 @@ test('meal manual override survives rendering and Now recomputes it', async () =
 
 test('opening schedule starts fifteen minutes ahead and displays a separate edit action', async () => {
   await render(<DishSetupFlow gateway={createDishSetupPreview('default', undefined, clock())} onExit={jest.fn()} now={clock} />);
-  await screen.findByText('Buổi ăn');
+  await screen.findByRole('header', { name: 'Buổi ăn' });
   await fireEvent.press(screen.getByRole('button', { name: 'Hẹn giờ' }));
   expect(await screen.findByText('Xác nhận · 22:00')).toBeOnTheScreen();
   await fireEvent.press(screen.getByText('Xác nhận · 22:00'));
+  // 22:00 is outside the dinner window: the user picks which side to fix.
+  expect(await screen.findByText('Giờ và buổi ăn chưa khớp')).toBeOnTheScreen();
+  await fireEvent.press(screen.getByRole('button', { name: 'Đổi thành Ăn vặt' }));
   expect(screen.getByText('02/11/2026 · 22:00')).toBeOnTheScreen();
   expect(screen.getByRole('button', { name: 'Sửa thời gian' })).toBeOnTheScreen();
 });
 
 test('changing meal on the form moves an expired meal time to tomorrow', async () => {
   await render(<DishSetupFlow gateway={createDishSetupPreview('default', { settings: { timeMode: 'scheduled', desiredAt: '2026-11-02T22:00:00+07:00' } }, clock())} onExit={jest.fn()} now={clock} />);
-  await screen.findByText('Buổi ăn');
+  await screen.findByRole('header', { name: 'Buổi ăn' });
   await fireEvent.press(screen.getByRole('button', { name: 'Ăn trưa' }));
+  expect(await screen.findByText('Giờ và buổi ăn chưa khớp')).toBeOnTheScreen();
+  await fireEvent.press(screen.getByRole('button', { name: 'Giữ Ăn trưa, đổi giờ' }));
+  expect(screen.getByText('03/11/2026 · 12:00')).toBeOnTheScreen();
+});
+
+test('a scheduled hour that fits the meal is applied without asking', async () => {
+  await render(<DishSetupFlow gateway={createDishSetupPreview('default', { settings: { timeMode: 'scheduled', desiredAt: '2026-11-03T12:00:00+07:00' } }, clock())} onExit={jest.fn()} now={clock} />);
+  await screen.findByRole('header', { name: 'Buổi ăn' });
+  await fireEvent.press(screen.getByRole('button', { name: 'Ăn trưa' }));
+  expect(screen.queryByText('Giờ và buổi ăn chưa khớp')).toBeNull();
   expect(screen.getByText('03/11/2026 · 12:00')).toBeOnTheScreen();
 });
 
@@ -98,7 +111,22 @@ test('host completion offers cancellation and Home is shown only after confirmed
   await fireEvent.press(screen.getByRole('button', { name: 'Hủy phòng' }));
   expect(exit).not.toHaveBeenCalled();
   await fireEvent.press(screen.getByText('Xác nhận hủy phòng'));
-  await waitFor(() => expect(screen.getByText('Phòng đã bị hủy')).toBeOnTheScreen());
-  await fireEvent.press(screen.getByRole('button', { name: 'Về trang chủ' }));
-  expect(exit).toHaveBeenCalledTimes(1);
+  await waitFor(() => expect(exit).toHaveBeenCalledTimes(1));
+});
+
+test('a friend picked with "Rủ ăn" / Kèo nhanh is already invited when setup opens', async () => {
+  await render(<DishSetupFlow gateway={createDishSetupPreview('default', undefined, clock())} onExit={jest.fn()} now={clock} initialInvitees={['friend-lan']} />);
+  await screen.findByRole('header', { name: 'Rủ bạn ăn cùng' });
+  expect(screen.getByRole('button', { name: /^Sửa bạn / })).toBeOnTheScreen();
+});
+
+test('the live gateway sends no settings for a brand-new room, yet the friend picked with Rủ ăn is still invited', async () => {
+  const preview = createDishSetupPreview('default', undefined, clock());
+  const gateway = { ...preview, read: async () => {
+    const { settings: _settings, room: _room, ...rest } = await preview.read();
+    return { ...rest, friends: [{ id: 'friend-lan', label: 'Lan' }] };
+  } };
+  await render(<DishSetupFlow gateway={gateway as typeof preview} onExit={jest.fn()} now={clock} initialInvitees={['friend-lan']} />);
+  await screen.findByRole('header', { name: 'Rủ bạn ăn cùng' });
+  expect(await screen.findByRole('button', { name: 'Sửa bạn Lan' })).toBeOnTheScreen();
 });

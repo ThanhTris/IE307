@@ -1,4 +1,4 @@
-import { render, screen, userEvent } from '@testing-library/react-native';
+import { render, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { type InboxItem } from '../../src/data/api';
 import { InboxScreen } from '../../src/features/inbox/screens/InboxScreen';
 import { HistoryScreen } from '../../src/features/history/screens/HistoryScreen';
@@ -8,19 +8,15 @@ const home = jest.fn();
 
 beforeEach(() => { nav.mockClear(); home.mockClear(); });
 
-test('live inbox links to the device push settings route', async () => {
-  const user = userEvent.setup();
-  const openSettings = jest.fn();
+test('live inbox shows an empty state without a device push settings button', async () => {
   await render(<InboxScreen
     repository={{ list: jest.fn().mockResolvedValue({ ok: true, data: { items: [], fetchedAt: '2026-11-08T00:00:00Z' } }) } as any}
     displayName="Trí"
     onNavigate={nav}
     onHome={home}
-    onPushSettings={openSettings}
   />);
   expect(await screen.findByText('Chưa có thông báo')).toBeOnTheScreen();
-  await user.press(screen.getByRole('button', { name: 'Cài đặt thông báo trên thiết bị' }));
-  expect(openSettings).toHaveBeenCalledTimes(1);
+  expect(screen.queryByRole('button', { name: 'Cài đặt thông báo trên thiết bị' })).toBeNull();
 });
 
 test('notification navigation opens the server-owned invitation without accepting it', async () => {
@@ -46,14 +42,13 @@ test('notification navigation opens the server-owned invitation without acceptin
     onHome={home}
     openEventId={item.eventId}
   />);
-  expect(await screen.findByText('Đã mở lời mời từ máy chủ. Chấp nhận hoặc từ chối bên dưới để xác nhận.')).toBeOnTheScreen();
-  expect(screen.getByText('Thông báo từ máy chủ')).toBeOnTheScreen();
-  expect(screen.queryByText('Kết quả máy chủ')).not.toBeOnTheScreen();
-  expect(screen.getByText('Lời mời phòng')).toBeOnTheScreen();
+  expect(await screen.findByText('Lời mời phòng')).toBeOnTheScreen();
+  expect(screen.queryByText('Thông báo từ máy chủ')).toBeNull();
+  // Opening the notification never answers it; only the button does, and it acts at once (no confirmation sheet).
   expect(repository.acceptRoom).not.toHaveBeenCalled();
-  await user.press(screen.getByRole('button', { name: 'Chấp nhận' }));
-  expect(screen.getByText('Xác nhận chấp nhận')).toBeOnTheScreen();
-  expect(repository.acceptRoom).not.toHaveBeenCalled();
+  await user.press(screen.getByRole('button', { name: 'Vào phòng' }));
+  expect(screen.queryByText('Xác nhận chấp nhận')).toBeNull();
+  expect(repository.acceptRoom).toHaveBeenCalledTimes(1);
 });
 
 test('notification retry resolves the same event from authenticated inbox after a network error', async () => {
@@ -89,8 +84,7 @@ test('notification retry resolves the same event from authenticated inbox after 
   online = true;
   await user.press(screen.getByRole('button', { name: 'Thử lại tải thông báo' }));
 
-  expect(await screen.findByText('Đã mở lời mời từ máy chủ. Chấp nhận hoặc từ chối bên dưới để xác nhận.')).toBeOnTheScreen();
-  expect(screen.getByText('Lời mời phòng')).toBeOnTheScreen();
+  expect(await screen.findByText('Lời mời phòng')).toBeOnTheScreen();
   expect(repository.list).toHaveBeenCalledTimes(2);
 });
 
@@ -114,13 +108,12 @@ test('live inbox hides a handled invitation after the server accepts it', async 
     rejectFriend: jest.fn().mockResolvedValue({ ok: true, data: undefined }),
   };
   await render(<InboxScreen repository={repository as any} displayName="Trí" onNavigate={nav} onHome={home} />);
-  await user.press(await screen.findByRole('button', { name: 'Chấp nhận' }));
-  await user.press(screen.getByRole('button', { name: 'Xác nhận chấp nhận' }));
+  await user.press(await screen.findByRole('button', { name: 'Đồng ý' }));
 
   expect(await screen.findByText('Chưa có thông báo')).toBeOnTheScreen();
   expect(repository.acceptFriend).toHaveBeenCalledWith('33333333-3333-4333-8333-333333333333');
   expect(repository.markHandled).toHaveBeenCalledWith(item.eventId);
-  expect(screen.queryByRole('button', { name: 'Chấp nhận' })).toBeNull();
+  expect(screen.queryByRole('button', { name: 'Đồng ý' })).toBeNull();
 });
 
 test('legacy result notification routes to the read-only legacy result screen', async () => {
@@ -168,14 +161,17 @@ test('live inbox marks all pages read and keeps the request ID after an uncertai
     }),
   };
   await render(<InboxScreen repository={repository as any} displayName="Trí" onNavigate={nav} onHome={home} />);
-  await user.press(await screen.findByRole('button', { name: 'Đọc tất cả' }));
+  await user.press(await screen.findByRole('button', { name: 'Đánh dấu tất cả đã đọc' }));
   expect(await screen.findByText(/thử lại an toàn/)).toBeOnTheScreen();
-  await user.press(screen.getByRole('button', { name: 'Đọc tất cả' }));
-  expect(await screen.findByText('Đã đánh dấu các thông báo hiện có là đã đọc.')).toBeOnTheScreen();
+  await user.press(screen.getByRole('button', { name: 'Đánh dấu tất cả đã đọc' }));
+  // Success needs no toast: the list simply shows everything as read.
+  await waitFor(() => expect(requestIds).toHaveLength(2));
+  expect(screen.queryByText(/Đã đánh dấu/)).toBeNull();
   expect(requestIds).toHaveLength(2);
   expect(requestIds[1]).toBe(requestIds[0]);
-  expect(screen.getByText('Trước đó')).toBeOnTheScreen();
-  expect(screen.getByText('Không có thông báo chưa đọc trên trang')).toBeOnTheScreen();
+  expect(screen.getByText('08/11/2026')).toBeOnTheScreen();
+  expect(screen.queryByText(/chưa đọc trên trang/)).toBeNull();
+  expect(screen.queryByText(/Cập nhật lúc/)).toBeNull();
 });
 
 test('live history opens the saved projection without re-reading the operational room', async () => {
@@ -229,4 +225,24 @@ test('offline history cache hides group projections and keeps only personal rows
   expect(await screen.findByText('Riêng tư món')).toBeOnTheScreen();
   expect(screen.queryByText('Không hiển thị nhóm offline')).toBeNull();
   expect(screen.getByText('Đang ngoại tuyến')).toBeOnTheScreen();
+});
+
+test('tapping a notification marks that one read; an invite shows the sender, with Từ chối left of Đồng ý', async () => {
+  const user = userEvent.setup();
+  const item: InboxItem = {
+    id: '11111111-1111-4111-8111-111111111111', eventId: '22222222-2222-4222-8222-222222222222',
+    type: 'friend_invite', title: 'Linh', body: 'muốn kết bạn với bạn', read: false,
+    metadata: { invitationId: '33333333-3333-4333-8333-333333333333' }, createdAt: '2026-11-08T00:00:00Z',
+  };
+  const repository = {
+    list: jest.fn(async () => ({ ok: true as const, data: { items: [item], fetchedAt: '2026-11-08T00:00:00Z' } })),
+    markRead: jest.fn().mockResolvedValue({ ok: true, data: undefined }),
+  };
+  await render(<InboxScreen repository={repository as any} displayName="Trí" onNavigate={nav} onHome={home} />);
+  expect(await screen.findByText(/uốn kết bạn với bạn/)).toBeOnTheScreen();
+  expect(screen.queryByText('Lời mời kết bạn')).toBeNull();
+  const labels = screen.getAllByRole('button').map(button => button.props.accessibilityLabel).filter(label => label === 'Từ chối' || label === 'Đồng ý');
+  expect(labels).toEqual(['Từ chối', 'Đồng ý']);
+  await user.press(screen.getByRole('summary'));
+  expect(repository.markRead).toHaveBeenCalledWith(item.eventId);
 });
