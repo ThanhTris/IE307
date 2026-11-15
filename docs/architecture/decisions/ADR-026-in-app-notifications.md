@@ -1,6 +1,6 @@
 # ADR-026 — In-app notifications, first-run permissions and opt-in history
 
-- Status: **Accepted by the project owner in chat on 2026-11-13** (to be re-confirmed by Trí in review).
+- Status: **Accepted by Trí on 2026-11-15 in chat**. PR #167 is explicitly approved as a combined cross-task change; implementation still requires passing verification before merge.
 - Scope: mobile app and the canonical B-supplement runtime (`list_partner_inbox`, friend invitations).
 - Runtime: `0052_inbox_friend_accepted.sql` (schema 0.28.0) and `0053_inbox_realtime.sql` (schema 0.29.0), applied to the
   local QA database only. Amended 2026-11-14 (decision 2): push through Realtime instead of a 10-second read.

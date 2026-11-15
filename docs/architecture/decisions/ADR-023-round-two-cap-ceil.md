@@ -1,6 +1,6 @@
 # ADR-023 — Round-2 removal limit rounds up
 
-- Status: **Accepted by the project owner in chat on 2026-11-12** (to be re-confirmed by Trí in review).
+- Status: **Accepted by Trí on 2026-11-15 in chat**. PR #167 is explicitly approved as a combined cross-task change; implementation still requires passing verification before merge.
 - Scope: round 2 of new sessions on the live runtimes (B and B-supplement). Amends the cap formula of ADR-019 and ADR-020; everything else in those ADRs stays.
 - Runtime: `0049_round_two_cap_ceil.sql`, applied to the local QA database only.
 

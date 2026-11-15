@@ -1,6 +1,6 @@
 # ADR-024 — Preference filters: soft ranking at start, 5–20 dishes
 
-- Status: **Accepted by the project owner in chat on 2026-11-13** (to be re-confirmed by Trí in review).
+- Status: **Accepted by Trí on 2026-11-15 in chat**. PR #167 is explicitly approved as a combined cross-task change; implementation still requires passing verification before merge.
 - Scope: canonical B-supplement runtime (`gm20_canonical_private`, contract `GM-07.B-supplement`), new and in-flight
   lobbies. The baseline B dispatcher (`dish_v4_private.dispatch`) and pinned v2/v3 sessions are unchanged.
 - Runtime: `0050_preference_ranking.sql` (schema 0.26.0), applied to the local QA database only.

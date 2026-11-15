@@ -1,7 +1,7 @@
 meta {
-  name: 21 Host submits round 2
+  name: 18 Member submits round 1
   type: http
-  seq: 21
+  seq: 19
 }
 post {
   url: {{baseUrl}}/rest/v1/rpc/dish_session
@@ -9,11 +9,11 @@ post {
   auth: none
 }
 headers {
-  Authorization: Bearer {{hostToken}}
+  Authorization: Bearer {{memberToken}}
   Content-Type: application/json
 }
 body:json {
-  {"command":"submit","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B","requestId":"r2_host_{{timestamp}}","roomId":"{{roomId}}","expectedVersion":{{roomVersion}},"round":2,"poolVersion":{{poolVersion}},"votes":{{r2VotesKeep}}}}
+  {"command":"submit","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B","requestId":"r1_member_{{timestamp}}","roomId":"{{roomId}}","expectedVersion":{{roomVersion}},"round":1,"poolVersion":{{poolVersion}},"votes":{{r1Votes}}}}
 }
 script:pre-request {
   bru.setVar('timestamp', String(Date.now()));
@@ -23,10 +23,10 @@ script:post-response {
   if (res.getStatus() === 200 && b.ok) bru.setVar('roomVersion', String(b.version));
 }
 tests {
-  test('A complete R2 KEEP ballot is accepted and does not score points', () => {
+  test('Second complete R1 ballot advances to real round two', () => {
     const b = res.getBody();
     expect(res.getStatus()).to.equal(200);
     expect(b.ok).to.equal(true);
-    expect(b.data.round).to.equal(2);
+    expect(b.state).to.equal('ROUND_2');
   });
 }

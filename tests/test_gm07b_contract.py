@@ -79,7 +79,7 @@ class Gm07bContractTests(unittest.TestCase):
         fixtures = self.request_fixtures()
         expected_commands = set(self.base_schema["$defs"]["command"]["enum"])
         self.assertEqual({command for command, _ in fixtures}, expected_commands)
-        self.assertEqual(set(self.supp_schema["$defs"]["command"]["enum"]), expected_commands)
+        self.assertEqual(set(self.supp_schema["$defs"]["command"]["enum"]), expected_commands | {"setReady"})
         for command, fields in fixtures:
             for version, own, other in (
                 (baseline, self.base_validator, self.supp_validator),
@@ -95,6 +95,30 @@ class Gm07bContractTests(unittest.TestCase):
                     unknown = copy.deepcopy(request)
                     unknown["payload"]["contractVersion"] = "dish-session-v4/roadmap-v2/GM-07.UNKNOWN"
                     self.assertFalse(own.is_valid(unknown), "Unknown version must not be accepted")
+
+    def test_supplement_ready_requires_explicit_version_and_boolean(self):
+        request = {"command": "setReady", "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B-supplement",
+            "requestId": "ready-001", "roomId": MODULE.ROOM_ID, "ready": True}}
+        self.supp_validator.validate(request)
+        self.assertFalse(self.base_validator.is_valid(request))
+        for field in request["payload"]:
+            bad = copy.deepcopy(request)
+            del bad["payload"][field]
+            self.assertFalse(self.supp_validator.is_valid(bad), field)
+        for value in (1, "true", None):
+            bad = copy.deepcopy(request)
+            bad["payload"]["ready"] = value
+            self.assertFalse(self.supp_validator.is_valid(bad))
+
+    def test_shortage_range_is_supplement_only(self):
+        command, fields = next((c, p) for c, p in self.request_fixtures() if c == "create")
+        for count in (4, 5, 9, 10, 20, 21, 5.5):
+            for suffix, validator, minimum in (("", self.base_validator, 10), ("-supplement", self.supp_validator, 5)):
+                request = {"command": command, "payload": copy.deepcopy(fields)}
+                request["payload"]["contractVersion"] = "dish-session-v4/roadmap-v2/GM-07.B" + suffix
+                request["payload"]["settings"]["dishCount"] = count
+                self.assertEqual(validator.is_valid(request), isinstance(count, int) and minimum <= count <= 20)
 
     def test_semantic_rejects_tied_rank_mismatch(self):
         """Dishes with identical scores must share the identical dense rank."""

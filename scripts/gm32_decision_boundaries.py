@@ -52,6 +52,7 @@ def run(db, manifest, check, literal):
                     preferences=PREFERENCES)
         for who in range(1, size):
             call('join', who, code=made['code'], displayName='GM32 member')
+            call('setReady', who, roomId=made['roomId'], ready=True)
         return made['roomId']
 
     def room(size=2, count=20):

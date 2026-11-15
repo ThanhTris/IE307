@@ -1,6 +1,6 @@
 # ADR-025 — Multi-label dish data for the preference filters
 
-- Status: **Accepted by the project owner in chat on 2026-11-13** (to be re-confirmed by Trí in review).
+- Status: **Accepted by Trí on 2026-11-15 in chat**. PR #167 is explicitly approved as a combined cross-task change; implementation still requires passing verification before merge.
 - Scope: canonical B-supplement runtime (as ADR-024) and the data contract of the next catalogue dataset.
 - Runtime: `0051_multi_label_filters.sql` (schema 0.27.0), applied to the local QA database only.
 - Builds on: ADR-024 (soft preference ranking, 5–20 dishes).

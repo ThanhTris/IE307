@@ -209,6 +209,40 @@ def verify(db):
         consent_source="0031_history_consent_policy_isolation.sql" if has_consent_policy_isolation else "0029_dish_v4_history_consent.sql"
         expected_sources.setdefault(ROOT/"supabase/migrations"/consent_source,[]).append(
           ("gm21_private.prepare_consents","gm21_private.prepare_consents"))
+    # Forward migrations replace or wrap these functions. Pin every wrapper as
+    # well as its renamed predecessor; never accept the deployed body as source.
+    upgrades = [
+        ('0.23.0', '0047_dish_v4_podium_tiebreak.sql', [
+            ('dish_v4_private.finish_baseline_0111', None),
+            ('public.dish_session', 'public.dish_session_before_pace')]),
+        ('0.24.0', '0048_canonical_podium_tiebreak.sql', [
+            ('gm20_canonical_private.finish', None)]),
+        ('0.25.0', '0049_round_two_cap_ceil.sql', [
+            ('gm20_canonical_private.dispatch', None)]),
+        ('0.26.0', '0050_preference_ranking.sql', [
+            ('gm20_canonical_private.dispatch', None)]),
+        ('0.30.0', '0054_room_rejoin_round_one.sql', [
+            ('public.dish_session', 'public.dish_session_before_rejoin')]),
+        ('0.31.0', '0055_lobby_ready.sql', [
+            ('public.dish_session', 'public.dish_session_before_ready')]),
+        ('0.31.1', '0056_ready_hardening.sql', [
+            ('public.dish_session', None)]),
+        ('0.31.2', '0057_ready_v4_only.sql', [
+            ('public.dish_session', None)]),
+    ]
+    if has_canonical:
+        for version, filename, changes in upgrades:
+            applied = db.psql("select count(*) from public.schema_versions where schema_version='" + version + "';").strip()
+            if applied != '1':
+                continue
+            for function, renamed in changes:
+                for entries in expected_sources.values():
+                    for entry in list(entries):
+                        if entry[0] == function:
+                            entries.remove(entry)
+                            if renamed:
+                                entries.append((renamed, entry[1]))
+                expected_sources.setdefault(ROOT/'supabase/migrations'/filename, []).append((function, function))
     for source_path,functions in expected_sources.items():
       source=source_path.read_text(encoding="utf-8")
       for name,source_name in functions:

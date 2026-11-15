@@ -387,6 +387,8 @@ for(const [index,policy] of ['v2','v3','b','bsup'].entries()){
 {
  const room=await createRoom(host,'b');
  expectOk(await dish(member.token,'join',{requestId:randomUUID(),code:room.code,displayName:'Existing B member'},'b'),'seed active member through B join for start race');
+ const joinedSnap=await roomSnapshot(host,room.id,'b');
+ expectOk(await dish(member.token,'updatePreferences',{requestId:randomUUID(),roomId:room.id,expectedVersion:joinedSnap.version,preferences:pref},'b'),'member saves preferences so host start can race acceptRoom');
  const invite=expectOk(await inviteRoom(host,room.id,outsider),'create accept/start race invite');
  const snapshot=await roomSnapshot(host,room.id,'b');
  const replies=await Promise.all([acceptRoom(outsider,invite.id),dish(host.token,'start',{requestId:randomUUID(),roomId:room.id,expectedVersion:snapshot.version},'b')]);

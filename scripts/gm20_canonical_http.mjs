@@ -49,7 +49,13 @@ function requestId(prefix){return prefix+'-'+Date.now()+'-'+randomUUID().slice(0
 async function waitWorker(){for(let i=0;i<30;i++){if(sql("select exists(select 1 from dish_v4_private.runtime where last_tick>clock_timestamp()-interval '15 seconds')")==='t'){results.push({case:'v4 worker heartbeat verified',result:'Pass',expected:true,actual:true});return;}await new Promise(r=>setTimeout(r,1000));}throw new Error('QA v4 worker did not become ready');}
 async function create(u,count=10,meal='lunch'){return expectOk(await api(u,'create',{requestId:requestId('create'),displayName:'QA host',settings:{dishCount:count,mealSlot:meal,desiredAt:null},preferences:pref}),'create');}
 async function snapshot(u,roomId){return expectOk(await api(u,'snapshot',{roomId}),'snapshot');}
-async function join(u,code,name){return expectOk(await api(u,'join',{requestId:requestId('join'),code,displayName:name}),'join');}
+async function join(u,code,name){
+ const receipt=expectOk(await api(u,'join',{requestId:requestId('join'),code,displayName:name}),'join');
+ const current=await snapshot(u,receipt.roomId);
+ expectOk(await api(u,'updatePreferences',{requestId:requestId('ready-preferences'),roomId:receipt.roomId,
+   expectedVersion:current.version,preferences:current.ownPreferences}),'member saves preferences before start');
+ return receipt;
+}
 function votesFor(pool,fn){return pool.map((d,i)=>({roundDishId:d.roundDishId,choice:fn(d,i)}));}
 function versionArgs(room,s,round){return {roomId:room,expectedVersion:s.version,round:s.round,poolVersion:s.poolVersion};}
 async function submit(u,room,s,votes,id){return api(u,'submit',{...versionArgs(room,s,s.round),requestId:id||requestId('submit'),votes});}
@@ -61,6 +67,59 @@ const setEnabled=value=>sql('update gm20_canonical_private.configuration set all
 setEnabled(false);
 expectFail(await api(h,'create',{requestId:requestId('disabled'),displayName:'QA',settings:{dishCount:10,mealSlot:'lunch',desiredAt:null},preferences:pref}),'UNSUPPORTED_CONTRACT_VERSION',400,'server flag blocks new supplement creation');
 setEnabled(true);
+// ADR-028: all lobby members must finish preferences or explicitly become ready.
+const readyRoom=await create(h);
+expectOk(await api(m,'join',{requestId:requestId('ready-join'),code:readyRoom.code,displayName:'Ready member'}),'join without saving preferences');
+let readyView=await snapshot(h,readyRoom.roomId);
+pass('host ready and new member choosing preferences',[true,false],
+ [readyView.members.find(u=>u.userId===h.id).ready,readyView.members.find(u=>u.userId===m.id).ready]);
+expectFail(await api(h,'start',{requestId:requestId('not-ready-start'),roomId:readyRoom.roomId,expectedVersion:readyView.version}),
+ 'MEMBERS_NOT_READY',409,'start waits for member preferences');
+const readyIntent={requestId:requestId('ready-on'),roomId:readyRoom.roomId,ready:true};
+const readyAck=expectOk(await api(m,'setReady',readyIntent),'explicit ready');
+pass('ready retry preserves version and receipt',readyAck,expectOk(await api(m,'setReady',readyIntent),'ready retry'));
+readyView=await snapshot(h,readyRoom.roomId);
+expectOk(await api(h,'start',{requestId:requestId('ready-start'),roomId:readyRoom.roomId,expectedVersion:readyView.version}),'ready room starts');
+pass('ready gate does not skip round one','ROUND_1',(await snapshot(m,readyRoom.roomId)).state);
+expectFail(await api(m,'setReady',{requestId:requestId('ready-after-start'),roomId:readyRoom.roomId,ready:false}),
+ 'INVALID_ROOM_STATE',409,'active round cannot be returned to choosing preferences');
+// ADR-028 extra coverage: host invariant, new joiner un-readies room, pre-existing lobby, and start/setReady race.
+const hostReadySnap=await snapshot(h,readyRoom.roomId);
+const extraReadyRoom=await create(h);
+const hostReadyAck=expectOk(await api(h,'setReady',{requestId:requestId('host-ready-false'),roomId:extraReadyRoom.roomId,ready:false}),'host setReady false stays true');
+pass('host remains ready even after setReady(false) without bumping version',
+ {ready:true,version:extraReadyRoom.version},{ready:hostReadyAck.ready,version:hostReadyAck.version});
+expectOk(await api(m,'join',{requestId:requestId('join-m2'),code:extraReadyRoom.code,displayName:'Ready member M'}),'member M joins');
+expectOk(await api(m,'setReady',{requestId:requestId('ready-m2'),roomId:extraReadyRoom.roomId,ready:true}),'member M becomes ready');
+expectOk(await api(x,'join',{requestId:requestId('join-x3'),code:extraReadyRoom.code,displayName:'Late member X'}),'third member X joins');
+const afterThirdJoin=await snapshot(h,extraReadyRoom.roomId);
+pass('newly joined member starts not ready while earlier members keep ready',
+ [true,true,false],
+ [h.id,m.id,x.id].map(uid=>afterThirdJoin.members.find(u=>u.userId===uid).ready));
+expectFail(await api(h,'start',{requestId:requestId('not-ready-third'),roomId:extraReadyRoom.roomId,expectedVersion:afterThirdJoin.version}),
+ 'MEMBERS_NOT_READY',409,'start blocks when newly joined member is not ready');
+expectOk(await api(x,'setReady',{requestId:requestId('ready-x3'),roomId:extraReadyRoom.roomId,ready:true}),'third member X readies up');
+// Pre-existing lobby (host and member raw columns false before 0055): host still appears ready, member still blocks start.
+sql("begin;select set_config('dish_v4.writer','on',true);update public.members set ready=false where room_id='"+extraReadyRoom.roomId+"';commit;");
+const oldLobbySnap=await snapshot(h,extraReadyRoom.roomId);
+pass('pre-existing lobby treats host as ready and non-hosts as not ready',
+ [true,false,false],
+ [h.id,m.id,x.id].map(uid=>oldLobbySnap.members.find(u=>u.userId===uid).ready));
+expectFail(await api(h,'start',{requestId:requestId('old-lobby-start'),roomId:extraReadyRoom.roomId,expectedVersion:oldLobbySnap.version}),
+ 'MEMBERS_NOT_READY',409,'pre-existing lobby requires non-host members to be ready');
+expectOk(await api(m,'setReady',{requestId:requestId('ready-m-old'),roomId:extraReadyRoom.roomId,ready:true}),'old lobby member M readies');
+expectOk(await api(x,'setReady',{requestId:requestId('ready-x-old'),roomId:extraReadyRoom.roomId,ready:true}),'old lobby member X readies');
+// Race: start vs setReady(false) serializes cleanly under room row lock.
+const beforeRace=await snapshot(h,extraReadyRoom.roomId);
+const [raceStart,raceUnready]=await Promise.all([
+ api(h,'start',{requestId:requestId('race-start'),roomId:extraReadyRoom.roomId,expectedVersion:beforeRace.version}),
+ api(m,'setReady',{requestId:requestId('race-unready'),roomId:extraReadyRoom.roomId,ready:false})
+]);
+const afterRace=await snapshot(h,extraReadyRoom.roomId);
+const startWon=raceStart.status===200&&raceUnready.status===409&&raceUnready.body.error?.messageKey==='INVALID_ROOM_STATE'&&afterRace.state==='ROUND_1';
+const unreadyWon=raceUnready.status===200&&raceStart.status===409&&raceStart.body.error?.messageKey==='MEMBERS_NOT_READY'&&afterRace.state==='LOBBY';
+pass('concurrent start and setReady(false) serialize cleanly',true,startWon||unreadyWon);
+pass('baseline start did not push previous active round back to LOBBY','ROUND_1',hostReadySnap.state);
 const preferenceBefore=expectOk(await api(h,'getDefaultPreferences'),'supplement preference initial read');
 const supplementPreferenceRequest={requestId:requestId('supplement-default-spicy'),expectedRevision:preferenceBefore.revision,preferences:spicyPref};
 const supplementPreferenceAck=expectOk(await api(h,'updateDefaultPreferences',supplementPreferenceRequest),'supplement account preference spicy update');
@@ -97,7 +156,7 @@ async function countLiteral(literal,expectedCount){
  });
  return {response,rawRequest};
 }
-for(const [literal,count] of [['10',10],['10.0',10],['20',20],['20.0',20],['10.5',null],['9',null],['21',null],['"10"',null],['null',null],['true',null]]){
+for(const [literal,count] of [['10',10],['10.0',10],['20',20],['20.0',20],['10.5',null],['5',5],['5.0',5],['9',9],['4',null],['21',null],['"10"',null],['null',null],['true',null]]){
  const {response,rawRequest}=await countLiteral(literal,count);
  if(count===null)expectFail(response,'INVALID_INPUT',400,'raw create rejects dishCount '+literal);
  else{

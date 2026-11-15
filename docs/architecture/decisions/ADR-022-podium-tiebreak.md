@@ -1,6 +1,6 @@
 # ADR-022 — Podium tie-break by decision time
 
-- Status: **Accepted by the project owner in chat on 2026-11-12** (to be re-confirmed by Trí in review).
+- Status: **Accepted by Trí on 2026-11-15 in chat**. PR #167 is explicitly approved as a combined cross-task change; implementation still requires passing verification before merge.
 - Scope: new sessions on the live runtimes (B and B-supplement). Existing stored results keep their order. Amends ADR-020 decisions 4 and 5 for ordering and winner choice only.
 - Runtime: migrations `0047_dish_v4_podium_tiebreak.sql` (baseline B path, pace storage, helpers) and `0048_canonical_podium_tiebreak.sql` (B-supplement / canonical path). Applied to the local QA database only.
 

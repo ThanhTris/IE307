@@ -80,6 +80,7 @@ liveTest('live ACK replay reconciles a restarted GM-31 outbox and drops terminal
   });
   const roomId: string = made.roomId;
   await call(peer.token, 'join', { requestId: randomUUID(), code: made.code, displayName: 'GM32 outbox peer' });
+  await call(peer.token, 'setReady', { requestId: randomUUID(), roomId, ready: true });
   const lobby = await snapshot(host.token, roomId);
   await call(host.token, 'start', { requestId: randomUUID(), roomId, expectedVersion: lobby.version });
   const roundOne = await snapshot(host.token, roomId);

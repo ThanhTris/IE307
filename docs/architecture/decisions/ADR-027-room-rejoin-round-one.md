@@ -1,6 +1,6 @@
 # ADR-027 — Rejoining a room during round 1
 
-- Status: **Proposed**, requested by the project owner in chat on 2026-11-14 (to be confirmed by Trí in review).
+- Status: **Accepted by Trí on 2026-11-15 in chat**. PR #167 is explicitly approved as a combined cross-task change; implementation still requires passing verification before merge.
 - Runtime: `0054_room_rejoin_round_one.sql` (schema 0.30.0), applied to the local QA database only.
 
 ## Context

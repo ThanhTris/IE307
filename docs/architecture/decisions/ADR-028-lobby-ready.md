@@ -1,6 +1,6 @@
 # ADR-028 — Lobby "ready" and avoiding recent winners
 
-- Status: **Proposed**, requested by the project owner in chat on 2026-11-14 (to be confirmed by Trí in review).
+- Status: **Accepted by Trí on 2026-11-15 in chat**. PR #167 is explicitly approved as a combined cross-task change; implementation still requires passing verification before merge.
 - Runtime: `0055_lobby_ready.sql` (schema 0.31.0), applied to the local QA database only. Replaces the "no ready" rule of ADR-019 for the lobby.
 
 ## Decision
@@ -10,6 +10,10 @@
 2. At `start`, every member whose room preferences have `avoidRecent = true` contributes the winners of their last 3
    personal history entries (consent-based history only). Those dishes go to the end of the draw: a soft preference,
    they are still drawn when the catalogue is short. Without history the draw is unchanged.
+
+## Compatibility clarification — 2026-11-15
+
+Trí explicitly chose the ready gate for **all existing and new rooms still in LOBBY**. This is an intentional change to the active lobby contract, not a fixture-only adjustment. Already-running rounds are not returned to lobby. Legacy behavior must be checked separately; passing updated fixtures alone is not proof of compatibility.
 
 ## Evidence
 `ADR-028_lobby_ready.test.sql` (5/5), QA e2e `.work/e2e/36-test-ready-avoid.mjs` (ready gate and avoid-recent, all pass),
