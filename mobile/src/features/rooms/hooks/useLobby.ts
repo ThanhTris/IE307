@@ -37,6 +37,7 @@ export function useLobby({
   const [realRevision, setRealRevision] = useState(0);
   const [eligibilityError, setEligibilityError] = useState<string | null>(null);
   const busyRef = useRef(false);
+  const openedVotingRef = useRef<string | null>(null);
   const pendingIntentRef = useRef<{
     action: string;
     requestId: string;
@@ -119,18 +120,22 @@ export function useLobby({
 
   useEffect(() => {
     if (!activeRoomId) return;
+    let active = true;
+    let polling = false;
     const interval = setInterval(() => {
-      if (!busyRef.current) {
-        void api.getRoomSnapshot(activeRoomId).then(result => {
-          if (result.ok) {
-            setSnapshot(result.data);
-            void checkEligibility(result.data);
-          }
-        });
-      }
+      if (busyRef.current || polling) return;
+      polling = true;
+      void api.getRoomSnapshot(activeRoomId).then(result => {
+        if (!active || !result.ok) return;
+        const next = result.data;
+        setSnapshot(previous => previous?.roomId === next.roomId && previous.version > next.version ? previous : next);
+        void checkEligibility(next);
+      }).catch(() => {
+        // A later poll or manual reload can retry this background read.
+      }).finally(() => { polling = false; });
     }, 4000);
-    return () => clearInterval(interval);
-  }, [activeRoomId, api, checkEligibility]);
+    return () => { active = false; clearInterval(interval); };
+  }, [activeRoomId, currentUserId, api, checkEligibility]);
 
   const getRequestId = (action: string, version: number, targetId?: string) => {
     const pending = pendingIntentRef.current;
@@ -145,27 +150,29 @@ export function useLobby({
   const viewer = currentUserId ? snapshot?.members.find(member => member.userId === currentUserId) : undefined;
 
   const isHost = Boolean(viewer && snapshot?.hostUserId === viewer.userId);
+  const closedRoomRef = useRef<string | null>(null);
+  // Move both host and waiting members once when the room enters an active voting/waiting stage or closes.
+  useEffect(() => {
+    if (busy || loadState !== 'ready' || !viewer || snapshot?.roomId !== activeRoomId) return;
+    const scope = JSON.stringify([activeRoomId, viewer.userId]);
+    if (snapshot.state === 'ROUND_1' || snapshot.state === 'WAITING_1' ||
+        snapshot.state === 'ROUND_2' || snapshot.state === 'WAITING_2') {
+      if (!onStartRound || openedVotingRef.current === scope) return;
+      openedVotingRef.current = scope;
+      onStartRound(snapshot);
+    } else if ((snapshot.state === 'CANCELLED' || snapshot.state === 'EXPIRED') && !isHost) {
+      if (closedRoomRef.current === scope) return;
+      closedRoomRef.current = scope;
+      onHome();
+    }
+  }, [activeRoomId, busy, isHost, loadState, onHome, onStartRound, snapshot, viewer]);
+
   const displaySnapshot = snapshot;
   const members = displaySnapshot?.members.map(member => ({
     id: member.userId,
     label: member.userId === displaySnapshot.hostUserId ? `${member.displayName} · Host` : member.displayName,
     initial: member.displayName.slice(0, 1),
   })) ?? [];
-
-  // Members never press "start": when the host starts the round (or cancels), the lobby they are watching moves them on.
-  const movedOn = useRef(false);
-  const roomState = snapshot?.state;
-  useEffect(() => {
-    if (!snapshot || !viewer || movedOn.current) return;
-    if (['ROUND_1', 'WAITING_1', 'ROUND_2', 'WAITING_2'].includes(snapshot.state) && onStartRound) {
-      movedOn.current = true;
-      onStartRound(snapshot);
-    } else if (['CANCELLED', 'EXPIRED'].includes(snapshot.state) && !isHost) {
-      movedOn.current = true;
-      onHome();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roomState, viewer?.userId]);
 
   const reload = () => {
     setRealRevision(v => v + 1);
@@ -221,9 +228,7 @@ export function useLobby({
         setNotice('Thiết lập phòng đã được cập nhật.'); setNoticeTone('success');
       } else if (action === 'start') {
         await refreshSnapshot(snapshot.roomId);
-        setNotice('');
-        movedOn.current = true;
-        if (onStartRound && snapshot) onStartRound(snapshot);
+        setNotice('Phòng chuyển sang vòng 1.'); setNoticeTone('success');
       } else if (action === 'cancel') {
         await refreshSnapshot(snapshot.roomId);
         setNotice('Phòng đã hủy.'); setNoticeTone('success');

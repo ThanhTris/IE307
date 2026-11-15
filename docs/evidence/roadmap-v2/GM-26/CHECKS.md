@@ -1,5 +1,147 @@
 # Output checks — GM-26 / roadmap-v2
 
+## PR #169 review follow-up — 2026-11-12
+
+Main `53214904efb6f065444796b327c3b77a55374f0a` includes product cleanup
+#166, the merged GM-25 correction #168 and the reconciled artifact registry.
+Remote merge `1777d31` already received that main; this follow-up preserves
+it and uses application revision `91ba58ac77277e7491248b5900448fb423c31d49`.
+The hook changes from cleanup were retained. No force-rebase is necessary
+because current main is already an ancestor.
+
+Both rounds use `startVotingSnapshotPolling`: one read at a time, initial
+delay 2.5 seconds, then 5 and at most 10 seconds after errors/`NOT_READY`.
+Success restores 2.5 seconds. Cleanup disables late read application and
+clears the scheduled timeout; accepted navigation stops scheduling even
+when the caller's screen stays mounted. Submission pauses the poll.
+Countdowns update display only, so reaching zero does not bypass backoff.
+No client deadline is extended and no local timeout decides a result.
+
+Renamed `pr156RevisionAudit.test.tsx` to the feature-based
+`votingSnapshotLifecycle.test.tsx`; the existing assertions are preserved.
+New cases cover both rounds' backoff/recovery, unsent drafts, slow reads
+without overlap and late responses after unmount. Existing transition
+cases also assert that polling timers stop after navigation.
+
+| Check on application revision `91ba58a` | Actual result |
+| --- | --- |
+| Typecheck, ESLint, architecture | Passed |
+| Focused lifecycle, consumer edge and GM-26 suites | 41 tests passed |
+| Full Jest | 70 suites / 1,366 tests passed; one suite / one test skipped |
+| Python regression | 680 tests run, six skipped, no failures |
+| Repository validator, task indexes, diff check | Passed |
+| Live Project merge/output gate against fetched main | `READY_FOR_MERGE_REVIEW`; no Project status or approval edited |
+| Rebuilt APK, unsubmitted member through both timeouts | Passed. Both independent AVD clients automatically opened Round 2 and then the same persisted result; only the host submitted in either round |
+
+Commands: `npm run typecheck`, `npm run lint`, `npm run check:architecture`,
+`npm test -- --runTestsByPath tests/component/votingSnapshotLifecycle.test.tsx
+tests/component/pr156ConsumerEdgeCases.test.tsx tests/component/gm26FigmaParity.test.tsx`,
+`npm test`, `python -m unittest discover -s tests -p 'test_*.py'`,
+`python scripts/validate_repository.py`, `python scripts/task_readiness.py --check-docs`,
+and `python scripts/task_readiness.py --task GM-26 --gate merge --base-ref origin/main --verify-outputs`.
+Host Node 24.15.0, npm 11.12.1; lockfile unchanged.
+
+### Rebuilt Android QA receipt
+
+APK built from application revision `91ba58a`, with no local application
+source diff in the disposable build checkout. SHA-256:
+`df1868bf44a223bf8ca74a60099eda526cc7024c0d07a57d200809029d31f5bb`.
+Main already supplies the merged GM-25 fix; no separate patch was layered
+into this build. Expo 58.0.23, Android API 37 ARM64, two isolated AVDs at
+1080×2400 / 420 dpi / font scale 1.0. The generated release-variant QA
+build embeds JS, uses debug signing, disables minification and permits
+cleartext only for loopback. Generated native files/APK remain local.
+
+Owned disposable GM-03 QA run `gm26-native-1112`, Auth + REST + worker,
+28 migrations, verified before testing. Application DB was not changed.
+New canonical sessions were enabled only in this owned QA DB.
+Manifest SHA-256:
+`0267edeecdf3c46e3cf69d577bea03c218449d5098efa7744c07ba14cbef37b0`;
+runtime seal:
+`be4648d3a1d9ee84dcf02853b080e8e50e85414c5a9aaa98873cca5d123d0920`.
+Catalogue `dish-catalogue-v1:1.1.0`, 39 draft/test-only cards, source hash
+`776b1e4998d0b170b51a7c39a4ead74461bdfd721f167dafddf7f072bf117a2f`.
+
+Reproduction through normal product screens and the real QA API:
+
+1. Create two independent guest sessions. Host creates an immediate lunch
+   room with 15 dishes; member opens a cold native invitation, confirms
+   joining and opens the lobby. Host starts. Both clients enter Round 1.
+2. Host selects OK for all 15 cards, submits and enters waiting. Do not
+   submit from the member. Server readback: roster 2, one host ballot,
+   zero member ballots. Do not use host early finalize.
+3. After the server's first 60-second timeout, both clients automatically
+   open Round 2 with 15 candidates. The member remains unsubmitted.
+4. Host selects “Chọn giữ tất cả”, “Xác nhận nộp Vòng 2” and confirms
+   “Chốt phiếu ngay”. Wait for the second server timeout, with no member
+   submit and no manual reload/navigation. Both clients automatically open
+   the result celebration for Cơm tấm, 1 point, then its persisted result
+   screen after dismissing the celebration.
+
+SQL readback: room `DECIDED`, round 2, one `gm06_canonical.results` row,
+two `dish_v4_private.ballots` rows (one per round, both from host), zero
+ballots from the other caller, two locked members, one scored R1 ballot
+and three ranked dishes. Winner name in the locked pool is Cơm tấm and
+the top score is 1, matching both clients. All data belongs to the owned
+QA namespace; room/user/request IDs and credentials are not published.
+
+Private captures stay local under `.work/gm33/`:
+
+| Capture | SHA-256 |
+| --- | --- |
+| `gm26-native-C-round-one-host-only.png` | `05d1243d270201576d52ea3c248485e59221bd04cc7b12a6ecacfbf9261f2d97` |
+| `gm26-native-C-automatic-round-two.png` | `6e1e9e7381449d76fcc49f087d5f34bae83f1f568bd55ae02eb9693f8dc2a35a` |
+| `gm26-native-C-automatic-result.png` | `9e20eb6045fd875ddc16404656f869f5562dd7922d7a1a16bad3c542235c3a4a` |
+| `gm26-native-C-persisted-result.png` | `20edcf1ed3c13c5795ad52761f03a06d77d457e3d9504c93cf5730bf9148380d` |
+
+This rerun proves the reviewed unsent-member progression on AVDs; it does
+not establish full Figma parity, a new physical USB pass, Places/FCM or
+the complete GM-33 pilot. It does not change voting rules, ACL, API,
+package versions, production configuration or human acceptance.
+The producer stop command completed; no containers remain for this run.
+Only the two owned AVDs and their reverse tunnels were stopped. Temporary
+room-link files and the temporary QA dependency symlink were removed.
+
+The earlier combined APK evidence below remains historical. Review of
+this follow-up belongs to Trí; GM-26 owner Trang is unchanged and Vinh
+authored this correction from the GM-33 pilot.
+
+## Active-round refresh correction — 2026-11-11
+
+The GM-33 standalone APK run on 2026-11-10 reproduced a member remaining
+on Round 1 after the server timed out into Round 2. That caller had not
+submitted a ballot or observed the peer's waiting deadline.
+
+The local branch `codex/gm-26-active-round-refresh` starts background
+snapshot reads before submission in both rounds. A member can observe
+the next round or terminal result while keeping an unsent draft. Reads
+pause during submission, and an older background response is discarded
+when a submission begins. Existing identity/context and snapshot-order
+guards handle late responses. The poll stops after outcome navigation.
+
+| Verification | Actual result |
+| --- | --- |
+| Reviewer and consumer regressions | 37 tests passed across `pr156RevisionAudit`, `pr156ConsumerEdgeCases` and `gm26FigmaParity`, including new unsent-member R1/R2 and pending-submit regressions |
+| Full mobile suite | 1,516 tests passed, one skipped, 81 suites passed and one skipped |
+| Static checks | TypeScript, ESLint, architecture boundaries, repository validator, task indexes and diff whitespace passed |
+| Standalone Android, two clients | Only host submitted in each round. Both clients automatically opened R2 after the first timeout and the same winner/score after the second timeout. Backend had one result and two ballots from the host only |
+
+This candidate is based on main `7913585`. Android verification uses a
+local APK with the GM-25 follow-up layered into the disposable build.
+The source branches retain their separate ownership.
+The run used two API 37 AVDs and owned QA `gm33-native-1111`, with
+28 migrations and real test catalogue 1.1.0. APK SHA-256
+`94f8312a5a5ed7b895fd1cd8e95cd2a7365fcb516d9760efb5268a379de4d1ee`.
+The USB phone was enumerated as unauthorized during this run.
+
+The later authorized USB retry `gm33-usb-1111b` used the physical
+API 35 phone as the member and an API 37 AVD as host. With roster two
+and eleven dishes, only host submitted in both rounds. The phone
+automatically opened Round 2 after the first timeout and the same
+winner/score after the second timeout. Server assertions confirmed one
+persisted result and two host ballots, with no member ballot. Installed
+APK SHA-256 `a6046dfbf6b14f57736519f7ef66af6f7e8aea30de9284bf25d0b8db9b5c609c`.
+
 ## Current local correction — 2026-11-06
 
 Tested source: `issue87_figma_ui_gm26`, baseline `a52e638fd483fe39098d982eed0a89b78afeae27` plus the final waiting/identity correction described below. Contract remains `dish-session-v4/roadmap-v2/GM-07.B-supplement`. The correction does not change API or migrations. The earlier local run aligned SDK 58 package patches and its lockfile: Expo 58.0.23, Router 58.0.30, React Native 0.88.1, Expo Go 58.0.5 (Android).

@@ -100,6 +100,176 @@ it.each([1, 2] as const)('allows an unsubmitted caller to keep voting in WAITING
   expect(result.current.isLocked).toBe(false);
 });
 
+it('observes the move to round two for an unsubmitted member and preserves an unsent draft before that move', async () => {
+  jest.useFakeTimers();
+  try {
+    const initial = snapshot();
+    const repo = repository(initial);
+    const onRoundTwo = jest.fn();
+    const { result, unmount } = await renderHook(() => useRoundOneVoting({
+      repository: repo, roomId, onRoundTwo, initialIsHost: false,
+    }));
+    const firstDish = initial.pool[0]!.roundDishId;
+    await act(async () => { result.current.handleVote(firstDish, 'OK'); });
+    await act(async () => { await jest.advanceTimersByTimeAsync(2500); });
+    expect(result.current.votes[firstDish]).toBe('OK');
+    expect(result.current.submissionState).toBe('idle');
+
+    const next = snapshot({ state: 'ROUND_2', round: 2, version: 8, poolVersion: 2, removalCap: 3 });
+    repo.getSnapshot.mockResolvedValue({ ok: true, data: next });
+    await act(async () => { await jest.advanceTimersByTimeAsync(2500); });
+    expect(onRoundTwo).toHaveBeenCalledTimes(1);
+    expect(result.current.needsRoundTwo).toBe(true);
+    expect(repo.submitBallot).not.toHaveBeenCalled();
+    expect(repo.enterWaiting).not.toHaveBeenCalled();
+    const calls = repo.getSnapshot.mock.calls.length;
+    await act(async () => { await jest.advanceTimersByTimeAsync(5000); });
+    expect(repo.getSnapshot).toHaveBeenCalledTimes(calls);
+    expect(jest.getTimerCount()).toBe(0);
+    await unmount();
+  } finally {
+    jest.useRealTimers();
+  }
+});
+
+it('observes the terminal result before the round-two caller submits', async () => {
+  jest.useFakeTimers();
+  try {
+    const initial = snapshot({ state: 'ROUND_2', round: 2, poolVersion: 2, removalCap: 3 });
+    const repo = repository(initial);
+    const onNoConsensus = jest.fn();
+    const { result, unmount } = await renderHook(() => useRoundTwoVoting({
+      repository: repo, roomId, onGoToNoConsensus: onNoConsensus,
+    }));
+    const firstDish = initial.pool[0]!.roundDishId;
+    await act(async () => { result.current.handleToggleChoice(firstDish, 'REMOVE'); });
+    await act(async () => { await jest.advanceTimersByTimeAsync(2500); });
+    expect(result.current.choices[firstDish]).toBe('REMOVE');
+    expect(result.current.submissionState).toBe('idle');
+
+    const outcome = terminal();
+    repo.getSnapshot.mockResolvedValue({ ok: true, data: outcome });
+    await act(async () => { await jest.advanceTimersByTimeAsync(2500); });
+    expect(onNoConsensus).toHaveBeenCalledWith(outcome.result);
+    expect(repo.submitBallot).not.toHaveBeenCalled();
+    expect(repo.enterWaiting).not.toHaveBeenCalled();
+    const calls = repo.getSnapshot.mock.calls.length;
+    await act(async () => { await jest.advanceTimersByTimeAsync(5000); });
+    expect(onNoConsensus).toHaveBeenCalledTimes(1);
+    expect(repo.getSnapshot).toHaveBeenCalledTimes(calls);
+    expect(jest.getTimerCount()).toBe(0);
+    await unmount();
+  } finally {
+    jest.useRealTimers();
+  }
+});
+
+it('ignores an older background read while a ballot is being submitted', async () => {
+  jest.useFakeTimers();
+  try {
+    const initial = snapshot();
+    const repo = repository(initial);
+    let completeRead!: (value: unknown) => void;
+    let completeSubmit!: (value: unknown) => void;
+    const { result, unmount } = await renderHook(() => useRoundOneVoting({ repository: repo, roomId }));
+    repo.getSnapshot.mockImplementationOnce(() => new Promise(resolve => { completeRead = resolve; }));
+    repo.submitBallot.mockImplementation(() => new Promise(resolve => { completeSubmit = resolve; }));
+    await act(async () => { await jest.advanceTimersByTimeAsync(2500); });
+    await act(async () => {
+      for (const dish of initial.pool) result.current.handleVote(dish.roundDishId, 'OK');
+    });
+    let submitted!: Promise<void>;
+    await act(async () => { submitted = result.current.handleSubmit(); });
+    expect(result.current.submissionState).toBe('pending');
+    await act(async () => { completeRead({ ok: true, data: initial }); });
+    expect(result.current.submissionState).toBe('pending');
+    expect(result.current.isLocked).toBe(true);
+    const calls = repo.getSnapshot.mock.calls.length;
+    await act(async () => { await jest.advanceTimersByTimeAsync(5000); });
+    expect(repo.getSnapshot).toHaveBeenCalledTimes(calls);
+    await act(async () => {
+      completeSubmit({ ok: false, error: { messageKey: 'NETWORK_ERROR' } });
+      await submitted;
+    });
+    expect(result.current.submissionState).toBe('error');
+    await unmount();
+  } finally {
+    jest.useRealTimers();
+  }
+});
+
+it.each([1, 2] as const)('stops round %s polling on unmount, including an in-flight response', async round => {
+  jest.useFakeTimers();
+  try {
+    const initial = snapshot({ state: round === 1 ? 'ROUND_1' : 'ROUND_2', round, removalCap: round === 2 ? 3 : null });
+    const repo = repository(initial);
+    const onNavigate = jest.fn();
+    const { unmount } = await renderHook(() => round === 1
+      ? useRoundOneVoting({ repository: repo, roomId, onRoundTwo: onNavigate })
+      : useRoundTwoVoting({ repository: repo, roomId, onGoToNoConsensus: onNavigate }));
+    let complete!: (response: unknown) => void;
+    repo.getSnapshot.mockImplementationOnce(() => new Promise(resolve => { complete = resolve; }));
+    await act(async () => { await jest.advanceTimersByTimeAsync(2500); });
+    expect(repo.getSnapshot).toHaveBeenCalledTimes(2);
+    // A slow read must not overlap another scheduled read.
+    await act(async () => { await jest.advanceTimersByTimeAsync(20000); });
+    expect(repo.getSnapshot).toHaveBeenCalledTimes(2);
+    await unmount();
+    await act(async () => {
+      complete({ ok: true, data: round === 1
+        ? snapshot({ state: 'ROUND_2', round: 2, version: 8, poolVersion: 2, removalCap: 3 })
+        : terminal() });
+      await jest.advanceTimersByTimeAsync(20000);
+    });
+    expect(onNavigate).not.toHaveBeenCalled();
+    expect(repo.getSnapshot).toHaveBeenCalledTimes(2);
+    expect(jest.getTimerCount()).toBe(0);
+  } finally {
+    jest.useRealTimers();
+  }
+});
+
+it.each([1, 2] as const)('backs off round %s errors/NOT_READY and recovers without losing a draft', async round => {
+  jest.useFakeTimers();
+  try {
+    const initial = waiting(round);
+    const repo = repository(initial);
+    const { result, unmount } = await renderHook(() => round === 1
+      ? useRoundOneVoting({ repository: repo, roomId })
+      : useRoundTwoVoting({ repository: repo, roomId }));
+    const choiceId = initial.pool[0]!.roundDishId;
+    await act(async () => {
+      if ('handleVote' in result.current) result.current.handleVote(choiceId, 'WANT');
+      else result.current.handleToggleChoice(choiceId, 'REMOVE');
+    });
+    repo.getSnapshot.mockResolvedValueOnce({ ok: false, error: { messageKey: 'NOT_READY' } })
+      .mockRejectedValueOnce(new Error('Synthetic network failure'))
+      .mockResolvedValueOnce({ ok: false, error: { messageKey: 'NOT_READY' } });
+    await act(async () => { await jest.advanceTimersByTimeAsync(2500); });
+    expect(repo.getSnapshot).toHaveBeenCalledTimes(2);
+    await act(async () => { await jest.advanceTimersByTimeAsync(4999); });
+    expect(repo.getSnapshot).toHaveBeenCalledTimes(2);
+    await act(async () => { await jest.advanceTimersByTimeAsync(1); });
+    expect(repo.getSnapshot).toHaveBeenCalledTimes(3);
+    await act(async () => { await jest.advanceTimersByTimeAsync(10000); });
+    expect(repo.getSnapshot).toHaveBeenCalledTimes(4);
+    await act(async () => { await jest.advanceTimersByTimeAsync(10000); });
+    expect(repo.getSnapshot).toHaveBeenCalledTimes(5);
+    expect(result.current.snapshotError).toBeNull();
+    await act(async () => { await jest.advanceTimersByTimeAsync(2499); });
+    expect(repo.getSnapshot).toHaveBeenCalledTimes(5);
+    await act(async () => { await jest.advanceTimersByTimeAsync(1); });
+    expect(repo.getSnapshot).toHaveBeenCalledTimes(6);
+    if ('votes' in result.current) expect(result.current.votes[choiceId]).toBe('WANT');
+    else expect(result.current.choices[choiceId]).toBe('REMOVE');
+    expect(repo.submitBallot).not.toHaveBeenCalled();
+    expect(repo.enterWaiting).not.toHaveBeenCalled();
+    await unmount();
+  } finally {
+    jest.useRealTimers();
+  }
+});
+
 it('keeps missing reference prices unknown instead of generating 50-70k', () => {
   const [card] = mapSnapshotPoolToPoolDishes(snapshot().pool);
   expect(card!.priceMin ?? null).toBeNull();

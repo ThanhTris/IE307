@@ -1,5 +1,56 @@
 # Bàn giao đầu ra task — GM-26 / roadmap-v2
 
+## PR #169 after product cleanup — 2026-11-12
+
+Current base: main `5321490`, already received by remote merge `1777d31`.
+Application revision `91ba58a` retains main's two voting hooks and uses
+`services/snapshotPolling.ts` for the same bounded retry policy in both
+rounds. Failed/`NOT_READY` reads back off from 2.5 to 5 to at most 10
+seconds; success resets the delay. There is no overlapping background
+request. Unmount, pending submission and accepted outcome navigation stop
+polling and invalidate late reads. The countdown does not issue network
+requests or decide the server outcome.
+
+Run `votingSnapshotLifecycle.test.tsx` (renamed from the PR-numbered audit
+file), `pr156ConsumerEdgeCases.test.tsx` and `gm26FigmaParity.test.tsx`:
+41 focused tests pass. Full Jest: 1,366 passed, one skipped. Python:
+680 run, six skipped. Typecheck/lint/architecture, offline repository and
+index checks pass; live merge gate against main is `READY_FOR_MERGE_REVIEW`.
+See [current checks](CHECKS.md#pr-169-review-follow-up--2026-11-12) for
+commands, source revisions and runtime evidence. Owner Trang, author Vinh,
+reviewer Trí; no new approval or Project status change is implied.
+
+Rebuilt APK SHA-256:
+`df1868bf44a223bf8ca74a60099eda526cc7024c0d07a57d200809029d31f5bb`.
+On owned QA `gm26-native-1112`, two independent API 37 AVD clients with
+15 dishes automatically followed both server timeouts. Only host sent a
+ballot in each round. The member automatically opened Round 2 and the
+same Cơm tấm / 1-point result; SQL confirmed one canonical result, two
+host ballots and zero member ballots. See CHECKS for manifest/capture
+hashes, steps and limits. The app source is exactly `91ba58a`, with GM-25
+already on main; the later documentation commit does not alter that APK.
+Physical USB, full visual parity and the remaining GM-33 cases were not
+rerun here. Do not interpret this focused correction as new approval of
+all historical GM-26 acceptance criteria.
+
+## Active-round refresh candidate — 2026-11-11
+
+Receive the local `codex/gm-26-active-round-refresh` candidate based on
+main `7913585`. Both voting hooks refresh server state while the caller
+has an unsent ballot. Reads pause during submission, in-flight background
+reads are invalidated at that transition, and navigation remains guarded
+by the existing context and snapshot ordering checks.
+
+The [new checks](CHECKS.md#active-round-refresh-correction--2026-11-11)
+record the focused tests, full mobile suite and standalone APK
+integration. Two independently authenticated AVD clients followed both
+timeouts automatically even though only the host submitted ballots.
+GM-25 is a separate application candidate. This integration receipt uses
+their combined local build. The subsequent authorized USB retry also
+verified both unsent-member timeout transitions on the API 35 phone,
+with only the host sending ballots. The remaining GM-33 native,
+visual and boundary cases still need their recorded evidence.
+
 ## Current local handoff — 2026-11-06
 
 Source: PR #156 branch `issue87_figma_ui_gm26`, baseline `a52e638fd483fe39098d982eed0a89b78afeae27` plus the final waiting/identity correction. Owner Trang / reviewer Trí are unchanged. Receive the complete patch rather than only one round's hook.

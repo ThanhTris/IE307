@@ -52,9 +52,8 @@
         "mobile/src/app/index.tsx",
         "mobile/src/app/+not-found.tsx",
         "mobile/src/bootstrap/AppProviders.tsx",
-        "mobile/src/features/home/screens/AppShellScreen.tsx",
+        "mobile/src/features/home/screens/NotFoundScreen.tsx",
         "mobile/tests/README.md",
-        "mobile/tests/component/AppShellScreen.test.tsx",
         "docs/evidence/roadmap-v2/GM-02/CHECKS.md"
       ],
       "inputs": [
@@ -218,7 +217,7 @@
       "outputs": [
         "mobile/src/data/api/contracts.ts",
         "mobile/src/data/api/client.ts",
-        "mobile/src/data/api/mock.ts",
+        "mobile/tests/mocks/api/mockApiClient.ts",
         "docs/architecture/API_CONTRACT.md",
         "docs/evidence/roadmap-v2/GM-07/CHECKS.md"
       ],
@@ -330,8 +329,8 @@
       "track": "UI",
       "stage": "screens",
       "outputs": [
-        "mobile/src/features/context/screens/ContextScreen.tsx",
-        "mobile/src/features/preferences/screens/PreferencesScreen.tsx",
+        "mobile/src/features/context/screens/DishSetupScreen.tsx",
+        "mobile/src/features/preferences/screens/DishPreferencesScreen.tsx",
         "docs/evidence/roadmap-v2/GM-10/CHECKS.md"
       ],
       "inputs": [
@@ -364,7 +363,6 @@
       "stage": "screens",
       "outputs": [
         "mobile/src/features/rooms/screens/LobbyScreen.tsx",
-        "mobile/src/features/rooms/screens/RoomStatusScreen.tsx",
         "docs/evidence/roadmap-v2/GM-11/CHECKS.md"
       ],
       "inputs": [
@@ -430,8 +428,8 @@
       "track": "UI",
       "stage": "screens",
       "outputs": [
-        "mobile/src/features/result/screens/ResultScreen.tsx",
-        "mobile/src/features/result/screens/NoConsensusScreen.tsx",
+        "mobile/src/features/result/screens/DishResultScreen.tsx",
+        "mobile/src/features/result/screens/DishNoConsensusScreen.tsx",
         "docs/evidence/roadmap-v2/GM-13/CHECKS.md"
       ],
       "inputs": [
@@ -889,7 +887,7 @@
         },
         {
           "task": "GM-10",
-          "artifact": "mobile/src/features/context/screens/ContextScreen.tsx",
+          "artifact": "mobile/src/features/context/screens/DishSetupScreen.tsx",
           "gate": "start"
         },
         {
@@ -934,7 +932,7 @@
         },
         {
           "task": "GM-10",
-          "artifact": "mobile/src/features/context/screens/ContextScreen.tsx",
+          "artifact": "mobile/src/features/context/screens/DishSetupScreen.tsx",
           "gate": "start"
         },
         {
@@ -1035,7 +1033,7 @@
       "inputs": [
         {
           "task": "GM-13",
-          "artifact": "mobile/src/features/result/screens/ResultScreen.tsx",
+          "artifact": "mobile/src/features/result/screens/DishResultScreen.tsx",
           "gate": "start"
         },
         {
@@ -1240,7 +1238,7 @@
         },
         {
           "task": "GM-13",
-          "artifact": "mobile/src/features/result/screens/ResultScreen.tsx",
+          "artifact": "mobile/src/features/result/screens/DishResultScreen.tsx",
           "gate": "start"
         }
       ],
@@ -1358,13 +1356,13 @@
         {
           "task": "GM-31",
           "artifact": "mobile/src/data/local/outbox.ts",
-      "gate": "merge"
+          "gate": "merge"
         },
-    {
-      "task": "GM-03",
-      "artifact": "scripts/backend.mjs",
-      "gate": "merge"
-    },
+        {
+          "task": "GM-03",
+          "artifact": "scripts/backend.mjs",
+          "gate": "merge"
+        },
         {
           "task": "GM-06",
           "artifact": "supabase/migrations/0001_core_schema.sql",
@@ -1708,22 +1706,17 @@
         },
         {
           "task": "GM-10",
-          "artifact": "mobile/src/features/context/screens/ContextScreen.tsx",
+          "artifact": "mobile/src/features/context/screens/DishSetupScreen.tsx",
           "gate": "start"
         },
         {
           "task": "GM-10",
-          "artifact": "mobile/src/features/preferences/screens/PreferencesScreen.tsx",
+          "artifact": "mobile/src/features/preferences/screens/DishPreferencesScreen.tsx",
           "gate": "start"
         },
         {
           "task": "GM-11",
           "artifact": "mobile/src/features/rooms/screens/LobbyScreen.tsx",
-          "gate": "start"
-        },
-        {
-          "task": "GM-11",
-          "artifact": "mobile/src/features/rooms/screens/RoomStatusScreen.tsx",
           "gate": "start"
         },
         {
@@ -1738,12 +1731,12 @@
         },
         {
           "task": "GM-13",
-          "artifact": "mobile/src/features/result/screens/ResultScreen.tsx",
+          "artifact": "mobile/src/features/result/screens/DishResultScreen.tsx",
           "gate": "start"
         },
         {
           "task": "GM-13",
-          "artifact": "mobile/src/features/result/screens/NoConsensusScreen.tsx",
+          "artifact": "mobile/src/features/result/screens/DishNoConsensusScreen.tsx",
           "gate": "start"
         },
         {
