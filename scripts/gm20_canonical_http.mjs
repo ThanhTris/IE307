@@ -465,29 +465,35 @@ pass('group revoke hides history live',false,expectOk(await api(h,'history'),'hi
 const memberPersonal=expectOk(await api(m,'history'),'member personal history').items.find(i=>i.roomId===historyRoom.id&&i.scope==='personal');
 if(withHistoryNames)pass('GM-42 group revoke leaves personal result without the roster',false,Object.hasOwn(memberPersonal,'participants'));
 if(withHistoryNames){
- const lateRoom=await room();
- await consent(m,'group',true);
- await send(h,lateRoom,()=> 'WANT');await send(m,lateRoom,()=> 'WANT');await allWait(lateRoom);
- const late=expectOk(await api(h,'history'),'late consent history').items.filter(i=>i.roomId===lateRoom.id);
+ // The base GM-20 flow already uses the shared pair's snapshot allowance.
+ const historyHost=await guest('GM-42 history host'),historyMember=await guest('GM-42 history member');
+ const historyPair=[historyHost,historyMember];
+ await consent(historyHost,'personal',true);
+ await consent(historyMember,'personal',true);
+ await consent(historyHost,'group',true);
+ const lateRoom=await room(historyPair);
+ await consent(historyMember,'group',true);
+ await send(historyHost,lateRoom,()=> 'WANT');await send(historyMember,lateRoom,()=> 'WANT');await allWait(lateRoom);
+ const late=expectOk(await api(historyHost,'history'),'late consent history').items.filter(i=>i.roomId===lateRoom.id);
  pass('GM-42 opt-in after lock keeps only the personal result',[['personal',false]],late.map(i=>[i.scope,Object.hasOwn(i,'participants')]));
- const previouslyLocked=await room();
+ const previouslyLocked=await room(historyPair);
  // Simulate a room that acquired its roster on 0057, before lock-time names existed.
  sql("delete from gm42_private.locked_names where room_id='"+previouslyLocked.id+"'");
- await send(h,previouslyLocked,()=> 'WANT');await send(m,previouslyLocked,()=> 'WANT');await allWait(previouslyLocked);
- const oldItems=expectOk(await api(h,'history'),'history for previously locked room').items.filter(i=>i.roomId===previouslyLocked.id);
+ await send(historyHost,previouslyLocked,()=> 'WANT');await send(historyMember,previouslyLocked,()=> 'WANT');await allWait(previouslyLocked);
+ const oldItems=expectOk(await api(historyHost,'history'),'history for previously locked room').items.filter(i=>i.roomId===previouslyLocked.id);
  pass('GM-42 pre-snapshot history still has both scopes without names',{
   scopes:['group','personal'],withNames:0
  },{scopes:oldItems.map(i=>i.scope).sort(),withNames:oldItems.filter(i=>Object.hasOwn(i,'participants')).length});
- const deletable=await room();await send(h,deletable,()=> 'WANT');await send(m,deletable,()=> 'WANT');await allWait(deletable);
- const deletableGroup=expectOk(await api(h,'history'),'group history before delete').items.find(i=>i.roomId===deletable.id&&i.scope==='group');
+ const deletable=await room(historyPair);await send(historyHost,deletable,()=> 'WANT');await send(historyMember,deletable,()=> 'WANT');await allWait(deletable);
+ const deletableGroup=expectOk(await api(historyHost,'history'),'group history before delete').items.find(i=>i.roomId===deletable.id&&i.scope==='group');
  const deletionRequest={requestId:requestId('delete-group'),historyId:deletableGroup.historyId};
- const deletion=expectOk(await api(h,'deleteHistory',deletionRequest),'group history delete');
- pass('GM-42 group delete replay keeps the same ACK',deletion,expectOk(await api(h,'deleteHistory',deletionRequest),'group history replay'));
+ const deletion=expectOk(await api(historyHost,'deleteHistory',deletionRequest),'group history delete');
+ pass('GM-42 group delete replay keeps the same ACK',deletion,expectOk(await api(historyHost,'deleteHistory',deletionRequest),'group history replay'));
  pass('GM-42 group delete physically removes the snapshot','0',sql("select count(*) from gm42_private.history_names where history_id='"+deletableGroup.historyId+"'"));
- const expiring=await room();await send(h,expiring,()=> 'WANT');await send(m,expiring,()=> 'WANT');await allWait(expiring);
- const expiringGroup=expectOk(await api(h,'history'),'group before expiry').items.find(i=>i.roomId===expiring.id&&i.scope==='group');
+ const expiring=await room(historyPair);await send(historyHost,expiring,()=> 'WANT');await send(historyMember,expiring,()=> 'WANT');await allWait(expiring);
+ const expiringGroup=expectOk(await api(historyHost,'history'),'group before expiry').items.find(i=>i.roomId===expiring.id&&i.scope==='group');
  sql("begin; update public.consents set expires_at=clock_timestamp(),version=version+1 where id in (select consent_id from gm06_canonical.history_audience where history_id='"+expiringGroup.historyId+"'); select gm17_private.cleanup(); commit;");
- const afterExpiry=expectOk(await api(h,'history'),'group after expiry').items.filter(i=>i.roomId===expiring.id);
+ const afterExpiry=expectOk(await api(historyHost,'history'),'group after expiry').items.filter(i=>i.roomId===expiring.id);
  pass('GM-42 group expiry hides names on remaining personal history',[['personal',false]],afterExpiry.map(i=>[i.scope,Object.hasOwn(i,'participants')]));
 }
 sql("begin;select set_config('dish_v4.writer','on',true);update public.rooms set created_at=clock_timestamp()-interval '3 days',expires_at=clock_timestamp()-interval '2 days',version=version+1 where id='"+historyRoom.id+"';select set_config('dish_v4.writer','off',true);select gm17_private.cleanup();commit;");
