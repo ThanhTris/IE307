@@ -456,6 +456,17 @@ def validate(src: Source, *, check_dependency_approvals=True) -> list[str]:
         errors.append(f'task/manifest mismatch: missing={sorted(expected-set(tasks))}; unexpected={sorted(set(tasks)-expected)}')
     records = task_records(src)
     numbered = sorted(tid for tid in tasks if tid != 'GM-00')
+    # New board cards can land as separate task records without renumbering
+    # another owner's board-only task or requiring another task's branch.
+    if numbered and numbered[-1] >= 'GM-42' and 'tasks/project-gate.json' in src.files:
+        try:
+            board_issues = github_project_status.configuration(src)['issues']
+        except github_project_status.ProjectUnavailable as error:
+            errors.append(str(error))
+            board_issues = {}
+        board_only = [tid for tid, issue in (('GM-41', 170), ('GM-42', 171))
+                      if tid < numbered[-1] and tid not in tasks and board_issues.get(tid) == issue]
+        numbered = sorted([*numbered, *board_only])
     if numbered != [f'GM-{n:02}' for n in range(1, len(numbered) + 1)]:
         errors.append('current task IDs must be contiguous from GM-01')
     mapping_errors, mapping = validate_roadmap(src, records)
@@ -538,9 +549,14 @@ def validate(src: Source, *, check_dependency_approvals=True) -> list[str]:
                          if meta.get('priority') == 'P0' and tid != release_task}
         # Owner decision in GM-40/#125: the new dish-only profile is a P0
         # supplement after the food-v1 release baseline, never a reverse edge
-        # GM-34 -> GM-40. This exception cannot exempt any other P0 task.
+        # GM-34 -> GM-40.
         if release_task == 'GM-34' and tasks.get('GM-40', {}).get('github_issue') == '125':
             required_core.discard('GM-40')
+        # The two P0 fixes were filed after the GM-34 release baseline.
+        if release_task == 'GM-34':
+            for tid, issue in (('GM-42', '171'), ('GM-43', '172')):
+                if tasks.get(tid, {}).get('github_issue') == issue:
+                    required_core.discard(tid)
         missing_core = required_core - ancestors(release_task)
         if missing_core:
             errors.append('release bypasses P0 tasks: ' + ', '.join(sorted(missing_core)))

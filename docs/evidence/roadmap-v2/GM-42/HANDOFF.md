@@ -1,0 +1,6 @@
+# GM-42 — Bàn giao history participants
+
+- Producer baseline `1e232dc`, GM-20 canonical writer PR #143 (`e3f7058`) và GM-21 canonical history PR #146 (`621accc`). Migration `0058` đăng ký schema `0.31.3` và revision `dish-session-v4/roadmap-v2/GM-42.1`.
+- Consumer tiếp tục gọi `dish_session` command `history` với wire `dish-session-v4/roadmap-v2/GM-07.B-supplement`. Trường `participants` có 2–20 tên và vai trò hoặc được bỏ qua. UI dùng thứ tự phần tử và phải giữ tên trùng. Consent và cách xử lý revoke/delete theo [ADR-029](../../../architecture/decisions/ADR-029-history-participant-names.md).
+- Từ clone sạch chạy `npm ci` rồi `npm run qa:start -- --run-id gm42-check --api-port 54381 --db-port 54382`. Trỏ `GM03_QA_MANIFEST` vào `.work/qa/gm42-check/manifest.json`, đặt `GM03_QA_WORKDIR` theo trường `workdir` của manifest, chạy `node scripts/gm20_canonical_http.mjs`. Runner tự tạo dữ liệu synthetic và ghi `.work/gm20-canonical/http-results.json`. Dùng `supabase/tests/http/GM-42.http` để gọi lại RPC với fixture đã tạo. Dọn QA bằng `npm run qa:stop -- --run-id gm42-check`.
+- Khi cần rollback trên nhánh phát triển, khởi tạo QA mới từ revision trước migration. Rollback môi trường đã dùng migration cần migration tiến để tháo wrapper, triggers và dọn snapshot private.

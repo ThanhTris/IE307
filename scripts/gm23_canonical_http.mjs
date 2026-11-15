@@ -64,6 +64,7 @@ const outputRelative=relative(resolve(root,'.work'),output);
 assert.ok(outputRelative&&!outputRelative.startsWith('..')&&!isAbsolute(outputRelative),'QA reports must stay in the ignored workspace');
 await mkdir(output,{recursive:true});
 await waitWorker();
+const withHistoryNames=sql("select exists(select 1 from public.schema_versions where contract_id='dish-session-v4/roadmap-v2/GM-42.1')")==='t';
 sql('update gm20_canonical_private.configuration set allow_new_sessions=true where singleton');
 await setActive(syntheticReleaseId);
 const h=await guest('history-host'),m=await guest('history-member'),x=await guest('history-outsider');
@@ -188,16 +189,26 @@ pass('group tombstone survives account revoke',1,receiptCount(groupResult));
 await consent(m,'group',true);
 pass('reenable does not resurrect group history',0,(await items(h,groupRoom)).length);
 const partialPeople=[await guest('partial-host'),await guest('partial-member')];
-await consent(partialPeople[0],'group',true);
+await scopes([partialPeople[0]],true,true);
 const partial=await room(partialPeople);const partialResult=(await finish(partial)).result;
 pass('one missing group grant never authorizes group',0,historyCount(partialResult));
+const partialRows=await items(partialPeople[0],partial);
+pass('personal history with missing group consent omits names',[['personal',false]],
+ partialRows.map(item=>[item.scope,Object.hasOwn(item,'participants')]));
 
 await scopes([h,m],true,true);
 const both=await room();const completed=await finish(both,'r2');const terminal=completed.result;
 pass('real R2 result preserves cohort and score versions',[2,2,'want2-ok1-round1-v1'],[terminal.round,terminal.round1BallotCount,terminal.scoreVersion]);
 const bothRows=await items(h,both);
 pass('own personal and group reuse exactly one canonical projection',true,bothRows.length===2&&bothRows.every(i=>JSON.stringify(i.result)===JSON.stringify(terminal)));
-pass('history summary retains typed context and omits unapproved identities',true,bothRows.every(i=>i.memberCount===2&&i.round1BallotCount===2&&i.desiredAt===null&&i.createdAt===i.finalizedAt&&!('participants'in i)));
+pass('history summary retains typed context',true,bothRows.every(i=>i.memberCount===2&&i.round1BallotCount===2&&i.desiredAt===null&&i.createdAt===i.finalizedAt));
+if(withHistoryNames){
+ const names=[{displayName:'QA host',role:'HOST'},{displayName:'QA member',role:'MEMBER'}];
+ pass('group consent exposes only names and roles from the locked roster',[names,names],
+  bothRows.map(item=>item.participants));
+}else{
+ pass('pre-GM-42 history omits participant names',true,bothRows.every(item=>!Object.hasOwn(item,'participants')));
+}
 const changed='gm21-changed-'+project+'-'+randomUUID();
 sql("insert into dish_v3_private.catalogues(id,source_sha,cards,test_only,active) select '"+changed+"',encode(extensions.digest(changed.cards::text,'sha256'),'hex'),changed.cards,true,false from (select jsonb_agg(v||jsonb_build_object('name','Changed synthetic QA card') order by ord) cards from dish_v3_private.catalogues c cross join lateral jsonb_array_elements(c.cards) with ordinality t(v,ord) where c.id='"+syntheticReleaseId+"') changed;");
 await setActive(changed);

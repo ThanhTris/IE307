@@ -195,6 +195,7 @@ def verify(db):
             expected_sources[ROOT/"supabase/migrations/0035_gm20_canonical_writer.sql"]=[
               ("dish_v4_private.tick","dish_v4_private.tick"),("dish_v4_private.finish","dish_v4_private.finish"),
               ("gm20_canonical_private.finish","gm20_canonical_private.finish"),
+              ("gm20_canonical_private.save_history","gm20_canonical_private.save_history"),
               ("gm20_canonical_private.dispatch","gm20_canonical_private.dispatch"),
               ("gm20_canonical_private.result_projection","gm20_canonical_private.result_projection"),
               ("public.dish_session","public.dish_session")]
@@ -229,6 +230,9 @@ def verify(db):
             ('public.dish_session', None)]),
         ('0.31.2', '0057_ready_v4_only.sql', [
             ('public.dish_session', None)]),
+        ('0.31.3', '0058_gm42_history_participants.sql', [
+            ('public.dish_session', 'public.dish_session_before_gm42'),
+            ('gm20_canonical_private.save_history', 'gm20_canonical_private.save_history_before_gm42')]),
     ]
     if has_canonical:
         for version, filename, changes in upgrades:
