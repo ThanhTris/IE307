@@ -9,6 +9,7 @@ import {
   SetReadyRequest,
   StartRoundRequest,
   LeaveRoomRequest,
+  RemoveRoomMemberRequest,
   CancelRoomRequest,
   SubmitBallotRequest,
   SubmitBallotResponse,
@@ -213,6 +214,26 @@ export async function startRoundMethod(
       state: norm.state,
       data: undefined,
     };
+  } catch (err) {
+    return { ok: false, requestId, roomId: req.roomId, error: ctx.mapError(err) };
+  }
+}
+
+export async function removeRoomMemberMethod(
+  ctx: RpcCallerContext,
+  req: RemoveRoomMemberRequest
+): Promise<WriteResult<void>> {
+  const requestId = req.requestId ?? ctx.generateRequestId();
+  try {
+    const raw = await ctx.callRpc<unknown>('remove_room_member', {
+      requestId,
+      room_ref: req.roomId,
+      member_ref: req.memberUserId,
+      expected_version: req.expectedVersion,
+    });
+    const norm = ctx.normalizeWriteResponse<unknown>(raw, requestId, (value): value is { accepted: true } => !!value && typeof value === 'object' && (value as { accepted?: unknown }).accepted === true, req.roomId);
+    if (!norm.ok) return norm;
+    return { ok: true, requestId: norm.requestId, roomId: req.roomId, version: norm.version, state: norm.state, data: undefined };
   } catch (err) {
     return { ok: false, requestId, roomId: req.roomId, error: ctx.mapError(err) };
   }

@@ -150,9 +150,9 @@ it('renders a canonical VND price with its kg unit', async () => {
   };
   const candidates = mapSnapshotPoolToPoolDishes([card]);
 
-  await render(<FinalRoundScreen candidates={candidates} showScenarioPicker={false} />);
+  await render(<FinalRoundScreen candidates={candidates} showScenarioPicker />);
   await waitFor(() => expect(screen.getByText(/kg/)).toBeTruthy());
-  expect(screen.getByText(/50\.000 ₫\/kg/)).toBeTruthy();
+  expect(screen.getByText(/50K\/kg/)).toBeTruthy();
 });
 
 it('does not replay an unresolved ballot from room A after switching the hook to room B', async () => {

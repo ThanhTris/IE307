@@ -18,7 +18,8 @@ export function InsufficientDishes({
   minimum?: number;
   onReduce?: () => void;
   onEdit: () => void;
-  onBack: () => void;
+  /** Omit when Edit already covers going back, so the card never shows two buttons doing the same thing. */
+  onBack?: () => void;
   disabled?: boolean;
 }) {
   const belowMinimum = mode === 'below-minimum';
@@ -38,14 +39,13 @@ export function InsufficientDishes({
       {!belowMinimum && onReduce ? (
         <AppButton
           label="Giảm số món"
-          variant="secondary"
           onPress={onReduce}
           disabled={disabled || count <= minimum}
           colors={colors}
         />
       ) : null}
-      <AppButton label="Sửa thiết lập" onPress={onEdit} disabled={disabled} colors={colors} />
-      <AppButton label="Quay lại" variant="quiet" onPress={onBack} disabled={disabled} colors={colors} />
+      <AppButton label="Sửa thiết lập" variant={!belowMinimum && onReduce ? 'secondary' : 'primary'} onPress={onEdit} disabled={disabled} colors={colors} />
+      {onBack ? <AppButton label="Quay lại" variant="quiet" onPress={onBack} disabled={disabled} colors={colors} /> : null}
     </View>
   );
 }

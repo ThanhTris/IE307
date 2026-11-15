@@ -1,0 +1,33 @@
+meta {
+  name: 14 Member saves room preferences
+  type: http
+  seq: 14
+}
+post {
+  url: {{baseUrl}}/rest/v1/rpc/dish_session
+  body: json
+  auth: none
+}
+headers {
+  Authorization: Bearer {{memberToken}}
+  Content-Type: application/json
+}
+body:json {
+  {"command":"updatePreferences","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B","requestId":"room_pref_{{timestamp}}","roomId":"{{roomId}}","expectedVersion":{{roomVersion}},"preferences":{"cuisineIds":[],"categoryIds":[],"temperature":"warm","flavor":null,"budget":null,"avoidRecent":false}}}
+}
+script:pre-request {
+  bru.setVar('timestamp', String(Date.now()));
+}
+script:post-response {
+  const b = res.getBody();
+  if (res.getStatus() === 200 && b.ok) bru.setVar('roomVersion', String(b.data.version));
+  else bru.runner.stopExecution();
+}
+tests {
+  test('Joined member saves room preferences before host starts', () => {
+    const b = res.getBody();
+    expect(res.getStatus()).to.equal(200);
+    expect(b.ok).to.equal(true);
+    expect(b.data.accepted).to.equal(true);
+  });
+}

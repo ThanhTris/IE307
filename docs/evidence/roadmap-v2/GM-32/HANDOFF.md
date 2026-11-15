@@ -63,3 +63,8 @@ the existing PR #163 head and retains its GM-19 settings tests. Before any
 subsequent update, fetch both refs, preserve upstream PR commits and rerun
 `python scripts/task_readiness.py --task GM-32 --gate merge --base-ref origin/main --verify-outputs`.
 Keep GM-33 on its own branch.
+
+## PR #167 Follow-up (`0042..0057`) — 2026-11-15
+
+- Updated `scripts/gm32_decision_boundaries.py` to match the accepted `ADR-023` ceiling cap (`max(1, ceil(0.30 * N))`) and normalized cross-platform QA workdir matching in `mobile/tests/integration/gm32OutboxLive.test.ts`.
+- All 7 `scripts/gm32_regression.py` groups (`baseline`, `legacy-decision`, `canonical`, `boundaries`, `history`, `notifications`, `outbox`) passed on isolated QA stacks applying `0001..0057`. Stage 3B physical USB Android verification (`GM-33`/`GM-34`) and `GM-35` G04/G05 remain deferred / `Not run`.

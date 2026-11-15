@@ -122,9 +122,9 @@ it('invalidates outstanding snapshot reads when the user or room context changes
 
 it.each([
   [{ priceMin: 10, priceMax: 10, currency: 'USD', unit: 'portion' }, '10 USD/phần'],
-  [{ priceMin: 50000, priceMax: 50000, currency: 'VND', unit: 'kg' }, '50.000 ₫/kg'],
+  [{ priceMin: 50000, priceMax: 50000, currency: 'VND', unit: 'kg' }, '50K/kg'],
   [{ priceMin: 30, priceMax: 50, currency: 'THB', unit: 'item' }, '30–50 THB/món'],
-  [{ priceMin: 90000, priceMax: 90000, currency: 'VND', unit: 'menu_item_unspecified' }, '90.000 ₫ · đơn vị chưa rõ'],
+  [{ priceMin: 90000, priceMax: 90000, currency: 'VND', unit: 'menu_item_unspecified' }, '90K'],
 ] as const)('formats known price metadata without inferring a different unit', (dish, expected) => {
   expect(formatDishPrice(dish)).toBe(expected);
 });

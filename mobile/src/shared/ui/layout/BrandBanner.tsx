@@ -18,7 +18,7 @@ export function BrandBanner({
         source={illustrationSource ?? require('../../../../assets/brand/friends-dining.png')}
         accessible={false}
         resizeMode="contain"
-        style={[styles.brandBannerImage, illustrationSource ? { width: 166 } : undefined]}
+        style={[styles.brandBannerImage, illustrationSource ? { width: 148 } : undefined]}
       />
     </View>
   );
@@ -33,6 +33,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingLeft: spacing.xl,
   },
-  brandBannerTitle: { flex: 1, fontSize: 18, lineHeight: 25, fontWeight: '700' },
+  brandBannerTitle: { flex: 1, fontSize: 16, lineHeight: 22, fontWeight: '700' },
   brandBannerImage: { width: '46%', height: 116, alignSelf: 'center' },
 });

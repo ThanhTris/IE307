@@ -879,6 +879,31 @@
             }
           },
           "additionalProperties": false
+        },
+        "fatty": {
+          "type": "object",
+          "required": [
+            "present",
+            "intensity"
+          ],
+          "properties": {
+            "present": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "intensity": {
+              "enum": [
+                "none",
+                "low",
+                "medium",
+                "high",
+                "unknown"
+              ]
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false
@@ -1008,6 +1033,15 @@
             {
               "$ref": "#/$defs/priceReference"
             }
+          ]
+        },
+        "origin": {
+          "enum": [
+            "north",
+            "central",
+            "south",
+            "west",
+            null
           ]
         }
       },

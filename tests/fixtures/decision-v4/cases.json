@@ -702,11 +702,11 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "NO_CONSENSUS",
         "round1BallotCount": 1,
+        "removalCap": 1,
+        "status": "NO_CONSENSUS",
         "eligibleIds": [],
         "candidateIds": [],
-        "removalCap": 1,
         "winnerId": null,
         "reasonCode": "ALL_REMOVED",
         "matchTier": "NO_CONSENSUS",
@@ -781,15 +781,15 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 1,
+        "status": "DECIDED",
         "eligibleIds": [
           "d01"
         ],
         "candidateIds": [
           "d01"
         ],
-        "removalCap": 1,
         "winnerId": "d01",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
@@ -872,15 +872,15 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 1,
+        "status": "DECIDED",
         "eligibleIds": [
           "d02"
         ],
         "candidateIds": [
           "d02"
         ],
-        "removalCap": 1,
         "winnerId": "d02",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
@@ -963,8 +963,9 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 1,
+        "status": "DECIDED",
         "eligibleIds": [
           "d01",
           "d02"
@@ -973,7 +974,6 @@
           "d01",
           "d02"
         ],
-        "removalCap": 1,
         "winnerId": "d01",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
@@ -1131,8 +1131,9 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 1,
+        "status": "DECIDED",
         "eligibleIds": [
           "d02",
           "d03"
@@ -1141,7 +1142,6 @@
           "d02",
           "d03"
         ],
-        "removalCap": 1,
         "winnerId": "d02",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
@@ -1231,8 +1231,9 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 1,
+        "status": "DECIDED",
         "eligibleIds": [
           "d01",
           "d02",
@@ -1243,7 +1244,6 @@
           "d02",
           "d03"
         ],
-        "removalCap": 1,
         "winnerId": "d01",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
@@ -1399,7 +1399,7 @@
         "round2": {
           "b": {
             "d01": "REMOVE",
-            "d02": "KEEP",
+            "d02": "REMOVE",
             "d03": "KEEP",
             "d04": "KEEP"
           }
@@ -1409,36 +1409,28 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 2,
+        "status": "DECIDED",
         "eligibleIds": [
-          "d02",
           "d03",
           "d04"
         ],
         "candidateIds": [
-          "d02",
           "d03",
           "d04"
         ],
-        "removalCap": 1,
-        "winnerId": "d02",
+        "winnerId": "d03",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
         "scoreVersion": "want2-ok1-round1-v1",
         "rankingVersion": "score-desc-dense-rank-v1",
         "topDishes": [
           {
-            "dishId": "d02",
-            "score": 1,
-            "rank": 1,
-            "isWinner": true
-          },
-          {
             "dishId": "d03",
             "score": 1,
             "rank": 1,
-            "isWinner": false
+            "isWinner": true
           },
           {
             "dishId": "d04",
@@ -1518,8 +1510,9 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 2,
+        "status": "DECIDED",
         "eligibleIds": [
           "d01",
           "d02",
@@ -1532,7 +1525,6 @@
           "d03",
           "d04"
         ],
-        "removalCap": 1,
         "winnerId": "d01",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
@@ -1620,7 +1612,7 @@
           "b": {
             "d01": "REMOVE",
             "d02": "REMOVE",
-            "d03": "KEEP",
+            "d03": "REMOVE",
             "d04": "KEEP"
           }
         },
@@ -1689,7 +1681,7 @@
         "round2": {
           "b": {
             "d01": "REMOVE",
-            "d02": "KEEP",
+            "d02": "REMOVE",
             "d03": "KEEP",
             "d04": "KEEP",
             "d05": "KEEP"
@@ -1700,41 +1692,39 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 2,
+        "status": "DECIDED",
         "eligibleIds": [
-          "d02",
           "d03",
           "d04",
           "d05"
         ],
         "candidateIds": [
-          "d02",
           "d03",
           "d04",
           "d05"
         ],
-        "removalCap": 1,
-        "winnerId": "d02",
+        "winnerId": "d03",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
         "scoreVersion": "want2-ok1-round1-v1",
         "rankingVersion": "score-desc-dense-rank-v1",
         "topDishes": [
           {
-            "dishId": "d02",
+            "dishId": "d03",
             "score": 1,
             "rank": 1,
             "isWinner": true
           },
           {
-            "dishId": "d03",
+            "dishId": "d04",
             "score": 1,
             "rank": 1,
             "isWinner": false
           },
           {
-            "dishId": "d04",
+            "dishId": "d05",
             "score": 1,
             "rank": 1,
             "isWinner": false
@@ -1812,8 +1802,9 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 2,
+        "status": "DECIDED",
         "eligibleIds": [
           "d01",
           "d02",
@@ -1828,7 +1819,6 @@
           "d04",
           "d05"
         ],
-        "removalCap": 1,
         "winnerId": "d01",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
@@ -1916,7 +1906,7 @@
           "b": {
             "d01": "REMOVE",
             "d02": "REMOVE",
-            "d03": "KEEP",
+            "d03": "REMOVE",
             "d04": "KEEP",
             "d05": "KEEP"
           }
@@ -1986,7 +1976,7 @@
         "round2": {
           "b": {
             "d01": "REMOVE",
-            "d02": "KEEP",
+            "d02": "REMOVE",
             "d03": "KEEP",
             "d04": "KEEP",
             "d05": "KEEP",
@@ -1998,43 +1988,41 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 2,
+        "status": "DECIDED",
         "eligibleIds": [
-          "d02",
           "d03",
           "d04",
           "d05",
           "d06"
         ],
         "candidateIds": [
-          "d02",
           "d03",
           "d04",
           "d05",
           "d06"
         ],
-        "removalCap": 1,
-        "winnerId": "d02",
+        "winnerId": "d03",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
         "scoreVersion": "want2-ok1-round1-v1",
         "rankingVersion": "score-desc-dense-rank-v1",
         "topDishes": [
           {
-            "dishId": "d02",
+            "dishId": "d03",
             "score": 1,
             "rank": 1,
             "isWinner": true
           },
           {
-            "dishId": "d03",
+            "dishId": "d04",
             "score": 1,
             "rank": 1,
             "isWinner": false
           },
           {
-            "dishId": "d04",
+            "dishId": "d05",
             "score": 1,
             "rank": 1,
             "isWinner": false
@@ -2113,8 +2101,9 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 2,
+        "status": "DECIDED",
         "eligibleIds": [
           "d01",
           "d02",
@@ -2131,7 +2120,6 @@
           "d05",
           "d06"
         ],
-        "removalCap": 1,
         "winnerId": "d01",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
@@ -2219,7 +2207,7 @@
           "b": {
             "d01": "REMOVE",
             "d02": "REMOVE",
-            "d03": "KEEP",
+            "d03": "REMOVE",
             "d04": "KEEP",
             "d05": "KEEP",
             "d06": "KEEP"
@@ -2291,7 +2279,7 @@
           "b": {
             "d01": "REMOVE",
             "d02": "REMOVE",
-            "d03": "KEEP",
+            "d03": "REMOVE",
             "d04": "KEEP",
             "d05": "KEEP",
             "d06": "KEEP",
@@ -2303,43 +2291,41 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 3,
+        "status": "DECIDED",
         "eligibleIds": [
-          "d03",
           "d04",
           "d05",
           "d06",
           "d07"
         ],
         "candidateIds": [
-          "d03",
           "d04",
           "d05",
           "d06",
           "d07"
         ],
-        "removalCap": 2,
-        "winnerId": "d03",
+        "winnerId": "d04",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
         "scoreVersion": "want2-ok1-round1-v1",
         "rankingVersion": "score-desc-dense-rank-v1",
         "topDishes": [
           {
-            "dishId": "d03",
+            "dishId": "d04",
             "score": 1,
             "rank": 1,
             "isWinner": true
           },
           {
-            "dishId": "d04",
+            "dishId": "d05",
             "score": 1,
             "rank": 1,
             "isWinner": false
           },
           {
-            "dishId": "d05",
+            "dishId": "d06",
             "score": 1,
             "rank": 1,
             "isWinner": false
@@ -2419,8 +2405,9 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 3,
+        "status": "DECIDED",
         "eligibleIds": [
           "d01",
           "d02",
@@ -2439,7 +2426,6 @@
           "d06",
           "d07"
         ],
-        "removalCap": 2,
         "winnerId": "d01",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
@@ -2528,7 +2514,7 @@
             "d01": "REMOVE",
             "d02": "REMOVE",
             "d03": "REMOVE",
-            "d04": "KEEP",
+            "d04": "REMOVE",
             "d05": "KEEP",
             "d06": "KEEP",
             "d07": "KEEP"
@@ -2600,7 +2586,7 @@
           "b": {
             "d01": "REMOVE",
             "d02": "REMOVE",
-            "d03": "KEEP",
+            "d03": "REMOVE",
             "d04": "KEEP",
             "d05": "KEEP",
             "d06": "KEEP",
@@ -2613,10 +2599,10 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 3,
+        "status": "DECIDED",
         "eligibleIds": [
-          "d03",
           "d04",
           "d05",
           "d06",
@@ -2624,34 +2610,32 @@
           "d08"
         ],
         "candidateIds": [
-          "d03",
           "d04",
           "d05",
           "d06",
           "d07",
           "d08"
         ],
-        "removalCap": 2,
-        "winnerId": "d03",
+        "winnerId": "d04",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
         "scoreVersion": "want2-ok1-round1-v1",
         "rankingVersion": "score-desc-dense-rank-v1",
         "topDishes": [
           {
-            "dishId": "d03",
+            "dishId": "d04",
             "score": 1,
             "rank": 1,
             "isWinner": true
           },
           {
-            "dishId": "d04",
+            "dishId": "d05",
             "score": 1,
             "rank": 1,
             "isWinner": false
           },
           {
-            "dishId": "d05",
+            "dishId": "d06",
             "score": 1,
             "rank": 1,
             "isWinner": false
@@ -2732,8 +2716,9 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 3,
+        "status": "DECIDED",
         "eligibleIds": [
           "d01",
           "d02",
@@ -2754,7 +2739,6 @@
           "d07",
           "d08"
         ],
-        "removalCap": 2,
         "winnerId": "d01",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
@@ -2843,7 +2827,7 @@
             "d01": "REMOVE",
             "d02": "REMOVE",
             "d03": "REMOVE",
-            "d04": "KEEP",
+            "d04": "REMOVE",
             "d05": "KEEP",
             "d06": "KEEP",
             "d07": "KEEP",
@@ -2916,7 +2900,7 @@
           "b": {
             "d01": "REMOVE",
             "d02": "REMOVE",
-            "d03": "KEEP",
+            "d03": "REMOVE",
             "d04": "KEEP",
             "d05": "KEEP",
             "d06": "KEEP",
@@ -2930,10 +2914,10 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 3,
+        "status": "DECIDED",
         "eligibleIds": [
-          "d03",
           "d04",
           "d05",
           "d06",
@@ -2942,7 +2926,6 @@
           "d09"
         ],
         "candidateIds": [
-          "d03",
           "d04",
           "d05",
           "d06",
@@ -2950,27 +2933,26 @@
           "d08",
           "d09"
         ],
-        "removalCap": 2,
-        "winnerId": "d03",
+        "winnerId": "d04",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
         "scoreVersion": "want2-ok1-round1-v1",
         "rankingVersion": "score-desc-dense-rank-v1",
         "topDishes": [
           {
-            "dishId": "d03",
+            "dishId": "d04",
             "score": 1,
             "rank": 1,
             "isWinner": true
           },
           {
-            "dishId": "d04",
+            "dishId": "d05",
             "score": 1,
             "rank": 1,
             "isWinner": false
           },
           {
-            "dishId": "d05",
+            "dishId": "d06",
             "score": 1,
             "rank": 1,
             "isWinner": false
@@ -3052,8 +3034,9 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 3,
+        "status": "DECIDED",
         "eligibleIds": [
           "d01",
           "d02",
@@ -3076,7 +3059,6 @@
           "d08",
           "d09"
         ],
-        "removalCap": 2,
         "winnerId": "d01",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
@@ -3165,7 +3147,7 @@
             "d01": "REMOVE",
             "d02": "REMOVE",
             "d03": "REMOVE",
-            "d04": "KEEP",
+            "d04": "REMOVE",
             "d05": "KEEP",
             "d06": "KEEP",
             "d07": "KEEP",
@@ -3254,8 +3236,9 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 3,
+        "status": "DECIDED",
         "eligibleIds": [
           "d04",
           "d05",
@@ -3274,7 +3257,6 @@
           "d09",
           "d10"
         ],
-        "removalCap": 3,
         "winnerId": "d04",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
@@ -3377,8 +3359,9 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 3,
+        "status": "DECIDED",
         "eligibleIds": [
           "d01",
           "d02",
@@ -3403,7 +3386,6 @@
           "d09",
           "d10"
         ],
-        "removalCap": 3,
         "winnerId": "d01",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
@@ -3568,7 +3550,7 @@
             "d01": "REMOVE",
             "d02": "REMOVE",
             "d03": "REMOVE",
-            "d04": "KEEP",
+            "d04": "REMOVE",
             "d05": "KEEP",
             "d06": "KEEP",
             "d07": "KEEP",
@@ -3583,10 +3565,10 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 4,
+        "status": "DECIDED",
         "eligibleIds": [
-          "d04",
           "d05",
           "d06",
           "d07",
@@ -3596,7 +3578,6 @@
           "d11"
         ],
         "candidateIds": [
-          "d04",
           "d05",
           "d06",
           "d07",
@@ -3605,27 +3586,26 @@
           "d10",
           "d11"
         ],
-        "removalCap": 3,
-        "winnerId": "d04",
+        "winnerId": "d05",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
         "scoreVersion": "want2-ok1-round1-v1",
         "rankingVersion": "score-desc-dense-rank-v1",
         "topDishes": [
           {
-            "dishId": "d04",
+            "dishId": "d05",
             "score": 1,
             "rank": 1,
             "isWinner": true
           },
           {
-            "dishId": "d05",
+            "dishId": "d06",
             "score": 1,
             "rank": 1,
             "isWinner": false
           },
           {
-            "dishId": "d06",
+            "dishId": "d07",
             "score": 1,
             "rank": 1,
             "isWinner": false
@@ -3709,8 +3689,9 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 4,
+        "status": "DECIDED",
         "eligibleIds": [
           "d01",
           "d02",
@@ -3737,7 +3718,6 @@
           "d10",
           "d11"
         ],
-        "removalCap": 3,
         "winnerId": "d01",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
@@ -3827,7 +3807,7 @@
             "d02": "REMOVE",
             "d03": "REMOVE",
             "d04": "REMOVE",
-            "d05": "KEEP",
+            "d05": "REMOVE",
             "d06": "KEEP",
             "d07": "KEEP",
             "d08": "KEEP",
@@ -3903,7 +3883,7 @@
             "d01": "REMOVE",
             "d02": "REMOVE",
             "d03": "REMOVE",
-            "d04": "KEEP",
+            "d04": "REMOVE",
             "d05": "KEEP",
             "d06": "KEEP",
             "d07": "KEEP",
@@ -3919,10 +3899,10 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 4,
+        "status": "DECIDED",
         "eligibleIds": [
-          "d04",
           "d05",
           "d06",
           "d07",
@@ -3933,7 +3913,6 @@
           "d12"
         ],
         "candidateIds": [
-          "d04",
           "d05",
           "d06",
           "d07",
@@ -3943,27 +3922,26 @@
           "d11",
           "d12"
         ],
-        "removalCap": 3,
-        "winnerId": "d04",
+        "winnerId": "d05",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
         "scoreVersion": "want2-ok1-round1-v1",
         "rankingVersion": "score-desc-dense-rank-v1",
         "topDishes": [
           {
-            "dishId": "d04",
+            "dishId": "d05",
             "score": 1,
             "rank": 1,
             "isWinner": true
           },
           {
-            "dishId": "d05",
+            "dishId": "d06",
             "score": 1,
             "rank": 1,
             "isWinner": false
           },
           {
-            "dishId": "d06",
+            "dishId": "d07",
             "score": 1,
             "rank": 1,
             "isWinner": false
@@ -4048,8 +4026,9 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 4,
+        "status": "DECIDED",
         "eligibleIds": [
           "d01",
           "d02",
@@ -4078,7 +4057,6 @@
           "d11",
           "d12"
         ],
-        "removalCap": 3,
         "winnerId": "d01",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
@@ -4168,7 +4146,7 @@
             "d02": "REMOVE",
             "d03": "REMOVE",
             "d04": "REMOVE",
-            "d05": "KEEP",
+            "d05": "REMOVE",
             "d06": "KEEP",
             "d07": "KEEP",
             "d08": "KEEP",
@@ -4245,7 +4223,7 @@
             "d01": "REMOVE",
             "d02": "REMOVE",
             "d03": "REMOVE",
-            "d04": "KEEP",
+            "d04": "REMOVE",
             "d05": "KEEP",
             "d06": "KEEP",
             "d07": "KEEP",
@@ -4262,10 +4240,10 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 4,
+        "status": "DECIDED",
         "eligibleIds": [
-          "d04",
           "d05",
           "d06",
           "d07",
@@ -4277,7 +4255,6 @@
           "d13"
         ],
         "candidateIds": [
-          "d04",
           "d05",
           "d06",
           "d07",
@@ -4288,27 +4265,26 @@
           "d12",
           "d13"
         ],
-        "removalCap": 3,
-        "winnerId": "d04",
+        "winnerId": "d05",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
         "scoreVersion": "want2-ok1-round1-v1",
         "rankingVersion": "score-desc-dense-rank-v1",
         "topDishes": [
           {
-            "dishId": "d04",
+            "dishId": "d05",
             "score": 1,
             "rank": 1,
             "isWinner": true
           },
           {
-            "dishId": "d05",
+            "dishId": "d06",
             "score": 1,
             "rank": 1,
             "isWinner": false
           },
           {
-            "dishId": "d06",
+            "dishId": "d07",
             "score": 1,
             "rank": 1,
             "isWinner": false
@@ -4394,8 +4370,9 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 4,
+        "status": "DECIDED",
         "eligibleIds": [
           "d01",
           "d02",
@@ -4426,7 +4403,6 @@
           "d12",
           "d13"
         ],
-        "removalCap": 3,
         "winnerId": "d01",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
@@ -4516,7 +4492,7 @@
             "d02": "REMOVE",
             "d03": "REMOVE",
             "d04": "REMOVE",
-            "d05": "KEEP",
+            "d05": "REMOVE",
             "d06": "KEEP",
             "d07": "KEEP",
             "d08": "KEEP",
@@ -4595,7 +4571,7 @@
             "d02": "REMOVE",
             "d03": "REMOVE",
             "d04": "REMOVE",
-            "d05": "KEEP",
+            "d05": "REMOVE",
             "d06": "KEEP",
             "d07": "KEEP",
             "d08": "KEEP",
@@ -4612,10 +4588,10 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 5,
+        "status": "DECIDED",
         "eligibleIds": [
-          "d05",
           "d06",
           "d07",
           "d08",
@@ -4627,7 +4603,6 @@
           "d14"
         ],
         "candidateIds": [
-          "d05",
           "d06",
           "d07",
           "d08",
@@ -4638,27 +4613,26 @@
           "d13",
           "d14"
         ],
-        "removalCap": 4,
-        "winnerId": "d05",
+        "winnerId": "d06",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
         "scoreVersion": "want2-ok1-round1-v1",
         "rankingVersion": "score-desc-dense-rank-v1",
         "topDishes": [
           {
-            "dishId": "d05",
+            "dishId": "d06",
             "score": 1,
             "rank": 1,
             "isWinner": true
           },
           {
-            "dishId": "d06",
+            "dishId": "d07",
             "score": 1,
             "rank": 1,
             "isWinner": false
           },
           {
-            "dishId": "d07",
+            "dishId": "d08",
             "score": 1,
             "rank": 1,
             "isWinner": false
@@ -4745,8 +4719,9 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 5,
+        "status": "DECIDED",
         "eligibleIds": [
           "d01",
           "d02",
@@ -4779,7 +4754,6 @@
           "d13",
           "d14"
         ],
-        "removalCap": 4,
         "winnerId": "d01",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
@@ -4870,7 +4844,7 @@
             "d03": "REMOVE",
             "d04": "REMOVE",
             "d05": "REMOVE",
-            "d06": "KEEP",
+            "d06": "REMOVE",
             "d07": "KEEP",
             "d08": "KEEP",
             "d09": "KEEP",
@@ -4949,7 +4923,7 @@
             "d02": "REMOVE",
             "d03": "REMOVE",
             "d04": "REMOVE",
-            "d05": "KEEP",
+            "d05": "REMOVE",
             "d06": "KEEP",
             "d07": "KEEP",
             "d08": "KEEP",
@@ -4967,10 +4941,10 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 5,
+        "status": "DECIDED",
         "eligibleIds": [
-          "d05",
           "d06",
           "d07",
           "d08",
@@ -4983,7 +4957,6 @@
           "d15"
         ],
         "candidateIds": [
-          "d05",
           "d06",
           "d07",
           "d08",
@@ -4995,27 +4968,26 @@
           "d14",
           "d15"
         ],
-        "removalCap": 4,
-        "winnerId": "d05",
+        "winnerId": "d06",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
         "scoreVersion": "want2-ok1-round1-v1",
         "rankingVersion": "score-desc-dense-rank-v1",
         "topDishes": [
           {
-            "dishId": "d05",
+            "dishId": "d06",
             "score": 1,
             "rank": 1,
             "isWinner": true
           },
           {
-            "dishId": "d06",
+            "dishId": "d07",
             "score": 1,
             "rank": 1,
             "isWinner": false
           },
           {
-            "dishId": "d07",
+            "dishId": "d08",
             "score": 1,
             "rank": 1,
             "isWinner": false
@@ -5103,8 +5075,9 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 5,
+        "status": "DECIDED",
         "eligibleIds": [
           "d01",
           "d02",
@@ -5139,7 +5112,6 @@
           "d14",
           "d15"
         ],
-        "removalCap": 4,
         "winnerId": "d01",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
@@ -5230,7 +5202,7 @@
             "d03": "REMOVE",
             "d04": "REMOVE",
             "d05": "REMOVE",
-            "d06": "KEEP",
+            "d06": "REMOVE",
             "d07": "KEEP",
             "d08": "KEEP",
             "d09": "KEEP",
@@ -5310,7 +5282,7 @@
             "d02": "REMOVE",
             "d03": "REMOVE",
             "d04": "REMOVE",
-            "d05": "KEEP",
+            "d05": "REMOVE",
             "d06": "KEEP",
             "d07": "KEEP",
             "d08": "KEEP",
@@ -5329,10 +5301,10 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 5,
+        "status": "DECIDED",
         "eligibleIds": [
-          "d05",
           "d06",
           "d07",
           "d08",
@@ -5346,7 +5318,6 @@
           "d16"
         ],
         "candidateIds": [
-          "d05",
           "d06",
           "d07",
           "d08",
@@ -5359,27 +5330,26 @@
           "d15",
           "d16"
         ],
-        "removalCap": 4,
-        "winnerId": "d05",
+        "winnerId": "d06",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
         "scoreVersion": "want2-ok1-round1-v1",
         "rankingVersion": "score-desc-dense-rank-v1",
         "topDishes": [
           {
-            "dishId": "d05",
+            "dishId": "d06",
             "score": 1,
             "rank": 1,
             "isWinner": true
           },
           {
-            "dishId": "d06",
+            "dishId": "d07",
             "score": 1,
             "rank": 1,
             "isWinner": false
           },
           {
-            "dishId": "d07",
+            "dishId": "d08",
             "score": 1,
             "rank": 1,
             "isWinner": false
@@ -5468,8 +5438,9 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 5,
+        "status": "DECIDED",
         "eligibleIds": [
           "d01",
           "d02",
@@ -5506,7 +5477,6 @@
           "d15",
           "d16"
         ],
-        "removalCap": 4,
         "winnerId": "d01",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
@@ -5597,7 +5567,7 @@
             "d03": "REMOVE",
             "d04": "REMOVE",
             "d05": "REMOVE",
-            "d06": "KEEP",
+            "d06": "REMOVE",
             "d07": "KEEP",
             "d08": "KEEP",
             "d09": "KEEP",
@@ -5679,7 +5649,7 @@
             "d03": "REMOVE",
             "d04": "REMOVE",
             "d05": "REMOVE",
-            "d06": "KEEP",
+            "d06": "REMOVE",
             "d07": "KEEP",
             "d08": "KEEP",
             "d09": "KEEP",
@@ -5698,10 +5668,10 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 6,
+        "status": "DECIDED",
         "eligibleIds": [
-          "d06",
           "d07",
           "d08",
           "d09",
@@ -5715,7 +5685,6 @@
           "d17"
         ],
         "candidateIds": [
-          "d06",
           "d07",
           "d08",
           "d09",
@@ -5728,27 +5697,26 @@
           "d16",
           "d17"
         ],
-        "removalCap": 5,
-        "winnerId": "d06",
+        "winnerId": "d07",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
         "scoreVersion": "want2-ok1-round1-v1",
         "rankingVersion": "score-desc-dense-rank-v1",
         "topDishes": [
           {
-            "dishId": "d06",
+            "dishId": "d07",
             "score": 1,
             "rank": 1,
             "isWinner": true
           },
           {
-            "dishId": "d07",
+            "dishId": "d08",
             "score": 1,
             "rank": 1,
             "isWinner": false
           },
           {
-            "dishId": "d08",
+            "dishId": "d09",
             "score": 1,
             "rank": 1,
             "isWinner": false
@@ -5838,8 +5806,9 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 6,
+        "status": "DECIDED",
         "eligibleIds": [
           "d01",
           "d02",
@@ -5878,7 +5847,6 @@
           "d16",
           "d17"
         ],
-        "removalCap": 5,
         "winnerId": "d01",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
@@ -5970,7 +5938,7 @@
             "d04": "REMOVE",
             "d05": "REMOVE",
             "d06": "REMOVE",
-            "d07": "KEEP",
+            "d07": "REMOVE",
             "d08": "KEEP",
             "d09": "KEEP",
             "d10": "KEEP",
@@ -6052,7 +6020,7 @@
             "d03": "REMOVE",
             "d04": "REMOVE",
             "d05": "REMOVE",
-            "d06": "KEEP",
+            "d06": "REMOVE",
             "d07": "KEEP",
             "d08": "KEEP",
             "d09": "KEEP",
@@ -6072,10 +6040,10 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 6,
+        "status": "DECIDED",
         "eligibleIds": [
-          "d06",
           "d07",
           "d08",
           "d09",
@@ -6090,7 +6058,6 @@
           "d18"
         ],
         "candidateIds": [
-          "d06",
           "d07",
           "d08",
           "d09",
@@ -6104,27 +6071,26 @@
           "d17",
           "d18"
         ],
-        "removalCap": 5,
-        "winnerId": "d06",
+        "winnerId": "d07",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
         "scoreVersion": "want2-ok1-round1-v1",
         "rankingVersion": "score-desc-dense-rank-v1",
         "topDishes": [
           {
-            "dishId": "d06",
+            "dishId": "d07",
             "score": 1,
             "rank": 1,
             "isWinner": true
           },
           {
-            "dishId": "d07",
+            "dishId": "d08",
             "score": 1,
             "rank": 1,
             "isWinner": false
           },
           {
-            "dishId": "d08",
+            "dishId": "d09",
             "score": 1,
             "rank": 1,
             "isWinner": false
@@ -6215,8 +6181,9 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 6,
+        "status": "DECIDED",
         "eligibleIds": [
           "d01",
           "d02",
@@ -6257,7 +6224,6 @@
           "d17",
           "d18"
         ],
-        "removalCap": 5,
         "winnerId": "d01",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
@@ -6349,7 +6315,7 @@
             "d04": "REMOVE",
             "d05": "REMOVE",
             "d06": "REMOVE",
-            "d07": "KEEP",
+            "d07": "REMOVE",
             "d08": "KEEP",
             "d09": "KEEP",
             "d10": "KEEP",
@@ -6432,7 +6398,7 @@
             "d03": "REMOVE",
             "d04": "REMOVE",
             "d05": "REMOVE",
-            "d06": "KEEP",
+            "d06": "REMOVE",
             "d07": "KEEP",
             "d08": "KEEP",
             "d09": "KEEP",
@@ -6453,10 +6419,10 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 6,
+        "status": "DECIDED",
         "eligibleIds": [
-          "d06",
           "d07",
           "d08",
           "d09",
@@ -6472,7 +6438,6 @@
           "d19"
         ],
         "candidateIds": [
-          "d06",
           "d07",
           "d08",
           "d09",
@@ -6487,27 +6452,26 @@
           "d18",
           "d19"
         ],
-        "removalCap": 5,
-        "winnerId": "d06",
+        "winnerId": "d07",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
         "scoreVersion": "want2-ok1-round1-v1",
         "rankingVersion": "score-desc-dense-rank-v1",
         "topDishes": [
           {
-            "dishId": "d06",
+            "dishId": "d07",
             "score": 1,
             "rank": 1,
             "isWinner": true
           },
           {
-            "dishId": "d07",
+            "dishId": "d08",
             "score": 1,
             "rank": 1,
             "isWinner": false
           },
           {
-            "dishId": "d08",
+            "dishId": "d09",
             "score": 1,
             "rank": 1,
             "isWinner": false
@@ -6599,8 +6563,9 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 6,
+        "status": "DECIDED",
         "eligibleIds": [
           "d01",
           "d02",
@@ -6643,7 +6608,6 @@
           "d18",
           "d19"
         ],
-        "removalCap": 5,
         "winnerId": "d01",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
@@ -6735,7 +6699,7 @@
             "d04": "REMOVE",
             "d05": "REMOVE",
             "d06": "REMOVE",
-            "d07": "KEEP",
+            "d07": "REMOVE",
             "d08": "KEEP",
             "d09": "KEEP",
             "d10": "KEEP",
@@ -6841,8 +6805,9 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 6,
+        "status": "DECIDED",
         "eligibleIds": [
           "d07",
           "d08",
@@ -6875,7 +6840,6 @@
           "d19",
           "d20"
         ],
-        "removalCap": 6,
         "winnerId": "d07",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",
@@ -6988,8 +6952,9 @@
       "expected": {
         "policyVersion": "dish-decision-v4/ADR-019-30PCT-MIN1",
         "evaluatorVersion": "1.0.0",
-        "status": "DECIDED",
         "round1BallotCount": 1,
+        "removalCap": 6,
+        "status": "DECIDED",
         "eligibleIds": [
           "d01",
           "d02",
@@ -7034,7 +6999,6 @@
           "d19",
           "d20"
         ],
-        "removalCap": 6,
         "winnerId": "d01",
         "reasonCode": "ACCEPTABLE_FINAL",
         "matchTier": "COMPROMISE",

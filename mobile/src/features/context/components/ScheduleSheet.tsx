@@ -24,20 +24,20 @@ export function ScheduleSheet({ initial, now, onConfirm, onClose, initialCalenda
   const weekday = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'][new Date(`${date}T00:00:00Z`).getUTCDay()];
   const dateLabel = `${weekday} · ${date.slice(8, 10)}/${date.slice(5, 7)}/${date.slice(0, 4)}`;
   return <SheetDialog visible title={calendar ? 'Chọn ngày hẹn' : 'Hẹn giờ ăn'} onClose={calendar ? () => setCalendar(false) : onClose} colors={colors} showHandle={false} showClose={false} backdropColor={dark ? undefined : 'rgba(70,195,79,0.22)'}>
-    <ScrollView style={{ maxHeight: (height - insets.top - insets.bottom) * 0.72 }} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-      {calendar ? <ScheduleCalendar initial={date} today={scheduleParts(new Date(now()).toISOString()).date} onConfirm={value => { setDate(value); setCalendar(false); setError(undefined); }} onBack={() => setCalendar(false)} /> : <>
+    {calendar ? <View style={styles.content}><ScheduleCalendar initial={date} today={scheduleParts(new Date(now()).toISOString()).date} onConfirm={value => { setDate(value); setCalendar(false); setError(undefined); }} onBack={() => setCalendar(false)} /></View>
+    : <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: (height - insets.top - insets.bottom) * 0.72 }} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+      <>
         <Text style={[styles.label, { color: colors.text }, textStyle(600)]}>Ngày hẹn</Text>
         <AppButton label={dateLabel} variant="secondary" onPress={() => setCalendar(true)} colors={colors} />
         <View style={styles.row}>
           <ScheduleWheel label="Giờ" value={hour} count={24} onChange={value => { setHour(value); setError(undefined); }} rowHeight={rowHeight} rows={rows} />
           <ScheduleWheel label="Phút" value={minute} count={60} onChange={value => { setMinute(value); setError(undefined); }} rowHeight={rowHeight} rows={rows} />
         </View>
-        <Text accessibilityLiveRegion="polite" style={[styles.zone, { color: colors.muted }, textStyle(400)]}>Giờ Việt Nam · UTC+7</Text>
         {error ? <StatusNotice title={error} colors={colors} /> : null}
         <AppButton label={`Xác nhận · ${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`} accessibilityHint="Xác nhận giờ hẹn" onPress={confirm} colors={colors} />
         <AppButton label="Hủy" accessibilityHint="Hủy hẹn giờ và giữ thiết lập trước đó" variant="secondary" onPress={onClose} colors={colors} />
-      </>}
-    </ScrollView>
+      </>
+    </ScrollView>}
   </SheetDialog>;
 }
-const styles = StyleSheet.create({ content: { gap: 12 }, label: { fontSize: 14, lineHeight: 21 }, row: { flexDirection: 'row', gap: 16 }, zone: { fontSize: 12, lineHeight: 18, textAlign: 'center' } });
+const styles = StyleSheet.create({ content: { gap: 12 }, label: { fontSize: 14, lineHeight: 21 }, row: { flexDirection: 'row', gap: 16 } });

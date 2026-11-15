@@ -1,39 +1,46 @@
+import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { AppButton, StatusNotice, ApiFeatureFrame } from '../../../shared/ui';
+import { useAppFonts } from '../../../bootstrap/AppFontProvider';
+import { AppButton, ApiFeatureFrame, SheetDialog } from '../../../shared/ui';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 
 type Props = {
   displayName: string;
   onNavigate: (path: string) => void;
   onHome: () => void;
-  onTutorial?: () => void;
 };
 
-export function ProfileScreen({ displayName, onNavigate, onHome, onTutorial }: Props) {
+/** Figma 232:349 "Cá nhân · Khách". Accounts are P1, so both account actions explain that guests can keep playing. */
+export function ProfileScreen({ displayName, onNavigate, onHome }: Props) {
   const { colors } = useShellTheme();
-  const name = displayName.trim() || 'Khách';
+  const { textStyle } = useAppFonts();
+  const [accountPanel, setAccountPanel] = useState<'Đăng nhập' | 'Tạo tài khoản'>();
+  const initial = (displayName.trim() || 'Khách').slice(0, 1).toUpperCase();
   return (
     <ApiFeatureFrame active="profile" title="Cá nhân" onNavigate={onNavigate} onHome={onHome}>
-      <Text accessibilityRole="header" style={[styles.title, { color: colors.text }]}>Cá nhân</Text>
-      <View style={[styles.profileCard, { backgroundColor: colors.surface, borderColor: colors.line }]}>
-        <View style={[styles.avatar, { backgroundColor: colors.warm }]}>
-          <Text style={[styles.avatarText, { color: colors.primary }]}>{name.slice(0, 1).toUpperCase()}</Text>
+      <Text accessibilityRole="header" style={[styles.title, { color: colors.text }, textStyle(700)]}>Cá nhân</Text>
+      <View style={[styles.card, { backgroundColor: colors.warm }]}>
+        <View style={[styles.avatar, { backgroundColor: colors.surface, borderColor: colors.line }]}>
+          <Text style={[styles.avatarText, { color: colors.text }, textStyle(500)]}>{initial}</Text>
         </View>
-        <Text accessibilityRole="header" style={[styles.name, { color: colors.text }]}>{name}</Text>
-        <Text style={[styles.meta, { color: colors.muted }]}>Phiên khách trên thiết bị này</Text>
+        <Text accessibilityRole="header" style={[styles.cardTitle, { color: colors.text }, textStyle(700)]}>Đăng nhập</Text>
+        <Text style={[styles.cardBody, { color: colors.muted }, textStyle(400)]}>Giữ bạn bè và lịch sử khi đổi máy.</Text>
       </View>
-      <StatusNotice title="Chưa liên kết tài khoản" message="Bạn đang dùng với tư cách khách. Lịch sử và bạn bè gắn với phiên trên thiết bị này." tone="info" colors={colors} />
-      <AppButton label="Cài đặt" onPress={() => onNavigate('/settings')} colors={colors} />
-      {onTutorial ? <AppButton label="Xem lại hướng dẫn" variant="secondary" onPress={onTutorial} colors={colors} /> : null}
+      <AppButton label="Đăng nhập" onPress={() => setAccountPanel('Đăng nhập')} colors={colors} textStyle={textStyle(600)} />
+      <AppButton label="Tạo tài khoản" variant="secondary" onPress={() => setAccountPanel('Tạo tài khoản')} colors={colors} textStyle={textStyle(600)} />
+      <SheetDialog visible={!!accountPanel} title={accountPanel ?? 'Tài khoản'} onClose={() => setAccountPanel(undefined)} colors={colors}>
+        <Text style={[styles.cardBody, { color: colors.text }, textStyle(400)]}>Tài khoản sẽ có trong bản cập nhật tới. Bạn vẫn dùng đầy đủ tính năng với tư cách khách.</Text>
+        <AppButton label="Đã hiểu" onPress={() => setAccountPanel(undefined)} colors={colors} textStyle={textStyle(600)} />
+      </SheetDialog>
     </ApiFeatureFrame>
   );
 }
 
 const styles = StyleSheet.create({
-  title: { fontFamily: 'InterBold', fontSize: 28, lineHeight: 36 },
-  profileCard: { alignItems: 'center', borderWidth: 1, borderRadius: 20, padding: 20, gap: 10 },
-  avatar: { width: 72, height: 72, borderRadius: 36, alignItems: 'center', justifyContent: 'center' },
-  avatarText: { fontFamily: 'InterBold', fontSize: 30 },
-  name: { fontFamily: 'InterBold', fontSize: 20, lineHeight: 26, textAlign: 'center' },
-  meta: { fontFamily: 'InterRegular', fontSize: 13, lineHeight: 19 },
+  title: { fontSize: 28, lineHeight: 36 },
+  card: { alignItems: 'center', borderRadius: 20, paddingVertical: 28, paddingHorizontal: 20, gap: 10 },
+  avatar: { width: 72, height: 72, borderRadius: 36, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  avatarText: { fontSize: 30, lineHeight: 36 },
+  cardTitle: { fontSize: 20, lineHeight: 28, textAlign: 'center' },
+  cardBody: { fontSize: 14, lineHeight: 21, textAlign: 'center' },
 });

@@ -1,4 +1,4 @@
-import type { ErrorCode, ReadResult, UpdateHistoryConsentRequest, WriteResult } from '../../../data/api/contracts';
+import type { ErrorCode, HistoryConsent, ReadResult, UpdateHistoryConsentRequest, WriteResult } from '../../../data/api/contracts';
 import { settleWithin } from '../../../data/local/bestEffort';
 import type { RoomRepository } from '../../rooms/services/roomRepository';
 import { createDurableRequestId } from '../../rooms/services/roomRepository';
@@ -26,6 +26,8 @@ export interface HistoryRepository {
   cached(): HistorySnapshot | undefined;
   cachedDurable(): Promise<HistorySnapshot | undefined>;
   fetch(): Promise<ReadResult<HistorySnapshot>>;
+  /** The account's saved choice: while it is off, finished rooms are not added to the history. */
+  readConsent(): Promise<ReadResult<HistoryConsent>>;
   updateConsent(request: Omit<UpdateHistoryConsentRequest, 'requestId'>): Promise<WriteResult<void>>;
   delete(historyId: string): Promise<WriteResult<void>>;
   invalidate(): void;
@@ -236,6 +238,7 @@ export function createHistoryRepository(
       if (!isCurrent(identity, requestGeneration)) return authError<HistorySnapshot>();
       return { ok: true, data: snapshot };
     },
+    readConsent: () => callSessionApi(roomRepository, client => client.getHistoryConsent()),
     async updateConsent(request) {
       const identity = currentIdentity();
       if (!identity) return { ok: false, error: { messageKey: 'AUTH_REQUIRED' } };

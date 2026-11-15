@@ -113,3 +113,8 @@ flowchart TD
 ## Latest AVD evidence status — 2026-11-07
 
 The latest AVD run observed the live setup/preferences screen only. It did not reach Figma result nodes `330:3075`, `617:1671`, or `379:1478`; Top 3, ties, Places and all viewport/font/TalkBack comparisons are Not run in this follow-up. Status values in the earlier rows describe historical implementation/component evidence and must not be interpreted as newly verified AVD parity. See [latest follow-up](FOLLOWUP_2026-11-07.md#integrated-preference-hotfix-follow-up--2026-11-07).
+
+## PR #167 Stage 3A AVD Result & Podium Verification — 2026-11-15
+
+- On `Medium_Phone_API_37.0` (`emulator-5554`, Expo Go) connected to QA backend `pr167-ci-fix-v7` (`127.0.0.1:54371`, migrations `0001..0057`, `EXPO_PUBLIC_PLACES_SIMULATED=1`), completed two-client voting into `DECIDED` (`ACCEPTABLE_FINAL`) and observed winner `Cơm chay` (2 điểm), Top 3 podium (`Cơm chay`, `Cơm cá kho`, `Cơm bò`), `Cùng ăn` companions (`HHost_AVD`, `Ban_AVD_2`), and simulated Places (`[Mô phỏng AVD]`, `Quán Cơm chay Cô Ba`, `420 m`, `TikTok`/`YouTube`). Redacted captures saved under ignored `review-results/artifacts/pr167-avd/`.
+- Remaining **Not run**: Stage 3B physical USB Android phone (`GM-33`/`GM-34`) and live Google Places billing key.

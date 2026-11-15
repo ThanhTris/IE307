@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { FlavorProfile, UserPreferences } from '../../../data/api/contracts';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
+import { AppIcon } from '../../../shared/ui/icons/AppIcon';
 import { PreferenceFlavorLevels } from './PreferenceFlavorLevels';
 
 const options = [
@@ -15,7 +16,7 @@ export function PreferenceAdvancedPanel({ value = 'unknown', flavor, disabled, o
   return <View style={[styles.card, { borderColor: colors.line, backgroundColor: colors.surface }]}>
     <Pressable accessibilityRole="button" accessibilityLabel="Tùy chọn nâng cao" accessibilityState={{ expanded: open, disabled }} disabled={disabled} onPress={() => setOpen(previous => !previous)} style={styles.header}>
       <View style={styles.copy}><Text style={[styles.title, { color: colors.text }, textStyle(600)]}>Tùy chọn nâng cao</Text><Text style={[styles.summary, { color: colors.muted }, textStyle(400)]}>{`Nhiệt độ · ${options.find(option => option.id === value)?.label ?? 'Chưa rõ'}`}</Text></View>
-      <Image source={require('../../../../assets/brand/home/back.png')} accessible={false} resizeMode="contain" style={[styles.chevron, { tintColor: colors.text, transform: [{ rotate: open ? '90deg' : '-90deg' }] }]} />
+      <View style={{ transform: [{ rotate: open ? '180deg' : '0deg' }] }}><AppIcon name="down" size={22} color={colors.text} /></View>
     </Pressable>
     {open ? <View style={styles.details}>
       <Text accessibilityRole="header" style={[styles.title, { color: colors.text }, textStyle(600)]}>Nhiệt độ món</Text>

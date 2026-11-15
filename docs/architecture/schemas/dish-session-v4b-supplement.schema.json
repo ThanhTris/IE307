@@ -47,7 +47,8 @@
         "updateDefaultPreferences",
         "result",
         "history",
-        "deleteHistory"
+        "deleteHistory",
+        "setReady"
       ]
     },
     "mealSlot": {
@@ -176,6 +177,15 @@
               "$ref": "#/$defs/priceReference"
             }
           ]
+        },
+        "origin": {
+          "enum": [
+            "north",
+            "central",
+            "south",
+            "west",
+            null
+          ]
         }
       },
       "additionalProperties": false
@@ -208,6 +218,10 @@
             "NOT_SUBMITTED",
             "ACCEPTED"
           ]
+        },
+        "ready": {
+          "type": "boolean",
+          "description": "Lobby readiness (ADR-028, migration 0055): false while the member is still choosing their taste; the host is always true."
         }
       },
       "additionalProperties": false
@@ -745,6 +759,22 @@
               }
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "command": {
+                "const": "setReady"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "payload": {
+                "$ref": "#/$defs/setReadyRequest"
+              }
+            }
+          }
         }
       ]
     },
@@ -837,7 +867,7 @@
         },
         "dishCount": {
           "type": "integer",
-          "minimum": 10,
+          "minimum": 5,
           "maximum": 20
         },
         "pool": {
@@ -974,7 +1004,7 @@
                 "const": 1
               },
               "pool": {
-                "minItems": 10,
+                "minItems": 5,
                 "maxItems": 20
               },
               "ownWaiting": {
@@ -1009,7 +1039,7 @@
                 "const": 1
               },
               "pool": {
-                "minItems": 10,
+                "minItems": 5,
                 "maxItems": 20
               }
             }
@@ -1922,6 +1952,9 @@
             },
             {
               "$ref": "#/$defs/historyPage"
+            },
+            {
+              "$ref": "#/$defs/readyAck"
             }
           ]
         }
@@ -1947,6 +1980,7 @@
         "RATE_LIMITED",
         "WORKER_NOT_READY",
         "NOT_READY",
+        "MEMBERS_NOT_READY",
         "UNSUPPORTED_CONTRACT_VERSION",
         "CATALOGUE_NOT_READY",
         "CONTRACT_MISMATCH",
@@ -2075,6 +2109,31 @@
           "additionalProperties": false
         },
         "sour": {
+          "type": "object",
+          "required": [
+            "present",
+            "intensity"
+          ],
+          "properties": {
+            "present": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "intensity": {
+              "enum": [
+                "none",
+                "low",
+                "medium",
+                "high",
+                "unknown"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "fatty": {
           "type": "object",
           "required": [
             "present",
@@ -2278,7 +2337,7 @@
       "properties": {
         "dishCount": {
           "type": "integer",
-          "minimum": 10,
+          "minimum": 5,
           "maximum": 20
         },
         "mealSlot": {
@@ -2407,7 +2466,7 @@
         },
         "dishCount": {
           "type": "integer",
-          "minimum": 10,
+          "minimum": 5,
           "maximum": 20
         },
         "mealSlot": {
@@ -2780,6 +2839,51 @@
         },
         "finalizedAt": {
           "$ref": "#/$defs/timestamp"
+        }
+      },
+      "additionalProperties": false
+    },
+    "setReadyRequest": {
+      "type": "object",
+      "required": [
+        "contractVersion",
+        "requestId",
+        "roomId",
+        "ready"
+      ],
+      "properties": {
+        "contractVersion": {
+          "const": "dish-session-v4/roadmap-v2/GM-07.B-supplement"
+        },
+        "requestId": {
+          "$ref": "#/$defs/requestId"
+        },
+        "roomId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "ready": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "readyAck": {
+      "type": "object",
+      "required": [
+        "accepted",
+        "version",
+        "ready"
+      ],
+      "properties": {
+        "accepted": {
+          "const": true
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "ready": {
+          "type": "boolean"
         }
       },
       "additionalProperties": false

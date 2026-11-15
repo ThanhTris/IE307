@@ -138,6 +138,8 @@ def exercise(db,rpc,check,users):
     snapshot=api('snapshot',roomId=room['roomId'])
     check('room preferences stay separate from updated defaults',snapshot['ownPreferences']==pref)
     check('peer cannot read other raw preference',api('snapshot',4,roomId=room['roomId'])['ownPreferences']==EMPTY)
+    api('updatePreferences',4,roomId=room['roomId'],expectedVersion=snapshot['version'],preferences=deepcopy(EMPTY))
+    snapshot=api('snapshot',roomId=room['roomId'])
     api('start',roomId=room['roomId'],expectedVersion=snapshot['version'])
     for who in [3,4]:
         snapshot=api('snapshot',who,roomId=room['roomId'])

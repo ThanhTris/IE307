@@ -51,29 +51,22 @@ describe('GM-26 — Vote Repository Unit Suite (Issue #87)', () => {
     });
   });
 
-  describe('Round 2 Elimination Cap: cap = max(1, floor(0.30 * N))', () => {
-    it('enforces cap = 1 for N = 1 (Node 638:9369 special case)', () => {
-      expect(getRoundTwoEliminationCap(1)).toBe(1);
+  describe('Round 2 Elimination Cap: cap = max(1, ceil(0.30 * N)) (ADR-023)', () => {
+    it('enforces cap = 1 for N = 1..3', () => {
+      for (const n of [1, 2, 3]) expect(getRoundTwoEliminationCap(n)).toBe(1);
     });
 
-    it('enforces cap = 1 for N = 2..6', () => {
-      expect(getRoundTwoEliminationCap(2)).toBe(1);
-      expect(getRoundTwoEliminationCap(3)).toBe(1);
-      expect(getRoundTwoEliminationCap(4)).toBe(1);
-      expect(getRoundTwoEliminationCap(5)).toBe(1);
-      expect(getRoundTwoEliminationCap(6)).toBe(1);
+    it('enforces cap = 2 for N = 4..6 (5 dishes already allow 2 removals)', () => {
+      for (const n of [4, 5, 6]) expect(getRoundTwoEliminationCap(n)).toBe(2);
     });
 
-    it('enforces cap = 2 for N = 7..9', () => {
-      expect(getRoundTwoEliminationCap(7)).toBe(2);
-      expect(getRoundTwoEliminationCap(8)).toBe(2);
-      expect(getRoundTwoEliminationCap(9)).toBe(2);
+    it('enforces cap = 3 for N = 7..10', () => {
+      for (const n of [7, 8, 9, 10]) expect(getRoundTwoEliminationCap(n)).toBe(3);
     });
 
-    it('enforces cap = 3 for N = 10..13', () => {
-      expect(getRoundTwoEliminationCap(10)).toBe(3);
-      expect(getRoundTwoEliminationCap(12)).toBe(3);
-      expect(getRoundTwoEliminationCap(13)).toBe(3);
+    it('grows with the pool up to 20 dishes without float rounding errors', () => {
+      expect([11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map(getRoundTwoEliminationCap)).toEqual([4, 4, 4, 5, 5, 5, 6, 6, 6, 6]);
+      for (let n = 1; n <= 20; n++) expect(getRoundTwoEliminationCap(n)).toBe(Math.max(1, Math.ceil(Math.round(0.3 * n * 1e6) / 1e6)));
     });
 
     it('returns 0 for non-positive candidate counts', () => {
@@ -163,6 +156,29 @@ describe('GM-26 — Vote Repository Unit Suite (Issue #87)', () => {
           ],
         },
       });
+    });
+
+    it('sends the per-card decision time with a round-1 ballot, clamped to dishes in the ballot', async () => {
+      const mockRpc = jest.fn().mockResolvedValue({ ok: true, data: { accepted: true, round: 1, poolVersion: 1, submittedAt: '2026-11-05T12:00:00Z' }, version: 2, state: 'WAITING_1' });
+      const repo = createLiveVoteRepository({ rpcCaller: mockRpc });
+      await repo.submitBallot({
+        roomId: 'room_live_01', round: 1, poolVersion: 1, expectedVersion: 1, requestId: 'req_pace',
+        votes: [{ roundDishId: 'dish_01', vote: 'WANT' }, { roundDishId: 'dish_02', vote: 'OK' }],
+        pace: [{ roundDishId: 'dish_01', ms: 1234.6 }, { roundDishId: 'dish_02', ms: 999999 }, { roundDishId: 'other', ms: 10 }, { roundDishId: 'dish_01', ms: Number.NaN }],
+      });
+      const payload = mockRpc.mock.calls[0]![1].payload;
+      expect(payload.pace).toEqual([{ roundDishId: 'dish_01', ms: 1235 }, { roundDishId: 'dish_02', ms: 60000 }]);
+      expect(Object.keys(payload).sort()).toEqual(['contractVersion', 'expectedVersion', 'pace', 'poolVersion', 'requestId', 'roomId', 'round', 'votes']);
+    });
+
+    it('does not send pace for round 2 or when none was measured', async () => {
+      const ok = { ok: true, data: { accepted: true, round: 1, poolVersion: 1, submittedAt: '2026-11-05T12:00:00Z' }, version: 2, state: 'WAITING_1' };
+      const mockRpc = jest.fn().mockResolvedValue(ok);
+      const repo = createLiveVoteRepository({ rpcCaller: mockRpc });
+      await repo.submitBallot({ roomId: 'room_a', round: 1, poolVersion: 1, expectedVersion: 1, requestId: 'req_none', votes: [{ roundDishId: 'd1', vote: 'WANT' }] });
+      expect(mockRpc.mock.calls[0]![1].payload).not.toHaveProperty('pace');
+      await repo.submitBallot({ roomId: 'room_b', round: 1, poolVersion: 1, expectedVersion: 1, requestId: 'req_empty', votes: [{ roundDishId: 'd1', vote: 'WANT' }], pace: [] });
+      expect(mockRpc.mock.calls[1]![1].payload).not.toHaveProperty('pace');
     });
 
     it('rejects Round 2 submission before calling server when REMOVE count exceeds cap', async () => {

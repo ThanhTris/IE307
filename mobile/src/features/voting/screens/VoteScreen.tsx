@@ -1,7 +1,5 @@
-import React from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  ActivityIndicator,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -12,16 +10,22 @@ import type { ApiClient, PoolDish, RoomResult } from '../../../data/api';
 import { MOCK_DISHES } from '../fixtures';
 import {
   AppButton,
+  StatusNotice,
   AppHeader,
   type VoteValue,
 } from '../../../shared/ui';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import type { VoteScreenScenario } from '../fixtures';
+import { ToastNotice } from '../../../shared/ui/feedback/Toast';
+import { VoteSkeleton } from '../components/VoteSkeleton';
 import type { VoteRepository } from '../services/voteRepository';
 import { useRoundOneVoting } from '../hooks/useRoundOneVoting';
 import { VoteScenarioAndStatusBanner } from '../components/VoteScenarioAndStatusBanner';
 import { VoteDishCardItem } from '../components/VoteDishCardItem';
-import { FlashcardDeckView } from '../components/FlashcardDeckView';
+import { FlashcardRoundView } from '../components/FlashcardRoundView';
+import { RoundWaitingView } from '../components/RoundWaitingView';
+import { RoundTwoNotice } from '../components/RoundTwoNotice';
+import { CONTAINER_STYLE, CONTAINER_GUTTER } from '../../../shared/ui/layout/ScreenContainer';
 
 export type VoteScreenProps = {
   pool?: PoolDish[];
@@ -61,6 +65,18 @@ export function VoteScreen({
   onBack,
 }: VoteScreenProps) {
   const { colors } = useShellTheme();
+  // Round 1 found no winner: tell the player before the screen moves on to round 2.
+  const [roundTwoNotice, setRoundTwoNotice] = useState<PoolDish[] | null>(null);
+  const announceRoundTwo = useCallback((candidates: PoolDish[]) => setRoundTwoNotice(candidates), []);
+  // The notice stays on screen (blank background) while the app moves to round 2, so nothing of round 1 flashes back
+  // behind the sliding screen; it goes only once.
+  const movedToRoundTwo = useRef(false);
+  const continueToRoundTwo = useCallback(() => {
+    if (!roundTwoNotice || movedToRoundTwo.current) return;
+    movedToRoundTwo.current = true;
+    onGoToFinalRound?.(roundTwoNotice);
+  }, [roundTwoNotice, onGoToFinalRound]);
+  const roundTwoDialog = roundTwoNotice ? <RoundTwoNotice remaining={roundTwoNotice.length} onContinue={continueToRoundTwo} /> : null;
   // Hide QA scenario picker in real mode when repository is provided (F2)
   const shouldShowScenarioPicker = showScenarioPicker ?? !repository;
 
@@ -82,8 +98,8 @@ export function VoteScreen({
     isLocked,
     activeCardIndex,
     viewMode,
-    setViewMode,
     canUndo,
+    handleSwipeVote,
     waitingCountdown,
     isHost,
     setIsHost,
@@ -98,11 +114,8 @@ export function VoteScreen({
     handleHostEarlyFinish,
     handleRetryWaiting,
     handleVote,
-    handleCardVote,
     handleCardDoubleTap,
     handleUndoCard,
-    handleNextCard,
-    handlePrevCard,
     handleClearVote,
     handleSubmit,
   } = useRoundOneVoting({
@@ -117,25 +130,25 @@ export function VoteScreen({
     simulateDelayMs,
     initialIsHost,
     initialViewMode,
-    onRoundTwo: onGoToFinalRound,
+    onRoundTwo: onGoToFinalRound ? announceRoundTwo : undefined,
     onGoToResult,
     onGoToNoConsensus,
   });
 
   const pool = effectivePool;
-  const currentDish = pool[activeCardIndex] || pool[0];
   const votedCount = pool.filter(dish => Boolean(votes[dish.roundDishId])).length;
+  // Flashcard deck: answering the last card sends the ballot straight away (no extra "done" screen).
+  const [deckFinished, setDeckFinished] = useState(false);
+  const submit = () => void handleSubmit(submissionState === 'error' ? 'round_two' : undefined);
+  useEffect(() => {
+    if (viewMode === 'flashcard' && deckFinished && allVoted && submissionState === 'idle') void handleSubmit();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deckFinished, allVoted, submissionState, viewMode]);
 
   if (isLoadingSnapshot) {
     return (
       <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-        <AppHeader title="Bình chọn · Vòng 1" onPressBrand={onBack} colors={colors} />
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, { color: colors.text }]}>
-            Đang tải dữ liệu phòng bình chọn từ hệ thống…
-          </Text>
-        </View>
+        <VoteSkeleton label="Đang tải phòng bình chọn" colors={colors} />
       </SafeAreaView>
     );
   }
@@ -143,24 +156,80 @@ export function VoteScreen({
   if (snapshotError && pool.length === 0) {
     return (
       <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-        <AppHeader title="Bình chọn · Vòng 1" onPressBrand={onBack} colors={colors} />
+        <AppHeader variant="back" title="Vòng 1" centeredTitle hideDivider onPressBack={onBack} colors={colors} />
         <View style={styles.loadingContainer}>
-          <Text style={[styles.errorTitle, { color: colors.danger }]}>
-            Không thể tải dữ liệu phòng
-          </Text>
-          <Text style={[styles.errorSubtitle, { color: colors.muted }]}>
-            Lỗi: {snapshotError}. Vui lòng kiểm tra lại kết nối mạng.
-          </Text>
-          <AppButton label="Thử lại tải phòng" onPress={() => void fetchSnapshot()} colors={colors} />
+          <StatusNotice title="Không thể tải dữ liệu phòng" message={`Lỗi: ${snapshotError}. Vui lòng kiểm tra lại kết nối mạng.`} tone="error" actionLabel="Thử lại tải phòng" onAction={() => void fetchSnapshot()} colors={colors} />
         </View>
+      </SafeAreaView>
+    );
+  }
+
+  // Round 1 found no winner: the dialog covers the whole screen and the app moves on to round 2, so nothing of round 1
+  // is drawn behind it, only the plain background.
+  if (roundTwoNotice) {
+    return <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+      {submissionState === 'error' && errorMessage ? <ToastNotice title="Chưa gửi được phiếu" message={errorMessage} tone="error" /> : null}
+      {waitingError ? <ToastNotice title={waitingError} tone="error" /> : null}
+      {roundTwoDialog}
+    </SafeAreaView>;
+  }
+
+  if (viewMode === 'flashcard' && !shouldShowScenarioPicker) {
+    const sent = submissionState === 'pending' || submissionState === 'ack';
+    return (
+      <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+        {submissionState === 'error' && errorMessage ? <ToastNotice title="Chưa gửi được phiếu" message={errorMessage} tone="error" /> : null}
+        {waitingError ? <ToastNotice title={waitingError} tone="error" /> : null}
+        {sent ? (
+          <>
+            <RoundWaitingView
+              pending={submissionState === 'pending'}
+              waiting={isWaitingForMembers}
+              needsRoundTwo={needsRoundTwo}
+              countdown={waitingCountdown}
+              acknowledged={rosterAcknowledgedCount}
+              total={totalRosterCount}
+              isHost={isHost}
+              canFinish={canHostEarlyFinish}
+              onFinish={handleHostEarlyFinish}
+              onRoundTwo={onGoToFinalRound ? () => onGoToFinalRound(roundTwoCandidates) : undefined}
+              colors={colors}
+            />
+            {waitingError || needsWaitingTransition ? (
+              <AppButton label={isRetryingWaiting ? 'Đang thử lại…' : 'Thử lại vào phòng chờ'} disabled={isRetryingWaiting} variant="quiet" onPress={handleRetryWaiting} colors={colors} />
+            ) : null}
+          </>
+        ) : (
+          <FlashcardRoundView
+            pool={pool}
+            votes={votes}
+            index={activeCardIndex}
+            retry={deckFinished && submissionState === 'error'}
+            locked={isLocked}
+            canUndo={(deckFinished && submissionState === 'idle') || canUndo}
+            onVote={(dish, vote) => {
+              handleSwipeVote(dish.roundDishId, vote);
+              if (activeCardIndex >= pool.length - 1) setDeckFinished(true);
+            }}
+            onUndo={() => {
+              // Undo takes back the answer of the card you return to, so the progress bar goes down too.
+              if (deckFinished) { setDeckFinished(false); handleClearVote(pool[activeCardIndex]!.roundDishId); return; }
+              const previous = pool[activeCardIndex - 1];
+              if (previous) handleClearVote(previous.roundDishId);
+              handleUndoCard();
+            }}
+            onRetry={submit}
+            colors={colors}
+          />
+        )}
       </SafeAreaView>
     );
   }
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <AppHeader title="Bình chọn · Vòng 1" onPressBrand={onBack} colors={colors} />
-      <ScrollView contentContainerStyle={styles.content}>
+      <AppHeader variant="back" title="Bình chọn · Vòng 1" centeredTitle hideDivider onPressBack={onBack} colors={colors} />
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <VoteScenarioAndStatusBanner
           showScenarioPicker={shouldShowScenarioPicker}
           submissionState={submissionState}
@@ -191,10 +260,8 @@ export function VoteScreen({
 
         {/* Waiting error banner with retry (F4) */}
         {waitingError || needsWaitingTransition ? (
-          <View style={[styles.errorBanner, { backgroundColor: colors.surface, borderColor: colors.danger }]}>
-            <Text style={[styles.errorBannerText, { color: colors.danger }]}>
-              {waitingError ? `⚠ ${waitingError}` : 'Phiếu đã được nhận; đang hoàn tất bước vào phòng chờ.'}
-            </Text>
+          <View>
+            {waitingError ? <ToastNotice title={waitingError} tone="error" /> : null}
             <AppButton
               label={isRetryingWaiting ? 'Đang thử lại…' : 'Thử lại vào hàng chờ'}
               disabled={isRetryingWaiting}
@@ -205,74 +272,7 @@ export function VoteScreen({
           </View>
         ) : null}
 
-        {/* View Mode Switcher */}
-        {submissionState === 'idle' && pool.length > 0 ? (
-          <View style={styles.viewModeRow}>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Chuyển sang chế độ Flashcard"
-              onPress={() => setViewMode('flashcard')}
-              style={[
-                styles.viewModeBtn,
-                {
-                  backgroundColor: viewMode === 'flashcard' ? colors.primary : colors.surface,
-                  borderColor: colors.primary,
-                },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.viewModeBtnText,
-                  { color: viewMode === 'flashcard' ? colors.onPrimary : colors.primary },
-                ]}
-              >
-                🎴 Flashcard từng thẻ
-              </Text>
-            </Pressable>
-
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Chuyển sang chế độ Danh sách đầy đủ"
-              onPress={() => setViewMode('list')}
-              style={[
-                styles.viewModeBtn,
-                {
-                  backgroundColor: viewMode === 'list' ? colors.primary : colors.surface,
-                  borderColor: colors.primary,
-                },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.viewModeBtnText,
-                  { color: viewMode === 'list' ? colors.onPrimary : colors.primary },
-                ]}
-              >
-                📋 Toàn bộ danh sách ({votedCount}/{pool.length})
-              </Text>
-            </Pressable>
-          </View>
-        ) : null}
-
-        {/* Flashcard or List view */}
-        {viewMode === 'flashcard' && currentDish ? (
-          <FlashcardDeckView
-            dish={currentDish}
-            cardIndex={activeCardIndex}
-            totalCards={pool.length}
-            votedCount={votedCount}
-            currentVote={votes[currentDish.roundDishId]}
-            isLocked={isLocked}
-            canUndo={canUndo}
-            onVote={vote => handleCardVote(currentDish.roundDishId, vote)}
-            onCardPress={() => handleCardDoubleTap(currentDish.roundDishId)}
-            onUndo={handleUndoCard}
-            onNext={handleNextCard}
-            onPrev={handlePrevCard}
-            onClearVote={() => handleClearVote(currentDish.roundDishId)}
-            colors={colors}
-          />
-        ) : (
+        {(
           <View style={styles.dishList}>
             {pool.map((dish, index) => (
               <VoteDishCardItem
@@ -325,13 +325,9 @@ export function VoteScreen({
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  content: { padding: 16, gap: 16, maxWidth: 600, width: '100%', alignSelf: 'center' },
+  content: { padding: CONTAINER_GUTTER, gap: 16, ...CONTAINER_STYLE },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24, gap: 16 },
   loadingText: { fontSize: 14, fontWeight: '600', textAlign: 'center' },
-  errorTitle: { fontSize: 16, fontWeight: '800', textAlign: 'center' },
-  errorSubtitle: { fontSize: 13, textAlign: 'center', marginBottom: 12 },
-  errorBanner: { padding: 12, borderRadius: 10, borderWidth: 1, gap: 8 },
-  errorBannerText: { fontSize: 13, fontWeight: '600' },
   viewModeRow: { flexDirection: 'row', gap: 10, justifyContent: 'center' },
   viewModeBtn: { flex: 1, minHeight: 44, borderRadius: 10, borderWidth: 1.5, justifyContent: 'center', alignItems: 'center' },
   viewModeBtnText: { fontSize: 13, fontWeight: '700' },

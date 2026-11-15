@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Image, StyleSheet, Text, View, type ImageSourcePropType } from 'react-native';
+import { Image, StyleSheet, View, type ImageSourcePropType } from 'react-native';
 import type { ComponentThemeProps } from '../types';
+import { ChoiceIconView } from '../icons/ChoiceIcon';
 
 export function ResultDishArtwork({ source, uri, label, size = 88, winner, imageScale = 1, compact = false, colors }: ComponentThemeProps & { source?: ImageSourcePropType; uri?: string; label: string; size?: number; winner?: boolean; imageScale?: number; compact?: boolean }) {
   const [failed, setFailed] = useState<string>();
@@ -10,7 +11,7 @@ export function ResultDishArtwork({ source, uri, label, size = 88, winner, image
   const artworkLabel = actual && failed !== identity ? label : `${label} · Chưa có ảnh`;
   return <View accessible accessibilityLabel={winner ? `${artworkLabel} · Món chiến thắng` : artworkLabel} style={[styles.frame, { width: size, height: size, borderRadius: size / 2, borderColor: winner ? colors?.primary : colors?.line, backgroundColor: colors?.warm }]}>
     {actual && failed !== identity ? <View style={[styles.clip, { borderRadius: size / 2 }]}><Image source={actual} accessible={false} resizeMode="contain" onError={() => setFailed(identity)} style={[styles.image, { transform: [{ scale: imageScale }] }]} /></View> : (
-      <Text maxFontSizeMultiplier={compact ? 1.4 : undefined} style={[styles.fallback, compact && styles.compactFallback, { color: colors?.text }]}>Chưa có ảnh</Text>
+      <ChoiceIconView icon={{ food: 'silverware-fork-knife' }} size={Math.round(size * 0.42)} color={colors?.primary ?? '#2E9A3C'} />
     )}
   </View>;
 }

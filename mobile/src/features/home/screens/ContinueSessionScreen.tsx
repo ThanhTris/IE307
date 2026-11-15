@@ -11,7 +11,7 @@ import { useHomeRoom } from '../hooks/useHomeRoom';
 const roomStage = (room: RoomSnapshot) => room.state === 'LOBBY' ? 'Đang ở phòng chờ' : room.state === 'ROUND_2' ? 'Vòng 2 · Đang chọn món' : 'Vòng 1 · Đang chọn món';
 
 export function ContinueSessionScreen({ repository, receipt, userId, enabled = true, isInitializing = false, onContinue, onHome }: {
-  repository: RoomEntryRepository; receipt?: RoomEntryReceipt | null; userId?: string;
+  repository: RoomEntryRepository; receipt?: Pick<RoomEntryReceipt, 'roomId'> & Partial<RoomEntryReceipt> | null; userId?: string;
   enabled?: boolean; isInitializing?: boolean; onContinue: (room: RoomSnapshot) => void; onHome: () => void;
 }) {
   const { colors, dark } = useShellTheme();
@@ -24,8 +24,9 @@ export function ContinueSessionScreen({ repository, receipt, userId, enabled = t
     {isInitializing ? <StatusNotice title="Đang khôi phục phiên…" colors={colors} /> : null}
     {receipt && !isInitializing && (!enabled || !userId) ? <StatusNotice title="Cần khôi phục danh tính" message="Về trang chủ và khôi phục phiên trước khi kiểm tra phòng đã lưu." colors={colors} /> : null}
     {room.loading ? <StatusNotice title="Đang kiểm tra phòng…" colors={colors} /> : null}
-    {room.error ? <StatusNotice title={room.unavailable ? 'Không thể tiếp tục phòng này' : 'Chưa kiểm tra được phòng'} message={errorCopy[room.error]} actionLabel={room.unavailable ? undefined : 'Kiểm tra lại phòng'} onAction={room.unavailable ? undefined : room.retry} tone="warning" colors={colors} /> : null}
-    {room.data && !room.active ? <StatusNotice title={room.data.state === 'EXPIRED' ? 'Phòng đã hết hạn' : 'Phòng đã kết thúc'} message="Về trang chủ để bắt đầu một phòng khác." colors={colors} /> : null}
+    {room.error ? <StatusNotice title={room.unavailable ? 'Không thể tiếp tục phòng này' : 'Chưa kiểm tra được phòng'} message={errorCopy[room.error]} actionLabel={room.unavailable ? undefined : 'Kiểm tra lại phòng'} onAction={room.unavailable ? undefined : room.retry} tone={room.unavailable ? undefined : 'error'} colors={colors} /> : null}
+    {room.data && !room.active && (room.data.state === 'ROUND_2' || room.data.state === 'WAITING_2') ? <StatusNotice title="Phòng đã sang vòng 2" message="Không thể vào lại nữa. Bạn sẽ nhận kết quả khi phòng chốt." colors={colors} /> : null}
+    {room.data && !room.active && room.data.state !== 'ROUND_2' && room.data.state !== 'WAITING_2' ? <StatusNotice title={room.data.state === 'EXPIRED' ? 'Phòng đã hết hạn' : 'Phòng đã kết thúc'} message="Về trang chủ để bắt đầu một phòng khác." colors={colors} /> : null}
     {room.active && room.data ? <>
       <View style={[styles.card, { backgroundColor: dark ? colors.surface : colors.onPrimary, borderColor: colors.line }]}>
         <Text style={[styles.roomTitle, { color: colors.text }, textStyle(600)]}>{host ? `Phòng của ${host.displayName}` : `Phòng #${room.data.code}`}</Text>
@@ -37,7 +38,7 @@ export function ContinueSessionScreen({ repository, receipt, userId, enabled = t
     </> : null}
     <View style={styles.spacer} />
     <View style={styles.actions}>
-      <AppButton label="Tiếp tục phiên" disabled={!enabled || !room.active} onPress={() => { if (room.active && room.data) onContinue(room.data); }} textStyle={textStyle(600)} colors={colors} />
+      <AppButton label="Quay lại phòng" disabled={!enabled || !room.active} onPress={() => { if (room.active && room.data) onContinue(room.data); }} textStyle={textStyle(600)} colors={colors} />
       <AppButton label="Về trang chủ" variant="secondary" onPress={onHome} textStyle={textStyle(600)} colors={colors} />
     </View>
   </HomeFlowFrame>;

@@ -14,13 +14,16 @@ for (const row of fixtures.cases) test(`independent vector: ${row.id}`, () => {
   if (row.expected.error) assert.throws(() => decide(input), RangeError);
   else assert.deepEqual(decide(input), row.expected);
 });
-test('accepts exactly roster2..20, not1/21, and initial pool10..20', () => {
+test('accepts exactly roster2..20, not1/21, and initial pool5..20 (ADR-024)', () => {
   for (let n = 2; n <= 20; n++) {
     const input = { ...snapshot(), roster: Array.from({ length: n }, (_, i) => `u${i}`), round1: { u0: ballot(pool, 'OK') } };
     assert.equal(decide(input).status, 'ROUND_2');
   }
   for (const n of [0, 1, 21]) assert.throws(() => decide({ ...snapshot(), roster: Array.from({ length: n }, (_, i) => `u${i}`) }), RangeError);
-  for (const n of [9, 21]) assert.throws(() => decide({ ...snapshot(), pool: Array.from({ length: n }, (_, i) => `x${i}`) }), RangeError);
+  for (const n of [4, 21]) assert.throws(() => decide({ ...snapshot(), pool: Array.from({ length: n }, (_, i) => `x${i}`) }), RangeError);
+  // A shortage pool of 5 dishes decides like any other.
+  const small = Array.from({ length: 5 }, (_, i) => `s${i}`);
+  assert.equal(decide({ ...snapshot(), pool: small, round1: { a: ballot(small, 'WANT'), b: ballot(small, 'WANT') } }).status, 'DECIDED');
   for (const n of [-1, 21, 1.5, NaN, Infinity, '1', null]) assert.throws(() => cap(n), RangeError);
   assert.equal(cap(0), 0);
 });

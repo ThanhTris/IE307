@@ -82,7 +82,7 @@ describe('PR157 reviewer contract regression', () => {
       .mockResolvedValueOnce({ ok: false, error: { messageKey: 'NOT_READY' } })
       .mockResolvedValue({ ok: true, data: { capability: 'scored-v4', result } });
     await render(<LiveDishResultScreen {...props} repository={repo(read)} pollIntervalMs={200} />);
-    expect(screen.getByText('Đang chốt kết quả')).toBeOnTheScreen();
+    expect(screen.getByLabelText('Đang chốt kết quả')).toBeOnTheScreen();
     await waitFor(() => expect(read.mock.calls.length).toBeGreaterThan(1));
   });
   test('clears room A result while opening room B', async () => {
@@ -94,7 +94,7 @@ describe('PR157 reviewer contract regression', () => {
     expect(screen.getAllByText(dish.name).length).toBeGreaterThan(0);
     await view.rerender(<LiveDishResultScreen {...props} roomId="room-b" repository={repository} />);
     expect(screen.queryAllByText(dish.name)).toEqual([]);
-    expect(screen.getByText('Đang tải kết quả')).toBeOnTheScreen();
+    expect(screen.getByLabelText('Đang tải kết quả')).toBeOnTheScreen();
   });
   test('renders an error and retry when Places returns ok:false', async () => {
     const read = jest.fn().mockResolvedValue({ ok: true, data: { capability: 'scored-v4', result } });
@@ -102,7 +102,8 @@ describe('PR157 reviewer contract regression', () => {
     await render(<LiveDishResultScreen {...props} repository={repo(read, { fetchNearbyPlaces: fetchPlaces })} />);
     await dismissCelebration();
     expect(screen.getByText(/Không tải được danh sách quán|Bạn đang ngoại tuyến/)).toBeOnTheScreen();
-    expect(screen.getByRole('button', { name: /^Thử lại( tìm quán)?$/ })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Mở Google Maps' })).toBeEnabled();
+    expect(screen.queryByRole('button', { name: /^Thử lại/ })).toBeNull();
     expect(screen.getAllByText(dish.name).length).toBeGreaterThan(0);
   });
   test('does not leave Places loading forever after failed retry', async () => {
@@ -112,9 +113,8 @@ describe('PR157 reviewer contract regression', () => {
       .mockResolvedValue({ ok: false, error: { messageKey: 'NETWORK_ERROR' } });
     await render(<LiveDishResultScreen {...props} repository={repo(read, { fetchNearbyPlaces: fetchPlaces })} />);
     await dismissCelebration();
-    await fireEvent.press(screen.getByRole('button', { name: 'Thử lại' }));
     expect(screen.queryByLabelText('Đang tìm quán')).toBeNull();
-    expect(screen.getByRole('button', { name: /^Thử lại( tìm quán)?$/ })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Mở Google Maps' })).toBeEnabled();
   });
   test('honors a forced access rejection rather than keeping an authorized result in cache', async () => {
     const rpc = jest.fn().mockResolvedValueOnce({ ok: true, data: clone() })

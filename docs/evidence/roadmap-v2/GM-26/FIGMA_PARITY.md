@@ -90,3 +90,10 @@ flowchart TD
 
 - **Thiết bị Android thật**: `Not run`. Chưa kết nối thiết bị qua ADB để so sánh pixel và visual render trên các viewport khác nhau (320dp, 360dp, 412dp) và font scale 200%.
 - **Backend Staging trực tiếp**: `Not run`. Kiểm thử tự động đã bao phủ 100% logic repository, RPC contract v4 và UI components bằng jest mocks; việc kết nối instance GoTrue/Supabase production từ xa chờ Trí nghiệm thu.
+
+## Cập nhật Stage 3A AVD trên PR #167 — 2026-11-15
+
+- Đã kiểm thử thực tế trên AVD `Medium_Phone_API_37.0` (`emulator-5554`, Expo Go) + QA backend local `pr167-ci-fix-v7` (`127.0.0.1:54371`, migrations `0001..0057`):
+  - **Vòng 1 & `WAITING_1`**: Hiển thị flashcard sắp ưu tiên mềm theo khẩu vị nhóm (`Cơm tấm` lên đầu), thử nút `Hoàn tác`, hoàn tất 10 món và vào màn chờ `1/2 thành viên đã gửi phiếu` với vòng đếm ngược 60s.
+  - **Chuyển Vòng 2 (`ADR-023` cap ceil)**: Sau khi peer nộp R1 `OK`, `RoundTwoNotice` hiển thị `Còn 10 món vào vòng 2. Mỗi người loại tối đa 3 món.`; chọn loại `Cơm cá chiên` ở Vòng 2, bấm `Gửi phiếu`, và chuyển sang màn kết quả `DECIDED` (`ACCEPTABLE_FINAL`) sau khi peer nộp `KEEP`.
+  - Ảnh chụp đối chiếu được lưu tại `review-results/artifacts/pr167-avd/` (local ignored). **Chặng 3B (điện thoại thật qua USB)** giữ nguyên **Not run**.

@@ -280,7 +280,7 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
       />
     );
 
-    expect(screen.getByText('Đang chốt kết quả')).toBeOnTheScreen();
+    expect(screen.getByLabelText('Đang chốt kết quả')).toBeOnTheScreen();
     expect(repo.getResult).toHaveBeenCalledTimes(1);
 
     // Wait for the short poll to tick
@@ -308,7 +308,7 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
       />
     );
 
-    expect(screen.getByText('Đang chốt kết quả')).toBeOnTheScreen();
+    expect(screen.getByLabelText('Đang chốt kết quả')).toBeOnTheScreen();
     expect(repo.getResult).toHaveBeenCalled();
     const callsBeforeUnmount = repo.getResult.mock.calls.length;
 
@@ -352,13 +352,13 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
     const { rerender } = await render(<TestHost roomId="room_A" />);
 
     // Initially loading room A
-    expect(screen.getByText('Đang tải kết quả')).toBeOnTheScreen();
+    expect(screen.getByLabelText('Đang tải kết quả')).toBeOnTheScreen();
 
     // Switch to room B before room A resolves
     await rerender(<TestHost roomId="room_B" />);
 
     // Room B is immediately in loading state
-    expect(screen.getByText('Đang tải kết quả')).toBeOnTheScreen();
+    expect(screen.getByLabelText('Đang tải kết quả')).toBeOnTheScreen();
 
     // Late response for room A arrives
     resolveA!({
@@ -368,7 +368,7 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
 
     // Room A response must be ignored; room A winner must NOT leak into room B
     expect(screen.queryByText('Phở bò tái nạm')).toBeNull();
-    expect(screen.getByText('Đang tải kết quả')).toBeOnTheScreen();
+    expect(screen.getByLabelText('Đang tải kết quả')).toBeOnTheScreen();
 
     // Now resolve room B
     resolveB!({
@@ -390,33 +390,8 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
     expect(screen.queryByText('Phở bò tái nạm')).toBeNull();
   });
 
-  test('initial Places failure shows error card with retry button, and retry failure does not lock spinner', async () => {
-    let failPlaces = true;
-    const mockFetchNearbyPlaces = jest.fn().mockImplementation(async () => {
-      if (failPlaces) {
-        return { ok: false, error: { messageKey: 'NETWORK_ERROR' } };
-      }
-      return {
-        ok: true,
-        data: {
-          resultId: decidedResult.resultId,
-          winnerDishId: decidedResult.winner!.dishId,
-          status: 'ready',
-          places: [
-            {
-              id: 'p1',
-              name: 'Quán Phở Thìn 13 Lò Đúc',
-              address: '13 Lò Đúc, Hà Nội',
-              distanceM: 500,
-              latitude: 21.018,
-              longitude: 105.856,
-              attribution: null,
-            },
-          ],
-          fetchedAt: '2026-11-06T10:10:00Z',
-        },
-      };
-    });
+  test('initial Places failure shows the offline notice and one Maps button, no spinner', async () => {
+    const mockFetchNearbyPlaces = jest.fn().mockResolvedValue({ ok: false, error: { messageKey: 'NETWORK_ERROR' } });
 
     const repo = {
       getResult: jest.fn().mockResolvedValue({ ok: true, data: { capability: 'scored-v4' as const, result: decidedResult } }),
@@ -437,29 +412,14 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
       fireEvent.press(dismiss);
     }
 
-    // Initial failure must display offline error notice and retry button (not unsupported card!)
+    // Initial failure shows the offline notice and a single Maps button (no retry button).
     expect(await screen.findByText('Bạn đang ngoại tuyến')).toBeOnTheScreen();
-    const retryBtn = await screen.findByRole('button', { name: 'Thử lại tìm quán' });
-    expect(retryBtn).toBeOnTheScreen();
-
-    // Press retry while still failing
-    fireEvent.press(retryBtn);
-
-    // Wait a tick for useResultAction to release lock
-    await new Promise(r => setTimeout(r, 50));
-
-    // Must still show retry button and not get stuck in infinite spinner
-    const retryBtnAfterFail = await screen.findByRole('button', { name: 'Thử lại tìm quán' });
-    expect(retryBtnAfterFail).toBeOnTheScreen();
-
-    // Now succeed on retry
-    failPlaces = false;
-    fireEvent.press(retryBtnAfterFail);
-
-    expect(await screen.findByText('Quán Phở Thìn 13 Lò Đúc')).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Mở Google Maps' })).toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: /^Thử lại/ })).toBeNull();
+    expect(screen.queryByLabelText('Đang tìm quán')).toBeNull();
   });
 
-  test('renders one shared score in each pedestal when dishes tie', async () => {
+  test('puts tied dishes on separate pedestals in server order', async () => {
     const tieResult: ScoredResult = {
       ...decidedResult,
       round1BallotCount: 4, // max score = 2 * 4 = 8
@@ -513,10 +473,13 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
     const dismiss = await screen.findByText('Chạm để bỏ qua');
     fireEvent.press(dismiss);
 
-    const first = within(screen.getByTestId('podium-group-1'));
-    expect(first.getAllByText('8 điểm')).toHaveLength(1);
-    expect(within(first.getByTestId('podium-bar-1')).getByText('8 điểm')).toBeOnTheScreen();
-    expect(within(screen.getByTestId('podium-bar-2')).getByText('6 điểm')).toBeOnTheScreen();
+    // Two dishes share 8 points: each still gets its own pedestal (positions 1 and 2), the third is 6 points.
+    expect(within(screen.getByTestId('podium-bar-1')).getByText('8 điểm')).toBeOnTheScreen();
+    expect(within(screen.getByTestId('podium-bar-2')).getByText('8 điểm')).toBeOnTheScreen();
+    expect(within(screen.getByTestId('podium-bar-3')).getByText('6 điểm')).toBeOnTheScreen();
+    expect(within(screen.getByTestId('podium-group-1')).getByText(tieResult.topDishes[0]!.dish.name)).toBeOnTheScreen();
+    expect(within(screen.getByTestId('podium-group-2')).getByText('Bún chả Hà Nội')).toBeOnTheScreen();
+    expect(screen.getByText(/Đồng điểm: xếp theo/)).toBeOnTheScreen();
   });
 
   test('external actions return ok: false pending GM-30', async () => {
@@ -537,8 +500,8 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
     const mapsBtn = await screen.findByText('Mở bản đồ');
     fireEvent.press(mapsBtn);
 
-    // Displays not yet supported message from useResultAction
-    expect(await screen.findByText(/Đã nhận yêu cầu của bạn|Chưa thực hiện được thao tác/)).toBeOnTheScreen();
+    // A successful action says nothing; only a failure is reported (as an error toast).
+    expect(screen.queryByText(/Đã nhận yêu cầu của bạn/)).toBeNull();
   });
 
   test('renders result when resultId matches server response (GM-28 navigation)', async () => {
@@ -848,7 +811,9 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
       // Verifies winner and Top 3 are strictly preserved in real mode even with no key
       expect(screen.getAllByText('Phở bò tái nạm').length).toBeGreaterThan(0);
       expect(screen.getByText('Cơm tấm sườn bì')).toBeTruthy();
-      expect(await screen.findByText('Chưa thể hiển thị bản đồ')).toBeTruthy();
+      // No key: the embedded map shows instead, without a stray "no map" caption under it.
+      expect(await screen.findByTestId('embedded-dish-map')).toBeTruthy();
+      expect(screen.queryByText('Chưa thể hiển thị bản đồ')).toBeNull();
     });
 
     test('DishResultEntry forwards placesConfig to LiveDishResultScreen in real mode', async () => {

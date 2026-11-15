@@ -13,7 +13,6 @@ export default function ProfileRoute() {
       displayName={live.user?.displayName ?? ''}
       onNavigate={path => router.push(path as Href)}
       onHome={home}
-      onTutorial={() => router.push('/tutorial')}
     />
   </RequireActiveSession>;
 }

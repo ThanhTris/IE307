@@ -36,6 +36,8 @@ export interface FlavorProfile {
   salty: FlavorItem;
   sweet: FlavorItem;
   sour: FlavorItem;
+  /** Béo / Ngậy (ADR-025). Optional: older servers and data do not send it. */
+  fatty?: FlavorItem;
 }
 
 export type ServiceMode = 'dine_in' | 'takeaway' | 'delivery';
@@ -63,7 +65,7 @@ export interface PoolDish {
   description?: string | null;
   cuisineIds: string[];
   categoryIds: string[];
-  origin?: 'north' | 'central' | 'south' | 'unknown' | 'not_applicable';
+  origin?: 'north' | 'central' | 'south' | 'west' | 'unknown' | 'not_applicable' | null;
   temperature?: 'hot' | 'warm' | 'cold' | 'ambient' | 'unknown' | null;
   flavor?: FlavorProfile | null;
   artwork?: DishArtwork | null;

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { ErrorCode, JoinRoomResponse } from '../../../data/api/contracts';
 import type { JoinRoomEntryProps } from '../screens/JoinRoomScreen';
 import { normalizeRoomCode, validDisplayName, validRoomCode } from '../services/roomEntry';
+import { parseJoinRoomUrl } from '../services/joinLinks';
 import { validPublicPreview, type JoinRoomPublicPreview } from '../services/joinPreview';
 import { useRoomSubmission } from './useRoomEntry';
 
@@ -115,7 +116,10 @@ export function useJoinRoomEntry({ repository, preview, initialCode = '', initia
       if (disabled) return;
       clearPreview();
       if (qrScannerAdapter) {
-        const perm = await qrScannerAdapter.getPermissionStatus();
+        // Ask for the camera right when the user opens the scanner; only a refusal shows the settings screen.
+        let perm = await qrScannerAdapter.getPermissionStatus();
+        if (perm === 'undetermined') perm = await qrScannerAdapter.requestPermission();
+        if (!mounted.current) return;
         if (perm === 'denied' || perm === 'blocked') {
           setCameraStatus('denied');
           setCameraMessage('Bạn chưa cấp quyền truy cập camera để quét mã QR.');
@@ -125,6 +129,14 @@ export function useJoinRoomEntry({ repository, preview, initialCode = '', initia
       }
       setCamera(true);
       setCameraStatus('idle');
+    },
+    /** A QR payload from the live camera: a join link or a bare code. Anything else keeps scanning. */
+    acceptScanned: (raw: string) => {
+      if (disabled) return;
+      const parsed = parseJoinRoomUrl(raw);
+      const scanned = parsed.ok ? parsed.code : normalizeRoomCode(raw);
+      if (!validRoomCode(scanned)) return;
+      cancelRead(); setCode(scanned); clearPreview(); setCamera(false); setCameraStatus('idle');
     },
     closeCamera: () => { if (!mutationLocked) { cancelRead(); setCamera(false); setCameraStatus('idle'); } },
   };

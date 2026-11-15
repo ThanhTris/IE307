@@ -1,12 +1,12 @@
 /** Product rules for voting rounds, shared by the live repositories and the screens. */
 
 /**
- * Calculates Round 2 elimination cap according to product spec:
- * cap = max(1, floor(0.30 * N)), applying even for N=1.
+ * Round 2 removal limit (ADR-023): 30% of the candidates rounded UP, at least 1.
+ * 1-3 dishes -> 1, 4-6 -> 2, 7-10 -> 3, 11 -> 4 ... 20 -> 6. Integer maths ((3N+9)/10) avoids float rounding.
  */
 export function getRoundTwoEliminationCap(candidateCount: number): number {
   if (candidateCount <= 0) return 0;
-  return Math.max(1, Math.floor(0.30 * candidateCount));
+  return Math.max(1, Math.floor((3 * candidateCount + 9) / 10));
 }
 
 /**

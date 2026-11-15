@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState, type ComponentRef } from 'react';
-import { Platform, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
+import { AppIcon } from '../../../shared/ui/icons/AppIcon';
+import { ToastNotice } from '../../../shared/ui/feedback/Toast';
 import { normalizeRoomCode } from '../services/roomEntry';
 
 /** Native glyphs and carets: no transparent IME input over simulated text. */
@@ -29,6 +32,10 @@ export function RoomCodeField({ value, onChange, disabled, error }: { value: str
     const next = entered.length === 6 ? entered : `${value.slice(0, start)}${entered}${value.slice(start + Math.max(1, entered.length))}`.slice(0, 6);
     setFocusRequest(entered.length === 6 ? 5 : entered ? Math.min(start + entered.length, 5) : Math.max(start - 1, 0));
     onChange(next);
+  };
+  const paste = async () => {
+    if (disabled) return;
+    try { const text = await Clipboard.getStringAsync(); if (text) edit(0, text); } catch { /* clipboard unavailable */ }
   };
   const backspace = (index: number) => {
     if (disabled || value[index] || index === 0) return;
@@ -69,9 +76,12 @@ export function RoomCodeField({ value, onChange, disabled, error }: { value: str
           style={[styles.input, { flexBasis: columns === 6 ? '14%' : '30%', color: colors.text, borderColor: active === index ? colors.primary : error ? colors.danger : colors.line, backgroundColor: active === index ? colors.warm : colors.background }, textStyle(700)]}
         />)}
       </View>
-      <Text style={[styles.pasteHint, { color: colors.muted }, textStyle(400)]}>Nhấn giữ một ô để dán toàn bộ mã</Text>
+      <Pressable accessibilityRole="button" accessibilityLabel="Dán mã phòng" disabled={disabled} onPress={() => { void paste(); }} hitSlop={8}
+        style={({ pressed }) => [styles.paste, { borderColor: colors.line, backgroundColor: pressed ? colors.soft : colors.warm, opacity: disabled ? 0.5 : 1 }]}>
+        <AppIcon name="copy" size={14} color={colors.text} /><Text style={[styles.pasteText, { color: colors.text }, textStyle(600)]}>Dán</Text>
+      </Pressable>
     </View>
-    {error ? <Text accessibilityRole="alert" style={[styles.helper, { color: colors.text, backgroundColor: colors.warm }, textStyle(400)]}>{error}</Text> : <Text style={[styles.helper, { color: colors.muted }, textStyle(400)]}>Lấy mã từ người tạo phòng.</Text>}
+    {error ? <ToastNotice title={error} tone="error" /> : null}
   </View>;
 }
 const styles = StyleSheet.create({
@@ -79,5 +89,5 @@ const styles = StyleSheet.create({
   card: { borderWidth: 1, borderRadius: 20, padding: 16, gap: 12 },
   slots: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   input: { flexGrow: 1, minWidth: 48, minHeight: 58, borderWidth: 1, borderRadius: 12, paddingHorizontal: 4, paddingVertical: 8, fontSize: 24, lineHeight: 34, textAlign: 'center' },
-  pasteHint: { textAlign: 'right', fontSize: 12, lineHeight: 18 }, helper: { fontSize: 14, lineHeight: 21, borderRadius: 8 },
+  paste: { alignSelf: 'flex-end', flexDirection: 'row', alignItems: 'center', gap: 6, borderWidth: 1, borderRadius: 999, paddingHorizontal: 12, minHeight: 32 }, pasteText: { fontSize: 13, lineHeight: 18 },
 });

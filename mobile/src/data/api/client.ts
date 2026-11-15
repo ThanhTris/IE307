@@ -26,6 +26,7 @@ import {
   SetReadyRequest,
   StartRoundRequest,
   LeaveRoomRequest,
+  RemoveRoomMemberRequest,
   CancelRoomRequest,
   SubmitBallotRequest,
   SubmitBallotResponse,
@@ -75,6 +76,7 @@ import {
   setReadyMethod,
   startRoundMethod,
   leaveRoomMethod,
+  removeRoomMemberMethod,
   cancelRoomMethod,
   submitBallotMethod,
   getResultOfferingsMethod,
@@ -254,6 +256,10 @@ export class ApiClientImpl implements ApiClient {
 
   leaveRoom(req: LeaveRoomRequest): Promise<WriteResult<void>> {
     return leaveRoomMethod(this.ctx, req);
+  }
+
+  removeRoomMember(req: RemoveRoomMemberRequest): Promise<WriteResult<void>> {
+    return removeRoomMemberMethod(this.ctx, req);
   }
 
   cancelRoom(req: CancelRoomRequest): Promise<WriteResult<void>> {

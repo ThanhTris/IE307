@@ -16,5 +16,5 @@ export function createJoinPreviewFixture(scenario = 'default'): JoinRoomPreviewP
 
 export function validPublicPreview(value: JoinRoomPublicPreview, requested: string): boolean {
   return value.code === requested && Number.isInteger(value.memberCount) && Number.isInteger(value.capacity)
-    && value.memberCount >= 0 && value.capacity >= 1 && value.capacity <= 20 && value.memberCount < value.capacity;
+    && value.memberCount >= 0 && value.capacity >= 1 && value.capacity <= 20 && value.memberCount <= value.capacity; // a full room only reaches here for its own member coming back (ADR-027); others get ROOM_FULL
 }

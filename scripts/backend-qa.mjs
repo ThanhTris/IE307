@@ -461,7 +461,7 @@ async function sealManifest(state, status, catalogueInfo) {
     migrationLedger: inventory.migrationLedger, schemaVersions: inventory.schemaVersions,
     functions: inventory.functions, functionInventorySha256: sha256(canonicalJson(inventory.functions)),
     catalogues: { ...catalogueInfo, observed: inventory.catalogues },
-    realtimeEnabled: false,
+    realtimeEnabled: true,
     credentialsWrittenToEvidence: false,
   };
   const manifest = await addManifestSeal(base);

@@ -237,3 +237,26 @@ export async function simulateDeferredRequest<T>(
   }
   return data;
 }
+
+/** `count` distinct round-2 candidates built from the mock dishes (ids and names are made unique), for previews and tests. */
+export function roundTwoCandidates(count: number): PoolDish[] {
+  return Array.from({ length: count }, (_, index) => {
+    const base = MOCK_DISHES[index % MOCK_DISHES.length]!;
+    const lap = Math.floor(index / MOCK_DISHES.length);
+    return { ...base, roundDishId: `${base.roundDishId}_r2_${index}`, choiceId: `${base.choiceId}_r2_${index}`, dishId: `${base.dishId}_${index}`, name: lap ? `${base.name} ${lap + 1}` : base.name };
+  });
+}
+
+/**
+ * Dishes with every field a flashcard can show (photo, description, categories, cuisines, meals, temperature,
+ * flavours, origin and price), so the card layout can be reviewed with full content. Used by the dev preview.
+ */
+export function richFlashcardDishes(): PoolDish[] {
+  const rich: Record<string, unknown>[] = [
+    { mealSlots: ['breakfast', 'lunch', 'dinner'], origin: 'north', cuisineIds: [], categoryIds: ['14bc9d6f-c43e-5c1d-9c13-eddc5cc80dcc'], flavor: { spicy: { present: true, intensity: 'medium' }, salty: { present: true, intensity: 'high' }, sweet: { present: false, intensity: 'none' }, sour: { present: true, intensity: 'low' } } },
+    { mealSlots: ['lunch', 'dinner'], origin: 'south', cuisineIds: [], categoryIds: ['e69b5f45-580d-5ee3-9e43-360650b4c650'], flavor: { spicy: { present: false, intensity: 'none' }, salty: { present: true, intensity: 'high' }, sweet: { present: true, intensity: 'medium' }, sour: { present: false, intensity: 'none' } } },
+    { mealSlots: ['breakfast', 'lunch'], origin: 'central', cuisineIds: [], categoryIds: ['ac9e12a4-0416-53fc-af30-5b8b11ee0b49'], flavor: { spicy: { present: true, intensity: 'high' }, salty: { present: true, intensity: 'low' }, sweet: { present: false, intensity: 'none' }, sour: { present: true, intensity: 'medium' } } },
+  ];
+  const snack = { ...MOCK_DISHES[3]!, roundDishId: 'rd_snack', choiceId: 'choice_snack', dishId: 'dish_snack', name: 'Chè khúc bạch', description: 'Chè mát lạnh, khúc bạch mềm, nhãn và hạnh nhân', mealSlots: ['snack'], origin: 'west', cuisineIds: [], categoryIds: ['97c011b2-3d0b-5d4c-92fb-7d05eb6a6538'], temperature: 'cold', flavor: { spicy: { present: false, intensity: 'none' }, salty: { present: false, intensity: 'none' }, sweet: { present: true, intensity: 'high' }, sour: { present: false, intensity: 'none' } } } as unknown as PoolDish;
+  return [...rich.map((extra, index) => ({ ...MOCK_DISHES[index]!, ...extra }) as PoolDish), snack];
+}

@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppHeader } from '../../../shared/ui';
+import { CONTAINER_STYLE, CONTAINER_GUTTER } from '../../../shared/ui/layout/ScreenContainer';
 
 export function HomeFlowFrame({ title, onHome, busy = false, children, centeredTitle = false, compact = false }: { title: string; onHome: () => void; busy?: boolean; children: ReactNode; centeredTitle?: boolean; compact?: boolean }) {
   const { colors } = useShellTheme();
@@ -13,9 +14,9 @@ export function HomeFlowFrame({ title, onHome, busy = false, children, centeredT
     return () => subscription.remove();
   }, [onHome, busy]);
   return <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-    <AppHeader variant="back" title={title} onPressBack={busy ? undefined : onHome} allowTitleWrap hideDivider centeredTitle={centeredTitle} backIconSource={require('../../../../assets/brand/home/back.png')} brandTextStyle={textStyle(700)} colors={colors} />
+    <AppHeader variant="back" title={title} onPressBack={busy ? undefined : onHome} allowTitleWrap hideDivider centeredTitle={centeredTitle} brandTextStyle={textStyle(700)} colors={colors} />
     <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-    <ScrollView contentContainerStyle={[styles.content, compact && { paddingTop: 24 }]} keyboardShouldPersistTaps="handled">
+    <ScrollView testID="screen-content" showsVerticalScrollIndicator={false} contentContainerStyle={[styles.content, compact && { paddingTop: 24 }]} keyboardShouldPersistTaps="handled">
       {children}
     </ScrollView>
     </KeyboardAvoidingView>
@@ -24,5 +25,5 @@ export function HomeFlowFrame({ title, onHome, busy = false, children, centeredT
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  content: { flexGrow: 1, paddingHorizontal: 24, paddingTop: 46, paddingBottom: 24, width: '100%', maxWidth: 480, alignSelf: 'center' },
+  content: { flexGrow: 1, paddingHorizontal: CONTAINER_GUTTER, paddingTop: 46, paddingBottom: 24, ...CONTAINER_STYLE },
 });

@@ -10,6 +10,7 @@ import {
   type TextStyle,
 } from 'react-native';
 import { radii, spacing, typography } from '../../theme/tokens';
+import { AppIcon } from '../icons/AppIcon';
 import type { ComponentThemeProps } from '../types';
 
 export type AvatarItem = {
@@ -23,12 +24,15 @@ export type AvatarItem = {
 export function AvatarRow({
   items,
   onAdd,
+  onSelect,
   showStatus = false,
   labelTextStyle,
   colors,
 }: ComponentThemeProps & {
   items: AvatarItem[];
   onAdd?: () => void;
+  /** Tap on a person (e.g. start a quick room with them). */
+  onSelect?: (id: string) => void;
   showStatus?: boolean;
   labelTextStyle?: TextStyle;
 }) {
@@ -40,7 +44,7 @@ export function AvatarRow({
       accessibilityLabel="Danh sách bạn ăn cùng"
     >
       {items.map(item => (
-        <View key={item.id} style={styles.avatarItem}>
+        <Pressable key={item.id} disabled={!onSelect} accessibilityRole={onSelect ? 'button' : undefined} accessibilityLabel={onSelect ? `Rủ ${item.label} ăn` : undefined} onPress={() => onSelect?.(item.id)} style={styles.avatarItem}>
           <View style={[styles.avatar, { backgroundColor: colors?.surface, borderColor: colors?.line }]}>
             {item.imageSource ? (
               <Image source={item.imageSource} style={styles.avatarImage as ImageStyle} />
@@ -59,7 +63,7 @@ export function AvatarRow({
           <Text numberOfLines={1} style={[styles.avatarLabel, { color: colors?.text }, labelTextStyle]}>
             {item.label}
           </Text>
-        </View>
+        </Pressable>
       ))}
       {onAdd ? (
         <Pressable
@@ -69,12 +73,7 @@ export function AvatarRow({
           style={({ pressed }) => [styles.avatarItem, { opacity: pressed ? 0.6 : 1 }]}
         >
           <View style={[styles.addAvatar, { borderColor: colors?.line }]}>
-            <Image
-              source={require('../../../../assets/brand/icons/plus.png')}
-              accessible={false}
-              resizeMode="contain"
-              style={[styles.addAvatarIcon, { tintColor: colors?.text }]}
-            />
+            <AppIcon name="plus" size={22} color={colors?.text} />
           </View>
           <Text style={[styles.avatarLabel, { color: colors?.text }, labelTextStyle]}>Thêm</Text>
         </Pressable>

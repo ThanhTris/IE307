@@ -1,19 +1,20 @@
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
+import { AppIcon, type AppIconName } from '../../../shared/ui/icons/AppIcon';
 
-const tabs = [
-  { label: 'Trang chủ', icon: require('../../../../assets/brand/icons/home.png') },
-  { label: 'Bạn bè', icon: require('../../../../assets/brand/icons/friends.png') },
-  { label: 'Lịch sử', icon: require('../../../../assets/brand/icons/history.png') },
-  { label: 'Cá nhân', icon: require('../../../../assets/brand/icons/profile.png') },
+const tabs: { label: string; icon: AppIconName }[] = [
+  { label: 'Trang chủ', icon: 'home' },
+  { label: 'Bạn bè', icon: 'friends' },
+  { label: 'Lịch sử', icon: 'history' },
+  { label: 'Cá nhân', icon: 'profile' },
 ];
 /** Noninteractive, hidden-from-accessibility scenery of the T01 example. */
 export function TutorialHomeFooter() {
   const { colors } = useShellTheme(), { textStyle } = useAppFonts();
   return <View pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={styles.root}>
     <View style={[styles.friends, { borderColor: colors.text }]}>{['Linh', 'Nam', 'Thêm'].map((label, index) => <View key={label} style={styles.friend}><View style={[styles.avatar, { borderColor: colors.text }]}><Text style={[styles.initial, { color: colors.text }, textStyle(600)]}>{index === 2 ? '+' : label[0]}</Text></View><Text style={[styles.label, { color: colors.text }, textStyle(600)]}>{label}</Text></View>)}</View>
-    <View style={[styles.tabs, { borderColor: colors.text }]}>{tabs.map(tab => <View key={tab.label} style={styles.tab}><Image source={tab.icon} accessible={false} style={[styles.icon, { tintColor: colors.text }]} /><Text style={[styles.label, { color: colors.text }, textStyle(500)]}>{tab.label}</Text></View>)}</View>
+    <View style={[styles.tabs, { borderColor: colors.text }]}>{tabs.map(tab => <View key={tab.label} style={styles.tab}><AppIcon name={tab.icon} size={24} color={colors.text} /><Text style={[styles.label, { color: colors.text }, textStyle(500)]}>{tab.label}</Text></View>)}</View>
   </View>;
 }
 const styles = StyleSheet.create({

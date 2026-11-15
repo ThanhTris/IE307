@@ -20,6 +20,7 @@ export type ErrorCode =
   | 'ROOM_EXPIRED'
   | 'ROOM_TERMINAL'
   | 'NOT_ENOUGH_MEMBERS'
+  | 'MEMBERS_NOT_READY'
   | 'INVALID_ROOM_STATE'
   | 'CONTEXT_CHANGED'
   // Voting & Submission

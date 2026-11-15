@@ -37,7 +37,7 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
     },
     members: [
       { userId: 'usr_tri_001', displayName: 'Trí Thanh', isHost: true, ready: false, joinedAt: '2026-10-25T00:00:00Z' },
-      { userId: 'usr_tuan_002', displayName: 'Tuấn', isHost: false, ready: false, joinedAt: '2026-10-25T00:01:00Z' },
+      { userId: 'usr_tuan_002', displayName: 'Tuấn', isHost: false, ready: true, joinedAt: '2026-10-25T00:01:00Z' },
     ],
     round: 1,
     poolVersion: 1,
@@ -242,7 +242,7 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
       );
 
       expect(screen.getByText('Phòng #GCD999')).toBeOnTheScreen();
-      const resumeBtn = screen.getByRole('button', { name: 'Tiếp tục phiên' });
+      const resumeBtn = screen.getByRole('button', { name: 'Quay lại phòng' });
       expect(resumeBtn).toBeOnTheScreen();
       await fireEvent.press(resumeBtn);
       expect(onResume).toHaveBeenCalledTimes(1);
@@ -504,11 +504,10 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
         />
       );
 
-      await fireEvent.press(screen.getByRole('button', { name: 'Tiếp tục →' }));
-      expect(previewFn).toHaveBeenCalledWith('GCD999');
+      await waitFor(() => expect(previewFn).toHaveBeenCalledWith('GCD999'));
       expect(await screen.findByText('2/20 thành viên')).toBeOnTheScreen();
       expect(screen.getByText('Phòng GCD999')).toBeOnTheScreen();
-      expect(screen.getByText('Xác nhận để vào phòng. Xem trước không giữ chỗ.')).toBeOnTheScreen();
+      expect(screen.queryByText(/Xem trước không giữ chỗ/)).toBeNull();
 
       await fireEvent.press(screen.getByRole('button', { name: 'Xác nhận vào phòng' }));
       expect(onEntered).toHaveBeenCalledWith(expect.objectContaining({ role: 'member', code: 'GCD999' }));
@@ -534,7 +533,6 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
         />
       );
 
-      await fireEvent.press(screen.getByRole('button', { name: 'Tiếp tục →' }));
       expect(await screen.findByText('Phòng đã đủ 20 người')).toBeOnTheScreen();
       expect(screen.queryByRole('button', { name: 'Xác nhận vào phòng' })).toBeNull();
     });
@@ -561,7 +559,7 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
       expect(screen.getByText('Ăn gì cũng được')).toBeOnTheScreen();
       expect(screen.getByText('Bỏ qua')).toBeOnTheScreen();
       expect(screen.getByText('Vào phòng chờ →')).toBeOnTheScreen();
-      expect(screen.getByText('Lựa chọn này áp dụng cho lịch sử cá nhân của tài khoản. Lưu lịch sử nhóm là quyền riêng, không bị thay đổi ở đây. Khẩu vị chỉ áp dụng cho phòng này.')).toBeOnTheScreen();
+      expect(screen.queryByText(/Lựa chọn này áp dụng/)).toBeNull();
 
       // Ensure no legacy ready banner or text exists
       expect(screen.queryByText(/sẵn sàng/i)).toBeNull();
@@ -577,13 +575,10 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
   });
 
   // Node 330:3070 — 06 · Phòng chờ / Chủ phòng / Thành viên
-  describe('Node 330:3070 — Phòng chờ Live Lobby không có Ready flow', () => {
+  describe('Node 330:3070 — Phòng chờ Live Lobby (ADR-028 Ready)', () => {
     it.each([
-      ['poll', 'ROUND_1'], ['reload', 'ROUND_1'],
-      ['poll', 'WAITING_1'], ['reload', 'WAITING_1'],
-      ['poll', 'ROUND_2'], ['reload', 'ROUND_2'],
-      ['poll', 'WAITING_2'], ['reload', 'WAITING_2'],
-    ] as const)('opens voting once when %s reads %s for a member', async (trigger, state) => {
+      ['ROUND_1'], ['WAITING_1'], ['ROUND_2'], ['WAITING_2'],
+    ] as const)('opens voting once when poll reads %s for a member', async state => {
       jest.useFakeTimers();
       try {
         const repo = createRoomRepository({ client: createMockApiClient() });
@@ -597,15 +592,39 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
 
         expect(await screen.findByText('GCD999')).toBeOnTheScreen();
         expect(onStartRound).not.toHaveBeenCalled();
-        if (trigger === 'poll') {
-          await act(async () => { await jest.advanceTimersByTimeAsync(4000); });
-        } else {
-          await fireEvent.press(screen.getByRole('button', { name: 'Tải lại phòng' }));
-        }
+        await act(async () => { await jest.advanceTimersByTimeAsync(4000); });
         expect(onStartRound).toHaveBeenCalledWith(started);
         await act(async () => { await jest.advanceTimersByTimeAsync(4000); });
         expect(snapshot.mock.calls.length).toBeGreaterThanOrEqual(3);
         expect(onStartRound).toHaveBeenCalledTimes(1);
+      } finally {
+        jest.useRealTimers();
+      }
+    });
+
+    it.each([
+      ['ROUND_1'], ['WAITING_1'], ['ROUND_2'], ['WAITING_2'],
+    ] as const)('opens voting once when manual reload reads %s for a member', async state => {
+      jest.useFakeTimers();
+      try {
+        const repo = createRoomRepository({ client: createMockApiClient() });
+        const started = { ...sampleSnapshot, version: 2, state };
+        jest.spyOn(repo, 'getRoomSnapshot')
+          .mockResolvedValueOnce({ ok: true, data: sampleSnapshot })
+          .mockResolvedValue({ ok: true, data: started });
+        const onStartRound = jest.fn();
+        const { result, unmount } = await renderHook(() => useLobby({
+          repository: repo, roomId: sampleSnapshot.roomId, currentUserId: 'usr_tuan_002',
+          onHome: jest.fn(), onStartRound,
+        }));
+
+        await waitFor(() => expect(result.current.loadState).toBe('ready'));
+        expect(onStartRound).not.toHaveBeenCalled();
+        await act(async () => { result.current.reload(); });
+        await waitFor(() => expect(onStartRound).toHaveBeenCalledWith(started));
+        await act(async () => { await jest.advanceTimersByTimeAsync(4000); });
+        expect(onStartRound).toHaveBeenCalledTimes(1);
+        await unmount();
       } finally {
         jest.useRealTimers();
       }
@@ -664,7 +683,7 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
       }
     });
 
-    it('renders real lobby with 20 member capacity, host start without ready requirement', async () => {
+    it('renders real lobby with 20 member capacity, host starts when every member is ready', async () => {
       const client = createMockApiClient();
       const repo = createRoomRepository({ client });
       const onHome = jest.fn();
@@ -681,12 +700,13 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
       );
 
       expect(await screen.findByText('GCD999')).toBeOnTheScreen();
-      expect(screen.getByText('Thành viên · 2/20')).toBeOnTheScreen();
+      expect(screen.getByText('Thành viên (2)')).toBeOnTheScreen();
 
-      // Ready controls are removed
+      // Readiness is shown as a label, not a button (ADR-028)
       expect(screen.queryByRole('button', { name: /sẵn sàng/i })).toBeNull();
+      expect(screen.getByLabelText('Sẵn sàng')).toBeOnTheScreen();
 
-      // Host can start directly
+      // Host can start once nobody is still choosing
       const startBtn = screen.getByRole('button', { name: 'Bắt đầu chọn món' });
       expect(startBtn.props.accessibilityState.disabled).not.toBe(true);
 
@@ -703,6 +723,18 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
           }),
         })
       );
+    });
+
+    it('the host cannot start while a member is still choosing their taste', async () => {
+      const guest = sampleSnapshot.members[1]!;
+      guest.ready = false;
+      try {
+        const client = createMockApiClient();
+        await render(<LobbyScreen repository={createRoomRepository({ client })} roomId="room_live_001" currentUserId="usr_tri_001" onHome={jest.fn()} onStartRound={jest.fn()} />);
+        expect(await screen.findByText('Chờ 1 người chọn khẩu vị')).toBeOnTheScreen();
+        expect(screen.getByLabelText('Đang chọn khẩu vị')).toBeOnTheScreen();
+        expect(screen.getByRole('button', { name: 'Bắt đầu chọn món' }).props.accessibilityState.disabled).toBe(true);
+      } finally { guest.ready = true; }
     });
 
     it('member role shows leave room button with confirmation sheet', async () => {
@@ -726,7 +758,7 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
       await fireEvent.press(leaveBtn);
 
       expect(screen.getByText('Xác nhận rời phòng?')).toBeOnTheScreen();
-      await fireEvent.press(screen.getByRole('button', { name: 'Xác nhận rời' }));
+      await fireEvent.press(screen.getAllByRole('button', { name: 'Rời phòng' }).at(-1)!);
 
       expect(client.callRpc).toHaveBeenCalledWith(
         'dish_session',

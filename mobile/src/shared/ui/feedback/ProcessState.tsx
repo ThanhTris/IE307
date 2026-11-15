@@ -1,6 +1,6 @@
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
-import { spacing } from '../../theme/tokens';
+import { View } from 'react-native';
 import type { ComponentThemeProps } from '../types';
+import { LoadingState } from './LoadingState';
 import { StatusNotice } from './StatusNotice';
 
 export type ProcessStateKind =
@@ -12,6 +12,7 @@ export type ProcessStateKind =
   | 'success'
   | 'closed';
 
+/** Busy states render a skeleton; the title/message always goes out as a toast. */
 export function ProcessState({
   state,
   title,
@@ -31,20 +32,9 @@ export function ProcessState({
   const tone =
     state === 'error' ? 'error' : state === 'closed' ? 'warning' : state === 'success' ? 'success' : 'info';
   return (
-    <View accessibilityLiveRegion="polite" style={styles.processState}>
-      {busy ? <ActivityIndicator accessibilityLabel={title} color={colors?.primary} /> : null}
-      <StatusNotice
-        title={title}
-        message={message}
-        tone={tone}
-        actionLabel={retryLabel}
-        onAction={onRetry}
-        colors={colors}
-      />
+    <View accessibilityLiveRegion="polite">
+      {busy ? <LoadingState label={title} rows={1} colors={colors} /> : null}
+      <StatusNotice title={title} message={message} tone={tone} actionLabel={retryLabel} onAction={onRetry} colors={colors} />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  processState: { gap: spacing.sm },
-});

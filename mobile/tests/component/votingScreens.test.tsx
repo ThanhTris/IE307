@@ -1,4 +1,4 @@
-import { render, screen, userEvent, waitFor } from '@testing-library/react-native';
+import { fireEvent, render, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { type ApiClient, type PoolDish, type RoomResult } from '../../src/data/api';
 import {
   FIXTURE_CANDIDATES_N1,
@@ -281,34 +281,33 @@ describe('GM-12 — VoteScreen (Vòng 1 Flashcard Vote)', () => {
     expect(screen.getByText('Yêu cầu Vòng 2 · Chọn lọc (Chưa đồng thuận)')).toBeOnTheScreen();
   });
 
-  test('Flashcard Vòng 1: hiển thị thẻ hiện tại, điều hướng thẻ trước/sau, Undo trước gửi', async () => {
+  test('Flashcard Vòng 1: một thẻ mỗi lần, cử chỉ (thao tác TalkBack), Hoàn tác trên header, xong thẻ cuối là tự gửi', async () => {
     const user = userEvent.setup();
-    await render(<VoteScreen pool={TEST_POOL} initialViewMode="flashcard" simulateDelayMs={0} />);
+    await render(<VoteScreen pool={TEST_POOL} initialViewMode="flashcard" showScenarioPicker={false} simulateDelayMs={0} />);
+    expect(screen.getByRole('header', { name: 'Vòng 1' })).toBeOnTheScreen();
+    expect(screen.getByText('0/2 món')).toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: 'Quay lại' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Hoàn tất' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Hướng dẫn' })).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Hoàn tác' }).props.accessibilityState?.disabled).toBe(true);
 
-    // Thẻ 1/2: Phở bò tái nạm
-    expect(screen.getByText('Thẻ 1 / 2')).toBeOnTheScreen();
-    expect(screen.getByText('Phở bò tái nạm')).toBeOnTheScreen();
+    // Swipe left = Không ăn (same as the TalkBack action) -> next card.
+    await fireEvent(screen.getByRole('adjustable', { name: 'Phở bò tái nạm' }), 'accessibilityAction', { nativeEvent: { actionName: 'no' } });
+    expect(screen.getByText('1/2 món')).toBeOnTheScreen();
+    expect(screen.getByRole('adjustable', { name: 'Cơm tấm sườn bì chả' })).toBeOnTheScreen();
 
-    // 3 nút cử chỉ thay thế đều hiển thị với touch target
-    expect(screen.getByRole('button', { name: 'Không ăn (Vuốt trái · NO)' })).toBeOnTheScreen();
-    expect(screen.getByRole('button', { name: 'Muốn ăn (Chạm 2 lần · WANT)' })).toBeOnTheScreen();
-    expect(screen.getByRole('button', { name: 'Ăn được (Vuốt phải · OK)' })).toBeOnTheScreen();
+    // Hoàn tác (header icon) goes back to the previous card, keeping its choice until it is answered again.
+    await user.press(screen.getByRole('button', { name: 'Hoàn tác' }));
+    // The progress bar goes back down with it: the card you return to is unanswered again.
+    expect(screen.getByRole('adjustable', { name: 'Phở bò tái nạm' })).toBeOnTheScreen();
+    expect(screen.getByText('0/2 món')).toBeOnTheScreen();
+    await fireEvent(screen.getByRole('adjustable', { name: 'Phở bò tái nạm' }), 'accessibilityAction', { nativeEvent: { actionName: 'want' } });
+    expect(screen.queryByText('Tương tác gần nhất')).toBeNull();
 
-    // Bấm nút gesture NO trên thẻ 1 -> tự động chuyển sang thẻ 2
-    const noGestureBtn = screen.getByRole('button', { name: 'Không ăn (Vuốt trái · NO)' });
-    await user.press(noGestureBtn);
-
-    // Đã chuyển sang Thẻ 2/2: Cơm tấm sườn bì chả
-    expect(screen.getByText('Thẻ 2 / 2')).toBeOnTheScreen();
-    expect(screen.getByText('Cơm tấm sườn bì chả')).toBeOnTheScreen();
-
-    // Bấm Hoàn tác (Undo) để quay lại thẻ trước
-    const undoCardBtn = screen.getByRole('button', { name: 'Hoàn tác về thẻ trước' });
-    await user.press(undoCardBtn);
-
-    // Đã quay lại Thẻ 1/2
-    expect(screen.getByText('Thẻ 1 / 2')).toBeOnTheScreen();
-    expect(screen.getByText('Phở bò tái nạm')).toBeOnTheScreen();
+    // Answering the last card sends the ballot and goes straight to the waiting view: no "done" screen.
+    await fireEvent(screen.getByRole('adjustable', { name: 'Cơm tấm sườn bì chả' }), 'accessibilityAction', { nativeEvent: { actionName: 'ok' } });
+    expect(await screen.findByText(/^(Đã gửi phiếu|Sang vòng 2)$/)).toBeOnTheScreen();
+    expect(screen.queryByText(/Đã chọn xong/)).toBeNull();
   });
 
   test('Kịch bản Chuyển Vòng 2: mở nút Vòng 2 và truyền đúng danh sách ứng viên từ fixture', async () => {
@@ -399,21 +398,22 @@ describe('GM-12 — FinalRoundScreen (Vòng 2 Chọn lọc)', () => {
     expect(submitBtn.props.accessibilityState.disabled).toBe(false);
   });
 
-  test('Cap R2=max(1, floor(0.30*N)) giới hạn số lượng món loại và chặn chọn vượt cap', async () => {
+  test('Cap R2=max(1, ceil(0.30*N)) giới hạn số lượng món loại và chặn chọn vượt cap', async () => {
     const user = userEvent.setup();
-    // N=4 -> Cap = max(1, floor(1.2)) = 1
+    // N=4 -> Cap = max(1, ceil(1.2)) = 2
     await render(<FinalRoundScreen candidates={FIXTURE_CANDIDATES_N4} simulateDelayMs={0} />);
 
-    expect(screen.getByText(/Giới hạn loại: tối đa 1 món/)).toBeOnTheScreen();
+    expect(screen.getByText(/Giới hạn loại: tối đa 2 món/)).toBeOnTheScreen();
     const removeButtons = screen.getAllByRole('button', { name: /Loại món/ });
     expect(removeButtons).toHaveLength(4);
 
-    // Loại món 1 -> thành công (1/1 món)
     await user.press(removeButtons[0]!);
-    expect(screen.getByText(/Đã chọn loại: 1\/1 món/)).toBeOnTheScreen();
+    expect(screen.getByText(/Đã chọn loại: 1\/2 món/)).toBeOnTheScreen();
+    await user.press(removeButtons[1]!);
+    expect(screen.getByText(/Đã chọn loại: 2\/2 món/)).toBeOnTheScreen();
 
-    // Món 2 nút Loại bị disabled vì đã đạt cap
-    expect(removeButtons[1]!.props.accessibilityState.disabled).toBe(true);
+    // Món 3 nút Loại bị disabled vì đã đạt cap
+    expect(removeButtons[2]!.props.accessibilityState.disabled).toBe(true);
   });
 
   test('Nút Giữ tất cả đặt lại toàn bộ món về KEEP và xóa thông báo cap', async () => {

@@ -31,7 +31,9 @@ async function makeTerminal(status){
  const host=await guest('upgrade-host-'+status),member=await guest('upgrade-member-'+status);
  const created=ok(await command(host,'create',{requestId:randomUUID(),displayName:'Upgrade host',settings:{dishCount:10,mealSlot:'lunch',desiredAt:null},preferences}),'create');
  ok(await command(member,'join',{requestId:randomUUID(),code:created.code,displayName:'Upgrade member'}),'join');
- let view=await snapshot(host,created.roomId);
+ let view=await snapshot(member,created.roomId);
+ ok(await command(member,'updatePreferences',{requestId:randomUUID(),roomId:created.roomId,expectedVersion:view.version,preferences}),'member saves preferences');
+ view=await snapshot(host,created.roomId);
  ok(await command(host,'start',{requestId:randomUUID(),roomId:created.roomId,expectedVersion:view.version}),'start');
  for(const user of [host,member]){
   view=await snapshot(user,created.roomId);

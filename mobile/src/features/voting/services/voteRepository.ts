@@ -89,6 +89,7 @@ export function mapSnapshotPoolToPoolDishes(pool: unknown[]): PoolDish[] {
       categoryLabels: Array.isArray(item.categoryLabels) ? item.categoryLabels : undefined,
       temperature: item.temperature ?? undefined,
       flavor: item.flavor ?? undefined,
+      origin: item.origin ?? undefined,
       priceReference: priceRef ?? undefined,
     } as PoolDish;
   });
@@ -186,12 +187,22 @@ function isCanonicalFinalizeEnvelope(
   return true;
 }
 
+/** Keeps only finite, bounded times for dishes that are actually in the ballot. */
+export function cleanPace(pace: { roundDishId: string; ms: number }[], votes: { roundDishId: string }[]): { roundDishId: string; ms: number }[] {
+  const allowed = new Set(votes.map(vote => vote.roundDishId));
+  return pace
+    .filter(item => allowed.has(item.roundDishId) && Number.isFinite(item.ms))
+    .map(item => ({ roundDishId: item.roundDishId, ms: Math.min(60000, Math.max(0, Math.round(item.ms))) }));
+}
+
 export interface SubmitBallotArgs {
   roomId: string;
   round: 1 | 2;
   poolVersion: number;
   expectedVersion: number;
   votes: BallotVoteItem[];
+  /** Optional per-card decision time in ms (round 1). Only breaks ties on the result; never part of the idempotent payload. */
+  pace?: { roundDishId: string; ms: number }[];
   intentId?: string;
   requestId?: string;
 }
@@ -280,7 +291,7 @@ export class LiveVoteRepository implements VoteRepository {
   /**
    * Submits a ballot for Round 1 (WANT/OK/NO) or Round 2 (KEEP/REMOVE).
    * Transforms input votes to canonical wire format: { roundDishId, choice } (F1).
-   * Enforces Round 2 elimination cap: max(1, floor(0.30 * N)).
+   * Enforces Round 2 elimination cap: ceil(0.30 * N), at least 1.
    * If cap is exceeded in Round 2, rejects with REMOVE_LIMIT before calling server.
    * Compares payload against cache: if re-submitting with identical requestId and payload, returns cached receipt.
    * If re-submitting with same requestId but different payload, rejects with BAD_REQUEST (F6).
@@ -376,6 +387,7 @@ export class LiveVoteRepository implements VoteRepository {
             poolVersion: args.poolVersion,
             expectedVersion: args.expectedVersion,
             votes: wireVotes,
+            ...(args.round === 1 && args.pace?.length ? { pace: cleanPace(args.pace, wireVotes) } : {}),
           },
         })) as any;
 

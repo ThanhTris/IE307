@@ -109,6 +109,14 @@ export interface LeaveRoomRequest {
   requestId?: string;
 }
 
+/** Host removes a member while the room is still in the lobby. */
+export interface RemoveRoomMemberRequest {
+  roomId: string;
+  memberUserId: string;
+  expectedVersion: number;
+  requestId?: string;
+}
+
 export interface CancelRoomRequest {
   roomId: string;
   expectedVersion: number;

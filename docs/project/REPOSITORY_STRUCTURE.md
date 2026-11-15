@@ -12,7 +12,7 @@ mobile/                         GM-02: config/lockfile/runner; app chỉ dùng b
   package.json / package-lock.json
   app.config.ts / tsconfig.json / eslint.config.js / .env.example / README.md
   src/README.md                 sơ đồ thư mục, route ↔ feature, quy ước (cập nhật 2026-11-10)
-  src/app/                      routes mỏng: index, welcome, tutorial, continue-session, friends, history, inbox, push-settings, profile, settings, join/
+  src/app/                      routes mỏng: index, welcome, tutorial, continue-session, friends, history, inbox, push-settings, profile, join/
     room/                       create, join, setup (chủ phòng và thành viên), lobby, vote, final-round, result, no-consensus
   src/bootstrap/                providers: font, theme, RoomRepositoryProvider (phiên khách + repository)
   src/features/                 home, auth, rooms, context (DishSetupFlow), preferences, voting, result, friends, inbox, history, account
@@ -48,7 +48,7 @@ tasks/archive/roadmap-v1/        snapshot JSON giữ task/mapping cũ
 
 Feature dùng screens/components/hooks/services/types/index khi cần, không tạo lớp rỗng bắt buộc. Domain không React/SDK/network. UI nhận DTO/view props và repository interface; app luôn dùng client thật, thiếu cấu hình thì báo lỗi, không fallback fixture. Mock chỉ nằm trong mobile/tests.
 
-Route theo màn: index, room/create/join/setup/lobby/vote/final-round/result/no-consensus, friends, inbox, history, profile, settings. Thành viên dùng chung room/setup với stage=preferences. Task màn thêm route của mình. Permission/native modules đưa vào task chức năng GM-24/29/30/31, không chặn xem UI mẫu.
+Route theo màn: index, room/create/join/setup/lobby/vote/final-round/result/no-consensus, friends, inbox, history, profile. Thành viên dùng chung room/setup với stage=preferences. Task màn thêm route của mình. Permission/native modules đưa vào task chức năng GM-24/29/30/31, không chặn xem UI mẫu.
 
 Owner file: GM-02 mobile package/lockfile/config; GM-03 root package/lockfile (chỉ BE tooling)/runner/config; GM-04 dictionary/schema/template/field coverage; GM-05 UI components; GM-06 migrations/schema convention; GM-07 DTO/client/mock. Các task sau bàn giao migration/request/test/file riêng, không sửa migration đã merge hoặc tạo contract trùng. Hai lockfile không là monorepo framework; thư mục quy hoạch của task sau không cần file rỗng hàng loạt.
 

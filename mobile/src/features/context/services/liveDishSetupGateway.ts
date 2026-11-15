@@ -38,8 +38,18 @@ function canonicalOwnPreferences(value: unknown, consent: boolean): UserPreferen
   };
 }
 
+/** Postgres jsonb re-orders object keys, so compare with keys sorted at every level (array order is kept). */
+function canonicalJson(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(canonicalJson);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.keys(value as Record<string, unknown>).sort()
+      .map(key => [key, canonicalJson((value as Record<string, unknown>)[key])]));
+  }
+  return value ?? null;
+}
+
 function sameJson(left: unknown, right: unknown): boolean {
-  return JSON.stringify(left ?? null) === JSON.stringify(right ?? null);
+  return JSON.stringify(canonicalJson(left)) === JSON.stringify(canonicalJson(right));
 }
 
 function childRequestId(root: string, suffix: string): string {
@@ -51,6 +61,8 @@ function mapWriteError(code: string): 'REJECTED' | 'UNKNOWN' | 'STALE' | 'CLOSED
   if (code === 'VERSION_CONFLICT') return 'STALE';
   if (code === 'NETWORK_ERROR' || code === 'TIMEOUT') return 'UNKNOWN';
   if (code === 'ROOM_EXPIRED' || code === 'ROOM_TERMINAL' || code === 'INVALID_ROOM_STATE') return 'CLOSED';
+  // Surface the server's reason in the Metro log so a generic "Chưa lưu được" can be diagnosed.
+  if (__DEV__) console.warn(`[dish-setup] write rejected: ${code}`);
   return 'REJECTED';
 }
 
@@ -107,7 +119,14 @@ function acceptedAck(value: unknown): value is { accepted: true; version?: numbe
 
 function snapshotSettingsMatch(snapshot: RoomSnapshot, desired: { dishCount: number; mealSlot: string; desiredAt: string | null }): boolean {
   return snapshot.state === 'LOBBY' && snapshot.settings?.dishCount === desired.dishCount
-    && snapshot.settings.mealSlot === desired.mealSlot && (snapshot.settings.desiredAt ?? null) === desired.desiredAt;
+    && snapshot.settings.mealSlot === desired.mealSlot && sameInstant(snapshot.settings.desiredAt ?? null, desired.desiredAt);
+}
+
+/** Postgres returns timestamptz as `…+00:00` while the client sends `….000Z`: compare the instant, not the text. */
+function sameInstant(a: string | null, b: string | null): boolean {
+  if (a === null || b === null) return a === b;
+  const left = Date.parse(a), right = Date.parse(b);
+  return Number.isFinite(left) && Number.isFinite(right) ? left === right : a === b;
 }
 
 function snapshotPreferencesMatch(snapshot: RoomSnapshot, desired: Record<string, unknown>, fields: readonly string[]): boolean {
@@ -141,6 +160,15 @@ export function createLiveDishSetupGateway(
       const consentRes = await repository.getHistoryConsent();
       if (!consentRes.ok) throw new Error(`Failed to read account history consent: ${consentRes.error.messageKey}`);
       const historyConsent = consentRes.data;
+      // "Prefer dishes other than the last 3 meals" needs the person's own saved history (ADR-028). Only the screens that
+      // show that option (a new room, or the host of a room) read it.
+      const readHasRecentHistory = async (): Promise<boolean> => {
+        if (!historyConsent.personal) return false;
+        try {
+          const history = await repository.dispatchDishSession<{ items?: { scope?: string }[] }>('history', {});
+          return history.ok && Array.isArray(history.data?.items) && history.data.items.some(item => item.scope === 'personal');
+        } catch { return false; /* the option is simply not offered */ }
+      };
       let accountDefaults = emptyPreferences(historyConsent.personal);
       try {
         const defsRes = await repository.getDefaultPreferences?.();
@@ -182,7 +210,7 @@ export function createLiveDishSetupGateway(
           historyConsent,
           room: cachedRoom,
           settings,
-          hasRecentHistory: false,
+          hasRecentHistory: isHost ? await readHasRecentHistory() : false,
           closedReason: snap.state === 'CANCELLED' ? 'cancelled' : isClosed ? 'closed' : undefined,
         };
       }
@@ -195,7 +223,7 @@ export function createLiveDishSetupGateway(
         accountDefaults,
         historyConsent,
         room: cachedRoom,
-        hasRecentHistory: false,
+        hasRecentHistory: await readHasRecentHistory(),
       };
     },
 

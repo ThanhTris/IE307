@@ -183,3 +183,9 @@ This section supersedes older full-mobile and AVD status statements above. Full 
 ## Latest integrated hotfix status — 2026-11-07
 
 See [integrated preference hotfix follow-up](FOLLOWUP_2026-11-07.md#integrated-preference-hotfix-follow-up--2026-11-07). The owned QA API suites passed against a local integration through migration 0040; the full mobile rerun passed 70/70 suites and 1,305/1,305 tests ([output summary](artifacts/2026-11-07-guard/integrated-mobile-final.txt)). The AVD confirmed room creation plus a persisted Cay preference but did not reach Lobby/result; result-screen scenarios and durable screenshots are Not run. This does not meet the GM-27 Chặng 3A merge gate. Older AVD claims in this file are historical and were not reproduced.
+
+## 2026-11-15 — PR #167 Composite Integration & Stage 3A AVD Result Verification
+
+- Updated `mobile/src/features/result/services/resultWireSchemas.json` to keep `fatty` (preference key) and `origin` synced with the canonical dish pool schema; verified by `tests/test_gm27_wire_schema.py` alongside `test_gm07b_contract.py`.
+- Stage 3A AVD + Live QA Backend (**Pass**): On `Medium_Phone_API_37.0` (`emulator-5554`, Expo Go) + QA peer (`Ban_AVD_2`) connected to `pr167-ci-fix-v7` (`127.0.0.1:54371`, migrations `0001..0057`, `EXPO_PUBLIC_PLACES_SIMULATED=1`), completed two-client voting through `DECIDED` (`ACCEPTABLE_FINAL`) and verified live rendering of the canonical winner (`Cơm chay`, 2 điểm), Top 3 podium (`Cơm chay`, `Cơm cá kho`, `Cơm bò`), `Cùng ăn` companions (`HHost_AVD`, `Ban_AVD_2`), and clearly labeled simulated Places (`[Mô phỏng AVD]`, `Quán Cơm chay Cô Ba`, `420 m`, `TikTok`/`YouTube`). Local screenshots saved under ignored `review-results/artifacts/pr167-avd/`.
+- **Not run**: Stage 3B physical USB Android phone (`GM-33`/`GM-34`) and real Google Places billing key / live map (`LiveResultMapView`) remain **Not run**.

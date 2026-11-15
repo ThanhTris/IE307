@@ -1,0 +1,274 @@
+{
+  "version": "2.0.0",
+  "extends": "taxonomy_v1.json (unchanged, pinned by the GM-40 manifest)",
+  "note": "Món có thể thuộc nhiều bữa, nhiều nhóm, nhiều miền và nhiều vị; ghi đủ mọi giá trị có nguồn.",
+  "newFamilies": {
+    "grill": {
+      "label": "nướng",
+      "id": "d610b992-e5dc-598b-a785-98c9e334cc02"
+    },
+    "soup": {
+      "label": "súp",
+      "id": "74957bde-884a-52de-a7dc-773cbe20f45b"
+    },
+    "skewer": {
+      "label": "xiên que",
+      "id": "ccc01428-f9b5-5cda-9b3c-c9fa2d2b5cbc"
+    },
+    "fried_snack": {
+      "label": "đồ chiên",
+      "id": "fe0b9168-50ca-5c86-9a58-fa504f80fb51"
+    },
+    "savory_cake": {
+      "label": "bánh mặn",
+      "id": "b00b01d5-f666-5e35-95d9-b05ae59223b2"
+    },
+    "snail_seafood": {
+      "label": "ốc và hải sản",
+      "id": "80be56b8-4ca6-5e80-8954-f27c473bfe12"
+    },
+    "sweet_cake": {
+      "label": "bánh ngọt",
+      "id": "9fa6625d-7c97-53c1-aa54-2ece27379847"
+    },
+    "che": {
+      "label": "chè",
+      "id": "7eb30270-45ac-527d-a57a-c487f3fe9bbe"
+    },
+    "ice_cream": {
+      "label": "kem",
+      "id": "8e994207-5c7b-524e-97aa-e4a5f7679071"
+    },
+    "fruit_pickle": {
+      "label": "trái cây và đồ chua",
+      "id": "8afc9f84-0241-5d69-8385-1e816eb25178"
+    },
+    "dry_snack": {
+      "label": "đồ ăn vặt khô",
+      "id": "62aa4584-f7db-5782-a4d5-a8199fda2502"
+    }
+  },
+  "regions": {
+    "vi_north": {
+      "label": "Miền Bắc",
+      "id": "0cc4d0c4-4692-5098-b61f-cdad67ee2d11",
+      "origin": "north"
+    },
+    "vi_central": {
+      "label": "Miền Trung",
+      "id": "4587f624-6f58-5a22-b109-8c5b27bb3154",
+      "origin": "central"
+    },
+    "vi_south": {
+      "label": "Miền Nam",
+      "id": "59eaa370-3b50-57cc-b01e-6691dcbd4be0",
+      "origin": "south"
+    },
+    "vi_west": {
+      "label": "Miền Tây",
+      "id": "93436350-0b00-55c0-9866-adff304ba486",
+      "origin": "west"
+    }
+  },
+  "flavorKinds": [
+    "spicy",
+    "salty",
+    "sweet",
+    "sour",
+    "fatty"
+  ],
+  "flavorIntensities": [
+    "none",
+    "low",
+    "medium",
+    "high",
+    "unknown"
+  ],
+  "flavorChoices": {
+    "Cay": "spicy present",
+    "Chua / Chua cay": "sour present",
+    "Ngọt": "sweet present",
+    "Mặn / Đậm đà": "salty present, intensity medium or high",
+    "Thanh đạm": "salty present, intensity low",
+    "Béo / Ngậy": "fatty present"
+  },
+  "mealSlots": [
+    "breakfast",
+    "lunch",
+    "dinner",
+    "snack"
+  ],
+  "groups": {
+    "main": [
+      {
+        "code": "family:rice",
+        "label": "Cơm",
+        "id": "e69b5f45-580d-5ee3-9e43-360650b4c650",
+        "linkedIds": [],
+        "families": [
+          "rice"
+        ]
+      },
+      {
+        "code": "family:bun",
+        "label": "Bún / Phở",
+        "id": "14bc9d6f-c43e-5c1d-9c13-eddc5cc80dcc",
+        "linkedIds": [
+          "1f89baf1-52f8-5f1e-98d8-7a36cae7a596"
+        ],
+        "families": [
+          "bun",
+          "pho"
+        ]
+      },
+      {
+        "code": "family:noodles",
+        "label": "Mì / Miến / Hủ tiếu",
+        "id": "ac9e12a4-0416-53fc-af30-5b8b11ee0b49",
+        "linkedIds": [
+          "a7033166-916f-5748-b9c3-6670424dbfcf",
+          "1af6a10b-2820-5c18-909f-40acfa83ec84",
+          "5cc8224c-f7da-5c2e-9dcc-274504b977c4",
+          "1e7f5a78-1429-5e5e-8df2-4cba824a881b"
+        ],
+        "families": [
+          "noodles",
+          "mien",
+          "hu_tieu",
+          "nui",
+          "banh_canh"
+        ]
+      },
+      {
+        "code": "family:hotpot",
+        "label": "Lẩu & Nướng",
+        "id": "7d4b93cd-665d-5ef3-bde6-9d2f1a721f40",
+        "linkedIds": [
+          "d610b992-e5dc-598b-a785-98c9e334cc02"
+        ],
+        "families": [
+          "hotpot",
+          "grill"
+        ]
+      },
+      {
+        "code": "family:banh_mi",
+        "label": "Bánh mì / Xôi",
+        "id": "811f6aa0-6b7f-5645-aeb9-c2f96cf50630",
+        "linkedIds": [
+          "87e3727e-5022-50a2-9a60-0b3dea21ca5d"
+        ],
+        "families": [
+          "banh_mi",
+          "sticky_rice"
+        ]
+      },
+      {
+        "code": "family:porridge",
+        "label": "Cháo / Súp",
+        "id": "bf53ba6f-c4fc-536b-a932-b7cb18cb7e60",
+        "linkedIds": [
+          "74957bde-884a-52de-a7dc-773cbe20f45b"
+        ],
+        "families": [
+          "porridge",
+          "soup"
+        ]
+      }
+    ],
+    "snack": [
+      {
+        "code": "snack:fried",
+        "label": "Đồ chiên & Xiên que",
+        "id": "fe0b9168-50ca-5c86-9a58-fa504f80fb51",
+        "linkedIds": [
+          "748c36e8-97ad-5dab-8903-c145243af069",
+          "ccc01428-f9b5-5cda-9b3c-c9fa2d2b5cbc"
+        ],
+        "families": [
+          "fried_snack",
+          "fried_chicken",
+          "skewer"
+        ]
+      },
+      {
+        "code": "snack:savory_cake",
+        "label": "Các loại bánh mặn",
+        "id": "542c7681-b911-5a11-ae24-7010ae19a0a1",
+        "linkedIds": [
+          "5dcf86dc-9369-59ca-a0cd-59836909b177",
+          "6bcd10c4-acc9-53cd-be72-43a4e7061b9a",
+          "e78e10c2-a90f-57b6-bc28-421fd7bd6b0a",
+          "b00b01d5-f666-5e35-95d9-b05ae59223b2"
+        ],
+        "families": [
+          "banh_bao",
+          "banh_cuon",
+          "banh_uot",
+          "banh_cuon_wrap",
+          "savory_cake"
+        ]
+      },
+      {
+        "code": "snack:mixed",
+        "label": "Món trộn & Cuốn",
+        "id": "bab170d6-9d47-57c9-8ca5-767954cbd111",
+        "linkedIds": [
+          "26e61cf0-7a35-56aa-a855-a11c6cd3599b"
+        ],
+        "families": [
+          "salad",
+          "rolls"
+        ]
+      },
+      {
+        "code": "snack:seafood",
+        "label": "Ốc & Hải sản",
+        "id": "80be56b8-4ca6-5e80-8954-f27c473bfe12",
+        "linkedIds": [],
+        "families": [
+          "snail_seafood"
+        ]
+      },
+      {
+        "code": "snack:sweet_cake",
+        "label": "Bánh ngọt",
+        "id": "9fa6625d-7c97-53c1-aa54-2ece27379847",
+        "linkedIds": [],
+        "families": [
+          "sweet_cake"
+        ]
+      },
+      {
+        "code": "snack:che",
+        "label": "Chè & Kem",
+        "id": "7eb30270-45ac-527d-a57a-c487f3fe9bbe",
+        "linkedIds": [
+          "8e994207-5c7b-524e-97aa-e4a5f7679071"
+        ],
+        "families": [
+          "che",
+          "ice_cream"
+        ]
+      },
+      {
+        "code": "snack:fruit",
+        "label": "Trái cây & Đồ chua",
+        "id": "8afc9f84-0241-5d69-8385-1e816eb25178",
+        "linkedIds": [],
+        "families": [
+          "fruit_pickle"
+        ]
+      },
+      {
+        "code": "snack:dry",
+        "label": "Đồ ăn vặt khô",
+        "id": "62aa4584-f7db-5782-a4d5-a8199fda2502",
+        "linkedIds": [],
+        "families": [
+          "dry_snack"
+        ]
+      }
+    ]
+  }
+}

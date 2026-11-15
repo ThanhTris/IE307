@@ -26,8 +26,8 @@ test.each(['Lỗi tải kết quả', 'Chưa xác nhận kết quả', 'Kết qu
   await press('Tình huống kiểm thử kết quả');
   await fireEvent.changeText(screen.getByLabelText('Tìm tình huống kết quả'), 'Lỗi tải quán');
   await press('Quán · Lỗi tải quán');
-  await press('Thử lại');
-  expect(await screen.findByText('Quán phở A · mẫu')).toBeOnTheScreen();
+  expect(screen.getByRole('button', { name: 'Mở Google Maps' })).toBeOnTheScreen();
+  expect(screen.queryByRole('button', { name: /^Thử lại/ })).toBeNull();
   expect(screen.queryByRole('button', { name: 'Chạm để bỏ qua' })).toBeNull();
 });
 

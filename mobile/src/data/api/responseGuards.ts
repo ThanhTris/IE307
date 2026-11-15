@@ -128,11 +128,11 @@ export function isDiscoveryContext(value: unknown): value is DiscoveryContextRes
 }
 
 function isFlavor(value: unknown): boolean {
-  return isRecord(value) && ['spicy', 'salty', 'sweet', 'sour'].every(key => {
-    const item = value[key];
-    return isRecord(item) && nullable(item.present, isBoolean)
-      && oneOf(item.intensity, ['none', 'low', 'medium', 'high', 'unknown']);
-  });
+  const item = (entry: unknown) => isRecord(entry) && nullable(entry.present, isBoolean)
+    && oneOf(entry.intensity, ['none', 'low', 'medium', 'high', 'unknown']);
+  // The four classic kinds are required; `fatty` (Béo / Ngậy) is optional.
+  return isRecord(value) && ['spicy', 'salty', 'sweet', 'sour'].every(key => item(value[key]))
+    && (value.fatty === undefined || item(value.fatty));
 }
 
 function isPrice(value: unknown): boolean {
@@ -224,12 +224,10 @@ const uniqueStringArray = (value: unknown, valid: (item: unknown) => boolean = i
   Array.isArray(value) && value.every(valid) && new Set(value).size === value.length;
 
 function isCanonicalFlavor(value: unknown): boolean {
-  if (!isRecord(value) || !onlyKeys(value, ['spicy', 'salty', 'sweet', 'sour'])) return false;
-  return (['spicy', 'salty', 'sweet', 'sour'] as const).every(key => {
-    const item = value[key];
-    return isRecord(item) && onlyKeys(item, ['present', 'intensity'])
-      && nullable(item.present, isBoolean) && oneOf(item.intensity, ['none', 'low', 'medium', 'high', 'unknown']);
-  });
+  if (!isRecord(value) || !onlyKeys(value, ['spicy', 'salty', 'sweet', 'sour', 'fatty'])) return false;
+  const item = (entry: unknown) => isRecord(entry) && onlyKeys(entry, ['present', 'intensity'])
+    && nullable(entry.present, isBoolean) && oneOf(entry.intensity, ['none', 'low', 'medium', 'high', 'unknown']);
+  return (['spicy', 'salty', 'sweet', 'sour'] as const).every(key => item(value[key])) && (value.fatty === undefined || item(value.fatty));
 }
 
 function isCanonicalArtwork(value: unknown): boolean {
@@ -251,7 +249,7 @@ function isCanonicalPrice(value: unknown): boolean {
 function isCanonicalPoolDish(value: unknown): boolean {
   return isRecord(value) && onlyKeys(value, [
     'roundDishId', 'dishId', 'name', 'description', 'mealSlots', 'cuisineIds', 'cuisineLabels',
-    'categoryIds', 'categoryLabels', 'temperature', 'flavor', 'artwork', 'priceReference',
+    'categoryIds', 'categoryLabels', 'temperature', 'flavor', 'origin', 'artwork', 'priceReference',
   ]) && isUuid(value.roundDishId) && isUuid(value.dishId)
     && isNonEmptyString(value.name) && value.name.length <= 256
     && nullable(value.description, v => isString(v) && v.length <= 2000)
@@ -260,14 +258,18 @@ function isCanonicalPoolDish(value: unknown): boolean {
     && uniqueStringArray(value.cuisineLabels, v => isNonEmptyString(v) && v.length <= 80)
     && uniqueStringArray(value.categoryLabels, v => isNonEmptyString(v) && v.length <= 80)
     && nullable(value.temperature, isTemperature) && nullable(value.flavor, isCanonicalFlavor)
+    // `origin` (ADR-024) is optional: older servers do not send it.
+    && optional(value.origin, v => nullable(v, o => ['north', 'central', 'south', 'west'].includes(String(o))))
     && nullable(value.artwork, isCanonicalArtwork) && nullable(value.priceReference, isCanonicalPrice);
 }
 
 function isCanonicalMember(value: unknown): boolean {
-  return isRecord(value) && onlyKeys(value, ['userId', 'displayName', 'role', 'submissionStatus'])
+  return isRecord(value) && onlyKeys(value, ['userId', 'displayName', 'role', 'submissionStatus', 'ready'])
     && isUuid(value.userId) && isNonEmptyString(value.displayName)
     && value.displayName.length <= 24 && oneOf(value.role, ['HOST', 'MEMBER'])
-    && oneOf(value.submissionStatus, ['NOT_SUBMITTED', 'ACCEPTED']);
+    && oneOf(value.submissionStatus, ['NOT_SUBMITTED', 'ACCEPTED'])
+    // `ready` (ADR-028) is optional: older servers do not send it.
+    && optional(value.ready, isBoolean);
 }
 
 function isCanonicalPreferences(value: unknown): boolean {
@@ -331,7 +333,8 @@ export function isCanonicalRoomSnapshot(value: unknown): value is RoomSnapshot {
     && isUuid(snapshot.roomId) && isRoomCode(snapshot.code)
     && oneOf(snapshot.state, ['LOBBY', 'ROUND_1', 'WAITING_1', 'ROUND_2', 'WAITING_2', 'DECIDED', 'NO_CONSENSUS', 'CANCELLED', 'EXPIRED'])
     && isVersion(snapshot.version) && (snapshot.round === 1 || snapshot.round === 2) && isVersion(snapshot.poolVersion)
-    && isCount(snapshot.dishCount) && snapshot.dishCount >= 10 && snapshot.dishCount <= 20
+    // 5..9 only after accepting a shortage (ADR-024).
+    && isCount(snapshot.dishCount) && snapshot.dishCount >= 5 && snapshot.dishCount <= 20
     && Array.isArray(snapshot.pool) && snapshot.pool.length <= 20 && snapshot.pool.every(isCanonicalPoolDish)
     && Array.isArray(snapshot.members) && snapshot.members.length >= 1 && snapshot.members.length <= 20 && snapshot.members.every(isCanonicalMember)
     && isCount(snapshot.submittedCount) && snapshot.submittedCount <= 20
@@ -342,7 +345,7 @@ export function isCanonicalRoomSnapshot(value: unknown): value is RoomSnapshot {
     && nullable(snapshot.deadline, isTimestamp) && isTimestamp(snapshot.serverTime)
     && nullable(snapshot.result, isCanonicalTerminalResult) && isUuid(snapshot.hostUserId)
     && isRecord(snapshot.settings) && onlyKeys(snapshot.settings, ['dishCount', 'mealSlot', 'desiredAt'])
-    && isCount(snapshot.settings.dishCount) && snapshot.settings.dishCount >= 10 && snapshot.settings.dishCount <= 20
+    && isCount(snapshot.settings.dishCount) && snapshot.settings.dishCount >= 5 && snapshot.settings.dishCount <= 20
     && oneOf(snapshot.settings.mealSlot, ['breakfast', 'lunch', 'dinner', 'snack'])
     && nullable(snapshot.settings.desiredAt, isTimestamp) && isCanonicalPreferences(snapshot.ownPreferences)
     && (snapshot.ownPreferenceRevision === null || isVersion(snapshot.ownPreferenceRevision))
@@ -351,11 +354,11 @@ export function isCanonicalRoomSnapshot(value: unknown): value is RoomSnapshot {
     && isTimestamp(snapshot.expiresAt) && isBoolean(snapshot.canEndWaiting))) return false;
 
   if (snapshot.state === 'LOBBY' || snapshot.state === 'ROUND_1' || snapshot.state === 'WAITING_1') {
-    if (snapshot.round !== 1 || snapshot.pool.length < 10 || snapshot.result !== null) return false;
+    if (snapshot.round !== 1 || snapshot.pool.length < 5 || snapshot.result !== null) return false;
   }
   if (snapshot.state === 'ROUND_2' || snapshot.state === 'WAITING_2') {
     if (snapshot.round !== 2 || snapshot.pool.length < 1 || snapshot.result !== null
-      || snapshot.removalCap !== Math.max(1, Math.floor(snapshot.pool.length * 0.3))) return false;
+      || snapshot.removalCap !== Math.max(1, Math.floor((3 * snapshot.pool.length + 9) / 10))) return false;
   }
   if (snapshot.state === 'NO_CONSENSUS') {
     const result = snapshot.result;
@@ -395,7 +398,7 @@ export function isSocialIdentity(value: unknown): value is SocialIdentity {
 
 export function isInboxItem(value: unknown): value is InboxItem {
   return isRecord(value) && isNonEmptyString(value.id) && isNonEmptyString(value.eventId)
-    && oneOf(value.type, ['friend_invite', 'room_invite', 'room_result'])
+    && oneOf(value.type, ['friend_invite', 'friend_accepted', 'room_invite', 'room_result'])
     && isString(value.title) && isString(value.body) && isBoolean(value.read)
     && optional(value.metadata, isRecord) && isTimestamp(value.createdAt);
 }

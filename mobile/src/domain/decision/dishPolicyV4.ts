@@ -77,7 +77,7 @@ function ids(value: unknown, min: number, max: number): value is string[] {
 }
 export function removalCapV4(count: number): number {
   if (!Number.isInteger(count) || count < 0 || count > 20) throw new RangeError('Invalid pool size');
-  return count === 0 ? 0 : Math.max(1, Math.floor(0.30 * count));
+  return count === 0 ? 0 : Math.max(1, Math.floor((3 * count + 9) / 10));
 }
 function ballots(value: unknown, roster: readonly string[], pool: readonly string[], allowed: readonly string[], cap?: number): RecordValue {
   if (!record(value)) throw new RangeError('Invalid accepted ballot map');
@@ -102,7 +102,7 @@ function ballots(value: unknown, roster: readonly string[], pool: readonly strin
 export function decideDishSessionV4(value: unknown): DishDecisionV4 {
   const keys = ['policyVersion', 'roster', 'pool', 'round', 'round1', 'round2', 'seed'];
   if (!record(value) || Object.keys(value).length !== keys.length || keys.some(k => !Object.hasOwn(value, k))
-    || value.policyVersion !== DISH_POLICY_V4 || !ids(value.roster, 2, 20) || !ids(value.pool, 10, 20)
+    || value.policyVersion !== DISH_POLICY_V4 || !ids(value.roster, 2, 20) || !ids(value.pool, 5, 20)
     || (value.round !== 1 && value.round !== 2) || typeof value.seed !== 'string' || !/^[0-9a-f]{8}$/.test(value.seed)) {
     throw new RangeError('Invalid locked v4 snapshot');
   }

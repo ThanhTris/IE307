@@ -104,6 +104,8 @@ def exercise(db,namespace,http,check):
     locked=v4('create',displayName='QA locked host',settings={'dishCount':20,'mealSlot':'lunch','desiredAt':None},preferences=pref)
     v4('join',1,code=locked['code'],displayName='QA locked member')
     snap=v4('snapshot',roomId=locked['roomId'])
+    v4('updatePreferences',1,roomId=locked['roomId'],expectedVersion=snap['version'],preferences=pref)
+    snap=v4('snapshot',roomId=locked['roomId'])
     v4('start',roomId=locked['roomId'],expectedVersion=snap['version'])
     for who in [0,1]:
         snap=v4('snapshot',who,roomId=locked['roomId'])

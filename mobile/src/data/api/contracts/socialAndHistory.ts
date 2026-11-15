@@ -51,7 +51,7 @@ export interface AcceptRoomInviteRequest {
 export interface InboxItem {
   id: string;
   eventId: string;
-  type: 'friend_invite' | 'room_invite' | 'room_result';
+  type: 'friend_invite' | 'friend_accepted' | 'room_invite' | 'room_result';
   title: string;
   body: string;
   read: boolean;

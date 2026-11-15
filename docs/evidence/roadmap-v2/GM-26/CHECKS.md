@@ -257,3 +257,10 @@ git diff --check
 | AC6 handoff is reproducible and truthful | **Pass (documentation)** | [HANDOFF.md](HANDOFF.md) and [FIGMA_PARITY.md](FIGMA_PARITY.md) provide comprehensive reproducible guidelines, state boundaries, and 2-device testing scenarios. |
 
 No Android device, backend test, or live deployment result is marked Pass here. Do not use this automated evidence to mark GM-26 Done or merge; Trí owns final review and acceptance.
+
+## 2026-11-15 — PR #167 Follow-up (ADR-023 Ceil Cap + Stage 3A AVD Two-Client Verification)
+
+- Project owner `ThanhTris` approved PR #167 and `ADR-022`..`ADR-028` (including `0049_round_two_cap_ceil.sql`, `0050_preference_ranking.sql`, `0054_room_rejoin_round_one.sql`, and `0055`..`0057`).
+- Stage 3A AVD + Live QA Backend (**Pass**): On `Medium_Phone_API_37.0` (`emulator-5554`, Expo Go) + QA peer (`Ban_AVD_2`) against `pr167-ci-fix-v7` (`127.0.0.1:54371`, migrations `0001..0057`), verified Round 1 flashcard soft-priority ordering (`Cơm tấm` prioritized from host `Cơm` preference), 10-card completion + `Hoàn tác` undo, `WAITING_1` (`1/2 thành viên đã gửi phiếu`, 60s ring), peer R1 `OK` submission transitioning to `RoundTwoNotice` (`Còn 10 món vào vòng 2. Mỗi người loại tối đa 3 món.`, reflecting `max(1, ceil(0.30 * 10)) = 3`), Round 2 elimination (`Cơm cá chiên` removed) + peer `KEEP`, and terminal transition to `DECIDED` (`ACCEPTABLE_FINAL`).
+- Post-`0057` QA checks: `gm32_regression.py canonical` (102 SQL/TS vectors + 203 assertions) and `boundaries` (279 assertions, incl. fixed integer ceil cap check `max(1, (3 * survivors + 9) // 10)`) **Pass**. Local redacted AVD screenshots are archived under ignored `review-results/artifacts/pr167-avd/`.
+- **Not run**: Stage 3B physical USB Android phone (`GM-33`/`GM-34`) remains **Not run**.

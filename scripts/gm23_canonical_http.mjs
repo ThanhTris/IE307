@@ -47,7 +47,13 @@ function requestId(prefix){return prefix+'-'+Date.now()+'-'+randomUUID().slice(0
 async function waitWorker(){for(let i=0;i<30;i++){if(sql("select exists(select 1 from dish_v4_private.runtime where last_tick>clock_timestamp()-interval '15 seconds')")==='t'){results.push({case:'v4 worker heartbeat verified',result:'Pass',expected:true,actual:true});return;}await new Promise(r=>setTimeout(r,1000));}throw new Error('QA v4 worker did not become ready');}
 async function create(u,count=10,meal='lunch'){return expectOk(await api(u,'create',{requestId:requestId('create'),displayName:'QA host',settings:{dishCount:count,mealSlot:meal,desiredAt:null},preferences:pref}),'create');}
 async function snapshot(u,roomId){return expectOk(await api(u,'snapshot',{roomId}),'snapshot');}
-async function join(u,code,name){return expectOk(await api(u,'join',{requestId:requestId('join'),code,displayName:name}),'join');}
+async function join(u,code,name){
+ const receipt=expectOk(await api(u,'join',{requestId:requestId('join'),code,displayName:name}),'join');
+ const current=await snapshot(u,receipt.roomId);
+ expectOk(await api(u,'updatePreferences',{requestId:requestId('ready-preferences'),roomId:receipt.roomId,
+   expectedVersion:current.version,preferences:current.ownPreferences}),'member saves preferences before start');
+ return receipt;
+}
 function votesFor(pool,fn){return pool.map((d,i)=>({roundDishId:d.roundDishId,choice:fn(d,i)}));}
 function versionArgs(room,s,round){return {roomId:room,expectedVersion:s.version,round:s.round,poolVersion:s.poolVersion};}
 async function submit(u,room,s,votes,id){return api(u,'submit',{...versionArgs(room,s,s.round),requestId:id||requestId('submit'),votes});}

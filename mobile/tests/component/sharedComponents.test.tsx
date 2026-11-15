@@ -65,8 +65,8 @@ test('Figma Home building blocks render the dining banner, branded header and se
       activeId="home"
       colors={colors}
       items={[
-        { id: 'home', label: 'Trang chủ', iconSource: require('../../assets/brand/icons/home.png'), onPress: jest.fn() },
-        { id: 'friends', label: 'Bạn bè', iconSource: require('../../assets/brand/icons/friends.png'), onPress: onFriends },
+        { id: 'home', label: 'Trang chủ', icon: 'home' as const, onPress: jest.fn() },
+        { id: 'friends', label: 'Bạn bè', icon: 'friends' as const, onPress: onFriends },
       ]}
     />
   </>);
@@ -88,11 +88,11 @@ test('icon action tile and quick-friend add affordance keep accessible button na
   const onCreate = jest.fn();
   const onAdd = jest.fn();
   await render(<>
-    <AppButton label="Tạo phòng" iconSource={require('../../assets/brand/icons/plus.png')} iconLayout="stacked" onPress={onCreate} colors={colors} />
+    <AppButton label="Tạo phòng" icon="plus" iconLayout="stacked" onPress={onCreate} colors={colors} />
     <AvatarRow items={[{ id: 'linh', label: 'Linh' }]} onAdd={onAdd} colors={colors} />
   </>);
 
-  expect(screen.getByTestId('app-button-icon')).toBeOnTheScreen();
+  expect(screen.getByTestId('app-button-icon', { includeHiddenElements: true })).toBeOnTheScreen();
   await userEvent.setup().press(screen.getByRole('button', { name: 'Tạo phòng' }));
   await userEvent.setup().press(screen.getByRole('button', { name: 'Thêm bạn' }));
   expect(onCreate).toHaveBeenCalledTimes(1);

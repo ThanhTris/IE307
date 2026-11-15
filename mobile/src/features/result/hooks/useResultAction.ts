@@ -11,7 +11,7 @@ export function useResultAction(resultId: string) {
     try {
       const reply = await action();
       if (scope.current !== resultId) return;
-      setStatus({ key: resultId, busy: false, message: reply && !reply.ok ? 'Chưa thực hiện được thao tác. Hãy thử lại.' : 'Đã nhận yêu cầu của bạn.' });
+      setStatus({ key: resultId, busy: false, message: reply && !reply.ok ? 'Chưa thực hiện được thao tác. Hãy thử lại.' : undefined });
     } catch { if (scope.current === resultId) setStatus({ key: resultId, busy: false, message: 'Chưa thực hiện được thao tác. Hãy thử lại.' }); }
     finally { if (lock.current === resultId) lock.current = undefined; }
   };

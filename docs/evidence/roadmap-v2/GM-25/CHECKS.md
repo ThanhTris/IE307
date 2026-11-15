@@ -193,3 +193,11 @@ git diff --check
 | AC6 handoff is reproducible and truthful | **Pass (documentation)** | [HANDOFF.md](HANDOFF.md) and [FIGMA_PARITY.md](FIGMA_PARITY.md) provide comprehensive reproducible guidelines and state boundaries. |
 
 No Android device, backend test, or live deployment result is marked Pass here. Do not use this automated evidence to mark GM-25 Done or merge; Trí owns final review and acceptance.
+
+## 2026-11-15 — PR #167 Composite Integration & Stage 3A AVD Verification
+
+- Project owner `ThanhTris` approved PR #167 (`refactor/product-cleanup-on-main` → `main`) as a composite integration PR together with `ADR-022`..`ADR-028` (`ADR-028` `ready` gate applies to all `dish-decision-v4` `LOBBY` rooms, including existing lobbies).
+- Merged `origin/main` (`c7bb6aa`, incl. `#168`) while preserving `#168`'s snapshot-based auto-navigation into Round 1 alongside the new `ADR-028` `ready` state/controls in `LobbyScreen.tsx` / `useLobby.ts`.
+- Stage 3A AVD + Live QA Backend (**Pass**): On `Medium_Phone_API_37.0` (`emulator-5554`) running Expo Go against isolated QA backend `pr167-ci-fix-v7` (`127.0.0.1:54371`, migrations `0001..0057`), verified Guest entry → first-login Permissions (`ADR-026`: Thông báo/Camera/Vị trí + unchecked opt-in `Lưu lịch sử bữa ăn của tôi`) → Home → Dish Setup (`10` dishes, lunch, eat now) → Preferences (`Cơm`, `Lưu thay đổi →`) → Lobby (`ADR-028` orange `Đang chọn khẩu vị` / `Chờ 1 người chọn khẩu vị` / disabled `Bắt đầu chọn món` until peer `Ban_AVD_2` saved ready → green `Sẵn sàng` / enabled `Bắt đầu chọn món` → `#168` auto-enter Round 1).
+- Post-`0057` QA baseline HTTP (`pr167-ci-fix-v5`) and `gm32_regression.py` (`baseline`, `boundaries`: 279 assertions) passed; `backend:test` passed `ADR-026`/`ADR-027`/`ADR-028` pgTAP suites (10 files / 129 tests total). Local screenshots archived under ignored `review-results/artifacts/pr167-avd/`.
+- **Not run**: Stage 3B physical USB Android device (`GM-33`/`GM-34`), real Google Places billing key, and remote FCM push remain **Not run**.

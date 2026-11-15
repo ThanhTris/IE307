@@ -19,7 +19,11 @@ liveTest('live ACK replay reconciles a restarted GM-31 outbox and drops terminal
   const manifest = JSON.parse(readFileSync(path, 'utf8'));
   const credentials = JSON.parse(readFileSync(resolve(workdir, 'credentials.private.json'), 'utf8'));
   const origin = new URL(manifest.endpoint.baseUrl);
-  if (manifest.format !== 'gm03-qa-manifest-v1' || manifest.workdir !== workdir
+  const normalizeWorkdir = (value: unknown) => {
+    const normalized = String(value ?? '').replaceAll('\\', '/');
+    return process.platform === 'win32' ? normalized.toLowerCase() : normalized;
+  };
+  if (manifest.format !== 'gm03-qa-manifest-v1' || normalizeWorkdir(manifest.workdir) !== normalizeWorkdir(workdir)
       || !manifest.projectId.startsWith('gm03qa-') || origin.protocol !== 'http:'
       || origin.hostname !== '127.0.0.1' || ['54321', '54322'].includes(origin.port)
       || credentials.apiUrl !== origin.origin) throw new Error('Unexpected QA origin');
@@ -80,6 +84,7 @@ liveTest('live ACK replay reconciles a restarted GM-31 outbox and drops terminal
   });
   const roomId: string = made.roomId;
   await call(peer.token, 'join', { requestId: randomUUID(), code: made.code, displayName: 'GM32 outbox peer' });
+  await call(peer.token, 'setReady', { requestId: randomUUID(), roomId, ready: true });
   const lobby = await snapshot(host.token, roomId);
   await call(host.token, 'start', { requestId: randomUUID(), roomId, expectedVersion: lobby.version });
   const roundOne = await snapshot(host.token, roomId);

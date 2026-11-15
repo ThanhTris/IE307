@@ -55,6 +55,8 @@ class V4Compatibility:
                                 settings={'dishCount':10,'mealSlot':'dinner','desiredAt':None}, preferences=deepcopy(EMPTY))
             for who in range(1,count):
                 self.invoke('join', who, code=created['code'], displayName='GM06 member')
+                member = self.invoke('snapshot', who, roomId=created['roomId'])
+                self.invoke('updatePreferences', who, roomId=created['roomId'], expectedVersion=member['version'], preferences=deepcopy(EMPTY))
             snap=self.invoke('snapshot', roomId=created['roomId'])
             self.invoke('start', roomId=created['roomId'], expectedVersion=snap['version'])
             for who in range(count):

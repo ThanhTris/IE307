@@ -4,6 +4,7 @@ import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppButton, StatusNotice } from '../../../shared/ui';
 import { HomeFlowFrame } from '../../home/components/HomeFlowFrame';
+import { ToastNotice } from '../../../shared/ui/feedback/Toast';
 
 /** Presentation received from the setup owner; no duplicate settings form here. */
 export type CreateEntrySummary = { meal: string; dishCount: number; time?: string; budget?: string };
@@ -32,7 +33,7 @@ export function CreateRoomScreen({ displayName, summary, onOpenSetup, onBack }: 
       {summary ? <Text style={[styles.body, { color: colors.text }, textStyle(400)]}>{`${summary.meal} · ${summary.dishCount} món${summary.time ? `\n${summary.time}` : ''}${summary.budget ? `\n${summary.budget}` : ''}`}</Text> : <Text style={[styles.body, { color: colors.muted }, textStyle(400)]}>Buổi ăn, số món và ưu tiên sẽ được chọn ở bước thiết lập.</Text>}
     </View>
     {!onOpenSetup ? <StatusNotice title="Thiết lập phòng đang được cập nhật" message="Bạn vẫn có thể quay lại trang chủ hoặc tham gia phòng đã có." colors={colors} /> : null}
-    {error ? <StatusNotice title="Chưa mở được thiết lập" message="Thông tin của bạn vẫn được giữ. Hãy thử lại." tone="error" colors={colors} /> : null}
+    {error ? <ToastNotice title="Chưa mở được thiết lập" message="Thông tin của bạn vẫn được giữ. Hãy thử lại." tone="error" /> : null}
     <View style={styles.spacer} />
     <AppButton label={error ? 'Thử mở lại thiết lập' : 'Tiếp tục thiết lập'} loading={busy} disabled={!onOpenSetup} onPress={() => { void open(); }} colors={colors} textStyle={textStyle(600)} />
   </HomeFlowFrame>;

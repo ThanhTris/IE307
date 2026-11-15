@@ -60,6 +60,15 @@ export function validScoredResult(value: ScoredResult | null): value is ScoredRe
   const winners = value.topDishes.filter(entry => entry.isWinner);
   return winners.length === 1 && winners[0]!.rank === 1 && equalProjection(winners[0]!.dish, value.winner);
 }
+/**
+ * Podium order: score first, then the server's own order for equal scores, with the winner leading its group.
+ * Every dish gets its own place (1, 2, 3), so equal scores never share a pedestal.
+ */
+export function podiumOrder<T extends { score: number; isWinner: boolean }>(entries: readonly T[]): T[] {
+  return entries.map((entry, index) => ({ entry, index }))
+    .sort((a, b) => b.entry.score - a.entry.score || Number(b.entry.isWinner) - Number(a.entry.isWinner) || a.index - b.index)
+    .map(item => item.entry);
+}
 export function resultPrice(dish: ResultDish) {
   const p = dish.priceReference;
   if (!p || !Number.isFinite(p.amount) || p.amount < 0 || !p.currency?.trim() || !p.unit?.trim() || !p.sourceRef?.trim() || !Number.isFinite(Date.parse(p.checkedAt))) return null;

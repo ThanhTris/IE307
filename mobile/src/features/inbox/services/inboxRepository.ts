@@ -15,6 +15,8 @@ export interface ResolvedRoom { roomId: string; destination: RoomDestination; re
 export interface InboxRepository {
   list(cursor?: string, knownEventIds?: ReadonlySet<string>): Promise<ReadResult<InboxPage>>;
   markAllRead(requestId: string): Promise<WriteResult<void>>;
+  /** Marks one entry (by event id) as read. */
+  markRead(eventId: string, requestId?: string): Promise<WriteResult<void>>;
   /** Suppress a server event after its invitation action succeeded for this app session. */
   markHandled(eventId: string): void;
   acceptFriend(invitationId: string): Promise<WriteResult<void>>;
@@ -43,7 +45,7 @@ function isInboxProjection(value: unknown): value is InboxItem {
     || typeof value.title !== 'string' || typeof value.body !== 'string' || typeof value.read !== 'boolean'
     || typeof value.createdAt !== 'string' || !Number.isFinite(Date.parse(value.createdAt)) || !isRecord(value.metadata)) return false;
   const metadata = value.metadata;
-  if (value.type === 'friend_invite') return exactKeys(metadata, ['invitationId']) && typeof metadata.invitationId === 'string' && UUID.test(metadata.invitationId);
+  if (value.type === 'friend_invite' || value.type === 'friend_accepted') return exactKeys(metadata, ['invitationId']) && typeof metadata.invitationId === 'string' && UUID.test(metadata.invitationId);
   if (value.type === 'room_invite') return exactKeys(metadata, ['invitationId', 'roomId'])
     && typeof metadata.invitationId === 'string' && UUID.test(metadata.invitationId)
     && typeof metadata.roomId === 'string' && UUID.test(metadata.roomId);
@@ -56,6 +58,10 @@ function isInboxProjection(value: unknown): value is InboxItem {
     && typeof metadata.contractVersion === 'string' && CONTRACTS.has(metadata.contractVersion)
     && Number.isInteger(metadata.eventVersion) && Number(metadata.eventVersion) >= 1;
 }
+
+const KNOWN_TYPES = new Set(['friend_invite', 'friend_accepted', 'room_invite', 'room_result']);
+/** A row of a type this build does not know (added by a newer server) is skipped; any other malformed row fails the page. */
+const isUnknownType = (value: unknown) => isRecord(value) && typeof value.type === 'string' && !KNOWN_TYPES.has(value.type);
 
 function malformedList(): ReadResult<InboxPage> {
   return { ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } };
@@ -127,10 +133,11 @@ export function createInboxRepository(roomRepository: RoomRepository): InboxRepo
     async list(cursor, knownEventIds = new Set()) {
       const result = await callSessionApi(roomRepository, client => client.listPartnerInbox(cursor));
       if (!result.ok) return result;
-      if (!Array.isArray(result.data) || !result.data.every(isInboxProjection)) return malformedList();
+      if (!Array.isArray(result.data) || !result.data.every(row => isInboxProjection(row) || isUnknownType(row))) return malformedList();
+      const rows = result.data.filter(isInboxProjection);
       const seen = new Set(knownEventIds);
       const handled = handledEventIds();
-      const items = result.data.filter(item => {
+      const items = rows.filter(item => {
         if (seen.has(item.eventId) || handled.has(item.eventId)) return false;
         seen.add(item.eventId);
         return true;
@@ -147,6 +154,11 @@ export function createInboxRepository(roomRepository: RoomRepository): InboxRepo
         && (!exactKeys(raw, ['ok', 'requestId', 'data']) || raw.requestId !== requestId || raw.data !== null)) {
         return { ok: false, requestId, error: { messageKey: 'MALFORMED_RESPONSE' } };
       }
+      return client.normalizeWriteResponse(raw, requestId, isVoidPayload);
+    }),
+    markRead: (eventId, requestId = createDurableRequestId('inbox_read_one')) => callSessionApi(roomRepository, async client => {
+      if (!(client instanceof ApiClientImpl)) return { ok: false, requestId, error: { messageKey: 'NOT_READY' } };
+      const raw = await client.callRpc<unknown>('mark_partner_inbox_item_read', { requestId, event_ref: eventId });
       return client.normalizeWriteResponse(raw, requestId, isVoidPayload);
     }),
     markHandled(eventId) {

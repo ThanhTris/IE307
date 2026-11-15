@@ -11,7 +11,8 @@ export function WaitingSummary({
 }: ComponentThemeProps & {
   acknowledged: number;
   total: number;
-  deadlineLabel: string;
+  /** Optional: omitted when the countdown is shown elsewhere. */
+  deadlineLabel?: string;
   statusLabel?: string;
 }) {
   const safeTotal = Math.max(total, 0);
@@ -36,7 +37,7 @@ export function WaitingSummary({
       >
         <View style={[styles.progressFill, { width: `${progress}%`, backgroundColor: colors?.primary }]} />
       </View>
-      <Text style={[styles.helper, { color: colors?.muted }]}>Hạn gửi: {deadlineLabel}</Text>
+      {deadlineLabel ? <Text style={[styles.helper, { color: colors?.muted }]}>Hạn gửi: {deadlineLabel}</Text> : null}
     </View>
   );
 }

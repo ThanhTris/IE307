@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { ReturnToRoomCard } from '../../features/rooms/components/ReturnToRoomCard';
+import { resumeHref } from '../../features/home/services/resumeRoom';
 import { JoinRoomScreen } from '../../features/rooms/screens/JoinRoomScreen';
+import { QrCameraScanner } from '../../features/rooms/components/QrCameraScanner';
 import { useRoomRepository } from '../../bootstrap/RoomRepositoryProvider';
 import { RequireActiveSession } from '../../features/auth/components/RequireActiveSession';
 import {
@@ -89,13 +92,22 @@ export default function JoinRoomRoute() {
       repository={live.repository}
       preview={(c: string) => live.repository.previewJoin(c)}
       qrScannerAdapter={qrAdapter}
+      renderScanner={isSimulatedScanner ? undefined : onScanned => <QrCameraScanner onScanned={onScanned} />}
       initialDisplayName={live.user?.displayName}
       initialCode={activeCode}
       linkError={effectiveError ?? undefined}
       onBack={() => (router.canGoBack() ? router.back() : router.replace('/'))}
+      returnToRoom={<ReturnToRoomCard repository={live.repository} userId={live.user?.id} onReturn={room => router.replace(resumeHref(room))} />}
       onEntered={room => {
-        // Members skip room settings and go straight to their own preferences.
-        router.replace({ pathname: '/room/setup', params: { roomId: room.roomId, stage: 'preferences' } });
+        void (async () => {
+          // Coming back to a room that already started (round 1) goes to its own screen, not to the preferences.
+          const snapshot = await live.repository.getRoomSnapshot(room.roomId).catch(() => undefined);
+          // Cannot tell whether the room started: the continue screen reads it again and picks the right screen.
+          if (!snapshot?.ok) router.replace('/continue-session');
+          else if (snapshot.data.state !== 'LOBBY') router.replace(resumeHref(snapshot.data));
+          // Members skip room settings and go straight to their own preferences.
+          else router.replace({ pathname: '/room/setup', params: { roomId: room.roomId, stage: 'preferences' } });
+        })();
       }}
     />
   </RequireActiveSession>;
