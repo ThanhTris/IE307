@@ -1,0 +1,236 @@
+{
+  "fixtureOnly": true,
+  "result": "Pass",
+  "runId": "gm-43-independent",
+  "base": "1e232dc2531fb0a4f8bc717bdf51ddf5e482b244",
+  "schemaVersion": "0.31.4",
+  "migration": "0059_gm43_result_notification_metadata.sql",
+  "migrationSha256": "0cdd8539f22f0f86f91c866f95e65af8772577e6f8a0e326a741698fc0563f29",
+  "caseCount": 14,
+  "combinedAssertions": 226,
+  "canonicalSchemaEnvelopes": 969,
+  "cases": [
+    {
+      "case": "GM-43 DECIDED submit ACK replay",
+      "result": "Pass",
+      "expected": {
+        "round": 1,
+        "accepted": true,
+        "poolVersion": 1,
+        "submittedAt": "2026-11-15T15:17:17.721993+00:00"
+      },
+      "actual": {
+        "round": 1,
+        "accepted": true,
+        "poolVersion": 1,
+        "submittedAt": "2026-11-15T15:17:17.721993+00:00"
+      }
+    },
+    {
+      "case": "GM-43 DECIDED submit ACK replay",
+      "result": "Pass",
+      "expected": {
+        "round": 1,
+        "accepted": true,
+        "poolVersion": 1,
+        "submittedAt": "2026-11-15T15:17:17.803351+00:00"
+      },
+      "actual": {
+        "round": 1,
+        "accepted": true,
+        "poolVersion": 1,
+        "submittedAt": "2026-11-15T15:17:17.803351+00:00"
+      }
+    },
+    {
+      "case": "GM-43 DECIDED host final inbox metadata",
+      "result": "Pass",
+      "expected": [
+        {
+          "roomId": "a6ac062d-8050-4534-bc2c-8ad2a19a15a1",
+          "resultId": "dda34c28-1bac-4bc9-90e6-e4b1c8d5ee5d",
+          "status": "DECIDED",
+          "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+          "eventVersion": 1
+        }
+      ],
+      "actual": [
+        {
+          "roomId": "a6ac062d-8050-4534-bc2c-8ad2a19a15a1",
+          "status": "DECIDED",
+          "resultId": "dda34c28-1bac-4bc9-90e6-e4b1c8d5ee5d",
+          "eventVersion": 1,
+          "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B"
+        }
+      ]
+    },
+    {
+      "case": "GM-43 DECIDED member final inbox metadata",
+      "result": "Pass",
+      "expected": [
+        {
+          "roomId": "a6ac062d-8050-4534-bc2c-8ad2a19a15a1",
+          "resultId": "dda34c28-1bac-4bc9-90e6-e4b1c8d5ee5d",
+          "status": "DECIDED",
+          "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+          "eventVersion": 1
+        }
+      ],
+      "actual": [
+        {
+          "roomId": "a6ac062d-8050-4534-bc2c-8ad2a19a15a1",
+          "status": "DECIDED",
+          "resultId": "dda34c28-1bac-4bc9-90e6-e4b1c8d5ee5d",
+          "eventVersion": 1,
+          "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B"
+        }
+      ]
+    },
+    {
+      "case": "GM-43 DECIDED outsider final inbox metadata",
+      "result": "Pass",
+      "expected": [],
+      "actual": []
+    },
+    {
+      "case": "GM-43 DECIDED one baseline event after replay",
+      "result": "Pass",
+      "expected": "1",
+      "actual": "1"
+    },
+    {
+      "case": "GM-43 DECIDED sender payload contains only typed references",
+      "result": "Pass",
+      "expected": {
+        "type": "room_result",
+        "eventId": "07d002f7-489c-40b7-9994-6e7bb8e21c46",
+        "roomId": "a6ac062d-8050-4534-bc2c-8ad2a19a15a1",
+        "resultId": "dda34c28-1bac-4bc9-90e6-e4b1c8d5ee5d",
+        "status": "DECIDED",
+        "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+        "eventVersion": 1
+      },
+      "actual": {
+        "type": "room_result",
+        "eventId": "07d002f7-489c-40b7-9994-6e7bb8e21c46",
+        "roomId": "a6ac062d-8050-4534-bc2c-8ad2a19a15a1",
+        "resultId": "dda34c28-1bac-4bc9-90e6-e4b1c8d5ee5d",
+        "status": "DECIDED",
+        "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+        "eventVersion": 1
+      }
+    },
+    {
+      "case": "GM-43 NO_CONSENSUS submit ACK replay",
+      "result": "Pass",
+      "expected": {
+        "round": 1,
+        "accepted": true,
+        "poolVersion": 1,
+        "submittedAt": "2026-11-15T15:17:19.341274+00:00"
+      },
+      "actual": {
+        "round": 1,
+        "accepted": true,
+        "poolVersion": 1,
+        "submittedAt": "2026-11-15T15:17:19.341274+00:00"
+      }
+    },
+    {
+      "case": "GM-43 NO_CONSENSUS submit ACK replay",
+      "result": "Pass",
+      "expected": {
+        "round": 1,
+        "accepted": true,
+        "poolVersion": 1,
+        "submittedAt": "2026-11-15T15:17:19.396102+00:00"
+      },
+      "actual": {
+        "round": 1,
+        "accepted": true,
+        "poolVersion": 1,
+        "submittedAt": "2026-11-15T15:17:19.396102+00:00"
+      }
+    },
+    {
+      "case": "GM-43 NO_CONSENSUS host final inbox metadata",
+      "result": "Pass",
+      "expected": [
+        {
+          "roomId": "8d7e7633-1f1d-48f4-9d8e-1b164fbb2ea0",
+          "resultId": "ff4a661c-4f5b-47ed-b89b-386ea13e5a49",
+          "status": "NO_CONSENSUS",
+          "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+          "eventVersion": 1
+        }
+      ],
+      "actual": [
+        {
+          "roomId": "8d7e7633-1f1d-48f4-9d8e-1b164fbb2ea0",
+          "status": "NO_CONSENSUS",
+          "resultId": "ff4a661c-4f5b-47ed-b89b-386ea13e5a49",
+          "eventVersion": 1,
+          "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B"
+        }
+      ]
+    },
+    {
+      "case": "GM-43 NO_CONSENSUS member final inbox metadata",
+      "result": "Pass",
+      "expected": [
+        {
+          "roomId": "8d7e7633-1f1d-48f4-9d8e-1b164fbb2ea0",
+          "resultId": "ff4a661c-4f5b-47ed-b89b-386ea13e5a49",
+          "status": "NO_CONSENSUS",
+          "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+          "eventVersion": 1
+        }
+      ],
+      "actual": [
+        {
+          "roomId": "8d7e7633-1f1d-48f4-9d8e-1b164fbb2ea0",
+          "status": "NO_CONSENSUS",
+          "resultId": "ff4a661c-4f5b-47ed-b89b-386ea13e5a49",
+          "eventVersion": 1,
+          "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B"
+        }
+      ]
+    },
+    {
+      "case": "GM-43 NO_CONSENSUS outsider final inbox metadata",
+      "result": "Pass",
+      "expected": [],
+      "actual": []
+    },
+    {
+      "case": "GM-43 NO_CONSENSUS one baseline event after replay",
+      "result": "Pass",
+      "expected": "1",
+      "actual": "1"
+    },
+    {
+      "case": "GM-43 NO_CONSENSUS sender payload contains only typed references",
+      "result": "Pass",
+      "expected": {
+        "type": "room_result",
+        "eventId": "2897e052-d4ae-4aa4-aa2d-a3608ba989df",
+        "roomId": "8d7e7633-1f1d-48f4-9d8e-1b164fbb2ea0",
+        "resultId": "ff4a661c-4f5b-47ed-b89b-386ea13e5a49",
+        "status": "NO_CONSENSUS",
+        "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+        "eventVersion": 1
+      },
+      "actual": {
+        "type": "room_result",
+        "eventId": "2897e052-d4ae-4aa4-aa2d-a3608ba989df",
+        "roomId": "8d7e7633-1f1d-48f4-9d8e-1b164fbb2ea0",
+        "resultId": "ff4a661c-4f5b-47ed-b89b-386ea13e5a49",
+        "status": "NO_CONSENSUS",
+        "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B",
+        "eventVersion": 1
+      }
+    }
+  ],
+  "independentAssertions": 217,
+  "runnerSha256": "d33c1e9fe2be94ac86d4dde7d7515ffefe08929689ee29845c1a094b344a5f92"
+}

@@ -1,0 +1,6 @@
+# GM-43 — Bàn giao metadata kết quả inbox
+
+- Producer baseline `1e232dc`, GM-20 canonical writer PR #143 (`e3f7058`) và GM-23 canonical notifications PR #154 (`0f522ed`). Migration `0059` đăng ký schema `0.31.4` và revision `dish-session-v4/roadmap-v2/GM-43.1`.
+- `list_partner_inbox` trả `metadata.status`, `metadata.contractVersion` và `metadata.eventVersion` cùng `roomId` và `resultId`. Consumer phân nhánh theo `status`; với event legacy thiếu status, dùng tham chiếu để đọc lại kết quả qua API có ACL. Push sender có cùng tham chiếu. Không dùng tiêu đề để xác định trạng thái.
+- Từ clone sạch chạy `npm ci` rồi `npm run qa:start -- --run-id gm43-check --api-port 54381 --db-port 54382`. Trỏ `GM03_QA_MANIFEST` vào `.work/qa/gm43-check/manifest.json`, đặt `GM03_QA_WORKDIR` theo trường `workdir` của manifest, chạy `node scripts/gm20_canonical_http.mjs`. Runner tạo hai kết quả v4 synthetic và kiểm claim/payload. Kết quả ghi tại `.work/gm20-canonical/http-results.json`. `supabase/tests/http/GM-43.http` gọi lại inbox từ cả hai fixture. Dọn QA bằng `npm run qa:stop -- --run-id gm43-check`.
+- Khi cần rollback trên nhánh phát triển, khởi tạo QA mới từ revision trước migration. Rollback trên môi trường đã migrate có thể phục hồi thân hàm `notification_metadata` từ migration `0038` bằng một migration tiến.
