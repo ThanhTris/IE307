@@ -86,3 +86,6 @@ Artifacts bàn giao chính:
 - Cắm điện thoại thật qua USB sau khi toàn bộ các task UI-API đã hoàn tất.
 - Khi cấp quyền camera thật trên thiết bị, camera view vật lý sẽ quét trực tiếp mã QR được render bởi `RoomQrModal` trên máy client thứ 2.
 - Cung cấp Google Places API billing key qua biến môi trường để kiểm thử địa điểm thực tế tại TP. Hồ Chí Minh.
+
+### 3.2. Cập nhật kiểm thử Chặng 3A trên PR #167 — 2026-11-15
+- Kết quả tích hợp end-to-end trên AVD `Medium_Phone_API_37.0` nối QA `pr167-ci-fix-v7` (`0057`, `EXPO_PUBLIC_PLACES_SIMULATED=1`) đã xác nhận phần hiển thị quán mô phỏng có nhãn `[Mô phỏng AVD]` ngay dưới màn kết quả `DECIDED`; camera QR vật lý và Google Places billing key vẫn hoãn sang Chặng 3B (`GM-33`/`GM-34`).

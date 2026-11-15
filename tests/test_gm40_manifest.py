@@ -48,6 +48,21 @@ class ManifestAdmissionTests(unittest.TestCase):
         with patch.object(qa,'command',side_effect=AssertionError('No processes during file admission')):
             self.assertEqual(qa.load_manifest(self.path),(self.manifest,self.state))
 
+    def test_posix_slash_workdir_from_node_producer_admitted_and_foreign_rejected(self):
+        self.manifest['workdir'] = self.directory.as_posix()
+        seal(self.manifest)
+        self.state['manifestSha256'] = self.manifest['sealSha256']
+        self.state['workdir'] = self.directory.as_posix()
+        self.write()
+        with patch.object(qa, 'command', side_effect=AssertionError('No processes during file admission')):
+            self.assertEqual(qa.load_manifest(self.path), (self.manifest, self.state))
+        self.manifest['workdir'] = str(self.directory.parent / 'other-checkout')
+        seal(self.manifest)
+        self.state['manifestSha256'] = self.manifest['sealSha256']
+        self.write()
+        with self.assertRaisesRegex(ValueError, 'CHECKOUT'):
+            qa.load_manifest(self.path)
+
     def test_tampered_seal_rejected_before_database(self):
         self.manifest['ownerUuid']=str(uuid.uuid4());self.write()
         with self.assertRaisesRegex(ValueError,'SEAL'):qa.load_manifest(self.path)

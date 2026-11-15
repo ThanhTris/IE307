@@ -139,3 +139,8 @@ The latest full mobile rerun passed 70/70 suites and 1305/1305 tests. AVD testin
 ## Latest integrated QA handoff — 2026-11-07
 
 Migration 0040 preference validation was verified on an owned disposable QA stack, not on `main` or a deployed system. GM-27's AVD consumer path created a room and persisted the host's Cay preference, but did not complete the transition to Lobby/result. Handoff to GM-25: the setup UI labels this live QA flow as “Mô phỏng” and progression remains unclear. Result authorization/refetch, Top 3, terminal states, Places, and device accessibility remain unverified on AVD. See [latest follow-up](FOLLOWUP_2026-11-07.md#integrated-preference-hotfix-follow-up--2026-11-07).
+
+## PR #167 Schema Sync & Stage 3A Result Follow-up — 2026-11-15
+
+- Synced `mobile/src/features/result/services/resultWireSchemas.json` (`fatty` + `origin`) with the backend contract schema.
+- Stage 3A AVD (`Medium_Phone_API_37.0`) + QA `pr167-ci-fix-v7` (`0057`, `EXPO_PUBLIC_PLACES_SIMULATED=1`) completed a full two-client session into `DECIDED` (`ACCEPTABLE_FINAL`), rendering canonical winner `Cơm chay` (2 điểm), Top 3 podium, `Cùng ăn` companions, and labeled `[Mô phỏng AVD]` nearby Places. Physical USB Android device (`Stage 3B`) and live Google Places billing key remain deferred to `GM-33`/`GM-34`.

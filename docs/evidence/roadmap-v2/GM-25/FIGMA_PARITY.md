@@ -80,3 +80,10 @@ flowchart TD
 - **Thiết bị Android thật**: `Not run`. Chưa kết nối thiết bị qua ADB để so sánh pixel và visual render trên các viewport khác nhau (320dp, 360dp, 412dp) và font scale 200%.
 - **Backend Supabase staging từ xa**: `Not run`. Kiểm thử hiện tại được thực thi với synthetic session và API dispatch contract assertions.
 - Nghiệm thu thực tế trên thiết bị và cơ sở dữ liệu backend do chủ dự án Trí (`ThanhTris`) trực tiếp thực hiện.
+
+## Cập nhật Stage 3A AVD trên PR #167 — 2026-11-15
+
+- Đã kiểm thử thực tế luồng tích hợp UI–API trên máy ảo Android `Medium_Phone_API_37.0` (`emulator-5554`, Expo Go) kết nối QA backend local `pr167-ci-fix-v7` (`127.0.0.1:54371`, migrations `0001..0057`):
+  - **First-login Permissions (`ADR-026`)**, **Home**, **Dish Setup & Preferences (`10` món, soft preference priority)** và **Live Lobby (`ADR-028`)** hiển thị đúng trạng thái `Đang chọn khẩu vị` (cam, vô hiệu hóa `Bắt đầu chọn món`) khi peer chưa ready, chuyển sang `Sẵn sàng` (xanh, mở khóa `Bắt đầu chọn món`) sau khi peer `setReady(true)`, và giữ nguyên chuyển tự động sang Vòng 1 của `#168`.
+  - Ảnh chụp đối chiếu đã che thông tin nhạy cảm được lưu tại `review-results/artifacts/pr167-avd/` (local ignored).
+- **Chặng 3B (điện thoại Android thật qua USB)**, **Google Places billing key** và **FCM push nền** giữ nguyên trạng thái `Not run` cho tới `GM-33`/`GM-34`.

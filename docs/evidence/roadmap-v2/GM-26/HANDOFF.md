@@ -198,3 +198,8 @@ EXPO_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
 3. Cả Host và Member chọn "✕ Đã loại":
    - SheetDialog cảnh báo màu đỏ: `⚠ Chú ý: Bạn đang chọn LOẠI TẤT CẢ các món`.
    - Cả 2 người nộp phiếu loại: Phiên kết thúc với trạng thái `NO_CONSENSUS / ALL_REMOVED`, không bao giờ mở Vòng 3.
+
+## PR #167 Follow-up (`ADR-023` Cap & Rejoin) — 2026-11-15
+
+- Following accepted `ADR-023` and migration `0049_round_two_cap_ceil.sql`, Round 2 elimination cap is `max(1, ceil(0.30 * N))` (e.g., `N=10 -> 3`).
+- Stage 3A AVD (`Medium_Phone_API_37.0`) + peer client (`Ban_AVD_2`) on QA `pr167-ci-fix-v7` (`0057`) verified Round 1 flashcards + Undo → `WAITING_1` (60s ring) → `RoundTwoNotice` (`Mỗi người loại tối đa 3 món`) → Round 2 elimination → `DECIDED` (`ACCEPTABLE_FINAL`). Stage 3B USB phone verification remains deferred to `GM-33`/`GM-34`.

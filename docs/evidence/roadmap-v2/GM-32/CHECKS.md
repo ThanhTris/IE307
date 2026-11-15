@@ -34,3 +34,12 @@ evidence sau khi consumer live được bàn giao.** [Review trên PR #163](http
 GM-35 vẫn `Todo` trên Project #2. Các expected trên lấy từ
 [yêu cầu GM-35](../../../../tasks/backlog/GM-35.md). Kết quả gate xác nhận
 dependency và output. Disposition của reviewer vẫn đang chờ.
+
+## Cập nhật hồi quy PR #167 (`0042..0057`, ADR-022..028) — 2026-11-15
+
+- Sau khi chủ dự án `ThanhTris` chấp nhận PR #167 tổng hợp cùng `ADR-022`..`ADR-028` và cổng `ready` áp cho mọi phòng `dish-decision-v4` đang `LOBBY`, các bộ hồi quy trên stack QA biệt lập (`0001..0057`) đều **Pass**:
+  - `scripts/gm32_decision_boundaries.py`: chỉnh công thức trần loại vòng 2 khớp `ADR-023` / `0049` (`max(1, (3 * survivors + 9) // 10)`).
+  - `mobile/tests/integration/gm32OutboxLive.test.ts`: chuẩn hóa đường dẫn workdir đa nền tảng Windows/POSIX.
+  - `gm32_regression.py` chạy đủ 7 nhóm trên stack có `0057`: `baseline` (GM-40 `100`, Auth `7`, Wire-B `173`, legacy eligibility/v2 `142`), `legacy-decision` (`140` vectors), `canonical` (`102` SQL/TS vectors + `203` writer/race assertions), `boundaries` (`279` assertions), `history` (`89` assertions), `notifications` (`151` assertions) và `outbox` (`19` assertions).
+  - `backend:test` pgTAP: `10/10` file (`129` tests, gồm `ADR-024`..`ADR-028`, `GM-19`, `GM-22`, `GM-28`) **Pass**.
+- G04/G05 (`GM-35`), Stage 3B USB phone (`GM-33`/`GM-34`), remote FCM và Google Places billing key giữ nguyên trạng thái **Not run**.

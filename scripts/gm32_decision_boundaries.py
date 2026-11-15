@@ -156,7 +156,7 @@ def run(db, manifest, check, literal):
                   next_state['result']['reasonCode']], [1, 'NO_CONSENSUS', 'EMPTY_INTERSECTION'])
             continue
 
-        cap = max(1, 3 * survivors // 10)
+        cap = max(1, (3 * survivors + 9) // 10)
         check(f'N={survivors} R2 count/cap/state', [len(next_state['pool']), next_state['removalCap'],
               next_state['state'], next_state['submittedCount'], next_state['poolVersion']],
               [survivors, cap, 'ROUND_2', 0, initial['poolVersion'] + 1])

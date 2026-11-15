@@ -94,3 +94,18 @@ for exact source revision, migration hashes, input/expected/actual reports,
 consumer regression and cleanup results. Producer schema0.12.0 is reported
 separately from the full database schema0.15.0. CI on the pushed PR revision is
 pending; this evidence does not imply task approval or Done.
+
+## PR #167 CI & Ready-Gate Follow-up — 2026-11-15
+
+- Target: composite integration PR #167 (`refactor/product-cleanup-on-main` → `main`), approved by project owner `ThanhTris` alongside `ADR-022`..`ADR-028` (including `0057_ready_v4_only.sql`).
+- Runtime updates verified:
+  - `scripts/dish_policy_worker.py` verifies the deployed PostgreSQL function definitions across the migration chain through `0047`/`0055`..`0057`.
+  - `0057_ready_v4_only.sql` locks `reference_epoch` before `rooms`, limits the `ADR-028` `MEMBERS_NOT_READY` gate to `dish-decision-v4` `LOBBY` sessions (`v3` and active rounds unchanged), and preserves `poolVersion` on host lobby ready transitions.
+  - `scripts/gm20_canonical_http.mjs` updates the fixture `version` consistently when exercising lobby readiness.
+- Post-`0057` isolated QA checks (`pr167-ci-fix-v5`..`pr167-gm32-bound`, loopback QA only):
+  - `qa:test`: 7 GM-03 Auth/REST assertions and 173 v4/wire-B cases **Pass**.
+  - `gm32_regression.py canonical`: 102 SQL/TypeScript decision vectors and 203 canonical writer/race assertions **Pass**.
+  - `gm32_regression.py boundaries`: 279 survivor, majority, and 60s clock boundary assertions **Pass**.
+  - `gm32_regression.py history`: 89 consent, history, and retention assertions **Pass**.
+  - Standalone `gm06_canonical_check.py`, `gm06_schema_check.py` (67 SQL assertions), `gm06_isolated_http_check.py`, `dish_policy_sql_check.py` (108 cases), and `backend:test` pgTAP (10 files / 129 tests) all **Pass**.
+- Scope limits: Remote staging/production databases were untouched; Stage 3B USB device, live Google Places billing key, and remote FCM push remain **Not run**.

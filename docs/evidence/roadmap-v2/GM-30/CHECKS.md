@@ -69,3 +69,8 @@ python scripts/validate_repository.py
 # Validate task readiness documentation
 python scripts/task_readiness.py --check-docs
 ```
+
+## PR #167 Stage 3A Simulated Places Follow-up — 2026-11-15
+
+- On PR #167 (`refactor/product-cleanup-on-main`, connected to QA backend `pr167-ci-fix-v7` at `127.0.0.1:54371`, migrations `0001..0057`, `EXPO_PUBLIC_PLACES_SIMULATED=1`), end-to-end Stage 3A AVD (`Medium_Phone_API_37.0`) voting reached `DECIDED` and rendered the clearly labeled dev simulated Places card (`[Mô phỏng AVD]`, `Dữ liệu mô phỏng trên máy ảo AVD · Google Places thật cần billing key`, `Quán Cơm chay Cô Ba`, `420 m`, `TikTok`/`YouTube`).
+- Physical QR scanner hardware, Google Places API billing key, and Stage 3B USB phone checks remain **Not run (Deferred to Stage 3B GM-33/GM-34)**.

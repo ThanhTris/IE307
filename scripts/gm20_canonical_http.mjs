@@ -100,7 +100,7 @@ expectFail(await api(h,'start',{requestId:requestId('not-ready-third'),roomId:ex
  'MEMBERS_NOT_READY',409,'start blocks when newly joined member is not ready');
 expectOk(await api(x,'setReady',{requestId:requestId('ready-x3'),roomId:extraReadyRoom.roomId,ready:true}),'third member X readies up');
 // Pre-existing lobby (host and member raw columns false before 0055): host still appears ready, member still blocks start.
-sql("begin;select set_config('dish_v4.writer','on',true);update public.members set ready=false where room_id='"+extraReadyRoom.roomId+"';commit;");
+sql("begin;select set_config('dish_v4.writer','on',true);update public.members set ready=false,version=version+1 where room_id='"+extraReadyRoom.roomId+"';commit;");
 const oldLobbySnap=await snapshot(h,extraReadyRoom.roomId);
 pass('pre-existing lobby treats host as ready and non-hosts as not ready',
  [true,false,false],

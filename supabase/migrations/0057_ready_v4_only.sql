@@ -20,6 +20,8 @@ begin
     or exists(select 1 from jsonb_object_keys(payload) k where k not in('contractVersion','requestId','roomId','ready')) then return dish_v4_private.fail('INVALID_INPUT'); end if;
   if not gm19_private.allow_call('dish_v4_setReady',60) then return dish_v4_private.fail('RATE_LIMITED','{}',429); end if;
   want:=(payload->>'ready')::boolean;
+  -- Match dispatch lock hierarchy: reference_epoch before rooms prevents AB/BA deadlocks.
+  perform 1 from gm06_private.reference_epoch where singleton for update;
   select * into r from public.rooms where id=room_key and policy_version='dish-decision-v4' for update;
   if not found then return dish_v4_private.fail('ROOM_NOT_FOUND','{}',404); end if;
   if not exists(select 1 from public.members where room_id=room_key and user_id=caller and left_at is null) then return dish_v4_private.fail('NOT_MEMBER','{}',403); end if;
@@ -28,7 +30,7 @@ begin
   if caller=r.host_user_id then want:=true; end if;
   perform set_config('dish_v4.writer','on',true);
   update public.members set ready=want,version=version+1 where room_id=room_key and user_id=caller and left_at is null and ready is distinct from want;
-  if found then update public.rooms set version=version+1,updated_at=clock_timestamp() where id=room_key; end if;
+  if found and caller<>r.host_user_id then update public.rooms set version=version+1,updated_at=clock_timestamp() where id=room_key; end if;
   select version into new_version from public.rooms where id=room_key;
   return jsonb_build_object('ok',true,'data',jsonb_build_object('accepted',true,'version',new_version,'ready',want));
  end if;
@@ -37,6 +39,8 @@ begin
   req_id:=payload->>'requestId';
   avoid:='';
   if room_key is not null and caller is not null then
+   -- Acquire reference_epoch before locking rooms to match dish_v4_private/gm20_canonical_private dispatch order.
+   perform 1 from gm06_private.reference_epoch where singleton for update;
    select * into r from public.rooms where id=room_key and policy_version='dish-decision-v4' for update;
    if found then
     if contract in('dish-session-v4/roadmap-v2/GM-07.B','dish-session-v4/roadmap-v2/GM-07.B-supplement')

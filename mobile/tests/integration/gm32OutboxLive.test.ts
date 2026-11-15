@@ -19,7 +19,11 @@ liveTest('live ACK replay reconciles a restarted GM-31 outbox and drops terminal
   const manifest = JSON.parse(readFileSync(path, 'utf8'));
   const credentials = JSON.parse(readFileSync(resolve(workdir, 'credentials.private.json'), 'utf8'));
   const origin = new URL(manifest.endpoint.baseUrl);
-  if (manifest.format !== 'gm03-qa-manifest-v1' || manifest.workdir !== workdir
+  const normalizeWorkdir = (value: unknown) => {
+    const normalized = String(value ?? '').replaceAll('\\', '/');
+    return process.platform === 'win32' ? normalized.toLowerCase() : normalized;
+  };
+  if (manifest.format !== 'gm03-qa-manifest-v1' || normalizeWorkdir(manifest.workdir) !== normalizeWorkdir(workdir)
       || !manifest.projectId.startsWith('gm03qa-') || origin.protocol !== 'http:'
       || origin.hostname !== '127.0.0.1' || ['54321', '54322'].includes(origin.port)
       || credentials.apiUrl !== origin.origin) throw new Error('Unexpected QA origin');

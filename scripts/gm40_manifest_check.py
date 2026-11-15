@@ -56,7 +56,13 @@ def load_manifest(path):
     if not re.fullmatch(r'[a-z0-9](?:[a-z0-9-]{0,28}[a-z0-9])?', run_id):
         raise ValueError('GM40_QA_RUN_ID_INVALID')
     workdir = ROOT/'.work/qa'/run_id
-    if given != workdir/'manifest.json' or manifest.get('workdir') != str(workdir):
+    def same_workdir(value):
+        if not isinstance(value, str):
+            return False
+        normalized = value.replace('\\', '/')
+        expected = workdir.as_posix()
+        return normalized.casefold() == expected.casefold() if os.name == 'nt' else normalized == expected
+    if given != workdir/'manifest.json' or not same_workdir(manifest.get('workdir')):
         raise ValueError('GM40_QA_MANIFEST_NOT_IN_THIS_CHECKOUT')
     # Reuse the producer's seal/contract verifier without opening a DB.
     probe = object.__new__(ManifestQAContainerDB)
@@ -65,7 +71,7 @@ def load_manifest(path):
     state = json.loads((workdir/'state.json').read_text(encoding='utf-8'))
     if (state.get('phase') != 'ready' or state.get('ownerUuid') != manifest.get('ownerUuid')
             or state.get('manifestSha256') != manifest['sealSha256']
-            or state.get('runId') != run_id or state.get('workdir') != str(workdir)
+            or state.get('runId') != run_id or not same_workdir(state.get('workdir'))
             or state.get('projectId') != 'gm03qa-' + run_id
             or state.get('containerName') != 'supabase_db_gm03qa-' + run_id):
         raise ValueError('GM40_QA_STATE_MISMATCH')
