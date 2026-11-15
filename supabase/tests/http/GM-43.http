@@ -1,0 +1,24 @@
+@baseUrl = http://127.0.0.1:54381
+@anonKey = <owned-QA-public-key>
+@token = <authorized-recipient-JWT>
+@resultId = <fixture-result-ID>
+@expectedStatus = DECIDED
+
+### Repeat with the NO_CONSENSUS fixture and expectedStatus=NO_CONSENSUS.
+POST {{baseUrl}}/rest/v1/rpc/list_partner_inbox
+apikey: {{anonKey}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"cursor":null}
+
+> {%
+  client.test('one notification with authoritative result metadata', function () {
+    client.assert(response.status === 200 && Array.isArray(response.body));
+    const rows = response.body.filter(i => i.type === 'room_result' && i.metadata.resultId === '{{resultId}}');
+    client.assert(rows.length === 1);
+    const metadata = rows[0].metadata;
+    client.assert(Object.keys(metadata).sort().join(',') === 'contractVersion,eventVersion,resultId,roomId,status');
+    client.assert(metadata.status === '{{expectedStatus}}' && Number.isInteger(metadata.eventVersion) && metadata.eventVersion >= 1);
+  });
+%}

@@ -2,7 +2,7 @@
 
 Sinh từ task bằng `python scripts/task_readiness.py --write-docs`; không sửa tay. `--check-docs` kiểm độ mới. Đây là metadata/gate chẩn đoán local, không phải trạng thái GitHub. Gate thực tế đọc Done live trên Project theo ADR-011; xem docs/project/PROJECT_READINESS.md.
 
-41 task sau GM-00: 36 P0 (gồm GM-01), 2 P1, 3 P2. Mã roadmap-v2 tăng theo lộ trình; mọi dependency có số nhỏ hơn task. Owner/reviewer là đề xuất; không kế thừa approval khi đổi scope.
+42 task sau GM-00: 37 P0 (gồm GM-01), 2 P1, 3 P2. Mã roadmap-v2 tăng theo lộ trình; mọi dependency có số nhỏ hơn task. Owner/reviewer là đề xuất; không kế thừa approval khi đổi scope.
 
 | Task | Luồng / bước | Phạm vi | Owner / reviewer | Mức/cỡ | Status | Gate bắt đầu | Start deps | Merge deps | Song song |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -47,5 +47,6 @@ Sinh từ task bằng `python scripts/task_readiness.py --write-docs`; không s�
 | [GM-39](../../tasks/backlog/GM-39.md) | UI / prototype | Bàn giao Figma và kiểm tra thiết kế bổ sung | Trang / Trí | P1/M | backlog | BLOCKED | [GM-05](../../tasks/backlog/GM-05.md), [GM-09](../../tasks/backlog/GM-09.md), [GM-10](../../tasks/backlog/GM-10.md), [GM-11](../../tasks/backlog/GM-11.md), [GM-12](../../tasks/backlog/GM-12.md), [GM-13](../../tasks/backlog/GM-13.md), [GM-14](../../tasks/backlog/GM-14.md) | [GM-05](../../tasks/backlog/GM-05.md), [GM-09](../../tasks/backlog/GM-09.md), [GM-10](../../tasks/backlog/GM-10.md), [GM-11](../../tasks/backlog/GM-11.md), [GM-12](../../tasks/backlog/GM-12.md), [GM-13](../../tasks/backlog/GM-13.md), [GM-14](../../tasks/backlog/GM-14.md) | — |
 | [GM-40](../../tasks/backlog/GM-40.md) | DATA / import | Data: chuẩn hóa món ăn và bỏ phụ thuộc dữ liệu quán | Vinh / Trí | P0/L | backlog | BLOCKED | [GM-04](../../tasks/backlog/GM-04.md), [GM-06](../../tasks/backlog/GM-06.md), [GM-07](../../tasks/backlog/GM-07.md), [GM-08](../../tasks/in-progress/GM-08.md), [GM-18](../../tasks/backlog/GM-18.md) | [GM-04](../../tasks/backlog/GM-04.md), [GM-06](../../tasks/backlog/GM-06.md), [GM-07](../../tasks/backlog/GM-07.md), [GM-08](../../tasks/in-progress/GM-08.md), [GM-18](../../tasks/backlog/GM-18.md) | — |
 | [GM-42](../../tasks/backlog/GM-42.md) | BE / implementation | BE: Trả danh sách Cùng ăn trong lịch sử | Trí / Trí | P0/M | backlog | BLOCKED | [GM-20](../../tasks/backlog/GM-20.md), [GM-21](../../tasks/backlog/GM-21.md) | [GM-20](../../tasks/backlog/GM-20.md), [GM-21](../../tasks/backlog/GM-21.md) | — |
+| [GM-43](../../tasks/backlog/GM-43.md) | BE / implementation | BE: Trả trạng thái thông báo kết quả phòng | Trí / Trí | P0/M | backlog | BLOCKED | [GM-20](../../tasks/backlog/GM-20.md), [GM-23](../../tasks/backlog/GM-23.md) | [GM-20](../../tasks/backlog/GM-20.md), [GM-23](../../tasks/backlog/GM-23.md) | — |
 
 [Hai gate và thứ tự merge](TASK_DEPENDENCIES.md) · [Đầu vào/đầu ra](TASK_HANDOFFS.md) · [Mã cũ–mới](TASK_RENUMBERING.md). Merge cần cả start deps và merge deps. Song song chỉ áp dụng phần độc lập được ghi trong task; không tự xác nhận nhận việc.

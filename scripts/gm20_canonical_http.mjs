@@ -1,3 +1,4 @@
+import {notification} from '../supabase/functions/push-sender/payload.mjs';
 // GM20.4 owned synthetic QA only; no production activation.
 import {createServer} from 'node:http';
 import {spawnSync,execFileSync} from 'node:child_process';
@@ -62,6 +63,7 @@ async function submit(u,room,s,votes,id){return api(u,'submit',{...versionArgs(r
 async function setActive(id){sql("update dish_v3_private.catalogues set active=false where active; update dish_v3_private.catalogues set active=true where id='"+id.replaceAll("'","''")+"';");}
 
 await waitWorker();
+const withResultMetadata=sql("select exists(select 1 from public.schema_versions where contract_id='dish-session-v4/roadmap-v2/GM-43.1')")==='t';
 const withHistoryNames=sql("select to_regclass('gm42_private.history_names') is not null")==='t';
 const h=await guest('canonical-host'),m=await guest('canonical-member'),x=await guest('canonical-outsider');
 const setEnabled=value=>sql('update gm20_canonical_private.configuration set allow_new_sessions='+value+' where singleton');
@@ -503,6 +505,48 @@ pass('canonical card mapping retained without operational room','t',sql("select 
 
 const afterB=JSON.parse(sql("select coalesce(jsonb_object_agg(id::text,projection),'{}'::jsonb) from dish_v4_private.results"));
 pass('pre-existing B result projections retain exact IDs/bytes',true,Object.entries(oldB).every(([id,projection])=>JSON.stringify(projection)===JSON.stringify(afterB[id])));
+
+if(withResultMetadata){
+ const baseline='dish-session-v4/roadmap-v2/GM-07.B';
+ const baselineApi=async (user,command,args={})=>expectOk(await legacyRpc(user,'dish_session',{
+  command,payload:{contractVersion:baseline,...args}
+ }),`GM-43 baseline ${command}`);
+ const owner=await guest('GM43 host'),member=await guest('GM43 member');
+ expectOk(await legacyRpc(owner,'register_push_device',{requestId:requestId('register'),device_id:randomUUID(),
+  token:'ExponentPushToken[gm43-synthetic]',permission:'granted'}),'register synthetic sender destination');
+ for(const status of ['DECIDED','NO_CONSENSUS']){
+  const {roomId,code}=await baselineApi(owner,'create',{requestId:requestId('create'),displayName:'GM43 host',
+   settings:{dishCount:10,mealSlot:'lunch',desiredAt:null},preferences:pref});
+  await baselineApi(member,'join',{requestId:requestId('join'),code,displayName:'GM43 member'});
+  const guestView=await baselineApi(member,'snapshot',{roomId});
+  await baselineApi(member,'updatePreferences',{requestId:requestId('ready'),roomId,expectedVersion:guestView.version,preferences:guestView.ownPreferences});
+  const ready=await baselineApi(owner,'snapshot',{roomId});
+  await baselineApi(owner,'start',{requestId:requestId('start'),roomId,expectedVersion:ready.version});
+  for(const user of [owner,member]){
+   const view=await baselineApi(user,'snapshot',{roomId});
+   const intent={...versionArgs(roomId,view),requestId:requestId('submit'),
+    votes:votesFor(view.pool,()=>status==='DECIDED'?'WANT':'NO')};
+   const ack=await baselineApi(user,'submit',intent);
+   pass(`GM-43 ${status} submit ACK replay`,ack,await baselineApi(user,'submit',intent));
+  }
+  const {resultId}=await baselineApi(owner,'result',{roomId});
+  for(const [user,recipient] of [[owner,'host'],[member,'member'],[x,'outsider']]){
+   const inbox=await legacyRpc(user,'list_partner_inbox',{});
+   assert.equal(inbox.status,200);
+   const rows=inbox.body.filter(item=>item.metadata?.resultId===resultId);
+   pass(`GM-43 ${status} ${recipient} final inbox metadata`,recipient==='outsider'?[]:[{
+    roomId,resultId,status,contractVersion:baseline,eventVersion:1
+   }],rows.map(item=>item.metadata));
+  }
+  pass(`GM-43 ${status} one baseline event after replay`,'1',sql("select count(*) from public.events where dish_v4_result_id='"+resultId+"'"));
+  const claims=JSON.parse(sql("begin; set local request.jwt.claim.role='service_role'; select public.claim_push_deliveries(100); commit;"));
+  const claim=claims.find(d=>d.resultId===resultId);
+  assert.ok(claim,`GM-43 ${status} is claimable`);
+  pass(`GM-43 ${status} sender payload contains only typed references`,{
+   type:'room_result',eventId:claim.eventId,roomId,resultId,status,contractVersion:baseline,eventVersion:1
+  },notification(claim).data);
+ }
+}
 
 const schema=spawnSync(process.env.GM_V4_PYTHON||'python',['scripts/validate_dish_v4_schema.py','--schema','docs/architecture/schemas/dish-session-v4b-supplement.schema.json','--stdin'],{cwd:root,encoding:'utf8',input:'['+contractSamples.join(',')+']',maxBuffer:2*1024*1024});
 assert.equal(schema.status,0,'B-supplement schema validation: '+schema.stderr.slice(0,1500));const validated=JSON.parse(schema.stdout);

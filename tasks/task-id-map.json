@@ -1845,6 +1845,37 @@
         "expected": "History trả participants từ roster khóa khi consent nhóm hợp lệ.",
         "cases": "2/20 người, tên trùng, legacy, đổi tên, outsider, revoke, expiry, delete và replay."
       }
+    },
+    {
+      "new_id": "GM-43",
+      "previous_ids": [],
+      "title": "BE: Trả trạng thái thông báo kết quả phòng",
+      "track": "BE",
+      "stage": "implementation",
+      "outputs": [
+        "supabase/migrations/0059_gm43_result_notification_metadata.sql",
+        "supabase/tests/http/GM-43.http",
+        "docs/evidence/roadmap-v2/GM-43/CHECKS.md"
+      ],
+      "inputs": [
+        {
+          "task": "GM-20",
+          "artifact": "supabase/migrations/0023_finalize.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-23",
+          "artifact": "supabase/functions/push-sender/index.ts",
+          "gate": "start"
+        }
+      ],
+      "verification": {
+        "mode": "api",
+        "tool": "SQL + HTTP trên QA cô lập.",
+        "entrypoint": "Suite GM-43 trong supabase/tests/http.",
+        "expected": "Inbox và sender trả metadata v4 đầy đủ từ dữ liệu kết quả đã lưu.",
+        "cases": "DECIDED, NO_CONSENSUS, retry, outsider, wrapper, sender và legacy."
+      }
     }
   ]
 }

@@ -133,6 +133,10 @@ This is a forward-only v4 behavior. Existing v2/v3 rooms and already-started v4 
 
 The screen-to-contract mapping and Figma node references are in [FIGMA_BE_UI_DATA_ALIGNMENT_2026-10-24.md](../project/audits/FIGMA_BE_UI_DATA_ALIGNMENT_2026-10-24.md). Result, history and notification consumers must read the same terminal projection. The API returns semantic ranks; the UI renders tied ranks at equal height and gives the selected winner a separate “Món được chọn” label. No mock restaurant/distance is returned as real data. The result screen uses Places-backed nearby restaurant/map content for the winning dish; opening Google Maps is a supplementary action, not a substitute for the in-app Places/map experience.
 
+### Result notification metadata
+
+For `room_result`, GM-43 (`0.31.4`) projects `{roomId, resultId, status, contractVersion, eventVersion}` under `metadata` in `list_partner_inbox`. The sender forwards these same references in push `data`. `status` is `DECIDED` or `NO_CONSENSUS`, `contractVersion` comes from the stored result or canonical event, and `eventVersion` is a positive integer. Use `metadata.status` for decisions and fetch the result through the authorized result API for details. Legacy events without authoritative fields retain their reference-only metadata. Titles and bodies are display copy.
+
 ## Errors and acceptance examples
 
 Keep GM-07.A error envelope and existing keys. `INSUFFICIENT_DISHES` includes `{available,requested}`. Add `ROOM_FULL`, `ROOM_LOCKED`, `ROOM_EXPIRED`, `NOT_HOST`, `NOT_MEMBER`, `VERSION_CONFLICT`, `REQUEST_ID_REUSED`, `UNSUPPORTED_FIELD` and `INVALID_INPUT` where relevant. Errors are safe for display, contain no secret or ballot.
