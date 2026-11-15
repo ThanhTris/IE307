@@ -1,0 +1,316 @@
+{
+  "fixtureOnly": true,
+  "result": "Pass",
+  "runId": "gm-42-independent",
+  "base": "1e232dc2531fb0a4f8bc717bdf51ddf5e482b244",
+  "schemaVersion": "0.31.3",
+  "migration": "0058_gm42_history_participants.sql",
+  "migrationSha256": "f3b3d011ce4622071a797c20f30c2a3cbbaf8b356ddf2b82f8bd72307cb53706",
+  "caseCount": 10,
+  "combinedAssertions": 226,
+  "canonicalSchemaEnvelopes": 1103,
+  "cases": [
+    {
+      "case": "GM-42 locked roster contains 20 names despite 11 ballots",
+      "result": "Pass",
+      "expected": [
+        {
+          "displayName": "QA host",
+          "role": "HOST"
+        },
+        {
+          "displayName": "Canonical member",
+          "role": "MEMBER"
+        },
+        {
+          "displayName": "Canonical member",
+          "role": "MEMBER"
+        },
+        {
+          "displayName": "Canonical member",
+          "role": "MEMBER"
+        },
+        {
+          "displayName": "Canonical member",
+          "role": "MEMBER"
+        },
+        {
+          "displayName": "Canonical member",
+          "role": "MEMBER"
+        },
+        {
+          "displayName": "Canonical member",
+          "role": "MEMBER"
+        },
+        {
+          "displayName": "Canonical member",
+          "role": "MEMBER"
+        },
+        {
+          "displayName": "Canonical member",
+          "role": "MEMBER"
+        },
+        {
+          "displayName": "Canonical member",
+          "role": "MEMBER"
+        },
+        {
+          "displayName": "Canonical member",
+          "role": "MEMBER"
+        },
+        {
+          "displayName": "Canonical member",
+          "role": "MEMBER"
+        },
+        {
+          "displayName": "Canonical member",
+          "role": "MEMBER"
+        },
+        {
+          "displayName": "Canonical member",
+          "role": "MEMBER"
+        },
+        {
+          "displayName": "Canonical member",
+          "role": "MEMBER"
+        },
+        {
+          "displayName": "Canonical member",
+          "role": "MEMBER"
+        },
+        {
+          "displayName": "Canonical member",
+          "role": "MEMBER"
+        },
+        {
+          "displayName": "Canonical member",
+          "role": "MEMBER"
+        },
+        {
+          "displayName": "Canonical member",
+          "role": "MEMBER"
+        },
+        {
+          "displayName": "Canonical member",
+          "role": "MEMBER"
+        }
+      ],
+      "actual": [
+        {
+          "role": "HOST",
+          "displayName": "QA host"
+        },
+        {
+          "role": "MEMBER",
+          "displayName": "Canonical member"
+        },
+        {
+          "role": "MEMBER",
+          "displayName": "Canonical member"
+        },
+        {
+          "role": "MEMBER",
+          "displayName": "Canonical member"
+        },
+        {
+          "role": "MEMBER",
+          "displayName": "Canonical member"
+        },
+        {
+          "role": "MEMBER",
+          "displayName": "Canonical member"
+        },
+        {
+          "role": "MEMBER",
+          "displayName": "Canonical member"
+        },
+        {
+          "role": "MEMBER",
+          "displayName": "Canonical member"
+        },
+        {
+          "role": "MEMBER",
+          "displayName": "Canonical member"
+        },
+        {
+          "role": "MEMBER",
+          "displayName": "Canonical member"
+        },
+        {
+          "role": "MEMBER",
+          "displayName": "Canonical member"
+        },
+        {
+          "role": "MEMBER",
+          "displayName": "Canonical member"
+        },
+        {
+          "role": "MEMBER",
+          "displayName": "Canonical member"
+        },
+        {
+          "role": "MEMBER",
+          "displayName": "Canonical member"
+        },
+        {
+          "role": "MEMBER",
+          "displayName": "Canonical member"
+        },
+        {
+          "role": "MEMBER",
+          "displayName": "Canonical member"
+        },
+        {
+          "role": "MEMBER",
+          "displayName": "Canonical member"
+        },
+        {
+          "role": "MEMBER",
+          "displayName": "Canonical member"
+        },
+        {
+          "role": "MEMBER",
+          "displayName": "Canonical member"
+        },
+        {
+          "role": "MEMBER",
+          "displayName": "Canonical member"
+        }
+      ]
+    },
+    {
+      "case": "GM-42 history keeps lock-time names on personal and group entries",
+      "result": "Pass",
+      "expected": [
+        [
+          {
+            "displayName": "QA host",
+            "role": "HOST"
+          },
+          {
+            "displayName": "Canonical member",
+            "role": "MEMBER"
+          }
+        ],
+        [
+          {
+            "displayName": "QA host",
+            "role": "HOST"
+          },
+          {
+            "displayName": "Canonical member",
+            "role": "MEMBER"
+          }
+        ]
+      ],
+      "actual": [
+        [
+          {
+            "role": "HOST",
+            "displayName": "QA host"
+          },
+          {
+            "role": "MEMBER",
+            "displayName": "Canonical member"
+          }
+        ],
+        [
+          {
+            "role": "HOST",
+            "displayName": "QA host"
+          },
+          {
+            "role": "MEMBER",
+            "displayName": "Canonical member"
+          }
+        ]
+      ]
+    },
+    {
+      "case": "GM-42 outsider has no matching history",
+      "result": "Pass",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "case": "GM-42 raw snapshot tables are private",
+      "result": "Pass",
+      "expected": "t",
+      "actual": "t"
+    },
+    {
+      "case": "GM-42 group revoke leaves personal result without the roster",
+      "result": "Pass",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "case": "GM-42 opt-in after lock keeps only the personal result",
+      "result": "Pass",
+      "expected": [
+        [
+          "personal",
+          false
+        ]
+      ],
+      "actual": [
+        [
+          "personal",
+          false
+        ]
+      ]
+    },
+    {
+      "case": "GM-42 pre-snapshot history still has both scopes without names",
+      "result": "Pass",
+      "expected": {
+        "scopes": [
+          "group",
+          "personal"
+        ],
+        "withNames": 0
+      },
+      "actual": {
+        "scopes": [
+          "group",
+          "personal"
+        ],
+        "withNames": 0
+      }
+    },
+    {
+      "case": "GM-42 group delete replay keeps the same ACK",
+      "result": "Pass",
+      "expected": {
+        "accepted": true
+      },
+      "actual": {
+        "accepted": true
+      }
+    },
+    {
+      "case": "GM-42 group delete physically removes the snapshot",
+      "result": "Pass",
+      "expected": "0",
+      "actual": "0"
+    },
+    {
+      "case": "GM-42 group expiry hides names on remaining personal history",
+      "result": "Pass",
+      "expected": [
+        [
+          "personal",
+          false
+        ]
+      ],
+      "actual": [
+        [
+          "personal",
+          false
+        ]
+      ]
+    }
+  ],
+  "independentAssertions": 213,
+  "runnerSha256": "40933c05b16a650177dd4e20d3b2f40e51a6c95619011b69c6a0d1cc26d591f9"
+}

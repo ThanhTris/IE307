@@ -117,6 +117,8 @@ The history query is invoked via command `"history"` with payload `{"contractVer
 - Top-level history item fields do not include `sessionId`, `status`, or `terminalRound`; `status` and `round` are encapsulated inside the child `result` object.
 - **Optional context projections** (when supported by producer): `desiredAt` (timestamp or null), `finalizedAt` (timestamp), `memberCount` (integer 1..20), `round1BallotCount` (integer 0..20 for v4 sessions), and `participants` (array of `{displayName, role}`).
 
+GM-42 (`0.31.3`) fills `participants` for eligible B-supplement history. The array contains 2–20 lock-time room names in roster order, including duplicate names. Roles are `HOST` and `MEMBER`. Items omit the field if a snapshot was never captured or the caller's right to read it has expired or been withdrawn. The policy also applies when the item is personal history. [ADR-029](decisions/ADR-029-history-participant-names.md)
+
 ### History result variants: Terminal result vs. Legacy unscored
 Each history item's `result` field strictly conforms to one of two schemas:
 1. **Full v4 terminal result** (`#/$defs/terminalResult`): Used for v4 sessions. Contains `status`, `winner`, `reasonCode`, `round`, `topDishes` (Top 3 podium entries with scores and dense ranks), `scoreVersion`, `rankingVersion`, and in the supplement `round1BallotCount`. If `round1BallotCount` is present on both the item and result, the values must match.

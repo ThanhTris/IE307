@@ -1,0 +1,30 @@
+@baseUrl = http://127.0.0.1:54381
+@anonKey = <owned-QA-public-key>
+@token = <authorized-member-JWT>
+@resultId = <fixture-result-ID>
+@historyId = <fixture-group-history-ID>
+
+### Use the GM-42 synthetic room from the canonical HTTP runner. Expect the full locked roster.
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{anonKey}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"command":"history","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B-supplement"}}
+
+> {%
+  client.test('locked roster with display names and roles only', function () {
+    client.assert(response.status === 200 && response.body.ok);
+    const item = response.body.data.items.find(i => i.resultId === '{{resultId}}');
+    client.assert(item && item.participants.length >= 2 && item.participants.length <= 20);
+    client.assert(item.participants.every(p => Object.keys(p).sort().join(',') === 'displayName,role' && ['HOST', 'MEMBER'].includes(p.role)));
+  });
+%}
+
+### Delete the group history and rerun the read. Any remaining personal item omits participants.
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{anonKey}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"command":"deleteHistory","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B-supplement","requestId":"gm42-delete-group","historyId":"{{historyId}}"}}

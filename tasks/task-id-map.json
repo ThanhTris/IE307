@@ -1816,6 +1816,37 @@
       }
     },
     {
+      "new_id": "GM-42",
+      "previous_ids": [],
+      "title": "BE: Trả danh sách Cùng ăn trong lịch sử",
+      "track": "BE",
+      "stage": "implementation",
+      "outputs": [
+        "supabase/migrations/0058_gm42_history_participants.sql",
+        "supabase/tests/http/GM-42.http",
+        "docs/evidence/roadmap-v2/GM-42/CHECKS.md"
+      ],
+      "inputs": [
+        {
+          "task": "GM-20",
+          "artifact": "supabase/migrations/0023_finalize.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-21",
+          "artifact": "supabase/migrations/0021_history.sql",
+          "gate": "start"
+        }
+      ],
+      "verification": {
+        "mode": "api",
+        "tool": "SQL + HTTP trên QA cô lập.",
+        "entrypoint": "Suite GM-42 trong supabase/tests/http.",
+        "expected": "History trả participants từ roster khóa khi consent nhóm hợp lệ.",
+        "cases": "2/20 người, tên trùng, legacy, đổi tên, outsider, revoke, expiry, delete và replay."
+      }
+    },
+    {
       "new_id": "GM-43",
       "previous_ids": [],
       "title": "BE: Trả trạng thái thông báo kết quả phòng",
