@@ -34,8 +34,8 @@ def configuration(src):
         if config['done_option'] == config['needs_update_option']:
             raise ValueError('dependency status options must be distinct')
         issues = config['issues']
-        if set(issues) != {f'GM-{n:02}' for n in range(1, 41)}:
-            raise ValueError('issue mapping must cover GM-01..40 exactly')
+        if len(issues) < 40 or set(issues) != {f'GM-{n:02}' for n in range(1, len(issues) + 1)}:
+            raise ValueError('issue mapping must cover contiguous IDs starting with GM-01..40')
         if any(type(n) is not int or n < 1 for n in issues.values()):
             raise ValueError('invalid issue number')
         if len(set(issues.values())) != len(issues):

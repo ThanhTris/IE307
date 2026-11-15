@@ -62,6 +62,7 @@ async function submit(u,room,s,votes,id){return api(u,'submit',{...versionArgs(r
 async function setActive(id){sql("update dish_v3_private.catalogues set active=false where active; update dish_v3_private.catalogues set active=true where id='"+id.replaceAll("'","''")+"';");}
 
 await waitWorker();
+const withHistoryNames=sql("select to_regclass('gm42_private.history_names') is not null")==='t';
 const h=await guest('canonical-host'),m=await guest('canonical-member'),x=await guest('canonical-outsider');
 const setEnabled=value=>sql('update gm20_canonical_private.configuration set allow_new_sessions='+value+' where singleton');
 setEnabled(false);
@@ -396,6 +397,12 @@ for(const size of [2,3,5,20]){
   pass('20-member actual terminal keeps R1 cohort',[20,11,1],[finished.memberCount,finished.result?.round1BallotCount,finished.submittedCount]);
   authority(qr,finished.result);
   pass('20-member group consent audience persists atomically','20',sql("select count(*) from gm06_canonical.history_audience a join gm06_canonical.histories h using(history_id,result_id) where h.result_id='"+finished.result.resultId+"' and h.scope='group'"));
+  if(withHistoryNames){
+   const group=expectOk(await api(h,'history'),'GM-42 maximum roster').items.find(i=>i.roomId===qr.id&&i.scope==='group');
+   pass('GM-42 locked roster contains 20 names despite 11 ballots',[
+    {displayName:'QA host',role:'HOST'},...Array.from({length:19},()=>({displayName:'Canonical member',role:'MEMBER'}))
+   ],group?.participants);
+  }
  }
 
 }
@@ -436,10 +443,18 @@ const revokedResult=(await allWait(revokedBefore)).result;
 pass('revoked before finalize prevents personal write','0',sql("select count(*) from gm06_canonical.histories where result_id='"+revokedResult.resultId+"' and scope='personal' and owner_user_id='"+m.id+"'"));
 pass('personal revoke does not suppress valid group consent','1',sql("select count(*) from gm06_canonical.histories where result_id='"+revokedResult.resultId+"' and scope='group'"));
 await consent(m,'personal',true);
-const historyRoom=await room();await send(h,historyRoom,()=> 'WANT');await send(m,historyRoom,()=> 'WANT');const hr=(await allWait(historyRoom)).result;
+const historyRoom=await room();
+if(withHistoryNames)sql("begin;select set_config('dish_v4.writer','on',true);update public.members set nickname='Changed after lock',version=version+1 where room_id='"+historyRoom.id+"' and user_id='"+m.id+"';commit;");
+await send(h,historyRoom,()=> 'WANT');await send(m,historyRoom,()=> 'WANT');const hr=(await allWait(historyRoom)).result;
 const page=expectOk(await api(h,'history'),'canonical history');const items=page.items.filter(i=>i.roomId===historyRoom.id);
 pass('personal and group writer share canonical result',2,items.length);pass('history reads writer projection exactly',true,items.every(i=>JSON.stringify(i.result)===JSON.stringify(hr)));
 const personal=items.find(i=>i.scope==='personal'),group=items.find(i=>i.scope==='group');
+if(withHistoryNames){
+ const expectedNames=[{displayName:'QA host',role:'HOST'},{displayName:'Canonical member',role:'MEMBER'}];
+ pass('GM-42 history keeps lock-time names on personal and group entries',[expectedNames,expectedNames],items.map(i=>i.participants));
+ pass('GM-42 outsider has no matching history',false,expectOk(await api(x,'history'),'outsider history').items.some(i=>i.roomId===historyRoom.id));
+ pass('GM-42 raw snapshot tables are private','t',sql("select not has_schema_privilege('authenticated','gm42_private','USAGE') and not has_schema_privilege('service_role','gm42_private','USAGE')"));
+}
 expectOk(await api(h,'deleteHistory',{requestId:requestId('delete-personal'),historyId:personal.historyId}),'delete personal payload');
 pass('deleted payload receipt survives','1',sql("select count(*) from gm06_canonical.history_receipts where result_id='"+hr.resultId+"' and scope='personal' and owner_user_id='"+h.id+"'"));
 pass('reconnect does not recreate history',false,expectOk(await api(h,'history'),'history after delete').items.some(i=>i.historyId===personal.historyId));
@@ -448,6 +463,33 @@ await consent(m,'group',false);
 pass('group revoke hides history live',false,expectOk(await api(h,'history'),'history after revoke').items.some(i=>i.historyId===group.historyId));
 // Operational room cleanup leaves retained canonical projection available via history.
 const memberPersonal=expectOk(await api(m,'history'),'member personal history').items.find(i=>i.roomId===historyRoom.id&&i.scope==='personal');
+if(withHistoryNames)pass('GM-42 group revoke leaves personal result without the roster',false,Object.hasOwn(memberPersonal,'participants'));
+if(withHistoryNames){
+ const lateRoom=await room();
+ await consent(m,'group',true);
+ await send(h,lateRoom,()=> 'WANT');await send(m,lateRoom,()=> 'WANT');await allWait(lateRoom);
+ const late=expectOk(await api(h,'history'),'late consent history').items.filter(i=>i.roomId===lateRoom.id);
+ pass('GM-42 opt-in after lock keeps only the personal result',[['personal',false]],late.map(i=>[i.scope,Object.hasOwn(i,'participants')]));
+ const previouslyLocked=await room();
+ // Simulate a room that acquired its roster on 0057, before lock-time names existed.
+ sql("delete from gm42_private.locked_names where room_id='"+previouslyLocked.id+"'");
+ await send(h,previouslyLocked,()=> 'WANT');await send(m,previouslyLocked,()=> 'WANT');await allWait(previouslyLocked);
+ const oldItems=expectOk(await api(h,'history'),'history for previously locked room').items.filter(i=>i.roomId===previouslyLocked.id);
+ pass('GM-42 pre-snapshot history still has both scopes without names',{
+  scopes:['group','personal'],withNames:0
+ },{scopes:oldItems.map(i=>i.scope).sort(),withNames:oldItems.filter(i=>Object.hasOwn(i,'participants')).length});
+ const deletable=await room();await send(h,deletable,()=> 'WANT');await send(m,deletable,()=> 'WANT');await allWait(deletable);
+ const deletableGroup=expectOk(await api(h,'history'),'group history before delete').items.find(i=>i.roomId===deletable.id&&i.scope==='group');
+ const deletionRequest={requestId:requestId('delete-group'),historyId:deletableGroup.historyId};
+ const deletion=expectOk(await api(h,'deleteHistory',deletionRequest),'group history delete');
+ pass('GM-42 group delete replay keeps the same ACK',deletion,expectOk(await api(h,'deleteHistory',deletionRequest),'group history replay'));
+ pass('GM-42 group delete physically removes the snapshot','0',sql("select count(*) from gm42_private.history_names where history_id='"+deletableGroup.historyId+"'"));
+ const expiring=await room();await send(h,expiring,()=> 'WANT');await send(m,expiring,()=> 'WANT');await allWait(expiring);
+ const expiringGroup=expectOk(await api(h,'history'),'group before expiry').items.find(i=>i.roomId===expiring.id&&i.scope==='group');
+ sql("begin; update public.consents set expires_at=clock_timestamp(),version=version+1 where id in (select consent_id from gm06_canonical.history_audience where history_id='"+expiringGroup.historyId+"'); select gm17_private.cleanup(); commit;");
+ const afterExpiry=expectOk(await api(h,'history'),'group after expiry').items.filter(i=>i.roomId===expiring.id);
+ pass('GM-42 group expiry hides names on remaining personal history',[['personal',false]],afterExpiry.map(i=>[i.scope,Object.hasOwn(i,'participants')]));
+}
 sql("begin;select set_config('dish_v4.writer','on',true);update public.rooms set created_at=clock_timestamp()-interval '3 days',expires_at=clock_timestamp()-interval '2 days',version=version+1 where id='"+historyRoom.id+"';select set_config('dish_v4.writer','off',true);select gm17_private.cleanup();commit;");
 const retained=expectOk(await api(m,'history'),'retained history after room cleanup').items.find(i=>i.historyId===memberPersonal.historyId);
 pass('history after room cleanup keeps exact projection',hr,retained?.result);
